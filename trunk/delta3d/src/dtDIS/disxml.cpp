@@ -1,5 +1,6 @@
 #include <dtDIS/disxml.h>
 #include <dtDIS/sharedstate.h>
+#include <dtDIS/propertyname.h>
 #include <dtGame/gamemanager.h>
 #include <dtUtil/log.h>
 #include <dtUtil/stringutils.h>
@@ -186,6 +187,15 @@ const char details::XMLEntityMapSchema::NODE_ACTORDATA_RESOURCE_ACTORPROPERTY[] 
 const char details::XMLEntityMapSchema::ATTRIBUTE_RESOURCE_GROUP[] = {"Group\0"};
 const char details::XMLEntityMapSchema::ATTRIBUTE_RESOURCE_RENDERSUITE[] = {"RenderSuite\0"};
 
+const char details::XMLEntityMapSchema::NODE_PROPERTY_NAMES[] = {"PropertyNames\0"};
+const char details::XMLEntityMapSchema::NODE_ENTITY_LOCATION[] = {"EntityLocation\0"};
+const char details::XMLEntityMapSchema::NODE_ENTITY_ORIENTATION[] = {"EntityOrientation\0"};
+const char details::XMLEntityMapSchema::NODE_ENTITY_LINEAR_VELOCITY[] = {"EntityLinearVelocity\0"};
+const char details::XMLEntityMapSchema::NODE_ENTITY_LAST_KNOWN_LOCATION[] = {"EntityLastKnownLocation\0"};
+const char details::XMLEntityMapSchema::NODE_ENTITY_LAST_KNOWN_ORIENTATION[] = {"EntityLastKnownOrientation\0"};
+const char details::XMLEntityMapSchema::NODE_ENTITY_DR_ALGO[] = {"EntityDeadReckoningAlgorithm\0"};
+const char details::XMLEntityMapSchema::NODE_ENTITY_GROUND_CLAMP[] = {"EntityGroundClamp\0"};
+
 EntityMapXMLHandler::EntityMapXMLHandler(SharedState* config, dtGame::GameManager* gm )
    : mSharedState(config)
    , mGM( gm )
@@ -280,6 +290,40 @@ void EntityMapXMLHandler::characters(const XMLCh* const chars, const unsigned in
 
    case ACTORDATA_RESOURCE_ACTORPROPERTY:
       {
+      } break;
+
+
+   case PROPERTY_NAMES:
+      {
+      } break;
+
+   case ENTITY_LOCATION:
+      {
+         dtDIS::EnginePropertyName::ENTITY_LOCATION = std::string(cstr);
+      } break;
+   case ENTITY_ORIENTATION:
+      {
+         dtDIS::EnginePropertyName::ENTITY_ORIENTATION = std::string(cstr);
+      } break;
+   case ENTITY_LINEAR_VELOCITY:
+      {
+         dtDIS::EnginePropertyName::ENTITY_LINEARY_VELOCITY = std::string(cstr);
+      } break;
+   case ENTITY_LAST_KNOWN_LOCATION:
+      {
+         dtDIS::EnginePropertyName::LAST_KNOWN_LOCATION = std::string(cstr);
+      } break;
+   case ENTITY_LAST_KNOWN_ORIENTATION:
+      {
+         dtDIS::EnginePropertyName::LAST_KNOWN_ORIENTATION = std::string(cstr);
+      } break;
+   case ENTITY_DR_ALGO:
+      {
+         dtDIS::EnginePropertyName::DEAD_RECKONING_ALGORITHM = std::string(cstr);
+      } break;
+   case ENTITY_GROUND_CLAMP:
+      {
+         dtDIS::EnginePropertyName::GROUND_CLAMP = std::string(cstr);
       } break;
 
    default:
@@ -444,6 +488,39 @@ void EntityMapXMLHandler::startElement(const XMLCh* const uri,const XMLCh* const
    {
       mNodeStack.push( MAPPING );
    }
+   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_PROPERTY_NAMES) )
+   {
+      mNodeStack.push( PROPERTY_NAMES );
+   }
+   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITY_LOCATION) )
+   {
+      mNodeStack.push( ENTITY_LOCATION );
+   }
+   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITY_ORIENTATION) )
+   {
+      mNodeStack.push( ENTITY_ORIENTATION );
+   }
+   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITY_LINEAR_VELOCITY) )
+   {
+      mNodeStack.push( ENTITY_LINEAR_VELOCITY );
+   }
+   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITY_LAST_KNOWN_LOCATION) )
+   {
+      mNodeStack.push( ENTITY_LAST_KNOWN_LOCATION );
+   }
+   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITY_LAST_KNOWN_ORIENTATION) )
+   {
+      mNodeStack.push( ENTITY_LAST_KNOWN_ORIENTATION );
+   }
+   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITY_DR_ALGO) )
+   {
+      mNodeStack.push( ENTITY_DR_ALGO );
+   }
+   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITY_GROUND_CLAMP) )
+   {
+      mNodeStack.push( ENTITY_GROUND_CLAMP );
+   }
+
 
    XMLString::release( &cstr );
 }

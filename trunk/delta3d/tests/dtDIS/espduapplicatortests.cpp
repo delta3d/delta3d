@@ -51,9 +51,9 @@ void ESPduApplicatorTests::TestApplyToMessage()
    InitializeUpdateMessage initmsg;
    initmsg( *should_be );
 
-   CompareParams( dtDIS::EnginePropertyName::ROTATION    , *should_be, *msg ) ;
-   CompareParams( dtDIS::EnginePropertyName::TRANSLATION , *should_be, *msg ) ;
-   CompareParams( dtDIS::EnginePropertyName::VELOCITY    , *should_be, *msg ) ;
+   CompareParams( dtDIS::EnginePropertyName::ENTITY_ORIENTATION    , *should_be, *msg ) ;
+   CompareParams( dtDIS::EnginePropertyName::ENTITY_LOCATION , *should_be, *msg ) ;
+   CompareParams( dtDIS::EnginePropertyName::ENTITY_LINEARY_VELOCITY    , *should_be, *msg ) ;
 
    CompareParams( dtDIS::HLABaseEntityPropertyName::PROPERTY_LAST_KNOWN_ROTATION    , *should_be, *msg ) ;
    CompareParams( dtDIS::HLABaseEntityPropertyName::PROPERTY_LAST_KNOWN_TRANSLATION , *should_be, *msg ) ;

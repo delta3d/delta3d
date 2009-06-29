@@ -24,6 +24,7 @@
 
 #include <dtDIS/dtdisexport.h>      // for export symbols
 #include <string>
+#include <dtUtil/refstring.h>
 
 namespace dtDIS
 {
@@ -45,23 +46,23 @@ namespace dtDIS
    {
       // Contains the official ActorProperty names that supported engine components respond to.
 
-      static const char ROTATION                  [] ;
-      static const char TRANSLATION               [] ;
-      static const char LAST_KNOWN_TRANSLATION    [] ;
-      static const char LAST_KNOWN_ROTATION       [] ;
+      static dtUtil::RefString ENTITY_LOCATION;
+      static dtUtil::RefString ENTITY_ORIENTATION;
+      static dtUtil::RefString LAST_KNOWN_LOCATION;
+      static dtUtil::RefString LAST_KNOWN_ORIENTATION;
 
-      static const char VELOCITY                  [] ;
-      static const char ACCELERATION              [] ;
+      static dtUtil::RefString ENTITY_LINEARY_VELOCITY;
+      //static dtUtil::RefString ACCELERATION;
 
-      static const char DEAD_RECKONING_ALGORITHM  [] ;
-      static const char GROUND_CLAMP              [] ;
+      static dtUtil::RefString DEAD_RECKONING_ALGORITHM;
+      static dtUtil::RefString GROUND_CLAMP;
 
-      static const char RESOURCE_DAMAGE_OFF       [] ;
-      static const char RESOURCE_DAMAGE_ON        [] ;
-      static const char RESOURCE_DAMAGE_DESTROYED [] ;
+      static dtUtil::RefString RESOURCE_DAMAGE_OFF;
+      static dtUtil::RefString RESOURCE_DAMAGE_ON;
+      static dtUtil::RefString RESOURCE_DAMAGE_DESTROYED;
 
-      static const char ARTICULATION              [] ;
-      static const char DOF_NODE_NAME             [] ;
+      static dtUtil::RefString ARTICULATION;
+      static dtUtil::RefString DOF_NODE_NAME;
    } ;
 
    struct DT_DIS_EXPORT HLABaseEntityPropertyName

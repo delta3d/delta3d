@@ -141,8 +141,16 @@ namespace dtDIS
 
       static const char ATTRIBUTE_RESOURCE_RENDERSUITE[];
       static const char ATTRIBUTE_RESOURCE_GROUP[];
-   };
 
+      static const char NODE_PROPERTY_NAMES[];
+      static const char NODE_ENTITY_LOCATION[];
+      static const char NODE_ENTITY_ORIENTATION[];
+      static const char NODE_ENTITY_LINEAR_VELOCITY[];
+      static const char NODE_ENTITY_LAST_KNOWN_LOCATION[];
+      static const char NODE_ENTITY_LAST_KNOWN_ORIENTATION[];
+      static const char NODE_ENTITY_DR_ALGO[];
+      static const char NODE_ENTITY_GROUND_CLAMP[];
+   };
    } // end namespace details
    ///@endcond
 
@@ -191,6 +199,14 @@ namespace dtDIS
          ACTORDATA_RESOURCE,
          ACTORDATA_RESOURCE_DESCRIPTOR,
          ACTORDATA_RESOURCE_ACTORPROPERTY,
+         PROPERTY_NAMES,
+         ENTITY_LOCATION,
+         ENTITY_ORIENTATION,
+         ENTITY_LINEAR_VELOCITY,
+         ENTITY_LAST_KNOWN_LOCATION,
+         ENTITY_LAST_KNOWN_ORIENTATION,
+         ENTITY_DR_ALGO,
+         ENTITY_GROUND_CLAMP
       };
 
       typedef std::stack<Nodes> NodeStack;

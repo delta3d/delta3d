@@ -94,21 +94,21 @@ void InitializeUpdateMessage::operator ()(dtGame::ActorUpdateMessage& msg) const
    //////mp = msg.AddUpdateParameter(dtDIS::PropertyName::ENTITYID_ENTITY, dtDAL::DataType::SHORTINT );
    //////mp->FromString( dtUtil::ToString(eid.getEntity()) );
 
-   mp = msg.AddUpdateParameter(dtDIS::EnginePropertyName::VELOCITY, dtDAL::DataType::VEC3 );
+   mp = msg.AddUpdateParameter(dtDIS::EnginePropertyName::ENTITY_LINEARY_VELOCITY, dtDAL::DataType::VEC3 );
    if (mp != NULL)
    {
       dtGame::Vec3MessageParameter *v3mp = static_cast<dtGame::Vec3MessageParameter*>(mp);
       v3mp->SetValue( osg::Vec3( 26, 27, 28 ) );
    }
 
-   mp = msg.AddUpdateParameter( dtDIS::EnginePropertyName::TRANSLATION , dtDAL::DataType::VEC3 );
+   mp = msg.AddUpdateParameter( dtDIS::EnginePropertyName::ENTITY_LOCATION , dtDAL::DataType::VEC3 );
    if( mp != NULL )
    {
       dtGame::Vec3MessageParameter* v3mp = static_cast<dtGame::Vec3MessageParameter*>( mp );
       v3mp->SetValue( osg::Vec3(29, 30, 31) );
    }
 
-   mp = msg.AddUpdateParameter( dtDIS::EnginePropertyName::ROTATION , dtDAL::DataType::VEC3 );
+   mp = msg.AddUpdateParameter( dtDIS::EnginePropertyName::ENTITY_ORIENTATION , dtDAL::DataType::VEC3 );
    if( mp != NULL )
    {
       dtGame::Vec3MessageParameter* v3mp = static_cast<dtGame::Vec3MessageParameter*>( mp );

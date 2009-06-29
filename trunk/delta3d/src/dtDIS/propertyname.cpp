@@ -10,28 +10,29 @@ namespace dtDIS
 
 
    // -- EnginePropertyName -- //
-   const char EnginePropertyName::ROTATION                  [] = { "Rotation\0"                 } ;
-   const char EnginePropertyName::TRANSLATION               [] = { "Translation\0"              } ;
-   const char EnginePropertyName::LAST_KNOWN_TRANSLATION    [] = { "Last_Known_Translation\0"   } ;
-   const char EnginePropertyName::LAST_KNOWN_ROTATION       [] = { "Last_Known_Rotation\0"      } ;
+   dtUtil::RefString EnginePropertyName::ENTITY_LOCATION           ("Translation");
 
-   const char EnginePropertyName::VELOCITY                  [] = { "Velocity_Vector\0"          } ;
-   const char EnginePropertyName::ACCELERATION              [] = { "Acceleration' 'Vector\0"      } ;
+   dtUtil::RefString EnginePropertyName::ENTITY_ORIENTATION        ("Rotation");
+   dtUtil::RefString EnginePropertyName::LAST_KNOWN_LOCATION    ("Last_Known_Translation");
+   dtUtil::RefString EnginePropertyName::LAST_KNOWN_ORIENTATION       ("Last_Known_Rotation");
 
-   const char EnginePropertyName::DEAD_RECKONING_ALGORITHM  [] = { "Dead_Reckoning_Algorithm\0" } ;
+   dtUtil::RefString EnginePropertyName::ENTITY_LINEARY_VELOCITY                  ("Velocity_Vector");
+   //dtUtil::RefString EnginePropertyName::ACCELERATION              ("Acceleration' 'Vector");
+
+   dtUtil::RefString EnginePropertyName::DEAD_RECKONING_ALGORITHM  ("Dead_Reckoning_Algorithm");
 
    ///\todo this only named "Flying" for now because of the dvte::IG::Entity actor.
-   const char EnginePropertyName::GROUND_CLAMP              [] = { "Flying\0"                   } ;
+   dtUtil::RefString EnginePropertyName::GROUND_CLAMP              ("Flying");
 
-   const char EnginePropertyName::RESOURCE_DAMAGE_OFF       [] = { "Non_damaged_actor\0"        } ;
-   const char EnginePropertyName::RESOURCE_DAMAGE_ON        [] = { "Damaged_actor\0"            } ;
-   const char EnginePropertyName::RESOURCE_DAMAGE_DESTROYED [] = { "Destroyed_actor\0"          } ;
+   dtUtil::RefString EnginePropertyName::RESOURCE_DAMAGE_OFF       ("Non_damaged_actor");
+   dtUtil::RefString EnginePropertyName::RESOURCE_DAMAGE_ON        ("Damaged_actor");
+   dtUtil::RefString EnginePropertyName::RESOURCE_DAMAGE_DESTROYED ("Destroyed_actor");
 
    ///\todo this only uses the substring 'Parameter' because dvte::IG::Entity needs it.
-   const char EnginePropertyName::ARTICULATION              [] = { "ArticulatedParameter\0"     } ;
+   dtUtil::RefString EnginePropertyName::ARTICULATION              ("ArticulatedParameter");
 
    /// this value is not a typo, it needs to be this because of the DVTE support.
-   const char EnginePropertyName::DOF_NODE_NAME             [] = { "OurName\0"                  } ;
+   dtUtil::RefString EnginePropertyName::DOF_NODE_NAME             ("OurName");
 
    // -- HLABaseEntityPropertyName -- //
    const std::string HLABaseEntityPropertyName::PROPERTY_LAST_KNOWN_TRANSLATION     = "Last Known Translation"     ;

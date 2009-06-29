@@ -116,6 +116,7 @@ SharedState::SharedState()
    , mActiveEntityControl()
    , mConnectionData()
 {
+   //TODO Should read and process a DIS xml configuration file
 }
 
 SharedState::~SharedState()
