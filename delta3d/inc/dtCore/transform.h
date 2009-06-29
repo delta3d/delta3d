@@ -1,20 +1,20 @@
-/* 
- * Delta3D Open Source Game and Simulation Engine 
- * Copyright (C) 2004-2005 MOVES Institute 
+/*
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2004-2005 MOVES Institute
  *
  * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free 
- * Software Foundation; either version 2.1 of the License, or (at your option) 
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
  *
  * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this library; if not, write to the Free Software Foundation, Inc., 
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
 */
 
@@ -34,7 +34,7 @@ namespace dtCore
    class DT_CORE_EXPORT Transform
    {
    public:
-      
+
       Transform(float tx = 0.0f, float ty = 0.0f, float tz = 0.0f,
                 float h = 0.0f, float p = 0.0f, float r = 0.0f);
       Transform(const Transform& that);
@@ -47,9 +47,9 @@ namespace dtCore
       /// Overwrites this transform with a scale matrix with the given values.
       void MakeScale(const osg::Vec3f& scaleVec) { mTransform.makeScale(scaleVec); }
       /// Overwrites this transform with a scale matrix with the given values.
-      void MakeScale(osg::Matrix::value_type x, osg::Matrix::value_type y, osg::Matrix::value_type z) 
+      void MakeScale(osg::Matrix::value_type x, osg::Matrix::value_type y, osg::Matrix::value_type z)
          { mTransform.makeScale(x,y,z); }
-      
+
       void GetRow(unsigned index, osg::Vec3& row) const;
       void SetRow(unsigned index, const osg::Vec3& row);
 
@@ -101,7 +101,7 @@ namespace dtCore
       virtual void SetRotation(const osg::Vec3& hpr);
 
       /**
-       * Set the rotation using a quaternion 
+       * Set the rotation using a quaternion
        * This will wipe out any scale assigned to the matrix.
        */
       virtual void SetRotation(const osg::Quat& quat) { mTransform.setRotate(quat); }
@@ -154,36 +154,44 @@ namespace dtCore
       double CalcDistanceSquared(const dtCore::Transform& xform);
 
       /**
-       * Does a polar decomposition (SLOW) on the matrix to get the scale and the unscaled rotation matrix, 
+       * Does a polar decomposition (SLOW) on the matrix to get the scale and the unscaled rotation matrix,
        * then rescales it based on the vector passed in.  This is not something you want to call often.
-       * Note - this scale value will be wiped out if you call SetRotation(). Scale is really only 
-       * relevant to visible 3D objects - it was separated out to significantly improve performance. 
-       * To use a permanent scale on an object, you should have a separate matrix transform that holds 
+       * Note - this scale value will be wiped out if you call SetRotation(). Scale is really only
+       * relevant to visible 3D objects - it was separated out to significantly improve performance.
+       * To use a permanent scale on an object, you should have a separate matrix transform that holds
        * the scale value and make your mesh be a child of that. See GameMeshActor for an example.
        */
       void Rescale(const osg::Vec3d& scale);
-      
+
       /**
-       * Does a polar decomposition (SLOW) on the matrix to get the scale and the unscaled rotation matrix, 
+       * Does a polar decomposition (SLOW) on the matrix to get the scale and the unscaled rotation matrix,
        * then rescales it based on the vector passed in.  This is not something you want to call often.
-       * Note - this scale value will be wiped out if you call SetRotation(). Scale is really only 
-       * relevant to visible 3D objects - it was separated out to significantly improve performance. 
-       * To use a permanent scale on an object, you should have a separate matrix transform that holds 
+       * Note - this scale value will be wiped out if you call SetRotation(). Scale is really only
+       * relevant to visible 3D objects - it was separated out to significantly improve performance.
+       * To use a permanent scale on an object, you should have a separate matrix transform that holds
        * the scale value and make your mesh be a child of that. See GameMeshActor for an example.
        */
       void Rescale(const osg::Vec3f& scale);
 
-      ///checks to see if the param transform is within epsilon of this transform
-      ///slightly more sophisticated as using operator ==
-      /// todo fix epsilon (does not equal 0.0001f)
+      /** checks to see if the param transform is within epsilon of this transform
+       *  slightly more sophisticated as using operator ==
+       *  The epsilon will scale up and down based on the values of the floats using the passed id in epsilon
+       *  as a base.
+       */
       bool EpsilonEquals(const Transform& transform, float epsilon = 0.0001f) const;
+
+      /// @return the refernce to the position in the transform matrix
+      osg::Matrix::value_type& operator()(unsigned i, unsigned j) { return mTransform(i, j); }
+
+      /// @return the value of the position in the transform matrix
+      osg::Matrix::value_type operator()(unsigned i, unsigned j) const { return mTransform(i, j); }
 
       Transform & operator=(const Transform &);
       bool        operator==(const Transform &);
 
-   protected:
+   private:
 
-      osg::Matrix mTransform; ///<Internal storage of the rotation
+      osg::Matrix mTransform; ///<Internal storage
    };
 }
 
