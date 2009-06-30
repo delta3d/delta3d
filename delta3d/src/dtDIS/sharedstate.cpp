@@ -1,5 +1,7 @@
 #include <dtDIS/sharedstate.h>
 #include <dtDAL/actorproxy.h>
+#include <dtUtil/xercesparser.h>
+#include <dtDIS/disxml.h>
 
 #include <cstddef>                   // for NULL
 
@@ -56,13 +58,19 @@ bool ResourceMapConfig::GetMappedResource(const DIS::EntityType& eid, const dtDA
 
 
 
-SharedState::SharedState()
+SharedState::SharedState(const std::string& connectionXMLFile)
    : mActorMapConfig()
    , mResourceMapConfig()
    , mActiveEntityControl()
    , mConnectionData()
 {
    //TODO Should read and process a DIS xml configuration file
+
+   if (!connectionXMLFile.empty())
+   {
+      //parse connection file
+      ParseConnectionData(connectionXMLFile);
+   }
 }
 
 SharedState::~SharedState()
@@ -109,3 +117,16 @@ const ConnectionData& SharedState::GetConnectionData() const
    return mConnectionData;
 }
 
+
+////////////////////////////////////////////////////////////////////////////////
+void dtDIS::SharedState::ParseConnectionData(const std::string& file)
+{
+   dtUtil::XercesParser parser;
+   dtDIS::ConnectionXMLHandler handler;
+   bool parsed = parser.Parse(file, handler, "dis_connection.xsd");
+
+   if (parsed)
+   {
+      this->SetConnectionData(handler.GetConnectionData());
+   }
+}
