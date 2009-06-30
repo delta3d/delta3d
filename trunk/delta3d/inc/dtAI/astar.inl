@@ -136,7 +136,9 @@ void AStar<_NodeType, _CostFunc, _Container, _Timer>::AddNodeLink(node_type* pPa
    }
    else
    {
-      Insert(mOpen, new node_type(pParent, pData, pParent->GetCostToNode() + mCostFunc(pParent->GetData(), pData), mCostFunc(pData, mConfig.Finish())));
+      cost_type costFromParent = mCostFunc(pParent->GetData(), pData);
+      cost_type costToFinish   = mCostFunc(pData, mConfig.Finish());
+      Insert(mOpen, new node_type(pParent, pData, pParent->GetCostToNode() + costFromParent, costToFinish));
    }
 }
 

@@ -91,92 +91,92 @@ namespace dtAI
       typedef AStarConfig<data_type, cost_type, container_type> config_type;
       typedef AStar<node_type, cost_function, container_type, _Timer> MyType;
 
-      public:
-         /**
-          * Default constructor creates a default config file
-          * with no constraints, and no path to goto
-          */
-         AStar();
+   public:
+      /**
+       * Default constructor creates a default config file
+       * with no constraints, and no path to goto
+       */
+      AStar();
 
-         /**
-          * Takes a config as an arg and copies it, use this constructor
-          * to setup constraints or configured with two path points to path between
-          */
-         AStar(const config_type& pConfig);
-         virtual ~AStar();
+      /**
+       * Takes a config as an arg and copies it, use this constructor
+       * to setup constraints or configured with two path points to path between
+       */
+      AStar(const config_type& pConfig);
+      virtual ~AStar();
 
-         /**
-          *  Resets the internal memory and copies the config class
-          *  for use on the next call to FindPath()
-          *
-          * @param takes an AStarConfig class 
-          */
-         void Reset(const config_type& pConfig);
+      /**
+       *  Resets the internal memory and copies the config class
+       *  for use on the next call to FindPath()
+       *
+       * @param takes an AStarConfig class 
+       */
+      void Reset(const config_type& pConfig);
 
-         /**
-          *  Resets the internal memory and keeps the same config params
-          *
-          * @param the point to find a path from
-          * @param the point to find a path to
-          */
-         void Reset(data_type pFrom, data_type pTo);
+      /**
+       *  Resets the internal memory and keeps the same config params
+       *
+       * @param the point to find a path from
+       * @param the point to find a path to
+       */
+      void Reset(data_type pFrom, data_type pTo);
 
-         /***
-          *  Resets config using a vector of possible points to go from to a vector of 
-          *  possible points to go to.
-          *  The first index in the from and to are the actual positions, where as the rest
-          *  of the vector are nearest points to the actual position, used for specifying 
-          *  procedural to and from data_type that do not exist within scope of the data_type::iterator.
-          */
-         void Reset(const std::vector<data_type>& pFrom, const std::vector<data_type>& pTo);
+      /***
+       *  Resets config using a vector of possible points to go from to a vector of 
+       *  possible points to go to.
+       *  The first index in the from and to are the actual positions, where as the rest
+       *  of the vector are nearest points to the actual position, used for specifying 
+       *  procedural to and from data_type that do not exist within scope of the data_type::iterator.
+       */
+      void Reset(const std::vector<data_type>& pFrom, const std::vector<data_type>& pTo);
 
-         /**
-          *  Runs the AStar algorithm, using the either the current config or the
-          *  the default config settings if none have been set
-          *  can check for return of false if no path is found         
-          *
-          * @return the result of this call to find path, NO_PATH, PATH_FOUND, or PARTIAL_PATH,
-          */
-         PathFindResult FindPath();
+      /**
+       *  Runs the AStar algorithm, using the either the current config or the
+       *  the default config settings if none have been set
+       *  can check for return of false if no path is found         
+       *
+       * @return the result of this call to find path, NO_PATH, PATH_FOUND, or PARTIAL_PATH,
+       */
+      PathFindResult FindPath();
 
-         /**
-          * Call this after calling FindPath() to get
-          * @return the result of the last call to FindPath()
-          */
-         container_type& GetPath(){return mConfig.mResult;}
+      /**
+       * Call this after calling FindPath() to get
+       * @return the result of the last call to FindPath()
+       */
+      container_type& GetPath() { return mConfig.mResult; }
 
-         /**
-          * Use this to get the config data to change constraints or get the
-          * statistics from the last run of GetPath(), also holds a container
-          * of the last found path
-          */
-         const config_type& GetConfig() const{return mConfig;}         
-         config_type& GetConfig(){return mConfig;}         
-         
-
-         cost_function& GetCostFunction() {return mCostFunc;}
-         const cost_function& GetCostFunction() const{return mCostFunc;}
-
-      protected:
-         AStar(const AStar&); //not implemented by design
-         AStar& operator=(const AStar&); //not implemented by design
-         void FreeMem();
+      /**
+       * Use this to get the config data to change constraints or get the
+       * statistics from the last run of GetPath(), also holds a container
+       * of the last found path
+       */
+      const config_type& GetConfig() const { return mConfig; }         
+      config_type& GetConfig() { return mConfig; }         
       
-         /**
-          * Internal helper functions, pulled out of main loop to be optimized
-          * at a later date
-          */
-         void AddNodeLink(node_type* pParent, data_type pData);
-         typename std::vector<_NodeType*>::iterator Contains(AStarContainer& pCont, data_type pNode);
-         void Remove(AStarContainer& pCont, typename AStarContainer::iterator iterToErase);
-         node_type* FindLowestCost(AStarContainer& pCont);
-         void Insert(AStarContainer& pCont, node_type* pNode);
-         
-         config_type mConfig;
-         AStarContainer mOpen;
-         AStarContainer mClosed;
-         cost_function mCostFunc;
-         _Timer mTimer;
+
+      cost_function& GetCostFunction() { return mCostFunc; }
+      const cost_function& GetCostFunction() const { return mCostFunc; }
+
+   protected:
+      AStar(const AStar&); //not implemented by design
+      AStar& operator=(const AStar&); //not implemented by design
+      void FreeMem();
+   
+      /**
+       * Internal helper functions, pulled out of main loop to be optimized
+       * at a later date
+       */
+      void AddNodeLink(node_type* pParent, data_type pData);
+      typename std::vector<_NodeType*>::iterator Contains(AStarContainer& pCont, data_type pNode);
+      void Remove(AStarContainer& pCont, typename AStarContainer::iterator iterToErase);
+      node_type* FindLowestCost(AStarContainer& pCont);
+      void Insert(AStarContainer& pCont, node_type* pNode);
+      
+      config_type mConfig;
+      AStarContainer mOpen;
+      AStarContainer mClosed;
+      cost_function mCostFunc;
+      _Timer mTimer;
    };
 
 #include "astar.inl"
