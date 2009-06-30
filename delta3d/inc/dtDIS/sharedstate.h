@@ -32,6 +32,7 @@
 
 #include <map>
 #include <dtDIS/entityidcompare.h>     // for typedef
+#include <dtDIS/activeentitycontrol.h>
 
 namespace dtCore
 {
@@ -65,40 +66,6 @@ namespace dtDIS
    } // end namespace details
    ///@endcond
 
-   ///\brief provides a single point for associating known entities & actors.
-   ///
-   /// Provides quick look-ups given either an entity or an actor
-   /// by keeping 2 maps in sync.
-   struct DT_DIS_EXPORT ActiveEntityControl
-   {
-   public:
-      /// relate an EntityID with an Actor
-      /// @return 'false' when any relation previously existed; 'true' if the relation was added.
-      bool AddEntity(const DIS::EntityID& eid, const dtDAL::ActorProxy* proxy);
-
-      /// remove a relation for the EntityID and Actor
-      /// @return 'false' when no relation previously existed; 'true' if the relation was removed.
-      bool RemoveEntity(const DIS::EntityID& eid, const dtDAL::ActorProxy* proxy);
-
-      /// finds the associated Entity
-      /// @return NULL when the proxy has no matching EntityID
-      //const DIS::EntityID* GetEntity(const dtDAL::ActorProxy* proxy);
-      const DIS::EntityID* GetEntity(const dtCore::UniqueId& uid) const;
-
-      /// finds the associated Actor
-      /// @return NULL when the EntityID has no matching Actor
-      const dtDAL::ActorProxy* GetActor(const DIS::EntityID& eid) const;
-
-      /// remove all state data.
-      void ClearAll();
-
-   private:
-      typedef std::map<dtCore::UniqueId,DIS::EntityID> ActorEntityMap;
-      ActorEntityMap mPublishedActors;
-
-      typedef std::map<DIS::EntityID,dtCore::RefPtr<const dtDAL::ActorProxy>,details::EntityIDCompare> EntityActorMap;
-      EntityActorMap mActiveEntities;
-   };
 
    ///\brief a structure to maintain the one-to-one
    /// relationship between the DIS::EntityID and the dtDAL::ActorType.
