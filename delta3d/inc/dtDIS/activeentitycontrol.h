@@ -8,10 +8,6 @@
 #include <dtCore/refptr.h>
 #include <map>
 
-namespace dtDAL
-{
-   class ActorProxy;
-}
 
 namespace dtDIS
 {
@@ -25,11 +21,11 @@ namespace dtDIS
    public:
       /// relate an EntityID with an Actor
       /// @return 'false' when any relation previously existed; 'true' if the relation was added.
-      bool AddEntity(const DIS::EntityID& eid, const dtDAL::ActorProxy* proxy);
+      bool AddEntity(const DIS::EntityID& eid, const dtCore::UniqueId& id);
 
       /// remove a relation for the EntityID and Actor
       /// @return 'false' when no relation previously existed; 'true' if the relation was removed.
-      bool RemoveEntity(const DIS::EntityID& eid, const dtDAL::ActorProxy* proxy);
+      bool RemoveEntity(const DIS::EntityID& eid, const dtCore::UniqueId& id);
 
       /// finds the associated Entity
       /// @return NULL when the proxy has no matching EntityID
@@ -38,17 +34,17 @@ namespace dtDIS
 
       /// finds the associated Actor
       /// @return NULL when the EntityID has no matching Actor
-      const dtDAL::ActorProxy* GetActor(const DIS::EntityID& eid) const;
+      const dtCore::UniqueId* GetActor(const DIS::EntityID& eid) const;
 
       /// remove all state data.
       void ClearAll();
 
    private:
-      typedef std::map<dtCore::UniqueId,DIS::EntityID> ActorEntityMap;
-      ActorEntityMap mPublishedActors;
+      typedef std::map<dtCore::UniqueId,DIS::EntityID> ActorToEntityMap;
+      ActorToEntityMap mActorToEntityMap;
 
-      typedef std::map<DIS::EntityID,dtCore::RefPtr<const dtDAL::ActorProxy>,details::EntityIDCompare> EntityActorMap;
-      EntityActorMap mActiveEntities;
+      typedef std::map<DIS::EntityID,dtCore::UniqueId,details::EntityIDCompare> EntityToActorMap;
+      EntityToActorMap mEntityToActorMap;
    };
 }
 #endif // activeentitycontrol_h__

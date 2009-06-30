@@ -3,37 +3,46 @@
 
 using namespace dtDIS;
 
-bool ActiveEntityControl::AddEntity(const DIS::EntityID& eid, const dtDAL::ActorProxy* proxy)
+bool ActiveEntityControl::AddEntity(const DIS::EntityID& eid, const dtCore::UniqueId& id)
 {
-   //bool published = mPublishedActors.insert( ActorEntityMap::value_type(proxy,eid).second;
-   bool published = mPublishedActors.insert( ActorEntityMap::value_type(proxy->GetId(),eid) ).second;
-   if( published )
+   bool inserted = mActorToEntityMap.insert(ActorToEntityMap::value_type(id,eid)).second;
+   if (inserted)
    {
-      EntityActorMap::value_type vp(eid,proxy);
-      bool activated = mActiveEntities.insert( vp ).second;
-      if( !activated )
+      inserted = mEntityToActorMap.insert(EntityToActorMap::value_type(eid, id)).second;
+      if (!inserted)
       {
          // keep it in sync with the other container
-         mPublishedActors.erase( proxy->GetId() );
+         mActorToEntityMap.erase(id);
       }
 
-      return activated;
+      return inserted;
    }
 
    return false;
 }
 
-bool ActiveEntityControl::RemoveEntity(const DIS::EntityID& eid, const dtDAL::ActorProxy* proxy)
+bool ActiveEntityControl::RemoveEntity(const DIS::EntityID& eid, const dtCore::UniqueId& id)
 {
-   bool pub = mPublishedActors.erase(proxy->GetId()) > 0;
-   bool act = mActiveEntities.erase(eid) > 0;
-   return( pub && act );
+   bool pub = mActorToEntityMap.erase(id) > 0;
+   bool act = mEntityToActorMap.erase(eid) > 0;
+   return(pub && act);
 }
 
 const DIS::EntityID* ActiveEntityControl::GetEntity(const dtCore::UniqueId& uid) const
 {
-   ActorEntityMap::const_iterator iter = mPublishedActors.find( uid );
-   if( iter != mPublishedActors.end() )
+   ActorToEntityMap::const_iterator iter = mActorToEntityMap.find(uid);
+   if (iter != mActorToEntityMap.end())
+   {
+      return (&(iter->second));
+   }
+
+   return NULL;
+}
+
+const dtCore::UniqueId* ActiveEntityControl::GetActor(const DIS::EntityID& eid) const
+{
+   EntityToActorMap::const_iterator iter = mEntityToActorMap.find(eid);
+   if (iter != mEntityToActorMap.end())
    {
       return( &(iter->second) );
    }
@@ -41,19 +50,7 @@ const DIS::EntityID* ActiveEntityControl::GetEntity(const dtCore::UniqueId& uid)
    return NULL;
 }
 
-const dtDAL::ActorProxy* ActiveEntityControl::GetActor(const DIS::EntityID& eid) const
-{
-   EntityActorMap::const_iterator iter = mActiveEntities.find( eid );
-   if( iter != mActiveEntities.end() )
-   {
-      return( (iter->second).get() );
-   }
-
-   return NULL;
-}
-
 void ActiveEntityControl::ClearAll()
 {
-   mActiveEntities.clear();
-   mPublishedActors.clear();
+   mActorToEntityMap.clear();
 }
