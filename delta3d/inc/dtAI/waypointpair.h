@@ -45,7 +45,13 @@ namespace dtAI
       virtual ~WaypointPair();
 
       /**
-       * calculates distance between the two points
+       * calculates distance between the two points on the XY plane
+       */
+      void Calculate2DDistance();
+      float Get2DDistance() const;
+
+      /**
+       * calculates distance between the two points in 3D space
        */
       void Calculate3DDistance();
       float Get3DDistance() const;
@@ -81,6 +87,7 @@ namespace dtAI
       const WaypointInterface* mFrom;
       const WaypointInterface* mTo;
 
+      float m2DDistance;
       float m3DDistance;
       float mSlope;
    };
