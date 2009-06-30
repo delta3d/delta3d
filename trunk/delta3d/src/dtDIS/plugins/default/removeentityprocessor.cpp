@@ -28,19 +28,19 @@ void RemoveEntityProcessor::Process(const DIS::Pdu& packet)
    const DIS::RemoveEntityPdu& pdu = static_cast<const DIS::RemoveEntityPdu&>( packet );
 
    // find out if there is an actor for this id
-   const dtDAL::ActorProxy* prox = mConfig->GetActiveEntityControl().GetActor( pdu.getReceivingEntityID() );
+   const dtCore::UniqueId* actorID = mConfig->GetActiveEntityControl().GetActor( pdu.getReceivingEntityID() );
 
    DIS::AcknowledgePdu acknowledge;
    acknowledge.setAcknowledgeFlag( dtDIS::ACKNOWLEDGE_CREATE_ENTITY );
 
-   if( prox == NULL )
+   if( actorID == NULL )
    {
       // the entity already existed, so remove it
       acknowledge.setResponseFlag( dtDIS::RESPONSE_UNABLE_TO_COMPLY );
    }
    else
    {
-      if( mConfig->GetActiveEntityControl().RemoveEntity( pdu.getReceivingEntityID(), prox ) )
+      if( mConfig->GetActiveEntityControl().RemoveEntity( pdu.getReceivingEntityID(), *actorID ) )
       {
          // delta3d knew about the entity, and was able to forget about it.
          acknowledge.setResponseFlag( dtDIS::RESPONSE_ABLE_TO_COMPLY );

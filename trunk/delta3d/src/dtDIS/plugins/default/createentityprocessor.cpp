@@ -27,11 +27,11 @@ void CreateEntityProcessor::Process(const DIS::Pdu& packet)
    const DIS::CreateEntityPdu& pdu = static_cast<const DIS::CreateEntityPdu&>( packet );
 
    // find out if there is an actor for this ID
-   const dtDAL::ActorProxy* prox = mConfig->GetActiveEntityControl().GetActor( pdu.getReceivingEntityID() );
+   const dtCore::UniqueId* actorID = mConfig->GetActiveEntityControl().GetActor( pdu.getReceivingEntityID() );
 
    DIS::AcknowledgePdu acknowledge;
    acknowledge.setAcknowledgeFlag( dtDIS::ACKNOWLEDGE_CREATE_ENTITY );
-   if( prox == NULL )
+   if( actorID == NULL )
    {
       // delta3d's DIS support needs to have the EntityType to know what
       // kind of actor to create, since this is not supplied in this
