@@ -231,7 +231,7 @@ namespace dtActors
          dtCore::DeltaDrawable* parent = drawable;
          while (parent)
          {
-            if (mPointList[pointIndex] == parent)
+            if (mPointList[pointIndex].get() == parent)
             {
                return pointIndex;
             }
@@ -271,7 +271,7 @@ namespace dtActors
    dtCore::Transformable* LinkedPointsActor::CreatePointDrawable(osg::Vec3 position)
    {
       dtCore::Transformable* point = new dtCore::Transformable();
-      
+
       // Attach this new point to the actor.
       AddChild(point);
 
@@ -366,7 +366,7 @@ namespace dtActors
    {
       LinkedPointsActor* actor = NULL;
       GetActor(actor);
-     
+
       return actor->GetPointList();
    }
 
