@@ -37,6 +37,7 @@ class QLineEdit;
 class QTextEdit;
 class QCloseEvent;
 class QPushButton;
+class QToolButton;
 
 namespace dtEditQt
 {
@@ -51,24 +52,39 @@ namespace dtEditQt
       /// Destructor
       virtual ~PrefabSaveDialog() { }
 
+      /// Retrieves the category of the prefab the user entered
+      const std::string getPrefabCategory();
+
       /// Retrieves the name of the prefab the user entered
-      std::string getPrefabName();
+      const std::string getPrefabName();
 
       /// Retrieves the filename of the prefab
-      std::string getPrefabFileName();
+      const std::string getPrefabFileName();
 
       /// Retrieves the description of the prefab
-      std::string getPrefabDescription();
+      const std::string getPrefabDescription();
+
+      /// Retrieves the icon file name of the prefab
+      const std::string GetPrefabIconFileName();
 
    public slots:
       /// slot for receiving the text changing signal
       void edited(const QString& newText);
+      
+      /// slot for changing the Prefab icon
+      void IconChanged();
 
    private:
       QPushButton* okButton;
       QLineEdit*   nameEdit;
+      QLineEdit*   mCategoryEdit;
+      std::string  mIconFilePath;
+      QToolButton* mIconButton;
+      QIcon*       mIcon;
       QTextEdit*   descEdit;
-      QLineEdit*   fileEdit;
+      //QLineEdit*   fileEdit;
+
+      bool EnsureIconFolderExists();
    };
 
 } // namespace dtEditQt

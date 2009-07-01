@@ -207,6 +207,10 @@ namespace  dtDAL
                   //ignored - the schema checks this value
                }
             }
+            else if (topEl == MapXMLConstants::ICON_ELEMENT)
+            {
+               mPrefabIconFileName = dtUtil::XMLStringConverter(chars).ToString();
+            }
          }
          else if (mInEvents)
          {
@@ -250,7 +254,7 @@ namespace  dtDAL
             {
                if (topEl == MapXMLConstants::ACTOR_ENVIRONMENT_ACTOR_ELEMENT)
                   mEnvActorId = dtUtil::XMLStringConverter(chars).ToString();
-            }
+            }            
          }
          else if (mInGroup)
          {
@@ -874,7 +878,7 @@ namespace  dtDAL
                      //make it ignore the rest of the mElements.
                      p.SetValue(NULL);
                      (*dataType) = NULL;
-                  }
+                  }                  
                }
                else if (topEl == MapXMLConstants::ACTOR_PROPERTY_RESOURCE_DISPLAY_ELEMENT)
                {
@@ -886,7 +890,7 @@ namespace  dtDAL
                   if (dataValue != "" && mDescriptorDisplayName != "")
                   {
                      ResourceDescriptor rd(mDescriptorDisplayName, dataValue);
-                     p.SetValue(&rd);
+                     p.SetValue(&rd);                     
                   }
                   else
                   {
@@ -1373,6 +1377,11 @@ namespace  dtDAL
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Prefab");
          mInPrefab = true;
       }
+      else if (XMLString::compareString(localname, MapXMLConstants::ICON_ELEMENT) == 0)
+      {
+         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Icon");               
+      }
+
       mElements.push(xmlCharString(localname));
    }
 
@@ -1427,6 +1436,13 @@ namespace  dtDAL
          EndGroupSection(localname);
       }
       mElements.pop();
+
+      if(mLoadingPrefab && mPrefabReadMode == PREFAB_ICON_ONLY &&
+         (XMLString::compareString(localname, MapXMLConstants::ICON_ELEMENT) == 0))
+      {
+         //Got the icon file name -- time to stop parsing
+         throw(dtUtil::Exception("Icon found", __FILE__, __LINE__));
+      }
    }
 
    /////////////////////////////////////////////////////////////////
@@ -1523,10 +1539,19 @@ namespace  dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void MapContentHandler::SetPrefabMode(std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >& proxyList)
+   void MapContentHandler::SetPrefabMode(std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >& proxyList,
+                                         PrefabReadMode readMode /* = READ_ALL */)
    {
       mLoadingPrefab = true;
       mPrefabProxyList = &proxyList;
+      
+      mPrefabReadMode = readMode;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const std::string MapContentHandler::GetPrefabIconFileName()
+   {
+      return mPrefabIconFileName;
    }
 
    /////////////////////////////////////////////////////////////////
@@ -1701,7 +1726,6 @@ namespace  dtDAL
 
    }
 
-
    /////////////////////////////////////////////////////////////////
    MapContentHandler::MapContentHandler()
       : mHasDeprecatedProperty(false)
@@ -1710,7 +1734,9 @@ namespace  dtDAL
       , mActorProperty(NULL)
       , mGroupIndex(-1)
       , mLoadingPrefab(false)
+      , mPrefabReadMode(PREFAB_READ_ALL)
       , mPrefabProxyList(NULL)
+      , mPrefabIconFileName("")
    {
       mLogger = &dtUtil::Log::GetInstance();
       //mLogger->SetLogLevel(dtUtil::Log::LOG_DEBUG);

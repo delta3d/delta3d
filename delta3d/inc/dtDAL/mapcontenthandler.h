@@ -54,7 +54,7 @@ namespace dtDAL
    class NamedGroupParameter;
    class ArrayActorPropertyBase;
    class ContainerActorProperty;
-   class DataType;
+   class DataType;   
 
    /**
     * @class MapContentHandler
@@ -64,6 +64,11 @@ namespace dtDAL
                                           public xercesc::EntityResolver, public osg::Referenced
    {
       public:
+
+         enum PrefabReadMode {
+            PREFAB_READ_ALL,
+            PREFAB_ICON_ONLY            
+         };
 
          ///Constructor
          MapContentHandler();
@@ -189,12 +194,18 @@ namespace dtDAL
          /**
          * Initializes the content handler to load a map.
          */
-         void SetMapMode() {mLoadingPrefab = false;}
+         void SetMapMode() {mLoadingPrefab = false; mPrefabReadMode = PREFAB_READ_ALL;}
 
          /**
          * Initializes the content handler to load a prefab.
          */
-         void SetPrefabMode(std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >& proxyList);
+         void SetPrefabMode(std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >& proxyList,
+                            PrefabReadMode readMode = PREFAB_READ_ALL);
+
+         /**
+         * Get prefab icon file name.  If there isn't one, returns ""
+         */
+         const std::string GetPrefabIconFileName();
 
          /**
           * note: store a RefPtr to this map immediately because reparsing with this handler
@@ -284,6 +295,8 @@ namespace dtDAL
          bool mFoundMapName;
 
          bool mLoadingPrefab;
+         PrefabReadMode mPrefabReadMode;
+         std::string mPrefabIconFileName;
          std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >* mPrefabProxyList;
 
          //Reset all of the internal data/state variables

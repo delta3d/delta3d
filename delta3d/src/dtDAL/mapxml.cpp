@@ -184,8 +184,36 @@ namespace dtDAL
       return false;
    }
 
-   /////////////////////////////////////////////////////////////////
+   ///////////////////////////////////////////////////////////////////////////////
+   const std::string MapParser::GetPrefabIconFileName(const std::string& path)
+   {
+      std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > proxyList; //just an empty list
+      std::string iconFileName = "";
 
+      mParsing = true;
+      mHandler->SetPrefabMode(proxyList, MapContentHandler::PREFAB_ICON_ONLY);
+      mXercesParser->setContentHandler(mHandler.get());
+      mXercesParser->setErrorHandler(mHandler.get());
+
+      try
+      {
+         mXercesParser->parse(path.c_str());
+      }
+      catch(dtUtil::Exception iconFoundWeAreDone)
+      {
+         //Probably the icon has been found, the exception to stop parsing has
+         //been thrown, so there's nothing to do here.  
+      }
+      
+      iconFileName = mHandler->GetPrefabIconFileName();
+   
+      mHandler->ClearMap();      
+      mParsing = false;
+
+      return iconFileName;
+   }
+   
+   /////////////////////////////////////////////////////////////////
    const std::string MapParser::ParseMapName(const std::string& path)
    {
       //this is a flag that will make sure
@@ -516,7 +544,7 @@ namespace dtDAL
          EndElement(); // End Editor Version Element.
          BeginElement(MapXMLConstants::SCHEMA_VERSION_ELEMENT);
          AddCharacters(std::string(MapXMLConstants::SCHEMA_VERSION));
-         EndElement(); // End Scema Version Element.
+         EndElement(); // End Scema Version Element.         
          EndElement(); // End Header Element.
 
          BeginElement(MapXMLConstants::LIBRARIES_ELEMENT);
@@ -662,7 +690,9 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void MapWriter::SavePrefab(const std::vector<dtCore::RefPtr<ActorProxy> > proxyList, const std::string& filePath, const std::string& description)
+   void MapWriter::SavePrefab(const std::vector<dtCore::RefPtr<ActorProxy> > proxyList,
+                              const std::string& filePath, const std::string& description,
+                              const std::string& iconFile /* = "" */)
    {
       FILE* outfile = fopen(filePath.c_str(), "w");
 
@@ -683,6 +713,7 @@ namespace dtDAL
          BeginElement(MapXMLConstants::PREFAB_ELEMENT, MapXMLConstants::PREFAB_NAMESPACE);
 
          BeginElement(MapXMLConstants::HEADER_ELEMENT);
+
          BeginElement(MapXMLConstants::DESCRIPTION_ELEMENT);
          AddCharacters(description);
          EndElement(); // End Description Element.
@@ -691,7 +722,11 @@ namespace dtDAL
          EndElement(); // End Editor Version Element.
          BeginElement(MapXMLConstants::SCHEMA_VERSION_ELEMENT);
          AddCharacters(std::string(MapXMLConstants::SCHEMA_VERSION));
-         EndElement(); // End Scema Version Element.
+         EndElement(); // End Schema Version Element.
+         BeginElement(MapXMLConstants::ICON_ELEMENT);
+         AddCharacters(iconFile);
+         EndElement(); //End Icon Element
+
          EndElement(); // End Header Element.
 
          osg::Vec3 origin;
