@@ -195,6 +195,9 @@ const char details::XMLEntityMapSchema::NODE_ENTITY_LAST_KNOWN_LOCATION[] = {"En
 const char details::XMLEntityMapSchema::NODE_ENTITY_LAST_KNOWN_ORIENTATION[] = {"EntityLastKnownOrientation\0"};
 const char details::XMLEntityMapSchema::NODE_ENTITY_DR_ALGO[] = {"EntityDeadReckoningAlgorithm\0"};
 const char details::XMLEntityMapSchema::NODE_ENTITY_GROUND_CLAMP[] = {"EntityGroundClamp\0"};
+const char details::XMLEntityMapSchema::NODE_ENTITY_NON_DAMAGED[] = {"EntityNonDamaged\0"};
+const char details::XMLEntityMapSchema::NODE_ENTITY_DAMAGED[] = {"EntityDamaged\0"};
+const char details::XMLEntityMapSchema::NODE_ENTITY_DESTROYED[] = {"EntityDestroyed\0"};
 
 EntityMapXMLHandler::EntityMapXMLHandler(SharedState* config, dtGame::GameManager* gm )
    : mSharedState(config)
@@ -326,6 +329,18 @@ void EntityMapXMLHandler::characters(const XMLCh* const chars, const unsigned in
          dtDIS::EnginePropertyName::GROUND_CLAMP = std::string(cstr);
       } break;
 
+   case ENTITY_NON_DAMAGED:
+      {
+         dtDIS::EnginePropertyName::RESOURCE_DAMAGE_OFF = std::string(cstr);
+      } break;
+   case ENTITY_DAMAGED:
+      {
+         dtDIS::EnginePropertyName::RESOURCE_DAMAGE_ON = std::string(cstr);
+      } break;
+   case ENTITY_DESTROYED:
+      {
+         dtDIS::EnginePropertyName::RESOURCE_DAMAGE_DESTROYED = std::string(cstr);
+      } break;
    default:
       {
          LOG_ERROR("Unsupported XML Element type, of value: " + dtUtil::ToString(mNodeStack.top()) )
@@ -519,6 +534,18 @@ void EntityMapXMLHandler::startElement(const XMLCh* const uri,const XMLCh* const
    else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITY_GROUND_CLAMP) )
    {
       mNodeStack.push( ENTITY_GROUND_CLAMP );
+   }
+   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITY_NON_DAMAGED) )
+   {
+      mNodeStack.push( ENTITY_NON_DAMAGED );
+   }
+   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITY_DAMAGED) )
+   {
+      mNodeStack.push( ENTITY_DAMAGED );
+   }
+   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITY_DESTROYED) )
+   {
+      mNodeStack.push( ENTITY_DESTROYED );
    }
 
 

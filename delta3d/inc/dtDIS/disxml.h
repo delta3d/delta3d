@@ -150,6 +150,9 @@ namespace dtDIS
       static const char NODE_ENTITY_LAST_KNOWN_ORIENTATION[];
       static const char NODE_ENTITY_DR_ALGO[];
       static const char NODE_ENTITY_GROUND_CLAMP[];
+      static const char NODE_ENTITY_NON_DAMAGED[];
+      static const char NODE_ENTITY_DAMAGED[];
+      static const char NODE_ENTITY_DESTROYED[];
    };
    } // end namespace details
    ///@endcond
@@ -206,7 +209,10 @@ namespace dtDIS
          ENTITY_LAST_KNOWN_LOCATION,
          ENTITY_LAST_KNOWN_ORIENTATION,
          ENTITY_DR_ALGO,
-         ENTITY_GROUND_CLAMP
+         ENTITY_GROUND_CLAMP,
+         ENTITY_NON_DAMAGED,
+         ENTITY_DAMAGED,
+         ENTITY_DESTROYED
       };
 
       typedef std::stack<Nodes> NodeStack;
