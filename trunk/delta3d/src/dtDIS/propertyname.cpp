@@ -13,10 +13,10 @@ namespace dtDIS
    dtUtil::RefString EnginePropertyName::ENTITY_LOCATION           ("Translation");
 
    dtUtil::RefString EnginePropertyName::ENTITY_ORIENTATION        ("Rotation");
-   dtUtil::RefString EnginePropertyName::LAST_KNOWN_LOCATION    ("Last_Known_Translation");
-   dtUtil::RefString EnginePropertyName::LAST_KNOWN_ORIENTATION       ("Last_Known_Rotation");
+   dtUtil::RefString EnginePropertyName::LAST_KNOWN_LOCATION       ("Last_Known_Translation");
+   dtUtil::RefString EnginePropertyName::LAST_KNOWN_ORIENTATION    ("Last_Known_Rotation");
 
-   dtUtil::RefString EnginePropertyName::ENTITY_LINEARY_VELOCITY                  ("Velocity_Vector");
+   dtUtil::RefString EnginePropertyName::ENTITY_LINEARY_VELOCITY   ("Velocity_Vector");
    //dtUtil::RefString EnginePropertyName::ACCELERATION              ("Acceleration' 'Vector");
 
    dtUtil::RefString EnginePropertyName::DEAD_RECKONING_ALGORITHM  ("Dead_Reckoning_Algorithm");
@@ -24,9 +24,9 @@ namespace dtDIS
    ///\todo this only named "Flying" for now because of the dvte::IG::Entity actor.
    dtUtil::RefString EnginePropertyName::GROUND_CLAMP              ("Flying");
 
-   dtUtil::RefString EnginePropertyName::RESOURCE_DAMAGE_OFF       ("Non_damaged_actor");
-   dtUtil::RefString EnginePropertyName::RESOURCE_DAMAGE_ON        ("Damaged_actor");
-   dtUtil::RefString EnginePropertyName::RESOURCE_DAMAGE_DESTROYED ("Destroyed_actor");
+   dtUtil::RefString EnginePropertyName::RESOURCE_DAMAGE_OFF       ("Non-damaged actor");
+   dtUtil::RefString EnginePropertyName::RESOURCE_DAMAGE_ON        ("Damaged actor");
+   dtUtil::RefString EnginePropertyName::RESOURCE_DAMAGE_DESTROYED ("Destroyed actor");
 
    ///\todo this only uses the substring 'Parameter' because dvte::IG::Entity needs it.
    dtUtil::RefString EnginePropertyName::ARTICULATION              ("ArticulatedParameter");
