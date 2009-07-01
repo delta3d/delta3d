@@ -67,6 +67,7 @@ namespace dtDAL
    XMLCh* MapXMLConstants::LAST_UPDATE_TIMESTAMP_ELEMENT = NULL;
    XMLCh* MapXMLConstants::EDITOR_VERSION_ELEMENT = NULL;
    XMLCh* MapXMLConstants::SCHEMA_VERSION_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::ICON_ELEMENT = NULL;
 
    XMLCh* MapXMLConstants::LIBRARIES_ELEMENT = NULL;
    XMLCh* MapXMLConstants::LIBRARY_ELEMENT = NULL;
@@ -151,6 +152,7 @@ namespace dtDAL
       LAST_UPDATE_TIMESTAMP_ELEMENT = xercesc::XMLString::transcode("lastUpdateTimestamp");
       EDITOR_VERSION_ELEMENT = xercesc::XMLString::transcode("editorVersion");
       SCHEMA_VERSION_ELEMENT = xercesc::XMLString::transcode("schemaVersion");
+      ICON_ELEMENT = xercesc::XMLString::transcode("icon");
 
       LIBRARIES_ELEMENT = xercesc::XMLString::transcode("libraries");
       LIBRARY_ELEMENT = xercesc::XMLString::transcode("library");

@@ -41,12 +41,13 @@
 #include <dtUtil/tree.h>
 
 class QGroupBox;
-class QTreeWidget;
 class QPushButton;
 class QModelIndex;
 class QBoxLayout;
 class QGridLayout;
 class QCheckBox;
+class QListWidgetItem;
+class QPoint;
 
 namespace dtCore
 {
@@ -55,13 +56,13 @@ namespace dtCore
 }
 
 namespace dtEditQt
-{
-   class ResourceDragTree;
-   class ResourceTreeWidget;
-
+{   
    class PerspectiveViewport;
    class ViewportContainer;
    class StageCamera;
+   
+   class ResourceDragListWidget;
+   class ResourceListWidgetItem;   
 
    /**
    * @class PrefabBrowser
@@ -86,7 +87,7 @@ namespace dtEditQt
       * Determines whether the create actor button is supposed to be enabled or
       * disabled based on whether an appropriate actor is selected.
       */
-      void handleEnableCreateActor();
+      void handleEnableCreateActorBtn();
 
       public slots:
          /**
@@ -100,9 +101,20 @@ namespace dtEditQt
          void createPrefabInstancePressed();
 
          /**
-         * Slot - Called when the tree selection changes
+         * Slot - Called when the list selection changes                                                                         
          */
-         void treeSelectionChanged();
+         void listSelectionChanged();
+
+         /**
+         * Slot - Called when the list selection is accepted (double-clicked)
+         */
+         void listSelectionDoubleClicked(QListWidgetItem* activatedItem);
+
+         /**
+         * Slot - Called when ResourceListWidget is double clicked...
+         * May need to be moved to ResourceListWidget class file...
+         */
+         void rightClickMenu(const QPoint& clickPoint);         
 
          /**
          * Slot - Called when the preview checkbox is selected.
@@ -124,7 +136,7 @@ namespace dtEditQt
          /**
          * Slot - Display currently selected mesh
          */
-         void displaySelection();
+         void displaySelection();   
 
    private:
 
@@ -139,10 +151,10 @@ namespace dtEditQt
       void SetCameraLookAt();
 
       /**
-      * A convenience method to returns the selected tree widget or NULL.
-      * @return The selected actor tree widget.  NULL if no selection.
-      */
-      ResourceTreeWidget* getSelectedPrefabWidget();
+      * A convenience method to returns the selected list widget or NULL.
+      * @return The selected list widget.  NULL if no selection.
+      */      
+      ResourceListWidgetItem* getSelectedPrefabWidget();
 
       /**
       * This defines the layout for the preview window.
@@ -162,6 +174,12 @@ namespace dtEditQt
       */
       QBoxLayout* buttonLayout();
 
+      /**
+      * Convenience method that builds a Prefab resource descriptor using
+      * the absolute path to the XML file defining the Prefab.
+      */
+      dtDAL::ResourceDescriptor createResDescriptorFromPath(std::string path);
+
 
       // Preview
       ViewportContainer*             mContainer;
@@ -179,15 +197,16 @@ namespace dtEditQt
 
       // Buttons
       QPushButton* mPreviewBtn;
-
-      // Tree
+      
       QIcon                mResourceIcon;
-      ResourceDragTree*    mTree;
       QPushButton*         mCreatePrefabBtn;
       QPushButton*         mCreateInstanceBtn;
       QPushButton*         mRefreshPrefabBtn;
 
-      ResourceTreeWidget*  mRootPrefabTree;
+      //List that browses prefab directories      
+      ResourceDragListWidget*         mListWidget;      
+      std::string          mCurrentDir;
+      std::string          mTopPrefabDir;
 
       // Prefab resources.
       dtUtil::tree<dtDAL::ResourceTreeNode> mPrefabList;
@@ -198,32 +217,8 @@ namespace dtEditQt
       // back through this tree to reexpand items later
       dtUtil::tree<QString> mExpandedActorTypeNames;
       bool                  mRootNodeWasExpanded;
-      int                   mLastScrollBarLocation;
-
-      /**
-      * Looks at the current actor tree and tries to mark which actor types are
-      * currently expanded.  This is then used to re-expand them with restorePreviousExpansion()
-      * after the tree is rebuilt.
-      */
-      void markCurrentExpansion();
-
-      /**
-      * recursive method to support markCurrentExpansion().
-      */
-      void recurseMarkCurrentExpansion(ResourceTreeWidget* parent,
-         dtUtil::tree<QString>& currentTree);
-
-      /**
-      * Attempts to re-expand previously expanded actor types.  This is a nicity for the user
-      * for when they load libraries and such.
-      */
-      void restorePreviousExpansion();
-
-      /**
-      * Recursive method to support restorePreviousExpansion().
-      */
-      void recurseRestorePreviousExpansion(ResourceTreeWidget* parent,
-         dtUtil::tree<QString>& currentTree);
+      int                   mLastScrollBarLocation;      
+      
    };
 
 } // namespace dtEditQt

@@ -52,7 +52,7 @@ namespace dtDAL
    class NamedParameter;
    class MapContentHandler;
    class ArrayActorPropertyBase;
-   class ContainerActorProperty;
+   class ContainerActorProperty;   
    
    /**
     * @class MapParser
@@ -80,6 +80,12 @@ namespace dtDAL
          * @param[in]  proxyList  The list of proxies loaded from the prefab.
          */
          bool ParsePrefab(const std::string& path, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >& proxyList);
+
+         /**
+         * Parses only the header of a prefab's xml file and extracts the icon
+         * file name.  Returns "" if no icon element is found in the header.        
+         */
+         const std::string GetPrefabIconFileName(const std::string& path);
 
          /**
           * Reads the assigned name from the map path given.
@@ -156,7 +162,9 @@ namespace dtDAL
          /**
          * Saves a number of given actor proxies into a prefab resource.
          */
-         void SavePrefab(std::vector<dtCore::RefPtr<ActorProxy> > proxyList, const std::string& filePath, const std::string& description);
+         void SavePrefab(std::vector<dtCore::RefPtr<ActorProxy> > proxyList,
+                         const std::string& filePath, const std::string& description,
+                         const std::string& iconFile = "");
          
       protected:
          virtual ~MapWriter(); ///Protected destructor so that this could be subclassed.

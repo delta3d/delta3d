@@ -27,9 +27,11 @@
  * William E. Johnson II
  * Jeffrey P. Houde
  */
-#include <prefix/dtstageprefix-src.h>
-#include <dtEditQt/prefabsaveasdialog.h>
 
+#include <dtEditQt/prefabsaveasdialog.h>
+#include <prefix/dtstageprefix-src.h>
+
+#include <QtGui/QFileDialog>
 #include <QtGui/QGroupBox>
 #include <QtGui/QLineEdit>
 #include <QtGui/QVBoxLayout>
@@ -41,14 +43,18 @@
 #include <QtGui/QMessageBox>
 #include <QtGui/QGroupBox>
 #include <QtGui/QLabel>
+#include <QtGui/QToolButton>
 
+#include <dtCore/globals.h>
 #include <dtDAL/project.h>
 #include <dtDAL/map.h>
 #include <dtDAL/exceptionenum.h>
+#include <dtEditQt/editoractions.h>
+#include <dtEditQt/editordata.h>
 
 namespace dtEditQt
 {
-
+   ///////////////////////////////////////////////////////////////////////////////
    PrefabSaveDialog::PrefabSaveDialog(QWidget* parent)
       : QDialog(parent)
    {
@@ -63,21 +69,41 @@ namespace dtEditQt
       label->setAlignment(Qt::AlignRight);
       nameEdit = new QLineEdit(groupBox);
       gridLayout->addWidget(label,    0, 0);
-      gridLayout->addWidget(nameEdit, 0, 1);
+      gridLayout->addWidget(nameEdit, 0, 1);      
 
+      label = new QLabel(tr("Category:"), groupBox);
+      label->setAlignment(Qt::AlignRight);
+      mCategoryEdit = new QLineEdit("General", groupBox);
+      gridLayout->addWidget(label, 1, 0);
+      gridLayout->addWidget(mCategoryEdit, 1, 1);
+
+      label = new QLabel(tr("Icon:\n(Click to change)"), groupBox);
+      label->setAlignment(Qt::AlignRight);            
+      
+      mIconFilePath = dtCore::GetDeltaRootPath();
+      mIconFilePath += "/utilities/STAGE/icons/Icon_NoIcon64.png";
+      mIcon = new QIcon(mIconFilePath.c_str());      
+      mIconButton = new QToolButton(groupBox);      
+      mIconButton->setIconSize(QSize(64,64));
+      mIconButton->setIcon(*mIcon);      
+      gridLayout->addWidget(label, 2, 0);
+      gridLayout->addWidget(mIconButton, 2, 1);
+      
+/*
       label = new QLabel(tr("FileName:"),groupBox);
       label->setAlignment(Qt::AlignRight);
       fileEdit = new QLineEdit(groupBox);
       fileEdit->setEnabled(false);
       //fileEdit->setValidator(new QValidator(fileEdit));
-      gridLayout->addWidget(label,    1, 0);
-      gridLayout->addWidget(fileEdit, 1, 1);
+      gridLayout->addWidget(label,    3, 0);
+      gridLayout->addWidget(fileEdit, 3, 1);
+*/
 
       label = new QLabel(tr("Description:"),groupBox);
       label->setAlignment(Qt::AlignRight);
       descEdit = new QTextEdit(groupBox);
-      gridLayout->addWidget(label,    2, 0);
-      gridLayout->addWidget(descEdit, 2, 1);
+      gridLayout->addWidget(label,    3, 0);
+      gridLayout->addWidget(descEdit, 3, 1);
 
       //Create the buttons...
       okButton = new QPushButton(tr("OK"),this);
@@ -92,6 +118,7 @@ namespace dtEditQt
 
       connect(okButton,     SIGNAL(clicked()), this, SLOT(accept()));
       connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
+      connect(mIconButton,  SIGNAL(clicked()), this, SLOT(IconChanged()));
 
       QVBoxLayout* mainLayout = new QVBoxLayout(this);
       mainLayout->addWidget(groupBox);
@@ -103,30 +130,138 @@ namespace dtEditQt
    ///////////////////////// SLOTS ///////////////////////////////
    void PrefabSaveDialog::edited(const QString& newText)
    {
-      QString text = newText;
+      QString text = newText;      
 
-      text.replace('-', '_');
-      text.replace(' ', '_');
-
-      fileEdit->setText(text);
-
-      // Enable the ok button now that we have text.
+      // Enable the ok button if we have text.
       !text.isEmpty() ? okButton->setEnabled(true) : okButton->setEnabled(false);
    }
 
-   std::string PrefabSaveDialog::getPrefabName()
+   ///////////////////////////////////////////////////////////////////////////////
+   void PrefabSaveDialog::IconChanged()
+   {
+      std::string pathToIcon = mIconFilePath.substr(0, mIconFilePath.find_last_of("\\/"));
+
+      mIconFilePath = QFileDialog::getOpenFileName(this, tr("Choose a new icon"), pathToIcon.c_str()).toStdString();
+
+      if(mIconFilePath.empty())
+         return;
+      
+      if(mIcon != NULL)
+      {
+         delete mIcon;         
+      }
+
+      if(! EnsureIconFolderExists())
+      {
+         return;
+      }            
+
+      QString prefabIconsDir(std::string(dtEditQt::EditorData::GetInstance().getCurrentProjectContext() + 
+                                "/" + dtEditQt::EditorActions::PREFAB_DIRECTORY + "/icons").c_str());
+      //get rid of backslashes ... need the two strings to be EXACTLY the same
+      prefabIconsDir.replace(QRegExp("\\\\"), QString("/"));
+
+      //Need to ensure icon is in the project in the prefabs folder --
+      //if not, copy it there:
+      QString iconPathOnly = mIconFilePath.substr(0, mIconFilePath.find_last_of("\\/")).c_str();
+      //get rid of backslashes ... need the two strings to be EXACTLY the same
+      iconPathOnly.replace(QRegExp("\\\\"), QString("/"));
+
+      if(iconPathOnly != prefabIconsDir)
+      {
+         std::string iconFileNameOnly = mIconFilePath.substr(mIconFilePath.find_last_of("\\/"));
+         std::string iconNewPath = prefabIconsDir.toStdString() + iconFileNameOnly;
+
+         dtUtil::FileUtils::GetInstance().FileCopy(mIconFilePath, iconNewPath, true);
+         
+         mIconFilePath = iconNewPath;
+      }
+      
+      mIcon = new QIcon(mIconFilePath.c_str());
+      mIconButton->setIcon(*mIcon);
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   const std::string PrefabSaveDialog::getPrefabCategory()
+   {
+      return mCategoryEdit->text().toStdString();
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   const std::string PrefabSaveDialog::getPrefabName()
    {
       return nameEdit->text().toStdString();
    }
 
-   std::string PrefabSaveDialog::getPrefabFileName()
+   ///////////////////////////////////////////////////////////////////////////////
+   const std::string PrefabSaveDialog::getPrefabFileName()
    {
-      return fileEdit->text().toStdString();
+      //file name has to be massaged -- some characters are not allowed in filenames,
+      //and they are: \/:*?"<>| (and we are not going to allow spaces, either)
+      
+      QString prefabFileName = nameEdit->text();
+      prefabFileName.replace(QRegExp("[\\\\/:*\?\"<>| ]"), QString("_"));
+      
+      return prefabFileName.toStdString();
    }
 
-   std::string PrefabSaveDialog::getPrefabDescription()
+   ///////////////////////////////////////////////////////////////////////////////
+   const std::string PrefabSaveDialog::getPrefabDescription()
    {
       return descEdit->toPlainText().toStdString();
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   const std::string PrefabSaveDialog::GetPrefabIconFileName()
+   {
+      //Only want to return the file name, NOT the path... Icons will always
+      //live in the prefabs/icons folder of the project's context folder.
+      return mIconFilePath.substr(mIconFilePath.find_last_of("\\/") + 1);
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   bool PrefabSaveDialog::EnsureIconFolderExists()
+   {      
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+      fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext());
+
+      std::string prefabIconsDir = EditorActions::PREFAB_DIRECTORY + "/icons";
+
+      // If the prefab directory does not exist, create it first.
+      if (!fileUtils.DirExists(EditorActions::PREFAB_DIRECTORY))
+      {
+         try 
+         {
+            fileUtils.MakeDirectory(EditorActions::PREFAB_DIRECTORY);
+         }
+         catch (const dtUtil::Exception& e)
+         {
+            LOG_ERROR(e.What());
+
+            QMessageBox::critical((QWidget *) dtEditQt::EditorData::GetInstance().getMainWindow(),
+               tr("Error"), QString(e.What().c_str()), tr("OK"));
+            return false;
+         }
+      }
+
+      // Now make sure the prefab icons directory exists
+      if (!fileUtils.DirExists(prefabIconsDir))
+      {
+         try 
+         {
+            fileUtils.MakeDirectory(prefabIconsDir);
+         }
+         catch (const dtUtil::Exception& e)
+         {
+            LOG_ERROR(e.What());
+
+            QMessageBox::critical((QWidget *)EditorData::GetInstance().getMainWindow(),
+               tr("Error"), QString(e.What().c_str()), tr("OK"));
+            return false;
+         }
+      }
+
+      return true;
    }
 
 } // namespace dtEditQt

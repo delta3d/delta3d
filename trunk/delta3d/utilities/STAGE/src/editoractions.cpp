@@ -612,8 +612,9 @@ namespace dtEditQt
          slotRestartAutosave();
          return;
       }
-
-      std::string fullPath = EditorActions::PREFAB_DIRECTORY + dtUtil::FileUtils::PATH_SEPARATOR + dlg.getPrefabName();
+      
+      std::string fullPath = EditorActions::PREFAB_DIRECTORY + dtUtil::FileUtils::PATH_SEPARATOR 
+                              + dlg.getPrefabCategory() + "/" + dlg.getPrefabFileName();
       std::string fullPathSaving = fullPath + ".saving";
 
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
@@ -626,11 +627,22 @@ namespace dtEditQt
             fileUtils.MakeDirectory(EditorActions::PREFAB_DIRECTORY);
          }
 
+         //If the category subdirectory is empty, just store prefabs in the root prefab directory
+         if (dlg.getPrefabCategory() != "")
+         {
+            // If the category subdirectory doesn't exist, it also needs to be created
+            if (!fileUtils.DirExists(fullPath.substr(0, fullPath.find_last_of("\\/"))))
+            {
+               fileUtils.MakeDirectory(fullPath.substr(0, fullPath.find_last_of("\\/")));
+            }
+         }
+
          ViewportOverlay* overlay = ViewportManager::GetInstance().getViewportOverlay();
          ViewportOverlay::ActorProxyList& selection = overlay->getCurrentActorSelection();
 
          dtCore::RefPtr<dtDAL::MapWriter> writer = new dtDAL::MapWriter;
-         writer->SavePrefab(selection, fullPathSaving, dlg.getPrefabDescription());
+         writer->SavePrefab(selection, fullPathSaving,
+                       dlg.getPrefabDescription(), dlg.GetPrefabIconFileName());
 
          //if it's successful, move it to the final file name
          fileUtils.FileMove(fullPathSaving, fullPath + ".dtprefab", true);
