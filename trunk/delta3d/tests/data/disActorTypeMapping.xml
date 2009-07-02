@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DISEntityMap>
+  <Mapping>
+    <EntityType>
+      <EntityKind>1</EntityKind>
+      <Domain>0</Domain>
+      <Country>3</Country>
+      <Category>2</Category>
+      <Subcategory>0</Subcategory>
+      <Specific>0</Specific>
+      <Extra>0</Extra>
+    </EntityType>
+    <ActorData>
+      <ActorType>
+        <Name>Static Mesh</Name>
+        <Category>dtcore</Category>
+      </ActorType>
+      <Resource>
+        <Descriptor>StaticMeshes:uh-1n.ive</Descriptor>
+        <Descriptor>Descriptor2</Descriptor>
+        <Descriptor>Descriptor3</Descriptor>
+        <ActorProperty>ActorProperty1</ActorProperty>
+      </Resource>
+    </ActorData>
+  </Mapping>
+
+</DISEntityMap>

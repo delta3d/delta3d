@@ -38,7 +38,7 @@ void FullApplicator::operator ()(const DIS::EntityStatePdu& source,
       if (config != NULL)
       {
          const ResourceMapConfig& resources = config->GetResourceMap();
-         const dtDAL::ResourceDescriptor* rdPtr;
+         const dtDAL::ResourceDescriptor* rdPtr = NULL;
          bool found = resources.GetMappedResource( source.getEntityType(), rdPtr ) ;
          if( found )
          {
