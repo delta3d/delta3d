@@ -27,6 +27,7 @@
 #include <dtCore/scene.h>
 #include <dtUtil/xercesparser.h>
 #include <dtCore/globals.h>
+#include <dtActors/engineactorregistry.h>
 
 namespace dtDIS
 {
@@ -34,12 +35,14 @@ namespace dtDIS
    {
       CPPUNIT_TEST_SUITE( XMLParsing );
       CPPUNIT_TEST( TestOverwritingPropertyNames );
+      CPPUNIT_TEST( TestMappingEntityTypeToActorType );
       CPPUNIT_TEST_SUITE_END();
 
       void setup();
       void teardown();
 
       void TestOverwritingPropertyNames();
+      void TestMappingEntityTypeToActorType();
    };
 
    using namespace dtDIS;
@@ -63,18 +66,12 @@ namespace dtDIS
    {
       const std::string startPropertyName = dtDIS::EnginePropertyName::ENTITY_LOCATION;
 
-      dtCore::RefPtr<dtCore::Scene> scene = new dtCore::Scene();
-      dtCore::RefPtr<dtGame::GameManager> mgr = new dtGame::GameManager(*scene);
-      dtDIS::SharedState config;
-      dtDIS::EntityMapXMLHandler handler(&config, mgr.get());
-
-      dtUtil::XercesParser parser;
       dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList() + ":" + dtCore::GetDeltaRootPath() + "/tests/data");
-
       std::string path = dtCore::FindFileInPathList("disPropertyNameOverwrites.xml");
       CPPUNIT_ASSERT(dtUtil::FileUtils::GetInstance().FileExists(path));
 
-      parser.Parse(path, handler, "dis_mapping.xsd");
+      dtDIS::SharedState config("", path);
+
 
       const std::string endPropertyName = dtDIS::EnginePropertyName::ENTITY_LOCATION;
 
@@ -84,5 +81,30 @@ namespace dtDIS
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Referenced property name should be set to what's in the .xml file",
          std::string("NewLocationName"), dtDIS::EnginePropertyName::ENTITY_LOCATION.Get());
 
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void XMLParsing::TestMappingEntityTypeToActorType()
+   {
+      //example file maps the DIS EntityType below to a StaticMesh actor
+
+      dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList() + ":" + dtCore::GetDeltaRootPath() + "/tests/data");
+      std::string path = dtCore::FindFileInPathList("disActorTypeMapping.xml");
+      CPPUNIT_ASSERT(dtUtil::FileUtils::GetInstance().FileExists(path));
+
+      dtDIS::SharedState config("", path);
+      DIS::EntityType eid;
+      eid.setEntityKind(1);
+      eid.setCategory(2);
+      eid.setCountry(3);
+
+      const dtDAL::ActorType* actorType = NULL;
+
+      bool res = config.GetActorMap().GetMappedActor(eid, actorType);
+      CPPUNIT_ASSERT_MESSAGE("Did not find a matching ActorType based on the supplied DIS::EntityType",
+                            res == true);
+
+      CPPUNIT_ASSERT_MESSAGE("ActorMap returned back the wrong ActorType for the supplied DIS::EntityType",
+                              dtActors::EngineActorRegistry::STATIC_MESH_ACTOR_TYPE.get() == actorType);      
    }
 }

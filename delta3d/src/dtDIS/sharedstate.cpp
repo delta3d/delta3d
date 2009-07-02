@@ -58,7 +58,8 @@ bool ResourceMapConfig::GetMappedResource(const DIS::EntityType& eid, const dtDA
 
 
 
-SharedState::SharedState(const std::string& connectionXMLFile)
+SharedState::SharedState(const std::string& connectionXMLFile,
+                         const std::string& entityMappingXMLFile)
    : mActorMapConfig()
    , mResourceMapConfig()
    , mActiveEntityControl()
@@ -70,6 +71,11 @@ SharedState::SharedState(const std::string& connectionXMLFile)
    {
       //parse connection file
       ParseConnectionData(connectionXMLFile);
+   }
+
+   if (!entityMappingXMLFile.empty())
+   {
+      ParseEntityMappingData(entityMappingXMLFile);
    }
 }
 
@@ -128,5 +134,17 @@ void dtDIS::SharedState::ParseConnectionData(const std::string& file)
    if (parsed)
    {
       this->SetConnectionData(handler.GetConnectionData());
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void dtDIS::SharedState::ParseEntityMappingData(const std::string& file)
+{
+   dtUtil::XercesParser parser;
+   dtDIS::EntityMapXMLHandler handler(this);
+   bool parsed = parser.Parse(file, handler, "dis_mapping.xsd");
+
+   if (parsed)
+   {
    }
 }

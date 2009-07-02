@@ -138,7 +138,8 @@ namespace dtDIS
    class DT_DIS_EXPORT SharedState
    {
    public:
-      SharedState(const std::string& connectionXMLFile="");
+      SharedState(const std::string& connectionXMLFile = "",
+                  const std::string& entityMappingXMLFile = "");
       ~SharedState();
 
       ActorMapConfig& GetActorMap();
@@ -160,6 +161,7 @@ namespace dtDIS
       ConnectionData mConnectionData;
 
       void ParseConnectionData(const std::string& file);
+      void ParseEntityMappingData(const std::string& file);
    };
 }
 

@@ -34,10 +34,6 @@
 #include <dtCore/refptr.h>                  // for member
 #include <dtDIS/sharedstate.h>              // for member
 
-namespace dtGame
-{
-   class GameManager;
-}
 
 namespace dtDIS
 {
@@ -164,7 +160,7 @@ namespace dtDIS
    class DT_DIS_EXPORT EntityMapXMLHandler : public XERCES_CPP_NAMESPACE_QUALIFIER ContentHandler
    {
    public:
-      EntityMapXMLHandler(SharedState* config, dtGame::GameManager* gm);
+      EntityMapXMLHandler(SharedState* config);
       ~EntityMapXMLHandler();
 
       // inherited pure virtual functions
@@ -182,7 +178,6 @@ namespace dtDIS
 
    private:
       SharedState* mSharedState;
-      dtCore::RefPtr<dtGame::GameManager> mGM;
 
       enum Nodes
       {

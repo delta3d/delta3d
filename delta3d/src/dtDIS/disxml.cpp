@@ -1,9 +1,9 @@
 #include <dtDIS/disxml.h>
 #include <dtDIS/sharedstate.h>
 #include <dtDIS/propertyname.h>
-#include <dtGame/gamemanager.h>
 #include <dtUtil/log.h>
 #include <dtUtil/stringutils.h>
+#include <dtDAL/librarymanager.h>
 
 #include <xercesc/util/XercesDefs.hpp>  // for xerces namespace definition
 #include <xercesc/util/XMLString.hpp>  // for xerces string support
@@ -199,9 +199,8 @@ const char details::XMLEntityMapSchema::NODE_ENTITY_NON_DAMAGED[] = {"EntityNonD
 const char details::XMLEntityMapSchema::NODE_ENTITY_DAMAGED[] = {"EntityDamaged\0"};
 const char details::XMLEntityMapSchema::NODE_ENTITY_DESTROYED[] = {"EntityDestroyed\0"};
 
-EntityMapXMLHandler::EntityMapXMLHandler(SharedState* config, dtGame::GameManager* gm )
+EntityMapXMLHandler::EntityMapXMLHandler(SharedState* config)
    : mSharedState(config)
-   , mGM( gm )
    , mNodeStack()
 {
 }
@@ -383,7 +382,7 @@ void EntityMapXMLHandler::endElement(const XMLCh* const uri,const XMLCh* const l
          // modify the actor mapping
 
          // find the actortype
-         const dtDAL::ActorType* actortype = mGM->FindActorType( mCurrentActorTypeCategory, mCurrentActorTypeName );
+         const dtDAL::ActorType* actortype = dtDAL::LibraryManager::GetInstance().FindActorType(mCurrentActorTypeCategory, mCurrentActorTypeName);
 
          if( actortype != NULL )
          {
