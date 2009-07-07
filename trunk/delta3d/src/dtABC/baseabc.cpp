@@ -220,6 +220,32 @@ const dtCore::View* dtABC::BaseABC::GetView() const
    return NULL;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+dtCore::View* dtABC::BaseABC::GetView(unsigned int idx)
+{
+   if (idx > mViewList.size())
+   {
+      return NULL;
+   }
+   else
+   {
+      return mViewList[idx].get();
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+const dtCore::View* dtABC::BaseABC::GetView(unsigned int idx) const
+{
+   if (idx > mViewList.size())
+   {
+      return NULL;
+   }
+   else
+   {
+      return mViewList[idx].get();
+   }
+}
+
 //////////////////////////////////////////////////////////////////////////
 void dtABC::BaseABC::SetView(dtCore::View* view)
 {
@@ -306,4 +332,10 @@ void dtABC::BaseABC::SetMouse(dtCore::Mouse* mouse)
    {
       GetView()->SetMouse(mouse);
    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+unsigned int dtABC::BaseABC::GetNumberOfViews() const
+{
+   return mViewList.size();
 }

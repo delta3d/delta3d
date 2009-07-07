@@ -74,6 +74,15 @@ namespace dtABC
       ///Get the (const) first view
       const dtCore::View* GetView() const;
 
+      ///Get the View by index (could be NULL)
+      dtCore::View* GetView(unsigned int idx);
+
+      ///Get the const View by index (could be NULL)
+      const dtCore::View* GetView(unsigned int idx) const;
+
+      ///Get the number of added Views
+      unsigned int GetNumberOfViews() const;
+
       ///Set the first view
       void SetView(dtCore::View* view);
 
