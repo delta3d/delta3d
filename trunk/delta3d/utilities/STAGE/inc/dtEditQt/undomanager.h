@@ -73,6 +73,16 @@ namespace dtEditQt
       virtual ~UndoManager();
 
       /**
+      * Begins a group of undo events.
+      */
+      void beginUndoGroup();
+
+      /**
+      * Ends a group of undo events.
+      */
+      void endUndoGroup();
+
+      /**
        * Returns true if there are undo items in the undo stack.
        */
       bool hasUndoItems();
@@ -171,7 +181,9 @@ namespace dtEditQt
             PROPERTY_CHANGED,
             PROXY_NAME_CHANGED,
             PROXY_CREATED,
-            PROXY_DELETED
+            PROXY_DELETED,
+            UNDO_GROUP_BEGIN,
+            UNDO_GROUP_END,
          };
 
          ChangeEvent() {}
