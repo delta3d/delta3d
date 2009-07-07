@@ -602,19 +602,11 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void EditorActions::slotFileExportPrefab()
+   bool EditorActions::SaveNewPrefab(std::string category, std::string prefabName,
+                                     std::string iconFile, std::string prefabDescrip)
    {
-      slotPauseAutosave();
-
-      PrefabSaveDialog dlg;
-      if (dlg.exec()== QDialog::Rejected)
-      {
-         slotRestartAutosave();
-         return;
-      }
-      
       std::string fullPath = EditorActions::PREFAB_DIRECTORY + dtUtil::FileUtils::PATH_SEPARATOR 
-                              + dlg.getPrefabCategory() + "/" + dlg.getPrefabFileName();
+         + category + "/" + prefabName;
       std::string fullPathSaving = fullPath + ".saving";
 
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
@@ -628,7 +620,7 @@ namespace dtEditQt
          }
 
          //If the category subdirectory is empty, just store prefabs in the root prefab directory
-         if (dlg.getPrefabCategory() != "")
+         if (category != "")
          {
             // If the category subdirectory doesn't exist, it also needs to be created
             if (!fileUtils.DirExists(fullPath.substr(0, fullPath.find_last_of("\\/"))))
@@ -641,8 +633,7 @@ namespace dtEditQt
          ViewportOverlay::ActorProxyList& selection = overlay->getCurrentActorSelection();
 
          dtCore::RefPtr<dtDAL::MapWriter> writer = new dtDAL::MapWriter;
-         writer->SavePrefab(selection, fullPathSaving,
-                       dlg.getPrefabDescription(), dlg.GetPrefabIconFileName());
+         writer->SavePrefab(selection, fullPathSaving, prefabDescrip, iconFile);
 
          //if it's successful, move it to the final file name
          fileUtils.FileMove(fullPathSaving, fullPath + ".dtprefab", true);
@@ -656,10 +647,27 @@ namespace dtEditQt
          QMessageBox::critical((QWidget *)EditorData::GetInstance().getMainWindow(),
             tr("Error"), QString(e.What().c_str()), tr("OK"));
 
-         //slotRestartAutosave();
-         //return;
+         return false;
       }
       fileUtils.PopDirectory();
+
+      return true;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorActions::slotFileExportPrefab()
+   {
+      slotPauseAutosave();
+
+      PrefabSaveDialog dlg;
+      if (dlg.exec()== QDialog::Rejected)
+      {
+         slotRestartAutosave();
+         return;
+      }
+
+      SaveNewPrefab(dlg.getPrefabCategory(), dlg.getPrefabFileName(),
+                    dlg.GetPrefabIconFileName(), dlg.getPrefabDescription());
 
       slotRestartAutosave();
    }

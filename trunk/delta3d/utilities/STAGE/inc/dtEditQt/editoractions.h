@@ -108,6 +108,12 @@ namespace dtEditQt
       QList<ExternalTool*>& GetExternalTools();
 
       const QList<QAction*> GetExternalToolActions() const;
+   
+      /**
+       * Method to save a new prefab.  Returns true on success.
+       */
+      bool SaveNewPrefab(std::string category, std::string prefabName,
+                         std::string iconFile, std::string prefabDescrip);
 
       /**
        * The actions for this class are public.  Essentially, this whole class is here

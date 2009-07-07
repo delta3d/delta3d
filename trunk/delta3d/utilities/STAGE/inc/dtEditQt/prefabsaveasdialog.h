@@ -67,6 +67,9 @@ namespace dtEditQt
       /// Retrieves the icon file name of the prefab
       const std::string GetPrefabIconFileName();
 
+      /// Sets the category of the prefab
+      void setPrefabCategory(const std::string cat);
+
    public slots:
       /// slot for receiving the text changing signal
       void edited(const QString& newText);
