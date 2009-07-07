@@ -148,20 +148,6 @@ void MasterComponent::ProcessMessage(const dtGame::Message& msg)
       }
    }
 
-   ///\todo move this to DispatchNetworkMessage,
-   /// when we are assuming the messageprocessor component is connected, which seems lame,
-   /// because right now it doesn't need to rely on the messageprocessor component to exist.
-   // build the network buffer
-   const dtCore::UniqueId& uid = msg.GetAboutActorId();
-   if(dtGame::GameActorProxy* gap = this->GetGameManager()->FindGameActorById( uid ) )
-   {
-      if( !gap->IsRemote() )
-      {
-         ///\todo determine if the message will exceed the MTU,
-         /// if yes, write to the socket before handling more Messages.
-         mOutgoingMessage.Handle( msg );
-      }
-   }
 }
 
 DIS::IncomingMessage& MasterComponent::GetIncomingMessage()
@@ -192,4 +178,10 @@ SharedState* MasterComponent::GetSharedState()
 const SharedState* MasterComponent::GetSharedState() const
 {
    return mConfig;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void dtDIS::MasterComponent::DispatchNetworkMessage(const dtGame::Message& message)
+{
+   mOutgoingMessage.Handle(message);
 }

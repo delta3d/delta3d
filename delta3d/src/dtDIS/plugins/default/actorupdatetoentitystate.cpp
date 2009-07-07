@@ -25,20 +25,25 @@ ActorUpdateToEntityState::~ActorUpdateToEntityState()
 DIS::Pdu* ActorUpdateToEntityState::Convert(const dtGame::Message& source)
 {
    // fill a packet with data
-   const dtDIS::ActiveEntityControl& aec = mConfig->GetActiveEntityControl();
-   const DIS::EntityID* eid = aec.GetEntity( source.GetAboutActorId() );
 
-   if( eid == NULL )
-   {
-      return NULL;
-   }
+   DIS::EntityID eid;
+   eid.setApplication(mConfig->GetApplicationID());
+   eid.setSite(mConfig->GetSiteID());
+
+   //create the DIS entity ID by using some of the UniqueID
+   const dtCore::UniqueId &uniqueID = source.GetAboutActorId();
+   const std::string idStr = uniqueID.ToString();
+   char chars[4];
+   for (int i=0; i<4; i++) {chars[i] = idStr[i];}
+
+   eid.setEntity(strtol(&chars[0], NULL, 16));
 
    // We know its true type since we created it in the this's ctor
    DIS::EntityStatePdu *downcastPdu = reinterpret_cast<DIS::EntityStatePdu*>(mPdu);
 
    // fill the packet with data
    details::FullApplicator applicator;
-   applicator( static_cast<const dtGame::ActorUpdateMessage&>(source), *eid, *downcastPdu, mConfig );
+   applicator( static_cast<const dtGame::ActorUpdateMessage&>(source), eid, *downcastPdu, mConfig );
 
    return mPdu;
 }

@@ -47,7 +47,14 @@ void ESPduProcessor::Process(const DIS::Pdu& packet)
    }
    else
    {
-       CreateRemoteActor(pdu);
+      //looks like we received a packet that we sent.  Just ignore it and move on
+      if ((mConfig->GetApplicationID() == pdu.getEntityID().getApplication()) &&
+          (mConfig->GetSiteID() == pdu.getEntityID().getSite()))
+      {
+         return;
+      }
+
+      CreateRemoteActor(pdu);
    }
 }
 
