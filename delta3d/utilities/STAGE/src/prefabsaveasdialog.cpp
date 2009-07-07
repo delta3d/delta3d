@@ -78,10 +78,21 @@ namespace dtEditQt
       gridLayout->addWidget(mCategoryEdit, 1, 1);
 
       label = new QLabel(tr("Icon:\n(Click to change)"), groupBox);
-      label->setAlignment(Qt::AlignRight);            
+      label->setAlignment(Qt::AlignRight);
+
+      mIconFilePath = dtDAL::Project::GetInstance().GetContext();
+      mIconFilePath += "/prefabs/icons/Icon_NoIcon64.png";
+
+      //put our "empty icon" icon in the prefabs icon folder if it is missing
+      if (! dtUtil::FileUtils::GetInstance().FileExists(mIconFilePath))
+      {
+         std::string templateIconFile = dtCore::GetDeltaRootPath() +
+                                    "/utilities/STAGE/icons/Icon_NoIcon64.png";
+
+         dtUtil::FileUtils::GetInstance().FileCopy(templateIconFile,
+                                                   mIconFilePath, false);
+      }      
       
-      mIconFilePath = dtCore::GetDeltaRootPath();
-      mIconFilePath += "/utilities/STAGE/icons/Icon_NoIcon64.png";
       mIcon = new QIcon(mIconFilePath.c_str());      
       mIconButton = new QToolButton(groupBox);      
       mIconButton->setIconSize(QSize(64,64));
@@ -217,6 +228,12 @@ namespace dtEditQt
       //Only want to return the file name, NOT the path... Icons will always
       //live in the prefabs/icons folder of the project's context folder.
       return mIconFilePath.substr(mIconFilePath.find_last_of("\\/") + 1);
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void PrefabSaveDialog::setPrefabCategory(const std::string cat)
+   {
+      mCategoryEdit->setText(cat.c_str());
    }
 
    ///////////////////////////////////////////////////////////////////////////////

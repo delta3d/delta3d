@@ -46,10 +46,11 @@ namespace dtEditQt
    ////////////////////////////////////////////////////////////////////////////////
    
    ResourceDragListWidget::ResourceDragListWidget(QWidget* parent)
+      : QListWidget(parent)      
    {
       setDragEnabled(true);
       //setAcceptDrops(true);
-      setDropIndicatorShown(true);
+      setDropIndicatorShown(true);      
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -143,7 +144,7 @@ namespace dtEditQt
    ResourceListWidgetItem::ResourceListWidgetItem(const dtDAL::ResourceDescriptor resource,
       const QIcon& icon, const QString& text /* = "" */, QListWidget* parent /* = 0 */,
       QListWidgetItem::ItemType type /* = QListWidgetItem::Type */)
-         : QListWidgetItem(icon, text, parent, type)
+         : QListWidgetItem(icon, text, parent, type)         
          , mResource(resource)
    {
       if (resource.GetResourceIdentifier() == "")

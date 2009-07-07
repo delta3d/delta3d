@@ -46,6 +46,7 @@
 #include <dtEditQt/actortypetreewidget.h>
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/editordata.h>
+#include <dtEditQt/prefabsaveasdialog.h>
 #include <dtEditQt/resourcelistwidgetitem.h>
 #include <dtEditQt/mainwindow.h>
 #include <dtEditQt/uiresources.h>
@@ -75,6 +76,8 @@ namespace dtEditQt
       : QWidget(parent)
       , mCurrentDir("")
       , mPopupMenu(this)    
+      , mExportNewPrefabAction(new QAction("Export New Prefab", this))
+      , mDeleteShortcut(QKeySequence(Qt::Key_Delete), this, SLOT(deleteKeyPushedSlot()))
    {
       setupGUI();
 
@@ -84,13 +87,14 @@ namespace dtEditQt
       connect(&EditorActions::GetInstance(), SIGNAL(PrefabExported()),
          this, SLOT(refreshPrefabs()));
      
-      mPopupMenu.addAction("Add Category", this, SLOT(addCategorySlot()));
-      mPopupMenu.addAction("Add Prefab Icon");      
+      mPopupMenu.addAction("Add Category", this, SLOT(addCategorySlot()));            
+      mPopupMenu.addAction(mExportNewPrefabAction);
+      connect(mExportNewPrefabAction, SIGNAL(triggered()), this, SLOT(exportNewPrefabSlot()));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    PrefabBrowser::~PrefabBrowser()
-   {
+   {      
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -315,6 +319,33 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   void PrefabBrowser::exportNewPrefabSlot()
+   {
+      PrefabSaveDialog dlg(this);
+      std::string contextDir = dtDAL::Project::GetInstance().GetContext();
+      std::string contextDirPlusPrefab = contextDir + "/prefabs";
+      std::string categoryRelPath = mCurrentDir.substr(contextDirPlusPrefab.size());
+
+      //chop off any preceeding slashes the category name
+      if(categoryRelPath[0] == '/' || categoryRelPath[0] == '\\')
+      {
+         categoryRelPath = categoryRelPath.substr(1);
+      }
+
+      dlg.setPrefabCategory(categoryRelPath);
+
+      if (dlg.exec() == QDialog::Rejected)
+      {
+         return;
+      }
+
+      EditorActions::GetInstance().SaveNewPrefab(dlg.getPrefabCategory(),
+                                                 dlg.getPrefabFileName(),
+                                                 dlg.GetPrefabIconFileName(),
+                                                 dlg.getPrefabDescription());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    ResourceListWidgetItem* PrefabBrowser::getSelectedPrefabWidget()
    {   
       if (mListWidget != NULL)
@@ -380,7 +411,7 @@ namespace dtEditQt
       mListWidget->setResourceName("Prefab");
       mListWidget->setAutoScroll(true);
       mListWidget->setViewMode(QListWidget::IconMode);
-      mListWidget->setIconSize(QSize(40,40));
+      mListWidget->setIconSize(QSize(50,50));
       mListWidget->setContextMenuPolicy(Qt::CustomContextMenu);
 
       // connect signals
@@ -388,7 +419,7 @@ namespace dtEditQt
       connect(mListWidget, SIGNAL(itemActivated(QListWidgetItem *)), this,
          SLOT(listSelectionDoubleClicked(QListWidgetItem*)));
       connect(mListWidget, SIGNAL(customContextMenuRequested(const QPoint &)), this,
-         SLOT(rightClickMenu(const QPoint &)));
+         SLOT(rightClickMenu(const QPoint &)));      
 
       // Checkbox for auto preview
       mPreviewChk = new QCheckBox(tr("Auto Preview"), groupBox);
@@ -586,6 +617,95 @@ namespace dtEditQt
       }
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
+   void PrefabBrowser::deleteKeyPushedSlot()
+   {
+      if (! isActiveWindow() || ! underMouse())
+      {
+         return;
+      }
+
+      ResourceListWidgetItem* selItem = getSelectedPrefabWidget();
+
+      if (selItem == NULL)
+      {
+         return;
+      }
+
+      //If not a Resource, assume this is a prefab category (folder)
+      if (! selItem->isResource())
+      {
+         QMessageBox msgBox(this);
+         std::string informative = "Deleting this Category will delete all Prefabs in the Category.\n";
+         informative += "Ensure that none of your maps use these Prefabs before deleting this Category.\n";
+         informative += "\nAre you sure you want to delete this Category?";
+         
+         msgBox.setWindowTitle("Delete All Prefabs in this Category?");
+         msgBox.setText(informative.c_str());
+         msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+         msgBox.setDefaultButton(QMessageBox::Cancel);
+         int ret = msgBox.exec();
+
+         if (ret == QMessageBox::Cancel)
+         {
+            return;
+         }
+
+         //Deleting the category is a go!
+         try 
+         {
+            dtUtil::FileUtils::GetInstance().DirDelete(selItem->getCategoryFullName().toStdString(), true);
+         }
+         catch (dtUtil::Exception e)
+         {
+            QString reason("Error deleting category.\n This reason was given:\n\n");
+            reason += e.ToString().c_str();
+
+            QMessageBox::critical(this, tr("Unable to delete Category"), reason, tr("OK"));
+            return;
+         }                  
+      }
+      else  //if selItem IS a Resource, assume it is a Prefab
+      {
+         QMessageBox msgBox(this);
+         std::string informative = "You should ensure that none of your maps use this Prefab";
+         informative += " before deleting it.\n\n";
+         informative += "Are you sure you want to delete this Prefab?";
+
+         msgBox.setWindowTitle("Delete Prefab?");
+         msgBox.setText(informative.c_str());
+         msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+         msgBox.setDefaultButton(QMessageBox::Cancel);
+         int ret = msgBox.exec();
+
+         if (ret == QMessageBox::Cancel)
+         {
+            return;
+         }
+
+         //Deleting the prefab is a go!
+         std::string prefabFullPath = dtEditQt::EditorData::GetInstance().getCurrentProjectContext();        
+         dtDAL::ResourceDescriptor& resDes = selItem->getResourceDescriptor();
+         QString prefabName = resDes.GetResourceIdentifier().c_str();
+         prefabName = prefabName.replace(QRegExp("::"), QString("/"));
+         prefabFullPath += "/" + prefabName.toStdString();
+
+         try
+         {
+            dtUtil::FileUtils::GetInstance().FileDelete(prefabFullPath);
+         }
+         catch (dtUtil::Exception e)
+         {
+            QString reason("Error deleting Prefab.\n This reason was given:\n\n");
+            reason += e.ToString().c_str();
+
+            QMessageBox::critical(this, tr("Unable to Delete Prefab"), reason, tr("OK"));
+            return;
+         }                          
+      }
+
+      refreshPrefabs();
+   }
 
    ///////////////////////////////////////////////////////////////////////////////
    void PrefabBrowser::listSelectionChanged()
@@ -616,10 +736,21 @@ namespace dtEditQt
 
    ///////////////////////////////////////////////////////////////////////////////
    void PrefabBrowser::rightClickMenu(const QPoint& clickPoint)
-   {           
+   {
+      //disable "Export Prefab" menu Action if there are no actors selected:
+      dtEditQt::ViewportOverlay::ActorProxyList& selectionList = 
+         dtEditQt::ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
+      if(selectionList.size() < 1)
+      {
+         mExportNewPrefabAction->setEnabled(false);
+      }
+      else
+      {
+         mExportNewPrefabAction->setEnabled(true);
+      }
+         
       mPopupMenu.exec(QCursor::pos());
    }
-
 
    ///////////////////////////////////////////////////////////////////////////////
    void PrefabBrowser::checkBoxSelected()
@@ -664,8 +795,8 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void PrefabBrowser::refreshPrefabs()
    {
-      unsigned int numCategories = 0;
-
+      unsigned int numCategories = 0;      
+      
       // resets everything and marks the current expansion
       clearPrefabTree();
 
@@ -792,7 +923,7 @@ namespace dtEditQt
             ResourceListWidgetItem* aWidget = new ResourceListWidgetItem(
                dtDAL::ResourceDescriptor(),                              
                QIcon(nextIconFullPath.c_str()), nextFile.c_str());
-            aWidget->setCategoryFullName(nextFileFullPath.c_str());
+            aWidget->setCategoryFullName(nextFileFullPath.c_str());            
 
             //want "Up a folder" to be first on all but the top level
             if(dtUtil::FileUtils::GetInstance().IsSameFile(mCurrentDir, mTopPrefabDir))
@@ -803,7 +934,7 @@ namespace dtEditQt
             {
                mListWidget->insertItem(1 + numCategories, aWidget);
             }
-            ++numCategories;
+            ++numCategories;            
          }
          else 
          {            

@@ -42,7 +42,7 @@ namespace dtEditQt
    * @note Created this sub class to handle list widget's with drag/drop.
    */
    class ResourceDragListWidget : public QListWidget
-   {
+   {  
    public:
       ResourceDragListWidget(QWidget* parent = 0);
       virtual ~ResourceDragListWidget() {}
@@ -118,12 +118,6 @@ namespace dtEditQt
        * @param ResourceDescriptor
        */
       void setResourceDescriptor(dtDAL::ResourceDescriptor& descriptor) { mResource = descriptor; }
-
-   protected:
-      void dragEnterEvent(QDragEnterEvent *event);
-      void dragMoveEvent(QDragMoveEvent *event);
-      void dropEvent(QDropEvent *event);
-      void startDrag(Qt::DropActions supportedActions);
 
    private:
       void setIndex(int index) { mItemIndex = index; }

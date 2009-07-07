@@ -31,6 +31,7 @@
 #define DELTA_PREFAB_BROWSER
 
 #include <QtGui/QMenu>
+#include <QtGui/QShortcut>
 #include <QtGui/QWidget>
 #include <vector>
 
@@ -41,6 +42,7 @@
 #include <dtDAL/resourcetreenode.h>
 #include <dtUtil/tree.h>
 
+class QAction;
 class QGroupBox;
 class QPushButton;
 class QModelIndex;
@@ -92,6 +94,9 @@ namespace dtEditQt
 
       public slots:
 
+         /*
+         * Slot - handles popup menu event adding a new Prefab category.
+         */
          void addCategorySlot();
 
          /**
@@ -103,6 +108,16 @@ namespace dtEditQt
          * Slot - handles the event when the create instance button is pressed.
          */
          void createPrefabInstancePressed();
+
+		 /**
+         * Slot - handles the delete key push event.
+         */
+         void deleteKeyPushedSlot();
+
+         /**
+         * Slot - handles exporting of a new prefab
+         */
+         void exportNewPrefabSlot();
 
          /**
          * Slot - Called when the list selection changes                                                                         
@@ -118,7 +133,7 @@ namespace dtEditQt
          * Slot - Called when ResourceListWidget is double clicked...
          * May need to be moved to ResourceListWidget class file...
          */
-         void rightClickMenu(const QPoint& clickPoint);         
+         void rightClickMenu(const QPoint& clickPoint); 
 
          /**
          * Slot - Called when the preview checkbox is selected.
@@ -214,7 +229,11 @@ namespace dtEditQt
 
       //Popup menu for creating new prefabs and categories
       QMenu                mPopupMenu;
+      QAction*             mExportNewPrefabAction;
       
+      //Keyboard shortcuts
+      QShortcut mDeleteShortcut;
+
    };
 
 } // namespace dtEditQt
