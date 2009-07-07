@@ -54,13 +54,22 @@ namespace dtDIS
       {
          bool operator ()(const DIS::EntityType& lhs, const DIS::EntityType& rhs) const
          {
-            return( lhs.getCategory()   < rhs.getCategory()
-                 || lhs.getCountry()    < rhs.getCountry()
-                 || lhs.getDomain()     < rhs.getDomain()
-                 || lhs.getEntityKind() < rhs.getEntityKind()
-                 || lhs.getExtra()      < rhs.getExtra()
-                 || lhs.getSpecific()   < rhs.getSpecific()
-                 || lhs.getSubcategory()< rhs.getSubcategory() );
+            if (lhs.getCategory() != rhs.getCategory())
+               return lhs.getCategory() < rhs.getCategory();
+            else if (lhs.getCountry() != rhs.getCountry())
+               return lhs.getCountry() < rhs.getCountry();
+            else if (lhs.getDomain() != rhs.getDomain())
+               return lhs.getDomain() < rhs.getDomain();
+            else if (lhs.getEntityKind() != rhs.getEntityKind())
+               return lhs.getEntityKind() < rhs.getEntityKind();
+            else if (lhs.getExtra() != rhs.getExtra())
+               return lhs.getExtra() < rhs.getExtra();
+            else if (lhs.getSpecific() != rhs.getSpecific())
+               return lhs.getSpecific() < rhs.getSpecific();
+            else if (lhs.getSubcategory() != rhs.getSubcategory())
+               return lhs.getSubcategory() < rhs.getSubcategory();           
+            else 
+               return false;
          }
       };
    } // end namespace details
@@ -154,11 +163,19 @@ namespace dtDIS
       void SetConnectionData(const ConnectionData& data);
       const ConnectionData& GetConnectionData() const;
 
+      void SetSiteID(unsigned short ID);
+      unsigned short GetSiteID() const;
+
+      void SetApplicationID(unsigned short ID);
+      unsigned short GetApplicationID() const; 
+
    private:
       ActorMapConfig mActorMapConfig;
       ResourceMapConfig mResourceMapConfig;
       ActiveEntityControl mActiveEntityControl;
       ConnectionData mConnectionData;
+      unsigned short mSiteID;       ///<For outgoing DIS packets
+      unsigned short mApplicationID;///<For outgoing DIS packets
 
       void ParseConnectionData(const std::string& file);
       void ParseEntityMappingData(const std::string& file);
