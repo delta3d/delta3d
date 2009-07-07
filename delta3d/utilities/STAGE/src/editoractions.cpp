@@ -931,6 +931,7 @@ namespace dtEditQt
       // remove each proxy's actor from the scene then remove the proxy from
       // the map.
       ViewportOverlay::ActorProxyList::iterator itor;
+      EditorData::GetInstance().getUndoManager().beginUndoGroup();
       for (itor = selection.begin(); itor != selection.end(); ++itor)
       {
          // \TODO: Find out why this const_cast is necessary. It compiles without
@@ -938,6 +939,7 @@ namespace dtEditQt
          dtDAL::ActorProxy* proxy = const_cast<dtDAL::ActorProxy*>(itor->get());
          deleteProxy(proxy, currMap);
       }
+      EditorData::GetInstance().getUndoManager().endUndoGroup();
 
       // Now that we have removed the selected objects, clear the current selection.
       std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > emptySelection;

@@ -204,10 +204,11 @@ namespace dtEditQt
             // we could send hundreds of translation and rotation events, so make sure
             // we surround it in a change transaction
             EditorEvents::GetInstance().emitBeginChangeTransaction();
-
+            EditorData::GetInstance().getUndoManager().beginUndoGroup();
             updateActorSelectionProperty(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
             updateActorSelectionProperty(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
             updateActorSelectionProperty("Scale");
+            EditorData::GetInstance().getUndoManager().endUndoGroup();
 
             EditorEvents::GetInstance().emitEndChangeTransaction();
 

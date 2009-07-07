@@ -800,26 +800,11 @@ namespace dtEditQt
       // we could send hundreds of translation and rotation events, so make sure
       // we surround it in a change transaction
       EditorEvents::GetInstance().emitBeginChangeTransaction();
+      EditorData::GetInstance().getUndoManager().beginUndoGroup();
       updateActorSelectionProperty(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
       updateActorSelectionProperty(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
       updateActorSelectionProperty("Scale");
-
-      //// Update the selected actor proxies with their new values.
-      //switch (mMotionType)
-      //{
-      //case STAGEObjectMotionModel::MOTION_TYPE_TRANSLATION:
-      //   updateActorSelectionProperty(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
-      //   break;
-      //case STAGEObjectMotionModel::MOTION_TYPE_ROTATION:
-      //   updateActorSelectionProperty(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
-      //   break;
-      //case STAGEObjectMotionModel::MOTION_TYPE_SCALE:
-      //   updateActorSelectionProperty("Scale");
-      //   break;
-
-      //default:
-      //break;
-      //}
+      EditorData::GetInstance().getUndoManager().endUndoGroup();
 
       EditorEvents::GetInstance().emitEndChangeTransaction();
 

@@ -225,6 +225,33 @@ namespace dtEditQt
          dtCore::RefPtr<ChangeEvent> redoEvent = mRedoStack.top();
          mRedoStack.pop();
 
+         // If the redo event was the beginning of a group, continue processing
+         // undo events until we reach the beginning of the group.
+         if (redoEvent->mType == ChangeEvent::UNDO_GROUP_BEGIN)
+         {
+            // Push this begin marker into the undo stack.
+            mUndoStack.push(redoEvent);
+
+            // Iterate through the group.
+            while (!mRedoStack.empty()) 
+            {
+               redoEvent = mRedoStack.top();
+               mRedoStack.pop();
+
+               // We are finished when we reach the begining of the group.
+               if (redoEvent->mType == ChangeEvent::UNDO_GROUP_END)
+               {
+                  mUndoStack.push(redoEvent);
+                  enableButtons();
+                  return;
+               }
+
+               handleUndoRedoEvent(redoEvent.get(), false);
+            }
+
+            return;
+         }
+
          handleUndoRedoEvent(redoEvent.get(), false);
       }
 
@@ -241,6 +268,33 @@ namespace dtEditQt
       {
          dtCore::RefPtr<ChangeEvent> undoEvent = mUndoStack.top();
          mUndoStack.pop();
+
+         // If the undo event was the end of a group, continue processing
+         // undo events until we reach the beginning of the group.
+         if (undoEvent->mType == ChangeEvent::UNDO_GROUP_END)
+         {
+            // Push this end marker into the redo stack.
+            mRedoStack.push(undoEvent);
+
+            // Iterate through the group.
+            while (!mUndoStack.empty()) 
+            {
+               undoEvent = mUndoStack.top();
+               mUndoStack.pop();
+
+               // We are finished when we reach the beginning of the group.
+               if (undoEvent->mType == ChangeEvent::UNDO_GROUP_BEGIN)
+               {
+                  mRedoStack.push(undoEvent);
+                  enableButtons();
+                  return;
+               }
+
+               handleUndoRedoEvent(undoEvent.get(), true);
+            }
+
+            return;
+         }
 
          handleUndoRedoEvent(undoEvent.get(), true);
       }
@@ -400,7 +454,7 @@ namespace dtEditQt
             mRecursePrevent = true;
             EditorEvents::GetInstance().emitBeginChangeTransaction();
             EditorEvents::GetInstance().emitActorProxyCreated(proxy, true);
-            ViewportManager::GetInstance().placeProxyInFrontOfCamera(proxy.get());
+            //ViewportManager::GetInstance().placeProxyInFrontOfCamera(proxy.get());
             EditorEvents::GetInstance().emitEndChangeTransaction();
             mRecursePrevent = false;
 
@@ -461,7 +515,7 @@ namespace dtEditQt
             else
             {
                // add it UNDO stack
-               mRedoStack.push(event);
+               mUndoStack.push(event);
             }
          }
       }
@@ -532,6 +586,24 @@ namespace dtEditQt
          dtCore::RefPtr<ChangeEvent> redoEvent = mRedoStack.top();
          mRedoStack.pop();
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void UndoManager::beginUndoGroup()
+   {
+      ChangeEvent* undoEvent = new ChangeEvent();
+      undoEvent->mType       = ChangeEvent::UNDO_GROUP_BEGIN;
+
+      mUndoStack.push(undoEvent);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void UndoManager::endUndoGroup()
+   {
+      ChangeEvent* undoEvent = new ChangeEvent();
+      undoEvent->mType       = ChangeEvent::UNDO_GROUP_END;
+
+      mUndoStack.push(undoEvent);
    }
 
    //////////////////////////////////////////////////////////////////////////////
