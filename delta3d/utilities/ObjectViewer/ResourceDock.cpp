@@ -594,7 +594,7 @@ void ResourceDock::OnSaveAs()
       QString filename = QFileDialog::getSaveFileName(this,
          tr("Save Geometry File"),
          fileInfo.filePath(),
-         tr("Geometry(*.osg *.ive)") );
+         tr("By Extension(*.*);;OpenFlight(*.flt);;OpenSceneGraph(*.osg *.ive);;Wavefront OBJ(*.obj)") );
 
       if (!filename.isEmpty())
       {
@@ -606,11 +606,13 @@ void ResourceDock::OnSaveAs()
          {
             fileInfo = filename;
 
+
             // Only export textures if we are saving to OSG format.
-            if (fileInfo.fileName().endsWith(tr(".osg"), Qt::CaseInsensitive))
-            {
+//            if (fileInfo.fileName().endsWith(tr(".osg"), Qt::CaseInsensitive))
+//            {
                ExportTexturesFromNode(fileInfo.path(), node);
-            }
+//            }
+//
 
             if (osgDB::writeNodeFile(*node, filename.toStdString()))
             {
