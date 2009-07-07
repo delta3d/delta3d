@@ -30,6 +30,7 @@
 #ifndef DELTA_PREFAB_BROWSER
 #define DELTA_PREFAB_BROWSER
 
+#include <QtGui/QMenu>
 #include <QtGui/QWidget>
 #include <vector>
 
@@ -90,6 +91,9 @@ namespace dtEditQt
       void handleEnableCreateActorBtn();
 
       public slots:
+
+         void addCategorySlot();
+
          /**
          * Slot - handles the event when the create button is pressed
          */
@@ -208,16 +212,8 @@ namespace dtEditQt
       std::string          mCurrentDir;
       std::string          mTopPrefabDir;
 
-      // Prefab resources.
-      dtUtil::tree<dtDAL::ResourceTreeNode> mPrefabList;
-
-      // this is a tree of actor type names which were expanded.  It is used
-      // when we reload actor types.  We walk the tree and look for
-      // expanded items.  For each one, we add it to this tree.  Then, we walk
-      // back through this tree to reexpand items later
-      dtUtil::tree<QString> mExpandedActorTypeNames;
-      bool                  mRootNodeWasExpanded;
-      int                   mLastScrollBarLocation;      
+      //Popup menu for creating new prefabs and categories
+      QMenu                mPopupMenu;
       
    };
 
