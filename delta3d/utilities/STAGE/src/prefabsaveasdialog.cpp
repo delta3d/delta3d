@@ -200,7 +200,7 @@ namespace dtEditQt
       //and they are: \/:*?"<>| (and we are not going to allow spaces, either)
       
       QString prefabFileName = nameEdit->text();
-      prefabFileName.replace(QRegExp("[\\\\/:*\?\"<>| ]"), QString("_"));
+      prefabFileName.replace(QRegExp("[\\\\/:\\*\\?\"<>| ]"), QString("_"));
       
       return prefabFileName.toStdString();
    }

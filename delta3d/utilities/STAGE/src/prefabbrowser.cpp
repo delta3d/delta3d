@@ -30,9 +30,11 @@
 #include <QtGui/QGridLayout>
 #include <QtGui/QGroupBox>
 #include <QtGui/QHeaderView>
+#include <QtGui/QInputDialog>
 #include <QtGui/QLabel>
 #include <QtGui/QListWidget>
 #include <QtGui/QMenu>
+#include <QtGui/QMessageBox>
 #include <QtGui/QPushButton>
 #include <QtGui/QScrollBar>
 #include <QtCore/QStringList>
@@ -71,7 +73,8 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    PrefabBrowser::PrefabBrowser(QWidget* parent)
       : QWidget(parent)
-      , mCurrentDir("")      
+      , mCurrentDir("")
+      , mPopupMenu(this)    
    {
       setupGUI();
 
@@ -80,6 +83,9 @@ namespace dtEditQt
       
       connect(&EditorActions::GetInstance(), SIGNAL(PrefabExported()),
          this, SLOT(refreshPrefabs()));
+     
+      mPopupMenu.addAction("Add Category", this, SLOT(addCategorySlot()));
+      mPopupMenu.addAction("Add Prefab Icon");      
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -249,6 +255,66 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   void PrefabBrowser::addCategorySlot()
+   {
+      bool ok;
+      bool validCategory = false;
+      QString newCategoryName;
+      std::string newCatFullPath;
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+
+      while (!validCategory)
+      {
+         newCategoryName = QInputDialog::getText(this, tr("Category Name"),
+                                    tr("Enter New Category Name:"), QLineEdit::Normal,
+                                    tr(""), &ok);
+
+         //Pushed OK button?
+         if (!ok || newCategoryName == "")
+         {
+            //pushed Cancel button, we're done here
+            return;
+         }
+
+         if (newCategoryName.contains(QRegExp("[\\\\/:\\*\\?\"<>|]")))
+         {
+            QMessageBox::critical(this, tr("Invalid Characters"),
+                   tr("category names cannot contain any of these characters\n \\/\"*?<>|"),
+                   tr("OK"));
+
+            continue; //category name isn't valid
+         }
+
+         newCatFullPath = mCurrentDir + "/" + newCategoryName.toStdString();         
+
+         if (fileUtils.DirExists(newCatFullPath))
+         {
+            QMessageBox::critical(this, tr("Category Already Exists"), 
+               tr("Category Already Exists"), tr("OK"));
+            continue; //category isn't valid
+         }     
+
+         validCategory = true;
+      }
+
+      try
+      {
+         fileUtils.MakeDirectory(newCatFullPath);
+      }
+      catch (dtUtil::Exception e)
+      {
+         QString reason("Unable to create category.\n This reason was given:\n\n");
+         reason += e.ToString().c_str();
+   
+      	QMessageBox::critical(this, tr("Unable to Create Category"), reason, tr("OK"));
+
+         return;
+      }
+
+      refreshPrefabs();      
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    ResourceListWidgetItem* PrefabBrowser::getSelectedPrefabWidget()
    {   
       if (mListWidget != NULL)
@@ -315,6 +381,14 @@ namespace dtEditQt
       mListWidget->setAutoScroll(true);
       mListWidget->setViewMode(QListWidget::IconMode);
       mListWidget->setIconSize(QSize(40,40));
+      mListWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+
+      // connect signals
+      connect(mListWidget, SIGNAL(itemSelectionChanged()), this, SLOT(listSelectionChanged()));
+      connect(mListWidget, SIGNAL(itemActivated(QListWidgetItem *)), this,
+         SLOT(listSelectionDoubleClicked(QListWidgetItem*)));
+      connect(mListWidget, SIGNAL(customContextMenuRequested(const QPoint &)), this,
+         SLOT(rightClickMenu(const QPoint &)));
 
       // Checkbox for auto preview
       mPreviewChk = new QCheckBox(tr("Auto Preview"), groupBox);
@@ -542,12 +616,8 @@ namespace dtEditQt
 
    ///////////////////////////////////////////////////////////////////////////////
    void PrefabBrowser::rightClickMenu(const QPoint& clickPoint)
-   {
-      //TODO: Get this working.  Want to be able to create categories (folders)
-
-      QMenu popupMenu("Boo");
-
-      popupMenu.exec(); 
+   {           
+      mPopupMenu.exec(QCursor::pos());
    }
 
 
@@ -594,8 +664,10 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void PrefabBrowser::refreshPrefabs()
    {
+      unsigned int numCategories = 0;
+
       // resets everything and marks the current expansion
-      clearPrefabTree();      
+      clearPrefabTree();
 
       dtDAL::Project& project = dtDAL::Project::GetInstance();
 
@@ -608,7 +680,7 @@ namespace dtEditQt
       EditorData::GetInstance().getMainWindow()->startWaitCursor();
 
       project.Refresh();
-      project.GetResourcesOfType(dtDAL::DataType::PREFAB, mPrefabList);
+      //project.GetResourcesOfType(dtDAL::DataType::PREFAB, mPrefabList);
 
       QIcon resourceIcon;
       resourceIcon.addPixmap(QPixmap(UIResources::ICON_ACTOR.c_str()));
@@ -631,6 +703,8 @@ namespace dtEditQt
                          dtEditQt::EditorActions::PREFAB_DIRECTORY + "/icons";
 
       dtUtil::DirectoryContents dirFiles = dtUtil::FileUtils::GetInstance().DirGetFiles(mCurrentDir);
+      //std::sort(dirFiles.begin(), dirFiles.end());    
+
       std::string nextFile;
       std::string nextFileFullPath;
       std::string nextIconFullPath;
@@ -723,12 +797,13 @@ namespace dtEditQt
             //want "Up a folder" to be first on all but the top level
             if(dtUtil::FileUtils::GetInstance().IsSameFile(mCurrentDir, mTopPrefabDir))
             {
-               mListWidget->insertItem(0, aWidget);
+               mListWidget->insertItem(0 + numCategories, aWidget);               
             }
             else
             {
-               mListWidget->insertItem(1, aWidget);
+               mListWidget->insertItem(1 + numCategories, aWidget);
             }
+            ++numCategories;
          }
          else 
          {            
@@ -738,13 +813,6 @@ namespace dtEditQt
             mListWidget->addItem(aWidget);
          }
       } // end for
-
-      // connect signals
-      connect(mListWidget, SIGNAL(itemSelectionChanged()), this, SLOT(listSelectionChanged()));
-      connect(mListWidget, SIGNAL(itemActivated(QListWidgetItem *)), this,
-                           SLOT(listSelectionDoubleClicked(QListWidgetItem*)));
-      connect(mListWidget, SIGNAL(customContextMenuRequested(const QPoint&)), this,
-                           SLOT(rightClickMenu(const QPoint&)));
                                                                                 
       EditorData::GetInstance().getMainWindow()->endWaitCursor();
    }
