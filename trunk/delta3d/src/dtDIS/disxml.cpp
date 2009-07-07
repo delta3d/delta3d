@@ -20,6 +20,8 @@ const char details::XMLConnectionSchema::NODE_PORT[] = {"Port\0"};
 const char details::XMLConnectionSchema::NODE_IP[] = {"IP\0"};
 const char details::XMLConnectionSchema::NODE_PLUGINS[] = {"Plugins\0"};
 const char details::XMLConnectionSchema::NODE_EXERCISE_ID[] = {"ExerciseID\0"};
+const char details::XMLConnectionSchema::NODE_SITE_ID[] = {"SiteID\0"};
+const char details::XMLConnectionSchema::NODE_APPLICATION_ID[] = {"ApplicationID\0"};
 const char details::XMLConnectionSchema::NODE_MTU[] = {"MTU\0"};
 
 
@@ -74,6 +76,16 @@ void ConnectionXMLHandler::characters(const XMLCh* const chars, const unsigned i
    case EXERCISE_ID:
       {
          mConnectionData.exercise_id = dtUtil::ToType<unsigned int>(cstr);
+      } break;
+
+   case SITE_ID:
+      {
+         mConnectionData.site_id = dtUtil::ToType<unsigned short>(cstr);
+      } break;
+
+   case APPLICATION_ID:
+      {
+         mConnectionData.application_id = dtUtil::ToType<unsigned short>(cstr);
       } break;
 
    case MTU:
@@ -139,6 +151,14 @@ void ConnectionXMLHandler::startElement(const XMLCh* const uri,const XMLCh* cons
    else if( XMLString::equals(cstr, dtDIS::details::XMLConnectionSchema::NODE_EXERCISE_ID) )
    {
       mNodeStack.push( EXERCISE_ID );
+   }
+   else if( XMLString::equals(cstr, dtDIS::details::XMLConnectionSchema::NODE_SITE_ID) )
+   {
+      mNodeStack.push( SITE_ID );
+   }
+   else if( XMLString::equals(cstr, dtDIS::details::XMLConnectionSchema::NODE_APPLICATION_ID) )
+   {
+      mNodeStack.push( APPLICATION_ID );
    }
    else if( XMLString::equals(cstr, dtDIS::details::XMLConnectionSchema::NODE_MTU) )
    {

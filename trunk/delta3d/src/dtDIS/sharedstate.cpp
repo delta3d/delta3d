@@ -118,6 +118,8 @@ const ActiveEntityControl& SharedState::GetActiveEntityControl() const
 void SharedState::SetConnectionData(const ConnectionData& data)
 {
    mConnectionData = data;
+   SetApplicationID(mConnectionData.application_id);
+   SetSiteID(mConnectionData.site_id);
 }
 
 const ConnectionData& SharedState::GetConnectionData() const
