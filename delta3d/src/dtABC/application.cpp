@@ -533,6 +533,11 @@ bool Application::AppXMLApplicator::operator ()(const ApplicationConfigData& dat
    if ((win != NULL) && (camera != NULL))
    {
       camera->SetWindow(win);
+      if ((data.VIEWPORT_W > 0) && (data.VIEWPORT_H > 0))
+      {
+         camera->GetOSGCamera()->setViewport(data.VIEWPORT_X, data.VIEWPORT_Y,
+                                             data.VIEWPORT_W, data.VIEWPORT_H);
+      }
    }
    else
    {
