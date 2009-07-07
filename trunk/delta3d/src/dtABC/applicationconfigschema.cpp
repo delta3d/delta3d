@@ -29,6 +29,7 @@ namespace dtABC
    const std::string ApplicationConfigSchema::SCENE="Scene";
    const std::string ApplicationConfigSchema::CAMERA="Camera";
    const std::string ApplicationConfigSchema::VIEW="View";
+   const std::string ApplicationConfigSchema::VIEWPORT="Viewport";
    const std::string ApplicationConfigSchema::LOG="Log";
    const std::string ApplicationConfigSchema::LIBRARY_PATH="LibraryPath";
    
@@ -36,6 +37,11 @@ namespace dtABC
    const std::string ApplicationConfigSchema::Y="Y";
    const std::string ApplicationConfigSchema::WIDTH="Width";
    const std::string ApplicationConfigSchema::HEIGHT="Height";
+
+   const std::string ApplicationConfigSchema::VIEWPORT_X="X";
+   const std::string ApplicationConfigSchema::VIEWPORT_Y="Y";
+   const std::string ApplicationConfigSchema::VIEWPORT_WIDTH="Width";
+   const std::string ApplicationConfigSchema::VIEWPORT_HEIGHT="Height";
    
    const std::string ApplicationConfigSchema::PIXELDEPTH="PixelDepth";
    const std::string ApplicationConfigSchema::REFRESHRATE="RefreshRate";

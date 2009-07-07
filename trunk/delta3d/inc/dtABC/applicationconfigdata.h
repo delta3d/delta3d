@@ -40,6 +40,7 @@ namespace dtABC
       bool SHOW_CURSOR, FULL_SCREEN, CHANGE_RESOLUTION;
       std::string CAMERA_NAME, VIEW_NAME, SCENE_NAME, WINDOW_NAME;
       std::string CAMERA_INSTANCE, SCENE_INSTANCE, WINDOW_INSTANCE;
+      int VIEWPORT_X, VIEWPORT_Y, VIEWPORT_W, VIEWPORT_H;
       
       std::map<std::string, std::string> LOG_LEVELS;
       std::vector<std::string> LIBRARY_PATHS;

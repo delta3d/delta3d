@@ -234,6 +234,38 @@ namespace dtABC
 //            LOG_ERROR("No Scene Instance specified for Camera, " + mConfigData.CAMERA_NAME)
 //         }
       }
+      else if (mCurrentElement == ApplicationConfigSchema::VIEWPORT)
+      {
+         // push some keys
+         dtUtil::AttributeSearch vpAttrs;
+
+         // do the attribute search, catch the results
+         dtUtil::AttributeSearch::ResultMap results = vpAttrs(attrs);
+
+         dtUtil::AttributeSearch::ResultMap::iterator iter = results.find(ApplicationConfigSchema::VIEWPORT_X);
+         if (iter != results.end())
+         {
+            mConfigData.VIEWPORT_X = dtUtil::ToType<int>(iter->second);
+         }
+
+         iter = results.find(ApplicationConfigSchema::VIEWPORT_Y);
+         if (iter != results.end())
+         {
+            mConfigData.VIEWPORT_Y = dtUtil::ToType<int>(iter->second);
+         }
+
+         iter = results.find(ApplicationConfigSchema::VIEWPORT_WIDTH);
+         if (iter != results.end())
+         {
+            mConfigData.VIEWPORT_W = dtUtil::ToType<int>(iter->second);
+         }
+
+         iter = results.find(ApplicationConfigSchema::VIEWPORT_HEIGHT);
+         if (iter != results.end())
+         {
+            mConfigData.VIEWPORT_H = dtUtil::ToType<int>(iter->second);
+         }
+      }
       else if ( mCurrentElement == ApplicationConfigSchema::LOG )
       {
          // push some keys
