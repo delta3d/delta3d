@@ -64,6 +64,8 @@ SharedState::SharedState(const std::string& connectionXMLFile,
    , mResourceMapConfig()
    , mActiveEntityControl()
    , mConnectionData()
+   , mSiteID(1)
+   , mApplicationID(1)
 {
    //TODO Should read and process a DIS xml configuration file
 
@@ -147,4 +149,28 @@ void dtDIS::SharedState::ParseEntityMappingData(const std::string& file)
    if (parsed)
    {
    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void dtDIS::SharedState::SetSiteID(unsigned short ID)
+{
+   mSiteID = ID;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+unsigned short dtDIS::SharedState::GetSiteID() const
+{
+   return mSiteID;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void dtDIS::SharedState::SetApplicationID(unsigned short ID)
+{
+   mApplicationID = ID;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+unsigned short dtDIS::SharedState::GetApplicationID() const
+{
+   return mApplicationID;
 }
