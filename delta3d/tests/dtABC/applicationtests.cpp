@@ -84,6 +84,7 @@ namespace dtTest
       CPPUNIT_TEST( TestSupplyingWindowToApplicationConstructor );
       CPPUNIT_TEST( TestReadingBadConfigFile );
       CPPUNIT_TEST( TestRemovingView );
+      CPPUNIT_TEST( TestGettingView );
       CPPUNIT_TEST_SUITE_END();
 
       public:
@@ -97,6 +98,7 @@ namespace dtTest
          void TestSupplyingWindowToApplicationConstructor();
          void TestReadingBadConfigFile();
          void TestRemovingView();
+         void TestGettingView();
 
       private:
          std::string mConfigName;
@@ -649,6 +651,28 @@ namespace dtTest
                                     false, app->ContainsView(*view));
 
       dtCore::System::GetInstance().Stop();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ApplicationTests::TestGettingView()
+   {
+      dtCore::RefPtr<dtABC::Application> app = new dtABC::Application();
+
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Application should have one View by default",
+                                   unsigned int(1), app->GetNumberOfViews());
+
+      dtCore::RefPtr<dtCore::View> view  = new dtCore::View();
+      app->AddView(*view);
+
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Application's View count didn't get updated with added View",
+                                   unsigned int(2), app->GetNumberOfViews());
+
+      dtCore::RefPtr<dtCore::View> retView = app->GetView(1);
+      CPPUNIT_ASSERT_MESSAGE("Application returned the wrong View",
+                             view.get() == retView.get());
+
+      CPPUNIT_ASSERT_MESSAGE("Application should not have returned a View with index out of bounds",
+                             NULL == app->GetView(10));
    }
 
    //////////////////////////////////////////////////////////////////////////
