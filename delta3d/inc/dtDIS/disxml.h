@@ -58,6 +58,8 @@ namespace dtDIS
       static const char NODE_IP[];
       static const char NODE_PLUGINS[];
       static const char NODE_EXERCISE_ID[];
+      static const char NODE_SITE_ID[];
+      static const char NODE_APPLICATION_ID[];
       static const char NODE_MTU[];
    };
 
@@ -98,6 +100,8 @@ namespace dtDIS
          IP,
          PLUGINS,
          EXERCISE_ID,
+         SITE_ID,
+         APPLICATION_ID,
          MTU
       };
 

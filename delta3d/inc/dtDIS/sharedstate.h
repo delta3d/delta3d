@@ -138,6 +138,8 @@ namespace dtDIS
       std::string ip;        // "234.235.236.237"
       std::string plug_dir;  // "plugins"
       unsigned char exercise_id; ///< the ID for the local simulation client
+      unsigned short site_id; ///<The ID of the sending site
+      unsigned short application_id; ///<the ID of the sending application
       unsigned int MTU;      // 1500
    };
 
