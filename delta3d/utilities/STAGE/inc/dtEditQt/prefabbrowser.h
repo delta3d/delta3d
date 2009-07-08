@@ -136,11 +136,6 @@ namespace dtEditQt
          void rightClickMenu(const QPoint& clickPoint); 
 
          /**
-         * Slot - Called when the preview checkbox is selected.
-         */
-         void checkBoxSelected();
-
-         /**
          * Slot - Handles refreshing the prefabs.
          */
          void refreshPrefabs();
@@ -152,11 +147,6 @@ namespace dtEditQt
          */
          void clearPrefabTree();
 
-         /**
-         * Slot - Display currently selected mesh
-         */
-         void displaySelection();   
-
    private:
 
       /**
@@ -165,21 +155,10 @@ namespace dtEditQt
       void setupGUI();
 
       /**
-      * Sets the camera to center around the prefab object.
-      */
-      void SetCameraLookAt();
-
-      /**
       * A convenience method to returns the selected list widget or NULL.
       * @return The selected list widget.  NULL if no selection.
       */      
       ResourceListWidgetItem* getSelectedPrefabWidget();
-
-      /**
-      * This defines the layout for the preview window.
-      * @return QGroupBox layout widget
-      */
-      QGroupBox* previewGroup();
 
       /**
       * This defines the layout for the prefab list.
@@ -199,24 +178,9 @@ namespace dtEditQt
       */
       dtDAL::ResourceDescriptor createResDescriptorFromPath(std::string path);
 
-
-      // Preview
-      ViewportContainer*             mContainer;
-      PerspectiveViewport*           mPerspView;
-      dtCore::RefPtr<dtCore::Scene>  mPrefabScene;
-      dtCore::RefPtr<StageCamera>    mCamera;
-
-      dtCore::RefPtr<dtActors::PrefabActorProxy> mPreviewObject;
-
       // Layout Objects
       QGridLayout* mGrid;
 
-      // Checkboxes
-      QCheckBox* mPreviewChk;
-
-      // Buttons
-      QPushButton* mPreviewBtn;
-      
       QIcon                mResourceIcon;
       QPushButton*         mCreatePrefabBtn;
       QPushButton*         mCreateInstanceBtn;

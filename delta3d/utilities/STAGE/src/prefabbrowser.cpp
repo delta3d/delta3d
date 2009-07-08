@@ -100,31 +100,9 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void PrefabBrowser::setupGUI()
    {
-      // create our new object
-      dtCore::RefPtr<dtDAL::ActorProxy> proxy =
-         dtDAL::LibraryManager::GetInstance().CreateActorProxy("dtActors", "Prefab");
-
-      mPreviewObject = dynamic_cast<dtActors::PrefabActorProxy*>(proxy.get());
-      dtCore::DeltaDrawable* actor = NULL;
-      mPreviewObject->GetActor(actor);
-
-      // Setup preview window.
-      mPrefabScene = new dtCore::Scene();
-      mPrefabScene->AddDrawable(actor);
-      mCamera = new StageCamera();
-      mCamera->makePerspective(60.0f,1.333f,0.1f,100000.0f);
-
-      QSplitter* splitter = new QSplitter(Qt::Vertical, this);
-
-      splitter->addWidget(previewGroup());
-      splitter->addWidget(listGroup());
-
-      splitter->setStretchFactor(0, 1);
-      splitter->setStretchFactor(1, 1);
-
       // Setup the main grid.
       mGrid = new QGridLayout(this);
-      mGrid->addWidget(splitter, 0, 0);
+      mGrid->addWidget(listGroup(), 0, 0);
       mGrid->addLayout(buttonLayout(), 1, 0, Qt::AlignCenter);
 
       mGrid->setRowStretch(1, 0);
@@ -134,110 +112,10 @@ namespace dtEditQt
       handleEnableCreateActorBtn();
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   void PrefabBrowser::SetCameraLookAt()
-   {
-      // Get the bounding sphere of all the actors that belong to this prefab.
-      dtCore::DeltaDrawable* prefab = NULL;
-      mPreviewObject->GetActor(prefab);
-      if (prefab)
-      {
-         osg::Vec3 min, max;
-
-         int childCount = prefab->GetNumChildren();
-         for (int childIndex = 0; childIndex < childCount; childIndex++)
-         {
-            dtCore::DeltaDrawable* child = prefab->GetChild(childIndex);
-            if (child)
-            {
-               const osg::BoundingSphere& bs = child->GetOSGNode()->getBound();
-
-               for (int axis = 0; axis < 3; axis++)
-               {
-                  if (min[axis] > bs.center()[axis] - bs.radius())
-                  {
-                     min[axis] = bs.center()[axis] - bs.radius();
-                  }
-
-                  if (max[axis] < bs.center()[axis] + bs.radius())
-                  {
-                     max[axis] = bs.center()[axis] + bs.radius();
-                  }
-               }
-            }
-         }
-
-         osg::Vec3 center;
-         float radius = 0.0f;
-
-         for (int axis = 0; axis < 3; axis++)
-         {
-            center[axis] = min[axis] + ((max[axis] - min[axis]) * 0.5f);
-
-            float testRadius = (max[axis] - min[axis]) * 0.5f;
-            if (testRadius > radius)
-            {
-               radius = testRadius;
-            }
-         }
-
-         dtCore::Transformable* tPrefab = dynamic_cast<dtCore::Transformable*>(prefab);
-         if (tPrefab)
-         {
-            float offset = (radius < 1000.0f) ? radius : 0.0f;
-
-            dtCore::Transform xform;
-            tPrefab->GetTransform(xform);
-
-            mCamera->resetRotation();
-            osg::Vec3 viewDir = mCamera->getViewDir();
-
-            osg::Vec3 translation;
-            xform.GetTranslation(translation);
-            if (offset > 0.0f)
-            {
-               mCamera->setPosition(translation + viewDir * offset * -2.0f);
-            }
-            else
-            {
-               mCamera->setPosition(translation + center);
-            }
-         }
-      }
-   }
-
    ////////////////////////////////////////////////////////////////////////////////
    void PrefabBrowser::clearPrefabTree()
    {
       mListWidget->clear();
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void PrefabBrowser::displaySelection()
-   {
-/*
-      ResourceTreeWidget* selection = getSelectedPrefabWidget();
-
-      if (selection)
-      {
-         dtDAL::ResourceActorProperty* resourceProp = NULL;
-         resourceProp = dynamic_cast<dtDAL::ResourceActorProperty*>(mPreviewObject->GetProperty("PrefabResource"));
-         if (resourceProp)
-         {
-            dtDAL::ResourceDescriptor descriptor = dtDAL::ResourceDescriptor();
-            if (selection->isResource())
-            {
-               descriptor = selection->getResourceDescriptor();
-            }
-
-            resourceProp->SetValue(&descriptor);
-            SetCameraLookAt();
-
-            mPerspView->refresh();
-            mPerspView->setFocus();
-         }
-      }
-*/
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -363,44 +241,6 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   QGroupBox* PrefabBrowser::previewGroup()
-   {
-      QGroupBox* groupBox = new QGroupBox(tr("Preview"));
-
-      QGridLayout* grid = new QGridLayout(groupBox);
-
-      // New reference of the viewport manager singleton
-      ViewportManager& vpMgr = ViewportManager::GetInstance();
-
-      // Create the perspective viewport for the static mesh preview window
-      mPerspView = (PerspectiveViewport*)vpMgr.createViewport("Preview",
-         ViewportManager::ViewportType::PERSPECTIVE);
-
-      // Assign the viewport a new scene
-      mPerspView->setScene(mPrefabScene.get());
-
-      //By default, perspective viewports have their camera set to the world view
-      //camera.  The world view camera is what is used in the main perspective view.
-      mPerspView->setCamera(mCamera.get());
-
-      //No need for an overlay for this viewport since we cannot select meshes
-      //in the preview window.
-      mPerspView->setOverlay(NULL);
-
-      // Disable the interaction modes
-      mPerspView->setAutoInteractionMode(false);
-      mPerspView->setAutoSceneUpdate(false);
-      mPerspView->setEnableKeyBindings(false);
-
-      // Create a viewport container for our static mesh window
-      mContainer = new ViewportContainer(mPerspView, groupBox);
-      mContainer->setViewport(mPerspView);
-
-      grid->addWidget(mContainer, 0, 0);
-      return groupBox;
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
    QGroupBox* PrefabBrowser::listGroup()
    {
       QGroupBox*   groupBox = new QGroupBox(tr("Prefabs"));
@@ -410,7 +250,7 @@ namespace dtEditQt
       mListWidget = new ResourceDragListWidget(groupBox);
       mListWidget->setResourceName("Prefab");
       mListWidget->setAutoScroll(true);
-      mListWidget->setViewMode(QListWidget::IconMode);
+      //mListWidget->setViewMode(QListWidget::IconMode);
       mListWidget->setIconSize(QSize(50,50));
       mListWidget->setContextMenuPolicy(Qt::CustomContextMenu);
 
@@ -422,18 +262,6 @@ namespace dtEditQt
          SLOT(rightClickMenu(const QPoint &)));      
 
       // Checkbox for auto preview
-      mPreviewChk = new QCheckBox(tr("Auto Preview"), groupBox);
-      connect(mPreviewChk, SIGNAL(stateChanged(int)), this, SLOT(checkBoxSelected()));
-      mPreviewChk->setChecked(false);
-
-      // Preview button for a selected mesh
-      mPreviewBtn = new QPushButton("Preview", groupBox);
-      connect(mPreviewBtn, SIGNAL(clicked()), this, SLOT(displaySelection()));
-      mPreviewBtn->setDisabled(true);
-
-      hbox->addWidget(mPreviewChk, 0, Qt::AlignLeft);
-      hbox->addWidget(mPreviewBtn, 0, Qt::AlignRight);
-      grid->addLayout(hbox, 0, 0);
       grid->addWidget(mListWidget, 1, 0);
 
       return groupBox;
@@ -753,46 +581,6 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void PrefabBrowser::checkBoxSelected()
-   {
-/*
-      if (mPreviewChk->isChecked())
-      {
-         ResourceTreeWidget* selection = NULL;
-
-         if (mTree != NULL)
-         {
-            QList <QTreeWidgetItem*> list = mTree->selectedItems();
-
-            if (!list.isEmpty())
-            {
-               selection = dynamic_cast<ResourceTreeWidget*>(list[0]);
-            }
-            if (selection != NULL)
-            {
-               if (selection->isResource())
-               {
-                  EditorData::GetInstance().setCurrentPrefabResource(selection->getResourceDescriptor());
-               }
-               else
-               {
-                  EditorData::GetInstance().setCurrentPrefabResource(dtDAL::ResourceDescriptor());
-               }
-            }
-         }
-
-         if(selection != NULL)
-         {
-            if (selection->isResource())
-            {
-               displaySelection();
-            }
-         }
-      }
-*/
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
    void PrefabBrowser::refreshPrefabs()
    {
       unsigned int numCategories = 0;      
@@ -862,7 +650,7 @@ namespace dtEditQt
          nextFile = dirFiles[i];
          isFolder = false;
 
-         if (dirFiles[i] == "." || dirFiles[i] == "..")
+         if (dirFiles[i] == "." || dirFiles[i] == ".." || dirFiles[i] == ".svn")
          {
             continue;
          }
@@ -872,7 +660,7 @@ namespace dtEditQt
          //determine what the icon is for this file:  ////////////////////////////////////////////         
          if (dtUtil::FileUtils::GetInstance().DirExists(nextFileFullPath))
          {
-            //Don't want to see the icons folder
+            //Don't want to see the icons or svn folders
             if(dtUtil::FileUtils::GetInstance().IsSameFile(mCurrentDir, mTopPrefabDir)
                 && nextFile == "icons")
             {

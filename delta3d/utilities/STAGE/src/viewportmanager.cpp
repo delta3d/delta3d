@@ -306,8 +306,8 @@ namespace dtEditQt
             {
                osg::Vec3 nearPos, farPos;
                nearPos = farPos = snapPos;
-               nearPos.z() -= 10000;
-               farPos.z() += 10000;
+               nearPos.z() += 10;
+               farPos.z() -= 10000;
                viewport->getPickPosition(nearPos, farPos, snapPos, ignoredDrawable);
             }
          }
