@@ -606,8 +606,8 @@ namespace dtTest
    //////////////////////////////////////////////////////////////////////////
    void ApplicationTests::TestReadingBadConfigFile()
    {
-      // We turn off 'error' logging here because the read bad config 
-      // prints out ".... error:32 ..." which causes MS Visual Studio to 
+      // We turn off 'error' logging here because the read bad config
+      // prints out ".... error:32 ..." which causes MS Visual Studio to
       // flag it as an error. The teardown will unset this.
       dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_ALWAYS);
 
@@ -642,7 +642,7 @@ namespace dtTest
                                    true, app->ContainsView(*view));
 
       app->RemoveView(*view);
-      
+
       //Application needs a frame to remove the view
       dtCore::System::GetInstance().Start();
       dtCore::System::GetInstance().Step();
@@ -659,13 +659,13 @@ namespace dtTest
       dtCore::RefPtr<dtABC::Application> app = new dtABC::Application();
 
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Application should have one View by default",
-                                   unsigned int(1), app->GetNumberOfViews());
+                                   unsigned(1), app->GetNumberOfViews());
 
       dtCore::RefPtr<dtCore::View> view  = new dtCore::View();
       app->AddView(*view);
 
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Application's View count didn't get updated with added View",
-                                   unsigned int(2), app->GetNumberOfViews());
+                                   unsigned(2), app->GetNumberOfViews());
 
       dtCore::RefPtr<dtCore::View> retView = app->GetView(1);
       CPPUNIT_ASSERT_MESSAGE("Application returned the wrong View",
