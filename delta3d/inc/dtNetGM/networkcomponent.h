@@ -34,6 +34,8 @@
 #include <gnelib.h>
 #include <dtGame/gmcomponent.h>
 #include <dtUtil/enumeration.h>
+#include <OpenThreads/ReentrantMutex>
+#include <deque>
 
 // Forward declaration
 namespace dtCore
@@ -56,6 +58,24 @@ namespace dtNetGM
    class NetworkBridge;
    class MachineInfoMessage;
 
+   class DT_NETGM_EXPORT MessageActionCode : public dtUtil::Enumeration
+   {
+      DECLARE_ENUM(MessageActionCode);
+   public:
+      // Tell the component to Send the message now.
+      static MessageActionCode SEND;
+      // Tell the component to Wait and ask again.
+      static MessageActionCode WAIT;
+      // Tell the component to send a reject message to the sender.
+      static MessageActionCode REJECT;
+      // Tell the component to just drop the message.
+      static MessageActionCode DROP;
+
+   private:
+      MessageActionCode(const std::string& name);
+      virtual ~MessageActionCode();
+   };
+
    /**
     * @class NetworkComponent
     * @brief baseclass GMComponent to communicate as client - server
@@ -76,11 +96,8 @@ namespace dtNetGM
          static const DestinationType ALL_NOT_CLIENTS;
 
       private:
-         DestinationType(const std::string& name) : dtUtil::Enumeration(name)
-         {
-            AddInstance(this);
-         }
-         virtual ~DestinationType() {}
+         DestinationType(const std::string& name);
+         virtual ~DestinationType();
       };
 
    public:
@@ -99,6 +116,9 @@ namespace dtNetGM
        * 'additional' Network Messages on the GameManager
        */
       virtual void OnAddedToGM();
+
+      /// Overridden to handle shutdown.
+      virtual void OnRemovedFromGM();
 
       /**
        * Function called by a GameManager to process Messages. This function forwards the connection related
@@ -225,6 +245,14 @@ namespace dtNetGM
 
       virtual void OnReceivedNetworkMessage(const dtGame::Message& message, NetworkBridge& networkBridge);
 
+      /**
+       * This is called when the component is ready to send a message to the game manager so the user.
+       * can decide what to do with it.  By default, the message is sent unless the gm is waiting for
+       * a map change to complete, then it returns wait.
+       */
+      virtual MessageActionCode& OnBeforeSendMessage(const dtGame::Message& message, std::string& rejectReason);
+
+
       void SendNetworkMessage(const dtGame::Message& message, const DestinationType& destinationType = DestinationType::DESTINATION);
 
       dtUtil::DataStream CreateDataStream(const dtGame::Message& message);
@@ -324,11 +352,14 @@ namespace dtNetGM
       int mRateIn; // Value describing the GNE connection parameter
 
       // Mutex
-      GNE::Mutex mMutex;
-      // local buffer to store messages received from the network.
-      std::queue<dtCore::RefPtr<const dtGame::Message> > mMessageBuffer;
+      OpenThreads::ReentrantMutex mMutex;
       // mutex for accessing the GameManager message queue
-      GNE::Mutex mBufferMutex;
+      OpenThreads::ReentrantMutex mBufferMutex;
+   private:
+      typedef std::deque<dtCore::RefPtr<const dtGame::Message> > MessageBufferType;
+      // local buffer to store messages received from the network.
+      MessageBufferType mMessageBuffer;
+      bool mMapChangeInProcess;
    };
 }
 #endif // DELTA_NETWORKCOMPONENT
