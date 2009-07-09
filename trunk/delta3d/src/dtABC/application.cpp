@@ -541,7 +541,8 @@ bool Application::AppXMLApplicator::operator ()(const ApplicationConfigData& dat
    }
    else
    {
-      LOG_WARNING("Application:Can't find instance of DeltaWin, " + data.WINDOW_INSTANCE );
+      LOG_WARNING("Application:Can't find instance of DeltaWin '" + data.WINDOW_INSTANCE +
+                  "' and/or instance of Camera '" + data.CAMERA_INSTANCE + "'");
       valid = false;
    }
 
