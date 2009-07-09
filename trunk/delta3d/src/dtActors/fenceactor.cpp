@@ -229,8 +229,7 @@ void FenceActor::SetPostMaxDistance(float value)
    mPostMaxDistance = value;
 
    // Clamp the size.
-   if (mPostMaxDistance <= 1.0f) mPostMaxDistance = 1.0f;
-   if (mPostMaxDistance < mPostMinDistance) mPostMaxDistance = mPostMinDistance;
+   if (mPostMaxDistance <= mPostMinDistance) mPostMaxDistance = mPostMinDistance;
 
    Visualize();
 }
