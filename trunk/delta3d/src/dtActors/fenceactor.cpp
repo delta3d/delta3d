@@ -1,4 +1,4 @@
-#include <dtActors/FenceActor.h>
+#include <dtActors/fenceactor.h>
 #include <dtCore/object.h>
 #include <dtCore/transformable.h>
 #include <dtCore/transform.h>
@@ -84,7 +84,7 @@ void FenceActor::Visualize(int pointIndex)
          osg::Vec3 dir = end - start;
          float totalLength = dir.length();
          dir.normalize();
-         
+
          // Now determine the position of each post.
          osg::Vec3 lastPost = start;
          int subPostIndex = 1;
@@ -323,7 +323,7 @@ void FenceActor::SetScale(const osg::Vec3& value)
 dtCore::Transformable* FenceActor::CreatePointDrawable(osg::Vec3 position)
 {
    dtCore::Transformable* point = new dtCore::Transformable();
-   
+
    // Attach this new point to the actor.
    AddChild(point);
 
@@ -516,7 +516,7 @@ void FenceActor::PlaceSegment(int pointIndex, int subIndex, dtCore::Transform st
       geom->setNormalArray(normalList.get());
       geom->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE);
 
-      // This time we simply use primitive, and hardwire the number of coords to use 
+      // This time we simply use primitive, and hardwire the number of coords to use
       // since we know up front,
       geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 4));
       geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 4, 4));
@@ -526,12 +526,12 @@ void FenceActor::PlaceSegment(int pointIndex, int subIndex, dtCore::Transform st
       std::string textureName = GetSegmentTexture(pointIndex, subIndex);
       if (!textureName.empty())
       {
-         // set up the texture state.    
+         // set up the texture state.
          osg::Texture2D* texture = new osg::Texture2D();
          texture->setWrap(osg::Texture2D::WRAP_S, osg::Texture2D::REPEAT);
          dtDAL::ResourceDescriptor descriptor = dtDAL::ResourceDescriptor(textureName);
          texture->setImage(osgDB::readImageFile(dtDAL::Project::GetInstance().GetResourcePath(descriptor)));
-         
+
          osg::StateSet* stateset = geom->getOrCreateStateSet();
          stateset->setTextureAttributeAndModes(0, texture, osg::StateAttribute::ON);
       }
