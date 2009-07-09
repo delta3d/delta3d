@@ -73,6 +73,7 @@ namespace dtActors
        static dtCore::RefPtr<dtDAL::ActorType> PREFAB_ACTOR_TYPE;
        static dtCore::RefPtr<dtDAL::ActorType> VOLUME_EDIT_ACTOR_TYPE;
        static dtCore::RefPtr<dtDAL::ActorType> LINKED_POINTS_ACTOR_TYPE;
+       static dtCore::RefPtr<dtDAL::ActorType> FENCE_ACTOR_TYPE;
 
         /**
          * Constructs the engine actor registry.
