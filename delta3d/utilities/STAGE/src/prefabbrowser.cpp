@@ -245,7 +245,6 @@ namespace dtEditQt
    {
       QGroupBox*   groupBox = new QGroupBox(tr("Prefabs"));
       QGridLayout* grid     = new QGridLayout(groupBox);
-      QHBoxLayout* hbox     = new QHBoxLayout();
       
       mListWidget = new ResourceDragListWidget(groupBox);
       mListWidget->setResourceName("Prefab");
@@ -621,8 +620,18 @@ namespace dtEditQt
       std::string iconDir = contextDir + "/" +
                          dtEditQt::EditorActions::PREFAB_DIRECTORY + "/icons";
 
-      dtUtil::DirectoryContents dirFiles = dtUtil::FileUtils::GetInstance().DirGetFiles(mCurrentDir);
-      //std::sort(dirFiles.begin(), dirFiles.end());    
+      dtUtil::DirectoryContents dirFiles;
+      if (dtUtil::FileUtils::GetInstance().DirExists(mCurrentDir))
+      {
+         dirFiles = dtUtil::FileUtils::GetInstance().DirGetFiles(mCurrentDir);
+         //std::sort(dirFiles.begin(), dirFiles.end());
+      }
+      else
+      {
+         //prefabs dir hasn't been created yet ... nothing to show
+         EditorData::GetInstance().getMainWindow()->endWaitCursor();
+         return;
+      }
 
       std::string nextFile;
       std::string nextFileFullPath;
