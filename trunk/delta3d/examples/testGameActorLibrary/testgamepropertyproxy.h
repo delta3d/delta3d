@@ -424,6 +424,10 @@ class DT_EXAMPLE_EXPORT TestGamePropertyActor : public dtGame::GameActor
       void SetTestGameEvent(dtDAL::GameEvent *event) { mTestGameEvent = event; }
       dtDAL::GameEvent *GetTestGameEvent() { return mTestGameEvent.get(); }
 
+      void SetTestActorId(const dtCore::UniqueId& id) { mTestId = id; }
+
+      const dtCore::UniqueId& GetTestActorId() const { return mTestId; }
+
    protected:
       virtual ~TestGamePropertyActor();
 
@@ -449,6 +453,7 @@ class DT_EXAMPLE_EXPORT TestGamePropertyActor : public dtGame::GameActor
     std::string mSound;
     std::string mTexture;
     dtCore::RefPtr<dtDAL::GameEvent> mTestGameEvent;
+    dtCore::UniqueId mTestId;
 
 };
 

@@ -1482,6 +1482,8 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool
    dtCore::RefPtr<dtGame::ActorUpdateMessage> actorUpdateMsg =
       static_cast<dtGame::ActorUpdateMessage*>(mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_UPDATED).get());
 
+   dtCore::UniqueId oldId(gap->GetProperty("Test_Actor_Id")->ToString());
+   CPPUNIT_ASSERT_MESSAGE("Has Fired should be false.", !oldId.ToString().empty());
    CPPUNIT_ASSERT_MESSAGE("Has Fired should be false.", gap->GetProperty("Has Fired")->ToString() == "false");
    CPPUNIT_ASSERT_MESSAGE("Local Tick Count should be 0.", gap->GetProperty("Local Tick Count")->ToString() == "0");
    CPPUNIT_ASSERT_MESSAGE("Remote Tick Count should be 0.", gap->GetProperty("Remote Tick Count")->ToString() == "0");
@@ -1528,11 +1530,11 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool
 
       actorUpdateMsg->GetUpdateParameter("Local Tick Count")->FromString("96");
       actorUpdateMsg->GetUpdateParameter("Remote Tick Count")->FromString("107");
+      actorUpdateMsg->GetUpdateParameter("Test_Actor_Id")->FromString("3333");
 
    }
 
    mGameManager->SendMessage(*actorUpdateMsg);
-   dtCore::AppSleep(10);
    dtCore::System::GetInstance().Step();
    if (remote)
    {
@@ -1551,6 +1553,7 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool
                                 gap->GetProperty("Local Tick Count")->ToString(), std::string("96"));
          CPPUNIT_ASSERT_EQUAL_MESSAGE("Remote Tick Count should be changed to 107.",
                                 gap->GetProperty("Remote Tick Count")->ToString(), std::string("107"));
+         CPPUNIT_ASSERT_EQUAL_MESSAGE("The new Id should be set.", std::string("3333"), gap->GetProperty("Test_Actor_Id")->ToString());
       }
    }
    else
@@ -1561,6 +1564,7 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool
                                     gap->GetProperty("Local Tick Count")->ToString(), std::string("0"));
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Remote Tick Count should still be 0.",
                                     gap->GetProperty("Remote Tick Count")->ToString(), std::string("0"));
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The new Id should NOT be set.", oldId.ToString(), gap->GetProperty("Test_Actor_Id")->ToString());
    }
 
 }

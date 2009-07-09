@@ -94,6 +94,7 @@ class GameManagerTests : public CPPUNIT_NS::TestFixture
 
         CPPUNIT_TEST(TestActorSearching);
         CPPUNIT_TEST(TestAddActor);
+        CPPUNIT_TEST(TestAddActorNullID);
         CPPUNIT_TEST(TestAddActorCrash);
 
         CPPUNIT_TEST(TestCreateRemoteActor);
@@ -128,6 +129,7 @@ public:
 
    void TestActorSearching();
    void TestAddActor();
+   void TestAddActorNullID();
    void TestAddActorCrash();
 
    void TestCreateRemoteActor();
@@ -899,6 +901,31 @@ void GameManagerTests::TestAddActorCrash()
 
    dtCore::System::GetInstance().Step();
    CPPUNIT_ASSERT(mManager->FindGameActorById(proxy->GetId()) == NULL);
+}
+
+//////////////////////////////////////////////////////////////////////////
+void GameManagerTests::TestAddActorNullID()
+{
+   dtCore::RefPtr<const dtDAL::ActorType> type = mManager->FindActorType("ExampleActors", "Test1Actor");
+   CPPUNIT_ASSERT(type != NULL);
+   dtCore::RefPtr<dtGame::GameActorProxy> proxy;
+   mManager->CreateActor(*type, proxy);
+   proxy->SetId(dtCore::UniqueId(""));
+   CPPUNIT_ASSERT_THROW_MESSAGE("Adding an actor with a null id should throw an exception.",
+         mManager->AddActor(*proxy, false, false), dtUtil::Exception);
+
+   CPPUNIT_ASSERT(!proxy->IsInGM());
+
+   dtCore::System::GetInstance().Step();
+   CPPUNIT_ASSERT(mManager->FindGameActorById(proxy->GetId()) == NULL);
+
+   CPPUNIT_ASSERT_THROW_MESSAGE("Adding an actor with a null id should throw an exception.",
+         mManager->AddActor(*proxy), dtUtil::Exception);
+
+   CPPUNIT_ASSERT(!proxy->IsInGM());
+
+   dtCore::System::GetInstance().Step();
+   CPPUNIT_ASSERT(mManager->FindActorById(proxy->GetId()) == NULL);
 }
 
 //////////////////////////////////////////////////////////////////////////
