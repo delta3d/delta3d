@@ -1027,19 +1027,28 @@ namespace dtDAL
    {
       ValidatePropertyType(property);
 
-      const dtDAL::ActorActorProperty* ap = static_cast<const dtDAL::ActorActorProperty*> (&property);
-      if (ap->GetValue() == NULL)
-         SetValue(dtCore::UniqueId(""));
-      else
-         SetValue(ap->GetValue()->GetId());
+      if (property.GetDataType() == DataType::ACTOR)
+      {
+         dtCore::UniqueId id(property.ToString());
+         SetValue(id);
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void NamedActorParameter::ApplyValueToProperty(dtDAL::ActorProperty& property) const
    {
-      throw dtUtil::Exception(ExceptionEnum::InvalidParameter,
-         "Cannot call ApplyValueToProperty()on an ActorMessageParameter.  See the GameActor::ApplyActorUpdate() for an example of how to do this.",
-         __FILE__, __LINE__);
+      ActorIDActorProperty* actorIDProp = dynamic_cast<ActorIDActorProperty*>(&property);
+      if (actorIDProp != NULL)
+      {
+         actorIDProp->SetValue(GetValue());
+      }
+      else
+      {
+
+         throw dtUtil::Exception(ExceptionEnum::InvalidParameter,
+            "Cannot call ApplyValueToProperty()on an ActorMessageParameter.  See the GameActor::ApplyActorUpdate() for an example of how to do this.",
+            __FILE__, __LINE__);
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////

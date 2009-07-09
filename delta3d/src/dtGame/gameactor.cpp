@@ -338,9 +338,16 @@ namespace dtGame
          }
 
 
+         dtDAL::ActorActorProperty* aap = NULL;
+
          if (paramType == dtDAL::DataType::ACTOR)
          {
-            dtDAL::ActorActorProperty *aap = static_cast<dtDAL::ActorActorProperty*>(property);
+            dtDAL::ActorActorProperty* aap = dynamic_cast<dtDAL::ActorActorProperty*>(property);
+         }
+
+         // If the property is of type ACTOR AND it is an ActorActor property not an ActorID property, it's a special case.
+         if (aap != NULL)
+         {
             const ActorMessageParameter* amp = static_cast<const ActorMessageParameter*>(params[i]);
             if ( GetGameManager() != NULL )
             {

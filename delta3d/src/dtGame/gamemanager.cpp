@@ -986,6 +986,12 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::AddActor(dtDAL::ActorProxy& actorProxy)
    {
+      if (actorProxy.GetId().ToString().empty())
+      {
+         throw dtUtil::Exception(ExceptionEnum::INVALID_ACTOR_STATE,
+            "Actors may not be added the GM with an empty unique id", __FILE__, __LINE__);
+      }
+
       if (mEnvironment.valid())
       {
          if (mEnvironment.get() != &actorProxy)
@@ -1015,6 +1021,12 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::AddActor(GameActorProxy& gameActorProxy, bool isRemote, bool publish)
    {
+      if (gameActorProxy.GetId().ToString().empty())
+      {
+         throw dtUtil::Exception(ExceptionEnum::INVALID_ACTOR_STATE,
+            "Actors may not be added the GM with an empty unique id", __FILE__, __LINE__);
+      }
+
       //Fail early here so that it doesn't fail is PublishActor and need to wait a tick to
       //clean up the actor.
       if (publish && isRemote)

@@ -1023,10 +1023,9 @@ void GameActorTests::TestMessageProcessingPerformance()
                dynamic_cast<TestGamePropertyProxy*>(actorProxy.get());
 
             // create and populate an actor update message with ALL properties for this actor
-            dtCore::RefPtr<dtGame::Message> updateMsg =
-                  mManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_UPDATED);
-            dtGame::ActorUpdateMessage* message = static_cast<dtGame::ActorUpdateMessage*>(updateMsg.get());
-            propProxy->PopulateActorUpdate(*message);
+            dtCore::RefPtr<dtGame::ActorUpdateMessage> updateMsg;
+            mManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_UPDATED, updateMsg);
+            propProxy->PopulateActorUpdate(*updateMsg);
             mManager->SendMessage(*updateMsg);
          }
 

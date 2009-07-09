@@ -61,10 +61,15 @@ class DT_EXAMPLE_EXPORT TestGameActor1 : public dtGame::GameActor
 
       int GetTickRemotes() const { return tickRemotes; }
       void SetTickRemotes(int newTickRemotes) { tickRemotes = newTickRemotes; }
+
+      void SetTestActorId(const dtCore::UniqueId& id) { mTestId = id; }
+
+      const dtCore::UniqueId& GetTestActorId() const { return mTestId; }
    private:
       bool fired;
       int tickLocals;
       int tickRemotes;
+      dtCore::UniqueId mTestId;
 };
 
 class DT_EXAMPLE_EXPORT TestGameActorProxy1 : public dtGame::GameActorProxy
