@@ -550,12 +550,12 @@ namespace dtEditQt
          return;
       }
 
-      std::string fullpath = selectedWidget->getCategoryFullName().toStdString();
+      QString fullpath = selectedWidget->getCategoryFullName();
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
-      if (fileUtils.DirExists(fullpath))
+      if (fileUtils.DirExists(fullpath.toStdString()))
       {
-         mCurrentDir = fullpath;
+         mCurrentDir = fullpath.replace(QString("\\"), QString("/")).toStdString();
       }
 
       refreshPrefabs();
@@ -608,17 +608,18 @@ namespace dtEditQt
       folderIcon.addPixmap(QPixmap(UIResources::ICON_TINY_FOLDER_OPEN.c_str()), QIcon::Normal, QIcon::On);
       folderIcon.addPixmap(QPixmap(UIResources::ICON_TINY_FOLDER.c_str()), QIcon::Normal, QIcon::Off);
       
-      if (mCurrentDir == "")
-      {
-         mCurrentDir = dtEditQt::EditorData::GetInstance().getCurrentProjectContext()
-                           + "/" + dtEditQt::EditorActions::PREFAB_DIRECTORY;
-         mTopPrefabDir = dtEditQt::EditorData::GetInstance().getCurrentProjectContext()
-            + "/" + dtEditQt::EditorActions::PREFAB_DIRECTORY;       
-      }
-
       std::string contextDir = dtEditQt::EditorData::GetInstance().getCurrentProjectContext();
       std::string iconDir = contextDir + "/" +
                          dtEditQt::EditorActions::PREFAB_DIRECTORY + "/icons";
+
+      std::string prefabDir = contextDir + "/" + dtEditQt::EditorActions::PREFAB_DIRECTORY;
+
+      // Test if we have changed our context directory.
+      if (mTopPrefabDir != prefabDir)
+      {
+         mCurrentDir = prefabDir;
+         mTopPrefabDir = prefabDir; 
+      }
 
       dtUtil::DirectoryContents dirFiles;
       if (dtUtil::FileUtils::GetInstance().DirExists(mCurrentDir))
@@ -638,7 +639,8 @@ namespace dtEditQt
       std::string nextIconFullPath;
       bool isFolder = false;
       
-      if (! dtUtil::FileUtils::GetInstance().IsSameFile(mCurrentDir, mTopPrefabDir))
+      //if (!dtUtil::FileUtils::GetInstance().IsSameFile(mCurrentDir, mTopPrefabDir))
+      if (mCurrentDir != mTopPrefabDir)
       {
          //Show a "Go up a folder" icon
          nextIconFullPath = dtCore::GetDeltaRootPath() + "/utilities/STAGE/icons/upfolder_big.png";
@@ -670,8 +672,8 @@ namespace dtEditQt
          if (dtUtil::FileUtils::GetInstance().DirExists(nextFileFullPath))
          {
             //Don't want to see the icons or svn folders
-            if(dtUtil::FileUtils::GetInstance().IsSameFile(mCurrentDir, mTopPrefabDir)
-                && nextFile == "icons")
+            //if(dtUtil::FileUtils::GetInstance().IsSameFile(mCurrentDir, mTopPrefabDir)
+            if (mCurrentDir == mTopPrefabDir && nextFile == "icons")
             {
                continue;
             }
@@ -723,7 +725,8 @@ namespace dtEditQt
             aWidget->setCategoryFullName(nextFileFullPath.c_str());            
 
             //want "Up a folder" to be first on all but the top level
-            if(dtUtil::FileUtils::GetInstance().IsSameFile(mCurrentDir, mTopPrefabDir))
+            //if(dtUtil::FileUtils::GetInstance().IsSameFile(mCurrentDir, mTopPrefabDir))
+            if (mCurrentDir == mTopPrefabDir)
             {
                mListWidget->insertItem(0 + numCategories, aWidget);               
             }
