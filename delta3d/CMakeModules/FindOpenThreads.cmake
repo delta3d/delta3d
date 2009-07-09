@@ -44,6 +44,7 @@ FIND_LIBRARY(${MYLIBRARY}
     $ENV{DELTA_ROOT}/ext/lib64
     $ENV{DELTA_ROOT}
     $ENV{OSG_ROOT}/lib
+    $ENV{OSG_ROOT}/build/lib
     ~/Library/Frameworks
     /Library/Frameworks
     /usr/local/lib

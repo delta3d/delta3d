@@ -39,6 +39,7 @@ MACRO(FIND_OSG_LIBRARY MYLIBRARY MYLIBRARYNAME)
         $ENV{OSGDIR}/lib
         $ENV{OSGDIR}
         $ENV{OSG_ROOT}/lib
+        $ENV{OSG_ROOT}/build/lib
         ${DELTA3D_EXT_DIR}/lib
         ${DELTA3D_EXT_DIR}/lib64
         $ENV{DELTA_ROOT}/ext/lib
