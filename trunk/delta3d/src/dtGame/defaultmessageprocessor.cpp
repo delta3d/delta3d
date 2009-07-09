@@ -145,7 +145,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void DefaultMessageProcessor::ProcessRemoteUpdateActor(const ActorUpdateMessage &msg, GameActorProxy *ap)
+   void DefaultMessageProcessor::ProcessRemoteUpdateActor(const ActorUpdateMessage& msg, GameActorProxy* ap)
    {
       //dtGame::GameActorProxy *ap = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
       if (ap == NULL)
@@ -171,9 +171,9 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void DefaultMessageProcessor::ProcessCreateActor(const ActorUpdateMessage &msg)
+   void DefaultMessageProcessor::ProcessCreateActor(const ActorUpdateMessage& msg)
    {
-      GameActorProxy *proxy = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
+      GameActorProxy* proxy = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
       if (proxy == NULL)
       {
          //just to make sure the message is actually remote
@@ -206,24 +206,30 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void DefaultMessageProcessor::ProcessUpdateActor(const ActorUpdateMessage &msg)
+   void DefaultMessageProcessor::ProcessUpdateActor(const ActorUpdateMessage& msg)
    {
       GameActorProxy *proxy = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
       if (proxy != NULL)
       {
          if (proxy->IsRemote())
+         {
             ProcessRemoteUpdateActor(msg, proxy);
+         }
          else
+         {
             ProcessLocalUpdateActor(msg);
+         }
       }
       else
+      {
          ProcessCreateActor(msg);
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void DefaultMessageProcessor::ProcessDeleteActor(const Message& msg)
    {
-      GameActorProxy *proxy = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
+      GameActorProxy* proxy = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
       if (proxy != NULL)
       {
          if (proxy->IsRemote())
