@@ -57,7 +57,7 @@
 #include <dtActors/prefabactorproxy.h>
 #include <dtActors/volumeeditactor.h>
 #include <dtActors/linkedpointsactorproxy.h>
-#include <dtActors/FenceActor.h>
+#include <dtActors/fenceactor.h>
 
 namespace dtActors
 { // "display name", "category", "description/tooltip"
@@ -96,7 +96,7 @@ namespace dtActors
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::PREFAB_ACTOR_TYPE(new dtDAL::ActorType("Prefab", "dtActors", "dtActors.Prefab actor"));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::LINKED_POINTS_ACTOR_TYPE(new dtDAL::ActorType("LinkedPoints", "dtActors", "dtActors.LinkedPoints actor"));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::FENCE_ACTOR_TYPE(new dtDAL::ActorType("Fence", "dtActors", "dtActors.Fence actor"));
-   
+
    /// deprecated types
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::ENVIRONMENT_ACTOR_TYPE(new dtDAL::ActorType("Environment", "dtcore.Environment", "dtCore::BasicEnvironment Actor."));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::ENV_ACTOR_TYPE(new dtDAL::ActorType("Env", "dtcore.Environment", "dtCore::Environment Actor."));
