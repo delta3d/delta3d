@@ -30,7 +30,7 @@ RandomActorGeneratorPlugin::RandomActorGeneratorPlugin(dtEditQt::MainWindow* mw)
    mUI.setupUi(this);
 
    // add dock widget to STAGE main window
-   mw->addDockWidget(Qt::LeftDockWidgetArea, this);    
+   mw->addDockWidget(Qt::RightDockWidgetArea, this);    
 
    connect(mUI.mGenerateBtn, SIGNAL(clicked()), this, SLOT(OnGeneratePushed()));
    //May want to put this back later
