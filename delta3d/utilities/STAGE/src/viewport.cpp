@@ -374,6 +374,10 @@ namespace dtEditQt
 
       std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > toSelect;
 
+      //ensure that the Brush outline is on (if it turns out the brush is selected it
+      //will get disabled later)
+      dtEditQt::EditorData::GetInstance().getMainWindow()->GetVolumeEditActor()->EnableOutline(true);
+
       dtCore::DeltaDrawable* drawable = getPickDrawable(x, y);
       if (!drawable)
       {

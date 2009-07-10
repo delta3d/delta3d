@@ -15,8 +15,9 @@ namespace dtCore
 
 //forward osg declarations
 namespace osg
-{
+{   
    class Geode;
+   class Group;   
    class Shape;
    class ShapeDrawable;
 }
@@ -45,7 +46,7 @@ public:
       static VolumeShapeType SPHERE;
       static VolumeShapeType CYLINDER;
       static VolumeShapeType CAPSULE;
-      static VolumeShapeType CONE;
+      static VolumeShapeType CONE;      
 
       private:
       VolumeShapeType(const std::string& name) : dtUtil::Enumeration(name)
@@ -65,7 +66,13 @@ public:
    void SetScale(const osg::Vec3& xyz);
    void SetShape(VolumeShapeType& shape);
 
+   void EnableOutline(bool doEnable);
+
 private:
+   void SetupWireOutline();
+   
+   dtCore::RefPtr<osg::Group>          mVolumeGroup;
+   dtCore::RefPtr<osg::Group>          mShaderGroup;   
    dtCore::RefPtr<osg::Geode>          mVolumeGeode;
    dtCore::RefPtr<osg::Shape>          mVolumeShape;
    dtCore::RefPtr<osg::ShapeDrawable>  mVolumeDrawable;

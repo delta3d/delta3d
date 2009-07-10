@@ -7,6 +7,7 @@
 #include <osg/BlendFunc>
 #include <osg/Depth>
 #include <osg/Geode>
+#include <osg/PolygonOffset>
 #include <osg/PolygonMode>
 #include <osg/Shape>
 #include <osg/ShapeDrawable>
@@ -23,7 +24,9 @@ VolumeEditActor::VolumeShapeType VolumeEditActor::VolumeShapeType::CONE("CONE");
 
 ////////////////////////////////////////////////////////////////////////////////
 VolumeEditActor::VolumeEditActor()
-   : dtCore::Transformable("VolumeEditActor")   
+   : dtCore::Transformable("VolumeEditActor")
+   , mVolumeGroup(new osg::Group())
+   , mShaderGroup(new osg::Group())
    , mVolumeGeode(new osg::Geode())
    , mModel(new dtCore::Model())
    , mBaseRadius(10.0)
@@ -32,10 +35,17 @@ VolumeEditActor::VolumeEditActor()
    //For volume to get added to scene, make the Geode a child of the
    //Transformable's OSGNode (Transformable Actor is already in scene)
    osg::Group *g = this->GetOSGNode()->asGroup();
-   g->addChild(&mModel->GetMatrixTransform());
+   g->addChild(&mModel->GetMatrixTransform());   
 
    g = mModel->GetMatrixTransform().asGroup();
-   g->addChild(mVolumeGeode.get());
+   g->addChild(mVolumeGroup.get());
+
+   mVolumeGroup->addChild(mVolumeGeode.get());   
+
+   //setup wireframe outline
+   SetupWireOutline();
+   mVolumeGroup->addChild(mShaderGroup.get());
+   mShaderGroup->addChild(mVolumeGeode.get());
 
    //default shape is box
    SetShape(VolumeShapeType::BOX);
@@ -152,31 +162,70 @@ void VolumeEditActor::SetShape(VolumeShapeType& shape)
    dtCore::RefPtr<osg::TessellationHints> tessHints = new osg::TessellationHints();
 
    mVolumeDrawable = new osg::ShapeDrawable(mVolumeShape.get(), tessHints.get());   
-   mVolumeDrawable->setColor(osg::Vec4(1.0f, 0.0f, 0.0f, 1.0f));
+   mVolumeDrawable->setColor(osg::Vec4(0.3f, 0.3f, 0.3f, 0.7f));
 
    //Volume should only ever contain one shape drawable,
    //so remove the old one, if there is one
    mVolumeGeode->removeDrawables(0, 1);
    mVolumeGeode->addDrawable(mVolumeDrawable.get());
 
-   osg::StateSet* stateSet = mVolumeGeode->getOrCreateStateSet();
+   osg::StateSet* stateSet = mVolumeGeode->getOrCreateStateSet();   
    if (stateSet)
-   {
-      stateSet->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
-      stateSet->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
-      //stateSet->setMode(GL_BLEND, osg::StateAttribute::ON);
-      stateSet->setRenderBinDetails(99, "RenderBin");
+   {      
+      stateSet->setMode(GL_BLEND, osg::StateAttribute::ON);
 
-      osg::PolygonMode* polygonMode = new osg::PolygonMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::LINE);
+      osg::PolygonMode* polygonMode = new osg::PolygonMode(osg::PolygonMode::FRONT, osg::PolygonMode::FILL);
       stateSet->setAttribute(polygonMode, osg::StateAttribute::OVERRIDE);
-
-      //osg::Depth* depth = new osg::Depth(osg::Depth::ALWAYS);
-      //stateSet->setAttribute(depth, osg::StateAttribute::ON);
-
-
-      //osg::BlendFunc* blend = new osg::BlendFunc(osg::BlendFunc::SRC_ALPHA, osg::BlendFunc::ONE_MINUS_SRC_ALPHA);
-      //stateSet->setAttribute(blend, osg::StateAttribute::ON);
+    
+      osg::BlendFunc* blend = new osg::BlendFunc(osg::BlendFunc::SRC_ALPHA, osg::BlendFunc::ONE_MINUS_SRC_ALPHA);
+      stateSet->setAttribute(blend, osg::StateAttribute::ON);
+      
+      stateSet->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
    }
+}
+
+void VolumeEditActor::EnableOutline(bool doEnable)
+{
+   if (doEnable)
+   {
+      SetupWireOutline();
+   }
+   else
+   {      
+      mShaderGroup->setStateSet(NULL);           
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void VolumeEditActor::SetupWireOutline()
+{
+   osg::StateSet* ss = mShaderGroup->getOrCreateStateSet();
+
+   osg::StateAttribute::GLModeValue turnOn =
+      osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON;
+
+   dtCore::RefPtr<osg::Program> program = new osg::Program();
+   dtCore::RefPtr<osg::Shader> fragShader = new osg::Shader(osg::Shader::FRAGMENT);
+
+   fragShader->setShaderSource("void main (void) { gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0); }");
+   program->addShader(fragShader.get());   
+
+   ss->setAttributeAndModes(program.get(), turnOn); 
+ 
+   //Create the required state attributes for wireframe overlay selection.
+   osg::PolygonOffset* po = new osg::PolygonOffset;
+   osg::PolygonMode* pm = new osg::PolygonMode();
+
+   pm->setMode(osg::PolygonMode::FRONT_AND_BACK,osg::PolygonMode::LINE);
+   po->setFactor(-1.0f);
+
+   po->setUnits(-1.0f);
+   ss->setAttributeAndModes(pm, turnOn);
+   ss->setAttributeAndModes(po, turnOn);   
+
+   ss->setMode(GL_BLEND,osg::StateAttribute::OVERRIDE | osg::StateAttribute::PROTECTED | osg::StateAttribute::OFF);
+
+   ss->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -227,11 +276,13 @@ void VolumeEditActorProxy::BuildPropertyMap()
       "Scales", "Transformable"));
 }
 
+////////////////////////////////////////////////////////////////////////////////
 VolumeEditActor::VolumeShapeType& VolumeEditActorProxy::GetShape()
 {
    return dynamic_cast<VolumeEditActor*>(GetActor())->GetShape();
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void VolumeEditActorProxy::SetShape(VolumeEditActor::VolumeShapeType& shape)
 {
    dynamic_cast<VolumeEditActor*>(GetActor())->SetShape(shape);
