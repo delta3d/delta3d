@@ -7,11 +7,88 @@
 #include <dtDAL/actorproperty.h>
 #include <osgText/Text>
 #include <dtActors/linkedpointsactorproxy.h>
+#include <dtCore/refptr.h>
+#include <osg/ref_ptr>
+#include <dtCore/object.h>
+#include <osg/Geode>
+#include <osg/Geometry>
 
 namespace dtDAL
 {
    class ResourceDescriptor;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// FENCE POST TRANSFORMABLE
+////////////////////////////////////////////////////////////////////////////////
+class FencePostTransformable : public dtCore::Transformable
+{
+private:
+
+   struct GeomData
+   {
+      // Post
+      dtCore::RefPtr<dtCore::Object> post;
+
+      // Segment
+      osg::ref_ptr<osg::Geometry>   segGeom;
+      osg::ref_ptr<osg::Geode>      segGeode;
+
+      osg::ref_ptr<osg::Vec3Array>  segVertexList;
+      osg::ref_ptr<osg::Vec2Array>  segTextureList;
+      osg::ref_ptr<osg::Vec3Array>  segNormalList;
+
+      osg::ref_ptr<osg::Texture2D>  segTexture;
+   };
+
+   /**
+   * Default Constructor.
+   */
+   FencePostTransformable();
+
+   /**
+   * Sets the current segment/post index.
+   * This will ensure the arrays are large enough
+   * for the given index but will not shrink the arrays
+   * for a smaller index.
+   *
+   * @param[in]  index  The index to set.
+   *
+   * @return     Success or failure.
+   */
+   bool SetIndex(int index);
+
+   /**
+   * This will set the current size of the segment/post arrays.
+   * Should be used when you know exactly how many posts and
+   * segments there will be.
+   *
+   * @param[in]  size  The new size.
+   *
+   * @return     Success or failure.
+   */
+   bool SetSize(int size);
+
+   /**
+   * This will clear all parent geometry if the
+   * geometry has been placed there by the parent.
+   */
+   void ClearParentGeometry();
+
+protected:
+   ~FencePostTransformable();
+
+private:
+
+   friend class FenceActor;
+
+   std::vector<GeomData> mGeomList;
+
+   dtCore::RefPtr<dtCore::Transformable> mOrigin;
+   osg::ref_ptr<osg::Vec4Array>          mSegColorList;
+
+   bool mRenderingParent;
+};
 
 /////////////////////////////////////////////////////////////////////////////
 // ACTOR CODE
@@ -33,7 +110,7 @@ public:
       int      segmentID;
    };
 
-   FenceActor(const std::string& name = "FenceActor");
+   FenceActor(dtDAL::ActorProxy* proxy, const std::string& name = "FenceActor");
 
    /**
    * This will visualize the current actor.

@@ -1,4 +1,4 @@
-#include <dtActors/fenceactor.h>
+#include <dtActors/FenceActor.h>
 #include <dtCore/object.h>
 #include <dtCore/transformable.h>
 #include <dtCore/transform.h>
@@ -9,18 +9,200 @@
 #include <dtDAL/project.h>
 #include <dtDAL/resourcedescriptor.h>
 #include <dtUtil/exception.h>
-#include <osg/Geode>
-#include <osg/ShapeDrawable>
-#include <osg/Geometry>
 #include <osgDB/ReadFile>
+
+////////////////////////////////////////////////////////////////////////////////
+// FENCE POST TRANSFORMABLE
+////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
+FencePostTransformable::FencePostTransformable()
+   : mRenderingParent(false)
+{
+}
+
+////////////////////////////////////////////////////////////////////////////////
+FencePostTransformable::~FencePostTransformable()
+{
+   SetSize(0);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool FencePostTransformable::SetIndex(int index)
+{
+   if (index < 0) index = 0;
+
+   // Expand the size.
+   while (index >= (int)mGeomList.size())
+   {
+      if (!mOrigin.valid())
+      {
+         mOrigin = new dtCore::Transformable();
+         AddChild(mOrigin.get());
+         //osg::Group* myGroup = GetOSGNode()->asGroup();
+         //myGroup->addChild(mOrigin->GetOSGNode());
+         dtCore::Transform segmentTransform;
+         mOrigin->SetTransform(segmentTransform);
+      }
+      
+      if (!mSegColorList.valid())
+      {
+         mSegColorList = new osg::Vec4Array();
+         mSegColorList->push_back(osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f));
+      }
+
+      GeomData data;
+
+      // Create the post geometry object.
+      data.post = new dtCore::Object();
+      if (!data.post.valid()) return false;
+
+      osg::Group* myGroup = GetOSGNode()->asGroup();
+      if (!myGroup) return false;
+      myGroup->addChild(data.post->GetOSGNode());
+
+      // Create Geometry objects to store all the segment quads.
+      data.segGeom = new osg::Geometry();
+      if (!data.segGeom.valid()) return false;
+
+      data.segGeode = new osg::Geode();
+      if (!data.segGeode.valid()) return false;
+
+      // Add the points geometry to the geode.
+      data.segGeode->addDrawable(data.segGeom.get());
+
+      // Add the Geode to the transformable node.
+      osg::Group* originGroup = mOrigin->GetOSGNode()->asGroup();
+      if (!originGroup) return false;
+
+      originGroup->addChild(data.segGeode.get());
+
+      // Create all of our buffer arrays.
+      data.segVertexList = new osg::Vec3Array();
+      if (!data.segVertexList.valid()) return false;
+      data.segTextureList = new osg::Vec2Array();
+      if (!data.segTextureList.valid()) return false;
+      data.segNormalList = new osg::Vec3Array();
+      if (!data.segNormalList.valid()) return false;
+
+      // Set the size of the buffer arrays.
+      data.segVertexList->resize(12);
+      data.segTextureList->resize(12);
+      data.segNormalList->resize(3);
+
+      // Apply the buffer arrays to the geometry.
+      data.segGeom->setVertexArray(data.segVertexList.get());
+
+      data.segGeom->setTexCoordArray(0, data.segTextureList.get());
+
+      data.segGeom->setColorArray(mSegColorList.get());
+      data.segGeom->setColorBinding(osg::Geometry::BIND_OVERALL);
+
+      data.segGeom->setNormalArray(data.segNormalList.get());
+      data.segGeom->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE);
+
+      // Now Set the primitive sets for the three sides of the segment.
+      data.segGeom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 4));
+      data.segGeom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 4, 4));
+      data.segGeom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 8, 4));
+
+      // Create a texture object to use for the segment.
+      data.segTexture = new osg::Texture2D();
+      if (!data.segTexture.valid()) return false;
+
+      data.segTexture->setWrap(osg::Texture2D::WRAP_S, osg::Texture2D::REPEAT);
+
+      osg::StateSet* stateset = data.segGeom->getOrCreateStateSet();
+      if (!stateset) return false;
+
+      stateset->setTextureAttributeAndModes(0, data.segTexture.get(), osg::StateAttribute::ON);
+
+      mGeomList.push_back(data);
+   }
+
+   return true;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool FencePostTransformable::SetSize(int size)
+{
+   if (size < 0) size = 0;
+
+   // Shrink the size.
+   if (size <= (int)mGeomList.size())
+   {
+      while ((int)mGeomList.size() > size)
+      {
+         GeomData& data = mGeomList.back();
+         
+         osg::Group* myGroup = GetOSGNode()->asGroup();
+         if (!myGroup) return false;
+         myGroup->removeChild(data.post->GetOSGNode());
+         data.post = NULL;
+
+         osg::Group* originGroup = mOrigin->GetOSGNode()->asGroup();
+         if (!originGroup) return false;
+         originGroup->removeChild(data.segGeode.get());
+
+         data.segGeode->removeDrawable(data.segGeom.get());
+         data.segGeode = NULL;
+
+         data.segGeom->setVertexArray(NULL);
+         data.segGeom->setTexCoordArray(0, NULL);
+         data.segGeom->setColorArray(NULL);
+         data.segGeom->setNormalArray(NULL);
+         data.segGeom->removePrimitiveSet(0, 3);
+         data.segGeom = NULL;
+
+         data.segVertexList = NULL;
+         data.segTextureList = NULL;
+         data.segNormalList = NULL;
+
+         data.segTexture = NULL;
+
+         mGeomList.pop_back();
+      }
+   }
+   // Expand the size.
+   else
+   {
+      return SetIndex(size - 1);
+   }
+
+   return true;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void FencePostTransformable::ClearParentGeometry()
+{
+   // If it ever gets here, it means we are ready to draw this
+   // post properly, so remove any geometry from it's parents.
+   if (mRenderingParent)
+   {
+      // First clear the old visualization data from the point.
+      while (GetNumChildren())
+      {
+         RemoveChild(GetChild(0));
+      }
+
+      osg::Group* pointGroup = GetOSGNode()->asGroup();
+      pointGroup->removeChildren(0, pointGroup->getNumChildren());
+
+      mRenderingParent = false;
+
+      // Just for good measure, make sure the Geom List is also empty.
+      SetSize(0);
+   }
+}
+
 
 /////////////////////////////////////////////////////////////////////////////
 // ACTOR CODE
 /////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////
-FenceActor::FenceActor(const std::string& name)
-   : BaseClass(name)
+FenceActor::FenceActor(dtDAL::ActorProxy* proxy, const std::string& name)
+   : BaseClass(proxy, name)
    , mPostMinDistance(1.0f)
    , mPostMaxDistance(10.0f)
    , mFenceScale(1.0f)
@@ -28,6 +210,8 @@ FenceActor::FenceActor(const std::string& name)
    , mSegmentWidth(1.0f)
    , mTopTextureRatio(0.2f)
 {
+   RemovePoint(0);
+   AddPoint(osg::Vec3());
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -38,92 +222,106 @@ FenceActor::~FenceActor()
 ////////////////////////////////////////////////////////////////////////////////
 void FenceActor::Visualize()
 {
-   // Iterate through each point.
-   for (int pointIndex = 0; pointIndex < GetPointCount(); pointIndex++)
-   {
-      Visualize(pointIndex);
-   }
+   BaseClass::Visualize();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void FenceActor::Visualize(int pointIndex)
 {
+   if (!IsMapLoaded())
+   {
+      return;
+   }
+
    // If there are no meshes setup for the posts yet, use the default sphere/line schema.
    if (mPostResourceList.size() == 0)
    {
-      LinkedPointsActor::Visualize(pointIndex);
+      BaseClass::Visualize(pointIndex);
+
+      FencePostTransformable* fencePost = dynamic_cast<FencePostTransformable*>(GetPointDrawable(pointIndex));
+      if (fencePost) fencePost->mRenderingParent = true;
       return;
    }
 
    dtCore::Transformable* point = GetPointDrawable(pointIndex);
    if (point)
    {
-      // First clear the old visualization data from the point.
-      while (point->GetNumChildren())
+      FencePostTransformable* fencePost = dynamic_cast<FencePostTransformable*>(GetPointDrawable(pointIndex));
+      if (fencePost)
       {
-         point->RemoveChild(point->GetChild(0));
-      }
+         // First make sure our parent geometry is cleared properly.
+         fencePost->ClearParentGeometry();
 
-      osg::Group* pointGroup = point->GetOSGNode()->asGroup();
-      pointGroup->removeChildren(0, pointGroup->getNumChildren());
+         // Always place a post directly on the point.
+         osg::Vec3 postPos = GetPointPosition(pointIndex);
+         dtCore::Transform prevPostTransform;
+         dtCore::Transform postTransform;
 
-      // Always place a post directly on the point.
-      osg::Vec3 postPos = GetPointPosition(pointIndex);
-      dtCore::Transform prevPostTransform = PlacePost(pointIndex, 0, postPos);
-      dtCore::Transform postTransform;
-
-      // Now generate the fence posts and segments up to the next point position.
-      if (pointIndex < GetPointCount() - 1)
-      {
-         int nextPoint = pointIndex + 1;
-
-         // Get our start and end points.
-         osg::Vec3 start = GetPointPosition(pointIndex);
-         osg::Vec3 end = GetPointPosition(nextPoint);
-
-         osg::Vec3 dir = end - start;
-         float totalLength = dir.length();
-         dir.normalize();
-
-         // Now determine the position of each post.
-         osg::Vec3 lastPost = start;
-         int subPostIndex = 1;
-         float length = 0.0f;
-         while(true)
+         // Now generate the fence posts and segments up to the next point position.
+         if (pointIndex < GetPointCount() - 1)
          {
-            osg::Vec3 position = lastPost + (dir * mPostMaxDistance);
-            length += mPostMaxDistance;
+            prevPostTransform = PlacePost(pointIndex, 0, postPos);
 
-            // Bail out if we have reached the end of our length.
-            if (length >= totalLength - mPostMinDistance)
+            int nextPoint = pointIndex + 1;
+
+            // Get our start and end points.
+            osg::Vec3 start = GetPointPosition(pointIndex);
+            osg::Vec3 end = GetPointPosition(nextPoint);
+
+            osg::Vec3 dir = end - start;
+            float totalLength = dir.length();
+            dir.normalize();
+            
+            // Now determine the position of each post.
+            osg::Vec3 lastPost = start;
+            int subPostIndex = 1;
+            float length = 0.0f;
+            while(true)
             {
-               // Make sure we use the end point as the end transform for the segment.
-               dtCore::Transformable* endPoint = GetPointDrawable(nextPoint);
-               assert(endPoint);
-               endPoint->GetTransform(postTransform);
+               osg::Vec3 position = lastPost + (dir * mPostMaxDistance);
+               length += mPostMaxDistance;
 
-               // Calculate the texture length of the segment.
-               float len = (postTransform.GetTranslation() - prevPostTransform.GetTranslation()).length();
-               float texLength = len / mPostMaxDistance;
+               // Bail out if we have reached the end of our length.
+               if (length >= totalLength - mPostMinDistance)
+               {
+                  // Make sure we use the end point as the end transform for the segment.
+                  dtCore::Transformable* endPoint = GetPointDrawable(nextPoint);
+                  assert(endPoint);
+                  endPoint->GetTransform(postTransform);
 
-               // Now place a segment to fill the gap between our last post and the next point.
-               PlaceSegment(pointIndex, subPostIndex - 1, prevPostTransform, postTransform, texLength);
+                  // Calculate the texture length of the segment.
+                  float len = (postTransform.GetTranslation() - prevPostTransform.GetTranslation()).length();
+                  float texLength = len / mPostMaxDistance;
 
-               break;
+                  // Now place a segment to fill the gap between our last post and the next point.
+                  PlaceSegment(pointIndex, subPostIndex - 1, prevPostTransform, postTransform, texLength);
+
+                  // Now make sure we clean up any additional indices.
+                  fencePost->SetSize(subPostIndex);
+                  break;
+               }
+
+               // Place a post if we are not too close to the end.
+               if (totalLength - length > mPostMinDistance)
+               {
+                  postTransform = PlacePost(pointIndex, subPostIndex, position);
+               }
+
+               // Now place a segment between the current post and the previous.
+               PlaceSegment(pointIndex, subPostIndex - 1, prevPostTransform, postTransform, 1.0f);
+               subPostIndex++;
+
+               lastPost = position;
+               prevPostTransform = postTransform;
             }
+         }
+         // Make sure we clear any geometry on the last post.
+         else
+         {
+            fencePost->SetSize(1);
 
-            // Place a post if we are not too close to the end.
-            if (totalLength - length > mPostMinDistance)
-            {
-               postTransform = PlacePost(pointIndex, subPostIndex, position);
-            }
-
-            // Now place a segment between the current post and the previous.
-            PlaceSegment(pointIndex, subPostIndex - 1, prevPostTransform, postTransform, 1.0f);
-            subPostIndex++;
-
-            lastPost = position;
-            prevPostTransform = postTransform;
+            prevPostTransform = PlacePost(pointIndex, 0, postPos);
+            PlaceSegment(pointIndex, 0, prevPostTransform, prevPostTransform, 1.0f);
          }
       }
    }
@@ -229,7 +427,8 @@ void FenceActor::SetPostMaxDistance(float value)
    mPostMaxDistance = value;
 
    // Clamp the size.
-   if (mPostMaxDistance <= mPostMinDistance) mPostMaxDistance = mPostMinDistance;
+   if (mPostMaxDistance < 0.0f) mPostMaxDistance = 0.0f;
+   if (mPostMaxDistance < mPostMinDistance) mPostMaxDistance = mPostMinDistance;
 
    Visualize();
 }
@@ -321,8 +520,8 @@ void FenceActor::SetScale(const osg::Vec3& value)
 ////////////////////////////////////////////////////////////////////////////////
 dtCore::Transformable* FenceActor::CreatePointDrawable(osg::Vec3 position)
 {
-   dtCore::Transformable* point = new dtCore::Transformable();
-
+   dtCore::Transformable* point = new FencePostTransformable();
+   
    // Attach this new point to the actor.
    AddChild(point);
 
@@ -359,24 +558,33 @@ void FenceActor::SetResourceIDSubSize(int pointIndex, int subCount)
 dtCore::Transform FenceActor::PlacePost(int pointIndex, int subIndex, osg::Vec3 position)
 {
    dtCore::Transform transform;
+   transform.SetTranslation(position);
 
    dtCore::Transformable* point = GetPointDrawable(pointIndex);
    if (point)
    {
-      std::string postMeshName = GetPostMesh(pointIndex, subIndex);
-      if (!postMeshName.empty())
+      FencePostTransformable* fencePost = dynamic_cast<FencePostTransformable*>(point);
+      if (fencePost)
       {
-         // Create our game mesh actor to represent the post.
-         dtCore::RefPtr<dtCore::Object> postMeshObj = new dtCore::Object();
-         osg::Node* postMeshNode = postMeshObj->LoadFile(postMeshName);
-         postMeshObj->SetScale(osg::Vec3(mFenceScale, mFenceScale, mFenceScale));
+         std::string postMeshName = GetPostMesh(pointIndex, subIndex);
+         if (!postMeshName.empty())
+         {
+            // Create our game mesh actor to represent the post.
+            if (!fencePost->SetIndex(subIndex))
+            {
+               return transform;
+            }
 
-         point->AddChild(postMeshObj.get());
+            dtCore::RefPtr<dtCore::Object> postMesh = fencePost->mGeomList[subIndex].post;
 
-         // Set the position of the object.
-         postMeshObj->GetTransform(transform);
-         transform.SetTranslation(position);
-         postMeshObj->SetTransform(transform);
+            osg::Node* postMeshNode = postMesh->LoadFile(postMeshName);
+            postMesh->SetScale(osg::Vec3(mFenceScale, mFenceScale, mFenceScale));
+
+            // Set the position of the object.
+            postMesh->GetTransform(transform);
+            transform.SetTranslation(position);
+            postMesh->SetTransform(transform);
+         }
       }
    }
 
@@ -389,150 +597,111 @@ void FenceActor::PlaceSegment(int pointIndex, int subIndex, dtCore::Transform st
    dtCore::Transformable* point = GetPointDrawable(pointIndex);
    if (point)
    {
-      dtCore::RefPtr<dtCore::Transformable> segmentTrans = NULL;
-
-      // First try and find an existing transform.
-      int childCount = point->GetNumChildren();
-      for (int childIndex = 0; childIndex < childCount; childIndex++)
+      FencePostTransformable* fencePost = dynamic_cast<FencePostTransformable*>(point);
+      if (fencePost)
       {
-         dtCore::DeltaDrawable* child = point->GetChild(childIndex);
-         if (child && child->GetName() == "OriginTransform")
+         if (!fencePost->SetIndex(subIndex))
          {
-            segmentTrans = dynamic_cast<dtCore::Transformable*>(child);
-            break;
+            return;
          }
-      }
 
-      // If the origin transform does not exist, make one.
-      if (!segmentTrans.valid())
-      {
-        segmentTrans = new dtCore::Transformable("OriginTransform");
-        point->AddChild(segmentTrans.get());
-        dtCore::Transform segmentTransform;
-        segmentTrans->SetTransform(segmentTransform);
-      }
+         // Always reset the origin transform to the origin of the world.
+         dtCore::Transform segmentTransform;
+         fencePost->mOrigin->SetTransform(segmentTransform);
 
-      // create Geometry object to store all the vertices and lines primitive.
-      osg::Geometry* geom = new osg::Geometry();
+         osg::Vec3 startRight, startUp, startForward;
+         osg::Vec3 endRight, endUp, endForward;
 
-      // add the points geometry to the geode.
-      osg::Geode* geode = new osg::Geode();
-      geode->addDrawable(geom);
+         // Get the orientation of our two posts.
+         start.GetOrientation(startRight, startUp, startForward);
+         end.GetOrientation(endRight, endUp, endForward);
 
-      osg::Group* segmentGroup = segmentTrans->GetOSGNode()->asGroup();
-      segmentGroup->addChild(geode);
+         // Get the vector between the two posts.
+         osg::Vec3 dir = end.GetTranslation() - start.GetTranslation();
+         dir.normalize();
 
-      osg::ref_ptr<osg::Vec3Array> vertexList   = new osg::Vec3Array();
-      osg::ref_ptr<osg::Vec2Array> textureList  = new osg::Vec2Array();
-      osg::ref_ptr<osg::Vec4Array> colorList    = new osg::Vec4Array();
-      osg::ref_ptr<osg::Vec3Array> normalList   = new osg::Vec3Array();
+         // Now get the vectors that will be used to calculate segment width
+         osg::Vec3 startWidth = startUp ^ dir;
+         startWidth.normalize();
+         startWidth *= mSegmentWidth * 0.5f * mFenceScale;
 
-      osg::Vec3 startRight, startUp, startForward;
-      osg::Vec3 endRight, endUp, endForward;
+         osg::Vec3 endWidth = endUp ^ dir;
+         endWidth.normalize();
+         endWidth *= mSegmentWidth * 0.5f * mFenceScale;
 
-      // Get the orientation of our two posts.
-      start.GetOrientation(startRight, startUp, startForward);
-      end.GetOrientation(endRight, endUp, endForward);
+         dtCore::Transform transform;
+         fencePost->mOrigin->SetTransform(transform);
 
-      // Get the vector between the two posts.
-      osg::Vec3 dir = end.GetTranslation() - start.GetTranslation();
-      dir.normalize();
+         ////////////////////////////////////////////////////////////////////////////////
+         // Vertex
+         // Front Wall
+         /// Bottom left vertex.
+         fencePost->mGeomList[subIndex].segVertexList->at(0) = (start.GetTranslation() + startWidth);
+         /// Top left vertex.
+         fencePost->mGeomList[subIndex].segVertexList->at(1) = ((start.GetTranslation() + startWidth) + (startUp * mSegmentHeight * mFenceScale));
+         /// Top right vertex.
+         fencePost->mGeomList[subIndex].segVertexList->at(2) = ((end.GetTranslation() + endWidth) + (endUp * mSegmentHeight * mFenceScale));
+         /// Bottom right vertex.
+         fencePost->mGeomList[subIndex].segVertexList->at(3) = (end.GetTranslation() + endWidth);
 
-      // Now get the vectors that will be used to calculate segment width
-      osg::Vec3 startWidth = startUp ^ dir;
-      startWidth.normalize();
-      startWidth *= mSegmentWidth * 0.5f * mFenceScale;
+         // Back Wall
+         /// Bottom left vertex.
+         fencePost->mGeomList[subIndex].segVertexList->at(4) = (end.GetTranslation() - endWidth);
+         /// Top left vertex.
+         fencePost->mGeomList[subIndex].segVertexList->at(5) = ((end.GetTranslation() - endWidth) + (endUp * mSegmentHeight * mFenceScale));
+         /// Top right vertex.
+         fencePost->mGeomList[subIndex].segVertexList->at(6) = ((start.GetTranslation() - startWidth) + (startUp * mSegmentHeight * mFenceScale));
+         /// Bottom right vertex.
+         fencePost->mGeomList[subIndex].segVertexList->at(7) = (start.GetTranslation() - startWidth);
 
-      osg::Vec3 endWidth = endUp ^ dir;
-      endWidth.normalize();
-      endWidth *= mSegmentWidth * 0.5f * mFenceScale;
+         // Top Wall
+         /// Bottom left vertex.
+         fencePost->mGeomList[subIndex].segVertexList->at(8) = ((start.GetTranslation() + startWidth) + (startUp * mSegmentHeight * mFenceScale));
+         /// Top left vertex.
+         fencePost->mGeomList[subIndex].segVertexList->at(9) = ((start.GetTranslation() - startWidth) + (startUp * mSegmentHeight * mFenceScale));
+         /// Top right vertex.
+         fencePost->mGeomList[subIndex].segVertexList->at(10)= ((end.GetTranslation() - endWidth) + (endUp * mSegmentHeight * mFenceScale));
+         /// Bottom right vertex.
+         fencePost->mGeomList[subIndex].segVertexList->at(11)= ((end.GetTranslation() + endWidth) + (endUp * mSegmentHeight * mFenceScale));
 
-      ////////////////////////////////////////////////////////////////////////////////
-      // Vertex
-      // Front Wall
-      /// Bottom left vertex.
-      vertexList->push_back(start.GetTranslation() + startWidth);
-      /// Top left vertex.
-      vertexList->push_back((start.GetTranslation() + startWidth) + (startUp * mSegmentHeight * mFenceScale));
-      /// Top right vertex.
-      vertexList->push_back((end.GetTranslation() + endWidth) + (endUp * mSegmentHeight * mFenceScale));
-      /// Bottom right vertex.
-      vertexList->push_back(end.GetTranslation() + endWidth);
+         ////////////////////////////////////////////////////////////////////////////////
+         // Texture
+         // Front Wall
+         fencePost->mGeomList[subIndex].segTextureList->at(0) = (osg::Vec2(1.0f, 0.0f));
+         fencePost->mGeomList[subIndex].segTextureList->at(1) = (osg::Vec2(1.0f, 1.0f - mTopTextureRatio));
+         fencePost->mGeomList[subIndex].segTextureList->at(2) = (osg::Vec2(1.0f - length, 1.0f - mTopTextureRatio));
+         fencePost->mGeomList[subIndex].segTextureList->at(3) = (osg::Vec2(1.0f - length, 0.0f));
 
-      // Back Wall
-      /// Bottom left vertex.
-      vertexList->push_back(end.GetTranslation() - endWidth);
-      /// Top left vertex.
-      vertexList->push_back((end.GetTranslation() - endWidth) + (endUp * mSegmentHeight * mFenceScale));
-      /// Top right vertex.
-      vertexList->push_back((start.GetTranslation() - startWidth) + (startUp * mSegmentHeight * mFenceScale));
-      /// Bottom right vertex.
-      vertexList->push_back(start.GetTranslation() - startWidth);
+         // Back Wall
+         fencePost->mGeomList[subIndex].segTextureList->at(4) = (osg::Vec2(1.0f - length, 0.0f));
+         fencePost->mGeomList[subIndex].segTextureList->at(5) = (osg::Vec2(1.0f - length, 1.0f - mTopTextureRatio));
+         fencePost->mGeomList[subIndex].segTextureList->at(6) = (osg::Vec2(1.0f, 1.0f - mTopTextureRatio));
+         fencePost->mGeomList[subIndex].segTextureList->at(7) = (osg::Vec2(1.0f, 0.0f));
 
-      // Top Wall
-      /// Bottom left vertex.
-      vertexList->push_back((start.GetTranslation() + startWidth) + (startUp * mSegmentHeight * mFenceScale));
-      /// Top left vertex.
-      vertexList->push_back((start.GetTranslation() - startWidth) + (startUp * mSegmentHeight * mFenceScale));
-      /// Top right vertex.
-      vertexList->push_back((end.GetTranslation() - endWidth) + (endUp * mSegmentHeight * mFenceScale));
-      /// Bottom right vertex.
-      vertexList->push_back((end.GetTranslation() + endWidth) + (endUp * mSegmentHeight * mFenceScale));
+         // Top Wall
+         fencePost->mGeomList[subIndex].segTextureList->at(8) = (osg::Vec2(1.0f, 1.0f - mTopTextureRatio));
+         fencePost->mGeomList[subIndex].segTextureList->at(9) = (osg::Vec2(1.0f, 1.0f));
+         fencePost->mGeomList[subIndex].segTextureList->at(10)= (osg::Vec2(1.0f - length, 1.0f));
+         fencePost->mGeomList[subIndex].segTextureList->at(11)= (osg::Vec2(1.0f - length, 1.0f - mTopTextureRatio));
 
-      geom->setVertexArray(vertexList.get());
+         ////////////////////////////////////////////////////////////////////////////////
+         // Normal
+         fencePost->mGeomList[subIndex].segNormalList->at(0) = dir;
+         fencePost->mGeomList[subIndex].segNormalList->at(1) = dir;
+         fencePost->mGeomList[subIndex].segNormalList->at(2) = dir;
 
-      ////////////////////////////////////////////////////////////////////////////////
-      // Texture
-      // Front Wall
-      textureList->push_back(osg::Vec2(1.0f, 0.0f));
-      textureList->push_back(osg::Vec2(1.0f, 1.0f - mTopTextureRatio));
-      textureList->push_back(osg::Vec2(1.0f - length, 1.0f - mTopTextureRatio));
-      textureList->push_back(osg::Vec2(1.0f - length, 0.0f));
+         // Get the texture to use for this segment.
+         std::string textureName = GetSegmentTexture(pointIndex, subIndex);
+         if (!textureName.empty())
+         {
+            // set up the texture state.
+            dtDAL::ResourceDescriptor descriptor = dtDAL::ResourceDescriptor(textureName);
+            fencePost->mGeomList[subIndex].segTexture->setImage(osgDB::readImageFile(dtDAL::Project::GetInstance().GetResourcePath(descriptor)));
+         }
 
-      // Back Wall
-      textureList->push_back(osg::Vec2(1.0f - length, 0.0f));
-      textureList->push_back(osg::Vec2(1.0f - length, 1.0f - mTopTextureRatio));
-      textureList->push_back(osg::Vec2(1.0f, 1.0f - mTopTextureRatio));
-      textureList->push_back(osg::Vec2(1.0f, 0.0f));
-
-      // Top Wall
-      textureList->push_back(osg::Vec2(1.0f, 1.0f - mTopTextureRatio));
-      textureList->push_back(osg::Vec2(1.0f, 1.0f));
-      textureList->push_back(osg::Vec2(1.0f - length, 1.0f));
-      textureList->push_back(osg::Vec2(1.0f - length, 1.0f - mTopTextureRatio));
-
-      geom->setTexCoordArray(0, textureList.get());
-
-      ////////////////////////////////////////////////////////////////////////////////
-      // Color
-      colorList->push_back(osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f));
-      geom->setColorArray(colorList.get());
-      geom->setColorBinding(osg::Geometry::BIND_OVERALL);
-
-      ////////////////////////////////////////////////////////////////////////////////
-      // Normal
-      normalList->push_back(dir);
-      geom->setNormalArray(normalList.get());
-      geom->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE);
-
-      // This time we simply use primitive, and hardwire the number of coords to use
-      // since we know up front,
-      geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 4));
-      geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 4, 4));
-      geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 8, 4));
-
-      // Get the texture to use for this segment.
-      std::string textureName = GetSegmentTexture(pointIndex, subIndex);
-      if (!textureName.empty())
-      {
-         // set up the texture state.
-         osg::Texture2D* texture = new osg::Texture2D();
-         texture->setWrap(osg::Texture2D::WRAP_S, osg::Texture2D::REPEAT);
-         dtDAL::ResourceDescriptor descriptor = dtDAL::ResourceDescriptor(textureName);
-         texture->setImage(osgDB::readImageFile(dtDAL::Project::GetInstance().GetResourcePath(descriptor)));
-
-         osg::StateSet* stateset = geom->getOrCreateStateSet();
-         stateset->setTextureAttributeAndModes(0, texture, osg::StateAttribute::ON);
+         // Make sure the geometry node knows to re-calculate the bounding area and display lists.
+         fencePost->mGeomList[subIndex].segGeom->dirtyBound();
+         fencePost->mGeomList[subIndex].segGeom->dirtyDisplayList();
       }
    }
 }
@@ -560,7 +729,7 @@ FenceActorProxy::~FenceActorProxy()
 /////////////////////////////////////////////////////////////////////////////
 void FenceActorProxy::CreateActor()
 {
-   SetActor(*new FenceActor());
+   SetActor(*new FenceActor(this));
 }
 
 /////////////////////////////////////////////////////////////////////////////

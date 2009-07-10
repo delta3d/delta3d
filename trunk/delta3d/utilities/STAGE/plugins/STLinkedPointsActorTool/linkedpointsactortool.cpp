@@ -736,11 +736,11 @@ ToolObjectMotionModel* LinkedPointsActorToolPlugin::GetMotionModelForView(Viewpo
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void LinkedPointsActorToolPlugin::ShowPlacementGhost(bool forceRefresh)
+void LinkedPointsActorToolPlugin::ShowPlacementGhost(osg::Vec3 position, bool forceRefresh)
 {
    if (!mShowingPlacementGhost && mActiveActor)
    {
-      mActiveActor->AddPoint(osg::Vec3());
+      mActiveActor->AddPoint(position);
       mShowingPlacementGhost = true;
       forceRefresh = true;
    }
@@ -823,13 +823,13 @@ void LinkedPointsActorToolPlugin::UpdatePlacementGhost(Viewport* vp, osg::Vec2 m
    //else
    {
       // If the ghost is being shown, update the position of it.
-      ShowPlacementGhost();
-
       osg::Vec3 position;
       if (editorView->getPickPosition(mousePos.x(), mousePos.y(), position, mActiveActor))
       {
          // Convert the pick position to the snap grid if needed.
          position = ViewportManager::GetInstance().GetSnapPosition(position, true, mActiveActor);
+         ShowPlacementGhost(position);
+
          int index = mActiveActor->GetPointCount() - 1;
          if (index > 0)
          {

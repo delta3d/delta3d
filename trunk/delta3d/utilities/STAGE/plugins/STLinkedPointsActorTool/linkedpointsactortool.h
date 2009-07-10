@@ -246,7 +246,7 @@ private:
    /**
    * Shows or Hides the placement ghost.
    */
-   void ShowPlacementGhost(bool forceRefresh = false);
+   void ShowPlacementGhost(osg::Vec3 position, bool forceRefresh = false);
    void HidePlacementGhost(bool forceRefresh = false);
    void UpdatePlacementGhost(Viewport* vp, osg::Vec2 mousePos);
 
