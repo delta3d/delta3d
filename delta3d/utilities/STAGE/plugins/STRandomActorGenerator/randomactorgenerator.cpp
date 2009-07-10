@@ -34,7 +34,10 @@ RandomActorGeneratorPlugin::RandomActorGeneratorPlugin(dtEditQt::MainWindow* mw)
 
    connect(mUI.mGenerateBtn, SIGNAL(clicked()), this, SLOT(OnGeneratePushed()));
    //May want to put this back later
-   //connect(mUI.mRefreshBtn, SIGNAL(clicked()), this, SLOT(OnRefreshActorList()));   
+   //connect(mUI.mRefreshBtn, SIGNAL(clicked()), this, SLOT(OnRefreshActorList()));
+   
+   connect(&(dtEditQt::EditorEvents::GetInstance()), SIGNAL(selectedActors(ActorProxyRefPtrVector&)),
+            this, SLOT(OnSelectedActorChange(ActorProxyRefPtrVector&)));
 
    //seed the random number generator
    srand(time(NULL));
@@ -118,6 +121,22 @@ void RandomActorGeneratorPlugin::OnRefreshActorList()
 
    dtEditQt::EditorData::GetInstance().getMainWindow()->endWaitCursor();
 */
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void RandomActorGeneratorPlugin::OnSelectedActorChange(ActorProxyRefPtrVector& actors)
+{
+   if (actors.size() > 0)
+   {
+      //ensure we can't duplicate the STAGE Brush
+      if (! dynamic_cast<dtActors::VolumeEditActorProxy*>(actors[0].get()))
+      {
+         mUI.mGenerateBtn->setEnabled(true);
+         return;
+      }
+   }
+   
+   mUI.mGenerateBtn->setEnabled(false);   
 }
 
 ////////////////////////////////////////////////////////////////////////////////
