@@ -660,7 +660,8 @@ namespace dtEditQt
          nextFile = dirFiles[i];
          isFolder = false;
 
-         if (dirFiles[i] == "." || dirFiles[i] == ".." || dirFiles[i] == ".svn")
+         //don't show any hidden directories
+         if (dirFiles[i][0] == '.')
          {
             continue;
          }
@@ -671,7 +672,8 @@ namespace dtEditQt
          if (dtUtil::FileUtils::GetInstance().DirExists(nextFileFullPath))
          {
             //Don't want to see the icons or svn folders
-            if(dtUtil::FileUtils::GetInstance().IsSameFile(mCurrentDir, mTopPrefabDir))            
+            if(dtUtil::FileUtils::GetInstance().IsSameFile(mCurrentDir, mTopPrefabDir) &&
+               nextFile == "icons")            
             {
                continue;
             }
