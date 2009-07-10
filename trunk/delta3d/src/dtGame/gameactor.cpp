@@ -342,7 +342,7 @@ namespace dtGame
 
          if (paramType == dtDAL::DataType::ACTOR)
          {
-            dtDAL::ActorActorProperty* aap = dynamic_cast<dtDAL::ActorActorProperty*>(property);
+            aap = dynamic_cast<dtDAL::ActorActorProperty*>(property);
          }
 
          // If the property is of type ACTOR AND it is an ActorActor property not an ActorID property, it's a special case.
