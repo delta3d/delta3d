@@ -6,6 +6,10 @@
 #include <dtDAL/containeractorproperty.h>
 #include <dtDAL/mapxml.h>
 #include <dtDAL/project.h>
+#include <dtDAL/functor.h>
+#include <dtGame/invokable.h>
+#include <dtGame/messagetype.h>
+#include <dtGame/gamemanager.h>
 #include <dtUtil/exception.h>
 #include <osg/Geode>
 #include <osg/ShapeDrawable>
@@ -17,9 +21,10 @@ namespace dtActors
    /////////////////////////////////////////////////////////////////////////////
 
    /////////////////////////////////////////////////////////////////////////////
-   LinkedPointsActor::LinkedPointsActor(const std::string& name)
+   LinkedPointsActor::LinkedPointsActor(dtDAL::ActorProxy* proxy, const std::string& name)
       : BaseClass(name)
       , mVisualize(false)
+      , mProxy(proxy)
    {
       // Always initialize with a single Link Point.
       AddPoint(osg::Vec3());
@@ -31,8 +36,30 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   bool LinkedPointsActor::IsMapLoaded()
+   {
+      //if (mProxy)
+      //{
+      //   dtGame::GameManager* gm = mProxy->GetGameManager();
+      //   if (gm && !gm->GetCurrentMap().empty())
+      //   {
+      //      return true;
+      //   }
+      //}
+
+      //return false;
+      return true;
+      //return !dtDAL::Project::GetInstance().IsMapBeingParsed();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void LinkedPointsActor::Visualize()
    {
+      if (!IsMapLoaded())
+      {
+         return;
+      }
+
       // Iterate through each point.
       for (int pointIndex = 0; pointIndex < GetPointCount(); pointIndex++)
       {
@@ -43,6 +70,11 @@ namespace dtActors
    ////////////////////////////////////////////////////////////////////////////////
    void LinkedPointsActor::Visualize(int pointIndex)
    {
+      if (!IsMapLoaded())
+      {
+         return;
+      }
+
       dtCore::Transformable* point = GetPointDrawable(pointIndex);
       if (point)
       {
@@ -305,7 +337,7 @@ namespace dtActors
    /////////////////////////////////////////////////////////////////////////////
    void LinkedPointsActorProxy::CreateActor()
    {
-      SetActor(*new LinkedPointsActor());
+      SetActor(*new LinkedPointsActor(this));
    }
 
    /////////////////////////////////////////////////////////////////////////////

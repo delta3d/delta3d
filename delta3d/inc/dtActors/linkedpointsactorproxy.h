@@ -1,12 +1,14 @@
 #ifndef linkedpointarrayactorproxy_h__
 #define linkedpointarrayactorproxy_h__
 
+#include <dtGame/gameactor.h>
 #include <dtDAL/plugin_export.h>
 #include <dtDAL/transformableactorproxy.h>
 #include <dtABC/export.h>
 #include <dtDAL/actorproperty.h>
 #include <osgText/Text>
 #include <dtCore/transformable.h>
+#include <dtDAL/gameevent.h>
 
 namespace dtActors
 {
@@ -18,7 +20,12 @@ namespace dtActors
    public:
       typedef dtCore::Transformable BaseClass;
 
-      LinkedPointsActor(const std::string& name = "LinkedPointsActor");
+      LinkedPointsActor(dtDAL::ActorProxy* proxy, const std::string& name = "LinkedPointsActor");
+
+      /**
+      * Retrieves whether the map is loaded or not.
+      */
+      bool IsMapLoaded();
 
       /**
       * This is used during the edit process to allow specialized
@@ -121,6 +128,8 @@ namespace dtActors
 
       bool mVisualize;
       std::vector<dtCore::RefPtr<dtCore::Transformable> >  mPointList;
+
+      dtDAL::ActorProxy* mProxy;
    };
 
    /////////////////////////////////////////////////////////////////////////////
