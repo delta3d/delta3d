@@ -60,6 +60,7 @@
 #include <dtEditQt/propertyeditor.h>
 #include <dtEditQt/undomanager.h>
 #include <dtEditQt/taskeditor.h>
+#include <dtEditQt/configurationmanager.h>
 #include <dtEditQt/externaltooldialog.h>
 #include <dtEditQt/externaltool.h>
 #include <dtEditQt/externaltoolargparsers.h>
@@ -1249,7 +1250,10 @@ namespace dtEditQt
          EditorData::GetInstance().addRecentProject(contextName);
          EditorEvents::GetInstance().emitProjectChanged();
          refreshRecentProjects();
-      }
+
+         ConfigurationManager::GetInstance().SetVariable(
+            ConfigurationManager::GENERAL, "ProjContextPath", contextName);
+      }      
 
       slotRestartAutosave();
    }
@@ -1452,6 +1456,9 @@ namespace dtEditQt
             dtDAL::Project::GetInstance().LoadMapIntoScene(*newMap,
                *(ViewportManager::GetInstance().getMasterScene()), true);
 
+            ConfigurationManager::GetInstance().SetVariable(
+               ConfigurationManager::GENERAL, "Map", newMap->GetName());
+
          }
          catch (const dtUtil::Exception& e)
          {
@@ -1468,6 +1475,7 @@ namespace dtEditQt
       // Now that we have changed maps, clear the current selection.
       std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > emptySelection;
       EditorEvents::GetInstance().emitActorsSelected(emptySelection);
+      
    }
 
    //////////////////////////////////////////////////////////////////////////////
