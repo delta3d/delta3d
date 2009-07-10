@@ -528,7 +528,34 @@ namespace dtEditQt
          findAndLoadPreferences();
          mPerspView->onEditorPreferencesChanged();
 
-         if (!EditorData::GetInstance().getLoadLastProject())//FindRecentProjects().empty())
+         //see if there is a Project Context Path in the Configuration Manager
+         if (ConfigurationManager::GetInstance().GetVariable(
+               ConfigurationManager::GENERAL, "ProjContextPath") != "")
+         {
+            std::string projContextPath = ConfigurationManager::GetInstance().GetVariable(
+                                             ConfigurationManager::GENERAL, "ProjContextPath");
+            if (dtUtil::FileUtils::GetInstance().DirExists(projContextPath))
+            {
+               // Try to set the project context specified in the config file 
+               try
+               {
+                  startWaitCursor();
+                  dtDAL::Project::GetInstance().SetContext(projContextPath);
+                  EditorData::GetInstance().setCurrentProjectContext(projContextPath);
+                  EditorData::GetInstance().addRecentProject(projContextPath);
+                  EditorEvents::GetInstance().emitProjectChanged();
+                  EditorActions::GetInstance().refreshRecentProjects();
+                  endWaitCursor();                  
+               }
+               catch(const dtUtil::Exception& e)
+               {
+                  endWaitCursor();
+                  QMessageBox::critical((QWidget*)this,
+                     tr("Error"), tr(e.What().c_str()), tr("OK"));
+               }               
+            }
+         }
+         else if (!EditorData::GetInstance().getLoadLastProject())//FindRecentProjects().empty())
          {
             ProjectContextDialog dialog(this);
             if (dialog.exec() == QDialog::Accepted)
@@ -578,7 +605,14 @@ namespace dtEditQt
          EditorActions::GetInstance().refreshRecentProjects();
          endWaitCursor();
 
-         if (EditorData::GetInstance().getLoadLastMap())
+         if (ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::GENERAL,
+                                                             "Map") != "")
+         {
+            std::string mapToLoad = ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::GENERAL,
+                                                                                    "Map");
+            checkAndLoadBackup(mapToLoad);
+         }
+         else if (EditorData::GetInstance().getLoadLastMap())
          {
             std::list<std::string>& maps = EditorData::GetInstance().getRecentMaps();
             if (!maps.empty())
@@ -1243,7 +1277,19 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void MainWindow::checkAndLoadBackup(const std::string& str)
    {
-      if (dtDAL::Project::GetInstance().HasBackup(str))
+      bool hasBackup;
+
+      try 
+      {
+         hasBackup = dtDAL::Project::GetInstance().HasBackup(str);
+      } 
+      catch (dtUtil::Exception e)
+      {
+         //must not have a valid backup
+         hasBackup = false;
+      }
+
+      if (hasBackup)
       {
          int result = QMessageBox::information(this, tr("Backup file found"),
             tr("A backup save file has been detected. Would you like to open it?"),
@@ -1288,12 +1334,22 @@ namespace dtEditQt
          }
       }
       else
-      {
+      {         
          startWaitCursor();
-         dtDAL::Map& m = dtDAL::Project::GetInstance().GetMap(str);
-         EditorActions::GetInstance().changeMaps(
-            EditorData::GetInstance().getCurrentMap(), &m);
-         EditorData::GetInstance().addRecentMap(m.GetName());
+         try
+         {
+            dtDAL::Map& m = dtDAL::Project::GetInstance().GetMap(str);
+            EditorActions::GetInstance().changeMaps(
+               EditorData::GetInstance().getCurrentMap(), &m);
+            EditorData::GetInstance().addRecentMap(m.GetName());
+         }
+         catch (dtUtil::Exception e)
+         {
+            QMessageBox::critical(this, tr("Failed to load map"),
+               tr("Failed to load previous map at: \n") +
+               tr(str.c_str()),
+               QMessageBox::Ok);            
+         }         
          endWaitCursor();
       }
    }
