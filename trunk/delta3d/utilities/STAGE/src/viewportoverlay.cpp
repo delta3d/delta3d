@@ -45,6 +45,8 @@
 #include <dtUtil/log.h>
 #include <cstdio>
 
+#include <dtActors/volumeeditactor.h>
+
 #include <dtDAL/actorproxyicon.h>
 
 #include <dtEditQt/viewportoverlay.h>
@@ -226,14 +228,29 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void ViewportOverlay::select(dtCore::DeltaDrawable* drawable)
    {
+      osg::StateSet* ss = mSelectionDecorator->getOrCreateStateSet();
+
       if (drawable == NULL || drawable->GetOSGNode() == NULL)
-      {
+      {         
          return;
       }
 
       if (mSelectionDecorator->containsNode(drawable->GetOSGNode()))
       {
          return;
+      }
+      
+      //if this is the Brush, then make the selectionDecorator visible through
+      //other objects
+      dtActors::VolumeEditActor* volEditActTest = dynamic_cast<dtActors::VolumeEditActor*>(drawable);
+      if (volEditActTest)
+      {         
+         ss->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
+         volEditActTest->EnableOutline(false);
+      }
+      else
+      {
+         ss->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);         
       }
 
       mSelectionDecorator->addChild(drawable->GetOSGNode());

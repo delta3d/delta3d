@@ -639,8 +639,7 @@ namespace dtEditQt
       std::string nextIconFullPath;
       bool isFolder = false;
       
-      //if (!dtUtil::FileUtils::GetInstance().IsSameFile(mCurrentDir, mTopPrefabDir))
-      if (mCurrentDir != mTopPrefabDir)
+      if (!dtUtil::FileUtils::GetInstance().IsSameFile(mCurrentDir, mTopPrefabDir))      
       {
          //Show a "Go up a folder" icon
          nextIconFullPath = dtCore::GetDeltaRootPath() + "/utilities/STAGE/icons/upfolder_big.png";
@@ -672,8 +671,7 @@ namespace dtEditQt
          if (dtUtil::FileUtils::GetInstance().DirExists(nextFileFullPath))
          {
             //Don't want to see the icons or svn folders
-            //if(dtUtil::FileUtils::GetInstance().IsSameFile(mCurrentDir, mTopPrefabDir)
-            if (mCurrentDir == mTopPrefabDir && nextFile == "icons")
+            if(dtUtil::FileUtils::GetInstance().IsSameFile(mCurrentDir, mTopPrefabDir))            
             {
                continue;
             }
@@ -725,8 +723,7 @@ namespace dtEditQt
             aWidget->setCategoryFullName(nextFileFullPath.c_str());            
 
             //want "Up a folder" to be first on all but the top level
-            //if(dtUtil::FileUtils::GetInstance().IsSameFile(mCurrentDir, mTopPrefabDir))
-            if (mCurrentDir == mTopPrefabDir)
+            if(dtUtil::FileUtils::GetInstance().IsSameFile(mCurrentDir, mTopPrefabDir))            
             {
                mListWidget->insertItem(0 + numCategories, aWidget);               
             }

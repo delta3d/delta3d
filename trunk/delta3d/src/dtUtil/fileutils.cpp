@@ -862,7 +862,15 @@ namespace dtUtil
          stat1.st_mode  == stat2.st_mode  &&
          stat1.st_size  == stat2.st_size)
       {
-         return true;
+         //also make sure the file names (NOT paths) are the same
+         std::string file1Name = file1.substr(file1.find_last_of("\\/"));
+         //Windows is case insensitive
+         std::transform(file1Name.begin(), file1Name.end(), file1Name.begin(), tolower);
+         std::string file2Name = file2.substr(file2.find_last_of("\\/"));
+         std::transform(file2Name.begin(), file2Name.end(), file2Name.begin(), tolower);
+
+         if (file1Name == file2Name)
+            return true;
       }
 #endif
 
