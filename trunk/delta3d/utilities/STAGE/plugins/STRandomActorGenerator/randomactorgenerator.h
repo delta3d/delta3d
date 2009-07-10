@@ -6,6 +6,7 @@
 
 #include <dtCore/refptr.h>
 #include <dtEditQt/plugininterface.h>
+#include <dtEditQt/typedefs.h>
 
 #include <osg/Vec3>
 
@@ -50,9 +51,10 @@ public:
    /** override close event to get notified when user closes the dock */
    virtual void closeEvent(QCloseEvent* event);
 
-public slots:     
+public slots: 
    void OnGeneratePushed();
    void OnRefreshActorList();
+   void OnSelectedActorChange(ActorProxyRefPtrVector& actors);
 
 private:
    void NewActorProxyInsideVolumeEditor(dtDAL::ActorProxy* proxyToCopy);
