@@ -671,7 +671,7 @@ namespace dtEditQt
          //determine what the icon is for this file:  ////////////////////////////////////////////         
          if (dtUtil::FileUtils::GetInstance().DirExists(nextFileFullPath))
          {
-            //Don't want to see the icons or svn folders
+            //Don't want to see the icons folder
             if(dtUtil::FileUtils::GetInstance().IsSameFile(mCurrentDir, mTopPrefabDir) &&
                nextFile == "icons")            
             {
