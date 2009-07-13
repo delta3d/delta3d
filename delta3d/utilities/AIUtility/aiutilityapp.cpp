@@ -40,8 +40,8 @@
 
 /////////////////////////////////////
 AIUtilityApp::AIUtilityApp()
-: dtABC::Application("config.xml")
-, mGM(new dtGame::GameManager(*GetScene()))
+   : dtABC::Application("config.xml")
+   , mGM(new dtGame::GameManager(*GetScene()))
 {
    mGM->SetApplication(*this);
 }

@@ -45,8 +45,8 @@ static const std::string CURRENT_MAP_SETTING("CurrentMap");
 
 //////////////////////////////////////////////
 MainWindow::MainWindow(QWidget& mainWidget)
-: mUi(new Ui::MainWindow)
-, mCentralWidget(mainWidget)
+   : mUi(new Ui::MainWindow)
+   , mCentralWidget(mainWidget)
 {
    mUi->setupUi(this);
 
