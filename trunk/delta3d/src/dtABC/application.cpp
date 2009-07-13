@@ -180,10 +180,6 @@ void Application::EventTraversal(const double deltaSimTime)
 
    if(!mFirstFrame || !mCompositeViewer->done())
    {
-      // NOTE: The new version OSG (2.2) relies on absolute frame time
-      // to update drawables; especially particle systems.
-      // The time delta will be ignored here and the absolute simulation
-      // time passed to the OSG scene updater.
      mCompositeViewer->eventTraversal();
    }
 }
@@ -202,6 +198,10 @@ void Application::Frame(const double deltaSimTime)
          mFirstFrame = false;
       }
 
+      // NOTE: The new version OSG (2.2) relies on absolute frame time
+      // to update drawables; especially particle systems.
+      // The time delta will be ignored here and the absolute simulation
+      // time passed to the OSG scene updater.
       mCompositeViewer->advance(dtCore::System::GetInstance().GetSimTimeSinceStartup());
       mCompositeViewer->updateTraversal();
       mCompositeViewer->renderingTraversals();
