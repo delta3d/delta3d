@@ -1,4 +1,4 @@
-#include <dtActors/FenceActor.h>
+#include <dtActors/fenceactor.h>
 #include <dtCore/object.h>
 #include <dtCore/transformable.h>
 #include <dtCore/transform.h>
@@ -44,7 +44,7 @@ bool FencePostTransformable::SetIndex(int index)
          dtCore::Transform segmentTransform;
          mOrigin->SetTransform(segmentTransform);
       }
-      
+
       if (!mSegColorList.valid())
       {
          mSegColorList = new osg::Vec4Array();
@@ -134,7 +134,7 @@ bool FencePostTransformable::SetSize(int size)
       while ((int)mGeomList.size() > size)
       {
          GeomData& data = mGeomList.back();
-         
+
          osg::Group* myGroup = GetOSGNode()->asGroup();
          if (!myGroup) return false;
          myGroup->removeChild(data.post->GetOSGNode());
@@ -271,7 +271,7 @@ void FenceActor::Visualize(int pointIndex)
             osg::Vec3 dir = end - start;
             float totalLength = dir.length();
             dir.normalize();
-            
+
             // Now determine the position of each post.
             osg::Vec3 lastPost = start;
             int subPostIndex = 1;
@@ -521,7 +521,7 @@ void FenceActor::SetScale(const osg::Vec3& value)
 dtCore::Transformable* FenceActor::CreatePointDrawable(osg::Vec3 position)
 {
    dtCore::Transformable* point = new FencePostTransformable();
-   
+
    // Attach this new point to the actor.
    AddChild(point);
 
