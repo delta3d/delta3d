@@ -11,17 +11,149 @@
 #include <dtGame/messagetype.h>
 #include <dtGame/gamemanager.h>
 #include <dtUtil/exception.h>
-#include <osg/Geode>
-#include <osg/ShapeDrawable>
 
 namespace dtActors
 {
+   bool LinkedPointsGeomData::Initialize()
+   {
+      // Point
+      mPointGeode = new osg::Geode();
+      if (!mPointGeode.valid()) return false;
+
+      mPointSphere = new osg::Sphere(osg::Vec3(0.0f, 0.0f, 0.0f), 1.0f);
+      if (!mPointSphere.valid()) return false;
+
+      mPointDrawable = new osg::ShapeDrawable(mPointSphere.get());
+      if (!mPointDrawable.valid()) return false;
+
+      mPointDrawable->setColor(osg::Vec4(0.0f, 1.0f, 1.0f, 1.0f));
+
+      mPointGeode->addDrawable(mPointDrawable.get());
+
+      if (!mParent) return false;
+      osg::Group* pointGroup = mParent->GetOSGNode()->asGroup();
+      if (!pointGroup) return false;
+      pointGroup->addChild(mPointGeode.get());
+
+      // Segment
+      mSegTransformable = new dtCore::Transformable();
+      if (!mSegTransformable.valid()) return false;
+
+      mSegGeode = new osg::Geode();
+      if (!mSegGeode.valid()) return false;
+
+      mSegCylinder = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, 0.0f), 0.15f, 0.15f);
+      if (!mSegCylinder.valid()) return false;
+
+      mSegDrawable = new osg::ShapeDrawable(mSegCylinder.get());
+      if (!mSegDrawable.valid()) return false;
+      mSegDrawable->setColor(osg::Vec4(0.0f, 0.5f, 1.0f, 1.0f));
+
+      pointGroup->addChild(mSegTransformable->GetOSGNode());
+      mSegGeode->addDrawable(mSegDrawable.get());
+
+      osg::Group* segGroup = mSegTransformable->GetOSGNode()->asGroup();
+      if (!segGroup) return false;
+      segGroup->addChild(mSegGeode.get());
+
+      return true;
+   }
+
+   bool LinkedPointsGeomData::Shutdown()
+   {
+      if (!mParent) return false;
+      osg::Group* pointGroup = mParent->GetOSGNode()->asGroup();
+      if (!pointGroup) return false;
+      pointGroup->removeChild(mPointGeode.get());
+      pointGroup->removeChild(mSegTransformable->GetOSGNode());
+
+      mPointGeode = NULL;
+      mPointSphere = NULL;
+      mPointDrawable = NULL;
+
+      mSegTransformable = NULL;
+      mSegGeode = NULL;
+      mSegCylinder = NULL;
+      mSegDrawable = NULL;
+
+      return true;
+   }
+
+
+   ////////////////////////////////////////////////////////////////////////////////
+   // LINKED POINTS GEOM NODE BASE
+   ////////////////////////////////////////////////////////////////////////////////
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool LinkedPointsGeomNodeBase::SetIndex(int index)
+   {
+      if (index < 0) index = 0;
+
+      // Expand the size.
+      while (index >= (int)mGeomList.size())
+      {
+         LinkedPointsGeomDataBase* data = CreateGeom();
+         if (!data) return false;
+         if (!data->Initialize()) return false;
+         mGeomList.push_back(data);
+      }
+
+      return true;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool LinkedPointsGeomNodeBase::SetSize(int size)
+   {
+      if (size < 0) size = 0;
+
+      // Shrink the size.
+      if (size <= (int)mGeomList.size())
+      {
+         while ((int)mGeomList.size() > size)
+         {
+            LinkedPointsGeomDataBase* data = mGeomList.back();
+            if (!data) return false;
+            data->Shutdown();
+            mGeomList.pop_back();
+         }
+      }
+      // Expand the size.
+      else
+      {
+         return SetIndex(size - 1);
+      }
+
+      return true;
+   }
+
+
+   ////////////////////////////////////////////////////////////////////////////////
+   // LINKED POINTS GEOM NODE
+   ////////////////////////////////////////////////////////////////////////////////
+
+   ////////////////////////////////////////////////////////////////////////////////
+   LinkedPointsGeomNode::LinkedPointsGeomNode()
+   {
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   LinkedPointsGeomNode::~LinkedPointsGeomNode()
+   {
+      SetSize(0);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   LinkedPointsGeomDataBase* LinkedPointsGeomNode::CreateGeom()
+   {
+      return new LinkedPointsGeomData(this);
+   }
+
    /////////////////////////////////////////////////////////////////////////////
    // ACTOR CODE
    /////////////////////////////////////////////////////////////////////////////
 
    /////////////////////////////////////////////////////////////////////////////
-   LinkedPointsActor::LinkedPointsActor(dtDAL::ActorProxy* proxy, const std::string& name)
+   LinkedPointsActor::LinkedPointsActor(dtActors::LinkedPointsActorProxy* proxy, const std::string& name)
       : BaseClass(name)
       , mVisualize(false)
       , mProxy(proxy)
@@ -36,26 +168,9 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool LinkedPointsActor::IsMapLoaded()
-   {
-      //if (mProxy)
-      //{
-      //   dtGame::GameManager* gm = mProxy->GetGameManager();
-      //   if (gm && !gm->GetCurrentMap().empty())
-      //   {
-      //      return true;
-      //   }
-      //}
-
-      //return false;
-      return true;
-      //return !dtDAL::Project::GetInstance().IsMapBeingParsed();
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
    void LinkedPointsActor::Visualize()
    {
-      if (!IsMapLoaded())
+      if (mProxy->IsLoading())
       {
          return;
       }
@@ -70,32 +185,29 @@ namespace dtActors
    ////////////////////////////////////////////////////////////////////////////////
    void LinkedPointsActor::Visualize(int pointIndex)
    {
-      if (!IsMapLoaded())
+      // Don't visualize during a map load or if we're not in STAGE.
+      if (mProxy->IsLoading() || !mProxy->IsInSTAGE())
       {
          return;
       }
 
-      dtCore::Transformable* point = GetPointDrawable(pointIndex);
+      dtActors::LinkedPointsGeomNode* point = 
+         dynamic_cast<dtActors::LinkedPointsGeomNode*>(GetPointDrawable(pointIndex));
+      // If the drawable is not of the proper class, regenerate it.
+      if (!point)
+      {
+         RegeneratePointDrawable(pointIndex);
+
+         point = dynamic_cast<dtActors::LinkedPointsGeomNode*>(GetPointDrawable(pointIndex));
+      }
+
       if (point)
       {
-         // First clear the old visualization data from the point.
-         while (point->GetNumChildren())
-         {
-            point->RemoveChild(point->GetChild(0));
-         }
+         if (!point->SetSize(1)) return;
 
-         osg::Group* pointGroup = point->GetOSGNode()->asGroup();
-         pointGroup->removeChildren(0, pointGroup->getNumChildren());
-
-         // Create a default sphere geode to represent this point.
-         osg::Geode* geode = new osg::Geode();
-         osg::Sphere* sphere = new osg::Sphere(osg::Vec3(0.0f, 0.0f, 0.0f), 1.0f);
-
-         osg::ShapeDrawable* sphereDrawable = new osg::ShapeDrawable(sphere);
-         sphereDrawable->setColor(osg::Vec4(0.0f, 1.0f, 1.0f, 1.0f));
-
-         geode->addDrawable(sphereDrawable);
-         pointGroup->addChild(geode);
+         dtActors::LinkedPointsGeomData* geomData =
+            dynamic_cast<dtActors::LinkedPointsGeomData*>(point->mGeomList[0].get());
+         if (!geomData) return;
 
          // Now create a cylinder to connect this point with the previous.
          if (pointIndex < GetPointCount() - 1)
@@ -111,26 +223,25 @@ namespace dtActors
             osg::Vec3 center = osg::Vec3(0.0f, 0.0f, height * 0.5f);
             dir.normalize();
 
-            dtCore::Transformable* lineRot = new dtCore::Transformable();
-            geode = new osg::Geode();
-            osg::Cylinder* line = new osg::Cylinder(center, 0.15f, height);
-            osg::ShapeDrawable* lineDrawable = new osg::ShapeDrawable(line);
-            lineDrawable->setColor(osg::Vec4(0.0f, 0.5f, 1.0f, 1.0f));
-
-            // Now add the line into the scene.
-            point->AddChild(lineRot);
-            geode->addDrawable(lineDrawable);
-
-            osg::Group* rotGroup = lineRot->GetOSGNode()->asGroup();
-            rotGroup->addChild(geode);
+            geomData->mSegCylinder->setCenter(center);
+            geomData->mSegCylinder->setHeight(height);
 
             osg::Matrix matrix;
             matrix = matrix.rotate(osg::Vec3(0.0f, 0.0f, 1.0f), dir);
             dtCore::Transform transform;
             transform.SetRotation(matrix);
             transform.SetTranslation(start);
-            lineRot->SetTransform(transform);
+            geomData->mSegTransformable->SetTransform(transform);
          }
+         else
+         {
+            osg::Vec3 center = osg::Vec3(0.0f, 0.0f, 0.0f);
+            geomData->mSegCylinder->setCenter(center);
+            geomData->mSegCylinder->setHeight(0.15f);
+         }
+
+         geomData->mSegDrawable->dirtyDisplayList();
+         geomData->mSegDrawable->dirtyBound();
       }
    }
 
@@ -302,7 +413,7 @@ namespace dtActors
    ////////////////////////////////////////////////////////////////////////////////
    dtCore::Transformable* LinkedPointsActor::CreatePointDrawable(osg::Vec3 position)
    {
-      dtCore::Transformable* point = new dtCore::Transformable();
+      dtCore::Transformable* point = new dtActors::LinkedPointsGeomNode();
 
       // Attach this new point to the actor.
       AddChild(point);
@@ -316,6 +427,27 @@ namespace dtActors
       return point;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void LinkedPointsActor::RegeneratePointDrawable(int pointIndex)
+   {
+      if (pointIndex < 0 || pointIndex >= (int)mPointList.size()) return;
+
+      // Copy the transform of the current point.
+      dtCore::Transform transform;
+      mPointList[pointIndex]->GetTransform(transform);
+
+      // Now re-create a new point drawable.
+      dtCore::Transformable* point = CreatePointDrawable(transform.GetTranslation());
+
+      // And set it to the same transform.
+      point->SetTransform(transform);
+
+      RemoveChild(mPointList[pointIndex].get());
+
+      // Now make this the new point.
+      mPointList[pointIndex] = point;
+   }
+
    /////////////////////////////////////////////////////////////////////////////
    // PROXY CODE
    /////////////////////////////////////////////////////////////////////////////
@@ -325,6 +457,7 @@ namespace dtActors
    LinkedPointsActorProxy::LinkedPointsActorProxy()
       : BaseClass()
       , mPointIndex(0)
+      , mLoading(false)
    {
       SetClassName(CLASS_NAME.Get());
    }
@@ -376,6 +509,24 @@ namespace dtActors
       arrayProp->SetMinArraySize(1);
 
       AddProperty(arrayProp);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void LinkedPointsActorProxy::OnMapLoadBegin()
+   {
+      mLoading = true;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void LinkedPointsActorProxy::OnMapLoadEnd()
+   {
+      mLoading = false;
+
+      // Once we have finished loading, we can visualize the actor.
+      LinkedPointsActor* actor = NULL;
+      GetActor(actor);
+
+      return actor->Visualize();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
