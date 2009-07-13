@@ -433,6 +433,9 @@ namespace  dtDAL
                      actorTypeFullName.c_str());
                }
 
+               // Notify the proxy that it is being loaded.
+               mActorProxy->OnMapLoadBegin();
+
                // When loading a prefab, all actors are put into a group.
                if (mLoadingPrefab)
                {

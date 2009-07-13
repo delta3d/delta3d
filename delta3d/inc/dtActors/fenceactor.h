@@ -18,441 +18,431 @@ namespace dtDAL
    class ResourceDescriptor;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// FENCE POST TRANSFORMABLE
-////////////////////////////////////////////////////////////////////////////////
-class FencePostTransformable : public dtCore::Transformable
+namespace dtActors
 {
-private:
-
-   struct GeomData
+   ////////////////////////////////////////////////////////////////////////////////
+   // FENCE POST GEOM DATA
+   ////////////////////////////////////////////////////////////////////////////////
+   class FencePostGeomData : public LinkedPointsGeomDataBase
    {
+   public:
+      FencePostGeomData(LinkedPointsGeomNodeBase* parent): 
+         LinkedPointsGeomDataBase(parent) {}
+
+      /**
+      * Initializes the Geom Data.
+      */
+      bool Initialize();
+
+      /**
+      * Shuts down the Geom Data.
+      */
+      bool Shutdown();
+
       // Post
-      dtCore::RefPtr<dtCore::Object> post;
+      dtCore::RefPtr<dtCore::Object>   mPost;
 
       // Segment
-      osg::ref_ptr<osg::Geometry>   segGeom;
-      osg::ref_ptr<osg::Geode>      segGeode;
+      osg::ref_ptr<osg::Geometry>      mSegGeom;
+      osg::ref_ptr<osg::Geode>         mSegGeode;
 
-      osg::ref_ptr<osg::Vec3Array>  segVertexList;
-      osg::ref_ptr<osg::Vec2Array>  segTextureList;
-      osg::ref_ptr<osg::Vec3Array>  segNormalList;
+      osg::ref_ptr<osg::Vec3Array>     mSegVertexList;
+      osg::ref_ptr<osg::Vec2Array>     mSegTextureList;
+      osg::ref_ptr<osg::Vec3Array>     mSegNormalList;
 
-      osg::ref_ptr<osg::Texture2D>  segTexture;
+      osg::ref_ptr<osg::Texture2D>     mSegTexture;
    };
 
-   /**
-   * Default Constructor.
-   */
-   FencePostTransformable();
-
-   /**
-   * Sets the current segment/post index.
-   * This will ensure the arrays are large enough
-   * for the given index but will not shrink the arrays
-   * for a smaller index.
-   *
-   * @param[in]  index  The index to set.
-   *
-   * @return     Success or failure.
-   */
-   bool SetIndex(int index);
-
-   /**
-   * This will set the current size of the segment/post arrays.
-   * Should be used when you know exactly how many posts and
-   * segments there will be.
-   *
-   * @param[in]  size  The new size.
-   *
-   * @return     Success or failure.
-   */
-   bool SetSize(int size);
-
-   /**
-   * This will clear all parent geometry if the
-   * geometry has been placed there by the parent.
-   */
-   void ClearParentGeometry();
-
-protected:
-   ~FencePostTransformable();
-
-private:
-
-   friend class FenceActor;
-
-   std::vector<GeomData> mGeomList;
-
-   dtCore::RefPtr<dtCore::Transformable> mOrigin;
-   osg::ref_ptr<osg::Vec4Array>          mSegColorList;
-
-   bool mRenderingParent;
-};
-
-/////////////////////////////////////////////////////////////////////////////
-// ACTOR CODE
-/////////////////////////////////////////////////////////////////////////////
-class DT_PLUGIN_EXPORT FenceActor : public dtActors::LinkedPointsActor
-{
-public:
-   typedef dtActors::LinkedPointsActor BaseClass;
-
-   struct ResourceIDData
+   ////////////////////////////////////////////////////////////////////////////////
+   // FENCE POST GEOM NODE
+   ////////////////////////////////////////////////////////////////////////////////
+   class FencePostGeomNode : public LinkedPointsGeomNodeBase
    {
-      ResourceIDData()
-      {
-         postID = 0;
-         segmentID = 0;
-      }
+   public:
 
-      int      postID;
-      int      segmentID;
+      /**
+      * Default Constructor.
+      */
+      FencePostGeomNode();
+
+      /**
+      * Default Destructor.
+      */
+      ~FencePostGeomNode();
+
+      /**
+      * Creates a new geom data.  This should be overloaded
+      * to create the Geom Data of the proper inheritance.
+      */
+      LinkedPointsGeomDataBase* CreateGeom();
+
+      dtCore::RefPtr<dtCore::Transformable> mOrigin;
+      osg::ref_ptr<osg::Vec4Array>          mSegColorList;
    };
 
-   FenceActor(dtDAL::ActorProxy* proxy, const std::string& name = "FenceActor");
+   /////////////////////////////////////////////////////////////////////////////
+   // ACTOR CODE
+   /////////////////////////////////////////////////////////////////////////////
+   class DT_PLUGIN_EXPORT FenceActor : public dtActors::LinkedPointsActor
+   {
+   public:
+      typedef dtActors::LinkedPointsActor BaseClass;
 
-   /**
-   * This will visualize the current actor.
-   */
-   virtual void Visualize(void);
+      struct ResourceIDData
+      {
+         ResourceIDData()
+         {
+            postID = 0;
+            segmentID = 0;
+         }
 
-   /**
-   * This will update the visuals on a single point.
-   *
-   * @param[in]  pointIndex  The point to update.
-   */
-   virtual void Visualize(int pointIndex);
+         int      postID;
+         int      segmentID;
+      };
 
-   /**
-   * Retrieves the list of fence post resources.
-   */
-   std::vector<std::string> GetPostResourceArray() const;
+      FenceActor(dtActors::LinkedPointsActorProxy* proxy, const std::string& name = "FenceActor");
 
-   /**
-   * Functor to set the current post resource array.
-   *
-   * @param[in]  value  The new array.
-   */
-   void SetPostResourceArray(const std::vector<std::string>& value);
+      /**
+      * This will visualize the current actor.
+      */
+      virtual void Visualize(void);
 
-   /**
-   * Retrieves the list of fence post resources.
-   */
-   std::vector<std::string> GetSegmentResourceArray() const;
+      /**
+      * This will update the visuals on a single point.
+      *
+      * @param[in]  pointIndex  The point to update.
+      */
+      virtual void Visualize(int pointIndex);
 
-   /**
-   * Functor to set the current post resource array.
-   *
-   * @param[in]  value  The new array.
-   */
-   void SetSegmentResourceArray(const std::vector<std::string>& value);
+      /**
+      * Retrieves the list of fence post resources.
+      */
+      std::vector<std::string> GetPostResourceArray() const;
 
-   /**
-   * Retrieves the list of fence post mesh indexes.
-   */
-   std::vector<std::vector<FenceActor::ResourceIDData> > GetResourceIDArray();
+      /**
+      * Functor to set the current post resource array.
+      *
+      * @param[in]  value  The new array.
+      */
+      void SetPostResourceArray(const std::vector<std::string>& value);
 
-   /**
-   * Sets the list of fence post mesh indexes.
-   */
-   void SetResourceIDArray(const std::vector<std::vector<FenceActor::ResourceIDData> >& value);
+      /**
+      * Retrieves the list of fence post resources.
+      */
+      std::vector<std::string> GetSegmentResourceArray() const;
 
-   /**
-   * Retrieves the post mesh resource of a particular post.
-   *
-   * @param[in]  pointIndex  The index of the point.
-   * @param[in]  subIndex    The index of the sub post between two points.
-   *
-   * @return     The name of the post mesh resource.  Empty if no meshes are available.
-   */
-   std::string GetPostMesh(int pointIndex, int subIndex);
+      /**
+      * Functor to set the current post resource array.
+      *
+      * @param[in]  value  The new array.
+      */
+      void SetSegmentResourceArray(const std::vector<std::string>& value);
 
-   /**
-   * Sets the post mesh resource for a particular post.
-   *
-   * @param[in]  pointIndex  The index of the point.
-   * @param[in]  subIndex    The index of the sub post between two points.
-   * @param[in]  meshIndex   The index of the mesh.
-   */
-   void SetPostMesh(int pointIndex, int subIndex, int meshIndex);
+      /**
+      * Retrieves the list of fence post mesh indexes.
+      */
+      std::vector<std::vector<FenceActor::ResourceIDData> > GetResourceIDArray();
 
-   /**
-   * Gets the minimum distance between posts.
-   */
-   float GetPostMinDistance() { return mPostMinDistance; }
+      /**
+      * Sets the list of fence post mesh indexes.
+      */
+      void SetResourceIDArray(const std::vector<std::vector<FenceActor::ResourceIDData> >& value);
 
-   /**
-   * Sets the minimum distance between posts.
-   */
-   void SetPostMinDistance(float value);
+      /**
+      * Retrieves the post mesh resource of a particular post.
+      *
+      * @param[in]  pointIndex  The index of the point.
+      * @param[in]  subIndex    The index of the sub post between two points.
+      *
+      * @return     The name of the post mesh resource.  Empty if no meshes are available.
+      */
+      std::string GetPostMesh(int pointIndex, int subIndex);
 
-   /**
-   * Gets the maximum distance between posts.
-   */
-   float GetPostMaxDistance() { return mPostMaxDistance; }
+      /**
+      * Sets the post mesh resource for a particular post.
+      *
+      * @param[in]  pointIndex  The index of the point.
+      * @param[in]  subIndex    The index of the sub post between two points.
+      * @param[in]  meshIndex   The index of the mesh.
+      */
+      void SetPostMesh(int pointIndex, int subIndex, int meshIndex);
 
-   /**
-   * Sets the maximum distance between posts.
-   */
-   void SetPostMaxDistance(float value);
+      /**
+      * Gets the minimum distance between posts.
+      */
+      float GetPostMinDistance() { return mPostMinDistance; }
 
-   /**
-   * Gets the post scale.
-   */
-   float GetFenceScale() { return mFenceScale; }
+      /**
+      * Sets the minimum distance between posts.
+      */
+      void SetPostMinDistance(float value);
 
-   /**
-   * Sets the post scale.
-   */
-   void SetFenceScale(float value);
+      /**
+      * Gets the maximum distance between posts.
+      */
+      float GetPostMaxDistance() { return mPostMaxDistance; }
 
-   /**
-   * Retrieves the segment texture resource for a particular segment.
-   *
-   * @param[in]  pointIndex  The index of the point.
-   * @param[in]  subIndex    The index of the sub post between two points.
-   *
-   * @return     The name of the segment texture resource.  Empty if no textures are available.
-   */
-   std::string GetSegmentTexture(int pointIndex, int subIndex);
+      /**
+      * Sets the maximum distance between posts.
+      */
+      void SetPostMaxDistance(float value);
 
-   /**
-   * Gets the height of the segments.
-   */
-   float GetSegmentHeight() { return mSegmentHeight; }
+      /**
+      * Gets the post scale.
+      */
+      float GetFenceScale() { return mFenceScale; }
 
-   /**
-   * Sets the height of the segments.
-   */
-   void SetSegmentHeight(float value);
+      /**
+      * Sets the post scale.
+      */
+      void SetFenceScale(float value);
 
-   /**
-   * Gets the width of the segments.
-   */
-   float GetSegmentWidth() { return mSegmentWidth; }
+      /**
+      * Retrieves the segment texture resource for a particular segment.
+      *
+      * @param[in]  pointIndex  The index of the point.
+      * @param[in]  subIndex    The index of the sub post between two points.
+      *
+      * @return     The name of the segment texture resource.  Empty if no textures are available.
+      */
+      std::string GetSegmentTexture(int pointIndex, int subIndex);
 
-   /**
-   * Sets the width of the segments.
-   */
-   void SetSegmentWidth(float value);
+      /**
+      * Gets the height of the segments.
+      */
+      float GetSegmentHeight() { return mSegmentHeight; }
 
-   /**
-   * Gets the top texture ratio.
-   */
-   float GetTopTextureRatio() { return mTopTextureRatio; }
+      /**
+      * Sets the height of the segments.
+      */
+      void SetSegmentHeight(float value);
 
-   /**
-   * Sets the top texture ratio.
-   */
-   void SetTopTextureRatio(float value);
+      /**
+      * Gets the width of the segments.
+      */
+      float GetSegmentWidth() { return mSegmentWidth; }
+
+      /**
+      * Sets the width of the segments.
+      */
+      void SetSegmentWidth(float value);
+
+      /**
+      * Gets the top texture ratio.
+      */
+      float GetTopTextureRatio() { return mTopTextureRatio; }
+
+      /**
+      * Sets the top texture ratio.
+      */
+      void SetTopTextureRatio(float value);
 
 
-   /**
-   * Gets the scale of the fence.
-   */
-   osg::Vec3 GetScale() const;
+      /**
+      * Gets the scale of the fence.
+      */
+      osg::Vec3 GetScale() const;
 
-   /**
-   * Sets the scale fo the fence.
-   */
-   void SetScale(const osg::Vec3& value);
+      /**
+      * Sets the scale fo the fence.
+      */
+      void SetScale(const osg::Vec3& value);
 
 
-   /**
-   * Creates the drawable representation of a new link point.
-   *
-   * @param[in]  position  The position of the drawable.
-   *
-   * @return               The new drawable.
-   */
-   virtual dtCore::Transformable* CreatePointDrawable(osg::Vec3 position);
+      /**
+      * Creates the drawable representation of a new link point.
+      *
+      * @param[in]  position  The position of the drawable.
+      *
+      * @return               The new drawable.
+      */
+      virtual dtCore::Transformable* CreatePointDrawable(osg::Vec3 position);
 
-protected:
-   virtual ~FenceActor();
+   protected:
+      virtual ~FenceActor();
 
-private:
+   private:
 
-   /**
-   * Resizes the number of indexes in the resource ID list.
-   *
-   * @param[in]  pointIndex  The new total number of points.
-   */
-   void SetResourceIDSize(int pointCount);
+      /**
+      * Resizes the number of indexes in the resource ID list.
+      *
+      * @param[in]  pointIndex  The new total number of points.
+      */
+      void SetResourceIDSize(int pointCount);
 
-   /**
-   * Resizes the number of indexes in the resource ID sub list.
-   *
-   * @param[in]  pointIndex  The index of the point.
-   * @param[in]  subCount    The new total count of sub indexes to set.
-   */
-   void SetResourceIDSubSize(int pointIndex, int subCount);
+      /**
+      * Resizes the number of indexes in the resource ID sub list.
+      *
+      * @param[in]  pointIndex  The index of the point.
+      * @param[in]  subCount    The new total count of sub indexes to set.
+      */
+      void SetResourceIDSubSize(int pointIndex, int subCount);
 
-   /**
-   * Places a post.
-   *
-   * @param[in]  pointIndex  The parent point of the post.
-   * @param[in]  subIndex    The post index.
-   * @param[in]  position    The position to place the post.
-   *
-   * @return     The transform of the newly placed post.
-   */
-   dtCore::Transform PlacePost(int pointIndex, int subIndex, osg::Vec3 position);
+      /**
+      * Places a post.
+      *
+      * @param[in]  pointIndex  The parent point of the post.
+      * @param[in]  subIndex    The post index.
+      * @param[in]  position    The position to place the post.
+      *
+      * @return     The transform of the newly placed post.
+      */
+      dtCore::Transform PlacePost(int pointIndex, int subIndex, osg::Vec3 position);
 
-   /**
-   * Places a segment.
-   *
-   * @param[in]  pointIndex  The parent point of the segment.
-   * @param[in]  subIndex    The segment index.
-   * @param[in]  start       The start post transform.
-   * @param[in]  end         The end post transform.
-   * @param[in]  length      The percentage of the texture to show.
-   */
-   void PlaceSegment(int pointIndex, int subIndex, dtCore::Transform start, dtCore::Transform end, float length);
+      /**
+      * Places a segment.
+      *
+      * @param[in]  pointIndex  The parent point of the segment.
+      * @param[in]  subIndex    The segment index.
+      * @param[in]  start       The start post transform.
+      * @param[in]  end         The end post transform.
+      * @param[in]  length      The percentage of the texture to show.
+      */
+      void PlaceSegment(int pointIndex, int subIndex, dtCore::Transform start, dtCore::Transform end, float length);
 
-   std::vector<std::string>                              mPostResourceList;
-   std::vector<std::string>                              mSegmentResourceList;
-   std::vector<std::vector<FenceActor::ResourceIDData> > mResourceIDList;
+      std::vector<std::string>                              mPostResourceList;
+      std::vector<std::string>                              mSegmentResourceList;
+      std::vector<std::vector<FenceActor::ResourceIDData> > mResourceIDList;
 
-   float mPostMinDistance;
-   float mPostMaxDistance;
-   float mFenceScale;
+      float mPostMinDistance;
+      float mPostMaxDistance;
+      float mFenceScale;
 
-   float mSegmentHeight;
-   float mSegmentWidth;
+      float mSegmentHeight;
+      float mSegmentWidth;
 
-   float mTopTextureRatio;
-};
+      float mTopTextureRatio;
+   };
 
-/////////////////////////////////////////////////////////////////////////////
-// PROXY CODE
-/////////////////////////////////////////////////////////////////////////////
-class DT_PLUGIN_EXPORT FenceActorProxy : public dtActors::LinkedPointsActorProxy
-{
-public:
-   typedef dtActors::LinkedPointsActorProxy BaseClass;
+   /////////////////////////////////////////////////////////////////////////////
+   // PROXY CODE
+   /////////////////////////////////////////////////////////////////////////////
+   class DT_PLUGIN_EXPORT FenceActorProxy : public dtActors::LinkedPointsActorProxy
+   {
+   public:
+      typedef dtActors::LinkedPointsActorProxy BaseClass;
 
-   /**
-   * Constructor.
-   */
-   FenceActorProxy();
+      /**
+      * Constructor.
+      */
+      FenceActorProxy();
 
-   /**
-   * Creates the default actor associated with this proxy.
-   */
-   void CreateActor();
+      /**
+      * Creates the default actor associated with this proxy.
+      */
+      void CreateActor();
 
-   /**
-   * Builds the property map.
-   */
-   void BuildPropertyMap();
+      /**
+      * Builds the property map.
+      */
+      void BuildPropertyMap();
 
-   /**
-   * Functor to set the current post index.
-   *
-   * @param[in]  index  The index to set.
-   */
-   void SetPostResourceIndex(int index);
+      /**
+      * Functor to set the current post index.
+      *
+      * @param[in]  index  The index to set.
+      */
+      void SetPostResourceIndex(int index);
 
-   /**
-   * Functor to set the current post index.
-   *
-   * @param[in]  index  The index to set.
-   */
-   void SetSegmentResourceIndex(int index);
+      /**
+      * Functor to set the current post index.
+      *
+      * @param[in]  index  The index to set.
+      */
+      void SetSegmentResourceIndex(int index);
 
-   /**
-   * Functor to retrieve the default value for a new post.
-   */
-   std::string GetDefaultPost(void);
+      /**
+      * Functor to retrieve the default value for a new post.
+      */
+      std::string GetDefaultPost(void);
 
-   /**
-   * Functor to retrieve the default value for a new post.
-   */
-   std::string GetDefaultSegment(void);
+      /**
+      * Functor to retrieve the default value for a new post.
+      */
+      std::string GetDefaultSegment(void);
 
-   /**
-   * Gets a ResourceDescriptor of the requested property name.
-   * @param name Name of the resource to retrieve.
-   * @return A pointer to the resource descripter or NULL if it
-   * is not found.
-   */
-   dtDAL::ResourceDescriptor* GetResource(const std::string& name);
+      /**
+      * Gets a ResourceDescriptor of the requested property name.
+      * @param name Name of the resource to retrieve.
+      * @return A pointer to the resource descripter or NULL if it
+      * is not found.
+      */
+      dtDAL::ResourceDescriptor* GetResource(const std::string& name);
 
-   /**
-   * Gets a ResourceDescriptor of the requested property name.
-   * @param name Name of the resource to retrieve.
-   * @return A pointer to the resource descripter or NULL if it
-   * is not found.
-   */
-   const dtDAL::ResourceDescriptor* GetResource(const std::string& name) const;
+      /**
+      * Gets a ResourceDescriptor of the requested property name.
+      * @param name Name of the resource to retrieve.
+      * @return A pointer to the resource descripter or NULL if it
+      * is not found.
+      */
+      const dtDAL::ResourceDescriptor* GetResource(const std::string& name) const;
 
-   /**
-   * Sets the mesh used as a fence post.
-   */
-   void SetPostMesh(const std::string& fileName);
+      /**
+      * Sets the mesh used as a fence post.
+      */
+      void SetPostMesh(const std::string& fileName);
 
-   /**
-   * Sets the texture used as a fence segment.
-   */
-   void SetSegmentTexture(const std::string& fileName);
+      /**
+      * Sets the texture used as a fence segment.
+      */
+      void SetSegmentTexture(const std::string& fileName);
 
-   /**
-   * Functor to set the current post ID index.
-   *
-   * @param[in]  index  The index to set.
-   */
-   void SetResourceIDIndex(int index);
+      /**
+      * Functor to set the current post ID index.
+      *
+      * @param[in]  index  The index to set.
+      */
+      void SetResourceIDIndex(int index);
 
-   /**
-   * Functor to set the current sub post ID index.
-   *
-   * @param[in]  index  The index to set.
-   */
-   void SetResourceIDSubIndex(int index);
+      /**
+      * Functor to set the current sub post ID index.
+      *
+      * @param[in]  index  The index to set.
+      */
+      void SetResourceIDSubIndex(int index);
 
-   /**
-   * Functor to retrieve the default value for a post ID list.
-   */
-   std::vector<FenceActor::ResourceIDData> GetDefaultResourceID();
+      /**
+      * Functor to retrieve the default value for a post ID list.
+      */
+      std::vector<FenceActor::ResourceIDData> GetDefaultResourceID();
 
-   /**
-   * Functor to retrieve the default value for a sub post ID.
-   */
-   FenceActor::ResourceIDData GetDefaultSubResourceID();
+      /**
+      * Functor to retrieve the default value for a sub post ID.
+      */
+      FenceActor::ResourceIDData GetDefaultSubResourceID();
 
-   /**
-   * Retrieves the sub post ID array.
-   */
-   std::vector<FenceActor::ResourceIDData> GetSubResourceIDArray();
+      /**
+      * Retrieves the sub post ID array.
+      */
+      std::vector<FenceActor::ResourceIDData> GetSubResourceIDArray();
 
-   /**
-   * Sets the sub post ID array.
-   */
-   void SetSubResourceIDArray(const std::vector<FenceActor::ResourceIDData>& value);
+      /**
+      * Sets the sub post ID array.
+      */
+      void SetSubResourceIDArray(const std::vector<FenceActor::ResourceIDData>& value);
 
-   /**
-   * Gets and Sets the post IDs.
-   */
-   int GetPostID();
-   void SetPostID(int value);
+      /**
+      * Gets and Sets the post IDs.
+      */
+      int GetPostID();
+      void SetPostID(int value);
 
-   /**
-   * Gets and Sets the segment IDs.
-   */
-   int GetSegmentID();
-   void SetSegmentID(int value);
+      /**
+      * Gets and Sets the segment IDs.
+      */
+      int GetSegmentID();
+      void SetSegmentID(int value);
 
-protected:
-   virtual ~FenceActorProxy();
+   protected:
+      virtual ~FenceActorProxy();
 
-private:
+   private:
 
-   int      mPostResourceIndex;
-   int      mSegmentResourceIndex;
+      int      mPostResourceIndex;
+      int      mSegmentResourceIndex;
 
-   int      mResourceIDIndex;
-   int      mResourceIDSubIndex;
-};
-
+      int      mResourceIDIndex;
+      int      mResourceIDSubIndex;
+   };
+}
 #endif // FenceActor_h__
