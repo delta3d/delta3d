@@ -84,7 +84,7 @@ void RandomActorGeneratorPlugin::OnGeneratePushed()
    }
 
    //not going to worry about multiple selections -- just use the first in the list 
-   dtDAL::ActorProxy* selectedActorProxy = (selectionList[0]).get();
+   dtDAL::ActorProxy* selectedActorProxy = selectionList[0].get();
    //Don't want to just make a bunch of copies of the volume editor:
    if(selectedActorProxy->GetActor() == volEditActor)
    {      

@@ -39,23 +39,26 @@ namespace Ui
 class MainWindow : public QMainWindow
 {
    Q_OBJECT
+
 public:
    MainWindow(QWidget& centralWidget);
    ~MainWindow();
 
    void showEvent(QShowEvent* e);
    void closeEvent(QCloseEvent* e);
+
 signals:
    void ProjectContextChanged(const std::string& path);
    void MapSelected(const std::string& path);
    void CloseMapSelected();
+
 public slots:
    void ChangeProjectContext();
    void OnOpenMap();
    void OnCloseMap();
    void EnableOrDisableControls();
-private:
 
+private:
    void ChangeMap(const QString& newMap);
 
    Ui::MainWindow* mUi;
@@ -63,6 +66,5 @@ private:
 
    QString mCurrentMapName;
 };
-
 
 #endif /*AIUTILITY_MAIN_WINDOW*/
