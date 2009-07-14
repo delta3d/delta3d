@@ -71,7 +71,7 @@ void ESPduProcessor::SendPartialUpdate(const DIS::EntityStatePdu& pdu, const dtD
    msg->SetActorTypeCategory( actor.GetActorType().GetCategory() );
 
    details::PartialApplicator apply;
-   apply( pdu , *msg );
+   apply(pdu, *msg, mConfig);
 
    // send it
    mGM->SendMessage( *msg );
@@ -131,6 +131,7 @@ void dtDIS::ESPduProcessor::CreateRemoteActor(const DIS::EntityStatePdu& pdu)
 
       dtCore::UniqueId newActorID;
       msg->SetAboutActorId(newActorID);
+      msg->SetName(newActorID.ToString());
 
       dtDIS::details::FullApplicator copyToMsg;
       copyToMsg(pdu, *msg, mConfig);

@@ -8,6 +8,8 @@
 #include <dtDIS/dllfinder.h>
 
 #include <dtDIS/plugins/default/defaultplugin.h>
+#include <dtActors/engineactorregistry.h>
+#include <dtActors/coordinateconfigactor.h>
 
 
 using namespace dtDIS;
@@ -144,6 +146,21 @@ void MasterComponent::ProcessMessage(const dtGame::Message& msg)
          {
             mConnection.Send( &(ds[0]), ds.size() );
             mOutgoingMessage.ClearData();
+         }
+      }
+   }
+   else if (mt == dtGame::MessageType::INFO_MAP_LOADED)
+   {
+      //find any coordinate config actor and pass it to the SharedState
+      dtActors::CoordinateConfigActorProxy* proxy(NULL);
+      GetGameManager()->FindActorByType(*dtActors::EngineActorRegistry::COORDINATE_CONFIG_ACTOR_TYPE, proxy);
+      if (proxy != NULL)
+      {
+         dtActors::CoordinateConfigActor* actor(NULL);
+         proxy->GetActor(actor);
+         if (actor != NULL)
+         {
+            mConfig->SetCoordinateConverter(actor->GetCoordinates());
          }
       }
    }
