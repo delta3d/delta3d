@@ -1,4 +1,7 @@
 #include <prefix/dtcoreprefix-src.h>
+
+#include <cassert>
+
 #include <dtCore/deltadrawable.h>
 #include <dtCore/scene.h>
 #include <dtUtil/log.h>
@@ -23,6 +26,7 @@ namespace dtCore
       const DeltaDrawable* GetParent() const;
 
       void AddedToScene(Scene* scene, osg::Node* node);
+      void RemovedFromScene(Scene* scene, osg::Node* node);
 
       Scene* GetSceneParent();
       const Scene* GetSceneParent() const;
@@ -333,7 +337,7 @@ namespace dtCore
    ////////////////////////////////////////////////////////////////////////////////
    void DeltaDrawablePrivate::AddedToScene(Scene* scene, osg::Node* node)
    {
-      if (mParentScene == scene) { return; } //nothing to do here.
+      if (mParentScene == scene) { return; } // nothing to do here.
 
       mParentScene = scene;
 
@@ -345,8 +349,7 @@ namespace dtCore
       }
 
       // If we've been set to inactive before being added to a Scene,
-      // then we need to do add in our Switch node.  If we've just been
-      // removed from a Scene and we're inactive, then we should remove our Switch
+      // then we need to do add in our Switch node.
       if (mParentScene != NULL)
       {
          if (GetActive() == false)
@@ -354,15 +357,30 @@ namespace dtCore
             InsertSwitchNode(node);
          }
       }
-      else
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DeltaDrawablePrivate::RemovedFromScene(Scene* scene, osg::Node* node)
+   {
+      // for now don't include this check, since we're calling
+      //   DeltaDrawablePrivate::AddedToScene() first
+      //if (mParentScene != scene) { return; } // we're not even in this scene; nothing to do here.
+
+      mParentScene = NULL;
+
+      for (ChildList::iterator itr = mChildList.begin();
+         itr != mChildList.end();
+         ++itr)
       {
-         //we've just been removed from a scene
-         if (GetActive() == false)
-         {
-            RemoveSwitchNode(node);
-         }
+         (*itr)->RemovedFromScene(scene);
       }
 
+      // we've just been removed from a scene
+      // if we're inactive, we should remove our Switch
+      if (GetActive() == false)
+      {
+         RemoveSwitchNode(node);
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -383,6 +401,7 @@ namespace dtCore
       {
          child->AddedToScene(mParentScene);
       }
+
       return true;
    }
 
@@ -441,7 +460,7 @@ DeltaDrawable::~DeltaDrawable()
 {
    DeregisterInstance(this);
 
-   for (unsigned int i=0;i<mPvt->GetNumChildren(); i++)
+   for (unsigned int i = 0; i < mPvt->GetNumChildren(); ++i)
    {
       DeltaDrawable* child = mPvt->GetChild(i);
       child->OnOrphaned();
@@ -538,11 +557,27 @@ bool dtCore::DeltaDrawable::GetIsRenderingProxyNode() const
  * and call AddedToScene() with the supplied Scene.
  *
  * @param scene the scene to which this drawable object has
- * been added.  Note: Can be NULL.
+ * been added.  Note: NULL indicates removal.
  */
 void DeltaDrawable::AddedToScene(Scene* scene)
 {
    mPvt->AddedToScene(scene, GetOSGNode());
+}
+
+/**
+ * Notifies this drawable object that it has been removed from
+ * a scene.  This is typically called from Scene::RemoveDrawable().
+ *
+ * This method will iterate through the list of children DeltaDrawable's (if any)
+ * and call RemovedFromScene() with the supplied Scene.
+ *
+ * @param scene the scene to which this drawable object has
+ * been added.  Note: scene should not be NULL.
+ */
+void DeltaDrawable::RemovedFromScene(Scene* scene)
+{
+   assert(scene);
+   mPvt->RemovedFromScene(scene, GetOSGNode());
 }
 
 /** Remove this DeltaDrawable from it's parent DeltaDrawable if it has one.

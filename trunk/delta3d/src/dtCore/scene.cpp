@@ -258,17 +258,18 @@ void Scene::RemoveDrawable(DeltaDrawable* drawable)
 {
    if (drawable == NULL)
    {
-      LOG_WARNING("A NULL DeltaDrawable was attempted to be added to the Scene");
+      LOG_WARNING("A NULL DeltaDrawable was attempted to be removed from the Scene");
       return;
    }
 
    mImpl->mSceneNode->removeChild(drawable->GetOSGNode());
    drawable->AddedToScene(NULL);
+   drawable->RemovedFromScene(this);
 
    unsigned int pos = GetDrawableIndex(drawable);
-   if (pos<mImpl->mAddedDrawables.size())
+   if (pos < mImpl->mAddedDrawables.size())
    {
-      mImpl->mAddedDrawables.erase(mImpl->mAddedDrawables.begin()+pos);
+      mImpl->mAddedDrawables.erase(mImpl->mAddedDrawables.begin() + pos);
    }
 }
 /////////////////////////////////////////////
