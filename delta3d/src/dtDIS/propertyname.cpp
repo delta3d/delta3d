@@ -7,7 +7,7 @@ namespace dtDIS
    // entityid stuff
    const char EntityPropertyName::ENTITYID   [] = { "DIS_Entity_EntityID\0"   } ;
    const char EntityPropertyName::APPEARANCE [] = { "DIS_Entity_Appearance\0" } ;
-
+   dtUtil::RefString EntityPropertyName::ENTITY_TYPE               ("EntityType");
 
    // -- EnginePropertyName -- //
    dtUtil::RefString EnginePropertyName::ENTITY_LOCATION           ("Translation");

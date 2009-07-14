@@ -31,6 +31,16 @@ namespace dtGame
    class GameManager;
 }
 
+namespace dtCore
+{
+   class UniqueId;
+}
+
+namespace DIS
+{
+   class EntityStatePdu;
+}
+
 namespace dtDIS
 {
    class SharedState;
@@ -46,6 +56,7 @@ namespace dtDIS
 
    private:
       ActorUpdateToEntityState();  ///< not implemented by design
+      void SetEntityType(const dtCore::UniqueId& uniqueID, DIS::EntityStatePdu* downcastPdu); 
 
       const dtDIS::SharedState* mConfig;
       dtGame::GameManager* mGM;
