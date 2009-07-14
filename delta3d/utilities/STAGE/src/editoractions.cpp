@@ -41,6 +41,8 @@
 
 #include <osgDB/FileNameUtils>
 
+#include <dtActors/volumeeditactor.h>
+
 #include <dtEditQt/uiresources.h>
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/editorevents.h>
@@ -310,6 +312,16 @@ namespace dtEditQt
       mActionEditRedo->setShortcut(tr("Ctrl+Y"));
       mActionEditRedo->setStatusTip(tr("Redoes the previous property edit, actor delete, or actor creation undo command."));
       connect(mActionEditRedo, SIGNAL(triggered()), this, SLOT(slotEditRedo()));
+
+      // Brush - Change Shape
+      mActionBrushShape = new QAction(QIcon(UIResources::ICON_BRUSH_CUBE.c_str()), tr("Brush Shape"), this);
+      mActionBrushShape->setStatusTip(tr("Changes STAGE Brush shape."));
+      connect(mActionBrushShape, SIGNAL(triggered()), this, SLOT(slotChangeBrushShape()));
+     
+	  // Brush - Reset Position and Scale
+      mActionBrushReset = new QAction(QIcon(UIResources::ICON_BRUSH_RESET.c_str()), tr("Reset/Recall Brush"), this);
+      mActionBrushReset->setStatusTip(tr("Bring Brush back in front of camera."));
+      connect(mActionBrushReset, SIGNAL(triggered()), this, SLOT(slotResetBrush()));
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -1087,6 +1099,53 @@ namespace dtEditQt
    void EditorActions::slotEditRedo()
    {
       EditorData::GetInstance().getUndoManager().doRedo();
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   void EditorActions::slotChangeBrushShape()
+   {
+      dtActors::VolumeEditActor::VolumeShapeType& shapeType = EditorData::GetInstance().getMainWindow()->GetVolumeEditActor()->GetShape();
+
+      if (shapeType == dtActors::VolumeEditActor::VolumeShapeType::BOX)
+      {       
+            mActionBrushShape->setIcon(QIcon(UIResources::ICON_BRUSH_SPHERE.c_str()));
+            EditorData::GetInstance().getMainWindow()->GetVolumeEditActor()->SetShape(
+                                   dtActors::VolumeEditActor::VolumeShapeType::SPHERE);            
+      }
+      else //change back to BOX
+      {       
+            mActionBrushShape->setIcon(QIcon(UIResources::ICON_BRUSH_CUBE.c_str()));            
+            EditorData::GetInstance().getMainWindow()->GetVolumeEditActor()->SetShape(
+                                      dtActors::VolumeEditActor::VolumeShapeType::BOX);       
+      }
+
+      ViewportManager::GetInstance().refreshAllViewports();
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   void EditorActions::slotResetBrush()
+   {
+      dtActors::VolumeEditActor* theBrushActor = EditorData::GetInstance().getMainWindow()->GetVolumeEditActor();
+      theBrushActor->SetScale(osg::Vec3(1.0f, 1.0f, 1.0f));
+      
+      dtCore::Transform xForm;
+      
+      StageCamera* worldCam = ViewportManager::GetInstance().getWorldViewCamera();
+      worldCam->getDeltaCamera()->GetTransform(xForm);           
+      
+      //move brush away from the camera a bit so we can see it
+      osg::Vec3 viewDir = worldCam->getViewDir();      
+      double len = theBrushActor->GetBaseLength();
+    
+      osg::Vec3 trans = xForm.GetTranslation();
+      trans[0] += viewDir[0] * len * 5.0;
+      trans[1] += viewDir[1] * len * 5.0;
+      trans[2] += viewDir[2] * len * 5.0;
+      xForm.SetTranslation(trans);
+
+      theBrushActor->SetTransform(xForm);
+
+      ViewportManager::GetInstance().refreshAllViewports();
    }
 
    //////////////////////////////////////////////////////////////////////////////
