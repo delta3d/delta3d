@@ -326,13 +326,13 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   std::vector<std::vector<FenceActor::ResourceIDData> > FenceActor::GetResourceIDArray()
+   std::vector<FenceActor::ResourceIDData> FenceActor::GetResourceIDArray()
    {
       return mResourceIDList;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void FenceActor::SetResourceIDArray(const std::vector<std::vector<FenceActor::ResourceIDData> >& value)
+   void FenceActor::SetResourceIDArray(const std::vector<FenceActor::ResourceIDData>& value)
    {
       mResourceIDList = value;
 
@@ -342,13 +342,15 @@ namespace dtActors
    ////////////////////////////////////////////////////////////////////////////////
    std::string FenceActor::GetPostMesh(int pointIndex, int subIndex)
    {
-      // First check if there is already a predefined mesh index to use for this post.
       int meshIndex = 0;
-      if (pointIndex < (int)mResourceIDList.size())
+
+      // Iterate through the resource ID list for a matching post/segment.
+      for (int index = 0; index < (int)mResourceIDList.size(); index++)
       {
-         if (subIndex < (int)mResourceIDList[pointIndex].size())
+         if (mResourceIDList[index].pointIndex == pointIndex &&
+            mResourceIDList[index].segmentIndex == subIndex)
          {
-            meshIndex = mResourceIDList[pointIndex][subIndex].postID;
+            meshIndex = mResourceIDList[index].postID;
          }
       }
 
@@ -364,19 +366,25 @@ namespace dtActors
    ////////////////////////////////////////////////////////////////////////////////
    void FenceActor::SetPostMesh(int pointIndex, int subIndex, int meshIndex)
    {
-      // Make sure the resource lists are large enough.
-      if (pointIndex >= (int)mResourceIDList.size())
+      // Iterate through the resource ID list for a matching post/segment.
+      for (int index = 0; index < (int)mResourceIDList.size(); index++)
       {
-         SetResourceIDSize(pointIndex);
+         if (mResourceIDList[index].pointIndex == pointIndex &&
+            mResourceIDList[index].segmentIndex == subIndex)
+         {
+            // If we already have an entry, update it and finish.
+            mResourceIDList[index].postID = meshIndex;
+            return;
+         }
       }
 
-      if (subIndex >= (int)mResourceIDList[pointIndex].size())
-      {
-         SetResourceIDSubSize(pointIndex, subIndex);
-      }
-
-      // Now set the mesh.
-      mResourceIDList[pointIndex][subIndex].postID = meshIndex;
+      // If we get here, it means we don't already have an entry, so create one.
+      FenceActor::ResourceIDData entry;
+      entry.pointIndex = pointIndex;
+      entry.segmentIndex = subIndex;
+      entry.postID = meshIndex;
+      entry.segmentID = 0;
+      mResourceIDList.push_back(entry);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -416,13 +424,15 @@ namespace dtActors
    ////////////////////////////////////////////////////////////////////////////////
    std::string FenceActor::GetSegmentTexture(int pointIndex, int subIndex)
    {
-      // First check if there is already a predefined mesh index to use for this post.
       int textureIndex = 0;
-      if (pointIndex < (int)mResourceIDList.size())
+
+      // Iterate through the resource ID list for a matching post/segment.
+      for (int index = 0; index < (int)mResourceIDList.size(); index++)
       {
-         if (subIndex < (int)mResourceIDList[pointIndex].size())
+         if (mResourceIDList[index].pointIndex == pointIndex &&
+            mResourceIDList[index].segmentIndex == subIndex)
          {
-            textureIndex = mResourceIDList[pointIndex][subIndex].segmentID;
+            textureIndex = mResourceIDList[index].segmentID;
          }
       }
 
@@ -433,6 +443,30 @@ namespace dtActors
       }
 
       return "";
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void FenceActor::SetSegmentTexture(int pointIndex, int subIndex, int textureIndex)
+   {
+      // Iterate through the resource ID list for a matching post/segment.
+      for (int index = 0; index < (int)mResourceIDList.size(); index++)
+      {
+         if (mResourceIDList[index].pointIndex == pointIndex &&
+            mResourceIDList[index].segmentIndex == subIndex)
+         {
+            // If we already have an entry, update it and finish.
+            mResourceIDList[index].segmentID = textureIndex;
+            return;
+         }
+      }
+
+      // If we get here, it means we don't already have an entry, so create one.
+      FenceActor::ResourceIDData entry;
+      entry.pointIndex = pointIndex;
+      entry.segmentIndex = subIndex;
+      entry.postID = 0;
+      entry.segmentID = textureIndex;
+      mResourceIDList.push_back(entry);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -509,26 +543,6 @@ namespace dtActors
 
 
       return point;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void FenceActor::SetResourceIDSize(int pointCount)
-   {
-      if (pointCount != (int)mResourceIDList.size() - 1)
-      {
-         mResourceIDList.resize(pointCount, std::vector<FenceActor::ResourceIDData>());
-      }
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void FenceActor::SetResourceIDSubSize(int pointIndex, int subCount)
-   {
-      if (pointIndex < (int)mResourceIDList.size())
-      {
-         SetResourceIDSize(pointIndex);
-      }
-
-      mResourceIDList[pointIndex].resize(subCount, FenceActor::ResourceIDData());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -699,7 +713,6 @@ namespace dtActors
       , mPostResourceIndex(0)
       , mSegmentResourceIndex(0)
       , mResourceIDIndex(0)
-      , mResourceIDSubIndex(0)
    {
       SetClassName("dtActors::FenceActor");
    }
@@ -760,6 +773,20 @@ namespace dtActors
       AddProperty(segmentResourceArrayProp);
 
       // Resource ID Array
+      dtDAL::IntActorProperty* pointIndexProp =
+         new dtDAL::IntActorProperty(
+         "PointIndex", "Point Index",
+         dtDAL::MakeFunctor(*this, &FenceActorProxy::SetPointIndex),
+         dtDAL::MakeFunctorRet(*this, &FenceActorProxy::GetPointIndex),
+         "The Index of the point.", "Build");
+
+      dtDAL::IntActorProperty* segmentIndexProp =
+         new dtDAL::IntActorProperty(
+         "SegmentIndex", "Segment Index",
+         dtDAL::MakeFunctor(*this, &FenceActorProxy::SetSegmentIndex),
+         dtDAL::MakeFunctorRet(*this, &FenceActorProxy::GetSegmentIndex),
+         "The Index of the segment.", "Build");
+
       dtDAL::IntActorProperty* postIDProp =
          new dtDAL::IntActorProperty(
          "PostID", "Post Mesh ID",
@@ -779,28 +806,20 @@ namespace dtActors
          "ResourceIDContainer", "Resource IDs",
          "Stores the resource ID's for posts and segments.",
          "Build");
+      resourceIDContainerProp->AddProperty(pointIndexProp);
+      resourceIDContainerProp->AddProperty(segmentIndexProp);
       resourceIDContainerProp->AddProperty(postIDProp);
       resourceIDContainerProp->AddProperty(segmentIDProp);
 
-      dtDAL::ArrayActorPropertyBase* subPostIDArrayProp =
-         new dtDAL::ArrayActorProperty<FenceActor::ResourceIDData>(
-         "SubResourceIDArray", "Sub Resource ID Array",
-         "The list of sub post ID's",
-         dtDAL::MakeFunctor(*this, &FenceActorProxy::SetResourceIDSubIndex),
-         dtDAL::MakeFunctorRet(*this, &FenceActorProxy::GetDefaultSubResourceID),
-         dtDAL::MakeFunctorRet(*this, &FenceActorProxy::GetSubResourceIDArray),
-         dtDAL::MakeFunctor(*this, &FenceActorProxy::SetSubResourceIDArray),
-         resourceIDContainerProp, "Build");
-
       dtDAL::ArrayActorPropertyBase* postIDArrayProp =
-         new dtDAL::ArrayActorProperty<std::vector<FenceActor::ResourceIDData> >(
+         new dtDAL::ArrayActorProperty<FenceActor::ResourceIDData>(
          "ResourceIDArray", "Resource ID Array",
          "The list of post ID's",
          dtDAL::MakeFunctor(*this, &FenceActorProxy::SetResourceIDIndex),
          dtDAL::MakeFunctorRet(*this, &FenceActorProxy::GetDefaultResourceID),
          dtDAL::MakeFunctorRet(*actor, &FenceActor::GetResourceIDArray),
          dtDAL::MakeFunctor(*actor, &FenceActor::SetResourceIDArray),
-         subPostIDArrayProp, "Build");
+         resourceIDContainerProp, "Build");
       AddProperty(postIDArrayProp);
 
       // Minimum Post Distance
@@ -988,51 +1007,66 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void FenceActorProxy::SetResourceIDSubIndex(int index)
-   {
-      mResourceIDSubIndex = index;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   std::vector<FenceActor::ResourceIDData> FenceActorProxy::GetDefaultResourceID()
-   {
-      return std::vector<FenceActor::ResourceIDData>();
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   FenceActor::ResourceIDData FenceActorProxy::GetDefaultSubResourceID()
+   FenceActor::ResourceIDData FenceActorProxy::GetDefaultResourceID()
    {
       return FenceActor::ResourceIDData();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   std::vector<FenceActor::ResourceIDData> FenceActorProxy::GetSubResourceIDArray()
+   int FenceActorProxy::GetPointIndex()
    {
       FenceActor* actor = NULL;
       GetActor(actor);
 
-      std::vector<std::vector<FenceActor::ResourceIDData> > postArray = actor->GetResourceIDArray();
-
-      if (mResourceIDIndex < (int)postArray.size())
+      std::vector<FenceActor::ResourceIDData> resourceArray = actor->GetResourceIDArray();
+      if (mResourceIDIndex < (int)resourceArray.size())
       {
-         return postArray[mResourceIDIndex];
+         return resourceArray[mResourceIDIndex].pointIndex;
       }
 
-      return GetDefaultResourceID();
+      return GetDefaultResourceID().pointIndex;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void FenceActorProxy::SetSubResourceIDArray(const std::vector<FenceActor::ResourceIDData>& value)
+   void FenceActorProxy::SetPointIndex(int value)
    {
       FenceActor* actor = NULL;
       GetActor(actor);
 
-      std::vector<std::vector<FenceActor::ResourceIDData> > postArray = actor->GetResourceIDArray();
-
-      if (mResourceIDIndex < (int)postArray.size())
+      std::vector<FenceActor::ResourceIDData> resourceArray = actor->GetResourceIDArray();
+      if (mResourceIDIndex < (int)resourceArray.size())
       {
-         postArray[mResourceIDIndex] = value;
-         actor->SetResourceIDArray(postArray);
+         resourceArray[mResourceIDIndex].pointIndex = value;
+         actor->SetResourceIDArray(resourceArray);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   int FenceActorProxy::GetSegmentIndex()
+   {
+      FenceActor* actor = NULL;
+      GetActor(actor);
+
+      std::vector<FenceActor::ResourceIDData> resourceArray = actor->GetResourceIDArray();
+      if (mResourceIDIndex < (int)resourceArray.size())
+      {
+         return resourceArray[mResourceIDIndex].segmentIndex;
+      }
+
+      return GetDefaultResourceID().segmentIndex;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void FenceActorProxy::SetSegmentIndex(int value)
+   {
+      FenceActor* actor = NULL;
+      GetActor(actor);
+
+      std::vector<FenceActor::ResourceIDData> resourceArray = actor->GetResourceIDArray();
+      if (mResourceIDIndex < (int)resourceArray.size())
+      {
+         resourceArray[mResourceIDIndex].segmentIndex = value;
+         actor->SetResourceIDArray(resourceArray);
       }
    }
 
@@ -1042,16 +1076,13 @@ namespace dtActors
       FenceActor* actor = NULL;
       GetActor(actor);
 
-      std::vector<std::vector<FenceActor::ResourceIDData> > postArray = actor->GetResourceIDArray();
-      if (mResourceIDIndex < (int)postArray.size())
+      std::vector<FenceActor::ResourceIDData> resourceArray = actor->GetResourceIDArray();
+      if (mResourceIDIndex < (int)resourceArray.size())
       {
-         if (mResourceIDSubIndex < (int)postArray[mResourceIDIndex].size())
-         {
-            return postArray[mResourceIDIndex][mResourceIDSubIndex].postID;
-         }
+         return resourceArray[mResourceIDIndex].postID;
       }
 
-      return GetDefaultSubResourceID().postID;
+      return GetDefaultResourceID().postID;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -1060,14 +1091,11 @@ namespace dtActors
       FenceActor* actor = NULL;
       GetActor(actor);
 
-      std::vector<std::vector<FenceActor::ResourceIDData> > postArray = actor->GetResourceIDArray();
-      if (mResourceIDIndex < (int)postArray.size())
+      std::vector<FenceActor::ResourceIDData> resourceArray = actor->GetResourceIDArray();
+      if (mResourceIDIndex < (int)resourceArray.size())
       {
-         if (mResourceIDSubIndex < (int)postArray[mResourceIDIndex].size())
-         {
-            postArray[mResourceIDIndex][mResourceIDSubIndex].postID = value;
-            actor->SetResourceIDArray(postArray);
-         }
+         resourceArray[mResourceIDIndex].postID = value;
+         actor->SetResourceIDArray(resourceArray);
       }
    }
 
@@ -1077,16 +1105,13 @@ namespace dtActors
       FenceActor* actor = NULL;
       GetActor(actor);
 
-      std::vector<std::vector<FenceActor::ResourceIDData> > postArray = actor->GetResourceIDArray();
-      if (mResourceIDIndex < (int)postArray.size())
+      std::vector<FenceActor::ResourceIDData> resourceArray = actor->GetResourceIDArray();
+      if (mResourceIDIndex < (int)resourceArray.size())
       {
-         if (mResourceIDSubIndex < (int)postArray[mResourceIDIndex].size())
-         {
-            return postArray[mResourceIDIndex][mResourceIDSubIndex].segmentID;
-         }
+         return resourceArray[mResourceIDIndex].segmentID;
       }
 
-      return GetDefaultSubResourceID().segmentID;
+      return GetDefaultResourceID().segmentID;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -1095,14 +1120,11 @@ namespace dtActors
       FenceActor* actor = NULL;
       GetActor(actor);
 
-      std::vector<std::vector<FenceActor::ResourceIDData> > postArray = actor->GetResourceIDArray();
-      if (mResourceIDIndex < (int)postArray.size())
+      std::vector<FenceActor::ResourceIDData> resourceArray = actor->GetResourceIDArray();
+      if (mResourceIDIndex < (int)resourceArray.size())
       {
-         if (mResourceIDSubIndex < (int)postArray[mResourceIDIndex].size())
-         {
-            postArray[mResourceIDIndex][mResourceIDSubIndex].segmentID = value;
-            actor->SetResourceIDArray(postArray);
-         }
+         resourceArray[mResourceIDIndex].segmentID = value;
+         actor->SetResourceIDArray(resourceArray);
       }
    }
 }

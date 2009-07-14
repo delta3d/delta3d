@@ -226,13 +226,23 @@ private:
    void shutdown();
 
    /**
+   * Sets the given point index as the selected.
+   *
+   * @param[in]  pointIndex   The index of the point to select.
+   *
+   * @return     True if the point index is valid.
+   */
+   bool selectPoint(int pointIndex);
+
+   /**
    * Sets the given drawable as the selected, if it belongs to the active proxy.
    *
-   * @param[in]  drawable  The drawable to select.
+   * @param[in]  drawable      The drawable to select.
+   * @param[in]  pickPosition  The position of the mouse pick used to select the drawable.
    *
    * @return     True if the drawable belongs to the active proxy.
    */
-   bool selectDrawable(dtCore::DeltaDrawable* drawable);
+   bool selectDrawable(dtCore::DeltaDrawable* drawable, osg::Vec3 pickPosition);
 
    /**
    * Retrieves the appropriate tool motion model based on the given viewport.

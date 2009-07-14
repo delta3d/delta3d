@@ -292,6 +292,12 @@ namespace dtEditQt
       virtual bool getPickPosition(osg::Vec3 nearPoint, osg::Vec3 farPoint, osg::Vec3& position, dtCore::DeltaDrawable* ignoredDrawable = NULL);
 
       /**
+      * Retrieves the last pick position calculated.
+      * @param ignoredDrawable A drawable to ignore.
+      */
+      virtual bool getPickPosition(osg::Vec3& position, dtCore::DeltaDrawable* ignoredDrawable = NULL);
+
+      /**
        * Projects the 2D window coordinates into the current scene and determines
        * if a ray whose origin is at the projected point intersects any actors
        * in the current scene.  Window coordinates are such that the origin is
