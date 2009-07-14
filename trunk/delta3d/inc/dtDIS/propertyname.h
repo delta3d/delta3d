@@ -39,7 +39,9 @@ namespace dtDIS
       //static const char LINEAR_VELOCITY[];
 
       static const char APPEARANCE[];
+
       // entitytype stuff
+      static dtUtil::RefString ENTITY_TYPE;
    } ;
 
    struct DT_DIS_EXPORT EnginePropertyName
