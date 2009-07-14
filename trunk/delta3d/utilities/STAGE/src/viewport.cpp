@@ -640,6 +640,32 @@ namespace dtEditQt
          return NULL;
       }
 
+      ViewportOverlay* overlay = ViewportManager::GetInstance().getViewportOverlay();
+      ViewportOverlay::ActorProxyList& selection = overlay->getCurrentActorSelection();
+
+      dtActors::VolumeEditActorProxy* brushProxy = 
+         EditorData::GetInstance().getMainWindow()->GetVolumeEditActorProxy();     
+
+      //if the STAGE Brush is already selected, 
+      //then attempt to select the next thing under it
+      if (selection.size() > 0)
+      {
+         if (brushProxy == selection[0])
+         {          
+            osgUtil::IntersectVisitor::HitList& hitList = mIsector->GetHitList();
+            for (unsigned short i = 1; i < mIsector->GetNumberOfHits(); i++)
+            {
+               osg::NodePath &nodePath = hitList[i].getNodePath();
+               dtCore::DeltaDrawable* drawable = mIsector->MapNodePathToDrawable(nodePath);
+
+               if (! dynamic_cast<dtActors::VolumeEditActor*>(drawable))
+               {
+                  return drawable;
+               }            
+            }
+         }
+      }
+
       return mIsector->GetClosestDeltaDrawable();
    }
 

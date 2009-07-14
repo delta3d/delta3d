@@ -256,6 +256,14 @@ namespace dtEditQt
       mUndoToolBar->addAction(EditorActions::GetInstance().mActionEditRedo);
       addToolBar(mUndoToolBar);
 
+      mBrushToolBar = new QToolBar(this);
+      mBrushToolBar->setObjectName("BrushToolBar");
+      mBrushToolBar->setWindowTitle(tr("Brush Toolbar"));
+      mBrushToolBar->setMinimumWidth(10);
+      mBrushToolBar->addAction(EditorActions::GetInstance().mActionBrushShape);
+      mBrushToolBar->addAction(EditorActions::GetInstance().mActionBrushReset);
+      addToolBar(mBrushToolBar);
+
       mToolsToolBar = new QToolBar(this);
       mToolsToolBar->setObjectName("ToolsToolBar");
       mToolsToolBar->setWindowTitle(tr("Tools Toolbar"));

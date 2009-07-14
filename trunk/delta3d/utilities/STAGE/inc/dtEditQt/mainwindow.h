@@ -144,7 +144,7 @@ namespace dtEditQt
       QToolBar* GetUndoToolbar() const          { return mUndoToolBar; }
       QToolBar* GetToolsToolbar() const         { return mToolsToolBar; }
       QToolBar* GetExternalToolsToolbar() const { return mExternalToolsToolBar; }
-
+      
       /**
       * viewport accessors.
       */
@@ -152,7 +152,7 @@ namespace dtEditQt
       OrthoViewport*       GetTopView() const   { return mTopView; }
       OrthoViewport*       GetSideView() const  { return mSideView; }
       OrthoViewport*       GetFrontView() const { return mFrontView; }
-      EditorViewportContainer* GetViewContainer() const { return mEditorContainer; }
+      EditorViewportContainer* GetViewContainer() const { return mEditorContainer; }     
 
       /**
        * @return the plugin manager
@@ -294,6 +294,7 @@ namespace dtEditQt
       QToolBar* mFileToolBar;
       QToolBar* mEditToolBar;
       QToolBar* mUndoToolBar;
+      QToolBar* mBrushToolBar;
       QToolBar* mToolsToolBar;
       QToolBar* mExternalToolsToolBar;
 
