@@ -32,6 +32,7 @@ namespace dtDIS
       CPPUNIT_TEST_SUITE( ActiveControlTests );
       CPPUNIT_TEST( TestAdding );
       CPPUNIT_TEST( TestRemoving );
+      CPPUNIT_TEST( EntityIDCompare );
       CPPUNIT_TEST_SUITE_END();
 
       void setup();
@@ -39,6 +40,7 @@ namespace dtDIS
 
       void TestAdding();
       void TestRemoving();
+      void EntityIDCompare();
    };
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -115,6 +117,28 @@ namespace dtDIS
       //ensure first one is still there
       CPPUNIT_ASSERT_MESSAGE("First Actor should not have been removed",
                               control.GetActor(eid1) != NULL);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ActiveControlTests::EntityIDCompare()
+   {
+      DIS::EntityID left;
+      left.setApplication(1);
+      left.setSite(10);
+      left.setEntity(5);
+
+      DIS::EntityID right;
+      right.setApplication(10);
+      right.setSite(1);
+      right.setEntity(50);
+
+      dtDIS::details::EntityIDCompare compare;
+
+      bool lrResult = compare(left, right);
+      bool rlResult = compare(right, left);
+
+      CPPUNIT_ASSERT_MESSAGE("dtDIS::EntityIDCompare failed the 'Strict Weak Ordering'",
+                             lrResult != rlResult);
    }
 
    CPPUNIT_TEST_SUITE_REGISTRATION( ActiveControlTests );
