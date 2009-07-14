@@ -154,6 +154,18 @@ namespace dtEditQt
       dtCore::DeltaDrawable* getLastDrawable() { return mLastDrawable.get(); }
 
       /**
+      * Sets the last pick position.
+      *
+      * @param[in]  position  The pick position.
+      */
+      void setLastPickPosition(const osg::Vec3& position) { mLastPickPosition = position; }
+
+      /**
+      * Gets the last pick position.
+      */
+      osg::Vec3 getLastPickPosition() { return mLastPickPosition; }
+
+      /**
        * Gets a reference to the static singleton instance of the viewport manager.
        * @return
        */
@@ -558,6 +570,7 @@ namespace dtEditQt
       bool                            mSnapTranslationEnabled;
 
       dtCore::RefPtr<dtCore::DeltaDrawable> mLastDrawable;
+      osg::Vec3                             mLastPickPosition;
 
       bool                            mShareMasterContext;
       std::map<std::string,Viewport*> mViewportList;

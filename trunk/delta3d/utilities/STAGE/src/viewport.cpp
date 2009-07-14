@@ -546,33 +546,7 @@ namespace dtEditQt
          return false;
       }
 
-      osgUtil::IntersectVisitor::HitList& hitList = mIsector->GetHitList();
-      for (int index = 0; index < (int)hitList.size(); index++)
-      {
-         osg::NodePath &nodePath = hitList[index].getNodePath();
-         dtCore::DeltaDrawable* drawable = mIsector->MapNodePathToDrawable(nodePath);
-
-         // Make sure the drawable and none of its parents are the ignored drawable.
-         bool isIgnored = false;
-         while (drawable)
-         {
-            if (drawable == ignoredDrawable)
-            {
-               isIgnored = true;
-               break;
-            }
-
-            drawable = drawable->GetParent();
-         }
-
-         if (!isIgnored)
-         {
-            position = hitList[index].getWorldIntersectPoint();
-            return true;
-         }
-      }
-
-      return false;
+      return getPickPosition(position, ignoredDrawable);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -583,6 +557,12 @@ namespace dtEditQt
          return false;
       }
 
+      return getPickPosition(position, ignoredDrawable);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Viewport::getPickPosition(osg::Vec3& position, dtCore::DeltaDrawable* ignoredDrawable)
+   {
       osgUtil::IntersectVisitor::HitList& hitList = mIsector->GetHitList();
       for (int index = 0; index < (int)hitList.size(); index++)
       {
@@ -605,6 +585,10 @@ namespace dtEditQt
          if (!isIgnored)
          {
             position = hitList[index].getWorldIntersectPoint();
+
+            // Tell the manager the last pick position.
+            ViewportManager::GetInstance().setLastDrawable(getPickDrawable());
+            ViewportManager::GetInstance().setLastPickPosition(position);
             return true;
          }
       }
@@ -623,9 +607,12 @@ namespace dtEditQt
       }
 
       dtCore::DeltaDrawable* drawable = getPickDrawable();
+      osg::Vec3 position;
+      getPickPosition(position);
 
       // Tell the manager the last drawable picked.
       ViewportManager::GetInstance().setLastDrawable(drawable);
+      ViewportManager::GetInstance().setLastPickPosition(position);
 
       return drawable;
    }

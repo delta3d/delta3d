@@ -92,9 +92,15 @@ namespace dtActors
       {
          ResourceIDData()
          {
+            pointIndex = 0;
+            segmentIndex = 0;
+
             postID = 0;
             segmentID = 0;
          }
+
+         int      pointIndex;
+         int      segmentIndex;
 
          int      postID;
          int      segmentID;
@@ -139,14 +145,14 @@ namespace dtActors
       void SetSegmentResourceArray(const std::vector<std::string>& value);
 
       /**
-      * Retrieves the list of fence post mesh indexes.
+      * Retrieves the list of resource IDs.
       */
-      std::vector<std::vector<FenceActor::ResourceIDData> > GetResourceIDArray();
+      std::vector<FenceActor::ResourceIDData> GetResourceIDArray();
 
       /**
       * Sets the list of fence post mesh indexes.
       */
-      void SetResourceIDArray(const std::vector<std::vector<FenceActor::ResourceIDData> >& value);
+      void SetResourceIDArray(const std::vector<FenceActor::ResourceIDData>& value);
 
       /**
       * Retrieves the post mesh resource of a particular post.
@@ -208,6 +214,15 @@ namespace dtActors
       std::string GetSegmentTexture(int pointIndex, int subIndex);
 
       /**
+      * Sets the segment texture resource for a particular segment.
+      *
+      * @param[in]  pointIndex    The index of the point.
+      * @param[in]  subIndex      The index of the sub post between two points.
+      * @param[in]  textureIndex  The index of the texture.
+      */
+      void SetSegmentTexture(int pointIndex, int subIndex, int textureIndex);
+
+      /**
       * Gets the height of the segments.
       */
       float GetSegmentHeight() { return mSegmentHeight; }
@@ -264,21 +279,6 @@ namespace dtActors
    private:
 
       /**
-      * Resizes the number of indexes in the resource ID list.
-      *
-      * @param[in]  pointIndex  The new total number of points.
-      */
-      void SetResourceIDSize(int pointCount);
-
-      /**
-      * Resizes the number of indexes in the resource ID sub list.
-      *
-      * @param[in]  pointIndex  The index of the point.
-      * @param[in]  subCount    The new total count of sub indexes to set.
-      */
-      void SetResourceIDSubSize(int pointIndex, int subCount);
-
-      /**
       * Places a post.
       *
       * @param[in]  pointIndex  The parent point of the post.
@@ -300,9 +300,9 @@ namespace dtActors
       */
       void PlaceSegment(int pointIndex, int subIndex, dtCore::Transform start, dtCore::Transform end, float length);
 
-      std::vector<std::string>                              mPostResourceList;
-      std::vector<std::string>                              mSegmentResourceList;
-      std::vector<std::vector<FenceActor::ResourceIDData> > mResourceIDList;
+      std::vector<std::string>                  mPostResourceList;
+      std::vector<std::string>                  mSegmentResourceList;
+      std::vector<FenceActor::ResourceIDData>   mResourceIDList;
 
       float mPostMinDistance;
       float mPostMaxDistance;
@@ -395,31 +395,21 @@ namespace dtActors
       void SetResourceIDIndex(int index);
 
       /**
-      * Functor to set the current sub post ID index.
-      *
-      * @param[in]  index  The index to set.
-      */
-      void SetResourceIDSubIndex(int index);
-
-      /**
       * Functor to retrieve the default value for a post ID list.
       */
-      std::vector<FenceActor::ResourceIDData> GetDefaultResourceID();
+      FenceActor::ResourceIDData GetDefaultResourceID();
 
       /**
-      * Functor to retrieve the default value for a sub post ID.
+      * Gets and Sets the point index.
       */
-      FenceActor::ResourceIDData GetDefaultSubResourceID();
+      int GetPointIndex();
+      void SetPointIndex(int value);
 
       /**
-      * Retrieves the sub post ID array.
+      * Gets and Sets the segment index.
       */
-      std::vector<FenceActor::ResourceIDData> GetSubResourceIDArray();
-
-      /**
-      * Sets the sub post ID array.
-      */
-      void SetSubResourceIDArray(const std::vector<FenceActor::ResourceIDData>& value);
+      int GetSegmentIndex();
+      void SetSegmentIndex(int value);
 
       /**
       * Gets and Sets the post IDs.
@@ -442,7 +432,6 @@ namespace dtActors
       int      mSegmentResourceIndex;
 
       int      mResourceIDIndex;
-      int      mResourceIDSubIndex;
    };
 }
 #endif // FenceActor_h__

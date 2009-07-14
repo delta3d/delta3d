@@ -462,7 +462,10 @@ void LinkedPointsActorToolPlugin::onSelectActors(Viewport* vp, QMouseEvent* e, b
          else
          {
             // Only override the selection if we are not selecting a specific point.
-            if (selectDrawable(editorView->getPickDrawable(e->pos().x(), e->pos().y())))
+            dtCore::DeltaDrawable* drawable = editorView->getPickDrawable(e->pos().x(), e->pos().y());
+            osg::Vec3 position;
+            editorView->getPickPosition(position);
+            if (selectDrawable(drawable, position))
             {
                *overrideDefault = true;
             }
@@ -599,7 +602,7 @@ void LinkedPointsActorToolPlugin::onDeleteLinkPointPressed()
          mCurrentPoint--;
       }
 
-      if (!selectDrawable(mActiveActor->GetPointDrawable(mCurrentPoint)))
+      if (!selectPoint(mCurrentPoint))
       {
          ViewportManager::GetInstance().refreshAllViewports();
       }
@@ -649,11 +652,11 @@ void LinkedPointsActorToolPlugin::initialize(dtActors::LinkedPointsActorProxy* a
 
    // Determine which point was selected.
    dtCore::DeltaDrawable* drawable = ViewportManager::GetInstance().getLastDrawable();
-   if (!selectDrawable(drawable))
+   osg::Vec3 position = ViewportManager::GetInstance().getLastPickPosition();
+   if (!selectDrawable(drawable, position))
    {
       // By default, we always select the first point.
-      drawable = mActiveActor->GetPointDrawable(0);
-      selectDrawable(drawable);
+      selectPoint(0);
    }
 }
 
@@ -682,30 +685,53 @@ void LinkedPointsActorToolPlugin::shutdown()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool LinkedPointsActorToolPlugin::selectDrawable(dtCore::DeltaDrawable* drawable)
+bool LinkedPointsActorToolPlugin::selectPoint(int pointIndex)
+{
+   if (pointIndex >= 0 && pointIndex < mActiveActor->GetPointCount())
+   {
+      dtCore::Transformable* point = mActiveActor->GetPointDrawable(pointIndex);
+      mCurrentPoint = pointIndex;
+
+      mPerspMotionModel->SetTarget(point);
+      mTopMotionModel->SetTarget(point);
+      mSideMotionModel->SetTarget(point);
+      mFrontMotionModel->SetTarget(point);
+
+      mPerspMotionModel->UpdateWidgets();
+      mTopMotionModel->UpdateWidgets();
+      mSideMotionModel->UpdateWidgets();
+      mFrontMotionModel->UpdateWidgets();
+
+      ViewportManager::GetInstance().refreshAllViewports();
+      return true;
+   }
+
+   return false;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool LinkedPointsActorToolPlugin::selectDrawable(dtCore::DeltaDrawable* drawable, osg::Vec3 pickPosition)
 {
    if (drawable && mActiveActor)
    {
       // Check if the drawable is a valid point on the actor.
       int pointIndex = mActiveActor->GetPointIndex(drawable);
-      if (pointIndex >= 0)
+      if (pointIndex >= 0 && pointIndex + 1 < mActiveActor->GetPointCount())
       {
-         dtCore::Transformable* point = mActiveActor->GetPointDrawable(pointIndex);
-         mCurrentPoint = pointIndex;
+         osg::Vec3 firstPos = mActiveActor->GetPointPosition(pointIndex);
+         osg::Vec3 secondPos = mActiveActor->GetPointPosition(pointIndex + 1);
+         float fDistance1 = (pickPosition - firstPos).length();
+         float fDistance2 = (pickPosition - secondPos).length();
 
-         mPerspMotionModel->SetTarget(point);
-         mTopMotionModel->SetTarget(point);
-         mSideMotionModel->SetTarget(point);
-         mFrontMotionModel->SetTarget(point);
-
-         mPerspMotionModel->UpdateWidgets();
-         mTopMotionModel->UpdateWidgets();
-         mSideMotionModel->UpdateWidgets();
-         mFrontMotionModel->UpdateWidgets();
-
-         ViewportManager::GetInstance().refreshAllViewports();
-         return true;
+         // If we are closer to our second point, then change our selection index.
+         if (fDistance1 > fDistance2)
+         {
+            pointIndex++;
+         }
       }
+
+      // now select our point.
+      return selectPoint(pointIndex);
    }
 
    mCurrentPoint = -1;
