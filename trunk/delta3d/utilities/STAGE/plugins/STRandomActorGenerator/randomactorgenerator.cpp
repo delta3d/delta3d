@@ -66,7 +66,7 @@ void RandomActorGeneratorPlugin::closeEvent(QCloseEvent* event)
 ////////////////////////////////////////////////////////////////////////////////
 void RandomActorGeneratorPlugin::OnGeneratePushed() 
 {
-   //get the VolumeEdit "Actor" from STAGE.  This is the area in which the
+   //get the VolumeEdit "Actor" from STAGE.  This is the area to which the
    //randomly generated actors will be constrained.
    dtActors::VolumeEditActor* volEditActor = mMainWindow->GetVolumeEditActor();   
 
@@ -82,11 +82,9 @@ void RandomActorGeneratorPlugin::OnGeneratePushed()
 
       return;
    }
-
-   //not going to worry about multiple selections -- just use the first in the list 
-   dtDAL::ActorProxy* selectedActorProxy = selectionList[0].get();
+  
    //Don't want to just make a bunch of copies of the volume editor:
-   if(selectedActorProxy->GetActor() == volEditActor)
+   if(selectionList[0]->GetActor() == volEditActor)
    {      
       QMessageBox::warning(this, tr("No actor selected."), 
          tr("Please select an actor to be generated."), QMessageBox::Ok);     
@@ -94,10 +92,20 @@ void RandomActorGeneratorPlugin::OnGeneratePushed()
       return;
    }
 
+   size_t index;
    for (int i = 0; i < mUI.mNumActorsToGenerate->value(); ++i)
    {
-      NewActorProxyInsideVolumeEditor(selectedActorProxy);
-   }   
+      //Randomly pick from the selectionList which ActorProxy to generate
+      //(e.g. if there is a tree Actor, a bush Actor, and a shrub,
+      // randomly pick which one gets generated next)
+      index = (int)( ((double) rand() / ((double)RAND_MAX + double(1)))
+                      * selectionList.size());
+      //previous line generates an int between 0 and (selectionList.size() - 1)
+
+      NewActorProxyInsideVolumeEditor(selectionList[index].get());
+   }
+
+   dtEditQt::ViewportManager::GetInstance().refreshAllViewports(); 
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -197,9 +205,7 @@ void RandomActorGeneratorPlugin::NewActorProxyInsideVolumeEditor(dtDAL::ActorPro
    //exist inside Delta Transforms.... if that ever changes this could break)
    osg::Matrixd volEAXMatrix;
    volEAXMatrix = volEditActor->GetMatrix();
-   aClonePtr->SetMatrix(aClonePtr->GetMatrix() * volEAXMatrix);
-
-   dtEditQt::ViewportManager::GetInstance().refreshAllViewports();         
+   aClonePtr->SetMatrix(aClonePtr->GetMatrix() * volEAXMatrix);   
 }
 
 ////////////////////////////////////////////////////////////////////////////////

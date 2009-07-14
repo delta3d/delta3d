@@ -920,7 +920,7 @@ namespace dtEditQt
 
    ///////////////////////////////////////////////////////////////////////////////
    void MainWindow::onActorProxyCreated(dtCore::RefPtr<dtDAL::ActorProxy> proxy, bool forceNoAdjustments)
-   {
+   {      
       EditorData::GetInstance().getCurrentMap()->SetModified(true);
       updateWindowTitle();
    }

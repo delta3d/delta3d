@@ -49,11 +49,12 @@
 
 #include <dtDAL/actorproxyicon.h>
 
-#include <dtEditQt/viewportoverlay.h>
-#include <dtEditQt/viewportmanager.h>
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/editoractions.h>
 #include <dtEditQt/editordata.h>
+#include <dtEditQt/mainwindow.h>
+#include <dtEditQt/viewportoverlay.h>
+#include <dtEditQt/viewportmanager.h>
 
 #include <dtDAL/map.h>
 
@@ -250,7 +251,8 @@ namespace dtEditQt
       }
       else
       {
-         ss->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);         
+         ss->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
+         EditorData::GetInstance().getMainWindow()->GetVolumeEditActor()->EnableOutline(true);
       }
 
       mSelectionDecorator->addChild(drawable->GetOSGNode());
