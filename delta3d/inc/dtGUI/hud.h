@@ -174,6 +174,12 @@ class DT_GUI_EXPORT HUD : public dtCore::Base,
         ///returns the file path for gui-xml-data/images @see SetFilePath
         static const std::string& GetFilePath();
 
+        /// returns whether the CEGUI mouse cursor should be visible or not
+        bool GetIsMouseCursorVisible() const   { return mIsMouseCursorVisible; }
+
+        /// sets whether the CEGUI mouse cursor should be visible or not
+        void SetIsMouseCursorVisible(bool val) { mIsMouseCursorVisible = val; }
+
         /********************************************************************************
                                  CEGUIConnectionManager-wrapper
          ********************************************************************************/
@@ -342,6 +348,8 @@ class DT_GUI_EXPORT HUD : public dtCore::Base,
         dtCore::RefPtr<dtGUI::CEGUIMouseListener>    m_pMouseListener; ///needed for injection keyboard-events to the cegui
         osg::Geode*                           m_pInternalGraph; ///osg graph used to render the gui
         CEGUI::Window*                        m_pRootsheet; ///auto-generated panel-window
+
+        bool mIsMouseCursorVisible;
 
         static std::string FilePath; ///gui-files-system-path (/data/gui)
         static bool SystemAndRendererCreatedByHUD;

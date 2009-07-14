@@ -53,6 +53,7 @@ HUD::HUD(osg::Camera* pTargetCamera, dtCore::Keyboard* pObservedKeyboard, dtCore
    , m_pCamera(0)
    , m_pKeyboard(0)
    , m_pMouse(0)
+   , mIsMouseCursorVisible(true)
 {
    m_pMouseListener    = new dtGUI::CEGUIMouseListener(this);
    m_pKeyboardListener = new dtGUI::CEGUIKeyboardListener(this);
@@ -395,7 +396,7 @@ void HUD::MakeCurrent() const
    }
 
    //if no mouse(-input) is present do not draw a cursor for this gui:
-   if (m_pMouse.valid())
+   if (m_pMouse.valid() && mIsMouseCursorVisible)
    {
       CEGUI::MouseCursor::getSingleton().show();
    }
