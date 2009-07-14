@@ -79,6 +79,10 @@ SharedState::SharedState(const std::string& connectionXMLFile,
    {
       ParseEntityMappingData(entityMappingXMLFile);
    }
+
+   //initialize to something valid
+   mCoordConverter.SetIncomingCoordinateType(dtUtil::IncomingCoordinateType::GEOCENTRIC);
+   mCoordConverter.SetLocalCoordinateType(dtUtil::LocalCoordinateType::CARTESIAN_FLAT_EARTH);
 }
 
 SharedState::~SharedState()
@@ -175,4 +179,21 @@ void dtDIS::SharedState::SetApplicationID(unsigned short ID)
 unsigned short dtDIS::SharedState::GetApplicationID() const
 {
    return mApplicationID;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void dtDIS::SharedState::SetCoordinateConverter(const dtUtil::Coordinates& coordConverter)
+{
+   mCoordConverter = coordConverter; //copy
+
+   //Ensure that the converter is setup to what dtDIS needs.  Incoming DIS is geocentric and
+   //the local is Flat earth?
+   mCoordConverter.SetIncomingCoordinateType(dtUtil::IncomingCoordinateType::GEOCENTRIC);
+   mCoordConverter.SetLocalCoordinateType(dtUtil::LocalCoordinateType::CARTESIAN_FLAT_EARTH);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+dtUtil::Coordinates dtDIS::SharedState::GetCoordinateConverter() const
+{
+   return mCoordConverter;
 }

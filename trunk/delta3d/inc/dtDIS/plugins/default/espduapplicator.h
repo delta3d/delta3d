@@ -78,7 +78,9 @@ namespace dtDIS
    {
    public:
       /// converts an incoming Pdu into a Message
-      void operator ()( const DIS::EntityStatePdu& source, dtGame::ActorUpdateMessage& dest ) ;
+      void operator ()(const DIS::EntityStatePdu& source,
+                       dtGame::ActorUpdateMessage& dest,
+                       const dtDIS::SharedState* config);
 
 #if 0
       osg::Vec3 mAcceleration ;

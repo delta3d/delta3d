@@ -29,6 +29,7 @@
 #include <dtDAL/actortype.h>           // for mapped dependency type.
 #include <dtDAL/resourcedescriptor.h>  // for mapped type
 #include <dtCore/uniqueid.h>           // for mapped dependency type.
+#include <dtUtil/coordinates.h>
 
 #include <map>
 #include <dtDIS/entityidcompare.h>     // for typedef
@@ -171,6 +172,9 @@ namespace dtDIS
       void SetApplicationID(unsigned short ID);
       unsigned short GetApplicationID() const; 
 
+      void SetCoordinateConverter(const dtUtil::Coordinates& coordConverter);
+      dtUtil::Coordinates GetCoordinateConverter() const;
+
    private:
       ActorMapConfig mActorMapConfig;
       ResourceMapConfig mResourceMapConfig;
@@ -178,6 +182,7 @@ namespace dtDIS
       ConnectionData mConnectionData;
       unsigned short mSiteID;       ///<For outgoing DIS packets
       unsigned short mApplicationID;///<For outgoing DIS packets
+      dtUtil::Coordinates mCoordConverter;
 
       void ParseConnectionData(const std::string& file);
       void ParseEntityMappingData(const std::string& file);

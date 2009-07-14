@@ -18,6 +18,7 @@
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/namedparameter.h>
 #include <dtGame/deadreckoningcomponent.h>
+#include <dtUtil/coordinates.h>
 
 #include <sstream>
 
@@ -28,7 +29,7 @@ void FullApplicator::operator ()(const DIS::EntityStatePdu& source,
                                  const dtDIS::SharedState* config) const
 {
    PartialApplicator partial;
-   partial( source, dest );
+   partial(source, dest, config);
 
    dtDAL::NamedParameter* mp;
 
@@ -90,7 +91,6 @@ void FullApplicator::operator ()(const dtGame::ActorUpdateMessage& source,
                                  const dtDIS::SharedState* config) const
 {
    // --- support the engine-core properties. --- //
-
    if ( const dtGame::MessageParameter* mp = source.GetUpdateParameter( EnginePropertyName::ENTITY_LOCATION ))
    {
       // DIS EntityState actor property
@@ -205,24 +205,29 @@ void FullApplicator::operator ()(const dtGame::ActorUpdateMessage& source,
 }
 
 
-///\todo use dtUtil::Coordinates::ConvertToLocalTranslation  for TRANSLATION.
 ///\todo use dtUtil::Coordinates::ConvertToLocalRotation for ENTITY_ORIENTATION.
 ///\todo implement dtHLAGM::RPRParameterTranslator::MapFromVelocityVectorToMessageParam for ENTITY_LINEARY_VELOCITY.
 ///\todo implement dtHLAGM::RPRParameterTranslator::MapFromAngularVelocityVectorToMessageParam for ANGULAR_VELOCITY.
-void PartialApplicator::operator ()( const DIS::EntityStatePdu& source , dtGame::ActorUpdateMessage& dest ) 
+void PartialApplicator::operator ()(const DIS::EntityStatePdu& source,
+                                    dtGame::ActorUpdateMessage& dest,
+                                    const dtDIS::SharedState* config) 
 {
-
    dtDAL::NamedParameter* mp ;
 
    // position //
    const DIS::Vector3Double& pos = source.getEntityLocation() ;
-   osg::Vec3 v3( pos.getX() , pos.getY() , pos.getZ() ) ;
+   osg::Vec3 v3(pos.getX(), pos.getY(), pos.getZ());
+
+   if (config != NULL)
+   {
+      v3 = config->GetCoordinateConverter().ConvertToLocalTranslation(v3);
+   }
 
    // dtDIS Actor Property Name 
-   if ( (mp = dest.AddUpdateParameter( EnginePropertyName::ENTITY_LOCATION , dtDAL::DataType::VEC3 )) )
+   if ((mp = dest.AddUpdateParameter(EnginePropertyName::ENTITY_LOCATION, dtDAL::DataType::VEC3)))
    {
-      dtGame::Vec3MessageParameter* v3mp = static_cast< dtGame::Vec3MessageParameter* > ( mp ) ;
-      v3mp->SetValue( v3 ) ;
+      dtGame::Vec3MessageParameter* v3mp = static_cast<dtGame::Vec3MessageParameter*>(mp);
+      v3mp->SetValue(v3);
    }
 
    if (  (mp = dest.AddUpdateParameter( dtDIS::EnginePropertyName::LAST_KNOWN_LOCATION , dtDAL::DataType::VEC3 )) )
