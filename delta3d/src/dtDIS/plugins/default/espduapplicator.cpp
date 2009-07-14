@@ -91,27 +91,37 @@ void FullApplicator::operator ()(const dtGame::ActorUpdateMessage& source,
                                  const dtDIS::SharedState* config) const
 {
    // --- support the engine-core properties. --- //
-   if ( const dtGame::MessageParameter* mp = source.GetUpdateParameter( EnginePropertyName::ENTITY_LOCATION ))
+   if (const dtGame::MessageParameter* mp = source.GetUpdateParameter(EnginePropertyName::ENTITY_LOCATION))
    {
       // DIS EntityState actor property
-      const dtGame::Vec3MessageParameter* v3mp = static_cast<const dtGame::Vec3MessageParameter*>( mp ) ;
-      const osg::Vec3& val = v3mp->GetValue() ;
-      DIS::Vector3Double loc ;
-      loc.setX( val[0] ) ;
-      loc.setY( val[1] ) ;
-      loc.setZ( val[2] ) ;
-      dest.setEntityLocation( loc ) ;
+      const dtGame::Vec3MessageParameter* v3mp = static_cast<const dtGame::Vec3MessageParameter*>(mp);
+      osg::Vec3 val = v3mp->GetValue();
+      if (config != NULL)
+      {
+         val = config->GetCoordinateConverter().ConvertToRemoteTranslation(val);
+      }
+
+      DIS::Vector3Double loc;
+      loc.setX(val[0]);
+      loc.setY(val[1]);
+      loc.setZ(val[2]);
+      dest.setEntityLocation(loc);
    }
-   else if ( const dtGame::MessageParameter* mp = source.GetUpdateParameter( dtDIS::HLABaseEntityPropertyName::PROPERTY_LAST_KNOWN_TRANSLATION ) )
+   else if (const dtGame::MessageParameter* mp = source.GetUpdateParameter(dtDIS::HLABaseEntityPropertyName::PROPERTY_LAST_KNOWN_TRANSLATION))
    {
       // HLA-DVTE actor property
-      const dtGame::Vec3MessageParameter* v3mp = static_cast<const dtGame::Vec3MessageParameter*>( mp ) ;
-      const osg::Vec3& val = v3mp->GetValue() ;
-      DIS::Vector3Double loc ;
-      loc.setX( val[0] ) ;
-      loc.setY( val[1] ) ;
-      loc.setZ( val[2] ) ;
-      dest.setEntityLocation( loc ) ;
+      const dtGame::Vec3MessageParameter* v3mp = static_cast<const dtGame::Vec3MessageParameter*>(mp);
+      osg::Vec3 val = v3mp->GetValue();
+      if (config != NULL)
+      {
+         val = config->GetCoordinateConverter().ConvertToRemoteTranslation(val);
+      }
+
+      DIS::Vector3Double loc;
+      loc.setX(val[0]);
+      loc.setY(val[1]);
+      loc.setZ(val[2]);
+      dest.setEntityLocation(loc);
    }
 
    if ( const dtGame::MessageParameter* mp = source.GetUpdateParameter( dtDIS::EnginePropertyName::ENTITY_ORIENTATION ) )
