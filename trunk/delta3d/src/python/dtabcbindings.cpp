@@ -10,6 +10,7 @@ void initProximityTriggerBindings();
 void initTriggerBindings();
 void initWeatherBindings();
 void initWidgetBindings();
+void initLabelActorBindings();
 
 BOOST_PYTHON_MODULE(PyDtABC)
 {
@@ -19,4 +20,5 @@ BOOST_PYTHON_MODULE(PyDtABC)
    initTriggerBindings();
    initWeatherBindings();
    initWidgetBindings();
+   initLabelActorBindings();
 }

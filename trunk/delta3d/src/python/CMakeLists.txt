@@ -94,6 +94,7 @@ SET(ABC_BINDINGS "PyDtABC")
   applicationbindings.cpp
   baseabcbindings.cpp
   dtabcbindings.cpp
+  labelactorbindings.cpp
   proximitytriggerbindings.cpp
   triggerbindings.cpp
   weatherbindings.cpp
