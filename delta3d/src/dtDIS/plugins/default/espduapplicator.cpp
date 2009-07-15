@@ -237,25 +237,30 @@ void PartialApplicator::operator ()(const DIS::EntityStatePdu& source,
    }
 
    // euler angles //
-   const DIS::Orientation& orie = source.getEntityOrientation();
-   osg::Vec3 hpr(orie.getPhi(), orie.getTheta(), orie.getPsi());
+   osg::Vec3 xyzRot;
 
    if (config != NULL)
    {
-      hpr = config->GetCoordinateConverter().ConvertToLocalRotation(hpr);
+      const DIS::Orientation& orie = source.getEntityOrientation();
+      const osg::Vec3 hpr = config->GetCoordinateConverter().ConvertToLocalRotation(orie.getPsi(), 
+                                                                                    orie.getTheta(), 
+                                                                                    orie.getPhi());
+      xyzRot[0] = hpr[1]; //swap from HPR to "rotations about the axis"
+      xyzRot[1] = hpr[2];
+      xyzRot[2] = hpr[0];
    }
 
    // dtDIS Actor Property Name
    if ((mp = dest.AddUpdateParameter(dtDIS::EnginePropertyName::ENTITY_ORIENTATION, dtDAL::DataType::VEC3)))
    {
       dtDAL::NamedVec3Parameter* v3mp = static_cast<dtDAL::NamedVec3Parameter*>(mp);
-      v3mp->SetValue(hpr);
+      v3mp->SetValue(xyzRot);
    }
 
    if ( (mp = dest.AddUpdateParameter( dtDIS::EnginePropertyName::LAST_KNOWN_ORIENTATION , dtDAL::DataType::VEC3 )) )
    {
       dtDAL::NamedVec3Parameter* v3mp = static_cast< dtDAL::NamedVec3Parameter* > ( mp ) ;
-      v3mp->SetValue( hpr ) ;
+      v3mp->SetValue(xyzRot) ;
    }
 
    // velocity //
