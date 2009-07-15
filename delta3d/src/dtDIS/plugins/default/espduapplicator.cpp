@@ -237,14 +237,19 @@ void PartialApplicator::operator ()(const DIS::EntityStatePdu& source,
    }
 
    // euler angles //
-   const DIS::Orientation& orie = source.getEntityOrientation() ;
-   osg::Vec3 hpr( orie.getPhi() , orie.getTheta() , orie.getPsi() ) ;
+   const DIS::Orientation& orie = source.getEntityOrientation();
+   osg::Vec3 hpr(orie.getPhi(), orie.getTheta(), orie.getPsi());
+
+   if (config != NULL)
+   {
+      hpr = config->GetCoordinateConverter().ConvertToLocalRotation(hpr);
+   }
 
    // dtDIS Actor Property Name
-   if ( (mp = dest.AddUpdateParameter( dtDIS::EnginePropertyName::ENTITY_ORIENTATION , dtDAL::DataType::VEC3 )) )
+   if ((mp = dest.AddUpdateParameter(dtDIS::EnginePropertyName::ENTITY_ORIENTATION, dtDAL::DataType::VEC3)))
    {
-      dtDAL::NamedVec3Parameter* v3mp = static_cast< dtDAL::NamedVec3Parameter* > ( mp ) ;
-      v3mp->SetValue( hpr ) ;
+      dtDAL::NamedVec3Parameter* v3mp = static_cast<dtDAL::NamedVec3Parameter*>(mp);
+      v3mp->SetValue(hpr);
    }
 
    if ( (mp = dest.AddUpdateParameter( dtDIS::EnginePropertyName::LAST_KNOWN_ORIENTATION , dtDAL::DataType::VEC3 )) )

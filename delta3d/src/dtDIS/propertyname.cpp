@@ -19,7 +19,7 @@ namespace dtDIS
    dtUtil::RefString EnginePropertyName::ENTITY_LINEARY_VELOCITY   ("Velocity Vector");
    //dtUtil::RefString EnginePropertyName::ACCELERATION              ("Acceleration' 'Vector");
 
-   dtUtil::RefString EnginePropertyName::DEAD_RECKONING_ALGORITHM  ("Dead_Reckoning_Algorithm");
+   dtUtil::RefString EnginePropertyName::DEAD_RECKONING_ALGORITHM  ("Dead Reckoning Algorithm");
 
    ///\todo this only named "Flying" for now because of the dvte::IG::Entity actor.
    dtUtil::RefString EnginePropertyName::GROUND_CLAMP              ("Flying");
