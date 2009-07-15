@@ -13,10 +13,10 @@ namespace dtDIS
    dtUtil::RefString EnginePropertyName::ENTITY_LOCATION           ("Translation");
 
    dtUtil::RefString EnginePropertyName::ENTITY_ORIENTATION        ("Rotation");
-   dtUtil::RefString EnginePropertyName::LAST_KNOWN_LOCATION       ("Last_Known_Translation");
-   dtUtil::RefString EnginePropertyName::LAST_KNOWN_ORIENTATION    ("Last_Known_Rotation");
+   dtUtil::RefString EnginePropertyName::LAST_KNOWN_LOCATION       ("Last Known Translation");
+   dtUtil::RefString EnginePropertyName::LAST_KNOWN_ORIENTATION    ("Last Known Rotation");
 
-   dtUtil::RefString EnginePropertyName::ENTITY_LINEARY_VELOCITY   ("Velocity_Vector");
+   dtUtil::RefString EnginePropertyName::ENTITY_LINEARY_VELOCITY   ("Velocity Vector");
    //dtUtil::RefString EnginePropertyName::ACCELERATION              ("Acceleration' 'Vector");
 
    dtUtil::RefString EnginePropertyName::DEAD_RECKONING_ALGORITHM  ("Dead_Reckoning_Algorithm");

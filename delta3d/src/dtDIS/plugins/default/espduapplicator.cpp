@@ -147,27 +147,17 @@ void FullApplicator::operator ()(const dtGame::ActorUpdateMessage& source,
       dest.setEntityOrientation( orie ) ;
    }
 
-   if ( const dtGame::MessageParameter* mp = source.GetUpdateParameter( dtDIS::EnginePropertyName::ENTITY_LINEARY_VELOCITY ) )
+   if (const dtGame::MessageParameter* mp = source.GetUpdateParameter(dtDIS::EnginePropertyName::ENTITY_LINEARY_VELOCITY))
    {
       // DIS EntityState actor property
-      const dtGame::Vec3MessageParameter* v3mp = static_cast<const dtGame::Vec3MessageParameter*>( mp );
-      const osg::Vec3& val = v3mp->GetValue() ;
-      DIS::Vector3Float vel ;
-      vel.setX( val[0] ) ;
-      vel.setY( val[1] ) ;
-      vel.setZ( val[2] ) ;
-      dest.setEntityLinearVelocity( vel ) ;
-   }
-   else if ( const dtGame::MessageParameter* mp = source.GetUpdateParameter( dtDIS::HLABaseEntityPropertyName::PROPERTY_VELOCITY_VECTOR ) )
-   {
-      // HLA-DVTE actor property
-      const dtGame::Vec3MessageParameter* v3mp = static_cast<const dtGame::Vec3MessageParameter*>( mp ) ;
-      const osg::Vec3& val = v3mp->GetValue() ;
-      DIS::Vector3Float vel ;
-      vel.setX( val[0] ) ;
-      vel.setY( val[1] ) ;
-      vel.setZ( val[2] ) ;
-      dest.setEntityLinearVelocity( vel ) ;
+      //TODO convert to DIS coordinate system?
+      const dtGame::Vec3MessageParameter* v3mp = static_cast<const dtGame::Vec3MessageParameter*>(mp);
+      const osg::Vec3& val = v3mp->GetValue();
+      DIS::Vector3Float vel;
+      vel.setX(val[0]);
+      vel.setY(val[1]);
+      vel.setZ(val[2]);
+      dest.setEntityLinearVelocity(vel);
    }
 
    /// support the dead reckoning data
@@ -246,13 +236,6 @@ void PartialApplicator::operator ()(const DIS::EntityStatePdu& source,
       v3mp->SetValue( v3 ) ;
    }
 
-   // HLA-DVTE Actor Property Name
-   if ( (mp = dest.AddUpdateParameter( dtDIS::HLABaseEntityPropertyName::PROPERTY_LAST_KNOWN_TRANSLATION , dtDAL::DataType::VEC3 )) )
-   {
-      dtGame::Vec3MessageParameter* v3mp = static_cast< dtGame::Vec3MessageParameter* > ( mp );
-      v3mp->SetValue( v3 );
-   }
-
    // euler angles //
    const DIS::Orientation& orie = source.getEntityOrientation() ;
    osg::Vec3 hpr( orie.getPhi() , orie.getTheta() , orie.getPsi() ) ;
@@ -270,33 +253,18 @@ void PartialApplicator::operator ()(const DIS::EntityStatePdu& source,
       v3mp->SetValue( hpr ) ;
    }
 
-   // HLA-DVTE Actor Property Name
-   if ( (mp = dest.AddUpdateParameter( dtDIS::HLABaseEntityPropertyName::PROPERTY_LAST_KNOWN_ROTATION , dtDAL::DataType::VEC3 )) )
-   {
-      dtDAL::NamedVec3Parameter* v3mp = static_cast< dtDAL::NamedVec3Parameter* > ( mp ) ;
-      v3mp->SetValue( hpr ) ;
-   }
-
    // velocity //
-   const DIS::Vector3Float& lv = source.getEntityLinearVelocity() ;
-   osg::Vec3 vel( lv.getX() , lv.getY() , lv.getZ() ) ;
 
    // dtDIS Actor Property Name
-   if ( (mp = dest.AddUpdateParameter( dtDIS::EnginePropertyName::ENTITY_LINEARY_VELOCITY , dtDAL::DataType::VEC3 )) )
+   if ((mp = dest.AddUpdateParameter(dtDIS::EnginePropertyName::ENTITY_LINEARY_VELOCITY, dtDAL::DataType::VEC3 )))
    {
-      dtDAL::NamedVec3Parameter* v3mp = static_cast< dtDAL::NamedVec3Parameter* > ( mp ) ;
-      v3mp->SetValue( vel ) ;
+      //TODO convert to local coordinate system?
+      const DIS::Vector3Float& lv = source.getEntityLinearVelocity();
+      osg::Vec3 vel(lv.getX(), lv.getY(), lv.getZ());
+      dtDAL::NamedVec3Parameter* v3mp = static_cast<dtDAL::NamedVec3Parameter*>(mp);
+      v3mp->SetValue(vel);
    }
 
-   // HLA-DVTE Actor Property Name
-   if( (mp = dest.AddUpdateParameter( dtDIS::HLABaseEntityPropertyName::PROPERTY_VELOCITY_VECTOR , dtDAL::DataType::VEC3 )) )
-   {
-      dtDAL::NamedVec3Parameter* v3mp = static_cast< dtDAL::NamedVec3Parameter* > ( mp ) ;
-      v3mp->SetValue( vel ) ;
-   }
-
-   // acceleration //
-   // HLA-DVTE Actor Property Name
 
 #if 0
    UpdateAcceleration( vel ) ;
