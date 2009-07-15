@@ -97,45 +97,25 @@ void ESPduProcessorTests::CreateRemoteActorFromEntityStatePDU()
    //create a test pdu and initialize it
    DIS::EntityStatePdu pdu;
    InitializePdu initpdu;
-   initpdu( pdu );
+   initpdu(pdu);
 
    //add a new mapping of DIS entity type and ActorType
    dtDIS::SharedState sharedState;
    sharedState.GetActorMap().AddActorMapping(pdu.getEntityType(), 
-      dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE.get() );
+      dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE.get());
  
    //create our entity state pdu processor and feed it a PDU to work on.
    //In this case, it should create a new Actor and apply all the values
    //of the PDU to the Actor's Properties
-   dtDIS::ESPduProcessor processor( gm.get(), &sharedState );
-   processor.Process( pdu );
+   dtDIS::ESPduProcessor processor(gm.get(), &sharedState);
+   processor.Process(pdu);
 
-   ///\todo need to tick the system so that message is really applied?
    dtCore::System::GetInstance().Step();
 
    //at this point, there should be a new Actor out there
    std::vector<dtDAL::ActorProxy*> proxies;
    gm->FindActorsByType(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, proxies );
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Should only be one actor created", size_t(1), proxies.size());
-
-   //we'll do a quick sanity check to make sure some of the Properties got
-   //applied correctly. This process is more thoroughly tested in
-   //espduapplicatortests.cpp
-   dtDAL::Vec3ActorProperty *v3Prop = NULL;
-   proxies[0]->GetProperty(dtDIS::EnginePropertyName::ENTITY_ORIENTATION,v3Prop);
-  
-   if (v3Prop != NULL)
-   {
-      DIS::Orientation orient = pdu.getEntityOrientation();
-      CPPUNIT_ASSERT_MESSAGE("Rotation doesn't match.",
-         dtUtil::Equivalent(osg::Vec3(orient.getPhi(), orient.getTheta(), orient.getPsi()),
-                           v3Prop->GetValue(),
-                           0.00001f));
-   } 
-
-   //Commented out since this type of actor doesn't have this Property added to it.
-   //dtDAL::ActorProperty *velProp = proxies[0]->GetProperty(dtDIS::EnginePropertyName::VELOCITY);
-   //CPPUNIT_ASSERT_MESSAGE("Doesn't have VELOCITY property", velProp != NULL);
 }
 
 void ESPduProcessorTests::TestNoActor()
