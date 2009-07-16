@@ -45,11 +45,20 @@ RTSMotionModel::RTSMotionModel( dtCore::Keyboard *keyboard
       ));
 
    SetDistanceAxis(GetDefaultLogicalInputDevice()->AddAxis(
-      "mouse wheel camera zoom",
-      new dtCore::AxisToAxis(
+         "translate left/right",
+         new dtCore::AxesToAxis(
+         GetDefaultLogicalInputDevice()->AddAxis(
+         "mouse wheel camera zoom",
+         new dtCore::AxisToAxis(
          mouse->GetAxis(2),
          0.05f,
-         0.0f)));
+         0.0f)),
+         GetDefaultLogicalInputDevice()->AddAxis(
+         "q/e keys zoom in/out",
+         new dtCore::DeltaButtonsToAxis(
+         keyboard->GetButton('q'),
+         keyboard->GetButton('e'), -0.05f, 0.05f))
+         )));
 
    if (useMouseScrolling)
    {

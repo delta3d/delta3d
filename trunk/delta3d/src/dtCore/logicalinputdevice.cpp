@@ -865,7 +865,73 @@ namespace dtCore
       return false;
    }
    
+   /**
+    * Constructor.
+    *
+    * @param firstSourceButton the first source button
+    * @param secondSourceButton the second source button
+    * @param firstButtonValue the value corresponding to the first
+    * source button
+    * @param secondButtonValue the value corresponding to the second
+    * source button
+    * @param neutralValue the value corresponding to the neutral
+    * state
+    */
+   DeltaButtonsToAxis::DeltaButtonsToAxis(Button* firstSourceButton,
+      Button* secondSourceButton,
+      double firstButtonValue,
+      double secondButtonValue,
+      double neutralValue)
+      : ButtonsToAxis(firstSourceButton, secondSourceButton, firstButtonValue,
+      secondButtonValue, neutralValue)
+   {}
+
+   /**
+    * Destructor.
+    */
+   DeltaButtonsToAxis::~DeltaButtonsToAxis()
+   {
+   }
+
    
+   bool DeltaButtonsToAxis::UpdateTargetAxisState()
+   {
+      if(GetTargetAxis() != NULL)
+      {
+         bool firstButtonState = false,
+            secondButtonState = false;
+
+         if (GetFirstSourceButton() != NULL)
+         {
+            firstButtonState = GetFirstSourceButton()->GetState();
+         }
+
+         if (GetSecondSourceButton())
+         {
+            secondButtonState = GetSecondSourceButton()->GetState();
+         }
+
+         double deltaValue = 0.0;
+
+         if (firstButtonState && !secondButtonState)
+         {
+            deltaValue = GetFirstButtonValue();
+         }
+         else if (secondButtonState && !firstButtonState)
+         {
+            deltaValue = GetSecondButtonValue();
+         }
+         else
+         {
+            deltaValue = GetNeutralValue();
+         }
+
+         return GetTargetAxis()->SetState(deltaValue, deltaValue);
+      }
+
+      return false;
+   }
+
    /**
     * Constructor.
     *
