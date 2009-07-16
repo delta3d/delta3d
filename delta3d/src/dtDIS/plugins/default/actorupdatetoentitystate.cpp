@@ -78,12 +78,12 @@ void ActorUpdateToEntityState::SetEntityType(const dtCore::UniqueId& uniqueID,
    tokenizer.tokenize(tokens, entityTypeStr);
    if (tokens.size() == 6)
    {
-      entityType.setEntityKind(dtUtil::ToType<unsigned char>(tokens[0]));
-      entityType.setDomain(dtUtil::ToType<unsigned char>(tokens[1]));
-      entityType.setCountry(dtUtil::ToType<unsigned short>(tokens[2]));
-      entityType.setCategory(dtUtil::ToType<unsigned char>(tokens[3]));
-      entityType.setSubcategory(dtUtil::ToType<unsigned char>(tokens[4]));
-      entityType.setSpecific(dtUtil::ToType<unsigned char>(tokens[5]));
+      entityType.setEntityKind(atoi(tokens[0].c_str()));
+      entityType.setDomain(atoi(tokens[1].c_str()));
+      entityType.setCountry(atoi(tokens[2].c_str()));
+      entityType.setCategory(atoi(tokens[3].c_str()));
+      entityType.setSubcategory(atoi(tokens[4].c_str()));
+      entityType.setSpecific(atoi(tokens[5].c_str()));
    }
 
    downcastPdu->setEntityType(entityType);
