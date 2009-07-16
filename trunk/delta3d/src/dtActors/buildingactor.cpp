@@ -206,8 +206,6 @@ namespace dtActors
    {
       if (!mProxy->IsLoading())
       {
-         IntersectionTest(osg::Vec3(0.0f, 0.0f, 0.0f), osg::Vec3(5.0f, 5.0f, 0.0f), osg::Vec3(0.0f, 5.0f, 0.0f),osg::Vec3(5.0f, 0.0f, 0.0f));
-
          mGenerateRoof = true;
 
          mRoofGeom->removePrimitiveSet(0, mRoofGeom->getNumPrimitiveSets());
@@ -786,6 +784,7 @@ namespace dtActors
       // we can do, so don't draw anything.
       if (recurseCount > (int)roofPoints.size())
       {
+         DrawRoofPortion(roofPoints);
          return;
       }
 
