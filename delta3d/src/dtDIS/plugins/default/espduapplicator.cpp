@@ -115,9 +115,9 @@ void FullApplicator::operator ()(const dtGame::ActorUpdateMessage& source,
       const dtGame::Vec3MessageParameter* v3mp = static_cast<const dtGame::Vec3MessageParameter*>(mp);
       const osg::Vec3& val = v3mp->GetValue();
       DIS::Orientation orie;
-      orie.setPhi(val[0]);
-      orie.setTheta(val[1]);
-      orie.setPsi(val[2]);
+      orie.setPhi(osg::DegreesToRadians(val[0])); //pitch
+      orie.setTheta(osg::DegreesToRadians(val[1])); //roll
+      orie.setPsi(osg::DegreesToRadians(val[2])); //heading
       dest.setEntityOrientation(orie);
    }
 

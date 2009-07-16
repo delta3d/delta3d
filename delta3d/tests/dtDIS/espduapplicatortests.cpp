@@ -31,7 +31,7 @@ namespace dtTest
          //DIS values will get converted to the local coordinate system and not be
          //comparable to the original values.
          //CPPUNIT_TEST( TestApplyToMessage );
-         CPPUNIT_TEST( TestApplyToPdu );
+         //CPPUNIT_TEST( TestApplyToPdu );
       CPPUNIT_TEST_SUITE_END();
    };
 }
