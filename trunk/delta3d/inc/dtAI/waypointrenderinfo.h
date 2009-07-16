@@ -29,6 +29,8 @@
 #include <dtUtil/refstring.h>
 #include <dtDAL/propertycontainer.h>
 
+#include <dtDAL/propertymacros.h>
+
 namespace dtAI
 {
 
@@ -56,28 +58,32 @@ namespace dtAI
          
          osg::Vec3 mWorldSpacePos;
 
-         bool mRenderWaypoints, mRenderWaypointID, mRenderWaypointText, mRenderNavMesh, mRenderNavMeshText;
+         DECLARE_PROPERTY(bool, RenderWaypoints);
+         DECLARE_PROPERTY(bool, RenderWaypointID);
+         DECLARE_PROPERTY(bool, RenderWaypointText);
+         DECLARE_PROPERTY(bool, RenderNavMesh);
+         DECLARE_PROPERTY(bool, RenderNavMeshText);
 
          //Waypoints
-         float mWaypointSize;
-         Color mWaypointColor;
+         DECLARE_PROPERTY(float, WaypointSize);
+         DECLARE_PROPERTY(Color, WaypointColor);
 
          //Waypoint Font
-         dtUtil::RefString mWaypointFontFile;
-         float mWaypointFontSizeScalar;
-         osg::Vec3 mWaypointTextOffset;
-         Color mWaypointFontColor;
+         DECLARE_PROPERTY(std::string, WaypointFontFile);
+         DECLARE_PROPERTY(float, WaypointFontSizeScalar);
+         DECLARE_PROPERTY(osg::Vec3, WaypointTextOffset);
+         DECLARE_PROPERTY(Color, WaypointFontColor);
 
          //Nav Mesh
-         float mNavMeshWidth;
-         Color mNavMeshColor;
+         DECLARE_PROPERTY(float, NavMeshWidth);
+         DECLARE_PROPERTY(Color, NavMeshColor);
 
          //Nav Mesh Font
-         dtUtil::RefString mNavMeshFontFile;
-         float mNavMeshFontSizeScalar;
+         DECLARE_PROPERTY(std::string, NavMeshFontFile);
+         DECLARE_PROPERTY(float, NavMeshFontSizeScalar);
          ///the text is scaled across the navmesh path
-         float mNavMeshTextOffsetScalar;
-         Color mNavMeshFontColor;
+         DECLARE_PROPERTY(float, NavMeshTextOffsetScalar);
+         DECLARE_PROPERTY(Color, NavMeshFontColor);
    };
 
 } // namespace dtAI

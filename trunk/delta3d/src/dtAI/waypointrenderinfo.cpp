@@ -72,6 +72,29 @@ namespace dtAI
    void WaypointRenderInfo::BuildPropertyMap()
    {
       //TODO Create Properties
+      typedef dtDAL::PropertyRegHelper<dtDAL::PropertyContainer&, WaypointRenderInfo> RegHelperType;
+
+      RegHelperType regHelper(*this, this, "WaypointRenderInfo");
+      
+      REGISTER_PROPERTY(RenderWaypoints, "Used to toggle waypoint rendering.", RegHelperType, regHelper);
+      REGISTER_PROPERTY(RenderWaypointID, "Used to toggle rendering the waypoint id above the waypoint.", RegHelperType, regHelper);
+      REGISTER_PROPERTY(RenderWaypointText, "Used to toggle waypoint text rendering.", RegHelperType, regHelper);
+      REGISTER_PROPERTY(RenderNavMesh, "Used to toggle navmesh rendering.", RegHelperType, regHelper);
+      REGISTER_PROPERTY(RenderNavMeshText, "Used to toggle navmesh text rendering.", RegHelperType, regHelper);
+      REGISTER_PROPERTY(WaypointSize, "Used to change the size of the waypoints.", RegHelperType, regHelper);
+      REGISTER_PROPERTY(WaypointColor, "Used to set the rendered waypoint color.", RegHelperType, regHelper);
+      REGISTER_PROPERTY(WaypointFontFile, "Used to set the font file use for the waypoint text.", RegHelperType, regHelper);
+      REGISTER_PROPERTY(WaypointFontSizeScalar, "Used to change the size of the waypoint text.", RegHelperType, regHelper);
+      REGISTER_PROPERTY(WaypointTextOffset, "Used to change the text offset from the waypoint.", RegHelperType, regHelper);
+      REGISTER_PROPERTY(WaypointFontColor, "Used to change the font color of the waypoint text.", RegHelperType, regHelper);
+      REGISTER_PROPERTY(NavMeshWidth, "Used to change the size of the rendered navmesh.", RegHelperType, regHelper);
+      REGISTER_PROPERTY(NavMeshColor, "Used to change the color of the navmesh.", RegHelperType, regHelper);
+      REGISTER_PROPERTY(NavMeshFontFile, "Used to change the font file of the navmesh text.", RegHelperType, regHelper);
+      REGISTER_PROPERTY(NavMeshFontSizeScalar, "Used to change the size of the navmesh font.", RegHelperType, regHelper);
+      REGISTER_PROPERTY(NavMeshTextOffsetScalar, "Used to offset the navmesh text.", RegHelperType, regHelper);
+      REGISTER_PROPERTY(NavMeshFontColor, "Used to change the navmesh text color.", RegHelperType, regHelper);
+
+
    }
 
 
