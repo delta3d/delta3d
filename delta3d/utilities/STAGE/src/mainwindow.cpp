@@ -903,12 +903,15 @@ namespace dtEditQt
       EditorData::GetInstance().getCurrentMap()->SetModified(true);
       updateWindowTitle();
 
-      // Remove this actor from any groups it may have been.
-      dtDAL::Map* map = EditorData::GetInstance().getCurrentMap();
-      if (map)
-      {
-         map->RemoveActorFromGroups(proxy.get());
-      }
+      // JPH: Moved this into the undo manager, it's very important
+      // that this undo event is created before the destroy event.
+      //// Remove this actor from any groups it may have been.
+      //dtDAL::Map* map = EditorData::GetInstance().getCurrentMap();
+      //if (map)
+      //{
+      //   map->RemoveActorFromGroups(proxy.get());
+      //   EditorData::GetInstance().getUndoManager().unGroupActor(proxy);
+      //}
    }
 
    ///////////////////////////////////////////////////////////////////////////////

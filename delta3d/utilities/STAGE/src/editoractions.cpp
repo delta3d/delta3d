@@ -952,7 +952,7 @@ namespace dtEditQt
       // remove each proxy's actor from the scene then remove the proxy from
       // the map.
       ViewportOverlay::ActorProxyList::iterator itor;
-      EditorData::GetInstance().getUndoManager().beginUndoGroup();
+      EditorData::GetInstance().getUndoManager().beginMultipleUndo();
       for (itor = selection.begin(); itor != selection.end(); ++itor)
       {
          // \TODO: Find out why this const_cast is necessary. It compiles without
@@ -960,7 +960,7 @@ namespace dtEditQt
          dtDAL::ActorProxy* proxy = const_cast<dtDAL::ActorProxy*>(itor->get());
          deleteProxy(proxy, currMap);
       }
-      EditorData::GetInstance().getUndoManager().endUndoGroup();
+      EditorData::GetInstance().getUndoManager().endMultipleUndo();
 
       // Now that we have removed the selected objects, clear the current selection.
       std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > emptySelection;
@@ -1241,11 +1241,14 @@ namespace dtEditQt
 
          int groupIndex = map->GetGroupCount();
 
+         EditorData::GetInstance().getUndoManager().beginMultipleUndo();
          for (int index = 0; index < (int)selection.size(); index++)
          {
             dtDAL::ActorProxy* proxy = selection[index].get();
             map->AddActorToGroup(groupIndex, proxy);
+            EditorData::GetInstance().getUndoManager().groupActor(proxy);
          }
+         EditorData::GetInstance().getUndoManager().endMultipleUndo();
       }
 
       mActionGroupActors->setEnabled(false);
@@ -1264,11 +1267,14 @@ namespace dtEditQt
       dtDAL::Map* map = EditorData::GetInstance().getCurrentMap();
       if (map)
       {
+         EditorData::GetInstance().getUndoManager().beginMultipleUndo();
          for (int index = 0; index < (int)selection.size(); index++)
          {
             dtDAL::ActorProxy* proxy = selection[index].get();
             map->RemoveActorFromGroups(proxy);
+            EditorData::GetInstance().getUndoManager().unGroupActor(proxy);
          }
+         EditorData::GetInstance().getUndoManager().endMultipleUndo();
       }
 
       mActionUngroupActors->setEnabled(false);

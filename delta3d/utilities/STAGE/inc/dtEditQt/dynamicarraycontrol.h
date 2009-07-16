@@ -101,8 +101,9 @@ namespace dtEditQt
        *
        * @param[in]  forceRefresh  True to force the UI to refresh.
        * @param[in]  isChild       True if a child control is calling this from its parent.
+       * @param[in]  initializing  True if we are initializing the list.
        */
-      void resizeChildren(bool forceRefresh = false, bool isChild = false);
+      void resizeChildren(bool forceRefresh = false, bool isChild = false, bool initializing = false);
 
    public slots:
       /**

@@ -46,7 +46,18 @@ bool dtDAL::ArrayActorPropertyBase::FromString(const std::string& value)
    // First read the total size of the array.
    std::string token = TakeToken(data);
 
+   // Make sure our array is the proper size.
    const int arraySize = dtUtil::ToType<int>(token);
+   while (GetArraySize() < arraySize)
+   {
+      Insert(0);
+   }
+
+   while (GetArraySize() > arraySize)
+   {
+      Remove(0);
+   }
+
    for (int index = 0; index < arraySize; index++)
    {
       SetIndex(index);
