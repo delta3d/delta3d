@@ -656,6 +656,13 @@ namespace dtCore
                                          bool oldState,
                                          bool newState);
 
+         // Accessors for child classes
+         Button* GetFirstSourceButton() const  { return mFirstSourceButton.get();  }
+         Button* GetSecondSourceButton() const { return mSecondSourceButton.get(); }
+         LogicalAxis* GetTargetAxis() const    { return mTargetAxis.get();         }
+         double GetFirstButtonValue() const    { return mFirstButtonValue;         }
+         double GetSecondButtonValue() const   { return mSecondButtonValue;        }
+         double GetNeutralValue() const        { return mNeutralValue;             }
 
       private:
 
@@ -663,30 +670,64 @@ namespace dtCore
           * The first source button.
           */
          RefPtr<Button> mFirstSourceButton;
-
          /**
           * The second source button.
           */
          RefPtr<Button> mSecondSourceButton;
-
          /// The target axis.
          RefPtr<LogicalAxis> mTargetAxis;
-
          /// The value corresponding to the first button.
          double mFirstButtonValue;
-
          /// The value corresponding to the second button.
          double mSecondButtonValue;
-
          /// The neutral value.
          double mNeutralValue;
 
-
          /// Updates the state of the target axis.
-         bool UpdateTargetAxisState();
+         virtual bool UpdateTargetAxisState();
    };
    
    
+   /**
+    * Maps two buttons to a logical axis and passes their values as the delta when
+    * they call SetState in UpdateTargetAxisState.
+    */
+   class DT_CORE_EXPORT DeltaButtonsToAxis : public ButtonsToAxis
+   {
+      public:
+
+         /**
+          * Constructor.
+          *
+          * @param firstSourceButton the first source button
+          * @param secondSourceButton the second source button
+          * @param firstButtonValue the value corresponding to the first
+          * source button
+          * @param secondButtonValue the value corresponding to the second
+          * source button
+          * @param neutralValue the value corresponding to the neutral
+          * state
+          */
+         DeltaButtonsToAxis(Button* firstSourceButton,
+                       Button* secondSourceButton,
+                       double firstButtonValue = -1.0,
+                       double secondButtonValue = 1.0,
+                       double neutralValue = 0.0);
+
+      protected:
+      
+         /**
+          * Destructor.
+          */
+         virtual ~DeltaButtonsToAxis();
+
+      private:
+
+         /// Updates the state of the target axis.
+         virtual bool UpdateTargetAxisState();
+
+   };
+
    /**
     * Maps a button and an axis to an axis, so that the value of the
     * target axis is equal to the value of the source axis when the
