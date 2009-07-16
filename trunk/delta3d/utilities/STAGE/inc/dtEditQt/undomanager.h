@@ -182,8 +182,8 @@ namespace dtEditQt
             PROXY_NAME_CHANGED,
             PROXY_CREATED,
             PROXY_DELETED,
-            UNDO_GROUP_BEGIN,
-            UNDO_GROUP_END,
+            MULTI_UNDO_BEGIN,
+            MULTI_UNDO_END,
          };
 
          ChangeEvent() {}
