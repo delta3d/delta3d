@@ -6,10 +6,6 @@
 #include <dtGame/actorupdatemessage.h>
 #include <DIS/EntityStatePdu.h>
 
-#include <DIS/StreamUtils.h>
-#include <sstream>
-#include <dtDIS/hasproperty.h>
-#include <dtDIS/propertyname.h>
 
 
 
@@ -145,8 +141,14 @@ void dtDIS::ESPduProcessor::CreateRemoteActor(const DIS::EntityStatePdu& pdu)
    }
    else
    {
-      std::ostringstream ss;
-      ss << entityType;
-      LOG_ERROR("Don't know the ActorType to create for " + ss.str() )
+      std::string entTypeStr;
+      entTypeStr += dtUtil::ToString<unsigned char>(entityType.getEntityKind()) + 
+              "." + dtUtil::ToString<unsigned char>(entityType.getDomain()) +
+              "." + dtUtil::ToString<unsigned short>(entityType.getCountry()) + 
+              "." + dtUtil::ToString<unsigned char>(entityType.getCategory()) + 
+              "." + dtUtil::ToString<unsigned char>(entityType.getSubcategory()) +
+              "." + dtUtil::ToString<unsigned char>(entityType.getSpecific()) + 
+              "." + dtUtil::ToString<unsigned char>(entityType.getExtra());
+      LOG_WARNING("Don't know the ActorType to create for:" +  entTypeStr);
    }
 }
