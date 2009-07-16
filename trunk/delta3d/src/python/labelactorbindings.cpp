@@ -103,7 +103,7 @@ public:
          return LabelActorWrapper::RIGHT_TOP;
       }
 
-      return LabelActorWrapper::NO_ALIGNMENT;    
+      return LabelActorWrapper::NO_ALIGNMENT;
    }
 
    void SetTextAlignment2(AlignEnumWrapper aew)
@@ -121,7 +121,7 @@ public:
          case LabelActorWrapper::CENTER_BOTTOM:
             LabelActor::SetTextAlignment(LabelActor::AlignmentEnum::CENTER_BOTTOM);
             break;
-            
+
          case LabelActorWrapper::CENTER_BOTTOM_BASE_LINE:
             LabelActor::SetTextAlignment(LabelActor::AlignmentEnum::CENTER_BOTTOM_BASE_LINE);
             break;
@@ -173,17 +173,17 @@ public:
          case LabelActorWrapper::RIGHT_TOP:
             LabelActor::SetTextAlignment(LabelActor::AlignmentEnum::RIGHT_TOP);
             break;
-         
+
          default:
             LabelActor::SetTextAlignment(LabelActor::AlignmentEnum::BASE_LINE);
-            break;     
+            break;
       }
-   }     
+   }
 };
-     
+
 void initLabelActorBindings()
 {
-  class_<LabelActor, bases<dtCore::Transformable>, dtCore::RefPtr<LabelActor>, boost::noncopyable>("LabelActor", init<optional<const std::string&>>())
+  class_<LabelActor, bases<dtCore::Transformable>, dtCore::RefPtr<LabelActor>, boost::noncopyable>("LabelActor", init<optional<const std::string&> >())
     //GetText allows you to get the text value of the label
     .def("GetText", &LabelActor::GetText)
     .def("SetText", &LabelActor::SetText)
@@ -206,7 +206,7 @@ void initLabelActorBindings()
     .def("SetEnableLighting", &LabelActor::SetEnableLighting)
     .def("GetEnableLighting", &LabelActor::GetEnableLighting)
     .def("SetEnableDepthTesting", &LabelActor::SetEnableDepthTesting)
-    .def("GetEnableDepthTesting", &LabelActor::GetEnableDepthTesting)   
+    .def("GetEnableDepthTesting", &LabelActor::GetEnableDepthTesting)
     .def("GetTextAlignment", &LabelActorWrapper::GetTextAlignment2)
     .def("SetTextAlignment", &LabelActorWrapper::SetTextAlignment2)
     ;
@@ -228,5 +228,5 @@ void initLabelActorBindings()
     .value("RIGHT_BOTTOM_BASE_LIN", LabelActorWrapper::RIGHT_BOTTOM_BASE_LINE)
     .value("RIGHT_CENTER", LabelActorWrapper::RIGHT_CENTER)
     .value("RIGHT_TOP", LabelActorWrapper::RIGHT_TOP)
-    .export_values();    
+    .export_values();
 }
