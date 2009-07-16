@@ -26,7 +26,7 @@ using namespace dtDIS::details;
 
 void FullApplicator::operator ()(const DIS::EntityStatePdu& source,
                                  dtGame::ActorUpdateMessage& dest,
-                                 const dtDIS::SharedState* config) const
+                                 dtDIS::SharedState* config) const
 {
    PartialApplicator partial;
    partial(source, dest, config);
@@ -89,7 +89,7 @@ void FullApplicator::operator ()(const DIS::EntityStatePdu& source,
 void FullApplicator::operator ()(const dtGame::ActorUpdateMessage& source,
                                  const DIS::EntityID& eid,
                                  DIS::EntityStatePdu& dest,
-                                 const dtDIS::SharedState* config) const
+                                 dtDIS::SharedState* config) const
 {
    // --- support the engine-core properties. --- //
    if (const dtGame::MessageParameter* mp = source.GetUpdateParameter(EnginePropertyName::ENTITY_LOCATION))
@@ -184,7 +184,7 @@ void FullApplicator::operator ()(const dtGame::ActorUpdateMessage& source,
 ///\todo implement dtHLAGM::RPRParameterTranslator::MapFromAngularVelocityVectorToMessageParam for ANGULAR_VELOCITY.
 void PartialApplicator::operator ()(const DIS::EntityStatePdu& source,
                                     dtGame::ActorUpdateMessage& dest,
-                                    const dtDIS::SharedState* config) 
+                                    dtDIS::SharedState* config) 
 {
    dtDAL::NamedParameter* mp ;
 

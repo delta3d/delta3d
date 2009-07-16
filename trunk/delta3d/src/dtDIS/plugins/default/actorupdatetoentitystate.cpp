@@ -13,7 +13,7 @@
 
 using namespace dtDIS;
 
-ActorUpdateToEntityState::ActorUpdateToEntityState(const dtDIS::SharedState* config, dtGame::GameManager* gm)
+ActorUpdateToEntityState::ActorUpdateToEntityState(dtDIS::SharedState* config, dtGame::GameManager* gm)
    : mConfig(config)
    , mGM(gm)
    , mPdu(new DIS::EntityStatePdu)

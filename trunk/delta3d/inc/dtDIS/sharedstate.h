@@ -173,7 +173,8 @@ namespace dtDIS
       unsigned short GetApplicationID() const; 
 
       void SetCoordinateConverter(const dtUtil::Coordinates& coordConverter);
-      dtUtil::Coordinates GetCoordinateConverter() const;
+      const dtUtil::Coordinates& GetCoordinateConverter() const;
+      dtUtil::Coordinates& GetCoordinateConverter();
 
    private:
       ActorMapConfig mActorMapConfig;
