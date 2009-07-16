@@ -201,7 +201,7 @@ namespace dtEditQt
    {
       PrefabSaveDialog dlg(this);
       std::string contextDir = dtDAL::Project::GetInstance().GetContext();
-      std::string contextDirPlusPrefab = contextDir + "/prefabs";
+      std::string contextDirPlusPrefab = contextDir + "/Prefabs";
       std::string categoryRelPath = mCurrentDir.substr(contextDirPlusPrefab.size());
 
       //chop off any preceeding slashes the category name
@@ -629,7 +629,7 @@ namespace dtEditQt
       }
       else
       {
-         //prefabs dir hasn't been created yet ... nothing to show
+         //Prefabs dir hasn't been created yet ... nothing to show
          EditorData::GetInstance().getMainWindow()->endWaitCursor();
          return;
       }

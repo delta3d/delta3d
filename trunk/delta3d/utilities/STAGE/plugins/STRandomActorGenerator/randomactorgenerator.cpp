@@ -3,9 +3,13 @@
 #include <ctime>
 
 #include <dtActors/volumeeditactor.h>
+
+#include <dtCore/isector.h>
 #include <dtCore/transformable.h>
+
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/librarymanager.h>
+
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/mainwindow.h>
@@ -40,7 +44,7 @@ RandomActorGeneratorPlugin::RandomActorGeneratorPlugin(dtEditQt::MainWindow* mw)
             this, SLOT(OnSelectedActorChange(ActorProxyRefPtrVector&)));
 
    //seed the random number generator
-   srand(time(NULL));
+   srand(time(NULL));   
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -205,7 +209,61 @@ void RandomActorGeneratorPlugin::NewActorProxyInsideVolumeEditor(dtDAL::ActorPro
    //exist inside Delta Transforms.... if that ever changes this could break)
    osg::Matrixd volEAXMatrix;
    volEAXMatrix = volEditActor->GetMatrix();
-   aClonePtr->SetMatrix(aClonePtr->GetMatrix() * volEAXMatrix);   
+   aClonePtr->SetMatrix(aClonePtr->GetMatrix() * volEAXMatrix);
+
+   if (mUI.mGroundClampCheckBox->checkState())
+   {
+      aClonePtr->GetTransform(cloneXForm);
+      osg::Vec3 translatedSpawnPoint = cloneXForm.GetTranslation();
+      osg::Vec3 startPoint;
+
+      dtCore::Scene* masterScene = dtEditQt::ViewportManager::GetInstance().getMasterScene();
+      //Don't want the new Actor's Drawable to be part of the intersection tests
+      masterScene->RemoveDrawable(aClonePtr);
+
+      //first find "top" of brush
+      dtCore::RefPtr<dtCore::Isector> groundFinder = new dtCore::Isector();
+      groundFinder->SetGeometry(dtEditQt::EditorData::GetInstance().getMainWindow()->GetVolumeEditActor());
+      groundFinder->SetStartPosition(translatedSpawnPoint);
+      groundFinder->SetDirection(osg::Vec3(0.0, 0.0, 1.0));
+      groundFinder->Update();
+      if (groundFinder->GetNumberOfHits() > 0)
+      {
+         groundFinder->GetHitPoint(startPoint, 0);
+      }
+      else
+      {
+         startPoint = translatedSpawnPoint;
+      }
+
+      //Now go from startPoint to the first poly "below" it      
+      groundFinder->SetScene(masterScene);      
+      groundFinder->SetGeometry(NULL);
+      groundFinder->SetStartPosition(startPoint);
+      //Down in Delta3D is -z so we're going to clamp in that direction
+      //(clamp towards toward the "ground."
+      groundFinder->SetDirection(osg::Vec3(0.0, 0.0, -1.0));
+      
+      groundFinder->Update();
+      osg::Vec3 groundHit;     
+      for (int i = 0; i < groundFinder->GetNumberOfHits(); ++i)
+      {         
+         groundFinder->GetHitPoint(groundHit, i);
+
+         //Take first hit point that is far enough away from the top of the brush
+         //(experiments have shown that the first 1 or 2 points are usually the
+         // top of the brush)
+         if (startPoint[2] - groundHit[2] >= 0.0001)
+         {
+            cloneXForm.SetTranslation(groundHit);
+            aClonePtr->SetTransform(cloneXForm);
+            break;
+         }
+      }  
+
+      //put new Actor's Drawable back in Scene
+      masterScene->AddDrawable(aClonePtr);    
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
