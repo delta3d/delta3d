@@ -318,12 +318,18 @@ void LinkedPointsActorToolPlugin::onMouseMoveEvent(Viewport* vp, QMouseEvent* e)
          //   refresh = true;
          //}
          //else
-         if (mIsInActorMode)
-         {
-            // Visualize the updated actor.
-            mActiveActor->Visualize(mCurrentPoint);
-            mActiveActor->Visualize(mCurrentPoint - 1);
-         }
+         //if (mIsInActorMode)
+         //{
+         //   dtCore::Transformable* target = motion->GetTarget();
+         //   if (target)
+         //   {
+         //      // Update the position and rotation of the target.
+         //      dtCore::Transform transform;
+         //      target->GetTransform(transform);
+         //      mActiveActor->SetPointPosition(mCurrentPoint, transform.GetTranslation());
+         //      mActiveActor->SetPointRotation(mCurrentPoint, );
+         //   }
+         //}
 
          if (refresh)
          {
@@ -552,8 +558,8 @@ void LinkedPointsActorToolPlugin::onSetSnapEnabled(bool translation, bool rotati
 {
    mPerspMotionModel->SetSnapEnabled(translation, rotation, scale);
    mTopMotionModel->SetSnapEnabled(translation, rotation, scale);
-   mPerspMotionModel->SetSnapEnabled(translation, rotation, scale);
-   mPerspMotionModel->SetSnapEnabled(translation, rotation, scale);
+   mSideMotionModel->SetSnapEnabled(translation, rotation, scale);
+   mFrontMotionModel->SetSnapEnabled(translation, rotation, scale);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -597,10 +603,7 @@ void LinkedPointsActorToolPlugin::onDeleteLinkPointPressed()
    {
       mActiveActor->RemovePoint(mCurrentPoint);
 
-      if (mCurrentPoint > 0)
-      {
-         mCurrentPoint--;
-      }
+      if (mCurrentPoint > 0) mCurrentPoint--;
 
       if (!selectPoint(mCurrentPoint))
       {
@@ -697,6 +700,16 @@ bool LinkedPointsActorToolPlugin::selectPoint(int pointIndex)
       mSideMotionModel->SetTarget(point);
       mFrontMotionModel->SetTarget(point);
 
+      mPerspMotionModel->SetPointIndex(mCurrentPoint);
+      mTopMotionModel->SetPointIndex(mCurrentPoint);
+      mSideMotionModel->SetPointIndex(mCurrentPoint);
+      mFrontMotionModel->SetPointIndex(mCurrentPoint);
+
+      mPerspMotionModel->SetActiveActor(mActiveActor);
+      mTopMotionModel->SetActiveActor(mActiveActor);
+      mSideMotionModel->SetActiveActor(mActiveActor);
+      mFrontMotionModel->SetActiveActor(mActiveActor);
+
       mPerspMotionModel->UpdateWidgets();
       mTopMotionModel->UpdateWidgets();
       mSideMotionModel->UpdateWidgets();
@@ -715,20 +728,7 @@ bool LinkedPointsActorToolPlugin::selectDrawable(dtCore::DeltaDrawable* drawable
    if (drawable && mActiveActor)
    {
       // Check if the drawable is a valid point on the actor.
-      int pointIndex = mActiveActor->GetPointIndex(drawable);
-      if (pointIndex >= 0 && pointIndex + 1 < mActiveActor->GetPointCount())
-      {
-         osg::Vec3 firstPos = mActiveActor->GetPointPosition(pointIndex);
-         osg::Vec3 secondPos = mActiveActor->GetPointPosition(pointIndex + 1);
-         float fDistance1 = (pickPosition - firstPos).length();
-         float fDistance2 = (pickPosition - secondPos).length();
-
-         // If we are closer to our second point, then change our selection index.
-         if (fDistance1 > fDistance2)
-         {
-            pointIndex++;
-         }
-      }
+      int pointIndex = mActiveActor->GetPointIndex(drawable, pickPosition);
 
       // now select our point.
       return selectPoint(pointIndex);

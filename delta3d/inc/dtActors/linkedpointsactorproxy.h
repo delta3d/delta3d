@@ -202,14 +202,14 @@ namespace dtActors
       * @param[in]  location  The location of the new point to be added.
       * @param[in]  index     The index to insert the new point, -1 to append.
       */
-      void AddPoint(osg::Vec3 location, int index = -1);
+      virtual void AddPoint(osg::Vec3 location, int index = -1);
 
       /**
       * Removes a point from the array.
       *
       * @param[in]  index  The index of the point to remove.
       */
-      void RemovePoint(int index);
+      virtual void RemovePoint(int index);
 
       /**
       * Changes the position or rotation of a point at the given index.
@@ -218,8 +218,8 @@ namespace dtActors
       * @param[in]  location  The new location of the point.
       * @param[in]  rotation  The new rotation of the point.
       */
-      void SetPointPosition(int index, osg::Vec3 location);
-      void SetPointRotation(int index, osg::Vec3 rotation);
+      virtual void SetPointPosition(int index, osg::Vec3 location);
+      virtual void SetPointRotation(int index, osg::Vec3 rotation);
 
       /**
       * Retrieves the position or rotation of a point.
@@ -244,6 +244,7 @@ namespace dtActors
       * @return     Returns the index of the found transformable or -1 if it doesn't exist.
       */
       int GetPointIndex(dtCore::DeltaDrawable* drawable);
+      virtual int GetPointIndex(dtCore::DeltaDrawable* drawable, osg::Vec3 pickPos);
 
       /**
       * Retrieves the total number of points in the array.
