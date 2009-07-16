@@ -305,6 +305,14 @@ namespace dtActors
       */
       void BuildPropertyMap();
 
+      /**
+      * Called when the SetRotation function is called.  The rotation will
+      * be passed in using x,y,z order (p,r,h)
+      * @param oldValue The previous value
+      * @param newValue The new value
+      */
+      void OnRotation(const osg::Vec3 &oldValue, const osg::Vec3 &newValue);
+
    protected:
       virtual ~BuildingActorProxy();
 
