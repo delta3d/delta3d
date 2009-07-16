@@ -91,7 +91,7 @@
 
 namespace dtEditQt
 {
-   const std::string EditorActions::PREFAB_DIRECTORY("prefabs");
+   const std::string EditorActions::PREFAB_DIRECTORY("Prefabs");
 
    // Singleton global variable for the library manager.
    dtCore::RefPtr<EditorActions> EditorActions::sInstance(NULL);

@@ -81,7 +81,20 @@ namespace dtEditQt
       label->setAlignment(Qt::AlignRight);
 
       mIconFilePath = dtDAL::Project::GetInstance().GetContext();
-      mIconFilePath += "/prefabs/icons/Icon_NoIcon64.png";
+
+      //make sure Prefabs folder exists
+      if (! dtUtil::FileUtils::GetInstance().FileExists(mIconFilePath + "/Prefabs"))
+      {
+         dtUtil::FileUtils::GetInstance().MakeDirectory(mIconFilePath + "/Prefabs");         
+      }
+      //make sure icons folder exists (not nested on purpose -- Prefabs folder may exist
+      //when Prefabs/icons does not)
+      if (! dtUtil::FileUtils::GetInstance().FileExists(mIconFilePath + "/Prefabs/icons"))
+      {
+         dtUtil::FileUtils::GetInstance().MakeDirectory(mIconFilePath + "/Prefabs/icons");
+      }
+
+      mIconFilePath += "/Prefabs/icons/Icon_NoIcon64.png";
 
       //put our "empty icon" icon in the prefabs icon folder if it is missing
       if (! dtUtil::FileUtils::GetInstance().FileExists(mIconFilePath))
@@ -89,8 +102,15 @@ namespace dtEditQt
          std::string templateIconFile = dtCore::GetDeltaRootPath() +
                                     "/utilities/STAGE/icons/Icon_NoIcon64.png";
 
-         dtUtil::FileUtils::GetInstance().FileCopy(templateIconFile,
-                                                   mIconFilePath, false);
+         try
+         {         
+            dtUtil::FileUtils::GetInstance().FileCopy(templateIconFile,
+                                                      mIconFilePath, false);
+         }
+         catch (dtUtil::Exception e)
+         {
+            //don't care if the no_icon icon doesn't make it, so give no message
+         }
       }      
       
       mIcon = new QIcon(mIconFilePath.c_str());      
