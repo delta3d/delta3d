@@ -193,7 +193,13 @@ void dtDIS::SharedState::SetCoordinateConverter(const dtUtil::Coordinates& coord
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-dtUtil::Coordinates dtDIS::SharedState::GetCoordinateConverter() const
+const dtUtil::Coordinates& dtDIS::SharedState::GetCoordinateConverter() const
+{
+   return mCoordConverter;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+dtUtil::Coordinates& dtDIS::SharedState::GetCoordinateConverter()
 {
    return mCoordConverter;
 }
