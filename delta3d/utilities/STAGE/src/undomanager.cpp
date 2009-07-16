@@ -220,39 +220,44 @@ namespace dtEditQt
       // clear any incomplete property change events
       mAboutToChangeEvent = NULL;
 
-      if (!mRedoStack.empty())
+      int multiRedoStack = 0;
+      while (!mRedoStack.empty())
       {
          dtCore::RefPtr<ChangeEvent> redoEvent = mRedoStack.top();
          mRedoStack.pop();
 
-         // If the redo event was the beginning of a group, continue processing
-         // undo events until we reach the beginning of the group.
-         if (redoEvent->mType == ChangeEvent::UNDO_GROUP_BEGIN)
+         // If we reach the beginning of a multiple redo event
+         if (redoEvent->mType == ChangeEvent::MULTI_UNDO_BEGIN)
          {
-            // Push this begin marker into the undo stack.
+            multiRedoStack++;
+
+            mUndoStack.push(redoEvent);
+            continue;
+         }
+
+         // If we reach the end of a multiple redo event
+         if (redoEvent->mType == ChangeEvent::MULTI_UNDO_END)
+         {
+            multiRedoStack--;
+
             mUndoStack.push(redoEvent);
 
-            // Iterate through the group.
-            while (!mRedoStack.empty()) 
+            // If we still have more multi-redo's do perform, continue.
+            if (multiRedoStack > 0)
             {
-               redoEvent = mRedoStack.top();
-               mRedoStack.pop();
-
-               // We are finished when we reach the begining of the group.
-               if (redoEvent->mType == ChangeEvent::UNDO_GROUP_END)
-               {
-                  mUndoStack.push(redoEvent);
-                  enableButtons();
-                  return;
-               }
-
-               handleUndoRedoEvent(redoEvent.get(), false);
+               continue;
             }
 
-            return;
+            break;
          }
 
          handleUndoRedoEvent(redoEvent.get(), false);
+
+         // If we don't have any more multiple redo events, we're done.
+         if (multiRedoStack == 0)
+         {
+            break;
+         }
       }
 
       enableButtons();
@@ -264,39 +269,46 @@ namespace dtEditQt
       // clear any incomplete property change events
       mAboutToChangeEvent = NULL;
 
-      if (!mUndoStack.empty())
+      int multiUndoStack = 0;
+      while (!mUndoStack.empty())
       {
          dtCore::RefPtr<ChangeEvent> undoEvent = mUndoStack.top();
          mUndoStack.pop();
 
-         // If the undo event was the end of a group, continue processing
-         // undo events until we reach the beginning of the group.
-         if (undoEvent->mType == ChangeEvent::UNDO_GROUP_END)
+         // If we reach the end of a multiple undo event, since we are undoing from
+         // a stack, the end event is actually our beginning event.
+         if (undoEvent->mType == ChangeEvent::MULTI_UNDO_END)
          {
-            // Push this end marker into the redo stack.
+            multiUndoStack++;
+
+            mRedoStack.push(undoEvent);
+            continue;
+         }
+
+         // If we reach the beginning of a multiple undo event, since we
+         // are undoing a stack, the beginning event is actually our end event.
+         if (undoEvent->mType == ChangeEvent::MULTI_UNDO_BEGIN)
+         {
+            multiUndoStack--;
+
             mRedoStack.push(undoEvent);
 
-            // Iterate through the group.
-            while (!mUndoStack.empty()) 
+            // If we still have more multi-undo's do perform, continue.
+            if (multiUndoStack > 0)
             {
-               undoEvent = mUndoStack.top();
-               mUndoStack.pop();
-
-               // We are finished when we reach the beginning of the group.
-               if (undoEvent->mType == ChangeEvent::UNDO_GROUP_BEGIN)
-               {
-                  mRedoStack.push(undoEvent);
-                  enableButtons();
-                  return;
-               }
-
-               handleUndoRedoEvent(undoEvent.get(), true);
+               continue;
             }
 
-            return;
+            break;
          }
 
          handleUndoRedoEvent(undoEvent.get(), true);
+
+         // If we don't have any more multiple undo events, we're done.
+         if (multiUndoStack == 0)
+         {
+            break;
+         }
       }
 
       enableButtons();
@@ -592,7 +604,7 @@ namespace dtEditQt
    void UndoManager::beginUndoGroup()
    {
       ChangeEvent* undoEvent = new ChangeEvent();
-      undoEvent->mType       = ChangeEvent::UNDO_GROUP_BEGIN;
+      undoEvent->mType       = ChangeEvent::MULTI_UNDO_BEGIN;
 
       mUndoStack.push(undoEvent);
    }
@@ -601,7 +613,7 @@ namespace dtEditQt
    void UndoManager::endUndoGroup()
    {
       ChangeEvent* undoEvent = new ChangeEvent();
-      undoEvent->mType       = ChangeEvent::UNDO_GROUP_END;
+      undoEvent->mType       = ChangeEvent::MULTI_UNDO_END;
 
       mUndoStack.push(undoEvent);
    }
