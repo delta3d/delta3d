@@ -35,8 +35,6 @@ namespace dtDIS
    dtUtil::RefString EnginePropertyName::DOF_NODE_NAME             ("OurName");
 
    // -- HLABaseEntityPropertyName -- //
-   const std::string HLABaseEntityPropertyName::PROPERTY_LAST_KNOWN_TRANSLATION     = "Last Known Translation"     ;
-   const std::string HLABaseEntityPropertyName::PROPERTY_LAST_KNOWN_ROTATION        = "Last Known Rotation"        ;
    const std::string HLABaseEntityPropertyName::PROPERTY_VELOCITY_VECTOR            = "Velocity Vector"            ;
    const std::string HLABaseEntityPropertyName::PROPERTY_ACCELERATION_VECTOR        = "Acceleration Vector"        ;
    const std::string HLABaseEntityPropertyName::PROPERTY_ANGULAR_VELOCITY_VECTOR    = "Angular Velocity Vector"    ;
