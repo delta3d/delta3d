@@ -40,6 +40,7 @@ LinkedPointsActorToolPlugin::LinkedPointsActorToolPlugin(MainWindow* mw)
    , mIsInCameraMode(false)
    , mShowingPlacementGhost(false)
    , mCurrentPoint(0)
+   , mCanCopy(false)
 {
    // apply layout made with QT designer
    Ui_LinkedPointsActorTool ui;
@@ -244,6 +245,7 @@ void LinkedPointsActorToolPlugin::onMousePressEvent(Viewport* vp, QMouseEvent* e
    }
 
    ToolObjectMotionModel* motion = GetMotionModelForView(vp);
+   mCanCopy = true;
 
    if (motion)
    {
@@ -278,6 +280,18 @@ void LinkedPointsActorToolPlugin::onMouseReleaseEvent(Viewport* vp, QMouseEvent*
       {
          motion->OnRightMouseReleased();
       }
+
+      // TODO:
+      // If we are ALT clicking somewhere on the actor
+      // but not on a gizmo, we want to insert a point here.
+      //EditorViewport* editorView = dynamic_cast<EditorViewport*>(vp);
+      //if (editorView)
+      //{
+      //   if (editorView->GetKeyMods() == Qt::AltModifier &&
+      //      motion->Update(pos) != ToolObjectMotionModel::MOTION_TYPE_MAX)
+      //   {
+      //   }
+      //}
    }
 }
 
@@ -300,6 +314,18 @@ void LinkedPointsActorToolPlugin::onMouseMoveEvent(Viewport* vp, QMouseEvent* e)
       if (motion)
       {
          bool refresh = false;
+
+         // First check if we can copy and we are holding the ALT key.
+         if (mCanCopy)
+         {
+            if (editorView->GetKeyMods() == Qt::AltModifier)
+            {
+               mActiveActor->AddPoint(mActiveActor->GetPointPosition(mCurrentPoint), mCurrentPoint + 1);
+               selectPoint(mCurrentPoint + 1);
+            }
+
+            mCanCopy = false;
+         }
 
          if (motion->Update(pos) != ToolObjectMotionModel::MOTION_TYPE_MAX)
          {

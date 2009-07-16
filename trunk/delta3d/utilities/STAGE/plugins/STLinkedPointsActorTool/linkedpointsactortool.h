@@ -271,6 +271,8 @@ private:
 
    int         mCurrentPoint;
 
+   bool        mCanCopy;
+
    dtCore::RefPtr<dtActors::LinkedPointsActorProxy> mActiveProxy;
    dtActors::LinkedPointsActor*                     mActiveActor;
 
