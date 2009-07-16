@@ -103,6 +103,10 @@ namespace dtAI
          if(wayFrom != NULL && wayTo != NULL)
          {
             mWaypointManager.GetNavMesh().AddPathSegment(wayFrom, wayTo);
+            if(mDrawable.valid())
+            {
+               mDrawable->UpdateWaypointGraph(mWaypointManager.GetNavMesh());
+            }
          }
       }
 
@@ -114,6 +118,10 @@ namespace dtAI
          if(wayFrom != NULL && wayTo != NULL)
          {
             mWaypointManager.GetNavMesh().RemovePathSegment(wayFrom, wayTo);
+            if(mDrawable.valid())
+            {
+               mDrawable->UpdateWaypointGraph(mWaypointManager.GetNavMesh());
+            }
             return true;
          }
 
@@ -127,6 +135,10 @@ namespace dtAI
          if(wayFrom != NULL)
          {
             mWaypointManager.GetNavMesh().RemoveAllPaths(wayFrom);
+            if(mDrawable.valid())
+            {
+               mDrawable->UpdateWaypointGraph(mWaypointManager.GetNavMesh());
+            }
          }
       }
 
@@ -207,6 +219,8 @@ namespace dtAI
             {
                mDrawable->InsertWaypoint(*(iter->second));
             }
+
+            mDrawable->UpdateWaypointGraph(mWaypointManager.GetNavMesh());
          }
 
          return mDrawable.get();

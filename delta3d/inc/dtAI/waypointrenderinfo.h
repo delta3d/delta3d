@@ -69,6 +69,7 @@ namespace dtAI
          Color mWaypointFontColor;
 
          //Nav Mesh
+         float mNavMeshWidth;
          Color mNavMeshColor;
 
          //Nav Mesh Font

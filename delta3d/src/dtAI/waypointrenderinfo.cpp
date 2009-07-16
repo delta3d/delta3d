@@ -64,7 +64,8 @@ namespace dtAI
       mNavMeshFontSizeScalar = 0.5f;
       mNavMeshTextOffsetScalar = 1.0f;
       mNavMeshFontColor = Color(1.0f, 1.0f, 1.0f, 1.0f);
-      mNavMeshColor = Color(1.0f, 1.0f, 1.0f, 1.0f);
+      mNavMeshColor = Color(0.5f, 1.0f, 0.5f, 1.0f);
+      mNavMeshWidth = 2.5f;
    }
    
    /////////////////////////////////////////////////////////////////////////////
