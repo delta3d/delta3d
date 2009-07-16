@@ -308,6 +308,7 @@ namespace dtActors
       mPointList[index]->SetTransform(transform);
 
       Visualize(index - 1);
+      Visualize(index);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -322,6 +323,9 @@ namespace dtActors
       mPointList[index]->GetTransform(transform);
       transform.SetRotation(rotation);
       mPointList[index]->SetTransform(transform);
+
+      Visualize(index - 1);
+      Visualize(index);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -384,6 +388,12 @@ namespace dtActors
       }
 
       return -1;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   int LinkedPointsActor::GetPointIndex(dtCore::DeltaDrawable* drawable, osg::Vec3 pickPos)
+   {
+      return GetPointIndex(drawable);
    }
 
    ////////////////////////////////////////////////////////////////////////////////

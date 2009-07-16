@@ -31,6 +31,11 @@
 
 #include <dtDAL/functor.h>
 
+namespace dtActors
+{
+   class LinkedPointsActor;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
@@ -55,6 +60,16 @@ class ToolObjectMotionModel : public dtCore::ObjectMotionModel
    protected:
 
    public:
+
+      /**
+      * Sets the Linked Points Actor point index.
+      */
+      void SetPointIndex(int index);
+
+      /**
+      * Sets the Active Linked Points Actor.
+      */
+      void SetActiveActor(dtActors::LinkedPointsActor* actor);
 
       /**
       * Presses the left mouse button.
@@ -153,8 +168,27 @@ class ToolObjectMotionModel : public dtCore::ObjectMotionModel
       */
       osg::Vec2 DefaultGetObjectScreenCoordinates(osg::Vec3 objectPos);
 
+      /**
+      * This callback handles the actual translation of the target.
+      *
+      * @param[in]  delta  The amount of translation to be performed.
+      */
+      virtual void OnTranslate(osg::Vec3 delta);
+
+      /**
+      * This callback handles the actual rotation of the target.
+      *
+      * @param[in]  delta  The amount of rotation to apply.
+      * @param[in]  axis   The axis of rotation.
+      */
+      virtual void OnRotate(float delta, osg::Vec3 axis);
+
       GetMouseLineFunc mGetMouseLineFunc;
       ObjectToScreenFunc mObjectToScreenFunc;
+
+      int   mPointIndex;
+
+      dtActors::LinkedPointsActor* mActiveActor;
 };
 
 ////////////////////////////////////////////////////////////////////////////////

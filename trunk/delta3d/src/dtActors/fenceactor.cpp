@@ -298,6 +298,28 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   int FenceActor::GetPointIndex(dtCore::DeltaDrawable* drawable, osg::Vec3 pickPos)
+   {
+      int pointIndex = BaseClass::GetPointIndex(drawable);
+
+      if (pointIndex >= 0 && pointIndex + 1 < GetPointCount())
+      {
+         osg::Vec3 firstPos = GetPointPosition(pointIndex);
+         osg::Vec3 secondPos = GetPointPosition(pointIndex + 1);
+         float fDistance1 = (pickPos - firstPos).length();
+         float fDistance2 = (pickPos - secondPos).length();
+
+         // If we are closer to our second point, then change our selection index.
+         if (fDistance1 > fDistance2)
+         {
+            pointIndex++;
+         }
+      }
+
+      return pointIndex;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    std::vector<std::string> FenceActor::GetPostResourceArray(void) const
    {
       return mPostResourceList;
@@ -626,9 +648,6 @@ namespace dtActors
             endWidth.normalize();
             endWidth *= mSegmentWidth * 0.5f * mFenceScale;
 
-            dtCore::Transform transform;
-            fencePost->mOrigin->SetTransform(transform);
-
             ////////////////////////////////////////////////////////////////////////////////
             // Vertex
             // Front Wall
@@ -683,9 +702,9 @@ namespace dtActors
 
             ////////////////////////////////////////////////////////////////////////////////
             // Normal
-            geomData->mSegNormalList->at(0) = dir;
-            geomData->mSegNormalList->at(1) = dir;
-            geomData->mSegNormalList->at(2) = dir;
+            geomData->mSegNormalList->at(0) = startWidth;
+            geomData->mSegNormalList->at(1) = -startWidth;
+            geomData->mSegNormalList->at(2) = startUp;
 
             // Get the texture to use for this segment.
             std::string textureName = GetSegmentTexture(pointIndex, subIndex);

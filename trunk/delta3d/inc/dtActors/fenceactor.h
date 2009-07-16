@@ -114,6 +114,15 @@ namespace dtActors
       virtual void Visualize(void);
 
       /**
+      * Retrieves the index of a point given a transformable.
+      *
+      * @param[in]  drawable  The drawable to find.
+      *
+      * @return     Returns the index of the found transformable or -1 if it doesn't exist.
+      */
+      int GetPointIndex(dtCore::DeltaDrawable* drawable, osg::Vec3 pickPos);
+
+      /**
       * This will update the visuals on a single point.
       *
       * @param[in]  pointIndex  The point to update.
