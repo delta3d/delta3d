@@ -1069,5 +1069,16 @@ namespace dtActors
          "Internal");
       AddProperty(scaleProp);
    }
+
+   //////////////////////////////////////////////////////
+   void BuildingActorProxy::OnRotation(const osg::Vec3 &oldValue, const osg::Vec3 &newValue)
+   {
+      BaseClass::OnRotation(oldValue, newValue);
+
+      // Re-visualize geometry when this actor has been rotated.
+      BuildingActor* actor = NULL;
+      GetActor(actor);
+      actor->Visualize();
+   }
 }
 ////////////////////////////////////////////////////////////////////////////////
