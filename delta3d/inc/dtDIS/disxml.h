@@ -126,6 +126,7 @@ namespace dtDIS
       static const char NODE_ENTITYTYPE_ENTITY_KIND[];
       static const char NODE_ENTITYTYPE_DOMAIN[];
       static const char NODE_ENTITYTYPE_COUNTRY[];
+      static const char NODE_ENTITYTYPE_CATEGORY[];
       static const char NODE_ENTITYTYPE_SUBCATEGORY[];
       static const char NODE_ENTITYTYPE_SPECIFIC[];
       static const char NODE_ENTITYTYPE_EXTRA[];

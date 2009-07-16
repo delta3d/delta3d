@@ -192,6 +192,7 @@ const char details::XMLEntityMapSchema::NODE_ENTITYTYPE_ENTITY_KIND[] = {"Entity
 const char details::XMLEntityMapSchema::NODE_ENTITYTYPE_DOMAIN[] = {"Domain\0"};
 const char details::XMLEntityMapSchema::NODE_ENTITYTYPE_COUNTRY[] = {"Country\0"};
 const char details::XMLEntityMapSchema::NODE_ENTITYTYPE_SUBCATEGORY[] = {"Subcategory\0"};
+const char details::XMLEntityMapSchema::NODE_ENTITYTYPE_CATEGORY[] = {"Category\0"};
 const char details::XMLEntityMapSchema::NODE_ENTITYTYPE_SPECIFIC[] = {"Specific\0"};
 const char details::XMLEntityMapSchema::NODE_ENTITYTYPE_EXTRA[] = {"Extra\0"};
 
@@ -490,33 +491,33 @@ void EntityMapXMLHandler::startElement(const XMLCh* const uri,const XMLCh* const
    {
       mNodeStack.push( ENTITYTYPE );
    }
-   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITYTYPE_COUNTRY) )
+   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITYTYPE_ENTITY_KIND) )
    {
-      mNodeStack.push( ENTITYTYPE_COUNTRY );
+      mNodeStack.push( ENTITYTYPE_ENTITY_KIND );
    }
    else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITYTYPE_DOMAIN) )
    {
       mNodeStack.push( ENTITYTYPE_DOMAIN );
    }
-   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITYTYPE_ENTITY_KIND) )
+   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITYTYPE_COUNTRY) )
    {
-      mNodeStack.push( ENTITYTYPE_ENTITY_KIND );
+      mNodeStack.push( ENTITYTYPE_COUNTRY );
    }
-   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITYTYPE_EXTRA) )
+   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITYTYPE_CATEGORY) )
    {
-      mNodeStack.push( ENTITYTYPE_EXTRA );
+      mNodeStack.push( ENTITYTYPE_CATEGORY );
    }
-   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITYTYPE_EXTRA) )
+   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITYTYPE_SUBCATEGORY) )
    {
-      mNodeStack.push( ENTITYTYPE_EXTRA );
+      mNodeStack.push( ENTITYTYPE_SUBCATEGORY );
    }
    else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITYTYPE_SPECIFIC) )
    {
       mNodeStack.push( ENTITYTYPE_SPECIFIC );
    }
-   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITYTYPE_SUBCATEGORY) )
+   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITYTYPE_EXTRA) )
    {
-      mNodeStack.push( ENTITYTYPE_SUBCATEGORY );
+      mNodeStack.push( ENTITYTYPE_EXTRA );
    }
    else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_MAPPING) )
    {
