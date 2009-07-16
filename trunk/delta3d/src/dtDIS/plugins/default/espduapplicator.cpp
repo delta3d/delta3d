@@ -85,6 +85,7 @@ void FullApplicator::operator ()(const DIS::EntityStatePdu& source,
    }
 }
 
+//////////////////////////////////////////////////////////////////////////
 void FullApplicator::operator ()(const dtGame::ActorUpdateMessage& source,
                                  const DIS::EntityID& eid,
                                  DIS::EntityStatePdu& dest,
@@ -107,44 +108,17 @@ void FullApplicator::operator ()(const dtGame::ActorUpdateMessage& source,
       loc.setZ(val[2]);
       dest.setEntityLocation(loc);
    }
-   else if (const dtGame::MessageParameter* mp = source.GetUpdateParameter(dtDIS::HLABaseEntityPropertyName::PROPERTY_LAST_KNOWN_TRANSLATION))
-   {
-      // HLA-DVTE actor property
-      const dtGame::Vec3MessageParameter* v3mp = static_cast<const dtGame::Vec3MessageParameter*>(mp);
-      osg::Vec3 val = v3mp->GetValue();
-      if (config != NULL)
-      {
-         val = config->GetCoordinateConverter().ConvertToRemoteTranslation(val);
-      }
 
-      DIS::Vector3Double loc;
-      loc.setX(val[0]);
-      loc.setY(val[1]);
-      loc.setZ(val[2]);
-      dest.setEntityLocation(loc);
-   }
-
-   if ( const dtGame::MessageParameter* mp = source.GetUpdateParameter( dtDIS::EnginePropertyName::ENTITY_ORIENTATION ) )
+   if (const dtGame::MessageParameter* mp = source.GetUpdateParameter(dtDIS::EnginePropertyName::ENTITY_ORIENTATION)) 
    {
       // DIS EntityState actor property
-      const dtGame::Vec3MessageParameter* v3mp = static_cast<const dtGame::Vec3MessageParameter*>( mp ) ;
-      const osg::Vec3& val = v3mp->GetValue() ;
-      DIS::Orientation orie ;
-      orie.setPhi( val[0] ) ;
-      orie.setTheta( val[1] ) ;
-      orie.setPsi( val[2] ) ;
-      dest.setEntityOrientation( orie ) ;
-   }
-   else if (  const dtGame::MessageParameter* mp = source.GetUpdateParameter( dtDIS::HLABaseEntityPropertyName::PROPERTY_LAST_KNOWN_ROTATION ) )
-   {
-      // HLA-DVTE actor property
-      const dtGame::Vec3MessageParameter* v3mp = static_cast<const dtGame::Vec3MessageParameter*>( mp ) ;
-      const osg::Vec3& val = v3mp->GetValue() ;
-      DIS::Orientation orie ;
-      orie.setPhi( val[0] ) ;
-      orie.setTheta( val[1] ) ;
-      orie.setPsi( val[2] ) ;
-      dest.setEntityOrientation( orie ) ;
+      const dtGame::Vec3MessageParameter* v3mp = static_cast<const dtGame::Vec3MessageParameter*>(mp);
+      const osg::Vec3& val = v3mp->GetValue();
+      DIS::Orientation orie;
+      orie.setPhi(val[0]);
+      orie.setTheta(val[1]);
+      orie.setPsi(val[2]);
+      dest.setEntityOrientation(orie);
    }
 
    if (const dtGame::MessageParameter* mp = source.GetUpdateParameter(dtDIS::EnginePropertyName::ENTITY_LINEARY_VELOCITY))
@@ -224,16 +198,10 @@ void PartialApplicator::operator ()(const DIS::EntityStatePdu& source,
    }
 
    // dtDIS Actor Property Name 
-   if ((mp = dest.AddUpdateParameter(EnginePropertyName::ENTITY_LOCATION, dtDAL::DataType::VEC3)))
+   if ((mp = dest.AddUpdateParameter(dtDIS::EnginePropertyName::LAST_KNOWN_LOCATION, dtDAL::DataType::VEC3)))
    {
       dtGame::Vec3MessageParameter* v3mp = static_cast<dtGame::Vec3MessageParameter*>(mp);
       v3mp->SetValue(v3);
-   }
-
-   if (  (mp = dest.AddUpdateParameter( dtDIS::EnginePropertyName::LAST_KNOWN_LOCATION , dtDAL::DataType::VEC3 )) )
-   {
-      dtGame::Vec3MessageParameter* v3mp = static_cast< dtGame::Vec3MessageParameter* > ( mp ) ;
-      v3mp->SetValue( v3 ) ;
    }
 
    // euler angles //
@@ -251,16 +219,10 @@ void PartialApplicator::operator ()(const DIS::EntityStatePdu& source,
    }
 
    // dtDIS Actor Property Name
-   if ((mp = dest.AddUpdateParameter(dtDIS::EnginePropertyName::ENTITY_ORIENTATION, dtDAL::DataType::VEC3)))
+   if ((mp = dest.AddUpdateParameter(dtDIS::EnginePropertyName::LAST_KNOWN_ORIENTATION, dtDAL::DataType::VEC3)))
    {
-      dtDAL::NamedVec3Parameter* v3mp = static_cast<dtDAL::NamedVec3Parameter*>(mp);
+      dtDAL::NamedVec3Parameter* v3mp = static_cast< dtDAL::NamedVec3Parameter*>(mp);
       v3mp->SetValue(xyzRot);
-   }
-
-   if ( (mp = dest.AddUpdateParameter( dtDIS::EnginePropertyName::LAST_KNOWN_ORIENTATION , dtDAL::DataType::VEC3 )) )
-   {
-      dtDAL::NamedVec3Parameter* v3mp = static_cast< dtDAL::NamedVec3Parameter* > ( mp ) ;
-      v3mp->SetValue(xyzRot) ;
    }
 
    // velocity //

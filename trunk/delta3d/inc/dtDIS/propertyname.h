@@ -48,9 +48,22 @@ namespace dtDIS
    {
       // Contains the official ActorProperty names that supported engine components respond to.
 
-      static dtUtil::RefString ENTITY_LOCATION;
+      ///Outgoing DIS packets read from this Property for the entity's XYZ translation
+      static dtUtil::RefString ENTITY_LOCATION; 
+      
+      ///Outgoing DIS packets read from this Property for the entity's XYZ axis rotation (not HPR)
       static dtUtil::RefString ENTITY_ORIENTATION;
+
+      /**Incoming DIS packets apply entity XYZ translation to this Property.  This is used
+       * by the dtGame::DeadReckoningComponent to update the Delta3D actor's position.  If
+       * no DeadReckoningComponent is used, set this variable to be the same as ENTITY_LOCATION.
+       */
       static dtUtil::RefString LAST_KNOWN_LOCATION;
+
+      /**Incoming DIS packets apply entity orientation to this Property.  This is used
+      * by the dtGame::DeadReckoningComponent to update the Delta3D actor's rotation.  If
+      * no DeadReckoningComponent is used, set this variable to be the same as ENTITY_ORIENTATION.
+      */
       static dtUtil::RefString LAST_KNOWN_ORIENTATION;
 
       static dtUtil::RefString ENTITY_LINEARY_VELOCITY;
@@ -75,8 +88,6 @@ namespace dtDIS
       // supported engine components respond to, namely that actor library.
       // Additionally, these are the base entity class properties only.
 
-      static const std::string PROPERTY_LAST_KNOWN_TRANSLATION     ;
-      static const std::string PROPERTY_LAST_KNOWN_ROTATION        ;
       static const std::string PROPERTY_VELOCITY_VECTOR            ;
       static const std::string PROPERTY_ACCELERATION_VECTOR        ;
       static const std::string PROPERTY_ANGULAR_VELOCITY_VECTOR    ;
