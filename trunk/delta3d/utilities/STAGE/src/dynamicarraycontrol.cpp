@@ -75,7 +75,7 @@ namespace dtEditQt
          DynamicAbstractControl::initializeData(newParent, newModel, newProxy, newProperty);
 
          // Create each element.
-         resizeChildren();
+         resizeChildren(false, false, true);
       }
       else
       {
@@ -202,7 +202,7 @@ namespace dtEditQt
       return !mProperty->IsReadOnly();
    }
 
-   void DynamicArrayControl::resizeChildren(bool forceRefresh, bool isChild)
+   void DynamicArrayControl::resizeChildren(bool forceRefresh, bool isChild, bool initializing)
    {
       int childCount = getChildCount();
       int size = mProperty->GetArraySize();
@@ -255,10 +255,13 @@ namespace dtEditQt
             }
          }
 
-         PropertyAboutToChange(*mProxy, *mProperty,
-                  oldValue, mProperty->ToString());
+         if (!initializing)
+         {
+            PropertyAboutToChange(*mProxy, *mProperty,
+               oldValue, mProperty->ToString());
 
-         dataChanged = true;
+            dataChanged = true;
+         }
       }
 
       // update our label
