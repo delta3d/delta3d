@@ -205,6 +205,17 @@ namespace dtActors
       virtual void AddPoint(osg::Vec3 location, int index = -1);
 
       /**
+      * Inserts a new point on a segment that is closest to
+      * the location specified.
+      *
+      * @param[in]  location  The location to insert near.
+      *
+      * @return     Returns the index of the new point created, or -1 if
+      *             the point could not be created.
+      */
+      virtual int AddPointOnSegment(osg::Vec3 location);
+
+      /**
       * Removes a point from the array.
       *
       * @param[in]  index  The index of the point to remove.
@@ -281,6 +292,17 @@ namespace dtActors
 
    protected:
       virtual ~LinkedPointsActor();
+
+      /**
+      * This will find the nearest point on a line from the given test point.
+      *
+      * @param[in]  point1     The first point of the line.
+      * @param[in]  point2     The second point of the line.
+      * @param[in]  testPoint  The point to test with.
+      *
+      * @return     The nearest position.
+      */
+      osg::Vec3 FindNearestPointOnLine(osg::Vec3 point1, osg::Vec3 point2, osg::Vec3 testPoint);
 
       dtActors::LinkedPointsActorProxy* mProxy;
 
