@@ -113,6 +113,17 @@ namespace dtActors
       void AddPoint(osg::Vec3 location, int index = -1);
 
       /**
+      * Inserts a new point on a segment that is closest to
+      * the location specified.
+      *
+      * @param[in]  location  The location to insert near.
+      *
+      * @return     Returns the index of the new point created, or -1 if
+      *             the point could not be created.
+      */
+      int AddPointOnSegment(osg::Vec3 location);
+
+      /**
       * Removes a point from the array.
       *
       * @param[in]  index  The index of the point to remove.

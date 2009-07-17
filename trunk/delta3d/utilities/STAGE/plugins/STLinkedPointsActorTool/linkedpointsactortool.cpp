@@ -257,6 +257,30 @@ void LinkedPointsActorToolPlugin::onMousePressEvent(Viewport* vp, QMouseEvent* e
       {
          motion->OnRightMousePressed();
       }
+
+      // If we are ALT clicking somewhere on the actor
+      // but not on a gizmo, we want to insert a point here.
+      EditorViewport* editorView = dynamic_cast<EditorViewport*>(vp);
+      if (editorView)
+      {
+         osg::Vec2 pos = editorView->convertMousePosition(e->pos());
+         if (editorView->GetKeyMods() == Qt::AltModifier &&
+            motion->Update(pos) == ToolObjectMotionModel::MOTION_TYPE_MAX)
+         {
+            osg::Vec3 pickPosition;
+            if (editorView->getPickPosition(e->pos().x(), e->pos().y(), pickPosition))
+            {
+               int newPoint = mActiveActor->AddPointOnSegment(pickPosition);
+               if (newPoint > -1)
+               {
+                  // Select this new point.
+                  selectPoint(newPoint);
+                  mCanCopy = false;
+                  ViewportManager::GetInstance().refreshAllViewports();
+               }
+            }
+         }
+      }
    }
 }
 
@@ -280,18 +304,6 @@ void LinkedPointsActorToolPlugin::onMouseReleaseEvent(Viewport* vp, QMouseEvent*
       {
          motion->OnRightMouseReleased();
       }
-
-      // TODO:
-      // If we are ALT clicking somewhere on the actor
-      // but not on a gizmo, we want to insert a point here.
-      //EditorViewport* editorView = dynamic_cast<EditorViewport*>(vp);
-      //if (editorView)
-      //{
-      //   if (editorView->GetKeyMods() == Qt::AltModifier &&
-      //      motion->Update(pos) != ToolObjectMotionModel::MOTION_TYPE_MAX)
-      //   {
-      //   }
-      //}
    }
 }
 
@@ -313,8 +325,6 @@ void LinkedPointsActorToolPlugin::onMouseMoveEvent(Viewport* vp, QMouseEvent* e)
       ToolObjectMotionModel* motion = GetMotionModelForView(vp);
       if (motion)
       {
-         bool refresh = false;
-
          // First check if we can copy and we are holding the ALT key.
          if (mCanCopy)
          {
@@ -334,33 +344,7 @@ void LinkedPointsActorToolPlugin::onMouseMoveEvent(Viewport* vp, QMouseEvent* e)
          else
          {
             UpdatePlacementGhost(vp, osg::Vec2(e->pos().x(), e->pos().y()));
-            refresh = true;
-         }
-
-         // Update ortho view motion model scales.
-         //if (mIsInCameraMode && motion != mPerspMotionModel.get())
-         //{
-         //   motion->SetScale(300.0f / editorView->getCamera()->getZoom());
-         //   refresh = true;
-         //}
-         //else
-         //if (mIsInActorMode)
-         //{
-         //   dtCore::Transformable* target = motion->GetTarget();
-         //   if (target)
-         //   {
-         //      // Update the position and rotation of the target.
-         //      dtCore::Transform transform;
-         //      target->GetTransform(transform);
-         //      mActiveActor->SetPointPosition(mCurrentPoint, transform.GetTranslation());
-         //      mActiveActor->SetPointRotation(mCurrentPoint, );
-         //   }
-         //}
-
-         if (refresh)
-         {
             motion->UpdateWidgets();
-            //ViewportManager::GetInstance().refreshAllViewports();
          }
       }
    }
@@ -493,13 +477,20 @@ void LinkedPointsActorToolPlugin::onSelectActors(Viewport* vp, QMouseEvent* e, b
          }
          else
          {
-            // Only override the selection if we are not selecting a specific point.
-            dtCore::DeltaDrawable* drawable = editorView->getPickDrawable(e->pos().x(), e->pos().y());
-            osg::Vec3 position;
-            editorView->getPickPosition(position);
-            if (selectDrawable(drawable, position))
+            // Only override the selection if we are not selecting a specific point or we are holding the ALT key.
+            if (editorView->GetKeyMods() == Qt::AltModifier)
             {
                *overrideDefault = true;
+            }
+            else
+            {
+               dtCore::DeltaDrawable* drawable = editorView->getPickDrawable(e->pos().x(), e->pos().y());
+               osg::Vec3 position;
+               editorView->getPickPosition(position);
+               if (selectDrawable(drawable, position))
+               {
+                  *overrideDefault = true;
+               }
             }
          }
       }

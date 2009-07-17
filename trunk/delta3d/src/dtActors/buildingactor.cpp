@@ -285,6 +285,46 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   int BuildingActor::AddPointOnSegment(osg::Vec3 location)
+   {
+      // Must have at least one segment (two connected points).
+      if (GetPointCount() < 2)
+      {
+         return -1;
+      }
+
+      float nearestDistance = -1;
+      int newIndex = -1;
+      osg::Vec3 newPosition;
+
+      for (int index = 0; index < GetPointCount(); index++)
+      {
+         osg::Vec3 firstPoint = GetPointPosition(index);
+
+         int nextIndex = index + 1;
+         if (nextIndex >= GetPointCount()) nextIndex = 0;
+         osg::Vec3 secondPoint = GetPointPosition(nextIndex);
+
+         osg::Vec3 pos = FindNearestPointOnLine(firstPoint, secondPoint, location);
+
+         float distance = (pos - location).length2();
+         if (nearestDistance == -1 || distance < nearestDistance)
+         {
+            nearestDistance = distance;
+            newIndex = index + 1;
+            newPosition = pos;
+         }
+      }
+
+      if (newIndex > -1)
+      {
+         AddPoint(newPosition, newIndex);
+      }
+
+      return newIndex;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void BuildingActor::RemovePoint(int index)
    {
       BaseClass::RemovePoint(index);

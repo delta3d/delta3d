@@ -273,6 +273,43 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   int LinkedPointsActor::AddPointOnSegment(osg::Vec3 location)
+   {
+      // Must have at least one segment (two connected points).
+      if (GetPointCount() < 2)
+      {
+         return -1;
+      }
+
+      float nearestDistance = -1;
+      int newIndex = -1;
+      osg::Vec3 newPosition;
+
+      for (int index = 0; index < GetPointCount() - 1; index++)
+      {
+         osg::Vec3 firstPoint = GetPointPosition(index);
+         osg::Vec3 secondPoint = GetPointPosition(index + 1);
+
+         osg::Vec3 pos = FindNearestPointOnLine(firstPoint, secondPoint, location);
+
+         float distance = (pos - location).length2();
+         if (nearestDistance == -1 || distance < nearestDistance)
+         {
+            nearestDistance = distance;
+            newIndex = index + 1;
+            newPosition = pos;
+         }
+      }
+
+      if (newIndex > -1)
+      {
+         AddPoint(newPosition, newIndex);
+      }
+
+      return newIndex;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void LinkedPointsActor::RemovePoint(int index)
    {
       // Can't remove a point that doesn't exist.
@@ -456,6 +493,34 @@ namespace dtActors
 
       // Now make this the new point.
       mPointList[pointIndex] = point;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   osg::Vec3 LinkedPointsActor::FindNearestPointOnLine(osg::Vec3 point1, osg::Vec3 point2, osg::Vec3 testPoint)
+   {
+      osg::Vec3 normal = point2 - point1;
+      float length = normal.length();
+      if (length == 0)
+      {
+         return point1;
+      }
+      normal.normalize();
+
+      float distance = (normal * (testPoint - point1));
+
+      // Point falls beyond the first point.
+      if (distance < 0)
+      {
+         return point1;
+      }
+
+      // Point falls beyond the second point.
+      if (distance > length)
+      {
+         return point2;
+      }
+
+      return point1 + (normal * distance);
    }
 
    /////////////////////////////////////////////////////////////////////////////
