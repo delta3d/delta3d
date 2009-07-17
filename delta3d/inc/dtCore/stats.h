@@ -44,6 +44,7 @@
 namespace osg
 {
    class Geometry;
+   class Geode;
 }
 
 namespace osgGA
@@ -71,7 +72,8 @@ namespace dtCore
          NO_STATS = 0,
          FRAME_RATE = 1,
          VIEWER_STATS = 2,
-         LAST = 3
+         DELTA_DETAILS = 3,
+         LAST = 4
       };
 
       void Reset();
@@ -86,6 +88,9 @@ namespace dtCore
       osg::Geometry* CreateFrameMarkers(const osg::Vec3& pos, float height, const osg::Vec4& colour, unsigned int numBlocks);
 
       osg::Geometry* CreateTick(const osg::Vec3& pos, float height, const osg::Vec4& colour, unsigned int numTicks);
+
+      osgText::Text* CreateTextControl(osg::Geode *geode, osg::Vec4& colorFR, 
+         const std::string& font, float characterSize, osg::Vec3& pos, const std::string &initialText);
 
       osg::Node* CreateCameraStats(const std::string& font, osg::Vec3& pos, float startBlocks, bool aquireGPUStats, float characterSize, osg::Stats* viewerStats, osg::Camera* camera);
 
@@ -109,6 +114,7 @@ namespace dtCore
 
       unsigned int                        mFrameRateChildNum;
       unsigned int                        mViewerChildNum;
+      unsigned int                        mDeltaSystemChildNum;
       unsigned int                        mSceneChildNum;
       unsigned int                        mNumBlocks;
       double                              mBlockMultiplier;
