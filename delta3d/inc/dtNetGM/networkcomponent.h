@@ -352,9 +352,9 @@ namespace dtNetGM
       int mRateIn; // Value describing the GNE connection parameter
 
       // Mutex
-      OpenThreads::ReentrantMutex mMutex;
+      OpenThreads::Mutex mMutex;
       // mutex for accessing the GameManager message queue
-      OpenThreads::ReentrantMutex mBufferMutex;
+      OpenThreads::Mutex mBufferMutex;
    private:
       typedef std::deque<dtCore::RefPtr<const dtGame::Message> > MessageBufferType;
       // local buffer to store messages received from the network.
