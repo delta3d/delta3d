@@ -17,6 +17,7 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  * William E. Johnson II
+ * David Guthrie
  */
 #include <prefix/dtgameprefix-src.h>
 #include <dtGame/messagefactory.h>
@@ -25,6 +26,7 @@
 #include <dtGame/loggermessages.h>
 #include <dtGame/actorupdatemessage.h>
 #include <dtCore/refptr.h>
+#include <sstream>
 
 #include <typeinfo>
 
@@ -34,6 +36,7 @@ namespace dtGame
    MessageFactory::MessageFactoryException MessageFactory::MessageFactoryException::TYPE_ALREADY_REGISTERED("Type already registered");
    MessageFactory::MessageFactoryException MessageFactory::MessageFactoryException::TYPE_NOT_REGISTERED("Type not registered");
 
+   /////////////////////////////////////////////////////////////////
    MessageFactory::MessageFactory(const std::string& name,
                                   const MachineInfo& machine,
                                   const std::string& desc) :
@@ -117,24 +120,28 @@ namespace dtGame
       RegisterMessageType<SystemMessage>(MessageType::SYSTEM_FRAME_SYNCH);
    }
 
+   /////////////////////////////////////////////////////////////////
    MessageFactory::~MessageFactory()
    {
 
    }
 
-   bool MessageFactory::IsMessageTypeSupported(const MessageType &msg) const
+   /////////////////////////////////////////////////////////////////
+   bool MessageFactory::IsMessageTypeSupported(const MessageType& msg) const
    {
       return mMessageFactory->IsTypeSupported(&msg);
    }
 
+   /////////////////////////////////////////////////////////////////
    void MessageFactory::GetSupportedMessageTypes(std::vector<const MessageType*>& vec)
    {
       mMessageFactory->GetSupportedTypes(vec);
    }
 
-   dtCore::RefPtr<Message> MessageFactory::CreateMessage(const MessageType& msgType)
+   /////////////////////////////////////////////////////////////////
+   dtCore::RefPtr<Message> MessageFactory::CreateMessage(const MessageType& msgType) const
    {
-      Message *msg = mMessageFactory->CreateObject(&msgType);
+      dtCore::RefPtr<Message> msg = mMessageFactory->CreateObject(&msgType);
 
       if (msg == NULL)
       {
@@ -149,7 +156,8 @@ namespace dtGame
       return msg;
    }
 
-   dtCore::RefPtr<Message> MessageFactory::CloneMessage(const Message& msg)
+   /////////////////////////////////////////////////////////////////
+   dtCore::RefPtr<Message> MessageFactory::CloneMessage(const Message& msg) const
    {
       dtCore::RefPtr<Message> theClone = CreateMessage(msg.GetMessageType());
       try
@@ -166,12 +174,13 @@ namespace dtGame
          //log a little extra info about the exception.
          LOGN_DEBUG("messagefactory.cpp",
             std::string("Exception trying to clone message of class ") + typeid(msg).name()
-            + " with type " + msg.GetMessageType().GetName() + ": " + ex.What());
+            + " with type " + msg.GetMessageType().GetName() + ": " + ex.ToString());
          throw ex;
       }
       return theClone;
    }
 
+   /////////////////////////////////////////////////////////////////
    const MessageType& MessageFactory::GetMessageTypeById(unsigned short id) const
    {
       std::map<unsigned short, const MessageType*>::const_iterator itor = mIdMap.find(id);
@@ -186,6 +195,7 @@ namespace dtGame
       return *itor->second;
    }
 
+   /////////////////////////////////////////////////////////////////
    const MessageType* MessageFactory::GetMessageTypeByName(const std::string& name) const
    {
       for (std::map<unsigned short, const MessageType*>::const_iterator i = mIdMap.begin(); i != mIdMap.end(); ++i)
@@ -195,5 +205,14 @@ namespace dtGame
       }
 
       return NULL;
+   }
+
+   /////////////////////////////////////////////////////////////////
+   void MessageFactory::ThrowIdException(const MessageType& type) const
+   {
+      std::ostringstream ss;
+      ss << "A MessageType with id " << type.GetId() << " has already been registered.";
+      throw dtUtil::Exception(MessageFactory::MessageFactoryException::TYPE_ALREADY_REGISTERED,
+         ss.str(), __FILE__, __LINE__);
    }
 }
