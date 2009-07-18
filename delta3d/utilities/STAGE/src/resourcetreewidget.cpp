@@ -119,9 +119,6 @@ namespace dtEditQt
 
       dataStream << resourceIdentity;
 
-      int width = pixmap.width();
-      int height = pixmap.height();
-
       QMimeData *mimeData = new QMimeData;
       mimeData->setData(mResourceName.c_str(), itemData);
 

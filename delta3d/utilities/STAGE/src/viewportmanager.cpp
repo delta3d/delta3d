@@ -41,6 +41,7 @@
 #include <dtEditQt/stagecamera.h>
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/editordata.h>
+#include <cmath>
 
 namespace dtEditQt
 {
@@ -289,7 +290,7 @@ namespace dtEditQt
          {
             float trans = position[index];
 
-            int mul = floorf((trans / mSnapTranslation) + 0.5f);
+            int mul = int(std::floor((trans / mSnapTranslation) + 0.5f));
             trans = mSnapTranslation * mul;
 
             snapPos[index] = trans;
