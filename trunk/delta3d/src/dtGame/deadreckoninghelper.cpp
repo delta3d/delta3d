@@ -112,6 +112,7 @@ namespace dtGame
       mUpdated = true;
    }
 
+   //////////////////////////////////////////////////////////////////////
    void DeadReckoningHelper::SetAdjustRotationToGround(bool newAdjust)
    {
       if (mGroundClampingData.GetAdjustRotationToGround() == newAdjust)
@@ -132,60 +133,62 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////
    void DeadReckoningHelper::SetLastKnownTranslation(const osg::Vec3 &vec)
    {
-      if (mTranslationInitiated)
+      // If multiple updates are received before the DR component
+      // is able to process them, i.e. in the same frame, it can result in a jitter/warp
+      // this if fixes the jitter.
+      if (!mTranslationUpdated)
       {
-         mTransBeforeLastUpdate = mCurrentDeadReckonedTranslation;
-         mLastTranslation = vec;
-         mTranslationElapsedTimeSinceUpdate = 0.0;
-         mTranslationUpdated = true;
-         mUpdated = true;
+         if (mTranslationInitiated)
+         {
+            mTransBeforeLastUpdate = mCurrentDeadReckonedTranslation;
+         }
+         else
+         {
+            mTransBeforeLastUpdate = vec;
+         }
       }
-      else
-      {
-         mTranslationInitiated = true;
-         mTransBeforeLastUpdate = vec;
-         mLastTranslation = vec;
-         mTranslationElapsedTimeSinceUpdate = 0.0;
-         mTranslationUpdated = true;
-         mUpdated = true;
-      }
+
+      mTranslationInitiated = true;
+      mLastTranslation = vec;
+      mTranslationElapsedTimeSinceUpdate = 0.0;
+      mTranslationUpdated = true;
+      mUpdated = true;
    }
 
    //////////////////////////////////////////////////////////////////////
    void DeadReckoningHelper::SetLastKnownRotation(const osg::Vec3 &vec)
    {
-      if (mRotationInitiated)
+      dtCore::Transform xform;
+      xform.SetRotation(vec);
+      xform.GetRotation(mLastRotationMatrix);
+      // If multiple updates are received before the DR component
+      // is able to process them, i.e. in the same frame, it can result in a jitter/warp
+      // this if fixes the jitter.
+      if (!mRotationUpdated)
       {
-         dtCore::Transform xform;
-         xform.SetRotation(vec);
-         xform.GetRotation(mLastRotationMatrix);
-         //dtUtil::MatrixUtil::MatrixToHpr(mLastRotation,mLastRotationMatrix);
-         mLastRotation = vec;
-         mRotQuatBeforeLastUpdate = mCurrentDeadReckonedRotation;
-         mLastRotationMatrix.get(mLastQuatRotation);
-         mRotationElapsedTimeSinceUpdate = 0.0;
-         mRotationUpdated = true;
-         mUpdated = true;
+         if (mRotationInitiated)
+         {
+            mRotQuatBeforeLastUpdate = mCurrentDeadReckonedRotation;
+         }
+         else
+         {
+            mLastRotationMatrix.get(mRotQuatBeforeLastUpdate);
+         }
       }
-      else
-      {
-         dtCore::Transform xform;
-         xform.SetRotation(vec);
-         xform.GetRotation(mLastRotationMatrix);
-         //dtUtil::MatrixUtil::MatrixToHpr(mLastRotation,mLastRotationMatrix);
-         mLastRotation = vec;
-         mLastRotationMatrix.get(mRotQuatBeforeLastUpdate);
-         mLastRotationMatrix.get(mLastQuatRotation);
-         mRotationElapsedTimeSinceUpdate = 0.0;
-         mRotationInitiated = true;
-         mRotationUpdated = true;
-         mUpdated = true;
-      }
+      mLastRotation = vec;
+      mLastRotationMatrix.get(mLastQuatRotation);
+      mRotationElapsedTimeSinceUpdate = 0.0;
+      mRotationInitiated = true;
+      mRotationUpdated = true;
+      mUpdated = true;
    }
 
    //////////////////////////////////////////////////////////////////////
    void DeadReckoningHelper::SetLastKnownVelocity(const osg::Vec3 &vec)
    {
+      // This technically suffers from the same jitter problem as the rotation and translation, but
+      // because the velocity takes time to change anyway, and because if updates are coming in frequently
+      // velocity blending won't do much, there is no need to fix it.
       mVelocityBeforeLastUpdate = mLastVelocity;
       mLastVelocity = vec;
       mTranslationElapsedTimeSinceUpdate = 0.0;
@@ -632,7 +635,7 @@ namespace dtGame
       osg::Vec3 pos;
       xform.GetTranslation(pos);
 
-      //Order of magnitude check - if the entity could not possibly get to the new position 
+      //Order of magnitude check - if the entity could not possibly get to the new position
       // in max smoothing time based on the magnitude of it's velocity, then smooth quicker (ie 1 second).
       if (mLastVelocity.length2() * (mTranslationEndSmoothingTime*mTranslationEndSmoothingTime) < (mLastTranslation - pos).length2() )
          mTranslationEndSmoothingTime = std::min(1.0f, mTranslationEndSmoothingTime);
@@ -706,29 +709,29 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////
    void DeadReckoningHelper::DeadReckonThePosition( osg::Vec3& pos, dtUtil::Log* pLogger, GameActor &gameActor )
    {
-      osg::Vec3 accelerationEffect; 
+      osg::Vec3 accelerationEffect;
       if (GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::VELOCITY_AND_ACCELERATION)
       {
-         accelerationEffect = ((mAccelerationVector * 0.5f) * 
+         accelerationEffect = ((mAccelerationVector * 0.5f) *
             (mTranslationElapsedTimeSinceUpdate * mTranslationElapsedTimeSinceUpdate));
       }
 
-      // True - meaning as if we just used the best known position & velocity. 
-      osg::Vec3 truePositionChange; 
+      // True - meaning as if we just used the best known position & velocity.
+      osg::Vec3 truePositionChange;
       // Blended - meaning using the last velocity & actual drawn position.
       osg::Vec3 blendedPositionChange;
 
-      // COMPUTE BLENDED VELOCITY - this smooths out some of the harsh blends. We do 
+      // COMPUTE BLENDED VELOCITY - this smooths out some of the harsh blends. We do
       // it in a fraction of the time of the translation else we get big overblown curves.
       osg::Vec3 mBlendedVelocity = mLastVelocity; mVelocityBeforeLastUpdate;
       float velBlendTime = mTranslationEndSmoothingTime/3.0f;
       if ((velBlendTime > 0.0f) && (mTranslationElapsedTimeSinceUpdate < velBlendTime))
       {
          float smoothingFactor = mTranslationElapsedTimeSinceUpdate/velBlendTime;
-         mBlendedVelocity = mVelocityBeforeLastUpdate * (1.0F - smoothingFactor) + 
+         mBlendedVelocity = mVelocityBeforeLastUpdate * (1.0F - smoothingFactor) +
             mLastVelocity * smoothingFactor;
       }
-      else 
+      else
          mBlendedVelocity = mLastVelocity;
 
 
