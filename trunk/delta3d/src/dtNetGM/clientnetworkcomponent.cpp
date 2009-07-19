@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * @author Pjotr van Amerongen, Curtiss Murphy
+ * @author Pjotr van Amerongen, Curtiss Murphy, David Guthrie
  */
 #include <dtNetGM/clientnetworkcomponent.h>
 #include <dtNetGM/clientconnectionlistener.h>
@@ -37,7 +37,6 @@ namespace dtNetGM
       , mAcceptedClient(false)
    {
       SetName(DEFAULT_NAME);
-      mConnectedClients.empty();
    }
 
    ////////////////////////////////////////////////////////////////////
