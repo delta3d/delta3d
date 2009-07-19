@@ -175,6 +175,7 @@ IMPLEMENT_ENUM(MessageActionCode);
 
       {
          // safely push all the received messages onto the GameManager message queue
+         //printf("Buffer [%x].\n", &mBufferMutex);
          OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mBufferMutex);
          swapBuffer.swap(mMessageBuffer);
       }
@@ -436,6 +437,7 @@ IMPLEMENT_ENUM(MessageActionCode);
       {
          // Store the message on the local buffer
          // Message queue will be forwarded to the GM on the next frame tick
+         //printf("Buffer [%x].\n", &mBufferMutex);
          OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mBufferMutex);
          mMessageBuffer.push_back(&message);
       }

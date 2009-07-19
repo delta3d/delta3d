@@ -181,7 +181,7 @@ namespace dtGame
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void GameActorProxy::NotifyPartialActorUpdate(const std::vector<std::string>& propNames)
+   void GameActorProxy::NotifyPartialActorUpdate(const std::vector<dtUtil::RefString>& propNames)
    {
       if (GetGameManager() == NULL || IsRemote())
       {
@@ -198,19 +198,63 @@ namespace dtGame
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void GameActorProxy::PopulateActorUpdate(ActorUpdateMessage& update, const std::vector<std::string>& propNames)
+   void GameActorProxy::NotifyPartialActorUpdate(const std::vector<std::string>& propNames)
+   {
+      // This method is DEPRECATED - we just have to convert the vector types.
+      std::vector<dtUtil::RefString> refStringPropNames;
+      refStringPropNames.reserve(propNames.size());
+      for (unsigned i = 0; i < propNames.size(); ++i)
+      {
+         refStringPropNames.push_back(propNames[i]);
+      }
+
+      NotifyPartialActorUpdate(refStringPropNames);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void GameActorProxy::NotifyPartialActorUpdate()
+   {
+      std::vector<dtUtil::RefString> propNames;
+      GetPartialUpdateProperties(propNames);
+      NotifyPartialActorUpdate(propNames);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void GameActorProxy::GetPartialUpdateProperties(std::vector<dtUtil::RefString>& propNamesToFill)
+   {
+      // The default of this does nothing except log a warning.
+      mLogger.LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+         "If you use NotifyPartialActorUpdate(), you should override GetPartialUpdateProperties().");
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void GameActorProxy::PopulateActorUpdate(ActorUpdateMessage& update, const std::vector<dtUtil::RefString>& propNames)
    {
       PopulateActorUpdate(update, propNames, true);
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void GameActorProxy::PopulateActorUpdate(ActorUpdateMessage& update)
+   void GameActorProxy::PopulateActorUpdate(ActorUpdateMessage& update, const std::vector<std::string>& propNames)
    {
-      PopulateActorUpdate(update, std::vector<std::string>(), false);
+      // This method is DEPRECATED - we just have to convert the vector types.
+      std::vector<dtUtil::RefString> refStringPropNames;
+      refStringPropNames.reserve(propNames.size());
+      for (unsigned i = 0; i < propNames.size(); ++i)
+      {
+         refStringPropNames.push_back(propNames[i]);
+      }
+
+      PopulateActorUpdate(update, refStringPropNames, true);
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void GameActorProxy::PopulateActorUpdate(ActorUpdateMessage& update, const std::vector<std::string>& propNames, bool limitProperties)
+   void GameActorProxy::PopulateActorUpdate(ActorUpdateMessage& update)
+   {
+      PopulateActorUpdate(update, std::vector<dtUtil::RefString>(), false);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void GameActorProxy::PopulateActorUpdate(ActorUpdateMessage& update, const std::vector<dtUtil::RefString>& propNames, bool limitProperties)
    {
       update.SetName(GetName());
       update.SetActorType(GetActorType());

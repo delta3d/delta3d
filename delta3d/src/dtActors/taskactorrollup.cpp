@@ -78,7 +78,7 @@ namespace dtActors
       if (taskActor->GetScore() >= taskActor->GetPassingScore())
          taskActor->SetComplete(true);
 
-      NotifyActorUpdate();
+      NotifyFullActorUpdate();
 
       if (GetParentTask() != NULL)
          GetParentTask()->NotifyScoreChanged(*this);

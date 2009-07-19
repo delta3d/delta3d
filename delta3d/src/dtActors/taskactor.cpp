@@ -90,7 +90,7 @@ namespace dtActors
          // Significant change, so notify the world
          if(proxy.GetGameManager() == NULL)
          {
-            proxy.NotifyActorUpdate();
+            proxy.NotifyFullActorUpdate();
          }
 
          // Send the Notify Completed Event if marking this task as completed.
@@ -140,7 +140,7 @@ namespace dtActors
          // Significant change, so notify the world
          if(proxy.GetGameManager() == NULL)
          {
-            proxy.NotifyActorUpdate();
+            proxy.NotifyFullActorUpdate();
          }
 
          // Send the Notify Failed Event if marking this task as failed.
@@ -163,7 +163,7 @@ namespace dtActors
       mNotifyLMSOnUpdate = false;
 
       TaskActorProxy &proxy = static_cast<TaskActorProxy&>(GetGameActorProxy());
-      proxy.NotifyActorUpdate();
+      proxy.NotifyFullActorUpdate();
    }
 
    ////////////////////////////END TASK ACTOR////////////////////////////////////
@@ -632,19 +632,6 @@ namespace dtActors
          result->AddParameter(*new dtDAL::NamedActorParameter(s, mSubTasks[i]));
       }
       return result;
-   }
-
-   //////////////////////////////////////////////////////////////////////////////
-   void TaskActorProxy::NotifyActorUpdate()
-   {
-      if (GetGameManager() == NULL || GetGameActor().IsRemote())
-         return;
-
-      dtCore::RefPtr<dtGame::Message> updateMsg =
-            GetGameManager()->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_UPDATED);
-      dtGame::ActorUpdateMessage *message = static_cast<dtGame::ActorUpdateMessage *>(updateMsg.get());
-      PopulateActorUpdate(*message);
-      GetGameManager()->SendMessage(*updateMsg);
    }
 
    /////////////////////////////////////////////////////////////////////////////

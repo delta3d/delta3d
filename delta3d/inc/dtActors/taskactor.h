@@ -373,13 +373,6 @@ namespace dtActors
          virtual bool IsChildTaskAllowedToChange(const TaskActorProxy &childTask) const;
 
          /**
-          * This method is called when a task property is changed.
-          * @note For optimal performance, the individual task implementations should
-          *   called this method only once if a group of properties changes in one tick.
-          */
-         virtual void NotifyActorUpdate();
-
-         /**
           * Convenience method for firing an event.
           * This method requires this task to be contained in the Game Manager.
           * @param gameEvent Event to be fired through the Game Manager via
