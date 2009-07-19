@@ -140,7 +140,7 @@ namespace dtUtil
    };
 
    ///Helper method to print enumerations to an output stream.
-   std::ostream& operator<<(std::ostream& os, const Enumeration& e);
+   DT_UTIL_EXPORT std::ostream& operator<<(std::ostream& os, const Enumeration& e);
 
 /**
  * Helper macros used to create the static data and methods
