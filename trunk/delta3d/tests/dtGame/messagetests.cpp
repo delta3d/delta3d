@@ -1490,7 +1490,7 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool
 
    if (partial)
    {
-      std::vector<std::string> params;
+      std::vector<dtUtil::RefString> params;
       params.push_back("Has Fired");
       gap->PopulateActorUpdate(*actorUpdateMsg, params);
    }
@@ -1748,7 +1748,7 @@ void MessageTests::TestRemoteActorCreatesFromPrototype()
    // To do that, we populate the TickLocal property (plus name and Id).
    dtCore::RefPtr<dtGame::ActorUpdateMessage> actorCreateMsg =
       static_cast<dtGame::ActorUpdateMessage*>(mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_CREATED).get());
-   std::vector<std::string> params;
+   std::vector<dtUtil::RefString> params;
    params.push_back("Local Tick Count");
    tempBogusGameProxy->PopulateActorUpdate(*actorCreateMsg, params);
    //make it remote

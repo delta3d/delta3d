@@ -187,7 +187,6 @@ namespace dtNetGM
    ////////////////////////////////////////////////////////////////////
    const dtGame::MachineInfo* ClientNetworkComponent::GetMachineInfo(const dtCore::UniqueId& uniqueId)
    {
-
       // check in direct connections (servers!)
       const dtGame::MachineInfo* machInfo = NetworkComponent::GetMachineInfo(uniqueId);
 
@@ -195,6 +194,7 @@ namespace dtNetGM
       {
          //lock after the above method call to avoid a recursive lock.
          OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mMutex);
+         
          // find MachineInfo among other client-connections
          for (std::vector< dtCore::RefPtr<dtGame::MachineInfo> >::iterator iter = mConnectedClients.begin(); iter != mConnectedClients.end(); iter++)
          {
