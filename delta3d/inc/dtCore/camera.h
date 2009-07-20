@@ -51,7 +51,7 @@ namespace dtCore
     * A dtCore::Camera is a view into the Scene.  It requires a dtCore::DeltaWin to
     * render the the Scene into.  If no DeltaWin is supplied, a default DeltaWin
     * will be created and will be overridden when a valid DeltaWin is supplied
-    * using SetWindow(). 
+    * using SetWindow().
     *
     * Any part of the Scene that doesn't contain renderable geometry will be
     * drawn a solid color using the values supplied to SetClearColor().
@@ -138,6 +138,8 @@ namespace dtCore
                     double bottom, double top,
                     double nearClip, double farClip);
 
+      static double ComputeAspectFromFOV(double hfov, double vfov);
+
       ///@return HOV
       float GetHorizontalFov();
 
@@ -146,12 +148,12 @@ namespace dtCore
 
       void SetProjectionResizePolicy( osg::Camera::ProjectionResizePolicy prp )
       {
-         mOsgCamera->setProjectionResizePolicy(prp); 
+         mOsgCamera->setProjectionResizePolicy(prp);
       }
 
       osg::Camera::ProjectionResizePolicy GetProjection()
       {
-         return (mOsgCamera->getProjectionResizePolicy()); 
+         return (mOsgCamera->getProjectionResizePolicy());
       }
 
       ///takes a number (generally width / height) to allow projections to scale correctly
@@ -197,7 +199,7 @@ namespace dtCore
        * plane to the far clipping plane.  The values for anything values may be greater or less of the position
        * given is off the screen or behind the camera..
        */
-      bool ConvertWorldCoordinateToScreenCoordinate(const osg::Vec3d& worldPos, osg::Vec3d& outScreenPos) const;     
+      bool ConvertWorldCoordinateToScreenCoordinate(const osg::Vec3d& worldPos, osg::Vec3d& outScreenPos) const;
 
       typedef dtUtil::Functor<void, TYPELIST_1(dtCore::Camera&), 4 * sizeof(void*)> CameraSyncCallback;
 
