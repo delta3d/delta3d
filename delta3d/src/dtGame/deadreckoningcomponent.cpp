@@ -68,20 +68,20 @@ namespace dtGame
          dtGame::GameActorProxy* mActor = GetGameManager()->FindGameActorById(message.GetAboutActorId());
          if (mActor != NULL)
             UnregisterActor(*mActor);
-            
+
          dtCore::Transformable* xformActor = mGroundClamper->GetEyePointActor();
          if (xformActor != NULL && message.GetAboutActorId() == xformActor->GetUniqueId())
          {
             mGroundClamper->SetEyePointActor(NULL);
          }
-         
+
          xformActor = mGroundClamper->GetTerrainActor();
          if (xformActor != NULL && message.GetAboutActorId() == xformActor->GetUniqueId())
          {
             mGroundClamper->SetTerrainActor(NULL);
          }
       }
-      else if (message.GetMessageType()  == dtGame::MessageType::INFO_MAP_UNLOADED)
+      else if (message.GetMessageType()  == dtGame::MessageType::INFO_MAP_UNLOAD_BEGIN)
       {
          mRegisteredActors.clear();
          mGroundClamper->SetEyePointActor(NULL);
@@ -100,7 +100,7 @@ namespace dtGame
    {
       return mGroundClamper->GetTerrainActor();
    }
-   
+
    //////////////////////////////////////////////////////////////////////
    void DeadReckoningComponent::SetTerrainActor(dtCore::Transformable* newTerrain)
    {
@@ -124,7 +124,7 @@ namespace dtGame
    {
       mGroundClamper->SetEyePointActor(newEyePointActor);
    }
-   
+
    //////////////////////////////////////////////////////////////////////
    void DeadReckoningComponent::SetGroundClamper( dtGame::BaseGroundClamper& clamper )
    {
@@ -144,7 +144,7 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningComponent::RegisterActor(dtGame::GameActorProxy& toRegister, DeadReckoningHelper& helper) 
+   void DeadReckoningComponent::RegisterActor(dtGame::GameActorProxy& toRegister, DeadReckoningHelper& helper)
    {
       DeadReckoningHelper::UpdateMode* updateMode = &helper.GetUpdateMode();
       if (*updateMode == DeadReckoningHelper::UpdateMode::AUTO)
@@ -164,7 +164,7 @@ namespace dtGame
       }
       else if (helper.IsUpdated())
       {
-         if (helper.GetEffectiveUpdateMode(toRegister.GetGameActor().IsRemote()) 
+         if (helper.GetEffectiveUpdateMode(toRegister.GetGameActor().IsRemote())
             == DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR)
          {
             dtCore::Transform xform;
@@ -177,9 +177,9 @@ namespace dtGame
          }
       }
 
-      // If the actor is local, don't move it, and force the 
+      // If the actor is local, don't move it, and force the
       // helper to match as if it was just updated.
-      if (helper.GetEffectiveUpdateMode(toRegister.GetGameActor().IsRemote()) 
+      if (helper.GetEffectiveUpdateMode(toRegister.GetGameActor().IsRemote())
          == DeadReckoningHelper::UpdateMode::CALCULATE_ONLY)
       {
          dtCore::Transform xform;
@@ -295,7 +295,7 @@ namespace dtGame
 
 
          // Only ground clamp and move remote objects.
-         if(helper.GetEffectiveUpdateMode(gameActor.IsRemote()) 
+         if(helper.GetEffectiveUpdateMode(gameActor.IsRemote())
                == DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR)
          {
             // Get the object's velocity for the current frame.
@@ -312,7 +312,7 @@ namespace dtGame
             {
                std::ostringstream ss;
                ss << "Actor " << gameActor.GetUniqueId() << " - " << gameActor.GetName() << " has attitude "
-                  << "\"" << helper.GetCurrentDeadReckonedRotation() << "\" and position \"" << helper.GetCurrentDeadReckonedTranslation() << "\" at time " 
+                  << "\"" << helper.GetCurrentDeadReckonedRotation() << "\" and position \"" << helper.GetCurrentDeadReckonedTranslation() << "\" at time "
                   << helper.GetLastRotationUpdatedTime() +  helper.GetRotationElapsedTimeSinceUpdate() << "";
                mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                      ss.str().c_str());
@@ -378,7 +378,7 @@ namespace dtGame
       {
          DeadReckoningHelper::DeadReckoningDOF *currentDOF = (*iterDOF).get();
 
-         // Only process the first DR stop in the chain so that subsequent 
+         // Only process the first DR stop in the chain so that subsequent
          // stops will be used as blending targets.
          if(currentDOF->mPrev == NULL && !currentDOF->mUpdate)
          {
@@ -400,7 +400,7 @@ namespace dtGame
                // start over at the beginning of the DOF list.  Hence the use of the Update flag.
                iterDOF = containerDOFs.begin();
                continue;
-            } 
+            }
 
 
             // there is something in the chain

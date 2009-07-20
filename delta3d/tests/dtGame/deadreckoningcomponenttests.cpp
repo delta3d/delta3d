@@ -254,31 +254,26 @@ namespace dtGame
 
             helper->SetLastKnownTranslation(vec);
             CPPUNIT_ASSERT(helper->GetLastKnownTranslation() == vec);
-            CPPUNIT_ASSERT(helper->GetLastKnownTranslationByCopy() == vec);
             CPPUNIT_ASSERT(helper->IsUpdated());
             helper->ClearUpdated();
 
             helper->SetLastKnownRotation(vec);
             CPPUNIT_ASSERT(helper->GetLastKnownRotation() == vec);
-            CPPUNIT_ASSERT(helper->GetLastKnownRotationByCopy() == vec);
             CPPUNIT_ASSERT(helper->IsUpdated());
             helper->ClearUpdated();
 
             helper->SetLastKnownVelocity(vec);
             CPPUNIT_ASSERT(helper->GetLastKnownVelocity() == vec);
-            CPPUNIT_ASSERT(helper->GetLastKnownVelocityByCopy() == vec);
             CPPUNIT_ASSERT(helper->IsUpdated());
             helper->ClearUpdated();
 
             helper->SetLastKnownAcceleration(vec);
             CPPUNIT_ASSERT(helper->GetLastKnownAcceleration() == vec);
-            CPPUNIT_ASSERT(helper->GetLastKnownAccelerationByCopy() == vec);
             CPPUNIT_ASSERT(helper->IsUpdated());
             helper->ClearUpdated();
 
             helper->SetLastKnownAngularVelocity(vec);
             CPPUNIT_ASSERT(helper->GetLastKnownAngularVelocity() == vec);
-            CPPUNIT_ASSERT(helper->GetLastKnownAngularVelocityByCopy() == vec);
             CPPUNIT_ASSERT(helper->IsUpdated());
             helper->ClearUpdated();
 
@@ -293,7 +288,6 @@ namespace dtGame
             CPPUNIT_ASSERT_MESSAGE("Setting the model dimensions should set the use property to true",
                   helper->UseModelDimensions());
             CPPUNIT_ASSERT(helper->GetModelDimensions() == vec);
-            CPPUNIT_ASSERT(helper->GetModelDimensionsByCopy() == vec);
 
             helper->SetUseModelDimensions(false);
             CPPUNIT_ASSERT(!helper->UseModelDimensions());
@@ -750,7 +744,7 @@ namespace dtGame
             dtGame::MessageFactory& msgFac = mGM->GetMessageFactory();
 
             dtCore::RefPtr<dtGame::MapMessage> mapMsg;
-            msgFac.CreateMessage(dtGame::MessageType::INFO_MAP_UNLOADED, mapMsg);
+            msgFac.CreateMessage(dtGame::MessageType::INFO_MAP_UNLOAD_BEGIN, mapMsg);
             mGM->SendMessage(*mapMsg);
             dtCore::System::GetInstance().Step();
          }
