@@ -104,6 +104,15 @@ namespace dtEditQt
       * Adds an exclusive tool into the tool mode bar.
       */
       void AddExclusiveToolMode(QAction* action);
+      
+      /**
+      * Finds and returns the tool mode button of a given label.
+      *
+      * @param[in]  name  The name of the tool mode to find.
+      * 
+      * @return     A pointer to the action, or NULL if none was found.
+      */
+      QAction* FindExclusiveToolMode(std::string name);
 
       /**
       * Removes an exclusive tool from the tool mode bar.

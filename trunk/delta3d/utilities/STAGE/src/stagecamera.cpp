@@ -34,6 +34,8 @@
 #include <dtUtil/matrixutil.h>
 #include <dtUtil/log.h>
 #include <dtDAL/actorproxyicon.h>
+//#include <dtEditQt/viewport.h>
+#include <dtCore/system.h>
 
 namespace dtEditQt
 {
@@ -211,6 +213,15 @@ namespace dtEditQt
       mCamPitch = 0;
       mCamYaw = 0;
       mCamRoll = 0;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void StageCamera::setViewport(int x, int y, int width, int height)
+   {
+      if (mDeltaCamera.valid())
+      {
+         mDeltaCamera->GetOSGCamera()->setViewport(x, y, width, height);
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -432,6 +443,10 @@ namespace dtEditQt
       transform.SetRotation(getYaw(), getPitch(), getRoll());
       transform.SetTranslation(mPosition);
       mDeltaCamera->SetTransform(transform);
+
+      // Sync up the camera since the game manager doesn't do this..
+      double userData[2] = {0.0, 0.0};
+      dtCore::System::GetInstance().SendMessage(dtCore::System::MESSAGE_CAMERA_SYNCH, userData);
    }
 
 } // namespace dtEditQt

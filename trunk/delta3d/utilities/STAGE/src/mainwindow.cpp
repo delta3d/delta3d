@@ -1010,7 +1010,21 @@ namespace dtEditQt
       mToolsToolBar->addAction(action);
       action->setActionGroup(mToolModeActionGroup);
       action->setCheckable(true);
+   }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   QAction* MainWindow::FindExclusiveToolMode(std::string name)
+   {
+      QList<QAction*> actions = mToolsToolBar->actions();
+      for (int actionIndex = 0; actionIndex < (int)actions.size(); actionIndex++)
+      {
+         if (name == actions[actionIndex]->text().toStdString())
+         {
+            return actions[actionIndex];
+         }
+      }
+
+      return NULL;
    }
 
    ////////////////////////////////////////////////////////////////////////////////

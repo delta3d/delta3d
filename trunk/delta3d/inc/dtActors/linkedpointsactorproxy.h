@@ -178,6 +178,11 @@ namespace dtActors
       LinkedPointsActor(dtActors::LinkedPointsActorProxy* proxy, const std::string& name = "LinkedPointsActor");
 
       /**
+      * Initializes the actor.
+      */
+      virtual bool Initialize();
+
+      /**
       * This is used during the edit process to allow specialized
       * visualization effects that should only be seen during edit in
       * STAGE.
@@ -254,7 +259,7 @@ namespace dtActors
       *
       * @return     Returns the index of the found transformable or -1 if it doesn't exist.
       */
-      int GetPointIndex(dtCore::DeltaDrawable* drawable);
+      virtual int GetPointIndex(dtCore::DeltaDrawable* drawable);
       virtual int GetPointIndex(dtCore::DeltaDrawable* drawable, osg::Vec3 pickPos);
 
       /**
