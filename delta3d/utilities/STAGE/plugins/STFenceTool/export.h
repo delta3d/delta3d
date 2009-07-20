@@ -10,16 +10,16 @@
 * preprocessor #defines.
 */
 #if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__) || defined( __BCPLUSPLUS__)  || defined( __MWERKS__)
-#  ifdef DT_LINKED_POINTS_ACTOR_TOOL_PLUGIN
-#    define DT_LINKED_POINTS_ACTOR_EXPORT __declspec(dllexport)
+#  ifdef DT_FENCE_TOOL_PLUGIN
+#    define DT_FENCE_TOOL_EXPORT __declspec(dllexport)
 #  else
-#    define DT_LINKED_POINTS_ACTOR_EXPORT __declspec(dllimport)
+#    define DT_FENCE_TOOL_EXPORT __declspec(dllimport)
 #  endif
 #else
-#  ifdef DT_LINKED_POINTS_ACTOR_TOOL_PLUGIN
-#    define DT_LINKED_POINTS_ACTOR_EXPORT  __attribute__ ((visibility("default")))
+#  ifdef DT_FENCE_TOOL_PLUGIN
+#    define DT_FENCE_TOOL_EXPORT  __attribute__ ((visibility("default")))
 #  else
-#    define DT_LINKED_POINTS_ACTOR_EXPORT
+#    define DT_FENCE_TOOL_EXPORT
 #  endif
 #endif
 

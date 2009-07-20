@@ -100,6 +100,8 @@ namespace dtEditQt
       QGridLayout* grid = new QGridLayout(this);
       grid->addWidget(splitter, 0, 0);
       grid->addWidget(standardButtons(QString("Resource Tools")), 1, 0, Qt::AlignCenter);
+
+      camera->setViewport(0, 0, perspView->width(), perspView->height());
    }
 
    ///////////////////////////////////////////////////////////////////////////////

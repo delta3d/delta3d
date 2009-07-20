@@ -29,9 +29,10 @@ namespace dtActors
       mPost = new dtCore::Object();
       if (!mPost.valid()) return false;
 
-      osg::Group* myGroup = mParent->GetOSGNode()->asGroup();
-      if (!myGroup) return false;
-      myGroup->addChild(mPost->GetOSGNode());
+      //osg::Group* myGroup = mParent->GetOSGNode()->asGroup();
+      //if (!myGroup) return false;
+      //myGroup->addChild(mPost->GetOSGNode());
+      mParent->AddChild(mPost.get());
 
       // Create Geometry objects to store all the segment quads.
       mSegGeom = new osg::Geometry();
@@ -44,9 +45,13 @@ namespace dtActors
       mSegGeode->addDrawable(mSegGeom.get());
 
       // Add the Geode to the transformable node.
-      osg::Group* originGroup = fenceParent->mOrigin->GetOSGNode()->asGroup();
-      if (!originGroup) return false;
+      mSegOrigin = new dtCore::Transformable();
+      if (!mSegOrigin.valid()) return false;
 
+      mParent->AddChild(mSegOrigin.get());
+
+      osg::Group* originGroup = mSegOrigin->GetOSGNode()->asGroup();
+      if (!originGroup) return false;
       originGroup->addChild(mSegGeode.get());
 
       // Create all of our buffer arrays.
@@ -97,18 +102,13 @@ namespace dtActors
    {
       if (!mParent) return false;
 
-      FencePostGeomNode* fenceParent = dynamic_cast<FencePostGeomNode*>(mParent);
-      if (!fenceParent) return false;
-
-      osg::Group* myGroup = mParent->GetOSGNode()->asGroup();
-      if (!myGroup) return false;
-      myGroup->removeChild(mPost->GetOSGNode());
+      mParent->RemoveChild(mPost.get());
       mPost = NULL;
 
-
-      osg::Group* originGroup = fenceParent->mOrigin->GetOSGNode()->asGroup();
+      osg::Group* originGroup = mSegOrigin->GetOSGNode()->asGroup();
       if (!originGroup) return false;
       originGroup->removeChild(mSegGeode.get());
+      mSegOrigin = NULL;
 
       mSegGeode->removeDrawable(mSegGeom.get());
       mSegGeode = NULL;
@@ -142,22 +142,12 @@ namespace dtActors
    FencePostGeomNode::~FencePostGeomNode()
    {
       SetSize(0);
-      mOrigin = NULL;
       mSegColorList = NULL;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    LinkedPointsGeomDataBase* FencePostGeomNode::CreateGeom()
    {
-      // Make sure our origin transformable exists.
-      if (!mOrigin.valid())
-      {
-         mOrigin = new dtCore::Transformable();
-         AddChild(mOrigin.get());
-         dtCore::Transform segmentTransform;
-         mOrigin->SetTransform(segmentTransform);
-      }
-
       // Make sure our color list array exists.
       if (!mSegColorList.valid())
       {
@@ -182,8 +172,6 @@ namespace dtActors
       , mSegmentWidth(1.0f)
       , mTopTextureRatio(0.2f)
    {
-      RemovePoint(0);
-      AddPoint(osg::Vec3());
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -298,6 +286,12 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   int FenceActor::GetPointIndex(dtCore::DeltaDrawable* drawable)
+   {
+      return BaseClass::GetPointIndex(drawable);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    int FenceActor::GetPointIndex(dtCore::DeltaDrawable* drawable, osg::Vec3 pickPos)
    {
       int pointIndex = BaseClass::GetPointIndex(drawable);
@@ -317,6 +311,37 @@ namespace dtActors
       }
 
       return pointIndex;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   FenceActor::DrawableType FenceActor::GetDrawableType(dtCore::DeltaDrawable* drawable, int& pointIndex, int& subIndex)
+   {
+      pointIndex = BaseClass::GetPointIndex(drawable);
+
+      if (pointIndex >= 0)
+      {
+         FencePostGeomNode* geom = dynamic_cast<FencePostGeomNode*>(GetPointDrawable(pointIndex));
+         if (geom)
+         {
+            for (subIndex = 0; subIndex < (int)geom->mGeomList.size(); subIndex++)
+            {
+               FencePostGeomData* data = dynamic_cast<FencePostGeomData*>(geom->mGeomList[subIndex].get());
+               if (data)
+               {
+                  if (drawable == data->mPost.get())
+                  {
+                     return DRAWABLE_TYPE_POST;
+                  }
+                  else if (drawable == data->mSegOrigin.get())
+                  {
+                     return DRAWABLE_TYPE_SEGMENT;
+                  }
+               }
+            }
+         }
+      }
+
+      return DRAWABLE_TYPE_NONE;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -410,6 +435,37 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void FenceActor::IncrementPostMesh(int pointIndex, int subIndex)
+   {
+      // Iterate through the resource ID list for a matching post/segment.
+      for (int index = 0; index < (int)mResourceIDList.size(); index++)
+      {
+         if (mResourceIDList[index].pointIndex == pointIndex &&
+            mResourceIDList[index].segmentIndex == subIndex)
+         {
+            // If we already have an entry, update it and finish.
+            int meshIndex = mResourceIDList[index].postID + 1;
+            if (meshIndex >= (int)mPostResourceList.size()) meshIndex = 0;
+            mResourceIDList[index].postID = meshIndex;
+            Visualize(pointIndex);
+            return;
+         }
+      }
+
+      // If we get here, it means we don't already have an entry, so create one.
+      if (mPostResourceList.size() > 0)
+      {
+         FenceActor::ResourceIDData entry;
+         entry.pointIndex = pointIndex;
+         entry.segmentIndex = subIndex;
+         entry.postID = 1;
+         entry.segmentID = 0;
+         mResourceIDList.push_back(entry);
+         Visualize(pointIndex);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void FenceActor::SetPostMinDistance(float value)
    {
       mPostMinDistance = value;
@@ -489,6 +545,37 @@ namespace dtActors
       entry.postID = 0;
       entry.segmentID = textureIndex;
       mResourceIDList.push_back(entry);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void FenceActor::IncrementSegmentMesh(int pointIndex, int subIndex)
+   {
+      // Iterate through the resource ID list for a matching post/segment.
+      for (int index = 0; index < (int)mResourceIDList.size(); index++)
+      {
+         if (mResourceIDList[index].pointIndex == pointIndex &&
+            mResourceIDList[index].segmentIndex == subIndex)
+         {
+            // If we already have an entry, update it and finish.
+            int textureIndex = mResourceIDList[index].segmentID + 1;
+            if (textureIndex >= (int)mSegmentResourceList.size()) textureIndex = 0;
+            mResourceIDList[index].segmentID = textureIndex;
+            Visualize(pointIndex);
+            return;
+         }
+      }
+
+      // If we get here, it means we don't already have an entry, so create one.
+      if (mSegmentResourceList.size() > 0)
+      {
+         FenceActor::ResourceIDData entry;
+         entry.pointIndex = pointIndex;
+         entry.segmentIndex = subIndex;
+         entry.postID = 0;
+         entry.segmentID = 1;
+         mResourceIDList.push_back(entry);
+         Visualize(pointIndex);
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -626,7 +713,7 @@ namespace dtActors
 
             // Always reset the origin transform to the origin of the world.
             dtCore::Transform segmentTransform;
-            fencePost->mOrigin->SetTransform(segmentTransform);
+            geomData->mSegOrigin->SetTransform(segmentTransform);
 
             osg::Vec3 startRight, startUp, startForward;
             osg::Vec3 endRight, endUp, endForward;
@@ -744,7 +831,9 @@ namespace dtActors
    /////////////////////////////////////////////////////////////////////////////
    void FenceActorProxy::CreateActor()
    {
-      SetActor(*new FenceActor(this));
+      LinkedPointsActor* actor = new FenceActor(this);
+      SetActor(*actor);
+      actor->Initialize();
    }
 
    /////////////////////////////////////////////////////////////////////////////

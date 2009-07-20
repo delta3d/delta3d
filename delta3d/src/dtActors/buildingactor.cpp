@@ -145,6 +145,16 @@ namespace dtActors
       , mBuildingHeight(3.0f)
       , mGenerateRoof(false)
    {
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   BuildingActor::~BuildingActor()
+   {
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool BuildingActor::Initialize()
+   {
       // Create the Wall Geometry object.
       mRoofGeom = new osg::Geometry();
       mRoofGeode = new osg::Geode();
@@ -192,13 +202,8 @@ namespace dtActors
       mWallTexture->setWrap(osg::Texture2D::WRAP_S, osg::Texture2D::REPEAT);
       mWallTexture->setWrap(osg::Texture2D::WRAP_T, osg::Texture2D::REPEAT);
 
-      RemovePoint(0);
       AddPoint(osg::Vec3());
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   BuildingActor::~BuildingActor()
-   {
+      return true;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -1045,7 +1050,9 @@ namespace dtActors
    /////////////////////////////////////////////////////////////////////////////
    void BuildingActorProxy::CreateActor()
    {
-      SetActor(*new BuildingActor(this));
+      LinkedPointsActor* actor = new BuildingActor(this);
+      SetActor(*actor);
+      actor->Initialize();
    }
 
    /////////////////////////////////////////////////////////////////////////////

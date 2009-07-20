@@ -158,13 +158,19 @@ namespace dtActors
       , mVisualize(false)
       , mProxy(proxy)
    {
-      // Always initialize with a single Link Point.
-      AddPoint(osg::Vec3());
    }
 
    /////////////////////////////////////////////////////////////////////////////
    LinkedPointsActor::~LinkedPointsActor()
    {
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool LinkedPointsActor::Initialize()
+   {
+      // Always initialize with a single Link Point.
+      AddPoint(osg::Vec3());
+      return true;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -545,7 +551,9 @@ namespace dtActors
    /////////////////////////////////////////////////////////////////////////////
    void LinkedPointsActorProxy::CreateActor()
    {
-      SetActor(*new LinkedPointsActor(this));
+      LinkedPointsActor* actor = new LinkedPointsActor(this);
+      SetActor(*actor);
+      actor->Initialize();
    }
 
    /////////////////////////////////////////////////////////////////////////////

@@ -93,6 +93,11 @@ namespace dtActors
       BuildingActor(dtActors::LinkedPointsActorProxy* proxy, const std::string& name = "BuildingActor");
 
       /**
+      * Initializes the actor.
+      */
+      virtual bool Initialize();
+
+      /**
       * This will visualize the current actor.
       */
       virtual void Visualize(void);

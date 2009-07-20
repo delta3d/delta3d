@@ -40,17 +40,18 @@ namespace dtActors
       bool Shutdown();
 
       // Post
-      dtCore::RefPtr<dtCore::Object>   mPost;
+      dtCore::RefPtr<dtCore::Object>         mPost;
 
       // Segment
-      osg::ref_ptr<osg::Geometry>      mSegGeom;
-      osg::ref_ptr<osg::Geode>         mSegGeode;
+      dtCore::RefPtr<dtCore::Transformable>  mSegOrigin;
+      osg::ref_ptr<osg::Geometry>            mSegGeom;
+      osg::ref_ptr<osg::Geode>               mSegGeode;
 
-      osg::ref_ptr<osg::Vec3Array>     mSegVertexList;
-      osg::ref_ptr<osg::Vec2Array>     mSegTextureList;
-      osg::ref_ptr<osg::Vec3Array>     mSegNormalList;
+      osg::ref_ptr<osg::Vec3Array>           mSegVertexList;
+      osg::ref_ptr<osg::Vec2Array>           mSegTextureList;
+      osg::ref_ptr<osg::Vec3Array>           mSegNormalList;
 
-      osg::ref_ptr<osg::Texture2D>     mSegTexture;
+      osg::ref_ptr<osg::Texture2D>           mSegTexture;
    };
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -76,7 +77,6 @@ namespace dtActors
       */
       LinkedPointsGeomDataBase* CreateGeom();
 
-      dtCore::RefPtr<dtCore::Transformable> mOrigin;
       osg::ref_ptr<osg::Vec4Array>          mSegColorList;
    };
 
@@ -87,6 +87,13 @@ namespace dtActors
    {
    public:
       typedef dtActors::LinkedPointsActor BaseClass;
+
+      enum DrawableType
+      {
+         DRAWABLE_TYPE_POST,
+         DRAWABLE_TYPE_SEGMENT,
+         DRAWABLE_TYPE_NONE,
+      };
 
       struct ResourceIDData
       {
@@ -120,7 +127,19 @@ namespace dtActors
       *
       * @return     Returns the index of the found transformable or -1 if it doesn't exist.
       */
+      int GetPointIndex(dtCore::DeltaDrawable* drawable);
       int GetPointIndex(dtCore::DeltaDrawable* drawable, osg::Vec3 pickPos);
+
+      /**
+      * Returns whether the drawable is a segment or post.
+      *
+      * @param[in]   drawable    The drawable.
+      * @param[out]  pointIndex  The index of the drawable found.
+      * @param[out]  subIndex    The sub index of the drawable found.
+      *
+      * @return     The type of the drawable.
+      */
+      DrawableType GetDrawableType(dtCore::DeltaDrawable* drawable, int& pointIndex, int& subIndex);
 
       /**
       * This will update the visuals on a single point.
@@ -183,6 +202,14 @@ namespace dtActors
       void SetPostMesh(int pointIndex, int subIndex, int meshIndex);
 
       /**
+      * Increments the post mesh index.
+      *
+      * @param[in]  pointIndex  The index of the point.
+      * @param[in]  subIndex    The index of the sub post between two points.
+      */
+      void IncrementPostMesh(int pointIndex, int subIndex);
+
+      /**
       * Gets the minimum distance between posts.
       */
       float GetPostMinDistance() { return mPostMinDistance; }
@@ -230,6 +257,14 @@ namespace dtActors
       * @param[in]  textureIndex  The index of the texture.
       */
       void SetSegmentTexture(int pointIndex, int subIndex, int textureIndex);
+
+      /**
+      * Increments the post mesh index.
+      *
+      * @param[in]  pointIndex  The index of the point.
+      * @param[in]  subIndex    The index of the sub post between two points.
+      */
+      void IncrementSegmentMesh(int pointIndex, int subIndex);
 
       /**
       * Gets the height of the segments.

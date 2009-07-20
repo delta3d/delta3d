@@ -66,8 +66,8 @@
 #include <dtActors/prefabactorproxy.h>
 #include <dtActors/volumeeditactor.h>
 
-#include <cmath>
-#include <sstream>
+//#include <cmath>
+//#include <sstream>
 
 namespace dtEditQt
 {
@@ -211,6 +211,7 @@ namespace dtEditQt
    void Viewport::resizeGL(int width, int height)
    {
       mSceneView->setViewport(0, 0, width, height);
+      getCamera()->setViewport(0, 0, width, height);
    }
 
    ///////////////////////////////////////////////////////////////////////////////

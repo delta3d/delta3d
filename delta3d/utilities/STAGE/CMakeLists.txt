@@ -1,3 +1,4 @@
+ADD_SUBDIRECTORY(plugins/STFenceTool)
 ADD_SUBDIRECTORY(plugins/STLinkedPointsActorTool)
 ADD_SUBDIRECTORY(plugins/STPluginDialog)
 ADD_SUBDIRECTORY(plugins/STMassImporter)
