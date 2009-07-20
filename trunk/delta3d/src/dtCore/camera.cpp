@@ -24,6 +24,7 @@
 
 #include <cassert>
 #include <algorithm>
+#include <cmath>
 
 using namespace dtUtil;
 
@@ -338,11 +339,21 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
+   double Camera::ComputeAspectFromFOV(double hfov, double vfov)
+   {
+      //aspect ratio is the ratio of the tangents of the half angles.
+      return std::tan(osg::DegreesToRadians(hfov / 2)) /
+         std::tan(osg::DegreesToRadians(vfov / 2));
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
    float Camera::GetHorizontalFov()
    {
       double vfov, aspectRatio, nearClip, farClip;
       GetPerspectiveParams(vfov, aspectRatio, nearClip, farClip);
-      return float(vfov * aspectRatio);
+
+      // aspect ratio is the ration of the tangents of the half angles, so need twice the arctan to get the angle
+      return 2 * osg::RadiansToDegrees(std::atan(std::tan(osg::DegreesToRadians(vfov / 2)) * aspectRatio));
    }
 
    /////////////////////////////////////////////////////////////////////////////

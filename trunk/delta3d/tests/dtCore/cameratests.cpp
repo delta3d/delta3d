@@ -201,8 +201,17 @@ void CameraTests::TestPerspective()
 
    CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The vertical fov method should return the one set",
       vfovSet, camera->GetVerticalFov(), 0.01);
-   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The horizontal fov method should return vertical fov * aspectRatio.",
-      vfovSet * aspectSet, camera->GetHorizontalFov(), 0.01);
+
+   double hfov = 100;
+   camera->SetPerspectiveParams(vfovSet, dtCore::Camera::ComputeAspectFromFOV(hfov, vfovSet), nearSet, farSet);
+
+   camera->GetPerspectiveParams(vfov, aspectRatio, nearClip, farClip);
+
+   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The vertical fov method should return the one set",
+      vfovSet, camera->GetVerticalFov(), 0.01);
+
+   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The horizontal fov method should return the one used to compute the aspect ratio",
+      hfov, camera->GetHorizontalFov(), 0.01);
 }
 
 void CameraTests::TestFrustum()
