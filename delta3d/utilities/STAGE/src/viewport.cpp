@@ -65,6 +65,7 @@
 
 #include <dtActors/prefabactorproxy.h>
 #include <dtActors/volumeeditactor.h>
+#include <dtUtil/mathdefines.h>
 
 //#include <cmath>
 //#include <sstream>
@@ -396,9 +397,9 @@ namespace dtEditQt
       if (newSelection == NULL)
       {
          dtActors::VolumeEditActor* volEditActTest = dynamic_cast<dtActors::VolumeEditActor*>(drawable);
-         
+
          if (volEditActTest)
-         {          
+         {
             newSelection = EditorData::GetInstance().getMainWindow()->GetVolumeEditActorProxy();
          }
       }
@@ -497,13 +498,13 @@ namespace dtEditQt
       {
          throw dtUtil::Exception(dtDAL::ExceptionEnum::BaseException,
             "Scene is invalid.  Cannot pick objects from an invalid scene.", __FILE__, __LINE__);
-         return NULL;
+         return false;
       }
 
       dtCore::RefPtr<dtDAL::Map> currMap = EditorData::GetInstance().getCurrentMap();
       if (!currMap.valid() || getCamera()== NULL)
       {
-         return NULL;
+         return false;
       }
 
       // Before we do any intersection tests, make sure the billboards are updated
@@ -631,15 +632,15 @@ namespace dtEditQt
       ViewportOverlay* overlay = ViewportManager::GetInstance().getViewportOverlay();
       ViewportOverlay::ActorProxyList& selection = overlay->getCurrentActorSelection();
 
-      dtActors::VolumeEditActorProxy* brushProxy = 
-         EditorData::GetInstance().getMainWindow()->GetVolumeEditActorProxy();     
+      dtActors::VolumeEditActorProxy* brushProxy =
+         EditorData::GetInstance().getMainWindow()->GetVolumeEditActorProxy();
 
-      //if the STAGE Brush is already selected, 
+      //if the STAGE Brush is already selected,
       //then attempt to select the next thing under it
       if (selection.size() > 0)
       {
          if (brushProxy == selection[0])
-         {          
+         {
             osgUtil::IntersectVisitor::HitList& hitList = mIsector->GetHitList();
             for (unsigned short i = 1; i < mIsector->GetNumberOfHits(); i++)
             {
@@ -649,7 +650,7 @@ namespace dtEditQt
                if (! dynamic_cast<dtActors::VolumeEditActor*>(drawable))
                {
                   return drawable;
-               }            
+               }
             }
          }
       }
@@ -769,8 +770,8 @@ namespace dtEditQt
       {
          QPoint center((x()+width())/2, (y()+height())/2);
 
-         float dxCenter = std::abs(float(e->pos().x() - center.x()));
-         float dyCenter = std::abs(float(e->pos().y() - center.y()));
+         float dxCenter = dtUtil::Abs(float(e->pos().x() - center.x()));
+         float dyCenter = dtUtil::Abs(float(e->pos().y() - center.y()));
 
          if (dxCenter > (width()/2) || dyCenter > (height()/2))
          {
@@ -807,7 +808,6 @@ namespace dtEditQt
    void Viewport::connectInteractionModeSlots()
    {
       // Connect the global actions we want to track.
-      EditorActions& ga = EditorActions::GetInstance();
       EditorEvents&  ge = EditorEvents::GetInstance();
 
       connect(&ge, SIGNAL(gotoActor(ActorProxyRefPtr)),          this, SLOT(onGotoActor(ActorProxyRefPtr)));
@@ -820,8 +820,7 @@ namespace dtEditQt
    void Viewport::disconnectInteractionModeSlots()
    {
       //Disconnect from all our global actions we were previously tracking.
-      EditorActions &ga = EditorActions::GetInstance();
-      EditorEvents  &ge = EditorEvents::GetInstance();
+      EditorEvents& ge = EditorEvents::GetInstance();
 
       disconnect(&ge, SIGNAL(gotoActor(ActorProxyRefPtr)), this, SLOT(onGotoActor(ActorProxyRefPtr)));
    }
