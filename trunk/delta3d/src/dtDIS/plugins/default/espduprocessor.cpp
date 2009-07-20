@@ -142,13 +142,13 @@ void dtDIS::ESPduProcessor::CreateRemoteActor(const DIS::EntityStatePdu& pdu)
    else
    {
       std::string entTypeStr;
-      entTypeStr += dtUtil::ToString<unsigned char>(entityType.getEntityKind()) + 
-              "." + dtUtil::ToString<unsigned char>(entityType.getDomain()) +
+      entTypeStr += dtUtil::ToString<unsigned short>(entityType.getEntityKind()) + 
+              "." + dtUtil::ToString<unsigned short>(entityType.getDomain()) +
               "." + dtUtil::ToString<unsigned short>(entityType.getCountry()) + 
-              "." + dtUtil::ToString<unsigned char>(entityType.getCategory()) + 
-              "." + dtUtil::ToString<unsigned char>(entityType.getSubcategory()) +
-              "." + dtUtil::ToString<unsigned char>(entityType.getSpecific()) + 
-              "." + dtUtil::ToString<unsigned char>(entityType.getExtra());
+              "." + dtUtil::ToString<unsigned short>(entityType.getCategory()) + 
+              "." + dtUtil::ToString<unsigned short>(entityType.getSubcategory()) +
+              "." + dtUtil::ToString<unsigned short>(entityType.getSpecific()) + 
+              "." + dtUtil::ToString<unsigned short>(entityType.getExtra());
       LOG_WARNING("Don't know the ActorType to create for:" +  entTypeStr);
    }
 }
