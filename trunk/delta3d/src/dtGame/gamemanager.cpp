@@ -240,6 +240,13 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::OnMessage(MessageData *data)
    {
+      if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+      {
+         mLogger->LogMessage(__FUNCTION__, __LINE__,
+                  "GM Starting delta message \"" + data->message + "\"",
+                  dtUtil::Log::LOG_DEBUG);
+      }
+
       if (data->message == dtCore::System::MESSAGE_POST_EVENT_TRAVERSAL)
       {
          double* timeChange = (double*)data->userData;
@@ -278,6 +285,13 @@ namespace dtGame
 
          double* timeChange = (double*)data->userData;
          PreFrame(0.0, *timeChange);
+      }
+
+      if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+      {
+         mLogger->LogMessage(__FUNCTION__, __LINE__,
+                  "GM Finishing delta message \"" + data->message + "\"",
+                  dtUtil::Log::LOG_DEBUG);
       }
    }
 
@@ -509,6 +523,13 @@ namespace dtGame
 
                GMComponent& component = **i;
 
+               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+               {
+                  mLogger->LogMessage(__FUNCTION__, __LINE__,
+                           "Dispatch Net Message Type \"" + message->GetMessageType().GetName() + "\" to GMComponent \"" +
+                           component.GetName() + "\"",
+                           dtUtil::Log::LOG_DEBUG);
+               }
                component.DispatchNetworkMessage(*message);
 
                // Statistics information
