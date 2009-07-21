@@ -349,6 +349,20 @@ void LinkedPointsActorToolPlugin::onMouseMoveEvent(Viewport* vp, QMouseEvent* e)
 
          if (motion->Update(pos) != ToolObjectMotionModel::MOTION_TYPE_MAX)
          {
+            // If we are holding the Control key, we should ground clamp the motion of this point.
+            if (editorView->GetKeyMods() == Qt::ControlModifier)
+            {
+               std::vector<dtCore::DeltaDrawable*> ignoredDrawables;
+               ignoredDrawables.push_back(mActiveActor);
+
+               osg::Vec3 position = mActiveActor->GetPointPosition(mCurrentPoint);
+               position = ViewportManager::GetInstance().GetSnapPosition(position, true, ignoredDrawables);
+               if (position != mActiveActor->GetPointPosition(mCurrentPoint))
+               {
+                  mActiveActor->SetPointPosition(mCurrentPoint, position);
+               }
+            }
+
             HidePlacementGhost();
          }
          else
@@ -685,6 +699,7 @@ void LinkedPointsActorToolPlugin::initialize(dtActors::LinkedPointsActorProxy* a
       if (!mIsDocked)
       {
          mMainWindow->addDockWidget(Qt::RightDockWidgetArea, this);
+         //setFloating(true);
          mIsDocked = true;
       }
 
@@ -886,11 +901,13 @@ void LinkedPointsActorToolPlugin::UpdatePlacementGhost(Viewport* vp, osg::Vec2 m
    }
 
    // If the ghost is being shown, update the position of it.
+   std::vector<dtCore::DeltaDrawable*> ignoredDrawables;
+   ignoredDrawables.push_back(mActiveActor);
    osg::Vec3 position;
-   if (editorView->getPickPosition(mousePos.x(), mousePos.y(), position, mActiveActor))
+   if (editorView->getPickPosition(mousePos.x(), mousePos.y(), position, ignoredDrawables))
    {
       // Convert the pick position to the snap grid if needed.
-      position = ViewportManager::GetInstance().GetSnapPosition(position, true, mActiveActor);
+      position = ViewportManager::GetInstance().GetSnapPosition(position, true, ignoredDrawables);
       ShowPlacementGhost(position);
 
       int index = mActiveActor->GetPointCount() - 1;

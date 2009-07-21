@@ -217,7 +217,7 @@ namespace dtEditQt
       *
       * @return                      The snapped position.
       */
-      osg::Vec3 GetSnapPosition(osg::Vec3 position, bool groundClamp = false, dtCore::DeltaDrawable* ignoredDrawable = NULL);
+      osg::Vec3 GetSnapPosition(osg::Vec3 position, bool groundClamp = false, std::vector<dtCore::DeltaDrawable*> ignoredDrawables = std::vector<dtCore::DeltaDrawable*>());
 
       /**
       * Signal used when a mouse has been pressed in a viewport.

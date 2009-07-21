@@ -375,17 +375,21 @@ namespace dtActors
       }
 
       int pointIndex = BaseClass::GetPointIndex(drawable);
-      if (pointIndex >= 0 && pointIndex + 1 < GetPointCount())
+      if (pointIndex >= 0)
       {
+         int nextPoint = pointIndex + 1;
+         if (nextPoint >= GetPointCount()) nextPoint = 0;
+
          osg::Vec3 firstPos = GetPointPosition(pointIndex);
-         osg::Vec3 secondPos = GetPointPosition(pointIndex + 1);
+         osg::Vec3 secondPos = GetPointPosition(nextPoint);
+
          float fDistance1 = (pickPos - firstPos).length();
          float fDistance2 = (pickPos - secondPos).length();
 
          // If we are closer to our second point, then change our selection index.
          if (fDistance1 > fDistance2)
          {
-            pointIndex++;
+            pointIndex = nextPoint;
          }
       }
 

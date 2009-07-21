@@ -279,7 +279,7 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   osg::Vec3 ViewportManager::GetSnapPosition(osg::Vec3 position, bool groundClamp, dtCore::DeltaDrawable* ignoredDrawable)
+   osg::Vec3 ViewportManager::GetSnapPosition(osg::Vec3 position, bool groundClamp, std::vector<dtCore::DeltaDrawable*> ignoredDrawables)
    {
       osg::Vec3 snapPos = position;
 
@@ -309,7 +309,7 @@ namespace dtEditQt
                nearPos = farPos = snapPos;
                nearPos.z() += 10;
                farPos.z() -= 10000;
-               viewport->getPickPosition(nearPos, farPos, snapPos, ignoredDrawable);
+               viewport->getPickPosition(nearPos, farPos, snapPos, ignoredDrawables);
             }
          }
       }
