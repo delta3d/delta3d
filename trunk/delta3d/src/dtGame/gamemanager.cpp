@@ -553,6 +553,13 @@ namespace dtGame
 
          try
          {
+            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            {
+               mLogger->LogMessage(__FUNCTION__, __LINE__,
+                        "Sending Message Type \"" + message.GetMessageType().GetName() + "\" to GMComponent \"" +
+                        component.GetName() + "\"",
+                        dtUtil::Log::LOG_DEBUG);
+            }
             component.ProcessMessage(message);
          }
          catch (const dtUtil::Exception& ex)
@@ -655,6 +662,14 @@ namespace dtGame
 
             try
             {
+               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+               {
+                  mLogger->LogMessage(__FUNCTION__, __LINE__,
+                           "Sending Message Type \"" + message.GetMessageType().GetName() + "\" to Actor \"" +
+                           listenerActorProxy->GetName() + "\" of Type \"" + listenerActorProxy->GetActorType().GetFullName()
+                           + "\"",
+                           dtUtil::Log::LOG_DEBUG);
+               }
                invokable->Invoke(message);
             }
             catch (const dtUtil::Exception& ex)
@@ -724,6 +739,14 @@ namespace dtGame
 
          try
          {
+            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            {
+                mLogger->LogMessage(__FUNCTION__, __LINE__,
+                         "Sending Message Type \"" + message.GetMessageType().GetName() + "\" to Actor \"" +
+                         aboutActor.GetName() + "\" of Type \"" + aboutActor.GetActorType().GetFullName()
+                         + "\"",
+                         dtUtil::Log::LOG_DEBUG);
+            }
             (*i)->Invoke(message);
          }
          catch (const dtUtil::Exception& ex)
@@ -778,6 +801,14 @@ namespace dtGame
 
             try
             {
+               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+               {
+                   mLogger->LogMessage(__FUNCTION__, __LINE__,
+                            "Sending Message Type \"" + message.GetMessageType().GetName() + "\" to Actor \"" +
+                            currentProxy.GetName() + "\" of Type \"" + currentProxy.GetActorType().GetFullName()
+                            + "\"",
+                            dtUtil::Log::LOG_DEBUG);
+               }
                invokable->Invoke(message);
             }
             catch (const dtUtil::Exception& ex)
