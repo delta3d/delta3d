@@ -78,9 +78,9 @@ namespace dtEditQt
 {
 
    ///////////////////////////////////////////////////////////////////////////////
-   MainWindow::MainWindow(const std::string& stagePath)
+   MainWindow::MainWindow(const std::string& stageConfigFile)
       : mPluginManager(new PluginManager(this))
-      , mSTAGEFullPath(stagePath)
+      , mSTAGEConfigFullPath(stageConfigFile)
       , mFileMenu(NULL)
       , mEditMenu(NULL)
       , mProjectMenu(NULL)
@@ -106,8 +106,11 @@ namespace dtEditQt
 
       ViewportManager::GetInstance();
       
-      //Read STAGE configuration file      
-      ConfigurationManager::GetInstance().ReadXML(dtCore::GetDeltaRootPath() + "/utilities/STAGE/STAGEConfig.xml");
+      //Read STAGE configuration file
+      if (stageConfigFile != "")
+      {
+         ConfigurationManager::GetInstance().ReadXML(mSTAGEConfigFullPath);
+      }
 
       connectSlots();
       setupDockWindows();
@@ -1052,9 +1055,9 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   const std::string& MainWindow::GetSTAGEPath()
+   const std::string& MainWindow::GetSTAGEConfigFile()
    {
-      return mSTAGEFullPath;
+      return mSTAGEConfigFullPath;
    }
 
    ///////////////////////////////////////////////////////////////////////////////

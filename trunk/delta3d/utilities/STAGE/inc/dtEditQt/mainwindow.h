@@ -70,7 +70,7 @@ namespace dtEditQt
       /**
        * Constructor
        */
-      MainWindow(const std::string& stagePath);
+      MainWindow(const std::string& stageConfigFile = "");
 
       /**
        * Destructor
@@ -131,9 +131,9 @@ namespace dtEditQt
 
       
       /**
-       * @return the full path to the currently running STAGE                                                                      
+       * @return the full path to the config file for currently running STAGE                                                                      
        **/
-      const std::string& GetSTAGEPath();
+      const std::string& GetSTAGEConfigFile();
 
       /**
        * menu accessors 
@@ -287,7 +287,7 @@ namespace dtEditQt
 
    private:      
       PluginManager* mPluginManager;
-      std::string mSTAGEFullPath;
+      std::string mSTAGEConfigFullPath;
   
       dtCore::RefPtr<dtActors::VolumeEditActorProxy> mVolEditActorProxy;
 

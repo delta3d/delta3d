@@ -54,7 +54,18 @@ void ConfigurationManager::ReadXML(const std::string& fileName)
    //if the file isn't valid (usually means STAGEConfig.xml is missing,
    // -- then we'll just use the default config so don't log an error
    if (dtUtil::FileUtils::GetInstance().FileExists(fileName))
+   {
       parser.parse(fileName.c_str());
+   }
+   else
+   {
+      std::string err = "STAGE config file not found: ";
+      err += fileName;
+
+      dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ERROR,
+         __FUNCTION__, __LINE__, err);
+      
+   }  
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -286,7 +297,7 @@ void ConfigurationManager::error(const xercesc::SAXParseException& e)
 {
    std::ostringstream errStrm;
    dtUtil::XMLStringConverter sysIDConverter(e.getSystemId());
-   dtUtil::XMLStringConverter msgConverter(e.getMessage());
+   dtUtil::XMLStringConverter msgConverter(e.getMessage());      
 
    errStrm << "\nError at file " << sysIDConverter.ToString()
       << ", line " << e.getLineNumber()
