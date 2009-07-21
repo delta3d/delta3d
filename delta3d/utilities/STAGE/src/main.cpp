@@ -57,13 +57,21 @@ int main(int argc, char* argv[])
    QSplashScreen* splash = new QSplashScreen(pixmap);
    splash->show();
 
+   //dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_INFO);
+
+   // Now that everything is initialized, show the main window.
+   // Construct the application...
+
+   //1st arg is the STAGEConfig.xml full path
+   std::string configFile = "";
+   if (argc > 1)
+   {
+      configFile = argv[1];
+   }
+
    try
    {
-      //dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_INFO);
-
-      // Now that everything is initialized, show the main window.
-      // Construct the application...
-      dtEditQt::MainWindow mainWindow(argv[0]);
+      dtEditQt::MainWindow mainWindow(configFile);
       mainWindow.show();
 
       splash->finish(&mainWindow);
