@@ -34,6 +34,7 @@ LinkedPointsActorToolPlugin::LinkedPointsActorToolPlugin(MainWindow* mw)
    : mMainWindow(mw)
    , mActiveProxy(NULL)
    , mActiveActor(NULL)
+   , mPointsProp(NULL)
    , mIsDocked(false)
    , mIsActive(false)
    , mIsInActorMode(false)
@@ -226,6 +227,8 @@ void LinkedPointsActorToolPlugin::onActorsSelected(ActorProxyRefPtrVector& actor
    shutdown();
    mActiveProxy = NULL;
    mActiveActor = NULL;
+   mPointsProp = NULL;
+   mOldPropValue = "";
 
    if (actors.size() == 0)
    {
@@ -270,9 +273,16 @@ void LinkedPointsActorToolPlugin::onMousePressEvent(Viewport* vp, QMouseEvent* e
             osg::Vec3 pickPosition;
             if (editorView->getPickPosition(e->pos().x(), e->pos().y(), pickPosition))
             {
+               mOldPropValue = mPointsProp->ToString();
+
                int newPoint = mActiveActor->AddPointOnSegment(pickPosition);
                if (newPoint > -1)
                {
+                  EditorEvents::GetInstance().emitBeginChangeTransaction();
+                  EditorEvents::GetInstance().emitActorPropertyAboutToChange(mActiveProxy.get(), mPointsProp, mOldPropValue, mPointsProp->ToString());
+                  EditorEvents::GetInstance().emitActorPropertyChanged(mActiveProxy.get(), mPointsProp);
+                  EditorEvents::GetInstance().emitEndChangeTransaction();
+
                   // Select this new point.
                   selectPoint(newPoint);
                   mCanCopy = false;
@@ -428,6 +438,8 @@ void LinkedPointsActorToolPlugin::onBeginActorMode(Viewport* vp, QMouseEvent* e,
          return;
       }
 
+      mOldPropValue = mPointsProp->ToString();
+
       mIsInActorMode = true;
    }
 }
@@ -444,7 +456,17 @@ void LinkedPointsActorToolPlugin::onEndActorMode(Viewport* vp, QMouseEvent* e, b
          return;
       }
 
+      EditorEvents::GetInstance().emitBeginChangeTransaction();
+      EditorEvents::GetInstance().emitActorPropertyAboutToChange(mActiveProxy.get(), mPointsProp, mOldPropValue, mPointsProp->ToString());
+      EditorEvents::GetInstance().emitActorPropertyChanged(mActiveProxy.get(), mPointsProp);
+      EditorEvents::GetInstance().emitEndChangeTransaction();
+
       mIsInActorMode = false;
+
+      if (overrideDefault)
+      {
+         *overrideDefault = true;
+      }
    }
 }
 
@@ -473,6 +495,12 @@ void LinkedPointsActorToolPlugin::onSelectActors(Viewport* vp, QMouseEvent* e, b
          if (mShowingPlacementGhost)
          {
             mShowingPlacementGhost = false;
+
+            EditorEvents::GetInstance().emitBeginChangeTransaction();
+            EditorEvents::GetInstance().emitActorPropertyAboutToChange(mActiveProxy.get(), mPointsProp, mOldPropValue, mPointsProp->ToString());
+            EditorEvents::GetInstance().emitActorPropertyChanged(mActiveProxy.get(), mPointsProp);
+            EditorEvents::GetInstance().emitEndChangeTransaction();
+
             *overrideDefault = true;
          }
          else
@@ -618,7 +646,14 @@ void LinkedPointsActorToolPlugin::onDeleteLinkPointPressed()
    HidePlacementGhost();
    if (mIsActive && mActiveActor && mActiveActor->GetPointCount() > 1)
    {
+      mOldPropValue = mPointsProp->ToString();
+
       mActiveActor->RemovePoint(mCurrentPoint);
+
+      EditorEvents::GetInstance().emitBeginChangeTransaction();
+      EditorEvents::GetInstance().emitActorPropertyAboutToChange(mActiveProxy.get(), mPointsProp, mOldPropValue, mPointsProp->ToString());
+      EditorEvents::GetInstance().emitActorPropertyChanged(mActiveProxy.get(), mPointsProp);
+      EditorEvents::GetInstance().emitEndChangeTransaction();
 
       if (mCurrentPoint > 0) mCurrentPoint--;
 
@@ -667,6 +702,7 @@ void LinkedPointsActorToolPlugin::initialize(dtActors::LinkedPointsActorProxy* a
 
    mActiveProxy = activeProxy;
    activeProxy->GetActor(mActiveActor);
+   mPointsProp = mActiveProxy->GetProperty("PointList");
 
    mActiveActor->SetVisualize(true);
 
@@ -701,7 +737,7 @@ void LinkedPointsActorToolPlugin::shutdown()
    mTopMotionModel->SetEnabled(false);
    mSideMotionModel->SetEnabled(false);
    mFrontMotionModel->SetEnabled(false);
-   //ViewportManager::GetInstance().refreshAllViewports();
+   ViewportManager::GetInstance().refreshAllViewports();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -783,9 +819,12 @@ void LinkedPointsActorToolPlugin::ShowPlacementGhost(osg::Vec3 position, bool fo
 {
    if (!mShowingPlacementGhost && mActiveActor)
    {
+      mOldPropValue = mPointsProp->ToString();
+
       mActiveActor->AddPoint(position);
       mShowingPlacementGhost = true;
       forceRefresh = true;
+      mPlacementGhostIndex = mActiveActor->GetPointCount();
    }
 
    if (forceRefresh)
@@ -838,48 +877,28 @@ void LinkedPointsActorToolPlugin::UpdatePlacementGhost(Viewport* vp, osg::Vec2 m
       return;
    }
 
-   //// If the mouse is hovering over an existing point, we don't need to show the ghost.
-   //bool hideGhost = false;
-   //dtCore::DeltaDrawable* drawable = editorView->getPickDrawable(mousePos.x(), mousePos.y());
-   //dtCore::Transformable* point = dynamic_cast<dtCore::Transformable*>(drawable);
-   //int pointIndex = mActiveActor->GetPointIndex(point);
-   //// If we have a valid point index, it means we are colliding with a point.
-   //if (pointIndex >= 0)
-   //{
-   //   bool isDirectPoint = (point == mActiveActor->GetPointDrawable(pointIndex));
-   //   if (isDirectPoint)
-   //   {
-   //      hideGhost = true;
-
-   //      // If we are showing the placement ghost, we want to ignore collision with that ghost.
-   //      if (mShowingPlacementGhost && pointIndex == mActiveActor->GetPointCount() - 1)
-   //      {
-   //         hideGhost = false;
-   //      }
-   //   }
-   //}
-
-   //if (hideGhost)
-   //{
-   //   HidePlacementGhost();
-   //}
-   //else
+   // If our placement ghost index is not the size of our point list,
+   // then it may have changed from an undo command.
+   if (mShowingPlacementGhost &&
+      mPlacementGhostIndex != mActiveActor->GetPointCount())
    {
-      // If the ghost is being shown, update the position of it.
-      osg::Vec3 position;
-      if (editorView->getPickPosition(mousePos.x(), mousePos.y(), position, mActiveActor))
-      {
-         // Convert the pick position to the snap grid if needed.
-         position = ViewportManager::GetInstance().GetSnapPosition(position, true, mActiveActor);
-         ShowPlacementGhost(position);
+      mShowingPlacementGhost = false;
+   }
 
-         int index = mActiveActor->GetPointCount() - 1;
-         if (index > 0)
-         {
-            mActiveActor->SetPointPosition(index, position);
-         }
-         ViewportManager::GetInstance().refreshAllViewports();
+   // If the ghost is being shown, update the position of it.
+   osg::Vec3 position;
+   if (editorView->getPickPosition(mousePos.x(), mousePos.y(), position, mActiveActor))
+   {
+      // Convert the pick position to the snap grid if needed.
+      position = ViewportManager::GetInstance().GetSnapPosition(position, true, mActiveActor);
+      ShowPlacementGhost(position);
+
+      int index = mActiveActor->GetPointCount() - 1;
+      if (index > 0)
+      {
+         mActiveActor->SetPointPosition(index, position);
       }
+      ViewportManager::GetInstance().refreshAllViewports();
    }
 }
 

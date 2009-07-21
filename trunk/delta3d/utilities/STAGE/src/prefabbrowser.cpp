@@ -249,7 +249,7 @@ namespace dtEditQt
       mListWidget = new ResourceDragListWidget(groupBox);
       mListWidget->setResourceName("Prefab");
       mListWidget->setAutoScroll(true);
-      mListWidget->setViewMode(QListWidget::IconMode);
+      //mListWidget->setViewMode(QListWidget::IconMode);
       mListWidget->setIconSize(QSize(50,50));
       mListWidget->setContextMenuPolicy(Qt::CustomContextMenu);
 
