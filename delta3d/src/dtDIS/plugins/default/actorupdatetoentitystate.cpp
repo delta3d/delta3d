@@ -51,6 +51,8 @@ DIS::Pdu* ActorUpdateToEntityState::Convert(const dtGame::Message& source)
    details::FullApplicator applicator;
    applicator( static_cast<const dtGame::ActorUpdateMessage&>(source), eid, *downcastPdu, mConfig );
 
+   downcastPdu->setTimestamp(mGM->GetRealClockTime());
+
    return mPdu;
 }
 
