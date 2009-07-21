@@ -37,7 +37,7 @@ void OutgoingMessage::Handle(const dtGame::Message& msg)
       if( pdu )
       {
          pdu->setExerciseID( mExerciseID );
-         //pdu->setTimestamp( );
+         //pdu->setTimestamp( msg.GetSource().GetTimeStamp()); //no workie
          pdu->marshal( mData );
       }
    }
