@@ -66,7 +66,8 @@ namespace dtCore
 
    ///////////////////////////////////////////////////////////////////////////////
    ShaderParameter::ShaderParameter(const std::string& name)
-      : mIsDirty(false)
+      : dtCore::Base(name)
+      , mIsDirty(false)
       , mIsShared(true)
       , mVarName(name)
       , mParentShader(NULL)
