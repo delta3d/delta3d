@@ -44,6 +44,7 @@
 #include <dtDAL/librarymanager.h>
 #include <dtDAL/actorproxyicon.h>
 #include <dtCore/isector.h>
+#include <dtCore/deltadrawable.h>
 #include <dtUtil/exception.h>
 #include <dtDAL/exceptionenum.h>
 #include <QtGui/QDrag>
@@ -401,10 +402,11 @@ namespace dtEditQt
          {
             dtCore::DeltaDrawable* ghostDrawable = NULL;
             mGhostProxy->GetActor(ghostDrawable);
-
+            std::vector<dtCore::DeltaDrawable*> ignoredDrawables;
+            ignoredDrawables.push_back(ghostDrawable);
             osg::Vec3 position;
 
-            if (!getPickPosition(event->pos().x(), event->pos().y(), position, ghostDrawable))
+            if (!getPickPosition(event->pos().x(), event->pos().y(), position, ignoredDrawables))
             {
                // Get the current position and direction the camera is facing.
                osg::Vec3 pos = mCamera->getPosition();
@@ -422,7 +424,7 @@ namespace dtEditQt
             }
 
             // Clamp the spawn position to the snap grid.
-            position = ViewportManager::GetInstance().GetSnapPosition(position, true, ghostDrawable);
+            position = ViewportManager::GetInstance().GetSnapPosition(position, true, ignoredDrawables);
 
             dtDAL::TransformableActorProxy* tProxy =
                dynamic_cast<dtDAL::TransformableActorProxy*>(mGhostProxy.get());
@@ -699,6 +701,44 @@ namespace dtEditQt
 
             // Make sure we only duplicate the actors once.
             mKeyMods = 0x0;
+         }
+         // If we are holding the Control key, we should clamp the position
+         // of the actor to the ground.
+         else if (mKeyMods == Qt::ControlModifier)
+         {
+            std::vector<dtCore::DeltaDrawable*> ignoredDrawables;
+            ViewportOverlay::ActorProxyList& selection = ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
+            for (int selectIndex = 0; selectIndex < (int)selection.size(); selectIndex++)
+            {
+               dtDAL::ActorProxy* proxy = selection[selectIndex].get();
+               if (proxy)
+               {
+                  dtCore::DeltaDrawable* drawable;
+                  proxy->GetActor(drawable);
+
+                  if (drawable)
+                  {
+                     ignoredDrawables.push_back(drawable);
+                  }
+               }
+            }
+
+            if (selection.size() > 0)
+            {
+               dtDAL::TransformableActorProxy* proxy = dynamic_cast<dtDAL::TransformableActorProxy*>(selection[0].get());
+               osg::Vec3 position = proxy->GetTranslation();
+               position = ViewportManager::GetInstance().GetSnapPosition(position, true, ignoredDrawables);
+               osg::Vec3 offset = position - proxy->GetTranslation();
+
+               for (int selectIndex = 0; selectIndex < (int)selection.size(); selectIndex++)
+               {
+                  dtDAL::TransformableActorProxy* proxy = dynamic_cast<dtDAL::TransformableActorProxy*>(selection[selectIndex].get());
+                  if (proxy)
+                  {
+                     proxy->SetTranslation(proxy->GetTranslation() + offset);
+                  }
+               }
+            }
          }
 
          ViewportManager::GetInstance().refreshAllViewports();

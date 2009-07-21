@@ -280,7 +280,7 @@ namespace dtEditQt
       * @param y Vertical window coordinate.
       * @param ignoredDrawable A drawable to ignore.
       */
-      virtual bool getPickPosition(int x, int y, osg::Vec3& position, dtCore::DeltaDrawable* ignoredDrawable = NULL);
+      virtual bool getPickPosition(int x, int y, osg::Vec3& position, std::vector<dtCore::DeltaDrawable*> ignoredDrawables = std::vector<dtCore::DeltaDrawable*>());
 
       /**
       * Projects a line into the current scene and returns the nearest point of collision.
@@ -289,13 +289,13 @@ namespace dtEditQt
       * @param position The returned closest point of collision.
       * @param ignoredDrawable A drawable to ignore.
       */
-      virtual bool getPickPosition(osg::Vec3 nearPoint, osg::Vec3 farPoint, osg::Vec3& position, dtCore::DeltaDrawable* ignoredDrawable = NULL);
+      virtual bool getPickPosition(osg::Vec3 nearPoint, osg::Vec3 farPoint, osg::Vec3& position, std::vector<dtCore::DeltaDrawable*> ignoredDrawables = std::vector<dtCore::DeltaDrawable*>());
 
       /**
       * Retrieves the last pick position calculated.
       * @param ignoredDrawable A drawable to ignore.
       */
-      virtual bool getPickPosition(osg::Vec3& position, dtCore::DeltaDrawable* ignoredDrawable = NULL);
+      virtual bool getPickPosition(osg::Vec3& position, std::vector<dtCore::DeltaDrawable*> ignoredDrawables = std::vector<dtCore::DeltaDrawable*>());
 
       /**
        * Projects the 2D window coordinates into the current scene and determines

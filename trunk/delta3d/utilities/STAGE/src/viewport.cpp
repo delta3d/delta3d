@@ -541,29 +541,29 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool Viewport::getPickPosition(int x, int y, osg::Vec3& position, dtCore::DeltaDrawable* ignoredDrawable)
+   bool Viewport::getPickPosition(int x, int y, osg::Vec3& position, std::vector<dtCore::DeltaDrawable*> ignoredDrawables)
    {
       if (!calculatePickISector(x, y))
       {
          return false;
       }
 
-      return getPickPosition(position, ignoredDrawable);
+      return getPickPosition(position, ignoredDrawables);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool Viewport::getPickPosition(osg::Vec3 nearPoint, osg::Vec3 farPoint, osg::Vec3& position, dtCore::DeltaDrawable* ignoredDrawable)
+   bool Viewport::getPickPosition(osg::Vec3 nearPoint, osg::Vec3 farPoint, osg::Vec3& position, std::vector<dtCore::DeltaDrawable*> ignoredDrawables)
    {
       if (!calculatePickISector(nearPoint, farPoint))
       {
          return false;
       }
 
-      return getPickPosition(position, ignoredDrawable);
+      return getPickPosition(position, ignoredDrawables);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool Viewport::getPickPosition(osg::Vec3& position, dtCore::DeltaDrawable* ignoredDrawable)
+   bool Viewport::getPickPosition(osg::Vec3& position, std::vector<dtCore::DeltaDrawable*> ignoredDrawables)
    {
       osgUtil::IntersectVisitor::HitList& hitList = mIsector->GetHitList();
       for (int index = 0; index < (int)hitList.size(); index++)
@@ -575,9 +575,17 @@ namespace dtEditQt
          bool isIgnored = false;
          while (drawable)
          {
-            if (drawable == ignoredDrawable)
+            for (int ignoreIndex = 0; ignoreIndex < (int)ignoredDrawables.size(); ignoreIndex++)
             {
-               isIgnored = true;
+               if (drawable == ignoredDrawables[ignoreIndex])
+               {
+                  isIgnored = true;
+                  break;
+               }
+            }
+
+            if (isIgnored)
+            {
                break;
             }
 
