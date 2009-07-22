@@ -220,6 +220,17 @@ namespace dtEditQt
       osg::Vec3 GetSnapPosition(osg::Vec3 position, bool groundClamp = false, std::vector<dtCore::DeltaDrawable*> ignoredDrawables = std::vector<dtCore::DeltaDrawable*>());
 
       /**
+      * Accessors for all snap settings.
+      */
+      bool GetSnapTranslationEnabled() { return mSnapTranslationEnabled; }
+      bool GetSnapRotationEnabled() { return mSnapRotationEnabled; }
+      bool GetSnapScaleEnabled() { return mSnapScaleEnabled; }
+
+      float GetSnapTranslation() { return mSnapTranslation; }
+      float GetSnapRotation() { return mSnapRotation; }
+      float GetSnapScale() { return mSnapScale; }
+
+      /**
       * Signal used when a mouse has been pressed in a viewport.
       *
       * @param[in]  vp  The viewport triggering this event.
@@ -566,8 +577,13 @@ namespace dtEditQt
    private:
       static dtCore::RefPtr<ViewportManager> sInstance;
 
-      float                           mSnapTranslation;
       bool                            mSnapTranslationEnabled;
+      bool                            mSnapRotationEnabled;
+      bool                            mSnapScaleEnabled;
+
+      float                           mSnapTranslation;
+      float                           mSnapRotation;
+      float                           mSnapScale;
 
       dtCore::RefPtr<dtCore::DeltaDrawable> mLastDrawable;
       osg::Vec3                             mLastPickPosition;

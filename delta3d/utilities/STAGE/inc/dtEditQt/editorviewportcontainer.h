@@ -84,6 +84,11 @@ namespace dtEditQt
 
       void setSnapEnabled(int state);
 
+      void onSetSnapEnabled(bool translation, bool rotation, bool scale);
+      void onSetSnapTranslation(float value);
+      void onSetSnapRotation(float value);
+      void onSetSnapScale(float value);
+
    protected:
       ///Creates the toolbar action objects.
       void createActions();

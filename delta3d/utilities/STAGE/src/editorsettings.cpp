@@ -72,6 +72,16 @@ namespace dtEditQt
    const QString EditorSettings::RIGID_CAMERA("Rigid_Camera_Movement");
    const QString EditorSettings::ACTOR_CREATION_OFFSET("Actor_Creation_Offset");
 
+   const QString EditorSettings::SNAP_GROUP("Snap_Group");
+
+   const QString EditorSettings::SNAP_TRANSLATION_ENABLED("Snap_Translation_Enabled");
+   const QString EditorSettings::SNAP_ROTATION_ENABLED("Snap_Rotation_Enabled");
+   const QString EditorSettings::SNAP_SCALE_ENABLED("Snap_Scale_Enabled");
+
+   const QString EditorSettings::SNAP_TRANSLATION_VALUE("Snap_Translation_Value");
+   const QString EditorSettings::SNAP_ROTATION_VALUE("Snap_Rotation_Value");
+   const QString EditorSettings::SNAP_SCALE_VALUE("Snap_Scale_Value");
+
    const QString EditorSettings::EXTERNAL_TOOLS("ExternalTools");
    const QString EditorSettings::EXTERNAL_TOOL_TITLE("Title");
    const QString EditorSettings::EXTERNAL_TOOL_COMMAND("Command");

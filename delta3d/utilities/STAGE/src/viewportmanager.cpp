@@ -412,6 +412,7 @@ namespace dtEditQt
    ////////////////////////////////////////////////////////////////////////////////
    void ViewportManager::emitSetSnapRotation(float increment)
    {
+      mSnapRotation = increment;
       LOG_INFO("Emitting event - [setSnapRotation]");
       emit setSnapRotation(increment);
    }
@@ -419,6 +420,7 @@ namespace dtEditQt
    ////////////////////////////////////////////////////////////////////////////////
    void ViewportManager::emitSetSnapScale(float increment)
    {
+      mSnapScale = increment;
       LOG_INFO("Emitting event - [setSnapScale]");
       emit setSnapScale(increment);
    }
@@ -427,6 +429,8 @@ namespace dtEditQt
    void ViewportManager::emitSetSnapEnabled(bool translation, bool rotation, bool scale)
    {
       mSnapTranslationEnabled = translation;
+      mSnapRotationEnabled = rotation;
+      mSnapScaleEnabled = scale;
       LOG_INFO("Emitting event - [setSnapEnabled]");
       emit setSnapEnabled(translation, rotation, scale);
    }

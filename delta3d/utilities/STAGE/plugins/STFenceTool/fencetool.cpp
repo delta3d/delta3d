@@ -139,6 +139,8 @@ void FenceToolPlugin::onSelectActors(Viewport* vp, QMouseEvent* e, bool* overrid
                break;
             }
          }
+
+         ViewportManager::GetInstance().refreshAllViewports();
       }
    }
 }
