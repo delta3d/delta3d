@@ -951,15 +951,50 @@ namespace dtEditQt
       // Once we have a reference to the current selection and the scene,
       // remove each proxy's actor from the scene then remove the proxy from
       // the map.
-      ViewportOverlay::ActorProxyList::iterator itor;
       EditorData::GetInstance().getUndoManager().beginMultipleUndo();
-      for (itor = selection.begin(); itor != selection.end(); ++itor)
+      while (selection.size())
       {
-         // \TODO: Find out why this const_cast is necessary. It compiles without
-         // it on MSVC 7.1, but not on gcc4.0.2 -osb
-         dtDAL::ActorProxy* proxy = const_cast<dtDAL::ActorProxy*>(itor->get());
-         deleteProxy(proxy, currMap);
+         // First check if this actor is in any groups.
+         dtDAL::ActorProxy* proxy = const_cast<dtDAL::ActorProxy*>(selection.back().get());
+
+         int groupIndex = currMap->FindGroupForActor(proxy);
+         if (groupIndex > -1)
+         {
+            // If this actor is in a group, we must delete the
+            // entire group at the same time.
+            EditorData::GetInstance().getUndoManager().beginMultipleUndo();
+            int actorCount = currMap->GetGroupActorCount(groupIndex);
+            for (int actorIndex = 0; actorIndex < actorCount; actorIndex++)
+            {
+               proxy = currMap->GetActorFromGroup(groupIndex, 0);
+               deleteProxy(proxy, currMap);
+
+               // Now remove this actor from the selection list.
+               for (int selectionIndex = 0; selectionIndex < (int)selection.size(); selectionIndex++)
+               {
+                  if (selection[selectionIndex].get() == proxy)
+                  {
+                     selection.erase(selection.begin() + selectionIndex);
+                     break;
+                  }
+               }
+            }
+            EditorData::GetInstance().getUndoManager().endMultipleUndo();
+         }
+         else
+         {
+            selection.pop_back();
+            deleteProxy(proxy, currMap);
+         }
       }
+
+      //for (itor = selection.begin(); itor != selection.end(); ++itor)
+      //{
+      //   // \TODO: Find out why this const_cast is necessary. It compiles without
+      //   // it on MSVC 7.1, but not on gcc4.0.2 -osb
+      //   dtDAL::ActorProxy* proxy = const_cast<dtDAL::ActorProxy*>(itor->get());
+      //   deleteProxy(proxy, currMap);
+      //}
       EditorData::GetInstance().getUndoManager().endMultipleUndo();
 
       // Now that we have removed the selected objects, clear the current selection.
@@ -1232,12 +1267,63 @@ namespace dtEditQt
       dtDAL::Map* map = EditorData::GetInstance().getCurrentMap();
       if (map)
       {
-         // Remove the current actors from any groups they are currently in.
-         for (int index = 0; index < (int)selection.size(); index++)
-         {
-            dtDAL::ActorProxy* proxy = selection[index].get();
-            map->RemoveActorFromGroups(proxy);
-         }
+         // First ungroup all actors.
+         EditorData::GetInstance().getUndoManager().beginMultipleUndo();
+         slotEditUngroupActors();
+         //std::vector<dtDAL::ActorProxy*> groupActors;
+
+         //while (selection.size())
+         //{
+         //   // First check if this actor is in any groups.
+         //   dtDAL::ActorProxy* proxy = const_cast<dtDAL::ActorProxy*>(selection.back().get());
+
+         //   int groupIndex = map->FindGroupForActor(proxy);
+         //   if (groupIndex > -1)
+         //   {
+         //      // First we ungroup any groups they are already in.
+         //      int actorCount = map->GetGroupActorCount(groupIndex);
+         //      for (int actorIndex = 0; actorIndex < actorCount; actorIndex++)
+         //      {
+         //         proxy = map->GetActorFromGroup(groupIndex, 0);
+         //         map->RemoveActorFromGroups(proxy);
+
+         //         groupActors.push_back(proxy);
+
+         //         // Now remove this actor from the selection list.
+         //         for (int selectionIndex = 0; selectionIndex < (int)selection.size(); selectionIndex++)
+         //         {
+         //            if (selection[selectionIndex].get() == proxy)
+         //            {
+         //               selection.erase(selection.begin() + selectionIndex);
+         //               break;
+         //            }
+         //         }
+         //      }
+         //   }
+         //   else
+         //   {
+         //      selection.pop_back();
+         //      groupActors.push_back(proxy);
+         //   }
+         //}
+
+         //// Now group them in the order they were previously groupped.
+         //groupIndex = map->GetGroupCount();
+         //EditorData::GetInstance().getUndoManager().beginMultipleUndo();
+         //for (int index = 0; index < (int)groupActors.size(); index++)
+         //{
+         //   dtDAL::ActorProxy* proxy = groupActors[index];
+         //   map->AddActorToGroup(groupIndex, proxy);
+         //   EditorData::GetInstance().getUndoManager().groupActor(proxy);
+         //}
+         //EditorData::GetInstance().getUndoManager().endMultipleUndo();
+
+         //// Remove the current actors from any groups they are currently in.
+         //for (int index = 0; index < (int)selection.size(); index++)
+         //{
+         //   dtDAL::ActorProxy* proxy = selection[index].get();
+         //   map->RemoveActorFromGroups(proxy);
+         //}
 
          int groupIndex = map->GetGroupCount();
 
@@ -1248,6 +1334,7 @@ namespace dtEditQt
             map->AddActorToGroup(groupIndex, proxy);
             EditorData::GetInstance().getUndoManager().groupActor(proxy);
          }
+         EditorData::GetInstance().getUndoManager().endMultipleUndo();
          EditorData::GetInstance().getUndoManager().endMultipleUndo();
       }
 
@@ -1261,20 +1348,61 @@ namespace dtEditQt
       EditorEvents::GetInstance().emitProjectChanged();
 
       ViewportOverlay* overlay = ViewportManager::GetInstance().getViewportOverlay();
-      ViewportOverlay::ActorProxyList& selection = overlay->getCurrentActorSelection();
+      ViewportOverlay::ActorProxyList selection = overlay->getCurrentActorSelection();
 
       // Remove all the selected actions from their current groups.
       dtDAL::Map* map = EditorData::GetInstance().getCurrentMap();
       if (map)
       {
          EditorData::GetInstance().getUndoManager().beginMultipleUndo();
-         for (int index = 0; index < (int)selection.size(); index++)
+         while (selection.size())
          {
-            dtDAL::ActorProxy* proxy = selection[index].get();
-            map->RemoveActorFromGroups(proxy);
-            EditorData::GetInstance().getUndoManager().unGroupActor(proxy);
+            // First check if this actor is in any groups.
+            dtDAL::ActorProxy* proxy = const_cast<dtDAL::ActorProxy*>(selection.back().get());
+
+            int groupIndex = map->FindGroupForActor(proxy);
+            if (groupIndex > -1)
+            {
+               // If this actor is in a group, we must delete the
+               // entire group at the same time.
+               EditorData::GetInstance().getUndoManager().beginMultipleUndo();
+               int actorCount = map->GetGroupActorCount(groupIndex);
+               for (int actorIndex = 0; actorIndex < actorCount; actorIndex++)
+               {
+                  proxy = map->GetActorFromGroup(groupIndex, 0);
+
+                  map->RemoveActorFromGroups(proxy);
+                  EditorData::GetInstance().getUndoManager().unGroupActor(proxy);
+
+                  // Now remove this actor from the selection list.
+                  for (int selectionIndex = 0; selectionIndex < (int)selection.size(); selectionIndex++)
+                  {
+                     if (selection[selectionIndex].get() == proxy)
+                     {
+                        selection.erase(selection.begin() + selectionIndex);
+                        break;
+                     }
+                  }
+               }
+               EditorData::GetInstance().getUndoManager().endMultipleUndo();
+            }
+            else
+            {
+               selection.pop_back();
+               map->RemoveActorFromGroups(proxy);
+               EditorData::GetInstance().getUndoManager().unGroupActor(proxy);
+            }
          }
          EditorData::GetInstance().getUndoManager().endMultipleUndo();
+
+         //EditorData::GetInstance().getUndoManager().beginMultipleUndo();
+         //for (int index = 0; index < (int)selection.size(); index++)
+         //{
+         //   dtDAL::ActorProxy* proxy = selection[index].get();
+         //   map->RemoveActorFromGroups(proxy);
+         //   EditorData::GetInstance().getUndoManager().unGroupActor(proxy);
+         //}
+         //EditorData::GetInstance().getUndoManager().endMultipleUndo();
       }
 
       mActionUngroupActors->setEnabled(false);

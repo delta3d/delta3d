@@ -16,6 +16,7 @@
 #include <dtEditQt/pluginmanager.h>
 #include <dtEditQt/viewportmanager.h>
 #include <dtEditQt/viewportoverlay.h>
+#include <dtEditQt/undomanager.h>
 #include <dtUtil/fileutils.h>
 
 #include <QtGui/QComboBox>
@@ -77,7 +78,7 @@ void RandomActorGeneratorPlugin::OnGeneratePushed()
    dtEditQt::ViewportOverlay::ActorProxyList& selectionList = 
       dtEditQt::ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
    if(selectionList.size() < 1)
-   {      
+   {
       dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ERROR,__FUNCTION__,
                                                 __LINE__, "No actor selected.");
 
@@ -96,6 +97,7 @@ void RandomActorGeneratorPlugin::OnGeneratePushed()
       return;
    }
 
+   dtEditQt::EditorData::GetInstance().getUndoManager().beginMultipleUndo();
    size_t index;
    for (int i = 0; i < mUI.mNumActorsToGenerate->value(); ++i)
    {
@@ -108,6 +110,7 @@ void RandomActorGeneratorPlugin::OnGeneratePushed()
 
       NewActorProxyInsideVolumeEditor(selectionList[index].get());
    }
+   dtEditQt::EditorData::GetInstance().getUndoManager().endMultipleUndo();
 
    dtEditQt::ViewportManager::GetInstance().refreshAllViewports(); 
 }
@@ -188,7 +191,6 @@ void RandomActorGeneratorPlugin::NewActorProxyInsideVolumeEditor(dtDAL::ActorPro
 
    //Add cloned actor to map send out a create event.      
    currMap->AddProxy(*aCloneProxy);
-   dtEditQt::EditorEvents::GetInstance().emitActorProxyCreated(aCloneProxy, false);
 
    //Apply rotation (NOT translation) transformations from original actor to the cloned actor
    //(scale has already been copied during the clone step)
@@ -264,6 +266,8 @@ void RandomActorGeneratorPlugin::NewActorProxyInsideVolumeEditor(dtDAL::ActorPro
       //put new Actor's Drawable back in Scene
       masterScene->AddDrawable(aClonePtr);    
    }
+
+   dtEditQt::EditorEvents::GetInstance().emitActorProxyCreated(aCloneProxy, false);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
