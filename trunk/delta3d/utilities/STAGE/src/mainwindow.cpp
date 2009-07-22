@@ -744,6 +744,15 @@ namespace dtEditQt
       settings.setValue(EditorSettings::SELECTION_COLOR, editorData.getSelectionColor());
       settings.endGroup();
 
+      // Save our current snap settings.
+      settings.beginGroup(EditorSettings::SNAP_GROUP);
+      settings.setValue(EditorSettings::SNAP_TRANSLATION_ENABLED, ViewportManager::GetInstance().GetSnapTranslationEnabled());
+      settings.setValue(EditorSettings::SNAP_ROTATION_ENABLED, ViewportManager::GetInstance().GetSnapRotationEnabled());
+      settings.setValue(EditorSettings::SNAP_SCALE_ENABLED, ViewportManager::GetInstance().GetSnapScaleEnabled());
+      settings.setValue(EditorSettings::SNAP_TRANSLATION_VALUE, ViewportManager::GetInstance().GetSnapTranslation());
+      settings.setValue(EditorSettings::SNAP_ROTATION_VALUE, ViewportManager::GetInstance().GetSnapRotation());
+      settings.setValue(EditorSettings::SNAP_SCALE_VALUE, ViewportManager::GetInstance().GetSnapScale());
+      settings.endGroup();
 
       // Save any custom library paths
       // Save the current project state...
@@ -1169,6 +1178,60 @@ namespace dtEditQt
       {
          QColor color = qvariant_cast<QColor>(settings.value(EditorSettings::SELECTION_COLOR));
          EditorData::GetInstance().setSelectionColor(color);
+      }
+      settings.endGroup();
+
+      // Snap settings.
+      settings.beginGroup(EditorSettings::SNAP_GROUP);
+      
+      bool snapTranslationEnabled = false;
+      if (settings.contains(EditorSettings::SNAP_TRANSLATION_ENABLED))
+      {
+         snapTranslationEnabled = settings.value(EditorSettings::SNAP_TRANSLATION_ENABLED).toBool();
+      }
+
+      bool snapRotationEnabled = false;
+      if (settings.contains(EditorSettings::SNAP_ROTATION_ENABLED))
+      {
+         snapRotationEnabled = settings.value(EditorSettings::SNAP_ROTATION_ENABLED).toBool();
+      }
+
+      bool snapScaleEnabled = false;
+      if (settings.contains(EditorSettings::SNAP_SCALE_ENABLED))
+      {
+         snapScaleEnabled = settings.value(EditorSettings::SNAP_SCALE_ENABLED).toBool();
+      }
+
+      ViewportManager::GetInstance().emitSetSnapEnabled(snapTranslationEnabled, snapRotationEnabled, snapScaleEnabled);
+
+      if (settings.contains(EditorSettings::SNAP_TRANSLATION_VALUE))
+      {
+         bool success;
+         float value = (float)settings.value(EditorSettings::SNAP_TRANSLATION_VALUE).toDouble(&success);
+         if (success)
+         {
+            ViewportManager::GetInstance().emitSetSnapTranslation(value);
+         }
+      }
+
+      if (settings.contains(EditorSettings::SNAP_ROTATION_VALUE))
+      {
+         bool success;
+         float value = (float)settings.value(EditorSettings::SNAP_ROTATION_VALUE).toDouble(&success);
+         if (success)
+         {
+            ViewportManager::GetInstance().emitSetSnapRotation(value);
+         }
+      }
+
+      if (settings.contains(EditorSettings::SNAP_SCALE_VALUE))
+      {
+         bool success;
+         float value = (float)settings.value(EditorSettings::SNAP_SCALE_VALUE).toDouble(&success);
+         if (success)
+         {
+            ViewportManager::GetInstance().emitSetSnapScale(value);
+         }
       }
       settings.endGroup();
 

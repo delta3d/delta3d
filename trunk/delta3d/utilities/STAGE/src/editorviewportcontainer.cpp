@@ -106,6 +106,32 @@ namespace dtEditQt
       ViewportManager::GetInstance().emitSetSnapEnabled(mCheckBoxTrans->isChecked(), mCheckBoxAngle->isChecked(), mCheckBoxScale->isChecked());
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorViewportContainer::onSetSnapEnabled(bool translation, bool rotation, bool scale)
+   {
+      mCheckBoxTrans->setChecked(translation);
+      mCheckBoxAngle->setChecked(rotation);
+      mCheckBoxScale->setChecked(scale);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorViewportContainer::onSetSnapTranslation(float value)
+   {
+      mEditTrans->setText(QString::number(value));
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorViewportContainer::onSetSnapRotation(float value)
+   {
+      mEditAngle->setText(QString::number(value));
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorViewportContainer::onSetSnapScale(float value)
+   {
+      mEditScale->setText(QString::number(value));
+   }
+
    ///////////////////////////////////////////////////////////////////////////////
    void EditorViewportContainer::createActions()
    {
@@ -219,6 +245,11 @@ namespace dtEditQt
       connect(mCheckBoxTrans, SIGNAL(stateChanged(int)), this, SLOT(setSnapEnabled(int)));
       connect(mCheckBoxAngle, SIGNAL(stateChanged(int)), this, SLOT(setSnapEnabled(int)));
       connect(mCheckBoxScale, SIGNAL(stateChanged(int)), this, SLOT(setSnapEnabled(int)));
+
+      connect(&ViewportManager::GetInstance(), SIGNAL(setSnapEnabled(bool, bool, bool)), this, SLOT(onSetSnapEnabled(bool, bool, bool)));
+      connect(&ViewportManager::GetInstance(), SIGNAL(setSnapTranslation(float)), this, SLOT(onSetSnapTranslation(float)));
+      connect(&ViewportManager::GetInstance(), SIGNAL(setSnapRotation(float)), this, SLOT(onSetSnapRotation(float)));
+      connect(&ViewportManager::GetInstance(), SIGNAL(setSnapScale(float)), this, SLOT(onSetSnapScale(float)));
    }
 
 } // namespace dtEditQt
