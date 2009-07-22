@@ -141,8 +141,7 @@ namespace dtEditQt
       if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::GENERAL,
                                                   "SaveConfigurationOnClose") == "true")
       {
-         //Save configuration
-         
+         //Save configuration         
 
          //Sample of how to save some STAGE config variables that we might care about:
          //QSplitter* hSplit = mSplitters.at(0);
@@ -150,7 +149,7 @@ namespace dtEditQt
          //mCfgMgr.SetVariable(ConfigurationManager::LAYOUT, "ShowTopView", hSize.height());
          //mCfgMgr.SetVariable(ConfigurationManager::LAYOUT, "HorizontalViewFrameWidth", hSize.width());
 
-         ConfigurationManager::GetInstance().WriteXML(dtCore::GetDeltaRootPath() + "/utilities/STAGE/STAGEConfig.xml");
+         ConfigurationManager::GetInstance().WriteXML(mSTAGEConfigFullPath);
       }
    }
 

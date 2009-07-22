@@ -343,7 +343,7 @@ void ConfigurationManager::warning(const xercesc::SAXParseException& e)
 ////////////////////////////////////////////////////////////////////////////////
 void ConfigurationManager::SetDefaultConfigValues()
 {
-   mGeneralVariables["SaveConfigurationOnClose"] = "true";
+   mGeneralVariables["SaveConfigurationOnClose"] = "false";
 
    mLayoutVariables["ShowFrontView"] = "true";
    mLayoutVariables["ShowSideView"] = "true";
