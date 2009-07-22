@@ -502,14 +502,14 @@ namespace dtEditQt
                         mapPtr->AddProxy(*proxy);
                         mapPtr->AddActorToGroup(groupIndex, proxy);
 
-                        // Notify the creation of the proxies.
-                        EditorEvents::GetInstance().emitActorProxyCreated(proxy, false);
-
                         tProxy = dynamic_cast<dtDAL::TransformableActorProxy*>(proxy);
                         if (tProxy)
                         {
                            tProxy->SetTranslation(tProxy->GetTranslation() + offset);
                         }
+
+                        // Notify the creation of the proxies.
+                        EditorEvents::GetInstance().emitActorProxyCreated(proxy, false);
                      }
                   }
                   catch (const dtUtil::Exception& e)

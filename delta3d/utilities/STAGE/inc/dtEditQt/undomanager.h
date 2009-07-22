@@ -29,6 +29,7 @@
 #ifndef DELTA_UNDOMANAGER
 #define DELTA_UNDOMANAGER
 
+#include <dtEditQt/export.h>
 #include <osg/Referenced>
 #include <QtCore/QObject>
 #include <vector>
@@ -57,7 +58,7 @@ namespace dtEditQt
     * @note This class should NEVER hold onto any real objects.  For instance, it won't hold onto
     * libraries, ActorProxies, Actors, or other map/project specific data.
     */
-   class UndoManager : QObject
+   class DT_EDITQT_EXPORT UndoManager : QObject
    {
       Q_OBJECT
 

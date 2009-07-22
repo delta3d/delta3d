@@ -438,10 +438,23 @@ namespace dtEditQt
          mUndoStack.push(event);
       }
 
+      // Remove this proxy from any groups they are in.
+      dtDAL::Map* map = EditorData::GetInstance().getCurrentMap();
+      if (map)
+      {
+         if (map->FindGroupForActor(proxy) > -1)
+         {
+            //beginMultipleUndo();
+            unGroupActor(proxy);
+            map->RemoveActorFromGroups(proxy);
+         }
+      }
+
       // Delete the sucker
       mRecursePrevent = true;
       EditorData::GetInstance().getMainWindow()->startWaitCursor();
       dtCore::RefPtr<dtDAL::Map> currMap = EditorData::GetInstance().getCurrentMap();
+
       EditorActions::GetInstance().deleteProxy(proxy, currMap);
 
       //We are deleting an object, so clear the current selection for safety.
