@@ -33,6 +33,14 @@ void FullApplicator::operator ()(const DIS::EntityStatePdu& source,
 
    dtDAL::NamedParameter* mp;
 
+   mp = dest.AddUpdateParameter(dtDIS::EnginePropertyName::ENTITY_MARKING, dtDAL::DataType::STRING);
+   if (mp != NULL)
+   {
+      dtDAL::NamedStringParameter* strAP = static_cast<dtDAL::NamedStringParameter*>(mp);
+      
+      strAP->SetValue(source.getMarking().getCharacters());
+   }
+
    mp = dest.AddUpdateParameter( dtDIS::EnginePropertyName::RESOURCE_DAMAGE_OFF , dtDAL::DataType::STATIC_MESH );
    if( mp != NULL )
    {
@@ -91,6 +99,17 @@ void FullApplicator::operator ()(const dtGame::ActorUpdateMessage& source,
                                  DIS::EntityStatePdu& dest,
                                  dtDIS::SharedState* config) const
 {
+   // --- support the engine-core properties. --- //
+   if (const dtGame::MessageParameter* mp = source.GetUpdateParameter(EnginePropertyName::ENTITY_MARKING))
+   {
+      const dtGame::StringMessageParameter* v3mp = static_cast<const dtGame::StringMessageParameter*>(mp);
+      const std::string value = v3mp->GetValue();
+      DIS::Marking marking;
+      marking.setCharacters(value.c_str());
+      dest.setMarking(marking);
+   }
+
+
    // --- support the engine-core properties. --- //
    if (const dtGame::MessageParameter* mp = source.GetUpdateParameter(EnginePropertyName::ENTITY_LOCATION))
    {
@@ -216,6 +235,10 @@ void PartialApplicator::operator ()(const DIS::EntityStatePdu& source,
       xyzRot[0] = hpr[1]; //swap from HPR to "rotations about the axis"
       xyzRot[1] = hpr[2];
       xyzRot[2] = hpr[0];
+      //xyzRot[0] = osg::RadiansToDegrees(orie.getPhi()); //pitch
+      //xyzRot[1] = osg::RadiansToDegrees(orie.getTheta()); //roll
+      //xyzRot[2] = osg::RadiansToDegrees(orie.getPsi()); //heading
+
    }
 
    // dtDIS Actor Property Name

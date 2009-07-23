@@ -48,6 +48,8 @@ namespace dtDIS
    {
       // Contains the official ActorProperty names that supported engine components respond to.
 
+
+      static dtUtil::RefString ENTITY_MARKING;
       ///Outgoing DIS packets read from this Property for the entity's XYZ translation
       static dtUtil::RefString ENTITY_LOCATION; 
       
