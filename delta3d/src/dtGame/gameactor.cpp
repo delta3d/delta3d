@@ -121,6 +121,9 @@ namespace dtGame
                dtDAL::StringActorProperty::SetFuncType(&ga, &GameActor::SetShaderGroup),
                dtDAL::StringActorProperty::GetFuncType(&ga, &GameActor::GetShaderGroup),
                "Sets the shader group on the game actor.",GROUPNAME));
+
+      /** let game actor components add their properties */
+      ga.BuildComponentPropertyMaps();
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -465,6 +468,24 @@ namespace dtGame
       }
    }
 
+   /////////////////////////////////////////////////////////////////////////////////////////////////////////
+   void GameActorProxy::RemoveInvokable(const std::string& name)
+   {
+      std::map<std::string,dtCore::RefPtr<Invokable> >::iterator itor =
+         mInvokables.find(name);
+      if (itor != mInvokables.end())
+      {
+         mInvokables.erase(itor);
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////////////////////////////
+   void GameActorProxy::RemoveInvokable(Invokable* inv)
+   {
+      RemoveInvokable(inv->GetName());
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////////////////////////////
    void GameActorProxy::BuildInvokables()
    {
       AddInvokable(*new Invokable(TICK_LOCAL_INVOKABLE,
@@ -643,8 +664,29 @@ namespace dtGame
       }
 
       ga->OnEnteredWorld();
+      ga->InitComponents();
 
       OnEnteredWorld();
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////
+   void GameActorProxy::InvokeRemovedFromWorld()
+   {
+      /**
+       * We will preform a check to make sure this actor actually is a GameActor
+       */
+
+      GameActor* ga = dynamic_cast<GameActor*>(GetActor());
+      if (ga == NULL)
+      {
+         // throw exception
+         throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION,
+                  "ERROR: Actor has the type of a GameActor, but casting it to a GameActorProxy failed.", __FILE__, __LINE__);
+      }
+
+      ga->RemoveAllComponents();
+
+      OnRemovedFromWorld();
    }
 
 

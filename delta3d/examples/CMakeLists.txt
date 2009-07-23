@@ -32,6 +32,7 @@ IF (BUILD_EXAMPLES)
   ADD_SUBDIRECTORY(testClouds)
   ADD_SUBDIRECTORY(testEffects)
 
+  ADD_SUBDIRECTORY(testGameActorComponents)
   ADD_SUBDIRECTORY(testGameEnvironment)
   
   IF(DTGUI_AVAILABLE)
