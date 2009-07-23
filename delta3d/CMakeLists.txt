@@ -1,3 +1,21 @@
+IF(WIN32)
+    CMAKE_MINIMUM_REQUIRED(VERSION 2.4.8 FATAL_ERROR)
+ELSE(WIN32)
+    IF(APPLE)
+        CMAKE_MINIMUM_REQUIRED(VERSION 2.4.8 FATAL_ERROR)
+        IF(${CMAKE_MAJOR_VERSION} EQUAL 2 AND ${CMAKE_MINOR_VERSION} EQUAL 4 AND ${CMAKE_PATCH_VERSION} LESS 7)
+            MESSAGE("Warning: A critical CMake bug exists in 2.4.6 and below. Trying to build Universal Binaries will result in a compile error that seems unrelated. Either avoid building Universal Binaries by changing the CMAKE_OSX_ARCHITECTURES field to list only your architecture, or upgrade to the current CVS version of CMake or a newer stable version if it exists.")
+        ENDIF(${CMAKE_MAJOR_VERSION} EQUAL 2 AND ${CMAKE_MINOR_VERSION} EQUAL 4 AND ${CMAKE_PATCH_VERSION} LESS 7)
+    ELSE(APPLE)
+        CMAKE_MINIMUM_REQUIRED(VERSION 2.4.8 FATAL_ERROR)
+    ENDIF(APPLE)
+ENDIF(WIN32)
+ 
+#see cmake --help-policy CMP0003 for more information
+IF(COMMAND cmake_policy)
+    CMAKE_POLICY(SET CMP0003 NEW)
+ENDIF(COMMAND cmake_policy)
+
 MACRO(ADD_DELTA3D_SUBFOLDERS)
 	#optional external dependencies
 	IF (BUILD_ANIM)  
@@ -106,23 +124,7 @@ MACRO(ADD_DELTA3D_SUBFOLDERS)
 	ADD_SUBDIRECTORY(utilities)
 ENDMACRO(ADD_DELTA3D_SUBFOLDERS)
 
-IF(WIN32)
-    CMAKE_MINIMUM_REQUIRED(VERSION 2.4.8 FATAL_ERROR)
-ELSE(WIN32)
-    IF(APPLE)
-        CMAKE_MINIMUM_REQUIRED(VERSION 2.4.8 FATAL_ERROR)
-        IF(${CMAKE_MAJOR_VERSION} EQUAL 2 AND ${CMAKE_MINOR_VERSION} EQUAL 4 AND ${CMAKE_PATCH_VERSION} LESS 7)
-            MESSAGE("Warning: A critical CMake bug exists in 2.4.6 and below. Trying to build Universal Binaries will result in a compile error that seems unrelated. Either avoid building Universal Binaries by changing the CMAKE_OSX_ARCHITECTURES field to list only your architecture, or upgrade to the current CVS version of CMake or a newer stable version if it exists.")
-        ENDIF(${CMAKE_MAJOR_VERSION} EQUAL 2 AND ${CMAKE_MINOR_VERSION} EQUAL 4 AND ${CMAKE_PATCH_VERSION} LESS 7)
-    ELSE(APPLE)
-        CMAKE_MINIMUM_REQUIRED(VERSION 2.4.8 FATAL_ERROR)
-    ENDIF(APPLE)
-ENDIF(WIN32)
- 
-#see cmake --help-policy CMP0003 for more information
-IF(COMMAND cmake_policy)
-    CMAKE_POLICY(SET CMP0003 NEW)
-ENDIF(COMMAND cmake_policy)
+
 
 PROJECT(DELTA3D)
 
