@@ -10,6 +10,7 @@ namespace dtDIS
    dtUtil::RefString EntityPropertyName::ENTITY_TYPE               ("EntityType");
 
    // -- EnginePropertyName -- //
+   dtUtil::RefString EnginePropertyName::ENTITY_MARKING            ("Description");
    dtUtil::RefString EnginePropertyName::ENTITY_LOCATION           ("Translation");
 
    dtUtil::RefString EnginePropertyName::ENTITY_ORIENTATION        ("Rotation");
