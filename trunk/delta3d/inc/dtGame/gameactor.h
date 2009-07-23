@@ -26,6 +26,7 @@
 #include <dtCore/physical.h>
 #include <dtDAL/physicalactorproxy.h>
 #include <dtGame/export.h>
+#include <dtGame/actorcomponentbase.h>
 
 namespace dtUtil
 {
@@ -48,7 +49,9 @@ namespace dtGame
     * Game Manager
     * @see dtGame::GameManager
     */
-   class DT_GAME_EXPORT GameActor : public dtCore::Physical
+   class DT_GAME_EXPORT GameActor 
+      : public dtCore::Physical
+      , public dtGame::ActorComponentBase
    {
    public:
       /// Constructor
@@ -261,6 +264,16 @@ namespace dtGame
        *      is not added and an error message is logged.
        */
       void AddInvokable(Invokable& newInvokable);
+
+      /**
+       * Remove this invokable from the proxy's list
+       */
+      void RemoveInvokable(const std::string& name);
+
+      /**
+       * Remove this invokable from the proxy's list
+       */
+      void RemoveInvokable(Invokable*);
 
       /**
        * @return the invokable with the given name or NULL if it doesn't have one with that name.
@@ -523,6 +536,11 @@ namespace dtGame
        * Invokes the OnEnteredWorld function of the actor, and then the proxy
        */
       void InvokeEnteredWorld();
+
+      /**
+       * Invokes the OnRemovedFromWorld function of the proxy
+       */
+      void InvokeRemovedFromWorld();
 
       /// This was added so the GameManager can be set on creation.
       void SetIsInGM(bool value);
