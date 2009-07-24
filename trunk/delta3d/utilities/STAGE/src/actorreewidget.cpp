@@ -114,9 +114,6 @@ namespace dtEditQt
       QString name      = actorType->GetName().c_str();
       dataStream << category << name;
 
-      int width = pixmap.width();
-      int height = pixmap.height();
-
       QMimeData *mimeData = new QMimeData;
       mimeData->setData("Actor", itemData);
 

@@ -155,8 +155,8 @@ namespace dtActors
    /////////////////////////////////////////////////////////////////////////////
    LinkedPointsActor::LinkedPointsActor(dtActors::LinkedPointsActorProxy* proxy, const std::string& name)
       : BaseClass(name)
-      , mVisualize(false)
       , mProxy(proxy)
+      , mVisualize(false)
    {
    }
 

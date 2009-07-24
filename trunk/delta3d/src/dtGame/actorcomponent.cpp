@@ -30,8 +30,9 @@
 using namespace dtGame;
 
 ////////////////////////////////////////////////////////////////////////////////
-dtGame::ActorComponent::ActorComponent(const ACType& type) : mType(type)
-, mOwner(NULL)
+dtGame::ActorComponent::ActorComponent(const ACType& type) : 
+  mOwner(NULL)
+, mType(type) 
 {
 
 }
