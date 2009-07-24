@@ -1741,8 +1741,8 @@ namespace  dtDAL
       , mGroupIndex(-1)
       , mLoadingPrefab(false)
       , mPrefabReadMode(PREFAB_READ_ALL)
-      , mPrefabProxyList(NULL)
       , mPrefabIconFileName("")
+      , mPrefabProxyList(NULL)
    {
       mLogger = &dtUtil::Log::GetInstance();
       //mLogger->SetLogLevel(dtUtil::Log::LOG_DEBUG);

@@ -145,8 +145,6 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void EditorViewportContainer::createToolBar()
    {
-      QToolButton* button = NULL;
-
       // Create our "toolbar" widget.
       mToolBar = new QFrame(this);
       mToolBar->setFrameStyle(QFrame::Box | QFrame::Raised);

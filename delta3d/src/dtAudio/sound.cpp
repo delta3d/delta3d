@@ -66,8 +66,8 @@ Sound::Sound()
    , mStopCB(NULL)
    , mStopCBData(NULL)
    , mCommandState(BIT(STOP))
-   , mIsInitialized(false)
    , mBuffer(0)
+   , mIsInitialized(false)
 {
    RegisterInstance(this);
 

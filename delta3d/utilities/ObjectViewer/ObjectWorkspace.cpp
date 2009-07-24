@@ -686,3 +686,4 @@ void ObjectWorkspace::SetupConnectionsWithViewer()
    connect((QObject*)this->mLocalSpaceAction, SIGNAL(triggered()), mViewer, SLOT(OnLocalSpaceMode()));
 
 }
+
