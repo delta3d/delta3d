@@ -35,6 +35,47 @@
 #include <dtGame/invokable.h>
 
 ////////////////////////////////////////////////////////////////////
+// Actor Component Code
+////////////////////////////////////////////////////////////////////
+
+const dtGame::ActorComponent::ACType TestActorComponent1::TYPE("TestActorComponent1");
+
+TestActorComponent1::TestActorComponent1()
+: dtGame::ActorComponent(TYPE)
+, mWasAdded(false)
+, mWasRemoved(false)
+{
+}
+
+void TestActorComponent1::OnAddedToActor(dtGame::GameActor& actor)
+{
+   mWasAdded = true;
+}
+
+void TestActorComponent1::OnRemovedFromActor(dtGame::GameActor& actor)
+{
+   mWasRemoved = true;
+}
+
+const dtGame::ActorComponent::ACType TestActorComponent2::TYPE("TestActorComponent2");
+
+TestActorComponent2::TestActorComponent2()
+: dtGame::ActorComponent(TYPE)
+, mWasAdded(false)
+, mWasRemoved(false)
+{
+}
+
+void TestActorComponent2::OnAddedToActor(dtGame::GameActor& actor)
+{
+   mWasAdded = true;
+}
+
+void TestActorComponent2::OnRemovedFromActor(dtGame::GameActor& actor)
+{
+   mWasRemoved = true;
+}
+////////////////////////////////////////////////////////////////////
 // Proxy Code
 ////////////////////////////////////////////////////////////////////
 TestGameActorProxy1::TestGameActorProxy1():ticksEnabled(false)
