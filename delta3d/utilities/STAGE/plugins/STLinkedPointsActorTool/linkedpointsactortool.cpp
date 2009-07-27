@@ -213,7 +213,7 @@ void LinkedPointsActorToolPlugin::onActorProxyDestroyed(ActorProxyRefPtr proxy)
 void LinkedPointsActorToolPlugin::onActorsSelected(ActorProxyRefPtrVector& actors)
 {
    // We can only use this editor if the linked points actor is the only one selected.
-   if (actors.size() == 1)
+   if (actors.size() > 0)
    {
       // Only allow linked points actor.
       dtActors::LinkedPointsActorProxy* linkedPointsProxy = dynamic_cast<dtActors::LinkedPointsActorProxy*>(actors[0].get());

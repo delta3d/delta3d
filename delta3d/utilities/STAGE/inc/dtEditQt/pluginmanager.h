@@ -54,6 +54,9 @@ namespace dtEditQt
       /** return instance of plugin or NULL if not active */
       Plugin* GetPlugin(const std::string& name);
 
+      /** returns all dependencies for a given plugin */
+      std::list<std::string> GetPluginDependencies(std::string name);
+
    public slots:
 
       /** instantiate plugin with given name 

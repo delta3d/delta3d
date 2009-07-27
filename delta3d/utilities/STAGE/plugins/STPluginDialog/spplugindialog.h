@@ -36,6 +36,9 @@ public slots:
    /** when user closes the dialog popup */
    void onCloseDialog();
 
+   /** when user checks/unchecks a plugin in the list */
+   void OnPluginChanged(QListWidgetItem* item);
+
    /** when user presses OK button */
    void onApplyChanges();
 

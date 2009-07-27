@@ -244,6 +244,20 @@ namespace dtEditQt
    }
 
 
+   std::list<std::string> PluginManager::GetPluginDependencies(std::string name)
+   {
+      std::list<std::string> deps;
+      PluginFactory* factory = GetPluginFactory(name);
+
+      if (factory)
+      {
+         factory->GetDependencies(deps);
+      }
+
+      return deps;
+   }
+
+
    void PluginManager::StartPlugin(const std::string& name, bool storeToConfig)
    {
       LOG_ALWAYS("Starting plugin " + name);
@@ -295,6 +309,33 @@ namespace dtEditQt
       if(!IsInstantiated(name))
       {
          return;
+      }
+
+      // Check if any other plugins depend on this one, and stop them as well.
+      std::list<std::string> activePlugins;
+      GetActivePlugins(activePlugins);
+      while(!activePlugins.empty())
+      {
+         std::string plugin = activePlugins.front();
+         activePlugins.pop_front();
+
+         PluginFactory* factory = GetPluginFactory(plugin);
+
+         // start all plugins this plugin depends on
+         std::list<std::string> deps;
+         factory->GetDependencies(deps);
+         while(!deps.empty())
+         {
+            std::string dependency = deps.front();
+            deps.pop_front();
+
+            // If the active plugin depends on this plugin, then we need to stop that one too.
+            if (dependency == name)
+            {
+               StopPlugin(plugin);
+               break;
+            }
+         }
       }
 
       LOG_ALWAYS("Stopping plugin " + name);

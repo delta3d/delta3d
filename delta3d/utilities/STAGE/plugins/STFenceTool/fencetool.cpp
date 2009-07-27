@@ -41,9 +41,6 @@ FenceToolPlugin::FenceToolPlugin(MainWindow* mw)
    connect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorProxyRefPtrVector &)),
       this, SLOT(onActorsSelected(ActorProxyRefPtrVector &)));
 
-   connect(&ViewportManager::GetInstance(), SIGNAL(mouseMoveEvent(Viewport*, QMouseEvent*)),
-      this, SLOT(onMouseMoveEvent(Viewport*, QMouseEvent*)));
-
    connect(&ViewportManager::GetInstance(), SIGNAL(selectActors(Viewport*, QMouseEvent*, bool*)),
       this, SLOT(onSelectActors(Viewport*, QMouseEvent*, bool*)));
 
@@ -193,7 +190,7 @@ public:
    virtual std::string GetName() { return FenceToolPlugin::PLUGIN_NAME; }
 
    /** get a description of the plugin */
-   virtual std::string GetDescription() { return "Creates a list of points."; }
+   virtual std::string GetDescription() { return "Handles Post meshes and Segment textures."; }
 
    virtual void GetDependencies(std::list<std::string>& deps) 
    {

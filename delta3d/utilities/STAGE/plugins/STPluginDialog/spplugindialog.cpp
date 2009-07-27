@@ -35,6 +35,8 @@ void PluginManagerPlugin::onOpenDialog()
    // connect cancel and accept buttons
    connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(onCloseDialog()));
    connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(onApplyChanges()));
+   connect(ui.mPluginList, SIGNAL(itemChanged(QListWidgetItem*)),
+      this, SLOT(OnPluginChanged(QListWidgetItem*)));
 
    // show the dialog
    mDialog->setVisible(true);
@@ -84,6 +86,92 @@ void PluginManagerPlugin::onCloseDialog()
    mDialog = NULL;
 }
 
+// user has checked/unchecked a plugin.
+void PluginManagerPlugin::OnPluginChanged(QListWidgetItem* item)
+{
+   dtEditQt::PluginManager* manager = mMainWindow->GetPluginManager();
+   if (!manager) return;
+
+   std::string name = item->text().toStdString();
+
+   // When activating a plugin, make sure we also activate any
+   // plugins that it depends on.
+   if (item->checkState() == Qt::Checked)
+   {
+      std::list<std::string> deps = manager->GetPluginDependencies(name);
+      while(!deps.empty())
+      {
+         std::string dependency = deps.front();
+         deps.pop_front();
+
+         QList<QListWidgetItem*> pluginItems = mPluginList->findItems(QString(dependency.c_str()), Qt::MatchExactly);
+
+         // check if dependency can be fulfilled
+         if (pluginItems.empty())
+         {
+            item->setCheckState(Qt::Unchecked);
+            return;
+         }
+
+         for (int pluginIndex = 0; pluginIndex < pluginItems.size(); pluginIndex++)
+         {
+            QListWidgetItem* pluginItem = pluginItems[pluginIndex];
+            if (pluginItem)
+            {
+               pluginItem->setCheckState(Qt::Checked);
+
+               // now double check to see if those dependencies were turned on properly.
+               if (pluginItem->checkState() == Qt::Unchecked)
+               {
+                  item->setCheckState(Qt::Unchecked);
+                  return;
+               }
+            }
+         }
+      }
+   }
+   // When deactivating a plugin, make sure to also deactivate any
+   // plugins that depend on this one.
+   else
+   {
+      std::list<std::string> plugins;
+      manager->GetAvailablePlugins(plugins);
+      while(!plugins.empty())
+      {
+         std::string plugin = plugins.front();
+         plugins.pop_front();
+
+         std::list<std::string> deps = manager->GetPluginDependencies(plugin);
+         while(!deps.empty())
+         {
+            std::string dependency = deps.front();
+            deps.pop_front();
+
+            // If the active plugin depends on this plugin, then we need to stop that one too.
+            if (dependency == name)
+            {
+               QList<QListWidgetItem*> pluginItems = mPluginList->findItems(QString(plugin.c_str()), Qt::MatchExactly);
+
+               // check if dependency can be fulfilled
+               if (pluginItems.empty())
+               {
+                  break;
+               }
+
+               for (int pluginIndex = 0; pluginIndex < pluginItems.size(); pluginIndex++)
+               {
+                  QListWidgetItem* pluginItem = pluginItems[pluginIndex];
+                  if (pluginItem)
+                  {
+                     pluginItem->setCheckState(Qt::Unchecked);
+                  }
+               }
+               break;
+            }
+         }
+      }
+   }
+}
 
 // user has pressed OK button. Start and stop plugins
 void PluginManagerPlugin::onApplyChanges()
@@ -104,7 +192,7 @@ void PluginManagerPlugin::onApplyChanges()
 
       if(!enabled && manager->IsInstantiated(name))
       {
-         manager->StopPlugin(name);        
+         manager->StopPlugin(name);
       }
       else if(enabled && !manager->IsInstantiated(name))
       {
