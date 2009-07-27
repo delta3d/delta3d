@@ -111,7 +111,7 @@ namespace dtActors
       {
          while ((int)mGeomList.size() > size)
          {
-            LinkedPointsGeomDataBase* data = mGeomList.back();
+            LinkedPointsGeomDataBase* data = mGeomList.back().get();
             if (!data) return false;
             data->Shutdown();
             mGeomList.pop_back();

@@ -9,18 +9,18 @@ const dtGame::ActorComponent::ACType TextLabelComponent::TYPE("TextLabelComponen
 
 TextLabelComponent::TextLabelComponent()
    : ActorComponent(TYPE)
+   , mFontSize(0.5f)
+   , mTextGeometry(new osgText::Text())
+   , mColor(osg::Vec4(1,1,1,1))
    , mGroup(new osg::Group())
    , mGeode(new osg::Geode())
    , mPosition(new osg::PositionAttitudeTransform())
-   , mTextGeometry(new osgText::Text())
-   , mShow(true)
-   , mColor(osg::Vec4(1,1,1,1))
-   , mText("")
-   , mFontSize(0.5f)
-   , mFlashInterval(1)
    , mIsFlashing(false)
+   , mShow(true)
+   , mText("") 
+   , mFlashInterval(1)
 {
-   mGroup->addChild(mPosition);
+   mGroup->addChild(mPosition.get());
    mPosition->addChild(mGeode.get());
 }
 
@@ -34,14 +34,14 @@ TextLabelComponent::~TextLabelComponent()
 void TextLabelComponent::OnAddedToActor(dtGame::GameActor& actor)
 {
    // add text node geometry to actor
-   actor.GetOSGNode()->asGroup()->addChild(mGroup);
+   actor.GetOSGNode()->asGroup()->addChild(mGroup.get());
 }
 
 
 void TextLabelComponent::OnRemovedFromActor(dtGame::GameActor& actor)
 {
    // remove text node geometry from actor
-   actor.GetOSGNode()->asGroup()->removeChild(mGroup);
+   actor.GetOSGNode()->asGroup()->removeChild(mGroup.get());
 }
 
 
