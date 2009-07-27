@@ -21,6 +21,7 @@
 
 using namespace dtAnim;
 
+////////////////////////////////////////////////////////////////////////////////
 CharDrawable::CharDrawable(Cal3DModelWrapper* wrapper)
    : dtCore::Transformable()
    , mAnimator(new Cal3DAnimator(wrapper))
@@ -31,20 +32,22 @@ CharDrawable::CharDrawable(Cal3DModelWrapper* wrapper)
 
    GetMatrixNode()->addChild(mNode.get());
 
-   SetCal3DWrapper( wrapper );
+   SetCal3DWrapper(wrapper);
 }
 
+////////////////////////////////////////////////////////////////////////////////
 CharDrawable::~CharDrawable()
 {
    RemoveSender(&dtCore::System::GetInstance());
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
 Cal3DModelWrapper* CharDrawable::GetCal3DWrapper()
 {
    return mAnimator->GetWrapper();
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void CharDrawable::OnMessage(dtCore::Base::MessageData* data)
 {
    assert(mAnimator.get());
@@ -65,10 +68,7 @@ void CharDrawable::OnMessage(dtCore::Base::MessageData* data)
    }
 }
 
-
-/** Will delete all existing drawables added to the geode, then add in a whole
-  * new set.
-  */
+////////////////////////////////////////////////////////////////////////////////
 osg::Node* CharDrawable::RebuildSubmeshes()
 {
    GetMatrixNode()->removeChild(mNode.get());
@@ -77,6 +77,7 @@ osg::Node* CharDrawable::RebuildSubmeshes()
    return mNode.get();
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void CharDrawable::SetCal3DWrapper(Cal3DModelWrapper* wrapper)
 {
    mAnimator->SetWrapper(wrapper);

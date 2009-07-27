@@ -49,7 +49,7 @@ namespace dtUtil
          static DataStreamException BUFFER_INVALID_POS;
 
       private:
-         DataStreamException(const std::string &name) : dtUtil::Enumeration(name) 
+         DataStreamException(const std::string& name) : dtUtil::Enumeration(name) 
          {
             AddInstance(this);
          }
@@ -88,9 +88,9 @@ namespace dtUtil
           *    instance gets destructed.  If false, the caller is responsible for freeing
           *    the associated buffer memory.
           */
-         DataStream(char *buffer, unsigned int bufferSize, bool autoFree=true);
-         DataStream(const DataStream &rhs);
-         DataStream &operator=(const DataStream &rhs);
+         DataStream(char* buffer, unsigned int bufferSize, bool autoFree=true);
+         DataStream(const DataStream& rhs);
+         DataStream& operator=(const DataStream& rhs);
          virtual ~DataStream();
 
          DataStream& operator>>(bool& value) { Read(value); return *this;}
@@ -193,7 +193,7 @@ namespace dtUtil
          void Write(const std::string& string);
 
          void Read(osg::Vec2f& vector);
-         void Write(const osg::Vec2f &vector);
+         void Write(const osg::Vec2f& vector);
 
          void Read(osg::Vec2d& vector);
          void Write(const osg::Vec2d& vector);
@@ -223,7 +223,7 @@ namespace dtUtil
          void Seekp(unsigned int offset, const SeekTypeEnum &type);
          void Seekg(unsigned int offset, const SeekTypeEnum &type);
 
-         const char *GetBuffer() const { return mBuffer; }         
+         const char* GetBuffer() const { return mBuffer; }         
 
          /**
           * Gets the endian'ness of the current platform.
@@ -251,7 +251,7 @@ namespace dtUtil
             unsigned int ResizeBuffer(unsigned int size = 0);
 
          private:
-            char *mBuffer;
+            char* mBuffer;
             unsigned int mBufferSize, mBufferCapacity;
             unsigned int mReadPos,mWritePos;
             bool mAutoFreeBuffer;
