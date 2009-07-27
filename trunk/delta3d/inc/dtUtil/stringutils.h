@@ -142,7 +142,7 @@ namespace dtUtil
 
       for (std::string::iterator i = toTrim.begin(); i != toTrim.end();)
       {
-         if (isspace(*i))
+         if (isspace(static_cast<unsigned char>(*i)))
          {
             i = toTrim.erase(i);
          }
@@ -159,7 +159,7 @@ namespace dtUtil
 
       for (int i = (int)(toTrim.size() - 1); i >= 0; --i)
       {
-         if (isspace(toTrim[i]))
+         if (isspace(static_cast<unsigned char>(toTrim[i])))
          {
             //we can just erase from the end because
             //it will shorted the part of the string already covered by the loop.
