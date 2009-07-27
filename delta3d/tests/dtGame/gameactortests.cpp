@@ -59,7 +59,7 @@
 #include <testGameActorLibrary/testgameactorlibrary.h>
 #include <testGameActorLibrary/testgameenvironmentactor.h>
 #include <testGameActorLibrary/testgamepropertyproxy.h>
-
+#include <testGameActorLibrary/testgameactor.h>
 #include <dtCore/observerptr.h>
 
 #include <cppunit/extensions/HelperMacros.h>
@@ -88,7 +88,9 @@ class GameActorTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestMessageProcessingPerformance);
       CPPUNIT_TEST(TestActorIsInGM);
       CPPUNIT_TEST(TestOnRemovedActor);
-
+      CPPUNIT_TEST(TestAddActorComponent);
+      CPPUNIT_TEST(TestActorComponentInitialized);
+      
    CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -111,6 +113,8 @@ public:
    void TestMessageProcessingPerformance();
    void TestActorIsInGM();
    void TestOnRemovedActor();
+   void TestAddActorComponent();
+   void TestActorComponentInitialized();
 
 private:
    static const std::string mTestGameActorLibrary;
@@ -1072,3 +1076,98 @@ void GameActorTests::TestOnRemovedActor()
    CPPUNIT_ASSERT_MESSAGE("Proxy should BE marked as 'RemovedFromWorld'", proxy1->IsRemovedFromWorld());
 }
 
+//////////////////////////////////////////////////////
+void GameActorTests::TestAddActorComponent()
+{
+   try
+   {
+      dtCore::RefPtr<const dtDAL::ActorType> actorType = mManager->FindActorType("ExampleActors", "Test1Actor");
+      dtCore::RefPtr<dtDAL::ActorProxy> proxy = mManager->CreateActor(*actorType);
+      dtCore::RefPtr<dtGame::GameActorProxy> gap = dynamic_cast<dtGame::GameActorProxy*>(proxy.get());
+      mManager->AddActor(*gap, true, false);
+
+      dtGame::GameActor* actor = &gap->GetGameActor();
+
+      dtCore::RefPtr<TestActorComponent1> component = new TestActorComponent1();
+      actor->AddComponent(component.get());
+
+      CPPUNIT_ASSERT_MESSAGE("Actor owner not set", component->GetOwner() == actor);
+
+      bool hascomp = actor->HasComponent(TestActorComponent1::TYPE);
+      CPPUNIT_ASSERT_MESSAGE("Actor component not found after it was added!", hascomp);
+
+      bool found = (actor->GetComponent(TestActorComponent1::TYPE) == component);
+      CPPUNIT_ASSERT_MESSAGE("Could not retrieve actor component after it was added!", found);
+      
+      TestActorComponent1* compare;
+      if(!actor->GetComponent(compare))
+      {
+         CPPUNIT_FAIL("Could not retrieve actor component after it was added");
+      }
+      bool foundtemplate = (compare == component);
+      CPPUNIT_ASSERT_MESSAGE("Could not retrieve actor component after it was added!", foundtemplate);
+
+      actor->RemoveComponent(TestActorComponent1::TYPE);
+      
+      try
+      {
+         bool notfound = (actor->GetComponent(TestActorComponent1::TYPE) == NULL);
+         CPPUNIT_ASSERT_MESSAGE("Searching for actor component should throw exception!", notfound);
+      }
+      catch(const dtUtil::Exception&)
+      {  
+      }
+
+
+      //clean up after test is finished.
+      mManager->DeleteActor(*gap);
+   }
+   catch(const dtUtil::Exception& e)
+   {
+      CPPUNIT_FAIL(e.What());
+   }
+}
+
+
+
+//////////////////////////////////////////////////////
+void GameActorTests::TestActorComponentInitialized()
+{
+   try
+   {
+      dtCore::RefPtr<const dtDAL::ActorType> actorType = mManager->FindActorType("ExampleActors", "Test1Actor");
+      dtCore::RefPtr<dtDAL::ActorProxy> proxy = mManager->CreateActor(*actorType);
+      dtCore::RefPtr<dtGame::GameActorProxy> gap = dynamic_cast<dtGame::GameActorProxy*>(proxy.get());
+      dtGame::GameActor* actor = &gap->GetGameActor();
+
+      dtCore::RefPtr<TestActorComponent1> component1 = new TestActorComponent1();
+      actor->AddComponent(component1.get());      
+
+      dtCore::RefPtr<TestActorComponent2> component2 = new TestActorComponent2();
+      
+      CPPUNIT_ASSERT_MESSAGE("Actor component1 should not be initialized before actor is in game!", !component1->mWasAdded);
+      
+      mManager->AddActor(*gap, true, false);
+      CPPUNIT_ASSERT_MESSAGE("Actor component1 be initialized when actor is added to game!", component1->mWasAdded);
+
+      CPPUNIT_ASSERT_MESSAGE("Actor component2 should not be initialized before added to actor!", !component2->mWasAdded);
+      actor->AddComponent(component2.get());
+      CPPUNIT_ASSERT_MESSAGE("Actor component2 should be initialized when added to actor!", component2->mWasAdded);
+      actor->RemoveComponent(component2);
+      CPPUNIT_ASSERT_MESSAGE("Actor component2 should be de-initialized when removed from actor!", component2->mWasRemoved);
+
+      CPPUNIT_ASSERT_MESSAGE("Actor component should not be removed yet!", !component1->mWasRemoved);
+      mManager->DeleteActor(*gap);
+      dtCore::AppSleep(10);
+      dtCore::System::GetInstance().Step();
+
+      //Actor should be removed by now.
+      CPPUNIT_ASSERT_MESSAGE("Actor component should be de-initialized when actor is added to game!", component1->mWasRemoved);
+
+     
+   }
+   catch(const dtUtil::Exception& e)
+   {
+      CPPUNIT_FAIL(e.What());
+   }
+}

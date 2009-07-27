@@ -31,6 +31,36 @@
 #include <dtGame/gameactor.h>
 #include "export.h"
 
+class DT_EXAMPLE_EXPORT TestActorComponent1 : public dtGame::ActorComponent
+{
+public:
+
+   static const ActorComponent::ACType TYPE;
+
+   TestActorComponent1();
+
+   virtual void OnAddedToActor(dtGame::GameActor& actor);
+   virtual void OnRemovedFromActor(dtGame::GameActor& actor);
+
+   bool mWasAdded;
+   bool mWasRemoved;
+};
+
+class DT_EXAMPLE_EXPORT TestActorComponent2 : public dtGame::ActorComponent
+{
+public:
+
+   static const ActorComponent::ACType TYPE;
+
+   TestActorComponent2();
+
+   virtual void OnAddedToActor(dtGame::GameActor& actor);
+   virtual void OnRemovedFromActor(dtGame::GameActor& actor);
+
+   bool mWasAdded;
+   bool mWasRemoved;
+};
+
 class DT_EXAMPLE_EXPORT TestGameActor1 : public dtGame::GameActor
 {
    public:
