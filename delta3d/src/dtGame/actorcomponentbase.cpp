@@ -92,7 +92,7 @@ void ActorComponentBase::RemoveComponent(const ActorComponent::ACType& type)
    if(iter != mComponents.end())
    {
       iter->second->OnRemovedFromActor(*static_cast<GameActor*>(this));
-      OnActorComponentRemoved(iter->second);
+      OnActorComponentRemoved(iter->second.get());
       mComponents.erase(iter);
       return;
    }
@@ -109,7 +109,7 @@ void ActorComponentBase::RemoveAllComponents()
 {
    while(!mComponents.empty())
    {
-      RemoveComponent((*mComponents.begin()).second);
+      RemoveComponent((*mComponents.begin()).second.get());
    }
 }
 
@@ -125,7 +125,7 @@ void ActorComponentBase::InitComponents()
    for(iter = mComponents.begin(); iter != mComponents.end(); ++iter)
    {
       (*iter).second->OnAddedToActor(*static_cast<GameActor*>(this));
-      OnActorComponentAdded((*iter).second);
+      OnActorComponentAdded((*iter).second.get());
    }
 }
 
