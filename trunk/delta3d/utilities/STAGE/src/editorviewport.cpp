@@ -408,6 +408,8 @@ namespace dtEditQt
 
             if (!getPickPosition(event->pos().x(), event->pos().y(), position, ignoredDrawables))
             {
+               // If we get here, it means our mouse position did not collide with an object to attach to.
+
                // Get the current position and direction the camera is facing.
                osg::Vec3 pos = mCamera->getPosition();
                osg::Vec3 viewDir = mCamera->getViewDir();
@@ -421,10 +423,17 @@ namespace dtEditQt
                   offset = actorCreationOffset;
                }
                position = pos + (viewDir * offset * 2);
-            }
 
-            // Clamp the spawn position to the snap grid.
-            position = ViewportManager::GetInstance().GetSnapPosition(position, true, ignoredDrawables);
+               // Clamp the spawn position to the snap grid.
+               position = ViewportManager::GetInstance().GetSnapPosition(position, false, ignoredDrawables);
+            }
+            else
+            {
+               // Clamp the spawn position to the snap grid and then to the ground.
+               position = ViewportManager::GetInstance().GetSnapPosition(
+                  position, ViewportManager::GetInstance().GetSnapTranslationEnabled(),
+                  ignoredDrawables);
+            }
 
             dtDAL::TransformableActorProxy* tProxy =
                dynamic_cast<dtDAL::TransformableActorProxy*>(mGhostProxy.get());
