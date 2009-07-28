@@ -570,6 +570,7 @@ namespace dtEditQt
       {
          osg::NodePath &nodePath = hitList[index].getNodePath();
          dtCore::DeltaDrawable* drawable = mIsector->MapNodePathToDrawable(nodePath);
+         dtCore::DeltaDrawable* lastDrawable = drawable;
 
          // Make sure the drawable and none of its parents are the ignored drawable.
          bool isIgnored = false;
@@ -589,6 +590,7 @@ namespace dtEditQt
                break;
             }
 
+            lastDrawable = drawable;
             drawable = drawable->GetParent();
          }
 
@@ -597,12 +599,13 @@ namespace dtEditQt
             position = hitList[index].getWorldIntersectPoint();
 
             // Tell the manager the last pick position.
-            ViewportManager::GetInstance().setLastDrawable(getPickDrawable());
+            ViewportManager::GetInstance().setLastDrawable(lastDrawable);
             ViewportManager::GetInstance().setLastPickPosition(position);
             return true;
          }
       }
 
+      ViewportManager::GetInstance().setLastDrawable(NULL);
       return false;
    }
 

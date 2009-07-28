@@ -40,6 +40,14 @@ public:
 public slots:
 
    /**
+   * Handles when a new actor proxy is created.
+   *
+   * @param[in]  proxy               The proxy that was created.
+   * @param[in]  forceNoAdjustments  If true, all slots catching this event should not change the proxy.
+   */
+   void onActorProxyCreated(ActorProxyRefPtr proxy, bool forceNoAdjustments);
+
+   /**
    * Handles when actors are selected.
    *
    * @param[in]  actors  The list of actors being selected.
