@@ -636,6 +636,7 @@ namespace dtTest
    {
       dtCore::RefPtr<dtABC::Application> app = new dtABC::Application();
       dtCore::RefPtr<dtCore::View> view = new dtCore::View("testView");
+      dtCore::ObserverPtr<dtCore::View> viewObserver = view.get();
 
       app->AddView(*view);
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Application should contain the added View",
@@ -649,6 +650,12 @@ namespace dtTest
 
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Application should not contain the removed View",
                                     false, app->ContainsView(*view));
+
+      //remove local reference, should cause View to be destructed and the ObserverPtr to be invalid
+      view = NULL;
+
+      CPPUNIT_ASSERT_MESSAGE("The View did not get destroyed when removed from Application",
+                              viewObserver.valid() == false);
 
       dtCore::System::GetInstance().Stop();
    }
