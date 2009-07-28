@@ -85,20 +85,23 @@ void ConfigurationManager::WriteXML(const std::string& fileName)
 std::string ConfigurationManager::GetVariable(SectionType section,
                                                const std::string& name)
 {
-   std::string token;
    switch(section)
    {
       case GENERAL:
-         token = mGeneralVariables[name];
+         return mGeneralVariables[name];
          break;
       case LAYOUT:
-         token = mLayoutVariables[name];
+         if (mLayoutVariables[name].empty())
+         {
+            mLayoutVariables[name] = "false";
+         }
+         return mLayoutVariables[name];
          break;
       case MENU:
-         token = mMenuVariables[name];
+         return mMenuVariables[name];
          break;
       case PLUGINS:
-         token = mPluginVariables[name];
+         return mPluginVariables[name];
          break;
       default:
          dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ERROR,
@@ -106,11 +109,7 @@ std::string ConfigurationManager::GetVariable(SectionType section,
          break;
    }
 
-   if (token.empty())
-   {
-      token = "false";
-   }
-   return token;
+   return "false";
 }
 
 ////////////////////////////////////////////////////////////////////////////////
