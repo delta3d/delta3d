@@ -38,6 +38,9 @@ BuildingToolPlugin::BuildingToolPlugin(MainWindow* mw)
    mModeButton = mMainWindow->FindExclusiveToolMode("Linked Points Actor Tool");
 
    // Setup our signal slots.
+   connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyCreated(ActorProxyRefPtr, bool)),
+      this, SLOT(onActorProxyCreated(ActorProxyRefPtr, bool)));
+
    connect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorProxyRefPtrVector &)),
       this, SLOT(onActorsSelected(ActorProxyRefPtrVector &)));
 
@@ -64,23 +67,48 @@ void BuildingToolPlugin::Destroy()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void BuildingToolPlugin::onActorsSelected(ActorProxyRefPtrVector& actors)
+void BuildingToolPlugin::onActorProxyCreated(ActorProxyRefPtr proxy, bool forceNoAdjustments)
 {
-   //// We can only use this editor if the linked points actor is the only one selected.
-   //if (actors.size() == 1)
+   //// Only do something if the tool is active.
+   //if (!mModeButton || !mModeButton->isChecked())
    //{
-   //   // Only allow linked points actor.
-   //   dtActors::BuildingActorProxy* fenceProxy = dynamic_cast<dtActors::BuildingActorProxy*>(actors[0].get());
-   //   if (fenceProxy)
-   //   {
-   //      initialize(fenceProxy);
-   //      return;
-   //   }
+   //   return;
    //}
 
-   //shutdown();
-   //mActiveProxy = NULL;
-   //mActiveActor = NULL;
+   // Determine if the actor created was dragged onto a building actor.
+   dtCore::DeltaDrawable* drawable = ViewportManager::GetInstance().getLastDrawable();
+
+   dtActors::BuildingActor* buildingActor = dynamic_cast<dtActors::BuildingActor*>(drawable);
+   if (buildingActor)
+   {
+      dtCore::Transformable* actor;
+      proxy->GetActor(actor);
+
+      if (actor)
+      {
+         buildingActor->AttachActor(actor);
+      }
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void BuildingToolPlugin::onActorsSelected(ActorProxyRefPtrVector& actors)
+{
+   // We can only use this editor if the linked points actor is the only one selected.
+   if (actors.size() == 1)
+   {
+      // Only allow linked points actor.
+      dtActors::BuildingActorProxy* buildingProxy = dynamic_cast<dtActors::BuildingActorProxy*>(actors[0].get());
+      if (buildingProxy)
+      {
+         initialize(buildingProxy);
+         return;
+      }
+   }
+
+   shutdown();
+   mActiveProxy = NULL;
+   mActiveActor = NULL;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -161,17 +189,51 @@ void BuildingToolPlugin::onModeButtonPressed()
 ////////////////////////////////////////////////////////////////////////////////
 void BuildingToolPlugin::initialize(dtActors::BuildingActorProxy* activeProxy)
 {
-   //mActiveProxy = activeProxy;
+   mActiveProxy = activeProxy;
 
-   //if (mActiveProxy.valid())
-   //{
-   //   mActiveProxy->GetActor(mActiveActor);
-   //}
+   if (mActiveProxy.valid())
+   {
+      mActiveProxy->GetActor(mActiveActor);
+
+      //dtDAL::Map* map = EditorData::GetInstance().getCurrentMap();
+
+      //if (map && mActiveActor)
+      //{
+      //   std::vector<dtCore::Transformable*> attachedActors;
+
+      //   // Retrieve the list of attached actor ID's and return to it a list of actual actor pointers.
+      //   std::vector<dtCore::UniqueId> attachedActorIDs = mActiveActor->GetAttachedList();
+
+      //   for (int index = 0; index < (int)attachedActorIDs.size(); index++)
+      //   {
+      //      dtDAL::TransformableActorProxy* proxy = NULL;
+      //      map->GetProxyById(attachedActorIDs[index], proxy);
+      //      if (proxy)
+      //      {
+      //         dtCore::Transformable* transformable = NULL;
+      //         proxy->GetActor(transformable);
+
+      //         if (transformable)
+      //         {
+      //            attachedActors.push_back(transformable);
+      //         }
+      //      }
+      //   }
+
+      //   mActiveActor->SetAttachedListPointers(attachedActors);
+      //}
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void BuildingToolPlugin::shutdown()
 {
+   //// Clear the list of actual actor pointers.
+   //if (mActiveActor)
+   //{
+   //   std::vector<dtCore::Transformable*> attachedActors;
+   //   mActiveActor->SetAttachedListPointers(attachedActors);
+   //}
 }
 
 

@@ -21,7 +21,7 @@ namespace dtDAL
 namespace dtActors
 {
    ////////////////////////////////////////////////////////////////////////////////
-   // FENCE POST GEOM DATA
+   // BUILDING GEOM DATA
    ////////////////////////////////////////////////////////////////////////////////
    class BuildingGeomData : public LinkedPointsGeomDataBase
    {
@@ -40,7 +40,7 @@ namespace dtActors
       bool Shutdown();
 
       // Wall
-      osg::ref_ptr<osg::Geometry>      mWallGeom;
+      osg::ref_ptr<osg::Geometry>      mWallGeom[2];
       osg::ref_ptr<osg::Geode>         mWallGeode;
 
       osg::ref_ptr<osg::Vec3Array>     mWallVertexList;
@@ -49,7 +49,7 @@ namespace dtActors
    };
 
    ////////////////////////////////////////////////////////////////////////////////
-   // FENCE POST GEOM NODE
+   // BUILDING GEOM NODE
    ////////////////////////////////////////////////////////////////////////////////
    class BuildingGeomNode : public LinkedPointsGeomNodeBase
    {
@@ -154,15 +154,36 @@ namespace dtActors
       */
       int GetPointIndex(dtCore::DeltaDrawable* drawable, osg::Vec3 pickPos);
 
+      ///**
+      //* Retrieves the attached actor list.
+      //*/
+      //std::vector<dtCore::UniqueId> GetAttachedList(void) { return mAttachedActors; }
+
+      ///**
+      //* Sets the attached actor list.
+      //*/
+      //void SetAttachedList(const std::vector<dtCore::UniqueId>& attachedList);
+      //void SetAttachedListPointers(const std::vector<dtCore::Transformable*>& attachedList);
+
+      /**
+      * Attaches an actor to the building.
+      */
+      void AttachActor(dtCore::Transformable* actor);
+
       /**
       * Sets the roof texture.
       */
       void SetRoofTexture(const std::string& fileName);
 
       /**
-      * Sets the wall texture.
+      * Sets the outside wall texture.
       */
-      void SetWallTexture(const std::string& fileName);
+      void SetOutWallTexture(const std::string& fileName);
+
+      /**
+      * Sets the inside wall texture.
+      */
+      void SetInWallTexture(const std::string& fileName);
 
       /**
       * Gets the width of the segments.
@@ -212,6 +233,21 @@ namespace dtActors
       * @return               The new drawable.
       */
       virtual dtCore::Transformable* CreatePointDrawable(osg::Vec3 position);
+
+      ///**
+      //* Called when the SetRotation function is called.  The rotation will
+      //* be passed in using x,y,z order (p,r,h)
+      //* @param oldValue The previous value
+      //* @param newValue The new value
+      //*/
+      //void OnRotation(const osg::Vec3 &oldValue, const osg::Vec3 &newValue);
+
+      ///**
+      //* Called when the SetScale function is called
+      //* @param oldValue The previous value
+      //* @param newValue The new value
+      //*/
+      //void OnTranslation(const osg::Vec3 &oldValue, const osg::Vec3 &newValue);
 
    protected:
       virtual ~BuildingActor();
@@ -274,11 +310,24 @@ namespace dtActors
       *
       * @return     True if the lines intersect.
       */
-      bool IntersectionTest(osg::Vec3 a1, osg::Vec3 a2, osg::Vec3 b1, osg::Vec3 b2);
+      bool IntersectionTest(osg::Vec3 a1, osg::Vec3 a2, osg::Vec3 b1, osg::Vec3 b2, osg::Vec3& intersectionPoint);
+
+      /**
+      * This will calculate if a given point is within the building, or outside.
+      *
+      * @param[in]  point  The point to test.
+      *
+      * @return     True if the point lies inside the building.
+      */
+      bool PointInBuilding(osg::Vec3 point);
 
       float       mRoofTextureScale;
       float       mWallTextureScale;
       float       mBuildingHeight;
+
+      //// Attached actors.
+      //std::vector<dtCore::UniqueId>       mAttachedActors;
+      //std::vector<dtCore::Transformable*> mAttachedActorPointers;
 
       // Roof.
       bool                             mGenerateRoof;
@@ -293,7 +342,8 @@ namespace dtActors
       osg::ref_ptr<osg::Vec3Array>     mRoofNormalList;
 
       osg::ref_ptr<osg::Texture2D>     mRoofTexture;
-      osg::ref_ptr<osg::Texture2D>     mWallTexture;
+      osg::ref_ptr<osg::Texture2D>     mOutWallTexture;
+      osg::ref_ptr<osg::Texture2D>     mInWallTexture;
 
       dtCore::RefPtr<dtCore::Transformable> mOrigin;
    };
@@ -322,6 +372,19 @@ namespace dtActors
       void BuildPropertyMap();
 
       /**
+      * This function queries the proxy with any properties not
+      * found in the property list. If a property was previously
+      * removed from the proxy, but is still important to load,
+      * then this function should return a property of
+      * the appropriate type to be used when loading the map.
+      *
+      * @param[in]  name  The name of the property queried for.
+      *
+      * @return           A property, or NULL if none is needed.
+      */
+      dtCore::RefPtr<dtDAL::ActorProperty> GetDeprecatedProperty(const std::string& name);
+
+      /**
       * Called when the SetRotation function is called.  The rotation will
       * be passed in using x,y,z order (p,r,h)
       * @param oldValue The previous value
@@ -329,10 +392,45 @@ namespace dtActors
       */
       void OnRotation(const osg::Vec3 &oldValue, const osg::Vec3 &newValue);
 
+      /**
+      * Called when the SetScale function is called
+      * @param oldValue The previous value
+      * @param newValue The new value
+      */
+      void OnTranslation(const osg::Vec3 &oldValue, const osg::Vec3 &newValue);
+
+      /**
+      * Sets the current attached actor index.
+      *
+      * @param[in]  index  The new index.
+      */
+      void SetAttachedActorIndex(int index);
+
+      ///**
+      //* Gets the default attached actor ID.
+      //*/
+      //dtCore::UniqueId GetDefaultAttachedActor();
+
+      ///**
+      //* Sets the current actor to the attached actor list.
+      //*
+      //* @param[in]  value  The actor.
+      //*/
+      //void SetAttachedActor(dtCore::UniqueId value);
+
+      ///**
+      //* Gets the current actor from the attached actor list.
+      //*
+      //* @return     The ID of the current actor.
+      //*/
+      //dtCore::UniqueId GetAttachedActor();
+
    protected:
       virtual ~BuildingActorProxy();
 
    private:
+
+      //int   mAttachedActorIndex;
    };
 }
 #endif // BuildingActor_h__

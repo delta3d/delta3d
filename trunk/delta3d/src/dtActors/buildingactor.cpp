@@ -16,7 +16,7 @@
 namespace dtActors
 {
    ////////////////////////////////////////////////////////////////////////////////
-   // FENCE POST GEOM DATA
+   // BUILDING GEOM DATA
    ////////////////////////////////////////////////////////////////////////////////
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -25,13 +25,17 @@ namespace dtActors
       if (!mParent) return false;
 
       // Create the Wall Geometry object.
-      mWallGeom = new osg::Geometry();
-      if (!mWallGeom.valid()) return false;
+      mWallGeom[0] = new osg::Geometry();
+      if (!mWallGeom[0].valid()) return false;
+
+      mWallGeom[1] = new osg::Geometry();
+      if (!mWallGeom[1].valid()) return false;
 
       mWallGeode = new osg::Geode();
       if (!mWallGeode.valid()) return false;
 
-      mWallGeode->addDrawable(mWallGeom.get());
+      mWallGeode->addDrawable(mWallGeom[0].get());
+      mWallGeode->addDrawable(mWallGeom[1].get());
 
       BuildingGeomNode* buildingParent = dynamic_cast<BuildingGeomNode*>(mParent);
       if (!buildingParent) return false;
@@ -55,19 +59,25 @@ namespace dtActors
       mWallNormalList->resize(2);
 
       // Apply the buffer arrays to the geometry.
-      mWallGeom->setVertexArray(mWallVertexList.get());
+      mWallGeom[0]->setVertexArray(mWallVertexList.get());
+      mWallGeom[1]->setVertexArray(mWallVertexList.get());
 
-      mWallGeom->setTexCoordArray(0, mWallTextureList.get());
+      mWallGeom[0]->setTexCoordArray(0, mWallTextureList.get());
+      mWallGeom[1]->setTexCoordArray(0, mWallTextureList.get());
 
-      mWallGeom->setColorArray(buildingParent->mSegColorList.get());
-      mWallGeom->setColorBinding(osg::Geometry::BIND_OVERALL);
+      mWallGeom[0]->setColorArray(buildingParent->mSegColorList.get());
+      mWallGeom[0]->setColorBinding(osg::Geometry::BIND_OVERALL);
+      mWallGeom[1]->setColorArray(buildingParent->mSegColorList.get());
+      mWallGeom[1]->setColorBinding(osg::Geometry::BIND_OVERALL);
 
-      mWallGeom->setNormalArray(mWallNormalList.get());
-      mWallGeom->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE);
+      mWallGeom[0]->setNormalArray(mWallNormalList.get());
+      mWallGeom[0]->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE);
+      mWallGeom[1]->setNormalArray(mWallNormalList.get());
+      mWallGeom[1]->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE);
 
       // Now Set the primitive sets for the three sides of the segment.
-      mWallGeom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 4));
-      mWallGeom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 4, 4));
+      mWallGeom[0]->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 4));
+      mWallGeom[1]->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 4, 4));
 
       return true;
    }
@@ -84,7 +94,8 @@ namespace dtActors
       if (!originGroup) return false;
       originGroup->removeChild(mWallGeode.get());
 
-      mWallGeom = NULL;
+      mWallGeom[0] = NULL;
+      mWallGeom[1] = NULL;
       mWallGeode = NULL;
 
       mWallVertexList = NULL;
@@ -95,7 +106,7 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   // FENCE POST GEOM NODE
+   // BUILDING GEOM NODE
    ////////////////////////////////////////////////////////////////////////////////
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -198,9 +209,13 @@ namespace dtActors
       stateset->setMode(GL_CULL_FACE, osg::StateAttribute::OFF | osg::StateAttribute::OVERRIDE);
 
       // Create a texture object to use for the walls.
-      mWallTexture = new osg::Texture2D();
-      mWallTexture->setWrap(osg::Texture2D::WRAP_S, osg::Texture2D::REPEAT);
-      mWallTexture->setWrap(osg::Texture2D::WRAP_T, osg::Texture2D::REPEAT);
+      mOutWallTexture = new osg::Texture2D();
+      mOutWallTexture->setWrap(osg::Texture2D::WRAP_S, osg::Texture2D::REPEAT);
+      mOutWallTexture->setWrap(osg::Texture2D::WRAP_T, osg::Texture2D::REPEAT);
+
+      mInWallTexture = new osg::Texture2D();
+      mInWallTexture->setWrap(osg::Texture2D::WRAP_S, osg::Texture2D::REPEAT);
+      mInWallTexture->setWrap(osg::Texture2D::WRAP_T, osg::Texture2D::REPEAT);
 
       AddPoint(osg::Vec3());
       return true;
@@ -396,6 +411,82 @@ namespace dtActors
       return pointIndex;
    }
 
+   //////////////////////////////////////////////////////////////////////////////////
+   //void BuildingActor::SetAttachedList(const std::vector<dtCore::UniqueId>& attachedList)
+   //{
+   //   mAttachedActors = attachedList;
+   //}
+
+   //////////////////////////////////////////////////////////////////////////////////
+   //void BuildingActor::SetAttachedListPointers(const std::vector<dtCore::Transformable*>& attachedList)
+   //{
+   //   mAttachedActorPointers = attachedList;
+   //}
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void BuildingActor::AttachActor(dtCore::Transformable* actor)
+   {
+      //mAttachedActors.push_back(actor->GetUniqueId());
+
+      // Now orient the actor to face out from the wall.
+      dtCore::Transform transform;
+      actor->GetTransform(transform);
+
+      // Must have at least one segment (two connected points).
+      if (GetPointCount() < 2)
+      {
+         return;
+      }
+
+      float nearestDistance = -1;
+      int wallIndex = -1;
+      osg::Vec3 wallNormal;
+      osg::Vec3 newPosition;
+
+      for (int index = 0; index < GetPointCount(); index++)
+      {
+         osg::Vec3 firstPoint = GetPointPosition(index);
+
+         int nextIndex = index + 1;
+         if (nextIndex >= GetPointCount()) nextIndex = 0;
+         osg::Vec3 secondPoint = GetPointPosition(nextIndex);
+
+         osg::Vec3 pos = FindNearestPointOnLine(firstPoint, secondPoint, transform.GetTranslation());
+
+         float distance = (pos - transform.GetTranslation()).length2();
+         if (nearestDistance == -1 || distance < nearestDistance)
+         {
+            nearestDistance = distance;
+            wallIndex = index;
+            newPosition = pos;
+
+            wallNormal = secondPoint - firstPoint;
+            wallNormal.normalize();
+            wallNormal = osg::Vec3(0.0f, 0.0f, 1.0f) ^ wallNormal;
+         }
+      }
+
+      if (wallIndex > -1)
+      {
+         float distance = (newPosition - transform.GetTranslation()).length2();
+
+         // If the object is close enough to the position, then we'll consider it attached.
+         if (distance < 100.0f)
+         {
+            if (PointInBuilding(GetPointPosition(wallIndex) + wallNormal))
+            {
+               transform.Set(transform.GetTranslation(), transform.GetTranslation() + wallNormal, osg::Vec3(0.0f, 0.0f, 1.0f));
+            }
+            else
+            {
+               transform.Set(transform.GetTranslation(), transform.GetTranslation() - wallNormal, osg::Vec3(0.0f, 0.0f, 1.0f));
+            }
+
+            actor->SetTransform(transform);
+         }
+      }
+   }
+
    ////////////////////////////////////////////////////////////////////////////////
    void BuildingActor::SetRoofTexture(const std::string& fileName)
    {
@@ -416,19 +507,38 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void BuildingActor::SetWallTexture(const std::string& fileName)
+   void BuildingActor::SetOutWallTexture(const std::string& fileName)
    {
-      if (mWallTexture.valid())
+      if (mOutWallTexture.valid())
       {
          if (!fileName.empty())
          {
             // set up the texture state.
             dtDAL::ResourceDescriptor descriptor = dtDAL::ResourceDescriptor(fileName);
-            mWallTexture->setImage(osgDB::readImageFile(dtDAL::Project::GetInstance().GetResourcePath(descriptor)));
+            mOutWallTexture->setImage(osgDB::readImageFile(dtDAL::Project::GetInstance().GetResourcePath(descriptor)));
          }
          else
          {
-            mWallTexture->setImage(NULL);
+            mOutWallTexture->setImage(NULL);
+         }
+         Visualize();
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void BuildingActor::SetInWallTexture(const std::string& fileName)
+   {
+      if (mInWallTexture.valid())
+      {
+         if (!fileName.empty())
+         {
+            // set up the texture state.
+            dtDAL::ResourceDescriptor descriptor = dtDAL::ResourceDescriptor(fileName);
+            mInWallTexture->setImage(osgDB::readImageFile(dtDAL::Project::GetInstance().GetResourcePath(descriptor)));
+         }
+         else
+         {
+            mInWallTexture->setImage(NULL);
          }
          Visualize();
       }
@@ -497,6 +607,80 @@ namespace dtActors
       return point;
    }
 
+   ////////////////////////////////////////////////////////
+   //void BuildingActor::OnRotation(const osg::Vec3 &oldValue, const osg::Vec3 &newValue)
+   //{
+   //   // Re-visualize geometry when this actor has been rotated.
+   //   Visualize();
+
+   //   dtCore::Transform transform;
+   //   GetTransform(transform);
+   //   osg::Vec3 center = transform.GetTranslation();
+
+   //   osg::Vec3 diff;
+   //   diff.x() = newValue.z() - oldValue.z();
+   //   //diff.y() = newValue.x() - oldValue.x();
+   //   //diff.z() = newValue.y() - oldValue.y();
+
+   //   // Rotate all attached actors with the building.
+   //   for (int index = 0; index < (int)mAttachedActorPointers.size(); index++)
+   //   {
+   //      dtCore::Transformable* actor = mAttachedActorPointers[index];
+   //      if (actor)
+   //      {
+   //         actor->GetTransform(transform);
+   //         osg::Vec3 offset = transform.GetTranslation() - center;
+   //         osg::Vec3 hpr;
+   //         transform.GetRotation(hpr);
+   //         hpr += diff;
+   //         transform.SetRotation(hpr);
+
+   //         //dtCore::Transform rotation;
+   //         //rotation.SetRotation(hpr);
+
+   //         //osg::Vec3 newPos = (offset * rotation) + center;
+   //         actor->SetTransform(transform);
+
+   //         //osg::Matrix matrix = actor->GetMatrix();
+   //         //osg::Vec3 offset = matrix.getTrans() - center;
+   //         //matrix = matrix
+   //         //matrix = matrix.rotate(oldValue, newValue);
+   //         //actor->SetMatrix(matrix);
+
+
+
+   //         //osg::Vec3 offset = matrix.getTrans() - center;
+
+   //         ////matrix = rotation.rotate(oldValue, newValue);
+   //         ////matrix.setTrans(0.0f, 0.0f, 0.0f);
+   //         //osg::Vec3 newPos = (offset * rotation) + center;
+   //         //matrix.setTrans(newPos);
+   //         //actor->SetMatrix(matrix);
+   //      }
+   //   }
+   //}
+
+   //////////////////////////////////////////////////////////////////////////////////
+   //void BuildingActor::OnTranslation(const osg::Vec3 &oldValue, const osg::Vec3 &newValue)
+   //{
+   //   // Re-visualize geometry when this actor has been translated.
+   //   Visualize();
+
+   //   // Translate all attached actors with the building.
+   //   osg::Vec3 offset = newValue - oldValue;
+   //   for (int index = 0; index < (int)mAttachedActorPointers.size(); index++)
+   //   {
+   //      dtCore::Transformable* actor = mAttachedActorPointers[index];
+   //      if (actor)
+   //      {
+   //         dtCore::Transform transform;
+   //         actor->GetTransform(transform);
+   //         transform.SetTranslation(transform.GetTranslation() + offset);
+   //         actor->SetTransform(transform);
+   //      }
+   //   }
+   //}
+
    ////////////////////////////////////////////////////////////////////////////////
    void BuildingActor::PlaceWall(int pointIndex, osg::Vec3 start, osg::Vec3 end)
    {
@@ -516,6 +700,8 @@ namespace dtActors
          osg::Vec3 dir = end - start;
          float wallLength = dir.length();
          dir.normalize();
+
+         osg::Vec3 normal = osg::Vec3(0.0f, 0.0f, 1.0f) ^ dir;
 
          float roofHeight = CalculateRoofHeight();
 
@@ -571,18 +757,33 @@ namespace dtActors
 
          ////////////////////////////////////////////////////////////////////////////////
          // Normal
-         geomData->mWallNormalList->at(0) = dir;
-         geomData->mWallNormalList->at(1) = dir;
+         geomData->mWallNormalList->at(0) = normal;
+         geomData->mWallNormalList->at(1) = -normal;
 
-         osg::StateSet* stateset = geomData->mWallGeom->getOrCreateStateSet();
-         if (stateset && mWallTexture.valid())
+         int inWallIndex = 0;
+         osg::Vec3 midPoint = start + ((end - start) * 0.5f);
+         if (PointInBuilding(midPoint + normal))
          {
-            stateset->setTextureAttributeAndModes(0, mWallTexture.get(), osg::StateAttribute::ON);
+            inWallIndex = 1;
+         }
+
+         osg::StateSet* stateset = geomData->mWallGeom[inWallIndex]->getOrCreateStateSet();
+         if (stateset && mOutWallTexture.valid())
+         {
+            stateset->setTextureAttributeAndModes(0, mOutWallTexture.get(), osg::StateAttribute::ON);
+         }
+
+         stateset = geomData->mWallGeom[inWallIndex ^ 1]->getOrCreateStateSet();
+         if (stateset && mInWallTexture.valid())
+         {
+            stateset->setTextureAttributeAndModes(0, mInWallTexture.get(), osg::StateAttribute::ON);
          }
 
          // Make sure the geometry node knows to re-calculate the bounding area and display lists.
-         geomData->mWallGeom->dirtyBound();
-         geomData->mWallGeom->dirtyDisplayList();
+         geomData->mWallGeom[0]->dirtyBound();
+         geomData->mWallGeom[0]->dirtyDisplayList();
+         geomData->mWallGeom[1]->dirtyBound();
+         geomData->mWallGeom[1]->dirtyDisplayList();
       }
    }
 
@@ -634,6 +835,7 @@ namespace dtActors
          return returnData;
       }
 
+      osg::Vec3 intersectionPoint;
       std::vector<int> passedPoints;
 
       int firstFailedIndex = -1;
@@ -672,7 +874,7 @@ namespace dtActors
                secondPoint = mRoofPoints[0];
             }
 
-            if (IntersectionTest(masterPoint, testPoint, firstPoint, secondPoint))
+            if (IntersectionTest(masterPoint, testPoint, firstPoint, secondPoint, intersectionPoint))
             {
                // If any of the tests fail, we are finished and this test point is
                // has failed its line of sight test.
@@ -719,7 +921,7 @@ namespace dtActors
                secondPoint = mRoofPoints[0];
             }
 
-            if (IntersectionTest(masterPoint, testPoint, firstPoint, secondPoint))
+            if (IntersectionTest(masterPoint, testPoint, firstPoint, secondPoint, intersectionPoint))
             {
                // If any of the tests fail, we are finished and this test point is
                // has failed its line of sight test.
@@ -938,8 +1140,10 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool BuildingActor::IntersectionTest(osg::Vec3 a1, osg::Vec3 a2, osg::Vec3 b1, osg::Vec3 b2)
+   bool BuildingActor::IntersectionTest(osg::Vec3 a1, osg::Vec3 a2, osg::Vec3 b1, osg::Vec3 b2, osg::Vec3& collisionPoint)
    {
+      osg::Vec3 originalStart = a1;
+
       // First do a basic bounding box collision test.
       osg::Vec3 minA, maxA, minB, maxB;
 
@@ -1029,7 +1233,103 @@ namespace dtActors
          // Fail if line 2 crosses line 1 outside of the line size.
          if (APos < 0.0f || APos > distA) return false;
 
+         // Get the actual point of collision.
+         osg::Vec3 normal = a2 - a1;
+         normal.normalize();
+         collisionPoint = originalStart + (normal * APos);
          return true;
+      }
+
+      return false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool BuildingActor::PointInBuilding(osg::Vec3 point)
+   {
+      std::vector<float> intersectPoints;
+
+      float yVal = point.y();
+
+      // Do a collision test between each wall and our imaginary Y axis line.
+      for (int pointIndex = 0; pointIndex < GetPointCount(); pointIndex++)
+      {
+         int nextPoint = pointIndex + 1;
+         if (nextPoint >= GetPointCount()) nextPoint = 0;
+
+         osg::Vec3 start = GetPointPosition(pointIndex);
+         osg::Vec3 end = GetPointPosition(nextPoint);
+
+         // Create our imaginary Y axis line.
+         osg::Vec3 yLineStart, yLineEnd;
+         yLineStart.y() = yVal;
+         yLineEnd.y() = yVal;
+         yLineStart.x() = start.x();
+         yLineEnd.x() = end.x();
+
+         // If our wall line is parallel to our y axis, we can ignore it.
+         if (start.y() == end.y())
+         {
+            continue;
+         }
+
+         // Perform a collision test.
+         osg::Vec3 intersectionPoint;
+         if (IntersectionTest(start, end, yLineStart, yLineEnd, intersectionPoint))
+         {
+            // If the point of intersection lies directly on an end point of the line,
+            // only allow it if the other point is below the threshold.
+            if (intersectionPoint.x() == end.x())
+            {
+               if (start.y() >= yVal)
+               {
+                  continue;
+               }
+            }
+            else if (intersectionPoint.x() == start.x())
+            {
+               if (end.y() >= yVal)
+               {
+                  continue;
+               }
+            }
+
+            // Now insert our new collision point into the sorted list.
+            bool bInserted = false;
+            for (int index = 0; index < (int)intersectPoints.size(); index++)
+            {
+               if (intersectPoints[index] >= intersectionPoint.x())
+               {
+                  intersectPoints.insert(intersectPoints.begin() + index, intersectionPoint.x());
+                  bInserted = true;
+                  break;
+               }
+            }
+
+            if (!bInserted)
+            {
+               intersectPoints.push_back(intersectionPoint.x());
+            }
+         }
+      }
+
+      // Now determine if our point is within the building.
+      for (int index = 0; index < (int)intersectPoints.size(); index++)
+      {
+         float xVal = intersectPoints[index];
+         if (xVal >= point.x())
+         {
+            int leftCount = index;
+            int rightCount = (int)intersectPoints.size() - index;
+
+            float oddTest = float(leftCount) * 0.5f;
+
+            // Odd numbers mean the point is inside the building.
+            if (oddTest != floor(oddTest))
+            {
+               return true;
+            }
+            return false;
+         }
       }
 
       return false;
@@ -1042,6 +1342,7 @@ namespace dtActors
    /////////////////////////////////////////////////////////////////////////////
    BuildingActorProxy::BuildingActorProxy()
       : BaseClass()
+      //, mAttachedActorIndex(0)
    {
       SetClassName("dtActors::BuildingActor");
    }
@@ -1067,6 +1368,22 @@ namespace dtActors
       BuildingActor* actor = NULL;
       GetActor(actor);
 
+      //// Attached Actors.
+      //dtDAL::ActorIDActorProperty* attachedActorProp = new dtDAL::ActorIDActorProperty(
+      //   *this, "AttachedActor", "Attached Actor",
+      //   dtDAL::ActorIDActorProperty::SetFuncType(this, &BuildingActorProxy::SetAttachedActor),
+      //   dtDAL::ActorIDActorProperty::GetFuncType(this, &BuildingActorProxy::GetAttachedActor),
+      //   "", "An attached actor.", "Internal");
+
+      //dtDAL::ArrayActorPropertyBase* attachedActorArrayProp = new dtDAL::ArrayActorProperty<dtCore::UniqueId>(
+      //   "AttachedActors", "Attached Actors", "The list actors that are attached.",
+      //   dtDAL::MakeFunctor(*this, &BuildingActorProxy::SetAttachedActorIndex),
+      //   dtDAL::MakeFunctorRet(*this, &BuildingActorProxy::GetDefaultAttachedActor),
+      //   dtDAL::MakeFunctorRet(*actor, &BuildingActor::GetAttachedList),
+      //   dtDAL::MakeFunctor(*actor, &BuildingActor::SetAttachedList),
+      //   attachedActorProp, "Internal");
+      //AddProperty(attachedActorArrayProp);
+
       // Roof Texture.
       dtDAL::ResourceActorProperty* roofTextureProp =
          new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::TEXTURE,
@@ -1075,13 +1392,21 @@ namespace dtActors
          "Defines the texture used when rendering the roof.", "Building");
       AddProperty(roofTextureProp);
 
-      // Wall Texture.
-      dtDAL::ResourceActorProperty* wallTextureProp =
+      // Outside Wall Texture.
+      dtDAL::ResourceActorProperty* outWallTextureProp =
          new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::TEXTURE,
-         "WallTextureResource", "Wall Texture",
-         dtDAL::MakeFunctor(*actor, &BuildingActor::SetWallTexture),
+         "OutWallTextureResource", "Outside Wall Texture",
+         dtDAL::MakeFunctor(*actor, &BuildingActor::SetOutWallTexture),
          "Defines the texture used when rendering walls.", "Building");
-      AddProperty(wallTextureProp);
+      AddProperty(outWallTextureProp);
+
+      // Inside Wall Texture.
+      dtDAL::ResourceActorProperty* inWallTextureProp =
+         new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::TEXTURE,
+         "InWallTextureResource", "Inside Wall Texture",
+         dtDAL::MakeFunctor(*actor, &BuildingActor::SetInWallTexture),
+         "Defines the texture used when rendering walls.", "Building");
+      AddProperty(inWallTextureProp);
 
       // Roof Texture Scale.
       dtDAL::FloatActorProperty* roofTextureScaleProp =
@@ -1121,6 +1446,24 @@ namespace dtActors
       AddProperty(scaleProp);
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   dtCore::RefPtr<dtDAL::ActorProperty> BuildingActorProxy::GetDeprecatedProperty(const std::string& name)
+   {
+      dtCore::RefPtr<dtDAL::ActorProperty> prop = BaseClass::GetDeprecatedProperty(name);
+
+      if (!prop.valid())
+      {
+            // Outside Wall Texture.
+         if (name == "WallTextureResource")
+         {
+            // We have renamed this property, so redirect it.
+            return GetProperty("OutWallTextureResource");
+         }
+      }
+
+      return prop;
+   }
+
    //////////////////////////////////////////////////////
    void BuildingActorProxy::OnRotation(const osg::Vec3 &oldValue, const osg::Vec3 &newValue)
    {
@@ -1130,6 +1473,60 @@ namespace dtActors
       BuildingActor* actor = NULL;
       GetActor(actor);
       actor->Visualize();
+      //actor->OnRotation(oldValue, newValue);
    }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void BuildingActorProxy::OnTranslation(const osg::Vec3 &oldValue, const osg::Vec3 &newValue)
+   {
+      BaseClass::OnTranslation(oldValue, newValue);
+
+      // Re-visualize geometry when this actor has been translated.
+      BuildingActor* actor = NULL;
+      GetActor(actor);
+      actor->Visualize();
+      //actor->OnTranslation(oldValue, newValue);
+   }
+
+   //////////////////////////////////////////////////////////////////////////////////
+   //void BuildingActorProxy::SetAttachedActorIndex(int index)
+   //{
+   //   mAttachedActorIndex = index;
+   //}
+
+   //////////////////////////////////////////////////////////////////////////////////
+   //dtCore::UniqueId BuildingActorProxy::GetDefaultAttachedActor()
+   //{
+   //   return dtCore::UniqueId();
+   //}
+
+   //////////////////////////////////////////////////////////////////////////////////
+   //void BuildingActorProxy::SetAttachedActor(dtCore::UniqueId value)
+   //{
+   //   BuildingActor* actor = NULL;
+   //   GetActor(actor);
+
+   //   std::vector<dtCore::UniqueId> attachedActors = actor->GetAttachedList();
+   //   if (mAttachedActorIndex < (int)attachedActors.size())
+   //   {
+   //      attachedActors[mAttachedActorIndex] = value;
+   //      actor->SetAttachedList(attachedActors);
+   //   }
+   //}
+
+   //////////////////////////////////////////////////////////////////////////////////
+   //dtCore::UniqueId BuildingActorProxy::GetAttachedActor()
+   //{
+   //   BuildingActor* actor = NULL;
+   //   GetActor(actor);
+
+   //   std::vector<dtCore::UniqueId> attachedActors = actor->GetAttachedList();
+   //   if (mAttachedActorIndex < (int)attachedActors.size())
+   //   {
+   //      return attachedActors[mAttachedActorIndex];
+   //   }
+
+   //   return GetDefaultAttachedActor();
+   //}
 }
 ////////////////////////////////////////////////////////////////////////////////

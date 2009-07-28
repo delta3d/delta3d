@@ -1839,10 +1839,12 @@ namespace  dtDAL
       else if (XMLString::compareString(localname, MapXMLConstants::ACTOR_PROPERTY_ARRAY_ELEMENT) == 0)
       {
          mInArrayProperty--;
+         if (mInArrayProperty < 0) mInArrayProperty = 0;
       }
       else if (XMLString::compareString(localname, MapXMLConstants::ACTOR_PROPERTY_CONTAINER_ELEMENT) == 0)
       {
          mInContainerProperty--;
+         if (mInContainerProperty < 0) mInContainerProperty = 0;
       }
       else if (mInGroupProperty)
       {
