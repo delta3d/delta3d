@@ -45,10 +45,10 @@ TestBumpMapApp::TestBumpMapApp(const std::string& customObjectName,
                                const std::string& configFilename /*= "config.xml"*/,
                                bool usePrecomputedTangents /*= false*/)
    : Application(configFilename)
+   , mPitchAngle(0.0f)
    , mUsePrecomputedTangents(usePrecomputedTangents)
    , mDiffuseTexture(NULL)
    , mNormalTexture(NULL)
-   , mPitchAngle(0.0f)
    , mYawAngle(0.0f)
 
 {
@@ -173,19 +173,19 @@ bool TestBumpMapApp::KeyPressed(const dtCore::Keyboard* keyboard, int key)
          mYawAngle -= 15.0f;
          verdict = true;
          break;
-      }  
+      }
    case osgGA::GUIEventAdapter::KEY_Up:
       {
          mPitchAngle += 15.0f;
          verdict = true;
          break;
-      }  
+      }
    case osgGA::GUIEventAdapter::KEY_Down:
       {
          mPitchAngle -= 15.0f;
          verdict = true;
          break;
-      }    
+      }
    case osgGA::GUIEventAdapter::KEY_Space:
       {
          static bool renderToggle = false;

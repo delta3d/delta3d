@@ -46,8 +46,8 @@ namespace dtEditQt
    ActorTab::ActorTab(QWidget* parent)
       : QDockWidget(parent)
       , mTabActorBrowser(NULL)
-      , mActorBrowserWidget(NULL)
       , mTabPrefabBrowser(NULL)
+      , mActorBrowserWidget(NULL)
       , mPrefabBrowserWidget(NULL)
    {
       setWindowTitle(tr("Actors"));
@@ -61,13 +61,13 @@ namespace dtEditQt
       {
          mTabActorBrowser = new TabWrapper(this);
          mActorBrowserWidget = new ActorBrowser(this);
-      }      
-      
+      }
+
       if (ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, "ShowPrefabBrowser") != "false")
       {
          mTabPrefabBrowser= new TabWrapper(this);
          mPrefabBrowserWidget= new PrefabBrowser(this);
-      }      
+      }
 
       addTabs();
 

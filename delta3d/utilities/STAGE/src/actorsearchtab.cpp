@@ -46,8 +46,8 @@ namespace dtEditQt
    ActorSearchTab::ActorSearchTab(QWidget* parent)
       : QDockWidget(parent)
       , mTabActorSearch(NULL)
-      , mActorSearchWidget(NULL)
       , mTabGlobalActor(NULL)
+      , mActorSearchWidget(NULL)
       , mActorGlobalWidget(NULL)
    {
       setWindowTitle(tr("Search"));
@@ -56,10 +56,10 @@ namespace dtEditQt
       mTabC = new TabContainer(this);
 
       //Note: tabs and widgets are different
-      
+
       if (ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, "ShowActorSearch") != "false")
       {
-         mTabActorSearch  = new TabWrapper(this);      
+         mTabActorSearch  = new TabWrapper(this);
          mActorSearchWidget  = new ActorSearcher(this);
       }
 
