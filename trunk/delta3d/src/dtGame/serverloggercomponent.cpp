@@ -1,23 +1,23 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
-* Copyright (C) 2005, BMH Associates, Inc.
-*
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
-* any later version.
-*
-* This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
-* details.
-*
-* You should have received a copy of the GNU Lesser General Public License
-* along with this library; if not, write to the Free Software Foundation, Inc.,
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*
-* Curtiss Murphy, Matthew W. Campbell
-*/
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2005, BMH Associates, Inc.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * Curtiss Murphy, Matthew W. Campbell
+ */
 #include <prefix/dtgameprefix-src.h>
 #include <dtGame/serverloggercomponent.h>
 #include <dtGame/loggermessages.h>
@@ -39,10 +39,10 @@ namespace dtGame
    const std::string ServerLoggerComponent::DEFAULT_NAME = "ServerLoggerComponent";
 
    //////////////////////////////////////////////////////////////////////////
-   ServerLoggerComponent::ServerLoggerComponent(LogStream &logStream, const std::string &name) :
-      GMComponent(name), 
-      mLogComponentMachineInfo(new MachineInfo("__Server Logger Component__")),
-      mPreviousLogState(&LogStateEnumeration::LOGGER_STATE_IDLE)
+   ServerLoggerComponent::ServerLoggerComponent(LogStream& logStream, const std::string& name)
+      : GMComponent(name)
+      , mLogComponentMachineInfo(new MachineInfo("__Server Logger Component__"))
+      , mPreviousLogState(&LogStateEnumeration::LOGGER_STATE_IDLE)
    {
       mLogStatus.SetStateEnum(LogStateEnumeration::LOGGER_STATE_IDLE);
       mLogStream = &logStream;
@@ -60,7 +60,9 @@ namespace dtGame
    ServerLoggerComponent::~ServerLoggerComponent()
    {
       if (mLogStream.valid())
+      {
          mLogStream->Close();
+      }
 
       mRecordIgnoreList.clear();
       mPlaybackList.clear();
@@ -176,12 +178,12 @@ namespace dtGame
       }
       else
       {
-         //One last step before passing the message to the log stream is to check
-         //to see if this is a timer message for the auto keyframe capture.  If so,
-         //perform a keyframe capture.
+         // One last step before passing the message to the log stream is to check
+         // to see if this is a timer message for the auto keyframe capture.  If so,
+         // perform a keyframe capture.
          if (message.GetMessageType() == MessageType::INFO_TIMER_ELAPSED)
          {
-            const TimerElapsedMessage &timerMsg =
+            const TimerElapsedMessage& timerMsg =
                static_cast<const TimerElapsedMessage&>(message);
 
             if (timerMsg.GetTimerName() == ServerLoggerComponent::AUTO_KEYFRAME_TIMER_NAME)
@@ -193,8 +195,8 @@ namespace dtGame
                }
                else
                {
-                  std::string time = dtUtil::DateTime::ToString(time_t(GetGameManager()->GetSimulationClockTime() / 1000000LL), 
-                     dtUtil::DateTime::TimeFormat::CLOCK_TIME_24_HOUR_FORMAT); 
+                  std::string time = dtUtil::DateTime::ToString(time_t(GetGameManager()->GetSimulationClockTime() / 1000000LL),
+                     dtUtil::DateTime::TimeFormat::CLOCK_TIME_24_HOUR_FORMAT);
 
                   LogKeyframe autoKeyFrame;
                   autoKeyFrame.SetActiveMaps(mLogStatus.GetActiveMaps());
@@ -206,20 +208,20 @@ namespace dtGame
             }
          }
 
-         //If its not a message intended for the logger, it gets logged to the stream.
+         // If its not a message intended for the logger, it gets logged to the stream.
          DoRecordMessage(message);
       }
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ServerLoggerComponent::HandleStatusMessageRequest(const Message &message)
+   void ServerLoggerComponent::HandleStatusMessageRequest(const Message& message)
    {
       DoRecordMessage(message);
       DoSendStatusMessage(message.GetDestination());
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ServerLoggerComponent::DoSendStatusMessage(const MachineInfo *destination)
+   void ServerLoggerComponent::DoSendStatusMessage(const MachineInfo* destination)
    {
       dtCore::RefPtr<LogStatusMessage> response = static_cast<LogStatusMessage*>
             (GetGameManager()->GetMessageFactory().CreateMessage(MessageType::LOG_INFO_STATUS).get());
@@ -237,7 +239,7 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ServerLoggerComponent::HandleChangeStateIdle(const Message &message)
+   void ServerLoggerComponent::HandleChangeStateIdle(const Message& message)
    {
       DoRecordMessage(message);
 
@@ -247,10 +249,12 @@ namespace dtGame
          {
             // close any open records or playbacks.
             if (mLogStatus.GetStateEnum() == LogStateEnumeration::LOGGER_STATE_RECORD)
+            {
                mLogStream->SetRecordDuration(mLogStatus.GetCurrentRecordDuration());
+            }
             mLogStream->Close();
          }
-         catch(const dtUtil::Exception &e)
+         catch (const dtUtil::Exception& e)
          {
             // note, we keep going, because the default result of an exception is to change to idle, which is what we're doing.
             GetGameManager()->RejectMessage(message, "Server Logger Component - Error: Changing State to Idle: " + e.What());
@@ -268,7 +272,7 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ServerLoggerComponent::HandleChangeStateRecord(const Message &message)
+   void ServerLoggerComponent::HandleChangeStateRecord(const Message& message)
    {
       DoRecordMessage(message);
 
@@ -283,13 +287,15 @@ namespace dtGame
       {
          try
          {
-            mLogStream->Close();  // just for safety
+            mLogStream->Close(); // just for safety
 
             // use default name?
             if (mLogStatus.GetLogFile() == "")
+            {
                mLogStatus.SetLogFile(DEFAULT_LOGNAME);
+            }
 
-            mLogStream->Create(mLogDirectory,mLogStatus.GetLogFile());
+            mLogStream->Create(mLogDirectory, mLogStatus.GetLogFile());
             mLogCache.insert(mLogStatus.GetLogFile());
 
             // insert first keyframe
@@ -305,14 +311,14 @@ namespace dtGame
             mLogStatus.SetCurrentRecordDuration(0.0);
             mLogStatus.SetStateEnum(LogStateEnumeration::LOGGER_STATE_RECORD);
 
-            //If the auto capture keyframe is active, start a timer.
+            // If the auto capture keyframe is active, start a timer.
             if (mLogStatus.GetAutoRecordKeyframeInterval() != 0.0)
             {
                GetGameManager()->SetTimer(ServerLoggerComponent::AUTO_KEYFRAME_TIMER_NAME,NULL,
-                  mLogStatus.GetAutoRecordKeyframeInterval(),true);
+                  mLogStatus.GetAutoRecordKeyframeInterval(), true);
             }
          }
-         catch(const dtUtil::Exception &e)
+         catch (const dtUtil::Exception& e)
          {
             // if we got an error above, we revert back to IDLE and tell the world.  Not sure what else we can do
             GetGameManager()->RejectMessage(message, "Server Logger Component - Error occured "
@@ -323,8 +329,8 @@ namespace dtGame
             {
                mLogStream->Close();
             }
-            catch(const dtUtil::Exception &e) 
-            { 
+            catch (const dtUtil::Exception& e)
+            {
                // LOG THE EXCEPTION
                e.LogException(dtUtil::Log::LOG_ERROR);
             } // ignore it.  Already failed, nothing we can do }
@@ -341,7 +347,7 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ServerLoggerComponent::HandleChangeStatePlayback(const Message &message)
+   void ServerLoggerComponent::HandleChangeStatePlayback(const Message& message)
    {
       if (mLogStatus.GetStateEnum() == LogStateEnumeration::LOGGER_STATE_RECORD)
       {
@@ -357,10 +363,12 @@ namespace dtGame
             mLogStream->Close();
 
             if (mLogStatus.GetLogFile() == "")
+            {
                mLogStatus.SetLogFile(DEFAULT_LOGNAME);
+            }
 
-            //Open the log file and read the first keyframe entry.  This contains the
-            //initial state of the recorded simulation contained within the log.
+            // Open the log file and read the first keyframe entry.  This contains the
+            // initial state of the recorded simulation contained within the log.
             std::vector<LogKeyframe> kfList;
             mLogStream->Open(mLogDirectory,mLogStatus.GetLogFile());
             mLogStream->GetKeyFrameIndex(kfList);
@@ -376,13 +384,15 @@ namespace dtGame
 
             mLogStatus.SetCurrentRecordDuration(mLogStream->GetRecordDuration());
             if (kfList.empty())
-               throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION,"Malformed log.  No initial "
+            {
+               throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION, "Malformed log.  No initial "
                   "keyframe could be found in the log.", __FILE__, __LINE__);
+            }
 
             JumpToKeyFrame(kfList[0]);
             mLogStatus.SetStateEnum(LogStateEnumeration::LOGGER_STATE_PLAYBACK);
          }
-         catch(const dtUtil::Exception &e)
+         catch (const dtUtil::Exception& e)
          {
             e.LogException(dtUtil::Log::LOG_ERROR);
             // if we got an error above, we revert back to IDLE and tell the world.  Not sure what else we can do
@@ -394,7 +404,7 @@ namespace dtGame
             {
                mLogStream->Close();
             }
-            catch(const dtUtil::Exception &e2) 
+            catch(const dtUtil::Exception& e2)
             {
                // LOG THE EXCEPTION
                e2.LogException(dtUtil::Log::LOG_ERROR);
@@ -412,11 +422,11 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ServerLoggerComponent::HandleRequestSetLogFile(const Message &message)
+   void ServerLoggerComponent::HandleRequestSetLogFile(const Message& message)
    {
       DoRecordMessage(message);
 
-      const dtGame::LogSetLogfileMessage *logMsg = (const dtGame::LogSetLogfileMessage *) &message;
+      const dtGame::LogSetLogfileMessage* logMsg = (const dtGame::LogSetLogfileMessage*)&message;
 
       if (mLogStatus.GetStateEnum() != LogStateEnumeration::LOGGER_STATE_IDLE)
       {
@@ -425,7 +435,7 @@ namespace dtGame
             logMsg->GetLogFileName() + "] while in non-Idle state [" + mLogStatus.GetStateEnum().GetName() + "]");
          return;
       }
-      else 
+      else
       {
          mLogStatus.SetLogFile(logMsg->GetLogFileName());
 
@@ -435,7 +445,7 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ServerLoggerComponent::HandleRequestGetLogs(const Message &message)
+   void ServerLoggerComponent::HandleRequestGetLogs(const Message& message)
    {
       DoRecordMessage(message);
 
@@ -448,12 +458,14 @@ namespace dtGame
          mLogStream->GetAvailableLogs(mLogDirectory,logList);
          response->SetLogList(logList);
 
-         //Update our cache to reflect the most recent query.
+         // Update our cache to reflect the most recent query.
          mLogCache.clear();
-         for (size_t i = 0; i < logList.size(); i++)
+         for (size_t i = 0; i < logList.size(); ++i)
+         {
             mLogCache.insert(logList[i]);
+         }
       }
-      catch(const dtUtil::Exception &e)
+      catch (const dtUtil::Exception& e)
       {
          GetGameManager()->RejectMessage(message,
             "Server Logger Component - Could not retrieve log file list " + e.What());
@@ -464,17 +476,17 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ServerLoggerComponent::HandleRequestSetAutoKeyframeInterval(const Message &message)
+   void ServerLoggerComponent::HandleRequestSetAutoKeyframeInterval(const Message& message)
    {
       DoRecordMessage(message);
-      const LogSetAutoKeyframeIntervalMessage &actual =
+      const LogSetAutoKeyframeIntervalMessage& actual =
          static_cast<const LogSetAutoKeyframeIntervalMessage&>(message);
 
-      //Need to create a timer that fires according to the autokeyframe interval.
-      //We actually do not create it here, but when recording begins.  To handle the
-      //request message we clear any old timers, validate the incoming data, and
-      //inform the world of the change in status.  Once recording begins, the timer
-      //will get set.
+      // Need to create a timer that fires according to the autokeyframe interval.
+      // We actually do not create it here, but when recording begins.  To handle the
+      // request message we clear any old timers, validate the incoming data, and
+      // inform the world of the change in status.  Once recording begins, the timer
+      // will get set.
       float kfTime = actual.GetAutoKeyframeInterval();
       if (kfTime < 0.0f)
       {
@@ -486,19 +498,21 @@ namespace dtGame
       // clear our old timer and recreate it if in record mode
       if (mLogStatus.GetStateEnum() == LogStateEnumeration::LOGGER_STATE_RECORD)
       {
-         GetGameManager()->ClearTimer(ServerLoggerComponent::AUTO_KEYFRAME_TIMER_NAME,NULL);
+         GetGameManager()->ClearTimer(ServerLoggerComponent::AUTO_KEYFRAME_TIMER_NAME, NULL);
          if (kfTime > 0.0)
-            GetGameManager()->SetTimer(ServerLoggerComponent::AUTO_KEYFRAME_TIMER_NAME,NULL,
-               kfTime,true);
+         {
+            GetGameManager()->SetTimer(ServerLoggerComponent::AUTO_KEYFRAME_TIMER_NAME, NULL,
+               kfTime, true);
+         }
       }
 
-      //Update the logger status and inform the world of the change.
+      // Update the logger status and inform the world of the change.
       mLogStatus.SetAutoRecordKeyframeInterval(actual.GetAutoKeyframeInterval());
       DoSendStatusMessage(NULL);
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ServerLoggerComponent::HandleRequestGetKeyFrames(const Message &message)
+   void ServerLoggerComponent::HandleRequestGetKeyFrames(const Message& message)
    {
       DoRecordMessage(message);
 
@@ -511,7 +525,7 @@ namespace dtGame
          mLogStream->GetKeyFrameIndex(kfList);
          response->SetKeyframeList(kfList);
       }
-      catch(const dtUtil::Exception &e)
+      catch(const dtUtil::Exception& e)
       {
          GetGameManager()->RejectMessage(message,
             "Server Logger Component - Could not retrieve key frame index: " + e.What());
@@ -522,7 +536,7 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ServerLoggerComponent::HandleRequestGetTags(const Message &message)
+   void ServerLoggerComponent::HandleRequestGetTags(const Message& message)
    {
       DoRecordMessage(message);
 
@@ -535,7 +549,7 @@ namespace dtGame
          mLogStream->GetTagIndex(tagList);
          response->SetTagList(tagList);
       }
-      catch(const dtUtil::Exception &e)
+      catch(const dtUtil::Exception& e)
       {
          GetGameManager()->RejectMessage(message,
             "Server Logger Component - Could not retrieve tags index: " + e.What());
@@ -546,7 +560,7 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ServerLoggerComponent::HandleRequestInsertTag(const LogInsertTagMessage &message)
+   void ServerLoggerComponent::HandleRequestInsertTag(const LogInsertTagMessage& message)
    {
       DoRecordMessage(message);
       if (mLogStatus.GetStateEnum() != LogStateEnumeration::LOGGER_STATE_RECORD)
@@ -575,7 +589,7 @@ namespace dtGame
 
             mLogStream->InsertTag(tag);
          }
-         catch(const dtUtil::Exception &e)
+         catch(const dtUtil::Exception& e)
          {
             GetGameManager()->RejectMessage(message,
                "Server Logger Component - Could not retrieve tags index: " + e.What());
@@ -584,22 +598,22 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ServerLoggerComponent::HandleRequestDeleteLogFile(const Message &message)
+   void ServerLoggerComponent::HandleRequestDeleteLogFile(const Message& message)
    {
       DoRecordMessage(message);
 
-      const LogDeleteLogfileMessage &actual =
+      const LogDeleteLogfileMessage& actual =
          static_cast<const LogDeleteLogfileMessage&>(message);
 
       try
       {
          mLogStream->Delete(mLogDirectory,actual.GetLogFileName());
 
-         //Update our cache.
+         // Update our cache.
          std::set<std::string>::iterator itor = mLogCache.find(actual.GetLogFileName());
          mLogCache.erase(itor);
       }
-      catch(const dtUtil::Exception &e)
+      catch(const dtUtil::Exception& e)
       {
          GetGameManager()->RejectMessage(message,
             "Server Logger Component - Could not delete log: " + e.What());
@@ -607,7 +621,7 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ServerLoggerComponent::ProcessTickMessage(const TickMessage &message)
+   void ServerLoggerComponent::ProcessTickMessage(const TickMessage& message)
    {
       long numKeyframeMsgsSkipped = 0;
       std::ostringstream ss;
@@ -623,20 +637,24 @@ namespace dtGame
       else if (mLogStatus.GetStateEnum() == LogStateEnumeration::LOGGER_STATE_PLAYBACK)
       {
          if (!mLogStream.valid() || mLogStream->IsEndOfStream())
+         {
             return;
+         }
 
          if (mNextMessage == NULL)
+         {
             mNextMessage = mLogStream->ReadMessage(mNextMessageSimTime);
+         }
 
          // while we got messages, do our stuff...
          while (mNextMessage != NULL && mNextMessageSimTime < GetGameManager()->GetSimulationTime())
          {
-            const MessageType &type = mNextMessage->GetMessageType();
+            const MessageType& type = mNextMessage->GetMessageType();
 
             // If an actor is destroyed, check and then update
             // the ignore list and the playback-join list appropriately
             // if the ID exists in those lists.
-            if ( type == MessageType::INFO_ACTOR_DELETED )
+            if (type == MessageType::INFO_ACTOR_DELETED)
             {
                HandleRemovePlaybackActorMessage(*mNextMessage);
                mNextMessage->SetSource(*mLogComponentMachineInfo);
@@ -728,7 +746,7 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ServerLoggerComponent::HandleJumpToKeyFrame(const LogJumpToKeyframeMessage &msg)
+   void ServerLoggerComponent::HandleJumpToKeyFrame(const LogJumpToKeyframeMessage& msg)
    {
       std::string keyframeName("UNKNOWN");
 
@@ -747,7 +765,7 @@ namespace dtGame
             JumpToKeyFrame(kf);
          }
       }
-      catch(const dtUtil::Exception &e)
+      catch(const dtUtil::Exception& e)
       {
          // if we got an error above, we revert back to IDLE and tell the world.  Not sure what else we can do
          GetGameManager()->RejectMessage(msg, "Server Logger Component - Error occured "
@@ -756,7 +774,7 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ServerLoggerComponent::HandleCaptureKeyFrame(const LogCaptureKeyframeMessage &msg)
+   void ServerLoggerComponent::HandleCaptureKeyFrame(const LogCaptureKeyframeMessage& msg)
    {
       DoRecordMessage(msg);
       if (mLogStatus.GetStateEnum() != LogStateEnumeration::LOGGER_STATE_RECORD)
@@ -783,11 +801,11 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool ServerLoggerComponent::SetLogDirectory(const std::string &dir)
+   bool ServerLoggerComponent::SetLogDirectory(const std::string& dir)
    {
       if (dir.empty())
       {
-         // This should throw an exception, but I'll log an error and return true or 
+         // This should throw an exception, but I'll log an error and return true or
          // false since the rest of the method looks like it is going out of it's way
          // to do that
          LOG_ERROR("The ServerLoggerComponent tried to set its log directory to an empty string.");
@@ -796,10 +814,12 @@ namespace dtGame
          //throw dtUtil::Exception("Tried to set the log directory to an empty string.",
          //   __FILE__, __LINE__);
       }
-      //Make sure we remove any trailing slashes from the path.
+      // Make sure we remove any trailing slashes from the path.
       std::string newPath = dir;
       if (newPath[newPath.length()-1] == '/' || newPath[newPath.length()-1] == '\\')
+      {
          newPath = newPath.substr(0,newPath.length()-1);
+      }
 
       newPath = dtUtil::FileUtils::GetInstance().GetAbsolutePath(newPath);
       if (!dtUtil::FileUtils::GetInstance().DirExists(newPath))
@@ -808,7 +828,7 @@ namespace dtGame
          {
             dtUtil::FileUtils::GetInstance().MakeDirectory(newPath);
          }
-         catch(const dtUtil::Exception &ex)
+         catch (const dtUtil::Exception& ex)
          {
             ex.LogException(dtUtil::Log::LOG_ERROR);
             return false;
@@ -820,24 +840,24 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ServerLoggerComponent::DumpKeyFrame(LogKeyframe &kf)
+   void ServerLoggerComponent::DumpKeyFrame(LogKeyframe& kf)
    {
       std::vector<GameActorProxy*> actors;
       std::vector<GameActorProxy*>::iterator actorItor;
 
-      //Inserting a keyframe into the log stream effectively marks the beginning
-      //of a new keyframe.  So mark it, and start writing messages.
+      // Inserting a keyframe into the log stream effectively marks the beginning
+      // of a new keyframe.  So mark it, and start writing messages.
       try
       {
          mLogStream->InsertKeyFrame(kf);
       }
-      catch(const dtUtil::Exception &e)
+      catch (const dtUtil::Exception& e)
       {
          LOG_ERROR("Caught exception while inserting keyframe: " + e.ToString());
          return;
       }
 
-      //The first message to write is a begin keyframe transaction message.
+      // The first message to write is a begin keyframe transaction message.
       dtCore::RefPtr<Message> kfMsg =
             (GetGameManager()->GetMessageFactory().CreateMessage(MessageType::LOG_COMMAND_BEGIN_LOADKEYFRAME_TRANS).get());
       mLogStream->WriteMessage(*kfMsg.get(),mLogStatus.GetCurrentSimTime());
@@ -845,50 +865,52 @@ namespace dtGame
       GetGameManager()->GetAllGameActors(actors);
       for (actorItor = actors.begin(); actorItor != actors.end(); ++actorItor)
       {
-         if ( !IsActorIdInList( (*actorItor)->GetId(), mRecordIgnoreList ) )
+         if (!IsActorIdInList((*actorItor)->GetId(), mRecordIgnoreList))
          {
-            //For each game actor we need to build an actor update message, ask the
-            //actor to fill the message with its current property state, and then
-            //dump the update message to the stream.
+            // For each game actor we need to build an actor update message, ask the
+            // actor to fill the message with its current property state, and then
+            // dump the update message to the stream.
             dtCore::RefPtr<dtGame::ActorUpdateMessage> updateMsg = static_cast<dtGame::ActorUpdateMessage*>
                (GetGameManager()->GetMessageFactory().CreateMessage(MessageType::INFO_ACTOR_UPDATED).get());
 
             (*actorItor)->PopulateActorUpdate(*updateMsg.get());
-            mLogStream->WriteMessage(*updateMsg.get(),mLogStatus.GetCurrentSimTime());
+            mLogStream->WriteMessage(*updateMsg.get(), mLogStatus.GetCurrentSimTime());
          }
       }
 
-      //We flag a keyframe as complete by adding a END_KEYFRAME message.
-      dtCore::RefPtr<LogEndLoadKeyframeMessage> endMsg = static_cast<LogEndLoadKeyframeMessage *>
+      // We flag a keyframe as complete by adding a END_KEYFRAME message.
+      dtCore::RefPtr<LogEndLoadKeyframeMessage> endMsg = static_cast<LogEndLoadKeyframeMessage*>
          (GetGameManager()->GetMessageFactory().CreateMessage(MessageType::LOG_COMMAND_END_LOADKEYFRAME_TRANS).get());
       endMsg->SetSuccessFlag(true);
-      mLogStream->WriteMessage(*endMsg,mLogStatus.GetCurrentSimTime());
+      mLogStream->WriteMessage(*endMsg, mLogStatus.GetCurrentSimTime());
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ServerLoggerComponent::JumpToKeyFrame(LogKeyframe &kf)
+   void ServerLoggerComponent::JumpToKeyFrame(LogKeyframe& kf)
    {
       double simTime;
 
-      std::map<dtCore::UniqueId,dtCore::RefPtr<Message> > updateMap;
-      std::map<dtCore::UniqueId,dtCore::RefPtr<Message> >::iterator updateMapItor;
+      std::map< dtCore::UniqueId, dtCore::RefPtr<Message> > updateMap;
+      std::map< dtCore::UniqueId, dtCore::RefPtr<Message> >::iterator updateMapItor;
 
-      //First, position the stream at the start of the keyframe.
+      // First, position the stream at the start of the keyframe.
       mLogStream->JumpToKeyFrame(kf);
 
-      //Now read the first message.  It should be a LOG_COMMAND_BEGIN_LOAD_KEYFRAME message.
+      // Now read the first message.  It should be a LOG_COMMAND_BEGIN_LOAD_KEYFRAME message.
       dtCore::RefPtr<Message> kfMsg = mLogStream->ReadMessage(simTime);
       if (!kfMsg.valid() || kfMsg->GetMessageType() != MessageType::LOG_COMMAND_BEGIN_LOADKEYFRAME_TRANS)
-         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION,"Malformed keyframe detected in the log "
+      {
+         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION, "Malformed keyframe detected in the log "
             "stream.  Cannot proceed.", __FILE__, __LINE__);
+      }
 
       GetGameManager()->SendMessage(*kfMsg.get());
       GetGameManager()->SendNetworkMessage(*kfMsg.get());
 
-      //Read all messages from the keyframe, track them, then compare them to what's
-      //currently in the game.  If an actor exists that is not in the game, send a delete
-      //message, else send and update/create message for the actor contained within the
-      //keyframe.
+      // Read all messages from the keyframe, track them, then compare them to what's
+      // currently in the game.  If an actor exists that is not in the game, send a delete
+      // message, else send and update/create message for the actor contained within the
+      // keyframe.
       kfMsg = mLogStream->ReadMessage(simTime);
       while (kfMsg->GetMessageType() != MessageType::LOG_COMMAND_END_LOADKEYFRAME_TRANS)
       {
@@ -896,25 +918,25 @@ namespace dtGame
          HandleAddPlaybackActorMessage(*kfMsg);
 
          mLogStatus.SetNumMessages(mLogStatus.GetNumMessages() + 1);
-         updateMap.insert(std::make_pair(kfMsg->GetAboutActorId(),kfMsg));
+         updateMap.insert(std::make_pair(kfMsg->GetAboutActorId(), kfMsg));
          kfMsg = mLogStream->ReadMessage(simTime);
       }
 
       std::vector<GameActorProxy*> gameProxies;
       std::vector<GameActorProxy*>::iterator proxyItor;
       GetGameManager()->GetAllGameActors(gameProxies);
-      for (proxyItor=gameProxies.begin(); proxyItor!=gameProxies.end(); ++proxyItor)
+      for (proxyItor = gameProxies.begin(); proxyItor != gameProxies.end(); ++proxyItor)
       {
          std::map<dtCore::UniqueId,dtCore::RefPtr<Message> >::iterator kfActorItor;
 
-         GameActorProxy *proxy = static_cast<GameActorProxy*>((*proxyItor));
+         GameActorProxy* proxy = static_cast<GameActorProxy*>((*proxyItor));
          kfActorItor = updateMap.find(proxy->GetId());
 
-         if (kfActorItor == updateMap.end() 
-            && IsActorIdInList( proxy->GetId(), mPlaybackList ) )
+         if (kfActorItor == updateMap.end()
+            && IsActorIdInList(proxy->GetId(), mPlaybackList))
          {
-            //Since the actor is not in the keyframe delete it.  Do this by processing/sending
-            //a message so remote objects will get removed as well.
+            // Since the actor is not in the keyframe delete it.  Do this by processing/sending
+            // a message so remote objects will get removed as well.
             dtCore::RefPtr<Message> msg = GetGameManager()->GetMessageFactory().CreateMessage(MessageType::INFO_ACTOR_DELETED);
             msg->SetAboutActorId(proxy->GetId());
             msg->SetDestination(&GetGameManager()->GetMachineInfo());
@@ -929,19 +951,19 @@ namespace dtGame
          }
       }
 
-      for (updateMapItor=updateMap.begin(); updateMapItor!=updateMap.end(); ++updateMapItor)
+      for (updateMapItor = updateMap.begin(); updateMapItor != updateMap.end(); ++updateMapItor)
       {
-         //If it is in the keyframe then send out an update message.  Note, that the
-         //update message causes the actor to be created if it does not yet exist.
+         // If it is in the keyframe then send out an update message.  Note, that the
+         // update message causes the actor to be created if it does not yet exist.
          updateMapItor->second->SetSource(*mLogComponentMachineInfo);
          GetGameManager()->SendMessage(*(updateMapItor->second.get()));
          GetGameManager()->SendNetworkMessage(*(updateMapItor->second.get()));
       }
 
-      //Finally, send out the simulation time located in the keyframe and send out
-      //the keyframe end message.
+      // Finally, send out the simulation time located in the keyframe and send out
+      // the keyframe end message.
       dtCore::RefPtr<LogEndLoadKeyframeMessage> endMsg =
-         static_cast<LogEndLoadKeyframeMessage *>(kfMsg.get());
+         static_cast<LogEndLoadKeyframeMessage*>(kfMsg.get());
 
       // reset our next message so that time and message will get updated on next tick
       mNextMessage = NULL;
@@ -952,7 +974,7 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ServerLoggerComponent::HandleMapLoadedMessage(const Message &message)
+   void ServerLoggerComponent::HandleMapLoadedMessage(const Message& message)
    {
       DoRecordMessage(message);
 
@@ -975,18 +997,18 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ServerLoggerComponent::DoRecordMessage(const Message &message)
+   void ServerLoggerComponent::DoRecordMessage(const Message& message)
    {
       if (mLogStatus.GetStateEnum() == LogStateEnumeration::LOGGER_STATE_RECORD)
       {
-         if (!IsActorIdInList(message.GetAboutActorId(),mRecordIgnoreList))
+         if (!IsActorIdInList(message.GetAboutActorId(), mRecordIgnoreList))
          {
             try
             {
                mLogStream->WriteMessage(message, mLogStatus.GetCurrentSimTime());
                mLogStatus.SetNumMessages(mLogStatus.GetNumMessages() + 1);
             }
-            catch(const dtUtil::Exception &e)
+            catch (const dtUtil::Exception& e)
             {
                std::string messageString;
                message.ToString(messageString);
@@ -999,21 +1021,21 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ServerLoggerComponent::HandleAddPlaybackActorMessage(const Message &message)
+   void ServerLoggerComponent::HandleAddPlaybackActorMessage(const Message& message)
    {
       // Make sure no ignored actors get added when they join the playback simulation.
       if (!message.GetAboutActorId().ToString().empty() &&
-         !IsActorIdInList(message.GetAboutActorId(),mPlaybackList))
+         !IsActorIdInList(message.GetAboutActorId(), mPlaybackList))
       {
          mPlaybackList.insert(message.GetAboutActorId());
       }
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ServerLoggerComponent::HandleRemovePlaybackActorMessage(const Message &message)
+   void ServerLoggerComponent::HandleRemovePlaybackActorMessage(const Message& message)
    {
       std::set<dtCore::UniqueId>::iterator itor = mPlaybackList.find(message.GetAboutActorId());
-      if ( itor != mPlaybackList.end() )
+      if (itor != mPlaybackList.end())
       {
          mPlaybackList.erase(itor);
       }
@@ -1026,7 +1048,7 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ServerLoggerComponent::HandleAddIgnoredActorMessage(const Message &message)
+   void ServerLoggerComponent::HandleAddIgnoredActorMessage(const Message& message)
    {
       mRecordIgnoreList.insert(message.GetAboutActorId());
 
@@ -1035,17 +1057,17 @@ namespace dtGame
       // joining actor not initially logged as ignored will be shoved into the
       // playback list.
       if (mLogStatus.GetStateEnum() != LogStateEnumeration::LOGGER_STATE_PLAYBACK
-         && IsActorIdInList(message.GetAboutActorId(),mPlaybackList))
+         && IsActorIdInList(message.GetAboutActorId(), mPlaybackList))
       {
          HandleRemovePlaybackActorMessage(message);
       }
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ServerLoggerComponent::HandleRemoveIgnoredActorMessage(const Message &message)
+   void ServerLoggerComponent::HandleRemoveIgnoredActorMessage(const Message& message)
    {
       std::set<dtCore::UniqueId>::iterator itor = mRecordIgnoreList.find(message.GetAboutActorId());
-      if ( itor != mRecordIgnoreList.end() )
+      if (itor != mRecordIgnoreList.end())
       {
          mRecordIgnoreList.erase(itor);
       }
@@ -1058,13 +1080,13 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool ServerLoggerComponent::IsActorIdInList( const dtCore::UniqueId& actorID, const std::set<dtCore::UniqueId>& checkedSet ) const
+   bool ServerLoggerComponent::IsActorIdInList(const dtCore::UniqueId& actorID, const std::set<dtCore::UniqueId>& checkedSet) const
    {
       return checkedSet.find(actorID) != checkedSet.end();
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool ServerLoggerComponent::IsActorIdInList(dtCore::UniqueId actorID, std::set<dtCore::UniqueId>& checkedSet ) 
+   bool ServerLoggerComponent::IsActorIdInList(dtCore::UniqueId actorID, std::set<dtCore::UniqueId>& checkedSet)
    {
       return checkedSet.find(actorID) != checkedSet.end();
    }
@@ -1074,7 +1096,7 @@ namespace dtGame
    {
       return mRecordIgnoreList.size();
    }
-   
+
    //////////////////////////////////////////////////////////////////////////
    int ServerLoggerComponent::GetPlaybackActorCount() const
    {
@@ -1084,40 +1106,41 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////////
    bool ServerLoggerComponent::IsIgnoredActorId(const dtCore::UniqueId& id) const
    {
-      return IsActorIdInList( id, mRecordIgnoreList );
+      return IsActorIdInList(id, mRecordIgnoreList);
    }
 
    //////////////////////////////////////////////////////////////////////////
    bool ServerLoggerComponent::IsPlaybackActorId(const dtCore::UniqueId& id) const
    {
-      return IsActorIdInList( id, mPlaybackList );
+      return IsActorIdInList(id, mPlaybackList);
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool ServerLoggerComponent::IsIgnoredActorId(dtCore::UniqueId id) 
+   bool ServerLoggerComponent::IsIgnoredActorId(dtCore::UniqueId id)
    {
-      return IsActorIdInList( id, mRecordIgnoreList );
+      return IsActorIdInList(id, mRecordIgnoreList);
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool ServerLoggerComponent::IsPlaybackActorId(dtCore::UniqueId id) 
+   bool ServerLoggerComponent::IsPlaybackActorId(dtCore::UniqueId id)
    {
-      return IsActorIdInList( id, mPlaybackList );
+      return IsActorIdInList(id, mPlaybackList);
    }
 
    //////////////////////////////////////////////////////////////////////////
    int ServerLoggerComponent::RequestDeletePlaybackActors()
    {
       int deleteCount = 0;
-      std::set<dtCore::UniqueId>::iterator itor = mPlaybackList.begin();
-      for ( ; itor!=mPlaybackList.end(); ++itor)
+      for (std::set<dtCore::UniqueId>::iterator itor = mPlaybackList.begin();
+           itor != mPlaybackList.end();
+           ++itor)
       {
-         dtCore::RefPtr<Message> msg = 
+         dtCore::RefPtr<Message> msg =
             GetGameManager()->GetMessageFactory().CreateMessage(MessageType::INFO_ACTOR_DELETED);
          msg->SetAboutActorId(*itor);
          msg->SetDestination(&GetGameManager()->GetMachineInfo());
          GetGameManager()->SendMessage(*msg);
-         deleteCount++;
+         ++deleteCount;
       }
 
       // Clean the playback actor ID collection.
@@ -1126,4 +1149,4 @@ namespace dtGame
       return deleteCount;
    }
 
-}
+} // namespace dtGame

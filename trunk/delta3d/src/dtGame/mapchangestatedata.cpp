@@ -73,7 +73,7 @@ namespace dtGame
 
       mCurrentState = &MapChangeState::UNLOAD;
 
-      //We are only changing maps if the new map list is not empty
+      // We are only changing maps if the new map list is not empty
       if (!mNewMapNames.empty())
       {
          const std::set<std::string>& names = dtDAL::Project::GetInstance().GetMapNames();
@@ -92,16 +92,14 @@ namespace dtGame
          SendMapMessage(MessageType::INFO_MAP_CHANGE_BEGIN, mNewMapNames);
       }
 
-      //mark all actors for deletion.
-      //Does not send create messages when this object is not in IDLE state.
+      // mark all actors for deletion.
+      // Does not send create messages when this object is not in IDLE state.
       mGameManager->DeleteAllActors(false);
 
       if (!mOldMapNames.empty())
       {
          SendMapMessage(MessageType::INFO_MAP_UNLOAD_BEGIN, mOldMapNames);
       }
-
-
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -125,7 +123,9 @@ namespace dtGame
                std::vector<dtDAL::GameEvent*>::const_iterator j = events.begin();
                std::vector<dtDAL::GameEvent*>::const_iterator jend = events.end();
                for (; j != jend; ++j)
+               {
                   mainGEM.RemoveEvent((*j)->GetUniqueId());
+               }
             }
             dtDAL::Project::GetInstance().CloseMap(oldMap, true);
          }
@@ -145,15 +145,15 @@ namespace dtGame
 
          for (; i != end; ++i)
          {
-            //Make the map load.
+            // Make the map load.
             try
             {
                dtDAL::Project::GetInstance().GetMap(*i);
             }
             catch (const dtUtil::Exception&)
             {
-               //if we can't load a map, we go back to idle and send and
-               //empty string map change ended message
+               // if we can't load a map, we go back to idle and send and
+               // empty string map change ended message
                mCurrentState = &MapChangeState::IDLE;
                SendMapMessage(MessageType::INFO_MAP_CHANGED, MapChangeStateData::NameVector());
                mNewMapNames.clear();
@@ -162,12 +162,15 @@ namespace dtGame
             }
          }
          if (success)
+         {
             SendMapMessage(MessageType::INFO_MAP_LOAD_BEGIN, mNewMapNames);
+         }
       }
       else
       {
          success = false;
       }
+
       return success;
    }
 
@@ -175,7 +178,7 @@ namespace dtGame
    void MapChangeStateData::LoadSingleMapIntoGM(const std::string& mapName)
    {
       dtDAL::Map& map = dtDAL::Project::GetInstance().GetMap(mapName);
-      //add all the events in the map to the game manager.
+      // add all the events in the map to the game manager.
       std::vector<dtDAL::GameEvent* > events;
       map.GetEventManager().GetAllEvents(events);
       dtDAL::GameEventManager& mainGEM = dtDAL::GameEventManager::GetInstance();
@@ -186,7 +189,9 @@ namespace dtGame
       {
          dtDAL::GameEvent* currEvent = *i;
          if (mainGEM.FindEvent(currEvent->GetUniqueId()) == NULL)
+         {
             mainGEM.AddEvent(*currEvent);
+         }
       }
 
       if (map.GetEnvironmentActor() != NULL)
@@ -200,12 +205,14 @@ namespace dtGame
       std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > proxies;
       map.GetAllProxies(proxies);
 
-      for (unsigned int i = 0; i < proxies.size(); i++)
+      for (unsigned int i = 0; i < proxies.size(); ++i)
       {
          dtDAL::ActorProxy& aProxy = *proxies[i];
          // Ensure that we don't try and add the environment actor
          if (map.GetEnvironmentActor() == &aProxy)
+         {
             continue;
+         }
 
          if (aProxy.IsGameActorProxy())
          {
@@ -220,8 +227,8 @@ namespace dtGame
                else
                {
                   bool shouldPublish = gameProxy->GetInitialOwnership() == GameActorProxy::Ownership::SERVER_PUBLISHED;
-                  //neither sends create messages nor adds to the scene when
-                  //this object is not in IDLE state :-)
+                  // neither sends create messages nor adds to the scene when
+                  // this object is not in IDLE state :-)
                   try
                   {
                      mGameManager->AddActor(*gameProxy, false, shouldPublish);
@@ -260,9 +267,11 @@ namespace dtGame
          throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION, msg, __FUNCTION__, __LINE__);
       }
 
-      //This shouldn't be called, but it should definitely not do anything.
+      // This shouldn't be called, but it should definitely not do anything.
       if (*mCurrentState == MapChangeState::IDLE)
+      {
          return;
+      }
 
       if (*mCurrentState == MapChangeState::UNLOAD)
       {
@@ -306,4 +315,4 @@ namespace dtGame
       mGameManager->SendMessage(*mapMessage);
    }
 
-}
+} // namespace dtGame
