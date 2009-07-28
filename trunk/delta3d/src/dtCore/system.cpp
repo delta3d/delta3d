@@ -465,8 +465,7 @@ namespace dtCore
    ////////////////////////////////////////////////////////////////////////////////
    void System::Run()
    {
-      mRunning = true;
-      InitVars();
+      Start(); ///Automatically start the System when Run.
 
       while(mRunning)
       {
