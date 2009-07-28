@@ -1,22 +1,22 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
-* Copyright (C) 2009, MOVES Institute
-*
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
-* any later version.
-*
-* This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
-* details.
-*
-* You should have received a copy of the GNU Lesser General Public License
-* along with this library; if not, write to the Free Software Foundation, Inc.,
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*
-*/
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2009, MOVES Institute
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ */
 
 #include <dtGame/actorcomponentbase.h>
 #include <dtGame/gameactor.h>
@@ -42,7 +42,7 @@ ActorComponentBase::~ActorComponentBase()
 void ActorComponentBase::AddComponent(ActorComponent* component)
 {
    // only one component of a type at a time!
-   if(HasComponent(component->GetType()))
+   if (HasComponent(component->GetType()))
    {
       std::ostringstream os;
       os << "Actor component of type " << component->GetType().Get() << " already exists!";
@@ -57,7 +57,7 @@ void ActorComponentBase::AddComponent(ActorComponent* component)
 
    // if base class is a game actor and the game actor is already instantiated in game:
    GameActor* self = static_cast<GameActor*>(this);
-   if(self->GetGameActorProxy().IsInGM())
+   if (self->GetGameActorProxy().IsInGM())
    {
       // initialize component
       component->OnAddedToActor(*self);
@@ -69,7 +69,7 @@ void ActorComponentBase::AddComponent(ActorComponent* component)
 ActorComponent* ActorComponentBase::GetComponent(const ActorComponent::ACType& type) const
 {
    ActorComponentMap::const_iterator iter = mComponents.find(type);
-   if(iter == mComponents.end())
+   if (iter == mComponents.end())
    {
       std::ostringstream os;
       os << "Actor component of type " << type.Get() << " not found!";
@@ -82,14 +82,14 @@ ActorComponent* ActorComponentBase::GetComponent(const ActorComponent::ACType& t
 bool ActorComponentBase::HasComponent(const ActorComponent::ACType& type) const
 {
    ActorComponentMap::const_iterator iter = mComponents.find(type);
-   return (iter != mComponents.end());
+   return iter != mComponents.end();
 }
 
 //////////////////////////////////////////////////////////////////////////
 void ActorComponentBase::RemoveComponent(const ActorComponent::ACType& type)
 {
    ActorComponentMap::iterator iter = mComponents.find(type);
-   if(iter != mComponents.end())
+   if (iter != mComponents.end())
    {
       iter->second->OnRemovedFromActor(*static_cast<GameActor*>(this));
       OnActorComponentRemoved(iter->second.get());
@@ -107,7 +107,7 @@ void ActorComponentBase::RemoveComponent(ActorComponent* component)
 //////////////////////////////////////////////////////////////////////////
 void ActorComponentBase::RemoveAllComponents()
 {
-   while(!mComponents.empty())
+   while (!mComponents.empty())
    {
       RemoveComponent((*mComponents.begin()).second.get());
    }
@@ -117,12 +117,12 @@ void ActorComponentBase::RemoveAllComponents()
 void ActorComponentBase::InitComponents()
 {
    // safety check
-   assert(dynamic_cast<GameActor*>(this) != NULL && 
+   assert(dynamic_cast<GameActor*>(this) != NULL &&
       "ActorComponentBase must derive from dtGame::GameActor!");
 
    // loop through all components and call their OnAddedToActor method
    ActorComponentMap::iterator iter;
-   for(iter = mComponents.begin(); iter != mComponents.end(); ++iter)
+   for (iter = mComponents.begin(); iter != mComponents.end(); ++iter)
    {
       (*iter).second->OnAddedToActor(*static_cast<GameActor*>(this));
       OnActorComponentAdded((*iter).second.get());
@@ -134,7 +134,7 @@ void ActorComponentBase::BuildComponentPropertyMaps()
 {
    // loop through all components and call their BuildPropertyMap() method
    ActorComponentMap::iterator iter;
-   for(iter = mComponents.begin(); iter != mComponents.end(); ++iter)
+   for (iter = mComponents.begin(); iter != mComponents.end(); ++iter)
    {
       (*iter).second->BuildPropertyMap();
    }
@@ -143,11 +143,9 @@ void ActorComponentBase::BuildComponentPropertyMaps()
 ////////////////////////////////////////////////////////////////////////////////
 void dtGame::ActorComponentBase::OnActorComponentAdded(ActorComponent* component)
 {
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void dtGame::ActorComponentBase::OnActorComponentRemoved(ActorComponent* component)
 {
-
 }

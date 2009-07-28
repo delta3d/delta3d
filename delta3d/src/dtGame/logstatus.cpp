@@ -31,16 +31,19 @@ namespace dtGame
    const LogStateEnumeration LogStateEnumeration::LOGGER_STATE_IDLE("LOGGER_STATE_IDLE");
 
    /////////////////////////////////////////////////////////////
-   LogStatus::LogStatus() : 
-      mStateEnum(&LogStateEnumeration::LOGGER_STATE_IDLE), 
-      mCurrentSimTime(0), mAutoRecordKeyframeInterval(0),
-      mCurrentRecordDuration(0), mNumMessages(0)
+   LogStatus::LogStatus()
+      : mStateEnum(&LogStateEnumeration::LOGGER_STATE_IDLE)
+      , mCurrentSimTime(0)
+      , mAutoRecordKeyframeInterval(0)
+      , mCurrentRecordDuration(0)
+      , mNumMessages(0)
    {
    }
+
    /////////////////////////////////////////////////////////////
-   void LogStatus::SetActiveMaps(const NameVector& newActiveMaps) 
-   { 
-      mActiveMaps = newActiveMaps; 
+   void LogStatus::SetActiveMaps(const NameVector& newActiveMaps)
+   {
+      mActiveMaps = newActiveMaps;
    }
 
    /////////////////////////////////////////////////////////////
@@ -51,4 +54,5 @@ namespace dtGame
             "], LogFile[" << me.mLogFile << "], #Messagse[" << me.mNumMessages << "]";
       return stream;
    }
-}
+
+} // namespace dtGame

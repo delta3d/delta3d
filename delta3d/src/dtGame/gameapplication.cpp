@@ -31,7 +31,7 @@
 
 #include <dtUtil/exception.h>
 #include <dtCore/scene.h>
-#include <osgViewer/CompositeViewer> //for parent class's forward declaration
+#include <osgViewer/CompositeViewer> // for parent class's forward declaration
 #include <dtCore/keyboard.h>
 
 #include <iostream>
@@ -61,11 +61,11 @@ namespace dtGame
          {
             mEntryPoint->OnShutdown(*this);
          }
-         catch(const dtUtil::Exception& e)
+         catch (const dtUtil::Exception& e)
          {
             e.LogException(dtUtil::Log::LOG_ALWAYS);
          }
-         catch(...)
+         catch (...)
          {
             LOG_ALWAYS("Unknown exception caught in the destructor of GameApplication");
          }
@@ -108,7 +108,7 @@ namespace dtGame
       {
          mEntryPointLib = lsm.LoadSharedLibrary(libName);
       }
-      catch (dtUtil::Exception)
+      catch (const dtUtil::Exception&)
       {
          msg.str("");
          msg << "Unable to load game library " << libName;
@@ -156,7 +156,7 @@ namespace dtGame
 
       try
       {
-         mGameManager = new dtGame::GameManager( *GetScene() );
+         mGameManager = new dtGame::GameManager(*GetScene());
          if (mGameManager == NULL)
          {
             msg.str("");
@@ -194,4 +194,5 @@ namespace dtGame
    {
       mGameManager = &gameManager;
    }
-}
+
+} // namespace dtGame
