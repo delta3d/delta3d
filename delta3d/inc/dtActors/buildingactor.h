@@ -216,6 +216,20 @@ namespace dtActors
       void SetBuildingHeight(float value);
 
       /**
+      * Gets the current flat roof flag.
+      *
+      * @return  The current value of the flag.
+      */
+      bool GetFlatRoofFlag();
+
+      /**
+      * Sets the current flat roof flag.
+      *
+      * @param[in]  value  The new value of the flag.
+      */
+      void SetFlatRoofFlag(bool value);
+
+      /**
       * Gets the scale of the fence.
       */
       osg::Vec3 GetScale() const;
@@ -265,8 +279,10 @@ namespace dtActors
 
       /**
       * Calculates the height of the roof.
+      *
+      * @param[in]  pointIndex  The index of the point.
       */
-      float CalculateRoofHeight();
+      float CalculateRoofHeight(int pointIndex);
 
       /**
       * Generates a roof with the given list of points.
@@ -331,6 +347,7 @@ namespace dtActors
 
       // Roof.
       bool                             mGenerateRoof;
+      bool                             mFlatRoof;
       std::vector<osg::Vec3>           mRoofPoints;
 
       osg::ref_ptr<osg::Geometry>      mRoofGeom;

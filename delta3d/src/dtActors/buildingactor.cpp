@@ -155,6 +155,7 @@ namespace dtActors
       , mWallTextureScale(1.0f)
       , mBuildingHeight(3.0f)
       , mGenerateRoof(false)
+      , mFlatRoof(true)
    {
    }
 
@@ -575,6 +576,22 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   bool BuildingActor::GetFlatRoofFlag()
+   {
+      return mFlatRoof;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void BuildingActor::SetFlatRoofFlag(bool value)
+   {
+      if (mFlatRoof != value)
+      {
+         mFlatRoof = value;
+         Visualize();
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    osg::Vec3 BuildingActor::GetScale() const
    {
       return osg::Vec3(mRoofTextureScale, mWallTextureScale, mBuildingHeight);
@@ -699,15 +716,23 @@ namespace dtActors
          // Get the vector between the two posts.
          osg::Vec3 dir = end - start;
          float wallLength = dir.length();
+
+         dir.x() = end.x() - start.x();
+         dir.y() = end.y() - start.y();
+         dir.z() = 0.0f;
          dir.normalize();
 
          osg::Vec3 normal = osg::Vec3(0.0f, 0.0f, 1.0f) ^ dir;
 
-         float roofHeight = CalculateRoofHeight();
+         int nextIndex = pointIndex + 1;
+         if (nextIndex >= GetPointCount()) nextIndex = 0;
+
+         float startRoofHeight = CalculateRoofHeight(pointIndex);
+         float endRoofHeight = CalculateRoofHeight(nextIndex);
 
          osg::Vec3 up = osg::Vec3(0.0f, 0.0f, 1.0f);
-         float startHeight = roofHeight - start.z();
-         float endHeight = roofHeight - end.z();
+         float startHeight = startRoofHeight - start.z();
+         float endHeight = endRoofHeight - end.z();
 
          float textureLength = wallLength * mWallTextureScale;
 
@@ -788,18 +813,26 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   float BuildingActor::CalculateRoofHeight()
+   float BuildingActor::CalculateRoofHeight(int pointIndex)
    {
-      // First find the highest point.
       float highestValue = 0;
-      for (int index = 0; index < GetPointCount(); index++)
+      if (mFlatRoof)
       {
-         osg::Vec3 position = GetPointPosition(index);
-
-         if (index == 0 || position.z() > highestValue)
+         // First find the highest point.
+         for (int index = 0; index < GetPointCount(); index++)
          {
-            highestValue = position.z();
+            osg::Vec3 position = GetPointPosition(index);
+
+            if (index == 0 || position.z() > highestValue)
+            {
+               highestValue = position.z();
+            }
          }
+      }
+      else
+      {
+         osg::Vec3 position = GetPointPosition(pointIndex);
+         highestValue = position.z();
       }
 
       return highestValue + mBuildingHeight;
@@ -1407,6 +1440,15 @@ namespace dtActors
          dtDAL::MakeFunctor(*actor, &BuildingActor::SetInWallTexture),
          "Defines the texture used when rendering walls.", "Building");
       AddProperty(inWallTextureProp);
+
+      // Flat Roof.
+      dtDAL::BooleanActorProperty* flatRoofProp =
+         new dtDAL::BooleanActorProperty(
+         "FlatRoof", "Flat Roof",
+         dtDAL::MakeFunctor(*actor, &BuildingActor::SetFlatRoofFlag),
+         dtDAL::MakeFunctorRet(*actor, &BuildingActor::GetFlatRoofFlag),
+         "Flattens the top of the roof.", "Building");
+      AddProperty(flatRoofProp);
 
       // Roof Texture Scale.
       dtDAL::FloatActorProperty* roofTextureScaleProp =
