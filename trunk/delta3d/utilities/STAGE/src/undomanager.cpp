@@ -27,6 +27,7 @@
  * Curtiss Murphy
  */
 #include <prefix/dtstageprefix-src.h>
+#include <dtActors/volumeeditactor.h>
 #include <QtGui/QAction>
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/editoractions.h>
@@ -349,6 +350,16 @@ namespace dtEditQt
       if (currMap.valid())
       {
          dtDAL::ActorProxy* proxy = currMap->GetProxyById(dtCore::UniqueId(event->mObjectId));
+
+         // Test to see if the proxy ID matches the volume brush.
+         if (!proxy)
+         {
+            dtActors::VolumeEditActorProxy* volumeProxy = EditorData::GetInstance().getMainWindow()->GetVolumeEditActorProxy();
+            if (volumeProxy && event->mObjectId == volumeProxy->GetId().ToString())
+            {
+               proxy = volumeProxy;
+            }
+         }
 
          // delete is special since the proxy is always NULL :)
          if (event->mType == ChangeEvent::PROXY_DELETED)
