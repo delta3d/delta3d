@@ -1,22 +1,22 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
-* Copyright (C) 2004-2005 MOVES Institute
-*
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
-* any later version.
-*
-* This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
-* details.
-*
-* You should have received a copy of the GNU Lesser General Public License
-* along with this library; if not, write to the Free Software Foundation, Inc.,
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*
-*/
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2004-2005 MOVES Institute
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ */
 
 #ifndef DELTA_VIEW
 #define DELTA_VIEW
@@ -59,15 +59,14 @@ namespace dtCore
       DECLARE_MANAGEMENT_LAYER(View)
 
    public:
-
       View(const std::string& name = "view", bool useSceneLight = true);
       View(osgViewer::View* view, const std::string& name = "view", bool useSceneLight = true);
 
       /*
-      *  This function is used by dtCore::Scene to take all the
-      *  existing cameras that reference that scene and reset its scene root.
-      *  This is done only when the scene's 'SceneNode' has changed.
-      */
+       *  This function is used by dtCore::Scene to take all the
+       *  existing cameras that reference that scene and reset its scene root.
+       *  This is done only when the scene's 'SceneNode' has changed.
+       */
 //      void ResetCameraScenes(Scene* sceneRootChanged);
 
       ///Deprecated Mar 10 2009 in favor of SetRenderOrder
@@ -149,63 +148,61 @@ namespace dtCore
       //this method is commented out in the implementation
       //void Frame();
 
-       /** Use the mouse cursor position to do an intersection into the view.
-         * @param intersectionPoint : the world coordinate intersection point
-         * @param traversalMask : the bit mask to use for the intersection traversal
-         * @return true if geometry was intersected, false otherwise
-         */
-       bool GetMousePickPosition(osg::Vec3 &intersectionPoint,
-                                 unsigned int traversalMask = 0xffffffff);
+      /** Use the mouse cursor position to do an intersection into the view.
+       * @param intersectionPoint : the world coordinate intersection point
+       * @param traversalMask : the bit mask to use for the intersection traversal
+       * @return true if geometry was intersected, false otherwise
+       */
+      bool GetMousePickPosition(osg::Vec3 &intersectionPoint,
+                                unsigned int traversalMask = 0xffffffff);
 
-       /** Use the supplied mouse position to do an intersection into the view.
-         * @param intersectionPoiont : the world coordinate intersection point
-         * @param mousePos : the mouse position to use (-1..1), (-1..1)
-         * @param traversalMask : the bit mask to use for the intersection traversal
-         * @return true if geometry was intersected, false otherwise
-         */
-       bool GetPickPosition(osg::Vec3 &intersectionPoint,
-                            const osg::Vec2 &mousePos,
-                            unsigned int traversalMask = 0xffffffff);
+      /** Use the supplied mouse position to do an intersection into the view.
+       * @param intersectionPoiont : the world coordinate intersection point
+       * @param mousePos : the mouse position to use (-1..1), (-1..1)
+       * @param traversalMask : the bit mask to use for the intersection traversal
+       * @return true if geometry was intersected, false otherwise
+       */
+      bool GetPickPosition(osg::Vec3 &intersectionPoint,
+                           const osg::Vec2 &mousePos,
+                           unsigned int traversalMask = 0xffffffff);
 
-       /** Use the mouse cursor position to do an intersection into the view.  Return
-         * back the first DeltaDrawable if one was intersected.
-         * @param traversalMask : the bit mask to use for the intersection traversal
-         * @return A DeltaDrawable that was intersected, or NULL
-         */
-       dtCore::DeltaDrawable* GetMousePickedObject(unsigned int traversalMask = 0xffffffff);
+      /** Use the mouse cursor position to do an intersection into the view.  Return
+       * back the first DeltaDrawable if one was intersected.
+       * @param traversalMask : the bit mask to use for the intersection traversal
+       * @return A DeltaDrawable that was intersected, or NULL
+       */
+      dtCore::DeltaDrawable* GetMousePickedObject(unsigned int traversalMask = 0xffffffff);
 
-       /** Just like GetMousePickedObject, only that screen coordinates given by position param
-         * is used instead of mouse position.
-         * @param mousePos The mouse position to use (-1..1), (-1..1)
-         * @param traversalMask : the optional bit mask to use for the intersection traversal
-         * @return A DeltaDrawable that was intersected, or NULL
-         */
-       dtCore::DeltaDrawable* GetPickedObject(const osg::Vec2& mousePos, unsigned int traversalMask);
+      /** Just like GetMousePickedObject, only that screen coordinates given by position param
+       * is used instead of mouse position.
+       * @param mousePos The mouse position to use (-1..1), (-1..1)
+       * @param traversalMask : the optional bit mask to use for the intersection traversal
+       * @return A DeltaDrawable that was intersected, or NULL
+       */
+      dtCore::DeltaDrawable* GetPickedObject(const osg::Vec2& mousePos, unsigned int traversalMask = 0xffffffff);
 
-       /** Supply a DatabasePager instance to overwrite the internal default pager.
-         * @param pager : A custom DatabasePager (or NULL to disable database paging)
-         */
-       void SetDatabasePager(dtCore::DatabasePager* pager);
+      /** Supply a DatabasePager instance to overwrite the internal default pager.
+       * @param pager : A custom DatabasePager (or NULL to disable database paging)
+       */
+      void SetDatabasePager(dtCore::DatabasePager* pager);
 
-       /** Get the DatabasePager instance this View is using.
-         * @return The internal DatabasePager (could be NULL)
-         */
-       dtCore::DatabasePager* GetDatabasePager();
-
-       /** Get the DatabasePager instance this View is using.
+      /** Get the DatabasePager instance this View is using.
        * @return The internal DatabasePager (could be NULL)
        */
-       const dtCore::DatabasePager* GetDatabasePager() const;
+      dtCore::DatabasePager* GetDatabasePager();
+
+      /** Get the DatabasePager instance this View is using.
+       * @return The internal DatabasePager (could be NULL)
+       */
+      const dtCore::DatabasePager* GetDatabasePager() const;
 
    protected:
-
       virtual ~View();
 
       friend class Scene;
       void UpdateFromScene();
 
    private:
-
       ///constructor implementation
       void Ctor(bool useSceneLight);
 
@@ -213,6 +210,6 @@ namespace dtCore
 
       ViewImpl* mImpl;
    };
-}
+} // namespace dtCore
 
-#endif //DELTA_VIEW
+#endif // DELTA_VIEW
