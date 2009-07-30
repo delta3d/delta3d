@@ -169,15 +169,15 @@ namespace dtEditQt
                   }
 
                   //clean up previous source and buffer
-                  if (mSoundSources[0] != NULL)
+                  if (mSoundSources[0] != 0)
                   {
                      alDeleteSources(1, mSoundSources);
-                     mSoundSources[0] = NULL;
+                     mSoundSources[0] = 0;
                   }
-                  if (mSoundBuffers[0] != NULL)
+                  if (mSoundBuffers[0] != 0)
                   {
                      alDeleteBuffers(1, mSoundBuffers);
-                     mSoundBuffers[0] = NULL;
+                     mSoundBuffers[0] = 0;
                   }
 
                   //create buffer
@@ -206,7 +206,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void SoundBrowser::stopSound()
    {
-      if (mSoundSources[0] == NULL)
+      if (mSoundSources[0] == 0)
       {
          return;
       }

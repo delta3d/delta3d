@@ -6,10 +6,6 @@
 #include <dtGame/actorupdatemessage.h>
 #include <DIS/EntityStatePdu.h>
 
-#include <DIS/StreamUtils.h>
-#include <sstream>
-#include <dtDIS/hasproperty.h>
-#include <dtDIS/propertyname.h>
 
 
 
@@ -30,65 +26,31 @@ void ESPduProcessor::Process(const DIS::Pdu& packet)
 {
    if (mConfig == NULL) return;
 
-   const DIS::EntityStatePdu& pdu = static_cast<const DIS::EntityStatePdu&>( packet );
+   const DIS::EntityStatePdu& pdu = static_cast<const DIS::EntityStatePdu&>(packet);
 
    // find out if there is an actor for this ID
-   const dtDAL::ActorProxy* prox = mConfig->GetActiveEntityControl().GetActor( pdu.getEntityID() );
+   const dtCore::UniqueId* actorID = mConfig->GetActiveEntityControl().GetActor(pdu.getEntityID());
 
    // check to see if this class knows about it
-   if( prox != NULL )
+   if (actorID != NULL)
    {
       // the entity is known, so update the previously created actor.
-      SendPartialUpdate( pdu , *prox );
+      dtDAL::ActorProxy* proxy = mGM->FindActorById(*actorID);
+      if (proxy)
+      {
+         SendPartialUpdate(pdu, *proxy);
+      }     
    }
-   else  // check to see if the GM knows about it
+   else
    {
-      // a possible optimization would be to assume that the GM does NOT
-      // know about this actor.  but, in the event that an actor supports a
-      // property that should associate it with this entity, let's honor that
-      // association by controlling that actor rather than a newly created actor.
-
-      // search all the proxies to know if any are posing as the Entity
-      typedef std::vector<dtDAL::ActorProxy*> ProxyVector;
-      ProxyVector proxies;
-      mGM->GetAllActors( proxies );
-
-      ///\todo add support for this when delta3d allows observation of the DIS properties
-      dtDIS::details::HasProperty hasprop( dtDIS::EntityPropertyName::ENTITYID ) ;
-      hasprop = std::for_each( proxies.begin() , proxies.end() , hasprop ) ;
-      size_t matches = hasprop.GetPassedActors().size() ;
-
-      // didn't have an actor that was posing as this Entity
-      if( matches < 1 )  // need to create a new actor
+      //looks like we received a packet that we sent.  Just ignore it and move on
+      if ((mConfig->GetApplicationID() == pdu.getEntityID().getApplication()) &&
+          (mConfig->GetSiteID() == pdu.getEntityID().getSite()))
       {
-         // if no, then make & add an actor, and remember it for removal.
-         //ActorTypeMap::iterator iter = mTypes.find( pdu.getEntityID().getEntity() );
-         //if( iter != mTypes.end() )
-         const dtDAL::ActorType* actortype( NULL );
-         dtDIS::ActorMapConfig& emapper = mConfig->GetActorMap();
-         const DIS::EntityType& etype = pdu.getEntityType();
-         if( emapper.GetMappedActor(etype, actortype) )
-         {
-            //this isn't the correct way to add a new remote actor. 
-            //dtCore::RefPtr<dtDAL::ActorProxy> proxy = mGM->CreateActor( *(actortype) );
-            //AddActor( pdu, proxy.get() );
+         return;
+      }
 
-            CreateRemoteActor( *actortype, pdu);
-         }
-         else
-         {
-            std::ostringstream ss;
-            ss << etype;
-            LOG_ERROR("Don't know the ActorType to create for " + ss.str() )
-         }
-      }
-      else  // at least one actor is already associated with this entity.
-      {
-         // start controlling the associated actor, maybe delete the others???
-         dtCore::RefPtr<dtDAL::ActorProxy> proxy = hasprop.GetPassedActors().front();
-         mConfig->GetActiveEntityControl().AddEntity( pdu.getEntityID(), proxy.get() );
-         SendPartialUpdate( pdu , *proxy );
-      }
+      CreateRemoteActor(pdu);
    }
 }
 
@@ -105,7 +67,7 @@ void ESPduProcessor::SendPartialUpdate(const DIS::EntityStatePdu& pdu, const dtD
    msg->SetActorTypeCategory( actor.GetActorType().GetCategory() );
 
    details::PartialApplicator apply;
-   apply( pdu , *msg );
+   apply(pdu, *msg, mConfig);
 
    // send it
    mGM->SendMessage( *msg );
@@ -130,36 +92,63 @@ void ESPduProcessor::ApplyFullUpdateToProxy(const DIS::EntityStatePdu& pdu, dtGa
    proxy.ApplyActorUpdate( *msg );
 }
 
-void ESPduProcessor::AddActor(const DIS::EntityStatePdu& pdu, dtDAL::ActorProxy* proxy)
+//void ESPduProcessor::AddActor(const DIS::EntityStatePdu& pdu, dtDAL::ActorProxy* proxy)
+//{
+//   dtGame::GameActorProxy* gap = dynamic_cast<dtGame::GameActorProxy*>( proxy );
+//   if( gap )
+//   {
+//      ApplyFullUpdateToProxy( pdu, *gap );
+//      mGM->AddActor( *gap, true, false );
+//   }
+//   else
+//   {
+//      mGM->AddActor( *proxy );
+//   }
+//
+//   // keep this actor in local memory for easy access
+//   mConfig->GetActiveEntityControl().AddEntity( pdu.getEntityID(), proxy );
+//}
+
+void dtDIS::ESPduProcessor::CreateRemoteActor(const DIS::EntityStatePdu& pdu)
 {
-   dtGame::GameActorProxy* gap = dynamic_cast<dtGame::GameActorProxy*>( proxy );
-   if( gap )
+   const dtDAL::ActorType* actorType(NULL);
+   dtDIS::ActorMapConfig& emapper = mConfig->GetActorMap();
+   const DIS::EntityType& entityType = pdu.getEntityType();
+
+   if(emapper.GetMappedActor(entityType, actorType))
    {
-      ApplyFullUpdateToProxy( pdu, *gap );
-      mGM->AddActor( *gap, true, false );
+      dtCore::RefPtr<dtGame::ActorUpdateMessage> msg;
+      mGM->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_CREATED, msg);
+
+      msg->SetSource(*mMachineInfo);
+
+      msg->SetActorTypeCategory(actorType->GetCategory());
+      msg->SetActorTypeName(actorType->GetName());
+
+      dtCore::UniqueId newActorID;
+      msg->SetAboutActorId(newActorID);
+      msg->SetName(newActorID.ToString());
+
+      dtDIS::details::FullApplicator copyToMsg;
+      copyToMsg(pdu, *msg, mConfig);
+
+      mGM->SendMessage(*msg);
+
+      //store the ID for later retrieval
+      mConfig->GetActiveEntityControl().AddEntity(pdu.getEntityID(), newActorID);
+
+      //TODO SendPartialUpdate()?
    }
    else
    {
-      mGM->AddActor( *proxy );
+      std::string entTypeStr;
+      entTypeStr += dtUtil::ToString<unsigned short>(entityType.getEntityKind()) + 
+              "." + dtUtil::ToString<unsigned short>(entityType.getDomain()) +
+              "." + dtUtil::ToString<unsigned short>(entityType.getCountry()) + 
+              "." + dtUtil::ToString<unsigned short>(entityType.getCategory()) + 
+              "." + dtUtil::ToString<unsigned short>(entityType.getSubcategory()) +
+              "." + dtUtil::ToString<unsigned short>(entityType.getSpecific()) + 
+              "." + dtUtil::ToString<unsigned short>(entityType.getExtra());
+      LOG_WARNING("Don't know the ActorType to create for:" +  entTypeStr);
    }
-
-   // keep this actor in local memory for easy access
-   mConfig->GetActiveEntityControl().AddEntity( pdu.getEntityID(), proxy );
-}
-
-void dtDIS::ESPduProcessor::CreateRemoteActor(const dtDAL::ActorType &actorType,
-                                              const DIS::EntityStatePdu& pdu)
-{
-   dtCore::RefPtr<dtGame::ActorUpdateMessage> msg;
-   mGM->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_CREATED, msg);
-
-   msg->SetSource( *mMachineInfo );
-
-   msg->SetActorTypeCategory( actorType.GetCategory() );
-   msg->SetActorTypeName( actorType.GetName() );
-
-   dtDIS::details::FullApplicator copyToMsg;
-   copyToMsg(pdu, *msg, mConfig);
-
-   mGM->SendMessage(*msg);
 }

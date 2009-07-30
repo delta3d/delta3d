@@ -137,11 +137,16 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void OrthoViewport::moveCamera(float dx, float dy)
+   bool OrthoViewport::moveCamera(float dx, float dy)
    {
+      if (!EditorViewport::moveCamera(dx, dy))
+      {
+         return false;
+      }
+
       if (*mCameraMode == OrthoViewport::CameraMode::NOTHING || getCamera() == NULL)
       {
-         return;
+         return true;
       }
 
       float xAmount = (-dx/getMouseSensitivity()*4.0f) / getCamera()->getZoom();
@@ -166,11 +171,23 @@ namespace dtEditQt
             getCamera()->zoom(0.9f);
          }
       }
+
+      return true;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void OrthoViewport::setScene(dtCore::Scene* scene)
+   {
+      EditorViewport::setScene(scene);
+
+      mObjectMotionModel->SetScale(450.0f / getCamera()->getZoom());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void OrthoViewport::wheelEvent(QWheelEvent* e)
    {
+      ViewportManager::GetInstance().emitWheelEvent(this, e);
+
       if (e->delta() > 0)
       {
          getCamera()->zoom(1.3f);
@@ -180,13 +197,17 @@ namespace dtEditQt
          getCamera()->zoom(0.7f);
       }
 
+      mObjectMotionModel->SetScale(450.0f / getCamera()->getZoom());
       refresh();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void OrthoViewport::beginCameraMode(QMouseEvent* e)
+   bool OrthoViewport::beginCameraMode(QMouseEvent* e)
    {
-      EditorViewport::beginCameraMode(e);
+      if (!EditorViewport::beginCameraMode(e))
+      {
+         return false;
+      }
 
       if (mMouseButton == Qt::LeftButton)
       {
@@ -205,18 +226,46 @@ namespace dtEditQt
 
       setInteractionMode(Viewport::InteractionMode::CAMERA);
       trapMouseCursor();
+
+      return true;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void OrthoViewport::endCameraMode(QMouseEvent* e)
+   bool OrthoViewport::endCameraMode(QMouseEvent* e)
    {
-      EditorViewport::endCameraMode(e);
+      if (!EditorViewport::endCameraMode(e))
+      {
+         return false;
+      }
 
       mCameraMode = &OrthoViewport::CameraMode::NOTHING;
       setInteractionMode(Viewport::InteractionMode::NOTHING);
       releaseMouseCursor();
+
+      return true;
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
+   bool OrthoViewport::beginActorMode(QMouseEvent* e)
+   {
+      if (!EditorViewport::beginActorMode(e))
+      {
+         return false;
+      }
+
+      return true;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   bool OrthoViewport::endActorMode(QMouseEvent* e)
+   {
+      if (!EditorViewport::endActorMode(e))
+      {
+         return false;
+      }
+
+      return true;
+   }
 
    ///////////////////////////////////////////////////////////////////////////////
    void OrthoViewport::warpWorldCamera(int x, int y)

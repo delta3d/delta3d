@@ -32,8 +32,6 @@ namespace dtGame
 {
    class GameManager;
    class TickMessage;
-   class ActorPublishedMessage;
-   class ActorDeletedMessage;
    class ActorUpdateMessage;
 
    class DT_GAME_EXPORT DefaultNetworkPublishingComponent : public GMComponent
@@ -74,13 +72,13 @@ namespace dtGame
           * Processes an incoming actor published message
           * @param The message
           */
-         virtual void ProcessPublishActor(const ActorPublishedMessage& msg, GameActorProxy& gap);
+         virtual void ProcessPublishActor(const Message& msg, GameActorProxy& gap);
 
          /**
           * Processes an incoming actor deleted message
           * @param The message
           */
-         virtual void ProcessDeleteActor(const ActorDeletedMessage& msg);
+         virtual void ProcessDeleteActor(const Message& msg);
 
          /**
           * Processes an incoming actor update message

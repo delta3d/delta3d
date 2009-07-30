@@ -20,34 +20,42 @@
 * Jeffrey P. Houde
 */
 
+#include <dtEditQt/prefabbrowser.h>
+
 #include <prefix/dtstageprefix-src.h>
 #include <QtGui/QDirModel>
+#include <QtGui/QDragEnterEvent>
+#include <QtGui/QDragMoveEvent>
+#include <QtGui/QDropEvent>
 #include <QtGui/QGridLayout>
 #include <QtGui/QGroupBox>
 #include <QtGui/QHeaderView>
+#include <QtGui/QInputDialog>
 #include <QtGui/QLabel>
+#include <QtGui/QListWidget>
+#include <QtGui/QMenu>
+#include <QtGui/QMessageBox>
 #include <QtGui/QPushButton>
-#include <QtGui/QScrollArea>
 #include <QtGui/QScrollBar>
 #include <QtCore/QStringList>
-#include <QtGui/QTreeView>
-#include <QtGui/QTreeWidget>
 #include <QtGui/QSplitter>
 #include <QtGui/QCheckBox>
+#include <QtGui/QToolButton>
 
-#include <dtEditQt/prefabbrowser.h>
 #include <dtEditQt/viewportmanager.h>
 #include <dtEditQt/actortypetreewidget.h>
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/editordata.h>
+#include <dtEditQt/prefabsaveasdialog.h>
+#include <dtEditQt/resourcelistwidgetitem.h>
 #include <dtEditQt/mainwindow.h>
-#include <dtEditQt/resourcetreewidget.h>
 #include <dtEditQt/uiresources.h>
 #include <dtEditQt/editoractions.h>
 #include <dtEditQt/stagecamera.h>
 #include <dtEditQt/viewportoverlay.h>
 #include <dtEditQt/viewportcontainer.h>
 #include <dtEditQt/perspectiveviewport.h>
+#include <dtCore/globals.h>
 #include <dtCore/scene.h>
 #include <dtCore/object.h>
 #include <dtActors/engineactorregistry.h>
@@ -60,15 +68,17 @@
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/librarymanager.h>
 #include <dtUtil/log.h>
+#include <algorithm>
 
 namespace dtEditQt
 {
-
    ///////////////////////////////////////////////////////////////////////////////
    PrefabBrowser::PrefabBrowser(QWidget* parent)
       : QWidget(parent)
-      , mRootPrefabTree(NULL)
-      , mRootNodeWasExpanded(false)
+      , mCurrentDir("")
+      , mPopupMenu(this)    
+      , mExportNewPrefabAction(new QAction("Export New Prefab", this))
+      , mDeleteShortcut(QKeySequence(Qt::Key_Delete), this, SLOT(deleteKeyPushedSlot()))
    {
       setupGUI();
 
@@ -77,168 +87,49 @@ namespace dtEditQt
       
       connect(&EditorActions::GetInstance(), SIGNAL(PrefabExported()),
          this, SLOT(refreshPrefabs()));
+     
+      mPopupMenu.addAction("Add Category", this, SLOT(addCategorySlot()));            
+      mPopupMenu.addAction(mExportNewPrefabAction);
+      connect(mExportNewPrefabAction, SIGNAL(triggered()), this, SLOT(exportNewPrefabSlot()));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    PrefabBrowser::~PrefabBrowser()
-   {
+   {      
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void PrefabBrowser::setupGUI()
    {
-      // create our new object
-      dtCore::RefPtr<dtDAL::ActorProxy> proxy =
-         dtDAL::LibraryManager::GetInstance().CreateActorProxy("dtActors", "Prefab");
-
-      mPreviewObject = dynamic_cast<dtActors::PrefabActorProxy*>(proxy.get());
-      dtCore::DeltaDrawable* actor = NULL;
-      mPreviewObject->GetActor(actor);
-
-      // Setup preview window.
-      mPrefabScene = new dtCore::Scene();
-      mPrefabScene->AddDrawable(actor);
-      mCamera = new StageCamera();
-      mCamera->makePerspective(60.0f,1.333f,0.1f,100000.0f);
-
-      QSplitter* splitter = new QSplitter(Qt::Vertical, this);
-
-      splitter->addWidget(previewGroup());
-      splitter->addWidget(listGroup());
-
-      splitter->setStretchFactor(0, 1);
-      splitter->setStretchFactor(1, 1);
-
       // Setup the main grid.
       mGrid = new QGridLayout(this);
-      mGrid->addWidget(splitter, 0, 0);
+      mGrid->addWidget(listGroup(), 0, 0);
       mGrid->addLayout(buttonLayout(), 1, 0, Qt::AlignCenter);
 
       mGrid->setRowStretch(1, 0);
 
       refreshPrefabs();
 
-      handleEnableCreateActor();
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void PrefabBrowser::SetCameraLookAt()
-   {
-      // Get the bounding sphere of all the actors that belong to this prefab.
-      dtCore::DeltaDrawable* prefab = NULL;
-      mPreviewObject->GetActor(prefab);
-      if (prefab)
-      {
-         osg::Vec3 min, max;
-
-         int childCount = prefab->GetNumChildren();
-         for (int childIndex = 0; childIndex < childCount; childIndex++)
-         {
-            dtCore::DeltaDrawable* child = prefab->GetChild(childIndex);
-            if (child)
-            {
-               const osg::BoundingSphere& bs = child->GetOSGNode()->getBound();
-
-               for (int axis = 0; axis < 3; axis++)
-               {
-                  if (min[axis] > bs.center()[axis] - bs.radius())
-                  {
-                     min[axis] = bs.center()[axis] - bs.radius();
-                  }
-
-                  if (max[axis] < bs.center()[axis] + bs.radius())
-                  {
-                     max[axis] = bs.center()[axis] + bs.radius();
-                  }
-               }
-            }
-         }
-
-         osg::Vec3 center;
-         float radius = 0.0f;
-
-         for (int axis = 0; axis < 3; axis++)
-         {
-            center[axis] = min[axis] + ((max[axis] - min[axis]) * 0.5f);
-
-            float testRadius = (max[axis] - min[axis]) * 0.5f;
-            if (testRadius > radius)
-            {
-               radius = testRadius;
-            }
-         }
-
-         dtCore::Transformable* tPrefab = dynamic_cast<dtCore::Transformable*>(prefab);
-         if (tPrefab)
-         {
-            float offset = (radius < 1000.0f) ? radius : 0.0f;
-
-            dtCore::Transform xform;
-            tPrefab->GetTransform(xform);
-
-            mCamera->resetRotation();
-            osg::Vec3 viewDir = mCamera->getViewDir();
-
-            osg::Vec3 translation;
-            xform.GetTranslation(translation);
-            if (offset > 0.0f)
-            {
-               mCamera->setPosition(translation + viewDir * offset * -2.0f);
-            }
-            else
-            {
-               mCamera->setPosition(translation + center);
-            }
-         }
-      }
+      handleEnableCreateActorBtn();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void PrefabBrowser::clearPrefabTree()
    {
-      markCurrentExpansion();
-
-      mTree->clear();
-      mPrefabList.clear();
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void PrefabBrowser::displaySelection()
-   {
-      ResourceTreeWidget* selection = getSelectedPrefabWidget();
-
-      if (selection)
-      {
-         dtDAL::ResourceActorProperty* resourceProp = NULL;
-         resourceProp = dynamic_cast<dtDAL::ResourceActorProperty*>(mPreviewObject->GetProperty("PrefabResource"));
-         if (resourceProp)
-         {
-            dtDAL::ResourceDescriptor descriptor = dtDAL::ResourceDescriptor();
-            if (selection->isResource())
-            {
-               descriptor = selection->getResourceDescriptor();
-            }
-
-            resourceProp->SetValue(&descriptor);
-            SetCameraLookAt();
-
-            mPerspView->refresh();
-            mPerspView->GetQGLWidget()->setFocus();
-         }
-      }
+      mListWidget->clear();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void PrefabBrowser::handleEnableCreateActor()
+   void PrefabBrowser::handleEnableCreateActorBtn()
    {
-      ResourceTreeWidget* selectedWidget = getSelectedPrefabWidget();
+      ResourceListWidgetItem* selectedWidget = getSelectedPrefabWidget();
 
-      // if we have a leaf, then enable the button
-      if (selectedWidget != NULL && selectedWidget->isResource())
+      if(selectedWidget != NULL && selectedWidget->isResource())
       {
-         mCreatePrefabBtn->setEnabled(true);
-         mCreateInstanceBtn->setEnabled(true);
-         return;
+            //enable the button      
+            mCreatePrefabBtn->setEnabled(true);
+            mCreateInstanceBtn->setEnabled(true);
+            return;
       }
 
       // disable the button if we got here.
@@ -247,59 +138,107 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   ResourceTreeWidget* PrefabBrowser::getSelectedPrefabWidget()
+   void PrefabBrowser::addCategorySlot()
    {
-      ResourceTreeWidget* returnVal = NULL;
+      bool ok;
+      bool validCategory = false;
+      QString newCategoryName;
+      std::string newCatFullPath;
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
-      if (mTree != NULL)
+      while (!validCategory)
       {
-         QList<QTreeWidgetItem*> list = mTree->selectedItems();
+         newCategoryName = QInputDialog::getText(this, tr("Category Name"),
+                                    tr("Enter New Category Name:"), QLineEdit::Normal,
+                                    tr(""), &ok);
 
-         if (!list.isEmpty())
+         //Pushed OK button?
+         if (!ok || newCategoryName == "")
          {
-            returnVal = dynamic_cast<ResourceTreeWidget*>(list[0]);
+            //pushed Cancel button, we're done here
+            return;
          }
+
+         if (newCategoryName.contains(QRegExp("[\\\\/:\\*\\?\"<>|]")))
+         {
+            QMessageBox::critical(this, tr("Invalid Characters"),
+                   tr("category names cannot contain any of these characters\n \\/\"*?<>|"),
+                   tr("OK"));
+
+            continue; //category name isn't valid
+         }
+
+         newCatFullPath = mCurrentDir + "/" + newCategoryName.toStdString();         
+
+         if (fileUtils.DirExists(newCatFullPath))
+         {
+            QMessageBox::critical(this, tr("Category Already Exists"), 
+               tr("Category Already Exists"), tr("OK"));
+            continue; //category isn't valid
+         }     
+
+         validCategory = true;
       }
 
-      return returnVal;
+      try
+      {
+         fileUtils.MakeDirectory(newCatFullPath);
+      }
+      catch (dtUtil::Exception e)
+      {
+         QString reason("Unable to create category.\n This reason was given:\n\n");
+         reason += e.ToString().c_str();
+   
+      	QMessageBox::critical(this, tr("Unable to Create Category"), reason, tr("OK"));
+
+         return;
+      }
+
+      refreshPrefabs();      
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   QGroupBox* PrefabBrowser::previewGroup()
+   void PrefabBrowser::exportNewPrefabSlot()
    {
-      QGroupBox* groupBox = new QGroupBox(tr("Preview"));
+      PrefabSaveDialog dlg(this);
+      std::string contextDir = dtDAL::Project::GetInstance().GetContext();
+      std::string contextDirPlusPrefab = contextDir + "/Prefabs";
+      std::string categoryRelPath = mCurrentDir.substr(contextDirPlusPrefab.size());
 
-      QGridLayout* grid = new QGridLayout(groupBox);
+      //chop off any preceeding slashes the category name
+      if(categoryRelPath[0] == '/' || categoryRelPath[0] == '\\')
+      {
+         categoryRelPath = categoryRelPath.substr(1);
+      }
 
-      // New reference of the viewport manager singleton
-      ViewportManager& vpMgr = ViewportManager::GetInstance();
+      dlg.setPrefabCategory(categoryRelPath);
 
-      // Create the perspective viewport for the static mesh preview window
-      mPerspView = (PerspectiveViewport*)vpMgr.createViewport("Preview",
-         ViewportManager::ViewportType::PERSPECTIVE);
+      if (dlg.exec() == QDialog::Rejected)
+      {
+         return;
+      }
 
-      // Assign the viewport a new scene
-      mPerspView->setScene(mPrefabScene.get());
+      EditorActions::GetInstance().SaveNewPrefab(dlg.getPrefabCategory(),
+                                                 dlg.getPrefabFileName(),
+                                                 dlg.GetPrefabIconFileName(),
+                                                 dlg.getPrefabDescription());
+   }
 
-      //By default, perspective viewports have their camera set to the world view
-      //camera.  The world view camera is what is used in the main perspective view.
-      mPerspView->setCamera(mCamera.get());
+   ///////////////////////////////////////////////////////////////////////////////
+   ResourceListWidgetItem* PrefabBrowser::getSelectedPrefabWidget()
+   {   
+      if (mListWidget != NULL)
+      {
+         QList<QListWidgetItem*> list = mListWidget->selectedItems();
 
-      //No need for an overlay for this viewport since we cannot select meshes
-      //in the preview window.
-      mPerspView->setOverlay(NULL);
+         if (! list.isEmpty())  
+         {            
+            return dynamic_cast<ResourceListWidgetItem*>(list[0]);
+         }
+      }
 
-      // Disable the interaction modes
-      mPerspView->setAutoInteractionMode(false);
-      mPerspView->setAutoSceneUpdate(false);
-      mPerspView->setEnableKeyBindings(false);
-
-      // Create a viewport container for our static mesh window
-      mContainer = new ViewportContainer(mPerspView, groupBox);
-      mContainer->setViewport(mPerspView);
-
-      grid->addWidget(mContainer, 0, 0);
-      return groupBox;
+      //nothing is selected
+      return NULL;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -307,29 +246,23 @@ namespace dtEditQt
    {
       QGroupBox*   groupBox = new QGroupBox(tr("Prefabs"));
       QGridLayout* grid     = new QGridLayout(groupBox);
-      QHBoxLayout* hbox     = new QHBoxLayout();
+      
+      mListWidget = new ResourceDragListWidget(groupBox);
+      mListWidget->setResourceName("Prefab");
+      mListWidget->setAutoScroll(true);
+      //mListWidget->setViewMode(QListWidget::IconMode);
+      mListWidget->setIconSize(QSize(50,50));
+      mListWidget->setContextMenuPolicy(Qt::CustomContextMenu);
 
-      // Create Tree
-      mTree = new ResourceDragTree(groupBox);
-      mTree->setResourceName("Prefab");
-      mTree->setColumnCount(1);
-      mTree->header()->hide();
-      connect(mTree, SIGNAL(itemSelectionChanged()), this, SLOT(treeSelectionChanged()));
+      // connect signals
+      connect(mListWidget, SIGNAL(itemSelectionChanged()), this, SLOT(listSelectionChanged()));
+      connect(mListWidget, SIGNAL(itemActivated(QListWidgetItem *)), this,
+         SLOT(listSelectionDoubleClicked(QListWidgetItem*)));
+      connect(mListWidget, SIGNAL(customContextMenuRequested(const QPoint &)), this,
+         SLOT(rightClickMenu(const QPoint &)));      
 
       // Checkbox for auto preview
-      mPreviewChk = new QCheckBox(tr("Auto Preview"), groupBox);
-      connect(mPreviewChk, SIGNAL(stateChanged(int)), this, SLOT(checkBoxSelected()));
-      mPreviewChk->setChecked(false);
-
-      // Preview button for a selected mesh
-      mPreviewBtn = new QPushButton("Preview", groupBox);
-      connect(mPreviewBtn, SIGNAL(clicked()), this, SLOT(displaySelection()));
-      mPreviewBtn->setDisabled(true);
-
-      hbox->addWidget(mPreviewChk, 0, Qt::AlignLeft);
-      hbox->addWidget(mPreviewBtn, 0, Qt::AlignRight);
-      grid->addLayout(hbox, 0, 0);
-      grid->addWidget(mTree, 1, 0);
+      grid->addWidget(mListWidget, 1, 0);
 
       return groupBox;
    }
@@ -356,93 +289,6 @@ namespace dtEditQt
       return btnLayout;
    }
 
-   /////////////////////////////////////////////////////////////////////////////////
-   void PrefabBrowser::markCurrentExpansion()
-   {
-      if (mTree != NULL && mRootPrefabTree != NULL)
-      {
-         // we trap the root node separately to make the tree walking easier.
-         mRootNodeWasExpanded = mTree->isItemExpanded(mRootPrefabTree);
-
-         // clear out previous marks
-         mExpandedActorTypeNames.clear();
-
-         // start recursion
-         recurseMarkCurrentExpansion(mRootPrefabTree, mExpandedActorTypeNames);
-
-         // also store the last location of the scroll bar... so that they go back
-         // to where they were next time.
-         mLastScrollBarLocation = mTree->verticalScrollBar()->sliderPosition();
-      }
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
-   void PrefabBrowser::recurseMarkCurrentExpansion(ResourceTreeWidget* parent,
-      dtUtil::tree<QString>& currentTree)
-   {
-      for (int i = 0; i < parent->childCount(); ++i)
-      {
-         ResourceTreeWidget* child = dynamic_cast<ResourceTreeWidget*>(parent->child(i));
-
-         // if we have children, then we could potentially be expanded...
-         if (child != NULL && child->childCount() > 0)
-         {
-            if (mTree->isItemExpanded(child))
-            {
-               // add it to our list
-               dtUtil::tree<QString>& insertedItem = currentTree.
-                  insert(child->getCategoryName()).tree_ref();
-
-               // recurse on the child with the new tree
-               recurseMarkCurrentExpansion(child, insertedItem);
-            }
-         }
-      }
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
-   void PrefabBrowser::restorePreviousExpansion()
-   {
-      if (mTree != NULL && mRootPrefabTree != NULL)
-      {
-         // re-expand the root node separately to make the tree walking easier.
-         if (mRootNodeWasExpanded)
-         {
-            mTree->expandItem(mRootPrefabTree);
-         }
-
-         recurseRestorePreviousExpansion(mRootPrefabTree, mExpandedActorTypeNames);
-
-         // Put the scroll bar back where it was last time
-         mTree->verticalScrollBar()->setSliderPosition(mLastScrollBarLocation);
-      }
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
-   void PrefabBrowser::recurseRestorePreviousExpansion(ResourceTreeWidget* parent,
-      dtUtil::tree<QString>& currentTree)
-   {
-      // walk through the children...
-      for (dtUtil::tree<QString>::const_iterator iter = currentTree.in(); iter != currentTree.end(); ++iter)
-      {
-         QString name = (*iter);
-
-         // Try to find a control with this name in our model
-         for (int i = 0; i < parent->childCount(); ++i)
-         {
-            ResourceTreeWidget* child = dynamic_cast<ResourceTreeWidget*>(parent->child(i));
-            // found a match!  expand it
-            if (child->getCategoryName() == name)
-            {
-               mTree->expandItem(child);
-
-               // recurse over the children of this object
-               recurseRestorePreviousExpansion(child, iter.tree_ref());
-            }
-         }
-      }
-   }
-
    ///////////////////////////////////////////////////////////////////////////////
    // SLOTS
    ///////////////////////////////////////////////////////////////////////////////
@@ -450,15 +296,16 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void PrefabBrowser::createPrefabPressed()
    {
-      ResourceTreeWidget* selectedWidget = getSelectedPrefabWidget();
+      ResourceListWidgetItem* selectedWidget = getSelectedPrefabWidget();
 
       if (selectedWidget && selectedWidget->isResource())
       {
+         dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+         fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext());
+
          dtDAL::ResourceDescriptor descriptor = selectedWidget->getResourceDescriptor();
          std::string fullPath = dtDAL::Project::GetInstance().GetResourcePath(descriptor);
 
-         dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-         fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext());
          try
          {
             EditorData::GetInstance().getMainWindow()->startWaitCursor();
@@ -553,11 +400,11 @@ namespace dtEditQt
    ////////////////////////////////////////////////////////////////////////////////
    void PrefabBrowser::createPrefabInstancePressed()
    {
-      ResourceTreeWidget* selectedWidget = getSelectedPrefabWidget();
-
+      ResourceListWidgetItem* selectedWidget = getSelectedPrefabWidget();
+      
       // if we have an actor type, then create the proxy and emit the signal
       if (selectedWidget && selectedWidget->isResource())
-      {
+      {      
          EditorData::GetInstance().getMainWindow()->startWaitCursor();
 
          // create our new object
@@ -578,7 +425,7 @@ namespace dtEditQt
             resourceProp = dynamic_cast<dtDAL::ResourceActorProperty*>(proxy->GetProperty("PrefabResource"));
             if (resourceProp)
             {
-               dtDAL::ResourceDescriptor descriptor = selectedWidget->getResourceDescriptor();
+               dtDAL::ResourceDescriptor descriptor = selectedWidget->getResourceDescriptor();               
                resourceProp->SetValue(&descriptor);
             }
 
@@ -599,104 +446,145 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void PrefabBrowser::treeSelectionChanged()
+   void PrefabBrowser::deleteKeyPushedSlot()
    {
-      handleEnableCreateActor();
-
-      ResourceTreeWidget* selection = NULL;
-
-      if (mTree != NULL)
+      if (! isActiveWindow() || ! underMouse())
       {
-         QList <QTreeWidgetItem*> list = mTree->selectedItems();
-
-         if (!list.isEmpty())
-         {
-            selection = dynamic_cast<ResourceTreeWidget*>(list[0]);
-         }
-         if (selection != NULL)
-         {
-            if (selection->isResource())
-            {
-               EditorData::GetInstance().setCurrentPrefabResource(selection->getResourceDescriptor());
-            }
-            else
-            {
-               EditorData::GetInstance().setCurrentPrefabResource(dtDAL::ResourceDescriptor());
-            }
-         }
+         return;
       }
 
-      // Set the prefab resource of the actor to the current prefab.
-      dtDAL::ResourceActorProperty* resourceProp = NULL;
-      resourceProp = dynamic_cast<dtDAL::ResourceActorProperty*>(mPreviewObject->GetProperty("PrefabResource"));
-      if (resourceProp)
+      ResourceListWidgetItem* selItem = getSelectedPrefabWidget();
+
+      if (selItem == NULL)
       {
-         dtDAL::ResourceDescriptor descriptor = dtDAL::ResourceDescriptor();
-         if (selection)
-         {
-            if (selection->isResource())
-            {
-               if (mPreviewChk->isChecked())
-               {
-                  displaySelection();
-               }
-               mPreviewBtn->setEnabled(true);
-            }
-            else
-            {
-               if (mPreviewChk->isChecked())
-               {
-                  // Since the current selection is not a resource,
-                  // displaying the selection will just clear the window.
-                  displaySelection();
-               }
-               mPreviewBtn->setDisabled(true);
-            }
-         }
+         return;
       }
+
+      //If not a Resource, assume this is a prefab category (folder)
+      if (! selItem->isResource())
+      {
+         QMessageBox msgBox(this);
+         std::string informative = "Deleting this Category will delete all Prefabs in the Category.\n";
+         informative += "Ensure that none of your maps use these Prefabs before deleting this Category.\n";
+         informative += "\nAre you sure you want to delete this Category?";
+         
+         msgBox.setWindowTitle("Delete All Prefabs in this Category?");
+         msgBox.setText(informative.c_str());
+         msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+         msgBox.setDefaultButton(QMessageBox::Cancel);
+         int ret = msgBox.exec();
+
+         if (ret == QMessageBox::Cancel)
+         {
+            return;
+         }
+
+         //Deleting the category is a go!
+         try 
+         {
+            dtUtil::FileUtils::GetInstance().DirDelete(selItem->getCategoryFullName().toStdString(), true);
+         }
+         catch (dtUtil::Exception e)
+         {
+            QString reason("Error deleting category.\n This reason was given:\n\n");
+            reason += e.ToString().c_str();
+
+            QMessageBox::critical(this, tr("Unable to delete Category"), reason, tr("OK"));
+            return;
+         }                  
+      }
+      else  //if selItem IS a Resource, assume it is a Prefab
+      {
+         QMessageBox msgBox(this);
+         std::string informative = "You should ensure that none of your maps use this Prefab";
+         informative += " before deleting it.\n\n";
+         informative += "Are you sure you want to delete this Prefab?";
+
+         msgBox.setWindowTitle("Delete Prefab?");
+         msgBox.setText(informative.c_str());
+         msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+         msgBox.setDefaultButton(QMessageBox::Cancel);
+         int ret = msgBox.exec();
+
+         if (ret == QMessageBox::Cancel)
+         {
+            return;
+         }
+
+         //Deleting the prefab is a go!
+         std::string prefabFullPath = dtEditQt::EditorData::GetInstance().getCurrentProjectContext();        
+         dtDAL::ResourceDescriptor& resDes = selItem->getResourceDescriptor();
+         QString prefabName = resDes.GetResourceIdentifier().c_str();
+         prefabName = prefabName.replace(QRegExp("::"), QString("/"));
+         prefabFullPath += "/" + prefabName.toStdString();
+
+         try
+         {
+            dtUtil::FileUtils::GetInstance().FileDelete(prefabFullPath);
+         }
+         catch (dtUtil::Exception e)
+         {
+            QString reason("Error deleting Prefab.\n This reason was given:\n\n");
+            reason += e.ToString().c_str();
+
+            QMessageBox::critical(this, tr("Unable to Delete Prefab"), reason, tr("OK"));
+            return;
+         }                          
+      }
+
+      refreshPrefabs();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void PrefabBrowser::checkBoxSelected()
+   void PrefabBrowser::listSelectionChanged()
    {
-      if (mPreviewChk->isChecked())
+      handleEnableCreateActorBtn();
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void PrefabBrowser::listSelectionDoubleClicked(QListWidgetItem* activatedItem)
+   {
+      ResourceListWidgetItem* selectedWidget = getSelectedPrefabWidget();      
+
+      if (selectedWidget == NULL)
       {
-         ResourceTreeWidget* selection = NULL;
-
-         if (mTree != NULL)
-         {
-            QList <QTreeWidgetItem*> list = mTree->selectedItems();
-
-            if (!list.isEmpty())
-            {
-               selection = dynamic_cast<ResourceTreeWidget*>(list[0]);
-            }
-            if (selection != NULL)
-            {
-               if (selection->isResource())
-               {
-                  EditorData::GetInstance().setCurrentPrefabResource(selection->getResourceDescriptor());
-               }
-               else
-               {
-                  EditorData::GetInstance().setCurrentPrefabResource(dtDAL::ResourceDescriptor());
-               }
-            }
-         }
-
-         if(selection != NULL)
-         {
-            if (selection->isResource())
-            {
-               displaySelection();
-            }
-         }
+         return;
       }
+
+      QString fullpath = selectedWidget->getCategoryFullName();
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+
+      if (fileUtils.DirExists(fullpath.toStdString()))
+      {
+         mCurrentDir = fullpath.replace(QString("\\"), QString("/")).toStdString();
+      }
+
+      refreshPrefabs();
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void PrefabBrowser::rightClickMenu(const QPoint& clickPoint)
+   {
+      //disable "Export Prefab" menu Action if there are no actors selected:
+      dtEditQt::ViewportOverlay::ActorProxyList& selectionList = 
+         dtEditQt::ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
+      if(selectionList.size() < 1)
+      {
+         mExportNewPrefabAction->setEnabled(false);
+      }
+      else
+      {
+         mExportNewPrefabAction->setEnabled(true);
+      }
+         
+      mPopupMenu.exec(QCursor::pos());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void PrefabBrowser::refreshPrefabs()
    {
+      unsigned int numCategories = 0;      
+      
       // resets everything and marks the current expansion
       clearPrefabTree();
 
@@ -711,7 +599,7 @@ namespace dtEditQt
       EditorData::GetInstance().getMainWindow()->startWaitCursor();
 
       project.Refresh();
-      project.GetResourcesOfType(dtDAL::DataType::PREFAB, mPrefabList);
+      //project.GetResourcesOfType(dtDAL::DataType::PREFAB, mPrefabList);
 
       QIcon resourceIcon;
       resourceIcon.addPixmap(QPixmap(UIResources::ICON_ACTOR.c_str()));
@@ -720,21 +608,169 @@ namespace dtEditQt
       QIcon folderIcon;
       folderIcon.addPixmap(QPixmap(UIResources::ICON_TINY_FOLDER_OPEN.c_str()), QIcon::Normal, QIcon::On);
       folderIcon.addPixmap(QPixmap(UIResources::ICON_TINY_FOLDER.c_str()), QIcon::Normal, QIcon::Off);
+      
+      std::string contextDir = dtEditQt::EditorData::GetInstance().getCurrentProjectContext();
+      std::string iconDir = contextDir + "/" +
+                         dtEditQt::EditorActions::PREFAB_DIRECTORY + "/icons";
 
-      // recreate our root.
-      mRootPrefabTree = new ResourceTreeWidget(mTree);
-      mRootPrefabTree->setText(0, "Prefabs");
-      mRootPrefabTree->recursivelyCreateResourceTree(mPrefabList, mResourceIcon);
-      mRootPrefabTree->setIsResource(false);
-      mRootPrefabTree->setIcon(0, folderIcon);
+      std::string prefabDir = contextDir + "/" + dtEditQt::EditorActions::PREFAB_DIRECTORY;
 
-      // connect tree signals
-      connect(mTree, SIGNAL(itemSelectionChanged()), this, SLOT(treeSelectionChanged()));
+      // Test if we have changed our context directory.
+      if (mTopPrefabDir != prefabDir)
+      {
+         mCurrentDir = prefabDir;
+         mTopPrefabDir = prefabDir; 
+      }
 
-      // Now, go back and try to re-expand items and restore our scroll position
-      restorePreviousExpansion();
+      dtUtil::DirectoryContents dirFiles;
+      if (dtUtil::FileUtils::GetInstance().DirExists(mCurrentDir))
+      {
+         dirFiles = dtUtil::FileUtils::GetInstance().DirGetFiles(mCurrentDir);
+         //std::sort(dirFiles.begin(), dirFiles.end());
+      }
+      else
+      {
+         //Prefabs dir hasn't been created yet ... nothing to show
+         EditorData::GetInstance().getMainWindow()->endWaitCursor();
+         return;
+      }
 
+      std::string nextFile;
+      std::string nextFileFullPath;
+      std::string nextIconFullPath;
+      bool isFolder = false;
+      
+      if (!dtUtil::FileUtils::GetInstance().IsSameFile(mCurrentDir, mTopPrefabDir))      
+      {
+         //Show a "Go up a folder" icon
+         nextIconFullPath = dtCore::GetDeltaRootPath() + "/utilities/STAGE/icons/upfolder_big.png";
+         ResourceListWidgetItem* aWidget = new ResourceListWidgetItem(
+                                           dtDAL::ResourceDescriptor(),
+                                           QIcon(nextIconFullPath.c_str()),
+                                           "Up");         
+
+         std::string prevDir =
+             dtUtil::FileUtils::GetInstance().GetAbsolutePath(mCurrentDir + "/..");
+         aWidget->setCategoryFullName(prevDir.c_str());
+
+         mListWidget->addItem(aWidget);
+      }
+
+      for (size_t i = 0; i < dirFiles.size(); ++i)
+      {
+         nextFile = dirFiles[i];
+         isFolder = false;
+
+         //don't show any hidden directories
+         if (dirFiles[i][0] == '.')
+         {
+            continue;
+         }
+
+         nextFileFullPath = mCurrentDir + "/" + nextFile;
+
+         //determine what the icon is for this file:  ////////////////////////////////////////////         
+         if (dtUtil::FileUtils::GetInstance().DirExists(nextFileFullPath))
+         {
+            //Don't want to see the icons folder
+            if(dtUtil::FileUtils::GetInstance().IsSameFile(mCurrentDir, mTopPrefabDir) &&
+               nextFile == "icons")            
+            {
+               continue;
+            }
+
+            //this file is a folder
+            nextIconFullPath = dtCore::GetDeltaRootPath() + "/utilities/STAGE/icons/folder.png";
+            isFolder = true;
+         }
+         else //this should be a regular file
+         {
+            std::string ext = nextFile.substr(nextFile.rfind("."));
+            std::transform(ext.begin(), ext.end(), ext.begin(), tolower);
+            if(ext != ".dtprefab")
+            {
+               //only doing files with .dtprefab extension
+               continue;
+            }
+
+            dtCore::RefPtr<dtDAL::MapParser> parser = new dtDAL::MapParser;            
+            std::string iconFileName = parser->GetPrefabIconFileName(nextFileFullPath);            
+            
+            nextIconFullPath = "";
+            if (iconFileName != "")
+            {
+               nextIconFullPath = iconDir + "/" + iconFileName;
+
+               if (! dtUtil::FileUtils::GetInstance().FileExists(nextIconFullPath))
+               {
+                  nextIconFullPath = "";
+               }
+            }   
+            
+            if(nextIconFullPath == "")
+            {
+               nextIconFullPath = dtCore::GetDeltaRootPath() + "/utilities/STAGE/icons/Icon_NoIcon64.png";
+            }            
+         }
+         
+         nextFile = nextFile.substr(0, nextFile.rfind(".dtprefab")); //truncate dtprefab extension         
+         nextFile = nextFile.substr(0, 16);  //truncate to 16 characters         
+         
+         //folders go to the front of the list
+         if (isFolder)
+         { 
+            //If this is a folder, DON'T give this a ResourceDescriptor:
+            ResourceListWidgetItem* aWidget = new ResourceListWidgetItem(
+               dtDAL::ResourceDescriptor(),                              
+               QIcon(nextIconFullPath.c_str()), nextFile.c_str());
+            aWidget->setCategoryFullName(nextFileFullPath.c_str());            
+
+            //want "Up a folder" to be first on all but the top level
+            if(dtUtil::FileUtils::GetInstance().IsSameFile(mCurrentDir, mTopPrefabDir))            
+            {
+               mListWidget->insertItem(0 + numCategories, aWidget);               
+            }
+            else
+            {
+               mListWidget->insertItem(1 + numCategories, aWidget);
+            }
+            ++numCategories;            
+         }
+         else 
+         {
+            ResourceListWidgetItem* aWidget = new ResourceListWidgetItem(
+               createResDescriptorFromPath(nextFileFullPath),                              
+               QIcon(nextIconFullPath.c_str()), nextFile.c_str());
+            mListWidget->addItem(aWidget);
+         }
+      } // end for
+                                                                                
       EditorData::GetInstance().getMainWindow()->endWaitCursor();
    }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   dtDAL::ResourceDescriptor PrefabBrowser::createResDescriptorFromPath(std::string path)
+   {
+      QString relPath = path.substr(dtDAL::Project::GetInstance().GetContext().length() + 1).c_str();
+
+      //remove redundant slashes first:
+      QRegExp re("\\\\\\\\");
+      while(relPath.contains(re))
+      {
+         relPath.replace(QRegExp("\\\\\\\\"), QString("/"));
+      }
+      re.setPattern("//");
+      while(relPath.contains(re))
+      {
+         relPath.replace(QRegExp("//"), QString("/"));
+      }
+
+      relPath = relPath.replace(QRegExp("[\\\\/]"),QString("::"));
+
+      dtDAL::ResourceDescriptor resDesc(relPath.toStdString(), relPath.toStdString());
+
+      return resDesc;
+   }
+
 
 } // namespace dtEditQt

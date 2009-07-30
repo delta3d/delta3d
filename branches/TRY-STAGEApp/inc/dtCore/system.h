@@ -31,9 +31,15 @@
 
 #include <map>
 
+namespace osg
+{
+   class Stats;
+}
+
 namespace dtCore
 {
    class Camera;
+   class SystemImpl;
 
    /**
     * Performs high-level frame coordination. The System is used to control the
@@ -312,8 +318,18 @@ namespace dtCore
       /// mostly for unit test, other places in code may need this though
       double GetMaxTimeBetweenDraws() const;
 
+      /// Turns on statistics - set from and used by stats to view Delta3D statistics.
+      void SetStats(osg::Stats *newValue);
+
+      /// Non-null if stats was set by stats. If non-null, system does some extra processing for stats.
+      osg::Stats* GetStats();
+
+      /// Returns true if there is a stats set.  When true, we are doing a tad more processing to do stats.
+      bool IsStatsOn();
+
    private:
 
+      SystemImpl* mSystemImpl;
       System(); ///<private
       static System* mSystem;   ///<The System pointer
       static bool mInstanceFlag;///<Have we created a System yet?

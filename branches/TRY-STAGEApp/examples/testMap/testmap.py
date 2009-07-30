@@ -33,20 +33,22 @@ class TestMap(Application):
 
       # Get the proxies from the map
       self.proxies = ActorProxyVector()
-      myMap.FindProxies(self.proxies,"StaticMesh*")
+      myMap.FindProxies(self.proxies,"*")
 
       self.smoke.LoadFile("Particles/smoke.osg")
-      self.explosion.AddDetonationTypeMapping(HighExplosiveDetonation, "Particles/explosion.osg")
+      self.explosion.AddDetonationTypeMapping("HighExplosiveDetonation", "Particles/explosion.osg")
  
       print 'self.proxies[0] = ', self.proxies[0]
       
       for actor in self.proxies :
+         print "Next Actor name:", actor.GetName()
          # Find our helicopter by name
-         if actor.GetName() == "StaticMesh0" :
+         if actor.GetName() == "helo" :
             self.helicopter = actor.GetActor()
          # Find our tree by name
          if actor.GetName() == "StaticMesh1" :
             self.tree = actor.GetActor()
+         
       
       # Error check
       if self.helicopter is None :
@@ -62,7 +64,7 @@ class TestMap(Application):
       self.smoke.SetEnabled(1)
       self.GetScene().AddDrawable(self.explosion)
 
-      # translate the camera back some
+      # translate the camera to a better view angle
       self.GetCamera().SetTransform(Transform(-25, -100, 0, 0, 0, 0))
 
    

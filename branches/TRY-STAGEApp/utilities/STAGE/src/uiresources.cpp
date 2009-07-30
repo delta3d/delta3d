@@ -50,11 +50,11 @@ namespace dtEditQt
       ICON_EDIT_UNDO = ":/icons/undo.png";
       ICON_EDIT_REDO = ":/icons/redo.png";
 
-      ICON_TOOLMODE_CAMERA = ":/icons/cameramode_small.png";
-      ICON_TOOLMODE_SELECT = ":/icons/selectmode_small.png";
-      ICON_TOOLMODE_TRANSLATE = ":/icons/translatemode_small.png";
-      ICON_TOOLMODE_ROTATE = ":/icons/rotatemode_small.png";
-      ICON_TOOLMODE_SCALE = ":/icons/scalemode_small.png";
+      ICON_BRUSH_CUBE = dtCore::GetDeltaRootPath() + "/utilities/STAGE/icons/cube.png";
+      ICON_BRUSH_SPHERE = dtCore::GetDeltaRootPath() + "/utilities/STAGE/icons/sphere.png";
+      ICON_BRUSH_RESET = dtCore::GetDeltaRootPath() + "/utilities/STAGE/icons/resetBrush.png";
+
+      ICON_TOOLMODE_NORMAL = ":/icons/normalmode.png";
 
       ICON_VIEWMODE_TEXTURES = ":/icons/texturemode_tiny.png";
       ICON_VIEWMODE_LIGHTING = ":/icons/lightingmode_tiny.png";
@@ -113,11 +113,11 @@ namespace dtEditQt
    std::string UIResources::ICON_EDIT_UNDO("");
    std::string UIResources::ICON_EDIT_REDO("");
 
-   std::string UIResources::ICON_TOOLMODE_CAMERA("");
-   std::string UIResources::ICON_TOOLMODE_SELECT("");
-   std::string UIResources::ICON_TOOLMODE_TRANSLATE("");
-   std::string UIResources::ICON_TOOLMODE_ROTATE("");
-   std::string UIResources::ICON_TOOLMODE_SCALE("");
+   std::string UIResources::ICON_BRUSH_CUBE("");
+   std::string UIResources::ICON_BRUSH_SPHERE("");
+   std::string UIResources::ICON_BRUSH_RESET("");
+
+   std::string UIResources::ICON_TOOLMODE_NORMAL("");
 
    std::string UIResources::ICON_VIEWMODE_TEXTURES("");
    std::string UIResources::ICON_VIEWMODE_LIGHTING("");

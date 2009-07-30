@@ -53,7 +53,7 @@ namespace dtNetGM
          return false;
       }
 
-      mMutex.acquire();
+      OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mMutex);
 
       bool ret = true;
 
@@ -82,7 +82,6 @@ namespace dtNetGM
       machineInfo.SetHostName(serverConnListener->getLocalAddress().getNameByAddress());
       machineInfo.SetIPAddress(serverConnListener->getLocalAddress().toString());
 
-      mMutex.release();
       return ret;
    }
 
@@ -101,7 +100,7 @@ namespace dtNetGM
    ////////////////////////////////////////////////////////////////////////////////
    void ServerNetworkComponent::OnDisconnect(NetworkBridge& networkBridge)
    {
-      mMutex.acquire();
+      OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mMutex);
 
       if (networkBridge.IsConnectedClient() && !IsShuttingDown())
       {
@@ -118,8 +117,6 @@ namespace dtNetGM
       // remove Connection
       networkBridge.SetClientConnected(false);
       NetworkComponent::OnDisconnect(networkBridge);
-
-      mMutex.release();
    }
 
 

@@ -27,6 +27,7 @@ TARGET_LINK_LIBRARIES(${LIB_NAME}
 ENDIF (WIN32)
 
 TARGET_LINK_LIBRARIES(${LIB_NAME}
+                      ${DTACTORS_LIBRARY}
                       ${DTUTIL_LIBRARY}
                       ${DTCORE_LIBRARY}
                       ${DTGAME_LIBRARY}

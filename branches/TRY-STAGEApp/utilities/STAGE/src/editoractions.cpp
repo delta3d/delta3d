@@ -41,6 +41,8 @@
 
 #include <osgDB/FileNameUtils>
 
+#include <dtActors/volumeeditactor.h>
+
 #include <dtEditQt/uiresources.h>
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/editorevents.h>
@@ -60,6 +62,7 @@
 #include <dtEditQt/propertyeditor.h>
 #include <dtEditQt/undomanager.h>
 #include <dtEditQt/taskeditor.h>
+#include <dtEditQt/configurationmanager.h>
 #include <dtEditQt/externaltooldialog.h>
 #include <dtEditQt/externaltool.h>
 #include <dtEditQt/externaltoolargparsers.h>
@@ -88,7 +91,7 @@
 
 namespace dtEditQt
 {
-   const std::string EditorActions::PREFAB_DIRECTORY("prefabs");
+   const std::string EditorActions::PREFAB_DIRECTORY("Prefabs");
 
    // Singleton global variable for the library manager.
    dtCore::RefPtr<EditorActions> EditorActions::sInstance(NULL);
@@ -309,6 +312,16 @@ namespace dtEditQt
       mActionEditRedo->setShortcut(tr("Ctrl+Y"));
       mActionEditRedo->setStatusTip(tr("Redoes the previous property edit, actor delete, or actor creation undo command."));
       connect(mActionEditRedo, SIGNAL(triggered()), this, SLOT(slotEditRedo()));
+
+      // Brush - Change Shape
+      mActionBrushShape = new QAction(QIcon(UIResources::ICON_BRUSH_CUBE.c_str()), tr("Brush Shape"), this);
+      mActionBrushShape->setStatusTip(tr("Changes STAGE Brush shape."));
+      connect(mActionBrushShape, SIGNAL(triggered()), this, SLOT(slotChangeBrushShape()));
+     
+	  // Brush - Reset Position and Scale
+      mActionBrushReset = new QAction(QIcon(UIResources::ICON_BRUSH_RESET.c_str()), tr("Reset/Recall Brush"), this);
+      mActionBrushReset->setStatusTip(tr("Bring Brush back in front of camera."));
+      connect(mActionBrushReset, SIGNAL(triggered()), this, SLOT(slotResetBrush()));
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -602,18 +615,11 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void EditorActions::slotFileExportPrefab()
+   bool EditorActions::SaveNewPrefab(std::string category, std::string prefabName,
+                                     std::string iconFile, std::string prefabDescrip)
    {
-      slotPauseAutosave();
-
-      PrefabSaveDialog dlg;
-      if (dlg.exec()== QDialog::Rejected)
-      {
-         slotRestartAutosave();
-         return;
-      }
-
-      std::string fullPath = EditorActions::PREFAB_DIRECTORY + dtUtil::FileUtils::PATH_SEPARATOR + dlg.getPrefabName();
+      std::string fullPath = EditorActions::PREFAB_DIRECTORY + dtUtil::FileUtils::PATH_SEPARATOR 
+         + category + "/" + prefabName;
       std::string fullPathSaving = fullPath + ".saving";
 
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
@@ -626,11 +632,21 @@ namespace dtEditQt
             fileUtils.MakeDirectory(EditorActions::PREFAB_DIRECTORY);
          }
 
+         //If the category subdirectory is empty, just store prefabs in the root prefab directory
+         if (category != "")
+         {
+            // If the category subdirectory doesn't exist, it also needs to be created
+            if (!fileUtils.DirExists(fullPath.substr(0, fullPath.find_last_of("\\/"))))
+            {
+               fileUtils.MakeDirectory(fullPath.substr(0, fullPath.find_last_of("\\/")));
+            }
+         }
+
          ViewportOverlay* overlay = ViewportManager::GetInstance().getViewportOverlay();
          ViewportOverlay::ActorProxyList& selection = overlay->getCurrentActorSelection();
 
          dtCore::RefPtr<dtDAL::MapWriter> writer = new dtDAL::MapWriter;
-         writer->SavePrefab(selection, fullPathSaving, dlg.getPrefabDescription());
+         writer->SavePrefab(selection, fullPathSaving, prefabDescrip, iconFile);
 
          //if it's successful, move it to the final file name
          fileUtils.FileMove(fullPathSaving, fullPath + ".dtprefab", true);
@@ -644,10 +660,27 @@ namespace dtEditQt
          QMessageBox::critical((QWidget *)EditorData::GetInstance().getMainWindow(),
             tr("Error"), QString(e.What().c_str()), tr("OK"));
 
-         //slotRestartAutosave();
-         //return;
+         return false;
       }
       fileUtils.PopDirectory();
+
+      return true;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorActions::slotFileExportPrefab()
+   {
+      slotPauseAutosave();
+
+      PrefabSaveDialog dlg;
+      if (dlg.exec()== QDialog::Rejected)
+      {
+         slotRestartAutosave();
+         return;
+      }
+
+      SaveNewPrefab(dlg.getPrefabCategory(), dlg.getPrefabFileName(),
+                    dlg.GetPrefabIconFileName(), dlg.getPrefabDescription());
 
       slotRestartAutosave();
    }
@@ -918,14 +951,51 @@ namespace dtEditQt
       // Once we have a reference to the current selection and the scene,
       // remove each proxy's actor from the scene then remove the proxy from
       // the map.
-      ViewportOverlay::ActorProxyList::iterator itor;
-      for (itor = selection.begin(); itor != selection.end(); ++itor)
+      EditorData::GetInstance().getUndoManager().beginMultipleUndo();
+      while (selection.size())
       {
-         // \TODO: Find out why this const_cast is necessary. It compiles without
-         // it on MSVC 7.1, but not on gcc4.0.2 -osb
-         dtDAL::ActorProxy* proxy = const_cast<dtDAL::ActorProxy*>(itor->get());
-         deleteProxy(proxy, currMap);
+         // First check if this actor is in any groups.
+         dtDAL::ActorProxy* proxy = const_cast<dtDAL::ActorProxy*>(selection.back().get());
+
+         int groupIndex = currMap->FindGroupForActor(proxy);
+         if (groupIndex > -1)
+         {
+            // If this actor is in a group, we must delete the
+            // entire group at the same time.
+            EditorData::GetInstance().getUndoManager().beginMultipleUndo();
+            int actorCount = currMap->GetGroupActorCount(groupIndex);
+            for (int actorIndex = 0; actorIndex < actorCount; actorIndex++)
+            {
+               proxy = currMap->GetActorFromGroup(groupIndex, 0);
+               deleteProxy(proxy, currMap);
+
+               // Now remove this actor from the selection list.
+               for (int selectionIndex = 0; selectionIndex < (int)selection.size(); selectionIndex++)
+               {
+                  if (selection[selectionIndex].get() == proxy)
+                  {
+                     selection.erase(selection.begin() + selectionIndex);
+                     break;
+                  }
+               }
+            }
+            EditorData::GetInstance().getUndoManager().endMultipleUndo();
+         }
+         else
+         {
+            selection.pop_back();
+            deleteProxy(proxy, currMap);
+         }
       }
+
+      //for (itor = selection.begin(); itor != selection.end(); ++itor)
+      //{
+      //   // \TODO: Find out why this const_cast is necessary. It compiles without
+      //   // it on MSVC 7.1, but not on gcc4.0.2 -osb
+      //   dtDAL::ActorProxy* proxy = const_cast<dtDAL::ActorProxy*>(itor->get());
+      //   deleteProxy(proxy, currMap);
+      //}
+      EditorData::GetInstance().getUndoManager().endMultipleUndo();
 
       // Now that we have removed the selected objects, clear the current selection.
       std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > emptySelection;
@@ -1067,6 +1137,53 @@ namespace dtEditQt
    }
 
    //////////////////////////////////////////////////////////////////////////////
+   void EditorActions::slotChangeBrushShape()
+   {
+      dtActors::VolumeEditActor::VolumeShapeType& shapeType = EditorData::GetInstance().getMainWindow()->GetVolumeEditActor()->GetShape();
+
+      if (shapeType == dtActors::VolumeEditActor::VolumeShapeType::BOX)
+      {       
+            mActionBrushShape->setIcon(QIcon(UIResources::ICON_BRUSH_SPHERE.c_str()));
+            EditorData::GetInstance().getMainWindow()->GetVolumeEditActor()->SetShape(
+                                   dtActors::VolumeEditActor::VolumeShapeType::SPHERE);            
+      }
+      else //change back to BOX
+      {       
+            mActionBrushShape->setIcon(QIcon(UIResources::ICON_BRUSH_CUBE.c_str()));            
+            EditorData::GetInstance().getMainWindow()->GetVolumeEditActor()->SetShape(
+                                      dtActors::VolumeEditActor::VolumeShapeType::BOX);       
+      }
+
+      ViewportManager::GetInstance().refreshAllViewports();
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   void EditorActions::slotResetBrush()
+   {
+      dtActors::VolumeEditActor* theBrushActor = EditorData::GetInstance().getMainWindow()->GetVolumeEditActor();
+      theBrushActor->SetScale(osg::Vec3(1.0f, 1.0f, 1.0f));
+      
+      dtCore::Transform xForm;
+      
+      StageCamera* worldCam = ViewportManager::GetInstance().getWorldViewCamera();
+      worldCam->getDeltaCamera()->GetTransform(xForm);           
+      
+      //move brush away from the camera a bit so we can see it
+      osg::Vec3 viewDir = worldCam->getViewDir();      
+      double len = theBrushActor->GetBaseLength();
+    
+      osg::Vec3 trans = xForm.GetTranslation();
+      trans[0] += viewDir[0] * len * 5.0;
+      trans[1] += viewDir[1] * len * 5.0;
+      trans[2] += viewDir[2] * len * 5.0;
+      xForm.SetTranslation(trans);
+
+      theBrushActor->SetTransform(xForm);
+
+      ViewportManager::GetInstance().refreshAllViewports();
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
    void EditorActions::slotTaskEditor()
    {
       TaskEditor taskEditor(static_cast<QWidget*>(EditorData::GetInstance().getMainWindow()));
@@ -1150,20 +1267,75 @@ namespace dtEditQt
       dtDAL::Map* map = EditorData::GetInstance().getCurrentMap();
       if (map)
       {
-         // Remove the current actors from any groups they are currently in.
-         for (int index = 0; index < (int)selection.size(); index++)
-         {
-            dtDAL::ActorProxy* proxy = selection[index].get();
-            map->RemoveActorFromGroups(proxy);
-         }
+         // First ungroup all actors.
+         EditorData::GetInstance().getUndoManager().beginMultipleUndo();
+         slotEditUngroupActors();
+         //std::vector<dtDAL::ActorProxy*> groupActors;
+
+         //while (selection.size())
+         //{
+         //   // First check if this actor is in any groups.
+         //   dtDAL::ActorProxy* proxy = const_cast<dtDAL::ActorProxy*>(selection.back().get());
+
+         //   int groupIndex = map->FindGroupForActor(proxy);
+         //   if (groupIndex > -1)
+         //   {
+         //      // First we ungroup any groups they are already in.
+         //      int actorCount = map->GetGroupActorCount(groupIndex);
+         //      for (int actorIndex = 0; actorIndex < actorCount; actorIndex++)
+         //      {
+         //         proxy = map->GetActorFromGroup(groupIndex, 0);
+         //         map->RemoveActorFromGroups(proxy);
+
+         //         groupActors.push_back(proxy);
+
+         //         // Now remove this actor from the selection list.
+         //         for (int selectionIndex = 0; selectionIndex < (int)selection.size(); selectionIndex++)
+         //         {
+         //            if (selection[selectionIndex].get() == proxy)
+         //            {
+         //               selection.erase(selection.begin() + selectionIndex);
+         //               break;
+         //            }
+         //         }
+         //      }
+         //   }
+         //   else
+         //   {
+         //      selection.pop_back();
+         //      groupActors.push_back(proxy);
+         //   }
+         //}
+
+         //// Now group them in the order they were previously groupped.
+         //groupIndex = map->GetGroupCount();
+         //EditorData::GetInstance().getUndoManager().beginMultipleUndo();
+         //for (int index = 0; index < (int)groupActors.size(); index++)
+         //{
+         //   dtDAL::ActorProxy* proxy = groupActors[index];
+         //   map->AddActorToGroup(groupIndex, proxy);
+         //   EditorData::GetInstance().getUndoManager().groupActor(proxy);
+         //}
+         //EditorData::GetInstance().getUndoManager().endMultipleUndo();
+
+         //// Remove the current actors from any groups they are currently in.
+         //for (int index = 0; index < (int)selection.size(); index++)
+         //{
+         //   dtDAL::ActorProxy* proxy = selection[index].get();
+         //   map->RemoveActorFromGroups(proxy);
+         //}
 
          int groupIndex = map->GetGroupCount();
 
+         EditorData::GetInstance().getUndoManager().beginMultipleUndo();
          for (int index = 0; index < (int)selection.size(); index++)
          {
             dtDAL::ActorProxy* proxy = selection[index].get();
             map->AddActorToGroup(groupIndex, proxy);
+            EditorData::GetInstance().getUndoManager().groupActor(proxy);
          }
+         EditorData::GetInstance().getUndoManager().endMultipleUndo();
+         EditorData::GetInstance().getUndoManager().endMultipleUndo();
       }
 
       mActionGroupActors->setEnabled(false);
@@ -1176,17 +1348,61 @@ namespace dtEditQt
       EditorEvents::GetInstance().emitProjectChanged();
 
       ViewportOverlay* overlay = ViewportManager::GetInstance().getViewportOverlay();
-      ViewportOverlay::ActorProxyList& selection = overlay->getCurrentActorSelection();
+      ViewportOverlay::ActorProxyList selection = overlay->getCurrentActorSelection();
 
       // Remove all the selected actions from their current groups.
       dtDAL::Map* map = EditorData::GetInstance().getCurrentMap();
       if (map)
       {
-         for (int index = 0; index < (int)selection.size(); index++)
+         EditorData::GetInstance().getUndoManager().beginMultipleUndo();
+         while (selection.size())
          {
-            dtDAL::ActorProxy* proxy = selection[index].get();
-            map->RemoveActorFromGroups(proxy);
+            // First check if this actor is in any groups.
+            dtDAL::ActorProxy* proxy = const_cast<dtDAL::ActorProxy*>(selection.back().get());
+
+            int groupIndex = map->FindGroupForActor(proxy);
+            if (groupIndex > -1)
+            {
+               // If this actor is in a group, we must delete the
+               // entire group at the same time.
+               EditorData::GetInstance().getUndoManager().beginMultipleUndo();
+               int actorCount = map->GetGroupActorCount(groupIndex);
+               for (int actorIndex = 0; actorIndex < actorCount; actorIndex++)
+               {
+                  proxy = map->GetActorFromGroup(groupIndex, 0);
+
+                  map->RemoveActorFromGroups(proxy);
+                  EditorData::GetInstance().getUndoManager().unGroupActor(proxy);
+
+                  // Now remove this actor from the selection list.
+                  for (int selectionIndex = 0; selectionIndex < (int)selection.size(); selectionIndex++)
+                  {
+                     if (selection[selectionIndex].get() == proxy)
+                     {
+                        selection.erase(selection.begin() + selectionIndex);
+                        break;
+                     }
+                  }
+               }
+               EditorData::GetInstance().getUndoManager().endMultipleUndo();
+            }
+            else
+            {
+               selection.pop_back();
+               map->RemoveActorFromGroups(proxy);
+               EditorData::GetInstance().getUndoManager().unGroupActor(proxy);
+            }
          }
+         EditorData::GetInstance().getUndoManager().endMultipleUndo();
+
+         //EditorData::GetInstance().getUndoManager().beginMultipleUndo();
+         //for (int index = 0; index < (int)selection.size(); index++)
+         //{
+         //   dtDAL::ActorProxy* proxy = selection[index].get();
+         //   map->RemoveActorFromGroups(proxy);
+         //   EditorData::GetInstance().getUndoManager().unGroupActor(proxy);
+         //}
+         //EditorData::GetInstance().getUndoManager().endMultipleUndo();
       }
 
       mActionUngroupActors->setEnabled(false);
@@ -1227,7 +1443,10 @@ namespace dtEditQt
          EditorData::GetInstance().addRecentProject(contextName);
          EditorEvents::GetInstance().emitProjectChanged();
          refreshRecentProjects();
-      }
+
+         ConfigurationManager::GetInstance().SetVariable(
+            ConfigurationManager::GENERAL, "ProjContextPath", contextName);
+      }      
 
       slotRestartAutosave();
    }
@@ -1430,6 +1649,9 @@ namespace dtEditQt
             dtDAL::Project::GetInstance().LoadMapIntoScene(*newMap,
                *(ViewportManager::GetInstance().getMasterScene()), true);
 
+            ConfigurationManager::GetInstance().SetVariable(
+               ConfigurationManager::GENERAL, "Map", newMap->GetName());
+
          }
          catch (const dtUtil::Exception& e)
          {
@@ -1446,6 +1668,7 @@ namespace dtEditQt
       // Now that we have changed maps, clear the current selection.
       std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > emptySelection;
       EditorEvents::GetInstance().emitActorsSelected(emptySelection);
+      
    }
 
    //////////////////////////////////////////////////////////////////////////////

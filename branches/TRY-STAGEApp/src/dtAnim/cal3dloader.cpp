@@ -249,7 +249,7 @@ namespace dtAnim
          lodOptions.SetMaxVisibleDistance(handler.mLODMaxVisibleDistance);
       }
 
-      if (handler.mFoundScale)
+      if (handler.mFoundScale && modelData.GetCoreModel() != NULL)
       {
          modelData.GetCoreModel()->scale(handler.mScale);
       }

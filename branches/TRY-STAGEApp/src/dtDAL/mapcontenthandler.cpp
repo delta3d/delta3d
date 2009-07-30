@@ -207,6 +207,10 @@ namespace  dtDAL
                   //ignored - the schema checks this value
                }
             }
+            else if (topEl == MapXMLConstants::ICON_ELEMENT)
+            {
+               mPrefabIconFileName = dtUtil::XMLStringConverter(chars).ToString();
+            }
          }
          else if (mInEvents)
          {
@@ -250,7 +254,7 @@ namespace  dtDAL
             {
                if (topEl == MapXMLConstants::ACTOR_ENVIRONMENT_ACTOR_ELEMENT)
                   mEnvActorId = dtUtil::XMLStringConverter(chars).ToString();
-            }
+            }            
          }
          else if (mInGroup)
          {
@@ -290,66 +294,69 @@ namespace  dtDAL
             mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
                                 "Actor proxy is NULL, but code has entered the actor property section");
          }
-         if (mInGroupProperty)
-         {
-            ParameterCharacters(chars);
-         }
          else
          {
-            // Make sure we don't try and change the current property if we are loading properties from an array.
-            if (mInArrayProperty == 0 && mInContainerProperty == 0 && topEl == MapXMLConstants::ACTOR_PROPERTY_NAME_ELEMENT)
+            if (mInGroupProperty)
             {
-               std::string propName = dtUtil::XMLStringConverter(chars).ToString();
-               mActorProperty = mActorProxy->GetProperty(propName);
-
-               // If the property was not found, attempt to get a temporary one instead.
-               if (!mActorProperty.valid())
-               {
-                  mActorProperty = mActorProxy->GetDeprecatedProperty(propName);
-                  if (mActorProperty.valid())
-                  {
-                     mHasDeprecatedProperty = true;
-                  }
-               }
-
-               if (mActorProperty == NULL)
-               {
-                  mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
-                                      "In actor property section, actor property for name \"%s\" was not found on actor proxy \"%s\".",
-                                      propName.c_str(), mActorProxy->GetName().c_str());
-               }
+               ParameterCharacters(chars);
             }
-            else if (mActorProperty != NULL)
+            else
             {
                // Make sure we don't try and change the current property if we are loading properties from an array.
-               if (mInArrayProperty == 0 && mInContainerProperty == 0 && topEl == MapXMLConstants::ACTOR_PROPERTY_RESOURCE_TYPE_ELEMENT)
+               if (mInArrayProperty == 0 && mInContainerProperty == 0 && topEl == MapXMLConstants::ACTOR_PROPERTY_NAME_ELEMENT)
                {
-                  std::string resourceTypeString = dtUtil::XMLStringConverter(chars).ToString();
-                  mActorPropertyType = static_cast<DataType*>(DataType::GetValueForName(resourceTypeString));
+                  std::string propName = dtUtil::XMLStringConverter(chars).ToString();
+                  mActorProperty = mActorProxy->GetProperty(propName);
 
-                  if (mActorPropertyType == NULL)
+                  // If the property was not found, attempt to get a temporary one instead.
+                  if (!mActorProperty.valid())
+                  {
+                     mActorProperty = mActorProxy->GetDeprecatedProperty(propName);
+                     if (mActorProperty.valid())
+                     {
+                        mHasDeprecatedProperty = true;
+                     }
+                  }
+
+                  if (mActorProperty == NULL)
                   {
                      mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
-                                         "No resource type found for type specified in mMap xml \"%s.\"",
-                                         resourceTypeString.c_str());
+                                         "In actor property section, actor property for name \"%s\" was not found on actor proxy \"%s\".",
+                                         propName.c_str(), mActorProxy->GetName().c_str());
                   }
                }
-               else if (mActorPropertyType != NULL)
+               else if (mActorProperty != NULL)
                {
-                  std::string dataValue = dtUtil::XMLStringConverter(chars).ToString();
-
-                  if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                  // Make sure we don't try and change the current property if we are loading properties from an array.
+                  if (mInArrayProperty == 0 && mInContainerProperty == 0 && topEl == MapXMLConstants::ACTOR_PROPERTY_RESOURCE_TYPE_ELEMENT)
                   {
-                     mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                                         "Setting value of property %s, property type %s, datatype %s, value %s, element name %s.",
-                                         mActorProperty->GetName().c_str(),
-                                         mActorProperty->GetDataType().GetName().c_str(),
-                                         mActorPropertyType->GetName().c_str(),
-                                         dataValue.c_str(), dtUtil::XMLStringConverter(topEl.c_str()).c_str());
-                  }
+                     std::string resourceTypeString = dtUtil::XMLStringConverter(chars).ToString();
+                     mActorPropertyType = static_cast<DataType*>(DataType::GetValueForName(resourceTypeString));
 
-                  //we now have the property, the type, and the data.
-                  ParsePropertyData(dataValue, &mActorPropertyType, mActorProperty.get());
+                     if (mActorPropertyType == NULL)
+                     {
+                        mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                                            "No resource type found for type specified in mMap xml \"%s.\"",
+                                            resourceTypeString.c_str());
+                     }
+                  }
+                  else if (mActorPropertyType != NULL)
+                  {
+                     std::string dataValue = dtUtil::XMLStringConverter(chars).ToString();
+
+                     if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                     {
+                        mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                                            "Setting value of property %s, property type %s, datatype %s, value %s, element name %s.",
+                                            mActorProperty->GetName().c_str(),
+                                            mActorProperty->GetDataType().GetName().c_str(),
+                                            mActorPropertyType->GetName().c_str(),
+                                            dataValue.c_str(), dtUtil::XMLStringConverter(topEl.c_str()).c_str());
+                     }
+
+                     //we now have the property, the type, and the data.
+                     ParsePropertyData(dataValue, &mActorPropertyType, mActorProperty.get());
+                  }
                }
             }
          }
@@ -425,6 +432,9 @@ namespace  dtDAL
                      "mActorProxy could not be created for ActorType \"%s\" not found.",
                      actorTypeFullName.c_str());
                }
+
+               // Notify the proxy that it is being loaded.
+               mActorProxy->OnMapLoadBegin();
 
                // When loading a prefab, all actors are put into a group.
                if (mLoadingPrefab)
@@ -874,7 +884,7 @@ namespace  dtDAL
                      //make it ignore the rest of the mElements.
                      p.SetValue(NULL);
                      (*dataType) = NULL;
-                  }
+                  }                  
                }
                else if (topEl == MapXMLConstants::ACTOR_PROPERTY_RESOURCE_DISPLAY_ELEMENT)
                {
@@ -886,7 +896,7 @@ namespace  dtDAL
                   if (dataValue != "" && mDescriptorDisplayName != "")
                   {
                      ResourceDescriptor rd(mDescriptorDisplayName, dataValue);
-                     p.SetValue(&rd);
+                     p.SetValue(&rd);                     
                   }
                   else
                   {
@@ -1373,6 +1383,11 @@ namespace  dtDAL
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Prefab");
          mInPrefab = true;
       }
+      else if (XMLString::compareString(localname, MapXMLConstants::ICON_ELEMENT) == 0)
+      {
+         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Icon");               
+      }
+
       mElements.push(xmlCharString(localname));
    }
 
@@ -1427,6 +1442,13 @@ namespace  dtDAL
          EndGroupSection(localname);
       }
       mElements.pop();
+
+      if(mLoadingPrefab && mPrefabReadMode == PREFAB_ICON_ONLY &&
+         (XMLString::compareString(localname, MapXMLConstants::ICON_ELEMENT) == 0))
+      {
+         //Got the icon file name -- time to stop parsing
+         throw(dtUtil::Exception("Icon found", __FILE__, __LINE__));
+      }
    }
 
    /////////////////////////////////////////////////////////////////
@@ -1523,10 +1545,19 @@ namespace  dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void MapContentHandler::SetPrefabMode(std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >& proxyList)
+   void MapContentHandler::SetPrefabMode(std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >& proxyList,
+                                         PrefabReadMode readMode /* = READ_ALL */)
    {
       mLoadingPrefab = true;
       mPrefabProxyList = &proxyList;
+      
+      mPrefabReadMode = readMode;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const std::string MapContentHandler::GetPrefabIconFileName()
+   {
+      return mPrefabIconFileName;
    }
 
    /////////////////////////////////////////////////////////////////
@@ -1701,7 +1732,6 @@ namespace  dtDAL
 
    }
 
-
    /////////////////////////////////////////////////////////////////
    MapContentHandler::MapContentHandler()
       : mHasDeprecatedProperty(false)
@@ -1710,6 +1740,8 @@ namespace  dtDAL
       , mActorProperty(NULL)
       , mGroupIndex(-1)
       , mLoadingPrefab(false)
+      , mPrefabReadMode(PREFAB_READ_ALL)
+      , mPrefabIconFileName("")
       , mPrefabProxyList(NULL)
    {
       mLogger = &dtUtil::Log::GetInstance();
@@ -1807,10 +1839,12 @@ namespace  dtDAL
       else if (XMLString::compareString(localname, MapXMLConstants::ACTOR_PROPERTY_ARRAY_ELEMENT) == 0)
       {
          mInArrayProperty--;
+         if (mInArrayProperty < 0) mInArrayProperty = 0;
       }
       else if (XMLString::compareString(localname, MapXMLConstants::ACTOR_PROPERTY_CONTAINER_ELEMENT) == 0)
       {
          mInContainerProperty--;
+         if (mInContainerProperty < 0) mInContainerProperty = 0;
       }
       else if (mInGroupProperty)
       {

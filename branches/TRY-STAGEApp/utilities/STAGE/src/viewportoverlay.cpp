@@ -45,13 +45,16 @@
 #include <dtUtil/log.h>
 #include <cstdio>
 
+#include <dtActors/volumeeditactor.h>
+
 #include <dtDAL/actorproxyicon.h>
 
-#include <dtEditQt/viewportoverlay.h>
-#include <dtEditQt/viewportmanager.h>
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/editoractions.h>
 #include <dtEditQt/editordata.h>
+#include <dtEditQt/mainwindow.h>
+#include <dtEditQt/viewportoverlay.h>
+#include <dtEditQt/viewportmanager.h>
 
 #include <dtDAL/map.h>
 
@@ -226,14 +229,30 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void ViewportOverlay::select(dtCore::DeltaDrawable* drawable)
    {
+      osg::StateSet* ss = mSelectionDecorator->getOrCreateStateSet();
+
       if (drawable == NULL || drawable->GetOSGNode() == NULL)
-      {
+      {         
          return;
       }
 
       if (mSelectionDecorator->containsNode(drawable->GetOSGNode()))
       {
          return;
+      }
+      
+      //if this is the Brush, then make the selectionDecorator visible through
+      //other objects
+      dtActors::VolumeEditActor* volEditActTest = dynamic_cast<dtActors::VolumeEditActor*>(drawable);
+      if (volEditActTest)
+      {         
+         ss->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
+         volEditActTest->EnableOutline(false);
+      }
+      else
+      {
+         ss->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
+         EditorData::GetInstance().getMainWindow()->GetVolumeEditActor()->EnableOutline(true);
       }
 
       mSelectionDecorator->addChild(drawable->GetOSGNode());
@@ -256,6 +275,20 @@ namespace dtEditQt
       for (int index = 0; index < (int)mCurrentActorSelection.size(); index++)
       {
          if (mCurrentActorSelection[index] == proxy)
+         {
+            return true;
+         }
+      }
+
+      return false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool ViewportOverlay::isActorSelectedFirst(dtDAL::ActorProxy* proxy) const
+   {
+      if (mCurrentActorSelection.size() > 0)
+      {
+         if (mCurrentActorSelection[0] == proxy)
          {
             return true;
          }

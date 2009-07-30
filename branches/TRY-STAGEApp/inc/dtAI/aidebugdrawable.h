@@ -43,6 +43,7 @@ namespace dtAI
 {
    class WaypointInterface;
    class WaypointRenderInfo;
+   class NavMesh;
 
    class DT_AI_EXPORT AIDebugDrawable : public dtCore::DeltaDrawable
    {
@@ -69,8 +70,12 @@ namespace dtAI
        * Note: Adding an existing waypoint will reset just its position
        *       currently use this to move the waypoint as well.
        */
-      virtual void InsertWaypoint(const WaypointInterface& wp);      
+      virtual void InsertWaypoint(const WaypointInterface& wp);
       virtual void RemoveWaypoint(unsigned id);
+
+
+      void UpdateWaypointGraph(const NavMesh& nm);
+
 
    protected:
       /*virtual*/ ~AIDebugDrawable();
@@ -97,13 +102,19 @@ namespace dtAI
 
       void CreateWaypointIDText(const WaypointInterface& wp);
 
+      void AddPathSegment(const WaypointInterface* pFrom, const WaypointInterface* pTo);
+      void ClearWaypointGraph();
+
    private:
+
       
       dtCore::RefPtr<WaypointRenderInfo> mRenderInfo;
       
       dtCore::RefPtr<osg::IntArray> mWaypointIDs;
       dtCore::RefPtr<osg::Vec3Array> mVerts;
-      dtCore::RefPtr<osg::Geometry> mGeometry;
+      dtCore::RefPtr<osg::UIntArray> mWaypointPairs;
+      dtCore::RefPtr<osg::Geometry> mWaypointGeometry;
+      dtCore::RefPtr<osg::Geometry> mNavMeshGeometry;
       dtCore::RefPtr<osg::Geode> mGeode;
       dtCore::RefPtr<osg::Geode> mGeodeIDs;
       dtCore::RefPtr<osg::Group> mNode;

@@ -37,9 +37,15 @@
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/map.h>
 #include <dtEditQt/typedefs.h>
-#include <dtEditQt/configurationmanager.h>
 
 class QSplitter;
+class QActionGroup;
+
+namespace dtActors
+{
+   class VolumeEditActor;
+   class VolumeEditActorProxy;
+}
 
 namespace dtEditQt
 {
@@ -47,8 +53,10 @@ namespace dtEditQt
    class OrthoViewport;
    class PropertyEditor;
    class ActorTab;
+   class ActorSearchTab;
    class ResourceBrowser;   
    class PluginManager;
+   class EditorViewportContainer;
    class STAGEApplication;
 
    /**
@@ -63,7 +71,7 @@ namespace dtEditQt
       /**
        * Constructor
        */
-      MainWindow(const std::string& stagePath);
+      MainWindow(const std::string& stageConfigFile = "");
 
       /**
        * Destructor
@@ -94,15 +102,39 @@ namespace dtEditQt
       void findAndLoadPreferences();
 
       /**
+      * Adds an exclusive tool into the tool mode bar.
+      */
+      void AddExclusiveToolMode(QAction* action);
+      
+      /**
+      * Finds and returns the tool mode button of a given label.
+      *
+      * @param[in]  name  The name of the tool mode to find.
+      * 
+      * @return     A pointer to the action, or NULL if none was found.
+      */
+      QAction* FindExclusiveToolMode(std::string name);
+
+      /**
+      * Removes an exclusive tool from the tool mode bar.
+      */
+      void RemoveExclusiveToolMode(QAction* action);
+
+      /**
+      * Returns to the normal tool mode.
+      */
+      void SetNormalToolMode();
+
+      /**
        * @return the property editor.
        */
       PropertyEditor* GetPropertyEditor();
 
       
       /**
-       * @return the full path to the currently running STAGE                                                                      
+       * @return the full path to the config file for currently running STAGE                                                                      
        **/
-      const std::string& GetSTAGEPath();
+      const std::string& GetSTAGEConfigFile();
 
       /**
        * menu accessors 
@@ -115,14 +147,37 @@ namespace dtEditQt
       QMenu* GetToolsMenu() const   { return mToolsMenu; }
 
       /**
+      * toolbar accessors.
+      */
+      QToolBar* GetFileToolbar() const          { return mFileToolBar; }
+      QToolBar* GetEditToolbar() const          { return mEditToolBar; }
+      QToolBar* GetUndoToolbar() const          { return mUndoToolBar; }
+      QToolBar* GetToolsToolbar() const         { return mToolsToolBar; }
+      QToolBar* GetExternalToolsToolbar() const { return mExternalToolsToolBar; }
+      
+      /**
+      * viewport accessors.
+      */
+      PerspectiveViewport* GetPerspView() const { return mPerspView; }
+      OrthoViewport*       GetTopView() const   { return mTopView; }
+      OrthoViewport*       GetSideView() const  { return mSideView; }
+      OrthoViewport*       GetFrontView() const { return mFrontView; }
+      EditorViewportContainer* GetViewContainer() const { return mEditorContainer; }     
+
+      /**
        * @return the plugin manager
        */
       PluginManager* GetPluginManager() { return mPluginManager; }
 
       /**
-       * @return the configuration manager
+      * @return the volume edit "actor"
+      */
+      dtActors::VolumeEditActor* GetVolumeEditActor();
+
+      /**
+       * @return the volume edit actor proxy
        */
-      ConfigurationManager* GetConfigurationManager() { return &mCfgMgr; }
+      dtActors::VolumeEditActorProxy* GetVolumeEditActorProxy();
 
 
       void SetupViewer(STAGEApplication* viewer);
@@ -235,9 +290,10 @@ namespace dtEditQt
       void keyPressEvent(QKeyEvent* e);
 
    private:      
-      ConfigurationManager mCfgMgr;
       PluginManager* mPluginManager;
-      std::string mSTAGEFullPath;
+      std::string mSTAGEConfigFullPath;
+  
+      dtCore::RefPtr<dtActors::VolumeEditActorProxy> mVolEditActorProxy;
 
       QMenu* mFileMenu;
       QMenu* mEditMenu;
@@ -251,16 +307,23 @@ namespace dtEditQt
       QToolBar* mFileToolBar;
       QToolBar* mEditToolBar;
       QToolBar* mUndoToolBar;
+      QToolBar* mBrushToolBar;
+      QToolBar* mToolsToolBar;
       QToolBar* mExternalToolsToolBar;
+
+      QActionGroup* mToolModeActionGroup;
+      QAction*      mNormalToolMode;
 
       PerspectiveViewport* mPerspView;
       OrthoViewport* mTopView;
       OrthoViewport* mSideView;
       OrthoViewport* mFrontView;
+      EditorViewportContainer* mEditorContainer;
 
       // main controls
       PropertyEditor*  mPropertyWindow;
       ActorTab*        mActorTab;
+      ActorSearchTab*  mActorSearchTab;
       ResourceBrowser* mResourceBrowser;
 
       QWidget*          mMainViewportParent;

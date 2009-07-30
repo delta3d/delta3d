@@ -253,7 +253,7 @@ void TankActor::MoveTheTank(float deltaSimTime)
       osgParticle::Particle& defaultParticle = pLayerToSet.GetParticleSystem().getDefaultParticleTemplate();
 
       // do our funky changes
-      float lifetime = dtUtil::Max(2.0f, abs(mVelocity+1) * 0.4f);
+      float lifetime = dtUtil::Max(2.0f, dtUtil::Abs(mVelocity+1) * 0.4f);
       defaultParticle.setLifeTime(lifetime);
    }
 
@@ -330,8 +330,8 @@ void TankActor::CheckForNewTarget()
       dtCore::RefPtr<dtDAL::Vec3ActorProperty> vec3prop(static_cast<dtDAL::Vec3ActorProperty*>(translationProp.get()));
       osg::Vec3 targetPosition(vec3prop->GetValue());
 
-      // Find the absolute distance from the center of the target to the plane.
-      float distance(std::abs(plane.distance(targetPosition)));
+      // Find the dtUtil::Absolute distance from the center of the target to the plane.
+      float distance(dtUtil::Abs(plane.distance(targetPosition)));
       // Find the radius of the target's bounding sphere.
       float radius((*iter)->GetActor()->GetOSGNode()->getBound().radius());
 
@@ -401,7 +401,7 @@ void TankActor::SetVelocity(float velocity)
    // would allow you to dead reckon the position without a network update.
    if (!IsRemote())
    {
-      if ((abs(abs(mLastReportedVelocity) - abs(mVelocity)) > 0.5) ||
+      if ((dtUtil::Abs(dtUtil::Abs(mLastReportedVelocity) - dtUtil::Abs(mVelocity)) > 0.5) ||
          (mLastReportedVelocity != mVelocity &&
             (mVelocity == MAXTANKVELOCITY || mVelocity == 0.0f || mVelocity == -MAXTANKVELOCITY)))
       {

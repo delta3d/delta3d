@@ -68,20 +68,20 @@ namespace dtGame
          dtGame::GameActorProxy* mActor = GetGameManager()->FindGameActorById(message.GetAboutActorId());
          if (mActor != NULL)
             UnregisterActor(*mActor);
-            
+
          dtCore::Transformable* xformActor = mGroundClamper->GetEyePointActor();
          if (xformActor != NULL && message.GetAboutActorId() == xformActor->GetUniqueId())
          {
             mGroundClamper->SetEyePointActor(NULL);
          }
-         
+
          xformActor = mGroundClamper->GetTerrainActor();
          if (xformActor != NULL && message.GetAboutActorId() == xformActor->GetUniqueId())
          {
             mGroundClamper->SetTerrainActor(NULL);
          }
       }
-      else if (message.GetMessageType()  == dtGame::MessageType::INFO_MAP_UNLOADED)
+      else if (message.GetMessageType()  == dtGame::MessageType::INFO_MAP_UNLOAD_BEGIN)
       {
          mRegisteredActors.clear();
          mGroundClamper->SetEyePointActor(NULL);
@@ -100,7 +100,7 @@ namespace dtGame
    {
       return mGroundClamper->GetTerrainActor();
    }
-   
+
    //////////////////////////////////////////////////////////////////////
    void DeadReckoningComponent::SetTerrainActor(dtCore::Transformable* newTerrain)
    {
@@ -124,7 +124,7 @@ namespace dtGame
    {
       mGroundClamper->SetEyePointActor(newEyePointActor);
    }
-   
+
    //////////////////////////////////////////////////////////////////////
    void DeadReckoningComponent::SetGroundClamper( dtGame::BaseGroundClamper& clamper )
    {
@@ -144,7 +144,7 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningComponent::RegisterActor(dtGame::GameActorProxy& toRegister, DeadReckoningHelper& helper) 
+   void DeadReckoningComponent::RegisterActor(dtGame::GameActorProxy& toRegister, DeadReckoningHelper& helper)
    {
       DeadReckoningHelper::UpdateMode* updateMode = &helper.GetUpdateMode();
       if (*updateMode == DeadReckoningHelper::UpdateMode::AUTO)
@@ -164,7 +164,7 @@ namespace dtGame
       }
       else if (helper.IsUpdated())
       {
-         if (helper.GetEffectiveUpdateMode(toRegister.GetGameActor().IsRemote()) 
+         if (helper.GetEffectiveUpdateMode(toRegister.GetGameActor().IsRemote())
             == DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR)
          {
             dtCore::Transform xform;
@@ -177,9 +177,9 @@ namespace dtGame
          }
       }
 
-      // If the actor is local, don't move it, and force the 
+      // If the actor is local, don't move it, and force the
       // helper to match as if it was just updated.
-      if (helper.GetEffectiveUpdateMode(toRegister.GetGameActor().IsRemote()) 
+      if (helper.GetEffectiveUpdateMode(toRegister.GetGameActor().IsRemote())
          == DeadReckoningHelper::UpdateMode::CALCULATE_ONLY)
       {
          dtCore::Transform xform;
@@ -268,31 +268,26 @@ namespace dtGame
             {
                helper.SetLastTranslationUpdatedTime(tickMessage.GetSimulationTime() - simTimeDelta);
                //helper.SetLastTranslationUpdatedTime(helper.mLastTimeTag);
-               helper.SetTranslationCurrentSmoothingTime( 0.0 );
+               helper.SetTranslationElapsedTimeSinceUpdate(0.0);
             }
 
             if ( helper.IsRotationUpdated() )
             {
                helper.SetLastRotationUpdatedTime(tickMessage.GetSimulationTime() - simTimeDelta );
                //helper.SetLastRotationUpdatedTime(helper.mLastTimeTag);
-               helper.SetRotationCurrentSmoothingTime( 0.0 );
+               helper.SetRotationElapsedTimeSinceUpdate(0.0);
                helper.SetRotationResolved( false );
             }
          }
 
-         //We want to do this every time.
-         helper.SetTranslationCurrentSmoothingTime( helper.GetTranslationCurrentSmoothingTime() + simTimeDelta );
-         helper.SetRotationCurrentSmoothingTime( helper.GetRotationCurrentSmoothingTime() + simTimeDelta );
+         //We want to do this every time. make sure it's greater than 0 in case of time being set.
+         float transElapsedTime = helper.GetTranslationElapsedTimeSinceUpdate() + simTimeDelta;
+         if (transElapsedTime < 0.0) transElapsedTime = 0.0f;
+         helper.SetTranslationElapsedTimeSinceUpdate(transElapsedTime);
+         float rotElapsedTime = helper.GetRotationElapsedTimeSinceUpdate() + simTimeDelta;
+         if (rotElapsedTime < 0.0) rotElapsedTime = 0.0f;
+         helper.SetRotationElapsedTimeSinceUpdate(rotElapsedTime);
 
-         //make sure it's greater than 0 in case of time being set.
-         if (helper.GetTranslationCurrentSmoothingTime() < 0.0) 
-         {
-            helper.SetTranslationCurrentSmoothingTime( 0.0 );
-         }
-         if (helper.GetRotationCurrentSmoothingTime() < 0.0) 
-         {
-            helper.SetRotationCurrentSmoothingTime( 0.0 );
-         }
 
          // Actual dead reckoning code moved into the helper..
          BaseGroundClamper::GroundClampingType* groundClampingType = &BaseGroundClamper::GroundClampingType::NONE;
@@ -300,11 +295,11 @@ namespace dtGame
 
 
          // Only ground clamp and move remote objects.
-         if(helper.GetEffectiveUpdateMode(gameActor.IsRemote()) 
+         if(helper.GetEffectiveUpdateMode(gameActor.IsRemote())
                == DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR)
          {
             // Get the object's velocity for the current frame.
-            osg::Vec3 velocity( helper.GetVelocityVector() + helper.GetAccelerationVector() * simTimeDelta );
+            osg::Vec3 velocity( helper.GetLastKnownVelocity() + helper.GetLastKnownAcceleration() * simTimeDelta );
 
             // Call the ground clamper for the current object.
             // The ground clamper should be smart enough to know
@@ -317,8 +312,8 @@ namespace dtGame
             {
                std::ostringstream ss;
                ss << "Actor " << gameActor.GetUniqueId() << " - " << gameActor.GetName() << " has attitude "
-                  << "\"" << helper.GetCurrentDeadReckonedRotation() << "\" and position \"" << helper.GetCurrentDeadReckonedTranslation() << "\" at time " 
-                  << helper.GetLastRotationUpdatedTime() +  helper.GetRotationCurrentSmoothingTime() << "";
+                  << "\"" << helper.GetCurrentDeadReckonedRotation() << "\" and position \"" << helper.GetCurrentDeadReckonedTranslation() << "\" at time "
+                  << helper.GetLastRotationUpdatedTime() +  helper.GetRotationElapsedTimeSinceUpdate() << "";
                mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                      ss.str().c_str());
             }
@@ -383,7 +378,7 @@ namespace dtGame
       {
          DeadReckoningHelper::DeadReckoningDOF *currentDOF = (*iterDOF).get();
 
-         // Only process the first DR stop in the chain so that subsequent 
+         // Only process the first DR stop in the chain so that subsequent
          // stops will be used as blending targets.
          if(currentDOF->mPrev == NULL && !currentDOF->mUpdate)
          {
@@ -405,7 +400,7 @@ namespace dtGame
                // start over at the beginning of the DOF list.  Hence the use of the Update flag.
                iterDOF = containerDOFs.begin();
                continue;
-            } 
+            }
 
 
             // there is something in the chain

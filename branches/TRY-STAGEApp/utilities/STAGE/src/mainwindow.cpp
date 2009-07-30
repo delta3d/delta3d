@@ -26,6 +26,8 @@
  *
  * Matthew W. Campbell
  */
+#include <dtEditQt/mainwindow.h>
+
 #include <prefix/dtstageprefix-src.h>
 #include <QtGui/QApplication>
 #include <QtGui/QIcon>
@@ -37,6 +39,7 @@
 #include <QtGui/QStatusBar>
 #include <QtGui/QMessageBox>
 #include <QtGui/QCloseEvent>
+#include <QtGui/QActionGroup>
 #include <QtCore/QDir>
 #include <QtCore/QTimer>
 
@@ -49,7 +52,7 @@
 #include <dtDAL/project.h>
 #include <dtDAL/librarymanager.h>
 #include <dtUtil/fileutils.h>
-#include <dtEditQt/mainwindow.h>
+#include <dtEditQt/configurationmanager.h>
 #include <dtEditQt/editoractions.h>
 #include <dtEditQt/editorsettings.h>
 #include <dtEditQt/perspectiveviewport.h>
@@ -60,6 +63,7 @@
 #include <dtEditQt/pluginmanager.h>
 #include <dtEditQt/propertyeditor.h>
 #include <dtEditQt/actortab.h>
+#include <dtEditQt/actorsearchtab.h>
 #include <dtEditQt/resourcebrowser.h>
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/editorevents.h>
@@ -77,10 +81,9 @@ namespace dtEditQt
 {
 
    ///////////////////////////////////////////////////////////////////////////////
-   MainWindow::MainWindow(const std::string& stagePath)
-      : mCfgMgr()
-      , mPluginManager(new PluginManager(this))
-      , mSTAGEFullPath(stagePath)
+   MainWindow::MainWindow(const std::string& stageConfigFile)
+      : mPluginManager(new PluginManager(this))
+      , mSTAGEConfigFullPath(stageConfigFile)
       , mFileMenu(NULL)
       , mEditMenu(NULL)
       , mProjectMenu(NULL)
@@ -92,6 +95,7 @@ namespace dtEditQt
       , mPropertyWindow(NULL)
       , mActorTab(NULL)
       , mResourceBrowser(NULL)
+      , mVolEditActorProxy(NULL)
    {
       // Ensure that the global singletons are lazily instantiated now
       dtDAL::LibraryManager::GetInstance();
@@ -105,8 +109,11 @@ namespace dtEditQt
 
       ViewportManager::GetInstance();
       
-      //Read STAGE configuration file      
-      mCfgMgr.ReadXML(dtCore::GetDeltaRootPath() + "/utilities/STAGE/STAGEConfig.xml");
+      //Read STAGE configuration file
+      if (stageConfigFile != "")
+      {
+         ConfigurationManager::GetInstance().ReadXML(mSTAGEConfigFullPath);
+      }
 
       connectSlots();
       setupDockWindows();
@@ -134,11 +141,10 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    MainWindow::~MainWindow()
    {
-      if(mCfgMgr.GetVariable(ConfigurationManager::GENERAL,
-                              "SaveConfigurationOnClose") == "true")
+      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::GENERAL,
+                                                  "SaveConfigurationOnClose") == "true")
       {
-         //Save configuration
-         
+         //Save configuration         
 
          //Sample of how to save some STAGE config variables that we might care about:
          //QSplitter* hSplit = mSplitters.at(0);
@@ -146,7 +152,7 @@ namespace dtEditQt
          //mCfgMgr.SetVariable(ConfigurationManager::LAYOUT, "ShowTopView", hSize.height());
          //mCfgMgr.SetVariable(ConfigurationManager::LAYOUT, "HorizontalViewFrameWidth", hSize.width());
 
-         mCfgMgr.WriteXML(dtCore::GetDeltaRootPath() + "/utilities/STAGE/STAGEConfig.xml");
+         ConfigurationManager::GetInstance().WriteXML(mSTAGEConfigFullPath);
       }
    }
 
@@ -160,7 +166,7 @@ namespace dtEditQt
 
       mRecentProjs->addAction(editorActions.mActionFileRecentProject0);
 
-      if (mCfgMgr.GetVariable(ConfigurationManager::MENU, "MenuType") == "Basic")
+      if (ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::MENU, "MenuType") == "Basic")
       {
          mFileMenu = menuBar()->addMenu(tr("&Edit Map"));         
       }
@@ -255,6 +261,27 @@ namespace dtEditQt
       mUndoToolBar->addAction(EditorActions::GetInstance().mActionEditRedo);
       addToolBar(mUndoToolBar);
 
+      mBrushToolBar = new QToolBar(this);
+      mBrushToolBar->setObjectName("BrushToolBar");
+      mBrushToolBar->setWindowTitle(tr("Brush Toolbar"));
+      mBrushToolBar->setMinimumWidth(10);
+      mBrushToolBar->addAction(EditorActions::GetInstance().mActionBrushShape);
+      mBrushToolBar->addAction(EditorActions::GetInstance().mActionBrushReset);
+      addToolBar(mBrushToolBar);
+
+      mToolsToolBar = new QToolBar(this);
+      mToolsToolBar->setObjectName("ToolsToolBar");
+      mToolsToolBar->setWindowTitle(tr("Tools Toolbar"));
+      mToolsToolBar->setMinimumWidth(10);
+      addToolBar(mToolsToolBar);
+
+      mToolModeActionGroup = new QActionGroup(this);
+      mToolModeActionGroup->setExclusive(true);
+
+      mNormalToolMode = new QAction(QIcon(UIResources::ICON_TOOLMODE_NORMAL.c_str()), "Normal Tools", this);
+      AddExclusiveToolMode(mNormalToolMode);
+      mNormalToolMode->setChecked(true);
+
       mExternalToolsToolBar = new QToolBar(this);
       mExternalToolsToolBar->setObjectName("ExternalToolsToolBar");
       mExternalToolsToolBar->setWindowTitle(tr("External Tools ToolBar"));
@@ -275,7 +302,7 @@ namespace dtEditQt
       setCorner(Qt::TopLeftCorner, Qt::LeftDockWidgetArea/*Qt::DockWindowAreaLeft*/);
 
 
-      if(mCfgMgr.GetVariable(ConfigurationManager::LAYOUT, "ShowPropertyEditor") != "false")
+      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, "ShowPropertyEditor") != "false")
       {      
          // create the main left dock window
          mPropertyWindow = new PropertyEditor(this);
@@ -298,7 +325,7 @@ namespace dtEditQt
          addDockWidget(Qt::LeftDockWidgetArea,  mPropertyWindow);
       }
 
-      if(mCfgMgr.GetVariable(ConfigurationManager::LAYOUT, "ShowActorTab") != "false")
+      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, "ShowActorTab") != "false")
       {
          mActorTab = new ActorTab(this);
          mActorTab->setObjectName("ActorTab");
@@ -306,7 +333,15 @@ namespace dtEditQt
          addDockWidget(Qt::LeftDockWidgetArea, mActorTab);
       }
 
-      if(mCfgMgr.GetVariable(ConfigurationManager::LAYOUT, "ShowResourceBrowser") != "false")
+      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, "ShowSearchTab") != "false")
+      {
+         mActorSearchTab = new ActorSearchTab(this);
+         mActorSearchTab->setObjectName("ActorSearchTab");
+         mActorTab->setFeatures(QDockWidget::AllDockWidgetFeatures);
+         addDockWidget(Qt::LeftDockWidgetArea, mActorSearchTab);
+      }
+
+      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, "ShowResourceBrowser") != "false")
       {
          mResourceBrowser = new ResourceBrowser(this);
          mResourceBrowser->setObjectName("ResourceBrowser");
@@ -367,44 +402,42 @@ namespace dtEditQt
       // for each viewport.
       ViewportContainer* container = NULL;
 
-      if(mCfgMgr.GetVariable(ConfigurationManager::LAYOUT, "ShowTopView") != "false")
+      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, "ShowTopView") != "false")
       {
          container = new ViewportContainer(mSideView, vSplit2);
       }
-      if(mCfgMgr.GetVariable(ConfigurationManager::LAYOUT, "ShowPerspView") != "false")
+      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, "ShowPerspView") != "false")
       {
          container = new ViewportContainer(mPerspView, vSplit2);
       }
-      if(mCfgMgr.GetVariable(ConfigurationManager::LAYOUT, "ShowTopView") != "false")
+      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, "ShowTopView") != "false")
       {
          container = new ViewportContainer(mTopView, vSplit1);
       }
-      if(mCfgMgr.GetVariable(ConfigurationManager::LAYOUT, "ShowFrontView") != "false")
+      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, "ShowFrontView") != "false")
       {
          container = new ViewportContainer(mFrontView, vSplit1);
       }
 
       // Create our editor container for all of our views.
-      EditorViewportContainer* editorContainer = new EditorViewportContainer(hSplit);
-      editorContainer->addViewport(mPerspView);
-      editorContainer->addViewport(mSideView);
-      editorContainer->addViewport(mTopView);
-      editorContainer->addViewport(mFrontView);
+      mEditorContainer = new EditorViewportContainer(hSplit);
+      mEditorContainer->updateSnaps();
 
       // Returns the root of the viewport widget hierarchy.
-      return editorContainer;
+      return mEditorContainer;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void MainWindow::setupVolumeEditActor()
    {
       //The persistent pseudo-actor that is used for special-purpose editing
-      dtCore::RefPtr<dtDAL::ActorProxy> proxy =         
-         dtDAL::LibraryManager::GetInstance().CreateActorProxy("dtutil", "Volume Edit").get();      
-      ViewportManager::GetInstance().getMasterScene()->AddDrawable(proxy->GetActor());
+      mVolEditActorProxy = 
+         dynamic_cast<dtActors::VolumeEditActorProxy*>(dtDAL::LibraryManager::GetInstance().CreateActorProxy("dtutil", "Volume Edit").get());
+      ViewportManager::GetInstance().getMasterScene()->AddDrawable(mVolEditActorProxy->GetActor());
 
       //move the VolumeEditActor away from the Perspective camera so we can see it.
-      dtCore::Transformable* volEditAct = dynamic_cast<dtCore::Transformable*>(proxy->GetActor());
+      dtActors::VolumeEditActor* volEditAct = 
+            dynamic_cast<dtActors::VolumeEditActor*>(mVolEditActorProxy->GetActor());
       if(volEditAct != NULL)
       {
          dtCore::Transform xForm;
@@ -516,7 +549,34 @@ namespace dtEditQt
          findAndLoadPreferences();
          mPerspView->onEditorPreferencesChanged();
 
-         if (!EditorData::GetInstance().getLoadLastProject())//FindRecentProjects().empty())
+         //see if there is a Project Context Path in the Configuration Manager
+         if (ConfigurationManager::GetInstance().GetVariable(
+               ConfigurationManager::GENERAL, "ProjContextPath") != "")
+         {
+            std::string projContextPath = ConfigurationManager::GetInstance().GetVariable(
+                                             ConfigurationManager::GENERAL, "ProjContextPath");
+            if (dtUtil::FileUtils::GetInstance().DirExists(projContextPath))
+            {
+               // Try to set the project context specified in the config file 
+               try
+               {
+                  startWaitCursor();
+                  dtDAL::Project::GetInstance().SetContext(projContextPath);
+                  EditorData::GetInstance().setCurrentProjectContext(projContextPath);
+                  EditorData::GetInstance().addRecentProject(projContextPath);
+                  EditorEvents::GetInstance().emitProjectChanged();
+                  EditorActions::GetInstance().refreshRecentProjects();
+                  endWaitCursor();                  
+               }
+               catch(const dtUtil::Exception& e)
+               {
+                  endWaitCursor();
+                  QMessageBox::critical((QWidget*)this,
+                     tr("Error"), tr(e.What().c_str()), tr("OK"));
+               }               
+            }
+         }
+         else if (!EditorData::GetInstance().getLoadLastProject())//FindRecentProjects().empty())
          {
             ProjectContextDialog dialog(this);
             if (dialog.exec() == QDialog::Accepted)
@@ -566,7 +626,14 @@ namespace dtEditQt
          EditorActions::GetInstance().refreshRecentProjects();
          endWaitCursor();
 
-         if (EditorData::GetInstance().getLoadLastMap())
+         if (ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::GENERAL,
+                                                             "Map") != "")
+         {
+            std::string mapToLoad = ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::GENERAL,
+                                                                                    "Map");
+            checkAndLoadBackup(mapToLoad);
+         }
+         else if (EditorData::GetInstance().getLoadLastMap())
          {
             std::list<std::string>& maps = EditorData::GetInstance().getRecentMaps();
             if (!maps.empty())
@@ -687,6 +754,15 @@ namespace dtEditQt
       settings.setValue(EditorSettings::SELECTION_COLOR, editorData.getSelectionColor());
       settings.endGroup();
 
+      // Save our current snap settings.
+      settings.beginGroup(EditorSettings::SNAP_GROUP);
+      settings.setValue(EditorSettings::SNAP_TRANSLATION_ENABLED, ViewportManager::GetInstance().GetSnapTranslationEnabled());
+      settings.setValue(EditorSettings::SNAP_ROTATION_ENABLED, ViewportManager::GetInstance().GetSnapRotationEnabled());
+      settings.setValue(EditorSettings::SNAP_SCALE_ENABLED, ViewportManager::GetInstance().GetSnapScaleEnabled());
+      settings.setValue(EditorSettings::SNAP_TRANSLATION_VALUE, ViewportManager::GetInstance().GetSnapTranslation());
+      settings.setValue(EditorSettings::SNAP_ROTATION_VALUE, ViewportManager::GetInstance().GetSnapRotation());
+      settings.setValue(EditorSettings::SNAP_SCALE_VALUE, ViewportManager::GetInstance().GetSnapScale());
+      settings.endGroup();
 
       // Save any custom library paths
       // Save the current project state...
@@ -849,12 +925,15 @@ namespace dtEditQt
       EditorData::GetInstance().getCurrentMap()->SetModified(true);
       updateWindowTitle();
 
-      // Remove this actor from any groups it may have been.
-      dtDAL::Map* map = EditorData::GetInstance().getCurrentMap();
-      if (map)
-      {
-         map->RemoveActorFromGroups(proxy.get());
-      }
+      // JPH: Moved this into the undo manager, it's very important
+      // that this undo event is created before the destroy event.
+      //// Remove this actor from any groups it may have been.
+      //dtDAL::Map* map = EditorData::GetInstance().getCurrentMap();
+      //if (map)
+      //{
+      //   map->RemoveActorFromGroups(proxy.get());
+      //   EditorData::GetInstance().getUndoManager().unGroupActor(proxy);
+      //}
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -866,7 +945,7 @@ namespace dtEditQt
 
    ///////////////////////////////////////////////////////////////////////////////
    void MainWindow::onActorProxyCreated(dtCore::RefPtr<dtDAL::ActorProxy> proxy, bool forceNoAdjustments)
-   {
+   {      
       EditorData::GetInstance().getCurrentMap()->SetModified(true);
       updateWindowTitle();
    }
@@ -942,6 +1021,52 @@ namespace dtEditQt
          this, SLOT(RebuildToolsMenu(const QList<QAction*>&)));
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void MainWindow::AddExclusiveToolMode(QAction* action)
+   {
+      if (!action)
+      {
+         return;
+      }
+
+      mToolsToolBar->addAction(action);
+      action->setActionGroup(mToolModeActionGroup);
+      action->setCheckable(true);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   QAction* MainWindow::FindExclusiveToolMode(std::string name)
+   {
+      QList<QAction*> actions = mToolsToolBar->actions();
+      for (int actionIndex = 0; actionIndex < (int)actions.size(); actionIndex++)
+      {
+         if (name == actions[actionIndex]->text().toStdString())
+         {
+            return actions[actionIndex];
+         }
+      }
+
+      return NULL;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void MainWindow::RemoveExclusiveToolMode(QAction* action)
+   {
+      if (!action)
+      {
+         return;
+      }
+
+      action->setActionGroup(NULL);
+      mToolsToolBar->removeAction(action);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void MainWindow::SetNormalToolMode()
+   {
+      mNormalToolMode->setChecked(true);
+   }
+
    ///////////////////////////////////////////////////////////////////////////////
    PropertyEditor* MainWindow::GetPropertyEditor()
    {
@@ -949,9 +1074,21 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   const std::string& MainWindow::GetSTAGEPath()
+   const std::string& MainWindow::GetSTAGEConfigFile()
    {
-      return mSTAGEFullPath;
+      return mSTAGEConfigFullPath;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   dtActors::VolumeEditActor* MainWindow::GetVolumeEditActor()
+   {
+      return dynamic_cast<dtActors::VolumeEditActor*>(mVolEditActorProxy.get()->GetActor());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   dtActors::VolumeEditActorProxy* MainWindow::GetVolumeEditActorProxy() 
+   {
+      return mVolEditActorProxy.get();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -1051,6 +1188,60 @@ namespace dtEditQt
       {
          QColor color = qvariant_cast<QColor>(settings.value(EditorSettings::SELECTION_COLOR));
          EditorData::GetInstance().setSelectionColor(color);
+      }
+      settings.endGroup();
+
+      // Snap settings.
+      settings.beginGroup(EditorSettings::SNAP_GROUP);
+      
+      bool snapTranslationEnabled = false;
+      if (settings.contains(EditorSettings::SNAP_TRANSLATION_ENABLED))
+      {
+         snapTranslationEnabled = settings.value(EditorSettings::SNAP_TRANSLATION_ENABLED).toBool();
+      }
+
+      bool snapRotationEnabled = false;
+      if (settings.contains(EditorSettings::SNAP_ROTATION_ENABLED))
+      {
+         snapRotationEnabled = settings.value(EditorSettings::SNAP_ROTATION_ENABLED).toBool();
+      }
+
+      bool snapScaleEnabled = false;
+      if (settings.contains(EditorSettings::SNAP_SCALE_ENABLED))
+      {
+         snapScaleEnabled = settings.value(EditorSettings::SNAP_SCALE_ENABLED).toBool();
+      }
+
+      ViewportManager::GetInstance().emitSetSnapEnabled(snapTranslationEnabled, snapRotationEnabled, snapScaleEnabled);
+
+      if (settings.contains(EditorSettings::SNAP_TRANSLATION_VALUE))
+      {
+         bool success;
+         float value = (float)settings.value(EditorSettings::SNAP_TRANSLATION_VALUE).toDouble(&success);
+         if (success)
+         {
+            ViewportManager::GetInstance().emitSetSnapTranslation(value);
+         }
+      }
+
+      if (settings.contains(EditorSettings::SNAP_ROTATION_VALUE))
+      {
+         bool success;
+         float value = (float)settings.value(EditorSettings::SNAP_ROTATION_VALUE).toDouble(&success);
+         if (success)
+         {
+            ViewportManager::GetInstance().emitSetSnapRotation(value);
+         }
+      }
+
+      if (settings.contains(EditorSettings::SNAP_SCALE_VALUE))
+      {
+         bool success;
+         float value = (float)settings.value(EditorSettings::SNAP_SCALE_VALUE).toDouble(&success);
+         if (success)
+         {
+            ViewportManager::GetInstance().emitSetSnapScale(value);
+         }
       }
       settings.endGroup();
 
@@ -1187,7 +1378,19 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void MainWindow::checkAndLoadBackup(const std::string& str)
    {
-      if (dtDAL::Project::GetInstance().HasBackup(str))
+      bool hasBackup;
+
+      try 
+      {
+         hasBackup = dtDAL::Project::GetInstance().HasBackup(str);
+      } 
+      catch (dtUtil::Exception e)
+      {
+         //must not have a valid backup
+         hasBackup = false;
+      }
+
+      if (hasBackup)
       {
          int result = QMessageBox::information(this, tr("Backup file found"),
             tr("A backup save file has been detected. Would you like to open it?"),
@@ -1232,12 +1435,22 @@ namespace dtEditQt
          }
       }
       else
-      {
+      {         
          startWaitCursor();
-         dtDAL::Map& m = dtDAL::Project::GetInstance().GetMap(str);
-         EditorActions::GetInstance().changeMaps(
-            EditorData::GetInstance().getCurrentMap(), &m);
-         EditorData::GetInstance().addRecentMap(m.GetName());
+         try
+         {
+            dtDAL::Map& m = dtDAL::Project::GetInstance().GetMap(str);
+            EditorActions::GetInstance().changeMaps(
+               EditorData::GetInstance().getCurrentMap(), &m);
+            EditorData::GetInstance().addRecentMap(m.GetName());
+         }
+         catch (dtUtil::Exception e)
+         {
+            QMessageBox::critical(this, tr("Failed to load map"),
+               tr("Failed to load previous map at: \n") +
+               tr(str.c_str()),
+               QMessageBox::Ok);            
+         }         
          endWaitCursor();
       }
    }

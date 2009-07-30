@@ -24,105 +24,97 @@
 #include <dtGame/export.h>
 #include <dtCore/uniqueid.h>
 #include <dtCore/refptr.h>
+#include <osg/Referenced>
 #include <string>
 
 namespace dtGame
 {
    /**
-    * @class MachineInfo 
+    * @class MachineInfo
     * A data class representing basic machine information.
     */
-   class MachineInfo : public osg::Referenced
+   class DT_GAME_EXPORT MachineInfo : public osg::Referenced
    {
       public:
 
          /// Constructor
-         MachineInfo(const std::string &name = "") : mName(name), mTimeStamp(0) { }
+         MachineInfo(const std::string& name = "");
 
          /**
           * Gets the name of a machine info
           * @return The name
           */
-         const std::string& GetName() const { return mName; }
+         const std::string& GetName() const;
 
          /**
           * Gets the host name of a machine info
           * @return The host name
           */
-         const std::string& GetHostName() const { return mHostName; }
+         const std::string& GetHostName() const;
 
          /**
           * Gets the ip address of a machine info
           * @return The ip address
           */
-         const std::string& GetIPAddress() const { return mIPAddress; }
+         const std::string& GetIPAddress() const;
 
          /**
           * Gets the timestamp of the last time this machine was heard from.
           * @return The time stamp
           */
-         unsigned long GetTimeStamp() const { return mTimeStamp; }
+         unsigned long GetTimeStamp() const;
 
          /**
           * Gets the ping of a machine info
           * @return The ping time, in milliseconds
           */
-         unsigned int GetPing() const { return mPing; }
+         unsigned int GetPing() const;
 
          /**
           * Gets the unique id of a machine info
           * @return The unique id
           * @see dtCore::UniqueId
           */
-         const dtCore::UniqueId& GetUniqueId() const { return mUniqueId; }
+         const dtCore::UniqueId& GetUniqueId() const;
 
          /**
           * Sets the name of a machine info
           * @param The new name
           */
-         void SetName(const std::string &newName) { mName = newName; }
+         void SetName(const std::string& newName);
 
          /**
           * Sets the host name of a machine info
           * @param The new host name
           */
-         void SetHostName(const std::string &newHostName) { mHostName = newHostName; }
+         void SetHostName(const std::string& newHostName);
 
          /**
           * Sets the ip address of a machine info
           * @param The new ip address
           */
-         void SetIPAddress(const std::string &newIPAddress) { mIPAddress = newIPAddress; }
-         
+         void SetIPAddress(const std::string& newIPAddress);
+
          /**
           * Sets the time stamp of a machine info
           * @param The new time stamp
           */
-         void SetTimeStamp(unsigned long newTimeStamp) { mTimeStamp = newTimeStamp; }
-         
+         void SetTimeStamp(unsigned long newTimeStamp);
+
          /**
           * Sets the ping of a machine info
           * @param The new ping, in milliseconds
           */
-         void SetPing(unsigned int newPing) { mPing = newPing; }
+         void SetPing(unsigned int newPing);
 
          /**
           * Sets the unique id of a machine info
           * @param The new unique id
           */
-         void SetUniqueId(const dtCore::UniqueId &newId) { mUniqueId = newId; }
+         void SetUniqueId(const dtCore::UniqueId& newId);
 
-         MachineInfo& operator=(const MachineInfo& assignFrom) 
-         {
-            mName = assignFrom.mName;
-            mUniqueId = assignFrom.mUniqueId;
-            mHostName = assignFrom.mHostName;
-            mIPAddress = assignFrom.mIPAddress;
-            mTimeStamp = assignFrom.mTimeStamp;
-            mPing = assignFrom.mPing;
-            return *this;
-         }
-         
+         MachineInfo& operator=(const MachineInfo& assignFrom);
+
          bool operator==(const MachineInfo& compareTo) const
          {
             return mUniqueId == compareTo.mUniqueId;
@@ -143,8 +135,8 @@ namespace dtGame
             return mUniqueId > compareTo.mUniqueId;
          }
       protected:
-         virtual ~MachineInfo() {}
-         
+         virtual ~MachineInfo();
+
       private:
          std::string mName;
          dtCore::UniqueId mUniqueId;
@@ -153,7 +145,7 @@ namespace dtGame
          unsigned long mTimeStamp;
          unsigned int mPing;
    };
-   
+
    class MachineInfoCompare
    {
       public:
@@ -161,23 +153,23 @@ namespace dtGame
          {
             if (!first.valid() && !second.valid())
                return true;
-               
+
             if (first.valid() != second.valid())
                return false;
-               
+
             return *first == *second;
-         } 
+         }
 
          bool operator()(dtCore::RefPtr<MachineInfo> first, dtCore::RefPtr<MachineInfo> second)
          {
             if (!first.valid() && !second.valid())
                return true;
-               
+
             if (first.valid() != second.valid())
                return false;
-               
+
             return *first == *second;
-         } 
+         }
    };
 }
 

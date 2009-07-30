@@ -66,6 +66,7 @@ namespace dtDAL
          static XMLCh* LAST_UPDATE_TIMESTAMP_ELEMENT;
          static XMLCh* EDITOR_VERSION_ELEMENT;
          static XMLCh* SCHEMA_VERSION_ELEMENT;
+         static XMLCh* ICON_ELEMENT;
 
          static XMLCh* LIBRARIES_ELEMENT;
          static XMLCh* LIBRARY_ELEMENT;

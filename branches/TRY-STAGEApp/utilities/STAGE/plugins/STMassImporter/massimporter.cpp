@@ -1,6 +1,8 @@
 #include "massimporter.h"
 #include "ui_massimporter.h"
 
+#include <assert.h>
+
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/librarymanager.h>
 #include <dtEditQt/editordata.h>
@@ -10,7 +12,6 @@
 #include <dtUtil/fileutils.h>
 #include <QtGui/QFileDialog>
 #include <QtGui/QMessageBox>
-
 
 const std::string MassImporterPlugin::PLUGIN_NAME = "Mass Importer";
 

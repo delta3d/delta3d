@@ -34,7 +34,8 @@ extern ParamBlockDesc2 visibilitygroup_param_blk;
 class VisibilityGroup:public OSGHelper{
 	public:
 		VisibilityGroup(TSTR name) : OSGHelper(name){	pblock2 = CreateParameterBlock2(&visibilitygroup_param_blk,0);};
-      virtual ClassDesc2& GetClassDesc();
+		void BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev);
+		void EndEditParams(IObjParam *ip, ULONG flags,Animatable *next);
 		Class_ID ClassID() {return VISIBILITYGROUP_CLASS_ID;}
 		RefTargetHandle Clone(RemapDir& remap);
 };
@@ -74,10 +75,19 @@ static ParamBlockDesc2 visibilitygroup_param_blk ( visibilitygroup_params, _T("v
 	end
 	);
 
-////////////////////////////////////////////////////////////////////////////////
-ClassDesc2& VisibilityGroup::GetClassDesc()
-{
-   return VisibilityGroupDesc;
+void VisibilityGroup::BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev)
+{	
+	this->ip = ip;
+	theHelperProc.SetCurrentOSGHelper(this);
+	VisibilityGroupDesc.BeginEditParams(ip, this, flags, prev);	
+}
+
+void VisibilityGroup::EndEditParams(IObjParam *ip, ULONG flags,Animatable *next)
+{	
+	this->ip = NULL;
+	theHelperProc.SetCurrentOSGHelper(NULL);
+	VisibilityGroupDesc.EndEditParams(ip, this, flags, next);
+	ClearAFlag(A_OBJ_CREATING);
 }
 
 RefTargetHandle VisibilityGroup::Clone(RemapDir& remap){

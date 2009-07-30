@@ -62,7 +62,7 @@ namespace dtDIS
       /// @param config The knowledge needed to get the job done.
       void operator ()(const DIS::EntityStatePdu& source,
                        dtGame::ActorUpdateMessage& dest,
-                       const SharedState* config) const;
+                       SharedState* config) const;
 
       /// for converting an outgoing Message into a Pdu
       ///\todo this should take a dtGame::Message, but something is broke, causing this function to require the dtGame::ActorUpdateMessage
@@ -70,7 +70,7 @@ namespace dtDIS
       void operator ()(const dtGame::ActorUpdateMessage& source,
                        const DIS::EntityID& eid,
                        DIS::EntityStatePdu& dest,
-                       const dtDIS::SharedState* active) const;
+                       dtDIS::SharedState* active) const;
    };
 
    /// The model of how to convert <i>frame-changing attributes</i> between an EntityStatePdu and an ActorUpdateMessage, and visa versa.
@@ -78,7 +78,9 @@ namespace dtDIS
    {
    public:
       /// converts an incoming Pdu into a Message
-      void operator ()( const DIS::EntityStatePdu& source, dtGame::ActorUpdateMessage& dest ) ;
+      void operator ()(const DIS::EntityStatePdu& source,
+                       dtGame::ActorUpdateMessage& dest,
+                       dtDIS::SharedState* config);
 
 #if 0
       osg::Vec3 mAcceleration ;

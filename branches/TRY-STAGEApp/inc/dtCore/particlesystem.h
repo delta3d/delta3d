@@ -1,20 +1,20 @@
-/* 
- * Delta3D Open Source Game and Simulation Engine 
- * Copyright (C) 2004-2005 MOVES Institute 
+/*
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2004-2005 MOVES Institute
  *
  * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free 
- * Software Foundation; either version 2.1 of the License, or (at your option) 
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
  *
  * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this library; if not, write to the Free Software Foundation, Inc., 
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
 */
 
@@ -33,6 +33,7 @@
 #include <osgParticle/Program>
 #include <osgParticle/Particle>
 #include <osgParticle/ParticleSystem>
+#include <osgParticle/ParticleSystemUpdater>
 
 namespace dtCore
 {
@@ -43,13 +44,13 @@ namespace dtCore
       public:
          /// Constructor
          ParticleLayer();
-         
+
          /// Destructor
          virtual ~ParticleLayer();
 
          /// Copy Constructor
          ParticleLayer(const ParticleLayer &copyLayer);
-       
+
          /// mutators for RefPtr Variables and string
          void SetGeode(osg::Geode& geode);
          void SetParticleSystem(osgParticle::ParticleSystem& particleSystem);
@@ -73,21 +74,21 @@ namespace dtCore
 
          osgParticle::Program& GetProgram();
          const osgParticle::Program& GetProgram() const;
-         
+
          const std::string& GetLayerName() const { return mLayerName; }
 
          /// Methods for telling if the Program is modular or fluid
-         bool IsFluidProgram()              {return !mProgTypeIsModular;}
-         bool IsModularProgram()            {return mProgTypeIsModular ;}
+         bool IsFluidProgram() const        {return !mProgTypeIsModular;}
+         bool IsModularProgram() const      {return mProgTypeIsModular ;}
 
          /// Methods for Getting if the program is modular or fluid
          void SetIsModularProgram(bool Val) {mProgTypeIsModular  =  Val;}
          void SetIsFluidProgram(  bool Val) {mProgTypeIsModular  = !Val;}
-         
+
          /// Operator overloadin' luvin
          bool operator==(const ParticleLayer& testLayer) const;
 
-      private:   
+      private:
          /**
          * The geode that holds the drawable particle system, and whose name is
          * the name of the layer.
@@ -114,7 +115,7 @@ namespace dtCore
          * Can be modular or fluid
          */
          RefPtr<osgParticle::Program> mProgram;
-         
+
          /**
          * Name of the layer
          */
@@ -133,6 +134,7 @@ namespace dtCore
       DECLARE_MANAGEMENT_LAYER(ParticleSystem)
 
       public:
+         typedef std::vector<ParticleLayer> LayerList;
 
          /**
           * Constructor.
@@ -146,13 +148,13 @@ namespace dtCore
          /**
           * Destructor.
           */
-         virtual ~ParticleSystem();         
+         virtual ~ParticleSystem();
 
       public:
 
          ///Load a file from disk
-         virtual osg::Node* LoadFile( const std::string& filename, bool useCache = false);
-         
+         virtual osg::Node* LoadFile( const std::string& filename, bool useCache = true);
+
          /**
           * Enables or disables this particle system.  Particle systems
           * are enabled by default.
@@ -161,7 +163,7 @@ namespace dtCore
           * to disable it
           */
          void SetEnabled(bool enable);
-         
+
          /**
           * Checks whether this particle system is enabled.
           *
@@ -169,21 +171,21 @@ namespace dtCore
           * otherwise
           */
          bool IsEnabled() const;
-         
+
          /**
           * Sets the parent-relative state of this particle system.  If
           * parent-relative mode is enabled, the entire particle system
           * will be positioned relative to the parent.  If disabled, only
           * the emitter will be positioned relative to the parent.  By
           * default, particle systems are not parent-relative.
-          * 
+          *
           * This must be set before loading the particle file.
           *
           * @param parentRelative true to enable parent-relative mode,
           * false to disable it
           */
          void SetParentRelative(bool parentRelative);
-         
+
          /**
           * Returns the parent-relative state of this particle system.
           *
@@ -197,8 +199,8 @@ namespace dtCore
           * that were loaded in to do the same thing.
           * @return The link list of all the layers
           */
-         std::list<ParticleLayer>& GetAllLayers() {return mLayers;}
-         const std::list<ParticleLayer>& GetAllLayers() const {return mLayers;}
+         LayerList& GetAllLayers() {return mLayers;}
+         const LayerList& GetAllLayers() const {return mLayers;}
 
          /**
           * GetSingleLayer will return the Layer of said name,
@@ -206,37 +208,47 @@ namespace dtCore
           *
           * @return Will return the link list you requested by name
           */
-         ParticleLayer* GetSingleLayer(const std::string &layerName);
-         const ParticleLayer* GetSingleLayer(const std::string &layerName) const;
+         ParticleLayer* GetSingleLayer(const std::string& layerName);
+         const ParticleLayer* GetSingleLayer(const std::string& layerName) const;
+
+         osgParticle::ParticleSystemUpdater* GetParticleSystemUpdater();
+         const osgParticle::ParticleSystemUpdater* GetParticleSystemUpdater() const;
 
          /**
           * SetAllLayers Will take in the new list of layers
-          * and set all the current layers to those of that 
+          * and set all the current layers to those of that
           * sent in
           */
-         void SetAllLayers(const std::list<ParticleLayer> &layersToSet);
+         void SetAllLayers(const LayerList &layersToSet);
 
          /**
-          * SetSingleLayer will take in the layerToSet 
+          * SetSingleLayer will take in the layerToSet
           * and set the layer in mlLayers to that sent in
           */
          void SetSingleLayer(ParticleLayer& layerToSet);
 
-   protected:
-       
-         /**
-          *  Called from LoadFile() function, should never be called
-          *  from user
-          */
-         void SetupParticleLayers();
+         /// Resets the particle system to the starting time.
+         void ResetTime();
+
+         const osg::Node* GetLoadedParticleSystemRoot() const;
+         const osg::Node* GetCachedOriginalParticleSystemRoot() const;
+         osg::Node* GetLoadedParticleSystemRoot();
+         osg::Node* GetCachedOriginalParticleSystemRoot();
+
+         static void ParseParticleLayers(osg::Node& ps, LayerList& layers,
+                  dtCore::RefPtr<osgParticle::ParticleSystemUpdater>& particleSystemUpdater);
+
+      protected:
+
+         void CloneParticleSystemDrawables();
 
       private:
-         
+
          /**
           * Whether or not the particle system is enabled.
           */
          bool mEnabled;
-         
+
          /**
           * Whether or not the particle system is in parent-relative
           * mode.
@@ -247,13 +259,16 @@ namespace dtCore
           * Layer for all the attributes for a particle system
           * All particle systems contained within that we loaded
           */
-         std::list<ParticleLayer> mLayers;
+         LayerList mLayers;
 
          /**
           * Handle to the whole system
-          */ 
-         RefPtr<osg::Node> mLoadedFile; 
-         
+          */
+         RefPtr<osg::Node> mLoadedFile;
+         //This hold onto the original, non copied particle system to help in stay in the cache
+         RefPtr<osg::Node> mOriginalLoadedParticleSystem;
+         RefPtr<osgParticle::ParticleSystemUpdater> mParticleSystemUpdater;
+
    };
 }
 

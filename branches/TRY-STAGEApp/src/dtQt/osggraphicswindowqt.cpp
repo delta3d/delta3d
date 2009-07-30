@@ -28,6 +28,7 @@
 
 #include <dtQt/osggraphicswindowqt.h>
 #include <dtQt/osgadapterwidget.h>
+#include <dtUtil/log.h>
 #include <dtQt/glwidgetfactory.h>
 
 namespace dtQt
@@ -44,6 +45,21 @@ namespace dtQt
    , mCursorShape(Qt::ArrowCursor)
    {
       _traits = traits;
+
+      QGLWidget* sharedContextWidget = NULL;
+      if (traits->sharedContext != NULL)
+      {
+         OSGGraphicsWindowQt* sharedWin = dynamic_cast<OSGGraphicsWindowQt*>(traits->sharedContext);
+         if (sharedWin != NULL)
+         {
+            sharedContextWidget = sharedWin->GetQGLWidget();
+         }
+         else
+         {
+            LOG_ERROR("A shared context was specified, but it is not a QGLWidget based context, so it can't be shared.");
+         }
+      }
+
       if (adapter == NULL)
       {
          Qt::WindowFlags flags = NULL;
@@ -58,9 +74,10 @@ namespace dtQt
          }
          else
          {
-            adapter = new dtQt::OSGAdapterWidget(false, NULL, NULL, flags);
+            adapter = new dtQt::OSGAdapterWidget(false, NULL, sharedContextWidget, flags);
          }
       }
+
       adapter->SetGraphicsWindow(*this);
       adapter->setFocusPolicy(Qt::StrongFocus);
       SetQGLWidget(adapter);

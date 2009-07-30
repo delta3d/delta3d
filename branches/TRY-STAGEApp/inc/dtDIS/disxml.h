@@ -34,10 +34,6 @@
 #include <dtCore/refptr.h>                  // for member
 #include <dtDIS/sharedstate.h>              // for member
 
-namespace dtGame
-{
-   class GameManager;
-}
 
 namespace dtDIS
 {
@@ -62,6 +58,8 @@ namespace dtDIS
       static const char NODE_IP[];
       static const char NODE_PLUGINS[];
       static const char NODE_EXERCISE_ID[];
+      static const char NODE_SITE_ID[];
+      static const char NODE_APPLICATION_ID[];
       static const char NODE_MTU[];
    };
 
@@ -102,6 +100,8 @@ namespace dtDIS
          IP,
          PLUGINS,
          EXERCISE_ID,
+         SITE_ID,
+         APPLICATION_ID,
          MTU
       };
 
@@ -126,6 +126,7 @@ namespace dtDIS
       static const char NODE_ENTITYTYPE_ENTITY_KIND[];
       static const char NODE_ENTITYTYPE_DOMAIN[];
       static const char NODE_ENTITYTYPE_COUNTRY[];
+      static const char NODE_ENTITYTYPE_CATEGORY[];
       static const char NODE_ENTITYTYPE_SUBCATEGORY[];
       static const char NODE_ENTITYTYPE_SPECIFIC[];
       static const char NODE_ENTITYTYPE_EXTRA[];
@@ -141,8 +142,19 @@ namespace dtDIS
 
       static const char ATTRIBUTE_RESOURCE_RENDERSUITE[];
       static const char ATTRIBUTE_RESOURCE_GROUP[];
-   };
 
+      static const char NODE_PROPERTY_NAMES[];
+      static const char NODE_ENTITY_LOCATION[];
+      static const char NODE_ENTITY_ORIENTATION[];
+      static const char NODE_ENTITY_LINEAR_VELOCITY[];
+      static const char NODE_ENTITY_LAST_KNOWN_LOCATION[];
+      static const char NODE_ENTITY_LAST_KNOWN_ORIENTATION[];
+      static const char NODE_ENTITY_DR_ALGO[];
+      static const char NODE_ENTITY_GROUND_CLAMP[];
+      static const char NODE_ENTITY_NON_DAMAGED[];
+      static const char NODE_ENTITY_DAMAGED[];
+      static const char NODE_ENTITY_DESTROYED[];
+   };
    } // end namespace details
    ///@endcond
 
@@ -153,7 +165,7 @@ namespace dtDIS
    class DT_DIS_EXPORT EntityMapXMLHandler : public XERCES_CPP_NAMESPACE_QUALIFIER ContentHandler
    {
    public:
-      EntityMapXMLHandler(SharedState* config, dtGame::GameManager* gm);
+      EntityMapXMLHandler(SharedState* config);
       ~EntityMapXMLHandler();
 
       // inherited pure virtual functions
@@ -171,7 +183,6 @@ namespace dtDIS
 
    private:
       SharedState* mSharedState;
-      dtCore::RefPtr<dtGame::GameManager> mGM;
 
       enum Nodes
       {
@@ -191,6 +202,17 @@ namespace dtDIS
          ACTORDATA_RESOURCE,
          ACTORDATA_RESOURCE_DESCRIPTOR,
          ACTORDATA_RESOURCE_ACTORPROPERTY,
+         PROPERTY_NAMES,
+         ENTITY_LOCATION,
+         ENTITY_ORIENTATION,
+         ENTITY_LINEAR_VELOCITY,
+         ENTITY_LAST_KNOWN_LOCATION,
+         ENTITY_LAST_KNOWN_ORIENTATION,
+         ENTITY_DR_ALGO,
+         ENTITY_GROUND_CLAMP,
+         ENTITY_NON_DAMAGED,
+         ENTITY_DAMAGED,
+         ENTITY_DESTROYED
       };
 
       typedef std::stack<Nodes> NodeStack;

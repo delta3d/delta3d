@@ -108,6 +108,12 @@ namespace dtEditQt
       QList<ExternalTool*>& GetExternalTools();
 
       const QList<QAction*> GetExternalToolActions() const;
+   
+      /**
+       * Method to save a new prefab.  Returns true on success.
+       */
+      bool SaveNewPrefab(std::string category, std::string prefabName,
+                         std::string iconFile, std::string prefabDescrip);
 
       /**
        * The actions for this class are public.  Essentially, this whole class is here
@@ -203,6 +209,12 @@ namespace dtEditQt
 
       // Action - Edit - Map Events Editor
       QAction* mActionEditMapEvents;
+
+      // Action - Brush - Brush Shape
+      QAction* mActionBrushShape;
+
+      // Action - Brush - Reset Brush
+      QAction* mActionBrushReset;
 
       // Action - File - Library Paths Dialog
       QAction* mActionFileEditLibraryPaths;
@@ -346,6 +358,16 @@ namespace dtEditQt
        * Slot - Edit Map Properties event.  Spawns the map properties editor.
        */
       void slotEditMapProperties();
+
+      /**
+       * Slot - Change the STAGE Brush shape (box, sphere, cone, etc)
+       */
+      void slotChangeBrushShape();
+
+      /**
+       * Slot - Reset the STAGE Brush (reset to cube and put in front of camera)
+       */
+      void slotResetBrush();
 
       /**
        * Slot - File Library Paths event.  Spawns the edit library paths dialog.

@@ -1,8 +1,9 @@
 #include <dtDIS/disxml.h>
 #include <dtDIS/sharedstate.h>
-#include <dtGame/gamemanager.h>
+#include <dtDIS/propertyname.h>
 #include <dtUtil/log.h>
 #include <dtUtil/stringutils.h>
+#include <dtDAL/librarymanager.h>
 
 #include <xercesc/util/XercesDefs.hpp>  // for xerces namespace definition
 #include <xercesc/util/XMLString.hpp>  // for xerces string support
@@ -19,6 +20,8 @@ const char details::XMLConnectionSchema::NODE_PORT[] = {"Port\0"};
 const char details::XMLConnectionSchema::NODE_IP[] = {"IP\0"};
 const char details::XMLConnectionSchema::NODE_PLUGINS[] = {"Plugins\0"};
 const char details::XMLConnectionSchema::NODE_EXERCISE_ID[] = {"ExerciseID\0"};
+const char details::XMLConnectionSchema::NODE_SITE_ID[] = {"SiteID\0"};
+const char details::XMLConnectionSchema::NODE_APPLICATION_ID[] = {"ApplicationID\0"};
 const char details::XMLConnectionSchema::NODE_MTU[] = {"MTU\0"};
 
 
@@ -73,6 +76,16 @@ void ConnectionXMLHandler::characters(const XMLCh* const chars, const unsigned i
    case EXERCISE_ID:
       {
          mConnectionData.exercise_id = dtUtil::ToType<unsigned int>(cstr);
+      } break;
+
+   case SITE_ID:
+      {
+         mConnectionData.site_id = dtUtil::ToType<unsigned short>(cstr);
+      } break;
+
+   case APPLICATION_ID:
+      {
+         mConnectionData.application_id = dtUtil::ToType<unsigned short>(cstr);
       } break;
 
    case MTU:
@@ -139,6 +152,14 @@ void ConnectionXMLHandler::startElement(const XMLCh* const uri,const XMLCh* cons
    {
       mNodeStack.push( EXERCISE_ID );
    }
+   else if( XMLString::equals(cstr, dtDIS::details::XMLConnectionSchema::NODE_SITE_ID) )
+   {
+      mNodeStack.push( SITE_ID );
+   }
+   else if( XMLString::equals(cstr, dtDIS::details::XMLConnectionSchema::NODE_APPLICATION_ID) )
+   {
+      mNodeStack.push( APPLICATION_ID );
+   }
    else if( XMLString::equals(cstr, dtDIS::details::XMLConnectionSchema::NODE_MTU) )
    {
       mNodeStack.push( MTU );
@@ -171,6 +192,7 @@ const char details::XMLEntityMapSchema::NODE_ENTITYTYPE_ENTITY_KIND[] = {"Entity
 const char details::XMLEntityMapSchema::NODE_ENTITYTYPE_DOMAIN[] = {"Domain\0"};
 const char details::XMLEntityMapSchema::NODE_ENTITYTYPE_COUNTRY[] = {"Country\0"};
 const char details::XMLEntityMapSchema::NODE_ENTITYTYPE_SUBCATEGORY[] = {"Subcategory\0"};
+const char details::XMLEntityMapSchema::NODE_ENTITYTYPE_CATEGORY[] = {"Category\0"};
 const char details::XMLEntityMapSchema::NODE_ENTITYTYPE_SPECIFIC[] = {"Specific\0"};
 const char details::XMLEntityMapSchema::NODE_ENTITYTYPE_EXTRA[] = {"Extra\0"};
 
@@ -186,9 +208,20 @@ const char details::XMLEntityMapSchema::NODE_ACTORDATA_RESOURCE_ACTORPROPERTY[] 
 const char details::XMLEntityMapSchema::ATTRIBUTE_RESOURCE_GROUP[] = {"Group\0"};
 const char details::XMLEntityMapSchema::ATTRIBUTE_RESOURCE_RENDERSUITE[] = {"RenderSuite\0"};
 
-EntityMapXMLHandler::EntityMapXMLHandler(SharedState* config, dtGame::GameManager* gm )
+const char details::XMLEntityMapSchema::NODE_PROPERTY_NAMES[] = {"PropertyNames\0"};
+const char details::XMLEntityMapSchema::NODE_ENTITY_LOCATION[] = {"EntityLocation\0"};
+const char details::XMLEntityMapSchema::NODE_ENTITY_ORIENTATION[] = {"EntityOrientation\0"};
+const char details::XMLEntityMapSchema::NODE_ENTITY_LINEAR_VELOCITY[] = {"EntityLinearVelocity\0"};
+const char details::XMLEntityMapSchema::NODE_ENTITY_LAST_KNOWN_LOCATION[] = {"EntityLastKnownLocation\0"};
+const char details::XMLEntityMapSchema::NODE_ENTITY_LAST_KNOWN_ORIENTATION[] = {"EntityLastKnownOrientation\0"};
+const char details::XMLEntityMapSchema::NODE_ENTITY_DR_ALGO[] = {"EntityDeadReckoningAlgorithm\0"};
+const char details::XMLEntityMapSchema::NODE_ENTITY_GROUND_CLAMP[] = {"EntityGroundClamp\0"};
+const char details::XMLEntityMapSchema::NODE_ENTITY_NON_DAMAGED[] = {"EntityNonDamaged\0"};
+const char details::XMLEntityMapSchema::NODE_ENTITY_DAMAGED[] = {"EntityDamaged\0"};
+const char details::XMLEntityMapSchema::NODE_ENTITY_DESTROYED[] = {"EntityDestroyed\0"};
+
+EntityMapXMLHandler::EntityMapXMLHandler(SharedState* config)
    : mSharedState(config)
-   , mGM( gm )
    , mNodeStack()
 {
 }
@@ -282,6 +315,52 @@ void EntityMapXMLHandler::characters(const XMLCh* const chars, const unsigned in
       {
       } break;
 
+
+   case PROPERTY_NAMES:
+      {
+      } break;
+
+   case ENTITY_LOCATION:
+      {
+         dtDIS::EnginePropertyName::ENTITY_LOCATION = std::string(cstr);
+      } break;
+   case ENTITY_ORIENTATION:
+      {
+         dtDIS::EnginePropertyName::ENTITY_ORIENTATION = std::string(cstr);
+      } break;
+   case ENTITY_LINEAR_VELOCITY:
+      {
+         dtDIS::EnginePropertyName::ENTITY_LINEARY_VELOCITY = std::string(cstr);
+      } break;
+   case ENTITY_LAST_KNOWN_LOCATION:
+      {
+         dtDIS::EnginePropertyName::LAST_KNOWN_LOCATION = std::string(cstr);
+      } break;
+   case ENTITY_LAST_KNOWN_ORIENTATION:
+      {
+         dtDIS::EnginePropertyName::LAST_KNOWN_ORIENTATION = std::string(cstr);
+      } break;
+   case ENTITY_DR_ALGO:
+      {
+         dtDIS::EnginePropertyName::DEAD_RECKONING_ALGORITHM = std::string(cstr);
+      } break;
+   case ENTITY_GROUND_CLAMP:
+      {
+         dtDIS::EnginePropertyName::GROUND_CLAMP = std::string(cstr);
+      } break;
+
+   case ENTITY_NON_DAMAGED:
+      {
+         dtDIS::EnginePropertyName::RESOURCE_DAMAGE_OFF = std::string(cstr);
+      } break;
+   case ENTITY_DAMAGED:
+      {
+         dtDIS::EnginePropertyName::RESOURCE_DAMAGE_ON = std::string(cstr);
+      } break;
+   case ENTITY_DESTROYED:
+      {
+         dtDIS::EnginePropertyName::RESOURCE_DAMAGE_DESTROYED = std::string(cstr);
+      } break;
    default:
       {
          LOG_ERROR("Unsupported XML Element type, of value: " + dtUtil::ToString(mNodeStack.top()) )
@@ -324,7 +403,7 @@ void EntityMapXMLHandler::endElement(const XMLCh* const uri,const XMLCh* const l
          // modify the actor mapping
 
          // find the actortype
-         const dtDAL::ActorType* actortype = mGM->FindActorType( mCurrentActorTypeCategory, mCurrentActorTypeName );
+         const dtDAL::ActorType* actortype = dtDAL::LibraryManager::GetInstance().FindActorType(mCurrentActorTypeCategory, mCurrentActorTypeName);
 
          if( actortype != NULL )
          {
@@ -412,38 +491,83 @@ void EntityMapXMLHandler::startElement(const XMLCh* const uri,const XMLCh* const
    {
       mNodeStack.push( ENTITYTYPE );
    }
-   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITYTYPE_COUNTRY) )
+   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITYTYPE_ENTITY_KIND) )
    {
-      mNodeStack.push( ENTITYTYPE_COUNTRY );
+      mNodeStack.push( ENTITYTYPE_ENTITY_KIND );
    }
    else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITYTYPE_DOMAIN) )
    {
       mNodeStack.push( ENTITYTYPE_DOMAIN );
    }
-   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITYTYPE_ENTITY_KIND) )
+   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITYTYPE_COUNTRY) )
    {
-      mNodeStack.push( ENTITYTYPE_ENTITY_KIND );
+      mNodeStack.push( ENTITYTYPE_COUNTRY );
    }
-   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITYTYPE_EXTRA) )
+   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITYTYPE_CATEGORY) )
    {
-      mNodeStack.push( ENTITYTYPE_EXTRA );
-   }
-   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITYTYPE_EXTRA) )
-   {
-      mNodeStack.push( ENTITYTYPE_EXTRA );
-   }
-   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITYTYPE_SPECIFIC) )
-   {
-      mNodeStack.push( ENTITYTYPE_SPECIFIC );
+      mNodeStack.push( ENTITYTYPE_CATEGORY );
    }
    else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITYTYPE_SUBCATEGORY) )
    {
       mNodeStack.push( ENTITYTYPE_SUBCATEGORY );
    }
+   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITYTYPE_SPECIFIC) )
+   {
+      mNodeStack.push( ENTITYTYPE_SPECIFIC );
+   }
+   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITYTYPE_EXTRA) )
+   {
+      mNodeStack.push( ENTITYTYPE_EXTRA );
+   }
    else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_MAPPING) )
    {
       mNodeStack.push( MAPPING );
    }
+   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_PROPERTY_NAMES) )
+   {
+      mNodeStack.push( PROPERTY_NAMES );
+   }
+   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITY_LOCATION) )
+   {
+      mNodeStack.push( ENTITY_LOCATION );
+   }
+   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITY_ORIENTATION) )
+   {
+      mNodeStack.push( ENTITY_ORIENTATION );
+   }
+   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITY_LINEAR_VELOCITY) )
+   {
+      mNodeStack.push( ENTITY_LINEAR_VELOCITY );
+   }
+   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITY_LAST_KNOWN_LOCATION) )
+   {
+      mNodeStack.push( ENTITY_LAST_KNOWN_LOCATION );
+   }
+   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITY_LAST_KNOWN_ORIENTATION) )
+   {
+      mNodeStack.push( ENTITY_LAST_KNOWN_ORIENTATION );
+   }
+   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITY_DR_ALGO) )
+   {
+      mNodeStack.push( ENTITY_DR_ALGO );
+   }
+   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITY_GROUND_CLAMP) )
+   {
+      mNodeStack.push( ENTITY_GROUND_CLAMP );
+   }
+   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITY_NON_DAMAGED) )
+   {
+      mNodeStack.push( ENTITY_NON_DAMAGED );
+   }
+   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITY_DAMAGED) )
+   {
+      mNodeStack.push( ENTITY_DAMAGED );
+   }
+   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITY_DESTROYED) )
+   {
+      mNodeStack.push( ENTITY_DESTROYED );
+   }
+
 
    XMLString::release( &cstr );
 }

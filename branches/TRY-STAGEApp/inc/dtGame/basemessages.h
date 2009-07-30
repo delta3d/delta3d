@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * William E. Johnson II 
+ * William E. Johnson II
  * David Guthrie
  */
 
@@ -29,6 +29,9 @@
 
 namespace dtGame
 {
+   typedef Message ActorDeletedMessage;
+   typedef Message ActorPublishedMessage;
+
    class DT_GAME_EXPORT TickMessage : public Message
    {
       public:
@@ -36,11 +39,11 @@ namespace dtGame
          static const dtUtil::RefString PARAM_DELTA_REAL_TIME;
          static const dtUtil::RefString PARAM_SIM_TIME_SCALE;
          static const dtUtil::RefString PARAM_SIMULATION_TIME;
-         
+
 
          /// Constructor
          TickMessage();
-         
+
          /**
           * Gets the delta sim time variable associated with this message
           * @return The deltaSimTime
@@ -93,7 +96,7 @@ namespace dtGame
       protected:
          /// Destructor
          virtual ~TickMessage() { }
-         
+
          dtCore::RefPtr<FloatMessageParameter> mDeltaSimTime;
          dtCore::RefPtr<FloatMessageParameter> mDeltaRealTime;
          dtCore::RefPtr<FloatMessageParameter> mSimTimeScale;
@@ -210,7 +213,7 @@ namespace dtGame
    };
 
    /**
-    * Message used for all of the map change, close, load, etc messages.  It 
+    * Message used for all of the map change, close, load, etc messages.  It
     * has a list of map names.
     */
    class DT_GAME_EXPORT MapMessage : public Message
@@ -265,32 +268,6 @@ namespace dtGame
 
       protected:
          virtual ~GameEventMessage() { }
-   };
-
-   class DT_GAME_EXPORT ActorPublishedMessage : public Message
-   {
-      public:
-         /// Constructor
-         ActorPublishedMessage() : Message()
-         {
-         }
-
-      protected:
-         /// Destructor
-         virtual ~ActorPublishedMessage() { }
-   };
-
-   class DT_GAME_EXPORT ActorDeletedMessage : public Message
-   {
-      public:
-         /// Constructor
-         ActorDeletedMessage() : Message()
-         {
-         }
-
-      protected:
-         /// Destructor
-         virtual ~ActorDeletedMessage() { }
    };
 
    class DT_GAME_EXPORT NetServerRejectMessage : public Message

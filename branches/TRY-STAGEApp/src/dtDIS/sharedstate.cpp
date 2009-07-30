@@ -1,64 +1,12 @@
 #include <dtDIS/sharedstate.h>
 #include <dtDAL/actorproxy.h>
+#include <dtUtil/xercesparser.h>
+#include <dtDIS/disxml.h>
 
 #include <cstddef>                   // for NULL
 
 using namespace dtDIS;
 
-bool ActiveEntityControl::AddEntity(const DIS::EntityID& eid, const dtDAL::ActorProxy* proxy)
-{
-   //bool published = mPublishedActors.insert( ActorEntityMap::value_type(proxy,eid).second;
-   bool published = mPublishedActors.insert( ActorEntityMap::value_type(proxy->GetId(),eid) ).second;
-   if( published )
-   {
-      EntityActorMap::value_type vp(eid,proxy);
-      bool activated = mActiveEntities.insert( vp ).second;
-      if( !activated )
-      {
-         // keep it in sync with the other container
-         mPublishedActors.erase( proxy->GetId() );
-      }
-
-      return activated;
-   }
-
-   return false;
-}
-
-bool ActiveEntityControl::RemoveEntity(const DIS::EntityID& eid, const dtDAL::ActorProxy* proxy)
-{
-   bool pub = mPublishedActors.erase(proxy->GetId()) > 0;
-   bool act = mActiveEntities.erase(eid) > 0;
-   return( pub && act );
-}
-
-const DIS::EntityID* ActiveEntityControl::GetEntity(const dtCore::UniqueId& uid) const
-{
-   ActorEntityMap::const_iterator iter = mPublishedActors.find( uid );
-   if( iter != mPublishedActors.end() )
-   {
-      return( &(iter->second) );
-   }
-
-   return NULL;
-}
-
-const dtDAL::ActorProxy* ActiveEntityControl::GetActor(const DIS::EntityID& eid) const
-{
-   EntityActorMap::const_iterator iter = mActiveEntities.find( eid );
-   if( iter != mActiveEntities.end() )
-   {
-      return( (iter->second).get() );
-   }
-
-   return NULL;
-}
-
-void ActiveEntityControl::ClearAll()
-{
-   mActiveEntities.clear();
-   mPublishedActors.clear();
-}
 
 
 bool ActorMapConfig::AddActorMapping(const DIS::EntityType& eid, const dtDAL::ActorType* at)
@@ -110,12 +58,31 @@ bool ResourceMapConfig::GetMappedResource(const DIS::EntityType& eid, const dtDA
 
 
 
-SharedState::SharedState()
+SharedState::SharedState(const std::string& connectionXMLFile,
+                         const std::string& entityMappingXMLFile)
    : mActorMapConfig()
    , mResourceMapConfig()
    , mActiveEntityControl()
    , mConnectionData()
+   , mSiteID(1)
+   , mApplicationID(1)
 {
+   //TODO Should read and process a DIS xml configuration file
+
+   if (!connectionXMLFile.empty())
+   {
+      //parse connection file
+      ParseConnectionData(connectionXMLFile);
+   }
+
+   if (!entityMappingXMLFile.empty())
+   {
+      ParseEntityMappingData(entityMappingXMLFile);
+   }
+
+   //initialize to something valid
+   mCoordConverter.SetIncomingCoordinateType(dtUtil::IncomingCoordinateType::GEOCENTRIC);
+   mCoordConverter.SetLocalCoordinateType(dtUtil::LocalCoordinateType::CARTESIAN_FLAT_EARTH);
 }
 
 SharedState::~SharedState()
@@ -155,6 +122,8 @@ const ActiveEntityControl& SharedState::GetActiveEntityControl() const
 void SharedState::SetConnectionData(const ConnectionData& data)
 {
    mConnectionData = data;
+   SetApplicationID(mConnectionData.application_id);
+   SetSiteID(mConnectionData.site_id);
 }
 
 const ConnectionData& SharedState::GetConnectionData() const
@@ -162,3 +131,75 @@ const ConnectionData& SharedState::GetConnectionData() const
    return mConnectionData;
 }
 
+
+////////////////////////////////////////////////////////////////////////////////
+void dtDIS::SharedState::ParseConnectionData(const std::string& file)
+{
+   dtUtil::XercesParser parser;
+   dtDIS::ConnectionXMLHandler handler;
+   bool parsed = parser.Parse(file, handler, "dis_connection.xsd");
+
+   if (parsed)
+   {
+      this->SetConnectionData(handler.GetConnectionData());
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void dtDIS::SharedState::ParseEntityMappingData(const std::string& file)
+{
+   dtUtil::XercesParser parser;
+   dtDIS::EntityMapXMLHandler handler(this);
+   bool parsed = parser.Parse(file, handler, "dis_mapping.xsd");
+
+   if (parsed)
+   {
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void dtDIS::SharedState::SetSiteID(unsigned short ID)
+{
+   mSiteID = ID;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+unsigned short dtDIS::SharedState::GetSiteID() const
+{
+   return mSiteID;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void dtDIS::SharedState::SetApplicationID(unsigned short ID)
+{
+   mApplicationID = ID;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+unsigned short dtDIS::SharedState::GetApplicationID() const
+{
+   return mApplicationID;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void dtDIS::SharedState::SetCoordinateConverter(const dtUtil::Coordinates& coordConverter)
+{
+   mCoordConverter = coordConverter; //copy
+
+   //Ensure that the converter is setup to what dtDIS needs.  Incoming DIS is geocentric and
+   //the local is Flat earth?
+   mCoordConverter.SetIncomingCoordinateType(dtUtil::IncomingCoordinateType::GEOCENTRIC);
+   mCoordConverter.SetLocalCoordinateType(dtUtil::LocalCoordinateType::CARTESIAN_FLAT_EARTH);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+const dtUtil::Coordinates& dtDIS::SharedState::GetCoordinateConverter() const
+{
+   return mCoordConverter;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+dtUtil::Coordinates& dtDIS::SharedState::GetCoordinateConverter()
+{
+   return mCoordConverter;
+}

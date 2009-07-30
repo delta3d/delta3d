@@ -52,9 +52,9 @@ namespace dtUtil
 
    private:
       std::string mVertexAttributeName;
-      osg::Program *mShaderProgram;
+      osg::Program* mShaderProgram;
       int mTangentVertexAttribNumber;
-   };
+   }; 
 }
 
 #endif /*DELTA_TANGENTSPACEVISITOR*/

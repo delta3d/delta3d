@@ -80,7 +80,7 @@ namespace dtEditQt
        * @param dx
        * @param dy
        */
-      void moveCamera(float dx, float dy);
+      bool moveCamera(float dx, float dy);
 
       /**
        * Sets the scene to be rendered by this viewport.
@@ -165,14 +165,14 @@ namespace dtEditQt
        * to properly respond to mouse movement events when in camera mode.
        * @param e
        */
-      void beginCameraMode(QMouseEvent* e);
+      bool beginCameraMode(QMouseEvent* e);
 
       /**
        * Called from the mouseReleaseEvent handler.  This restores the state of
        * the viewport as it was before camera mode was entered.
        * @param e
        */
-      void endCameraMode(QMouseEvent* e);
+      bool endCameraMode(QMouseEvent* e);
 
       /**
        * Called from the mousePressEvent handler.  Depending on what modifier
@@ -180,14 +180,14 @@ namespace dtEditQt
        * actor manipulation.
        * @param e
        */
-      void beginActorMode(QMouseEvent* e);
+      bool beginActorMode(QMouseEvent* e);
 
       /**
        * Called from the mouseReleaseEvent handler.  This restores the state of
        * the viewport as it was before actor mode was entered.
        * @param e
        */
-      void endActorMode(QMouseEvent* e);
+      bool endActorMode(QMouseEvent* e);
 
       /**
        * Takes the current selection of actors and attaches them to the camera.

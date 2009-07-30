@@ -4,7 +4,6 @@
       <file>icons/animationsoff_small.png</file>
       <file>icons/animationson_small.png</file>
       <file>icons/application_icon.png</file>
-      <file>icons/cameramode_small.png</file>
       <file>icons/category_large.png</file>
       <file>icons/character_resource.png</file>
       <file>icons/character_tab.png</file>
@@ -22,6 +21,7 @@
       <file>icons/lightingmode_tiny.png</file>
 	  <file>icons/localspace.png</file>
       <file>icons/newmap_small.png</file>
+	  <file>icons/normalmode.png</file>
       <file>icons/openmap_small.png</file>
       <file>icons/particle_resource.png</file>
       <file>icons/particle.ico</file>
@@ -29,10 +29,7 @@
       <file>icons/redo.png</file>
       <file>icons/refresh_large.png</file>
       <file>icons/refresh_small.png</file>
-      <file>icons/rotatemode_small.png</file>
-      <file>icons/scalemode_small.png</file>
       <file>icons/savemap_small.png</file>
-      <file>icons/selectmode_small.png</file>
       <file>icons/snapgrid_small.png</file>
       <file>icons/sound_resource.png</file>
       <file>icons/sound_tab.png</file>
@@ -47,7 +44,6 @@
       <file>icons/texturemode_tiny.png</file>
       <file>icons/texture_resource.png</file>
       <file>icons/texture_tab.png</file>
-      <file>icons/translatemode_small.png</file>
       <file>icons/trash_large.png</file>
       <file>icons/trash_small.png</file>
       <file>icons/undo.png</file>

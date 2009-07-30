@@ -67,6 +67,9 @@ namespace dtDIS
       /// \note This can be ignored by client developers.
       void ProcessMessage(const dtGame::Message& msg);
 
+      /// Time to convert the Message into DIS PDU's and send out
+      virtual void DispatchNetworkMessage(const dtGame::Message& message);
+
       ///// a convenience accessor, not needed usually.
       //const PluginManager& GetPluginManager() const;
 

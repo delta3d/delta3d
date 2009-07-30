@@ -105,7 +105,7 @@ namespace dtActors
 
             // Notify the system that the task state has changed.
             proxy.NotifyScoreChanged(proxy);
-            proxy.NotifyActorUpdate();
+            proxy.NotifyFullActorUpdate();
          }
       }
    }

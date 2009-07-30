@@ -112,11 +112,6 @@ class STAGEObjectMotionModel : public dtCore::ObjectMotionModel
       //void SetObjectToScreenFunc(ObjectToScreenFunc func);
 
       /**
-      * Sets the primary Target.
-      */
-      void SetTarget(dtCore::Transformable* target);
-
-      /**
       * Adds a target to the target list.
       *
       * @param[in]  target  The target to add.

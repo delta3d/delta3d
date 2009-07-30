@@ -59,7 +59,8 @@ private:
    dtCore::RefPtr<dtCore::Object> mCustomObject;
    dtCore::RefPtr<dtCore::Object> mLightObject;
 
-   float mTotalTime;
+   float mPitchAngle;
+   float mYawAngle;
    bool mUsePrecomputedTangents;
 
    osg::ref_ptr<osg::Texture2D> mDiffuseTexture;
@@ -71,6 +72,8 @@ private:
    dtCore::RefPtr<dtCore::ShaderParamVec4> mLightPosition;
    dtCore::RefPtr<dtCore::OrbitMotionModel> mOrbitMotion;
    dtCore::RefPtr<dtABC::LabelActor> mLabel;
+
+   osg::Uniform* mRotationUniform;
 
    void GenerateTangentsForObject(dtCore::Object* object);
    void AssignShaderToObject(dtCore::Object* object, dtCore::ShaderParamInt*& outMode);

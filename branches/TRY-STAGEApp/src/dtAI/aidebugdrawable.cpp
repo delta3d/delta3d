@@ -23,14 +23,19 @@
 #include <dtAI/aidebugdrawable.h>
 #include <dtAI/waypointinterface.h>
 #include <dtAI/waypointrenderinfo.h>
+#include <dtAI/waypointpair.h>
+#include <dtAI/navmesh.h>
 
+#include <dtUtil/log.h>
 #include <dtUtil/stringutils.h>
+#include <dtUtil/mathdefines.h>
 
 #include <osg/Geode>
 #include <osg/Geometry>
 #include <osg/Group>
 
 #include <osg/Point>
+#include <osg/LineWidth>
 
 #include <osgText/Text>
 
@@ -101,27 +106,39 @@ namespace dtAI
       mNode = new osg::Group();
       mGeode = new osg::Geode();
       mGeodeIDs = new osg::Geode();
-      mGeometry = new osg::Geometry();
-      
-      mWaypointIDs = new osg::IntArray();
-      mVerts = new osg::Vec3Array();
-      mGeometry->setVertexArray(mVerts.get());
+      mWaypointGeometry = new osg::Geometry();
+      mNavMeshGeometry = new osg::Geometry();
 
+      mWaypointIDs = new osg::IntArray();
+      mWaypointPairs = new osg::UIntArray();
+      mVerts = new osg::Vec3Array();
+
+      mWaypointGeometry->setVertexArray(mVerts.get());
+      mNavMeshGeometry->setVertexArray(mVerts.get());
+      
       mNode->addChild(mGeode.get());
       mNode->addChild(mGeodeIDs.get());
-      mGeode->addDrawable(mGeometry.get());
+      
+      mGeode->addDrawable(mWaypointGeometry.get());
+      mGeode->addDrawable(mNavMeshGeometry.get());
 
       //set the default color of the waypoints here so a derivative class can override it
-      osg::Vec4Array *colors = new osg::Vec4Array(1);
-      (*colors)[0] = mRenderInfo->mWaypointColor;
-      mGeometry->setColorArray(colors);
-      mGeometry->setColorBinding(osg::Geometry::BIND_OVERALL);
+      osg::Vec4Array* waypointColors = new osg::Vec4Array(1);
+      (*waypointColors)[0] = mRenderInfo->mWaypointColor;
+      mWaypointGeometry->setColorArray(waypointColors);
+      mWaypointGeometry->setColorBinding(osg::Geometry::BIND_OVERALL);
+
+      osg::Vec4Array* navmeshColors = new osg::Vec4Array(1);
+      (*navmeshColors)[0] = mRenderInfo->mNavMeshColor;
+      mNavMeshGeometry->setColorArray(navmeshColors);
+      mNavMeshGeometry->setColorBinding(osg::Geometry::BIND_OVERALL);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void AIDebugDrawable::ClearMemory()
    {
       //todo-
+      ClearWaypointGraph();
    }
 
 
@@ -158,7 +175,7 @@ namespace dtAI
    ///////////////////////////////////////////////////////////////////////////////
    osg::Geometry* AIDebugDrawable::GetGeometry()
    {
-      return mGeometry.get();
+      return mWaypointGeometry.get();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -223,16 +240,26 @@ namespace dtAI
    void AIDebugDrawable::OnGeometryChanged()
    {
       //seems like there should be a generic dirty()- does this only work with display lists?
-      mGeometry->dirtyDisplayList();
-      mGeometry->setVertexArray(mVerts.get());
-      mGeometry->removePrimitiveSet(0);
+      mWaypointGeometry->dirtyDisplayList();
+      mWaypointGeometry->setVertexArray(mVerts.get());
+      
+      mWaypointGeometry->removePrimitiveSet(0);
       osg::PrimitiveSet* ps = new osg::DrawArrays(osg::PrimitiveSet::POINTS, 0, mVerts->size());
-      mGeometry->addPrimitiveSet(ps);
+      mWaypointGeometry->addPrimitiveSet(ps);
       //setting it back to zero will ensure any user data does not get removed when this function is called again
-      mGeometry->setPrimitiveSet(0, ps);
+      mWaypointGeometry->setPrimitiveSet(0, ps);
+
+      mNavMeshGeometry->removePrimitiveSet(0);
+      osg::PrimitiveSet* psLines = new osg::DrawElementsUInt(osg::PrimitiveSet::LINES, mWaypointPairs->begin(), mWaypointPairs->end());
+      mNavMeshGeometry->addPrimitiveSet(psLines);
+      //setting it back to zero will ensure any user data does not get removed when this function is called again
+      mNavMeshGeometry->setPrimitiveSet(0, psLines);
 
       osg::Point* p = new osg::Point(mRenderInfo->mWaypointSize);
-      mGeometry->getOrCreateStateSet()->setAttribute(p, osg::StateAttribute::ON);
+      mWaypointGeometry->getOrCreateStateSet()->setAttribute(p, osg::StateAttribute::ON);
+
+      osg::LineWidth* lw = new osg::LineWidth(mRenderInfo->mNavMeshWidth);
+      mNavMeshGeometry->getOrCreateStateSet()->setAttribute(lw, osg::StateAttribute::ON);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -254,5 +281,43 @@ namespace dtAI
       mGeodeIDs->addDrawable(text);
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
+   void AIDebugDrawable::UpdateWaypointGraph( const NavMesh& nm )
+   {
+      //just clear and re-add them all, this should only happen often during editing
+      ClearWaypointGraph();
 
+      NavMesh::NavMeshContainer::const_iterator iter = nm.GetNavMesh().begin();
+      NavMesh::NavMeshContainer::const_iterator iterEnd = nm.GetNavMesh().end();
+
+      for(;iter != iterEnd; ++iter)
+      {
+         const WaypointPair* wp = (*iter).second;
+         AddPathSegment(wp->GetWaypointFrom(), wp->GetWaypointTo());
+      }
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void AIDebugDrawable::AddPathSegment( const WaypointInterface* pFrom, const WaypointInterface* pTo )
+   {
+      int indexFrom = FindWaypoint(pFrom->GetID());
+      int indexTo = FindWaypoint(pTo->GetID());
+
+      if(indexFrom > -1 && indexTo > -1)
+      {
+         mWaypointPairs->push_back(indexFrom);
+         mWaypointPairs->push_back(indexTo);
+         OnGeometryChanged();
+      }
+      else
+      {
+         LOG_ERROR("Invalid path segment");
+      }
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void AIDebugDrawable::ClearWaypointGraph()
+   {
+      mWaypointPairs->clear();
+   }
 }

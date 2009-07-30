@@ -35,6 +35,7 @@ namespace dtABC
       static const std::string NAME;
       static const std::string SCENE;
       static const std::string CAMERA;
+      static const std::string VIEWPORT;
       static const std::string VIEW;
       static const std::string LOG;
       static const std::string LIBRARY_PATH;
@@ -43,6 +44,11 @@ namespace dtABC
       static const std::string Y;
       static const std::string WIDTH;
       static const std::string HEIGHT;
+
+      static const std::string VIEWPORT_X;
+      static const std::string VIEWPORT_Y;
+      static const std::string VIEWPORT_WIDTH;
+      static const std::string VIEWPORT_HEIGHT;
 
       static const std::string PIXELDEPTH;
       static const std::string REFRESHRATE;

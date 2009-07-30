@@ -60,6 +60,7 @@ class TransformableTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST(TestRotationQuat);
    CPPUNIT_TEST(TestTransRotScaleGetSet);
    CPPUNIT_TEST(TestConstructorTakingMatrixNode);
+   CPPUNIT_TEST(TestValueOperators);
    CPPUNIT_TEST(TestRows);
    CPPUNIT_TEST(TestDistance);
    CPPUNIT_TEST(TestGetTransformWithDisabledCamera);
@@ -90,6 +91,7 @@ public:
    void TestTransRotScaleGetSet();
    void TestConstructorTakingMatrixNode();
    void TestSetMatrix();
+   void TestValueOperators();
    void TestRows();
    void TestDistance();
    void TestGetTransformWithDisabledCamera();
@@ -574,6 +576,18 @@ void TransformableTests::TestConstructorTakingMatrixNode()
                            mt.get() == object->GetOSGNode() );
 }
 
+void TransformableTests::TestValueOperators()
+{
+   dtCore::Transform xform;
+   xform.MakeIdentity();
+
+   CPPUNIT_ASSERT_DOUBLES_EQUAL(osg::Matrix::value_type(1.0), xform(0,0), 0.001);
+   CPPUNIT_ASSERT_DOUBLES_EQUAL(osg::Matrix::value_type(0.0), xform(0,1), 0.001);
+   CPPUNIT_ASSERT_DOUBLES_EQUAL(osg::Matrix::value_type(1.0), xform(3,3), 0.001);
+
+   xform(3,0) = 5.6;
+   CPPUNIT_ASSERT_DOUBLES_EQUAL(osg::Matrix::value_type(5.6), xform(3,0), 0.001);
+}
 void TransformableTests::TestRows()
 {
    dtCore::Transform transformTest;

@@ -40,11 +40,11 @@ namespace dtCore
          RefPtr(const RefPtr& rp):osg::ref_ptr<T>(rp) {}
 
          // added specifically for Delta3D
-          template <typename TSub>
+         template <typename TSub>
          RefPtr(const osg::ref_ptr<TSub>& rp):osg::ref_ptr<T>(rp.get()) {}
 
          // added specifically for Delta3D
-         friend inline std::ostream &operator<<(std::ostream &os, const RefPtr& rp)
+         friend inline std::ostream& operator<<(std::ostream& os, const RefPtr& rp)
          {
             os << rp.get();
             return os;

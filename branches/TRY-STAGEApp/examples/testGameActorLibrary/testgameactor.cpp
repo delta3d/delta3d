@@ -35,6 +35,47 @@
 #include <dtGame/invokable.h>
 
 ////////////////////////////////////////////////////////////////////
+// Actor Component Code
+////////////////////////////////////////////////////////////////////
+
+const dtGame::ActorComponent::ACType TestActorComponent1::TYPE("TestActorComponent1");
+
+TestActorComponent1::TestActorComponent1()
+: dtGame::ActorComponent(TYPE)
+, mWasAdded(false)
+, mWasRemoved(false)
+{
+}
+
+void TestActorComponent1::OnAddedToActor(dtGame::GameActor& actor)
+{
+   mWasAdded = true;
+}
+
+void TestActorComponent1::OnRemovedFromActor(dtGame::GameActor& actor)
+{
+   mWasRemoved = true;
+}
+
+const dtGame::ActorComponent::ACType TestActorComponent2::TYPE("TestActorComponent2");
+
+TestActorComponent2::TestActorComponent2()
+: dtGame::ActorComponent(TYPE)
+, mWasAdded(false)
+, mWasRemoved(false)
+{
+}
+
+void TestActorComponent2::OnAddedToActor(dtGame::GameActor& actor)
+{
+   mWasAdded = true;
+}
+
+void TestActorComponent2::OnRemovedFromActor(dtGame::GameActor& actor)
+{
+   mWasRemoved = true;
+}
+////////////////////////////////////////////////////////////////////
 // Proxy Code
 ////////////////////////////////////////////////////////////////////
 TestGameActorProxy1::TestGameActorProxy1():ticksEnabled(false)
@@ -51,33 +92,45 @@ void TestGameActorProxy1::BuildPropertyMap()
 {
    dtGame::GameActorProxy::BuildPropertyMap();
 
+   TestGameActor1* actor = NULL;
+   GetActor(actor);
+
    AddProperty(new dtDAL::BooleanActorProperty("Has Fired", "Has this actor fired",
-      dtDAL::MakeFunctor(static_cast<TestGameActor1&>(GetGameActor()), &TestGameActor1::SetOneIsFired),
-      dtDAL::MakeFunctorRet(static_cast<TestGameActor1&>(GetGameActor()), &TestGameActor1::OneIsFired),
+      dtDAL::BooleanActorProperty::SetFuncType(actor, &TestGameActor1::SetOneIsFired),
+      dtDAL::BooleanActorProperty::GetFuncType(actor, &TestGameActor1::OneIsFired),
       "Sets/Gets if this actor has fired.", ""));
 
    AddProperty(new dtDAL::IntActorProperty("Local Tick Count", "The number of tick messages received",
-      dtDAL::MakeFunctor(static_cast<TestGameActor1&>(GetGameActor()), &TestGameActor1::SetTickLocals),
-      dtDAL::MakeFunctorRet(static_cast<TestGameActor1&>(GetGameActor()), &TestGameActor1::GetTickLocals),
+      dtDAL::IntActorProperty::SetFuncType(actor, &TestGameActor1::SetTickLocals),
+      dtDAL::IntActorProperty::GetFuncType(actor, &TestGameActor1::GetTickLocals),
       "Sets/Gets the number of local tick messages counted.", ""));
    AddProperty(new dtDAL::IntActorProperty("Remote Tick Count", "The number of tick messages received",
-      dtDAL::MakeFunctor(static_cast<TestGameActor1&>(GetGameActor()), &TestGameActor1::SetTickRemotes),
-      dtDAL::MakeFunctorRet(static_cast<TestGameActor1&>(GetGameActor()), &TestGameActor1::GetTickRemotes),
+      dtDAL::IntActorProperty::SetFuncType(actor, &TestGameActor1::SetTickRemotes),
+      dtDAL::IntActorProperty::GetFuncType(actor, &TestGameActor1::GetTickRemotes),
       "Sets/Gets the number of remote tick messages counted.", ""));
+
+   AddProperty(new dtDAL::ActorIDActorProperty(*this, "Test_Actor_Id", "Test Actor Id",
+      dtDAL::ActorIDActorProperty::SetFuncType(actor, &TestGameActor1::SetTestActorId),
+      dtDAL::ActorIDActorProperty::GetFuncType(actor, &TestGameActor1::GetTestActorId),
+      "dtCore::Transformable",
+      "An example linked actor property", ""));
 }
 
 void TestGameActorProxy1::BuildInvokables()
 {
    dtGame::GameActorProxy::BuildInvokables();
 
+   TestGameActor1* actor = NULL;
+   GetActor(actor);
+
    AddInvokable(*new dtGame::Invokable("Fire One",
-      dtDAL::MakeFunctor(static_cast<TestGameActor1&>(GetGameActor()), &TestGameActor1::FireOne)));
+      dtUtil::MakeFunctor(&TestGameActor1::FireOne, actor)));
 
    AddInvokable(*new dtGame::Invokable("Reset",
-      dtDAL::MakeFunctor(static_cast<TestGameActor1&>(GetGameActor()), &TestGameActor1::Reset)));
+      dtUtil::MakeFunctor(&TestGameActor1::Reset, actor)));
 
    AddInvokable(*new dtGame::Invokable("Toggle Ticks",
-      dtDAL::MakeFunctor(*this, &TestGameActorProxy1::ToggleTicks)));
+      dtUtil::MakeFunctor(&TestGameActorProxy1::ToggleTicks, this)));
 
    //register local tick handles.
    //This is just to test local handler registration.  If you want to

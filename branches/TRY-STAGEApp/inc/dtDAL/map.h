@@ -481,7 +481,6 @@ namespace dtDAL
          //The name set when it was created/last saved.
          std::string mSavedName;
          std::string mFileName;
-         std::string mPathNodeFile;
          bool mCreateNavMesh;
          std::string mDescription;
          std::string mAuthor;

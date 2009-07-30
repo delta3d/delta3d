@@ -27,6 +27,7 @@
  * Curtiss Murphy
  */
 #include <prefix/dtstageprefix-src.h>
+#include <dtActors/volumeeditactor.h>
 #include <QtGui/QAction>
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/editoractions.h>
@@ -42,12 +43,14 @@
 #include <dtDAL/project.h>
 #include <dtEditQt/mainwindow.h>
 #include <dtEditQt/undomanager.h>
+#include <dtEditQt/viewportoverlay.h>
 
 namespace dtEditQt
 {
    ///////////////////////////////////////////////////////////////////////////////
    UndoManager::UndoManager()
       : mRecursePrevent(false)
+      , mGroupIndex(-1)
    {
       LOG_INFO("Initializing the UndoManager.");
 
@@ -204,11 +207,30 @@ namespace dtEditQt
          // clear any incomplete property change events
          mAboutToChangeEvent = NULL;
 
+         // First test if this actor is in a group.
+         bool isGroupped = false;
+         dtDAL::Map* map = EditorData::GetInstance().getCurrentMap();
+         if (map)
+         {
+            if (map->FindGroupForActor(proxy.get()) > -1)
+            {
+               isGroupped = true;
+               //beginMultipleUndo();
+               unGroupActor(proxy);
+               map->RemoveActorFromGroups(proxy.get());
+            }
+         }
+
          ChangeEvent* undoEvent = createFullUndoEvent(proxy.get());
          undoEvent->mType = ChangeEvent::PROXY_DELETED;
 
          // add it to our main undo stack
          mUndoStack.push(undoEvent);
+
+         //if (isGroupped)
+         //{
+         //   endMultipleUndo();
+         //}
 
          enableButtons();
       }
@@ -220,12 +242,47 @@ namespace dtEditQt
       // clear any incomplete property change events
       mAboutToChangeEvent = NULL;
 
-      if (!mRedoStack.empty())
+      int multiRedoStack = 0;
+      while (!mRedoStack.empty())
       {
          dtCore::RefPtr<ChangeEvent> redoEvent = mRedoStack.top();
          mRedoStack.pop();
 
+         // If we reach the beginning of a multiple redo event
+         if (redoEvent->mType == ChangeEvent::MULTI_UNDO_BEGIN)
+         {
+            multiRedoStack++;
+
+            // Reset the group index.
+            mGroupIndex = -1;
+
+            mUndoStack.push(redoEvent);
+            continue;
+         }
+
+         // If we reach the end of a multiple redo event
+         if (redoEvent->mType == ChangeEvent::MULTI_UNDO_END)
+         {
+            multiRedoStack--;
+
+            mUndoStack.push(redoEvent);
+
+            // If we still have more multi-redo's do perform, continue.
+            if (multiRedoStack > 0)
+            {
+               continue;
+            }
+
+            break;
+         }
+
          handleUndoRedoEvent(redoEvent.get(), false);
+
+         // If we don't have any more multiple redo events, we're done.
+         if (multiRedoStack == 0)
+         {
+            break;
+         }
       }
 
       enableButtons();
@@ -237,12 +294,49 @@ namespace dtEditQt
       // clear any incomplete property change events
       mAboutToChangeEvent = NULL;
 
-      if (!mUndoStack.empty())
+      int multiUndoStack = 0;
+      while (!mUndoStack.empty())
       {
          dtCore::RefPtr<ChangeEvent> undoEvent = mUndoStack.top();
          mUndoStack.pop();
 
+         // If we reach the end of a multiple undo event, since we are undoing from
+         // a stack, the end event is actually our beginning event.
+         if (undoEvent->mType == ChangeEvent::MULTI_UNDO_END)
+         {
+            multiUndoStack++;
+
+            // Reset the group index.
+            mGroupIndex = -1;
+
+            mRedoStack.push(undoEvent);
+            continue;
+         }
+
+         // If we reach the beginning of a multiple undo event, since we
+         // are undoing a stack, the beginning event is actually our end event.
+         if (undoEvent->mType == ChangeEvent::MULTI_UNDO_BEGIN)
+         {
+            multiUndoStack--;
+
+            mRedoStack.push(undoEvent);
+
+            // If we still have more multi-undo's do perform, continue.
+            if (multiUndoStack > 0)
+            {
+               continue;
+            }
+
+            break;
+         }
+
          handleUndoRedoEvent(undoEvent.get(), true);
+
+         // If we don't have any more multiple undo events, we're done.
+         if (multiUndoStack == 0)
+         {
+            break;
+         }
       }
 
       enableButtons();
@@ -256,6 +350,16 @@ namespace dtEditQt
       if (currMap.valid())
       {
          dtDAL::ActorProxy* proxy = currMap->GetProxyById(dtCore::UniqueId(event->mObjectId));
+
+         // Test to see if the proxy ID matches the volume brush.
+         if (!proxy)
+         {
+            dtActors::VolumeEditActorProxy* volumeProxy = EditorData::GetInstance().getMainWindow()->GetVolumeEditActorProxy();
+            if (volumeProxy && event->mObjectId == volumeProxy->GetId().ToString())
+            {
+               proxy = volumeProxy;
+            }
+         }
 
          // delete is special since the proxy is always NULL :)
          if (event->mType == ChangeEvent::PROXY_DELETED)
@@ -277,7 +381,12 @@ namespace dtEditQt
             case ChangeEvent::PROXY_CREATED:
                handleUndoRedoCreateObject(event, proxy, isUndo);
                return; // best to return because event can be modified as a side effect
-    
+            case ChangeEvent::GROUP_CREATED:
+               handleUndoRedoCreateGroup(event, proxy, true, isUndo);
+               return;
+            case ChangeEvent::GROUP_DELETED:
+               handleUndoRedoCreateGroup(event, proxy, false, isUndo);
+               return;
             default:
             break;
             }
@@ -340,10 +449,23 @@ namespace dtEditQt
          mUndoStack.push(event);
       }
 
+      // Remove this proxy from any groups they are in.
+      dtDAL::Map* map = EditorData::GetInstance().getCurrentMap();
+      if (map)
+      {
+         if (map->FindGroupForActor(proxy) > -1)
+         {
+            //beginMultipleUndo();
+            unGroupActor(proxy);
+            map->RemoveActorFromGroups(proxy);
+         }
+      }
+
       // Delete the sucker
       mRecursePrevent = true;
       EditorData::GetInstance().getMainWindow()->startWaitCursor();
       dtCore::RefPtr<dtDAL::Map> currMap = EditorData::GetInstance().getCurrentMap();
+
       EditorActions::GetInstance().deleteProxy(proxy, currMap);
 
       //We are deleting an object, so clear the current selection for safety.
@@ -352,6 +474,62 @@ namespace dtEditQt
 
       EditorData::GetInstance().getMainWindow()->endWaitCursor();
       mRecursePrevent = false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void UndoManager::handleUndoRedoCreateGroup(ChangeEvent* event, dtDAL::ActorProxy* proxy, bool createGroup, bool isUndo)
+   {
+      if (isUndo)
+      {
+         // add it REDO stack
+         mRedoStack.push(event);
+      }
+      else
+      {
+         // add it UNDO stack
+         mUndoStack.push(event);
+      }
+
+      dtDAL::Map* map = EditorData::GetInstance().getCurrentMap();
+      if (map)
+      {
+         // Undo'ing the creation of a group is the same as removing the actor from the group.
+         if (createGroup == isUndo)
+         {
+            map->RemoveActorFromGroups(proxy);
+         }
+         // Redo'ing the creation of a group is the same as putting the actor into a group.
+         else
+         {
+            // If we don't already have a new group created for this event, create one.
+            if (mGroupIndex == -1)
+            {
+               mGroupIndex = map->GetGroupCount();
+
+               // Since this is the first actor being grouped, remove our current
+               // selection and enable multi-select mode.
+
+               std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > emptySelection;
+               EditorEvents::GetInstance().emitActorsSelected(emptySelection);
+            }
+
+            // Now add the new proxy to the current selection.
+            std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > toSelect;
+            ViewportOverlay::ActorProxyList& selection = ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
+
+            for (int index = 0; index < (int)selection.size(); index++)
+            {
+               toSelect.push_back(selection[index]);
+            }
+
+            map->AddActorToGroup(mGroupIndex, proxy);
+            toSelect.push_back(proxy);
+
+            EditorEvents::GetInstance().emitActorsSelected(toSelect);
+         }
+      }
+
+      enableButtons();
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -380,6 +558,9 @@ namespace dtEditQt
             dtDAL::LibraryManager::GetInstance().CreateActorProxy(*actorType.get()).get();
          if (proxy.valid())
          {
+            // Tell the proxy that it is loading.
+            proxy->OnMapLoadBegin();
+
             // set all of our old properties before telling anyone else about it
             for (undoPropIter = event->mUndoPropData.begin(); undoPropIter != event->mUndoPropData.end(); ++undoPropIter)
             {
@@ -397,10 +578,14 @@ namespace dtEditQt
             proxy->SetId(dtCore::UniqueId(event->mObjectId));
             proxy->SetName(event->mOldName);
             currMap->AddProxy(*(proxy.get()));
+
+            // Tell the proxy that it is finished loading.
+            proxy->OnMapLoadEnd();
+
             mRecursePrevent = true;
             EditorEvents::GetInstance().emitBeginChangeTransaction();
             EditorEvents::GetInstance().emitActorProxyCreated(proxy, true);
-            ViewportManager::GetInstance().placeProxyInFrontOfCamera(proxy.get());
+            //ViewportManager::GetInstance().placeProxyInFrontOfCamera(proxy.get());
             EditorEvents::GetInstance().emitEndChangeTransaction();
             mRecursePrevent = false;
 
@@ -461,7 +646,7 @@ namespace dtEditQt
             else
             {
                // add it UNDO stack
-               mRedoStack.push(event);
+               mUndoStack.push(event);
             }
          }
       }
@@ -534,6 +719,24 @@ namespace dtEditQt
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void UndoManager::beginMultipleUndo()
+   {
+      ChangeEvent* undoEvent = new ChangeEvent();
+      undoEvent->mType       = ChangeEvent::MULTI_UNDO_BEGIN;
+
+      mUndoStack.push(undoEvent);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void UndoManager::endMultipleUndo()
+   {
+      ChangeEvent* undoEvent = new ChangeEvent();
+      undoEvent->mType       = ChangeEvent::MULTI_UNDO_END;
+
+      mUndoStack.push(undoEvent);
+   }
+
    //////////////////////////////////////////////////////////////////////////////
    bool UndoManager::hasUndoItems()
    {
@@ -544,6 +747,36 @@ namespace dtEditQt
    bool UndoManager::hasRedoItems()
    {
       return !mRedoStack.empty();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void UndoManager::groupActor(ActorProxyRefPtr proxy)
+   {
+      ChangeEvent* undoEvent = new ChangeEvent();
+      undoEvent->mType       = ChangeEvent::GROUP_CREATED;
+
+      if (proxy.valid())
+      {
+         undoEvent->mObjectId   = proxy->GetId().ToString();
+      }
+
+      mUndoStack.push(undoEvent);
+      enableButtons();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void UndoManager::unGroupActor(ActorProxyRefPtr proxy)
+   {
+      ChangeEvent* undoEvent = new ChangeEvent();
+      undoEvent->mType       = ChangeEvent::GROUP_DELETED;
+
+      if (proxy.valid())
+      {
+         undoEvent->mObjectId   = proxy->GetId().ToString();
+      }
+
+      mUndoStack.push(undoEvent);
+      enableButtons();
    }
 
 } // namespace dtEditQt

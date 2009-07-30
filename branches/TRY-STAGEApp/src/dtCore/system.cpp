@@ -11,6 +11,9 @@
 #include <osgViewer/GraphicsWindow>
 #include <ctime>
 
+//#include <sstream>
+#include <osg/Stats>
+
 using namespace dtUtil;
 
 namespace dtCore
@@ -33,6 +36,58 @@ namespace dtCore
    const dtUtil::RefString System::MESSAGE_PAUSE_END("pause_end");
    const dtUtil::RefString System::MESSAGE_EXIT("exit");
 
+
+   /// A wrapper for data like stats to prevent includes wherever system.h is used - uses the pimple pattern (like view)
+   class SystemImpl
+   {
+   public:
+      SystemImpl() 
+         : mTimerStart(0)
+         , mTotalFrameTime(0.0)
+      {  
+      }
+      ~SystemImpl() 
+      { 
+         mStats = NULL;
+      }
+
+
+      /////////////////////////////////////////////////////////////////
+      float EndStatTimer(const std::string& attribName) 
+      {
+         // Call this at the end of a section. User is responsible for calling StartStatTimer()
+         // first.
+
+         double elapsedTime = 0.0;
+         if (mStats != NULL && mStats->collectStats(attribName))
+         {
+            elapsedTime = mTickClock.DeltaMil(mTimerStart, mTickClock.Tick());
+            mStats->setAttribute(mStats->getLatestFrameNumber(), attribName, elapsedTime);
+         }
+         // accumulates till the end of frame, then reset back to 0 next frame.
+         mTotalFrameTime += elapsedTime;
+
+         return elapsedTime;
+      }
+
+      /////////////////////////////////////////////////////////////////
+      void StartStatTimer() 
+      {
+         // Call at the beginning of a section.  User is responsible for calling this before 
+         // calling EndStatTimer()
+         if (mStats != NULL)
+         {
+            mTimerStart = mTickClock.Tick();
+         }
+      }
+
+      dtCore::Timer mTickClock;
+      dtCore::Timer_t mTimerStart;
+      dtCore::RefPtr<osg::Stats> mStats;
+      double mTotalFrameTime;
+   };
+
+
    ////////////////////////////////////////////////////////////////////////////////
    System::System()
       : mRealClockTime(0)
@@ -54,6 +109,8 @@ namespace dtCore
    {
       mTickClockTime = mClock.Tick();
       RegisterInstance(this);
+
+      mSystemImpl = new SystemImpl();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -62,6 +119,8 @@ namespace dtCore
       DeregisterInstance(this);
 
       mInstanceFlag = false;
+
+      delete mSystemImpl;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -178,6 +237,26 @@ namespace dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void System::SetStats(osg::Stats *newValue)
+   {
+      // Holds onto stats on the impl - part of pimple pattern to hide includes
+      mSystemImpl->mStats = newValue;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   osg::Stats* System::GetStats()
+   {
+      // Holds onto stats on the impl - part of pimple pattern to hide includes
+      return mSystemImpl->mStats.get();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool System::IsStatsOn()
+   {
+      return (GetStats() != NULL);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void System::SetSimulationTime(double newTime)
    {
       mSimulationTime = newTime;
@@ -258,6 +337,7 @@ namespace dtCore
          return;
       }
 
+      mSystemImpl->mTotalFrameTime = 0.0;  // reset frame timer for stats
       mAccumulateLastRealDt = false;
 
       mSimulationTime      += simFrameTime;
@@ -299,6 +379,7 @@ namespace dtCore
 
       if (mPaused)
       {
+         mSystemImpl->mTotalFrameTime = 0.0;  // reset frame timer for stats
          mWasPaused = true;
          EventTraversal(0.0, realDT);
          PostEventTraversal(0.0, realDT);
@@ -311,6 +392,7 @@ namespace dtCore
       {
          if (!mUseFixedTimeStep)
          {
+            mSystemImpl->mTotalFrameTime = 0.0;  // reset frame timer for stats
             mWasPaused = false;
 
             // update real time variable(s)
@@ -335,6 +417,15 @@ namespace dtCore
             SystemStepFixed(realDT);
          }
       }
+
+      // set our full delta processing time as an attribute
+      if (IsStatsOn())
+      {
+         mSystemImpl->mStats->setAttribute(mSystemImpl->mStats->getLatestFrameNumber(), 
+            "FullDeltaFrameTime", mSystemImpl->mTotalFrameTime);
+      }
+
+
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -374,8 +465,7 @@ namespace dtCore
    ////////////////////////////////////////////////////////////////////////////////
    void System::Run()
    {
-      mRunning = true;
-      InitVars();
+      Start(); ///Automatically start the System when Run.
 
       while(mRunning)
       {
@@ -424,8 +514,13 @@ namespace dtCore
    {
       if (dtUtil::Bits::Has(mSystemStages, System::STAGE_EVENT_TRAVERSAL))
       {
+         mSystemImpl->StartStatTimer();
+
          double userData[2] = { deltaSimTime, deltaRealTime };
          SendMessage(MESSAGE_EVENT_TRAVERSAL, userData);
+
+         mSystemImpl->EndStatTimer(MESSAGE_EVENT_TRAVERSAL);
+
       }
    }
 
@@ -434,8 +529,12 @@ namespace dtCore
    {
       if (dtUtil::Bits::Has(mSystemStages, System::STAGE_POST_EVENT_TRAVERSAL))
       {
+         mSystemImpl->StartStatTimer();
+
          double userData[2] = { deltaSimTime, deltaRealTime };
          SendMessage(MESSAGE_POST_EVENT_TRAVERSAL, userData);
+
+         mSystemImpl->EndStatTimer(MESSAGE_POST_EVENT_TRAVERSAL);
       }
    }
 
@@ -444,8 +543,12 @@ namespace dtCore
    {
       if (dtUtil::Bits::Has(mSystemStages, System::STAGE_PREFRAME))
       {
+         mSystemImpl->StartStatTimer();
+
          double userData[2] = { deltaSimTime, deltaRealTime };
          SendMessage(MESSAGE_PRE_FRAME, userData);
+
+         mSystemImpl->EndStatTimer(MESSAGE_PRE_FRAME);
       }
    }
 
@@ -454,8 +557,12 @@ namespace dtCore
    {
       if (dtUtil::Bits::Has(mSystemStages, System::STAGE_FRAME_SYNCH))
       {
+         mSystemImpl->StartStatTimer();
+
          double userData[2] = { deltaSimTime, deltaRealTime };
          SendMessage(MESSAGE_FRAME_SYNCH, userData);
+
+         mSystemImpl->EndStatTimer(MESSAGE_FRAME_SYNCH);
       }
    }
 
@@ -464,8 +571,12 @@ namespace dtCore
    {
       if (dtUtil::Bits::Has(mSystemStages, System::STAGE_CAMERA_SYNCH))
       {
+         mSystemImpl->StartStatTimer();
+
          double userData[2] = { deltaSimTime, deltaRealTime };
          SendMessage(MESSAGE_CAMERA_SYNCH, userData);
+
+         mSystemImpl->EndStatTimer(MESSAGE_CAMERA_SYNCH);
       }
    }
 
@@ -474,8 +585,12 @@ namespace dtCore
    {
       if (dtUtil::Bits::Has(mSystemStages, System::STAGE_FRAME))
       {
+         mSystemImpl->StartStatTimer();
+
          double userData[2] = { deltaSimTime, deltaRealTime };
          SendMessage(MESSAGE_FRAME, userData );
+
+         mSystemImpl->EndStatTimer(MESSAGE_FRAME);
       }
    }
 
@@ -484,8 +599,12 @@ namespace dtCore
    {
       if (dtUtil::Bits::Has(mSystemStages, System::STAGE_POSTFRAME))
       {
+         mSystemImpl->StartStatTimer();
+
          double userData[2] = { deltaSimTime, deltaRealTime };
          SendMessage(MESSAGE_POST_FRAME, userData);
+
+         mSystemImpl->EndStatTimer(MESSAGE_POST_FRAME);
       }
    }
 

@@ -28,6 +28,7 @@
  */
 #include <prefix/dtstageprefix-src.h>
 #include "dtEditQt/actortab.h"
+#include <dtEditQt/configurationmanager.h>
 #include "dtEditQt/tabcontainer.h"
 #include "dtEditQt/tabwrapper.h"
 #include "dtEditQt/actorbrowser.h"
@@ -41,27 +42,32 @@
 
 namespace dtEditQt
 {
-
    ///////////////////////////////////////////////////////////////////////////////
    ActorTab::ActorTab(QWidget* parent)
       : QDockWidget(parent)
+      , mTabActorBrowser(NULL)
+      , mTabPrefabBrowser(NULL)
+      , mActorBrowserWidget(NULL)
+      , mPrefabBrowserWidget(NULL)
    {
       setWindowTitle(tr("Actors"));
 
       // container
       mTabC = new TabContainer(this);
 
-      // tabs
-      mTabActorBrowser = new TabWrapper(this);
-      mTabActorSearch  = new TabWrapper(this);
-      mTabGlobalActor  = new TabWrapper(this);
-      mTabPrefabBrowser= new TabWrapper(this);
+      //Note: tabs and widgets are different
 
-      // widgets
-      mActorBrowserWidget = new ActorBrowser(this);
-      mActorSearchWidget  = new ActorSearcher(this);
-      mActorGlobalWidget  = new ActorGlobalBrowser(this);
-      mPrefabBrowserWidget= new PrefabBrowser(this);
+      if (ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, "ShowActorBrowser") != "false")
+      {
+         mTabActorBrowser = new TabWrapper(this);
+         mActorBrowserWidget = new ActorBrowser(this);
+      }
+
+      if (ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, "ShowPrefabBrowser") != "false")
+      {
+         mTabPrefabBrowser= new TabWrapper(this);
+         mPrefabBrowserWidget= new PrefabBrowser(this);
+      }
 
       addTabs();
 
@@ -74,25 +80,21 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    void ActorTab::addTabs()
    {
-      // Actor Browser Tab
-      mTabActorBrowser->setWidget(mActorBrowserWidget);
-      mTabActorBrowser->setName("Actors");
-      mTabC->addTab(mTabActorBrowser);
+      if (mActorBrowserWidget != NULL)
+      {
+         // Actor Browser Tab
+         mTabActorBrowser->setWidget(mActorBrowserWidget);
+         mTabActorBrowser->setName("Actors");
+         mTabC->addTab(mTabActorBrowser);
+      }
 
-      // Actor Search tab
-      mTabActorSearch->setWidget(mActorSearchWidget);
-      mTabActorSearch->setName("Actor Search");
-      mTabC->addTab(mTabActorSearch);
-
-      // Global Actors
-      mTabGlobalActor->setWidget(mActorGlobalWidget);
-      mTabGlobalActor->setName("Global Actors");
-      mTabC->addTab(mTabGlobalActor);
-
-      // Prefabs Tab
-      mTabPrefabBrowser->setWidget(mPrefabBrowserWidget);
-      mTabPrefabBrowser->setName("Prefabs");
-      mTabC->addTab(mTabPrefabBrowser);
+      if (mPrefabBrowserWidget != NULL)
+      {
+         // Prefabs Tab
+         mTabPrefabBrowser->setWidget(mPrefabBrowserWidget);
+         mTabPrefabBrowser->setName("Prefabs");
+         mTabC->addTab(mTabPrefabBrowser);
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////////

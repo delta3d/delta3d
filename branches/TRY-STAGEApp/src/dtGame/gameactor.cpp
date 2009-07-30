@@ -121,6 +121,9 @@ namespace dtGame
                dtDAL::StringActorProperty::SetFuncType(&ga, &GameActor::SetShaderGroup),
                dtDAL::StringActorProperty::GetFuncType(&ga, &GameActor::GetShaderGroup),
                "Sets the shader group on the game actor.",GROUPNAME));
+
+      /** let game actor components add their properties */
+      ga.BuildComponentPropertyMaps();
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -181,7 +184,7 @@ namespace dtGame
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void GameActorProxy::NotifyPartialActorUpdate(const std::vector<std::string>& propNames)
+   void GameActorProxy::NotifyPartialActorUpdate(const std::vector<dtUtil::RefString>& propNames)
    {
       if (GetGameManager() == NULL || IsRemote())
       {
@@ -198,19 +201,63 @@ namespace dtGame
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void GameActorProxy::PopulateActorUpdate(ActorUpdateMessage& update, const std::vector<std::string>& propNames)
+   void GameActorProxy::NotifyPartialActorUpdate(const std::vector<std::string>& propNames)
+   {
+      // This method is DEPRECATED - we just have to convert the vector types.
+      std::vector<dtUtil::RefString> refStringPropNames;
+      refStringPropNames.reserve(propNames.size());
+      for (unsigned i = 0; i < propNames.size(); ++i)
+      {
+         refStringPropNames.push_back(propNames[i]);
+      }
+
+      NotifyPartialActorUpdate(refStringPropNames);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void GameActorProxy::NotifyPartialActorUpdate()
+   {
+      std::vector<dtUtil::RefString> propNames;
+      GetPartialUpdateProperties(propNames);
+      NotifyPartialActorUpdate(propNames);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void GameActorProxy::GetPartialUpdateProperties(std::vector<dtUtil::RefString>& propNamesToFill)
+   {
+      // The default of this does nothing except log a warning.
+      mLogger.LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+         "If you use NotifyPartialActorUpdate(), you should override GetPartialUpdateProperties().");
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void GameActorProxy::PopulateActorUpdate(ActorUpdateMessage& update, const std::vector<dtUtil::RefString>& propNames)
    {
       PopulateActorUpdate(update, propNames, true);
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void GameActorProxy::PopulateActorUpdate(ActorUpdateMessage& update)
+   void GameActorProxy::PopulateActorUpdate(ActorUpdateMessage& update, const std::vector<std::string>& propNames)
    {
-      PopulateActorUpdate(update, std::vector<std::string>(), false);
+      // This method is DEPRECATED - we just have to convert the vector types.
+      std::vector<dtUtil::RefString> refStringPropNames;
+      refStringPropNames.reserve(propNames.size());
+      for (unsigned i = 0; i < propNames.size(); ++i)
+      {
+         refStringPropNames.push_back(propNames[i]);
+      }
+
+      PopulateActorUpdate(update, refStringPropNames, true);
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void GameActorProxy::PopulateActorUpdate(ActorUpdateMessage& update, const std::vector<std::string>& propNames, bool limitProperties)
+   void GameActorProxy::PopulateActorUpdate(ActorUpdateMessage& update)
+   {
+      PopulateActorUpdate(update, std::vector<dtUtil::RefString>(), false);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void GameActorProxy::PopulateActorUpdate(ActorUpdateMessage& update, const std::vector<dtUtil::RefString>& propNames, bool limitProperties)
    {
       update.SetName(GetName());
       update.SetActorType(GetActorType());
@@ -338,9 +385,16 @@ namespace dtGame
          }
 
 
+         dtDAL::ActorActorProperty* aap = NULL;
+
          if (paramType == dtDAL::DataType::ACTOR)
          {
-            dtDAL::ActorActorProperty *aap = static_cast<dtDAL::ActorActorProperty*>(property);
+            aap = dynamic_cast<dtDAL::ActorActorProperty*>(property);
+         }
+
+         // If the property is of type ACTOR AND it is an ActorActor property not an ActorID property, it's a special case.
+         if (aap != NULL)
+         {
             const ActorMessageParameter* amp = static_cast<const ActorMessageParameter*>(params[i]);
             if ( GetGameManager() != NULL )
             {
@@ -414,6 +468,24 @@ namespace dtGame
       }
    }
 
+   /////////////////////////////////////////////////////////////////////////////////////////////////////////
+   void GameActorProxy::RemoveInvokable(const std::string& name)
+   {
+      std::map<std::string,dtCore::RefPtr<Invokable> >::iterator itor =
+         mInvokables.find(name);
+      if (itor != mInvokables.end())
+      {
+         mInvokables.erase(itor);
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////////////////////////////
+   void GameActorProxy::RemoveInvokable(Invokable* inv)
+   {
+      RemoveInvokable(inv->GetName());
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////////////////////////////
    void GameActorProxy::BuildInvokables()
    {
       AddInvokable(*new Invokable(TICK_LOCAL_INVOKABLE,
@@ -592,8 +664,29 @@ namespace dtGame
       }
 
       ga->OnEnteredWorld();
+      ga->InitComponents();
 
       OnEnteredWorld();
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////
+   void GameActorProxy::InvokeRemovedFromWorld()
+   {
+      /**
+       * We will preform a check to make sure this actor actually is a GameActor
+       */
+
+      GameActor* ga = dynamic_cast<GameActor*>(GetActor());
+      if (ga == NULL)
+      {
+         // throw exception
+         throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION,
+                  "ERROR: Actor has the type of a GameActor, but casting it to a GameActorProxy failed.", __FILE__, __LINE__);
+      }
+
+      ga->RemoveAllComponents();
+
+      OnRemovedFromWorld();
    }
 
 
@@ -736,6 +829,12 @@ namespace dtGame
    void GameActor::SetPrototypeName(const std::string& prototypeName)
    {
       mPrototypeName = prototypeName;
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   const std::string& GameActor::GetPrototypeName() const
+   {
+      return mPrototypeName;
    }
 
 }

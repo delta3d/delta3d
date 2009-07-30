@@ -26,6 +26,7 @@
 #include <dtCore/physical.h>
 #include <dtDAL/physicalactorproxy.h>
 #include <dtGame/export.h>
+#include <dtGame/actorcomponentbase.h>
 
 namespace dtUtil
 {
@@ -48,7 +49,9 @@ namespace dtGame
     * Game Manager
     * @see dtGame::GameManager
     */
-   class DT_GAME_EXPORT GameActor : public dtCore::Physical
+   class DT_GAME_EXPORT GameActor 
+      : public dtCore::Physical
+      , public dtGame::ActorComponentBase
    {
    public:
       /// Constructor
@@ -139,7 +142,7 @@ namespace dtGame
       * processor, it will attempt to look up the prototype first. Extremely useful for networking.
       * @return The prototype that was used to create this actor. Set by the GM.
       */
-      std::string GetPrototypeName() const { return mPrototypeName; }
+      const std::string& GetPrototypeName() const;
 
    protected:
 
@@ -263,6 +266,16 @@ namespace dtGame
       void AddInvokable(Invokable& newInvokable);
 
       /**
+       * Remove this invokable from the proxy's list
+       */
+      void RemoveInvokable(const std::string& name);
+
+      /**
+       * Remove this invokable from the proxy's list
+       */
+      void RemoveInvokable(Invokable*);
+
+      /**
        * @return the invokable with the given name or NULL if it doesn't have one with that name.
        */
       Invokable* GetInvokable(const std::string& name);
@@ -292,17 +305,36 @@ namespace dtGame
        * Note - This will do nothing if the actor is Remote.
        * @param propNames  the properties to include in the update message.
        */
-      virtual void NotifyPartialActorUpdate(const std::vector<std::string>& propNames);
+      virtual void NotifyPartialActorUpdate(const std::vector<dtUtil::RefString>& propNames);
+      /**
+       * Deprecated - Use NotifyPartialActorUpdate() with dtUtil::RefString instead.
+       * @see NotifyPartialActorUpdate
+       */
+      DEPRECATE_FUNC virtual void NotifyPartialActorUpdate(const std::vector<std::string>& propNames);
 
       /**
-       * This is like NotifyFullActorUpdate() except that on subclasses, it might
-       * only update some fields.  The Full would always send all properties, where
-       * this one might only send what it thinks has updated since the last update.
-       * The default implementation just calls NotifyFullActorUpdate().
+       * This is like NotifyFullActorUpdate() except that your subclass might only want to 
+       * send some properties. If you use this, you MUST override GetPartialUpdateProperties()
+       * to set which properties will be sent.
        * Note - This will do nothing if the actor is Remote.
-       * @see NotifyFullActorUpdate
        */
-      virtual void NotifyActorUpdate();
+      virtual void NotifyPartialActorUpdate();
+
+      /**
+       * Override this and add whatever properties you want to go out when you call 
+       * NotifyPartialActorUpdate(). Note - you should not use NotifyPartialActorUpdate() 
+       * without overriding this - the default implementation logs a warning.
+       * Note - This will do nothing if the actor is Remote.
+       */
+      virtual void GetPartialUpdateProperties(std::vector<dtUtil::RefString>& propNamesToFill);
+
+      /**
+       * Deprecated - Use NotifyFullActorUpdate() for a full or NotifyPartialActorUpdate() 
+       * for a partial. 
+       * @see NotifyFullActorUpdate
+       * @see NotifyPartialActorUpdate
+       */
+      DEPRECATE_FUNC virtual void NotifyActorUpdate();
 
       /**
        * Populates an update message from the actor proxy.  When overwriting this method, be sure to call or
@@ -310,7 +342,12 @@ namespace dtGame
        * @param update The message to populate.
        * @param propNames  the properties to include in the message.
        */
-      virtual void PopulateActorUpdate(ActorUpdateMessage& update, const std::vector<std::string>& propNames);
+      virtual void PopulateActorUpdate(ActorUpdateMessage& update, const std::vector<dtUtil::RefString>& propNames);
+      /**
+       * Deprecated - Use PopulateActorUpdate() with dtUtil::RefString instead.
+       * @see PopulateActorUpdate
+       */
+      DEPRECATE_FUNC virtual void PopulateActorUpdate(ActorUpdateMessage& update, const std::vector<std::string>& propNames);
 
       /**
        * Populates an update message from the actor proxy.  It will add all property values to the message.
@@ -481,7 +518,7 @@ namespace dtGame
        * @param propNames the list of properties to include in the message.
        * @param limitProperties true if the propNames list should be respected or false if all properties should added.
        */
-      void PopulateActorUpdate(ActorUpdateMessage& update, const std::vector<std::string>& propNames, bool limitProperties);
+      void PopulateActorUpdate(ActorUpdateMessage& update, const std::vector<dtUtil::RefString>& propNames, bool limitProperties);
 
       /**
        * Sets if the actor is remote by invoking the actor implementation
@@ -499,6 +536,11 @@ namespace dtGame
        * Invokes the OnEnteredWorld function of the actor, and then the proxy
        */
       void InvokeEnteredWorld();
+
+      /**
+       * Invokes the OnRemovedFromWorld function of the proxy
+       */
+      void InvokeRemovedFromWorld();
 
       /// This was added so the GameManager can be set on creation.
       void SetIsInGM(bool value);

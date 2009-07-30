@@ -281,7 +281,8 @@ namespace dtDAL
       dtCore::RefPtr<const ActorType> type = FindActorType(category, name);
       if(!type.valid())
          throw dtUtil::Exception(dtDAL::ExceptionEnum::ObjectFactoryUnknownType, 
-         "No actor exists of the specified name and category", __FILE__, __LINE__);
+         "No actor exists of the specified name [" + name + "] and category[" + 
+         category + "].", __FILE__, __LINE__);
 
       return CreateActorProxy(*type);
    }

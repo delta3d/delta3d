@@ -43,6 +43,7 @@
 
 namespace dtEditQt
 {
+   class Viewport;
 
    /**
     * The camera class provides a view into the scene.  It supports orthographic
@@ -117,6 +118,11 @@ namespace dtEditQt
        * axis is up, the positive Y axis is forward, and the positive X axis is right.
        */
       void resetRotation();
+
+      /**
+      * Sets the viewport.
+      */
+      void setViewport(int x, int y, int width, int height);
 
       /**
        * Sets the camera's orthographic viewing parameters and puts this camera into

@@ -143,7 +143,7 @@ namespace dtAI
 
    bool NavMesh::IsOneWay(WaypointPair* pPair) const
    {
-      NavMeshContainer::const_iterator iter = begin(pPair->GetWaypointTo());
+      NavMeshContainer::const_iterator iter      = begin(pPair->GetWaypointTo());
       NavMeshContainer::const_iterator endOfList = end(pPair->GetWaypointTo());
 
       WaypointID id = pPair->GetWaypointFrom()->GetID();

@@ -17,6 +17,7 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  * Matthew W. Campbell
+ * David Guthrie
  */
 
 #ifndef DELTA_ENUMERATION
@@ -26,9 +27,8 @@
 
 #include <string>
 #include <vector>
-#include <ostream>
+#include <iosfwd>
 #include <dtUtil/export.h>
-#include <osg/Referenced>  // for base class
 
 //Disable visual C++ compiler warnings that seem to indicate the compiler is
 //getting confused when compiling an enumeration.
@@ -48,6 +48,7 @@ namespace dtUtil
    {
    public:
       /**
+       * Inlined because it's called frequently
        * @return the string representation of this enumeration.
        */
       const std::string& GetName() const
@@ -60,6 +61,7 @@ namespace dtUtil
        * and only references to enumerations may be stored by the user, it is
        * safe and efficient to compare enumeration objects based on their memory
        * address.
+       * Inlined because it's called frequently
        */
       bool operator==(const Enumeration& rhs) const
       {
@@ -68,6 +70,7 @@ namespace dtUtil
 
       /**
        * Inequality test for an enumeration.
+       * Inlined because it's called frequently
        * @see operator==
        */
       bool operator!=(const Enumeration& rhs) const
@@ -84,37 +87,26 @@ namespace dtUtil
        *  Uses the STL string compare method implying that the rules for string
        *  equality are the same as they are for the STL string compare method.
        */
-      bool operator==(const std::string& rhs) const
-      {
-         return mName == rhs;
-      }
+      bool operator==(const std::string& rhs) const;
 
       ///Overloaded inequality test for this enumeration's string value.
-      bool operator!=(const std::string& rhs) const
-      {
-         return mName != rhs;
-      }
+      bool operator!=(const std::string& rhs) const;
 
       ///Overloaded less than test for this enumeration's string value.
-      bool operator<(const std::string& rhs) const
-      {
-         return mName < rhs;
-      }
+      bool operator<(const std::string& rhs) const;
 
       ///Overloaded greater than test for this enumeration's string value.
-      bool operator>(const std::string& rhs) const
-      {
-         return mName > rhs;
-      }
+      bool operator>(const std::string& rhs) const;
 
       /**
        * Overloaded less than operator.  This checks the memory addresses of the two
        * enumerations.
+       * Inlined because it's called frequently
        * @param rhs The second enumeration to compare to this one.
        * @return True if this enumeration is less than rhs.
        * @note
        *  This method is supported by enumerations so they may be used as keys
-       *  in STL containers.  Since memory addresses are guarenteed to be unique
+       *  in STL containers.  Since memory addresses are guaranteed to be unique
        *  this methods works fine.  However, it really does not make sense to use
        *  this method of comparison in other circumstances.
        */
@@ -125,7 +117,7 @@ namespace dtUtil
 
    protected:
       ///Private virtual desctructor to get rid of compile warning
-      virtual ~Enumeration() {};
+      virtual ~Enumeration();
 
       /**
        * Construct the enumeration.
@@ -134,28 +126,21 @@ namespace dtUtil
        *      must call addInstance(this) in order for enumerations to be
        *      enumerated.
        */
-      Enumeration(const std::string& name)
-         : mName(name)
-      {
-      }
+      Enumeration(const std::string& name);
 
    private:
       ///Private assignment operator to enforce enumeration storage by reference.
-      Enumeration& operator=(const Enumeration&) { return *this; }
+      Enumeration& operator=(const Enumeration&);
 
       ///String representation of the enumeration.
       std::string mName;
       ///Private copy constructor to enforce enumeration storage by reference.
-      Enumeration(const Enumeration&) { }
+      Enumeration(const Enumeration&);
 
-      ///Helper method to print enumerations to an output stream.
-      friend std::ostream &operator<<(std::ostream& os, const Enumeration& e)
-      {
-         os << e.GetName();
-         return os;
-      }
    };
 
+   ///Helper method to print enumerations to an output stream.
+   DT_UTIL_EXPORT std::ostream& operator<<(std::ostream& os, const Enumeration& e);
 
 /**
  * Helper macros used to create the static data and methods

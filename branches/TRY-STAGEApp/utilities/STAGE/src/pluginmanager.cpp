@@ -1,5 +1,6 @@
 #include <dtEditQt/pluginmanager.h>
 
+#include <dtEditQt/configurationmanager.h>
 #include <dtEditQt/mainwindow.h>
 #include <dtUtil/exception.h>
 #include <dtUtil/fileutils.h>
@@ -151,9 +152,9 @@ namespace dtEditQt
    /** get the list of plugins to start from config file and start them */
    void PluginManager::StartPluginsInConfigFile()
    {
-      // get config string from manager
-      ConfigurationManager* cm = mMainWindow->GetConfigurationManager();
-      std::string activated = cm->GetVariable(ConfigurationManager::PLUGINS, "Activated");
+      // get config string from manager      
+      std::string activated = 
+         ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::PLUGINS, "Activated");
 
       if(activated == "")
       {
@@ -197,9 +198,8 @@ namespace dtEditQt
             os << *i << "/";
          }
       }
-
-      ConfigurationManager* cm = mMainWindow->GetConfigurationManager();
-      cm->SetVariable(ConfigurationManager::PLUGINS, "Activated", os.str());
+      
+      ConfigurationManager::GetInstance().SetVariable(ConfigurationManager::PLUGINS, "Activated", os.str());
    }
 
 
@@ -241,6 +241,20 @@ namespace dtEditQt
             toFill.push_back((*iter).first);
          }
       }
+   }
+
+
+   std::list<std::string> PluginManager::GetPluginDependencies(std::string name)
+   {
+      std::list<std::string> deps;
+      PluginFactory* factory = GetPluginFactory(name);
+
+      if (factory)
+      {
+         factory->GetDependencies(deps);
+      }
+
+      return deps;
    }
 
 
@@ -295,6 +309,33 @@ namespace dtEditQt
       if(!IsInstantiated(name))
       {
          return;
+      }
+
+      // Check if any other plugins depend on this one, and stop them as well.
+      std::list<std::string> activePlugins;
+      GetActivePlugins(activePlugins);
+      while(!activePlugins.empty())
+      {
+         std::string plugin = activePlugins.front();
+         activePlugins.pop_front();
+
+         PluginFactory* factory = GetPluginFactory(plugin);
+
+         // start all plugins this plugin depends on
+         std::list<std::string> deps;
+         factory->GetDependencies(deps);
+         while(!deps.empty())
+         {
+            std::string dependency = deps.front();
+            deps.pop_front();
+
+            // If the active plugin depends on this plugin, then we need to stop that one too.
+            if (dependency == name)
+            {
+               StopPlugin(plugin);
+               break;
+            }
+         }
       }
 
       LOG_ALWAYS("Stopping plugin " + name);

@@ -125,7 +125,7 @@ AnimNodeBuilder::Cal3DBoundingSphereCalculator::Cal3DBoundingSphereCalculator(Ca
 
 ////////////////////////////////////////////////////////////////////////////////
 osg::BoundingSphere AnimNodeBuilder::Cal3DBoundingSphereCalculator::computeBound(const osg::Node&) const
-{   
+{
    osg::BoundingSphere bSphere(mWrapper->GetBoundingBox());
    return bSphere;
 }
@@ -193,7 +193,7 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateNode(Cal3DModelWrapper* pWrappe
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateSoftwareInternal(Cal3DModelWrapper* pWrapper, bool vbo) 
+dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateSoftwareInternal(Cal3DModelWrapper* pWrapper, bool vbo)
 {
    if (pWrapper == NULL)
    {
@@ -203,7 +203,7 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateSoftwareInternal(Cal3DModelWrap
 
    dtCore::RefPtr<osg::Geode> geode = new osg::Geode();
 
-   geode->setComputeBoundingSphereCallback(new Cal3DBoundingSphereCalculator(*pWrapper));   
+   geode->setComputeBoundingSphereCallback(new Cal3DBoundingSphereCalculator(*pWrapper));
 
    if (pWrapper->BeginRenderingQuery())
    {
@@ -218,8 +218,8 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateSoftwareInternal(Cal3DModelWrap
 
          for (int submeshId = 0; submeshId < submeshCount; submeshId++)
          {
-            dtAnim::SubmeshDrawable *submesh = new dtAnim::SubmeshDrawable(pWrapper, meshId, submeshId);
-            submesh->SetBoundingBox(boundingBox); 
+            dtAnim::SubmeshDrawable* submesh = new dtAnim::SubmeshDrawable(pWrapper, meshId, submeshId);
+            submesh->SetBoundingBox(boundingBox);
             submesh->setUseVertexBufferObjects(vbo);
             geode->addDrawable(submesh);
          }
@@ -373,7 +373,7 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
             boneTransformUniform.append("[0]");
          }
       }
-      // End check.      
+      // End check.
 
       // Compute this only once
       osg::BoundingBox boundingBox = pWrapper->GetBoundingBox();

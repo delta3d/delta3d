@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 #include <dtCore/stats.h>
+#include <dtCore/system.h>
 
 #include <osgViewer/Renderer>
 #include <osgViewer/View>
@@ -20,6 +21,7 @@ StatsHandler::StatsHandler(osgViewer::ViewerBase& viewer)
    , mThreadingModel(osgViewer::ViewerBase::SingleThreaded)
    , mFrameRateChildNum(0)
    , mViewerChildNum(0)
+   , mDeltaSystemChildNum(0)
    , mSceneChildNum(0)
    , mNumBlocks(8)
    , mBlockMultiplier(10000.0)
@@ -38,11 +40,13 @@ bool StatsHandler::SelectNextType()
       UpdateThreadingModelText();
    }
    
-   #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 2  && OSG_VERSION_MINOR >= 8
-   if (mViewer->getViewerStats() == NULL)
-   #else
-   if (mViewer->getStats() == NULL)
-   #endif
+   osg::Stats* stats;
+#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 2  && OSG_VERSION_MINOR >= 8
+   stats = mViewer->getViewerStats();
+#else
+   stats = mViewer->getStats();
+#endif
+   if (stats == NULL)
    {
       return false;
    }
@@ -64,27 +68,27 @@ bool StatsHandler::SelectNextType()
    {
    case(NO_STATS):
       {
-         #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 2  && OSG_VERSION_MINOR >= 8
-         mViewer->getViewerStats()->collectStats("frame_rate",false);
-         mViewer->getViewerStats()->collectStats("event",false);
-         mViewer->getViewerStats()->collectStats("update",false);
-         #else
-		   mViewer->getStats()->collectStats("frame_rate",false);
-         mViewer->getStats()->collectStats("event",false);
-         mViewer->getStats()->collectStats("update",false);
-         #endif
+         stats->collectStats("frame_rate",false);
+         stats->collectStats("event",false);
+         stats->collectStats("update",false);
          for(osgViewer::ViewerBase::Cameras::iterator itr = cameras.begin();
             itr != cameras.end();
             ++itr)
          {
-            #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 2  && OSG_VERSION_MINOR >= 8
             if ((*itr)->getStats()) (*itr)->getStats()->collectStats("rendering",false);
             if ((*itr)->getStats()) (*itr)->getStats()->collectStats("gpu",false);
-            #else
-            if ((*itr)->getStats()) (*itr)->getStats()->collectStats("rendering",false);
-            if ((*itr)->getStats()) (*itr)->getStats()->collectStats("gpu",false);
-            #endif
          }
+
+         // Delta3D System stuff
+         System::GetInstance().SetStats(NULL);
+         stats->collectStats(System::MESSAGE_EVENT_TRAVERSAL, false);
+         stats->collectStats(System::MESSAGE_POST_EVENT_TRAVERSAL, false);
+         stats->collectStats(System::MESSAGE_PRE_FRAME, false);
+         stats->collectStats(System::MESSAGE_CAMERA_SYNCH, false);
+         stats->collectStats(System::MESSAGE_FRAME_SYNCH, false);
+         stats->collectStats(System::MESSAGE_FRAME, false);
+         stats->collectStats(System::MESSAGE_POST_FRAME, false);
+         stats->collectStats("FullDeltaFrameTime", false); // should be a constant
 
          mCamera->setNodeMask(0x0); 
          mSwitch->setAllChildrenOff();
@@ -92,11 +96,7 @@ bool StatsHandler::SelectNextType()
       }
    case(FRAME_RATE):
       {
-         #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 2  && OSG_VERSION_MINOR >= 8
-         mViewer->getViewerStats()->collectStats("frame_rate",true);
-         #else
-         mViewer->getStats()->collectStats("frame_rate",true);
-         #endif
+         stats->collectStats("frame_rate",true);
          mCamera->setNodeMask(0xffffffff);
          mSwitch->setValue(mFrameRateChildNum, true);
          break;
@@ -117,13 +117,8 @@ bool StatsHandler::SelectNextType()
             }
          }
 
-         #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 2  && OSG_VERSION_MINOR >= 8
-         mViewer->getViewerStats()->collectStats("event",true);
-         mViewer->getViewerStats()->collectStats("update",true);
-         #else
-         mViewer->getStats()->collectStats("event",true);
-         mViewer->getStats()->collectStats("update",true);
-         #endif
+         stats->collectStats("event",true);
+         stats->collectStats("update",true);
          for(osgViewer::ViewerBase::Cameras::iterator itr = cameras.begin();
             itr != cameras.end();
             ++itr)
@@ -134,6 +129,22 @@ bool StatsHandler::SelectNextType()
 
          mCamera->setNodeMask(0xffffffff);
          mSwitch->setValue(mViewerChildNum, true);
+         break;
+      }
+
+   case(DELTA_DETAILS):
+      {
+         System::GetInstance().SetStats(stats);
+         stats->collectStats(System::MESSAGE_EVENT_TRAVERSAL, true);
+         stats->collectStats(System::MESSAGE_POST_EVENT_TRAVERSAL, true);
+         stats->collectStats(System::MESSAGE_PRE_FRAME, true);
+         stats->collectStats(System::MESSAGE_CAMERA_SYNCH, true);
+         stats->collectStats(System::MESSAGE_FRAME_SYNCH, true);
+         stats->collectStats(System::MESSAGE_FRAME, true);
+         stats->collectStats(System::MESSAGE_POST_FRAME, true);
+         stats->collectStats("FullDeltaFrameTime", true);
+         mCamera->setNodeMask(0xffffffff);
+         mSwitch->setValue(mDeltaSystemChildNum, true);
          break;
       }
            
@@ -563,6 +574,12 @@ void StatsHandler::SetUpScene(osgViewer::ViewerBase* viewer)
 
    osg::Vec4 colorDP(1.0f,1.0f,0.5f,1.0f);
 
+   osg::Stats* stats;
+#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 2  && OSG_VERSION_MINOR >= 8
+   stats = mViewer->getViewerStats();
+#else
+   stats = mViewer->getStats();
+#endif
 
    // frame rate stats
    {
@@ -589,12 +606,7 @@ void StatsHandler::SetUpScene(osgViewer::ViewerBase* viewer)
       frameRateValue->setCharacterSize(characterSize);
       frameRateValue->setPosition(pos);
       frameRateValue->setText("0.0");
-
-      #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 2  && OSG_VERSION_MINOR >= 8
-      frameRateValue->setDrawCallback(new TextDrawCallback(viewer->getViewerStats(),"Frame rate",-1, true, 1.0));
-      #else
-      frameRateValue->setDrawCallback(new TextDrawCallback(viewer->getStats(),"Frame rate",-1, true, 1.0));
-      #endif
+      frameRateValue->setDrawCallback(new TextDrawCallback(stats,"Frame rate",-1, true, 1.0));
 
       pos.y() -= characterSize * 1.5f;
    }
@@ -649,18 +661,10 @@ void StatsHandler::SetUpScene(osgViewer::ViewerBase* viewer)
          eventValue->setPosition(pos);
          eventValue->setText("0.0");
 
-         #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 2  && OSG_VERSION_MINOR >= 8
-         eventValue->setDrawCallback(new TextDrawCallback(viewer->getViewerStats(),"Event traversal time taken",-1, false, 1000.0));
-         #else
-         eventValue->setDrawCallback(new TextDrawCallback(viewer->getStats(),"Event traversal time taken",-1, false, 1000.0));
-         #endif
+         eventValue->setDrawCallback(new TextDrawCallback(stats,"Event traversal time taken",-1, false, 1000.0));
          pos.x() = startBlocks;
          osg::Geometry* geometry = CreateGeometry(pos, characterSize *0.8, colorUpdateAlpha, mNumBlocks);
-         #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 2  && OSG_VERSION_MINOR >= 8
-         geometry->setDrawCallback(new BlockDrawCallback(this, startBlocks, viewer->getViewerStats(), viewer->getViewerStats(), "Event traversal begin time", "Event traversal end time", -1, mNumBlocks));
-         #else
-         geometry->setDrawCallback(new BlockDrawCallback(this, startBlocks, viewer->getStats(), viewer->getStats(), "Event traversal begin time", "Event traversal end time", -1, mNumBlocks));
-         #endif
+         geometry->setDrawCallback(new BlockDrawCallback(this, startBlocks, stats, stats, "Event traversal begin time", "Event traversal end time", -1, mNumBlocks));
          geode->addDrawable(geometry);
 
          pos.y() -= characterSize*1.5f;
@@ -689,19 +693,11 @@ void StatsHandler::SetUpScene(osgViewer::ViewerBase* viewer)
          updateValue->setPosition(pos);
          updateValue->setText("0.0");
 
-         #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 2  && OSG_VERSION_MINOR >= 8
-         updateValue->setDrawCallback(new TextDrawCallback(viewer->getViewerStats(),"Update traversal time taken",-1, false, 1000.0));
-         #else
-         updateValue->setDrawCallback(new TextDrawCallback(viewer->getStats(),"Update traversal time taken",-1, false, 1000.0));
-         #endif
+         updateValue->setDrawCallback(new TextDrawCallback(stats,"Update traversal time taken",-1, false, 1000.0));
 
          pos.x() = startBlocks;
          osg::Geometry* geometry = CreateGeometry(pos, characterSize *0.8, colorUpdateAlpha, mNumBlocks);
-         #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 2  && OSG_VERSION_MINOR >= 8
-         geometry->setDrawCallback(new BlockDrawCallback(this, startBlocks, viewer->getViewerStats(), viewer->getViewerStats(), "Update traversal begin time", "Update traversal end time", -1, mNumBlocks));
-         #else
-         geometry->setDrawCallback(new BlockDrawCallback(this, startBlocks, viewer->getStats(), viewer->getStats(), "Update traversal begin time", "Update traversal end time", -1, mNumBlocks));
-         #endif
+         geometry->setDrawCallback(new BlockDrawCallback(this, startBlocks, stats, stats, "Update traversal begin time", "Update traversal end time", -1, mNumBlocks));
          geode->addDrawable(geometry);
 
          pos.y() -= characterSize*1.5f;
@@ -714,11 +710,7 @@ void StatsHandler::SetUpScene(osgViewer::ViewerBase* viewer)
          citr != cameras.end();
          ++citr)
       {
-         #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 2  && OSG_VERSION_MINOR >= 8
-         group->addChild(CreateCameraStats(font, pos, startBlocks, aquireGPUStats, characterSize, viewer->getViewerStats(), *citr));
-         #else
-         group->addChild(CreateCameraStats(font, pos, startBlocks, aquireGPUStats, characterSize, viewer->getStats(), *citr));
-         #endif
+         group->addChild(CreateCameraStats(font, pos, startBlocks, aquireGPUStats, characterSize, stats, *citr));
       }
 
       // add frame ticks
@@ -736,11 +728,7 @@ void StatsHandler::SetUpScene(osgViewer::ViewerBase* viewer)
          geode->addDrawable(ticks);
 
          osg::Geometry* frameMarkers = CreateFrameMarkers(pos, height, colourTicks, mNumBlocks + 1);
-         #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 2  && OSG_VERSION_MINOR >= 8
-         frameMarkers->setDrawCallback(new FrameMarkerDrawCallback(this, startBlocks, viewer->getViewerStats(), 0, mNumBlocks + 1));
-         #else
-         frameMarkers->setDrawCallback(new FrameMarkerDrawCallback(this, startBlocks, viewer->getStats(), 0, mNumBlocks + 1));
-         #endif
+         frameMarkers->setDrawCallback(new FrameMarkerDrawCallback(this, startBlocks, stats, 0, mNumBlocks + 1));
          geode->addDrawable(frameMarkers);
       }
 
@@ -831,6 +819,87 @@ void StatsHandler::SetUpScene(osgViewer::ViewerBase* viewer)
          pos.x() = leftPos;
       }
    }
+
+   // Delta Details stats
+   {
+      osg::Group* group = new osg::Group;
+      mDeltaSystemChildNum = mSwitch->getNumChildren();
+      mSwitch->addChild(group, false);
+
+      osg::Geode* geode = new osg::Geode();
+      group->addChild(geode);
+
+      pos.y() -= characterSize*2.0f;
+      osg::Vec4 colorDelta(1.0f,1.0f,0.4f,1.0f);
+      osg::Vec4 colorTotal(1.0f,0.7f,0.1f,1.0f);
+      osgText::Text* text;
+      
+      // MESSAGE_EVENT_TRAVERSAL
+      pos.x() = leftPos;
+      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "Input Events: "); // label
+      pos.x() = text->getBound().xMax();
+      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "0.0"); // Value
+      text->setDrawCallback(new TextDrawCallback(stats,System::MESSAGE_EVENT_TRAVERSAL,-1, true, 1.0));
+      pos.y() -= characterSize * 1.5f;
+
+      // MESSAGE_POST_EVENT_TRAVERSAL
+      pos.x() = leftPos;
+      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "Post Event: "); // label
+      pos.x() = text->getBound().xMax();
+      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "0.0"); // Value
+      text->setDrawCallback(new TextDrawCallback(stats,System::MESSAGE_POST_EVENT_TRAVERSAL,-1, true, 1.0));
+      pos.y() -= characterSize * 1.5f;
+
+      // MESSAGE_PRE_FRAME
+      pos.x() = leftPos;
+      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "Pre Frame: "); // label
+      pos.x() = text->getBound().xMax();
+      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "0.0"); // Value
+      text->setDrawCallback(new TextDrawCallback(stats,System::MESSAGE_PRE_FRAME,-1, true, 1.0));
+      pos.y() -= characterSize * 1.5f;
+
+      // MESSAGE_CAMERA_SYNCH
+      pos.x() = leftPos;
+      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "Camera Sync: "); // label
+      pos.x() = text->getBound().xMax();
+      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "0.0"); // Value
+      text->setDrawCallback(new TextDrawCallback(stats,System::MESSAGE_CAMERA_SYNCH,-1, true, 1.0));
+      pos.y() -= characterSize * 1.5f;
+
+      // MESSAGE_FRAME_SYNCH
+      pos.x() = leftPos;
+      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "Frame Sync: "); // label
+      pos.x() = text->getBound().xMax();
+      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "0.0"); // Value
+      text->setDrawCallback(new TextDrawCallback(stats,System::MESSAGE_FRAME_SYNCH,-1, true, 1.0));
+      pos.y() -= characterSize * 1.5f;
+
+      // MESSAGE_FRAME
+      pos.x() = leftPos;
+      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "Frame: "); // label
+      pos.x() = text->getBound().xMax();
+      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "0.0"); // Value
+      text->setDrawCallback(new TextDrawCallback(stats,System::MESSAGE_FRAME,-1, true, 1.0));
+      pos.y() -= characterSize * 1.5f;
+
+      // MESSAGE_POST_FRAME
+      pos.x() = leftPos;
+      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "Post Frame: "); // label
+      pos.x() = text->getBound().xMax();
+      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "0.0"); // Value
+      text->setDrawCallback(new TextDrawCallback(stats,System::MESSAGE_POST_FRAME,-1, true, 1.0));
+      pos.y() -= characterSize * 1.5f;
+
+      // TOTAL
+      pos.x() = leftPos;
+      text = CreateTextControl(geode, colorTotal, font, characterSize, pos, "Total: "); // label
+      pos.x() = text->getBound().xMax();
+      text = CreateTextControl(geode, colorTotal, font, characterSize, pos, "0.0"); // Value
+      text->setDrawCallback(new TextDrawCallback(stats,"FullDeltaFrameTime",-1, true, 1.0));
+      pos.y() -= characterSize * 1.5f;
+
+   }
+
 #if 0
    // scene stats
    {
@@ -854,6 +923,27 @@ void StatsHandler::SetUpScene(osgViewer::ViewerBase* viewer)
       _switch->addChild(geode, false);
    }
 #endif    
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+osgText::Text* StatsHandler::CreateTextControl(osg::Geode *geode, osg::Vec4& colorFR, 
+                                           const std::string& font, float characterSize, 
+                                           osg::Vec3& pos, const std::string &initialText)
+{
+   osg::ref_ptr<osgText::Text> newText = new osgText::Text;
+
+   if (geode != NULL)
+   {
+      geode->addDrawable(newText.get());
+   }
+   newText->setColor(colorFR);
+   newText->setFont(font);
+   newText->setCharacterSize(characterSize);
+   newText->setPosition(pos);
+   newText->setText(initialText);
+
+   return newText.get();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

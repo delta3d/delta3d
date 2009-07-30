@@ -111,6 +111,8 @@ void DeltaWin::CreateDeltaWindow(const DeltaWinTraits& windowTraits)
    {
       SetFullScreenMode(windowTraits.fullScreen);
    }
+
+   ShowCursor(windowTraits.showCursor);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

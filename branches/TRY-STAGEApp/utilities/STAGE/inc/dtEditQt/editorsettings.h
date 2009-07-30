@@ -89,6 +89,17 @@ namespace dtEditQt
       static const QString RIGID_CAMERA;
       static const QString ACTOR_CREATION_OFFSET;
 
+      // Snap settings
+      static const QString SNAP_GROUP;
+
+      static const QString SNAP_TRANSLATION_ENABLED;
+      static const QString SNAP_ROTATION_ENABLED;
+      static const QString SNAP_SCALE_ENABLED;
+
+      static const QString SNAP_TRANSLATION_VALUE;
+      static const QString SNAP_ROTATION_VALUE;
+      static const QString SNAP_SCALE_VALUE;
+
       ///Version identifier for the main window docking state.
       static const int MAINWIN_DOCK_STATE_ID;
 

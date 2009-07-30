@@ -44,7 +44,7 @@ namespace dtEditQt
    ////////////////////////////////////////////////////////////////////////////////
    // RESOURCE DRAG TREE
    ////////////////////////////////////////////////////////////////////////////////
-   
+
    ResourceDragTree::ResourceDragTree(QWidget* parent)
    {
       setDragEnabled(true);
@@ -119,9 +119,6 @@ namespace dtEditQt
 
       dataStream << resourceIdentity;
 
-      int width = pixmap.width();
-      int height = pixmap.height();
-
       QMimeData *mimeData = new QMimeData;
       mimeData->setData(mResourceName.c_str(), itemData);
 
@@ -139,7 +136,7 @@ namespace dtEditQt
    ////////////////////////////////////////////////////////////////////////////////
    // RESOURCE TREE WIDGET
    ///////////////////////////////////////////////////////////////////////////////
-   
+
    ResourceTreeWidget::ResourceTreeWidget(ResourceTree* parent)
       : QTreeWidgetItem(parent)
    {

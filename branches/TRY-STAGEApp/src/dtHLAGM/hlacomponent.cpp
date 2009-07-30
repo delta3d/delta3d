@@ -762,7 +762,7 @@ namespace dtHLAGM
             }
 
             // We eventually need to lookup the list of properties needed using the attr handle set.
-            gap->NotifyActorUpdate();
+            gap->NotifyFullActorUpdate();
          }
       }
    }

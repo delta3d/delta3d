@@ -30,6 +30,7 @@
 #include <QtGui/QAction>
 #include <QtGui/QMouseEvent>
 
+#include <dtEditQt/mainwindow.h>
 #include <dtEditQt/viewport.h>
 #include <dtEditQt/viewportoverlay.h>
 #include <dtEditQt/viewportmanager.h>
@@ -64,11 +65,11 @@
 
 #include <dtActors/prefabactorproxy.h>
 #include <dtActors/volumeeditactor.h>
+#include <dtUtil/mathdefines.h>
 
 #include <dtQt/osggraphicswindowqt.h>
-
-#include <cmath>
-#include <sstream>
+//#include <cmath>
+//#include <sstream>
 
 namespace dtEditQt
 {
@@ -225,6 +226,7 @@ namespace dtEditQt
    void Viewport::resizeGL(int width, int height)
    {
       //mSceneView->setViewport(0, 0, width, height); //TODO
+      getCamera()->setViewport(0, 0, width, height);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -388,6 +390,10 @@ namespace dtEditQt
 
       std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > toSelect;
 
+      //ensure that the Brush outline is on (if it turns out the brush is selected it
+      //will get disabled later)
+      dtEditQt::EditorData::GetInstance().getMainWindow()->GetVolumeEditActor()->EnableOutline(true);
+
       dtCore::DeltaDrawable* drawable = getPickDrawable(x, y);
       if (!drawable)
       {
@@ -405,25 +411,22 @@ namespace dtEditQt
       if (newSelection == NULL)
       {
          dtActors::VolumeEditActor* volEditActTest = dynamic_cast<dtActors::VolumeEditActor*>(drawable);
-         
+
          if (volEditActTest)
          {
-            newSelection = volEditActTest->GetProxy();
+            newSelection = EditorData::GetInstance().getMainWindow()->GetVolumeEditActorProxy();
          }
       }
 
-      // if its not an actor that is directly part of the map then it may be an actor under a prefab.      
+      // If it's not an actor that is directly part of the map, then it may be a child of one.
       if (newSelection == NULL)
       {
          dtCore::DeltaDrawable* parent = drawable->GetParent();
-         if (parent)
+         while(parent && !newSelection)
          {
-            // If the parent is a prefab actor, then we want to select that instead.
-            dtActors::PrefabActor* prefabActor = dynamic_cast<dtActors::PrefabActor*>(parent);
-            if (prefabActor)
-            {
-               newSelection = currMap->GetProxyById(prefabActor->GetUniqueId());
-            }
+            newSelection = currMap->GetProxyById(parent->GetUniqueId());
+
+            parent = parent->GetParent();
          }
       }
 
@@ -457,8 +460,7 @@ namespace dtEditQt
       if (newSelection)
       {
          // Determine if this new selection is part of a group.
-         std::vector<dtDAL::ActorProxy*> groupActors;
-         groupActors.push_back(newSelection);
+         toSelect.push_back(newSelection);
 
          int groupIndex = currMap->FindGroupForActor(newSelection);
 
@@ -470,23 +472,8 @@ namespace dtEditQt
                dtDAL::ActorProxy* proxy = currMap->GetActorFromGroup(groupIndex, actorIndex);
                if (proxy != newSelection)
                {
-                  groupActors.push_back(proxy);
+                  toSelect.push_back(proxy);
                }
-            }
-         }
-
-         if (overlay->isActorSelected(newSelection))
-         {
-            for (int index = 0; index < (int)groupActors.size(); index++)
-            {
-               overlay->removeActorFromCurrentSelection(groupActors[index]);
-            }
-         }
-         else
-         {
-            for (int index = 0; index < (int)groupActors.size(); index++)
-            {
-               toSelect.push_back(groupActors[index]);
             }
          }
       }
@@ -496,7 +483,19 @@ namespace dtEditQt
       // key is pressed) add the current selection to the newly selected proxy.
       if (overlay->getMultiSelectMode())
       {
-         ViewportOverlay::ActorProxyList::iterator itor;
+         for (int index = 0; index < (int)toSelect.size(); index++)
+         {
+            for (int selIndex = 0; selIndex < (int)selection.size(); selIndex++)
+            {
+               if (toSelect[index] == selection[selIndex])
+               {
+                  selection.erase(selection.begin() + selIndex);
+                  break;
+               }
+            }
+         }
+
+         ViewportOverlay::ActorProxyList::iterator itor = selection.begin();
          for (itor = selection.begin(); itor != selection.end(); ++itor)
          {
             toSelect.push_back(const_cast<dtDAL::ActorProxy*>(itor->get()));
@@ -513,13 +512,13 @@ namespace dtEditQt
       {
          throw dtUtil::Exception(dtDAL::ExceptionEnum::BaseException,
             "Scene is invalid.  Cannot pick objects from an invalid scene.", __FILE__, __LINE__);
-         return NULL;
+         return false;
       }
 
       dtCore::RefPtr<dtDAL::Map> currMap = EditorData::GetInstance().getCurrentMap();
       if (!currMap.valid() || getCamera()== NULL)
       {
-         return NULL;
+         return false;
       }
 
       // Before we do any intersection tests, make sure the billboards are updated
@@ -530,12 +529,19 @@ namespace dtEditQt
          updateActorProxyBillboards();
       }
 
-      mIsector->Reset();
-      mIsector->SetScene(getScene());
       osg::Vec3 nearPoint, farPoint;
       //int yLoc = int(mSceneView->getViewport()->height()-y); //TODO
 
       //mSceneView->projectWindowXYIntoObject(x, yLoc, nearPoint, farPoint); //TODO
+
+      return calculatePickISector(nearPoint, farPoint);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Viewport::calculatePickISector(osg::Vec3 nearPoint, osg::Vec3 farPoint)
+   {
+      mIsector->Reset();
+      mIsector->SetScene(getScene());
       mIsector->SetStartPosition(nearPoint);
       mIsector->SetDirection(farPoint-nearPoint);
 
@@ -549,63 +555,134 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool Viewport::getPickPosition(int x, int y, osg::Vec3& position, dtCore::DeltaDrawable* ignoredDrawable)
+   bool Viewport::getPickPosition(int x, int y, osg::Vec3& position, std::vector<dtCore::DeltaDrawable*> ignoredDrawables)
    {
       if (!calculatePickISector(x, y))
       {
          return false;
       }
 
+      return getPickPosition(position, ignoredDrawables);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Viewport::getPickPosition(osg::Vec3 nearPoint, osg::Vec3 farPoint, osg::Vec3& position, std::vector<dtCore::DeltaDrawable*> ignoredDrawables)
+   {
+      if (!calculatePickISector(nearPoint, farPoint))
+      {
+         return false;
+      }
+
+      return getPickPosition(position, ignoredDrawables);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Viewport::getPickPosition(osg::Vec3& position, std::vector<dtCore::DeltaDrawable*> ignoredDrawables)
+   {
       osgUtil::IntersectVisitor::HitList& hitList = mIsector->GetHitList();
       for (int index = 0; index < (int)hitList.size(); index++)
       {
          osg::NodePath &nodePath = hitList[index].getNodePath();
          dtCore::DeltaDrawable* drawable = mIsector->MapNodePathToDrawable(nodePath);
+         dtCore::DeltaDrawable* lastDrawable = drawable;
 
          // Make sure the drawable and none of its parents are the ignored drawable.
          bool isIgnored = false;
          while (drawable)
          {
-            if (drawable == ignoredDrawable)
+            for (int ignoreIndex = 0; ignoreIndex < (int)ignoredDrawables.size(); ignoreIndex++)
             {
-               isIgnored = true;
+               if (drawable == ignoredDrawables[ignoreIndex])
+               {
+                  isIgnored = true;
+                  break;
+               }
+            }
+
+            if (isIgnored)
+            {
                break;
             }
 
+            lastDrawable = drawable;
             drawable = drawable->GetParent();
          }
 
          if (!isIgnored)
          {
             position = hitList[index].getWorldIntersectPoint();
+
+            // Tell the manager the last pick position.
+            ViewportManager::GetInstance().setLastDrawable(lastDrawable);
+            ViewportManager::GetInstance().setLastPickPosition(position);
             return true;
          }
       }
 
+      ViewportManager::GetInstance().setLastDrawable(NULL);
       return false;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    dtCore::DeltaDrawable* Viewport::getPickDrawable(int x, int y)
    {
-      return mView->GetMousePickedObject(); 
+      // If we found no intersections no need to continue so emit an empty selection
+      // and return.
+      if (!calculatePickISector(x, y))
+      {
+         return NULL;
+      }
 
-      //// If we found no intersections no need to continue so emit an empty selection
-      //// and return.
-      //if (!calculatePickISector(x, y))
-      //{
-      //   return NULL;
-      //}
+      dtCore::DeltaDrawable* drawable = getPickDrawable();
+      osg::Vec3 position;
+      getPickPosition(position);
 
-      //if (mIsector->GetClosestDeltaDrawable()== NULL)
-      //{
-      //   LOG_ERROR("Intersection query reported an intersection but returned an "
-      //      "invalid DeltaDrawable.");
-      //   return NULL;
-      //}
+      // Tell the manager the last drawable picked.
+      ViewportManager::GetInstance().setLastDrawable(drawable);
+      ViewportManager::GetInstance().setLastPickPosition(position);
 
-      //return mIsector->GetClosestDeltaDrawable();
+      return drawable;
    }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtCore::DeltaDrawable* Viewport::getPickDrawable()
+   {
+      if (mIsector->GetClosestDeltaDrawable()== NULL)
+      {
+         LOG_ERROR("Intersection query reported an intersection but returned an "
+            "invalid DeltaDrawable.");
+         return NULL;
+      }
+
+      ViewportOverlay* overlay = ViewportManager::GetInstance().getViewportOverlay();
+      ViewportOverlay::ActorProxyList& selection = overlay->getCurrentActorSelection();
+
+      dtActors::VolumeEditActorProxy* brushProxy =
+         EditorData::GetInstance().getMainWindow()->GetVolumeEditActorProxy();
+
+      //if the STAGE Brush is already selected,
+      //then attempt to select the next thing under it
+      if (selection.size() > 0)
+      {
+         if (brushProxy == selection[0])
+         {
+            osgUtil::IntersectVisitor::HitList& hitList = mIsector->GetHitList();
+            for (unsigned short i = 1; i < mIsector->GetNumberOfHits(); i++)
+            {
+               osg::NodePath &nodePath = hitList[i].getNodePath();
+               dtCore::DeltaDrawable* drawable = mIsector->MapNodePathToDrawable(nodePath);
+
+               if (! dynamic_cast<dtActors::VolumeEditActor*>(drawable))
+               {
+                  return drawable;
+               }
+            }
+         }
+      }
+
+      return mIsector->GetClosestDeltaDrawable();
+   }
+
 
    ///////////////////////////////////////////////////////////////////////////////
    void Viewport::onGotoActor(dtCore::RefPtr<dtDAL::ActorProxy> proxy)
@@ -718,8 +795,8 @@ namespace dtEditQt
       {
          QPoint center((this->GetQGLWidget()->x()+this->GetQGLWidget()->width())/2, (this->GetQGLWidget()->y()+this->GetQGLWidget()->height())/2);
 
-         float dxCenter = std::abs(float(e->pos().x() - center.x()));
-         float dyCenter = std::abs(float(e->pos().y() - center.y()));
+         float dxCenter = dtUtil::Abs(float(e->pos().x() - center.x()));
+         float dyCenter = dtUtil::Abs(float(e->pos().y() - center.y()));
 
          if (dxCenter > (this->GetQGLWidget()->width()/2) || dyCenter > (this->GetQGLWidget()->height()/2))
          {
@@ -758,7 +835,6 @@ namespace dtEditQt
    void Viewport::connectInteractionModeSlots()
    {
       // Connect the global actions we want to track.
-      EditorActions& ga = EditorActions::GetInstance();
       EditorEvents&  ge = EditorEvents::GetInstance();
 
       connect(&ge, SIGNAL(gotoActor(ActorProxyRefPtr)),          this, SLOT(onGotoActor(ActorProxyRefPtr)));
@@ -771,8 +847,7 @@ namespace dtEditQt
    void Viewport::disconnectInteractionModeSlots()
    {
       //Disconnect from all our global actions we were previously tracking.
-      EditorActions &ga = EditorActions::GetInstance();
-      EditorEvents  &ge = EditorEvents::GetInstance();
+      EditorEvents& ge = EditorEvents::GetInstance();
 
       disconnect(&ge, SIGNAL(gotoActor(ActorProxyRefPtr)), this, SLOT(onGotoActor(ActorProxyRefPtr)));
    }

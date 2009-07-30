@@ -43,7 +43,7 @@ namespace dtUtil
    {
       for (unsigned i = 0; i < geode.getNumDrawables(); ++i) 
       {
-         osg::Geometry* geo = dynamic_cast<osg::Geometry* >(geode.getDrawable(i));
+         osg::Geometry* geo = dynamic_cast<osg::Geometry*>(geode.getDrawable(i));
          if (geo != NULL) 
          {
             // if the tangents are not already set, then put the tangents on.

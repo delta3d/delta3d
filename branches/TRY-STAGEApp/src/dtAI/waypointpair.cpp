@@ -20,88 +20,103 @@
  */
 
 #include <dtAI/waypointpair.h>
+#include <osg/Vec2>
 #include <cassert>
-
 
 namespace dtAI
 {
-WaypointPair::WaypointPair()
-   : mFrom(0)
-   , mTo(0)
-   , m3DDistance(0)
-{
-}
 
-WaypointPair::WaypointPair(const WaypointInterface* pFrom, const WaypointInterface* pTo)
-   : mFrom(pFrom)
-   , mTo(pTo)
-{
-   Calculate3DDistance();
-   CalculateSlope();
-}
-
-WaypointPair::~WaypointPair()
-{
-}
-
-void WaypointPair::Calculate3DDistance()
-{
-   m3DDistance = osg::Vec3(mTo->GetPosition() - mFrom->GetPosition()).length();
-}
-
-
-void WaypointPair::CalculateSlope()
-{
-   if (GetTo()[0] - GetFrom()[0])
+   WaypointPair::WaypointPair()
+      : mFrom(0)
+      , mTo(0)
+      , m2DDistance(0)
+      , m3DDistance(0)
    {
-      mSlope = 0;
    }
-   else
+
+   WaypointPair::WaypointPair(const WaypointInterface* pFrom, const WaypointInterface* pTo)
+      : mFrom(pFrom)
+      , mTo(pTo)
    {
-      mSlope = (GetTo()[1] - GetFrom()[1]) / (GetTo()[0] - GetFrom()[0]);
+      Calculate2DDistance();
+      Calculate3DDistance();
+      CalculateSlope();
    }
-}
 
-float WaypointPair::GetSlope() const
-{
-   return mSlope;
-}
+   WaypointPair::~WaypointPair()
+   {
+   }
 
-float WaypointPair::Get3DDistance() const
-{
-   return m3DDistance;
-}
+   void WaypointPair::Calculate2DDistance()
+   {
+      m2DDistance = (
+         osg::Vec2(mTo->GetPosition().x(), mTo->GetPosition().y()) -
+         osg::Vec2(mFrom->GetPosition().x(), mFrom->GetPosition().y())
+         ).length();
+   }
 
-void WaypointPair::SetFrom(const WaypointInterface* pWaypoint)
-{
-   assert(pWaypoint);
-   mFrom = pWaypoint;
-}
+   float WaypointPair::Get2DDistance() const
+   {
+      return m2DDistance;
+   }
 
-void WaypointPair::SetTo(const WaypointInterface* pWaypoint)
-{
-   assert(pWaypoint);
-   mTo = pWaypoint;
-}
+   void WaypointPair::Calculate3DDistance()
+   {
+      m3DDistance = osg::Vec3(mTo->GetPosition() - mFrom->GetPosition()).length();
+   }
 
-const WaypointInterface* WaypointPair::GetWaypointFrom() const
-{
-   return mFrom;
-}
+   float WaypointPair::Get3DDistance() const
+   {
+      return m3DDistance;
+   }
 
-const WaypointInterface* WaypointPair::GetWaypointTo() const
-{
-   return mTo;
-}
+   void WaypointPair::CalculateSlope()
+   {
+      if (GetTo()[0] - GetFrom()[0])
+      {
+         mSlope = 0;
+      }
+      else
+      {
+         mSlope = (GetTo()[1] - GetFrom()[1]) / (GetTo()[0] - GetFrom()[0]);
+      }
+   }
 
-const osg::Vec3& WaypointPair::GetFrom() const
-{
-   return mFrom->GetPosition();
-}
+   float WaypointPair::GetSlope() const
+   {
+      return mSlope;
+   }
 
-const osg::Vec3& WaypointPair::GetTo() const
-{
-   return mTo->GetPosition();
-}
+   void WaypointPair::SetFrom(const WaypointInterface* pWaypoint)
+   {
+      assert(pWaypoint);
+      mFrom = pWaypoint;
+   }
+
+   void WaypointPair::SetTo(const WaypointInterface* pWaypoint)
+   {
+      assert(pWaypoint);
+      mTo = pWaypoint;
+   }
+
+   const WaypointInterface* WaypointPair::GetWaypointFrom() const
+   {
+      return mFrom;
+   }
+
+   const WaypointInterface* WaypointPair::GetWaypointTo() const
+   {
+      return mTo;
+   }
+
+   const osg::Vec3& WaypointPair::GetFrom() const
+   {
+      return mFrom->GetPosition();
+   }
+
+   const osg::Vec3& WaypointPair::GetTo() const
+   {
+      return mTo->GetPosition();
+   }
 
 } // namespace dtAI

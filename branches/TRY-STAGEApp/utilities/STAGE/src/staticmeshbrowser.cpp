@@ -106,6 +106,8 @@ namespace dtEditQt
 
       // This corrects the stretch for the last row
       grid->setRowStretch(1, 0);
+
+      //camera->setViewport(0, 0, perspView->width(), perspView->height()); //TODO E!
    }
 
    ///////////////////////////////////////////////////////////////////////////////

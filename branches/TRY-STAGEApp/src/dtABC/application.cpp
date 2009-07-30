@@ -177,14 +177,9 @@ void Application::EventTraversal(const double deltaSimTime)
    //We advance the OSG clock in the EventTraversal message because it is our first message
    //also we call frame() on the composite viewer our first frame since it has extra code
    //to realize the window and we would need our own derivation to replicate it.
-   
+
    if(!mFirstFrame || !mCompositeViewer->done())
    {
-      // NOTE: The new version OSG (2.2) relies on absolute frame time
-      // to update drawables; especially particle systems.
-      // The time delta will be ignored here and the absolute simulation
-      // time passed to the OSG scene updater.
-     mCompositeViewer->advance(dtCore::System::GetInstance().GetSimTimeSinceStartup());
      mCompositeViewer->eventTraversal();
    }
 }
@@ -194,7 +189,7 @@ void Application::Frame(const double deltaSimTime)
 {
    if(!mCompositeViewer->done())
    {
-      //NOTE: The OSG frame() advances the clock and does three traversals, event, update, and render.  
+      //NOTE: The OSG frame() advances the clock and does three traversals, event, update, and render.
       //We are moving the event traversal to be its own message so we can reliably accept input during the
       //typical Delta3D update of PreFrame().  The only exception to this is that we need
       if(mFirstFrame)
@@ -203,6 +198,11 @@ void Application::Frame(const double deltaSimTime)
          mFirstFrame = false;
       }
 
+      // NOTE: The new version OSG (2.2) relies on absolute frame time
+      // to update drawables; especially particle systems.
+      // The time delta will be ignored here and the absolute simulation
+      // time passed to the OSG scene updater.
+      mCompositeViewer->advance(dtCore::System::GetInstance().GetSimTimeSinceStartup());
       mCompositeViewer->updateTraversal();
       mCompositeViewer->renderingTraversals();
    }
@@ -533,10 +533,16 @@ bool Application::AppXMLApplicator::operator ()(const ApplicationConfigData& dat
    if ((win != NULL) && (camera != NULL))
    {
       camera->SetWindow(win);
+      if ((data.VIEWPORT_W > 0) && (data.VIEWPORT_H > 0))
+      {
+         camera->GetOSGCamera()->setViewport(data.VIEWPORT_X, data.VIEWPORT_Y,
+                                             data.VIEWPORT_W, data.VIEWPORT_H);
+      }
    }
    else
    {
-      LOG_WARNING("Application:Can't find instance of DeltaWin, " + data.WINDOW_INSTANCE );
+      LOG_WARNING("Application:Can't find instance of DeltaWin '" + data.WINDOW_INSTANCE +
+                  "' and/or instance of Camera '" + data.CAMERA_INSTANCE + "'");
       valid = false;
    }
 

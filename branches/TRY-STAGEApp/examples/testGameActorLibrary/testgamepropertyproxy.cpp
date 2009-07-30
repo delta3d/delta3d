@@ -117,7 +117,7 @@ void TestGamePropertyProxy::BuildPropertyMap()
 {
    GameActorProxy::BuildPropertyMap();
 
-   TestGamePropertyActor &actor = static_cast<TestGamePropertyActor &>(GetGameActor());
+   TestGamePropertyActor& actor = static_cast<TestGamePropertyActor &>(GetGameActor());
 
    AddProperty(new BooleanActorProperty("Test_Boolean", "Test Boolean",
       MakeFunctor(actor, &TestGamePropertyActor::SetTestBool),
@@ -226,11 +226,11 @@ void TestGamePropertyProxy::BuildPropertyMap()
    //   MakeFunctor(actor, &TestGamePropertyActor::SetTextureResourceName),
    //   "An example texture resource property", GROUPNAME));
 
-   //AddProperty(new ActorActorProperty(actor, "Test_Actor", "Test Actor",
-   //   MakeFunctor(actor, &TestGamePropertyActor::SetTestActor),
-   //   MakeFunctorRet(actor, &TestGamePropertyActor::GetTestActor),
-   //   "dtCore::Transformable",
-   //   "An example linked actor property", GROUPNAME));
+   AddProperty(new ActorIDActorProperty(*this, "Test_Actor_Id", "Test Actor Id",
+      dtDAL::ActorIDActorProperty::SetFuncType(&actor, &TestGamePropertyActor::SetTestActorId),
+      dtDAL::ActorIDActorProperty::GetFuncType(&actor, &TestGamePropertyActor::GetTestActorId),
+      "dtCore::Transformable",
+      "An example linked actor property", GROUPNAME));
 
    AddProperty(new GameEventActorProperty(*this, "TestGameEvent", "Test Game Event",
                MakeFunctor(actor, &TestGamePropertyActor::SetTestGameEvent),

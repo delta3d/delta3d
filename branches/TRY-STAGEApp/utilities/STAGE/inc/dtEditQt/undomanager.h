@@ -29,6 +29,7 @@
 #ifndef DELTA_UNDOMANAGER
 #define DELTA_UNDOMANAGER
 
+#include <dtEditQt/export.h>
 #include <osg/Referenced>
 #include <QtCore/QObject>
 #include <vector>
@@ -57,7 +58,7 @@ namespace dtEditQt
     * @note This class should NEVER hold onto any real objects.  For instance, it won't hold onto
     * libraries, ActorProxies, Actors, or other map/project specific data.
     */
-   class UndoManager : QObject
+   class DT_EDITQT_EXPORT UndoManager : QObject
    {
       Q_OBJECT
 
@@ -71,6 +72,16 @@ namespace dtEditQt
        * Destructor
        */
       virtual ~UndoManager();
+
+      /**
+      * Begins a group of undo events.
+      */
+      void beginMultipleUndo();
+
+      /**
+      * Ends a group of undo events.
+      */
+      void endMultipleUndo();
 
       /**
        * Returns true if there are undo items in the undo stack.
@@ -103,6 +114,16 @@ namespace dtEditQt
        * Removes all change events from the redo list.
        */
       void clearRedoList();
+
+      /**
+      * Creates a group actor event.
+      */
+      void groupActor(ActorProxyRefPtr proxy);
+
+      /**
+      * Creates an ungroup actor event.
+      */
+      void unGroupActor(ActorProxyRefPtr proxy);
 
    protected:
 
@@ -171,7 +192,11 @@ namespace dtEditQt
             PROPERTY_CHANGED,
             PROXY_NAME_CHANGED,
             PROXY_CREATED,
-            PROXY_DELETED
+            PROXY_DELETED,
+            MULTI_UNDO_BEGIN,
+            MULTI_UNDO_END,
+            GROUP_CREATED,
+            GROUP_DELETED,
          };
 
          ChangeEvent() {}
@@ -230,6 +255,11 @@ namespace dtEditQt
       void handleUndoRedoDeleteObject(ChangeEvent* event, bool isUndo);
 
       /**
+      * Internal method to handle an undo/redo of group creation.
+      */
+      void handleUndoRedoCreateGroup(ChangeEvent* event, dtDAL::ActorProxy* proxy, bool createGroup, bool isUndo);
+
+      /**
        * Internal method to create a complete change event for a proxy.  This event is
        * used by both the delete and change event types.  It makes an UndoPropertyData for
        * every property on the proxy.
@@ -243,6 +273,8 @@ namespace dtEditQt
        * handleUndoRedoXXX method.
        */
       void handleUndoRedoEvent(ChangeEvent* event, bool isUndo);
+
+      int   mGroupIndex;
    };
 
 } // namespace dtEditQt

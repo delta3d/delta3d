@@ -63,14 +63,8 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void EditorViewportContainer::addViewport(Viewport* viewport)
+   void EditorViewportContainer::updateSnaps()
    {
-      EditorViewport* editorView = dynamic_cast<EditorViewport*>(viewport);
-      if (editorView)
-      {
-         mViewportList.push_back(editorView);
-      }
-
       setSnapTranslation();
       setSnapRotation();
       setSnapScale();
@@ -88,49 +82,54 @@ namespace dtEditQt
       }
    }
 
-   //////////////////////////////////////////////////////////////////////////////////
-   //void EditorViewportContainer::setLocalSpace()
-   //{
-   //   for (int viewIndex = 0; viewIndex < (int)mViewportList.size(); viewIndex++)
-   //   {
-   //      mViewportList[viewIndex]->setLocalSpace(mSetLocalSpaceAction->isChecked());
-   //   }
-   //}
-
    ////////////////////////////////////////////////////////////////////////////////
    void EditorViewportContainer::setSnapTranslation()
    {
-      for (int viewIndex = 0; viewIndex < (int)mViewportList.size(); viewIndex++)
-      {
-         mViewportList[viewIndex]->setSnapTranslation(mEditTrans->text().toFloat());
-      }
+      ViewportManager::GetInstance().emitSetSnapTranslation(mEditTrans->text().toFloat());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void EditorViewportContainer::setSnapRotation()
    {
-      for (int viewIndex = 0; viewIndex < (int)mViewportList.size(); viewIndex++)
-      {
-         mViewportList[viewIndex]->setSnapRotation(mEditAngle->text().toFloat());
-      }
+      ViewportManager::GetInstance().emitSetSnapRotation(mEditAngle->text().toFloat());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void EditorViewportContainer::setSnapScale()
    {
-      for (int viewIndex = 0; viewIndex < (int)mViewportList.size(); viewIndex++)
-      {
-         mViewportList[viewIndex]->setSnapScale(mEditScale->text().toFloat());
-      }
+      ViewportManager::GetInstance().emitSetSnapScale(mEditScale->text().toFloat());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void EditorViewportContainer::setSnapEnabled(int state)
    {
-      for (int viewIndex = 0; viewIndex < (int)mViewportList.size(); viewIndex++)
-      {
-         mViewportList[viewIndex]->setSnapEnabled(mCheckBoxTrans->isChecked(), mCheckBoxAngle->isChecked(), mCheckBoxScale->isChecked());
-      }
+      ViewportManager::GetInstance().emitSetSnapEnabled(mCheckBoxTrans->isChecked(), mCheckBoxAngle->isChecked(), mCheckBoxScale->isChecked());
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorViewportContainer::onSetSnapEnabled(bool translation, bool rotation, bool scale)
+   {
+      mCheckBoxTrans->setChecked(translation);
+      mCheckBoxAngle->setChecked(rotation);
+      mCheckBoxScale->setChecked(scale);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorViewportContainer::onSetSnapTranslation(float value)
+   {
+      mEditTrans->setText(QString::number(value));
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorViewportContainer::onSetSnapRotation(float value)
+   {
+      mEditAngle->setText(QString::number(value));
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorViewportContainer::onSetSnapScale(float value)
+   {
+      mEditScale->setText(QString::number(value));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -146,8 +145,6 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void EditorViewportContainer::createToolBar()
    {
-      QToolButton* button = NULL;
-
       // Create our "toolbar" widget.
       mToolBar = new QFrame(this);
       mToolBar->setFrameStyle(QFrame::Box | QFrame::Raised);
@@ -246,6 +243,11 @@ namespace dtEditQt
       connect(mCheckBoxTrans, SIGNAL(stateChanged(int)), this, SLOT(setSnapEnabled(int)));
       connect(mCheckBoxAngle, SIGNAL(stateChanged(int)), this, SLOT(setSnapEnabled(int)));
       connect(mCheckBoxScale, SIGNAL(stateChanged(int)), this, SLOT(setSnapEnabled(int)));
+
+      connect(&ViewportManager::GetInstance(), SIGNAL(setSnapEnabled(bool, bool, bool)), this, SLOT(onSetSnapEnabled(bool, bool, bool)));
+      connect(&ViewportManager::GetInstance(), SIGNAL(setSnapTranslation(float)), this, SLOT(onSetSnapTranslation(float)));
+      connect(&ViewportManager::GetInstance(), SIGNAL(setSnapRotation(float)), this, SLOT(onSetSnapRotation(float)));
+      connect(&ViewportManager::GetInstance(), SIGNAL(setSnapScale(float)), this, SLOT(onSetSnapScale(float)));
    }
 
 } // namespace dtEditQt

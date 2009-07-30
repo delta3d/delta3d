@@ -31,6 +31,16 @@ namespace dtGame
    class GameManager;
 }
 
+namespace dtCore
+{
+   class UniqueId;
+}
+
+namespace DIS
+{
+   class EntityStatePdu;
+}
+
 namespace dtDIS
 {
    class SharedState;
@@ -39,15 +49,16 @@ namespace dtDIS
    class DT_DIS_DEFAULT_EXPORT ActorUpdateToEntityState : public dtDIS::IMessageToPacketAdapter
    {
    public:
-      ActorUpdateToEntityState(const dtDIS::SharedState* config, dtGame::GameManager* gm);
+      ActorUpdateToEntityState(dtDIS::SharedState* config, dtGame::GameManager* gm);
       ~ActorUpdateToEntityState();
 
       DIS::Pdu* Convert(const dtGame::Message& source);
 
    private:
       ActorUpdateToEntityState();  ///< not implemented by design
+      void SetEntityType(const dtCore::UniqueId& uniqueID, DIS::EntityStatePdu* downcastPdu); 
 
-      const dtDIS::SharedState* mConfig;
+      dtDIS::SharedState* mConfig;
       dtGame::GameManager* mGM;
       DIS::Pdu* mPdu;
    };

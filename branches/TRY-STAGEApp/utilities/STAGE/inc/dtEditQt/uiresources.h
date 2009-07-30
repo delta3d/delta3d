@@ -57,13 +57,12 @@ namespace dtEditQt
       static std::string ICON_EDIT_UNGROUP;
       static std::string ICON_EDIT_UNDO;
       static std::string ICON_EDIT_REDO;
+      
+      static std::string ICON_BRUSH_CUBE;
+      static std::string ICON_BRUSH_SPHERE;
+      static std::string ICON_BRUSH_RESET;
 
-
-      static std::string ICON_TOOLMODE_CAMERA;
-      static std::string ICON_TOOLMODE_SELECT;
-      static std::string ICON_TOOLMODE_TRANSLATE;
-      static std::string ICON_TOOLMODE_ROTATE;
-      static std::string ICON_TOOLMODE_SCALE;
+      static std::string ICON_TOOLMODE_NORMAL;
 
       static std::string ICON_VIEWMODE_TEXTURES;
       static std::string ICON_VIEWMODE_LIGHTING;

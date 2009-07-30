@@ -3,6 +3,7 @@
 
 #include <map>
 #include <string>
+
 #include <osg/Vec2>
 
 #include <xercesc/dom/DOMElement.hpp>
@@ -22,9 +23,9 @@ public:
       LAYOUT,
       MENU,
       PLUGINS
-   };
-
-   ConfigurationManager();
+   }; 
+   
+   static ConfigurationManager& GetInstance();  
 
    void ReadXML(const std::string& fileName);
    void WriteXML(const std::string& fileName);
@@ -35,6 +36,7 @@ public:
    void SetVariable(SectionType section, const std::string& name, int value);
 
 private:   
+   ConfigurationManager();
 
    void ToXML(XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument& doc) const;   
 
@@ -54,6 +56,9 @@ private:
    void fatalError(const xercesc::SAXParseException& exc);
 
    void SetDefaultConfigValues();
+
+   //Singleton instance of this class.
+   static ConfigurationManager* mInstance;
 
    std::map<std::string, std::string> mGeneralVariables;    // name/value pairs
    std::map<std::string, std::string> mLayoutVariables;     // name/value pairs

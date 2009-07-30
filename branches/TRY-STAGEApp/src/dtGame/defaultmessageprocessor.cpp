@@ -40,19 +40,18 @@ namespace dtGame
    const std::string DefaultMessageProcessor::DEFAULT_NAME = "DefaultMessageProcessor";
 
    ///////////////////////////////////////////////////////////////////////////////
-   DefaultMessageProcessor::DefaultMessageProcessor(const std::string& name) : GMComponent(name)
+   DefaultMessageProcessor::DefaultMessageProcessor(const std::string& name)
+      : GMComponent(name)
    {
-
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    DefaultMessageProcessor::~DefaultMessageProcessor()
    {
-
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void DefaultMessageProcessor::ProcessMessage(const Message &msg)
+   void DefaultMessageProcessor::ProcessMessage(const Message& msg)
    {
       //bool remote = false;
       if (GetGameManager() == NULL)
@@ -71,28 +70,46 @@ namespace dtGame
       }
 
       if (msg.GetMessageType() == MessageType::INFO_ACTOR_CREATED)
+      {
          ProcessCreateActor(static_cast<const ActorUpdateMessage&>(msg));
+      }
       else if (msg.GetMessageType() == MessageType::INFO_ACTOR_UPDATED)
+      {
          ProcessUpdateActor(static_cast<const ActorUpdateMessage&>(msg));
+      }
       else if (msg.GetMessageType() == MessageType::INFO_ACTOR_DELETED)
-         ProcessDeleteActor(static_cast<const ActorDeletedMessage&>(msg));
+      {
+         ProcessDeleteActor(msg);
+      }
       else if (msg.GetMessageType() == MessageType::INFO_PLAYER_ENTERED_WORLD)
+      {
          ProcessPlayerEnteredWorldMessage(msg);
+      }
       else if (msg.GetMessageType() == MessageType::TICK_LOCAL ||
             msg.GetMessageType() == MessageType::TICK_REMOTE)
+      {
          ProcessTick(static_cast<const TickMessage&>(msg));
+      }
       else
       {
          //remote = GetGameManager()->GetMachineInfo() != msg.GetSource();
 
          if (msg.GetMessageType() == MessageType::COMMAND_PAUSE)
+         {
             ProcessPauseCommand(msg);
+         }
          else if (msg.GetMessageType() == MessageType::COMMAND_RESUME)
+         {
             ProcessResumeCommand(msg);
+         }
          else if (msg.GetMessageType() == MessageType::COMMAND_RESTART)
+         {
             ProcessRestartCommand(static_cast<const RestartMessage&>(msg));
+         }
          else if (msg.GetMessageType() == MessageType::COMMAND_SET_TIME)
+         {
             ProcessTimeChangeCommand(static_cast<const TimeChangeMessage&>(msg));
+         }
          else
          {
             LOG_DEBUG("The default message component is processing an unhandled local message");
@@ -138,16 +155,16 @@ namespace dtGame
          gap = GetGameManager()->CreateRemoteGameActor(*type);
       }
 
-      //Change the id to match the one this is ghosting.
+      // Change the id to match the one this is ghosting.
       gap->SetId(msg.GetAboutActorId());
 
       return gap;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void DefaultMessageProcessor::ProcessRemoteUpdateActor(const ActorUpdateMessage &msg, GameActorProxy *ap)
+   void DefaultMessageProcessor::ProcessRemoteUpdateActor(const ActorUpdateMessage& msg, GameActorProxy* ap)
    {
-      //dtGame::GameActorProxy *ap = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
+      //dtGame::GameActorProxy* ap = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
       if (ap == NULL)
       {
          LOG_ERROR("The about actor is invalid");
@@ -158,9 +175,9 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void DefaultMessageProcessor::ProcessRemoteDeleteActor(const ActorDeletedMessage &msg)
+   void DefaultMessageProcessor::ProcessRemoteDeleteActor(const Message& msg)
    {
-      dtGame::GameActorProxy *ap = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
+      dtGame::GameActorProxy* ap = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
       if (ap == NULL)
       {
          LOG_WARNING("Actor deleted msg does not specify a valid actor.");
@@ -171,12 +188,12 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void DefaultMessageProcessor::ProcessCreateActor(const ActorUpdateMessage &msg)
+   void DefaultMessageProcessor::ProcessCreateActor(const ActorUpdateMessage& msg)
    {
-      GameActorProxy *proxy = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
+      GameActorProxy* proxy = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
       if (proxy == NULL)
       {
-         //just to make sure the message is actually remote
+         // just to make sure the message is actually remote
          if (msg.GetSource() != GetGameManager()->GetMachineInfo())
          {
             try
@@ -206,30 +223,40 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void DefaultMessageProcessor::ProcessUpdateActor(const ActorUpdateMessage &msg)
+   void DefaultMessageProcessor::ProcessUpdateActor(const ActorUpdateMessage& msg)
    {
-      GameActorProxy *proxy = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
+      GameActorProxy* proxy = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
       if (proxy != NULL)
       {
          if (proxy->IsRemote())
+         {
             ProcessRemoteUpdateActor(msg, proxy);
+         }
          else
+         {
             ProcessLocalUpdateActor(msg);
+         }
       }
       else
+      {
          ProcessCreateActor(msg);
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void DefaultMessageProcessor::ProcessDeleteActor(const ActorDeletedMessage &msg)
+   void DefaultMessageProcessor::ProcessDeleteActor(const Message& msg)
    {
-      GameActorProxy *proxy = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
+      GameActorProxy* proxy = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
       if (proxy != NULL)
       {
          if (proxy->IsRemote())
+         {
             ProcessRemoteDeleteActor(msg);
+         }
          else
+         {
             ProcessLocalDeleteActor(msg);
+         }
       }
       else
       {
@@ -237,7 +264,6 @@ namespace dtGame
          return;
       }
    }
-
 
    ///////////////////////////////////////////////////////////////////////////////
    void DefaultMessageProcessor::ProcessPauseCommand(const Message& msg)
@@ -258,12 +284,13 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void DefaultMessageProcessor::ProcessUnhandledLocalMessage(const Message &msg)
+   void DefaultMessageProcessor::ProcessUnhandledLocalMessage(const Message& msg)
    {
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void DefaultMessageProcessor::ProcessUnhandledRemoteMessage(const Message &msg)
+   void DefaultMessageProcessor::ProcessUnhandledRemoteMessage(const Message& msg)
    {
    }
-}
+
+} // namespace dtGame

@@ -45,10 +45,11 @@ TestBumpMapApp::TestBumpMapApp(const std::string& customObjectName,
                                const std::string& configFilename /*= "config.xml"*/,
                                bool usePrecomputedTangents /*= false*/)
    : Application(configFilename)
-   , mTotalTime(0.0f)
+   , mPitchAngle(0.0f)
    , mUsePrecomputedTangents(usePrecomputedTangents)
    , mDiffuseTexture(NULL)
    , mNormalTexture(NULL)
+   , mYawAngle(0.0f)
 
 {
    //load the xml file which specifies our shaders
@@ -63,8 +64,8 @@ TestBumpMapApp::TestBumpMapApp(const std::string& customObjectName,
    dtCore::ShaderParamInt* sphereMode = NULL;
 
    // Assign the bump shader to the nodes
-   AssignShaderToObject(mSphere.get(), sphereMode);
    AssignShaderToObject(mCustomObject.get(), customMode);
+   AssignShaderToObject(mSphere.get(), sphereMode);
 
    // Store pointers to the mode for toggling different paths in the shader
    mCustomShaderMode = customMode;
@@ -85,6 +86,9 @@ TestBumpMapApp::TestBumpMapApp(const std::string& customObjectName,
    CenterCameraOnObject(mCustomObject.get());
 
    CreateHelpLabel();
+
+   mRotationUniform = new osg::Uniform(osg::Uniform::FLOAT_MAT4, "RotationMatrix");
+   GetCamera()->GetOSGCamera()->getOrCreateStateSet()->addUniform(mRotationUniform);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -158,9 +162,27 @@ bool TestBumpMapApp::KeyPressed(const dtCore::Keyboard* keyboard, int key)
 
    switch(key)
    {
-   case osgGA::GUIEventAdapter::KEY_Escape:
+   case osgGA::GUIEventAdapter::KEY_Left:
       {
-         this->Quit();
+         mYawAngle += 15.0f;
+         verdict = true;
+         break;
+      }
+   case osgGA::GUIEventAdapter::KEY_Right:
+      {
+         mYawAngle -= 15.0f;
+         verdict = true;
+         break;
+      }
+   case osgGA::GUIEventAdapter::KEY_Up:
+      {
+         mPitchAngle += 15.0f;
+         verdict = true;
+         break;
+      }
+   case osgGA::GUIEventAdapter::KEY_Down:
+      {
+         mPitchAngle -= 15.0f;
          verdict = true;
          break;
       }
@@ -210,10 +232,14 @@ bool TestBumpMapApp::KeyPressed(const dtCore::Keyboard* keyboard, int key)
 ////////////////////////////////////////////////////////////////////////////////
 void TestBumpMapApp::PreFrame(const double deltaFrameTime)
 {
-   mTotalTime += deltaFrameTime * 0.15f;
+   float angleIncrement = deltaFrameTime * 2.0f;
+   mYawAngle += angleIncrement;
+   mPitchAngle += angleIncrement;
 
    osg::Matrix rotateMat;
-   rotateMat.makeRotate(osg::DegreesToRadians(30.0f) * mTotalTime, osg::Vec3(1.0f, 0.0f, 1.0f));
+   rotateMat.makeRotate(osg::DegreesToRadians(mYawAngle), osg::Vec3(0.0f, 0.0f, 1.0f),
+                        osg::DegreesToRadians(mPitchAngle), osg::Vec3(1.0f, 0.0f, 0.0f),
+                        osg::DegreesToRadians(0.0f), osg::Vec3(0.0f, 1.0f, 0.0f));
 
    dtCore::Transform objectTransform;
    mCustomObject->GetTransform(objectTransform);
@@ -227,6 +253,8 @@ void TestBumpMapApp::PreFrame(const double deltaFrameTime)
    dtCore::Transform lightTransform;
    GetScene()->GetLight(0)->GetTransform(lightTransform);
    mLightObject->SetTransform(lightTransform);
+
+   mRotationUniform->set(rotateMat);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -277,8 +305,11 @@ void TestBumpMapApp::AssignShaderToObject(dtCore::Object* object, dtCore::Shader
       osg::Program* osgProgram = boundProgram->GetShaderProgram();
       outMode = dynamic_cast<dtCore::ShaderParamInt*>(boundProgram->FindParameter("mode"));
 
-      // Hook up the vertex attrib to the location where it was created
-      osgProgram->addBindAttribLocation("tangentAttrib", 6);
+      if (mUsePrecomputedTangents)
+      {
+         // Hook up the vertex attrib to the location where it is created
+         osgProgram->addBindAttribLocation("tangentAttrib", 6);
+      }
    }
 }
 

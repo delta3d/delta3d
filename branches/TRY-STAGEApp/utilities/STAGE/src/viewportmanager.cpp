@@ -41,6 +41,7 @@
 #include <dtEditQt/stagecamera.h>
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/editordata.h>
+#include <cmath>
 
 namespace dtEditQt
 {
@@ -279,6 +280,163 @@ namespace dtEditQt
    dtCore::DatabasePager* ViewportManager::GetDatabasePager() const
    {
       return mMasterView->GetDatabasePager();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   osg::Vec3 ViewportManager::GetSnapPosition(osg::Vec3 position, bool groundClamp, std::vector<dtCore::DeltaDrawable*> ignoredDrawables)
+   {
+      osg::Vec3 snapPos = position;
+
+      // If snapping is not enabled, return the original position.
+      if (mSnapTranslationEnabled)
+      {
+         for (int index = 0; index < 3; index++)
+         {
+            float trans = position[index];
+
+            int mul = int(std::floor((trans / mSnapTranslation) + 0.5f));
+            trans = mSnapTranslation * mul;
+
+            snapPos[index] = trans;
+         }
+      }
+
+      // Clamp the position to the ground.
+      if (groundClamp)
+      {
+         if (mViewportList.size())
+         {
+            Viewport* viewport = mViewportList["Perspective View"];
+            if (viewport)
+            {
+               osg::Vec3 nearPos, farPos;
+               nearPos = farPos = snapPos;
+               nearPos.z() += 10;
+               farPos.z() -= 10000;
+               viewport->getPickPosition(nearPos, farPos, snapPos, ignoredDrawables);
+            }
+         }
+      }
+
+      return snapPos;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ViewportManager::emitMousePressEvent(Viewport* vp, QMouseEvent* e)
+   {
+      LOG_INFO("Emitting event - [mousePressEvent]");
+      emit mousePressEvent(vp, e);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ViewportManager::emitMouseReleaseEvent(Viewport* vp, QMouseEvent* e)
+   {
+      LOG_INFO("Emitting event - [mouseReleaseEvent]");
+      emit mouseReleaseEvent(vp, e);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ViewportManager::emitMouseMoveEvent(Viewport* vp, QMouseEvent* e)
+   {
+      LOG_INFO("Emitting event - [mouseMoveEvent]");
+      emit mouseMoveEvent(vp, e);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ViewportManager::emitWheelEvent(Viewport* vp, QWheelEvent* e)
+   {
+      LOG_INFO("Emitting event - [wheelEvent]");
+      emit wheelEvent(vp, e);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ViewportManager::emitShouldBeginActorMode(Viewport* vp, osg::Vec2 position, bool* overrideDefault, bool* result)
+   {
+      LOG_INFO("Emitting event - [shouldBeginActorMode]");
+      emit shouldBeginActorMode(vp, position, overrideDefault, result);
+   }
+   
+   ////////////////////////////////////////////////////////////////////////////////
+   void ViewportManager::emitBeginActorMode(Viewport* vp, QMouseEvent* e, bool* overrideDefault)
+   {
+      LOG_INFO("Emitting event - [beginActorMode]");
+      emit beginActorMode(vp, e, overrideDefault);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ViewportManager::emitEndActorMode(Viewport* vp, QMouseEvent* e, bool* overrideDefault)
+   {
+      LOG_INFO("Emitting event - [endActorMode]");
+      emit endActorMode(vp, e, overrideDefault);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ViewportManager::emitBeginCameraMode(Viewport* vp, QMouseEvent* e, bool* overrideDefault)
+   {
+      LOG_INFO("Emitting event - [beginCameraMode]");
+      emit beginCameraMode(vp, e, overrideDefault);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ViewportManager::emitEndCameraMode(Viewport* vp, QMouseEvent* e, bool* overrideDefault)
+   {
+      LOG_INFO("Emitting event - [endCameraMode]");
+      emit endCameraMode(vp, e, overrideDefault);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ViewportManager::emitMoveCamera(Viewport* vp, float dx, float dy, bool* overrideDefault)
+   {
+      LOG_INFO("Emitting event - [moveCamera]");
+      emit moveCamera(vp, dx, dy, overrideDefault);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ViewportManager::emitSelectActors(Viewport* vp, QMouseEvent* e, bool* overrideDefault)
+   {
+      LOG_INFO("Emitting event - [selectActors]");
+      emit selectActors(vp, e, overrideDefault);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ViewportManager::emitDuplicateActors(Viewport* vp, bool* overrideDefault)
+   {
+      LOG_INFO("Emitting event - [duplicateActors]");
+      emit duplicateActors(vp, overrideDefault);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ViewportManager::emitSetSnapTranslation(float increment)
+   {
+      mSnapTranslation = increment;
+      LOG_INFO("Emitting event - [setSnapTranslation]");
+      emit setSnapTranslation(increment);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ViewportManager::emitSetSnapRotation(float increment)
+   {
+      mSnapRotation = increment;
+      LOG_INFO("Emitting event - [setSnapRotation]");
+      emit setSnapRotation(increment);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ViewportManager::emitSetSnapScale(float increment)
+   {
+      mSnapScale = increment;
+      LOG_INFO("Emitting event - [setSnapScale]");
+      emit setSnapScale(increment);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ViewportManager::emitSetSnapEnabled(bool translation, bool rotation, bool scale)
+   {
+      mSnapTranslationEnabled = translation;
+      mSnapRotationEnabled = rotation;
+      mSnapScaleEnabled = scale;
+      LOG_INFO("Emitting event - [setSnapEnabled]");
+      emit setSnapEnabled(translation, rotation, scale);
    }
 
    ///////////////////////////////////////////////////////////////////////////////

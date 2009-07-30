@@ -67,9 +67,9 @@ namespace dtEditQt
       EditorViewportContainer(QWidget* child = NULL, QWidget* parent = NULL);
 
       /**
-      * Adds a viewport into our window.
+      * Updates all snap settings to all viewports.
       */
-      void addViewport(Viewport* viewport);
+      virtual void updateSnaps();
 
       /**
       * Sets the current child of the container.
@@ -78,13 +78,16 @@ namespace dtEditQt
 
    public slots:
 
-      //void setLocalSpace();
-
       void setSnapTranslation();
       void setSnapRotation();
       void setSnapScale();
 
       void setSnapEnabled(int state);
+
+      void onSetSnapEnabled(bool translation, bool rotation, bool scale);
+      void onSetSnapTranslation(float value);
+      void onSetSnapRotation(float value);
+      void onSetSnapScale(float value);
 
    protected:
       ///Creates the toolbar action objects.
@@ -94,8 +97,6 @@ namespace dtEditQt
       void createToolBar();
 
    private:
-      std::vector<EditorViewport*> mViewportList;
-
       QBoxLayout*       mLayout;
       //QBoxLayout*       mButtonLayout;
       QFrame*           mToolBar;
