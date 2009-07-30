@@ -612,7 +612,7 @@ namespace dtActors
    ////////////////////////////////////////////////////////////////////////////////
    osg::Vec3 FenceActor::GetScale() const
    {
-      return osg::Vec3(mPostMaxDistance, mSegmentWidth, mFenceScale);
+      return osg::Vec3(mPostMaxDistance, 1.0f, mFenceScale);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -622,8 +622,8 @@ namespace dtActors
       if (mPostMaxDistance <= 1.0f) mPostMaxDistance = 1.0f;
       if (mPostMaxDistance < mPostMinDistance) mPostMaxDistance = mPostMinDistance;
 
-      mSegmentWidth = value.y();
-      if (mSegmentWidth < 0.0f) mSegmentWidth = 0.0f;
+      //mSegmentWidth = value.y();
+      //if (mSegmentWidth < 0.0f) mSegmentWidth = 0.0f;
 
       mFenceScale = value.z();
 
