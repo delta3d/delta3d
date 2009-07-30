@@ -297,6 +297,7 @@ private:
    QAction*     mModeButton;
 
    QCheckBox*   mCreationModeCheckbox;
+   QCheckBox*   mFavorRightAnglesCheckbox;
    QPushButton* mDeleteLinkButton;
    QPushButton* mFinishedButton;
 };
