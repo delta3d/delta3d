@@ -669,6 +669,16 @@ namespace dtEditQt
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorViewport::mouseDoubleClickEvent(QMouseEvent* e)
+   {
+      mMouseButton = e->button();
+      mMouseButtons = e->buttons();
+      mKeyMods = e->modifiers();
+
+      ViewportManager::GetInstance().emitMouseDoubleClickEvent(this, e);
+   }
+
    ///////////////////////////////////////////////////////////////////////////////
    void EditorViewport::onMouseMoveEvent(QMouseEvent* e, float dx, float dy)
    {

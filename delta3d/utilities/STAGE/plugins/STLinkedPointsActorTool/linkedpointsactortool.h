@@ -85,6 +85,14 @@ public slots:
    void onMouseReleaseEvent(Viewport* vp, QMouseEvent* e);
 
    /**
+   * Signal used when a mouse has been double clicked in a viewport.
+   *
+   * @param[in]  vp  The viewport triggering this event.
+   * @param[in]  e   The mouse event.
+   */
+   void onMouseDoubleClickEvent(Viewport* vp, QMouseEvent* e);
+
+   /**
    * Signal used when a mouse has been moved in a viewport.
    *
    * @param[in]  vp  The viewport triggering this event.

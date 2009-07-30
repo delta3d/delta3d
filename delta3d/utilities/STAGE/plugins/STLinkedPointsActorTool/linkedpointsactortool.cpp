@@ -66,6 +66,8 @@ LinkedPointsActorToolPlugin::LinkedPointsActorToolPlugin(MainWindow* mw)
       this, SLOT(onMousePressEvent(Viewport*, QMouseEvent*)));
    connect(&ViewportManager::GetInstance(), SIGNAL(mouseReleaseEvent(Viewport*, QMouseEvent*)),
       this, SLOT(onMouseReleaseEvent(Viewport*, QMouseEvent*)));
+   connect(&ViewportManager::GetInstance(), SIGNAL(mouseDoubleClickEvent(Viewport*, QMouseEvent*)),
+      this, SLOT(onMouseDoubleClickEvent(Viewport*, QMouseEvent*)));
    connect(&ViewportManager::GetInstance(), SIGNAL(mouseMoveEvent(Viewport*, QMouseEvent*)),
       this, SLOT(onMouseMoveEvent(Viewport*, QMouseEvent*)));
    connect(&ViewportManager::GetInstance(), SIGNAL(wheelEvent(Viewport*, QWheelEvent*)),
@@ -318,6 +320,12 @@ void LinkedPointsActorToolPlugin::onMouseReleaseEvent(Viewport* vp, QMouseEvent*
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void LinkedPointsActorToolPlugin::onMouseDoubleClickEvent(Viewport* vp, QMouseEvent* e)
+{
+   mCreationModeCheckbox->setChecked(!mCreationModeCheckbox->isChecked());
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void LinkedPointsActorToolPlugin::onMouseMoveEvent(Viewport* vp, QMouseEvent* e)
 {
    if (!mIsActive)
@@ -497,8 +505,7 @@ void LinkedPointsActorToolPlugin::onSelectActors(Viewport* vp, QMouseEvent* e, b
       }
 
       // You can not select other actors while in this tool, you can only
-      // select the points on the current active proxy or create new points
-      // in the chain.
+      // create new points in the chain.
       if (editorView->GetMouseButton() == Qt::LeftButton)
       {
          // Always only allow a single selection.
