@@ -50,9 +50,10 @@ LinkedPointsActorToolPlugin::LinkedPointsActorToolPlugin(MainWindow* mw)
    mModeButton = new QAction(QIcon(MODE_ICON.c_str()), "Linked Points Actor Tool", this);
    mMainWindow->AddExclusiveToolMode(mModeButton);
 
-   mCreationModeCheckbox = ui.mCreationModeCheckbox;
-   mDeleteLinkButton     = ui.mDeleteLinkButton;
-   mFinishedButton       = ui.mFinishedButton;
+   mCreationModeCheckbox      = ui.mCreationModeCheckbox;
+   mFavorRightAnglesCheckbox  = ui.mFavorRightAnglesCheckbox;
+   mDeleteLinkButton          = ui.mDeleteLinkButton;
+   mFinishedButton            = ui.mFinishedButton;
 
    // Setup our signal slots.
    connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyCreated(ActorProxyRefPtr, bool)),
@@ -323,6 +324,7 @@ void LinkedPointsActorToolPlugin::onMouseReleaseEvent(Viewport* vp, QMouseEvent*
 void LinkedPointsActorToolPlugin::onMouseDoubleClickEvent(Viewport* vp, QMouseEvent* e)
 {
    mCreationModeCheckbox->setChecked(!mCreationModeCheckbox->isChecked());
+   onCreationModePressed();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -516,6 +518,7 @@ void LinkedPointsActorToolPlugin::onSelectActors(Viewport* vp, QMouseEvent* e, b
          if (mShowingPlacementGhost)
          {
             mShowingPlacementGhost = false;
+            selectPoint(mActiveActor->GetPointCount() - 1);
 
             EditorEvents::GetInstance().emitBeginChangeTransaction();
             EditorEvents::GetInstance().emitActorPropertyAboutToChange(mActiveProxy.get(), mPointsProp, mOldPropValue, mPointsProp->ToString());
@@ -913,6 +916,62 @@ void LinkedPointsActorToolPlugin::UpdatePlacementGhost(Viewport* vp, osg::Vec2 m
    osg::Vec3 position;
    if (editorView->getPickPosition(mousePos.x(), mousePos.y(), position, ignoredDrawables))
    {
+      // Snap to right angles.
+      if (mShowingPlacementGhost && mFavorRightAnglesCheckbox->isChecked())
+      {
+         bool bLockedX = false;
+         bool bLockedY = false;
+
+         int prevPoint = mActiveActor->GetPointCount() - 2;
+         if (prevPoint >= 0)
+         {
+            osg::Vec3 prevPos = mActiveActor->GetPointPosition(prevPoint);
+            osg::Vec3 vec = position - prevPos;
+            vec.z() = 0.0f;
+            vec.normalize();
+            float dot = vec * osg::Vec3(0.0f, 1.0f, 0.0f);
+            if (abs(dot) >= 0.99f)
+            {
+               bLockedX = true;
+               position.x() = prevPos.x();
+            }
+            else
+            {
+               dot = vec * osg::Vec3(1.0f, 0.0f, 0.0f);
+               if (abs(dot) >= 0.99f)
+               {
+                  bLockedY = true;
+                  position.y() = prevPos.y();
+               }
+            }
+
+            osg::Vec3 nextPos = mActiveActor->GetPointPosition(0);
+            vec = position - nextPos;
+            vec.z() = 0.0f;
+            vec.normalize();
+
+            // Test for a lock with the next point.
+            if (!bLockedX)
+            {
+               dot = vec * osg::Vec3(0.0f, 1.0f, 0.0f);
+               if (abs(dot) >= 0.99f)
+               {
+                  bLockedY = true;
+                  position.x() = nextPos.x();
+               }
+            }
+
+            if (!bLockedY)
+            {
+               dot = vec * osg::Vec3(1.0f, 0.0f, 0.0f);
+               if (abs(dot) >= 0.99f)
+               {
+                  position.y() = nextPos.y();
+               }
+            }
+         }
+      }
+
       // Convert the pick position to the snap grid if needed.
       position = ViewportManager::GetInstance().GetSnapPosition(position, true, ignoredDrawables);
       ShowPlacementGhost(position);
