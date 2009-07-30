@@ -57,13 +57,13 @@ namespace dtEditQt
 
       //Note: tabs and widgets are different
 
-      if (ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, "ShowActorSearch") != "false")
+      if (ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, CONF_MGR_SHOW_ACTOR_SEARCH) != "false")
       {
          mTabActorSearch  = new TabWrapper(this);
          mActorSearchWidget  = new ActorSearcher(this);
       }
 
-      if (ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, "ShowGlobalActors") != "false")
+      if (ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, CONF_MGR_SHOW_GLOBAL_ACTORS) != "false")
       {
          mTabGlobalActor  = new TabWrapper(this);
          mActorGlobalWidget  = new ActorGlobalBrowser(this);

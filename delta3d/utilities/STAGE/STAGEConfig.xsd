@@ -40,12 +40,6 @@
             </xs:complexType>
          </xs:element>
       
-         <xs:element name="Menu">
-            <xs:complexType>
-               <xs:attribute name="MenuType" type="xs:string"/>
-            </xs:complexType>
-         </xs:element>
-		 
 		 <xs:element name="Plugins">
             <xs:complexType>
                <xs:attribute name="Activated" type="xs:string"/>

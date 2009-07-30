@@ -1446,7 +1446,7 @@ namespace dtEditQt
          refreshRecentProjects();
 
          ConfigurationManager::GetInstance().SetVariable(
-            ConfigurationManager::GENERAL, "ProjContextPath", contextName);
+            ConfigurationManager::GENERAL, CONF_MGR_PROJECT_CONTEXT, contextName);
       }      
 
       slotRestartAutosave();
@@ -1651,7 +1651,7 @@ namespace dtEditQt
                *(ViewportManager::GetInstance().getMasterScene()), true);
 
             ConfigurationManager::GetInstance().SetVariable(
-               ConfigurationManager::GENERAL, "Map", newMap->GetName());
+               ConfigurationManager::GENERAL, CONF_MGR_MAP_FILE, newMap->GetName());
 
          }
          catch (const dtUtil::Exception& e)
