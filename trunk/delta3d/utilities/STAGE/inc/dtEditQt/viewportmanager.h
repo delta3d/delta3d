@@ -247,6 +247,14 @@ namespace dtEditQt
       void emitMouseReleaseEvent(Viewport* vp, QMouseEvent* e);
 
       /**
+      * Signal used when the mouse has been double clicked.
+      *
+      * @param[in]  vp  The viewport triggering this event.
+      * @param[in]  e   The mouse event.
+      */
+      void emitMouseDoubleClickEvent(Viewport* vp, QMouseEvent* e);
+
+      /**
       * Signal used when a mouse has been moved in a viewport.
       *
       * @param[in]  vp  The viewport triggering this event.
@@ -378,6 +386,14 @@ namespace dtEditQt
       * @param[in]  e   The mouse event.
       */
       void mouseReleaseEvent(Viewport* vp, QMouseEvent* e);
+
+      /**
+      * Signal used when the mouse has been double clicked.
+      *
+      * @param[in]  vp  The viewport triggering this event.
+      * @param[in]  e   The mouse event.
+      */
+      void mouseDoubleClickEvent(Viewport* vp, QMouseEvent* e);
 
       /**
       * Signal used when a mouse has been moved in a viewport.
