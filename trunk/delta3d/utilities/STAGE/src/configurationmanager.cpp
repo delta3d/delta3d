@@ -347,18 +347,25 @@ void ConfigurationManager::warning(const xercesc::SAXParseException& e)
 ////////////////////////////////////////////////////////////////////////////////
 void ConfigurationManager::SetDefaultConfigValues()
 {
-   mGeneralVariables["SaveConfigurationOnClose"] = "false";
+   mGeneralVariables[CONF_MGR_MAP_FILE] = "";
+   mGeneralVariables[CONF_MGR_PROJECT_CONTEXT] = "";
+   mGeneralVariables[CONF_MGR_SAVE_ON_CLOSE] = "false";
 
-   mLayoutVariables["ShowFrontView"] = "true";
-   mLayoutVariables["ShowSideView"] = "true";
-   mLayoutVariables["ShowTopView"] = "true";
-   mLayoutVariables["ShowPerspView"] = "true";
+   mLayoutVariables[CONF_MGR_SHOW_FRONT_VIEW] = "true";
+   mLayoutVariables[CONF_MGR_SHOW_SIDE_VIEW] = "true";
+   mLayoutVariables[CONF_MGR_SHOW_TOP_VIEW] = "true";
+   mLayoutVariables[CONF_MGR_SHOW_PERSP_VIEW] = "true";
+   
+   mLayoutVariables[CONF_MGR_SHOW_ACTOR_TAB] = "true";
+   mLayoutVariables[CONF_MGR_SHOW_ACTOR_BROWSER] = "true";
+   mLayoutVariables[CONF_MGR_SHOW_PREFAB_BROWSER] = "true";
+   mLayoutVariables[CONF_MGR_SHOW_SEARCH_TAB] = "true";
+   mLayoutVariables[CONF_MGR_SHOW_ACTOR_SEARCH] = "true";
+   mLayoutVariables[CONF_MGR_SHOW_GLOBAL_ACTORS] = "true";
+   mLayoutVariables[CONF_MGR_SHOW_RESOURCE_BROWSER] = "true";
+   mLayoutVariables[CONF_MGR_SHOW_PROPERTY_EDITOR] = "true";
 
-   mLayoutVariables["ShowPropertyEditor"] = "true";
-   mLayoutVariables["ShowActorTab"] = "true";
-   mLayoutVariables["ShowResourceBrowser"] = "true";
-
-   mPluginVariables["Activated"] = "";
+   mPluginVariables[CONF_MGR_PLUGINS_ACTIVATED] = "";
 }
 
 } //namespace dtEditQt

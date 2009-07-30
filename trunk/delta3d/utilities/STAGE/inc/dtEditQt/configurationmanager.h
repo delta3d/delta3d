@@ -4,6 +4,8 @@
 #include <map>
 #include <string>
 
+#include <dtUtil/refstring.h>
+
 #include <osg/Vec2>
 
 #include <xercesc/dom/DOMElement.hpp>
@@ -13,6 +15,25 @@
 
 namespace dtEditQt
 {
+static const dtUtil::RefString CONF_MGR_MAP_FILE("Map");
+static const dtUtil::RefString CONF_MGR_PROJECT_CONTEXT("ProjContextPath");
+static const dtUtil::RefString CONF_MGR_SAVE_ON_CLOSE("SaveConfigurationOnClose");
+
+static const dtUtil::RefString CONF_MGR_SHOW_FRONT_VIEW("ShowFrontView");
+static const dtUtil::RefString CONF_MGR_SHOW_SIDE_VIEW("ShowSideView");
+static const dtUtil::RefString CONF_MGR_SHOW_TOP_VIEW("ShowTopView");
+static const dtUtil::RefString CONF_MGR_SHOW_PERSP_VIEW("ShowPerspView");
+
+static const dtUtil::RefString CONF_MGR_SHOW_ACTOR_TAB("ShowActorTab");
+static const dtUtil::RefString CONF_MGR_SHOW_ACTOR_BROWSER("ShowActorBrowser");
+static const dtUtil::RefString CONF_MGR_SHOW_PREFAB_BROWSER("ShowPrefabBrowser");
+static const dtUtil::RefString CONF_MGR_SHOW_SEARCH_TAB("ShowSearchTab");
+static const dtUtil::RefString CONF_MGR_SHOW_ACTOR_SEARCH("ShowActorSearch");
+static const dtUtil::RefString CONF_MGR_SHOW_GLOBAL_ACTORS("ShowGlobalActors");
+static const dtUtil::RefString CONF_MGR_SHOW_RESOURCE_BROWSER("ShowResourceBrowser");
+static const dtUtil::RefString CONF_MGR_SHOW_PROPERTY_EDITOR("ShowPropertyEditor");
+
+static const dtUtil::RefString CONF_MGR_PLUGINS_ACTIVATED("Activated");
 
 class ConfigurationManager : public xercesc::DefaultHandler
 {
