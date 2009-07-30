@@ -1251,6 +1251,7 @@ namespace dtEditQt
       if (mActors.size()> 0)
       {
          EditorEvents::GetInstance().emitGotoActor(mActors[0]);
+         ViewportManager::GetInstance().refreshAllViewports();
       }
    }
 
