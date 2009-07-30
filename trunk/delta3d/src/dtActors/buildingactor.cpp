@@ -151,8 +151,8 @@ namespace dtActors
    /////////////////////////////////////////////////////////////////////////////
    BuildingActor::BuildingActor(dtActors::LinkedPointsActorProxy* proxy, const std::string& name)
       : BaseClass(proxy, name)
-      , mRoofTextureScale(1.0f)
-      , mWallTextureScale(1.0f)
+      , mRoofTextureScale(100.0f)
+      , mWallTextureScale(100.0f)
       , mBuildingHeight(3.0f)
       , mGenerateRoof(false)
       , mFlatRoof(true)
@@ -734,7 +734,7 @@ namespace dtActors
          float startHeight = startRoofHeight - start.z();
          float endHeight = endRoofHeight - end.z();
 
-         float textureLength = wallLength * mWallTextureScale;
+         float textureLength = wallLength * (mWallTextureScale * 0.01f);
 
          // If we are generating a roof, make sure we add the roof point into our list
          if (mGenerateRoof)
@@ -768,16 +768,16 @@ namespace dtActors
          ////////////////////////////////////////////////////////////////////////////////
          // Texture
          // Front Wall
-         geomData->mWallTextureList->at(0) = (osg::Vec2(1.0f, 1.0f - startHeight * mWallTextureScale));
+         geomData->mWallTextureList->at(0) = (osg::Vec2(1.0f, 1.0f - startHeight * (mWallTextureScale * 0.01f)));
          geomData->mWallTextureList->at(1) = (osg::Vec2(1.0f, 1.0f));
          geomData->mWallTextureList->at(2) = (osg::Vec2(1.0f - textureLength, 1.0f));
-         geomData->mWallTextureList->at(3) = (osg::Vec2(1.0f - textureLength, 1.0f - endHeight * mWallTextureScale));
+         geomData->mWallTextureList->at(3) = (osg::Vec2(1.0f - textureLength, 1.0f - endHeight * (mWallTextureScale * 0.01f)));
 
          // Back Wall
-         geomData->mWallTextureList->at(4) = (osg::Vec2(1.0f - textureLength, 1.0f - endHeight * mWallTextureScale));
+         geomData->mWallTextureList->at(4) = (osg::Vec2(1.0f - textureLength, 1.0f - endHeight * (mWallTextureScale * 0.01f)));
          geomData->mWallTextureList->at(5) = (osg::Vec2(1.0f - textureLength, 1.0f));
          geomData->mWallTextureList->at(6) = (osg::Vec2(1.0f, 1.0f));
-         geomData->mWallTextureList->at(7) = (osg::Vec2(1.0f, 1.0f - startHeight * mWallTextureScale));
+         geomData->mWallTextureList->at(7) = (osg::Vec2(1.0f, 1.0f - startHeight * (mWallTextureScale * 0.01f)));
 
 
          ////////////////////////////////////////////////////////////////////////////////
@@ -1162,7 +1162,7 @@ namespace dtActors
          osg::Vec3 pos = roofPoints[pointIndex];
 
          mRoofVertexList->push_back(pos);
-         mRoofTextureList->push_back(osg::Vec2(pos.x() * mRoofTextureScale, pos.y() * mRoofTextureScale));
+         mRoofTextureList->push_back(osg::Vec2(pos.x() * (mRoofTextureScale * 0.01f), pos.y() * (mRoofTextureScale * 0.01f)));
       }
 
       mRoofGeom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::TRIANGLE_FAN, firstIndex, (int)roofPoints.size()));

@@ -25,7 +25,7 @@ using namespace dtCore;
 IMPLEMENT_MANAGEMENT_LAYER(ObjectMotionModel)
 
 const int ARROW_NODE_MASK = 0x0f000000;
-const float SENSITIVITY = 5.0f;
+const float SENSITIVITY = 0.1f;
 
 //////////////////////////////////////////////////////////////////////////
 ObjectMotionModel::ObjectMotionModel(dtCore::View* view)
@@ -1453,6 +1453,7 @@ void ObjectMotionModel::UpdateScale(void)
 
       // Find the translation vector.
       fDistance = axis * vector;
+      fDistance *= SENSITIVITY;
 
       // Snap
       if (mSnap && mSnapScaleEnabled)
