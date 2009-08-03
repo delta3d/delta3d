@@ -189,8 +189,8 @@ void RandomActorGeneratorPlugin::NewActorProxyInsideVolumeEditor(dtDAL::ActorPro
       return;
    }
 
-   //Add cloned actor to map send out a create event.      
-   currMap->AddProxy(*aCloneProxy);
+   //Add cloned actor to map (with a unique name)
+   currMap->AddProxy(*aCloneProxy, true);
 
    //Apply rotation (NOT translation) transformations from original actor to the cloned actor
    //(scale has already been copied during the clone step)
@@ -291,6 +291,7 @@ void RandomActorGeneratorPlugin::NewActorProxyInsideVolumeEditor(dtDAL::ActorPro
       masterScene->AddDrawable(aClonePtr);    
    }
 
+   //send out a created event.      
    dtEditQt::EditorEvents::GetInstance().emitActorProxyCreated(aCloneProxy, false);
 }
 
