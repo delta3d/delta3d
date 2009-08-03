@@ -33,6 +33,7 @@
 #include <osgDB/DatabasePager>
 #include <osgDB/Registry>
 #include <dtUtil/log.h>
+#include <dtDAL/map.h>
 #include <dtDAL/actorproxyicon.h>
 #include <dtEditQt/viewportmanager.h>
 #include <dtEditQt/orthoviewport.h>
@@ -315,6 +316,118 @@ namespace dtEditQt
       }
 
       return snapPos;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ViewportManager::SavePresetCamera(int index)
+   {
+      dtDAL::Map::PresetCameraData data;
+      data.isValid = true;
+
+      Viewport* viewport = mViewportList["Perspective View"];
+      if (viewport)
+      {
+         StageCamera* cam = viewport->getCamera();
+         if (cam)
+         {
+            data.persPosition = cam->getPosition();
+            data.persRotation = cam->getOrientation();
+         }
+      }
+      viewport = mViewportList["Top View (XY)"];
+      if (viewport)
+      {
+         StageCamera* cam = viewport->getCamera();
+         if (cam)
+         {
+            data.topPosition = cam->getPosition();
+            data.topZoom     = cam->getZoom();
+         }
+      }
+      viewport = mViewportList["Side View (YZ)"];
+      if (viewport)
+      {
+         StageCamera* cam = viewport->getCamera();
+         if (cam)
+         {
+            data.sidePosition = cam->getPosition();
+            data.sideZoom     = cam->getZoom();
+         }
+      }
+      viewport = mViewportList["Front View (XZ)"];
+      if (viewport)
+      {
+         StageCamera* cam = viewport->getCamera();
+         if (cam)
+         {
+            data.frontPosition = cam->getPosition();
+            data.frontZoom     = cam->getZoom();
+         }
+      }
+
+      dtDAL::Map* map = EditorData::GetInstance().getCurrentMap();
+      if (map)
+      {
+         map->SetPresetCameraData(index, data);
+         EditorData::GetInstance().getCurrentMap()->SetModified(true);
+         EditorEvents::GetInstance().emitProjectChanged();
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ViewportManager::LoadPresetCamera(int index)
+   {
+      dtDAL::Map* map = EditorData::GetInstance().getCurrentMap();
+      if (map)
+      {
+         dtDAL::Map::PresetCameraData data = map->GetPresetCameraData(index);
+         if (data.isValid)
+         {
+            Viewport* viewport = mViewportList["Perspective View"];
+            if (viewport)
+            {
+               StageCamera* cam = viewport->getCamera();
+               if (cam)
+               {
+                  cam->setPosition(data.persPosition);
+                  cam->resetRotation();
+                  cam->rotate(data.persRotation);
+               }
+            }
+            viewport = mViewportList["Top View (XY)"];
+            if (viewport)
+            {
+               StageCamera* cam = viewport->getCamera();
+               if (cam)
+               {
+                  cam->setPosition(data.topPosition);
+                  cam->setZoom(data.topZoom);
+               }
+            }
+            viewport = mViewportList["Side View (YZ)"];
+            if (viewport)
+            {
+               StageCamera* cam = viewport->getCamera();
+               if (cam)
+               {
+                  cam->setPosition(data.sidePosition);
+                  cam->setZoom(data.sideZoom);
+               }
+            }
+            viewport = mViewportList["Front View (XZ)"];
+            if (viewport)
+            {
+               StageCamera* cam = viewport->getCamera();
+               if (cam)
+               {
+                  cam->setPosition(data.frontPosition);
+                  cam->setZoom(data.frontZoom);
+               }
+            }
+
+            refreshAllViewports();
+         }
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////

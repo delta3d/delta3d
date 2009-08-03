@@ -246,6 +246,19 @@ namespace dtEditQt
       mUpdateProjectionMatrix = true;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void StageCamera::setZoom(double zoom)
+   {
+      mZoomFactor = zoom;
+
+      if (mZoomFactor < 0.0001)
+      {
+         mZoomFactor = 0.0001;
+      }
+
+      mUpdateProjectionMatrix = true;
+   }
+
    ///////////////////////////////////////////////////////////////////////////////
    void StageCamera::update()
    {

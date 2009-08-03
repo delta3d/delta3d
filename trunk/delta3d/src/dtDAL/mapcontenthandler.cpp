@@ -274,6 +274,10 @@ namespace  dtDAL
                }
             }
          }
+         else if (mInPresetCameras)
+         {
+            PresetCameraCharacters(chars);
+         }
       }
 
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
@@ -458,7 +462,131 @@ namespace  dtDAL
             mIgnoreCurrentActor = true;
          }
       }
+   }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void MapContentHandler::PresetCameraCharacters(const XMLCh* const chars)
+   {
+      xmlCharString& topEl = mElements.top();
+
+      if (mInPresetCameras)
+      {
+         if (topEl == MapXMLConstants::PRESET_CAMERA_INDEX_ELEMENT)
+         {
+            std::istringstream stream;
+            stream.str(dtUtil::XMLStringConverter(chars).ToString());
+            stream >> mPresetCameraIndex;
+
+            mPresetCameraData.isValid = true;
+         }
+         else if (topEl == MapXMLConstants::PRESET_CAMERA_PERSPECTIVE_VIEW_ELEMENT)
+         {
+            mPresetCameraView = 0;
+         }
+         else if (topEl == MapXMLConstants::PRESET_CAMERA_TOP_VIEW_ELEMENT)
+         {
+            mPresetCameraView = 1;
+         }
+         else if (topEl == MapXMLConstants::PRESET_CAMERA_SIDE_VIEW_ELEMENT)
+         {
+            mPresetCameraView = 2;
+         }
+         else if (topEl == MapXMLConstants::PRESET_CAMERA_FRONT_VIEW_ELEMENT)
+         {
+            mPresetCameraView = 3;
+         }
+         else if (topEl == MapXMLConstants::PRESET_CAMERA_POSITION_X_ELEMENT)
+         {
+            char* endMarker;
+            double value = strtod(dtUtil::XMLStringConverter(chars).ToString().c_str(), &endMarker);
+
+            switch (mPresetCameraView)
+            {
+            case 0: mPresetCameraData.persPosition.x() = value; break;
+            case 1: mPresetCameraData.topPosition.x() = value; break;
+            case 2: mPresetCameraData.sidePosition.x() = value; break;
+            case 3: mPresetCameraData.frontPosition.x() = value; break;
+            }
+         }
+         else if (topEl == MapXMLConstants::PRESET_CAMERA_POSITION_Y_ELEMENT)
+         {
+            char* endMarker;
+            double value = strtod(dtUtil::XMLStringConverter(chars).ToString().c_str(), &endMarker);
+
+            switch (mPresetCameraView)
+            {
+            case 0: mPresetCameraData.persPosition.y() = value; break;
+            case 1: mPresetCameraData.topPosition.y() = value; break;
+            case 2: mPresetCameraData.sidePosition.y() = value; break;
+            case 3: mPresetCameraData.frontPosition.y() = value; break;
+            }
+         }
+         else if (topEl == MapXMLConstants::PRESET_CAMERA_POSITION_Z_ELEMENT)
+         {
+            char* endMarker;
+            double value = strtod(dtUtil::XMLStringConverter(chars).ToString().c_str(), &endMarker);
+
+            switch (mPresetCameraView)
+            {
+            case 0: mPresetCameraData.persPosition.z() = value; break;
+            case 1: mPresetCameraData.topPosition.z() = value; break;
+            case 2: mPresetCameraData.sidePosition.z() = value; break;
+            case 3: mPresetCameraData.frontPosition.z() = value; break;
+            }
+         }
+         else if (topEl == MapXMLConstants::PRESET_CAMERA_ROTATION_X_ELEMENT)
+         {
+            char* endMarker;
+            double value = strtod(dtUtil::XMLStringConverter(chars).ToString().c_str(), &endMarker);
+
+            switch (mPresetCameraView)
+            {
+            case 0: mPresetCameraData.persRotation.x() = value; break;
+            }
+         }
+         else if (topEl == MapXMLConstants::PRESET_CAMERA_ROTATION_Y_ELEMENT)
+         {
+            char* endMarker;
+            double value = strtod(dtUtil::XMLStringConverter(chars).ToString().c_str(), &endMarker);
+
+            switch (mPresetCameraView)
+            {
+            case 0: mPresetCameraData.persRotation.y() = value; break;
+            }
+         }
+         else if (topEl == MapXMLConstants::PRESET_CAMERA_ROTATION_Z_ELEMENT)
+         {
+            char* endMarker;
+            double value = strtod(dtUtil::XMLStringConverter(chars).ToString().c_str(), &endMarker);
+
+            switch (mPresetCameraView)
+            {
+            case 0: mPresetCameraData.persRotation.z() = value; break;
+            }
+         }
+         else if (topEl == MapXMLConstants::PRESET_CAMERA_ROTATION_W_ELEMENT)
+         {
+            char* endMarker;
+            double value = strtod(dtUtil::XMLStringConverter(chars).ToString().c_str(), &endMarker);
+
+            switch (mPresetCameraView)
+            {
+            case 0: mPresetCameraData.persRotation.w() = value; break;
+            }
+         }
+         else if (topEl == MapXMLConstants::PRESET_CAMERA_ZOOM_ELEMENT)
+         {
+            char* endMarker;
+            double value = strtod(dtUtil::XMLStringConverter(chars).ToString().c_str(), &endMarker);
+
+            switch (mPresetCameraView)
+            {
+            case 1: mPresetCameraData.topZoom = value; break;
+            case 2: mPresetCameraData.sideZoom = value; break;
+            case 3: mPresetCameraData.frontZoom = value; break;
+            }
+         }
+      }
    }
 
    /////////////////////////////////////////////////////////////////
@@ -1332,6 +1460,14 @@ namespace  dtDAL
                mGroupIndex = mMap->GetGroupCount();
             }
          }
+         else if (mInPresetCameras)
+         {
+            if (XMLString::compareString(localname, MapXMLConstants::PRESET_CAMERA_ELEMENT) == 0)
+            {
+               mPresetCameraIndex = -1;
+               mPresetCameraData.isValid = false;
+            }
+         }
          else if (mInEvents)
          {
             if (XMLString::compareString(localname, MapXMLConstants::EVENT_ELEMENT) == 0)
@@ -1370,6 +1506,12 @@ namespace  dtDAL
                if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                   mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Found Groups");
                mInGroup = true;
+            }
+            else if (XMLString::compareString(localname, MapXMLConstants::PRESET_CAMERAS_ELEMENT) == 0)
+            {
+               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Found Preset Cameras");
+               mInPresetCameras = true;
             }
          }
       }
@@ -1440,6 +1582,10 @@ namespace  dtDAL
       else if (mInGroup)
       {
          EndGroupSection(localname);
+      }
+      else if (mInPresetCameras)
+      {
+         EndPresetCameraSection(localname);
       }
       mElements.pop();
 
@@ -1571,8 +1717,12 @@ namespace  dtDAL
       mInEvents = false;
       mInActors = false;
       mInGroup = false;
+      mInPresetCameras = false;
       mInActorProperty = false;
       mInActor = false;
+      mPresetCameraIndex = -1;
+      mPresetCameraData.isValid = false;
+      mPresetCameraView = 0;
 
       mEnvActorId = "";
 
@@ -1936,6 +2086,30 @@ namespace  dtDAL
    void MapContentHandler::EndGroupElement()
    {
       mInGroup = false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void MapContentHandler::EndPresetCameraSection(const XMLCh* const localname)
+   {
+      if (XMLString::compareString(localname, MapXMLConstants::PRESET_CAMERAS_ELEMENT) == 0)
+      {
+         mInPresetCameras = false;
+      }
+      else if (XMLString::compareString(localname, MapXMLConstants::PRESET_CAMERA_ELEMENT) == 0)
+      {
+         EndPresetCameraElement();
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void MapContentHandler::EndPresetCameraElement()
+   {
+      if (mPresetCameraIndex > -1 &&
+         mPresetCameraData.isValid &&
+         mMap.valid())
+      {
+         mMap->SetPresetCameraData(mPresetCameraIndex, mPresetCameraData);
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
