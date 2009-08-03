@@ -73,9 +73,10 @@ namespace dtEditQt
       , mSkipUpdateForCam(false)
    {
       //mObjectMotionModel = new STAGEObjectMotionModel(ViewportManager::GetInstance().getMasterView());
-      mObjectMotionModel = new STAGEObjectMotionModel(GetView());
+      //mObjectMotionModel = new STAGEObjectMotionModel(GetView());
+      mObjectMotionModel = new dtCore::ObjectMotionModel(GetView());
       mObjectMotionModel->SetEnabled(false);
-      mObjectMotionModel->ClearTargets();
+      //mObjectMotionModel->ClearTargets(); //TODO E!
       //mObjectMotionModel->SetGetMouseLineFunc(dtDAL::MakeFunctor(*this, &EditorViewport::GetMouseLine));
       //mObjectMotionModel->SetObjectToScreenFunc(dtDAL::MakeFunctorRet(*this, &EditorViewport::GetObjectScreenCoordinates));
       mObjectMotionModel->SetScale(1.5f);
@@ -128,7 +129,7 @@ namespace dtEditQt
 
       if (actors.size() > 0)
       {
-         mObjectMotionModel->ClearTargets();
+         //mObjectMotionModel->ClearTargets(); //TODO E!
 
          // Now iterate through the additional targets.
          bool canScale = false;
@@ -139,7 +140,14 @@ namespace dtEditQt
 
             if (targetProxy)
             {
-               mObjectMotionModel->AddTarget(targetProxy);
+               //mObjectMotionModel->AddTarget(targetProxy); //TODO E!
+               dtCore::Transformable* target = NULL;
+               targetProxy->GetActor(target);
+               if (target)
+               {
+                  mObjectMotionModel->SetTarget(target);
+               }
+
 
                // Once we determine that a target can scale, we don't need to
                // test the others.
@@ -163,7 +171,7 @@ namespace dtEditQt
       else
       {
          mObjectMotionModel->SetEnabled(false);
-         mObjectMotionModel->ClearTargets();
+         //mObjectMotionModel->ClearTargets(); //TODO E!
          mObjectMotionModel->SetScaleEnabled(false);
       }
 
@@ -800,7 +808,7 @@ namespace dtEditQt
          return result;
       }
 
-      if (mObjectMotionModel->Update(position) != STAGEObjectMotionModel::MOTION_TYPE_MAX)
+      if (mObjectMotionModel->Update(position) != dtCore::ObjectMotionModel::MOTION_TYPE_MAX)
       {
          return true;
       }
