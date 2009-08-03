@@ -39,7 +39,7 @@ namespace dtDAL
       //mFileName requires some processing.
       SetFileName(mFileName);
       mEventManager = new MapGameEvents(*this);
-      //mPresetCameras.resize(10);
+      mPresetCameras.resize(10);
    }
    
    Map::~Map() 
@@ -561,6 +561,28 @@ namespace dtDAL
       return NULL;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   Map::PresetCameraData Map::GetPresetCameraData(int index)
+   {
+      if (index >= (int)mPresetCameras.size())
+      {
+         return PresetCameraData();
+      }
+
+      return mPresetCameras[index];
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void Map::SetPresetCameraData(int index, Map::PresetCameraData presetData)
+   {
+      if (index >= (int)mPresetCameras.size())
+      {
+         return;
+      }
+
+      mPresetCameras[index] = presetData;
+   }
+
    //////////////////////////////////////////////////////////////////////////
    const std::vector<std::string>& Map::GetMissingLibraries() const
    {
@@ -785,9 +807,7 @@ namespace dtDAL
    ////////////////////////////////////////////////////////////////////////////////
    std::string Map::NumberToString(int number)
    {
-      std::string numString;
-      numString.resize(5);
-      itoa(number, &numString[0], 10);
+      std::string numString = dtUtil::ToString(number);
 
       // If we have a number value, convert it to be 2 digits at least.
       int letterCount = numString.length();
