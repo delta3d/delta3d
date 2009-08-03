@@ -253,8 +253,9 @@ namespace dtDAL
          /**
           * Adds a new proxy to the map.
           * @param proxy the proxy to add.
+          * @param reNumber true if we want to re-number the proxy with a unique value
           */
-         void AddProxy(ActorProxy& proxy);
+         void AddProxy(ActorProxy& proxy, bool reNumber = false);
 
          /**
           * Removes a proxy.
@@ -472,6 +473,11 @@ namespace dtDAL
           */
          void AddMissingActorTypes(const std::set<std::string>& types);
 
+         ///**
+         //* Gets the matrix of a preset camera position.
+         //*/
+         //osg::Matrix GetPresetCameraMatrix();
+
          virtual ~Map();
          
        private:
@@ -499,6 +505,8 @@ namespace dtDAL
          std::map<std::string, std::string> mLibraryVersionMap;
          std::vector<std::string> mLibraryOrder;
 
+         std::map<std::string, int> mProxyNumberMap;
+
          std::vector<std::string> mMissingLibraries;
          std::set<std::string> mMissingActorTypes;
 
@@ -507,20 +515,39 @@ namespace dtDAL
          //all of the classes used by the proxies in the map.
          mutable std::set<std::string> mProxyActorClasses;
 
+         //std::vector<osg::Matrix> mPresetCameras;
+
          bool MatchesSearch(const ActorProxy& actorProxy, const std::string& category, const std::string& typemName,
                            const std::string& classmName, PlaceableFilter placeable) const;
 
          static bool Match(char* WildCards, char* str);
          static bool Scan(char*& Wildcards, char*& str);
 
+         /**
+         * This function will separate a full proxy name into its
+         * name and number components.
+         *
+         * @param[in]   fullName  The original full name of the proxy.
+         * @param[out]  name      The returned name component.
+         * @param[out]  number    The returned number component.
+         */
+         void SplitProxyName(const std::string& fullName, std::string& name, std::string& number);
+
+         /**
+         * Converts a given number to a string value.
+         *
+         * @param[in]  The number to convert.
+         *
+         * @return     The returned string value of the number.
+         */
+         std::string NumberToString(int number);
+
          // -----------------------------------------------------------------------
          //  Unimplemented constructors and operators
          // -----------------------------------------------------------------------
          Map(const Map&);
          Map& operator=(const Map&);
-
    };
-
 }
 
 #endif

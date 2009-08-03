@@ -887,7 +887,7 @@ namespace dtEditQt
          }
 
          // Add the new proxy to the map and send out a create event.
-         currMap->AddProxy(*copy);
+         currMap->AddProxy(*copy, true);
 
          EditorEvents::GetInstance().emitActorProxyCreated(copy, false);
 
