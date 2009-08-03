@@ -204,6 +204,11 @@ namespace dtCore
          osg::Vec2 GetMousePosition(void);
 
          /**
+         * Retrieves the current motion type.
+         */
+         MotionType GetMotionType() { return mMotionType; }
+
+         /**
          * Presses the left mouse button.
          * Should only use this if Delta3D is not receiving a regular tick update.
          */
