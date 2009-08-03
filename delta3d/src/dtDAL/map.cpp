@@ -39,7 +39,7 @@ namespace dtDAL
       //mFileName requires some processing.
       SetFileName(mFileName);
       mEventManager = new MapGameEvents(*this);
-      mPresetCameras.resize(10);
+      //mPresetCameras.resize(10);
    }
    
    Map::~Map() 
@@ -559,28 +559,6 @@ namespace dtDAL
       }
 
       return NULL;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   Map::PresetCameraData Map::GetPresetCameraData(int index)
-   {
-      if (index >= (int)mPresetCameras.size())
-      {
-         return PresetCameraData();
-      }
-
-      return mPresetCameras[index];
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void Map::SetPresetCameraData(int index, Map::PresetCameraData presetData)
-   {
-      if (index >= (int)mPresetCameras.size())
-      {
-         return;
-      }
-
-      mPresetCameras[index] = presetData;
    }
 
    //////////////////////////////////////////////////////////////////////////
