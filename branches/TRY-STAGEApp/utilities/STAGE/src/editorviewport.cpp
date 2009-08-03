@@ -410,7 +410,7 @@ namespace dtEditQt
             ignoredDrawables.push_back(ghostDrawable);
             osg::Vec3 position;
 
-            if (!getPickPosition(event->pos().x(), event->pos().y(), position, ignoredDrawables))
+            if (!getPickPosition(/*event->pos().x(), event->pos().y(),*/ position, ignoredDrawables))
             {
                // If we get here, it means our mouse position did not collide with an object to attach to.
 

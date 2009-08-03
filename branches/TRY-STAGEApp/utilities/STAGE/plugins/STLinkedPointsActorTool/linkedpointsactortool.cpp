@@ -274,7 +274,7 @@ void LinkedPointsActorToolPlugin::onMousePressEvent(Viewport* vp, QMouseEvent* e
             motion->Update(pos) == ToolObjectMotionModel::MOTION_TYPE_MAX)
          {
             osg::Vec3 pickPosition;
-            if (editorView->getPickPosition(e->pos().x(), e->pos().y(), pickPosition))
+            if (editorView->getPickPosition(pickPosition))
             {
                mOldPropValue = mPointsProp->ToString();
 
@@ -914,7 +914,7 @@ void LinkedPointsActorToolPlugin::UpdatePlacementGhost(Viewport* vp, osg::Vec2 m
    std::vector<dtCore::DeltaDrawable*> ignoredDrawables;
    ignoredDrawables.push_back(mActiveActor);
    osg::Vec3 position;
-   if (editorView->getPickPosition(mousePos.x(), mousePos.y(), position, ignoredDrawables))
+   if (editorView->getPickPosition(position, ignoredDrawables))
    {
       // Snap to right angles.
       if (mShowingPlacementGhost && mFavorRightAnglesCheckbox->isChecked())

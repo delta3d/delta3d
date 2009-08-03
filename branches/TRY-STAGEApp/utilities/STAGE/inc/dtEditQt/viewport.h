@@ -283,7 +283,7 @@ namespace dtEditQt
       * @param y Vertical window coordinate.
       * @param ignoredDrawable A drawable to ignore.
       */
-      virtual bool getPickPosition(int x, int y, osg::Vec3& position, std::vector<dtCore::DeltaDrawable*> ignoredDrawables = std::vector<dtCore::DeltaDrawable*>());
+      //virtual bool getPickPosition(int x, int y, osg::Vec3& position, std::vector<dtCore::DeltaDrawable*> ignoredDrawables = std::vector<dtCore::DeltaDrawable*>());
 
       /**
       * Projects a line into the current scene and returns the nearest point of collision.

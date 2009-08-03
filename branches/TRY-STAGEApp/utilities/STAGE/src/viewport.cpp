@@ -555,30 +555,24 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool Viewport::getPickPosition(int x, int y, osg::Vec3& position, std::vector<dtCore::DeltaDrawable*> ignoredDrawables)
-   {
-      if (!calculatePickISector(x, y))
-      {
-         return false;
-      }
+   //bool Viewport::getPickPosition(int x, int y, osg::Vec3& position, std::vector<dtCore::DeltaDrawable*> ignoredDrawables)
+   //{
+   //   //if (!calculatePickISector(x, y)) //E!
+   //   //{
+   //   //   return false;
+   //   //}
 
-      return getPickPosition(position, ignoredDrawables);
-   }
+   //   return getPickPosition(position, ignoredDrawables);
+   //}
 
    ////////////////////////////////////////////////////////////////////////////////
    bool Viewport::getPickPosition(osg::Vec3 nearPoint, osg::Vec3 farPoint, osg::Vec3& position, std::vector<dtCore::DeltaDrawable*> ignoredDrawables)
    {
-      if (!calculatePickISector(nearPoint, farPoint))
+      if (!calculatePickISector(nearPoint, farPoint)) //E!
       {
          return false;
       }
 
-      return getPickPosition(position, ignoredDrawables);
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   bool Viewport::getPickPosition(osg::Vec3& position, std::vector<dtCore::DeltaDrawable*> ignoredDrawables)
-   {
       osgUtil::IntersectVisitor::HitList& hitList = mIsector->GetHitList();
       for (int index = 0; index < (int)hitList.size(); index++)
       {
@@ -624,20 +618,72 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   bool Viewport::getPickPosition(osg::Vec3& position, std::vector<dtCore::DeltaDrawable*> ignoredDrawables)
+   {
+      dtCore::DeltaDrawable* pickedDrawable = mView->GetMousePickedObject();
+      bool picked = mView->GetMousePickPosition(position);
+
+      //osgUtil::IntersectVisitor::HitList& hitList = mIsector->GetHitList();
+      //for (int index = 0; index < (int)hitList.size(); index++)
+      {
+         //osg::NodePath &nodePath = hitList[index].getNodePath();
+         //dtCore::DeltaDrawable* drawable = mIsector->MapNodePathToDrawable(nodePath);
+         dtCore::DeltaDrawable* drawable = pickedDrawable;
+         dtCore::DeltaDrawable* lastDrawable = pickedDrawable;
+
+         // Make sure the drawable and none of its parents are the ignored drawable.
+         bool isIgnored = false;
+         while (drawable)
+         {
+            for (int ignoreIndex = 0; ignoreIndex < (int)ignoredDrawables.size(); ignoreIndex++)
+            {
+               if (drawable == ignoredDrawables[ignoreIndex])
+               {
+                  isIgnored = true;
+                  break;
+               }
+            }
+
+            if (isIgnored)
+            {
+               break;
+            }
+
+            lastDrawable = drawable;
+            drawable = drawable->GetParent();
+         }
+
+         if (!isIgnored)
+         {
+            //position = hitList[index].getWorldIntersectPoint();
+
+            // Tell the manager the last pick position.
+            ViewportManager::GetInstance().setLastDrawable(lastDrawable);
+            ViewportManager::GetInstance().setLastPickPosition(position);
+            return true;
+         }
+      }
+
+      ViewportManager::GetInstance().setLastDrawable(NULL);
+      return false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    dtCore::DeltaDrawable* Viewport::getPickDrawable(int x, int y)
    {
-      return mView->GetMousePickedObject();  //E!
 
       // If we found no intersections no need to continue so emit an empty selection
       // and return.
-      if (!calculatePickISector(x, y))
-      {
-         return NULL;
-      }
+      //if (!calculatePickISector(x, y)) //TODO E!
+      //{
+      //   return NULL;
+      //}
 
-      dtCore::DeltaDrawable* drawable = getPickDrawable();
+      dtCore::DeltaDrawable* drawable = mView->GetMousePickedObject();
+      
       osg::Vec3 position;
-      getPickPosition(position);
+      //getPickPosition(position); //TODO E!
+      mView->GetMousePickPosition(position);
 
       // Tell the manager the last drawable picked.
       ViewportManager::GetInstance().setLastDrawable(drawable);
