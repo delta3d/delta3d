@@ -47,6 +47,7 @@
 #include <dtCore/isector.h>
 #include <dtCore/deltadrawable.h>
 #include <dtUtil/exception.h>
+#include <dtUtil/mathdefines.h>
 #include <dtDAL/exceptionenum.h>
 #include <QtGui/QDrag>
 #include <QtGui/QDragMoveEvent>
@@ -196,7 +197,8 @@ namespace dtEditQt
       osg::Viewport* viewport = mCamera->getDeltaCamera()->GetOSGCamera()->getViewport();
       if (viewport)
       {
-         pos.y() = viewport->height() - pixelPos.y();
+         pos[0] = dtUtil::MapRangeValue(float(pixelPos.x()), 0.f, float(viewport->width()), -1.f, 1.f);
+         pos[1] = dtUtil::MapRangeValue(float(pixelPos.y()), 0.f, float(viewport->height()), 1.f, -1.f);
       }
       return pos;
    }

@@ -785,9 +785,7 @@ namespace dtDAL
    ////////////////////////////////////////////////////////////////////////////////
    std::string Map::NumberToString(int number)
    {
-      std::string numString;
-      numString.resize(5);
-      itoa(number, &numString[0], 10);
+      std::string numString = dtUtil::ToString(number);
 
       // If we have a number value, convert it to be 2 digits at least.
       int letterCount = numString.length();
