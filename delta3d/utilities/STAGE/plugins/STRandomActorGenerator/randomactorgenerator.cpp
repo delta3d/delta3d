@@ -204,14 +204,38 @@ void RandomActorGeneratorPlugin::NewActorProxyInsideVolumeEditor(dtDAL::ActorPro
    cloneXForm.SetRotation(h, p, r);      
 
    //apply the random translations to the cloned actor's matrix
-   cloneXForm.SetTranslation(spawnPoint[0], spawnPoint[1], spawnPoint[2]);
+   cloneXForm.SetTranslation(spawnPoint[0], spawnPoint[1], spawnPoint[2]);   
+
+   if (mUI.mRandomRotationCheckBox->checkState())
+   {
+      //apply random rotation on the specified axis
+
+      //get a random angle (between 0 and 360 degrees.
+      float randAngle = (360.0f * rand()) / RAND_MAX;      
+           
+      if (mUI.mRandomAxisComboBox->currentIndex() == 0) //X-Axis
+      {
+         p += randAngle;
+      }
+      else if (mUI.mRandomAxisComboBox->currentIndex() == 1) //Y-Axis
+      {
+         r += randAngle;
+      }
+      else if (mUI.mRandomAxisComboBox->currentIndex() == 2) //Z-Axis
+      {
+         h += randAngle;
+      }
+
+      cloneXForm.SetRotation(h,p,r);      
+   }
+
    aClonePtr->SetTransform(cloneXForm);
    
    //Apply rotation and translation from VolEditActor (remember: scale doesn't
    //exist inside Delta Transforms.... if that ever changes this could break)
    osg::Matrixd volEAXMatrix;
    volEAXMatrix = volEditActor->GetMatrix();
-   aClonePtr->SetMatrix(aClonePtr->GetMatrix() * volEAXMatrix);
+   aClonePtr->SetMatrix(aClonePtr->GetMatrix() * volEAXMatrix);   
 
    if (mUI.mGroundClampCheckBox->checkState())
    {
