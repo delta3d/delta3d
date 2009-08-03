@@ -302,7 +302,7 @@ namespace dtEditQt
             dtCore::RefPtr<dtDAL::Map> mapPtr = EditorData::GetInstance().getCurrentMap();
             if (mapPtr.valid())
             {
-               mapPtr->AddProxy(*(proxy.get()));
+               mapPtr->AddProxy(*(proxy.get()), true);
             }
 
             // let the world know that a new proxy exists

@@ -32,12 +32,14 @@ namespace dtDAL
 {
    const std::string Map::MAP_FILE_EXTENSION(".dtmap");
    
-   Map::Map(const std::string& mFileName, const std::string& name) : 
-      mModified(true), mName(name) 
+   Map::Map(const std::string& mFileName, const std::string& name)
+      : mModified(true)
+      , mName(name)
    {
       //mFileName requires some processing.
       SetFileName(mFileName);
       mEventManager = new MapGameEvents(*this);
+      //mPresetCameras.resize(10);
    }
    
    Map::~Map() 
@@ -150,7 +152,6 @@ namespace dtDAL
                          const std::string& className,
                          PlaceableFilter placeable) const 
    {
-      
       container.clear();
       
       if (name != "" || category != "" || typeName != "" || className != "" || placeable != Either) 
@@ -184,8 +185,6 @@ namespace dtDAL
                            const std::string& className,
                            PlaceableFilter placeable) const
    {
-
-
       if (!className.empty() && !actorProxy.IsInstanceOf(className))
          return false;
 
@@ -225,8 +224,47 @@ namespace dtDAL
 
    }
 
-   void Map::AddProxy(ActorProxy& proxy) 
+   void Map::AddProxy(ActorProxy& proxy, bool reNumber) 
    {
+      // Check if this proxy already has a number associated with it.
+      std::string proxyName = proxy.GetName();
+      std::string name, number;
+      SplitProxyName(proxyName, name, number);
+
+      if (reNumber)
+      {
+         if (mProxyNumberMap.find(name) != mProxyNumberMap.end())
+         {
+            number = NumberToString(mProxyNumberMap[name] + 1);
+         }
+         else
+         {
+            number = "01";
+         }
+
+         proxyName = name + "_" + number;
+         proxy.SetName(proxyName);
+      }
+
+      // Keep track of our highest number value.
+      if (!number.empty())
+      {
+         int num = atoi(number.c_str());
+         int highNum = 0;
+
+         if (mProxyNumberMap.find(name) != mProxyNumberMap.end())
+         {
+            highNum = mProxyNumberMap[name];
+         }
+
+         if (highNum < num)
+         {
+            mProxyNumberMap[name] = num;
+         }
+      }
+      
+      // Append a unique number to the end of the proxy.
+
       if (mProxyMap.insert(std::make_pair(proxy.GetId(), dtCore::RefPtr<ActorProxy>(&proxy))).second) 
       {
          const std::set<std::string>& hierarchy = proxy.GetClassHierarchy();
@@ -328,7 +366,6 @@ namespace dtDAL
 
    bool Map::RemoveLibrary(const std::string& name) 
    {
-
       std::map<std::string, std::string>::iterator oldMap = mLibraryVersionMap.find(name);
 
       if (oldMap != mLibraryVersionMap.end())
@@ -366,6 +403,11 @@ namespace dtDAL
    {
       mMissingLibraries.insert(mMissingLibraries.end(), libs.begin(), libs.end());
    }
+
+   //osg::Matrix Map::GetPresetCameraMatrix()
+   //{
+   //   return osg::Matrix();
+   //}
 
    bool Map::WildMatch(const std::string& sWild, const std::string& sString) 
    {
@@ -700,5 +742,72 @@ namespace dtDAL
    void Map::SetSavedName(const std::string& newSavedName)
    {
       mSavedName = newSavedName;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void Map::SplitProxyName(const std::string& fullName, std::string& name, std::string& number)
+   {
+      name = fullName;
+      number = "";
+      int letterCount = fullName.length();
+
+      bool foundNumber = false;
+      for (int letterIndex = letterCount - 1; letterIndex >= 0; letterIndex--)
+      {
+         char letter = fullName[letterIndex];
+
+         // Check if this letter is a number value.
+         if (letter == '_')
+         {
+            name.resize(letterIndex);
+            if (letterIndex < letterCount)
+               number = &fullName[letterIndex + 1];
+            foundNumber = true;
+            break;
+         }
+         else if (letter < '0' || letter > '9')
+         {
+            name.resize(letterIndex + 1);
+            number = &fullName[letterIndex + 1];
+            foundNumber = true;
+            break;
+         }
+      }
+
+      if (!foundNumber)
+      {
+         // If we get here, it means our proxy's name is just a number.
+         name = "";
+         number = fullName;
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   std::string Map::NumberToString(int number)
+   {
+      std::string numString;
+      numString.resize(5);
+      itoa(number, &numString[0], 10);
+
+      // If we have a number value, convert it to be 2 digits at least.
+      int letterCount = numString.length();
+      for (int letterIndex = 0; letterIndex < letterCount; letterIndex++)
+      {
+         char letter = numString[letterIndex];
+
+         // Ignore all leading zero's
+         if (letter != '0')
+         {
+            numString = &numString[letterIndex];
+            break;
+         }
+      }
+
+      while (numString.length() < 2)
+      {
+         numString.insert(numString.begin(), '0');
+      }
+
+      return numString;
    }
 }
