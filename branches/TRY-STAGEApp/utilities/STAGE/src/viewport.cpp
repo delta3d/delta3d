@@ -530,9 +530,9 @@ namespace dtEditQt
       }
 
       osg::Vec3 nearPoint, farPoint;
-      //int yLoc = int(mSceneView->getViewport()->height()-y); //TODO
+      //int yLoc = int(mSceneView->getViewport()->height()-y); //TODO E!
 
-      //mSceneView->projectWindowXYIntoObject(x, yLoc, nearPoint, farPoint); //TODO
+      //mSceneView->projectWindowXYIntoObject(x, yLoc, nearPoint, farPoint); //TODO E!
 
       return calculatePickISector(nearPoint, farPoint);
    }
@@ -626,6 +626,8 @@ namespace dtEditQt
    ////////////////////////////////////////////////////////////////////////////////
    dtCore::DeltaDrawable* Viewport::getPickDrawable(int x, int y)
    {
+      return mView->GetMousePickedObject();  //E!
+
       // If we found no intersections no need to continue so emit an empty selection
       // and return.
       if (!calculatePickISector(x, y))
