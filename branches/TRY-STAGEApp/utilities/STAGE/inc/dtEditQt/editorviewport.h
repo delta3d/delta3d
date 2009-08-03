@@ -230,6 +230,11 @@ namespace dtEditQt {
 
 
       /**
+      * Called when the user double clicks the mouse button in the viewport.
+      */
+      void mouseDoubleClickEvent(QMouseEvent *e);
+
+      /**
        * Called when the user moves the mouse while pressing any combination of
        * mouse buttons.  Based on the current mode, the camera is updated.
        * @param dx the adjusted change in x that the mouse moved.

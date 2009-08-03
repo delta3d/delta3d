@@ -26,10 +26,10 @@ class ViewImpl
 {
 public:
    ViewImpl(osgViewer::View& view)
-   : mOsgViewerView(&view)
-   , mTargetFrameRate(60.0)
-   , mRenderOrder(0)
-   , mPager(NULL)
+      : mOsgViewerView(&view)
+      , mTargetFrameRate(60.0)
+      , mRenderOrder(0)
+      , mPager(NULL)
    {
       assert(mOsgViewerView.valid());
    }
@@ -41,7 +41,7 @@ public:
                               const osg::Vec2& mousePos,
                               unsigned int traversalMask);
 
-   typedef std::set<dtCore::RefPtr<dtCore::Camera> > CameraSet;
+   typedef std::set< dtCore::RefPtr<dtCore::Camera> > CameraSet;
    /// set of osg::Camera wrapping the mView camera slave list
    CameraSet mCameraSlave;
 
@@ -64,32 +64,25 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 bool ViewImpl::GetMouseIntersections(osgUtil::LineSegmentIntersector::Intersections& hitList,
-                                         const osg::Vec2& mousePos,
-                                         unsigned int traversalMask)
+                                     const osg::Vec2& mousePos,
+                                     unsigned int traversalMask)
 {
-   if (!mCamera.valid())
+   bool success = false;
+
+   if (mCamera.valid() && mCamera->GetWindow() != NULL)
    {
-      return false;
+      // lower left screen has (0, 0)
+      osg::Vec2 windowCoord(0.0 , 0.0);
+      mCamera->GetWindow()->CalcPixelCoords(mousePos, windowCoord);
+
+      if (mOsgViewerView->computeIntersections(windowCoord.x(), windowCoord.y(),
+         hitList, traversalMask))
+      {
+         success = true;
+      }
    }
 
-   if (mCamera->GetWindow() == NULL)
-   {
-      return false;
-   }
-
-   // lower left screen has (0, 0)
-   osg::Vec2 windowCoord(0.0 , 0.0);
-   mCamera->GetWindow()->CalcPixelCoords(mousePos, windowCoord);
-
-   if (mOsgViewerView->computeIntersections(windowCoord.x(), windowCoord.y(),
-                                                hitList, traversalMask))
-   {
-      return true;
-   }
-   else
-   {
-      return false;
-   }
+   return success;
 }
 
 
@@ -97,7 +90,6 @@ bool ViewImpl::GetMouseIntersections(osgUtil::LineSegmentIntersector::Intersecti
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 IMPLEMENT_MANAGEMENT_LAYER(View)
-
 
 ////////////////////////////////////////////////////////////////////////////////
 View::View(const std::string& name, bool useSceneLight)
@@ -144,9 +136,9 @@ void View::Ctor(bool useSceneLight)
 ////////////////////////////////////////////////////////////////////////////////
 View::~View()
 {
-    DeregisterInstance(this);
-    delete mImpl;
-    mImpl = NULL;
+   DeregisterInstance(this);
+   delete mImpl;
+   mImpl = NULL;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -210,41 +202,37 @@ bool View::RemoveSlave(Camera* camera)
 ////////////////////////////////////////////////////////////////////////////////
 void View::SetCamera(Camera* camera)
 {
-   if (mImpl->mCamera == camera)
+   if (mImpl->mCamera != camera)
    {
-      return;
-   }
+      mImpl->mCamera = camera;
 
-   mImpl->mCamera = camera;
-
-   if (mImpl->mCamera.valid())
-   {
-      mImpl->mOsgViewerView->setCamera(camera->GetOSGCamera());
-      mImpl->mOsgViewerView->assignSceneDataToCameras();
+      if (mImpl->mCamera.valid())
+      {
+         mImpl->mOsgViewerView->setCamera(camera->GetOSGCamera());
+         mImpl->mOsgViewerView->assignSceneDataToCameras();
+      }
    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void View::SetScene(Scene* scene)
 {
-   if (mImpl->mScene == scene)
+   if (mImpl->mScene != scene)
    {
-      return;
-   }
+      if (mImpl->mScene.valid())
+      {
+         mImpl->mScene->RemoveView(*this);
+         mImpl->mScene->SetDatabasePager(NULL);
+      }
 
-   if (mImpl->mScene.valid())
-   {
-      mImpl->mScene->RemoveView(*this);
-      mImpl->mScene->SetDatabasePager(NULL);
-   }
+      mImpl->mScene = scene;
 
-   mImpl->mScene = scene;
-
-   if (mImpl->mScene.valid())
-   {
-      mImpl->mScene->AddView(*this);
-      mImpl->mScene->SetDatabasePager(mImpl->mPager.get());
-      UpdateFromScene();
+      if (mImpl->mScene.valid())
+      {
+         mImpl->mScene->AddView(*this);
+         mImpl->mScene->SetDatabasePager(mImpl->mPager.get());
+         UpdateFromScene();
+      }
    }
 }
 
@@ -264,7 +252,6 @@ const Camera* View::GetCamera() const
 Scene* View::GetScene()
 {
    return (mImpl->mScene.get());
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -332,13 +319,14 @@ void View::UpdateFromScene()
 bool View::GetMousePickPosition(osg::Vec3& position, unsigned int traversalMask)
 {
    const Mouse* mouse = GetMouse();
+   bool picked = false;
 
-   if (mouse == NULL)
+   if (mouse != NULL)
    {
-      return false;
+      picked = GetPickPosition(position, mouse->GetPosition(), traversalMask);
    }
 
-   return GetPickPosition(position, mouse->GetPosition(), traversalMask);
+   return picked;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -348,6 +336,8 @@ bool View::GetPickPosition(osg::Vec3& intersectionPoint,
 {
    osgUtil::LineSegmentIntersector::Intersections hitList;
 
+   bool success = false;
+
    if (mImpl->GetMouseIntersections(hitList, mousePos, traversalMask))
    {
       std::multiset<osgUtil::LineSegmentIntersector::Intersection>::iterator itr = hitList.begin();
@@ -355,20 +345,25 @@ bool View::GetPickPosition(osg::Vec3& intersectionPoint,
 
       intersectionPoint = hit.getWorldIntersectPoint();
 
-      return true;
+      success = true;
    }
-   else
-   {
-      return false;
-   }
+
+   return success;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 DeltaDrawable* View::GetMousePickedObject(unsigned int traversalMask)
 {
+   DeltaDrawable* result = NULL;
    const Mouse* mouse = GetMouse();
-   if (mouse == NULL) { return NULL; }
-   return GetPickedObject(mouse->GetPosition(), traversalMask);
+
+   if (mouse != NULL)
+   {
+      const osg::Vec2& mousePos = mouse->GetPosition();
+      result = GetPickedObject(mousePos, traversalMask);
+   }
+
+   return result;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -377,18 +372,18 @@ DeltaDrawable* View::GetPickedObject(const osg::Vec2& mousePos, unsigned int tra
    Scene* scene = GetScene();
    if (scene == NULL) { return NULL; }
 
-   osgUtil::LineSegmentIntersector::Intersections hitList ;
+   osgUtil::LineSegmentIntersector::Intersections hitList;
 
    if (mImpl->GetMouseIntersections(hitList, mousePos, traversalMask) == false)
    {
       return NULL;
    }
 
-   //For every isector hit, loop through all of the Nodes in it's NodePath and
-   //try to find a corresponding DeltaDrawable that's in the Scene.
-   //Will return back the first match found.
-   //Note: using a reverse iterator to loop through the NodePath.  This should cause
-   //it to return the child-most DeltaDrawable and not the DeltaDrawable parents.
+   // For every isector hit, loop through all of the Nodes in it's NodePath and
+   // try to find a corresponding DeltaDrawable that's in the Scene.
+   // Will return back the first match found.
+   // Note: using a reverse iterator to loop through the NodePath.  This should cause
+   // it to return the child-most DeltaDrawable and not the DeltaDrawable parents.
    std::vector<DeltaDrawable*> drawables = scene->GetAllDrawablesInTheScene();
 
    for (std::multiset<osgUtil::LineSegmentIntersector::Intersection>::const_iterator hitItr = hitList.begin();
@@ -411,33 +406,31 @@ DeltaDrawable* View::GetPickedObject(const osg::Vec2& mousePos, unsigned int tra
       }
    }
 
-   //nothing hit or no match found, return NULL
+   // nothing hit or no match found, return NULL
    return NULL;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void dtCore::View::SetDatabasePager(DatabasePager* pager)
 {
-   if (mImpl->mPager.get() == pager)
+   if (mImpl->mPager.get() != pager)
    {
-      return;
-   }
+      mImpl->mPager = pager;
 
-   mImpl->mPager = pager;
-
-   if (mImpl->mPager.valid())
-   {
-      mImpl->mOsgViewerView->setDatabasePager(mImpl->mPager->GetOsgDatabasePager());
-   }
-   else
-   {
-      mImpl->mOsgViewerView->setDatabasePager(NULL);
-   }
+      if (mImpl->mPager.valid())
+      {
+         mImpl->mOsgViewerView->setDatabasePager(mImpl->mPager->GetOsgDatabasePager());
+      }
+      else
+      {
+         mImpl->mOsgViewerView->setDatabasePager(NULL);
+      }
 
 
-   if (mImpl->mScene.valid())
-   {
-      mImpl->mScene->SetDatabasePager(mImpl->mPager.get());
+      if (mImpl->mScene.valid())
+      {
+         mImpl->mScene->SetDatabasePager(mImpl->mPager.get());
+      }
    }
 }
 

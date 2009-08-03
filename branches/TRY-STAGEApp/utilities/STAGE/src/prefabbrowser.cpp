@@ -354,7 +354,7 @@ namespace dtEditQt
             {
                dtDAL::ActorProxy* proxy = proxyList[proxyIndex].get();
 
-               currMap->AddProxy(*proxy);
+               currMap->AddProxy(*proxy, true);
                currMap->AddActorToGroup(groupIndex, proxy);
 
                // Notify the creation of the proxies.
@@ -417,7 +417,7 @@ namespace dtEditQt
             dtCore::RefPtr<dtDAL::Map> mapPtr = EditorData::GetInstance().getCurrentMap();
             if (mapPtr.valid())
             {
-               mapPtr->AddProxy(*(proxy.get()));
+               mapPtr->AddProxy(*(proxy.get()), true);
             }
 
             // Set the prefab resource of the actor to the current prefab.

@@ -502,7 +502,7 @@ namespace dtEditQt
                      {
                         dtDAL::ActorProxy* proxy = proxies[proxyIndex].get();
 
-                        mapPtr->AddProxy(*proxy);
+                        mapPtr->AddProxy(*proxy, true);
                         mapPtr->AddActorToGroup(groupIndex, proxy);
 
                         tProxy = dynamic_cast<dtDAL::TransformableActorProxy*>(proxy);
@@ -537,7 +537,7 @@ namespace dtEditQt
 
             if (mapPtr.valid())
             {
-               mapPtr->AddProxy(*mGhostProxy.get());
+               mapPtr->AddProxy(*mGhostProxy.get(), true);
             }
 
             // let the world know that a new proxy exists
@@ -661,6 +661,16 @@ namespace dtEditQt
       {
          selectActors(e);
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorViewport::mouseDoubleClickEvent(QMouseEvent* e)
+   {
+      mMouseButton = e->button();
+      mMouseButtons = e->buttons();
+      mKeyMods = e->modifiers();
+
+      ViewportManager::GetInstance().emitMouseDoubleClickEvent(this, e);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -1048,7 +1058,7 @@ namespace dtEditQt
          }
 
          // Add the new proxy to the map and send out a create event.
-         currMap->AddProxy(*copy);
+         currMap->AddProxy(*copy, true);
 
          EditorEvents::GetInstance().emitActorProxyCreated(copy, false);
 

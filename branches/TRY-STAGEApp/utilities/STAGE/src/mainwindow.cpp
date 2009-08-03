@@ -79,7 +79,6 @@
 
 namespace dtEditQt
 {
-
    ///////////////////////////////////////////////////////////////////////////////
    MainWindow::MainWindow(const std::string& stageConfigFile)
       : mPluginManager(new PluginManager(this))
@@ -142,14 +141,14 @@ namespace dtEditQt
    MainWindow::~MainWindow()
    {
       if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::GENERAL,
-                                                  "SaveConfigurationOnClose") == "true")
+                                                  CONF_MGR_SAVE_ON_CLOSE) == "true")
       {
          //Save configuration         
 
          //Sample of how to save some STAGE config variables that we might care about:
          //QSplitter* hSplit = mSplitters.at(0);
          //QSize hSize = hSplit->frameSize();  
-         //mCfgMgr.SetVariable(ConfigurationManager::LAYOUT, "ShowTopView", hSize.height());
+         //mCfgMgr.SetVariable(ConfigurationManager::LAYOUT, CONF_MGR_SHOW_TOP_VIEW, hSize.height());
          //mCfgMgr.SetVariable(ConfigurationManager::LAYOUT, "HorizontalViewFrameWidth", hSize.width());
 
          ConfigurationManager::GetInstance().WriteXML(mSTAGEConfigFullPath);
@@ -302,7 +301,7 @@ namespace dtEditQt
       setCorner(Qt::TopLeftCorner, Qt::LeftDockWidgetArea/*Qt::DockWindowAreaLeft*/);
 
 
-      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, "ShowPropertyEditor") != "false")
+      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, CONF_MGR_SHOW_PROPERTY_EDITOR) != "false")
       {      
          // create the main left dock window
          mPropertyWindow = new PropertyEditor(this);
@@ -325,7 +324,7 @@ namespace dtEditQt
          addDockWidget(Qt::LeftDockWidgetArea,  mPropertyWindow);
       }
 
-      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, "ShowActorTab") != "false")
+      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, CONF_MGR_SHOW_ACTOR_TAB) != "false")
       {
          mActorTab = new ActorTab(this);
          mActorTab->setObjectName("ActorTab");
@@ -333,7 +332,7 @@ namespace dtEditQt
          addDockWidget(Qt::LeftDockWidgetArea, mActorTab);
       }
 
-      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, "ShowSearchTab") != "false")
+      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, CONF_MGR_SHOW_SEARCH_TAB) != "false")
       {
          mActorSearchTab = new ActorSearchTab(this);
          mActorSearchTab->setObjectName("ActorSearchTab");
@@ -341,7 +340,7 @@ namespace dtEditQt
          addDockWidget(Qt::LeftDockWidgetArea, mActorSearchTab);
       }
 
-      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, "ShowResourceBrowser") != "false")
+      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, CONF_MGR_SHOW_RESOURCE_BROWSER) != "false")
       {
          mResourceBrowser = new ResourceBrowser(this);
          mResourceBrowser->setObjectName("ResourceBrowser");
@@ -402,19 +401,19 @@ namespace dtEditQt
       // for each viewport.
       ViewportContainer* container = NULL;
 
-      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, "ShowTopView") != "false")
+      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, CONF_MGR_SHOW_SIDE_VIEW) != "false")
       {
          container = new ViewportContainer(mSideView, vSplit2);
       }
-      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, "ShowPerspView") != "false")
+      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, CONF_MGR_SHOW_PERSP_VIEW) != "false")
       {
          container = new ViewportContainer(mPerspView, vSplit2);
       }
-      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, "ShowTopView") != "false")
+      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, CONF_MGR_SHOW_TOP_VIEW) != "false")
       {
          container = new ViewportContainer(mTopView, vSplit1);
       }
-      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, "ShowFrontView") != "false")
+      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, CONF_MGR_SHOW_FRONT_VIEW) != "false")
       {
          container = new ViewportContainer(mFrontView, vSplit1);
       }
@@ -551,10 +550,10 @@ namespace dtEditQt
 
          //see if there is a Project Context Path in the Configuration Manager
          if (ConfigurationManager::GetInstance().GetVariable(
-               ConfigurationManager::GENERAL, "ProjContextPath") != "")
+               ConfigurationManager::GENERAL, CONF_MGR_PROJECT_CONTEXT) != "")
          {
             std::string projContextPath = ConfigurationManager::GetInstance().GetVariable(
-                                             ConfigurationManager::GENERAL, "ProjContextPath");
+                                             ConfigurationManager::GENERAL, CONF_MGR_PROJECT_CONTEXT);
             if (dtUtil::FileUtils::GetInstance().DirExists(projContextPath))
             {
                // Try to set the project context specified in the config file 
@@ -627,10 +626,10 @@ namespace dtEditQt
          endWaitCursor();
 
          if (ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::GENERAL,
-                                                             "Map") != "")
+                                                             CONF_MGR_MAP_FILE) != "")
          {
             std::string mapToLoad = ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::GENERAL,
-                                                                                    "Map");
+                                                                                    CONF_MGR_MAP_FILE);
             checkAndLoadBackup(mapToLoad);
          }
          else if (EditorData::GetInstance().getLoadLastMap())

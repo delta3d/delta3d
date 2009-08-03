@@ -336,6 +336,13 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void ViewportManager::emitMouseDoubleClickEvent(Viewport* vp, QMouseEvent* e)
+   {
+      LOG_INFO("Emitting event - [mouseDoubleClickEvent]");
+      emit mouseDoubleClickEvent(vp, e);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void ViewportManager::emitMouseMoveEvent(Viewport* vp, QMouseEvent* e)
    {
       LOG_INFO("Emitting event - [mouseMoveEvent]");

@@ -57,13 +57,13 @@ namespace dtEditQt
 
       //Note: tabs and widgets are different
 
-      if (ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, "ShowActorBrowser") != "false")
+      if (ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, CONF_MGR_SHOW_ACTOR_BROWSER) != "false")
       {
          mTabActorBrowser = new TabWrapper(this);
          mActorBrowserWidget = new ActorBrowser(this);
       }
 
-      if (ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, "ShowPrefabBrowser") != "false")
+      if (ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, CONF_MGR_SHOW_PREFAB_BROWSER) != "false")
       {
          mTabPrefabBrowser= new TabWrapper(this);
          mPrefabBrowserWidget= new PrefabBrowser(this);

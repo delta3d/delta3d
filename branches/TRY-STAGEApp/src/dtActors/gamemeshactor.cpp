@@ -41,6 +41,7 @@ namespace dtActors
       , mModel(new dtCore::Model)
    {
       GetMatrixNode()->addChild(&mModel->GetMatrixTransform());
+      SetName("StaticMesh");
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -233,12 +234,12 @@ namespace dtActors
    {
       SetActor(*new GameMeshActor(*this));
 
-      // set the default name of this object so they show up somewhat nicely in STAGE
-      // obviously, it's not guaranteed to be unique
-      static int actorCount = 0;
-      std::ostringstream ss;
-      ss << "StaticMesh" << actorCount++;
-      SetName(ss.str());
+      //// set the default name of this object so they show up somewhat nicely in STAGE
+      //// obviously, it's not guaranteed to be unique
+      //static int actorCount = 0;
+      //std::ostringstream ss;
+      //ss << "StaticMesh" << actorCount++;
+      //SetName(ss.str());
    }
 
    ///////////////////////////////////////////////////////////////////////////////

@@ -154,7 +154,7 @@ namespace dtEditQt
    {
       // get config string from manager      
       std::string activated = 
-         ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::PLUGINS, "Activated");
+         ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::PLUGINS, CONF_MGR_PLUGINS_ACTIVATED);
 
       if(activated == "")
       {
@@ -199,7 +199,7 @@ namespace dtEditQt
          }
       }
       
-      ConfigurationManager::GetInstance().SetVariable(ConfigurationManager::PLUGINS, "Activated", os.str());
+      ConfigurationManager::GetInstance().SetVariable(ConfigurationManager::PLUGINS, CONF_MGR_PLUGINS_ACTIVATED, os.str());
    }
 
 

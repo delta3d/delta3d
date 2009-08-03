@@ -887,7 +887,7 @@ namespace dtEditQt
          }
 
          // Add the new proxy to the map and send out a create event.
-         currMap->AddProxy(*copy);
+         currMap->AddProxy(*copy, true);
 
          EditorEvents::GetInstance().emitActorProxyCreated(copy, false);
 
@@ -1251,6 +1251,7 @@ namespace dtEditQt
       if (mActors.size()> 0)
       {
          EditorEvents::GetInstance().emitGotoActor(mActors[0]);
+         ViewportManager::GetInstance().refreshAllViewports();
       }
    }
 
@@ -1445,7 +1446,7 @@ namespace dtEditQt
          refreshRecentProjects();
 
          ConfigurationManager::GetInstance().SetVariable(
-            ConfigurationManager::GENERAL, "ProjContextPath", contextName);
+            ConfigurationManager::GENERAL, CONF_MGR_PROJECT_CONTEXT, contextName);
       }      
 
       slotRestartAutosave();
@@ -1650,7 +1651,7 @@ namespace dtEditQt
                *(ViewportManager::GetInstance().getMasterScene()), true);
 
             ConfigurationManager::GetInstance().SetVariable(
-               ConfigurationManager::GENERAL, "Map", newMap->GetName());
+               ConfigurationManager::GENERAL, CONF_MGR_MAP_FILE, newMap->GetName());
 
          }
          catch (const dtUtil::Exception& e)
