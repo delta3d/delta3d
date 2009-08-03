@@ -28,6 +28,7 @@
 #include <map>
 #include <set>
 
+#include <dtDAL/map.h>
 #include <dtDAL/export.h>
 #include <dtCore/uniqueid.h>
 #include <dtCore/refptr.h>
@@ -244,6 +245,7 @@ namespace dtDAL
          bool mInActors;
          bool mInActor;
          bool mInGroup;
+         bool mInPresetCameras;
          bool mIgnoreCurrentActor;
          bool mInActorProperty;
          bool mPreparingProp;
@@ -299,6 +301,10 @@ namespace dtDAL
          std::string mPrefabIconFileName;
          std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >* mPrefabProxyList;
 
+         int                   mPresetCameraIndex;
+         Map::PresetCameraData mPresetCameraData;
+         int                   mPresetCameraView;
+
          //Reset all of the internal data/state variables
          void Reset();
          //reset/clear all of the library data/state variables
@@ -311,6 +317,8 @@ namespace dtDAL
          bool IsPropertyCorrectType(dtDAL::DataType** dataType, dtDAL::ActorProperty* actorProperty);
          //Called from characters when the state says we are inside an actor element.
          void ActorCharacters(const XMLCh* const chars);
+         //Called from characters when the state says we are inside a preset camera element.
+         void PresetCameraCharacters(const XMLCh* const chars);
          //Called from characters when the state says we are inside a parameter of a group actor property.
          void ParameterCharacters(const XMLCh* const chars);
          //parses the text data from the xml and stores it in the property.
@@ -345,6 +353,8 @@ namespace dtDAL
          void EndActorPropertyElement();
          void EndGroupSection(const XMLCh* const localname);
          void EndGroupElement();
+         void EndPresetCameraSection(const XMLCh* const localname);
+         void EndPresetCameraElement();
          void EndLibrarySection(const XMLCh* const localname);
          void EndLibraryElement();
          void EndEventSection(const XMLCh* const localname);

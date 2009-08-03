@@ -51,7 +51,6 @@ class QWheelEvent;
 
 namespace dtEditQt
 {
-
    class Viewport;
    class ViewportOverlay;
    class StageCamera;
@@ -229,6 +228,20 @@ namespace dtEditQt
       float GetSnapTranslation() { return mSnapTranslation; }
       float GetSnapRotation() { return mSnapRotation; }
       float GetSnapScale() { return mSnapScale; }
+
+      /**
+      * Saves the current camera position into a preset camera.
+      *
+      * @param[in]  index  The index of the preset to save to.
+      */
+      void SavePresetCamera(int index);
+
+      /**
+      * Loads a previous preset camera position.
+      *
+      * @param[in]  index  The index of the preset to load.
+      */
+      void LoadPresetCamera(int index);
 
       /**
       * Signal used when a mouse has been pressed in a viewport.

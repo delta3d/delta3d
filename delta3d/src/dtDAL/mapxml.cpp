@@ -666,6 +666,142 @@ namespace dtDAL
          }
          EndElement(); // End Groups Element.
 
+         BeginElement(MapXMLConstants::PRESET_CAMERAS_ELEMENT);
+         {
+            char numberConversionBuffer[80];
+
+            for (int presetIndex = 0; presetIndex < 10; presetIndex++)
+            {
+               // Skip elements that are invalid.
+               Map::PresetCameraData data = map.GetPresetCameraData(presetIndex);
+               if (!data.isValid)
+               {
+                  continue;
+               }
+
+               BeginElement(MapXMLConstants::PRESET_CAMERA_ELEMENT);
+               {
+                  BeginElement(MapXMLConstants::PRESET_CAMERA_INDEX_ELEMENT);
+                  snprintf(numberConversionBuffer, 80, "%d", presetIndex);
+                  AddCharacters(numberConversionBuffer);
+                  EndElement(); // End Preset Camera Index Element.
+
+                  BeginElement(MapXMLConstants::PRESET_CAMERA_PERSPECTIVE_VIEW_ELEMENT);
+                  {
+                     BeginElement(MapXMLConstants::PRESET_CAMERA_POSITION_X_ELEMENT);
+                     snprintf(numberConversionBuffer, 80, "%f", data.persPosition.x());
+                     AddCharacters(numberConversionBuffer);
+                     EndElement(); // End Preset Camera Position X Element.
+
+                     BeginElement(MapXMLConstants::PRESET_CAMERA_POSITION_Y_ELEMENT);
+                     snprintf(numberConversionBuffer, 80, "%f", data.persPosition.y());
+                     AddCharacters(numberConversionBuffer);
+                     EndElement(); // End Preset Camera Position Y Element.
+
+                     BeginElement(MapXMLConstants::PRESET_CAMERA_POSITION_Z_ELEMENT);
+                     snprintf(numberConversionBuffer, 80, "%f", data.persPosition.z());
+                     AddCharacters(numberConversionBuffer);
+                     EndElement(); // End Preset Camera Position Z Element.
+
+                     BeginElement(MapXMLConstants::PRESET_CAMERA_ROTATION_X_ELEMENT);
+                     snprintf(numberConversionBuffer, 80, "%f", data.persRotation.x());
+                     AddCharacters(numberConversionBuffer);
+                     EndElement(); // End Preset Camera Rotation X Element.
+
+                     BeginElement(MapXMLConstants::PRESET_CAMERA_ROTATION_Y_ELEMENT);
+                     snprintf(numberConversionBuffer, 80, "%f", data.persRotation.y());
+                     AddCharacters(numberConversionBuffer);
+                     EndElement(); // End Preset Camera Rotation Y Element.
+
+                     BeginElement(MapXMLConstants::PRESET_CAMERA_ROTATION_Z_ELEMENT);
+                     snprintf(numberConversionBuffer, 80, "%f", data.persRotation.z());
+                     AddCharacters(numberConversionBuffer);
+                     EndElement(); // End Preset Camera Rotation Z Element.
+
+                     BeginElement(MapXMLConstants::PRESET_CAMERA_ROTATION_W_ELEMENT);
+                     snprintf(numberConversionBuffer, 80, "%f", data.persRotation.w());
+                     AddCharacters(numberConversionBuffer);
+                     EndElement(); // End Preset Camera Rotation W Element.
+                  }
+                  EndElement(); // End Preset Camera Perspective View Element.
+
+                  BeginElement(MapXMLConstants::PRESET_CAMERA_TOP_VIEW_ELEMENT);
+                  {
+                     BeginElement(MapXMLConstants::PRESET_CAMERA_POSITION_X_ELEMENT);
+                     snprintf(numberConversionBuffer, 80, "%f", data.topPosition.x());
+                     AddCharacters(numberConversionBuffer);
+                     EndElement(); // End Preset Camera Position X Element.
+
+                     BeginElement(MapXMLConstants::PRESET_CAMERA_POSITION_Y_ELEMENT);
+                     snprintf(numberConversionBuffer, 80, "%f", data.topPosition.y());
+                     AddCharacters(numberConversionBuffer);
+                     EndElement(); // End Preset Camera Position Y Element.
+
+                     BeginElement(MapXMLConstants::PRESET_CAMERA_POSITION_Z_ELEMENT);
+                     snprintf(numberConversionBuffer, 80, "%f", data.topPosition.z());
+                     AddCharacters(numberConversionBuffer);
+                     EndElement(); // End Preset Camera Position Z Element.
+
+                     BeginElement(MapXMLConstants::PRESET_CAMERA_ZOOM_ELEMENT);
+                     snprintf(numberConversionBuffer, 80, "%f", data.topZoom);
+                     AddCharacters(numberConversionBuffer);
+                     EndElement(); // End Preset Camera Zoom Element.
+                  }
+                  EndElement(); // End Preset Camera Top View Element;
+
+                  BeginElement(MapXMLConstants::PRESET_CAMERA_SIDE_VIEW_ELEMENT);
+                  {
+                     BeginElement(MapXMLConstants::PRESET_CAMERA_POSITION_X_ELEMENT);
+                     snprintf(numberConversionBuffer, 80, "%f", data.sidePosition.x());
+                     AddCharacters(numberConversionBuffer);
+                     EndElement(); // End Preset Camera Position X Element.
+
+                     BeginElement(MapXMLConstants::PRESET_CAMERA_POSITION_Y_ELEMENT);
+                     snprintf(numberConversionBuffer, 80, "%f", data.sidePosition.y());
+                     AddCharacters(numberConversionBuffer);
+                     EndElement(); // End Preset Camera Position Y Element.
+
+                     BeginElement(MapXMLConstants::PRESET_CAMERA_POSITION_Z_ELEMENT);
+                     snprintf(numberConversionBuffer, 80, "%f", data.sidePosition.z());
+                     AddCharacters(numberConversionBuffer);
+                     EndElement(); // End Preset Camera Position Z Element.
+
+                     BeginElement(MapXMLConstants::PRESET_CAMERA_ZOOM_ELEMENT);
+                     snprintf(numberConversionBuffer, 80, "%f", data.sideZoom);
+                     AddCharacters(numberConversionBuffer);
+                     EndElement(); // End Preset Camera Zoom Element.
+                  }
+                  EndElement(); // End Preset Camera Side View Element;
+
+                  BeginElement(MapXMLConstants::PRESET_CAMERA_FRONT_VIEW_ELEMENT);
+                  {
+                     BeginElement(MapXMLConstants::PRESET_CAMERA_POSITION_X_ELEMENT);
+                     snprintf(numberConversionBuffer, 80, "%f", data.frontPosition.x());
+                     AddCharacters(numberConversionBuffer);
+                     EndElement(); // End Preset Camera Position X Element.
+
+                     BeginElement(MapXMLConstants::PRESET_CAMERA_POSITION_Y_ELEMENT);
+                     snprintf(numberConversionBuffer, 80, "%f", data.frontPosition.y());
+                     AddCharacters(numberConversionBuffer);
+                     EndElement(); // End Preset Camera Position Y Element.
+
+                     BeginElement(MapXMLConstants::PRESET_CAMERA_POSITION_Z_ELEMENT);
+                     snprintf(numberConversionBuffer, 80, "%f", data.frontPosition.z());
+                     AddCharacters(numberConversionBuffer);
+                     EndElement(); // End Preset Camera Position Z Element.
+
+                     BeginElement(MapXMLConstants::PRESET_CAMERA_ZOOM_ELEMENT);
+                     snprintf(numberConversionBuffer, 80, "%f", data.frontZoom);
+                     AddCharacters(numberConversionBuffer);
+                     EndElement(); // End Preset Camera Zoom Element.
+                  }
+                  EndElement(); // End Preset Camera Front View Element;
+               }
+               EndElement(); // End Preset Camera Element.
+            }
+         }
+         EndElement(); // End Preset Camera Element.
+
          EndElement(); // End Map Element.
 
          //closes the file.

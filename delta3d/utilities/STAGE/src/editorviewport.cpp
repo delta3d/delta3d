@@ -184,6 +184,41 @@ namespace dtEditQt
    void EditorViewport::keyPressEvent(QKeyEvent* e)
    {
       Viewport::keyPressEvent(e);
+
+      bool holdingControl = false;
+      if (e->modifiers() == Qt::ControlModifier)
+      {
+         holdingControl = true;
+      }
+
+      int index = -1;
+      switch(e->key())
+      {
+      case Qt::Key_1: index = 1; break;
+      case Qt::Key_2: index = 2; break;
+      case Qt::Key_3: index = 3; break;
+      case Qt::Key_4: index = 4; break;
+      case Qt::Key_5: index = 5; break;
+      case Qt::Key_6: index = 6; break;
+      case Qt::Key_7: index = 7; break;
+      case Qt::Key_8: index = 8; break;
+      case Qt::Key_9: index = 9; break;
+      case Qt::Key_0: index = 10; break;
+      }
+
+      if (index > -1)
+      {
+         // If we are holding control and pressing a number key, save
+         // the current camera position to a preset.
+         if (holdingControl)
+         {
+            ViewportManager::GetInstance().SavePresetCamera(index);
+         }
+         else
+         {
+            ViewportManager::GetInstance().LoadPresetCamera(index);
+         }
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////

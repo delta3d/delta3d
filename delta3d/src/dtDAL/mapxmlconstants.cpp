@@ -130,6 +130,22 @@ namespace dtDAL
    XMLCh* MapXMLConstants::ACTOR_GROUP_ELEMENT = NULL;
    XMLCh* MapXMLConstants::ACTOR_GROUP_ACTOR_ELEMENT = NULL;
 
+   XMLCh* MapXMLConstants::PRESET_CAMERAS_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::PRESET_CAMERA_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::PRESET_CAMERA_INDEX_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::PRESET_CAMERA_PERSPECTIVE_VIEW_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::PRESET_CAMERA_TOP_VIEW_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::PRESET_CAMERA_SIDE_VIEW_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::PRESET_CAMERA_FRONT_VIEW_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::PRESET_CAMERA_POSITION_X_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::PRESET_CAMERA_POSITION_Y_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::PRESET_CAMERA_POSITION_Z_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::PRESET_CAMERA_ROTATION_X_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::PRESET_CAMERA_ROTATION_Y_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::PRESET_CAMERA_ROTATION_Z_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::PRESET_CAMERA_ROTATION_W_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::PRESET_CAMERA_ZOOM_ELEMENT = NULL;
+
    void MapXMLConstants::StaticInit()
    {
       END_XML_ELEMENT = xercesc::XMLString::transcode("</");
@@ -214,6 +230,22 @@ namespace dtDAL
       ACTOR_GROUPS_ELEMENT = xercesc::XMLString::transcode("groups");
       ACTOR_GROUP_ELEMENT = xercesc::XMLString::transcode("group");
       ACTOR_GROUP_ACTOR_ELEMENT = xercesc::XMLString::transcode("actor");
+
+      PRESET_CAMERAS_ELEMENT = xercesc::XMLString::transcode("presetCameras");
+      PRESET_CAMERA_ELEMENT = xercesc::XMLString::transcode("presetCamera");
+      PRESET_CAMERA_INDEX_ELEMENT = xercesc::XMLString::transcode("index");
+      PRESET_CAMERA_PERSPECTIVE_VIEW_ELEMENT = xercesc::XMLString::transcode("perspectiveView");
+      PRESET_CAMERA_TOP_VIEW_ELEMENT = xercesc::XMLString::transcode("topView");
+      PRESET_CAMERA_SIDE_VIEW_ELEMENT = xercesc::XMLString::transcode("sideView");
+      PRESET_CAMERA_FRONT_VIEW_ELEMENT = xercesc::XMLString::transcode("frontView");
+      PRESET_CAMERA_POSITION_X_ELEMENT = xercesc::XMLString::transcode("positionX");
+      PRESET_CAMERA_POSITION_Y_ELEMENT = xercesc::XMLString::transcode("positionY");
+      PRESET_CAMERA_POSITION_Z_ELEMENT = xercesc::XMLString::transcode("positionZ");
+      PRESET_CAMERA_ROTATION_X_ELEMENT = xercesc::XMLString::transcode("rotationX");
+      PRESET_CAMERA_ROTATION_Y_ELEMENT = xercesc::XMLString::transcode("rotationY");
+      PRESET_CAMERA_ROTATION_Z_ELEMENT = xercesc::XMLString::transcode("rotationZ");
+      PRESET_CAMERA_ROTATION_W_ELEMENT = xercesc::XMLString::transcode("rotationW");
+      PRESET_CAMERA_ZOOM_ELEMENT = xercesc::XMLString::transcode("zoom");
    }
 
    void MapXMLConstants::StaticShutdown()
@@ -295,6 +327,22 @@ namespace dtDAL
       xercesc::XMLString::release(&ACTOR_GROUPS_ELEMENT);
       xercesc::XMLString::release(&ACTOR_GROUP_ELEMENT);
       xercesc::XMLString::release(&ACTOR_GROUP_ACTOR_ELEMENT);
+
+      xercesc::XMLString::release(&PRESET_CAMERAS_ELEMENT);
+      xercesc::XMLString::release(&PRESET_CAMERA_ELEMENT);
+      xercesc::XMLString::release(&PRESET_CAMERA_INDEX_ELEMENT);
+      xercesc::XMLString::release(&PRESET_CAMERA_PERSPECTIVE_VIEW_ELEMENT);
+      xercesc::XMLString::release(&PRESET_CAMERA_TOP_VIEW_ELEMENT);
+      xercesc::XMLString::release(&PRESET_CAMERA_SIDE_VIEW_ELEMENT);
+      xercesc::XMLString::release(&PRESET_CAMERA_FRONT_VIEW_ELEMENT);
+      xercesc::XMLString::release(&PRESET_CAMERA_POSITION_X_ELEMENT);
+      xercesc::XMLString::release(&PRESET_CAMERA_POSITION_Y_ELEMENT);
+      xercesc::XMLString::release(&PRESET_CAMERA_POSITION_Z_ELEMENT);
+      xercesc::XMLString::release(&PRESET_CAMERA_ROTATION_X_ELEMENT);
+      xercesc::XMLString::release(&PRESET_CAMERA_ROTATION_Y_ELEMENT);
+      xercesc::XMLString::release(&PRESET_CAMERA_ROTATION_Z_ELEMENT);
+      xercesc::XMLString::release(&PRESET_CAMERA_ROTATION_W_ELEMENT);
+      xercesc::XMLString::release(&PRESET_CAMERA_ZOOM_ELEMENT);
    }
 
    MapXMLConstants::MapXMLConstants() {}
