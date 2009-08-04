@@ -132,7 +132,7 @@ namespace dtEditQt
          }
          else
          {
-            vp = createViewportImpl(name, type, parent, mMasterViewport->GetQGLWidget());
+            vp = createViewportImpl(name, type, parent, (osg::GraphicsContext*)(mMasterViewport->GetWindow()->GetOsgViewerGraphicsWindow()));
          }
       }
       else
@@ -164,7 +164,7 @@ namespace dtEditQt
 
    ///////////////////////////////////////////////////////////////////////////////
    Viewport* ViewportManager::createViewportImpl(const std::string& name,
-       ViewportType& type, QWidget* parent, QGLWidget* shareWith)
+       ViewportType& type, QWidget* parent, osg::GraphicsContext* shareWith)
    {
       if (type == ViewportType::ORTHOGRAPHIC)
       {

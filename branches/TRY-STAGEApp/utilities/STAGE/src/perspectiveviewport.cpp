@@ -58,7 +58,7 @@ namespace dtEditQt
 
    ///////////////////////////////////////////////////////////////////////////////
    PerspectiveViewport::PerspectiveViewport(const std::string& name, QWidget* parent,
-      QGLWidget* shareWith)
+      osg::GraphicsContext* shareWith)
       : EditorViewport(ViewportManager::ViewportType::PERSPECTIVE, name, parent, shareWith)
    {
       mCameraMode = &CameraMode::NOTHING;

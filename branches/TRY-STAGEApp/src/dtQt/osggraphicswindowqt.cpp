@@ -70,7 +70,7 @@ namespace dtQt
 
          if (factory != NULL)
          {
-            adapter = factory->CreateWidget();
+            adapter = factory->CreateWidget(false, NULL, sharedContextWidget, flags);
          }
          else
          {

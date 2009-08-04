@@ -29,7 +29,7 @@
 #include <dtCore/objectmotionmodel.h>
 #include <dtDAL/transformableactorproxy.h>
 
-#include <dtDAL/functor.h>
+//#include <dtDAL/functor.h>
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -176,7 +176,7 @@ class STAGEObjectMotionModel : public dtCore::ObjectMotionModel
       * @param[in]  start     The start position of the line.
       * @param[in]  end       The end position of the line.
       */
-      void DefaultGetMouseLineFunc(osg::Vec2 mousePos, osg::Vec3& start, osg::Vec3& end);
+      //void DefaultGetMouseLineFunc(osg::Vec2 mousePos, osg::Vec3& start, osg::Vec3& end);
 
       /**
       * This is the default callback for calculating the screen
@@ -186,7 +186,7 @@ class STAGEObjectMotionModel : public dtCore::ObjectMotionModel
       *
       * @return                The position of the object in screen coords.
       */
-      osg::Vec2 DefaultGetObjectScreenCoordinates(osg::Vec3 objectPos);
+      //osg::Vec2 DefaultGetObjectScreenCoordinates(osg::Vec3 objectPos);
 
       /**
       * This callback handles the actual translation of the target.

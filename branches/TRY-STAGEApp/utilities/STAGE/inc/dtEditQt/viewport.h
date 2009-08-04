@@ -444,6 +444,8 @@ namespace dtEditQt
       //osgUtil::SceneView* getSceneView() { return mSceneView.get(); }
       dtCore::View* GetView();
 
+      dtCore::DeltaWin* GetWindow();
+
       /**
       * Called when the user moves the mouse while pressing any combination of
       * mouse buttons.  Based on the current mode, the camera is updated.
@@ -493,7 +495,7 @@ namespace dtEditQt
        * with the specified QGLWidget.
        */
       Viewport(ViewportManager::ViewportType& type, const std::string& name,
-         QWidget* parent = NULL, QGLWidget* shareWith = NULL);
+         QWidget* parent = NULL, osg::GraphicsContext* shareWith = NULL);
 
       /**
        * Destroys this viewport.

@@ -92,7 +92,7 @@ namespace dtEditQt
 
 
    ///////////////////////////////////////////////////////////////////////////////
-   Viewport::Viewport(ViewportManager::ViewportType& type, const std::string& name, QWidget* parent, QGLWidget* shareWith)
+   Viewport::Viewport(ViewportManager::ViewportType& type, const std::string& name, QWidget* parent, osg::GraphicsContext* shareWith)
       //: QWidget(parent)
       : QObject(parent)
       , mInChangeTransaction(false)
@@ -105,7 +105,7 @@ namespace dtEditQt
       , mEnableKeyBindings(true)
       , mIsector(new dtCore::Isector())
       , mIsMouseTrapped(false)
-      , mWindow(new dtCore::DeltaWin())
+      , mWindow(NULL)
       , mView(new dtCore::View())
       , mCamera(new StageCamera())
       , mScene(new dtCore::Scene())
@@ -114,6 +114,10 @@ namespace dtEditQt
       mMouseSensitivity = 10.0f;
       mInteractionMode = &InteractionMode::NOTHING;
       mRenderStyle = &RenderStyle::WIREFRAME;
+
+      dtCore::DeltaWin::DeltaWinTraits winTraits;
+      winTraits.contextToShare = shareWith;
+      mWindow = new dtCore::DeltaWin(winTraits);
 
       mRootNodeGroup = new osg::Group();
       //mSceneView = new osgUtil::SceneView();
@@ -1097,5 +1101,11 @@ namespace dtEditQt
    {
       mCamera = cam;
       mCamera->getDeltaCamera()->SetWindow(mWindow.get());
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtCore::DeltaWin* Viewport::GetWindow()
+   {
+      return mWindow.get();
    }
 } // namespace dtEditQt

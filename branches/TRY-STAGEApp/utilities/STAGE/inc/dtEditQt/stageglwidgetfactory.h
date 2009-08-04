@@ -20,9 +20,11 @@ namespace dtEditQt
       {
       }
 
-      dtQt::OSGAdapterWidget* CreateWidget()
+      dtQt::OSGAdapterWidget* CreateWidget(bool drawOnSeparateThread,  QWidget* parent = NULL,
+         const QGLWidget* shareWidget = NULL, Qt::WindowFlags f = NULL)
       {
-         return new dtEditQt::STAGEGLWidget(false);
+         return new dtEditQt::STAGEGLWidget(drawOnSeparateThread, parent,
+                                            shareWidget, f);
       }
    };
 }

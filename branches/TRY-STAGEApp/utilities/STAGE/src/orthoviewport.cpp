@@ -61,7 +61,7 @@ namespace dtEditQt
 
    ///////////////////////////////////////////////////////////////////////////////
    OrthoViewport::OrthoViewport(const std::string& name, QWidget* parent,
-      QGLWidget* shareWith)
+      osg::GraphicsContext* shareWith)
       : EditorViewport(ViewportManager::ViewportType::ORTHOGRAPHIC, name, parent, shareWith)
    {
       //mCamera = new StageCamera();

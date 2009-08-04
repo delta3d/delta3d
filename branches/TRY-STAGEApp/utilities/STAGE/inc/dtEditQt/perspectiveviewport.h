@@ -112,7 +112,7 @@ namespace dtEditQt
        * @param shareWith
        */
       PerspectiveViewport(const std::string& name, QWidget* parent = NULL,
-            QGLWidget* shareWith = NULL);
+            osg::GraphicsContext* shareWith = NULL);
 
       /**
        * Destroys the viewport.

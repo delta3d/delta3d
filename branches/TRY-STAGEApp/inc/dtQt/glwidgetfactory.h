@@ -46,7 +46,8 @@ namespace dtQt
          }
 
          ///Overwrite to generate a custom OSGAdapterWidget
-         virtual OSGAdapterWidget* CreateWidget() = 0;
+         virtual OSGAdapterWidget* CreateWidget(bool drawOnSeparateThread,  QWidget* parent = NULL,
+                                                const QGLWidget* shareWidget = NULL, Qt::WindowFlags f = NULL) = 0;
    };
 }
 #endif // glwidgetfactory_h__

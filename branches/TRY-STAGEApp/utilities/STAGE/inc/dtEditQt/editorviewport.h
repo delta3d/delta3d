@@ -30,7 +30,7 @@
 #define DELTA_EDITOR_VIEWPORT
 
 #include <dtEditQt/viewport.h>
-#include <dtCore/objectmotionmodel.h>
+#include <dtEditQt/stageobjectmotionmodel.h>
 
 namespace dtEditQt {
 
@@ -114,7 +114,7 @@ namespace dtEditQt {
       /**
       * Retrieves the object motion model.
       */
-      dtCore::ObjectMotionModel* GetObjectMotionModel() {return mObjectMotionModel.get();}
+      STAGEObjectMotionModel* GetObjectMotionModel() {return mObjectMotionModel.get();}
 
       /**
       * Called when the user presses a mouse button in the viewport.  Based on
@@ -196,7 +196,7 @@ namespace dtEditQt {
        */
       EditorViewport(ViewportManager::ViewportType& type,
          const std::string& name, QWidget* parent = NULL,
-         QGLWidget* shareWith = NULL);
+         osg::GraphicsContext* shareWith = NULL);
 
       /**
        * Destroys the viewport.
@@ -335,7 +335,7 @@ namespace dtEditQt {
    protected:
       bool mAttachActorToCamera;
 
-      dtCore::RefPtr<dtCore::ObjectMotionModel> mObjectMotionModel;
+      dtCore::RefPtr<STAGEObjectMotionModel> mObjectMotionModel;
       //STAGEObjectMotionModel::MotionType     mMotionType;
 
       dtCore::RefPtr<dtDAL::ActorProxy>      mGhostProxy;

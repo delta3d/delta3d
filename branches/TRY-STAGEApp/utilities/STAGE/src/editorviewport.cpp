@@ -67,17 +67,17 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    EditorViewport::EditorViewport(ViewportManager::ViewportType& type,
       const std::string& name, QWidget* parent,
-      QGLWidget* shareWith)
+      osg::GraphicsContext* shareWith)
       : Viewport(type, name, parent, shareWith)
       , mObjectMotionModel(NULL)
       , mGhostProxy(NULL)
       , mSkipUpdateForCam(false)
    {
       //mObjectMotionModel = new STAGEObjectMotionModel(ViewportManager::GetInstance().getMasterView());
-      //mObjectMotionModel = new STAGEObjectMotionModel(GetView());
-      mObjectMotionModel = new dtCore::ObjectMotionModel(GetView());
+      mObjectMotionModel = new STAGEObjectMotionModel(GetView());
+      //mObjectMotionModel = new dtCore::ObjectMotionModel(GetView());
       mObjectMotionModel->SetEnabled(false);
-      //mObjectMotionModel->ClearTargets(); //TODO E!
+      mObjectMotionModel->ClearTargets();
       //mObjectMotionModel->SetGetMouseLineFunc(dtDAL::MakeFunctor(*this, &EditorViewport::GetMouseLine));
       //mObjectMotionModel->SetObjectToScreenFunc(dtDAL::MakeFunctorRet(*this, &EditorViewport::GetObjectScreenCoordinates));
       mObjectMotionModel->SetScale(1.5f);
@@ -130,7 +130,7 @@ namespace dtEditQt
 
       if (actors.size() > 0)
       {
-         //mObjectMotionModel->ClearTargets(); //TODO E!
+         mObjectMotionModel->ClearTargets();
 
          // Now iterate through the additional targets.
          bool canScale = false;
@@ -141,7 +141,7 @@ namespace dtEditQt
 
             if (targetProxy)
             {
-               //mObjectMotionModel->AddTarget(targetProxy); //TODO E!
+               mObjectMotionModel->AddTarget(targetProxy);
                dtCore::Transformable* target = NULL;
                targetProxy->GetActor(target);
                if (target)
@@ -172,17 +172,17 @@ namespace dtEditQt
       else
       {
          mObjectMotionModel->SetEnabled(false);
-         //mObjectMotionModel->ClearTargets(); //TODO E!
+         mObjectMotionModel->ClearTargets();
          mObjectMotionModel->SetScaleEnabled(false);
       }
 
-      mObjectMotionModel->UpdateWidgets();
+      //mObjectMotionModel->UpdateWidgets(); //TODO E!  is this needed?
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void EditorViewport::refresh()
    {
-      mObjectMotionModel->UpdateWidgets();
+      //mObjectMotionModel->UpdateWidgets(); //TODO E!
 
       Viewport::refresh();
    }

@@ -49,6 +49,11 @@ class QWidget;
 class QMouseEvent;
 class QWheelEvent;
 
+namespace osg
+{
+   class GraphicsContext;
+}
+
 namespace dtEditQt
 {
    class Viewport;
@@ -603,7 +608,7 @@ namespace dtEditQt
        * @return The newly created viewport.
        */
       Viewport* createViewportImpl(const std::string& name, ViewportType& type,
-         QWidget* parent, QGLWidget* shareWith);
+         QWidget* parent, osg::GraphicsContext* shareWith);
 
    private:
       static dtCore::RefPtr<ViewportManager> sInstance;

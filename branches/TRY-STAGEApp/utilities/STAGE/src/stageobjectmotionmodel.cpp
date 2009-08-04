@@ -176,16 +176,16 @@ void STAGEObjectMotionModel::ClearTargets(void)
 //}
 
 ////////////////////////////////////////////////////////////////////////////////
-void STAGEObjectMotionModel::DefaultGetMouseLineFunc(osg::Vec2 mousePos, osg::Vec3& start, osg::Vec3& end)
-{
-   ObjectMotionModel::GetMouseLine(mousePos, start, end);
-}
+//void STAGEObjectMotionModel::DefaultGetMouseLineFunc(osg::Vec2 mousePos, osg::Vec3& start, osg::Vec3& end)
+//{
+//   ObjectMotionModel::GetMouseLine(mousePos, start, end);
+//}
 
 ////////////////////////////////////////////////////////////////////////////////
-osg::Vec2 STAGEObjectMotionModel::DefaultGetObjectScreenCoordinates(osg::Vec3 objectPos)
-{
-   return ObjectMotionModel::GetObjectScreenCoordinates(objectPos);
-}
+//osg::Vec2 STAGEObjectMotionModel::DefaultGetObjectScreenCoordinates(osg::Vec3 objectPos)
+//{
+//   return ObjectMotionModel::GetObjectScreenCoordinates(objectPos);
+//}
 
 ////////////////////////////////////////////////////////////////////////////////
 void STAGEObjectMotionModel::OnTranslate(osg::Vec3 delta)
