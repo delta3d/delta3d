@@ -27,7 +27,7 @@
  * Curtiss Murphy
  */
 #include <prefix/dtstageprefix-src.h>
-#include "dtEditQt/actorsearchtab.h"
+#include "dtEditQt/actordockwidget.h"
 #include <dtEditQt/configurationmanager.h>
 #include "dtEditQt/tabcontainer.h"
 #include "dtEditQt/tabwrapper.h"
@@ -43,30 +43,30 @@
 namespace dtEditQt
 {
    ///////////////////////////////////////////////////////////////////////////////
-   ActorSearchTab::ActorSearchTab(QWidget* parent)
+   ActorDockWidget::ActorDockWidget(QWidget* parent)
       : QDockWidget(parent)
-      , mTabActorSearch(NULL)
-      , mTabGlobalActor(NULL)
-      , mActorSearchWidget(NULL)
-      , mActorGlobalWidget(NULL)
+      , mTabActorBrowser(NULL)
+      , mTabPrefabBrowser(NULL)
+      , mActorBrowserWidget(NULL)
+      , mPrefabBrowserWidget(NULL)
    {
-      setWindowTitle(tr("Search"));
+      setWindowTitle(tr("Actors"));
 
       // container
       mTabC = new TabContainer(this);
 
       //Note: tabs and widgets are different
 
-      if (ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, CONF_MGR_SHOW_ACTOR_SEARCH) != "false")
+      if (ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, CONF_MGR_SHOW_ACTOR_BROWSER) != "false")
       {
-         mTabActorSearch  = new TabWrapper(this);
-         mActorSearchWidget  = new ActorSearcher(this);
+         mTabActorBrowser = new TabWrapper(this);
+         mActorBrowserWidget = new ActorBrowser(this);
       }
 
-      if (ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, CONF_MGR_SHOW_GLOBAL_ACTORS) != "false")
+      if (ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, CONF_MGR_SHOW_PREFAB_BROWSER) != "false")
       {
-         mTabGlobalActor  = new TabWrapper(this);
-         mActorGlobalWidget  = new ActorGlobalBrowser(this);
+         mTabPrefabBrowser= new TabWrapper(this);
+         mPrefabBrowserWidget= new PrefabBrowser(this);
       }
 
       addTabs();
@@ -75,36 +75,36 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   ActorSearchTab::~ActorSearchTab() {}
+   ActorDockWidget::~ActorDockWidget() {}
 
    /////////////////////////////////////////////////////////////////////////////////
-   void ActorSearchTab::addTabs()
+   void ActorDockWidget::addTabs()
    {
-      if (mActorSearchWidget != NULL)
+      if (mActorBrowserWidget != NULL)
       {
-         // Actor Search tab
-         mTabActorSearch->setWidget(mActorSearchWidget);
-         mTabActorSearch->setName("Actor Search");
-         mTabC->addTab(mTabActorSearch);
+         // Actor Browser Tab
+         mTabActorBrowser->setWidget(mActorBrowserWidget);
+         mTabActorBrowser->setName("Actors");
+         mTabC->addTab(mTabActorBrowser);
       }
 
-      if (mActorGlobalWidget != NULL)
+      if (mPrefabBrowserWidget != NULL)
       {
-         // Global Actors
-         mTabGlobalActor->setWidget(mActorGlobalWidget);
-         mTabGlobalActor->setName("Global Actors");
-         mTabC->addTab(mTabGlobalActor);
+         // Prefabs Tab
+         mTabPrefabBrowser->setWidget(mPrefabBrowserWidget);
+         mTabPrefabBrowser->setName("Prefabs");
+         mTabC->addTab(mTabPrefabBrowser);
       }
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   QWidget* ActorSearchTab::getWidget()
+   QWidget* ActorDockWidget::getWidget()
    {
       return mTabC->getWidget();
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void ActorSearchTab::closeEvent(QCloseEvent* e)
+   void ActorDockWidget::closeEvent(QCloseEvent* e)
    {
       EditorActions::GetInstance().mActionWindowsActorSearch->setChecked(false);
    }

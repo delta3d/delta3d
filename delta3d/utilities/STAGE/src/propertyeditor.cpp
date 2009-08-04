@@ -470,7 +470,10 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    void PropertyEditor::closeEvent(QCloseEvent* e)
    {
-      EditorActions::GetInstance().mActionWindowsPropertyEditor->setChecked(false);
+      if(EditorActions::GetInstance().mActionWindowsPropertyEditor != NULL)
+      {
+         EditorActions::GetInstance().mActionWindowsPropertyEditor->setChecked(false);
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////////
