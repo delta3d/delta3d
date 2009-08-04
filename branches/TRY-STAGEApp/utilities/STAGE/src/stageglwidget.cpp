@@ -158,3 +158,24 @@ void dtEditQt::STAGEGLWidget::keyReleaseEvent(QKeyEvent* e)
       mViewport->keyReleaseEvent(e);
    }
 }
+
+////////////////////////////////////////////////////////////////////////////////
+void dtEditQt::STAGEGLWidget::enterEvent(QEvent *e)
+{
+   dtQt::OSGAdapterWidget::enterEvent(e);
+   if (mViewport != NULL)
+   {
+      mViewport->getCamera()->getDeltaCamera()->SetEnabled(true);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void dtEditQt::STAGEGLWidget::leaveEvent(QEvent *e)
+{
+   dtQt::OSGAdapterWidget::leaveEvent(e);
+   if (mViewport != NULL)
+   {
+      mViewport->getCamera()->getDeltaCamera()->SetEnabled(false);
+   }
+
+}

@@ -74,6 +74,10 @@ namespace dtEditQt
       virtual void dragMoveEvent(QDragMoveEvent* event);
       virtual void dropEvent(QDropEvent* event);
 
+
+      virtual void enterEvent(QEvent *e);
+      virtual void leaveEvent(QEvent *e);
+
       /**
       * Called when the viewport needs to redraw itself.
       */
