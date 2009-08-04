@@ -295,9 +295,6 @@ namespace dtActors
       */
       void RegeneratePointDrawable(int pointIndex);
 
-   protected:
-      virtual ~LinkedPointsActor();
-
       /**
       * This will find the nearest point on a line from the given test point.
       *
@@ -308,6 +305,9 @@ namespace dtActors
       * @return     The nearest position.
       */
       osg::Vec3 FindNearestPointOnLine(osg::Vec3 point1, osg::Vec3 point2, osg::Vec3 testPoint);
+
+   protected:
+      virtual ~LinkedPointsActor();
 
       dtActors::LinkedPointsActorProxy* mProxy;
 
