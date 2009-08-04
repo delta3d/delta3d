@@ -1658,7 +1658,6 @@ namespace dtEditQt
 
             ConfigurationManager::GetInstance().SetVariable(
                ConfigurationManager::GENERAL, CONF_MGR_MAP_FILE, newMap->GetName());
-
          }
          catch (const dtUtil::Exception& e)
          {
@@ -1671,6 +1670,9 @@ namespace dtEditQt
       // Update the editor state to reflect the changes.
       EditorData::GetInstance().setCurrentMap(newMap);
       EditorEvents::GetInstance().emitCurrentMapChanged();
+
+      // Now load the first camera if there is one.
+      ViewportManager::GetInstance().LoadPresetCamera(1);
 
       // Now that we have changed maps, clear the current selection.
       std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > emptySelection;
