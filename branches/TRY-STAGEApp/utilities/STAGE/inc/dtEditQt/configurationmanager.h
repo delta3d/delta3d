@@ -24,12 +24,12 @@ static const dtUtil::RefString CONF_MGR_SHOW_SIDE_VIEW("ShowSideView");
 static const dtUtil::RefString CONF_MGR_SHOW_TOP_VIEW("ShowTopView");
 static const dtUtil::RefString CONF_MGR_SHOW_PERSP_VIEW("ShowPerspView");
 
-static const dtUtil::RefString CONF_MGR_SHOW_ACTOR_TAB("ShowActorTab");
-static const dtUtil::RefString CONF_MGR_SHOW_ACTOR_BROWSER("ShowActorBrowser");
-static const dtUtil::RefString CONF_MGR_SHOW_PREFAB_BROWSER("ShowPrefabBrowser");
-static const dtUtil::RefString CONF_MGR_SHOW_SEARCH_TAB("ShowSearchTab");
-static const dtUtil::RefString CONF_MGR_SHOW_ACTOR_SEARCH("ShowActorSearch");
-static const dtUtil::RefString CONF_MGR_SHOW_GLOBAL_ACTORS("ShowGlobalActors");
+static const dtUtil::RefString CONF_MGR_SHOW_ACTOR_DOCKWIDGET("ShowActorDockWidget");
+static const dtUtil::RefString CONF_MGR_SHOW_ACTOR_BROWSER("ShowActorBrowserTab");
+static const dtUtil::RefString CONF_MGR_SHOW_PREFAB_BROWSER("ShowPrefabBrowserTab");
+static const dtUtil::RefString CONF_MGR_SHOW_SEARCH_DOCKWIDGET("ShowSearchDockWidget");
+static const dtUtil::RefString CONF_MGR_SHOW_ACTOR_SEARCH("ShowActorSearchTab");
+static const dtUtil::RefString CONF_MGR_SHOW_GLOBAL_ACTORS("ShowGlobalActorsTab");
 static const dtUtil::RefString CONF_MGR_SHOW_RESOURCE_BROWSER("ShowResourceBrowser");
 static const dtUtil::RefString CONF_MGR_SHOW_PROPERTY_EDITOR("ShowPropertyEditor");
 
@@ -41,8 +41,7 @@ public:
    enum SectionType
    {
       GENERAL,
-      LAYOUT,
-      MENU,
+      LAYOUT,      
       PLUGINS
    }; 
    
@@ -82,8 +81,7 @@ private:
    static ConfigurationManager* mInstance;
 
    std::map<std::string, std::string> mGeneralVariables;    // name/value pairs
-   std::map<std::string, std::string> mLayoutVariables;     // name/value pairs
-   std::map<std::string, std::string> mMenuVariables;       // name/value pairs
+   std::map<std::string, std::string> mLayoutVariables;     // name/value pairs   
    std::map<std::string, std::string> mPluginVariables;     // name/value pairs
    //To add more sections to the config file, make some more maps here, add a 
    //value to the SectionType enum, and then modify the XML readers/writers   

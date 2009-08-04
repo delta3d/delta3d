@@ -307,6 +307,22 @@ namespace dtEditQt {
       virtual bool DuplicateActors();
 
       /**
+      * Called when the user presses a key on the keyboard in the viewport.
+      * Based on the combination of keys pressed, the viewport's current
+      * mode will be set.
+      * @param e
+      */
+      void keyPressEvent(QKeyEvent* e);
+
+      /**
+      * Called when the user releases a key on the keyboard in the viewport.
+      * Based on the keys released, the viewport's current mode is
+      * updated accordingly.
+      * @param e
+      */
+      void keyReleaseEvent(QKeyEvent* e);
+
+      /**
       * Converts pixel mouse position to delta normalized format.
       *
       * @param[in]  pixelPos  The original position of the mouse.

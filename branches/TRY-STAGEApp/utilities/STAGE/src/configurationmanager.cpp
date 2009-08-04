@@ -96,10 +96,7 @@ std::string ConfigurationManager::GetVariable(SectionType section,
             mLayoutVariables[name] = "false";
          }
          return mLayoutVariables[name];
-         break;
-      case MENU:
-         return mMenuVariables[name];
-         break;
+         break;      
       case PLUGINS:
          return mPluginVariables[name];
          break;
@@ -125,9 +122,6 @@ void ConfigurationManager::SetVariable(SectionType section,
          break;
       case LAYOUT:
          mLayoutVariables[name] = value;
-         break;
-      case MENU:
-         mMenuVariables[name] = value;
          break;
       case PLUGINS:
          mPluginVariables[name] = value;
@@ -187,7 +181,6 @@ void ConfigurationManager::ToXML(XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument& doc
 
    root->appendChild(WriteSectionToXML(doc, GENERAL));
    root->appendChild(WriteSectionToXML(doc, LAYOUT));
-   root->appendChild(WriteSectionToXML(doc, MENU));
    root->appendChild(WriteSectionToXML(doc, PLUGINS));
 }
 
@@ -210,11 +203,6 @@ XERCES_CPP_NAMESPACE_QUALIFIER DOMElement*
          beginIt = mLayoutVariables.begin();
          endIt = mLayoutVariables.end();
          groupName = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode("Layout");
-         break;
-      case MENU:
-         beginIt = mMenuVariables.begin();
-         endIt = mMenuVariables.end();
-         groupName = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode("Menu");
          break;
       case PLUGINS:
          beginIt = mPluginVariables.begin();
@@ -272,10 +260,6 @@ void ConfigurationManager::startElement(const XMLCh* const uri, const XMLCh* con
    else if(sectionStr == "Layout")
    {
       currentMapPtr = &mLayoutVariables;
-   }
-   else if(sectionStr == "Menu")
-   {
-      currentMapPtr = &mMenuVariables;
    }
    else if(sectionStr == "Plugins")
    {
@@ -356,10 +340,10 @@ void ConfigurationManager::SetDefaultConfigValues()
    mLayoutVariables[CONF_MGR_SHOW_TOP_VIEW] = "true";
    mLayoutVariables[CONF_MGR_SHOW_PERSP_VIEW] = "true";
    
-   mLayoutVariables[CONF_MGR_SHOW_ACTOR_TAB] = "true";
+   mLayoutVariables[CONF_MGR_SHOW_ACTOR_DOCKWIDGET] = "true";
    mLayoutVariables[CONF_MGR_SHOW_ACTOR_BROWSER] = "true";
    mLayoutVariables[CONF_MGR_SHOW_PREFAB_BROWSER] = "true";
-   mLayoutVariables[CONF_MGR_SHOW_SEARCH_TAB] = "true";
+   mLayoutVariables[CONF_MGR_SHOW_SEARCH_DOCKWIDGET] = "true";
    mLayoutVariables[CONF_MGR_SHOW_ACTOR_SEARCH] = "true";
    mLayoutVariables[CONF_MGR_SHOW_GLOBAL_ACTORS] = "true";
    mLayoutVariables[CONF_MGR_SHOW_RESOURCE_BROWSER] = "true";

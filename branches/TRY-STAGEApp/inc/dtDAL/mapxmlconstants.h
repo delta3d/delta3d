@@ -129,6 +129,22 @@ namespace dtDAL
          static XMLCh* ACTOR_GROUP_ELEMENT;
          static XMLCh* ACTOR_GROUP_ACTOR_ELEMENT;
 
+         static XMLCh* PRESET_CAMERAS_ELEMENT;
+         static XMLCh* PRESET_CAMERA_ELEMENT;
+         static XMLCh* PRESET_CAMERA_INDEX_ELEMENT;
+         static XMLCh* PRESET_CAMERA_PERSPECTIVE_VIEW_ELEMENT;
+         static XMLCh* PRESET_CAMERA_TOP_VIEW_ELEMENT;
+         static XMLCh* PRESET_CAMERA_SIDE_VIEW_ELEMENT;
+         static XMLCh* PRESET_CAMERA_FRONT_VIEW_ELEMENT;
+         static XMLCh* PRESET_CAMERA_POSITION_X_ELEMENT;
+         static XMLCh* PRESET_CAMERA_POSITION_Y_ELEMENT;
+         static XMLCh* PRESET_CAMERA_POSITION_Z_ELEMENT;
+         static XMLCh* PRESET_CAMERA_ROTATION_X_ELEMENT;
+         static XMLCh* PRESET_CAMERA_ROTATION_Y_ELEMENT;
+         static XMLCh* PRESET_CAMERA_ROTATION_Z_ELEMENT;
+         static XMLCh* PRESET_CAMERA_ROTATION_W_ELEMENT;
+         static XMLCh* PRESET_CAMERA_ZOOM_ELEMENT;
+
          /**
           * this is called automatically on startup.
           */

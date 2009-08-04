@@ -114,6 +114,12 @@ namespace dtEditQt
       double getZoom() const { return mZoomFactor; }
 
       /**
+      * Sets the current zoom factor.
+      * @param zoom The amount of zoom to set.
+      */
+      void setZoom(double zoom);
+
+      /**
        * Resets the camera's rotation quaternion to the identity where the positive Z
        * axis is up, the positive Y axis is forward, and the positive X axis is right.
        */

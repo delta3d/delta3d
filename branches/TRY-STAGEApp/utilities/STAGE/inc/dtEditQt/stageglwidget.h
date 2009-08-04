@@ -50,6 +50,23 @@ namespace dtEditQt
       virtual void wheelEvent(QWheelEvent* e);
 
       /**
+      * Called when the user presses a key on the keyboard in the viewport.
+      * Based on the combination of keys pressed, the viewport's current
+      * mode will be set.
+      * @param e
+      */
+      void keyPressEvent(QKeyEvent* e);
+
+      /**
+      * Called when the user releases a key on the keyboard in the viewport.
+      * Based on the keys released, the viewport's current mode is
+      * updated accordingly.
+      * @param e
+      */
+      void keyReleaseEvent(QKeyEvent* e);
+
+
+      /**
       * Drag events.
       */
       virtual void dragEnterEvent(QDragEnterEvent* event);

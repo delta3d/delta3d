@@ -25,22 +25,21 @@
 
                <!-- Note: if ShowActorTab is false, none of the other
                ShowActor stuff will be visible either. -->
-               <xs:attribute name="ShowActorTab" type="xs:boolean"/>
-               <xs:attribute name="ShowActorBrowser" type="xs:boolean"/>
-               <xs:attribute name="ShowPrefabBrowser" type="xs:boolean"/>
+               <xs:attribute name="ShowActorDockWidget" type="xs:boolean"/>
+               <xs:attribute name="ShowActorBrowserTab" type="xs:boolean"/>
+               <xs:attribute name="ShowPrefabBrowserTab" type="xs:boolean"/>
 
                <!-- Note: if the ShowSearchTab is false, none of the other
                Search stuff will be visible either. -->
-               <xs:attribute name="ShowSearchTab" type="xs:boolean"/>
-               <xs:attribute name="ShowActorSearch" type="xs:boolean"/>
-               <xs:attribute name="ShowGlobalActors" type="xs:boolean"/>        
-
+               <xs:attribute name="ShowSearchDockWidget" type="xs:boolean"/>
+               <xs:attribute name="ShowActorSearchTab" type="xs:boolean"/>
+               <xs:attribute name="ShowGlobalActorsTab" type="xs:boolean"/>        
                <xs:attribute name="ShowResourceBrowser" type="xs:boolean"/>
                <xs:attribute name="ShowPropertyEditor" type="xs:boolean"/>
             </xs:complexType>
          </xs:element>
       
-		 <xs:element name="Plugins">
+		   <xs:element name="Plugins">
             <xs:complexType>
                <xs:attribute name="Activated" type="xs:string"/>
             </xs:complexType>

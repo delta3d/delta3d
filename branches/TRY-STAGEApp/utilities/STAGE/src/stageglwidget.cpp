@@ -138,3 +138,23 @@ void dtEditQt::STAGEGLWidget::wheelEvent(QWheelEvent* e)
       mViewport->wheelEvent(e);
    }
 }
+
+////////////////////////////////////////////////////////////////////////////////
+void dtEditQt::STAGEGLWidget::keyPressEvent(QKeyEvent* e)
+{
+   dtQt::OSGAdapterWidget::keyPressEvent(e);
+   if (mViewport != NULL)
+   {
+      mViewport->keyPressEvent(e);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void dtEditQt::STAGEGLWidget::keyReleaseEvent(QKeyEvent* e)
+{
+   dtQt::OSGAdapterWidget::keyReleaseEvent(e);
+   if (mViewport != NULL)
+   {
+      mViewport->keyReleaseEvent(e);
+   }
+}

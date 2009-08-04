@@ -26,6 +26,8 @@
 #include <map>
 
 #include <osg/Referenced>
+#include <osg/Vec3>
+#include <osg/Quat>
 
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/export.h>
@@ -91,6 +93,46 @@ namespace dtDAL
             std::vector<dtDAL::ActorProxy*> actorList;
          };
    
+         // Preset camera data.
+         struct PresetCameraData
+         {
+         public:
+            bool      isValid;
+
+            // Perspective view.
+            osg::Vec3 persPosition;
+            osg::Quat persRotation;
+
+            // Top view.
+            osg::Vec3 topPosition;
+            double    topZoom;
+
+            // Side view.
+            osg::Vec3 sidePosition;
+            double    sideZoom;
+
+            // Front view.
+            osg::Vec3 frontPosition;
+            double    frontZoom;
+
+            PresetCameraData()
+            {
+               isValid     = false;
+
+               persPosition.set(0.0f, 0.0f, 0.0f);
+               persRotation.set(0.0f, 0.0f, 0.0f, 0.0f);
+
+               topPosition.set(0.0f, 0.0f, 0.0f);
+               topZoom     = 1.0f;
+
+               sidePosition.set(0.0f, 0.0f, 0.0f);
+               sideZoom    = 1.0f;
+
+               frontPosition.set(0.0f, 0.0f, 0.0f);
+               frontZoom   = 1.0f;
+            }
+         };
+
          /**
           * @return the mName of the map.
           */
@@ -436,6 +478,23 @@ namespace dtDAL
          */
          dtDAL::ActorProxy* GetActorFromGroup(int groupIndex, int actorIndex);
 
+         /**
+         * Gets the matrix of a preset camera position.
+         *
+         * @param[in]  index  The index of the preset camera to retrieve.
+         *
+         * @return     The matrix to the preset camera.
+         */
+         PresetCameraData GetPresetCameraData(int index);
+
+         /**
+         * Sets a preset camera index.
+         *
+         * @param[in]  index       The preset camera index.
+         * @param[in]  presetData  The preset camera data.
+         */
+         void SetPresetCameraData(int index, PresetCameraData presetData);
+
       protected:
          friend class Project;
 
@@ -472,11 +531,6 @@ namespace dtDAL
           * @param types the types to add.
           */
          void AddMissingActorTypes(const std::set<std::string>& types);
-
-         ///**
-         //* Gets the matrix of a preset camera position.
-         //*/
-         //osg::Matrix GetPresetCameraMatrix();
 
          virtual ~Map();
          
@@ -515,7 +569,7 @@ namespace dtDAL
          //all of the classes used by the proxies in the map.
          mutable std::set<std::string> mProxyActorClasses;
 
-         //std::vector<osg::Matrix> mPresetCameras;
+         std::vector<PresetCameraData> mPresetCameras;
 
          bool MatchesSearch(const ActorProxy& actorProxy, const std::string& category, const std::string& typemName,
                            const std::string& classmName, PlaceableFilter placeable) const;
