@@ -919,54 +919,87 @@ void LinkedPointsActorToolPlugin::UpdatePlacementGhost(Viewport* vp, osg::Vec2 m
       // Snap to right angles.
       if (mShowingPlacementGhost && mFavorRightAnglesCheckbox->isChecked())
       {
-         bool bLockedX = false;
-         bool bLockedY = false;
-
          int prevPoint = mActiveActor->GetPointCount() - 2;
          if (prevPoint >= 0)
          {
+            osg::Vec3 angle1, angle2;
             osg::Vec3 prevPos = mActiveActor->GetPointPosition(prevPoint);
-            osg::Vec3 vec = position - prevPos;
-            vec.z() = 0.0f;
-            vec.normalize();
-            float dot = vec * osg::Vec3(0.0f, 1.0f, 0.0f);
-            if (abs(dot) >= 0.99f)
+
+            // If we only have a single point placed so far, align
+            // the favored angles with the world axes.
+            if (prevPoint == 0)
             {
-               bLockedX = true;
-               position.x() = prevPos.x();
+               angle1.set(0.0f, 1.0f, 0.0f);
+               angle2.set(1.0f, 0.0f, 0.0f);
             }
             else
             {
-               dot = vec * osg::Vec3(1.0f, 0.0f, 0.0f);
+               osg::Vec3 prevPos2 = mActiveActor->GetPointPosition(prevPoint - 1);
+               angle1 = prevPos - prevPos2;
+               angle1.normalize();
+               angle2 = angle1 ^ osg::Vec3(0.0f, 0.0f, 1.0f);
+            }
+
+            osg::Vec3 vec = position - prevPos;
+            float len = vec.length2();
+            vec.z() = 0.0f;
+            vec.normalize();
+            float dot = vec * angle1;
+            if (abs(dot) >= 0.99f)
+            {
+               osg::Vec3 start = prevPos - (angle1 * len);
+               osg::Vec3 end = prevPos + (angle1 * len);
+               position = mActiveActor->FindNearestPointOnLine(start, end, position);
+            }
+            else
+            {
+               dot = vec * angle2;
                if (abs(dot) >= 0.99f)
                {
-                  bLockedY = true;
-                  position.y() = prevPos.y();
+                  osg::Vec3 start = prevPos - (angle2 * len);
+                  osg::Vec3 end = prevPos + (angle2 * len);
+                  position = mActiveActor->FindNearestPointOnLine(start, end, position);
                }
             }
 
             osg::Vec3 nextPos = mActiveActor->GetPointPosition(0);
+
+            // If we only have a single point placed so far, align
+            // the favored angles with the world axes.
+            if (prevPoint == 0)
+            {
+               angle1.set(0.0f, 1.0f, 0.0f);
+               angle2.set(1.0f, 0.0f, 0.0f);
+            }
+            else
+            {
+               osg::Vec3 nextPos2 = mActiveActor->GetPointPosition(1);
+               angle1 = nextPos2 - nextPos;
+               angle1.normalize();
+               angle2 = angle1 ^ osg::Vec3(0.0f, 0.0f, 1.0f);
+            }
+
             vec = position - nextPos;
+            len = vec.length2();
             vec.z() = 0.0f;
             vec.normalize();
 
             // Test for a lock with the next point.
-            if (!bLockedX)
+            dot = vec * angle1;
+            if (abs(dot) >= 0.99f)
             {
-               dot = vec * osg::Vec3(0.0f, 1.0f, 0.0f);
-               if (abs(dot) >= 0.99f)
-               {
-                  bLockedY = true;
-                  position.x() = nextPos.x();
-               }
+               osg::Vec3 start = nextPos - (angle1 * len);
+               osg::Vec3 end = nextPos + (angle1 * len);
+               position = mActiveActor->FindNearestPointOnLine(start, end, position);
             }
-
-            if (!bLockedY)
+            else
             {
-               dot = vec * osg::Vec3(1.0f, 0.0f, 0.0f);
+               dot = vec * angle2;
                if (abs(dot) >= 0.99f)
                {
-                  position.y() = nextPos.y();
+                  osg::Vec3 start = nextPos - (angle2 * len);
+                  osg::Vec3 end = nextPos + (angle2 * len);
+                  position = mActiveActor->FindNearestPointOnLine(start, end, position);
                }
             }
          }
