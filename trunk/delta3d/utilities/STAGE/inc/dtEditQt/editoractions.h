@@ -228,6 +228,9 @@ namespace dtEditQt
       // Action - Property Editor - Hides/Brings back the property editor window
       QAction* mActionWindowsPropertyEditor;
 
+      // Action - Property Editor - Hides/Brings back the property editor window
+      QAction* mActionWindowsActor;
+
       // Action - Actor Search - Hides/Brings back the actor tab window
       QAction* mActionWindowsActorSearch;
 

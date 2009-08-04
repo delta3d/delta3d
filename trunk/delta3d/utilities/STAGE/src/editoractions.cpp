@@ -333,14 +333,20 @@ namespace dtEditQt
       mActionWindowsPropertyEditor->setCheckable(true);
       mActionWindowsPropertyEditor->setChecked(true);
 
+      mActionWindowsActor = new QAction(tr("Actor"), this);
+      mActionWindowsActor->setShortcut(tr("Alt+2"));
+      mActionWindowsActor->setStatusTip(tr("Hides and retrieves the actor search window"));
+      mActionWindowsActor->setCheckable(true);
+      mActionWindowsActor->setChecked(true);
+
       mActionWindowsActorSearch = new QAction(tr("Actor Search"), this);
-      mActionWindowsActorSearch->setShortcut(tr("Alt+2"));
+      mActionWindowsActorSearch->setShortcut(tr("Alt+3"));
       mActionWindowsActorSearch->setStatusTip(tr("Hides and retrieves the actor search window"));
       mActionWindowsActorSearch->setCheckable(true);
       mActionWindowsActorSearch->setChecked(true);
 
       mActionWindowsResourceBrowser = new QAction(tr("Resource Browser"), this);
-      mActionWindowsResourceBrowser->setShortcut(tr("Alt+3"));
+      mActionWindowsResourceBrowser->setShortcut(tr("Alt+4"));
       mActionWindowsResourceBrowser->setStatusTip(tr("Hides and retrieves the resource browser"));
       mActionWindowsResourceBrowser->setCheckable(true);
       mActionWindowsResourceBrowser->setChecked(true);

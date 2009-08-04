@@ -52,8 +52,8 @@ namespace dtEditQt
    class PerspectiveViewport;
    class OrthoViewport;
    class PropertyEditor;
-   class ActorTab;
-   class ActorSearchTab;
+   class ActorDockWidget;
+   class ActorSearchDockWidget;
    class ResourceBrowser;   
    class PluginManager;
    class EditorViewportContainer;
@@ -207,7 +207,13 @@ namespace dtEditQt
       void onPropertyEditorSelection();
 
       /**
-       * This slot will either hide or retrieve the actor tab window when the tab is
+      * This slot will either hide or retrieve the actor dockwidget when
+      * selected from the main menu
+      */
+      void onActorSelection();
+
+      /**
+       * This slot will either hide or retrieve the actor search dockwidget when
        * selected from the main menu
        */
       void onActorSearchSelection();
@@ -318,8 +324,8 @@ namespace dtEditQt
 
       // main controls
       PropertyEditor*  mPropertyWindow;
-      ActorTab*        mActorTab;
-      ActorSearchTab*  mActorSearchTab;
+      ActorDockWidget*        mActorDockWidg;
+      ActorSearchDockWidget*  mActorSearchDockWidg;
       ResourceBrowser* mResourceBrowser;
 
       QWidget*          mMainViewportParent;

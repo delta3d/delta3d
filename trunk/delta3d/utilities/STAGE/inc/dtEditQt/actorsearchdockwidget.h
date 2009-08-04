@@ -1,6 +1,6 @@
 /* -*-c++-*-
  * Delta3D Simulation Training And Game Editor (STAGE)
- * STAGE - ActorSearchTab (.h & .cpp) - Using 'The MIT License'
+ * STAGE - ActorSearchDockWidget (.h & .cpp) - Using 'The MIT License'
  * Copyright (C) 2005-2008, Alion Science and Technology Corporation
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -46,21 +46,21 @@ namespace dtEditQt
     class PrefabBrowser;
 
     /**
-    * @class ActorSearchTab
+    * @class ActorSearchDockWidget
     * @brief This class holds all actor related tabs.
     */
-    class ActorSearchTab : public QDockWidget
+    class ActorSearchDockWidget : public QDockWidget
     {
     public:
         /**
         * Constructor
         */
-        ActorSearchTab(QWidget* parent = 0);
+        ActorSearchDockWidget(QWidget* parent = 0);
 
         /**
         * Destructor
         */
-        ~ActorSearchTab();
+        ~ActorSearchDockWidget();
 
         /**
         * Adds tab widgets to the tab container

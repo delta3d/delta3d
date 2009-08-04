@@ -61,8 +61,8 @@
 #include <dtEditQt/editorviewportcontainer.h>
 #include <dtEditQt/pluginmanager.h>
 #include <dtEditQt/propertyeditor.h>
-#include <dtEditQt/actortab.h>
-#include <dtEditQt/actorsearchtab.h>
+#include <dtEditQt/actordockwidget.h>
+#include <dtEditQt/actorsearchdockwidget.h>
 #include <dtEditQt/resourcebrowser.h>
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/editorevents.h>
@@ -89,7 +89,8 @@ namespace dtEditQt
       , mRecentMaps(NULL)
       , mToolsMenu(NULL)
       , mPropertyWindow(NULL)
-      , mActorTab(NULL)
+      , mActorDockWidg(NULL)
+      , mActorSearchDockWidg(NULL)
       , mResourceBrowser(NULL)
       , mVolEditActorProxy(NULL)
    {
@@ -104,10 +105,10 @@ namespace dtEditQt
       dtDAL::Project::GetInstance().SetEditMode(true);
 
       ViewportManager::GetInstance();
-      
+
       //Read STAGE configuration file
       if (stageConfigFile != "")
-      {
+      {                  
          ConfigurationManager::GetInstance().ReadXML(mSTAGEConfigFullPath);
       }
 
@@ -129,9 +130,9 @@ namespace dtEditQt
       QIcon icon;
       icon.addPixmap(QPixmap(UIResources::ICON_APPLICATION.c_str()));
       setWindowIcon(icon);      
-      
+
       // setup plugins
-      SetupPlugins();
+      SetupPlugins();           
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -162,64 +163,72 @@ namespace dtEditQt
 
       mRecentProjs->addAction(editorActions.mActionFileRecentProject0);
 
-      if (ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::MENU, "MenuType") == "Basic")
-      {
-         mFileMenu = menuBar()->addMenu(tr("&Edit Map"));         
-      }
-      else
-      {
-         mFileMenu = menuBar()->addMenu(tr("&File"));
-         mFileMenu->addAction(editorActions.mActionFileNewMap);
-         mFileMenu->addAction(editorActions.mActionFileOpenMap);
-         mFileMenu->addAction(editorActions.mActionFileCloseMap);
-         mFileMenu->addSeparator();
-         mFileMenu->addAction(editorActions.mActionFileSaveMap);
-         mFileMenu->addAction(editorActions.mActionFileSaveMapAs);
-         mFileMenu->addSeparator();
-         mFileMenu->addAction(editorActions.mActionFileExportPrefab);
-         mFileMenu->addSeparator();
-         mFileMenu->addAction(editorActions.mActionFileChangeProject);
-         mFileMenu->addSeparator();
-         mFileMenu->addMenu(mRecentProjs);
-         mFileMenu->addSeparator();
-         mFileMenu->addAction(editorActions.mActionFileEditLibraryPaths);
-         mFileMenu->addSeparator();
-         mFileMenu->addAction(editorActions.mActionFileExit);
+      mFileMenu = menuBar()->addMenu(tr("&File"));
+      mFileMenu->addAction(editorActions.mActionFileNewMap);
+      mFileMenu->addAction(editorActions.mActionFileOpenMap);
+      mFileMenu->addAction(editorActions.mActionFileCloseMap);
+      mFileMenu->addSeparator();
+      mFileMenu->addAction(editorActions.mActionFileSaveMap);
+      mFileMenu->addAction(editorActions.mActionFileSaveMapAs);
+      mFileMenu->addSeparator();
+      mFileMenu->addAction(editorActions.mActionFileExportPrefab);
+      mFileMenu->addSeparator();
+      mFileMenu->addAction(editorActions.mActionFileChangeProject);
+      mFileMenu->addSeparator();
+      mFileMenu->addMenu(mRecentProjs);
+      mFileMenu->addSeparator();
+      mFileMenu->addAction(editorActions.mActionFileEditLibraryPaths);
+      mFileMenu->addSeparator();
+      mFileMenu->addAction(editorActions.mActionFileExit);
 
-         mEditMenu = menuBar()->addMenu(tr("&Edit"));
-         mEditMenu->addAction(editorActions.mActionEditUndo);
-         mEditMenu->addAction(editorActions.mActionEditRedo);
-         mEditMenu->addSeparator();
-         mEditMenu->addAction(editorActions.mActionLocalSpace);
-         mEditMenu->addSeparator();
-         mEditMenu->addAction(editorActions.mActionGroupActors);
-         mEditMenu->addAction(editorActions.mActionUngroupActors);
-         mEditMenu->addAction(editorActions.mActionEditDuplicateActor);
-         mEditMenu->addAction(editorActions.mActionEditDeleteActor);
-         mEditMenu->addAction(editorActions.mActionEditGroundClampActors);
-         mEditMenu->addAction(editorActions.mActionEditGotoActor);
-         mEditMenu->addSeparator();
-         mEditMenu->addAction(editorActions.mActionGetGotoPosition);
-         mEditMenu->addSeparator();
-         mEditMenu->addAction(editorActions.mActionEditMapProperties);
-         mEditMenu->addAction(editorActions.mActionEditMapLibraries);
-         mEditMenu->addAction(editorActions.mActionEditMapEvents);
-         mEditMenu->addSeparator();
-         mEditMenu->addAction(editorActions.mActionFileEditPreferences);
+      mEditMenu = menuBar()->addMenu(tr("&Edit"));
+      mEditMenu->addAction(editorActions.mActionEditUndo);
+      mEditMenu->addAction(editorActions.mActionEditRedo);
+      mEditMenu->addSeparator();
+      mEditMenu->addAction(editorActions.mActionLocalSpace);
+      mEditMenu->addSeparator();
+      mEditMenu->addAction(editorActions.mActionGroupActors);
+      mEditMenu->addAction(editorActions.mActionUngroupActors);
+      mEditMenu->addAction(editorActions.mActionEditDuplicateActor);
+      mEditMenu->addAction(editorActions.mActionEditDeleteActor);
+      mEditMenu->addAction(editorActions.mActionEditGroundClampActors);
+      mEditMenu->addAction(editorActions.mActionEditGotoActor);
+      mEditMenu->addSeparator();
+      mEditMenu->addAction(editorActions.mActionGetGotoPosition);
+      mEditMenu->addSeparator();
+      mEditMenu->addAction(editorActions.mActionEditMapProperties);
+      mEditMenu->addAction(editorActions.mActionEditMapLibraries);
+      mEditMenu->addAction(editorActions.mActionEditMapEvents);
+      mEditMenu->addSeparator();
+      mEditMenu->addAction(editorActions.mActionFileEditPreferences);
 
-         mWindowMenu = menuBar()->addMenu(tr("&Window"));
+      mWindowMenu = menuBar()->addMenu(tr("&Window"));
+      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT,
+                                             CONF_MGR_SHOW_PROPERTY_EDITOR) != "false")
+      {
          mWindowMenu->addAction(editorActions.mActionWindowsPropertyEditor);
+      }
+
+      mWindowMenu->addAction(editorActions.mActionWindowsActor);
+
+      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT,
+         CONF_MGR_SHOW_ACTOR_BROWSER) != "false")
+      {
          mWindowMenu->addAction(editorActions.mActionWindowsActorSearch);
+      }
+      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT,
+         CONF_MGR_SHOW_RESOURCE_BROWSER) != "false")
+      {
          mWindowMenu->addAction(editorActions.mActionWindowsResourceBrowser);
-         mWindowMenu->addSeparator();
-         mWindowMenu->addAction(editorActions.mActionWindowsResetWindows);
+      }
+      mWindowMenu->addSeparator();
+      mWindowMenu->addAction(editorActions.mActionWindowsResetWindows);
 
-         mToolsMenu = menuBar()->addMenu(tr("&Tools"));
+      mToolsMenu = menuBar()->addMenu(tr("&Tools"));
 
-         mHelpMenu = menuBar()->addMenu(tr("&Help"));
-         mHelpMenu->addAction(editorActions.mActionHelpAboutEditor);
-         mHelpMenu->addAction(editorActions.mActionHelpAboutQT);
-      } //end else 
+      mHelpMenu = menuBar()->addMenu(tr("&Help"));
+      mHelpMenu->addAction(editorActions.mActionHelpAboutEditor);
+      mHelpMenu->addAction(editorActions.mActionHelpAboutQT);      
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -297,8 +306,8 @@ namespace dtEditQt
       // setup the layout of the dock windows
       setCorner(Qt::TopLeftCorner, Qt::LeftDockWidgetArea/*Qt::DockWindowAreaLeft*/);
 
-
-      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, CONF_MGR_SHOW_PROPERTY_EDITOR) != "false")
+      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT,
+                                            CONF_MGR_SHOW_PROPERTY_EDITOR) != "false")
       {      
          // create the main left dock window
          mPropertyWindow = new PropertyEditor(this);
@@ -321,20 +330,20 @@ namespace dtEditQt
          addDockWidget(Qt::LeftDockWidgetArea,  mPropertyWindow);
       }
 
-      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, CONF_MGR_SHOW_ACTOR_TAB) != "false")
+      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, CONF_MGR_SHOW_ACTOR_DOCKWIDGET) != "false")
       {
-         mActorTab = new ActorTab(this);
-         mActorTab->setObjectName("ActorTab");
-         mActorTab->setFeatures(QDockWidget::AllDockWidgetFeatures);
-         addDockWidget(Qt::LeftDockWidgetArea, mActorTab);
+         mActorDockWidg = new ActorDockWidget(this);
+         mActorDockWidg->setObjectName("ActorDockWidget");
+         mActorDockWidg->setFeatures(QDockWidget::AllDockWidgetFeatures);
+         addDockWidget(Qt::LeftDockWidgetArea, mActorDockWidg);
       }
 
-      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, CONF_MGR_SHOW_SEARCH_TAB) != "false")
+      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, CONF_MGR_SHOW_SEARCH_DOCKWIDGET) != "false")
       {
-         mActorSearchTab = new ActorSearchTab(this);
-         mActorSearchTab->setObjectName("ActorSearchTab");
-         mActorTab->setFeatures(QDockWidget::AllDockWidgetFeatures);
-         addDockWidget(Qt::LeftDockWidgetArea, mActorSearchTab);
+         mActorSearchDockWidg = new ActorSearchDockWidget(this);
+         mActorSearchDockWidg->setObjectName("ActorSearchDockWidget");
+         mActorDockWidg->setFeatures(QDockWidget::AllDockWidgetFeatures);
+         addDockWidget(Qt::LeftDockWidgetArea, mActorSearchDockWidg);
       }
 
       if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, CONF_MGR_SHOW_RESOURCE_BROWSER) != "false")
@@ -465,6 +474,7 @@ namespace dtEditQt
       EditorActions::GetInstance().mActionEditTaskEditor->setEnabled(hasBoth);
       EditorActions::GetInstance().mActionEditMapEvents->setEnabled(hasBoth);
 
+      EditorActions::GetInstance().mActionWindowsActor->setEnabled(hasBoth);
       EditorActions::GetInstance().mActionWindowsActorSearch->setEnabled(hasBoth);
       EditorActions::GetInstance().mActionWindowsPropertyEditor->setEnabled(hasBoth);
       EditorActions::GetInstance().mActionWindowsResourceBrowser->setEnabled(hasBoth);
@@ -478,9 +488,9 @@ namespace dtEditQt
       {
          mPropertyWindow->setEnabled(hasBoth);
       }
-      if(mActorTab != NULL)
+      if(mActorDockWidg != NULL)
       {
-         mActorTab->setEnabled(hasBoth);
+         mActorDockWidg->setEnabled(hasBoth);
       }
       if(mResourceBrowser != NULL)
       {
@@ -504,12 +514,20 @@ namespace dtEditQt
          addDockWidget(Qt::LeftDockWidgetArea,  mPropertyWindow);
       }
       
-      if (mActorTab != NULL)
+      if (mActorDockWidg != NULL)
       {
-         mActorTab->setFloating(false);
-         mActorTab->setVisible(true);
+         mActorDockWidg->setFloating(false);
+         mActorDockWidg->setVisible(true);
+         EditorActions::GetInstance().mActionWindowsActor->setChecked(true);
+         addDockWidget(Qt::LeftDockWidgetArea,  mActorDockWidg);
+      }
+
+      if (mActorSearchDockWidg != NULL)
+      {
+         mActorSearchDockWidg->setFloating(false);
+         mActorSearchDockWidg->setVisible(true);
          EditorActions::GetInstance().mActionWindowsActorSearch->setChecked(true);
-         addDockWidget(Qt::LeftDockWidgetArea,  mActorTab);
+         addDockWidget(Qt::LeftDockWidgetArea,  mActorSearchDockWidg);
       }
 
       if (mResourceBrowser != NULL)
@@ -640,9 +658,9 @@ namespace dtEditQt
          {
             mPropertyWindow->setUpdatesEnabled(true);
          }
-         if (mActorTab != NULL)
+         if (mActorDockWidg != NULL)
          {
-            mActorTab->setUpdatesEnabled(true);
+            mActorDockWidg->setUpdatesEnabled(true);
          }
          if (mResourceBrowser != NULL)
          {
@@ -656,9 +674,9 @@ namespace dtEditQt
          {
             mPropertyWindow->setUpdatesEnabled(true);
          }
-         if (mActorTab != NULL)
+         if (mActorDockWidg != NULL)
          {
-            mActorTab->setUpdatesEnabled(true);
+            mActorDockWidg->setUpdatesEnabled(true);
          }
          if (mResourceBrowser != NULL)
          {
@@ -674,9 +692,9 @@ namespace dtEditQt
          {
             mPropertyWindow->setUpdatesEnabled(true);
          }
-         if (mActorTab != NULL)
+         if (mActorDockWidg != NULL)
          {
-            mActorTab->setUpdatesEnabled(true);
+            mActorDockWidg->setUpdatesEnabled(true);
          }
          if (mResourceBrowser != NULL)
          {
@@ -884,11 +902,20 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void MainWindow::onActorSearchSelection()
+   void MainWindow::onActorSelection()
    {
-      if(mActorTab != NULL)
+      if(mActorDockWidg != NULL)
       {
-         mActorTab->setVisible(EditorActions::GetInstance().mActionWindowsActorSearch->isChecked());
+         mActorDockWidg->setVisible(EditorActions::GetInstance().mActionWindowsActor->isChecked());
+      }
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void MainWindow::onActorSearchSelection()
+   {   
+      if (mActorSearchDockWidg != NULL)
+      {
+         mActorSearchDockWidg->setVisible(EditorActions::GetInstance().mActionWindowsActorSearch->isChecked());
       }
    }
 
@@ -948,15 +975,19 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void MainWindow::setWindowMenuTabsChecked()
    {
-      if(mPropertyWindow != NULL)
+      if(mPropertyWindow != NULL && EditorActions::GetInstance().mActionWindowsPropertyEditor != NULL)
       {
          EditorActions::GetInstance().mActionWindowsPropertyEditor->setChecked(mPropertyWindow->isVisible());
       }
-      if(mActorTab != NULL)
+      if(mActorDockWidg != NULL && EditorActions::GetInstance().mActionWindowsActor != NULL)
       {
-         EditorActions::GetInstance().mActionWindowsActorSearch->setChecked(mActorTab->isVisible());
+         EditorActions::GetInstance().mActionWindowsActor->setChecked(mActorDockWidg->isVisible());
       }
-      if(mResourceBrowser != NULL)
+      if(mActorSearchDockWidg != NULL && EditorActions::GetInstance().mActionWindowsActorSearch != NULL)
+      {
+         EditorActions::GetInstance().mActionWindowsActorSearch->setChecked(mActorSearchDockWidg->isVisible());
+      }
+      if(mResourceBrowser != NULL && EditorActions::GetInstance().mActionWindowsResourceBrowser != NULL)
       {
          EditorActions::GetInstance().mActionWindowsResourceBrowser->setChecked(mResourceBrowser->isVisible());
       }
@@ -969,6 +1000,8 @@ namespace dtEditQt
 
       connect(editorActions.mActionWindowsPropertyEditor, SIGNAL(triggered()),
          this, SLOT(onPropertyEditorSelection()));
+      connect(editorActions.mActionWindowsActor,          SIGNAL(triggered()),
+         this, SLOT(onActorSelection()));
       connect(editorActions.mActionWindowsActorSearch,    SIGNAL(triggered()),
          this, SLOT(onActorSearchSelection()));
       connect(editorActions.mActionWindowsResourceBrowser,SIGNAL(triggered()),
