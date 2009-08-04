@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>308</width>
-    <height>178</height>
+    <width>302</width>
+    <height>205</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>100</width>
-    <height>150</height>
+    <height>200</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -24,9 +24,9 @@
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>0</y>
+      <y>-4</y>
       <width>300</width>
-      <height>16</height>
+      <height>20</height>
      </rect>
     </property>
     <property name="font">
@@ -36,7 +36,7 @@
      </font>
     </property>
     <property name="text">
-     <string> Create actors at random places in the volume brush</string>
+     <string> Create actors at random in the volume brush</string>
     </property>
    </widget>
    <widget class="QWidget" name="formLayoutWidget">
@@ -45,7 +45,7 @@
       <x>10</x>
       <y>20</y>
       <width>281</width>
-      <height>121</height>
+      <height>147</height>
      </rect>
     </property>
     <layout class="QFormLayout" name="formLayout">
@@ -99,36 +99,25 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="0">
-      <widget class="QCheckBox" name="mRandomRotationCheckBox">
+     <item row="4" column="0">
+      <widget class="QCheckBox" name="mRandomYRotationCheckBox">
        <property name="text">
-        <string>Random Rotation About:</string>
+        <string>Random Rotation Abt Y-Axis</string>
        </property>
       </widget>
      </item>
-     <item row="3" column="1">
-      <widget class="QComboBox" name="mRandomAxisComboBox">
-       <property name="maximumSize">
-        <size>
-         <width>75</width>
-         <height>16777215</height>
-        </size>
+     <item row="3" column="0">
+      <widget class="QCheckBox" name="mRandomXRotationCheckBox">
+       <property name="text">
+        <string>Random Rotation Abt X-Axis</string>
        </property>
-       <item>
-        <property name="text">
-         <string>X Axis</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Y Axis</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Z Axis</string>
-        </property>
-       </item>
+      </widget>
+     </item>
+     <item row="5" column="0">
+      <widget class="QCheckBox" name="mRandomZRotationCheckBox">
+       <property name="text">
+        <string>Random Rotation Abt Z-Axis</string>
+       </property>
       </widget>
      </item>
     </layout>
