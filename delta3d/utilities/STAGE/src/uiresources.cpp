@@ -54,6 +54,8 @@ namespace dtEditQt
       ICON_BRUSH_SPHERE = dtCore::GetDeltaRootPath() + "/utilities/STAGE/icons/sphere.png";
       ICON_BRUSH_RESET = dtCore::GetDeltaRootPath() + "/utilities/STAGE/icons/resetBrush.png";
 
+      ICON_EYE = dtCore::GetDeltaRootPath() + "/utilities/STAGE/icons/eye.png";      
+
       ICON_TOOLMODE_NORMAL = ":/icons/normalmode.png";
 
       ICON_VIEWMODE_TEXTURES = ":/icons/texturemode_tiny.png";
@@ -116,6 +118,8 @@ namespace dtEditQt
    std::string UIResources::ICON_BRUSH_CUBE("");
    std::string UIResources::ICON_BRUSH_SPHERE("");
    std::string UIResources::ICON_BRUSH_RESET("");
+
+   std::string UIResources::ICON_EYE("");
 
    std::string UIResources::ICON_TOOLMODE_NORMAL("");
 

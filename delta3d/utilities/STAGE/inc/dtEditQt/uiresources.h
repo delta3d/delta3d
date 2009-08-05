@@ -61,6 +61,8 @@ namespace dtEditQt
       static std::string ICON_BRUSH_CUBE;
       static std::string ICON_BRUSH_SPHERE;
       static std::string ICON_BRUSH_RESET;
+      
+      static std::string ICON_EYE;      
 
       static std::string ICON_TOOLMODE_NORMAL;
 
