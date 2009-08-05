@@ -102,21 +102,21 @@
      <item row="4" column="0">
       <widget class="QCheckBox" name="mRandomYRotationCheckBox">
        <property name="text">
-        <string>Random Rotation Abt Y-Axis</string>
+        <string>Rotation About Y-Axis</string>
        </property>
       </widget>
      </item>
      <item row="3" column="0">
       <widget class="QCheckBox" name="mRandomXRotationCheckBox">
        <property name="text">
-        <string>Random Rotation Abt X-Axis</string>
+        <string>Rotation About X-Axis</string>
        </property>
       </widget>
      </item>
      <item row="5" column="0">
       <widget class="QCheckBox" name="mRandomZRotationCheckBox">
        <property name="text">
-        <string>Random Rotation Abt Z-Axis</string>
+        <string>Rotation About Z-Axis</string>
        </property>
       </widget>
      </item>
