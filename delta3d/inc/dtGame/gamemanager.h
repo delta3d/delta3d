@@ -227,9 +227,9 @@ namespace dtGame
             }
 
             /**
-             * Wraps up several methods used to lookup and create actors from prototypes. 
+             * Wraps up several methods used to lookup and create actors from prototypes.
              * It attempts to create a new actor from a prototype by using the name.  Assumes only 1 match.
-             * @param prototypeName The unique name to look for. 
+             * @param prototypeName The unique name to look for.
              * @param proxy Where the new actor proxy will go (with correct type) - ex dtCore::RefPtr<dtDAL::ActorProxy> newProxy
              */
             template <typename T>
@@ -239,7 +239,7 @@ namespace dtGame
                FindPrototypeByName(prototypeName, prototypeProxy);
                if (prototypeProxy != NULL)
                {
-                  dtCore::RefPtr<dtDAL::ActorProxy> newActorProxy = 
+                  dtCore::RefPtr<dtDAL::ActorProxy> newActorProxy =
                      CreateActorFromPrototype(prototypeProxy->GetId());
                   proxy = dynamic_cast<T*>(newActorProxy.get());
                }
@@ -1133,10 +1133,6 @@ namespace dtGame
              * @param envActor The about actor of the message
              */
             void SendEnvironmentChangedMessage(IEnvGameActorProxy* envActor);
-
-            template <typename MapType, typename KeyType>
-            void CheckForDuplicateRegistration(const KeyType& type, const std::string& typeName,
-                     GameActorProxy& proxy, const std::string& invokableName, MapType& mapToCheck);
 
             dtCore::RefPtr<MachineInfo>         mMachineInfo;
             dtCore::RefPtr<IEnvGameActorProxy>  mEnvironment;
