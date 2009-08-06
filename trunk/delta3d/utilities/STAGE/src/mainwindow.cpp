@@ -955,6 +955,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void MainWindow::onActorProxyNameChanged(dtCore::RefPtr<dtDAL::ActorProxy> proxy, std::string oldName)
    {
+      EditorData::GetInstance().getCurrentMap()->OnProxyRenamed(*proxy.get());
       EditorData::GetInstance().getCurrentMap()->SetModified(true);
       updateWindowTitle();
    }

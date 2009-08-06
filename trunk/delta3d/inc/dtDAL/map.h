@@ -307,6 +307,13 @@ namespace dtDAL
          bool RemoveProxy(const ActorProxy& proxy);
 
          /**
+         * Should be called when a proxy has been renamed.
+         * This will keep track of our highest number values.
+         * @param proxy the proxy that is being renamed.
+         */
+         void OnProxyRenamed(ActorProxy& proxy);
+
+         /**
           * Clear all the proxies from the map.
           */
          void ClearProxies();
