@@ -231,6 +231,7 @@ namespace dtDAL
       std::string name, number;
       SplitProxyName(proxyName, name, number);
 
+      // Re-number the proxy with a unique value.
       if (reNumber)
       {
          if (mProxyNumberMap.find(name) != mProxyNumberMap.end())
@@ -262,8 +263,6 @@ namespace dtDAL
             mProxyNumberMap[name] = num;
          }
       }
-      
-      // Append a unique number to the end of the proxy.
 
       if (mProxyMap.insert(std::make_pair(proxy.GetId(), dtCore::RefPtr<ActorProxy>(&proxy))).second) 
       {
@@ -306,6 +305,30 @@ namespace dtDAL
          return true;
       }
       return false;
+   }
+
+   void Map::OnProxyRenamed(ActorProxy& proxy)
+   {
+      std::string proxyName = proxy.GetName();
+      std::string name, number;
+      SplitProxyName(proxyName, name, number);
+
+      // Keep track of our highest number value.
+      if (!number.empty())
+      {
+         int num = atoi(number.c_str());
+         int highNum = 0;
+
+         if (mProxyNumberMap.find(name) != mProxyNumberMap.end())
+         {
+            highNum = mProxyNumberMap[name];
+         }
+
+         if (highNum < num)
+         {
+            mProxyNumberMap[name] = num;
+         }
+      }
    }
 
    void Map::ClearProxies() 
