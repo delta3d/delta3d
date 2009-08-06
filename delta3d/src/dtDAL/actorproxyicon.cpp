@@ -393,8 +393,7 @@ namespace dtDAL
       pm->setMode(osg::PolygonMode::FRONT_AND_BACK,osg::PolygonMode::FILL);
 
       osg::TessellationHints *tessHints = new osg::TessellationHints();
-      tessHints->setTessellationMode(osg::TessellationHints::USE_TARGET_NUM_FACES);
-      tessHints->setTargetNumFaces(50);
+      tessHints->setDetailRatio(0.1f);
       tessHints->setCreateNormals(false);
       tessHints->setCreateTextureCoords(true);
 
@@ -421,10 +420,8 @@ namespace dtDAL
       coneTx->addChild(coneGeode);
 
       osg::Group *group = new osg::Group();
-      osg::MatrixTransform* scaleMatrix = new osg::MatrixTransform;
-      scaleMatrix->addChild(cylinderTx);
-      scaleMatrix->addChild(coneTx);
-      group->addChild(scaleMatrix);
+      group->addChild(cylinderTx);
+      group->addChild(coneTx);
       return group;
    }
 
