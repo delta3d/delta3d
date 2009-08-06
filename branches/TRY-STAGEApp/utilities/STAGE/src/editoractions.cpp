@@ -318,10 +318,15 @@ namespace dtEditQt
       mActionBrushShape->setStatusTip(tr("Changes STAGE Brush shape."));
       connect(mActionBrushShape, SIGNAL(triggered()), this, SLOT(slotChangeBrushShape()));
      
-	  // Brush - Reset Position and Scale
+	  // Brush - Reset Position and Scale and Rotation
       mActionBrushReset = new QAction(QIcon(UIResources::ICON_BRUSH_RESET.c_str()), tr("Reset/Recall Brush"), this);
       mActionBrushReset->setStatusTip(tr("Bring Brush back in front of camera."));
       connect(mActionBrushReset, SIGNAL(triggered()), this, SLOT(slotResetBrush()));
+
+      // Brush - Hide/Show brush
+      mActionHideShowBrush = new QAction(QIcon(UIResources::ICON_EYE.c_str()), tr("Show/Hide Brush"), this);
+      mActionHideShowBrush->setStatusTip(tr("Show/Hide Brush"));
+      connect(mActionHideShowBrush, SIGNAL(triggered()), this, SLOT(slotShowHideBrush()));
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -1166,7 +1171,16 @@ namespace dtEditQt
    //////////////////////////////////////////////////////////////////////////////
    void EditorActions::slotResetBrush()
    {
-      dtActors::VolumeEditActor* theBrushActor = EditorData::GetInstance().getMainWindow()->GetVolumeEditActor();
+      dtActors::VolumeEditActor* theBrushActor = 
+                EditorData::GetInstance().getMainWindow()->GetVolumeEditActor();
+
+      //make sure the brush is not masked away:
+      if (theBrushActor->GetOSGNode()->getNodeMask() == 0)
+      {
+         //since the brush is now hidden, this call should show it:
+         slotShowHideBrush();
+      }
+
       theBrushActor->SetScale(osg::Vec3(1.0f, 1.0f, 1.0f));
       
       dtCore::Transform xForm;
@@ -1184,10 +1198,55 @@ namespace dtEditQt
       trans[2] += viewDir[2] * len * 5.0;
       xForm.SetTranslation(trans);
 
-      theBrushActor->SetTransform(xForm);
+      //Volume brush's rotation should be 0,0,0
+      xForm.SetRotation(0.0f, 0.0f, 0.0f);
+
+      theBrushActor->SetTransform(xForm);      
 
       ViewportManager::GetInstance().refreshAllViewports();
    }
+
+   //////////////////////////////////////////////////////////////////////////////
+   void EditorActions::slotShowHideBrush()
+   {
+      dtActors::VolumeEditActor* theBrushActor = 
+         EditorData::GetInstance().getMainWindow()->GetVolumeEditActor();
+
+      if (theBrushActor->GetOSGNode()->getNodeMask() == 0)
+      {
+         mActionHideShowBrush->setIcon(QIcon(UIResources::ICON_EYE.c_str()));
+
+         theBrushActor->EnableOutline(true);
+
+         theBrushActor->GetOSGNode()->setNodeMask(0xffffffff);
+      }
+      else
+      {
+         //Need a hidden icon (eye closed?)
+         //mActionHideShowBrush->setIcon(QIcon());
+
+         //make sure brush is not selected:
+         ViewportOverlay* overlay = ViewportManager::GetInstance().getViewportOverlay();
+
+         overlay->removeActorFromCurrentSelection(
+                  EditorData::GetInstance().getMainWindow()->GetVolumeEditActorProxy());
+         ViewportOverlay::ActorProxyList apl = overlay->getCurrentActorSelection();
+
+         //emitActorsSelected method requires a different data type than what
+         //getCurrentActorSelection returned so we'll have to do this little copy:
+         ActorProxyRefPtrVector aplrp;
+         for (size_t i = 0; i < apl.size(); ++i)
+         {
+            aplrp.push_back(apl[i]);
+         }      
+         EditorEvents::GetInstance().emitActorsSelected(aplrp);
+
+         theBrushActor->GetOSGNode()->setNodeMask(0);         
+      }
+
+      ViewportManager::GetInstance().refreshAllViewports();
+   }
+
 
    //////////////////////////////////////////////////////////////////////////////
    void EditorActions::slotTaskEditor()
@@ -1658,7 +1717,6 @@ namespace dtEditQt
 
             ConfigurationManager::GetInstance().SetVariable(
                ConfigurationManager::GENERAL, CONF_MGR_MAP_FILE, newMap->GetName());
-
          }
          catch (const dtUtil::Exception& e)
          {
@@ -1671,6 +1729,9 @@ namespace dtEditQt
       // Update the editor state to reflect the changes.
       EditorData::GetInstance().setCurrentMap(newMap);
       EditorEvents::GetInstance().emitCurrentMapChanged();
+
+      // Now load the first camera if there is one.
+      ViewportManager::GetInstance().LoadPresetCamera(1);
 
       // Now that we have changed maps, clear the current selection.
       std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > emptySelection;

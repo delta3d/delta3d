@@ -275,6 +275,7 @@ namespace dtEditQt
       mBrushToolBar->setMinimumWidth(10);
       mBrushToolBar->addAction(EditorActions::GetInstance().mActionBrushShape);
       mBrushToolBar->addAction(EditorActions::GetInstance().mActionBrushReset);
+      mBrushToolBar->addAction(EditorActions::GetInstance().mActionHideShowBrush);
       addToolBar(mBrushToolBar);
 
       mToolsToolBar = new QToolBar(this);

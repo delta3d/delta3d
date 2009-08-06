@@ -216,6 +216,9 @@ namespace dtEditQt
       // Action - Brush - Reset Brush
       QAction* mActionBrushReset;
 
+      // Action - Brush - Hide/Show Brush
+      QAction* mActionHideShowBrush;
+
       // Action - File - Library Paths Dialog
       QAction* mActionFileEditLibraryPaths;
 
@@ -371,6 +374,11 @@ namespace dtEditQt
        * Slot - Reset the STAGE Brush (reset to cube and put in front of camera)
        */
       void slotResetBrush();
+
+      /**
+      * Slot - Show/Hide the STAGE Brush
+      */
+      void slotShowHideBrush();
 
       /**
        * Slot - File Library Paths event.  Spawns the edit library paths dialog.

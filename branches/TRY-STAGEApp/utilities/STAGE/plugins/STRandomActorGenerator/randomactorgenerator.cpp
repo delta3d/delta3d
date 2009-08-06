@@ -206,28 +206,25 @@ void RandomActorGeneratorPlugin::NewActorProxyInsideVolumeEditor(dtDAL::ActorPro
    //apply the random translations to the cloned actor's matrix
    cloneXForm.SetTranslation(spawnPoint[0], spawnPoint[1], spawnPoint[2]);   
 
-   if (mUI.mRandomRotationCheckBox->checkState())
+   //apply random rotation on the specified axes      
+   float randAngle;
+   if (mUI.mRandomXRotationCheckBox->isChecked()) //X-Axis
    {
-      //apply random rotation on the specified axis
-
       //get a random angle (between 0 and 360 degrees.
-      float randAngle = (360.0f * rand()) / RAND_MAX;      
-           
-      if (mUI.mRandomAxisComboBox->currentIndex() == 0) //X-Axis
-      {
-         p += randAngle;
-      }
-      else if (mUI.mRandomAxisComboBox->currentIndex() == 1) //Y-Axis
-      {
-         r += randAngle;
-      }
-      else if (mUI.mRandomAxisComboBox->currentIndex() == 2) //Z-Axis
-      {
-         h += randAngle;
-      }
-
-      cloneXForm.SetRotation(h,p,r);      
+      randAngle = (360.0f * rand()) / RAND_MAX;
+      p += randAngle;
    }
+   if (mUI.mRandomYRotationCheckBox->isChecked()) //Y-Axis
+   {
+      randAngle = (360.0f * rand()) / RAND_MAX;
+      r += randAngle;
+   }
+   if (mUI.mRandomZRotationCheckBox->isChecked()) //Z-Axis
+   {
+      randAngle = (360.0f * rand()) / RAND_MAX;
+      h += randAngle;
+   }
+   cloneXForm.SetRotation(h,p,r);   
 
    aClonePtr->SetTransform(cloneXForm);
    
