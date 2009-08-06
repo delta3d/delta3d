@@ -69,7 +69,6 @@ namespace dtCore
       : dtCore::Base(name)
       , mIsDirty(false)
       , mIsShared(true)
-      , mVarName(name)
       , mParentShader(NULL)
       , mUniform(NULL)
    {
