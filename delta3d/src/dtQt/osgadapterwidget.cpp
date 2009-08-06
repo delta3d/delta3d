@@ -130,7 +130,9 @@ namespace dtQt
                mDrawOnSeparateThread(drawOnSeparateThread)
    {
       mTimer.setInterval(10);
-      setAutoBufferSwap(!drawOnSeparateThread);
+      
+      //don't let Qt perform the swap buffer since OSG will be handling that
+      setAutoBufferSwap(false);
 
       // This enables us to track mouse movement even when
       // no button is pressed.  The motion models depend
