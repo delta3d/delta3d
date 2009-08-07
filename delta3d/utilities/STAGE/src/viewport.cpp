@@ -378,7 +378,7 @@ namespace dtEditQt
 
       //ensure that the Brush outline is on (if it turns out the brush is selected it
       //will get disabled later)
-      dtEditQt::EditorData::GetInstance().getMainWindow()->GetVolumeEditActor()->EnableOutline(true);
+      //dtEditQt::EditorData::GetInstance().getMainWindow()->GetVolumeEditActor()->EnableOutline(true);
 
       dtCore::DeltaDrawable* drawable = getPickDrawable(x, y);
       if (!drawable)
@@ -388,7 +388,7 @@ namespace dtEditQt
       }
 
       ViewportOverlay* overlay = ViewportManager::GetInstance().getViewportOverlay();
-      ViewportOverlay::ActorProxyList& selection = overlay->getCurrentActorSelection();
+      ViewportOverlay::ActorProxyList selection = overlay->getCurrentActorSelection();
 
       // First see if the selected drawable is an actor.
       dtDAL::ActorProxy* newSelection = currMap->GetProxyById(drawable->GetUniqueId());
@@ -469,6 +469,7 @@ namespace dtEditQt
       // key is pressed) add the current selection to the newly selected proxy.
       if (overlay->getMultiSelectMode())
       {
+         bool unSelecting = false;
          for (int index = 0; index < (int)toSelect.size(); index++)
          {
             for (int selIndex = 0; selIndex < (int)selection.size(); selIndex++)
@@ -476,15 +477,43 @@ namespace dtEditQt
                if (toSelect[index] == selection[selIndex])
                {
                   selection.erase(selection.begin() + selIndex);
+
+                  // If we are clicking on the current primary selection, then un-select it instead.
+                  if (selIndex == 0 && index == 0)
+                  {
+                     unSelecting = true;
+                  }
                   break;
                }
             }
+         }
+
+         // Clearing the toSelect list will un-select the currently selected actor as well as all the actors within its group.
+         if (unSelecting)
+         {
+            toSelect.clear();
          }
 
          ViewportOverlay::ActorProxyList::iterator itor = selection.begin();
          for (itor = selection.begin(); itor != selection.end(); ++itor)
          {
             toSelect.push_back(const_cast<dtDAL::ActorProxy*>(itor->get()));
+         }
+      }
+      // If we are not multi-selecting, then selecting an actor that is already selected
+      // will un-select.
+      else
+      {
+         for (int index = 0; index < (int)toSelect.size(); index++)
+         {
+            for (int selIndex = 0; selIndex < (int)selection.size(); selIndex++)
+            {
+               if (toSelect[index] == selection[selIndex])
+               {
+                  toSelect.clear();
+                  break;
+               }
+            }
          }
       }
 
@@ -640,31 +669,42 @@ namespace dtEditQt
          return NULL;
       }
 
-      ViewportOverlay* overlay = ViewportManager::GetInstance().getViewportOverlay();
-      ViewportOverlay::ActorProxyList& selection = overlay->getCurrentActorSelection();
+      //ViewportOverlay* overlay = ViewportManager::GetInstance().getViewportOverlay();
+      //ViewportOverlay::ActorProxyList& selection = overlay->getCurrentActorSelection();
 
-      dtActors::VolumeEditActorProxy* brushProxy =
-         EditorData::GetInstance().getMainWindow()->GetVolumeEditActorProxy();
+      //dtActors::VolumeEditActorProxy* brushProxy =
+      //   EditorData::GetInstance().getMainWindow()->GetVolumeEditActorProxy();
 
-      //if the STAGE Brush is already selected,
-      //then attempt to select the next thing under it
-      if (selection.size() > 0)
-      {
-         if (brushProxy == selection[0])
-         {
-            osgUtil::IntersectVisitor::HitList& hitList = mIsector->GetHitList();
-            for (unsigned short i = 1; i < mIsector->GetNumberOfHits(); i++)
-            {
-               osg::NodePath &nodePath = hitList[i].getNodePath();
-               dtCore::DeltaDrawable* drawable = mIsector->MapNodePathToDrawable(nodePath);
+      ////if the STAGE Brush is already selected,
+      ////then attempt to select the next thing under it
+      //if (selection.size() > 0 && brushProxy)
+      //{
+      //   bool isBrushSelected = false;
+      //   for (int selectionIndex = 0; selectionIndex < (int)selection.size(); selectionIndex++)
+      //   {
+      //      if (selection[selectionIndex] == brushProxy)
+      //      {
+      //         isBrushSelected = true;
+      //         break;
+      //      }
+      //   }
 
-               if (! dynamic_cast<dtActors::VolumeEditActor*>(drawable))
-               {
-                  return drawable;
-               }
-            }
-         }
-      }
+      //   // If we are selecting the brush when it is already selected, select the actor behind the brush instead.
+      //   if (isBrushSelected && brushProxy->GetActor() == mIsector->GetClosestDeltaDrawable())
+      //   {
+      //      osgUtil::IntersectVisitor::HitList& hitList = mIsector->GetHitList();
+      //      for (unsigned short i = 1; i < mIsector->GetNumberOfHits(); i++)
+      //      {
+      //         osg::NodePath &nodePath = hitList[i].getNodePath();
+      //         dtCore::DeltaDrawable* drawable = mIsector->MapNodePathToDrawable(nodePath);
+
+      //         if (! dynamic_cast<dtActors::VolumeEditActor*>(drawable))
+      //         {
+      //            return drawable;
+      //         }
+      //      }
+      //   }
+      //}
 
       return mIsector->GetClosestDeltaDrawable();
    }

@@ -171,8 +171,10 @@ void VolumeEditActor::SetShape(VolumeShapeType& shape)
 
    osg::StateSet* stateSet = mVolumeGeode->getOrCreateStateSet();   
    if (stateSet)
-   {      
+   {
       stateSet->setMode(GL_BLEND, osg::StateAttribute::ON);
+
+      stateSet->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
 
       osg::PolygonMode* polygonMode = new osg::PolygonMode(osg::PolygonMode::FRONT, osg::PolygonMode::FILL);
       stateSet->setAttribute(polygonMode, osg::StateAttribute::OVERRIDE);
@@ -191,8 +193,8 @@ void VolumeEditActor::EnableOutline(bool doEnable)
       SetupWireOutline();
    }
    else
-   {      
-      mShaderGroup->setStateSet(NULL);           
+   {
+      mShaderGroup->setStateSet(NULL);
    }
 }
 
@@ -221,7 +223,7 @@ void VolumeEditActor::SetupWireOutline()
 
    po->setUnits(-1.0f);
    ss->setAttributeAndModes(pm, turnOn);
-   ss->setAttributeAndModes(po, turnOn);   
+   ss->setAttributeAndModes(po, turnOn);
 
    ss->setMode(GL_BLEND,osg::StateAttribute::OVERRIDE | osg::StateAttribute::PROTECTED | osg::StateAttribute::OFF);
 

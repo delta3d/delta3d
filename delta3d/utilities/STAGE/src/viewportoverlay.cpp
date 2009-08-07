@@ -97,9 +97,13 @@ namespace dtEditQt
    {
       ViewportManager::GetInstance().refreshActorSelection(actors);
 
+      //ensure that the Brush outline is on (if it turns out the brush is selected it
+      //will get disabled later)
+      EditorData::GetInstance().getMainWindow()->GetVolumeEditActor()->EnableOutline(true);
+
+      clearCurrentSelection();
       if (actors.empty())
       {
-         clearCurrentSelection();
          EditorActions::GetInstance().mActionFileExportPrefab->setEnabled(false);
          EditorActions::GetInstance().mActionGroupActors->setEnabled(false);
          EditorActions::GetInstance().mActionUngroupActors->setEnabled(false);
@@ -111,12 +115,10 @@ namespace dtEditQt
          return;
       }
 
-      if (!mMultiSelectMode)
-      {
-         clearCurrentSelection();
-      }
-
-      mCurrentActorSelection.clear();
+      //if (!mMultiSelectMode)
+      //{
+      //   clearCurrentSelection();
+      //}
 
       for (unsigned int i = 0; i < actors.size(); ++i)
       {
@@ -245,15 +247,15 @@ namespace dtEditQt
       //other objects
       dtActors::VolumeEditActor* volEditActTest = dynamic_cast<dtActors::VolumeEditActor*>(drawable);
       if (volEditActTest)
-      {         
-         ss->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
+      {
+         //ss->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
          volEditActTest->EnableOutline(false);
       }
-      else
-      {
-         ss->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
-         EditorData::GetInstance().getMainWindow()->GetVolumeEditActor()->EnableOutline(true);
-      }
+      //else
+      //{
+      //   ss->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
+      //   EditorData::GetInstance().getMainWindow()->GetVolumeEditActor()->EnableOutline(true);
+      //}
 
       mSelectionDecorator->addChild(drawable->GetOSGNode());
    }
