@@ -39,10 +39,18 @@ namespace dtActors
       */
       bool Shutdown();
 
+      /**
+      * Sets the validity of this segment.
+      *
+      * @param[in]  enabled  The new status.
+      */
+      void SetSegmentEnabled(bool enabled);
+
       // Post
       dtCore::RefPtr<dtCore::Object>         mPost;
 
       // Segment
+      bool                                   mSegEnabled;
       dtCore::RefPtr<dtCore::Transformable>  mSegOrigin;
       osg::ref_ptr<osg::Geometry>            mSegGeom;
       osg::ref_ptr<osg::Geode>               mSegGeode;
@@ -134,12 +142,13 @@ namespace dtActors
       * Returns whether the drawable is a segment or post.
       *
       * @param[in]   drawable    The drawable.
+      * @param[in]   position    The pick position.
       * @param[out]  pointIndex  The index of the drawable found.
       * @param[out]  subIndex    The sub index of the drawable found.
       *
       * @return     The type of the drawable.
       */
-      DrawableType GetDrawableType(dtCore::DeltaDrawable* drawable, int& pointIndex, int& subIndex);
+      DrawableType GetDrawableType(dtCore::DeltaDrawable* drawable, osg::Vec3 position, int& pointIndex, int& subIndex);
 
       /**
       * This will update the visuals on a single point.
