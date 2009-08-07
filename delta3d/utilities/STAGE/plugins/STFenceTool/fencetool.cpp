@@ -119,7 +119,7 @@ void FenceToolPlugin::onSelectActors(Viewport* vp, QMouseEvent* e, bool* overrid
          // Check if the drawable is a valid point on the actor.
          int pointIndex = 0;
          int subIndex = 0;
-         dtActors::FenceActor::DrawableType type = mActiveActor->GetDrawableType(drawable, pointIndex, subIndex);
+         dtActors::FenceActor::DrawableType type = mActiveActor->GetDrawableType(drawable, position, pointIndex, subIndex);
          if (type != dtActors::FenceActor::DRAWABLE_TYPE_NONE)
          {
             *overrideDefault = true;
