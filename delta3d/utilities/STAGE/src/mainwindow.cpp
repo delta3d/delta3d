@@ -1559,8 +1559,8 @@ namespace dtEditQt
       #ifdef DELTA_WIN32
          #ifdef _DEBUG
            pluginPath += "/Debug";
-         #else
-           pluginPath += "/Release";
+         //#else
+         //  pluginPath += "/Release";
          #endif
       #endif
 
