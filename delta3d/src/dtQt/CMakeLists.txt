@@ -9,13 +9,35 @@ file(GLOB LIB_PUBLIC_HEADERS "${HEADER_PATH}/*.h")
 set(LIB_SOURCES 
 
 baselibrarylisteditor.cpp
+basepropertyeditor.cpp
 deltastepper.cpp
 dialoglistselection.cpp
+dynamicabstractcontrol.cpp
+dynamicabstractparentcontrol.cpp
+dynamicarraycontrol.cpp
+dynamicarrayelementcontrol.cpp
+dynamicboolcontrol.cpp
+dynamiccolorelementcontrol.cpp
+dynamiccolorrgbacontrol.cpp
+dynamiccontainercontrol.cpp
+dynamicdoublecontrol.cpp
+dynamicenumcontrol.cpp
+dynamicfloatcontrol.cpp
+dynamicgroupcontrol.cpp
+dynamicintcontrol.cpp
+dynamiclabelcontrol.cpp
+dynamiclongcontrol.cpp
+dynamicresourcecontrolbase.cpp
+dynamicstringcontrol.cpp
+dynamicvectorelementcontrol.cpp
 librarypathseditor.cpp
 osgadapterwidget.cpp
-osggraphicswindowqt
+osggraphicswindowqt.cpp
 projectcontextdialog.cpp
-qtguiwindowsystemwrapper.cpp 
+propertyeditordelegate.cpp
+propertyeditormodel.cpp
+propertyeditortreeview.cpp
+qtguiwindowsystemwrapper.cpp
 viewwindow.cpp
 
 )

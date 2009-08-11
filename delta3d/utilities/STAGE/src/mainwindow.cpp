@@ -108,7 +108,7 @@ namespace dtEditQt
 
       //Read STAGE configuration file
       if (stageConfigFile != "")
-      {                  
+      {
          ConfigurationManager::GetInstance().ReadXML(mSTAGEConfigFullPath);
       }
 
@@ -129,10 +129,10 @@ namespace dtEditQt
       // add the application icon
       QIcon icon;
       icon.addPixmap(QPixmap(UIResources::ICON_APPLICATION.c_str()));
-      setWindowIcon(icon);      
+      setWindowIcon(icon);
 
       // setup plugins
-      SetupPlugins();           
+      SetupPlugins();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -141,11 +141,11 @@ namespace dtEditQt
       if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::GENERAL,
                                                   CONF_MGR_SAVE_ON_CLOSE) == "true")
       {
-         //Save configuration         
+         //Save configuration
 
          //Sample of how to save some STAGE config variables that we might care about:
          //QSplitter* hSplit = mSplitters.at(0);
-         //QSize hSize = hSplit->frameSize();  
+         //QSize hSize = hSplit->frameSize();
          //mCfgMgr.SetVariable(ConfigurationManager::LAYOUT, CONF_MGR_SHOW_TOP_VIEW, hSize.height());
          //mCfgMgr.SetVariable(ConfigurationManager::LAYOUT, "HorizontalViewFrameWidth", hSize.width());
 
@@ -228,7 +228,7 @@ namespace dtEditQt
 
       mHelpMenu = menuBar()->addMenu(tr("&Help"));
       mHelpMenu->addAction(editorActions.mActionHelpAboutEditor);
-      mHelpMenu->addAction(editorActions.mActionHelpAboutQT);      
+      mHelpMenu->addAction(editorActions.mActionHelpAboutQT);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -309,24 +309,24 @@ namespace dtEditQt
 
       if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT,
                                             CONF_MGR_SHOW_PROPERTY_EDITOR) != "false")
-      {      
+      {
          // create the main left dock window
          mPropertyWindow = new PropertyEditor(this);
          mPropertyWindow->setObjectName("PropertyWindow");
 
          // listen for selection changed event
          connect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorProxyRefPtrVector&)),
-                  mPropertyWindow, SLOT(handleActorsSelected(ActorProxyRefPtrVector&)));
+                  mPropertyWindow, SLOT(HandleActorsSelected(ActorProxyRefPtrVector&)));
 
          // listen for property change events and update the tree.  These can be generated
          // by the viewports, or the tree itself.
          connect(&EditorEvents::GetInstance(), SIGNAL(actorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)),
-                  mPropertyWindow, SLOT(actorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)));
+                  mPropertyWindow, SLOT(ActorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)));
 
          // listen for name changes so we can update our group box label or handle undo changes
-         connect(&EditorEvents::GetInstance(), SIGNAL(proxyNameChanged(ActorProxyRefPtr, std::string)),
-                  mPropertyWindow, SLOT(proxyNameChanged(ActorProxyRefPtr, std::string)));
-         
+         connect(&EditorEvents::GetInstance(), SIGNAL(ProxyNameChanged(dtDAL::ActorProxy&, std::string)),
+                  mPropertyWindow, SLOT(ProxyNameChanged(dtDAL::ActorProxy&, std::string)));
+
          mPropertyWindow->setFeatures(QDockWidget::AllDockWidgetFeatures);
          addDockWidget(Qt::LeftDockWidgetArea,  mPropertyWindow);
       }
@@ -351,7 +351,7 @@ namespace dtEditQt
       {
          mResourceBrowser = new ResourceBrowser(this);
          mResourceBrowser->setObjectName("ResourceBrowser");
-         mResourceBrowser->setFeatures(QDockWidget::AllDockWidgetFeatures);      
+         mResourceBrowser->setFeatures(QDockWidget::AllDockWidgetFeatures);
          addDockWidget(Qt::RightDockWidgetArea, mResourceBrowser);
       }
 
@@ -429,12 +429,12 @@ namespace dtEditQt
    void MainWindow::setupVolumeEditActor()
    {
       //The persistent pseudo-actor that is used for special-purpose editing
-      mVolEditActorProxy = 
+      mVolEditActorProxy =
          dynamic_cast<dtActors::VolumeEditActorProxy*>(dtDAL::LibraryManager::GetInstance().CreateActorProxy("dtutil", "Volume Edit").get());
       ViewportManager::GetInstance().getMasterScene()->AddDrawable(mVolEditActorProxy->GetActor());
 
       //move the VolumeEditActor away from the Perspective camera so we can see it.
-      dtActors::VolumeEditActor* volEditAct = 
+      dtActors::VolumeEditActor* volEditAct =
             dynamic_cast<dtActors::VolumeEditActor*>(mVolEditActorProxy->GetActor());
       if(volEditAct != NULL)
       {
@@ -503,18 +503,18 @@ namespace dtEditQt
 
    ///////////////////////////////////////////////////////////////////////////////
    void MainWindow::onResetWindows()
-   {      
+   {
       if (mPropertyWindow != NULL)
       {
          // If detached, reattach
          mPropertyWindow->setFloating(false);
          // This should always default back to visible, like the app was restarted and the .ini
-         // was deleted      
+         // was deleted
          mPropertyWindow->setVisible(true);
          EditorActions::GetInstance().mActionWindowsPropertyEditor->setChecked(true);
          addDockWidget(Qt::LeftDockWidgetArea,  mPropertyWindow);
       }
-      
+
       if (mActorDockWidg != NULL)
       {
          mActorDockWidg->setFloating(false);
@@ -534,8 +534,8 @@ namespace dtEditQt
       if (mResourceBrowser != NULL)
       {
          mResourceBrowser->setFloating(false);
-         mResourceBrowser->setVisible(true);      
-         EditorActions::GetInstance().mActionWindowsResourceBrowser->setChecked(true);      
+         mResourceBrowser->setVisible(true);
+         EditorActions::GetInstance().mActionWindowsResourceBrowser->setChecked(true);
          addDockWidget(Qt::RightDockWidgetArea, mResourceBrowser);
       }
 
@@ -564,7 +564,7 @@ namespace dtEditQt
                                              ConfigurationManager::GENERAL, CONF_MGR_PROJECT_CONTEXT);
             if (dtUtil::FileUtils::GetInstance().DirExists(projContextPath))
             {
-               // Try to set the project context specified in the config file 
+               // Try to set the project context specified in the config file
                try
                {
                   startWaitCursor();
@@ -573,14 +573,14 @@ namespace dtEditQt
                   EditorData::GetInstance().addRecentProject(projContextPath);
                   EditorEvents::GetInstance().emitProjectChanged();
                   EditorActions::GetInstance().refreshRecentProjects();
-                  endWaitCursor();                  
+                  endWaitCursor();
                }
                catch(const dtUtil::Exception& e)
                {
                   endWaitCursor();
                   QMessageBox::critical((QWidget*)this,
                      tr("Error"), tr(e.What().c_str()), tr("OK"));
-               }               
+               }
             }
          }
          else if (!EditorData::GetInstance().getLoadLastProject())//FindRecentProjects().empty())
@@ -716,18 +716,18 @@ namespace dtEditQt
       {
          // listen for selection changed event
          disconnect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorProxyRefPtrVector&)),
-            mPropertyWindow, SLOT(handleActorsSelected(ActorProxyRefPtrVector&)));
+            mPropertyWindow, SLOT(HandleActorsSelected(ActorProxyRefPtrVector&)));
 
          // listen for property change events and update the tree.  These can be generated
          // by the viewports, or the tree itself.
          disconnect(&EditorEvents::GetInstance(), SIGNAL(actorPropertyChanged(ActorProxyRefPtr,
             ActorPropertyRefPtr)),
-            mPropertyWindow, SLOT(actorPropertyChanged(ActorProxyRefPtr,
+            mPropertyWindow, SLOT(ActorPropertyChanged(ActorProxyRefPtr,
             ActorPropertyRefPtr)));
 
          // listen for name changes so we can update our group box label or handle undo changes
-         disconnect(&EditorEvents::GetInstance(), SIGNAL(proxyNameChanged(ActorProxyRefPtr, std::string)),
-                  mPropertyWindow, SLOT(proxyNameChanged(ActorProxyRefPtr, std::string)));
+         disconnect(&EditorEvents::GetInstance(), SIGNAL(ProxyNameChanged(dtDAL::ActorProxy&, std::string)),
+                  mPropertyWindow, SLOT(ProxyNameChanged(dtDAL::ActorProxy&, std::string)));
       }
 
       EditorData& editorData = EditorData::GetInstance();
@@ -913,7 +913,7 @@ namespace dtEditQt
 
    ///////////////////////////////////////////////////////////////////////////////
    void MainWindow::onActorSearchSelection()
-   {   
+   {
       if (mActorSearchDockWidg != NULL)
       {
          mActorSearchDockWidg->setVisible(EditorActions::GetInstance().mActionWindowsActorSearch->isChecked());
@@ -953,16 +953,16 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void MainWindow::onActorProxyNameChanged(dtCore::RefPtr<dtDAL::ActorProxy> proxy, std::string oldName)
+   void MainWindow::onActorProxyNameChanged(dtDAL::ActorProxy& proxy, std::string oldName)
    {
-      EditorData::GetInstance().getCurrentMap()->OnProxyRenamed(*proxy.get());
+      EditorData::GetInstance().getCurrentMap()->OnProxyRenamed(proxy);
       EditorData::GetInstance().getCurrentMap()->SetModified(true);
       updateWindowTitle();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void MainWindow::onActorProxyCreated(dtCore::RefPtr<dtDAL::ActorProxy> proxy, bool forceNoAdjustments)
-   {      
+   {
       EditorData::GetInstance().getCurrentMap()->SetModified(true);
       updateWindowTitle();
    }
@@ -1035,8 +1035,8 @@ namespace dtEditQt
       connect(&EditorEvents::GetInstance(),
          SIGNAL(actorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)),
          this, SLOT(onActorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)));
-      connect(&EditorEvents::GetInstance(), SIGNAL(proxyNameChanged(ActorProxyRefPtr, std::string)),
-         this, SLOT(onActorProxyNameChanged(ActorProxyRefPtr, std::string)));
+      connect(&EditorEvents::GetInstance(), SIGNAL(ProxyNameChanged(dtDAL::ActorProxy&, std::string)),
+         this, SLOT(onActorProxyNameChanged(dtDAL::ActorProxy&, std::string)));
       connect(&EditorEvents::GetInstance(), SIGNAL(showStatusBarMessage(const QString, int)),
          this, SLOT(showStatusBarMessage(const QString, int)));
 
@@ -1109,7 +1109,7 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtActors::VolumeEditActorProxy* MainWindow::GetVolumeEditActorProxy() 
+   dtActors::VolumeEditActorProxy* MainWindow::GetVolumeEditActorProxy()
    {
       return mVolEditActorProxy.get();
    }
@@ -1216,7 +1216,7 @@ namespace dtEditQt
 
       // Snap settings.
       settings.beginGroup(EditorSettings::SNAP_GROUP);
-      
+
       bool snapTranslationEnabled = false;
       if (settings.contains(EditorSettings::SNAP_TRANSLATION_ENABLED))
       {
@@ -1333,17 +1333,17 @@ namespace dtEditQt
             if (EditorData::GetInstance().getLoadLastProject())
             {
                EditorData::GetInstance().setCurrentProjectContext(project);
-               try 
+               try
                {
                   dtDAL::Project::GetInstance().SetContext(project);
-               }               
+               }
                catch (dtUtil::Exception&)
                {
-                   failedToLoadContext = true;                   
-               }               
+                   failedToLoadContext = true;
+               }
             }
             projects.push_back(project);
-         }         
+         }
       }
 
       if(failedToLoadContext)
@@ -1403,10 +1403,10 @@ namespace dtEditQt
    {
       bool hasBackup;
 
-      try 
+      try
       {
          hasBackup = dtDAL::Project::GetInstance().HasBackup(str);
-      } 
+      }
       catch (dtUtil::Exception e)
       {
          //must not have a valid backup
@@ -1458,7 +1458,7 @@ namespace dtEditQt
          }
       }
       else
-      {         
+      {
          startWaitCursor();
          try
          {
@@ -1472,8 +1472,8 @@ namespace dtEditQt
             QMessageBox::critical(this, tr("Failed to load map"),
                tr("Failed to load previous map at: \n") +
                tr(str.c_str()),
-               QMessageBox::Ok);            
-         }         
+               QMessageBox::Ok);
+         }
          endWaitCursor();
       }
    }
@@ -1569,7 +1569,7 @@ namespace dtEditQt
          //no plugin path found...lets not try to load any plugins
          LOG_INFO("No plugin path was found. No plugins will be loaded.");
          return;
-      }     
+      }
 
       LOG_INFO("Trying to load plugins from directory " + pluginPath);
 

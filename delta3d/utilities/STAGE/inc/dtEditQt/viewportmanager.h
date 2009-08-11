@@ -41,7 +41,7 @@
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/actorproperty.h>
 #include <dtCore/timer.h>
-#include "dtEditQt/typedefs.h"
+#include <dtQt/typedefs.h>
 #include "export.h"
 
 class QGLWidget;

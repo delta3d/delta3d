@@ -81,8 +81,8 @@ namespace dtEditQt
          std::string, std::string)),
          this, SLOT(actorPropertyAboutToChange(ActorProxyRefPtr, ActorPropertyRefPtr,
          std::string, std::string)));
-      connect(&EditorEvents::GetInstance(), SIGNAL(proxyNameChanged(ActorProxyRefPtr, std::string)),
-         this, SLOT(onProxyNameChanged(ActorProxyRefPtr, std::string)));
+      connect(&EditorEvents::GetInstance(), SIGNAL(ProxyNameChanged(dtDAL::ActorProxy&, std::string)),
+         this, SLOT(onProxyNameChanged(dtDAL::ActorProxy&, std::string)));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -171,7 +171,7 @@ namespace dtEditQt
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void UndoManager::onProxyNameChanged(dtCore::RefPtr<dtDAL::ActorProxy> proxy, std::string oldName)
+   void UndoManager::onProxyNameChanged(dtDAL::ActorProxy& proxy, std::string oldName)
    {
       if (!mRecursePrevent)
       {
@@ -182,9 +182,9 @@ namespace dtEditQt
 
          ChangeEvent* undoEvent       = new ChangeEvent();
          undoEvent->mType              = ChangeEvent::PROXY_NAME_CHANGED;
-         undoEvent->mObjectId          = proxy->GetId().ToString();
-         undoEvent->mActorTypeName     = proxy->GetActorType().GetName();
-         undoEvent->mActorTypeCategory = proxy->GetActorType().GetCategory();
+         undoEvent->mObjectId          = proxy.GetId().ToString();
+         undoEvent->mActorTypeName     = proxy.GetActorType().GetName();
+         undoEvent->mActorTypeCategory = proxy.GetActorType().GetCategory();
          undoEvent->mOldName           = oldName;
 
          // add it to our main undo stack
@@ -405,9 +405,8 @@ namespace dtEditQt
       // do the undo
       proxy->SetName(event->mOldName);
       // notify the world of our change to the data.
-      dtCore::RefPtr<dtDAL::ActorProxy> ActorProxyRefPtr = proxy;
       mRecursePrevent = true;
-      EditorEvents::GetInstance().emitProxyNameChanged(ActorProxyRefPtr, currentName);
+      EditorEvents::GetInstance().emitProxyNameChanged(*proxy, currentName);
       mRecursePrevent = false;
 
       // now turn the undo into a redo event

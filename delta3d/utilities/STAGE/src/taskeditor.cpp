@@ -48,7 +48,6 @@
 #include <QtCore/QVariant>
 
 #include <dtEditQt/editordata.h>
-#include <dtEditQt/typedefs.h>
 
 #include <dtDAL/map.h>
 #include <dtDAL/namedparameter.h>

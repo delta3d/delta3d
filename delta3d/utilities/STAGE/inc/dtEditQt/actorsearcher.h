@@ -34,7 +34,7 @@
 #include <vector>
 #include <dtCore/refptr.h>
 #include <dtDAL/actorproxy.h>
-#include <dtEditQt/typedefs.h>
+#include <dtQt/typedefs.h>
 #include <dtDAL/actorproperty.h>
 
 class QComboBox;
@@ -91,7 +91,7 @@ namespace dtEditQt
    private:
       QGroupBox* resultsGroup();
       QGroupBox* searchGroup();
-                
+
       QComboBox*   mCategoryBox;
       QComboBox*   mTypeBox;
       QComboBox*   mClassBox;

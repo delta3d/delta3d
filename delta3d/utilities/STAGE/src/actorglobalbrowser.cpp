@@ -81,9 +81,9 @@ namespace dtEditQt
          SLOT(onActorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)));
 
       connect(&EditorEvents::GetInstance(),
-         SIGNAL(proxyNameChanged(ActorProxyRefPtr, std::string)),
+         SIGNAL(ProxyNameChanged(dtDAL::ActorProxy&, std::string)),
          this,
-         SLOT(onActorProxyNameChanged(ActorProxyRefPtr, std::string)));
+         SLOT(onActorProxyNameChanged(dtDAL::ActorProxy&, std::string)));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -158,9 +158,9 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ActorGlobalBrowser::onActorProxyNameChanged(ActorProxyRefPtr proxy, std::string oldName)
+   void ActorGlobalBrowser::onActorProxyNameChanged(dtDAL::ActorProxy& proxy, std::string oldName)
    {
-      mResultsTable->HandleProxyUpdated(proxy);
+      mResultsTable->HandleProxyUpdated(&proxy);
    }
 
 } // namespace dtEditQt

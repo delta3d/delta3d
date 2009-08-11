@@ -39,7 +39,7 @@
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/actortype.h>
 #include <dtDAL/actorproperty.h>
-#include "dtEditQt/typedefs.h"
+#include <dtQt/typedefs.h>
 
 namespace dtCore
 {
@@ -157,7 +157,7 @@ namespace dtEditQt
       /**
        * When the name changes, trap this event.
        */
-      void onProxyNameChanged(ActorProxyRefPtr proxy, std::string oldName);
+      void onProxyNameChanged(dtDAL::ActorProxy&, std::string);
 
       /**
        * Called when a map, project, or libraries change.  Clears all undo/redo events.

@@ -35,7 +35,7 @@
 #include <vector>
 #include <osg/Referenced>
 #include <dtDAL/actorproxy.h>
-#include <dtEditQt/typedefs.h>
+#include <dtQt/typedefs.h>
 #include <dtCore/refptr.h>
 
 class QAction;
@@ -108,7 +108,7 @@ namespace dtEditQt
       QList<ExternalTool*>& GetExternalTools();
 
       const QList<QAction*> GetExternalToolActions() const;
-   
+
       /**
        * Method to save a new prefab.  Returns true on success.
        */
