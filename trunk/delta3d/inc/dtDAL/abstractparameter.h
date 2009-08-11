@@ -48,7 +48,7 @@ namespace dtDAL
          /**
           * Gets the unique name assigned to this parameter.
           */
-         const std::string& GetName() const { return mName; }
+         const dtUtil::RefString& GetName() const { return mName; }
 
          virtual const std::string ToString() const = 0;
 
