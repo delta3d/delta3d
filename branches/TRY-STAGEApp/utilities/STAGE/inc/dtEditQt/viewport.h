@@ -633,10 +633,11 @@ namespace dtEditQt
        * overlays and other objects that are editor specific and are not
        * a part of the actual scene.
        */
-      osg::ref_ptr<osg::Group> mRootNodeGroup;
+      osg::ref_ptr<osg::Group>         mRootNodeGroup;
 
-      dtCore::RefPtr<dtCore::Isector> mIsector;
+      dtCore::RefPtr<dtCore::Isector>  mIsector;
 
+      bool                             mIsDirty;
    };
 
 } // namespace dtEditQt

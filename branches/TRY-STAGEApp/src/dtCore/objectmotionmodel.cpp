@@ -761,6 +761,9 @@ dtCore::DeltaDrawable* ObjectMotionModel::MousePick(void)
    osg::Vec3 startPoint, endPoint;
    GetMouseLine(GetMousePosition(), startPoint, endPoint);
 
+   // Can't do anything if we don't have a valid mouse line.
+   if (startPoint == endPoint) return NULL;
+
    osg::ref_ptr<osgUtil::LineSegmentIntersector> picker = new osgUtil::LineSegmentIntersector(osgUtil::Intersector::MODEL, startPoint, endPoint);
 
    osgUtil::IntersectionVisitor iv(picker.get());
@@ -952,7 +955,7 @@ void ObjectMotionModel::UpdateTranslation(void)
    osg::Vec3 camUp;
    osg::Vec3 camRight;
    osg::Vec3 camAt;
-   //osg::Vec3 camPos;
+   osg::Vec3 camPos;
 
    dtCore::Transformable* target = GetTarget();
    if (!target)
@@ -968,7 +971,7 @@ void ObjectMotionModel::UpdateTranslation(void)
    dtCore::Transform camTransform;
    mCamera->GetTransform(camTransform);
    camTransform.GetOrientation(camRight, camUp, camAt);
-   //camPos = camTransform.GetTranslation();
+   camPos = camTransform.GetTranslation();
 
    if (mCoordinateSpace == LOCAL_SPACE)
    {
@@ -991,24 +994,30 @@ void ObjectMotionModel::UpdateTranslation(void)
    case ARROW_TYPE_AT:
       {
          axis = targetAt;
-         plane1 = targetUp ^ axis;
-         plane2 = targetRight ^ axis;
+         plane1 = targetUp;
+         plane2 = targetRight;
+         //plane1 = targetUp ^ axis;
+         //plane2 = axis ^ targetRight;
          break;
       }
 
    case ARROW_TYPE_RIGHT:
       {
          axis = targetRight;
-         plane1 = targetUp ^ axis;
-         plane2 = axis ^ targetAt;
+         plane1 = targetUp;
+         plane2 = targetAt;
+         //plane1 = targetUp ^ axis;
+         //plane2 = axis ^ targetAt;
          break;
       }
 
    case ARROW_TYPE_UP:
       {
          axis = targetUp;
-         plane1 = axis ^ targetRight;
-         plane2 = targetAt ^ axis;
+         plane1 = targetRight;
+         plane2 = targetAt;
+         //plane1 = axis ^ targetRight;
+         //plane2 = targetAt ^ axis;
          break;
       }
    default:
@@ -1017,22 +1026,23 @@ void ObjectMotionModel::UpdateTranslation(void)
       }
    }
 
-   plane1.normalize();
-   plane2.normalize();
-
-   // Find the best plane.
-   float fBest = fabs(camAt * plane1);
-   float fTest = fabs(camAt * plane2);
-
-   if (fBest > osg::DegreesToRadians(5.0f))
+   osg::Vec3 vecToTarget = targetPos - camPos;
+   vecToTarget.normalize();
+   float fDot = fabs(vecToTarget * axis);
+   if (fDot < 0.95f)
    {
-      plane = &plane1;
-   }
+      plane1.normalize();
+      plane2.normalize();
 
-   if (fTest > fBest)
-   {
-      fBest = fTest;
-      if (fBest > osg::DegreesToRadians(5.0f))
+      float fDot1 = fabs(vecToTarget * plane1);
+      float fDot2 = fabs(vecToTarget * plane2);
+
+      // Find the best plane.
+      if (fDot1 >= fDot2)
+      {
+         plane = &plane1;
+      }
+      else
       {
          plane = &plane2;
       }
@@ -1332,7 +1342,7 @@ void ObjectMotionModel::UpdateScale(void)
    osg::Vec3 camUp;
    osg::Vec3 camRight;
    osg::Vec3 camAt;
-   //osg::Vec3 camPos;
+   osg::Vec3 camPos;
 
    dtCore::Transformable* target = GetTarget();
    if (!target)
@@ -1348,7 +1358,7 @@ void ObjectMotionModel::UpdateScale(void)
    dtCore::Transform camTransform;
    mCamera->GetTransform(camTransform);
    camTransform.GetOrientation(camRight, camUp, camAt);
-   //camPos = camTransform.GetTranslation();
+   camPos = camTransform.GetTranslation();
 
    if (mCoordinateSpace == LOCAL_SPACE)
    {
@@ -1371,8 +1381,10 @@ void ObjectMotionModel::UpdateScale(void)
       {
          axis = targetAt;
          scaleAxis = osg::Vec3(0.0f, 1.0f, 0.0f);
-         plane1 = targetUp ^ axis;
-         plane2 = targetRight ^ axis;
+         plane1 = targetUp;
+         plane2 = targetRight;
+         //plane1 = targetUp ^ axis;
+         //plane2 = targetRight ^ axis;
          break;
       }
 
@@ -1380,8 +1392,10 @@ void ObjectMotionModel::UpdateScale(void)
       {
          axis = targetRight;
          scaleAxis = osg::Vec3(1.0f, 0.0f, 0.0f);
-         plane1 = targetUp ^ axis;
-         plane2 = axis ^ targetAt;
+         plane1 = targetUp;
+         plane2 = targetAt;
+         //plane1 = targetUp ^ axis;
+         //plane2 = axis ^ targetAt;
          break;
       }
 
@@ -1389,8 +1403,10 @@ void ObjectMotionModel::UpdateScale(void)
       {
          axis = targetUp;
          scaleAxis = osg::Vec3(0.0f, 0.0f, 1.0f);
-         plane1 = axis ^ targetRight;
-         plane2 = targetAt ^ axis;
+         plane1 = targetAt;
+         plane2 = targetRight;
+         //plane1 = axis ^ targetRight;
+         //plane2 = targetAt ^ axis;
          break;
       }
 
@@ -1409,22 +1425,23 @@ void ObjectMotionModel::UpdateScale(void)
       }
    }
 
-   plane1.normalize();
-   plane2.normalize();
-
-   // Find the best plane.
-   float fBest = fabs(camAt * plane1);
-   float fTest = fabs(camAt * plane2);
-
-   if (fBest > osg::DegreesToRadians(5.0f))
+   osg::Vec3 vecToTarget = targetPos - camPos;
+   vecToTarget.normalize();
+   float fDot = fabs(vecToTarget * axis);
+   if (fDot < 0.95f)
    {
-      plane = &plane1;
-   }
+      plane1.normalize();
+      plane2.normalize();
 
-   if (fTest > fBest)
-   {
-      fBest = fTest;
-      if (fBest > osg::DegreesToRadians(5.0f))
+      float fDot1 = fabs(vecToTarget * plane1);
+      float fDot2 = fabs(vecToTarget * plane2);
+
+      // Find the best plane.
+      if (fDot1 >= fDot2)
+      {
+         plane = &plane1;
+      }
+      else
       {
          plane = &plane2;
       }

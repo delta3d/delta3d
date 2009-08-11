@@ -182,7 +182,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void EditorViewport::refresh()
    {
-      //mObjectMotionModel->UpdateWidgets(); //TODO E!
+      mObjectMotionModel->UpdateWidgets(); //TODO E!
 
       Viewport::refresh();
    }
@@ -212,6 +212,11 @@ namespace dtEditQt
       case Qt::Key_8: index = 8; break;
       case Qt::Key_9: index = 9; break;
       case Qt::Key_0: index = 10; break;
+      case Qt::Key_Delete:
+         {
+            EditorActions::GetInstance().slotEditDeleteActors();
+         }
+         return;
       }
 
       if (index > -1)

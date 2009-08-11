@@ -241,7 +241,7 @@ namespace dtCore
             }
             else
             {
-               dtUtil::ClampMax(mValue, mOffset + mCurrentRange);
+               dtUtil::ClampMin(mValue, mOffset);
             }
          }
       }
@@ -261,7 +261,7 @@ namespace dtCore
             }
             else
             {
-               dtUtil::ClampMax(mValue, mOffset + mCurrentRange);
+               dtUtil::ClampMin(mValue, mOffset);
             }
          } 
          else if (mValue > mOffset + mCurrentRange) // was going up.  Turn around

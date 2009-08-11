@@ -80,8 +80,6 @@ class GameActorTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestInvokableMessageRegistration);
       CPPUNIT_TEST(TestGlobalInvokableMessageRegistration);
       CPPUNIT_TEST(TestGlobalInvokableMessageRegistrationEndOfFrame);
-      CPPUNIT_TEST(TestGlobalInvokableMessageRegistrationDuplicates);
-      CPPUNIT_TEST(TestOtherActorInvokableMessageRegistrationDuplicates);
       CPPUNIT_TEST(TestStaticGameActorTypes);
       CPPUNIT_TEST(TestEnvironmentTimeConversions);
       CPPUNIT_TEST(TestDefaultProcessMessageRegistration);
@@ -90,7 +88,7 @@ class GameActorTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestOnRemovedActor);
       CPPUNIT_TEST(TestAddActorComponent);
       CPPUNIT_TEST(TestActorComponentInitialized);
-      
+
    CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -106,8 +104,6 @@ public:
    void TestDefaultProcessMessageRegistration();
    void TestGlobalInvokableMessageRegistration();
    void TestGlobalInvokableMessageRegistrationEndOfFrame();
-   void TestGlobalInvokableMessageRegistrationDuplicates();
-   void TestOtherActorInvokableMessageRegistrationDuplicates();
    void TestStaticGameActorTypes();
    void TestEnvironmentTimeConversions();
    void TestMessageProcessingPerformance();
@@ -459,73 +455,6 @@ void GameActorTests::TestGlobalInvokableMessageRegistrationEndOfFrame()
                mManager->RegisterForMessages(dtGame::MessageType::TICK_END_OF_FRAME, *gap1, iTestListener->GetName()),
                dtUtil::Exception);
 
-   }
-   catch (const dtUtil::Exception& e)
-   {
-      CPPUNIT_FAIL(e.ToString());
-   }
-}
-
-void GameActorTests::TestGlobalInvokableMessageRegistrationDuplicates()
-{
-   try
-   {
-      dtCore::RefPtr<const dtDAL::ActorType> actor1Type = mManager->FindActorType("ExampleActors", "Test2Actor");
-
-      dtCore::RefPtr<dtGame::GameActorProxy> gap1;
-      mManager->CreateActor(*actor1Type, gap1);
-
-      mManager->AddActor(*gap1, false, false);
-
-      dtGame::Invokable* iTestListener = gap1->GetInvokable("Test Message Listener");
-
-      CPPUNIT_ASSERT_NO_THROW(
-               mManager->RegisterForMessages(dtGame::MessageType::INFO_MAP_LOADED, *gap1, iTestListener->GetName()));
-
-      CPPUNIT_ASSERT_THROW(
-               mManager->RegisterForMessages(dtGame::MessageType::INFO_MAP_LOADED, *gap1, iTestListener->GetName()),
-               dtUtil::Exception);
-
-      mManager->UnregisterForMessages(dtGame::MessageType::INFO_MAP_LOADED, *gap1, iTestListener->GetName());
-
-      CPPUNIT_ASSERT_NO_THROW(
-               mManager->RegisterForMessages(dtGame::MessageType::INFO_MAP_LOADED, *gap1, iTestListener->GetName()));
-   }
-   catch (const dtUtil::Exception& e)
-   {
-      CPPUNIT_FAIL(e.ToString());
-   }
-}
-
-void GameActorTests::TestOtherActorInvokableMessageRegistrationDuplicates()
-{
-   try
-   {
-      dtCore::RefPtr<const dtDAL::ActorType> actor1Type = mManager->FindActorType("ExampleActors", "Test2Actor");
-      dtCore::RefPtr<const dtDAL::ActorType> actor2Type = mManager->FindActorType("ExampleActors", "Test1Actor");
-
-      dtCore::RefPtr<dtGame::GameActorProxy> gap1;
-      mManager->CreateActor(*actor1Type, gap1);
-
-      dtCore::RefPtr<dtGame::GameActorProxy> gap2;
-      mManager->CreateActor(*actor2Type, gap2);
-
-      mManager->AddActor(*gap1, false, false);
-      mManager->AddActor(*gap2, false, false);
-
-      dtGame::Invokable* iTestListener = gap1->GetInvokable("Test Message Listener");
-
-      CPPUNIT_ASSERT_NO_THROW(
-               mManager->RegisterForMessagesAboutActor(dtGame::MessageType::INFO_MAP_LOADED, gap2->GetId(), *gap1, iTestListener->GetName()));
-
-      CPPUNIT_ASSERT_THROW(
-               mManager->RegisterForMessagesAboutActor(dtGame::MessageType::INFO_MAP_LOADED, gap2->GetId(), *gap1, iTestListener->GetName()),
-               dtUtil::Exception);
-
-      mManager->UnregisterForMessagesAboutActor(dtGame::MessageType::INFO_MAP_LOADED, gap2->GetId(), *gap1, iTestListener->GetName());
-
-      CPPUNIT_ASSERT_NO_THROW(
-               mManager->RegisterForMessagesAboutActor(dtGame::MessageType::INFO_MAP_LOADED, gap2->GetId(), *gap1, iTestListener->GetName()));
    }
    catch (const dtUtil::Exception& e)
    {
@@ -1098,7 +1027,7 @@ void GameActorTests::TestAddActorComponent()
 
       bool found = (actor->GetComponent(TestActorComponent1::TYPE) == component);
       CPPUNIT_ASSERT_MESSAGE("Could not retrieve actor component after it was added!", found);
-      
+
       TestActorComponent1* compare;
       if(!actor->GetComponent(compare))
       {
@@ -1108,14 +1037,14 @@ void GameActorTests::TestAddActorComponent()
       CPPUNIT_ASSERT_MESSAGE("Could not retrieve actor component after it was added!", foundtemplate);
 
       actor->RemoveComponent(TestActorComponent1::TYPE);
-      
+
       try
       {
          bool notfound = (actor->GetComponent(TestActorComponent1::TYPE) == NULL);
          CPPUNIT_ASSERT_MESSAGE("Searching for actor component should throw exception!", notfound);
       }
       catch(const dtUtil::Exception&)
-      {  
+      {
       }
 
 
@@ -1141,12 +1070,12 @@ void GameActorTests::TestActorComponentInitialized()
       dtGame::GameActor* actor = &gap->GetGameActor();
 
       dtCore::RefPtr<TestActorComponent1> component1 = new TestActorComponent1();
-      actor->AddComponent(component1.get());      
+      actor->AddComponent(component1.get());
 
       dtCore::RefPtr<TestActorComponent2> component2 = new TestActorComponent2();
-      
+
       CPPUNIT_ASSERT_MESSAGE("Actor component1 should not be initialized before actor is in game!", !component1->mWasAdded);
-      
+
       mManager->AddActor(*gap, true, false);
       CPPUNIT_ASSERT_MESSAGE("Actor component1 be initialized when actor is added to game!", component1->mWasAdded);
 
@@ -1164,7 +1093,7 @@ void GameActorTests::TestActorComponentInitialized()
       //Actor should be removed by now.
       CPPUNIT_ASSERT_MESSAGE("Actor component should be de-initialized when actor is added to game!", component1->mWasRemoved);
 
-     
+
    }
    catch(const dtUtil::Exception& e)
    {

@@ -980,26 +980,34 @@ void LinkedPointsActorToolPlugin::UpdatePlacementGhost(Viewport* vp, osg::Vec2 m
             }
 
             vec = position - nextPos;
-            len = vec.length2();
-            vec.z() = 0.0f;
-            vec.normalize();
+            len = vec.length();
 
-            // Test for a lock with the next point.
-            dot = vec * angle1;
-            if (abs(dot) >= 0.99f)
+            if (len <= 1.0f)
             {
-               osg::Vec3 start = nextPos - (angle1 * len);
-               osg::Vec3 end = nextPos + (angle1 * len);
-               position = mActiveActor->FindNearestPointOnLine(start, end, position);
+               position = nextPos;
             }
             else
             {
-               dot = vec * angle2;
+               vec.z() = 0.0f;
+               vec.normalize();
+
+               // Test for a lock with the next point.
+               dot = vec * angle1;
                if (abs(dot) >= 0.99f)
                {
-                  osg::Vec3 start = nextPos - (angle2 * len);
-                  osg::Vec3 end = nextPos + (angle2 * len);
+                  osg::Vec3 start = nextPos - (angle1 * len * 2);
+                  osg::Vec3 end = nextPos + (angle1 * len * 2);
                   position = mActiveActor->FindNearestPointOnLine(start, end, position);
+               }
+               else
+               {
+                  dot = vec * angle2;
+                  if (abs(dot) >= 0.99f)
+                  {
+                     osg::Vec3 start = nextPos - (angle2 * len);
+                     osg::Vec3 end = nextPos + (angle2 * len);
+                     position = mActiveActor->FindNearestPointOnLine(start, end, position);
+                  }
                }
             }
          }

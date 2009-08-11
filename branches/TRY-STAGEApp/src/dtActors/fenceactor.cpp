@@ -50,9 +50,7 @@ namespace dtActors
 
       mParent->AddChild(mSegOrigin.get());
 
-      osg::Group* originGroup = mSegOrigin->GetOSGNode()->asGroup();
-      if (!originGroup) return false;
-      originGroup->addChild(mSegGeode.get());
+      mSegEnabled = false;
 
       // Create all of our buffer arrays.
       mSegVertexList = new osg::Vec3Array();
@@ -62,7 +60,6 @@ namespace dtActors
       mSegNormalList = new osg::Vec3Array();
       if (!mSegNormalList.valid()) return false;
 
-      // Set the size of the buffer arrays.
       mSegVertexList->resize(12);
       mSegTextureList->resize(12);
       mSegNormalList->resize(3);
@@ -105,9 +102,7 @@ namespace dtActors
       mParent->RemoveChild(mPost.get());
       mPost = NULL;
 
-      osg::Group* originGroup = mSegOrigin->GetOSGNode()->asGroup();
-      if (!originGroup) return false;
-      originGroup->removeChild(mSegGeode.get());
+      SetSegmentEnabled(false);
       mSegOrigin = NULL;
 
       mSegGeode->removeDrawable(mSegGeom.get());
@@ -127,6 +122,32 @@ namespace dtActors
       mSegTexture = NULL;
 
       return true;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void FencePostGeomData::SetSegmentEnabled(bool enabled)
+   {
+      if (enabled != mSegEnabled)
+      {
+         if (enabled)
+         {
+            osg::Group* originGroup = mSegOrigin->GetOSGNode()->asGroup();
+            if (originGroup)
+            {
+               originGroup->addChild(mSegGeode.get());
+            }
+         }
+         else
+         {
+            osg::Group* originGroup = mSegOrigin->GetOSGNode()->asGroup();
+            if (originGroup)
+            {
+               originGroup->removeChild(mSegGeode.get());
+            }
+         }
+
+         mSegEnabled = enabled;
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -235,8 +256,25 @@ namespace dtActors
             osg::Vec3 lastPost = start;
             int subPostIndex = 1;
             float length = 0.0f;
+
+            int startPostIndex = 0;
+            std::string startTextureName = GetSegmentTexture(pointIndex, subPostIndex - 1);
+            dtCore::Transform startPostTransform = prevPostTransform;
+
             while(true)
             {
+               if (!point->SetIndex(subPostIndex - 1))
+               {
+                  return;
+               }
+
+               FencePostGeomData* geomData = dynamic_cast<FencePostGeomData*>(point->mGeomList[subPostIndex - 1].get());
+               if (!geomData) return;
+
+               geomData->SetSegmentEnabled(false);
+
+               std::string textureName = GetSegmentTexture(pointIndex, subPostIndex);
+
                osg::Vec3 position = lastPost + (dir * mPostMaxDistance);
                length += mPostMaxDistance;
 
@@ -253,7 +291,7 @@ namespace dtActors
                   float texLength = len / mPostMaxDistance;
 
                   // Now place a segment to fill the gap between our last post and the next point.
-                  PlaceSegment(pointIndex, subPostIndex - 1, prevPostTransform, postTransform, texLength);
+                  PlaceSegment(pointIndex, startPostIndex, startPostTransform, postTransform, texLength + (subPostIndex - startPostIndex - 1));
 
                   // Now make sure we clean up any additional indices.
                   point->SetSize(subPostIndex);
@@ -267,7 +305,13 @@ namespace dtActors
                }
 
                // Now place a segment between the current post and the previous.
-               PlaceSegment(pointIndex, subPostIndex - 1, prevPostTransform, postTransform, 1.0f);
+               if (startTextureName != textureName)
+               {
+                  PlaceSegment(pointIndex, startPostIndex, startPostTransform, postTransform, float(subPostIndex - startPostIndex));
+                  startPostIndex = subPostIndex;
+                  startPostTransform = postTransform;
+                  startTextureName = textureName;
+               }
                subPostIndex++;
 
                lastPost = position;
@@ -314,7 +358,7 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   FenceActor::DrawableType FenceActor::GetDrawableType(dtCore::DeltaDrawable* drawable, int& pointIndex, int& subIndex)
+   FenceActor::DrawableType FenceActor::GetDrawableType(dtCore::DeltaDrawable* drawable, osg::Vec3 position, int& pointIndex, int& subIndex)
    {
       pointIndex = BaseClass::GetPointIndex(drawable);
 
@@ -334,6 +378,26 @@ namespace dtActors
                   }
                   else if (drawable == data->mSegOrigin.get())
                   {
+                     if (mPostMaxDistance > 0)
+                     {
+                        // Now figure out which segment was clicked on.
+                        osg::Vec3 start = GetPointPosition(pointIndex);
+                        osg::Vec3 end = GetPointPosition(pointIndex + 1);
+
+                        osg::Vec3 closestPoint = FindNearestPointOnLine(start, end, position);
+                        float posLen = (closestPoint - start).length();
+                        float fullLen = (start - end).length();
+
+                        float index = posLen / mPostMaxDistance;
+                        subIndex = floor(index);
+
+                        float len = fullLen - (subIndex * mPostMaxDistance);
+                        if (len <= mPostMinDistance)
+                        {
+                           subIndex--;
+                        }
+                     }
+
                      return DRAWABLE_TYPE_SEGMENT;
                   }
                }
@@ -437,6 +501,11 @@ namespace dtActors
    ////////////////////////////////////////////////////////////////////////////////
    void FenceActor::IncrementPostMesh(int pointIndex, int subIndex)
    {
+      if (mPostResourceList.size() <= 1)
+      {
+         return;
+      }
+
       // Iterate through the resource ID list for a matching post/segment.
       for (int index = 0; index < (int)mResourceIDList.size(); index++)
       {
@@ -550,6 +619,11 @@ namespace dtActors
    ////////////////////////////////////////////////////////////////////////////////
    void FenceActor::IncrementSegmentMesh(int pointIndex, int subIndex)
    {
+      if (mSegmentResourceList.size() <= 1)
+      {
+         return;
+      }
+
       // Iterate through the resource ID list for a matching post/segment.
       for (int index = 0; index < (int)mResourceIDList.size(); index++)
       {
@@ -710,6 +784,8 @@ namespace dtActors
 
             FencePostGeomData* geomData = dynamic_cast<FencePostGeomData*>(fencePost->mGeomList[subIndex].get());
             if (!geomData) return;
+
+            geomData->SetSegmentEnabled(true);
 
             // Always reset the origin transform to the origin of the world.
             dtCore::Transform segmentTransform;

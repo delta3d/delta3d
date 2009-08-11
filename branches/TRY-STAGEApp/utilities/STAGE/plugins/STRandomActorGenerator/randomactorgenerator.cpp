@@ -3,6 +3,7 @@
 #include <ctime>
 
 #include <dtActors/volumeeditactor.h>
+#include <dtActors/gamemeshactor.h>
 
 #include <dtCore/isector.h>
 #include <dtCore/transformable.h>
@@ -224,9 +225,42 @@ void RandomActorGeneratorPlugin::NewActorProxyInsideVolumeEditor(dtDAL::ActorPro
       randAngle = (360.0f * rand()) / RAND_MAX;
       h += randAngle;
    }
-   cloneXForm.SetRotation(h,p,r);   
+   cloneXForm.SetRotation(h,p,r);
 
+   //Applying translation and roation.
    aClonePtr->SetTransform(cloneXForm);
+
+   //random scale?
+   if (mUI.mRandomScaleCheckBox->isChecked())   
+   {
+      //random scale between scaleMin and scaleMax
+      float randScale = ((mUI.mScaleMaxSpinBox->value() * rand()) / RAND_MAX)
+                           + mUI.mScaleMinSpinBox->value();
+
+      dtDAL::ActorProperty* prop = aCloneProxy->GetProperty("Scale");
+      dtDAL::Vec3ActorProperty* scaleProp = dynamic_cast<dtDAL::Vec3ActorProperty*>(prop);
+
+      if (scaleProp) //scaling is possible with this actor
+      {         
+         osg::Vec3 newScale(randScale, randScale, randScale);
+
+         // It causes problems when the scale is negative in the current version of OSG
+         if (newScale.x() < 0.0001f)
+         {
+            newScale.x() = 0.0001f;
+         }
+         if (newScale.y() < 0.0001f)
+         {
+            newScale.y() = 0.0001f;
+         }
+         if (newScale.z() < 0.0001f)
+         {
+            newScale.z() = 0.0001f;
+         }
+
+         scaleProp->SetValue(newScale);
+      }      
+   }   
    
    //Apply rotation and translation from VolEditActor (remember: scale doesn't
    //exist inside Delta Transforms.... if that ever changes this could break)
