@@ -204,7 +204,7 @@ namespace dtHLAGM
       {
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                              "The incoming parameter \"%s\" is not of a supported type \"%s\" for conversion to \"%s\"",
-                             parameter.GetName().c_str(), parameterDataType.GetName().c_str(),
+                             parameter.GetName()->c_str(), parameterDataType.GetName().c_str(),
                              RPRAttributeType::WORLD_COORDINATE_TYPE.GetName().c_str());
       }
 
@@ -274,7 +274,7 @@ namespace dtHLAGM
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                              "The incoming parameter \"%s\" is not of a supported type "
                              "\"%s\" for conversion to \"%s\"",
-                             parameter.GetName().c_str(), parameterDataType.GetName().c_str(),
+                             parameter.GetName()->c_str(), parameterDataType.GetName().c_str(),
                              RPRAttributeType::EULER_ANGLES_TYPE.GetName().c_str());
       }
 
@@ -333,7 +333,7 @@ namespace dtHLAGM
       {
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                              "The incoming parameter \"%s\" is not of a supported type \"%s\" for conversion to \"%s\"",
-                             parameter.GetName().c_str(), parameterDataType.GetName().c_str(),
+                             parameter.GetName()->c_str(), parameterDataType.GetName().c_str(),
                              RPRAttributeType::VELOCITY_VECTOR_TYPE.GetName().c_str());
       }
       return osg::Vec3f(result);
@@ -367,7 +367,7 @@ namespace dtHLAGM
       {
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                              "The incoming parameter \"%s\" is not of a supported type \"%s\" for conversion to \"%s\"",
-                             parameter.GetName().c_str(), parameterDataType.GetName().c_str(),
+                             parameter.GetName()->c_str(), parameterDataType.GetName().c_str(),
                              RPRAttributeType::ANGULAR_VELOCITY_VECTOR_TYPE.GetName().c_str());
       }
       return result;
@@ -412,7 +412,7 @@ namespace dtHLAGM
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                              "The incoming parameter \"%s\" is not of a supported type \"%s\" for conversion to \"%s\"."
                              "Only enumeration parameters are supported.",
-                             parameter.GetName().c_str(), parameter.GetDataType().GetName().c_str(),
+                             parameter.GetName()->c_str(), parameter.GetDataType().GetName().c_str(),
                              RPRAttributeType::VELOCITY_VECTOR_TYPE.GetName().c_str());
          return;
       }
@@ -516,7 +516,7 @@ namespace dtHLAGM
       {
          mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
             "Warning, the Message Parameter DataType for \"%s\" is \"%s\", but the mapping configuration says it should be \"%s\"",
-            parameter.GetName().c_str(), parameterDataType.GetName().c_str(),
+            parameter.GetName()->c_str(), parameterDataType.GetName().c_str(),
             paramDef.GetGameType().GetName().c_str());
       }
 
