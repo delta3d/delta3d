@@ -32,21 +32,21 @@ RandomActorGeneratorPlugin::RandomActorGeneratorPlugin(dtEditQt::MainWindow* mw)
    : mMainWindow(mw)
    , mUI()
 {
-   // apply layout made with QT designer   
+   // apply layout made with QT designer
    mUI.setupUi(this);
 
    // add dock widget to STAGE main window
-   mw->addDockWidget(Qt::RightDockWidgetArea, this);    
+   mw->addDockWidget(Qt::RightDockWidgetArea, this);
 
    connect(mUI.mGenerateBtn, SIGNAL(clicked()), this, SLOT(OnGeneratePushed()));
    //May want to put this back later
    //connect(mUI.mRefreshBtn, SIGNAL(clicked()), this, SLOT(OnRefreshActorList()));
-   
+
    connect(&(dtEditQt::EditorEvents::GetInstance()), SIGNAL(selectedActors(ActorProxyRefPtrVector&)),
             this, SLOT(OnSelectedActorChange(ActorProxyRefPtrVector&)));
 
    //seed the random number generator
-   srand(time(NULL));   
+   srand(time(NULL));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -57,7 +57,7 @@ RandomActorGeneratorPlugin::~RandomActorGeneratorPlugin()
 ////////////////////////////////////////////////////////////////////////////////
 // remove our stuff from GUI
 void RandomActorGeneratorPlugin::Destroy()
-{  
+{
    mMainWindow->removeDockWidget(this);
 }
 
@@ -70,30 +70,30 @@ void RandomActorGeneratorPlugin::closeEvent(QCloseEvent* event)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void RandomActorGeneratorPlugin::OnGeneratePushed() 
+void RandomActorGeneratorPlugin::OnGeneratePushed()
 {
    //get the VolumeEdit "Actor" from STAGE.  This is the area to which the
    //randomly generated actors will be constrained.
-   dtActors::VolumeEditActor* volEditActor = mMainWindow->GetVolumeEditActor();   
+   dtActors::VolumeEditActor* volEditActor = mMainWindow->GetVolumeEditActor();
 
-   dtEditQt::ViewportOverlay::ActorProxyList& selectionList = 
+   dtEditQt::ViewportOverlay::ActorProxyList& selectionList =
       dtEditQt::ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
    if(selectionList.size() < 1)
    {
       dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ERROR,__FUNCTION__,
                                                 __LINE__, "No actor selected.");
 
-      QMessageBox::warning(this, tr("No actor selected."), 
-         tr("Please select an actor to be generated."), QMessageBox::Ok);     
+      QMessageBox::warning(this, tr("No actor selected."),
+         tr("Please select an actor to be generated."), QMessageBox::Ok);
 
       return;
    }
-  
+
    //Don't want to just make a bunch of copies of the volume editor:
    if(selectionList[0]->GetActor() == volEditActor)
-   {      
-      QMessageBox::warning(this, tr("No actor selected."), 
-         tr("Please select an actor to be generated."), QMessageBox::Ok);     
+   {
+      QMessageBox::warning(this, tr("No actor selected."),
+         tr("Please select an actor to be generated."), QMessageBox::Ok);
 
       return;
    }
@@ -113,7 +113,7 @@ void RandomActorGeneratorPlugin::OnGeneratePushed()
    }
    dtEditQt::EditorData::GetInstance().getUndoManager().endMultipleUndo();
 
-   dtEditQt::ViewportManager::GetInstance().refreshAllViewports(); 
+   dtEditQt::ViewportManager::GetInstance().refreshAllViewports();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -123,16 +123,16 @@ void RandomActorGeneratorPlugin::OnRefreshActorList()
 
    dtEditQt::EditorData::GetInstance().getMainWindow()->startWaitCursor();
 
-   dtCore::RefPtr<dtDAL::Map> mapPtr = dtEditQt::EditorData::GetInstance().getCurrentMap();  
+   dtCore::RefPtr<dtDAL::Map> mapPtr = dtEditQt::EditorData::GetInstance().getCurrentMap();
    std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > foundProxies;
-   mapPtr->FindProxies(foundProxies, std::string(""), std::string(""), 
+   mapPtr->FindProxies(foundProxies, std::string(""), std::string(""),
    std::string(""), std::string(""), dtDAL::Map::Either);
 
    std::vector< dtCore::RefPtr<dtDAL::ActorProxy> >::iterator it;
    for(it = foundProxies.begin(); it != foundProxies.end(); ++it)
    {
       mUI.mActorToGenerate->addItem((*it).get()->GetActor()->GetName().c_str(),
-                                    (*it).get()->GetId().ToString().c_str());      
+                                    (*it).get()->GetId().ToString().c_str());
    }
 
    dtEditQt::EditorData::GetInstance().getMainWindow()->endWaitCursor();
@@ -142,7 +142,7 @@ void RandomActorGeneratorPlugin::OnRefreshActorList()
 ////////////////////////////////////////////////////////////////////////////////
 void RandomActorGeneratorPlugin::OnSelectedActorChange(ActorProxyRefPtrVector& actors)
 {
-   if (actors.size() > 0)
+   if (!actors.empty())
    {
       //ensure we can't duplicate the STAGE Brush
       if (! dynamic_cast<dtActors::VolumeEditActorProxy*>(actors[0].get()))
@@ -151,26 +151,26 @@ void RandomActorGeneratorPlugin::OnSelectedActorChange(ActorProxyRefPtrVector& a
          return;
       }
    }
-   
-   mUI.mGenerateBtn->setEnabled(false);   
+
+   mUI.mGenerateBtn->setEnabled(false);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void RandomActorGeneratorPlugin::NewActorProxyInsideVolumeEditor(dtDAL::ActorProxy* proxyToCopy)
-{   
+{
    dtActors::VolumeEditActor* volEditActor = mMainWindow->GetVolumeEditActor();
    dtCore::RefPtr<dtDAL::Map> currMap = dtEditQt::EditorData::GetInstance().getCurrentMap();
-   osg::Vec3 spawnPoint;   
+   osg::Vec3 spawnPoint;
 
    if(volEditActor->GetShape() == dtActors::VolumeEditActor::VolumeShapeType::BOX)
-   {      
+   {
       spawnPoint = RandomPointInsideBox();
    }
    else if(volEditActor->GetShape() == dtActors::VolumeEditActor::VolumeShapeType::SPHERE)
    {
       spawnPoint = RandomPointInsideSphere();
-   } 
-   else 
+   }
+   else
    {
       //TODO change this to a Qt error dialog
       dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ERROR,__FUNCTION__,
@@ -195,19 +195,19 @@ void RandomActorGeneratorPlugin::NewActorProxyInsideVolumeEditor(dtDAL::ActorPro
 
    //Apply rotation (NOT translation) transformations from original actor to the cloned actor
    //(scale has already been copied during the clone step)
-   dtCore::Transform cloneXForm;  
+   dtCore::Transform cloneXForm;
    aClonePtr->GetTransform(cloneXForm);
-   dtCore::Transformable* originalTransformable = dynamic_cast<dtCore::Transformable*>(proxyToCopy->GetActor());      
-   dtCore::Transform originalTransform;      
+   dtCore::Transformable* originalTransformable = dynamic_cast<dtCore::Transformable*>(proxyToCopy->GetActor());
+   dtCore::Transform originalTransform;
    originalTransformable->GetTransform(originalTransform);
    float h,p,r;
    originalTransform.GetRotation(h, p, r);
-   cloneXForm.SetRotation(h, p, r);      
+   cloneXForm.SetRotation(h, p, r);
 
    //apply the random translations to the cloned actor's matrix
-   cloneXForm.SetTranslation(spawnPoint[0], spawnPoint[1], spawnPoint[2]);   
+   cloneXForm.SetTranslation(spawnPoint[0], spawnPoint[1], spawnPoint[2]);
 
-   //apply random rotation on the specified axes      
+   //apply random rotation on the specified axes
    float randAngle;
    if (mUI.mRandomXRotationCheckBox->isChecked()) //X-Axis
    {
@@ -231,7 +231,7 @@ void RandomActorGeneratorPlugin::NewActorProxyInsideVolumeEditor(dtDAL::ActorPro
    aClonePtr->SetTransform(cloneXForm);
 
    //random scale?
-   if (mUI.mRandomScaleCheckBox->isChecked())   
+   if (mUI.mRandomScaleCheckBox->isChecked())
    {
       //random scale between scaleMin and scaleMax
       float randScale = ((mUI.mScaleMaxSpinBox->value() * rand()) / RAND_MAX)
@@ -241,7 +241,7 @@ void RandomActorGeneratorPlugin::NewActorProxyInsideVolumeEditor(dtDAL::ActorPro
       dtDAL::Vec3ActorProperty* scaleProp = dynamic_cast<dtDAL::Vec3ActorProperty*>(prop);
 
       if (scaleProp) //scaling is possible with this actor
-      {         
+      {
          osg::Vec3 newScale(randScale, randScale, randScale);
 
          // It causes problems when the scale is negative in the current version of OSG
@@ -259,14 +259,14 @@ void RandomActorGeneratorPlugin::NewActorProxyInsideVolumeEditor(dtDAL::ActorPro
          }
 
          scaleProp->SetValue(newScale);
-      }      
-   }   
-   
+      }
+   }
+
    //Apply rotation and translation from VolEditActor (remember: scale doesn't
    //exist inside Delta Transforms.... if that ever changes this could break)
    osg::Matrixd volEAXMatrix;
    volEAXMatrix = volEditActor->GetMatrix();
-   aClonePtr->SetMatrix(aClonePtr->GetMatrix() * volEAXMatrix);   
+   aClonePtr->SetMatrix(aClonePtr->GetMatrix() * volEAXMatrix);
 
    if (mUI.mGroundClampCheckBox->checkState())
    {
@@ -293,18 +293,18 @@ void RandomActorGeneratorPlugin::NewActorProxyInsideVolumeEditor(dtDAL::ActorPro
          startPoint = translatedSpawnPoint;
       }
 
-      //Now go from startPoint to the first poly "below" it      
-      groundFinder->SetScene(masterScene);      
+      //Now go from startPoint to the first poly "below" it
+      groundFinder->SetScene(masterScene);
       groundFinder->SetGeometry(NULL);
       groundFinder->SetStartPosition(startPoint);
       //Down in Delta3D is -z so we're going to clamp in that direction
       //(clamp towards toward the "ground."
       groundFinder->SetDirection(osg::Vec3(0.0, 0.0, -1.0));
-      
+
       groundFinder->Update();
-      osg::Vec3 groundHit;     
+      osg::Vec3 groundHit;
       for (int i = 0; i < groundFinder->GetNumberOfHits(); ++i)
-      {         
+      {
          groundFinder->GetHitPoint(groundHit, i);
 
          //Take first hit point that is far enough away from the top of the brush
@@ -316,13 +316,13 @@ void RandomActorGeneratorPlugin::NewActorProxyInsideVolumeEditor(dtDAL::ActorPro
             aClonePtr->SetTransform(cloneXForm);
             break;
          }
-      }  
+      }
 
       //put new Actor's Drawable back in Scene
-      masterScene->AddDrawable(aClonePtr);    
+      masterScene->AddDrawable(aClonePtr);
    }
 
-   //send out a created event.      
+   //send out a created event.
    dtEditQt::EditorEvents::GetInstance().emitActorProxyCreated(aCloneProxy, false);
 }
 
@@ -331,18 +331,18 @@ osg::Vec3 RandomActorGeneratorPlugin::RandomPointInsideBox()
 {
    osg::Vec3 spawnPoint;
    dtActors::VolumeEditActor* volEditActor = mMainWindow->GetVolumeEditActor();
-   osg::Vec3 volEAScale = volEditActor->GetScale();   
+   osg::Vec3 volEAScale = volEditActor->GetScale();
    double baseLength = volEditActor->GetBaseLength();
-   
-   //apply volEditActor's scale to each dimension of the box      
-   double xLen = baseLength * volEAScale[0];      
-   double yLen = baseLength * volEAScale[1];      
+
+   //apply volEditActor's scale to each dimension of the box
+   double xLen = baseLength * volEAScale[0];
+   double yLen = baseLength * volEAScale[1];
    double zLen = baseLength * volEAScale[2];
 
    double halfX = xLen * 0.5;
    double halfY = yLen * 0.5;
    double halfZ = zLen * 0.5;
-   
+
    spawnPoint[0] = (xLen * rand() / RAND_MAX) - halfX;
    spawnPoint[1] = (yLen * rand() / RAND_MAX) - halfY;
    spawnPoint[2] = (zLen * rand() / RAND_MAX) - halfZ;
@@ -372,8 +372,8 @@ osg::Vec3 RandomActorGeneratorPlugin::RandomPointInsideSphere()
 
    osg::Vec3 spawnPoint;
    dtActors::VolumeEditActor* volEditActor = mMainWindow->GetVolumeEditActor();
-   osg::Vec3 volEAScale = volEditActor->GetScale();   
-   double baseRadius = volEditActor->GetBaseRadius(); 
+   osg::Vec3 volEAScale = volEditActor->GetScale();
+   double baseRadius = volEditActor->GetBaseRadius();
 
    double u = ((2.0 * rand()) / RAND_MAX) - 1.0;
    double theta = ((2.0 * osg::PI * rand()) / RAND_MAX);
@@ -381,8 +381,8 @@ osg::Vec3 RandomActorGeneratorPlugin::RandomPointInsideSphere()
    //osg's unit Sphere has top at origin
    //osg::Vec3 firstPoint(0.0, 0.0, 0.0);  //not needed 0 + secondPoint is easy
 
-   osg::Vec3 secondPoint;      
-   double squareRoot = sqrt(1.0 - u*u);      
+   osg::Vec3 secondPoint;
+   double squareRoot = sqrt(1.0 - u*u);
    secondPoint[0] = squareRoot * cos(theta);
    secondPoint[1] = squareRoot * sin(theta);
    secondPoint[2] = u;
@@ -395,7 +395,7 @@ osg::Vec3 RandomActorGeneratorPlugin::RandomPointInsideSphere()
    //spawnPoint[2] = (firstPoint[2] + secondPoint[2]) * lineParam;
    spawnPoint[2] = secondPoint[2] * lineParam; //firstPoint[2] is always 0.0
 
-   //Need to scale based on scale matrix for the VolumeEditActor and the radius 
+   //Need to scale based on scale matrix for the VolumeEditActor and the radius
    spawnPoint[0] *= baseRadius * volEAScale[0];
    spawnPoint[1] *= baseRadius * volEAScale[1];
    spawnPoint[2] *= baseRadius * volEAScale[2];
@@ -418,20 +418,20 @@ public:
    /** get a description of the plugin */
    virtual std::string GetDescription() { return "Randomly creates a number of actors."; }
 
-   virtual void GetDependencies(std::list<std::string>& deps) 
+   virtual void GetDependencies(std::list<std::string>& deps)
    {
       // just for testing
       deps.push_back("Plugin Manager");
    }
 
     /** construct the plugin and return a pointer to it */
-   virtual dtEditQt::Plugin* Create(dtEditQt::MainWindow* mw) 
-   { 
+   virtual dtEditQt::Plugin* Create(dtEditQt::MainWindow* mw)
+   {
       mPlugin = new RandomActorGeneratorPlugin(mw);
       return mPlugin;
    }
 
-   virtual void Destroy() 
+   virtual void Destroy()
    {
       delete mPlugin;
    }
@@ -439,7 +439,7 @@ public:
 private:
 
    dtEditQt::Plugin* mPlugin;
-}; 
+};
 } //namespace RandomActorGenerator
 
 extern "C" STAGE_RANDOM_ACTOR_GENERATOR_EXPORT dtEditQt::PluginFactory* CreatePluginFactory()

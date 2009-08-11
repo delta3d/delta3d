@@ -138,10 +138,10 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void EditorEvents::emitProxyNameChanged(dtCore::RefPtr<dtDAL::ActorProxy> proxy, std::string oldName)
+   void EditorEvents::emitProxyNameChanged(dtDAL::ActorProxy& proxy, std::string oldName)
    {
       LOG_INFO("Emitting UI event - [proxyNameChanged]");
-      emit proxyNameChanged(proxy, oldName);
+      emit ProxyNameChanged(proxy, oldName);
    }
 
    ///////////////////////////////////////////////////////////////////////////////

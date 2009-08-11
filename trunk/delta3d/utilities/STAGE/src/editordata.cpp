@@ -176,7 +176,17 @@ namespace dtEditQt
       PropertyEditor* propEditor = getMainWindow()->GetPropertyEditor();
       if(propEditor != NULL)
       {
-         propEditor->GetSelectedActors(toFill);
+         std::vector<dtDAL::PropertyContainer*> toFillPC;
+
+         propEditor->GetSelectedPropertyContainers(toFillPC);
+
+         toFill.clear();
+         toFill.reserve(toFillPC.size());
+         for (size_t i = 0; i != toFillPC.size(); ++i)
+         {
+            toFill.push_back(static_cast<dtDAL::ActorProxy*>(toFillPC[i]));
+         }
+
       }
    }
 

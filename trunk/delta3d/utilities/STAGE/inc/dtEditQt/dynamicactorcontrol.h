@@ -29,8 +29,8 @@
 #ifndef DELTA_DYNAMIC_ACTOR_CONTROL
 #define DELTA_DYNAMIC_ACTOR_CONTROL
 
-#include <dtEditQt/dynamicabstractcontrol.h>
-#include <dtEditQt/dynamicsubwidgets.h>
+#include <dtQt/dynamicabstractcontrol.h>
+#include <dtQt/dynamicsubwidgets.h>
 
 // Forward References
 namespace dtDAL
@@ -43,7 +43,7 @@ namespace dtEditQt
 {
    class PropertyEditorModel;
 
-   class DynamicActorControl : public DynamicAbstractControl
+   class DynamicActorControl : public dtQt::DynamicAbstractControl
    {
       Q_OBJECT
 
@@ -55,10 +55,10 @@ namespace dtEditQt
          virtual ~DynamicActorControl();
 
          /**
-          * @see DynamicAbstractControl#initializeData
+          * @see DynamicAbstractControl#InitializeData
           */
-         void initializeData(DynamicAbstractControl* newParent,PropertyEditorModel* newModel,
-                             dtDAL::ActorProxy* newProxy, dtDAL::ActorProperty* newProperty);
+         void InitializeData(dtQt::DynamicAbstractControl* newParent, dtQt::PropertyEditorModel* newModel,
+                             dtDAL::PropertyContainer* newPC, dtDAL::ActorProperty* newProperty);
 
          /**
           * @see DynamicAbstractControl#updateEditorFromModel
@@ -111,7 +111,8 @@ namespace dtEditQt
           */
          virtual bool updateData(QWidget* widget);
 
-         void actorPropertyChanged(ActorProxyRefPtr proxy, ActorPropertyRefPtr property);
+         void actorPropertyChanged(dtDAL::PropertyContainer& propCon,
+                  dtDAL::ActorProperty& property);
 
          /**
           * Called when the user selects an item in the combo box
@@ -150,8 +151,8 @@ namespace dtEditQt
          // We work around this by trapping the destruction of this object, it should
          // call our handleSubEditDestroy() method so we know to not hold this anymore
          QWidget*        mTemporaryWrapper;
-         SubQComboBox*   mTemporaryEditControl;
-         SubQPushButton* mTemporaryGotoButton;
+         dtQt::SubQComboBox*   mTemporaryEditControl;
+         dtQt::SubQPushButton* mTemporaryGotoButton;
    };
 
 } // namespace dtEditQt

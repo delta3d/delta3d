@@ -29,12 +29,12 @@
 #include <prefix/dtstageprefix-src.h>
 
 #include <dtEditQt/dynamicgrouppropertycontrol.h>
-#include <dtEditQt/propertyeditormodel.h>
-#include <dtEditQt/propertyeditortreeview.h>
+#include <dtQt/propertyeditormodel.h>
+#include <dtQt/propertyeditortreeview.h>
+#include <dtQt/dynamicsubwidgets.h>
 
 
 #include <dtEditQt/groupuiregistry.h>
-#include <dtEditQt/dynamicsubwidgets.h>
 #include <dtEditQt/groupuiplugin.h>
 #include <dtEditQt/mainwindow.h>
 
@@ -63,7 +63,7 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void DynamicGroupPropertyControl::addChildControl(DynamicAbstractControl* child, PropertyEditorModel* model)
+   void DynamicGroupPropertyControl::addChildControl(dtQt::DynamicAbstractControl* child, dtQt::PropertyEditorModel* model)
    {
       // Note - if you change the propertyeditor so that it adds and removes rows instead of destroying
       // the property editor, you need to work with the begin/endinsertrows methods of model.
@@ -80,7 +80,7 @@ namespace dtEditQt
       QWidget* wrapper = new QWidget(parent);
       wrapper->setFocusPolicy(Qt::StrongFocus);
       // set the background color to white so that it sort of blends in with the rest of the controls
-      SetBackgroundColor(wrapper, PropertyEditorTreeView::ROW_COLOR_ODD);
+      SetBackgroundColor(wrapper, dtQt::PropertyEditorTreeView::ROW_COLOR_ODD);
 
       if (!mInitialized)
       {
@@ -93,7 +93,7 @@ namespace dtEditQt
       grid->setSpacing(1);
 
       // Edit button
-      SubQPushButton* temporaryEditBtn = new SubQPushButton(tr("Edit"), wrapper, this);
+      dtQt::SubQPushButton* temporaryEditBtn = new dtQt::SubQPushButton(tr("Edit"), wrapper, this);
       connect(temporaryEditBtn, SIGNAL(clicked()), this, SLOT(EditClicked()));
       temporaryEditBtn->setToolTip(QString(tr("Edits this property with the configured editor plugin.")));
 
@@ -103,15 +103,15 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void DynamicGroupPropertyControl::initializeData(DynamicAbstractControl* newParent,
-      PropertyEditorModel* newModel, dtDAL::ActorProxy* newProxy, dtDAL::ActorProperty* newProperty)
+   void DynamicGroupPropertyControl::InitializeData(dtQt::DynamicAbstractControl* newParent,
+      dtQt::PropertyEditorModel* newModel, dtDAL::PropertyContainer* propCon, dtDAL::ActorProperty* newProperty)
    {
       // Note - We used to have dynamic_cast in here, but it was failing to properly cast in
       // all cases in Linux with gcc4.  So we replaced it with a static cast.
       if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::GROUP)
       {
          mGroupProperty = dynamic_cast<dtDAL::GroupActorProperty*>(newProperty);
-         DynamicAbstractControl::initializeData(newParent, newModel, newProxy, newProperty);
+         DynamicAbstractControl::InitializeData(newParent, newModel, propCon, newProperty);
       }
       else
       {
@@ -223,11 +223,11 @@ namespace dtEditQt
             dtCore::RefPtr<dtDAL::NamedGroupParameter> param = new dtDAL::NamedGroupParameter(mGroupProperty->GetName());
             plugin->UpdateModelFromWidget(*pluginWidget, *param);
             // give undo manager the ability to create undo/redo events
-            emit PropertyAboutToChange(*mProxy, *mGroupProperty,
+            emit PropertyAboutToChange(*mPropContainer, *mGroupProperty,
                mGroupProperty->ToString(), param->ToString());
             mGroupProperty->SetValue(*param);
             // notify the world (mostly the viewports) that our property changed
-            emit PropertyChanged(*mProxy, *mGroupProperty);
+            emit PropertyChanged(*mPropContainer, *mGroupProperty);
          }
       }
       else

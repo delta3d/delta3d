@@ -28,7 +28,7 @@
  */
 #include <prefix/dtstageprefix-src.h>
 #include <dtEditQt/dynamicnamecontrol.h>
-#include <dtEditQt/dynamicsubwidgets.h>
+#include <dtQt/dynamicsubwidgets.h>
 #include <dtEditQt/editorevents.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtUtil/log.h>
@@ -45,8 +45,8 @@ namespace dtEditQt
       : mTemporaryEditControl(NULL)
    {
       // listen for name changes so we can update our own edit control
-      connect(&EditorEvents::GetInstance(), SIGNAL(proxyNameChanged(ActorProxyRefPtr, std::string)),
-         this, SLOT(proxyNameChanged(ActorProxyRefPtr, std::string)));
+      connect(&EditorEvents::GetInstance(), SIGNAL(ProxyNameChanged(dtDAL::ActorProxy&, std::string)),
+         this, SLOT(ProxyNameChanged(dtDAL::ActorProxy&, std::string)));
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -55,12 +55,20 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
+   void DynamicNameControl::InitializeData(dtQt::DynamicAbstractControl* newParent,
+      dtQt::PropertyEditorModel* newModel, dtDAL::PropertyContainer* newPC, dtDAL::ActorProperty* newProperty)
+   {
+      DynamicAbstractControl::InitializeData(newParent, newModel, newPC, newProperty);
+      mProxy = static_cast<dtDAL::ActorProxy*>(newPC);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
    void DynamicNameControl::updateEditorFromModel(QWidget* widget)
    {
       if (widget != NULL)
       {
          // Note, don't use the temporary variable here.  It can cause errors with QT.
-         SubQLineEdit* editBox = static_cast<SubQLineEdit*>(widget);
+         dtQt::SubQLineEdit* editBox = static_cast<dtQt::SubQLineEdit*>(widget);
 
          // set the current value from our property
          editBox->setText(tr(mProxy->GetName().c_str()));
@@ -79,7 +87,7 @@ namespace dtEditQt
       if (widget != NULL)
       {
          // Note, don't use the temporary variable here.  It can cause errors with QT.
-         SubQLineEdit* editBox = static_cast<SubQLineEdit*>(widget);
+         dtQt::SubQLineEdit* editBox = static_cast<dtQt::SubQLineEdit*>(widget);
          //bool success = false;
 
          // get the data from our control
@@ -101,7 +109,7 @@ namespace dtEditQt
       // no notification cause it's not a property
       if (dataChanged)
       {
-         EditorEvents::GetInstance().emitProxyNameChanged(mProxy.get(), oldName);
+         EditorEvents::GetInstance().emitProxyNameChanged(*mProxy, oldName);
       }
 
       return dataChanged;
@@ -112,7 +120,7 @@ namespace dtEditQt
       const QStyleOptionViewItem& option, const QModelIndex& index)
    {
       // create and init the edit box
-      mTemporaryEditControl = new SubQLineEdit(parent, this);
+      mTemporaryEditControl = new dtQt::SubQLineEdit(parent, this);
 
       if (!mInitialized)
       {
@@ -172,9 +180,9 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void DynamicNameControl::proxyNameChanged(dtCore::RefPtr<dtDAL::ActorProxy> proxy, std::string oldName)
+   void DynamicNameControl::ProxyNameChanged(dtDAL::ActorProxy& proxy, std::string oldName)
    {
-      if (mTemporaryEditControl != NULL && proxy == mProxy)
+      if (mTemporaryEditControl != NULL && &proxy == mPropContainer)
       {
          updateEditorFromModel(mTemporaryEditControl);
       }
