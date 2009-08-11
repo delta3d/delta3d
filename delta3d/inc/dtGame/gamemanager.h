@@ -1088,7 +1088,7 @@ namespace dtGame
 
 
             /// Implements the functionality that will happen on the PostFrame event
-            virtual void PostFrame();
+            virtual void PostFrame(double deltaSimTime, double deltaRealTime);
 
             void PopulateTickMessage(TickMessage& tickMessage,
                      double deltaSimTime, double deltaRealTime, double simulationTime);

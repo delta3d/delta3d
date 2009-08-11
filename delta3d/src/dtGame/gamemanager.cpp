@@ -274,7 +274,8 @@ namespace dtGame
       }
       else if (data->message == dtCore::System::MESSAGE_POST_FRAME)
       {
-         PostFrame();
+         double* timeChange = (double*)data->userData;
+         PostFrame(timeChange[0], timeChange[1]);
       }
       else if (data->message == dtCore::System::MESSAGE_PAUSE_START)
       {
@@ -900,8 +901,15 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::PostFrame()
+   void GameManager::PostFrame(double deltaSimTime, double deltaRealTime)
    {
+      double simulationTime = dtCore::System::GetInstance().GetSimulationTime();
+
+      dtCore::RefPtr<SystemMessage> postFrame;
+      GetMessageFactory().CreateMessage(MessageType::SYSTEM_POST_FRAME, postFrame);
+      PopulateTickMessage(*postFrame, deltaSimTime, deltaRealTime, simulationTime);
+
+      DoSendMessage(*postFrame);
    }
 
    ///////////////////////////////////////////////////////////////////////////////

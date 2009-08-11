@@ -114,6 +114,7 @@ namespace dtGame
          //SYSTEM MESSAGES
          static const MessageType SYSTEM_POST_EVENT_TRAVERSAL;
          static const MessageType SYSTEM_FRAME_SYNCH;
+         static const MessageType SYSTEM_POST_FRAME;
 
 
          /**
