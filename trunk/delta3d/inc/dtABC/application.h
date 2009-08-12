@@ -211,6 +211,12 @@ namespace dtABC
       ///Cycle through the statistics modes
       void SetNextStatisticsType();
 
+      /// @return the instance of the osgViewer::CompositeViewer
+      const osgViewer::CompositeViewer* GetCompositeViewer() const { return mCompositeViewer.get(); }
+
+      /// @return the instance of the osgViewer::CompositeViewer
+      osgViewer::CompositeViewer* GetCompositeViewer() { return mCompositeViewer.get(); }
+
    protected:
 
       virtual ~Application();
@@ -236,12 +242,6 @@ namespace dtABC
       /// @param file the name of the data file to be parsed.
       /// @return true, if both parsing and applying went well.
       bool ParseConfigFile(const std::string& file);
-
-      /// @return the instance of the osgViewer::CompositeViewer
-      const osgViewer::CompositeViewer* GetCompositeViewer() const { return mCompositeViewer.get(); }
-
-      /// @return the instance of the osgViewer::CompositeViewer
-      osgViewer::CompositeViewer* GetCompositeViewer() { return mCompositeViewer.get(); }
 
       /**
        * Forces the application to re-read the set of config properties it handles.
