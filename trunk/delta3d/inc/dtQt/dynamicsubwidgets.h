@@ -100,7 +100,7 @@ namespace dtQt
     * If you use this callback to clear out any handles to this control, then
     * it will be safe to hold onto a control created in the createEditor() method.
     */
-   class SubQComboBox : public QComboBox
+   class DT_QT_EXPORT SubQComboBox : public QComboBox
    {
       Q_OBJECT
 
@@ -130,7 +130,7 @@ namespace dtQt
     * If you use this callback to clear out any handles to this control, then
     * it will be safe to hold onto a control created in the createEditor() method.
     */
-   class SubQSpinBox : public QSpinBox
+   class DT_QT_EXPORT SubQSpinBox : public QSpinBox
    {
       Q_OBJECT
 
@@ -160,7 +160,7 @@ namespace dtQt
     * If you use this callback to clear out any handles to this control, then
     * it will be safe to hold onto a control created in the createEditor() method.
     */
-   class SubQLabel : public QLabel
+   class DT_QT_EXPORT SubQLabel : public QLabel
    {
       Q_OBJECT
 
@@ -190,7 +190,7 @@ namespace dtQt
     * If you use this callback to clear out any handles to this control, then
     * it will be safe to hold onto a control created in the createEditor() method.
     */
-   class SubQPushButton : public QPushButton
+   class DT_QT_EXPORT SubQPushButton : public QPushButton
    {
       Q_OBJECT
 
@@ -219,7 +219,7 @@ namespace dtQt
     * Subclass of QWidget. Used to trap multiple children if needed.
     * Unlike the other SubXYZ classes, this one does NOT work with the parent control
     */
-   class SubQWidget : public QWidget
+   class DT_QT_EXPORT SubQWidget : public QWidget
    {
       Q_OBJECT
 
