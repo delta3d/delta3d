@@ -86,11 +86,11 @@ namespace dtEditQt
        */
       void yaw(double degrees);
 
-      /**
-       * Rotates the camera about its current view vector.
-       * @param degrees Amount of rotation in degrees.
-       */
-      void roll(double degrees);
+      ///**
+      // * Rotates the camera about its current view vector.
+      // * @param degrees Amount of rotation in degrees.
+      // */
+      //void roll(double degrees);
 
       /**
        * Rotates the camera using the given quaternion.
@@ -125,10 +125,10 @@ namespace dtEditQt
        */
       void resetRotation();
 
-      /**
-      * Sets the viewport.
-      */
-      void setViewport(int x, int y, int width, int height);
+      ///**
+      //* Sets the viewport.
+      //*/
+      //void setViewport(int x, int y, int width, int height);
 
       /**
        * Sets the camera's orthographic viewing parameters and puts this camera into
@@ -203,30 +203,30 @@ namespace dtEditQt
        */
       osg::Quat getOrientation() const;
 
-      /**
-       * Gets the current pitch of this camera.
-       * @return The pitch value in degrees.
-       */
-      double getPitch() const { return mCamPitch; }
+      ///**
+      // * Gets the current pitch of this camera.
+      // * @return The pitch value in degrees.
+      // */
+      //double getPitch() const { return mCamPitch; }
 
-      /**
-       * Gets the current yaw of this camera.
-       * @return The yaw value in degrees.
-       */
-      double getYaw() const { return mCamYaw; }
+      ///**
+      // * Gets the current yaw of this camera.
+      // * @return The yaw value in degrees.
+      // */
+      //double getYaw() const { return mCamYaw; }
 
-      /**
-       * Gets the current roll of this camera.
-       * @return The roll value in degrees.
-       */
-      double getRoll() const { return mCamRoll; }
+      ///**
+      // * Gets the current roll of this camera.
+      // * @return The roll value in degrees.
+      // */
+      //double getRoll() const { return mCamRoll; }
 
       /**
        * Gets the current position of this camera.
        * @return Returns a 3D vector corresponding to this camera's current position
        * in world coordinates.
        */
-      const osg::Vec3& getPosition() const { return mPosition; }
+      osg::Vec3 getPosition() const;
 
       /**
        * Gets this camera's current projection matrix.
@@ -325,9 +325,9 @@ namespace dtEditQt
          PERSPECTIVE
       };
 
-      osg::Vec3 mPosition;
+      //osg::Vec3 mPosition;
       //osg::Quat mOrientation;
-      double mCamPitch, mCamYaw, mCamRoll;
+      //double mCamPitch, mCamYaw, mCamRoll;
 
       osg::Matrixd mProjectionMat;
       osg::Matrixd mWorldViewMat;
@@ -340,7 +340,7 @@ namespace dtEditQt
       //bool mUpdateProjectionMatrix;
       //bool mUpdateWorldViewMatrix;
 
-      //ProjectionType mProjType;
+      ProjectionType mProjType;
 
       dtCore::RefPtr<dtCore::Camera> mDeltaCamera;
 

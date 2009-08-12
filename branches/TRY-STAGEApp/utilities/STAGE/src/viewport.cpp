@@ -230,7 +230,7 @@ namespace dtEditQt
    void Viewport::resizeGL(int width, int height)
    {
       //mSceneView->setViewport(0, 0, width, height); //TODO
-      getCamera()->setViewport(0, 0, width, height);
+      //getCamera()->setViewport(0, 0, width, height);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -252,8 +252,8 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void Viewport::refresh()
    {
-      mIsDirty = true;
-      GetQGLWidget()->updateGL(); 
+      //mIsDirty = true;
+      //GetQGLWidget()->updateGL(); 
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -268,12 +268,12 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void Viewport::renderFrame()
    {
-      if (!mIsDirty)
-      {
-         return;
-      }
+      //if (!mIsDirty)
+      //{
+      //   return;
+      //}
 
-      mIsDirty = false;
+      //mIsDirty = false;
       getCamera()->update();
       //getSceneView()->setProjectionMatrix(getCamera()->getProjectionMatrix());
       //getSceneView()->setViewMatrix(getCamera()->getWorldViewMatrix());
@@ -719,7 +719,7 @@ namespace dtEditQt
       //   return NULL;
       //}
 
-      dtCore::DeltaDrawable* drawable = mView->GetMousePickedObject();
+      dtCore::DeltaDrawable* drawable = mView->GetPickedObject(osg::Vec2(x, y));
       
       osg::Vec3 position;
       //getPickPosition(position); //TODO E!

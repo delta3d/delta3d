@@ -727,25 +727,6 @@ osg::TriangleMesh* ObjectMotionModel::GenerateRing(float minRadius, float maxRad
 
 
 ////////////////////////////////////////////////////////////////////////////////
-osg::Vec3 ObjectMotionModel::GetMouseVector(osg::Vec2 mousePos)
-{
-   if (!mCamera)
-   {
-      return osg::Vec3();
-   }
-
-   const osg::Camera* camera = mCamera->GetOSGCamera();
-   osg::Matrix matrix = camera->getViewMatrix() * camera->getProjectionMatrix();
-
-   const osg::Matrix inverse = osg::Matrix::inverse(matrix);
-   osg::Vec3 startVertex = osg::Vec3(mousePos.x(), mousePos.y(), 0.0f) * inverse;
-
-   dtCore::Transform transform;
-   mCamera->GetTransform(transform);
-   return startVertex - transform.GetTranslation();
-}
-
-////////////////////////////////////////////////////////////////////////////////
 dtCore::DeltaDrawable* ObjectMotionModel::MousePick(void)
 {
    if (!mView)
@@ -815,13 +796,52 @@ dtCore::DeltaDrawable* ObjectMotionModel::MousePick(void)
 ////////////////////////////////////////////////////////////////////////////////
 void ObjectMotionModel::GetMouseLine(osg::Vec2 mousePos, osg::Vec3& start, osg::Vec3& end)
 {
-   osg::Vec3 mouseVec = GetMouseVector(mousePos);
-   mouseVec.normalize();
+   if (!mCamera)
+   {
+      return;
+   }
+
+   float distance = GetCameraDistanceToTarget();
 
    dtCore::Transform transform;
    mCamera->GetTransform(transform);
-   start = transform.GetTranslation();
-   end = start + (mouseVec * (GetCameraDistanceToTarget() * 1.5f));
+
+   const osg::Camera* camera = mCamera->GetOSGCamera();
+
+   osg::Vec3 dir;
+
+   double left, right, bottom, top, near, far;
+   if (camera->getProjectionMatrixAsOrtho(left, right, bottom, top, near, far))
+   {
+      osg::Vec3 rightAxis, upAxis, forwardAxis;
+      transform.GetOrientation(rightAxis, upAxis, forwardAxis);
+
+      osg::Matrix matrix = camera->getProjectionMatrix();
+      double xDif = right - left;
+      double yDif = top - bottom;
+
+      osg::Vec3 center = transform.GetTranslation();
+      center += rightAxis * ((xDif * 0.5f) * mousePos.x());
+      center += upAxis * ((yDif * 0.5f) * mousePos.y());
+
+      dir = forwardAxis * 10000.0f;
+      start = center - dir;
+      end = center + dir;
+   }
+   else
+   {
+      osg::Matrix projMatrix = camera->getProjectionMatrix();
+      osg::Matrix viewMatrix = camera->getViewMatrix();
+      osg::Matrix matrix = viewMatrix * projMatrix;
+
+      const osg::Matrix inverse = osg::Matrix::inverse(matrix);
+
+      start = transform.GetTranslation();
+
+      dir = (osg::Vec3(mousePos.x(), mousePos.y(), 0.0f) * inverse) - start;
+      dir.normalize();
+      end = start + (dir * (distance * 1.5f));
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

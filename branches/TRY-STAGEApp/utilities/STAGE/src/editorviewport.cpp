@@ -176,15 +176,15 @@ namespace dtEditQt
          mObjectMotionModel->SetScaleEnabled(false);
       }
 
-      //mObjectMotionModel->UpdateWidgets(); //TODO E!  is this needed?
+      mObjectMotionModel->UpdateWidgets();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void EditorViewport::refresh()
    {
-      mObjectMotionModel->UpdateWidgets(); //TODO E!
-
       Viewport::refresh();
+
+      mObjectMotionModel->UpdateWidgets();
    }
 
 
@@ -255,7 +255,13 @@ namespace dtEditQt
       return pos;
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
+   ///////////////////////////////////////////////////////////////////////////////
+   void EditorViewport::renderFrame()
+   {
+      Viewport::renderFrame();
+   }
+
+   //////////////////////////////////////////////////////////////////////////////////
    //void EditorViewport::GetMouseLine(osg::Vec2 mousePos, osg::Vec3& start, osg::Vec3& end)
    //{
    //   int xLoc = mousePos.x();
@@ -269,7 +275,7 @@ namespace dtEditQt
    //   //}
    //}
 
-   ////////////////////////////////////////////////////////////////////////////////
+   //////////////////////////////////////////////////////////////////////////////////
    //osg::Vec2 EditorViewport::GetObjectScreenCoordinates(osg::Vec3 objectPos)
    //{
    //   osg::Vec3 screenPos;
