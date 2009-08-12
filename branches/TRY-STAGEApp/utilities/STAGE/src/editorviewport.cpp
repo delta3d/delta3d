@@ -255,12 +255,6 @@ namespace dtEditQt
       return pos;
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   void EditorViewport::renderFrame()
-   {
-      Viewport::renderFrame();
-   }
-
    //////////////////////////////////////////////////////////////////////////////////
    //void EditorViewport::GetMouseLine(osg::Vec2 mousePos, osg::Vec3& start, osg::Vec3& end)
    //{
