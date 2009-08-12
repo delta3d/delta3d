@@ -29,6 +29,7 @@
 #ifndef DELTA_DYNAMICCOLORELEMENTCONTROL
 #define DELTA_DYNAMICCOLORELEMENTCONTROL
 
+#include <dtQt/export.h>
 #include <dtQt/dynamicabstractcontrol.h>
 #include <dtQt/dynamicsubwidgets.h>
 
@@ -49,7 +50,7 @@ namespace dtQt
      * the ColorRgbaActorProperty, and ColorRgbActorProperty with separate contructors.
      * It provides a get and set method to get at the data.
      */
-    class DynamicColorElementControl : public DynamicAbstractControl
+    class DT_QT_EXPORT DynamicColorElementControl : public DynamicAbstractControl
     {
         Q_OBJECT
 

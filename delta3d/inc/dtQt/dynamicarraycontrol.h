@@ -29,6 +29,7 @@
 #ifndef DELTA_DYNAMICARRAYCONTROL
 #define DELTA_DYNAMICARRAYCONTROL
 
+#include <dtQt/export.h>
 #include <dtQt/dynamicabstractparentcontrol.h>
 #include <dtQt/dynamicsubwidgets.h>
 
@@ -45,7 +46,7 @@ namespace dtQt
     * @class DynamicArrayControl
     * @brief This is the dynamic control for the float data type - used in the property editor
     */
-   class DynamicArrayControl : public DynamicAbstractParentControl
+   class DT_QT_EXPORT DynamicArrayControl : public DynamicAbstractParentControl
    {
       Q_OBJECT
 

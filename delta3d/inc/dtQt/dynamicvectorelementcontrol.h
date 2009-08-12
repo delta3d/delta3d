@@ -29,6 +29,7 @@
 #ifndef DELTA_DYNAMICVECTORELEMENTCONTROL
 #define DELTA_DYNAMICVECTORELEMENTCONTROL
 
+#include <dtQt/export.h>
 #include <dtQt/dynamicabstractcontrol.h>
 #include <dtQt/dynamicsubwidgets.h>
 
@@ -56,7 +57,7 @@ namespace dtQt
     * the Vec2, Vec3, and Vec4 with separate contructors.  It provides a get and set
     * method to get at the data.
     */
-   class DynamicVectorElementControl : public DynamicAbstractControl
+   class DT_QT_EXPORT DynamicVectorElementControl : public DynamicAbstractControl
    {
       Q_OBJECT
 

@@ -29,6 +29,7 @@
 #ifndef DELTA_PROPERTYEDITORMODEL
 #define DELTA_PROPERTYEDITORMODEL
 
+#include <dtQt/export.h>
 #include <dtQt/dynamicabstractcontrol.h>
 #include <dtQt/dynamicabstractparentcontrol.h>
 #include <dtQt/dynamicgroupcontrol.h>
@@ -46,7 +47,7 @@ namespace dtQt
     * to see the original.  The original class is distributable according to the
     * standard QT license (GPL).
     */
-   class PropertyEditorModel : public QAbstractItemModel
+   class DT_QT_EXPORT PropertyEditorModel : public QAbstractItemModel
    {
       Q_OBJECT
 

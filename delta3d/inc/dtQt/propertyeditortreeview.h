@@ -29,6 +29,7 @@
 #ifndef DELTA_PROPERTYEDITORTREEVIEW
 #define DELTA_PROPERTYEDITORTREEVIEW
 
+#include <dtQt/export.h>
 #include <dtQt/dynamicabstractcontrol.h>
 #include <dtQt/propertyeditormodel.h>
 #include <QtCore/QAbstractItemModel>
@@ -55,7 +56,7 @@ namespace dtQt
     * to see the original.  The original class is distributable according to the
     * standard QT license (GPL).
     */
-   class PropertyEditorTreeView : public QTreeView
+   class DT_QT_EXPORT PropertyEditorTreeView : public QTreeView
    {
       Q_OBJECT
 

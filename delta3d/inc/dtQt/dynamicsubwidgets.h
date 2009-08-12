@@ -29,6 +29,7 @@
 #ifndef DELTA_DYNAMICSUBWIDGETS
 #define DELTA_DYNAMICSUBWIDGETS
 
+#include <dtQt/export.h>
 #include <dtQt/dynamicabstractcontrol.h>
 #include <QtGui/QComboBox>
 #include <QtGui/QLabel>
@@ -69,7 +70,7 @@ namespace dtQt
     * If you use this callback to clear out any handles to this control, then
     * it will be safe to hold onto a control created in the createEditor() method.
     */
-   class SubQLineEdit : public QLineEdit
+   class DT_QT_EXPORT SubQLineEdit : public QLineEdit
    {
       Q_OBJECT
 

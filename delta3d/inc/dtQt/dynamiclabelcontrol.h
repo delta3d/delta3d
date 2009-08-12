@@ -29,6 +29,7 @@
 #ifndef DELTA_DYNAMICLABELCONTROL
 #define DELTA_DYNAMICLABELCONTROL
 
+#include <dtQt/export.h>
 #include <dtQt/dynamicabstractcontrol.h>
 
 
@@ -46,7 +47,7 @@ namespace dtQt
     * The first purpose is to work with a label data type (once it exists).  The second
     * is just a placeholder to add non-editable strings with no underlying data type.
     */
-    class DynamicLabelControl : public DynamicAbstractControl
+    class DT_QT_EXPORT DynamicLabelControl : public DynamicAbstractControl
     {
         Q_OBJECT
 

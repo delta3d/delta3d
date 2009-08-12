@@ -30,6 +30,7 @@
 #ifndef DELTA_PROPERTYEDITORDELEGATE
 #define DELTA_PROPERTYEDITORDELEGATE
 
+#include <dtQt/export.h>
 #include <QtGui/QItemDelegate>
 #include <dtQt/dynamicabstractcontrol.h>
 
@@ -48,7 +49,7 @@ namespace dtQt
     * to see the original.  The original class is distributable according to the
     * standard QT license (GPL).
     */
-   class PropertyEditorDelegate : public QItemDelegate
+   class DT_QT_EXPORT PropertyEditorDelegate : public QItemDelegate
    {
       Q_OBJECT
 

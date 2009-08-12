@@ -29,6 +29,7 @@
 #ifndef DELTA_DYNAMICRESOURCECONTROLBASE
 #define DELTA_DYNAMICRESOURCECONTROLBASE
 
+#include <dtQt/export.h>
 #include <dtQt/dynamicabstractparentcontrol.h>
 #include <dtQt/dynamicsubwidgets.h>
 #include <dtQt/dynamiclabelcontrol.h>
@@ -54,7 +55,7 @@ namespace dtQt
     * This control is not editable, but has several child controls and some of them
     * are editable.
     */
-   class DynamicResourceControlBase : public DynamicAbstractParentControl
+   class DT_QT_EXPORT DynamicResourceControlBase : public DynamicAbstractParentControl
    {
       Q_OBJECT
 
