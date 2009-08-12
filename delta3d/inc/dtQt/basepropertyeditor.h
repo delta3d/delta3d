@@ -69,7 +69,7 @@ namespace dtQt
     * information about the selected actor(s) including type, name, location, rotation, etc...  It is a
     * dockable window.
     */
-   class BasePropertyEditor : public QDockWidget
+   class DT_QT_EXPORT BasePropertyEditor : public QDockWidget
    {
       Q_OBJECT
    public:
