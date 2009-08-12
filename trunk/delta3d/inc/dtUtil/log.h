@@ -79,6 +79,8 @@ namespace dtUtil
      #define LOGN_ALWAYS(name, msg)\
         dtUtil::Log::GetInstance(name).LogMessage(__FUNCTION__, __LINE__, msg,dtUtil::Log::LOG_ALWAYS);
 
+   struct LogImpl;
+
    /**
      * Log class which the engine uses for all of its logging
      * needs.  The log file is formatted using html tags,
@@ -110,7 +112,7 @@ namespace dtUtil
          *  @param msg - Message to display.
          *  @param msgType - Type of message being displayed. (error,warning,info)
          */
-        void LogMessage(const std::string &source, int line, const std::string &msg,
+        void LogMessage(const std::string& source, int line, const std::string& msg,
                             LogMessageType msgType = LOG_INFO) const;
 
         /**
@@ -123,8 +125,8 @@ namespace dtUtil
          *  @note
          *      Max length of the string to be printed is 2048 characters.
          */
-        void LogMessage(LogMessageType msgType, const std::string &source, int line,
-                            const char *msg, ...) const;
+        void LogMessage(LogMessageType msgType, const std::string& source, int line,
+                            const char* msg, ...) const;
 
         /**
          * Little more sophisticated method for logging messages.  Allows for
@@ -136,21 +138,22 @@ namespace dtUtil
          *  @note
          *      Max length of the string to be printed is 2048 characters.
          */
-        void LogMessage(LogMessageType msgType, const std::string &source, int line,
-                        const std::string &msg) const;
+        void LogMessage(LogMessageType msgType, const std::string& source, int line,
+                        const std::string& msg) const;
 
         /**
         * Logs a time-stamped message.  Takes a variable-argument list
         *  (va_list) that was created with va_start.
         *  @param msgType - Type of message being displayed. (error,warning,info)
         *  @param source - String identifier of the source of the message.
+        *  @param line  - line number or negative for unknown.
         *  @param msg - Printf - style format string.
         *  @param list - va_list created with va_start.
         *  @note
         *      Max length of the string to be printed is 2048 characters.
         */
-        void LogMessage(LogMessageType msgType, const std::string &source,
-                        const char *msg, va_list list) const;
+        void LogMessage(LogMessageType msgType, const std::string& source, int line,
+                        const char* msg, va_list list) const;
 
         /**
          * Little more sophisticated method for logging messages.  Allows for
@@ -213,14 +216,22 @@ namespace dtUtil
            STANDARD = TO_FILE | TO_CONSOLE ///<The default setting
         };
 
-        ///Configure where the Log messages get directed
+        /** Tell the Log where to send output messages.  The supplied parameter is a
+         *  bitwise combination of OutputStreamOptions.  The default is STANDARD, which
+         *  directs messages to both the console and the output file.
+         *  For example, to tell the Log to output to the file and console:
+         *  \code
+         *   dtUtil::Log::GetInstance().SetOutputStreamBit(dtUtil::Log::TO_FILE | dtUtil::Log::TO_CONSOLE);
+         *  \endcode
+         *  \param option A bitwise combination of options.
+         */
         void SetOutputStreamBit(unsigned int option);
 
         ///Get the currently defined output stream options
         unsigned int GetOutputStreamBit() const;
 
         ///Returns the name of this logger.
-        const std::string& GetName() const { return mName; }
+        const std::string& GetName() const;
 
     //Constructor and destructor are both protected since this is a singleton.
     protected:
@@ -235,11 +246,8 @@ namespace dtUtil
         ~Log();
 
     private:
-        static const std::string mDefaultName;
-
         LogMessageType mLevel;
-        unsigned int mOutputStreamBit; ///<the current output stream option
-        std::string mName;
+        LogImpl* mImpl;
     };
 }
 

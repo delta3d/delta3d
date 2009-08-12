@@ -9,13 +9,13 @@
 // Replacement message handler for ODE
 extern "C" void ODEMessageHandler(int errnum, const char* msg, va_list ap)
 {
-   dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_INFO, __FILE__, msg, ap);
+   dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_INFO, __FILE__, __LINE__, msg, ap);
 }
 /////////////////////////////////////////////
 // Replacement debug handler for ODE
 extern "C" void ODEDebugHandler(int errnum, const char* msg, va_list ap)
 {
-   dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ERROR, __FILE__, msg, ap);
+   dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ERROR, __FILE__, __LINE__, msg, ap);
 
    assert(false);
 }
