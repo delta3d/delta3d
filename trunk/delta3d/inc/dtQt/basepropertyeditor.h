@@ -40,6 +40,7 @@
 #include <dtQt/typedefs.h>
 
 #include <dtQt/dynamicabstractcontrol.h>
+#include <dtQt/export.h>
 
 class QMainWindow;
 class QTreeWidget;

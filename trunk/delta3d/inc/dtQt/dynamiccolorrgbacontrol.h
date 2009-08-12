@@ -29,6 +29,7 @@
 #ifndef DELTA_DYNAMICCOLORRGBCONTROL
 #define DELTA_DYNAMICCOLORRGBCONTROL
 
+#include <dtQt/export.h>
 #include <dtQt/dynamicabstractparentcontrol.h>
 
 class QLabel;
@@ -51,7 +52,7 @@ namespace dtQt
      * @Note It adds a group of child elements to the tree, since you can't edit 3 things
      * in one control easily.
      */
-   class DynamicColorRGBAControl : public DynamicAbstractParentControl
+   class DT_QT_EXPORT DynamicColorRGBAControl : public DynamicAbstractParentControl
    {
       Q_OBJECT
    public:

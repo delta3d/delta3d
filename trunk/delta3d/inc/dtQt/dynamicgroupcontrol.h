@@ -29,6 +29,7 @@
 #ifndef DELTA_DYNAMICGROUPCONTROL
 #define DELTA_DYNAMICGROUPCONTROL
 
+#include <dtQt/export.h>
 #include <dtQt/dynamicabstractparentcontrol.h>
 #include <vector>
 
@@ -49,7 +50,7 @@ namespace dtQt
     * The primary purpose of the group control is to provide a visual grouping of property types
     * so that they aren't all laid out together.
     */
-    class DynamicGroupControl : public DynamicAbstractParentControl
+    class DT_QT_EXPORT DynamicGroupControl : public DynamicAbstractParentControl
     {
         Q_OBJECT
     public:

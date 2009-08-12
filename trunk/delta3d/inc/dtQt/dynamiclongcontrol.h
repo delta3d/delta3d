@@ -29,6 +29,7 @@
 #ifndef DELTA_DYNAMICLONGCONTROL
 #define DELTA_DYNAMICLONGCONTROL
 
+#include <dtQt/export.h>
 #include <dtQt/dynamicabstractcontrol.h>
 #include <dtQt/dynamicsubwidgets.h>
 
@@ -47,7 +48,7 @@ namespace dtQt
     * @brief This is the dynamic control for the long data type - used in the property editor.
     * @note This is really the same as int, but we need a separate control anyway.
     */
-    class DynamicLongControl : public DynamicAbstractControl
+    class DT_QT_EXPORT DynamicLongControl : public DynamicAbstractControl
     {
         Q_OBJECT
 

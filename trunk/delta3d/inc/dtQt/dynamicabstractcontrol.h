@@ -29,6 +29,7 @@
 #ifndef DELTA_DYNAMICABSTRACTCONTROL
 #define DELTA_DYNAMICABSTRACTCONTROL
 
+#include <dtQt/export.h>
 #include <QtCore/QObject>
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/actorproperty.h>
@@ -69,7 +70,7 @@ namespace dtQt
    * @class DynamicAbstractControl
    * @brief This is the base class for all the dynamic controls that are used in the property editor
    */
-   class DynamicAbstractControl : public QObject
+   class DT_QT_EXPORT DynamicAbstractControl : public QObject
    {
       Q_OBJECT
    public:

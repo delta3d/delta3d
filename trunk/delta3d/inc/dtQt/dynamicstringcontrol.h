@@ -29,6 +29,7 @@
 #ifndef DELTA_DYNAMICSTRINGCONTROL
 #define DELTA_DYNAMICSTRINGCONTROL
 
+#include <dtQt/export.h>
 #include <dtQt/dynamicabstractcontrol.h>
 #include <dtQt/dynamicsubwidgets.h>
 
@@ -44,7 +45,7 @@ namespace dtQt
     * @class DynamicStringControl
     * @brief This is the dynamic control for the String data type - used in the property editor
     */
-   class DynamicStringControl : public DynamicAbstractControl
+   class DT_QT_EXPORT DynamicStringControl : public DynamicAbstractControl
    {
       Q_OBJECT
 

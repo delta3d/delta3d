@@ -29,6 +29,7 @@
 #ifndef DELTA_DYNAMIC_ENUM_CONTROL
 #define DELTA_DYNAMIC_ENUM_CONTROL
 
+#include <dtQt/export.h>
 #include <dtQt/dynamicabstractcontrol.h>
 #include <dtQt/dynamicsubwidgets.h>
 
@@ -46,7 +47,7 @@ namespace dtQt
      * @class DynamicEnumControl
      * @brief This is the dynamic control for the enum data type - used in the property editor
      */
-    class DynamicEnumControl : public DynamicAbstractControl
+    class DT_QT_EXPORT DynamicEnumControl : public DynamicAbstractControl
     {
         Q_OBJECT
 

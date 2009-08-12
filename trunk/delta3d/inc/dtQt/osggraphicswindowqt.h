@@ -29,10 +29,10 @@
 #ifndef OSGGRAPHICSWINDOWQT_H_
 #define OSGGRAPHICSWINDOWQT_H_
 
+#include <dtQt/export.h>
 #include <QtCore/Qt>
 #include <QtCore/QObject>
 #include <osgViewer/GraphicsWindow>
-#include <dtQt/export.h>
 
 class QGLWidget;
 

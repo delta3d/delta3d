@@ -29,6 +29,7 @@
 #ifndef DELTA_DYNAMICABSTRACTPARENTCONTROL
 #define DELTA_DYNAMICABSTRACTPARENTCONTROL
 
+#include <dtQt/export.h>
 #include <dtQt/dynamicabstractcontrol.h>
 #include <vector>
 
@@ -44,7 +45,7 @@ namespace dtQt
      * with it.  This is common behavior in the dynamic controls that was pulled
      * to this class.
      */
-    class DynamicAbstractParentControl : public DynamicAbstractControl
+    class DT_QT_EXPORT DynamicAbstractParentControl : public DynamicAbstractControl
     {
         Q_OBJECT
     public:

@@ -29,6 +29,7 @@
 #ifndef DELTA_DYNAMICDOUBLECONTROL
 #define DELTA_DYNAMICDOUBLECONTROL
 
+#include <dtQt/export.h>
 #include <dtQt/dynamicabstractcontrol.h>
 #include <dtQt/dynamicsubwidgets.h>
 
@@ -47,7 +48,7 @@ namespace dtQt
      * @brief This is the dynamic control for the double data type - used in the property editor
      * @note This is almost identical to the float control, but has different data types.
      */
-    class DynamicDoubleControl : public DynamicAbstractControl
+    class DT_QT_EXPORT DynamicDoubleControl : public DynamicAbstractControl
     {
         Q_OBJECT
     public:

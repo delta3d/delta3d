@@ -29,6 +29,7 @@
 #ifndef DELTA_DYNAMICBOOLCONTROL
 #define DELTA_DYNAMICBOOLCONTROL
 
+#include <dtQt/export.h>
 #include <dtQt/dynamicabstractcontrol.h>
 #include <dtQt/dynamicsubwidgets.h>
 
@@ -46,7 +47,7 @@ namespace dtQt
      * @class DynamicBoolControl
      * @brief This is the dynamic control for the bool data type - used in the property editor
      */
-    class DynamicBoolControl : public DynamicAbstractControl
+    class DT_QT_EXPORT DynamicBoolControl : public DynamicAbstractControl
     {
         Q_OBJECT
 
