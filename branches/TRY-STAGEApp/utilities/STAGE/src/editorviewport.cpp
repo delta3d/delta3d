@@ -741,46 +741,8 @@ namespace dtEditQt
             // Make sure we only duplicate the actors once.
             mKeyMods = 0x0;
          }
-         // If we are holding the Control key, we should clamp the position
-         // of the actor to the ground.
-         else if (mKeyMods == Qt::ControlModifier)
-         {
-            std::vector<dtCore::DeltaDrawable*> ignoredDrawables;
-            ViewportOverlay::ActorProxyList& selection = ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
-            for (int selectIndex = 0; selectIndex < (int)selection.size(); selectIndex++)
-            {
-               dtDAL::ActorProxy* proxy = selection[selectIndex].get();
-               if (proxy)
-               {
-                  dtCore::DeltaDrawable* drawable;
-                  proxy->GetActor(drawable);
 
-                  if (drawable)
-                  {
-                     ignoredDrawables.push_back(drawable);
-                  }
-               }
-            }
-
-            if (selection.size() > 0)
-            {
-               dtDAL::TransformableActorProxy* proxy = dynamic_cast<dtDAL::TransformableActorProxy*>(selection[0].get());
-               osg::Vec3 position = proxy->GetTranslation();
-               position = ViewportManager::GetInstance().GetSnapPosition(position, true, ignoredDrawables);
-               osg::Vec3 offset = position - proxy->GetTranslation();
-
-               for (int selectIndex = 0; selectIndex < (int)selection.size(); selectIndex++)
-               {
-                  dtDAL::TransformableActorProxy* proxy = dynamic_cast<dtDAL::TransformableActorProxy*>(selection[selectIndex].get());
-                  if (proxy)
-                  {
-                     proxy->SetTranslation(proxy->GetTranslation() + offset);
-                  }
-               }
-            }
-         }
-
-         ViewportManager::GetInstance().refreshAllViewports();
+         //ViewportManager::GetInstance().refreshAllViewports();
       }
    }
 
@@ -874,6 +836,45 @@ namespace dtEditQt
       if (overrideDefault)
       {
          return false;
+      }
+
+      // If we are holding the Control key, we should clamp the position
+      // of the actor to the ground.
+      if (mKeyMods == Qt::ControlModifier)
+      {
+         std::vector<dtCore::DeltaDrawable*> ignoredDrawables;
+         ViewportOverlay::ActorProxyList& selection = ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
+         for (int selectIndex = 0; selectIndex < (int)selection.size(); selectIndex++)
+         {
+            dtDAL::ActorProxy* proxy = selection[selectIndex].get();
+            if (proxy)
+            {
+               dtCore::DeltaDrawable* drawable;
+               proxy->GetActor(drawable);
+
+               if (drawable)
+               {
+                  ignoredDrawables.push_back(drawable);
+               }
+            }
+         }
+
+         if (selection.size() > 0)
+         {
+            dtDAL::TransformableActorProxy* proxy = dynamic_cast<dtDAL::TransformableActorProxy*>(selection[0].get());
+            osg::Vec3 position = proxy->GetTranslation();
+            position = ViewportManager::GetInstance().GetSnapPosition(position, true, ignoredDrawables);
+            osg::Vec3 offset = position - proxy->GetTranslation();
+
+            for (int selectIndex = 0; selectIndex < (int)selection.size(); selectIndex++)
+            {
+               dtDAL::TransformableActorProxy* proxy = dynamic_cast<dtDAL::TransformableActorProxy*>(selection[selectIndex].get());
+               if (proxy)
+               {
+                  proxy->SetTranslation(proxy->GetTranslation() + offset);
+               }
+            }
+         }
       }
 
       // we could send hundreds of translation and rotation events, so make sure
