@@ -694,35 +694,38 @@ namespace dtEditQt
          dtCore::DeltaDrawable* lastDrawable = drawable;
 
          // Make sure the drawable and none of its parents are the ignored drawable.
-         bool isIgnored = false;
-         while (drawable)
+         if (drawable)
          {
-            for (int ignoreIndex = 0; ignoreIndex < (int)ignoredDrawables.size(); ignoreIndex++)
+            bool isIgnored = false;
+            while (drawable)
             {
-               if (drawable == ignoredDrawables[ignoreIndex])
+               for (int ignoreIndex = 0; ignoreIndex < (int)ignoredDrawables.size(); ignoreIndex++)
                {
-                  isIgnored = true;
+                  if (drawable == ignoredDrawables[ignoreIndex])
+                  {
+                     isIgnored = true;
+                     break;
+                  }
+               }
+
+               if (isIgnored)
+               {
                   break;
                }
+
+               lastDrawable = drawable;
+               drawable = drawable->GetParent();
             }
 
-            if (isIgnored)
+            if (!isIgnored)
             {
-               break;
+               position = hitList[index].getWorldIntersectPoint();
+
+               // Tell the manager the last pick position.
+               ViewportManager::GetInstance().setLastDrawable(lastDrawable);
+               ViewportManager::GetInstance().setLastPickPosition(position);
+               return true;
             }
-
-            lastDrawable = drawable;
-            drawable = drawable->GetParent();
-         }
-
-         if (!isIgnored)
-         {
-            position = hitList[index].getWorldIntersectPoint();
-
-            // Tell the manager the last pick position.
-            ViewportManager::GetInstance().setLastDrawable(lastDrawable);
-            ViewportManager::GetInstance().setLastPickPosition(position);
-            return true;
          }
       }
 
@@ -758,43 +761,6 @@ namespace dtEditQt
             "invalid DeltaDrawable.");
          return NULL;
       }
-
-      //ViewportOverlay* overlay = ViewportManager::GetInstance().getViewportOverlay();
-      //ViewportOverlay::ActorProxyList& selection = overlay->getCurrentActorSelection();
-
-      //dtActors::VolumeEditActorProxy* brushProxy =
-      //   EditorData::GetInstance().getMainWindow()->GetVolumeEditActorProxy();
-
-      ////if the STAGE Brush is already selected,
-      ////then attempt to select the next thing under it
-      //if (selection.size() > 0 && brushProxy)
-      //{
-      //   bool isBrushSelected = false;
-      //   for (int selectionIndex = 0; selectionIndex < (int)selection.size(); selectionIndex++)
-      //   {
-      //      if (selection[selectionIndex] == brushProxy)
-      //      {
-      //         isBrushSelected = true;
-      //         break;
-      //      }
-      //   }
-
-      //   // If we are selecting the brush when it is already selected, select the actor behind the brush instead.
-      //   if (isBrushSelected && brushProxy->GetActor() == mIsector->GetClosestDeltaDrawable())
-      //   {
-      //      osgUtil::IntersectVisitor::HitList& hitList = mIsector->GetHitList();
-      //      for (unsigned short i = 1; i < mIsector->GetNumberOfHits(); i++)
-      //      {
-      //         osg::NodePath &nodePath = hitList[i].getNodePath();
-      //         dtCore::DeltaDrawable* drawable = mIsector->MapNodePathToDrawable(nodePath);
-
-      //         if (! dynamic_cast<dtActors::VolumeEditActor*>(drawable))
-      //         {
-      //            return drawable;
-      //         }
-      //      }
-      //   }
-      //}
 
       return mIsector->GetClosestDeltaDrawable();
    }

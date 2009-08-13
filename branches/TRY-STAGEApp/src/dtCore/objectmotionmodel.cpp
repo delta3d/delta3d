@@ -808,37 +808,30 @@ void ObjectMotionModel::GetMouseLine(osg::Vec2 mousePos, osg::Vec3& start, osg::
 
    const osg::Camera* camera = mCamera->GetOSGCamera();
 
-   osg::Vec3 dir;
-
    double left, right, bottom, top, near, far;
    if (camera->getProjectionMatrixAsOrtho(left, right, bottom, top, near, far))
    {
-      osg::Vec3 rightAxis, upAxis, forwardAxis;
-      transform.GetOrientation(rightAxis, upAxis, forwardAxis);
-
-      osg::Matrix matrix = camera->getProjectionMatrix();
       double xDif = right - left;
       double yDif = top - bottom;
 
+      osg::Vec3 rightAxis, upAxis, forwardAxis;
+      transform.GetOrientation(rightAxis, upAxis, forwardAxis);
       osg::Vec3 center = transform.GetTranslation();
       center += rightAxis * ((xDif * 0.5f) * mousePos.x());
       center += upAxis * ((yDif * 0.5f) * mousePos.y());
 
-      dir = forwardAxis * 10000.0f;
+      osg::Vec3 dir = forwardAxis * 45000.0f;
       start = center - dir;
       end = center + dir;
    }
    else
    {
-      osg::Matrix projMatrix = camera->getProjectionMatrix();
-      osg::Matrix viewMatrix = camera->getViewMatrix();
-      osg::Matrix matrix = viewMatrix * projMatrix;
-
+      osg::Matrix matrix = camera->getViewMatrix() * camera->getProjectionMatrix();
       const osg::Matrix inverse = osg::Matrix::inverse(matrix);
 
       start = transform.GetTranslation();
 
-      dir = (osg::Vec3(mousePos.x(), mousePos.y(), 0.0f) * inverse) - start;
+      osg::Vec3 dir = (osg::Vec3(mousePos.x(), mousePos.y(), 0.0f) * inverse) - start;
       dir.normalize();
       end = start + (dir * (distance * 1.5f));
    }
@@ -852,11 +845,42 @@ osg::Vec2 ObjectMotionModel::GetObjectScreenCoordinates(osg::Vec3 objectPos)
       return osg::Vec2();
    }
 
-   const osg::Camera* camera = mCamera->GetOSGCamera();
-   osg::Matrix matrix = camera->getViewMatrix() * camera->getProjectionMatrix();
+   dtCore::Transform transform;
+   mCamera->GetTransform(transform);
 
-   osg::Vec3 screenPos = objectPos * matrix;
-   return osg::Vec2(screenPos.x(), screenPos.y());
+   const osg::Camera* camera = mCamera->GetOSGCamera();
+
+   double left, right, bottom, top, near, far;
+   if (camera->getProjectionMatrixAsOrtho(left, right, bottom, top, near, far))
+   {
+      double xDif = (right - left) * 0.5f;
+      double yDif = (top - bottom) * 0.5f;
+
+      osg::Vec3 rightAxis, upAxis, forwardAxis;
+      transform.GetOrientation(rightAxis, upAxis, forwardAxis);
+
+      osg::Vec3 offset = transform.GetTranslation() - objectPos;
+      osg::Vec2 center;
+      center.x() = xDif + (rightAxis * offset);
+      center.y() = yDif + (upAxis * offset);
+
+      if (xDif == 0.0f && yDif == 0.0f)
+      {
+         return osg::Vec2();
+      }
+
+      center.x() = 1.0f - (center.x() / xDif);
+      center.y() = 1.0f - (center.y() / yDif);
+
+      return center;
+   }
+   else
+   {
+      osg::Matrix matrix = camera->getViewMatrix() * camera->getProjectionMatrix();
+
+      osg::Vec3 screenPos = objectPos * matrix;
+      return osg::Vec2(screenPos.x(), screenPos.y());
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1046,7 +1070,12 @@ void ObjectMotionModel::UpdateTranslation(void)
       }
    }
 
-   osg::Vec3 vecToTarget = targetPos - camPos;
+   // Get the mouse vector.
+   osg::Vec3 mouseStart, mouseEnd;
+   GetMouseLine(GetMousePosition() + mMouseOffset, mouseStart, mouseEnd);
+   osg::Vec3 mouse = mouseEnd - mouseStart;
+
+   osg::Vec3 vecToTarget = targetPos - mouseStart;
    vecToTarget.normalize();
    float fDot = fabs(vecToTarget * axis);
    if (fDot < 0.95f)
@@ -1070,17 +1099,13 @@ void ObjectMotionModel::UpdateTranslation(void)
 
    if (plane)
    {
-      // Get the mouse vector.
-      osg::Vec3 mouseStart, mouseEnd;
-      GetMouseLine(GetMousePosition() + mMouseOffset, mouseStart, mouseEnd);
-      osg::Vec3 mouse = mouseEnd - mouseStart;
-
       // Calculate the mouse collision in the 3D space relative to the plane
       // of the camera and the desired axis of the object.
       float fStartOffset   = mouseStart * (*plane);
       float fDistMod       = mouse      * (*plane);
       float fPlaneOffset   = targetPos  * (*plane);
 
+      if (fDistMod == 0.0f) return;
       float fDistance      = (fPlaneOffset - fStartOffset) / fDistMod;
 
       // Find the projected point of collision on the plane.
