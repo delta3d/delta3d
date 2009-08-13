@@ -116,56 +116,32 @@ LinkedPointsActorToolPlugin::~LinkedPointsActorToolPlugin()
 ////////////////////////////////////////////////////////////////////////////////
 void LinkedPointsActorToolPlugin::InitializeMotionModels()
 {
-   mPerspMotionModel = new ToolObjectMotionModel(ViewportManager::GetInstance().getMasterView());
+   mPerspMotionModel = new ToolObjectMotionModel(mMainWindow->GetPerspView()->GetView());
    mPerspMotionModel->SetEnabled(false);
-   //mPerspMotionModel->SetGetMouseLineFunc(dtDAL::MakeFunctor(*mMainWindow->GetPerspView(), &EditorViewport::GetMouseLine)); //TODO
-   //mPerspMotionModel->SetObjectToScreenFunc(dtDAL::MakeFunctorRet(*mMainWindow->GetPerspView(), &EditorViewport::GetObjectScreenCoordinates)); //TODO
    mPerspMotionModel->SetScale(1.0f);
-   osg::Group* node = NULL; //mMainWindow->GetPerspView()->getSceneView()->getSceneData()->asGroup(); //TODO E!
-   if (node)
-   {
-      mPerspMotionModel->SetSceneNode(node);
-      mPerspMotionModel->SetCamera(mMainWindow->GetPerspView()->getCamera()->getDeltaCamera());
-   }
+   mPerspMotionModel->SetCamera(mMainWindow->GetPerspView()->getCamera()->getDeltaCamera());
+   mPerspMotionModel->SetSceneNode(mMainWindow->GetPerspView()->GetRootNode());
 
-   mTopMotionModel = new ToolObjectMotionModel(ViewportManager::GetInstance().getMasterView());
+   mTopMotionModel = new ToolObjectMotionModel(mMainWindow->GetTopView()->GetView());
    mTopMotionModel->SetEnabled(false);
-   //mTopMotionModel->SetGetMouseLineFunc(dtDAL::MakeFunctor(*mMainWindow->GetTopView(), &EditorViewport::GetMouseLine)); //TODO E!
-   //mTopMotionModel->SetObjectToScreenFunc(dtDAL::MakeFunctorRet(*mMainWindow->GetTopView(), &EditorViewport::GetObjectScreenCoordinates));
    mTopMotionModel->SetAutoScaleEnabled(false);
    mTopMotionModel->SetScale(300.0f / mMainWindow->GetTopView()->getCamera()->getZoom());
-   //node = mMainWindow->GetTopView()->getSceneView()->getSceneData()->asGroup(); //TODO E!
-   if (node)
-   {
-      mTopMotionModel->SetSceneNode(node);
-      mTopMotionModel->SetCamera(mMainWindow->GetTopView()->getCamera()->getDeltaCamera());
-   }
+   mTopMotionModel->SetCamera(mMainWindow->GetTopView()->getCamera()->getDeltaCamera());
+   mTopMotionModel->SetSceneNode(mMainWindow->GetTopView()->GetRootNode());
 
-   mSideMotionModel = new ToolObjectMotionModel(ViewportManager::GetInstance().getMasterView());
+   mSideMotionModel = new ToolObjectMotionModel(mMainWindow->GetSideView()->GetView());
    mSideMotionModel->SetEnabled(false);
-   //mSideMotionModel->SetGetMouseLineFunc(dtDAL::MakeFunctor(*mMainWindow->GetSideView(), &EditorViewport::GetMouseLine)); //TODO E!
-   //mSideMotionModel->SetObjectToScreenFunc(dtDAL::MakeFunctorRet(*mMainWindow->GetSideView(), &EditorViewport::GetObjectScreenCoordinates));
    mSideMotionModel->SetAutoScaleEnabled(false);
    mSideMotionModel->SetScale(300.0f / mMainWindow->GetSideView()->getCamera()->getZoom());
-   //node = mMainWindow->GetSideView()->getSceneView()->getSceneData()->asGroup(); //TODO E!
-   if (node)
-   {
-      mSideMotionModel->SetSceneNode(node);
-      mSideMotionModel->SetCamera(mMainWindow->GetSideView()->getCamera()->getDeltaCamera());
-   }
+   mSideMotionModel->SetCamera(mMainWindow->GetSideView()->getCamera()->getDeltaCamera());
+   mSideMotionModel->SetSceneNode(mMainWindow->GetSideView()->GetRootNode());
 
-   mFrontMotionModel = new ToolObjectMotionModel(ViewportManager::GetInstance().getMasterView());
+   mFrontMotionModel = new ToolObjectMotionModel(mMainWindow->GetFrontView()->GetView());
    mFrontMotionModel->SetEnabled(false);
-   //mFrontMotionModel->SetGetMouseLineFunc(dtDAL::MakeFunctor(*mMainWindow->GetFrontView(), &EditorViewport::GetMouseLine)); //TODO E!
-   //mFrontMotionModel->SetObjectToScreenFunc(dtDAL::MakeFunctorRet(*mMainWindow->GetFrontView(), &EditorViewport::GetObjectScreenCoordinates));
    mFrontMotionModel->SetAutoScaleEnabled(false);
    mFrontMotionModel->SetScale(300.0f / mMainWindow->GetFrontView()->getCamera()->getZoom());
-   //node = mMainWindow->GetFrontView()->getSceneView()->getSceneData()->asGroup(); //TODO E!
-   if (node)
-   {
-      mFrontMotionModel->SetSceneNode(node);
-      mFrontMotionModel->SetCamera(mMainWindow->GetFrontView()->getCamera()->getDeltaCamera());
-   }
+   mFrontMotionModel->SetCamera(mMainWindow->GetFrontView()->getCamera()->getDeltaCamera());
+   mFrontMotionModel->SetSceneNode(mMainWindow->GetFrontView()->GetRootNode());
 
    mMainWindow->GetViewContainer()->updateSnaps();
 }
@@ -274,7 +250,7 @@ void LinkedPointsActorToolPlugin::onMousePressEvent(Viewport* vp, QMouseEvent* e
             motion->Update(pos) == ToolObjectMotionModel::MOTION_TYPE_MAX)
          {
             osg::Vec3 pickPosition;
-            if (editorView->getPickPosition(pickPosition))
+            if (editorView->getPickPosition(e->pos().x(), e->pos().y(), pickPosition))
             {
                mOldPropValue = mPointsProp->ToString();
 
@@ -914,7 +890,7 @@ void LinkedPointsActorToolPlugin::UpdatePlacementGhost(Viewport* vp, osg::Vec2 m
    std::vector<dtCore::DeltaDrawable*> ignoredDrawables;
    ignoredDrawables.push_back(mActiveActor);
    osg::Vec3 position;
-   if (editorView->getPickPosition(position, ignoredDrawables))
+   if (editorView->getPickPosition(mousePos.x(), mousePos.y(), position, ignoredDrawables))
    {
       // Snap to right angles.
       if (mShowingPlacementGhost && mFavorRightAnglesCheckbox->isChecked())

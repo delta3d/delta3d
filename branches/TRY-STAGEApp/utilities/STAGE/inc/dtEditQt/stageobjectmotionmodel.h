@@ -88,30 +88,6 @@ class STAGEObjectMotionModel : public dtCore::ObjectMotionModel
       void OnMessage(MessageData* data);
 
       /**
-      * Resets the GetMouseLine callback function.
-      */
-      //void ResetGetMouseLineFunc(void);
-
-      /**
-      * Sets the GetMouseLine callback function.
-      *
-      * @param[in]  func  The functor.
-      */
-      //void SetGetMouseLineFunc(GetMouseLineFunc func);
-
-      /**
-      * Resets the Object to screen callback function.
-      */
-      //void ResetObjectToScreenFunc(void);
-
-      /**
-      * Sets the Object to Screen callback function.
-      *
-      * @param[in]  func  The functor.
-      */
-      //void SetObjectToScreenFunc(ObjectToScreenFunc func);
-
-      /**
       * Adds a target to the target list.
       *
       * @param[in]  target  The target to add.
@@ -147,24 +123,6 @@ class STAGEObjectMotionModel : public dtCore::ObjectMotionModel
       dtDAL::TransformableActorProxy* GetTarget(int index) {return mTargets[index];}
 
    protected:
-
-      /**
-      * Calculates the 3D collision line that represents the mouse.
-      *
-      * @param[in]  mousePos  The position of the mouse in screen coords.
-      * @param[in]  start     The start position of the line.
-      * @param[in]  end       The end position of the line.
-      */
-      //virtual void GetMouseLine(osg::Vec2 mousePos, osg::Vec3& start, osg::Vec3& end);
-
-      /**
-      * Calculates the screen coordinates of a 3d position in the world.
-      *
-      * @param[in]  objectPos  The position of the object in 3d space.
-      *
-      * @return                The position of the object in screen coords.
-      */
-      //virtual osg::Vec2 GetObjectScreenCoordinates(osg::Vec3 objectPos);
 
    private:
 

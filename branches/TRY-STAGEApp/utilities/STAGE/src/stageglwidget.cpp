@@ -160,6 +160,16 @@ void dtEditQt::STAGEGLWidget::keyReleaseEvent(QKeyEvent* e)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void dtEditQt::STAGEGLWidget::mouseDoubleClickEvent(QMouseEvent* e)
+{
+   dtQt::OSGAdapterWidget::mouseDoubleClickEvent(e);
+   if (mViewport != NULL)
+   {
+      mViewport->mouseDoubleClickEvent(e);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void dtEditQt::STAGEGLWidget::enterEvent(QEvent *e)
 {
    dtQt::OSGAdapterWidget::enterEvent(e);
@@ -177,5 +187,4 @@ void dtEditQt::STAGEGLWidget::leaveEvent(QEvent *e)
    {
       mViewport->getCamera()->getDeltaCamera()->SetEnabled(false);
    }
-
 }

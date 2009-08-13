@@ -19,8 +19,6 @@ IMPLEMENT_MANAGEMENT_LAYER(STAGEObjectMotionModel)
 STAGEObjectMotionModel::STAGEObjectMotionModel(dtCore::View* view)
    : dtCore::ObjectMotionModel(view)
 {
-   //ResetGetMouseLineFunc();
-   //ResetObjectToScreenFunc();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -162,30 +160,6 @@ void STAGEObjectMotionModel::ClearTargets(void)
    mTargets.clear();
    ObjectMotionModel::SetTarget(NULL);
 }
-
-////////////////////////////////////////////////////////////////////////////////
-//void STAGEObjectMotionModel::GetMouseLine(osg::Vec2 mousePos, osg::Vec3& start, osg::Vec3& end)
-//{
-//   mGetMouseLineFunc(mousePos, start, end);
-//}
-
-////////////////////////////////////////////////////////////////////////////////
-//osg::Vec2 STAGEObjectMotionModel::GetObjectScreenCoordinates(osg::Vec3 objectPos)
-//{
-//   return mObjectToScreenFunc(objectPos);
-//}
-
-////////////////////////////////////////////////////////////////////////////////
-//void STAGEObjectMotionModel::DefaultGetMouseLineFunc(osg::Vec2 mousePos, osg::Vec3& start, osg::Vec3& end)
-//{
-//   ObjectMotionModel::GetMouseLine(mousePos, start, end);
-//}
-
-////////////////////////////////////////////////////////////////////////////////
-//osg::Vec2 STAGEObjectMotionModel::DefaultGetObjectScreenCoordinates(osg::Vec3 objectPos)
-//{
-//   return ObjectMotionModel::GetObjectScreenCoordinates(objectPos);
-//}
 
 ////////////////////////////////////////////////////////////////////////////////
 void STAGEObjectMotionModel::OnTranslate(osg::Vec3 delta)

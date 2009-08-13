@@ -109,6 +109,7 @@ namespace dtEditQt
       , mView(new dtCore::View())
       , mCamera(new StageCamera())
       , mScene(new dtCore::Scene())
+      , mIsDirty(false)
    {
       mFrameStamp = new osg::FrameStamp();
       mMouseSensitivity = 10.0f;
@@ -241,7 +242,11 @@ namespace dtEditQt
       //   return;
       //}
 
-      renderFrame();
+      if (mIsDirty)
+      {
+         mIsDirty = false;
+         renderFrame();
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -252,8 +257,8 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void Viewport::refresh()
    {
-      //mIsDirty = true;
-      //GetQGLWidget()->updateGL(); 
+      mIsDirty = true;
+      GetQGLWidget()->updateGL(); 
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -268,15 +273,13 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void Viewport::renderFrame()
    {
-      //if (!mIsDirty)
-      //{
-      //   return;
-      //}
+      if (!mIsDirty)
+      {
+         return;
+      }
 
-      //mIsDirty = false;
+      mIsDirty = false;
       getCamera()->update();
-      //getSceneView()->setProjectionMatrix(getCamera()->getProjectionMatrix());
-      //getSceneView()->setViewMatrix(getCamera()->getWorldViewMatrix());
 
       // Make sure the billboards of any actor proxies are oriented towards the
       // camera in this viewport.
@@ -313,7 +316,7 @@ namespace dtEditQt
          {
             dbp->SignalEndFrame();
             // This magic number is the default amount of time that dtCore Scene USED to use.
-            double cleanupTime = 0.0025;
+            //double cleanupTime = 0.0025;
             //dbp->CompileGLObjects(*mSceneView->getState(), cleanupTime);
 
             //mSceneView->flushDeletedGLObjects(cleanupTime);
@@ -546,6 +549,71 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   osg::Vec2 Viewport::convertMousePosition(QPoint pixelPos)
+   {
+      osg::Vec2 pos;
+      pos.x() = pixelPos.x();
+      pos.y() = 0.0;
+      osg::Viewport* viewport = mCamera->getDeltaCamera()->GetOSGCamera()->getViewport();
+      if (viewport)
+      {
+         pos[0] = dtUtil::MapRangeValue(float(pixelPos.x()), 0.f, float(viewport->width()), -1.f, 1.f);
+         pos[1] = dtUtil::MapRangeValue(float(pixelPos.y()), 0.f, float(viewport->height()), 1.f, -1.f);
+      }
+      return pos;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void Viewport::GetMouseLine(osg::Vec2 mousePos, osg::Vec3& start, osg::Vec3& end)
+   {
+      StageCamera* cam = getCamera();
+      if (!cam)
+      {
+         return;
+      }
+
+      dtCore::Transform transform;
+      cam->getDeltaCamera()->GetTransform(transform);
+
+      const osg::Camera* camera = cam->getDeltaCamera()->GetOSGCamera();
+
+      osg::Vec3 dir;
+
+      double left, right, bottom, top, zNear, zFar;
+      if (camera->getProjectionMatrixAsOrtho(left, right, bottom, top, zNear, zFar))
+      {
+         osg::Vec3 rightAxis, upAxis, forwardAxis;
+         transform.GetOrientation(rightAxis, upAxis, forwardAxis);
+
+         osg::Matrix matrix = camera->getProjectionMatrix();
+         double xDif = right - left;
+         double yDif = top - bottom;
+
+         osg::Vec3 center = transform.GetTranslation();
+         center += rightAxis * ((xDif * 0.5f) * mousePos.x());
+         center += upAxis * ((yDif * 0.5f) * mousePos.y());
+
+         dir = forwardAxis * (zFar * 1.5f);
+         start = center - dir;
+         end = center + dir;
+      }
+      else
+      {
+         osg::Matrix projMatrix = camera->getProjectionMatrix();
+         osg::Matrix viewMatrix = camera->getViewMatrix();
+         osg::Matrix matrix = viewMatrix * projMatrix;
+
+         const osg::Matrix inverse = osg::Matrix::inverse(matrix);
+
+         start = transform.GetTranslation();
+
+         dir = (osg::Vec3(mousePos.x(), mousePos.y(), 0.0f) * inverse) - start;
+         dir.normalize();
+         end = start + (dir * 15000);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    bool Viewport::calculatePickISector(int x, int y)
    {
       if (!mScene.valid())
@@ -570,9 +638,8 @@ namespace dtEditQt
       }
 
       osg::Vec3 nearPoint, farPoint;
-      //int yLoc = int(mSceneView->getViewport()->height()-y); //TODO E!
-
-      //mSceneView->projectWindowXYIntoObject(x, yLoc, nearPoint, farPoint); //TODO E!
+      osg::Vec2 mousePos = convertMousePosition(QPoint(x, y));
+      GetMouseLine(mousePos, nearPoint, farPoint);
 
       return calculatePickISector(nearPoint, farPoint);
    }
@@ -595,24 +662,30 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   //bool Viewport::getPickPosition(int x, int y, osg::Vec3& position, std::vector<dtCore::DeltaDrawable*> ignoredDrawables)
-   //{
-   //   //if (!calculatePickISector(x, y)) //E!
-   //   //{
-   //   //   return false;
-   //   //}
-
-   //   return getPickPosition(position, ignoredDrawables);
-   //}
-
-   ////////////////////////////////////////////////////////////////////////////////
-   bool Viewport::getPickPosition(osg::Vec3 nearPoint, osg::Vec3 farPoint, osg::Vec3& position, std::vector<dtCore::DeltaDrawable*> ignoredDrawables)
+   bool Viewport::getPickPosition(int x, int y, osg::Vec3& position, std::vector<dtCore::DeltaDrawable*> ignoredDrawables)
    {
-      if (!calculatePickISector(nearPoint, farPoint)) //E!
+      if (!calculatePickISector(x, y))
       {
          return false;
       }
 
+      return getPickPosition(position, ignoredDrawables);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Viewport::getPickPosition(osg::Vec3 nearPoint, osg::Vec3 farPoint, osg::Vec3& position, std::vector<dtCore::DeltaDrawable*> ignoredDrawables)
+   {
+      if (!calculatePickISector(nearPoint, farPoint))
+      {
+         return false;
+      }
+
+      return getPickPosition(position, ignoredDrawables);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Viewport::getPickPosition(osg::Vec3& position, std::vector<dtCore::DeltaDrawable*> ignoredDrawables)
+   {
       osgUtil::IntersectVisitor::HitList& hitList = mIsector->GetHitList();
       for (int index = 0; index < (int)hitList.size(); index++)
       {
@@ -658,72 +731,16 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool Viewport::getPickPosition(osg::Vec3& position, std::vector<dtCore::DeltaDrawable*> ignoredDrawables)
-   {
-      dtCore::DeltaDrawable* pickedDrawable = mView->GetMousePickedObject();
-      bool picked = mView->GetMousePickPosition(position);
-
-      //osgUtil::IntersectVisitor::HitList& hitList = mIsector->GetHitList();
-      //for (int index = 0; index < (int)hitList.size(); index++)
-      {
-         //osg::NodePath &nodePath = hitList[index].getNodePath();
-         //dtCore::DeltaDrawable* drawable = mIsector->MapNodePathToDrawable(nodePath);
-         dtCore::DeltaDrawable* drawable = pickedDrawable;
-         dtCore::DeltaDrawable* lastDrawable = pickedDrawable;
-
-         // Make sure the drawable and none of its parents are the ignored drawable.
-         bool isIgnored = false;
-         while (drawable)
-         {
-            for (int ignoreIndex = 0; ignoreIndex < (int)ignoredDrawables.size(); ignoreIndex++)
-            {
-               if (drawable == ignoredDrawables[ignoreIndex])
-               {
-                  isIgnored = true;
-                  break;
-               }
-            }
-
-            if (isIgnored)
-            {
-               break;
-            }
-
-            lastDrawable = drawable;
-            drawable = drawable->GetParent();
-         }
-
-         if (!isIgnored)
-         {
-            //position = hitList[index].getWorldIntersectPoint();
-
-            // Tell the manager the last pick position.
-            ViewportManager::GetInstance().setLastDrawable(lastDrawable);
-            ViewportManager::GetInstance().setLastPickPosition(position);
-            return true;
-         }
-      }
-
-      ViewportManager::GetInstance().setLastDrawable(NULL);
-      return false;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
    dtCore::DeltaDrawable* Viewport::getPickDrawable(int x, int y)
    {
+      if (!calculatePickISector(x, y))
+      {
+         return NULL;
+      }
 
-      // If we found no intersections no need to continue so emit an empty selection
-      // and return.
-      //if (!calculatePickISector(x, y)) //TODO E!
-      //{
-      //   return NULL;
-      //}
-
-      dtCore::DeltaDrawable* drawable = mView->GetPickedObject(osg::Vec2(x, y));
-      
       osg::Vec3 position;
-      //getPickPosition(position); //TODO E!
-      mView->GetMousePickPosition(position);
+      getPickPosition(position);
+      dtCore::DeltaDrawable* drawable = getPickDrawable();
 
       // Tell the manager the last drawable picked.
       ViewportManager::GetInstance().setLastDrawable(drawable);
@@ -735,7 +752,7 @@ namespace dtEditQt
    ////////////////////////////////////////////////////////////////////////////////
    dtCore::DeltaDrawable* Viewport::getPickDrawable()
    {
-      if (mIsector->GetClosestDeltaDrawable()== NULL)
+      if (mIsector->GetClosestDeltaDrawable() == NULL)
       {
          LOG_ERROR("Intersection query reported an intersection but returned an "
             "invalid DeltaDrawable.");
@@ -1138,10 +1155,10 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtCore::View* Viewport::GetView()
-   {
-      return mView.get();
-   }
+   //dtCore::View* Viewport::GetView()
+   //{
+   //   return mView.get();
+   //}
 
    ////////////////////////////////////////////////////////////////////////////////
    void Viewport::setCamera(StageCamera* cam)

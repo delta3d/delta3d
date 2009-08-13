@@ -134,6 +134,11 @@ namespace dtEditQt {
       virtual void mouseReleaseEvent(QMouseEvent* e);
 
       /**
+      * Called when the user double clicks the mouse button in the viewport.
+      */
+      virtual void mouseDoubleClickEvent(QMouseEvent *e);
+
+      /**
       * Called when the user moves the wheel on a mouse containing a scroll wheel.
       * This causes the scene to be zoomed in and out.
       * @param e
@@ -204,35 +209,10 @@ namespace dtEditQt {
       virtual ~EditorViewport() {}
 
 
-
-      /**
-       * Calculates the 3D collision line that represents the mouse.
-       *
-       * @param[in]  mousePos  The position of the mouse in screen coords.
-       * @param[in]  start     The start position of the line.
-       * @param[in]  end       The end position of the line.
-       */
-      //virtual void GetMouseLine(osg::Vec2 mousePos, osg::Vec3& start, osg::Vec3& end);
-
-      /**
-       * Calculates the screen coordinates of a 3d position in the world.
-       *
-       * @param[in]  objectPos  The position of the object in 3d space.
-       *
-       * @return                The position of the object in screen coords.
-       */
-      //virtual osg::Vec2 GetObjectScreenCoordinates(osg::Vec3 objectPos);
-
       /**
       * Clears the current Ghost Proxy.
       */
       void ClearGhostProxy();
-
-
-      /**
-      * Called when the user double clicks the mouse button in the viewport.
-      */
-      void mouseDoubleClickEvent(QMouseEvent *e);
 
       /**
        * Called when the user moves the mouse while pressing any combination of
@@ -322,17 +302,14 @@ namespace dtEditQt {
       */
       void keyReleaseEvent(QKeyEvent* e);
 
-      /**
-      * Converts pixel mouse position to delta normalized format.
-      *
-      * @param[in]  pixelPos  The original position of the mouse.
-      *
-      * @return               The converted mouse position.
-      */
-      virtual osg::Vec2 convertMousePosition(QPoint pixelPos);
-
-
    protected:
+
+      /**
+      * Renders the scene as is viewed from the viewport's currently assigned
+      * camera.
+      */
+      virtual void renderFrame();
+
       bool mAttachActorToCamera;
 
       dtCore::RefPtr<STAGEObjectMotionModel> mObjectMotionModel;

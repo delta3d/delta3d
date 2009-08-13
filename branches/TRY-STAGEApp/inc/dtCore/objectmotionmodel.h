@@ -273,15 +273,6 @@ namespace dtCore
          virtual osg::TriangleMesh* GenerateRing(float minRadius, float maxRadius, int segments);
 
          /**
-         * Converts the current mouse position to a 3D vector in the world.
-         *
-         * @param[in]  mousePos  The position of the mouse.
-         *
-         * @return  The mouse vector.
-         */
-         osg::Vec3 GetMouseVector(osg::Vec2 mousePos);
-
-         /**
          * Does a collision test to see if the mouse has picked
          * one of the widgets of this motion model.
          * mMotionType and mHoverArrow will be set to

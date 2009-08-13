@@ -43,6 +43,11 @@ namespace dtEditQt
       virtual void mouseReleaseEvent(QMouseEvent* e);
 
       /**
+      * Called when the user double clicks the mouse button in the viewport.
+      */
+      virtual void mouseDoubleClickEvent(QMouseEvent *e);
+
+      /**
       * Called when the user moves the wheel on a mouse containing a scroll wheel.
       * This causes the scene to be zoomed in and out.
       * @param e

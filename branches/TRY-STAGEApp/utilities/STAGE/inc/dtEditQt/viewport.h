@@ -256,6 +256,24 @@ namespace dtEditQt
       virtual void pick(int x, int y);
 
       /**
+      * Converts pixel mouse position to delta normalized format.
+      *
+      * @param[in]  pixelPos  The original position of the mouse.
+      *
+      * @return               The converted mouse position.
+      */
+      virtual osg::Vec2 convertMousePosition(QPoint pixelPos);
+
+      /**
+      * Calculates the 3D collision line that represents the mouse.
+      *
+      * @param[in]  mousePos  The position of the mouse in screen coords.
+      * @param[in]  start     The start position of the line.
+      * @param[in]  end       The end position of the line.
+      */
+      virtual void GetMouseLine(osg::Vec2 mousePos, osg::Vec3& start, osg::Vec3& end);
+
+      /**
       * Projects the 2D window coordinates into the current scene and determines
       * if a ray whose origin is at the projected point intersects any actors
       * in the current scene.  Window coordinates are such that the origin is
@@ -283,7 +301,7 @@ namespace dtEditQt
       * @param y Vertical window coordinate.
       * @param ignoredDrawable A drawable to ignore.
       */
-      //virtual bool getPickPosition(int x, int y, osg::Vec3& position, std::vector<dtCore::DeltaDrawable*> ignoredDrawables = std::vector<dtCore::DeltaDrawable*>());
+      virtual bool getPickPosition(int x, int y, osg::Vec3& position, std::vector<dtCore::DeltaDrawable*> ignoredDrawables = std::vector<dtCore::DeltaDrawable*>());
 
       /**
       * Projects a line into the current scene and returns the nearest point of collision.
@@ -442,7 +460,7 @@ namespace dtEditQt
       * @return
       */
       //osgUtil::SceneView* getSceneView() { return mSceneView.get(); }
-      dtCore::View* GetView();
+      dtCore::View* GetView() { return mView.get(); }
 
       dtCore::DeltaWin* GetWindow();
 

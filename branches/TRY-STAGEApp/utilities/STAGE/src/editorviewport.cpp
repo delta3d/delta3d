@@ -78,8 +78,6 @@ namespace dtEditQt
       //mObjectMotionModel = new dtCore::ObjectMotionModel(GetView());
       mObjectMotionModel->SetEnabled(false);
       mObjectMotionModel->ClearTargets();
-      //mObjectMotionModel->SetGetMouseLineFunc(dtDAL::MakeFunctor(*this, &EditorViewport::GetMouseLine));
-      //mObjectMotionModel->SetObjectToScreenFunc(dtDAL::MakeFunctorRet(*this, &EditorViewport::GetObjectScreenCoordinates));
       mObjectMotionModel->SetScale(1.5f);
 
       this->GetQGLWidget()->setAcceptDrops(true);
@@ -182,9 +180,9 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void EditorViewport::refresh()
    {
-      Viewport::refresh();
+      //mObjectMotionModel->UpdateWidgets();
 
-      mObjectMotionModel->UpdateWidgets();
+      Viewport::refresh();
    }
 
 
@@ -239,45 +237,6 @@ namespace dtEditQt
    {
       //Viewport::keyReleaseEvent(e);
    }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   osg::Vec2 EditorViewport::convertMousePosition(QPoint pixelPos)
-   {
-      osg::Vec2 pos;
-      pos.x() = pixelPos.x();
-      pos.y() = 0.0;
-      osg::Viewport* viewport = mCamera->getDeltaCamera()->GetOSGCamera()->getViewport();
-      if (viewport)
-      {
-         pos[0] = dtUtil::MapRangeValue(float(pixelPos.x()), 0.f, float(viewport->width()), -1.f, 1.f);
-         pos[1] = dtUtil::MapRangeValue(float(pixelPos.y()), 0.f, float(viewport->height()), 1.f, -1.f);
-      }
-      return pos;
-   }
-
-   //////////////////////////////////////////////////////////////////////////////////
-   //void EditorViewport::GetMouseLine(osg::Vec2 mousePos, osg::Vec3& start, osg::Vec3& end)
-   //{
-   //   int xLoc = mousePos.x();
-   //   int yLoc = mousePos.y();
-
-   //   //TODO
-   //   //if (getSceneView()->getViewport()->height() > 0 ||
-   //   //    getSceneView()->getViewport()->width()  > 0)
-   //   //{
-   //   //   getSceneView()->projectWindowXYIntoObject(xLoc, yLoc, start, end);
-   //   //}
-   //}
-
-   //////////////////////////////////////////////////////////////////////////////////
-   //osg::Vec2 EditorViewport::GetObjectScreenCoordinates(osg::Vec3 objectPos)
-   //{
-   //   osg::Vec3 screenPos;
-   //   //TODO
-   //   //getSceneView()->projectObjectIntoWindow(objectPos, screenPos);
-
-   //   return osg::Vec2(screenPos.x(), screenPos.y());
-   //}
 
    ////////////////////////////////////////////////////////////////////////////////
    void EditorViewport::ClearGhostProxy()
@@ -462,7 +421,7 @@ namespace dtEditQt
             ignoredDrawables.push_back(ghostDrawable);
             osg::Vec3 position;
 
-            if (!getPickPosition(/*event->pos().x(), event->pos().y(),*/ position, ignoredDrawables))
+            if (!getPickPosition(event->pos().x(), event->pos().y(), position, ignoredDrawables))
             {
                // If we get here, it means our mouse position did not collide with an object to attach to.
 
@@ -1159,6 +1118,14 @@ namespace dtEditQt
       EditorData::GetInstance().getMainWindow()->endWaitCursor();
 
       return true;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void EditorViewport::renderFrame()
+   {
+      mObjectMotionModel->UpdateWidgets();
+
+      Viewport::renderFrame();
    }
 
 } // namespace dtEditQt

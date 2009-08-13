@@ -96,7 +96,7 @@ namespace dtEditQt
    ////////////////////////////////////////////////////////////////////////////////
    void PerspectiveViewport::keyPressEvent(QKeyEvent* e)
    {
-      //EditorViewport::keyPressEvent(e);
+      EditorViewport::keyPressEvent(e);
 
       if (e->key()==Qt::Key_A)
       {
