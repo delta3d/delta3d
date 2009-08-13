@@ -319,24 +319,31 @@ namespace dtAudio
           * @param gain the new gain
           */
          void SetGain(float gain);
+
          /**
           * Returns the gain of the sound source.
           *
           * @return the current gain
           */
          float GetGain() const;
+
          /**
           * Sets the pitch multiplier of the sound source.
+          * The value is clamped between 0.000001 and 128,
+          * but some implementations inexplicably won't take a pitch greater than 2.0, so if this is called
+          * with greater than 2.0, the code will attempt to set it, but if fails, it will attempt to set to 2.0.
           *
           * @param pitch the new pitch
           */
          void SetPitch(float pitch);
+
          /**
           * Returns the pitch multipier of the sound source.
           *
           * @return the current pitch
           */
          float GetPitch() const;
+
          /**
           * Flags sound to be relative to listener position.
           *
@@ -364,7 +371,7 @@ namespace dtAudio
             DEPRECATE("void dtAudio::Sound::ListenerRelative()",
                       "void dtAudio::Sound::SetListenerRelative()");
 
-            SetListenerRelative(relative);            
+            SetListenerRelative(relative);
          } 
 
          /**

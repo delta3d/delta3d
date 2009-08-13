@@ -489,13 +489,28 @@ float Sound::GetGain() const
 ////////////////////////////////////////////////////////////////////////////////
 void Sound::SetPitch(float pitch)
 {
-   // force pitch to range from zero+ to two
-   // for some reason openAL chokes on 2+
-   // also, openAL states zero to be invalid
-   dtUtil::Clamp<float>(pitch, 0.000001f, 2.0f);
+   dtUtil::Clamp(pitch, 0.000001f, 128.0f);
 
    alSourcef(mSource, AL_PITCH, pitch);
-   CheckForError("Attempt to set pitch on source", __FUNCTION__, __LINE__);
+   ALenum error = alGetError();
+   if (error != AL_NO_ERROR && pitch > 2.0)
+   {
+      // force pitch to range from zero+ to two
+      // for some reason openAL chokes on 2+
+      // also, openAL states zero to be invalid
+      alSourcef(mSource, AL_PITCH, 2.0f);
+      if (!CheckForError("Set pitch on source failed.", __FUNCTION__, __LINE__))
+      {
+         static bool warnedAboutPitchRange = false;
+         if (!warnedAboutPitchRange)
+         {
+            warnedAboutPitchRange = true;
+            LOGN_WARNING("audiomanager.cpp", "Setting the pitch to greater than 2.0 is unsupported on many OpenAL implementations.\n"
+                     "You have one of those implementations.  All pitches greater than 2.0 will be clamped."
+                     "You may try switching to openal-soft to fix it.");
+         }
+      }
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
