@@ -189,7 +189,7 @@ namespace dtAudio
 
    private:
       AudioManager(const std::string& name = "audiomanager",
-                   ALCdevice* dev = NULL, ALCcontext* cntxt = NULL);
+                   ALCdevice* dev = NULL, ALCcontext* cntxt = NULL, bool shutdownPassedInContexts = true);
       virtual ~AudioManager();
 
    public:
@@ -210,9 +210,11 @@ namespace dtAudio
        *@param name - The name of the AudioManager instance.
        *@param dev  - The OpenAL device to be used by the AudioManager.
        *@param cntxt - The OpenAL context to be used by the AudioManager.
+       *@param shutdownPassedInContexts - this doesn't matter if cntxt or dev are NULL, but if true, it will close
+       *                                  the passed in context when the audio manager destructor is called.
        */
       static void Instantiate(const std::string& name = "audiomanager",
-                              ALCdevice* dev = NULL, ALCcontext* cntxt = NULL);
+                              ALCdevice* dev = NULL, ALCcontext* cntxt = NULL, bool shutdownPassedInContexts = true);
 
       /// destroy the singleton and shutdown OpenAL
       static void Destroy();
@@ -285,7 +287,7 @@ namespace dtAudio
       void SetSpeedOfSound(float s);
 
       /// Returns true if initialized
-      bool IsInitialized() const { return _Mgr != NULL; }
+      static bool IsInitialized() { return _Mgr != NULL; }
 
       /**
        * receive messages
@@ -407,7 +409,9 @@ namespace dtAudio
                                           ///prior to a system-wide pause message
 
       ALCdevice*          mDevice;
-      ALCcontext*         mContext;      
+      ALCcontext*         mContext;
+
+      bool mShutdownContexts;
    };
 };
 
