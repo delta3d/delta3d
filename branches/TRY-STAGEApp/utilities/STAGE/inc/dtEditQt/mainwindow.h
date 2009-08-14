@@ -36,7 +36,7 @@
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/map.h>
-#include <dtEditQt/typedefs.h>
+#include <dtQt/typedefs.h>
 
 class QSplitter;
 class QActionGroup;
@@ -54,7 +54,7 @@ namespace dtEditQt
    class PropertyEditor;
    class ActorDockWidget;
    class ActorSearchDockWidget;
-   class ResourceBrowser;   
+   class ResourceBrowser;
    class PluginManager;
    class EditorViewportContainer;
    class STAGEApplication;
@@ -105,12 +105,12 @@ namespace dtEditQt
       * Adds an exclusive tool into the tool mode bar.
       */
       void AddExclusiveToolMode(QAction* action);
-      
+
       /**
       * Finds and returns the tool mode button of a given label.
       *
       * @param[in]  name  The name of the tool mode to find.
-      * 
+      *
       * @return     A pointer to the action, or NULL if none was found.
       */
       QAction* FindExclusiveToolMode(std::string name);
@@ -130,14 +130,14 @@ namespace dtEditQt
        */
       PropertyEditor* GetPropertyEditor();
 
-      
+
       /**
-       * @return the full path to the config file for currently running STAGE                                                                      
+       * @return the full path to the config file for currently running STAGE
        **/
       const std::string& GetSTAGEConfigFile();
 
       /**
-       * menu accessors 
+       * menu accessors
        */
       QMenu* GetFileMenu() const    { return mFileMenu; }
       QMenu* GetEditMenu() const    { return mEditMenu; }
@@ -154,7 +154,7 @@ namespace dtEditQt
       QToolBar* GetUndoToolbar() const          { return mUndoToolBar; }
       QToolBar* GetToolsToolbar() const         { return mToolsToolBar; }
       QToolBar* GetExternalToolsToolbar() const { return mExternalToolsToolBar; }
-      
+
       /**
       * viewport accessors.
       */
@@ -162,7 +162,7 @@ namespace dtEditQt
       OrthoViewport*       GetTopView() const   { return mTopView; }
       OrthoViewport*       GetSideView() const  { return mSideView; }
       OrthoViewport*       GetFrontView() const { return mFrontView; }
-      EditorViewportContainer* GetViewContainer() const { return mEditorContainer; }     
+      EditorViewportContainer* GetViewContainer() const { return mEditorContainer; }
 
       /**
        * @return the plugin manager
@@ -181,7 +181,6 @@ namespace dtEditQt
 
 
       void SetupViewer(STAGEApplication* viewer);
-      
 
    public slots:
       /**
@@ -243,7 +242,7 @@ namespace dtEditQt
 
       void onActorProxyDestroyed(ActorProxyRefPtr proxy);
 
-      void onActorProxyNameChanged(ActorProxyRefPtr proxy, std::string oldName);
+      void onActorProxyNameChanged(dtDAL::ActorProxy& proxy, std::string oldName);
 
       void onMapPropertyChanged();
 
@@ -295,10 +294,10 @@ namespace dtEditQt
        */
       void keyPressEvent(QKeyEvent* e);
 
-   private:      
+   private:
       PluginManager* mPluginManager;
       std::string mSTAGEConfigFullPath;
-  
+
       dtCore::RefPtr<dtActors::VolumeEditActorProxy> mVolEditActorProxy;
 
       QMenu* mFileMenu;

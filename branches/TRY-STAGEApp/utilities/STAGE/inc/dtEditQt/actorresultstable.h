@@ -36,7 +36,7 @@
 #include <vector>
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/actorproperty.h>
-#include <dtEditQt/typedefs.h>
+#include <dtQt/typedefs.h>
 
 class QGroupBox;
 class QPushButton;

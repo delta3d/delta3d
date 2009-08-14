@@ -35,7 +35,7 @@
 #include <vector>
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/actorproperty.h>
-#include "typedefs.h"
+#include <dtQt/typedefs.h>
 
 // Forward Declarations
 namespace dtCore
@@ -142,7 +142,7 @@ namespace dtEditQt
       /**
        * This is emitted when the user edits the name in the property editor.
        */
-      void emitProxyNameChanged(ActorProxyRefPtr proxy, std::string oldName);
+      void emitProxyNameChanged(dtDAL::ActorProxy& proxy, std::string oldName);
 
       /**
        * The user has modified the passed in property on the passed in proxy.  There are
@@ -237,7 +237,7 @@ namespace dtEditQt
       void actorPropertyChanged(ActorProxyRefPtr proxy, ActorPropertyRefPtr property);
       void actorPropertyAboutToChange(ActorProxyRefPtr proxy,
          ActorPropertyRefPtr property, std::string oldValue, std::string newValue);
-      void proxyNameChanged(ActorProxyRefPtr proxy, std::string oldName);
+      void ProxyNameChanged(dtDAL::ActorProxy& proxy, std::string oldName);
       void beginChangeTransaction();
       void endChangeTransaction();
       void mapLibraryImported();

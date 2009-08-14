@@ -29,8 +29,8 @@
 #ifndef DELTA_DYNAMIC_GAME_EVENT_CONTROL
 #define DELTA_DYNAMIC_GAME_EVENT_CONTROL
 
-#include <dtEditQt/dynamicabstractcontrol.h>
-#include <dtEditQt/dynamicsubwidgets.h>
+#include <dtQt/dynamicabstractcontrol.h>
+#include <dtQt/dynamicsubwidgets.h>
 
 // Forward References
 namespace dtDAL
@@ -43,7 +43,7 @@ namespace dtEditQt
 
    class PropertyEditorModel;
 
-   class DynamicGameEventControl : public DynamicAbstractControl
+   class DynamicGameEventControl : public dtQt::DynamicAbstractControl
    {
       Q_OBJECT
 
@@ -56,25 +56,25 @@ namespace dtEditQt
          virtual ~DynamicGameEventControl();
 
          /**
-          * @see DynamicAbstractControl#initializeData
+          * @see DynamicAbstractControl#InitializeData
           */
-         void initializeData(DynamicAbstractControl *newParent,PropertyEditorModel *newModel,
-            dtDAL::ActorProxy *newProxy, dtDAL::ActorProperty *newProperty);
+         void InitializeData(dtQt::DynamicAbstractControl* newParent, dtQt::PropertyEditorModel* newModel,
+            dtDAL::PropertyContainer* newPC, dtDAL::ActorProperty* newProperty);
 
          /**
           * @see DynamicAbstractControl#updateEditorFromModel
           */
-         virtual void updateEditorFromModel(QWidget *widget);
+         virtual void updateEditorFromModel(QWidget* widget);
 
          /**
           * @see DynamicAbstractControl#updateModelFromEditor
           */
-         virtual bool updateModelFromEditor(QWidget *widget);
+         virtual bool updateModelFromEditor(QWidget* widget);
 
          /**
           * @see DynamicAbstractControl#createEditor
           */
-         virtual QWidget* createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index);
+         virtual QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index);
 
          /**
           * @see DynamicAbstractControl#getDisplayName
@@ -102,11 +102,11 @@ namespace dtEditQt
          /**
           * @see DynamicAbstractControl#updateData
           */
-         virtual bool updateData(QWidget *widget);
+         virtual bool updateData(QWidget* widget);
          /**
           * @see DynamicAbstractControl#handleSubEditDestroy
           */
-         void handleSubEditDestroy(QWidget *widget, QAbstractItemDelegate::EndEditHint hint = QAbstractItemDelegate::NoHint)
+         void handleSubEditDestroy(QWidget* widget, QAbstractItemDelegate::EndEditHint hint = QAbstractItemDelegate::NoHint)
          {
             // we have to check - sometimes the destructor won't get called before the
             // next widget is created.  Then, when it is called, it sets the NEW editor to NULL!
@@ -116,7 +116,8 @@ namespace dtEditQt
             }
          }
 
-         void actorPropertyChanged(ActorProxyRefPtr proxy, ActorPropertyRefPtr property);
+         void actorPropertyChanged(dtDAL::PropertyContainer& propCon,
+                  dtDAL::ActorProperty& property);
 
          /**
           * Called when the user selects an item in the combo box
@@ -124,13 +125,13 @@ namespace dtEditQt
          void itemSelected(int index);
 
       private:
-         dtDAL::GameEventActorProperty *mProperty;
+         dtDAL::GameEventActorProperty* mProperty;
 
          // This pointer is not really in our control.  It is constructed in the createEditor()
          // method and destroyed whenever QT feels like it (mostly when the control looses focus).
          // We work around this by trapping the destruction of this object, it should
          // call our handleSubEditDestroy() method so we know to not hold this anymore
-         SubQComboBox *mTemporaryEditControl;
+         dtQt::SubQComboBox* mTemporaryEditControl;
    };
 
 } // namespace dtEditQt

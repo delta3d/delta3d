@@ -23,8 +23,8 @@
 #ifndef DELTA_PROJECT_CONTEXT_DIALOG
 #define DELTA_PROJECT_CONTEXT_DIALOG
 
-#include <QtGui/QDialog>
 #include <dtQt/export.h>
+#include <QtGui/QDialog>
 
 ///////////////////////////////////////////////////////////////////////////////
 

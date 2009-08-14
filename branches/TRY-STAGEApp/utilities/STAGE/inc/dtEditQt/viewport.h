@@ -47,7 +47,7 @@
 #include <dtDAL/actorproxy.h>
 #include <dtEditQt/stagecamera.h>
 #include <dtEditQt/viewportmanager.h>
-#include <dtEditQt/typedefs.h>
+#include <dtQt/typedefs.h>
 #include <dtCore/refptr.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/view.h>

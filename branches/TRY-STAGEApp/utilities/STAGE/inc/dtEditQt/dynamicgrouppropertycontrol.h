@@ -29,7 +29,7 @@
 #ifndef DELTA_DYNAMICGROUPPROPERTYCONTROL
 #define DELTA_DYNAMICGROUPPROPERTYCONTROL
 
-#include <dtEditQt/dynamicabstractparentcontrol.h>
+#include <dtQt/dynamicabstractparentcontrol.h>
 #include <vector>
 
 
@@ -49,7 +49,7 @@ namespace dtEditQt
     * The primary purpose of the group control is to provide a visual grouping of property types
     * so that they aren't all laid out together.
     */
-   class DynamicGroupPropertyControl : public DynamicAbstractParentControl
+   class DynamicGroupPropertyControl : public dtQt::DynamicAbstractParentControl
    {
          Q_OBJECT
       public:
@@ -67,26 +67,26 @@ namespace dtEditQt
           * Groups can have children.  This is how you add children to the group. Note that you can't
           * remove a child once it's added.
           */
-         void addChildControl(DynamicAbstractControl *child, PropertyEditorModel *model);
+         void addChildControl(dtQt::DynamicAbstractControl* child, dtQt::PropertyEditorModel* model);
 
          // OVERRIDDEN METHODS FROM ABSTRACT BASE
 
          /**
-          * @see DynamicAbstractControl#initializeData
+          * @see DynamicAbstractControl#InitializeData
           */
-         virtual void initializeData(DynamicAbstractControl *newParent, PropertyEditorModel *model,
-                                     dtDAL::ActorProxy *proxy, dtDAL::ActorProperty *property);
+         virtual void InitializeData(dtQt::DynamicAbstractControl* newParent, dtQt::PropertyEditorModel* model,
+                                     dtDAL::PropertyContainer* pc, dtDAL::ActorProperty* property);
 
          /**
           * @see DynamicAbstractControl#addSelfToParentWidget
           */
-         void addSelfToParentWidget(QWidget &parent, QGridLayout &layout, int row);
+         void addSelfToParentWidget(QWidget& parent, QGridLayout& layout, int row);
 
          /**
           * @see DynamicAbstractControl#createEditor
           */
-         virtual QWidget *createEditor(QWidget *parent,
-                                       const QStyleOptionViewItem &option,
+         virtual QWidget* createEditor(QWidget* parent,
+                                       const QStyleOptionViewItem& option,
                                        const QModelIndex &index);
 
          /**
@@ -114,7 +114,7 @@ namespace dtEditQt
          /**
           * @see DynamicAbstractControl#updateData
           */
-         virtual bool updateData(QWidget *widget);
+         virtual bool updateData(QWidget* widget);
 
          ///Slot called when the edit button on the editor control is clicked.
          void EditClicked();

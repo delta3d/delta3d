@@ -29,8 +29,8 @@
 #ifndef DELTA_DYNAMICNAMECONTROL
 #define DELTA_DYNAMICNAMECONTROL
 
-#include <dtEditQt/dynamicabstractcontrol.h>
-#include <dtEditQt/dynamicsubwidgets.h>
+#include <dtQt/dynamicabstractcontrol.h>
+#include <dtQt/dynamicsubwidgets.h>
 
 namespace dtEditQt
 {
@@ -39,7 +39,7 @@ namespace dtEditQt
     * @class DynamicNameControl
     * @brief This is not really a dynamic control at all.  It is used to edit the proxies name in the tree.
     */
-    class DynamicNameControl : public DynamicAbstractControl
+    class DynamicNameControl : public dtQt::DynamicAbstractControl
     {
         Q_OBJECT
 
@@ -53,6 +53,9 @@ namespace dtEditQt
          * Destructor
          */
         virtual ~DynamicNameControl();
+
+        void InitializeData(dtQt::DynamicAbstractControl* newParent,
+           dtQt::PropertyEditorModel* newModel, dtDAL::PropertyContainer* newPC, dtDAL::ActorProperty* newProperty);
 
         /**
          * @see DynamicAbstractControl#updateEditorFromModel
@@ -96,7 +99,7 @@ namespace dtEditQt
          */
         virtual bool updateData(QWidget* widget);
 
-        virtual void proxyNameChanged(ActorProxyRefPtr proxy, std::string oldName);
+        virtual void ProxyNameChanged(dtDAL::ActorProxy& proxy, std::string oldName);
 
         /**
          * @see DynamicAbstractControl#handleSubEditDestroy
@@ -119,7 +122,9 @@ namespace dtEditQt
         // method and destroyed whenever QT feels like it (mostly when the control looses focus).
         // We work around this by trapping the destruction of this object, it should
         // call our handleSubEditDestroy() method so we know to not hold this anymore
-        SubQLineEdit *mTemporaryEditControl;
+        dtQt::SubQLineEdit *mTemporaryEditControl;
+
+        dtCore::RefPtr<dtDAL::ActorProxy> mProxy;
     };
 
 } // namespace dtEditQt

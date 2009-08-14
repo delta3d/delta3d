@@ -22,10 +22,10 @@
  * David Guthrie
  */
 
+#include <dtQt/export.h>
 #include <osg/Version>
 #include <osg/GraphicsContext>
 #include <dtCore/refptr.h>
-#include <dtQt/export.h>
 
 namespace dtQt
 {

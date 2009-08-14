@@ -29,7 +29,7 @@
 #include <dtDAL/project.h>
 #include <prefix/dtstageprefix-src.h>
 #include <dtEditQt/dynamicactorcontrol.h>
-#include <dtEditQt/propertyeditortreeview.h>
+#include <dtQt/propertyeditortreeview.h>
 #include <dtDAL/map.h>
 #include <dtDAL/exceptionenum.h>
 #include <dtDAL/datatype.h>
@@ -52,12 +52,14 @@ namespace dtEditQt
    {
    }
 
+   /////////////////////////////////////////////////////////////////////////////////
    DynamicActorControl::~DynamicActorControl()
    {
    }
 
-   void DynamicActorControl::initializeData(DynamicAbstractControl* newParent,
-      PropertyEditorModel* newModel, dtDAL::ActorProxy* newProxy, dtDAL::ActorProperty* newProperty)
+   /////////////////////////////////////////////////////////////////////////////////
+   void DynamicActorControl::InitializeData(dtQt::DynamicAbstractControl* newParent,
+      dtQt::PropertyEditorModel* newModel, dtDAL::PropertyContainer* newPC, dtDAL::ActorProperty* newProperty)
    {
       // Note - Unlike the other properties, we can't static or reinterpret cast this object.
       // We need to dynamic cast it...
@@ -65,7 +67,7 @@ namespace dtEditQt
       {
          mProperty = dynamic_cast<dtDAL::ActorActorProperty*>(newProperty);
          mIdProperty = dynamic_cast<dtDAL::ActorIDActorProperty*>(newProperty);
-         DynamicAbstractControl::initializeData(newParent, newModel, newProxy, newProperty);
+         dtQt::DynamicAbstractControl::InitializeData(newParent, newModel, newPC, newProperty);
       }
       else
       {
@@ -116,7 +118,7 @@ namespace dtEditQt
          if (previousString != selectionString)
          {
             // give undo manager the ability to create undo/redo events
-            emit PropertyAboutToChange(*mProxy, *getActorProperty(), previousString, selectionString);
+            emit PropertyAboutToChange(*mPropContainer, *getActorProperty(), previousString, selectionString);
 
             dtDAL::Map* curMap = EditorData::GetInstance().getCurrentMap();
             if (curMap == NULL)
@@ -163,7 +165,7 @@ namespace dtEditQt
       // notify the world (mostly the viewports) that our property changed
       if (dataChanged)
       {
-         emit PropertyChanged(*mProxy, *getActorProperty());
+         emit PropertyChanged(*mPropContainer, *getActorProperty());
       }
 
       return dataChanged;
@@ -176,7 +178,7 @@ namespace dtEditQt
       QWidget* wrapper = new QWidget(parent);
       wrapper->setFocusPolicy(Qt::StrongFocus);
       // set the background color to white so that it sort of blends in with the rest of the controls
-      SetBackgroundColor(wrapper, PropertyEditorTreeView::ROW_COLOR_ODD);
+      SetBackgroundColor(wrapper, dtQt::PropertyEditorTreeView::ROW_COLOR_ODD);
 
       if (!mInitialized)
       {
@@ -188,9 +190,9 @@ namespace dtEditQt
       grid->setMargin(0);
       grid->setSpacing(1);
 
-      mTemporaryEditControl = new SubQComboBox(wrapper, this);
+      mTemporaryEditControl = new dtQt::SubQComboBox(wrapper, this);
 
-      mTemporaryGotoButton = new SubQPushButton(tr("Goto"), wrapper, this);
+      mTemporaryGotoButton = new dtQt::SubQPushButton(tr("Goto"), wrapper, this);
 
       connect(mTemporaryGotoButton, SIGNAL(clicked()), this, SLOT(onGotoClicked()));
 
@@ -317,14 +319,12 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void DynamicActorControl::actorPropertyChanged(dtCore::RefPtr<dtDAL::ActorProxy> proxy,
-      dtCore::RefPtr<dtDAL::ActorProperty> property)
+   void DynamicActorControl::actorPropertyChanged(dtDAL::PropertyContainer& propCon,
+      dtDAL::ActorProperty& property)
    {
-      DynamicAbstractControl::actorPropertyChanged(proxy, property);
+      DynamicAbstractControl::actorPropertyChanged(propCon, property);
 
-      dtDAL::ActorActorProperty* changedProp = dynamic_cast<dtDAL::ActorActorProperty*>(property.get());
-
-      if (mTemporaryEditControl != NULL && proxy == mProxy && changedProp == getActorProperty())
+      if (mTemporaryEditControl != NULL && &propCon == mPropContainer && &property == getActorProperty())
       {
          updateEditorFromModel(mTemporaryEditControl);
       }

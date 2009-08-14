@@ -118,6 +118,7 @@ namespace dtGame
       //System Messages
       RegisterMessageType<SystemMessage>(MessageType::SYSTEM_POST_EVENT_TRAVERSAL);
       RegisterMessageType<SystemMessage>(MessageType::SYSTEM_FRAME_SYNCH);
+      RegisterMessageType<SystemMessage>(MessageType::SYSTEM_POST_FRAME);
    }
 
    /////////////////////////////////////////////////////////////////

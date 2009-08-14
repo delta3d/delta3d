@@ -201,7 +201,7 @@ namespace dtEditQt
       {
          if (itor->second->getAutoInteractionMode())
          {
-            //TODO itor->second->refresh();
+            itor->second->refresh();
          }
       }
    }

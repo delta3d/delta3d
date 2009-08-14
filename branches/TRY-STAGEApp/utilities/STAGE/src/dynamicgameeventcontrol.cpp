@@ -48,15 +48,16 @@ namespace dtEditQt
    {
    }
 
-   void DynamicGameEventControl::initializeData(DynamicAbstractControl* newParent,
-      PropertyEditorModel* newModel, dtDAL::ActorProxy* newProxy, dtDAL::ActorProperty* newProperty)
+   /////////////////////////////////////////////////////////////////////////////////
+   void DynamicGameEventControl::InitializeData(dtQt::DynamicAbstractControl* newParent,
+      dtQt::PropertyEditorModel* newModel, dtDAL::PropertyContainer* newPC, dtDAL::ActorProperty* newProperty)
    {
       // Note - Unlike the other properties, we can't static or reinterpret cast this object.
       // We need to dynamic cast it...
       if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::GAME_EVENT)
       {
          mProperty = dynamic_cast<dtDAL::GameEventActorProperty*>(newProperty);
-         DynamicAbstractControl::initializeData(newParent, newModel, newProxy, newProperty);
+         dtQt::DynamicAbstractControl::InitializeData(newParent, newModel, newPC, newProperty);
       }
       else
       {
@@ -106,14 +107,14 @@ namespace dtEditQt
          if (previousString != selectionString)
          {
             // give undo manager the ability to create undo/redo events
-            emit PropertyAboutToChange(*mProxy, *mProperty, previousString, selectionString);
+            emit PropertyAboutToChange(*mPropContainer, *mProperty, previousString, selectionString);
 
             dtDAL::GameEvent* eventToSet = NULL;
             //std::vector<dtDAL::GameEvent*> events;
             dtDAL::Map& curMap = *EditorData::GetInstance().getCurrentMap();
             //curMap.GetEventManager().GetAllEvents(events);
-            eventToSet = curMap.GetEventManager().FindEvent(selectionString);
             //for (unsigned int i = 0; i < events.size(); i++)
+            eventToSet = curMap.GetEventManager().FindEvent(selectionString);
             //{
             //   if (events[i]->GetName() == selectionString)
             //   {
@@ -129,7 +130,7 @@ namespace dtEditQt
       // notify the world (mostly the viewports) that our property changed
       if (dataChanged)
       {
-         emit PropertyChanged(*mProxy, *mProperty);
+         emit PropertyChanged(*mPropContainer, *mProperty);
       }
 
       return dataChanged;
@@ -138,7 +139,7 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    QWidget* DynamicGameEventControl::createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index)
    {
-      mTemporaryEditControl = new SubQComboBox(parent, this);
+      mTemporaryEditControl = new dtQt::SubQComboBox(parent, this);
       if (!mInitialized)
       {
          LOG_ERROR("Tried to add itself to the parent widget before being initialized");
@@ -222,14 +223,14 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void DynamicGameEventControl::actorPropertyChanged(dtCore::RefPtr<dtDAL::ActorProxy> proxy,
-      dtCore::RefPtr<dtDAL::ActorProperty> property)
+   void DynamicGameEventControl::actorPropertyChanged(dtDAL::PropertyContainer& propCon,
+            dtDAL::ActorProperty& property)
    {
-      DynamicAbstractControl::actorPropertyChanged(proxy, property);
+      DynamicAbstractControl::actorPropertyChanged(propCon, property);
 
-      dtDAL::GameEventActorProperty* changedProp = dynamic_cast<dtDAL::GameEventActorProperty*>(property.get());
+      dtDAL::GameEventActorProperty* changedProp = dynamic_cast<dtDAL::GameEventActorProperty*>(&property);
 
-      if (mTemporaryEditControl != NULL && proxy == mProxy && changedProp == mProperty)
+      if (mTemporaryEditControl != NULL && &propCon == mPropContainer && changedProp == mProperty)
       {
          updateEditorFromModel(mTemporaryEditControl);
       }

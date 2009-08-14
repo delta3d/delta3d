@@ -52,7 +52,7 @@ inline bool CheckForError(const std::string& userMessage,
    {
       std::ostringstream finalStream;
       finalStream << "User Message: [" << userMessage << "] OpenAL Message: [" << alGetString(error) << "]";
-      dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_WARNING, msgFunction, lineNumber, finalStream.str().c_str());
+      dtUtil::Log::GetInstance("audiomanager.cpp").LogMessage(dtUtil::Log::LOG_WARNING, msgFunction, lineNumber, finalStream.str().c_str());
       return AL_TRUE;
    }
    else
@@ -63,7 +63,7 @@ inline bool CheckForError(const std::string& userMessage,
       {
          std::ostringstream finalStream;
          finalStream << "User Message: [" << userMessage << "] " << "Alut Message: [" << alutGetErrorString(alutError) << "] Line " << lineNumber;
-         dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_WARNING, msgFunction, lineNumber, finalStream.str().c_str());
+         dtUtil::Log::GetInstance("audiomanager.cpp").LogMessage(dtUtil::Log::LOG_WARNING, msgFunction, lineNumber, finalStream.str().c_str());
          return AL_TRUE;
       }
    }
@@ -76,7 +76,7 @@ inline bool CheckForError(const std::string& userMessage,
 // public member functions
 // default consructor
 AudioManager::AudioManager(const std::string& name /*= "audiomanager"*/,
-                           ALCdevice* dev /* = NULL */, ALCcontext* cntxt /* = NULL */)
+                           ALCdevice* dev /* = NULL */, ALCcontext* cntxt /* = NULL */, bool shutdownPassedInContexts)
    : Base(name)
    , mEAXSet(NULL)
    , mEAXGet(NULL)
@@ -84,6 +84,7 @@ AudioManager::AudioManager(const std::string& name /*= "audiomanager"*/,
    , mIsConfigured(false)
    , mDevice(0)
    , mContext(0)
+   , mShutdownContexts(false)
 {
    RegisterInstance(this);
 
@@ -117,6 +118,7 @@ AudioManager::AudioManager(const std::string& name /*= "audiomanager"*/,
 
       mDevice = dev;
       mContext = cntxt;
+      mShutdownContexts = shutdownPassedInContexts;
    }
 }
 
@@ -152,29 +154,31 @@ AudioManager::~AudioManager()
    mBufferMap.clear();
    mSoundList.clear();
 
-   //close context and device in case they were not opened by ALUT
-   CloseContext();
-   CloseDevice();
-
    alutExit();
-   //If using custom device and context calls via straght OpenAL (w/o ALUT)
-   //then alutExit may get confused when attempting to close context or
-   //device.  If so, I don't want to hear an error about it as it doesn't matter.
-   //CheckForError("alutExit()", __FUNCTION__, __LINE__);
+   CheckForError("alutExit()", __FUNCTION__, __LINE__);
+
+   if (mShutdownContexts)
+   {
+      LOGN_INFO("audiomanager.cpp", "Shutting down custom contexts.");
+      // alut won't close the context if it's not the one that created it, so it needs to be done after alutExit()
+      // or alut exit won't work.
+      CloseContext();
+      CloseDevice();
+   }
 
    RemoveSender(&dtCore::System::GetInstance());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // create the singleton manager
-void AudioManager::Instantiate(const std::string& name, ALCdevice* dev, ALCcontext* cntxt)
+void AudioManager::Instantiate(const std::string& name, ALCdevice* dev, ALCcontext* cntxt, bool shutdownPassedInContexts)
 {
    if (_Mgr.get())
    {
       return;
    }
 
-   _Mgr  = new AudioManager(name, dev, cntxt);
+   _Mgr  = new AudioManager(name, dev, cntxt, shutdownPassedInContexts);
    assert(_Mgr.get());
 
    _Mic  = new Listener;
@@ -476,7 +480,7 @@ ALint AudioManager::LoadFile(const std::string& file)
    if (filename.empty())
    {
       // still no file name, bail...
-      Log::GetInstance().LogMessage(Log::LOG_WARNING, __FUNCTION__, "AudioManager: can't load file %s", file.c_str());
+      Log::GetInstance("audiomanager.cpp").LogMessage(Log::LOG_WARNING, __FUNCTION__, "AudioManager: can't load file %s", file.c_str());
       return -1;
    }
 
@@ -538,7 +542,7 @@ ALint AudioManager::LoadFile(const std::string& file)
    if (data == NULL)
    {
       #ifndef ALUT_API_MAJOR_VERSION
-      Log::GetInstance().LogMessage(Log::LOG_WARNING, __FUNCTION__,
+      Log::GetInstance("audiomanager.cpp").LogMessage(Log::LOG_WARNING, __FUNCTION__,
          "AudioManager: alutLoadWAVFile error on %s", file.c_str());
       #else
          CheckForError("AudioManager: alutLoadMemoryFromFile error", __FUNCTION__, __LINE__);
@@ -678,7 +682,7 @@ bool AudioManager::ConfigEAX(bool eax)
    // check for EAX support
    if (alIsExtensionPresent(buf) == AL_FALSE)
    {
-      Log::GetInstance().LogMessage(Log::LOG_WARNING, __FUNCTION__,
+      Log::GetInstance("audiomanager.cpp").LogMessage(Log::LOG_WARNING, __FUNCTION__,
          "AudioManager: %s is not available", _EaxVer);
       return false;
    }
@@ -694,7 +698,7 @@ bool AudioManager::ConfigEAX(bool eax)
    mEAXSet = alGetProcAddress(buf);
    if (mEAXSet == 0)
    {
-      Log::GetInstance().LogMessage(Log::LOG_WARNING, __FUNCTION__,
+      Log::GetInstance("audiomanager.cpp").LogMessage(Log::LOG_WARNING, __FUNCTION__,
          "AudioManager: %s is not available", _EaxVer);
       return false;
    }
@@ -710,7 +714,7 @@ bool AudioManager::ConfigEAX(bool eax)
    mEAXGet = alGetProcAddress(buf);
    if (mEAXGet == 0)
    {
-      Log::GetInstance().LogMessage(Log::LOG_WARNING, __FUNCTION__,
+      Log::GetInstance("audiomanager.cpp").LogMessage(Log::LOG_WARNING, __FUNCTION__,
          "AudioManager: %s is not available", _EaxVer);
       mEAXSet = 0;
       return false;
@@ -839,7 +843,7 @@ bool AudioManager::ReleaseSoundSource(Sound& snd, const std::string& errorMessag
    {
       std::ostringstream logMessage;
       logMessage << "Sound source was invalid for sound \"" << snd.GetFilename() << "\".";
-      dtUtil::Log::GetInstance().LogMessage(callerFunctionName,
+      dtUtil::Log::GetInstance("audiomanager.cpp").LogMessage(callerFunctionName,
          callerFunctionLineNum, logMessage.str(), dtUtil::Log::LOG_WARNING);
    }
 
@@ -860,7 +864,7 @@ bool AudioManager::ReleaseSoundBuffer(ALuint bufferHandle, const std::string& er
    }
    else
    {
-      dtUtil::Log::GetInstance().LogMessage(callerFunctionName,
+      dtUtil::Log::GetInstance("audiomanager.cpp").LogMessage(callerFunctionName,
          callerFunctionLineNum, "Sound buffer was invalid.", dtUtil::Log::LOG_WARNING);
    }
 
@@ -873,7 +877,7 @@ void AudioManager::OpenDevice(const ALCchar* deviceName)
    mDevice = alcOpenDevice(deviceName);
    if (mDevice == NULL)
    {
-      Log::GetInstance().LogMessage(Log::LOG_ERROR, __FUNCTION__,
+      Log::GetInstance("audiomanager.cpp").LogMessage(Log::LOG_ERROR, __FUNCTION__,
                       "AudioManager can't open audio device.\n");
    }
 }
@@ -884,13 +888,13 @@ void AudioManager::CreateContext()
    mContext = alcCreateContext(mDevice, NULL);
    if (!mContext)
    {
-      Log::GetInstance().LogMessage(Log::LOG_ERROR, __FUNCTION__,
+      Log::GetInstance("audiomanager.cpp").LogMessage(Log::LOG_ERROR, __FUNCTION__,
                       "AudioManager can't create audio context.\n");
    }
 
    if(!alcMakeContextCurrent(mContext))
    {
-      Log::GetInstance().LogMessage(Log::LOG_ERROR, __FUNCTION__,
+      Log::GetInstance("audiomanager.cpp").LogMessage(Log::LOG_ERROR, __FUNCTION__,
                       "AudioManager can't make audio context current.\n");
    }
 

@@ -1,5 +1,6 @@
 #include "prefix/dtutilprefix-src.h"
 #include <dtUtil/refstring.h>
+#include <ostream>
 #ifdef __GNUG__
 #  include <ext/hash_set>
 #elif defined(_MSC_VER)
@@ -39,7 +40,7 @@ namespace dtUtil
    static std::set<std::string> StringSet;
 #endif
 #endif
-   size_t RefString::GetSharedStringCount() 
+   size_t RefString::GetSharedStringCount()
    {
       return StringCount;
    }
@@ -77,15 +78,21 @@ namespace dtUtil
    }
 
    /////////////////////////////////////////////////////////////
-   RefString RefString::operator+(const std::string& string) const 
-   { 
+   RefString RefString::operator+(const std::string& string) const
+   {
       return RefString(*mString + string);
    }
 
    /////////////////////////////////////////////////////////////
    RefString RefString::operator+(const RefString& refString) const
-   { 
+   {
       return RefString(*mString + *refString.mString);
+   }
+
+   /////////////////////////////////////////////////////////////
+   RefString RefString::operator+(const char* str) const
+   {
+      return RefString(*mString + str);
    }
 
    /////////////////////////////////////////////////////////////
@@ -122,7 +129,7 @@ namespace dtUtil
       //One can only insert a string once, but it will still return the iterator.
       mString = &(*StringSet.insert(value).first);
       StringCount = StringSet.size();
-      
+
 #if THREAD_SAFETY
       gStringSetMutex.unlock();
 #endif
@@ -136,6 +143,13 @@ namespace dtUtil
       mString = new std::string(value);
       ++StringCount;
 #endif
+   }
+
+   /////////////////////////////////////////////////////////////
+   std::ostream& operator<<(std::ostream& stream, const RefString& rs)
+   {
+      stream << rs.Get();
+      return stream;
    }
 
 }

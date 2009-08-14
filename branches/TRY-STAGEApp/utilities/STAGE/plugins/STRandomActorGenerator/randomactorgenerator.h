@@ -6,7 +6,7 @@
 
 #include <dtCore/refptr.h>
 #include <dtEditQt/plugininterface.h>
-#include <dtEditQt/typedefs.h>
+#include <dtQt/typedefs.h>
 
 #include <osg/Vec3>
 
@@ -27,12 +27,12 @@ namespace dtEditQt
 
 /**
    The random actor generator is a STAGE plugin that can be used to import
-   randomly generate actors in a given area.  
-   
+   randomly generate actors in a given area.
+
    We'll be using the STAGE VolumeEditActor as the location where random
    actors get spawned.
 */
-class STAGE_RANDOM_ACTOR_GENERATOR_EXPORT RandomActorGeneratorPlugin 
+class STAGE_RANDOM_ACTOR_GENERATOR_EXPORT RandomActorGeneratorPlugin
    : public QDockWidget
    , public dtEditQt::Plugin
 {
@@ -41,7 +41,7 @@ class STAGE_RANDOM_ACTOR_GENERATOR_EXPORT RandomActorGeneratorPlugin
 public:
 
    const static std::string PLUGIN_NAME;
-   
+
    RandomActorGeneratorPlugin(dtEditQt::MainWindow* mw);
 
    ~RandomActorGeneratorPlugin();
@@ -51,7 +51,7 @@ public:
    /** override close event to get notified when user closes the dock */
    virtual void closeEvent(QCloseEvent* event);
 
-public slots: 
+public slots:
    void OnGeneratePushed();
    void OnRefreshActorList();
    void OnSelectedActorChange(ActorProxyRefPtrVector& actors);
@@ -63,7 +63,7 @@ private:
 
    Ui_RandomActorGenerator mUI;
 
-   dtEditQt::MainWindow* mMainWindow;   
+   dtEditQt::MainWindow* mMainWindow;
 
 };
 

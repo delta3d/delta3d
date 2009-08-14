@@ -148,6 +148,9 @@ namespace dtGame
    const MessageType MessageType::SYSTEM_FRAME_SYNCH("Frame Synch", "System",
       "Sent on the system message framesynch.  Use this message to do anything dependent on per frame camera positions or orientations.", 301);
 
+   const MessageType MessageType::SYSTEM_POST_FRAME("Post Frame", "System",
+      "Sent on the system message postframe.  Use this to do thing after the rendering, but before the next frame.", 302);
+
    //////////////////////////////////////////////////////////////////////////////////////
    MessageType::MessageType(const std::string& name, const std::string& category,
                const std::string& description, const unsigned short id)

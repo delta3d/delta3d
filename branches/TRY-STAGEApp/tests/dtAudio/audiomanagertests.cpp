@@ -35,6 +35,8 @@ class AudioManagerTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST_SUITE(AudioManagerTests);
 
       CPPUNIT_TEST(TestInitialize);
+      CPPUNIT_TEST(TestInitializeCustomContext);
+      CPPUNIT_TEST(TestInitializeCustomContextNoShutdown);
 
    CPPUNIT_TEST_SUITE_END();
 
@@ -44,13 +46,15 @@ public:
    void tearDown();
 
    void TestInitialize();
+   void TestInitializeCustomContext();
+   void TestInitializeCustomContextNoShutdown();
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(AudioManagerTests);
 
 void AudioManagerTests::setUp()
 {
-   if(dtAudio::AudioManager::GetInstance().IsInitialized())
+   if (dtAudio::AudioManager::IsInitialized())
    {
       dtAudio::AudioManager::GetInstance().Destroy();
    }
@@ -58,7 +62,7 @@ void AudioManagerTests::setUp()
 
 void AudioManagerTests::tearDown()
 {
-   if(dtAudio::AudioManager::GetInstance().IsInitialized())
+   if (dtAudio::AudioManager::IsInitialized())
    {
       dtAudio::AudioManager::GetInstance().Destroy();
    }
@@ -66,13 +70,65 @@ void AudioManagerTests::tearDown()
 
 void AudioManagerTests::TestInitialize()
 {
-   CPPUNIT_ASSERT(!dtAudio::AudioManager::GetInstance().IsInitialized());
+   CPPUNIT_ASSERT(!dtAudio::AudioManager::IsInitialized());
 
    dtAudio::AudioManager::Instantiate();
 
-   CPPUNIT_ASSERT(dtAudio::AudioManager::GetInstance().IsInitialized());
+   CPPUNIT_ASSERT(dtAudio::AudioManager::IsInitialized());
 
    dtAudio::AudioManager::Destroy();
 
-   CPPUNIT_ASSERT(!dtAudio::AudioManager::GetInstance().IsInitialized());
+   CPPUNIT_ASSERT(!dtAudio::AudioManager::IsInitialized());
+}
+
+void CreateDeviceAndContext(ALCdevice*& device, ALCcontext*& context)
+{
+   device = alcOpenDevice(NULL);
+   ALenum error = alGetError();
+   CPPUNIT_ASSERT(error == AL_NO_ERROR);
+   context = alcCreateContext(device, NULL);
+   error = alGetError();
+   CPPUNIT_ASSERT(error == AL_NO_ERROR);
+}
+
+void AudioManagerTests::TestInitializeCustomContext()
+{
+   ALCdevice* device = NULL;
+   ALCcontext* context = NULL;
+   CreateDeviceAndContext(device, context);
+
+   dtAudio::AudioManager::Instantiate("joe", device, context, true);
+
+   CPPUNIT_ASSERT(dtAudio::AudioManager::IsInitialized());
+
+   CPPUNIT_ASSERT(dtAudio::AudioManager::GetInstance().GetContext() == context);
+   CPPUNIT_ASSERT(dtAudio::AudioManager::GetInstance().GetDevice() == device);
+
+   dtAudio::AudioManager::GetInstance().Destroy();
+
+   CPPUNIT_ASSERT(!alcMakeContextCurrent(context));
+   CPPUNIT_ASSERT(alcGetCurrentContext() == NULL);
+
+   CPPUNIT_ASSERT(!alcCloseDevice(device));
+}
+
+void AudioManagerTests::TestInitializeCustomContextNoShutdown()
+{
+   ALCdevice* device = NULL;
+   ALCcontext* context = NULL;
+   CreateDeviceAndContext(device, context);
+
+   dtAudio::AudioManager::Instantiate("joe", device, context, false);
+
+   CPPUNIT_ASSERT(dtAudio::AudioManager::IsInitialized());
+
+   CPPUNIT_ASSERT(dtAudio::AudioManager::GetInstance().GetContext() == context);
+   CPPUNIT_ASSERT(dtAudio::AudioManager::GetInstance().GetDevice() == device);
+
+   dtAudio::AudioManager::GetInstance().Destroy();
+
+   CPPUNIT_ASSERT(alcMakeContextCurrent(context));
+   CPPUNIT_ASSERT(alcMakeContextCurrent(NULL));
+   alcDestroyContext(context);
+   CPPUNIT_ASSERT(alcCloseDevice(device));
 }

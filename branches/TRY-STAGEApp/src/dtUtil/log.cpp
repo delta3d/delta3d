@@ -24,17 +24,20 @@
 
 #include <dtCore/refptr.h>
 
+#include <OpenThreads/Mutex>
+#include <OpenThreads/ScopedLock>
+
 #include <iomanip>
 #include <iostream>
 #include <fstream>
 #include <cstdarg>
+#include <cstdio>
 #include <ctime>
 #include <map>
 
 namespace dtUtil
 {
-   const std::string Log::mDefaultName("__+default+__");
-   static const char *sLogFileName = "delta3d_log.html";
+   static const char* sLogFileName = "delta3d_log.html";
 
 #ifdef _DEBUG
    static std::string sTitle("Delta 3D Engine Log File (Debug Libs)");
@@ -152,6 +155,7 @@ namespace dtUtil
          return i->second.get();
       }
 
+      OpenThreads::Mutex mMutex;
    private:
       std::map<std::string, dtCore::RefPtr<Log> > mInstances;
    };
@@ -190,24 +194,44 @@ namespace dtUtil
    }
 
    //////////////////////////////////////////////////////////////////////////
+   //////////////////////////////////////////////////////////////////////////
+   struct LogImpl
+   {
+      LogImpl(const std::string& name)
+      : mOutputStreamBit(Log::STANDARD)
+      , mName(name)
+      {
+      }
+
+      static const std::string mDefaultName;
+
+      unsigned int mOutputStreamBit; ///<the current output stream option
+      std::string mName;
+   };
+
+   const std::string LogImpl::mDefaultName("__+default+__");
+   //////////////////////////////////////////////////////////////////////////
+   //////////////////////////////////////////////////////////////////////////
+
    Log::Log(const std::string& name)
-      :mLevel(LOG_WARNING),
-      mOutputStreamBit(Log::STANDARD),
-      mName(name)
+   : mLevel(Log::LOG_WARNING)
+   , mImpl(new LogImpl(name))
    {
    }
 
    //////////////////////////////////////////////////////////////////////////
    Log::~Log()
    {
+      delete mImpl;
+      mImpl = NULL;
    }
 
 
    //////////////////////////////////////////////////////////////////////////
-   void Log::LogMessage(const std::string &source, int line, const std::string &msg,
+   void Log::LogMessage(const std::string& source, int line, const std::string& msg,
                 LogMessageType msgType) const
    {
-      if (mOutputStreamBit == Log::NO_OUTPUT)
+      if (mImpl->mOutputStreamBit == Log::NO_OUTPUT)
          return;
 
       if (msgType < mLevel)
@@ -247,8 +271,19 @@ namespace dtUtil
 
       }
 
-      if (dtUtil::Bits::Has(mOutputStreamBit, Log::TO_FILE))
+      OpenThreads::ScopedLock<OpenThreads::Mutex> lock(manager->mMutex);
+
+      if (dtUtil::Bits::Has(mImpl->mOutputStreamBit, Log::TO_FILE))
       {
+         static const std::string htmlNewline ( "<br>\n" );
+         std::string htmlMsg ( msg );
+         for ( size_t lineEnd = htmlMsg.find( '\n' );
+              lineEnd != std::string::npos;
+              lineEnd = htmlMsg.find( '\n', lineEnd ) )
+         {
+            htmlMsg.replace ( lineEnd, 1, htmlNewline );
+            lineEnd += htmlNewline.size() + 1;
+         }
          manager->logFile << color << GetLogLevelString(msgType) << ": "
             << std::setw(2) << std::setfill('0') << t->tm_hour << ":"
             << std::setw(2) << std::setfill('0') << t->tm_min << ":"
@@ -257,242 +292,68 @@ namespace dtUtil
          if (line > 0)
             manager->logFile << ":" << line;
 
-         manager->logFile << "&gt; " << msg << "</font></b><br>" << std::endl;
+         manager->logFile << "&gt; " << htmlMsg << "</font></b><br>" << std::endl;
 
          manager->logFile.flush(); //Make sure everything is written, in case of a crash.
       }
 
-      if (dtUtil::Bits::Has(mOutputStreamBit, Log::TO_CONSOLE))
+      if (dtUtil::Bits::Has(mImpl->mOutputStreamBit, Log::TO_CONSOLE))
       {
          std::cout << GetLogLevelString(msgType) << ": "
             << std::setw(2) << std::setfill('0') << t->tm_hour << ":"
             << std::setw(2) << std::setfill('0') << t->tm_min << ":"
             << std::setw(2) << std::setfill('0') << t->tm_sec << ":<"
-            << source << ":" << line << ">" << msg << std::endl;
+            << source;
+         if (line > 0)
+         {
+            std:: cout << ":" << line;
+         }
+         std::cout << ">" << msg << std::endl;
       }
 
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void Log::LogMessage(LogMessageType msgType, const std::string &source,
-                            const char *msg, va_list list) const
+   void Log::LogMessage(LogMessageType msgType, const std::string& source, int line,
+                            const char* msg, va_list list) const
    {
-      static char buffer[2049];
-      struct tm *t;
-      time_t cTime;
-      std::string color;
+      char buffer[2049];
 
-      if (mOutputStreamBit == Log::NO_OUTPUT)
-         return;
+      vsnprintf(buffer, 2049, msg, list);
 
-      if (msgType < mLevel)
-         return;
-
-      if (!manager->logFile.is_open())
-         return;
-
-      time(&cTime);
-      t = localtime(&cTime);
-
-      switch (msgType)
-      {
-      case LOG_DEBUG:
-         color = "<b><font color=#808080>";
-         break;
-
-      case LOG_INFO:
-         color = "<b><font color=#008080>";
-         break;
-
-      case LOG_ERROR:
-         color = "<b><font color=#FF0000>";
-         break;
-
-      case LOG_WARNING:
-         color = "<b><font color=#808000>";
-         break;
-
-      case LOG_ALWAYS:
-         color = "<b><font color=#000000>";
-         break;
-
-      }
-
-      vsprintf(buffer,msg,list);
-
-      if (dtUtil::Bits::Has(mOutputStreamBit, Log::TO_FILE))
-      {
-         manager->logFile << color << GetLogLevelString(msgType) << ": "
-            << std::setw(2) << std::setfill('0') << t->tm_hour << ":"
-            << std::setw(2) << std::setfill('0') << t->tm_min << ":"
-            << std::setw(2) << std::setfill('0') << t->tm_sec << ": &lt;"
-            << source << "&gt; " << buffer << "</font></b><br>" << std::endl;
-
-         manager->logFile.flush();
-      }
-
-      if (dtUtil::Bits::Has(mOutputStreamBit, Log::TO_CONSOLE))
-      {
-         std::cout << GetLogLevelString(msgType) << ": "
-            << std::setw(2) << std::setfill('0') << t->tm_hour << ":"
-            << std::setw(2) << std::setfill('0') << t->tm_min << ":"
-            << std::setw(2) << std::setfill('0') << t->tm_sec << ":<"
-            << source << ">" << buffer << std::endl;
-      }
-
+      LogMessage(source, line, buffer, msgType);
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void Log::LogMessage(LogMessageType msgType, const std::string &source,
-                     const char *msg, ...) const
+   void Log::LogMessage(LogMessageType msgType, const std::string& source,
+                     const char* msg, ...) const
    {
       va_list list;
 
       va_start(list,msg);
-      LogMessage(msgType,source,msg,list);
+      LogMessage(msgType, source, -1, msg, list);
       va_end(list);
 
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void Log::LogMessage(LogMessageType msgType, const std::string &source, int line,
-                            const char *msg, ...) const
+   void Log::LogMessage(LogMessageType msgType, const std::string& source, int line,
+                            const char* msg, ...) const
    {
-      static char buffer[2049];
       va_list list;
-      struct tm *t;
-      time_t cTime;
-      std::string color;
-
-      if (mOutputStreamBit == Log::NO_OUTPUT)
-         return;
-
-      if (msgType < mLevel)
-         return;
-
-      if (!manager->logFile.is_open())
-         return;
-
-      time(&cTime);
-      t = localtime(&cTime);
-
-      switch (msgType)
-      {
-      case LOG_DEBUG:
-         color = "<b><font color=#808080>";
-         break;
-
-      case LOG_INFO:
-         color = "<b><font color=#008080>";
-         break;
-
-      case LOG_ERROR:
-         color = "<b><font color=#FF0000>";
-         break;
-
-      case LOG_WARNING:
-         color = "<b><font color=#808000>";
-         break;
-
-      case LOG_ALWAYS:
-         color = "<b><font color=#000000>";
-         break;
-
-      }
 
       va_start(list,msg);
-      vsprintf(buffer,msg,list);
+      LogMessage(msgType, source, line, msg, list);
       va_end(list);
-
-      if (dtUtil::Bits::Has(mOutputStreamBit, Log::TO_FILE))
-      {
-         manager->logFile << color << GetLogLevelString(msgType) << ": "
-            << std::setw(2) << std::setfill('0') << t->tm_hour << ":"
-            << std::setw(2) << std::setfill('0') << t->tm_min << ":"
-            << std::setw(2) << std::setfill('0') << t->tm_sec << ": &lt;"
-            << source << ":" << line << "&gt; " << buffer << "</font></b><br>" << std::endl;
-
-         manager->logFile.flush();
-      }
-
-
-      if (dtUtil::Bits::Has(mOutputStreamBit, Log::TO_CONSOLE))
-      {
-         std::cout << GetLogLevelString(msgType) << ": "
-            << std::setw(2) << std::setfill('0') << t->tm_hour << ":"
-            << std::setw(2) << std::setfill('0') << t->tm_min << ":"
-            << std::setw(2) << std::setfill('0') << t->tm_sec << ":<"
-            << source << ":" << line << ">" << buffer << std::endl;
-      }
-
    }
 
+   //////////////////////////////////////////////////////////////////////////
    void Log::LogMessage(LogMessageType msgType,
-                        const std::string &source,
+                        const std::string& source,
                         int line,
-                        const std::string &msg) const
+                        const std::string& msg) const
    {
-      struct tm *t;
-      time_t cTime;
-      std::string color;
-
-      if (mOutputStreamBit == Log::NO_OUTPUT)
-         return;
-
-      if (msgType < mLevel)
-         return;
-
-      if (!manager->logFile.is_open())
-         return;
-
-      time(&cTime);
-      t = localtime(&cTime);
-
-      switch (msgType)
-      {
-      case LOG_DEBUG:
-         color = "<b><font color=#808080>";
-         break;
-
-      case LOG_INFO:
-         color = "<b><font color=#008080>";
-         break;
-
-      case LOG_ERROR:
-         color = "<b><font color=#FF0000>";
-         break;
-
-      case LOG_WARNING:
-         color = "<b><font color=#808000>";
-         break;
-
-      case LOG_ALWAYS:
-         color = "<b><font color=#000000>";
-         break;
-
-      }
-
-      if (dtUtil::Bits::Has(mOutputStreamBit, Log::TO_FILE))
-      {
-         manager->logFile << color << GetLogLevelString(msgType) << ": "
-            << std::setw(2) << std::setfill('0') << t->tm_hour << ":"
-            << std::setw(2) << std::setfill('0') << t->tm_min << ":"
-            << std::setw(2) << std::setfill('0') << t->tm_sec << ": &lt;"
-            << source << ":" << line << "&gt; " << msg << "</font></b><br>" << std::endl;
-
-         manager->logFile.flush();
-      }
-
-
-      if (dtUtil::Bits::Has(mOutputStreamBit, Log::TO_CONSOLE))
-      {
-         std::cout << GetLogLevelString(msgType) << ": "
-            << std::setw(2) << std::setfill('0') << t->tm_hour << ":"
-            << std::setw(2) << std::setfill('0') << t->tm_min << ":"
-            << std::setw(2) << std::setfill('0') << t->tm_sec << ":<"
-            << source << ":" << line << ">" << msg << std::endl;
-      }
-
+      LogMessage(source, line, msg, msgType);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -501,26 +362,27 @@ namespace dtUtil
       if (!manager->logFile.is_open())
          return;
 
-      if (mOutputStreamBit == Log::NO_OUTPUT)
+      if (mImpl->mOutputStreamBit == Log::NO_OUTPUT)
          return;
 
-      if (dtUtil::Bits::Has(mOutputStreamBit, Log::TO_FILE))
+      if (dtUtil::Bits::Has(mImpl->mOutputStreamBit, Log::TO_FILE))
       {
          manager->logFile << "<hr>" << std::endl;
       }
    }
 
    //////////////////////////////////////////////////////////////////////////
-   Log &Log::GetInstance()
+   Log& Log::GetInstance()
    {
-      return GetInstance(mDefaultName);
+      return GetInstance(LogImpl::mDefaultName);
    }
 
    //////////////////////////////////////////////////////////////////////////
-   Log &Log::GetInstance(const std::string& name)
+   Log& Log::GetInstance(const std::string& name)
    {
       if (manager == NULL)
          manager = new LogManager;
+
       Log* l = manager->GetInstance(name);
       if (l == NULL)
       {
@@ -538,7 +400,7 @@ namespace dtUtil
 
       switch(msgType)
       {
-      case Log::LOG_ALWAYS:    lev = "Always";  break;
+      case Log::LOG_ALWAYS:  lev = "Always";  break;
       case Log::LOG_ERROR:   lev = "Error";   break;
       case Log::LOG_WARNING: lev = "Warn";    break;
       case Log::LOG_INFO:    lev = "Info";    break;
@@ -567,22 +429,22 @@ namespace dtUtil
       else return LOG_WARNING;
    }
 
-   /** Tell the Log where to send output messages.  The supplied parameter is a
-    *  bitwise combination of OutputStreamOptions.  The default is STANDARD, which
-    *  directs messages to both the console and the output file.
-    *  For example, to tell the Log to output to the file and console:
-    *  \code
-    *   dtUtil::Log::GetInstance().SetOutputStreamBit(dtUtil::Log::TO_FILE | dtUtil::Log::TO_CONSOLE);
-    *  \endcode
-    *  \param option A bitwise combination of options.
-    */
+   ///////////////////////////////////////////////////////////////////////////
    void Log::SetOutputStreamBit(unsigned int option)
    {
-      mOutputStreamBit = option;
+      mImpl->mOutputStreamBit = option;
    }
 
+   ///////////////////////////////////////////////////////////////////////////
    unsigned int Log::GetOutputStreamBit() const
    {
-      return mOutputStreamBit;
+      return mImpl->mOutputStreamBit;
    }
+
+   ///////////////////////////////////////////////////////////////////////////
+   const std::string& Log::GetName() const
+   {
+      return mImpl->mName;
+   }
+
 } //end namespace
