@@ -86,10 +86,10 @@ namespace dtEditQt
        */
       void yaw(double degrees);
 
-      ///**
-      // * Rotates the camera about its current view vector.
-      // * @param degrees Amount of rotation in degrees.
-      // */
+      /**
+       * Rotates the camera about its current view vector.
+       * @param degrees Amount of rotation in degrees.
+       */
       //void roll(double degrees);
 
       /**
@@ -203,24 +203,6 @@ namespace dtEditQt
        */
       osg::Quat getOrientation() const;
 
-      ///**
-      // * Gets the current pitch of this camera.
-      // * @return The pitch value in degrees.
-      // */
-      //double getPitch() const { return mCamPitch; }
-
-      ///**
-      // * Gets the current yaw of this camera.
-      // * @return The yaw value in degrees.
-      // */
-      //double getYaw() const { return mCamYaw; }
-
-      ///**
-      // * Gets the current roll of this camera.
-      // * @return The roll value in degrees.
-      // */
-      //double getRoll() const { return mCamRoll; }
-
       /**
        * Gets the current position of this camera.
        * @return Returns a 3D vector corresponding to this camera's current position
@@ -325,10 +307,6 @@ namespace dtEditQt
          PERSPECTIVE
       };
 
-      //osg::Vec3 mPosition;
-      //osg::Quat mOrientation;
-      //double mCamPitch, mCamYaw, mCamRoll;
-
       osg::Matrixd mProjectionMat;
       osg::Matrixd mWorldViewMat;
 
@@ -336,9 +314,6 @@ namespace dtEditQt
       double mOrthoLeft, mOrthoRight, mOrthoTop, mOrthoBottom;
       double mZNear, mZFar;
       double mZoomFactor;
-
-      //bool mUpdateProjectionMatrix;
-      //bool mUpdateWorldViewMatrix;
 
       ProjectionType mProjType;
 

@@ -47,8 +47,6 @@ namespace dtEditQt
       , mZNear(1.0f)
       , mZFar(10000.0f)
       , mZoomFactor(1.0f)
-      //, mUpdateProjectionMatrix(true)
-      //, mUpdateWorldViewMatrix(true)
       , mProjType(PERSPECTIVE)
       , mDeltaCamera(new dtCore::Camera("StageCamera"))
    {
@@ -79,22 +77,6 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void StageCamera::pitch(double degrees)
    {
-      //osg::Quat q;
-      //q.makeRotate(osg::DegreesToRadians(degrees), getRightDir());
-      //rotate(q);
-
-      //mCamPitch += degrees;
-
-      //if (mCamPitch < 0.0)
-      //{
-      //   mCamPitch += 360.0;
-      //}
-
-      //if (mCamPitch > 360.0)
-      //{
-      //   mCamPitch -= 360.0;
-      //}
-
       dtCore::Transform xform;
       mDeltaCamera->GetTransform(xform);
       osg::Vec3 hpr;
@@ -106,22 +88,6 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void StageCamera::yaw(double degrees)
    {
-      //osg::Quat q;
-      //q.makeRotate(osg::DegreesToRadians(degrees), osg::Vec3(0, 0, 1));
-      //rotate(q);
-
-      //mCamYaw += degrees;
-
-      //if (mCamYaw < 0.0)
-      //{
-      //   mCamYaw += 360.0;
-      //}
-
-      //if (mCamYaw > 360.0)
-      //{
-      //   mCamYaw -= 360.0;
-      //}
-
       dtCore::Transform xform;
       mDeltaCamera->GetTransform(xform);
       osg::Vec3 hpr;
@@ -130,31 +96,15 @@ namespace dtEditQt
       mDeltaCamera->SetTransform(xform);
    }
 
-   /////////////////////////////////////////////////////////////////////////////////
+   ///////////////////////////////////////////////////////////////////////////////
    //void StageCamera::roll(double degrees)
    //{
-   //   osg::Quat q;
-   //   q.makeRotate(osg::DegreesToRadians(-degrees), getViewDir());
-   //   rotate(q);
-
-   //   mCamRoll += degrees;
-
-   //   if (mCamRoll < 0.0)
-   //   {
-   //      mCamRoll += 360.0;
-   //   }
-
-   //   if (mCamRoll > 360.0)
-   //   {
-   //      mCamRoll -= 360.0;
-   //   }
-
-   //   //dtCore::Transform xform;
-   //   //mDeltaCamera->GetTransform(xform);
-   //   //osg::Vec3 hpr;
-   //   //xform.GetRotation(hpr);
-   //   //xform.SetRotation(hpr[0], hpr[1], mCamRoll);
-   //   //mDeltaCamera->SetTransform(xform);
+   //   dtCore::Transform xform;
+   //   mDeltaCamera->GetTransform(xform);
+   //   osg::Vec3 hpr;
+   //   xform.GetRotation(hpr);
+   //   xform.SetRotation(hpr[0], hpr[1], hpr[2] + degrees);
+   //   mDeltaCamera->SetTransform(xform);
    //}
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -167,7 +117,6 @@ namespace dtEditQt
       mOrthoTop               = top;
       mZNear                  = nearZ;
       mZFar                   = farZ;
-      //mUpdateProjectionMatrix = true;
       mProjType               = ORTHOGRAPHIC;
       
       mDeltaCamera->SetOrtho(mOrthoLeft, mOrthoRight, mOrthoBottom, mOrthoTop,
@@ -181,7 +130,6 @@ namespace dtEditQt
       mAspectRatio            = aspect;
       mZNear                  = nearZ;
       mZFar                   = farZ;
-      //mUpdateProjectionMatrix = true;
       mProjType               = PERSPECTIVE;
       
       mDeltaCamera->SetPerspectiveParams(mFovY, mAspectRatio, mZNear, mZFar);
@@ -201,7 +149,6 @@ namespace dtEditQt
          makeOrtho(mOrthoLeft, mOrthoRight, mOrthoBottom, mOrthoTop,
             mZNear, mZFar);
       }
-      //mUpdateProjectionMatrix = true;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -218,7 +165,6 @@ namespace dtEditQt
          makeOrtho(mOrthoLeft, mOrthoRight, mOrthoBottom, mOrthoTop,
             mZNear, mZFar);
       }
-      //mUpdateProjectionMatrix = true;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -235,7 +181,6 @@ namespace dtEditQt
          makeOrtho(mOrthoLeft, mOrthoRight, mOrthoBottom, mOrthoTop,
             mZNear, mZFar);
       }
-      //mUpdateProjectionMatrix = true;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -275,26 +220,25 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void StageCamera::rotate(const osg::Quat& q)
    {
-      //mOrientation = q * mOrientation;
-      //mUpdateWorldViewMatrix = true;
-
       dtCore::Transform xform;
       mDeltaCamera->GetTransform(xform);
       osg::Quat orientation;
       xform.GetRotation(orientation);
 
       xform.SetRotation(q * orientation);
+
+      // Now make sure we remove the roll.
+      osg::Vec3 hpr;
+      xform.GetRotation(hpr);
+      hpr.z() = 0.0f;
+      xform.SetRotation(hpr);
+
       mDeltaCamera->SetTransform(xform);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void StageCamera::resetRotation()
    {
-      ////mOrientation = osg::Quat(osg::DegreesToRadians(-90.0), osg::Vec3(1, 0, 0));
-      //mCamPitch = 0;
-      //mCamYaw = 0;
-      //mCamRoll = 0;
-
       dtCore::Transform xform;
       mDeltaCamera->GetTransform(xform);
       xform.SetRotation(0, 0, 0);
@@ -347,9 +291,6 @@ namespace dtEditQt
                             mOrthoBottom / mZoomFactor,
                             mOrthoTop    / mZoomFactor,
                             mZNear, mZFar);
-
-
-      //mUpdateProjectionMatrix = true;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -367,8 +308,6 @@ namespace dtEditQt
          mOrthoBottom / mZoomFactor,
          mOrthoTop    / mZoomFactor,
          mZNear, mZFar);
-
-      //mUpdateProjectionMatrix = true;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -379,50 +318,6 @@ namespace dtEditQt
       updateActorAttachments();
       //updateDeltaCamera();
    }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   //const osg::Matrix& StageCamera::getProjectionMatrix()
-   //{
-   //   if (mUpdateProjectionMatrix)
-   //   {
-   //      if (mProjType == PERSPECTIVE)
-   //      {
-   //         //mProjectionMat.makePerspective(mFovY, mAspectRatio,
-   //         //   mZNear, mZFar);
-   //         mProjectionMat = mDeltaCamera->GetOSGCamera()->getViewMatrix();
-   //      }
-   //      else if (mProjType == ORTHOGRAPHIC)
-   //      {
-   //         //mProjectionMat.makeOrtho(mOrthoLeft / mZoomFactor,
-   //         //   mOrthoRight  / mZoomFactor,
-   //         //   mOrthoBottom / mZoomFactor,
-   //         //   mOrthoTop    / mZoomFactor,
-   //         //   mZNear, mZFar);
-   //         mProjectionMat = mDeltaCamera->GetOSGCamera()->getViewMatrix();
-   //      }
-
-   //      mUpdateProjectionMatrix = false;
-   //   }
-
-   //   return mProjectionMat;
-   //}
-
-   ///////////////////////////////////////////////////////////////////////////////
-   //const osg::Matrix& StageCamera::getWorldViewMatrix()
-   //{
-   //   if (mUpdateWorldViewMatrix)
-   //   {
-   //      //mWorldViewMat = osg::Matrix::translate(-mPosition) *
-   //      //   osg::Matrix::rotate(mOrientation);
-   //      mUpdateWorldViewMatrix = false;
-
-   //      dtCore::Transform xform;
-   //      mDeltaCamera->GetTransform(xform);
-   //      xform.Get(mWorldViewMat);
-   //   }
-
-   //   return mWorldViewMat;
-   //}
 
    ///////////////////////////////////////////////////////////////////////////////
    void StageCamera::getOrthoParams(double& left, double& right, double& bottom, double& top,

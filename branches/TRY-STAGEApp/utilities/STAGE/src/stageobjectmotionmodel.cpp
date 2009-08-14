@@ -52,34 +52,8 @@ void STAGEObjectMotionModel::OnRightMouseReleased(void)
 ////////////////////////////////////////////////////////////////////////////////
 void STAGEObjectMotionModel::OnMessage(MessageData *data)
 {
-   // This function is overritten to do nothing.
+   // This function is overwritten to do nothing.
 }
-
-////////////////////////////////////////////////////////////////////////////////
-//void STAGEObjectMotionModel::ResetGetMouseLineFunc(void)
-//{
-//   mGetMouseLineFunc = dtDAL::MakeFunctor(
-//      *this, &STAGEObjectMotionModel::DefaultGetMouseLineFunc);
-//}
-
-////////////////////////////////////////////////////////////////////////////////
-//void STAGEObjectMotionModel::SetGetMouseLineFunc(GetMouseLineFunc func)
-//{
-//   mGetMouseLineFunc = func;
-//}
-
-////////////////////////////////////////////////////////////////////////////////
-//void STAGEObjectMotionModel::ResetObjectToScreenFunc(void)
-//{
-//   mObjectToScreenFunc = dtDAL::MakeFunctorRet(
-//      *this, &STAGEObjectMotionModel::DefaultGetObjectScreenCoordinates);
-//}
-
-////////////////////////////////////////////////////////////////////////////////
-//void STAGEObjectMotionModel::SetObjectToScreenFunc(ObjectToScreenFunc func)
-//{
-//   mObjectToScreenFunc = func;
-//}
 
 ////////////////////////////////////////////////////////////////////////////////
 void STAGEObjectMotionModel::AddTarget(dtDAL::TransformableActorProxy* target)

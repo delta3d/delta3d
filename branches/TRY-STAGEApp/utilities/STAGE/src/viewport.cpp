@@ -237,11 +237,6 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void Viewport::paintGL()
    {
-      //if (!mSceneView.valid() || !mScene.valid() || !mCamera.valid())
-      //{
-      //   return;
-      //}
-
       if (mIsDirty)
       {
          mIsDirty = false;
