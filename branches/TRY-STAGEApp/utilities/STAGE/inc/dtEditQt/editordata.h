@@ -292,14 +292,14 @@ namespace dtEditQt
        * @param name The name of the map
        * @note If the name is already in list, the name in the list is deleted
        */
-      void addRecentMap(const std::string& name);
+      void addRecentMap(std::string name);
 
       /**
        * Adds a new project name to the list of recent projects
        * @param name The name of the project
        * @note If the name is already in list, the name in the list is deleted
        */
-      void addRecentProject(const std::string& name);
+      void addRecentProject(std::string name);
 
       /**
        * UndoManager accessor

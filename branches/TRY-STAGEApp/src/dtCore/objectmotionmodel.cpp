@@ -1470,7 +1470,12 @@ void ObjectMotionModel::UpdateScale(void)
       }
    }
 
-   osg::Vec3 vecToTarget = targetPos - camPos;
+   // Get the mouse vector.
+   osg::Vec3 mouseStart, mouseEnd;
+   GetMouseLine(GetMousePosition() + mMouseOffset, mouseStart, mouseEnd);
+   osg::Vec3 mouse = mouseEnd - mouseStart;
+
+   osg::Vec3 vecToTarget = targetPos - mouseStart;
    vecToTarget.normalize();
    float fDot = fabs(vecToTarget * axis);
    if (fDot < 0.95f)
@@ -1494,13 +1499,6 @@ void ObjectMotionModel::UpdateScale(void)
 
    if (plane)
    {
-      // Get the mouse vector.
-      osg::Vec3 mouseStart, mouseEnd;
-      osg::Vec2 newMousePos = GetMousePosition();
-      GetMouseLine(newMousePos + mMouseOffset, mouseStart, mouseEnd);
-      osg::Vec2 objectPos = GetObjectScreenCoordinates(targetPos);
-      osg::Vec3 mouse = mouseEnd - mouseStart;
-
       // Calculate the mouse collision in the 3D space relative to the plane
       // of the camera and the desired axis of the object.
       float fStartOffset   = mouseStart * (*plane);
@@ -1534,7 +1532,8 @@ void ObjectMotionModel::UpdateScale(void)
 
       if (scaleAxis.length() >= 0.0001f)
       {
-         mMouseOffset = objectPos - newMousePos;
+         osg::Vec2 objectPos = GetObjectScreenCoordinates(targetPos);
+         mMouseOffset = objectPos - GetMousePosition();
 
          OnScale(scaleAxis * fDistance);
       }
