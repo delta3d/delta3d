@@ -129,7 +129,11 @@ namespace dtEditQt
       //mScene->GetSceneNode()->addChild(mRootNodeGroup.get());
       setOverlay(ViewportManager::GetInstance().getViewportOverlay());
 
-      this->GetQGLWidget()->setMouseTracking(true);
+      if (this->GetQGLWidget() != NULL)
+      {
+         this->GetQGLWidget()->setMouseTracking(true);
+      }
+
       mCacheMouseLocation = true;
 
       //connect(&mTimer, SIGNAL(timeout()), this, SLOT(updateGL()));
@@ -253,7 +257,10 @@ namespace dtEditQt
    void Viewport::refresh()
    {
       mIsDirty = true;
-      GetQGLWidget()->updateGL(); 
+      if (GetQGLWidget() != NULL)
+      {
+         GetQGLWidget()->updateGL(); 
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -382,7 +389,11 @@ namespace dtEditQt
             throw dtUtil::Exception(dtDAL::ExceptionEnum::BaseException,"Cannot refresh the viewport. "
                   "It has not been initialized.", __FILE__, __LINE__);
          }
-         GetQGLWidget()->updateGL();
+
+         if (GetQGLWidget() != NULL)
+         {
+            GetQGLWidget()->updateGL();
+         }
       }
 
       emit renderStyleChanged();
@@ -804,6 +815,11 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void Viewport::trapMouseCursor()
    {
+      if (this->GetQGLWidget() == NULL)
+      {
+         return;
+      }
+
       // Get the current cursor so we can restore it later.
       if (this->GetQGLWidget()->cursor().shape()!= Qt::BlankCursor)
       {
@@ -833,7 +849,11 @@ namespace dtEditQt
    void Viewport::releaseMouseCursor(const QPoint& mousePosition)
    {
       mIsMouseTrapped = false;
-      this->GetQGLWidget()->setCursor(mOldMouseCursor);
+
+      if (this->GetQGLWidget() != NULL)
+      {
+         this->GetQGLWidget()->setCursor(mOldMouseCursor);
+      }
 
       if (mousePosition.x() != -1 && mousePosition.y() != -1)
       {
@@ -868,7 +888,7 @@ namespace dtEditQt
 
       QPoint mousePos = e->pos();
 
-      if (mIsMouseTrapped)
+      if ((mIsMouseTrapped) && (this->GetQGLWidget() != NULL))
       {
          QPoint center((this->GetQGLWidget()->x()+this->GetQGLWidget()->width())/2, (this->GetQGLWidget()->y()+this->GetQGLWidget()->height())/2);
 
@@ -1105,7 +1125,14 @@ namespace dtEditQt
    QGLWidget* Viewport::GetQGLWidget()
    {
       dtQt::OSGGraphicsWindowQt* osgGraphWindow = dynamic_cast<dtQt::OSGGraphicsWindowQt*>(mWindow->GetOsgViewerGraphicsWindow());
-      return osgGraphWindow->GetQGLWidget();
+      if (osgGraphWindow)
+      {
+         return osgGraphWindow->GetQGLWidget();
+      }
+      else
+      {
+         return NULL;
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
