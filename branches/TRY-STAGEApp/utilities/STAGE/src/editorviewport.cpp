@@ -87,7 +87,6 @@ namespace dtEditQt
       {
          glWidget->SetViewport(this);      	
       }
-
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -180,7 +179,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void EditorViewport::refresh()
    {
-      //mObjectMotionModel->UpdateWidgets();
+      mObjectMotionModel->UpdateWidgets();
 
       Viewport::refresh();
    }
@@ -742,7 +741,7 @@ namespace dtEditQt
             mKeyMods = 0x0;
          }
 
-         //ViewportManager::GetInstance().refreshAllViewports();
+         ViewportManager::GetInstance().refreshAllViewports();
       }
    }
 
@@ -1124,8 +1123,6 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void EditorViewport::renderFrame()
    {
-      mObjectMotionModel->UpdateWidgets();
-
       Viewport::renderFrame();
    }
 

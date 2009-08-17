@@ -8,7 +8,6 @@ dtEditQt::STAGEGLWidget::STAGEGLWidget(bool drawOnSeparateThread,  QWidget* pare
 dtQt::OSGAdapterWidget(drawOnSeparateThread, parent, shareWidget, f)
 , mViewport(NULL)
 {
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -26,7 +25,6 @@ void dtEditQt::STAGEGLWidget::mouseMoveEvent(QMouseEvent* e)
    {
       mViewport->mouseMoveEvent(e);
    }
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -97,11 +95,14 @@ void dtEditQt::STAGEGLWidget::dropEvent(QDropEvent* event)
 ////////////////////////////////////////////////////////////////////////////////
 void dtEditQt::STAGEGLWidget::paintGL()
 {
-   dtQt::OSGAdapterWidget::paintGL();
-
    if (mViewport != NULL)
    {
-      mViewport->paintGL();
+      //if (mViewport->IsDirty())
+      //{
+         dtQt::OSGAdapterWidget::paintGL();
+
+         mViewport->paintGL();
+      //}
    }
 }
 
@@ -175,7 +176,7 @@ void dtEditQt::STAGEGLWidget::enterEvent(QEvent *e)
    dtQt::OSGAdapterWidget::enterEvent(e);
    if (mViewport != NULL)
    {
-      mViewport->getCamera()->getDeltaCamera()->SetEnabled(true);
+      //mViewport->getCamera()->getDeltaCamera()->SetEnabled(true);
    }
 }
 
@@ -185,6 +186,7 @@ void dtEditQt::STAGEGLWidget::leaveEvent(QEvent *e)
    dtQt::OSGAdapterWidget::leaveEvent(e);
    if (mViewport != NULL)
    {
-      mViewport->getCamera()->getDeltaCamera()->SetEnabled(false);
+      //mViewport->getCamera()->getDeltaCamera()->SetEnabled(false);
    }
 }
+

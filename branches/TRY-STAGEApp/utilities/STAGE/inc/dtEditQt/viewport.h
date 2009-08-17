@@ -487,6 +487,12 @@ namespace dtEditQt
 
       osg::Group* GetRootNode() { return mRootNodeGroup.get(); }
 
+      /**
+      * returns whether the window dirty.
+      */
+      bool IsDirty() { return mIsDirty; }
+
+
    public slots:
       ///Moves the camera such that the actor is clearly visible.
       void onGotoActor(ActorProxyRefPtr proxy);

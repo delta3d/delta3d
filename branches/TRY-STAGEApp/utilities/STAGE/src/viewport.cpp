@@ -241,11 +241,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void Viewport::paintGL()
    {
-      if (mIsDirty)
-      {
-         mIsDirty = false;
-         renderFrame();
-      }
+      renderFrame();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -257,10 +253,10 @@ namespace dtEditQt
    void Viewport::refresh()
    {
       mIsDirty = true;
-      if (GetQGLWidget() != NULL)
-      {
-         GetQGLWidget()->updateGL(); 
-      }
+      //if (GetQGLWidget() != NULL)
+      //{
+      //   GetQGLWidget()->updateGL(); 
+      //}
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -275,11 +271,6 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void Viewport::renderFrame()
    {
-      if (!mIsDirty)
-      {
-         return;
-      }
-
       mIsDirty = false;
       getCamera()->update();
 
