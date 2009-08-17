@@ -26,12 +26,6 @@
             <abstract/>
             <entityIdAttributeName>EntityIdentifier</entityIdAttributeName>
             <attrToProp>
-                <hlaName>DamageState</hlaName>
-                <hlaDataType>UNSIGNED_INT_TYPE</hlaDataType>
-                <gameName>Current Health</gameName>
-                <gameDataType>INT</gameDataType>
-            </attrToProp>
-            <attrToProp>
                 <hlaName>Orientation</hlaName>
                 <hlaDataType>EULER_ANGLES_TYPE</hlaDataType>
                 <gameName>Rotation</gameName>
@@ -43,16 +37,22 @@
                 <gameName>Translation</gameName>
                 <gameDataType>VEC3</gameDataType>
             </attrToProp>
+        </object>
+
+        <object name="PhysicalEntity" extends="BaseEntity">
+            <abstract/>
+            <attrToProp>
+                <hlaName>DamageState</hlaName>
+                <hlaDataType>UNSIGNED_INT_TYPE</hlaDataType>
+                <gameName>Current Health</gameName>
+                <gameDataType>INT</gameDataType>
+            </attrToProp>
             <attrToProp>
                 <hlaName>Marking</hlaName>
                 <hlaDataType>MARKING_TYPE</hlaDataType>
                 <gameName>Name</gameName>
                 <gameDataType>STRING</gameDataType>
             </attrToProp>
-        </object>
-
-        <object name="PhysicalEntity" extends="BaseEntity">
-            <abstract/>
         </object>
 
         <object name="GroundVehicle" extends="PhysicalEntity">
