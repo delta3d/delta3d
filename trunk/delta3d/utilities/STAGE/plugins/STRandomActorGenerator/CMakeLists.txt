@@ -4,8 +4,8 @@ file(GLOB LIB_HEADERS "*.h")
 file(GLOB LIB_SOURCES "*.cpp")
 
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/utilities/STAGE/inc
-						  ${QT_INCLUDE_DIR}
-						  ${CMAKE_CURRENT_BINARY_DIR} # for ui*.h files
+              ${QT_INCLUDE_DIR}
+              ${CMAKE_CURRENT_BINARY_DIR} # for ui*.h files
 )
 
 qt4_wrap_cpp(MOC_SOURCES ${LIB_HEADERS})
@@ -19,7 +19,7 @@ ADD_LIBRARY(${LIB_NAME} MODULE
 )
 
 TARGET_LINK_LIBRARIES( ${LIB_NAME}
-					        STAGE
+                       STAGE
                        ${DTUTIL_LIBRARY}
                        ${DTCORE_LIBRARY}
                        ${DTGAME_LIBRARY}
@@ -39,5 +39,7 @@ SET_TARGET_PROPERTIES(${LIB_NAME}
 SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin/stplugins)
 
 #make sure that the debug build is the only one that gets built in the debug folder.
-SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES OUTPUT_NAME ../${LIB_NAME})
-SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES DEBUG_OUTPUT_NAME ${LIB_NAME})
+IF (MSVC)
+  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES OUTPUT_NAME ../${LIB_NAME})
+  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES DEBUG_OUTPUT_NAME ${LIB_NAME})
+ENDIF (MSVC)  
