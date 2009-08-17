@@ -1025,7 +1025,7 @@ void GameActorTests::TestAddActorComponent()
       bool hascomp = actor->HasComponent(TestActorComponent1::TYPE);
       CPPUNIT_ASSERT_MESSAGE("Actor component not found after it was added!", hascomp);
 
-      bool found = (actor->GetComponent(TestActorComponent1::TYPE) == component);
+      bool found = (actor->GetComponent(TestActorComponent1::TYPE) == component.get());
       CPPUNIT_ASSERT_MESSAGE("Could not retrieve actor component after it was added!", found);
 
       TestActorComponent1* compare;
@@ -1082,7 +1082,7 @@ void GameActorTests::TestActorComponentInitialized()
       CPPUNIT_ASSERT_MESSAGE("Actor component2 should not be initialized before added to actor!", !component2->mWasAdded);
       actor->AddComponent(component2.get());
       CPPUNIT_ASSERT_MESSAGE("Actor component2 should be initialized when added to actor!", component2->mWasAdded);
-      actor->RemoveComponent(component2);
+      actor->RemoveComponent(component2.get());
       CPPUNIT_ASSERT_MESSAGE("Actor component2 should be de-initialized when removed from actor!", component2->mWasRemoved);
 
       CPPUNIT_ASSERT_MESSAGE("Actor component should not be removed yet!", !component1->mWasRemoved);
