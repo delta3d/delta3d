@@ -460,7 +460,7 @@ namespace dtEditQt
             dtDAL::ActorProxyIcon* billBoard = mGhostProxy->GetBillBoardIcon();
             if (billBoard)
             {
-               billBoard->SetRotation(osg::Matrix::rotate(getCamera()->getOrientation().inverse()));
+               billBoard->SetRotation(osg::Matrix::rotate(getCamera()->getOrientation()));
             }
 
             ViewportManager::GetInstance().refreshAllViewports();

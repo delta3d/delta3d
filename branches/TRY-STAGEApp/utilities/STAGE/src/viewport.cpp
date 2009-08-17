@@ -253,10 +253,11 @@ namespace dtEditQt
    void Viewport::refresh()
    {
       mIsDirty = true;
-      //if (GetQGLWidget() != NULL)
-      //{
-      //   GetQGLWidget()->updateGL(); 
-      //}
+
+      if (GetQGLWidget() != NULL)
+      {
+         GetQGLWidget()->updateGL(); 
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -1021,7 +1022,7 @@ namespace dtEditQt
             dtDAL::ActorProxyIcon* billBoard = proxy->GetBillBoardIcon();
             if (billBoard != NULL)
             {
-               billBoard->SetRotation(osg::Matrix::rotate(getCamera()->getOrientation().inverse()));
+               billBoard->SetRotation(osg::Matrix::rotate(getCamera()->getOrientation()));
             }
          }
          else if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_AUTO)
