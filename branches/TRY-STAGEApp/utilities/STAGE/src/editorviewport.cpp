@@ -72,6 +72,7 @@ namespace dtEditQt
       , mObjectMotionModel(NULL)
       , mGhostProxy(NULL)
       , mSkipUpdateForCam(false)
+      , mEnabled(false)
    {
       //mObjectMotionModel = new STAGEObjectMotionModel(ViewportManager::GetInstance().getMasterView());
       mObjectMotionModel = new STAGEObjectMotionModel(GetView());
@@ -164,7 +165,12 @@ namespace dtEditQt
          }
 
          mObjectMotionModel->SetScaleEnabled(canScale);
-         mObjectMotionModel->SetEnabled(true);
+         
+         //only enable the MotionModel for active Viewports
+         if (GetEnabled())
+         {
+            mObjectMotionModel->SetEnabled(true);
+         }
       }
       else
       {
@@ -1129,4 +1135,16 @@ namespace dtEditQt
       Viewport::renderFrame();
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorViewport::SetEnabled(bool enabled)
+   {
+      mEnabled = enabled;
+      GetObjectMotionModel()->SetEnabled(mEnabled);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool EditorViewport::GetEnabled() const
+   {
+      return mEnabled;
+   }
 } // namespace dtEditQt

@@ -302,6 +302,19 @@ namespace dtEditQt {
       */
       void keyReleaseEvent(QKeyEvent* e);
 
+      /** 
+      * Enable or disable this Viewport.  High level control over if this
+      * Viewport is considered enabled or not.
+      * @param enabled: true to enabled, false to disable
+      */
+      void SetEnabled(bool enabled);
+
+      /** 
+      * Is this Viewport considered to be enabled or not
+      * @return true if enabled, false otherwise
+      */
+      bool GetEnabled() const;
+
    protected:
 
       /**
@@ -322,6 +335,9 @@ namespace dtEditQt {
       Qt::KeyboardModifiers                  mKeyMods;
 
       bool                                   mSkipUpdateForCam;
+
+   private:
+      bool                                   mEnabled;  //is this Viewport Enabled?
    };
 
 } // namespace dtEditQt

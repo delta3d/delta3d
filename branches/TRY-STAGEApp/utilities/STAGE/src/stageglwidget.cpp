@@ -95,15 +95,29 @@ void dtEditQt::STAGEGLWidget::dropEvent(QDropEvent* event)
 ////////////////////////////////////////////////////////////////////////////////
 void dtEditQt::STAGEGLWidget::paintGL()
 {
-   if (mViewport != NULL)
+   if (mViewport == NULL) 
    {
-      //if (mViewport->IsDirty())
-      //{
-         dtQt::OSGAdapterWidget::paintGL();
-
-         mViewport->paintGL();
-      //}
+      return;
    }
+
+   //Qt wants to redraw this widget.  If this View isn't currently in the Application
+   //temporarily add it, render, then remove it.
+   bool viewAdded = false;
+   if (!ViewportManager::GetInstance().GetApplication()->ContainsView(*mViewport->GetView()))
+   {
+      ViewportManager::GetInstance().GetApplication()->AddView(*mViewport->GetView());
+      viewAdded = true;
+   }
+
+   dtQt::OSGAdapterWidget::paintGL();
+   mViewport->paintGL();
+
+   //put things back the way they were
+   if (viewAdded)
+   {
+      ViewportManager::GetInstance().GetApplication()->RemoveView(*mViewport->GetView());
+   }
+   
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -176,11 +190,12 @@ void dtEditQt::STAGEGLWidget::enterEvent(QEvent *e)
    dtQt::OSGAdapterWidget::enterEvent(e);
    if (mViewport != NULL)
    {
+      //mouse entered this Widget.  Make sure the View is in the Application
       if (!ViewportManager::GetInstance().GetApplication()->ContainsView(*mViewport->GetView()))
       {
          ViewportManager::GetInstance().GetApplication()->AddView(*mViewport->GetView());
       }
-      mViewport->GetObjectMotionModel()->SetEnabled(true);
+      mViewport->SetEnabled(true); //enable the Viewport
    }
 }
 
@@ -190,11 +205,12 @@ void dtEditQt::STAGEGLWidget::leaveEvent(QEvent *e)
    dtQt::OSGAdapterWidget::leaveEvent(e);
    if (mViewport != NULL)
    {
+      //mouse left this Widget.  Make sure the View is not in the Application
       if (ViewportManager::GetInstance().GetApplication()->ContainsView(*mViewport->GetView()))
       {
          ViewportManager::GetInstance().GetApplication()->RemoveView(*mViewport->GetView());
       }
-      mViewport->GetObjectMotionModel()->SetEnabled(false);
+      mViewport->SetEnabled(false); //disable the Viewport
    }
 }
 
