@@ -710,7 +710,7 @@ namespace dtEditQt
       osg::Vec2 pos = convertMousePosition(e->pos());
 
       // Update the object motion model mouse position.
-      mObjectMotionModel->Update(pos);
+      //mObjectMotionModel->Update(pos); //gets called automatically, every frame, in ObjectMotionModel
 
       // If we move the mouse while in select actor mode,
       // immediately jump to camera motion mode.

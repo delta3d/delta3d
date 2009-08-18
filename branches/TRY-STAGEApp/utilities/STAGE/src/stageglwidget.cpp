@@ -180,7 +180,7 @@ void dtEditQt::STAGEGLWidget::enterEvent(QEvent *e)
       {
          ViewportManager::GetInstance().GetApplication()->AddView(*mViewport->GetView());
       }
-      //mViewport->getCamera()->getDeltaCamera()->SetEnabled(true);
+      mViewport->GetObjectMotionModel()->SetEnabled(true);
    }
 }
 
@@ -194,7 +194,7 @@ void dtEditQt::STAGEGLWidget::leaveEvent(QEvent *e)
       {
          ViewportManager::GetInstance().GetApplication()->RemoveView(*mViewport->GetView());
       }
-      //mViewport->getCamera()->getDeltaCamera()->SetEnabled(false);
+      mViewport->GetObjectMotionModel()->SetEnabled(false);
    }
 }
 

@@ -80,7 +80,7 @@ class STAGEObjectMotionModel : public dtCore::ObjectMotionModel
       *
       * @param[in] data  The message data
       */
-      void OnMessage(MessageData* data);
+      //void OnMessage(MessageData* data);
 
       /**
       * Adds a target to the target list.

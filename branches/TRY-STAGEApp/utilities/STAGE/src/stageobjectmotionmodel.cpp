@@ -50,10 +50,10 @@ void STAGEObjectMotionModel::OnRightMouseReleased(void)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void STAGEObjectMotionModel::OnMessage(MessageData *data)
-{
-   // This function is overwritten to do nothing.
-}
+//void STAGEObjectMotionModel::OnMessage(MessageData *data)
+//{
+//   // This function is overwritten to do nothing.
+//}
 
 ////////////////////////////////////////////////////////////////////////////////
 void STAGEObjectMotionModel::AddTarget(dtDAL::TransformableActorProxy* target)
