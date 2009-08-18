@@ -794,4 +794,16 @@ namespace dtEditQt
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void ViewportManager::SetApplication(dtABC::Application* app)
+   {
+      mApplication = app;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtABC::Application* ViewportManager::GetApplication() const
+   {
+      return mApplication.get();
+   }
+
 } // namespace dtEditQt

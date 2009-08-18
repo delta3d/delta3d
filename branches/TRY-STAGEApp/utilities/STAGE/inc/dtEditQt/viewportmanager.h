@@ -42,6 +42,7 @@
 #include <dtDAL/actorproperty.h>
 #include <dtCore/timer.h>
 #include <dtQt/typedefs.h>
+#include <dtABC/application.h>
 #include "export.h"
 
 class QGLWidget;
@@ -131,6 +132,9 @@ namespace dtEditQt
        * @return A pointer to the world view camera.
        */
       StageCamera* getWorldViewCamera() { return mWorldCamera.get(); }
+
+      void SetApplication(dtABC::Application* app);
+      dtABC::Application* GetApplication() const;
 
       /**
        * Moves an actor such that it is placed in from of the world view camera.
@@ -634,6 +638,7 @@ namespace dtEditQt
       int                             mNumTextureUnits;
       bool                            mInChangeTransaction;
       dtCore::Timer_t                 mStartTick;
+      dtCore::RefPtr<dtABC::Application> mApplication;
    };
 
 } // namespace dtEditQt

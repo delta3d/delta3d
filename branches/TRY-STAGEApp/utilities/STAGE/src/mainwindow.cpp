@@ -1611,6 +1611,7 @@ namespace dtEditQt
       //   widget->setParent(mMainViewportParent);         
       //}
 
+      ViewportManager::GetInstance().SetApplication(viewer);
 
       Viewport* masterViewport = ViewportManager::GetInstance().GetMasterViewport();
       if (masterViewport)

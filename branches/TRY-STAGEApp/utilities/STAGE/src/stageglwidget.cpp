@@ -176,6 +176,10 @@ void dtEditQt::STAGEGLWidget::enterEvent(QEvent *e)
    dtQt::OSGAdapterWidget::enterEvent(e);
    if (mViewport != NULL)
    {
+      if (!ViewportManager::GetInstance().GetApplication()->ContainsView(*mViewport->GetView()))
+      {
+         ViewportManager::GetInstance().GetApplication()->AddView(*mViewport->GetView());
+      }
       //mViewport->getCamera()->getDeltaCamera()->SetEnabled(true);
    }
 }
@@ -186,6 +190,10 @@ void dtEditQt::STAGEGLWidget::leaveEvent(QEvent *e)
    dtQt::OSGAdapterWidget::leaveEvent(e);
    if (mViewport != NULL)
    {
+      if (ViewportManager::GetInstance().GetApplication()->ContainsView(*mViewport->GetView()))
+      {
+         ViewportManager::GetInstance().GetApplication()->RemoveView(*mViewport->GetView());
+      }
       //mViewport->getCamera()->getDeltaCamera()->SetEnabled(false);
    }
 }
