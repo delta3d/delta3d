@@ -900,7 +900,8 @@ namespace dtEditQt
 
       mLastMouseUpdateLocation = mousePos;
 
-      refresh();
+      //refresh();
+      renderFrame(); 
    }
 
    ///////////////////////////////////////////////////////////////////////////////
