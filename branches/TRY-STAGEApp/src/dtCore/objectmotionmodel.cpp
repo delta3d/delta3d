@@ -542,10 +542,15 @@ void ObjectMotionModel::InitArrows(void)
       mArrows[arrowIndex].arrowCylinder = new osg::ShapeDrawable(cylinder);
       mArrows[arrowIndex].arrowCone     = new osg::ShapeDrawable(cone);
       mArrows[arrowIndex].scaleBox      = new osg::ShapeDrawable(box);
+      mArrows[arrowIndex].arrowCylinder->setUseDisplayList(false);
+      mArrows[arrowIndex].arrowCone->setUseDisplayList(false);
+      mArrows[arrowIndex].scaleBox->setUseDisplayList(false);
 
       mArrows[arrowIndex].rotationRing  = new osg::ShapeDrawable(ring);
+      mArrows[arrowIndex].rotationRing->setUseDisplayList(false);
       osg::ShapeDrawable* rotationSelectionRing = new osg::ShapeDrawable(selectionRing);
       rotationSelectionRing->setColor(osg::Vec4(0.0f, 0.0f, 0.0f, 0.0f));
+      rotationSelectionRing->setUseDisplayList(false);
 
       // Now set up their Hierarchy.
       mTargetTransform->AddChild(mArrows[arrowIndex].translationTransform.get());
@@ -596,6 +601,7 @@ void ObjectMotionModel::InitArrows(void)
    mScaleGeode            = new osg::Geode();
    osg::Sphere* scaleOrb  = new osg::Sphere(osg::Vec3(0.0f, 0.0f, 0.0f), 0.012f);
    mScaleOrb              = new osg::ShapeDrawable(scaleOrb);
+   mScaleOrb->setUseDisplayList(false);
    mScaleGeode->addDrawable(mScaleOrb.get());
    mScaleGeode->setNodeMask(ARROW_NODE_MASK);
    osg::Group* scaleGroup = mScaleTransform->GetOSGNode()->asGroup();
