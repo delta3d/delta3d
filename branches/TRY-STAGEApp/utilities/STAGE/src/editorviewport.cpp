@@ -179,7 +179,10 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void EditorViewport::refresh()
    {
-      mObjectMotionModel->UpdateWidgets();
+      //TODO calling this here causes a rendering slow down.  Not calling it 
+      //here causes the Gizmo geometry to not resize until after 
+      //the camera is done moving.
+      //mObjectMotionModel->UpdateWidgets();
 
       Viewport::refresh();
    }
@@ -741,7 +744,7 @@ namespace dtEditQt
             mKeyMods = 0x0;
          }
 
-         ViewportManager::GetInstance().refreshAllViewports();
+         //ViewportManager::GetInstance().refreshAllViewports();  //causes gizmo manipulations to be slow
       }
    }
 
