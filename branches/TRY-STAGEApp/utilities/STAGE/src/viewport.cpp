@@ -111,7 +111,7 @@ namespace dtEditQt
       , mScene(new dtCore::Scene())
       , mIsDirty(false)
    {
-      mFrameStamp = new osg::FrameStamp();
+      //mFrameStamp = new osg::FrameStamp();
       mMouseSensitivity = 10.0f;
       mInteractionMode = &InteractionMode::NOTHING;
       mRenderStyle = &RenderStyle::WIREFRAME;
@@ -187,29 +187,29 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void Viewport::setOverlay(ViewportOverlay* overlay)
    {
-      return; //TODO
-      //if (mSceneView.valid())
-      {
-         //If the new overlay is NULL, clear the current overlay.
-         if (overlay == NULL)
-         {
-            mRootNodeGroup->removeChild(mOverlay->getOverlayGroup());
-            mOverlay = NULL;
-            return;
-         }
+      //return; //TODO
+      ////if (mSceneView.valid())
+      //{
+      //   //If the new overlay is NULL, clear the current overlay.
+      //   if (overlay == NULL && mOverlay.valid())
+      //   {
+      //      mRootNodeGroup->removeChild(mOverlay->getOverlayGroup());
+      //      mOverlay = NULL;
+      //      return;
+      //   }
 
-         //Else update the current overlay in both the scene and in the viewport.
-         if (mOverlay != NULL)
-         {
-            mRootNodeGroup->replaceChild(mOverlay->getOverlayGroup(), overlay->getOverlayGroup());
-         }
-         else
-         {
-            mRootNodeGroup->addChild(overlay->getOverlayGroup());
-         }
+      //   //Else update the current overlay in both the scene and in the viewport.
+      //   if (mOverlay != NULL)
+      //   {
+      //      mRootNodeGroup->replaceChild(mOverlay->getOverlayGroup(), overlay->getOverlayGroup());
+      //   }
+      //   else
+      //   {
+      //      mRootNodeGroup->addChild(overlay->getOverlayGroup());
+      //   }
 
-         mOverlay = overlay;
-      }
+      //   mOverlay = overlay;
+      //}
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -282,40 +282,40 @@ namespace dtEditQt
          updateActorProxyBillboards();
       }
 
-      if (ViewportManager::GetInstance().IsPagingEnabled())
-      {
-         const dtCore::DatabasePager* dbp = ViewportManager::GetInstance().GetDatabasePager();
-         if (dbp != NULL)
-         {
-            dbp->SignalBeginFrame(mFrameStamp.get());
-#if OPENSCENEGRAPH_MAJOR_VERSION < 2 || (OPENSCENEGRAPH_MAJOR_VERSION == 2 && OPENSCENEGRAPH_MINOR_VERSION <= 6)
-            dbp->UpdateSceneGraph(mFrameStamp->getReferenceTime());
-#else
-            dbp->UpdateSceneGraph(mFrameStamp.get());
-#endif
-         }
-      }
-
-      mFrameStamp->setReferenceTime(osg::Timer::instance()->delta_s(ViewportManager::GetInstance().GetStartTick(), osg::Timer::instance()->tick()));
-      mFrameStamp->setFrameNumber(mFrameStamp->getFrameNumber()+ 1);
-
-      //mSceneView->update();
-      //mSceneView->cull();
-      //mSceneView->draw();
-
-      if (ViewportManager::GetInstance().IsPagingEnabled())
-      {
-         const dtCore::DatabasePager* dbp = ViewportManager::GetInstance().GetDatabasePager();
-         if (dbp != NULL)
-         {
-            dbp->SignalEndFrame();
-            // This magic number is the default amount of time that dtCore Scene USED to use.
-            //double cleanupTime = 0.0025;
-            //dbp->CompileGLObjects(*mSceneView->getState(), cleanupTime);
-
-            //mSceneView->flushDeletedGLObjects(cleanupTime);
-         }
-      }
+//      if (ViewportManager::GetInstance().IsPagingEnabled())
+//      {
+//         const dtCore::DatabasePager* dbp = ViewportManager::GetInstance().GetDatabasePager();
+//         if (dbp != NULL)
+//         {
+//            dbp->SignalBeginFrame(mFrameStamp.get());
+//#if OPENSCENEGRAPH_MAJOR_VERSION < 2 || (OPENSCENEGRAPH_MAJOR_VERSION == 2 && OPENSCENEGRAPH_MINOR_VERSION <= 6)
+//            dbp->UpdateSceneGraph(mFrameStamp->getReferenceTime());
+//#else
+//            dbp->UpdateSceneGraph(mFrameStamp.get());
+//#endif
+//         }
+//      }
+//
+//      mFrameStamp->setReferenceTime(osg::Timer::instance()->delta_s(ViewportManager::GetInstance().GetStartTick(), osg::Timer::instance()->tick()));
+//      mFrameStamp->setFrameNumber(mFrameStamp->getFrameNumber()+ 1);
+//
+//      //mSceneView->update();
+//      //mSceneView->cull();
+//      //mSceneView->draw();
+//
+//      if (ViewportManager::GetInstance().IsPagingEnabled())
+//      {
+//         const dtCore::DatabasePager* dbp = ViewportManager::GetInstance().GetDatabasePager();
+//         if (dbp != NULL)
+//         {
+//            dbp->SignalEndFrame();
+//            // This magic number is the default amount of time that dtCore Scene USED to use.
+//            //double cleanupTime = 0.0025;
+//            //dbp->CompileGLObjects(*mSceneView->getState(), cleanupTime);
+//
+//            //mSceneView->flushDeletedGLObjects(cleanupTime);
+//         }
+//      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -1017,7 +1017,8 @@ namespace dtEditQt
          dtDAL::ActorProxy* proxy = itor->get();
          const dtDAL::ActorProxy::RenderMode& renderMode = proxy->GetRenderMode();
 
-         if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON ||renderMode == dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON)
+         if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON ||
+            renderMode == dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON)
          {
             dtDAL::ActorProxyIcon* billBoard = proxy->GetBillBoardIcon();
             if (billBoard != NULL)

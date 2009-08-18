@@ -368,7 +368,7 @@ namespace dtEditQt
        * Gets the current overlay assigned to this viewport.
        * @return The overlay assigned to this viewport.
        */
-      ViewportOverlay* getOverlay() { return mOverlay.get(); }
+      //ViewportOverlay* getOverlay() { return mOverlay.get(); }
 
       /**
        * Sets the viewport's camera.  The camera determines the point of view
@@ -643,9 +643,9 @@ namespace dtEditQt
       // be set in BeginEdit and cleared in EndEdit
       std::map< std::string, std::vector<std::string> > mSelectedActorOrigValues;
 
-      dtCore::RefPtr<ViewportOverlay>  mOverlay;
+      //dtCore::RefPtr<ViewportOverlay>  mOverlay;
       dtCore::RefPtr<dtCore::Scene>    mScene;
-      osg::ref_ptr<osg::FrameStamp>    mFrameStamp;
+      //osg::ref_ptr<osg::FrameStamp>    mFrameStamp;
       //osg::ref_ptr<osgUtil::SceneView> mSceneView;
       dtCore::RefPtr<dtCore::View>     mView;
       osg::ref_ptr<osg::StateSet>      mGlobalStateSet;
