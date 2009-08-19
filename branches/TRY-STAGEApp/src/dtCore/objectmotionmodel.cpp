@@ -31,6 +31,7 @@ const float SENSITIVITY = 0.1f;
 ObjectMotionModel::ObjectMotionModel(dtCore::View* view)
    : MotionModel("ObjectMotionModel")
    , mScale(1.0f)
+   , mCurScale(0.0f)
    , mView(NULL)
    , mSceneNode(NULL)
    , mMouse(NULL)
@@ -72,6 +73,14 @@ ObjectMotionModel::~ObjectMotionModel()
    RemoveSender(&System::GetInstance());
 
    DeregisterInstance(this);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectMotionModel::SetTarget(Transformable* target)
+{
+   MotionModel::SetTarget(target);
+
+   UpdateVisibility();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -121,20 +130,7 @@ void ObjectMotionModel::SetEnabled(bool enabled)
    {
       MotionModel::SetEnabled(enabled);
 
-      // Make sure our arrows are in the scene.
-      if (mSceneNode && mTargetTransform.valid())
-      {
-         if (IsEnabled())
-         {
-            mSceneNode->addChild(mTargetTransform->GetOSGNode());
-         }
-         else
-         {
-            mSceneNode->removeChild(mTargetTransform->GetOSGNode());
-         }
-      }
-
-      UpdateWidgets();
+      UpdateVisibility();
    }
 }
 
@@ -153,25 +149,25 @@ void ObjectMotionModel::SetScaleEnabled(bool enabled)
 
       if (mAllowScaleGizmo)
       {
-         mTargetTransform->AddChild(mScaleTransform.get());
+         mTargetTransform->addChild(mScaleTransform->GetOSGNode());
       }
       else
       {
-         mTargetTransform->RemoveChild(mScaleTransform.get());
+         mTargetTransform->removeChild(mScaleTransform->GetOSGNode());
       }
 
-      if (enabled)
+      if (mVisible)
       {
          for (int arrow = 0; arrow < ARROW_TYPE_MAX; arrow++)
          {
-            mTargetTransform->AddChild(mArrows[arrow].scaleTransform.get());
+            mTargetTransform->addChild(mArrows[arrow].scaleTransform->GetOSGNode());
          }
       }
       else
       {
          for (int arrow = 0; arrow < ARROW_TYPE_MAX; arrow++)
          {
-            mTargetTransform->RemoveChild(mArrows[arrow].scaleTransform.get());
+            mTargetTransform->removeChild(mArrows[arrow].scaleTransform->GetOSGNode());
          }
       }
    }
@@ -181,6 +177,12 @@ void ObjectMotionModel::SetScaleEnabled(bool enabled)
 void ObjectMotionModel::SetScale(float scale)
 {
    mScale = scale;
+
+   //mTargetTransform->setAutoUpdateEyeMovementTolerance(0.0f);
+   ////mTargetTransform->setAutoScaleTransitionWidthRatio(1.0f);
+   //mTargetTransform->setMinimumScale(1.0);
+   //mTargetTransform->setMaximumScale(1500);
+   //mTargetTransform->setScale(mScale);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -220,6 +222,17 @@ float ObjectMotionModel::GetCameraDistanceToTarget(void)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void ObjectMotionModel::SetAutoScaleEnabled(bool enabled)
+{
+   if (mTargetTransform.valid())
+   {
+      //mTargetTransform->setAutoScaleToScreen(enabled);
+
+      mAutoScale = enabled;
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
 ObjectMotionModel::CoordinateSpace ObjectMotionModel::GetCoordinateSpace(void)
 {
    return mCoordinateSpace;
@@ -242,25 +255,25 @@ void ObjectMotionModel::SetCoordinateSpace(CoordinateSpace coordinateSpace)
 
       if (mAllowScaleGizmo)
       {
-         mTargetTransform->AddChild(mScaleTransform.get());
+         mTargetTransform->addChild(mScaleTransform->GetOSGNode());
       }
       else
       {
-         mTargetTransform->RemoveChild(mScaleTransform.get());
+         mTargetTransform->removeChild(mScaleTransform->GetOSGNode());
       }
 
-      if (enabled)
+      if (mVisible)
       {
          for (int arrow = 0; arrow < ARROW_TYPE_MAX; arrow++)
          {
-            mTargetTransform->AddChild(mArrows[arrow].scaleTransform.get());
+            mTargetTransform->addChild(mArrows[arrow].scaleTransform->GetOSGNode());
          }
       }
       else
       {
          for (int arrow = 0; arrow < ARROW_TYPE_MAX; arrow++)
          {
-            mTargetTransform->RemoveChild(mArrows[arrow].scaleTransform.get());
+            mTargetTransform->removeChild(mArrows[arrow].scaleTransform->GetOSGNode());
          }
       }
    }
@@ -353,81 +366,84 @@ void ObjectMotionModel::OnMessage(MessageData *data)
 ////////////////////////////////////////////////////////////////////////////////
 ObjectMotionModel::MotionType ObjectMotionModel::Update(osg::Vec2 pos)
 {
-   mMousePos = pos;
-
-   if (GetTarget() && IsEnabled() && mTargetTransform.valid())
+   if (mMousePos != pos)
    {
-      // Now update the widget highlights based on the new mouse position.
-      // When the mouse is released, deselect our current arrow.
-      if (!mLeftMouse && !mRightMouse)
+      mMousePos = pos;
+
+      if (mVisible && mTargetTransform.valid())
       {
-         if (mMouseLocked)
+         // Now update the widget highlights based on the new mouse position.
+         // When the mouse is released, deselect our current arrow.
+         if (!mLeftMouse && !mRightMouse)
          {
-            mAngleGeode->removeDrawable(mAngleDrawable.get());
-            mAngleOriginGeode->removeDrawable(mAngleOriginDrawable.get());
-         }
+            if (mMouseLocked)
+            {
+               mAngleGeode->removeDrawable(mAngleDrawable.get());
+               mAngleOriginGeode->removeDrawable(mAngleOriginDrawable.get());
+            }
 
-         mMouseDown     = false;
-         mMouseLocked   = false;
+            mMouseDown     = false;
+            mMouseLocked   = false;
 
-         // Test for arrow hovering.
-         UpdateWidgets();
-         if (HighlightWidgets(MousePick()))
-         {
-            return mMotionType;
-         }
-      }
-      else
-      {
-         // First mouse click.
-         if (!mMouseDown)
-         {
-            mMouseDown = true;
-
-            // Do a collision test to see if the mouse collides with any of
-            // the motion arrows.
+            // Test for arrow hovering.
             UpdateWidgets();
             if (HighlightWidgets(MousePick()))
             {
-               mMouseLocked = true;
-
-               // Get the offset mouse position.
-               dtCore::Transformable* target = GetTarget();
-               if (target)
-               {
-                  dtCore::Transform transform;
-                  target->GetTransform(transform);
-                  osg::Vec2 objectPos = GetObjectScreenCoordinates(transform.GetTranslation());
-                  mMouseOrigin = GetMousePosition();
-                  mMouseOffset = objectPos - mMouseOrigin;
-                  mOriginalTargetPos = transform.GetTranslation();
-                  mOriginAngle = 0.0f;
-               }
                return mMotionType;
             }
          }
-         // If we currently have a motion arrow locked to the mouse.
-         else if (mMouseLocked)
+         else
          {
-            switch (mMotionType)
+            // First mouse click.
+            if (!mMouseDown)
             {
-            case MOTION_TYPE_TRANSLATION:
-               UpdateTranslation();
-               break;
+               mMouseDown = true;
 
-            case MOTION_TYPE_ROTATION:
-               UpdateRotation();
-               break;
+               // Do a collision test to see if the mouse collides with any of
+               // the motion arrows.
+               UpdateWidgets();
+               if (HighlightWidgets(MousePick()))
+               {
+                  mMouseLocked = true;
 
-            case MOTION_TYPE_SCALE:
-               UpdateScale();
-               break;
-
-            default:
-               break;
+                  // Get the offset mouse position.
+                  dtCore::Transformable* target = GetTarget();
+                  if (target)
+                  {
+                     dtCore::Transform transform;
+                     target->GetTransform(transform);
+                     osg::Vec2 objectPos = GetObjectScreenCoordinates(transform.GetTranslation());
+                     mMouseOrigin = GetMousePosition();
+                     mMouseOffset = objectPos - mMouseOrigin;
+                     mOriginalTargetPos = transform.GetTranslation();
+                     mOriginAngle = 0.0f;
+                  }
+                  return mMotionType;
+               }
             }
-            UpdateWidgets();
-            return mMotionType;
+            // If we currently have a motion arrow locked to the mouse.
+            else if (mMouseLocked)
+            {
+               switch (mMotionType)
+               {
+               case MOTION_TYPE_TRANSLATION:
+                  UpdateTranslation();
+                  break;
+
+               case MOTION_TYPE_ROTATION:
+                  UpdateRotation();
+                  break;
+
+               case MOTION_TYPE_SCALE:
+                  UpdateScale();
+                  break;
+
+               default:
+                  break;
+               }
+               UpdateWidgets();
+               return mMotionType;
+            }
          }
       }
    }
@@ -438,7 +454,7 @@ ObjectMotionModel::MotionType ObjectMotionModel::Update(osg::Vec2 pos)
 ////////////////////////////////////////////////////////////////////////////////
 void ObjectMotionModel::UpdateWidgets(void)
 {
-   if (GetTarget() && IsEnabled() && mTargetTransform.valid())
+   if (mVisible && mTargetTransform.valid())
    {
       // Update the position of the arrows to the position of the target.
       dtCore::Transformable* target = GetTarget();
@@ -458,19 +474,29 @@ void ObjectMotionModel::UpdateWidgets(void)
          position = targetTransform.GetTranslation();
       }
 
-      float scale = GetAutoScaleSize();
-      transform.Rescale(osg::Vec3(scale, scale, scale));
-      transform.SetTranslation(position);
+      osg::Quat q;
+      transform.GetRotation(q);
+      mTargetTransform->setRotation(q);
+      mTargetTransform->setPosition(position);
 
-      mTargetTransform->SetTransform(transform);
+      float scale = GetAutoScaleSize();
+      if (mCurScale != scale)
+      {
+         mTargetTransform->setScale(scale);
+         mCurScale = scale;
+      }
    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void ObjectMotionModel::InitArrows(void)
 {
-   mTargetTransform = new dtCore::Transformable();
-   osg::Group* groupNode = mTargetTransform->GetOSGNode()->asGroup();
+   mTargetTransform = new osg::AutoTransform();
+   mTargetTransform->setAutoRotateMode(osg::AutoTransform::NO_ROTATION);
+   //mTargetTransform->setAutoScaleToScreen(mAutoScale);
+   //SetScale(mScale);
+
+   osg::Group* groupNode = mTargetTransform->asGroup();
    if (groupNode)
    {
       // Make this group render top most.
@@ -553,9 +579,9 @@ void ObjectMotionModel::InitArrows(void)
       rotationSelectionRing->setUseDisplayList(false);
 
       // Now set up their Hierarchy.
-      mTargetTransform->AddChild(mArrows[arrowIndex].translationTransform.get());
-      mTargetTransform->AddChild(mArrows[arrowIndex].rotationTransform.get());
-      //mTargetTransform->AddChild(mArrows[arrowIndex].scaleTransform.get());
+      mTargetTransform->addChild(mArrows[arrowIndex].translationTransform->GetOSGNode());
+      mTargetTransform->addChild(mArrows[arrowIndex].rotationTransform->GetOSGNode());
+      //mTargetTransform->addChild(mArrows[arrowIndex].scaleTransform->GetOSGNode());
 
       if (wireNode)
       {
@@ -609,7 +635,7 @@ void ObjectMotionModel::InitArrows(void)
    {
       scaleGroup->addChild(mScaleGeode.get());
    }
-   //mTargetTransform->AddChild(mScaleTransform.get());
+   //mTargetTransform->addChild(mScaleTransform->GetOSGNode());
 
    mAngleTransform = new dtCore::Transformable();
    mAngleGeode     = new osg::Geode();
@@ -617,7 +643,7 @@ void ObjectMotionModel::InitArrows(void)
    mAngleDrawable  = new osg::ShapeDrawable(mAngleCylinder.get());
 
    mAngleTransform->GetOSGNode()->asGroup()->addChild(mAngleGeode.get());
-   mTargetTransform->AddChild(mAngleTransform.get());
+   mTargetTransform->addChild(mAngleTransform->GetOSGNode());
 
    mAngleOriginTransform = new dtCore::Transformable();
    mAngleOriginGeode     = new osg::Geode();
@@ -625,12 +651,9 @@ void ObjectMotionModel::InitArrows(void)
    mAngleOriginDrawable  = new osg::ShapeDrawable(mAngleOriginCylinder.get());
 
    mAngleOriginTransform->GetOSGNode()->asGroup()->addChild(mAngleOriginGeode.get());
-   mTargetTransform->AddChild(mAngleOriginTransform.get());
+   mTargetTransform->addChild(mAngleOriginTransform->GetOSGNode());
 
-   if (IsEnabled() && mSceneNode)
-   {
-      mSceneNode->addChild(mTargetTransform->GetOSGNode());
-   }
+   UpdateVisibility();
 
    // Now position and rotate our axes.
    dtCore::Transform transformX;
@@ -662,6 +685,29 @@ void ObjectMotionModel::InitArrows(void)
    SetArrowHighlight(ARROW_TYPE_MAX);
 }
 
+////////////////////////////////////////////////////////////////////////////////
+void ObjectMotionModel::UpdateVisibility()
+{
+   bool visible = IsEnabled() && GetTarget();
+   if (mVisible != visible)
+   {
+      // Make sure our arrows are in the scene.
+      if (mSceneNode && mTargetTransform.valid())
+      {
+         if (visible)
+         {
+            mSceneNode->addChild(mTargetTransform.get());
+            UpdateWidgets();
+         }
+         else
+         {
+            mSceneNode->removeChild(mTargetTransform.get());
+         }
+
+         mVisible = visible;
+      }
+   }
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 osg::TriangleMesh* ObjectMotionModel::GenerateRing(float minRadius, float maxRadius, int segments)
@@ -756,7 +802,7 @@ dtCore::DeltaDrawable* ObjectMotionModel::MousePick(void)
    osgUtil::IntersectionVisitor iv(picker.get());
    iv.setTraversalMask(ARROW_NODE_MASK);
 
-   mTargetTransform->GetOSGNode()->accept(iv);
+   mTargetTransform->accept(iv);
 
    osgUtil::LineSegmentIntersector::Intersections hitList;
    if (picker->containsIntersections())

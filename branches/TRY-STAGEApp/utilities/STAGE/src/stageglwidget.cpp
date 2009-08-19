@@ -60,6 +60,10 @@ void dtEditQt::STAGEGLWidget::dragEnterEvent(QDragEnterEvent* event)
 {
    if (mViewport != NULL)
    {
+      if (!ViewportManager::GetInstance().GetApplication()->ContainsView(*mViewport->GetView()))
+      {
+         ViewportManager::GetInstance().GetApplication()->AddView(*mViewport->GetView());
+      }
       mViewport->dragEnterEvent(event);
    }
 }
@@ -69,6 +73,10 @@ void dtEditQt::STAGEGLWidget::dragLeaveEvent(QDragLeaveEvent* event)
 {
    if (mViewport != NULL)
    {
+      if (ViewportManager::GetInstance().GetApplication()->ContainsView(*mViewport->GetView()))
+      {
+         ViewportManager::GetInstance().GetApplication()->RemoveView(*mViewport->GetView());
+      }
       mViewport->dragLeaveEvent(event);
    }
 

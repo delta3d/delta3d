@@ -198,7 +198,7 @@ namespace dtEditQt
       }
 
       mObjectMotionModel->SetScale(450.0f / getCamera()->getZoom());
-      refresh();
+      mObjectMotionModel->UpdateWidgets();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -238,6 +238,7 @@ namespace dtEditQt
          return false;
       }
 
+      mObjectMotionModel->SetEnabled(true);
       mCameraMode = &OrthoViewport::CameraMode::NOTHING;
       setInteractionMode(Viewport::InteractionMode::NOTHING);
       releaseMouseCursor();

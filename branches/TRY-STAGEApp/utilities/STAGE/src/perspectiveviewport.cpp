@@ -194,6 +194,8 @@ namespace dtEditQt
       }
       else
       {
+         mObjectMotionModel->SetEnabled(true);
+
          setInteractionMode(Viewport::InteractionMode::NOTHING);
 
          mCameraMode = &CameraMode::NOTHING;

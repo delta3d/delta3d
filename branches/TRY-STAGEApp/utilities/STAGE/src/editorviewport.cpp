@@ -646,6 +646,7 @@ namespace dtEditQt
          // mode instead.
          else
          {
+            mObjectMotionModel->SetEnabled(false);
             setInteractionMode(Viewport::InteractionMode::SELECT_ACTOR);
          }
       }

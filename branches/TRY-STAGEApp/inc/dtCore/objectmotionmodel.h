@@ -34,6 +34,7 @@
 #include <osg/Geode>
 #include <osg/Shape>
 #include <osg/ShapeDrawable>
+#include <osg/AutoTransform>
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -91,6 +92,13 @@ namespace dtCore
          virtual ~ObjectMotionModel();
 
       public:
+
+         /**
+         * Sets the target of this motion model.
+         *
+         * @param target the new target
+         */
+         virtual void SetTarget(Transformable* target);
 
          /**
          * Sets the current view.
@@ -152,7 +160,7 @@ namespace dtCore
          * Sets whether the motion model should be scaled
          * based on distance from the camera.
          */
-         virtual void SetAutoScaleEnabled(bool enabled) {mAutoScale=enabled;}
+         virtual void SetAutoScaleEnabled(bool enabled);
 
          /**
          * Gets the current coordinate space.
@@ -260,6 +268,11 @@ namespace dtCore
          * Initialize our three Axes arrows.
          */
          virtual void InitArrows(void);
+
+         /**
+         * Updates the visibility of the motion model widgets.
+         */
+         void UpdateVisibility();
 
          /**
          * Generates a triangle mesh used for the rotation rings.
@@ -382,10 +395,15 @@ namespace dtCore
          osg::ref_ptr<osg::Cylinder>               mAngleCylinder;
          osg::ref_ptr<osg::ShapeDrawable>          mAngleDrawable;
 
-         dtCore::RefPtr<dtCore::Transformable>     mTargetTransform;
+         osg::ref_ptr<osg::AutoTransform>          mTargetTransform;
 
          ArrowData       mArrows[ARROW_TYPE_MAX];
          float           mScale;
+
+         bool            mVisible;
+
+         float           mCurScale;
+         osg::Quat       mCurQuat;
 
          dtCore::View*   mView;
          osg::Group*     mSceneNode;
