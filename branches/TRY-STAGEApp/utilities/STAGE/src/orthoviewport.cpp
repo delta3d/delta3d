@@ -68,8 +68,7 @@ namespace dtEditQt
       mCameraMode = &OrthoViewport::CameraMode::NOTHING;
       setViewType(OrthoViewType::TOP,false);
 
-      mObjectMotionModel->SetAutoScaleEnabled(false);
-      mObjectMotionModel->SetScale(1.0f);
+      mObjectMotionModel->SetScale(450.0f);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -132,8 +131,6 @@ namespace dtEditQt
    void OrthoViewport::onMouseMoveEvent(QMouseEvent* e, float dx, float dy)
    {
       EditorViewport::onMouseMoveEvent(e, dx, dy);
-
-      mObjectMotionModel->SetScale(450.0f / getCamera()->getZoom());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -179,8 +176,6 @@ namespace dtEditQt
    void OrthoViewport::setScene(dtCore::Scene* scene)
    {
       EditorViewport::setScene(scene);
-
-      mObjectMotionModel->SetScale(450.0f / getCamera()->getZoom());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -197,7 +192,9 @@ namespace dtEditQt
          getCamera()->zoom(0.7f);
       }
 
-      mObjectMotionModel->SetScale(450.0f / getCamera()->getZoom());
+      // The motion model will not update unless the mouse moves,
+      // because of this we need to force it to update its' widget
+      // geometry.
       mObjectMotionModel->UpdateWidgets();
    }
 
@@ -238,7 +235,7 @@ namespace dtEditQt
          return false;
       }
 
-      mObjectMotionModel->SetEnabled(true);
+      mObjectMotionModel->SetInteractionEnabled(true);
       mCameraMode = &OrthoViewport::CameraMode::NOTHING;
       setInteractionMode(Viewport::InteractionMode::NOTHING);
       releaseMouseCursor();

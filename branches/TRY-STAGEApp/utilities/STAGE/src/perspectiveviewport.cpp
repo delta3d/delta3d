@@ -194,7 +194,7 @@ namespace dtEditQt
       }
       else
       {
-         mObjectMotionModel->SetEnabled(true);
+         mObjectMotionModel->SetInteractionEnabled(true);
 
          setInteractionMode(Viewport::InteractionMode::NOTHING);
 

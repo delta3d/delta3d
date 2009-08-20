@@ -74,9 +74,7 @@ namespace dtEditQt
       , mSkipUpdateForCam(false)
       , mEnabled(false)
    {
-      //mObjectMotionModel = new STAGEObjectMotionModel(ViewportManager::GetInstance().getMasterView());
       mObjectMotionModel = new STAGEObjectMotionModel(GetView());
-      //mObjectMotionModel = new dtCore::ObjectMotionModel(GetView());
       mObjectMotionModel->SetEnabled(false);
       mObjectMotionModel->ClearTargets();
       mObjectMotionModel->SetScale(1.5f);
@@ -113,7 +111,6 @@ namespace dtEditQt
       {
          if (mObjectMotionModel.valid())
          {
-            //mObjectMotionModel->SetSceneNode(scene->GetSceneNode());
             mObjectMotionModel->SetSceneNode(GetRootNode());
 
             mObjectMotionModel->SetCamera(mCamera->getDeltaCamera());
@@ -178,18 +175,11 @@ namespace dtEditQt
          mObjectMotionModel->ClearTargets();
          mObjectMotionModel->SetScaleEnabled(false);
       }
-
-      mObjectMotionModel->UpdateWidgets();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void EditorViewport::refresh()
    {
-      //TODO calling this here causes a rendering slow down.  Not calling it 
-      //here causes the Gizmo geometry to not resize until after 
-      //the camera is done moving.
-      //mObjectMotionModel->UpdateWidgets();
-
       Viewport::refresh();
    }
 
@@ -646,7 +636,7 @@ namespace dtEditQt
          // mode instead.
          else
          {
-            mObjectMotionModel->SetEnabled(false);
+            mObjectMotionModel->SetInteractionEnabled(false);
             setInteractionMode(Viewport::InteractionMode::SELECT_ACTOR);
          }
       }
@@ -715,9 +705,6 @@ namespace dtEditQt
 
       // Get the position of the mouse.
       osg::Vec2 pos = convertMousePosition(e->pos());
-
-      // Update the object motion model mouse position.
-      //mObjectMotionModel->Update(pos); //gets called automatically, every frame, in ObjectMotionModel
 
       // If we move the mouse while in select actor mode,
       // immediately jump to camera motion mode.

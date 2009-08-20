@@ -326,7 +326,6 @@ namespace dtEditQt {
       bool mAttachActorToCamera;
 
       dtCore::RefPtr<STAGEObjectMotionModel> mObjectMotionModel;
-      //STAGEObjectMotionModel::MotionType     mMotionType;
 
       dtCore::RefPtr<dtDAL::ActorProxy>      mGhostProxy;
 

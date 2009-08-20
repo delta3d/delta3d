@@ -12,6 +12,7 @@
 #include <osg/Depth>
 #include <osg/BlendFunc>
 #include <osgUtil/LineSegmentIntersector>
+#include <osgViewer/GraphicsWindow>
 
 #include <dtCore/system.h>
 #include <dtCore/logicalinputdevice.h>
@@ -19,6 +20,7 @@
 #include <dtCore/camera.h>
 #include <dtCore/scene.h>
 #include <dtCore/transform.h>
+#include <dtCore/deltawin.h>
 
 using namespace dtCore;
 
@@ -32,6 +34,8 @@ ObjectMotionModel::ObjectMotionModel(dtCore::View* view)
    : MotionModel("ObjectMotionModel")
    , mScale(1.0f)
    , mCurScale(0.0f)
+   , mVisible(false)
+   , mInteractionEnabled(true)
    , mView(NULL)
    , mSceneNode(NULL)
    , mMouse(NULL)
@@ -135,6 +139,21 @@ void ObjectMotionModel::SetEnabled(bool enabled)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void ObjectMotionModel::SetInteractionEnabled(bool enabled)
+{
+   mInteractionEnabled = enabled;
+
+   // If we are turning interaction off, make sure we clear all
+   // interaction data.
+   if (!mInteractionEnabled)
+   {
+      HighlightWidgets(NULL);
+      mMouseDown     = false;
+      mMouseLocked   = false;
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void ObjectMotionModel::SetScaleEnabled(bool enabled)
 {
    if (mAllowScaleGizmo != enabled)
@@ -177,12 +196,7 @@ void ObjectMotionModel::SetScaleEnabled(bool enabled)
 void ObjectMotionModel::SetScale(float scale)
 {
    mScale = scale;
-
-   //mTargetTransform->setAutoUpdateEyeMovementTolerance(0.0f);
-   ////mTargetTransform->setAutoScaleTransitionWidthRatio(1.0f);
-   //mTargetTransform->setMinimumScale(1.0);
-   //mTargetTransform->setMaximumScale(1500);
-   //mTargetTransform->setScale(mScale);
+   UpdateWidgets();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -190,7 +204,34 @@ float ObjectMotionModel::GetAutoScaleSize(void)
 {
    if (mAutoScale)
    {
-      return GetScale() * GetCameraDistanceToTarget();
+      if (mCamera)
+      {
+         const osg::Camera* camera = mCamera->GetOSGCamera();
+
+         double left, right, bottom, top, near, far;
+         if (camera->getProjectionMatrixAsOrtho(left, right, bottom, top, near, far))
+         {
+            if (camera->getViewport())
+            {
+               int width = camera->getViewport()->width();
+               if (width > 0)
+               {
+                  double windowSize = right - left;
+                  float zoomFactor = width / windowSize;
+
+                  if (zoomFactor != 0.0f)
+                  {
+                     return GetScale() / zoomFactor;
+                  }
+               }
+            }
+         }
+         else
+         {
+            // Perspective views are scaled by the distance to the camera.
+            return GetScale() * GetCameraDistanceToTarget();
+         }
+      }
    }
 
    return GetScale();
@@ -372,79 +413,76 @@ ObjectMotionModel::MotionType ObjectMotionModel::Update(osg::Vec2 pos)
 
       if (mVisible && mTargetTransform.valid())
       {
-         // Now update the widget highlights based on the new mouse position.
-         // When the mouse is released, deselect our current arrow.
-         if (!mLeftMouse && !mRightMouse)
+         if (mInteractionEnabled)
          {
-            if (mMouseLocked)
+            // Now update the widget highlights based on the new mouse position.
+            // When the mouse is released, deselect our current arrow.
+            if (!mLeftMouse && !mRightMouse)
             {
-               mAngleGeode->removeDrawable(mAngleDrawable.get());
-               mAngleOriginGeode->removeDrawable(mAngleOriginDrawable.get());
-            }
-
-            mMouseDown     = false;
-            mMouseLocked   = false;
-
-            // Test for arrow hovering.
-            UpdateWidgets();
-            if (HighlightWidgets(MousePick()))
-            {
-               return mMotionType;
-            }
-         }
-         else
-         {
-            // First mouse click.
-            if (!mMouseDown)
-            {
-               mMouseDown = true;
-
-               // Do a collision test to see if the mouse collides with any of
-               // the motion arrows.
-               UpdateWidgets();
-               if (HighlightWidgets(MousePick()))
+               if (mMouseLocked)
                {
-                  mMouseLocked = true;
+                  mAngleGeode->removeDrawable(mAngleDrawable.get());
+                  mAngleOriginGeode->removeDrawable(mAngleOriginDrawable.get());
+               }
 
-                  // Get the offset mouse position.
-                  dtCore::Transformable* target = GetTarget();
-                  if (target)
+               mMouseDown     = false;
+               mMouseLocked   = false;
+
+               // Test for arrow hovering.
+               HighlightWidgets(MousePick());
+            }
+            else
+            {
+               // First mouse click.
+               if (!mMouseDown)
+               {
+                  mMouseDown = true;
+
+                  // Do a collision test to see if the mouse collides with any of
+                  // the motion arrows.
+                  if (HighlightWidgets(MousePick()))
                   {
-                     dtCore::Transform transform;
-                     target->GetTransform(transform);
-                     osg::Vec2 objectPos = GetObjectScreenCoordinates(transform.GetTranslation());
-                     mMouseOrigin = GetMousePosition();
-                     mMouseOffset = objectPos - mMouseOrigin;
-                     mOriginalTargetPos = transform.GetTranslation();
-                     mOriginAngle = 0.0f;
+                     mMouseLocked = true;
+
+                     // Get the offset mouse position.
+                     dtCore::Transformable* target = GetTarget();
+                     if (target)
+                     {
+                        dtCore::Transform transform;
+                        target->GetTransform(transform);
+                        osg::Vec2 objectPos = GetObjectScreenCoordinates(transform.GetTranslation());
+                        mMouseOrigin = GetMousePosition();
+                        mMouseOffset = objectPos - mMouseOrigin;
+                        mOriginalTargetPos = transform.GetTranslation();
+                        mOriginAngle = 0.0f;
+                     }
                   }
-                  return mMotionType;
                }
-            }
-            // If we currently have a motion arrow locked to the mouse.
-            else if (mMouseLocked)
-            {
-               switch (mMotionType)
+               // If we currently have a motion arrow locked to the mouse.
+               else if (mMouseLocked)
                {
-               case MOTION_TYPE_TRANSLATION:
-                  UpdateTranslation();
-                  break;
+                  switch (mMotionType)
+                  {
+                  case MOTION_TYPE_TRANSLATION:
+                     UpdateTranslation();
+                     break;
 
-               case MOTION_TYPE_ROTATION:
-                  UpdateRotation();
-                  break;
+                  case MOTION_TYPE_ROTATION:
+                     UpdateRotation();
+                     break;
 
-               case MOTION_TYPE_SCALE:
-                  UpdateScale();
-                  break;
+                  case MOTION_TYPE_SCALE:
+                     UpdateScale();
+                     break;
 
-               default:
-                  break;
+                  default:
+                     break;
+                  }
                }
-               UpdateWidgets();
-               return mMotionType;
             }
          }
+
+         UpdateWidgets();
       }
    }
 
@@ -697,7 +735,6 @@ void ObjectMotionModel::UpdateVisibility()
          if (visible)
          {
             mSceneNode->addChild(mTargetTransform.get());
-            UpdateWidgets();
          }
          else
          {
@@ -706,6 +743,11 @@ void ObjectMotionModel::UpdateVisibility()
 
          mVisible = visible;
       }
+   }
+
+   if (mVisible)
+   {
+      UpdateWidgets();
    }
 }
 

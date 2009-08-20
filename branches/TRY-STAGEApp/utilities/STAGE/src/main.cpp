@@ -32,7 +32,9 @@
 #include <sstream>
 #include <dtCore/globals.h>
 #include <dtCore/system.h>
+#include <dtABC/application.h>
 #include <dtEditQt/mainwindow.h>
+#include <dtEditQt/viewportmanager.h>
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/uiresources.h>
 #include <dtUtil/log.h>
@@ -91,11 +93,11 @@ int main(int argc, char* argv[])
 
       dtCore::RefPtr<dtEditQt::STAGEApplication> viewer = new dtEditQt::STAGEApplication();
       viewer->Config();
-      viewer->SetWindow(NULL);
-      viewer->RemoveView(*viewer->GetView());
 
-      mainWindow.SetupViewer(viewer.get());
+      dtEditQt::ViewportManager::GetInstance().SetApplication(viewer.get());
       mainWindow.show();
+
+      viewer->GetView()->GetCamera()->SetNearFarCullingMode(dtCore::Camera::NO_AUTO_NEAR_FAR);
 
       //create a little class to ensure Delta3D performs Window "steps"
       dtCore::System::GetInstance().Start();
@@ -116,6 +118,8 @@ int main(int argc, char* argv[])
       result = app.exec();
       //dtCore::System::GetInstance().Stop();
       stepper.Stop();
+
+      dtEditQt::ViewportManager::GetInstance().SetApplication(NULL);
    }
    catch (const dtUtil::Exception& e)
    {

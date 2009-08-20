@@ -57,7 +57,6 @@ namespace dtEditQt
    class ResourceBrowser;
    class PluginManager;
    class EditorViewportContainer;
-   class STAGEApplication;
 
    /**
     * This class is the main window of the application.  It contains the menu bar,
@@ -180,7 +179,7 @@ namespace dtEditQt
       dtActors::VolumeEditActorProxy* GetVolumeEditActorProxy();
 
 
-      void SetupViewer(STAGEApplication* viewer);
+      //void SetupViewer(STAGEApplication* viewer);
 
    public slots:
       /**

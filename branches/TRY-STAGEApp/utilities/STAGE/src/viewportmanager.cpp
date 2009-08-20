@@ -428,8 +428,6 @@ namespace dtEditQt
                   cam->setZoom(data.frontZoom);
                }
             }
-
-            refreshAllViewports();
          }
       }
    }

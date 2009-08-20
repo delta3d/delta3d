@@ -128,6 +128,13 @@ namespace dtCore
          virtual void SetEnabled(bool enabled);
 
          /**
+         * Enables the interaction of the motion model.
+         *
+         * @param[in]  enabled  True to enable interaction.
+         */
+         virtual void SetInteractionEnabled(bool enabled);
+
+         /**
          * Enables or disables the scale gizmos.
          *
          * @param[in]  enabled  True to enable the scale gizmos.
@@ -401,6 +408,7 @@ namespace dtCore
          float           mScale;
 
          bool            mVisible;
+         bool            mInteractionEnabled;
 
          float           mCurScale;
          osg::Quat       mCurQuat;
