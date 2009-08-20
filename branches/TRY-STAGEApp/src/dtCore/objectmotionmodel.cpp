@@ -20,7 +20,6 @@
 #include <dtCore/camera.h>
 #include <dtCore/scene.h>
 #include <dtCore/transform.h>
-#include <dtCore/deltawin.h>
 
 using namespace dtCore;
 

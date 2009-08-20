@@ -891,6 +891,7 @@ namespace dtEditQt
    bool EditorViewport::selectActors(QMouseEvent* e)
    {
       setInteractionMode(Viewport::InteractionMode::NOTHING);
+      mObjectMotionModel->SetInteractionEnabled(true);
 
       bool overrideDefault = false;
       ViewportManager::GetInstance().emitSelectActors(this, e, &overrideDefault);
