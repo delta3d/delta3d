@@ -1613,16 +1613,19 @@ namespace dtEditQt
 
       ViewportManager::GetInstance().SetApplication(viewer);
 
-      Viewport* masterViewport = ViewportManager::GetInstance().GetMasterViewport();
-      if (masterViewport)
-      {
-         viewer->AddView(*masterViewport->GetView());
-      }
+      //Don't need to add the views here anymore, they will get added automatically when
+      //they're needed.
 
-      viewer->AddView(*mSideView->GetView());
-      viewer->AddView(*mTopView->GetView());
-      viewer->AddView(*mFrontView->GetView());
-      viewer->AddView(*mPerspView->GetView());
+      //Viewport* masterViewport = ViewportManager::GetInstance().GetMasterViewport();
+      //if (masterViewport)
+      //{
+      //   viewer->AddView(*masterViewport->GetView());
+      //}
+
+      //viewer->AddView(*mSideView->GetView());
+      //viewer->AddView(*mTopView->GetView());
+      //viewer->AddView(*mFrontView->GetView());
+      //viewer->AddView(*mPerspView->GetView());
 
       //ViewportManager::GetInstance().getWorldViewCamera()->getDeltaCamera()->SetWindow(viewer->GetWindow());
       
