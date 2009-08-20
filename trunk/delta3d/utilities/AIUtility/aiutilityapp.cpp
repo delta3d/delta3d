@@ -35,6 +35,7 @@
 #include <dtCore/system.h>
 
 #include <dtCore/flymotionmodel.h>
+#include <dtCore/fpsmotionmodel.h>
 
 #include "aicomponent.h"
 
@@ -65,6 +66,13 @@ void AIUtilityApp::Config()
    dtCore::System::GetInstance().Start();
    mStepper.Start();
 }
+
+/////////////////////////////////////
+void AIUtilityApp::SetAIPluginInterface(dtAI::AIPluginInterface* interface)
+{
+   emit AIPluginInterfaceChanged(interface);
+}
+
 
 /////////////////////////////////////
 void AIUtilityApp::DoQuit()

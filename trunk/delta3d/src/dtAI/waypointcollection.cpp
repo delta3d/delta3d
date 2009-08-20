@@ -170,8 +170,8 @@ namespace dtAI
       //NOTE: this only works if the waypoint is an immediate child
       //potentially add find child to Tree class to fix this
 
-      WaypointTree::child_iterator iter = begin_child();
-      WaypointTree::child_iterator iterEnd = end_child();
+      WaypointTreeChildIterator iter = begin_child();
+      WaypointTreeChildIterator iterEnd = end_child();
       for(; iter != iterEnd; ++iter)
       {
          if(waypoint->GetID() == iter->value->GetID())
@@ -189,8 +189,8 @@ namespace dtAI
    WaypointCollection* WaypointCollection::FindClosestChild(const WaypointInterface& waypoint)
    {
       //may return null if is leaf node
-      WaypointTree::const_child_iterator iter = begin_child();
-      WaypointTree::const_child_iterator iterEnd = end_child();
+      WaypointTreeConstChildIterator iter = begin_child();
+      WaypointTreeConstChildIterator iterEnd = end_child();
 
       float dist = 0.0f;
 
@@ -250,8 +250,8 @@ namespace dtAI
    {
       //calculate new bounds
 
-      WaypointTree::const_child_iterator iter = begin_child();
-      WaypointTree::const_child_iterator iterEnd = end_child();
+      WaypointTreeConstChildIterator iter = begin_child();
+      WaypointTreeConstChildIterator iterEnd = end_child();
       
       //average points to find new center
       osg::Vec3 newCenter;
@@ -270,8 +270,8 @@ namespace dtAI
 
       //reset radius
       mRadius = 0.0f;
-      WaypointTree::const_child_iterator iter2 = begin_child();
-      WaypointTree::const_child_iterator iterEnd2 = end_child();
+      WaypointTreeConstChildIterator iter2 = begin_child();
+      WaypointTreeConstChildIterator iterEnd2 = end_child();
       for(;iter2 != iterEnd2; ++iter2)
       {
          //increase bounds, potentially recenter

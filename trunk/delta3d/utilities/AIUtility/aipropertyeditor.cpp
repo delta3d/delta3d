@@ -1,6 +1,6 @@
 /* -*-c++-*-
  * Delta3D
- * Copyright 2009, Alion Science and Technology
+ * Copyright 2007-2008, Alion Science and Technology
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -22,40 +22,28 @@
  * David Guthrie
  */
 
-#ifndef AIUTILITYAPP_H_
-#define AIUTILITYAPP_H_
+#include "aipropertyeditor.h"
 
-#include <QtCore/QObject>
-#include <dtABC/application.h>
-#include <dtCore/motionmodel.h>
-#include <dtQt/deltastepper.h>
-
-#include <dtGame/gamemanager.h>
-
-namespace dtAI
+/////////////////////////////////////////////////////////////////
+AIPropertyEditor::AIPropertyEditor(QMainWindow& parent)
+: dtQt::BasePropertyEditor(&parent)
 {
-   class AIPluginInterface;
 }
 
-class AIUtilityApp: public QObject, public dtABC::Application
+/////////////////////////////////////////////////////////////////
+AIPropertyEditor::~AIPropertyEditor()
 {
-   Q_OBJECT
-public:
-   AIUtilityApp();
-   virtual ~AIUtilityApp();
-   virtual void Config();
-   void SetAIPluginInterface(dtAI::AIPluginInterface* interface);
-signals:
-   void AIPluginInterfaceChanged(dtAI::AIPluginInterface* interface);
-public slots:
-   void DoQuit();
-   void SetProjectContext(const std::string& path);
-   void ChangeMap(const std::string& map);
-   void CloseMap();
-private:
-   dtQt::DeltaStepper mStepper;
-   dtCore::RefPtr<dtGame::GameManager> mGM;
-   dtCore::RefPtr<dtCore::MotionModel> mMotionModel;
-};
+}
 
-#endif /* AIUTILITYAPP_H_ */
+/////////////////////////////////////////////////////////////////
+void AIPropertyEditor::PropertyAboutToChangeFromControl(dtDAL::PropertyContainer& pc, dtDAL::ActorProperty& ap,
+         const std::string& oldValue, const std::string& newValue)
+{
+}
+
+/////////////////////////////////////////////////////////////////
+void AIPropertyEditor::PropertyChangedFromControl(dtDAL::PropertyContainer& pc, dtDAL::ActorProperty& ap)
+{
+   emit SignalPropertyChangedFromControl(pc, ap);
+}
+

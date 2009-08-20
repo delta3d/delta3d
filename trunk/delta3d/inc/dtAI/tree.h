@@ -47,9 +47,9 @@ namespace dtAI
 
       _TreeIteratorBase(value_type* ptr, value_type* root): _ptr(ptr), _root(root){}
 
-      _TreeIteratorBase(_TreeIteratorBase& pIter): _ptr(pIter._ptr), _root(pIter._root){}
+      _TreeIteratorBase(const _TreeIteratorBase& pIter): _ptr(pIter._ptr), _root(pIter._root){}
 
-      _TreeIteratorBase& operator=(_TreeIteratorBase& pIter)
+      _TreeIteratorBase& operator=(const _TreeIteratorBase& pIter)
       {
          _ptr= pIter._ptr;
          _root = pIter._root;
@@ -76,9 +76,9 @@ namespace dtAI
 
       _TreeIteratorChildBase(value_type* ptr, value_type* root): _ptr(ptr), _root(root){}
 
-      _TreeIteratorChildBase(_TreeIteratorChildBase& pIter): _ptr(pIter._ptr), _root(pIter._root){}
+      _TreeIteratorChildBase(const _TreeIteratorChildBase& pIter): _ptr(pIter._ptr), _root(pIter._root){}
 
-      _TreeIteratorChildBase& operator=(_TreeIteratorChildBase& pIter)
+      _TreeIteratorChildBase& operator=(const _TreeIteratorChildBase& pIter)
       {
          _ptr= pIter._ptr;
          _root = pIter._root;
@@ -184,38 +184,39 @@ namespace dtAI
    public:
       typedef _TreeIteratorBase<_Node> BaseClass;
       typedef _RevTreeIterator<_Node> MyType;
+      typedef _Node value_type;
 
       _RevTreeIterator(){}
 
-      _RevTreeIterator(BaseClass& pIter): BaseClass(pIter){}
+      _RevTreeIterator(const BaseClass& pIter): BaseClass(pIter){}
 
       _RevTreeIterator(value_type* ptr, value_type* root): BaseClass(ptr, root){}
 
-      _RevTreeIterator& operator=(BaseClass& pIter)
+      _RevTreeIterator& operator=(const BaseClass& pIter)
       {
          return BaseClass(pIter);
       }
 
-      ~_RevTreeIterator(){ _ptr = 0; _root = 0;}
+      ~_RevTreeIterator(){ BaseClass::_ptr = 0; BaseClass::_root = 0;}
 
-      _Node& operator*() const{ return *_ptr; }
+      _Node& operator*() const{ return *BaseClass::_ptr; }
 
-      _Node* operator->() const{return _ptr; }
+      _Node* operator->() const{return BaseClass::_ptr; }
 
-      bool operator==(const _RevTreeIterator& pIter) const{ return _ptr == pIter._ptr; }
+      bool operator==(const _RevTreeIterator& pIter) const{ return BaseClass::_ptr == pIter._ptr; }
 
-      bool operator!=(const _RevTreeIterator& pIter) const{ return !(_ptr == pIter._ptr); }
+      bool operator!=(const _RevTreeIterator& pIter) const{ return !(BaseClass::_ptr == pIter._ptr); }
 
       _RevTreeIterator& operator--()
       {
-         _ptr = _ptr->next();
+         BaseClass::_ptr = BaseClass::_ptr->next();
          return *this;
       }
 
       _RevTreeIterator& operator++()
       {
-         if(_ptr) _ptr = _ptr->prev();
-         else _ptr = _root->last_descendant();
+         if (BaseClass::_ptr) BaseClass::_ptr = BaseClass::_ptr->prev();
+         else BaseClass::_ptr = BaseClass::_root->last_descendant();
          return *this;
       }
    };
@@ -231,36 +232,37 @@ namespace dtAI
    public:
       typedef _TreeIteratorChildBase<_Node> BaseClass;
       typedef _FWDTreeChildIterator<_Node> MyType;
+      typedef _Node value_type;
 
       _FWDTreeChildIterator(){}
 
-      _FWDTreeChildIterator(BaseClass& pIter): BaseClass(pIter){}
+      _FWDTreeChildIterator(const BaseClass& pIter): BaseClass(pIter){}
 
-      _FWDTreeChildIterator(value_type* ptr, value_type* root): BaseClass(ptr, root){}
+      _FWDTreeChildIterator(value_type* ptr, value_type* root): BaseClass(ptr, root) {}
 
-      _FWDTreeChildIterator& operator=(BaseClass& pIter)
+      _FWDTreeChildIterator& operator=(const BaseClass& pIter)
       {
          return BaseClass(pIter);
       }
 
-      _Node& operator*() const{ return *_ptr; }
+      _Node& operator*() const{ return *BaseClass::_ptr; }
 
-      _Node* operator->() const{return _ptr; }
+      _Node* operator->() const{return BaseClass::_ptr; }
 
-      bool operator==(const _FWDTreeChildIterator& pIter) const{ return _ptr == pIter._ptr; }
+      bool operator==(const _FWDTreeChildIterator& pIter) const{ return BaseClass::_ptr == pIter._ptr; }
 
-      bool operator!=(const _FWDTreeChildIterator& pIter) const{ return !(_ptr == pIter._ptr); }
+      bool operator!=(const _FWDTreeChildIterator& pIter) const{ return !(BaseClass::_ptr == pIter._ptr); }
 
       _FWDTreeChildIterator& operator++()
       {
-         _ptr = _ptr->next_sibling();
+         BaseClass::_ptr = BaseClass::_ptr->next_sibling();
          return *this;
       }
 
       _FWDTreeChildIterator& operator--()
       {
-         if(_ptr) _ptr = _ptr->prev_sibling();
-         else _ptr = _root->last_child();
+         if(BaseClass::_ptr) BaseClass::_ptr = BaseClass::_ptr->prev_sibling();
+         else BaseClass::_ptr = BaseClass::_root->last_child();
          return *this;
       }
    };
@@ -277,36 +279,37 @@ namespace dtAI
    public:
       typedef _TreeIteratorChildBase<_Node> BaseClass;
       typedef _RevTreeChildIterator<_Node> MyType;
+      typedef _Node value_type;
 
       _RevTreeChildIterator(){}
 
-      _RevTreeChildIterator(BaseClass& pIter): BaseClass(pIter){}
+      _RevTreeChildIterator(const BaseClass& pIter): BaseClass(pIter){}
 
       _RevTreeChildIterator(value_type* ptr, value_type* root): BaseClass(ptr, root){}
 
-      _RevTreeChildIterator& operator=(BaseClass& pIter)
+      _RevTreeChildIterator& operator=(const BaseClass& pIter)
       {
          return BaseClass(pIter);
       }
 
-      _Node& operator*() const{ return *_ptr; }
+      _Node& operator*() const{ return *BaseClass::_ptr; }
 
-      _Node* operator->() const{return _ptr; }
+      _Node* operator->() const{return BaseClass::_ptr; }
 
-      bool operator==(const _RevTreeChildIterator& pIter) const{ return _ptr == pIter._ptr; }
+      bool operator==(const _RevTreeChildIterator& pIter) const{ return BaseClass::_ptr == pIter._ptr; }
 
-      bool operator!=(const _RevTreeChildIterator& pIter) const{ return !(_ptr == pIter._ptr); }
+      bool operator!=(const _RevTreeChildIterator& pIter) const{ return !(BaseClass::_ptr == pIter._ptr); }
 
       _RevTreeChildIterator& operator--()
       {
-         _ptr = _ptr->next_sibling();
+         BaseClass::_ptr = BaseClass::_ptr->next_sibling();
          return *this;
       }
 
       _RevTreeChildIterator& operator++()
       {
-         if(_ptr) _ptr = _ptr->prev_sibling();
-         else _ptr = _root->last_child();
+         if(BaseClass::_ptr) BaseClass::_ptr = BaseClass::_ptr->prev_sibling();
+         else BaseClass::_ptr = BaseClass::_root->last_child();
          return *this;
       }
 
@@ -322,37 +325,38 @@ namespace dtAI
    public:
       typedef _TreeIteratorBase<_Node> BaseClass;
       typedef _FWDTreeIterator<_Node> MyType;
+      typedef _Node value_type;
 
       _FWDTreeIterator(){}
 
-      _FWDTreeIterator(BaseClass& pIter): BaseClass(pIter){}
+      _FWDTreeIterator(const BaseClass& pIter): BaseClass(pIter){}
 
       _FWDTreeIterator(value_type* ptr, value_type* root): BaseClass(ptr, root){}
 
-      _FWDTreeIterator& operator=(BaseClass& pIter)
+      _FWDTreeIterator& operator=(const BaseClass& pIter)
       {
          return BaseClass(pIter);
       }
 
 
-      _Node& operator*() const{ return *_ptr; }
+      _Node& operator*() const{ return *BaseClass::_ptr; }
 
-      _Node* operator->() const{return _ptr; }
+      _Node* operator->() const{return BaseClass::_ptr; }
 
-      bool operator==(const _FWDTreeIterator& pIter) const{ return _ptr == pIter._ptr; }
+      bool operator==(const _FWDTreeIterator& pIter) const{ return BaseClass::_ptr == pIter._ptr; }
 
-      bool operator!=(const _FWDTreeIterator& pIter) const{ return !(_ptr == pIter._ptr); }
+      bool operator!=(const _FWDTreeIterator& pIter) const{ return !(BaseClass::_ptr == pIter._ptr); }
 
       _FWDTreeIterator& operator++()
       {
-         _ptr = _ptr->next();
+         BaseClass::_ptr = BaseClass::_ptr->next();
          return *this;
       }
 
       _FWDTreeIterator& operator--()
       {
-         if(_ptr) _ptr = _ptr->prev();
-         else _ptr = _root->last_descendant();
+         if(BaseClass::_ptr) BaseClass::_ptr = BaseClass::_ptr->prev();
+         else BaseClass::_ptr = BaseClass::_root->last_descendant();
          return *this;
       }
    };
@@ -368,41 +372,43 @@ namespace dtAI
    public:
       typedef _TreeIteratorBase_Const<_Node> BaseClass;
       typedef _FWDTreeIterator_Const<_Node> MyType;
+      typedef _Node value_type;
+      typedef const _Node* const_pointer;
 
       _FWDTreeIterator_Const(): BaseClass(){}
 
       _FWDTreeIterator_Const(const BaseClass& pIter): BaseClass(pIter){}
-      _FWDTreeIterator_Const(_TreeIteratorBase<_Node>& pIter): BaseClass(pIter){}
+      _FWDTreeIterator_Const(const _TreeIteratorBase<_Node>& pIter): BaseClass(pIter){}
 
       _FWDTreeIterator_Const(const_pointer ptr, const_pointer root): BaseClass(ptr, root){}
 
-      _FWDTreeIterator_Const& operator=(_FWDTreeIterator_Const& pIter)
+      _FWDTreeIterator_Const& operator=(const _FWDTreeIterator_Const& pIter)
       {
          return BaseClass::operator=(pIter);
       }
 
-      _FWDTreeIterator_Const& operator=(_FWDTreeIterator<_Node>& pIter)
+      _FWDTreeIterator_Const& operator=(const _FWDTreeIterator<_Node>& pIter)
       {
          return BaseClass::operator=(pIter);
       }
 
-      const _Node& operator*() const{ return *_ptr; }
-      const _Node* operator->() const{return _ptr;}
+      const _Node& operator*() const{ return *BaseClass::_ptr; }
+      const _Node* operator->() const{return BaseClass::_ptr;}
 
-      bool operator==(const _FWDTreeIterator_Const& pIter) const{ return _ptr == pIter._ptr; }
+      bool operator==(const _FWDTreeIterator_Const& pIter) const{ return BaseClass::_ptr == pIter._ptr; }
 
-      bool operator!=(const _FWDTreeIterator_Const& pIter) const{ return !(_ptr == pIter._ptr); }
+      bool operator!=(const _FWDTreeIterator_Const& pIter) const{ return !(BaseClass::_ptr == pIter._ptr); }
 
       _FWDTreeIterator_Const& operator++()
       {
-         _ptr = _ptr->next();
+         BaseClass::_ptr = BaseClass::_ptr->next();
          return *this;
       }
 
       _FWDTreeIterator_Const& operator--()
       {
-         if(_ptr) _ptr = _ptr->prev();
-         else _ptr = _root->last_descendant();
+         if(BaseClass::_ptr) BaseClass::_ptr = BaseClass::_ptr->prev();
+         else BaseClass::_ptr = BaseClass::_root->last_descendant();
          return *this;
       }
    };
@@ -419,6 +425,8 @@ namespace dtAI
    public:
       typedef _TreeIteratorBase_Const<_Node> BaseClass;
       typedef _RevTreeIterator_Const<_Node> MyType;
+      typedef _Node value_type;
+      typedef const _Node* const_pointer;
 
       _RevTreeIterator_Const(): BaseClass(){}
 
@@ -427,40 +435,40 @@ namespace dtAI
 
       _RevTreeIterator_Const(const_pointer ptr, const_pointer root): BaseClass(ptr, root){}
 
-      _RevTreeIterator_Const& operator=(_RevTreeIterator_Const& pIter)
+      _RevTreeIterator_Const& operator=(const _RevTreeIterator_Const& pIter)
       {
          return BaseClass::operator=(pIter);
       }
 
-      _RevTreeIterator_Const& operator=(_FWDTreeIterator<_Node>& pIter)
+      _RevTreeIterator_Const& operator=(const _FWDTreeIterator<_Node>& pIter)
       {
          return BaseClass::operator=(pIter);
       }
 
-      _RevTreeIterator_Const& operator=(_RevTreeIterator<_Node>& pIter)
+      _RevTreeIterator_Const& operator=(const _RevTreeIterator<_Node>& pIter)
       {
-         _ptr= pIter._ptr;
-         _root = pIter._root;
+         BaseClass::_ptr= pIter._ptr;
+         BaseClass::_root = pIter._root;
          return *this;
       }
 
-      const _Node& operator*() const{ return *_ptr; }
-      const _Node* operator->() const{return _ptr;}
+      const _Node& operator*() const{ return *BaseClass::_ptr; }
+      const _Node* operator->() const{return BaseClass::_ptr;}
 
-      bool operator==(const _RevTreeIterator_Const& pIter) const{ return _ptr == pIter._ptr; }
+      bool operator==(const _RevTreeIterator_Const& pIter) const{ return BaseClass::_ptr == pIter._ptr; }
 
-      bool operator!=(const _RevTreeIterator_Const& pIter) const{ return !(_ptr == pIter._ptr); }
+      bool operator!=(const _RevTreeIterator_Const& pIter) const{ return !(BaseClass::_ptr == pIter._ptr); }
 
       _RevTreeIterator_Const& operator--()
       {
-         _ptr = _ptr->next();
+         BaseClass::_ptr = BaseClass::_ptr->next();
          return *this;
       }
 
       _RevTreeIterator_Const& operator++()
       {
-         if(_ptr) _ptr = _ptr->prev();
-         else _ptr = _root->last_descendant();
+         if(BaseClass::_ptr) BaseClass::_ptr = BaseClass::_ptr->prev();
+         else BaseClass::_ptr = BaseClass::_root->last_descendant();
          return *this;
       }
    };
@@ -476,49 +484,51 @@ namespace dtAI
    public:
       typedef _FWDTreeChildIterator_Const<_Node> MyType;
       typedef _TreeIteratorChildBase_Const<_Node> BaseClass;
+      typedef _Node value_type;
+      typedef const _Node* const_pointer;
 
       _FWDTreeChildIterator_Const(): BaseClass(){}
 
       _FWDTreeChildIterator_Const(const BaseClass& pIter): BaseClass(pIter){}
-      _FWDTreeChildIterator_Const(_TreeIteratorChildBase<_Node>& pIter): BaseClass(pIter){}
+      _FWDTreeChildIterator_Const(const _TreeIteratorChildBase<_Node>& pIter): BaseClass(pIter){}
 
       _FWDTreeChildIterator_Const(const_pointer ptr, const_pointer root): BaseClass(ptr, root){}
 
-      _FWDTreeChildIterator_Const& operator=(_FWDTreeChildIterator_Const& pIter)
+      _FWDTreeChildIterator_Const& operator=(const _FWDTreeChildIterator_Const& pIter)
       {
          return BaseClass::operator=(pIter);
       }
 
-      _FWDTreeChildIterator_Const& operator=(_FWDTreeIterator<_Node>& pIter)
+      _FWDTreeChildIterator_Const& operator=(const _FWDTreeIterator<_Node>& pIter)
       {
          return BaseClass::operator=(pIter);
       }
 
-      _FWDTreeChildIterator_Const& operator=(_RevTreeIterator<_Node>& pIter)
+      _FWDTreeChildIterator_Const& operator=(const _RevTreeIterator<_Node>& pIter)
       {
-         _ptr= pIter._ptr;
-         _root = pIter._root;
+         BaseClass::_ptr= pIter._ptr;
+         BaseClass::_root = pIter._root;
          return *this;
       }
 
-      const _Node& operator*() const{ return *_ptr; }
+      const _Node& operator*() const{ return *BaseClass::_ptr; }
 
-      const _Node* operator->() const{return _ptr;}
+      const _Node* operator->() const{return BaseClass::_ptr;}
 
-      bool operator==(const _FWDTreeChildIterator_Const& pIter) const{ return _ptr == pIter._ptr; }
+      bool operator==(const _FWDTreeChildIterator_Const& pIter) const{ return BaseClass::_ptr == pIter._ptr; }
 
-      bool operator!=(const _FWDTreeChildIterator_Const& pIter) const{ return !(_ptr == pIter._ptr); }
+      bool operator!=(const _FWDTreeChildIterator_Const& pIter) const{ return !(BaseClass::_ptr == pIter._ptr); }
 
       _FWDTreeChildIterator_Const& operator++()
       {
-         _ptr = _ptr->next_sibling();
+         BaseClass::_ptr = BaseClass::_ptr->next_sibling();
          return *this;
       }
 
       _FWDTreeChildIterator_Const& operator--()
       {
-         if(_ptr) _ptr = _ptr->prev_sibling();
-         else _ptr = _root->last_child();
+         if(BaseClass::_ptr) BaseClass::_ptr = BaseClass::_ptr->prev_sibling();
+         else BaseClass::_ptr = BaseClass::_root->last_child();
          return *this;
       }
    };
@@ -535,48 +545,49 @@ namespace dtAI
    public:
       typedef _RevTreeChildIterator_Const<_Node> MyType;
       typedef _TreeIteratorChildBase_Const<_Node> BaseClass;
+      typedef const _Node* const_pointer;
 
       _RevTreeChildIterator_Const(): BaseClass(){}
 
       _RevTreeChildIterator_Const(const BaseClass& pIter): BaseClass(pIter){}
-      _RevTreeChildIterator_Const(_TreeIteratorChildBase<_Node>& pIter): BaseClass(pIter){}
+      _RevTreeChildIterator_Const(const _TreeIteratorChildBase<_Node>& pIter): BaseClass(pIter){}
 
       _RevTreeChildIterator_Const(const_pointer ptr, const_pointer root): BaseClass(ptr, root){}
 
-      _RevTreeChildIterator_Const& operator=(_RevTreeChildIterator_Const& pIter)
+      _RevTreeChildIterator_Const& operator=(const _RevTreeChildIterator_Const& pIter)
       {
          return BaseClass::operator=(pIter);
       }
 
-      _RevTreeChildIterator_Const& operator=(_FWDTreeIterator<_Node>& pIter)
+      _RevTreeChildIterator_Const& operator=(const _FWDTreeIterator<_Node>& pIter)
       {
          return BaseClass::operator=(pIter);
       }
 
-      _RevTreeChildIterator_Const& operator=(_RevTreeIterator<_Node>& pIter)
+      _RevTreeChildIterator_Const& operator=(const _RevTreeIterator<_Node>& pIter)
       {
-         _ptr= pIter._ptr;
-         _root = pIter._root;
+         BaseClass::_ptr= pIter._ptr;
+         BaseClass::_root = pIter._root;
          return *this;
       }
 
-      _Node& operator*() const{ return *_ptr; }
-      const _Node* operator->() const{return _ptr;}
+      _Node& operator*() const{ return *BaseClass::_ptr; }
+      const _Node* operator->() const{return BaseClass::_ptr;}
       
-      bool operator==(const _RevTreeChildIterator_Const& pIter) const{ return _ptr == pIter._ptr; }
+      bool operator==(const _RevTreeChildIterator_Const& pIter) const{ return BaseClass::_ptr == pIter._ptr; }
 
-      bool operator!=(const _RevTreeChildIterator_Const& pIter) const{ return !(_ptr == pIter._ptr); }
+      bool operator!=(const _RevTreeChildIterator_Const& pIter) const{ return !(BaseClass::_ptr == pIter._ptr); }
 
       _RevTreeChildIterator_Const& operator--()
       {
-         _ptr = _ptr->next_sibling();
+         BaseClass::_ptr = BaseClass::_ptr->next_sibling();
          return *this;
       }
 
       _RevTreeChildIterator_Const& operator++()
       {
-         if(_ptr) _ptr = _ptr->prev_sibling();
-         else _ptr = _root->last_child();
+         if(BaseClass::_ptr) BaseClass::_ptr = BaseClass::_ptr->prev_sibling();
+         else BaseClass::_ptr = BaseClass::_root->last_child();
          return *this;
       }
    };
@@ -594,7 +605,6 @@ namespace dtAI
 
       typedef Tree<T> _MyType;
       typedef _MyType TreeNode;
-      typedef typename _MyType TreeNode;
 
       typedef _FWDTreeIterator<TreeNode> iterator;
       typedef _FWDTreeIterator_Const<TreeNode> const_iterator;
@@ -1108,13 +1118,13 @@ namespace dtAI
    template <class T>
    typename Tree<T>::child_iterator Tree<T>::begin_child()
    {
-      return child_iterator(first_child(), this);
+      return typename Tree<T>::child_iterator(first_child(), this);
    }
 
    template <class T>
    typename Tree<T>::const_child_iterator Tree<T>::begin_child() const
    {
-      return const_child_iterator(first_child(), this);
+      return typename Tree<T>::const_child_iterator(first_child(), this);
    }
 
    template <class T>
@@ -1156,13 +1166,13 @@ namespace dtAI
    template <class T>
    typename Tree<T>::child_iterator Tree<T>::end_child()
    {
-      return child_iterator(0, this);
+      return typename Tree<T>::child_iterator(0, this);
    }
 
    template <class T>
    typename Tree<T>::const_child_iterator Tree<T>::end_child() const
    {
-      return const_child_iterator(0, this);
+      return typename Tree<T>::const_child_iterator(0, this);
    }
 
    template <class T>

@@ -42,6 +42,8 @@ namespace dtAI
    {
       public:
          typedef dtAI::Tree<const WaypointInterface*> WaypointTree;
+         typedef dtAI::Tree<const WaypointInterface*>::child_iterator WaypointTreeChildIterator;
+         typedef dtAI::Tree<const WaypointInterface*>::child_iterator WaypointTreeConstChildIterator;
 
          WaypointCollection();
          WaypointCollection(const osg::Vec3& pos);

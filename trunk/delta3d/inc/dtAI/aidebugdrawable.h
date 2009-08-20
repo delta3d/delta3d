@@ -45,13 +45,15 @@ namespace dtAI
    class WaypointRenderInfo;
    class NavMesh;
 
+   class AIDebugDrawableImpl;
+
    class DT_AI_EXPORT AIDebugDrawable : public dtCore::DeltaDrawable
    {
    public:
       typedef osg::Vec3 Color;
 
    public:
-      
+
       AIDebugDrawable();
       AIDebugDrawable(WaypointRenderInfo& pRenderInfo);
 
@@ -60,8 +62,8 @@ namespace dtAI
        *    call this every frame we can make a separate function to reset ALL the geometry       
        */
       void SetRenderInfo(WaypointRenderInfo& pRenderInfo);
-      WaypointRenderInfo& GetRenderInfo(const WaypointRenderInfo& pRenderInfo);
-      const WaypointRenderInfo& GetRenderInfo(const WaypointRenderInfo& pRenderInfo) const;
+      WaypointRenderInfo& GetRenderInfo();
+      const WaypointRenderInfo& GetRenderInfo() const;
 
       osg::Node* GetOSGNode();
       const osg::Node* GetOSGNode() const;
@@ -76,6 +78,8 @@ namespace dtAI
 
       void UpdateWaypointGraph(const NavMesh& nm);
 
+      //this is an expensive operation because all the geometry must be recreated
+      void OnRenderInfoChanged();
 
    protected:
       /*virtual*/ ~AIDebugDrawable();
@@ -83,9 +87,12 @@ namespace dtAI
       void Init();
       void ClearMemory();
       void SetOSGNode(osg::Group* grp);
-      
-      osg::Geode* GetGeode();
-      void SetGeode(osg::Geode* geode);
+
+      osg::Geode* GetGeodeWayPoints();
+      void SetGeodeWayPoints(osg::Geode* geode);
+
+      osg::Geode* GetGeodeNavMesh();
+      void SetGeodeNavMesh(osg::Geode* geode);
 
       osg::Geometry* GetGeometry();
       void SetGeometry(osg::Geometry* geom);
@@ -97,28 +104,12 @@ namespace dtAI
       //when the vertex data has changed
       void OnGeometryChanged();
 
-      //this is an expensive operation because all the geometry must be recreated
-      void OnRenderInfoChanged();
-
-      void CreateWaypointIDText(const WaypointInterface& wp);
-
       void AddPathSegment(const WaypointInterface* pFrom, const WaypointInterface* pTo);
       void ClearWaypointGraph();
 
    private:
 
-      
-      dtCore::RefPtr<WaypointRenderInfo> mRenderInfo;
-      
-      dtCore::RefPtr<osg::IntArray> mWaypointIDs;
-      dtCore::RefPtr<osg::Vec3Array> mVerts;
-      dtCore::RefPtr<osg::UIntArray> mWaypointPairs;
-      dtCore::RefPtr<osg::Geometry> mWaypointGeometry;
-      dtCore::RefPtr<osg::Geometry> mNavMeshGeometry;
-      dtCore::RefPtr<osg::Geode> mGeode;
-      dtCore::RefPtr<osg::Geode> mGeodeIDs;
-      dtCore::RefPtr<osg::Group> mNode;
-
+      AIDebugDrawableImpl* mImpl;
    };
 
 } // namespace dtAI
