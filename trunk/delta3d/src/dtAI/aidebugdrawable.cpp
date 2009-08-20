@@ -139,6 +139,12 @@ namespace dtAI
          osg::Vec4Array* navmeshColors = new osg::Vec4Array(1);
          (*navmeshColors)[0] = mRenderInfo->GetNavMeshColor();
          mNavMeshGeometry->setColorArray(navmeshColors);
+
+         osg::Point* p = new osg::Point(mRenderInfo->GetWaypointSize());
+         mWaypointGeometry->getOrCreateStateSet()->setAttribute(p, osg::StateAttribute::ON);
+
+         osg::LineWidth* lw = new osg::LineWidth(mRenderInfo->GetNavMeshWidth());
+         mNavMeshGeometry->getOrCreateStateSet()->setAttribute(lw, osg::StateAttribute::ON);
       }
 
       void OnGeometryChanged()
