@@ -101,7 +101,7 @@ void DeltaWin::CreateDeltaWindow(const DeltaWinTraits& windowTraits)
    WindowResizeCallback* defCB = new DefResizeCB();
    mResizeCallbackContainer->AddCallback(*defCB);
 
-   CreateGraphicsWindow(*osgTraits);
+   CreateGraphicsWindow(*osgTraits, windowTraits.realizeUponCreate);
 
    if (!windowTraits.fullScreen)
    {
@@ -116,7 +116,8 @@ void DeltaWin::CreateDeltaWindow(const DeltaWinTraits& windowTraits)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void DeltaWin::CreateGraphicsWindow(osg::GraphicsContext::Traits& traits)
+void DeltaWin::CreateGraphicsWindow(osg::GraphicsContext::Traits& traits,
+                                    bool realizeUponCreate)
 {
    osg::ref_ptr<osg::GraphicsContext> gc = osg::GraphicsContext::createGraphicsContext(&traits);
 
@@ -134,8 +135,12 @@ void DeltaWin::CreateGraphicsWindow(osg::GraphicsContext::Traits& traits)
    {
       mOsgViewerGraphicsWindow->getEventQueue()->getCurrentEventState()->setWindowRectangle(traits.x, traits.y,
                                                                       traits.width, traits.height);
-      mOsgViewerGraphicsWindow->realize();
-      mOsgViewerGraphicsWindow->makeCurrent();
+      if (realizeUponCreate)
+      {
+         mOsgViewerGraphicsWindow->realize();
+         mOsgViewerGraphicsWindow->makeCurrent();
+      }
+
    }
 }
 

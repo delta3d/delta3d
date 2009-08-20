@@ -101,6 +101,7 @@ namespace dtCore
             , hostName("")
             , displayNum(0)
             , screenNum(0)
+            , realizeUponCreate(true)
          {
          }
 
@@ -118,6 +119,7 @@ namespace dtCore
          std::string hostName;
          int displayNum;
          int screenNum;
+         bool realizeUponCreate;
 
       };
 
@@ -267,7 +269,8 @@ namespace dtCore
       void CreateDeltaWindow(const DeltaWinTraits& windowTraits);
 
       ///Convenient method to create a GraphicsWindow
-      void CreateGraphicsWindow(osg::GraphicsContext::Traits& traits);
+      void CreateGraphicsWindow(osg::GraphicsContext::Traits& traits,
+                                bool realizeUponCreate);
 
       static int CalcRefreshRate(int width, int height, int dotclock);
 
