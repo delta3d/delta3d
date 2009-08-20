@@ -118,6 +118,7 @@ namespace dtEditQt
 
       dtCore::DeltaWin::DeltaWinTraits winTraits;
       winTraits.contextToShare = shareWith;
+      winTraits.realizeUponCreate = false;
       mWindow = new dtCore::DeltaWin(winTraits);
 
       mRootNodeGroup = new osg::Group();
@@ -147,7 +148,7 @@ namespace dtEditQt
       //GetQWidget()->setParent(GetQGLWidget());
       //GetQGLWidget()->setParent(GetQWidget());
 
-      initializeGL();
+      //initializeGL(); //E!
    }
 
    ///////////////////////////////////////////////////////////////////////////////
