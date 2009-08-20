@@ -132,18 +132,18 @@ namespace dtAI
       TestState(){}
       ~TestState(){}
 
-      DECLARE_PROPERTY(osg::Vec3, Pos);
-      DECLARE_PROPERTY(osg::Vec3, Forward);
-      DECLARE_PROPERTY(osg::Vec3, Up);
+      DECLARE_PROPERTY_INLINE(osg::Vec3, Pos);
+      DECLARE_PROPERTY_INLINE(osg::Vec3, Forward);
+      DECLARE_PROPERTY_INLINE(osg::Vec3, Up);
 
-      DECLARE_PROPERTY(osg::Vec3, Vel);
-      DECLARE_PROPERTY(osg::Vec3, Accel);
+      DECLARE_PROPERTY_INLINE(osg::Vec3, Vel);
+      DECLARE_PROPERTY_INLINE(osg::Vec3, Accel);
 
-      DECLARE_PROPERTY(float, AngularVel);
-      DECLARE_PROPERTY(float, AngularAccel);
+      DECLARE_PROPERTY_INLINE(float, AngularVel);
+      DECLARE_PROPERTY_INLINE(float, AngularAccel);
 
-      DECLARE_PROPERTY(float, Pitch);
-      DECLARE_PROPERTY(float, Roll);
+      DECLARE_PROPERTY_INLINE(float, Pitch);
+      DECLARE_PROPERTY_INLINE(float, Roll);
 
       void RegisterProperties(dtDAL::PropertyContainer& pc, const std::string& group)
       {
@@ -155,20 +155,20 @@ namespace dtAI
       TestGoalState(){}
       ~TestGoalState(){}
 
-      DECLARE_PROPERTY(float, DragCoef);
-      DECLARE_PROPERTY(float, AngularDragCoef);
+      DECLARE_PROPERTY_INLINE(float, DragCoef);
+      DECLARE_PROPERTY_INLINE(float, AngularDragCoef);
 
-      DECLARE_PROPERTY(float, MaxVel);
-      DECLARE_PROPERTY(float, MaxAccel);
+      DECLARE_PROPERTY_INLINE(float, MaxVel);
+      DECLARE_PROPERTY_INLINE(float, MaxAccel);
 
-      DECLARE_PROPERTY(float, MaxAngularVel);
-      DECLARE_PROPERTY(float, MaxAngularAccel);
+      DECLARE_PROPERTY_INLINE(float, MaxAngularVel);
+      DECLARE_PROPERTY_INLINE(float, MaxAngularAccel);
 
-      DECLARE_PROPERTY(float, MaxPitch);
-      DECLARE_PROPERTY(float, MaxRoll);
+      DECLARE_PROPERTY_INLINE(float, MaxPitch);
+      DECLARE_PROPERTY_INLINE(float, MaxRoll);
 
-      DECLARE_PROPERTY(float, MinElevation);
-      DECLARE_PROPERTY(float, MaxElevation);
+      DECLARE_PROPERTY_INLINE(float, MinElevation);
+      DECLARE_PROPERTY_INLINE(float, MaxElevation);
 
       void RegisterProperties(dtDAL::PropertyContainer& pc, const std::string& group)
       {
@@ -183,9 +183,9 @@ namespace dtAI
       //these are the control inputs
       //all are floats from 1 to -1 
       //which represents percentage of maximum
-      DECLARE_PROPERTY(float, Thrust);
-      DECLARE_PROPERTY(float, Lift);
-      DECLARE_PROPERTY(float, Yaw);
+      DECLARE_PROPERTY_INLINE(float, Thrust);
+      DECLARE_PROPERTY_INLINE(float, Lift);
+      DECLARE_PROPERTY_INLINE(float, Yaw);
 
       void RegisterProperties(dtDAL::PropertyContainer& pc, const std::string& group)
       {
@@ -202,7 +202,7 @@ namespace dtAI
 
       /*virtual*/ bool GetGoal(const BaseClass::StateType& current_state, BaseClass::GoalStateType& result) const
       {
-         result.mPos.set(250.0f, 50.0f, 20.0f);
+         result.SetPos(osg::Vec3(250.0f, 50.0f, 20.0f));
          return true;
       }
 

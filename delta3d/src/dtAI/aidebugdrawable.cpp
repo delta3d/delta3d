@@ -39,21 +39,179 @@
 
 #include <osgText/Text>
 
+#ifdef __GNUG__
+#  include <ext/hash_map>
+#elif defined(_MSC_VER)
+#  include <hash_map>
+#else
+#  include <map>
+#endif
+
 namespace dtAI
 {
+
+   class RenderData: public osg::Referenced
+   {
+   public:
+      dtCore::RefPtr<osgText::Text> mTextNode;
+   };
+
+#ifdef __GNUG__
+   typedef __gnu_cxx::hash_map<unsigned, dtCore::RefPtr<RenderData> > RenderDataMap;
+#elif defined(_MSC_VER)
+   typedef stdext::hash_map<unsigned, dtCore::RefPtr<RenderData> > RenderDataMap;
+#else
+   typedef std::map<unsigned, dtCore::RefPtr<RenderData> > RenderDataMap;
+#endif
+
+   class AIDebugDrawableImpl
+   {
+   public:
+      AIDebugDrawableImpl(WaypointRenderInfo& pRenderInfo)
+      : mRenderInfo(&pRenderInfo)
+      {
+
+      }
+
+      void Init()
+      {
+         mNode = new osg::Group();
+         mGeodeWayPoints = new osg::Geode();
+         mGeodeNavMesh = new osg::Geode();
+         mGeodeIDs = new osg::Geode();
+         mWaypointGeometry = new osg::Geometry();
+         mNavMeshGeometry = new osg::Geometry();
+
+         mWaypointIDs = new osg::UIntArray();
+         mWaypointPairs = new osg::UIntArray();
+         mVerts = new osg::Vec3Array();
+
+         mWaypointGeometry->setVertexArray(mVerts.get());
+         mNavMeshGeometry->setVertexArray(mVerts.get());
+
+         mNode->addChild(mGeodeWayPoints.get());
+         mNode->addChild(mGeodeNavMesh.get());
+         mNode->addChild(mGeodeIDs.get());
+
+         mGeodeNavMesh->addDrawable(mNavMeshGeometry.get());
+         mGeodeWayPoints->addDrawable(mWaypointGeometry.get());
+
+         mWaypointGeometry->setColorBinding(osg::Geometry::BIND_OVERALL);
+
+         mNavMeshGeometry->setColorBinding(osg::Geometry::BIND_OVERALL);
+
+         mRenderInfo->Init();
+      }
+
+      void OnRenderInfoChanged()
+      {
+         if (mRenderInfo->GetRenderWaypointID())
+         {
+            mGeodeIDs->setNodeMask(~0);
+         }
+         else
+         {
+            mGeodeIDs->setNodeMask(0);
+         }
+
+         if (mRenderInfo->GetRenderNavMesh())
+         {
+            mGeodeNavMesh->setNodeMask(~0);
+         }
+         else
+         {
+            mGeodeNavMesh->setNodeMask(0);
+         }
+
+         if (mRenderInfo->GetRenderWaypoints())
+         {
+            mGeodeWayPoints->setNodeMask(~0);
+         }
+         else
+         {
+            mGeodeWayPoints->setNodeMask(0);
+         }
+
+         osg::Vec4Array* waypointColors = new osg::Vec4Array(1);
+         (*waypointColors)[0] = mRenderInfo->GetWaypointColor();
+         mWaypointGeometry->setColorArray(waypointColors);
+
+         osg::Vec4Array* navmeshColors = new osg::Vec4Array(1);
+         (*navmeshColors)[0] = mRenderInfo->GetNavMeshColor();
+         mNavMeshGeometry->setColorArray(navmeshColors);
+      }
+
+      void OnGeometryChanged()
+      {
+         //seems like there should be a generic dirty()- does this only work with display lists?
+         mWaypointGeometry->dirtyDisplayList();
+         mWaypointGeometry->setVertexArray(mVerts.get());
+
+         mWaypointGeometry->removePrimitiveSet(0);
+         osg::PrimitiveSet* ps = new osg::DrawArrays(osg::PrimitiveSet::POINTS, 0, mVerts->size());
+         mWaypointGeometry->addPrimitiveSet(ps);
+         //setting it back to zero will ensure any user data does not get removed when this function is called again
+         mWaypointGeometry->setPrimitiveSet(0, ps);
+
+         mNavMeshGeometry->removePrimitiveSet(0);
+         osg::PrimitiveSet* psLines = new osg::DrawElementsUInt(osg::PrimitiveSet::LINES, mWaypointPairs->begin(), mWaypointPairs->end());
+         mNavMeshGeometry->addPrimitiveSet(psLines);
+         //setting it back to zero will ensure any user data does not get removed when this function is called again
+         mNavMeshGeometry->setPrimitiveSet(0, psLines);
+
+         osg::Point* p = new osg::Point(mRenderInfo->GetWaypointSize());
+         mWaypointGeometry->getOrCreateStateSet()->setAttribute(p, osg::StateAttribute::ON);
+
+         osg::LineWidth* lw = new osg::LineWidth(mRenderInfo->GetNavMeshWidth());
+         mNavMeshGeometry->getOrCreateStateSet()->setAttribute(lw, osg::StateAttribute::ON);
+      }
+
+      void CreateWaypointIDText(const WaypointInterface& wp, RenderData& renderData)
+      {
+         //note: we either create a render info in the constructor
+         //or we take one by reference so should never be NULL
+
+         osgText::Text* text = new osgText::Text();
+         text->setDrawMode(osgText::Text::TEXT);
+         text->setAlignment(osgText::TextBase::CENTER_CENTER);
+         text->setAxisAlignment(osgText::TextBase::SCREEN);
+         text->setAutoRotateToScreen(true);
+         text->setFont(mRenderInfo->GetWaypointFontFile());
+         text->setCharacterSize(mRenderInfo->GetWaypointFontSizeScalar());
+         text->setColor(mRenderInfo->GetWaypointFontColor());
+         text->setPosition(wp.GetPosition() + mRenderInfo->GetWaypointTextOffset());
+         text->setText(dtUtil::ToString(wp.GetID()));
+         renderData.mTextNode = text;
+         mGeodeIDs->addDrawable(text);
+      }
+
+      dtCore::RefPtr<WaypointRenderInfo> mRenderInfo;
+
+      dtCore::RefPtr<osg::UIntArray> mWaypointIDs;
+      dtCore::RefPtr<osg::Vec3Array> mVerts;
+      dtCore::RefPtr<osg::UIntArray> mWaypointPairs;
+      dtCore::RefPtr<osg::Geometry> mWaypointGeometry;
+      dtCore::RefPtr<osg::Geometry> mNavMeshGeometry;
+      dtCore::RefPtr<osg::Geode> mGeodeNavMesh;
+      dtCore::RefPtr<osg::Geode> mGeodeWayPoints;
+      dtCore::RefPtr<osg::Geode> mGeodeIDs;
+      dtCore::RefPtr<osg::Group> mNode;
+
+      RenderDataMap mRenderData;
+   };
 
    //////////////////////////////////////////////////////////////////////////////
    //AIDebugDrawable
    //////////////////////////////////////////////////////////////////////////////
    AIDebugDrawable::AIDebugDrawable()
-      : mRenderInfo(new WaypointRenderInfo())
+   : mImpl(new AIDebugDrawableImpl(*new WaypointRenderInfo))
    {
       Init();
    }
    
    ///////////////////////////////////////////////////////////////////////////////
    AIDebugDrawable::AIDebugDrawable(WaypointRenderInfo& pRenderInfo)
-      : mRenderInfo(&pRenderInfo)      
+      : mImpl(new AIDebugDrawableImpl(pRenderInfo))
    {
       Init();
    }
@@ -61,77 +219,42 @@ namespace dtAI
    ///////////////////////////////////////////////////////////////////////////////
    AIDebugDrawable::~AIDebugDrawable()
    {
+      delete mImpl;
+      mImpl = NULL;
    }
+
 
    ///////////////////////////////////////////////////////////////////////////////
    void AIDebugDrawable::SetRenderInfo(WaypointRenderInfo& pRenderInfo)
    {
-      mRenderInfo = &pRenderInfo;
+      mImpl->mRenderInfo = &pRenderInfo;
       
-      OnRenderInfoChanged();
+      mImpl->OnRenderInfoChanged();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   WaypointRenderInfo& AIDebugDrawable::GetRenderInfo(const WaypointRenderInfo& pRenderInfo)
+   WaypointRenderInfo& AIDebugDrawable::GetRenderInfo()
    {
-      return *mRenderInfo;
+      return *mImpl->mRenderInfo;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   const WaypointRenderInfo& AIDebugDrawable::GetRenderInfo(const WaypointRenderInfo& pRenderInfo) const
+   const WaypointRenderInfo& AIDebugDrawable::GetRenderInfo() const
    {
-      return *mRenderInfo;
+      return *mImpl->mRenderInfo;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void AIDebugDrawable::OnRenderInfoChanged()
    {
-      /**TODO: RE-CREATE ALL GEOMETRY
-      if(mRenderInfo->mRenderWaypointID)
-      {
-      if(!mNode->containsNode(mGeodeIDs.get()))
-      {
-      mNode->addChild(mGeodeIDs.get());
-      }
-      else
-      {
-      mNode->removeChild(mGeodeIDs.get());
-      }
-      }*/
+      mImpl->OnRenderInfoChanged();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void AIDebugDrawable::Init()
    {
-      mNode = new osg::Group();
-      mGeode = new osg::Geode();
-      mGeodeIDs = new osg::Geode();
-      mWaypointGeometry = new osg::Geometry();
-      mNavMeshGeometry = new osg::Geometry();
-
-      mWaypointIDs = new osg::IntArray();
-      mWaypointPairs = new osg::UIntArray();
-      mVerts = new osg::Vec3Array();
-
-      mWaypointGeometry->setVertexArray(mVerts.get());
-      mNavMeshGeometry->setVertexArray(mVerts.get());
-      
-      mNode->addChild(mGeode.get());
-      mNode->addChild(mGeodeIDs.get());
-      
-      mGeode->addDrawable(mWaypointGeometry.get());
-      mGeode->addDrawable(mNavMeshGeometry.get());
-
-      //set the default color of the waypoints here so a derivative class can override it
-      osg::Vec4Array* waypointColors = new osg::Vec4Array(1);
-      (*waypointColors)[0] = mRenderInfo->mWaypointColor;
-      mWaypointGeometry->setColorArray(waypointColors);
-      mWaypointGeometry->setColorBinding(osg::Geometry::BIND_OVERALL);
-
-      osg::Vec4Array* navmeshColors = new osg::Vec4Array(1);
-      (*navmeshColors)[0] = mRenderInfo->mNavMeshColor;
-      mNavMeshGeometry->setColorArray(navmeshColors);
-      mNavMeshGeometry->setColorBinding(osg::Geometry::BIND_OVERALL);
+      mImpl->Init();
+      mImpl->OnRenderInfoChanged();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -143,48 +266,60 @@ namespace dtAI
 
 
    ///////////////////////////////////////////////////////////////////////////////
-   osg::Geode* AIDebugDrawable::GetGeode()
+   osg::Geode* AIDebugDrawable::GetGeodeNavMesh()
    {
-      return mGeode.get();
+      return mImpl->mGeodeNavMesh.get();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void AIDebugDrawable::SetGeode( osg::Geode* geode )
+   void AIDebugDrawable::SetGeodeNavMesh( osg::Geode* geode )
    {
-      mGeode = geode;
+      mImpl->mGeodeNavMesh = geode;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   osg::Geode* AIDebugDrawable::GetGeodeWayPoints()
+   {
+      return mImpl->mGeodeWayPoints.get();
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void AIDebugDrawable::SetGeodeWayPoints(osg::Geode* geode)
+   {
+      mImpl->mGeodeWayPoints = geode;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    osg::Node* AIDebugDrawable::GetOSGNode()
    {
-      return mNode.get();
+      return mImpl->mNode.get();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    const osg::Node* AIDebugDrawable::GetOSGNode() const
    {
-      return mNode.get();
+      return mImpl->mNode.get();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void AIDebugDrawable::SetOSGNode( osg::Group* grp )
    {
-      mNode = grp;
+      mImpl->mNode = grp;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    osg::Geometry* AIDebugDrawable::GetGeometry()
    {
-      return mWaypointGeometry.get();
+      return mImpl->mWaypointGeometry.get();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    int AIDebugDrawable::FindWaypoint(unsigned id)
    {
-      unsigned numWaypoints = mWaypointIDs->size();
+      unsigned numWaypoints = mImpl->mWaypointIDs->size();
       for(unsigned count = 0; count < numWaypoints; ++count)
       {
-         if((*mWaypointIDs)[count] == id)
+         if((*mImpl->mWaypointIDs)[count] == id)
          {
             return count;
          }
@@ -197,20 +332,20 @@ namespace dtAI
    void AIDebugDrawable::InsertWaypoint(const WaypointInterface& wp)
    {
       int loc = FindWaypoint(wp.GetID());
-      if(loc > -1)
+      if (loc > -1)
       {
          //we already have this waypoint so lets make sure its in the right place
-         (*mVerts)[loc].set(wp.GetPosition());
+         (*mImpl->mVerts)[loc].set(wp.GetPosition());
       }
       else //lets add it to the existing waypoints
       {
-         mWaypointIDs->push_back(wp.GetID());
-         mVerts->push_back(wp.GetPosition());
+         mImpl->mWaypointIDs->push_back(wp.GetID());
+         mImpl->mVerts->push_back(wp.GetPosition());
+         dtCore::RefPtr<RenderData> newRenderData = new RenderData;
+         mImpl->mRenderData.insert(std::make_pair(wp.GetID(), newRenderData));
 
-         if(mRenderInfo->mRenderWaypointText)
-         {
-            CreateWaypointIDText(wp);
-         }
+         mImpl->CreateWaypointIDText(wp, *newRenderData);
+
       }
 
       OnGeometryChanged();
@@ -220,17 +355,24 @@ namespace dtAI
    void AIDebugDrawable::RemoveWaypoint(unsigned id)
    {
       int loc = FindWaypoint(id);
-      if(loc > -1)
+      if (loc > -1)
       {
          //since this data is easily copied we can perform a faster erase
          //we simply copy the last element to the place of the element to be removed
          //and then we pop off the last element
          //it should be noted that order is not preserved.... if this matters we will need to revist this
-         (*mVerts)[loc].set((*mVerts)[mVerts->size() - 1]);
-         (*mWaypointIDs)[loc] = (*mWaypointIDs)[mWaypointIDs->size() - 1];
+         (*mImpl->mVerts)[loc].set((*mImpl->mVerts)[mImpl->mVerts->size() - 1]);
+         (*mImpl->mWaypointIDs)[loc] = (*mImpl->mWaypointIDs)[mImpl->mWaypointIDs->size() - 1];
 
-         mVerts->pop_back();
-         mWaypointIDs->pop_back();
+         mImpl->mVerts->pop_back();
+         mImpl->mWaypointIDs->pop_back();
+
+         RenderDataMap::iterator i = mImpl->mRenderData.find(id);
+         if (i != mImpl->mRenderData.end())
+         {
+            mImpl->mGeodeIDs->removeDrawable(i->second->mTextNode.get());
+            mImpl->mRenderData.erase(i);
+         }
 
          OnGeometryChanged();
       }
@@ -239,46 +381,7 @@ namespace dtAI
    ///////////////////////////////////////////////////////////////////////////////
    void AIDebugDrawable::OnGeometryChanged()
    {
-      //seems like there should be a generic dirty()- does this only work with display lists?
-      mWaypointGeometry->dirtyDisplayList();
-      mWaypointGeometry->setVertexArray(mVerts.get());
-      
-      mWaypointGeometry->removePrimitiveSet(0);
-      osg::PrimitiveSet* ps = new osg::DrawArrays(osg::PrimitiveSet::POINTS, 0, mVerts->size());
-      mWaypointGeometry->addPrimitiveSet(ps);
-      //setting it back to zero will ensure any user data does not get removed when this function is called again
-      mWaypointGeometry->setPrimitiveSet(0, ps);
-
-      mNavMeshGeometry->removePrimitiveSet(0);
-      osg::PrimitiveSet* psLines = new osg::DrawElementsUInt(osg::PrimitiveSet::LINES, mWaypointPairs->begin(), mWaypointPairs->end());
-      mNavMeshGeometry->addPrimitiveSet(psLines);
-      //setting it back to zero will ensure any user data does not get removed when this function is called again
-      mNavMeshGeometry->setPrimitiveSet(0, psLines);
-
-      osg::Point* p = new osg::Point(mRenderInfo->mWaypointSize);
-      mWaypointGeometry->getOrCreateStateSet()->setAttribute(p, osg::StateAttribute::ON);
-
-      osg::LineWidth* lw = new osg::LineWidth(mRenderInfo->mNavMeshWidth);
-      mNavMeshGeometry->getOrCreateStateSet()->setAttribute(lw, osg::StateAttribute::ON);
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void AIDebugDrawable::CreateWaypointIDText(const WaypointInterface& wp)
-   {
-      //note: we either create a render info in the constructor
-      //or we take one by reference so should never be NULL
-
-      osgText::Text* text = new osgText::Text(); 
-      text->setDrawMode(osgText::Text::TEXT);
-      text->setAlignment(osgText::TextBase::CENTER_CENTER);
-      text->setAxisAlignment(osgText::TextBase::SCREEN);
-      text->setAutoRotateToScreen(true);
-      text->setFont(mRenderInfo->mWaypointFontFile);
-      text->setCharacterSize(mRenderInfo->mWaypointFontSizeScalar);
-      text->setColor(mRenderInfo->mWaypointFontColor);
-      text->setPosition(wp.GetPosition() + mRenderInfo->mWaypointTextOffset);
-      text->setText(dtUtil::ToString(wp.GetID()));
-      mGeodeIDs->addDrawable(text);
+      mImpl->OnGeometryChanged();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -290,7 +393,7 @@ namespace dtAI
       NavMesh::NavMeshContainer::const_iterator iter = nm.GetNavMesh().begin();
       NavMesh::NavMeshContainer::const_iterator iterEnd = nm.GetNavMesh().end();
 
-      for(;iter != iterEnd; ++iter)
+      for (;iter != iterEnd; ++iter)
       {
          const WaypointPair* wp = (*iter).second;
          AddPathSegment(wp->GetWaypointFrom(), wp->GetWaypointTo());
@@ -303,10 +406,10 @@ namespace dtAI
       int indexFrom = FindWaypoint(pFrom->GetID());
       int indexTo = FindWaypoint(pTo->GetID());
 
-      if(indexFrom > -1 && indexTo > -1)
+      if (indexFrom > -1 && indexTo > -1)
       {
-         mWaypointPairs->push_back(indexFrom);
-         mWaypointPairs->push_back(indexTo);
+         mImpl->mWaypointPairs->push_back(indexFrom);
+         mImpl->mWaypointPairs->push_back(indexTo);
          OnGeometryChanged();
       }
       else
@@ -318,6 +421,6 @@ namespace dtAI
    ///////////////////////////////////////////////////////////////////////////////
    void AIDebugDrawable::ClearWaypointGraph()
    {
-      mWaypointPairs->clear();
+      mImpl->mWaypointPairs->clear();
    }
 }

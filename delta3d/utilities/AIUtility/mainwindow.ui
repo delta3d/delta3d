@@ -33,7 +33,14 @@
     <addaction name="separator"/>
     <addaction name="mActionQuit"/>
    </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+    <addaction name="mActionRenderingOptions"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionQuit">
@@ -59,6 +66,11 @@
   <action name="mActionCloseMap">
    <property name="text">
     <string>Close Map</string>
+   </property>
+  </action>
+  <action name="mActionRenderingOptions">
+   <property name="text">
+    <string>Rendering Options</string>
    </property>
   </action>
  </widget>

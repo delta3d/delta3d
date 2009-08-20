@@ -1,6 +1,6 @@
 /* -*-c++-*-
  * Delta3D
- * Copyright 2009, Alion Science and Technology
+ * Copyright 2007-2008, Alion Science and Technology
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,44 +18,29 @@
  *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
- *
- * David Guthrie
+ * david
  */
 
-#ifndef AIUTILITYAPP_H_
-#define AIUTILITYAPP_H_
+#ifndef AIPROPERTYEDITOR_H_
+#define AIPROPERTYEDITOR_H_
 
-#include <QtCore/QObject>
-#include <dtABC/application.h>
-#include <dtCore/motionmodel.h>
-#include <dtQt/deltastepper.h>
+#include <dtQt/basepropertyeditor.h>
 
-#include <dtGame/gamemanager.h>
-
-namespace dtAI
+class AIPropertyEditor: public dtQt::BasePropertyEditor
 {
-   class AIPluginInterface;
-}
-
-class AIUtilityApp: public QObject, public dtABC::Application
-{
-   Q_OBJECT
+   Q_OBJECT;
 public:
-   AIUtilityApp();
-   virtual ~AIUtilityApp();
-   virtual void Config();
-   void SetAIPluginInterface(dtAI::AIPluginInterface* interface);
+   AIPropertyEditor(QMainWindow& parent);
+   virtual ~AIPropertyEditor();
+
 signals:
-   void AIPluginInterfaceChanged(dtAI::AIPluginInterface* interface);
+
+   void SignalPropertyChangedFromControl(dtDAL::PropertyContainer&, dtDAL::ActorProperty&);
+
 public slots:
-   void DoQuit();
-   void SetProjectContext(const std::string& path);
-   void ChangeMap(const std::string& map);
-   void CloseMap();
-private:
-   dtQt::DeltaStepper mStepper;
-   dtCore::RefPtr<dtGame::GameManager> mGM;
-   dtCore::RefPtr<dtCore::MotionModel> mMotionModel;
+   virtual void PropertyAboutToChangeFromControl(dtDAL::PropertyContainer&, dtDAL::ActorProperty&,
+            const std::string& oldValue, const std::string& newValue);
+   virtual void PropertyChangedFromControl(dtDAL::PropertyContainer&, dtDAL::ActorProperty&);
 };
 
-#endif /* AIUTILITYAPP_H_ */
+#endif /* AIPROPERTYEDITOR_H_ */

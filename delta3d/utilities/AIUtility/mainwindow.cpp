@@ -36,6 +36,14 @@
 
 #include <dtDAL/map.h>
 #include <dtDAL/project.h>
+#include <dtDAL/propertycontainer.h>
+#include <dtDAL/actorproperty.h>
+#include "aipropertyeditor.h"
+
+#include <dtAI/aiplugininterface.h>
+#include <dtAI/aidebugdrawable.h>
+#include <dtAI/waypointrenderinfo.h>
+
 #include <set>
 
 static const std::string ORG_NAME("delta3d.org");
@@ -47,6 +55,8 @@ static const std::string CURRENT_MAP_SETTING("CurrentMap");
 MainWindow::MainWindow(QWidget& mainWidget)
    : mUi(new Ui::MainWindow)
    , mCentralWidget(mainWidget)
+   , mPropertyEditor(*new AIPropertyEditor(*this))
+   , mPluginInterface(NULL)
 {
    mUi->setupUi(this);
 
@@ -56,6 +66,12 @@ MainWindow::MainWindow(QWidget& mainWidget)
    connect(mUi->mActionOpenMap, SIGNAL(triggered()), this, SLOT(OnOpenMap()));
    connect(mUi->mActionCloseMap, SIGNAL(triggered()), this, SLOT(OnCloseMap()));
    connect(mUi->mChangeContextAction, SIGNAL(triggered()), this, SLOT(ChangeProjectContext()));
+   connect(mUi->mActionRenderingOptions, SIGNAL(triggered()), this, SLOT(SelectRenderingOptions()));
+
+   connect(&mPropertyEditor, SIGNAL(SignalPropertyChangedFromControl(dtDAL::PropertyContainer&, dtDAL::ActorProperty&)),
+            this, SLOT(PropertyChangedFromControl(dtDAL::PropertyContainer&, dtDAL::ActorProperty&)));
+
+   addDockWidget(Qt::LeftDockWidgetArea, &mPropertyEditor);
 }
 
 //////////////////////////////////////////////
@@ -166,5 +182,43 @@ void MainWindow::EnableOrDisableControls()
    // Stop from changing context unless the map is closed. It works around a bug.
    // since the map doesn't change immediately in the GM, we can't just change maps.
    mUi->mChangeContextAction->setEnabled(mCurrentMapName.isEmpty());
+}
+
+////////////////////////////////////////////////////////////////////////////////
+dtAI::AIPluginInterface* MainWindow::GetAIPluginInterface()
+{
+   return mPluginInterface;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::SetAIPluginInterface(dtAI::AIPluginInterface* interface)
+{
+   mPluginInterface = interface;
+   EnableOrDisableControls();
+   // clear the selection
+   dtQt::BasePropertyEditor::PropertyContainerRefPtrVector selected;
+   mPropertyEditor.HandlePropertyContainersSelected(selected);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::SelectRenderingOptions()
+{
+   if (mPluginInterface != NULL)
+   {
+      dtQt::BasePropertyEditor::PropertyContainerRefPtrVector selected;
+      dtAI::WaypointRenderInfo& ri = mPluginInterface->GetDebugDrawable()->GetRenderInfo();
+      selected.push_back(&ri);
+      mPropertyEditor.HandlePropertyContainersSelected(selected);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::PropertyChangedFromControl(dtDAL::PropertyContainer& pc, dtDAL::ActorProperty& ap)
+{
+   dtAI::WaypointRenderInfo& ri = mPluginInterface->GetDebugDrawable()->GetRenderInfo();
+   if (&pc == &ri)
+   {
+      mPluginInterface->GetDebugDrawable()->OnRenderInfoChanged();
+   }
 }
 

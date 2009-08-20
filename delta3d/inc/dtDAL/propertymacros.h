@@ -71,7 +71,8 @@ namespace dtDAL
       const std::string& mGroup;
    };
 
-   #define DECLARE_PROPERTY(PropertyType, PropertyName) \
+   #define DECLARE_PROPERTY_INLINE(PropertyType, PropertyName) \
+   private:\
       PropertyType  m ## PropertyName; \
    public: \
       \
@@ -84,6 +85,36 @@ namespace dtDAL
    {\
       return m ## PropertyName;\
    };\
+      \
+
+   #define DECLARE_PROPERTY(PropertyType, PropertyName) \
+   private:\
+      PropertyType  m ## PropertyName; \
+   public: \
+      \
+      void Set ## PropertyName(dtDAL::TypeToActorProperty<PropertyType>::SetValueType value);\
+      \
+      dtDAL::TypeToActorProperty<PropertyType>::GetValueType Get ## PropertyName() const;\
+      \
+
+   #define IMPLEMENT_PROPERTY_GETTER(ClassName, PropertyType, PropertyName) \
+      dtDAL::TypeToActorProperty<PropertyType>::GetValueType ClassName::Get ## PropertyName() const\
+      {\
+         return m ## PropertyName;\
+      }\
+      \
+
+   #define IMPLEMENT_PROPERTY_SETTER(ClassName, PropertyType, PropertyName) \
+      void ClassName::Set ## PropertyName(dtDAL::TypeToActorProperty<PropertyType>::SetValueType value)\
+      {\
+         m ## PropertyName = value;\
+      }\
+      \
+
+   #define IMPLEMENT_PROPERTY(ClassName, PropertyType, PropertyName) \
+      IMPLEMENT_PROPERTY_SETTER(ClassName, PropertyType, PropertyName)\
+      \
+      IMPLEMENT_PROPERTY_GETTER(ClassName, PropertyType, PropertyName)\
       \
 
 

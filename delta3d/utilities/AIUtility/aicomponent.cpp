@@ -32,7 +32,9 @@
 #include <dtAI/aiplugininterface.h>
 #include <dtAI/aidebugdrawable.h>
 
-const std::string AIComponent::DEFAULT_NAME = "AIComponent";
+#include "aiutilityapp.h"
+
+const std::string AIComponent::DEFAULT_NAME("AIComponent");
 
 /////////////////////////////////////////////////////////////
 AIComponent::AIComponent(const std::string& name)
@@ -83,14 +85,13 @@ dtAI::AIPluginInterface* AIComponent::GetAIPluginInterface()
 /////////////////////////////////////////////////////////////
 void AIComponent::ProcessMessage(const dtGame::Message &message)
 {
-   if(message.GetMessageType() == dtGame::MessageType::TICK_LOCAL)
-   {
-      //float dt = float(static_cast<const dtGame::TickMessage&>(message).GetDeltaSimTime());
-   }
-   else if(message.GetMessageType() == dtGame::MessageType::INFO_GAME_EVENT)
+   if (message.GetMessageType() == dtGame::MessageType::TICK_LOCAL)
    {
    }
-   else if(message.GetMessageType() == dtGame::MessageType::INFO_MAP_LOADED)
+   else if (message.GetMessageType() == dtGame::MessageType::INFO_GAME_EVENT)
+   {
+   }
+   else if (message.GetMessageType() == dtGame::MessageType::INFO_MAP_LOADED)
    {
       //when the map is loaded we must look for an instance of an AIInterfaceActor and add it's debug drawable
       //to the scene, this will make the waypoints visible in the map
@@ -102,8 +103,11 @@ void AIComponent::ProcessMessage(const dtGame::Message &message)
       {
          GetGameManager()->GetScene().AddDrawable(GetAIPluginInterface()->GetDebugDrawable());
       }
+
+      AIUtilityApp& aiApp = dynamic_cast<AIUtilityApp&>(GetGameManager()->GetApplication());
+      aiApp.SetAIPluginInterface(mAIInterfaceProxy->GetAIInterface());
    }
-   else if(message.GetMessageType() == dtGame::MessageType::INFO_MAP_UNLOADED)
+   else if (message.GetMessageType() == dtGame::MessageType::INFO_MAP_UNLOADED)
    {
       CleanUp();
    }
