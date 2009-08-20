@@ -176,6 +176,7 @@ namespace dtQt
       {
          mQWidget->close();
          delete mQWidget;
+         mQWidget = NULL;
       }
    }
 

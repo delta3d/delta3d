@@ -97,5 +97,32 @@ namespace dtAI
 
    }
 
+   IMPLEMENT_PROPERTY(WaypointRenderInfo, bool, RenderWaypoints)
+   IMPLEMENT_PROPERTY(WaypointRenderInfo, bool, RenderWaypointID)
+   IMPLEMENT_PROPERTY(WaypointRenderInfo, bool, RenderWaypointText)
+   IMPLEMENT_PROPERTY(WaypointRenderInfo, bool, RenderNavMesh)
+   IMPLEMENT_PROPERTY(WaypointRenderInfo, bool, RenderNavMeshText)
+
+   //Waypoints
+   IMPLEMENT_PROPERTY(WaypointRenderInfo, float, WaypointSize)
+   IMPLEMENT_PROPERTY(WaypointRenderInfo, WaypointRenderInfo::Color, WaypointColor)
+
+   //Waypoint Font
+   IMPLEMENT_PROPERTY(WaypointRenderInfo, std::string, WaypointFontFile)
+   IMPLEMENT_PROPERTY(WaypointRenderInfo, float, WaypointFontSizeScalar)
+   IMPLEMENT_PROPERTY(WaypointRenderInfo, osg::Vec3, WaypointTextOffset)
+   IMPLEMENT_PROPERTY(WaypointRenderInfo, WaypointRenderInfo::Color, WaypointFontColor)
+
+   //Nav Mesh
+   IMPLEMENT_PROPERTY(WaypointRenderInfo, float, NavMeshWidth)
+   IMPLEMENT_PROPERTY(WaypointRenderInfo, WaypointRenderInfo::Color, NavMeshColor)
+
+   //Nav Mesh Font
+   IMPLEMENT_PROPERTY(WaypointRenderInfo, std::string, NavMeshFontFile)
+   IMPLEMENT_PROPERTY(WaypointRenderInfo, float, NavMeshFontSizeScalar)
+   ///the text is scaled across the navmesh path
+   IMPLEMENT_PROPERTY(WaypointRenderInfo, float, NavMeshTextOffsetScalar)
+   IMPLEMENT_PROPERTY(WaypointRenderInfo, WaypointRenderInfo::Color, NavMeshFontColor)
+
 
 } // namespace dtAI

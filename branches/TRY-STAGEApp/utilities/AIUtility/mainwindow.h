@@ -28,11 +28,23 @@
 #include <QtGui/QMainWindow>
 
 class QCloseEvent;
+class AIPropertyEditor;
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace Ui
 {
    class MainWindow;
+}
+
+namespace dtAI
+{
+   class AIPluginInterface;
+}
+
+namespace dtDAL
+{
+   class PropertyContainer;
+   class ActorProperty;
 }
 /// @endcond
 
@@ -47,6 +59,8 @@ public:
    void showEvent(QShowEvent* e);
    void closeEvent(QCloseEvent* e);
 
+   dtAI::AIPluginInterface* GetAIPluginInterface();
+
 signals:
    void ProjectContextChanged(const std::string& path);
    void MapSelected(const std::string& path);
@@ -57,12 +71,16 @@ public slots:
    void OnOpenMap();
    void OnCloseMap();
    void EnableOrDisableControls();
-
+   void SetAIPluginInterface(dtAI::AIPluginInterface* interface);
+   void SelectRenderingOptions();
+   void PropertyChangedFromControl(dtDAL::PropertyContainer&, dtDAL::ActorProperty&);
 private:
    void ChangeMap(const QString& newMap);
 
    Ui::MainWindow* mUi;
    QWidget& mCentralWidget;
+   AIPropertyEditor& mPropertyEditor;
+   dtAI::AIPluginInterface* mPluginInterface;
 
    QString mCurrentMapName;
 };

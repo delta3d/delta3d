@@ -107,9 +107,7 @@ void AudioManagerTests::TestInitializeCustomContext()
    dtAudio::AudioManager::GetInstance().Destroy();
 
    CPPUNIT_ASSERT(!alcMakeContextCurrent(context));
-   CPPUNIT_ASSERT(alcGetCurrentContext() == NULL);
-
-   CPPUNIT_ASSERT(!alcCloseDevice(device));
+   CPPUNIT_ASSERT(alcGetCurrentContext() == NULL);   
 }
 
 void AudioManagerTests::TestInitializeCustomContextNoShutdown()
