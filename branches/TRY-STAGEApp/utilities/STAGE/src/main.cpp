@@ -32,6 +32,7 @@
 #include <sstream>
 #include <dtCore/globals.h>
 #include <dtCore/system.h>
+#include <dtCore/deltawin.h>
 #include <dtABC/application.h>
 #include <dtEditQt/mainwindow.h>
 #include <dtEditQt/viewportmanager.h>
@@ -91,13 +92,23 @@ int main(int argc, char* argv[])
       dtEditQt::MainWindow mainWindow(configFile);
       //mainWindow.show();
 
-      dtCore::RefPtr<dtEditQt::STAGEApplication> viewer = new dtEditQt::STAGEApplication();
+      //create a dummy window that won't get realized, then delete it.  This is
+      //just to get around the automatic creation of a DeltaWin by Application.
+      dtCore::DeltaWin::DeltaWinTraits traits;
+      traits.realizeUponCreate = false;
+      traits.name = "dummy";
+      dtCore::RefPtr<dtCore::DeltaWin> dummyWin = new dtCore::DeltaWin(traits);
+
+      dtCore::RefPtr<dtEditQt::STAGEApplication> viewer = new dtEditQt::STAGEApplication(dummyWin.get());
       viewer->Config();
+      
+      dummyWin = NULL;
 
       dtEditQt::ViewportManager::GetInstance().SetApplication(viewer.get());
       mainWindow.show();
 
-      viewer->GetView()->GetCamera()->SetNearFarCullingMode(dtCore::Camera::NO_AUTO_NEAR_FAR);
+      //can't do this here, that View doesn't exist.
+      //viewer->GetView()->GetCamera()->SetNearFarCullingMode(dtCore::Camera::NO_AUTO_NEAR_FAR);
 
       //create a little class to ensure Delta3D performs Window "steps"
       dtCore::System::GetInstance().Start();

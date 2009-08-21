@@ -60,10 +60,7 @@ void dtEditQt::STAGEGLWidget::dragEnterEvent(QDragEnterEvent* event)
 {
    if (mViewport != NULL)
    {
-      if (!ViewportManager::GetInstance().GetApplication()->ContainsView(*mViewport->GetView()))
-      {
-         ViewportManager::GetInstance().GetApplication()->AddView(*mViewport->GetView());
-      }
+      ViewportManager::GetInstance().EnableViewport(mViewport, true);
       mViewport->dragEnterEvent(event);
    }
 }
@@ -73,13 +70,9 @@ void dtEditQt::STAGEGLWidget::dragLeaveEvent(QDragLeaveEvent* event)
 {
    if (mViewport != NULL)
    {
-      if (ViewportManager::GetInstance().GetApplication()->ContainsView(*mViewport->GetView()))
-      {
-         ViewportManager::GetInstance().GetApplication()->RemoveView(*mViewport->GetView());
-      }
+      ViewportManager::GetInstance().EnableViewport(mViewport, false);
       mViewport->dragLeaveEvent(event);
    }
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -111,9 +104,8 @@ void dtEditQt::STAGEGLWidget::paintGL()
    //Qt wants to redraw this widget.  If this View isn't currently in the Application
    //temporarily add it, render, then remove it.
    bool viewAdded = false;
-   if (!ViewportManager::GetInstance().GetApplication()->ContainsView(*mViewport->GetView()))
+   if (ViewportManager::GetInstance().EnableViewport(mViewport, true))
    {
-      ViewportManager::GetInstance().GetApplication()->AddView(*mViewport->GetView());
       viewAdded = true;
    }
 
@@ -123,9 +115,8 @@ void dtEditQt::STAGEGLWidget::paintGL()
    //put things back the way they were
    if (viewAdded)
    {
-      ViewportManager::GetInstance().GetApplication()->RemoveView(*mViewport->GetView());
-   }
-   
+      ViewportManager::GetInstance().EnableViewport(mViewport, false);
+   }   
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -199,10 +190,7 @@ void dtEditQt::STAGEGLWidget::enterEvent(QEvent *e)
    if (mViewport != NULL)
    {
       //mouse entered this Widget.  Make sure the View is in the Application
-      if (!ViewportManager::GetInstance().GetApplication()->ContainsView(*mViewport->GetView()))
-      {
-         ViewportManager::GetInstance().GetApplication()->AddView(*mViewport->GetView());
-      }
+      ViewportManager::GetInstance().EnableViewport(mViewport, true);
       mViewport->SetEnabled(true); //enable the Viewport
    }
 }
@@ -214,10 +202,7 @@ void dtEditQt::STAGEGLWidget::leaveEvent(QEvent *e)
    if (mViewport != NULL)
    {
       //mouse left this Widget.  Make sure the View is not in the Application
-      if (ViewportManager::GetInstance().GetApplication()->ContainsView(*mViewport->GetView()))
-      {
-         ViewportManager::GetInstance().GetApplication()->RemoveView(*mViewport->GetView());
-      }
+      ViewportManager::GetInstance().EnableViewport(mViewport, false);
       mViewport->SetEnabled(false); //disable the Viewport
    }
 }

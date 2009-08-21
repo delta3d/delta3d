@@ -393,6 +393,8 @@ namespace dtEditQt
       */
       void emitSetSnapEnabled(bool translation, bool rotation, bool scale);
 
+      bool EnableViewport(Viewport* viewport, bool enable);
+
    signals:
 
       /**

@@ -8,7 +8,8 @@ namespace dtEditQt
    class STAGEApplication : public dtABC::Application
    {
    public:
-   	STAGEApplication();
+      STAGEApplication(dtCore::DeltaWin* win=NULL);
+      virtual void Config();
    protected:
       virtual ~STAGEApplication();
    	

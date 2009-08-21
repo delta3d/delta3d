@@ -804,4 +804,31 @@ namespace dtEditQt
       return mApplication.get();
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   bool ViewportManager::EnableViewport(Viewport* viewport, bool enable)
+   {
+      if (GetApplication() == NULL) {return false;}
+
+      if (enable)
+      {
+         if (!GetApplication()->ContainsView(*viewport->GetView()))
+         {
+            GetApplication()->AddView(*viewport->GetView());
+            return true;
+         }
+      }
+      else
+      {
+         if (GetApplication()->ContainsView(*viewport->GetView()))
+         {
+            if (GetApplication()->GetNumberOfViews() > 1)
+            {
+               GetApplication()->RemoveView(*viewport->GetView());
+               return true;
+            }
+         }
+      }
+
+      return false;
+   }
 } // namespace dtEditQt
