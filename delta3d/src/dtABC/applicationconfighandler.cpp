@@ -85,7 +85,7 @@ namespace dtABC
          std::string name("DefaultApp"),
                      xstring("100"), ystring("100"),
                      wstring("640"), hstring("480"),
-                     showstring("1"), fullstring("0"),
+                     showstring("1"), fullstring("0"), realizestring("1"),
                      changeres("0"), bitdepth("24"), refresh("60");
 
          // search for specific named attributes, append the list of searched strings
@@ -124,6 +124,10 @@ namespace dtABC
          if ( iter != results.end() )
             fullstring = iter->second;
 
+         iter = results.find(ApplicationConfigSchema::REALIZE_UPON_CREATE);
+         if ( iter != results.end() )
+            realizestring = iter->second;
+
          iter = results.find(ApplicationConfigSchema::CHANGEDISPLAYRESOLUTION);
          if ( iter != results.end() )
             changeres = iter->second;
@@ -136,15 +140,16 @@ namespace dtABC
          if ( iter != results.end() )
             refresh = iter->second;
 
-         int winX = dtUtil::ToType<int>(xstring.c_str());
-         int winY = dtUtil::ToType<int>(ystring.c_str());
-         int width = dtUtil::ToType<int>(wstring.c_str());
-         int height = dtUtil::ToType<int>(hstring.c_str());
-         bool showCursor = dtUtil::ToType<bool>(showstring.c_str());
-         bool fullScreen = dtUtil::ToType<bool>(fullstring.c_str());
-         bool resolution_changed = dtUtil::ToType<bool>(changeres.c_str());
-         int depth = dtUtil::ToType<int>(bitdepth.c_str());
-         int rate = dtUtil::ToType<int>(refresh.c_str());
+         int winX = dtUtil::ToType<int>(xstring);
+         int winY = dtUtil::ToType<int>(ystring);
+         int width = dtUtil::ToType<int>(wstring);
+         int height = dtUtil::ToType<int>(hstring);
+         bool showCursor = dtUtil::ToType<bool>(showstring);
+         bool fullScreen = dtUtil::ToType<bool>(fullstring);
+         bool realizeUponCreate = dtUtil::ToType<bool>(realizestring);
+         bool resolution_changed = dtUtil::ToType<bool>(changeres);
+         int depth = dtUtil::ToType<int>(bitdepth);
+         int rate = dtUtil::ToType<int>(refresh);
 
          mConfigData.WINDOW_NAME = name;
          mConfigData.RESOLUTION.width = width;
@@ -155,6 +160,7 @@ namespace dtABC
          mConfigData.WINDOW_Y = winY;
          mConfigData.SHOW_CURSOR = showCursor;
          mConfigData.FULL_SCREEN = fullScreen;
+         mConfigData.REALIZE_UPON_CREATE = realizeUponCreate;
          mConfigData.CHANGE_RESOLUTION = resolution_changed;
       }
       else if ( mCurrentElement == ApplicationConfigSchema::SCENE )

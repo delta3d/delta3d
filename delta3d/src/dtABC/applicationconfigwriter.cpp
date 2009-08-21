@@ -91,6 +91,12 @@ namespace dtABC
             data.FULL_SCREEN ? "1" : "0"
          ).ToXmlString()
       );
+
+      windo->setAttribute( sch.REALIZE_UPON_CREATE,
+         dtUtil::StringToXMLConverter(
+            data.REALIZE_UPON_CREATE ? "1" : "0"
+         ).ToXmlString()
+      );
       
       
       windo->setAttribute( sch.CHANGEDISPLAYRESOLUTION,
@@ -174,6 +180,7 @@ namespace dtABC
       REFRESHRATE = XMLString::transcode( ApplicationConfigSchema::REFRESHRATE.c_str() );
       SHOWCURSOR = XMLString::transcode( ApplicationConfigSchema::SHOWCURSOR.c_str() );
       FULLSCREEN = XMLString::transcode( ApplicationConfigSchema::FULLSCREEN.c_str() );
+      REALIZE_UPON_CREATE = XMLString::transcode( ApplicationConfigSchema::REALIZE_UPON_CREATE.c_str() );
       CHANGEDISPLAYRESOLUTION = XMLString::transcode( ApplicationConfigSchema::CHANGEDISPLAYRESOLUTION.c_str() );
 
       WINDOWINSTANCE = XMLString::transcode( ApplicationConfigSchema::WINDOWINSTANCE.c_str() );
@@ -205,6 +212,7 @@ namespace dtABC
       XMLString::release( &REFRESHRATE );
       XMLString::release( &SHOWCURSOR );
       XMLString::release( &FULLSCREEN );
+      XMLString::release( &REALIZE_UPON_CREATE );
       XMLString::release( &CHANGEDISPLAYRESOLUTION );
 
       XMLString::release( &WINDOWINSTANCE );

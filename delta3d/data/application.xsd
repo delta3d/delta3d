@@ -27,6 +27,7 @@
             <xs:attribute name="RefreshRate" type="xs:integer" use="required" />
             <xs:attribute name="ShowCursor" type="xs:boolean" use="required" />
             <xs:attribute name="FullScreen" type="xs:boolean" use="required" />
+            <xs:attribute name="RealizeUponCreate" type="xs:boolean" use="optional" />
             <xs:attribute name="ChangeDisplayResolution" type="xs:boolean" use="required" />
           </xs:complexType>
         </xs:element>
