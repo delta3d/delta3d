@@ -59,6 +59,7 @@
 #include <dtActors/linkedpointsactorproxy.h>
 #include <dtActors/fenceactor.h>
 #include <dtActors/buildingactor.h>
+#include <dtActors/watergridactor.h>
 
 namespace dtActors
 { // "display name", "category", "description/tooltip"
@@ -98,6 +99,7 @@ namespace dtActors
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::LINKED_POINTS_ACTOR_TYPE(new dtDAL::ActorType("LinkedPoints", "dtActors", "dtActors.LinkedPoints actor"));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::FENCE_ACTOR_TYPE(new dtDAL::ActorType("Fence", "dtActors", "dtActors.Fence actor"));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::BUILDING_ACTOR_TYPE(new dtDAL::ActorType("Building", "dtActors", "dtActors.Building actor"));
+   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::WATER_GRID_ACTOR_TYPE(new dtDAL::ActorType("Water", "dtActors", "dtActors.Water actor"));
 
    /// deprecated types
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::ENVIRONMENT_ACTOR_TYPE(new dtDAL::ActorType("Environment", "dtcore.Environment", "dtCore::BasicEnvironment Actor."));
@@ -185,6 +187,7 @@ namespace dtActors
       mActorFactory->RegisterType<LinkedPointsActorProxy>(LINKED_POINTS_ACTOR_TYPE.get());
       mActorFactory->RegisterType<FenceActorProxy>(FENCE_ACTOR_TYPE.get());
       mActorFactory->RegisterType<BuildingActorProxy>(BUILDING_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<WaterGridActorProxy>(WATER_GRID_ACTOR_TYPE.get());
 
       // Base Game Mesh actor - typically subclassed (maybe shouldn't even be registered)
       mActorFactory->RegisterType<GameMeshActorProxy>(GAME_MESH_ACTOR_TYPE.get());

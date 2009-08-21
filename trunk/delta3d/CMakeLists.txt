@@ -10,7 +10,7 @@ ELSE(WIN32)
         CMAKE_MINIMUM_REQUIRED(VERSION 2.4.8 FATAL_ERROR)
     ENDIF(APPLE)
 ENDIF(WIN32)
- 
+
 #see cmake --help-policy CMP0003 for more information
 IF(COMMAND cmake_policy)
     CMAKE_POLICY(SET CMP0003 NEW)
