@@ -111,6 +111,9 @@ namespace dtEditQt
          EditorActions::GetInstance().mActionEditDuplicateActor->setEnabled(false);
          EditorActions::GetInstance().mActionEditGroundClampActors->setEnabled(false);
          EditorActions::GetInstance().mActionEditGotoActor->setEnabled(false);
+         EditorActions::GetInstance().mActionEditResetTranslation->setEnabled(false);
+         EditorActions::GetInstance().mActionEditResetRotation->setEnabled(false);
+         EditorActions::GetInstance().mActionEditResetScale->setEnabled(false);
          ViewportManager::GetInstance().refreshAllViewports();
          return;
       }
@@ -225,6 +228,9 @@ namespace dtEditQt
       EditorActions::GetInstance().mActionEditDuplicateActor->setEnabled(true);
       EditorActions::GetInstance().mActionEditGroundClampActors->setEnabled(true);
       EditorActions::GetInstance().mActionEditGotoActor->setEnabled(true);
+      EditorActions::GetInstance().mActionEditResetTranslation->setEnabled(true);
+      EditorActions::GetInstance().mActionEditResetRotation->setEnabled(true);
+      EditorActions::GetInstance().mActionEditResetScale->setEnabled(true);
       ViewportManager::GetInstance().refreshAllViewports();
    }
 

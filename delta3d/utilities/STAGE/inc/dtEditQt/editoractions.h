@@ -210,6 +210,15 @@ namespace dtEditQt
       // Action - Edit - Map Events Editor
       QAction* mActionEditMapEvents;
 
+      // Action - Edit - Resets the translation on the current selection
+      QAction* mActionEditResetTranslation;
+
+      // Action - Edit - Resets the rotation on the current selection
+      QAction* mActionEditResetRotation;
+
+      // Action - Edit - Resets the scale on the current selection
+      QAction* mActionEditResetScale;
+
       // Action - Brush - Brush Shape
       QAction* mActionBrushShape;
 
@@ -349,6 +358,21 @@ namespace dtEditQt
        * Slot - Edit - Redo.  Reapplies the previously undone command
        */
       void slotEditRedo();
+
+      /**
+      * Slot - Edit - Reset Translation.
+      */
+      void slotEditResetTranslation();
+
+      /**
+      * Slot - Edit - Reset Rotation.
+      */
+      void slotEditResetRotation();
+
+      /**
+      * Slot - Edit - Reset Scale.
+      */
+      void slotEditResetScale();
 
       /**
        * Slot - Edit Lib Edit event.  Spawns the library editor.
