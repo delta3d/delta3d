@@ -189,10 +189,15 @@ namespace dtEditQt
       mEditMenu->addSeparator();
       mEditMenu->addAction(editorActions.mActionGroupActors);
       mEditMenu->addAction(editorActions.mActionUngroupActors);
+      mEditMenu->addSeparator();
       mEditMenu->addAction(editorActions.mActionEditDuplicateActor);
       mEditMenu->addAction(editorActions.mActionEditDeleteActor);
       mEditMenu->addAction(editorActions.mActionEditGroundClampActors);
       mEditMenu->addAction(editorActions.mActionEditGotoActor);
+      mEditMenu->addSeparator();
+      mEditMenu->addAction(editorActions.mActionEditResetTranslation);
+      mEditMenu->addAction(editorActions.mActionEditResetRotation);
+      mEditMenu->addAction(editorActions.mActionEditResetScale);
       mEditMenu->addSeparator();
       mEditMenu->addAction(editorActions.mActionGetGotoPosition);
       mEditMenu->addSeparator();
@@ -251,11 +256,16 @@ namespace dtEditQt
       mEditToolBar->addSeparator();
       mEditToolBar->addAction(EditorActions::GetInstance().mActionGroupActors);
       mEditToolBar->addAction(EditorActions::GetInstance().mActionUngroupActors);
+      mEditToolBar->addSeparator();
       mEditToolBar->addAction(EditorActions::GetInstance().mActionEditDuplicateActor);
       mEditToolBar->addAction(EditorActions::GetInstance().mActionEditDeleteActor);
       mEditToolBar->addAction(EditorActions::GetInstance().mActionEditGotoActor);
       mEditToolBar->addAction(EditorActions::GetInstance().mActionEditGroundClampActors);
       //mEditToolBar->addAction(EditorActions::GetInstance().mActionEditTaskEditor);
+      mEditToolBar->addSeparator();
+      mEditToolBar->addAction(EditorActions::GetInstance().mActionEditResetTranslation);
+      mEditToolBar->addAction(EditorActions::GetInstance().mActionEditResetRotation);
+      mEditToolBar->addAction(EditorActions::GetInstance().mActionEditResetScale);
       addToolBar(mEditToolBar);
 
       mUndoToolBar = new QToolBar(this);
@@ -474,6 +484,9 @@ namespace dtEditQt
       EditorActions::GetInstance().mActionEditMapLibraries->setEnabled(hasBoth);
       EditorActions::GetInstance().mActionEditTaskEditor->setEnabled(hasBoth);
       EditorActions::GetInstance().mActionEditMapEvents->setEnabled(hasBoth);
+      EditorActions::GetInstance().mActionEditResetTranslation->setEnabled(false);
+      EditorActions::GetInstance().mActionEditResetRotation->setEnabled(false);
+      EditorActions::GetInstance().mActionEditResetScale->setEnabled(false);
 
       EditorActions::GetInstance().mActionWindowsActor->setEnabled(hasBoth);
       EditorActions::GetInstance().mActionWindowsActorSearch->setEnabled(hasBoth);

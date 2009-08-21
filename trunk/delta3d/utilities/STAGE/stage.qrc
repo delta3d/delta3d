@@ -7,8 +7,10 @@
       <file>icons/category_large.png</file>
       <file>icons/character_resource.png</file>
       <file>icons/character_tab.png</file>
+	  <file>icons/cube.png</file>
       <file>icons/duplicate_large.png</file>
       <file>icons/duplicate_small.png</file>
+	  <file>icons/eye.png</file>
       <file>icons/folderopen_tiny.png</file>
       <file>icons/folder_tiny.png</file>
       <file>icons/goto_large.png</file>
@@ -29,10 +31,15 @@
       <file>icons/redo.png</file>
       <file>icons/refresh_large.png</file>
       <file>icons/refresh_small.png</file>
+	  <file>icons/resetBrush.png</file>
+	  <file>icons/resetrotation.png</file>
+	  <file>icons/resetscale.png</file>
+	  <file>icons/resettranslation.png</file>
       <file>icons/savemap_small.png</file>
       <file>icons/snapgrid_small.png</file>
       <file>icons/sound_resource.png</file>
       <file>icons/sound_tab.png</file>
+	  <file>icons/sphere.png</file>
       <file>icons/splash.png</file>
       <file>icons/staticmesh_resource.png</file>
       <file>icons/staticmesh_tab.png</file>

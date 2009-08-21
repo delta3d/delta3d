@@ -49,12 +49,15 @@ namespace dtEditQt
       ICON_EDIT_UNGROUP = ":/icons/ungroup.png";
       ICON_EDIT_UNDO = ":/icons/undo.png";
       ICON_EDIT_REDO = ":/icons/redo.png";
+      ICON_EDIT_RESET_TRANSLATION = ":/icons/resettranslation.png";
+      ICON_EDIT_RESET_ROTATION = ":/icons/resetrotation.png";
+      ICON_EDIT_RESET_SCALE = ":/icons/resetscale.png";
 
-      ICON_BRUSH_CUBE = dtCore::GetDeltaRootPath() + "/utilities/STAGE/icons/cube.png";
-      ICON_BRUSH_SPHERE = dtCore::GetDeltaRootPath() + "/utilities/STAGE/icons/sphere.png";
-      ICON_BRUSH_RESET = dtCore::GetDeltaRootPath() + "/utilities/STAGE/icons/resetBrush.png";
+      ICON_BRUSH_CUBE = ":/icons/cube.png";
+      ICON_BRUSH_SPHERE = ":/icons/sphere.png";
+      ICON_BRUSH_RESET = ":/icons/resetBrush.png";
 
-      ICON_EYE = dtCore::GetDeltaRootPath() + "/utilities/STAGE/icons/eye.png";      
+      ICON_EYE = ":/icons/eye.png";      
 
       ICON_TOOLMODE_NORMAL = ":/icons/normalmode.png";
 
@@ -114,6 +117,9 @@ namespace dtEditQt
    std::string UIResources::ICON_EDIT_UNGROUP("");
    std::string UIResources::ICON_EDIT_UNDO("");
    std::string UIResources::ICON_EDIT_REDO("");
+   std::string UIResources::ICON_EDIT_RESET_TRANSLATION("");
+   std::string UIResources::ICON_EDIT_RESET_ROTATION("");
+   std::string UIResources::ICON_EDIT_RESET_SCALE("");
 
    std::string UIResources::ICON_BRUSH_CUBE("");
    std::string UIResources::ICON_BRUSH_SPHERE("");
