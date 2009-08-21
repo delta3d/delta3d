@@ -54,6 +54,7 @@ namespace dtABC
       static const std::string REFRESHRATE;
       static const std::string SHOWCURSOR;
       static const std::string FULLSCREEN;
+      static const std::string REALIZE_UPON_CREATE;
       static const std::string CHANGEDISPLAYRESOLUTION;
 
       static const std::string WINDOWINSTANCE;
