@@ -35,23 +35,19 @@
 namespace dtCore
 {
    ///////////////////////////////////////////////////////////////////////////////
-   BatchIsector::BatchIsector(dtCore::Scene *scene) :
+   BatchIsector::BatchIsector(dtCore::Scene *scene, unsigned numIsectors) :
       mScene(scene)
-      ,mFixedArraySize(32)
+   {
+      mISectors.reserve(numIsectors);
+      for(unsigned i = 0 ; i < numIsectors; ++i)
       {
-      for(int i = 0 ; i < mFixedArraySize; ++i)
-      {
-         mISectors[i] = new SingleISector(i);
+         mISectors.push_back(new BatchIsector::SingleISector(i));
       }
-      }
+   }
 
    ///////////////////////////////////////////////////////////////////////////////
    BatchIsector::~BatchIsector()
    {
-      for(int i = 0 ; i < mFixedArraySize; ++i)
-      {
-         mISectors[i] = NULL;
-      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -63,42 +59,48 @@ namespace dtCore
          return false;
       }
 
-      osgUtil::IntersectVisitor intersectVisitor;
+      osgUtil::IntersectionVisitor intersectionVisitor;
+      dtCore::RefPtr<osgUtil::IntersectorGroup> intersectGroup = new osgUtil::IntersectorGroup;
+      intersectionVisitor.setIntersector(intersectGroup.get());
 
-      if(useHighestLvlOfDetail)
-         intersectVisitor.setLODSelectionMode(osgUtil::IntersectVisitor::USE_HIGHEST_LEVEL_OF_DETAIL);
-      else
-         intersectVisitor.setLODSelectionMode(osgUtil::IntersectVisitor::USE_SEGMENT_START_POINT_AS_EYE_POINT_FOR_LOD_LEVEL_SELECTION);
-
-      for(int i = 0 ; i < mFixedArraySize; ++i)
+      if (useHighestLvlOfDetail)
       {
-         if(mISectors[i]->GetIsOn())
+         intersectionVisitor.setLODSelectionMode(osgUtil::IntersectionVisitor::USE_HIGHEST_LEVEL_OF_DETAIL);
+      }
+      else
+      {
+         intersectionVisitor.setLODSelectionMode(osgUtil::IntersectionVisitor::USE_EYE_POINT_FOR_LOD_LEVEL_SELECTION);
+      }
+
+      for (unsigned i = 0 ; i < mISectors.size(); ++i)
+      {
+         if (mISectors[i]->GetIsOn())
          {
-            intersectVisitor.addLineSegment(mISectors[i]->mLineSegment.get());
+            intersectGroup->addIntersector(mISectors[i]->mLineSegment.get());
          }
       }
 
-      intersectVisitor.setEyePoint(cameraEyePoint);
+      intersectionVisitor.setReferenceEyePoint(cameraEyePoint);
 
-      if(mQueryRoot.valid())
+      if (mQueryRoot.valid())
       {
-         mQueryRoot->GetOSGNode()->accept(intersectVisitor);
+         mQueryRoot->GetOSGNode()->accept(intersectionVisitor);
       }
-      else if( mScene != NULL )
+      else if (mScene != NULL)
       {
-         mScene->GetSceneNode()->accept(intersectVisitor);
+         mScene->GetSceneNode()->accept(intersectionVisitor);
       }
 
-      if(intersectVisitor.hits())
+      if (intersectGroup->containsIntersections())
       {
-         for(int i = 0 ; i < mFixedArraySize; ++i)
+         for (unsigned i = 0 ; i < mISectors.size(); ++i)
          {
-            if(mISectors[i]->GetIsOn())
+            if (mISectors[i]->GetIsOn())
             {
-               mISectors[i]->SetHitList(intersectVisitor.getHitList(mISectors[i]->mLineSegment.get()));
-               if(mISectors[i]->mCheckClosestDrawables == true)
+               mISectors[i]->SetHitList(mISectors[i]->mLineSegment->getIntersections());
+               if (mISectors[i]->mCheckClosestDrawables == true)
                {
-                  osg::NodePath &nodePath = mISectors[i]->GetHitList()[0].getNodePath();
+                  const osg::NodePath& nodePath = (*mISectors[i]->mHitList.begin()).nodePath;
                   mISectors[i]->mClosestDrawable = MapNodePathToDrawable(nodePath);
                }
             }
@@ -110,7 +112,7 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtCore::DeltaDrawable *BatchIsector::MapNodePathToDrawable(osg::NodePath &nodePath)
+   dtCore::DeltaDrawable* BatchIsector::MapNodePathToDrawable(const osg::NodePath& nodePath)
    {
       if( ( !mQueryRoot.valid() && mScene == NULL ) || nodePath.empty() )
       {
@@ -118,7 +120,7 @@ namespace dtCore
       }
 
       std::set<osg::Node *> nodeCache;
-      osg::NodePath::iterator itor;
+      osg::NodePath::const_iterator itor;
       std::stack<dtCore::DeltaDrawable *> drawables;
 
       //Create a cache of the nodepath for quicker lookups since we are doing
@@ -181,7 +183,7 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    BatchIsector::SingleISector& BatchIsector::EnableAndGetISector(int nIndexID)
    {
-      if(CheckBoundsOnArray(nIndexID) == false)
+      if (CheckBoundsOnArray(nIndexID) == false)
       {
          throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_PARAMETER,
                   "EnableAndGetISector sent in bad index", __FILE__, __LINE__);
@@ -193,7 +195,7 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    const BatchIsector::SingleISector& BatchIsector::GetSingleISector(int nIndexID)
    {
-      if(CheckBoundsOnArray(nIndexID) == false)
+      if (CheckBoundsOnArray(nIndexID) == false)
       {
          throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_PARAMETER,
                   "EnableAndGetISector sent in bad index", __FILE__, __LINE__);
@@ -204,10 +206,10 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    void BatchIsector::StopUsingSingleISector(int nIndexID)
    {
-      if(CheckBoundsOnArray(nIndexID) == false)
+      if (CheckBoundsOnArray(nIndexID) == false)
          return;  
 
-      if(mISectors[nIndexID]->GetIsOn())
+      if (mISectors[nIndexID]->GetIsOn())
       {
          mISectors[nIndexID]->ResetSingleISector();
       }
@@ -217,19 +219,16 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    void BatchIsector::StopUsingAllISectors()
    {
-      for(int i = 0 ; i < mFixedArraySize; ++i)
+      for (unsigned i = 0 ; i < mISectors.size(); ++i)
+      {
          StopUsingSingleISector(i);
+      }
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   bool BatchIsector::CheckBoundsOnArray(int index)
+   ///////////////////////////////////////////////////////////////////////////
+   bool BatchIsector::CheckBoundsOnArray(unsigned index)
    {
-      if(index < 0 || index > mFixedArraySize - 1)
-      {
-         LOG_ERROR("You sent in a bad index to the batchISector");
-         return false;
-      }
-      return true;
+      return index < mISectors.size();
    }
 
    //////////////////////////////////////////////////////////////////////////////////////
@@ -237,38 +236,80 @@ namespace dtCore
    //////////////////////////////////////////////////////////////////////////////////////
 
    ///////////////////////////////////////////////////////////////////////////////
-   void BatchIsector::SingleISector::GetHitPoint( osg::Vec3& xyz, int pointNum ) const
+   BatchIsector::SingleISector::SingleISector(const unsigned idForISector, const std::string& nameForISector, bool checkClosestDrawables)
+   : mLineSegment(new osgUtil::LineSegmentIntersector(osgUtil::Intersector::MODEL, osg::Vec3d(), osg::Vec3d()))
+   , mNameForReference(nameForISector)
+   , mIDForReference(-1)
+   , mIsOn(false)
+   , mCheckClosestDrawables(checkClosestDrawables)
    {
-      if (pointNum >= GetNumberOfHits()) return;
-
-      xyz = mHitList[pointNum].getWorldIntersectPoint();
-   }
-   ///////////////////////////////////////////////////////////////////////////////
-   void BatchIsector::SingleISector::GetHitPointNormal( osg::Vec3& normal, int pointNum ) const
-   {
-      if (pointNum >= GetNumberOfHits()) return;
-
-      normal = mHitList[pointNum].getWorldIntersectNormal();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   int BatchIsector::SingleISector::GetNumberOfHits() const
+   BatchIsector::SingleISector::SingleISector(const unsigned idForISector, bool checkClosestDrawables)
+   : mLineSegment(new osgUtil::LineSegmentIntersector(osgUtil::Intersector::MODEL, osg::Vec3d(), osg::Vec3d()))
+   , mIDForReference(idForISector)
+   , mIsOn(false)
+   , mCheckClosestDrawables(checkClosestDrawables)
+   {
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   BatchIsector::SingleISector::~SingleISector()
+   {
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void BatchIsector::SingleISector::GetHitPoint( osg::Vec3& xyz, unsigned pointNum ) const
+   {
+      if (pointNum >= GetNumberOfHits()) return;
+
+      xyz = GetIntersectionHit(pointNum).getWorldIntersectPoint();
+   }
+   ///////////////////////////////////////////////////////////////////////////////
+   void BatchIsector::SingleISector::GetHitPointNormal( osg::Vec3& normal, unsigned pointNum ) const
+   {
+      if (pointNum >= GetNumberOfHits()) return;
+
+      normal = GetIntersectionHit(pointNum).getWorldIntersectNormal();
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   unsigned BatchIsector::SingleISector::GetNumberOfHits() const
    {
       return mHitList.size();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void BatchIsector::SingleISector::SetSectorAsRay(const osg::Vec3& startPos, osg::Vec3& direction, const float lineLength)
+   BatchIsector::Hit BatchIsector::SingleISector::GetIntersectionHit(unsigned num) const
+   {
+      unsigned count = 0;
+      HitList::const_iterator i, iend;
+      i = mHitList.begin();
+      iend = mHitList.end();
+      for (; i != iend; ++i, ++count)
+      {
+         if (count == num)
+         {
+            return *i;
+         }
+      }
+      return Hit();
+   }
+
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void BatchIsector::SingleISector::SetSectorAsRay(const osg::Vec3d& startPos, osg::Vec3d& direction, const double lineLength)
    {
       direction.normalize();
-      mLineSegment->set(startPos, startPos + (direction*lineLength));
-      ResetSingleISector();
+      SetSectorAsLineSegment(startPos, startPos + (direction*lineLength));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void BatchIsector::SingleISector::SetSectorAsLineSegment(const osg::Vec3& startPos, const osg::Vec3& endPos)
+   void BatchIsector::SingleISector::SetSectorAsLineSegment(const osg::Vec3d& startPos, const osg::Vec3d& endPos)
    {
-      mLineSegment->set(startPos, endPos);
+      mLineSegment->setStart(startPos);
+      mLineSegment->setEnd(endPos);
       ResetSingleISector();
    }
 
@@ -280,7 +321,7 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void BatchIsector::SingleISector::SetHitList(osgUtil::IntersectVisitor::HitList& newList)
+   void BatchIsector::SingleISector::SetHitList(BatchIsector::HitList& newList)
    {
       mHitList = newList;
    }
