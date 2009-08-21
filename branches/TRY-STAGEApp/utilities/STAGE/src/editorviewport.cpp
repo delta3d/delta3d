@@ -381,7 +381,7 @@ namespace dtEditQt
             }
 
             ViewportManager::GetInstance().getMasterScene()->AddDrawable(drawable);
-            ViewportManager::GetInstance().refreshAllViewports();
+            //ViewportManager::GetInstance().refreshAllViewports();
          }
 
          event->accept();
@@ -397,7 +397,7 @@ namespace dtEditQt
       // Remove the ghost.
       ClearGhostProxy();
 
-      ViewportManager::GetInstance().refreshAllViewports();
+      //ViewportManager::GetInstance().refreshAllViewports();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -462,7 +462,7 @@ namespace dtEditQt
                billBoard->SetRotation(osg::Matrix::rotate(getCamera()->getOrientation()));
             }
 
-            ViewportManager::GetInstance().refreshAllViewports();
+            //ViewportManager::GetInstance().refreshAllViewports();
          }
 
          event->setDropAction(Qt::MoveAction);
@@ -546,7 +546,7 @@ namespace dtEditQt
                   ViewportManager::GetInstance().getViewportOverlay()->clearCurrentSelection();
                   ViewportManager::GetInstance().getViewportOverlay()->setMultiSelectMode(true);
                   EditorEvents::GetInstance().emitActorsSelected(proxies);
-                  ViewportManager::GetInstance().refreshAllViewports();
+                  //ViewportManager::GetInstance().refreshAllViewports();
                }
 
                event->setDropAction(Qt::MoveAction);
@@ -586,7 +586,7 @@ namespace dtEditQt
          event->setDropAction(Qt::MoveAction);
          event->accept();
 
-         ViewportManager::GetInstance().refreshAllViewports();
+         //ViewportManager::GetInstance().refreshAllViewports();
       }
       else
       {
@@ -912,7 +912,7 @@ namespace dtEditQt
          }
 
          pick(e->pos().x(), e->pos().y());
-         ViewportManager::GetInstance().refreshAllViewports();
+         //ViewportManager::GetInstance().refreshAllViewports();
       }
 
       return true;

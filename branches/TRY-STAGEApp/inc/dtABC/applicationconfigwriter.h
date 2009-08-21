@@ -64,6 +64,7 @@ namespace dtABC
          XMLCh* REFRESHRATE;
          XMLCh* SHOWCURSOR;
          XMLCh* FULLSCREEN;
+         XMLCh* REALIZE_UPON_CREATE;
          XMLCh* CHANGEDISPLAYRESOLUTION;
 
          XMLCh* WINDOWINSTANCE;

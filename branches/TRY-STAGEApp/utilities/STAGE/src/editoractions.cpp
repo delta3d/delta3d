@@ -84,6 +84,7 @@
 #include <dtDAL/actorproxyicon.h>
 #include <dtDAL/environmentactor.h>
 #include <dtDAL/librarymanager.h>
+#include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/map.h>
 #include <dtCore/globals.h>
 
@@ -311,6 +312,21 @@ namespace dtEditQt
       mActionEditRedo->setShortcut(tr("Ctrl+Y"));
       mActionEditRedo->setStatusTip(tr("Redoes the previous property edit, actor delete, or actor creation undo command."));
       connect(mActionEditRedo, SIGNAL(triggered()), this, SLOT(slotEditRedo()));
+
+      // Edit - Reset Translation
+      mActionEditResetTranslation = new QAction(QIcon(UIResources::ICON_EDIT_RESET_TRANSLATION.c_str()), tr("Reset Translation"), this);
+      mActionEditResetTranslation->setStatusTip(tr("Resets the translations on the current selection."));
+      connect(mActionEditResetTranslation, SIGNAL(triggered()), this, SLOT(slotEditResetTranslation()));
+
+      // Edit - Reset Rotation
+      mActionEditResetRotation = new QAction(QIcon(UIResources::ICON_EDIT_RESET_ROTATION.c_str()), tr("Reset Rotation"), this);
+      mActionEditResetRotation->setStatusTip(tr("Resets the rotation on the current selection."));
+      connect(mActionEditResetRotation, SIGNAL(triggered()), this, SLOT(slotEditResetRotation()));
+
+      // Edit - Reset Scale
+      mActionEditResetScale = new QAction(QIcon(UIResources::ICON_EDIT_RESET_SCALE.c_str()), tr("Reset Scale"), this);
+      mActionEditResetScale->setStatusTip(tr("Resets the scale on the current selection."));
+      connect(mActionEditResetScale, SIGNAL(triggered()), this, SLOT(slotEditResetScale()));
 
       // Brush - Change Shape
       mActionBrushShape = new QAction(QIcon(UIResources::ICON_BRUSH_CUBE.c_str()), tr("Brush Shape"), this);
@@ -1144,6 +1160,116 @@ namespace dtEditQt
    void EditorActions::slotEditRedo()
    {
       EditorData::GetInstance().getUndoManager().doRedo();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorActions::slotEditResetTranslation()
+   {
+      LOG_INFO("Resetting Translation on Actors.");
+
+      ViewportOverlay::ActorProxyList& selection =ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
+
+      EditorEvents::GetInstance().emitBeginChangeTransaction();
+      EditorData::GetInstance().getUndoManager().beginMultipleUndo();
+
+      // Reset each proxy that is selected.
+      ViewportOverlay::ActorProxyList::iterator itor;
+      for (itor = selection.begin(); itor != selection.end(); ++itor)
+      {
+         dtDAL::TransformableActorProxy* proxy =
+            dynamic_cast<dtDAL::TransformableActorProxy*>(itor->get());
+         if (proxy != NULL)
+         {
+            dtDAL::ActorProperty* prop = proxy->GetProperty(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
+
+            if (prop)
+            {
+               std::string oldValue = prop->ToString();
+               proxy->SetTranslation(osg::Vec3());
+               std::string newValue = prop->ToString();
+
+               EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, prop, oldValue, newValue);
+               EditorEvents::GetInstance().emitActorPropertyChanged(proxy, prop);
+            }
+         }
+      }
+
+      EditorData::GetInstance().getUndoManager().endMultipleUndo();
+      EditorEvents::GetInstance().emitEndChangeTransaction();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorActions::slotEditResetRotation()
+   {
+      LOG_INFO("Resetting Translation on Actors.");
+
+      ViewportOverlay::ActorProxyList& selection =ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
+
+      EditorEvents::GetInstance().emitBeginChangeTransaction();
+      EditorData::GetInstance().getUndoManager().beginMultipleUndo();
+
+      // Reset each proxy that is selected.
+      ViewportOverlay::ActorProxyList::iterator itor;
+      for (itor = selection.begin(); itor != selection.end(); ++itor)
+      {
+         dtDAL::TransformableActorProxy* proxy =
+            dynamic_cast<dtDAL::TransformableActorProxy*>(itor->get());
+         if (proxy != NULL)
+         {
+            dtDAL::ActorProperty* prop = proxy->GetProperty(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
+
+            if (prop)
+            {
+               std::string oldValue = prop->ToString();
+               proxy->SetRotation(osg::Vec3());
+               std::string newValue = prop->ToString();
+
+               EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, prop, oldValue, newValue);
+               EditorEvents::GetInstance().emitActorPropertyChanged(proxy, prop);
+            }
+         }
+      }
+
+      EditorData::GetInstance().getUndoManager().endMultipleUndo();
+      EditorEvents::GetInstance().emitEndChangeTransaction();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorActions::slotEditResetScale()
+   {
+      LOG_INFO("Resetting Translation on Actors.");
+
+      ViewportOverlay::ActorProxyList& selection =ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
+
+      EditorEvents::GetInstance().emitBeginChangeTransaction();
+      EditorData::GetInstance().getUndoManager().beginMultipleUndo();
+
+      // Reset each proxy that is selected.
+      ViewportOverlay::ActorProxyList::iterator itor;
+      for (itor = selection.begin(); itor != selection.end(); ++itor)
+      {
+         dtDAL::TransformableActorProxy* proxy =
+            dynamic_cast<dtDAL::TransformableActorProxy*>(itor->get());
+         if (proxy != NULL)
+         {
+            dtDAL::Vec3ActorProperty* prop = dynamic_cast<dtDAL::Vec3ActorProperty*> (proxy->GetProperty("Scale"));
+
+            if (prop)
+            {
+               std::string oldValue = prop->ToString();
+
+               prop->SetValue(osg::Vec3(1.0f, 1.0f, 1.0f));
+
+               std::string newValue = prop->ToString();
+
+               EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, prop, oldValue, newValue);
+               EditorEvents::GetInstance().emitActorPropertyChanged(proxy, prop);
+            }
+         }
+      }
+
+      EditorData::GetInstance().getUndoManager().endMultipleUndo();
+      EditorEvents::GetInstance().emitEndChangeTransaction();
    }
 
    //////////////////////////////////////////////////////////////////////////////

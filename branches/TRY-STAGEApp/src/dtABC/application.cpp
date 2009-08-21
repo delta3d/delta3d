@@ -287,7 +287,7 @@ bool Application::MouseScrolled(const dtCore::Mouse* mouse, int delta)
 
 ///////////////////////////////////////////////////////////////////////////////
 void Application::CreateInstances(const std::string& name, int x, int y, int width,
-                                  int height, bool cursor, bool fullScreen)
+                                  int height, bool cursor, bool fullScreen, bool realizeUponCreate)
 {
    //create the instances and hook-up the default
    //connections.  The instance attributes may be
@@ -304,7 +304,7 @@ void Application::CreateInstances(const std::string& name, int x, int y, int wid
       traits.height = height;
       traits.showCursor = cursor;
       traits.fullScreen = fullScreen;
-
+      traits.realizeUponCreate = realizeUponCreate;
       mWindow = new dtCore::DeltaWin(traits);
    }
 
@@ -417,6 +417,7 @@ ApplicationConfigData Application::GetDefaultConfigData()
 
    data.SHOW_CURSOR = true;
    data.FULL_SCREEN = false;
+   data.REALIZE_UPON_CREATE = true;
    data.CHANGE_RESOLUTION = false;
 
    data.CAMERA_NAME = "defaultCam";
@@ -511,6 +512,11 @@ bool Application::AppXMLApplicator::operator ()(const ApplicationConfigData& dat
    dwin->SetPosition(data.WINDOW_X, data.WINDOW_Y, data.RESOLUTION.width, data.RESOLUTION.height);
    dwin->ShowCursor(data.SHOW_CURSOR);
    dwin->SetFullScreenMode(data.FULL_SCREEN);
+   if (data.REALIZE_UPON_CREATE)
+   {
+      dwin->GetOsgViewerGraphicsWindow()->realize();
+      dwin->GetOsgViewerGraphicsWindow()->makeCurrent();
+   }
 
    // change the resolution if needed and valid
    if (data.CHANGE_RESOLUTION)

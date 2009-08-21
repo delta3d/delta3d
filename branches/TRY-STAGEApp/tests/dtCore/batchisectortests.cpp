@@ -110,7 +110,7 @@ class BatchISectorTests : public CPPUNIT_NS::TestFixture
          CPPUNIT_ASSERT(terrain.get() == iSector.GetClosestDrawable());
 
          mBatchIsector->Reset();
-         CPPUNIT_ASSERT_EQUAL(0, iSector.GetNumberOfHits());
+         CPPUNIT_ASSERT_EQUAL(0U, iSector.GetNumberOfHits());
          CPPUNIT_ASSERT(NULL == iSector.GetClosestDrawable());
       
             

@@ -110,6 +110,7 @@ namespace dtTest
          {
             CPPUNIT_ASSERT_EQUAL( actual.CHANGE_RESOLUTION , truth.CHANGE_RESOLUTION );
             CPPUNIT_ASSERT_EQUAL( actual.FULL_SCREEN , truth.FULL_SCREEN );
+            CPPUNIT_ASSERT_EQUAL( actual.REALIZE_UPON_CREATE , truth.REALIZE_UPON_CREATE );
             CPPUNIT_ASSERT_EQUAL( actual.RESOLUTION.bitDepth , truth.RESOLUTION.bitDepth );
             CPPUNIT_ASSERT_EQUAL( actual.RESOLUTION.height , truth.RESOLUTION.height );
             CPPUNIT_ASSERT_EQUAL( actual.RESOLUTION.refresh , truth.RESOLUTION.refresh );
@@ -333,6 +334,7 @@ namespace dtTest
       dtABC::ApplicationConfigData truth;
       truth.CHANGE_RESOLUTION = false;
       truth.FULL_SCREEN = false;
+      truth.REALIZE_UPON_CREATE = true;
 
       truth.RESOLUTION.bitDepth = 16;
       truth.RESOLUTION.height = 32;

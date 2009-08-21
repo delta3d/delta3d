@@ -24,13 +24,25 @@
 
 namespace dtABC
 {
-   ApplicationConfigData::ApplicationConfigData() :
-      WINDOW_X(0), WINDOW_Y(0),
-      RESOLUTION(),
-      SHOW_CURSOR(false), FULL_SCREEN(false), CHANGE_RESOLUTION(false),
-      CAMERA_NAME(""), VIEW_NAME(""), SCENE_NAME(""), WINDOW_NAME(""),
-      CAMERA_INSTANCE(""), SCENE_INSTANCE(""), WINDOW_INSTANCE(""),
-      VIEWPORT_X(0), VIEWPORT_Y(0), VIEWPORT_W(-1), VIEWPORT_H(-1)
+   ApplicationConfigData::ApplicationConfigData()
+   : WINDOW_X(0)
+   , WINDOW_Y(0)
+   , RESOLUTION()
+   , SHOW_CURSOR(false)
+   , FULL_SCREEN(false)
+   , CHANGE_RESOLUTION(false)
+   , REALIZE_UPON_CREATE(false)
+   , CAMERA_NAME("")
+   , VIEW_NAME("")
+   , SCENE_NAME("")
+   , WINDOW_NAME("")
+   , CAMERA_INSTANCE("")
+   , SCENE_INSTANCE("")
+   , WINDOW_INSTANCE("")
+   , VIEWPORT_X(0)
+   , VIEWPORT_Y(0)
+   , VIEWPORT_W(-1)
+   , VIEWPORT_H(-1)
    {
    }
    
