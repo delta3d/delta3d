@@ -135,7 +135,7 @@ namespace dtEditQt
 
       // By default, perspective viewports have their camera set to the world view
       // camera.  The world view camera is what is used in the main perspective view.
-      perspView->setCamera(camera.get());
+      //perspView->setCamera(camera.get()); //E!
 
       // No need for an overlay for this viewport since we cannot select meshes
       // in the preview window.
