@@ -33,6 +33,7 @@
 #include <dtGame/gmcomponent.h>
 #include <dtGame/invokable.h>
 #include <dtGame/mapchangestatedata.h>
+#include <dtGame/gmstatistics.h>
 
 #include <dtDAL/actortype.h>
 #include <dtDAL/project.h>
@@ -71,6 +72,23 @@ namespace dtGame
    const GameManager::ComponentPriority GameManager::ComponentPriority::LOWER("LOWER", 4);
    const GameManager::ComponentPriority GameManager::ComponentPriority::LOWEST("LOWEST", 5);
 
+
+   /// A wrapper for data like stats to prevent includes wherever gamemanager.h is used - uses the pimple pattern (like system)
+   class GMImpl
+   {
+   public:
+      GMImpl() 
+      {  
+      }
+      ~GMImpl() 
+      { 
+      }
+
+      /// stats for the work of the GM - in a class so its less obtrusive to the gm
+      GMStatistics mGMStatistics;
+   };
+
+
    ///////////////////////////////////////////////////////////////////////////////
    GameManager::GameManager(dtCore::Scene& scene)
       : mMachineInfo(new MachineInfo())
@@ -92,6 +110,8 @@ namespace dtGame
       dtCore::RefPtr<Message> restartMessage =
          GetMessageFactory().CreateMessage(MessageType::INFO_RESTARTED);
       SendMessage(*restartMessage);
+
+      mGMImpl = new GMImpl();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -99,6 +119,7 @@ namespace dtGame
       : mMachineInfo(new MachineInfo())
       , mFactory("GameManager MessageFactory", *mMachineInfo, "")
    {
+      // THIS IS PRIVATE AND PREVENTS USE OF COPY CONSTRUCTOR. DO NOT PUT ANYTHING HERE
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -108,6 +129,8 @@ namespace dtGame
    GameManager::~GameManager()
    {
       RemoveSender(&dtCore::System::GetInstance());
+
+      delete mGMImpl;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -428,9 +451,9 @@ namespace dtGame
       // statistics stuff.
       //  stats information used to track statistics per fragment (usually about 1 second)
       dtCore::Timer_t frameTickStart(0);
-      if (mGmStatistics.mStatisticsInterval > 0)
+      if (mGMImpl->mGMStatistics.mStatisticsInterval > 0)
       {
-         frameTickStart = mGmStatistics.mStatsTickClock.Tick();
+         frameTickStart = mGMImpl->mGMStatistics.mStatsTickClock.Tick();
       }
 
       DoSendNetworkMessages();
@@ -470,7 +493,7 @@ namespace dtGame
 
       RemoveDeletedActors();
 
-      mGmStatistics.FragmentTimeDump(frameTickStart, *this);
+      mGMImpl->mGMStatistics.FragmentTimeDump(frameTickStart, *this);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -509,12 +532,12 @@ namespace dtGame
    void GameManager::DoSendNetworkMessages()
    {
       // statistics stuff.
-      bool logComponents = mGmStatistics.ShouldWeLogComponents();
+      bool logComponents = mGMImpl->mGMStatistics.ShouldWeLogComponents();
       dtCore::Timer_t frameTickStartCurrent(0);
       // SEND MESSAGES - Forward Send Messages to all components (no actors)
       while (!mSendNetworkMessageQueue.empty())
       {
-         mGmStatistics.mStatsNumSendNetworkMessages += 1;
+         mGMImpl->mGMStatistics.mStatsNumSendNetworkMessages += 1;
          dtCore::RefPtr<const Message> message = mSendNetworkMessageQueue.front();
          mSendNetworkMessageQueue.pop();
 
@@ -536,7 +559,7 @@ namespace dtGame
                // Statistics information
                if (logComponents)
                {
-                  frameTickStartCurrent = mGmStatistics.mStatsTickClock.Tick();
+                  frameTickStartCurrent = mGMImpl->mGMStatistics.mStatsTickClock.Tick();
                }
 
                GMComponent& component = **i;
@@ -554,10 +577,10 @@ namespace dtGame
                if (logComponents)
                {
                   double frameTickDelta =
-                     mGmStatistics.mStatsTickClock.DeltaSec(frameTickStartCurrent,
-                                              mGmStatistics.mStatsTickClock.Tick());
+                     mGMImpl->mGMStatistics.mStatsTickClock.DeltaSec(frameTickStartCurrent,
+                                              mGMImpl->mGMStatistics.mStatsTickClock.Tick());
 
-                  mGmStatistics.UpdateDebugStats(component.GetUniqueId(),
+                  mGMImpl->mGMStatistics.UpdateDebugStats(component.GetUniqueId(),
                                                  component.GetName(),
                                                  frameTickDelta, true, false);
                }
@@ -574,7 +597,7 @@ namespace dtGame
    void GameManager::DoSendMessageToComponents(const Message& message)
    {
       //statistics stuff.
-      bool logComponents = mGmStatistics.ShouldWeLogComponents();
+      bool logComponents = mGMImpl->mGMStatistics.ShouldWeLogComponents();
       dtCore::Timer_t frameTickStartCurrent(0);
       bool isATickLocalMessage = (message.GetMessageType() == MessageType::TICK_LOCAL);
 
@@ -587,7 +610,7 @@ namespace dtGame
          // Statistics information
          if (logComponents)
          {
-            frameTickStartCurrent = mGmStatistics.mStatsTickClock.Tick();
+            frameTickStartCurrent = mGMImpl->mGMStatistics.mStatsTickClock.Tick();
          }
 
          GMComponent& component = **i;
@@ -612,10 +635,10 @@ namespace dtGame
          if (logComponents)
          {
             double frameTickDelta =
-               mGmStatistics.mStatsTickClock.DeltaSec(frameTickStartCurrent,
-                                                      mGmStatistics.mStatsTickClock.Tick());
+               mGMImpl->mGMStatistics.mStatsTickClock.DeltaSec(frameTickStartCurrent,
+                                                      mGMImpl->mGMStatistics.mStatsTickClock.Tick());
 
-            mGmStatistics.UpdateDebugStats(component.GetUniqueId(),
+            mGMImpl->mGMStatistics.UpdateDebugStats(component.GetUniqueId(),
                                            component.GetName(),
                                            frameTickDelta, true, isATickLocalMessage);
          }
@@ -649,7 +672,7 @@ namespace dtGame
       // PROCESS MESSAGES - Send all Process messages to components and interested actors
       while (!mSendMessageQueue.empty())
       {
-         mGmStatistics.mStatsNumProcMessages += 1;
+         mGMImpl->mGMStatistics.mStatsNumProcMessages += 1;
 
          // Forward to Components first
          dtCore::RefPtr<const Message> messageRef = mSendMessageQueue.front();
@@ -671,7 +694,7 @@ namespace dtGame
    void GameManager::InvokeGlobalInvokables(const Message& message)
    {
       // statistics stuff.
-      bool logActors = mGmStatistics.ShouldWeLogActors();
+      bool logActors = mGMImpl->mGMStatistics.ShouldWeLogActors();
       dtCore::Timer_t frameTickStartCurrent(0);
       bool isATickLocalMessage = (message.GetMessageType() == MessageType::TICK_LOCAL);
 
@@ -702,7 +725,7 @@ namespace dtGame
             // Statistics information
             if (logActors)
             {
-               frameTickStartCurrent = mGmStatistics.mStatsTickClock.Tick();
+               frameTickStartCurrent = mGMImpl->mGMStatistics.mStatsTickClock.Tick();
             }
 
             try
@@ -726,10 +749,10 @@ namespace dtGame
             if (logActors)
             {
                double frameTickDelta
-               = mGmStatistics.mStatsTickClock.DeltaSec(frameTickStartCurrent,
-                                                        mGmStatistics.mStatsTickClock.Tick());
+               = mGMImpl->mGMStatistics.mStatsTickClock.DeltaSec(frameTickStartCurrent,
+                                                        mGMImpl->mGMStatistics.mStatsTickClock.Tick());
 
-               mGmStatistics.UpdateDebugStats(listenerActorProxy->GetId(),
+               mGMImpl->mGMStatistics.UpdateDebugStats(listenerActorProxy->GetId(),
                      listenerActorProxy->GetName(), frameTickDelta,
                      false, isATickLocalMessage);
             }
@@ -767,7 +790,7 @@ namespace dtGame
    void GameManager::InvokeForActorInvokables(const Message& message, GameActorProxy& aboutActor)
    {
       // statistics stuff.
-      bool logActors = mGmStatistics.ShouldWeLogActors();
+      bool logActors = mGMImpl->mGMStatistics.ShouldWeLogActors();
       dtCore::Timer_t frameTickStartCurrent(0);
 
       std::vector<dtGame::Invokable*> aboutActorInvokables;
@@ -783,7 +806,7 @@ namespace dtGame
          // Statistics information
          if (logActors)
          {
-            frameTickStartCurrent = mGmStatistics.mStatsTickClock.Tick();
+            frameTickStartCurrent = mGMImpl->mGMStatistics.mStatsTickClock.Tick();
          }
 
          try
@@ -807,10 +830,10 @@ namespace dtGame
          if (logActors)
          {
             double frameTickDelta =
-                     mGmStatistics.mStatsTickClock.DeltaSec(frameTickStartCurrent,
-                                                            mGmStatistics.mStatsTickClock.Tick());
+                     mGMImpl->mGMStatistics.mStatsTickClock.DeltaSec(frameTickStartCurrent,
+                                                            mGMImpl->mGMStatistics.mStatsTickClock.Tick());
 
-            mGmStatistics.UpdateDebugStats(aboutActor.GetId(), aboutActor.GetName(),
+            mGMImpl->mGMStatistics.UpdateDebugStats(aboutActor.GetId(), aboutActor.GetName(),
                                            frameTickDelta, false, false);
          }
       }
@@ -820,7 +843,7 @@ namespace dtGame
    void GameManager::InvokeOtherActorInvokables(const Message& message)
    {
       // statistics stuff.
-      bool logActors = mGmStatistics.ShouldWeLogActors();
+      bool logActors = mGMImpl->mGMStatistics.ShouldWeLogActors();
       dtCore::Timer_t frameTickStartCurrent(0);
 
       // next, sent it to all actors listening to that actor for that message type.
@@ -849,7 +872,7 @@ namespace dtGame
             // Statistics information
             if (logActors)
             {
-               frameTickStartCurrent = mGmStatistics.mStatsTickClock.Tick();
+               frameTickStartCurrent = mGMImpl->mGMStatistics.mStatsTickClock.Tick();
             }
 
             try
@@ -872,9 +895,9 @@ namespace dtGame
             if (logActors)
             {
                double frameTickDelta =
-                  mGmStatistics.mStatsTickClock.DeltaSec(frameTickStartCurrent,
-                                                         mGmStatistics.mStatsTickClock.Tick());
-               mGmStatistics.UpdateDebugStats(currentProxy.GetId(), currentProxy.GetName(),
+                  mGMImpl->mGMStatistics.mStatsTickClock.DeltaSec(frameTickStartCurrent,
+                                                         mGMImpl->mGMStatistics.mStatsTickClock.Tick());
+               mGMImpl->mGMStatistics.UpdateDebugStats(currentProxy.GetId(), currentProxy.GetName(),
                                               frameTickDelta, false, false);
             }
          }
@@ -2124,7 +2147,7 @@ namespace dtGame
          RemoveComponent(*mComponentList.back());
       }
 
-      mGmStatistics.mDebugLoggerInformation.clear();
+      mGMImpl->mGMStatistics.mDebugLoggerInformation.clear();
 
       while (!mSendNetworkMessageQueue.empty())
       {
@@ -2146,32 +2169,32 @@ namespace dtGame
    ////////////////////////////////////////////////////////////////////////////////
    int GameManager::GetStatisticsInterval() const
    {
-      return mGmStatistics.GetStatisticsInterval();
+      return mGMImpl->mGMStatistics.GetStatisticsInterval();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    bool GameManager::GetStatisticsToConsole() const
    {
-      return mGmStatistics.ShouldWeLogToConsole();
+      return mGMImpl->mGMStatistics.ShouldWeLogToConsole();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    const std::string& GameManager::GetStatisticsLogFilePath() const
    {
-      return mGmStatistics.GetFilePathToPrintDebugInformation();
+      return mGMImpl->mGMStatistics.GetFilePathToPrintDebugInformation();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::DebugStatisticsTurnOff(bool logLastTime, bool clearList)
    {
-      mGmStatistics.DebugStatisticsTurnOff(*this, logLastTime, clearList);
+      mGMImpl->mGMStatistics.DebugStatisticsTurnOff(*this, logLastTime, clearList);
    }
 
    //////////////////////////////////////////////////////////////////////////////
    void GameManager::DebugStatisticsTurnOn(bool logComponents, bool logActors,
       const int statisticsInterval, bool toConsole, const std::string& path)
    {
-      mGmStatistics.DebugStatisticsTurnOn(logComponents, logActors,
+      mGMImpl->mGMStatistics.DebugStatisticsTurnOn(logComponents, logActors,
          statisticsInterval, toConsole, path);
    }
 

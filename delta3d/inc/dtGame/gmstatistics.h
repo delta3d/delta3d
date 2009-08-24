@@ -38,9 +38,10 @@ namespace dtGame
    {
       friend class GameManager;
 
-      protected:
+   public:
          GMStatistics();
          ~GMStatistics();
+
 
          /// Used for statistics information, should never have to call yourself.
          void UpdateDebugStats(const dtCore::UniqueId& uniqueIDToFind, const std::string& nameOfObject, float realTimeElapsed,
@@ -138,6 +139,8 @@ namespace dtGame
          long                 mStatsNumSendNetworkMessages;
          long                 mStatsNumFrames;
          dtCore::Timer_t      mStatsCumGMProcessTime;
+         float                mStatsCurFrameActorTotal; 
+         float                mStatsCurFrameCompTotal; 
          int                  mStatisticsInterval;                                  ///< how often we print the information out.
          std::string          mFilePathToPrintDebugInformation;                     ///< where the file is located at that we print out to
          bool                 mPrintFileToConsole;                                  ///< if the information goes to console or file

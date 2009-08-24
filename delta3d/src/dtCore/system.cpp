@@ -83,7 +83,7 @@ namespace dtCore
 
       dtCore::Timer mTickClock;
       dtCore::Timer_t mTimerStart;
-      dtCore::RefPtr<osg::Stats> mStats;
+      dtCore::ObserverPtr<osg::Stats> mStats;
       double mTotalFrameTime;
    };
 
