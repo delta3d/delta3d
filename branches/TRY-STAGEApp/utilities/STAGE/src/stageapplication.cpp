@@ -22,8 +22,5 @@ void dtEditQt::STAGEApplication::Config()
    this->SetWindow(NULL);
    this->SetCamera(NULL);
 
-   this->RemoveView(*this->GetView());
-
-   //Views don't get removed until a PostFrame happens
-   this->PostFrame(0.0);
+   this->RemoveView(*this->GetView(), true);
 }

@@ -43,6 +43,7 @@
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/editordata.h>
 #include <cmath>
+#include <osgViewer/CompositeViewer>
 
 namespace dtEditQt
 {
@@ -61,7 +62,7 @@ namespace dtEditQt
       : mShareMasterContext(true)
       , mMasterViewport(NULL)
       , mMasterScene(new dtCore::Scene())
-      , mMasterView(new dtCore::View())
+      , mMasterView(new dtCore::View("master view"))
    {
       mMasterView->SetScene(mMasterScene.get());
       mViewportOverlay     = new ViewportOverlay();
@@ -814,6 +815,13 @@ namespace dtEditQt
          if (!GetApplication()->ContainsView(*viewport->GetView()))
          {
             GetApplication()->AddView(*viewport->GetView());
+
+            //if OSG thinks we're done, set it straight.
+            if (GetApplication()->GetCompositeViewer()->done())
+            {
+               GetApplication()->GetCompositeViewer()->setDone(false);
+            }
+
             return true;
          }
       }
@@ -821,11 +829,8 @@ namespace dtEditQt
       {
          if (GetApplication()->ContainsView(*viewport->GetView()))
          {
-            if (GetApplication()->GetNumberOfViews() > 1)
-            {
-               GetApplication()->RemoveView(*viewport->GetView());
-               return true;
-            }
+            GetApplication()->RemoveView(*viewport->GetView());
+            return true;
          }
       }
 

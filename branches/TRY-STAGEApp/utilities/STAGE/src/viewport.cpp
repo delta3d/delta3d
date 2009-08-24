@@ -106,7 +106,7 @@ namespace dtEditQt
       , mIsector(new dtCore::Isector())
       , mIsMouseTrapped(false)
       , mWindow(NULL)
-      , mView(new dtCore::View())
+      , mView(new dtCore::View(name))
       , mCamera(new StageCamera())
       , mScene(new dtCore::Scene())
       , mIsDirty(false)
