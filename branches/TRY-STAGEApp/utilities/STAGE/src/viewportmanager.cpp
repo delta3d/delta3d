@@ -32,6 +32,7 @@
 #include <osg/Texture>
 #include <osgDB/DatabasePager>
 #include <osgDB/Registry>
+#include <osgViewer/CompositeViewer>
 #include <dtUtil/log.h>
 #include <dtDAL/map.h>
 #include <dtDAL/actorproxyicon.h>
@@ -43,7 +44,6 @@
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/editordata.h>
 #include <cmath>
-#include <osgViewer/CompositeViewer>
 
 namespace dtEditQt
 {
@@ -431,6 +431,13 @@ namespace dtEditQt
             }
          }
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ViewportManager::emitViewportEnabled(Viewport* vp, bool enabled, bool* overrideDefault)
+   {
+      LOG_INFO("Emitting event - [viewportEnabled]");
+      emit viewportEnabled(vp, enabled, overrideDefault);
    }
 
    ////////////////////////////////////////////////////////////////////////////////

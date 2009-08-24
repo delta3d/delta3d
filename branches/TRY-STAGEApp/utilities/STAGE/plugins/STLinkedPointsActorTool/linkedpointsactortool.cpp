@@ -63,6 +63,8 @@ LinkedPointsActorToolPlugin::LinkedPointsActorToolPlugin(MainWindow* mw)
    connect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorProxyRefPtrVector &)),
       this, SLOT(onActorsSelected(ActorProxyRefPtrVector &)));
 
+   connect(&ViewportManager::GetInstance(), SIGNAL(viewportEnabled(Viewport*, bool, bool*)),
+      this, SLOT(onViewportEnabled(Viewport*, bool, bool*)));
    connect(&ViewportManager::GetInstance(), SIGNAL(mousePressEvent(Viewport*, QMouseEvent*)),
       this, SLOT(onMousePressEvent(Viewport*, QMouseEvent*)));
    connect(&ViewportManager::GetInstance(), SIGNAL(mouseReleaseEvent(Viewport*, QMouseEvent*)),
@@ -219,6 +221,26 @@ void LinkedPointsActorToolPlugin::onActorsSelected(ActorProxyRefPtrVector& actor
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void LinkedPointsActorToolPlugin::onViewportEnabled(Viewport* vp, bool enabled, bool* overrideDefault)
+{
+   if (!mIsActive)
+   {
+      return;
+   }
+
+   if (overrideDefault)
+   {
+      *overrideDefault = true;
+   }
+
+   ToolObjectMotionModel* motion = GetMotionModelForView(vp);
+   if (motion)
+   {
+      motion->SetEnabled(enabled);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void LinkedPointsActorToolPlugin::onMousePressEvent(Viewport* vp, QMouseEvent* e)
 {
    if (!mIsActive)
@@ -265,7 +287,7 @@ void LinkedPointsActorToolPlugin::onMousePressEvent(Viewport* vp, QMouseEvent* e
                   // Select this new point.
                   selectPoint(newPoint);
                   mCanCopy = false;
-                  ViewportManager::GetInstance().refreshAllViewports();
+                  //ViewportManager::GetInstance().refreshAllViewports();
                }
             }
          }
@@ -494,7 +516,8 @@ void LinkedPointsActorToolPlugin::onSelectActors(Viewport* vp, QMouseEvent* e, b
          if (mShowingPlacementGhost)
          {
             mShowingPlacementGhost = false;
-            selectPoint(mActiveActor->GetPointCount() - 1);
+            //selectPoint(mActiveActor->GetPointCount() - 1);
+            mCurrentPoint = mActiveActor->GetPointCount() - 1;
 
             EditorEvents::GetInstance().emitBeginChangeTransaction();
             EditorEvents::GetInstance().emitActorPropertyAboutToChange(mActiveProxy.get(), mPointsProp, mOldPropValue, mPointsProp->ToString());
@@ -628,11 +651,11 @@ void LinkedPointsActorToolPlugin::onCreationModePressed()
 {
    if (mCreationModeCheckbox->isChecked())
    {
-      mPerspMotionModel->SetEnabled(false);
-      mTopMotionModel->SetEnabled(false);
-      mSideMotionModel->SetEnabled(false);
-      mFrontMotionModel->SetEnabled(false);
-      ViewportManager::GetInstance().refreshAllViewports();
+      mPerspMotionModel->SetTarget(NULL);
+      mTopMotionModel->SetTarget(NULL);
+      mSideMotionModel->SetTarget(NULL);
+      mFrontMotionModel->SetTarget(NULL);
+      //ViewportManager::GetInstance().refreshAllViewports();
    }
    else
    {
@@ -659,7 +682,7 @@ void LinkedPointsActorToolPlugin::onDeleteLinkPointPressed()
 
       if (!selectPoint(mCurrentPoint))
       {
-         ViewportManager::GetInstance().refreshAllViewports();
+         //ViewportManager::GetInstance().refreshAllViewports();
       }
    }
 }
@@ -694,10 +717,10 @@ void LinkedPointsActorToolPlugin::initialize(dtActors::LinkedPointsActorProxy* a
       mMainWindow->GetSideView()->GetObjectMotionModel()->SetEnabled(false);
       mMainWindow->GetFrontView()->GetObjectMotionModel()->SetEnabled(false);
 
-      mPerspMotionModel->SetEnabled(true);
-      mTopMotionModel->SetEnabled(true);
-      mSideMotionModel->SetEnabled(true);
-      mFrontMotionModel->SetEnabled(true);
+      //mPerspMotionModel->SetEnabled(true);
+      //mTopMotionModel->SetEnabled(true);
+      //mSideMotionModel->SetEnabled(true);
+      //mFrontMotionModel->SetEnabled(true);
       //ViewportManager::GetInstance().refreshAllViewports();
    }
 
@@ -729,16 +752,20 @@ void LinkedPointsActorToolPlugin::shutdown()
       mActiveActor->SetVisualize(false);
    }
 
-   mMainWindow->GetPerspView()->GetObjectMotionModel()->SetEnabled(true);
-   mMainWindow->GetTopView()->GetObjectMotionModel()->SetEnabled(true);
-   mMainWindow->GetSideView()->GetObjectMotionModel()->SetEnabled(true);
-   mMainWindow->GetFrontView()->GetObjectMotionModel()->SetEnabled(true);
+   //mMainWindow->GetPerspView()->GetObjectMotionModel()->SetEnabled(true);
+   //mMainWindow->GetTopView()->GetObjectMotionModel()->SetEnabled(true);
+   //mMainWindow->GetSideView()->GetObjectMotionModel()->SetEnabled(true);
+   //mMainWindow->GetFrontView()->GetObjectMotionModel()->SetEnabled(true);
 
    mPerspMotionModel->SetEnabled(false);
    mTopMotionModel->SetEnabled(false);
    mSideMotionModel->SetEnabled(false);
    mFrontMotionModel->SetEnabled(false);
-   ViewportManager::GetInstance().refreshAllViewports();
+   mPerspMotionModel->SetTarget(NULL);
+   mTopMotionModel->SetTarget(NULL);
+   mSideMotionModel->SetTarget(NULL);
+   mFrontMotionModel->SetTarget(NULL);
+   //ViewportManager::GetInstance().refreshAllViewports();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -769,7 +796,7 @@ bool LinkedPointsActorToolPlugin::selectPoint(int pointIndex)
       mSideMotionModel->UpdateWidgets();
       mFrontMotionModel->UpdateWidgets();
 
-      ViewportManager::GetInstance().refreshAllViewports();
+      //ViewportManager::GetInstance().refreshAllViewports();
       return true;
    }
 
@@ -830,11 +857,11 @@ void LinkedPointsActorToolPlugin::ShowPlacementGhost(osg::Vec3 position, bool fo
 
    if (forceRefresh)
    {
-      mPerspMotionModel->SetEnabled(false);
-      mTopMotionModel->SetEnabled(false);
-      mSideMotionModel->SetEnabled(false);
-      mFrontMotionModel->SetEnabled(false);
-      ViewportManager::GetInstance().refreshAllViewports();
+      mPerspMotionModel->SetTarget(NULL);
+      mTopMotionModel->SetTarget(NULL);
+      mSideMotionModel->SetTarget(NULL);
+      mFrontMotionModel->SetTarget(NULL);
+      //ViewportManager::GetInstance().refreshAllViewports();
    }
 }
 
@@ -854,11 +881,8 @@ void LinkedPointsActorToolPlugin::HidePlacementGhost(bool forceRefresh)
 
    if (forceRefresh)
    {
-      mPerspMotionModel->SetEnabled(true);
-      mTopMotionModel->SetEnabled(true);
-      mSideMotionModel->SetEnabled(true);
-      mFrontMotionModel->SetEnabled(true);
-      ViewportManager::GetInstance().refreshAllViewports();
+      selectPoint(mCurrentPoint);
+      //ViewportManager::GetInstance().refreshAllViewports();
    }
 }
 
@@ -998,7 +1022,7 @@ void LinkedPointsActorToolPlugin::UpdatePlacementGhost(Viewport* vp, osg::Vec2 m
       {
          mActiveActor->SetPointPosition(index, position);
       }
-      ViewportManager::GetInstance().refreshAllViewports();
+      //ViewportManager::GetInstance().refreshAllViewports();
    }
 }
 

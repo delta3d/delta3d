@@ -164,14 +164,14 @@ namespace dtEditQt
          mObjectMotionModel->SetScaleEnabled(canScale);
          
          //only enable the MotionModel for active Viewports
-         if (GetEnabled())
-         {
-            mObjectMotionModel->SetEnabled(true);
-         }
+         //if (GetEnabled())
+         //{
+         //   mObjectMotionModel->SetEnabled(true);
+         //}
       }
       else
       {
-         mObjectMotionModel->SetEnabled(false);
+         //mObjectMotionModel->SetEnabled(false);
          mObjectMotionModel->ClearTargets();
          mObjectMotionModel->SetScaleEnabled(false);
       }
@@ -1128,6 +1128,14 @@ namespace dtEditQt
    void EditorViewport::SetEnabled(bool enabled)
    {
       mEnabled = enabled;
+
+      bool overrideDefault = false;
+      ViewportManager::GetInstance().emitViewportEnabled(this, enabled, &overrideDefault);
+      if (overrideDefault)
+      {
+         return;
+      }
+
       GetObjectMotionModel()->SetEnabled(mEnabled);
    }
 

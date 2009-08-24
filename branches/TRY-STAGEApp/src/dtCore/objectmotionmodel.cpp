@@ -174,7 +174,7 @@ void ObjectMotionModel::SetScaleEnabled(bool enabled)
          mTargetTransform->removeChild(mScaleTransform->GetOSGNode());
       }
 
-      if (mVisible)
+      if (enabled)
       {
          for (int arrow = 0; arrow < ARROW_TYPE_MAX; arrow++)
          {
@@ -302,7 +302,7 @@ void ObjectMotionModel::SetCoordinateSpace(CoordinateSpace coordinateSpace)
          mTargetTransform->removeChild(mScaleTransform->GetOSGNode());
       }
 
-      if (mVisible)
+      if (enabled)
       {
          for (int arrow = 0; arrow < ARROW_TYPE_MAX; arrow++)
          {
@@ -541,44 +541,44 @@ void ObjectMotionModel::InitArrows(void)
       if (stateSet)
       {
          //stateSet->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
-         stateSet->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
-         stateSet->setMode(GL_BLEND, osg::StateAttribute::ON);
+         stateSet->setMode(GL_LIGHTING, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF);
+         stateSet->setMode(GL_BLEND, osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
          stateSet->setRenderBinDetails(98, "RenderBin");
 
-         osg::PolygonMode* polygonMode = new osg::PolygonMode(osg::PolygonMode::FRONT, osg::PolygonMode::FILL);
-         stateSet->setAttribute(polygonMode, osg::StateAttribute::ON);
+         osg::PolygonMode* polygonMode = new osg::PolygonMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::FILL);
+         stateSet->setAttribute(polygonMode, osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
 
          osg::Depth* depth = new osg::Depth(osg::Depth::ALWAYS);
-         stateSet->setAttribute(depth, osg::StateAttribute::ON);
+         stateSet->setAttribute(depth, osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
 
          osg::BlendFunc* blend = new osg::BlendFunc(osg::BlendFunc::SRC_ALPHA, osg::BlendFunc::ONE_MINUS_SRC_ALPHA);
-         stateSet->setAttribute(blend, osg::StateAttribute::ON);
+         stateSet->setAttribute(blend, osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
       }
    }
 
-   osg::Group* wireNode = NULL;//new osg::Group();
-   if (wireNode)
-   {
-      // Make this group render top most.
-      osg::StateSet* stateSet = wireNode->getOrCreateStateSet();
-      if (stateSet)
-      {
-         //stateSet->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
-         stateSet->setMode(GL_BLEND, osg::StateAttribute::ON);
-         stateSet->setRenderBinDetails(99, "RenderBin");
+   //osg::Group* wireNode = NULL;//new osg::Group();
+   //if (wireNode)
+   //{
+   //   // Make this group render top most.
+   //   osg::StateSet* stateSet = wireNode->getOrCreateStateSet();
+   //   if (stateSet)
+   //   {
+   //      //stateSet->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
+   //      stateSet->setMode(GL_BLEND, osg::StateAttribute::ON);
+   //      stateSet->setRenderBinDetails(99, "RenderBin");
 
-         osg::PolygonMode* polygonMode = new osg::PolygonMode(osg::PolygonMode::FRONT, osg::PolygonMode::FILL);
-         stateSet->setAttribute(polygonMode, osg::StateAttribute::ON);
+   //      osg::PolygonMode* polygonMode = new osg::PolygonMode(osg::PolygonMode::FRONT, osg::PolygonMode::FILL);
+   //      stateSet->setAttribute(polygonMode, osg::StateAttribute::ON);
 
-         osg::Depth* depth = new osg::Depth(osg::Depth::LEQUAL);
-         stateSet->setAttribute(depth, osg::StateAttribute::ON);
-      }
+   //      osg::Depth* depth = new osg::Depth(osg::Depth::LEQUAL);
+   //      stateSet->setAttribute(depth, osg::StateAttribute::ON);
+   //   }
 
-      if (groupNode)
-      {
-         groupNode->addChild(wireNode);
-      }
-   }
+   //   if (groupNode)
+   //   {
+   //      groupNode->addChild(wireNode);
+   //   }
+   //}
 
    float ringRadius             = 0.08f;
    float ringVisibleThickness   = 0.003f;
@@ -620,12 +620,12 @@ void ObjectMotionModel::InitArrows(void)
       mTargetTransform->addChild(mArrows[arrowIndex].rotationTransform->GetOSGNode());
       //mTargetTransform->addChild(mArrows[arrowIndex].scaleTransform->GetOSGNode());
 
-      if (wireNode)
-      {
-         wireNode->addChild(mArrows[arrowIndex].translationTransform->GetOSGNode());
-         wireNode->addChild(mArrows[arrowIndex].rotationTransform->GetOSGNode());
-         //wireNode->addChild(mArrows[arrowIndex].scaleTransform->GetOSGNode());
-      }
+      //if (wireNode)
+      //{
+      //   wireNode->addChild(mArrows[arrowIndex].translationTransform->GetOSGNode());
+      //   wireNode->addChild(mArrows[arrowIndex].rotationTransform->GetOSGNode());
+      //   //wireNode->addChild(mArrows[arrowIndex].scaleTransform->GetOSGNode());
+      //}
 
       osg::Group* arrowGroup = mArrows[arrowIndex].translationTransform->GetOSGNode()->asGroup();
       if (arrowGroup)
@@ -744,10 +744,7 @@ void ObjectMotionModel::UpdateVisibility()
       }
    }
 
-   if (mVisible)
-   {
-      UpdateWidgets();
-   }
+   UpdateWidgets();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -255,6 +255,15 @@ namespace dtEditQt
       void LoadPresetCamera(int index);
 
       /**
+      * Signal used when a viewport has been enabled.
+      *
+      * @param[in]   vp               The viewport triggering this event.
+      * @param[in]   enabled          Whether the viewport is being enabled or not.
+      * @param[out]  overrideDefault  Should be set true if you don't want the default behavior to handle this.
+      */
+      void emitViewportEnabled(Viewport* vp, bool enabled, bool* overrideDefault = NULL);
+
+      /**
       * Signal used when a mouse has been pressed in a viewport.
       *
       * @param[in]  vp  The viewport triggering this event.
@@ -396,6 +405,15 @@ namespace dtEditQt
       bool EnableViewport(Viewport* viewport, bool enable);
 
    signals:
+
+      /**
+      * Signal used when a viewport has been enabled.
+      *
+      * @param[in]   vp               The viewport triggering this event.
+      * @param[in]   enabled          Whether the viewport is being enabled or not.
+      * @param[out]  overrideDefault  Should be set true if you don't want the default behavior to handle this.
+      */
+      void viewportEnabled(Viewport* vp, bool enabled, bool* overrideDefault);
 
       /**
       * Signal used when a mouse has been pressed in a viewport.

@@ -69,6 +69,15 @@ public slots:
    void onActorsSelected(ActorProxyRefPtrVector& actors);
 
    /**
+   * Signal used when a viewport has been enabled.
+   *
+   * @param[in]   vp               The viewport triggering this event.
+   * @param[in]   enabled          Whether the viewport is being enabled or not.
+   * @param[out]  overrideDefault  Should be set true if you don't want the default behavior to handle this.
+   */
+   void onViewportEnabled(Viewport* vp, bool enabled, bool* overrideDefault);
+
+   /**
    * Signal used when a mouse has been pressed in a viewport.
    *
    * @param[in]  vp  The viewport triggering this event.

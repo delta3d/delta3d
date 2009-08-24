@@ -332,8 +332,8 @@ namespace dtEditQt
       //         "because the current scene view is invalid.", __FILE__, __LINE__);
       //}
 
-      osg::StateAttribute::GLModeValue turnOn  = osg::StateAttribute::OVERRIDE |osg::StateAttribute::ON;
-      osg::StateAttribute::GLModeValue turnOff = osg::StateAttribute::OVERRIDE |osg::StateAttribute::OFF;
+      osg::StateAttribute::GLModeValue turnOn  = osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON;
+      osg::StateAttribute::GLModeValue turnOff = osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF;
 
       osg::PolygonMode* pm = dynamic_cast<osg::PolygonMode*>(
             mGlobalStateSet->getAttribute(osg::StateAttribute::POLYGONMODE));
