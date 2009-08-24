@@ -80,7 +80,7 @@ namespace dtGame
    {
       DECLARE_MANAGEMENT_LAYER(GameManager)
 
-      friend GMStatistics;
+      friend class GMStatistics;
 
       public:
          static const std::string CONFIG_STATISTICS_INTERVAL;
