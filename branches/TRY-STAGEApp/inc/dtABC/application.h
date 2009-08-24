@@ -202,8 +202,17 @@ namespace dtABC
       /// Add a view to the Viewer
       void AddView(dtCore::View& view);
 
-      /// Remove a view to the Viewer
-      void RemoveView(dtCore::View& view);
+      /** 
+       * Remove a View from the Viewer.  This View will be removed during the
+       * next PostFrame(), unless the "immediately" flag is set to true.  Views that
+       * are removed immediately could crash the application if removed at the 
+       * incorrect time.
+       * @param view The View to remove.
+       * @param immediately : Advanced flag to indicate the View should be removed
+       * immediately instead of deferring until the next PostFrame().  Use with
+       * caution.
+       */
+      void RemoveView(dtCore::View& view, bool immediately = false);
 
       // Checks to see if a view is added the application.
       bool ContainsView(dtCore::View& view);
