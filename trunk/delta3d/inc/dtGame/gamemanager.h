@@ -32,7 +32,7 @@
 #include <dtGame/message.h>
 #include <dtGame/machineinfo.h>
 #include <dtGame/environmentactor.h>
-#include <dtGame/gmstatistics.h>
+//#include <dtGame/gmstatistics.h>
 
 #include <dtCore/refptr.h>
 #include <dtCore/base.h>
@@ -74,12 +74,13 @@ namespace dtGame
    class MapChangeStateData;
    class TickMessage;
    class GMStatistics;
+   class GMImpl;
 
    class DT_GAME_EXPORT GameManager : public dtCore::Base
    {
       DECLARE_MANAGEMENT_LAYER(GameManager)
 
-      friend class GMStatistics;
+      friend GMStatistics;
 
       public:
          static const std::string CONFIG_STATISTICS_INTERVAL;
@@ -1107,6 +1108,7 @@ namespace dtGame
             void RemoveDeletedActors();
 
          private:
+            GMImpl* mGMImpl; // Pimple pattern for private data
 
             std::set<TimerInfo>& GetSimulationTimerList() { return mSimulationTimers; }
 
@@ -1167,9 +1169,6 @@ namespace dtGame
             bool mPaused;
             NameVector mLoadedMaps;
             dtCore::RefPtr<MapChangeStateData> mMapChangeStateData;
-
-            /// stats for this, in a class so its less obtrusive to the gm
-            GMStatistics mGmStatistics;
 
             /// application the gm has. the one and only.
             dtABC::Application* mApplication;

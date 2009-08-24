@@ -89,6 +89,9 @@ bool StatsHandler::SelectNextType()
          stats->collectStats(System::MESSAGE_FRAME, false);
          stats->collectStats(System::MESSAGE_POST_FRAME, false);
          stats->collectStats("FullDeltaFrameTime", false); // should be a constant
+         stats->collectStats("GMTotal", false);
+         stats->collectStats("GMActors", false);
+         stats->collectStats("GMComponents", false);
 
          mCamera->setNodeMask(0x0); 
          mSwitch->setAllChildrenOff();
@@ -143,6 +146,9 @@ bool StatsHandler::SelectNextType()
          stats->collectStats(System::MESSAGE_FRAME, true);
          stats->collectStats(System::MESSAGE_POST_FRAME, true);
          stats->collectStats("FullDeltaFrameTime", true);
+         stats->collectStats("GMTotal", true);
+         stats->collectStats("GMActors", true);
+         stats->collectStats("GMComponents", true);
          mCamera->setNodeMask(0xffffffff);
          mSwitch->setValue(mDeltaSystemChildNum, true);
          break;
@@ -856,6 +862,27 @@ void StatsHandler::SetUpScene(osgViewer::ViewerBase* viewer)
       pos.x() = text->getBound().xMax();
       text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "0.0"); // Value
       text->setDrawCallback(new TextDrawCallback(stats,System::MESSAGE_PRE_FRAME,-1, true, 1.0));
+      // The GameManager part of PreFrame
+      // GM Total
+      pos.x() += 60.0f;
+      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "GM [Total: "); // label
+      pos.x() = text->getBound().xMax();
+      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "0.0"); // Value
+      text->setDrawCallback(new TextDrawCallback(stats,"GMTotal",-1, true, 1.0));
+      // GM Actors
+      pos.x() += 50.0f;
+      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "Actors: "); // label
+      pos.x() = text->getBound().xMax();
+      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "0.0"); // Value
+      text->setDrawCallback(new TextDrawCallback(stats,"GMActors",-1, true, 1.0));
+      // GM Actors
+      pos.x() += 50.0f;
+      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "Comps: "); // label
+      pos.x() = text->getBound().xMax();
+      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "0.0"); // Value
+      text->setDrawCallback(new TextDrawCallback(stats,"GMComponents",-1, true, 1.0));
+      pos.x() += 50.0f;
+      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "]"); // label
       pos.y() -= characterSize * 1.5f;
 
       // MESSAGE_CAMERA_SYNCH
