@@ -13,6 +13,23 @@
 #endif
 
 #include <sstream>
+#include <map>
+#include <set>
+
+struct DeprecatedFunction
+{
+   const char*   OldFunctionName;
+   const char*   NewFunctionName;
+   std::set<int> CalledFrom;
+};
+
+class DeprecationMgrImpl
+{
+public:
+
+   std::map<const char*, DeprecatedFunction> mFunctions;
+
+};
 
 //////////////////////////////////////////////////////////////////////////
 DeprecationMgr& DeprecationMgr::GetInstance()
@@ -21,10 +38,16 @@ DeprecationMgr& DeprecationMgr::GetInstance()
    return Instance;
 }
 
+DeprecationMgr::DeprecationMgr()
+: mImpl(new DeprecationMgrImpl)
+{
+
+}
+
 //////////////////////////////////////////////////////////////////////////
 DeprecationMgr::~DeprecationMgr()
 {
-   if (!m_Functions.empty())
+   if (!mImpl->mFunctions.empty())
    {
 #if defined(DELTA_WIN32)
       OutputDebugString( "*************************************************************\n" );
@@ -36,7 +59,7 @@ DeprecationMgr::~DeprecationMgr()
 
       //char txt[255];
       std::map<const char*, DeprecatedFunction>::iterator i;
-      for (i = m_Functions.begin(); i != m_Functions.end(); ++i)
+      for (i = mImpl->mFunctions.begin(); i != mImpl->mFunctions.end(); ++i)
       {
          DeprecatedFunction* pFunction = &((*i).second);
 
@@ -74,8 +97,10 @@ DeprecationMgr::~DeprecationMgr()
       std::cerr << "*************************************************************" << std::endl;
 #endif // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
-      m_Functions.clear();
+      mImpl->mFunctions.clear();
    }
+   delete mImpl;
+   mImpl = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -102,17 +127,17 @@ bool DeprecationMgr::AddDeprecatedFunction(const char* OldFunctionName, const ch
 
    // Check if this function was already listed as deprecated
    std::map<const char*, DeprecatedFunction>::iterator ExistingFunc;
-   ExistingFunc = m_Functions.find (OldFunctionName);
+   ExistingFunc = mImpl->mFunctions.find (OldFunctionName);
 
    // If it wasn't, make a new entry for it
-   if (ExistingFunc == m_Functions.end())
+   if (ExistingFunc == mImpl->mFunctions.end())
    {
       DeprecatedFunction Function;
       Function.OldFunctionName = OldFunctionName;
       Function.NewFunctionName = NewFunctionName;
       Function.CalledFrom.insert ( CalledFrom );
 
-      m_Functions[OldFunctionName] = Function;
+      mImpl->mFunctions[OldFunctionName] = Function;
       bAddedForFirstTime = true;
    }
 
