@@ -196,12 +196,6 @@ namespace dtActors
       dtGame::GameActorProxy::BuildPropertyMap();
       TaskActor &task = static_cast<TaskActor &>(GetGameActor());
 
-      //Description...
-      AddProperty(new dtDAL::StringActorProperty("Description","Description",
-         dtDAL::StringActorProperty::SetFuncType(&task,&TaskActor::SetDescription),
-         dtDAL::StringActorProperty::GetFuncType(&task,&TaskActor::GetDescription),
-         "Sets/gets the description of this task.",GROUPNAME));
-
       //DisplayName...
       AddProperty(new dtDAL::StringActorProperty("DisplayName","Display Name",
          dtDAL::StringActorProperty::SetFuncType(&task,&TaskActor::SetDisplayName),
