@@ -174,7 +174,7 @@ void VolumeEditActor::SetShape(VolumeShapeType& shape)
    {
       stateSet->setMode(GL_BLEND, osg::StateAttribute::ON);
 
-      stateSet->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
+      //stateSet->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
 
       osg::PolygonMode* polygonMode = new osg::PolygonMode(osg::PolygonMode::FRONT, osg::PolygonMode::FILL);
       stateSet->setAttribute(polygonMode, osg::StateAttribute::OVERRIDE);
@@ -213,6 +213,7 @@ void VolumeEditActor::SetupWireOutline()
    program->addShader(fragShader.get());   
 
    ss->setAttributeAndModes(program.get(), turnOn); 
+   ss->setRenderBinDetails(80, "RenderBin");
  
    //Create the required state attributes for wireframe overlay selection.
    osg::PolygonOffset* po = new osg::PolygonOffset;
@@ -227,7 +228,7 @@ void VolumeEditActor::SetupWireOutline()
 
    ss->setMode(GL_BLEND,osg::StateAttribute::OVERRIDE | osg::StateAttribute::PROTECTED | osg::StateAttribute::OFF);
 
-   ss->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
+   ss->setMode(GL_DEPTH_TEST, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
