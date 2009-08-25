@@ -133,6 +133,13 @@ namespace dtEditQt
        */
       StageCamera* getWorldViewCamera() { return mWorldCamera.get(); }
 
+      /**
+      * Sets a handle to the world view camera.
+      *
+      * @param A pointer to the perspective camera.
+      */
+      void setWorldViewCamera(StageCamera* camera);
+
       void SetApplication(dtABC::Application* app);
       dtABC::Application* GetApplication() const;
 

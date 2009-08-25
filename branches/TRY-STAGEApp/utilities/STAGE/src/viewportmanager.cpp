@@ -66,13 +66,13 @@ namespace dtEditQt
    {
       mMasterView->SetScene(mMasterScene.get());
       mViewportOverlay     = new ViewportOverlay();
-      mWorldCamera         = new StageCamera();
+      //mWorldCamera         = new StageCamera();
       mInChangeTransaction = false;
       mStartTick = 0;
 
       mMasterScene->GetSceneNode()->addChild(mViewportOverlay->getOverlayGroup()); //TODO testing
 
-      mMasterView->SetCamera(mWorldCamera->getDeltaCamera());     
+      //mMasterView->SetCamera(mWorldCamera->getDeltaCamera());     
 
       EditorEvents* editorEvents = &EditorEvents::GetInstance();
 
@@ -429,6 +429,8 @@ namespace dtEditQt
                   cam->setZoom(data.frontZoom);
                }
             }
+
+            refreshAllViewports();
          }
       }
    }
@@ -797,6 +799,17 @@ namespace dtEditQt
       else
       {
          return false;
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ViewportManager::setWorldViewCamera(StageCamera* camera)
+   {
+      mWorldCamera = camera;
+
+      if (mWorldCamera)
+      {
+         mMasterView->SetCamera(mWorldCamera->getDeltaCamera());     
       }
    }
 

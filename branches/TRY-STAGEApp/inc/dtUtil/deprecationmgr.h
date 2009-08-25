@@ -25,9 +25,6 @@
 #include <dtUtil/macros.h>
 #include <dtUtil/export.h>
 
-#include <map>
-#include <set>
-
 //This will generate a compile-time warning when a function is prefaced.
 #if defined (DELTA_WIN32)
    #define DEPRECATE_FUNC  __declspec(deprecated)
@@ -60,6 +57,9 @@
    #define DEPRECATE(a,b)
 #endif
 
+
+class DeprecationMgrImpl;
+
 /**
 * Used to deprecate a method.  To deprecate a method use:
 * @code
@@ -85,16 +85,8 @@ public:
                               const void* FramePtr);
 
 private:
-   struct DeprecatedFunction
-   {
-      const char*   OldFunctionName;
-      const char*   NewFunctionName;
-      std::set<int> CalledFrom;
-   };
-
-   DeprecationMgr() {}
-
-   std::map<const char*, DeprecatedFunction> m_Functions;
+   DeprecationMgr();
+   DeprecationMgrImpl* mImpl;
 };
 
 

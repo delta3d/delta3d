@@ -22,6 +22,8 @@
 #include <prefix/dtgameprefix-src.h>
 #include <dtGame/gmstatistics.h>
 #include <dtGame/gamemanager.h>
+#include <dtCore/system.h>
+#include <osg/Stats>
 #include <sstream>
 
 namespace dtGame
@@ -37,6 +39,8 @@ namespace dtGame
       , mStatsNumSendNetworkMessages(0)
       , mStatsNumFrames(0)
       , mStatsCumGMProcessTime(0)
+      , mStatsCurFrameActorTotal(0.0f)
+      , mStatsCurFrameCompTotal(0.0f)
       , mStatisticsInterval(0)
       , mPrintFileToConsole(false)
       , mDoStatsOnTheComponents(false)
@@ -86,6 +90,7 @@ namespace dtGame
    void GMStatistics::UpdateDebugStats(const dtCore::UniqueId &uniqueIDToFind,
                                       const std::string& nameOfObject, float elapsedTime, bool isComponent, bool ticklocal)
    {
+
       std::map<dtCore::UniqueId, dtCore::RefPtr<LogDebugInformation> >::iterator itor =
          mDebugLoggerInformation.find(uniqueIDToFind);
       if (itor != mDebugLoggerInformation.end())
@@ -95,12 +100,8 @@ namespace dtGame
          {
             debugInfo.mTickLocalTime +=elapsedTime;
             debugInfo.mTimesThrough += 1;
-            debugInfo.mTotalTime += elapsedTime;
          }
-         else
-         {
-            debugInfo.mTotalTime += elapsedTime;
-         }
+         debugInfo.mTotalTime += elapsedTime;
       }
       else
       {
@@ -108,6 +109,16 @@ namespace dtGame
          toPushDebugInfo->mTotalTime = elapsedTime;
          mDebugLoggerInformation.insert(std::make_pair(uniqueIDToFind, toPushDebugInfo));
       }
+
+      if (!isComponent)
+      {
+         mStatsCurFrameActorTotal += elapsedTime;
+      }
+      else
+      {
+         mStatsCurFrameCompTotal += elapsedTime;
+      }
+
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -323,8 +334,23 @@ namespace dtGame
          dtCore::Timer_t frameTickStop = mStatsTickClock.Tick();
          double fragmentDelta = mStatsTickClock.DeltaMicro(mStatsLastFragmentDump, frameTickStop);
 
-         mStatsCumGMProcessTime +=
-            dtCore::Timer_t(mStatsTickClock.DeltaMicro(frameTickStart, frameTickStop));
+         dtCore::Timer_t timeForThisTick = dtCore::Timer_t(mStatsTickClock.DeltaMicro(frameTickStart, frameTickStop));
+         mStatsCumGMProcessTime += timeForThisTick;
+
+         // Update the visual statistics used when stats is on - via application.SetNextStatisticsType()
+         // See dtCore::System.cpp and dtCore::Stats.cpp for more info
+         osg::Stats* stats = dtCore::System::GetInstance().GetStats();
+         if (stats != NULL && stats->collectStats("GMTotal"))
+         {
+            float timeThisTickInMillis = timeForThisTick / 1000.0f; // timethis tick is in micros.
+            stats->setAttribute(stats->getLatestFrameNumber(), "GMTotal", timeThisTickInMillis);
+            float actorTimeThisTickInMillis = mStatsCurFrameActorTotal * 1000.f; // actor total is in secs.
+            stats->setAttribute(stats->getLatestFrameNumber(), "GMActors", actorTimeThisTickInMillis);
+            mStatsCurFrameActorTotal = 0.0f; // reset for next frame.
+            float compTimeThisTickInMillis = mStatsCurFrameCompTotal * 1000.f; // comp total is in secs.
+            stats->setAttribute(stats->getLatestFrameNumber(), "GMComponents", compTimeThisTickInMillis);
+            mStatsCurFrameCompTotal = 0.0f; // reset for next frame.
+         }
 
          // handle weird case of wrap around (just to be safe)
          if (fragmentDelta < 0)

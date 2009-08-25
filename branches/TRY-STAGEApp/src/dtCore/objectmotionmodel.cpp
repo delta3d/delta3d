@@ -541,18 +541,18 @@ void ObjectMotionModel::InitArrows(void)
       if (stateSet)
       {
          //stateSet->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
-         stateSet->setMode(GL_LIGHTING, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF);
-         stateSet->setMode(GL_BLEND, osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
+         stateSet->setMode(GL_LIGHTING, osg::StateAttribute::PROTECTED | osg::StateAttribute::OFF);
+         stateSet->setMode(GL_BLEND, osg::StateAttribute::PROTECTED | osg::StateAttribute::ON);
          stateSet->setRenderBinDetails(98, "RenderBin");
 
          osg::PolygonMode* polygonMode = new osg::PolygonMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::FILL);
-         stateSet->setAttribute(polygonMode, osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
+         stateSet->setAttribute(polygonMode, osg::StateAttribute::PROTECTED | osg::StateAttribute::ON);
 
          osg::Depth* depth = new osg::Depth(osg::Depth::ALWAYS);
-         stateSet->setAttribute(depth, osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
+         stateSet->setAttribute(depth, osg::StateAttribute::PROTECTED | osg::StateAttribute::ON);
 
          osg::BlendFunc* blend = new osg::BlendFunc(osg::BlendFunc::SRC_ALPHA, osg::BlendFunc::ONE_MINUS_SRC_ALPHA);
-         stateSet->setAttribute(blend, osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
+         stateSet->setAttribute(blend, osg::StateAttribute::PROTECTED | osg::StateAttribute::ON);
       }
    }
 

@@ -66,6 +66,8 @@ namespace dtEditQt
       //mCamera = ViewportManager::GetInstance().getWorldViewCamera();
       //mCamera->setFarClipPlane(250000.0f);
       setMoveActorWithCamera(EditorData::GetInstance().getRigidCamera());
+
+      ViewportManager::GetInstance().setWorldViewCamera(getCamera());
    }
 
    ///////////////////////////////////////////////////////////////////////////////

@@ -223,7 +223,7 @@ const dtCore::View* dtABC::BaseABC::GetView() const
 ////////////////////////////////////////////////////////////////////////////////
 dtCore::View* dtABC::BaseABC::GetView(unsigned int idx)
 {
-   if (idx > mViewList.size())
+   if (idx >= mViewList.size())
    {
       return NULL;
    }

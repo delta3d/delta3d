@@ -1154,12 +1154,16 @@ namespace dtEditQt
    void EditorActions::slotEditUndo()
    {
       EditorData::GetInstance().getUndoManager().doUndo();
+
+      ViewportManager::GetInstance().refreshAllViewports();
    }
 
    //////////////////////////////////////////////////////////////////////////////
    void EditorActions::slotEditRedo()
    {
       EditorData::GetInstance().getUndoManager().doRedo();
+
+      ViewportManager::GetInstance().refreshAllViewports();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
