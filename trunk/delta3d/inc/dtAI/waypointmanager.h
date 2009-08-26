@@ -262,7 +262,7 @@ namespace dtAI
       // our drawable
       osg::ref_ptr<osg::Geode> mDrawable;
 
-      NavMesh mNavMesh;
+      dtCore::RefPtr<NavMesh> mNavMesh;
    };
 
 } // namespace dtAI

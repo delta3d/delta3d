@@ -26,8 +26,14 @@
 #include <dtAI/primitives.h>
 #include <osg/Vec3>
 
+namespace dtDAL
+{
+   class PropertyContainer;
+}
+
 namespace dtAI
 {
+   class WaypointPropertyBase;
 
    class DT_AI_EXPORT WaypointInterface
    {
@@ -46,6 +52,8 @@ namespace dtAI
 
       virtual const osg::Vec3& GetPosition() const = 0;
       virtual void SetPosition(const osg::Vec3& pVec) = 0;
+
+      virtual void CreateProperties(WaypointPropertyBase& container);
 
    protected:
       void SetID(WaypointID pID);

@@ -25,7 +25,6 @@
 #ifndef __DELTA_AIPLUGININTERFACE_H__
 #define __DELTA_AIPLUGININTERFACE_H__
 
-//#include <loki/AbstractFactory.h>
 #include <string>
 #include <vector>
 
@@ -35,6 +34,10 @@
 #include <dtAI/waypointinterface.h>
 #include <osg/Vec3>
 
+#include <dtDAL/objecttype.h>
+#include <dtUtil/objectfactory.h>
+
+#include <dtAI/waypointpropertycache.h>
 
 namespace dtAI
 {
@@ -44,19 +47,11 @@ namespace dtAI
    {
       public: 
          typedef std::vector<WaypointInterface*> WaypointArray;      
-         //typedef FactoryObjects LOKI_TYPELIST_2(WaypointInterface);
-         //typedef Loki::AbstractFactory<FactoryObjects> AIFactory;
+         typedef dtUtil::ObjectFactory< dtCore::RefPtr<const dtDAL::ObjectType>, WaypointInterface> WaypointFactory;
 
       public: //interface declaration
-         AIPluginInterface(){}
-         //AIPluginInterface(AIFactory* factory): mFactory(factory){}
-         virtual ~AIPluginInterface(){}
-
-         //template <class T>
-         //T* CreateInterfaceObject()
-         //{            
-         //   return mInterfaceObjects<T>.Create();
-         //}
+         AIPluginInterface();
+         virtual ~AIPluginInterface();
 
          /**
          * Inserts a waypoint by position into the system
@@ -90,6 +85,13 @@ namespace dtAI
          * @return the waypoint found, or NULL if no waypoint exists with that Id
          */
          virtual WaypointInterface* GetWaypointByName(const std::string& name) = 0;
+
+
+         /**
+         *  Copies all waypoints into a vector
+         *  @param the vector of waypoints to fill
+         */
+         virtual void GetWaypoints(WaypointArray& toFill) = 0;
 
 
          /**
@@ -156,13 +158,44 @@ namespace dtAI
          */
          virtual void ClearMemory() = 0;
 
+         /**
+         *	Use the Waypoint factory to create a Waypoint.
+         */
+         WaypointInterface* CreateWaypoint(const dtDAL::ObjectType& type) const;
+
+         /**
+         * Checks to see if this registry supports the given waypoint type.
+         * @param type The type to check support for.
+         * @return true if supported, false otherwise.
+         */
+         bool IsWaypointTypeSupported(dtCore::RefPtr<const dtDAL::ObjectType> type) const;
+
+         /**
+         * Gets a list of waypoint types supported.
+         */
+         void GetSupportedWaypointTypes(std::vector<dtCore::RefPtr<const dtDAL::ObjectType> >& actors) const;
+
+         template <class WaypointDerivative> 
+         WaypointPropertyBase* CreateWaypointPropertyContainer(const dtDAL::ObjectType& type, WaypointDerivative* wp) const
+         {
+            return mPropertyCache->GetPropertyContainer(type, wp);
+         }
+
+         template <class WaypointDerivative> 
+         void RegisterWaypointType(dtCore::RefPtr<const dtDAL::ObjectType> type)
+         {
+            mFactory->RegisterType<WaypointDerivative>(type);
+            mPropertyCache->RegisterType<WaypointDerivative>(type);
+         }
 
       protected: 
 
 
       private:
 
-         //AIFactory* mFactory;
+         dtCore::RefPtr<WaypointFactory> mFactory;
+         dtCore::RefPtr<WaypointPropertyCache> mPropertyCache;
+
    };
 
 }// namespace dtAI

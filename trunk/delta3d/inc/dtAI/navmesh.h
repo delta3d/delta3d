@@ -24,6 +24,7 @@
 
 #include <dtAI/export.h>
 #include <dtAI/primitives.h>
+#include <osg/Referenced>
 #include <map>
 
 namespace dtAI
@@ -35,7 +36,7 @@ namespace dtAI
     * A NavMesh is the collection of all WaypointPairs
     * This is used for finding traversal paths between points
     */
-   class DT_AI_EXPORT NavMesh
+   class DT_AI_EXPORT NavMesh : public osg::Referenced
    {
    public:
       typedef std::pair<WaypointID, WaypointPair*> NavMeshPair;
@@ -43,7 +44,14 @@ namespace dtAI
 
    public:         
          NavMesh();
+         NavMesh(NavMeshContainer::iterator from, NavMeshContainer::iterator to);
+
+   protected:
          ~NavMesh();
+
+   public:
+         void InsertCopy(NavMeshContainer::iterator from, NavMeshContainer::iterator to);
+         void Remove(NavMeshContainer::iterator from, NavMeshContainer::iterator to);
 
          /**
           * Creates a new WaypointPair and adds it to the current set

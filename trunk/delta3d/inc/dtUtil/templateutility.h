@@ -21,6 +21,8 @@
 #ifndef DELTA_TEMPLATE_UTILITY
 #define DELTA_TEMPLATE_UTILITY
 
+#include <utility> //for std::pair
+
 #include <dtUtil/typetraits.h>
 
 namespace dtUtil
