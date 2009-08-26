@@ -36,6 +36,7 @@ namespace dtAI
    class NavMesh;
    class AIPluginInterface;
    class WaypointCollection;
+   class AIDebugDrawable;
 
    //using pimpl pattern, this is forward declared and
    //implemented in the .cpp
@@ -167,6 +168,8 @@ namespace dtAI
       //void FindRadial(const osg::Vec3& pos, float radius, WaypointArray& vectorIn) const;
 
       //path finding
+      void GetNavMeshAtLevel(const WaypointCollection* root, unsigned level, NavMesh& result) const;
+
       //int GetNumLevels() const;
       //void SetCurrentSearchLevel(int l);
       //int GetCurrentSearchLevel() const;
@@ -183,6 +186,7 @@ namespace dtAI
       //\todo
       //bool ValidateTree();
       //bool ValidateMemory();
+      AIDebugDrawable* GetDebugDrawableAtLevel(const WaypointCollection* root, unsigned level) const;
 
    protected:
       //override for derived cleanup
