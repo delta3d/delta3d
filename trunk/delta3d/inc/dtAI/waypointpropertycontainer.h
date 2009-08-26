@@ -199,16 +199,6 @@ namespace dtAI
          }
       }
 
-      /*virtual*/ dtDAL::PropertyContainer& GetProperties()
-      {
-         return *mPropertyContainer;
-      }
-
-      /*virtual*/ const dtDAL::PropertyContainer& GetProperties() const
-      {
-         return *mPropertyContainer;
-      }
-
       /*virtual*/ void AddCommand(CommandBase* cmd)
       {
          mCommands.push_back(cmd);
