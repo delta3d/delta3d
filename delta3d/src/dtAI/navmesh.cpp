@@ -33,6 +33,11 @@ namespace dtAI
 
    }
 
+   NavMesh::NavMesh(NavMeshContainer::iterator from, NavMeshContainer::iterator to)
+   {
+      mNavMesh.insert(from, to);
+   }
+
    struct NavMeshDeleteFunc
    {
       template<class _Type>
@@ -54,6 +59,16 @@ namespace dtAI
          std::for_each(mNavMesh.begin(), mNavMesh.end(), NavMeshDeleteFunc());
          mNavMesh.clear();
       }
+   }
+
+   void NavMesh::InsertCopy(NavMeshContainer::iterator from, NavMeshContainer::iterator to)
+   {
+      mNavMesh.insert(from, to);
+   }
+
+   void NavMesh::Remove(NavMeshContainer::iterator from, NavMeshContainer::iterator to)
+   {
+      mNavMesh.erase(from, to);
    }
 
    void NavMesh::AddPathSegment(const WaypointInterface* pFrom, const WaypointInterface* pTo)
@@ -158,6 +173,5 @@ namespace dtAI
 
       return true;
    }
-
 
 } // namespace dtAI

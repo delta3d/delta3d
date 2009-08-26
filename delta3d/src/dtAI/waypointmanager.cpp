@@ -72,6 +72,7 @@ namespace dtAI
       , mNavMeshWidth(3.0f)
       , mNavMeshColor(0.0f, 1.0f, 0.35f, 1.0f)
       , mDrawable(new osg::Geode)
+      , mNavMesh(new NavMesh())
    {
       mDrawable->addDrawable(new WaypointManagerDrawable(this));
    }
@@ -185,7 +186,7 @@ namespace dtAI
    /////////////////////////////////////////////////////////////////////////////
    void WaypointManager::AddPathSegment(WaypointID idFrom, WaypointID idTo)
    {
-      mNavMesh.AddPathSegment(mWaypoints[idFrom], mWaypoints[idTo]);
+      mNavMesh->AddPathSegment(mWaypoints[idFrom], mWaypoints[idTo]);
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -223,12 +224,12 @@ namespace dtAI
       }
 
       // write out our number of nav mesh paths
-      unsigned navMeshSize = mNavMesh.GetNavMesh().size();
+      unsigned navMeshSize = mNavMesh->GetNavMesh().size();
       outfile << navMeshSize << std::endl;
 
       // now loop through the navmesh and write out index pairs
-      NavMesh::NavMeshContainer::const_iterator iter = mNavMesh.GetNavMesh().begin();
-      NavMesh::NavMeshContainer::const_iterator endOfList = mNavMesh.GetNavMesh().end();
+      NavMesh::NavMeshContainer::const_iterator iter = mNavMesh->GetNavMesh().begin();
+      NavMesh::NavMeshContainer::const_iterator endOfList = mNavMesh->GetNavMesh().end();
 
       while (iter != endOfList)
       {
@@ -295,7 +296,7 @@ namespace dtAI
             {
                WaypointID indexFrom, indexTo;
                infile >> indexFrom >> indexTo;
-               mNavMesh.AddPathSegment(mWaypoints[indexFrom], mWaypoints[indexTo]);
+               mNavMesh->AddPathSegment(mWaypoints[indexFrom], mWaypoints[indexTo]);
             }
 
             read_file_ok = true;
@@ -366,7 +367,7 @@ namespace dtAI
                   //if there is a path between the two points
                   if (!pIsector->Update())
                   {
-                     mNavMesh.AddPathSegment(pWaypoint1, pWaypoint2);
+                     mNavMesh->AddPathSegment(pWaypoint1, pWaypoint2);
                   }
 
                   pIsector->Reset();
@@ -390,7 +391,7 @@ namespace dtAI
    /////////////////////////////////////////////////////////////////////////////
    void WaypointManager::OnMapSave(const std::string& pWaypointFilename, bool pCreateNavMesh, dtCore::Scene* pScene)
    {
-      mNavMesh.Clear();
+      mNavMesh->Clear();
       if (pCreateNavMesh) CreateNavMesh(pScene);
       WriteFile(pWaypointFilename);
    }
@@ -404,13 +405,13 @@ namespace dtAI
    /////////////////////////////////////////////////////////////////////////////
    NavMesh& WaypointManager::GetNavMesh()
    {
-      return mNavMesh;
+      return *mNavMesh;
    }
 
    /////////////////////////////////////////////////////////////////////////////
    const NavMesh& WaypointManager::GetNavMesh() const
    {
-      return mNavMesh;
+      return *mNavMesh;
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -485,7 +486,7 @@ namespace dtAI
       //free memory
       std::for_each(mWaypoints.begin(), mWaypoints.end(), WaypointManagerDeleteFunc());
       mWaypoints.clear();
-      mNavMesh.Clear();
+      mNavMesh->Clear();
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -616,8 +617,8 @@ namespace dtAI
 
          glBegin(GL_LINES);
 
-         NavMesh::NavMeshContainer::const_iterator iter = mHelper->mNavMesh.GetNavMesh().begin();
-         NavMesh::NavMeshContainer::const_iterator endOfVector = mHelper->mNavMesh.GetNavMesh().end();
+         NavMesh::NavMeshContainer::const_iterator iter = mHelper->mNavMesh->GetNavMesh().begin();
+         NavMesh::NavMeshContainer::const_iterator endOfVector = mHelper->mNavMesh->GetNavMesh().end();
 
          while (iter != endOfVector)
          {
@@ -631,7 +632,7 @@ namespace dtAI
 
             glVertex3fv(&pFrom[0]);
 
-            if (mHelper->mDrawNavMeshDetails && mHelper->mNavMesh.IsOneWay(pMesh))
+            if (mHelper->mDrawNavMeshDetails && mHelper->mNavMesh->IsOneWay(pMesh))
             {
                glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
             }

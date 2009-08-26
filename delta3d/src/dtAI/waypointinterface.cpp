@@ -20,6 +20,11 @@
  */
 
 #include <dtAI/waypointinterface.h>
+#include <dtAI/waypointpropertycontainer.h>
+#include <dtDAL/propertycontainer.h>
+#include <dtDAL/enginepropertytypes.h>
+#include <dtUtil/templateutility.h>
+
 
 namespace dtAI
 {
@@ -60,6 +65,49 @@ namespace dtAI
       return mID;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
+   void WaypointInterface::CreateProperties(WaypointPropertyBase& container )
+   {
+      static dtUtil::RefString Property_WaypointID("WaypointID");
+      static dtUtil::RefString Property_WaypointPosition("WaypointPosition");
+      static dtUtil::RefString Desc_WaypointPosition("WaypointPosition");
+      static dtUtil::RefString Desc_WaypointID("The ID of the waypoint");
+      static dtUtil::RefString WaypointGroup("WaypointInterface");
+
+      //////////////////////////////////////////////////////////////////////////
+      typedef WaypointPropertyContainer<WaypointInterface>::Command0<unsigned, unsigned(WaypointInterface::*)() const> GetIDCommand;
+
+      GetIDCommand* getIDCmd = new GetIDCommand(container, &WaypointInterface::GetID);
+      container.AddCommand(getIDCmd);
+      
+      //////////////////////////////////////////////////////////////////////////
+      typedef WaypointPropertyContainer<WaypointInterface>::Command1<void, void (WaypointInterface::*)(const osg::Vec3&), const osg::Vec3&> SetPosCommand;
+
+      SetPosCommand* setPosCmd = new SetPosCommand(container, &WaypointInterface::SetPosition);
+      container.AddCommand(setPosCmd);
+
+      //////////////////////////////////////////////////////////////////////////
+      typedef WaypointPropertyContainer<WaypointInterface>::Command0<const osg::Vec3&, const osg::Vec3& (WaypointInterface::*)() const> GetPosCommand;
+
+      GetPosCommand* getPosCmd = new GetPosCommand(container, &WaypointInterface::GetPosition);
+      container.AddCommand(getPosCmd);
+
+
+      //////////////////////////////////////////////////////////////////////////
+      dtDAL::IntActorProperty* prop = new dtDAL::IntActorProperty(Property_WaypointID, Property_WaypointID, 
+                                       dtDAL::IntActorProperty::SetFuncType(),
+                                       dtDAL::IntActorProperty::GetFuncType(getIDCmd, &GetIDCommand::Invoke),
+                                       Desc_WaypointID, WaypointGroup);
+      prop->SetReadOnly(true);
+      container.AddProperty(prop);
+
+
+      //////////////////////////////////////////////////////////////////////////
+      container.AddProperty(new dtDAL::Vec3ActorProperty(Property_WaypointPosition, Property_WaypointPosition,
+                        dtDAL::Vec3ActorProperty::SetFuncType(setPosCmd, &SetPosCommand::Invoke),
+                        dtDAL::Vec3ActorProperty::GetFuncType(getPosCmd, &GetPosCommand::Invoke),
+                        Desc_WaypointPosition, WaypointGroup));
+   }
 
 
 } // namespace dtAI

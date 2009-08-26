@@ -226,6 +226,17 @@ namespace dtAI
          return mDrawable.get();
       }
 
+      void GetWaypoints(WaypointArray& toFill)
+      {
+         dtAI::WaypointManager::WaypointMap::const_iterator iter = mWaypointManager.GetWaypoints().begin();
+         dtAI::WaypointManager::WaypointMap::const_iterator iterEnd = mWaypointManager.GetWaypoints().end();
+
+         for(;iter != iterEnd; ++iter)
+         {
+            toFill.push_back((*iter).second);
+         }
+      }
+
    protected:
 
       virtual ~DeltaAIInterface()
@@ -296,6 +307,8 @@ namespace dtAI
        SetActor(*actor);
 
        mAIInterface = CreateAIInterface();
+
+       mAIInterface->RegisterWaypointType<Waypoint>(new dtDAL::ObjectType("Waypoint"));
     }
 
     ///////////////////////////////////////////////////////////////////////
