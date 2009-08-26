@@ -25,6 +25,8 @@
 #include <dtAI/tree.h>
 #include <dtAI/navmesh.h>
 #include <dtAI/waypointpair.h>
+#include <dtAI/aidebugdrawable.h>
+
 
 #include <dtCore/observerptr.h>
 
@@ -51,9 +53,15 @@ namespace dtAI
       typedef std::map<WaypointID, WaypointHolder> WaypointMap;
       typedef std::vector<dtCore::RefPtr<WaypointCollection> > WaypointCollectionArray;
       
+      WaypointGraphImpl()
+         : mNavMesh(new NavMesh())
+      {
+
+      }
+
       void CleanUp()
       {
-         mNavMesh.Clear();
+         mNavMesh->Clear();
          mWaypointOwnership.clear();
 
          WaypointCollectionArray::iterator iter = mRootNode.begin();
@@ -193,7 +201,7 @@ namespace dtAI
       void Remove(dtCore::RefPtr<WaypointCollection> wc)
       {
          //remove all paths
-         mNavMesh.RemoveAllPaths(wc.get());
+         mNavMesh->RemoveAllPaths(wc.get());
          
          //remove from map
          WaypointMap::iterator iter = mWaypointOwnership.find(wc->GetID());
@@ -228,7 +236,7 @@ namespace dtAI
       }
 
 
-      NavMesh mNavMesh;
+      dtCore::RefPtr<NavMesh> mNavMesh;
       WaypointMap mWaypointOwnership;
       WaypointCollectionArray mRootNode;
    };
@@ -481,7 +489,7 @@ namespace dtAI
       }
       
 
-      mImpl->mNavMesh.AddPathSegment(pFrom, pTo);
+      mImpl->mNavMesh->AddPathSegment(pFrom, pTo);
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -489,7 +497,7 @@ namespace dtAI
    {
       //TODO-
 
-      mImpl->mNavMesh.RemovePathSegment(wayFrom, wayTo);     
+      mImpl->mNavMesh->RemovePathSegment(wayFrom, wayTo);     
 
       //restructure graph if critical edges are removed
 
@@ -503,8 +511,8 @@ namespace dtAI
 
       if(way != NULL)
       {
-         NavMesh::NavMeshContainer::iterator iter = mImpl->mNavMesh.begin(pFrom);
-         for(;iter != mImpl->mNavMesh.end(pFrom); iter = mImpl->mNavMesh.begin(pFrom))
+         NavMesh::NavMeshContainer::iterator iter = mImpl->mNavMesh->begin(pFrom);
+         for(;iter != mImpl->mNavMesh->end(pFrom); iter = mImpl->mNavMesh->begin(pFrom))
          {
             RemoveEdge(iter->second->GetWaypointFrom(), iter->second->GetWaypointTo());
          }
@@ -518,8 +526,8 @@ namespace dtAI
 
       if(way != NULL)
       {
-         NavMesh::NavMeshContainer::iterator iter = mImpl->mNavMesh.begin(way);
-         NavMesh::NavMeshContainer::iterator iterEnd = mImpl->mNavMesh.end(way);
+         NavMesh::NavMeshContainer::iterator iter = mImpl->mNavMesh->begin(way);
+         NavMesh::NavMeshContainer::iterator iterEnd = mImpl->mNavMesh->end(way);
          
          for(;iter != iterEnd; ++iter)
          {
@@ -606,4 +614,31 @@ namespace dtAI
    {
       return (mImpl->mWaypointOwnership.find(id) != mImpl->mWaypointOwnership.end());
    }
+
+   void WaypointGraph::GetNavMeshAtLevel(const WaypointCollection* root, unsigned level, NavMesh& result) const
+   {
+      const WaypointCollection* wcAtLevel = root;
+      int numLevels = root->level();
+      for(int currentLevel = 0; currentLevel < numLevels; ++currentLevel)
+      {
+         //wcAtLevel = root->first_child();
+
+         //if(wcAtLevel != NULL && currentLevel == level)
+         //{
+         //   
+         //}
+      }
+   }
+
+   AIDebugDrawable* WaypointGraph::GetDebugDrawableAtLevel(const WaypointCollection* root, unsigned level) const
+   {
+      AIDebugDrawable* dd = new AIDebugDrawable();
+
+      dtCore::RefPtr<NavMesh> nm = new NavMesh();
+
+      GetNavMeshAtLevel(root, level, *nm);
+      dd->UpdateWaypointGraph(*nm);
+      return dd;
+   }
+
 } // namespace dtAI
