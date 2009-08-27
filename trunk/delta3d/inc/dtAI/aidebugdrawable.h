@@ -81,11 +81,18 @@ namespace dtAI
       //this is an expensive operation because all the geometry must be recreated
       void OnRenderInfoChanged();
 
+      /**
+      * @return -1 if no hit was found, else a WaypointID
+      */
+      //int Intersect(osg::Vec3& from, osg::Vec3& to) const;
+
+
+      void ClearMemory();
+
    protected:
       /*virtual*/ ~AIDebugDrawable();
 
       void Init();
-      void ClearMemory();
       void SetOSGNode(osg::Group* grp);
 
       osg::Geode* GetGeodeWayPoints();
