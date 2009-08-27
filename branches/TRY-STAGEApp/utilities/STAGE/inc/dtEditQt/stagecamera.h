@@ -125,11 +125,6 @@ namespace dtEditQt
        */
       void resetRotation();
 
-      ///**
-      //* Sets the viewport.
-      //*/
-      //void setViewport(int x, int y, int width, int height);
-
       /**
        * Sets the camera's orthographic viewing parameters and puts this camera into
        * orthographic viewing mode.
@@ -210,22 +205,6 @@ namespace dtEditQt
        */
       osg::Vec3 getPosition() const;
 
-      /**
-       * Gets this camera's current projection matrix.
-       * @return The current projection matrix.  This is constructed based on the
-       * the orthographic or perspective projection settings.
-       * @see makePerspective
-       * @see makeOrtho
-       */
-      //const osg::Matrix& getProjectionMatrix();
-
-      /**
-       * Gets the camera's current view matrix.
-       * @return The view matrix is generated from its current position and its
-       * current orientation.
-       */
-      //const osg::Matrix& getWorldViewMatrix();
-
       void getOrthoParams(double& left, double& right, double& bottom, double& top,
          double& nearZ, double& farZ);
 
@@ -263,10 +242,6 @@ namespace dtEditQt
        */
       void updateActorAttachments();
 
-      /**
-       * Updates the delta camera.
-       */
-      //void updateDeltaCamera();
 
       /**
        * Returns a count of the number of actor proxies currently attached to this

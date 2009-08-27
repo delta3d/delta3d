@@ -34,8 +34,6 @@
 #include <dtUtil/matrixutil.h>
 #include <dtUtil/log.h>
 #include <dtDAL/actorproxyicon.h>
-//#include <dtEditQt/viewport.h>
-#include <dtCore/system.h>
 
 namespace dtEditQt
 {
@@ -186,8 +184,6 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    osg::Vec3 StageCamera::getViewDir() const
    {
-      //return mOrientation.conj() * osg::Vec3(0.0f, 0.0f, -1.0f);
-
       dtCore::Transform xform;
       mDeltaCamera->GetTransform(xform);
       osg::Vec3 right, up, forward;
@@ -198,7 +194,6 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    osg::Vec3 StageCamera::getUpDir() const
    {
-      //return mOrientation.conj() * osg::Vec3(0.0f, 1.0f, 0.0f);
       dtCore::Transform xform;
       mDeltaCamera->GetTransform(xform);
       osg::Vec3 right, up, forward;
@@ -209,7 +204,6 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    osg::Vec3 StageCamera::getRightDir() const
    {
-      //return mOrientation.conj() * osg::Vec3(1.0f, 0.0f, 0.0f);
       dtCore::Transform xform;
       mDeltaCamera->GetTransform(xform);
       osg::Vec3 right, up, forward;
@@ -244,15 +238,6 @@ namespace dtEditQt
       xform.SetRotation(0, 0, 0);
       mDeltaCamera->SetTransform(xform);
    }
-
-   //////////////////////////////////////////////////////////////////////////////////
-   //void StageCamera::setViewport(int x, int y, int width, int height)
-   //{
-   //   if (mDeltaCamera.valid())
-   //   {
-   //      mDeltaCamera->GetOSGCamera()->setViewport(x, y, width, height);
-   //   }
-   //}
 
    ///////////////////////////////////////////////////////////////////////////////
    osg::Quat StageCamera::getOrientation() const
@@ -313,10 +298,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void StageCamera::update()
    {
-      //getProjectionMatrix();
-      //getWorldViewMatrix();
       updateActorAttachments();
-      //updateDeltaCamera();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -452,36 +434,5 @@ namespace dtEditQt
          tProxy->SetRotationFromMatrix(newRotationMat);
       }
    }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   //void StageCamera::updateDeltaCamera()
-   //{
-   //   if (!mDeltaCamera.valid())
-   //   {
-   //      return;
-   //   }
-
-   //   if (mProjType == PERSPECTIVE)
-   //   {
-   //      mDeltaCamera->GetOSGCamera()->setProjectionMatrixAsPerspective(mFovY, 1.0f, mZNear, mZFar);
-   //   }
-   //   else
-   //   {
-   //      mDeltaCamera->GetOSGCamera()->setProjectionMatrix(getProjectionMatrix());
-   //   }
-
-   //   mDeltaCamera->GetOSGCamera()->setViewMatrix(getWorldViewMatrix());
-
-   //   dtCore::Transform transform;
-   //   mDeltaCamera->GetTransform(transform);
-   //   //transform.SetRotation(mOrientation);
-   //   transform.SetRotation(getYaw(), getPitch(), getRoll());
-   //   transform.SetTranslation(mPosition);
-   //   mDeltaCamera->SetTransform(transform);
-
-      // Sync up the camera since the game manager doesn't do this..
-   //   double userData[2] = {0.0, 0.0};
-   //   dtCore::System::GetInstance().SendMessage(dtCore::System::MESSAGE_CAMERA_SYNCH, userData);
-   //}
 
 } // namespace dtEditQt
