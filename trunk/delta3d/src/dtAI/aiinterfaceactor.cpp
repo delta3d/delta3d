@@ -46,7 +46,7 @@ namespace dtAI
          d[2] = pos[2];
       }
 
-      KDHolder(const osg::Vec3& pos, int id)
+      KDHolder(const osg::Vec3& pos, WaypointID id)
       {
          d[0] = pos[0];
          d[1] = pos[1];
@@ -77,7 +77,7 @@ namespace dtAI
 
       inline value_type operator[](size_t const N) const { return d[N]; }
 
-      int mID;
+      WaypointID mID;
       value_type d[3];      
    };
 
