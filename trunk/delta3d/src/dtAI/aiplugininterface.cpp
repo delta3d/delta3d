@@ -39,9 +39,25 @@ namespace dtAI
    }
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   WaypointInterface* AIPluginInterface::CreateWaypoint(const dtDAL::ObjectType& type) const
+   WaypointInterface* AIPluginInterface::CreateWaypoint(const osg::Vec3& pos, const dtDAL::ObjectType& type)
    {
-      return mFactory->CreateObject(&type);
+      WaypointInterface* newWaypoint = mFactory->CreateObject(&type);
+      newWaypoint->SetPosition(pos);
+      InsertWaypoint(newWaypoint);
+      return newWaypoint;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   WaypointInterface* AIPluginInterface::CreateWaypointNoDuplicates(const osg::Vec3& pos, float radius, const dtDAL::ObjectType& type)
+   {
+      WaypointInterface* result = GetClosestWaypoint(pos, radius);
+
+      if(result == NULL)
+      {         
+         result = CreateWaypoint(pos, type);
+      }      
+
+      return result;
    }
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -55,4 +71,5 @@ namespace dtAI
    {
       mFactory->GetSupportedTypes(actors);
    }   
+
 }

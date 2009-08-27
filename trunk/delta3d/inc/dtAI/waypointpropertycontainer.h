@@ -199,11 +199,6 @@ namespace dtAI
          }
       }
 
-      /*virtual*/ void AddCommand(CommandBase* cmd)
-      {
-         mCommands.push_back(cmd);
-      }
-
    private:
       WaypointType* mWaypoint;
    };

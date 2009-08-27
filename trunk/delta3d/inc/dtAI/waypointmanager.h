@@ -140,6 +140,13 @@ namespace dtAI
        */
       WaypointID AddWaypoint(const osg::Vec3& pWaypoint);
 
+      /**      
+      * @note this does not create a new waypoint, the function above does
+      * @note if you are having to use this function, consider using an AIInterfaceActor
+      *        and at runtime using its AIPluginInterface Ptr
+      */
+      void AddWaypoint(Waypoint* pWaypoint);
+
       /**
        * Use this function to remove waypoints you have created
        */
