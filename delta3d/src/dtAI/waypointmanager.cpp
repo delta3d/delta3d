@@ -117,6 +117,15 @@ namespace dtAI
    }
 
    /////////////////////////////////////////////////////////////////////////////
+   void WaypointManager::AddWaypoint(Waypoint* wp)
+   {
+      if(GetWaypoint(wp->GetID()) == NULL)
+      {
+         mWaypoints.insert(std::pair<WaypointID, Waypoint*>(wp->GetID(), wp));
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
    void WaypointManager::RemoveWaypoint(WaypointID id)
    {
       //we are indexing into map with a key generated on AddWaypoint

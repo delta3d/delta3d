@@ -28,60 +28,157 @@
 #include <dtAI/waypointmanager.h>
 #include <dtAI/astarwaypointutils.h>
 #include <dtAI/aidebugdrawable.h>
-
+#include <dtUtil/kdtree.h>
 
 namespace dtAI
 {
    //////////////////////////////////////////////////////////////////////////////////
    //This is the default AI plugin interface implementation
    //////////////////////////////////////////////////////////////////////////////////////////
+   struct KDHolder
+   {
+      typedef float value_type;
+
+      KDHolder(const osg::Vec3& pos)
+      {
+         d[0] = pos[0];
+         d[1] = pos[1];
+         d[2] = pos[2];
+      }
+
+      KDHolder(const osg::Vec3& pos, int id)
+      {
+         d[0] = pos[0];
+         d[1] = pos[1];
+         d[2] = pos[2];
+
+         mID = id;
+      }
+
+      KDHolder(value_type a, value_type b, value_type c)
+      {
+         d[0] = a;
+         d[1] = b;
+         d[2] = c;
+      }
+
+      KDHolder(const KDHolder& x)
+      {
+         d[0] = x.d[0];
+         d[1] = x.d[1];
+         d[2] = x.d[2];
+         mID = x.mID;
+      }
+
+      operator osg::Vec3()
+      {
+         return osg::Vec3(d[0], d[1], d[2]);
+      }
+
+      inline value_type operator[](size_t const N) const { return d[N]; }
+
+      int mID;
+      value_type d[3];      
+   };
+
+
+   inline float KDHolderIndexFunc(KDHolder t, size_t k ) { return t[k]; }
+
+   typedef std::pointer_to_binary_function<KDHolder, size_t, float> tree_search_func;
+   typedef dtUtil::KDTree<3, KDHolder, tree_search_func> WaypointTree;
+   typedef std::pair<WaypointTree::const_iterator, float> find_result;
 
    class DeltaAIInterface: public AIPluginInterface
    {
+
    public:
-   /*   typedef Loki::ConcreteFactory< AIPluginInterface::AIFactory,
-                                     Loki::OpNewFactoryUnit,
-                                     LOKI_TYPELIST_1(Waypoint)> DeltaAIFactory;*/
 
       DeltaAIInterface()
-         //: AIPluginInterface(new DeltaAIFactory())
          : mWaypointManager(WaypointManager::GetInstance())
+         , mKDTreeDirty(true)
+         , mTree(new WaypointTree(std::ptr_fun(KDHolderIndexFunc)))
       {
 
       }
 
-      WaypointID InsertWaypoint(const osg::Vec3& pos)
+      void InsertWaypoint(WaypointInterface* waypoint)
       {
-         WaypointID id = mWaypointManager.AddWaypoint(pos);
-
-         //if we have created a drawable then we must add and remove to it
-         if(mDrawable.valid())
+         ///note- this currently only supports backwards compatability with the 
+         ///waypoint manager which only supports Waypoints
+         Waypoint* waypointDerivativeTemp = dynamic_cast<Waypoint*>(waypoint);
+         
+         if(waypointDerivativeTemp != NULL)
          {
-            WaypointInterface* wi = mWaypointManager.GetWaypoint(id);
-            if(wi != NULL)
+            mWaypointManager.AddWaypoint(waypointDerivativeTemp);
+
+            //if we have created a drawable then we must add and remove to it
+            if(mDrawable.valid())
+            {
+               mDrawable->InsertWaypoint(*waypoint);
+            }
+
+            KDHolder node(waypoint->GetPosition(), waypoint->GetID());
+            mTree->insert(node);
+
+            mKDTreeDirty = true;
+         }
+         else
+         {
+            LOG_ERROR("The current version of the AIInterfaceActor only supports the legacy Waypoint type 'dtAI::Waypoint'.");
+         }
+      }
+
+      bool MoveWaypoint(WaypointInterface* wi, const osg::Vec3& newPos)
+      {         
+         //the kd-tree cannot move :( for now remove and re-insert
+         osg::Vec3 pos = wi->GetPosition();        
+
+         find_result found = mTree->find_nearest(pos, 1.0f);
+         if(found.first != mTree->end() && (*found.first).mID == wi->GetID())
+         {            
+            mTree->erase(found.first);
+            
+            KDHolder node(newPos, wi->GetID());
+            mTree->insert(node);
+
+            wi->SetPosition(newPos);
+
+            //the drawable allows re-inserting to move
+            if(mDrawable.valid())
             {
                mDrawable->InsertWaypoint(*wi);
             }
+
+            mKDTreeDirty = true;
+            return true;
          }
 
-         return id;
+         return false;
       }
 
-      bool RemoveWaypoint(WaypointID id)
+      bool RemoveWaypoint(WaypointInterface* wi)
       {
-         if(mDrawable.valid())
-         {
-            mDrawable->RemoveWaypoint(id);
+         bool result = false;         
+
+         osg::Vec3 pos = wi->GetPosition();
+         find_result found = mTree->find_nearest(pos, 1.0f);
+         if(found.first != mTree->end() && found.first->mID == wi->GetID())
+         {            
+            mTree->erase(found.first);
+            
+            if(mDrawable.valid())
+            {
+               mDrawable->RemoveWaypoint(wi->GetID());
+            }
+
+            mWaypointManager.RemoveWaypoint(wi->GetID());
+
+            mKDTreeDirty = true;
+
+            result = true;
          }
-
-         mWaypointManager.RemoveWaypoint(id);
-         return true;
-      }
-
-      WaypointInterface* GetClosestWaypoint(const osg::Vec3& pos)
-      {
-         //un-implemented-- Placeholder for waypoint manager replacement
-         return NULL;
+      
+         return result;
       }
 
       WaypointInterface* GetWaypointById(WaypointID id)
@@ -189,8 +286,13 @@ namespace dtAI
 
       void ClearMemory()
       {
-         mWaypointManager.GetNavMesh().Clear();
          mWaypointManager.Clear();
+         mTree->clear();
+         
+         if(mDrawable.valid())
+         {
+            mDrawable->ClearMemory();
+         }
       }
 
       bool LoadWaypointFile(const std::string& filename)
@@ -237,19 +339,76 @@ namespace dtAI
          }
       }
 
+      WaypointInterface* GetClosestWaypoint(const osg::Vec3& pos, float maxRadius)
+      {
+         if(mKDTreeDirty)
+         {
+            Optimize();
+         }
+
+         WaypointInterface* result = NULL;
+
+         find_result found = mTree->find_nearest(pos, maxRadius);
+         if(found.first != mTree->end())
+         {              
+            result = GetWaypointById(found.first->mID);            
+         }
+
+         return result;
+      }
+
+
+      bool GetWaypointsAtRadius(const osg::Vec3& pos, float radius, WaypointArray& arrayToFill)
+      {
+         if(mKDTreeDirty)
+         {
+            Optimize();
+         }
+
+         std::vector<KDHolder> v;
+
+         mTree->find_within_range(pos, radius, std::back_inserter(v));
+
+         std::vector<KDHolder>::const_iterator iter = v.begin();
+         std::vector<KDHolder>::const_iterator iterEnd = v.end();
+         for (; iter != iterEnd; ++iter)
+         {
+            WaypointInterface* wi = GetWaypointById(iter->mID);
+            if(wi != NULL)
+            {
+               arrayToFill.push_back(wi);
+            }
+            else
+            {
+               LOG_ERROR("Error searching for waypoints.");
+            }
+         }  
+
+         return !arrayToFill.empty();
+      }
+
    protected:
 
       virtual ~DeltaAIInterface()
       {
          ClearMemory();
+         delete mTree;
       }
 
+      void Optimize()
+      {
+         mTree->optimize();
+         mKDTreeDirty = false;
+      }
 
    private:
 
       dtCore::RefPtr<AIDebugDrawable> mDrawable;
       WaypointAStar mAStar;
       WaypointManager& mWaypointManager;
+
+      bool mKDTreeDirty;
+      WaypointTree* mTree;      
 
    };
 
