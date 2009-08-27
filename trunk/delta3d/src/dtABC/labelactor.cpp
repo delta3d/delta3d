@@ -233,6 +233,48 @@ namespace dtABC
       return mTextNode->getCharacterHeight();
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void LabelActor::SetMaximumWidth(float maximumWidth)
+   {
+      mTextNode->setMaximumWidth(maximumWidth);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   float LabelActor::GetMaximumWidth() const
+   {
+      return mTextNode->getMaximumWidth();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void LabelActor::SetMaximumHeight(float maximumHeight)
+   {
+      mTextNode->setMaximumHeight(maximumHeight);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   float LabelActor::GetMaximumHeight() const
+   {
+      return mTextNode->getMaximumHeight();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void LabelActor::SetLineSpacing(float lineSpacing)
+   {
+      mTextNode->setLineSpacing(lineSpacing);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   float LabelActor::GetLineSpacing() const
+   {
+      return mTextNode->getLineSpacing();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   unsigned int LabelActor::GetLineCount() const
+   {
+      return mTextNode->getLineCount();
+   }
+
    /////////////////////////////////////////////////////////////////////////////
    void LabelActor::SetTextColor(const osg::Vec4& color)
    {
