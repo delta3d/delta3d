@@ -12,7 +12,7 @@ file(GLOB PROG_SOURCES "*.cpp" "*.rc")
 
 QT4_ADD_RESOURCES(RCC_SOURCES ${APP_NAME}Resources.qrc)
 qt4_wrap_cpp(MOC_SOURCES ${PROG_HEADERS})
-qt4_wrap_ui(UI_SOURCES mainwindow.ui)
+qt4_wrap_ui(UI_SOURCES mainwindow.ui waypointbrowser.ui)
 
 ADD_EXECUTABLE(${APP_NAME}
     ${PROG_HEADERS}

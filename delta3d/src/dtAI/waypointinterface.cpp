@@ -68,11 +68,11 @@ namespace dtAI
    /////////////////////////////////////////////////////////////////////////////
    void WaypointInterface::CreateProperties(WaypointPropertyBase& container )
    {
-      static dtUtil::RefString Property_WaypointID("WaypointID");
-      static dtUtil::RefString Property_WaypointPosition("WaypointPosition");
-      static dtUtil::RefString Desc_WaypointPosition("WaypointPosition");
-      static dtUtil::RefString Desc_WaypointID("The ID of the waypoint");
-      static dtUtil::RefString WaypointGroup("WaypointInterface");
+      static const dtUtil::RefString Property_WaypointID("WaypointID");
+      static const dtUtil::RefString Property_WaypointPosition("WaypointPosition");
+      static const dtUtil::RefString Desc_WaypointPosition("WaypointPosition");
+      static const dtUtil::RefString Desc_WaypointID("The ID of the waypoint");
+      static const dtUtil::RefString WaypointGroup("WaypointInterface");
 
       //////////////////////////////////////////////////////////////////////////
       typedef WaypointPropertyContainer<WaypointInterface>::Command0<unsigned, unsigned(WaypointInterface::*)() const> GetIDCommand;

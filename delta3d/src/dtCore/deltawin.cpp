@@ -76,6 +76,7 @@ DeltaWin::DeltaWin(const std::string& name,
    deltaTraits.height = height;
    deltaTraits.showCursor = cursor;
    deltaTraits.fullScreen = fullScreen;
+   deltaTraits.realizeUponCreate = true;
    deltaTraits.inheritedWindowData = inheritedWindowData;
    deltaTraits.contextToShare = NULL;
 

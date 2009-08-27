@@ -34,8 +34,8 @@
 #include <dtCore/deltawin.h>
 #include <dtCore/system.h>
 
+#include <dtCore/objectmotionmodel.h>
 #include <dtCore/flymotionmodel.h>
-#include <dtCore/fpsmotionmodel.h>
 
 #include "aicomponent.h"
 
@@ -45,6 +45,7 @@ AIUtilityApp::AIUtilityApp()
    , mGM(new dtGame::GameManager(*GetScene()))
 {
    mGM->SetApplication(*this);
+   mLastCameraTransform.MakeIdentity();
 }
 
 /////////////////////////////////////
@@ -106,3 +107,24 @@ void AIUtilityApp::CloseMap()
 {
    mGM->CloseCurrentMap();
 }
+
+/////////////////////////////////////
+void AIUtilityApp::PreFrame(const double deltaSimTime)
+{
+   BaseClass::PreFrame(deltaSimTime);
+   dtCore::Transform xform;
+   GetCamera()->GetTransform(xform);
+
+   if (!xform.EpsilonEquals(mLastCameraTransform))
+   {
+      mLastCameraTransform = xform;
+      emit CameraTransformChanged(xform);
+   }
+}
+
+////////////////////////////////////////
+void AIUtilityApp::TransformCamera(const dtCore::Transform& xform)
+{
+   GetCamera()->SetTransform(xform);
+}
+

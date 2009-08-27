@@ -27,8 +27,7 @@
 
 #include <QtGui/QMainWindow>
 
-class QCloseEvent;
-class AIPropertyEditor;
+#include <dtCore/transform.h>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace Ui
@@ -39,6 +38,7 @@ namespace Ui
 namespace dtAI
 {
    class AIPluginInterface;
+   class WaypointInterface;
 }
 
 namespace dtDAL
@@ -46,6 +46,10 @@ namespace dtDAL
    class PropertyContainer;
    class ActorProperty;
 }
+
+class QCloseEvent;
+class AIPropertyEditor;
+class WaypointBrowser;
 /// @endcond
 
 class MainWindow : public QMainWindow
@@ -61,10 +65,13 @@ public:
 
    dtAI::AIPluginInterface* GetAIPluginInterface();
 
+   bool eventFilter(QObject *object, QEvent *event);
+
 signals:
    void ProjectContextChanged(const std::string& path);
    void MapSelected(const std::string& path);
    void CloseMapSelected();
+   void RequestCameraTransformChange(const dtCore::Transform& xform);
 
 public slots:
    void ChangeProjectContext();
@@ -74,15 +81,25 @@ public slots:
    void SetAIPluginInterface(dtAI::AIPluginInterface* interface);
    void SelectRenderingOptions();
    void PropertyChangedFromControl(dtDAL::PropertyContainer&, dtDAL::ActorProperty&);
+   void OnCameraTransformChanged(const dtCore::Transform& xform);
+
+   void OnPropertyEditorShowHide(bool);
+   void OnWaypointBrowserShowHide(bool);
+   void OnChildRequestCameraTransformChange(const dtCore::Transform& xform);
+
+   void OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>& waypoints);
+
 private:
    void ChangeMap(const QString& newMap);
 
    Ui::MainWindow* mUi;
    QWidget& mCentralWidget;
    AIPropertyEditor& mPropertyEditor;
+   WaypointBrowser& mWaypointBrowser;
    dtAI::AIPluginInterface* mPluginInterface;
 
    QString mCurrentMapName;
+   dtCore::Transform mCurrentCameraTransform;
 };
 
 #endif /*AIUTILITY_MAIN_WINDOW*/

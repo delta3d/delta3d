@@ -49,18 +49,23 @@ namespace dtAI
       //we actually don't want to reset this, simiarly to the Waypoint ID
       //this comes from supporting the pure virtual functions in the base
       //mWorldSpacePos = osg::Vec3(0.0f, 0.0f, 0.0f);
+      mRenderWaypoints = true;
+      mRenderWaypointID = true;
+      mRenderWaypointText = true;
+      mRenderNavMesh = true;
+      mRenderNavMeshText = true;
 
       //set the rest to reasonable defaults
       mWaypointSize = 10.0f;
       mWaypointColor = Color(1.0f, 1.0f, 1.0f, 1.0f);
 
-      mWaypointFontFile = dtUtil::RefString("Arial.ttf");
+      mWaypointFontFile = "Arial.ttf";
       mWaypointFontSizeScalar = 0.5f;
       mWaypointTextOffset = osg::Vec3(0.0f, 0.0f, 0.3f);
       mWaypointFontColor = Color(1.0f, 1.0f, 1.0f, 1.0f);
       mNavMeshColor = Color(1.0f, 1.0f, 1.0f, 1.0f);
 
-      mNavMeshFontFile = dtUtil::RefString("Arial.ttf");
+      mNavMeshFontFile = "Arial.ttf";
       mNavMeshFontSizeScalar = 0.5f;
       mNavMeshTextOffsetScalar = 1.0f;
       mNavMeshFontColor = Color(1.0f, 1.0f, 1.0f, 1.0f);

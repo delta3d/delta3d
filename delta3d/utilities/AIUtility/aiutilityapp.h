@@ -28,6 +28,7 @@
 #include <QtCore/QObject>
 #include <dtABC/application.h>
 #include <dtCore/motionmodel.h>
+#include <dtCore/transform.h>
 #include <dtQt/deltastepper.h>
 
 #include <dtGame/gamemanager.h>
@@ -41,21 +42,29 @@ class AIUtilityApp: public QObject, public dtABC::Application
 {
    Q_OBJECT
 public:
+   typedef dtABC::Application BaseClass;
+
    AIUtilityApp();
    virtual ~AIUtilityApp();
    virtual void Config();
    void SetAIPluginInterface(dtAI::AIPluginInterface* interface);
 signals:
    void AIPluginInterfaceChanged(dtAI::AIPluginInterface* interface);
+   void CameraTransformChanged(const dtCore::Transform& xform);
 public slots:
    void DoQuit();
    void SetProjectContext(const std::string& path);
    void ChangeMap(const std::string& map);
    void CloseMap();
+   void TransformCamera(const dtCore::Transform&);
+protected:
+   ///override for preframe
+   virtual void PreFrame(const double deltaSimTime);
 private:
    dtQt::DeltaStepper mStepper;
    dtCore::RefPtr<dtGame::GameManager> mGM;
    dtCore::RefPtr<dtCore::MotionModel> mMotionModel;
+   dtCore::Transform mLastCameraTransform;
 };
 
 #endif /* AIUTILITYAPP_H_ */
