@@ -34,15 +34,19 @@
 #include <QtGui/QMessageBox>
 #include <QtCore/QSettings>
 
+#include <dtCore/transform.h>
 #include <dtDAL/map.h>
 #include <dtDAL/project.h>
 #include <dtDAL/propertycontainer.h>
 #include <dtDAL/actorproperty.h>
 #include "aipropertyeditor.h"
+#include "waypointbrowser.h"
 
 #include <dtAI/aiplugininterface.h>
 #include <dtAI/aidebugdrawable.h>
 #include <dtAI/waypointrenderinfo.h>
+#include <dtAI/waypointpropertycontainer.h>
+#include <dtAI/waypointpropertycache.h>
 
 #include <set>
 
@@ -50,12 +54,14 @@ static const std::string ORG_NAME("delta3d.org");
 static const std::string APP_NAME("AIUtility");
 static const std::string PROJECT_CONTEXT_SETTING("ProjectContext");
 static const std::string CURRENT_MAP_SETTING("CurrentMap");
+static const std::string WINDOW_SETTINGS("WindowSettings");
 
 //////////////////////////////////////////////
 MainWindow::MainWindow(QWidget& mainWidget)
    : mUi(new Ui::MainWindow)
    , mCentralWidget(mainWidget)
    , mPropertyEditor(*new AIPropertyEditor(*this))
+   , mWaypointBrowser(*new WaypointBrowser(*this))
    , mPluginInterface(NULL)
 {
    mUi->setupUi(this);
@@ -63,15 +69,30 @@ MainWindow::MainWindow(QWidget& mainWidget)
    setCentralWidget(&mCentralWidget);
    setWindowTitle(tr("AI Utility"));
 
+   mCurrentCameraTransform.MakeIdentity();
+
    connect(mUi->mActionOpenMap, SIGNAL(triggered()), this, SLOT(OnOpenMap()));
    connect(mUi->mActionCloseMap, SIGNAL(triggered()), this, SLOT(OnCloseMap()));
    connect(mUi->mChangeContextAction, SIGNAL(triggered()), this, SLOT(ChangeProjectContext()));
    connect(mUi->mActionRenderingOptions, SIGNAL(triggered()), this, SLOT(SelectRenderingOptions()));
 
+   connect(mUi->mActionPropertyEditorVisible, SIGNAL(toggled(bool)), this, SLOT(OnPropertyEditorShowHide(bool)));
+   connect(mUi->mActionWaypointBrowserVisible, SIGNAL(toggled(bool)), this, SLOT(OnWaypointBrowserShowHide(bool)));
+
    connect(&mPropertyEditor, SIGNAL(SignalPropertyChangedFromControl(dtDAL::PropertyContainer&, dtDAL::ActorProperty&)),
             this, SLOT(PropertyChangedFromControl(dtDAL::PropertyContainer&, dtDAL::ActorProperty&)));
 
+   connect(&mWaypointBrowser, SIGNAL(RequestCameraTransformChange(const dtCore::Transform&)),
+            this, SLOT(OnChildRequestCameraTransformChange(const dtCore::Transform&)));
+
+   connect(&mWaypointBrowser, SIGNAL(WaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>&)),
+            this, SLOT(OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>&)));
+
    addDockWidget(Qt::LeftDockWidgetArea, &mPropertyEditor);
+   addDockWidget(Qt::RightDockWidgetArea, &mWaypointBrowser);
+
+   mPropertyEditor.installEventFilter(this);
+   mWaypointBrowser.installEventFilter(this);
 }
 
 //////////////////////////////////////////////
@@ -86,6 +107,9 @@ void MainWindow::showEvent(QShowEvent* e)
    if (!e->spontaneous())
    {
       QSettings settings(ORG_NAME.c_str(), APP_NAME.c_str());
+
+      restoreGeometry(settings.value(WINDOW_SETTINGS.c_str()).toByteArray());
+
       QString projectContext = settings.value(PROJECT_CONTEXT_SETTING.c_str()).toString();
 
 
@@ -105,6 +129,11 @@ void MainWindow::closeEvent(QCloseEvent* e)
 {
    //Disconnect the central widget because OSG wants to close it itself.
    mCentralWidget.setParent(NULL);
+
+   QSettings settings(ORG_NAME.c_str(), APP_NAME.c_str());
+   settings.setValue(WINDOW_SETTINGS.c_str(), saveGeometry());
+   settings.sync();
+
    QApplication::quit();
 }
 
@@ -182,6 +211,9 @@ void MainWindow::EnableOrDisableControls()
    // Stop from changing context unless the map is closed. It works around a bug.
    // since the map doesn't change immediately in the GM, we can't just change maps.
    mUi->mChangeContextAction->setEnabled(mCurrentMapName.isEmpty());
+
+   mUi->mActionWaypointBrowserVisible->setChecked(mWaypointBrowser.isVisible());
+   mUi->mActionPropertyEditorVisible->setChecked(mPropertyEditor.isVisible());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -198,6 +230,27 @@ void MainWindow::SetAIPluginInterface(dtAI::AIPluginInterface* interface)
    // clear the selection
    dtQt::BasePropertyEditor::PropertyContainerRefPtrVector selected;
    mPropertyEditor.HandlePropertyContainersSelected(selected);
+   mWaypointBrowser.SetPluginInterface(interface);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool MainWindow::eventFilter(QObject *object, QEvent *event)
+{
+   bool result = false;
+   if (event->type() == QEvent::Close)
+   {
+      if (object == &mPropertyEditor)
+      {
+         mUi->mActionPropertyEditorVisible->setChecked(false);
+         result = true;
+      }
+      else if (object == &mWaypointBrowser)
+      {
+         mUi->mActionWaypointBrowserVisible->setChecked(false);
+         result = true;
+      }
+   }
+   return result;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -220,5 +273,50 @@ void MainWindow::PropertyChangedFromControl(dtDAL::PropertyContainer& pc, dtDAL:
    {
       mPluginInterface->GetDebugDrawable()->OnRenderInfoChanged();
    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnCameraTransformChanged(const dtCore::Transform& xform)
+{
+   mCurrentCameraTransform = xform;
+   mWaypointBrowser.SetCameraTransform(xform);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnChildRequestCameraTransformChange(const dtCore::Transform& xform)
+{
+   emit RequestCameraTransformChange(xform);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>& waypoints)
+{
+   if (mPluginInterface == NULL)
+   {
+      return;
+   }
+
+   std::vector<dtCore::RefPtr<dtDAL::PropertyContainer> > propertyContainers;
+   propertyContainers.reserve(waypoints.size());
+
+   for (size_t i = 0; i < waypoints.size(); ++i)
+   {
+      dtAI::WaypointInterface* wpi = waypoints[i];
+      //mPluginInterface->CreateWaypointPropertyContainer();
+   }
+
+   mPropertyEditor.HandlePropertyContainersSelected(propertyContainers);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnPropertyEditorShowHide(bool checked)
+{
+   mPropertyEditor.setVisible(checked);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnWaypointBrowserShowHide(bool checked)
+{
+   mWaypointBrowser.setVisible(checked);
 }
 

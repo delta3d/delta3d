@@ -39,8 +39,16 @@
     </property>
     <addaction name="mActionRenderingOptions"/>
    </widget>
+   <widget class="QMenu" name="menuWindows">
+    <property name="title">
+     <string>Windows</string>
+    </property>
+    <addaction name="mActionPropertyEditorVisible"/>
+    <addaction name="mActionWaypointBrowserVisible"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
+   <addaction name="menuWindows"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionQuit">
@@ -71,6 +79,28 @@
   <action name="mActionRenderingOptions">
    <property name="text">
     <string>Rendering Options</string>
+   </property>
+  </action>
+  <action name="mActionPropertyEditorVisible">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Property Editor</string>
+   </property>
+  </action>
+  <action name="mActionWaypointBrowserVisible">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Waypoint Browser</string>
    </property>
   </action>
  </widget>

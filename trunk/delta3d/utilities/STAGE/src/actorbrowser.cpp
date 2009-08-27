@@ -162,11 +162,9 @@ namespace dtEditQt
       if (selectedWidget != NULL && selectedWidget->isLeafNode())
       {
          mCreateActorBtn->setEnabled(true);
-         return;
       }
-
       // disable the button if we got here.
-      if (mCreateActorBtn != NULL)
+      else if (mCreateActorBtn != NULL)
       {
          mCreateActorBtn->setEnabled(false);
       }

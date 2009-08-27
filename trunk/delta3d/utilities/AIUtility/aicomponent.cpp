@@ -83,7 +83,7 @@ dtAI::AIPluginInterface* AIComponent::GetAIPluginInterface()
 
 
 /////////////////////////////////////////////////////////////
-void AIComponent::ProcessMessage(const dtGame::Message &message)
+void AIComponent::ProcessMessage(const dtGame::Message& message)
 {
    if (message.GetMessageType() == dtGame::MessageType::TICK_LOCAL)
    {
