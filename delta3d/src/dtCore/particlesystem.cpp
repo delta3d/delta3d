@@ -22,9 +22,6 @@
 
 #include <osg/Version> // For #ifdef
 
-#include <osgDB/WriteFile>
-#include <dtUtil/stringutils.h>
-
 using namespace dtCore;
 using namespace dtUtil;
 
@@ -290,7 +287,6 @@ bool ParticleLayer::operator==(const ParticleLayer& testLayer) const
 ////////////////////////////////////////////////////////////////////////////////
 osg::Node* ParticleSystem::LoadFile( const std::string& filename, bool useCache)
 {
-   LOG_ALWAYS("Loading File : " + filename);
    //First, cleanup
    if (GetMatrixNode()->getNumChildren() > 0)
    {
@@ -622,8 +618,6 @@ void ParticleSystem::CloneParticleSystemDrawables()
       layer.GetModularEmitter().setParticleSystem(newPSDrawable.get());
       layer.GetProgram().setParticleSystem(newPSDrawable.get());
    }
-   static int which = 0;
-   osgDB::writeNodeFile(*mLoadedFile, "/Users/david/development/psOut/ps" + dtUtil::ToString(which) + ".osg");
 }
 
 ////////////////////////////////////////////////////////////////////////////////
