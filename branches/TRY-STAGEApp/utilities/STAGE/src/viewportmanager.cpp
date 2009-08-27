@@ -61,9 +61,7 @@ namespace dtEditQt
       : mShareMasterContext(true)
       , mMasterViewport(NULL)
       , mMasterScene(new dtCore::Scene())
-      , mMasterView(new dtCore::View("master view"))
    {
-      mMasterView->SetScene(mMasterScene.get());
       mViewportOverlay     = new ViewportOverlay();
       //mWorldCamera         = new StageCamera();
       mInChangeTransaction = false;
@@ -786,11 +784,6 @@ namespace dtEditQt
    void ViewportManager::setWorldViewCamera(StageCamera* camera)
    {
       mWorldCamera = camera;
-
-      if (mWorldCamera)
-      {
-         mMasterView->SetCamera(mWorldCamera->getDeltaCamera());     
-      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////

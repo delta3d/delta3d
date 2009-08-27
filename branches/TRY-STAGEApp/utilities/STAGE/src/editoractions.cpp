@@ -74,19 +74,16 @@
 #include <dtUtil/log.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/librarysharingmanager.h>
-#include <dtCore/isector.h>
 #include <dtCore/transform.h>
 #include <dtDAL/project.h>
 #include <dtDAL/map.h>
 #include <dtDAL/mapxml.h>
-#include <dtDAL/exceptionenum.h>
 #include <dtDAL/transformableactorproxy.h>
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/actorproxyicon.h>
 #include <dtDAL/environmentactor.h>
 #include <dtDAL/librarymanager.h>
 #include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/map.h>
 #include <dtCore/globals.h>
 
 #include <sstream>

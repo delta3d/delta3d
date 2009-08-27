@@ -34,7 +34,6 @@
 #include <map>
 #include <osg/Referenced>
 #include <dtCore/scene.h>
-#include <dtCore/view.h>
 #include <dtCore/uniqueid.h>
 #include <dtCore/deltadrawable.h>
 #include <dtUtil/enumeration.h>
@@ -112,8 +111,6 @@ namespace dtEditQt
       /**
        * Gets a handle to the master view.
        */
-      dtCore::View* getMasterView() { return mMasterView.get(); }
-
       Viewport* GetMasterViewport() { return mMasterViewport;}
 
       /**
@@ -648,7 +645,6 @@ namespace dtEditQt
       Viewport*                       mMasterViewport;
       dtCore::RefPtr<ViewportOverlay> mViewportOverlay;
       dtCore::RefPtr<dtCore::Scene>   mMasterScene;
-      dtCore::RefPtr<dtCore::View>    mMasterView;
       dtCore::RefPtr<StageCamera>     mWorldCamera;
       int                             mNumTextureUnits;
       bool                            mInChangeTransaction;
