@@ -30,7 +30,6 @@
 #ifndef DELTA_ORTHO_VIEWPORT
 #define DELTA_ORTHO_VIEWPORT
 
-#include <QtGui/QCursor>
 #include <dtUtil/enumeration.h>
 #include "dtEditQt/editorviewport.h"
 
@@ -131,12 +130,6 @@ namespace dtEditQt
       bool moveCamera(float dx, float dy);
 
       /**
-      * Sets the scene to be rendered by this viewport.
-      * @param scene The new scene to be rendered.
-      */
-      void setScene(dtCore::Scene* scene);
-
-      /**
       * Initializes the viewport.  This just sets the current render style
       * to be wireframe and the view type to be OrthoViewType::TOP.
       */
@@ -170,17 +163,6 @@ namespace dtEditQt
       virtual ~OrthoViewport() { }
 
 
-
-
-      /**
-       * Called when the user moves the mouse while pressing any combination of
-       * mouse buttons.  Based on the current mode, the camera is updated.
-       * @param dx the adjusted change in x that the mouse moved.
-       * @param dy the adjusted change in y that the mouse moved.
-       */
-      virtual void onMouseMoveEvent(QMouseEvent* e, float dx, float dy);
-
-
       /**
        * Called from the mousePressEvent handler.  This sets the viewport state
        * to properly respond to mouse movement events when in camera mode.
@@ -210,7 +192,6 @@ namespace dtEditQt
       */
       virtual bool endActorMode(QMouseEvent* e);
 
-      void warpWorldCamera(int x, int y);
 
    private:
       ///Allow the ViewportManager access to it can create perspective viewports.

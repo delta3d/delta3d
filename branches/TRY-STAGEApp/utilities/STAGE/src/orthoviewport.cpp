@@ -28,16 +28,8 @@
  */
 #include <prefix/dtstageprefix-src.h>
 #include <QtGui/QMouseEvent>
-#include <QtGui/QAction>
-#include <osg/Math>
-#include <osg/CullSettings>
 #include <dtEditQt/orthoviewport.h>
-#include <dtEditQt/viewportoverlay.h>
-#include <dtEditQt/editorevents.h>
-#include <dtEditQt/editoractions.h>
 #include <dtDAL/exceptionenum.h>
-#include <dtDAL/transformableactorproxy.h>
-#include <dtDAL/enginepropertytypes.h>
 
 namespace dtEditQt
 {
@@ -64,7 +56,6 @@ namespace dtEditQt
       osg::GraphicsContext* shareWith)
       : EditorViewport(ViewportManager::ViewportType::ORTHOGRAPHIC, name, parent, shareWith)
    {
-      //mCamera = new StageCamera();
       mCameraMode = &OrthoViewport::CameraMode::NOTHING;
       setViewType(OrthoViewType::TOP,false);
 
@@ -128,12 +119,6 @@ namespace dtEditQt
 
 
    ///////////////////////////////////////////////////////////////////////////////
-   void OrthoViewport::onMouseMoveEvent(QMouseEvent* e, float dx, float dy)
-   {
-      EditorViewport::onMouseMoveEvent(e, dx, dy);
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
    bool OrthoViewport::moveCamera(float dx, float dy)
    {
       if (!EditorViewport::moveCamera(dx, dy))
@@ -172,11 +157,6 @@ namespace dtEditQt
       return true;
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   void OrthoViewport::setScene(dtCore::Scene* scene)
-   {
-      EditorViewport::setScene(scene);
-   }
 
    ///////////////////////////////////////////////////////////////////////////////
    void OrthoViewport::wheelEvent(QWheelEvent* e)
@@ -263,11 +243,6 @@ namespace dtEditQt
       }
 
       return true;
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void OrthoViewport::warpWorldCamera(int x, int y)
-   {
    }
 
 } // namespace dtEditQt

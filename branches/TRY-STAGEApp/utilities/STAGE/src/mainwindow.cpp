@@ -40,17 +40,16 @@
 #include <QtGui/QMessageBox>
 #include <QtGui/QCloseEvent>
 #include <QtGui/QActionGroup>
-#include <QtCore/QDir>
 #include <QtCore/QTimer>
 
 #include <dtActors/volumeeditactor.h>
-#include <dtCore/uniqueid.h>
 #include <dtCore/globals.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/transform.h>
 #include <dtUtil/macros.h>
 #include <dtDAL/project.h>
 #include <dtDAL/librarymanager.h>
+#include <dtDAL/map.h>
 #include <dtUtil/fileutils.h>
 #include <dtEditQt/configurationmanager.h>
 #include <dtEditQt/editoractions.h>
@@ -71,10 +70,7 @@
 #include <dtEditQt/projectcontextdialog.h>
 #include <dtEditQt/uiresources.h>
 #include <dtEditQt/externaltool.h>
-#include <dtQt/osggraphicswindowqt.h>
 
-#include <osgDB/FileNameUtils>
-#include <osgDB/Registry>
 
 namespace dtEditQt
 {
@@ -1604,42 +1600,4 @@ namespace dtEditQt
       mPluginManager->StartPluginsInConfigFile();
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
-   //void MainWindow::SetupViewer(STAGEApplication* viewer)
-   //{
-   //   //dtQt::OSGGraphicsWindowQt* osgGraphWindow = dynamic_cast<dtQt::OSGGraphicsWindowQt*>(viewer->GetWindow()->GetOsgViewerGraphicsWindow());
-   //   //if (osgGraphWindow == NULL)
-   //   //{
-   //   //   LOG_ERROR("Unable to initialize. The deltawin could not be created with a QGLWidget.");
-   //   //   return;
-   //   //}
-
-   //   ////stuff the QGLWidget into it's parent widget placeholder and ensure it gets
-   //   ////resized to fit the parent
-   //   //QWidget* widget = osgGraphWindow->GetQGLWidget();
-   //   //if (widget != NULL)
-   //   //{
-   //   //   widget->setGeometry(mMainViewportParent->geometry());
-   //   //   widget->setParent(mMainViewportParent);         
-   //   //}
-
-   //   ViewportManager::GetInstance().SetApplication(viewer);
-
-   //   //Don't need to add the views here anymore, they will get added automatically when
-   //   //they're needed.
-
-   //   //Viewport* masterViewport = ViewportManager::GetInstance().GetMasterViewport();
-   //   //if (masterViewport)
-   //   //{
-   //   //   viewer->AddView(*masterViewport->GetView());
-   //   //}
-
-   //   //viewer->AddView(*mSideView->GetView());
-   //   //viewer->AddView(*mTopView->GetView());
-   //   //viewer->AddView(*mFrontView->GetView());
-   //   //viewer->AddView(*mPerspView->GetView());
-
-   //   //ViewportManager::GetInstance().getWorldViewCamera()->getDeltaCamera()->SetWindow(viewer->GetWindow());
-   //   
-   //}
 } // namespace dtEditQt

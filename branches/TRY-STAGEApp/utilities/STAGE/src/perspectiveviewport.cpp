@@ -28,17 +28,11 @@
  */
 #include <prefix/dtstageprefix-src.h>
 #include <QtGui/QMouseEvent>
-#include <QtGui/QAction>
 #include <dtEditQt/perspectiveviewport.h>
 #include <dtEditQt/viewportoverlay.h>
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/editordata.h>
-#include <dtEditQt/editoractions.h>
 #include <dtDAL/transformableactorproxy.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtCore/isector.h>
-#include <dtUtil/exception.h>
-#include <dtDAL/exceptionenum.h>
 
 namespace dtEditQt
 {
@@ -63,18 +57,10 @@ namespace dtEditQt
    {
       mCameraMode = &CameraMode::NOTHING;
 
-      //mCamera = ViewportManager::GetInstance().getWorldViewCamera();
-      //mCamera->setFarClipPlane(250000.0f);
       setMoveActorWithCamera(EditorData::GetInstance().getRigidCamera());
 
       ViewportManager::GetInstance().setWorldViewCamera(getCamera());
    }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   //void PerspectiveViewport::setScene(dtCore::Scene* scene)
-   //{
-   //   EditorViewport::setScene(scene);
-   //}
 
    ///////////////////////////////////////////////////////////////////////////////
    void PerspectiveViewport::resizeGL(int width, int height)
@@ -106,30 +92,6 @@ namespace dtEditQt
          EditorEvents::GetInstance().emitCreateActor();
       }
    }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   //void PerspectiveViewport::keyReleaseEvent(QKeyEvent* e)
-   //{
-   //   EditorViewport::keyReleaseEvent(e);
-   //}
-
-   ///////////////////////////////////////////////////////////////////////////////
-   //void PerspectiveViewport::mousePressEvent(QMouseEvent* e)
-   //{
-   //   EditorViewport::mousePressEvent(e);
-   //}
-
-   ///////////////////////////////////////////////////////////////////////////////
-   //void PerspectiveViewport::mouseReleaseEvent(QMouseEvent* e)
-   //{
-   //   EditorViewport::mouseReleaseEvent(e);
-   //}
-
-   ///////////////////////////////////////////////////////////////////////////////
-   //void PerspectiveViewport::onMouseMoveEvent(QMouseEvent* e, float dx, float dy)
-   //{
-   //   EditorViewport::onMouseMoveEvent(e, dx, dy);
-   //}
 
    ///////////////////////////////////////////////////////////////////////////////
    bool PerspectiveViewport::beginCameraMode(QMouseEvent* e)

@@ -31,7 +31,6 @@
 #include <QtOpenGL/QGLWidget>
 #include <osg/Texture>
 #include <osgDB/DatabasePager>
-#include <osgDB/Registry>
 #include <osgViewer/CompositeViewer>
 #include <dtUtil/log.h>
 #include <dtDAL/map.h>
@@ -68,7 +67,6 @@ namespace dtEditQt
       mViewportOverlay     = new ViewportOverlay();
       //mWorldCamera         = new StageCamera();
       mInChangeTransaction = false;
-      mStartTick = 0;
 
       mMasterScene->GetSceneNode()->addChild(mViewportOverlay->getOverlayGroup()); //TODO testing
 
@@ -278,11 +276,6 @@ namespace dtEditQt
    }
 
 
-   ///////////////////////////////////////////////////////////////////////////////
-   dtCore::DatabasePager* ViewportManager::GetDatabasePager() const
-   {
-      return mMasterView->GetDatabasePager();
-   }
 
    ////////////////////////////////////////////////////////////////////////////////
    osg::Vec3 ViewportManager::GetSnapPosition(osg::Vec3 position, bool groundClamp, std::vector<dtCore::DeltaDrawable*> ignoredDrawables)
@@ -787,19 +780,6 @@ namespace dtEditQt
    {
       refreshScene();
       refreshAllViewports();
-   }
-
-   //////////////////////////////////////////////////////////////////////////
-   bool ViewportManager::IsPagingEnabled() const
-   {
-      if (mMasterView->GetDatabasePager() != NULL)
-      {
-         return true;
-      }
-      else
-      {
-         return false;
-      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////

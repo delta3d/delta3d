@@ -5,6 +5,7 @@
 #include <dtEditQt/editordata.h>
 #include <dtDAL/resourcedescriptor.h>
 #include <dtDAL/project.h>
+#include <dtDAL/map.h>
 
 namespace dtEditQt
 {

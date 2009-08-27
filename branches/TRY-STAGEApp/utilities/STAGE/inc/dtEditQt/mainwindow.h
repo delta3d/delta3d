@@ -32,10 +32,7 @@
 
 #include <dtEditQt/export.h>
 #include <QtGui/QMainWindow>
-#include <dtCore/uniqueid.h>
 #include <dtDAL/actorproxy.h>
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/map.h>
 #include <dtQt/typedefs.h>
 
 class QSplitter;
@@ -75,7 +72,7 @@ namespace dtEditQt
       /**
        * Destructor
        */
-      ~MainWindow();
+      virtual ~MainWindow();
 
       /**
        * Adds custom library paths as specified by the user settings
@@ -177,9 +174,6 @@ namespace dtEditQt
        * @return the volume edit actor proxy
        */
       dtActors::VolumeEditActorProxy* GetVolumeEditActorProxy();
-
-
-      //void SetupViewer(STAGEApplication* viewer);
 
    public slots:
       /**

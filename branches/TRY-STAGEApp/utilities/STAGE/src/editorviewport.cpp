@@ -29,22 +29,19 @@
 
 #include <prefix/dtstageprefix-src.h>
 #include <QtGui/QMouseEvent>
-#include <QtGui/QAction>
-#include <dtActors/prefabactorproxy.h>
 #include <dtEditQt/mainwindow.h>
-#include <dtEditQt/perspectiveviewport.h>
 #include <dtEditQt/viewportoverlay.h>
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/editoractions.h>
 #include <dtEditQt/propertyeditor.h>
 #include <dtEditQt/stageglwidget.h>
+#include <dtEditQt/editorviewport.h>
 #include <dtDAL/transformableactorproxy.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/map.h>
 #include <dtDAL/librarymanager.h>
 #include <dtDAL/actorproxyicon.h>
-#include <dtCore/isector.h>
 #include <dtCore/deltadrawable.h>
 #include <dtUtil/exception.h>
 #include <dtUtil/mathdefines.h>
@@ -53,12 +50,8 @@
 #include <QtGui/QDragMoveEvent>
 #include <QtGui/QDragEnterEvent>
 #include <QtGui/QDragLeaveEvent>
-#include <dtDAL/transformableactorproxy.h>
 #include <dtDAL/mapxml.h>
 #include <dtDAL/project.h>
-
-#include <osg/PolygonMode>
-#include <osg/BlendFunc>
 
 
 namespace dtEditQt
@@ -106,7 +99,6 @@ namespace dtEditQt
    {
       Viewport::setScene(scene);
 
-      //osg::Group* node = getSceneView()->getSceneData()->asGroup();
       if (scene->GetSceneNode())
       {
          if (mObjectMotionModel.valid())
@@ -189,8 +181,6 @@ namespace dtEditQt
    ////////////////////////////////////////////////////////////////////////////////
    void EditorViewport::keyPressEvent(QKeyEvent* e)
    {
-      //Viewport::keyPressEvent(e);
-
       bool holdingControl = false;
       if (e->modifiers() == Qt::ControlModifier)
       {
@@ -235,7 +225,6 @@ namespace dtEditQt
    ////////////////////////////////////////////////////////////////////////////////
    void EditorViewport::keyReleaseEvent(QKeyEvent* e)
    {
-      //Viewport::keyReleaseEvent(e);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -623,12 +612,7 @@ namespace dtEditQt
       {
          // If this returns true, it means we are hovering our mouse over a
          // valid motion model widget so we should go into actor mode.
-         //mMotionType = mObjectMotionModel->Update(pos);
-         //if (mMotionType != STAGEObjectMotionModel::MOTION_TYPE_MAX)
-         //{
-         //   beginActorMode(e);
-         //}
-         if (shouldBeginActorMode(pos))
+        if (shouldBeginActorMode(pos))
          {
             beginActorMode(e);
          }
@@ -804,22 +788,6 @@ namespace dtEditQt
       saveSelectedActorOrigValues(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
       saveSelectedActorOrigValues(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
       saveSelectedActorOrigValues("Scale");
-
-      //switch (mMotionType)
-      //{
-      //case STAGEObjectMotionModel::MOTION_TYPE_TRANSLATION:
-      //   saveSelectedActorOrigValues(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
-      //   break;
-      //case STAGEObjectMotionModel::MOTION_TYPE_ROTATION:
-      //   saveSelectedActorOrigValues(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
-      //   break;
-      //case STAGEObjectMotionModel::MOTION_TYPE_SCALE:
-      //   saveSelectedActorOrigValues("Scale");
-      //   break;
-
-      //default:
-      //break;
-      //}
 
       return true;
    }

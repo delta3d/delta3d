@@ -33,12 +33,10 @@
 #include <dtCore/globals.h>
 #include <dtCore/system.h>
 #include <dtCore/deltawin.h>
-#include <dtABC/application.h>
 #include <dtEditQt/mainwindow.h>
 #include <dtEditQt/viewportmanager.h>
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/uiresources.h>
-#include <dtUtil/log.h>
 #include <dtUtil/exception.h>
 #include <dtAudio/audiomanager.h>
 #include <dtQt/qtguiwindowsystemwrapper.h>
@@ -62,7 +60,6 @@ int main(int argc, char* argv[])
    QSplashScreen* splash = new QSplashScreen(pixmap);
    splash->show();
 
-   //dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_INFO);
 
    // Now that everything is initialized, show the main window.
    // Construct the application...
@@ -90,7 +87,6 @@ int main(int argc, char* argv[])
       // Now that everything is initialized, show the main window.
       // Construct the application...
       dtEditQt::MainWindow mainWindow(configFile);
-      //mainWindow.show();
 
       //create a dummy window that won't get realized, then delete it.  This is
       //just to get around the automatic creation of a DeltaWin by Application.
@@ -107,9 +103,6 @@ int main(int argc, char* argv[])
       dtEditQt::ViewportManager::GetInstance().SetApplication(viewer.get());
       mainWindow.show();
 
-      //can't do this here, that View doesn't exist.
-      //viewer->GetView()->GetCamera()->SetNearFarCullingMode(dtCore::Camera::NO_AUTO_NEAR_FAR);
-
       //create a little class to ensure Delta3D performs Window "steps"
       dtCore::System::GetInstance().Start();
       dtQt::DeltaStepper stepper;
@@ -122,12 +115,7 @@ int main(int argc, char* argv[])
       dtEditQt::EditorEvents::GetInstance().emitEditorInitiationEvent();
       mainWindow.setWindowMenuTabsChecked();
 
-      //dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
-      //dtCore::System::GetInstance().Start();
-      //dtCore::System::GetInstance().Config();
-
       result = app.exec();
-      //dtCore::System::GetInstance().Stop();
       stepper.Stop();
 
       dtEditQt::ViewportManager::GetInstance().SetApplication(NULL);

@@ -7,9 +7,11 @@
 
 #include <dtCore/isector.h>
 #include <dtCore/transformable.h>
+#include <dtCore/transform.h>
 
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/librarymanager.h>
+#include <dtDAL/map.h>
 
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/editorevents.h>

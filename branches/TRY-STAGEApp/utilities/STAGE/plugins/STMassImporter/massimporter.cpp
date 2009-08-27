@@ -5,6 +5,7 @@
 
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/librarymanager.h>
+#include <dtDAL/map.h>
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/pluginmanager.h>

@@ -29,22 +29,15 @@
 #ifndef DELTA_VIEWPORT_OVERLAY
 #define DELTA_VIEWPORT_OVERLAY
 
-#include <set>
-#include <map>
 #include <QtCore/QObject>
 #include <osg/ref_ptr>
 #include <osg/Referenced>
-#include <osg/Geode>
-#include <osg/Geometry>
-#include <dtCore/transformable.h>
-#include <dtABC/beziercontroller.h>
 #include <dtDAL/actorproxy.h>
-#include "dtEditQt/viewportmanager.h"
+#include <dtQt/typedefs.h>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
 {
-   class Material;
    class Group;
 }
 /// @endcond
@@ -66,7 +59,6 @@ namespace dtEditQt
    public:
       ///Simplifies the interface to a list of actor proxies.
       typedef std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > ActorProxyList;
-      //typedef std::set< dtCore::RefPtr<dtDAL::ActorProxy> > ActorProxyList;
 
       /**
        * Constructs the overlay.

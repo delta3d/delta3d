@@ -31,19 +31,12 @@
 
 #include <osg/PolygonMode>
 #include <osg/PolygonOffset>
-#include <osg/Material>
-#include <osg/CullFace>
 #include <osg/Group>
-#include <osg/Geometry>
-#include <osg/NodeVisitor>
-#include <osgDB/WriteFile>
-#include <dtCore/transformable.h>
-
 #include <osg/Program>
 #include <osg/Shader>
+
 #include <dtUtil/macros.h>
 #include <dtUtil/log.h>
-#include <cstdio>
 
 #include <dtActors/volumeeditactor.h>
 

@@ -39,13 +39,10 @@
 #include <dtCore/deltadrawable.h>
 #include <dtUtil/enumeration.h>
 #include <dtDAL/actorproxy.h>
-#include <dtDAL/actorproperty.h>
-#include <dtCore/timer.h>
 #include <dtQt/typedefs.h>
 #include <dtABC/application.h>
 #include "export.h"
 
-class QGLWidget;
 class QWidget;
 class QMouseEvent;
 class QWheelEvent;
@@ -215,15 +212,6 @@ namespace dtEditQt
        */
       int getNumTextureUnits() const { return mNumTextureUnits; }
 
-      /// Returns if database paging is enabled
-      bool IsPagingEnabled() const;
-
-      /// Returns if database paging is enabled
-      dtCore::DatabasePager* GetDatabasePager() const;
-
-      dtCore::Timer_t GetStartTick() { return mStartTick; }
-
-      void SetStartTick(unsigned int time) { mStartTick = time; }
 
       /**
       * Retrieves the nearest snap position to the given position.
@@ -664,7 +652,6 @@ namespace dtEditQt
       dtCore::RefPtr<StageCamera>     mWorldCamera;
       int                             mNumTextureUnits;
       bool                            mInChangeTransaction;
-      dtCore::Timer_t                 mStartTick;
       dtCore::RefPtr<dtABC::Application> mApplication;
    };
 

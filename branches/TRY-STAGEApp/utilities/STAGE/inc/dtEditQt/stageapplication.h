@@ -5,6 +5,8 @@
 
 namespace dtEditQt
 {
+   ///simple Application only really needed to kill the default DeltaWin 
+   ///inherited in Application.
    class STAGEApplication : public dtABC::Application
    {
    public:

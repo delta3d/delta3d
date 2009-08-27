@@ -39,9 +39,7 @@
 #include <QtGui/QLineEdit>
 #include <QtGui/QDoubleValidator>
 #include <dtEditQt/viewportcontainer.h>
-#include <dtEditQt/viewport.h>
 #include <dtEditQt/viewportmanager.h>
-#include <dtEditQt/orthoviewport.h>
 #include <dtEditQt/uiresources.h>
 
 namespace dtEditQt

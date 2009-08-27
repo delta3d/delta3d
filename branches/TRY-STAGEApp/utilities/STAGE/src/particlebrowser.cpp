@@ -30,28 +30,22 @@
 // had to add this header to make it compile in linux
 // not sure why.
 #include <prefix/dtstageprefix-src.h>
-#include <QtGui/QHeaderView>
-
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QGridLayout>
 #include <QtCore/QString>
-
 #include <QtGui/QAction>
 #include <QtGui/QMenu>
-#include <QtGui/QContextMenuEvent>
-
 #include <QtGui/QGroupBox>
 #include <QtGui/QCheckBox>
 #include <QtGui/QSplitter>
-
 #include <QtGui/QPushButton>
 
 #include <dtCore/scene.h>
 #include <dtCore/object.h>
 
 #include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/datatype.h>
 #include <dtDAL/librarymanager.h>
+#include <dtDAL/map.h>
 
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/mainwindow.h>
@@ -155,10 +149,6 @@ namespace dtEditQt
       // By default, perspective viewports have their camera set to the world view
       // camera.  The world view camera is what is used in the main perspective view.
       //perspView->setCamera(camera.get()); //E!
-
-      // No need for an overlay for this viewport since we cannot select meshes
-      // in the preview window.
-      perspView->setOverlay(NULL);
 
       // Disable the interaction modes
       perspView->setAutoInteractionMode(false);

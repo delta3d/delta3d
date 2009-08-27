@@ -9,13 +9,18 @@ namespace dtEditQt
 {
    class EditorViewport;
 
+   /** Special QGLWidgets used by STAGE.  These route incoming Qt events
+     * to base dtQt::OSGAdapterWidget as well as the associated dtEditQt::Viewport. 
+     */
    class STAGEGLWidget : public dtQt::OSGAdapterWidget
    {
    public:
-      STAGEGLWidget(bool drawOnSeparateThread,  QWidget * parent = NULL,
-         const QGLWidget * shareWidget = NULL, Qt::WindowFlags f = NULL);
-   	virtual ~STAGEGLWidget();
+      STAGEGLWidget(bool drawOnSeparateThread,  QWidget* parent = NULL,
+                    const QGLWidget* shareWidget = NULL, Qt::WindowFlags f = NULL);
 
+      virtual ~STAGEGLWidget();
+
+      ///Which EditorViewport is this widget associated with?
       void SetViewport(EditorViewport* viewport);
 
    protected:
@@ -60,7 +65,7 @@ namespace dtEditQt
       * mode will be set.
       * @param e
       */
-      void keyPressEvent(QKeyEvent* e);
+      virtual void keyPressEvent(QKeyEvent* e);
 
       /**
       * Called when the user releases a key on the keyboard in the viewport.
@@ -68,7 +73,7 @@ namespace dtEditQt
       * updated accordingly.
       * @param e
       */
-      void keyReleaseEvent(QKeyEvent* e);
+      virtual void keyReleaseEvent(QKeyEvent* e);
 
 
       /**
@@ -94,7 +99,7 @@ namespace dtEditQt
 
    private:
 
-      dtEditQt::EditorViewport* mViewport; ///<The Viewport that's using this widget
+      dtEditQt::EditorViewport* mViewport; ///<The Viewport that's associated with this widget
    };
 }
 #endif // stageglwidget_h__

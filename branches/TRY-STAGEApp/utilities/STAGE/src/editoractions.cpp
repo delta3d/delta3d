@@ -75,6 +75,7 @@
 #include <dtUtil/fileutils.h>
 #include <dtUtil/librarysharingmanager.h>
 #include <dtCore/isector.h>
+#include <dtCore/transform.h>
 #include <dtDAL/project.h>
 #include <dtDAL/map.h>
 #include <dtDAL/mapxml.h>

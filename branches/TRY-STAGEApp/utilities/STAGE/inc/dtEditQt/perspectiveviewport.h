@@ -128,39 +128,6 @@ namespace dtEditQt
       void keyPressEvent(QKeyEvent* e);
 
       /**
-       * Called when the user releases a key on the keyboard in the viewport.
-       * Based on the keys released, the viewport's current mode is
-       * updated accordingly.
-       * @param e
-       */
-      //void keyReleaseEvent(QKeyEvent* e);
-
-      /**
-       * Called when the user presses a mouse button in the viewport.  Based on
-       * the combination of buttons pressed, the viewport's current mode will
-       * be set.
-       * @param e
-       * @see ModeType
-       */
-      //void mousePressEvent(QMouseEvent* e);
-
-      /**
-       * Called when the user releases a mouse button in the viewport.  Based on
-       * the buttons released, the viewport's current mode is updated
-       * accordingly.
-       * @param e
-       */
-      //void mouseReleaseEvent(QMouseEvent* e);
-
-      /**
-       * Called when the user moves the mouse while pressing any combination of
-       * mouse buttons.  Based on the current mode, the camera is updated.
-       * @param dx the adjusted change in x that the mouse moved.
-       * @param dy the adjusted change in y that the mouse moved.
-       */
-      //virtual void onMouseMoveEvent(QMouseEvent* e, float dx, float dy);
-
-      /**
        * Called from the mousePressEvent handler.  This sets the viewport state
        * to properly respond to mouse movement events when in camera mode.
        * @param e
