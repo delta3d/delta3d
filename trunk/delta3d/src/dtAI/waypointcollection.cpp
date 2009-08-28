@@ -23,6 +23,7 @@
 #include <dtAI/waypointpair.h>
 #include <dtUtil/log.h>
 
+#include <dtAI/waypointtypes.h>
 
 namespace dtAI
 {
@@ -31,6 +32,7 @@ namespace dtAI
    /////////////////////////////////////////////////////////////////////////////
    WaypointCollection::WaypointCollection()
       : WaypointTree(this)
+      , WaypointInterface(WaypointTypes::WAYPOINT_COLLECTION.get())
       , mLeaf (false)
       , mRadius(0.0f)
       , mPosition()
@@ -41,6 +43,7 @@ namespace dtAI
    /////////////////////////////////////////////////////////////////////////////
    WaypointCollection::WaypointCollection(const osg::Vec3& pos)
       : WaypointTree(this)
+      , WaypointInterface(WaypointTypes::WAYPOINT_COLLECTION.get())
       , mLeaf (false)
       , mRadius(0.0f)
       , mPosition(pos)
@@ -51,6 +54,7 @@ namespace dtAI
    /////////////////////////////////////////////////////////////////////////////
    WaypointCollection::WaypointCollection(const WaypointCollection& way)
       : WaypointTree(way)
+      , WaypointInterface(WaypointTypes::WAYPOINT_COLLECTION.get())
       , mLeaf(way.mLeaf)
       , mRadius(way.mRadius)
       , mPosition(way.mPosition)
@@ -298,5 +302,10 @@ namespace dtAI
       }
    }
 
+   /////////////////////////////////////////////////////////////////////////////
+   void WaypointCollection::CreateProperties( WaypointPropertyBase& container )
+   {
+      WaypointInterface::CreateProperties(container);
+   }
 
 } // namespace dtAI

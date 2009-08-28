@@ -62,6 +62,7 @@ namespace dtAI
    /////////////////////////////////////////////////////////////////////////////
    WaypointManager::WaypointManager()
       : mLoadActors(0)
+      , mDeleteOnClear(true)
       , mDrawWaypoints(false)
       , mDrawNavMesh(false)
       , mDrawNavMeshDetails(false)
@@ -493,7 +494,10 @@ namespace dtAI
    void WaypointManager::Clear()
    {
       //free memory
-      std::for_each(mWaypoints.begin(), mWaypoints.end(), WaypointManagerDeleteFunc());
+      if(mDeleteOnClear)
+      {
+         std::for_each(mWaypoints.begin(), mWaypoints.end(), WaypointManagerDeleteFunc());
+      }
       mWaypoints.clear();
       mNavMesh->Clear();
    }
@@ -562,6 +566,17 @@ namespace dtAI
       return (pResult / float(i));
    }
 
+   //////////////////////////////////////////////////////////////////////////
+   void WaypointManager::SetDeleteOnClear( bool b )
+   {
+      mDeleteOnClear = b;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool WaypointManager::GetDeleteOnClear() const
+   {
+      return mDeleteOnClear;
+   }
 
    //////////////////////////////////////////////////////////////////////////
    //WaypointManagerDrawable

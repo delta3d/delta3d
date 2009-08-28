@@ -22,9 +22,13 @@
 #ifndef __DELTA_WAYPOINTINTERFACE_H__
 #define __DELTA_WAYPOINTINTERFACE_H__
 
+#include <string>
+#include <osg/Vec3>
+
 #include <dtAI/export.h>
 #include <dtAI/primitives.h>
-#include <osg/Vec3>
+
+#include <dtDAL/objecttype.h>
 
 namespace dtDAL
 {
@@ -38,7 +42,7 @@ namespace dtAI
    class DT_AI_EXPORT WaypointInterface
    {
    public:
-      WaypointInterface();
+      WaypointInterface(const dtDAL::ObjectType* wpt);
 
       bool operator==(const WaypointInterface& pWay) const;
       bool operator!=(const WaypointInterface& pWay) const;
@@ -49,6 +53,9 @@ namespace dtAI
       //WaypointInterface* Clone(const WaypointInterface& wp);
 
       WaypointID GetID() const;
+      const dtDAL::ObjectType& GetWaypointType() const;
+
+      virtual std::string ToString() const;
 
       virtual const osg::Vec3& GetPosition() const = 0;
       virtual void SetPosition(const osg::Vec3& pVec) = 0;
@@ -60,6 +67,7 @@ namespace dtAI
 
    private:
       WaypointID mID;
+      dtCore::RefPtr<const dtDAL::ObjectType> mWaypointType;
 
       static WaypointID mIDCounter;
    };

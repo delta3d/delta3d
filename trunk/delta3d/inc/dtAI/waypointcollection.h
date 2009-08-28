@@ -31,6 +31,8 @@
 
 namespace dtAI 
 {
+   class WaypointPropertyBase;
+
    /**
     *	WaypointCollection is meant to be a container for waypoints that is also
     * a derivative of the WaypointInterface base.  Semantically all children of
@@ -77,6 +79,7 @@ namespace dtAI
 
          void Recalculate();      
 
+         /*virtual*/ void CreateProperties(WaypointPropertyBase& container);
 
       private:
 

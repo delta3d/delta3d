@@ -23,16 +23,18 @@
 #include <dtAI/waypointpropertycontainer.h>
 #include <dtDAL/propertycontainer.h>
 #include <dtDAL/enginepropertytypes.h>
-#include <dtUtil/templateutility.h>
 
+#include <dtUtil/templateutility.h>
+#include <sstream>
 
 namespace dtAI
 {
    WaypointID WaypointInterface::mIDCounter = 0;
 
    /////////////////////////////////////////////////////////////////////////////
-   WaypointInterface::WaypointInterface()
+   WaypointInterface::WaypointInterface(const dtDAL::ObjectType* wpt)
       : mID(mIDCounter++)
+      , mWaypointType(wpt)
    {
    }
 
@@ -63,6 +65,13 @@ namespace dtAI
    dtAI::WaypointID WaypointInterface::GetID() const
    {
       return mID;
+   }
+
+
+   /////////////////////////////////////////////////////////////////////////////
+   const dtDAL::ObjectType& WaypointInterface::GetWaypointType() const
+   {
+      return *mWaypointType;
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -109,5 +118,14 @@ namespace dtAI
                         Desc_WaypointPosition, WaypointGroup));
    }
 
+   //////////////////////////////////////////////////////////////////////////
+   std::string WaypointInterface::ToString() const
+   {
+      osg::Vec3 pos = GetPosition();
+      std::ostringstream ss;
+      ss << "ID: " << mID << ", Pos: (" << pos[0] << ", " << pos[1] << ", " << pos[2] << ")" << std::endl;
+
+      return ss.str();
+   }
 
 } // namespace dtAI
