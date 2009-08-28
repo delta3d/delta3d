@@ -190,6 +190,14 @@ namespace dtAI
        */
       float AvgDistBetweenWaypoints() const;
 
+      /**
+      *	By default if you call CreateWaypoint(osg::Vec3) then the WaypointManger
+      *  will create your waypoint and delete the memory on clear.  This is legacy 
+      *  behavior and is overridden by the AIInterfaceActor
+      */
+      void SetDeleteOnClear(bool b);
+      bool GetDeleteOnClear() const;
+
    private:
 
       /**
@@ -240,6 +248,9 @@ namespace dtAI
       //////////////////////////////////////////////////////////////////////////
       //////////////////////////////////////////////////////////////////////////
 
+      //this flag is here specifically to support legacy behavior using
+      //the AIInterfaceActor
+      bool mDeleteOnClear;
 
       // a flag to toggle drawing of the waypoints
       bool mDrawWaypoints;

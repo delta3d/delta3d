@@ -77,11 +77,17 @@ namespace dtAI
          virtual bool MoveWaypoint(WaypointInterface* wi, const osg::Vec3& newPos) = 0;
 
          /**
+         *  Copies all waypoints into a vector
+         *  @param the vector of waypoints to fill
+         */
+         virtual void GetWaypoints(WaypointArray& toFill) = 0;
+
+
+         /**
          * Finds the closest waypoint to a given point
          * @return the waypoint found, or NULL if no waypoints exist
          */
          virtual WaypointInterface* GetClosestWaypoint(const osg::Vec3& pos, float maxDistance) = 0;
-
 
          /**
          * Searches for waypoints within radius of a point.
@@ -105,29 +111,32 @@ namespace dtAI
          */
          virtual WaypointInterface* GetWaypointByName(const std::string& name) = 0;
 
+         /**
+         * Fills a vector of waypoints from all matching the specific name
+         */
+         virtual void GetWaypointsByName(const std::string& name, WaypointArray& arrayToFill) = 0;         
 
          /**
-         *  Copies all waypoints into a vector
+         *  Copies all waypoints of a specific type into a vector
          *  @param the vector of waypoints to fill
          */
-         virtual void GetWaypoints(WaypointArray& toFill) = 0;
-
+         virtual void GetWaypointsByType(const dtDAL::ObjectType& type, WaypointArray& toFill) = 0;
 
          /**
          * Creates a path between the specified waypoints
          */
-         virtual void AddPathSegment(WaypointID pFrom, WaypointID pTo) = 0;
+         virtual void AddEdge(WaypointID pFrom, WaypointID pTo) = 0;
 
          /**
          * Removes the path segment between the two waypoints if one exists         
          * @returns true if a path existed and it was succesfully new AIPluginInterface
          */
-         virtual bool RemovePathSegment(WaypointID pFrom, WaypointID pTo) = 0;
+         virtual bool RemoveEdge(WaypointID pFrom, WaypointID pTo) = 0;
 
          /**
          * Removes all path segments from the specified waypoint
          */
-         virtual void RemoveAllPaths(WaypointID pFrom) = 0;
+         virtual void RemoveAllEdges(WaypointID pFrom) = 0;
 
          /**
          * Fills the specified vector with all the waypoints that 
@@ -135,7 +144,7 @@ namespace dtAI
          *  @param the waypoint from which to find paths
          *  @param the waypoint array to fill
          */
-         virtual void GetAllPathsFromWaypoint(WaypointID pFrom, WaypointArray& result) = 0;
+         virtual void GetAllEdgesFromWaypoint(WaypointID pFrom, WaypointArray& result) = 0;
 
 
          /**

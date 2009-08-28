@@ -26,11 +26,13 @@
 #include <dtUtil/mathdefines.h>
 #include <dtUtil/log.h>
 
+#include <dtAI/waypointtypes.h>
+
 namespace dtAI
 {
    /////////////////////////////////////////////////////////////////////////////
    Waypoint::Waypoint()
-      : WaypointInterface()
+      : WaypointInterface(WaypointTypes::DEFAULT_WAYPOINT.get())
       , mRenderFlag(Waypoint::RENDER_DEFAULT)
       , mGradient(1.0f)
       , mAlpha(1.0f)
@@ -39,7 +41,7 @@ namespace dtAI
 
    /////////////////////////////////////////////////////////////////////////////
    Waypoint::Waypoint(const osg::Vec3& pPos)      
-      : WaypointInterface()
+      : WaypointInterface(WaypointTypes::DEFAULT_WAYPOINT.get())
       , mRenderFlag(Waypoint::RENDER_DEFAULT)
       , mGradient(1.0f)
       , mAlpha(1.0f)
