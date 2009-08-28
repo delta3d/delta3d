@@ -142,6 +142,7 @@ namespace dtCore
 
    public:
       CubeMapProfile();
+      virtual ~CubeMapProfile();
 
       void Config(osg::Group*);
       void SetTexture(dtCore::SkyBox::SkyBoxSideEnum side, const std::string& filename);

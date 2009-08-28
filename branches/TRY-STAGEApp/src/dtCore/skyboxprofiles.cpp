@@ -164,6 +164,12 @@ CubeMapProfile::CubeMapProfile()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+CubeMapProfile::~CubeMapProfile()
+{
+   mGeode->setCullCallback(NULL);
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void CubeMapProfile::Config(osg::Group* pGroup)
 {
    mCubeMap->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);

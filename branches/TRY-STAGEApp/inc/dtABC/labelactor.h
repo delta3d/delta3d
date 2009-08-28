@@ -88,6 +88,44 @@ namespace dtABC
          float GetFontSize() const;
 
          /**
+          * Set the maximum width of the text box.
+          * With horizontal layouts any characters which do not fit are wrapped around.
+          * 0 or negative values indicate that no maximum width is set, lines can be as long as 
+          * they need be to fit thre required text
+          */
+         void SetMaximumWidth(float maximumWidth);
+
+         /**
+          * Get the maximum width of the text box.
+          */
+         float GetMaximumWidth() const;
+
+         /**
+          * Set the maximum height of the text box.
+          * With horizontal layouts any characters which do not fit are wrapped around.
+          * 0 or negative values indicate that no maximum height is set, lines can be as long as 
+          * they need be to fit the required text
+          */
+         void SetMaximumHeight(float maximumHeight);
+
+         /**
+          * Get the maximum height of the text box.
+          */
+         float GetMaximumHeight() const;
+
+         /**
+         * Set the spacing between each line.
+         * This is a percent value of the size of the text.
+         */
+         void SetLineSpacing(float lineSpacing);
+         float GetLineSpacing() const;
+
+         /**
+         * Retrieves the line count of the text.
+         */
+         unsigned int GetLineCount() const;
+
+         /**
           * Set the RGBA color of the label text.
           */
          void SetTextColor(const osg::Vec4& color);

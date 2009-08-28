@@ -80,7 +80,7 @@ void ParticleViewer::Config()
 ////////////////////////////////////////////////////////////////////////////////
 void ParticleViewer::LoadFile(QString filename, bool import/* = false*/)
 {
-   if(filename != "")
+   if (!filename.isEmpty())
    {
       QFileInfo fileName = filename;
 
@@ -91,7 +91,7 @@ void ParticleViewer::LoadFile(QString filename, bool import/* = false*/)
          return;
       }
 
-      osg::Group* newParticleSystemGroup = (osg::Group*)node;
+      osg::Group* newParticleSystemGroup = static_cast<osg::Group*>(node);
       std::vector<ParticleSystemLayer> newLayers;
       osgParticle::ParticleSystemUpdater* newParticleSystemUpdater = NULL;
       unsigned int i;
@@ -127,7 +127,7 @@ void ParticleViewer::LoadFile(QString filename, bool import/* = false*/)
                      osg::Drawable* drawable = layer.mGeode->getDrawable(j);
                      if(IS_A(drawable, osgParticle::ParticleSystem*))
                      {
-                        layer.mParticleSystem = (osgParticle::ParticleSystem*)drawable;
+                        layer.mParticleSystem = static_cast<osgParticle::ParticleSystem*>(drawable);
                         layer.mpParticle = new osgParticle::Particle(layer.mParticleSystem->getDefaultParticleTemplate());
                      }
                   }
@@ -158,7 +158,7 @@ void ParticleViewer::LoadFile(QString filename, bool import/* = false*/)
                      osg::Node* childNode = newEmitterTransform->getChild(j);
                      if(IS_A(childNode, osgParticle::ModularEmitter*))
                      {
-                        osgParticle::ModularEmitter* newModularEmitter = (osgParticle::ModularEmitter*)childNode;
+                        osgParticle::ModularEmitter* newModularEmitter = static_cast<osgParticle::ModularEmitter*>(childNode);
                         for(unsigned int k = 0; k < newLayers.size(); ++k)
                         {
                            if(newLayers[k].mParticleSystem == newModularEmitter->getParticleSystem())
@@ -204,7 +204,7 @@ void ParticleViewer::LoadFile(QString filename, bool import/* = false*/)
                   osg::Drawable* drawable = layer.mGeode->getDrawable(j);
                   if (IS_A(drawable, osgParticle::ParticleSystem*))
                   {
-                     layer.mParticleSystem = (osgParticle::ParticleSystem*)drawable;
+                     layer.mParticleSystem = static_cast<osgParticle::ParticleSystem*>(drawable);
                      layer.mpParticle = new osgParticle::Particle(layer.mParticleSystem->getDefaultParticleTemplate());
                   }
                }
@@ -229,15 +229,15 @@ void ParticleViewer::LoadFile(QString filename, bool import/* = false*/)
             if (IS_A(node, osg::MatrixTransform*))
             {
                osg::MatrixTransform* newEmitterTransform = static_cast<osg::MatrixTransform*>(node);
-               for(unsigned int j = 0; j < newEmitterTransform->getNumChildren(); ++j)
+               for (unsigned int j = 0; j < newEmitterTransform->getNumChildren(); ++j)
                {
                   osg::Node* childNode = newEmitterTransform->getChild(j);
                   if (IS_A(childNode, osgParticle::ModularEmitter*))
                   {
-                     osgParticle::ModularEmitter* newModularEmitter = (osgParticle::ModularEmitter*)childNode;
-                     for(unsigned int k = 0; k < newLayers.size(); ++k)
+                     osgParticle::ModularEmitter* newModularEmitter = static_cast<osgParticle::ModularEmitter*>(childNode);
+                     for (unsigned int k = 0; k < newLayers.size(); ++k)
                      {
-                        if(newLayers[k].mParticleSystem == newModularEmitter->getParticleSystem())
+                        if (newLayers[k].mParticleSystem == newModularEmitter->getParticleSystem())
                         {
                            newLayers[k].mEmitterTransform = newEmitterTransform;
                            newLayers[k].mModularEmitter = newModularEmitter;
@@ -358,9 +358,9 @@ void ParticleViewer::LoadReferenceObject()
 
    bool visible = true;
 
-   if(filename != "")
+   if (filename != "")
    {
-      if(mpReferenceModel.valid())
+      if (mpReferenceModel.valid())
       {
          //remove the existing one from the scene
          mpSceneGroup->removeChild(mpReferenceModel.get());
@@ -369,7 +369,7 @@ void ParticleViewer::LoadReferenceObject()
          visible = mpReferenceModel->getNodeMask() ? true : false;
       }
       mpReferenceModel = osgDB::readNodeFile(filename.toStdString());
-      if(mpReferenceModel.valid())
+      if (mpReferenceModel.valid())
       {
          mpSceneGroup->addChild(mpReferenceModel.get());
          emit ReferenceObjectLoaded(filename);
@@ -402,7 +402,7 @@ void ParticleViewer::ToggleReferenceObject(bool enabled)
 ////////////////////////////////////////////////////////////////////////////////
 void ParticleViewer::SaveParticleToFile()
 {
-   if(mParticleSystemFilename == "")
+   if (mParticleSystemFilename.isEmpty())
    {
       SaveParticleAs();
    }
@@ -423,7 +423,7 @@ void ParticleViewer::SaveParticleAs()
    QString filename = QFileDialog::getSaveFileName(NULL, tr("Save As"),
       mParticleSystemFilename, tr("Particle Systems (*.osg)"));
 
-   if(filename != "")
+   if (!filename.isEmpty())
    {
       SetParticleSystemFilename(filename);
       SaveParticleToFile();

@@ -25,7 +25,6 @@
 #ifndef __DELTA_AIPLUGININTERFACE_H__
 #define __DELTA_AIPLUGININTERFACE_H__
 
-//#include <loki/AbstractFactory.h>
 #include <string>
 #include <vector>
 
@@ -35,6 +34,10 @@
 #include <dtAI/waypointinterface.h>
 #include <osg/Vec3>
 
+#include <dtDAL/objecttype.h>
+#include <dtUtil/objectfactory.h>
+
+#include <dtAI/waypointpropertycache.h>
 
 namespace dtAI
 {
@@ -44,38 +47,49 @@ namespace dtAI
    {
       public: 
          typedef std::vector<WaypointInterface*> WaypointArray;      
-         //typedef FactoryObjects LOKI_TYPELIST_2(WaypointInterface);
-         //typedef Loki::AbstractFactory<FactoryObjects> AIFactory;
+         typedef dtUtil::ObjectFactory< dtCore::RefPtr<const dtDAL::ObjectType>, WaypointInterface> WaypointFactory;
 
       public: //interface declaration
-         AIPluginInterface(){}
-         //AIPluginInterface(AIFactory* factory): mFactory(factory){}
-         virtual ~AIPluginInterface(){}
-
-         //template <class T>
-         //T* CreateInterfaceObject()
-         //{            
-         //   return mInterfaceObjects<T>.Create();
-         //}
+         AIPluginInterface();
+         virtual ~AIPluginInterface();
 
          /**
-         * Inserts a waypoint by position into the system
+         * Inserts a waypoint into the system.
+         * @note you do not need to call this if you created 
+         *  the waypoint through this interface.
+         *
          * @return the waypoint created
          */
-         virtual WaypointID InsertWaypoint(const osg::Vec3& pos) = 0;
+         virtual void InsertWaypoint(WaypointInterface* waypoint) = 0;
 
          /**
          * Removes a waypoint by Id from the system
          * @param the ID of the waypoint to remove
          * @return whether the waypoint was found and successfully removed
          */
-         virtual bool RemoveWaypoint(WaypointID id) = 0;
+         virtual bool RemoveWaypoint(WaypointInterface* waypoint) = 0;
+
+         /**
+         * The proper way to move a waypoint, re-inserting may will create duplicates
+         * @param the waypoint which has presumably been moved
+         * @return whether the waypoint was found and successfully moved
+         */
+         virtual bool MoveWaypoint(WaypointInterface* wi, const osg::Vec3& newPos) = 0;
 
          /**
          * Finds the closest waypoint to a given point
          * @return the waypoint found, or NULL if no waypoints exist
          */
-         virtual WaypointInterface* GetClosestWaypoint(const osg::Vec3& pos) = 0;
+         virtual WaypointInterface* GetClosestWaypoint(const osg::Vec3& pos, float maxDistance) = 0;
+
+
+         /**
+         * Searches for waypoints within radius of a point.
+         * @param pos, the point to search from
+         * @param radius, it will find waypoints up to and not including this distance         
+         * @param arrayToFill, a std::vector<WaypointInterface*> by reference for the result
+         */
+         virtual bool GetWaypointsAtRadius(const osg::Vec3& pos, float radius, WaypointArray& arrayToFill) = 0;
 
 
          /**
@@ -90,6 +104,13 @@ namespace dtAI
          * @return the waypoint found, or NULL if no waypoint exists with that Id
          */
          virtual WaypointInterface* GetWaypointByName(const std::string& name) = 0;
+
+
+         /**
+         *  Copies all waypoints into a vector
+         *  @param the vector of waypoints to fill
+         */
+         virtual void GetWaypoints(WaypointArray& toFill) = 0;
 
 
          /**
@@ -156,13 +177,53 @@ namespace dtAI
          */
          virtual void ClearMemory() = 0;
 
+         /**
+         *	Use the Waypoint factory to create a Waypoint. 
+         *  @note This will auto insert, no need to call Insert() afterwards
+         */
+         WaypointInterface* CreateWaypoint(const osg::Vec3& pos, const dtDAL::ObjectType& type);
+
+         /**
+         *	This creates a Waypoint like above but ensures there is not already a Waypoint within radius from at that point. 
+         *  @note This will auto insert, no need to call Insert() afterwards
+         *
+         *  @return Either a new waypoint or the waypoint that already exists within radius
+         */
+         WaypointInterface* CreateWaypointNoDuplicates(const osg::Vec3& pos, float radius, const dtDAL::ObjectType& type);
+
+         /**
+         * Checks to see if this registry supports the given waypoint type.
+         * @param type The type to check support for.
+         * @return true if supported, false otherwise.
+         */
+         bool IsWaypointTypeSupported(dtCore::RefPtr<const dtDAL::ObjectType> type) const;
+
+         /**
+         * Gets a list of waypoint types supported.
+         */
+         void GetSupportedWaypointTypes(std::vector<dtCore::RefPtr<const dtDAL::ObjectType> >& actors) const;
+
+         template <class WaypointDerivative> 
+         WaypointPropertyBase* CreateWaypointPropertyContainer(const dtDAL::ObjectType& type, WaypointDerivative* wp) const
+         {
+            return mPropertyCache->GetPropertyContainer(type, wp);
+         }
+
+         template <class WaypointDerivative> 
+         void RegisterWaypointType(dtCore::RefPtr<const dtDAL::ObjectType> type)
+         {
+            mFactory->RegisterType<WaypointDerivative>(type);
+            mPropertyCache->RegisterType<WaypointDerivative>(type);
+         }
 
       protected: 
 
 
       private:
 
-         //AIFactory* mFactory;
+         dtCore::RefPtr<WaypointFactory> mFactory;
+         dtCore::RefPtr<WaypointPropertyCache> mPropertyCache;
+
    };
 
 }// namespace dtAI
