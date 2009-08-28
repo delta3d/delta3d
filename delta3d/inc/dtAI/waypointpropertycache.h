@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * Bradley Anderegg 
+ * Bradley Anderegg
  */
 
 #ifndef __DELTA_WAYPOINTPROPERTYCACHE_H__
@@ -45,12 +45,13 @@ namespace dtAI
          template <class WaypointType>
          WaypointPropertyBase* GetPropertyContainer(const dtDAL::ObjectType& waypointType, WaypointType* wt)
          {
-            WaypointPropertyBase* wpb = mPropertyFactory->CreateObject(waypointType);
+            WaypointPropertyBase* wpb = mPropertyFactory->CreateObject(&waypointType);
             wpb->Set(wt);
             wt->CreateProperties(*wpb);
+            return wpb;
          }
 
-         template <class WaypointDerivative> 
+         template <class WaypointDerivative>
          void RegisterType(dtCore::RefPtr<const dtDAL::ObjectType> type)
          {
             mPropertyFactory->RegisterType<WaypointPropertyContainer<WaypointDerivative> >(type);
@@ -58,7 +59,7 @@ namespace dtAI
 
    private:
       typedef dtUtil::ObjectFactory< dtCore::RefPtr<const dtDAL::ObjectType>, WaypointPropertyBase> WaypointPropertyFactory;
-      
+
       dtCore::RefPtr<WaypointPropertyFactory> mPropertyFactory;
 
    };
