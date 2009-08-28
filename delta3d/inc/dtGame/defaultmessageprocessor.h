@@ -70,7 +70,7 @@ namespace dtGame
           * Processes an local actor update message
           * @param msg The message
           */
-         virtual void ProcessLocalUpdateActor(const ActorUpdateMessage& msg) {}
+         virtual void ProcessLocalUpdateActor(const ActorUpdateMessage& msg, GameActorProxy* proxy);
 
          /**
           * Processes a local actor delete message

@@ -189,9 +189,15 @@ namespace dtGame
    public:
       typedef dtDAL::PhysicalActorProxy BaseClass;
 
-      // Use this when you register a message type and want to receive it in ProcessMessage()
+      /**
+       * Name is intended to become a property, so this constant exists for that and for the LocalActorUpdatePolicy
+       * filter property list.
+       */
+      static const dtUtil::RefString PROPERTY_NAME;
+
+      /// Use this when you register a message type and want to receive it in ProcessMessage()
       static const std::string PROCESS_MSG_INVOKABLE;
-      // invokables for tick local and remote - will call TickLocal() and TickRemote();
+      /// invokables for tick local and remote - will call TickLocal() and TickRemote();
       static const std::string TICK_LOCAL_INVOKABLE;
       static const std::string TICK_REMOTE_INVOKABLE;
 
@@ -205,10 +211,18 @@ namespace dtGame
          static Ownership CLIENT_LOCAL;
          static Ownership CLIENT_AND_SERVER_LOCAL;
          static Ownership PROTOTYPE;
-         Ownership(const std::string &name) : dtUtil::Enumeration(name)
-         {
-            AddInstance(this);
-         }
+         Ownership(const std::string& name);
+      };
+
+      /// Internal class to represent the ownership of an actor proxy
+      class DT_GAME_EXPORT LocalActorUpdatePolicy : public dtUtil::Enumeration
+      {
+         DECLARE_ENUM(LocalActorUpdatePolicy);
+      public:
+         static LocalActorUpdatePolicy IGNORE;
+         static LocalActorUpdatePolicy ACCEPT_ALL;
+         static LocalActorUpdatePolicy ACCEPT_WITH_PROPERTY_FILTER;
+         LocalActorUpdatePolicy(const std::string& name);
       };
 
       /// Constructor
@@ -358,13 +372,16 @@ namespace dtGame
       virtual void PopulateActorUpdate(ActorUpdateMessage& update);
 
       /**
-       * Takes and actor update message and applys the parameter values to change the
+       * Takes and actor update message and applies the parameter values to change the
        * the property values of the this actor proxy.  This is virtual so it can be extended
-       * or replaced to accomodate special behavior or special subclasses of actor update.
+       * or replaced to accommodate special behavior or special subclasses of actor update.
        *
        * @param msg the message to apply.
+       * @param checkLocalUpdatePolicy set to true if the policy filtering should be consulted, if false the update will
+       *                               just be set with no checking.
+       * @see #SetLocalActorUpdatePolicy
        */
-      virtual void ApplyActorUpdate(const ActorUpdateMessage& msg);
+      virtual void ApplyActorUpdate(const ActorUpdateMessage& msg, bool checkLocalUpdatePolicy = false);
 
       /**
        * Get all of the invokables registered for a given message type.
@@ -400,6 +417,23 @@ namespace dtGame
        * @see dtGame::GameActorProxy::Ownership
        */
       void SetInitialOwnership(Ownership& newOwnership);
+
+      /**
+       * Returns the local actor update policy.  This defines what the actor should do if an INFO_ACTOR_UPDATED
+       * message comes in remotely about this actor when it is locally created and simulated.  Essentially that would
+       * mean that another system would be trying to change property values on this actor.
+       * @return The current policy
+       * @see dtGame::GameActorProxy::LocalActorUpdatePolicy
+       */
+      LocalActorUpdatePolicy& GetLocalActorUpdatePolicy();
+
+      /**
+       * Sets a new local actor update policy.  This defines what the actor should do if an INFO_ACTOR_UPDATED
+       * message comes in remotely about this actor when it is locally created and simulated.  Essentially that would
+       * mean that another system would be trying to change property values on this actor.
+       * @see dtGame::GameActorProxy::LocalActorUpdatePolicy
+       */
+      void SetLocalActorUpdatePolicy(LocalActorUpdatePolicy& newPolicy);
 
       /**
        * Registers to receive a specific type of message from the GM.  You will receive
@@ -474,8 +508,8 @@ namespace dtGame
 
       /**
        * Returns true if the actor has been added to the
-       * GM yet or if not.
-       * then is set to true upon being added to the gm
+       * Game Manager yet or if not.
+       * then is set to true upon being added to the GM
        */
       bool IsInGM() const;
 
@@ -484,6 +518,12 @@ namespace dtGame
        * for actors within the map.
        */
       void SetGameManager(GameManager* gm);
+
+      /**
+       * This essetially checks to see if a property name is in the accept filter
+       * @see dtGame::GameActorProxy::LocalActorUpdatePolicy::ACCEPT_WITH_PROPERTY_FILTER
+       */
+      bool ShouldAcceptPropertyInLocalUpdate(const dtUtil::RefString& propName) const;
 
    protected:
       /// Destructor
@@ -509,6 +549,20 @@ namespace dtGame
        * are being deleted, register for the INFO_ACTOR_DELETED with RegisterForMessagesAboutSelf().
        */
       virtual void OnRemovedFromWorld() { }
+
+      /**
+       * Adds a property to the accept list for local updates.
+       * If you want to accept a the actor name from a message, you must add PROPERTY_NAME to this list.
+       * @see dtGame::GameActorProxy::PROPERTY_NAME
+       * @see dtGame::GameActorProxy::LocalActorUpdatePolicy::ACCEPT_WITH_PROPERTY_FILTER
+       */
+      void AddPropertyToLocalUpdateAcceptFilter(const dtUtil::RefString& propName);
+
+      /**
+       * Removes a property to the accept list for local updates.
+       * @see dtGame::GameActorProxy::LocalActorUpdatePolicy::ACCEPT_WITH_PROPERTY_FILTER
+       */
+      void RemovePropertyFromLocalUpdateAcceptFilter(const dtUtil::RefString& propName);
 
    private:
 
@@ -547,10 +601,12 @@ namespace dtGame
 
       friend class GameManager;
       GameManager* mParent;
-      Ownership* ownership;
+      Ownership* mOwnership;
+      LocalActorUpdatePolicy* mLocalActorUpdatePolicy;
       dtUtil::Log& mLogger;
       std::map<std::string, dtCore::RefPtr<Invokable> > mInvokables;
       std::multimap<const MessageType*, dtCore::RefPtr<Invokable> > mMessageHandlers;
+      std::set<dtUtil::RefString> mLocalUpdatePropertyAcceptList;
       bool mIsInGM;
    };
 }

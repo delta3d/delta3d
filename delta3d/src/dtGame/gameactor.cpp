@@ -44,17 +44,42 @@
 
 namespace dtGame
 {
+   const dtUtil::RefString GameActorProxy::PROPERTY_NAME("Name");
+
    // invokable names
    const std::string GameActorProxy::PROCESS_MSG_INVOKABLE("Process Message");
    const std::string GameActorProxy::TICK_LOCAL_INVOKABLE("Tick Local");
    const std::string GameActorProxy::TICK_REMOTE_INVOKABLE("Tick Remote");
 
+   ///////////////////////////////////////////
+
    IMPLEMENT_ENUM(GameActorProxy::Ownership);
+
+   GameActorProxy::Ownership::Ownership(const std::string& name)
+   : dtUtil::Enumeration(name)
+   {
+      AddInstance(this);
+   }
+
    GameActorProxy::Ownership GameActorProxy::Ownership::SERVER_PUBLISHED("Server+Published");
    GameActorProxy::Ownership GameActorProxy::Ownership::SERVER_LOCAL("Server Local");
    GameActorProxy::Ownership GameActorProxy::Ownership::CLIENT_LOCAL("Client Local");
    GameActorProxy::Ownership GameActorProxy::Ownership::CLIENT_AND_SERVER_LOCAL("Client and Server Local");
    GameActorProxy::Ownership GameActorProxy::Ownership::PROTOTYPE("PROTOTYPE");
+
+   ///////////////////////////////////////////
+
+   IMPLEMENT_ENUM(GameActorProxy::LocalActorUpdatePolicy);
+
+   GameActorProxy::LocalActorUpdatePolicy::LocalActorUpdatePolicy(const std::string& name)
+   : dtUtil::Enumeration(name)
+   {
+      AddInstance(this);
+   }
+
+   GameActorProxy::LocalActorUpdatePolicy GameActorProxy::LocalActorUpdatePolicy::IGNORE("IGNORE");
+   GameActorProxy::LocalActorUpdatePolicy GameActorProxy::LocalActorUpdatePolicy::ACCEPT_ALL("ACCEPT_ALL");
+   GameActorProxy::LocalActorUpdatePolicy GameActorProxy::LocalActorUpdatePolicy::ACCEPT_WITH_PROPERTY_FILTER("ACCEPT_WITH_PROPERTY_FILTER");
 
    ///////////////////////////////////////////
    // Actor Proxy code
@@ -63,7 +88,8 @@ namespace dtGame
    /////////////////////////////////////////////////////////////////////////////
    GameActorProxy::GameActorProxy()
       : mParent(NULL)
-      , ownership(&GameActorProxy::Ownership::SERVER_LOCAL)
+      , mOwnership(&GameActorProxy::Ownership::SERVER_LOCAL)
+      , mLocalActorUpdatePolicy(&GameActorProxy::LocalActorUpdatePolicy::ACCEPT_ALL)
       , mLogger(dtUtil::Log::GetInstance("gameactor.cpp"))
       , mIsInGM(false)
    {
@@ -89,38 +115,60 @@ namespace dtGame
 
       dtDAL::PhysicalActorProxy::BuildPropertyMap();
 
-      dtDAL::BooleanActorProperty *bap = new dtDAL::BooleanActorProperty("IsGameActor", "Is Game Actor",
+      static const dtUtil::RefString PROPERTY_IS_GAME_ACTOR("IsGameActor");
+      static const dtUtil::RefString PROPERTY_IS_GAME_ACTOR_LABEL("Is Game Actor");
+      static const dtUtil::RefString PROPERTY_IS_GAME_ACTOR_DESC("Read only property that always returns true, used to show in STAGE");
+      dtDAL::BooleanActorProperty *bap = new dtDAL::BooleanActorProperty(PROPERTY_IS_GAME_ACTOR, PROPERTY_IS_GAME_ACTOR_LABEL,
                dtDAL::BooleanActorProperty::SetFuncType(),
                dtDAL::BooleanActorProperty::GetFuncType(this, &GameActorProxy::IsGameActorProxy),
-               "Read only property that always returns true", "");
+               PROPERTY_IS_GAME_ACTOR_DESC, "");
       bap->SetReadOnly(true);
       AddProperty(bap);
 
-      bap = new dtDAL::BooleanActorProperty("IsRemote", "Is Remote",
+      static const dtUtil::RefString PROPERTY_IS_REMOTE("IsRemote");
+      static const dtUtil::RefString PROPERTY_IS_REMOTE_LABEL("Is Remote");
+      static const dtUtil::RefString PROPERTY_IS_REMOTE_DESC("Sets/Gets if a game actor is remote");
+      bap = new dtDAL::BooleanActorProperty(PROPERTY_IS_REMOTE, PROPERTY_IS_REMOTE_LABEL,
                dtDAL::BooleanActorProperty::SetFuncType(),
                dtDAL::BooleanActorProperty::GetFuncType(this, &GameActorProxy::IsRemote),
-               "Sets/Gets if a game actor is remote", "");
+               PROPERTY_IS_REMOTE_DESC, "");
       bap->SetReadOnly(true);
       AddProperty(bap);
 
-      bap = new dtDAL::BooleanActorProperty("IsPublished", "Is Published",
+      static const dtUtil::RefString PROPERTY_IS_PUBLISHED("IsPublished");
+      static const dtUtil::RefString PROPERTY_IS_PUBLISHED_LABEL("Is Pubilshed");
+      static const dtUtil::RefString PROPERTY_IS_PUBLISHED_DESC("Sets/Gets if a game actor is published");
+      bap = new dtDAL::BooleanActorProperty(PROPERTY_IS_PUBLISHED, PROPERTY_IS_PUBLISHED_LABEL,
                dtDAL::BooleanActorProperty::SetFuncType(),
                dtDAL::BooleanActorProperty::GetFuncType(this, &GameActorProxy::IsPublished),
-               "Sets/Gets if a game actor is published", "");
+               PROPERTY_IS_PUBLISHED_DESC, "");
       bap->SetReadOnly(true);
       AddProperty(bap);
 
-      AddProperty(new dtDAL::EnumActorProperty<Ownership>("Initial Ownership", "Initial Ownership",
+      static const dtUtil::RefString PROPERTY_INITIAL_OWNERSHIP("Initial Ownership");
+      static const dtUtil::RefString PROPERTY_INITIAL_OWNERSHIP_DESC("Sets/Gets the initial ownership of the actor proxy");
+      AddProperty(new dtDAL::EnumActorProperty<Ownership>(PROPERTY_INITIAL_OWNERSHIP, PROPERTY_INITIAL_OWNERSHIP,
                dtDAL::EnumActorProperty<Ownership>::SetFuncType(this, &GameActorProxy::SetInitialOwnership),
                dtDAL::EnumActorProperty<Ownership>::GetFuncType(this, &GameActorProxy::GetInitialOwnership),
-               "Sets/Gets the initial ownership of the actor proxy"));
+               PROPERTY_INITIAL_OWNERSHIP_DESC));
 
-      const std::string GROUPNAME = "ShaderParams";
+      static const dtUtil::RefString PROPERTY_LOCAL_ACTOR_ACCEPT_UPDATE_POLICY("Local Actor Update Policy");
+      static const dtUtil::RefString PROPERTY_LOCAL_ACTOR_ACCEPT_UPDATE_POLICY_DESC(
+               "Sets/Gets the policy of what to do when a local actor receives a remote message that it was updated.");
+      AddProperty(new dtDAL::EnumActorProperty<LocalActorUpdatePolicy>(PROPERTY_LOCAL_ACTOR_ACCEPT_UPDATE_POLICY,
+               PROPERTY_LOCAL_ACTOR_ACCEPT_UPDATE_POLICY,
+               dtDAL::EnumActorProperty<LocalActorUpdatePolicy>::SetFuncType(this, &GameActorProxy::SetLocalActorUpdatePolicy),
+               dtDAL::EnumActorProperty<LocalActorUpdatePolicy>::GetFuncType(this, &GameActorProxy::GetLocalActorUpdatePolicy),
+               PROPERTY_LOCAL_ACTOR_ACCEPT_UPDATE_POLICY_DESC));
 
-      AddProperty(new dtDAL::StringActorProperty("ShaderGroup","ShaderGroup",
+      static const dtUtil::RefString PROPERTY_SHADER_GROUP("ShaderGroup");
+      static const dtUtil::RefString PROPERTY_SHADER_GROUP_DESC("Sets the shader group on the game actor.");
+      static const dtUtil::RefString GROUPNAME("ShaderParams");
+
+      AddProperty(new dtDAL::StringActorProperty(PROPERTY_SHADER_GROUP, PROPERTY_SHADER_GROUP,
                dtDAL::StringActorProperty::SetFuncType(&ga, &GameActor::SetShaderGroup),
                dtDAL::StringActorProperty::GetFuncType(&ga, &GameActor::GetShaderGroup),
-               "Sets the shader group on the game actor.",GROUPNAME));
+               PROPERTY_SHADER_GROUP_DESC,GROUPNAME));
 
       /** let game actor components add their properties */
       ga.BuildComponentPropertyMaps();
@@ -321,17 +369,33 @@ namespace dtGame
    }
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////////
-   void GameActorProxy::ApplyActorUpdate(const ActorUpdateMessage& msg)
+   void GameActorProxy::ApplyActorUpdate(const ActorUpdateMessage& msg, bool checkLocalUpdatePolicy)
    {
-      const StringMessageParameter* nameParam = static_cast<const StringMessageParameter*>(msg.GetParameter("Name"));
-      if (nameParam != NULL)
+      bool isLocal = !IsRemote();
+      bool filterProps = isLocal && GetLocalActorUpdatePolicy() == LocalActorUpdatePolicy::ACCEPT_WITH_PROPERTY_FILTER;
+
+      if (checkLocalUpdatePolicy && isLocal && GetLocalActorUpdatePolicy() == LocalActorUpdatePolicy::IGNORE)
       {
+         if (mLogger.IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         {
+            mLogger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                     "Ignoring update message on actor with type \"%s\" and name \"%s\".",
+                     GetActorType().GetFullName().c_str(),
+                     GetName().c_str()
+            );
+         }
+         return;
+      }
+
+      if (!filterProps || ShouldAcceptPropertyInLocalUpdate(PROPERTY_NAME))
+      {
+         const std::string& nameInMessage = msg.GetName().c_str();
          if (mLogger.IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
          {
             mLogger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                      "Setting name on actor type \"%s\" to value \"%s\"",
                      GetActorType().GetFullName().c_str(),
-                     nameParam->ToString().c_str()
+                     nameInMessage.c_str()
             );
          }
          // we prevent users from setting an empty name because there are many cases where a component will
@@ -339,8 +403,8 @@ namespace dtGame
          // component doesn't know) in which case, it would overwrite the real name with an empty string == bad.
          // But, we go ahead and allow this if it is the create message.  So, you can create an actor with an
          // empty name, but can't ever override it to an empty string after that.
-         if (msg.GetMessageType() == MessageType::INFO_ACTOR_CREATED || !nameParam->GetValue().empty())
-            SetName(nameParam->GetValue());
+         if (msg.GetMessageType() == MessageType::INFO_ACTOR_CREATED || !nameInMessage.empty())
+            SetName(nameInMessage);
       }
 
       std::vector<const MessageParameter*> params;
@@ -348,13 +412,29 @@ namespace dtGame
 
       for (unsigned int i = 0; i < params.size(); ++i)
       {
+         const dtUtil::RefString& paramName = params[i]->GetName();
+
+         if (filterProps && !ShouldAcceptPropertyInLocalUpdate(paramName))
+         {
+            if (mLogger.IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            {
+               mLogger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                        "On actor with type \"%s\" Ignoring property named \"%s\" because the actor is local,"
+                        "it is set to ACCEPT_WITH_PROPERTY_FILTER, and the property is not in the accept list.",
+                        GetActorType().GetFullName().c_str(),
+                        paramName.c_str()
+               );
+            }
+            continue;
+         }
+
          const dtDAL::DataType& paramType = params[i]->GetDataType();
 
-         dtDAL::ActorProperty* property = GetProperty(params[i]->GetName());
+         dtDAL::ActorProperty* property = GetProperty(paramName);
 
          if (property == NULL)
          {
-            LOG_WARNING(("Property \"" + params[i]->GetName() +
+            LOG_WARNING(("Property \"" + paramName +
                      "\" was not found on actor type \"" +
                      GetActorType().GetFullName() +
                      "\"").c_str());
@@ -368,7 +448,7 @@ namespace dtGame
             {
                mLogger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                         "Not setting property \"%s\" on actor type \"%s\" to value \"%s\" because the property is read only.",
-                        params[i]->GetName().c_str(), GetActorType().GetFullName().c_str(),
+                        paramName.c_str(), GetActorType().GetFullName().c_str(),
                         params[i]->ToString().c_str()
                );
             }
@@ -379,7 +459,7 @@ namespace dtGame
          {
             mLogger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                      "Setting property \"%s\" on actor type \"%s\" to value \"%s\"",
-                     params[i]->GetName().c_str(), GetActorType().GetFullName().c_str(),
+                     paramName.c_str(), GetActorType().GetFullName().c_str(),
                      params[i]->ToString().c_str()
             );
          }
@@ -441,13 +521,24 @@ namespace dtGame
    /////////////////////////////////////////////////////////////////////////////////////////////////////////
    GameActorProxy::Ownership& GameActorProxy::GetInitialOwnership()
    {
-      return *ownership;
+      return *mOwnership;
    }
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////////
    void GameActorProxy::SetInitialOwnership(GameActorProxy::Ownership &newOwnership)
    {
-      ownership = &newOwnership;
+      mOwnership = &newOwnership;
+   }
+   /////////////////////////////////////////////////////////////////////////////////////////////////////////
+   GameActorProxy::LocalActorUpdatePolicy& GameActorProxy::GetLocalActorUpdatePolicy()
+   {
+      return *mLocalActorUpdatePolicy;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////////////////////////////
+   void GameActorProxy::SetLocalActorUpdatePolicy(GameActorProxy::LocalActorUpdatePolicy& newPolicy)
+   {
+      mLocalActorUpdatePolicy = &newPolicy;
    }
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -689,6 +780,27 @@ namespace dtGame
       OnRemovedFromWorld();
    }
 
+   ///////////////////////////////////////////
+   void GameActorProxy::AddPropertyToLocalUpdateAcceptFilter(const dtUtil::RefString& propName)
+   {
+      mLocalUpdatePropertyAcceptList.insert(propName);
+   }
+
+   ///////////////////////////////////////////
+   void GameActorProxy::RemovePropertyFromLocalUpdateAcceptFilter(const dtUtil::RefString& propName)
+   {
+      std::set<dtUtil::RefString>::iterator i = mLocalUpdatePropertyAcceptList.find(propName);
+      if (i != mLocalUpdatePropertyAcceptList.end())
+      {
+         mLocalUpdatePropertyAcceptList.erase(i);
+      }
+   }
+
+   ///////////////////////////////////////////
+   bool GameActorProxy::ShouldAcceptPropertyInLocalUpdate(const dtUtil::RefString& propName) const
+   {
+      return mLocalUpdatePropertyAcceptList.find(propName) != mLocalUpdatePropertyAcceptList.end();
+   }
 
    ///////////////////////////////////////////
    // Actor code

@@ -71,7 +71,6 @@ class GameActorTests : public CPPUNIT_NS::TestFixture
 {
    CPPUNIT_TEST_SUITE(GameActorTests);
 
-      CPPUNIT_TEST(TestGameActor);
       CPPUNIT_TEST(TestGameActorProxy);
       CPPUNIT_TEST(TestGameActorProxyDeleteError);
       CPPUNIT_TEST(TestSetEnvironmentActor);
@@ -94,7 +93,6 @@ class GameActorTests : public CPPUNIT_NS::TestFixture
 public:
    void setUp();
    void tearDown();
-   void TestGameActor();
    void TestGameActorProxy();
    void TestGameActorProxyDeleteError();
    void TestSetEnvironmentActor();
@@ -178,24 +176,6 @@ void GameActorTests::TestActorIsInGM()
    catch(const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.What());
-   }
-}
-
-
-////////////////////////////////////////////////////////////////////////
-void GameActorTests::TestGameActor()
-{
-   try
-   {
-
-   }
-   catch (const dtUtil::Exception& e)
-   {
-      CPPUNIT_FAIL(e.What());
-   }
-   catch (const std::exception& e)
-   {
-      CPPUNIT_FAIL(std::string("Caught exception of type: ") + typeid(e).name() + " " + e.what());
    }
 }
 
