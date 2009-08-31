@@ -119,6 +119,16 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   void DefaultMessageProcessor::ProcessLocalUpdateActor(const ActorUpdateMessage& msg, GameActorProxy* proxy)
+   {
+      // just to make sure the message is actually remote
+      if (msg.GetSource() != GetGameManager()->GetMachineInfo() && proxy != NULL && !proxy->IsRemote())
+      {
+         proxy->ApplyActorUpdate(msg, true);
+      }
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    dtCore::RefPtr<GameActorProxy> DefaultMessageProcessor::ProcessRemoteCreateActor(const ActorUpdateMessage& msg)
    {
       const std::string& prototypeName = msg.GetPrototypeName();
@@ -234,7 +244,7 @@ namespace dtGame
          }
          else
          {
-            ProcessLocalUpdateActor(msg);
+            ProcessLocalUpdateActor(msg, proxy);
          }
       }
       else
