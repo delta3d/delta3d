@@ -13,6 +13,7 @@
                <xs:attribute name="Map" type="xs:string"/>
                <xs:attribute name="ProjContextPath" type="xs:string"/>
                <xs:attribute name="SaveConfigurationOnClose" type="xs:boolean"/>
+               <xs:attribute name="Stylesheet" type="xs:string"/>
             </xs:complexType>
          </xs:element>
 
