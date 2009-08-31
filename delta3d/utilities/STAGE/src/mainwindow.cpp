@@ -94,6 +94,34 @@ namespace dtEditQt
       , mResourceBrowser(NULL)
       , mVolEditActorProxy(NULL)
    {
+      //Read STAGE configuration file
+      if (stageConfigFile != "")
+      {
+         ConfigurationManager::GetInstance().ReadXML(mSTAGEConfigFullPath);
+      }
+
+      //Setup stylesheet based on what's in the configuration file.
+      //Note that stylesheet has to be setup for qApp before ANYTHING in the 
+      //qApp starts up or the stylesheet does not get applied.
+      std::string styleSheetFile = 
+         ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::GENERAL,
+                                                         CONF_MGR_STYLESHEET);
+      if (styleSheetFile != "")
+      {
+         //check to see if the stylesheet is "just found" (we were given an absolute path)
+         if (! dtUtil::FileUtils::GetInstance().FileExists(styleSheetFile))
+         {
+            //file not found, assume it's in STAGE's stylesheets directory
+            styleSheetFile = dtCore::GetDeltaRootPath() + "/utilities/STAGE/style/" + styleSheetFile;
+         }
+
+         QFile file(styleSheetFile.c_str());         
+         file.open(QFile::ReadOnly);         
+         QString ss = QString(file.readAll());
+
+         qApp->setStyleSheet(ss);
+      }
+
       // Ensure that the global singletons are lazily instantiated now
       dtDAL::LibraryManager::GetInstance();
       EditorActions::GetInstance();
@@ -105,12 +133,6 @@ namespace dtEditQt
       dtDAL::Project::GetInstance().SetEditMode(true);
 
       ViewportManager::GetInstance();
-
-      //Read STAGE configuration file
-      if (stageConfigFile != "")
-      {
-         ConfigurationManager::GetInstance().ReadXML(mSTAGEConfigFullPath);
-      }
 
       connectSlots();
       setupDockWindows();

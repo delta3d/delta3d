@@ -4,6 +4,8 @@
       <file>icons/animationsoff_small.png</file>
       <file>icons/animationson_small.png</file>
       <file>icons/application_icon.png</file>
+      <file>icons/blackDownArrow.png</file>
+      <file>icons/blackUpArrow.png</file>
       <file>icons/category_large.png</file>
       <file>icons/character_resource.png</file>
       <file>icons/character_tab.png</file>
@@ -56,6 +58,8 @@
       <file>icons/undo.png</file>
       <file>icons/ungroup.png</file>
       <file>icons/viewer.ico</file>
+      <file>icons/whiteDownArrow.png</file>
+      <file>icons/whiteUpArrow.png</file>
       <file>icons/wireframemode_tiny.png</file>
       <file>license.txt</file>
       <file>help.html</file>
