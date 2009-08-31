@@ -1459,6 +1459,8 @@ void MessageTests::TestDefaultMessageProcessorWithLocalActorUpdates()
    TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(false, false, dtGame::GameActorProxy::LocalActorUpdatePolicy::IGNORE);
    TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(false, true, dtGame::GameActorProxy::LocalActorUpdatePolicy::ACCEPT_ALL);
    TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(false, false, dtGame::GameActorProxy::LocalActorUpdatePolicy::ACCEPT_ALL);
+   TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(false, true, dtGame::GameActorProxy::LocalActorUpdatePolicy::ACCEPT_WITH_PROPERTY_FILTER);
+   TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(false, false, dtGame::GameActorProxy::LocalActorUpdatePolicy::ACCEPT_WITH_PROPERTY_FILTER);
 }
 
 void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool remote, bool partial,
@@ -1473,6 +1475,11 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool
    CPPUNIT_ASSERT(ap->IsGameActorProxy());
    dtCore::RefPtr<dtGame::GameActorProxy> gap = dynamic_cast<dtGame::GameActorProxy*>(ap.get());
    CPPUNIT_ASSERT(gap != NULL);
+
+   CPPUNIT_ASSERT_MESSAGE("This property should have been in the accept list", gap->ShouldAcceptPropertyInLocalUpdate("Has Fired"));
+   CPPUNIT_ASSERT_MESSAGE("This property should have been in the accept list", gap->ShouldAcceptPropertyInLocalUpdate("Remote Tick Count"));
+   CPPUNIT_ASSERT_MESSAGE("This property should not be in the accept list because it was added, then removed", !gap->ShouldAcceptPropertyInLocalUpdate("Local Tick Count"));
+   CPPUNIT_ASSERT_MESSAGE("This property should not be in the accept list because it was never added", !gap->ShouldAcceptPropertyInLocalUpdate("Test_Actor_Id"));
 
    gap->SetLocalActorUpdatePolicy(policy);
 
@@ -1559,8 +1566,10 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool
    mGameManager->SendMessage(*actorUpdateMsg);
    dtCore::System::GetInstance().Step();
 
-   if (remote || policy == dtGame::GameActorProxy::LocalActorUpdatePolicy::ACCEPT_ALL)
+   if (remote || policy != dtGame::GameActorProxy::LocalActorUpdatePolicy::IGNORE)
    {
+      bool acceptWithFilter = !remote && policy == dtGame::GameActorProxy::LocalActorUpdatePolicy::ACCEPT_WITH_PROPERTY_FILTER;
+
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Has Fired should be changed to true.",
                              gap->GetProperty("Has Fired")->ToString(), std::string("true"));
       if (partial)
@@ -1572,11 +1581,20 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool
       }
       else
       {
-         CPPUNIT_ASSERT_EQUAL_MESSAGE("Local Tick Count should be changed to 96.",
-                                gap->GetProperty("Local Tick Count")->ToString(), std::string("96"));
          CPPUNIT_ASSERT_EQUAL_MESSAGE("Remote Tick Count should be changed to 107.",
                                 gap->GetProperty("Remote Tick Count")->ToString(), std::string("107"));
-         CPPUNIT_ASSERT_EQUAL_MESSAGE("The new Id should be set.", std::string("3333"), gap->GetProperty("Test_Actor_Id")->ToString());
+         if (!acceptWithFilter)
+         {
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Local Tick Count should be changed to 96.",
+                                   gap->GetProperty("Local Tick Count")->ToString(), std::string("96"));
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("The new Id should be set.", std::string("3333"), gap->GetProperty("Test_Actor_Id")->ToString());
+         }
+         else
+         {
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("Local Tick Count should still be 0.",
+                                          gap->GetProperty("Local Tick Count")->ToString(), std::string("0"));
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("The new Id should NOT be set.", oldId.ToString(), gap->GetProperty("Test_Actor_Id")->ToString());
+         }
       }
    }
    else
