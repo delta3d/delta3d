@@ -29,6 +29,8 @@
 
 namespace dtQt
 {
+   class GLWidgetFactory;
+
    class DT_QT_EXPORT QtGuiWindowSystemWrapper: public osg::GraphicsContext::WindowingSystemInterface
    {
       public:
@@ -57,9 +59,13 @@ namespace dtQt
 
          virtual osg::GraphicsContext* createGraphicsContext(osg::GraphicsContext::Traits* traits);
 
+         ///Supply a custom factory to create custom QGLWidgets.
+         void SetGLWidgetFactory(GLWidgetFactory* factory);
+
       protected:
          virtual ~QtGuiWindowSystemWrapper() {};
       private:
          dtCore::RefPtr<osg::GraphicsContext::WindowingSystemInterface> mInterface;
+         GLWidgetFactory* mWidgetFactory;
    };
 }

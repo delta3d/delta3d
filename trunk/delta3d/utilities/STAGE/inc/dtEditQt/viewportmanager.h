@@ -34,20 +34,22 @@
 #include <map>
 #include <osg/Referenced>
 #include <dtCore/scene.h>
-#include <dtCore/view.h>
 #include <dtCore/uniqueid.h>
 #include <dtCore/deltadrawable.h>
 #include <dtUtil/enumeration.h>
 #include <dtDAL/actorproxy.h>
-#include <dtDAL/actorproperty.h>
-#include <dtCore/timer.h>
 #include <dtQt/typedefs.h>
+#include <dtABC/application.h>
 #include "export.h"
 
-class QGLWidget;
 class QWidget;
 class QMouseEvent;
 class QWheelEvent;
+
+namespace osg
+{
+   class GraphicsContext;
+}
 
 namespace dtEditQt
 {
@@ -109,7 +111,7 @@ namespace dtEditQt
       /**
        * Gets a handle to the master view.
        */
-      dtCore::View* getMasterView() { return mMasterView.get(); }
+      Viewport* GetMasterViewport() { return mMasterViewport;}
 
       /**
        * Gets a handle to the master scene.  Once the handle is retrieved, use it to
@@ -124,6 +126,16 @@ namespace dtEditQt
        * @return A pointer to the world view camera.
        */
       StageCamera* getWorldViewCamera() { return mWorldCamera.get(); }
+
+      /**
+      * Sets a handle to the world view camera.
+      *
+      * @param A pointer to the perspective camera.
+      */
+      void setWorldViewCamera(StageCamera* camera);
+
+      void SetApplication(dtABC::Application* app);
+      dtABC::Application* GetApplication() const;
 
       /**
        * Moves an actor such that it is placed in from of the world view camera.
@@ -197,15 +209,6 @@ namespace dtEditQt
        */
       int getNumTextureUnits() const { return mNumTextureUnits; }
 
-      /// Returns if database paging is enabled
-      bool IsPagingEnabled() const;
-
-      /// Returns if database paging is enabled
-      dtCore::DatabasePager* GetDatabasePager() const;
-
-      dtCore::Timer_t GetStartTick() { return mStartTick; }
-
-      void SetStartTick(unsigned int time) { mStartTick = time; }
 
       /**
       * Retrieves the nearest snap position to the given position.
@@ -242,6 +245,15 @@ namespace dtEditQt
       * @param[in]  index  The index of the preset to load.
       */
       void LoadPresetCamera(int index);
+
+      /**
+      * Signal used when a viewport has been enabled.
+      *
+      * @param[in]   vp               The viewport triggering this event.
+      * @param[in]   enabled          Whether the viewport is being enabled or not.
+      * @param[out]  overrideDefault  Should be set true if you don't want the default behavior to handle this.
+      */
+      void emitViewportEnabled(Viewport* vp, bool enabled, bool* overrideDefault = NULL);
 
       /**
       * Signal used when a mouse has been pressed in a viewport.
@@ -382,7 +394,18 @@ namespace dtEditQt
       */
       void emitSetSnapEnabled(bool translation, bool rotation, bool scale);
 
+      bool EnableViewport(Viewport* viewport, bool enable);
+
    signals:
+
+      /**
+      * Signal used when a viewport has been enabled.
+      *
+      * @param[in]   vp               The viewport triggering this event.
+      * @param[in]   enabled          Whether the viewport is being enabled or not.
+      * @param[out]  overrideDefault  Should be set true if you don't want the default behavior to handle this.
+      */
+      void viewportEnabled(Viewport* vp, bool enabled, bool* overrideDefault);
 
       /**
       * Signal used when a mouse has been pressed in a viewport.
@@ -601,7 +624,7 @@ namespace dtEditQt
        * @return The newly created viewport.
        */
       Viewport* createViewportImpl(const std::string& name, ViewportType& type,
-         QWidget* parent, QGLWidget* shareWith);
+         QWidget* parent, osg::GraphicsContext* shareWith);
 
    private:
       static dtCore::RefPtr<ViewportManager> sInstance;
@@ -622,11 +645,10 @@ namespace dtEditQt
       Viewport*                       mMasterViewport;
       dtCore::RefPtr<ViewportOverlay> mViewportOverlay;
       dtCore::RefPtr<dtCore::Scene>   mMasterScene;
-      dtCore::RefPtr<dtCore::View>    mMasterView;
       dtCore::RefPtr<StageCamera>     mWorldCamera;
       int                             mNumTextureUnits;
       bool                            mInChangeTransaction;
-      dtCore::Timer_t                 mStartTick;
+      dtCore::RefPtr<dtABC::Application> mApplication;
    };
 
 } // namespace dtEditQt

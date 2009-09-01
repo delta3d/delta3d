@@ -29,34 +29,29 @@
 
 #include <prefix/dtstageprefix-src.h>
 #include <QtGui/QMouseEvent>
-#include <QtGui/QAction>
-#include <dtActors/prefabactorproxy.h>
 #include <dtEditQt/mainwindow.h>
-#include <dtEditQt/perspectiveviewport.h>
 #include <dtEditQt/viewportoverlay.h>
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/editoractions.h>
 #include <dtEditQt/propertyeditor.h>
+#include <dtEditQt/stageglwidget.h>
+#include <dtEditQt/editorviewport.h>
 #include <dtDAL/transformableactorproxy.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/map.h>
 #include <dtDAL/librarymanager.h>
 #include <dtDAL/actorproxyicon.h>
-#include <dtCore/isector.h>
 #include <dtCore/deltadrawable.h>
 #include <dtUtil/exception.h>
+#include <dtUtil/mathdefines.h>
 #include <dtDAL/exceptionenum.h>
 #include <QtGui/QDrag>
 #include <QtGui/QDragMoveEvent>
 #include <QtGui/QDragEnterEvent>
 #include <QtGui/QDragLeaveEvent>
-#include <dtDAL/transformableactorproxy.h>
 #include <dtDAL/mapxml.h>
 #include <dtDAL/project.h>
-
-#include <osg/PolygonMode>
-#include <osg/BlendFunc>
 
 
 namespace dtEditQt
@@ -65,20 +60,25 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    EditorViewport::EditorViewport(ViewportManager::ViewportType& type,
       const std::string& name, QWidget* parent,
-      QGLWidget* shareWith)
+      osg::GraphicsContext* shareWith)
       : Viewport(type, name, parent, shareWith)
       , mObjectMotionModel(NULL)
       , mGhostProxy(NULL)
       , mSkipUpdateForCam(false)
+      , mEnabled(false)
    {
-      mObjectMotionModel = new STAGEObjectMotionModel(ViewportManager::GetInstance().getMasterView());
+      mObjectMotionModel = new STAGEObjectMotionModel(GetView());
       mObjectMotionModel->SetEnabled(false);
       mObjectMotionModel->ClearTargets();
-      mObjectMotionModel->SetGetMouseLineFunc(dtDAL::MakeFunctor(*this, &EditorViewport::GetMouseLine));
-      mObjectMotionModel->SetObjectToScreenFunc(dtDAL::MakeFunctorRet(*this, &EditorViewport::GetObjectScreenCoordinates));
       mObjectMotionModel->SetScale(1.5f);
 
-      setAcceptDrops(true);
+      this->GetQGLWidget()->setAcceptDrops(true);
+
+      STAGEGLWidget* glWidget = dynamic_cast<STAGEGLWidget*>(this->GetQGLWidget());
+      if (NULL != glWidget)
+      {
+         glWidget->SetViewport(this);      	
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -99,12 +99,11 @@ namespace dtEditQt
    {
       Viewport::setScene(scene);
 
-      osg::Group* node = getSceneView()->getSceneData()->asGroup();
-      if (node)
+      if (scene->GetSceneNode())
       {
          if (mObjectMotionModel.valid())
          {
-            mObjectMotionModel->SetSceneNode(node);
+            mObjectMotionModel->SetSceneNode(GetRootNode());
 
             mObjectMotionModel->SetCamera(mCamera->getDeltaCamera());
          }
@@ -130,6 +129,13 @@ namespace dtEditQt
             if (targetProxy)
             {
                mObjectMotionModel->AddTarget(targetProxy);
+               dtCore::Transformable* target = NULL;
+               targetProxy->GetActor(target);
+               if (target)
+               {
+                  mObjectMotionModel->SetTarget(target);
+               }
+
 
                // Once we determine that a target can scale, we don't need to
                // test the others.
@@ -148,16 +154,19 @@ namespace dtEditQt
          }
 
          mObjectMotionModel->SetScaleEnabled(canScale);
-         mObjectMotionModel->SetEnabled(true);
+         
+         //// only enable the MotionModel for active Viewports
+         //if (GetEnabled())
+         //{
+         //   mObjectMotionModel->SetEnabled(true);
+         //}
       }
       else
       {
-         mObjectMotionModel->SetEnabled(false);
+         //mObjectMotionModel->SetEnabled(false);
          mObjectMotionModel->ClearTargets();
          mObjectMotionModel->SetScaleEnabled(false);
       }
-
-      mObjectMotionModel->UpdateWidgets();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -168,23 +177,10 @@ namespace dtEditQt
       Viewport::refresh();
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   void EditorViewport::resizeGL(int width, int height)
-   {
-      Viewport::resizeGL(width, height);
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void EditorViewport::initializeGL()
-   {
-      Viewport::initializeGL();
-   }
 
    ////////////////////////////////////////////////////////////////////////////////
    void EditorViewport::keyPressEvent(QKeyEvent* e)
    {
-      Viewport::keyPressEvent(e);
-
       bool holdingControl = false;
       if (e->modifiers() == Qt::ControlModifier)
       {
@@ -229,38 +225,6 @@ namespace dtEditQt
    ////////////////////////////////////////////////////////////////////////////////
    void EditorViewport::keyReleaseEvent(QKeyEvent* e)
    {
-      Viewport::keyReleaseEvent(e);
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   osg::Vec2 EditorViewport::convertMousePosition(QPoint pixelPos)
-   {
-      osg::Vec2 pos;
-      pos.x() = pixelPos.x();
-      pos.y() = getSceneView()->getViewport()->height() - pixelPos.y();
-      return pos;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void EditorViewport::GetMouseLine(osg::Vec2 mousePos, osg::Vec3& start, osg::Vec3& end)
-   {
-      int xLoc = mousePos.x();
-      int yLoc = mousePos.y();
-
-      if (getSceneView()->getViewport()->height() > 0 ||
-          getSceneView()->getViewport()->width()  > 0)
-      {
-         getSceneView()->projectWindowXYIntoObject(xLoc, yLoc, start, end);
-      }
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   osg::Vec2 EditorViewport::GetObjectScreenCoordinates(osg::Vec3 objectPos)
-   {
-      osg::Vec3 screenPos;
-      getSceneView()->projectObjectIntoWindow(objectPos, screenPos);
-
-      return osg::Vec2(screenPos.x(), screenPos.y());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -408,7 +372,7 @@ namespace dtEditQt
             }
 
             ViewportManager::GetInstance().getMasterScene()->AddDrawable(drawable);
-            ViewportManager::GetInstance().refreshAllViewports();
+            //ViewportManager::GetInstance().refreshAllViewports();
          }
 
          event->accept();
@@ -424,7 +388,7 @@ namespace dtEditQt
       // Remove the ghost.
       ClearGhostProxy();
 
-      ViewportManager::GetInstance().refreshAllViewports();
+      //ViewportManager::GetInstance().refreshAllViewports();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -486,10 +450,10 @@ namespace dtEditQt
             dtDAL::ActorProxyIcon* billBoard = mGhostProxy->GetBillBoardIcon();
             if (billBoard)
             {
-               billBoard->SetRotation(osg::Matrix::rotate(getCamera()->getOrientation().inverse()));
+               billBoard->SetRotation(osg::Matrix::rotate(getCamera()->getOrientation()));
             }
 
-            ViewportManager::GetInstance().refreshAllViewports();
+            //ViewportManager::GetInstance().refreshAllViewports();
          }
 
          event->setDropAction(Qt::MoveAction);
@@ -573,7 +537,7 @@ namespace dtEditQt
                   ViewportManager::GetInstance().getViewportOverlay()->clearCurrentSelection();
                   ViewportManager::GetInstance().getViewportOverlay()->setMultiSelectMode(true);
                   EditorEvents::GetInstance().emitActorsSelected(proxies);
-                  ViewportManager::GetInstance().refreshAllViewports();
+                  //ViewportManager::GetInstance().refreshAllViewports();
                }
 
                event->setDropAction(Qt::MoveAction);
@@ -613,7 +577,7 @@ namespace dtEditQt
          event->setDropAction(Qt::MoveAction);
          event->accept();
 
-         ViewportManager::GetInstance().refreshAllViewports();
+         //ViewportManager::GetInstance().refreshAllViewports();
       }
       else
       {
@@ -628,7 +592,7 @@ namespace dtEditQt
       mMouseButtons = e->buttons();
       mKeyMods = e->modifiers();
 
-      setFocus();
+      this->GetQGLWidget()->setFocus();
 
       ViewportManager::GetInstance().emitMousePressEvent(this, e);
 
@@ -648,12 +612,7 @@ namespace dtEditQt
       {
          // If this returns true, it means we are hovering our mouse over a
          // valid motion model widget so we should go into actor mode.
-         //mMotionType = mObjectMotionModel->Update(pos);
-         //if (mMotionType != STAGEObjectMotionModel::MOTION_TYPE_MAX)
-         //{
-         //   beginActorMode(e);
-         //}
-         if (shouldBeginActorMode(pos))
+        if (shouldBeginActorMode(pos))
          {
             beginActorMode(e);
          }
@@ -663,6 +622,7 @@ namespace dtEditQt
          // mode instead.
          else
          {
+            mObjectMotionModel->SetInteractionEnabled(false);
             setInteractionMode(Viewport::InteractionMode::SELECT_ACTOR);
          }
       }
@@ -719,6 +679,11 @@ namespace dtEditQt
       ViewportManager::GetInstance().emitMouseDoubleClickEvent(this, e);
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorViewport::wheelEvent(QWheelEvent* e)
+   {
+   }
+
    ///////////////////////////////////////////////////////////////////////////////
    void EditorViewport::onMouseMoveEvent(QMouseEvent* e, float dx, float dy)
    {
@@ -726,9 +691,6 @@ namespace dtEditQt
 
       // Get the position of the mouse.
       osg::Vec2 pos = convertMousePosition(e->pos());
-
-      // Update the object motion model mouse position.
-      mObjectMotionModel->Update(pos);
 
       // If we move the mouse while in select actor mode,
       // immediately jump to camera motion mode.
@@ -761,46 +723,8 @@ namespace dtEditQt
             // Make sure we only duplicate the actors once.
             mKeyMods = 0x0;
          }
-         // If we are holding the Control key, we should clamp the position
-         // of the actor to the ground.
-         else if (mKeyMods == Qt::ControlModifier)
-         {
-            std::vector<dtCore::DeltaDrawable*> ignoredDrawables;
-            ViewportOverlay::ActorProxyList& selection = ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
-            for (int selectIndex = 0; selectIndex < (int)selection.size(); selectIndex++)
-            {
-               dtDAL::ActorProxy* proxy = selection[selectIndex].get();
-               if (proxy)
-               {
-                  dtCore::DeltaDrawable* drawable;
-                  proxy->GetActor(drawable);
 
-                  if (drawable)
-                  {
-                     ignoredDrawables.push_back(drawable);
-                  }
-               }
-            }
-
-            if (selection.size() > 0)
-            {
-               dtDAL::TransformableActorProxy* proxy = dynamic_cast<dtDAL::TransformableActorProxy*>(selection[0].get());
-               osg::Vec3 position = proxy->GetTranslation();
-               position = ViewportManager::GetInstance().GetSnapPosition(position, true, ignoredDrawables);
-               osg::Vec3 offset = position - proxy->GetTranslation();
-
-               for (int selectIndex = 0; selectIndex < (int)selection.size(); selectIndex++)
-               {
-                  dtDAL::TransformableActorProxy* proxy = dynamic_cast<dtDAL::TransformableActorProxy*>(selection[selectIndex].get());
-                  if (proxy)
-                  {
-                     proxy->SetTranslation(proxy->GetTranslation() + offset);
-                  }
-               }
-            }
-         }
-
-         ViewportManager::GetInstance().refreshAllViewports();
+         //ViewportManager::GetInstance().refreshAllViewports();  //causes gizmo manipulations to be slow
       }
    }
 
@@ -841,7 +765,7 @@ namespace dtEditQt
          return result;
       }
 
-      if (mObjectMotionModel->Update(position) != STAGEObjectMotionModel::MOTION_TYPE_MAX)
+      if (mObjectMotionModel->Update(position) != dtCore::ObjectMotionModel::MOTION_TYPE_MAX)
       {
          return true;
       }
@@ -865,22 +789,6 @@ namespace dtEditQt
       saveSelectedActorOrigValues(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
       saveSelectedActorOrigValues("Scale");
 
-      //switch (mMotionType)
-      //{
-      //case STAGEObjectMotionModel::MOTION_TYPE_TRANSLATION:
-      //   saveSelectedActorOrigValues(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
-      //   break;
-      //case STAGEObjectMotionModel::MOTION_TYPE_ROTATION:
-      //   saveSelectedActorOrigValues(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
-      //   break;
-      //case STAGEObjectMotionModel::MOTION_TYPE_SCALE:
-      //   saveSelectedActorOrigValues("Scale");
-      //   break;
-
-      //default:
-      //break;
-      //}
-
       return true;
    }
 
@@ -894,6 +802,45 @@ namespace dtEditQt
       if (overrideDefault)
       {
          return false;
+      }
+
+      // If we are holding the Control key, we should clamp the position
+      // of the actor to the ground.
+      if (mKeyMods == Qt::ControlModifier)
+      {
+         std::vector<dtCore::DeltaDrawable*> ignoredDrawables;
+         ViewportOverlay::ActorProxyList& selection = ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
+         for (int selectIndex = 0; selectIndex < (int)selection.size(); selectIndex++)
+         {
+            dtDAL::ActorProxy* proxy = selection[selectIndex].get();
+            if (proxy)
+            {
+               dtCore::DeltaDrawable* drawable;
+               proxy->GetActor(drawable);
+
+               if (drawable)
+               {
+                  ignoredDrawables.push_back(drawable);
+               }
+            }
+         }
+
+         if (selection.size() > 0)
+         {
+            dtDAL::TransformableActorProxy* proxy = dynamic_cast<dtDAL::TransformableActorProxy*>(selection[0].get());
+            osg::Vec3 position = proxy->GetTranslation();
+            position = ViewportManager::GetInstance().GetSnapPosition(position, true, ignoredDrawables);
+            osg::Vec3 offset = position - proxy->GetTranslation();
+
+            for (int selectIndex = 0; selectIndex < (int)selection.size(); selectIndex++)
+            {
+               dtDAL::TransformableActorProxy* proxy = dynamic_cast<dtDAL::TransformableActorProxy*>(selection[selectIndex].get());
+               if (proxy)
+               {
+                  proxy->SetTranslation(proxy->GetTranslation() + offset);
+               }
+            }
+         }
       }
 
       // we could send hundreds of translation and rotation events, so make sure
@@ -914,6 +861,7 @@ namespace dtEditQt
    bool EditorViewport::selectActors(QMouseEvent* e)
    {
       setInteractionMode(Viewport::InteractionMode::NOTHING);
+      mObjectMotionModel->SetInteractionEnabled(true);
 
       bool overrideDefault = false;
       ViewportManager::GetInstance().emitSelectActors(this, e, &overrideDefault);
@@ -934,7 +882,7 @@ namespace dtEditQt
          }
 
          pick(e->pos().x(), e->pos().y());
-         ViewportManager::GetInstance().refreshAllViewports();
+         //ViewportManager::GetInstance().refreshAllViewports();
       }
 
       return true;
@@ -1138,5 +1086,32 @@ namespace dtEditQt
       EditorData::GetInstance().getMainWindow()->endWaitCursor();
 
       return true;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void EditorViewport::renderFrame()
+   {
+      Viewport::renderFrame();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorViewport::SetEnabled(bool enabled)
+   {
+      mEnabled = enabled;
+
+      bool overrideDefault = false;
+      ViewportManager::GetInstance().emitViewportEnabled(this, enabled, &overrideDefault);
+      if (overrideDefault)
+      {
+         return;
+      }
+
+      GetObjectMotionModel()->SetEnabled(mEnabled);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool EditorViewport::GetEnabled() const
+   {
+      return mEnabled;
    }
 } // namespace dtEditQt

@@ -39,9 +39,7 @@
 #include <QtGui/QLineEdit>
 #include <QtGui/QDoubleValidator>
 #include <dtEditQt/viewportcontainer.h>
-#include <dtEditQt/viewport.h>
 #include <dtEditQt/viewportmanager.h>
-#include <dtEditQt/orthoviewport.h>
 #include <dtEditQt/uiresources.h>
 
 namespace dtEditQt
@@ -75,8 +73,8 @@ namespace dtEditQt
    {
       mViewPort = viewPort;
       mViewportTitle->setText(tr(viewPort->getName().c_str()));
-      mViewPort->setParent(this);
-      mLayout->addWidget(mViewPort);
+      //mViewPort->setParent(this); //TODO redundant?
+      mLayout->addWidget(mViewPort->GetQGLWidget());
       connect(mViewPort,SIGNAL(renderStyleChanged()),
               this, SLOT(onViewportRenderStyleChanged()));
 

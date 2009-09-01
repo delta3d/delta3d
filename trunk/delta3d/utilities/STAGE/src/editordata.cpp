@@ -95,7 +95,7 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void EditorData::addRecentMap(const std::string& name)
+   void EditorData::addRecentMap(std::string name)
    {
       for (std::list<std::string>::iterator i = mRecentMaps.begin();
          i != mRecentMaps.end();
@@ -120,7 +120,7 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void EditorData::addRecentProject(const std::string& name)
+   void EditorData::addRecentProject(std::string name)
    {
       for (std::list<std::string>::iterator i = mRecentProjects.begin();
          i != mRecentProjects.end(); ++i)

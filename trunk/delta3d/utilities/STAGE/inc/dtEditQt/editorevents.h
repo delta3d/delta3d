@@ -32,16 +32,8 @@
 #include <dtEditQt/export.h>
 #include <QtCore/QObject>
 #include <osg/Referenced>
-#include <vector>
 #include <dtDAL/actorproxy.h>
-#include <dtDAL/actorproperty.h>
 #include <dtQt/typedefs.h>
-
-// Forward Declarations
-namespace dtCore
-{
-   class DeltaDrawable;
-}
 
 namespace dtEditQt
 {

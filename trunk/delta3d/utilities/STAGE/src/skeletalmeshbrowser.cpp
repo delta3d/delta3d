@@ -24,19 +24,14 @@
  * Michael Guerrero
  */
 #include <prefix/dtstageprefix-src.h>
-#include <QtCore/QDir>
-#include <QtGui/QHeaderView>
 
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QGridLayout>
 #include <QtGui/QSplitter>
 #include <QtCore/QString>
-
 #include <QtGui/QGroupBox>
-
 #include <QtGui/QPushButton>
 #include <QtGui/QCheckBox>
-
 #include <QtGui/QAction>
 #include <QtGui/QMenu>
 #include <QtGui/QContextMenuEvent>
@@ -135,11 +130,7 @@ namespace dtEditQt
 
       // By default, perspective viewports have their camera set to the world view
       // camera.  The world view camera is what is used in the main perspective view.
-      perspView->setCamera(camera.get());
-
-      // No need for an overlay for this viewport since we cannot select meshes
-      // in the preview window.
-      perspView->setOverlay(NULL);
+      //perspView->setCamera(camera.get()); //E!
 
       // Disable the interaction modes
       perspView->setAutoInteractionMode(false);
@@ -300,7 +291,7 @@ namespace dtEditQt
             SetCameraLookAt(*camera, *previewObject);
 
             perspView->refresh();
-            perspView->setFocus();
+            perspView->GetQGLWidget()->setFocus();
          }
       }
    }

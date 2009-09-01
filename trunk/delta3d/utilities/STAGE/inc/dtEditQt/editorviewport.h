@@ -116,6 +116,43 @@ namespace dtEditQt {
       */
       STAGEObjectMotionModel* GetObjectMotionModel() {return mObjectMotionModel.get();}
 
+      /**
+      * Called when the user presses a mouse button in the viewport.  Based on
+      * the combination of buttons pressed, the viewport's current mode will
+      * be set.
+      * @param e
+      * @see ModeType
+      */
+      virtual void mousePressEvent(QMouseEvent* e);
+
+      /**
+      * Called when the user releases a mouse button in the viewport.  Based on
+      * the buttons released, the viewport's current mode is updated
+      * accordingly.
+      * @param e
+      */
+      virtual void mouseReleaseEvent(QMouseEvent* e);
+
+      /**
+      * Called when the user double clicks the mouse button in the viewport.
+      */
+      virtual void mouseDoubleClickEvent(QMouseEvent *e);
+
+      /**
+      * Called when the user moves the wheel on a mouse containing a scroll wheel.
+      * This causes the scene to be zoomed in and out.
+      * @param e
+      */
+      virtual void wheelEvent(QWheelEvent* e);
+
+      /**
+      * Drag events.
+      */
+      void dragEnterEvent(QDragEnterEvent* event);
+      void dragLeaveEvent(QDragLeaveEvent* event);
+      void dragMoveEvent(QDragMoveEvent* event);
+      void dropEvent(QDropEvent* event);
+
    public slots:
       /**
        * Puts the perspective viewport options in sync with the editor preferences.
@@ -164,106 +201,18 @@ namespace dtEditQt {
        */
       EditorViewport(ViewportManager::ViewportType& type,
          const std::string& name, QWidget* parent = NULL,
-         QGLWidget* shareWith = NULL);
+         osg::GraphicsContext* shareWith = NULL);
 
       /**
        * Destroys the viewport.
        */
       virtual ~EditorViewport() {}
 
-      /**
-       * Initializes the viewport.  This just sets the render style to be
-       * textured and un-lit.
-       */
-      void initializeGL();
-
-      /**
-       * Sets the perspective projection viewing parameters of this viewport's
-       * camera.
-       * @param width The new width of the viewport.
-       * @param height The new height of the viewport.
-       */
-      void resizeGL(int width, int height);
-
-   public:
-      /**
-       * Called when the user presses a key on the keyboard in the viewport.
-       * Based on the combination of keys pressed, the viewport's current
-       * mode will be set.
-       * @param e
-       */
-      void keyPressEvent(QKeyEvent* e);
-
-      /**
-       * Called when the user releases a key on the keyboard in the viewport.
-       * Based on the keys released, the viewport's current mode is
-       * updated accordingly.
-       * @param e
-       */
-      void keyReleaseEvent(QKeyEvent* e);
-
-      /**
-       * Converts pixel mouse position to delta normalized format.
-       *
-       * @param[in]  pixelPos  The original position of the mouse.
-       *
-       * @return               The converted mouse position.
-       */
-      virtual osg::Vec2 convertMousePosition(QPoint pixelPos);
-
-      /**
-       * Calculates the 3D collision line that represents the mouse.
-       *
-       * @param[in]  mousePos  The position of the mouse in screen coords.
-       * @param[in]  start     The start position of the line.
-       * @param[in]  end       The end position of the line.
-       */
-      virtual void GetMouseLine(osg::Vec2 mousePos, osg::Vec3& start, osg::Vec3& end);
-
-      /**
-       * Calculates the screen coordinates of a 3d position in the world.
-       *
-       * @param[in]  objectPos  The position of the object in 3d space.
-       *
-       * @return                The position of the object in screen coords.
-       */
-      virtual osg::Vec2 GetObjectScreenCoordinates(osg::Vec3 objectPos);
 
       /**
       * Clears the current Ghost Proxy.
       */
       void ClearGhostProxy();
-
-   protected:
-      /**
-      * Drag events.
-      */
-      void dragEnterEvent(QDragEnterEvent* event);
-      void dragLeaveEvent(QDragLeaveEvent* event);
-      void dragMoveEvent(QDragMoveEvent* event);
-      void dropEvent(QDropEvent* event);
-
-      /**
-       * Called when the user presses a mouse button in the viewport.  Based on
-       * the combination of buttons pressed, the viewport's current mode will
-       * be set.
-       * @param e
-       * @see ModeType
-       */
-      void mousePressEvent(QMouseEvent* e);
-
-      /**
-       * Called when the user releases a mouse button in the viewport.  Based on
-       * the buttons released, the viewport's current mode is updated
-       * accordingly.
-       * @param e
-       */
-      void mouseReleaseEvent(QMouseEvent* e);
-
-      /**
-      * Called when the user double clicks the mouse button in the viewport.
-      */
-      void mouseDoubleClickEvent(QMouseEvent *e);
 
       /**
        * Called when the user moves the mouse while pressing any combination of
@@ -337,11 +286,46 @@ namespace dtEditQt {
       */
       virtual bool DuplicateActors();
 
+      /**
+      * Called when the user presses a key on the keyboard in the viewport.
+      * Based on the combination of keys pressed, the viewport's current
+      * mode will be set.
+      * @param e
+      */
+      void keyPressEvent(QKeyEvent* e);
+
+      /**
+      * Called when the user releases a key on the keyboard in the viewport.
+      * Based on the keys released, the viewport's current mode is
+      * updated accordingly.
+      * @param e
+      */
+      void keyReleaseEvent(QKeyEvent* e);
+
+      /** 
+      * Enable or disable this Viewport.  High level control over if this
+      * Viewport is considered enabled or not.
+      * @param enabled: true to enabled, false to disable
+      */
+      void SetEnabled(bool enabled);
+
+      /** 
+      * Is this Viewport considered to be enabled or not
+      * @return true if enabled, false otherwise
+      */
+      bool GetEnabled() const;
+
    protected:
+
+      /**
+      * Renders the scene as is viewed from the viewport's currently assigned
+      * camera.
+      */
+      virtual void renderFrame();
+
       bool mAttachActorToCamera;
 
       dtCore::RefPtr<STAGEObjectMotionModel> mObjectMotionModel;
-      //STAGEObjectMotionModel::MotionType     mMotionType;
 
       dtCore::RefPtr<dtDAL::ActorProxy>      mGhostProxy;
 
@@ -350,6 +334,9 @@ namespace dtEditQt {
       Qt::KeyboardModifiers                  mKeyMods;
 
       bool                                   mSkipUpdateForCam;
+
+   private:
+      bool                                   mEnabled;  //is this Viewport Enabled?
    };
 
 } // namespace dtEditQt

@@ -202,6 +202,9 @@ namespace dtActors
    ////////////////////////////////////////////////////////////////////////////////
    WaterGridActor::~WaterGridActor()
    {
+      dtABC::Application::GetInstance("Application")->GetScene()->GetSceneNode()->addChild(mWaveCamera.get());
+      dtABC::Application::GetInstance("Application")->GetScene()->GetSceneNode()->addChild(mWaveCameraScreen.get());
+      dtABC::Application::GetInstance("Application")->GetScene()->GetSceneNode()->addChild(mReflectionCamera.get());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -255,9 +258,12 @@ namespace dtActors
       dtCore::Camera::AddCameraSyncCallback(*this,
          dtCore::Camera::CameraSyncCallback(this, &WaterGridActor::UpdateWaveUniforms));
 
-      std::string developerMode = "false";
-      developerMode = GetGameActorProxy().GetGameManager()->GetConfiguration().GetConfigPropertyValue("DeveloperMode");
-      mDeveloperMode = (developerMode == "true" || developerMode == "1");
+      if (!GetGameActorProxy().IsInSTAGE())
+      {
+         std::string developerMode = "false";
+         developerMode = GetGameActorProxy().GetGameManager()->GetConfiguration().GetConfigPropertyValue("DeveloperMode");
+         mDeveloperMode = (developerMode == "true" || developerMode == "1");
+      }
 
       // Set the water height to the height of the water actor in the world.
       dtCore::Transform transform;
@@ -318,7 +324,7 @@ namespace dtActors
       mDeltaTime = dt;
       mElapsedTime += dt;
 
-      dtCore::Keyboard* kb = GetGameActorProxy().GetGameManager()->GetApplication().GetKeyboard();
+      dtCore::Keyboard* kb = dtABC::Application::GetInstance("Application")->GetKeyboard();
 
       static float keyTimeOut = 0.0f;
       keyTimeOut -= dt;
@@ -788,8 +794,8 @@ namespace dtActors
          AddOrthoQuad(mWaveCameraScreen.get(), mWaveTexture.get(), "WaveTest", "waveTexture");
          mWaveCameraScreen->setNodeMask(0x0);
 
-         GetGameActorProxy().GetGameManager()->GetScene().GetSceneNode()->addChild(mWaveCamera.get());
-         GetGameActorProxy().GetGameManager()->GetScene().GetSceneNode()->addChild(mWaveCameraScreen.get());
+         dtABC::Application::GetInstance("Application")->GetScene()->GetSceneNode()->addChild(mWaveCamera.get());
+         dtABC::Application::GetInstance("Application")->GetScene()->GetSceneNode()->addChild(mWaveCameraScreen.get());
       }
 
       osg::Uniform* tex = new osg::Uniform(osg::Uniform::SAMPLER_2D, UNIFORM_WAVE_TEXTURE);
@@ -896,7 +902,7 @@ namespace dtActors
 
       AddReflectionGroup(mReflectionCamera.get());
 
-      GetGameActorProxy().GetGameManager()->GetScene().GetSceneNode()->addChild(mReflectionCamera.get());
+      dtABC::Application::GetInstance("Application")->GetScene()->GetSceneNode()->addChild(mReflectionCamera.get());
 
       osg::Uniform* tex = new osg::Uniform(osg::Uniform::SAMPLER_2D, UNIFORM_REFLECTION_MAP);
       tex->set(1);
@@ -927,7 +933,7 @@ namespace dtActors
       //   quadState->setAttributeAndModes(depth, osg::StateAttribute::OFF | osg::StateAttribute::OVERRIDE);
       //   quadState->setRenderBinDetails(50, "RenderBin");
 
-      //   GetGameActorProxy().GetGameManager()->GetScene().GetSceneNode()->addChild(proj);
+      //   dtABC::Application::GetInstance()->GetScene().GetSceneNode()->addChild(proj);
       //}
 
    }
@@ -1176,10 +1182,15 @@ namespace dtActors
    ////////////////////////////////////////////////////////////////////////////////
    void WaterGridActorProxy::CreateActor()
    {
-      //dtGame::GameManager* gm = GetGameManager();   
-
       WaterGridActor* actor = new WaterGridActor(*this);
       SetActor(*actor);
+
+      //if (IsInSTAGE())
+      //{
+      //   actor->Initialize();
+      //   ResetSceneCamera();
+      //   actor->ResetReflectionUpdate();
+      //}
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -1283,9 +1294,12 @@ namespace dtActors
       {
          waterActor->SetSceneCamera(sceneCamera);
       }
+      //else if (IsInSTAGE())
+      //{
+      //}
       else if (IsInGM())
       {
-         waterActor->SetSceneCamera(GetGameManager()->GetApplication().GetCamera());
+         waterActor->SetSceneCamera(dtABC::Application::GetInstance("Application")->GetCamera());
       }
    }
 }

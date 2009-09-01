@@ -523,8 +523,6 @@ namespace dtEditQt
       ///Singleton instance of this class.
       static dtCore::RefPtr<EditorActions> sInstance;
 
-      dtCore::RefPtr<dtCore::Isector> mIsector;
-
       QList<ExternalTool*> mTools;
       QList<const ExternalToolArgParser*> mExternalToolArgParsers;
    };

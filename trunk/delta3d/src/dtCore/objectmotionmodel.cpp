@@ -12,6 +12,7 @@
 #include <osg/Depth>
 #include <osg/BlendFunc>
 #include <osgUtil/LineSegmentIntersector>
+#include <osgViewer/GraphicsWindow>
 
 #include <dtCore/system.h>
 #include <dtCore/logicalinputdevice.h>
@@ -31,6 +32,9 @@ const float SENSITIVITY = 0.1f;
 ObjectMotionModel::ObjectMotionModel(dtCore::View* view)
    : MotionModel("ObjectMotionModel")
    , mScale(1.0f)
+   , mCurScale(0.0f)
+   , mVisible(false)
+   , mInteractionEnabled(true)
    , mView(NULL)
    , mSceneNode(NULL)
    , mMouse(NULL)
@@ -72,6 +76,14 @@ ObjectMotionModel::~ObjectMotionModel()
    RemoveSender(&System::GetInstance());
 
    DeregisterInstance(this);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectMotionModel::SetTarget(Transformable* target)
+{
+   MotionModel::SetTarget(target);
+
+   UpdateVisibility();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -121,20 +133,22 @@ void ObjectMotionModel::SetEnabled(bool enabled)
    {
       MotionModel::SetEnabled(enabled);
 
-      // Make sure our arrows are in the scene.
-      if (mSceneNode && mTargetTransform.valid())
-      {
-         if (IsEnabled())
-         {
-            mSceneNode->addChild(mTargetTransform->GetOSGNode());
-         }
-         else
-         {
-            mSceneNode->removeChild(mTargetTransform->GetOSGNode());
-         }
-      }
+      UpdateVisibility();
+   }
+}
 
-      UpdateWidgets();
+////////////////////////////////////////////////////////////////////////////////
+void ObjectMotionModel::SetInteractionEnabled(bool enabled)
+{
+   mInteractionEnabled = enabled;
+
+   // If we are turning interaction off, make sure we clear all
+   // interaction data.
+   if (!mInteractionEnabled)
+   {
+      HighlightWidgets(NULL);
+      mMouseDown     = false;
+      mMouseLocked   = false;
    }
 }
 
@@ -153,25 +167,25 @@ void ObjectMotionModel::SetScaleEnabled(bool enabled)
 
       if (mAllowScaleGizmo)
       {
-         mTargetTransform->AddChild(mScaleTransform.get());
+         mTargetTransform->addChild(mScaleTransform->GetOSGNode());
       }
       else
       {
-         mTargetTransform->RemoveChild(mScaleTransform.get());
+         mTargetTransform->removeChild(mScaleTransform->GetOSGNode());
       }
 
       if (enabled)
       {
          for (int arrow = 0; arrow < ARROW_TYPE_MAX; arrow++)
          {
-            mTargetTransform->AddChild(mArrows[arrow].scaleTransform.get());
+            mTargetTransform->addChild(mArrows[arrow].scaleTransform->GetOSGNode());
          }
       }
       else
       {
          for (int arrow = 0; arrow < ARROW_TYPE_MAX; arrow++)
          {
-            mTargetTransform->RemoveChild(mArrows[arrow].scaleTransform.get());
+            mTargetTransform->removeChild(mArrows[arrow].scaleTransform->GetOSGNode());
          }
       }
    }
@@ -181,6 +195,7 @@ void ObjectMotionModel::SetScaleEnabled(bool enabled)
 void ObjectMotionModel::SetScale(float scale)
 {
    mScale = scale;
+   UpdateWidgets();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -188,7 +203,34 @@ float ObjectMotionModel::GetAutoScaleSize(void)
 {
    if (mAutoScale)
    {
-      return GetScale() * GetCameraDistanceToTarget();
+      if (mCamera)
+      {
+         const osg::Camera* camera = mCamera->GetOSGCamera();
+
+         double left, right, bottom, top, near, far;
+         if (camera->getProjectionMatrixAsOrtho(left, right, bottom, top, near, far))
+         {
+            if (camera->getViewport())
+            {
+               int width = camera->getViewport()->width();
+               if (width > 0)
+               {
+                  double windowSize = right - left;
+                  float zoomFactor = width / windowSize;
+
+                  if (zoomFactor != 0.0f)
+                  {
+                     return GetScale() / zoomFactor;
+                  }
+               }
+            }
+         }
+         else
+         {
+            // Perspective views are scaled by the distance to the camera.
+            return GetScale() * GetCameraDistanceToTarget();
+         }
+      }
    }
 
    return GetScale();
@@ -220,6 +262,17 @@ float ObjectMotionModel::GetCameraDistanceToTarget(void)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void ObjectMotionModel::SetAutoScaleEnabled(bool enabled)
+{
+   if (mTargetTransform.valid())
+   {
+      //mTargetTransform->setAutoScaleToScreen(enabled);
+
+      mAutoScale = enabled;
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
 ObjectMotionModel::CoordinateSpace ObjectMotionModel::GetCoordinateSpace(void)
 {
    return mCoordinateSpace;
@@ -242,25 +295,25 @@ void ObjectMotionModel::SetCoordinateSpace(CoordinateSpace coordinateSpace)
 
       if (mAllowScaleGizmo)
       {
-         mTargetTransform->AddChild(mScaleTransform.get());
+         mTargetTransform->addChild(mScaleTransform->GetOSGNode());
       }
       else
       {
-         mTargetTransform->RemoveChild(mScaleTransform.get());
+         mTargetTransform->removeChild(mScaleTransform->GetOSGNode());
       }
 
       if (enabled)
       {
          for (int arrow = 0; arrow < ARROW_TYPE_MAX; arrow++)
          {
-            mTargetTransform->AddChild(mArrows[arrow].scaleTransform.get());
+            mTargetTransform->addChild(mArrows[arrow].scaleTransform->GetOSGNode());
          }
       }
       else
       {
          for (int arrow = 0; arrow < ARROW_TYPE_MAX; arrow++)
          {
-            mTargetTransform->RemoveChild(mArrows[arrow].scaleTransform.get());
+            mTargetTransform->removeChild(mArrows[arrow].scaleTransform->GetOSGNode());
          }
       }
    }
@@ -353,82 +406,82 @@ void ObjectMotionModel::OnMessage(MessageData *data)
 ////////////////////////////////////////////////////////////////////////////////
 ObjectMotionModel::MotionType ObjectMotionModel::Update(osg::Vec2 pos)
 {
-   mMousePos = pos;
-
-   if (GetTarget() && IsEnabled() && mTargetTransform.valid())
+   if (mMousePos != pos)
    {
-      // Now update the widget highlights based on the new mouse position.
-      // When the mouse is released, deselect our current arrow.
-      if (!mLeftMouse && !mRightMouse)
+      mMousePos = pos;
+
+      if (mVisible && mTargetTransform.valid())
       {
-         if (mMouseLocked)
+         if (mInteractionEnabled)
          {
-            mAngleGeode->removeDrawable(mAngleDrawable.get());
-            mAngleOriginGeode->removeDrawable(mAngleOriginDrawable.get());
-         }
-
-         mMouseDown     = false;
-         mMouseLocked   = false;
-
-         // Test for arrow hovering.
-         UpdateWidgets();
-         if (HighlightWidgets(MousePick()))
-         {
-            return mMotionType;
-         }
-      }
-      else
-      {
-         // First mouse click.
-         if (!mMouseDown)
-         {
-            mMouseDown = true;
-
-            // Do a collision test to see if the mouse collides with any of
-            // the motion arrows.
-            UpdateWidgets();
-            if (HighlightWidgets(MousePick()))
+            // Now update the widget highlights based on the new mouse position.
+            // When the mouse is released, deselect our current arrow.
+            if (!mLeftMouse && !mRightMouse)
             {
-               mMouseLocked = true;
-
-               // Get the offset mouse position.
-               dtCore::Transformable* target = GetTarget();
-               if (target)
+               if (mMouseLocked)
                {
-                  dtCore::Transform transform;
-                  target->GetTransform(transform);
-                  osg::Vec2 objectPos = GetObjectScreenCoordinates(transform.GetTranslation());
-                  mMouseOrigin = GetMousePosition();
-                  mMouseOffset = objectPos - mMouseOrigin;
-                  mOriginalTargetPos = transform.GetTranslation();
-                  mOriginAngle = 0.0f;
+                  mAngleGeode->removeDrawable(mAngleDrawable.get());
+                  mAngleOriginGeode->removeDrawable(mAngleOriginDrawable.get());
                }
-               return mMotionType;
+
+               mMouseDown     = false;
+               mMouseLocked   = false;
+
+               // Test for arrow hovering.
+               HighlightWidgets(MousePick());
             }
-         }
-         // If we currently have a motion arrow locked to the mouse.
-         else if (mMouseLocked)
-         {
-            switch (mMotionType)
+            else
             {
-            case MOTION_TYPE_TRANSLATION:
-               UpdateTranslation();
-               break;
+               // First mouse click.
+               if (!mMouseDown)
+               {
+                  mMouseDown = true;
 
-            case MOTION_TYPE_ROTATION:
-               UpdateRotation();
-               break;
+                  // Do a collision test to see if the mouse collides with any of
+                  // the motion arrows.
+                  if (HighlightWidgets(MousePick()))
+                  {
+                     mMouseLocked = true;
 
-            case MOTION_TYPE_SCALE:
-               UpdateScale();
-               break;
+                     // Get the offset mouse position.
+                     dtCore::Transformable* target = GetTarget();
+                     if (target)
+                     {
+                        dtCore::Transform transform;
+                        target->GetTransform(transform);
+                        osg::Vec2 objectPos = GetObjectScreenCoordinates(transform.GetTranslation());
+                        mMouseOrigin = GetMousePosition();
+                        mMouseOffset = objectPos - mMouseOrigin;
+                        mOriginalTargetPos = transform.GetTranslation();
+                        mOriginAngle = 0.0f;
+                     }
+                  }
+               }
+               // If we currently have a motion arrow locked to the mouse.
+               else if (mMouseLocked)
+               {
+                  switch (mMotionType)
+                  {
+                  case MOTION_TYPE_TRANSLATION:
+                     UpdateTranslation();
+                     break;
 
-            default:
-               break;
+                  case MOTION_TYPE_ROTATION:
+                     UpdateRotation();
+                     break;
+
+                  case MOTION_TYPE_SCALE:
+                     UpdateScale();
+                     break;
+
+                  default:
+                     break;
+                  }
+               }
             }
-            UpdateWidgets();
-            return mMotionType;
          }
+
+         UpdateWidgets();
       }
    }
 
@@ -438,7 +491,7 @@ ObjectMotionModel::MotionType ObjectMotionModel::Update(osg::Vec2 pos)
 ////////////////////////////////////////////////////////////////////////////////
 void ObjectMotionModel::UpdateWidgets(void)
 {
-   if (GetTarget() && IsEnabled() && mTargetTransform.valid())
+   if (mVisible && mTargetTransform.valid())
    {
       // Update the position of the arrows to the position of the target.
       dtCore::Transformable* target = GetTarget();
@@ -458,19 +511,29 @@ void ObjectMotionModel::UpdateWidgets(void)
          position = targetTransform.GetTranslation();
       }
 
-      float scale = GetAutoScaleSize();
-      transform.Rescale(osg::Vec3(scale, scale, scale));
-      transform.SetTranslation(position);
+      osg::Quat q;
+      transform.GetRotation(q);
+      mTargetTransform->setRotation(q);
+      mTargetTransform->setPosition(position);
 
-      mTargetTransform->SetTransform(transform);
+      float scale = GetAutoScaleSize();
+      if (mCurScale != scale)
+      {
+         mTargetTransform->setScale(scale);
+         mCurScale = scale;
+      }
    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void ObjectMotionModel::InitArrows(void)
 {
-   mTargetTransform = new dtCore::Transformable();
-   osg::Group* groupNode = mTargetTransform->GetOSGNode()->asGroup();
+   mTargetTransform = new osg::AutoTransform();
+   mTargetTransform->setAutoRotateMode(osg::AutoTransform::NO_ROTATION);
+   //mTargetTransform->setAutoScaleToScreen(mAutoScale);
+   //SetScale(mScale);
+
+   osg::Group* groupNode = mTargetTransform->asGroup();
    if (groupNode)
    {
       // Make this group render top most.
@@ -478,44 +541,44 @@ void ObjectMotionModel::InitArrows(void)
       if (stateSet)
       {
          //stateSet->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
-         stateSet->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
-         stateSet->setMode(GL_BLEND, osg::StateAttribute::ON);
+         stateSet->setMode(GL_LIGHTING, osg::StateAttribute::PROTECTED | osg::StateAttribute::OFF);
+         stateSet->setMode(GL_BLEND, osg::StateAttribute::PROTECTED | osg::StateAttribute::ON);
          stateSet->setRenderBinDetails(98, "RenderBin");
 
-         osg::PolygonMode* polygonMode = new osg::PolygonMode(osg::PolygonMode::FRONT, osg::PolygonMode::FILL);
-         stateSet->setAttribute(polygonMode, osg::StateAttribute::ON);
+         osg::PolygonMode* polygonMode = new osg::PolygonMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::FILL);
+         stateSet->setAttribute(polygonMode, osg::StateAttribute::PROTECTED | osg::StateAttribute::ON);
 
          osg::Depth* depth = new osg::Depth(osg::Depth::ALWAYS);
-         stateSet->setAttribute(depth, osg::StateAttribute::ON);
+         stateSet->setAttribute(depth, osg::StateAttribute::PROTECTED | osg::StateAttribute::ON);
 
          osg::BlendFunc* blend = new osg::BlendFunc(osg::BlendFunc::SRC_ALPHA, osg::BlendFunc::ONE_MINUS_SRC_ALPHA);
-         stateSet->setAttribute(blend, osg::StateAttribute::ON);
+         stateSet->setAttribute(blend, osg::StateAttribute::PROTECTED | osg::StateAttribute::ON);
       }
    }
 
-   osg::Group* wireNode = NULL;//new osg::Group();
-   if (wireNode)
-   {
-      // Make this group render top most.
-      osg::StateSet* stateSet = wireNode->getOrCreateStateSet();
-      if (stateSet)
-      {
-         //stateSet->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
-         stateSet->setMode(GL_BLEND, osg::StateAttribute::ON);
-         stateSet->setRenderBinDetails(99, "RenderBin");
+   //osg::Group* wireNode = NULL;//new osg::Group();
+   //if (wireNode)
+   //{
+   //   // Make this group render top most.
+   //   osg::StateSet* stateSet = wireNode->getOrCreateStateSet();
+   //   if (stateSet)
+   //   {
+   //      //stateSet->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
+   //      stateSet->setMode(GL_BLEND, osg::StateAttribute::ON);
+   //      stateSet->setRenderBinDetails(99, "RenderBin");
 
-         osg::PolygonMode* polygonMode = new osg::PolygonMode(osg::PolygonMode::FRONT, osg::PolygonMode::FILL);
-         stateSet->setAttribute(polygonMode, osg::StateAttribute::ON);
+   //      osg::PolygonMode* polygonMode = new osg::PolygonMode(osg::PolygonMode::FRONT, osg::PolygonMode::FILL);
+   //      stateSet->setAttribute(polygonMode, osg::StateAttribute::ON);
 
-         osg::Depth* depth = new osg::Depth(osg::Depth::LEQUAL);
-         stateSet->setAttribute(depth, osg::StateAttribute::ON);
-      }
+   //      osg::Depth* depth = new osg::Depth(osg::Depth::LEQUAL);
+   //      stateSet->setAttribute(depth, osg::StateAttribute::ON);
+   //   }
 
-      if (groupNode)
-      {
-         groupNode->addChild(wireNode);
-      }
-   }
+   //   if (groupNode)
+   //   {
+   //      groupNode->addChild(wireNode);
+   //   }
+   //}
 
    float ringRadius             = 0.08f;
    float ringVisibleThickness   = 0.003f;
@@ -542,22 +605,27 @@ void ObjectMotionModel::InitArrows(void)
       mArrows[arrowIndex].arrowCylinder = new osg::ShapeDrawable(cylinder);
       mArrows[arrowIndex].arrowCone     = new osg::ShapeDrawable(cone);
       mArrows[arrowIndex].scaleBox      = new osg::ShapeDrawable(box);
+      mArrows[arrowIndex].arrowCylinder->setUseDisplayList(false);
+      mArrows[arrowIndex].arrowCone->setUseDisplayList(false);
+      mArrows[arrowIndex].scaleBox->setUseDisplayList(false);
 
       mArrows[arrowIndex].rotationRing  = new osg::ShapeDrawable(ring);
+      mArrows[arrowIndex].rotationRing->setUseDisplayList(false);
       osg::ShapeDrawable* rotationSelectionRing = new osg::ShapeDrawable(selectionRing);
       rotationSelectionRing->setColor(osg::Vec4(0.0f, 0.0f, 0.0f, 0.0f));
+      rotationSelectionRing->setUseDisplayList(false);
 
       // Now set up their Hierarchy.
-      mTargetTransform->AddChild(mArrows[arrowIndex].translationTransform.get());
-      mTargetTransform->AddChild(mArrows[arrowIndex].rotationTransform.get());
-      //mTargetTransform->AddChild(mArrows[arrowIndex].scaleTransform.get());
+      mTargetTransform->addChild(mArrows[arrowIndex].translationTransform->GetOSGNode());
+      mTargetTransform->addChild(mArrows[arrowIndex].rotationTransform->GetOSGNode());
+      //mTargetTransform->addChild(mArrows[arrowIndex].scaleTransform->GetOSGNode());
 
-      if (wireNode)
-      {
-         wireNode->addChild(mArrows[arrowIndex].translationTransform->GetOSGNode());
-         wireNode->addChild(mArrows[arrowIndex].rotationTransform->GetOSGNode());
-         //wireNode->addChild(mArrows[arrowIndex].scaleTransform->GetOSGNode());
-      }
+      //if (wireNode)
+      //{
+      //   wireNode->addChild(mArrows[arrowIndex].translationTransform->GetOSGNode());
+      //   wireNode->addChild(mArrows[arrowIndex].rotationTransform->GetOSGNode());
+      //   //wireNode->addChild(mArrows[arrowIndex].scaleTransform->GetOSGNode());
+      //}
 
       osg::Group* arrowGroup = mArrows[arrowIndex].translationTransform->GetOSGNode()->asGroup();
       if (arrowGroup)
@@ -596,6 +664,7 @@ void ObjectMotionModel::InitArrows(void)
    mScaleGeode            = new osg::Geode();
    osg::Sphere* scaleOrb  = new osg::Sphere(osg::Vec3(0.0f, 0.0f, 0.0f), 0.012f);
    mScaleOrb              = new osg::ShapeDrawable(scaleOrb);
+   mScaleOrb->setUseDisplayList(false);
    mScaleGeode->addDrawable(mScaleOrb.get());
    mScaleGeode->setNodeMask(ARROW_NODE_MASK);
    osg::Group* scaleGroup = mScaleTransform->GetOSGNode()->asGroup();
@@ -603,7 +672,7 @@ void ObjectMotionModel::InitArrows(void)
    {
       scaleGroup->addChild(mScaleGeode.get());
    }
-   //mTargetTransform->AddChild(mScaleTransform.get());
+   //mTargetTransform->addChild(mScaleTransform->GetOSGNode());
 
    mAngleTransform = new dtCore::Transformable();
    mAngleGeode     = new osg::Geode();
@@ -611,7 +680,7 @@ void ObjectMotionModel::InitArrows(void)
    mAngleDrawable  = new osg::ShapeDrawable(mAngleCylinder.get());
 
    mAngleTransform->GetOSGNode()->asGroup()->addChild(mAngleGeode.get());
-   mTargetTransform->AddChild(mAngleTransform.get());
+   mTargetTransform->addChild(mAngleTransform->GetOSGNode());
 
    mAngleOriginTransform = new dtCore::Transformable();
    mAngleOriginGeode     = new osg::Geode();
@@ -619,12 +688,9 @@ void ObjectMotionModel::InitArrows(void)
    mAngleOriginDrawable  = new osg::ShapeDrawable(mAngleOriginCylinder.get());
 
    mAngleOriginTransform->GetOSGNode()->asGroup()->addChild(mAngleOriginGeode.get());
-   mTargetTransform->AddChild(mAngleOriginTransform.get());
+   mTargetTransform->addChild(mAngleOriginTransform->GetOSGNode());
 
-   if (IsEnabled() && mSceneNode)
-   {
-      mSceneNode->addChild(mTargetTransform->GetOSGNode());
-   }
+   UpdateVisibility();
 
    // Now position and rotate our axes.
    dtCore::Transform transformX;
@@ -656,6 +722,30 @@ void ObjectMotionModel::InitArrows(void)
    SetArrowHighlight(ARROW_TYPE_MAX);
 }
 
+////////////////////////////////////////////////////////////////////////////////
+void ObjectMotionModel::UpdateVisibility()
+{
+   bool visible = IsEnabled() && GetTarget();
+   if (mVisible != visible)
+   {
+      // Make sure our arrows are in the scene.
+      if (mSceneNode && mTargetTransform.valid())
+      {
+         if (visible)
+         {
+            mSceneNode->addChild(mTargetTransform.get());
+         }
+         else
+         {
+            mSceneNode->removeChild(mTargetTransform.get());
+         }
+
+         mVisible = visible;
+      }
+   }
+
+   UpdateWidgets();
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 osg::TriangleMesh* ObjectMotionModel::GenerateRing(float minRadius, float maxRadius, int segments)
@@ -727,25 +817,6 @@ osg::TriangleMesh* ObjectMotionModel::GenerateRing(float minRadius, float maxRad
 
 
 ////////////////////////////////////////////////////////////////////////////////
-osg::Vec3 ObjectMotionModel::GetMouseVector(osg::Vec2 mousePos)
-{
-   if (!mCamera)
-   {
-      return osg::Vec3();
-   }
-
-   const osg::Camera* camera = mCamera->GetOSGCamera();
-   osg::Matrix matrix = camera->getViewMatrix() * camera->getProjectionMatrix();
-
-   const osg::Matrix inverse = osg::Matrix::inverse(matrix);
-   osg::Vec3 startVertex = osg::Vec3(mousePos.x(), mousePos.y(), 0.0f) * inverse;
-
-   dtCore::Transform transform;
-   mCamera->GetTransform(transform);
-   return startVertex - transform.GetTranslation();
-}
-
-////////////////////////////////////////////////////////////////////////////////
 dtCore::DeltaDrawable* ObjectMotionModel::MousePick(void)
 {
    if (!mView)
@@ -761,12 +832,15 @@ dtCore::DeltaDrawable* ObjectMotionModel::MousePick(void)
    osg::Vec3 startPoint, endPoint;
    GetMouseLine(GetMousePosition(), startPoint, endPoint);
 
+   // Can't do anything if we don't have a valid mouse line.
+   if (startPoint == endPoint) return NULL;
+
    osg::ref_ptr<osgUtil::LineSegmentIntersector> picker = new osgUtil::LineSegmentIntersector(osgUtil::Intersector::MODEL, startPoint, endPoint);
 
    osgUtil::IntersectionVisitor iv(picker.get());
    iv.setTraversalMask(ARROW_NODE_MASK);
 
-   mTargetTransform->GetOSGNode()->accept(iv);
+   mTargetTransform->accept(iv);
 
    osgUtil::LineSegmentIntersector::Intersections hitList;
    if (picker->containsIntersections())
@@ -812,13 +886,45 @@ dtCore::DeltaDrawable* ObjectMotionModel::MousePick(void)
 ////////////////////////////////////////////////////////////////////////////////
 void ObjectMotionModel::GetMouseLine(osg::Vec2 mousePos, osg::Vec3& start, osg::Vec3& end)
 {
-   osg::Vec3 mouseVec = GetMouseVector(mousePos);
-   mouseVec.normalize();
+   if (!mCamera)
+   {
+      return;
+   }
+
+   float distance = GetCameraDistanceToTarget();
 
    dtCore::Transform transform;
    mCamera->GetTransform(transform);
-   start = transform.GetTranslation();
-   end = start + (mouseVec * (GetCameraDistanceToTarget() * 1.5f));
+
+   const osg::Camera* camera = mCamera->GetOSGCamera();
+
+   double left, right, bottom, top, near, far;
+   if (camera->getProjectionMatrixAsOrtho(left, right, bottom, top, near, far))
+   {
+      double xDif = right - left;
+      double yDif = top - bottom;
+
+      osg::Vec3 rightAxis, upAxis, forwardAxis;
+      transform.GetOrientation(rightAxis, upAxis, forwardAxis);
+      osg::Vec3 center = transform.GetTranslation();
+      center += rightAxis * ((xDif * 0.5f) * mousePos.x());
+      center += upAxis * ((yDif * 0.5f) * mousePos.y());
+
+      osg::Vec3 dir = forwardAxis * 45000.0f;
+      start = center - dir;
+      end = center + dir;
+   }
+   else
+   {
+      osg::Matrix matrix = camera->getViewMatrix() * camera->getProjectionMatrix();
+      const osg::Matrix inverse = osg::Matrix::inverse(matrix);
+
+      start = transform.GetTranslation();
+
+      osg::Vec3 dir = (osg::Vec3(mousePos.x(), mousePos.y(), 0.0f) * inverse) - start;
+      dir.normalize();
+      end = start + (dir * (distance * 1.5f));
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -829,11 +935,42 @@ osg::Vec2 ObjectMotionModel::GetObjectScreenCoordinates(osg::Vec3 objectPos)
       return osg::Vec2();
    }
 
-   const osg::Camera* camera = mCamera->GetOSGCamera();
-   osg::Matrix matrix = camera->getViewMatrix() * camera->getProjectionMatrix();
+   dtCore::Transform transform;
+   mCamera->GetTransform(transform);
 
-   osg::Vec3 screenPos = objectPos * matrix;
-   return osg::Vec2(screenPos.x(), screenPos.y());
+   const osg::Camera* camera = mCamera->GetOSGCamera();
+
+   double left, right, bottom, top, near, far;
+   if (camera->getProjectionMatrixAsOrtho(left, right, bottom, top, near, far))
+   {
+      double xDif = (right - left) * 0.5f;
+      double yDif = (top - bottom) * 0.5f;
+
+      osg::Vec3 rightAxis, upAxis, forwardAxis;
+      transform.GetOrientation(rightAxis, upAxis, forwardAxis);
+
+      osg::Vec3 offset = transform.GetTranslation() - objectPos;
+      osg::Vec2 center;
+      center.x() = xDif + (rightAxis * offset);
+      center.y() = yDif + (upAxis * offset);
+
+      if (xDif == 0.0f && yDif == 0.0f)
+      {
+         return osg::Vec2();
+      }
+
+      center.x() = 1.0f - (center.x() / xDif);
+      center.y() = 1.0f - (center.y() / yDif);
+
+      return center;
+   }
+   else
+   {
+      osg::Matrix matrix = camera->getViewMatrix() * camera->getProjectionMatrix();
+
+      osg::Vec3 screenPos = objectPos * matrix;
+      return osg::Vec2(screenPos.x(), screenPos.y());
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1023,7 +1160,12 @@ void ObjectMotionModel::UpdateTranslation(void)
       }
    }
 
-   osg::Vec3 vecToTarget = targetPos - camPos;
+   // Get the mouse vector.
+   osg::Vec3 mouseStart, mouseEnd;
+   GetMouseLine(GetMousePosition() + mMouseOffset, mouseStart, mouseEnd);
+   osg::Vec3 mouse = mouseEnd - mouseStart;
+
+   osg::Vec3 vecToTarget = targetPos - mouseStart;
    vecToTarget.normalize();
    float fDot = fabs(vecToTarget * axis);
    if (fDot < 0.95f)
@@ -1047,17 +1189,13 @@ void ObjectMotionModel::UpdateTranslation(void)
 
    if (plane)
    {
-      // Get the mouse vector.
-      osg::Vec3 mouseStart, mouseEnd;
-      GetMouseLine(GetMousePosition() + mMouseOffset, mouseStart, mouseEnd);
-      osg::Vec3 mouse = mouseEnd - mouseStart;
-
       // Calculate the mouse collision in the 3D space relative to the plane
       // of the camera and the desired axis of the object.
       float fStartOffset   = mouseStart * (*plane);
       float fDistMod       = mouse      * (*plane);
       float fPlaneOffset   = targetPos  * (*plane);
 
+      if (fDistMod == 0.0f) return;
       float fDistance      = (fPlaneOffset - fStartOffset) / fDistMod;
 
       // Find the projected point of collision on the plane.
@@ -1422,7 +1560,12 @@ void ObjectMotionModel::UpdateScale(void)
       }
    }
 
-   osg::Vec3 vecToTarget = targetPos - camPos;
+   // Get the mouse vector.
+   osg::Vec3 mouseStart, mouseEnd;
+   GetMouseLine(GetMousePosition() + mMouseOffset, mouseStart, mouseEnd);
+   osg::Vec3 mouse = mouseEnd - mouseStart;
+
+   osg::Vec3 vecToTarget = targetPos - mouseStart;
    vecToTarget.normalize();
    float fDot = fabs(vecToTarget * axis);
    if (fDot < 0.95f)
@@ -1446,13 +1589,6 @@ void ObjectMotionModel::UpdateScale(void)
 
    if (plane)
    {
-      // Get the mouse vector.
-      osg::Vec3 mouseStart, mouseEnd;
-      osg::Vec2 newMousePos = GetMousePosition();
-      GetMouseLine(newMousePos + mMouseOffset, mouseStart, mouseEnd);
-      osg::Vec2 objectPos = GetObjectScreenCoordinates(targetPos);
-      osg::Vec3 mouse = mouseEnd - mouseStart;
-
       // Calculate the mouse collision in the 3D space relative to the plane
       // of the camera and the desired axis of the object.
       float fStartOffset   = mouseStart * (*plane);
@@ -1486,7 +1622,8 @@ void ObjectMotionModel::UpdateScale(void)
 
       if (scaleAxis.length() >= 0.0001f)
       {
-         mMouseOffset = objectPos - newMousePos;
+         osg::Vec2 objectPos = GetObjectScreenCoordinates(targetPos);
+         mMouseOffset = objectPos - GetMousePosition();
 
          OnScale(scaleAxis * fDistance);
       }

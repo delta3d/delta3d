@@ -21,19 +21,14 @@
  */
 
 #include <prefix/dtstageprefix-src.h>
-#include <QtCore/QDir>
-#include <QtGui/QHeaderView>
 
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QGridLayout>
 #include <QtGui/QSplitter>
 #include <QtCore/QString>
-
 #include <QtGui/QGroupBox>
-
 #include <QtGui/QPushButton>
 #include <QtGui/QCheckBox>
-
 #include <QtGui/QAction>
 #include <QtGui/QMenu>
 #include <QtGui/QContextMenuEvent>
@@ -53,7 +48,6 @@
 #include <dtEditQt/uiresources.h>
 
 #include <dtDAL/project.h>
-#include <dtDAL/exceptionenum.h>
 #include <dtDAL/librarymanager.h>
 #include <dtDAL/map.h>
 #include <dtDAL/enginepropertytypes.h>
@@ -107,7 +101,7 @@ namespace dtEditQt
       // This corrects the stretch for the last row
       grid->setRowStretch(1, 0);
 
-      camera->setViewport(0, 0, perspView->width(), perspView->height());
+      //camera->setViewport(0, 0, perspView->width(), perspView->height()); //TODO E!
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -132,11 +126,7 @@ namespace dtEditQt
 
       //By default, perspective viewports have their camera set to the world view
       //camera.  The world view camera is what is used in the main perspective view.
-      perspView->setCamera(camera.get());
-
-      //No need for an overlay for this viewport since we cannot select meshes
-      //in the preview window.
-      perspView->setOverlay(NULL);
+      //perspView->setCamera(camera.get()); //E!
 
       // Disable the interaction modes
       perspView->setAutoInteractionMode(false);
@@ -299,7 +289,7 @@ namespace dtEditQt
             SetCameraLookAt(*camera, *previewObject);
 
             perspView->refresh();
-            perspView->setFocus();
+            perspView->GetQGLWidget()->setFocus();
          }
       }
    }

@@ -31,29 +31,24 @@
 #ifndef DELTA_STAGE_VIEWPORT
 #define DELTA_STAGE_VIEWPORT
 
-#include <QtCore/QTimer>
 #include <QtOpenGL/QGLWidget>
+#include <QtGui/QWidget>
 #include <QtGui/QCursor>
 
 #include <map>
 
-#include <dtABC/application.h>
-#include <osgUtil/SceneView>
-#include <dtCore/base.h>
-#include <dtCore/system.h>
-#include <dtCore/transformable.h>
 #include <dtUtil/enumeration.h>
 #include <dtDAL/actorproxy.h>
 #include <dtEditQt/stagecamera.h>
 #include <dtEditQt/viewportmanager.h>
 #include <dtQt/typedefs.h>
 #include <dtCore/refptr.h>
-#include <dtCore/objectmotionmodel.h>
+#include <dtCore/deltawin.h>
+#include <dtCore/view.h>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
 {
-   class FrameStamp;
    class StateSet;
    class ClearNode;
 }
@@ -83,7 +78,7 @@ namespace dtEditQt
     * @see PerspectiveViewport
     * @see OrthoViewport
     */
-   class Viewport : public QGLWidget
+   class Viewport : public QObject
    {
       Q_OBJECT
 
@@ -144,23 +139,6 @@ namespace dtEditQt
           */
          static const InteractionMode SELECT_ACTOR;
 
-         /**
-          * This mode allows the selected actor(s) to be repositioned in the
-          * scene by using the mouse and dragging them to a new position.
-          */
-         //static const InteractionMode TRANSLATE_ACTOR;
-
-         /**
-          * This mode allows the selected actor(s) to be rotated about own
-          * local axis or pivot point.
-          */
-         //static const InteractionMode ROTATE_ACTOR;
-
-         /**
-          * This mode allows the selected actor(s) to be either uniformly scaled,
-          * or scaled along either the X,Y or Z axis.
-          */
-         //static const InteractionMode SCALE_ACTOR;
 
       private:
          InteractionMode(const std::string& name)
@@ -253,6 +231,24 @@ namespace dtEditQt
       virtual void pick(int x, int y);
 
       /**
+      * Converts pixel mouse position to delta normalized format.
+      *
+      * @param[in]  pixelPos  The original position of the mouse.
+      *
+      * @return               The converted mouse position.
+      */
+      virtual osg::Vec2 convertMousePosition(QPoint pixelPos);
+
+      /**
+      * Calculates the 3D collision line that represents the mouse.
+      *
+      * @param[in]  mousePos  The position of the mouse in screen coords.
+      * @param[in]  start     The start position of the line.
+      * @param[in]  end       The end position of the line.
+      */
+      virtual void GetMouseLine(osg::Vec2 mousePos, osg::Vec3& start, osg::Vec3& end);
+
+      /**
       * Projects the 2D window coordinates into the current scene and determines
       * if a ray whose origin is at the projected point intersects any actors
       * in the current scene.  Window coordinates are such that the origin is
@@ -336,25 +332,11 @@ namespace dtEditQt
       dtCore::Scene* getScene() { return mScene.get(); }
 
       /**
-       * Sets the overlay object for this viewport.
-       * @param overlay The new overlay.
-       * @note Of the overlay parameter is NULL, the overlay is cleared from this
-       *  viewport.
-       */
-      void setOverlay(ViewportOverlay* overlay);
-
-      /**
-       * Gets the current overlay assigned to this viewport.
-       * @return The overlay assigned to this viewport.
-       */
-      ViewportOverlay* getOverlay() { return mOverlay.get(); }
-
-      /**
        * Sets the viewport's camera.  The camera determines the point of view
        * from which the current scene is rendered.
        * @param cam The new camera to use.
        */
-      void setCamera(StageCamera* cam) { mCamera = cam; }
+      void setCamera(StageCamera* cam);
 
       /**
        * Gets this viewport's camera.
@@ -429,6 +411,45 @@ namespace dtEditQt
        */
       void setClearColor(const osg::Vec4& color);
 
+      QGLWidget* GetQGLWidget();
+
+
+      /**
+      * Returns the underlying scene view that is attached to this viewport.
+      * @return
+      */
+      dtCore::View* GetView() { return mView.get(); }
+
+      dtCore::DeltaWin* GetWindow();
+
+      /**
+      * Called when the user moves the mouse while pressing any combination of
+      * mouse buttons.  Based on the current mode, the camera is updated.
+      */
+      virtual void mouseMoveEvent(QMouseEvent* e);
+
+      /**
+      * Called when the viewport needs to redraw itself.
+      */
+      virtual void paintGL();
+
+      /**
+      * Called by the Qt windowing system when the viewport is to be initialized.
+      */
+      virtual void initializeGL();
+
+      /**
+      * Called by the Qt windowing system when the viewport is resized by the user.
+      */
+      virtual void resizeGL(int width, int height);
+
+      osg::Group* GetRootNode() { return mRootNodeGroup.get(); }
+
+      /**
+      * returns whether the window dirty.
+      */
+
+
    public slots:
       ///Moves the camera such that the actor is clearly visible.
       void onGotoActor(ActorProxyRefPtr proxy);
@@ -455,27 +476,14 @@ namespace dtEditQt
        * with the specified QGLWidget.
        */
       Viewport(ViewportManager::ViewportType& type, const std::string& name,
-         QWidget* parent = NULL, QGLWidget* shareWith = NULL);
+         QWidget* parent = NULL, osg::GraphicsContext* shareWith = NULL);
 
       /**
        * Destroys this viewport.
        */
       virtual ~Viewport();
 
-      /**
-       * Called by the Qt windowing system when the viewport is to be initialized.
-       */
-      virtual void initializeGL();
 
-      /**
-       * Called by the Qt windowing system when the viewport is resized by the user.
-       */
-      virtual void resizeGL(int width, int height);
-
-      /**
-       * Called when the viewport needs to redraw itself.
-       */
-      virtual void paintGL();
 
       /**
        * Renders the scene as is viewed from the viewport's currently assigned
@@ -483,15 +491,6 @@ namespace dtEditQt
        */
       virtual void renderFrame();
 
-      void SetRedrawContinuously(bool contRedraw);
-      bool GetRedrawContinuously() const { return mRedrawContinuously; }
-
-   public:
-      /**
-       * Returns the underlying scene view that is attached to this viewport.
-       * @return
-       */
-      osgUtil::SceneView* getSceneView() { return mSceneView.get(); }
 
       /**
        * Returns the state set for this viewport.  This determines how the scene is
@@ -541,20 +540,9 @@ namespace dtEditQt
        */
       void updateActorProxyBillboards();
 
-      /**
-       * Called when the user moves the mouse while pressing any combination of
-       * mouse buttons.  Based on the current mode, the camera is updated.
-       */
-      void mouseMoveEvent(QMouseEvent* e);
 
       /// Called by the mouse move event with the adjusted x and y so that subclasses can do what they need.
       virtual void onMouseMoveEvent(QMouseEvent* e, float dx, float dy) = 0;
-
-      /// Overridden to adjust the update interval when focus is received
-      virtual void focusInEvent(QFocusEvent* event);
-
-      /// Overridden to adjust the update interval when focus is lost
-      virtual void focusOutEvent(QFocusEvent* event);
 
       /**
        * Camera attached to this viewport.
@@ -569,8 +557,8 @@ namespace dtEditQt
        */
       bool mInChangeTransaction;
 
-   protected:
-      osg::Group* GetRootNode() { return mRootNodeGroup.get(); }
+
+      dtCore::RefPtr<dtCore::DeltaWin> mWindow;
 
    private:
       ///Sets up the initial render state of this viewport.
@@ -585,7 +573,6 @@ namespace dtEditQt
       const RenderStyle*             mRenderStyle;
       const InteractionMode*         mInteractionMode;
 
-      bool mRedrawContinuously;
       bool mUseAutoInteractionMode;
       bool mAutoSceneUpdate;
       bool mInitialized;
@@ -597,16 +584,13 @@ namespace dtEditQt
       bool    mIsMouseTrapped;
 
       QPoint mLastMouseUpdateLocation;
-      QTimer mTimer;
 
       // holds the original values of translation and/or rotation.  This should
       // be set in BeginEdit and cleared in EndEdit
       std::map< std::string, std::vector<std::string> > mSelectedActorOrigValues;
 
-      dtCore::RefPtr<ViewportOverlay>  mOverlay;
       dtCore::RefPtr<dtCore::Scene>    mScene;
-      osg::ref_ptr<osg::FrameStamp>    mFrameStamp;
-      osg::ref_ptr<osgUtil::SceneView> mSceneView;
+      dtCore::RefPtr<dtCore::View>     mView;
       osg::ref_ptr<osg::StateSet>      mGlobalStateSet;
       osg::ref_ptr<osg::ClearNode>     mClearNode;
 
@@ -616,9 +600,9 @@ namespace dtEditQt
        * overlays and other objects that are editor specific and are not
        * a part of the actual scene.
        */
-      osg::ref_ptr<osg::Group> mRootNodeGroup;
+      osg::ref_ptr<osg::Group>         mRootNodeGroup;
 
-      dtCore::RefPtr<dtCore::Isector> mIsector;
+      dtCore::RefPtr<dtCore::Isector>  mIsector;
    };
 
 } // namespace dtEditQt

@@ -31,7 +31,7 @@
 #include <QtOpenGL/QGLWidget>
 #include <osg/Texture>
 #include <osgDB/DatabasePager>
-#include <osgDB/Registry>
+#include <osgViewer/CompositeViewer>
 #include <dtUtil/log.h>
 #include <dtDAL/map.h>
 #include <dtDAL/actorproxyicon.h>
@@ -61,13 +61,14 @@ namespace dtEditQt
       : mShareMasterContext(true)
       , mMasterViewport(NULL)
       , mMasterScene(new dtCore::Scene())
-      , mMasterView(new dtCore::View())
    {
-      mMasterView->SetScene(mMasterScene.get());
       mViewportOverlay     = new ViewportOverlay();
-      mWorldCamera         = new StageCamera();
+      //mWorldCamera         = new StageCamera();
       mInChangeTransaction = false;
-      mStartTick = 0;
+
+      mMasterScene->GetSceneNode()->addChild(mViewportOverlay->getOverlayGroup()); //TODO testing
+
+      //mMasterView->SetCamera(mWorldCamera->getDeltaCamera());     
 
       EditorEvents* editorEvents = &EditorEvents::GetInstance();
 
@@ -128,7 +129,7 @@ namespace dtEditQt
          }
          else
          {
-            vp = createViewportImpl(name, type, parent, mMasterViewport);
+            vp = createViewportImpl(name, type, parent, (osg::GraphicsContext*)(mMasterViewport->GetWindow()->GetOsgViewerGraphicsWindow()));
          }
       }
       else
@@ -137,7 +138,7 @@ namespace dtEditQt
       }
 
       // Now make sure the viewport we created has a valid OpenGL context.
-      if (!vp || !vp->isValid())
+      if (!vp || !vp->GetQGLWidget()->isValid())
       {
          LOG_ERROR("Error creating viewport.");
          return NULL;
@@ -160,7 +161,7 @@ namespace dtEditQt
 
    ///////////////////////////////////////////////////////////////////////////////
    Viewport* ViewportManager::createViewportImpl(const std::string& name,
-       ViewportType& type, QWidget* parent, QGLWidget* shareWith)
+       ViewportType& type, QWidget* parent, osg::GraphicsContext* shareWith)
    {
       if (type == ViewportType::ORTHOGRAPHIC)
       {
@@ -273,11 +274,6 @@ namespace dtEditQt
    }
 
 
-   ///////////////////////////////////////////////////////////////////////////////
-   dtCore::DatabasePager* ViewportManager::GetDatabasePager() const
-   {
-      return mMasterView->GetDatabasePager();
-   }
 
    ////////////////////////////////////////////////////////////////////////////////
    osg::Vec3 ViewportManager::GetSnapPosition(osg::Vec3 position, bool groundClamp, std::vector<dtCore::DeltaDrawable*> ignoredDrawables)
@@ -428,6 +424,13 @@ namespace dtEditQt
             refreshAllViewports();
          }
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ViewportManager::emitViewportEnabled(Viewport* vp, bool enabled, bool* overrideDefault)
+   {
+      LOG_INFO("Emitting event - [viewportEnabled]");
+      emit viewportEnabled(vp, enabled, overrideDefault);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -777,17 +780,53 @@ namespace dtEditQt
       refreshAllViewports();
    }
 
-   //////////////////////////////////////////////////////////////////////////
-   bool ViewportManager::IsPagingEnabled() const
+   ////////////////////////////////////////////////////////////////////////////////
+   void ViewportManager::setWorldViewCamera(StageCamera* camera)
    {
-      if (mMasterView->GetDatabasePager() != NULL)
+      mWorldCamera = camera;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ViewportManager::SetApplication(dtABC::Application* app)
+   {
+      mApplication = app;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtABC::Application* ViewportManager::GetApplication() const
+   {
+      return mApplication.get();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool ViewportManager::EnableViewport(Viewport* viewport, bool enable)
+   {
+      if (GetApplication() == NULL) {return false;}
+
+      if (enable)
       {
-         return true;
+         if (!GetApplication()->ContainsView(*viewport->GetView()))
+         {
+            GetApplication()->AddView(*viewport->GetView());
+
+            //if OSG thinks we're done, set it straight.
+            if (GetApplication()->GetCompositeViewer()->done())
+            {
+               GetApplication()->GetCompositeViewer()->setDone(false);
+            }
+
+            return true;
+         }
       }
       else
       {
-         return false;
+         if (GetApplication()->ContainsView(*viewport->GetView()))
+         {
+            GetApplication()->RemoveView(*viewport->GetView());
+            return true;
+         }
       }
-   }
 
+      return false;
+   }
 } // namespace dtEditQt

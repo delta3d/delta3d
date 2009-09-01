@@ -30,13 +30,7 @@
 #define DELTA_EDITOR_VIEWPORT_CONTAINER
 
 #include <QtGui/QWidget>
-#include "dtEditQt/editorviewport.h"
 
-class QAction;
-class QActionGroup;
-class QLabel;
-class QMenu;
-class QContextMenuEvent;
 class QBoxLayout;
 class QFrame;
 class QLineEdit;
@@ -90,15 +84,12 @@ namespace dtEditQt
       void onSetSnapScale(float value);
 
    protected:
-      ///Creates the toolbar action objects.
-      void createActions();
 
       ///Adds the action objects to this containers toolbar.
       void createToolBar();
 
    private:
       QBoxLayout*       mLayout;
-      //QBoxLayout*       mButtonLayout;
       QFrame*           mToolBar;
       QLineEdit*        mEditTrans;
       QLineEdit*        mEditAngle;
@@ -106,9 +97,6 @@ namespace dtEditQt
       QCheckBox*        mCheckBoxTrans;
       QCheckBox*        mCheckBoxAngle;
       QCheckBox*        mCheckBoxScale;
-
-      //// Action objects.
-      //QAction*          mSetLocalSpaceAction;
 
       void SetupSnapWidgets(QBoxLayout* layout);
    };

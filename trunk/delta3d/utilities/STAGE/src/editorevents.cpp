@@ -27,15 +27,8 @@
  * Matthew W. Campbell
  */
 #include <prefix/dtstageprefix-src.h>
-#include <QtGui/QMainWindow>
-#include <QtCore/QTimer>
-#include <QtGui/QMessageBox>
 
 #include <dtEditQt/editorevents.h>
-#include <dtEditQt/editordata.h>
-#include <dtEditQt/editoractions.h>
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/map.h>
 #include <dtUtil/log.h>
 
 namespace dtEditQt

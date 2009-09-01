@@ -32,14 +32,17 @@
 #include <sstream>
 #include <dtCore/globals.h>
 #include <dtCore/system.h>
+#include <dtCore/deltawin.h>
 #include <dtEditQt/mainwindow.h>
 #include <dtEditQt/viewportmanager.h>
-#include <dtDAL/librarymanager.h>
 #include <dtEditQt/editorevents.h>
-#include <dtEditQt/editoractions.h>
 #include <dtEditQt/uiresources.h>
-#include <dtUtil/log.h>
+#include <dtUtil/exception.h>
 #include <dtAudio/audiomanager.h>
+#include <dtQt/qtguiwindowsystemwrapper.h>
+#include <dtQt/deltastepper.h>
+#include <dtEditQt/stageapplication.h>
+#include <dtEditQt/stageglwidgetfactory.h>
 
 int main(int argc, char* argv[])
 {
@@ -57,7 +60,6 @@ int main(int argc, char* argv[])
    QSplashScreen* splash = new QSplashScreen(pixmap);
    splash->show();
 
-   //dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_INFO);
 
    // Now that everything is initialized, show the main window.
    // Construct the application...
@@ -69,10 +71,42 @@ int main(int argc, char* argv[])
       configFile = argv[1];
    }
 
+   //Create special QGLWidget's when we create DeltaWin instances
+   dtQt::QtGuiWindowSystemWrapper::EnableQtGUIWrapper();
+
+   osg::GraphicsContext::WindowingSystemInterface* winSys = osg::GraphicsContext::getWindowingSystemInterface();
+   dtQt::QtGuiWindowSystemWrapper* qtgui = dynamic_cast<dtQt::QtGuiWindowSystemWrapper*>(winSys);
+   if (qtgui)
+   {
+      qtgui->SetGLWidgetFactory(new dtEditQt::STAGEGLWidgetFactory());
+   }
+   
+
    try
    {
+      // Now that everything is initialized, show the main window.
+      // Construct the application...
       dtEditQt::MainWindow mainWindow(configFile);
+
+      //create a dummy window that won't get realized, then delete it.  This is
+      //just to get around the automatic creation of a DeltaWin by Application.
+      dtCore::DeltaWin::DeltaWinTraits traits;
+      traits.realizeUponCreate = false;
+      traits.name = "dummy";
+      dtCore::RefPtr<dtCore::DeltaWin> dummyWin = new dtCore::DeltaWin(traits);
+
+      dtCore::RefPtr<dtEditQt::STAGEApplication> viewer = new dtEditQt::STAGEApplication(dummyWin.get());
+      viewer->Config();
+      
+      dummyWin = NULL;
+
+      dtEditQt::ViewportManager::GetInstance().SetApplication(viewer.get());
       mainWindow.show();
+
+      //create a little class to ensure Delta3D performs Window "steps"
+      dtCore::System::GetInstance().Start();
+      dtQt::DeltaStepper stepper;
+      stepper.Start();
 
       splash->finish(&mainWindow);
       delete splash;
@@ -81,11 +115,10 @@ int main(int argc, char* argv[])
       dtEditQt::EditorEvents::GetInstance().emitEditorInitiationEvent();
       mainWindow.setWindowMenuTabsChecked();
 
-      dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
-      dtCore::System::GetInstance().Start();
-      dtCore::System::GetInstance().Config();
       result = app.exec();
-      dtCore::System::GetInstance().Stop();
+      stepper.Stop();
+
+      dtEditQt::ViewportManager::GetInstance().SetApplication(NULL);
    }
    catch (const dtUtil::Exception& e)
    {
