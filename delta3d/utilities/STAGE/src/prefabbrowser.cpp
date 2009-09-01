@@ -68,6 +68,7 @@
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/librarymanager.h>
 #include <dtUtil/log.h>
+#include <algorithm>
 
 namespace dtEditQt
 {

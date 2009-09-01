@@ -30,7 +30,6 @@
 #ifndef DELTA_ORTHO_VIEWPORT
 #define DELTA_ORTHO_VIEWPORT
 
-#include <QtGui/QCursor>
 #include <dtUtil/enumeration.h>
 #include "dtEditQt/editorviewport.h"
 
@@ -131,83 +130,38 @@ namespace dtEditQt
       bool moveCamera(float dx, float dy);
 
       /**
-      * Sets the scene to be rendered by this viewport.
-      * @param scene The new scene to be rendered.
+      * Initializes the viewport.  This just sets the current render style
+      * to be wireframe and the view type to be OrthoViewType::TOP.
       */
-      void setScene(dtCore::Scene* scene);
+      virtual void initializeGL();
+
+      /**
+      * Sets the orthographic projection parameters of the current camera.
+      * @param width The width of the viewport.
+      * @param height The height of the viewport.
+      */
+      void resizeGL(int width, int height);
+
+      /**
+      * Called when the user moves the wheel on a mouse containing a scroll wheel.
+      * This causes the scene to be zoomed in and out.
+      * @param e
+      */
+      void wheelEvent(QWheelEvent* e);
+
 
    protected:
       /**
        * Constructs the orthographic viewport.
        */
       OrthoViewport(const std::string& name, QWidget* parent = NULL,
-            QGLWidget* shareWith = NULL);
+            osg::GraphicsContext* shareWith = NULL);
 
       /**
        * Destroys the viewport.
        */
       virtual ~OrthoViewport() { }
 
-      /**
-       * Initializes the viewport.  This just sets the current render style
-       * to be wireframe and the view type to be OrthoViewType::TOP.
-       */
-      void initializeGL();
-
-      /**
-       * Sets the orthographic projection parameters of the current camera.
-       * @param width The width of the viewport.
-       * @param height The height of the viewport.
-       */
-      void resizeGL(int width, int height);
-
-      /**
-       * Called when the user presses a key on the keyboard in the viewport.
-       * Based on the combination of keys pressed, the viewport's current
-       * mode will be set.
-       * @param e
-       */
-      void keyPressEvent(QKeyEvent* e);
-
-      /**
-       * Called when the user releases a key on the keyboard in the viewport.
-       * Based on the keys released, the viewport's current mode is
-       * updated accordingly.
-       * @param e
-       */
-      void keyReleaseEvent(QKeyEvent* e);
-
-      /**
-       * Called when the user releases a mouse button in the viewport.  Based on
-       * the buttons released, the viewport's current mode is updated
-       * accordingly.
-       * @param e
-       */
-      void mouseReleaseEvent(QMouseEvent* e);
-
-      /**
-       * Called when the user presses a mouse button in the viewport.  Based on
-       * the combination of buttons pressed, the viewport's current mode will
-       * be set.
-       * @param e
-       * @see ModeType
-       */
-      void mousePressEvent(QMouseEvent*);
-
-      /**
-       * Called when the user moves the mouse while pressing any combination of
-       * mouse buttons.  Based on the current mode, the camera is updated.
-       * @param dx the adjusted change in x that the mouse moved.
-       * @param dy the adjusted change in y that the mouse moved.
-       */
-      virtual void onMouseMoveEvent(QMouseEvent* e, float dx, float dy);
-
-      /**
-       * Called when the user moves the wheel on a mouse containing a scroll wheel.
-       * This causes the scene to be zoomed in and out.
-       * @param e
-       */
-      void wheelEvent(QWheelEvent* e);
 
       /**
        * Called from the mousePressEvent handler.  This sets the viewport state
@@ -224,21 +178,20 @@ namespace dtEditQt
       bool endCameraMode(QMouseEvent* e);
 
       /**
-       * Called from the mousePressEvent handler.  Depending on what modifier
-       * key is pressed, this puts the viewport state into a mode that enables
-       * actor manipulation.
-       * @param e
-       */
-      bool beginActorMode(QMouseEvent* e);
+      * Called from the mousePressEvent handler.  Depending on what modifier
+      * key is pressed, this puts the viewport state into a mode that enables
+      * actor manipulation.
+      * @param e
+      */
+      virtual bool beginActorMode(QMouseEvent* e);
 
       /**
-       * Called from the mouseReleaseEvent handler.  This restores the state of
-       * the viewport as it was before actor mode was entered.
-       * @param e
-       */
-      bool endActorMode(QMouseEvent* e);
+      * Called from the mouseReleaseEvent handler.  This restores the state of
+      * the viewport as it was before actor mode was entered.
+      * @param e
+      */
+      virtual bool endActorMode(QMouseEvent* e);
 
-      void warpWorldCamera(int x, int y);
 
    private:
       ///Allow the ViewportManager access to it can create perspective viewports.

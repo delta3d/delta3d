@@ -40,10 +40,7 @@
 #include <QtGui/QDoubleValidator>
 #include <QtGui/QCheckBox>
 #include <dtEditQt/editorviewportcontainer.h>
-#include <dtEditQt/viewport.h>
-#include <dtEditQt/editorviewport.h>
 #include <dtEditQt/viewportmanager.h>
-#include <dtEditQt/orthoviewport.h>
 #include <dtEditQt/uiresources.h>
 
 namespace dtEditQt
@@ -56,7 +53,6 @@ namespace dtEditQt
       mLayout->setMargin(0);
       mLayout->setSpacing(0);
 
-      createActions();
       createToolBar();
 
       setChild(child);
@@ -76,7 +72,7 @@ namespace dtEditQt
    {
       if (child)
       {
-         child->setParent(this);
+         //child->setParent(this); //TODO  is this required?
          mLayout->addWidget(child);
          mLayout->addWidget(mToolBar);
       }
@@ -133,16 +129,6 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void EditorViewportContainer::createActions()
-   {
-      //mSetLocalSpaceAction = new QAction(QIcon(UIResources::ICON_EDIT_LOCAL_SPACE.c_str()),
-      //   tr("Local Space Mode"), this);
-      //mSetLocalSpaceAction->setCheckable(true);
-      //mSetLocalSpaceAction->setChecked(true);
-      //connect(mSetLocalSpaceAction, SIGNAL(triggered()), this, SLOT(setLocalSpace()));
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
    void EditorViewportContainer::createToolBar()
    {
       // Create our "toolbar" widget.
@@ -151,24 +137,11 @@ namespace dtEditQt
       mToolBar->setFixedHeight(25);
 
       QBoxLayout* layout = new QHBoxLayout(mToolBar);
-      //mButtonLayout = new QHBoxLayout();
 
       layout->setAlignment(Qt::AlignLeft);
       layout->setSpacing(5);
       layout->setMargin(0);
-
-      //mButtonLayout->setAlignment(Qt::AlignLeft);
-      //mButtonLayout->setSpacing(0);
-      //mButtonLayout->setMargin(1);
-
       layout->addSpacing(5);
-      //layout->addLayout(mButtonLayout);
-
-      //button = new QToolButton(mToolBar);
-      //button->setDefaultAction(mSetLocalSpaceAction);
-      //button->setAutoRaise(true);
-      //button->setFocusPolicy(Qt::NoFocus);
-      //mButtonLayout->addWidget(button);
 
       SetupSnapWidgets(layout);
       layout->addSpacing(5);

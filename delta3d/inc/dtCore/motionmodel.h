@@ -64,7 +64,7 @@ namespace dtCore
           *
           * @param target the new target
           */
-         void SetTarget(Transformable* target);
+         virtual void SetTarget(Transformable* target);
          
          /**
           * Returns the target of this motion model.

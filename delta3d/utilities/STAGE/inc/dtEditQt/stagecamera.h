@@ -90,7 +90,7 @@ namespace dtEditQt
        * Rotates the camera about its current view vector.
        * @param degrees Amount of rotation in degrees.
        */
-      void roll(double degrees);
+      //void roll(double degrees);
 
       /**
        * Rotates the camera using the given quaternion.
@@ -124,11 +124,6 @@ namespace dtEditQt
        * axis is up, the positive Y axis is forward, and the positive X axis is right.
        */
       void resetRotation();
-
-      /**
-      * Sets the viewport.
-      */
-      void setViewport(int x, int y, int width, int height);
 
       /**
        * Sets the camera's orthographic viewing parameters and puts this camera into
@@ -204,45 +199,11 @@ namespace dtEditQt
       osg::Quat getOrientation() const;
 
       /**
-       * Gets the current pitch of this camera.
-       * @return The pitch value in degrees.
-       */
-      double getPitch() const { return mCamPitch; }
-
-      /**
-       * Gets the current yaw of this camera.
-       * @return The yaw value in degrees.
-       */
-      double getYaw() const { return mCamYaw; }
-
-      /**
-       * Gets the current roll of this camera.
-       * @return The roll value in degrees.
-       */
-      double getRoll() const { return mCamRoll; }
-
-      /**
        * Gets the current position of this camera.
        * @return Returns a 3D vector corresponding to this camera's current position
        * in world coordinates.
        */
-      const osg::Vec3& getPosition() const { return mPosition; }
-
-      /**
-       * Gets this camera's current projection matrix.
-       * @return The current projection matrix.  This is constructed based on the
-       * the orthographic or perspective projection settings.
-       * @see makePerspective
-       * @see makeOrtho
-       */
-      const osg::Matrix& getProjectionMatrix();
-
-      /**
-       * Gets the camera's current view matrix.
-       * @return The view matrix is generated from its current position and its
-       * current orientation.
-       */
-      const osg::Matrix& getWorldViewMatrix();
+      osg::Vec3 getPosition() const;
 
       void getOrthoParams(double& left, double& right, double& bottom, double& top,
          double& nearZ, double& farZ);
@@ -281,10 +242,6 @@ namespace dtEditQt
        */
       void updateActorAttachments();
 
-      /**
-       * Updates the delta camera.
-       */
-      void updateDeltaCamera();
 
       /**
        * Returns a count of the number of actor proxies currently attached to this
@@ -325,10 +282,6 @@ namespace dtEditQt
          PERSPECTIVE
       };
 
-      osg::Vec3 mPosition;
-      osg::Quat mOrientation;
-      double mCamPitch, mCamYaw, mCamRoll;
-
       osg::Matrixd mProjectionMat;
       osg::Matrixd mWorldViewMat;
 
@@ -336,9 +289,6 @@ namespace dtEditQt
       double mOrthoLeft, mOrthoRight, mOrthoTop, mOrthoBottom;
       double mZNear, mZFar;
       double mZoomFactor;
-
-      bool mUpdateProjectionMatrix;
-      bool mUpdateWorldViewMatrix;
 
       ProjectionType mProjType;
 

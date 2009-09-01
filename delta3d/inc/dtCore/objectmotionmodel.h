@@ -34,6 +34,7 @@
 #include <osg/Geode>
 #include <osg/Shape>
 #include <osg/ShapeDrawable>
+#include <osg/AutoTransform>
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -93,6 +94,13 @@ namespace dtCore
       public:
 
          /**
+         * Sets the target of this motion model.
+         *
+         * @param target the new target
+         */
+         virtual void SetTarget(Transformable* target);
+
+         /**
          * Sets the current view.
          *
          * @param[in]  view  The View.
@@ -118,6 +126,13 @@ namespace dtCore
          *                      to disable it
          */
          virtual void SetEnabled(bool enabled);
+
+         /**
+         * Enables the interaction of the motion model.
+         *
+         * @param[in]  enabled  True to enable interaction.
+         */
+         virtual void SetInteractionEnabled(bool enabled);
 
          /**
          * Enables or disables the scale gizmos.
@@ -152,7 +167,7 @@ namespace dtCore
          * Sets whether the motion model should be scaled
          * based on distance from the camera.
          */
-         virtual void SetAutoScaleEnabled(bool enabled) {mAutoScale=enabled;}
+         virtual void SetAutoScaleEnabled(bool enabled);
 
          /**
          * Gets the current coordinate space.
@@ -262,6 +277,11 @@ namespace dtCore
          virtual void InitArrows(void);
 
          /**
+         * Updates the visibility of the motion model widgets.
+         */
+         void UpdateVisibility();
+
+         /**
          * Generates a triangle mesh used for the rotation rings.
          *
          * @param[in]   minRadius  The inner radius of the ring.
@@ -271,15 +291,6 @@ namespace dtCore
          * @return                 The generated TriangleMesh.
          */
          virtual osg::TriangleMesh* GenerateRing(float minRadius, float maxRadius, int segments);
-
-         /**
-         * Converts the current mouse position to a 3D vector in the world.
-         *
-         * @param[in]  mousePos  The position of the mouse.
-         *
-         * @return  The mouse vector.
-         */
-         osg::Vec3 GetMouseVector(osg::Vec2 mousePos);
 
          /**
          * Does a collision test to see if the mouse has picked
@@ -391,10 +402,16 @@ namespace dtCore
          osg::ref_ptr<osg::Cylinder>               mAngleCylinder;
          osg::ref_ptr<osg::ShapeDrawable>          mAngleDrawable;
 
-         dtCore::RefPtr<dtCore::Transformable>     mTargetTransform;
+         osg::ref_ptr<osg::AutoTransform>          mTargetTransform;
 
          ArrowData       mArrows[ARROW_TYPE_MAX];
          float           mScale;
+
+         bool            mVisible;
+         bool            mInteractionEnabled;
+
+         float           mCurScale;
+         osg::Quat       mCurQuat;
 
          dtCore::View*   mView;
          osg::Group*     mSceneNode;

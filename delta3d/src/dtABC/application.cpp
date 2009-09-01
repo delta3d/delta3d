@@ -606,11 +606,17 @@ bool Application::ContainsView(dtCore::View &view)
 }
 
 ////////////////////////////////////////////////////////
-void Application::RemoveView(dtCore::View &view)
+void Application::RemoveView(dtCore::View &view, bool immediately)
 {
-   mViewsToDelete.push_back(&view);
+   if (immediately)
+   {
+      RemoveViewImpl(view);
+   }
+   else
+   {
+      mViewsToDelete.push_back(&view);
+   }
 }
-
 ////////////////////////////////////////////////////////////////////////////////
 void Application::RemoveViewImpl(dtCore::View& view)
 {
@@ -627,7 +633,7 @@ void Application::RemoveViewImpl(dtCore::View& view)
          view.GetMouse()->RemoveMouseListener(mMouseListener.get());
       }
 
-      mViewList.erase(it);
       mCompositeViewer->removeView(view.GetOsgViewerView());
+      mViewList.erase(it);
    }
 }

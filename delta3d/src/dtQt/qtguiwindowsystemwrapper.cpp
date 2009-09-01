@@ -25,6 +25,7 @@
 
 #include <dtQt/qtguiwindowsystemwrapper.h>
 #include <dtQt/osggraphicswindowqt.h>
+#include <dtQt/glwidgetfactory.h>
 #include <dtUtil/log.h>
 
 namespace dtQt
@@ -47,6 +48,7 @@ namespace dtQt
    /////////////////////////////////////////////////////////////
    QtGuiWindowSystemWrapper::QtGuiWindowSystemWrapper(osg::GraphicsContext::WindowingSystemInterface& oldInterface)
    : mInterface(&oldInterface)
+   , mWidgetFactory(NULL)
    {
    }
 
@@ -102,7 +104,13 @@ namespace dtQt
       }
       else
       {
-         return new dtQt::OSGGraphicsWindowQt(traits);
+         return new dtQt::OSGGraphicsWindowQt(traits, mWidgetFactory);
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void QtGuiWindowSystemWrapper::SetGLWidgetFactory(GLWidgetFactory* factory)
+   {
+      mWidgetFactory = factory;
    }
 }

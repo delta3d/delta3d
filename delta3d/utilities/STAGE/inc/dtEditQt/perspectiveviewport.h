@@ -86,13 +86,13 @@ namespace dtEditQt
        * Sets the scene to be rendered by this viewport.
        * @param scene The new scene to be rendered.
        */
-      virtual void setScene(dtCore::Scene* scene);
+      //virtual void setScene(dtCore::Scene* scene);
 
       /**
        * Initializes the viewport.  This just sets the render style to be
        * textured and un-lit.
        */
-      void initializeGL();
+      virtual void initializeGL();
 
       /**
        * Sets the perspective projection viewing parameters of this viewport's
@@ -112,7 +112,7 @@ namespace dtEditQt
        * @param shareWith
        */
       PerspectiveViewport(const std::string& name, QWidget* parent = NULL,
-            QGLWidget* shareWith = NULL);
+            osg::GraphicsContext* shareWith = NULL);
 
       /**
        * Destroys the viewport.
@@ -126,39 +126,6 @@ namespace dtEditQt
        * @param e
        */
       void keyPressEvent(QKeyEvent* e);
-
-      /**
-       * Called when the user releases a key on the keyboard in the viewport.
-       * Based on the keys released, the viewport's current mode is
-       * updated accordingly.
-       * @param e
-       */
-      void keyReleaseEvent(QKeyEvent* e);
-
-      /**
-       * Called when the user presses a mouse button in the viewport.  Based on
-       * the combination of buttons pressed, the viewport's current mode will
-       * be set.
-       * @param e
-       * @see ModeType
-       */
-      void mousePressEvent(QMouseEvent* e);
-
-      /**
-       * Called when the user releases a mouse button in the viewport.  Based on
-       * the buttons released, the viewport's current mode is updated
-       * accordingly.
-       * @param e
-       */
-      void mouseReleaseEvent(QMouseEvent* e);
-
-      /**
-       * Called when the user moves the mouse while pressing any combination of
-       * mouse buttons.  Based on the current mode, the camera is updated.
-       * @param dx the adjusted change in x that the mouse moved.
-       * @param dy the adjusted change in y that the mouse moved.
-       */
-      virtual void onMouseMoveEvent(QMouseEvent* e, float dx, float dy);
 
       /**
        * Called from the mousePressEvent handler.  This sets the viewport state

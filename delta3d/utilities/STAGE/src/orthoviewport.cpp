@@ -28,16 +28,8 @@
  */
 #include <prefix/dtstageprefix-src.h>
 #include <QtGui/QMouseEvent>
-#include <QtGui/QAction>
-#include <osg/Math>
-#include <osg/CullSettings>
 #include <dtEditQt/orthoviewport.h>
-#include <dtEditQt/viewportoverlay.h>
-#include <dtEditQt/editorevents.h>
-#include <dtEditQt/editoractions.h>
 #include <dtDAL/exceptionenum.h>
-#include <dtDAL/transformableactorproxy.h>
-#include <dtDAL/enginepropertytypes.h>
 
 namespace dtEditQt
 {
@@ -61,15 +53,13 @@ namespace dtEditQt
 
    ///////////////////////////////////////////////////////////////////////////////
    OrthoViewport::OrthoViewport(const std::string& name, QWidget* parent,
-      QGLWidget* shareWith)
+      osg::GraphicsContext* shareWith)
       : EditorViewport(ViewportManager::ViewportType::ORTHOGRAPHIC, name, parent, shareWith)
    {
-      mCamera = new StageCamera();
       mCameraMode = &OrthoViewport::CameraMode::NOTHING;
       setViewType(OrthoViewType::TOP,false);
 
-      mObjectMotionModel->SetAutoScaleEnabled(false);
-      mObjectMotionModel->SetScale(1.0f);
+      mObjectMotionModel->SetScale(450.0f);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -79,7 +69,7 @@ namespace dtEditQt
 
       // We do not want OSG to compute our near and far clipping planes when in
       // orthographic view
-      getSceneView()->setComputeNearFarMode(osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR);
+      mCamera->getDeltaCamera()->SetNearFarCullingMode(dtCore::Camera::NO_AUTO_NEAR_FAR);
 
       // Default to wireframe view.
       setRenderStyle(Viewport::RenderStyle::WIREFRAME,false);
@@ -127,37 +117,6 @@ namespace dtEditQt
       }
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
-   void OrthoViewport::keyPressEvent(QKeyEvent* e)
-   {
-      EditorViewport::keyPressEvent(e);
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void OrthoViewport::keyReleaseEvent(QKeyEvent* e)
-   {
-      EditorViewport::keyReleaseEvent(e);
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void OrthoViewport::mousePressEvent(QMouseEvent* e)
-   {
-      EditorViewport::mousePressEvent(e);
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void OrthoViewport::mouseReleaseEvent(QMouseEvent* e)
-   {
-      EditorViewport::mouseReleaseEvent(e);
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void OrthoViewport::onMouseMoveEvent(QMouseEvent* e, float dx, float dy)
-   {
-      EditorViewport::onMouseMoveEvent(e, dx, dy);
-
-      mObjectMotionModel->SetScale(450.0f / getCamera()->getZoom());
-   }
 
    ///////////////////////////////////////////////////////////////////////////////
    bool OrthoViewport::moveCamera(float dx, float dy)
@@ -198,13 +157,6 @@ namespace dtEditQt
       return true;
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   void OrthoViewport::setScene(dtCore::Scene* scene)
-   {
-      EditorViewport::setScene(scene);
-
-      mObjectMotionModel->SetScale(450.0f / getCamera()->getZoom());
-   }
 
    ///////////////////////////////////////////////////////////////////////////////
    void OrthoViewport::wheelEvent(QWheelEvent* e)
@@ -220,8 +172,10 @@ namespace dtEditQt
          getCamera()->zoom(0.7f);
       }
 
-      mObjectMotionModel->SetScale(450.0f / getCamera()->getZoom());
-      refresh();
+      // The motion model will not update unless the mouse moves,
+      // because of this we need to force it to update its' widget
+      // geometry.
+      mObjectMotionModel->UpdateWidgets();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -239,9 +193,10 @@ namespace dtEditQt
       else if (mMouseButton == Qt::RightButton)
       {
          osg::Vec3 nearPoint,farPoint;
-         int xLoc = e->pos().x();
-         int yLoc = int(getSceneView()->getViewport()->height()-e->pos().y());
-         getSceneView()->projectWindowXYIntoObject(xLoc, yLoc, nearPoint, farPoint);
+         //TODO
+         //int xLoc = e->pos().x();
+         //int yLoc = int(getSceneView()->getViewport()->height()-e->pos().y());
+         //getSceneView()->projectWindowXYIntoObject(xLoc, yLoc, nearPoint, farPoint);
          mZoomToPosition = nearPoint;
          mCameraMode = &OrthoViewport::CameraMode::CAMERA_ZOOM;
       }
@@ -260,6 +215,7 @@ namespace dtEditQt
          return false;
       }
 
+      mObjectMotionModel->SetInteractionEnabled(true);
       mCameraMode = &OrthoViewport::CameraMode::NOTHING;
       setInteractionMode(Viewport::InteractionMode::NOTHING);
       releaseMouseCursor();
@@ -287,11 +243,6 @@ namespace dtEditQt
       }
 
       return true;
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void OrthoViewport::warpWorldCamera(int x, int y)
-   {
    }
 
 } // namespace dtEditQt

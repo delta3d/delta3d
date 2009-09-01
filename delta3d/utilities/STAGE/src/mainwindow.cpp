@@ -29,6 +29,7 @@
 #include <dtEditQt/mainwindow.h>
 
 #include <prefix/dtstageprefix-src.h>
+#include <Qt/qfile.h>
 #include <QtGui/QApplication>
 #include <QtGui/QIcon>
 #include <QtGui/QMenu>
@@ -40,16 +41,16 @@
 #include <QtGui/QMessageBox>
 #include <QtGui/QCloseEvent>
 #include <QtGui/QActionGroup>
-#include <QtCore/QDir>
 #include <QtCore/QTimer>
 
 #include <dtActors/volumeeditactor.h>
-#include <dtCore/uniqueid.h>
 #include <dtCore/globals.h>
+#include <dtCore/deltawin.h>
 #include <dtCore/transform.h>
 #include <dtUtil/macros.h>
 #include <dtDAL/project.h>
 #include <dtDAL/librarymanager.h>
+#include <dtDAL/map.h>
 #include <dtUtil/fileutils.h>
 #include <dtEditQt/configurationmanager.h>
 #include <dtEditQt/editoractions.h>
@@ -71,8 +72,6 @@
 #include <dtEditQt/uiresources.h>
 #include <dtEditQt/externaltool.h>
 
-#include <osgDB/FileNameUtils>
-#include <osgDB/Registry>
 
 namespace dtEditQt
 {
@@ -411,20 +410,29 @@ namespace dtEditQt
       mPerspView = (PerspectiveViewport*)vpMgr.createViewport("Perspective View",
          ViewportManager::ViewportType::PERSPECTIVE);
       mPerspView->setAutoInteractionMode(true);
+      mPerspView->getCamera()->getDeltaCamera()->GetOSGCamera()->setCullMask(0x0F000001);  //magic number, based on ObjectMotionModel's mask
+      mPerspView->GetRootNode()->setNodeMask(0x00000001);
 
       mTopView = (OrthoViewport*)vpMgr.createViewport("Top View (XY)",
          ViewportManager::ViewportType::ORTHOGRAPHIC);
+      mTopView->setViewType(OrthoViewport::OrthoViewType::TOP,false);
       mTopView->setAutoInteractionMode(true);
+      mTopView->getCamera()->getDeltaCamera()->GetOSGCamera()->setCullMask(0x0F000002);
+      mTopView->GetRootNode()->setNodeMask(0x00000002);
 
       mSideView = (OrthoViewport*)vpMgr.createViewport("Side View (YZ)",
          ViewportManager::ViewportType::ORTHOGRAPHIC);
       mSideView->setViewType(OrthoViewport::OrthoViewType::SIDE,false);
       mSideView->setAutoInteractionMode(true);
+      mSideView->getCamera()->getDeltaCamera()->GetOSGCamera()->setCullMask(0x0F000004);
+      mSideView->GetRootNode()->setNodeMask(0x00000004);
 
       mFrontView = (OrthoViewport*)vpMgr.createViewport("Front View (XZ)",
          ViewportManager::ViewportType::ORTHOGRAPHIC);
       mFrontView->setViewType(OrthoViewport::OrthoViewType::FRONT,false);
       mFrontView->setAutoInteractionMode(true);
+      mFrontView->getCamera()->getDeltaCamera()->GetOSGCamera()->setCullMask(0x0F000008);
+      mFrontView->GetRootNode()->setNodeMask(0x00000008);
 
 
       // We now wrap each viewport in a viewport container to provide the
@@ -1614,4 +1622,5 @@ namespace dtEditQt
       // start plugins that were set in config file
       mPluginManager->StartPluginsInConfigFile();
    }
+
 } // namespace dtEditQt

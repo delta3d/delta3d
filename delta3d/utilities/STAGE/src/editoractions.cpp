@@ -74,18 +74,16 @@
 #include <dtUtil/log.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/librarysharingmanager.h>
-#include <dtCore/isector.h>
+#include <dtCore/transform.h>
 #include <dtDAL/project.h>
 #include <dtDAL/map.h>
 #include <dtDAL/mapxml.h>
-#include <dtDAL/exceptionenum.h>
 #include <dtDAL/transformableactorproxy.h>
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/actorproxyicon.h>
 #include <dtDAL/environmentactor.h>
 #include <dtDAL/librarymanager.h>
 #include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/map.h>
 #include <dtCore/globals.h>
 
 #include <sstream>
@@ -100,7 +98,6 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    EditorActions::EditorActions()
       : mExternalToolActionGroup(new QActionGroup(NULL))
-      , mIsector(new dtCore::Isector)
    {
       LOG_INFO("Initializing Editor Actions.");
       setupFileActions();
@@ -1155,12 +1152,16 @@ namespace dtEditQt
    void EditorActions::slotEditUndo()
    {
       EditorData::GetInstance().getUndoManager().doUndo();
+
+      ViewportManager::GetInstance().refreshAllViewports();
    }
 
    //////////////////////////////////////////////////////////////////////////////
    void EditorActions::slotEditRedo()
    {
       EditorData::GetInstance().getUndoManager().doRedo();
+
+      ViewportManager::GetInstance().refreshAllViewports();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -1395,45 +1396,52 @@ namespace dtEditQt
          return;
       }
 
-      // We're about to do a LOT of work, especially if lots of things are select
-      // so, start a change transaction.
-      EditorData::GetInstance().getMainWindow()->startWaitCursor();
-      EditorEvents::GetInstance().emitBeginChangeTransaction();
-
-      // Iterate through the current selection, trace a ray directly below it.  If there is
-      // an intersection, move the current proxy to that point.
-      ViewportOverlay::ActorProxyList::iterator itor;
-
-      mIsector->Reset();
-      mIsector->SetScene(scene);
-
-      for (itor = selection.begin(); itor != selection.end(); ++itor)
+      if (selection.size())
       {
-         dtDAL::ActorProxy* proxy = const_cast<dtDAL::ActorProxy*>(itor->get());
+         // We're about to do a LOT of work, especially if lots of things are select
+         // so, start a change transaction.
+         EditorData::GetInstance().getMainWindow()->startWaitCursor();
+         EditorEvents::GetInstance().emitBeginChangeTransaction();
+
+         std::vector<dtCore::DeltaDrawable*> ignoredDrawables;
+         for (int selectIndex = 0; selectIndex < (int)selection.size(); selectIndex++)
+         {
+            dtDAL::ActorProxy* proxy = selection[selectIndex].get();
+            if (proxy)
+            {
+               dtCore::DeltaDrawable* drawable;
+               proxy->GetActor(drawable);
+
+               if (drawable) ignoredDrawables.push_back(drawable);
+            }
+         }
+
+         dtDAL::ActorProxy* proxy = selection[0];
          dtDAL::TransformableActorProxy* tProxy =
             dynamic_cast<dtDAL::TransformableActorProxy*>(proxy);
 
          if (tProxy != NULL)
          {
-            osg::Vec3 pos = tProxy->GetTranslation();
+            osg::Vec3 position = tProxy->GetTranslation();
+            position = ViewportManager::GetInstance().GetSnapPosition(position, true, ignoredDrawables);
+            osg::Vec3 offset = position - tProxy->GetTranslation();
 
-            mIsector->SetStartPosition(pos);
-            mIsector->SetDirection(osg::Vec3(0, 0, -1));
-            mIsector->Reset();
-
-            // Find a possible intersection point.  If we find an intersection
-            // point, move the actor to that location.
-            if (mIsector->Update())
+            ViewportOverlay::ActorProxyList::iterator itor;
+            for (itor = selection.begin(); itor != selection.end(); ++itor)
             {
-               osgUtil::IntersectVisitor& iv = mIsector->GetIntersectVisitor();
-               osg::Vec3 p = iv.getHitList(mIsector->GetLineSegment())[0].getWorldIntersectPoint();
-               tProxy->SetTranslation(p);
+               proxy = const_cast<dtDAL::ActorProxy*>(itor->get());
+               tProxy = dynamic_cast<dtDAL::TransformableActorProxy*>(proxy);
+
+               if (tProxy != NULL)
+               {
+                  tProxy->SetTranslation(tProxy->GetTranslation() + offset);
+               }
             }
+
+            EditorEvents::GetInstance().emitEndChangeTransaction();
+            EditorData::GetInstance().getMainWindow()->endWaitCursor();
          }
       }
-
-      EditorEvents::GetInstance().emitEndChangeTransaction();
-      EditorData::GetInstance().getMainWindow()->endWaitCursor();
    }
 
    //////////////////////////////////////////////////////////////////////////////

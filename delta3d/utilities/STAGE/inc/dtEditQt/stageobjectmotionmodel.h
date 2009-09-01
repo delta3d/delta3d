@@ -29,8 +29,6 @@
 #include <dtCore/objectmotionmodel.h>
 #include <dtDAL/transformableactorproxy.h>
 
-#include <dtDAL/functor.h>
-
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
@@ -39,9 +37,6 @@
 class STAGEObjectMotionModel : public dtCore::ObjectMotionModel
 {
    DECLARE_MANAGEMENT_LAYER(STAGEObjectMotionModel)
-
-   typedef dtUtil::Functor<void, TYPELIST_3(osg::Vec2, osg::Vec3&, osg::Vec3&)> GetMouseLineFunc;
-   typedef dtUtil::Functor<osg::Vec2, TYPELIST_1(osg::Vec3)> ObjectToScreenFunc;
 
    public:
 
@@ -85,31 +80,7 @@ class STAGEObjectMotionModel : public dtCore::ObjectMotionModel
       *
       * @param[in] data  The message data
       */
-      void OnMessage(MessageData* data);
-
-      /**
-      * Resets the GetMouseLine callback function.
-      */
-      void ResetGetMouseLineFunc(void);
-
-      /**
-      * Sets the GetMouseLine callback function.
-      *
-      * @param[in]  func  The functor.
-      */
-      void SetGetMouseLineFunc(GetMouseLineFunc func);
-
-      /**
-      * Resets the Object to screen callback function.
-      */
-      void ResetObjectToScreenFunc(void);
-
-      /**
-      * Sets the Object to Screen callback function.
-      *
-      * @param[in]  func  The functor.
-      */
-      void SetObjectToScreenFunc(ObjectToScreenFunc func);
+      //void OnMessage(MessageData* data);
 
       /**
       * Adds a target to the target list.
@@ -148,45 +119,7 @@ class STAGEObjectMotionModel : public dtCore::ObjectMotionModel
 
    protected:
 
-      /**
-      * Calculates the 3D collision line that represents the mouse.
-      *
-      * @param[in]  mousePos  The position of the mouse in screen coords.
-      * @param[in]  start     The start position of the line.
-      * @param[in]  end       The end position of the line.
-      */
-      virtual void GetMouseLine(osg::Vec2 mousePos, osg::Vec3& start, osg::Vec3& end);
-
-      /**
-      * Calculates the screen coordinates of a 3d position in the world.
-      *
-      * @param[in]  objectPos  The position of the object in 3d space.
-      *
-      * @return                The position of the object in screen coords.
-      */
-      virtual osg::Vec2 GetObjectScreenCoordinates(osg::Vec3 objectPos);
-
    private:
-
-      /**
-      * This is the default callback for calculating the 3D collision
-      * line that represents the mouse.
-      *
-      * @param[in]  mousePos  The position of the mouse in screen coords.
-      * @param[in]  start     The start position of the line.
-      * @param[in]  end       The end position of the line.
-      */
-      void DefaultGetMouseLineFunc(osg::Vec2 mousePos, osg::Vec3& start, osg::Vec3& end);
-
-      /**
-      * This is the default callback for calculating the screen
-      * coordinates of a 3d position in the world.
-      *
-      * @param[in]  objectPos  The position of the object in 3d space.
-      *
-      * @return                The position of the object in screen coords.
-      */
-      osg::Vec2 DefaultGetObjectScreenCoordinates(osg::Vec3 objectPos);
 
       /**
       * This callback handles the actual translation of the target.
@@ -211,9 +144,6 @@ class STAGEObjectMotionModel : public dtCore::ObjectMotionModel
       virtual void OnScale(osg::Vec3 delta);
 
       std::vector<dtDAL::TransformableActorProxy*> mTargets;
-
-      GetMouseLineFunc mGetMouseLineFunc;
-      ObjectToScreenFunc mObjectToScreenFunc;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
