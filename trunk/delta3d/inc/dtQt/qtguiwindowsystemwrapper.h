@@ -23,14 +23,13 @@
  */
 
 #include <dtQt/export.h>
+#include <dtQt/glwidgetfactory.h>
 #include <osg/Version>
 #include <osg/GraphicsContext>
 #include <dtCore/refptr.h>
 
 namespace dtQt
 {
-   class GLWidgetFactory;
-
    class DT_QT_EXPORT QtGuiWindowSystemWrapper: public osg::GraphicsContext::WindowingSystemInterface
    {
       public:
@@ -66,6 +65,6 @@ namespace dtQt
          virtual ~QtGuiWindowSystemWrapper() {};
       private:
          dtCore::RefPtr<osg::GraphicsContext::WindowingSystemInterface> mInterface;
-         GLWidgetFactory* mWidgetFactory;
+         dtCore::RefPtr<GLWidgetFactory> mWidgetFactory;
    };
 }
