@@ -13,11 +13,7 @@ namespace dtEditQt
    class STAGEGLWidgetFactory : public dtQt::GLWidgetFactory
    {
    public:
-   	STAGEGLWidgetFactory()
-      {
-      }
-   	
-      virtual ~STAGEGLWidgetFactory()
+      STAGEGLWidgetFactory()
       {
       }
 
@@ -26,6 +22,10 @@ namespace dtEditQt
       {
          return new dtEditQt::STAGEGLWidget(drawOnSeparateThread, parent,
                                             shareWidget, f);
+      }
+   protected:
+      virtual ~STAGEGLWidgetFactory()
+      {
       }
    };
 }

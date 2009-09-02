@@ -26,6 +26,7 @@
 #define glwidgetfactory_h__
 
 #include <QtOpenGL/QGLWidget>
+#include <osg/Referenced>
 
 namespace dtQt
 {
@@ -35,20 +36,22 @@ namespace dtQt
      * for custom application requirements.
      * @see QtGuiWindowSystemWrapper::SetGLWidgetFactory()
      */
-   class GLWidgetFactory
+   class GLWidgetFactory : public osg::Referenced
    {
       public:
-   	   GLWidgetFactory()
-         {
-         }
-
-   	   ~GLWidgetFactory()
+         GLWidgetFactory()
          {
          }
 
          ///Overwrite to generate a custom OSGAdapterWidget
          virtual OSGAdapterWidget* CreateWidget(bool drawOnSeparateThread,  QWidget* parent = NULL,
                                                 const QGLWidget* shareWidget = NULL, Qt::WindowFlags f = NULL) = 0;
+
+      protected:
+         ~GLWidgetFactory()
+         {
+         }
+
    };
 }
 #endif // glwidgetfactory_h__
