@@ -51,6 +51,16 @@ namespace dtCore
          LogicalInputDevice(const std::string& name = "LogicalInputDevice");
 
          /**
+         * Adds a new logical button to this device.
+         *
+         * @param description a description of the button
+         * @param mapping the initial button mapping, or NULL for none
+         */
+         LogicalButton* AddButton(const std::string& description,
+            int buttonSymbol,
+            ButtonMapping* mapping = NULL);
+
+         /**
           * Adds a new logical button to this device.  Equivalent to AddButton(description,
           * new ButtonToButton(sourceButton)).
           *
@@ -101,15 +111,6 @@ namespace dtCore
          virtual ~LogicalInputDevice();
 
       private:
-            /**
-            * Adds a new logical button to this device.
-            *
-            * @param description a description of the button
-            * @param mapping the initial button mapping, or NULL for none
-            */
-            LogicalButton* AddButton(const std::string& description,
-                                       int buttonSymbol,
-                                       ButtonMapping* mapping = NULL);
 
    };
    
@@ -275,6 +276,103 @@ namespace dtCore
           * Updates the state of the target button.
           */
          void UpdateTargetButtonState();
+   };
+
+   /**
+   * Maps two buttons to a logical button.
+   */
+   class DT_CORE_EXPORT ButtonsToButton :  public ButtonMapping,
+      public ButtonListener
+   {
+   public:
+
+      /**
+      * Constructor.
+      *
+      * @param sourceButton the source button
+      */
+      ButtonsToButton(Button* firstButton, Button* secondButton);
+
+   protected:
+
+      /**
+      * Destructor.
+      */
+      virtual ~ButtonsToButton();
+
+   public:
+
+      /**
+      * Sets the first button.
+      *
+      * @param sourceButton the new source button
+      */
+      void SetFirstButton(Button* button);
+
+      /**
+      * Sets the second button.
+      *
+      * @param sourceButton the new source button
+      */
+      void SetSecondButton(Button* button);
+
+      /**
+      * Returns the first button.
+      *
+      * @return the current source button
+      */
+      Button* GetFirstButton();
+
+      /**
+      * Returns the second button.
+      *
+      * @return the current source button
+      */
+      Button* GetSecondButton();
+
+      /**
+      * Sets the target button.
+      *
+      * @param targetButton the new target button
+      */
+      virtual void SetTargetButton(LogicalButton* targetButton);
+
+      /**
+      * Gets the target button.
+      *
+      * @return the current target button
+      */
+      virtual LogicalButton* GetTargetButton();
+
+      /**
+      * Called when a button's state has changed.
+      *
+      * @param button the origin of the event
+      * @param oldState the old state of the button
+      * @param newState the new state of the button
+      */
+      virtual bool ButtonStateChanged(const Button* button,
+         bool oldState,
+         bool newState);
+
+   private:
+
+      /**
+      * The source button.
+      */
+      RefPtr<Button> mFirstButton;
+      RefPtr<Button> mSecondButton;
+
+      /**
+      * The target button.
+      */
+      RefPtr<LogicalButton> mTargetButton;
+
+
+      /**
+      * Updates the state of the target button.
+      */
+      void UpdateTargetButtonState();
    };
 
    /**

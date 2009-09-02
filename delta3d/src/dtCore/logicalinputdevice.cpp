@@ -251,7 +251,176 @@ namespace dtCore
    
       UpdateTargetButtonState();
    }
-   
+
+   /**
+   * Constructor.
+   *
+   * @param firstButton  the first button
+   * @param secondButton the second button
+   */
+   ButtonsToButton::ButtonsToButton(Button* firstButton, Button* secondButton) :
+      mFirstButton(firstButton),
+      mSecondButton(secondButton),
+      mTargetButton(NULL)
+   {}
+
+   /**
+   * Destructor.
+   */
+   ButtonsToButton::~ButtonsToButton()
+   {
+      if(mFirstButton.valid())
+      {
+         mFirstButton->RemoveButtonListener(this);
+      }
+      if(mSecondButton.valid())
+      {
+         mSecondButton->RemoveButtonListener(this);
+      }
+   }
+
+   /**
+   * Sets the first button.
+   *
+   * @param sourceButton the new source button
+   */
+   void ButtonsToButton::SetFirstButton(Button* button)
+   {
+      if(mFirstButton.valid())
+      {
+         mFirstButton->RemoveButtonListener(this);
+      }
+
+      mFirstButton = button;
+
+      if(mFirstButton.valid() && mTargetButton.valid())
+      {
+         mFirstButton->AddButtonListener(this);
+      }
+
+      UpdateTargetButtonState();
+   }
+
+   /**
+   * Sets the second button.
+   *
+   * @param sourceButton the new source button
+   */
+   void ButtonsToButton::SetSecondButton(Button* button)
+   {
+      if(mSecondButton.valid())
+      {
+         mSecondButton->RemoveButtonListener(this);
+      }
+
+      mSecondButton = button;
+
+      if(mSecondButton.valid() && mTargetButton.valid())
+      {
+         mSecondButton->AddButtonListener(this);
+      }
+
+      UpdateTargetButtonState();
+   }
+
+   /**
+   * Returns the first button.
+   *
+   * @return the current source button
+   */
+   Button* ButtonsToButton::GetFirstButton()
+   {
+      return mFirstButton.get();
+   }
+
+   /**
+   * Returns the second button.
+   *
+   * @return the current source button
+   */
+   Button* ButtonsToButton::GetSecondButton()
+   {
+      return mSecondButton.get();
+   }
+
+   /**
+   * Sets the target button.
+   *
+   * @param targetButton the new target button
+   */
+   void ButtonsToButton::SetTargetButton(LogicalButton* targetButton)
+   {
+      mTargetButton = targetButton;
+
+      if(mFirstButton.valid() && mSecondButton.valid())
+      {
+         if(mTargetButton.valid())
+         {
+            mFirstButton->AddButtonListener(this);
+            mSecondButton->AddButtonListener(this);
+         }
+         else
+         {
+            mFirstButton->RemoveButtonListener(this);
+            mSecondButton->RemoveButtonListener(this);
+         }
+      }
+
+      UpdateTargetButtonState();
+   }
+
+   /**
+   * Gets the target button.
+   *
+   * @return the current target button
+   */
+   LogicalButton* ButtonsToButton::GetTargetButton()
+   {
+      return mTargetButton.get();
+   }
+
+   /**
+   * Called when a button's state has changed.
+   *
+   * @param button the origin of the event
+   * @param oldState the old state of the button
+   * @param newState the new state of the button
+   */
+   bool ButtonsToButton::ButtonStateChanged(const Button* button, bool oldState, bool newState)
+   {
+      if(mTargetButton.valid())
+      {
+         // The target state is true if either first or second buttons are valid.
+         if (mFirstButton.valid() && mSecondButton.valid())
+         {
+            newState = mFirstButton->GetState() | mSecondButton->GetState();
+         }
+
+         return mTargetButton->SetState(newState);
+      }
+
+      return false;
+   }
+
+   /**
+   * Updates the state of the target button.
+   */
+   void ButtonsToButton::UpdateTargetButtonState()
+   {
+      if(mTargetButton.valid())
+      {
+         bool state = false;
+
+         // The target state is true if either first or second buttons are valid.
+         if (mFirstButton.valid() && mSecondButton.valid())
+         {
+            state = mFirstButton->GetState() | mSecondButton->GetState();
+         }
+
+         mTargetButton->SetState(state);
+      }
+   }
+
    /**
     * Gets the target button.
     *
