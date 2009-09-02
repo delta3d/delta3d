@@ -219,7 +219,7 @@ namespace dtGame
       {
          DECLARE_ENUM(LocalActorUpdatePolicy);
       public:
-         static LocalActorUpdatePolicy IGNORE;
+         static LocalActorUpdatePolicy IGNORE_ALL;
          static LocalActorUpdatePolicy ACCEPT_ALL;
          static LocalActorUpdatePolicy ACCEPT_WITH_PROPERTY_FILTER;
          LocalActorUpdatePolicy(const std::string& name);

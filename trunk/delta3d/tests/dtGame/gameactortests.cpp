@@ -200,9 +200,21 @@ void GameActorTests::TestGameActorProxy()
       CPPUNIT_ASSERT_MESSAGE("Game Actor should not initially be published", !gap->IsPublished());
       CPPUNIT_ASSERT_MESSAGE("Game Actor should not initially be remote", !gap->IsRemote());
 
+
+      CPPUNIT_ASSERT_MESSAGE("GameActorProxy's ownership should default to SERVER_LOCAL",
+               gap->GetInitialOwnership() == dtGame::GameActorProxy::Ownership::SERVER_LOCAL);
+
       gap->SetInitialOwnership(dtGame::GameActorProxy::Ownership::SERVER_LOCAL);
 
       CPPUNIT_ASSERT_MESSAGE("GameActorProxy's ownership should have been set", gap->GetInitialOwnership() == dtGame::GameActorProxy::Ownership::SERVER_LOCAL);
+
+      CPPUNIT_ASSERT_MESSAGE("GameActorProxy local actor update policy should default to ACCEPT_ALL",
+               gap->GetLocalActorUpdatePolicy() == dtGame::GameActorProxy::LocalActorUpdatePolicy::ACCEPT_ALL);
+
+      gap->SetLocalActorUpdatePolicy(dtGame::GameActorProxy::LocalActorUpdatePolicy::IGNORE_ALL);
+
+      CPPUNIT_ASSERT_MESSAGE("GameActorProxy local actor update policy should now be IGNORE_ALL",
+               gap->GetLocalActorUpdatePolicy() == dtGame::GameActorProxy::LocalActorUpdatePolicy::IGNORE_ALL);
    }
    catch (const dtUtil::Exception& e)
    {
