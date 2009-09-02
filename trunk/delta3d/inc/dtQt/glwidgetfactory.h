@@ -25,6 +25,7 @@
 #ifndef glwidgetfactory_h__
 #define glwidgetfactory_h__
 
+#include <QtOpenGL/QGLWidget>
 
 namespace dtQt
 {

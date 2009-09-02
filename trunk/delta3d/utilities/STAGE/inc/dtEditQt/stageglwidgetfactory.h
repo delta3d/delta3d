@@ -21,7 +21,7 @@ namespace dtEditQt
       {
       }
 
-      dtQt::OSGAdapterWidget* CreateWidget(bool drawOnSeparateThread,  QWidget* parent = NULL,
+      virtual dtQt::OSGAdapterWidget* CreateWidget(bool drawOnSeparateThread,  QWidget* parent = NULL,
                                            const QGLWidget* shareWidget = NULL, Qt::WindowFlags f = NULL)
       {
          return new dtEditQt::STAGEGLWidget(drawOnSeparateThread, parent,
