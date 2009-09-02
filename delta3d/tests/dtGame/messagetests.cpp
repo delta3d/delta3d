@@ -1455,8 +1455,8 @@ void MessageTests::TestDefaultMessageProcessorWithLocalActorUpdates()
    dtGame::DefaultMessageProcessor& defMsgProcessor = *new dtGame::DefaultMessageProcessor();
    mGameManager->AddComponent(defMsgProcessor, dtGame::GameManager::ComponentPriority::HIGHEST);
 
-   TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(false, true, dtGame::GameActorProxy::LocalActorUpdatePolicy::IGNORE);
-   TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(false, false, dtGame::GameActorProxy::LocalActorUpdatePolicy::IGNORE);
+   TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(false, true, dtGame::GameActorProxy::LocalActorUpdatePolicy::IGNORE_ALL);
+   TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(false, false, dtGame::GameActorProxy::LocalActorUpdatePolicy::IGNORE_ALL);
    TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(false, true, dtGame::GameActorProxy::LocalActorUpdatePolicy::ACCEPT_ALL);
    TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(false, false, dtGame::GameActorProxy::LocalActorUpdatePolicy::ACCEPT_ALL);
    TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(false, true, dtGame::GameActorProxy::LocalActorUpdatePolicy::ACCEPT_WITH_PROPERTY_FILTER);
@@ -1566,7 +1566,7 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool
    mGameManager->SendMessage(*actorUpdateMsg);
    dtCore::System::GetInstance().Step();
 
-   if (remote || policy != dtGame::GameActorProxy::LocalActorUpdatePolicy::IGNORE)
+   if (remote || policy != dtGame::GameActorProxy::LocalActorUpdatePolicy::IGNORE_ALL)
    {
       bool acceptWithFilter = !remote && policy == dtGame::GameActorProxy::LocalActorUpdatePolicy::ACCEPT_WITH_PROPERTY_FILTER;
 
