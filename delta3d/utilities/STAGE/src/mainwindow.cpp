@@ -29,7 +29,7 @@
 #include <dtEditQt/mainwindow.h>
 
 #include <prefix/dtstageprefix-src.h>
-#include <Qt/qfile.h>
+#include <QtCore/QFile>
 #include <QtGui/QApplication>
 #include <QtGui/QIcon>
 #include <QtGui/QMenu>
