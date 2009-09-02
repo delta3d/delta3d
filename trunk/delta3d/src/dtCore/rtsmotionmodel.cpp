@@ -29,6 +29,9 @@ RTSMotionModel::RTSMotionModel( dtCore::Keyboard *keyboard
    // set some parameters
    SetDistance(20.0f);
 
+   // JPH: This makes sure the camera does not rotate towards the sky.
+   SetElevationMaxLimit(0.0f);
+
    // azimuth (left/right angle)
    SetAzimuthAxis(GetDefaultLogicalInputDevice()->AddAxis(
       "orbit vertical",
@@ -123,25 +126,29 @@ bool RTSMotionModel::AxisStateChanged(const dtCore::Axis *axis, double oldState,
    // do value correction here
 
    // correct the pitch
-   if (GetTarget())
-   {
-      dtCore::Transform transform;
+   // JPH: Removed this algorithm here because it is already handled
+   // JPH: by the Orbit Motion Model by adjusting the elevation max limit.
+   // JPH: It also works better because it doesn't force the camera to
+   // JPH: translate down (Z axis) when you try to go beyond the limit.
+   //if (GetTarget())
+   //{
+   //   dtCore::Transform transform;
 
-      // get the current orientation
-      osg::Vec3 hpr;
-      GetTarget()->GetTransform(transform);
-      transform.GetRotation(hpr);
+   //   // get the current orientation
+   //   osg::Vec3 hpr;
+   //   GetTarget()->GetTransform(transform);
+   //   transform.GetRotation(hpr);
 
-      // clamp pitch
-      if (hpr[1] > 0.0f)
-      {
-         hpr[1] = 0.0f;
-      }
+   //   // clamp pitch
+   //   if (hpr[1] > 0.0f)
+   //   {
+   //      hpr[1] = 0.0f;
+   //   }
 
-      // set rotation
-      transform.SetRotation(hpr);
-      GetTarget()->SetTransform(transform);
-   }
+   //   // set rotation
+   //   transform.SetRotation(hpr);
+   //   GetTarget()->SetTransform(transform);
+   //}
 
    return rval;
 }
