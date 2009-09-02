@@ -9,8 +9,8 @@ namespace dtCore {
    /**
    * Maps an axis to a logical axis with an arbitrary transformation.
    */
-   class AxisToAxisTransformation : public AxisMapping,
-                                    public AxisListener
+   class DT_CORE_EXPORT AxisToAxisTransformation : public AxisMapping,
+                                                   public AxisListener
    {
    public:
 
