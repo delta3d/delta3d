@@ -499,6 +499,12 @@ bool Application::AppXMLApplicator::operator ()(const ApplicationConfigData& dat
       app->SetConfigPropertyValue(i->first, i->second);
    }
 
+   if (data.REALIZE_UPON_CREATE)
+   {
+      dwin->GetOsgViewerGraphicsWindow()->realize();
+      dwin->GetOsgViewerGraphicsWindow()->makeCurrent();
+   }
+
    // John's unwittingly caught a confusing aspect of the Applications's config file here.
    // Historically, the Window's "name" attribute is used for the WindowTitle, while other
    // elements, such as Screen, use the "name" attribute for the Base name. John had followed
@@ -512,11 +518,6 @@ bool Application::AppXMLApplicator::operator ()(const ApplicationConfigData& dat
    dwin->SetPosition(data.WINDOW_X, data.WINDOW_Y, data.RESOLUTION.width, data.RESOLUTION.height);
    dwin->ShowCursor(data.SHOW_CURSOR);
    dwin->SetFullScreenMode(data.FULL_SCREEN);
-   if (data.REALIZE_UPON_CREATE)
-   {
-      dwin->GetOsgViewerGraphicsWindow()->realize();
-      dwin->GetOsgViewerGraphicsWindow()->makeCurrent();
-   }
 
    // change the resolution if needed and valid
    if (data.CHANGE_RESOLUTION)
