@@ -156,6 +156,21 @@ namespace dtABC
          const osg::Vec2& GetBackSize() const;
 
          /**
+         * Sets the background border size.
+         *
+         * @param[in]  size  The width/height of the border.
+         */
+         void SetBackBorderSize(osg::Vec2 size);
+
+         /**
+          * This will flag the object to use an auto calculated
+          * text back size.
+          *
+          * @param[in]  enabled  Use it or not?
+          */
+         void SetAutoBackSizeEnabled(bool enabled);
+
+         /**
           * Set whether the label background should be visible or not.
           */
          void SetBackVisible(bool visible);
@@ -248,6 +263,9 @@ namespace dtABC
          void Update();
 
       private:
+         bool      mAutoBackSize;
+         osg::Vec2 mBackBorderSize;
+
          osg::Vec2 mBackdropDims;
          dtCore::RefPtr<osgText::Text> mTextNode;
          dtCore::RefPtr<osg::Geometry> mBackdrop;

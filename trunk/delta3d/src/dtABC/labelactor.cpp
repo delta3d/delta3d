@@ -126,6 +126,7 @@ namespace dtABC
       , mBackdrop(new osg::Geometry)
       , mBackdropVerts(NULL)
       , mFontFile()
+      , mAutoBackSize(true)
    {
       osg::Group* root = static_cast<osg::Group*>(GetOSGNode());
 
@@ -200,6 +201,7 @@ namespace dtABC
    void LabelActor::SetText(const std::string& text)
    {
       mTextNode->setText(text);
+      Update();
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -306,6 +308,7 @@ namespace dtABC
    /////////////////////////////////////////////////////////////////////////////
    void LabelActor::SetBackWidth(float width)
    {
+      mAutoBackSize = false;
       mBackdropDims.x() = width;
       Update();
    }
@@ -319,6 +322,7 @@ namespace dtABC
    /////////////////////////////////////////////////////////////////////////////
    void LabelActor::SetBackHeight(float height)
    {
+      mAutoBackSize = false;
       mBackdropDims.y() = height;
       Update();
    }
@@ -332,6 +336,7 @@ namespace dtABC
    /////////////////////////////////////////////////////////////////////////////
    void LabelActor::SetBackSize(const osg::Vec2& backSize)
    {
+      mAutoBackSize = false;
       mBackdropDims = backSize;
       Update();
    }
@@ -340,6 +345,20 @@ namespace dtABC
    const osg::Vec2& LabelActor::GetBackSize() const
    {
       return mBackdropDims;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void LabelActor::SetBackBorderSize(osg::Vec2 size)
+   {
+      mBackBorderSize = size;
+      Update();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void LabelActor::SetAutoBackSizeEnabled(bool enabled)
+   {
+      mAutoBackSize = enabled;
+      Update();
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -357,12 +376,25 @@ namespace dtABC
    /////////////////////////////////////////////////////////////////////////////
    void LabelActor::Update()
    {
-      float halfWidth = mBackdropDims.x() * 0.5f;
-      float halfHeight = mBackdropDims.y() * 0.5f;
-      (*mBackdropVerts)[0].set(-halfWidth, -halfHeight, 0.0f); // LEFT-BOTTOM
-      (*mBackdropVerts)[1].set( halfWidth, -halfHeight, 0.0f); // RIGHT-BOTTOM
-      (*mBackdropVerts)[2].set( halfWidth,  halfHeight, 0.0f); // RIGHT-TOP
-      (*mBackdropVerts)[3].set(-halfWidth,  halfHeight, 0.0f); // LEFT-TOP
+      if (mAutoBackSize)
+      {
+         osg::BoundingBox bounds = mTextNode->getBound();
+
+         (*mBackdropVerts)[0].set(bounds.xMin() - mBackBorderSize.x(), bounds.yMin() - mBackBorderSize.y(), 0.0f); // LEFT-BOTTOM
+         (*mBackdropVerts)[1].set(bounds.xMax() + mBackBorderSize.x(), bounds.yMin() - mBackBorderSize.y(), 0.0f); // RIGHT-BOTTOM
+         (*mBackdropVerts)[2].set(bounds.xMax() + mBackBorderSize.x(), bounds.yMax() + mBackBorderSize.y(), 0.0f); // RIGHT-TOP
+         (*mBackdropVerts)[3].set(bounds.xMin() - mBackBorderSize.x(), bounds.yMax() + mBackBorderSize.y(), 0.0f); // LEFT-TOP
+      }
+      // Old implementation to preserve backward compatibility...
+      else
+      {
+         float halfWidth = (mBackdropDims.x() * 0.5f) + (mBackBorderSize.x() * 2.0f);
+         float halfHeight = (mBackdropDims.y() * 0.5f) + (mBackBorderSize.y() * 2.0f);
+         (*mBackdropVerts)[0].set(-halfWidth, -halfHeight, 0.0f); // LEFT-BOTTOM
+         (*mBackdropVerts)[1].set( halfWidth, -halfHeight, 0.0f); // RIGHT-BOTTOM
+         (*mBackdropVerts)[2].set( halfWidth,  halfHeight, 0.0f); // RIGHT-TOP
+         (*mBackdropVerts)[3].set(-halfWidth,  halfHeight, 0.0f); // LEFT-TOP
+      }
 
       // Reset the vertex positions.
       mBackdrop->setVertexArray(mBackdropVerts.get());
