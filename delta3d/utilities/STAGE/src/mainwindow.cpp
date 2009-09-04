@@ -438,23 +438,45 @@ namespace dtEditQt
       // We now wrap each viewport in a viewport container to provide the
       // toolbar and right click menu add-ons which are needed by the editor
       // for each viewport.
-      ViewportContainer* container = NULL;
+      ViewportContainer* topContainer = new ViewportContainer(mTopView, vSplit1);
+      ViewportContainer* frontContainer = new ViewportContainer(mFrontView, vSplit1);
+      ViewportContainer* sideContainer = new ViewportContainer(mSideView, vSplit2);
+      ViewportContainer* perspContainer = new ViewportContainer(mPerspView, vSplit2);
 
-      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, CONF_MGR_SHOW_SIDE_VIEW) != "false")
+      bool bTopHidden = false;
+      if (ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, CONF_MGR_SHOW_TOP_VIEW) == "false")
       {
-         container = new ViewportContainer(mSideView, vSplit2);
+         mTopView->GetQGLWidget()->hide();
+         topContainer->hide();
+         bTopHidden = true;
       }
-      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, CONF_MGR_SHOW_PERSP_VIEW) != "false")
+
+      if (ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, CONF_MGR_SHOW_FRONT_VIEW) == "false")
       {
-         container = new ViewportContainer(mPerspView, vSplit2);
+         mFrontView->GetQGLWidget()->hide();
+         frontContainer->hide();
+         if (bTopHidden)
+         {
+            vSplit1->hide();
+         }
       }
-      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, CONF_MGR_SHOW_TOP_VIEW) != "false")
+
+      bool bBottomHidden = false;
+      if (ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, CONF_MGR_SHOW_SIDE_VIEW) == "false")
       {
-         container = new ViewportContainer(mTopView, vSplit1);
+         mSideView->GetQGLWidget()->hide();
+         sideContainer->hide();
+         bBottomHidden = true;
       }
-      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, CONF_MGR_SHOW_FRONT_VIEW) != "false")
+
+      if (ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, CONF_MGR_SHOW_PERSP_VIEW) == "false")
       {
-         container = new ViewportContainer(mFrontView, vSplit1);
+         mPerspView->GetQGLWidget()->hide();
+         perspContainer->hide();
+         if (bBottomHidden)
+         {
+            vSplit2->hide();
+         }
       }
 
       // Create our editor container for all of our views.
