@@ -28,7 +28,29 @@ extern "C" void ODEErrorHandler(int errnum, const char* msg, va_list ap)
    assert(false);
 }
 
-bool dtCore::ODEController::kInitialized = false;
+namespace dtCore
+{
+   static OpenThreads::Atomic ODERefCount;
+
+   void RefODE()
+   {
+      if (++ODERefCount == 1)
+      {
+         if (!dInitODE2(0))
+         {
+            LOG_ERROR("ODE failed to initialize.");
+         }
+      }
+   }
+
+   void DerefODE()
+   {
+      if (--ODERefCount == 0)
+      {
+         dCloseODE();
+      }
+   }
+}
 
 const dtUtil::RefString dtCore::ODEController::MESSAGE_COLLISION("collision");
 const dtUtil::RefString dtCore::ODEController::MESSAGE_PHYSICS_STEP("physics_step");
@@ -57,20 +79,15 @@ mMsgSender(msgSender)
 }
 
 //////////////////////////////////////////////////////////////////////////
+unsigned dtCore::ODEController::GetODERefCount()
+{
+   return ODERefCount;
+}
+
+//////////////////////////////////////////////////////////////////////////
 void dtCore::ODEController::Ctor()
 {
-   if (kInitialized == false)
-   {
-      if (dInitODE2(0))
-      {
-         kInitialized = true;
-      }
-      else
-      {
-         LOG_ERROR("ODE failed to initialize.");
-      }
-   }
-
+   RefODE();
    //supply our method to be called when geoms actually collide
    mSpaceWrapper->SetDefaultCollisionCBFunc(dtCore::ODESpaceWrap::CollisionCBFunc(this, &ODEController::DefaultCBFunc));
 
@@ -79,14 +96,11 @@ void dtCore::ODEController::Ctor()
    dSetErrorHandler(ODEErrorHandler);
 }
 
+
 //////////////////////////////////////////////////////////////////////////
 dtCore::ODEController::~ODEController()
 {
-   if (kInitialized == true)
-   {
-      dCloseODE();
-      kInitialized = false;
-   }
+   DerefODE();
 
    // Since we are going to destroy all the bodies in our world with dWorldDestroy,
    // we must remove the references to the bodies associated with their default collision

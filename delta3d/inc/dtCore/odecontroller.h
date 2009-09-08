@@ -36,7 +36,6 @@
 #include <ode/common.h>
 #include <ode/collision_space.h>
 
-
 namespace dtCore
 {
    class Transformable;
@@ -161,6 +160,10 @@ namespace dtCore
 
          return this->GetContactJointGroupID();
       }
+
+      /// @return the number of instances of this class that are holding a reference to the static ODE initialization.
+      static unsigned GetODERefCount();
+
    protected:
       virtual ~ODEController();
 
@@ -184,8 +187,6 @@ namespace dtCore
       TransformableVector mCollidableContents; ///<The physical contents of the scene
 
       dtCore::ObserverPtr<dtCore::Base> mMsgSender; ///<only to send out a "collision" message
-
-      static bool kInitialized; ///< static flag to track if ODE has been init'd
    };
 }
 #endif // odeiterator_h__
