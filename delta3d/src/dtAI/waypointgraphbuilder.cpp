@@ -102,7 +102,7 @@ namespace dtAI
       //returns true if the value was added to the container
       bool operator()(typename _Container::reference _Val)
       {	// push value into container
-         _Container::iterator iter = std::find(container->begin(), container->end(), _Val);
+         typename _Container::iterator iter = std::find(container->begin(), container->end(), _Val);
          if(iter != container->end())
          {
             container->erase(iter);
