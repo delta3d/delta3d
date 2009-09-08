@@ -73,7 +73,11 @@ namespace dtAI
 
    void NavMesh::AddEdge(const WaypointInterface* pFrom, const WaypointInterface* pTo)
    {
-      mNavMesh.insert( NavMeshPair(pFrom->GetID(), new WaypointPair(pFrom, pTo)));
+      //adding check for duplicates
+      if(!ContainsEdge(pFrom, pTo))
+      {
+         mNavMesh.insert( NavMeshPair(pFrom->GetID(), new WaypointPair(pFrom, pTo)));
+      }
    }
 
    void NavMesh::AddPathSegment(const WaypointInterface* pFrom, const WaypointInterface* pTo)

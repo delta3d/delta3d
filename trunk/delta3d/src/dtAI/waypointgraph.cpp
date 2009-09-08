@@ -379,15 +379,26 @@ namespace dtAI
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void WaypointGraph::CreateSearchLevel(WaypointGraphBuilder* builder, unsigned level)
+   void WaypointGraph::CreateSearchGraph(WaypointGraphBuilder* builder, unsigned maxLevels)
+   {      
+      bool success = true;
+      for(unsigned i = 1; i < maxLevels && success; ++i)
+      {
+         success = CreateSearchLevel(builder, i);
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   bool WaypointGraph::CreateSearchLevel(WaypointGraphBuilder* builder, unsigned level)
    {
       if(level > 0)
       {
-         builder->CreateNextSearchLevel(mImpl->GetSearchLevel(level - 1));
+         return builder->CreateNextSearchLevel(mImpl->GetSearchLevel(level - 1));
       }
       else
       {
          LOG_ERROR("Cannot create search level 0, search level 0 represents the concrete waypoints.");
+         return false;
       }
 
    }

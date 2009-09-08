@@ -335,7 +335,7 @@ void WaypointGraphTests::CreateWaypoints()
    mGraph->AddEdge(wpArray[16], wpArray[15]);
 
    dtCore::RefPtr<WaypointGraphBuilder> mBuilder = new WaypointGraphBuilder(*mAIInterface, *mGraph);
-   mGraph->CreateSearchLevel(mBuilder.get(), 1);
+   mGraph->CreateSearchGraph(mBuilder.get(), 10);
 }
 
 void WaypointGraphTests::TestBuildGraph()
@@ -343,10 +343,24 @@ void WaypointGraphTests::TestBuildGraph()
    CreateWaypoints();
 
    
-   CPPUNIT_ASSERT(mGraph->GetNumSearchLevels() == 2);   
+   CPPUNIT_ASSERT(mGraph->GetNumSearchLevels() == 4);   
+   CPPUNIT_ASSERT(mGraph->GetSearchLevel(0)->mNodes.size() == 16);   
+   CPPUNIT_ASSERT(mGraph->GetSearchLevel(1)->mNodes.size() == 6);   
+   CPPUNIT_ASSERT(mGraph->GetSearchLevel(2)->mNodes.size() == 3); 
+   CPPUNIT_ASSERT(mGraph->GetSearchLevel(3)->mNodes.size() == 1);
+
 
    //there should be paths between all nodes now
-   CPPUNIT_ASSERT(mGraph->HasPath(wpArray[1], wpArray[2]));
+   for(int i = 1; i < 17; ++i)
+   {
+      for(int j = 1; j < 17; ++j)
+      {
+         if(i != j)
+         {
+            CPPUNIT_ASSERT(mGraph->HasPath(wpArray[i], wpArray[j]));
+         }
+      }
+   }
 
    //cleanup
    mGraph->Clear();

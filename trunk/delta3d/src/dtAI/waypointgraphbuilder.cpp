@@ -205,7 +205,7 @@ namespace dtAI
    //}
 
    //////////////////////////////////////////////////////////////////////////
-   void WaypointGraphBuilder::CreateNextSearchLevel(WaypointGraph::SearchLevel* sl)
+   bool WaypointGraphBuilder::CreateNextSearchLevel(WaypointGraph::SearchLevel* sl)
    {
       mUnAssignedNodes.clear();
       mAssignedNodes.clear();
@@ -225,6 +225,7 @@ namespace dtAI
       CreateSearchLevelNavMesh(*(sl->mNavMesh), newSearchLevel);
 
       //return ConvertFromBuilderSearchLevel(newSearchLevel.get());
+      return !mAssignedNodes.empty();
    }
          
 
@@ -280,12 +281,17 @@ namespace dtAI
          const WaypointInterface* curWp = nodesToBuild.back();
          nodesToBuild.pop_back();
 
-         ConstWaypointArray cliques;
-         FindCliques(curWp, nm, cliques);
+         ConstWaypointArray canidates, tmp;
+         //find all bidirectional paths
+         FindCanidates(curWp, nm, canidates);
 
-         if(!cliques.empty())
-         {
-            WaypointCollection* wpColl = CreateClique(1, curWp, cliques, nm);
+         //remove all nodes already assigned
+         FindAllMatches(canidates, mAssignedNodes, insert_back<ConstWaypointArray>(tmp));
+         std::for_each(tmp.begin(), tmp.end(), array_remove<ConstWaypointArray>(canidates));      
+
+         if(!canidates.empty())
+         {  
+            WaypointCollection* wpColl = CreateClique(1, curWp, canidates, nm);
 
             //store the condensed node
             wl->mNodes.push_back(wpColl);
@@ -345,8 +351,6 @@ namespace dtAI
 
       mAssignedNodes.push_back(curWay);
 
-      //todo- insert all child paths
-      
       int totalCount = dtUtil::Min(int(cliques.size()), numChildren);
       for(int childNum = 0; childNum < totalCount; ++childNum)
       {
