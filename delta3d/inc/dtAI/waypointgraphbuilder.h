@@ -55,7 +55,7 @@ namespace dtAI
       public:
 
          //virtual dtCore::RefPtr<WaypointGraph> CreateWaypointGraph(const NavMesh& nm);
-         virtual void CreateNextSearchLevel(WaypointGraph::SearchLevel* sl);
+         virtual bool CreateNextSearchLevel(WaypointGraph::SearchLevel* sl);
 
       protected:
 

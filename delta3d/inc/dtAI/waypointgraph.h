@@ -79,8 +79,15 @@ namespace dtAI
 
       /**
       *  You must run Create() after you make changes to the underlying structure.	
+      *     This function will recreate the whole tree.
       */
-      void CreateSearchLevel(WaypointGraphBuilder* builder, unsigned level);
+      void CreateSearchGraph(WaypointGraphBuilder* builder, unsigned maxLevels);
+
+      /**
+      *  Creates an individual level of the tree, SearchLevel level-1 must exist.
+      *     level 0 is by default the concrete waypoints.
+      */
+      bool CreateSearchLevel(WaypointGraphBuilder* builder, unsigned level);
       
       /**
       * Inserting waypoints into the tree structure.
