@@ -196,6 +196,8 @@ void ODEPhysicsTests::TestSettingTheCoG()
 //////////////////////////////////////////////////////////////////////////
 void ODEPhysicsTests::TestODEControllerDestructor()
 {
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("1 references should exist for ode including the unit test global unit test application.", 1U, dtCore::ODEController::GetODERefCount());
+
    dtCore::ObserverPtr<dtCore::ODEController> ctrl = new dtCore::ODEController();
  
    dtCore::ObserverPtr<dtCore::Scene> sceneObserver;
@@ -208,6 +210,10 @@ void ODEPhysicsTests::TestODEControllerDestructor()
 
       CPPUNIT_ASSERT_EQUAL_MESSAGE("ODEController should have a reference count of 1.",
                                    1, ctrl->referenceCount());
+
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("2 references should exist for ode.", 2U, dtCore::ODEController::GetODERefCount());
+      dtCore::RefPtr<dtCore::Scene> scene2 = new dtCore::Scene();
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("3 references should exist for ode.", 3U, dtCore::ODEController::GetODERefCount());
    }
 
    //scene goes out of scope, should be de-referenced and destroyed
@@ -217,4 +223,6 @@ void ODEPhysicsTests::TestODEControllerDestructor()
    //Scene de-referenced ODEController so it should have been destroyed
    CPPUNIT_ASSERT_MESSAGE("ODEController should be deleted when the Scene does.",
                            ctrl.get() == NULL);
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("1 reference should exist for ode because of the global unit test application.", 1U, dtCore::ODEController::GetODERefCount());
 }
