@@ -21,9 +21,11 @@
 
 #include <dtAI/waypointcollection.h>
 #include <dtAI/waypointpair.h>
-#include <dtUtil/log.h>
-
+#include <dtAI/navmesh.h>
 #include <dtAI/waypointtypes.h>
+
+
+#include <dtUtil/log.h>
 
 namespace dtAI
 {
@@ -36,6 +38,7 @@ namespace dtAI
       , mLeaf (false)
       , mRadius(0.0f)
       , mPosition()
+      , mChildEdges(new NavMesh())
    {
 
    }
@@ -47,6 +50,7 @@ namespace dtAI
       , mLeaf (false)
       , mRadius(0.0f)
       , mPosition(pos)
+      , mChildEdges(new NavMesh())
    {
 
    }
@@ -58,6 +62,7 @@ namespace dtAI
       , mLeaf(way.mLeaf)
       , mRadius(way.mRadius)
       , mPosition(way.mPosition)
+      , mChildEdges(new NavMesh())
    {
 
    }
@@ -111,6 +116,50 @@ namespace dtAI
    }
 
    /////////////////////////////////////////////////////////////////////////////
+   void WaypointCollection::Insert(const WaypointInterface* waypoint)
+   {
+      if(waypoint->GetWaypointType() == *WaypointTypes::WAYPOINT_COLLECTION)
+      {
+         const WaypointCollection* wc = dynamic_cast<const WaypointCollection*>(waypoint);
+         
+         if(wc != NULL)
+         {
+            AddChild(wc);
+         }
+         else
+         {
+            LOG_ERROR("Error adding WaypointCollection '" + waypoint->ToString() + "' as child of WaypointCollection '" + ToString() + "'.");
+         }
+      }
+      else
+      {
+         InsertWaypoint(waypoint);
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void WaypointCollection::Remove(const WaypointInterface* waypoint)
+   {
+      if(waypoint->GetWaypointType() == *WaypointTypes::WAYPOINT_COLLECTION)
+      {
+         const WaypointCollection* wc = dynamic_cast<const WaypointCollection*>(waypoint);
+
+         if(wc != NULL)
+         {
+            RemoveChild(wc);
+         }
+         else
+         {
+            LOG_ERROR("Error removing WaypointCollection '" + waypoint->ToString() + "' from WaypointCollection '" + ToString() + "'.");
+         }
+      }
+      else
+      {
+         RemoveWaypoint(waypoint);
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
    void WaypointCollection::InsertWaypoint(const WaypointInterface* waypoint)
    {
       //if we were not flagged as a leaf but don't have any children
@@ -128,7 +177,7 @@ namespace dtAI
       }
       else 
       {
-         WaypointCollection* closestChild = FindClosestChild(*waypoint);
+         /*WaypointCollection* closestChild = FindClosestChild(*waypoint);
          if(closestChild != NULL)
          {
             closestChild->InsertWaypoint(waypoint);
@@ -136,34 +185,37 @@ namespace dtAI
          else
          {
             LOG_ERROR("A waypoint collection thinks it's not a leaf but FindClosestChild() returns NULL.");
-         }
+         }*/
          
+         LOG_ERROR("Only leaf nodes may hold concrete waypoints, if this is a WaypointCollection use AddChild().");
       }         
       
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void WaypointCollection::AddChild(dtCore::RefPtr<WaypointCollection> waypoint)
+   void WaypointCollection::AddChild(dtCore::RefPtr<const WaypointCollection> waypoint)
    {
-      //add to the waypoint tree
+      //add to the waypoint tree, it only becomes a leaf by inserting a waypoint into it
       if(mLeaf)
       {
-        LOG_ERROR("Should not be inserting WaypointCollection into leaf node.");
+        LOG_ERROR("WaypointCollection leaf nodes may only hold concrete waypoints, at some point a concrete waypoint was childed to this node.");
       }
       else
       {
-         insert_subtree(waypoint.get(), 0);
+         WaypointCollection* wc = const_cast<WaypointCollection*>(waypoint.get());
+         WaypointTree::insert_subtree(wc, 0);
+         Recalculate();
       }         
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void WaypointCollection::RemoveChild(dtCore::RefPtr<WaypointCollection> waypoint)
+   void WaypointCollection::RemoveChild(dtCore::RefPtr<const WaypointCollection> waypoint)
    {         
       //a check to make sure we are indeed the parent
       if( (waypoint->parent() != NULL) && (waypoint->parent()->value->GetID() == GetID()) )
-      {
-         
-         WaypointTree::remove_subtree(waypoint.get());
+      {         
+         WaypointCollection* wc = const_cast<WaypointCollection*>(waypoint.get());
+         WaypointTree::remove_subtree(wc);
          Recalculate();
       }
    }
@@ -190,64 +242,64 @@ namespace dtAI
 
 
    /////////////////////////////////////////////////////////////////////////////
-   WaypointCollection* WaypointCollection::FindClosestChild(const WaypointInterface& waypoint)
-   {
-      //may return null if is leaf node
-      WaypointTreeConstChildIterator iter = begin_child();
-      WaypointTreeConstChildIterator iterEnd = end_child();
+   //WaypointCollection* WaypointCollection::FindClosestChild(const WaypointInterface& waypoint)
+   //{
+   //   //may return null if is leaf node
+   //   WaypointTreeConstChildIterator iter = begin_child();
+   //   WaypointTreeConstChildIterator iterEnd = end_child();
 
-      float dist = 0.0f;
+   //   float dist = 0.0f;
 
-      WaypointInterface* wiPtr = NULL;
-      //we dont set the collection ptr until the end so we dont have to cast for every child
-      WaypointCollection* wcPtr = NULL;
-      for(;iter != iterEnd; ++iter)
-      {
-         WaypointPair wp(this, iter->value);
-         if(wp.Get3DDistance() >= dist)
-         {
-            wiPtr = const_cast<WaypointInterface*>(iter->value);
-            dist = wp.Get3DDistance();
-         }
-      }   
-      if(wiPtr != NULL)
-      {
-         wcPtr = dynamic_cast<WaypointCollection*>(wiPtr);
-      }
+   //   WaypointInterface* wiPtr = NULL;
+   //   //we dont set the collection ptr until the end so we dont have to cast for every child
+   //   WaypointCollection* wcPtr = NULL;
+   //   for(;iter != iterEnd; ++iter)
+   //   {
+   //      WaypointPair wp(this, iter->value);
+   //      if(wp.Get3DDistance() >= dist)
+   //      {
+   //         wiPtr = const_cast<WaypointInterface*>(iter->value);
+   //         dist = wp.Get3DDistance();
+   //      }
+   //   }   
+   //   if(wiPtr != NULL)
+   //   {
+   //      wcPtr = dynamic_cast<WaypointCollection*>(wiPtr);
+   //   }
 
-      //may return NULL
-      return wcPtr;
-   }
+   //   //may return NULL
+   //   return wcPtr;
+   //}
 
-   /////////////////////////////////////////////////////////////////////////////
-   const WaypointCollection* WaypointCollection::FindClosestChild(const WaypointInterface& waypoint) const
-   {
-      //may return null if is leaf node
-      WaypointTree::const_child_iterator iter = begin_child();
-      WaypointTree::const_child_iterator iterEnd = end_child();
+   ///////////////////////////////////////////////////////////////////////////////
+   //const WaypointCollection* WaypointCollection::FindClosestChild(const WaypointInterface& waypoint) const
+   //{
+   //   //may return null if is leaf node
+   //   WaypointTree::const_child_iterator iter = begin_child();
+   //   WaypointTree::const_child_iterator iterEnd = end_child();
 
-      float dist = 0.0f;
-      
-      const WaypointInterface* wiPtr = NULL;
-      //we dont set the collection ptr until the end so we dont have to cast for every child
-      const WaypointCollection* wcPtr = NULL;
-      for(;iter != iterEnd; ++iter)
-      {
-         WaypointPair wp(this, iter->value);
-         if(wp.Get3DDistance() >= dist)
-         {
-            wiPtr = iter->value;
-            dist = wp.Get3DDistance();
-         }
-      }   
-      if(wiPtr != NULL)
-      {
-         wcPtr = dynamic_cast<const WaypointCollection*>(wiPtr);
-      }
+   //   float dist = 0.0f;
+   //   
+   //   const WaypointInterface* wiPtr = NULL;
+   //   //we dont set the collection ptr until the end so we dont have to cast for every child
+   //   const WaypointCollection* wcPtr = NULL;
+   //   for(;iter != iterEnd; ++iter)
+   //   {
+   //      WaypointPair wp(this, iter->value);
+   //      if(wp.Get3DDistance() >= dist)
+   //      {
+   //         wiPtr = iter->value;
+   //         dist = wp.Get3DDistance();
+   //      }
+   //   }   
+   //   if(wiPtr != NULL)
+   //   {
+   //      wcPtr = dynamic_cast<const WaypointCollection*>(wiPtr);
+   //   }
 
-      //may return NULL
-      return wcPtr;
-   }
+   //   //may return NULL
+   //   return wcPtr;
+   //}
 
    /////////////////////////////////////////////////////////////////////////////
    void WaypointCollection::Recalculate()
@@ -306,6 +358,16 @@ namespace dtAI
    void WaypointCollection::CreateProperties( WaypointPropertyBase& container )
    {
       WaypointInterface::CreateProperties(container);
+   }
+
+   NavMesh& WaypointCollection::GetNavMesh()
+   {
+      return *mChildEdges;
+   }
+
+   const NavMesh& WaypointCollection::GetNavMesh() const
+   {
+      return *mChildEdges;
    }
 
 } // namespace dtAI

@@ -398,6 +398,17 @@ namespace dtAI
          }
       }
 
+      void GetWaypoints(ConstWaypointArray& toFill) const
+      {
+         dtAI::WaypointManager::WaypointMap::const_iterator iter = mWaypointManager.GetWaypoints().begin();
+         dtAI::WaypointManager::WaypointMap::const_iterator iterEnd = mWaypointManager.GetWaypoints().end();
+
+         for(;iter != iterEnd; ++iter)
+         {
+            toFill.push_back((*iter).second);
+         }
+      }
+
       void GetWaypointsByType(const dtDAL::ObjectType& type, WaypointArray& toFill)
       {
          dtAI::WaypointManager::WaypointMap::const_iterator iter = mWaypointManager.GetWaypoints().begin();

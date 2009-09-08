@@ -213,7 +213,7 @@ void AStarTests::TestNavMesh()
 
    navMesh->RemoveAllPaths(&two);
 
-   CPPUNIT_ASSERT(navMesh->ContainsPath(&one, &two));
+   CPPUNIT_ASSERT(!navMesh->ContainsPath(&one, &two));
    CPPUNIT_ASSERT(!navMesh->ContainsPath(&two, &three));
    CPPUNIT_ASSERT(!navMesh->ContainsPath(&two, &four));
    CPPUNIT_ASSERT(!navMesh->ContainsPath(&two, &five));
@@ -223,7 +223,7 @@ void AStarTests::TestNavMesh()
 
    navMesh->RemoveAllPaths(&three);
 
-   CPPUNIT_ASSERT(navMesh->ContainsPath(&one, &two));
+   CPPUNIT_ASSERT(!navMesh->ContainsPath(&one, &two));
    CPPUNIT_ASSERT(!navMesh->ContainsPath(&two, &three));
    CPPUNIT_ASSERT(!navMesh->ContainsPath(&two, &four));
    CPPUNIT_ASSERT(!navMesh->ContainsPath(&two, &five));

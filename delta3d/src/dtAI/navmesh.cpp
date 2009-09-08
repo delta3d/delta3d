@@ -61,7 +61,7 @@ namespace dtAI
       }
    }
 
-   void NavMesh::InsertCopy(NavMeshContainer::iterator from, NavMeshContainer::iterator to)
+   void NavMesh::InsertCopy(NavMeshContainer::const_iterator from, NavMeshContainer::const_iterator to)
    {
       mNavMesh.insert(from, to);
    }
@@ -71,12 +71,17 @@ namespace dtAI
       mNavMesh.erase(from, to);
    }
 
-   void NavMesh::AddPathSegment(const WaypointInterface* pFrom, const WaypointInterface* pTo)
+   void NavMesh::AddEdge(const WaypointInterface* pFrom, const WaypointInterface* pTo)
    {
       mNavMesh.insert( NavMeshPair(pFrom->GetID(), new WaypointPair(pFrom, pTo)));
    }
 
-   void NavMesh::RemovePathSegment(const WaypointInterface* pFrom, const WaypointInterface* pTo)
+   void NavMesh::AddPathSegment(const WaypointInterface* pFrom, const WaypointInterface* pTo)
+   {
+      AddEdge(pFrom, pTo);
+   }
+
+   void NavMesh::RemoveEdge(const WaypointInterface* pFrom, const WaypointInterface* pTo)
    {
       NavMeshContainer::iterator iter      = begin(pFrom);
       NavMeshContainer::iterator endOfList = end(pFrom);
@@ -93,13 +98,51 @@ namespace dtAI
       }
    }
 
-   void NavMesh::RemoveAllPaths(const WaypointInterface* pFrom)
+   void NavMesh::RemovePathSegment(const WaypointInterface* pFrom, const WaypointInterface* pTo)
    {
-      std::pair<NavMeshContainer::iterator, NavMeshContainer::iterator> rangeElements = mNavMesh.equal_range(pFrom->GetID());
+      RemoveEdge(pFrom, pTo);
+   }
+
+   void NavMesh::RemoveAllEdges(const WaypointInterface* from)
+   {
+      WaypointID id = from->GetID();
+
+      std::pair<NavMeshContainer::iterator, NavMeshContainer::iterator> rangeElements = mNavMesh.equal_range(from->GetID());
+      
+      //before we delete these paths, lets see if these are bi-directional
+      NavMeshContainer::iterator iter = mNavMesh.begin();
+      NavMeshContainer::iterator iterEnd = mNavMesh.end();
+      for(; iter != iterEnd;)
+      {
+         if(iter->first == id || iter->second->GetWaypointTo()->GetID() == id)
+         {
+            NavMeshContainer::iterator iterTmp = iter;
+            ++iterTmp;
+
+            mNavMesh.erase(iter);
+            iter = iterTmp;
+         }
+         else
+         {
+            ++iter;
+         }
+      }
+      
+   }
+
+   void NavMesh::RemoveAllEdgesFromWaypoint(const WaypointInterface* from)
+   {
+      std::pair<NavMeshContainer::iterator, NavMeshContainer::iterator> rangeElements = mNavMesh.equal_range(from->GetID());
+      
       mNavMesh.erase(rangeElements.first, rangeElements.second);
    }
 
-   bool NavMesh::ContainsPath(const WaypointInterface* pFrom, const WaypointInterface* pTo) const
+   void NavMesh::RemoveAllPaths(const WaypointInterface* pFrom)
+   {
+      RemoveAllEdges(pFrom);
+   }
+
+   bool NavMesh::ContainsEdge(const WaypointInterface* pFrom, const WaypointInterface* pTo) const
    {
       NavMeshContainer::const_iterator iter = begin(pFrom);
       NavMeshContainer::const_iterator endOfList = end(pFrom);
@@ -115,6 +158,12 @@ namespace dtAI
       }
 
       return false;
+   }
+
+
+   bool NavMesh::ContainsPath(const WaypointInterface* pFrom, const WaypointInterface* pTo) const
+   {
+      return ContainsEdge(pFrom, pTo);
    }
 
    const NavMesh::NavMeshContainer& NavMesh::GetNavMesh() const

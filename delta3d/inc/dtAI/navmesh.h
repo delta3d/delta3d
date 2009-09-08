@@ -50,28 +50,42 @@ namespace dtAI
          ~NavMesh();
 
    public:
-         void InsertCopy(NavMeshContainer::iterator from, NavMeshContainer::iterator to);
+         void InsertCopy(NavMeshContainer::const_iterator from, NavMeshContainer::const_iterator to);
          void Remove(NavMeshContainer::iterator from, NavMeshContainer::iterator to);
+
+         /**
+         *	@note For consistency Path and PathSegment are being replaced by the word Edge,
+         *        the Add,Remove and such using the old nomenclature will be deprecated.
+         */
+
 
          /**
           * Creates a new WaypointPair and adds it to the current set
           */
+         void AddEdge(const WaypointInterface* pFrom, const WaypointInterface* pTo);
          void AddPathSegment(const WaypointInterface* pFrom, const WaypointInterface* pTo);
 
          /**
           * Removes the path segment between the two waypoints if one exists         
           */
+         void RemoveEdge(const WaypointInterface* pFrom, const WaypointInterface* pTo);
          void RemovePathSegment(const WaypointInterface* pFrom, const WaypointInterface* pTo);
 
          /**
-          * Removes all path segments from the specified waypoint
+          * Removes all path segments from and to the specified waypoint
+          * @note this used to only remove paths from the specified waypoint
+          *        and has been changed to remove paths going to the waypoint as well.                  
+          *        for legacy behavoir use RemoveAllEdgesFromWaypoint().
           */
+         void RemoveAllEdges(const WaypointInterface* pFrom);
+         void RemoveAllEdgesFromWaypoint(const WaypointInterface* pFrom);
          void RemoveAllPaths(const WaypointInterface* pFrom);
 
 
          /**
           *	@return whether or not a path exists between the two waypoints
           */
+         bool ContainsEdge(const WaypointInterface* pFrom, const WaypointInterface* pTo) const;
          bool ContainsPath(const WaypointInterface* pFrom, const WaypointInterface* pTo) const;
 
          /**

@@ -117,7 +117,7 @@ namespace dtAI
          return *this;
       }
 
-      _TreeIteratorBase_Const(_TreeIteratorBase<_Node>& pIter): _ptr(pIter._ptr), _root(pIter._root){}
+      _TreeIteratorBase_Const(const _TreeIteratorBase<_Node>& pIter): _ptr(pIter._ptr), _root(pIter._root){}
 
       _TreeIteratorBase_Const& operator=(_TreeIteratorBase<_Node>& pIter)
       {
@@ -158,7 +158,8 @@ namespace dtAI
          return *this;
       }
 
-      _TreeIteratorChildBase_Const(_TreeIteratorChildBase<_Node>& pIter): _ptr(pIter._ptr), _root(pIter._root){}
+      _TreeIteratorChildBase_Const(const _TreeIteratorChildBase<_Node>& pIter): _ptr(pIter._ptr), _root(pIter._root){}
+
 
       _TreeIteratorChildBase_Const& operator=(_TreeIteratorChildBase<_Node>& pIter)
       {

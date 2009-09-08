@@ -22,8 +22,8 @@
 * Bradley Anderegg
 */
 
-#ifndef __DELTA_AIPLUGININTERFACE_H__
-#define __DELTA_AIPLUGININTERFACE_H__
+#ifndef DELTA_AIPLUGININTERFACE_H
+#define DELTA_AIPLUGININTERFACE_H
 
 #include <string>
 #include <vector>
@@ -47,6 +47,8 @@ namespace dtAI
    {
       public: 
          typedef std::vector<WaypointInterface*> WaypointArray;      
+         typedef std::vector<const WaypointInterface*> ConstWaypointArray;      
+         
          typedef dtUtil::ObjectFactory< dtCore::RefPtr<const dtDAL::ObjectType>, WaypointInterface> WaypointFactory;
 
       public: //interface declaration
@@ -81,6 +83,7 @@ namespace dtAI
          *  @param the vector of waypoints to fill
          */
          virtual void GetWaypoints(WaypointArray& toFill) = 0;
+         virtual void GetWaypoints(ConstWaypointArray& toFill) const = 0;
 
 
          /**
@@ -237,4 +240,4 @@ namespace dtAI
 
 }// namespace dtAI
 
-#endif /* __DELTA_AIPLUGININTERFACE_H__ */
+#endif /* DELTA_AIPLUGININTERFACE_H */
