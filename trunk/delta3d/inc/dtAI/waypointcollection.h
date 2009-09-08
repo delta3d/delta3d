@@ -26,12 +26,15 @@
 #include <dtAI/tree.h>
 #include <dtAI/waypointinterface.h>
 
+#include <dtCore/refptr.h>
+
 #include <osg/Vec3>
 
 
 namespace dtAI 
 {
    class WaypointPropertyBase;
+   class NavMesh;
 
    /**
     *	WaypointCollection is meant to be a container for waypoints that is also
@@ -49,6 +52,7 @@ namespace dtAI
 
          WaypointCollection();
          WaypointCollection(const osg::Vec3& pos);
+         //WaypointCollection(const NavMesh& children);
          WaypointCollection(const WaypointCollection& way);
 
    protected:
@@ -60,26 +64,56 @@ namespace dtAI
 
          void CleanUp();
 
+         /**
+         * A collection is marked as a leaf if it has any concrete nodes as children
+         *   as opposed to waypoint collections as children.
+         */
          bool IsLeaf();
 
+         /**
+         * Our position and radius make up a bounding sphere.	
+         */
          float GetRadius();
 
          /*virtual*/ const osg::Vec3& GetPosition() const;      
          /*virtual*/ void SetPosition(const osg::Vec3& pVec);    
 
-         void AddChild(dtCore::RefPtr<WaypointCollection> waypoint);
-         void RemoveChild(dtCore::RefPtr<WaypointCollection> waypoint);
-
-         void InsertWaypoint(const WaypointInterface* waypoint);
-         void RemoveWaypoint(const WaypointInterface* waypoint);
+         /**
+         * These are generic insert and remove functions which key off of the waypoint type
+         *  and cast it to a WaypointCollection if it is one.
+         *
+         *  If you know whether you are adding a concrete waypoint or collection you may use
+         *  the functions below to short circuit the check.
+         */
+         void Insert(const WaypointInterface* waypoint);
+         void Remove(const WaypointInterface* waypoint);
 
          //may return null if is leaf node
-         WaypointCollection* FindClosestChild(const WaypointInterface& waypoint);
-         const WaypointCollection* FindClosestChild(const WaypointInterface& waypoint) const;
+         //WaypointCollection* FindClosestChild(const WaypointInterface& waypoint);
+         //const WaypointCollection* FindClosestChild(const WaypointInterface& waypoint) const;
 
          void Recalculate();      
 
          /*virtual*/ void CreateProperties(WaypointPropertyBase& container);
+
+         NavMesh& GetNavMesh();
+         const NavMesh& GetNavMesh() const;
+         
+         //void GetAllChildPathsFrom(const WaypointInterface* wi, WaypointGraph::ConstWaypointArray& result);
+         //void GetAllChildPathsTo(const WaypointInterface* wi, WaypointGraph::ConstWaypointArray& result);
+
+
+      protected:
+
+         /**
+         * If you specifically know whether you are adding a concrete waypoint or a child collection
+         *  you can use these functions, else use Insert() and Remove() above.
+         */
+         virtual void AddChild(dtCore::RefPtr<const WaypointCollection> waypoint);
+         virtual void RemoveChild(dtCore::RefPtr<const WaypointCollection> waypoint);
+
+         virtual void InsertWaypoint(const WaypointInterface* waypoint);
+         virtual void RemoveWaypoint(const WaypointInterface* waypoint);
 
       private:
 
@@ -87,6 +121,7 @@ namespace dtAI
          bool mLeaf;
          float mRadius;
          osg::Vec3 mPosition;
+         dtCore::RefPtr<NavMesh> mChildEdges;
    };
 
 

@@ -37,6 +37,7 @@ namespace dtAI
    class AIPluginInterface;
    class WaypointCollection;
    class AIDebugDrawable;
+   class WaypointGraphBuilder;
 
    //using pimpl pattern, this is forward declared and
    //implemented in the .cpp
@@ -46,54 +47,41 @@ namespace dtAI
    {
    public: //datatypes
 
-
-      class WaypointGraphBuilderInterface
-      {
-         public:
-            WaypointGraphBuilderInterface(){};
-            virtual ~WaypointGraphBuilderInterface(){}
-
-            //creating the graph
-            virtual unsigned GetMaxChildrenPerNode() const = 0;
-            virtual WaypointCollection* SelectBestCollection(const WaypointInterface& wp, WaypointGraph& wg) const = 0;
-            
-            //potentially we may need to break up a single leaf node into two pieces
-            //we simply allow the user to overload the default heuristic
-            typedef std::pair<WaypointCollection*, WaypointCollection*> WaypointCollectionPair;
-
-            virtual WaypointCollectionPair Split(WaypointCollection* wc) const = 0;
-      };
-
       typedef std::vector<dtAI::WaypointInterface*> WaypointArray;
       typedef std::vector<const dtAI::WaypointInterface*> ConstWaypointArray;
+      typedef std::vector<dtCore::RefPtr<dtAI::WaypointCollection> > WaypointCollectionArray;
+
+      class DT_AI_EXPORT SearchLevel: public osg::Referenced
+      {
+         public:
+            SearchLevel();
+            
+         protected:
+            virtual ~SearchLevel();
+
+         public:
+
+            unsigned mLevelNum;
+            ConstWaypointArray mNodes;
+            dtCore::RefPtr<NavMesh> mNavMesh;
+      };
+
+      typedef std::vector<dtCore::RefPtr<SearchLevel> > SearchLevelArray;
+
 
    public:
       WaypointGraph();
 
-   protected:
+   protected:  
       virtual ~WaypointGraph();
 
    public:
 
       /**
-       *	Creating a graph with a NavMesh will add all waypoints into the
-       * as a flat tree and then group waypoints into separate collections
-       * recursively until a tree is built.
-       *
-       * @todo- allow user to specify a way to build their own graph
-       */
-      void CreateGraph(NavMesh& waypointData, WaypointGraphBuilderInterface* wb);//, const WaypointGraphBuilderInterface& builder);      
-
-      /**
-       *	Loading a WaypointGraph from file, currently unimplemented.
-       */
-      //bool LoadWaypointFile(const std::string& filename);
-      
-      /**
-      *	Saving a WaypointGraph to file, currently unimplemented.
+      *  You must run Create() after you make changes to the underlying structure.	
       */
-      //bool SaveWaypointFile(const std::string& filename);
-
+      void CreateSearchLevel(WaypointGraphBuilder* builder, unsigned level);
+      
       /**
       * Inserting waypoints into the tree structure.
       * To move a waypoint simply re-add it, this can be expensive
@@ -102,18 +90,19 @@ namespace dtAI
       void InsertWaypoint(WaypointInterface* waypoint);
 
       /**
+      * Collections can not be re-inserted to be moved, they must be completely removed
+      *  only use this function to modify the internal tree structure
+      *  ie. if you dont know what level to add it on, use InsertWaypoint() :) 
+      */
+      void InsertCollection(WaypointCollection* waypoint, unsigned level);
+
+      /**
        *	This removes the waypoint from the internal tree structure,
        * then collapses all empty parents.  The memory for the waypoint
        * is not deleted, it is assumed to be managed elsewhere. If you
-       * added the waypoint by new-ing one, simply delete the ptr if this
-       * returns true.
-       *
-       * @return Whether the waypoint was found and a remove was successful
-       *
-       * @todo- should this remove a collection from the tree, or should that
-       *         be an error, and require the use of a different function like RemoveCollection()?
+       * added the waypoint by new-ing one, simply delete the ptr.
        */
-      bool RemoveWaypoint(WaypointInterface* waypoint);
+      void RemoveWaypoint(WaypointID id);
 
       /**
        *	@return true if the waypoint is found in the WaypointGraph,
@@ -150,33 +139,56 @@ namespace dtAI
       const WaypointCollection* FindCollection(WaypointID id) const;
 
       /**
+      *	Returns the waypoint's parent WaypointCollection, id may be a WaypointCollection.
+      *  @return Waypoint's parent or NULL if waypoint or parent not found 
+      */
+      WaypointCollection* GetParent(WaypointID id);
+      const WaypointCollection* GetParent(WaypointID id) const;
+
+      /**
        *	This finds the waypoint and traverss up the tree to find the top most node
        * containing this as a child.
        */
       WaypointCollection* GetRootParent(WaypointID id);
       const WaypointCollection* GetRootParent(WaypointID id) const;
-
+      
       //adding and removing path segments
-      void AddEdge(const WaypointInterface* pFrom, const WaypointInterface* pTo);
-      bool RemoveEdge(const WaypointInterface* pFrom, const WaypointInterface* pTo);
-      void RemoveAllEdgesFromWaypoint(const WaypointInterface* pFrom);
-      void GetAllEdgesFromWaypoint(const WaypointInterface& pFrom, ConstWaypointArray& result) const;
+      void AddEdge(WaypointID idFrom, WaypointID idTo);
+      bool RemoveEdge(WaypointID idFrom, WaypointID idTo);
+      void RemoveAllEdgesFromWaypoint(WaypointID idFrom);
+      void GetAllEdgesFromWaypoint(WaypointID idFrom, ConstWaypointArray& result) const;
 
-      //searching and intersecting waypoints
-      bool HasPath(const WaypointInterface& rhs, const WaypointInterface& lhs) const;
-      //WaypointInterface* FindClosest(const osg::Vec3& point3d) const;
-      //void FindRadial(const osg::Vec3& pos, float radius, WaypointArray& vectorIn) const;
+      /**
+      * This does a hierarchical search for a common parent, returns true if one exists.     
+      */
+      bool HasPath(WaypointID idFrom, WaypointID idTo) const;
+      
+      /**
+      * Searches for a common parent, which represents the top of the search tree
+      * to path between these points.
+      */
+      //WaypointCollection* FindCommonParent(const WaypointInterface& lhs, const WaypointInterface& rhs);
 
       //path finding
-      void GetNavMeshAtLevel(const WaypointCollection* root, unsigned level, NavMesh& result) const;
+      NavMesh* GetNavMeshAtSearchLevel(unsigned level);
+      const NavMesh* GetNavMeshAtSearchLevel(unsigned level) const;
 
-      //int GetNumLevels() const;
-      //void SetCurrentSearchLevel(int l);
-      //int GetCurrentSearchLevel() const;
-      //int GetWaypointLevel(WaypointInterface& id);
-      //WaypointID MapWaypointToLevel(int atLevel, WaypointInterface& point, int outLevel) const;
-      //bool FindPath(WaypointInterface& from, WaypointInterface& to, WaypointArray& result) const;
+      unsigned GetNumSearchLevels() const;
+      SearchLevel* GetSearchLevel(unsigned levelNum);
+      SearchLevel* GetOrCreateSearchLevel(unsigned levelNum);
+      const SearchLevel* GetSearchLevel(unsigned levelNum) const;
+     
+      //returns -1 if not found
+      int GetSearchLevelNum(WaypointID id) const;
 
+      //void AddSearchLevel(dtCore::RefPtr<SearchLevel> newLevel);
+
+      /**
+      * Use this to assign a waypoint to a new parent
+      */
+      void SetParent(WaypointID id, WaypointCollection* parent);
+
+      
       //clears all memory, does a lot of deleting!
       void Clear();
 
@@ -186,16 +198,24 @@ namespace dtAI
       //\todo
       //bool ValidateTree();
       //bool ValidateMemory();
-      AIDebugDrawable* GetDebugDrawableAtLevel(const WaypointCollection* root, unsigned level) const;
+      //bool ValidateLevels();
+      AIDebugDrawable* GetDrawableAtSearchLevel(const WaypointCollection* root, unsigned level) const;
 
    protected:
       //override for derived cleanup
       virtual void OnClear();
 
+      virtual bool HasPath_Protected(const WaypointCollection* pFrom, const WaypointCollection* pTo) const;
+      virtual void AddEdge_Protected(const WaypointInterface* pFrom, const WaypointInterface* pTo);
+      virtual void RemoveWaypoint_Protected(const WaypointInterface* waypoint);
+      virtual bool RemoveEdge_Protected(const WaypointInterface* pFrom, const WaypointInterface* pTo);
+      virtual void RemoveAllEdgesFromWaypoint_Protected(const WaypointInterface* pFrom);
+      virtual void GetAllEdgesFromWaypoint_Protected(const WaypointInterface& pFrom, ConstWaypointArray& result) const;
+
 
    private:     
 
-      WaypointGraphImpl* mImpl;
+      WaypointGraphImpl* mImpl;      
    };
 
 }//namespace 
