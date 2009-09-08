@@ -1338,6 +1338,7 @@ void ObjectMotionModel::UpdateRotation(void)
    float fDistMod       = mouse      * axis;
    float fPlaneOffset   = targetPos  * axis;
 
+   if (fDistMod == 0.0f) return;
    float fDistance      = (fPlaneOffset - fStartOffset) / fDistMod;
 
    // Find the projected point of collision on the plane.
@@ -1595,6 +1596,7 @@ void ObjectMotionModel::UpdateScale(void)
       float fDistMod       = mouse      * (*plane);
       float fPlaneOffset   = targetPos  * (*plane);
 
+      if (fDistMod == 0.0f) return;
       float fDistance      = (fPlaneOffset - fStartOffset) / fDistMod;
 
       // Find the projected point of collision on the plane.
