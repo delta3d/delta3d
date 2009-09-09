@@ -25,6 +25,11 @@
 #include <dtUtil/refstring.h>
 #include <osg/Referenced>
 
+namespace dtUtil
+{
+   class DataStream;
+}
+
 namespace dtDAL
 {
    class DataType;
@@ -57,6 +62,12 @@ namespace dtDAL
           * @param value the string value to assign the parameter to.
           */
          virtual bool FromString(const std::string& value) = 0;
+
+         /// write the data to a data stream
+         virtual void ToDataStream(dtUtil::DataStream& stream) const = 0;
+
+         /// read the data from a data stream.
+         virtual bool FromDataStream(dtUtil::DataStream& stream) = 0;
 
       protected:
 

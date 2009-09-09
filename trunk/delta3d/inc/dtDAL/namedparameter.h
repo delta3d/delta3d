@@ -66,10 +66,6 @@ namespace dtDAL
 
          NamedParameter(DataType& dataType, const dtUtil::RefString& name, bool isList = false);
 
-         virtual void ToDataStream(dtUtil::DataStream& stream) const = 0;
-
-         virtual bool FromDataStream(dtUtil::DataStream& stream) = 0;
-
          /**
           * @param otherParam the message parameter to make this one match.
           */

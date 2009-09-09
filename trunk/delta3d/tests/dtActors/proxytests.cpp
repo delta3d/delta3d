@@ -126,19 +126,52 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
    }
 }
 
+static void SimpleStringToFromDataStreamCheck(dtUtil::DataStream& ds, dtDAL::ActorProperty& p)
+{
+   if (p.IsReadOnly())
+   {
+      return;
+   }
+
+   ds.Rewind();
+   p.ToDataStream(ds);
+
+   std::string expected = p.ToString();
+
+   ds.Rewind();
+   try
+   {
+      CPPUNIT_ASSERT_MESSAGE("From datastream should succeed on non-readonly properties: " + p.GetName() + " " + p.GetDataType().GetName(),
+               p.FromDataStream(ds));
+   }
+   catch (...)
+   {
+      throw;
+   }
+   std::string actual = p.ToString();
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("To and from datastream should be lossless, so ToString should return the same value"
+            " both times", expected, actual);
+}
+
 void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, bool isElement)
 {
    std::string proxyTypeName = proxy.GetActorType().GetName();
    std::string name = prop->GetName();
    const float epsilon = 0.0001f;
 
+   static char* buffer = new char[512];
+   dtUtil::DataStream ds(buffer, 512, false);
+
    if(prop->IsReadOnly())
    {
       // Test and make sure you can't set the property
-      dtDAL::ActorProperty *p = prop;
-      const std::string &str = p->ToString();
+      dtDAL::ActorProperty* p = prop;
+      const std::string& str = p->ToString();
       bool shouldBeFalse = p->FromString(str);
       CPPUNIT_ASSERT_MESSAGE("Should not have been able to set the string value on an read only property", !shouldBeFalse);
+
+      ds.Rewind();
+      CPPUNIT_ASSERT_MESSAGE("From datastream should fail on readonly properties", !p->FromDataStream(ds));
       return;
    }
    
@@ -203,6 +236,7 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
    }
    else if (prop->GetDataType() == DataType::INT)
    {
+      SimpleStringToFromDataStreamCheck(ds, *prop);
       dtDAL::IntActorProperty* prop1 = NULL;
       if (isElement)
       {
@@ -221,6 +255,8 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
    }
    else if (prop->GetDataType() == DataType::LONGINT)
    {
+      SimpleStringToFromDataStreamCheck(ds, *prop);
+
       dtDAL::LongActorProperty* prop1 = NULL;
       if (isElement)
       {
@@ -239,6 +275,8 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
    }
    else if (prop->GetDataType() == DataType::STRING)
    {
+      SimpleStringToFromDataStreamCheck(ds, *prop);
+
       // This one property is in UTC format for time. This test would fail
       if(prop->GetName() == "Time and Date")
       {
@@ -266,6 +304,8 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
    }
    else if (prop->GetDataType() == DataType::BOOLEAN)
    {
+      SimpleStringToFromDataStreamCheck(ds, *prop);
+
       //there have been some problems with Normal Rescaling
       if (name != "Normal Rescaling" && name != "Collision Geometry")
       {
@@ -289,6 +329,8 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
    }
    else if (prop->GetDataType() == DataType::ENUMERATION)
    {
+      SimpleStringToFromDataStreamCheck(ds, *prop);
+
       dtDAL::AbstractEnumActorProperty* eap = NULL;
       if (isElement)
       {
@@ -318,45 +360,59 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
    else if (prop->GetDataType() == DataType::ACTOR)
    {
       dtDAL::ActorActorProperty* aap = NULL;
+      dtDAL::ActorIDActorProperty* aidap = NULL;
       if (isElement)
       {
          aap = dynamic_cast<dtDAL::ActorActorProperty*>(prop);
+         if (aap == NULL)
+         {
+            aidap = dynamic_cast<dtDAL::ActorIDActorProperty*>(prop);
+            CPPUNIT_ASSERT(aidap != NULL);
+         }
+
       }
       else
       {
          proxy.GetProperty(prop->GetName(), aap);
       }
 
-      CPPUNIT_ASSERT_MESSAGE("The ActorActorProperty should not be NULL", aap);
-
-      aap->SetValue(NULL);
-
-      CPPUNIT_ASSERT_MESSAGE(std::string("Value should be NULL, but it's not"), aap->GetValue() == NULL);
-
-      const std::string &actorClass = aap->GetDesiredActorClass();
-      dtDAL::ActorProxy *tempProxy  = NULL;
-
-      for(unsigned int i = 0; i < proxies.size(); ++i)
+      if (aap != NULL)
       {
-         if(proxies[i]->IsInstanceOf(actorClass))
+         CPPUNIT_ASSERT_MESSAGE("The ActorActorProperty should not be NULL", aap);
+
+         aap->SetValue(NULL);
+
+         CPPUNIT_ASSERT_MESSAGE(std::string("Value should be NULL, but it's not"), aap->GetValue() == NULL);
+
+         const std::string &actorClass = aap->GetDesiredActorClass();
+         dtDAL::ActorProxy *tempProxy  = NULL;
+
+         for(unsigned int i = 0; i < proxies.size(); ++i)
          {
-            tempProxy = proxies[i].get();
-            break;
+            if(proxies[i]->IsInstanceOf(actorClass))
+            {
+               tempProxy = proxies[i].get();
+               break;
+            }
          }
+
+         CPPUNIT_ASSERT_MESSAGE("TempProxy should not be NULL", tempProxy != NULL);
+
+         aap->SetValue(tempProxy);
+         dtDAL::ActorProxy *ap = aap->GetValue();
+
+         CPPUNIT_ASSERT_MESSAGE("GetValue should return what it was set to", ap == tempProxy);
+
+         ap->SetName("Bob");
+         CPPUNIT_ASSERT_MESSAGE("The proxy's name should be Bob", ap->GetName() == "Bob");
+
+         aap->SetValue(NULL);
+         CPPUNIT_ASSERT_MESSAGE("The property's value should be NULL", !aap->GetValue());
       }
-
-      CPPUNIT_ASSERT_MESSAGE("TempProxy should not be NULL", tempProxy != NULL);
-
-      aap->SetValue(tempProxy);
-      dtDAL::ActorProxy *ap = aap->GetValue();
-
-      CPPUNIT_ASSERT_MESSAGE("GetValue should return what it was set to", ap == tempProxy);
-
-      ap->SetName("Bob");
-      CPPUNIT_ASSERT_MESSAGE("The proxy's name should be Bob", ap->GetName() == "Bob");
-
-      aap->SetValue(NULL);
-      CPPUNIT_ASSERT_MESSAGE("The property's value should be NULL", !aap->GetValue());
+      else
+      {
+         SimpleStringToFromDataStreamCheck(ds, *aidap);
+      }
    }
    else if (prop->GetDataType() == DataType::VEC3)
    {
@@ -822,6 +878,8 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
       dtDAL::GameEventManager::GetInstance().AddEvent(*event);
       prop1->SetValue(event.get());
 
+      SimpleStringToFromDataStreamCheck(ds, *prop);
+
       dtDAL::GameEvent *eventToCheck = prop1->GetValue();
       CPPUNIT_ASSERT_MESSAGE("Game Event name was equal.",
                              eventToCheck->GetName() == event->GetName());
@@ -867,6 +925,8 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
 
          prop1->SetValue(*param);
 
+         SimpleStringToFromDataStreamCheck(ds, *prop);
+
          RefPtr<dtDAL::NamedGroupParameter> valParam = prop1->GetValue();
          CPPUNIT_ASSERT(valParam.valid());
          CPPUNIT_ASSERT_EQUAL(valParam->GetName(), param->GetName());
@@ -909,6 +969,8 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
          prop1->SetIndex(index);
          testProp(proxy, prop1->GetArrayProperty(), true);
       }
+
+      SimpleStringToFromDataStreamCheck(ds, *prop);
    }
    else if (prop->GetDataType() == DataType::CONTAINER)
    {
@@ -928,6 +990,8 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
       {
          testProp(proxy, prop1->GetProperty(index), true);
       }
+
+      SimpleStringToFromDataStreamCheck(ds, *prop);
    }
 }
 
