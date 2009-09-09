@@ -28,7 +28,6 @@
 #include <dtDAL/export.h>
 #include <dtDAL/abstractparameter.h>
 
-
 namespace dtDAL
 {
 
@@ -123,6 +122,12 @@ namespace dtDAL
           * @return The current number precision.
           */
          unsigned int GetNumberPrecision() const;
+
+         /// write the data to a data stream
+         virtual void ToDataStream(dtUtil::DataStream& stream) const;
+
+         /// read the data from a data stream.
+         virtual bool FromDataStream(dtUtil::DataStream& stream);
 
       protected:
 
