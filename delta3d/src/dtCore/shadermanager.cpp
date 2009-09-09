@@ -303,9 +303,15 @@ namespace dtCore
    /////////////////////////////////////////////////////////////////////////////
    void ShaderManager::UnassignShaderFromNode(osg::Node& node)
    {
+      dtCore::RefPtr<osg::StateSet> stateSet = node.getStateSet(); //node.getOrCreateStateSet();
+      if (!stateSet.valid())
+      {
+         // Exit early if no stateset exists yet
+         return;
+      }
+
       std::vector<dtCore::RefPtr<ShaderParameter> > params;
       std::vector<dtCore::RefPtr<ShaderParameter> >::iterator currParam;
-      dtCore::RefPtr<osg::StateSet> stateSet = node.getOrCreateStateSet();
 
       // find any instances of weak references to this node and remove it from the active list.
       for (int i = mActiveNodeList.size() - 1; i >= 0; i--)
@@ -318,8 +324,9 @@ namespace dtCore
             for (currParam=params.begin(); currParam!=params.end(); ++currParam)
                (*currParam)->DetachFromRenderState(*stateSet);
 
-            // remove the program
-            stateSet->setAttributeAndModes(new osg::Program(), osg::StateAttribute::ON);
+            // remove the program - which causes it to inherit. 
+            //stateSet->setAttributeAndModes(new osg::Program(), osg::StateAttribute::ON); // or INHERIT
+            stateSet->removeAttribute(osg::StateAttribute::PROGRAM);
          }
       }
 

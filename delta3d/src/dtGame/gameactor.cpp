@@ -878,8 +878,15 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////////////////////////////
    void GameActor::SetShaderGroup(const std::string &groupName)
    {
-      mShaderGroup = groupName;
-      OnShaderGroupChanged();
+      // Setting the shader group, when it didn't change can cause a massive
+      // hit on performance because it unassigns everything and will make a new 
+      // instance of the shader and all its params. Could also cause anomalies with 
+      // oscilating shader params.
+      if (groupName != mShaderGroup)
+      {
+         mShaderGroup = groupName;
+         OnShaderGroupChanged();
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////
