@@ -32,7 +32,7 @@ namespace dtCore
 {
    static OpenThreads::Atomic ODERefCount;
 
-   void RefODE()
+   static void RefODE()
    {
       if (++ODERefCount == 1)
       {
@@ -43,7 +43,7 @@ namespace dtCore
       }
    }
 
-   void DerefODE()
+   static void DerefODE()
    {
       if (--ODERefCount == 0)
       {
