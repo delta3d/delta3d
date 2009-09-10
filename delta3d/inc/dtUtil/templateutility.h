@@ -127,6 +127,87 @@ namespace dtUtil
    //   }
    //};
 
+
+   template<class _Container, class _InputType = typename _Container::const_reference>
+   class insert_back
+   {	
+   public:
+      typedef _Container container_type;
+      typedef _InputType input_type;
+
+      explicit insert_back(_Container& _Cont)
+         : container(&_Cont)
+      {	// construct with container
+      }
+
+      //returns true if the value was added to the container
+      void operator()(input_type _Val)
+      {	// push value into container
+         container->push_back(_Val);
+      }
+
+   protected:
+      _Container* container;	// pointer to container
+   };
+
+   template<class _Container>
+   class insert_back_no_duplicates
+   {	
+   public:
+      typedef _Container container_type;
+      typedef typename _Container::reference reference;
+
+      explicit insert_back_no_duplicates(_Container& _Cont)
+         : container(&_Cont)
+      {	// construct with container
+      }
+
+      //returns true if the value was added to the container
+      bool operator()(typename _Container::const_reference _Val)
+      {	// push value into container
+         if(std::find(container->begin(), container->end(), _Val) == container->end())
+         {
+            container->push_back(_Val);
+            return true;
+         }
+
+         return false;
+      }
+
+   protected:
+      _Container* container;	// pointer to container
+   };
+
+
+   template<class _Container>
+   class array_remove
+   {	
+   public:
+      typedef _Container container_type;
+      typedef typename _Container::reference reference;
+
+      explicit array_remove(_Container& _Cont)
+         : container(&_Cont)
+      {	// construct with container
+      }
+
+      //returns true if the value was added to the container
+      bool operator()(typename _Container::reference _Val)
+      {	// push value into container
+         typename _Container::iterator iter = std::find(container->begin(), container->end(), _Val);
+         if(iter != container->end())
+         {
+            container->erase(iter);
+            return true;
+         }
+
+         return false;
+      }
+
+   protected:
+      _Container* container;	// pointer to container
+   };
+
 }//namespace dtUtil
 
 #endif//DELTA_TEMPLATE_UTILITY

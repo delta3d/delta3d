@@ -80,6 +80,10 @@ namespace dtAI
       void SetAlpha(float newAlpha) const;
       float GetAlpha() const;
 
+      //these are just no-ops 
+      virtual void ref() const{};
+      virtual void unref() const{};
+
    private:        
       mutable RenderFlag mRenderFlag;
       mutable osg::Vec3 mColor; 

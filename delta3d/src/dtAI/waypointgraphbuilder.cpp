@@ -30,92 +30,13 @@
 
 #include <dtUtil/log.h>
 #include <dtUtil/mathdefines.h>
+#include <dtUtil/templateutility.h>
 
 #include <algorithm>
 
 
 namespace dtAI
 {
-   template<class _Container>
-   class insert_back
-   {	
-   public:
-      typedef _Container container_type;
-      typedef typename _Container::reference reference;
-
-      explicit insert_back(_Container& _Cont)
-         : container(&_Cont)
-      {	// construct with container
-      }
-
-      //returns true if the value was added to the container
-      void operator()(typename _Container::const_reference _Val)
-      {	// push value into container
-         container->push_back(_Val);
-      }
-
-   protected:
-      _Container* container;	// pointer to container
-   };
-
-   template<class _Container>
-   class insert_back_no_duplicates
-   {	
-   public:
-      typedef _Container container_type;
-      typedef typename _Container::reference reference;
-
-      explicit insert_back_no_duplicates(_Container& _Cont)
-         : container(&_Cont)
-      {	// construct with container
-      }
-
-      //returns true if the value was added to the container
-      bool operator()(typename _Container::const_reference _Val)
-      {	// push value into container
-         if(std::find(container->begin(), container->end(), _Val) == container->end())
-         {
-            container->push_back(_Val);
-            return true;
-         }
-
-         return false;
-      }
-
-   protected:
-      _Container* container;	// pointer to container
-   };
-
-
-   template<class _Container>
-   class array_remove
-   {	
-   public:
-      typedef _Container container_type;
-      typedef typename _Container::reference reference;
-
-      explicit array_remove(_Container& _Cont)
-         : container(&_Cont)
-      {	// construct with container
-      }
-
-      //returns true if the value was added to the container
-      bool operator()(typename _Container::reference _Val)
-      {	// push value into container
-         typename _Container::iterator iter = std::find(container->begin(), container->end(), _Val);
-         if(iter != container->end())
-         {
-            container->erase(iter);
-            return true;
-         }
-
-         return false;
-      }
-
-   protected:
-      _Container* container;	// pointer to container
-   };
-
    template<class _Container>
    class copy_navmesh_paths
    {	
@@ -286,8 +207,8 @@ namespace dtAI
          FindCanidates(curWp, nm, canidates);
 
          //remove all nodes already assigned
-         FindAllMatches(canidates, mAssignedNodes, insert_back<ConstWaypointArray>(tmp));
-         std::for_each(tmp.begin(), tmp.end(), array_remove<ConstWaypointArray>(canidates));      
+         FindAllMatches(canidates, mAssignedNodes, dtUtil::insert_back<ConstWaypointArray>(tmp));
+         std::for_each(tmp.begin(), tmp.end(), dtUtil::array_remove<ConstWaypointArray>(canidates));      
 
          if(!canidates.empty())
          {  
@@ -392,7 +313,7 @@ namespace dtAI
 
                //a template function defined at the top of this file
                //insert_back_no_duplicates was a handy back inserter modification, at the top as well
-               FindAllMatches(canidates, canidatesNext, insert_back_no_duplicates<ConstWaypointArray>(cliques));
+               FindAllMatches(canidates, canidatesNext, dtUtil::insert_back_no_duplicates<ConstWaypointArray>(cliques));
                canidatesNext.clear();
             }
          }
@@ -400,9 +321,9 @@ namespace dtAI
          //all the nodes in the resulting cliques array are potential matches, we must 
          //eliminate all nodes that are already assigned
          canidates.clear();
-         FindAllMatches(cliques, mAssignedNodes, insert_back<ConstWaypointArray>(canidates));
+         FindAllMatches(cliques, mAssignedNodes, dtUtil::insert_back<ConstWaypointArray>(canidates));
          
-         std::for_each(canidates.begin(), canidates.end(), array_remove<ConstWaypointArray>(cliques));         
+         std::for_each(canidates.begin(), canidates.end(), dtUtil::array_remove<ConstWaypointArray>(cliques));         
       }
    }
 

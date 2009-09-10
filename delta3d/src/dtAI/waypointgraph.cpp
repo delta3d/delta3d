@@ -71,7 +71,7 @@ namespace dtAI
               
          unsigned mLevel;
          WaypointCollection* mParent;
-         const WaypointInterface* mWaypoint;
+         dtCore::RefPtr<const WaypointInterface> mWaypoint;
       };
 
       typedef std::map<WaypointID, WaypointHolder> WaypointMap;
@@ -710,6 +710,7 @@ namespace dtAI
       return NULL;
    }
    
+   /////////////////////////////////////////////////////////////////////////////
    NavMesh* WaypointGraph::GetNavMeshAtSearchLevel(unsigned level)
    {
       WaypointGraph::SearchLevel* sl = mImpl->GetSearchLevel(level);
@@ -721,6 +722,7 @@ namespace dtAI
       return NULL;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    AIDebugDrawable* WaypointGraph::GetDrawableAtSearchLevel(const WaypointCollection* root, unsigned level) const
    {
       const NavMesh* nm = GetNavMeshAtSearchLevel(level);
@@ -736,6 +738,7 @@ namespace dtAI
       return NULL;
    }   
 
+   /////////////////////////////////////////////////////////////////////////////
    unsigned WaypointGraph::GetNumSearchLevels() const
    {
       //note this is not necessarily the max mLevel of all search levels
@@ -743,24 +746,28 @@ namespace dtAI
       return mImpl->mSearchLevels.size();
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    const WaypointGraph::SearchLevel* WaypointGraph::GetSearchLevel(unsigned levelNum) const
    {
       //we are guaranteed to have a search level 0
       return mImpl->GetSearchLevel(levelNum);
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    WaypointGraph::SearchLevel* WaypointGraph::GetSearchLevel(unsigned levelNum) 
    {
       //we are guaranteed to have a search level 0
       return mImpl->GetSearchLevel(levelNum);
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    WaypointGraph::SearchLevel* WaypointGraph::GetOrCreateSearchLevel(unsigned levelNum) 
    {
       //we are guaranteed to have a search level 0
       return mImpl->GetOrCreateSearchLevel(levelNum);
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    int WaypointGraph::GetSearchLevelNum(WaypointID id) const
    {
       WaypointGraphImpl::WaypointMap::const_iterator iter = mImpl->mWaypointOwnership.find(id);
@@ -791,6 +798,7 @@ namespace dtAI
    //   return NULL;
    //}
 
+   /////////////////////////////////////////////////////////////////////////////
    WaypointCollection* WaypointGraph::GetParent(WaypointID id)
    {
       WaypointCollection* result = NULL;
@@ -815,6 +823,7 @@ namespace dtAI
       return result;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    const WaypointCollection* WaypointGraph::GetParent(WaypointID id) const
    {
       const WaypointCollection* result = NULL;
@@ -839,6 +848,7 @@ namespace dtAI
       return result;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void WaypointGraph::SetParent(WaypointID id, WaypointCollection* parent)
    {
       WaypointGraphImpl::WaypointMap::iterator iter = mImpl->mWaypointOwnership.find(id);

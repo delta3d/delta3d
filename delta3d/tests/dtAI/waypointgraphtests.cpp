@@ -27,6 +27,7 @@
 #include <dtAI/waypointcollection.h>
 #include <dtAI/waypointgraph.h>
 #include <dtAI/waypointgraphbuilder.h>
+#include <dtAI/waypointgraphastar.h>
 #include <dtAI/aiplugininterface.h>
 #include <dtAI/aiinterfaceactor.h>
 #include <dtAI/aiactorregistry.h>
@@ -480,6 +481,21 @@ void WaypointGraphTests::TestCollectionBounds()
 
 void WaypointGraphTests::TestPathfinding()
 {
+   CreateWaypoints();
+
+   WaypointGraphAStar astar(*mGraph); 
+
+   for(int i = 1; i < 17; ++i)
+   {
+      for(int j = 1; j < 17; ++j)
+      {
+         if(i != j)
+         {
+            PathFindResult result = astar.HierarchicalFindPath(wpArray[i], wpArray[j]);
+            CPPUNIT_ASSERT_EQUAL(result, PATH_FOUND);
+         }
+      }
+   }
 
 }
 
