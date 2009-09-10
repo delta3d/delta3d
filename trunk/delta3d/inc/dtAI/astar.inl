@@ -56,6 +56,14 @@ private:
 
 template<class _NodeType, class _CostFunc, class _Container, class _Timer>
 AStar<_NodeType, _CostFunc, _Container, _Timer>::AStar()
+: mFuncCreateNode(this, &AStar<_NodeType, _CostFunc, _Container, _Timer>::CreateNode)
+{
+   
+}
+
+template<class _NodeType, class _CostFunc, class _Container, class _Timer>
+AStar<_NodeType, _CostFunc, _Container, _Timer>::AStar(CreateNodeFunctor createFunc)
+: mFuncCreateNode(createFunc)
 {
 }
 
@@ -119,7 +127,7 @@ void AStar<_NodeType, _CostFunc, _Container, _Timer>::Reset(const std::vector<da
 
    while (iter != endOfList)
    {
-      mOpen.push_back(new node_type(0, *iter, mCostFunc(pFrom[0], *iter), mCostFunc(*iter, pTo[0]) ));
+      mOpen.push_back(mFuncCreateNode(NULL, *iter, mCostFunc(pFrom[0], *iter), mCostFunc(*iter, pTo[0]) ));
       ++iter;
    }
 
@@ -132,13 +140,13 @@ void AStar<_NodeType, _CostFunc, _Container, _Timer>::AddNodeLink(node_type* pPa
 {
    if (!pParent)
    {
-      Insert(mOpen, new node_type(0, pData, 0, mCostFunc(mConfig.Start(), mConfig.Finish())));
+      Insert(mOpen, mFuncCreateNode(NULL, pData, 0, mCostFunc(mConfig.Start(), mConfig.Finish())));
    }
    else
    {
       cost_type costFromParent = mCostFunc(pParent->GetData(), pData);
       cost_type costToFinish   = mCostFunc(pData, mConfig.Finish());
-      Insert(mOpen, new node_type(pParent, pData, pParent->GetCostToNode() + costFromParent, costToFinish));
+      Insert(mOpen, mFuncCreateNode(pParent, pData, pParent->GetCostToNode() + costFromParent, costToFinish));
    }
 }
 
@@ -185,6 +193,11 @@ _NodeType* AStar<_NodeType, _CostFunc, _Container, _Timer>::FindLowestCost(AStar
    }
 }
 
+template<class _NodeType, class _CostFunc, class _Container, class _Timer>
+_NodeType* AStar<_NodeType, _CostFunc, _Container, _Timer>::CreateNode(node_type* pParent, data_type datatype, cost_type pGn, cost_type pHn)
+{
+   return new node_type(pParent, datatype, pGn, pHn);
+}
 
 
 template<class _NodeType, class _CostFunc, class _Container, class _Timer>

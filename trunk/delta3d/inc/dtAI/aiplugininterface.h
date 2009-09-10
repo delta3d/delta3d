@@ -147,7 +147,7 @@ namespace dtAI
          *  @param the waypoint from which to find paths
          *  @param the waypoint array to fill
          */
-         virtual void GetAllEdgesFromWaypoint(WaypointID pFrom, WaypointArray& result) = 0;
+         virtual void GetAllEdgesFromWaypoint(WaypointID pFrom, ConstWaypointArray& result) = 0;
 
 
          /**

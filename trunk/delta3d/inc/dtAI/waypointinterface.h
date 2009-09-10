@@ -48,10 +48,7 @@ namespace dtAI
       bool operator!=(const WaypointInterface& pWay) const;
 
       virtual ~WaypointInterface();
-
-      //TODO- Provide copy constructors and a virtual clone
-      //WaypointInterface* Clone(const WaypointInterface& wp);
-
+      
       WaypointID GetID() const;
       const dtDAL::ObjectType& GetWaypointType() const;
 
@@ -61,6 +58,14 @@ namespace dtAI
       virtual void SetPosition(const osg::Vec3& pVec) = 0;
 
       virtual void CreateProperties(WaypointPropertyBase& container);
+
+      /**
+      * This allows derivative waypoint classes to either subclass Referenced
+      *  and overload calling the base functions, or ignore, do nothing, and manage
+      *  your own memory.     
+      */
+      virtual void ref() const = 0;
+      virtual void unref() const = 0;
 
    protected:
       void SetID(WaypointID pID);

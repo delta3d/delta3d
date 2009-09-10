@@ -103,6 +103,17 @@ namespace dtAI
          //void GetAllChildPathsTo(const WaypointInterface* wi, WaypointGraph::ConstWaypointArray& result);
 
 
+         //these are pure virtual from WaypointInterface
+         virtual void ref() const
+         {
+            osg::Referenced::ref();
+         }
+
+         virtual void unref() const
+         {
+            osg::Referenced::unref();
+         }
+
       protected:
 
          /**

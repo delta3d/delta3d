@@ -24,6 +24,7 @@
 
 #include <dtAI/astarconfig.h>
 #include <dtAI/pathfinding.h>
+#include <dtUtil/functor.h>
 
 #include <algorithm>
 #include <vector>
@@ -91,12 +92,19 @@ namespace dtAI
       typedef AStarConfig<data_type, cost_type, container_type> config_type;
       typedef AStar<node_type, cost_function, container_type, _Timer> MyType;
 
+      typedef dtUtil::Functor<node_type*, TYPELIST_4(node_type*, data_type, cost_type, cost_type)> CreateNodeFunctor;
+
    public:
       /**
        * Default constructor creates a default config file
        * with no constraints, and no path to goto
        */
       AStar();
+      
+      /**
+      * Use this constructor to supply a creation function for the internal nodetype
+      */
+      AStar(CreateNodeFunctor createFunc);
 
       /**
        * Takes a config as an arg and copies it, use this constructor
@@ -158,8 +166,8 @@ namespace dtAI
       const cost_function& GetCostFunction() const { return mCostFunc; }
 
    protected:
-      AStar(const AStar&); //not implemented by design
-      AStar& operator=(const AStar&); //not implemented by design
+      //AStar(const AStar&); //not implemented by design
+      //AStar& operator=(const AStar&); //not implemented by design
       void FreeMem();
    
       /**
@@ -172,11 +180,15 @@ namespace dtAI
       node_type* FindLowestCost(AStarContainer& pCont);
       void Insert(AStarContainer& pCont, node_type* pNode);
       
+      node_type* CreateNode(node_type* pParent, data_type datatype, cost_type pGn, cost_type pHn);
+
       config_type mConfig;
       AStarContainer mOpen;
       AStarContainer mClosed;
       cost_function mCostFunc;
       _Timer mTimer;
+
+      CreateNodeFunctor mFuncCreateNode;
    };
 
 #include "astar.inl"
