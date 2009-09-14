@@ -66,6 +66,7 @@ namespace dtEditQt
       mResultsTree->setAlternatingRowColors(true);
       mResultsTree->setRootIsDecorated(false);
       mResultsTree->setSortingEnabled(true);
+      mResultsTree->sortItems(0, Qt::AscendingOrder);
       mResultsTree->setSelectionMode(QTreeView::ExtendedSelection);
       mResultsTree->setSelectionBehavior(QTreeView::SelectRows);
       connect(mResultsTree, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(gotoPressed()));
