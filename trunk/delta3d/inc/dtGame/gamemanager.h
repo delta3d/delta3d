@@ -698,14 +698,17 @@ namespace dtGame
 
             /**
              * Loads a single map, closing any currenly opened maps.  For loading multiple maps together, you should
-             * call ChangeMapSet.  It also describes the sequence of messages.
-             * @see #ChangeMapSet
+             * call ChangeMapSet().  It also describes the sequence of messages.
+             * @see #ChangeMapSet()
              * @see #CloseCurrentMap()
              * @param mapName       The name of the map to load.
              * @param addBillboards optional parameter that defaults to false that says whether or not proxy billboards should be
              *                      added to the scene.  This should only be true for debugging purposes.
              * @throws ExceptionEnum::INVALID_PARAMETER if no map name is supplied.
              * @throws ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION if map change is already in progress.
+             * @note ChangeMap() requires numerous "frames" for the Map change to occur.  This
+             * typically means dtCore::System needs to step a few times before all the Actors
+             * have been loaded.
              */
             void ChangeMap(const std::string& mapName, bool addBillboards = false);
 
@@ -731,6 +734,9 @@ namespace dtGame
              *                      added to the scene.  This should only be true for debugging purposes.
              * @throws ExceptionEnum::INVALID_PARAMETER if no map name is supplied.
              * @throws ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION if map change is already in progress.
+             * @note ChangeMapSet() requires numerous "frames" for the Map change to occur.  This
+             * typically means dtCore::System needs to step a few times before all the Actors
+             * have been loaded.
              */
             void ChangeMapSet(const NameVector& mapNames, bool addBillboards = false);
 
