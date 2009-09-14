@@ -554,10 +554,17 @@ namespace dtEditQt
       {
          mPropertyWindow->setEnabled(hasBoth);
       }
+
       if(mActorDockWidg != NULL)
       {
          mActorDockWidg->setEnabled(hasBoth);
       }
+
+      if (mActorSearchDockWidg != NULL)
+      {
+         mActorSearchDockWidg->setEnabled(hasBoth);
+      }
+
       if(mResourceBrowser != NULL)
       {
          mResourceBrowser->setEnabled(hasProject);

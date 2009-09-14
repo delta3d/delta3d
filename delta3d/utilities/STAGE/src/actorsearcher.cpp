@@ -261,10 +261,14 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void ActorSearcher::searchPressed()
    {
-      EditorData::GetInstance().getMainWindow()->startWaitCursor();
-
       std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > foundProxies;
       dtDAL::Map* map = EditorData::GetInstance().getCurrentMap();
+      if (map == NULL)
+      {
+         return;
+      }
+
+      EditorData::GetInstance().getMainWindow()->startWaitCursor();
 
       // get the search values
       QString searchName     = mActorNameEdit->text();
