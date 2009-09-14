@@ -235,7 +235,11 @@ namespace dtActors
             osg::Matrix matrix;
             matrix = matrix.rotate(osg::Vec3(0.0f, 0.0f, 1.0f), dir);
             dtCore::Transform transform;
-            transform.SetRotation(matrix);
+            if (matrix.valid())
+            {
+               transform.SetRotation(matrix);
+            }
+
             transform.SetTranslation(start);
             geomData->mSegTransformable->SetTransform(transform);
          }
