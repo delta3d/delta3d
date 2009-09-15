@@ -437,7 +437,7 @@ namespace dtGame
             LOG_WARNING(("Property \"" + paramName +
                      "\" was not found on actor type \"" +
                      GetActorType().GetFullName() +
-                     "\"").c_str());
+                     "\""));
             continue;
          }
 
