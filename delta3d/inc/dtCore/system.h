@@ -31,10 +31,12 @@
 
 #include <map>
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
 {
    class Stats;
 }
+/// @endcond
 
 namespace dtCore
 {

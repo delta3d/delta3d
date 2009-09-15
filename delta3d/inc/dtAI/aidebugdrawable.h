@@ -32,12 +32,14 @@
 //this includes osg::Vec3, Vec4, and all those
 #include <osg/Array>
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
 {
    class Group;
    class Geode;
    class Geometry;
 }
+/// @endcond
 
 namespace dtAI
 {

@@ -40,7 +40,7 @@
 #include <osgText/Text>
 #include <osg/Switch>
 
-/// @cond
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
 {
    class Geometry;

@@ -14,6 +14,7 @@ namespace dtCore
 }
 
 //forward osg declarations
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
 {   
    class Geode;
@@ -21,6 +22,7 @@ namespace osg
    class Shape;
    class ShapeDrawable;
 }
+/// @endcond
 
 namespace dtActors
 {
