@@ -40,10 +40,12 @@
 #include <osg/Texture2D>
 #include <osg/Texture3D>
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
 {
    class Camera;
 }
+/// @endcond
 
 namespace dtActors
 {
