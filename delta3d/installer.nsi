@@ -1,3 +1,7 @@
+; define INSTALL_CHM (no value) to install the index.chm file instead of the html files (defaults to include the html files)
+; use VERSION = x to define which version number to use (defaults to "anonymous-build")
+; use DELTA_BUILD_DIR = x to define which delta3d subfolder contains the Delta3D binary files (defaults to "build")
+; use OUTFILE = x to overwrite the output file name (defaults to "dt_win32_${VERSION}_setup.exe")
 
 
 !ifndef VERSION
@@ -13,6 +17,7 @@
 !ifndef DELTA_BUILD_DIR
   !define DELTA_BUILD_DIR 'build'
 !endif
+
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "Delta3D"
@@ -119,8 +124,13 @@ Section "!Delta3D" Delta3DSection
   SetOutPath "$INSTDIR\doc"
   File "doc\doxyfile.cfg"
   File "doc\footer.html"
-  File /r /x .svn .\doc\html
   
+  !ifdef INSTALL_CHM
+    File ".\doc\html\index.chm"
+  !else
+    File /r /x .svn .\doc\html
+  !endif
+    
   ;examples
   SetOutPath "$INSTDIR\examples"
   File /r /x .svn /x *.obj /x *.pch /x *.pdb /x *.idb /x *.ilk /x *.htm /x windows-msvc* .\examples\*
