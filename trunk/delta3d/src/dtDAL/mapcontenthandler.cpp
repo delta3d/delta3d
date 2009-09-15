@@ -325,8 +325,9 @@ namespace  dtDAL
                   if (mActorProperty == NULL)
                   {
                      mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
-                                         "In actor property section, actor property for name \"%s\" was not found on actor proxy \"%s\".",
-                                         propName.c_str(), mActorProxy->GetName().c_str());
+                                         "The ActorProperty named \"%s\" was not found on the ActorProxy named \"%s\" (%s).",
+                                         propName.c_str(), mActorProxy->GetName().c_str(),
+                                         mActorProxy->GetClassName().c_str());
                   }
                }
                else if (mActorProperty != NULL)
