@@ -85,15 +85,18 @@ namespace dtCore
          if (mActiveNodeList[i].nodeWeakReference.valid())
          {
             osg::Node *node = mActiveNodeList[i].nodeWeakReference.get();
-            dtCore::RefPtr<osg::StateSet> stateSet = node->getOrCreateStateSet();
+            dtCore::RefPtr<osg::StateSet> stateSet = node->getStateSet();
 
-            // clean up the parameters effects to the stateset
-            mActiveNodeList[i].shaderInstance->GetParameterList(params);
-            for (currParam=params.begin(); currParam!=params.end(); ++currParam)
-               (*currParam)->DetachFromRenderState(*stateSet);
+            if (stateSet.valid())
+            {
+               // clean up the parameters effects to the stateset
+               mActiveNodeList[i].shaderInstance->GetParameterList(params);
+               for (currParam=params.begin(); currParam!=params.end(); ++currParam)
+                  (*currParam)->DetachFromRenderState(*stateSet);
 
-            // remove the program
-            stateSet->setAttributeAndModes(new osg::Program(), osg::StateAttribute::ON);
+               // remove the program
+               stateSet->removeAttribute(osg::StateAttribute::PROGRAM);
+            }
          }
       }
 
