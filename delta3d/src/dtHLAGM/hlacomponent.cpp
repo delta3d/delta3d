@@ -971,11 +971,15 @@ namespace dtHLAGM
          if (GetObjectMapping(objectToActor.GetObjectClassName(), objectToActor.GetDisID()) != NULL)
          {
             std::ostringstream ss;
-            ss << "Unable to register object mapping "
-               << objectToActor.GetActorType().GetCategory() << "."
-               << objectToActor.GetActorType().GetName() << " and classname"
-               << objectToActor.GetObjectClassName() <<  ".  "
-               << "A mapping with both the same object name and DIS ID (if enabled) exists.  "
+            ss << "Unable to register object mapping \""
+               << objectToActor.GetActorType().GetFullName() << ", classname \""
+               << objectToActor.GetObjectClassName();
+               if (objectToActor.GetDisID() != NULL)
+               {
+                  ss <<  "\" and DIS ID \"" << *objectToActor.GetDisID();
+
+               }
+               ss << ".\"  A mapping with both the same object name and DIS ID (if enabled) exists.  "
                << "Set one to <localOnly/> if both mappings are required.";
 
             throw dtUtil::Exception(dtHLAGM::ExceptionEnum::XML_CONFIG_EXCEPTION, ss.str(), __FILE__, __LINE__);
