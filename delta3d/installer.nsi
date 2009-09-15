@@ -137,10 +137,6 @@ Section "!Delta3D" Delta3DSection
   SetOutPath "$INSTDIR\${DELTA_BUILD_DIR}\lib"
   File /x *.exp /x *.pdb /x *.idb .\${DELTA_BUILD_DIR}\lib\*
   
-  ;macosx
-  SetOutPath "$INSTDIR\macosx"
-  File /r /x .svn .\macosx\*
-  
   ;src
   SetOutPath "$INSTDIR\src"
   File /r /x .svn /x *.obj /x *.pch /x *.pdb /x *.ilk /x *.idb /x *.htm /x windows-msvc* .\src\*
@@ -259,7 +255,6 @@ Section Uninstall
   Delete "$INSTDIR\installer.nsi"
   Delete "$INSTDIR\license.txt"
   Delete "$INSTDIR\readme.txt"
-  Delete "$INSTDIR\oalinst.exe"
   Delete "$INSTDIR\vcredist_x86.exe"
 
 
@@ -290,9 +285,6 @@ Section Uninstall
   
   ;lib
   RMDIR /r $INSTDIR\${DELTA_BUILD_DIR}\lib
-  
-  ;macosx
-  RMDIR /r $INSTDIR\macosx
   
   ;src
   RMDIR /r $INSTDIR\src
