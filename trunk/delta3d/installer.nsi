@@ -253,6 +253,24 @@ FunctionEnd
 
 Section Uninstall
   !insertmacro MUI_STARTMENU_GETFOLDER "Application" $ICONS_GROUP
+  
+  ;environment variables
+  MessageBox MB_YESNO "Remove Delta3D Environment Variables (DELTA_ROOT, DELTA_INC, DELTA_LIB, DELTA_DATA)?" IDYES removeEnvVars IDNO next
+  removeEnvVars:
+    Push "DELTA_ROOT"
+    Call un.DeleteEnvStr
+    Push "DELTA_INC"
+    Call un.DeleteEnvStr
+    Push "DELTA_LIB"
+    Call un.DeleteEnvStr
+    Push "DELTA_DATA"
+    Call un.DeleteEnvStr
+    Push "${DELTA_ROOT}\${DELTA_BUILD_DIR}\bin"
+    Call un.RemoveFromPath
+    Push "${DELTA_ROOT}\ext\bin"
+    Call un.RemoveFromPath
+  next:
+
   ;root
   Delete "$INSTDIR\${PRODUCT_NAME}.url"
   Delete "$INSTDIR\uninst.exe"
@@ -266,8 +284,6 @@ Section Uninstall
   Delete "$INSTDIR\license.txt"
   Delete "$INSTDIR\readme.txt"
   Delete "$INSTDIR\vcredist_x86.exe"
-
-
 
   ;bin
   RMDir /r $INSTDIR\${DELTA_BUILD_DIR}
@@ -307,21 +323,7 @@ Section Uninstall
 
   ;VisualStudio
   RMDIR /r $INSTDIR\VisualStudio
-  
-  ;environment variables
-  Push "DELTA_ROOT"
-  Call un.DeleteEnvStr
-  Push "DELTA_INC"
-  Call un.DeleteEnvStr
-  Push "DELTA_LIB"
-  Call un.DeleteEnvStr
-  Push "DELTA_DATA"
-  Call un.DeleteEnvStr
 
-  Push "${DELTA_ROOT}\${DELTA_BUILD_DIR}\bin"
-  Call un.RemoveFromPath
-  Push "${DELTA_ROOT}\ext\bin"
-  Call un.RemoveFromPath
 
   Delete "$SMPROGRAMS\$ICONS_GROUP\Uninstall.lnk"
   Delete "$SMPROGRAMS\$ICONS_GROUP\Delta3D.org.lnk"
