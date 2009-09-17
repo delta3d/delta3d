@@ -93,6 +93,7 @@ public slots:
    void OnToggleHardwareSkinning();
    void OnToggleShadingToolbar();
    void OnToggleLODScaleToolbar();
+   void OnToggleSpeedScaleToolbar();
    void OnToggleScalingToolbar();
    void OnToggleLightingToolbar();
    void OnDisplayError(const QString& msg);

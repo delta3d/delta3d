@@ -151,6 +151,7 @@ void MainWindow::CreateMenus()
 
    QAction* toggleShadeToolbarAction = toolBarMenu->addAction("Shading toolbar");
    QAction* toggleLODScaleToolbarAction  = toolBarMenu->addAction("LOD Scale toolbar");
+   QAction* toggleSpeedScaleToolbarAction  = toolBarMenu->addAction("Speed Scale toolbar");
    //QAction *toggleLightToolBarAction = toolBarMenu->addAction("Lighting toolbar");
    QAction* toggleScalingToolbarAction  = toolBarMenu->addAction("Scaling toolbar");
 
@@ -158,6 +159,8 @@ void MainWindow::CreateMenus()
    toggleShadeToolbarAction->setChecked(true);
    toggleLODScaleToolbarAction->setCheckable(true);
    toggleLODScaleToolbarAction->setChecked(true);
+   toggleSpeedScaleToolbarAction->setCheckable(true);
+   toggleSpeedScaleToolbarAction->setChecked(true);
    //toggleLightToolBarAction->setCheckable(true);
    //toggleLightToolBarAction->setChecked(true);
    toggleScalingToolbarAction->setCheckable(true);
@@ -165,6 +168,7 @@ void MainWindow::CreateMenus()
 
    connect(toggleShadeToolbarAction, SIGNAL(triggered()), this, SLOT(OnToggleShadingToolbar()));
    connect(toggleLODScaleToolbarAction, SIGNAL(triggered()), this, SLOT(OnToggleLODScaleToolbar()));
+   connect(toggleSpeedScaleToolbarAction, SIGNAL(triggered()), this, SLOT(OnToggleSpeedScaleToolbar()));
    connect(toggleScalingToolbarAction, SIGNAL(triggered()), this, SLOT(OnToggleScalingToolbar()));
 
    for (int actionIndex = 0; actionIndex < 5; ++actionIndex)
@@ -741,6 +745,19 @@ void MainWindow::OnToggleLODScaleToolbar()
    else
    {
       mLODScaleToolbar->hide();
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnToggleSpeedScaleToolbar()
+{
+   if (mSpeedToolbar->isHidden())
+   {
+      mSpeedToolbar->show();
+   }
+   else
+   {
+      mSpeedToolbar->hide();
    }
 }
 
