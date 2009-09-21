@@ -21,11 +21,11 @@
 
 #include <dtAI/waypointcollection.h>
 #include <dtAI/waypointpair.h>
-#include <dtAI/navmesh.h>
 #include <dtAI/waypointtypes.h>
 
 
 #include <dtUtil/log.h>
+
 
 namespace dtAI
 {
@@ -38,7 +38,6 @@ namespace dtAI
       , mLeaf (false)
       , mRadius(0.0f)
       , mPosition()
-      , mChildEdges(new NavMesh())
    {
 
    }
@@ -50,7 +49,6 @@ namespace dtAI
       , mLeaf (false)
       , mRadius(0.0f)
       , mPosition(pos)
-      , mChildEdges(new NavMesh())
    {
 
    }
@@ -62,7 +60,6 @@ namespace dtAI
       , mLeaf(way.mLeaf)
       , mRadius(way.mRadius)
       , mPosition(way.mPosition)
-      , mChildEdges(new NavMesh())
    {
 
    }
@@ -83,6 +80,8 @@ namespace dtAI
 
       //todo- verify this is called above on erase
       clear();
+
+      mChildEdges.clear();
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -90,6 +89,7 @@ namespace dtAI
    {
       return new WaypointCollection();
    }
+
 
    /////////////////////////////////////////////////////////////////////////////
    bool WaypointCollection::IsLeaf()
@@ -113,6 +113,30 @@ namespace dtAI
    /*virtual*/ void WaypointCollection::SetPosition(const osg::Vec3& pVec)
    {
       mPosition = pVec;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   WaypointCollection* WaypointCollection::GetParent()
+   {
+      WaypointTree* parentNode = WaypointTree::parent();
+      if(parentNode != NULL)
+      {
+         return dynamic_cast<WaypointCollection*>(parentNode);
+      }
+
+      return NULL;
+   }
+      
+   /////////////////////////////////////////////////////////////////////////////
+   const WaypointCollection* WaypointCollection::GetParent() const
+   {
+      const WaypointTree* parentNode = WaypointTree::parent();
+      if(parentNode != NULL)
+      {
+         return dynamic_cast<const WaypointCollection*>(parentNode);
+      }
+
+      return NULL;
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -284,19 +308,51 @@ namespace dtAI
    }
 
    /////////////////////////////////////////////////////////////////////////////
+   void WaypointCollection::AddEdge(WaypointID sibling, const ChildEdge& edge)
+   {
+      mChildEdges.insert(std::make_pair(sibling, edge));
+   }
+
+
+   /////////////////////////////////////////////////////////////////////////////
+   bool WaypointCollection::RemoveEdge(WaypointID sibling, const ChildEdge& edge)
+   {    
+      ChildEdgeMap::iterator iter = mChildEdges.lower_bound(sibling);
+      ChildEdgeMap::iterator iterEnd = mChildEdges.upper_bound(sibling);
+      for (;iter != iterEnd; ++iter)
+      {
+         if((*iter).second == edge)
+         {
+            mChildEdges.erase(iter);
+            return true;
+         }
+      }
+
+      return false;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void WaypointCollection::ClearEdges()
+   {
+      mChildEdges.clear();
+   }
+   
+   /////////////////////////////////////////////////////////////////////////////
+   void WaypointCollection::GetEdges(WaypointID sibling, ChildEdgeArray& result) const
+   {
+      ChildEdgeMap::const_iterator iter = mChildEdges.lower_bound(sibling);
+      ChildEdgeMap::const_iterator iterEnd = mChildEdges.upper_bound(sibling);
+      for (;iter != iterEnd; ++iter)
+      {
+         result.push_back((*iter).second);
+      }
+
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
    void WaypointCollection::CreateProperties( WaypointPropertyBase& container )
    {
       WaypointInterface::CreateProperties(container);
-   }
-
-   NavMesh& WaypointCollection::GetNavMesh()
-   {
-      return *mChildEdges;
-   }
-
-   const NavMesh& WaypointCollection::GetNavMesh() const
-   {
-      return *mChildEdges;
    }
 
 } // namespace dtAI

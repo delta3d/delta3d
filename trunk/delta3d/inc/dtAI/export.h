@@ -41,6 +41,7 @@
 
 #ifdef _WIN32
 #   pragma warning (disable: 4251)
+#   pragma warning(disable : 4355) // 'this' used in initializer list
 #endif
 
 #endif // DELTA_AI_EXPORT

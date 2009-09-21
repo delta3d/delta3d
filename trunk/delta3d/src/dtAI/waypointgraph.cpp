@@ -333,10 +333,76 @@ namespace dtAI
       //}
 
 
-      //WaypointCollection* FindCommonParent(const WaypointCollection& lhs, const WaypointCollection& rhs)
-      //{
-      //   return NULL;
-      //}
+      const WaypointCollection* FindCommonParent(const WaypointCollection& lhs, const WaypointCollection& rhs) const
+      {
+         //first lets get them on the same level
+         int idLHS = GetSearchLevelNum(lhs.GetID());
+         int idRHS = GetSearchLevelNum(rhs.GetID());
+         
+         if(idLHS >= 0 && idRHS > 0)
+         {
+            const WaypointCollection::WaypointTree* lhsParent = &lhs;
+            const WaypointCollection::WaypointTree* rhsParent = &rhs;
+
+            while(idLHS < idRHS && lhsParent != NULL)
+            {
+               lhsParent = lhsParent->parent();
+               ++idLHS;
+            }
+
+            while(idRHS < idLHS && rhsParent != NULL)
+            {
+               rhsParent = rhsParent->parent();          
+               ++idRHS;
+            }
+
+            //now they should be on the same search level lets traverse up to a common parent
+            while(lhsParent != NULL && rhsParent != NULL)
+            {
+               if(lhsParent == rhsParent)
+               {
+                  return CastToCollection(lhsParent);
+               }
+
+               lhsParent = lhsParent->parent();
+               rhsParent = rhsParent->parent();                        
+            }
+         }
+
+         return NULL;
+      }
+
+      bool GetNodePath(const WaypointCollection& wp, const WaypointCollection& parentNode, WaypointGraph::ConstWaypointCollectionArray& result) const
+      {
+         const WaypointCollection::WaypointTree* curNode = &wp;
+
+         while(curNode != NULL)
+         {
+            if(curNode == &parentNode)
+            {
+               return true;
+            }
+
+            result.push_back(CastToCollection(curNode));
+            curNode = curNode->parent();
+         }
+
+         result.clear();
+         return false;
+      }
+
+      int GetSearchLevelNum(WaypointID id) const
+      {
+         WaypointMap::const_iterator iter = mWaypointOwnership.find(id);
+         if(iter != mWaypointOwnership.end())
+         {
+            const WaypointHolder& wh = (*iter).second;
+            return wh.mLevel;
+         }
+          
+         return -1;
+      }
+
 
       //dtCore::RefPtr<NavMesh> mNavMesh;
       //WaypointMap mWaypointOwnership;
@@ -790,33 +856,62 @@ namespace dtAI
    /////////////////////////////////////////////////////////////////////////////
    int WaypointGraph::GetSearchLevelNum(WaypointID id) const
    {
-      WaypointGraphImpl::WaypointMap::const_iterator iter = mImpl->mWaypointOwnership.find(id);
-      if(iter != mImpl->mWaypointOwnership.end())
-      {
-         const WaypointGraphImpl::WaypointHolder& wh = (*iter).second;
-         return wh.mLevel;
-      }
-       
-      return -1;
+      return mImpl->GetSearchLevelNum(id);
    }
+
+   /////////////////////////////////////////////////////////////////////////////
+   //WaypointCollection* WaypointGraph::MapNodeToLevel(WaypointInterface* wp, unsigned levelNum)
+   //{
+   //   WaypointCollection* result = FindCollection(wp->GetID());
+   //   if(result != NULL)
+   //   {
+
+   //   }
+
+   //}
+
 
    //void WaypointGraph::AddSearchLevel(dtCore::RefPtr<WaypointGraph::SearchLevel> newLevel)
    //{
    //   mImpl->AddSearchLevel(newLevel.get());
    //}
 
-   //commented out because the mImpl::FindCommonParent() is not implemented
-   //WaypointCollection* WaypointGraph::FindCommonParent( const WaypointInterface& lhs, const WaypointInterface& rhs)
-   //{
-   //   const WaypointCollection* wpColLhs = FindCollection(lhs.GetID());
-   //   const WaypointCollection* wpColRhs = FindCollection(rhs.GetID());
-   //   if(wpColRhs != NULL && wpColLhs != NULL)
-   //   {
-   //      return mImpl->FindCommonParent(*wpColLhs, *wpColRhs);
-   //   } 
+   /////////////////////////////////////////////////////////////////////////////
+   const WaypointCollection* WaypointGraph::FindCommonParent(WaypointID lhs, WaypointID rhs) const
+   {
+      const WaypointCollection* wpColLhs = FindCollection(lhs);
+      const WaypointCollection* wpColRhs = FindCollection(rhs);
+      if(wpColRhs != NULL && wpColLhs != NULL)
+      {
+         return FindCommonParent(*wpColLhs, *wpColRhs);
+      } 
 
-   //   return NULL;
-   //}
+      return NULL;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   bool WaypointGraph::GetNodePath(const WaypointInterface* childNode, const WaypointCollection* parentNode, ConstWaypointCollectionArray& result)
+   {
+      WaypointCollection* wc = FindCollection(childNode->GetID());
+      if(wc != NULL)
+      {
+         return GetNodePath(*wc, *parentNode, result);
+      }
+
+      return false;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   bool WaypointGraph::GetNodePath(const WaypointCollection& childNode, const WaypointCollection& parentNode, ConstWaypointCollectionArray& result)
+   {
+      return mImpl->GetNodePath(childNode, parentNode, result);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   const WaypointCollection* WaypointGraph::FindCommonParent(const WaypointCollection& lhs, const WaypointCollection& rhs) const
+   {
+      return mImpl->FindCommonParent(lhs, rhs);
+   }
 
    /////////////////////////////////////////////////////////////////////////////
    WaypointCollection* WaypointGraph::GetParent(WaypointID id)
