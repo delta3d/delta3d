@@ -1,8 +1,18 @@
 
 SET(LIB_NAME testProceduralAnimation)
 
-file(GLOB LIB_SOURCES "*.cpp" "*.h")
-list(REMOVE_ITEM LIB_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/precomp.cpp)
+SET(LIB_SOURCES
+    proceduralanimationactor.cpp
+	proceduralanimationactor.h
+	proceduralanimationcomponent.cpp
+	proceduralanimationcomponent.h
+	readme.txt
+	testactorlibraryregistry.cpp
+	testactorlibraryregistry.h
+	testentrypoint.cpp
+	testentrypoint.h
+	testexport.h
+)
 
 INCLUDE_DIRECTORIES( ${CAL3D_INCLUDE_DIR} )#for dtAnim
 
