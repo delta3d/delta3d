@@ -24,7 +24,7 @@
 
 namespace dtAI
 {
-   enum PathFindResult{ NO_PATH = 0, PATH_FOUND, PARTIAL_PATH};
-} //namespace dtAI
+   enum PathFindResult { NO_PATH = 0, PATH_FOUND, PARTIAL_PATH};
+} // namespace dtAI
 
 #endif // __DELTA_PATHFINDING_H__

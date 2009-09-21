@@ -46,7 +46,7 @@ namespace dtAI
    class StateVar: public IStateVariable
    {
    public:
-      StateVar(const _Type& pData): mData(pData){}
+      StateVar(const _Type& pData) : mData(pData) {}
 
       IStateVariable* Copy() const
       {
@@ -129,7 +129,6 @@ namespace dtAI
    {
    public:
       virtual bool Apply(const Operator*, WorldState* pWSIn) const = 0;
-
    };
 
 
@@ -137,8 +136,8 @@ namespace dtAI
    class Eff: public IEffect
    {
    public:
-      Eff(const std::string& pName, const _Type& pData): mName(pName), mData(pData){}
-      ~Eff(){}
+      Eff(const std::string& pName, const _Type& pData) : mName(pName), mData(pData) {}
+      ~Eff() {}
 
       bool Apply(const Operator*, WorldState* pWSIn) const
       {
@@ -176,62 +175,57 @@ namespace dtAI
    template <typename _Type>
    class TOperator: public Operator
    {
-      public:
-         typedef Eff<_Type> EffectType;
-         typedef Conditional<_Type> InterruptType;
-         typedef std::vector<dtCore::RefPtr<EffectType> > EffectList;
-         typedef std::vector<dtCore::RefPtr<InterruptType> > InterruptList;
+   public:
+      typedef Eff<_Type> EffectType;
+      typedef Conditional<_Type> InterruptType;
+      typedef std::vector< dtCore::RefPtr<EffectType> > EffectList;
+      typedef std::vector< dtCore::RefPtr<InterruptType> > InterruptList;
 
-      public:
-         TOperator(const std::string& pName):
-            Operator(pName, Operator::ApplyOperatorFunctor(this, &TOperator<_Type>::Apply)){}
+   public:
+      TOperator(const std::string& pName):
+         Operator(pName, Operator::ApplyOperatorFunctor(this, &TOperator<_Type>::Apply)) {}
 
-         void SetCost(float pcost){mCost = pcost;}
+      void SetCost(float pcost){mCost = pcost;}
 
-         void AddEffect(EffectType* pEffect){mEffects.push_back(pEffect);}
-         void AddInterrupt(InterruptType* pInterrupt){mInterrupts.push_back(pInterrupt);}
+      void AddEffect(EffectType* pEffect) { mEffects.push_back(pEffect); }
+      void AddInterrupt(InterruptType* pInterrupt) { mInterrupts.push_back(pInterrupt); }
 
-         bool CheckInterrupts(const WorldState* pCurrent) const
+      bool CheckInterrupts(const WorldState* pCurrent) const
+      {
+         typename InterruptList::const_iterator iter = mInterrupts.begin();
+         typename InterruptList::const_iterator endOfList = mInterrupts.end();
+         while (iter != endOfList)
          {
-            typename InterruptList::const_iterator iter = mInterrupts.begin();
-            typename InterruptList::const_iterator endOfList = mInterrupts.end();
-            while (iter != endOfList)
+            if ((*iter)->Evaluate(pCurrent))
             {
-               if ((*iter)->Evaluate(pCurrent))
-               {
-                  return false;
-               }
-               ++iter;
+               return false;
             }
-            return true;
+            ++iter;
+         }
+         return true;
+      }
+
+      bool Apply(const Operator* oper, WorldState* pWSIn) const
+      {
+         typename EffectList::const_iterator iter = mEffects.begin();
+         typename EffectList::const_iterator endOfList = mEffects.end();
+         while (iter != endOfList)
+         {
+            (*iter)->Apply(oper, pWSIn);
+            ++iter;
          }
 
-         bool Apply(const Operator* oper, WorldState* pWSIn) const
-         {
-            typename EffectList::const_iterator iter = mEffects.begin();
-            typename EffectList::const_iterator endOfList = mEffects.end();
-            while (iter != endOfList)
-            {
-               (*iter)->Apply(oper, pWSIn);
-               ++iter;
-            }
+         pWSIn->AddCost(mCost);
+         return true;
+      }
 
-            pWSIn->AddCost(mCost);
-            return true;
-         }
-
-      private:
-
-         float mCost;
-         EffectList mEffects;
-         InterruptList mInterrupts;
-
+   private:
+      float mCost;
+      EffectList mEffects;
+      InterruptList mInterrupts;
    };
 
-
    typedef TOperator<bool> NPCOperator;
-
-
 } // namespace dtAI
 
 #endif // __DELTA_PLANNERASTARUTILS_H__

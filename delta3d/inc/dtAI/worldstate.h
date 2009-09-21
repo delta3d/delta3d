@@ -32,55 +32,53 @@
 namespace dtAI
 {
    /**
-    * 
+    *
     */
    class DT_AI_EXPORT WorldState
    {
-      public:
-         typedef std::pair<std::string, IStateVariable*> StringStateMapping;
-         typedef std::map<std::string, IStateVariable*> StateVarMapping;
+   public:
+      typedef std::pair<std::string, IStateVariable*> StringStateMapping;
+      typedef std::map<std::string, IStateVariable*> StateVarMapping;
 
-      public:
-         WorldState();
-         WorldState(const WorldState& pWS);
+   public:
+      WorldState();
+      WorldState(const WorldState& pWS);
 
-         WorldState& operator=(const WorldState& pWS);
+      WorldState& operator=(const WorldState& pWS);
 
-         virtual ~WorldState();
+      virtual ~WorldState();
 
-         float GetCost() const;
-         void AddCost(float pCost);
+      float GetCost() const;
+      void AddCost(float pCost);
 
-         void AddState(const std::string& pName, IStateVariable* pStateVar);
-         IStateVariable* GetState(const std::string& pState);
-         
-         template <typename T>
-         void GetState(const std::string& pState, T*& pStateVar)
-         {
-            pStateVar = dynamic_cast<T*>(GetState(pState));
-         }
+      void AddState(const std::string& pName, IStateVariable* pStateVar);
+      IStateVariable* GetState(const std::string& pState);
 
-         const IStateVariable* GetState(const std::string& pState) const;
+      template <typename T>
+      void GetState(const std::string& pState, T*& pStateVar)
+      {
+         pStateVar = dynamic_cast<T*>(GetState(pState));
+      }
 
-         template <typename T>
-         void GetState(const std::string& pState, const T*& pStateVar) const
-         {
-            pStateVar = dynamic_cast<const T*>(GetState(pState));
-         }
+      const IStateVariable* GetState(const std::string& pState) const;
 
-         const StateVarMapping& GetStateVariables() const { return mStateVariables; }
+      template <typename T>
+      void GetState(const std::string& pState, const T*& pStateVar) const
+      {
+         pStateVar = dynamic_cast<const T*>(GetState(pState));
+      }
 
+      const StateVarMapping& GetStateVariables() const { return mStateVariables; }
 
-      private:
-         void FreeMem();
+   private:
+      void FreeMem();
 
-         float mCost;
-         StateVarMapping mStateVariables;
-
+      float mCost;
+      StateVarMapping mStateVariables;
    };
 
    DT_AI_EXPORT std::ostream& operator << (std::ostream &o, const WorldState &worldState);
 
-}//namespace dtAI
+} // namespace dtAI
 
 #endif // __DELTA_WORLDSTATE_H__

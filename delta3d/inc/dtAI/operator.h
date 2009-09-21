@@ -35,41 +35,41 @@
 namespace dtAI
 {
    /**
-    * 
+    *
     */
    class DT_AI_EXPORT Operator
    {
-      public:
-         typedef std::list<dtCore::RefPtr<IConditional> > ConditionalList;
-         typedef dtUtil::Functor<bool, TYPELIST_2(const Operator*, WorldState*)> ApplyOperatorFunctor;
+   public:
+      typedef std::list<dtCore::RefPtr<IConditional> > ConditionalList;
+      typedef dtUtil::Functor<bool, TYPELIST_2(const Operator*, WorldState*)> ApplyOperatorFunctor;
 
-      public:
-         Operator(const std::string& pName, const ApplyOperatorFunctor& pEvalFunc);
-         virtual ~Operator();
+   public:
+      Operator(const std::string& pName, const ApplyOperatorFunctor& pEvalFunc);
+      virtual ~Operator();
 
-         bool operator==(const Operator& pRHS) const;
+      bool operator==(const Operator& pRHS) const;
 
-         const std::string& GetName() const;
+      const std::string& GetName() const;
 
-         bool Apply(WorldState* pWSIn) const;
-   
-         void AddPreCondition(IConditional* pCondIn);
-   
-         void RemovePreCondition(IConditional* pConditional);
+      bool Apply(WorldState* pWSIn) const;
 
-         const ConditionalList& GetPreConditions() const;
+      void AddPreCondition(IConditional* pCondIn);
 
-      protected:
-         Operator(const Operator&);             //not implemented by design
-         Operator& operator=(const Operator&);  //not implemented by design
+      void RemovePreCondition(IConditional* pConditional);
 
-         std::string mName;
+      const ConditionalList& GetPreConditions() const;
 
-         ConditionalList mPreConditionals;
+   protected:
+      Operator(const Operator&);             //not implemented by design
+      Operator& operator=(const Operator&);  //not implemented by design
 
-         ApplyOperatorFunctor mApplyFunctor;
-   
+      std::string mName;
+
+      ConditionalList mPreConditionals;
+
+      ApplyOperatorFunctor mApplyFunctor;
    };
-}//namespace dtAI
+
+} // namespace dtAI
 
 #endif // __DELTA_OPERATOR_H__

@@ -32,7 +32,7 @@ namespace dtAI
     * It's purpose is to serve a generic method of generating alerts for ai agents
     */
 
-   //This functor is used to perform the compare
+   // This functor is used to perform the compare
    template <typename ReportFunctor, typename ReportData, typename ArgType1, typename ArgType2>
    struct CompareFunctor
    {
@@ -51,7 +51,7 @@ namespace dtAI
       }
    };
 
-   //a base class will allow us to hold a container of these
+   // a base class will allow us to hold a container of these
    template <typename ReportData>
    class SensorBase: public osg::Referenced
    {
@@ -63,7 +63,6 @@ namespace dtAI
    protected:
       ~SensorBase(){}
    };
-
 
    template <typename Type1, typename Type2, typename EvaluateFunc1, typename EvaluateFunc2, typename CompareFunc, typename ReportFunc, typename ReportData>
    class Sensor: public SensorBase<ReportData>
@@ -112,6 +111,7 @@ namespace dtAI
          }
          return mReportData;
       }
+
       /**
        * This function makes us play friendly with the generic functor interface
        */

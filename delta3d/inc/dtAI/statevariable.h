@@ -32,16 +32,14 @@ namespace dtAI
     */
    class DT_AI_EXPORT IStateVariable
    {
-      public:
-   
-         virtual ~IStateVariable() {};
+   public:
+      virtual ~IStateVariable() {};
 
-         virtual IStateVariable* Copy() const = 0;
+      virtual IStateVariable* Copy() const = 0;
 
-         virtual const std::string ToString() const = 0;
+      virtual const std::string ToString() const = 0;
 
-      private:
-   
+   private:
    };
 
    inline std::ostream& operator << (std::ostream &o, const IStateVariable& stateVar)
@@ -49,6 +47,6 @@ namespace dtAI
       o << stateVar.ToString();
       return o;
    }
-}//namespace dtAI
+} // namespace dtAI
 
 #endif // __DELTA_STATEVARIABLE_H__

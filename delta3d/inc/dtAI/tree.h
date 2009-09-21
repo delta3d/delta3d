@@ -2,27 +2,26 @@
 #define DTAI_DELTA_TREE_H
 
 /*
-* Delta3D Open Source Game and Simulation Engine
-* Copyright (C) 2009 Alion Science and Technology
-*
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
-* any later version.
-*
-* This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
-* details.
-*
-* You should have received a copy of the GNU Lesser General Public License
-* along with this library; if not, write to the Free Software Foundation, Inc.,
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*
-* Bradley Anderegg
-*
-*/
-
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2009 Alion Science and Technology
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * Bradley Anderegg
+ *
+ */
 
 #include <dtUtil/typetraits.h>
 #include <cstddef>
@@ -97,14 +96,13 @@ namespace dtAI
    {
    public:
       typedef _Node value_type;
-      //typedef const typename dtUtil::TypeTraits<value_type>::pointer_type const_pointer;
+      // typedef const typename dtUtil::TypeTraits<value_type>::pointer_type const_pointer;
       typedef const _Node* const_pointer;
       typedef typename dtUtil::TypeTraits<value_type>::const_reference const_reference;
 
       _TreeIteratorBase_Const(): _ptr(0), _root(0){}
       ~_TreeIteratorBase_Const(){ _ptr = 0; _root = 0;} //note: although this should be virtual, we have nothing to delete
       // so as an optimization I am going to ignore the virtual
-
 
       _TreeIteratorBase_Const(const_pointer ptr, const_pointer root): _ptr(ptr), _root(root){}
 
@@ -146,7 +144,6 @@ namespace dtAI
       ~_TreeIteratorChildBase_Const(){ _ptr = 0; _root = 0;} //note: although this should be virtual, we have nothing to delete
       // so as an optimization I am going to ignore the virtual
 
-
       _TreeIteratorChildBase_Const(const_pointer ptr, const_pointer root): _ptr(ptr), _root(root){}
 
       _TreeIteratorChildBase_Const(const _TreeIteratorChildBase_Const& pIter): _ptr(pIter._ptr), _root(pIter._root){}
@@ -159,7 +156,6 @@ namespace dtAI
       }
 
       _TreeIteratorChildBase_Const(const _TreeIteratorChildBase<_Node>& pIter): _ptr(pIter._ptr), _root(pIter._root){}
-
 
       _TreeIteratorChildBase_Const& operator=(_TreeIteratorChildBase<_Node>& pIter)
       {
@@ -176,7 +172,7 @@ namespace dtAI
    };
 
    // -----------------------------------------------------------------------------
-   // Reverse Tree Iterator 
+   // Reverse Tree Iterator
    // -----------------------------------------------------------------------------
 
    template<class _Node>
@@ -222,10 +218,8 @@ namespace dtAI
       }
    };
 
-
-
    // -----------------------------------------------------------------------------
-   // Forward Tree Child Iterator 
+   // Forward Tree Child Iterator
    // -----------------------------------------------------------------------------
    template<class _Node>
    class _FWDTreeChildIterator: public _TreeIteratorChildBase<_Node>
@@ -268,10 +262,8 @@ namespace dtAI
       }
    };
 
-
-
    // -----------------------------------------------------------------------------
-   // Reverse Tree Iterator 
+   // Reverse Tree Iterator
    // -----------------------------------------------------------------------------
 
    template<class _Node>
@@ -313,12 +305,10 @@ namespace dtAI
          else BaseClass::_ptr = BaseClass::_root->last_child();
          return *this;
       }
-
    };
 
-
    // -----------------------------------------------------------------------------
-   // Forward Tree Iterator 
+   // Forward Tree Iterator
    // -----------------------------------------------------------------------------
    template<class _Node>
    class _FWDTreeIterator: public _TreeIteratorBase<_Node>
@@ -338,7 +328,6 @@ namespace dtAI
       {
          return BaseClass(pIter);
       }
-
 
       _Node& operator*() const{ return *BaseClass::_ptr; }
 
@@ -362,9 +351,8 @@ namespace dtAI
       }
    };
 
-
    // -----------------------------------------------------------------------------
-   // Const Tree Iterator 
+   // Const Tree Iterator
    // -----------------------------------------------------------------------------
 
    template<class _Node>
@@ -414,10 +402,8 @@ namespace dtAI
       }
    };
 
-
-
    // -----------------------------------------------------------------------------
-   // Const Reverse Tree Iterator 
+   // Const Reverse Tree Iterator
    // -----------------------------------------------------------------------------
 
    template<class _Node>
@@ -474,9 +460,8 @@ namespace dtAI
       }
    };
 
-
    // -----------------------------------------------------------------------------
-   // Const Tree Iterator 
+   // Const Tree Iterator
    // -----------------------------------------------------------------------------
 
    template<class _Node>
@@ -534,10 +519,8 @@ namespace dtAI
       }
    };
 
-
-
    // -----------------------------------------------------------------------------
-   // Const Reverse Tree Iterator 
+   // Const Reverse Tree Iterator
    // -----------------------------------------------------------------------------
 
    template<class _Node>
@@ -574,7 +557,7 @@ namespace dtAI
 
       _Node& operator*() const{ return *BaseClass::_ptr; }
       const _Node* operator->() const{return BaseClass::_ptr;}
-      
+
       bool operator==(const _RevTreeChildIterator_Const& pIter) const{ return BaseClass::_ptr == pIter._ptr; }
 
       bool operator!=(const _RevTreeChildIterator_Const& pIter) const{ return !(BaseClass::_ptr == pIter._ptr); }
@@ -593,17 +576,13 @@ namespace dtAI
       }
    };
 
-
-
    template <class T>
    class Tree : public osg::Referenced
    {
-
       ////////////////////////////////////////////////////////////////////////////////////////////
       //Data Structures
       ////////////////////////////////////////////////////////////////////////////////////////////
    public:
-
       typedef Tree<T> _MyType;
       typedef _MyType TreeNode;
 
@@ -616,7 +595,7 @@ namespace dtAI
       typedef _FWDTreeChildIterator_Const<TreeNode> const_child_iterator;
       typedef _RevTreeChildIterator<TreeNode> reverse_child_iterator;
       typedef _RevTreeChildIterator_Const<TreeNode> const_reverse_child_iterator;
-      
+
       typedef typename dtUtil::TypeTraits<T>::value_type value_type;
       typedef typename dtUtil::TypeTraits<T>::const_reference vt_const_ref;
       typedef typename dtUtil::TypeTraits<T>::pointer_type vt_ptr;
@@ -626,7 +605,6 @@ namespace dtAI
       typedef Tree<T>* pointer;
       typedef const Tree<T>* const_pointer;
       typedef dtCore::RefPtr<Tree<T> > ref_pointer;
-
 
       /////////////////////////////////////////////////////////////////////////////////////////////
       //Functions
@@ -647,7 +625,6 @@ namespace dtAI
       virtual ~Tree();
 
    public:
-
       void clear();
 
       bool empty() const;
@@ -656,7 +633,7 @@ namespace dtAI
       unsigned size() const;
 
       //depth in the tree
-      unsigned level() const; 
+      unsigned level() const;
 
       //number of children
       unsigned degree() const;
@@ -682,10 +659,10 @@ namespace dtAI
 
       void push_front(ref_pointer subtree);
       void pop_front();
-      
+
       void push_back(ref_pointer subtree);
       void pop_back();
-      
+
       iterator erase(iterator pWhere);
       reverse_iterator erase(reverse_iterator pWhere);
       child_iterator erase(child_iterator pWhere);
@@ -697,62 +674,59 @@ namespace dtAI
       reverse_child_iterator insert(ref_pointer subtree, reverse_child_iterator pWhere);
 
       /**
-      * get an iterator performing a pre-order traversal
-      */
+       * get an iterator performing a pre-order traversal
+       */
       iterator begin();
       const_iterator begin() const;
 
       /**
-      * get an iterator pointing to the end of the pre-order traversal
-      */
+       * get an iterator pointing to the end of the pre-order traversal
+       */
       iterator end();
       const_iterator end() const;
 
       /**
-      * iterate through all immediate children
-      */
+       * iterate through all immediate children
+       */
       child_iterator begin_child();
       const_child_iterator begin_child() const;
 
       /**
-      * get an iterator pointing to the end of the immediate children
-      */
+       * get an iterator pointing to the end of the immediate children
+       */
       child_iterator end_child();
       const_child_iterator end_child() const;
 
       /**
-      * reverse iterator performs a post-order traversal
-      */
+       * reverse iterator performs a post-order traversal
+       */
       reverse_iterator rbegin();
       const_reverse_iterator rbegin() const;
 
       /**
-      * reverse iterator performs a post-order traversal
-      */
+       * reverse iterator performs a post-order traversal
+       */
       reverse_iterator rend();
       const_reverse_iterator rend() const;
 
       /**
-      * reverse iterate through all immediate children
-      */
+       * reverse iterate through all immediate children
+       */
       reverse_child_iterator rbegin_child();
       const_reverse_child_iterator rbegin_child() const;
 
       /**
-      * reverse iterate through all immediate children
-      */
+       * reverse iterate through all immediate children
+       */
       reverse_child_iterator rend_child();
       const_reverse_child_iterator rend_child() const;
 
-
-   
       T value;
 
       void remove_subtree(pointer tree);
       void insert_subtree(pointer tree, pointer next);
 
    private:
-
       void init();
       void destroy_decendants();
       void change_last_descendant(pointer tree);
@@ -764,8 +738,6 @@ namespace dtAI
       ref_pointer mNext;
       ref_pointer mLastDecendant;
    };
-
-
 
    template <class T>
    Tree<T>::Tree()
@@ -783,7 +755,6 @@ namespace dtAI
 
    template <class T>
    Tree<T>::Tree(const Tree<T>& pTree)
-     
    {
       init();
       copy_children(&pTree);
@@ -1032,7 +1003,7 @@ namespace dtAI
       ref_pointer child = &*pWhere;
       ref_pointer parent = child->mParent;
       ref_pointer next = child->next_sibling();
-      parent->remove_subtree(child.get());      
+      parent->remove_subtree(child.get());
       child->clear();
 
       return iterator(next.get(), this);
@@ -1074,7 +1045,6 @@ namespace dtAI
 
       return reverse_child_iterator(rev_next.get(), this);
    }
-
 
    template <class T>
    typename Tree<T>::iterator Tree<T>::insert(ref_pointer subtree, iterator pIter)
@@ -1310,6 +1280,6 @@ namespace dtAI
       }
    }
 
-}// namespace dtAI
+} // namespace dtAI
 
 #endif //DTAI_DELTA_TREE_H

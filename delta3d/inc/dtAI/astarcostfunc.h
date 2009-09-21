@@ -29,22 +29,23 @@ namespace dtAI
     * derive this class and implement operator() with your custom data type.
     * The return must be a scalar value.
     */
-   template<class _DataType, class _CostType> 
+   template<class _DataType, class _CostType>
    class AStarCostFunc
    {
       public:
          typedef _DataType data_type;
          typedef _CostType Real;
 
-      public:  
+      public:
          AStarCostFunc(){}
          virtual ~AStarCostFunc(){}
-            
+
          virtual Real operator()(data_type pFrom, data_type pTo) const = 0;
 
       private:
-   
+
    };
-}//namespace dtAI
+
+} // namespace dtAI
 
 #endif // __DELTA_ASTARCOSTFUNC_H__

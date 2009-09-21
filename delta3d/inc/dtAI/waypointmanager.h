@@ -36,10 +36,8 @@
 #include <vector>
 #include <map>
 
-
 #define WAYPOINT_HELPER_FILE_ID 42193
 #define WAYPOINT_FILE_VERSION 100
-
 
 namespace dtAI
 {
@@ -140,11 +138,11 @@ namespace dtAI
        */
       WaypointID AddWaypoint(const osg::Vec3& pWaypoint);
 
-      /**      
-      * @note this does not create a new waypoint, the function above does
-      * @note if you are having to use this function, consider using an AIInterfaceActor
-      *        and at runtime using its AIPluginInterface Ptr
-      */
+      /**
+       * @note this does not create a new waypoint, the function above does
+       * @note if you are having to use this function, consider using an AIInterfaceActor
+       *       and at runtime using its AIPluginInterface Ptr
+       */
       void AddWaypoint(Waypoint* pWaypoint);
 
       /**
@@ -166,7 +164,7 @@ namespace dtAI
       void OnMapSave(const std::string& pWaypointFilename, bool pCreateNavMesh, dtCore::Scene* pScene);
       void OnMapClose();
 
-      //before operating on our waypoint map obtain a lock
+      // before operating on our waypoint map obtain a lock
       bool ObtainLock();
       void ReleaseLock();
 
@@ -191,15 +189,14 @@ namespace dtAI
       float AvgDistBetweenWaypoints() const;
 
       /**
-      *	By default if you call CreateWaypoint(osg::Vec3) then the WaypointManger
-      *  will create your waypoint and delete the memory on clear.  This is legacy 
-      *  behavior and is overridden by the AIInterfaceActor
-      */
+       * By default if you call CreateWaypoint(osg::Vec3) then the WaypointManger
+       * will create your waypoint and delete the memory on clear.  This is legacy
+       * behavior and is overridden by the AIInterfaceActor
+       */
       void SetDeleteOnClear(bool b);
       bool GetDeleteOnClear() const;
 
    private:
-
       /**
        * Explicitly instantiates our static member
        */
@@ -217,8 +214,6 @@ namespace dtAI
 
       /// our static singleton
       static osg::ref_ptr<WaypointManager> mSingleton;
-
-
 
       //////////////////////////////////////////////////////////////////////////
       //////////////////////////////////////////////////////////////////////////
@@ -245,11 +240,12 @@ namespace dtAI
       private:
          WaypointManager* mHelper;
       };
+
       //////////////////////////////////////////////////////////////////////////
       //////////////////////////////////////////////////////////////////////////
 
-      //this flag is here specifically to support legacy behavior using
-      //the AIInterfaceActor
+      // this flag is here specifically to support legacy behavior using
+      // the AIInterfaceActor
       bool mDeleteOnClear;
 
       // a flag to toggle drawing of the waypoints
@@ -284,6 +280,5 @@ namespace dtAI
    };
 
 } // namespace dtAI
-
 
 #endif // __DELTA_WaypointManager_H__

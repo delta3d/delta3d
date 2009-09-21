@@ -36,97 +36,94 @@ namespace dtAI
     */
    class DT_AI_EXPORT NPCParser
    {
-      public:
+   public:
+      NPCParser();
+      virtual ~NPCParser();
 
-         NPCParser();
-         virtual ~NPCParser();
+      bool LoadScript(const std::string& pFilename, BaseNPC* pNPC);
 
-         bool LoadScript(const std::string& pFilename, BaseNPC* pNPC);
+   private:
+      // internal datatypes
 
+      enum ParamType{ PARAM_BOOL = 0, PARAM_INT};
 
-      private:
+      struct Param
+      {
+         Param(bool b): mType(PARAM_BOOL) {mBool = b;}
+         Param(int i): mType(PARAM_INT) {mInt = i;}
 
-         //internal datatypes
-
-         enum ParamType{ PARAM_BOOL = 0, PARAM_INT};
-
-         struct Param
+         Param& operator=(const Param& pIn)
          {
-            Param(bool b): mType(PARAM_BOOL) {mBool = b;}
-            Param(int i): mType(PARAM_INT) {mInt = i;}
-
-            Param& operator=(const Param& pIn)
+            if (pIn.mType == PARAM_BOOL)
             {
-               if (pIn.mType == PARAM_BOOL)
-               {
-                  mType = PARAM_BOOL;
-                  mBool = pIn.mBool;
-               }
-               else if (pIn.mType == PARAM_INT)
-               {
-                  mType = PARAM_INT;
-                  mInt = pIn.mInt;
-               }
-
-               return *this;
+               mType = PARAM_BOOL;
+               mBool = pIn.mBool;
+            }
+            else if (pIn.mType == PARAM_INT)
+            {
+               mType = PARAM_INT;
+               mInt = pIn.mInt;
             }
 
-            ParamType mType;
+            return *this;
+         }
 
-            union
-            {
-               bool mBool;
-               int mInt;
-            };
+         ParamType mType;
 
-         };
-
-         struct NPCParserError
+         union
          {
-            std::string pError;
-            unsigned pLineNumber;
+            bool mBool;
+            int mInt;
          };
 
-         typedef std::pair<std::string, std::vector<Param> > ExpressionPair;
-         typedef std::vector<ExpressionPair> Expression;
+      };
 
-         static const std::string TOKEN_NPC;
-         static const std::string TOKEN_WORLD_STATE;
-         static const std::string TOKEN_OPERATOR;
-         static const std::string TOKEN_PRECONDS;
-         static const std::string TOKEN_INTERRUPT;
-         static const std::string TOKEN_EFFECTS;
-         static const std::string TOKEN_COST;
-         static const std::string TOKEN_GOALS;
-         static const std::string TOKEN_TRUE;
-         static const std::string TOKEN_FALSE;
-         static const std::string TOKEN_OPEN_BRACKET;
-         static const std::string TOKEN_CLOSE_BRACKET;
-         static const std::string TOKEN_OPEN_PAREN;
-         static const std::string TOKEN_CLOSE_PAREN;
-         static const std::string TOKEN_DELIMETER;
+      struct NPCParserError
+      {
+         std::string pError;
+         unsigned pLineNumber;
+      };
 
-         void CreateWorldState(BaseNPC* pNPC, Expression& pExr);
-         void CreateGoals(BaseNPC* pNPC, Expression& pExr);
-         void CreateOperator(BaseNPC* pNPC, const std::string& pOpName, Expression& pPreConds, Expression& pInterrupts, Expression& pEffects, int pCost);
-         Precondition* CreatePrecondition(ExpressionPair& expr);
-         Effect* CreateEffect(ExpressionPair& expr);
+      typedef std::pair<std::string, std::vector<Param> > ExpressionPair;
+      typedef std::vector<ExpressionPair> Expression;
 
-         void ParseExpression(Expression& pExp);
-         Param ParseParam();
-         void ParseToken(const std::string& pToken);
-         bool ParseString(std::string& pStr);
-         bool IsDigit(const char pChar) const;
-         int ParseInt();
-         char ParseDelimeter();
-         bool IsDelimeter(char c) const;
-         bool IsWhiteSpace(char c) const;
-         NPCParserError CreateError(const std::string& pError);
-         void PrintError(NPCParserError& pError);
+      static const std::string TOKEN_NPC;
+      static const std::string TOKEN_WORLD_STATE;
+      static const std::string TOKEN_OPERATOR;
+      static const std::string TOKEN_PRECONDS;
+      static const std::string TOKEN_INTERRUPT;
+      static const std::string TOKEN_EFFECTS;
+      static const std::string TOKEN_COST;
+      static const std::string TOKEN_GOALS;
+      static const std::string TOKEN_TRUE;
+      static const std::string TOKEN_FALSE;
+      static const std::string TOKEN_OPEN_BRACKET;
+      static const std::string TOKEN_CLOSE_BRACKET;
+      static const std::string TOKEN_OPEN_PAREN;
+      static const std::string TOKEN_CLOSE_PAREN;
+      static const std::string TOKEN_DELIMETER;
 
-         mutable unsigned mLineNumber;
-         std::string mCurrentTask;
-         std::ifstream mFileStream;
+      void CreateWorldState(BaseNPC* pNPC, Expression& pExr);
+      void CreateGoals(BaseNPC* pNPC, Expression& pExr);
+      void CreateOperator(BaseNPC* pNPC, const std::string& pOpName, Expression& pPreConds, Expression& pInterrupts, Expression& pEffects, int pCost);
+      Precondition* CreatePrecondition(ExpressionPair& expr);
+      Effect* CreateEffect(ExpressionPair& expr);
+
+      void ParseExpression(Expression& pExp);
+      Param ParseParam();
+      void ParseToken(const std::string& pToken);
+      bool ParseString(std::string& pStr);
+      bool IsDigit(const char pChar) const;
+      int ParseInt();
+      char ParseDelimeter();
+      bool IsDelimeter(char c) const;
+      bool IsWhiteSpace(char c) const;
+      NPCParserError CreateError(const std::string& pError);
+      void PrintError(NPCParserError& pError);
+
+      mutable unsigned mLineNumber;
+      std::string mCurrentTask;
+      std::ifstream mFileStream;
    };
 } // namespace dtAI
 

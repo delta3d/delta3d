@@ -75,21 +75,20 @@ namespace dtAI
       /*virtual*/ bool IsPlaceable() const;
 
 
-      //Use the AIPluginInterface object to interface with dtAI through this actor
-      //using this instead of dtAI directly will ensure you will be
-      //compatible with future versions of dtAI
+      // Use the AIPluginInterface object to interface with dtAI through this actor
+      // using this instead of dtAI directly will ensure you will be
+      // compatible with future versions of dtAI
       AIPluginInterface* GetAIInterface();
       const AIPluginInterface* GetAIInterface() const;
 
    protected:
-
      /*virtual*/ void CreateActor();
 
      /**
       * This is called from CreateActor
       */
      virtual AIPluginInterface* CreateAIInterface();
-     
+
 
      /**
       * Destructor

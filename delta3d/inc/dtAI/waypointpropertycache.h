@@ -35,34 +35,32 @@ namespace dtAI
 {
    class WaypointPropertyCache: public osg::Referenced
    {
-      public:
-         WaypointPropertyCache()
-            : mPropertyFactory(new WaypointPropertyFactory())
-         {
+   public:
+      WaypointPropertyCache()
+         : mPropertyFactory(new WaypointPropertyFactory())
+      {
 
-         }
+      }
 
-         WaypointPropertyBase* GetPropertyContainer(const dtDAL::ObjectType& waypointType, WaypointInterface* wt)
-         {
-            WaypointPropertyBase* wpb = mPropertyFactory->CreateObject(&waypointType);
-            wpb->Set(wt);
-            wt->CreateProperties(*wpb);
-            return wpb;
-         }
+      WaypointPropertyBase* GetPropertyContainer(const dtDAL::ObjectType& waypointType, WaypointInterface* wt)
+      {
+         WaypointPropertyBase* wpb = mPropertyFactory->CreateObject(&waypointType);
+         wpb->Set(wt);
+         wt->CreateProperties(*wpb);
+         return wpb;
+      }
 
-         template <class WaypointDerivative>
-         void RegisterType(dtCore::RefPtr<const dtDAL::ObjectType> type)
-         {
-            mPropertyFactory->RegisterType<WaypointPropertyContainer<WaypointDerivative> >(type);
-         }
+      template <class WaypointDerivative>
+      void RegisterType(dtCore::RefPtr<const dtDAL::ObjectType> type)
+      {
+         mPropertyFactory->RegisterType<WaypointPropertyContainer<WaypointDerivative> >(type);
+      }
 
    private:
       typedef dtUtil::ObjectFactory< dtCore::RefPtr<const dtDAL::ObjectType>, WaypointPropertyBase> WaypointPropertyFactory;
 
       dtCore::RefPtr<WaypointPropertyFactory> mPropertyFactory;
-
    };
-
 
 } // namespace dtAI
 

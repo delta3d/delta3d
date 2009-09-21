@@ -1,4 +1,4 @@
- /*
+/*
  * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2004-2006 MOVES Institute
  *
@@ -31,45 +31,44 @@
 namespace dtAI
 {
    /**
-    * A class used to interface with the planner 
+    * A class used to interface with the planner
     */
    class DT_AI_EXPORT PlannerHelper
    {
-      public:
-         typedef dtUtil::Functor<float, TYPELIST_1(const WorldState*)> RemainingCostFunctor;
-         typedef dtUtil::Functor<bool, TYPELIST_1(const WorldState*)> DesiredStateFunctor;
-         typedef std::list<Operator*> OperatorList; 
-         
-      public:
-         PlannerHelper(const RemainingCostFunctor& pRCF, const DesiredStateFunctor& pDSF);
-         virtual ~PlannerHelper();
-   
-         void AddOperator(Operator* pOperator);
-         void RemoveOperator(Operator* pOperator);
+   public:
+      typedef dtUtil::Functor<float, TYPELIST_1(const WorldState*)> RemainingCostFunctor;
+      typedef dtUtil::Functor<bool, TYPELIST_1(const WorldState*)> DesiredStateFunctor;
+      typedef std::list<Operator*> OperatorList;
 
-         const Operator* GetOperator(const std::string& pName) const;
-         const OperatorList& GetOperators() const;
+   public:
+      PlannerHelper(const RemainingCostFunctor& pRCF, const DesiredStateFunctor& pDSF);
+      virtual ~PlannerHelper();
 
-         void SetCurrentState(const WorldState& pNewState);
-         
-         WorldState* GetCurrentState();
-         const WorldState* GetCurrentState() const;
+      void AddOperator(Operator* pOperator);
+      void RemoveOperator(Operator* pOperator);
 
-         void SetRemainingCostFunc(const RemainingCostFunctor& pFunc);
-         void SetDesiredStateFunc(const DesiredStateFunctor& pFunc);
+      const Operator* GetOperator(const std::string& pName) const;
+      const OperatorList& GetOperators() const;
 
-         float RemainingCost(const WorldState* pWS) const;
-         bool IsDesiredState(const WorldState* pWS) const;
+      void SetCurrentState(const WorldState& pNewState);
 
-      private:
+      WorldState* GetCurrentState();
+      const WorldState* GetCurrentState() const;
 
-         OperatorList mOperators;
-         WorldState* mCurrentState;
+      void SetRemainingCostFunc(const RemainingCostFunctor& pFunc);
+      void SetDesiredStateFunc(const DesiredStateFunctor& pFunc);
 
-         RemainingCostFunctor mRemainingCost;
-         DesiredStateFunctor mDesiredState;
-   
+      float RemainingCost(const WorldState* pWS) const;
+      bool IsDesiredState(const WorldState* pWS) const;
+
+   private:
+      OperatorList mOperators;
+      WorldState* mCurrentState;
+
+      RemainingCostFunctor mRemainingCost;
+      DesiredStateFunctor mDesiredState;
    };
-}//namespace dtAI
+
+} // namespace dtAI
 
 #endif // __DELTA_PLANNERHELPER_H__

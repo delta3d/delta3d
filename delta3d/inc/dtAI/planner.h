@@ -38,45 +38,43 @@ namespace dtAI
     */
    class DT_AI_EXPORT Planner
    {
-      public:
-         enum PlannerResult{NO_PLAN, PLAN_FOUND, PARTIAL_PLAN};
+   public:
+      enum PlannerResult{NO_PLAN, PLAN_FOUND, PARTIAL_PLAN};
 
-         typedef std::list<const PlannerNodeLink*> PlannerContainer;
-         typedef std::list<const Operator*> OperatorList;
-         typedef std::vector<const Operator*> OperatorVector;
-     
-      public:
-   
-         Planner();
-         virtual ~Planner();     
+      typedef std::list<const PlannerNodeLink*> PlannerContainer;
+      typedef std::list<const Operator*> OperatorList;
+      typedef std::vector<const Operator*> OperatorVector;
 
-         void Reset(const PlannerConfig& pConfig);
-         void Reset(const PlannerHelper* pHelper);
+   public:
+      Planner();
+      virtual ~Planner();
 
-         PlannerResult GeneratePlan();
+      void Reset(const PlannerConfig& pConfig);
+      void Reset(const PlannerHelper* pHelper);
 
-         OperatorList GetPlan() const;
+      PlannerResult GeneratePlan();
 
-         PlannerConfig& GetConfig();
-         const PlannerConfig& GetConfig() const;
-         
-         OperatorVector GetPlanAsVector() const;
+      OperatorList GetPlan() const;
 
-         
-      private:
-         void FreeMem();
+      PlannerConfig& GetConfig();
+      const PlannerConfig& GetConfig() const;
 
-         const PlannerNodeLink* FindLowestCost();
-         void Remove(const PlannerNodeLink* pNodeLink);
-         bool Contains(PlannerNodeLink* pNodeLink);
-         bool CanApplyOperator(const Operator* pOperator, const WorldState* pState);
-         void GetTraversableStates(const WorldState* pCurrentState, const std::list<Operator*>& pOperators, std::list<Operator*>& pOperatorListIn);
+      OperatorVector GetPlanAsVector() const;
 
-         const PlannerHelper* mHelper;
-         PlannerConfig mConfig;    
-         PlannerContainer mOpen;
-   
+   private:
+      void FreeMem();
+
+      const PlannerNodeLink* FindLowestCost();
+      void Remove(const PlannerNodeLink* pNodeLink);
+      bool Contains(PlannerNodeLink* pNodeLink);
+      bool CanApplyOperator(const Operator* pOperator, const WorldState* pState);
+      void GetTraversableStates(const WorldState* pCurrentState, const std::list<Operator*>& pOperators, std::list<Operator*>& pOperatorListIn);
+
+      const PlannerHelper* mHelper;
+      PlannerConfig mConfig;
+      PlannerContainer mOpen;
    };
-}//namespace dtAI
+
+} // namespace dtAI
 
 #endif // __DELTA_PLANNER_H__

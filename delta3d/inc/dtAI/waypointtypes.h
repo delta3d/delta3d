@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * Bradley Anderegg 
+ * Bradley Anderegg
  */
 
 #ifndef __DELTA_WAYPOINTTYPES_H__
@@ -46,58 +46,57 @@ namespace dtAI
 
    class DT_AI_EXPORT WaypointTypes
    {
-      public:
-         static dtCore::RefPtr<dtDAL::ObjectType> DEFAULT_WAYPOINT;
-         static dtCore::RefPtr<dtDAL::ObjectType> NAMED_WAYPOINT;
-         static dtCore::RefPtr<dtDAL::ObjectType> TACTICAL_WAYPOINT;
-         static dtCore::RefPtr<dtDAL::ObjectType> WAYPOINT_COLLECTION;
+   public:
+      static dtCore::RefPtr<dtDAL::ObjectType> DEFAULT_WAYPOINT;
+      static dtCore::RefPtr<dtDAL::ObjectType> NAMED_WAYPOINT;
+      static dtCore::RefPtr<dtDAL::ObjectType> TACTICAL_WAYPOINT;
+      static dtCore::RefPtr<dtDAL::ObjectType> WAYPOINT_COLLECTION;
    };
-
 
    class DT_AI_EXPORT NamedWaypoint : public osg::Referenced, public WaypointInterface
    {
-      public:
-         typedef WaypointInterface BaseClass;
+   public:
+      typedef WaypointInterface BaseClass;
 
-      public:
-         NamedWaypoint();
-         NamedWaypoint(const osg::Vec3& pos);
-         NamedWaypoint(const dtUtil::RefString& name);
-         NamedWaypoint(const osg::Vec3& pos, const dtUtil::RefString& name);
-         /*virtual*/ ~NamedWaypoint();
+   public:
+      NamedWaypoint();
+      NamedWaypoint(const osg::Vec3& pos);
+      NamedWaypoint(const dtUtil::RefString& name);
+      NamedWaypoint(const osg::Vec3& pos, const dtUtil::RefString& name);
+      /*virtual*/ ~NamedWaypoint();
 
-         void SetName(const std::string& name);
-         const std::string& GetName() const;
-         std::string GetNameCopy() const;
-         
-         /*virtual*/ std::string ToString() const;
+      void SetName(const std::string& name);
+      const std::string& GetName() const;
+      std::string GetNameCopy() const;
 
-         /*virtual*/ const osg::Vec3& GetPosition() const;
-         /*virtual*/ void SetPosition(const osg::Vec3& pVec);
+      /*virtual*/ std::string ToString() const;
 
-         /*virtual*/ void CreateProperties(WaypointPropertyBase& container);
+      /*virtual*/ const osg::Vec3& GetPosition() const;
+      /*virtual*/ void SetPosition(const osg::Vec3& pVec);
 
-         virtual void ref() const
-         {
-            osg::Referenced::ref();
-         }
+      /*virtual*/ void CreateProperties(WaypointPropertyBase& container);
 
-         virtual void unref() const
-         {
-            osg::Referenced::unref();
-         }
+      virtual void ref() const
+      {
+         osg::Referenced::ref();
+      }
 
-      protected:
-         //these allow derivatives of named waypoint to pass in their derivated object type
-         NamedWaypoint(const dtDAL::ObjectType* ot);
-         NamedWaypoint(const dtDAL::ObjectType* ot, const osg::Vec3& pos);
-         NamedWaypoint(const dtDAL::ObjectType* ot, const dtUtil::RefString& name);
-         NamedWaypoint(const dtDAL::ObjectType* ot, const osg::Vec3& pos, const dtUtil::RefString& name);
+      virtual void unref() const
+      {
+         osg::Referenced::unref();
+      }
 
-      private:
-         dtUtil::RefString mName;
+   protected:
+      // these allow derivatives of named waypoint to pass in their derivated object type
+      NamedWaypoint(const dtDAL::ObjectType* ot);
+      NamedWaypoint(const dtDAL::ObjectType* ot, const osg::Vec3& pos);
+      NamedWaypoint(const dtDAL::ObjectType* ot, const dtUtil::RefString& name);
+      NamedWaypoint(const dtDAL::ObjectType* ot, const osg::Vec3& pos, const dtUtil::RefString& name);
 
-         osg::Vec3 mPosition;
+   private:
+      dtUtil::RefString mName;
+
+      osg::Vec3 mPosition;
    };
 
    class DT_AI_EXPORT TacticalWaypoint : public NamedWaypoint
@@ -112,7 +111,6 @@ namespace dtAI
       TacticalWaypoint(const osg::Vec3& pos, const dtUtil::RefString& name);
       /*virtual*/ ~TacticalWaypoint();
 
-
       void SetCover(bool b);
       bool GetCover() const;
 
@@ -126,7 +124,6 @@ namespace dtAI
       void SetSniperAngle(const osg::Vec3& angle);
       const osg::Vec3& GetSniperAngle() const;
       osg::Vec3 GetSniperAngleCopy() const;
-      
 
       /*virtual*/ void CreateProperties(WaypointPropertyBase& container);
 

@@ -22,7 +22,7 @@
 #ifndef __DELTA_ASTARCONFIG_H__
 #define __DELTA_ASTARCONFIG_H__
 
-//vs thinks std::numeric_limits<>::max() is a macro
+// vs thinks std::numeric_limits<>::max() is a macro
 #ifdef max
 #undef max
 #endif
@@ -72,31 +72,31 @@ namespace dtAI
 
 
    public:
-      ///the resulting path, and the total cost to it
+      /// the resulting path, and the total cost to it
       container mResult;
       cost_type mTotalCost;
 
-      ///these are used as statistical output
+      /// these are used as statistical output
       unsigned int mTotalNodesExplored;
       double mTotalTime;
       unsigned int mNumIterations;
 
-      ///these are the max values per iteration
-      ///and should be set for dealing with constraints
+      /// these are the max values per iteration
+      /// and should be set for dealing with constraints
       unsigned int mMaxNodesExplored;
       double mMaxTime;
       cost_type mMaxCost;
       unsigned int mMaxDepth;
 
-      ///when true, nodes already on closed list are not processed
-      ///should be set false for inconsistent heuristic functions
-      ///see Norvig and Russell, 2nd Edition, p. 99
+      /// when true, nodes already on closed list are not processed
+      /// should be set false for inconsistent heuristic functions
+      /// see Norvig and Russell, 2nd Edition, p. 99
       bool mCheckClosedList;
 
 
    //private:
 
-      ///these are for usage by AStar.h and should not be used by clients of AStar.h
+      /// these are for usage by AStar.h and should not be used by clients of AStar.h
       void Reset(data_type pFrom, data_type pTo)
       {
          mStart              = pFrom;
@@ -152,15 +152,15 @@ namespace dtAI
          return mFinish[0];
       }
 
-      ///these are for usage by AStar.h and should not be used by clients of AStar.h
+      /// these are for usage by AStar.h and should not be used by clients of AStar.h
       data_type mStart;
 
       std::vector<data_type> mFinish;
 
-      //these are for book keeping during a single iteration
-      ///these are for usage by AStar.h and should not be used by clients of AStar.h
+      // these are for book keeping during a single iteration
+      /// these are for usage by AStar.h and should not be used by clients of AStar.h
       unsigned int mNodesExplored;
-      ///these are for usage by AStar.h and should not be used by clients of AStar.h
+      /// these are for usage by AStar.h and should not be used by clients of AStar.h
       double mTimeSpent;
    };
 

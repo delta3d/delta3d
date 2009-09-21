@@ -65,8 +65,8 @@ namespace dtAI
          virtual ~AStarNode(){}
 
          /**
-         * equality is based on the class data_type's operator ==
-         */
+          * equality is based on the class data_type's operator ==
+          */
          bool operator==(const AStarNode& pNode) const
          {
             return mData == pNode.GetData();
@@ -78,13 +78,13 @@ namespace dtAI
          }
 
          /**
-         * we use operator < to compare costs between nodes
-         */
+          * we use operator < to compare costs between nodes
+          */
          bool operator<(const AStarNode& pType) const
          {
             cost_type myCost = mCostToNode + mCostToGoal;
             cost_type otherCost = pType.GetCostToNode() + pType.GetCostToGoal();
-            //check if they are equivalent first
+            // check if they are equivalent first
             if (dtUtil::Equivalent(myCost, otherCost)) { return false; }
             else { return myCost < otherCost; }
          }
@@ -93,36 +93,35 @@ namespace dtAI
          const node_type *GetParent() const { return mParent; }
 
          /**
-         * This is the cost to get to the node from the start
-         * in common AStar terms it is called cost g(n)
-         */
-         cost_type GetCostToNode() const{return mCostToNode;}
+          * This is the cost to get to the node from the start
+          * in common AStar terms it is called cost g(n)
+          */
+         cost_type GetCostToNode() const { return mCostToNode; }
 
          /**
-         * This is the cost to get from the node to the end
-         * in common AStar terms it is called cost h(n)
-         */
-         cost_type GetCostToGoal() const{return mCostToGoal;}
+          * This is the cost to get from the node to the end
+          * in common AStar terms it is called cost h(n)
+          */
+         cost_type GetCostToGoal() const { return mCostToGoal; }
 
          data_type GetData(){return mData;}
-         const data_type GetData() const{return mData;}
+         const data_type GetData() const { return mData; }
 
          /**
-         * returns an iterator to the first acceptable point from this node
-         */
+          * returns an iterator to the first acceptable point from this node
+          */
          virtual iterator begin() const = 0;
 
          /**
-         * returns an iterator one past the last acceptable point from this node
-         */
+          * returns an iterator one past the last acceptable point from this node
+          */
          virtual iterator end() const = 0;
 
-         unsigned int GetDepth() const {return mDepth;}
-
+         unsigned int GetDepth() const { return mDepth; }
 
       protected:
-         AStarNode(const AStarNode& pNode); //not implemented by design
-         AStarNode& operator=(const AStarNode& pNode); //not implemented by design
+         AStarNode(const AStarNode& pNode); // not implemented by design
+         AStarNode& operator=(const AStarNode& pNode); // not implemented by design
 
          data_type mData;
 

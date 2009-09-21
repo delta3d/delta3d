@@ -17,7 +17,6 @@
  * Copyright (C) 2007, Bradley Anderegg
  */
 
-
 #ifndef DELTA_STEERINGPIPELINE
 #define DELTA_STEERINGPIPELINE
 
@@ -34,14 +33,13 @@ namespace dtAI
    class AIPipelineFunctorsBase
    {
    public:
-      //these typedefs are used by the steering pipeline to resolve type info
-      //on the 3 template parameters of a Controllable
+      // these typedefs are used by the steering pipeline to resolve type info
+      // on the 3 template parameters of a Controllable
       typedef State_ StateType;
       typedef GoalState_ GoalStateType;
       typedef PathType_ PathType;
       typedef Controls_ ControlType;
    };
-
 
    template <class State_, class GoalState_>
    class Targeter
@@ -52,11 +50,9 @@ namespace dtAI
 
       typedef dtUtil::Functor<bool, TYPELIST_2(const StateType&, GoalStateType&)> TargetFunctor;
 
-      //returns true to continue
+      // returns true to continue
       virtual bool GetGoal(const StateType& current_state, GoalStateType& result) = 0;
-
    };
-
 
    template <class State_, class GoalState_>
    class Decomposer
@@ -69,8 +65,7 @@ namespace dtAI
       virtual void Decompose(const StateType& current_state, GoalStateType& result) const = 0;
    };
 
-
-   template <class State_, class GoalState_, class PathType_ = std::vector<GoalState_> >
+   template < class State_, class GoalState_, class PathType_ = std::vector<GoalState_> >
    class Constraint
    {
    public:
@@ -85,13 +80,12 @@ namespace dtAI
       virtual void Suggest(const PathType& pathToFollow, const StateType& current_state, GoalStateType& result) const = 0;
    };
 
-
    template <class State_, class GoalState_, class Controls_, class PathType_ = std::vector<GoalState_> >
    struct ObtainGoal : public AIPipelineFunctorsBase<State_, GoalState_, Controls_, PathType_>
    {
       typedef AIPipelineFunctorsBase<State_, GoalState_, Controls_, PathType_> BaseClass;
 
-      ObtainGoal(const typename BaseClass::StateType& k): mState(k){}
+      ObtainGoal(const typename BaseClass::StateType& k) : mState(k) {}
 
       bool operator()(Targeter<State_, GoalState_>& target)
       {
@@ -134,7 +128,6 @@ namespace dtAI
       for (; from != to; ++from) func(**from);
    }
 
-
    template <class ControllableType_>
    class SteeringPipeline : public AIPipelineFunctorsBase<typename ControllableType_::StateType,
                                                           typename ControllableType_::GoalStateType,
@@ -159,7 +152,6 @@ namespace dtAI
       typedef typename ControllableType::ConstraintType ConstraintType;
 
       typedef SteeringPipeline<ControllableType> value_type;
-
 
    public:
       SteeringPipeline()
@@ -200,7 +192,6 @@ namespace dtAI
       }
 
    private:
-
       bool FindGoal(AIGoal& g, ControllableType& entityToStep, AIControlState& output, int maxAttempts)
       {
          AIPath p;
@@ -229,14 +220,9 @@ namespace dtAI
          return true;
       }
 
-
       unsigned mMaxUpdateAttempts;
-
    };
 
-
-
-
-}//namespace dtAI
+} // namespace dtAI
 
 #endif //DELTA_STEERINGPIPELINE

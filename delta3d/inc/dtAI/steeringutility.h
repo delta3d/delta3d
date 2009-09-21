@@ -19,7 +19,6 @@
  * Copyright (C) 2007, Bradley Anderegg
  */
 
-
 #ifndef DELTA_STEERINGUTILITY
 #define DELTA_STEERINGUTILITY
 
@@ -55,6 +54,7 @@ namespace dtAI
       {
 
       }
+
       const Kinematic& GetGoal() const
       {
          return mGoal;
@@ -153,7 +153,6 @@ namespace dtAI
       bool mHasAngularVel;
    };
 
-
-}//namespace dtAI
+} // namespace dtAI
 
 #endif //DELTA_STEERINGUTILITY
