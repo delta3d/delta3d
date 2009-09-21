@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * Bradley Anderegg 
+ * Bradley Anderegg
  */
 
 #ifndef DELTA_WAYPOINTRENDERINFO
@@ -36,54 +36,52 @@ namespace dtAI
 
    class DT_AI_EXPORT WaypointRenderInfo : public dtDAL::PropertyContainer
    {
-      public:
-         typedef osg::Vec4 Color;
+   public:
+      typedef osg::Vec4 Color;
 
-      public:
-         WaypointRenderInfo();
-         virtual ~WaypointRenderInfo();
+   public:
+      WaypointRenderInfo();
+      virtual ~WaypointRenderInfo();
 
-         ///you must call init to create the properties
-         void Init();
+      /// you must call init to create the properties
+      void Init();
 
-         ///sets reasonable defaults to all parameters except position, does not reset the position
-         void SetDefaults();
+      /// sets reasonable defaults to all parameters except position, does not reset the position
+      void SetDefaults();
 
-      protected:
+   protected:
+      // override this to create properties
+      virtual void BuildPropertyMap();
 
-         //override this to create properties
-         virtual void BuildPropertyMap();
+   public:
+      osg::Vec3 mWorldSpacePos;
 
-      public:
-         
-         osg::Vec3 mWorldSpacePos;
+      DECLARE_PROPERTY(bool, RenderWaypoints);
+      DECLARE_PROPERTY(bool, RenderWaypointID);
+      DECLARE_PROPERTY(bool, RenderWaypointText);
+      DECLARE_PROPERTY(bool, RenderNavMesh);
+      DECLARE_PROPERTY(bool, RenderNavMeshText);
 
-         DECLARE_PROPERTY(bool, RenderWaypoints);
-         DECLARE_PROPERTY(bool, RenderWaypointID);
-         DECLARE_PROPERTY(bool, RenderWaypointText);
-         DECLARE_PROPERTY(bool, RenderNavMesh);
-         DECLARE_PROPERTY(bool, RenderNavMeshText);
+      // Waypoints
+      DECLARE_PROPERTY(float, WaypointSize);
+      DECLARE_PROPERTY(Color, WaypointColor);
 
-         //Waypoints
-         DECLARE_PROPERTY(float, WaypointSize);
-         DECLARE_PROPERTY(Color, WaypointColor);
+      // Waypoint Font
+      DECLARE_PROPERTY(std::string, WaypointFontFile);
+      DECLARE_PROPERTY(float, WaypointFontSizeScalar);
+      DECLARE_PROPERTY(osg::Vec3, WaypointTextOffset);
+      DECLARE_PROPERTY(Color, WaypointFontColor);
 
-         //Waypoint Font
-         DECLARE_PROPERTY(std::string, WaypointFontFile);
-         DECLARE_PROPERTY(float, WaypointFontSizeScalar);
-         DECLARE_PROPERTY(osg::Vec3, WaypointTextOffset);
-         DECLARE_PROPERTY(Color, WaypointFontColor);
+      // Nav Mesh
+      DECLARE_PROPERTY(float, NavMeshWidth);
+      DECLARE_PROPERTY(Color, NavMeshColor);
 
-         //Nav Mesh
-         DECLARE_PROPERTY(float, NavMeshWidth);
-         DECLARE_PROPERTY(Color, NavMeshColor);
-
-         //Nav Mesh Font
-         DECLARE_PROPERTY(std::string, NavMeshFontFile);
-         DECLARE_PROPERTY(float, NavMeshFontSizeScalar);
-         ///the text is scaled across the navmesh path
-         DECLARE_PROPERTY(float, NavMeshTextOffsetScalar);
-         DECLARE_PROPERTY(Color, NavMeshFontColor);
+      // Nav Mesh Font
+      DECLARE_PROPERTY(std::string, NavMeshFontFile);
+      DECLARE_PROPERTY(float, NavMeshFontSizeScalar);
+      /// the text is scaled across the navmesh path
+      DECLARE_PROPERTY(float, NavMeshTextOffsetScalar);
+      DECLARE_PROPERTY(Color, NavMeshFontColor);
    };
 
 } // namespace dtAI

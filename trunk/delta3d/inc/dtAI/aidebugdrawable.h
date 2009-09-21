@@ -55,13 +55,12 @@ namespace dtAI
       typedef osg::Vec3 Color;
 
    public:
-
       AIDebugDrawable();
       AIDebugDrawable(WaypointRenderInfo& pRenderInfo);
 
       /**
-       *	@note replaces all geometry, this can be SLOW, if the editor interface must
-       *    call this every frame we can make a separate function to reset ALL the geometry       
+       * @note replaces all geometry, this can be SLOW, if the editor interface must
+       * call this every frame we can make a separate function to reset ALL the geometry
        */
       void SetRenderInfo(WaypointRenderInfo& pRenderInfo);
       WaypointRenderInfo& GetRenderInfo();
@@ -80,12 +79,12 @@ namespace dtAI
 
       void UpdateWaypointGraph(const NavMesh& nm);
 
-      //this is an expensive operation because all the geometry must be recreated
+      // this is an expensive operation because all the geometry must be recreated
       void OnRenderInfoChanged();
 
       /**
-      * @return -1 if no hit was found, else a WaypointID
-      */
+       * @return -1 if no hit was found, else a WaypointID
+       */
       //int Intersect(osg::Vec3& from, osg::Vec3& to) const;
 
 
@@ -105,19 +104,18 @@ namespace dtAI
 
       osg::Geometry* GetGeometry();
       void SetGeometry(osg::Geometry* geom);
-      
-      //@return the index of the waypoint in the vertex and id arrays, -1 if it does exist
+
+      // @return the index of the waypoint in the vertex and id arrays, -1 if it does exist
       int FindWaypoint(unsigned id);
 
-      //call this method to reset the data on the geometry node
-      //when the vertex data has changed
+      // call this method to reset the data on the geometry node
+      // when the vertex data has changed
       void OnGeometryChanged();
 
       void AddPathSegment(const WaypointInterface* pFrom, const WaypointInterface* pTo);
       void ClearWaypointGraph();
 
    private:
-
       AIDebugDrawableImpl* mImpl;
    };
 

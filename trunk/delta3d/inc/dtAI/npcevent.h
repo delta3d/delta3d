@@ -27,14 +27,15 @@
 #include <dtUtil/enumeration.h>
 
 namespace dtAI
-{   
+{
 
    class DT_AI_EXPORT NPCEvent : public dtUtil::Enumeration
    {
-      DECLARE_ENUM(NPCEvent); 
-   public:      
+      DECLARE_ENUM(NPCEvent);
+
+   public:
       NPCEvent(const std::string& name);
-      
+
       static const NPCEvent NPC_EVENT_SPAWN;
       static const NPCEvent NPC_EVENT_DIE;
       static const NPCEvent NPC_EVENT_SLEEP;
@@ -47,6 +48,6 @@ namespace dtAI
    };
 
 
-}//namespace dtAI
+} // namespace dtAI
 
 #endif // __DELTA_NPCEVENT_H__

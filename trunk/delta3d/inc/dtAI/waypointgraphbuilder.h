@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * Bradley Anderegg 
+ * Bradley Anderegg
  */
 
 #ifndef DELTA_WAYPOINTGRAPH_BUILDER
@@ -33,7 +33,7 @@
 #include <osg/Referenced>
 #include <dtCore/refptr.h>
 
-namespace dtAI 
+namespace dtAI
 {
    class AIPluginInterface;
    class WaypointCollection;
@@ -41,51 +41,48 @@ namespace dtAI
 
    class DT_AI_EXPORT WaypointGraphBuilder : public osg::Referenced
    {
-      public:
-         typedef std::vector< dtCore::RefPtr<NavMesh> > NavMeshArray;
-         typedef std::vector<const WaypointInterface*> ConstWaypointArray;
+   public:
+      typedef std::vector< dtCore::RefPtr<NavMesh> > NavMeshArray;
+      typedef std::vector<const WaypointInterface*> ConstWaypointArray;
 
-      public:
-         //AIPluginInterface used for factory creation of waypoint collections
-         WaypointGraphBuilder(AIPluginInterface& aiInterface, WaypointGraph& wpGraph);
+   public:
+      // AIPluginInterface used for factory creation of waypoint collections
+      WaypointGraphBuilder(AIPluginInterface& aiInterface, WaypointGraph& wpGraph);
 
-      protected:
-         virtual ~WaypointGraphBuilder();
+   protected:
+      virtual ~WaypointGraphBuilder();
 
-      public:
+   public:
+      //virtual dtCore::RefPtr<WaypointGraph> CreateWaypointGraph(const NavMesh& nm);
+      virtual bool CreateNextSearchLevel(WaypointGraph::SearchLevel* sl);
 
-         //virtual dtCore::RefPtr<WaypointGraph> CreateWaypointGraph(const NavMesh& nm);
-         virtual bool CreateNextSearchLevel(WaypointGraph::SearchLevel* sl);
+   protected:
+      virtual WaypointCollection* CreateWaypointCollection(const osg::Vec3& pos, unsigned searchLevel);
 
-      protected:
+      WaypointCollection* CreateClique(int numChildren, const WaypointInterface* curWay, const ConstWaypointArray& cliques, const NavMesh& nm);
+      void FindCliques(const WaypointInterface* wp, const NavMesh& nm, ConstWaypointArray& result);
+      void FindCanidates(const WaypointInterface* wp, const NavMesh& nm, ConstWaypointArray& result);
 
-         virtual WaypointCollection* CreateWaypointCollection(const osg::Vec3& pos, unsigned searchLevel);
+   private:
+      virtual void CreateSearchLevelNavMesh(const NavMesh& nm, BuilderSearchLevel* sl);
+      virtual void CreateAll2Cliques(ConstWaypointArray& nodesToBuild, ConstWaypointArray& unassignedNodes, const NavMesh& nm, BuilderSearchLevel* wl);
+      virtual void CreateAll4Cliques(ConstWaypointArray& nodesToBuild, ConstWaypointArray& unassignedNodes, const NavMesh& nm, BuilderSearchLevel* wl);
 
-         WaypointCollection* CreateClique(int numChildren, const WaypointInterface* curWay, const ConstWaypointArray& cliques, const NavMesh& nm);
-         void FindCliques(const WaypointInterface* wp, const NavMesh& nm, ConstWaypointArray& result);
-         void FindCanidates(const WaypointInterface* wp, const NavMesh& nm, ConstWaypointArray& result);         
+      virtual void AssignRemainingCliques(ConstWaypointArray& nodesToBuild, const NavMesh& nm, BuilderSearchLevel* wl);
 
-      private:         
+      dtCore::RefPtr<WaypointGraph::SearchLevel> ConvertFromBuilderSearchLevel(BuilderSearchLevel* sl);
 
-         virtual void CreateSearchLevelNavMesh(const NavMesh& nm, BuilderSearchLevel* sl); 
-         virtual void CreateAll2Cliques(ConstWaypointArray& nodesToBuild, ConstWaypointArray& unassignedNodes, const NavMesh& nm, BuilderSearchLevel* wl);
-         virtual void CreateAll4Cliques(ConstWaypointArray& nodesToBuild, ConstWaypointArray& unassignedNodes, const NavMesh& nm, BuilderSearchLevel* wl);
-         
-         virtual void AssignRemainingCliques(ConstWaypointArray& nodesToBuild, const NavMesh& nm, BuilderSearchLevel* wl);
+      virtual bool Assign(const WaypointInterface* wp, WaypointCollection* parent);
 
-         dtCore::RefPtr<WaypointGraph::SearchLevel> ConvertFromBuilderSearchLevel(BuilderSearchLevel* sl);
+      unsigned mCurrentCreationLevel;
+      dtCore::RefPtr<AIPluginInterface> mAIInterface;
+      dtCore::RefPtr<WaypointGraph> mWPGraph;
 
-         virtual bool Assign(const WaypointInterface* wp, WaypointCollection* parent);
-
-         unsigned mCurrentCreationLevel;
-         dtCore::RefPtr<AIPluginInterface> mAIInterface;
-         dtCore::RefPtr<WaypointGraph> mWPGraph;
-
-         ConstWaypointArray mAssignedNodes;
-         ConstWaypointArray mUnAssignedNodes;
-         ConstWaypointArray mNodesUnMatched;
+      ConstWaypointArray mAssignedNodes;
+      ConstWaypointArray mUnAssignedNodes;
+      ConstWaypointArray mNodesUnMatched;
    };
-   
-}//namespace dtAI
+
+} // namespace dtAI
 
 #endif // DELTA_WAYPOINTGRAPH_BUILDER

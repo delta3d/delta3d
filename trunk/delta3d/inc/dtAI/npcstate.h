@@ -34,31 +34,29 @@
 namespace dtAI
 {
 
-class DT_AI_EXPORT NPCState: public osg::Referenced
-{
+   class DT_AI_EXPORT NPCState: public osg::Referenced
+   {
    public:
-
       typedef dtUtil::Enumeration Type;
       typedef std::list<osg::ref_ptr<dtUtil::Command<void> > > CommandList;
       typedef dtUtil::Command<void>* CommandPtr;
       typedef dtUtil::Functor<void, TYPELIST_1(double)>  UpdateFunctor;
 
-
    public:
       NPCState();
       NPCState(const Type* pType);
 
-      //the object factory doesn't allow creation with anything but
-      //a default constructor so we need a set type
+      // the object factory doesn't allow creation with anything but
+      // a default constructor so we need a set type
       void SetType(const Type* stateType);
 
       const Type* GetType() const;
       const std::string& GetName() const;
 
-      ///Executes the entry commands
+      /// Executes the entry commands
       void OnEntry();
 
-      //Executes the exit commands
+      // Executes the exit commands
       void OnExit();
 
       void AddEntryCommand(CommandPtr pCommand);
@@ -71,9 +69,9 @@ class DT_AI_EXPORT NPCState: public osg::Referenced
       UpdateFunctor& GetUpdate();
 
    protected:
-         ~NPCState();
-         NPCState(const NPCState&); //not implemented by design
-         const NPCState& operator=(const NPCState&); //not implemented by design
+      ~NPCState();
+      NPCState(const NPCState&); //not implemented by design
+      const NPCState& operator=(const NPCState&); //not implemented by design
 
    private:
       void DefaultUpdateFunctor(double dt);
@@ -84,16 +82,14 @@ class DT_AI_EXPORT NPCState: public osg::Referenced
       CommandList mOnStart;
       CommandList mOnFinish;
       UpdateFunctor mOnUpdate;
+   };
 
-};
 
-
-class DT_AI_EXPORT NPCStateTypes: public NPCState::Type
-{
-   DECLARE_ENUM(NPCStateTypes);
+   class DT_AI_EXPORT NPCStateTypes: public NPCState::Type
+   {
+      DECLARE_ENUM(NPCStateTypes);
 
    public:
-
       NPCStateTypes(const std::string& stateName);
 
       static const NPCStateTypes   NPC_STATE_DEFAULT;
@@ -106,11 +102,8 @@ class DT_AI_EXPORT NPCStateTypes: public NPCState::Type
 
    private:
       NPCStateTypes(); //not implemented by design
+   };
 
-};
-
-
-}//namespace dtAI
-
+} // namespace dtAI
 
 #endif // __DELTA__NPCSTATE_H__

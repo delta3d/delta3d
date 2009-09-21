@@ -32,11 +32,11 @@ namespace dtAI
    public:
       static dtCore::RefPtr<dtDAL::ActorType> AI_INTERFACE_ACTOR_TYPE;
 
-
       AIActorRegistry();
 
       virtual void RegisterActorTypes();
    };
+
 } // namespace dtAI
 
 #endif // DELTA_AI_ACTOR_REGISTRY

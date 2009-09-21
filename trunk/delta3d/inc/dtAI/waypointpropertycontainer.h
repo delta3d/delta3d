@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * Bradley Anderegg 
+ * Bradley Anderegg
  */
 
 #ifndef __DELTA_WAYPOINTPROPERTYCONTAINER_H__
@@ -31,17 +31,16 @@ namespace dtAI
 {
 
    //////////////////////////////////////////////////////////////////////////
-   //A custom command class that can be used with a PropertyContainer
+   // A custom command class that can be used with a PropertyContainer
    //////////////////////////////////////////////////////////////////////////
    class WaypointPropertyBase;
    class CommandBase : public osg::Referenced
    {
    public:
-      CommandBase(WaypointPropertyBase& wp) 
-         : osg::Referenced() 
+      CommandBase(WaypointPropertyBase& wp)
+         : osg::Referenced()
          , mOwnership(&wp)
       {
-
       }
 
       WaypointInterface* Get();
@@ -65,10 +64,9 @@ namespace dtAI
    class Command0 : public CommandBase
    {
    public:
-
       Command0(WaypointPropertyBase& wp, PointerToMemFn ptr)
-         : CommandBase(wp) 
-         , pMemFn_(ptr)            
+         : CommandBase(wp)
+         , pMemFn_(ptr)
       {
       }
 
@@ -90,8 +88,7 @@ namespace dtAI
    class Command1 : public CommandBase
    {
    public:
-
-      Command1(WaypointPropertyBase& wp, PointerToMemFn ptr) 
+      Command1(WaypointPropertyBase& wp, PointerToMemFn ptr)
          : CommandBase(wp)
          , pMemFn_(ptr)
       {
@@ -101,7 +98,6 @@ namespace dtAI
       {
          return ((*static_cast<typename dtUtil::FunTraits<PointerToMemFn>::ObjType*>(Get())).*pMemFn_)(t);
       }
-
 
    protected:
       /*virtual*/ ~Command1()
@@ -113,129 +109,121 @@ namespace dtAI
    };
 
    //////////////////////////////////////////////////////////////////////////
-   //WaypointPropertyBase
+   // WaypointPropertyBase
    //////////////////////////////////////////////////////////////////////////
    class WaypointPropertyBase: public dtDAL::PropertyContainer
    {
-      public:
+   public:
+      WaypointPropertyBase(){};
 
-         WaypointPropertyBase(){};
+      virtual ~WaypointPropertyBase(){}
 
-         virtual ~WaypointPropertyBase(){}
+      operator WaypointInterface*()
+      {
+         return Get();
+      }
 
+      operator const WaypointInterface*() const
+      {
+         return Get();
+      }
 
-         operator WaypointInterface*()
-         {
-            return Get();
-         }
+      WaypointInterface* operator->()
+      {
+         return Get();
+      }
 
-         operator const WaypointInterface*() const
-         {
-            return Get();
-         }
+      const WaypointInterface* operator->() const
+      {
+         return Get();
+      }
 
-         WaypointInterface* operator->()
-         {
-            return Get();
-         }
+      WaypointInterface& operator*()
+      {
+         return *Get();
+      }
 
-         const WaypointInterface* operator->() const
-         {
-            return Get();
-         }
+      const WaypointInterface& operator*() const
+      {
+         return *Get();
+      }
 
-         WaypointInterface& operator*()
-         {
-            return *Get();
-         }
+      virtual void AddCommand(CommandBase* cmd)
+      {
+         mCommands.push_back(cmd);
+      }
 
-         const WaypointInterface& operator*() const
-         {
-            return *Get();
-         }
+      virtual WaypointInterface* Get() = 0;
+      virtual const WaypointInterface* Get() const = 0;
+      virtual void Set(WaypointInterface*) = 0;
 
-         virtual void AddCommand(CommandBase* cmd)
-         {
-            mCommands.push_back(cmd);
-         }
+      template<class PropertyType_, typename CallTypeGet, typename CallTypeSet>
+      void CreateProperty(const dtUtil::RefString& name, const dtUtil::RefString& label,
+                           CallTypeGet getFunc,
+                           CallTypeSet setFunc,
+                           const dtUtil::RefString& desc, const dtUtil::RefString& group)
+      {
+         typedef typename dtUtil::FunTraits<CallTypeGet>::ObjType ClassType_;
+         typedef typename dtDAL::TypeToActorProperty<PropertyType_>::value_type ActorPropertyType;
 
-         virtual WaypointInterface* Get() = 0;
-         virtual const WaypointInterface* Get() const = 0;
-         virtual void Set(WaypointInterface*) = 0;
+         typedef typename dtDAL::TypeToActorProperty<PropertyType_>::SetValueType SetParamType;
+         typedef typename dtDAL::TypeToActorProperty<PropertyType_>::GetValueType GetParamType;
 
+         typedef typename ActorPropertyType::SetFuncType SetFuncType;
+         typedef typename ActorPropertyType::GetFuncType GetFuncType;
 
-         template<class PropertyType_, typename CallTypeGet, typename CallTypeSet>
-         void CreateProperty(const dtUtil::RefString& name, const dtUtil::RefString& label,  
-                              CallTypeGet getFunc,
-                              CallTypeSet setFunc,
-                              const dtUtil::RefString& desc, const dtUtil::RefString& group)
-         {
-            typedef typename dtUtil::FunTraits<CallTypeGet>::ObjType ClassType_;
-            typedef typename dtDAL::TypeToActorProperty<PropertyType_>::value_type ActorPropertyType;
-            
-            typedef typename dtDAL::TypeToActorProperty<PropertyType_>::SetValueType SetParamType;
-            typedef typename dtDAL::TypeToActorProperty<PropertyType_>::GetValueType GetParamType;
+         typedef Command0<GetParamType, PropertyType_(ClassType_::*)() const> GetCmd;
+         typedef Command1<void, void (ClassType_::*)(SetParamType), SetParamType> SetCmd;
 
-            typedef typename ActorPropertyType::SetFuncType SetFuncType;
-            typedef typename ActorPropertyType::GetFuncType GetFuncType;
+         GetCmd* getter = new GetCmd(*this, getFunc);
+         SetCmd* setter = new SetCmd(*this, setFunc);
 
-            typedef Command0<GetParamType, PropertyType_(ClassType_::*)() const> GetCmd;
-            typedef Command1<void, void (ClassType_::*)(SetParamType), SetParamType> SetCmd;
+         AddCommand(setter);
+         AddCommand(getter);
 
-            GetCmd* getter = new GetCmd(*this, getFunc);
-            SetCmd* setter = new SetCmd(*this, setFunc);
+         ActorPropertyType* prop = new ActorPropertyType(name, label,
+            SetFuncType(setter, &SetCmd::Invoke),
+            GetFuncType(getter, &GetCmd::Invoke),
+            desc, group);
 
-            AddCommand(setter);
-            AddCommand(getter);
+         PropertyContainer::AddProperty(prop);
+      }
 
-            ActorPropertyType* prop = new ActorPropertyType(name, label, 
-               SetFuncType(setter, &SetCmd::Invoke),
-               GetFuncType(getter, &GetCmd::Invoke),
-               desc, group);
+      template<class PropertyType_, typename CallTypeGet>
+      void CreateReadOnlyProperty(const dtUtil::RefString& name, const dtUtil::RefString& label,
+         CallTypeGet getFunc, const dtUtil::RefString& desc, const dtUtil::RefString& group)
+      {
+         typedef typename dtUtil::FunTraits<CallTypeGet>::ObjType ClassType_;
+         typedef typename dtDAL::TypeToActorProperty<PropertyType_>::value_type ActorPropertyType;
+         typedef typename ActorPropertyType::SetFuncType SetFuncType;
+         typedef typename ActorPropertyType::GetFuncType GetFuncType;
 
-            PropertyContainer::AddProperty(prop);
-         }
+         typedef typename dtDAL::TypeToActorProperty<PropertyType_>::GetValueType GetParamType;
 
+         typedef Command0<GetParamType, PropertyType_(ClassType_::*)() const> GetCmd;
 
-         template<class PropertyType_, typename CallTypeGet>
-         void CreateReadOnlyProperty(const dtUtil::RefString& name, const dtUtil::RefString& label,  
-            CallTypeGet getFunc, const dtUtil::RefString& desc, const dtUtil::RefString& group)
-         {
-            typedef typename dtUtil::FunTraits<CallTypeGet>::ObjType ClassType_;
-            typedef typename dtDAL::TypeToActorProperty<PropertyType_>::value_type ActorPropertyType;
-            typedef typename ActorPropertyType::SetFuncType SetFuncType;
-            typedef typename ActorPropertyType::GetFuncType GetFuncType;
+         GetCmd* getter = new GetCmd(*this, getFunc);
 
-            typedef typename dtDAL::TypeToActorProperty<PropertyType_>::GetValueType GetParamType;
+         AddCommand(getter);
 
-            typedef Command0<GetParamType, PropertyType_(ClassType_::*)() const> GetCmd;
+         ActorPropertyType* prop = new ActorPropertyType(name, label,
+            SetFuncType(),
+            GetFuncType(getter, &GetCmd::Invoke),
+            desc, group);
 
-            GetCmd* getter = new GetCmd(*this, getFunc);
+         prop->SetReadOnly(true);
+         PropertyContainer::AddProperty(prop);
+      }
 
-            AddCommand(getter);
-
-            ActorPropertyType* prop = new ActorPropertyType(name, label, 
-               SetFuncType(),
-               GetFuncType(getter, &GetCmd::Invoke),
-               desc, group);
-
-            prop->SetReadOnly(true);
-            PropertyContainer::AddProperty(prop);
-         }
-
-
-      protected:
-
-         std::vector<dtCore::RefPtr<CommandBase> > mCommands;
-
-
+   protected:
+      std::vector<dtCore::RefPtr<CommandBase> > mCommands;
    };
 
    //////////////////////////////////////////////////////////////////////////
-   //WaypointPropertyContainer
+   // WaypointPropertyContainer
    //////////////////////////////////////////////////////////////////////////
 
-   //T must be derived from WaypointInterface, could add a compile time assert here if we had loki
+   // T must be derived from WaypointInterface, could add a compile time assert here if we had loki
    template <class T>
    class WaypointPropertyContainer: public WaypointPropertyBase
    {
@@ -243,10 +231,10 @@ namespace dtAI
       typedef T WaypointType;
 
    public:
-      WaypointPropertyContainer() 
+      WaypointPropertyContainer()
       {
-
       }
+
       virtual ~WaypointPropertyContainer(){}
 
       /*virtual*/ WaypointInterface* Get()
@@ -276,9 +264,8 @@ namespace dtAI
       WaypointType* mWaypoint;
    };
 
+   // inline implementations
 
-   //inline implementations
-   
    inline WaypointInterface* CommandBase::Get()
    {
       return mOwnership->Get();

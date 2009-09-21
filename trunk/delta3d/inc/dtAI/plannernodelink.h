@@ -22,7 +22,6 @@
 #ifndef __DELTA_PLANNERNODELINK_H__
 #define __DELTA_PLANNERNODELINK_H__
 
-
 namespace dtAI
 {
    class WorldState;
@@ -34,8 +33,7 @@ namespace dtAI
 
    class PlannerNodeLink
    {
-   public:   
-
+   public:
       PlannerNodeLink(): mState(0), mOperator(0), mParent(0), mGCost(0), mHCost(0){}
 
       bool operator <(const PlannerNodeLink& pnl) const
@@ -50,6 +48,6 @@ namespace dtAI
       float mGCost, mHCost;
    };
 
-}//namespace dtAI
+} // namespace dtAI
 
 #endif // __DELTA_PLANNERNODELINK_H__

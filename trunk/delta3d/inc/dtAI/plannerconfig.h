@@ -24,7 +24,7 @@
 
 #include <dtCore/timer.h>
 
-//vs thinks std::numeric_limits<>::max() is a macro
+// vs thinks std::numeric_limits<>::max() is a macro
 #ifdef max
 #undef max
 #endif
@@ -32,11 +32,8 @@
 
 #include <list>
 
-
 namespace dtAI
 {
-
-
    class PlannerTimer
    {
    public:
@@ -47,34 +44,31 @@ namespace dtAI
       dtCore::Timer_t mTime;
    };
 
-
-
    /**
-    * 
+    *
     */
    class PlannerConfig
    {
-      public:
-         PlannerConfig()
-            : mResult()
-            , mMaxTimePerIteration(std::numeric_limits<double>::max())
-            , mCurrentElapsedTime(0.0)
-            , mTotalElapsedTime(0.0)
-            , mTimer()
-         {
-         
-         }
+   public:
+      PlannerConfig()
+         : mResult()
+         , mMaxTimePerIteration(std::numeric_limits<double>::max())
+         , mCurrentElapsedTime(0.0)
+         , mTotalElapsedTime(0.0)
+         , mTimer()
+      {
 
-         std::list<const Operator*> mResult;
+      }
 
-         double mMaxTimePerIteration;
-         double mCurrentElapsedTime;
-         double mTotalElapsedTime;
+      std::list<const Operator*> mResult;
 
-         PlannerTimer mTimer;
-         
-   
+      double mMaxTimePerIteration;
+      double mCurrentElapsedTime;
+      double mTotalElapsedTime;
+
+      PlannerTimer mTimer;
    };
-}//namespace dtAI
+
+} // namespace dtAI
 
 #endif // __DELTA_PLANNERCONFIG_H__

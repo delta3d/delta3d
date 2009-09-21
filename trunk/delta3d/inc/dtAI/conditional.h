@@ -29,27 +29,27 @@ namespace dtAI
 {
    class WorldState;
 
-
    /**
     * An expression that evaluates to true of false
     */
    class IConditional: public osg::Referenced
    {
-      public:
-         IConditional(){}
+   public:
+      IConditional(){}
 
-         bool operator==(const IConditional& pCond) const
-         {
-            return GetName() == pCond.GetName();
-         }
+      bool operator==(const IConditional& pCond) const
+      {
+         return GetName() == pCond.GetName();
+      }
 
-         virtual const std::string& GetName() const = 0;
+      virtual const std::string& GetName() const = 0;
 
-         virtual bool Evaluate(const WorldState*) = 0;
+      virtual bool Evaluate(const WorldState*) = 0;
 
-      protected:
-         virtual ~IConditional() {};
+   protected:
+      virtual ~IConditional() {};
    };
-}//namespace dtAI
+
+} // namespace dtAI
 
 #endif // __DELTA_CONDITIONAL_H__

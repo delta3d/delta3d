@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * Bradley Anderegg 
+ * Bradley Anderegg
  */
 
 #ifndef __DELTA_WAYPOINTINTERFACE_H__
@@ -48,7 +48,7 @@ namespace dtAI
       bool operator!=(const WaypointInterface& pWay) const;
 
       virtual ~WaypointInterface();
-      
+
       WaypointID GetID() const;
 
       //this is only public for loading and saving, if you change a waypoints ID
@@ -65,10 +65,10 @@ namespace dtAI
       virtual void CreateProperties(WaypointPropertyBase& container);
 
       /**
-      * This allows derivative waypoint classes to either subclass Referenced
-      *  and overload calling the base functions, or ignore, do nothing, and manage
-      *  your own memory.     
-      */
+       * This allows derivative waypoint classes to either subclass Referenced
+       *  and overload calling the base functions, or ignore, do nothing, and manage
+       *  your own memory.
+       */
       virtual void ref() const = 0;
       virtual void unref() const = 0;
 

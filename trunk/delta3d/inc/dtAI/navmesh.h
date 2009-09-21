@@ -31,7 +31,7 @@ namespace dtAI
 {
    class WaypointInterface;
    class WaypointPair;
-   
+
    /**
     * A NavMesh is the collection of all WaypointPairs
     * This is used for finding traversal paths between points
@@ -40,91 +40,90 @@ namespace dtAI
    {
    public:
       typedef std::pair<WaypointID, WaypointPair*> NavMeshPair;
-      typedef std::multimap<WaypointID, WaypointPair*> NavMeshContainer;      
-
-   public:         
-         NavMesh();
-         NavMesh(NavMeshContainer::iterator from, NavMeshContainer::iterator to);
-
-   protected:
-         ~NavMesh();
+      typedef std::multimap<WaypointID, WaypointPair*> NavMeshContainer;
 
    public:
-         void InsertCopy(NavMeshContainer::const_iterator from, NavMeshContainer::const_iterator to);
-         void Remove(NavMeshContainer::iterator from, NavMeshContainer::iterator to);
+      NavMesh();
+      NavMesh(NavMeshContainer::iterator from, NavMeshContainer::iterator to);
 
-         /**
-         *	@note For consistency Path and PathSegment are being replaced by the word Edge,
-         *        the Add,Remove and such using the old nomenclature will be deprecated.
-         */
+   protected:
+      ~NavMesh();
+
+   public:
+      void InsertCopy(NavMeshContainer::const_iterator from, NavMeshContainer::const_iterator to);
+      void Remove(NavMeshContainer::iterator from, NavMeshContainer::iterator to);
+
+      /**
+       * @note For consistency Path and PathSegment are being replaced by the word Edge,
+       *       the Add,Remove and such using the old nomenclature will be deprecated.
+       */
+
+      /**
+       * Creates a new WaypointPair and adds it to the current set
+       */
+      void AddEdge(const WaypointInterface* pFrom, const WaypointInterface* pTo);
+      void AddPathSegment(const WaypointInterface* pFrom, const WaypointInterface* pTo);
+
+      /**
+       * Removes the path segment between the two waypoints if one exists
+       */
+      void RemoveEdge(const WaypointInterface* pFrom, const WaypointInterface* pTo);
+      void RemovePathSegment(const WaypointInterface* pFrom, const WaypointInterface* pTo);
+
+      /**
+       * Removes all path segments from and to the specified waypoint
+       * @note this used to only remove paths from the specified waypoint
+       *        and has been changed to remove paths going to the waypoint as well.
+       *        for legacy behavoir use RemoveAllEdgesFromWaypoint().
+       */
+      void RemoveAllEdges(const WaypointInterface* pFrom);
+      void RemoveAllEdgesFromWaypoint(const WaypointInterface* pFrom);
+      void RemoveAllPaths(const WaypointInterface* pFrom);
 
 
-         /**
-          * Creates a new WaypointPair and adds it to the current set
-          */
-         void AddEdge(const WaypointInterface* pFrom, const WaypointInterface* pTo);
-         void AddPathSegment(const WaypointInterface* pFrom, const WaypointInterface* pTo);
+      /**
+       * @return whether or not a path exists between the two waypoints
+       */
+      bool ContainsEdge(const WaypointInterface* pFrom, const WaypointInterface* pTo) const;
+      bool ContainsPath(const WaypointInterface* pFrom, const WaypointInterface* pTo) const;
 
-         /**
-          * Removes the path segment between the two waypoints if one exists         
-          */
-         void RemoveEdge(const WaypointInterface* pFrom, const WaypointInterface* pTo);
-         void RemovePathSegment(const WaypointInterface* pFrom, const WaypointInterface* pTo);
+      /**
+       * returns a reference to the multimap which contains all WaypointPairs
+       * indexed by the starting waypoint
+       */
+      const NavMeshContainer& GetNavMesh() const;
 
-         /**
-          * Removes all path segments from and to the specified waypoint
-          * @note this used to only remove paths from the specified waypoint
-          *        and has been changed to remove paths going to the waypoint as well.                  
-          *        for legacy behavoir use RemoveAllEdgesFromWaypoint().
-          */
-         void RemoveAllEdges(const WaypointInterface* pFrom);
-         void RemoveAllEdgesFromWaypoint(const WaypointInterface* pFrom);
-         void RemoveAllPaths(const WaypointInterface* pFrom);
+      /**
+       * Returns a multimap iterator to begin starting at the first
+       * valid waypoint you can get to from the waypoint specified
+       * used by WaypointIter in WaypointUtils.h
+       */
+      NavMeshContainer::iterator begin(const WaypointInterface* pPtr);
+      NavMeshContainer::const_iterator begin(const WaypointInterface* pPtr) const;
 
+      /**
+       * Returns a multimap iterator to the end sequence of
+       * valid waypoints you can get to from the waypoint specified
+       * used by WaypointIter in WaypointUtils.h
+       */
+      NavMeshContainer::iterator end(const WaypointInterface* pPtr);
+      NavMeshContainer::const_iterator end(const WaypointInterface* pPtr) const;
 
-         /**
-          *	@return whether or not a path exists between the two waypoints
-          */
-         bool ContainsEdge(const WaypointInterface* pFrom, const WaypointInterface* pTo) const;
-         bool ContainsPath(const WaypointInterface* pFrom, const WaypointInterface* pTo) const;
+      /**
+       * Returns the number of immediately reachable waypoints
+       * adjacent to the given waypoint
+       */
+      NavMeshContainer::size_type size(const WaypointInterface* pPtr) const;
 
-         /**
-          * returns a reference to the multimap which contains all WaypointPairs
-          * indexed by the starting waypoint
-          */
-         const NavMeshContainer& GetNavMesh() const;
+      /**
+       * Frees memory and clears all waypoints from the multimap
+       */
+      void Clear();
 
-         /**
-          * Returns a multimap iterator to begin starting at the first
-          * valid waypoint you can get to from the waypoint specified
-          * used by WaypointIter in WaypointUtils.h
-          */
-         NavMeshContainer::iterator begin(const WaypointInterface* pPtr);
-         NavMeshContainer::const_iterator begin(const WaypointInterface* pPtr) const;
-         
-         /**
-          * Returns a multimap iterator to the end sequence of
-          * valid waypoints you can get to from the waypoint specified
-          * used by WaypointIter in WaypointUtils.h
-          */
-         NavMeshContainer::iterator end(const WaypointInterface* pPtr);
-         NavMeshContainer::const_iterator end(const WaypointInterface* pPtr) const;
-
-         /**
-          * Returns the number of immediately reachable waypoints
-          * adjacent to the given waypoint
-          */
-         NavMeshContainer::size_type size(const WaypointInterface* pPtr) const;
-
-         /**
-          * Frees memory and clears all waypoints from the multimap
-          */
-         void Clear();
-
-         /**
-          * Returns whether or not there is a WaypointPair going in the opposite direction
-          */
-         bool IsOneWay(WaypointPair* pPair) const;
+      /**
+       * Returns whether or not there is a WaypointPair going in the opposite direction
+       */
+      bool IsOneWay(WaypointPair* pPair) const;
 
    private:
       NavMeshContainer mNavMesh;

@@ -34,7 +34,6 @@
 #include <functional>
 #include <string>
 
-
 namespace dtAI
 {
    /**
@@ -43,12 +42,13 @@ namespace dtAI
    class DT_AI_EXPORT FSM
    {
    public:
-      //had to place this outside of the template so gcc won't gripe.
+      // had to place this outside of the template so gcc won't gripe.
       /** Compares 2 referenced pointer objects by pointer value and name.*/
       template<typename T>
       struct RefPtrWithNameCompare : std::binary_function<T,T,bool>
       {
-         /** RefPtrWithNameCompare will make sure the State being added is
+         /**
+          * RefPtrWithNameCompare will make sure the State being added is
           * unique to the set based on its name AND based on the fact
           * that the State has a unique place in memory.
           * This makes sure that no one tried to submit a State that
@@ -61,12 +61,13 @@ namespace dtAI
          }
       };
 
-      //had to place this outside of the template so gcc won't gripe.
+      // had to place this outside of the template so gcc won't gripe.
       /** Compares a pair, but assumes the 2nd type is a referenced pointer.*/
       template<typename T>
       struct PairRefPtrWithNameCompare : public std::binary_function<T,T,bool>
       {
-         /** Re-implement the default comparison algorithm for std::pair<T1,T2>::operator<,
+         /**
+          * Re-implement the default comparison algorithm for std::pair<T1,T2>::operator<,
           * but add smart StatePtr comparison with the RefPtrWithNameCompare predicate.
           * \sa http://www.sgi.com/tech/stl/pair.html
           */
@@ -98,7 +99,7 @@ namespace dtAI
       typedef std::map< EventStatePtrPair, StatePtr, PairRefPtrWithNameCompare<EventStatePtrPair> > TransitionMap;
 
    public:
-      FSM(); //sets up default factory
+      FSM(); // sets up default factory
       FSM(FactoryType* pFactory); //created with specific NPCState factory
       virtual ~FSM();
 
@@ -115,8 +116,8 @@ namespace dtAI
       void MakeCurrent(const NPCState::Type* state);
 
       /**
-       *pass all events through this function
-       *@return whether or not the event caused a transition
+       * pass all events through this function
+       * @return whether or not the event caused a transition
        */
 
       bool HandleEvent(const NPCEvent* pEvent);
@@ -126,7 +127,7 @@ namespace dtAI
       void FreeMem();
       void OnStateChange(NPCState* pState);
 
-      //NPCState's are not abstract so by default we don't need a derivation
+      // NPCState's are not abstract so by default we don't need a derivation
       void SetupDefaultFactory();
 
    protected:

@@ -28,7 +28,7 @@
 #include <osg/Vec3>
 #include <osg/Vec4>
 
-namespace dtAI 
+namespace dtAI
 {
 
    /**
@@ -44,10 +44,10 @@ namespace dtAI
       {
          RENDERFLAG_FIRST = 0,
 
-         RENDER_DEFAULT = RENDERFLAG_FIRST, 
-         RENDER_RED, 
+         RENDER_DEFAULT = RENDERFLAG_FIRST,
+         RENDER_RED,
          RENDER_GREEN,
-         RENDER_BLUE, 
+         RENDER_BLUE,
          RENDER_CUSTOM,
 
          RENDERFLAG_LAST = RENDER_CUSTOM,
@@ -76,17 +76,17 @@ namespace dtAI
       void SetAlpha(float newAlpha) const;
       float GetAlpha() const;
 
-      //these are just no-ops 
+      // these are just no-ops
       virtual void ref() const{};
       virtual void unref() const{};
 
-   private:        
+   private:
       mutable RenderFlag mRenderFlag;
-      mutable osg::Vec3 mColor; 
+      mutable osg::Vec3 mColor;
       mutable float mGradient;
-      mutable float mAlpha;         
+      mutable float mAlpha;
 
-      osg::Vec3 mPosition;   
+      osg::Vec3 mPosition;
 
       inline void SetColorFromRenderFlag() const;
    };

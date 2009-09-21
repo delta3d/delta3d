@@ -30,28 +30,28 @@
 
 namespace dtAI
 {
-   
+
    class WaypointGraphNode: public AStarNode<WaypointGraphNode, const WaypointInterface*, WaypointGraph::ConstWaypointArray::const_iterator, float>
    {
    public:
-      //we must supply astar with a create function to use this constructor    
+      // we must supply astar with a create function to use this constructor
       WaypointGraphNode(WaypointGraph& wpGraph, node_type* pParent, const WaypointInterface* pWaypoint, cost_type pGn, cost_type pHn)
          : BaseType(pParent, pWaypoint, pGn, pHn)
          , mWPGraph(&wpGraph)
       {
          mWaypoints.clear();
          mWPGraph->GetAllEdgesFromWaypoint(pWaypoint->GetID(), mWaypoints);
-      }      
+      }
 
-      //we need this one just to compile, probably a good sign there is some refactoring to be done
+      // we need this one just to compile, probably a good sign there is some refactoring to be done
       WaypointGraphNode(node_type* pParent, const WaypointInterface* pWaypoint, cost_type pGn, cost_type pHn)
          : BaseType(pParent, pWaypoint, pGn, pHn)
          , mWPGraph(NULL)
       {
-      }  
+      }
 
       /*virtual*/ iterator begin() const
-      {         
+      {
          return mWaypoints.begin();
       }
 
@@ -63,31 +63,25 @@ namespace dtAI
    private:
       WaypointGraph* mWPGraph;
       WaypointGraph::ConstWaypointArray mWaypoints;
-
    };
 
-
-   typedef AStar<WaypointGraphNode, WaypointCostFunc, std::list<const WaypointInterface*>, AStarTimer > WaypointGraphAStarBase;
-
+   typedef AStar<WaypointGraphNode, WaypointCostFunc, std::list<const WaypointInterface*>, AStarTimer> WaypointGraphAStarBase;
 
    class DT_AI_EXPORT WaypointGraphAStar: public WaypointGraphAStarBase
    {
-      public:
-         typedef WaypointGraphAStarBase::CreateNodeFunctor WaypointGraphAStarCreateFunctor;
+   public:
+      typedef WaypointGraphAStarBase::CreateNodeFunctor WaypointGraphAStarCreateFunctor;
 
-         WaypointGraphAStar(WaypointGraph& wpGraph);
-         virtual ~WaypointGraphAStar();
+      WaypointGraphAStar(WaypointGraph& wpGraph);
+      virtual ~WaypointGraphAStar();
 
-         PathFindResult HierarchicalFindPath(WaypointID from, WaypointID to);
+      PathFindResult HierarchicalFindPath(WaypointID from, WaypointID to);
 
-         WaypointGraphNode* CreateNode(WaypointGraphNode* pParent, const WaypointInterface* pWaypoint, float pGn, float pHn);
+      WaypointGraphNode* CreateNode(WaypointGraphNode* pParent, const WaypointInterface* pWaypoint, float pGn, float pHn);
 
-
-      private: 
-         WaypointGraph& mWPGraph;
-
+   private:
+      WaypointGraph& mWPGraph;
    };
-
 
 } // namespace dtAI
 

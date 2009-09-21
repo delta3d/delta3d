@@ -34,55 +34,52 @@ namespace dtAI
       typename ErrorHandlerType = dtUtil::DoNothing<int, ErrorResultType> >
    class SteeringBehavior: public osg::Referenced
    {
-      public:
-         typedef KinematicGoal_ KinematicGoalType;
-         typedef Kinematic_ KinematicType;
-         typedef SteeringOutput_ SteeringOutputType;
+   public:
+      typedef KinematicGoal_ KinematicGoalType;
+      typedef Kinematic_ KinematicType;
+      typedef SteeringOutput_ SteeringOutputType;
 
-         typedef std::vector<std::pair<SensorType, ErrorHandlerType> > SensorErrorArray;
+      typedef std::vector<std::pair<SensorType, ErrorHandlerType> > SensorErrorArray;
 
-         typedef typename dtUtil::TypeTraits<KinematicGoalType>::const_param_type ConstKinematicGoalParam;
-         typedef typename dtUtil::TypeTraits<KinematicType>::const_param_type ConstKinematicParam;
-         typedef typename dtUtil::TypeTraits<SteeringOutputType>::reference SteeringOutByRefParam;
+      typedef typename dtUtil::TypeTraits<KinematicGoalType>::const_param_type ConstKinematicGoalParam;
+      typedef typename dtUtil::TypeTraits<KinematicType>::const_param_type ConstKinematicParam;
+      typedef typename dtUtil::TypeTraits<SteeringOutputType>::reference SteeringOutByRefParam;
 
-         typedef typename dtUtil::TypeTraits<SensorType>::param_type SensorParamType;
-         typedef typename dtUtil::TypeTraits<ErrorHandlerType>::param_type ErrorHandlerParamType;
+      typedef typename dtUtil::TypeTraits<SensorType>::param_type SensorParamType;
+      typedef typename dtUtil::TypeTraits<ErrorHandlerType>::param_type ErrorHandlerParamType;
 
-      public:
-         SteeringBehavior(){}
+   public:
+      SteeringBehavior(){}
 
-         /**
-         * @param dt, the delta frame time
-         * @param current_goal, the kinematic goal which the behavior can operate on
-         * @param current_state, the kinematic state is physical state which we apply our behavior to in hopes of making it match the goal
-         * @param result, the result of the behavior is copied into a SteeringOutput which can later be integrated by the physics model
-         */
-         virtual void Think(float dt, ConstKinematicGoalParam current_goal, ConstKinematicParam current_state, SteeringOutByRefParam result) = 0;
+      /**
+       * @param dt, the delta frame time
+       * @param current_goal, the kinematic goal which the behavior can operate on
+       * @param current_state, the kinematic state is physical state which we apply our behavior to in hopes of making it match the goal
+       * @param result, the result of the behavior is copied into a SteeringOutput which can later be integrated by the physics model
+       */
+      virtual void Think(float dt, ConstKinematicGoalParam current_goal, ConstKinematicParam current_state, SteeringOutByRefParam result) = 0;
 
+      void AddErrorHandler(SensorParamType s, ErrorHandlerParamType eh)
+      {
+         mSensorErrors.push_back(std::make_pair(SensorType(s), ErrorHandlerType(eh)));
+      }
 
-         void AddErrorHandler(SensorParamType s, ErrorHandlerParamType eh)
-         {
-            mSensorErrors.push_back(std::make_pair(SensorType(s), ErrorHandlerType(eh)));
-         }
+      void RemoveErrorHandler(SensorParamType s, ErrorHandlerParamType eh)
+      {
+         mSensorErrors.erase(std::remove(mSensorErrors.begin(), mSensorErrors.end(), std::make_pair(SensorType(s), ErrorHandlerType(eh))));
+      }
 
-         void RemoveErrorHandler(SensorParamType s, ErrorHandlerParamType eh)
-         {
-            mSensorErrors.erase(std::remove(mSensorErrors.begin(), mSensorErrors.end(), std::make_pair(SensorType(s), ErrorHandlerType(eh))));
-         }
+      void InvokeErrorHandling()
+      {
+         std::for_each(mSensorErrors.begin(), mSensorErrors.end(), dtUtil::EvaluateInvoke<SensorParamType, ErrorHandlerParamType, ErrorResultType>());
+      }
 
-         void InvokeErrorHandling()
-         {
-            std::for_each(mSensorErrors.begin(), mSensorErrors.end(), dtUtil::EvaluateInvoke<SensorParamType, ErrorHandlerParamType, ErrorResultType>());
-         }
+   protected:
+      /*virtual*/ ~SteeringBehavior(){}
 
-
-      protected:
-         /*virtual*/ ~SteeringBehavior(){}
-
-
-         SensorErrorArray mSensorErrors;
-
+      SensorErrorArray mSensorErrors;
    };
-}
 
-#endif //DELTA_STEERINGBEHAVIOR
+} // namespace dtAI
+
+#endif // DELTA_STEERINGBEHAVIOR

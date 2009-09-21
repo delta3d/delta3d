@@ -22,7 +22,6 @@
 #ifndef __DELTA_WAYPOINTPAIR_H__
 #define __DELTA_WAYPOINTPAIR_H__
 
-
 #include <dtAI/export.h>
 #include <dtAI/waypointinterface.h>
 
@@ -40,7 +39,7 @@ namespace dtAI
       /**
        * constructor assigns the two waypoints, calculates slope and 2D Distance
        */
-      WaypointPair(const WaypointInterface* pFrom, const WaypointInterface* pTo);      
+      WaypointPair(const WaypointInterface* pFrom, const WaypointInterface* pTo);
       WaypointPair();
       virtual ~WaypointPair();
 

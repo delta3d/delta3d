@@ -58,7 +58,7 @@ template<class _NodeType, class _CostFunc, class _Container, class _Timer>
 AStar<_NodeType, _CostFunc, _Container, _Timer>::AStar()
 : mFuncCreateNode(this, &AStar<_NodeType, _CostFunc, _Container, _Timer>::CreateNode)
 {
-   
+
 }
 
 template<class _NodeType, class _CostFunc, class _Container, class _Timer>
@@ -122,7 +122,7 @@ void AStar<_NodeType, _CostFunc, _Container, _Timer>::Reset(const std::vector<da
    typename std::vector<data_type>::const_iterator iter = pFrom.begin();
    typename std::vector<data_type>::const_iterator endOfList = pFrom.end();
 
-   //we start from index 1
+   // we start from index 1
    ++iter;
 
    while (iter != endOfList)
@@ -157,14 +157,14 @@ void AStar<_NodeType, _CostFunc, _Container, _Timer>::Insert(AStarContainer& pCo
    std::push_heap(pCont.begin(), pCont.end(), node_type_gtr_func());
 }
 
-//This needs to be optimized once we have a more suitable container implementation
+// This needs to be optimized once we have a more suitable container implementation
 template<class _NodeType, class _CostFunc, class _Container, class _Timer>
 typename std::vector<_NodeType*>::iterator AStar<_NodeType, _CostFunc, _Container, _Timer>::Contains(AStarContainer& pCont, data_type pNode)
 {
    return std::find_if (pCont.begin(), pCont.end(), node_type_comp_func<data_type, node_type>(pNode));
 }
 
-//This needs to be optimized once we have a more suitable container implementation
+// This needs to be optimized once we have a more suitable container implementation
 template<class _NodeType, class _CostFunc, class _Container, class _Timer>
 void AStar<_NodeType, _CostFunc, _Container, _Timer>::Remove(AStarContainer& pCont, typename AStarContainer::iterator iterToErase)
 {
@@ -176,7 +176,7 @@ void AStar<_NodeType, _CostFunc, _Container, _Timer>::Remove(AStarContainer& pCo
 }
 
 
-//This needs to be optimized once we have a more suitable container implementation
+// This needs to be optimized once we have a more suitable container implementation
 template<class _NodeType, class _CostFunc, class _Container, class _Timer>
 _NodeType* AStar<_NodeType, _CostFunc, _Container, _Timer>::FindLowestCost(AStarContainer& pCont)
 {
@@ -203,8 +203,8 @@ _NodeType* AStar<_NodeType, _CostFunc, _Container, _Timer>::CreateNode(node_type
 template<class _NodeType, class _CostFunc, class _Container, class _Timer>
 PathFindResult AStar<_NodeType, _CostFunc, _Container, _Timer>::FindPath()
 {
-   //increment our iteration
-   //reset our constraint bookkeeping vars
+   // increment our iteration
+   // reset our constraint bookkeeping vars
    ++mConfig.mNumIterations;
    mConfig.mTimeSpent = 0;
    mConfig.mNodesExplored = 0;
@@ -218,10 +218,10 @@ PathFindResult AStar<_NodeType, _CostFunc, _Container, _Timer>::FindPath()
          return NO_PATH;
       }
 
-      //start with the node of lowest cost in the open list
+      // start with the node of lowest cost in the open list
       node_type* pStart = FindLowestCost(mOpen);
 
-      //check if we found a path to the end or if we have exceeded a constraint
+      // check if we found a path to the end or if we have exceeded a constraint
       cost_type pCost = (pStart->GetCostToNode() + pStart->GetCostToGoal());
       bool pExceededMaxCost(pCost >= mConfig.mMaxCost);
       bool pHasPathToFinish = mConfig.AtFinish(pStart->GetData());
@@ -231,13 +231,13 @@ PathFindResult AStar<_NodeType, _CostFunc, _Container, _Timer>::FindPath()
       bool pHasExceededTimeLimit(mConfig.mTimeSpent > mConfig.mMaxTime);
       bool pAtOrExceedingMaxDepth(pStart->GetDepth() >= mConfig.mMaxDepth);
 
-      //if we have exceeded a constraint or found a path to the end return
+      // if we have exceeded a constraint or found a path to the end return
       if (pHasPathToFinish || pExceededMaxCost || pHasExceededTimeLimit || pAtOrExceedingMaxDepth || (mConfig.mNodesExplored >= mConfig.mMaxNodesExplored))
       {
-         //we simply add it back to the container so it will be deleted later
+         // we simply add it back to the container so it will be deleted later
          mClosed.push_back(pStart);
 
-         //\todo combine partial lists instead of clearing them
+         // \todo combine partial lists instead of clearing them
          mConfig.mResult.clear();
 
          while (pStart)
@@ -258,34 +258,34 @@ PathFindResult AStar<_NodeType, _CostFunc, _Container, _Timer>::FindPath()
       {
          ++mConfig.mNodesExplored;
 
-         //add it onto the closed list
+         // add it onto the closed list
          Insert(mClosed, pStart);
 
-         //we will iterate through the potential places this node can take us
+         // we will iterate through the potential places this node can take us
          typename node_type::iterator iter = pStart->begin();
          typename node_type::iterator endOfList = pStart->end();
 
-         //\todo refactor this with a better container type
+         // \todo refactor this with a better container type
          while (iter != endOfList)
          {
             data_type pNode = *iter;
-            //if its not in the closed list
+            // if its not in the closed list
             if (!mConfig.mCheckClosedList || Contains(mClosed, pNode) == mClosed.end())
             {
-               //if it isnt in the open list
+               // if it isnt in the open list
                typename AStarContainer::iterator pNodeLinkIter = Contains(mOpen, pNode);
                if (pNodeLinkIter == mOpen.end())
                {
-                  //create a new path in the open list
+                  // create a new path in the open list
                   AddNodeLink(pStart, pNode);
                }
-               else //lets see if we can get there for cheaper
+               else // lets see if we can get there for cheaper
                {
-                  //compute cost to pNode from pStart
+                  // compute cost to pNode from pStart
                   cost_type pNewCost = pStart->GetCostToNode() + mCostFunc(pStart->GetData(), pNode);
 
-                  //if the new g(n) cost is cheaper then the old one delete the old one
-                  //and add the new one as the best potential path to pNode
+                  // if the new g(n) cost is cheaper then the old one delete the old one
+                  // and add the new one as the best potential path to pNode
                   if (pNewCost < (*pNodeLinkIter)->GetCostToNode())
                   {
                      Remove(mOpen, pNodeLinkIter);
