@@ -358,43 +358,50 @@ namespace dtAI
          mWaypointGraph->Clear();
       }
 
-      //bool LoadLegacyWaypointFile(const std::string& filename)
-      //{
-      //   ////temporarily uses the waypoint manager
-      //   //WaypointManager& wm = WaypointManager::GetInstance();
-      //   //bool result = wm.ReadFile(filename);
-      //   //if(result)
-      //   //{
-      //   //   NavMesh::NavMeshContainer::const_iterator nm_iter = wm.GetNavMesh().GetNavMesh().begin();
-      //   //   NavMesh::NavMeshContainer::const_iterator nm_iterEnd = wm.GetNavMesh().GetNavMesh().end();
+      bool LoadLegacyWaypointFile(const std::string& filename)
+      {
+         WaypointManager& wm = WaypointManager::GetInstance();
+         bool result = wm.ReadFile(filename);
+         if(result)
+         {
+            NavMesh::NavMeshContainer::const_iterator nm_iter = wm.GetNavMesh().GetNavMesh().begin();
+            NavMesh::NavMeshContainer::const_iterator nm_iterEnd = wm.GetNavMesh().GetNavMesh().end();
 
-      //   //   for(;nm_iter != nm_iterEnd; ++nm_iter)
-      //   //   {
-      //   //      const WaypointPair* wp = (*nm_iter).second;
+            for(;nm_iter != nm_iterEnd; ++nm_iter)
+            {
+               const WaypointPair* wp = (*nm_iter).second;
 
-      //   //      if(GetWaypointById(wp->GetWaypointFrom()->GetID()) == NULL)
-      //   //      {
-      //   //         InsertWaypoint(const_cast<WaypointInterface*>(wp->GetWaypointFrom()));
-      //   //      }
+               if(GetWaypointById(wp->GetWaypointFrom()->GetID()) == NULL)
+               {
+                  InsertWaypoint(const_cast<WaypointInterface*>(wp->GetWaypointFrom()));
+               }
 
-      //   //      if(GetWaypointById(wp->GetWaypointTo()->GetID()) == NULL)
-      //   //      {
-      //   //         InsertWaypoint(const_cast<WaypointInterface*>(wp->GetWaypointTo()));
-      //   //      }
-      //   //      
-      //   //      AddEdge(wp->GetWaypointFrom()->GetID(), wp->GetWaypointTo()->GetID());
-      //   //   }
-      //   //   
-      //   //   //wm.SetDeleteOnClear(false);
-      //   //}
-      //   //return result;
-      //}
+               if(GetWaypointById(wp->GetWaypointTo()->GetID()) == NULL)
+               {
+                  InsertWaypoint(const_cast<WaypointInterface*>(wp->GetWaypointTo()));
+               }
+               
+               AddEdge(wp->GetWaypointFrom()->GetID(), wp->GetWaypointTo()->GetID());
+            }
+            
+            //wm.SetDeleteOnClear(false);
+         }
+         return result;
+      }
 
 
       bool LoadWaypointFile(const std::string& filename)
       {
          dtCore::RefPtr<WaypointReaderWriter> reader = new WaypointReaderWriter(*this);
-         return reader->LoadWaypointFile(filename);
+         bool result = reader->LoadWaypointFile(filename);
+
+         if(!result)
+         {
+            //this is temporary to support the old waypoint file
+            result = LoadLegacyWaypointFile(filename);
+         }
+
+         return result;
       }
 
       bool SaveWaypointFile(const std::string& filename)

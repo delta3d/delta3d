@@ -339,7 +339,7 @@ void WaypointGraphTests::CreateWaypoints()
    mAIInterface->AddEdge(wpArray[15], wpArray[16]);
    mAIInterface->AddEdge(wpArray[16], wpArray[15]);
 
-   dtCore::RefPtr<WaypointGraphBuilder> mBuilder = new WaypointGraphBuilder(*mAIInterface, *mGraph);
+   dtCore::RefPtr<WaypointGraphBuilder> mBuilder = new WaypointGraphBuilder(*mAIInterface, mAIInterface->GetWaypointGraph());
    mGraph->CreateSearchGraph(mBuilder.get(), 10);
 }
 
