@@ -21,6 +21,9 @@
  *
  * David Guthrie
  */
+#ifndef qtguiwindowsystemwrapper_h__
+#define qtguiwindowsystemwrapper_h__
+
 
 #include <dtQt/export.h>
 #include <dtQt/glwidgetfactory.h>
@@ -68,3 +71,4 @@ namespace dtQt
          dtCore::RefPtr<GLWidgetFactory> mWidgetFactory;
    };
 }
+#endif // qtguiwindowsystemwrapper_h__
