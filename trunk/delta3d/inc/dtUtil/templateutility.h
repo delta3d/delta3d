@@ -22,6 +22,7 @@
 #define DELTA_TEMPLATE_UTILITY
 
 #include <utility> //for std::pair
+#include <algorithm>
 
 #include <dtUtil/typetraits.h>
 
