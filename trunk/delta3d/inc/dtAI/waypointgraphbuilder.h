@@ -59,7 +59,7 @@ namespace dtAI
 
       protected:
 
-         virtual WaypointCollection* CreateWaypointCollection(const osg::Vec3& pos);
+         virtual WaypointCollection* CreateWaypointCollection(const osg::Vec3& pos, unsigned searchLevel);
 
          WaypointCollection* CreateClique(int numChildren, const WaypointInterface* curWay, const ConstWaypointArray& cliques, const NavMesh& nm);
          void FindCliques(const WaypointInterface* wp, const NavMesh& nm, ConstWaypointArray& result);

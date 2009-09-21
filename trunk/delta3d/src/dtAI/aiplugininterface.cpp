@@ -41,10 +41,16 @@ namespace dtAI
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
    WaypointInterface* AIPluginInterface::CreateWaypoint(const osg::Vec3& pos, const dtDAL::ObjectType& type)
    {
-      WaypointInterface* newWaypoint = mFactory->CreateObject(&type);
+      WaypointInterface* newWaypoint = CreateNoInsert(type);
       newWaypoint->SetPosition(pos);
       InsertWaypoint(newWaypoint);
       return newWaypoint;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   WaypointInterface* AIPluginInterface::CreateNoInsert(const dtDAL::ObjectType& type)
+   {
+      return mFactory->CreateObject(&type);
    }
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -72,4 +78,25 @@ namespace dtAI
       mFactory->GetSupportedTypes(actors);
    }   
 
+   /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   const dtDAL::ObjectType* AIPluginInterface::GetWaypointTypeByName( const std::string& name ) const
+   {
+      typedef std::vector<dtCore::RefPtr<const dtDAL::ObjectType> > ObjectTypeArray;
+
+      ObjectTypeArray waypointTypes;
+      GetSupportedWaypointTypes(waypointTypes);
+
+      ObjectTypeArray::iterator ob_iter = waypointTypes.begin();
+      ObjectTypeArray::iterator ob_iterEnd = waypointTypes.end();
+
+      for(;ob_iter != ob_iterEnd; ++ob_iter)
+      {
+         if((**ob_iter).GetName() == name)
+         {
+            return (*ob_iter).get();
+         }
+      }
+
+      return NULL;
+   }
 }

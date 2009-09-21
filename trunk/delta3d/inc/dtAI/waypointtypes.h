@@ -68,6 +68,7 @@ namespace dtAI
 
          void SetName(const std::string& name);
          const std::string& GetName() const;
+         std::string GetNameCopy() const;
          
          /*virtual*/ std::string ToString() const;
 
@@ -117,12 +118,14 @@ namespace dtAI
 
       void SetCoverAngle(const osg::Vec3& angle);
       const osg::Vec3& GetCoverAngle() const;
+      osg::Vec3 GetCoverAngleCopy() const;
 
       void SetSniper(bool b);
       bool GetSniper() const;
 
       void SetSniperAngle(const osg::Vec3& angle);
       const osg::Vec3& GetSniperAngle() const;
+      osg::Vec3 GetSniperAngleCopy() const;
       
 
       /*virtual*/ void CreateProperties(WaypointPropertyBase& container);

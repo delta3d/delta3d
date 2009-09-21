@@ -42,6 +42,8 @@
 namespace dtAI
 {
    class AIDebugDrawable;
+   class WaypointCollection;
+   class WaypointGraph;
 
    class DT_AI_EXPORT AIPluginInterface: public osg::Referenced
    {
@@ -77,6 +79,31 @@ namespace dtAI
          * @return whether the waypoint was found and successfully moved
          */
          virtual bool MoveWaypoint(WaypointInterface* wi, const osg::Vec3& newPos) = 0;
+
+         /**
+         * This is for inserting a WaypointCollection at a specific search level,
+         *  this is done on CreateSearchGraph(), use InsertWaypoint()
+         *  for default inserting of WaypointCollections.
+         */
+         virtual void InsertCollection(WaypointCollection* waypoint, unsigned level) = 0;
+
+         /**
+         *  Takes the WaypointID of a waypoint already added, and assigns it
+         *     to a parent waypoint which may or may not be already inserted.
+         *  
+         *  @return returns false if childWP was not found, or if parentWp has already been added 
+         *             at the wrong search level
+         *
+         *  @note Calling this function will add the childWp to the parentWp using Insert().
+         */
+         virtual bool Assign(WaypointID childWp, WaypointCollection* parentWp) = 0;
+         
+         /**
+         *  Returns a reference to the internal waypoint graph.  All operations on this
+         *     interface are automatically applied to the waypoint graph.
+         */
+         virtual WaypointGraph& GetWaypointGraph() = 0;
+         virtual const WaypointGraph& GetWaypointGraph() const = 0;
 
          /**
          *  Copies all waypoints into a vector
@@ -214,12 +241,18 @@ namespace dtAI
          * Gets a list of waypoint types supported.
          */
          void GetSupportedWaypointTypes(std::vector<dtCore::RefPtr<const dtDAL::ObjectType> >& actors) const;
+         
+         const dtDAL::ObjectType* GetWaypointTypeByName(const std::string& name) const;
 
-         template <class WaypointDerivative> 
-         WaypointPropertyBase* CreateWaypointPropertyContainer(const dtDAL::ObjectType& type, WaypointDerivative* wp) const
+         WaypointPropertyBase* CreateWaypointPropertyContainer(const dtDAL::ObjectType& type, WaypointInterface* wp) const
          {
             return mPropertyCache->GetPropertyContainer(type, wp);
          }
+
+         /**
+         *  This simply uses the factory to create the waypoint, it does not insert it.
+         */
+         WaypointInterface* CreateNoInsert(const dtDAL::ObjectType& type);
 
          template <class WaypointDerivative> 
          void RegisterWaypointType(dtCore::RefPtr<const dtDAL::ObjectType> type)

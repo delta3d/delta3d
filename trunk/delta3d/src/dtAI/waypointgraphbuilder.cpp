@@ -175,9 +175,9 @@ namespace dtAI
                WaypointCollection* wc = mWPGraph->GetParent(wayTo->GetID());
                if(wc != NULL)
                {
-                  wc->Insert(wayTo);
+                  mWPGraph->Assign(wayTo->GetID(), wc);
+
                   mAssignedNodes.push_back(wayTo);
-                  mWPGraph->SetParent(wayTo->GetID(), wc);
                                        
                   unassigned = false;
                   break;               
@@ -264,11 +264,9 @@ namespace dtAI
    WaypointCollection* WaypointGraphBuilder::CreateClique(int numChildren, const WaypointInterface* curWay, const ConstWaypointArray& cliques, const NavMesh& nm)
    {     
       //create a new hold to contain this waypoint, and potentially 4 siblings
-      WaypointCollection* parentNode = CreateWaypointCollection(curWay->GetPosition());
-      mWPGraph->InsertCollection(parentNode, mCurrentCreationLevel);
-
-      parentNode->Insert(curWay);
-      mWPGraph->SetParent(curWay->GetID(), parentNode);
+      WaypointCollection* parentNode = CreateWaypointCollection(curWay->GetPosition(), mCurrentCreationLevel);
+      
+      mWPGraph->Assign(curWay->GetID(), parentNode);
 
       mAssignedNodes.push_back(curWay);
 
@@ -278,7 +276,6 @@ namespace dtAI
          //we have a successful match
          const WaypointInterface* curMatch = cliques[childNum];
          Assign(curMatch, parentNode);
-         mWPGraph->SetParent(curMatch->GetID(), parentNode);
       }
 
       return parentNode;
@@ -352,9 +349,12 @@ namespace dtAI
 
 
    //////////////////////////////////////////////////////////////////////////
-   WaypointCollection* WaypointGraphBuilder::CreateWaypointCollection(const osg::Vec3& pos)
+   WaypointCollection* WaypointGraphBuilder::CreateWaypointCollection(const osg::Vec3& pos, unsigned searchLevel)
    {
-      return dynamic_cast<WaypointCollection*>(mAIInterface->CreateWaypoint(pos, *WaypointTypes::WAYPOINT_COLLECTION));
+      WaypointCollection* wc = dynamic_cast<WaypointCollection*>(mAIInterface->CreateNoInsert(*WaypointTypes::WAYPOINT_COLLECTION));
+      wc->SetPosition(pos);
+      mAIInterface->InsertCollection(wc, searchLevel);
+      return wc;
    }
 
 
@@ -422,12 +422,12 @@ namespace dtAI
 
    bool WaypointGraphBuilder::Assign(const WaypointInterface* wp, WaypointCollection* parentNode)
    {
-      //TODO: its late and I need to refactor this below
+      //TODO: this should be refactored so its not so ugly
       ConstWaypointArray::iterator tIter = std::find(mUnAssignedNodes.begin(), mUnAssignedNodes.end(), wp);
       if(tIter != mUnAssignedNodes.end())
       {
-         //and finally add as a child of the common parent
-         parentNode->Insert(wp);
+         //and finally add as a child of the common parent         
+         mWPGraph->Assign(wp->GetID(), parentNode);
          mUnAssignedNodes.erase(tIter);
          mAssignedNodes.push_back(wp);
          return true;
@@ -437,7 +437,7 @@ namespace dtAI
          tIter = std::find(mNodesUnMatched.begin(), mNodesUnMatched.end(), wp);
          if(tIter != mNodesUnMatched.end())
          {               
-            parentNode->Insert(wp);
+            mWPGraph->Assign(wp->GetID(), parentNode);
             mNodesUnMatched.erase(tIter);
             mAssignedNodes.push_back(wp);
             return true;

@@ -42,8 +42,7 @@ namespace dtAI
 
          }
 
-         template <class WaypointType>
-         WaypointPropertyBase* GetPropertyContainer(const dtDAL::ObjectType& waypointType, WaypointType* wt)
+         WaypointPropertyBase* GetPropertyContainer(const dtDAL::ObjectType& waypointType, WaypointInterface* wt)
          {
             WaypointPropertyBase* wpb = mPropertyFactory->CreateObject(&waypointType);
             wpb->Set(wt);

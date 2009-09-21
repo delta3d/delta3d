@@ -59,6 +59,9 @@ namespace dtAI
    void WaypointInterface::SetID(WaypointID pID)
    {
       mID = pID;
+
+      //increment counter if necessary
+      if(mIDCounter <= mID) mIDCounter = mID + 1;
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -73,6 +76,12 @@ namespace dtAI
    {
       return *mWaypointType;
    }
+   
+   //////////////////////////////////////////////////////////////////////////
+   osg::Vec3 WaypointInterface::GetPosCopy() const
+   {
+      return GetPosition();
+   }
 
    /////////////////////////////////////////////////////////////////////////////
    void WaypointInterface::CreateProperties(WaypointPropertyBase& container )
@@ -83,39 +92,14 @@ namespace dtAI
       static const dtUtil::RefString Desc_WaypointID("The ID of the waypoint");
       static const dtUtil::RefString WaypointGroup("WaypointInterface");
 
-      //////////////////////////////////////////////////////////////////////////
-      typedef WaypointPropertyContainer<WaypointInterface>::Command0<unsigned, unsigned(WaypointInterface::*)() const> GetIDCommand;
+      container.CreateProperty<osg::Vec3>(Property_WaypointPosition, Property_WaypointPosition, 
+                  &WaypointInterface::GetPosCopy, &WaypointInterface::SetPosition, Desc_WaypointPosition, WaypointGroup);
 
-      GetIDCommand* getIDCmd = new GetIDCommand(container, &WaypointInterface::GetID);
-      container.AddCommand(getIDCmd);
-      
-      //////////////////////////////////////////////////////////////////////////
-      typedef WaypointPropertyContainer<WaypointInterface>::Command1<void, void (WaypointInterface::*)(const osg::Vec3&), const osg::Vec3&> SetPosCommand;
+      //we actually do not let you set the ID through the property, because we cannot guarantee it will never change.
+      //This boils down to a read/write issue.
+      container.CreateReadOnlyProperty<int>(Property_WaypointID, Property_WaypointID, 
+                                                  &WaypointInterface::GetIDAsInt, Desc_WaypointID, WaypointGroup);
 
-      SetPosCommand* setPosCmd = new SetPosCommand(container, &WaypointInterface::SetPosition);
-      container.AddCommand(setPosCmd);
-
-      //////////////////////////////////////////////////////////////////////////
-      typedef WaypointPropertyContainer<WaypointInterface>::Command0<const osg::Vec3&, const osg::Vec3& (WaypointInterface::*)() const> GetPosCommand;
-
-      GetPosCommand* getPosCmd = new GetPosCommand(container, &WaypointInterface::GetPosition);
-      container.AddCommand(getPosCmd);
-
-
-      //////////////////////////////////////////////////////////////////////////
-      dtDAL::IntActorProperty* prop = new dtDAL::IntActorProperty(Property_WaypointID, Property_WaypointID, 
-                                       dtDAL::IntActorProperty::SetFuncType(),
-                                       dtDAL::IntActorProperty::GetFuncType(getIDCmd, &GetIDCommand::Invoke),
-                                       Desc_WaypointID, WaypointGroup);
-      prop->SetReadOnly(true);
-      container.AddProperty(prop);
-
-
-      //////////////////////////////////////////////////////////////////////////
-      container.AddProperty(new dtDAL::Vec3ActorProperty(Property_WaypointPosition, Property_WaypointPosition,
-                        dtDAL::Vec3ActorProperty::SetFuncType(setPosCmd, &SetPosCommand::Invoke),
-                        dtDAL::Vec3ActorProperty::GetFuncType(getPosCmd, &GetPosCommand::Invoke),
-                        Desc_WaypointPosition, WaypointGroup));
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -126,6 +110,13 @@ namespace dtAI
       ss << "ID: " << mID << ", Pos: (" << pos[0] << ", " << pos[1] << ", " << pos[2] << ")" << std::endl;
 
       return ss.str();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   int WaypointInterface::GetIDAsInt() const
+   {
+      //todo: we need an unsigned int actor property
+      return GetID();
    }
 
 } // namespace dtAI

@@ -126,6 +126,12 @@ namespace dtAI
    }
 
    //////////////////////////////////////////////////////////////////////////
+   std::string NamedWaypoint::GetNameCopy() const
+   {
+      return mName.Get();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    const osg::Vec3& NamedWaypoint::GetPosition() const
    {
       return mPosition;
@@ -136,12 +142,18 @@ namespace dtAI
    {
       mPosition = pVec;
    }
-   
 
    /////////////////////////////////////////////////////////////////////////////
    void NamedWaypoint::CreateProperties(WaypointPropertyBase& container )
    {
       BaseClass::CreateProperties(container);
+
+      static const dtUtil::RefString Property_WaypointName("WaypointName");
+      static const dtUtil::RefString Desc_WaypointName("Name of Waypoint");
+      static const dtUtil::RefString WaypointGroup("NamedWaypoint");
+
+      container.CreateProperty<std::string>(Property_WaypointName, Property_WaypointName, 
+         &NamedWaypoint::GetNameCopy, &NamedWaypoint::SetName, Desc_WaypointName, WaypointGroup);
    }
 
 
@@ -204,6 +216,12 @@ namespace dtAI
    {
       return mCoverAngle;
    }
+   
+   //////////////////////////////////////////////////////////////////////////
+   osg::Vec3 TacticalWaypoint::GetCoverAngleCopy() const
+   {
+      return mCoverAngle;
+   }
 
    //////////////////////////////////////////////////////////////////////////
    void TacticalWaypoint::SetSniper( bool b )
@@ -230,9 +248,35 @@ namespace dtAI
    }
 
    //////////////////////////////////////////////////////////////////////////
+   osg::Vec3 TacticalWaypoint::GetSniperAngleCopy() const
+   {
+      return mSniperAngle;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void TacticalWaypoint::CreateProperties( WaypointPropertyBase& container )
    {
       BaseClass::CreateProperties(container);
+
+      static const dtUtil::RefString Property_SniperPoint("SniperPoint");
+      static const dtUtil::RefString Property_SniperAngle("SniperAngle");
+
+      static const dtUtil::RefString Property_CoverPoint("CoverPoint");
+      static const dtUtil::RefString Property_CoverAngle("CoverAngle");
+
+      static const dtUtil::RefString WaypointGroup("TacticalWaypoint");
+
+      container.CreateProperty<bool>(Property_SniperPoint, Property_SniperPoint, 
+         &TacticalWaypoint::GetSniper, &TacticalWaypoint::SetSniper, Property_SniperPoint, WaypointGroup);
+
+      container.CreateProperty<osg::Vec3>(Property_SniperAngle, Property_SniperAngle, 
+         &TacticalWaypoint::GetSniperAngleCopy, &TacticalWaypoint::SetSniperAngle, Property_SniperAngle, WaypointGroup);
+
+      container.CreateProperty<bool>(Property_CoverPoint, Property_CoverPoint, 
+         &TacticalWaypoint::GetCover, &TacticalWaypoint::SetCover, Property_CoverPoint, WaypointGroup);
+
+      container.CreateProperty<osg::Vec3>(Property_CoverAngle, Property_CoverAngle, 
+         &TacticalWaypoint::GetCoverAngleCopy, &TacticalWaypoint::SetCoverAngle, Property_CoverAngle, WaypointGroup);
    }
 
 } // namespace dtAI

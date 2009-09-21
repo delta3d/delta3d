@@ -27,11 +27,13 @@
 #include <dtAI/waypointpair.h>
 #include <dtAI/aidebugdrawable.h>
 #include <dtAI/waypointgraphbuilder.h>
+#include <dtAI/waypointtypes.h>
 
 
 #include <dtCore/observerptr.h>
 
 #include <dtUtil/log.h>
+#include <dtUtil/stringutils.h>
 
 #include <algorithm>
 #include <map>
@@ -408,8 +410,26 @@ namespace dtAI
    {
       if(!Contains(waypoint->GetID()))
       {
-         //passing in null will create a new one
-         mImpl->Insert(*waypoint, NULL);
+         if(waypoint->GetWaypointType() == *WaypointTypes::WAYPOINT_COLLECTION)
+         {
+            WaypointCollection* wc = dynamic_cast<WaypointCollection*>(waypoint);
+
+            if(wc != NULL)
+            {
+               //by default all collections are entered in the first level,
+               //this is for lazy creation on CreateSearchGraph(), or CreateSearchLevel()
+               mImpl->InsertCollection(wc, 1);
+            }
+            else
+            {
+               LOG_ERROR("Error adding WaypointCollection '" + wc->ToString() + "' as child of WaypointCollection '" + wc->ToString() + "'.");
+            }
+         }
+         else
+         {
+            //passing in null will add with no parent
+            mImpl->Insert(*waypoint, NULL);
+         }
       }
       else //since we already have the waypoint, assume we are moving it,
            //a valid operation and noted in the header
@@ -849,15 +869,41 @@ namespace dtAI
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void WaypointGraph::SetParent(WaypointID id, WaypointCollection* parent)
+   bool WaypointGraph::Assign(WaypointID childWp, WaypointCollection* parentWp)
    {
-      WaypointGraphImpl::WaypointMap::iterator iter = mImpl->mWaypointOwnership.find(id);
+      WaypointID parentID = parentWp->GetID();
+
+      WaypointGraphImpl::WaypointMap::iterator iter = mImpl->mWaypointOwnership.find(childWp);
+      WaypointGraphImpl::WaypointMap::iterator parentIter = mImpl->mWaypointOwnership.find(parentID);
+      
       if(iter != mImpl->mWaypointOwnership.end())
       {
          WaypointGraphImpl::WaypointHolder& wh = (*iter).second;
+         
+         unsigned searchLevel = wh.mLevel + 1;
 
-         wh.mParent = parent;
+         if(parentIter == mImpl->mWaypointOwnership.end())
+         {
+            InsertCollection(parentWp, searchLevel);
+         }
+         else
+         {
+            WaypointGraphImpl::WaypointHolder& whParent = (*parentIter).second;
+            if(whParent.mLevel != searchLevel)
+            {
+               LOG_ERROR("WaypointCollection '" + parentWp->ToString() + 
+                  "' has search level " + dtUtil::ToString(whParent.mLevel) + " which should be 1 greater then child '" +
+                  wh.mWaypoint->ToString() + "' search level of " + dtUtil::ToString(wh.mLevel) + ".");
+               
+               return false;
+            }
+         }
+
+         parentWp->Insert(wh.mWaypoint.get());
+         wh.mParent = parentWp;
+         return true;
       }
-   }
 
+      return false;
+   }
 } // namespace dtAI
