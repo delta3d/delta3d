@@ -176,6 +176,9 @@ namespace dtAI
             typedef typename dtDAL::TypeToActorProperty<PropertyType_>::SetValueType SetParamType;
             typedef typename dtDAL::TypeToActorProperty<PropertyType_>::GetValueType GetParamType;
 
+            typedef typename ActorPropertyType::SetFuncType SetFuncType;
+            typedef typename ActorPropertyType::GetFuncType GetFuncType;
+
             typedef Command0<GetParamType, PropertyType_(ClassType_::*)() const> GetCmd;
             typedef Command1<void, void (ClassType_::*)(SetParamType), SetParamType> SetCmd;
 
@@ -186,8 +189,8 @@ namespace dtAI
             AddCommand(getter);
 
             ActorPropertyType* prop = new ActorPropertyType(name, label, 
-               ActorPropertyType::SetFuncType(setter, &SetCmd::Invoke),
-               ActorPropertyType::GetFuncType(getter, &GetCmd::Invoke),
+               SetFuncType(setter, &SetCmd::Invoke),
+               GetFuncType(getter, &GetCmd::Invoke),
                desc, group);
 
             PropertyContainer::AddProperty(prop);
@@ -200,6 +203,8 @@ namespace dtAI
          {
             typedef typename dtUtil::FunTraits<CallTypeGet>::ObjType ClassType_;
             typedef typename dtDAL::TypeToActorProperty<PropertyType_>::value_type ActorPropertyType;
+            typedef typename ActorPropertyType::SetFuncType SetFuncType;
+            typedef typename ActorPropertyType::GetFuncType GetFuncType;
 
             typedef typename dtDAL::TypeToActorProperty<PropertyType_>::GetValueType GetParamType;
 
@@ -210,8 +215,8 @@ namespace dtAI
             AddCommand(getter);
 
             ActorPropertyType* prop = new ActorPropertyType(name, label, 
-               ActorPropertyType::SetFuncType(),
-               ActorPropertyType::GetFuncType(getter, &GetCmd::Invoke),
+               SetFuncType(),
+               GetFuncType(getter, &GetCmd::Invoke),
                desc, group);
 
             prop->SetReadOnly(true);
