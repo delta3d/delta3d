@@ -97,9 +97,20 @@ namespace dtAI
       void InsertWaypoint(WaypointInterface* waypoint);
 
       /**
-      * Collections can not be re-inserted to be moved, they must be completely removed
-      *  only use this function to modify the internal tree structure
-      *  ie. if you dont know what level to add it on, use InsertWaypoint() :) 
+      *  Takes the WaypointID of a waypoint already added, and assigns it
+      *     to a parent waypoint which may or may not be already inserted.
+      *  
+      *  @return returns false if childWP was not found, or if parentWp has already been added 
+      *             at the wrong search level
+      *
+      *  @note Calling this function will add the childWp to the parentWp using Insert().
+      */
+      bool Assign(WaypointID childWp, WaypointCollection* parentWp);
+
+      /**
+      * This is for inserting a WaypointCollection at a specific search level,
+      *  this is done on CreateSearchGraph(), use InsertWaypoint()
+      *  for default inserting of WaypointCollections.
       */
       void InsertCollection(WaypointCollection* waypoint, unsigned level);
 
@@ -189,11 +200,6 @@ namespace dtAI
       int GetSearchLevelNum(WaypointID id) const;
 
       //void AddSearchLevel(dtCore::RefPtr<SearchLevel> newLevel);
-
-      /**
-      * Use this to assign a waypoint to a new parent
-      */
-      void SetParent(WaypointID id, WaypointCollection* parent);
 
       
       //clears all memory, does a lot of deleting!

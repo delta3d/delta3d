@@ -39,7 +39,6 @@ namespace dtAI
       CPPUNIT_TEST( TestAddRemoveWaypoints );
       CPPUNIT_TEST( TestAddRemoveEdge );
       CPPUNIT_TEST( TestPathfinding );
-      CPPUNIT_TEST( TestRangeQuery );
       CPPUNIT_TEST( TestLoadSave );
       CPPUNIT_TEST( TestWaypointPropertyContainer );
       CPPUNIT_TEST( TestMemory );
@@ -52,7 +51,6 @@ namespace dtAI
          void TestAddRemoveWaypoints();
          void TestAddRemoveEdge();
          void TestPathfinding();
-         void TestRangeQuery();
          void TestLoadSave();
          void TestWaypointPropertyContainer();
          void TestMemory();
@@ -180,17 +178,15 @@ namespace dtAI
 
    }
 
+   //most of these are currently being tested in waypointgraphtests.cpp,
+   //and are placeholders here
+
    void AIInterfaceTests::TestAddRemoveEdge()
    {
 
    }
 
    void AIInterfaceTests::TestPathfinding()
-   {
-
-   }
-
-   void AIInterfaceTests::TestRangeQuery()
    {
 
    }

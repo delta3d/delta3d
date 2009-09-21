@@ -177,16 +177,6 @@ namespace dtAI
       }
       else 
       {
-         /*WaypointCollection* closestChild = FindClosestChild(*waypoint);
-         if(closestChild != NULL)
-         {
-            closestChild->InsertWaypoint(waypoint);
-         }
-         else
-         {
-            LOG_ERROR("A waypoint collection thinks it's not a leaf but FindClosestChild() returns NULL.");
-         }*/
-         
          LOG_ERROR("Only leaf nodes may hold concrete waypoints, if this is a WaypointCollection use AddChild().");
       }         
       
@@ -239,67 +229,6 @@ namespace dtAI
       
       Recalculate();
    }
-
-
-   /////////////////////////////////////////////////////////////////////////////
-   //WaypointCollection* WaypointCollection::FindClosestChild(const WaypointInterface& waypoint)
-   //{
-   //   //may return null if is leaf node
-   //   WaypointTreeConstChildIterator iter = begin_child();
-   //   WaypointTreeConstChildIterator iterEnd = end_child();
-
-   //   float dist = 0.0f;
-
-   //   WaypointInterface* wiPtr = NULL;
-   //   //we dont set the collection ptr until the end so we dont have to cast for every child
-   //   WaypointCollection* wcPtr = NULL;
-   //   for(;iter != iterEnd; ++iter)
-   //   {
-   //      WaypointPair wp(this, iter->value);
-   //      if(wp.Get3DDistance() >= dist)
-   //      {
-   //         wiPtr = const_cast<WaypointInterface*>(iter->value);
-   //         dist = wp.Get3DDistance();
-   //      }
-   //   }   
-   //   if(wiPtr != NULL)
-   //   {
-   //      wcPtr = dynamic_cast<WaypointCollection*>(wiPtr);
-   //   }
-
-   //   //may return NULL
-   //   return wcPtr;
-   //}
-
-   ///////////////////////////////////////////////////////////////////////////////
-   //const WaypointCollection* WaypointCollection::FindClosestChild(const WaypointInterface& waypoint) const
-   //{
-   //   //may return null if is leaf node
-   //   WaypointTree::const_child_iterator iter = begin_child();
-   //   WaypointTree::const_child_iterator iterEnd = end_child();
-
-   //   float dist = 0.0f;
-   //   
-   //   const WaypointInterface* wiPtr = NULL;
-   //   //we dont set the collection ptr until the end so we dont have to cast for every child
-   //   const WaypointCollection* wcPtr = NULL;
-   //   for(;iter != iterEnd; ++iter)
-   //   {
-   //      WaypointPair wp(this, iter->value);
-   //      if(wp.Get3DDistance() >= dist)
-   //      {
-   //         wiPtr = iter->value;
-   //         dist = wp.Get3DDistance();
-   //      }
-   //   }   
-   //   if(wiPtr != NULL)
-   //   {
-   //      wcPtr = dynamic_cast<const WaypointCollection*>(wiPtr);
-   //   }
-
-   //   //may return NULL
-   //   return wcPtr;
-   //}
 
    /////////////////////////////////////////////////////////////////////////////
    void WaypointCollection::Recalculate()

@@ -133,7 +133,7 @@ namespace dtDAL
       template <typename T>
       struct _TypeToActorProperty_<osg::Vec2f, T>
       {
-         typedef dtDAL::Vec3ActorProperty value_type;
+         typedef dtDAL::Vec2ActorProperty value_type;
 
          typedef const osg::Vec2f& GetValueType;
          typedef const osg::Vec2f& SetValueType;
@@ -145,7 +145,7 @@ namespace dtDAL
       template <typename T>
       struct _TypeToActorProperty_<osg::Vec2d, T>
       {
-         typedef dtDAL::Vec3dActorProperty value_type;
+         typedef dtDAL::Vec2dActorProperty value_type;
 
          typedef const osg::Vec2d& GetValueType;
          typedef const osg::Vec2d& SetValueType;
@@ -197,6 +197,18 @@ namespace dtDAL
 
          typedef const osg::Vec4d& GetValueType;
          typedef const osg::Vec4d& SetValueType;
+
+         typedef value_type::GetFuncType GetFuncType;
+         typedef value_type::SetFuncType SetFuncType;
+      };
+
+      template <typename T>
+      struct _TypeToActorProperty_<dtCore::UniqueId, T>
+      {
+         typedef dtDAL::ActorIDActorProperty value_type;
+
+         typedef const dtCore::UniqueId GetValueType;
+         typedef const dtCore::UniqueId& SetValueType;
 
          typedef value_type::GetFuncType GetFuncType;
          typedef value_type::SetFuncType SetFuncType;

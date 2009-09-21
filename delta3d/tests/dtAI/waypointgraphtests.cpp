@@ -32,6 +32,7 @@
 #include <dtAI/aiinterfaceactor.h>
 #include <dtAI/aiactorregistry.h>
 #include <dtDAL/librarymanager.h>
+#include <dtDAL/project.h>
 
 #include <dtCore/refptr.h>
 #include <dtUtil/mathdefines.h>
@@ -47,6 +48,7 @@ namespace dtAI
       CPPUNIT_TEST(TestBuildGraph);
       CPPUNIT_TEST(TestPathfinding);
       CPPUNIT_TEST(TestCollectionBounds);
+      CPPUNIT_TEST(TestLoadSave);
       CPPUNIT_TEST(TestClearMemory);
       CPPUNIT_TEST_SUITE_END();
 
@@ -61,6 +63,7 @@ namespace dtAI
       void TestBuildGraph();
       void TestPathfinding();
       void TestClearMemory();
+      void TestLoadSave();
       void TestCollectionBounds();
 
    private:
@@ -77,13 +80,13 @@ CPPUNIT_TEST_SUITE_REGISTRATION( WaypointGraphTests );
 
 void WaypointGraphTests::setUp()
 {
-   mGraph = new WaypointGraph();
-
    dtDAL::LibraryManager& libMan = dtDAL::LibraryManager::GetInstance();
    libMan.LoadActorRegistry("dtAI");
    dtCore::RefPtr<dtDAL::ActorProxy> proxy = libMan.CreateActorProxy(*AIActorRegistry::AI_INTERFACE_ACTOR_TYPE);
 
    mAIInterface = dynamic_cast<dtAI::AIInterfaceActorProxy*>(proxy.get())->GetAIInterface();
+
+   mGraph = &mAIInterface->GetWaypointGraph();
 
 }
 
@@ -220,120 +223,121 @@ void WaypointGraphTests::TestAddRemoveEdge()
 
 void WaypointGraphTests::CreateWaypoints()
 {
+   mAIInterface->ClearMemory();
    wpArray.clear();
    wpArray.reserve(17);
 
    for(int i = 0; i < 17; ++i)
    {  
       Waypoint* wp = new Waypoint(osg::Vec3(i, i, i));
-      mGraph->InsertWaypoint(wp);
+      mAIInterface->InsertWaypoint(wp);
       wpArray.push_back(wp->GetID());
    }
 
 
    //0
-   mGraph->RemoveWaypoint(wpArray[0]);
-   //mGraph->AddEdge(wpArray[0], wpArray[1]);
-   //mGraph->AddEdge(wpArray[1], wpArray[0]);
+   mAIInterface->RemoveWaypoint(mAIInterface->GetWaypointById(wpArray[0]));
+   //mAIInterface->AddEdge(wpArray[0], wpArray[1]);
+   //mAIInterface->AddEdge(wpArray[1], wpArray[0]);
 
    //1
-   mGraph->AddEdge(wpArray[1], wpArray[2]);
-   mGraph->AddEdge(wpArray[2], wpArray[1]);
+   mAIInterface->AddEdge(wpArray[1], wpArray[2]);
+   mAIInterface->AddEdge(wpArray[2], wpArray[1]);
 
-   mGraph->AddEdge(wpArray[1], wpArray[3]);
-   mGraph->AddEdge(wpArray[3], wpArray[1]);
+   mAIInterface->AddEdge(wpArray[1], wpArray[3]);
+   mAIInterface->AddEdge(wpArray[3], wpArray[1]);
 
-   mGraph->AddEdge(wpArray[1], wpArray[4]);
-   mGraph->AddEdge(wpArray[4], wpArray[1]);
+   mAIInterface->AddEdge(wpArray[1], wpArray[4]);
+   mAIInterface->AddEdge(wpArray[4], wpArray[1]);
 
    //2
-   mGraph->AddEdge(wpArray[2], wpArray[3]);
-   mGraph->AddEdge(wpArray[3], wpArray[2]);
+   mAIInterface->AddEdge(wpArray[2], wpArray[3]);
+   mAIInterface->AddEdge(wpArray[3], wpArray[2]);
 
-   mGraph->AddEdge(wpArray[2], wpArray[4]);
-   mGraph->AddEdge(wpArray[4], wpArray[2]);
+   mAIInterface->AddEdge(wpArray[2], wpArray[4]);
+   mAIInterface->AddEdge(wpArray[4], wpArray[2]);
 
-   mGraph->AddEdge(wpArray[2], wpArray[15]);
-   mGraph->AddEdge(wpArray[15], wpArray[2]);
+   mAIInterface->AddEdge(wpArray[2], wpArray[15]);
+   mAIInterface->AddEdge(wpArray[15], wpArray[2]);
 
    //3
-   mGraph->AddEdge(wpArray[3], wpArray[4]);
-   mGraph->AddEdge(wpArray[4], wpArray[3]);
+   mAIInterface->AddEdge(wpArray[3], wpArray[4]);
+   mAIInterface->AddEdge(wpArray[4], wpArray[3]);
 
-   mGraph->AddEdge(wpArray[3], wpArray[5]);
-   mGraph->AddEdge(wpArray[5], wpArray[3]);
+   mAIInterface->AddEdge(wpArray[3], wpArray[5]);
+   mAIInterface->AddEdge(wpArray[5], wpArray[3]);
 
-   mGraph->AddEdge(wpArray[3], wpArray[6]);
-   mGraph->AddEdge(wpArray[6], wpArray[3]);
+   mAIInterface->AddEdge(wpArray[3], wpArray[6]);
+   mAIInterface->AddEdge(wpArray[6], wpArray[3]);
 
    //4
-   mGraph->AddEdge(wpArray[4], wpArray[5]);
-   mGraph->AddEdge(wpArray[5], wpArray[4]);
+   mAIInterface->AddEdge(wpArray[4], wpArray[5]);
+   mAIInterface->AddEdge(wpArray[5], wpArray[4]);
 
-   mGraph->AddEdge(wpArray[4], wpArray[6]);
-   mGraph->AddEdge(wpArray[6], wpArray[4]);
+   mAIInterface->AddEdge(wpArray[4], wpArray[6]);
+   mAIInterface->AddEdge(wpArray[6], wpArray[4]);
 
    //5
-   mGraph->AddEdge(wpArray[5], wpArray[6]);
-   mGraph->AddEdge(wpArray[6], wpArray[5]);
+   mAIInterface->AddEdge(wpArray[5], wpArray[6]);
+   mAIInterface->AddEdge(wpArray[6], wpArray[5]);
 
    //6
-   mGraph->AddEdge(wpArray[6], wpArray[7]);
-   mGraph->AddEdge(wpArray[7], wpArray[6]);
+   mAIInterface->AddEdge(wpArray[6], wpArray[7]);
+   mAIInterface->AddEdge(wpArray[7], wpArray[6]);
 
    //7
-   mGraph->AddEdge(wpArray[7], wpArray[8]);
-   mGraph->AddEdge(wpArray[8], wpArray[7]);
+   mAIInterface->AddEdge(wpArray[7], wpArray[8]);
+   mAIInterface->AddEdge(wpArray[8], wpArray[7]);
 
    //8
-   mGraph->AddEdge(wpArray[8], wpArray[9]);
-   mGraph->AddEdge(wpArray[9], wpArray[8]);
+   mAIInterface->AddEdge(wpArray[8], wpArray[9]);
+   mAIInterface->AddEdge(wpArray[9], wpArray[8]);
 
    //9
-   mGraph->AddEdge(wpArray[9], wpArray[10]);
-   mGraph->AddEdge(wpArray[10], wpArray[9]);
+   mAIInterface->AddEdge(wpArray[9], wpArray[10]);
+   mAIInterface->AddEdge(wpArray[10], wpArray[9]);
 
-   mGraph->AddEdge(wpArray[9], wpArray[11]);
-   mGraph->AddEdge(wpArray[11], wpArray[9]);
+   mAIInterface->AddEdge(wpArray[9], wpArray[11]);
+   mAIInterface->AddEdge(wpArray[11], wpArray[9]);
 
-   mGraph->AddEdge(wpArray[9], wpArray[12]);
-   mGraph->AddEdge(wpArray[12], wpArray[9]);
+   mAIInterface->AddEdge(wpArray[9], wpArray[12]);
+   mAIInterface->AddEdge(wpArray[12], wpArray[9]);
 
    //10
-   mGraph->AddEdge(wpArray[10], wpArray[11]);
-   mGraph->AddEdge(wpArray[11], wpArray[10]);
+   mAIInterface->AddEdge(wpArray[10], wpArray[11]);
+   mAIInterface->AddEdge(wpArray[11], wpArray[10]);
 
-   mGraph->AddEdge(wpArray[10], wpArray[12]);
-   mGraph->AddEdge(wpArray[12], wpArray[10]);
+   mAIInterface->AddEdge(wpArray[10], wpArray[12]);
+   mAIInterface->AddEdge(wpArray[12], wpArray[10]);
 
    //11
-   mGraph->AddEdge(wpArray[11], wpArray[12]);
-   mGraph->AddEdge(wpArray[12], wpArray[11]);
+   mAIInterface->AddEdge(wpArray[11], wpArray[12]);
+   mAIInterface->AddEdge(wpArray[12], wpArray[11]);
 
-   mGraph->AddEdge(wpArray[11], wpArray[13]);
-   mGraph->AddEdge(wpArray[13], wpArray[11]);
+   mAIInterface->AddEdge(wpArray[11], wpArray[13]);
+   mAIInterface->AddEdge(wpArray[13], wpArray[11]);
 
-   mGraph->AddEdge(wpArray[11], wpArray[14]);
-   mGraph->AddEdge(wpArray[14], wpArray[11]);
+   mAIInterface->AddEdge(wpArray[11], wpArray[14]);
+   mAIInterface->AddEdge(wpArray[14], wpArray[11]);
 
    //12
-   mGraph->AddEdge(wpArray[12], wpArray[13]);
-   mGraph->AddEdge(wpArray[13], wpArray[12]);
+   mAIInterface->AddEdge(wpArray[12], wpArray[13]);
+   mAIInterface->AddEdge(wpArray[13], wpArray[12]);
 
-   mGraph->AddEdge(wpArray[12], wpArray[14]);
-   mGraph->AddEdge(wpArray[14], wpArray[12]);
+   mAIInterface->AddEdge(wpArray[12], wpArray[14]);
+   mAIInterface->AddEdge(wpArray[14], wpArray[12]);
 
    //13
-   mGraph->AddEdge(wpArray[13], wpArray[14]);
-   mGraph->AddEdge(wpArray[14], wpArray[13]);
+   mAIInterface->AddEdge(wpArray[13], wpArray[14]);
+   mAIInterface->AddEdge(wpArray[14], wpArray[13]);
 
-   mGraph->AddEdge(wpArray[13], wpArray[16]);
-   mGraph->AddEdge(wpArray[16], wpArray[13]);
+   mAIInterface->AddEdge(wpArray[13], wpArray[16]);
+   mAIInterface->AddEdge(wpArray[16], wpArray[13]);
 
    //14
    //15
-   mGraph->AddEdge(wpArray[15], wpArray[16]);
-   mGraph->AddEdge(wpArray[16], wpArray[15]);
+   mAIInterface->AddEdge(wpArray[15], wpArray[16]);
+   mAIInterface->AddEdge(wpArray[16], wpArray[15]);
 
    dtCore::RefPtr<WaypointGraphBuilder> mBuilder = new WaypointGraphBuilder(*mAIInterface, *mGraph);
    mGraph->CreateSearchGraph(mBuilder.get(), 10);
@@ -496,6 +500,63 @@ void WaypointGraphTests::TestPathfinding()
          }
       }
    }
+
+}
+
+void WaypointGraphTests::TestLoadSave()
+{
+   CreateWaypoints();
+
+   //dtDAL::Project& proj = dtDAL::Project::GetInstance();
+   //std::string filePath = proj.GetContext();
+   std::string filename = "WaypointGraphTests_TestWaypointFile.ai";
+   //std::string fullFilename = filePath + '/' + filename;
+   std::string fullFilename = "./" + filename;
+
+   bool result = mAIInterface->SaveWaypointFile(fullFilename);
+   CPPUNIT_ASSERT_MESSAGE("Error saving waypoint file '" + fullFilename + "'.", result);
+
+   mAIInterface->ClearMemory();
+
+   CPPUNIT_ASSERT(mGraph->GetNumSearchLevels() == 0);   
+
+   result = mAIInterface->LoadWaypointFile(fullFilename);
+   CPPUNIT_ASSERT_MESSAGE("Error loading waypoint file '" + fullFilename + "'.", result);
+
+   CPPUNIT_ASSERT(mGraph->GetNumSearchLevels() == 4);   
+   CPPUNIT_ASSERT(mGraph->GetSearchLevel(0)->mNodes.size() == 16);   
+   CPPUNIT_ASSERT(mGraph->GetSearchLevel(1)->mNodes.size() == 6);   
+   CPPUNIT_ASSERT(mGraph->GetSearchLevel(2)->mNodes.size() == 3); 
+   CPPUNIT_ASSERT(mGraph->GetSearchLevel(3)->mNodes.size() == 1);
+
+
+   //there should be paths between all nodes now
+   for(int i = 1; i < 17; ++i)
+   {
+      for(int j = 1; j < 17; ++j)
+      {
+         if(i != j)
+         {
+            CPPUNIT_ASSERT(mGraph->HasPath(wpArray[i], wpArray[j]));
+         }
+      }
+   }
+
+   //todo-
+   //try pathfinding on it after loading it from file
+   //WaypointGraphAStar astar(*mGraph); 
+
+   //for(int i = 1; i < 17; ++i)
+   //{
+   //   for(int j = 1; j < 17; ++j)
+   //   {
+   //      if(i != j)
+   //      {
+   //         PathFindResult result = astar.HierarchicalFindPath(wpArray[i], wpArray[j]);
+   //         CPPUNIT_ASSERT_EQUAL(result, PATH_FOUND);
+   //      }
+   //   }
+   //}
 
 }
 

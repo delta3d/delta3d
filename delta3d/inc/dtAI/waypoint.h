@@ -59,10 +59,6 @@ namespace dtAI
       Waypoint(const osg::Vec3& pPos);
       ~Waypoint();
 
-      // override so it isn't protected
-      // this is a temporary work-around transitioning to the waypoint interface
-      void SetID(WaypointID ID);
-
       const osg::Vec3& GetPosition() const;
       void SetPosition(const osg::Vec3& pVec);
 

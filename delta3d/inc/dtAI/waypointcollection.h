@@ -71,7 +71,7 @@ namespace dtAI
          bool IsLeaf();
 
          /**
-         * Our position and radius make up a bounding sphere.	
+         * Our position and radius make up a bounding sphere.
          */
          float GetRadius();
 
@@ -80,17 +80,10 @@ namespace dtAI
 
          /**
          * These are generic insert and remove functions which key off of the waypoint type
-         *  and cast it to a WaypointCollection if it is one.
-         *
-         *  If you know whether you are adding a concrete waypoint or collection you may use
-         *  the functions below to short circuit the check.
+         *  and cast it to a WaypointCollection if it is one.  Do not use the derived tree insert functions.
          */
          void Insert(const WaypointInterface* waypoint);
          void Remove(const WaypointInterface* waypoint);
-
-         //may return null if is leaf node
-         //WaypointCollection* FindClosestChild(const WaypointInterface& waypoint);
-         //const WaypointCollection* FindClosestChild(const WaypointInterface& waypoint) const;
 
          void Recalculate();      
 

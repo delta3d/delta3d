@@ -50,6 +50,11 @@ namespace dtAI
       virtual ~WaypointInterface();
       
       WaypointID GetID() const;
+
+      //this is only public for loading and saving, if you change a waypoints ID
+      //you must remove it first and re-add it to the AIPluginInterface
+      void SetID(WaypointID pID);
+
       const dtDAL::ObjectType& GetWaypointType() const;
 
       virtual std::string ToString() const;
@@ -68,7 +73,10 @@ namespace dtAI
       virtual void unref() const = 0;
 
    protected:
-      void SetID(WaypointID pID);
+
+      //for use by property container
+      osg::Vec3 GetPosCopy() const;
+      int GetIDAsInt() const;
 
    private:
       WaypointID mID;

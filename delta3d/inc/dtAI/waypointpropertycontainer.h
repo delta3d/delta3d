@@ -22,42 +22,102 @@
 #ifndef __DELTA_WAYPOINTPROPERTYCONTAINER_H__
 #define __DELTA_WAYPOINTPROPERTYCONTAINER_H__
 
+#include <dtDAL/typetoactorproperty.h>
 #include <dtDAL/propertycontainer.h>
 #include <dtUtil/log.h>
 #include <osg/Referenced>
 
 namespace dtAI
 {
+
+   //////////////////////////////////////////////////////////////////////////
+   //A custom command class that can be used with a PropertyContainer
+   //////////////////////////////////////////////////////////////////////////
+   class WaypointPropertyBase;
+   class CommandBase : public osg::Referenced
+   {
+   public:
+      CommandBase(WaypointPropertyBase& wp) 
+         : osg::Referenced() 
+         , mOwnership(&wp)
+      {
+
+      }
+
+      WaypointInterface* Get();
+      //{
+      //   return mOwnership->Get();
+      //};
+
+      const WaypointInterface* Get() const;
+      //{
+      //   return mOwnership->Get();
+      //};
+
+   protected:
+      virtual ~CommandBase() {}
+
+   private:
+      WaypointPropertyBase* mOwnership;
+   };
+
+   template<typename RetT, typename PointerToMemFn>
+   class Command0 : public CommandBase
+   {
+   public:
+
+      Command0(WaypointPropertyBase& wp, PointerToMemFn ptr)
+         : CommandBase(wp) 
+         , pMemFn_(ptr)            
+      {
+      }
+
+      RetT Invoke()
+      {
+         return ((*static_cast<typename dtUtil::FunTraits<PointerToMemFn>::ObjType*>(Get())).*pMemFn_)();
+      }
+
+   protected:
+      /*virtual*/ ~Command0()
+      {
+      }
+
+   private:
+      PointerToMemFn pMemFn_;
+   };
+
+   template<typename RetT, typename PointerToMemFn, typename ArgT>
+   class Command1 : public CommandBase
+   {
+   public:
+
+      Command1(WaypointPropertyBase& wp, PointerToMemFn ptr) 
+         : CommandBase(wp)
+         , pMemFn_(ptr)
+      {
+      }
+
+      RetT Invoke(ArgT t)
+      {
+         return ((*static_cast<typename dtUtil::FunTraits<PointerToMemFn>::ObjType*>(Get())).*pMemFn_)(t);
+      }
+
+
+   protected:
+      /*virtual*/ ~Command1()
+      {
+      }
+
+   private:
+      PointerToMemFn pMemFn_;
+   };
+
+   //////////////////////////////////////////////////////////////////////////
+   //WaypointPropertyBase
+   //////////////////////////////////////////////////////////////////////////
    class WaypointPropertyBase: public dtDAL::PropertyContainer
    {
       public:
-
-         class CommandBase : public osg::Referenced
-         {
-         public:
-            CommandBase(WaypointPropertyBase& wp) 
-               : osg::Referenced() 
-               , mOwnership(&wp)
-            {
-
-            }
-
-            WaypointInterface* Get()
-            {
-               return mOwnership->Get();
-            };
-
-            const WaypointInterface* Get() const
-            {
-               return mOwnership->Get();
-            };
-
-         protected:
-            virtual ~CommandBase() {}
-
-         private:
-            WaypointPropertyBase* mOwnership;
-         };
 
          WaypointPropertyBase(){};
 
@@ -103,6 +163,62 @@ namespace dtAI
          virtual const WaypointInterface* Get() const = 0;
          virtual void Set(WaypointInterface*) = 0;
 
+
+         template<class PropertyType_, typename CallTypeGet, typename CallTypeSet>
+         void CreateProperty(const dtUtil::RefString& name, const dtUtil::RefString& label,  
+                              CallTypeGet getFunc,
+                              CallTypeSet setFunc,
+                              const dtUtil::RefString& desc, const dtUtil::RefString& group)
+         {
+            typedef typename dtUtil::FunTraits<CallTypeGet>::ObjType ClassType_;
+            typedef typename dtDAL::TypeToActorProperty<PropertyType_>::value_type ActorPropertyType;
+            
+            typedef typename dtDAL::TypeToActorProperty<PropertyType_>::SetValueType SetParamType;
+            typedef typename dtDAL::TypeToActorProperty<PropertyType_>::GetValueType GetParamType;
+
+            typedef Command0<GetParamType, PropertyType_(ClassType_::*)() const> GetCmd;
+            typedef Command1<void, void (ClassType_::*)(SetParamType), SetParamType> SetCmd;
+
+            GetCmd* getter = new GetCmd(*this, getFunc);
+            SetCmd* setter = new SetCmd(*this, setFunc);
+
+            AddCommand(setter);
+            AddCommand(getter);
+
+            ActorPropertyType* prop = new ActorPropertyType(name, label, 
+               ActorPropertyType::SetFuncType(setter, &SetCmd::Invoke),
+               ActorPropertyType::GetFuncType(getter, &GetCmd::Invoke),
+               desc, group);
+
+            PropertyContainer::AddProperty(prop);
+         }
+
+
+         template<class PropertyType_, typename CallTypeGet>
+         void CreateReadOnlyProperty(const dtUtil::RefString& name, const dtUtil::RefString& label,  
+            CallTypeGet getFunc, const dtUtil::RefString& desc, const dtUtil::RefString& group)
+         {
+            typedef typename dtUtil::FunTraits<CallTypeGet>::ObjType ClassType_;
+            typedef typename dtDAL::TypeToActorProperty<PropertyType_>::value_type ActorPropertyType;
+
+            typedef typename dtDAL::TypeToActorProperty<PropertyType_>::GetValueType GetParamType;
+
+            typedef Command0<GetParamType, PropertyType_(ClassType_::*)() const> GetCmd;
+
+            GetCmd* getter = new GetCmd(*this, getFunc);
+
+            AddCommand(getter);
+
+            ActorPropertyType* prop = new ActorPropertyType(name, label, 
+               ActorPropertyType::SetFuncType(),
+               ActorPropertyType::GetFuncType(getter, &GetCmd::Invoke),
+               desc, group);
+
+            prop->SetReadOnly(true);
+            PropertyContainer::AddProperty(prop);
+         }
+
+
       protected:
 
          std::vector<dtCore::RefPtr<CommandBase> > mCommands;
@@ -110,64 +226,16 @@ namespace dtAI
 
    };
 
-   //T must be derived from WaypointInterface
+   //////////////////////////////////////////////////////////////////////////
+   //WaypointPropertyContainer
+   //////////////////////////////////////////////////////////////////////////
+
+   //T must be derived from WaypointInterface, could add a compile time assert here if we had loki
    template <class T>
    class WaypointPropertyContainer: public WaypointPropertyBase
    {
    public:
       typedef T WaypointType;
-
-      template<typename RetT, typename PointerToMemFn>
-      class Command0 : public CommandBase
-      {
-      public:
-
-         Command0(WaypointPropertyBase& wp, PointerToMemFn ptr)
-            : CommandBase(wp) 
-            , pMemFn_(ptr)            
-         {
-         }
-
-         RetT Invoke()
-         {
-            return ((*Get()).*pMemFn_)();
-         }
-
-      protected:
-         /*virtual*/ ~Command0()
-         {
-         }
-
-      private:
-         PointerToMemFn pMemFn_;
-      };
-
-      template<typename RetT, typename PointerToMemFn, typename ArgT>
-      class Command1 : public CommandBase
-      {
-      public:
-
-         Command1(WaypointPropertyBase& wp, PointerToMemFn ptr) 
-            : CommandBase(wp)
-            , pMemFn_(ptr)
-         {
-         }
-
-         RetT Invoke(ArgT t)
-         {
-            return ((*Get()).*pMemFn_)(t);
-         }
-
-
-      protected:
-         /*virtual*/ ~Command1()
-         {
-         }
-
-      private:
-         PointerToMemFn pMemFn_;
-      };
-
 
    public:
       WaypointPropertyContainer() 
@@ -201,6 +269,19 @@ namespace dtAI
 
    private:
       WaypointType* mWaypoint;
+   };
+
+
+   //inline implementations
+   
+   inline WaypointInterface* CommandBase::Get()
+   {
+      return mOwnership->Get();
+   };
+
+   inline const WaypointInterface* CommandBase::Get() const
+   {
+      return mOwnership->Get();
    };
 
 } // namespace dtAI

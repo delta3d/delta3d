@@ -25,18 +25,32 @@
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/project.h>
 #include <dtAI/navmesh.h>
-#include <dtAI/waypointmanager.h>
 #include <dtAI/waypointcollection.h>
 #include <dtAI/astarwaypointutils.h>
 #include <dtAI/aidebugdrawable.h>
 #include <dtAI/waypointtypes.h>
 #include <dtAI/waypointgraphastar.h>
+#include <dtAI/waypointreaderwriter.h>
+
 #include <dtUtil/templateutility.h>
 #include <dtUtil/kdtree.h>
 
-
 namespace dtAI
 {
+   //////////////////////////////////////////////////////////////////////////
+   //file saving and loading utils
+   //////////////////////////////////////////////////////////////////////////
+   namespace WaypointFileHeader
+   {
+      const unsigned FILE_IDENT = 5705313;
+      
+      const unsigned VERSION_MAJOR = 1;
+      const unsigned VERSION_MINOR = 0;
+
+      const char FILE_START_END_CHAR = '!';
+   };
+
+
    //////////////////////////////////////////////////////////////////////////////////
    //This is the default AI plugin interface implementation
    //////////////////////////////////////////////////////////////////////////////////////////
@@ -124,6 +138,38 @@ namespace dtAI
          mKDTreeDirty = true;
       }
 
+      void InsertCollection(WaypointCollection* waypoint, unsigned level)
+      {
+         mWaypoints.push_back(waypoint);
+         mWaypointGraph->InsertCollection(waypoint, level);
+
+         //if we have created a drawable then we must add and remove to it
+         if(mDrawable.valid())
+         {
+            mDrawable->InsertWaypoint(*waypoint);
+         }
+
+         KDHolder node(waypoint->GetPosition(), waypoint->GetID());
+         mKDTree->insert(node);
+
+         mKDTreeDirty = true;
+      }
+
+      WaypointGraph& GetWaypointGraph()
+      {
+         return *mWaypointGraph;
+      }
+      
+      const WaypointGraph& GetWaypointGraph() const
+      {
+         return *mWaypointGraph;
+      }
+
+      bool Assign(WaypointID childWp, WaypointCollection* parentWp)
+      {
+         return mWaypointGraph->Assign(childWp, parentWp);
+      }
+
       bool MoveWaypoint(WaypointInterface* wi, const osg::Vec3& newPos)
       {         
          //the kd-tree cannot move :( for now remove and re-insert
@@ -171,19 +217,25 @@ namespace dtAI
             WaypointInterface* wpPtr = GetWaypointById(iter->mID);
             if(wpPtr != NULL && wpPtr->GetID() == wi->GetID())
             {            
+
+               //remove from current drawable
                if(mDrawable.valid())
                {
                   RemoveAllEdges(wpPtr->GetID());
-                  mDrawable->RemoveWaypoint(wpPtr->GetID());                  
+                  mDrawable->RemoveWaypoint(wpPtr->GetID());
                }
 
+               //remove from kd-tree
                mKDTree->erase(*iter);
-               mWaypointGraph->RemoveWaypoint(wpPtr->GetID());
-               
                mKDTreeDirty = true;
-               //dtUtil::array_remove rm(mWaypoints);               
-               //dtCore::RefPtr<WaypointInterface*> wpRef = wpPtr;
-               //result = rm(wpRef);
+
+               //remove from waypoint graph
+               mWaypointGraph->RemoveWaypoint(wpPtr->GetID());
+
+               //finally remove it from internal array
+               dtUtil::array_remove<WaypointRefArray> rm(mWaypoints);
+               dtCore::RefPtr<WaypointInterface> wpRef = wpPtr;
+               result = rm(wpRef);
                break;
             }
          }
@@ -306,42 +358,49 @@ namespace dtAI
          mWaypointGraph->Clear();
       }
 
+      //bool LoadLegacyWaypointFile(const std::string& filename)
+      //{
+      //   ////temporarily uses the waypoint manager
+      //   //WaypointManager& wm = WaypointManager::GetInstance();
+      //   //bool result = wm.ReadFile(filename);
+      //   //if(result)
+      //   //{
+      //   //   NavMesh::NavMeshContainer::const_iterator nm_iter = wm.GetNavMesh().GetNavMesh().begin();
+      //   //   NavMesh::NavMeshContainer::const_iterator nm_iterEnd = wm.GetNavMesh().GetNavMesh().end();
+
+      //   //   for(;nm_iter != nm_iterEnd; ++nm_iter)
+      //   //   {
+      //   //      const WaypointPair* wp = (*nm_iter).second;
+
+      //   //      if(GetWaypointById(wp->GetWaypointFrom()->GetID()) == NULL)
+      //   //      {
+      //   //         InsertWaypoint(const_cast<WaypointInterface*>(wp->GetWaypointFrom()));
+      //   //      }
+
+      //   //      if(GetWaypointById(wp->GetWaypointTo()->GetID()) == NULL)
+      //   //      {
+      //   //         InsertWaypoint(const_cast<WaypointInterface*>(wp->GetWaypointTo()));
+      //   //      }
+      //   //      
+      //   //      AddEdge(wp->GetWaypointFrom()->GetID(), wp->GetWaypointTo()->GetID());
+      //   //   }
+      //   //   
+      //   //   //wm.SetDeleteOnClear(false);
+      //   //}
+      //   //return result;
+      //}
+
+
       bool LoadWaypointFile(const std::string& filename)
       {
-         //temporarily uses the waypoint manager
-         WaypointManager& wm = WaypointManager::GetInstance();
-         bool result = wm.ReadFile(filename);
-         if(result)
-         {
-            NavMesh::NavMeshContainer::const_iterator nm_iter = wm.GetNavMesh().GetNavMesh().begin();
-            NavMesh::NavMeshContainer::const_iterator nm_iterEnd = wm.GetNavMesh().GetNavMesh().end();
-
-            for(;nm_iter != nm_iterEnd; ++nm_iter)
-            {
-               const WaypointPair* wp = (*nm_iter).second;
-
-               if(GetWaypointById(wp->GetWaypointFrom()->GetID()) == NULL)
-               {
-                  InsertWaypoint(const_cast<WaypointInterface*>(wp->GetWaypointFrom()));
-               }
-
-               if(GetWaypointById(wp->GetWaypointTo()->GetID()) == NULL)
-               {
-                  InsertWaypoint(const_cast<WaypointInterface*>(wp->GetWaypointTo()));
-               }
-               
-               AddEdge(wp->GetWaypointFrom()->GetID(), wp->GetWaypointTo()->GetID());                  
-            }
-            
-            //wm.SetDeleteOnClear(false);
-         }
-         return result;
+         dtCore::RefPtr<WaypointReaderWriter> reader = new WaypointReaderWriter(*this);
+         return reader->LoadWaypointFile(filename);
       }
 
       bool SaveWaypointFile(const std::string& filename)
       {
-         //return mWaypointManager.WriteFile(filename);
-         return true;
+         dtCore::RefPtr<WaypointReaderWriter> reader = new WaypointReaderWriter(*this);
+         return reader->SaveWaypointFile(filename);
       }
 
       AIDebugDrawable* GetDebugDrawable()
