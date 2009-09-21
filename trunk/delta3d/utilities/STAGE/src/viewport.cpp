@@ -84,19 +84,19 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    Viewport::Viewport(ViewportManager::ViewportType& type, const std::string& name, QWidget* parent, osg::GraphicsContext* shareWith)
       : QObject(parent)
+      , mCamera(new StageCamera())
       , mInChangeTransaction(false)
+      , mWindow(NULL)
       , mName(name)
       , mViewPortType(type)
       , mUseAutoInteractionMode(false)
       , mAutoSceneUpdate(true)
       , mInitialized(false)
       , mEnableKeyBindings(true)
-      , mIsector(new dtCore::Isector())
       , mIsMouseTrapped(false)
-      , mWindow(NULL)
-      , mView(new dtCore::View(name))
-      , mCamera(new StageCamera())
       , mScene(new dtCore::Scene())
+      , mView(new dtCore::View(name))
+      , mIsector(new dtCore::Isector())
    {
       mMouseSensitivity = 10.0f;
       mInteractionMode = &InteractionMode::NOTHING;
