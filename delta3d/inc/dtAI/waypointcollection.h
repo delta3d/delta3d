@@ -28,13 +28,14 @@
 
 #include <dtCore/refptr.h>
 
+#include <vector>
+#include <map>
 #include <osg/Vec3>
 
 
 namespace dtAI 
 {
    class WaypointPropertyBase;
-   class NavMesh;
 
    /**
     *	WaypointCollection is meant to be a container for waypoints that is also
@@ -50,9 +51,12 @@ namespace dtAI
          typedef dtAI::Tree<const WaypointInterface*>::child_iterator WaypointTreeChildIterator;
          typedef dtAI::Tree<const WaypointInterface*>::child_iterator WaypointTreeConstChildIterator;
 
+         typedef std::pair<WaypointID, WaypointID> ChildEdge;
+         typedef std::multimap<WaypointID, ChildEdge> ChildEdgeMap;      
+         typedef std::vector<ChildEdge> ChildEdgeArray;
+
          WaypointCollection();
          WaypointCollection(const osg::Vec3& pos);
-         //WaypointCollection(const NavMesh& children);
          WaypointCollection(const WaypointCollection& way);
 
    protected:
@@ -63,6 +67,17 @@ namespace dtAI
          /*virtual*/ WaypointTree::ref_pointer clone() const;
 
          void CleanUp();
+
+         //these are pure virtual from WaypointInterface
+         virtual void ref() const
+         {
+            osg::Referenced::ref();
+         }
+
+         virtual void unref() const
+         {
+            osg::Referenced::unref();
+         }
 
          /**
          * A collection is marked as a leaf if it has any concrete nodes as children
@@ -85,27 +100,17 @@ namespace dtAI
          void Insert(const WaypointInterface* waypoint);
          void Remove(const WaypointInterface* waypoint);
 
+         WaypointCollection* GetParent();
+         const WaypointCollection* GetParent() const;
+
          void Recalculate();      
 
+         void AddEdge(WaypointID sibling, const ChildEdge& edge);
+         bool RemoveEdge(WaypointID sibling, const ChildEdge& edge);
+         void GetEdges(WaypointID sibling, ChildEdgeArray& result) const; 
+         void ClearEdges();
+
          /*virtual*/ void CreateProperties(WaypointPropertyBase& container);
-
-         NavMesh& GetNavMesh();
-         const NavMesh& GetNavMesh() const;
-         
-         //void GetAllChildPathsFrom(const WaypointInterface* wi, WaypointGraph::ConstWaypointArray& result);
-         //void GetAllChildPathsTo(const WaypointInterface* wi, WaypointGraph::ConstWaypointArray& result);
-
-
-         //these are pure virtual from WaypointInterface
-         virtual void ref() const
-         {
-            osg::Referenced::ref();
-         }
-
-         virtual void unref() const
-         {
-            osg::Referenced::unref();
-         }
 
       protected:
 
@@ -125,7 +130,7 @@ namespace dtAI
          bool mLeaf;
          float mRadius;
          osg::Vec3 mPosition;
-         dtCore::RefPtr<NavMesh> mChildEdges;
+         ChildEdgeMap mChildEdges;
    };
 
 

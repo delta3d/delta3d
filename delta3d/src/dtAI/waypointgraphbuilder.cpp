@@ -398,7 +398,7 @@ namespace dtAI
             NavMesh::NavMeshContainer::const_iterator nm_iterEnd = nm.end(childPtr);
 
             //the actual child edges are stored on the WaypointCollection itself
-            wc->GetNavMesh().InsertCopy(nm_iter, nm_iterEnd);
+            //wc->GetNavMesh().InsertCopy(nm_iter, nm_iterEnd);
 
             //the search level only contains edges relevant to the nodes in it
             for(;nm_iter != nm_iterEnd; ++nm_iter)
@@ -408,6 +408,9 @@ namespace dtAI
                //todo- why would wpToParent ever be NULL
                if((wpToParent != NULL) && wpToParent->GetID() != wc->GetID())
                {
+                  //this give the waypoint collection immediate child edges to all siblings
+                  wc->AddEdge(wpToParent->GetID(), WaypointCollection::ChildEdge(childPtr->GetID(), (*nm_iter).second->GetWaypointTo()->GetID()));
+
                   //this effectively adds an edge from me to all my children's destination waypoint parents                  
                   //sl->mNavMesh->AddEdge(wc, wpToParent);
                   mWPGraph->AddEdge(wc->GetID(), wpToParent->GetID());

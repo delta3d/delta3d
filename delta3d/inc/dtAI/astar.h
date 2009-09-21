@@ -22,6 +22,8 @@
 #ifndef __DELTA_ASTAR_H__
 #define __DELTA_ASTAR_H__
 
+#include <dtAI/export.h> //included to get rid of warning 4355- 'this' used in base member initializer list
+
 #include <dtAI/astarconfig.h>
 #include <dtAI/pathfinding.h>
 #include <dtUtil/functor.h>

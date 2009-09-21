@@ -50,6 +50,7 @@ namespace dtAI
       typedef std::vector<dtAI::WaypointInterface*> WaypointArray;
       typedef std::vector<const dtAI::WaypointInterface*> ConstWaypointArray;
       typedef std::vector<dtCore::RefPtr<dtAI::WaypointCollection> > WaypointCollectionArray;
+      typedef std::vector<const dtAI::WaypointCollection*> ConstWaypointCollectionArray;
 
       class DT_AI_EXPORT SearchLevel: public osg::Referenced
       {
@@ -185,7 +186,17 @@ namespace dtAI
       * Searches for a common parent, which represents the top of the search tree
       * to path between these points.
       */
-      //WaypointCollection* FindCommonParent(const WaypointInterface& lhs, const WaypointInterface& rhs);
+      const WaypointCollection* FindCommonParent(WaypointID lhs, WaypointID rhs) const;
+      const WaypointCollection* FindCommonParent(const WaypointCollection& lhs, const WaypointCollection& rhs) const;
+
+      
+      /**
+      * Traverses up the tree, adding each parent to the end of the array until it reaches
+      *    the specified node.
+      *  @return true if parentNode was found as a parent to childNode
+      */
+      bool GetNodePath(const WaypointInterface* childNode, const WaypointCollection* parentNode, ConstWaypointCollectionArray& result);
+      bool GetNodePath(const WaypointCollection& childNode, const WaypointCollection& parentNode, ConstWaypointCollectionArray& result);
 
       //path finding
       NavMesh* GetNavMeshAtSearchLevel(unsigned level);
@@ -198,6 +209,7 @@ namespace dtAI
      
       //returns -1 if not found
       int GetSearchLevelNum(WaypointID id) const;
+      //WaypointCollection* MapNodeToLevel(WaypointInterface* wp, unsigned levelNum);
 
       //void AddSearchLevel(dtCore::RefPtr<SearchLevel> newLevel);
 
