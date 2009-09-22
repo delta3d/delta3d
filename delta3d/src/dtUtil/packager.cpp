@@ -1,7 +1,9 @@
 #include <dtUtil/packager.h>
 
+#include <dtUtil\fileutils.h>
+
+#include <osgDB\FileNameUtils>
 #include <stdio.h>
-#include <direct.h>
 
 
 namespace dtUtil
@@ -81,8 +83,7 @@ namespace dtUtil
       }
 
       // now rename the temp file to the actual file name.
-      remove(finalFile.c_str());
-      rename(tempFile.c_str(), finalFile.c_str());
+      dtUtil::FileUtils::GetInstance().FileMove(tempFile, finalFile, true);
 
       if (mPackagePath == filename)
       {
@@ -158,6 +159,15 @@ namespace dtUtil
          else filename = &filepath[letter + 1];
       }
 
+      // First check to see if this file already exists in this directory...
+      for (int index = 0; index < (int)tree->files.size(); index++)
+      {
+         if (tree->files[index].name == filename)
+         {
+            return false;
+         }
+      }
+
       PackTreeData data;
       data.name = filename;
       data.source = filepath;
@@ -167,7 +177,7 @@ namespace dtUtil
 
       tree->files.push_back(data);
 
-      return false;
+      return true;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -228,7 +238,7 @@ namespace dtUtil
          tree = NULL;
       }
 
-      return false;
+      return true;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -366,10 +376,20 @@ namespace dtUtil
       ReadString(dir, packFile);
       std::string path = outDir + dir;
 
+      // Remove any trailing slashes.
+      if(path.length() > 0 &&
+         (path[path.length()-1] == '\\' || path[path.length()-1] == '/'))
+      {
+         path.resize(path.length()-1);
+      }
+
       if (!mOpeningPackage)
       {
          // Create the output directory.
-         _mkdir(path.c_str());
+         if (!dtUtil::FileUtils::GetInstance().DirExists(path))
+         {
+            dtUtil::FileUtils::GetInstance().MakeDirectory(path);
+         }
       }
 
       // Now iterate through all the files.
@@ -416,7 +436,9 @@ namespace dtUtil
             return false;
          }
 
-         bufferLength = _filelength(file->_file);
+         dtUtil::FileInfo fileInfo = dtUtil::FileUtils::GetInstance().GetFileInfo(tree->source);
+
+         bufferLength = (long)fileInfo.size;
          if (bufferLength <= 0) fclose(file);
       }
 
@@ -548,3 +570,4 @@ namespace dtUtil
    }
 }
 
+////////////////////////////////////////////////////////////////////////////////
