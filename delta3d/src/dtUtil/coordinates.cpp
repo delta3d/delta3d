@@ -1139,7 +1139,7 @@ namespace dtUtil
                eastingLetter, northingLetter, eastingNum, northingNum);
 
        std::string result(mgrsString);
-       trim(result);
+       Trim(result);
        return result;
    }
 

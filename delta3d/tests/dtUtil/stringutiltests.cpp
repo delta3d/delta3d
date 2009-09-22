@@ -129,51 +129,51 @@ void StringUtilTests::TestTrim()
    {
       mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__,  __LINE__, "Testing Trim.\n");
       std::string testString = "";
-      dtUtil::trim(testString);  
+      dtUtil::Trim(testString);
       CPPUNIT_ASSERT_MESSAGE("Size should be 0", testString.size() == 0);
 
       testString = "1";
-      dtUtil::trim(testString);
+      dtUtil::Trim(testString);
       CPPUNIT_ASSERT_MESSAGE("Size should be 1", testString.size() == 1);
       
       testString = " 1";//<space>char
-      dtUtil::trim(testString);
+      dtUtil::Trim(testString);
       CPPUNIT_ASSERT_MESSAGE("Size should be 1", testString.size() == 1);
 
       testString = "1 ";//char<space>
-      dtUtil::trim(testString); 
+      dtUtil::Trim(testString);
       CPPUNIT_ASSERT_MESSAGE("Size should be 1", testString.size() == 1);
 
       testString = " 1 ";//<space>char<space>
-      dtUtil::trim(testString);
+      dtUtil::Trim(testString);
       CPPUNIT_ASSERT_MESSAGE("Size should be 1", testString.size() == 1);
       
       testString = "	1";  //<tab>char
-      dtUtil::trim(testString);
+      dtUtil::Trim(testString);
       CPPUNIT_ASSERT_MESSAGE("Size should be 1", testString.size() == 1);
       
       testString = "1	"; //char<tab>
-      dtUtil::trim(testString); 
+      dtUtil::Trim(testString);
       CPPUNIT_ASSERT_MESSAGE("Size should be 1", testString.size() == 1);
       
       testString = "	1	"; //<tab>char<tab>
-      dtUtil::trim(testString); 
+      dtUtil::Trim(testString);
       CPPUNIT_ASSERT_MESSAGE("Size should be 1", testString.size() == 1);
       
       testString = "12 345"; //12<space>345
-      dtUtil::trim(testString); 
+      dtUtil::Trim(testString);
       CPPUNIT_ASSERT_MESSAGE("Size should be 6", testString.size() == 6);
       
       testString = "12	345"; //12<tab>345
-      dtUtil::trim(testString); 
+      dtUtil::Trim(testString);
       CPPUNIT_ASSERT_MESSAGE("Size should be 6", testString.size() == 6);
       
       testString = "12	3 4	5"; //12<tab>3<space>4<tab>5
-      dtUtil::trim(testString); 
+      dtUtil::Trim(testString);
       CPPUNIT_ASSERT_MESSAGE("Size should be 8", testString.size() == 8);      
 
       testString = " 	 12345 	 "; //<space><tab><space>12345<space><tab><space>
-      dtUtil::trim(testString); 
+      dtUtil::Trim(testString);
       CPPUNIT_ASSERT_MESSAGE("Size should be 5", testString.size() == 5);
       
       testString.empty();
@@ -184,17 +184,17 @@ void StringUtilTests::TestTrim()
       }
       std::string aReallyBigStringCopy = aReallyBigString;
       unsigned len = aReallyBigString.size();
-      dtUtil::trim(aReallyBigString);
+      dtUtil::Trim(aReallyBigString);
       CPPUNIT_ASSERT(aReallyBigString.size() == len);
 
       aReallyBigString = aReallyBigStringCopy;
       aReallyBigString.insert(0, "\t");
-      dtUtil::trim(aReallyBigString);
+      dtUtil::Trim(aReallyBigString);
       CPPUNIT_ASSERT(aReallyBigString.size() == len);
 
       aReallyBigString = aReallyBigStringCopy;
       aReallyBigString.insert(len, "\t");
-      dtUtil::trim(aReallyBigString); 
+      dtUtil::Trim(aReallyBigString);
       CPPUNIT_ASSERT(aReallyBigString.size() == len);
 
    }
