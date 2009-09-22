@@ -9,7 +9,15 @@
 
 namespace dtUtil
 {
-   ////////////////////////////////////////////////////////////////////
+   #ifdef DELTA_WIN32
+   const std::string IsSpace::DEFAULT_LOCALE_NAME("english");
+   #elif defined (__APPLE__)
+   const std::string IsSpace::DEFAULT_LOCALE_NAME("C");
+   #else
+   const std::string IsSpace::DEFAULT_LOCALE_NAME("en_US.UTF-8");
+   #endif
+
+      ////////////////////////////////////////////////////////////////////
    const std::string& Trim(std::string& toTrim)
    {
       while (!toTrim.empty() && isspace(toTrim[toTrim.length()-1]))
