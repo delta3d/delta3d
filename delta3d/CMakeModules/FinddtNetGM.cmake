@@ -1,4 +1,5 @@
 # Locate dtNetGM
+# Note: Does not find Boost header files, which are required by dtNetGM
 #
 
 INCLUDE(delta3d_common)
