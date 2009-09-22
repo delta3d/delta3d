@@ -30,6 +30,7 @@ SET(DTGUI_LIBRARIES
     
 SET(DTGUI_INCLUDE_DIRECTORIES ${DELTA3D_INCLUDE_DIR}
                               ${CEGUI_INCLUDE_DIR}
+                              ${CEGUI_INCLUDE_DIR}/CEGUI
     )
 
 

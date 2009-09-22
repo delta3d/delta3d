@@ -6,6 +6,5 @@ BUILD_EXE_EXAMPLE( testGUI
                    ${DTUTIL_LIBRARY}
                    ${DTCORE_LIBRARY}
                    ${DTABC_LIBRARY}
-                   ${DTDAL_LIBRARY}
                    ${DTGUI_LIBRARY}
                  )
