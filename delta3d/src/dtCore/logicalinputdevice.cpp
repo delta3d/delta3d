@@ -253,6 +253,51 @@ namespace dtCore
    }
 
    /**
+   * Gets the target button.
+   *
+   * @return the current target button
+   */
+   LogicalButton* ButtonToButton::GetTargetButton()
+   {
+      return mTargetButton.get();
+   }
+
+   /**
+   * Called when a button's state has changed.
+   *
+   * @param button the origin of the event
+   * @param oldState the old state of the button
+   * @param newState the new state of the button
+   */
+   bool ButtonToButton::ButtonStateChanged(const Button* button, bool oldState, bool newState)
+   {
+      if(mTargetButton.valid())
+      {
+         return mTargetButton->SetState(newState);
+      }
+
+      return false;
+   }
+
+   /**
+   * Updates the state of the target button.
+   */
+   void ButtonToButton::UpdateTargetButtonState()
+   {
+      if(mTargetButton.valid())
+      {
+         bool state = false;
+
+         if(mSourceButton.valid())
+         {
+            state = mSourceButton->GetState();
+         }
+
+         mTargetButton->SetState(state);
+      }
+   }
+
+   /**
    * Constructor.
    *
    * @param firstButton  the first button
@@ -421,51 +466,6 @@ namespace dtCore
       }
    }
 
-   /**
-    * Gets the target button.
-    *
-    * @return the current target button
-    */
-   LogicalButton* ButtonToButton::GetTargetButton()
-   {
-      return mTargetButton.get();
-   }
-   
-   /**
-    * Called when a button's state has changed.
-    *
-    * @param button the origin of the event
-    * @param oldState the old state of the button
-    * @param newState the new state of the button
-    */
-   bool ButtonToButton::ButtonStateChanged(const Button* button, bool oldState, bool newState)
-   {
-      if(mTargetButton.valid())
-      {
-         return mTargetButton->SetState(newState);
-      }
-
-      return false;
-   }
-   
-   /**
-    * Updates the state of the target button.
-    */
-   void ButtonToButton::UpdateTargetButtonState()
-   {
-      if(mTargetButton.valid())
-      {
-         bool state = false;
-   
-         if(mSourceButton.valid())
-         {
-            state = mSourceButton->GetState();
-         }
-   
-         mTargetButton->SetState(state);
-      }
-   }
-   
    /**
     * Constructor.
     *
