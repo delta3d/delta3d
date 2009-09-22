@@ -853,7 +853,7 @@ namespace  dtDAL
          case DataType::GAMEEVENT_ID:
          {
             GameEventActorProperty& geProp = static_cast<GameEventActorProperty&>(*actorProperty);
-            if (!dtUtil::trim(dataValue).empty())
+            if (!dtUtil::Trim(dataValue).empty())
             {
                GameEvent *e = mMap->GetEventManager().FindEvent(dtCore::UniqueId(dataValue));
                if (e != NULL)
@@ -958,7 +958,7 @@ namespace  dtDAL
          case DataType::ACTOR_ID:
          {
             //insert the data into this map to make it accessible to assign once the parsing is done.
-            dtUtil::trim(dataValue);
+            dtUtil::Trim(dataValue);
             if (!dataValue.empty() && dataValue != "NULL")
             {
                ActorIDActorProperty* p = dynamic_cast<ActorIDActorProperty*>(actorProperty);
@@ -1086,7 +1086,7 @@ namespace  dtDAL
          case DataType::GAMEEVENT_ID:
          {
             NamedGameEventParameter& geParam = static_cast<NamedGameEventParameter&>(np);
-            if (!dtUtil::trim(dataValue).empty())
+            if (!dtUtil::Trim(dataValue).empty())
             {
                GameEvent *e = mMap->GetEventManager().FindEvent(dtCore::UniqueId(dataValue));
                if (e != NULL)
@@ -1192,7 +1192,7 @@ namespace  dtDAL
          case DataType::ACTOR_ID:
          {
             //insert the data into this map to make it accessible to assign once the parsing is done.
-            dtUtil::trim(dataValue);
+            dtUtil::Trim(dataValue);
             if (!dataValue.empty() && dataValue != "NULL")
             {
                static_cast<NamedActorParameter&>(np).SetValue(dtCore::UniqueId(dataValue));

@@ -38,6 +38,7 @@
 #include <vector>
 #include <functional>
 #include <osg/io_utils>
+#include <dtUtil/deprecationmgr.h>
 
 namespace dtUtil
 {
@@ -128,50 +129,14 @@ namespace dtUtil
    };
 
    /**
-   * Trims whitespace off the front and end of a string
-   * @param toTrim the string to trim.
-   */
-   inline const std::string& trim(std::string& toTrim)
-   {
-      if (toTrim.empty())
-      {
-         return toTrim;
-      }
+    * Trims whitespace off the front and end of a string
+    * @param toTrim the string to trim.
+    */
+   const std::string& Trim(std::string& toTrim);
 
-      // TODO: All this code should be replaced with STL algorithms
+   /// Call Trim instead
+   DEPRECATE_FUNC inline const std::string& trim(std::string& toTrim) { return Trim(toTrim); }
 
-      for (std::string::iterator i = toTrim.begin(); i != toTrim.end();)
-      {
-         if (isspace(static_cast<unsigned char>(*i)))
-         {
-            i = toTrim.erase(i);
-         }
-         else
-         {
-            break;
-         }
-      }
-
-      if (toTrim.empty())
-      {
-         return toTrim;
-      }
-
-      for (int i = (int)(toTrim.size() - 1); i >= 0; --i)
-      {
-         if (isspace(static_cast<unsigned char>(toTrim[i])))
-         {
-            //we can just erase from the end because
-            //it will shorted the part of the string already covered by the loop.
-            toTrim.erase(i);
-         }
-         else
-         {
-            break;
-         }
-      }
-      return toTrim;
-   }
 
    /**
     * A templated function for taking any of the osg vector types and reading the data from a string.
@@ -223,10 +188,13 @@ namespace dtUtil
     * @param t the instance of the type to converted.
     */
    template<typename T>
-   std::string ToString(const T& t, int precision = 16)
+   std::string ToString(const T& t, int precision = -1)
    {
       std::ostringstream ss;
-      ss.precision(precision);
+      if (precision > 0)
+      {
+         ss.precision(precision);
+      }
       ss << t;
       return ss.str();
    }

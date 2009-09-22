@@ -1673,8 +1673,8 @@ namespace dtDAL
                identifier = tokens[0];
             }
 
-            dtUtil::trim(identifier);
-            dtUtil::trim(displayName);
+            dtUtil::Trim(identifier);
+            dtUtil::Trim(displayName);
             mValueList->push_back(dtDAL::ResourceDescriptor(displayName, identifier));
          }
       }
@@ -1694,8 +1694,8 @@ namespace dtDAL
             identifier = tokens[0];
          }
 
-         dtUtil::trim(identifier);
-         dtUtil::trim(displayName);
+         dtUtil::Trim(identifier);
+         dtUtil::Trim(displayName);
 
          dtDAL::ResourceDescriptor descriptor(displayName,identifier);
          SetValue(&descriptor);

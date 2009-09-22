@@ -9,7 +9,21 @@
 
 namespace dtUtil
 {
-   
+   ////////////////////////////////////////////////////////////////////
+   const std::string& Trim(std::string& toTrim)
+   {
+      while (!toTrim.empty() && isspace(toTrim[toTrim.length()-1]))
+      {
+         toTrim.erase(toTrim.length()-1);
+      }
+
+      while (!toTrim.empty() && isspace(toTrim[0]))
+      {
+          toTrim.erase(0,1);
+      }
+      return toTrim;
+   }
+
    ////////////////////////////////////////////////////////////////////
    static bool Scan(const char*& wildCards, const char*& str) 
    {
