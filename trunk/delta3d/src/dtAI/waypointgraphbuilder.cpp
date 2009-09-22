@@ -143,10 +143,9 @@ namespace dtAI
 
       AssignRemainingCliques(mUnAssignedNodes, *(sl->mNavMesh), newSearchLevel.get());
 
-      CreateSearchLevelNavMesh(*(sl->mNavMesh), newSearchLevel);
+      CreateSearchLevelNavMesh(newSearchLevel->mNodes, *(sl->mNavMesh));
 
-      //return ConvertFromBuilderSearchLevel(newSearchLevel.get());
-      return !mAssignedNodes.empty();
+      return newSearchLevel->mNodes.size() > 1;
    }
          
 
@@ -378,10 +377,10 @@ namespace dtAI
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void WaypointGraphBuilder::CreateSearchLevelNavMesh(const NavMesh& nm, BuilderSearchLevel* sl)
+   void WaypointGraphBuilder::CreateSearchLevelNavMesh(WaypointGraph::WaypointCollectionArray& wps, const NavMesh& nm)
    {
-      BuilderSearchLevel::WaypointCollectionArray::iterator iter = sl->mNodes.begin();
-      BuilderSearchLevel::WaypointCollectionArray::iterator iterEnd = sl->mNodes.end();
+      WaypointGraph::WaypointCollectionArray::iterator iter = wps.begin();
+      WaypointGraph::WaypointCollectionArray::iterator iterEnd = wps.end();
 
       for(; iter != iterEnd; ++iter)
       {
@@ -405,15 +404,19 @@ namespace dtAI
             {
                WaypointCollection* wpToParent = mWPGraph->GetParent((*nm_iter).second->GetWaypointTo()->GetID());
 
-               //todo- why would wpToParent ever be NULL
-               if((wpToParent != NULL) && wpToParent->GetID() != wc->GetID())
+               if(wpToParent != NULL)
                {
-                  //this give the waypoint collection immediate child edges to all siblings
-                  wc->AddEdge(wpToParent->GetID(), WaypointCollection::ChildEdge(childPtr->GetID(), (*nm_iter).second->GetWaypointTo()->GetID()));
+                  if(wpToParent->GetID() != wc->GetID())
+                  {
+                     //this effectively adds an edge from me to all my children's destination waypoint parents                  
+                     mWPGraph->AddEdge(wc->GetID(), wpToParent->GetID());
+                  }
 
-                  //this effectively adds an edge from me to all my children's destination waypoint parents                  
-                  //sl->mNavMesh->AddEdge(wc, wpToParent);
-                  mWPGraph->AddEdge(wc->GetID(), wpToParent->GetID());
+                  if(childPtr->GetID() != (*nm_iter).second->GetWaypointTo()->GetID()) //wpParent may be ourself, this is ok because it adds our own child paths
+                  {
+                     //this give the waypoint collection immediate child edges to all siblings
+                     wc->AddEdge(wpToParent->GetID(), WaypointCollection::ChildEdge(childPtr->GetID(), (*nm_iter).second->GetWaypointTo()->GetID()));
+                  }
                }
             }
 

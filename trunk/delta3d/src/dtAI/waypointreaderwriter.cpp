@@ -25,9 +25,11 @@
 #include <dtAI/waypointinterface.h>
 #include <dtAI/waypointcollection.h>
 #include <dtAI/navmesh.h>
+#include <dtAI/waypointpair.h>
 
 #include <dtAI/waypointtypes.h>
 #include <dtAI/waypointgraph.h>
+#include <dtAI/navmesh.h>
 
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actorproperty.h>
@@ -35,7 +37,6 @@
 
 #include <dtUtil/datastream.h>
 #include <dtUtil/exception.h>
-
 #include <fstream>
 
 namespace dtAI
@@ -227,8 +228,9 @@ namespace dtAI
                   mAIInterface->AddEdge(edgeDataIter->first, edgeDataIter->second);
                }
 
-               //and now assign all children
+               //and now assign all children and child edges
                AssignChildren();
+               AssignChildEdges();               
 
                read_file_ok = true;
             }
@@ -273,6 +275,21 @@ namespace dtAI
          }
 
          mAIInterface->Assign(wpPair.second, wc);
+      }
+   }
+
+   void WaypointReaderWriter::AssignChildEdges()
+   {
+      WaypointGraph& wpGraph = mAIInterface->GetWaypointGraph();
+      unsigned numLevels = wpGraph.GetNumSearchLevels();
+
+      //we skip the first level since they dont hold edges
+      for(unsigned level = 1; level < numLevels; ++level)
+      {
+         WaypointGraph::SearchLevel* slLast = wpGraph.GetSearchLevel(level - 1);
+         WaypointGraph::SearchLevel* slCurrent = wpGraph.GetSearchLevel(level);
+
+         CreateWaypointCollectionEdges(slCurrent->mNodes, *slLast->mNavMesh);
       }
    }
 
@@ -419,6 +436,49 @@ namespace dtAI
       else
       {
          mAIInterface->InsertWaypoint(waypoint);
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void WaypointReaderWriter::CreateWaypointCollectionEdges(ConstWaypointArray& wps, const NavMesh& nm)
+   {
+      WaypointGraph& wpGraph = mAIInterface->GetWaypointGraph();
+
+      ConstWaypointArray::iterator iter = wps.begin();
+      ConstWaypointArray::iterator iterEnd = wps.end();
+
+      for(; iter != iterEnd; ++iter)
+      {
+         WaypointCollection* wc = wpGraph.FindCollection((*iter)->GetID());
+
+         WaypointCollection::WaypointTree::const_child_iterator children = wc->begin_child();
+         WaypointCollection::WaypointTree::const_child_iterator childrenEnd = wc->end_child();
+
+         for(; children != childrenEnd; ++children)
+         {
+            const WaypointInterface* childPtr = children->value;
+
+            NavMesh::NavMeshContainer::const_iterator nm_iter = nm.begin(childPtr);
+            NavMesh::NavMeshContainer::const_iterator nm_iterEnd = nm.end(childPtr);
+
+            //the actual child edges are stored on the WaypointCollection itself
+            //wc->GetNavMesh().InsertCopy(nm_iter, nm_iterEnd);
+
+            //the search level only contains edges relevant to the nodes in it
+            for(;nm_iter != nm_iterEnd; ++nm_iter)
+            {
+               WaypointCollection* wpToParent = wpGraph.GetParent((*nm_iter).second->GetWaypointTo()->GetID());
+
+               //todo- why would wpToParent ever be NULL
+               if(wpToParent != NULL && childPtr->GetID() != (*nm_iter).second->GetWaypointTo()->GetID()) //wpParent may be ourself, this is ok because it adds our own child paths
+               {
+                  //this give the waypoint collection immediate child edges to all siblings
+                  wc->AddEdge(wpToParent->GetID(), WaypointCollection::ChildEdge(childPtr->GetID(), (*nm_iter).second->GetWaypointTo()->GetID()));
+               }
+            }
+
+         }
+
       }
    }
 }//namespace dtAI

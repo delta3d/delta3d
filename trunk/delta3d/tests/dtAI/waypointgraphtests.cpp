@@ -489,13 +489,19 @@ void WaypointGraphTests::TestPathfinding()
 
    WaypointGraphAStar astar(*mGraph); 
 
+   WaypointGraph::ConstWaypointArray path;
+   PathFindResult result = astar.HierarchicalFindPath(wpArray[5], wpArray[14], path);
+   CPPUNIT_ASSERT_EQUAL(result, PATH_FOUND);
+
+
    for(int i = 1; i < 17; ++i)
    {
       for(int j = 1; j < 17; ++j)
       {
          if(i != j)
          {
-            PathFindResult result = astar.HierarchicalFindPath(wpArray[i], wpArray[j]);
+            path.clear();
+            result = astar.HierarchicalFindPath(wpArray[i], wpArray[j], path);
             CPPUNIT_ASSERT_EQUAL(result, PATH_FOUND);
          }
       }
@@ -523,7 +529,8 @@ void WaypointGraphTests::TestLoadSave()
    result = mAIInterface->LoadWaypointFile(fullFilename);
    CPPUNIT_ASSERT_MESSAGE("Error loading waypoint file '" + fullFilename + "'.", result);
 
-   CPPUNIT_ASSERT(mGraph->GetNumSearchLevels() == 4);   
+   int numSearchLevels = mGraph->GetNumSearchLevels();
+   CPPUNIT_ASSERT(numSearchLevels == 4);   
    CPPUNIT_ASSERT(mGraph->GetSearchLevel(0)->mNodes.size() == 16);   
    CPPUNIT_ASSERT(mGraph->GetSearchLevel(1)->mNodes.size() == 6);   
    CPPUNIT_ASSERT(mGraph->GetSearchLevel(2)->mNodes.size() == 3); 
@@ -542,21 +549,22 @@ void WaypointGraphTests::TestLoadSave()
       }
    }
 
-   //todo-
    //try pathfinding on it after loading it from file
-   //WaypointGraphAStar astar(*mGraph); 
+   WaypointGraphAStar astar(*mGraph); 
 
-   //for(int i = 1; i < 17; ++i)
-   //{
-   //   for(int j = 1; j < 17; ++j)
-   //   {
-   //      if(i != j)
-   //      {
-   //         PathFindResult result = astar.HierarchicalFindPath(wpArray[i], wpArray[j]);
-   //         CPPUNIT_ASSERT_EQUAL(result, PATH_FOUND);
-   //      }
-   //   }
-   //}
+   WaypointGraph::ConstWaypointArray path;
+   for(int i = 1; i < 17; ++i)
+   {
+      for(int j = 1; j < 17; ++j)
+      {
+         if(i != j)
+         {
+            path.clear();
+            PathFindResult result = astar.HierarchicalFindPath(wpArray[i], wpArray[j], path);
+            CPPUNIT_ASSERT_EQUAL(result, PATH_FOUND);
+         }
+      }
+   }
 
 }
 
