@@ -122,7 +122,22 @@ namespace dtAI
 
       return result;      
    }
-   
+
+   PathFindResult WaypointGraphAStar::FindSingleLevelPath(WaypointID from, WaypointID to, WaypointGraph::ConstWaypointArray& result)
+   {
+      const WaypointInterface* fromWP = mWPGraph.FindWaypoint(from);
+      const WaypointInterface* toWP = mWPGraph.FindWaypoint(to);
+
+      PathFindResult pfr = NO_PATH;
+
+      if(fromWP != NULL && toWP != NULL)
+      {
+         pfr = FindSingleLevelPath(fromWP, toWP, result);
+      }
+
+      return pfr;
+   }
+
    PathFindResult WaypointGraphAStar::FindSingleLevelPath(const WaypointInterface* from, const WaypointInterface* to, WaypointGraph::ConstWaypointArray& result)
    {
       WaypointGraphAStarBase::Reset(from, to);
@@ -191,96 +206,5 @@ namespace dtAI
       }
    }
 
-
-   //const WaypointInterface* WaypointGraphAStar::FindNext(WaypointID from, WaypointID to)
-   //{  
-   //   WaypointID nextWaypoint = to;
-   //   
-   //   bool keepGoing = true;
-   //   while(keepGoing)
-   //   {
-   //      WaypointCollection::ChildEdge edge;
-   //      //if this returns false there was an error and we'll quit out
-   //      keepGoing = FindNextEdge(from, nextWaypoint, edge);
-   //      
-   //      if(from == edge.first)
-   //      {
-   //         return mWPGraph.FindWaypoint(edge.second);
-   //      }
-   //      else
-   //      {
-   //         //the new waypoint to path TO is the FROM of the closest equal parent connection
-   //         //between the points,
-   //         nextWaypoint = edge.first;
-   //      }
-   //   }
-
-   //   return NULL;
-   //}
-
-   //void WaypointGraphAStar::ResolvePathAtNextLowerLevel(const WaypointInterface* from, const WaypointInterface* to, WaypointGraph::ConstWaypointArray& result)
-   //{
-   //   const WaypointCollection* wcParent = mWPGraph.FindCommonParent(from->GetID(), to->GetID());
-
-   //   if(wcParent != NULL)
-   //   {
-   //      //we must path at each lower level
-   //      WaypointGraph::ConstWaypointCollectionArray lhs, rhs;         
-
-   //      mWPGraph.GetNodePath(from, wcParent, lhs);
-   //      mWPGraph.GetNodePath(to, wcParent, rhs);
-
-   //      if(!lhs.empty() && !rhs.empty())
-   //      {
-   //         const WaypointCollection* lhsCurNode = lhs.back();
-   //         const WaypointCollection* rhsCurNode = rhs.back();
-
-   //         FindAbstractPath(lhsCurNode, rhsCurNode, result);
-   //      }
-
-   //   }
-
-   //}
-
-   //bool WaypointGraphAStar::FindNextEdge(WaypointID from, WaypointID to, WaypointCollection::ChildEdge& result)
-   //{
-   //   const WaypointInterface* fromWP = mWPGraph.FindWaypoint(from);
-   //   const WaypointInterface* toWP = mWPGraph.FindWaypoint(to);
-
-   //   const WaypointCollection* wcParent = mWPGraph.FindCommonParent(from, to);
-
-   //   if(wcParent != NULL && fromWP != NULL && toWP != NULL)
-   //   {
-   //      WaypointGraph::ConstWaypointCollectionArray lhs, rhs;
-
-   //      mWPGraph.GetNodePath(fromWP, wcParent, lhs);
-   //      mWPGraph.GetNodePath(toWP, wcParent, rhs);
-
-   //      const WaypointInterface* lhsCurNode = fromWP;
-   //      const WaypointInterface* rhsCurNode = toWP;
-
-   //      if(!lhs.empty())
-   //      {
-   //         lhsCurNode = lhs.back();            
-   //      }
-
-   //      if(!rhs.empty())
-   //      {
-   //         rhsCurNode = rhs.back();
-   //      }
-
-   //      WaypointGraph::ConstWaypointArray pathData;
-   //      PathFindResult res = FindAbstractPath(lhsCurNode, rhsCurNode, pathData);
-   //      if(res != NO_PATH && pathData.size() >= 2)
-   //      {
-   //         result.first = pathData[0]->GetID();
-   //         result.second = pathData[1]->GetID();
-   //         return true;
-   //      }
-
-   //   }
-
-   //   return false;
-   //}
 } // namespace dtAI
 

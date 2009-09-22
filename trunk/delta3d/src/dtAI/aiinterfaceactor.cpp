@@ -318,32 +318,18 @@ namespace dtAI
          mWaypointGraph->GetAllEdgesFromWaypoint(pFrom, result);
       }
 
-      bool FindPath(WaypointID pFrom, WaypointID pTo, WaypointArray& result)
+      PathFindResult FindPath(WaypointID pFrom, WaypointID pTo, ConstWaypointArray& result)
       {
-         const WaypointInterface* wayFrom = mWaypointGraph->FindWaypoint(pFrom);
-         const WaypointInterface* wayTo = mWaypointGraph->FindWaypoint(pTo);
+         WaypointGraphAStar astar(*mWaypointGraph); 
 
-         if(wayFrom != NULL && wayTo != NULL)
-         {
-            mAStar.Reset(wayFrom, wayTo);
-            if(mAStar.FindPath() == PATH_FOUND)
-            {
-               //we should be able to do a simple assign here however we have a
-               //const array of waypoints so we have to const cast each one
-               //this code should go away with the refactor
-               WaypointGraphAStar::container_type::iterator iter = mAStar.GetPath().begin();
-               WaypointGraphAStar::container_type::iterator iterEnd = mAStar.GetPath().end();
+         return astar.FindSingleLevelPath(pFrom, pTo, result);
+      }
 
-               for(;iter != iterEnd; ++iter)
-               {
-                  result.push_back(const_cast<dtAI::WaypointInterface*>(*iter));
-               }
+      PathFindResult HierarchicalFindPath(WaypointID pFrom, WaypointID pTo, ConstWaypointArray& result)
+      {
+         WaypointGraphAStar astar(*mWaypointGraph); 
 
-               return true;
-            }
-         }
-
-         return false;
+         return astar.HierarchicalFindPath(pFrom, pTo, result);
       }
 
       void ClearMemory()

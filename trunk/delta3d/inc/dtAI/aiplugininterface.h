@@ -30,6 +30,7 @@
 
 #include <osg/Referenced>
 
+#include <dtAI/pathfinding.h>
 #include <dtAI/export.h>
 #include <dtAI/waypointinterface.h>
 #include <osg/Vec3>
@@ -174,13 +175,24 @@ namespace dtAI
       virtual void GetAllEdgesFromWaypoint(WaypointID pFrom, ConstWaypointArray& result) = 0;
 
       /**
-       * Attempts to find a path between the specified waypoints
+       * Attempts to find a path between the specified waypoints at whichever search level the
+       *   waypoints are currently on, hence it is a flat search.
        * @param from: the waypoint to start pathing from
        * @param to: the waypoint to path to
        * @param result: an empty waypoint vector to fill with the resulting path
        * @return whether a path was found successfully
        */
-      virtual bool FindPath(WaypointID from, WaypointID to, WaypointArray& result) = 0;
+      virtual PathFindResult FindPath(WaypointID from, WaypointID to, ConstWaypointArray& result) = 0;
+
+      /**
+      * Attempts to find a hierarchical path between the specified waypoints by finding their common WaypointCollection
+      *   parent and resolving the path at each step.
+      * @param from: the waypoint to start pathing from
+      * @param to: the waypoint to path to
+      * @param result: an empty waypoint vector to fill with the resulting path
+      * @return whether a path was found successfully
+      */
+      virtual PathFindResult HierarchicalFindPath(WaypointID from, WaypointID to, ConstWaypointArray& result) = 0;
 
       /**
        * Loads the waypoint file into the system
