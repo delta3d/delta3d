@@ -100,7 +100,7 @@ namespace dtAI
 
          PathFindResult HierarchicalFindPath(WaypointID from, WaypointID to, WaypointGraph::ConstWaypointArray& result);
 
-         PathFindResult FindSingleLevelPath(const WaypointInterface* from, const WaypointInterface* to, WaypointGraph::ConstWaypointArray& result);
+         PathFindResult FindSingleLevelPath(WaypointID from, WaypointID to, WaypointGraph::ConstWaypointArray& result);
 
          //const WaypointInterface* FindNext(WaypointID from, WaypointID to);
 
@@ -114,6 +114,7 @@ namespace dtAI
          void AddPaths(const WaypointCollection* from, const WaypointIDArray& wps, NavMesh& nm);
          void FillIDArray(const WaypointGraph::ConstWaypointArray& wps, WaypointIDArray& idArray);
 
+         PathFindResult FindSingleLevelPath(const WaypointInterface* from, const WaypointInterface* to, WaypointGraph::ConstWaypointArray& result);
          PathFindResult HierarchicalFindPath(const WaypointInterface* from, const WaypointInterface* to, WaypointGraph::ConstWaypointCollectionArray& lhs, WaypointGraph::ConstWaypointCollectionArray& rhs, WaypointGraph::ConstWaypointArray& lastPath);
 
          //void ResolvePathAtNextLowerLevel(const WaypointInterface* from, const WaypointInterface* to, WaypointGraph::ConstWaypointArray& result);
