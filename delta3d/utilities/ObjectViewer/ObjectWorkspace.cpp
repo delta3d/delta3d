@@ -337,61 +337,65 @@ void ObjectWorkspace::OnRemoveShaderDef(const std::string& filename)
 ////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::UpdateResourceLists()
 {
-   assert(!mContextPath.empty());
-
-   QDir directory(mContextPath.c_str());
-
-   if (directory.cd(QString(mContextPath.c_str()) + "/shaders"))
+   // If the context path in the registry is not valid, this will not be entered
+   if (dtDAL::Project::GetInstance().IsContextValid())
    {
-      QStringList nameFilters;
-      nameFilters << "*.xml";
+      assert(!mContextPath.empty());
 
-      QFileInfoList fileList = directory.entryInfoList(nameFilters, QDir::Files);
+      QDir directory(mContextPath.c_str());
 
-      // Try to load all definitions
-      while (!fileList.empty())
+      if (directory.cd(QString(mContextPath.c_str()) + "/shaders"))
       {
-         QFileInfo fileInfo = fileList.takeFirst();
-         mShaderDefinitionName = QString("%1/shaders/%2").arg(QString(mContextPath.c_str()), fileInfo.fileName());
-         emit LoadShaderDefinition(mShaderDefinitionName);
+         QStringList nameFilters;
+         nameFilters << "*.xml";
+
+         QFileInfoList fileList = directory.entryInfoList(nameFilters, QDir::Files);
+
+         // Try to load all definitions
+         while (!fileList.empty())
+         {
+            QFileInfo fileInfo = fileList.takeFirst();
+            mShaderDefinitionName = QString("%1/shaders/%2").arg(QString(mContextPath.c_str()), fileInfo.fileName());
+            emit LoadShaderDefinition(mShaderDefinitionName);
+         }
+
+         directory.cdUp();
       }
 
-      directory.cdUp();
-   }
-
-   // Now load all the additional shader files in the shader lists.
-   for (int shaderIndex = 0; shaderIndex < mAdditionalShaderFiles.size(); shaderIndex++)
-   {
-      emit LoadShaderDefinition(mAdditionalShaderFiles.at(shaderIndex).c_str());
-   }
-
-   // Populate the map list.
-   QStringList mapList;
-   std::set<std::string> mapNames = dtDAL::Project::GetInstance().GetMapNames();
-   for (std::set<std::string>::iterator map = mapNames.begin(); map != mapNames.end(); map++)
-   {
-      mapList << map->c_str();
-   }
-
-   for (int mapIndex = 0; mapIndex < mapList.size(); mapIndex++)
-   {
-      mResourceDock->OnNewMap(mapList.at(mapIndex).toStdString());
-   }
-
-   // Populate the object list.
-   QString staticMeshDir = QString(mContextPath.c_str()) + "/staticmeshes";
-
-   if (directory.cd(staticMeshDir))
-   {
-      QStringList nameFilters;
-      nameFilters << "*.ive" << "*.osg";
-
-      QFileInfoList fileList = directory.entryInfoList(nameFilters, QDir::Files);
-
-      while (!fileList.empty())
+      // Now load all the additional shader files in the shader lists.
+      for (int shaderIndex = 0; shaderIndex < mAdditionalShaderFiles.size(); shaderIndex++)
       {
-         QFileInfo fileInfo = fileList.takeFirst();
-         mResourceDock->OnNewGeometry(staticMeshDir.toStdString(), fileInfo.fileName().toStdString());
+         emit LoadShaderDefinition(mAdditionalShaderFiles.at(shaderIndex).c_str());
+      }
+
+      // Populate the map list.
+      QStringList mapList;
+      std::set<std::string> mapNames = dtDAL::Project::GetInstance().GetMapNames();
+      for (std::set<std::string>::iterator map = mapNames.begin(); map != mapNames.end(); map++)
+      {
+         mapList << map->c_str();
+      }
+
+      for (int mapIndex = 0; mapIndex < mapList.size(); mapIndex++)
+      {
+         mResourceDock->OnNewMap(mapList.at(mapIndex).toStdString());
+      }
+
+      // Populate the object list.
+      QString staticMeshDir = QString(mContextPath.c_str()) + "/staticmeshes";
+
+      if (directory.cd(staticMeshDir))
+      {
+         QStringList nameFilters;
+         nameFilters << "*.ive" << "*.osg";
+
+         QFileInfoList fileList = directory.entryInfoList(nameFilters, QDir::Files);
+
+         while (!fileList.empty())
+         {
+            QFileInfo fileInfo = fileList.takeFirst();
+            mResourceDock->OnNewGeometry(staticMeshDir.toStdString(), fileInfo.fileName().toStdString());
+         }
       }
    }
 }
@@ -529,11 +533,17 @@ void ObjectWorkspace::SaveCurrentContextPath()
    {
       dtDAL::Project::GetInstance().SetContext(mContextPath);
 
+      // Update the registry entry based on the current valid context
       settings.setValue("projectContextPath", mContextPath.c_str());
       settings.sync();
    }
    catch (const dtUtil::Exception &e)
    {
+      // The context path is not valid, clear the registry entry
+      mContextPath = "";
+      settings.remove("projectContextPath");
+      settings.sync();
+
       QMessageBox::critical((QWidget *)this, tr("Error"), tr(e.What().c_str()), tr("Ok"));
    }
 }
