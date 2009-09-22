@@ -24,6 +24,7 @@
 
 #include <dtAI/export.h>
 #include <dtAI/primitives.h>
+#include <dtAI/waypointcollection.h>
 
 #include <osg/Referenced>
 
@@ -36,6 +37,7 @@ namespace dtAI
    class WaypointInterface;
    class AIPluginInterface;
    class WaypointCollection;
+   class NavMesh;
 
    class DT_AI_EXPORT WaypointReaderWriter : public osg::Referenced
    {
@@ -51,8 +53,12 @@ namespace dtAI
       protected:
          /*virtual*/ ~WaypointReaderWriter();
 
+         typedef std::vector<const dtAI::WaypointInterface*> ConstWaypointArray;
+
+         void CreateWaypointCollectionEdges(ConstWaypointArray& wps, const NavMesh& nm);
          void Insert(WaypointInterface* wi, int searchLevel);
          void AssignChildren();
+         void AssignChildEdges();
 
          AIPluginInterface* mAIInterface;
 

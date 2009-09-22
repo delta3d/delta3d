@@ -995,7 +995,17 @@ namespace dtAI
          }
 
          parentWp->Insert(wh.mWaypoint.get());
-         wh.mParent = parentWp;
+         const WaypointCollection* childCollection = dynamic_cast<const WaypointCollection*>(wh.mWaypoint.get());
+         if(childCollection != NULL)
+         {
+            //waypoint collections parents are themselves in the waypoint map
+            wh.mParent = const_cast<WaypointCollection*>(childCollection);
+         }
+         else
+         {        
+            wh.mParent = parentWp;
+         }
+
          return true;
       }
 
