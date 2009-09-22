@@ -89,6 +89,7 @@ public slots:
    void OnDelete();
    void OnGoto();
    void SetCameraTransform(const dtCore::Transform& xform);
+   void ResetWaypointResult();
 protected slots:
    void EnableDisable();
    void WaypointsSelected();
@@ -96,7 +97,6 @@ private:
 
    float GetCreateAndGotoDistance() const;
    void ResetTypesTree();
-   void ResetWaypointResult();
 
    Ui::WaypointBrowser* mUi;
    dtAI::AIPluginInterface* mAIPluginInterface;

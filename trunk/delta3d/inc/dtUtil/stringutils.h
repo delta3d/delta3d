@@ -223,9 +223,10 @@ namespace dtUtil
     * @param t the instance of the type to converted.
     */
    template<typename T>
-   std::string ToString(const T& t)
+   std::string ToString(const T& t, int precision = 16)
    {
       std::ostringstream ss;
+      ss.precision(precision);
       ss << t;
       return ss.str();
    }

@@ -39,8 +39,12 @@ int main(int argc, char* argv[])
             &win, SLOT(SetAIPluginInterface(dtAI::AIPluginInterface*)));
    QObject::connect(app.get(), SIGNAL(CameraTransformChanged(const dtCore::Transform&)),
             &win, SLOT(OnCameraTransformChanged(const dtCore::Transform&)));
+   QObject::connect(app.get(), SIGNAL(Error(const std::string&)),
+            &win, SLOT(OnError(const std::string&)));
    QObject::connect(&win, SIGNAL(RequestCameraTransformChange(const dtCore::Transform&)),
             app.get(), SLOT(TransformCamera(const dtCore::Transform&)));
+   QObject::connect(&win, SIGNAL(AddAIInterfaceToMap(const std::string&)),
+            app.get(), SLOT(AddAIInterfaceToMap(const std::string&)));
 
    QObject::connect(&win, SIGNAL(ProjectContextChanged(const std::string&)), app.get(), SLOT(SetProjectContext(const std::string&)));
    QObject::connect(&win, SIGNAL(MapSelected(const std::string&)), app.get(), SLOT(ChangeMap(const std::string&)));

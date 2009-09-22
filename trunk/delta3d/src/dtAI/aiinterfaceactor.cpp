@@ -387,13 +387,21 @@ namespace dtAI
             result = LoadLegacyWaypointFile(filename);
          }
 
+         mLastFileLoaded = filename;
          return result;
       }
 
       bool SaveWaypointFile(const std::string& filename)
       {
          dtCore::RefPtr<WaypointReaderWriter> reader = new WaypointReaderWriter(*this);
-         return reader->SaveWaypointFile(filename);
+         if (filename.empty() && !mLastFileLoaded.empty())
+         {
+            return reader->SaveWaypointFile(mLastFileLoaded);
+         }
+         else
+         {
+            return reader->SaveWaypointFile(filename);
+         }
       }
 
       AIDebugDrawable* GetDebugDrawable()
@@ -520,8 +528,9 @@ namespace dtAI
       WaypointRefArray mWaypoints;
 
       bool mKDTreeDirty;
-      WaypointKDTree* mKDTree;      
+      WaypointKDTree* mKDTree;
 
+      std::string mLastFileLoaded;
    };
 
 
@@ -609,14 +618,16 @@ namespace dtAI
     void AIInterfaceActorProxy::LoadFile(const std::string& fileName)
     {
          mAIInterface->ClearMemory();
-
-         std::string res = dtDAL::Project::GetInstance().GetContext() + '/'+ fileName;
-
-         bool success = mAIInterface->LoadWaypointFile(res);
-
-         if(!success)
+         if (!fileName.empty())
          {
-            LOG_ERROR("Unable to load Waypoint File '" + fileName + "'")
+            std::string res = dtDAL::Project::GetInstance().GetContext() + '/'+ fileName;
+
+            bool success = mAIInterface->LoadWaypointFile(res);
+
+            if(!success)
+            {
+               LOG_ERROR("Unable to load Waypoint File '" + fileName + "'")
+            }
          }
     }
 

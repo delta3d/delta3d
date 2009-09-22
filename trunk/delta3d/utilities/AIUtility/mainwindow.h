@@ -57,6 +57,12 @@ class MainWindow : public QMainWindow
    Q_OBJECT
 
 public:
+   static const std::string ORG_NAME;
+   static const std::string APP_NAME;
+   static const std::string PROJECT_CONTEXT_SETTING;
+   static const std::string CURRENT_MAP_SETTING;
+   static const std::string WINDOW_SETTINGS;
+
    MainWindow(QWidget& centralWidget);
    ~MainWindow();
 
@@ -72,11 +78,14 @@ signals:
    void MapSelected(const std::string& path);
    void CloseMapSelected();
    void RequestCameraTransformChange(const dtCore::Transform& xform);
+   void AddAIInterfaceToMap(const std::string& map);
 
 public slots:
+   void OnError(const std::string& message);
    void ChangeProjectContext();
    void OnOpenMap();
    void OnCloseMap();
+   void OnSave();
    void EnableOrDisableControls();
    void SetAIPluginInterface(dtAI::AIPluginInterface* interface);
    void SelectRenderingOptions();

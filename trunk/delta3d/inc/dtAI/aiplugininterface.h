@@ -203,10 +203,10 @@ namespace dtAI
 
       /**
        * Serializes the waypoint data to file
-       * @param the name of the waypoint file
+       * @param the name of the waypoint file, or empty for save the last opened file.
        * @return whether the waypoint file was saved successfully
        */
-      virtual bool SaveWaypointFile(const std::string& filename) = 0;
+      virtual bool SaveWaypointFile(const std::string& filename = "") = 0;
 
       /**
        *   This method is used for visualizing the internal data in the AI system
