@@ -51,12 +51,14 @@ public:
 signals:
    void AIPluginInterfaceChanged(dtAI::AIPluginInterface* interface);
    void CameraTransformChanged(const dtCore::Transform& xform);
+   void Error(const std::string& message);
 public slots:
    void DoQuit();
    void SetProjectContext(const std::string& path);
    void ChangeMap(const std::string& map);
    void CloseMap();
    void TransformCamera(const dtCore::Transform&);
+   void AddAIInterfaceToMap(const std::string& map);
 protected:
    ///override for preframe
    virtual void PreFrame(const double deltaSimTime);

@@ -27,8 +27,11 @@
 #include "waypointbrowsertreeitem.h"
 #include "objecttypetreewidget.h"
 
+#include "mainwindow.h"
+
 #include <QtGui/QDoubleValidator>
 #include <QtGui/QScrollBar>
+#include <QtCore/QSettings>
 
 ///////////////////////////////////////////////////
 WaypointBrowser::WaypointBrowser(QWidget& parent)
@@ -42,6 +45,7 @@ WaypointBrowser::WaypointBrowser(QWidget& parent)
    connect(mUi->mBtnCreateWaypoint, SIGNAL(pressed()), this, SLOT(OnCreate()));
    connect(mUi->mBtnDeleteWaypoint, SIGNAL(pressed()), this, SLOT(OnDelete()));
    connect(mUi->mBtnGotoWaypoint, SIGNAL(pressed()), this, SLOT(OnGoto()));
+   connect(mUi->mBtnSearchRefresh, SIGNAL(pressed()), this, SLOT(ResetWaypointResult()));
 
 
    connect(mUi->mWaypointList, SIGNAL(itemSelectionChanged()), this, SLOT(WaypointsSelected()));
@@ -190,19 +194,36 @@ void WaypointBrowser::RecurseRestorePreviousExpansion(QTreeWidget& tree, QTreeWi
 ///////////////////////////////////////////////////
 void WaypointBrowser::ResetWaypointResult()
 {
+   QSettings settings(MainWindow::ORG_NAME.c_str(), MainWindow::APP_NAME.c_str());
+//   settings.setValue(CURRENT_MAP_SETTING.c_str(), mCurrentMapName);
+//   settings.sync();
+
    mUi->mWaypointList->clear();
 
    if (mAIPluginInterface != NULL)
    {
+      osg::Vec3 pos;
+      mCameraTransform.GetTranslation(pos);
       dtAI::AIPluginInterface::WaypointArray waypoints;
-      mAIPluginInterface->GetWaypoints(waypoints);
-      dtAI::AIPluginInterface::WaypointArray::iterator i, iend;
-      i = waypoints.begin();
-      iend = waypoints.end();
-      for (; i != iend; ++i)
+      QString text = mUi->mSearchRange->text();
+      bool ok = false;
+      double range = text.toDouble(&ok);
+
+      if (ok && range > 0.0)
       {
-         dtAI::WaypointInterface* wpi = *i;
-         new WaypointBrowserTreeItem(mUi->mWaypointList->invisibleRootItem(), *wpi);
+         if (range > 0.0)
+         {
+            mAIPluginInterface->GetWaypointsAtRadius(pos, float(range), waypoints);
+         }
+
+         dtAI::AIPluginInterface::WaypointArray::iterator i, iend;
+         i = waypoints.begin();
+         iend = waypoints.end();
+         for (; i != iend; ++i)
+         {
+            dtAI::WaypointInterface* wpi = *i;
+            new WaypointBrowserTreeItem(mUi->mWaypointList->invisibleRootItem(), *wpi);
+         }
       }
    }
 }
@@ -316,6 +337,7 @@ void WaypointBrowser::EnableDisable()
    }
    mUi->mBtnCreateWaypoint->setEnabled(selectedItem != NULL && selectedItem->IsLeafNode());
 }
+
 ///////////////////////////////////////////////////
 void WaypointBrowser::WaypointsSelected()
 {
@@ -353,5 +375,4 @@ float WaypointBrowser::GetCreateAndGotoDistance() const
    }
    return distance;
 }
-
 

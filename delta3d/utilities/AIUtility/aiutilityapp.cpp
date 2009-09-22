@@ -128,3 +128,17 @@ void AIUtilityApp::TransformCamera(const dtCore::Transform& xform)
    GetCamera()->SetTransform(xform);
 }
 
+////////////////////////////////////////
+void AIUtilityApp::AddAIInterfaceToMap(const std::string& map)
+{
+   AIComponent* aicomp = NULL;
+   mGM->GetComponentByName(AIComponent::DEFAULT_NAME, aicomp);
+   try
+   {
+      aicomp->AddAIInterfaceToMap(map);
+   }
+   catch (const dtUtil::Exception& ex)
+   {
+      emit Error(ex.ToString());
+   }
+}

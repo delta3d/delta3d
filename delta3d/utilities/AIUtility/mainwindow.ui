@@ -31,6 +31,8 @@
     <addaction name="mActionCloseMap"/>
     <addaction name="mChangeContextAction"/>
     <addaction name="separator"/>
+    <addaction name="mActionSave"/>
+    <addaction name="separator"/>
     <addaction name="mActionQuit"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
@@ -101,6 +103,11 @@
    </property>
    <property name="text">
     <string>Waypoint Browser</string>
+   </property>
+  </action>
+  <action name="mActionSave">
+   <property name="text">
+    <string>&amp;Save</string>
    </property>
   </action>
  </widget>

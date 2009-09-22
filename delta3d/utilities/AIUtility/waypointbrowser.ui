@@ -81,6 +81,47 @@
      </layout>
     </item>
     <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Search Range</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="mSearchRange">
+        <property name="toolTip">
+         <string>Sets the range from the camera to search for waypoints.</string>
+        </property>
+        <property name="text">
+         <string>20.0</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="mBtnSearchRefresh">
+        <property name="text">
+         <string>Refresh</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+    <item>
      <widget class="QTreeWidget" name="mWaypointList">
       <property name="frameShadow">
        <enum>QFrame::Sunken</enum>
@@ -93,6 +134,9 @@
       </property>
       <property name="rootIsDecorated">
        <bool>false</bool>
+      </property>
+      <property name="sortingEnabled">
+       <bool>true</bool>
       </property>
       <property name="animated">
        <bool>true</bool>
@@ -107,16 +151,7 @@
        <number>100</number>
       </attribute>
       <attribute name="headerShowSortIndicator" stdset="0">
-       <bool>false</bool>
-      </attribute>
-      <attribute name="headerDefaultSectionSize">
-       <number>100</number>
-      </attribute>
-      <attribute name="headerVisible">
        <bool>true</bool>
-      </attribute>
-      <attribute name="headerShowSortIndicator" stdset="0">
-       <bool>false</bool>
       </attribute>
       <column>
        <property name="text">
@@ -182,6 +217,22 @@
     <hint type="destinationlabel">
      <x>83</x>
      <y>287</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>mSearchRange</sender>
+   <signal>returnPressed()</signal>
+   <receiver>mBtnSearchRefresh</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>197</x>
+     <y>307</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>338</x>
+     <y>309</y>
     </hint>
    </hints>
   </connection>

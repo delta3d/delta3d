@@ -50,11 +50,11 @@
 
 #include <set>
 
-static const std::string ORG_NAME("delta3d.org");
-static const std::string APP_NAME("AIUtility");
-static const std::string PROJECT_CONTEXT_SETTING("ProjectContext");
-static const std::string CURRENT_MAP_SETTING("CurrentMap");
-static const std::string WINDOW_SETTINGS("WindowSettings");
+const std::string MainWindow::ORG_NAME("delta3d.org");
+const std::string MainWindow::APP_NAME("AIUtility");
+const std::string MainWindow::PROJECT_CONTEXT_SETTING("ProjectContext");
+const std::string MainWindow::CURRENT_MAP_SETTING("CurrentMap");
+const std::string MainWindow::WINDOW_SETTINGS("WindowSettings");
 
 //////////////////////////////////////////////
 MainWindow::MainWindow(QWidget& mainWidget)
@@ -73,6 +73,7 @@ MainWindow::MainWindow(QWidget& mainWidget)
 
    connect(mUi->mActionOpenMap, SIGNAL(triggered()), this, SLOT(OnOpenMap()));
    connect(mUi->mActionCloseMap, SIGNAL(triggered()), this, SLOT(OnCloseMap()));
+   connect(mUi->mActionSave, SIGNAL(triggered()), this, SLOT(OnSave()));
    connect(mUi->mChangeContextAction, SIGNAL(triggered()), this, SLOT(ChangeProjectContext()));
    connect(mUi->mActionRenderingOptions, SIGNAL(triggered()), this, SLOT(SelectRenderingOptions()));
 
@@ -135,6 +136,12 @@ void MainWindow::closeEvent(QCloseEvent* e)
    settings.sync();
 
    QApplication::quit();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnError(const std::string& message)
+{
+   QMessageBox::critical(this, "Error", tr(message.c_str()));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -204,6 +211,19 @@ void MainWindow::OnCloseMap()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnSave()
+{
+   if (mPluginInterface != NULL)
+   {
+      // save the one that was last opened.  It would be nice to have a save as.
+      if (!mPluginInterface->SaveWaypointFile())
+      {
+         QMessageBox::critical(this, "Error Saving", "Saving the waypoint file failed for an unknown reason");
+      }
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void MainWindow::EnableOrDisableControls()
 {
    mUi->mActionOpenMap->setEnabled(!dtDAL::Project::GetInstance().GetContext().empty());
@@ -231,10 +251,25 @@ void MainWindow::SetAIPluginInterface(dtAI::AIPluginInterface* interface)
    dtQt::BasePropertyEditor::PropertyContainerRefPtrVector selected;
    mPropertyEditor.HandlePropertyContainersSelected(selected);
    mWaypointBrowser.SetPluginInterface(interface);
+
+   if (interface == NULL && !mCurrentMapName.isEmpty())
+   {
+      if (QMessageBox::question(this, tr("AI Interface Actor"), tr("No AI interface actor was found in the map that was opened.\n"
+               "Would you like to add the default one and re-save the map?\n"
+               "(No will close the map)"), QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+      {
+         emit AddAIInterfaceToMap(mCurrentMapName.toStdString());
+      }
+      else
+      {
+         // Close the map.
+         ChangeMap(tr(""));
+      }
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool MainWindow::eventFilter(QObject *object, QEvent *event)
+bool MainWindow::eventFilter(QObject* object, QEvent* event)
 {
    bool result = false;
    if (event->type() == QEvent::Close)
@@ -302,7 +337,7 @@ void MainWindow::OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*
    for (size_t i = 0; i < waypoints.size(); ++i)
    {
       dtAI::WaypointInterface* wpi = waypoints[i];
-      //mPluginInterface->CreateWaypointPropertyContainer();
+      propertyContainers.push_back(mPluginInterface->CreateWaypointPropertyContainer(wpi->GetWaypointType(), wpi));
    }
 
    mPropertyEditor.HandlePropertyContainersSelected(propertyContainers);

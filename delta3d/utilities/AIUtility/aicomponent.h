@@ -53,6 +53,8 @@ class AIComponent : public dtGame::GMComponent
 
       dtAI::AIPluginInterface* GetAIPluginInterface();
 
+      void AddAIInterfaceToMap(const std::string& map);
+
    protected:
 
       /// Destructor
