@@ -88,19 +88,14 @@ namespace dtUtil
    /** \brief A functor which tests if a character is whitespace.
      * This "predicate" needed to have 'state', the locale member.
      */
-   class IsSpace : public std::unary_function<char, bool>
+   class DT_UTIL_EXPORT IsSpace : public std::unary_function<char, bool>
    {
-      public:
-         #if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
-            IsSpace(const std::locale& loc=std::locale("english") ) : mLocale(loc) {}
-         #elif defined (__APPLE__)
-            IsSpace(const std::locale& loc=std::locale("C") ) : mLocale(loc) {}
-         #else
-            IsSpace(const std::locale& loc=std::locale("en_US.UTF-8") ) : mLocale(loc) {}
-         #endif
+   public:
+      static const std::string DEFAULT_LOCALE_NAME;
+      IsSpace(const std::locale& loc=std::locale(DEFAULT_LOCALE_NAME.c_str()) ) : mLocale(loc) {}
 
-         const std::locale& GetLocale() const { return mLocale; }
-         bool operator()(char c) const { return std::isspace(c,mLocale); }
+      const std::locale& GetLocale() const { return mLocale; }
+      bool operator()(char c) const { return std::isspace(c,mLocale); }
 
    private:
       std::locale mLocale;
@@ -132,7 +127,7 @@ namespace dtUtil
     * Trims whitespace off the front and end of a string
     * @param toTrim the string to trim.
     */
-   const std::string& Trim(std::string& toTrim);
+   DT_UTIL_EXPORT const std::string& Trim(std::string& toTrim);
 
    /// Call Trim instead
    DEPRECATE_FUNC inline const std::string& trim(std::string& toTrim) { return Trim(toTrim); }
