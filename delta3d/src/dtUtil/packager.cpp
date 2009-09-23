@@ -1,8 +1,8 @@
 #include <dtUtil/packager.h>
 
-#include <dtUtil\fileutils.h>
+#include <dtUtil/fileutils.h>
 
-#include <osgDB\FileNameUtils>
+#include <osgDB/FileNameUtils>
 #include <stdio.h>
 
 
@@ -33,7 +33,7 @@ namespace dtUtil
       ClosePackage();
 
       mPackagePath = filename;
-      fopen_s(&mPackage, std::string(mPackagePath + ".dtpkg").c_str(), "rb");
+      mPackage = fopen(std::string(mPackagePath + ".dtpkg").c_str(), "rb");
       if (!mPackage)
       {
          return false;
@@ -57,7 +57,7 @@ namespace dtUtil
       if (!overwrite)
       {
          FILE* file = NULL;
-         fopen_s(&file, tempFile.c_str(), "rb");
+         file = fopen(tempFile.c_str(), "rb");
          if (file)
          {
             fclose(file);
@@ -67,7 +67,7 @@ namespace dtUtil
 
       // Now create the file.
       FILE* file = NULL;
-      fopen_s(&file, tempFile.c_str(), "wb");
+      file = fopen(tempFile.c_str(), "wb");
       if (!file)
       {
          return false;
@@ -99,7 +99,7 @@ namespace dtUtil
       std::string finalFile = filename + ".dtpkg";
 
       FILE* file = NULL;
-      fopen_s(&file, finalFile.c_str(), "rb");
+      file = fopen(finalFile.c_str(), "rb");
       if (!file)
       {
          return false;
@@ -430,7 +430,7 @@ namespace dtUtil
       }
       else
       {
-         fopen_s(&file, tree->source.c_str(), "rb");
+         file = fopen(tree->source.c_str(), "rb");
          if (!file)
          {
             return false;
@@ -452,7 +452,7 @@ namespace dtUtil
          }
 
          memset(buffer, 0, bufferLength);
-         fread_s(buffer, bufferLength, sizeof(char), bufferLength, file);
+         fread(buffer, bufferLength, sizeof(char), file);
          if (!tree->isFromPack) fclose(file);
 
          // Write the header for this file.
@@ -491,7 +491,7 @@ namespace dtUtil
          }
 
          memset(buffer, 0, bufferLength);
-         fread_s(buffer, bufferLength, sizeof(char), bufferLength, packFile);
+         fread(buffer, bufferLength, sizeof(char), packFile);
       }
 
       if (mOpeningPackage)
@@ -518,7 +518,7 @@ namespace dtUtil
       else
       {
          FILE* file = NULL;
-         fopen_s(&file, path.c_str(), "wb");
+         file = fopen(path.c_str(), "wb");
          if (!file)
          {
             return false;
