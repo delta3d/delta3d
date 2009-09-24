@@ -56,10 +56,10 @@ namespace dtUtil
       {
          //std::cout << "Creating logger" << std::endl;
 
-         if (!logFile.is_open())
-         {
-            OpenFile();
-         }
+         //if (!logFile.is_open())
+         //{
+         //   OpenFile();
+         //}
          //std::cout.flush();
       }
 
@@ -237,9 +237,6 @@ namespace dtUtil
       if (msgType < mLevel)
          return;
 
-      if (!manager->logFile.is_open())
-         return;
-
       struct tm *t;
       time_t cTime;
       std::string color;
@@ -275,6 +272,16 @@ namespace dtUtil
 
       if (dtUtil::Bits::Has(mImpl->mOutputStreamBit, Log::TO_FILE))
       {
+         if (!manager->logFile.is_open())
+         {
+            manager->OpenFile();
+
+            if (!manager->logFile.is_open())
+            {
+               return;
+            }
+         }
+
          static const std::string htmlNewline ( "<br>\n" );
          std::string htmlMsg ( msg );
          for ( size_t lineEnd = htmlMsg.find( '\n' );
