@@ -22,48 +22,30 @@
 #define AIUTILITY_AI_COMPONENT
 
 #include <dtCore/refptr.h>
-#include <dtGame/gmcomponent.h>
-#include <dtAI/aiinterfaceactor.h>
+#include <dtAI/baseaicomponent.h>
 
 namespace dtAI
 {
    class AIPluginInterface;
 }
 
-class AIComponent : public dtGame::GMComponent
+class AIComponent : public dtAI::BaseAIComponent
 {
-   public:
+public:
+   static const std::string DEFAULT_NAME;
 
-      static const std::string DEFAULT_NAME;
+   /// Constructor
+   AIComponent(const std::string& name = DEFAULT_NAME);
 
-      /// Constructor
-      AIComponent(const std::string& name = DEFAULT_NAME);
+   /**
+    * Handles incoming messages
+    */
+   /*virtual*/ void ProcessMessage(const dtGame::Message& message);
 
-      /**
-       * Handles incoming messages
-       */
-      virtual void ProcessMessage(const dtGame::Message& message);
+   void AddAIInterfaceToMap(const std::string& map);
 
-      /**
-       * Called when this component is added to the game manager
-       */
-      virtual void OnAddedToGM();
-
-      virtual void OnRemovedFromGM();
-
-      dtAI::AIPluginInterface* GetAIPluginInterface();
-
-      void AddAIInterfaceToMap(const std::string& map);
-
-   protected:
-
-      /// Destructor
-      virtual ~AIComponent();
-
-      virtual void CleanUp();
-
-   private:
-      dtCore::RefPtr<dtAI::AIInterfaceActorProxy> mAIInterfaceProxy;
+protected:
+   /*virtual*/ void CleanUp();
 };
 
 #endif //AIUTILITY_AI_COMPONENT
