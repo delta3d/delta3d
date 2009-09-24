@@ -32,16 +32,16 @@ const std::string LinkedPointsActorToolPlugin::MODE_ICON   = ":/icons/mode.png";
 ////////////////////////////////////////////////////////////////////////////////
 LinkedPointsActorToolPlugin::LinkedPointsActorToolPlugin(MainWindow* mw)
    : mMainWindow(mw)
+   , mIsDocked(false)
+   , mIsActive(false)
+   , mShowingPlacementGhost(false)
+   , mIsInActorMode(false)
+   , mIsInCameraMode(false)
+   , mCurrentPoint(0)
+   , mCanCopy(false)
    , mActiveProxy(NULL)
    , mActiveActor(NULL)
    , mPointsProp(NULL)
-   , mIsDocked(false)
-   , mIsActive(false)
-   , mIsInActorMode(false)
-   , mIsInCameraMode(false)
-   , mShowingPlacementGhost(false)
-   , mCurrentPoint(0)
-   , mCanCopy(false)
 {
    // apply layout made with QT designer
    Ui_LinkedPointsActorTool ui;

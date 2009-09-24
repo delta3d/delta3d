@@ -114,7 +114,6 @@ bool MapExporterPlugin::AddResourcesFromProperty(const dtDAL::ActorProperty* pro
       {
          // Since this is a resource property, extract the resource from it and add
          // it to the package.
-         dtDAL::DataType& dataType = resourceProp->GetDataType();
          dtDAL::ResourceDescriptor* descriptor = resourceProp->GetValue();
 
          if (descriptor && !descriptor->GetResourceIdentifier().empty())
