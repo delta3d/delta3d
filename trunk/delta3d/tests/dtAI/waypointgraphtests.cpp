@@ -27,6 +27,7 @@
 #include <dtAI/waypointcollection.h>
 #include <dtAI/waypointgraph.h>
 #include <dtAI/waypointgraphbuilder.h>
+#include <dtAI/waypointtypes.h>
 #include <dtAI/waypointgraphastar.h>
 #include <dtAI/aiplugininterface.h>
 #include <dtAI/aiinterfaceactor.h>
@@ -47,6 +48,7 @@ namespace dtAI
       CPPUNIT_TEST(TestAddRemoveEdge);
       CPPUNIT_TEST(TestBuildGraph);
       CPPUNIT_TEST(TestPathfinding);
+      CPPUNIT_TEST(TestCollections);
       CPPUNIT_TEST(TestCollectionBounds);
       CPPUNIT_TEST(TestLoadSave);
       CPPUNIT_TEST(TestClearMemory);
@@ -62,6 +64,7 @@ namespace dtAI
       void TestAddRemoveEdge();
       void TestBuildGraph();
       void TestPathfinding();
+      void TestCollections();
       void TestClearMemory();
       void TestLoadSave();
       void TestCollectionBounds();
@@ -481,8 +484,6 @@ void WaypointGraphTests::TestCollectionBounds()
    //CPPUNIT_ASSERT(dtUtil::Equivalent(wc->GetRadius(),dist));
 }
 
-
-
 void WaypointGraphTests::TestPathfinding()
 {
    CreateWaypoints();
@@ -507,6 +508,93 @@ void WaypointGraphTests::TestPathfinding()
       }
    }
 
+}
+
+void WaypointGraphTests::TestCollections()
+{
+   mAIInterface->ClearMemory();
+
+   //lets create two sets of three waypoints with a bridge between them
+   
+   WaypointInterface* wp01_grp01 = mAIInterface->CreateWaypoint(osg::Vec3(-1.0f, 0.0f, 0.0f), *WaypointTypes::DEFAULT_WAYPOINT);
+   WaypointInterface* wp02_grp01 = mAIInterface->CreateWaypoint(osg::Vec3(-2.0f, 0.0f, 0.0f), *WaypointTypes::DEFAULT_WAYPOINT);
+   WaypointInterface* wp03_grp01 = mAIInterface->CreateWaypoint(osg::Vec3(-1.5f, 0.5f, 0.0f), *WaypointTypes::DEFAULT_WAYPOINT);   
+
+   mAIInterface->AddEdge(wp01_grp01->GetID(), wp02_grp01->GetID());
+   mAIInterface->AddEdge(wp02_grp01->GetID(), wp01_grp01->GetID());
+
+   mAIInterface->AddEdge(wp01_grp01->GetID(), wp03_grp01->GetID());
+   mAIInterface->AddEdge(wp03_grp01->GetID(), wp01_grp01->GetID());
+
+   mAIInterface->AddEdge(wp02_grp01->GetID(), wp03_grp01->GetID());
+   mAIInterface->AddEdge(wp03_grp01->GetID(), wp02_grp01->GetID());
+
+   //add the first set of waypoints to one collection
+   dtCore::RefPtr<WaypointCollection> wc_grp01 = new WaypointCollection();
+   mAIInterface->Assign(wp01_grp01->GetID(), wc_grp01.get());
+   mAIInterface->Assign(wp02_grp01->GetID(), wc_grp01.get());
+   mAIInterface->Assign(wp03_grp01->GetID(), wc_grp01.get());
+
+
+   //now lets create a second group of waypoints
+   WaypointInterface* wp01_grp02 = mAIInterface->CreateWaypoint(osg::Vec3(1.0f, 0.0f, 0.0f), *WaypointTypes::DEFAULT_WAYPOINT);
+   WaypointInterface* wp02_grp02 = mAIInterface->CreateWaypoint(osg::Vec3(2.0f, 0.0f, 0.0f), *WaypointTypes::DEFAULT_WAYPOINT);
+   WaypointInterface* wp03_grp02 = mAIInterface->CreateWaypoint(osg::Vec3(1.5f, 0.5f, 0.0f), *WaypointTypes::DEFAULT_WAYPOINT);
+
+   mAIInterface->AddEdge(wp01_grp02->GetID(), wp02_grp02->GetID());
+   mAIInterface->AddEdge(wp02_grp02->GetID(), wp01_grp02->GetID());
+
+   mAIInterface->AddEdge(wp01_grp02->GetID(), wp03_grp02->GetID());
+   mAIInterface->AddEdge(wp03_grp02->GetID(), wp01_grp02->GetID());
+
+   mAIInterface->AddEdge(wp02_grp02->GetID(), wp03_grp02->GetID());
+   mAIInterface->AddEdge(wp03_grp02->GetID(), wp02_grp02->GetID());
+   
+   //and add them to a second waypoint collection
+   dtCore::RefPtr<WaypointCollection> wc_grp02 = new WaypointCollection();
+   mAIInterface->Assign(wp01_grp02->GetID(), wc_grp02.get());
+   mAIInterface->Assign(wp02_grp02->GetID(), wc_grp02.get());
+   mAIInterface->Assign(wp03_grp02->GetID(), wc_grp02.get());
+
+
+   //now lets create a bridge between them, or point that is accessible from both groups
+   WaypointInterface* wpBridge = mAIInterface->CreateWaypoint(osg::Vec3(0.0f, 0.0f, 0.0f), *WaypointTypes::DEFAULT_WAYPOINT);
+
+   mAIInterface->AddEdge(wpBridge->GetID(), wp01_grp01->GetID());
+   mAIInterface->AddEdge(wp01_grp01->GetID(), wpBridge->GetID());
+
+   mAIInterface->AddEdge(wpBridge->GetID(), wp01_grp02->GetID());
+   mAIInterface->AddEdge(wp01_grp02->GetID(), wpBridge->GetID());
+
+   //technically the bridge could be in either collection, or a new one
+   //lets make it a new one for fun
+   dtCore::RefPtr<WaypointCollection> wc_bridge = new WaypointCollection();
+   mAIInterface->Assign(wpBridge->GetID(), wc_bridge.get());
+
+   //now we currently have three groups of waypoints, but until they have a common parent
+   //the HierarchicalFindPath() will not work on them, though the standard FindPath() will (on the AIPluginInterface)
+   //since it just operates at the lowest level, so lets make a parent
+   dtCore::RefPtr<WaypointCollection> rootNode = new WaypointCollection();
+   mAIInterface->Assign(wc_grp01->GetID(), rootNode.get());
+   mAIInterface->Assign(wc_grp02->GetID(), rootNode.get());
+   mAIInterface->Assign(wc_bridge->GetID(), rootNode.get());
+
+   //and since we created our own tree (I'll show you how to have it done automatically below)
+   //we must have the waypoint graph create all absract edges necessary for pathing   
+   mAIInterface->GetWaypointGraph().CreateAbstractEdges();
+
+   //now we have a small hierarchical waypoint representation
+   //how do we search on it- well thats the easy part :)
+   WaypointGraph::ConstWaypointArray path;
+   PathFindResult result = mAIInterface->HierarchicalFindPath(wp02_grp01->GetID(), wp02_grp02->GetID(), path);
+   CPPUNIT_ASSERT_EQUAL(result, PATH_FOUND);
+
+   //or what if we want to find a higher level path, thats quite simple as well
+   //the standard FindPath() will operate at whichever level of the tree that the waypoints
+   //its given are on, as long as they are both on the same search level.
+   path.clear();
+   result = mAIInterface->FindPath(wc_grp01->GetID(), wc_grp02->GetID(), path);
+   CPPUNIT_ASSERT_EQUAL(result, PATH_FOUND);
 }
 
 void WaypointGraphTests::TestLoadSave()

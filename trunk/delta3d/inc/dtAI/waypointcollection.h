@@ -102,9 +102,10 @@ namespace dtAI
       const WaypointCollection* GetParent() const;
 
       void Recalculate();
-
+      
       void AddEdge(WaypointID sibling, const ChildEdge& edge);
       bool RemoveEdge(WaypointID sibling, const ChildEdge& edge);
+      bool ContainsEdge(WaypointID sibling, const ChildEdge& edge);
       void GetEdges(WaypointID sibling, ChildEdgeArray& result) const;
       void ClearEdges();
 

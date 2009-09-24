@@ -64,7 +64,6 @@ namespace dtAI
       void FindCanidates(const WaypointInterface* wp, const NavMesh& nm, ConstWaypointArray& result);
 
    private:
-      virtual void CreateSearchLevelNavMesh(WaypointGraph::WaypointCollectionArray& wps, const NavMesh& nm);
       virtual void CreateAll2Cliques(ConstWaypointArray& nodesToBuild, ConstWaypointArray& unassignedNodes, const NavMesh& nm, BuilderSearchLevel* wl);
       virtual void CreateAll4Cliques(ConstWaypointArray& nodesToBuild, ConstWaypointArray& unassignedNodes, const NavMesh& nm, BuilderSearchLevel* wl);
 
