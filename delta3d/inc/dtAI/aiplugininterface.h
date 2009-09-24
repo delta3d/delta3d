@@ -52,7 +52,7 @@ namespace dtAI
       typedef std::vector<WaypointInterface*> WaypointArray;
       typedef std::vector<const WaypointInterface*> ConstWaypointArray;
 
-      typedef dtUtil::ObjectFactory< dtCore::RefPtr<const dtDAL::ObjectType>, WaypointInterface> WaypointFactory;
+      typedef dtUtil::ObjectFactory< dtCore::RefPtr<const dtDAL::ObjectType>, WaypointInterface > WaypointFactory;
 
    public: //interface declaration
       AIPluginInterface();
@@ -185,13 +185,13 @@ namespace dtAI
       virtual PathFindResult FindPath(WaypointID from, WaypointID to, ConstWaypointArray& result) = 0;
 
       /**
-      * Attempts to find a hierarchical path between the specified waypoints by finding their common WaypointCollection
-      *   parent and resolving the path at each step.
-      * @param from: the waypoint to start pathing from
-      * @param to: the waypoint to path to
-      * @param result: an empty waypoint vector to fill with the resulting path
-      * @return whether a path was found successfully
-      */
+       * Attempts to find a hierarchical path between the specified waypoints by finding their common WaypointCollection
+       *   parent and resolving the path at each step.
+       * @param from: the waypoint to start pathing from
+       * @param to: the waypoint to path to
+       * @param result: an empty waypoint vector to fill with the resulting path
+       * @return whether a path was found successfully
+       */
       virtual PathFindResult HierarchicalFindPath(WaypointID from, WaypointID to, ConstWaypointArray& result) = 0;
 
       /**

@@ -57,8 +57,8 @@ public:
 signals:
    void WaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>&);
    void RequestCameraTransformChange(const dtCore::Transform& xform);
-protected:
 
+protected:
    /**
     * Looks at the current actor tree and tries to mark which actor types are
     * currently expanded.  This is then used to re-expand them with RestorePreviousExpansion()

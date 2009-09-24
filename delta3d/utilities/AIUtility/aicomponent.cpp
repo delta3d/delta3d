@@ -44,84 +44,34 @@ const std::string AIComponent::DEFAULT_NAME("AIComponent");
 
 /////////////////////////////////////////////////////////////
 AIComponent::AIComponent(const std::string& name)
-   : dtGame::GMComponent(name)
+   : dtAI::BaseAIComponent(name)
 {
 
-}
-
-/////////////////////////////////////////////////////////////
-AIComponent::~AIComponent()
-{
-
-}
-
-/////////////////////////////////////////////////////////////
-void AIComponent::OnAddedToGM()
-{
-
-}
-
-/////////////////////////////////////////////////////////////
-void AIComponent::OnRemovedFromGM()
-{
-   CleanUp();
 }
 
 /////////////////////////////////////////////////////////////
 void AIComponent::CleanUp()
 {
-   if (mAIInterfaceProxy.valid())
-   {
-      GetGameManager()->GetScene().RemoveDrawable(GetAIPluginInterface()->GetDebugDrawable());
-      mAIInterfaceProxy = NULL;
-      AIUtilityApp& aiApp = dynamic_cast<AIUtilityApp&>(GetGameManager()->GetApplication());
-      aiApp.SetAIPluginInterface(NULL);
-   }
+   dtAI::BaseAIComponent::CleanUp();
+   AIUtilityApp& aiApp = dynamic_cast<AIUtilityApp&>(GetGameManager()->GetApplication());
+   aiApp.SetAIPluginInterface(NULL);
 }
-
-/////////////////////////////////////////////////////////////
-dtAI::AIPluginInterface* AIComponent::GetAIPluginInterface()
-{
-   if (mAIInterfaceProxy.valid())
-   {
-      return mAIInterfaceProxy->GetAIInterface();
-   }
-   return NULL;
-}
-
 
 /////////////////////////////////////////////////////////////
 void AIComponent::ProcessMessage(const dtGame::Message& message)
 {
-   if (message.GetMessageType() == dtGame::MessageType::TICK_LOCAL)
+   dtAI::BaseAIComponent::ProcessMessage(message);
+
+   if (message.GetMessageType() == dtGame::MessageType::INFO_MAP_LOADED)
    {
-   }
-   else if (message.GetMessageType() == dtGame::MessageType::INFO_GAME_EVENT)
-   {
-   }
-   else if (message.GetMessageType() == dtGame::MessageType::INFO_MAP_LOADED)
-   {
-      //when the map is loaded we must look for an instance of an AIInterfaceActor and add it's debug drawable
-      //to the scene, this will make the waypoints visible in the map
-      dtAI::AIInterfaceActorProxy* aiInterface = NULL;
-      GetGameManager()->FindActorByType(*dtAI::AIActorRegistry::AI_INTERFACE_ACTOR_TYPE, aiInterface);
-      mAIInterfaceProxy = aiInterface;
+      if (GetAIPluginInterface())
+      {
+         GetGameManager()->GetScene().AddDrawable(GetAIPluginInterface()->GetDebugDrawable());
+      }
 
       AIUtilityApp& aiApp = dynamic_cast<AIUtilityApp&>(GetGameManager()->GetApplication());
 
-      if (mAIInterfaceProxy.valid())
-      {
-         GetGameManager()->GetScene().AddDrawable(GetAIPluginInterface()->GetDebugDrawable());
-         aiApp.SetAIPluginInterface(mAIInterfaceProxy->GetAIInterface());
-      }
-      else
-      {
-         aiApp.SetAIPluginInterface(NULL);
-      }
-   }
-   else if (message.GetMessageType() == dtGame::MessageType::INFO_MAP_UNLOADED)
-   {
-      CleanUp();
+      aiApp.SetAIPluginInterface(GetAIPluginInterface());
    }
 }
 
@@ -171,10 +121,10 @@ void AIComponent::AddAIInterfaceToMap(const std::string& map)
    rap->SetValue(&rd);
    dtDAL::Project::GetInstance().SaveMap(m);
 
-   mAIInterfaceProxy = aiActor;
+   SetAIPluginInterfaceProxy(aiActor);
    AIUtilityApp& aiApp = dynamic_cast<AIUtilityApp&>(GetGameManager()->GetApplication());
    GetGameManager()->GetScene().AddDrawable(GetAIPluginInterface()->GetDebugDrawable());
-   aiApp.SetAIPluginInterface(mAIInterfaceProxy->GetAIInterface());
+   aiApp.SetAIPluginInterface(GetAIPluginInterface());
 }
 
 

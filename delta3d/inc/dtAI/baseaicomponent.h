@@ -45,13 +45,17 @@ namespace dtAI
       /*virtual*/ void ProcessMessage(const dtGame::Message& message);
 
       dtAI::AIPluginInterface* GetAIPluginInterface();
+      const dtAI::AIPluginInterface* GetAIPluginInterface() const;
 
       /*virtual*/ void OnAddedToGM();
 
       /*virtual*/ void OnRemovedFromGM();
 
    protected:
+      /// Destructor
+      virtual ~BaseAIComponent();
       virtual void CleanUp();
+      void SetAIPluginInterfaceProxy(AIInterfaceActorProxy* proxy) { mAIInterfaceProxy = proxy; }
 
    private:
       void TickLocal(float dt);
