@@ -43,7 +43,6 @@ class Viewer : public QObject, public dtABC::Application
 
 public:
    Viewer();
-   ~Viewer();
 
    virtual void Config();
 
@@ -99,6 +98,8 @@ signals:
    void BlendUpdate(const std::vector<float>& weightList);
 
 protected:
+   virtual ~Viewer();
+
    virtual void PostFrame(const double deltaFrameTime);
 
 private:
