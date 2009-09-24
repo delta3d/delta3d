@@ -87,7 +87,7 @@ namespace dtUtil
    const double MagneticNorthLatitude  = 82.116;
    const double MagneticNorthLongitude = 114.0666;
 
-   struct UTMParameters
+   struct DT_UTIL_EXPORT UTMParameters
    {
       UTMParameters();
 
