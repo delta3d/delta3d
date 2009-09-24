@@ -4,7 +4,7 @@
 
 #include <osgDB/FileNameUtils>
 #include <stdio.h>
-
+#include <string.h>
 
 namespace dtUtil
 {
