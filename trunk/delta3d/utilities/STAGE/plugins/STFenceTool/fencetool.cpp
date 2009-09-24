@@ -30,9 +30,9 @@ const std::string FenceToolPlugin::PLUGIN_NAME = "Fence Tool";
 ////////////////////////////////////////////////////////////////////////////////
 FenceToolPlugin::FenceToolPlugin(MainWindow* mw)
    : mMainWindow(mw)
-   , mModeButton(NULL)
    , mActiveProxy(NULL)
    , mActiveActor(NULL)
+   , mModeButton(NULL)
 {
    // Find the mode button for the Linked Points Actor Tool Plugin.
    mModeButton = mMainWindow->FindExclusiveToolMode("Linked Points Actor Tool");
@@ -134,6 +134,10 @@ void FenceToolPlugin::onSelectActors(Viewport* vp, QMouseEvent* e, bool* overrid
             case dtActors::FenceActor::DRAWABLE_TYPE_SEGMENT:
                mActiveActor->IncrementSegmentMesh(pointIndex, subIndex);
                break;
+            
+            case dtActors::FenceActor::DRAWABLE_TYPE_NONE:
+            default:
+            break;
             }
          }
 

@@ -31,8 +31,8 @@ const std::string RandomActorGeneratorPlugin::PLUGIN_NAME = "Random Actor Genera
 
 ////////////////////////////////////////////////////////////////////////////////
 RandomActorGeneratorPlugin::RandomActorGeneratorPlugin(dtEditQt::MainWindow* mw)
-   : mMainWindow(mw)
-   , mUI()
+   : mUI()
+   , mMainWindow(mw)
 {
    // apply layout made with QT designer
    mUI.setupUi(this);

@@ -30,9 +30,9 @@ const std::string BuildingToolPlugin::PLUGIN_NAME = "Building Tool";
 ////////////////////////////////////////////////////////////////////////////////
 BuildingToolPlugin::BuildingToolPlugin(MainWindow* mw)
    : mMainWindow(mw)
-   , mModeButton(NULL)
    , mActiveProxy(NULL)
    , mActiveActor(NULL)
+   , mModeButton(NULL)
 {
    // Find the mode button for the Linked Points Actor Tool Plugin.
    mModeButton = mMainWindow->FindExclusiveToolMode("Linked Points Actor Tool");
