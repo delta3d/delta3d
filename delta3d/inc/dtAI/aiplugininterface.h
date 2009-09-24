@@ -46,7 +46,7 @@ namespace dtAI
    class WaypointCollection;
    class WaypointGraph;
 
-   class DT_AI_EXPORT AIPluginInterface: public osg::Referenced
+   class DT_AI_EXPORT AIPluginInterface : public osg::Referenced
    {
    public:
       typedef std::vector<WaypointInterface*> WaypointArray;
@@ -132,6 +132,7 @@ namespace dtAI
        * @return the waypoint found, or NULL if no waypoint exists with that Id
        */
       virtual WaypointInterface* GetWaypointById(WaypointID id) = 0;
+      virtual const WaypointInterface* GetWaypointById(WaypointID id) const = 0;
 
       /**
        * Returns a waypoint from the specific waypoint Id

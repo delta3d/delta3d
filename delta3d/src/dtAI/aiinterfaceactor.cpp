@@ -100,7 +100,6 @@ namespace dtAI
       value_type d[3];      
    };
 
-
    inline float KDHolderIndexFunc(KDHolder t, size_t k ) { return t[k]; }
 
    typedef std::pointer_to_binary_function<KDHolder, size_t, float> tree_search_func;
@@ -109,9 +108,7 @@ namespace dtAI
 
    class DeltaAIInterface: public AIPluginInterface
    {
-
    public:
-
       DeltaAIInterface()
          //: mWaypointManager(WaypointManager::GetInstance())         
          : mWaypointGraph(new WaypointGraph())
@@ -268,6 +265,12 @@ namespace dtAI
       }
 
       WaypointInterface* GetWaypointById(WaypointID id)
+      {
+         //todo- fix this const cast
+         return const_cast<WaypointInterface*>(mWaypointGraph->FindWaypoint(id));
+      }
+
+      const WaypointInterface* GetWaypointById(WaypointID id) const
       {
          //todo- fix this const cast
          return const_cast<WaypointInterface*>(mWaypointGraph->FindWaypoint(id));
