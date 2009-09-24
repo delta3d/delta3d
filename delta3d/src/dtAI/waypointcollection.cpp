@@ -310,7 +310,10 @@ namespace dtAI
    /////////////////////////////////////////////////////////////////////////////
    void WaypointCollection::AddEdge(WaypointID sibling, const ChildEdge& edge)
    {
-      mChildEdges.insert(std::make_pair(sibling, edge));
+      if(!ContainsEdge(sibling, edge))
+      {
+         mChildEdges.insert(std::make_pair(sibling, edge));
+      }
    }
 
 
@@ -355,4 +358,19 @@ namespace dtAI
       WaypointInterface::CreateProperties(container);
    }
 
+   /////////////////////////////////////////////////////////////////////////////
+   bool WaypointCollection::ContainsEdge(WaypointID sibling, const ChildEdge& edge)
+   {
+      ChildEdgeMap::const_iterator iter = mChildEdges.lower_bound(sibling);
+      ChildEdgeMap::const_iterator iterEnd = mChildEdges.upper_bound(sibling);
+      for (;iter != iterEnd; ++iter)
+      {
+         if((*iter).second == edge)
+         {
+            return true;
+         }
+      }
+
+      return false;
+   }
 } // namespace dtAI

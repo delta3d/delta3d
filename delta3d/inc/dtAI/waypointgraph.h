@@ -87,6 +87,18 @@ namespace dtAI
       bool CreateSearchLevel(WaypointGraphBuilder* builder, unsigned level);
 
       /**
+      *  Use this function to generate the higher level edges from the lower level edges.	
+      *  This is only needed if you created your own WaypointCollections and Assigned them manually.
+      */
+      void CreateAbstractEdges();
+
+      /**
+      *  Use this to only refresh a single search level.	
+      *  Level must be from 1 to NumSearchLevels - 1.
+      */
+      void CreateAbstractEdgesAtLevel(unsigned level);
+
+      /**
        * Inserting waypoints into the tree structure.
        * To move a waypoint simply re-add it, this can be expensive
        * so if you have a large tree do not do this every frame.
@@ -96,6 +108,9 @@ namespace dtAI
       /**
        *  Takes the WaypointID of a waypoint already added, and assigns it
        *     to a parent waypoint which may or may not be already inserted.
+       * 
+       *   Unless you know specifically which level to insert the WaypointCollection you
+       *     must use this function to insert it.  It will auto insert at the childWp level + 1.
        *
        *  @return returns false if childWP was not found, or if parentWp has already been added
        *             at the wrong search level

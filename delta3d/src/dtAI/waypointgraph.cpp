@@ -1011,4 +1011,77 @@ namespace dtAI
 
       return false;
    }
+
+   void WaypointGraph::CreateAbstractEdges()
+   {
+      unsigned numLevels = GetNumSearchLevels();
+
+      //we skip the first level since these are user generated
+      for(unsigned level = 1; level < numLevels; ++level)
+      {
+         CreateAbstractEdgesAtLevel(level);
+      }
+   }
+
+   void WaypointGraph::CreateAbstractEdgesAtLevel(unsigned level)
+   {
+      if(level > 0 && level < GetNumSearchLevels())
+      {
+         SearchLevel* slLast = GetSearchLevel(level - 1);
+         SearchLevel* slCurrent = GetSearchLevel(level);
+
+         ConstWaypointArray& wps = slCurrent->mNodes;
+         const NavMesh& nm = *slLast->mNavMesh;
+
+         ConstWaypointArray::iterator iter = wps.begin();
+         ConstWaypointArray::iterator iterEnd = wps.end();
+
+         for(; iter != iterEnd; ++iter)
+         {
+            WaypointCollection* wc = FindCollection((*iter)->GetID());
+
+            wc->ClearEdges();
+
+            WaypointCollection::WaypointTree::const_child_iterator children = wc->begin_child();
+            WaypointCollection::WaypointTree::const_child_iterator childrenEnd = wc->end_child();
+
+            for(; children != childrenEnd; ++children)
+            {
+               const WaypointInterface* childPtr = children->value;
+
+               NavMesh::NavMeshContainer::const_iterator nm_iter = nm.begin(childPtr);
+               NavMesh::NavMeshContainer::const_iterator nm_iterEnd = nm.end(childPtr);
+
+               //the search level only contains edges relevant to the nodes in it
+               for(;nm_iter != nm_iterEnd; ++nm_iter)
+               {
+                  WaypointCollection* wpToParent = GetParent((*nm_iter).second->GetWaypointTo()->GetID());
+
+                  if(wpToParent != NULL)
+                  {
+                     if(wpToParent->GetID() != wc->GetID())
+                     {
+                        //this effectively adds an edge from me to all my children's destination waypoint parents                  
+                        AddEdge(wc->GetID(), wpToParent->GetID());
+                     }
+
+                     if(childPtr->GetID() != (*nm_iter).second->GetWaypointTo()->GetID()) //wpParent may be ourself, this is ok because it adds our own child paths
+                     {
+                        //this give the waypoint collection immediate child edges to all siblings
+                        wc->AddEdge(wpToParent->GetID(), WaypointCollection::ChildEdge(childPtr->GetID(), (*nm_iter).second->GetWaypointTo()->GetID()));
+                     }
+                  }
+                  else
+                  {
+                     LOG_ERROR("Error while creating abstract edges for level '" + dtUtil::ToString(level) + 
+                                 "', no parent found for waypoint '" + (*nm_iter).second->GetWaypointTo()->ToString() + ".");
+                  }
+               }
+
+            }
+
+         }
+      }
+   }
+
 } // namespace dtAI

@@ -167,7 +167,31 @@ namespace dtAI
 
       bool Assign(WaypointID childWp, WaypointCollection* parentWp)
       {
-         return mWaypointGraph->Assign(childWp, parentWp);
+         //only the parent can be added through this function
+         bool containsWp = GetWaypointById(parentWp->GetID()) != NULL;
+
+         if(mWaypointGraph->Assign(childWp, parentWp))
+         {
+            if(!containsWp)
+            {
+               mWaypoints.push_back(parentWp);
+
+               //if we have created a drawable then we must add and remove to it
+               if(mDrawable.valid())
+               {
+                  mDrawable->InsertWaypoint(*parentWp);
+               }
+
+               KDHolder node(parentWp->GetPosition(), parentWp->GetID());
+               mKDTree->insert(node);
+
+               mKDTreeDirty = true;
+            }
+
+            return true;
+         }
+
+         return false;
       }
 
       bool MoveWaypoint(WaypointInterface* wi, const osg::Vec3& newPos)
