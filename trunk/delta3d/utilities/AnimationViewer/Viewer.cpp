@@ -64,9 +64,10 @@ using namespace dtCore;
 using namespace dtAnim;
 
 ////////////////////////////////////////////////////////////////////////////////
-Viewer::Viewer()
-   : mCalDatabase(&Cal3DDatabase::GetInstance())
-   , mPoseMeshes(NULL)
+Viewer::Viewer() : 
+ dtABC::Application()
+ , mCalDatabase(&Cal3DDatabase::GetInstance())
+ , mPoseMeshes(NULL)
 {
    dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_DEBUG);
 }
