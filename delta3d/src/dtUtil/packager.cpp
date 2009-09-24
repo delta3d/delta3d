@@ -17,7 +17,6 @@ namespace dtUtil
       mTree.name = "";
       mTree.source = "";
       mTree.isFromPack = false;
-      mTree.seekPos = 0L;
       mTree.parent = NULL;
    }
 
@@ -33,7 +32,7 @@ namespace dtUtil
       ClosePackage();
 
       mPackagePath = filename;
-      mPackage = fopen(std::string(mPackagePath + ".dtpkg").c_str(), "rb");
+      mPackage = fopen(std::string(osgDB::getFilePath(mPackagePath) + '\\' + osgDB::getStrippedName(mPackagePath) + ".dtpkg").c_str(), "rb");
       if (!mPackage)
       {
          return false;
@@ -50,8 +49,8 @@ namespace dtUtil
    ////////////////////////////////////////////////////////////////////////////////
    bool Packager::PackPackage(const std::string& filename, bool overwrite)
    {
-      std::string tempFile = filename + ".tmp";
-      std::string finalFile = filename + ".dtpkg";
+      std::string tempFile = osgDB::getFilePath(filename) + '\\' + osgDB::getStrippedName(filename) + ".tmp";
+      std::string finalFile = osgDB::getFilePath(filename) + '\\' + osgDB::getStrippedName(filename) + ".dtpkg";
 
       // If we are not overwriting, then make sure the package doesn't already exist.
       if (!overwrite)
@@ -96,7 +95,7 @@ namespace dtUtil
    ////////////////////////////////////////////////////////////////////////////////
    bool Packager::UnpackPackage(const std::string& filename, const std::string& outDir)
    {
-      std::string finalFile = filename + ".dtpkg";
+      std::string finalFile = osgDB::getFilePath(filename) + '\\' + osgDB::getStrippedName(filename) + ".dtpkg";
 
       FILE* file = NULL;
       file = fopen(finalFile.c_str(), "rb");
@@ -139,6 +138,15 @@ namespace dtUtil
    ////////////////////////////////////////////////////////////////////////////////
    bool Packager::AddFile(const std::string& filepath, const std::string& outDir)
    {
+      // First make sure the file exists.
+      FILE* file = NULL;
+      file = fopen(filepath.c_str(), "rb");
+      if (!file)
+      {
+         return false;
+      }
+      fclose(file);
+
       PackTreeData* tree = CreatePackDataForPath(outDir);
       if (!tree) return false;
 
@@ -172,7 +180,6 @@ namespace dtUtil
       data.name = filename;
       data.source = filepath;
       data.isFromPack = false;
-      data.seekPos = 0L;
       data.parent = tree;
 
       tree->files.push_back(data);
@@ -263,6 +270,12 @@ namespace dtUtil
             }
             start = index + 2;
 
+            // Skip empty names.
+            if (folder.empty())
+            {
+               continue;
+            }
+
             bool bFound = false;
             for (int index = 0; index < (int)tree->folders.size(); index++)
             {
@@ -281,7 +294,6 @@ namespace dtUtil
                data.name = folder;
                data.source = "";
                data.isFromPack = false;
-               data.seekPos = 0L;
                data.parent = tree;
                tree->folders.push_back(data);
 
@@ -383,7 +395,7 @@ namespace dtUtil
          path.resize(path.length()-1);
       }
 
-      if (!mOpeningPackage)
+      if (!mOpeningPackage && !path.empty())
       {
          // Create the output directory.
          if (!dtUtil::FileUtils::GetInstance().DirExists(path))
@@ -424,8 +436,7 @@ namespace dtUtil
       if (tree->isFromPack && mPackage)
       {
          file = mPackage;
-         long seekPos = (long)tree->seekPos;
-         fseek(file, seekPos, SEEK_SET);
+         fsetpos(file, &tree->seekPos);
          fread(&bufferLength, sizeof(long), 1, file);
       }
       else
@@ -475,7 +486,7 @@ namespace dtUtil
 
       std::string path = outDir + '/' + filename;
 
-      fpos_t seekPos = 0;
+      fpos_t seekPos;
       fgetpos(packFile, &seekPos);
 
       long bufferLength = 0;

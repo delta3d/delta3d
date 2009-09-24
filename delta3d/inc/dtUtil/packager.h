@@ -118,6 +118,12 @@ namespace dtUtil
       */
       bool RemoveFile(const std::string& filepath);
 
+      /**
+      * Retrieves the file structure tree of all files that
+      * are currently bound to be packed into a package.
+      */
+      const PackTreeData& GetPackTree() {return mTree;}
+
    private:
 
       /**
