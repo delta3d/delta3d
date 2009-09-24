@@ -50,6 +50,7 @@ namespace dtCore
 namespace dtABC
 {
    struct ApplicationConfigData;
+   class ApplicationConfigHandler;
 
    ///Base generic Application class
 
@@ -243,32 +244,30 @@ namespace dtABC
 
       ///Create basic instances and set up system hooks
       virtual void CreateInstances(const std::string& name = "defaultWin", int x = 100, int y = 100, 
-         int width = 640, int height = 480, bool cursor = true, bool fullScreen = false, bool realizeUponCreate = false);
+         int width = 640, int height = 480, bool cursor = true, bool fullScreen = false, bool realizeUponCreate = true);
 
-      /// Read the supplied config file, called from the constructor
-      /// Read an existing data file and setup the internal class
-      /// members with attributes from the data file.
-      /// @param file the name of the data file to be parsed.
-      /// @return true, if both parsing and applying went well.
-      bool ParseConfigFile(const std::string& file);
+      /** Read the supplied config file, called from the constructor
+       *  Read an existing data file and setup the internal class
+       *  members with attributes from the data file.
+       *  @param file the name of the data file to be parsed.
+       *  @param handler The XML config file handler used to support the parsing
+       *  @return true if the file was read and parsed correctly, false otherwise
+       */
+      bool ParseConfigFile(const std::string& file, ApplicationConfigHandler& handler) const;
 
-      /**
+      /** Apply the config file data to the previously created Application members.
+        * @param handler The handler which was used to parse the config file
+        * @return True if the data was applied correctly, false otherwise
+        */
+      bool ApplyConfigData(const ApplicationConfigHandler &handler);
+
+       /**
        * Forces the application to re-read the set of config properties it handles.
        * This is virtual so a subclass can add new properties.
        */
       virtual void ReadSystemProperties();
    private:
 
-      /// A utility to apply the parsed data to the Application instance
-      class AppXMLApplicator
-      {
-      public:
-         /// the method to apply the data
-         /// @param data The data to be applied
-         /// @param app The application to apply the data to
-         /// @return true, if all went well.
-         bool operator ()(const ApplicationConfigData& data, Application* app);
-      };
 
       ///private method to remove a view. Must *not* be called during event traversal.
       void RemoveViewImpl(dtCore::View& view);
