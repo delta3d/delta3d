@@ -1,6 +1,6 @@
 /* -*-c++-*-
  * Delta3D Open Source Game and Simulation Engine
- * Copyright (C) 2004-2005 MOVES Institute
+ * Copyright (C) 2004-2009 MOVES Institute
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,6 +17,7 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  * John K. Grant
+ * Erik Johnson
  */
 
 #include <dtABC/application.h>
@@ -60,6 +61,18 @@ const std::string Application::SIM_FRAME_RATE("System.SimFrameRate");
 const std::string Application::MAX_TIME_BETWEEN_DRAWS("System.MaxTimeBetweenDraws");
 const std::string Application::USE_FIXED_TIME_STEP("System.UseFixedTimeStep");
 
+
+/// A utility to apply the parsed data to the Application instance
+class AppXMLApplicator
+{
+public:
+   /// the method to apply the data
+   /// @param data The data to be applied
+   /// @param app The application to apply the data to
+   /// @return true, if all went well.
+   bool operator ()(const ApplicationConfigData& data, Application* app);
+};
+
 ///////////////////////////////////////////////////////////////////////////////
 Application::Application(const std::string& configFilename, dtCore::DeltaWin* win)
    : BaseClass("Application")
@@ -80,21 +93,26 @@ Application::Application(const std::string& configFilename, dtCore::DeltaWin* wi
 
    mWindow = win;
 
-   CreateInstances(); //create default Viewer View
-
-   mStats = new dtCore::StatsHandler(*mCompositeViewer);
-
-   if (!configFilename.empty())
+   ApplicationConfigHandler handler;
+   if (ParseConfigFile(configFilename, handler))
    {
-      std::string foundPath = dtCore::FindFileInPathList(configFilename);
-      if (foundPath.empty())
-      {
-         LOG_WARNING("Application: Can't find config file, " + configFilename + ", using defaults instead.")
-      }
-      else if (!ParseConfigFile(foundPath))
-      {
-         LOG_WARNING("Application: Error loading config file, using defaults instead.");
-      }
+      //create instances using values from the parsed config file
+      CreateInstances(handler.mConfigData.WINDOW_NAME,
+                      handler.mConfigData.WINDOW_X,
+                      handler.mConfigData.WINDOW_Y,
+                      handler.mConfigData.RESOLUTION.width,
+                      handler.mConfigData.RESOLUTION.height,
+                      handler.mConfigData.SHOW_CURSOR,
+                      handler.mConfigData.FULL_SCREEN,
+                      handler.mConfigData.REALIZE_UPON_CREATE);
+
+      //apply the config data to the created instances
+      ApplyConfigData(handler);
+   }
+   else
+   {
+      //create instances using the default values
+      CreateInstances(); 
    }
 }
 
@@ -322,6 +340,8 @@ void Application::CreateInstances(const std::string& name, int x, int y, int wid
 
    GetKeyboard()->AddKeyboardListener(mKeyboardListener.get());
    GetMouse()->AddMouseListener(mMouseListener.get());
+
+   mStats = new dtCore::StatsHandler(*mCompositeViewer);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -357,24 +377,27 @@ void Application::RemoveConfigPropertyValue(const std::string& name)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-bool Application::ParseConfigFile(const std::string& file)
+bool Application::ParseConfigFile(const std::string& file, ApplicationConfigHandler& handler) const
 {
-   ApplicationConfigHandler handler;
-   dtUtil::XercesParser parser;
-
-   bool parsed_well = parser.Parse(file, handler, "application.xsd");
-   if (!parsed_well)
+   if (file.empty())
    {
-      LOG_ERROR("The Application config file, " + file + ", wasn't parsed correctly.");
-      return(false);
+      return false;
    }
 
-   AppXMLApplicator applicator;
-   bool applied_well = applicator(handler.mConfigData, this);
-   if (!applied_well)
+   const std::string foundPath = dtCore::FindFileInPathList(file);
+   if (foundPath.empty())
    {
-      LOG_ERROR("The Application config file data wasn't applied correctly.");
-      return(false);
+      LOG_WARNING("Application: Can't find config file, " + file + ", using defaults instead.");
+      return false;        
+   }
+
+   dtUtil::XercesParser parser;
+
+   bool parsed_well = parser.Parse(foundPath, handler, "application.xsd");
+   if (!parsed_well)
+   {
+      LOG_ERROR("The Application config file, " + foundPath + ", wasn't parsed correctly.");
+      return false;
    }
 
    return true;
@@ -443,7 +466,7 @@ ApplicationConfigData Application::GetDefaultConfigData()
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 // --- applicator's implementation --- //
-bool Application::AppXMLApplicator::operator ()(const ApplicationConfigData& data, dtABC::Application* app)
+bool AppXMLApplicator::operator ()(const ApplicationConfigData& data, dtABC::Application* app)
 {
    // set up the View
    if (!data.VIEW_NAME.empty())
@@ -497,12 +520,6 @@ bool Application::AppXMLApplicator::operator ()(const ApplicationConfigData& dat
       i != data.mProperties.end(); ++i)
    {
       app->SetConfigPropertyValue(i->first, i->second);
-   }
-
-   if (data.REALIZE_UPON_CREATE)
-   {
-      dwin->GetOsgViewerGraphicsWindow()->realize();
-      dwin->GetOsgViewerGraphicsWindow()->makeCurrent();
    }
 
    // John's unwittingly caught a confusing aspect of the Applications's config file here.
@@ -637,4 +654,18 @@ void Application::RemoveViewImpl(dtCore::View& view)
       mCompositeViewer->removeView(view.GetOsgViewerView());
       mViewList.erase(it);
    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool Application::ApplyConfigData(const ApplicationConfigHandler &handler)
+{
+   AppXMLApplicator applicator;
+   bool applied_well = applicator(handler.mConfigData, this);
+
+   if (!applied_well)
+   {
+      LOG_ERROR("The Application config file data wasn't applied correctly.");
+   }
+
+   return applied_well;
 }
