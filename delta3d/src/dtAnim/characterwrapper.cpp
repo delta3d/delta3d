@@ -31,11 +31,13 @@
 #include <dtAnim/animationsequence.h>
 #include <dtAnim/cal3dmodelwrapper.h>
 #include <dtAnim/ical3ddriver.h>
+#include <dtAnim/animationhelper.h>
 #include <dtUtil/hotspotdefinition.h>
 
 
 namespace dtAnim
 {
+   ////////////////////////////////////////////////////////////////////////////////
    CharacterWrapper::CharacterWrapper(const std::string& filename)
       : BaseClass()
       , mSpeed(0.0f)
@@ -47,11 +49,13 @@ namespace dtAnim
       Init(filename);
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    CharacterWrapper::~CharacterWrapper()
    {
    }
 
 
+   ////////////////////////////////////////////////////////////////////////////////
    void CharacterWrapper::Update(float dt)
    {
       osg::Vec3 pos;
@@ -97,17 +101,20 @@ namespace dtAnim
       mAnimHelper->Update(dt);
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    float CharacterWrapper::GetHeightAboveGround() const
    {
       return mHeightAboveGround;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    void CharacterWrapper::SetHeightAboveGround(float heightAboveGround)
    {
       mHeightAboveGround = heightAboveGround;
    }
 
 
+   ////////////////////////////////////////////////////////////////////////////////
    void CharacterWrapper::SetGroundClamp(dtCore::Transformable* nodeToClampTo, float heightAboveGround)
    {
       if (!mIsector.valid())
@@ -119,6 +126,7 @@ namespace dtAnim
       mIsector->SetGeometry(nodeToClampTo);
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    void CharacterWrapper::SetGroundClamp(dtCore::Scene* sceneRoot, float heightAboveGround)
    {
       if (!mIsector.valid())
@@ -130,6 +138,7 @@ namespace dtAnim
       mIsector->SetScene(sceneRoot);
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    void CharacterWrapper::Init(const std::string& filename)
    {
       mAnimHelper = new dtAnim::AnimationHelper();
@@ -140,26 +149,31 @@ namespace dtAnim
       BaseClass::GetMatrixNode()->addChild(mLocalOffset.get());
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    float CharacterWrapper::GetSpeed() const
    {
       return mSpeed;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    void CharacterWrapper::SetSpeed(float metersPerSecond)
    {
       mSpeed = metersPerSecond;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    float CharacterWrapper::GetRotationSpeed() const
    {
       return mRotationSpeed;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    void CharacterWrapper::SetRotationSpeed(float radiansPerSecond)
    {
       mRotationSpeed = radiansPerSecond;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    void CharacterWrapper::RotateToHeading(float headingInRadians, float delta)
    {
       float rotation = GetHeading();
@@ -186,6 +200,7 @@ namespace dtAnim
       SetHeading(rotation);
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    void CharacterWrapper::RotateToPoint(const osg::Vec3& targetPos, float delta)
    {
       osg::Vec3 ownPos;
@@ -223,6 +238,7 @@ namespace dtAnim
    }
 
 
+   ////////////////////////////////////////////////////////////////////////////////
    float CharacterWrapper::GetHeading() const
    {
       osg::Vec3 rot;
@@ -232,6 +248,7 @@ namespace dtAnim
       return rot[0];
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    void CharacterWrapper::SetHeading(float degrees)
    {
       osg::Vec3 rot;
@@ -243,6 +260,7 @@ namespace dtAnim
       BaseClass::SetTransform(trans);
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    dtCore::Transform CharacterWrapper::GetLocalOffset() const
    {
       dtCore::Transform trans;
@@ -250,6 +268,7 @@ namespace dtAnim
       return trans;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    void CharacterWrapper::SetLocalOffset(const dtCore::Transform& localOffset)
    {
       osg::Matrix mat;
@@ -257,24 +276,39 @@ namespace dtAnim
       mLocalOffset->setMatrix(mat);
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    void CharacterWrapper::PlayAnimation(const std::string& pAnim)
    {
       mAnimHelper->PlayAnimation(pAnim);
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    void CharacterWrapper::ClearAnimation(const std::string& pAnim, float fadeOutTime)
    {
       mAnimHelper->ClearAnimation(pAnim, fadeOutTime);
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    bool CharacterWrapper::IsAnimationPlaying(const std::string& name) const
    {
       return mAnimHelper->GetSequenceMixer().IsAnimationPlaying(name);
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    void CharacterWrapper::ClearAllAnimations(float fadeOutTime)
    {
       mAnimHelper->ClearAll(fadeOutTime);
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   AnimationHelper& CharacterWrapper::GetAnimationHelper()
+   {
+      return *mAnimHelper;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const AnimationHelper& CharacterWrapper::GetAnimationHelper() const
+   {
+      return *mAnimHelper;
+   }
 } // namespace dtAI
