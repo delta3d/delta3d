@@ -54,7 +54,7 @@ namespace dtAI
 
       typedef dtUtil::ObjectFactory< dtCore::RefPtr<const dtDAL::ObjectType>, WaypointInterface > WaypointFactory;
 
-   public: //interface declaration
+   public: // interface declaration
       AIPluginInterface();
       virtual ~AIPluginInterface();
 

@@ -61,11 +61,7 @@ namespace dtAI
    /////////////////////////////////////////////////////////////
    void BaseAIComponent::CleanUp()
    {
-      if (mAIInterfaceProxy.valid())
-      {
-         GetGameManager()->GetScene().RemoveDrawable(GetAIPluginInterface()->GetDebugDrawable());
-         mAIInterfaceProxy = NULL;
-      }
+      mAIInterfaceProxy = NULL;
    }
 
    /////////////////////////////////////////////////////////////

@@ -68,9 +68,9 @@ namespace dtAI
 
       // Waypoint Font
       DECLARE_PROPERTY(std::string, WaypointFontFile);
-      DECLARE_PROPERTY(float, WaypointFontSizeScalar);
-      DECLARE_PROPERTY(osg::Vec3, WaypointTextOffset);
-      DECLARE_PROPERTY(Color, WaypointFontColor);
+      DECLARE_PROPERTY(float,       WaypointFontSizeScalar);
+      DECLARE_PROPERTY(osg::Vec3,   WaypointTextOffset);
+      DECLARE_PROPERTY(Color,       WaypointFontColor);
 
       // Nav Mesh
       DECLARE_PROPERTY(float, NavMeshWidth);
@@ -78,7 +78,7 @@ namespace dtAI
 
       // Nav Mesh Font
       DECLARE_PROPERTY(std::string, NavMeshFontFile);
-      DECLARE_PROPERTY(float, NavMeshFontSizeScalar);
+      DECLARE_PROPERTY(float,       NavMeshFontSizeScalar);
       /// the text is scaled across the navmesh path
       DECLARE_PROPERTY(float, NavMeshTextOffsetScalar);
       DECLARE_PROPERTY(Color, NavMeshFontColor);
