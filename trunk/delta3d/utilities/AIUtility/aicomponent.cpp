@@ -52,7 +52,13 @@ AIComponent::AIComponent(const std::string& name)
 /////////////////////////////////////////////////////////////
 void AIComponent::CleanUp()
 {
+   if (GetAIPluginInterface())
+   {
+      GetGameManager()->GetScene().RemoveDrawable(GetAIPluginInterface()->GetDebugDrawable());
+   }
+
    dtAI::BaseAIComponent::CleanUp();
+
    AIUtilityApp& aiApp = dynamic_cast<AIUtilityApp&>(GetGameManager()->GetApplication());
    aiApp.SetAIPluginInterface(NULL);
 }
@@ -74,7 +80,6 @@ void AIComponent::ProcessMessage(const dtGame::Message& message)
       aiApp.SetAIPluginInterface(GetAIPluginInterface());
    }
 }
-
 
 /////////////////////////////////////////////////////////////
 void AIComponent::AddAIInterfaceToMap(const std::string& map)

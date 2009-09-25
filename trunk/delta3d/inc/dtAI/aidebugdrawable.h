@@ -76,7 +76,6 @@ namespace dtAI
       virtual void InsertWaypoint(const WaypointInterface& wp);
       virtual void RemoveWaypoint(unsigned id);
 
-
       void UpdateWaypointGraph(const NavMesh& nm);
 
       // this is an expensive operation because all the geometry must be recreated
