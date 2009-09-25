@@ -26,7 +26,6 @@
 #include <dtCore/refptr.h>
 #include <dtCore/observerptr.h>
 #include <dtCore/transformable.h>
-#include <dtAnim/animationhelper.h>
 #include <string>
 
 namespace dtCore
@@ -209,6 +208,18 @@ namespace dtAnim
           * @param the name of the animation
           */
          bool IsAnimationPlaying(const std::string& name) const;
+
+         /**
+         * Get the internal AnimationHelper this instance is using.
+         * @return The AnimationHelper used to manage the animations
+         */
+         AnimationHelper& GetAnimationHelper();
+
+         /**
+         * Get the internal AnimationHelper this instance is using.
+         * @return The AnimationHelper used to manage the animations
+         */
+         const AnimationHelper& GetAnimationHelper() const;
 
       private:
 
