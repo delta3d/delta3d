@@ -139,13 +139,10 @@ namespace dtUtil
    bool Packager::AddFile(const std::string& filepath, const std::string& outDir)
    {
       // First make sure the file exists.
-      FILE* file = NULL;
-      file = fopen(filepath.c_str(), "rb");
-      if (!file)
+      if (!dtUtil::FileUtils::GetInstance().FileExists(filepath))
       {
          return false;
       }
-      fclose(file);
 
       PackTreeData* tree = CreatePackDataForPath(outDir);
       if (!tree) return false;

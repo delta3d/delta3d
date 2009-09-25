@@ -21,6 +21,11 @@ namespace dtDAL
    class ActorProperty;
 }
 
+namespace osg
+{
+   class Node;
+}
+
 /**
  * The MapExporterPlugin is a plugin that is used as a tool
  * to place a LinkedPointsActor into the world.
@@ -60,6 +65,16 @@ public slots:
    * @return     Returns true if it was a valid resource property.
    */
    bool AddResourcesFromProperty(const dtDAL::ActorProperty* prop, dtUtil::Packager& packager);
+
+   /**
+   * Find any resources referenced by the given OSG node and all its children.
+   *
+   * @param[in]  node      The OSG node to search.
+   * @param[in]  packager  The packager to add resources to.
+   *
+   * @return     Returns true if any shaders were found.
+   */
+   bool AddResourcesFromNode(osg::Node* node, dtUtil::Packager& packager);
 
 private:
 
