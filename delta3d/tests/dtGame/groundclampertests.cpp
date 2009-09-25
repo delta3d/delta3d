@@ -352,13 +352,13 @@ namespace dtGame
                      !mGroundClamper->GetClosestHit(*mTestGameActor, data, *single, 0.03, point, normal));
 
             dtCore::BatchIsector::Hit hit;
-            hit.localIntersectionNormal = osg::Vec3(0.0f, 0.0f, 1.0f);
-            hit.localIntersectionPoint  = osg::Vec3(3.0f, 4.0f, 1.0f);
-            hitList.insert(hit);
+            hit._intersectNormal = osg::Vec3(0.0f, 0.0f, 1.0f);
+            hit._intersectPoint  = osg::Vec3(3.0f, 4.0f, 1.0f);
+            hitList.push_back(hit);
 
-            hit.localIntersectionNormal = osg::Vec3(0.0f, 1.0f, 0.0f);
-            hit.localIntersectionPoint  = osg::Vec3(3.0f, 4.0f, 4.0f);
-            hitList.insert(hit);
+            hit._intersectNormal = osg::Vec3(0.0f, 1.0f, 0.0f);
+            hit._intersectPoint  = osg::Vec3(3.0f, 4.0f, 4.0f);
+            hitList.push_back(hit);
 
             single->SetHitList(hitList);
 
