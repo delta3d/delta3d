@@ -12,6 +12,8 @@
 
 #include <QtGui/QFileDialog>
 
+#include <osg/Node>
+#include <osg/Group>
 #include <osgDB/FileNameUtils>
 
 const std::string MapExporterPlugin::PLUGIN_NAME = "Map Exporter";
@@ -88,6 +90,12 @@ void MapExporterPlugin::onExportButtonPressed()
                for (int propIndex = 0; propIndex < (int)properties.size(); propIndex++)
                {
                   AddResourcesFromProperty(properties[propIndex], packager);
+               }
+
+               dtCore::DeltaDrawable* drawable = proxy->GetActor();
+               if (drawable)
+               {
+                  AddResourcesFromNode(drawable->GetOSGNode(), packager);
                }
             }
          }
@@ -190,6 +198,73 @@ bool MapExporterPlugin::AddResourcesFromProperty(const dtDAL::ActorProperty* pro
    return false;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+bool MapExporterPlugin::AddResourcesFromNode(osg::Node* node, dtUtil::Packager& packager)
+{
+   if (!node) return false;
+
+   // Get the state set of this node and find any shaders assigned.
+   osg::StateSet* ss = node->getStateSet();
+   if (ss)
+   {
+      //// Find all textures.
+      //osg::StateSet::TextureAttributeList& textureList = ss->getTextureAttributeList();
+
+      //for (int textureIndex = 0; textureIndex < (int)textureList.size(); textureIndex++)
+      //{
+      //   osg::StateSet::AttributeList& attributes = textureList[textureIndex];
+
+      //   for (AttributeList::iterator i = attributes.begin();
+      //      i != attributes.end(); ++i)
+      //   {
+      //      osg::StateAttribute* attribute = i->second.first.get();
+      //      if (attribute && attribute->isTextureAttribute())
+      //      {
+      //      }
+      //   }
+      //}
+
+      // Find all attributes.
+      osg::StateSet::AttributeList& attributes = ss->getAttributeList();
+      for (osg::StateSet::AttributeList::iterator i = attributes.begin();
+         i != attributes.end(); ++i)
+      {
+         osg::StateAttribute* attribute = i->second.first.get();
+         if (attribute)
+         {
+            // Find any shader attributes.
+            if (attribute->getType() == osg::StateAttribute::PROGRAM)
+            {
+               osg::Program* program = dynamic_cast<osg::Program*>(attribute);
+               if (!program) continue;
+
+               int shaderCount = (int)program->getNumShaders();
+               for (int shaderIndex = 0; shaderIndex < shaderCount; shaderIndex++)
+               {
+                  osg::Shader* shader = program->getShader(shaderIndex);
+                  if (shader)
+                  {
+                     std::string path = shader->getFileName();
+                     std::string resourceDir = "shaders";
+
+                     packager.AddFile(path, resourceDir);
+                  }
+               }
+            }
+         }
+      }
+   }
+
+   // If this node is a group, iterate through all its' children.
+   osg::Group* group = node->asGroup();
+   if (group)
+   {
+      for (int childIndex = 0; childIndex < (int)group->getNumChildren(); childIndex++)
+      {
+         AddResourcesFromNode(group->getChild(childIndex), packager);
+      }
+   }
+}
 
 ////////////////////////////////////////////////////////////
 
