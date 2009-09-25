@@ -72,6 +72,8 @@
 #include <dtEditQt/uiresources.h>
 #include <dtEditQt/externaltool.h>
 
+#include <osgDB/FileNameUtils>
+
 
 namespace dtEditQt
 {
@@ -96,6 +98,12 @@ namespace dtEditQt
       //Read STAGE configuration file
       if (stageConfigFile != "")
       {
+         // If the file doesn't exist, assume its' a relative path instead.
+         if (!dtUtil::FileUtils::GetInstance().FileExists(mSTAGEConfigFullPath))
+         {
+            mSTAGEConfigFullPath = dtUtil::FileUtils::GetInstance().CurrentDirectory() + "\\" + mSTAGEConfigFullPath;
+         }
+
          ConfigurationManager::GetInstance().ReadXML(mSTAGEConfigFullPath);
       }
 
@@ -650,7 +658,7 @@ namespace dtEditQt
                catch(const dtUtil::Exception& e)
                {
                   endWaitCursor();
-                  QMessageBox::critical((QWidget*)this,
+                  QMessageBox::warning((QWidget*)this,
                      tr("Error"), tr(e.What().c_str()), tr("OK"));
                }
             }
