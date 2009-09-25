@@ -124,6 +124,13 @@ namespace dtUtil
       */
       const PackTreeData& GetPackTree() {return mTree;}
 
+      /**
+      * This will parse the PackTreeData structure and
+      * find the node to the given path.  If none exists, this
+      * will return NULL.
+      */
+      PackTreeData* FindPackDataForPath(const std::string& path);
+
    private:
 
       /**
@@ -132,13 +139,6 @@ namespace dtUtil
       * will create one.
       */
       PackTreeData* CreatePackDataForPath(const std::string& path);
-
-      /**
-      * This will parse the PackTreeData structure and
-      * find the node to the given path.  If none exists, this
-      * will return NULL.
-      */
-      PackTreeData* FindPackDataForPath(const std::string& path);
 
       /**
       * Recursive function that iterates the pack tree data

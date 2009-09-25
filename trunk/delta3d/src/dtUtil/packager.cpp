@@ -249,6 +249,56 @@ namespace dtUtil
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   Packager::PackTreeData* Packager::FindPackDataForPath(const std::string& path)
+   {
+      int len = (int)path.length();
+      int start = 0;
+
+      if (len == 0) return &mTree;
+
+      PackTreeData* tree = &mTree;
+
+      // Parse each folder from the path.
+      for (int index = 0; index < len; index++)
+      {
+         if (index == len-1 || path[index+1] == '\\' || path[index+1] == '/')
+         {
+            std::string folder;
+            for (int letter = start; letter < index + 1; letter++)
+            {
+               folder = folder + path[letter];
+            }
+            start = index + 2;
+
+            // Skip empty names.
+            if (folder.empty())
+            {
+               continue;
+            }
+
+            bool bFound = false;
+            for (int index = 0; index < (int)tree->folders.size(); index++)
+            {
+               if (tree->folders[index].name == folder)
+               {
+                  bFound = true;
+                  tree = &tree->folders[index];
+                  break;
+               }
+            }
+
+            // If this directory was not found, then create it.
+            if (!bFound)
+            {
+               return NULL;
+            }
+         }
+      }
+
+      return tree;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    Packager::PackTreeData* Packager::CreatePackDataForPath(const std::string& path)
    {
       int len = (int)path.length();
@@ -298,50 +348,6 @@ namespace dtUtil
                tree->folders.push_back(data);
 
                tree = &tree->folders.back();
-            }
-         }
-      }
-
-      return tree;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   Packager::PackTreeData* Packager::FindPackDataForPath(const std::string& path)
-   {
-      int len = (int)path.length();
-      int start = 0;
-
-      if (len == 0) return &mTree;
-
-      PackTreeData* tree = &mTree;
-
-      // Parse each folder from the path.
-      for (int index = 0; index < len; index++)
-      {
-         if (index == len-1 || path[index+1] == '\\' || path[index+1] == '/')
-         {
-            std::string folder;
-            for (int letter = start; letter < index + 1; letter++)
-            {
-               folder = folder + path[letter];
-            }
-            start = index + 2;
-
-            bool bFound = false;
-            for (int index = 0; index < (int)tree->folders.size(); index++)
-            {
-               if (tree->folders[index].name == folder)
-               {
-                  bFound = true;
-                  tree = &tree->folders[index];
-                  break;
-               }
-            }
-
-            // If this directory was not found, then create it.
-            if (!bFound)
-            {
-               return NULL;
             }
          }
       }
