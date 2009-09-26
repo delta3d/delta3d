@@ -98,6 +98,11 @@ namespace dtAI
       void Insert(const WaypointInterface* waypoint);
       void Remove(const WaypointInterface* waypoint);
 
+      /**
+      *  @return true if there is a waypoint with specified id as an immediate child.
+      */
+      bool HasChild(WaypointID id);
+
       WaypointCollection* GetParent();
       const WaypointCollection* GetParent() const;
 

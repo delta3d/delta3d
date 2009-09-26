@@ -120,36 +120,42 @@ namespace dtAI
 
       void InsertWaypoint(WaypointInterface* waypoint)
       {
-         mWaypoints.push_back(waypoint);
-         mWaypointGraph->InsertWaypoint(waypoint);
-
-         //if we have created a drawable then we must add and remove to it
-         if(mDrawable.valid())
+         if(GetWaypointById(waypoint->GetID()) == NULL)
          {
-            mDrawable->InsertWaypoint(*waypoint);
+            mWaypoints.push_back(waypoint);
+            mWaypointGraph->InsertWaypoint(waypoint);
+
+            //if we have created a drawable then we must add and remove to it
+            if(mDrawable.valid())
+            {
+               mDrawable->InsertWaypoint(*waypoint);
+            }
+
+            KDHolder node(waypoint->GetPosition(), waypoint->GetID());
+            mKDTree->insert(node);
+
+            mKDTreeDirty = true;
          }
-
-         KDHolder node(waypoint->GetPosition(), waypoint->GetID());
-         mKDTree->insert(node);
-
-         mKDTreeDirty = true;
       }
 
       void InsertCollection(WaypointCollection* waypoint, unsigned level)
       {
-         mWaypoints.push_back(waypoint);
-         mWaypointGraph->InsertCollection(waypoint, level);
-
-         //if we have created a drawable then we must add and remove to it
-         if(mDrawable.valid())
+         if(GetWaypointById(waypoint->GetID()) == NULL)
          {
-            mDrawable->InsertWaypoint(*waypoint);
+            mWaypoints.push_back(waypoint);
+            mWaypointGraph->InsertCollection(waypoint, level);
+
+            //if we have created a drawable then we must add and remove to it
+            if(mDrawable.valid())
+            {
+               mDrawable->InsertWaypoint(*waypoint);
+            }
+
+            KDHolder node(waypoint->GetPosition(), waypoint->GetID());
+            mKDTree->insert(node);
+
+            mKDTreeDirty = true;
          }
-
-         KDHolder node(waypoint->GetPosition(), waypoint->GetID());
-         mKDTree->insert(node);
-
-         mKDTreeDirty = true;
       }
 
       WaypointGraph& GetWaypointGraph()

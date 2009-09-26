@@ -142,22 +142,25 @@ namespace dtAI
    /////////////////////////////////////////////////////////////////////////////
    void WaypointCollection::Insert(const WaypointInterface* waypoint)
    {
-      if(waypoint->GetWaypointType() == *WaypointTypes::WAYPOINT_COLLECTION)
+      if(!HasChild(waypoint->GetID()))
       {
-         const WaypointCollection* wc = dynamic_cast<const WaypointCollection*>(waypoint);
-         
-         if(wc != NULL)
+         if(waypoint->GetWaypointType() == *WaypointTypes::WAYPOINT_COLLECTION)
          {
-            AddChild(wc);
+            const WaypointCollection* wc = dynamic_cast<const WaypointCollection*>(waypoint);
+            
+            if(wc != NULL)
+            {
+               AddChild(wc);
+            }
+            else
+            {
+               LOG_ERROR("Error adding WaypointCollection '" + waypoint->ToString() + "' as child of WaypointCollection '" + ToString() + "'.");
+            }
          }
          else
          {
-            LOG_ERROR("Error adding WaypointCollection '" + waypoint->ToString() + "' as child of WaypointCollection '" + ToString() + "'.");
+            InsertWaypoint(waypoint);
          }
-      }
-      else
-      {
-         InsertWaypoint(waypoint);
       }
    }
 
@@ -370,6 +373,23 @@ namespace dtAI
             return true;
          }
       }
+
+      return false;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   bool WaypointCollection::HasChild( WaypointID id )
+   {
+      WaypointTreeConstChildIterator iter = begin_child();
+      WaypointTreeConstChildIterator iterEnd = end_child();
+
+      for(;iter != iterEnd; ++iter)
+      {
+         if(iter->value->GetID() == id)
+         {
+            return true;
+         }
+      }  
 
       return false;
    }

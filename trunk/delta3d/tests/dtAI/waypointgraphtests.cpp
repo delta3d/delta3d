@@ -52,6 +52,7 @@ namespace dtAI
       CPPUNIT_TEST(TestCollectionBounds);
       CPPUNIT_TEST(TestLoadSave);
       CPPUNIT_TEST(TestClearMemory);
+      CPPUNIT_TEST(TestAddDuplicates);
       CPPUNIT_TEST_SUITE_END();
 
    public:
@@ -68,6 +69,7 @@ namespace dtAI
       void TestClearMemory();
       void TestLoadSave();
       void TestCollectionBounds();
+      void TestAddDuplicates();
 
    private:
       void CreateWaypoints();
@@ -653,6 +655,66 @@ void WaypointGraphTests::TestLoadSave()
          }
       }
    }
+
+}
+
+void WaypointGraphTests::TestAddDuplicates()
+{
+   int i = 0;
+   WaypointGraph::WaypointArray wps;
+
+   mAIInterface->ClearMemory();
+   
+   //lets create two sets of three waypoints with a bridge between them
+
+   WaypointInterface* wp01 = mAIInterface->CreateWaypoint(osg::Vec3(-1.0f, 0.0f, 0.0f), *WaypointTypes::DEFAULT_WAYPOINT);
+
+   for(i = 0; i < 5; ++i)
+   {
+      mAIInterface->InsertWaypoint(wp01);
+   }
+   
+   mAIInterface->GetWaypoints(wps);
+   CPPUNIT_ASSERT(wps.size() == 1);
+
+   //now lets test this on collections
+   dtCore::RefPtr<WaypointCollection> wc = new WaypointCollection();
+
+   for(i = 0; i < 5; ++i)
+   {
+      mAIInterface->InsertWaypoint(wc.get());
+   }
+
+   wps.clear();
+   mAIInterface->GetWaypoints(wps);
+   CPPUNIT_ASSERT(wps.size() == 2);
+
+   for(i = 0; i < 5; ++i)
+   {
+      mAIInterface->Assign(wp01->GetID(), wc.get());
+   }
+
+   CPPUNIT_ASSERT(wc->degree() == 1);
+
+   //now lets try assigning at the wrong level
+   dtCore::RefPtr<WaypointCollection> rootNode = new WaypointCollection();
+   mAIInterface->InsertWaypoint(rootNode.get());
+
+   bool assignResult = mAIInterface->Assign(wc->GetID() , rootNode.get());
+
+   CPPUNIT_ASSERT(assignResult);
+   CPPUNIT_ASSERT(rootNode->degree() == 1);
+   CPPUNIT_ASSERT(rootNode->level() == 0);
+   CPPUNIT_ASSERT(wc->level() == 1);
+
+   WaypointGraph& wpGraph = mAIInterface->GetWaypointGraph();
+   CPPUNIT_ASSERT(wpGraph.GetSearchLevelNum(wp01->GetID()) == 0);
+   CPPUNIT_ASSERT(wpGraph.GetSearchLevelNum(wc->GetID()) == 1);
+   CPPUNIT_ASSERT(wpGraph.GetSearchLevelNum(rootNode->GetID()) == 2);
+
+   wps.clear();
+   mAIInterface->GetWaypoints(wps);
+   CPPUNIT_ASSERT(wps.size() == 3);
 
 }
 

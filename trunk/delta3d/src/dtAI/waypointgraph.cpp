@@ -983,14 +983,44 @@ namespace dtAI
          }
          else
          {
-            WaypointGraphImpl::WaypointHolder& whParent = (*parentIter).second;
+            //we just copy it here because we may end up removing it from the map, read below.
+            WaypointGraphImpl::WaypointHolder whParent = (*parentIter).second;
             if(whParent.mLevel != searchLevel)
             {
-               LOG_ERROR("WaypointCollection '" + parentWp->ToString() + 
-                  "' has search level " + dtUtil::ToString(whParent.mLevel) + " which should be 1 greater then child '" +
-                  wh.mWaypoint->ToString() + "' search level of " + dtUtil::ToString(wh.mLevel) + ".");
-               
-               return false;
+               //there is a common use case which may cause this situation, where adding a collection without a waypoint level
+               //through the default Insert(), or just creating it through the AIPluginInterface factory will have the same effect.
+               //to work around this we will allow a collection to be re-inserted with a child once, meaning if we have no parent
+               //and no children we will remove ourselves and re-add on the proper search level.  Wow, that was a mouthful....
+
+               //the parent pointer of a collection is always the collection itself, this avoids casting and we already have a parent ptr
+               //through the waypoint tree interface
+               if(whParent.mParent->parent() == NULL && whParent.mParent->degree() == 0)
+               {
+                  dtCore::RefPtr<WaypointCollection> wcHolder = whParent.mParent;
+
+                  WaypointGraph::SearchLevel* sl = GetSearchLevel(whParent.mLevel);
+                  if(sl != NULL)
+                  {
+                     sl->mNavMesh->RemoveAllEdges(whParent.mWaypoint);
+                     sl->mNodes.erase(std::remove(sl->mNodes.begin(), sl->mNodes.end(), whParent.mWaypoint), sl->mNodes.end());
+                  }
+
+                  //erase the waypoint from the map
+                  mImpl->mWaypointOwnership.erase(parentIter);
+                  
+                  //now re-add it at the correct level
+                  InsertCollection(wcHolder.get(), searchLevel);
+
+
+               }
+               else
+               {
+
+                  LOG_ERROR("WaypointCollection '" + parentWp->ToString() + 
+                     "' has search level " + dtUtil::ToString(whParent.mLevel) + " which should be 1 greater then child '" +
+                     wh.mWaypoint->ToString() + "' search level of " + dtUtil::ToString(wh.mLevel) + ".");
+                  return false;
+               }
             }
          }
 
@@ -998,7 +1028,8 @@ namespace dtAI
          const WaypointCollection* childCollection = dynamic_cast<const WaypointCollection*>(wh.mWaypoint.get());
          if(childCollection != NULL)
          {
-            //waypoint collections parents are themselves in the waypoint map
+            //the parent pointer of a collection is always the collection itself, this avoids casting and we already have a parent ptr
+            //through the waypoint tree interface, set the correct ptr here.
             wh.mParent = const_cast<WaypointCollection*>(childCollection);
          }
          else
