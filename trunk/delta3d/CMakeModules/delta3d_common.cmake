@@ -70,6 +70,8 @@ function(DELTA3D_FIND_PATH module header)
             /opt
             /usr/freeware
             /usr
+            /usr/include
+            /usr/local/include
             ${DELTA3D_EXT_DIR} #defined in delta3d_common.cmake
    )
 endfunction(DELTA3D_FIND_PATH module header)
