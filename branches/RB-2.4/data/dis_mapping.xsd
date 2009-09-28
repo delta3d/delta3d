@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:element name="DIS">
+    <xsd:complexType>
+      <xsd:choice maxOccurs="unbounded">
+        <xsd:element name="DISEntityMap">
+          <xsd:complexType>
+            <xsd:choice maxOccurs="unbounded">
+              <xsd:element name="Mapping">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="EntityType">
+                      <xsd:complexType>
+                        <xsd:sequence maxOccurs="unbounded">
+                          <xsd:element minOccurs="0" name="EntityKind" type="xsd:unsignedByte" />
+                          <xsd:element minOccurs="0" name="Domain" type="xsd:unsignedByte" />
+                          <xsd:element minOccurs="0" name="Country" type="xsd:unsignedShort" />
+                          <xsd:element minOccurs="0" name="Category" type="xsd:unsignedByte" />
+                          <xsd:element minOccurs="0" name="Subcategory" type="xsd:unsignedByte" />
+                          <xsd:element minOccurs="0" name="Specific" type="xsd:unsignedByte" />
+                          <xsd:element minOccurs="0" name="Extra" type="xsd:unsignedByte" />
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="ActorData">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="ActorType">
+                            <xsd:complexType>
+                              <xsd:sequence>
+                                <xsd:element name="Name" type="xsd:string" />
+                                <xsd:element name="Category" type="xsd:string" />
+                              </xsd:sequence>
+                            </xsd:complexType>
+                          </xsd:element>
+                          <xsd:element name="Resource">
+                            <xsd:complexType>
+                              <xsd:sequence>
+                                <xsd:element maxOccurs="unbounded" name="Descriptor" type="xsd:string" />
+                                <xsd:element name="ActorProperty" type="xsd:string" />
+                              </xsd:sequence>
+                            </xsd:complexType>
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+            </xsd:choice>
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="PropertyNames">
+          <xsd:complexType>
+            <xsd:choice maxOccurs="unbounded">
+              <xsd:element name="EntityLocation" type="xsd:string" />
+              <xsd:element name="EntityOrientation" type="xsd:string" />
+              <xsd:element name="EntityLinearVelocity" type="xsd:string" />
+              <xsd:element name="EntityLastKnownLocation" type="xsd:string" />
+              <xsd:element name="EntityLastKnownOrientation" type="xsd:string" />
+              <xsd:element name="EntityDeadReckoningAlgorithm" type="xsd:string" />
+              <xsd:element name="EntityGroundClamp" type="xsd:string" />
+            </xsd:choice>
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:choice>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>

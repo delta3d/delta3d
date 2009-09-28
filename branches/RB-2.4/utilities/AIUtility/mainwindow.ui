@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="mActionOpenMap"/>
+    <addaction name="mActionCloseMap"/>
+    <addaction name="mChangeContextAction"/>
+    <addaction name="separator"/>
+    <addaction name="mActionSave"/>
+    <addaction name="separator"/>
+    <addaction name="mActionQuit"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+    <addaction name="mActionRenderingOptions"/>
+   </widget>
+   <widget class="QMenu" name="menuWindows">
+    <property name="title">
+     <string>Windows</string>
+    </property>
+    <addaction name="mActionPropertyEditorVisible"/>
+    <addaction name="mActionWaypointBrowserVisible"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
+   <addaction name="menuWindows"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionQuit">
+   <property name="text">
+    <string>Quit</string>
+   </property>
+  </action>
+  <action name="mActionQuit">
+   <property name="text">
+    <string>&amp;Quit</string>
+   </property>
+  </action>
+  <action name="mChangeContextAction">
+   <property name="text">
+    <string>Change Project Context</string>
+   </property>
+  </action>
+  <action name="mActionOpenMap">
+   <property name="text">
+    <string>Open Map</string>
+   </property>
+  </action>
+  <action name="mActionCloseMap">
+   <property name="text">
+    <string>Close Map</string>
+   </property>
+  </action>
+  <action name="mActionRenderingOptions">
+   <property name="text">
+    <string>Rendering Options</string>
+   </property>
+  </action>
+  <action name="mActionPropertyEditorVisible">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Property Editor</string>
+   </property>
+  </action>
+  <action name="mActionWaypointBrowserVisible">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Waypoint Browser</string>
+   </property>
+  </action>
+  <action name="mActionSave">
+   <property name="text">
+    <string>&amp;Save</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>mActionQuit</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

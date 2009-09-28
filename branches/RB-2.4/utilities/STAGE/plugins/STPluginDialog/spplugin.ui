@@ -1,0 +1,62 @@
+<ui version="4.0" >
+ <class>PluginDialog</class>
+ <widget class="QDialog" name="PluginDialog" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>495</width>
+    <height>308</height>
+   </rect>
+  </property>
+  <property name="sizePolicy" >
+   <sizepolicy vsizetype="Maximum" hsizetype="Expanding" >
+    <horstretch>1</horstretch>
+    <verstretch>13</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle" >
+   <string>Manage Plugins</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2" >
+   <item>
+    <widget class="QScrollArea" name="scrollArea" >
+     <property name="widgetResizable" >
+      <bool>true</bool>
+     </property>
+     <widget class="QWidget" name="scrollAreaWidgetContents" >
+      <property name="geometry" >
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>473</width>
+        <height>254</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_4" >
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_3" >
+         <item>
+          <widget class="QListWidget" name="mPluginList" />
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons" >
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" id="EntityTypeMappings">
+	<xs:element name="EntityTypeMappings">
+		<xs:complexType>
+			<xs:choice maxOccurs="unbounded">
+				<xs:element name="EntityTypeMapping">
+					<xs:complexType>
+						<xs:attribute name="kind" form="unqualified" type="xs:string" />
+						<xs:attribute name="model" form="unqualified" type="xs:string" />
+						<xs:attribute name="icon" form="unqualified" type="xs:string" />
+						<xs:attribute name="domain" form="unqualified" type="xs:string" />
+						<xs:attribute name="category" form="unqualified" type="xs:string" />
+						<xs:attribute name="country" form="unqualified" type="xs:string" />
+						<xs:attribute name="subcategory" form="unqualified" type="xs:string" />
+						<xs:attribute name="specific" form="unqualified" type="xs:string" />
+					</xs:complexType>
+				</xs:element>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
