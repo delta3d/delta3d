@@ -101,5 +101,5 @@ namespace dtAI
          CleanUp();
       }
    }
-   
+
 } // namespace dtAI
