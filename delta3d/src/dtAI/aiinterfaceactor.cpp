@@ -120,13 +120,13 @@ namespace dtAI
 
       void InsertWaypoint(WaypointInterface* waypoint)
       {
-         if(GetWaypointById(waypoint->GetID()) == NULL)
+         if (GetWaypointById(waypoint->GetID()) == NULL)
          {
             mWaypoints.push_back(waypoint);
             mWaypointGraph->InsertWaypoint(waypoint);
 
             //if we have created a drawable then we must add and remove to it
-            if(mDrawable.valid())
+            if (mDrawable.valid())
             {
                mDrawable->InsertWaypoint(*waypoint);
             }
@@ -140,13 +140,13 @@ namespace dtAI
 
       void InsertCollection(WaypointCollection* waypoint, unsigned level)
       {
-         if(GetWaypointById(waypoint->GetID()) == NULL)
+         if (GetWaypointById(waypoint->GetID()) == NULL)
          {
             mWaypoints.push_back(waypoint);
             mWaypointGraph->InsertCollection(waypoint, level);
 
             //if we have created a drawable then we must add and remove to it
-            if(mDrawable.valid())
+            if (mDrawable.valid())
             {
                mDrawable->InsertWaypoint(*waypoint);
             }
@@ -173,14 +173,14 @@ namespace dtAI
          //only the parent can be added through this function
          bool containsWp = GetWaypointById(parentWp->GetID()) != NULL;
 
-         if(mWaypointGraph->Assign(childWp, parentWp))
+         if (mWaypointGraph->Assign(childWp, parentWp))
          {
-            if(!containsWp)
+            if (!containsWp)
             {
                mWaypoints.push_back(parentWp);
 
                //if we have created a drawable then we must add and remove to it
-               if(mDrawable.valid())
+               if (mDrawable.valid())
                {
                   mDrawable->InsertWaypoint(*parentWp);
                }
@@ -203,7 +203,7 @@ namespace dtAI
          osg::Vec3 pos = wi->GetPosition();        
 
          find_result found = mKDTree->find_nearest(pos, 1.0f);
-         if(found.first != mKDTree->end() && (*found.first).mID == wi->GetID())
+         if (found.first != mKDTree->end() && (*found.first).mID == wi->GetID())
          {            
             mKDTree->erase(found.first);
             
@@ -216,7 +216,7 @@ namespace dtAI
             mWaypointGraph->InsertWaypoint(wi);
 
             //the drawable allows re-inserting to move
-            if(mDrawable.valid())
+            if (mDrawable.valid())
             {
                mDrawable->InsertWaypoint(*wi);
             }
@@ -242,11 +242,11 @@ namespace dtAI
          for (; iter != iterEnd; ++iter)
          {
             WaypointInterface* wpPtr = GetWaypointById(iter->mID);
-            if(wpPtr != NULL && wpPtr->GetID() == wi->GetID())
+            if (wpPtr != NULL && wpPtr->GetID() == wi->GetID())
             {            
 
                //remove from current drawable
-               if(mDrawable.valid())
+               if (mDrawable.valid())
                {
                   RemoveAllEdges(wpPtr->GetID());
                   mDrawable->RemoveWaypoint(wpPtr->GetID());
@@ -287,9 +287,9 @@ namespace dtAI
          WaypointRefArray::const_iterator iter = mWaypoints.begin();
          WaypointRefArray::const_iterator iterEnd = mWaypoints.end();
 
-         for(;iter != iterEnd; ++iter)
+         for (;iter != iterEnd; ++iter)
          {
-            if((*iter)->ToString() == name)
+            if ((*iter)->ToString() == name)
             {
                return (*iter).get();
             }
@@ -303,9 +303,9 @@ namespace dtAI
          WaypointRefArray::const_iterator iter = mWaypoints.begin();
          WaypointRefArray::const_iterator iterEnd = mWaypoints.end();
 
-         for(;iter != iterEnd; ++iter)
+         for (;iter != iterEnd; ++iter)
          {
-            if((*iter)->ToString() == name)
+            if ((*iter)->ToString() == name)
             {
                arrayToFill.push_back((*iter).get());
             }
@@ -316,7 +316,7 @@ namespace dtAI
       {
          mWaypointGraph->AddEdge(pFrom, pTo);
 
-         /*if(mDrawable.valid())
+         /*if (mDrawable.valid())
          {
             mDrawable->UpdateWaypointGraph(mWaypointManager.GetNavMesh());
          }*/
@@ -326,7 +326,7 @@ namespace dtAI
       {
          bool result = mWaypointGraph->RemoveEdge(pFrom, pTo);
 
-         /*if(result && mDrawable.valid())
+         /*if (result && mDrawable.valid())
          {
             mDrawable->UpdateWaypointGraph(mWaypointManager.GetNavMesh());
          }*/
@@ -336,10 +336,10 @@ namespace dtAI
       void RemoveAllEdges(WaypointID pFrom)
       {
          mWaypointGraph->RemoveAllEdgesFromWaypoint(pFrom);
-         if(mDrawable.valid())
+         if (mDrawable.valid())
          {
             NavMesh* nm = mWaypointGraph->GetNavMeshAtSearchLevel(0);
-            if(nm != NULL)
+            if (nm != NULL)
             {
                mDrawable->UpdateWaypointGraph(*nm);
             }
@@ -369,7 +369,7 @@ namespace dtAI
       {
          mKDTree->clear();
 
-         if(mDrawable.valid())
+         if (mDrawable.valid())
          {
             mDrawable->ClearMemory();
          }
@@ -381,21 +381,21 @@ namespace dtAI
       {
          WaypointManager& wm = WaypointManager::GetInstance();
          bool result = wm.ReadFile(filename);
-         if(result)
+         if (result)
          {
             NavMesh::NavMeshContainer::const_iterator nm_iter = wm.GetNavMesh().GetNavMesh().begin();
             NavMesh::NavMeshContainer::const_iterator nm_iterEnd = wm.GetNavMesh().GetNavMesh().end();
 
-            for(;nm_iter != nm_iterEnd; ++nm_iter)
+            for (;nm_iter != nm_iterEnd; ++nm_iter)
             {
                const WaypointPair* wp = (*nm_iter).second;
 
-               if(GetWaypointById(wp->GetWaypointFrom()->GetID()) == NULL)
+               if (GetWaypointById(wp->GetWaypointFrom()->GetID()) == NULL)
                {
                   InsertWaypoint(const_cast<WaypointInterface*>(wp->GetWaypointFrom()));
                }
 
-               if(GetWaypointById(wp->GetWaypointTo()->GetID()) == NULL)
+               if (GetWaypointById(wp->GetWaypointTo()->GetID()) == NULL)
                {
                   InsertWaypoint(const_cast<WaypointInterface*>(wp->GetWaypointTo()));
                }
@@ -464,12 +464,27 @@ namespace dtAI
 
       void GetWaypoints(WaypointArray& toFill)
       {
-         std::for_each(mWaypoints.begin(), mWaypoints.end(), dtUtil::insert_back<WaypointArray, dtCore::RefPtr<WaypointInterface> >(toFill));
+         std::for_each(mWaypoints.begin(), mWaypoints.end(), dtUtil::insert_back< WaypointArray, dtCore::RefPtr<WaypointInterface> >(toFill));
       }
 
       void GetWaypoints(ConstWaypointArray& toFill) const
       {
-         std::for_each(mWaypoints.begin(), mWaypoints.end(), dtUtil::insert_back<ConstWaypointArray, dtCore::RefPtr<WaypointInterface> >(toFill));
+         std::for_each(mWaypoints.begin(), mWaypoints.end(), dtUtil::insert_back< ConstWaypointArray, dtCore::RefPtr<WaypointInterface> >(toFill));
+      }
+
+      size_t GetNumWaypoints() const
+      {
+         return mWaypoints.size();
+      }
+
+      dtAI::WaypointID GetMaxWaypointID() const
+      {
+         dtAI::WaypointID maxID = 0;
+         for (size_t i = 0; i < GetNumWaypoints(); ++i)
+         {
+            maxID = std::max(maxID, mWaypoints[i]->GetID());
+         }
+         return maxID;
       }
 
       void GetWaypointsByType(const dtDAL::ObjectType& type, WaypointArray& toFill)
@@ -477,9 +492,9 @@ namespace dtAI
          WaypointRefArray::const_iterator iter = mWaypoints.begin();
          WaypointRefArray::const_iterator iterEnd = mWaypoints.end();
 
-         for(;iter != iterEnd; ++iter)
+         for (;iter != iterEnd; ++iter)
          {
-            if((*iter)->GetWaypointType() == type)
+            if ((*iter)->GetWaypointType() == type)
             {
                toFill.push_back((*iter).get());
             }
@@ -489,7 +504,7 @@ namespace dtAI
 
       WaypointInterface* GetClosestWaypoint(const osg::Vec3& pos, float maxRadius)
       {
-         if(mKDTreeDirty)
+         if (mKDTreeDirty)
          {
             Optimize();
          }
@@ -497,7 +512,7 @@ namespace dtAI
          WaypointInterface* result = NULL;
 
          find_result found = mKDTree->find_nearest(pos, maxRadius);
-         if(found.first != mKDTree->end())
+         if (found.first != mKDTree->end())
          {              
             result = GetWaypointById(found.first->mID);            
          }
@@ -508,7 +523,7 @@ namespace dtAI
 
       bool GetWaypointsAtRadius(const osg::Vec3& pos, float radius, WaypointArray& arrayToFill)
       {
-         if(mKDTreeDirty)
+         if (mKDTreeDirty)
          {
             Optimize();
          }
@@ -522,7 +537,7 @@ namespace dtAI
          for (; iter != iterEnd; ++iter)
          {
             WaypointInterface* wi = GetWaypointById(iter->mID);
-            if(wi != NULL)
+            if (wi != NULL)
             {
                arrayToFill.push_back(wi);
             }
@@ -536,7 +551,6 @@ namespace dtAI
       }
 
    protected:
-
       virtual ~DeltaAIInterface()
       {
          ClearMemory();
@@ -550,14 +564,13 @@ namespace dtAI
       }
 
    private:
-
       dtCore::RefPtr<AIDebugDrawable> mDrawable;
 
       dtCore::RefPtr<WaypointGraph> mWaypointGraph;
 
       WaypointGraphAStar mAStar;
 
-      typedef std::vector<dtCore::RefPtr<dtAI::WaypointInterface> > WaypointRefArray;
+      typedef std::vector< dtCore::RefPtr<dtAI::WaypointInterface> > WaypointRefArray;
       WaypointRefArray mWaypoints;
 
       bool mKDTreeDirty;
@@ -565,7 +578,6 @@ namespace dtAI
 
       std::string mLastFileLoaded;
    };
-
 
    ///////////////////////////////////////////////////////////////////////////////
    // CLASS CONSTANTS

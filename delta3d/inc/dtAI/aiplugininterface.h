@@ -114,6 +114,16 @@ namespace dtAI
       virtual void GetWaypoints(ConstWaypointArray& toFill) const = 0;
 
       /**
+       *  Get the number of waypoints.
+       */
+      virtual size_t GetNumWaypoints() const = 0;
+
+      /**
+       *  Get the highest waypoint ID in the system.
+       */
+      virtual dtAI::WaypointID GetMaxWaypointID() const = 0;
+
+      /**
        * Finds the closest waypoint to a given point
        * @return the waypoint found, or NULL if no waypoints exist
        */
