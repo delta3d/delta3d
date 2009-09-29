@@ -153,13 +153,19 @@ namespace dtAI
          mWaypointGeometry->dirtyDisplayList();
          mWaypointGeometry->setVertexArray(mVerts.get());
 
-         mWaypointGeometry->removePrimitiveSet(0);
+         if (mWaypointGeometry->getNumPrimitiveSets() > 0)
+         {
+            mWaypointGeometry->removePrimitiveSet(0);
+         }
          osg::PrimitiveSet* ps = new osg::DrawArrays(osg::PrimitiveSet::POINTS, 0, mVerts->size());
          mWaypointGeometry->addPrimitiveSet(ps);
          //setting it back to zero will ensure any user data does not get removed when this function is called again
          mWaypointGeometry->setPrimitiveSet(0, ps);
 
-         mNavMeshGeometry->removePrimitiveSet(0);
+         if (mNavMeshGeometry->getNumPrimitiveSets() > 0)
+         {
+            mNavMeshGeometry->removePrimitiveSet(0);
+         }
          osg::PrimitiveSet* psLines = new osg::DrawElementsUInt(osg::PrimitiveSet::LINES, mWaypointPairs->begin(), mWaypointPairs->end());
          mNavMeshGeometry->addPrimitiveSet(psLines);
          //setting it back to zero will ensure any user data does not get removed when this function is called again
