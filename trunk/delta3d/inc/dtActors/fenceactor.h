@@ -46,6 +46,13 @@ namespace dtActors
       */
       void SetSegmentEnabled(bool enabled);
 
+      /**
+      * Sets the quad size for the segment.
+      *
+      * @param[in]  count  The number of quads.
+      */
+      void SetQuadCount(int count);
+
       // Post
       dtCore::RefPtr<dtCore::Object>         mPost;
 
@@ -190,6 +197,16 @@ namespace dtActors
       * Sets the list of fence post mesh indexes.
       */
       void SetResourceIDArray(const std::vector<FenceActor::ResourceIDData>& value);
+
+      /**
+      * Retrieves the list of segment points.
+      */
+      std::vector<osg::Vec2> GetSegmentPointArray();
+
+      /**
+      * Sets the list of segment points.
+      */
+      void SetSegmentPointArray(const std::vector<osg::Vec2>& value);
 
       /**
       * Retrieves the post mesh resource of a particular post.
@@ -353,9 +370,26 @@ namespace dtActors
       */
       void PlaceSegment(int pointIndex, int subIndex, dtCore::Transform start, dtCore::Transform end, float length);
 
+      /**
+      * Places a quad for a segment.
+      *
+      * @param[in]  geomData   The geometry data.
+      * @param[in]  quadIndex  The index of the quad.
+      * @param[in]  startTop   The top of the start point.
+      * @param[in]  startBot   The bottom of the start point.
+      * @param[in]  endTop     The top of the end point.
+      * @param[in]  endBot     The bot of the end point.
+      * @param[in]  texTop     The texture UV for the top of the quad.
+      * @param[in]  texBot     The texture UV for the bottom of the quad.
+      * @param[in]  length     The percentage of the texture to show.
+      */
+      void PlaceSegmentQuad(FencePostGeomData* geomData, int quadIndex, osg::Vec3 startTop, osg::Vec3 startBot, osg::Vec3 endTop, osg::Vec3 endBot, float texTop, float texBot, float texStart, float texEnd);
+
       std::vector<std::string>                  mPostResourceList;
       std::vector<std::string>                  mSegmentResourceList;
       std::vector<FenceActor::ResourceIDData>   mResourceIDList;
+
+      std::vector<osg::Vec2>                    mSegmentPointList;
 
       float mPostMinDistance;
       float mPostMaxDistance;
@@ -453,6 +487,18 @@ namespace dtActors
       FenceActor::ResourceIDData GetDefaultResourceID();
 
       /**
+      * Functor to set the current segment point index.
+      *
+      * @param[in]  index  The index to set.
+      */
+      void SetSegmentPointIndex(int index);
+
+      /**
+      * Functor to retrieve the default value for a segment point.
+      */
+      osg::Vec2 GetDefaultSegmentPoint();
+
+      /**
       * Gets and Sets the point index.
       */
       int GetPointIndex();
@@ -476,6 +522,12 @@ namespace dtActors
       int GetSegmentID();
       void SetSegmentID(int value);
 
+      /**
+      * Gets and Sets the segment point.
+      */
+      osg::Vec2 GetSegmentPoint();
+      void SetSegmentPoint(const osg::Vec2& value);
+
    protected:
       virtual ~FenceActorProxy();
 
@@ -483,6 +535,7 @@ namespace dtActors
 
       int      mPostResourceIndex;
       int      mSegmentResourceIndex;
+      int      mSegmentPointIndex;
 
       int      mResourceIDIndex;
    };
