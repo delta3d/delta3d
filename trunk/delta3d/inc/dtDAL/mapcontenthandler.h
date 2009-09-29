@@ -201,7 +201,7 @@ namespace dtDAL
          * Initializes the content handler to load a prefab.
          */
          void SetPrefabMode(std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >& proxyList,
-                            PrefabReadMode readMode = PREFAB_READ_ALL);
+               PrefabReadMode readMode = PREFAB_READ_ALL, dtDAL::Map* map = NULL);
 
          /**
          * Get prefab icon file name.  If there isn't one, returns ""

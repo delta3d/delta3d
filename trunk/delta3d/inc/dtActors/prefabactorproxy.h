@@ -5,6 +5,7 @@
 #include <dtDAL/transformableactorproxy.h>
 #include <dtABC/export.h>
 #include <dtDAL/actorproperty.h>
+#include <dtDAL/map.h>
 #include <osgText/Text>
 #include <dtCore/transformable.h>
 
@@ -42,6 +43,8 @@ namespace dtActors
 
       virtual void BuildPropertyMap();
 
+      void SetMap(dtDAL::Map* map);
+
       void SetPrefab(const std::string& fileName);
 
       std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >& GetPrefabProxies();
@@ -51,6 +54,8 @@ namespace dtActors
 
    private:
       std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > mProxies;
+
+      dtCore::RefPtr<dtDAL::Map> mMap;
    };
 }
 #endif // prefabactorproxy_h__

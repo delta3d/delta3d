@@ -52,6 +52,7 @@
 #include <QtGui/QDragLeaveEvent>
 #include <dtDAL/mapxml.h>
 #include <dtDAL/project.h>
+#include <dtActors/prefabactorproxy.h>
 
 
 namespace dtEditQt
@@ -506,7 +507,7 @@ namespace dtEditQt
                      std::string fullPath = dtDAL::Project::GetInstance().GetResourcePath(descriptor);
 
                      dtCore::RefPtr<dtDAL::MapParser> parser = new dtDAL::MapParser;
-                     parser->ParsePrefab(fullPath, proxies);
+                     parser->ParsePrefab(fullPath, proxies, mapPtr.get());
 
                      for (int proxyIndex = 0; proxyIndex < (int)proxies.size(); proxyIndex++)
                      {

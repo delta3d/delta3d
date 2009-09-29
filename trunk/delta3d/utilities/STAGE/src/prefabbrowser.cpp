@@ -311,13 +311,13 @@ namespace dtEditQt
             EditorData::GetInstance().getMainWindow()->startWaitCursor();
             EditorEvents::GetInstance().emitBeginChangeTransaction();
 
+            dtCore::RefPtr<dtDAL::Map> currMap = EditorData::GetInstance().getCurrentMap();
             std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > proxyList;
             dtCore::RefPtr<dtDAL::MapParser> parser = new dtDAL::MapParser;
-            parser->ParsePrefab(fullPath, proxyList);
+            parser->ParsePrefab(fullPath, proxyList, currMap.get());
 
             // Auto select all of the proxies.
             ViewportOverlay::ActorProxyList selection = ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
-            dtCore::RefPtr<dtDAL::Map> currMap = EditorData::GetInstance().getCurrentMap();
             ViewportOverlay* overlay = ViewportManager::GetInstance().getViewportOverlay();
 
             // Make sure we have valid data.
@@ -404,7 +404,7 @@ namespace dtEditQt
       
       // if we have an actor type, then create the proxy and emit the signal
       if (selectedWidget && selectedWidget->isResource())
-      {      
+      {
          EditorData::GetInstance().getMainWindow()->startWaitCursor();
 
          // create our new object
@@ -418,6 +418,12 @@ namespace dtEditQt
             if (mapPtr.valid())
             {
                mapPtr->AddProxy(*(proxy.get()), true);
+            }
+
+            dtActors::PrefabActorProxy* prefabProxy = dynamic_cast<dtActors::PrefabActorProxy*>(proxy.get());
+            if (prefabProxy)
+            {
+               prefabProxy->SetMap(mapPtr.get());
             }
 
             // Set the prefab resource of the actor to the current prefab.

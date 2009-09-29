@@ -59,6 +59,12 @@ namespace dtActors
          "Defines the Prefab resource to use.", "Prefab"));
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void PrefabActorProxy::SetMap(dtDAL::Map* map)
+   {
+      mMap = map;
+   }
+
    ///////////////////////////////////////////////////////////////////////////////
    void PrefabActorProxy::SetPrefab(const std::string& fileName)
    {
@@ -95,7 +101,7 @@ namespace dtActors
          try
          {
             dtCore::RefPtr<dtDAL::MapParser> parser = new dtDAL::MapParser;
-            parser->ParsePrefab(fileName, mProxies);
+            parser->ParsePrefab(fileName, mProxies, mMap.get());
 
             for (int proxyIndex = 0; proxyIndex < (int)mProxies.size(); proxyIndex++)
             {

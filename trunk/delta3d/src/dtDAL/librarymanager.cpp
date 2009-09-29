@@ -329,6 +329,20 @@ namespace dtDAL
       return found->second;        
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   std::string LibraryManager::GetLibraryNameForRegistry(ActorPluginRegistry* registry)
+   {
+      for (RegistryMapItor i = mRegistries.begin(); i != mRegistries.end(); ++i)
+      {
+         if (i->second.registry == registry)
+         {
+            return i->first;
+         }
+      }
+
+      return "";
+   }
+
    ///////////////////////////////////////////////////////////////////////////////
    void LibraryManager::UnloadActorRegistry(const std::string &libName)
    {
