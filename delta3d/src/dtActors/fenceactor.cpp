@@ -60,10 +60,6 @@ namespace dtActors
       mSegNormalList = new osg::Vec3Array();
       if (!mSegNormalList.valid()) return false;
 
-      mSegVertexList->resize(12);
-      mSegTextureList->resize(12);
-      mSegNormalList->resize(3);
-
       // Apply the buffer arrays to the geometry.
       mSegGeom->setVertexArray(mSegVertexList.get());
 
@@ -74,11 +70,6 @@ namespace dtActors
 
       mSegGeom->setNormalArray(mSegNormalList.get());
       mSegGeom->setNormalBinding(osg::Geometry::BIND_PER_PRIMITIVE);
-
-      // Now Set the primitive sets for the three sides of the segment.
-      mSegGeom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 4));
-      mSegGeom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 4, 4));
-      mSegGeom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 8, 4));
 
       // Create a texture object to use for the segment.
       mSegTexture = new osg::Texture2D();
@@ -151,6 +142,29 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void FencePostGeomData::SetQuadCount(int count)
+   {
+      // Ignore if the size is not changed.
+      if (count < 0 || count == (int)mSegNormalList->size())
+      {
+         return;
+      }
+
+      mSegVertexList->resize(count * 4);
+      mSegTextureList->resize(count * 4);
+      mSegNormalList->resize(count);
+
+      // Remove all the current primitives.
+      mSegGeom->removePrimitiveSet(0, mSegGeom->getNumPrimitiveSets());
+
+      // Now Set the primitive sets for the three sides of the segment.
+      for (int index = 0; index < count; index++)
+      {
+         mSegGeom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, index * 4, 4));
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    // FENCE POST GEOM NODE
    ////////////////////////////////////////////////////////////////////////////////
 
@@ -193,6 +207,8 @@ namespace dtActors
       , mSegmentWidth(1.0f)
       , mTopTextureRatio(0.2f)
    {
+      mSegmentPointList.push_back(osg::Vec2(0.0f, 1.0f));
+      mSegmentPointList.push_back(osg::Vec2(0.0f, 0.0f));
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -446,6 +462,20 @@ namespace dtActors
    void FenceActor::SetResourceIDArray(const std::vector<FenceActor::ResourceIDData>& value)
    {
       mResourceIDList = value;
+
+      Visualize();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   std::vector<osg::Vec2> FenceActor::GetSegmentPointArray()
+   {
+      return mSegmentPointList;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void FenceActor::SetSegmentPointArray(const std::vector<osg::Vec2>& value)
+   {
+      mSegmentPointList = value;
 
       Visualize();
    }
@@ -803,72 +833,136 @@ namespace dtActors
             dir.normalize();
 
             // Now get the vectors that will be used to calculate segment width
-            osg::Vec3 startWidth = startUp ^ dir;
-            startWidth.normalize();
-            startWidth *= mSegmentWidth * 0.5f * mFenceScale;
+            osg::Vec3 startWidthN = startUp ^ dir;
+            startWidthN.normalize();
+            osg::Vec3 startWidth = startWidthN * mSegmentWidth * 0.5f * mFenceScale;
 
-            osg::Vec3 endWidth = endUp ^ dir;
-            endWidth.normalize();
-            endWidth *= mSegmentWidth * 0.5f * mFenceScale;
+            osg::Vec3 endWidthN = endUp ^ dir;
+            endWidthN.normalize();
+            osg::Vec3 endWidth = endWidthN * mSegmentWidth * 0.5f * mFenceScale;
 
-            ////////////////////////////////////////////////////////////////////////////////
-            // Vertex
-            // Front Wall
-            /// Bottom left vertex.
-            geomData->mSegVertexList->at(0) = (start.GetTranslation() + startWidth);
-            /// Top left vertex.
-            geomData->mSegVertexList->at(1) = ((start.GetTranslation() + startWidth) + (startUp * mSegmentHeight * mFenceScale));
-            /// Top right vertex.
-            geomData->mSegVertexList->at(2) = ((end.GetTranslation() + endWidth) + (endUp * mSegmentHeight * mFenceScale));
-            /// Bottom right vertex.
-            geomData->mSegVertexList->at(3) = (end.GetTranslation() + endWidth);
+            int quadCount = ((mSegmentPointList.size() - 1) * 2) + 1;
+            if (pointIndex > 0 && pointIndex < (int)GetPointList().size() - 1)
+            {
+               geomData->SetQuadCount(quadCount * 2);
+            }
+            else
+            {
+               geomData->SetQuadCount(quadCount + (quadCount / 2) + 1);
+            }
 
-            // Back Wall
-            /// Bottom left vertex.
-            geomData->mSegVertexList->at(4) = (end.GetTranslation() - endWidth);
-            /// Top left vertex.
-            geomData->mSegVertexList->at(5) = ((end.GetTranslation() - endWidth) + (endUp * mSegmentHeight * mFenceScale));
-            /// Top right vertex.
-            geomData->mSegVertexList->at(6) = ((start.GetTranslation() - startWidth) + (startUp * mSegmentHeight * mFenceScale));
-            /// Bottom right vertex.
-            geomData->mSegVertexList->at(7) = (start.GetTranslation() - startWidth);
+            // Top
+            {
+               PlaceSegmentQuad(geomData, 0,
+                  (start.GetTranslation() - (startWidth + (startWidthN * mSegmentPointList[0].x() * mSegmentHeight * mFenceScale))) + (startUp * mSegmentHeight * mFenceScale * mSegmentPointList[0].y()),
+                  (start.GetTranslation() + (startWidth + (startWidthN * mSegmentPointList[0].x() * mSegmentHeight * mFenceScale))) + (startUp * mSegmentHeight * mFenceScale * mSegmentPointList[0].y()),
+                  (end.GetTranslation() - (endWidth + (endWidthN * mSegmentPointList[0].x() * mSegmentHeight * mFenceScale))) + (endUp * mSegmentHeight * mFenceScale * mSegmentPointList[0].y()),
+                  (end.GetTranslation() + (endWidth + (endWidthN * mSegmentPointList[0].x() * mSegmentHeight * mFenceScale))) + (endUp * mSegmentHeight * mFenceScale * mSegmentPointList[0].y()),
+                  1.0f, 1.0f - mTopTextureRatio, 0.0f, length);
+            }
 
-            // Top Wall
-            /// Bottom left vertex.
-            geomData->mSegVertexList->at(8) = ((start.GetTranslation() + startWidth) + (startUp * mSegmentHeight * mFenceScale));
-            /// Top left vertex.
-            geomData->mSegVertexList->at(9) = ((start.GetTranslation() - startWidth) + (startUp * mSegmentHeight * mFenceScale));
-            /// Top right vertex.
-            geomData->mSegVertexList->at(10)= ((end.GetTranslation() - endWidth) + (endUp * mSegmentHeight * mFenceScale));
-            /// Bottom right vertex.
-            geomData->mSegVertexList->at(11)= ((end.GetTranslation() + endWidth) + (endUp * mSegmentHeight * mFenceScale));
+            // Sides
+            for (int index = 0; index < (int)mSegmentPointList.size() - 1; index++)
+            {
+               float texTop = (1.0f - mTopTextureRatio) * mSegmentPointList[index].y();
+               float texBot = (1.0f - mTopTextureRatio) * mSegmentPointList[index + 1].y();
 
-            ////////////////////////////////////////////////////////////////////////////////
-            // Texture
-            // Front Wall
-            geomData->mSegTextureList->at(0) = (osg::Vec2(1.0f, 0.0f));
-            geomData->mSegTextureList->at(1) = (osg::Vec2(1.0f, 1.0f - mTopTextureRatio));
-            geomData->mSegTextureList->at(2) = (osg::Vec2(1.0f - length, 1.0f - mTopTextureRatio));
-            geomData->mSegTextureList->at(3) = (osg::Vec2(1.0f - length, 0.0f));
+               int quadIndex = (index * 2) + 1;
+               PlaceSegmentQuad(geomData, quadIndex,
+                  (start.GetTranslation() + (startWidth + (startWidthN * mSegmentHeight * mFenceScale * mSegmentPointList[index].x()))) + (startUp * mSegmentHeight * mFenceScale * mSegmentPointList[index].y()),
+                  (start.GetTranslation() + (startWidth + (startWidthN * mSegmentHeight * mFenceScale * mSegmentPointList[index + 1].x()))) + (startUp * mSegmentHeight * mFenceScale * mSegmentPointList[index + 1].y()),
+                  (end.GetTranslation() + (endWidth + (endWidthN * mSegmentHeight * mFenceScale * mSegmentPointList[index].x()))) + (endUp * mSegmentHeight * mFenceScale * mSegmentPointList[index].y()),
+                  (end.GetTranslation() + (endWidth + (endWidthN * mSegmentHeight * mFenceScale * mSegmentPointList[index + 1].x()))) + (endUp * mSegmentHeight * mFenceScale * mSegmentPointList[index + 1].y()),
+                  texTop, texBot, 0.0f, length);
+               PlaceSegmentQuad(geomData, quadIndex + 1,
+                  (start.GetTranslation() - (startWidth + (startWidthN * mSegmentHeight * mFenceScale * mSegmentPointList[index + 1].x()))) + (startUp * mSegmentHeight * mFenceScale * mSegmentPointList[index + 1].y()),
+                  (start.GetTranslation() - (startWidth + (startWidthN * mSegmentHeight * mFenceScale * mSegmentPointList[index].x()))) + (startUp * mSegmentHeight * mFenceScale * mSegmentPointList[index].y()),
+                  (end.GetTranslation() - (endWidth + (endWidthN * mSegmentHeight * mFenceScale * mSegmentPointList[index + 1].x()))) + (endUp * mSegmentHeight * mFenceScale * mSegmentPointList[index + 1].y()),
+                  (end.GetTranslation() - (endWidth + (endWidthN * mSegmentHeight * mFenceScale * mSegmentPointList[index].x()))) + (endUp * mSegmentHeight * mFenceScale * mSegmentPointList[index].y()),
+                  texBot, texTop, 0.0f, length);
+            }
 
-            // Back Wall
-            geomData->mSegTextureList->at(4) = (osg::Vec2(1.0f - length, 0.0f));
-            geomData->mSegTextureList->at(5) = (osg::Vec2(1.0f - length, 1.0f - mTopTextureRatio));
-            geomData->mSegTextureList->at(6) = (osg::Vec2(1.0f, 1.0f - mTopTextureRatio));
-            geomData->mSegTextureList->at(7) = (osg::Vec2(1.0f, 0.0f));
+            // Now connect the geometry of this segment to the previous
+            if (pointIndex > 0 && pointIndex < (int)GetPointList().size() - 1)
+            {
+               FencePostGeomNode* prevPost = dynamic_cast<FencePostGeomNode*>(GetPointDrawable(pointIndex - 1));
+               if (prevPost)
+               {
+                  if (!prevPost->SetIndex(subIndex))
+                  {
+                     return;
+                  }
 
-            // Top Wall
-            geomData->mSegTextureList->at(8) = (osg::Vec2(1.0f, 1.0f - mTopTextureRatio));
-            geomData->mSegTextureList->at(9) = (osg::Vec2(1.0f, 1.0f));
-            geomData->mSegTextureList->at(10)= (osg::Vec2(1.0f - length, 1.0f));
-            geomData->mSegTextureList->at(11)= (osg::Vec2(1.0f - length, 1.0f - mTopTextureRatio));
+                  FencePostGeomData* prevGeomData = dynamic_cast<FencePostGeomData*>(prevPost->mGeomList[subIndex].get());
+                  if (!prevGeomData) return;
 
-            ////////////////////////////////////////////////////////////////////////////////
-            // Normal
-            geomData->mSegNormalList->at(0) = startWidth;
-            geomData->mSegNormalList->at(1) = -startWidth;
-            geomData->mSegNormalList->at(2) = startUp;
+                  // Make sure the previous post has the proper geometry.
+                  if ((int)prevGeomData->mSegNormalList->size() >= quadCount)
+                  {
+                     for (int index = 0; index < quadCount; index++)
+                     {
+                        PlaceSegmentQuad(geomData, quadCount + index,
+                           prevGeomData->mSegVertexList->at((index * 4) + 2),
+                           prevGeomData->mSegVertexList->at((index * 4) + 3),
+                           geomData->mSegVertexList->at((index * 4) + 1),
+                           geomData->mSegVertexList->at((index * 4) + 0),
+                           geomData->mSegTextureList->at((index * 4) + 2).y(),
+                           geomData->mSegTextureList->at((index * 4) + 3).y(),
+                           0.0f, 1.0f);
+                     }
+                  }
+               }
+            }
+            // If this is an end post, then cap the end.
+            else if (pointIndex == 0)
+            {
+               if ((int)geomData->mSegNormalList->size() >= quadCount)
+               {
+                  int halfCount = quadCount / 2 + 1;
+                  for (int index = 1; index < halfCount; index++)
+                  {
+                     PlaceSegmentQuad(geomData, quadCount + index - 1,
+                        geomData->mSegVertexList->at((index * 8) - 4),
+                        geomData->mSegVertexList->at((index * 8) - 3),
+                        geomData->mSegVertexList->at((index * 8) + 1),
+                        geomData->mSegVertexList->at((index * 8) + 0),
+                        geomData->mSegTextureList->at((index * 8) + 1).y(),
+                        geomData->mSegTextureList->at((index * 8) + 0).y(),
+                        0.0f, 1.0f);
+                  }
+               }
+            }
+            else
+            {
+               FencePostGeomNode* prevPost = dynamic_cast<FencePostGeomNode*>(GetPointDrawable(pointIndex - 1));
+               if (prevPost)
+               {
+                  if (!prevPost->SetIndex(subIndex))
+                  {
+                     return;
+                  }
 
+                  FencePostGeomData* prevGeomData = dynamic_cast<FencePostGeomData*>(prevPost->mGeomList[subIndex].get());
+                  if (!prevGeomData) return;
+
+                  if ((int)prevGeomData->mSegNormalList->size() >= quadCount)
+                  {
+                     int halfCount = quadCount / 2 + 1;
+                     for (int index = 1; index < halfCount; index++)
+                     {
+                        PlaceSegmentQuad(geomData, quadCount + index - 1,
+                           prevGeomData->mSegVertexList->at((index * 8) + 2),
+                           prevGeomData->mSegVertexList->at((index * 8) + 3),
+                           prevGeomData->mSegVertexList->at((index * 8) - 1),
+                           prevGeomData->mSegVertexList->at((index * 8) - 2),
+                           prevGeomData->mSegTextureList->at((index * 8) + 2).y(),
+                           prevGeomData->mSegTextureList->at((index * 8) + 3).y(),
+                           0.0f, 1.0f);
+                     }
+                  }
+               }
+            }
+            
             // Get the texture to use for this segment.
             std::string textureName = GetSegmentTexture(pointIndex, subIndex);
             if (!textureName.empty())
@@ -883,6 +977,32 @@ namespace dtActors
             geomData->mSegGeom->dirtyDisplayList();
          }
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void FenceActor::PlaceSegmentQuad(FencePostGeomData* geomData, int quadIndex, osg::Vec3 startTop, osg::Vec3 startBot, osg::Vec3 endTop, osg::Vec3 endBot, float texTop, float texBot, float texStart, float texEnd)
+   {
+      geomData->mSegVertexList->at((quadIndex * 4) + 0) = startBot;
+      geomData->mSegVertexList->at((quadIndex * 4) + 1) = startTop;
+      geomData->mSegVertexList->at((quadIndex * 4) + 2) = endTop;
+      geomData->mSegVertexList->at((quadIndex * 4) + 3) = endBot;
+
+      geomData->mSegTextureList->at((quadIndex * 4) + 0) = (osg::Vec2(texStart, texBot));
+      geomData->mSegTextureList->at((quadIndex * 4) + 1) = (osg::Vec2(texStart, texTop));
+      geomData->mSegTextureList->at((quadIndex * 4) + 2) = (osg::Vec2(texEnd, texTop));
+      geomData->mSegTextureList->at((quadIndex * 4) + 3) = (osg::Vec2(texEnd, texBot));
+
+      // Calculate the surface normal.
+      osg::Vec3 bottomToTopVec = startTop - startBot;
+      bottomToTopVec.normalize();
+
+      osg::Vec3 startToEndVec = endBot - startBot;
+      startToEndVec.normalize();
+
+      osg::Vec3 normal = bottomToTopVec ^ startToEndVec;
+      normal.normalize();
+
+      geomData->mSegNormalList->at(quadIndex) = normal;
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -955,6 +1075,25 @@ namespace dtActors
          dtDAL::MakeFunctor(*actor, &FenceActor::SetSegmentResourceArray),
          segmentResourceProp, "Fence");
       AddProperty(segmentResourceArrayProp);
+
+      dtDAL::Vec2ActorProperty* segmentPointProp =
+         new dtDAL::Vec2ActorProperty(
+         "SegmentPoint", "Segment Point",
+         dtDAL::MakeFunctor(*this, &FenceActorProxy::SetSegmentPoint),
+         dtDAL::MakeFunctorRet(*this, &FenceActorProxy::GetSegmentPoint),
+         "Stores the point data for a segment.",
+         "Fence");
+
+      dtDAL::ArrayActorPropertyBase* segmentPointArrayProp =
+         new dtDAL::ArrayActorProperty<osg::Vec2>(
+         "SegmentPointArray", "Segment Point Array",
+         "The list of segment points.",
+         dtDAL::MakeFunctor(*this, &FenceActorProxy::SetSegmentPointIndex),
+         dtDAL::MakeFunctorRet(*this, &FenceActorProxy::GetDefaultSegmentPoint),
+         dtDAL::MakeFunctorRet(*actor, &FenceActor::GetSegmentPointArray),
+         dtDAL::MakeFunctor(*actor, &FenceActor::SetSegmentPointArray),
+         segmentPointProp, "Fence");
+      AddProperty(segmentPointArrayProp);
 
       // Resource ID Array
       dtDAL::IntActorProperty* pointIndexProp =
@@ -1197,6 +1336,18 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void FenceActorProxy::SetSegmentPointIndex(int index)
+   {
+      mSegmentPointIndex = index;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   osg::Vec2 FenceActorProxy::GetDefaultSegmentPoint()
+   {
+      return osg::Vec2();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    int FenceActorProxy::GetPointIndex()
    {
       FenceActor* actor = NULL;
@@ -1309,6 +1460,35 @@ namespace dtActors
       {
          resourceArray[mResourceIDIndex].segmentID = value;
          actor->SetResourceIDArray(resourceArray);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   osg::Vec2 FenceActorProxy::GetSegmentPoint()
+   {
+      FenceActor* actor = NULL;
+      GetActor(actor);
+
+      std::vector<osg::Vec2> pointArray = actor->GetSegmentPointArray();
+      if (mSegmentPointIndex < (int)pointArray.size())
+      {
+         return pointArray[mSegmentPointIndex];
+      }
+
+      return osg::Vec2();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void FenceActorProxy::SetSegmentPoint(const osg::Vec2& value)
+   {
+      FenceActor* actor = NULL;
+      GetActor(actor);
+
+      std::vector<osg::Vec2> pointArray = actor->GetSegmentPointArray();
+      if (mSegmentPointIndex < (int)pointArray.size())
+      {
+         pointArray[mSegmentPointIndex] = value;
+         actor->SetSegmentPointArray(pointArray);
       }
    }
 }

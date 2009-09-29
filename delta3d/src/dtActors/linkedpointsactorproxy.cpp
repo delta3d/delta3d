@@ -339,6 +339,8 @@ namespace dtActors
 
       // Update the previous point that was connected to the removed point.
       Visualize(index - 1);
+      Visualize(index);
+      Visualize(index + 1);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -356,6 +358,7 @@ namespace dtActors
 
       Visualize(index - 1);
       Visualize(index);
+      Visualize(index + 1);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -373,6 +376,7 @@ namespace dtActors
 
       Visualize(index - 1);
       Visualize(index);
+      Visualize(index + 1);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
