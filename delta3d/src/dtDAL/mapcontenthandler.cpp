@@ -1693,12 +1693,13 @@ namespace  dtDAL
 
    ////////////////////////////////////////////////////////////////////////////////
    void MapContentHandler::SetPrefabMode(std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >& proxyList,
-                                         PrefabReadMode readMode /* = READ_ALL */)
+      PrefabReadMode readMode, dtDAL::Map* map)
    {
       mLoadingPrefab = true;
       mPrefabProxyList = &proxyList;
       
       mPrefabReadMode = readMode;
+      mMap = map;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -1710,7 +1711,10 @@ namespace  dtDAL
    /////////////////////////////////////////////////////////////////
    void MapContentHandler::Reset()
    {
-      mMap = NULL;
+      if (!mLoadingPrefab)
+      {
+         mMap = NULL;
+      }
       mInMap = false;
       mInPrefab = false;
       mInHeader = false;
@@ -2143,7 +2147,7 @@ namespace  dtDAL
          {
             LibraryManager::GetInstance().LoadActorRegistry(mLibName);
          }
-         mMap->AddLibrary(mLibName, mLibVersion);
+         if (mMap.valid()) mMap->AddLibrary(mLibName, mLibVersion);
          ClearLibraryValues();
       }
       catch (const dtUtil::Exception& e)

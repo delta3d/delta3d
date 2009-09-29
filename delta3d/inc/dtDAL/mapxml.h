@@ -78,8 +78,9 @@ namespace dtDAL
          *
          * @param[in]  path       The prefab filepath.
          * @param[in]  proxyList  The list of proxies loaded from the prefab.
+         * @param[in]  map        The map we are loading the prefab for.
          */
-         bool ParsePrefab(const std::string& path, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >& proxyList);
+         bool ParsePrefab(const std::string& path, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >& proxyList, dtDAL::Map* map = NULL);
 
          /**
          * Parses only the header of a prefab's xml file and extracts the icon

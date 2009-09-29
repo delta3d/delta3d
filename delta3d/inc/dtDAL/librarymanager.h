@@ -173,6 +173,13 @@ namespace dtDAL
          ActorPluginRegistry *GetRegistryForType(const ActorType& actorType);
 
          /**
+         * Gets the name of a library given the registry.
+         * @param registry The registry.
+         * @return The name of the actor library.
+         */
+         std::string GetLibraryNameForRegistry(ActorPluginRegistry* registry);
+
+         /**
           * Determines which platform we are running on and returns a
           * platform dependent library name.
           * @param libBase Platform independent library name.

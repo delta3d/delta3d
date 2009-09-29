@@ -64,6 +64,7 @@
 #include <dtDAL/mapxmlconstants.h>
 #include <dtDAL/mapcontenthandler.h>
 #include <dtDAL/transformableactorproxy.h>
+#include <dtDAL/librarymanager.h>
 
 #include <dtUtil/fileutils.h>
 #include <dtUtil/datetime.h>
@@ -148,12 +149,12 @@ namespace dtDAL
 
    /////////////////////////////////////////////////////////////////
 
-   bool MapParser::ParsePrefab(const std::string& path, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >& proxyList)
+   bool MapParser::ParsePrefab(const std::string& path, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >& proxyList, dtDAL::Map* map)
    {
       try
       {
          mParsing = true;
-         mHandler->SetPrefabMode(proxyList);
+         mHandler->SetPrefabMode(proxyList, dtDAL::MapContentHandler::PREFAB_READ_ALL, map);
          mXercesParser->setContentHandler(mHandler.get());
          mXercesParser->setErrorHandler(mHandler.get());
          mXercesParser->parse(path.c_str());
@@ -864,6 +865,33 @@ namespace dtDAL
          EndElement(); //End Icon Element
 
          EndElement(); // End Header Element.
+
+         BeginElement(MapXMLConstants::LIBRARIES_ELEMENT);
+         for (int proxyIndex = 0; proxyIndex < (int)proxyList.size(); proxyIndex++)
+         {
+            ActorProxy* proxy = proxyList[proxyIndex].get();
+
+            // We can't do anything without a proxy.
+            if (!proxy)
+            {
+               continue;
+            }
+
+            const dtDAL::ActorType& type = proxy->GetActorType();
+            dtDAL::ActorPluginRegistry* registry = dtDAL::LibraryManager::GetInstance().GetRegistryForType(type);
+            if (registry)
+            {
+               BeginElement(MapXMLConstants::LIBRARY_ELEMENT);
+               BeginElement(MapXMLConstants::LIBRARY_NAME_ELEMENT);
+               AddCharacters(dtDAL::LibraryManager::GetInstance().GetLibraryNameForRegistry(registry));
+               EndElement(); // End Library Name Element.
+               BeginElement(MapXMLConstants::LIBRARY_VERSION_ELEMENT);
+               AddCharacters("");
+               EndElement(); // End Library Version Element.
+               EndElement(); // End Library Element.
+            }
+         }
+         EndElement(); // End Libraries Element.
 
          osg::Vec3 origin;
          bool originSet = false;
