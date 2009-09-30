@@ -493,8 +493,8 @@ namespace dtAI
    /////////////////////////////////////////////////////////////////////////////
    void WaypointManager::Clear()
    {
-      //free memory
-      if(mDeleteOnClear)
+      // free memory
+      if (mDeleteOnClear)
       {
          std::for_each(mWaypoints.begin(), mWaypoints.end(), WaypointManagerDeleteFunc());
       }
@@ -567,7 +567,7 @@ namespace dtAI
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void WaypointManager::SetDeleteOnClear( bool b )
+   void WaypointManager::SetDeleteOnClear(bool b)
    {
       mDeleteOnClear = b;
    }
@@ -579,7 +579,7 @@ namespace dtAI
    }
 
    //////////////////////////////////////////////////////////////////////////
-   //WaypointManagerDrawable
+   // WaypointManagerDrawable
    //////////////////////////////////////////////////////////////////////////
 
    /////////////////////////////////////////////////////////////////////////////

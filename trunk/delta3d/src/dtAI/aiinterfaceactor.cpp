@@ -1,24 +1,23 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
-* Copyright (C) 2009 Alion Science and Technology
-*
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
-* any later version.
-*
-* This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
-* details.
-*
-* You should have received a copy of the GNU Lesser General Public License
-* along with this library; if not, write to the Free Software Foundation, Inc.,
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*
-* Bradley Anderegg
-*/
-
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2009 Alion Science and Technology
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * Bradley Anderegg
+ */
 
 #include <dtAI/aiinterfaceactor.h>
 #include <dtAI/aiplugininterface.h>
@@ -38,7 +37,7 @@
 namespace dtAI
 {
    //////////////////////////////////////////////////////////////////////////
-   //file saving and loading utils
+   // file saving and loading utils
    //////////////////////////////////////////////////////////////////////////
    namespace WaypointFileHeader
    {
@@ -52,7 +51,7 @@ namespace dtAI
 
 
    //////////////////////////////////////////////////////////////////////////////////
-   //This is the default AI plugin interface implementation
+   // This is the default AI plugin interface implementation
    //////////////////////////////////////////////////////////////////////////////////////////
    struct KDHolder
    {
@@ -125,7 +124,7 @@ namespace dtAI
             mWaypoints.push_back(waypoint);
             mWaypointGraph->InsertWaypoint(waypoint);
 
-            //if we have created a drawable then we must add and remove to it
+            // if we have created a drawable then we must add and remove to it
             if (mDrawable.valid())
             {
                mDrawable->InsertWaypoint(*waypoint);
@@ -145,7 +144,7 @@ namespace dtAI
             mWaypoints.push_back(waypoint);
             mWaypointGraph->InsertCollection(waypoint, level);
 
-            //if we have created a drawable then we must add and remove to it
+            // if we have created a drawable then we must add and remove to it
             if (mDrawable.valid())
             {
                mDrawable->InsertWaypoint(*waypoint);
@@ -170,7 +169,7 @@ namespace dtAI
 
       bool Assign(WaypointID childWp, WaypointCollection* parentWp)
       {
-         //only the parent can be added through this function
+         // only the parent can be added through this function
          bool containsWp = GetWaypointById(parentWp->GetID()) != NULL;
 
          if (mWaypointGraph->Assign(childWp, parentWp))
@@ -179,7 +178,7 @@ namespace dtAI
             {
                mWaypoints.push_back(parentWp);
 
-               //if we have created a drawable then we must add and remove to it
+               // if we have created a drawable then we must add and remove to it
                if (mDrawable.valid())
                {
                   mDrawable->InsertWaypoint(*parentWp);
@@ -199,7 +198,7 @@ namespace dtAI
 
       bool MoveWaypoint(WaypointInterface* wi, const osg::Vec3& newPos)
       {         
-         //the kd-tree cannot move :( for now remove and re-insert
+         // the kd-tree cannot move :( for now remove and re-insert
          osg::Vec3 pos = wi->GetPosition();        
 
          find_result found = mKDTree->find_nearest(pos, 1.0f);
@@ -212,10 +211,10 @@ namespace dtAI
 
             wi->SetPosition(newPos);
 
-            //re-insert to move
+            // re-insert to move
             mWaypointGraph->InsertWaypoint(wi);
 
-            //the drawable allows re-inserting to move
+            // the drawable allows re-inserting to move
             if (mDrawable.valid())
             {
                mDrawable->InsertWaypoint(*wi);
@@ -245,21 +244,21 @@ namespace dtAI
             if (wpPtr != NULL && wpPtr->GetID() == wi->GetID())
             {            
 
-               //remove from current drawable
+               // remove from current drawable
                if (mDrawable.valid())
                {
                   RemoveAllEdges(wpPtr->GetID());
                   mDrawable->RemoveWaypoint(wpPtr->GetID());
                }
 
-               //remove from kd-tree
+               // remove from kd-tree
                mKDTree->erase(*iter);
                mKDTreeDirty = true;
 
-               //remove from waypoint graph
+               // remove from waypoint graph
                mWaypointGraph->RemoveWaypoint(wpPtr->GetID());
 
-               //finally remove it from internal array
+               // finally remove it from internal array
                dtUtil::array_remove<WaypointRefArray> rm(mWaypoints);
                dtCore::RefPtr<WaypointInterface> wpRef = wpPtr;
                result = rm(wpRef);
@@ -272,13 +271,13 @@ namespace dtAI
 
       WaypointInterface* GetWaypointById(WaypointID id)
       {
-         //todo- fix this const cast
+         // todo- fix this const cast
          return const_cast<WaypointInterface*>(mWaypointGraph->FindWaypoint(id));
       }
 
       const WaypointInterface* GetWaypointById(WaypointID id) const
       {
-         //todo- fix this const cast
+         // todo- fix this const cast
          return const_cast<WaypointInterface*>(mWaypointGraph->FindWaypoint(id));
       }
 
@@ -383,38 +382,33 @@ namespace dtAI
          bool result = wm.ReadFile(filename);
          if (result)
          {
-            NavMesh::NavMeshContainer::const_iterator nm_iter = wm.GetNavMesh().GetNavMesh().begin();
-            NavMesh::NavMeshContainer::const_iterator nm_iterEnd = wm.GetNavMesh().GetNavMesh().end();
+            for (WaypointManager::WaypointMap::const_iterator i = wm.GetWaypoints().begin();
+                 i != wm.GetWaypoints().end();
+                 ++i)
+            {
+               InsertWaypoint(i->second);
+            }
 
-            for (;nm_iter != nm_iterEnd; ++nm_iter)
+            for (NavMesh::NavMeshContainer::const_iterator nm_iter = wm.GetNavMesh().GetNavMesh().begin();
+                 nm_iter != wm.GetNavMesh().GetNavMesh().end();
+                 ++nm_iter)
             {
                const WaypointPair* wp = (*nm_iter).second;
-
-               if (GetWaypointById(wp->GetWaypointFrom()->GetID()) == NULL)
-               {
-                  InsertWaypoint(const_cast<WaypointInterface*>(wp->GetWaypointFrom()));
-               }
-
-               if (GetWaypointById(wp->GetWaypointTo()->GetID()) == NULL)
-               {
-                  InsertWaypoint(const_cast<WaypointInterface*>(wp->GetWaypointTo()));
-               }
                
                AddEdge(wp->GetWaypointFrom()->GetID(), wp->GetWaypointTo()->GetID());
             }
-            
+
             //wm.SetDeleteOnClear(false);
          }
          return result;
       }
-
 
       bool LoadWaypointFile(const std::string& filename)
       {
          dtCore::RefPtr<WaypointReaderWriter> reader = new WaypointReaderWriter(*this);
          bool result = reader->LoadWaypointFile(filename);
 
-         if(!result)
+         if (!result)
          {
             //this is temporary to support the old waypoint file
             result = LoadLegacyWaypointFile(filename);
@@ -439,7 +433,7 @@ namespace dtAI
 
       AIDebugDrawable* GetDebugDrawable()
       {
-         if(!mDrawable.valid())
+         if (!mDrawable.valid())
          {
             mDrawable = new AIDebugDrawable();
 
@@ -447,13 +441,13 @@ namespace dtAI
             WaypointRefArray::const_iterator iter = mWaypoints.begin();
             WaypointRefArray::const_iterator iterEnd = mWaypoints.end();
 
-            for(;iter != iterEnd; ++iter)
+            for (;iter != iterEnd; ++iter)
             {
                mDrawable->InsertWaypoint(**iter);
             }
 
             NavMesh* nm = mWaypointGraph->GetNavMeshAtSearchLevel(0);
-            if(nm != NULL)
+            if (nm != NULL)
             {
                mDrawable->UpdateWaypointGraph(*nm);
             }
@@ -501,7 +495,6 @@ namespace dtAI
          }
       }
 
-
       WaypointInterface* GetClosestWaypoint(const osg::Vec3& pos, float maxRadius)
       {
          if (mKDTreeDirty)
@@ -519,7 +512,6 @@ namespace dtAI
 
          return result;
       }
-
 
       bool GetWaypointsAtRadius(const osg::Vec3& pos, float radius, WaypointArray& arrayToFill)
       {
@@ -669,7 +661,7 @@ namespace dtAI
 
             bool success = mAIInterface->LoadWaypointFile(res);
 
-            if(!success)
+            if (!success)
             {
                LOG_ERROR("Unable to load Waypoint File '" + fileName + "'")
             }

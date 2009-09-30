@@ -216,7 +216,7 @@ namespace dtAI
    //AIDebugDrawable
    //////////////////////////////////////////////////////////////////////////////
    AIDebugDrawable::AIDebugDrawable()
-   : mImpl(new AIDebugDrawableImpl(*new WaypointRenderInfo))
+      : mImpl(new AIDebugDrawableImpl(*new WaypointRenderInfo))
    {
       Init();
    }
@@ -284,7 +284,7 @@ namespace dtAI
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void AIDebugDrawable::SetGeodeNavMesh( osg::Geode* geode )
+   void AIDebugDrawable::SetGeodeNavMesh(osg::Geode* geode)
    {
       mImpl->mGeodeNavMesh = geode;
    }
@@ -314,7 +314,7 @@ namespace dtAI
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void AIDebugDrawable::SetOSGNode( osg::Group* grp )
+   void AIDebugDrawable::SetOSGNode(osg::Group* grp)
    {
       mImpl->mNode = grp;
    }
@@ -346,10 +346,10 @@ namespace dtAI
       int loc = FindWaypoint(wp.GetID());
       if (loc > -1)
       {
-         //we already have this waypoint so lets make sure its in the right place
+         // we already have this waypoint so lets make sure its in the right place
          (*mImpl->mVerts)[loc].set(wp.GetPosition());
       }
-      else //lets add it to the existing waypoints
+      else // lets add it to the existing waypoints
       {
          mImpl->mWaypointIDs->push_back(wp.GetID());
          mImpl->mVerts->push_back(wp.GetPosition());
