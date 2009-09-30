@@ -61,7 +61,7 @@ namespace dtAI
       mID = pID;
 
       //increment counter if necessary
-      if(mIDCounter <= mID) mIDCounter = mID + 1;
+      if (mIDCounter <= mID) { mIDCounter = mID + 1; }
    }
 
    /////////////////////////////////////////////////////////////////////////////
