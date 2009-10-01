@@ -154,7 +154,15 @@ void CEGUIRenderer::doRender(void)
    m_currTexture = 0;
 
    initPerFrameStates();
-   glInterleavedArrays(GL_T2F_C4UB_V3F , 0, myBuff);
+   //glInterleavedArrays(GL_T2F_C4UB_V3F , 0, myBuff);
+
+   glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+   glEnableClientState(GL_COLOR_ARRAY);
+   glEnableClientState(GL_VERTEX_ARRAY);
+   glTexCoordPointer(2, GL_FLOAT, sizeof(MyQuad), &myBuff[0].tex);
+   glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(MyQuad), &myBuff[0].color);
+   glVertexPointer(3, GL_FLOAT, sizeof(MyQuad), &myBuff[0].vertex);
+
 
    // iterate over each quad in the list
    for (QuadList::iterator i = m_quadlist.begin(); i != m_quadlist.end(); ++i)
