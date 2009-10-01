@@ -248,8 +248,8 @@ namespace dtCore
 
       protected:
          double GetTimeDelta(const MessageData* data) const;
-         osg::Vec3 Rotate(const osg::Vec3& hpr, double delta) const;
-         osg::Vec3 Translate(const osg::Vec3& xyz, double delta) const;
+         osg::Vec3 Rotate(const osg::Vec3& hpr, double delta, bool& changed) const;
+         osg::Vec3 Translate(const osg::Vec3& xyz, double delta, bool& changed) const;
 
       private:
 
