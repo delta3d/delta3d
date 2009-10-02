@@ -60,8 +60,11 @@ void dtEditQt::STAGEGLWidget::dragEnterEvent(QDragEnterEvent* event)
 {
    if (mViewport != NULL)
    {
-      ViewportManager::GetInstance().EnableViewport(mViewport, true);
-      mViewport->dragEnterEvent(event);
+      if (!mViewport->GetIsRemoved())
+      {
+         ViewportManager::GetInstance().EnableViewport(mViewport, true);
+         mViewport->dragEnterEvent(event);
+      }
    }
 }
 
@@ -70,8 +73,11 @@ void dtEditQt::STAGEGLWidget::dragLeaveEvent(QDragLeaveEvent* event)
 {
    if (mViewport != NULL)
    {
-      ViewportManager::GetInstance().EnableViewport(mViewport, false);
-      mViewport->dragLeaveEvent(event);
+      if (!mViewport->GetIsRemoved())
+      {
+         ViewportManager::GetInstance().EnableViewport(mViewport, false);
+         mViewport->dragLeaveEvent(event);
+      }
    }
 }
 
@@ -96,7 +102,7 @@ void dtEditQt::STAGEGLWidget::dropEvent(QDropEvent* event)
 ////////////////////////////////////////////////////////////////////////////////
 void dtEditQt::STAGEGLWidget::paintGL()
 {
-   if (mViewport == NULL) 
+   if (mViewport == NULL || mViewport->GetIsRemoved()) 
    {
       return;
    }
@@ -189,9 +195,12 @@ void dtEditQt::STAGEGLWidget::enterEvent(QEvent *e)
    dtQt::OSGAdapterWidget::enterEvent(e);
    if (mViewport != NULL)
    {
-      //mouse entered this Widget.  Make sure the View is in the Application
-      ViewportManager::GetInstance().EnableViewport(mViewport, true);
-      mViewport->SetEnabled(true); //enable the Viewport
+      if (!mViewport->GetIsRemoved())
+      {
+         //mouse entered this Widget.  Make sure the View is in the Application
+         ViewportManager::GetInstance().EnableViewport(mViewport, true);
+         mViewport->SetEnabled(true); //enable the Viewport
+      }
    }
 }
 
@@ -201,9 +210,12 @@ void dtEditQt::STAGEGLWidget::leaveEvent(QEvent *e)
    dtQt::OSGAdapterWidget::leaveEvent(e);
    if (mViewport != NULL)
    {
-      //mouse left this Widget.  Make sure the View is not in the Application
-      ViewportManager::GetInstance().EnableViewport(mViewport, false);
-      mViewport->SetEnabled(false); //disable the Viewport
+      if (!mViewport->GetIsRemoved())
+      {
+         //mouse left this Widget.  Make sure the View is not in the Application
+         ViewportManager::GetInstance().EnableViewport(mViewport, false);
+         mViewport->SetEnabled(false); //disable the Viewport
+      }
    }
 }
 
