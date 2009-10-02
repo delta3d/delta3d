@@ -315,6 +315,12 @@ namespace dtEditQt {
       */
       bool GetEnabled() const;
 
+      /**
+      * Whether this viewport is being hidden by the configuration.
+      */
+      bool GetIsRemoved() const {return mIsRemoved;}
+      void RemoveView() {mIsRemoved = true;}
+
    protected:
 
       /**
@@ -337,6 +343,7 @@ namespace dtEditQt {
 
    private:
       bool                                   mEnabled;  //is this Viewport Enabled?
+      bool                                   mIsRemoved;
    };
 
 } // namespace dtEditQt

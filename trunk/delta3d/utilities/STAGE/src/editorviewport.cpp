@@ -67,6 +67,7 @@ namespace dtEditQt
       , mGhostProxy(NULL)
       , mSkipUpdateForCam(false)
       , mEnabled(false)
+      , mIsRemoved(false)
    {
       mObjectMotionModel = new STAGEObjectMotionModel(GetView());
       mObjectMotionModel->SetEnabled(false);

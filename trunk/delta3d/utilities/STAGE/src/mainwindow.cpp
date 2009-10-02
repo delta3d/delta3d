@@ -455,6 +455,7 @@ namespace dtEditQt
       if (ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, CONF_MGR_SHOW_TOP_VIEW) == "false")
       {
          mTopView->GetQGLWidget()->hide();
+         mTopView->RemoveView();
          topContainer->hide();
          bTopHidden = true;
       }
@@ -462,6 +463,7 @@ namespace dtEditQt
       if (ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, CONF_MGR_SHOW_FRONT_VIEW) == "false")
       {
          mFrontView->GetQGLWidget()->hide();
+         mFrontView->RemoveView();
          frontContainer->hide();
          if (bTopHidden)
          {
@@ -473,6 +475,7 @@ namespace dtEditQt
       if (ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, CONF_MGR_SHOW_SIDE_VIEW) == "false")
       {
          mSideView->GetQGLWidget()->hide();
+         mSideView->RemoveView();
          sideContainer->hide();
          bBottomHidden = true;
       }
@@ -480,6 +483,7 @@ namespace dtEditQt
       if (ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, CONF_MGR_SHOW_PERSP_VIEW) == "false")
       {
          mPerspView->GetQGLWidget()->hide();
+         mPerspView->RemoveView();
          perspContainer->hide();
          if (bBottomHidden)
          {
@@ -644,6 +648,7 @@ namespace dtEditQt
                                              ConfigurationManager::GENERAL, CONF_MGR_PROJECT_CONTEXT);
             if (dtUtil::FileUtils::GetInstance().DirExists(projContextPath))
             {
+               projContextPath = dtUtil::FileUtils::GetInstance().GetAbsolutePath(projContextPath);
                // Try to set the project context specified in the config file
                try
                {
