@@ -394,6 +394,14 @@ namespace dtEditQt
       */
       void emitSetSnapEnabled(bool translation, bool rotation, bool scale);
 
+      /**
+      * Modifies the list of properties to be displayed in the property editor.
+      *
+      * @param[in]  propertyContainer  The property container.
+      * @param[in]  propList           The list of properties to be displayed.
+      */
+      void emitModifyPropList(dtDAL::PropertyContainer& propertyContainer, std::vector<dtDAL::ActorProperty*>& propList);
+
       bool EnableViewport(Viewport* viewport, bool enable);
 
    signals:
@@ -545,6 +553,14 @@ namespace dtEditQt
       * Sets the enabled status of each snap tool.
       */
       void setSnapEnabled(bool translation, bool rotation, bool scale);
+
+      /**
+      * Modifies the list of properties to be displayed in the property editor.
+      *
+      * @param[in]  propertyContainer  The property container.
+      * @param[in]  propList           The list of properties to be displayed.
+      */
+      void modifyPropList(dtDAL::PropertyContainer& propertyContainer, std::vector<dtDAL::ActorProperty*>& propList);
 
    public slots:
       /**

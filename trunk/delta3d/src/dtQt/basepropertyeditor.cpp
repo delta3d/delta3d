@@ -258,8 +258,16 @@ namespace dtQt
    /////////////////////////////////////////////////////////////////////////////////
    void BasePropertyEditor::buildDynamicControls(dtDAL::PropertyContainer& propertyContainer, DynamicGroupControl* parentControl)
    {
-      dtDAL::ActorProperty* curProp;
       std::vector<dtDAL::ActorProperty*> propList;
+      propertyContainer.GetPropertyList(propList);
+
+      buildDynamicControls(propertyContainer, propList, parentControl);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void BasePropertyEditor::buildDynamicControls(dtDAL::PropertyContainer& propertyContainer, const std::vector<dtDAL::ActorProperty*>& propList, DynamicGroupControl* parentControl)
+   {
+      dtDAL::ActorProperty* curProp;
       DynamicAbstractControl* newControl;
       std::vector<dtDAL::ActorProperty*>::const_iterator propIter;
       int row = 0;
@@ -269,10 +277,6 @@ namespace dtQt
       {
          parent = parentControl;
       }
-
-      propertyContainer.GetPropertyList(propList);
-
-      // create controls for the basic properties - name, type, etc...
 
       // for each property, create a new dynamic control and add it to a group, if appropriate.
       for (propIter = propList.begin(); propIter != propList.end(); ++propIter)

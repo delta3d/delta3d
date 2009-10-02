@@ -558,6 +558,13 @@ namespace dtEditQt
       emit setSnapEnabled(translation, rotation, scale);
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void ViewportManager::emitModifyPropList(dtDAL::PropertyContainer& propertyContainer, std::vector<dtDAL::ActorProperty*>& propList)
+   {
+      LOG_INFO("Emitting event - [modifyPropList]");
+      emit modifyPropList(propertyContainer, propList);
+   }
+
    ///////////////////////////////////////////////////////////////////////////////
    void ViewportManager::onActorPropertyChanged(dtCore::RefPtr<dtDAL::ActorProxy> proxy,
       dtCore::RefPtr<dtDAL::ActorProperty> property)
