@@ -345,7 +345,7 @@ namespace dtAI
          }
       }
 
-      void GetAllEdgesFromWaypoint(WaypointID pFrom, ConstWaypointArray& result)
+      void GetAllEdgesFromWaypoint(WaypointID pFrom, ConstWaypointArray& result) const
       {
          mWaypointGraph->GetAllEdgesFromWaypoint(pFrom, result);
       }
