@@ -15,6 +15,8 @@
 #include <dtCore/transform.h>
 
 #include <dtUtil/bits.h>
+#include <dtUtil/mathdefines.h>
+#include <dtUtil/log.h>
 
 using namespace dtCore;
 
@@ -436,9 +438,9 @@ void FlyMotionModel::SetUseSimTimeForSpeed(bool useSimTimeForSpeed)
  *
  * @param data the message data
  */
-void FlyMotionModel::OnMessage(MessageData *data)
+void FlyMotionModel::OnMessage(MessageData* data)
 {
-   if (GetTarget() != 0 &&
+   if (GetTarget() != NULL &&
       IsEnabled() &&
       (data->message == dtCore::System::MESSAGE_POST_EVENT_TRAVERSAL/*MESSAGE_PRE_FRAME*/) &&
       // don't move if paused & using simtime for speed (since simtime will be 0 if paused)
@@ -457,17 +459,28 @@ void FlyMotionModel::OnMessage(MessageData *data)
 
       // rotation
 
-      hpr = Rotate(hpr, delta);
-      transform.SetRotation(hpr);
+      bool rotationChanged = false;
+      hpr = Rotate(hpr, delta, rotationChanged);
+      if (rotationChanged)
+      {
+         transform.SetRotation(hpr);
+      }
 
       // translation
 
-      xyz = Translate(xyz, delta);
-      transform.SetTranslation(xyz);
+      bool translationChanged = false;
+      xyz = Translate(xyz, delta, translationChanged);
+      if (translationChanged)
+      {
+         transform.SetTranslation(xyz);
+      }
 
       // finalize changes
 
-      GetTarget()->SetTransform(transform);
+      if (rotationChanged || translationChanged)
+      {
+         GetTarget()->SetTransform(transform);
+      }
    }
 }
 
@@ -494,16 +507,19 @@ double FlyMotionModel::GetTimeDelta(const MessageData* data) const
    return delta;
 }
 
-osg::Vec3 FlyMotionModel::Rotate(const osg::Vec3 &hpr, double delta) const
+osg::Vec3 FlyMotionModel::Rotate(const osg::Vec3& hpr, double delta, bool& changed) const
 {
    osg::Vec3 out = hpr;
 
-   if (mTurnLeftRightAxis != 0)
+   changed = false;
+
+   if (mTurnLeftRightAxis != NULL && mTurnLeftRightAxis->GetState() != 0.0)
    {
       out[0] -= float(mTurnLeftRightAxis->GetState() * mMaximumTurnSpeed * delta);
+      changed = true;
    }
 
-   if (mTurnUpDownAxis != 0)
+   if (mTurnUpDownAxis != NULL && mTurnUpDownAxis->GetState() != 0.0)
    {
       float rotateTo = out[1] + float(mTurnUpDownAxis->GetState() * mMaximumTurnSpeed * delta);
 
@@ -519,9 +535,9 @@ osg::Vec3 FlyMotionModel::Rotate(const osg::Vec3 &hpr, double delta) const
       {
          out[1] = rotateTo;
       }
+      changed = true;
    }
 
-   out[2] = 0.0f;
 
    if (HasOption(OPTION_RESET_MOUSE_CURSOR))
    {
@@ -532,26 +548,56 @@ osg::Vec3 FlyMotionModel::Rotate(const osg::Vec3 &hpr, double delta) const
       mMouse->SetPosition(0.0f,0.0f); // keeps cursor at center of screen
    }
 
+   // allow for one degree of error.  Assigning it to 1 or -1 as opposed
+   // to 0.0, keeps the camera from jerking when it corrects.
+   // One degree of being off isn't very noticeable, and it keeps the accumulated error
+   // of getting and setting the transform down.
+   if (out[2] > 1.0 )
+   {
+      out[2] = 1.0f;
+      changed = true;
+   }
+   else if (out[2] < -1.0)
+   {
+      out[2] = -1.0f;
+      changed = true;
+   }
+
+   if (!changed)
+   {
+      return hpr;
+   }
+
    return out;
 }
 
-osg::Vec3 FlyMotionModel::Translate(const osg::Vec3 &xyz, double delta) const
+osg::Vec3 FlyMotionModel::Translate(const osg::Vec3& xyz, double delta, bool& changed) const
 {
    osg::Vec3 translation;
 
-   if (mFlyForwardBackwardAxis != 0)
+   changed = false;
+
+   if (mFlyForwardBackwardAxis != NULL && mFlyForwardBackwardAxis->GetState() != 0.0)
    {
       translation[1] = float(mFlyForwardBackwardAxis->GetState() * mMaximumFlySpeed * delta);
+      changed = true;
    }
 
-   if (mFlyLeftRightAxis != 0)
+   if (mFlyLeftRightAxis != NULL && mFlyLeftRightAxis->GetState() != 0.0)
    {
       translation[0] = float(mFlyLeftRightAxis->GetState() * mMaximumFlySpeed * delta);
+      changed = true;
    }
 
-   if (mFlyUpDownAxis != 0)
+   if (mFlyUpDownAxis != NULL && mFlyUpDownAxis->GetState() != 0.0)
    {
       translation[2] = float(mFlyUpDownAxis->GetState() * mMaximumFlySpeed * delta);
+      changed = true;
+   }
+
+   if (!changed)
+   {
+      return xyz;
    }
 
    // rotate

@@ -86,12 +86,19 @@ namespace dtQt
    ////////////////////////////////////////////////////////////
    OSGGraphicsWindowQt::~OSGGraphicsWindowQt()
    {
-
+      SetQGLWidget(NULL);
    }
 
    ////////////////////////////////////////////////////////////
    void OSGGraphicsWindowQt::SetQGLWidget(QGLWidget* qwidget)
    {
+      if (mQWidget != NULL && getState() != NULL)
+      {
+         mQWidget = NULL;
+         decrementContextIDUsageCount(getState()->getContextID());
+         setState(NULL);
+      }
+
       mQWidget = qwidget;
       mValid = mQWidget != NULL;
 
@@ -185,6 +192,11 @@ namespace dtQt
    {
       if (mQWidget != NULL)
       {
+         if (!mQWidget->isVisible())
+         {
+            return false;
+         }
+
          mQWidget->makeCurrent();
          return true;
       }

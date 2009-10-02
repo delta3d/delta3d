@@ -29,6 +29,9 @@
 #include <dtCore/flymotionmodel.h>
 #include <dtCore/mouse.h>
 #include <dtCore/keyboard.h>
+#include <dtCore/transform.h>
+#include <dtCore/transformable.h>
+#include <dtCore/system.h>
 
 using namespace dtCore;
 
@@ -62,9 +65,10 @@ class TestAxisListener : public AxisListener
 class MotionModelTests : public CPPUNIT_NS::TestFixture 
 {
    CPPUNIT_TEST_SUITE(MotionModelTests);
-   CPPUNIT_TEST(TestOribitMotionModelAxisStateClobbering);
+   CPPUNIT_TEST(TestOrbitMotionModelAxisStateClobbering);
    CPPUNIT_TEST(TestFlyMotionModelProperties);
    CPPUNIT_TEST(TestFlyMotionModelOptions);
+   CPPUNIT_TEST(TestFlyMotionModelUpdate);
    CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -72,22 +76,25 @@ public:
    void setUp();
    void tearDown();
 
-   void TestOribitMotionModelAxisStateClobbering();
+   void TestOrbitMotionModelAxisStateClobbering();
    void TestFlyMotionModelProperties();
    void TestFlyMotionModelOptions();
+   void TestFlyMotionModelUpdate();
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(MotionModelTests);
 
 void MotionModelTests::setUp()
 {
+   dtCore::System::GetInstance().Start();
 }
 
 void MotionModelTests::tearDown()
 {
+   dtCore::System::GetInstance().Stop();
 }
 
-void MotionModelTests::TestOribitMotionModelAxisStateClobbering()
+void MotionModelTests::TestOrbitMotionModelAxisStateClobbering()
 {
    // This is a fun test. For a while, OribitMotionModel (with his
    // best intentions), was clobbering the ability of axis listeners
@@ -115,6 +122,76 @@ void MotionModelTests::TestOribitMotionModelAxisStateClobbering()
    inputDevice->GetAxis( 0 )->SetState( 2.0 );
    CPPUNIT_ASSERT( testAxisListener.HasAxisStateChanged() );
  }
+
+
+void MotionModelTests::TestFlyMotionModelUpdate()
+{
+   RefPtr<Mouse> mouse = new Mouse();
+   RefPtr<Keyboard> kb = new Keyboard();
+
+   dtCore::RefPtr<dtCore::FlyMotionModel> motionModel = new dtCore::FlyMotionModel(kb, mouse);
+
+   motionModel->SetEnabled(true);
+
+   dtCore::RefPtr<dtCore::Transformable> parent, target;
+
+   parent = new dtCore::Transformable("parent");
+   target = new dtCore::Transformable("target");
+
+   motionModel->SetTarget(target);
+
+   parent->AddChild(target);
+
+   dtCore::Transform xform;
+   xform.SetTranslation(osg::Vec3(90.0, 5000.1, -34.76));
+   xform.SetRotation(osg::Vec3(0.0, 0.0, 3.0));
+   parent->SetTransform(xform, dtCore::Transformable::REL_CS);
+   xform.MakeIdentity();
+   target->SetTransform(xform, dtCore::Transformable::REL_CS);
+
+   dtCore::System::GetInstance().Step();
+
+   target->GetTransform(xform, dtCore::Transformable::REL_CS);
+   osg::Vec3 hpr;
+   xform.GetRotation(hpr);
+   CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0f, float(hpr[0]), 0.01f);
+   CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0f, float(hpr[1]), 0.01f);
+   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The roll should be -2.0 because the fly motion model "
+            "sets the absolute roll to 1 degree of error.  Setting it to -3.0 would no error, but it causes jerky behavior.",
+            -2.0f, float(hpr[2]), 0.2f);
+
+   xform.SetRotation(osg::Vec3(0.0, 0.0, -2.4f));
+   target->SetTransform(xform, dtCore::Transformable::REL_CS);
+
+   target->GetTransform(xform, dtCore::Transformable::REL_CS);
+   xform.GetRotation(hpr);
+   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The roll should not have changed because it uses a 1 degree margin of error.",
+            -2.4f, float(hpr[2]), 0.2f);
+
+   dtCore::System::GetInstance().Step();
+
+   dtCore::Transform xform2;
+   target->GetTransform(xform2, dtCore::Transformable::REL_CS);
+
+   CPPUNIT_ASSERT_MESSAGE("The transform should not have changed AT ALL because"
+            " none of the axes are different and the roll didn't change.", xform.EpsilonEquals(xform2, 0.0001));
+
+   motionModel->GetFlyForwardBackwardAxis()->SetState(0.5, 0.5);
+   motionModel->GetFlyLeftRightAxis()->SetState(0.5, 0.5);
+   motionModel->GetFlyUpDownAxis()->SetState(0.5, 0.5);
+   motionModel->GetTurnLeftRightAxis()->SetState(0.5, 0.5);
+   motionModel->GetTurnUpDownAxis()->SetState(0.5, 0.5);
+
+   dtCore::Base::MessageData data;
+   data.message = dtCore::System::MESSAGE_POST_EVENT_TRAVERSAL;
+   double userData[2] = { 0.7, 0.7 };
+   data.userData = userData;
+   motionModel->OnMessage(&data);
+
+   target->GetTransform(xform2, dtCore::Transformable::REL_CS);
+
+   CPPUNIT_ASSERT_MESSAGE("The transform should have changed quite a bit.", !xform.EpsilonEquals(xform2, 0.500));
+}
 
 void MotionModelTests::TestFlyMotionModelProperties()
 {
@@ -162,7 +239,7 @@ void MotionModelTests::TestFlyMotionModelOptions()
                                 FlyMotionModel::OPTION_USE_SIMTIME_FOR_SPEED;
 
    RefPtr<FlyMotionModel> motionModel = new FlyMotionModel(kb.get(),
-                                                           mouse.get(),                                                           
+                                                           mouse.get(),
                                                            options);
 
 
