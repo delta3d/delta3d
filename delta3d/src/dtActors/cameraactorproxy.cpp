@@ -68,6 +68,7 @@ void CameraActorProxy::BuildPropertyMap()
       "Sets the camera's clear color, which can be thought of as the background color", GROUPNAME));
 }
 
+////////////////////////////////////////////////////////////////////////////////
 dtDAL::ActorProxyIcon* CameraActorProxy::GetBillBoardIcon()
 {
    if(!mBillBoardIcon.valid())

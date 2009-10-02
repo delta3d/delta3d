@@ -30,6 +30,7 @@
 #include <prefix/dtstageprefix-src.h>
 
 #include <dtEditQt/propertyeditor.h>
+#include <dtEditQt/viewportmanager.h>
 
 #include <dtQt/dynamicabstractcontrol.h>
 #include <dtQt/dynamicgroupcontrol.h>
@@ -187,8 +188,12 @@ namespace dtEditQt
          baseGroupControl->addChildControl(labelControl, propertyEditorModel);
       }
 
-      BaseClass::buildDynamicControls(propCon, parentControl);
+      std::vector<dtDAL::ActorProperty*> propList;
+      propCon.GetPropertyList(propList);
 
+      ViewportManager::GetInstance().emitModifyPropList(propCon, propList);
+
+      BaseClass::buildDynamicControls(propCon, propList, parentControl);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -237,3 +242,4 @@ namespace dtEditQt
 
 
 } // namespace dtEditQt
+
