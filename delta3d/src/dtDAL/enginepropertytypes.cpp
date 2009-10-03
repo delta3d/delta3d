@@ -382,6 +382,24 @@ namespace dtDAL
       : ActorProperty(type, name, label, desc, groupName)
       , mProxy(&actorProxy)
       , SetPropFunctor(Set)
+      , mHasGetFunctor(false)
+   {
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   ResourceActorProperty::ResourceActorProperty(ActorProxy& actorProxy,
+                        DataType& type,
+                        const dtUtil::RefString& name,
+                        const dtUtil::RefString& label,
+                        SetFuncType Set,
+                        GetFuncType Get,
+                        const dtUtil::RefString& desc,
+                        const dtUtil::RefString& groupName)
+      : ActorProperty(type, name, label, desc, groupName)
+      , mProxy(&actorProxy)
+      , SetPropFunctor(Set)
+      , GetPropFunctor(Get)
+      , mHasGetFunctor(true)
    {
    }
 
@@ -437,6 +455,13 @@ namespace dtDAL
    ////////////////////////////////////////////////////////////////////////////
    ResourceDescriptor* ResourceActorProperty::GetValue() const
    {
+      if (mHasGetFunctor)
+      {
+         std::string resName = GetPropFunctor();
+         dtDAL::ResourceDescriptor descriptor(resName);
+         mProxy->SetResource(GetName(), &descriptor);
+      }
+
       return mProxy->GetResource(GetName());
    }
 
