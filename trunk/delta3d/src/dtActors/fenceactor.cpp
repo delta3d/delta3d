@@ -842,13 +842,20 @@ namespace dtActors
             osg::Vec3 endWidth = endWidthN * mSegmentWidth * 0.5f * mFenceScale;
 
             int quadCount = ((mSegmentPointList.size() - 1) * 2) + 1;
-            if (pointIndex > 0 && pointIndex < (int)GetPointList().size() - 1)
+            if (subIndex == 0)
             {
-               geomData->SetQuadCount(quadCount * 2);
+               if (pointIndex > 0 && pointIndex < (int)GetPointList().size() - 1)
+               {
+                  geomData->SetQuadCount(quadCount * 2);
+               }
+               else
+               {
+                  geomData->SetQuadCount(quadCount + (quadCount / 2));
+               }
             }
             else
             {
-               geomData->SetQuadCount(quadCount + (quadCount / 2) + 1);
+               geomData->SetQuadCount(quadCount);
             }
 
             // Top
@@ -883,81 +890,96 @@ namespace dtActors
             }
 
             // Now connect the geometry of this segment to the previous
-            if (pointIndex > 0 && pointIndex < (int)GetPointList().size() - 1)
+            if (subIndex == 0)
             {
-               FencePostGeomNode* prevPost = dynamic_cast<FencePostGeomNode*>(GetPointDrawable(pointIndex - 1));
-               if (prevPost)
+               if (pointIndex > 0 && pointIndex < (int)GetPointList().size() - 1)
                {
-                  if (!prevPost->SetIndex(subIndex))
+                  FencePostGeomNode* prevPost = dynamic_cast<FencePostGeomNode*>(GetPointDrawable(pointIndex - 1));
+                  if (prevPost)
                   {
-                     return;
-                  }
+                     FencePostGeomData* prevGeomData = NULL;
 
-                  FencePostGeomData* prevGeomData = dynamic_cast<FencePostGeomData*>(prevPost->mGeomList[subIndex].get());
-                  if (!prevGeomData) return;
-
-                  // Make sure the previous post has the proper geometry.
-                  if ((int)prevGeomData->mSegNormalList->size() >= quadCount)
-                  {
-                     for (int index = 0; index < quadCount; index++)
+                     // Find the last enabled segment.
+                     for (int index = 0; index < (int)prevPost->mGeomList.size(); index++)
                      {
-                        PlaceSegmentQuad(geomData, quadCount + index,
-                           prevGeomData->mSegVertexList->at((index * 4) + 2),
-                           prevGeomData->mSegVertexList->at((index * 4) + 3),
-                           geomData->mSegVertexList->at((index * 4) + 1),
-                           geomData->mSegVertexList->at((index * 4) + 0),
-                           geomData->mSegTextureList->at((index * 4) + 2).y(),
-                           geomData->mSegTextureList->at((index * 4) + 3).y(),
-                           0.0f, 1.0f);
+                        FencePostGeomData* testGeomData = dynamic_cast<FencePostGeomData*>(prevPost->mGeomList[index].get());
+                        if (testGeomData && testGeomData->mSegEnabled)
+                        {
+                           prevGeomData = testGeomData;
+                        }
+                     }
+
+                     if (!prevGeomData) return;
+
+                     // Make sure the previous post has the proper geometry.
+                     if ((int)prevGeomData->mSegNormalList->size() >= quadCount)
+                     {
+                        for (int index = 0; index < quadCount; index++)
+                        {
+                           PlaceSegmentQuad(geomData, quadCount + index,
+                              prevGeomData->mSegVertexList->at((index * 4) + 2),
+                              prevGeomData->mSegVertexList->at((index * 4) + 3),
+                              geomData->mSegVertexList->at((index * 4) + 1),
+                              geomData->mSegVertexList->at((index * 4) + 0),
+                              geomData->mSegTextureList->at((index * 4) + 2).y(),
+                              geomData->mSegTextureList->at((index * 4) + 3).y(),
+                              0.0f, 1.0f);
+                        }
                      }
                   }
                }
-            }
-            // If this is an end post, then cap the end.
-            else if (pointIndex == 0)
-            {
-               if ((int)geomData->mSegNormalList->size() >= quadCount)
+               // If this is an end post, then cap the end.
+               else if (pointIndex == 0)
                {
-                  int halfCount = quadCount / 2 + 1;
-                  for (int index = 1; index < halfCount; index++)
-                  {
-                     PlaceSegmentQuad(geomData, quadCount + index - 1,
-                        geomData->mSegVertexList->at((index * 8) - 4),
-                        geomData->mSegVertexList->at((index * 8) - 3),
-                        geomData->mSegVertexList->at((index * 8) + 1),
-                        geomData->mSegVertexList->at((index * 8) + 0),
-                        geomData->mSegTextureList->at((index * 8) + 1).y(),
-                        geomData->mSegTextureList->at((index * 8) + 0).y(),
-                        0.0f, 1.0f);
-                  }
-               }
-            }
-            else
-            {
-               FencePostGeomNode* prevPost = dynamic_cast<FencePostGeomNode*>(GetPointDrawable(pointIndex - 1));
-               if (prevPost)
-               {
-                  if (!prevPost->SetIndex(subIndex))
-                  {
-                     return;
-                  }
-
-                  FencePostGeomData* prevGeomData = dynamic_cast<FencePostGeomData*>(prevPost->mGeomList[subIndex].get());
-                  if (!prevGeomData) return;
-
-                  if ((int)prevGeomData->mSegNormalList->size() >= quadCount)
+                  if ((int)geomData->mSegNormalList->size() >= quadCount)
                   {
                      int halfCount = quadCount / 2 + 1;
                      for (int index = 1; index < halfCount; index++)
                      {
                         PlaceSegmentQuad(geomData, quadCount + index - 1,
-                           prevGeomData->mSegVertexList->at((index * 8) + 2),
-                           prevGeomData->mSegVertexList->at((index * 8) + 3),
-                           prevGeomData->mSegVertexList->at((index * 8) - 1),
-                           prevGeomData->mSegVertexList->at((index * 8) - 2),
-                           prevGeomData->mSegTextureList->at((index * 8) + 2).y(),
-                           prevGeomData->mSegTextureList->at((index * 8) + 3).y(),
+                           geomData->mSegVertexList->at((index * 8) - 4),
+                           geomData->mSegVertexList->at((index * 8) - 3),
+                           geomData->mSegVertexList->at((index * 8) + 1),
+                           geomData->mSegVertexList->at((index * 8) + 0),
+                           geomData->mSegTextureList->at((index * 8) + 1).y(),
+                           geomData->mSegTextureList->at((index * 8) + 0).y(),
                            0.0f, 1.0f);
+                     }
+                  }
+               }
+               else
+               {
+                  FencePostGeomNode* prevPost = dynamic_cast<FencePostGeomNode*>(GetPointDrawable(pointIndex - 1));
+                  if (prevPost)
+                  {
+                     FencePostGeomData* prevGeomData = NULL;
+
+                     // Find the last enabled segment.
+                     for (int index = 0; index < (int)prevPost->mGeomList.size(); index++)
+                     {
+                        FencePostGeomData* testGeomData = dynamic_cast<FencePostGeomData*>(prevPost->mGeomList[index].get());
+                        if (testGeomData && testGeomData->mSegEnabled)
+                        {
+                           prevGeomData = testGeomData;
+                        }
+                     }
+
+                     if (!prevGeomData) return;
+
+                     if ((int)prevGeomData->mSegNormalList->size() >= quadCount)
+                     {
+                        int halfCount = quadCount / 2 + 1;
+                        for (int index = 1; index < halfCount; index++)
+                        {
+                           PlaceSegmentQuad(geomData, quadCount + index - 1,
+                              prevGeomData->mSegVertexList->at((index * 8) + 2),
+                              prevGeomData->mSegVertexList->at((index * 8) + 3),
+                              prevGeomData->mSegVertexList->at((index * 8) - 1),
+                              prevGeomData->mSegVertexList->at((index * 8) - 2),
+                              prevGeomData->mSegTextureList->at((index * 8) + 2).y(),
+                              prevGeomData->mSegTextureList->at((index * 8) + 3).y(),
+                              0.0f, 1.0f);
+                        }
                      }
                   }
                }
@@ -1045,6 +1067,7 @@ namespace dtActors
          new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::STATIC_MESH,
          "PostMeshResource", "Post Mesh",
          dtDAL::MakeFunctor(*this, &FenceActorProxy::SetPostMesh),
+         dtDAL::MakeFunctorRet(*this, &FenceActorProxy::GetPostMesh),
          "Defines the mesh used to represent a fence post.", "Fence");
 
       dtDAL::ArrayActorPropertyBase* postResourceArrayProp =
@@ -1063,6 +1086,7 @@ namespace dtActors
          new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::TEXTURE,
          "SegmentTextureResource", "Segment Texture",
          dtDAL::MakeFunctor(*this, &FenceActorProxy::SetSegmentTexture),
+         dtDAL::MakeFunctorRet(*this, &FenceActorProxy::GetSegmentTexture),
          "Defines the texture used to represent a fence segment.", "Fence");
 
       dtDAL::ArrayActorPropertyBase* segmentResourceArrayProp =
@@ -1235,65 +1259,65 @@ namespace dtActors
       return "";
    }
 
-   ///////////////////////////////////////////////////////////////////////////////////////
-   dtDAL::ResourceDescriptor* FenceActorProxy::GetResource(const std::string& name)
-   {
-      static dtDAL::ResourceDescriptor descriptor;
+   /////////////////////////////////////////////////////////////////////////////////////////
+   //dtDAL::ResourceDescriptor* FenceActorProxy::GetResource(const std::string& name)
+   //{
+   //   static dtDAL::ResourceDescriptor descriptor;
 
-      FenceActor* actor = NULL;
-      GetActor(actor);
+   //   FenceActor* actor = NULL;
+   //   GetActor(actor);
 
-      if (name == "PostMeshResource")
-      {
-         std::vector<std::string> postArray = actor->GetPostResourceArray();
-         if (mPostResourceIndex >= 0 && mPostResourceIndex < (int)postArray.size())
-         {
-            descriptor = dtDAL::ResourceDescriptor(postArray[mPostResourceIndex]);
-            return &descriptor;
-         }
-      }
-      else if (name == "SegmentTextureResource")
-      {
-         std::vector<std::string> segmentArray = actor->GetSegmentResourceArray();
-         if (mSegmentResourceIndex >= 0 && mSegmentResourceIndex < (int)segmentArray.size())
-         {
-            descriptor = dtDAL::ResourceDescriptor(segmentArray[mSegmentResourceIndex]);
-            return &descriptor;
-         }
-      }
+   //   if (name == "PostMeshResource")
+   //   {
+   //      std::vector<std::string> postArray = actor->GetPostResourceArray();
+   //      if (mPostResourceIndex >= 0 && mPostResourceIndex < (int)postArray.size())
+   //      {
+   //         descriptor = dtDAL::ResourceDescriptor(postArray[mPostResourceIndex]);
+   //         return &descriptor;
+   //      }
+   //   }
+   //   else if (name == "SegmentTextureResource")
+   //   {
+   //      std::vector<std::string> segmentArray = actor->GetSegmentResourceArray();
+   //      if (mSegmentResourceIndex >= 0 && mSegmentResourceIndex < (int)segmentArray.size())
+   //      {
+   //         descriptor = dtDAL::ResourceDescriptor(segmentArray[mSegmentResourceIndex]);
+   //         return &descriptor;
+   //      }
+   //   }
 
-      return ActorProxy::GetResource(name);
-   }
+   //   return ActorProxy::GetResource(name);
+   //}
 
-   ///////////////////////////////////////////////////////////////////////////////////////
-   const dtDAL::ResourceDescriptor* FenceActorProxy::GetResource(const std::string& name) const
-   {
-      static dtDAL::ResourceDescriptor descriptor;
+   /////////////////////////////////////////////////////////////////////////////////////////
+   //const dtDAL::ResourceDescriptor* FenceActorProxy::GetResource(const std::string& name) const
+   //{
+   //   static dtDAL::ResourceDescriptor descriptor;
 
-      const FenceActor* actor = NULL;
-      GetActor(actor);
+   //   const FenceActor* actor = NULL;
+   //   GetActor(actor);
 
-      if (name == "PostMeshResource")
-      {
-         std::vector<std::string> postArray = actor->GetPostResourceArray();
-         if (mPostResourceIndex >= 0 && mPostResourceIndex < (int)postArray.size())
-         {
-            descriptor = dtDAL::ResourceDescriptor(postArray[mPostResourceIndex]);
-            return &descriptor;
-         }
-      }
-      else if (name == "SegmentTextureResource")
-      {
-         std::vector<std::string> segmentArray = actor->GetSegmentResourceArray();
-         if (mSegmentResourceIndex >= 0 && mSegmentResourceIndex < (int)segmentArray.size())
-         {
-            descriptor = dtDAL::ResourceDescriptor(segmentArray[mSegmentResourceIndex]);
-            return &descriptor;
-         }
-      }
+   //   if (name == "PostMeshResource")
+   //   {
+   //      std::vector<std::string> postArray = actor->GetPostResourceArray();
+   //      if (mPostResourceIndex >= 0 && mPostResourceIndex < (int)postArray.size())
+   //      {
+   //         descriptor = dtDAL::ResourceDescriptor(postArray[mPostResourceIndex]);
+   //         return &descriptor;
+   //      }
+   //   }
+   //   else if (name == "SegmentTextureResource")
+   //   {
+   //      std::vector<std::string> segmentArray = actor->GetSegmentResourceArray();
+   //      if (mSegmentResourceIndex >= 0 && mSegmentResourceIndex < (int)segmentArray.size())
+   //      {
+   //         descriptor = dtDAL::ResourceDescriptor(segmentArray[mSegmentResourceIndex]);
+   //         return &descriptor;
+   //      }
+   //   }
 
-      return ActorProxy::GetResource(name);
-   }
+   //   return ActorProxy::GetResource(name);
+   //}
 
    ////////////////////////////////////////////////////////////////////////////////
    void FenceActorProxy::SetPostMesh(const std::string& fileName)
@@ -1310,6 +1334,19 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   std::string FenceActorProxy::GetPostMesh()
+   {
+      FenceActor* actor = NULL;
+      GetActor(actor);
+
+      std::vector<std::string> postArray = actor->GetPostResourceArray();
+      if (mPostResourceIndex >= 0 && mPostResourceIndex < (int)postArray.size())
+      {
+         return postArray[mPostResourceIndex];
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void FenceActorProxy::SetSegmentTexture(const std::string& fileName)
    {
       FenceActor* actor = NULL;
@@ -1320,6 +1357,19 @@ namespace dtActors
       {
          segmentArray[mSegmentResourceIndex] = fileName;
          actor->SetSegmentResourceArray(segmentArray);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   std::string FenceActorProxy::GetSegmentTexture()
+   {
+      FenceActor* actor = NULL;
+      GetActor(actor);
+
+      std::vector<std::string> segmentArray = actor->GetSegmentResourceArray();
+      if (mSegmentResourceIndex >= 0 && mSegmentResourceIndex < (int)segmentArray.size())
+      {
+         return segmentArray[mSegmentResourceIndex];
       }
    }
 

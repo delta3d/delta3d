@@ -280,12 +280,22 @@ namespace dtDAL
    {
       public:
          typedef dtUtil::Functor<void, TYPELIST_1(const std::string&)> SetFuncType;
+         typedef dtUtil::Functor<std::string, TYPELIST_0()> GetFuncType;
 
          ResourceActorProperty(ActorProxy& actorProxy,
                                DataType& type,
                                const dtUtil::RefString& name,
                                const dtUtil::RefString& label,
                                SetFuncType Set,
+                               const dtUtil::RefString& desc = "",
+                               const dtUtil::RefString& groupName = "");
+
+         ResourceActorProperty(ActorProxy& actorProxy,
+                               DataType& type,
+                               const dtUtil::RefString& name,
+                               const dtUtil::RefString& label,
+                               SetFuncType Set,
+                               GetFuncType Get,
                                const dtUtil::RefString& desc = "",
                                const dtUtil::RefString& groupName = "");
 
@@ -331,6 +341,9 @@ namespace dtDAL
       private:
          ActorProxy* mProxy;
          SetFuncType SetPropFunctor;
+
+         bool        mHasGetFunctor;
+         GetFuncType GetPropFunctor;
 
       protected:
          virtual ~ResourceActorProperty() { }
