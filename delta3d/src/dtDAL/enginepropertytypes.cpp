@@ -383,6 +383,7 @@ namespace dtDAL
       , mProxy(&actorProxy)
       , SetPropFunctor(Set)
       , mHasGetFunctor(false)
+      , mUsingDescFunctors(false)
    {
    }
 
@@ -400,6 +401,25 @@ namespace dtDAL
       , SetPropFunctor(Set)
       , GetPropFunctor(Get)
       , mHasGetFunctor(true)
+      , mUsingDescFunctors(false)
+   {
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   ResourceActorProperty::ResourceActorProperty(ActorProxy& actorProxy,
+                         DataType& type,
+                         const dtUtil::RefString& name,
+                         const dtUtil::RefString& label,
+                         SetDescFuncType Set,
+                         GetDescFuncType Get,
+                         const dtUtil::RefString& desc,
+                         const dtUtil::RefString& groupName)
+       : ActorProperty(type, name, label, desc, groupName)
+       , mProxy(&actorProxy)
+       , mHasGetFunctor(false)
+       , mUsingDescFunctors(true)
+       , SetDescPropFunctor(Set)
+       , GetDescPropFunctor(Get)
    {
    }
 
@@ -427,27 +447,35 @@ namespace dtDAL
       }
 
       mProxy->SetResource(GetName(), value);
-      if (value == NULL)
-         SetPropFunctor("");
+
+      if (mUsingDescFunctors)
+      {
+         SetDescPropFunctor(value);
+      }
       else
       {
-         try
-         {
-            std::string path = Project::GetInstance().GetResourcePath(*value);
-            if (dtUtil::Log::GetInstance("EnginePropertyTypes.h").IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-               dtUtil::Log::GetInstance("EnginePropertyTypes.h").LogMessage(dtUtil::Log::LOG_DEBUG,
-                                                                            __FUNCTION__, __LINE__,
-                                                                            "Path to resource is: %s",
-                                                                            path.c_str());
-            SetPropFunctor(path);
-         }
-         catch(const dtUtil::Exception& ex)
-         {
-            mProxy->SetResource(GetName(), NULL);
+         if (value == NULL)
             SetPropFunctor("");
-            dtUtil::Log::GetInstance("EnginePropertyTypes.h").LogMessage(dtUtil::Log::LOG_WARNING,
-                                                                         __FUNCTION__, __LINE__, "Resource %s not found.  Setting property %s to NULL. Error Message %s.",
-                                                                         value->GetResourceIdentifier().c_str(), GetName().c_str(), ex.What().c_str());
+         else
+         {
+            try
+            {
+               std::string path = Project::GetInstance().GetResourcePath(*value);
+               if (dtUtil::Log::GetInstance("EnginePropertyTypes.h").IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                  dtUtil::Log::GetInstance("EnginePropertyTypes.h").LogMessage(dtUtil::Log::LOG_DEBUG,
+                  __FUNCTION__, __LINE__,
+                  "Path to resource is: %s",
+                  path.c_str());
+               SetPropFunctor(path);
+            }
+            catch(const dtUtil::Exception& ex)
+            {
+               mProxy->SetResource(GetName(), NULL);
+               SetPropFunctor("");
+               dtUtil::Log::GetInstance("EnginePropertyTypes.h").LogMessage(dtUtil::Log::LOG_WARNING,
+                  __FUNCTION__, __LINE__, "Resource %s not found.  Setting property %s to NULL. Error Message %s.",
+                  value->GetResourceIdentifier().c_str(), GetName().c_str(), ex.What().c_str());
+            }
          }
       }
    }
@@ -455,6 +483,10 @@ namespace dtDAL
    ////////////////////////////////////////////////////////////////////////////
    ResourceDescriptor* ResourceActorProperty::GetValue() const
    {
+      if (mUsingDescFunctors)
+      {
+         return GetDescPropFunctor();
+      }
       if (mHasGetFunctor)
       {
          std::string resName = GetPropFunctor();
