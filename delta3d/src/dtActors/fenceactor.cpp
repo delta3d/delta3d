@@ -1259,66 +1259,6 @@ namespace dtActors
       return "";
    }
 
-   /////////////////////////////////////////////////////////////////////////////////////////
-   //dtDAL::ResourceDescriptor* FenceActorProxy::GetResource(const std::string& name)
-   //{
-   //   static dtDAL::ResourceDescriptor descriptor;
-
-   //   FenceActor* actor = NULL;
-   //   GetActor(actor);
-
-   //   if (name == "PostMeshResource")
-   //   {
-   //      std::vector<std::string> postArray = actor->GetPostResourceArray();
-   //      if (mPostResourceIndex >= 0 && mPostResourceIndex < (int)postArray.size())
-   //      {
-   //         descriptor = dtDAL::ResourceDescriptor(postArray[mPostResourceIndex]);
-   //         return &descriptor;
-   //      }
-   //   }
-   //   else if (name == "SegmentTextureResource")
-   //   {
-   //      std::vector<std::string> segmentArray = actor->GetSegmentResourceArray();
-   //      if (mSegmentResourceIndex >= 0 && mSegmentResourceIndex < (int)segmentArray.size())
-   //      {
-   //         descriptor = dtDAL::ResourceDescriptor(segmentArray[mSegmentResourceIndex]);
-   //         return &descriptor;
-   //      }
-   //   }
-
-   //   return ActorProxy::GetResource(name);
-   //}
-
-   /////////////////////////////////////////////////////////////////////////////////////////
-   //const dtDAL::ResourceDescriptor* FenceActorProxy::GetResource(const std::string& name) const
-   //{
-   //   static dtDAL::ResourceDescriptor descriptor;
-
-   //   const FenceActor* actor = NULL;
-   //   GetActor(actor);
-
-   //   if (name == "PostMeshResource")
-   //   {
-   //      std::vector<std::string> postArray = actor->GetPostResourceArray();
-   //      if (mPostResourceIndex >= 0 && mPostResourceIndex < (int)postArray.size())
-   //      {
-   //         descriptor = dtDAL::ResourceDescriptor(postArray[mPostResourceIndex]);
-   //         return &descriptor;
-   //      }
-   //   }
-   //   else if (name == "SegmentTextureResource")
-   //   {
-   //      std::vector<std::string> segmentArray = actor->GetSegmentResourceArray();
-   //      if (mSegmentResourceIndex >= 0 && mSegmentResourceIndex < (int)segmentArray.size())
-   //      {
-   //         descriptor = dtDAL::ResourceDescriptor(segmentArray[mSegmentResourceIndex]);
-   //         return &descriptor;
-   //      }
-   //   }
-
-   //   return ActorProxy::GetResource(name);
-   //}
-
    ////////////////////////////////////////////////////////////////////////////////
    void FenceActorProxy::SetPostMesh(const std::string& fileName)
    {
@@ -1344,6 +1284,8 @@ namespace dtActors
       {
          return postArray[mPostResourceIndex];
       }
+
+      return "";
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -1371,6 +1313,8 @@ namespace dtActors
       {
          return segmentArray[mSegmentResourceIndex];
       }
+
+      return "";
    }
 
    ////////////////////////////////////////////////////////////////////////////////
