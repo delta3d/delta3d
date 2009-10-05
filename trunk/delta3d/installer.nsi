@@ -107,6 +107,10 @@ Section "!Delta3D" Delta3DSection
   File .\${DELTA_BUILD_DIR}\bin\testHUD.exe
   File /nonfatal /x *d.dle .\.\${DELTA_BUILD_DIR}\bin\*.dle
   File /nonfatal /x *d.dlo .\.\${DELTA_BUILD_DIR}\bin\*.dlo
+  
+  ;bin/stplugins   STAGE release plugins
+  SetOutPath "$INSTDIR\${DELTA_BUILD_DIR}\bin\stplugins"
+  File .\${DELTA_BUILD_DIR}\bin\stplugins\*.dll
 
   ;bin\release : the Python bindinds
   SetOutPath "$INSTDIR\${DELTA_BUILD_DIR}\bin\release"
