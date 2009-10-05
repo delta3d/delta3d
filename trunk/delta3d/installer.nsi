@@ -167,7 +167,11 @@ Section "!Delta3D" Delta3DSection
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
   CreateDirectory "$SMPROGRAMS\$ICONS_GROUP"
   CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\Delta3D Directory.lnk" "$INSTDIR"
-  CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\API Documentation.lnk" "$INSTDIR\doc\html\index.html"
+  !ifdef INSTALL_CHM
+    CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\API Documentation.lnk" "$INSTDIR\doc\index.chm"
+  !else
+    CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\API Documentation.lnk" "$INSTDIR\doc\html\index.html"
+  !endif
   CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\STAGE.lnk" "$INSTDIR\${DELTA_BUILD_DIR}\bin\STAGE.exe"
   CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\Object Viewer.lnk" "$INSTDIR\${DELTA_BUILD_DIR}\bin\ObjectViewer.exe"
   CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\Particle Editor.lnk" "$INSTDIR\${DELTA_BUILD_DIR}\bin\ParticleEditor.exe"
