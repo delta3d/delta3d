@@ -402,6 +402,14 @@ namespace dtEditQt
       */
       void emitModifyPropList(dtDAL::PropertyContainer& propertyContainer, std::vector<dtDAL::ActorProperty*>& propList);
 
+      /**
+      * Enables or Disables the viewport by adding or removing it from the scene.
+      *
+      * @param[in]  viewport  The viewport.
+      * @param[in]  enable    Enable or Disable?
+      *
+      * @return     Returns true if the viewport enabled status was changed.
+      */
       bool EnableViewport(Viewport* viewport, bool enable);
 
    signals:

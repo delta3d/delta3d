@@ -448,22 +448,6 @@ namespace dtActors
       */
       std::string GetDefaultSegment(void);
 
-      ///**
-      //* Gets a ResourceDescriptor of the requested property name.
-      //* @param name Name of the resource to retrieve.
-      //* @return A pointer to the resource descripter or NULL if it
-      //* is not found.
-      //*/
-      //dtDAL::ResourceDescriptor* GetResource(const std::string& name);
-
-      ///**
-      //* Gets a ResourceDescriptor of the requested property name.
-      //* @param name Name of the resource to retrieve.
-      //* @return A pointer to the resource descripter or NULL if it
-      //* is not found.
-      //*/
-      //const dtDAL::ResourceDescriptor* GetResource(const std::string& name) const;
-
       /**
       * Sets the mesh used as a fence post.
       */

@@ -4,9 +4,10 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 dtEditQt::STAGEGLWidget::STAGEGLWidget(bool drawOnSeparateThread,  QWidget* parent,
-                                       const QGLWidget* shareWidget, Qt::WindowFlags f):
-dtQt::OSGAdapterWidget(drawOnSeparateThread, parent, shareWidget, f)
-, mViewport(NULL)
+                                       const QGLWidget* shareWidget, Qt::WindowFlags f)
+   : dtQt::OSGAdapterWidget(drawOnSeparateThread, parent, shareWidget, f)
+   , mViewport(NULL)
+   , mIsMouseOver(false)
 {
 }
 
@@ -58,6 +59,8 @@ void dtEditQt::STAGEGLWidget::mouseReleaseEvent(QMouseEvent* e)
 ////////////////////////////////////////////////////////////////////////////////
 void dtEditQt::STAGEGLWidget::dragEnterEvent(QDragEnterEvent* event)
 {
+   mIsMouseOver = true;
+
    if (mViewport != NULL)
    {
       if (!mViewport->GetIsRemoved())
@@ -71,6 +74,8 @@ void dtEditQt::STAGEGLWidget::dragEnterEvent(QDragEnterEvent* event)
 ////////////////////////////////////////////////////////////////////////////////
 void dtEditQt::STAGEGLWidget::dragLeaveEvent(QDragLeaveEvent* event)
 {
+   mIsMouseOver = false;
+
    if (mViewport != NULL)
    {
       if (!mViewport->GetIsRemoved())
@@ -119,7 +124,7 @@ void dtEditQt::STAGEGLWidget::paintGL()
    mViewport->paintGL();
 
    //put things back the way they were
-   if (viewAdded)
+   if (viewAdded && !mIsMouseOver)
    {
       ViewportManager::GetInstance().EnableViewport(mViewport, false);
    }   
@@ -145,7 +150,6 @@ void dtEditQt::STAGEGLWidget::resizeGL(int width, int height)
    {
       mViewport->resizeGL(width, height);
    }
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -192,6 +196,8 @@ void dtEditQt::STAGEGLWidget::mouseDoubleClickEvent(QMouseEvent* e)
 ////////////////////////////////////////////////////////////////////////////////
 void dtEditQt::STAGEGLWidget::enterEvent(QEvent *e)
 {
+   mIsMouseOver = true;
+
    dtQt::OSGAdapterWidget::enterEvent(e);
    if (mViewport != NULL)
    {
@@ -207,6 +213,8 @@ void dtEditQt::STAGEGLWidget::enterEvent(QEvent *e)
 ////////////////////////////////////////////////////////////////////////////////
 void dtEditQt::STAGEGLWidget::leaveEvent(QEvent *e)
 {
+   mIsMouseOver = false;
+
    dtQt::OSGAdapterWidget::leaveEvent(e);
    if (mViewport != NULL)
    {
