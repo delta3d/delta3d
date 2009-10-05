@@ -885,6 +885,18 @@ namespace dtEditQt
 
          pick(e->pos().x(), e->pos().y());
          //ViewportManager::GetInstance().refreshAllViewports();
+
+         // Enable the object motion model if you have a selection.
+         if (GetEnabled())
+         {
+            ViewportOverlay* overlay = ViewportManager::GetInstance().getViewportOverlay();
+            ViewportOverlay::ActorProxyList selection = overlay->getCurrentActorSelection();
+
+            if (selection.size() > 0)
+            {
+               mObjectMotionModel->SetEnabled(true);
+            }
+         }
       }
 
       return true;
