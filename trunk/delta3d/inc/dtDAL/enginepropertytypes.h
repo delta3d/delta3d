@@ -282,6 +282,21 @@ namespace dtDAL
          typedef dtUtil::Functor<void, TYPELIST_1(const std::string&)> SetFuncType;
          typedef dtUtil::Functor<std::string, TYPELIST_0()> GetFuncType;
 
+         typedef dtUtil::Functor<void, TYPELIST_1(const dtDAL::ResourceDescriptor*)> SetDescFuncType;
+         typedef dtUtil::Functor<dtDAL::ResourceDescriptor*, TYPELIST_0()> GetDescFuncType;
+
+         /**
+         * Our original constructor, only allows you to specify a Set function
+         * callback that sets the value via resource path name.
+         *
+         * @param actorProxy The actor proxy.
+         * @param type The type of resource this contains.
+         * @param name The name of the property.
+         * @param label The label displayed for this property in the UI.
+         * @param Set The Setter callback function that receives a string value.
+         * @param desc The description of the property.
+         * @param groupName The group that this property will fall under.
+         */
          ResourceActorProperty(ActorProxy& actorProxy,
                                DataType& type,
                                const dtUtil::RefString& name,
@@ -290,12 +305,47 @@ namespace dtDAL
                                const dtUtil::RefString& desc = "",
                                const dtUtil::RefString& groupName = "");
 
+         /**
+         * Modified constructor that allows you to specify both Get and Set
+         * callback functions, both passing the resource path string.
+         *
+         * @param actorProxy The actor proxy.
+         * @param type The type of resource this contains.
+         * @param name The name of the property.
+         * @param label The label displayed for this property in the UI.
+         * @param Set The Setter callback function that receives a string value.
+         * @param Get The Getter callback function that returns a string value.
+         * @param desc The description of the property.
+         * @param groupName The group that this property will fall under.
+         */
          ResourceActorProperty(ActorProxy& actorProxy,
                                DataType& type,
                                const dtUtil::RefString& name,
                                const dtUtil::RefString& label,
                                SetFuncType Set,
                                GetFuncType Get,
+                               const dtUtil::RefString& desc = "",
+                               const dtUtil::RefString& groupName = "");
+
+         /**
+         * Modified constructor that allows you to specify both Get and Set
+         * callback functions, both passing the resource descriptor pointer.
+         *
+         * @param actorProxy The actor proxy.
+         * @param type The type of resource this contains.
+         * @param name The name of the property.
+         * @param label The label displayed for this property in the UI.
+         * @param Set The Setter callback function that receives resource descriptor.
+         * @param Get The Getter callback function that returns a resource descriptor.
+         * @param desc The description of the property.
+         * @param groupName The group that this property will fall under.
+         */
+         ResourceActorProperty(ActorProxy& actorProxy,
+                               DataType& type,
+                               const dtUtil::RefString& name,
+                               const dtUtil::RefString& label,
+                               SetDescFuncType Set,
+                               GetDescFuncType Get,
                                const dtUtil::RefString& desc = "",
                                const dtUtil::RefString& groupName = "");
 
@@ -344,6 +394,10 @@ namespace dtDAL
 
          bool        mHasGetFunctor;
          GetFuncType GetPropFunctor;
+        
+         bool              mUsingDescFunctors;
+         SetDescFuncType   SetDescPropFunctor;
+         GetDescFuncType   GetDescPropFunctor;
 
       protected:
          virtual ~ResourceActorProperty() { }
