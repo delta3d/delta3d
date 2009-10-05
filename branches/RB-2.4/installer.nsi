@@ -18,6 +18,10 @@
   !define DELTA_BUILD_DIR 'build'
 !endif
 
+!ifdef NOCOMPRESS
+  SetCompress off
+!endif
+
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "Delta3D"
@@ -85,12 +89,12 @@ Section "!Delta3D" Delta3DSection
   SetOutPath "$INSTDIR"
   SetOverwrite ifnewer
   File "changes.txt"
-  File "CMakeLists.txt"
-  File "configure"
-  File "configure.bat"
-  File "configure-debug"
+  ;File "CMakeLists.txt"
+  ;File "configure"
+  ;File "configure.bat"
+  ;File "configure-debug"
   File "credits.txt"
-  File "installer.nsi"
+  ;File "installer.nsi"
   File "license.txt"
   File "readme.txt"
 
@@ -103,6 +107,10 @@ Section "!Delta3D" Delta3DSection
   File .\${DELTA_BUILD_DIR}\bin\testHUD.exe
   File /nonfatal /x *d.dle .\.\${DELTA_BUILD_DIR}\bin\*.dle
   File /nonfatal /x *d.dlo .\.\${DELTA_BUILD_DIR}\bin\*.dlo
+  
+  ;bin/stplugins   STAGE release plugins
+  SetOutPath "$INSTDIR\${DELTA_BUILD_DIR}\bin\stplugins"
+  File .\${DELTA_BUILD_DIR}\bin\stplugins\*.dll
 
   ;bin\release : the Python bindinds
   SetOutPath "$INSTDIR\${DELTA_BUILD_DIR}\bin\release"
@@ -118,7 +126,7 @@ Section "!Delta3D" Delta3DSection
   
   ;demos
   SetOutPath "$INSTDIR\demos"
-  File /r /x .svn /x *.obj /x *.pch /x *.pdb /x *.idb /x *.ilk /x *.htm /x windows-msvc* .\demos\*
+  File /r /x .svn /x CMakeLists.txt .\demos\*
   
   ;doc
   SetOutPath "$INSTDIR\doc"
@@ -133,7 +141,11 @@ Section "!Delta3D" Delta3DSection
     
   ;examples
   SetOutPath "$INSTDIR\examples"
-  File /r /x .svn /x *.obj /x *.pch /x *.pdb /x *.idb /x *.ilk /x *.htm /x windows-msvc* .\examples\*
+  File /r /x .svn /x CMakeLists.txt .\examples\*
+  
+  ;examples/buildScripts
+  SetOutPath "$INSTDIR\examples\buildScripts"
+  File /r /x .svn .\examples\buildScripts\*
   
   ;ext
   SetOutPath "$INSTDIR\ext"
@@ -149,25 +161,29 @@ Section "!Delta3D" Delta3DSection
   
   ;src
   SetOutPath "$INSTDIR\src"
-  File /r /x .svn /x *.obj /x *.pch /x *.pdb /x *.ilk /x *.idb /x *.htm /x windows-msvc* .\src\*
+  File /r /x .svn /x CMakeLists.txt .\src\*
 
   ;tests
   SetOutPath "$INSTDIR\tests"
-  File /r /x .svn /x *.obj /x *.pch /x *.pdb /x *.ilk /x *.idb /x *.htm /x windows-msvc* .\tests\*
+  File /r /x .svn /x *.exp /x *.pdb /x *.idb /x *.ilk /x CMakeLists.txt .\tests\*
 
   ;utilities
   SetOutPath "$INSTDIR\utilities"
-  File /r /x .svn /x *.obj /x *.pch /x *.pdb /x *.idb /x *.htm /x windows-msvc* .\utilities\*
+  File /r /x .svn /x CMakeLists.txt .\utilities\*
 
   ;VisualStudio
   SetOutPath "$INSTDIR\VisualStudio"
-  File /r /x .svn /x *.suo /x *.ncb /x *.pdb /x *.idb /x Debug /x Release /x Makefile* .\VisualStudio\*
+  File /r  /x .svn .\VisualStudio\*
 
 ; Shortcuts
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
   CreateDirectory "$SMPROGRAMS\$ICONS_GROUP"
   CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\Delta3D Directory.lnk" "$INSTDIR"
-  CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\API Documentation.lnk" "$INSTDIR\doc\html\index.html"
+  !ifdef INSTALL_CHM
+    CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\API Documentation.lnk" "$INSTDIR\doc\index.chm"
+  !else
+    CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\API Documentation.lnk" "$INSTDIR\doc\html\index.html"
+  !endif
   CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\STAGE.lnk" "$INSTDIR\${DELTA_BUILD_DIR}\bin\STAGE.exe"
   CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\Object Viewer.lnk" "$INSTDIR\${DELTA_BUILD_DIR}\bin\ObjectViewer.exe"
   CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\Particle Editor.lnk" "$INSTDIR\${DELTA_BUILD_DIR}\bin\ParticleEditor.exe"
