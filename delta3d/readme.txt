@@ -2,15 +2,14 @@
 # Delta3D: The Open-Source Game Engine #
 ########################################
 
-Welcome to Delta3D ! We hope to get you up and running with Delta3D as
+Welcome to Delta3D! We hope to get you up and running with Delta3D as
 quickly as possible. If you only wish run pre-built applications and have
 already used the Windows installer, you are ready to rock. 
 
 Go ahead and try out the examples by running the executables found in
-the bin folder.
+the build/bin folder.
 
-There are also several useful utitilies also found in the delta3d/bin folder.
-See the readme.txt in delta3d/utilities for more details.
+There are also several useful utitilies also found in the build/bin folder.
 
 Thanks for using Delta3D! Please visit our webpage at http://www.delta3d.org
 and don't hesistate to use the forums for any problems you may have. We'll do
@@ -19,13 +18,20 @@ our best to respond as quick as possible.
 Sincerely,
 The Delta3D Team
 
+
 ########################
 # Building From Source #
 ########################
 
-Delta3D uses CMake (http://www.cmake.org) to generate projects.  See 
+Delta3D uses CMake (http://www.cmake.org) to generate projects for the 
+libraries, examples, and utilities.  See 
 http://delta3d.wiki.sourceforge.net/Tutorials for instructions on
 how to build Delta3D from source.
+
+NOTE: You will *not* be able to compile the libraries or utilities
+      from the Delta3D SDK package, only the examples.  See the Tutorials
+      page for help in deciding which Delta3D download is right for you. 
+
 
 ################
 # Dependencies #
@@ -115,12 +121,4 @@ LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$DELTA_LIB
    See http://delta3d.wiki.sourceforge.net/Tutorials for information on 
    how to compile the non-distributed external dependencies required for 
    building STAGE.
-  
-      
-   NOTE: If you have installed the Windows dependency package or
-         used the full-on installer, you must remove the Qt DLLs that are 
-         shipped inside ext\bin. These were placed there so users could
-         use the STAGE binary without rebuilding Qt. However, if you are 
-         reading this section it means you _are_ rebuilding Qt in order
-         to rebuild STAGE, so the old DLLs will conflict.
-   
+
