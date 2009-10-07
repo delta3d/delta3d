@@ -97,6 +97,7 @@ namespace dtEditQt
 
       const std::string& libName = libPair.first;
       const std::string& filePath = libPair.second;
+      const std::string& pathOnly = libPair.second.substr(0, libPair.second.find_last_of("\\/"));
 
       if (filePath.empty())
       {
@@ -120,6 +121,9 @@ namespace dtEditQt
             return;
          }
       }
+
+      //before attempting to load, ensure the filePath is in search path list
+      dtUtil::LibrarySharingManager::GetInstance().AddToSearchPath(pathOnly);
 
       try
       {
