@@ -458,6 +458,10 @@ ENDIF(DELTA3D_AGGRESSIVE_WARNING_FLAGS)
 
 ADD_DELTA3D_SUBFOLDERS()
 
+#MADAY HACK FOR PLAYING WITH SWIG
+ADD_SUBDIRECTORY(src/swigPython)
+
+
 #-----------------------------------------------------------------------------
 ### uninstall target
 #-----------------------------------------------------------------------------
