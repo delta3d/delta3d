@@ -1,0 +1,2185 @@
+/* -*-c++-*-
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2006, Alion Science and Technology, BMH Operation.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * David Guthrie
+ */
+
+#include <prefix/dtdalprefix-src.h>
+
+#include <typeinfo>
+
+#include <dtDAL/mapcontenthandler.h>
+#include <dtDAL/map.h>
+#include <dtDAL/librarymanager.h>
+#include <dtDAL/exceptionenum.h>
+#include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/groupactorproperty.h>
+#include <dtDAL/arrayactorpropertybase.h>
+#include <dtDAL/containeractorproperty.h>
+#include <dtDAL/actorproperty.h>
+#include <dtDAL/actorproxy.h>
+#include <dtDAL/datatype.h>
+#include <dtDAL/mapxmlconstants.h>
+#include <dtDAL/environmentactor.h>
+#include <dtDAL/gameevent.h>
+#include <dtDAL/gameeventmanager.h>
+#include <dtDAL/namedparameter.h>
+#include <dtDAL/mapxmlconstants.h>
+
+#include <dtUtil/xercesutils.h>
+
+#ifdef _MSC_VER
+#   pragma warning(push)
+#   pragma warning(disable : 4267) // for warning C4267: 'argument' : conversion from 'size_t' to 'const unsigned int', possible loss of data
+#endif
+
+#include <xercesc/util/XMLString.hpp>
+#include <xercesc/util/OutOfMemoryException.hpp>
+#include <xercesc/sax/SAXParseException.hpp>
+
+#ifdef _MSC_VER
+#   pragma warning(pop)
+#endif
+
+#include <osg/Vec2f>
+#include <osg/Vec2d>
+#include <osg/Vec3f>
+#include <osg/Vec3d>
+
+XERCES_CPP_NAMESPACE_USE
+
+
+// Default iimplementation of char_traits<XMLCh>, needed for gcc3.3
+#if (__GNUC__ == 3 && __GNUC_MINOR__ <= 3)
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
+namespace std
+{
+   template<>
+   struct char_traits<unsigned short>
+   {
+      typedef unsigned short char_type;
+
+      static void
+         assign(char_type& __c1, const char_type& __c2)
+      { __c1 = __c2; }
+
+      static int
+         compare(const char_type* __s1, const char_type* __s2, size_t __n)
+      {
+         for (;__n > 0; ++__s1, ++__s2, --__n) {
+            if (*__s1 < *__s2) return -1;
+            if (*__s1 > *__s2) return +1;
+         }
+         return 0;
+      }
+
+      static size_t
+         length(const char_type* __s)
+      { size_t __n = 0; while (*__s++) ++__n; return __n; }
+
+      static char_type*
+         copy(char_type* __s1, const char_type* __s2, size_t __n)
+      {  return static_cast<char_type*>(memcpy(__s1, __s2, __n * sizeof(char_type))); }
+
+   };
+}
+/// @endcond
+#endif
+
+namespace  dtDAL
+{
+
+   /////////////////////////////////////////////////////////////////
+   Map* MapContentHandler::GetMap()
+   {
+      return mMap.get();
+   }
+
+   /////////////////////////////////////////////////////////////////
+   const Map* MapContentHandler::GetMap() const
+   {
+      return mMap.get();
+   }
+
+   /////////////////////////////////////////////////////////////////
+   void MapContentHandler::ClearMap()
+   {
+      mMap = NULL;
+   }
+
+   /////////////////////////////////////////////////////////////////
+   bool MapContentHandler::IsPropertyCorrectType(dtDAL::DataType** dataType, dtDAL::ActorProperty* actorProperty)
+   {
+      if (actorProperty == NULL || (*dataType) == NULL || mActorProxy == NULL)
+      {
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Call made to %s with content handler in incorrect state.", __FUNCTION__);
+         return false;
+      }
+      bool result = actorProperty->GetDataType() == *(*dataType);
+      if (!result)
+      {
+         if ( (*(*dataType) == DataType::VEC2 && (actorProperty->GetDataType() == DataType::VEC2D || actorProperty->GetDataType() == DataType::VEC2F)) ||
+              (*(*dataType) == DataType::VEC3 && (actorProperty->GetDataType() == DataType::VEC3D || actorProperty->GetDataType() == DataType::VEC3F)) ||
+              (*(*dataType) == DataType::VEC4 && (actorProperty->GetDataType() == DataType::VEC4D || actorProperty->GetDataType() == DataType::VEC4F)) )
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
+                                "Differentiating between a osg::vecf/osg::vecd and a osg::vec. Correcting.");
+            (*dataType) = &actorProperty->GetDataType();
+            return true;
+         }
+
+         mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                             "Parameter/Property %s of actor %s was saved as type %s, but is now of type %s. Data will be ignored",
+                             actorProperty->GetName().c_str(), mActorProxy->GetName().c_str(),
+                             (*dataType)->GetName().c_str(), actorProperty->GetDataType().GetName().c_str());
+      }
+      return result;
+   }
+
+   /////////////////////////////////////////////////////////////////
+   void MapContentHandler::characters(const XMLCh* const chars, const unsigned int length)
+   {
+      xmlCharString& topEl = mElements.top();
+      if (mInMap || mInPrefab)
+      {
+         if (mInHeader)
+         {
+            if (topEl == MapXMLConstants::MAP_NAME_ELEMENT)
+            {
+               mMap->SetName(dtUtil::XMLStringConverter(chars).ToString());
+               //this flag is only used when the parser is just looking for the map name.
+               mFoundMapName = true;
+            }            
+            else if (topEl == MapXMLConstants::DESCRIPTION_ELEMENT)
+            {
+               // if we are loading a prefab, this description does not matter.
+               if (!mLoadingPrefab)
+               {
+                  mMap->SetDescription(dtUtil::XMLStringConverter(chars).ToString());
+               }
+            }
+            else if (topEl == MapXMLConstants::AUTHOR_ELEMENT)
+            {
+               mMap->SetAuthor(dtUtil::XMLStringConverter(chars).ToString());
+            }
+            else if (topEl == MapXMLConstants::COMMENT_ELEMENT)
+            {
+               mMap->SetComment(dtUtil::XMLStringConverter(chars).ToString());
+            }
+            else if (topEl == MapXMLConstants::COPYRIGHT_ELEMENT)
+            {
+               mMap->SetCopyright(dtUtil::XMLStringConverter(chars).ToString());
+            }
+            else if (topEl == MapXMLConstants::CREATE_TIMESTAMP_ELEMENT)
+            {
+               mMap->SetCreateDateTime(dtUtil::XMLStringConverter(chars).ToString());
+            }
+            else if (topEl == MapXMLConstants::LAST_UPDATE_TIMESTAMP_ELEMENT)
+            {
+               //ignored for now
+            }
+            else if (topEl == MapXMLConstants::EDITOR_VERSION_ELEMENT)
+            {
+               if (!mLoadingPrefab)
+               {
+                  //ignored for now
+               }
+            }
+            else if (topEl == MapXMLConstants::SCHEMA_VERSION_ELEMENT)
+            {
+               if (!mLoadingPrefab)
+               {
+                  //ignored - the schema checks this value
+               }
+            }
+            else if (topEl == MapXMLConstants::ICON_ELEMENT)
+            {
+               mPrefabIconFileName = dtUtil::XMLStringConverter(chars).ToString();
+            }
+         }
+         else if (mInEvents)
+         {
+            if (mGameEvent.valid())
+            {
+               if (topEl == MapXMLConstants::EVENT_ID_ELEMENT)
+               {
+                  mGameEvent->SetUniqueId(dtCore::UniqueId(dtUtil::XMLStringConverter(chars).ToString()));
+               }
+               else if (topEl == MapXMLConstants::EVENT_NAME_ELEMENT)
+               {
+                  mGameEvent->SetName(dtUtil::XMLStringConverter(chars).ToString());
+               }
+               else if (topEl == MapXMLConstants::EVENT_DESCRIPTION_ELEMENT)
+               {
+                  mGameEvent->SetDescription(dtUtil::XMLStringConverter(chars).ToString());
+               }
+            }
+         }
+         else if (mInLibraries)
+         {
+            if (topEl == MapXMLConstants::LIBRARY_NAME_ELEMENT)
+            {
+               mLibName = dtUtil::XMLStringConverter(chars).ToString();
+            }
+            else if (topEl == MapXMLConstants::LIBRARY_VERSION_ELEMENT)
+            {
+               mLibVersion = dtUtil::XMLStringConverter(chars).ToString();
+            }
+         }
+         else if (mInActors)
+         {
+            if (mInActor)
+            {
+               if (!mIgnoreCurrentActor)
+               {
+                  ActorCharacters(chars);
+               }
+            }
+            else
+            {
+               if (topEl == MapXMLConstants::ACTOR_ENVIRONMENT_ACTOR_ELEMENT)
+                  mEnvActorId = dtUtil::XMLStringConverter(chars).ToString();
+            }            
+         }
+         else if (mInGroup)
+         {
+            if (topEl == MapXMLConstants::ACTOR_GROUP_ACTOR_ELEMENT)
+            {
+               if (mGroupIndex == -1)
+               {
+                  mGroupIndex = 0;
+               }
+
+               dtDAL::ActorProxy* proxy = NULL;
+               dtCore::UniqueId id = dtCore::UniqueId(dtUtil::XMLStringConverter(chars).ToString());
+               mMap->GetProxyById(id, proxy);
+               if (proxy)
+               {
+                  mMap->AddActorToGroup(mGroupIndex, proxy);
+               }
+            }
+         }
+         else if (mInPresetCameras)
+         {
+            PresetCameraCharacters(chars);
+         }
+      }
+
+      if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+      {
+         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__,
+                             "Found characters for element \"%s\" \"%s\"", dtUtil::XMLStringConverter(topEl.c_str()).c_str(), dtUtil::XMLStringConverter(chars).c_str());
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////
+   void MapContentHandler::ActorCharacters(const XMLCh* const chars)
+   {
+      xmlCharString& topEl = mElements.top();
+      if (mInActorProperty)
+      {
+         if (mActorProxy == NULL)
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                                "Actor proxy is NULL, but code has entered the actor property section");
+         }
+         else
+         {
+            if (mInGroupProperty)
+            {
+               ParameterCharacters(chars);
+            }
+            else
+            {
+               // Make sure we don't try and change the current property if we are loading properties from an array.
+               if (mInArrayProperty == 0 && mInContainerProperty == 0 && topEl == MapXMLConstants::ACTOR_PROPERTY_NAME_ELEMENT)
+               {
+                  std::string propName = dtUtil::XMLStringConverter(chars).ToString();
+                  mActorProperty = mActorProxy->GetProperty(propName);
+
+                  // If the property was not found, attempt to get a temporary one instead.
+                  if (!mActorProperty.valid())
+                  {
+                     mActorProperty = mActorProxy->GetDeprecatedProperty(propName);
+                     if (mActorProperty.valid())
+                     {
+                        mHasDeprecatedProperty = true;
+                     }
+                  }
+
+                  if (mActorProperty == NULL)
+                  {
+                     mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                                         "The ActorProperty named \"%s\" was not found on the ActorProxy named \"%s\" (%s).",
+                                         propName.c_str(), mActorProxy->GetName().c_str(),
+                                         mActorProxy->GetClassName().c_str());
+                  }
+               }
+               else if (mActorProperty != NULL)
+               {
+                  // Make sure we don't try and change the current property if we are loading properties from an array.
+                  if (mInArrayProperty == 0 && mInContainerProperty == 0 && topEl == MapXMLConstants::ACTOR_PROPERTY_RESOURCE_TYPE_ELEMENT)
+                  {
+                     std::string resourceTypeString = dtUtil::XMLStringConverter(chars).ToString();
+                     mActorPropertyType = static_cast<DataType*>(DataType::GetValueForName(resourceTypeString));
+
+                     if (mActorPropertyType == NULL)
+                     {
+                        mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                                            "No resource type found for type specified in mMap xml \"%s.\"",
+                                            resourceTypeString.c_str());
+                     }
+                  }
+                  else if (mActorPropertyType != NULL)
+                  {
+                     std::string dataValue = dtUtil::XMLStringConverter(chars).ToString();
+
+                     if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                     {
+                        mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                                            "Setting value of property %s, property type %s, datatype %s, value %s, element name %s.",
+                                            mActorProperty->GetName().c_str(),
+                                            mActorProperty->GetDataType().GetName().c_str(),
+                                            mActorPropertyType->GetName().c_str(),
+                                            dataValue.c_str(), dtUtil::XMLStringConverter(topEl.c_str()).c_str());
+                     }
+
+                     //we now have the property, the type, and the data.
+                     ParsePropertyData(dataValue, &mActorPropertyType, mActorProperty.get());
+                  }
+               }
+            }
+         }
+      }
+      else if (topEl == MapXMLConstants::ACTOR_NAME_ELEMENT)
+      {
+         if (mActorProxy == NULL)
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
+                                "Encountered the actor name element with value \"%s\", but actor is NULL.",
+                                dtUtil::XMLStringConverter(chars).c_str());
+         }
+         else
+         {
+            mActorProxy->SetName(dtUtil::XMLStringConverter(chars).ToString());
+         }
+      }
+      else if (topEl == MapXMLConstants::ACTOR_ID_ELEMENT)
+      {
+         if (mActorProxy == NULL)
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
+                                "Encountered the actor id element with value \"%s\", but actor is NULL.",
+                                dtUtil::XMLStringConverter(chars).c_str());
+         }
+         else if (!mLoadingPrefab)
+         {
+            mActorProxy->SetId(dtCore::UniqueId(dtUtil::XMLStringConverter(chars).ToString()));
+         }
+      }
+      else if (topEl == MapXMLConstants::ACTOR_TYPE_ELEMENT)
+      {
+         std::string actorTypeFullName = dtUtil::XMLStringConverter(chars).ToString();
+         size_t index = actorTypeFullName.find_last_of('.');
+
+         std::string actorTypeCategory;
+         std::string actorTypeName;
+
+         if (index == actorTypeFullName.length())
+         {
+            actorTypeName = actorTypeFullName;
+            actorTypeCategory.clear();
+         }
+         else
+         {
+            actorTypeName = actorTypeFullName.substr(index + 1);
+            actorTypeCategory = actorTypeFullName.substr(0, index);
+         }
+
+         //Make sure we have not tried to load this actor type already and failed.
+         if (mMissingActorTypes.find(actorTypeFullName) == mMissingActorTypes.end())
+         {
+            dtCore::RefPtr<const ActorType> actorType =
+               LibraryManager::GetInstance().FindActorType(actorTypeCategory, actorTypeName);
+
+            if (actorType == NULL)
+            {
+               mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__,  __LINE__,
+                                   "ActorType \"%s\" not found.", actorTypeFullName.c_str());
+               mMissingActorTypes.insert(actorTypeFullName);
+               mIgnoreCurrentActor = true;
+            }
+            else
+            {
+               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                                   "Creating actor proxy %s with category %s.",
+                                   actorTypeName.c_str(), actorTypeCategory.c_str());
+
+               mActorProxy = LibraryManager::GetInstance().CreateActorProxy(*actorType).get();
+               if (mActorProxy == NULL)
+               {
+                  mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__,  __LINE__,
+                     "mActorProxy could not be created for ActorType \"%s\" not found.",
+                     actorTypeFullName.c_str());
+               }
+
+               // Notify the proxy that it is being loaded.
+               mActorProxy->OnMapLoadBegin();
+
+               // When loading a prefab, all actors are put into a group.
+               if (mLoadingPrefab)
+               {
+                  //if (mGroupIndex == -1)
+                  //{
+                  //   mGroupIndex = mMap->GetGroupCount();
+                  //}
+
+                  //mMap->AddActorToGroup(mGroupIndex, mActorProxy.get());
+
+                  if (mPrefabProxyList)
+                  {
+                     mPrefabProxyList->push_back(mActorProxy);
+                  }
+               }
+            }
+         }
+         else
+         {
+            mIgnoreCurrentActor = true;
+         }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void MapContentHandler::PresetCameraCharacters(const XMLCh* const chars)
+   {
+      xmlCharString& topEl = mElements.top();
+
+      if (mInPresetCameras)
+      {
+         if (topEl == MapXMLConstants::PRESET_CAMERA_INDEX_ELEMENT)
+         {
+            std::istringstream stream;
+            stream.str(dtUtil::XMLStringConverter(chars).ToString());
+            stream >> mPresetCameraIndex;
+
+            mPresetCameraData.isValid = true;
+         }
+         else if (topEl == MapXMLConstants::PRESET_CAMERA_PERSPECTIVE_VIEW_ELEMENT)
+         {
+            mPresetCameraView = 0;
+         }
+         else if (topEl == MapXMLConstants::PRESET_CAMERA_TOP_VIEW_ELEMENT)
+         {
+            mPresetCameraView = 1;
+         }
+         else if (topEl == MapXMLConstants::PRESET_CAMERA_SIDE_VIEW_ELEMENT)
+         {
+            mPresetCameraView = 2;
+         }
+         else if (topEl == MapXMLConstants::PRESET_CAMERA_FRONT_VIEW_ELEMENT)
+         {
+            mPresetCameraView = 3;
+         }
+         else if (topEl == MapXMLConstants::PRESET_CAMERA_POSITION_X_ELEMENT)
+         {
+            char* endMarker;
+            double value = strtod(dtUtil::XMLStringConverter(chars).ToString().c_str(), &endMarker);
+
+            switch (mPresetCameraView)
+            {
+            case 0: mPresetCameraData.persPosition.x() = value; break;
+            case 1: mPresetCameraData.topPosition.x() = value; break;
+            case 2: mPresetCameraData.sidePosition.x() = value; break;
+            case 3: mPresetCameraData.frontPosition.x() = value; break;
+            }
+         }
+         else if (topEl == MapXMLConstants::PRESET_CAMERA_POSITION_Y_ELEMENT)
+         {
+            char* endMarker;
+            double value = strtod(dtUtil::XMLStringConverter(chars).ToString().c_str(), &endMarker);
+
+            switch (mPresetCameraView)
+            {
+            case 0: mPresetCameraData.persPosition.y() = value; break;
+            case 1: mPresetCameraData.topPosition.y() = value; break;
+            case 2: mPresetCameraData.sidePosition.y() = value; break;
+            case 3: mPresetCameraData.frontPosition.y() = value; break;
+            }
+         }
+         else if (topEl == MapXMLConstants::PRESET_CAMERA_POSITION_Z_ELEMENT)
+         {
+            char* endMarker;
+            double value = strtod(dtUtil::XMLStringConverter(chars).ToString().c_str(), &endMarker);
+
+            switch (mPresetCameraView)
+            {
+            case 0: mPresetCameraData.persPosition.z() = value; break;
+            case 1: mPresetCameraData.topPosition.z() = value; break;
+            case 2: mPresetCameraData.sidePosition.z() = value; break;
+            case 3: mPresetCameraData.frontPosition.z() = value; break;
+            }
+         }
+         else if (topEl == MapXMLConstants::PRESET_CAMERA_ROTATION_X_ELEMENT)
+         {
+            char* endMarker;
+            double value = strtod(dtUtil::XMLStringConverter(chars).ToString().c_str(), &endMarker);
+
+            switch (mPresetCameraView)
+            {
+            case 0: mPresetCameraData.persRotation.x() = value; break;
+            }
+         }
+         else if (topEl == MapXMLConstants::PRESET_CAMERA_ROTATION_Y_ELEMENT)
+         {
+            char* endMarker;
+            double value = strtod(dtUtil::XMLStringConverter(chars).ToString().c_str(), &endMarker);
+
+            switch (mPresetCameraView)
+            {
+            case 0: mPresetCameraData.persRotation.y() = value; break;
+            }
+         }
+         else if (topEl == MapXMLConstants::PRESET_CAMERA_ROTATION_Z_ELEMENT)
+         {
+            char* endMarker;
+            double value = strtod(dtUtil::XMLStringConverter(chars).ToString().c_str(), &endMarker);
+
+            switch (mPresetCameraView)
+            {
+            case 0: mPresetCameraData.persRotation.z() = value; break;
+            }
+         }
+         else if (topEl == MapXMLConstants::PRESET_CAMERA_ROTATION_W_ELEMENT)
+         {
+            char* endMarker;
+            double value = strtod(dtUtil::XMLStringConverter(chars).ToString().c_str(), &endMarker);
+
+            switch (mPresetCameraView)
+            {
+            case 0: mPresetCameraData.persRotation.w() = value; break;
+            }
+         }
+         else if (topEl == MapXMLConstants::PRESET_CAMERA_ZOOM_ELEMENT)
+         {
+            char* endMarker;
+            double value = strtod(dtUtil::XMLStringConverter(chars).ToString().c_str(), &endMarker);
+
+            switch (mPresetCameraView)
+            {
+            case 1: mPresetCameraData.topZoom = value; break;
+            case 2: mPresetCameraData.sideZoom = value; break;
+            case 3: mPresetCameraData.frontZoom = value; break;
+            }
+         }
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////
+   void MapContentHandler::CreateAndPushParameter()
+   {
+      try
+      {
+         NamedGroupParameter& gp = dynamic_cast<NamedGroupParameter&>(*mParameterStack.top());
+         mParameterStack.push(gp.AddParameter(mParameterNameToCreate, *mParameterTypeToCreate));
+         mParameterTypeToCreate = NULL;
+         mParameterNameToCreate.clear();
+      }
+      catch (const std::bad_cast&)
+      {
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                             "Tried to add a new parameter \"%s\" with type \"%s\", but failed",
+                             mParameterNameToCreate.c_str(), mParameterTypeToCreate->GetName().c_str());
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////
+   void MapContentHandler::ParameterCharacters(const XMLCh* const chars)
+   {
+      xmlCharString& topEl = mElements.top();
+      if (topEl == MapXMLConstants::ACTOR_PROPERTY_NAME_ELEMENT)
+      {
+         mParameterNameToCreate = dtUtil::XMLStringConverter(chars).ToString();
+         if (mParameterNameToCreate.empty())
+            mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                                "In named parameter section, found a named parameter with an empty name.");
+
+      }
+      //Resource datatypes are held in a string value inside the resource element.
+      //This means creating the parameter has to be here, when the type element is found.
+      else if (topEl == MapXMLConstants::ACTOR_PROPERTY_RESOURCE_TYPE_ELEMENT)
+      {
+         std::string resourceTypeString = dtUtil::XMLStringConverter(chars).ToString();
+         mParameterTypeToCreate = static_cast<DataType*>(DataType::GetValueForName(resourceTypeString));
+
+         if (mParameterTypeToCreate == NULL)
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                                "No resource type found for type specified in mMap xml \"%s.\"",
+                                resourceTypeString.c_str());
+         }
+         else
+         {
+            //if this fails, the parameter just won't be added.
+            CreateAndPushParameter();
+         }
+      }
+      //The make sure we are parsing a parameter type other than group.  If not, then no character data
+      //makes any sense to handle.
+      else if (!mParameterStack.empty() && mParameterStack.top()->GetDataType() != DataType::GROUP)
+      {
+         std::string dataValue = dtUtil::XMLStringConverter(chars).ToString();
+
+         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                                "Setting value of parameter %s, parameter datatype %s, value %s, element name %s.",
+                                mParameterStack.top()->GetName().c_str(),
+                                mParameterStack.top()->GetDataType().GetName().c_str(),
+                                dataValue.c_str(), dtUtil::XMLStringConverter(topEl.c_str()).c_str());
+
+         //we now have the property, the type, and the data.
+         ParseParameterData(dataValue);
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////
+   template <typename VecType>
+   void MapContentHandler::ParseVec(const std::string& dataValue, VecType& vec, size_t vecSize)
+   {
+      xmlCharString& topEl = mElements.top();
+
+      char* endMarker;
+      double value = strtod(dataValue.c_str(), &endMarker);
+
+      if (topEl == MapXMLConstants::ACTOR_VEC_1_ELEMENT || topEl == MapXMLConstants::ACTOR_COLOR_R_ELEMENT)
+      {
+         vec[0] = value;
+      }
+      else if (topEl == MapXMLConstants::ACTOR_VEC_2_ELEMENT || topEl == MapXMLConstants::ACTOR_COLOR_G_ELEMENT)
+      {
+         vec[1] = value;
+      }
+      else if (vecSize >= 3 && (topEl == MapXMLConstants::ACTOR_VEC_3_ELEMENT || topEl == MapXMLConstants::ACTOR_COLOR_B_ELEMENT))
+      {
+         vec[2] = value;
+      }
+      else if (vecSize == 4 && (topEl == MapXMLConstants::ACTOR_VEC_4_ELEMENT || topEl == MapXMLConstants::ACTOR_COLOR_A_ELEMENT))
+      {
+         vec[3] = value;
+      }
+      else
+      {
+         if (topEl == MapXMLConstants::ACTOR_PROPERTY_VEC2_ELEMENT ||
+             topEl == MapXMLConstants::ACTOR_PROPERTY_VEC3_ELEMENT ||
+             topEl == MapXMLConstants::ACTOR_PROPERTY_VEC4_ELEMENT ||
+             topEl == MapXMLConstants::ACTOR_PROPERTY_COLOR_RGBA_ELEMENT ||
+             topEl == MapXMLConstants::ACTOR_PROPERTY_COLOR_RGBA_ELEMENT)
+            return;
+
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+            "Got an invalid element for a Vec%u: %s", unsigned(vecSize), dtUtil::XMLStringConverter(topEl.c_str()).c_str());
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void MapContentHandler::ParseArray(std::string& dataValue, ArrayActorPropertyBase* arrayProp)
+   {
+      xmlCharString& topEl = mElements.top();
+
+      // Find the property we want to edit based on how deep the array is nested.
+      for (int nestIndex = 1; nestIndex < mInArrayProperty; nestIndex++)
+      {
+         arrayProp = static_cast<ArrayActorPropertyBase*>(arrayProp->GetArrayProperty());
+      }
+
+      if (!arrayProp)
+      {
+         return;
+      }
+
+      // Array Size
+      if (topEl == MapXMLConstants::ACTOR_ARRAY_SIZE_ELEMENT)
+      {
+         int arraySize;
+         std::istringstream stream;
+         stream.str(dataValue);
+         stream >> arraySize;
+
+         // Add more elements.
+         arrayProp->SetIndex(0);
+         while (arraySize > arrayProp->GetArraySize())
+         {
+            arrayProp->Insert(0);
+         }
+
+         // Remove extra elements.
+         while (arraySize < arrayProp->GetArraySize())
+         {
+            arrayProp->Remove(0);
+         }
+      }
+      // Set current Array Index
+      else if (topEl == MapXMLConstants::ACTOR_ARRAY_INDEX_ELEMENT)
+      {
+         int index;
+         std::istringstream stream;
+         stream.str(dataValue);
+         stream >> index;
+         arrayProp->SetIndex(index);
+      }
+      // Skipped elements.
+      else if (topEl == MapXMLConstants::ACTOR_ARRAY_ELEMENT ||
+               topEl == MapXMLConstants::ACTOR_PROPERTY_ARRAY_ELEMENT ||
+               topEl == MapXMLConstants::ACTOR_PROPERTY_CONTAINER_ELEMENT ||
+               topEl == MapXMLConstants::ACTOR_PROPERTY_ELEMENT)
+      {
+      }
+      // Unrecognized elements are checked with the array's property type
+      else
+      {
+         ActorProperty* prop = arrayProp->GetArrayProperty();
+         if (prop)
+         {
+            DataType* propType = &prop->GetDataType();
+
+            // If the element is the name of the property, we only care
+            // about it if we are parsing container elements.
+            if (topEl != MapXMLConstants::ACTOR_PROPERTY_NAME_ELEMENT ||
+               (propType == &DataType::ARRAY || propType == &DataType::CONTAINER))
+            {
+               ParsePropertyData(dataValue, &propType, prop);
+            }
+         }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void MapContentHandler::ParseContainer(std::string& dataValue, ContainerActorProperty* arrayProp)
+   {
+      xmlCharString& topEl = mElements.top();
+
+      // Find the property we want to edit based on how deep the container is nested.
+      for (int nestIndex = 1; nestIndex < mInContainerProperty; nestIndex++)
+      {
+         int index = arrayProp->GetCurrentPropertyIndex();
+         arrayProp = static_cast<ContainerActorProperty*>(arrayProp->GetProperty(index));
+      }
+
+      if (!arrayProp)
+      {
+         return;
+      }
+
+      // Skipped elements.
+      if (topEl == MapXMLConstants::ACTOR_ARRAY_ELEMENT ||
+         topEl == MapXMLConstants::ACTOR_PROPERTY_ARRAY_ELEMENT ||
+         topEl == MapXMLConstants::ACTOR_PROPERTY_CONTAINER_ELEMENT ||
+         topEl == MapXMLConstants::ACTOR_PROPERTY_ELEMENT)
+      {
+      }
+      else if (topEl == MapXMLConstants::ACTOR_PROPERTY_NAME_ELEMENT)
+      {
+         arrayProp->SetCurrentPropertyIndex(-1);
+         // Find the property in the container with the given name.
+         for (int index = 0; index < arrayProp->GetPropertyCount(); index++)
+         {
+            ActorProperty* prop = arrayProp->GetProperty(index);
+            if (prop)
+            {
+               if (prop->GetName() == dataValue)
+               {
+                  arrayProp->SetCurrentPropertyIndex(index);
+                  break;
+               }
+            }
+         }
+      }
+      // Unrecognized elements are checked with the array's property type
+      else
+      {
+         int index = arrayProp->GetCurrentPropertyIndex();
+         ActorProperty* prop = arrayProp->GetProperty(index);
+         if (prop)
+         {
+            DataType* propType = &prop->GetDataType();
+            ParsePropertyData(dataValue, &propType, prop);
+         }
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////
+   void MapContentHandler::ParsePropertyData(std::string& dataValue, dtDAL::DataType** dataType, dtDAL::ActorProperty* actorProperty)
+   {
+      if (!IsPropertyCorrectType(dataType, actorProperty))
+         return;
+
+      xmlCharString& topEl = mElements.top();
+
+      switch ((*dataType)->GetTypeId())
+      {
+         case DataType::FLOAT_ID:
+         case DataType::DOUBLE_ID:
+         case DataType::INT_ID:
+         case DataType::LONGINT_ID:
+         case DataType::STRING_ID:
+         case DataType::BOOLEAN_ID:
+         case DataType::ENUMERATION_ID:
+         {
+            if (!actorProperty->FromString(dataValue))
+            {
+               mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                                   "Failed Setting value %s for property type %s named %s on actor named %s",
+                                   dataValue.c_str(), (*dataType)->GetName().c_str(),
+                                   actorProperty->GetName().c_str(), mActorProxy->GetName().c_str());
+            }
+            (*dataType) = NULL;
+            break;
+         }
+         case DataType::GAMEEVENT_ID:
+         {
+            GameEventActorProperty& geProp = static_cast<GameEventActorProperty&>(*actorProperty);
+            if (!dtUtil::Trim(dataValue).empty())
+            {
+               GameEvent *e = mMap->GetEventManager().FindEvent(dtCore::UniqueId(dataValue));
+               if (e != NULL)
+               {
+                  geProp.SetValue(e);
+               }
+               else
+               {
+                  geProp.SetValue(NULL);
+                  mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                                      "Game Event referenced in actor property %s on proxy of type \"%s\" was not found.",
+                                      actorProperty->GetName().c_str(), mActorProxy->GetActorType().GetFullName().c_str());
+               }
+            }
+            else
+            {
+               geProp.SetValue(NULL);
+            }
+            (*dataType) = NULL;
+            break;
+         }
+         case DataType::VEC2_ID:
+         {
+            Vec2ActorProperty& p = static_cast<Vec2ActorProperty&>(*actorProperty);
+            osg::Vec2 vec = p.GetValue();
+            ParseVec(dataValue, vec, 2);
+            p.SetValue(vec);
+            break;
+         }
+         case DataType::VEC2F_ID:
+         {
+            Vec2fActorProperty& p = static_cast<Vec2fActorProperty&>(*actorProperty);
+            osg::Vec2f vec = p.GetValue();
+            ParseVec(dataValue, vec, 2);
+            p.SetValue(vec);
+            break;
+         }
+         case DataType::VEC2D_ID:
+         {
+            Vec2dActorProperty& p = static_cast<Vec2dActorProperty&>(*actorProperty);
+            osg::Vec2d vec = p.GetValue();
+            ParseVec(dataValue, vec, 2);
+            p.SetValue(vec);
+            break;
+         }
+         case DataType::VEC3_ID:
+         {
+            Vec3ActorProperty& p = static_cast<Vec3ActorProperty&>(*actorProperty);
+            osg::Vec3 vec = p.GetValue();
+            ParseVec(dataValue, vec, 3);
+            p.SetValue(vec);
+            break;
+         }
+         case DataType::VEC3F_ID:
+         {
+            Vec3fActorProperty& p = static_cast<Vec3fActorProperty&>(*actorProperty);
+            osg::Vec3f vec = p.GetValue();
+            ParseVec(dataValue, vec, 3);
+            p.SetValue(vec);
+            break;
+         }
+         case DataType::VEC3D_ID:
+         {
+            Vec3dActorProperty& p = static_cast<Vec3dActorProperty&>(*actorProperty);
+            osg::Vec3d vec = p.GetValue();
+            ParseVec(dataValue, vec, 3);
+            p.SetValue(vec);
+            break;
+         }
+         case DataType::VEC4_ID:
+         {
+            Vec4ActorProperty& p = static_cast<Vec4ActorProperty&>(*actorProperty);
+            osg::Vec4 vec = p.GetValue();
+            ParseVec(dataValue, vec, 4);
+            p.SetValue(vec);
+            break;
+         }
+         case DataType::VEC4F_ID:
+         {
+            Vec4fActorProperty& p = static_cast<Vec4fActorProperty&>(*actorProperty);
+            osg::Vec4f vec = p.GetValue();
+            ParseVec(dataValue, vec, 4);
+            p.SetValue(vec);
+            break;
+         }
+         case DataType::VEC4D_ID:
+         {
+            Vec4dActorProperty& p = static_cast<Vec4dActorProperty&>(*actorProperty);
+            osg::Vec4d vec = p.GetValue();
+            ParseVec(dataValue, vec, 4);
+            p.SetValue(vec);
+            break;
+         }
+         case DataType::RGBACOLOR_ID:
+         {
+            ColorRgbaActorProperty& p = static_cast<ColorRgbaActorProperty&>(*actorProperty);
+            osg::Vec4 vec = p.GetValue();
+            ParseVec(dataValue, vec, 4);
+            p.SetValue(vec);
+            break;
+         }
+         case DataType::ACTOR_ID:
+         {
+            //insert the data into this map to make it accessible to assign once the parsing is done.
+            dtUtil::Trim(dataValue);
+            if (!dataValue.empty() && dataValue != "NULL")
+            {
+               ActorIDActorProperty* p = dynamic_cast<ActorIDActorProperty*>(actorProperty);
+               if (p)
+               {
+                  if (!p->FromString(dataValue))
+                  {
+                     mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                        "Failed Setting value %s for property type %s named %s on actor named %s",
+                        dataValue.c_str(), (*dataType)->GetName().c_str(),
+                        actorProperty->GetName().c_str(), mActorProxy->GetName().c_str());
+                  }
+               }
+               else
+               {
+                  mActorLinking.insert(std::make_pair(mActorProxy->GetId(), std::make_pair(actorProperty->GetName(), dtCore::UniqueId(dataValue))));
+               }
+            }
+            (*dataType) = NULL;
+            break;
+         }
+         case DataType::GROUP_ID:
+         {
+            ///Nothing Useful happens here.
+            break;
+         }
+         case DataType::ARRAY_ID:
+         {
+            ArrayActorPropertyBase& arrayProp = static_cast<ArrayActorPropertyBase&>(*actorProperty);
+            ParseArray(dataValue, &arrayProp);
+            break;
+         }
+         case DataType::CONTAINER_ID:
+         {
+            ContainerActorProperty& arrayProp = static_cast<ContainerActorProperty&>(*actorProperty);
+            ParseContainer(dataValue, &arrayProp);
+            break;
+         }
+         default:
+         {
+            if ((*dataType)->IsResource())
+            {
+               ResourceActorProperty& p = static_cast<ResourceActorProperty&>(*actorProperty);
+               if (topEl == MapXMLConstants::ACTOR_PROPERTY_RESOURCE_TYPE_ELEMENT)
+               {
+                  if (dataValue != p.GetDataType().GetName())
+                  {
+                     mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                                         "Save file expected resource property %s on actor named %s to have type %s, but it is %s.",
+                                         actorProperty->GetName().c_str(), mActorProxy->GetName().c_str(),
+                                         dataValue.c_str(), p.GetDataType().GetName().c_str());
+                     //make it ignore the rest of the mElements.
+                     p.SetValue(NULL);
+                     (*dataType) = NULL;
+                  }                  
+               }
+               else if (topEl == MapXMLConstants::ACTOR_PROPERTY_RESOURCE_DISPLAY_ELEMENT)
+               {
+                  mDescriptorDisplayName = dataValue;
+               }
+               else if (topEl == MapXMLConstants::ACTOR_PROPERTY_RESOURCE_IDENTIFIER_ELEMENT)
+               {
+                  //if the value is null, then both strings will be empty.
+                  if (dataValue != "" && mDescriptorDisplayName != "")
+                  {
+                     ResourceDescriptor rd(mDescriptorDisplayName, dataValue);
+                     p.SetValue(&rd);                     
+                  }
+                  else
+                  {
+                     p.SetValue(NULL);
+                  }
+               }
+            }
+            else
+            {
+               mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__,  __LINE__,
+                  "DataType \"%s\" is not supported in the map loading code.  The data has been ignored.",
+                  (*dataType)->GetName().c_str());
+            }
+         }
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////
+   void MapContentHandler::ParseParameterData(std::string& dataValue)
+   {
+      if (mParameterStack.empty())
+      {
+         mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                             "Unable to set the value \"%s\" without a valid parameter for group actor property \"%s\" "
+                             "on actor \"%s\" with type \"%s\".",
+                             dataValue.c_str(), mActorProperty->GetName().c_str(), mActorProxy->GetName().c_str(),
+                             mActorProxy->GetActorType().GetFullName().c_str());
+         return;
+      }
+
+      xmlCharString& topEl = mElements.top();
+
+      ///Optimization
+      if (topEl == MapXMLConstants::ACTOR_PROPERTY_PARAMETER_ELEMENT)
+         return;
+
+      NamedParameter& np = *mParameterStack.top();
+
+      switch (np.GetDataType().GetTypeId())
+      {
+         case DataType::FLOAT_ID:
+         case DataType::DOUBLE_ID:
+         case DataType::INT_ID:
+         case DataType::LONGINT_ID:
+         case DataType::STRING_ID:
+         case DataType::BOOLEAN_ID:
+         case DataType::ENUMERATION_ID:
+         {
+            if (!np.FromString(dataValue))
+            {
+               mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                                   "Failed Setting value \"%s\" for parameter type \"%s\" named \"%s\" on actor named \"%s\" in property \"%s\".",
+                                   dataValue.c_str(), mActorPropertyType->GetName().c_str(),
+                                   mActorProperty->GetName().c_str(), mActorProxy->GetName().c_str());
+            }
+            break;
+         }
+         case DataType::GAMEEVENT_ID:
+         {
+            NamedGameEventParameter& geParam = static_cast<NamedGameEventParameter&>(np);
+            if (!dtUtil::Trim(dataValue).empty())
+            {
+               GameEvent *e = mMap->GetEventManager().FindEvent(dtCore::UniqueId(dataValue));
+               if (e != NULL)
+               {
+                  geParam.SetValue(dtCore::UniqueId(dataValue));
+               }
+               else
+               {
+                  geParam.SetValue(dtCore::UniqueId(""));
+                  mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                                      "Game Event referenced in named parameter \"%s\" in property \"%s\" "
+                                      "proxy of type \"%s\" was not found.",
+                                      np.GetName().c_str(), mActorProperty->GetName().c_str(),
+                                      mActorProxy->GetActorType().GetFullName().c_str());
+               }
+            }
+            else
+            {
+               geParam.SetValue(dtCore::UniqueId(""));
+            }
+            break;
+         }
+         case DataType::VEC2_ID:
+         {
+            NamedVec2Parameter& p = static_cast<NamedVec2Parameter&>(np);
+            osg::Vec2 vec = p.GetValue();
+            ParseVec(dataValue, vec, 2);
+            p.SetValue(vec);
+            break;
+         }
+         case DataType::VEC2F_ID:
+         {
+            NamedVec2fParameter& p = static_cast<NamedVec2fParameter&>(np);
+            osg::Vec2f vec = p.GetValue();
+            ParseVec(dataValue, vec, 2);
+            p.SetValue(vec);
+            break;
+         }
+         case DataType::VEC2D_ID:
+         {
+            NamedVec2dParameter& p = static_cast<NamedVec2dParameter&>(np);
+            osg::Vec2d vec = p.GetValue();
+            ParseVec(dataValue, vec, 2);
+            p.SetValue(vec);
+            break;
+         }
+         case DataType::VEC3_ID:
+         {
+            NamedVec3Parameter& p = static_cast<NamedVec3Parameter&>(np);
+            osg::Vec3 vec = p.GetValue();
+            ParseVec(dataValue, vec, 3);
+            p.SetValue(vec);
+            break;
+         }
+         case DataType::VEC3F_ID:
+         {
+            NamedVec3fParameter& p = static_cast<NamedVec3fParameter&>(np);
+            osg::Vec3f vec = p.GetValue();
+            ParseVec(dataValue, vec, 3);
+            p.SetValue(vec);
+            break;
+         }
+         case DataType::VEC3D_ID:
+         {
+            NamedVec3dParameter& p = static_cast<NamedVec3dParameter&>(np);
+            osg::Vec3d vec = p.GetValue();
+            ParseVec(dataValue, vec, 3);
+            p.SetValue(vec);
+            break;
+         }
+         case DataType::VEC4_ID:
+         {
+            NamedVec4Parameter& p = static_cast<NamedVec4Parameter&>(np);
+            osg::Vec4 vec = p.GetValue();
+            ParseVec(dataValue, vec, 4);
+            p.SetValue(vec);
+            break;
+         }
+         case DataType::VEC4F_ID:
+         {
+            NamedVec4fParameter& p = static_cast<NamedVec4fParameter&>(np);
+            osg::Vec4f vec = p.GetValue();
+            ParseVec(dataValue, vec, 4);
+            p.SetValue(vec);
+            break;
+         }
+         case DataType::VEC4D_ID:
+         {
+            NamedVec4dParameter& p = static_cast<NamedVec4dParameter&>(np);
+            osg::Vec4d vec = p.GetValue();
+            ParseVec(dataValue, vec, 4);
+            p.SetValue(vec);
+            break;
+         }
+         case DataType::RGBACOLOR_ID:
+         {
+            NamedRGBAColorParameter& p = static_cast<NamedRGBAColorParameter&>(np);
+            osg::Vec4 vec = p.GetValue();
+            ParseVec(dataValue, vec, 4);
+            p.SetValue(vec);
+            break;
+         }
+         case DataType::ACTOR_ID:
+         {
+            //insert the data into this map to make it accessible to assign once the parsing is done.
+            dtUtil::Trim(dataValue);
+            if (!dataValue.empty() && dataValue != "NULL")
+            {
+               static_cast<NamedActorParameter&>(np).SetValue(dtCore::UniqueId(dataValue));
+            }
+            break;
+         }
+         case DataType::GROUP_ID:
+         {
+            break;
+         }
+         default:
+         {
+            if (np.GetDataType().IsResource())
+            {
+               NamedResourceParameter& p = static_cast<NamedResourceParameter&>(np);
+
+               if (topEl == MapXMLConstants::ACTOR_PROPERTY_RESOURCE_DISPLAY_ELEMENT)
+               {
+                  mDescriptorDisplayName = dataValue;
+               }
+               else if (topEl == MapXMLConstants::ACTOR_PROPERTY_RESOURCE_IDENTIFIER_ELEMENT)
+               {
+                  //if the value is null, then both strings will be empty.
+                  if (dataValue != "" && mDescriptorDisplayName != "")
+                  {
+                     ResourceDescriptor rd(mDescriptorDisplayName, dataValue);
+                     p.SetValue(&rd);
+                  }
+                  else
+                  {
+                     p.SetValue(NULL);
+                  }
+               }
+            }
+            else
+            {
+               mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__,  __LINE__,
+                  "DataType \"%s\" is not supported in the map loading code.  Ignoring parameter \"%s\".",
+                  np.GetDataType().GetName().c_str(), np.GetName().c_str());
+
+            }
+         }
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////
+   void MapContentHandler::startDocument()
+   {
+      if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__,
+            "Parsing Map Document Started.");
+
+      Reset();
+      if (!mLoadingPrefab)
+      {
+         mMap = new Map("","");
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////
+   DataType* MapContentHandler::ParsePropertyType(const XMLCh* const localname, bool errorIfNotFound)
+   {
+      if (XMLString::compareString(localname,
+          MapXMLConstants::ACTOR_PROPERTY_BOOLEAN_ELEMENT) == 0)
+      {
+         return &DataType::BOOLEAN;
+      }
+      else if (XMLString::compareString(localname,
+               MapXMLConstants::ACTOR_PROPERTY_FLOAT_ELEMENT) == 0)
+      {
+         return &DataType::FLOAT;
+      }
+      else if (XMLString::compareString(localname,
+               MapXMLConstants::ACTOR_PROPERTY_DOUBLE_ELEMENT) == 0)
+      {
+         return &DataType::DOUBLE;
+      }
+      else if (XMLString::compareString(localname,
+               MapXMLConstants::ACTOR_PROPERTY_INTEGER_ELEMENT) == 0)
+      {
+         return &DataType::INT;
+      }
+      else if (XMLString::compareString(localname,
+               MapXMLConstants::ACTOR_PROPERTY_LONG_ELEMENT) == 0)
+      {
+         return &DataType::LONGINT;
+      }
+      else if (XMLString::compareString(localname,
+               MapXMLConstants::ACTOR_PROPERTY_VEC2_ELEMENT) == 0)
+      {
+         return &DataType::VEC2;
+      }
+      else if (XMLString::compareString(localname,
+               MapXMLConstants::ACTOR_PROPERTY_VEC3_ELEMENT) == 0)
+      {
+         return &DataType::VEC3;
+      }
+      else if (XMLString::compareString(localname,
+               MapXMLConstants::ACTOR_PROPERTY_VEC4_ELEMENT) == 0)
+      {
+         return &DataType::VEC4;
+      }
+      else if (XMLString::compareString(localname,
+               MapXMLConstants::ACTOR_PROPERTY_STRING_ELEMENT) == 0)
+      {
+         return &DataType::STRING;
+      }
+      else if (XMLString::compareString(localname,
+               MapXMLConstants::ACTOR_PROPERTY_COLOR_RGBA_ELEMENT) == 0)
+      {
+         return &DataType::RGBACOLOR;
+      }
+      else if (XMLString::compareString(localname,
+               MapXMLConstants::ACTOR_PROPERTY_COLOR_RGB_ELEMENT) == 0)
+      {
+         return &DataType::RGBCOLOR;
+      }
+      else if (XMLString::compareString(localname,
+               MapXMLConstants::ACTOR_PROPERTY_ENUM_ELEMENT) == 0)
+      {
+         return &DataType::ENUMERATION;
+      }
+      else if (XMLString::compareString(localname,
+               MapXMLConstants::ACTOR_PROPERTY_ACTOR_ID_ELEMENT) == 0)
+      {
+         return &DataType::ACTOR;
+      }
+      else if (XMLString::compareString(localname,
+               MapXMLConstants::ACTOR_PROPERTY_GAMEEVENT_ELEMENT) == 0)
+      {
+         return &DataType::GAME_EVENT;
+      }
+      else if (XMLString::compareString(localname,
+               MapXMLConstants::ACTOR_PROPERTY_GROUP_ELEMENT) == 0)
+      {
+         return &DataType::GROUP;
+      }
+      else if (XMLString::compareString(localname,
+               MapXMLConstants::ACTOR_PROPERTY_ARRAY_ELEMENT) == 0)
+      {
+         return &DataType::ARRAY;
+      }
+      else if (XMLString::compareString(localname,
+               MapXMLConstants::ACTOR_PROPERTY_CONTAINER_ELEMENT) == 0)
+      {
+         return &DataType::CONTAINER;
+      }
+      else if (XMLString::compareString(localname,
+               MapXMLConstants::ACTOR_PROPERTY_RESOURCE_TYPE_ELEMENT) == 0)
+      {
+         //Need the character contents to know the type, so this will be
+         //handled later.
+      }
+      else if (errorIfNotFound)
+      {
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
+                             "Found property data element with name %s, but this does not map to a known type.\n",
+                             dtUtil::XMLStringConverter(localname).c_str());
+      }
+      return NULL;
+   }
+
+   /////////////////////////////////////////////////////////////////
+   void MapContentHandler::NonEmptyDefaultWorkaround()
+   {
+      // We don't have control over what the string or actor
+      // property default value is, but if the data in the
+      // xml is empty string, no event is generated.  Thus,
+      // this preemptively set this string to "" so that
+      // empty data will work.
+      if (mActorPropertyType != NULL && !mActorProperty->IsReadOnly())
+      {
+         if (*mActorPropertyType == DataType::STRING
+                || *mActorPropertyType == DataType::ACTOR)
+         {
+            mActorProperty->FromString("");
+         }
+         else if (*mActorPropertyType == DataType::GAME_EVENT)
+         {
+            static_cast<GameEventActorProperty*>(mActorProperty.get())->SetValue(NULL);
+         }
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////
+   void MapContentHandler::startElement (
+      const XMLCh* const uri,
+      const XMLCh* const localname,
+      const XMLCh* const qname,
+      const xercesc::Attributes& attrs)
+   {
+      if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+      {
+         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                             "Found element %s", dtUtil::XMLStringConverter(localname).c_str());
+      }
+
+      if (mInMap || mInPrefab)
+      {
+         if (mInLibraries)
+         {
+            if (XMLString::compareString(localname, MapXMLConstants::LIBRARY_ELEMENT) == 0)
+            {
+               ClearLibraryValues();
+            }
+         }
+         else if (mInActors)
+         {
+            if (mInActor)
+            {
+               if (mInActorProperty)
+               {
+                  if (mActorProperty != NULL)
+                  {
+                     if (mActorPropertyType == NULL)
+                     {
+                        mActorPropertyType = ParsePropertyType(localname);
+                     }
+
+                     if (mInGroupProperty)
+                     {
+                        if (!mParameterNameToCreate.empty())
+                        {
+                           mParameterTypeToCreate = ParsePropertyType(localname);
+                           //It will be null if it's a resource property.  The value will be parsed later.
+                           if (mParameterTypeToCreate != NULL)
+                              CreateAndPushParameter();
+                        }
+                     }
+                     else if (XMLString::compareString(localname,
+                                                       MapXMLConstants::ACTOR_PROPERTY_GROUP_ELEMENT) == 0)
+                     {
+                         mInGroupProperty = true;
+                         ClearParameterValues();
+                         mParameterStack.push(new NamedGroupParameter(mActorProperty->GetName()));
+
+                     }
+                     else if (XMLString::compareString(localname,
+                        MapXMLConstants::ACTOR_PROPERTY_ARRAY_ELEMENT) == 0)
+                     {
+                        mInArrayProperty++;
+                     }
+                     else if (XMLString::compareString(localname,
+                        MapXMLConstants::ACTOR_PROPERTY_CONTAINER_ELEMENT) == 0)
+                     {
+                        mInContainerProperty++;
+                     }
+                  }
+               }
+               else if (XMLString::compareString(localname,
+                  MapXMLConstants::ACTOR_PROPERTY_ELEMENT) == 0)
+               {
+                  mInActorProperty = true;
+               }
+            }
+            else if (XMLString::compareString(localname, MapXMLConstants::ACTOR_ELEMENT) == 0)
+            {
+               mInActor = true;
+               ClearActorValues();
+            }
+         }
+         else if (mInGroup)
+         {
+            if (XMLString::compareString(localname, MapXMLConstants::ACTOR_GROUP_ELEMENT) == 0)
+            {
+               mGroupIndex = mMap->GetGroupCount();
+            }
+         }
+         else if (mInPresetCameras)
+         {
+            if (XMLString::compareString(localname, MapXMLConstants::PRESET_CAMERA_ELEMENT) == 0)
+            {
+               mPresetCameraIndex = -1;
+               mPresetCameraData.isValid = false;
+            }
+         }
+         else if (mInEvents)
+         {
+            if (XMLString::compareString(localname, MapXMLConstants::EVENT_ELEMENT) == 0)
+            {
+               mGameEvent = new GameEvent();
+            }
+         }
+         else if (!mInHeader && !mInEvents && !mInLibraries && !mInActors && !mInGroup)
+         {
+            if (XMLString::compareString(localname, MapXMLConstants::HEADER_ELEMENT) == 0)
+            {
+               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Header");
+               mInHeader = true;
+            }
+            if (XMLString::compareString(localname, MapXMLConstants::EVENTS_ELEMENT) == 0)
+            {
+               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Events");
+               mInEvents = true;
+            }
+            else if (XMLString::compareString(localname, MapXMLConstants::LIBRARIES_ELEMENT) == 0)
+            {
+               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Libraries");
+               mInLibraries = true;
+            }
+            else if (XMLString::compareString(localname, MapXMLConstants::ACTORS_ELEMENT) == 0)
+            {
+               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Actors");
+               mInActors = true;
+            }
+            else if (XMLString::compareString(localname, MapXMLConstants::ACTOR_GROUPS_ELEMENT) == 0)
+            {
+               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Found Groups");
+               mInGroup = true;
+            }
+            else if (XMLString::compareString(localname, MapXMLConstants::PRESET_CAMERAS_ELEMENT) == 0)
+            {
+               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Found Preset Cameras");
+               mInPresetCameras = true;
+            }
+         }
+      }
+      else if (XMLString::compareString(localname, MapXMLConstants::MAP_ELEMENT) == 0)
+      {
+         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Map");
+         mInMap = true;
+      }
+      else if (XMLString::compareString(localname, MapXMLConstants::PREFAB_ELEMENT) == 0)
+      {
+         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Prefab");
+         mInPrefab = true;
+      }
+      else if (XMLString::compareString(localname, MapXMLConstants::ICON_ELEMENT) == 0)
+      {
+         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Icon");               
+      }
+
+      mElements.push(xmlCharString(localname));
+   }
+
+   /////////////////////////////////////////////////////////////////
+   void MapContentHandler::endElement( const XMLCh* const uri,
+                                       const XMLCh* const localname,
+                                       const XMLCh* const qname)
+   {
+      if (mElements.empty())
+      {
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                             "Attempting to pop elements off of stack and the stack is empty."
+                             "it should at least contain element %s.",
+                             dtUtil::XMLStringConverter(localname).c_str());
+         return;
+      }
+
+      const XMLCh* lname = mElements.top().c_str();
+
+      if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+      {
+         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__,
+                             "Ending element: \"%s\"", dtUtil::XMLStringConverter(lname).c_str());
+      }
+
+      if (XMLString::compareString(lname, localname) != 0)
+      {
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                             "Attempting to pop mElements off of stack and the element "
+                             "at the top (%s) is not the same as the element ending (%s).",
+                             dtUtil::XMLStringConverter(lname).c_str(), dtUtil::XMLStringConverter(localname).c_str());
+      }
+
+      if (mInHeader)
+      {
+         EndHeaderElement(localname);
+      }
+      else if (mInEvents)
+      {
+         EndEventSection(localname);
+      }
+      else if (mInLibraries)
+      {
+         EndLibrarySection(localname);
+      }
+      else if (mInActors)
+      {
+         EndActorSection(localname);
+      }
+      else if (mInGroup)
+      {
+         EndGroupSection(localname);
+      }
+      else if (mInPresetCameras)
+      {
+         EndPresetCameraSection(localname);
+      }
+      mElements.pop();
+
+      if(mLoadingPrefab && mPrefabReadMode == PREFAB_ICON_ONLY &&
+         (XMLString::compareString(localname, MapXMLConstants::ICON_ELEMENT) == 0))
+      {
+         //Got the icon file name -- time to stop parsing
+         throw(dtUtil::Exception("Icon found", __FILE__, __LINE__));
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////
+   void MapContentHandler::endDocument()
+   {
+      LinkActors();
+      AssignGroupProperties();
+
+      if (!mEnvActorId.ToString().empty())
+      {
+         try
+         {
+            dtCore::RefPtr<ActorProxy> proxy = mMap->GetProxyById(mEnvActorId);
+            if (!proxy.valid())
+            {
+               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                  "No environment actor was located in the map.");
+               return;
+            }
+            else
+            {
+               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                  "An environment actor was located in the map.");
+            }
+
+            IEnvironmentActor *ea = dynamic_cast<IEnvironmentActor*>(proxy->GetActor());
+            if (ea == NULL)
+            {
+               throw dtUtil::Exception(ExceptionEnum::InvalidActorException,
+                  "The environment actor proxy's actor should be an environment, but a dynamic_cast failed", __FILE__, __LINE__);
+            }
+            mMap->SetEnvironmentActor(proxy.get());
+         }
+         catch(dtUtil::Exception &e)
+         {
+            LOG_ERROR("Exception caught: " + e.What());
+            throw e;
+         }
+
+      }
+
+      mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__,
+                          "Parsing Map Document Ended.\n");
+   }
+
+   /////////////////////////////////////////////////////////////////
+   void MapContentHandler::error(const xercesc::SAXParseException& exc)
+   {
+      mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
+                          "ERROR %d:%d - %s:%s - %s", exc.getLineNumber(),
+                          exc.getColumnNumber(), dtUtil::XMLStringConverter(exc.getPublicId()).c_str(),
+                          dtUtil::XMLStringConverter(exc.getSystemId()).c_str(),
+                          dtUtil::XMLStringConverter(exc.getMessage()).c_str());
+      throw exc;
+   }
+
+   /////////////////////////////////////////////////////////////////
+   void MapContentHandler::fatalError(const xercesc::SAXParseException& exc)
+   {
+      mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
+                          "FATAL-ERROR %d:%d - %s:%s - %s", exc.getLineNumber(),
+                          exc.getColumnNumber(), dtUtil::XMLStringConverter(exc.getPublicId()).c_str(),
+                          dtUtil::XMLStringConverter(exc.getSystemId()).c_str(),
+                          dtUtil::XMLStringConverter(exc.getMessage()).c_str());
+      throw exc;
+   }
+
+   /////////////////////////////////////////////////////////////////
+   void MapContentHandler::warning(const xercesc::SAXParseException& exc)
+   {
+      mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__,  __LINE__,
+                          "WARNING %d:%d - %s:%s - %s", exc.getLineNumber(),
+                          exc.getColumnNumber(), dtUtil::XMLStringConverter(exc.getPublicId()).c_str(),
+                          dtUtil::XMLStringConverter(exc.getSystemId()).c_str(),
+                          dtUtil::XMLStringConverter(exc.getMessage()).c_str());
+   }
+
+   /////////////////////////////////////////////////////////////////
+   void MapContentHandler::resetDocument()
+   {
+      Reset();
+   }
+
+   /////////////////////////////////////////////////////////////////
+   void MapContentHandler::resetErrors()
+   {
+      mErrorCount = 0;
+      mFatalErrorCount = 0;
+      mWarningCount = 0;
+      mMissingLibraries.clear();
+      mMissingActorTypes.clear();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void MapContentHandler::SetPrefabMode(std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >& proxyList,
+                                         PrefabReadMode readMode /* = READ_ALL */)
+   {
+      mLoadingPrefab = true;
+      mPrefabProxyList = &proxyList;
+      
+      mPrefabReadMode = readMode;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const std::string MapContentHandler::GetPrefabIconFileName()
+   {
+      return mPrefabIconFileName;
+   }
+
+   /////////////////////////////////////////////////////////////////
+   void MapContentHandler::Reset()
+   {
+      mMap = NULL;
+      mInMap = false;
+      mInPrefab = false;
+      mInHeader = false;
+      mInLibraries = false;
+      mInEvents = false;
+      mInActors = false;
+      mInGroup = false;
+      mInPresetCameras = false;
+      mInActorProperty = false;
+      mInActor = false;
+      mPresetCameraIndex = -1;
+      mPresetCameraData.isValid = false;
+      mPresetCameraView = 0;
+
+      mEnvActorId = "";
+
+      while (!mElements.empty()) mElements.pop();
+      mMissingActorTypes.clear();
+
+      ClearLibraryValues();
+      ClearActorValues();
+      //This should NOT be done in the Actor Value because this should
+      //be cleared at the start and finish of a document, not between each actor.
+      mActorLinking.clear();
+
+      mGroupParameters.clear();
+
+      resetErrors();
+
+      mFoundMapName = false;
+      mGameEvent = NULL;
+   }
+
+   /////////////////////////////////////////////////////////////////
+   void MapContentHandler::ClearLibraryValues()
+   {
+      mLibName.clear();
+      mLibVersion.clear();
+   }
+
+   /////////////////////////////////////////////////////////////////
+   void MapContentHandler::ClearActorValues()
+   {
+      mCurrentPropName.clear();
+      mActorProxy = NULL;
+      mActorPropertyType = NULL;
+      mActorProperty = NULL;
+      mIgnoreCurrentActor = false;
+      mDescriptorDisplayName.clear();
+
+      mInGroupProperty = false;
+      mInArrayProperty = 0;
+      mInContainerProperty = 0;
+      while (!mParameterStack.empty())
+      {
+         mParameterStack.pop();
+      }
+
+      ClearParameterValues();
+   }
+
+   /////////////////////////////////////////////////////////////////
+   void MapContentHandler::ClearParameterValues()
+   {
+      mParameterNameToCreate.clear();
+      mParameterTypeToCreate = NULL;
+   }
+
+   /////////////////////////////////////////////////////////////////
+   void MapContentHandler::AssignGroupProperties()
+   {
+      for (std::multimap<dtCore::UniqueId, std::pair<std::string, dtCore::RefPtr<dtDAL::NamedGroupParameter> > >::iterator i
+           = mGroupParameters.begin();
+           i != mGroupParameters.end(); ++i)
+      {
+         dtCore::UniqueId id = i->first;
+         ActorProxy* proxyToModify = mMap->GetProxyById(id);
+         if (proxyToModify == NULL)
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
+                                "Proxy with ID %s was defined to have a group property set, but the proxy does not exist in the new map.",
+                                id.ToString().c_str());
+            continue;
+         }
+         std::pair<std::string, dtCore::RefPtr<dtDAL::NamedGroupParameter> >& data = i->second;
+         std::string& propertyName = data.first;
+         dtCore::RefPtr<dtDAL::NamedGroupParameter>& propValue = data.second;
+
+         dtCore::RefPtr<ActorProperty> property = proxyToModify->GetProperty(propertyName);
+         if (!property.valid())
+         {
+            property = proxyToModify->GetDeprecatedProperty(propertyName);
+         }
+
+         if (!property.valid())
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__,  __LINE__,
+                                "Proxy with ID %s was defined to have group property %s set with actor %s, but the property does not exist on the proxy.",
+                                id.ToString().c_str(), propertyName.c_str(), propValue->ToString().c_str());
+            continue;
+         }
+
+         GroupActorProperty* gap = dynamic_cast<GroupActorProperty*>(property.get());
+         if (gap == NULL)
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__,  __LINE__,
+                                "Proxy with ID %s was defined to have actor property %s set with actor %s, but the property is not a GroupActorProperty.",
+                                id.ToString().c_str(), propertyName.c_str(), propValue->ToString().c_str());
+            continue;
+         }
+         gap->SetValue(*propValue);
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////
+   void MapContentHandler::LinkActors()
+   {
+      for (std::multimap<dtCore::UniqueId, std::pair<std::string, dtCore::UniqueId> >::iterator i = mActorLinking.begin();
+           i != mActorLinking.end(); ++i)
+      {
+         dtCore::UniqueId id = i->first;
+         ActorProxy* proxyToModify = mMap->GetProxyById(id);
+         if (proxyToModify == NULL)
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
+                                "Proxy with ID %s was defined to have an actor property set, but the proxy does not exist in the new map.",
+                                id.ToString().c_str());
+            continue;
+         }
+         std::pair<std::string, dtCore::UniqueId>& data = i->second;
+         std::string& propertyName = data.first;
+         dtCore::UniqueId& propValueId = data.second;
+         if (propValueId.ToString().empty())
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__,  __LINE__,
+                                "Proxy with ID %s was defined to have actor property %s set, but the id is empty.",
+                                id.ToString().c_str(), propertyName.c_str(), propValueId.ToString().c_str());
+
+         }
+         ActorProxy* valueProxy = mMap->GetProxyById(propValueId);
+         if (valueProxy == NULL)
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
+                                "Proxy with ID %s was defined to have actor property %s set with actor %s, but the proxy does not exist in the new map.",
+                                id.ToString().c_str(), propertyName.c_str(), propValueId.ToString().c_str());
+            continue;
+         }
+         dtCore::RefPtr<ActorProperty> property = proxyToModify->GetProperty(propertyName);
+         if (!property.valid())
+         {
+            property = proxyToModify->GetDeprecatedProperty(propertyName);
+         }
+         if (!property.valid())
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__,  __LINE__,
+                                "Proxy with ID %s was defined to have actor property %s set with actor %s, but the property does not exist on the proxy.",
+                                id.ToString().c_str(), propertyName.c_str(), propValueId.ToString().c_str());
+            continue;
+         }
+         ActorActorProperty* aap = dynamic_cast<ActorActorProperty*>(property.get());
+         if (aap == NULL)
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__,  __LINE__,
+                                "Proxy with ID %s was defined to have actor property %s set with actor %s, but the property is not an ActorActorProperty.",
+                                id.ToString().c_str(), propertyName.c_str(), propValueId.ToString().c_str());
+            continue;
+         }
+         aap->SetValue(valueProxy);
+      }
+
+   }
+
+   /////////////////////////////////////////////////////////////////
+   MapContentHandler::MapContentHandler()
+      : mHasDeprecatedProperty(false)
+      , mActorProxy(NULL)
+      , mActorPropertyType(NULL)
+      , mActorProperty(NULL)
+      , mGroupIndex(-1)
+      , mLoadingPrefab(false)
+      , mPrefabReadMode(PREFAB_READ_ALL)
+      , mPrefabIconFileName("")
+      , mPrefabProxyList(NULL)
+   {
+      mLogger = &dtUtil::Log::GetInstance();
+      //mLogger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
+      mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__,  __LINE__, "Creating Map Content Handler.\n");
+
+      mEnvActorId = "";
+   }
+
+   /////////////////////////////////////////////////////////////////
+   MapContentHandler::~MapContentHandler() {}
+
+   MapContentHandler::MapContentHandler(const MapContentHandler&) {}
+   MapContentHandler& MapContentHandler::operator=(const MapContentHandler&) { return *this;}
+
+   void MapContentHandler::startPrefixMapping(const XMLCh* const prefix, const XMLCh* const uri) {}
+
+   void MapContentHandler::endPrefixMapping(const XMLCh* const prefix) {}
+
+   void MapContentHandler::skippedEntity(const XMLCh* const name) {}
+
+   void MapContentHandler::ignorableWhitespace(const XMLCh* const chars, const unsigned int length) {}
+
+   void MapContentHandler::processingInstruction(const XMLCh* const target, const XMLCh* const data) {}
+
+
+   void MapContentHandler::setDocumentLocator(const xercesc::Locator* const locator) {}
+
+   InputSource* MapContentHandler::resolveEntity(const XMLCh* const publicId, const XMLCh* const systemId)
+   {
+      return NULL;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void MapContentHandler::EndHeaderElement(const XMLCh* const localname)
+   {
+      if (XMLString::compareString(localname, MapXMLConstants::HEADER_ELEMENT) == 0)
+      {
+         mInHeader = false;
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void MapContentHandler::EndActorElement()
+   {
+      if (mActorProxy != NULL)
+      {
+         if (!mLoadingPrefab)
+         {
+            mMap->AddProxy(*mActorProxy);
+         }
+         mActorProxy->OnMapLoadEnd(); //notify ActorProxy we're done loading it
+      }
+      mActorProxy = NULL;
+      mInActor = false;
+      ClearActorValues();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void MapContentHandler::EndActorSection(const XMLCh* const localname)
+   {
+      if (XMLString::compareString(localname, MapXMLConstants::ACTORS_ELEMENT) == 0)
+      {
+         EndActorsElement();
+      }
+      else if (XMLString::compareString(localname, MapXMLConstants::ACTOR_ELEMENT) == 0)
+      {
+         EndActorElement();
+      }
+      else if (mInActor)
+      {
+         EndActorPropertySection(localname);
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void MapContentHandler::EndActorsElement()
+   {
+      mInActors = false;
+      if (mInActor)
+      {
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                             "Found the closing actors section tag, but the content handler thinks it's still parsing an actor");
+         mInActor = false;
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void MapContentHandler::EndActorPropertySection(const XMLCh* const localname)
+   {
+      if (mInArrayProperty == 0 && mInContainerProperty == 0 && XMLString::compareString(localname, MapXMLConstants::ACTOR_PROPERTY_ELEMENT) == 0)
+      {
+         EndActorPropertyElement();
+      }
+      else if (XMLString::compareString(localname, MapXMLConstants::ACTOR_PROPERTY_ARRAY_ELEMENT) == 0)
+      {
+         mInArrayProperty--;
+         if (mInArrayProperty < 0) mInArrayProperty = 0;
+      }
+      else if (XMLString::compareString(localname, MapXMLConstants::ACTOR_PROPERTY_CONTAINER_ELEMENT) == 0)
+      {
+         mInContainerProperty--;
+         if (mInContainerProperty < 0) mInContainerProperty = 0;
+      }
+      else if (mInGroupProperty)
+      {
+         if (XMLString::compareString(localname, MapXMLConstants::ACTOR_PROPERTY_PARAMETER_ELEMENT) == 0)
+         {
+            EndActorPropertyParameterElement();
+         }
+         else if (XMLString::compareString(localname, MapXMLConstants::ACTOR_PROPERTY_GROUP_ELEMENT) == 0)
+         {
+            EndActorPropertyGroupElement();
+         }
+         else if (!mParameterStack.empty())
+         {
+            // parse the end element into a data type to see if it's an end param element.
+            dtDAL::DataType* d = ParsePropertyType(localname, false);
+            // The parameter has ended, so pop.
+            if (d != NULL)
+            {
+               mParameterStack.pop();
+            }
+         }
+      }
+      else if (mInActorProperty)
+      {
+         if (mActorProperty != NULL)
+         {
+            if (mActorPropertyType != NULL && mInArrayProperty == 0 && mInContainerProperty == 0)
+            {
+               // parse the end element into a data type to see if it's an end property element.
+               dtDAL::DataType* d = ParsePropertyType(localname, false);
+               // The property has ended, so in case the property type has not
+               // been unset, it is now.
+               if (d != NULL)
+               {
+                  //This works here because the actor types referenced here all set
+                  // their property type to NULL when the value is set.
+                  NonEmptyDefaultWorkaround();
+                  mActorPropertyType = NULL;
+               }
+            }
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void MapContentHandler::EndActorPropertyGroupElement()
+   {
+      dtCore::RefPtr<NamedGroupParameter> topParam = static_cast<NamedGroupParameter*>(mParameterStack.top().get());
+      mParameterStack.pop();
+      //The only way we know we have completed a group actor property is that the
+      //stack of parameters has been emptied since they can nest infinitely.
+      if (mParameterStack.empty())
+      {
+         mInGroupProperty = false;
+         mGroupParameters.insert(std::make_pair(mActorProxy->GetId(),
+            std::make_pair(mActorProperty->GetName(), topParam)));
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void MapContentHandler::EndActorPropertyParameterElement()
+   {
+      ///We pop if the element was never filled in.  This happens if the value is empty for
+      ///parameter data.  We don't pop for a group because that is handled separately below.
+      if (!mParameterStack.empty() && mParameterStack.top()->GetDataType() != DataType::GROUP)
+      {
+         mParameterStack.pop();
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void MapContentHandler::EndActorPropertyElement()
+   {
+      mInActorProperty = false;
+      mActorProperty = NULL;
+      mActorPropertyType = NULL;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void MapContentHandler::EndGroupSection(const XMLCh* const localname)
+   {
+      if (XMLString::compareString(localname, MapXMLConstants::ACTOR_GROUPS_ELEMENT) == 0)
+      {
+         EndGroupElement();
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void MapContentHandler::EndGroupElement()
+   {
+      mInGroup = false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void MapContentHandler::EndPresetCameraSection(const XMLCh* const localname)
+   {
+      if (XMLString::compareString(localname, MapXMLConstants::PRESET_CAMERAS_ELEMENT) == 0)
+      {
+         mInPresetCameras = false;
+      }
+      else if (XMLString::compareString(localname, MapXMLConstants::PRESET_CAMERA_ELEMENT) == 0)
+      {
+         EndPresetCameraElement();
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void MapContentHandler::EndPresetCameraElement()
+   {
+      if (mPresetCameraIndex > -1 &&
+         mPresetCameraData.isValid &&
+         mMap.valid())
+      {
+         mMap->SetPresetCameraData(mPresetCameraIndex, mPresetCameraData);
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void MapContentHandler::EndLibrarySection(const XMLCh* const localname)
+   {
+      if (XMLString::compareString(localname, MapXMLConstants::LIBRARIES_ELEMENT) == 0)
+      {
+         mInLibraries = false;
+      }
+      else if (XMLString::compareString(localname, MapXMLConstants::LIBRARY_ELEMENT) == 0)
+      {
+         EndLibraryElement();
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void MapContentHandler::EndLibraryElement()
+   {
+      if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+      {
+         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,
+            "Attempting to add library %s version %s to the library manager.",
+            mLibName.c_str(),
+            mLibVersion.c_str());
+      }
+
+      try
+      {
+         if (LibraryManager::GetInstance().GetRegistry(mLibName) == NULL)
+         {
+            LibraryManager::GetInstance().LoadActorRegistry(mLibName);
+         }
+         mMap->AddLibrary(mLibName, mLibVersion);
+         ClearLibraryValues();
+      }
+      catch (const dtUtil::Exception& e)
+      {
+         mMissingLibraries.push_back(mLibName);
+         if (dtDAL::ExceptionEnum::ProjectResourceError == e.TypeEnum())
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+               "Error loading library %s version %s in the library manager.  Exception message to follow.",
+               mLibName.c_str(), mLibVersion.c_str());
+         }
+         else
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+               "Unknown exception loading library %s version %s in the library manager.  Exception message to follow.",
+               mLibName.c_str(), mLibVersion.c_str());
+         }
+         e.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void MapContentHandler::EndEventSection(const XMLCh* const localname)
+   {
+      if (XMLString::compareString(localname, MapXMLConstants::EVENTS_ELEMENT) == 0)
+      {
+         mInEvents = false;
+      }
+      else if (XMLString::compareString(localname, MapXMLConstants::EVENT_ELEMENT) == 0)
+      {
+         if (mGameEvent.valid())
+         {
+            mMap->GetEventManager().AddEvent(*mGameEvent);
+            mGameEvent = NULL;
+         }
+      }
+   }
+
+}

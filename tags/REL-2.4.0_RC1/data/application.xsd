@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" id="Application">
+
+  <xs:simpleType name="nonEmptyString">
+    <xs:restriction base="xs:normalizedString">
+      <xs:minLength value="1" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="PropertyType">
+    <xs:simpleContent>
+      <xs:extension base="xs:normalizedString">
+        <xs:attribute name="Name" type="nonEmptyString" use="required" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:element name="Application">
+    <xs:complexType>
+      <xs:sequence minOccurs="0">
+        <xs:element name="Window">
+          <xs:complexType>
+            <xs:attribute name="Name" type="xs:string" use="required" />
+            <xs:attribute name="X" type="xs:string" use="required" />
+            <xs:attribute name="Y" type="xs:string" use="required" />
+            <xs:attribute name="Width" type="xs:string" use="required" />
+            <xs:attribute name="Height" type="xs:string" use="required" />
+            <xs:attribute name="PixelDepth" type="xs:integer" use="required" />
+            <xs:attribute name="RefreshRate" type="xs:integer" use="required" />
+            <xs:attribute name="ShowCursor" type="xs:boolean" use="required" />
+            <xs:attribute name="FullScreen" type="xs:boolean" use="required" />
+            <xs:attribute name="RealizeUponCreate" type="xs:boolean" use="optional" />
+            <xs:attribute name="ChangeDisplayResolution" type="xs:boolean" use="required" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Scene">
+          <xs:complexType>
+            <xs:attribute form="unqualified" name="Name" type="xs:string" use="required" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Camera">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Viewport" minOccurs="0" maxOccurs="1">
+                <xs:complexType>
+                  <xs:attribute name="X" type="xs:integer" use="required" />
+                  <xs:attribute name="Y" type="xs:integer" use="required" />
+                  <xs:attribute name="Width" type="xs:integer" use="required" />
+                  <xs:attribute name="Height" type="xs:integer" use="required" />
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute form="unqualified" name="Name" type="xs:string" use="required" />
+            <xs:attribute form="unqualified" name="WindowInstance" type="xs:string" use="required" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="View">
+          <xs:complexType>
+            <xs:attribute form="unqualified" name="Name" type="xs:string" use="required" />
+            <xs:attribute form="unqualified" name="CameraInstance" type="xs:string" use="required" />
+            <xs:attribute form="unqualified" name="SceneInstance" type="xs:string" use="required" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element minOccurs="0" maxOccurs="unbounded" name="Log">
+          <xs:complexType>
+            <xs:attribute form="unqualified" name="Name" type="xs:string" />
+            <xs:attribute form="unqualified" name="Level" type="xs:string" use="required" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element minOccurs="0" maxOccurs="unbounded" name="LibraryPath" type="xs:normalizedString" />
+        <xs:element minOccurs="0" maxOccurs="1" name="Properties">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="unbounded" name="Property" type="PropertyType" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

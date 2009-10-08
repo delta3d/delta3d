@@ -1,0 +1,861 @@
+(FED
+(Federation DVTE)
+(FEDversion v1.3)
+ (spaces 
+ (space HyperSpace
+ )
+ )
+ (objects 
+    (class ObjectRoot 
+       (attribute privilegeToDelete  reliable timestamp)
+       (class RTIprivate)
+ (class BaseEntity
+     (attribute AccelerationVector best_effort receive)
+     (attribute AngularVelocityVector best_effort receive)
+     (attribute DeadReckoningAlgorithm best_effort receive)
+     (attribute EntityType best_effort receive)
+     (attribute EntityIdentifier best_effort receive)
+     (attribute IsFrozen best_effort receive)
+     (attribute Orientation best_effort receive)
+     (attribute WorldLocation best_effort receive)
+     (attribute VelocityVector best_effort receive)
+ (class EnvironmentalEntity
+     (attribute OpacityCode best_effort receive)
+ )
+ (class PhysicalEntity
+     (attribute AlternateEntityType best_effort receive)
+     (attribute ArticulatedParametersArray best_effort receive)
+     (attribute CamouflageType best_effort receive)
+     (attribute DamageState best_effort receive)
+     (attribute EngineSmokeOn best_effort receive)
+     (attribute FirePowerDisabled best_effort receive)
+     (attribute FlamesPresent best_effort receive)
+     (attribute ForceIdentifier best_effort receive)
+     (attribute HasAmmunitionSupplyCap best_effort receive)
+     (attribute HasFuelSupplyCap best_effort receive)
+     (attribute HasRecoveryCap best_effort receive)
+     (attribute HasRepairCap best_effort receive)
+     (attribute Immobilized best_effort receive)
+     (attribute IsConcealed best_effort receive)
+     (attribute Marking best_effort receive)
+     (attribute PowerPlantOn best_effort receive)
+     (attribute SmokePlumePresent best_effort receive)
+     (attribute TentDeployed best_effort receive)
+     (attribute TrailingEffectsCode best_effort receive)
+ (class Platform
+     (attribute AfterburnerOn best_effort receive)
+     (attribute AntiCollisionLightsOn best_effort receive)
+     (attribute BlackOutBrakeLightsOn best_effort receive)
+     (attribute BlackOutLightsOn best_effort receive)
+     (attribute BrakeLightsOn best_effort receive)
+     (attribute FormationLightsOn best_effort receive)
+     (attribute HatchState best_effort receive)
+     (attribute HeadLightsOn best_effort receive)
+     (attribute InteriorLightsOn best_effort receive)
+     (attribute LandingLightsOn best_effort receive)
+     (attribute LauncherRaised best_effort receive)
+     (attribute NavigationLightsOn best_effort receive)
+     (attribute RampDeployed best_effort receive)
+     (attribute RunningLightsOn best_effort receive)
+     (attribute SpotLightsOn best_effort receive)
+     (attribute TailLightsOn best_effort receive)
+ (class Aircraft
+ )
+ (class AmphibiousVehicle
+ )
+ (class GroundVehicle
+ )
+ (class MultiDomainPlatform
+ )
+ (class Spacecraft
+ )
+ (class SubmersibleVessel
+ )
+ (class SurfaceVessel
+ )
+ )
+ (class Lifeform
+     (attribute FlashLightsOn best_effort receive)
+     (attribute StanceCode best_effort receive)
+     (attribute PrimaryWeaponState best_effort receive)
+     (attribute SecondaryWeaponState best_effort receive)
+ (class Human
+ )
+ (class NonHuman
+ )
+ )
+ (class CulturalFeature
+     (attribute ExternalLightsOn best_effort receive)
+     (attribute InternalHeatSourceOn best_effort receive)
+     (attribute InternalLightsOn best_effort receive)
+ )
+ (class Expendables
+ )
+ (class Munition
+     (attribute LauncherFlashPresent best_effort receive)
+ )
+ (class Radio
+ )
+ (class Sensor
+     (attribute AntennaRaised best_effort receive)
+     (attribute BlackoutLightsOn best_effort receive)
+     (attribute LightsOn best_effort receive)
+     (attribute InteriorLightsOn best_effort receive)
+     (attribute MissionKill best_effort receive)
+ )
+ (class Supplies
+ )
+ )
+ )
+ (class EmbeddedSystem
+     (attribute EntityIdentifier best_effort receive)
+     (attribute HostObjectIdentifier best_effort receive)
+     (attribute RelativePosition best_effort receive)
+ (class Designator
+     (attribute CodeName best_effort receive)
+     (attribute DesignatedObjectIdentifier best_effort receive)
+     (attribute DesignatorCode best_effort receive)
+     (attribute DesignatorEmissionWavelength best_effort receive)
+     (attribute DesignatorOutputPower best_effort receive)
+     (attribute DesignatorSpotLocation best_effort receive)
+     (attribute DeadReckoningAlgorithm best_effort receive)
+     (attribute RelativeSpotLocation best_effort receive)
+     (attribute SpotLinearAccelerationVector best_effort receive)
+ )
+ (class EmitterSystem
+     (attribute EmitterFunctionCode best_effort receive)
+     (attribute EmitterType best_effort receive)
+     (attribute EmitterIndex best_effort receive)
+     (attribute EventIdentifier best_effort receive)
+ )
+ (class RadioReceiver
+     (attribute RadioIndex best_effort receive)
+     (attribute ReceivedPower best_effort receive)
+     (attribute ReceivedTransmitterIdentifier best_effort receive)
+     (attribute ReceiverOperationalStatus best_effort receive)
+ )
+ (class RadioTransmitter
+     (attribute AntennaPatternData best_effort receive)
+     (attribute CryptographicMode best_effort receive)
+     (attribute CryptoSystem best_effort receive)
+     (attribute EncryptionKeyIdentifier best_effort receive)
+     (attribute Frequency best_effort receive)
+     (attribute FrequencyBandwidth best_effort receive)
+     (attribute FrequencyHopInUse best_effort receive)
+     (attribute ModulationParameters best_effort receive)
+     (attribute PsuedoNoiseSpectrumInUse best_effort receive)
+     (attribute RadioIndex best_effort receive)
+     (attribute RadioInputSource best_effort receive)
+     (attribute RadioSystemType best_effort receive)
+     (attribute RFModulationSystemType best_effort receive)
+     (attribute RFModulationType best_effort receive)
+     (attribute TimeHopInUse best_effort receive)
+     (attribute TransmittedPower best_effort receive)
+     (attribute TransmitterOperationalStatus best_effort receive)
+     (attribute WorldLocation best_effort receive)
+ )
+ )
+ (class EmitterBeam
+     (attribute BeamAzimuthCenter best_effort receive)
+     (attribute BeamAzimuthSweep best_effort receive)
+     (attribute BeamElevationCenter best_effort receive)
+     (attribute BeamElevationSweep best_effort receive)
+     (attribute BeamFunctionCode best_effort receive)
+     (attribute BeamIdentifier best_effort receive)
+     (attribute BeamParameterIndex best_effort receive)
+     (attribute EffectiveRadiatedPower best_effort receive)
+     (attribute EmissionFrequency best_effort receive)
+     (attribute EmitterSystemIdentifier best_effort receive)
+     (attribute EventIdentifier best_effort receive)
+     (attribute FrequencyRange best_effort receive)
+     (attribute PulseRepetitionFrequency best_effort receive)
+     (attribute PulseWidth best_effort receive)
+     (attribute SweepSynch best_effort receive)
+ (class RadarBeam
+     (attribute HighDensityTrack best_effort receive)
+     (attribute TrackObjectIdentifiers best_effort receive)
+ )
+ (class JammerBeam
+     (attribute JammingModeSequence best_effort receive)
+     (attribute JammedObjectIdentifiers best_effort receive)
+     (attribute HighDensityJam best_effort receive)
+ )
+ )
+ (class Manager
+ (class Federation
+     (attribute FederationName reliable receive)
+     (attribute FederatesInFederation reliable receive)
+     (attribute RTIversion reliable receive)
+     (attribute FEDid reliable receive)
+     (attribute LastSaveName reliable receive)
+     (attribute LastSaveTime reliable receive)
+     (attribute NextSaveName reliable receive)
+     (attribute NextSaveTime reliable receive)
+ )
+ (class Federate
+     (attribute FederateHandle reliable receive)
+     (attribute FederateType reliable receive)
+     (attribute FederateHost reliable receive)
+     (attribute RTIversion reliable receive)
+     (attribute FEDid reliable receive)
+     (attribute TimeConstrained reliable receive)
+     (attribute TimeRegulating reliable receive)
+     (attribute AsynchronousDelivery reliable receive)
+     (attribute FederateState reliable receive)
+     (attribute TimeManagerState reliable receive)
+     (attribute FederateTime reliable receive)
+     (attribute Lookahead reliable receive)
+     (attribute LBTS reliable receive)
+     (attribute MinNextEventTime reliable receive)
+     (attribute ROlength reliable receive)
+     (attribute TSOlength reliable receive)
+     (attribute ReflectionsReceived reliable receive)
+     (attribute UpdatesSent reliable receive)
+     (attribute InteractionsReceived reliable receive)
+     (attribute InteractionsSent reliable receive)
+     (attribute ObjectsOwned reliable receive)
+     (attribute ObjectsUpdated reliable receive)
+     (attribute ObjectsReflected reliable receive)
+ )
+ )
+    )
+)
+ (interactions 
+    (class InteractionRoot  reliable timestamp
+       (class RTIprivate  reliable timestamp)
+  (class Acknowledge best_effort receive
+     (parameter OriginatingEntity)
+      (parameter ReceivingEntity)
+      (parameter RequestIdentifier)
+      (parameter AcknowledgeFlag)
+      (parameter ResponseFlag)
+  )
+
+  (class ActionRequest best_effort receive
+     (parameter OriginatingEntity)
+      (parameter ReceivingEntity)
+      (parameter RequestIdentifier)
+      (parameter ActionRequestCode)
+      (parameter FixedDatums)
+      (parameter VariableDatumSet)
+  )
+
+  (class ActionResponse best_effort receive
+     (parameter OriginatingEntity)
+      (parameter ReceivingEntity)
+      (parameter RequestIdentifier)
+      (parameter RequestStatus)
+      (parameter FixedDatums)
+      (parameter VariableDatumSet)
+  )
+
+  (class ActionRequestToObject best_effort receive
+     (parameter ObjectIdentifiers)
+      (parameter ActionRequestCode)
+  )
+
+  (class ActionResponseFromObject best_effort receive
+     (parameter ActionResult)
+  )
+
+  (class AttributeChangeRequest best_effort receive
+     (parameter ObjectIdentifiers)
+      (parameter AttributeValueSet)
+  )
+
+  (class AttributeChangeResult best_effort receive
+     (parameter ObjectIdentifier)
+      (parameter AttributeChangeResult)
+      (parameter AttributeValueSet)
+  )
+
+  (class Collision best_effort receive
+     (parameter CollidingObjectIdentifier)
+      (parameter IssuingObjectMass)
+      (parameter IssuingObjectVelocityVector)
+      (parameter CollisionType)
+      (parameter CollisionLocation)
+      (parameter EventIdentifier)
+      (parameter IssuingObjectIdentifier)
+  )
+
+  (class Comment best_effort receive
+     (parameter OriginatingEntity)
+      (parameter ReceivingEntity)
+      (parameter VariableDatumSet)
+  )
+
+  (class CreateObjectRequest best_effort receive
+     (parameter ObjectClass)
+      (parameter AttributeValueSet)
+      (parameter RequestIdentifier)
+  )
+
+  (class CreateObjectResult best_effort receive
+     (parameter CreateObjectResult)
+      (parameter RequestIdentifier)
+  )
+
+  (class CreateEntity best_effort receive
+     (parameter OriginatingEntity)
+      (parameter ReceivingEntity)
+      (parameter RequestIdentifier)
+  )
+
+  (class Data best_effort receive
+     (parameter OriginatingEntity)
+      (parameter ReceivingEntity)
+      (parameter RequestIdentifier)
+      (parameter FixedDatums)
+      (parameter VariableDatumSet)
+  )
+
+  (class DataQuery best_effort receive
+     (parameter OriginatingEntity)
+      (parameter ReceivingEntity)
+      (parameter RequestIdentifier)
+      (parameter TimeInterval)
+      (parameter FixedDatumIdentifiers)
+      (parameter VariableDatumIdentifiers)
+  )
+
+  (class EventReport best_effort receive
+     (parameter OriginatingEntity)
+      (parameter ReceivingEntity)
+      (parameter EventType)
+      (parameter FixedDatums)
+      (parameter VariableDatumSet)
+  )
+
+  (class MunitionDetonation best_effort receive
+     (parameter ArticulatedPartData)
+      (parameter DetonationLocation)
+      (parameter DetonationResultCode)
+      (parameter EventIdentifier)
+      (parameter FiringObjectIdentifier)
+      (parameter FinalVelocityVector)
+      (parameter FuseType)
+      (parameter MunitionObjectIdentifier)
+      (parameter MunitionType)
+      (parameter QuantityFired)
+      (parameter RateOfFire)
+      (parameter RelativeDetonationLocation)
+      (parameter TargetObjectIdentifier)
+      (parameter WarheadType)
+  )
+
+  (class RadioSignal best_effort receive
+  (class ApplicationSpecificRadioSignal best_effort receive
+     (parameter HostRadioIndex)
+      (parameter DataRate)
+      (parameter SignalDataLength)
+      (parameter SignalData)
+      (parameter TacticalDataLinkType)
+      (parameter TDLMessageCount)
+      (parameter UserProtocolID)
+  )
+
+  (class DatabaseIndexRadioSignal best_effort receive
+     (parameter HostRadioIndex)
+      (parameter DatabaseIndex)
+      (parameter Duration)
+      (parameter StartOffset)
+      (parameter TacticalDataLinkType)
+      (parameter TDLMessageCount)
+  )
+
+  (class EncodedAudioRadioSignal best_effort receive
+     (parameter HostRadioIndex)
+      (parameter TransmitterSignalEncodingType)
+      (parameter SignalSampleRate)
+      (parameter SampleCount)
+      (parameter SignalDataLength)
+      (parameter SignalData)
+  )
+
+  (class RawBinaryRadioSignal best_effort receive
+     (parameter HostRadioIndex)
+      (parameter DataRate)
+      (parameter SignalDataLength)
+      (parameter SignalData)
+      (parameter TacticalDataLinkType)
+      (parameter TDLMessageCount)
+  )
+
+ )
+
+  (class RemoveObjectRequest best_effort receive
+     (parameter ObjectIdentifiers)
+      (parameter RequestIdentifier)
+  )
+
+  (class RemoveObjectResult best_effort receive
+     (parameter RemoveObjectResult)
+      (parameter RequestIdentifier)
+  )
+
+  (class RemoveEntity best_effort receive
+     (parameter OriginatingEntity)
+      (parameter ReceivingEntity)
+      (parameter RequestIdentifier)
+  )
+
+  (class RepairComplete best_effort receive
+     (parameter ReceivingObject)
+      (parameter RepairingObject)
+      (parameter RepairType)
+  )
+
+  (class RepairResponse best_effort receive
+     (parameter ReceivingObject)
+      (parameter RepairingObject)
+      (parameter RepairResultCode)
+  )
+
+  (class ResupplyCancel best_effort receive
+     (parameter ReceivingObject)
+      (parameter SupplyingObject)
+  )
+
+  (class ResupplyOffer best_effort receive
+     (parameter ReceivingObject)
+      (parameter SupplyingObject)
+      (parameter SuppliesData)
+  )
+
+  (class ResupplyReceived best_effort receive
+     (parameter ReceivingObject)
+      (parameter SupplyingObject)
+      (parameter SuppliesData)
+  )
+
+  (class ServiceRequest best_effort receive
+     (parameter RequestingObject)
+      (parameter ServicingObject)
+      (parameter ServiceType)
+      (parameter SuppliesData)
+  )
+
+  (class SetData best_effort receive
+     (parameter OriginatingEntity)
+      (parameter ReceivingEntity)
+      (parameter RequestIdentifier)
+      (parameter FixedDatums)
+      (parameter VariableDatumSet)
+  )
+
+  (class StartResume best_effort receive
+     (parameter OriginatingEntity)
+      (parameter ReceivingEntity)
+      (parameter RequestIdentifier)
+      (parameter RealWorldTime)
+      (parameter SimulationTime)
+  )
+
+  (class StopFreeze best_effort receive
+     (parameter OriginatingEntity)
+      (parameter ReceivingEntity)
+      (parameter RequestIdentifier)
+      (parameter RealWorldTime)
+      (parameter Reason)
+      (parameter ReflectValues)
+      (parameter RunInternalSimulationClock)
+      (parameter UpdateAttributes)
+  )
+
+  (class WeaponFire best_effort receive
+     (parameter EventIdentifier)
+      (parameter FireControlSolutionRange)
+      (parameter FireMissionIndex)
+      (parameter FiringLocation)
+      (parameter FiringObjectIdentifier)
+      (parameter FuseType)
+      (parameter InitialVelocityVector)
+      (parameter MunitionObjectIdentifier)
+      (parameter MunitionType)
+      (parameter QuantityFired)
+      (parameter RateOfFire)
+      (parameter TargetObjectIdentifier)
+      (parameter WarheadType)
+  )
+
+  (class SimMark best_effort receive
+     (parameter SimMarkTime)
+      (parameter SimMarkSubject)
+      (parameter SimMarkDescription)
+  )
+
+  (class TacticalBookmark best_effort receive
+     (parameter Time)
+   (class BlueOnBlueDirect best_effort receive
+     (parameter FiringPlatformID)
+      (parameter FiringPlatformLocation)
+      (parameter TargetPlatformID)
+      (parameter TargetPlatformLocation)
+      (parameter TargetDamageState1)
+      (parameter TargetDamageState2)
+      (parameter NumberOfRounds)
+      (parameter TypeOfRounds)
+      (parameter DetonationLocation)
+      (parameter FriendlyMDCount)
+      (parameter EnemyMDCount)
+  )
+
+  (class FirstFire best_effort receive
+     (parameter FiringPlatformID)
+      (parameter FiringPlatformLocation)
+      (parameter TargetPlatformID)
+  )
+
+ )
+
+  (class DamageAssessment best_effort receive
+     (parameter SimulationName)
+      (parameter SimulationVersion)
+      (parameter EventIdentifier)
+      (parameter FiringObjectIdentifier)
+      (parameter FiringObjectGuise)
+      (parameter FiringObjectForce)
+      (parameter FiringObjectLocation)
+      (parameter FiringObjectVelocity)
+      (parameter FiringObjectOrientation)
+      (parameter FiringObjectMarking)
+      (parameter TargetFromDetonation)
+      (parameter TargetObjectIdentifier)
+      (parameter TargetObjectGuise)
+      (parameter TargetObjectForce)
+      (parameter TargetObjectLocation)
+      (parameter TargetObjectVelocity)
+      (parameter TargetObjectOrientation)
+      (parameter TargetObjectMarking)
+      (parameter MunitionObjectIdentifier)
+      (parameter MunitionType)
+      (parameter MunitionName)
+      (parameter SubstituteMunitionType)
+      (parameter SubstituteMunitionName)
+      (parameter FuseType)
+      (parameter WarheadType)
+      (parameter QuantityFired)
+      (parameter RateOfFire)
+      (parameter DetonationLocation)
+      (parameter FinalVelocityVector)
+      (parameter DetonationResultCode)
+      (parameter RelativeDetonationLocation)
+      (parameter Range)
+      (parameter Error)
+      (parameter PCatastrophic)
+      (parameter PMobilityAndFirepower)
+      (parameter PMobilityOnly)
+      (parameter PFirePowerOnly)
+      (parameter PNoKill)
+      (parameter ComputedDamageResult)
+      (parameter DamageResultReason)
+      (parameter PreviousDamageState)
+      (parameter NewDamageState)
+  )
+
+  (class CFEnvironmentInteraction best_effort receive
+     (parameter Year)
+      (parameter Month)
+      (parameter Day)
+      (parameter Hour)
+      (parameter Minute)
+      (parameter Second)
+      (parameter MilliSecond)
+      (parameter ElapsedTime)
+      (parameter WeatherCondition)
+      (parameter SeaState)
+      (parameter WindSpeed)
+      (parameter WindDirection)
+      (parameter Temperature)
+      (parameter Visibility)
+      (parameter ProcessID)
+  )
+
+  (class Manager reliable receive
+  (class Federate reliable receive
+     (parameter Federate)
+   (class Request reliable receive
+  (class RequestPublications reliable receive
+ )
+
+  (class RequestSubscriptions reliable receive
+ )
+
+  (class RequestObjectsOwned reliable receive
+ )
+
+  (class RequestObjectsUpdated reliable receive
+ )
+
+  (class RequestObjectsReflected reliable receive
+ )
+
+  (class RequestUpdatesSent reliable receive
+ )
+
+  (class RequestInteractionsSent reliable receive
+ )
+
+  (class RequestReflectionsReceived reliable receive
+ )
+
+  (class RequestInteractionsReceived reliable receive
+ )
+
+  (class RequestObjectInformation reliable receive
+     (parameter ObjectInstance)
+  )
+
+ )
+
+  (class Report reliable receive
+  (class ReportObjectPublication reliable receive
+     (parameter NumberOfClasses)
+      (parameter ObjectClass)
+      (parameter AttributeList)
+  )
+
+  (class ReportObjectSubscription reliable receive
+     (parameter NumberOfClasses)
+      (parameter ObjectClass)
+      (parameter Active)
+      (parameter AttributeList)
+  )
+
+  (class ReportInteractionPublication reliable receive
+     (parameter InteractionClassList)
+  )
+
+  (class ReportInteractionSubscription reliable receive
+     (parameter InteractionClassList)
+  )
+
+  (class ReportObjectsOwned reliable receive
+     (parameter ObjectCounts)
+  )
+
+  (class ReportObjectsUpdated reliable receive
+     (parameter ObjectCounts)
+  )
+
+  (class ReportObjectsReflected reliable receive
+     (parameter ObjectCounts)
+  )
+
+  (class ReportUpdatesSent reliable receive
+     (parameter TransportationType)
+      (parameter UpdateCounts)
+  )
+
+  (class ReportReflectionsReceived reliable receive
+     (parameter TransportationType)
+      (parameter ReflectCounts)
+  )
+
+  (class ReportInteractionsSent reliable receive
+     (parameter TransportationType)
+      (parameter InteractionCounts)
+  )
+
+  (class ReportInteractionsReceived reliable receive
+     (parameter TransportationType)
+      (parameter InteractionCounts)
+  )
+
+  (class ReportObjectInformation reliable receive
+     (parameter ObjectInstance)
+      (parameter OwnedAttributeList)
+      (parameter RegisteredClass)
+      (parameter KnownClass)
+  )
+
+  (class Alert reliable receive
+     (parameter AlertSeverity)
+      (parameter AlertDescription)
+      (parameter AlertID)
+  )
+
+  (class ReportServiceInvocation reliable receive
+     (parameter Service)
+      (parameter Initiator)
+      (parameter SuccessIndicator)
+      (parameter SuppliedArgument1)
+      (parameter SuppliedArgument2)
+      (parameter SuppliedArgument3)
+      (parameter SuppliedArgument4)
+      (parameter SuppliedArgument5)
+      (parameter ReturnedArgument)
+      (parameter ExceptionDescription)
+      (parameter ExceptionID)
+  )
+
+ )
+
+  (class Adjust reliable receive
+  (class SetTiming reliable receive
+     (parameter ReportPeriod)
+  )
+
+  (class ModifyAttributeState reliable receive
+     (parameter ObjectInstance)
+      (parameter Attribute)
+      (parameter AttributeState)
+  )
+
+  (class SetServiceReporting reliable receive
+     (parameter ReportingState)
+  )
+
+  (class SetExceptionLogging reliable receive
+     (parameter LoggingState)
+  )
+
+ )
+
+  (class Service reliable receive
+  (class ResignFederationExecution reliable receive
+     (parameter ResignAction)
+  )
+
+  (class SynchronizationPointAchieved reliable receive
+     (parameter Label)
+  )
+
+  (class FederateSaveBegun reliable receive
+ )
+
+  (class FederateSaveComplete reliable receive
+     (parameter SuccessIndicator)
+  )
+
+  (class FederateRestoreComplete reliable receive
+     (parameter SuccessIndicator)
+  )
+
+  (class PublishObjectClass reliable receive
+     (parameter ObjectClass)
+      (parameter AttributeList)
+  )
+
+  (class UnpublishObjectClass reliable receive
+     (parameter ObjectClass)
+  )
+
+  (class PublishInteractionClass reliable receive
+     (parameter InteractionClass)
+  )
+
+  (class UnpublishInteractionClass reliable receive
+     (parameter InteractionClass)
+  )
+
+  (class SubscribeObjectClassAttributes reliable receive
+     (parameter ObjectClass)
+      (parameter AttributeList)
+      (parameter Active)
+  )
+
+  (class UnsubscribeObjectClass reliable receive
+     (parameter ObjectClass)
+  )
+
+  (class SubscribeInteractionClass reliable receive
+     (parameter InteractionClass)
+      (parameter Active)
+  )
+
+  (class UnsubscribeInteractionClass reliable receive
+     (parameter InteractionClass)
+  )
+
+  (class DeleteObjectInstance reliable receive
+     (parameter ObjectInstance)
+      (parameter Tag)
+      (parameter FederationTime)
+  )
+
+  (class LocalDeleteObjectInstance reliable receive
+     (parameter ObjectInstance)
+  )
+
+  (class ChangeAttributeTransportationType reliable receive
+     (parameter ObjectInstance)
+      (parameter AttributeList)
+      (parameter TransportationType)
+  )
+
+  (class ChangeAttributeOrderType reliable receive
+     (parameter ObjectInstance)
+      (parameter AttributeList)
+      (parameter OrderingType)
+  )
+
+  (class ChangeInteractionTransportationType reliable receive
+     (parameter InteractionClass)
+      (parameter TransportationType)
+  )
+
+  (class ChangeInteractionOrderType reliable receive
+     (parameter InteractionClass)
+      (parameter OrderingType)
+  )
+
+  (class UnconditionalAttributeOwnershipDivestiture reliable receive
+     (parameter ObjectInstance)
+      (parameter AttributeList)
+  )
+
+  (class EnableTimeRegulation reliable receive
+     (parameter FederationTime)
+      (parameter Lookahead)
+  )
+
+  (class DisableTimeRegulation reliable receive
+ )
+
+  (class EnableTimeConstrained reliable receive
+ )
+
+  (class DisableTimeConstrained reliable receive
+ )
+
+  (class EnableAsynchronousDelivery reliable receive
+ )
+
+  (class DisableAsynchronousDelivery reliable receive
+ )
+
+  (class ModifyLookahead reliable receive
+     (parameter Lookahead)
+  )
+
+  (class TimeAdvanceRequest reliable receive
+     (parameter FederationTime)
+  )
+
+  (class TimeAdvanceRequestAvailable reliable receive
+     (parameter FederationTime)
+  )
+
+  (class NextEventRequest reliable receive
+     (parameter FederationTime)
+  )
+
+  (class NextEventRequestAvailable reliable receive
+     (parameter FederationTime)
+  )
+
+  (class FlushQueueRequest reliable receive
+     (parameter FederationTime)
+  )
+
+ )
+
+ )
+
+ )
+
+    )
+ )
+)
