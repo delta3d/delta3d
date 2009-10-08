@@ -517,14 +517,17 @@ void LinkedPointsActorToolPlugin::onSelectActors(Viewport* vp, QMouseEvent* e, b
          {
             mShowingPlacementGhost = false;
             //selectPoint(mActiveActor->GetPointCount() - 1);
-            mCurrentPoint = mActiveActor->GetPointCount() - 1;
+            if (mActiveActor)
+            {
+               mCurrentPoint = mActiveActor->GetPointCount() - 1;
 
-            EditorEvents::GetInstance().emitBeginChangeTransaction();
-            EditorEvents::GetInstance().emitActorPropertyAboutToChange(mActiveProxy.get(), mPointsProp, mOldPropValue, mPointsProp->ToString());
-            EditorEvents::GetInstance().emitActorPropertyChanged(mActiveProxy.get(), mPointsProp);
-            EditorEvents::GetInstance().emitEndChangeTransaction();
+               EditorEvents::GetInstance().emitBeginChangeTransaction();
+               EditorEvents::GetInstance().emitActorPropertyAboutToChange(mActiveProxy.get(), mPointsProp, mOldPropValue, mPointsProp->ToString());
+               EditorEvents::GetInstance().emitActorPropertyChanged(mActiveProxy.get(), mPointsProp);
+               EditorEvents::GetInstance().emitEndChangeTransaction();
 
-            *overrideDefault = true;
+               *overrideDefault = true;
+            }
          }
          else
          {
@@ -771,7 +774,7 @@ void LinkedPointsActorToolPlugin::shutdown()
 ////////////////////////////////////////////////////////////////////////////////
 bool LinkedPointsActorToolPlugin::selectPoint(int pointIndex)
 {
-   if (pointIndex >= 0 && pointIndex < mActiveActor->GetPointCount())
+   if (mActiveActor && pointIndex >= 0 && pointIndex < mActiveActor->GetPointCount())
    {
       dtCore::Transformable* point = mActiveActor->GetPointDrawable(pointIndex);
       mCurrentPoint = pointIndex;
@@ -849,10 +852,13 @@ void LinkedPointsActorToolPlugin::ShowPlacementGhost(osg::Vec3 position, bool fo
    {
       mOldPropValue = mPointsProp->ToString();
 
-      mActiveActor->AddPoint(position);
-      mShowingPlacementGhost = true;
-      forceRefresh = true;
-      mPlacementGhostIndex = mActiveActor->GetPointCount();
+      if (mActiveActor)
+      {
+         mActiveActor->AddPoint(position);
+         mShowingPlacementGhost = true;
+         forceRefresh = true;
+         mPlacementGhostIndex = mActiveActor->GetPointCount();
+      }
    }
 
    if (forceRefresh)
@@ -890,7 +896,7 @@ void LinkedPointsActorToolPlugin::HidePlacementGhost(bool forceRefresh)
 void LinkedPointsActorToolPlugin::UpdatePlacementGhost(Viewport* vp, osg::Vec2 mousePos)
 {
    EditorViewport* editorView = dynamic_cast<EditorViewport*>(vp);
-   if (!editorView)
+   if (!editorView || !mActiveActor)
    {
       return;
    }
