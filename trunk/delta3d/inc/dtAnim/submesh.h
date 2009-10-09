@@ -68,139 +68,137 @@ namespace dtAnim
     * internal.
     */
    class DT_ANIM_EXPORT SubmeshDrawable: public osg::Drawable {
-      public:
-         static const unsigned LOD_COUNT = 4;
+   public:
+      static const unsigned LOD_COUNT = 4;
 
-         /**
-          * Creates a submesh for one model given the mesh and submesh of this mesh
-          */
-         SubmeshDrawable(Cal3DModelWrapper *wrapper, unsigned mesh, unsigned submesh);
+      /**
+       * Creates a submesh for one model given the mesh and submesh of this mesh
+       */
+      SubmeshDrawable(Cal3DModelWrapper *wrapper, unsigned mesh, unsigned submesh);
 
-         /**
-          * Draws the geometry.
-          */
-         virtual void drawImplementation(osg::RenderInfo& renderInfo) const;
+      /**
+       * Draws the geometry.
+       */
+      virtual void drawImplementation(osg::RenderInfo& renderInfo) const;
 
-         /**
-          * Accept PrimitiveVisitor, in this case a TriangleVisitor
-          */
+      /**
+       * Accept PrimitiveVisitor, in this case a TriangleVisitor
+       */
 
-         /** Return true, SubMesh does support accept(PrimitiveFunctor&). */
-         virtual bool supports(osg::PrimitiveFunctor&) const { return true; }
+      /** Return true, SubMesh does support accept(PrimitiveFunctor&). */
+      virtual bool supports(osg::PrimitiveFunctor&) const { return true; }
 
-         /** Accept a PrimitiveFunctor and call its methods to tell it
-           * about the interal primitives that this Drawable has. 
-           */
+      /** Accept a PrimitiveFunctor and call its methods to tell it
+       * about the interal primitives that this Drawable has. 
+       */
 
-         virtual void accept(osg::PrimitiveFunctor& pf) const;
+      virtual void accept(osg::PrimitiveFunctor& pf) const;
 
-         virtual osg::Object* cloneType() const;
-         virtual osg::Object* clone(const osg::CopyOp&) const;
+      virtual osg::Object* cloneType() const;
+      virtual osg::Object* clone(const osg::CopyOp&) const;
 
-         unsigned int GetMeshID() const { return mMeshID; }
-         unsigned int GetSubmeshID() const { return mSubmeshID; }
+      unsigned int GetMeshID() const { return mMeshID; }
+      unsigned int GetSubmeshID() const { return mSubmeshID; }
 
-         Cal3DModelWrapper& GetModelWrapper() { return *mWrapper; }
-         const Cal3DModelWrapper& GetModelWrapper() const { return *mWrapper; }
+      Cal3DModelWrapper& GetModelWrapper() { return *mWrapper; }
+      const Cal3DModelWrapper& GetModelWrapper() const { return *mWrapper; }
 
-         LODOptions& GetLODOptions() { return mModelData->GetLODOptions(); }
-         const LODOptions& GetLODOptions() const { return mModelData->GetLODOptions(); }
+      LODOptions& GetLODOptions() { return mModelData->GetLODOptions(); }
+      const LODOptions& GetLODOptions() const { return mModelData->GetLODOptions(); }
 
-         float GetCurrentLOD() const { return mCurrentLOD; }
-         void SetCurrentLOD(float lod) { mCurrentLOD = lod; };
+      float GetCurrentLOD() const { return mCurrentLOD; }
+      void SetCurrentLOD(float lod) { mCurrentLOD = lod; };
 
-         void SetBoundingBox(const osg::BoundingBox& boundingBox) { mBoundingBox = boundingBox; }
+      void SetBoundingBox(const osg::BoundingBox& boundingBox) { mBoundingBox = boundingBox; }
 
-      protected:
-         ~SubmeshDrawable();
+   protected:
+      ~SubmeshDrawable();
 
-         void InitVertexBuffers(osg::State& state) const;
+      void InitVertexBuffers(osg::State& state) const;
 
-      private:
-         SubmeshDrawable();   ///< not implemented by design
-         bool VBOAvailable(const osg::RenderInfo& renderInfo) const;
-         void DrawUsingVBO(osg::RenderInfo &renderInfo) const;
-         void DrawUsingPrimitives(osg::RenderInfo &renderInfo) const;
+   private:
+      SubmeshDrawable();   ///< not implemented by design
+      bool VBOAvailable(const osg::RenderInfo& renderInfo) const;
+      void DrawUsingVBO(osg::RenderInfo &renderInfo) const;
+      void DrawUsingPrimitives(osg::RenderInfo &renderInfo) const;
 
-         unsigned mMeshID;
-         unsigned mSubmeshID;
+      unsigned mMeshID;
+      unsigned mSubmeshID;
 
-         mutable unsigned mMeshVBO;
-         mutable unsigned mMeshIndices;
-         mutable unsigned mFaceCount[LOD_COUNT];
-         mutable unsigned mFaceOffsets[LOD_COUNT];
-         mutable unsigned mVertexCount[LOD_COUNT];
-         mutable unsigned mVertexOffsets[LOD_COUNT];
-         mutable dtCore::RefPtr<Cal3DModelData> mModelData;
+      mutable osg::ref_ptr<osg::VertexBufferObject>  mMeshVBO;
+      mutable osg::ref_ptr<osg::ElementBufferObject> mMeshEBO;
+      mutable unsigned mFaceCount[LOD_COUNT];
+      mutable unsigned mFaceOffsets[LOD_COUNT];
+      mutable unsigned mVertexCount[LOD_COUNT];
+      mutable unsigned mVertexOffsets[LOD_COUNT];
+      mutable dtCore::RefPtr<Cal3DModelData> mModelData;
 
-         mutable float    mCurrentLOD;
-         
-         mutable bool     mInitalized;
-         mutable int      mVBOContextID;
-         
-         dtCore::RefPtr<Cal3DModelWrapper> mWrapper;
+      mutable float mCurrentLOD;
+      mutable bool  mInitalized;
 
-         static const unsigned STRIDE = 10;
-         static const unsigned STRIDE_BYTES = STRIDE * sizeof(float);
+      dtCore::RefPtr<Cal3DModelWrapper> mWrapper;
 
-         osg::BoundingBox mBoundingBox;
+      static const unsigned STRIDE = 10;
+      static const unsigned STRIDE_BYTES = STRIDE * sizeof(float);
 
-         void SetUpMaterial();
+      osg::BoundingBox mBoundingBox;
 
-         // Old, compatible rendering path
-         mutable float* mMeshVertices;
-         mutable float* mMeshNormals;
-         mutable float* mMeshTextureCoordinates;
-         mutable int* mMeshFaces;
+      void SetUpMaterial();
+
+      // Old, compatible rendering path
+      mutable float* mMeshVertices;
+      mutable float* mMeshNormals;
+      mutable float* mMeshTextureCoordinates;
+      mutable int* mMeshFaces;
    };
 
    class SubmeshDirtyCallback: public osg::Drawable::UpdateCallback 
    {
-      public:
-         virtual void update (osg::NodeVisitor*, osg::Drawable* d);
+   public:
+      virtual void update (osg::NodeVisitor*, osg::Drawable* d);
    };
 
    class SubmeshCullCallback: public osg::Drawable::CullCallback 
    {
-      public:
-         SubmeshCullCallback(Cal3DModelWrapper& wrapper, int meshID)
-            : mWrapper(&wrapper)
-            , mMeshID(meshID)
-          {}
+   public:
+      SubmeshCullCallback(Cal3DModelWrapper& wrapper, int meshID)
+         : mWrapper(&wrapper)
+         , mMeshID(meshID)
+      {}
 
-         virtual bool cull(osg::NodeVisitor* nv, osg::Drawable* drawable, osg::RenderInfo* renderInfo) const;
+      virtual bool cull(osg::NodeVisitor* nv, osg::Drawable* drawable, osg::RenderInfo* renderInfo) const;
 
-      private:
-         dtCore::RefPtr<Cal3DModelWrapper> mWrapper;
-         CalHardwareModel* mHardwareModel;
-         int mMeshID;
+   private:
+      dtCore::RefPtr<Cal3DModelWrapper> mWrapper;
+      CalHardwareModel* mHardwareModel;
+      int mMeshID;
    };
 
    class SubmeshUserData: public osg::Object
    {
-      public:
-         typedef osg::Object BaseClass;
-         
-         float    mLOD;
+   public:
+      typedef osg::Object BaseClass;
 
-         /** Clone the type of an object, with Object* return type.
-             Must be defined by derived classes.*/
-         virtual osg::Object* cloneType() const;
+      float    mLOD;
 
-         /** Clone an object, with Object* return type.
-             Must be defined by derived classes.*/
-         virtual osg::Object* clone(const osg::CopyOp&) const;
+      /** Clone the type of an object, with Object* return type.
+      Must be defined by derived classes.*/
+      virtual osg::Object* cloneType() const;
 
-         virtual bool isSameKindAs(const osg::Object*) const;
+      /** Clone an object, with Object* return type.
+      Must be defined by derived classes.*/
+      virtual osg::Object* clone(const osg::CopyOp&) const;
 
-         /** return the name of the object's library. Must be defined
-             by derived classes. The OpenSceneGraph convention is that the
-             namespace of a library is the same as the library name.*/
-         virtual const char* libraryName() const;
+      virtual bool isSameKindAs(const osg::Object*) const;
 
-         /** return the name of the object's class type. Must be defined
-             by derived classes.*/
-         virtual const char* className() const;
+      /** return the name of the object's library. Must be defined
+      by derived classes. The OpenSceneGraph convention is that the
+      namespace of a library is the same as the library name.*/
+      virtual const char* libraryName() const;
+
+      /** return the name of the object's class type. Must be defined
+      by derived classes.*/
+      virtual const char* className() const;
    };
 
 } //namespace dtAnim

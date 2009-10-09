@@ -41,19 +41,19 @@ namespace dtAnim
 
    class SubmeshComputeBound : public osg::Drawable::ComputeBoundingBoxCallback
    {
-      public:
-         SubmeshComputeBound(const osg::BoundingBox& boundingBox)
-            : mBoundingBox(boundingBox)
-         {
-         }
+   public:
+      SubmeshComputeBound(const osg::BoundingBox& boundingBox)
+         : mBoundingBox(boundingBox)
+      {
+      }
 
-         /*virtual*/ osg::BoundingBox computeBound(const osg::Drawable&) const
-         {
-            // temp until a better solution is implemented
-            return mBoundingBox;
-         }
+      /*virtual*/ osg::BoundingBox computeBound(const osg::Drawable&) const
+      {
+         // temp until a better solution is implemented
+         return mBoundingBox;
+      }
 
-         const osg::BoundingBox& mBoundingBox;
+      const osg::BoundingBox& mBoundingBox;
    };
 
 
@@ -136,11 +136,8 @@ namespace dtAnim
    SubmeshDrawable::SubmeshDrawable(Cal3DModelWrapper* wrapper, unsigned mesh, unsigned Submesh)
       : mMeshID(mesh)
       , mSubmeshID(Submesh)
-      , mMeshVBO(0)
-      , mMeshIndices(0)
       , mCurrentLOD(1.0f)
       , mInitalized(false)
-      , mVBOContextID(-1)
       , mWrapper(wrapper)
       , mMeshVertices(NULL)
       , mMeshNormals(NULL)
@@ -169,23 +166,6 @@ namespace dtAnim
    ////////////////////////////////////////////////////////////////////////////////////////
    SubmeshDrawable::~SubmeshDrawable(void)
    {
-      if (mVBOContextID > 0)
-      {
-         osg::Drawable::Extensions* glExt = osg::Drawable::getExtensions(mVBOContextID, true);
-
-         GLuint bufferID = mMeshVBO;
-         if (bufferID > 0)
-         {
-            glExt->glDeleteBuffers(1, &bufferID);
-         }
-
-         bufferID = mMeshIndices;
-         if (bufferID > 0)
-         {
-            glExt->glDeleteBuffers(1, &bufferID);
-         }
-      }
-
       delete [] mMeshVertices;
       delete [] mMeshNormals;
       delete [] mMeshFaces;
@@ -264,9 +244,7 @@ namespace dtAnim
    ////////////////////////////////////////////////////////////////////////////////////////
    void SubmeshDrawable::InitVertexBuffers(osg::State& state) const
    {
-      osg::Drawable::Extensions* glExt = osg::Drawable::getExtensions(state.getContextID(), true);
-
-      mVBOContextID = state.getContextID();
+      osg::Drawable::Extensions* glExt = osg::Drawable::getExtensions(state.getContextID(), true);     
 
       int vertexCountTotal = 0;
       int faceCountTotal = 0;
@@ -303,22 +281,12 @@ namespace dtAnim
          mFaceOffsets[i] = mFaceOffsets[i - 1 ] + mFaceCount[i - 1];
       }
 
-      GLuint tempId;
-      glExt->glGenBuffers(1, &tempId);
-      mMeshVBO = tempId;
-      glExt->glBindBuffer(GL_ARRAY_BUFFER_ARB, mMeshVBO);
-      glExt->glBufferData(GL_ARRAY_BUFFER_ARB, STRIDE_BYTES * vertexCountTotal, NULL, GL_DYNAMIC_DRAW_ARB);
+      // Allocate data arrays to populate
+      CalIndex* indexArrayStart = new CalIndex[faceCountTotal * 3];
+      float* vertexArrayStart = new float[STRIDE * vertexCountTotal];
 
-      float* vertexArray = reinterpret_cast<float*>(glExt->glMapBuffer(GL_ARRAY_BUFFER_ARB, GL_READ_WRITE_ARB));
-
-      glExt->glGenBuffers(1, &tempId);
-      mMeshIndices = tempId;
-      mModelData->SetIndexVBO(mMeshIndices);
-
-      glExt->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, mMeshIndices);
-      glExt->glBufferData(GL_ELEMENT_ARRAY_BUFFER_ARB, faceCountTotal * 3 * sizeof(CalIndex), NULL, GL_STATIC_DRAW_ARB);
-
-      CalIndex* indexArray = reinterpret_cast<CalIndex*>(glExt->glMapBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, GL_READ_WRITE_ARB));
+      CalIndex* indexArray = indexArrayStart;
+      float* vertexArray = vertexArrayStart;
 
       ///Fill the index and vertex VBOs once for each level of detail
       for (unsigned i = 0; i < LOD_COUNT; ++i)
@@ -334,11 +302,10 @@ namespace dtAnim
             {
                int vertexCount = mWrapper->GetVertices(vertexArray, STRIDE_BYTES);
 
-               // get the transformed normals of the Submesh
-               mWrapper->GetNormals(vertexArray + 3, STRIDE_BYTES);
+               // Position and normal will be copied per frame, no need to do it here
+               // Only copy over the texture coordinates.
 
                mWrapper->GetTextureCoords(0, vertexArray + 6, STRIDE_BYTES);
-
                mWrapper->GetTextureCoords(1, vertexArray + 8, STRIDE_BYTES);
 
                //invert texture coordinates.
@@ -359,11 +326,35 @@ namespace dtAnim
          mWrapper->EndRenderingQuery();
       }
 
-      glExt->glUnmapBuffer(GL_ARRAY_BUFFER_ARB);
-      glExt->glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB);
+      mMeshVBO = new osg::VertexBufferObject;
+      mMeshEBO = new osg::ElementBufferObject;
 
-      glExt->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
-      glExt->glBindBuffer(GL_ARRAY_BUFFER_ARB, 0);
+      // Create osg arrays that can be passed to create buffer objects
+      osg::FloatArray* osgVertexArray = new osg::FloatArray(STRIDE * vertexCountTotal, vertexArrayStart);
+      osg::IntArray* osgIndexArray = new osg::IntArray(faceCountTotal * 3, indexArrayStart);     
+
+      osg::DrawElements* drawElements = NULL;
+      
+      // Allocate the draw elements for the element size that CalIndex defines 
+      if (sizeof(CalIndex) < 4)
+      {
+         drawElements = new osg::DrawElementsUShort(GL_TRIANGLES, faceCountTotal * 3, (GLushort*)indexArrayStart);
+      }
+      else
+      {
+         drawElements = new osg::DrawElementsUInt(GL_TRIANGLES, faceCountTotal * 3, (GLuint*)indexArrayStart);
+      }
+
+      mMeshVBO->addArray(osgVertexArray);
+      mMeshEBO->addDrawElements(drawElements);
+
+      // Store the buffers with the model data for possible re-use later
+      mModelData->SetVertexVBO(mMeshVBO);
+      mModelData->SetIndexEBO(mMeshEBO);
+
+      // The osg arrays copy these values, so we don't need them anymore
+      delete[] vertexArrayStart;
+      delete[] indexArrayStart;
    }
 
 
@@ -394,12 +385,12 @@ namespace dtAnim
       /// this processes the lowest LOD at the moment,
       /// because that's what's loaded at the front of the VBO.
       osg::Drawable::Extensions* glExt = osg::Drawable::getExtensions(0, true);
-      glExt->glBindBuffer(GL_ARRAY_BUFFER_ARB, mMeshVBO);
+      mMeshVBO->bindBuffer(0);
       osg::Vec3f* vertexArray = reinterpret_cast<osg::Vec3f*>(glExt->glMapBuffer(GL_ARRAY_BUFFER_ARB, GL_READ_WRITE_ARB));
 
       functor.setVertexArray(mVertexCount[0], vertexArray);
-
-      glExt->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, mMeshIndices);
+     
+      mMeshEBO->bindBuffer(0);
       void* indexArray = glExt->glMapBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, GL_READ_WRITE_ARB);
 
       if (sizeof(CalIndex) == sizeof(short))
@@ -417,8 +408,8 @@ namespace dtAnim
 
       glExt->glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB);
       glExt->glUnmapBuffer(GL_ARRAY_BUFFER_ARB);
-      glExt->glBindBuffer(GL_ARRAY_BUFFER_ARB, 0);
-      glExt->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+      mMeshVBO->unbindBuffer(0);
+      mMeshEBO->unbindBuffer(0);
    }
 
    ////////////////////////////////////////////////////////////////////////////////////////
@@ -494,10 +485,14 @@ namespace dtAnim
 
             const Extensions* glExt = getExtensions(state.getContextID(), true);
 
-            glExt->glBindBuffer(GL_ARRAY_BUFFER_ARB, mMeshVBO);
+            lodIndex = 0;
+
+            state.bindVertexBufferObject(mMeshVBO);
+
+            // Get the transformed vertices for this frame
             if (!initializedThisDraw)
             {
-               float* vertexArray = reinterpret_cast<float*>(glExt->glMapBuffer(GL_ARRAY_BUFFER_ARB, GL_READ_WRITE_ARB));
+               float* vertexArray = reinterpret_cast<float*>(glExt->glMapBuffer(GL_ARRAY_BUFFER_ARB, GL_WRITE_ONLY_ARB));              
 
                ///offset into the vbo to fill the correct lod.
                vertexArray += mVertexOffsets[lodIndex] * STRIDE;
@@ -518,13 +513,13 @@ namespace dtAnim
             state.setTexCoordPointer(1, 2, GL_FLOAT, STRIDE_BYTES, BUFFER_OFFSET(8 + offset));
 
             //make the call to render
-            glExt->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, mMeshIndices);
+            state.bindElementBufferObject(mMeshEBO);
 
             glDrawElements(GL_TRIANGLES, mFaceCount[lodIndex] * 3U, (sizeof(CalIndex) < 4) ?
                            GL_UNSIGNED_SHORT: GL_UNSIGNED_INT, INDEX_OFFSET(3U * mFaceOffsets[lodIndex]));
 
-            glExt->glBindBuffer(GL_ARRAY_BUFFER_ARB, 0);
-            glExt->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+            state.unbindVertexBufferObject();
+            state.unbindElementBufferObject();
 
             // This data could potential cause problems
             // so we clear it out here (i.e CEGUI incompatible)

@@ -281,7 +281,9 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
    const size_t stride = 18;
    const size_t strideBytes = stride * sizeof(float);
 
-   Array<CalIndex> indexArray(numIndices);
+   // Allocate data arrays for the hardware model to populate
+   CalIndex* indexArray = new CalIndex[numIndices];
+   float* vertexArray = new float[stride * numVerts];
 
    CalHardwareModel* hardwareModel = pWrapper->GetOrCreateCalHardwareModel();
    if (!hardwareModel->getVectorHardwareMesh().empty())
@@ -293,60 +295,59 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
       hardwareModel->getVectorHardwareMesh().clear();
    }
 
-   osg::Drawable::Extensions* glExt = osg::Drawable::getExtensions(0, true);
-   GLuint vbo[2];
-   if (modelData->GetVertexVBO() == 0)
-   {
-      glExt->glGenBuffers(1, &vbo[0]);
-      glExt->glBindBuffer(GL_ARRAY_BUFFER_ARB, vbo[0]);
-      glExt->glBufferData(GL_ARRAY_BUFFER_ARB, strideBytes * numVerts, NULL, GL_STATIC_DRAW_ARB);
-      modelData->SetVertexVBO(vbo[0]);
-   }
-   else
-   {
-      vbo[0] = modelData->GetVertexVBO();
-      glExt->glBindBuffer(GL_ARRAY_BUFFER_ARB, vbo[0]);
-   }
+   hardwareModel->setIndexBuffer(indexArray);
 
-   bool newIndexBuffer = false;
-   if (modelData->GetIndexVBO() == 0)
-   {
-      glExt->glGenBuffers(1, &vbo[1]);
-      modelData->SetIndexVBO(vbo[1]);
-      newIndexBuffer = true;
-   }
-   else
-   {
-      vbo[1] = modelData->GetIndexVBO();
-   }
-
-   hardwareModel->setIndexBuffer(indexArray.mArray);
-
-   float* vboVertexAttr = static_cast<float*>(glExt->glMapBuffer(GL_ARRAY_BUFFER_ARB, GL_READ_WRITE_ARB));
-
-   hardwareModel->setVertexBuffer(reinterpret_cast<char*>(vboVertexAttr), strideBytes);
-   hardwareModel->setNormalBuffer(reinterpret_cast<char*>(vboVertexAttr + 3), strideBytes);
+   hardwareModel->setVertexBuffer(reinterpret_cast<char*>(vertexArray), strideBytes);
+   hardwareModel->setNormalBuffer(reinterpret_cast<char*>(vertexArray + 3), strideBytes);
 
    hardwareModel->setTextureCoordNum(2);
-   hardwareModel->setTextureCoordBuffer(0, reinterpret_cast<char*>(vboVertexAttr + 6), strideBytes);
-   hardwareModel->setTextureCoordBuffer(1, reinterpret_cast<char*>(vboVertexAttr + 8), strideBytes);
+   hardwareModel->setTextureCoordBuffer(0, reinterpret_cast<char*>(vertexArray + 6), strideBytes);
+   hardwareModel->setTextureCoordBuffer(1, reinterpret_cast<char*>(vertexArray + 8), strideBytes);
 
-   hardwareModel->setWeightBuffer(reinterpret_cast<char*>(vboVertexAttr + 10), strideBytes);
-   hardwareModel->setMatrixIndexBuffer(reinterpret_cast<char*>(vboVertexAttr + 14), strideBytes);
+   hardwareModel->setWeightBuffer(reinterpret_cast<char*>(vertexArray + 10), strideBytes);
+   hardwareModel->setMatrixIndexBuffer(reinterpret_cast<char*>(vertexArray + 14), strideBytes);
 
+   // Load the data into our arrays
    if (hardwareModel->load(0, 0, modelData->GetShaderMaxBones()))
    {
+      InvertTextureCoordinates(hardwareModel, stride, vertexArray, modelData, indexArray);
 
-      InvertTextureCoordinates(hardwareModel, stride, vboVertexAttr, modelData, indexArray);
+      osg::VertexBufferObject* vertexVBO = modelData->GetVertexVBO();
+      osg::ElementBufferObject* indexEBO = modelData->GetIndexEBO();
+
+      if (vertexVBO == NULL)
+      {
+         // Either both should be NULL, or both non NULL
+         assert(indexEBO == NULL);
+
+         // Create osg arrays that can be passed to create buffer objects
+         osg::FloatArray* osgVertexArray = new osg::FloatArray(stride * numVerts, vertexArray);
+         osg::IntArray* osgIndexArray = new osg::IntArray(numIndices, indexArray);      
+
+         vertexVBO = new osg::VertexBufferObject;
+         indexEBO = new osg::ElementBufferObject;
+
+         osg::DrawElements* drawElements = NULL;
+
+         // Allocate the draw elements for the element size that CalIndex defines 
+         if (sizeof(CalIndex) < 4)
+         {
+            drawElements = new osg::DrawElementsUShort(GL_TRIANGLES, numIndices, (GLushort*)indexArray);
+         }
+         else
+         {
+            drawElements = new osg::DrawElementsUInt(GL_TRIANGLES, numIndices, (GLuint*)indexArray);
+         }
+
+         vertexVBO->addArray(osgVertexArray);
+         indexEBO->addDrawElements(drawElements);
+
+         // Store the buffers with the model data for possible re-use later
+         modelData->SetVertexVBO(vertexVBO);
+         modelData->SetIndexEBO(indexEBO);
+      }
 
       const int numIndices = 3 * hardwareModel->getTotalFaceCount();
-
-      glExt->glUnmapBuffer(GL_ARRAY_BUFFER_ARB);
-      if (newIndexBuffer)
-      {
-         glExt->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, vbo[1]);
-         glExt->glBufferData(GL_ELEMENT_ARRAY_BUFFER_ARB, numIndices * sizeof(CalIndex), (const void*) indexArray.mArray, GL_STATIC_DRAW_ARB);
-      }
 
       dtCore::ShaderProgram* shadProg = LoadShaders(*modelData, *geode);
 
@@ -382,7 +383,7 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
       {
          HardwareSubmeshDrawable* drawable = new HardwareSubmeshDrawable(pWrapper, hardwareModel,
                                                  boneTransformUniform, modelData->GetShaderMaxBones(),
-                                                 meshCount, vbo[0], vbo[1]);
+                                                 meshCount, vertexVBO, indexEBO);
          drawable->SetBoundingBox(boundingBox);
          geode->addDrawable(drawable);
       }
@@ -391,12 +392,12 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
    }
    else
    {
-      glExt->glUnmapBuffer(GL_ARRAY_BUFFER_ARB);
       LOG_ERROR("Unable to create a hardware mesh:" + CalError::getLastErrorDescription() );
    }
 
-   glExt->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
-   glExt->glBindBuffer(GL_ARRAY_BUFFER_ARB, 0);
+   // The osg arrays copy these values, so we don't need them anymore
+   delete[] vertexArray;
+   delete[] indexArray;
 
    pWrapper->EndRenderingQuery();
 
@@ -498,9 +499,9 @@ void AnimNodeBuilder::CalcNumVertsAndIndices( Cal3DModelWrapper* pWrapper,
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void AnimNodeBuilder::InvertTextureCoordinates( CalHardwareModel* hardwareModel, const size_t stride,
-                                                float* vboVertexAttr, Cal3DModelData* modelData,
-                                                Array<CalIndex> &indexArray )
+void AnimNodeBuilder::InvertTextureCoordinates(CalHardwareModel* hardwareModel, const size_t stride,
+                                               float* vboVertexAttr, Cal3DModelData* modelData,
+                                               CalIndex*& indexArray)
 {
    const int numVerts = hardwareModel->getTotalVertexCount();
    //invert texture coordinates.

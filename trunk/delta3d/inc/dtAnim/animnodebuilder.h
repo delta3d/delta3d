@@ -158,12 +158,12 @@ private:
 
    CreateFunc mCreateFunc;
 
-   void CalcNumVertsAndIndices( Cal3DModelWrapper* pWrapper,
-                                int &numVerts, int &numIndices );
+   void CalcNumVertsAndIndices(Cal3DModelWrapper* pWrapper,
+                               int& numVerts, int& numIndices);
 
-   void InvertTextureCoordinates( CalHardwareModel* hardwareModel, const size_t stride,
+   void InvertTextureCoordinates(CalHardwareModel* hardwareModel, const size_t stride,
                                  float* vboVertexAttr, Cal3DModelData* modelData,
-                                 Array<CalIndex> &indexArray );
+                                 CalIndex*& indexArray);
 
    ///Does the hardware support vertex buffers?
    bool SupportsVertexBuffers() const;

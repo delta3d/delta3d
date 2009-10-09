@@ -35,6 +35,11 @@ namespace osg
    class Program;
    class PrimitiveFunctor;
 }
+
+namespace osgUtil
+{
+   class GLObjectsVisitor;
+}
 /// @endcond
 
 namespace dtAnim 
@@ -47,7 +52,7 @@ namespace dtAnim
 
          HardwareSubmeshDrawable(Cal3DModelWrapper* wrapper, CalHardwareModel* model,
                const std::string& boneUniformName, unsigned numBones,
-               unsigned mesh, unsigned vertexVBO, unsigned indexVBO);
+               unsigned mesh, osg::VertexBufferObject* vertexVBO, osg::ElementBufferObject* indexEBO);
 
          void SetBoundingBox(const osg::BoundingBox& boundingBox);
 
@@ -68,7 +73,9 @@ namespace dtAnim
          dtCore::RefPtr<osg::Uniform> mBoneTransforms;
          std::string mBoneUniformName;
          osg::BoundingBox mBoundingBox;
-         unsigned mNumBones, mMeshID, mVertexVBO, mIndexVBO;
+         unsigned int mNumBones, mMeshID;
+         osg::VertexBufferObject* mVertexVBO;
+         osg::ElementBufferObject* mIndexEBO;
    };
 
 }; //namespace dtAnim
