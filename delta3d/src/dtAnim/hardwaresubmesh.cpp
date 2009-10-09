@@ -110,7 +110,7 @@ namespace dtAnim
 ////////////////////////////////////////////////////////////////////////////////
 HardwareSubmeshDrawable::HardwareSubmeshDrawable(Cal3DModelWrapper* wrapper, CalHardwareModel* model,
       const std::string& boneUniformName, unsigned numBones, unsigned mesh,
-      unsigned vertexVBO, unsigned indexVBO)
+      osg::VertexBufferObject* vertexVBO, osg::ElementBufferObject* indexEBO)
    : osg::Drawable()
    , mWrapper(wrapper)
    , mHardwareModel(model)
@@ -119,7 +119,7 @@ HardwareSubmeshDrawable::HardwareSubmeshDrawable(Cal3DModelWrapper* wrapper, Cal
    , mNumBones(numBones)
    , mMeshID(mesh)
    , mVertexVBO(vertexVBO)
-   , mIndexVBO(indexVBO)
+   , mIndexEBO(indexEBO)
 {
    setUseDisplayList(false);
    setUseVertexBufferObjects(true);
@@ -166,12 +166,12 @@ void HardwareSubmeshDrawable::drawImplementation(osg::RenderInfo& renderInfo) co
 
    osg::State& state = *renderInfo.getState();
 
-   //bind the VBO's
+   // Prepare to bind buffer objects
    state.disableAllVertexArrays();
 
    const Extensions* glExt = getExtensions(state.getContextID(),true);
 
-   glExt->glBindBuffer(GL_ARRAY_BUFFER_ARB, mVertexVBO);
+   state.bindVertexBufferObject(mVertexVBO);
 
    unsigned stride = 18 * sizeof(float);
 
@@ -186,14 +186,14 @@ void HardwareSubmeshDrawable::drawImplementation(osg::RenderInfo& renderInfo) co
    state.setTexCoordPointer(2, 4, GL_FLOAT, stride, BUFFER_OFFSET(10));
    state.setTexCoordPointer(3, 4, GL_FLOAT, stride, BUFFER_OFFSET(14));
 
-   //make the call to render
-   glExt->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, mIndexVBO);
+   state.bindElementBufferObject(mIndexEBO);
 
+   // Make the call to render
    glDrawElements(GL_TRIANGLES,  mHardwareModel->getFaceCount() * 3, (sizeof(CalIndex) < 4) ?
-         GL_UNSIGNED_SHORT: GL_UNSIGNED_INT, (void*)(sizeof(CalIndex) * mHardwareModel->getStartIndex()));
+         GL_UNSIGNED_SHORT: GL_UNSIGNED_INT, (void*)(sizeof(CalIndex) * mHardwareModel->getStartIndex()));  
 
-   glExt->glBindBuffer(GL_ARRAY_BUFFER_ARB, 0);
-   glExt->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+   state.unbindVertexBufferObject();
+   state.unbindElementBufferObject();
 
    // This data could potentially cause problems
    // so we clear it out here (i.e CEGUI incompatible)
@@ -211,14 +211,14 @@ void HardwareSubmeshDrawable::drawImplementation(osg::RenderInfo& renderInfo) co
 osg::Object* HardwareSubmeshDrawable::clone(const osg::CopyOp&) const
 {
    return new HardwareSubmeshDrawable(mWrapper.get(), mHardwareModel, mBoneUniformName,
-         mNumBones, mMeshID, mVertexVBO, mIndexVBO);
+         mNumBones, mMeshID, mVertexVBO, mIndexEBO);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 osg::Object* HardwareSubmeshDrawable::cloneType() const
 {
    return new HardwareSubmeshDrawable(mWrapper.get(), mHardwareModel,
-         mBoneUniformName, mNumBones, mMeshID, mVertexVBO, mIndexVBO);
+         mBoneUniformName, mNumBones, mMeshID, mVertexVBO, mIndexEBO);
 }
 
 //////////////////////////////////////////////////////////////////////////

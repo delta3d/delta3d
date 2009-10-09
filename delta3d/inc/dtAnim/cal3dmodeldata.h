@@ -24,10 +24,17 @@
 #include <dtAnim/export.h>
 
 #include <dtCore/refptr.h>
+#include <dtCore/observerptr.h>
 
 #include <osg/Referenced>
 
 #include <vector>
+
+namespace osg
+{
+   class VertexBufferObject;
+   class ElementBufferObject;
+}
 
 class CalCoreModel;
 
@@ -89,22 +96,20 @@ namespace dtAnim
          const AnimatableArray& GetAnimatables() const;
 
          /**
-          * @return the id of the of the Vertex Buffer Object being used with this 
-          *    character core model, or 0 for none.
+          * @return the vbo being used with this character core model, or 0 for none.
           */
-         unsigned GetVertexVBO() const;
+         osg::VertexBufferObject* GetVertexVBO();
          
-         /// Sets the id of the of the Vertex Buffer Object being used with this character core model
-         void SetVertexVBO(unsigned);
+         /// Sets the Vertex Buffer Object being used with this character core model
+         void SetVertexVBO(osg::VertexBufferObject* vbo);
 
          /**
-          * @return the id of the of the Index Vertex Buffer Object being used with this 
-          *    character core model, or 0 for none
+          * @return the ebo being used with this character core model, or 0 for none
           */
-         unsigned GetIndexVBO() const;
+         osg::ElementBufferObject* GetIndexEBO() const;
          
-         /// Sets the id of the of the Index Vertex Buffer Object being used with this character core model
-         void SetIndexVBO(unsigned);
+         /// Sets the Element Buffer Object being used with this character core model
+         void SetIndexEBO(osg::ElementBufferObject* ebo);
          
          /**
           * @see dtCore::ShaderManager
@@ -138,7 +143,7 @@ namespace dtAnim
          void SetShaderMaxBones(unsigned maxBones);
 
          LODOptions& GetLODOptions() { return mLODOptions; }
-         const LODOptions& GetLODOptions() const { return mLODOptions; }
+         const LODOptions& GetLODOptions() const { return mLODOptions; }         
          
       protected:
          virtual ~Cal3DModelData();
@@ -153,7 +158,8 @@ namespace dtAnim
          CalCoreModel* mCoreModel;
          AnimationWrapperArray mAnimWrappers;
          AnimatableArray mAnimatables;
-         unsigned mVertexVBO, mIndexVBO;
+         dtCore::ObserverPtr<osg::VertexBufferObject> mVertexVBO;
+         dtCore::ObserverPtr<osg::ElementBufferObject> mIndexVBO;
          unsigned mShaderMaxBones;
 
          LODOptions mLODOptions;

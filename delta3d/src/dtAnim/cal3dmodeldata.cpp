@@ -22,6 +22,8 @@
 #include <dtAnim/animatable.h>
 #include <dtAnim/animationwrapper.h>
 
+#include <osg/BufferObject>
+
 #include <cal3d/coremodel.h>
 
 #include <algorithm>
@@ -30,13 +32,13 @@
  {
    ////////////////////////////////////////////////////////////////////////////////
    Cal3DModelData::Cal3DModelData(CalCoreModel* coreModel, const std::string& filename)
-   : mFilename(filename)
-   , mCoreModel(coreModel)
-   , mAnimWrappers()
-   , mAnimatables()
-   , mVertexVBO(0)
-   , mIndexVBO(0)
-   , mShaderMaxBones(72)
+      : mFilename(filename)
+      , mCoreModel(coreModel)
+      , mAnimWrappers()
+      , mAnimatables()
+      , mVertexVBO(0)
+      , mIndexVBO(0)
+      , mShaderMaxBones(72)
    {
    }
 
@@ -115,27 +117,27 @@
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   unsigned Cal3DModelData::GetVertexVBO() const
+   osg::VertexBufferObject* Cal3DModelData::GetVertexVBO() 
    {
-      return mVertexVBO;   
+      return mVertexVBO.get();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void Cal3DModelData::SetVertexVBO(unsigned vbo)
+   void Cal3DModelData::SetVertexVBO(osg::VertexBufferObject* vbo)
    {
       mVertexVBO = vbo;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   unsigned Cal3DModelData::GetIndexVBO() const
+   osg::ElementBufferObject* Cal3DModelData::GetIndexEBO() const
    {
-      return mIndexVBO;
+      return mIndexVBO.get();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void Cal3DModelData::SetIndexVBO(unsigned vbo)
+   void Cal3DModelData::SetIndexEBO(osg::ElementBufferObject* ebo)
    {
-      mIndexVBO = vbo;
+      mIndexVBO = ebo;
    }
 
    ////////////////////////////////////////////////////////////////////////////////

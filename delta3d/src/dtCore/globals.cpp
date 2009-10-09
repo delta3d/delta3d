@@ -96,7 +96,7 @@ namespace dtCore
       return pathString;
    }
    
-   std::string FindFileInPathList(const std::string &fileName)
+   std::string FindFileInPathList(const std::string& fileName)
    {
       std::string filePath = osgDB::findDataFile(fileName);
       
