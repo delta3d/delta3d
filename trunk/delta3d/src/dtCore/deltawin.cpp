@@ -104,14 +104,14 @@ void DeltaWin::CreateDeltaWindow(const DeltaWinTraits& windowTraits)
 
    CreateGraphicsWindow(*osgTraits, windowTraits.realizeUponCreate);
 
-   if (!windowTraits.fullScreen)
+   if (windowTraits.fullScreen)
    {
-      SetPosition(windowTraits.x, windowTraits.y, windowTraits.width, windowTraits.height);
+      mIsFullScreen = true;
    }
-   else
-   {
-      SetFullScreenMode(windowTraits.fullScreen);
-   }
+
+   // Save the window size in case we have to restore it later
+   mLastWindowedWidth  = osgTraits->width;
+   mLastWindowedHeight = osgTraits->height;
 
    ShowCursor(windowTraits.showCursor);
 }
@@ -472,6 +472,25 @@ osg::ref_ptr<osg::GraphicsContext::Traits> DeltaWin::CreateOSGTraits(const Delta
          break;
       default:
          break;
+      }
+   }
+
+   //create the Window fullscreen, if required
+   if (deltaTraits.fullScreen == true)
+   {
+      osg::GraphicsContext::WindowingSystemInterface* wsi = osg::GraphicsContext::getWindowingSystemInterface();
+
+      if (wsi != NULL)
+      {
+         unsigned int screenWidth;
+         unsigned int screenHeight;
+
+         wsi->getScreenResolution(*traits, screenWidth, screenHeight);
+         traits->windowDecoration = false;
+         traits->x = 0;
+         traits->y = 0;
+         traits->width = screenWidth;
+         traits->height = screenHeight;
       }
    }
 
