@@ -108,6 +108,24 @@ namespace dtGame
       BuildInvokables();
    }
 
+   class AddPropsFunc
+   {
+   public:
+      void operator() (ActorComponent& ac)
+      {
+         std::vector<dtDAL::ActorProperty*> toFill;
+         ac.GetPropertyList(toFill);
+         std::vector<dtDAL::ActorProperty*>::iterator i, iend;
+         i = toFill.begin();
+         iend = toFill.end();
+         for (; i != iend; ++i)
+         {
+            gap->AddProperty(*i);
+         }
+      }
+      GameActorProxy* gap;
+   };
+
    /////////////////////////////////////////////////////////////////////////////
    void GameActorProxy::BuildPropertyMap()
    {
@@ -172,6 +190,10 @@ namespace dtGame
 
       /** let game actor components add their properties */
       ga.BuildComponentPropertyMaps();
+
+      AddPropsFunc addAllProps;
+      addAllProps.gap = this;
+      ga.ForEachComponent(addAllProps);
    }
 
    /////////////////////////////////////////////////////////////////////////////

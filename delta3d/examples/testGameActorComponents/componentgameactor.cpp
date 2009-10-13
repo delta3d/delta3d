@@ -48,7 +48,7 @@ void ComponentGameActorProxy::CreateActor()
 
    // add component to the actor. When done now, the component's properties
    // are accessible in STAGE.
-   actor->AddComponent(new TextLabelComponent());
+   actor->AddComponent(*new TextLabelComponent());
 
    SetActor(*actor); 
 }

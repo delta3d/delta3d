@@ -135,7 +135,7 @@ public:
 
 protected:
 
-    ~TextLabelComponent();
+    virtual ~TextLabelComponent();
 
 private:
 

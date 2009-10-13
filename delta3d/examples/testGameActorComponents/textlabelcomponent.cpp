@@ -122,35 +122,35 @@ void TextLabelComponent::BuildPropertyMap()
    dtGame::GameActor* actor;
    GetOwner(actor);
 
-   static std::string GROUPNAME = "Text Label";
+   static const dtUtil::RefString GROUPNAME = "Text Label";
 
-   actor->GetGameActorProxy().AddProperty(new dtDAL::StringActorProperty("Text", "Text",
-      dtDAL::MakeFunctor(*this, &TextLabelComponent::SetText),
-      dtDAL::MakeFunctorRet(*this, &TextLabelComponent::GetText),
+   AddProperty(new dtDAL::StringActorProperty("Text", "Text",
+      dtDAL::StringActorProperty::SetFuncType(this, &TextLabelComponent::SetText),
+      dtDAL::StringActorProperty::GetFuncType(this, &TextLabelComponent::GetText),
       "",
       GROUPNAME));
 
-   actor->GetGameActorProxy().AddProperty(new dtDAL::FloatActorProperty("Text Height", "Text Height",
-      dtDAL::MakeFunctor(*this, &TextLabelComponent::SetHeight),
-      dtDAL::MakeFunctorRet(*this, &TextLabelComponent::GetHeight),
+   AddProperty(new dtDAL::FloatActorProperty("Text Height", "Text Height",
+      dtDAL::FloatActorProperty::SetFuncType(this, &TextLabelComponent::SetHeight),
+      dtDAL::FloatActorProperty::GetFuncType(this, &TextLabelComponent::GetHeight),
       "height of text above actor",
       GROUPNAME));
 
-   actor->GetGameActorProxy().AddProperty(new dtDAL::FloatActorProperty("Flash Interval", "Flash Interval",
-      dtDAL::MakeFunctor(*this, &TextLabelComponent::SetFlashInterval),
-      dtDAL::MakeFunctorRet(*this, &TextLabelComponent::GetFlashInterval),
+   AddProperty(new dtDAL::FloatActorProperty("Flash Interval", "Flash Interval",
+      dtDAL::FloatActorProperty::SetFuncType(this, &TextLabelComponent::SetFlashInterval),
+      dtDAL::FloatActorProperty::GetFuncType(this, &TextLabelComponent::GetFlashInterval),
       "interval for flashing text during alarm",
       GROUPNAME));
 
-   actor->GetGameActorProxy().AddProperty(new dtDAL::BooleanActorProperty("Is Flashing", "Is Flashing",
-      dtDAL::MakeFunctor(*this, &TextLabelComponent::SetFlashing),
-      dtDAL::MakeFunctorRet(*this, &TextLabelComponent::IsFlashing),
+   AddProperty(new dtDAL::BooleanActorProperty("Is Flashing", "Is Flashing",
+      dtDAL::BooleanActorProperty::SetFuncType(this, &TextLabelComponent::SetFlashing),
+      dtDAL::BooleanActorProperty::GetFuncType(this, &TextLabelComponent::IsFlashing),
       "interval for flashing text during alarm",
       GROUPNAME));
 
-   actor->GetGameActorProxy().AddProperty(new dtDAL::BooleanActorProperty("Visible", "Visible",
-      dtDAL::MakeFunctor(*this, &TextLabelComponent::SetEnabled),
-      dtDAL::MakeFunctorRet(*this, &TextLabelComponent::IsEnabled),
+   AddProperty(new dtDAL::BooleanActorProperty("Visible", "Visible",
+      dtDAL::BooleanActorProperty::SetFuncType(this, &TextLabelComponent::SetEnabled),
+      dtDAL::BooleanActorProperty::GetFuncType(this, &TextLabelComponent::IsEnabled),
       "",
       GROUPNAME));
 }

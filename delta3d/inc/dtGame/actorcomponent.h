@@ -22,7 +22,7 @@
 #define actorcomponent_h__
 
 #include <dtGame/export.h>
-#include <osg/Referenced>
+#include <dtDAL/propertycontainer.h>
 #include <dtUtil/refstring.h>
 
 namespace dtGame
@@ -39,7 +39,7 @@ namespace dtGame
     * When the ActorComponent is added to a ActorComponentBase, it receives a
     * reference to the ActorComponentBase through the method SetOwner().
     */
-   class DT_GAME_EXPORT ActorComponent : public osg::Referenced
+   class DT_GAME_EXPORT ActorComponent : public dtDAL::PropertyContainer
    {
 
    public:

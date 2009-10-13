@@ -67,12 +67,24 @@ namespace dtGame
          return true;
       }
 
+      /**
+       * Allows performing an operation on each actor component.
+       * @param func a class with an operator() that takes an actor component by reference (dtGame::ActorComponent&)
+       */
+      template <typename UnaryFunctor>
+      void ForEachComponent(UnaryFunctor func) const;
+
       /** 
        * Get component by type string
        * @param type The type-string of the ActorComponent to get
        * @return the selected ActorComponent (could be NULL if not found)
        */
       ActorComponent* GetComponent(const ActorComponent::ACType& type) const;
+
+      /**
+       * Fill the vector with all the actor components.
+       */
+      void GetAllComponents(std::vector<ActorComponent*> toFill);
 
       /**
        * Does base contain a component of given type?
@@ -85,7 +97,7 @@ namespace dtGame
        * Add an ActorComponent. Only one ActorComponent of a given type can be added.
        * @param component The ActorComponent to try to add
        */
-      void AddComponent(ActorComponent* component);
+      void AddComponent(ActorComponent& component);
 
       /** 
        * Remove component by type
@@ -97,7 +109,7 @@ namespace dtGame
        * Remove component by reference
        * @param component : Pointer to the ActorComponent to remove
        */
-      void RemoveComponent(ActorComponent* component);
+      void RemoveComponent(ActorComponent& component);
 
       /**
        * Remove all contained ActorComponent
@@ -118,13 +130,13 @@ namespace dtGame
        * Override this to get informed about newly added ActorComponent 
        * @param component The ActorComponent just added 
        */
-      virtual void OnActorComponentAdded(ActorComponent* component);
+      virtual void OnActorComponentAdded(ActorComponent& component);
 
       /** 
        * Override this to get informed about removed components
        * @param component The ActorComponent just removed 
        */
-      virtual void OnActorComponentRemoved(ActorComponent* component);
+      virtual void OnActorComponentRemoved(ActorComponent& component);
 
    protected:
      
@@ -135,6 +147,30 @@ namespace dtGame
       ActorComponentMap mComponents;
 
    };
+
+   template <typename UnaryFunctor, typename pairType>
+   class BindActorComponent
+   {
+   public:
+      BindActorComponent(UnaryFunctor func)
+      : mFunc(func)
+      {}
+
+      void operator () (pairType thePair)
+      {
+         mFunc(*thePair.second);
+      }
+   private:
+      UnaryFunctor mFunc;
+   };
+
+   template <typename UnaryFunctor>
+   inline void ActorComponentBase::ForEachComponent(UnaryFunctor func) const
+   {
+      BindActorComponent<UnaryFunctor, ActorComponentBase::ActorComponentMap::value_type> actorCompMapBindFunc(func);
+      std::for_each(mComponents.begin(), mComponents.end(), actorCompMapBindFunc);
+   }
+
 }
 
 #endif // actorcomponentbase_h__
