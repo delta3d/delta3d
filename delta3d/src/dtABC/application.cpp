@@ -329,8 +329,6 @@ void Application::CreateInstances(const std::string& name, int x, int y, int wid
    GetCamera()->SetWindow(mWindow.get());
 
    mCompositeViewer = new osgViewer::CompositeViewer;
-   //mCompositeViewer->setThreadingModel(osgViewer::CompositeViewer::DrawThreadPerContext);
-   mCompositeViewer->setUpThreading();
    mCompositeViewer->addView(mViewList.front()->GetOsgViewerView());
 
    //Disable OSG's default behavior of quitting when the Escape key is pressed.
@@ -434,13 +432,14 @@ void dtABC::Application::SetNextStatisticsType()
 ApplicationConfigData Application::GetDefaultConfigData()
 {
    ApplicationConfigData data;
+   const dtCore::DeltaWin::DeltaWinTraits winTraits; //use the default DeltaWin values
 
    data.WINDOW_X = 100;
    data.WINDOW_Y = 100;
 
-   data.SHOW_CURSOR = true;
-   data.FULL_SCREEN = false;
-   data.REALIZE_UPON_CREATE = true;
+   data.SHOW_CURSOR = winTraits.showCursor;
+   data.FULL_SCREEN = winTraits.fullScreen;
+   data.REALIZE_UPON_CREATE = winTraits.realizeUponCreate;
    data.CHANGE_RESOLUTION = false;
 
    data.CAMERA_NAME = "defaultCam";
@@ -452,8 +451,8 @@ ApplicationConfigData Application::GetDefaultConfigData()
    data.WINDOW_INSTANCE = "defaultWin";
    data.CAMERA_INSTANCE = "defaultCam";
 
-   data.RESOLUTION.width = 640;
-   data.RESOLUTION.height = 480;
+   data.RESOLUTION.width = winTraits.DEFAULT_WIDTH;
+   data.RESOLUTION.height = winTraits.DEFAULT_HEIGHT;
    data.RESOLUTION.bitDepth = 24;
    data.RESOLUTION.refresh = 60;
 
@@ -522,19 +521,14 @@ bool AppXMLApplicator::operator ()(const ApplicationConfigData& data, dtABC::App
       app->SetConfigPropertyValue(i->first, i->second);
    }
 
-   // John's unwittingly caught a confusing aspect of the Applications's config file here.
-   // Historically, the Window's "name" attribute is used for the WindowTitle, while other
-   // elements, such as Screen, use the "name" attribute for the Base name. John had followed
-   // convention and just called SetName. Perhaps we need to add a new paramter called
-   // "title". However, this would break the expectation of users with previously written
-   // configuration files. Maybe we could do an automatically update whenver a config file
-   // without the "title" attribute is passed to Application. See Case 722 -osb
-   dwin->SetWindowTitle(data.WINDOW_NAME);
    dwin->SetName(data.WINDOW_NAME); // Perhaps a different parameter is needed for this?
 
-   dwin->SetPosition(data.WINDOW_X, data.WINDOW_Y, data.RESOLUTION.width, data.RESOLUTION.height);
-   dwin->ShowCursor(data.SHOW_CURSOR);
-   dwin->SetFullScreenMode(data.FULL_SCREEN);
+   //The following are redundant calls.  The values have already been set
+   //via the constructor of DeltaWin
+   //dwin->SetWindowTitle(data.WINDOW_NAME);
+   //dwin->SetPosition(data.WINDOW_X, data.WINDOW_Y, data.RESOLUTION.width, data.RESOLUTION.height);
+   //dwin->ShowCursor(data.SHOW_CURSOR);
+   //dwin->SetFullScreenMode(data.FULL_SCREEN);
 
    // change the resolution if needed and valid
    if (data.CHANGE_RESOLUTION)
