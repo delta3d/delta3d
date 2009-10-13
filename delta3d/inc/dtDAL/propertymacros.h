@@ -56,7 +56,7 @@ namespace dtDAL
       {}
 
       template <class PropType, typename SetPtr, typename GetPtr>
-      void RegisterProperty(PropType prop, SetPtr setter, GetPtr getter, const std::string& name, const std::string& desc)
+      void RegisterProperty(PropType prop, SetPtr setter, GetPtr getter, const dtUtil::RefString& name, const dtUtil::RefString& desc)
       {
 
          mPropCon.AddProperty(new typename dtDAL::TypeToActorProperty<PropType>::value_type(name, name,
@@ -126,10 +126,18 @@ namespace dtDAL
 
 
    #define REGISTER_PROPERTY(PropertyName, PropertyDesc, RegHelperType_, RegHelperInstance) \
+      static const dtUtil::RefString DESC_ ## PropertyName (PropertyDesc);\
       RegHelperInstance.RegisterProperty(m ## PropertyName, \
       CREATE_PROPERTY_SETTER_HELPER_MACRO(RegHelperType_, PropertyName), \
       CREATE_PROPERTY_GETTER_HELPER_MACRO(RegHelperType_, PropertyName), \
-   #PropertyName, #PropertyDesc);\
+   #PropertyName, DESC_ ## PropertyName);\
+
+   #define REGISTER_PROPERTY_WITH_NAME(PropertyName, PropertyStringName, PropertyDesc, RegHelperType_, RegHelperInstance) \
+      static const dtUtil::RefString DESC_ ## PropertyName (PropertyDesc);\
+      RegHelperInstance.RegisterProperty(m ## PropertyName, \
+      CREATE_PROPERTY_SETTER_HELPER_MACRO(RegHelperType_, PropertyName), \
+      CREATE_PROPERTY_GETTER_HELPER_MACRO(RegHelperType_, PropertyName), \
+   PropertyStringName, DESC_ ## PropertyName);\
 
 }//namespace dtDAL
 
