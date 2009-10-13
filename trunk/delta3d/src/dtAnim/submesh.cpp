@@ -349,8 +349,8 @@ namespace dtAnim
       mMeshEBO->addDrawElements(drawElements);
 
       // Store the buffers with the model data for possible re-use later
-      mModelData->SetVertexVBO(mMeshVBO);
-      mModelData->SetIndexEBO(mMeshEBO);
+      mModelData->SetVertexBufferObject(mMeshVBO);
+      mModelData->SetElementBufferObject(mMeshEBO);
 
       // The osg arrays copy these values, so we don't need them anymore
       delete[] vertexArrayStart;

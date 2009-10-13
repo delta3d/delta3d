@@ -117,25 +117,25 @@
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   osg::VertexBufferObject* Cal3DModelData::GetVertexVBO() 
+   osg::VertexBufferObject* Cal3DModelData::GetVertexBufferObject() 
    {
       return mVertexVBO.get();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void Cal3DModelData::SetVertexVBO(osg::VertexBufferObject* vbo)
+   void Cal3DModelData::SetVertexBufferObject(osg::VertexBufferObject* vbo)
    {
       mVertexVBO = vbo;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   osg::ElementBufferObject* Cal3DModelData::GetIndexEBO() const
+   osg::ElementBufferObject* Cal3DModelData::GetElementBufferObject() const
    {
       return mIndexVBO.get();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void Cal3DModelData::SetIndexEBO(osg::ElementBufferObject* ebo)
+   void Cal3DModelData::SetElementBufferObject(osg::ElementBufferObject* ebo)
    {
       mIndexVBO = ebo;
    }

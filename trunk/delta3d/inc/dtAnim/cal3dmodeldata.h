@@ -98,18 +98,18 @@ namespace dtAnim
          /**
           * @return the vbo being used with this character core model, or 0 for none.
           */
-         osg::VertexBufferObject* GetVertexVBO();
+         osg::VertexBufferObject* GetVertexBufferObject();
          
          /// Sets the Vertex Buffer Object being used with this character core model
-         void SetVertexVBO(osg::VertexBufferObject* vbo);
+         void SetVertexBufferObject(osg::VertexBufferObject* vbo);
 
          /**
           * @return the ebo being used with this character core model, or 0 for none
           */
-         osg::ElementBufferObject* GetIndexEBO() const;
+         osg::ElementBufferObject* GetElementBufferObject() const;
          
          /// Sets the Element Buffer Object being used with this character core model
-         void SetIndexEBO(osg::ElementBufferObject* ebo);
+         void SetElementBufferObject(osg::ElementBufferObject* ebo);
          
          /**
           * @see dtCore::ShaderManager

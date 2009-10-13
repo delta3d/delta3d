@@ -171,14 +171,8 @@ namespace dtAnim
 
             CPPUNIT_ASSERT_EQUAL(modelData->GetFilename(), modelPath);
 
-            CPPUNIT_ASSERT_EQUAL(0U, modelData->GetVertexVBO());
-            modelData->SetVertexVBO(4U);
-            CPPUNIT_ASSERT_EQUAL(4U, modelData->GetVertexVBO());
-
-            CPPUNIT_ASSERT_EQUAL(0U, modelData->GetIndexVBO());
-            modelData->SetIndexVBO(4U);
-            CPPUNIT_ASSERT_EQUAL(4U, modelData->GetIndexVBO());
-
+            CPPUNIT_ASSERT(modelData->GetVertexBufferObject() == NULL); 
+            CPPUNIT_ASSERT(modelData->GetElementBufferObject() == NULL);
 
             CPPUNIT_ASSERT(modelData->GetCoreModel() == wrapper->GetCalModel()->getCoreModel()); 
 
