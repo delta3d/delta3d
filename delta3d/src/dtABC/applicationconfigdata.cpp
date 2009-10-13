@@ -20,7 +20,6 @@
  * David Guthrie
  */
 #include <dtABC/applicationconfigdata.h>
-#include <dtUtil/log.h>
 
 namespace dtABC
 {

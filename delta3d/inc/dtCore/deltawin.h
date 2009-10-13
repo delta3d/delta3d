@@ -274,13 +274,6 @@ namespace dtCore
 
       static int CalcRefreshRate(int width, int height, int dotclock);
 
-      osg::ref_ptr<osg::GraphicsContext::Traits> CreateTraits(const std::string& name = "defaulWindow",
-                                                              int x = 500, int y = 500,
-                                                              int width = 640, int height = 480,
-                                                              unsigned int screenNum = 0,
-                                                              bool cursor = true,
-                                                              osg::Referenced * inheritedWindowData = NULL) const;
-
       ///Little utility used to convert the supplied parameters into a OSG Trait.
       osg::ref_ptr<osg::GraphicsContext::Traits> CreateOSGTraits(const DeltaWinTraits& deltaTraits) const;
 
