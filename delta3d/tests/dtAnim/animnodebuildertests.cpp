@@ -145,18 +145,17 @@ namespace dtAnim
 
             CheckGeode(geode, true);
             Cal3DModelData* modelData = Cal3DDatabase::GetInstance().GetModelData(*mHelper->GetModelWrapper());
-            CPPUNIT_ASSERT(modelData->GetVertexVBO() != 0);
-            CPPUNIT_ASSERT(modelData->GetIndexVBO() != 0);
-            CPPUNIT_ASSERT(modelData->GetIndexVBO() != modelData->GetVertexVBO());
+            CPPUNIT_ASSERT(modelData->GetVertexBufferObject() != 0);
+            CPPUNIT_ASSERT(modelData->GetElementBufferObject() != 0);
 
             dtCore::RefPtr<dtAnim::AnimationHelper> secondHelper = new AnimationHelper();
             secondHelper->LoadModel(mModelPath);
             Cal3DModelData* secondModelData = Cal3DDatabase::GetInstance().GetModelData(*secondHelper->GetModelWrapper());
 
             CPPUNIT_ASSERT_EQUAL_MESSAGE("The first and second hardware meshes should share VBO's", 
-                  secondModelData->GetVertexVBO(), modelData->GetVertexVBO());
+                  secondModelData->GetVertexBufferObject(), modelData->GetVertexBufferObject());
             CPPUNIT_ASSERT_EQUAL_MESSAGE("The first and second hardware meshes should share VBO's", 
-                  secondModelData->GetIndexVBO(), modelData->GetIndexVBO());
+                  secondModelData->GetElementBufferObject(), modelData->GetElementBufferObject());
 
             GetGlobalApplication().GetScene()->RemoveDrawable(drawable.get());
          }

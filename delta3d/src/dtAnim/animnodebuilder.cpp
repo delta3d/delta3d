@@ -312,8 +312,8 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
    {
       InvertTextureCoordinates(hardwareModel, stride, vertexArray, modelData, indexArray);
 
-      osg::VertexBufferObject* vertexVBO = modelData->GetVertexVBO();
-      osg::ElementBufferObject* indexEBO = modelData->GetIndexEBO();
+      osg::VertexBufferObject* vertexVBO = modelData->GetVertexBufferObject();
+      osg::ElementBufferObject* indexEBO = modelData->GetElementBufferObject();
 
       if (vertexVBO == NULL)
       {
@@ -343,8 +343,8 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
          indexEBO->addDrawElements(drawElements);
 
          // Store the buffers with the model data for possible re-use later
-         modelData->SetVertexVBO(vertexVBO);
-         modelData->SetIndexEBO(indexEBO);
+         modelData->SetVertexBufferObject(vertexVBO);
+         modelData->SetElementBufferObject(indexEBO);
       }
 
       const int numIndices = 3 * hardwareModel->getTotalFaceCount();
