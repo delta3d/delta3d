@@ -72,6 +72,7 @@ class GameActorTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST_SUITE(GameActorTests);
 
       CPPUNIT_TEST(TestGameActorProxy);
+      //CPPUNIT_TEST(TestGameActorNoDefaultStateSet);
       CPPUNIT_TEST(TestGameActorProxyDeleteError);
       CPPUNIT_TEST(TestSetEnvironmentActor);
       CPPUNIT_TEST(TestAddRemoveFromEnvActor);
@@ -94,6 +95,7 @@ public:
    void setUp();
    void tearDown();
    void TestGameActorProxy();
+   void TestGameActorNoDefaultStateSet();
    void TestGameActorProxyDeleteError();
    void TestSetEnvironmentActor();
    void TestAddRemoveFromEnvActor();
@@ -183,12 +185,8 @@ void GameActorTests::TestGameActorProxy()
 {
    try
    {
-      dtCore::RefPtr<const dtDAL::ActorType> actorType = mManager->FindActorType("ExampleActors", "Test1Actor");
-
-      CPPUNIT_ASSERT(actorType != NULL);
-
-      dtCore::RefPtr<dtDAL::ActorProxy> proxy = mManager->CreateActor(*actorType);
-      dtCore::RefPtr<dtGame::GameActorProxy> gap = dynamic_cast<dtGame::GameActorProxy*>(proxy.get());
+      dtCore::RefPtr<dtGame::GameActorProxy> gap;
+      mManager->CreateActor("ExampleActors", "Test1Actor", gap);
 
       CPPUNIT_ASSERT_MESSAGE("GameActorProxy should not be NULL", gap != NULL);
       CPPUNIT_ASSERT_MESSAGE("GameActor should have a reference to the proxy", &gap->GetGameActor().GetGameActorProxy() == gap.get());
@@ -218,12 +216,42 @@ void GameActorTests::TestGameActorProxy()
    }
    catch (const dtUtil::Exception& e)
    {
-      CPPUNIT_FAIL(e.What());
+      CPPUNIT_FAIL(e.ToString());
    }
 //   catch (const std::exception& e)
 //   {
 //      CPPUNIT_FAIL(std::string("Caught exception of type: ") + typeid(e).name() + " " + e.what());
 //   }
+}
+
+void GameActorTests::TestGameActorNoDefaultStateSet()
+{
+   try
+   {
+      dtCore::RefPtr<dtGame::GameActorProxy> gap;
+      mManager->CreateActor("ExampleActors", "Test1Actor", gap);
+      CPPUNIT_ASSERT_MESSAGE("GameActorProxy should not be NULL", gap != NULL);
+
+      dtGame::GameActor* gameActor = NULL;
+      gap->GetActor(gameActor);
+
+      CPPUNIT_ASSERT_MESSAGE("a newly created game actor should not have stateset.",
+               gameActor->GetOSGNode()->getStateSet() == NULL);
+
+      mManager->AddActor(*gap, false, false);
+
+      CPPUNIT_ASSERT_MESSAGE("A game actor that has just been added to the gm should not have stateset",
+               gameActor->GetOSGNode()->getStateSet() == NULL);
+
+      gameActor->SetShaderGroup(std::string());
+
+      CPPUNIT_ASSERT_MESSAGE("Setting the shader group to empty should not create a stateset",
+               gameActor->GetOSGNode()->getStateSet() == NULL);
+   }
+   catch (const dtUtil::Exception& e)
+   {
+      CPPUNIT_FAIL(e.ToString());
+   }
 }
 
 void GameActorTests::TestGameActorProxyDeleteError()
@@ -1010,7 +1038,7 @@ void GameActorTests::TestAddActorComponent()
       dtGame::GameActor* actor = &gap->GetGameActor();
 
       dtCore::RefPtr<TestActorComponent1> component = new TestActorComponent1();
-      actor->AddComponent(component.get());
+      actor->AddComponent(*component);
 
       CPPUNIT_ASSERT_MESSAGE("Actor owner not set", component->GetOwner() == actor);
 
@@ -1062,7 +1090,7 @@ void GameActorTests::TestActorComponentInitialized()
       dtGame::GameActor* actor = &gap->GetGameActor();
 
       dtCore::RefPtr<TestActorComponent1> component1 = new TestActorComponent1();
-      actor->AddComponent(component1.get());
+      actor->AddComponent(*component1);
 
       dtCore::RefPtr<TestActorComponent2> component2 = new TestActorComponent2();
 
@@ -1072,9 +1100,9 @@ void GameActorTests::TestActorComponentInitialized()
       CPPUNIT_ASSERT_MESSAGE("Actor component1 be initialized when actor is added to game!", component1->mWasAdded);
 
       CPPUNIT_ASSERT_MESSAGE("Actor component2 should not be initialized before added to actor!", !component2->mWasAdded);
-      actor->AddComponent(component2.get());
+      actor->AddComponent(*component2);
       CPPUNIT_ASSERT_MESSAGE("Actor component2 should be initialized when added to actor!", component2->mWasAdded);
-      actor->RemoveComponent(component2.get());
+      actor->RemoveComponent(*component2);
       CPPUNIT_ASSERT_MESSAGE("Actor component2 should be de-initialized when removed from actor!", component2->mWasRemoved);
 
       CPPUNIT_ASSERT_MESSAGE("Actor component should not be removed yet!", !component1->mWasRemoved);
