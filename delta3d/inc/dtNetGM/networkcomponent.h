@@ -82,6 +82,7 @@ namespace dtNetGM
     */
    class DT_NETGM_EXPORT NetworkComponent : public dtGame::GMComponent
    {
+      DECLARE_MANAGEMENT_LAYER(NetworkComponent);
    protected:
       /**
        * @class DestinationType
@@ -284,7 +285,12 @@ namespace dtNetGM
       void GetConnectedClients(std::vector<NetworkBridge*>& connectedClients);
 
       /**
-       * Shutdown network communications and clear connections
+       * Disconnect from all active network connections
+       */
+      virtual void Disconnect();
+
+      /**
+       * Shutdown network communications and clear connections plus shutdown the internal networking subsystem.
        */
       virtual void ShutdownNetwork();
 

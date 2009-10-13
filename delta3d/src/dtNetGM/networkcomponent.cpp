@@ -65,6 +65,8 @@ IMPLEMENT_ENUM(MessageActionCode);
    const NetworkComponent::DestinationType NetworkComponent::DestinationType::ALL_CLIENTS("All Clients");
    const NetworkComponent::DestinationType NetworkComponent::DestinationType::ALL_NOT_CLIENTS("All Not Clients");
 
+   IMPLEMENT_MANAGEMENT_LAYER(NetworkComponent);
+
    ////////////////////////////////////////////////////////////////////////////////
    NetworkComponent::NetworkComponent(const std::string& gameName, const int gameVersion, const std::string& logFile)
       : dtGame::GMComponent("NetworkComponent")
@@ -80,6 +82,7 @@ IMPLEMENT_ENUM(MessageActionCode);
       {
          mGneInitialized = false;
       }
+      RegisterInstance(this);
 
       InitializeNetwork(gameName, gameVersion, logFile);
    }
@@ -87,7 +90,9 @@ IMPLEMENT_ENUM(MessageActionCode);
    ////////////////////////////////////////////////////////////////////////////////
    NetworkComponent::~NetworkComponent(void)
    {
-      mConnections.clear();
+      ShutdownNetwork();
+      //De-register after calling ShutdownNetwork because the code expects the instance count to include this instance.
+      DeregisterInstance(this);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -111,7 +116,7 @@ IMPLEMENT_ENUM(MessageActionCode);
    {
       // This is really not a proper shutdown.  It needs to send a message across to notify the other clients
       // but this just makes it drop immediately.
-      ShutdownNetwork();
+      Disconnect();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -677,10 +682,8 @@ IMPLEMENT_ENUM(MessageActionCode);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void NetworkComponent::ShutdownNetwork()
+   void NetworkComponent::Disconnect()
    {
-      LOG_INFO("Shutting down network...");
-
       OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mMutex);
 
       mShuttingDown = true;
@@ -691,8 +694,23 @@ IMPLEMENT_ENUM(MessageActionCode);
          (*iter)->Disconnect(-1);
       }
       mConnections.clear();
+   }
 
-      GNE::shutdownGNE();
+   ////////////////////////////////////////////////////////////////////////////////
+   void NetworkComponent::ShutdownNetwork()
+   {
+      LOG_INFO("Shutting down network...");
+
+      Disconnect();
+
+      // Only shutdown if this network component is the only existing one, otherwise some other
+      // instance will still want GNE running, Eventually it will get shutdown by the destructor of the last
+      // network component.
+      if (mGneInitialized && GetInstanceCount() <= 1)
+      {
+         GNE::shutdownGNE();
+         mGneInitialized = false;
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
