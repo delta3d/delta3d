@@ -31,6 +31,7 @@
 
 #include <dtEditQt/viewport.h>
 #include <dtEditQt/stageobjectmotionmodel.h>
+#include <dtEditQt/stagecameramotionmodel.h>
 
 namespace dtEditQt {
 
@@ -62,20 +63,27 @@ namespace dtEditQt {
        */
       bool getMoveActorWithCamera() const { return mAttachActorToCamera; }
 
+      ///**
+      // * Moves the camera.
+      // * @par
+      // *  The camera's movement is determined by the current mode of the
+      // *  perspective viewport:<br>
+      // *      CAMERA_TRANSLATE - The camera is moved by up/down (dy) and
+      // *          left/right (dx). <br>
+      // *      CAMERA_NAVIGATE - The camera is moved forward/backward (dy) and
+      // *          can be rotated about its up axis. (dx). <br>
+      // *      CAMERA_LOOK - The camera is stationary and can look in any direction. <br>
+      // * @param dx
+      // * @param dy
+      // */
+      //virtual bool moveCamera(float dx, float dy);
+
       /**
-       * Moves the camera.
-       * @par
-       *  The camera's movement is determined by the current mode of the
-       *  perspective viewport:<br>
-       *      CAMERA_TRANSLATE - The camera is moved by up/down (dy) and
-       *          left/right (dx). <br>
-       *      CAMERA_NAVIGATE - The camera is moved forward/backward (dy) and
-       *          can be rotated about its up axis. (dx). <br>
-       *      CAMERA_LOOK - The camera is stationary and can look in any direction. <br>
-       * @param dx
-       * @param dy
-       */
-      virtual bool moveCamera(float dx, float dy);
+      * Sets the current camera motion model.
+      *
+      * @param[in]  motion  The camera motion model (use NULL for default).
+      */
+      void setCameraMotionModel(STAGECameraMotionModel* motion = NULL);
 
       /**
        * Sets the scene to be rendered by this viewport.
@@ -332,6 +340,8 @@ namespace dtEditQt {
       bool mAttachActorToCamera;
 
       dtCore::RefPtr<STAGEObjectMotionModel> mObjectMotionModel;
+      dtCore::RefPtr<STAGECameraMotionModel> mCameraMotionModel;
+      dtCore::RefPtr<STAGECameraMotionModel> mDefaultCameraMotionModel;
 
       dtCore::RefPtr<dtDAL::ActorProxy>      mGhostProxy;
 

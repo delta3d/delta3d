@@ -446,9 +446,24 @@ namespace dtEditQt
       osg::Group* GetRootNode() { return mRootNodeGroup.get(); }
 
       /**
-      * returns whether the window dirty.
+      * Updates a property on the current actor selection.
+      * @param propName The name of the property to update.
+      * @note
+      *  This method sends an actorPropertyChange event for each actor proxy
+      *  selected.  This method is used in the ortho and perspective viewports
+      *  to update the current selection after it has been translated, rotated, etc.
+      * @see EditorEvents::emitActorPropertyChanged
       */
+      void updateActorSelectionProperty(const std::string& propName);
 
+      /**
+      * Saves the original version of the actor rotation or translation values.
+      * This is used so that undo/redo can track the old value of a property.
+      * @param propName The name of the property to update.
+      * @note
+      *  It clears the list of any previous old values.
+      */
+      void saveSelectedActorOrigValues(const std::string& propName);
 
    public slots:
       ///Moves the camera such that the actor is clearly visible.
@@ -509,26 +524,6 @@ namespace dtEditQt
        * Tells the viewport to stop listening to global UI events.
        */
       virtual void disconnectInteractionModeSlots();
-
-      /**
-       * Updates a property on the current actor selection.
-       * @param propName The name of the property to update.
-       * @note
-       *  This method sends an actorPropertyChange event for each actor proxy
-       *  selected.  This method is used in the ortho and perspective viewports
-       *  to update the current selection after it has been translated, rotated, etc.
-       * @see EditorEvents::emitActorPropertyChanged
-       */
-      void updateActorSelectionProperty(const std::string& propName);
-
-      /**
-       * Saves the original version of the actor rotation or translation values.
-       * This is used so that undo/redo can track the old value of a property.
-       * @param propName The name of the property to update.
-       * @note
-       *  It clears the list of any previous old values.
-       */
-      void saveSelectedActorOrigValues(const std::string& propName);
 
       /**
        * Spins through the actor proxies currently in the map and if they
