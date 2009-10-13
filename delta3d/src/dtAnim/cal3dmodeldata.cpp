@@ -36,8 +36,8 @@
       , mCoreModel(coreModel)
       , mAnimWrappers()
       , mAnimatables()
-      , mVertexVBO(0)
-      , mIndexVBO(0)
+      , mVertexBufferObject(0)
+      , mElementBufferObject(0)
       , mShaderMaxBones(72)
    {
    }
@@ -119,25 +119,25 @@
    ////////////////////////////////////////////////////////////////////////////////
    osg::VertexBufferObject* Cal3DModelData::GetVertexBufferObject() 
    {
-      return mVertexVBO.get();
+      return mVertexBufferObject.get();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void Cal3DModelData::SetVertexBufferObject(osg::VertexBufferObject* vbo)
    {
-      mVertexVBO = vbo;
+      mVertexBufferObject = vbo;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    osg::ElementBufferObject* Cal3DModelData::GetElementBufferObject() const
    {
-      return mIndexVBO.get();
+      return mElementBufferObject.get();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void Cal3DModelData::SetElementBufferObject(osg::ElementBufferObject* ebo)
    {
-      mIndexVBO = ebo;
+      mElementBufferObject = ebo;
    }
 
    ////////////////////////////////////////////////////////////////////////////////

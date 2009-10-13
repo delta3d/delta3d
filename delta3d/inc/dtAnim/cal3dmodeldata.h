@@ -24,9 +24,9 @@
 #include <dtAnim/export.h>
 
 #include <dtCore/refptr.h>
-#include <dtCore/observerptr.h>
 
 #include <osg/Referenced>
+#include <osg/observer_ptr>
 
 #include <vector>
 
@@ -158,8 +158,8 @@ namespace dtAnim
          CalCoreModel* mCoreModel;
          AnimationWrapperArray mAnimWrappers;
          AnimatableArray mAnimatables;
-         dtCore::ObserverPtr<osg::VertexBufferObject> mVertexVBO;
-         dtCore::ObserverPtr<osg::ElementBufferObject> mIndexVBO;
+         osg::observer_ptr<osg::VertexBufferObject> mVertexBufferObject;
+         osg::observer_ptr<osg::ElementBufferObject> mElementBufferObject;
          unsigned mShaderMaxBones;
 
          LODOptions mLODOptions;
