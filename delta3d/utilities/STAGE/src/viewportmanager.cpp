@@ -503,12 +503,12 @@ namespace dtEditQt
       emit endCameraMode(vp, e, overrideDefault);
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
-   void ViewportManager::emitMoveCamera(Viewport* vp, float dx, float dy, bool* overrideDefault)
-   {
-      LOG_INFO("Emitting event - [moveCamera]");
-      emit moveCamera(vp, dx, dy, overrideDefault);
-   }
+   //////////////////////////////////////////////////////////////////////////////////
+   //void ViewportManager::emitMoveCamera(Viewport* vp, float dx, float dy, bool* overrideDefault)
+   //{
+   //   LOG_INFO("Emitting event - [moveCamera]");
+   //   emit moveCamera(vp, dx, dy, overrideDefault);
+   //}
 
    ////////////////////////////////////////////////////////////////////////////////
    void ViewportManager::emitSelectActors(Viewport* vp, QMouseEvent* e, bool* overrideDefault)

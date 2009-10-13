@@ -44,49 +44,6 @@ namespace dtEditQt
       Q_OBJECT
 
    public:
-      /**
-       * Enumerates the specific types of interactions a perspective viewport
-       * supports.  These extend the interactions of the base viewport.  For example,
-       * when the overall mode is camera mode, the perspective viewport supports
-       * more specific behavior.
-       */
-      class CameraMode : public dtUtil::Enumeration
-      {
-         DECLARE_ENUM(CameraMode);
-      public:
-         static const CameraMode CAMERA_TRANSLATE;
-         static const CameraMode CAMERA_NAVIGATE;
-         static const CameraMode CAMERA_LOOK;
-         static const CameraMode NOTHING;
-
-      private:
-         CameraMode(const std::string& name)
-            : dtUtil::Enumeration(name)
-         {
-            AddInstance(this);
-         }
-      };
-
-      /**
-       * Moves the camera.
-       * @par
-       *  The camera's movement is determined by the current mode of the
-       *  perspective viewport:<br>
-       *      CAMERA_TRANSLATE - The camera is moved by up/down (dy) and
-       *          left/right (dx). <br>
-       *      CAMERA_NAVIGATE - The camera is moved forward/backward (dy) and
-       *          can be rotated about its up axis. (dx). <br>
-       *      CAMERA_LOOK - The camera is stationary and can look in any direction. <br>
-       * @param dx
-       * @param dy
-       */
-      bool moveCamera(float dx, float dy);
-
-      /**
-       * Sets the scene to be rendered by this viewport.
-       * @param scene The new scene to be rendered.
-       */
-      //virtual void setScene(dtCore::Scene* scene);
 
       /**
        * Initializes the viewport.  This just sets the render style to be
@@ -101,6 +58,12 @@ namespace dtEditQt
        * @param height The new height of the viewport.
        */
       void resizeGL(int width, int height);
+
+      /**
+      * Takes the current selection of actors and attaches them to the camera.
+      * Therefore, as the camera moves, the actors move along with it.
+      */
+      void attachCurrentSelectionToCamera();
 
    public slots:
 
@@ -128,20 +91,6 @@ namespace dtEditQt
       void keyPressEvent(QKeyEvent* e);
 
       /**
-       * Called from the mousePressEvent handler.  This sets the viewport state
-       * to properly respond to mouse movement events when in camera mode.
-       * @param e
-       */
-      bool beginCameraMode(QMouseEvent* e);
-
-      /**
-       * Called from the mouseReleaseEvent handler.  This restores the state of
-       * the viewport as it was before camera mode was entered.
-       * @param e
-       */
-      bool endCameraMode(QMouseEvent* e);
-
-      /**
        * Called from the mousePressEvent handler.  Depending on what modifier
        * key is pressed, this puts the viewport state into a mode that enables
        * actor manipulation.
@@ -156,17 +105,9 @@ namespace dtEditQt
        */
       bool endActorMode(QMouseEvent* e);
 
-      /**
-       * Takes the current selection of actors and attaches them to the camera.
-       * Therefore, as the camera moves, the actors move along with it.
-       */
-      void attachCurrentSelectionToCamera();
-
    private:
       ///Allow the ViewportManager access to it can create perspective viewports.
       friend class ViewportManager;
-
-      const CameraMode* mCameraMode;
    };
 
 } // namespace dtEditQt

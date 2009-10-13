@@ -32,34 +32,26 @@
 #include <dtEditQt/viewportoverlay.h>
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/editordata.h>
+#include <dtEditQt/stagecameramotionmodel3d.h>
 #include <dtDAL/transformableactorproxy.h>
 
 namespace dtEditQt
 {
-
-   /////////////////////////////////////////////////////////////////////////////
-   IMPLEMENT_ENUM(PerspectiveViewport::CameraMode);
-   const PerspectiveViewport::CameraMode
-      PerspectiveViewport::CameraMode::CAMERA_TRANSLATE("CAMERA_TRANSLATE");
-   const PerspectiveViewport::CameraMode
-      PerspectiveViewport::CameraMode::CAMERA_LOOK("CAMERA_LOOK");
-   const PerspectiveViewport::CameraMode
-      PerspectiveViewport::CameraMode::CAMERA_NAVIGATE("CAMERA_NAVIGATE");
-   const PerspectiveViewport::CameraMode
-      PerspectiveViewport::CameraMode::NOTHING("NOTHING");
-   /////////////////////////////////////////////////////////////////////////////
-
-
    ///////////////////////////////////////////////////////////////////////////////
    PerspectiveViewport::PerspectiveViewport(const std::string& name, QWidget* parent,
       osg::GraphicsContext* shareWith)
       : EditorViewport(ViewportManager::ViewportType::PERSPECTIVE, name, parent, shareWith)
    {
-      mCameraMode = &CameraMode::NOTHING;
-
       setMoveActorWithCamera(EditorData::GetInstance().getRigidCamera());
 
       ViewportManager::GetInstance().setWorldViewCamera(getCamera());
+
+      // Create our camera model.
+      mDefaultCameraMotionModel = new STAGECameraMotionModel3D();
+      mDefaultCameraMotionModel->SetCamera(getCamera());
+      mDefaultCameraMotionModel->SetViewport(this);
+
+      mCameraMotionModel = mDefaultCameraMotionModel;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -94,98 +86,6 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   bool PerspectiveViewport::beginCameraMode(QMouseEvent* e)
-   {
-      if (!EditorViewport::beginCameraMode(e))
-      {
-         return false;
-      }
-
-      setInteractionMode(Viewport::InteractionMode::CAMERA);
-
-      Qt::MouseButtons bothButtons = Qt::LeftButton | Qt::RightButton;
-
-      if (getMoveActorWithCamera() && getEnableKeyBindings() &&
-         e->modifiers() == Qt::ShiftModifier &&
-         mCameraMode == &CameraMode::NOTHING)
-      {
-         attachCurrentSelectionToCamera();
-         saveSelectedActorOrigValues(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
-         saveSelectedActorOrigValues(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
-         saveSelectedActorOrigValues("Scale");
-      }
-
-      if (mMouseButtons == bothButtons || mMouseButtons == Qt::MidButton)
-      {
-         mCameraMode = &CameraMode::CAMERA_TRANSLATE;
-      }
-      else if (mMouseButton == Qt::LeftButton)
-      {
-         mCameraMode = &CameraMode::CAMERA_NAVIGATE;
-      }
-      else if (mMouseButton == Qt::RightButton)
-      {
-         mCameraMode = &CameraMode::CAMERA_LOOK;
-      }
-      else
-      {
-         mCameraMode = &CameraMode::NOTHING;
-         return true;
-      }
-
-      trapMouseCursor();
-
-      return true;
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   bool PerspectiveViewport::endCameraMode(QMouseEvent* e)
-   {
-      if (!EditorViewport::endCameraMode(e))
-      {
-         return false;
-      }
-
-      if (mMouseButton == Qt::LeftButton && mMouseButtons == Qt::RightButton)
-      {
-         mCameraMode = &CameraMode::CAMERA_LOOK;
-         EditorViewport::beginCameraMode(e);
-      }
-      else if (mMouseButton == Qt::RightButton && mMouseButtons == Qt::LeftButton)
-      {
-         mCameraMode = &CameraMode::CAMERA_NAVIGATE;
-         EditorViewport::beginCameraMode(e);
-      }
-      else
-      {
-         mObjectMotionModel->SetInteractionEnabled(true);
-
-         setInteractionMode(Viewport::InteractionMode::NOTHING);
-
-         mCameraMode = &CameraMode::NOTHING;
-         releaseMouseCursor();
-         if (getMoveActorWithCamera() && getCamera() != NULL &&
-            getEnableKeyBindings() && getCamera()->getNumActorAttachments() != 0)
-         {
-            // we could send hundreds of translation and rotation events, so make sure
-            // we surround it in a change transaction
-            EditorEvents::GetInstance().emitBeginChangeTransaction();
-            EditorData::GetInstance().getUndoManager().beginMultipleUndo();
-            updateActorSelectionProperty(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
-            updateActorSelectionProperty(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
-            updateActorSelectionProperty("Scale");
-            EditorData::GetInstance().getUndoManager().endMultipleUndo();
-
-            EditorEvents::GetInstance().emitEndChangeTransaction();
-
-            getCamera()->removeAllActorAttachments();
-         }
-      }
-
-      return true;
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
    bool PerspectiveViewport::beginActorMode(QMouseEvent* e)
    {
       if (!EditorViewport::beginActorMode(e))
@@ -202,45 +102,6 @@ namespace dtEditQt
       if (!EditorViewport::endActorMode(e))
       {
          return false;
-      }
-
-      return true;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   bool PerspectiveViewport::moveCamera(float dx, float dy)
-   {
-      if (!EditorViewport::moveCamera(dx, dy))
-      {
-         return false;
-      }
-
-      if (*mCameraMode == CameraMode::NOTHING || getCamera() == NULL)
-      {
-         return true;
-      }
-
-      if (*mCameraMode == CameraMode::CAMERA_NAVIGATE)
-      {
-         getCamera()->yaw(-dx / 10.0f);
-
-         //Move along the view direction, however, ignore the z-axis.  This way
-         //we can look at the ground but move parallel to it.
-         osg::Vec3 viewDir = getCamera()->getViewDir() * ((float)-dy/getMouseSensitivity());
-         viewDir[2] = 0.0f;
-         getCamera()->move(viewDir);
-      }
-      else if (*mCameraMode == CameraMode::CAMERA_LOOK)
-      {
-         getCamera()->pitch(-dy / 10.0f);
-         getCamera()->yaw(-dx / 10.0f);
-      }
-      else if (*mCameraMode == CameraMode::CAMERA_TRANSLATE)
-      {
-         getCamera()->move(getCamera()->getUpDir() *
-            (-dy / getMouseSensitivity()));
-         getCamera()->move(getCamera()->getRightDir() *
-            (dx / getMouseSensitivity()));
       }
 
       return true;

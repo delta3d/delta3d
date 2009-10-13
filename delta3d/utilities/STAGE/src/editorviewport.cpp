@@ -83,17 +83,30 @@ namespace dtEditQt
       }
    }
 
-   /////////////////////////////////////////////////////////////////////////////
-   bool EditorViewport::moveCamera(float dx, float dy)
-   {
-      bool overrideDefault = false;
-      ViewportManager::GetInstance().emitMoveCamera(this, dx, dy, &overrideDefault);
-      if (overrideDefault)
-      {
-         return false;
-      }
+   ///////////////////////////////////////////////////////////////////////////////
+   //bool EditorViewport::moveCamera(float dx, float dy)
+   //{
+   //   bool overrideDefault = false;
+   //   ViewportManager::GetInstance().emitMoveCamera(this, dx, dy, &overrideDefault);
+   //   if (overrideDefault)
+   //   {
+   //      return false;
+   //   }
 
-      return true;
+   //   return true;
+   //}
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorViewport::setCameraMotionModel(STAGECameraMotionModel* motion)
+   {
+      if (motion)
+      {
+         mCameraMotionModel = motion;
+      }
+      else
+      {
+         mCameraMotionModel = mDefaultCameraMotionModel;
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -601,10 +614,20 @@ namespace dtEditQt
       if (mMouseButton == Qt::LeftButton)
       {
          mObjectMotionModel->OnLeftMousePressed();
+
+         if (mCameraMotionModel.valid())
+         {
+            mCameraMotionModel->OnLeftMousePressed();
+         }
       }
       else if (mMouseButton == Qt::RightButton)
       {
          mObjectMotionModel->OnRightMousePressed();
+
+         if (mCameraMotionModel.valid())
+         {
+            mCameraMotionModel->OnRightMousePressed();
+         }
       }
 
       osg::Vec2 pos = convertMousePosition(e->pos());
@@ -614,7 +637,7 @@ namespace dtEditQt
       {
          // If this returns true, it means we are hovering our mouse over a
          // valid motion model widget so we should go into actor mode.
-        if (shouldBeginActorMode(pos))
+         if (shouldBeginActorMode(pos))
          {
             beginActorMode(e);
          }
@@ -647,10 +670,20 @@ namespace dtEditQt
       if (mMouseButton == Qt::LeftButton)
       {
          mObjectMotionModel->OnLeftMouseReleased();
+
+         if (mCameraMotionModel.valid())
+         {
+            mCameraMotionModel->OnLeftMouseReleased();
+         }
       }
       else if (mMouseButton == Qt::RightButton)
       {
          mObjectMotionModel->OnRightMouseReleased();
+
+         if (mCameraMotionModel.valid())
+         {
+            mCameraMotionModel->OnRightMouseReleased();
+         }
       }
 
       // End camera mode.
@@ -684,6 +717,17 @@ namespace dtEditQt
    ////////////////////////////////////////////////////////////////////////////////
    void EditorViewport::wheelEvent(QWheelEvent* e)
    {
+      ViewportManager::GetInstance().emitWheelEvent(this, e);
+
+      if (mCameraMotionModel.valid())
+      {
+         mCameraMotionModel->WheelEvent(e->delta());
+      }
+
+      // The motion model will not update unless the mouse moves,
+      // because of this we need to force it to update its' widget
+      // geometry.
+      mObjectMotionModel->UpdateWidgets();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -711,7 +755,10 @@ namespace dtEditQt
       // Update the camera.
       else if (getInteractionMode() == Viewport::InteractionMode::CAMERA)
       {
-         moveCamera(dx, dy);
+         if (mCameraMotionModel.valid())
+         {
+            mCameraMotionModel->OnMouseMoved(dx, dy);
+         }
       }
       else if (getInteractionMode() == Viewport::InteractionMode::ACTOR)
       {
@@ -740,6 +787,11 @@ namespace dtEditQt
          return false;
       }
 
+      if (mCameraMotionModel.valid())
+      {
+         mCameraMotionModel->BeginCameraMode(e);
+      }
+
       return true;
    }
 
@@ -751,6 +803,11 @@ namespace dtEditQt
       if (overrideDefault)
       {
          return false;
+      }
+
+      if (mCameraMotionModel.valid())
+      {
+         mCameraMotionModel->EndCameraMode(e);
       }
 
       return true;

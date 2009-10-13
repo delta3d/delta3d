@@ -29,6 +29,7 @@
 #include <prefix/dtstageprefix-src.h>
 #include <QtGui/QMouseEvent>
 #include <dtEditQt/orthoviewport.h>
+#include <dtEditQt/stagecameramotionmodel2d.h>
 #include <dtDAL/exceptionenum.h>
 
 namespace dtEditQt
@@ -42,24 +43,20 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
 
    ///////////////////////////////////////////////////////////////////////////////
-   IMPLEMENT_ENUM(OrthoViewport::CameraMode);
-   const OrthoViewport::CameraMode
-      OrthoViewport::CameraMode::CAMERA_PAN("CAMERA_PAN");
-   const OrthoViewport::CameraMode
-      OrthoViewport::CameraMode::CAMERA_ZOOM("CAMERA_ZOOM");
-   const OrthoViewport::CameraMode
-      OrthoViewport::CameraMode::NOTHING("NOTHING");
-   ///////////////////////////////////////////////////////////////////////////////
-
-   ///////////////////////////////////////////////////////////////////////////////
    OrthoViewport::OrthoViewport(const std::string& name, QWidget* parent,
       osg::GraphicsContext* shareWith)
       : EditorViewport(ViewportManager::ViewportType::ORTHOGRAPHIC, name, parent, shareWith)
    {
-      mCameraMode = &OrthoViewport::CameraMode::NOTHING;
       setViewType(OrthoViewType::TOP,false);
 
       mObjectMotionModel->SetScale(450.0f);
+
+      // Create our camera model.
+      mDefaultCameraMotionModel = new STAGECameraMotionModel2D();
+      mDefaultCameraMotionModel->SetCamera(getCamera());
+      mDefaultCameraMotionModel->SetViewport(this);
+
+      mCameraMotionModel = mDefaultCameraMotionModel;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -115,112 +112,6 @@ namespace dtEditQt
          }
          refresh();
       }
-   }
-
-
-   ///////////////////////////////////////////////////////////////////////////////
-   bool OrthoViewport::moveCamera(float dx, float dy)
-   {
-      if (!EditorViewport::moveCamera(dx, dy))
-      {
-         return false;
-      }
-
-      if (*mCameraMode == OrthoViewport::CameraMode::NOTHING || getCamera() == NULL)
-      {
-         return true;
-      }
-
-      float xAmount = (-dx/getMouseSensitivity()*4.0f) / getCamera()->getZoom();
-      float yAmount = (dy/getMouseSensitivity()*4.0f) / getCamera()->getZoom();
-
-      if (*mCameraMode == OrthoViewport::CameraMode::CAMERA_PAN)
-      {
-         getCamera()->move(getCamera()->getRightDir() * xAmount);
-         getCamera()->move(getCamera()->getUpDir() * yAmount);
-      }
-      else if (*mCameraMode == OrthoViewport::CameraMode::CAMERA_ZOOM)
-      {
-         osg::Vec3 moveVec = mZoomToPosition-getCamera()->getPosition();
-
-         moveVec.normalize();
-         if (dy <= -1.0f)
-         {
-            getCamera()->zoom(1.1f);
-         }
-         else if (dy >= 1.0f)
-         {
-            getCamera()->zoom(0.9f);
-         }
-      }
-
-      return true;
-   }
-
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void OrthoViewport::wheelEvent(QWheelEvent* e)
-   {
-      ViewportManager::GetInstance().emitWheelEvent(this, e);
-
-      if (e->delta() > 0)
-      {
-         getCamera()->zoom(1.3f);
-      }
-      else
-      {
-         getCamera()->zoom(0.7f);
-      }
-
-      // The motion model will not update unless the mouse moves,
-      // because of this we need to force it to update its' widget
-      // geometry.
-      mObjectMotionModel->UpdateWidgets();
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   bool OrthoViewport::beginCameraMode(QMouseEvent* e)
-   {
-      if (!EditorViewport::beginCameraMode(e))
-      {
-         return false;
-      }
-
-      if (mMouseButton == Qt::LeftButton)
-      {
-         mCameraMode = &OrthoViewport::CameraMode::CAMERA_PAN;
-      }
-      else if (mMouseButton == Qt::RightButton)
-      {
-         osg::Vec3 nearPoint,farPoint;
-         //TODO
-         //int xLoc = e->pos().x();
-         //int yLoc = int(getSceneView()->getViewport()->height()-e->pos().y());
-         //getSceneView()->projectWindowXYIntoObject(xLoc, yLoc, nearPoint, farPoint);
-         mZoomToPosition = nearPoint;
-         mCameraMode = &OrthoViewport::CameraMode::CAMERA_ZOOM;
-      }
-
-      setInteractionMode(Viewport::InteractionMode::CAMERA);
-      trapMouseCursor();
-
-      return true;
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   bool OrthoViewport::endCameraMode(QMouseEvent* e)
-   {
-      if (!EditorViewport::endCameraMode(e))
-      {
-         return false;
-      }
-
-      mObjectMotionModel->SetInteractionEnabled(true);
-      mCameraMode = &OrthoViewport::CameraMode::NOTHING;
-      setInteractionMode(Viewport::InteractionMode::NOTHING);
-      releaseMouseCursor();
-
-      return true;
    }
 
    ///////////////////////////////////////////////////////////////////////////////

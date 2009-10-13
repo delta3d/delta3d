@@ -82,29 +82,6 @@ namespace dtEditQt
       };
 
       /**
-       * Enumerates the specific types of interactions an orthographic viewport
-       * supports.  These extend the interactions of the base viewport.  For example,
-       * when the overall mode is camera mode, the orthographic viewport supports
-       * more specific behavior.
-       */
-      class CameraMode : public dtUtil::Enumeration
-      {
-         DECLARE_ENUM(CameraMode);
-
-      public:
-         static const CameraMode CAMERA_PAN;
-         static const CameraMode CAMERA_ZOOM;
-         static const CameraMode NOTHING;
-
-      private:
-         CameraMode(const std::string& name)
-            : dtUtil::Enumeration(name)
-         {
-            AddInstance(this);
-         }
-      };
-
-      /**
        * Sets this orthographic viewport's current view type.
        * @param type The new view type.
        */
@@ -115,19 +92,6 @@ namespace dtEditQt
        * @return
        */
       const OrthoViewType& getViewType() const { return *mViewType; }
-
-      /**
-       * Moves the camera.
-       * @par
-       *  The camera's movement is based on the current camera mode.<br>
-       *      CAMERA_PAN - Pans the camera along the plane the
-       *          viewport is looking at.<br>
-       *      CAMERA_ZOOM - Zooms the camera in and out.
-       *
-       * @param dx
-       * @param dy
-       */
-      bool moveCamera(float dx, float dy);
 
       /**
       * Initializes the viewport.  This just sets the current render style
@@ -142,14 +106,6 @@ namespace dtEditQt
       */
       void resizeGL(int width, int height);
 
-      /**
-      * Called when the user moves the wheel on a mouse containing a scroll wheel.
-      * This causes the scene to be zoomed in and out.
-      * @param e
-      */
-      void wheelEvent(QWheelEvent* e);
-
-
    protected:
       /**
        * Constructs the orthographic viewport.
@@ -161,21 +117,6 @@ namespace dtEditQt
        * Destroys the viewport.
        */
       virtual ~OrthoViewport() { }
-
-
-      /**
-       * Called from the mousePressEvent handler.  This sets the viewport state
-       * to properly respond to mouse movement events when in camera mode.
-       * @param e
-       */
-      bool beginCameraMode(QMouseEvent* e);
-
-      /**
-       * Called from the mouseReleaseEvent handler.  This restores the state of
-       * the viewport to it was before camera mode was entered.
-       * @param e
-       */
-      bool endCameraMode(QMouseEvent* e);
 
       /**
       * Called from the mousePressEvent handler.  Depending on what modifier
@@ -197,7 +138,6 @@ namespace dtEditQt
       ///Allow the ViewportManager access to it can create perspective viewports.
       friend class ViewportManager;
 
-      const CameraMode*    mCameraMode;
       const OrthoViewType* mViewType;
       osg::Vec3            mZoomToPosition;
    };

@@ -341,15 +341,15 @@ namespace dtEditQt
       */
       void emitEndCameraMode(Viewport* vp, QMouseEvent* e, bool* overrideDefault = NULL);
 
-      /**
-      * Signal used when the camera is moved.
-      *
-      * @param[in]   vp               The viewport triggering this event.
-      * @param[in]   dx               Horizontal delta movement.
-      * @param[in]   dy               Vertical delta movement.
-      * @param[out]  overrideDefault  Should be set true if you don't want the default behavior to handle this.
-      */
-      void emitMoveCamera(Viewport* vp, float dx, float dy, bool* overrideDefault = NULL);
+      ///**
+      //* Signal used when the camera is moved.
+      //*
+      //* @param[in]   vp               The viewport triggering this event.
+      //* @param[in]   dx               Horizontal delta movement.
+      //* @param[in]   dy               Vertical delta movement.
+      //* @param[out]  overrideDefault  Should be set true if you don't want the default behavior to handle this.
+      //*/
+      //void emitMoveCamera(Viewport* vp, float dx, float dy, bool* overrideDefault = NULL);
 
       /**
       * Signal used when to select actors.
@@ -509,15 +509,15 @@ namespace dtEditQt
       */
       void endCameraMode(Viewport* vp, QMouseEvent* e, bool* overrideDefault);
 
-      /**
-      * Signal used when the camera is moved.
-      *
-      * @param[in]   vp               The viewport triggering this event.
-      * @param[in]   dx               Horizontal delta movement.
-      * @param[in]   dy               Vertical delta movement.
-      * @param[out]  overrideDefault  Should be set true if you don't want the default behavior to handle this.
-      */
-      void moveCamera(Viewport* vp, float dx, float dy, bool* overrideDefault);
+      ///**
+      //* Signal used when the camera is moved.
+      //*
+      //* @param[in]   vp               The viewport triggering this event.
+      //* @param[in]   dx               Horizontal delta movement.
+      //* @param[in]   dy               Vertical delta movement.
+      //* @param[out]  overrideDefault  Should be set true if you don't want the default behavior to handle this.
+      //*/
+      //void moveCamera(Viewport* vp, float dx, float dy, bool* overrideDefault);
 
       /**
       * Signal used when to select actors.

@@ -1,0 +1,183 @@
+// stagecameramotionmodel3d.cpp: Implementation of the STAGECameraMotionModel3D class.
+//
+//////////////////////////////////////////////////////////////////////
+#include <dtEditQt/stagecameramotionmodel3d.h>
+#include <dtEditQt/editorviewport.h>
+#include <dtEditQt/perspectiveviewport.h>
+#include <dtEditQt/editorevents.h>
+#include <dtEditQt/editordata.h>
+
+#include <dtCore/system.h>
+#include <dtCore/view.h>
+#include <dtCore/transformable.h>
+
+namespace dtEditQt
+{
+   IMPLEMENT_MANAGEMENT_LAYER(STAGECameraMotionModel3D)
+
+   ////////////////////////////////////////////////////////////////////////////////
+   STAGECameraMotionModel3D::STAGECameraMotionModel3D(const std::string& name)
+      : STAGECameraMotionModel(name)
+   {
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   STAGECameraMotionModel3D::~STAGECameraMotionModel3D()
+   {
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool STAGECameraMotionModel3D::BeginCameraMode(QMouseEvent* e)
+   {
+      if (STAGECameraMotionModel::BeginCameraMode(e))
+      {
+         if (!mViewport) return false;
+
+         mViewport->setInteractionMode(Viewport::InteractionMode::CAMERA);
+
+         if (mViewport->getMoveActorWithCamera() && mViewport->getEnableKeyBindings() &&
+            e->modifiers() == Qt::ShiftModifier &&
+            mCameraMode == NOTHING)
+         {
+            PerspectiveViewport* perspectiveViewport = dynamic_cast<PerspectiveViewport*>(mViewport);
+            if (perspectiveViewport)
+            {
+               perspectiveViewport->attachCurrentSelectionToCamera();
+               perspectiveViewport->saveSelectedActorOrigValues(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
+               perspectiveViewport->saveSelectedActorOrigValues(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
+               perspectiveViewport->saveSelectedActorOrigValues("Scale");
+            }
+         }
+
+         if ((mLeftMouse && mRightMouse) ||
+            mViewport->GetMouseButtons() == Qt::MidButton)
+         {
+            mCameraMode = CAMERA_TRANSLATE;
+         }
+         else if (mLeftMouse)
+         {
+            mCameraMode = CAMERA_NAVIGATE;
+         }
+         else if (mRightMouse)
+         {
+            mCameraMode = CAMERA_LOOK;
+         }
+         else
+         {
+            mCameraMode = NOTHING;
+            return true;
+         }
+
+         mViewport->trapMouseCursor();
+
+         return true;
+      }
+
+      return false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool STAGECameraMotionModel3D::EndCameraMode(QMouseEvent* e)
+   {
+      if (STAGECameraMotionModel::EndCameraMode(e))
+      {
+         if (!mViewport) return false;
+
+         if (mLeftMouse && !mRightMouse)
+         {
+            mCameraMode = CAMERA_LOOK;
+            mViewport->beginCameraMode(e);
+         }
+         else if (mRightMouse && !mLeftMouse)
+         {
+            mCameraMode = CAMERA_NAVIGATE;
+            mViewport->beginCameraMode(e);
+         }
+         else
+         {
+            mViewport->GetObjectMotionModel()->SetInteractionEnabled(true);
+
+            mViewport->setInteractionMode(Viewport::InteractionMode::NOTHING);
+
+            mCameraMode = NOTHING;
+            mViewport->releaseMouseCursor();
+            if (mViewport->getMoveActorWithCamera() &&
+               mViewport->getEnableKeyBindings() &&
+               mCamera->getNumActorAttachments() != 0)
+            {
+               // we could send hundreds of translation and rotation events, so make sure
+               // we surround it in a change transaction
+               EditorEvents::GetInstance().emitBeginChangeTransaction();
+               EditorData::GetInstance().getUndoManager().beginMultipleUndo();
+               mViewport->updateActorSelectionProperty(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
+               mViewport->updateActorSelectionProperty(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
+               mViewport->updateActorSelectionProperty("Scale");
+               EditorData::GetInstance().getUndoManager().endMultipleUndo();
+
+               EditorEvents::GetInstance().emitEndChangeTransaction();
+
+               mCamera->removeAllActorAttachments();
+            }
+         }
+
+         return true;
+      }
+
+      return false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool STAGECameraMotionModel3D::OnMouseMoved(float dx, float dy)
+   {
+      if (STAGECameraMotionModel::OnMouseMoved(dx, dy))
+      {
+         // If we are not in a camera mode or there is no viewport, bail.
+         if (mCameraMode == NOTHING || !mViewport)
+         {
+            return true;
+         }
+
+         // Navigate the camera.
+         if (mCameraMode == CAMERA_NAVIGATE)
+         {
+            mCamera->yaw(-dx / 10.0f);
+
+            //Move along the view direction, however, ignore the z-axis.  This way
+            //we can look at the ground but move parallel to it.
+            osg::Vec3 viewDir = mCamera->getViewDir() * ((float)-dy / mViewport->getMouseSensitivity());
+            viewDir[2] = 0.0f;
+            mCamera->move(viewDir);
+         }
+         else if (mCameraMode == CAMERA_LOOK)
+         {
+            mCamera->pitch(-dy / 10.0f);
+            mCamera->yaw(-dx / 10.0f);
+         }
+         else if (mCameraMode == CAMERA_TRANSLATE)
+         {
+            mCamera->move(mCamera->getUpDir() *
+               (-dy / mViewport->getMouseSensitivity()));
+            mCamera->move(mCamera->getRightDir() *
+               (dx / mViewport->getMouseSensitivity()));
+         }
+
+         return true;
+      }
+
+      return false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool STAGECameraMotionModel3D::WheelEvent(int delta)
+   {
+      if (STAGECameraMotionModel::WheelEvent(delta))
+      {
+
+         return true;
+      }
+
+      return false;
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
