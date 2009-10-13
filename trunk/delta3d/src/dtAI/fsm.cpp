@@ -131,9 +131,9 @@ void FSM::MakeCurrent(const NPCState::Type* pStateType)
 
 void FSM::OnStateChange(NPCState* pState)
 {
-   if (!pState)
+   if (pState == NULL)
    {
-      LOG_ERROR("FSM::OnStateChange, Invalid State: " + pState->GetName());
+      LOG_ERROR("FSM::OnStateChange, Invalid State: NULL");
       return;
    }
    mCurrentState->OnExit();
