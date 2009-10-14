@@ -68,12 +68,12 @@ namespace dtEditQt
       /**
       * Sets the camera for STAGE.
       */
-      void SetCamera(StageCamera* camera);
+      virtual void SetCamera(StageCamera* camera);
 
       /**
       * Sets the current viewport.
       */
-      void SetViewport(EditorViewport* viewport);
+      virtual void SetViewport(EditorViewport* viewport);
 
       /**
       * Message handler callback.
@@ -114,6 +114,9 @@ namespace dtEditQt
       * Event handler to enable the camera mode.
       *
       * @param[in]  e  The mouse event.
+      *
+      * @return     Returns true to confirm the camera should be activated.
+      *              If false is returned, the camera mode will not be enabled.
       */
       virtual bool BeginCameraMode(QMouseEvent* e);
 
@@ -121,6 +124,10 @@ namespace dtEditQt
       * Event handler to disable the camera mode.
       *
       * @param[in]  e  The mouse event.
+      *
+      * @return     Returns true to confirm the camera should be disabled.
+      *              If false is returned, the camera mode will not be
+      *              turned off.
       */
       virtual bool EndCameraMode(QMouseEvent* e);
 

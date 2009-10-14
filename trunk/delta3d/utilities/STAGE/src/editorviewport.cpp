@@ -789,10 +789,14 @@ namespace dtEditQt
 
       if (mCameraMotionModel.valid())
       {
-         mCameraMotionModel->BeginCameraMode(e);
+         if (mCameraMotionModel->BeginCameraMode(e))
+         {
+            setInteractionMode(Viewport::InteractionMode::CAMERA);
+            return true;
+         }
       }
 
-      return true;
+      return false;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -807,10 +811,16 @@ namespace dtEditQt
 
       if (mCameraMotionModel.valid())
       {
-         mCameraMotionModel->EndCameraMode(e);
+         if (mCameraMotionModel->EndCameraMode(e))
+         {
+            mObjectMotionModel->SetInteractionEnabled(true);
+            setInteractionMode(Viewport::InteractionMode::NOTHING);
+
+            return true;
+         }
       }
 
-      return true;
+      return false;
    }
 
    ////////////////////////////////////////////////////////////////////////////////

@@ -379,7 +379,7 @@ namespace dtEditQt
          dtDAL::Map::PresetCameraData data = map->GetPresetCameraData(index);
          if (data.isValid)
          {
-            Viewport* viewport = mViewportList["Perspective View"];
+            EditorViewport* viewport = dynamic_cast<EditorViewport*>(mViewportList["Perspective View"]);
             if (viewport)
             {
                StageCamera* cam = viewport->getCamera();
@@ -388,9 +388,13 @@ namespace dtEditQt
                   cam->setPosition(data.persPosition);
                   cam->resetRotation();
                   cam->rotate(data.persRotation);
+
+                  // Make sure we refresh the camera motion model with the updated camera.
+                  STAGECameraMotionModel* cameraMotion = viewport->getCameraMotionModel();
+                  if (cameraMotion) cameraMotion->SetCamera(cam);
                }
             }
-            viewport = mViewportList["Top View (XY)"];
+            viewport = dynamic_cast<EditorViewport*>(mViewportList["Top View (XY)"]);
             if (viewport)
             {
                StageCamera* cam = viewport->getCamera();
@@ -398,9 +402,13 @@ namespace dtEditQt
                {
                   cam->setPosition(data.topPosition);
                   cam->setZoom(data.topZoom);
+
+                  // Make sure we refresh the camera motion model with the updated camera.
+                  STAGECameraMotionModel* cameraMotion = viewport->getCameraMotionModel();
+                  if (cameraMotion) cameraMotion->SetCamera(cam);
                }
             }
-            viewport = mViewportList["Side View (YZ)"];
+            viewport = dynamic_cast<EditorViewport*>(mViewportList["Side View (YZ)"]);
             if (viewport)
             {
                StageCamera* cam = viewport->getCamera();
@@ -408,9 +416,13 @@ namespace dtEditQt
                {
                   cam->setPosition(data.sidePosition);
                   cam->setZoom(data.sideZoom);
+
+                  // Make sure we refresh the camera motion model with the updated camera.
+                  STAGECameraMotionModel* cameraMotion = viewport->getCameraMotionModel();
+                  if (cameraMotion) cameraMotion->SetCamera(cam);
                }
             }
-            viewport = mViewportList["Front View (XZ)"];
+            viewport = dynamic_cast<EditorViewport*>(mViewportList["Front View (XZ)"]);
             if (viewport)
             {
                StageCamera* cam = viewport->getCamera();
@@ -418,6 +430,10 @@ namespace dtEditQt
                {
                   cam->setPosition(data.frontPosition);
                   cam->setZoom(data.frontZoom);
+
+                  // Make sure we refresh the camera motion model with the updated camera.
+                  STAGECameraMotionModel* cameraMotion = viewport->getCameraMotionModel();
+                  if (cameraMotion) cameraMotion->SetCamera(cam);
                }
             }
 

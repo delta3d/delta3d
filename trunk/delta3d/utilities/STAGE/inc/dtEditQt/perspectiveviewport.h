@@ -31,6 +31,7 @@
 #define DELTA_PERSPECTIVE_VIEWPORT
 
 #include <dtEditQt/editorviewport.h>
+#include <dtEditQt/export.h>
 
 namespace dtEditQt
 {
@@ -39,7 +40,7 @@ namespace dtEditQt
     * This class provides a 3D first person style view into the scene.  Its camera
     * mode allows the user to fly around a scene and view it from any angle.
     */
-   class PerspectiveViewport : public EditorViewport
+   class DT_EDITQT_EXPORT PerspectiveViewport : public EditorViewport
    {
       Q_OBJECT
 
@@ -89,6 +90,20 @@ namespace dtEditQt
        * @param e
        */
       void keyPressEvent(QKeyEvent* e);
+
+      /**
+      * Called from the mousePressEvent handler.  This sets the viewport state
+      * to properly respond to mouse movement events when in camera mode.
+      * @param e
+      */
+      virtual bool beginCameraMode(QMouseEvent* e);
+
+      /**
+      * Called from the mouseReleaseEvent handler.  This restores the state of
+      * the viewport as it was before camera mode was entered.
+      * @param e
+      */
+      virtual bool endCameraMode(QMouseEvent* e);
 
       /**
        * Called from the mousePressEvent handler.  Depending on what modifier

@@ -23,11 +23,6 @@ namespace dtEditQt
       ///Which EditorViewport is this widget associated with?
       void SetViewport(EditorViewport* viewport);
 
-      /**
-      * Retrieves whether the mouse is hovering over this widget or not.
-      */
-      bool isMouseOver() {return mIsMouseOver;}
-
    protected:
       /**
       * Called when the user moves the mouse while pressing any combination of
@@ -105,7 +100,6 @@ namespace dtEditQt
    private:
 
       dtEditQt::EditorViewport*  mViewport; ///<The Viewport that's associated with this widget
-      bool                       mIsMouseOver;
    };
 }
 #endif // stageglwidget_h__

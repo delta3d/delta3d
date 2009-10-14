@@ -45,8 +45,6 @@ namespace dtEditQt
 
          if (mViewport)
          {
-            mViewport->setInteractionMode(Viewport::InteractionMode::CAMERA);
-
             mViewport->trapMouseCursor();
          }
 
@@ -65,8 +63,6 @@ namespace dtEditQt
 
          if (mViewport)
          {
-            mViewport->GetObjectMotionModel()->SetInteractionEnabled(true);
-            mViewport->setInteractionMode(Viewport::InteractionMode::NOTHING);
             mViewport->releaseMouseCursor();
          }
 
@@ -91,8 +87,8 @@ namespace dtEditQt
          if (mCameraMode == CAMERA_PAN)
          {
             // Calculate the translation amount.
-            float xAmount = (-dx / mViewport->getMouseSensitivity() * 4.0f) / mCamera->getZoom();
-            float yAmount = ( dy / mViewport->getMouseSensitivity() * 4.0f) / mCamera->getZoom();
+            float xAmount = (-dx * mViewport->getMouseSensitivity()) / mCamera->getZoom();
+            float yAmount = ( dy * mViewport->getMouseSensitivity()) / mCamera->getZoom();
 
             mCamera->move(mCamera->getRightDir() * xAmount);
             mCamera->move(mCamera->getUpDir() * yAmount);
@@ -104,11 +100,11 @@ namespace dtEditQt
             moveVec.normalize();
             if (dy <= -1.0f)
             {
-               mCamera->zoom(1.1f);
+               mCamera->zoom(1.0f + 0.1f * mViewport->getMouseSensitivity());
             }
             else if (dy >= 1.0f)
             {
-               mCamera->zoom(0.9f);
+               mCamera->zoom(1.0f - 0.1f * mViewport->getMouseSensitivity());
             }
          }
 
@@ -127,11 +123,11 @@ namespace dtEditQt
          {
             if (delta > 0)
             {
-               mCamera->zoom(1.3f);
+               mCamera->zoom(1.0f + 0.3f * mViewport->getMouseSensitivity());
             }
             else
             {
-               mCamera->zoom(0.7f);
+               mCamera->zoom(1.0f - 0.3f * mViewport->getMouseSensitivity());
             }
 
             return true;

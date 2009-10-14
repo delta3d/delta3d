@@ -40,6 +40,7 @@
 #include <dtCore/camera.h>
 
 #include <dtDAL/transformableactorproxy.h>
+#include <dtEditQt/export.h>
 
 namespace dtEditQt
 {
@@ -49,7 +50,7 @@ namespace dtEditQt
     * The camera class provides a view into the scene.  It supports orthographic
     * and perspective views.
     */
-   class StageCamera : public QObject, public osg::Referenced
+   class DT_EDITQT_EXPORT StageCamera : public QObject, public osg::Referenced
    {
       Q_OBJECT
 

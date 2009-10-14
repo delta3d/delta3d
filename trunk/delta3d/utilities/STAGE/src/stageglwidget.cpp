@@ -7,7 +7,6 @@ dtEditQt::STAGEGLWidget::STAGEGLWidget(bool drawOnSeparateThread,  QWidget* pare
                                        const QGLWidget* shareWidget, Qt::WindowFlags f)
    : dtQt::OSGAdapterWidget(drawOnSeparateThread, parent, shareWidget, f)
    , mViewport(NULL)
-   , mIsMouseOver(false)
 {
 }
 
@@ -20,6 +19,11 @@ dtEditQt::STAGEGLWidget::~STAGEGLWidget()
 ////////////////////////////////////////////////////////////////////////////////
 void dtEditQt::STAGEGLWidget::mouseMoveEvent(QMouseEvent* e)
 {
+   if (ViewportManager::GetInstance().EnableViewport(mViewport, true))
+   {
+      mViewport->SetEnabled(true); //enable the Viewport
+   }
+
    dtQt::OSGAdapterWidget::mouseMoveEvent(e);
 
    if (mViewport!= NULL)
@@ -37,6 +41,11 @@ void dtEditQt::STAGEGLWidget::SetViewport(EditorViewport* viewport)
 ////////////////////////////////////////////////////////////////////////////////
 void dtEditQt::STAGEGLWidget::mousePressEvent(QMouseEvent* e)
 {
+   if (ViewportManager::GetInstance().EnableViewport(mViewport, true))
+   {
+      mViewport->SetEnabled(true); //enable the Viewport
+   }
+
    dtQt::OSGAdapterWidget::mousePressEvent(e);
 
    if (mViewport != NULL)
@@ -48,6 +57,11 @@ void dtEditQt::STAGEGLWidget::mousePressEvent(QMouseEvent* e)
 ////////////////////////////////////////////////////////////////////////////////
 void dtEditQt::STAGEGLWidget::mouseReleaseEvent(QMouseEvent* e)
 {
+   if (ViewportManager::GetInstance().EnableViewport(mViewport, true))
+   {
+      mViewport->SetEnabled(true); //enable the Viewport
+   }
+
    dtQt::OSGAdapterWidget::mouseReleaseEvent(e);
 
    if (mViewport != NULL)
@@ -59,7 +73,10 @@ void dtEditQt::STAGEGLWidget::mouseReleaseEvent(QMouseEvent* e)
 ////////////////////////////////////////////////////////////////////////////////
 void dtEditQt::STAGEGLWidget::dragEnterEvent(QDragEnterEvent* event)
 {
-   mIsMouseOver = true;
+   if (ViewportManager::GetInstance().EnableViewport(mViewport, true))
+   {
+      mViewport->SetEnabled(true); //enable the Viewport
+   }
 
    if (mViewport != NULL)
    {
@@ -74,8 +91,6 @@ void dtEditQt::STAGEGLWidget::dragEnterEvent(QDragEnterEvent* event)
 ////////////////////////////////////////////////////////////////////////////////
 void dtEditQt::STAGEGLWidget::dragLeaveEvent(QDragLeaveEvent* event)
 {
-   mIsMouseOver = false;
-
    if (mViewport != NULL)
    {
       if (!mViewport->GetIsRemoved())
@@ -89,6 +104,11 @@ void dtEditQt::STAGEGLWidget::dragLeaveEvent(QDragLeaveEvent* event)
 ////////////////////////////////////////////////////////////////////////////////
 void dtEditQt::STAGEGLWidget::dragMoveEvent(QDragMoveEvent* event)
 {
+   if (ViewportManager::GetInstance().EnableViewport(mViewport, true))
+   {
+      mViewport->SetEnabled(true); //enable the Viewport
+   }
+
    if (mViewport != NULL)
    {
       mViewport->dragMoveEvent(event);
@@ -98,6 +118,11 @@ void dtEditQt::STAGEGLWidget::dragMoveEvent(QDragMoveEvent* event)
 ////////////////////////////////////////////////////////////////////////////////
 void dtEditQt::STAGEGLWidget::dropEvent(QDropEvent* event)
 {
+   if (ViewportManager::GetInstance().EnableViewport(mViewport, true))
+   {
+      mViewport->SetEnabled(true); //enable the Viewport
+   }
+
    if (mViewport != NULL)
    {
       mViewport->dropEvent(event);
@@ -117,6 +142,7 @@ void dtEditQt::STAGEGLWidget::paintGL()
    bool viewAdded = false;
    if (ViewportManager::GetInstance().EnableViewport(mViewport, true))
    {
+      mViewport->SetEnabled(true); //enable the Viewport
       viewAdded = true;
    }
 
@@ -124,9 +150,10 @@ void dtEditQt::STAGEGLWidget::paintGL()
    mViewport->paintGL();
 
    //put things back the way they were
-   if (viewAdded && !mIsMouseOver)
+   if (viewAdded)
    {
       ViewportManager::GetInstance().EnableViewport(mViewport, false);
+      mViewport->SetEnabled(false); //disable the Viewport
    }   
 }
 
@@ -155,6 +182,11 @@ void dtEditQt::STAGEGLWidget::resizeGL(int width, int height)
 ////////////////////////////////////////////////////////////////////////////////
 void dtEditQt::STAGEGLWidget::wheelEvent(QWheelEvent* e)
 {
+   if (ViewportManager::GetInstance().EnableViewport(mViewport, true))
+   {
+      mViewport->SetEnabled(true); //enable the Viewport
+   }
+
    dtQt::OSGAdapterWidget::wheelEvent(e);
 
    if (mViewport != NULL)
@@ -166,6 +198,11 @@ void dtEditQt::STAGEGLWidget::wheelEvent(QWheelEvent* e)
 ////////////////////////////////////////////////////////////////////////////////
 void dtEditQt::STAGEGLWidget::keyPressEvent(QKeyEvent* e)
 {
+   if (ViewportManager::GetInstance().EnableViewport(mViewport, true))
+   {
+      mViewport->SetEnabled(true); //enable the Viewport
+   }
+
    dtQt::OSGAdapterWidget::keyPressEvent(e);
    if (mViewport != NULL)
    {
@@ -176,6 +213,11 @@ void dtEditQt::STAGEGLWidget::keyPressEvent(QKeyEvent* e)
 ////////////////////////////////////////////////////////////////////////////////
 void dtEditQt::STAGEGLWidget::keyReleaseEvent(QKeyEvent* e)
 {
+   if (ViewportManager::GetInstance().EnableViewport(mViewport, true))
+   {
+      mViewport->SetEnabled(true); //enable the Viewport
+   }
+
    dtQt::OSGAdapterWidget::keyReleaseEvent(e);
    if (mViewport != NULL)
    {
@@ -186,6 +228,11 @@ void dtEditQt::STAGEGLWidget::keyReleaseEvent(QKeyEvent* e)
 ////////////////////////////////////////////////////////////////////////////////
 void dtEditQt::STAGEGLWidget::mouseDoubleClickEvent(QMouseEvent* e)
 {
+   if (ViewportManager::GetInstance().EnableViewport(mViewport, true))
+   {
+      mViewport->SetEnabled(true); //enable the Viewport
+   }
+
    dtQt::OSGAdapterWidget::mouseDoubleClickEvent(e);
    if (mViewport != NULL)
    {
@@ -196,8 +243,6 @@ void dtEditQt::STAGEGLWidget::mouseDoubleClickEvent(QMouseEvent* e)
 ////////////////////////////////////////////////////////////////////////////////
 void dtEditQt::STAGEGLWidget::enterEvent(QEvent *e)
 {
-   mIsMouseOver = true;
-
    dtQt::OSGAdapterWidget::enterEvent(e);
    if (mViewport != NULL)
    {
@@ -213,8 +258,6 @@ void dtEditQt::STAGEGLWidget::enterEvent(QEvent *e)
 ////////////////////////////////////////////////////////////////////////////////
 void dtEditQt::STAGEGLWidget::leaveEvent(QEvent *e)
 {
-   mIsMouseOver = false;
-
    dtQt::OSGAdapterWidget::leaveEvent(e);
    if (mViewport != NULL)
    {
