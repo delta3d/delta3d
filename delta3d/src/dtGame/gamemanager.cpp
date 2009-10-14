@@ -694,18 +694,17 @@ namespace dtGame
    void GameManager::InvokeGlobalInvokables(const Message& message)
    {
       // statistics stuff.
-      bool logActors = mGMImpl->mGMStatistics.ShouldWeLogActors();
+      const bool logActors = mGMImpl->mGMStatistics.ShouldWeLogActors();
       dtCore::Timer_t frameTickStartCurrent(0);
-      bool isATickLocalMessage = (message.GetMessageType() == MessageType::TICK_LOCAL);
+      const bool isATickLocalMessage = (message.GetMessageType() == MessageType::TICK_LOCAL);
 
       // GLOBAL INVOKABLES - Process it on globally registered invokables
       const MessageType& msgType = message.GetMessageType();
-      std::multimap<const MessageType*, std::pair<dtCore::RefPtr<GameActorProxy>, std::string> >::iterator itor
-         = mGlobalMessageListeners.find(&msgType);
+      GlobalMessageListenerMap::iterator itor = mGlobalMessageListeners.find(&msgType);
 
       while (itor != mGlobalMessageListeners.end() && itor->first == &msgType)
       {
-         std::pair<dtCore::RefPtr<GameActorProxy>, std::string >& listener = itor->second;
+         ProxyInvokablePair& listener = itor->second;
          ++itor;
 
          // hold onto the actor in a refptr so that the stats code
@@ -753,8 +752,9 @@ namespace dtGame
                                                         mGMImpl->mGMStatistics.mStatsTickClock.Tick());
 
                mGMImpl->mGMStatistics.UpdateDebugStats(listenerActorProxy->GetId(),
-                     listenerActorProxy->GetName(), frameTickDelta,
-                     false, isATickLocalMessage);
+                                                       listenerActorProxy->GetName(),
+                                                       frameTickDelta,
+                                                       false, isATickLocalMessage);
             }
          }
          else
