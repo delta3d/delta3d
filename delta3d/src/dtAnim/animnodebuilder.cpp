@@ -323,7 +323,6 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
 
          // Create osg arrays that can be passed to create buffer objects
          osg::FloatArray* osgVertexArray = new osg::FloatArray(stride * numVerts, vertexArray);
-         osg::IntArray* osgIndexArray = new osg::IntArray(numIndices, indexArray);      
 
          vertexVBO = new osg::VertexBufferObject;
          indexEBO = new osg::ElementBufferObject;
@@ -347,8 +346,6 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
          modelData->SetVertexBufferObject(vertexVBO);
          modelData->SetElementBufferObject(indexEBO);
       }
-
-      const int numIndices = 3 * hardwareModel->getTotalFaceCount();
 
       dtCore::ShaderProgram* shadProg = LoadShaders(*modelData, *geode);
 

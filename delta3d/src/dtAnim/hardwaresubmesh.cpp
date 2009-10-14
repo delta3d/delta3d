@@ -169,8 +169,6 @@ void HardwareSubmeshDrawable::drawImplementation(osg::RenderInfo& renderInfo) co
    // Prepare to bind buffer objects
    state.disableAllVertexArrays();
 
-   const Extensions* glExt = getExtensions(state.getContextID(),true);
-
    state.bindVertexBufferObject(mVertexVBO);
 
    unsigned stride = 18 * sizeof(float);

@@ -195,7 +195,7 @@ namespace dtCore
    ////////////////////////////////////////////////////////////////////////////////
    DT_CORE_EXPORT bool IsEnvironment(const std::string& env)
    {
-      if (char* ptr = getenv(env.c_str()))
+      if (getenv(env.c_str()))
       {
          return true;
       }

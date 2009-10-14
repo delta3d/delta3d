@@ -784,7 +784,6 @@ namespace dtActors
 
                dtCore::RefPtr<dtCore::Object> postMesh = geomData->mPost;
 
-               osg::Node* postMeshNode = postMesh->LoadFile(postMeshName);
                postMesh->SetScale(osg::Vec3(mFenceScale, mFenceScale, mFenceScale));
 
                // Set the position of the object.

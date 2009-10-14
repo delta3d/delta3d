@@ -24,6 +24,8 @@
 #include <dtGame/export.h>
 #include <dtGame/actorcomponent.h>
 #include <dtCore/refptr.h>
+
+#include <algorithm>
 #include <map>
 
 namespace dtGame

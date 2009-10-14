@@ -664,7 +664,6 @@ namespace dtAI
    /////////////////////////////////////////////////////////////////////////////
    bool WaypointGraph::RemoveEdge(WaypointID wayFrom, WaypointID wayTo)
    {
-      bool result = false;
       const WaypointInterface* wpLhs = FindWaypoint(wayFrom);
       const WaypointInterface* wpRhs = FindWaypoint(wayTo);
 
