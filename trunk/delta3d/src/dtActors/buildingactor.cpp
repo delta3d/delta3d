@@ -1352,7 +1352,6 @@ namespace dtActors
          if (xVal >= point.x())
          {
             int leftCount = index;
-            int rightCount = (int)intersectPoints.size() - index;
 
             float oddTest = float(leftCount) * 0.5f;
 

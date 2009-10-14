@@ -230,7 +230,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void ViewportOverlay::select(dtCore::DeltaDrawable* drawable)
    {
-      osg::StateSet* ss = mSelectionDecorator->getOrCreateStateSet();
+      //osg::StateSet* ss = mSelectionDecorator->getOrCreateStateSet();
 
       if (drawable == NULL || drawable->GetOSGNode() == NULL)
       {         

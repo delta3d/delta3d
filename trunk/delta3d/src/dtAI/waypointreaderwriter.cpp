@@ -147,8 +147,6 @@ namespace dtAI
                         int searchLevel = -1;
                         if(*ot == *WaypointTypes::WAYPOINT_COLLECTION)
                         {
-                           WaypointCollection* wc = static_cast<WaypointCollection*>(wi);
-                           
                            //read our search level
                            ds.Read(searchLevel);
 

@@ -723,7 +723,7 @@ namespace dtGame
 
       // COMPUTE BLENDED VELOCITY - this smooths out some of the harsh blends. We do
       // it in a fraction of the time of the translation else we get big overblown curves.
-      osg::Vec3 mBlendedVelocity = mLastVelocity; mVelocityBeforeLastUpdate;
+      osg::Vec3 mBlendedVelocity = mLastVelocity;
       float velBlendTime = mTranslationEndSmoothingTime/3.0f;
       if ((velBlendTime > 0.0f) && (mTranslationElapsedTimeSinceUpdate < velBlendTime))
       {

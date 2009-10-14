@@ -239,14 +239,14 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    void BatchIsector::SingleISector::GetHitPoint( osg::Vec3& xyz, int pointNum ) const
    {
-      if (pointNum >= GetNumberOfHits()) return;
+      if (pointNum >= (int) GetNumberOfHits()) return;
 
       xyz = mHitList[pointNum].getWorldIntersectPoint();
    }
    ///////////////////////////////////////////////////////////////////////////////
    void BatchIsector::SingleISector::GetHitPointNormal( osg::Vec3& normal, int pointNum ) const
    {
-      if (pointNum >= GetNumberOfHits()) return;
+      if (pointNum >= (int) GetNumberOfHits()) return;
 
       normal = mHitList[pointNum].getWorldIntersectNormal();
    }

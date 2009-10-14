@@ -244,8 +244,6 @@ namespace dtAnim
    ////////////////////////////////////////////////////////////////////////////////////////
    void SubmeshDrawable::InitVertexBuffers(osg::State& state) const
    {
-      osg::Drawable::Extensions* glExt = osg::Drawable::getExtensions(state.getContextID(), true);     
-
       int vertexCountTotal = 0;
       int faceCountTotal = 0;
 
@@ -331,7 +329,6 @@ namespace dtAnim
 
       // Create osg arrays that can be passed to create buffer objects
       osg::FloatArray* osgVertexArray = new osg::FloatArray(STRIDE * vertexCountTotal, vertexArrayStart);
-      osg::IntArray* osgIndexArray = new osg::IntArray(faceCountTotal * 3, indexArrayStart);     
 
       osg::DrawElements* drawElements = NULL;
       
