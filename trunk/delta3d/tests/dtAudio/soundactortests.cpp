@@ -118,14 +118,14 @@ void SoundActorTests::tearDown()
    dtCore::System::GetInstance().SetPause(false);
    dtCore::System::GetInstance().Stop();
 
-   dtAudio::AudioManager::Destroy();
-
-   if(mGameManager.valid())
+   if (mGameManager.valid())
    {
       mGameManager->DeleteAllActors();
       mGameManager->UnloadActorRegistry(LIBRARY_TEST_GAME_ACTOR);
       mGameManager = NULL;
    }
+
+   dtAudio::AudioManager::Destroy();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -140,7 +140,7 @@ void SoundActorTests::TestProperties()
 {
    try
    {
-      const dtAudio::SoundActorProxy* proxy = mProxy.get();
+      dtAudio::SoundActorProxy* proxy = mProxy.get();
 
       // Get the tested properties.
       // Random Sound Effect
@@ -195,6 +195,54 @@ void SoundActorTests::TestProperties()
          propRandTimeMax->GetValue() == dtAudio::SoundActorProxy::DEFAULT_RANDOM_TIME_MAX );
       CPPUNIT_ASSERT_MESSAGE("Sound min random time is 5 by default",
          propRandTimeMin->GetValue() == dtAudio::SoundActorProxy::DEFAULT_RANDOM_TIME_MIN );
+
+      float testFloat = 0.73f;
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(proxy->GetSound()->GetGain(), proxy->GetGain(), 0.01f);
+      proxy->SetGain(testFloat);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(testFloat, proxy->GetSound()->GetGain(), 0.01f);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(testFloat, proxy->GetGain(), 0.01f);
+
+      //Change the float to make sure all the properties differ.
+      testFloat += 0.1f;
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(proxy->GetSound()->GetMaxGain(), proxy->GetMaxGain(), 0.01f);
+      proxy->SetMaxGain(testFloat);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(testFloat, proxy->GetSound()->GetMaxGain(), 0.01f);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(testFloat, proxy->GetMaxGain(), 0.01f);
+
+      //Change the float to make sure all the properties differ.
+      testFloat -= 0.4f;
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(proxy->GetSound()->GetMinGain(), proxy->GetMinGain(), 0.01f);
+      proxy->SetMinGain(testFloat);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(testFloat, proxy->GetSound()->GetMinGain(), 0.01f);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(testFloat, proxy->GetMinGain(), 0.01f);
+
+      testFloat = 0.9f;
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(proxy->GetSound()->GetPitch(), proxy->GetPitch(), 0.01f);
+      proxy->SetPitch(testFloat);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(testFloat, proxy->GetSound()->GetPitch(), 0.01f);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(testFloat, proxy->GetPitch(), 0.01f);
+
+      testFloat = 1.7f;
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(proxy->GetSound()->GetMaxDistance(), proxy->GetMaxDistance(), 0.01f);
+      proxy->SetMaxDistance(testFloat);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(testFloat, proxy->GetSound()->GetMaxDistance(), 0.01f);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(testFloat, proxy->GetMaxDistance(), 0.01f);
+
+      testFloat = 0.88f;
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(proxy->GetSound()->GetRolloffFactor(), proxy->GetRolloffFactor(), 0.01f);
+      proxy->SetRolloffFactor(testFloat);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(testFloat, proxy->GetSound()->GetRolloffFactor(), 0.01f);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL(testFloat, proxy->GetRolloffFactor(), 0.01f);
+
+      CPPUNIT_ASSERT_EQUAL(proxy->GetSound()->IsLooping(), proxy->IsLooping());
+      proxy->SetLooping(false);
+      CPPUNIT_ASSERT_EQUAL(false, proxy->GetSound()->IsLooping());
+      CPPUNIT_ASSERT_EQUAL(false, proxy->IsLooping());
+
+      CPPUNIT_ASSERT_EQUAL(proxy->GetSound()->IsListenerRelative(), proxy->IsListenerRelative());
+      proxy->SetListenerRelative(true);
+      CPPUNIT_ASSERT_EQUAL(true, proxy->GetSound()->IsListenerRelative());
+      CPPUNIT_ASSERT_EQUAL(true, proxy->IsListenerRelative());
    }
    catch (const dtUtil::Exception& e)
    {
@@ -208,6 +256,7 @@ void SoundActorTests::TestTimedPlay()
 {
    try
    {
+
       // Test loading a sound.
       mProxy->LoadFile( dtCore::GetDeltaRootPath() + "/tests/data/Sounds/silence.wav" );
       dtAudio::SoundActor* soundActor = NULL;
@@ -225,32 +274,28 @@ void SoundActorTests::TestTimedPlay()
 
       // Test adding to the game manager.
       const float offsetTime = 0.1f;
+
+      //Clear all the randomness.
+      mProxy->SetMinRandomTime(0.0);
+      mProxy->SetMaxRandomTime(0.0);
       mProxy->SetOffsetTime(offsetTime);
       sound->SetLooping( true );
       mGameManager->AddActor( *mProxy, false, false );
 
-      dtCore::Timer timer;
+      double simTime = dtCore::System::GetInstance().GetSimulationTime();
       dtCore::System::GetInstance().Step();
-      if (timer.ElapsedSeconds() < offsetTime)
+      double newSimTime = dtCore::System::GetInstance().GetSimulationTime();
+      if ((newSimTime - simTime) < offsetTime)
       {
          CPPUNIT_ASSERT_MESSAGE("Sound should not be playing yet.",
-                                 sound->IsPlaying() == false );
+                                 !sound->IsPlaying());
+      }
+      else
+      {
+         CPPUNIT_ASSERT_MESSAGE("Sound should be playing now.",
+                                 sound->IsPlaying());
       }
  
-      /*TickSystem(20);
-      if (timer.ElapsedSeconds() < offsetTime)
-      {
-         CPPUNIT_ASSERT_MESSAGE("Sound should still not be playing yet.",
-                                sound->IsPlaying() == false);
-      }
-
-      TickSystem(81);
-      if (timer.ElapsedSeconds() > offsetTime)
-      {
-         CPPUNIT_ASSERT_MESSAGE("Sound should now be playing.",
-                                sound->IsPlaying() == true);
-      }*/
-
       // --- Stop the sound
       sound->Stop();
       dtCore::System::GetInstance().Step(); // Sends sound commands to Audio Manager.
