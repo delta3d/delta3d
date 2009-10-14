@@ -143,6 +143,7 @@ AnimNodeBuilder::AnimNodeBuilder()
    }
    else
    {
+      LOG_WARNING("dtAnim could not deduce the hardware capability, no geometry will be rendered.")
       SetCreate(CreateFunc(this, &AnimNodeBuilder::CreateNULL));
    }
 }

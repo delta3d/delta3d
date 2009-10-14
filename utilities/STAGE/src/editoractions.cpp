@@ -979,7 +979,16 @@ namespace dtEditQt
       while (selection.size())
       {
          // First check if this actor is in any groups.
-         dtDAL::ActorProxy* proxy = const_cast<dtDAL::ActorProxy*>(selection.back().get());
+         dtDAL::ActorProxy* proxy = 
+            const_cast<dtDAL::ActorProxy*>(selection.back().get());
+
+         //don't allow the main Volume Brush to be deleted:
+         if (proxy->GetActor() == 
+               EditorData::GetInstance().getMainWindow()->GetVolumeEditActor())
+         {
+            selection.pop_back();
+            continue;
+         }         
 
          int groupIndex = currMap->FindGroupForActor(proxy);
          if (groupIndex > -1)
@@ -994,7 +1003,8 @@ namespace dtEditQt
                deleteProxy(proxy, currMap);
 
                // Now remove this actor from the selection list.
-               for (int selectionIndex = 0; selectionIndex < (int)selection.size(); selectionIndex++)
+               for (int selectionIndex = 0; 
+                    selectionIndex < (int)selection.size(); selectionIndex++)
                {
                   if (selection[selectionIndex].get() == proxy)
                   {
