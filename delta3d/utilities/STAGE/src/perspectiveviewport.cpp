@@ -85,6 +85,55 @@ namespace dtEditQt
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   bool PerspectiveViewport::beginCameraMode(QMouseEvent* e)
+   {
+      if (EditorViewport::beginCameraMode(e))
+      {
+         if (getMoveActorWithCamera() && getEnableKeyBindings() &&
+            e->modifiers() == Qt::ShiftModifier)
+         {
+            attachCurrentSelectionToCamera();
+            saveSelectedActorOrigValues(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
+            saveSelectedActorOrigValues(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
+            saveSelectedActorOrigValues("Scale");
+         }
+
+         return true;
+      }
+
+      return false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool PerspectiveViewport::endCameraMode(QMouseEvent* e)
+   {
+      if (EditorViewport::endCameraMode(e))
+      {
+         if (getMoveActorWithCamera() &&
+            getEnableKeyBindings() &&
+            getCamera()->getNumActorAttachments() != 0)
+         {
+            // we could send hundreds of translation and rotation events, so make sure
+            // we surround it in a change transaction
+            EditorEvents::GetInstance().emitBeginChangeTransaction();
+            EditorData::GetInstance().getUndoManager().beginMultipleUndo();
+            updateActorSelectionProperty(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
+            updateActorSelectionProperty(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
+            updateActorSelectionProperty("Scale");
+            EditorData::GetInstance().getUndoManager().endMultipleUndo();
+
+            EditorEvents::GetInstance().emitEndChangeTransaction();
+
+            getCamera()->removeAllActorAttachments();
+         }
+
+         return true;
+      }
+
+      return false;
+   }
+
    ///////////////////////////////////////////////////////////////////////////////
    bool PerspectiveViewport::beginActorMode(QMouseEvent* e)
    {

@@ -5,6 +5,7 @@ ADD_SUBDIRECTORY(plugins/STMapExporterTool)
 ADD_SUBDIRECTORY(plugins/STPluginDialog)
 ADD_SUBDIRECTORY(plugins/STMassImporter)
 ADD_SUBDIRECTORY(plugins/STRandomActorGenerator)
+ADD_SUBDIRECTORY(plugins/STRTSCamera)
 
 SET(APP_NAME STAGE)
  

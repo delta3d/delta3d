@@ -32,6 +32,7 @@
 #include <dtEditQt/viewport.h>
 #include <dtEditQt/stageobjectmotionmodel.h>
 #include <dtEditQt/stagecameramotionmodel.h>
+#include <dtEditQt/export.h>
 
 namespace dtEditQt {
 
@@ -39,7 +40,7 @@ namespace dtEditQt {
     * This class is the base class for all viewports that will be used to
     * edit the maps.
     */
-   class EditorViewport : public Viewport
+   class DT_EDITQT_EXPORT EditorViewport : public Viewport
    {
       Q_OBJECT
 
@@ -63,27 +64,17 @@ namespace dtEditQt {
        */
       bool getMoveActorWithCamera() const { return mAttachActorToCamera; }
 
-      ///**
-      // * Moves the camera.
-      // * @par
-      // *  The camera's movement is determined by the current mode of the
-      // *  perspective viewport:<br>
-      // *      CAMERA_TRANSLATE - The camera is moved by up/down (dy) and
-      // *          left/right (dx). <br>
-      // *      CAMERA_NAVIGATE - The camera is moved forward/backward (dy) and
-      // *          can be rotated about its up axis. (dx). <br>
-      // *      CAMERA_LOOK - The camera is stationary and can look in any direction. <br>
-      // * @param dx
-      // * @param dy
-      // */
-      //virtual bool moveCamera(float dx, float dy);
-
       /**
       * Sets the current camera motion model.
       *
       * @param[in]  motion  The camera motion model (use NULL for default).
       */
       void setCameraMotionModel(STAGECameraMotionModel* motion = NULL);
+
+      /**
+      * Retrieves the current camera motion mode.
+      */
+      STAGECameraMotionModel* getCameraMotionModel() {return mCameraMotionModel.get();}
 
       /**
        * Sets the scene to be rendered by this viewport.

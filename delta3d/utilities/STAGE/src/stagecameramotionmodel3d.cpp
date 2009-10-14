@@ -18,6 +18,7 @@ namespace dtEditQt
    ////////////////////////////////////////////////////////////////////////////////
    STAGECameraMotionModel3D::STAGECameraMotionModel3D(const std::string& name)
       : STAGECameraMotionModel(name)
+      , mCameraMode(NOTHING)
    {
    }
 
@@ -32,22 +33,6 @@ namespace dtEditQt
       if (STAGECameraMotionModel::BeginCameraMode(e))
       {
          if (!mViewport) return false;
-
-         mViewport->setInteractionMode(Viewport::InteractionMode::CAMERA);
-
-         if (mViewport->getMoveActorWithCamera() && mViewport->getEnableKeyBindings() &&
-            e->modifiers() == Qt::ShiftModifier &&
-            mCameraMode == NOTHING)
-         {
-            PerspectiveViewport* perspectiveViewport = dynamic_cast<PerspectiveViewport*>(mViewport);
-            if (perspectiveViewport)
-            {
-               perspectiveViewport->attachCurrentSelectionToCamera();
-               perspectiveViewport->saveSelectedActorOrigValues(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
-               perspectiveViewport->saveSelectedActorOrigValues(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
-               perspectiveViewport->saveSelectedActorOrigValues("Scale");
-            }
-         }
 
          if ((mLeftMouse && mRightMouse) ||
             mViewport->GetMouseButtons() == Qt::MidButton)
@@ -87,40 +72,21 @@ namespace dtEditQt
          {
             mCameraMode = CAMERA_LOOK;
             mViewport->beginCameraMode(e);
+            return false;
          }
          else if (mRightMouse && !mLeftMouse)
          {
             mCameraMode = CAMERA_NAVIGATE;
             mViewport->beginCameraMode(e);
+            return false;
          }
          else
          {
-            mViewport->GetObjectMotionModel()->SetInteractionEnabled(true);
-
-            mViewport->setInteractionMode(Viewport::InteractionMode::NOTHING);
-
             mCameraMode = NOTHING;
             mViewport->releaseMouseCursor();
-            if (mViewport->getMoveActorWithCamera() &&
-               mViewport->getEnableKeyBindings() &&
-               mCamera->getNumActorAttachments() != 0)
-            {
-               // we could send hundreds of translation and rotation events, so make sure
-               // we surround it in a change transaction
-               EditorEvents::GetInstance().emitBeginChangeTransaction();
-               EditorData::GetInstance().getUndoManager().beginMultipleUndo();
-               mViewport->updateActorSelectionProperty(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
-               mViewport->updateActorSelectionProperty(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
-               mViewport->updateActorSelectionProperty("Scale");
-               EditorData::GetInstance().getUndoManager().endMultipleUndo();
 
-               EditorEvents::GetInstance().emitEndChangeTransaction();
-
-               mCamera->removeAllActorAttachments();
-            }
+            return true;
          }
-
-         return true;
       }
 
       return false;
@@ -144,21 +110,19 @@ namespace dtEditQt
 
             //Move along the view direction, however, ignore the z-axis.  This way
             //we can look at the ground but move parallel to it.
-            osg::Vec3 viewDir = mCamera->getViewDir() * ((float)-dy / mViewport->getMouseSensitivity());
+            osg::Vec3 viewDir = mCamera->getViewDir() * -dy * mViewport->getMouseSensitivity();
             viewDir[2] = 0.0f;
             mCamera->move(viewDir);
          }
          else if (mCameraMode == CAMERA_LOOK)
          {
-            mCamera->pitch(-dy / 10.0f);
-            mCamera->yaw(-dx / 10.0f);
+            mCamera->pitch(-dy * 0.1f * mViewport->getMouseSensitivity());
+            mCamera->yaw(-dx * 0.1f * mViewport->getMouseSensitivity());
          }
          else if (mCameraMode == CAMERA_TRANSLATE)
          {
-            mCamera->move(mCamera->getUpDir() *
-               (-dy / mViewport->getMouseSensitivity()));
-            mCamera->move(mCamera->getRightDir() *
-               (dx / mViewport->getMouseSensitivity()));
+            mCamera->move(mCamera->getUpDir() * -dy * mViewport->getMouseSensitivity());
+            mCamera->move(mCamera->getRightDir() * dx * mViewport->getMouseSensitivity());
          }
 
          return true;
@@ -172,7 +136,6 @@ namespace dtEditQt
    {
       if (STAGECameraMotionModel::WheelEvent(delta))
       {
-
          return true;
       }
 

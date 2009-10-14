@@ -45,6 +45,7 @@
 #include <dtCore/refptr.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/view.h>
+#include <dtEditQt/export.h>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
@@ -78,7 +79,7 @@ namespace dtEditQt
     * @see PerspectiveViewport
     * @see OrthoViewport
     */
-   class Viewport : public QObject
+   class DT_EDITQT_EXPORT Viewport : public QObject
    {
       Q_OBJECT
 
@@ -87,7 +88,7 @@ namespace dtEditQt
        * The RenderStyle enumeration contains the different ways in which
        * a particular viewport can render its scene.
        */
-      class RenderStyle : public dtUtil::Enumeration
+      class DT_EDITQT_EXPORT RenderStyle : public dtUtil::Enumeration
       {
          DECLARE_ENUM(RenderStyle);
 
@@ -111,7 +112,7 @@ namespace dtEditQt
        * determine the way a viewport responds to user input as well as
        * how the scene is manipulated.
        */
-      class InteractionMode : public dtUtil::Enumeration
+      class DT_EDITQT_EXPORT InteractionMode : public dtUtil::Enumeration
       {
          DECLARE_ENUM(InteractionMode);
 

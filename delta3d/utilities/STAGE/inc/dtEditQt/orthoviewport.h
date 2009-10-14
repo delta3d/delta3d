@@ -32,6 +32,7 @@
 
 #include <dtUtil/enumeration.h>
 #include "dtEditQt/editorviewport.h"
+#include <dtEditQt/export.h>
 
 namespace dtEditQt
 {
@@ -41,7 +42,7 @@ namespace dtEditQt
     * along each of the 3D axis.
     * @see OrthoViewType
     */
-   class OrthoViewport : public EditorViewport
+   class DT_EDITQT_EXPORT OrthoViewport : public EditorViewport
    {
       Q_OBJECT
 

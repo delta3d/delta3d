@@ -98,7 +98,7 @@ namespace dtEditQt
       , mView(new dtCore::View(name))
       , mIsector(new dtCore::Isector())
    {
-      mMouseSensitivity = 10.0f;
+      mMouseSensitivity = 1.0f;
       mInteractionMode = &InteractionMode::NOTHING;
       mRenderStyle = &RenderStyle::WIREFRAME;
 

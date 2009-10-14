@@ -78,23 +78,23 @@ namespace dtEditQt
       connect(mViewPort,SIGNAL(renderStyleChanged()),
               this, SLOT(onViewportRenderStyleChanged()));
 
-      if (mViewPort->getType() == ViewportManager::ViewportType::PERSPECTIVE)
-      {
+      //if (mViewPort->getType() == ViewportManager::ViewportType::PERSPECTIVE)
+      //{
          addCameraControlWidget();
-      }
-      else
-      {
-         if (mCameraMovementMenu != NULL)
-         {
-            delete mCameraMovementMenu;
-            mCameraMovementMenu = NULL;
-         }
-         if (mCameraSpeedGroup)
-         {
-            delete mCameraSpeedGroup;
-            mCameraSpeedGroup = NULL;
-         }
-      }
+      //}
+      //else
+      //{
+      //   if (mCameraMovementMenu != NULL)
+      //   {
+      //      delete mCameraMovementMenu;
+      //      mCameraMovementMenu = NULL;
+      //   }
+      //   if (mCameraSpeedGroup)
+      //   {
+      //      delete mCameraSpeedGroup;
+      //      mCameraSpeedGroup = NULL;
+      //   }
+      //}
 
       // Manually call the slot the first time the viewport is set so the state
       // of the actions are set properly.
@@ -282,7 +282,7 @@ namespace dtEditQt
    {
       if (mViewPort != NULL)
       {
-         mViewPort->setMouseSensitivity(100.0f);
+         mViewPort->setMouseSensitivity(0.2f);
          mCameraSpeedSlowest->setChecked(true);
       }
    }
@@ -292,7 +292,7 @@ namespace dtEditQt
    {
       if (mViewPort != NULL)
       {
-         mViewPort->setMouseSensitivity(50.0f);
+         mViewPort->setMouseSensitivity(0.5f);
          mCameraSpeedSlow->setChecked(true);
       }
    }
@@ -302,7 +302,7 @@ namespace dtEditQt
    {
       if (mViewPort != NULL)
       {
-         mViewPort->setMouseSensitivity(10.0f);
+         mViewPort->setMouseSensitivity(1.0f);
          mCameraSpeedNormal->setChecked(true);
       }
    }
@@ -312,7 +312,7 @@ namespace dtEditQt
    {
       if (mViewPort != NULL)
       {
-         mViewPort->setMouseSensitivity(3.0f);
+         mViewPort->setMouseSensitivity(2.0f);
          mCameraSpeedFast->setChecked(true);
       }
    }
@@ -322,7 +322,7 @@ namespace dtEditQt
    {
       if (mViewPort != NULL)
       {
-         mViewPort->setMouseSensitivity(0.2f);
+         mViewPort->setMouseSensitivity(5.0f);
          mCameraSpeedFastest->setChecked(true);
       }
    }
