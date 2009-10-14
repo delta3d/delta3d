@@ -69,7 +69,7 @@ namespace dtAudio
       //make sure AudioManager has been initialized
       if(!dtAudio::AudioManager::GetInstance().IsInitialized())
       {
-         dtAudio::AudioManager::Instantiate();       
+         dtAudio::AudioManager::Instantiate();
       }
 
       mSound = dtAudio::AudioManager::GetInstance().NewSound();
@@ -80,7 +80,7 @@ namespace dtAudio
    ///////////////////////////////////////////////////////////////////////////////
    SoundActor::~SoundActor()
    {
-      if(mSound.valid())
+      if (mSound.valid())
       {
          dtAudio::AudioManager::GetInstance().FreeSound(mSound.get());
       }
@@ -109,6 +109,14 @@ namespace dtAudio
       , mMaxRandomTime(SoundActorProxy::DEFAULT_RANDOM_TIME_MAX)
       , mOffsetTime(0.0f)
       , mPlaySoundAtStartup(true)
+      , mGain(0.0)
+      , mPitch(0.0)
+      , mMaxDistance(0.0)
+      , mRolloffFactor(0.0)
+      , mMinGain(0.0)
+      , mMaxGain(0.0)
+      , mLooping(true)
+      , mListenerRelative(false)
    {
       /**
        * @note You must instantiate, configure, and shutdown the
@@ -141,6 +149,17 @@ namespace dtAudio
     {
        SoundActor* actor = new SoundActor(*this);
        SetActor(*actor);
+       Sound* sound = GetSound();
+
+       //Read the defaults.
+       mLooping = sound->IsLooping();
+       mListenerRelative = sound->IsListenerRelative();
+       mRolloffFactor = sound->GetRolloffFactor();
+       mGain = sound->GetGain();
+       mPitch = sound->GetPitch();
+       mMaxGain = sound->GetMaxGain();
+       mMinGain = sound->GetMinGain();
+       mMaxDistance = sound->GetMaxDistance();
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -193,10 +212,8 @@ namespace dtAudio
     ///////////////////////////////////////////////////////////////////////////////
     void SoundActorProxy::BuildPropertyMap()
     {
-        const dtUtil::RefString& GROUPNAME = "Sound";
+        const dtUtil::RefString GROUPNAME = "Sound";
         GameActorProxy::BuildPropertyMap();
-
-        Sound* sound = static_cast<SoundActor&>(GetGameActor()).GetSound();
 
         // This property toggles whether or not a sound loops. A
         // value of true will loop the sound, while a value of false
@@ -205,8 +222,8 @@ namespace dtAudio
         AddProperty(new BooleanActorProperty(
            PROPERTY_LOOPING,
            PROPERTY_LOOPING,
-            MakeFunctor(*sound, &Sound::SetLooping),
-            MakeFunctorRet(*sound, &Sound::IsLooping),
+            MakeFunctor(*this, &SoundActorProxy::SetLooping),
+            MakeFunctorRet(*this, &SoundActorProxy::IsLooping),
             "Toggles if a sound loops continuously.", GROUPNAME));
 
         // This property manipulates the gain of a sound. It uses
@@ -216,8 +233,8 @@ namespace dtAudio
         AddProperty(new FloatActorProperty(
            PROPERTY_GAIN,
            PROPERTY_GAIN,
-            MakeFunctor(*sound, &Sound::SetGain),
-            MakeFunctorRet(*sound, &Sound::GetGain),
+            MakeFunctor(*this, &SoundActorProxy::SetGain),
+            MakeFunctorRet(*this, &SoundActorProxy::GetGain),
             "Sets the gain of a sound.", GROUPNAME));
 
         // This property manipulates the pitch of a sound. It uses
@@ -226,8 +243,8 @@ namespace dtAudio
         AddProperty(new FloatActorProperty(
            PROPERTY_PITCH,
            PROPERTY_PITCH,
-            MakeFunctor(*sound, &Sound::SetPitch),
-            MakeFunctorRet(*sound, &Sound::GetPitch),
+            MakeFunctor(*this, &SoundActorProxy::SetPitch),
+            MakeFunctorRet(*this, &SoundActorProxy::GetPitch),
             "Sets the pitch of a sound.", GROUPNAME));
 
         // This property toggles whether or not a sound is listerner
@@ -236,8 +253,8 @@ namespace dtAudio
         AddProperty(new BooleanActorProperty(
            PROPERTY_LISTENER_RELATIVE,
            PROPERTY_LISTENER_RELATIVE,
-            MakeFunctor(*sound, &Sound::SetListenerRelative),
-            MakeFunctorRet(*sound, &Sound::IsListenerRelative),
+            MakeFunctor(*this, &SoundActorProxy::SetListenerRelative),
+            MakeFunctorRet(*this, &SoundActorProxy::IsListenerRelative),
             "Toggles if a sound is relative to the listener.", GROUPNAME));
 
         // This property manipulates the maximum distance of a sound. It uses
@@ -246,8 +263,8 @@ namespace dtAudio
         AddProperty(new FloatActorProperty(
            PROPERTY_MAX_DISTANCE,
            PROPERTY_MAX_DISTANCE,
-            MakeFunctor(*sound, &Sound::SetMaxDistance),
-            MakeFunctorRet(*sound, &Sound::GetMaxDistance),
+            MakeFunctor(*this, &SoundActorProxy::SetMaxDistance),
+            MakeFunctorRet(*this, &SoundActorProxy::GetMaxDistance),
             "Sets the maximum distance of a sound.", GROUPNAME));
 
         // This property manipulates the roll off factor of a sound. It uses
@@ -256,8 +273,8 @@ namespace dtAudio
         AddProperty(new FloatActorProperty(
            PROPERTY_ROLLOFF_FACTOR,
            PROPERTY_ROLLOFF_FACTOR,
-            MakeFunctor(*sound, &Sound::SetRolloffFactor),
-            MakeFunctorRet(*sound, &Sound::GetRolloffFactor),
+            MakeFunctor(*this, &SoundActorProxy::SetRolloffFactor),
+            MakeFunctorRet(*this, &SoundActorProxy::GetRolloffFactor),
             "Sets the rolloff factor of a sound.", GROUPNAME));
 
         // This property manipulates the minimum gain of a sound. It uses
@@ -266,8 +283,8 @@ namespace dtAudio
         AddProperty(new FloatActorProperty(
            PROPERTY_MIN_GAIN,
            PROPERTY_MIN_GAIN,
-            MakeFunctor(*sound, &Sound::SetMinGain),
-            MakeFunctorRet(*sound, &Sound::GetMinGain),
+            MakeFunctor(*this, &SoundActorProxy::SetMinGain),
+            MakeFunctorRet(*this, &SoundActorProxy::GetMinGain),
             "Sets the minimum gain of a sound.", GROUPNAME));
 
         // This property manipulates the maximum gain of a sound. It uses
@@ -276,8 +293,8 @@ namespace dtAudio
         AddProperty(new FloatActorProperty(
            PROPERTY_MAX_GAIN,
            PROPERTY_MAX_GAIN,
-            MakeFunctor(*sound, &Sound::SetMaxGain),
-            MakeFunctorRet(*sound, &Sound::GetMaxGain),
+            MakeFunctor(*this, &SoundActorProxy::SetMaxGain),
+            MakeFunctorRet(*this, &SoundActorProxy::GetMaxGain),
             "Sets the maximum gain of a sound.", GROUPNAME));
 
         // This property manipulates the direction of a sound. It uses
@@ -346,7 +363,7 @@ namespace dtAudio
     ///////////////////////////////////////////////////////////////////////////////
     void SoundActorProxy::LoadFile(const std::string& fileName)
     {
-        Sound* snd = static_cast<SoundActor&>(GetGameActor()).GetSound();
+        Sound* snd = GetSound();
 
         if (!fileName.empty())
         {
@@ -357,7 +374,7 @@ namespace dtAudio
     ///////////////////////////////////////////////////////////////////////////////
     void SoundActorProxy::SetDirection(const osg::Vec3& dir)
     {
-        Sound* snd = static_cast<SoundActor&>(GetGameActor()).GetSound();
+        Sound* snd = GetSound();
 
         snd->SetDirection(dir);
     }
@@ -365,7 +382,7 @@ namespace dtAudio
     ///////////////////////////////////////////////////////////////////////////////
     osg::Vec3 SoundActorProxy::GetDirection()
     {
-        Sound* snd = static_cast<SoundActor&>(GetGameActor()).GetSound();
+        Sound* snd = GetSound();
 
         osg::Vec3 pos;
         snd->GetDirection(pos);
@@ -375,7 +392,7 @@ namespace dtAudio
     ///////////////////////////////////////////////////////////////////////////////
     void SoundActorProxy::SetVelocity(const osg::Vec3& vel)
     {
-        Sound* snd = static_cast<SoundActor&>(GetGameActor()).GetSound();
+        Sound* snd = GetSound();
 
         snd->SetVelocity(vel);
     }
@@ -383,7 +400,7 @@ namespace dtAudio
     ///////////////////////////////////////////////////////////////////////////////
     osg::Vec3 SoundActorProxy::GetVelocity()
     {
-        Sound* snd = static_cast<SoundActor&>(GetGameActor()).GetSound();
+        Sound* snd = GetSound();
 
         osg::Vec3 pos;
         snd->GetVelocity(pos);
@@ -393,7 +410,7 @@ namespace dtAudio
     ///////////////////////////////////////////////////////////////////////////////
     void SoundActorProxy::Play()
     {
-        Sound* snd = static_cast<SoundActor&>(GetGameActor()).GetSound();
+        Sound* snd = GetSound();
 
         snd->Play();
     }
@@ -435,5 +452,117 @@ namespace dtAudio
        const dtAudio::SoundActor* actor = NULL;
        GetActor(actor);
        return actor->GetSound();
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void SoundActorProxy::SetLooping(bool looping)
+    {
+       Sound* snd = GetSound();
+       snd->SetLooping(looping);
+       mLooping = looping;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    bool SoundActorProxy::IsLooping() const
+    {
+       return mLooping;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void SoundActorProxy::SetGain(float gain)
+    {
+       Sound* snd = GetSound();
+       snd->SetGain(gain);
+       mGain = gain;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    float SoundActorProxy::GetGain() const
+    {
+       return mGain;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void SoundActorProxy::SetPitch(float pitch)
+    {
+       Sound* snd = GetSound();
+       snd->SetPitch(pitch);
+       mPitch = pitch;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    float SoundActorProxy::GetPitch() const
+    {
+       return mPitch;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void SoundActorProxy::SetListenerRelative(bool lisrel)
+    {
+       Sound* snd = GetSound();
+       snd->SetListenerRelative(lisrel);
+       mListenerRelative = lisrel;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    bool SoundActorProxy::IsListenerRelative() const
+    {
+       return mListenerRelative;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void SoundActorProxy::SetMaxDistance(float max)
+    {
+       Sound* snd = GetSound();
+       snd->SetMaxDistance(max);
+       mMaxDistance = max;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    float SoundActorProxy::GetMaxDistance() const
+    {
+       return mMaxDistance;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void SoundActorProxy::SetRolloffFactor(float rolloff)
+    {
+       Sound* snd = GetSound();
+       snd->SetRolloffFactor(rolloff);
+       mRolloffFactor = rolloff;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    float SoundActorProxy::GetRolloffFactor() const
+    {
+       return mRolloffFactor;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void SoundActorProxy::SetMinGain(float min)
+    {
+       Sound* snd = GetSound();
+       snd->SetMinGain(min);
+       mMinGain = min;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    float SoundActorProxy::GetMinGain() const
+    {
+       return mMinGain;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void SoundActorProxy::SetMaxGain(float max)
+    {
+       Sound* snd = GetSound();
+       snd->SetMaxGain(max);
+       mMaxGain = max;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    float SoundActorProxy::GetMaxGain() const
+    {
+       return mMaxGain;
     }
 }

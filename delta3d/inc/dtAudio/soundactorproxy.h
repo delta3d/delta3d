@@ -49,14 +49,19 @@ namespace dtAudio
    private:
 
       dtCore::RefPtr<dtAudio::Sound> mSound;
+
+      float mGain, mPitch, mMaxDistance, mRolloffFactor, mMinGain, mMaxGain;
+
+      bool mLooping;
+      bool mListenerRelative;
    };
 
 
 
    /**
-    * @class SoundActorProxy
-    * @brief This proxy wraps the Sound Delta3D object.
-    */
+   * @class SoundActorProxy
+   * @brief This proxy wraps the Sound Delta3D object.
+   */
    class DT_AUDIO_EXPORT SoundActorProxy : public dtGame::GameActorProxy
    {
    public:
@@ -84,75 +89,75 @@ namespace dtAudio
       static const float DEFAULT_RANDOM_TIME_MIN;
 
       /**
-       * Constructor
-       */
+      * Constructor
+      */
       SoundActorProxy();
 
       /**
-       * Adds the properties that are common to all Delta3D physical objects.
-       */
+      * Adds the properties that are common to all Delta3D physical objects.
+      */
       virtual void BuildPropertyMap();
 
       /**
-       * Loads in a sound file
-       * @param fileName The file to load
-       */
+      * Loads in a sound file
+      * @param fileName The file to load
+      */
       void LoadFile(const std::string& fileName);
 
       /**
-       * Sets the direction
-       * @param dir The direction to Set
-       */
+      * Sets the direction
+      * @param dir The direction to Set
+      */
       void SetDirection(const osg::Vec3& dir);
 
       /**
-       * Gets the direction
-       * @return The current direction
-       */
+      * Gets the direction
+      * @return The current direction
+      */
       osg::Vec3 GetDirection();
 
       /**
-       * Sets the velocity
-       * @param vel The velocity to Set
-       */
+      * Sets the velocity
+      * @param vel The velocity to Set
+      */
       void SetVelocity(const osg::Vec3& vel);
 
       /**
-       * Gets the velocity
-       * @return The current velocity
-       */
+      * Gets the velocity
+      * @return The current velocity
+      */
       osg::Vec3 GetVelocity();
 
       /**
-       * Plays the sound immediately without using timers.
-       */
+      * Plays the sound immediately without using timers.
+      */
       void Play();
 
       /**
-       * Play the sound using the random time range properties set on this sound actor.
-       * A sound timer is created in the Game Manager to trigger the sound to play.
-       * The sound will play once the timer elapses while this actor is contained
-       * in the Game Manager.
-       * @param offsetSeconds Time in seconds to wait prior to playing the sound.
-       *        The offset is added with randomized time if this actor is set as random.
-       */
+      * Play the sound using the random time range properties set on this sound actor.
+      * A sound timer is created in the Game Manager to trigger the sound to play.
+      * The sound will play once the timer elapses while this actor is contained
+      * in the Game Manager.
+      * @param offsetSeconds Time in seconds to wait prior to playing the sound.
+      *        The offset is added with randomized time if this actor is set as random.
+      */
       void PlayQueued(float offsetSeconds = 0.0f);
 
       /**
-       * Gets the render mode of sound actor proxies.
-       * @return RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON.  Although this may seem a little
-       *  strange considering you cannot actually draw a sound, however, this informs the
-       *  world that this proxy's actor and billboard should be represented in the scene.
-       */
+      * Gets the render mode of sound actor proxies.
+      * @return RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON.  Although this may seem a little
+      *  strange considering you cannot actually draw a sound, however, this informs the
+      *  world that this proxy's actor and billboard should be represented in the scene.
+      */
       virtual const ActorProxy::RenderMode& GetRenderMode()
       {
-          return ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON;
+         return ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON;
       }
 
       /**
-       * Gets the billboard icon associated with sound actor proxies.
-       * @return
-       */
+      * Gets the billboard icon associated with sound actor proxies.
+      * @return
+      */
       virtual dtDAL::ActorProxyIcon* GetBillBoardIcon();
 
       /// Builds the invokables of this actor
@@ -178,68 +183,92 @@ namespace dtAudio
       void SetPlayAtStartup(bool val) {mPlaySoundAtStartup = val;}
 
       /**
-       * Set the minimum seconds to wait between random executions of the sound.
-       * @param seconds Minimum time to wait in whole and/or partial seconds.
-       */
+      * Set the minimum seconds to wait between random executions of the sound.
+      * @param seconds Minimum time to wait in whole and/or partial seconds.
+      */
       void SetMinRandomTime(float seconds) {mMinRandomTime = seconds;}
 
       /**
-       * @return Minimum time to wait in whole and/or partial seconds
-       *         prior to playing the sound.
-       */
+      * @return Minimum time to wait in whole and/or partial seconds
+      *         prior to playing the sound.
+      */
       float GetMinRandomTime() const {return mMinRandomTime;}
 
       /**
-       * Set the maximum seconds to wait between random executions of the sound.
-       * @param seconds Maximum time to wait in whole and/or partial seconds.
-       */
+      * Set the maximum seconds to wait between random executions of the sound.
+      * @param seconds Maximum time to wait in whole and/or partial seconds.
+      */
       void SetMaxRandomTime(float seconds) {mMaxRandomTime = seconds;}
 
       /**
-       * @return Maximum time to wait in whole and/or partial seconds
-       *         prior to playing the sound.
-       */
+      * @return Maximum time to wait in whole and/or partial seconds
+      *         prior to playing the sound.
+      */
       float GetMaxRandomTime() const {return mMaxRandomTime;}
 
       /**
-       * Set the seconds to wait before the initial execution of the sound.
-       * Note that this is only used when the sound actor enters the Game Manager.
-       * @param seconds Time to wait in whole and/or partial seconds.
-       */
+      * Set the seconds to wait before the initial execution of the sound.
+      * Note that this is only used when the sound actor enters the Game Manager.
+      * @param seconds Time to wait in whole and/or partial seconds.
+      */
       float GetOffsetTime() const {return mOffsetTime;}
 
       /**
-       * @return Time to wait in whole and/or partial seconds
-       *         prior to playing the sound for the first time
-       *         when the actor enters the Game Manager.
-       */
+      * @return Time to wait in whole and/or partial seconds
+      *         prior to playing the sound for the first time
+      *         when the actor enters the Game Manager.
+      */
       void SetOffsetTime(float seconds) {mOffsetTime = seconds;}
 
       /**
-       * Access the sound object directly without having to grab a hold
-       * of the associated Sound Actor.
-       * @return Sound object held by the associated Sound Actor.
-       */
+      * Access the sound object directly without having to grab a hold
+      * of the associated Sound Actor.
+      * @return Sound object held by the associated Sound Actor.
+      */
       dtAudio::Sound* GetSound();
 
       /**
-       * Access the sound object directly without having to grab a hold
-       * of the associated Sound Actor.
-       * @return Sound object held by the associated Sound Actor.
-       */
+      * Access the sound object directly without having to grab a hold
+      * of the associated Sound Actor.
+      * @return Sound object held by the associated Sound Actor.
+      */
       const dtAudio::Sound* GetSound() const;
+
+      void SetLooping(bool looping);
+      bool IsLooping() const;
+
+      void SetGain(float gain);
+      float GetGain() const;
+
+      void SetPitch(float pitch);
+      float GetPitch() const;
+
+      void SetListenerRelative(bool lisrel);
+      bool IsListenerRelative() const;
+
+      void SetMaxDistance(float max);
+      float GetMaxDistance() const;
+
+      void SetRolloffFactor(float rolloff);
+      float GetRolloffFactor() const;
+
+      void SetMinGain(float min);
+      float GetMinGain() const;
+
+      void SetMaxGain(float max);
+      float GetMaxGain() const;
 
    protected:
 
-     /**
+      /**
       * Creates a new positional sound.
       */
-     virtual void CreateActor();
+      virtual void CreateActor();
 
-     /**
+      /**
       * Destructor
       */
-     virtual ~SoundActorProxy();
+      virtual ~SoundActorProxy();
 
    private:
 
@@ -253,14 +282,19 @@ namespace dtAudio
       float mMaxRandomTime;
 
       /**
-       * Seconds to wait before play the sound.
-       * In case you have many objects all playing at random,
-       * this is so they wont overlap.
-       */
+      * Seconds to wait before play the sound.
+      * In case you have many objects all playing at random,
+      * this is so they wont overlap.
+      */
       float mOffsetTime;
 
       /// Flag that determines whether or not the sound begins at app startup
       bool mPlaySoundAtStartup;
+
+      float mGain, mPitch, mMaxDistance, mRolloffFactor, mMinGain, mMaxGain;
+
+      bool mLooping;
+      bool mListenerRelative;
    };
 } // namespace dtAudio
 
