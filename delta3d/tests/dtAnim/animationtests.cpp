@@ -55,7 +55,7 @@ namespace dtAnim
          void ForceFadeOut(float time){}; 
          void Recalculate(){}
          dtCore::RefPtr<Animatable> Clone(Cal3DModelWrapper* pWrapper)const{return new TestAnimatable(*this);}
-         void Prune(){}
+         void Prune(){SetPrune(true);}
 
          void SetStartTime2(float animStart1){ SetStartTime(animStart1);}
          void SetEndTime2(float animEnd1){ SetEndTime(animEnd1);}
@@ -97,6 +97,7 @@ namespace dtAnim
       CPPUNIT_TEST( TestSequenceMixer );
       CPPUNIT_TEST( TestAnimHelper );
       CPPUNIT_TEST( TestAnimController );
+      CPPUNIT_TEST( TestAnimCallback );
       CPPUNIT_TEST_SUITE_END();
       
       public:
@@ -110,6 +111,9 @@ namespace dtAnim
          void TestSequenceMixer();
          void TestAnimController();
          void TestAnimHelper();
+         void TestAnimCallback();
+
+         void OnAnimationCompleted(const dtAnim::Animatable& anim);
 
       private:
 
@@ -119,6 +123,8 @@ namespace dtAnim
             strstream.str("");
             strstream << "Expected \"" << expected << "\" but got \"" << result << "\"";
          }
+
+         const dtAnim::Animatable* mLastAnimatableCompleted;
 
          float animStart1;
          float animEnd1;
@@ -152,6 +158,8 @@ namespace dtAnim
       
       std::string modelPath = dtCore::FindFileInPathList("SkeletalMeshes/marine_test.xml");
       CPPUNIT_ASSERT(!modelPath.empty());
+
+      mLastAnimatableCompleted = NULL;
       
       mHelper->LoadModel(modelPath);
 
@@ -197,6 +205,7 @@ namespace dtAnim
       mAnimatable1 = NULL;
       mAnimatable2 = NULL;
       mHelper = NULL;
+      mLastAnimatableCompleted = NULL;
    }
 
 
@@ -496,4 +505,20 @@ namespace dtAnim
 
 
    }
+
+   void AnimationTests::TestAnimCallback()
+   {
+      dtAnim::AnimationCallback animEndCallback(this, &AnimationTests::OnAnimationCompleted);
+      mAnimatable1->SetEndCallback(animEndCallback);
+
+      CPPUNIT_ASSERT(mLastAnimatableCompleted == NULL);
+      mAnimatable1->Prune();
+      CPPUNIT_ASSERT(mLastAnimatableCompleted == mAnimatable1.get());
+   }
+
+   void AnimationTests::OnAnimationCompleted(const dtAnim::Animatable& anim)
+   {
+      mLastAnimatableCompleted = &anim;
+   }
+
 }

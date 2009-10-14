@@ -214,6 +214,11 @@ void Animatable::SetCurrentWeight(float weight)
 void Animatable::SetPrune(bool b)
 {
    mShouldPrune = b;
+
+   if(b && mEndCallback.valid())
+   {
+      mEndCallback(*this);
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -226,6 +231,12 @@ const std::string& Animatable::GetName() const
 void Animatable::SetName(const std::string& pName)
 {
    mName = pName;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void Animatable::SetEndCallback(AnimationCallback callback)
+{
+   mEndCallback = callback;
 }
 
 
