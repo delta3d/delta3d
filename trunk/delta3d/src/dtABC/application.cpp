@@ -329,6 +329,7 @@ void Application::CreateInstances(const std::string& name, int x, int y, int wid
    GetCamera()->SetWindow(mWindow.get());
 
    mCompositeViewer = new osgViewer::CompositeViewer;
+   mCompositeViewer->setUpThreading();
    mCompositeViewer->addView(mViewList.front()->GetOsgViewerView());
 
    //Disable OSG's default behavior of quitting when the Escape key is pressed.
