@@ -35,6 +35,9 @@
 #include <osg/CullFace>
 #include <osg/BlendFunc>
 
+///Used to support rendering with multiple threads
+OpenThreads::Mutex gUpdateMutex;
+
 namespace dtAnim
 {
    class HardwareSubmeshComputeBound : public osg::Drawable::ComputeBoundingBoxCallback
@@ -69,11 +72,17 @@ namespace dtAnim
          /** do customized update code.*/
          virtual void update(osg::NodeVisitor*, osg::Drawable* drawable)
          {
+            gUpdateMutex.lock();
+
             //select the proper hardware mesh
-            mHardwareModel->selectHardwareMesh(mHardwareMeshID);
+            if (!mHardwareModel->selectHardwareMesh(mHardwareMeshID))
+            {
+               gUpdateMutex.unlock();
+               return;
+            }
 
             //spin through the bones in the hardware mesh
-            int numBones = mHardwareModel->getBoneCount();
+            const int numBones = mHardwareModel->getBoneCount();
             for (int bone = 0; bone < numBones; ++bone)
             {
 
@@ -98,13 +107,15 @@ namespace dtAnim
                mBoneTransforms->setElement(bone * 3 + 1, rotY);
                mBoneTransforms->setElement(bone * 3 + 2, rotZ);
             }
+
+            gUpdateMutex.unlock();
          }
 
       private:
          dtCore::RefPtr<Cal3DModelWrapper> mWrapper;
          CalHardwareModel* mHardwareModel;
          dtCore::RefPtr<osg::Uniform> mBoneTransforms;
-         unsigned mHardwareMeshID;
+         unsigned mHardwareMeshID;         
    };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -161,8 +172,16 @@ void HardwareSubmeshDrawable::SetBoundingBox(const osg::BoundingBox& boundingBox
 ////////////////////////////////////////////////////////////////////////////////
 void HardwareSubmeshDrawable::drawImplementation(osg::RenderInfo& renderInfo) const
 {
-   //select the appropriate mesh
-   mHardwareModel->selectHardwareMesh(mMeshID);
+   gUpdateMutex.lock();
+      //select the appropriate mesh
+      if (!mHardwareModel->selectHardwareMesh(mMeshID))
+      {
+         gUpdateMutex.unlock();
+         return;
+      }
+      const int faceCount = mHardwareModel->getFaceCount();
+      const int startIndex = mHardwareModel->getStartIndex();
+   gUpdateMutex.unlock();
 
    osg::State& state = *renderInfo.getState();
 
@@ -187,8 +206,8 @@ void HardwareSubmeshDrawable::drawImplementation(osg::RenderInfo& renderInfo) co
    state.bindElementBufferObject(mIndexEBO);
 
    // Make the call to render
-   glDrawElements(GL_TRIANGLES,  mHardwareModel->getFaceCount() * 3, (sizeof(CalIndex) < 4) ?
-         GL_UNSIGNED_SHORT: GL_UNSIGNED_INT, (void*)(sizeof(CalIndex) * mHardwareModel->getStartIndex()));  
+   glDrawElements(GL_TRIANGLES,  faceCount * 3, (sizeof(CalIndex) < 4) ?
+                  GL_UNSIGNED_SHORT: GL_UNSIGNED_INT, (void*)(sizeof(CalIndex) * startIndex));  
 
    state.unbindVertexBufferObject();
    state.unbindElementBufferObject();
