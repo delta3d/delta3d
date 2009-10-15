@@ -92,6 +92,18 @@ namespace dtGame
          const MessageParameter* GetParameter(const std::string& name) const;
 
          /**
+          * Gets a const list of the parameters currently registered for this
+          * message
+          */
+         void GetParameterList(std::vector<const MessageParameter *>& paramList) const;
+
+         /**
+          * Gets a list of the parameters currently registered for this
+          * message
+          */
+         void GetParameterList(std::vector<MessageParameter *>& paramList);
+
+         /**
           * This getter, not the class of the object, determines what type the message is.
           * @return the message type enumeration for this message.
           */
@@ -177,6 +189,7 @@ namespace dtGame
          bool operator==(const Message& toCompare) const;
          bool operator!=(const Message& toCompare) const { return !(*this == toCompare); }
          
+
       protected:
          /**
           * Adds a parameter to this message. This method is protected because only a message class
