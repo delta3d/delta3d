@@ -286,12 +286,21 @@ namespace dtCore
    {
    public:
 
+      enum ButtonComboEnum
+      {
+         BOTH_BUTTONS,  // Must be both buttons to activate.
+         SINGLE_BUTTON, // Can be either one or the other, but not both.
+         ANY_BUTTONS,   // Any combination of buttons will work.
+      };
+
       /**
       * Constructor.
       *
-      * @param sourceButton the source button
+      * @param firstButton   The first button.
+      * @param secondButton  The second button.
+      * @param flag          How the buttons can be used.
       */
-      ButtonsToButton(Button* firstButton, Button* secondButton);
+      ButtonsToButton(Button* firstButton, Button* secondButton, ButtonComboEnum flag = ANY_BUTTONS);
 
    protected:
 
@@ -367,6 +376,8 @@ namespace dtCore
       * The target button.
       */
       RefPtr<LogicalButton> mTargetButton;
+
+      ButtonComboEnum       mFlag;
 
 
       /**
