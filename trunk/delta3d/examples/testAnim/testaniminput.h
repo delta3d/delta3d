@@ -42,7 +42,7 @@ class TEST_ANIM_EXPORT TestAnimInput : public dtGame::BaseInputComponent
    public:
 
       // Constructor
-      TestAnimInput(const std::string &name);
+      TestAnimInput(const std::string& name);
 
       // We're going to handle key presses!
       virtual bool HandleKeyPressed(const dtCore::Keyboard* keyboard, int key);
@@ -51,13 +51,13 @@ class TEST_ANIM_EXPORT TestAnimInput : public dtGame::BaseInputComponent
       virtual bool HandleKeyReleased(const dtCore::Keyboard* keyboard, int key);
 
       // Handle messages from the GM
-      virtual void ProcessMessage(const dtGame::Message &message);
+      virtual void ProcessMessage(const dtGame::Message& message);
 
       /**
        * Sets the player actor that this component access
        * @param gap The new actor proxy
        */
-      void SetPlayerActor(dtGame::GameActorProxy &gap);
+      void SetPlayerActor(dtGame::GameActorProxy& gap);
       
       void SetAnimationHelper(dtAnim::AnimationHelper& pHelper);
 
@@ -77,8 +77,8 @@ class TEST_ANIM_EXPORT TestAnimInput : public dtGame::BaseInputComponent
 
       float mSpeed, mTurnRate, mTurnDirection;
       bool mKeyIsPressed, mIsWalking, mIsTurning;
-      dtCore::RefPtr<dtGame::GameActorProxy> mPlayer;
-      dtCore::RefPtr<dtAnim::AnimationHelper> mAnimationHelper;
+      dtCore::ObserverPtr<dtGame::GameActorProxy> mPlayer;
+      dtCore::ObserverPtr<dtAnim::AnimationHelper> mAnimationHelper;
 };
 
 #endif

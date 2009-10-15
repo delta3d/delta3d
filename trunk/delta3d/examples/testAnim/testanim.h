@@ -28,7 +28,9 @@
 #include <dtGame/gameentrypoint.h>
 #include <dtCore/refptr.h>
 #include <dtCore/observerptr.h>
+#include <dtCore/tripod.h>
 #include "export.h"
+#include "testaniminput.h"
 
 // Foward declarations
 namespace dtCore
@@ -40,6 +42,7 @@ namespace dtCore
 namespace dtGame
 {
    class GameManager;
+   class DefaultMessageProcessor;
 }
 
 namespace dtAnim
@@ -48,7 +51,6 @@ namespace dtAnim
    class AnimationComponent;
    class AnimationGameActorProxy;
 }
-
 
 
 class TEST_ANIM_EXPORT TestAnim : public dtGame::GameEntryPoint
@@ -78,9 +80,17 @@ class TEST_ANIM_EXPORT TestAnim : public dtGame::GameEntryPoint
                                     dtAnim::AnimationComponent* animComp, bool isPlayer,
                                     dtCore::Camera *camera);
 
-      dtCore::RefPtr<dtAnim::AnimationHelper> mAnimationHelper;
+      void CreateAdditionalWindows();
+
+      dtCore::ObserverPtr<dtAnim::AnimationHelper> mAnimationHelper;
       dtCore::RefPtr<dtCore::FlyMotionModel> mFMM;
       bool mPerformanceTest;
+
+      dtCore::RefPtr<dtGame::DefaultMessageProcessor> mMessageProcComponent;
+      dtCore::RefPtr<dtAnim::AnimationComponent> mAnimationComponent;
+      dtCore::RefPtr<TestAnimInput> mInputComponent;
+
+      dtCore::RefPtr<dtCore::Tripod> mTripod;
 };
 
 #endif

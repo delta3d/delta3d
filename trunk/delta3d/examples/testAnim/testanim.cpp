@@ -24,7 +24,6 @@
 */
 
 #include "testanim.h"
-#include "testaniminput.h"
 
 #include <dtUtil/hotspotdefinition.h>
 #include <dtUtil/mathdefines.h>
@@ -38,7 +37,7 @@
 #include <dtCore/system.h>
 #include <dtCore/object.h>
 #include <dtCore/shadermanager.h>
-#include <dtCore/tripod.h>
+#include <dtCore/transform.h>
 
 #include <dtDAL/map.h>
 #include <dtDAL/actorproxy.h>
@@ -78,6 +77,7 @@ extern "C" TEST_ANIM_EXPORT void DestroyGameEntryPoint(dtGame::GameEntryPoint* e
 {
    delete entryPoint;
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////
 TestAnim::TestAnim()
@@ -119,7 +119,6 @@ void TestAnim::Initialize(dtGame::GameApplication& app, int argc, char **argv)
    }
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////
 void TestAnim::OnStartup(dtGame::GameApplication& app)
 {
@@ -153,20 +152,16 @@ void TestAnim::OnStartup(dtGame::GameApplication& app)
       e.LogException(dtUtil::Log::LOG_ERROR);
    }
 
-   //dtDAL::Project::GetInstance().GetResourcePath(dtDAL::ResourceDescriptor(""));
-   //dtCore::ShaderManager::GetInstance().LoadShaderDefinitions();
+   mMessageProcComponent = new dtGame::DefaultMessageProcessor();
+   mAnimationComponent = new dtAnim::AnimationComponent();
 
-   dtGame::DefaultMessageProcessor* dmp = new dtGame::DefaultMessageProcessor();
-
-   dtAnim::AnimationComponent* animComp = new dtAnim::AnimationComponent();
-
-   gameManager.AddComponent(*dmp,dtGame::GameManager::ComponentPriority::HIGHEST);
-   gameManager.AddComponent(*animComp, dtGame::GameManager::ComponentPriority::NORMAL);
+   gameManager.AddComponent(*mMessageProcComponent,dtGame::GameManager::ComponentPriority::HIGHEST);
+   gameManager.AddComponent(*mAnimationComponent, dtGame::GameManager::ComponentPriority::NORMAL);
 
    if (!mPerformanceTest)
    {
-      TestAnimInput* inputComp = new TestAnimInput("TestAnimInput");
-      gameManager.AddComponent(*inputComp, dtGame::GameManager::ComponentPriority::NORMAL);
+      mInputComponent = new TestAnimInput("TestAnimInput");
+      gameManager.AddComponent(*mInputComponent, dtGame::GameManager::ComponentPriority::NORMAL);
 
       ProxyContainer::iterator iter = proxies.begin();
       ProxyContainer::iterator endIter = proxies.end();
@@ -180,12 +175,12 @@ void TestAnim::OnStartup(dtGame::GameApplication& app)
             static bool first = true;
 
             //the first one will be the player
-            InitializeAnimationActor(gameProxy, animComp, true, app.GetCamera());
+            InitializeAnimationActor(gameProxy, mAnimationComponent, true, app.GetCamera());          
 
             if (first)
             {
-               inputComp->SetAnimationHelper(*mAnimationHelper);
-               inputComp->SetPlayerActor(*gameProxy);
+               mInputComponent->SetAnimationHelper(*mAnimationHelper);
+               mInputComponent->SetPlayerActor(*gameProxy);
                first = false;
             }
          }
@@ -207,16 +202,13 @@ void TestAnim::OnStartup(dtGame::GameApplication& app)
 
                dtAnim::AnimationGameActor* actor = dynamic_cast<dtAnim::AnimationGameActor*>(&proxy->GetGameActor());
                actor->SetModel("SkeletalMeshes/marine.xml");
-               InitializeAnimationActor(proxy.get(), animComp, false, app.GetCamera());
+               InitializeAnimationActor(proxy.get(), mAnimationComponent, false, app.GetCamera());
 
                proxy->SetTranslation(startPos);
             }
          }
          startPos[1] = 0.0f;
       }
-
-      //      app.GetCamera()->SetNextStatisticsType();
-
    }
 
    if (!groundActor.empty())
@@ -227,7 +219,7 @@ void TestAnim::OnStartup(dtGame::GameApplication& app)
          dtCore::Transformable* transform = dynamic_cast<dtCore::Transformable*>(proxy->GetActor());
          if (transform)
          {
-            animComp->SetTerrainActor(transform);
+            mAnimationComponent->SetTerrainActor(transform);
          }
       }
    }
@@ -235,15 +227,18 @@ void TestAnim::OnStartup(dtGame::GameApplication& app)
    {
       LOG_ERROR("Cannot find ground");
    }
-
-   gameManager.DebugStatisticsTurnOn(false, false, 5);
-
-   //   app.GetWindow()->SetKeyRepeat(false);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void TestAnim::OnShutdown(dtGame::GameApplication& app)
 {
+   dtGame::GameManager* gm = app.GetGameManager();
+
+   gm->RemoveComponent(*mAnimationComponent);
+   gm->RemoveComponent(*mInputComponent);
+   gm->RemoveComponent(*mMessageProcComponent);
+
+   dtGame::GameEntryPoint::OnShutdown(app);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -275,9 +270,9 @@ void TestAnim::InitializeAnimationActor(dtAnim::AnimationGameActorProxy* gamePro
             mAnimationHelper->SetGroundClamp(true);
 
             //attach the Camera to the Actor using a Tripod
-            dtCore::Tripod *tripod = new dtCore::Tripod(camera, actor);
-            tripod->SetTetherMode( dtCore::Tripod::TETHER_WORLD_REL );
-            tripod->SetOffset( 0.f, -5.f, 1.25f, 0.f, 0.f, 0.f);
+            mTripod = new dtCore::Tripod(camera, actor);
+            mTripod->SetTetherMode(dtCore::Tripod::TETHER_WORLD_REL);
+            mTripod->SetOffset(0.f, -5.f, 1.25f, 0.f, 0.f, 0.f);
 
 
             //attach a pack to the guy's back

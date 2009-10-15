@@ -39,8 +39,9 @@
 #include <osg/Vec3>
 #include <dtGame/logtag.h>
 
+
 ////////////////////////////////////////////////////////////////////
-TestAnimInput::TestAnimInput(const std::string &name)
+TestAnimInput::TestAnimInput(const std::string& name)
    : dtGame::BaseInputComponent(name)
    , mSpeed(2.0f)
    , mTurnRate(1.01f)
@@ -71,13 +72,12 @@ void TestAnimInput::SetTurnRate(float turn)
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool TestAnimInput::HandleKeyPressed(const dtCore::Keyboard *keyBoard, int key)
+bool TestAnimInput::HandleKeyPressed(const dtCore::Keyboard* keyBoard, int key)
 {
-   bool handled = true;
+   bool handled = false;
 
    switch (key)
    {
-
       case osgGA::GUIEventAdapter::KEY_Escape:
          {
             GetGameManager()->GetApplication().Quit();
@@ -126,6 +126,11 @@ bool TestAnimInput::HandleKeyPressed(const dtCore::Keyboard *keyBoard, int key)
             camera->SetLODScale(oldLODScale / 1.1);
             return false;
          }
+      case '~':
+         {
+            dtABC::Application& app = GetGameManager()->GetApplication();
+            app.SetNextStatisticsType();
+         }
       default:
          break;
    };
@@ -141,7 +146,7 @@ bool TestAnimInput::HandleKeyPressed(const dtCore::Keyboard *keyBoard, int key)
 //////////////////////////////////////////////////////////////////////////
 bool TestAnimInput::HandleKeyReleased(const dtCore::Keyboard* keyboard, int key)
 {
-   bool handled = true;
+   bool handled = false;
 
    switch (key)
    {
@@ -171,7 +176,7 @@ bool TestAnimInput::HandleKeyReleased(const dtCore::Keyboard* keyboard, int key)
 }
 
 ////////////////////////////////////////////////////////////////////////
-void TestAnimInput::SetPlayerActor(dtGame::GameActorProxy &gap)
+void TestAnimInput::SetPlayerActor(dtGame::GameActorProxy& gap)
 {
    mPlayer = &gap;
 }
