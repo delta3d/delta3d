@@ -154,7 +154,7 @@ HardwareSubmeshDrawable::HardwareSubmeshDrawable(Cal3DModelWrapper* wrapper, Cal
    
    //set our update callback which will update the bone transforms
    setUpdateCallback(new HardwareSubmeshCallback(*mWrapper, *mHardwareModel, *mBoneTransforms, mMeshID));
-   setCullCallback(new SubmeshCullCallback(*mWrapper, guessedMeshID));
+   //setCullCallback(new SubmeshCullCallback(*mWrapper, guessedMeshID)); //this only works for software mode
    setComputeBoundingBoxCallback(new HardwareSubmeshComputeBound(mBoundingBox));
 }
 

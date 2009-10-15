@@ -121,6 +121,7 @@ namespace dtAnim
       bool VBOAvailable(const osg::RenderInfo& renderInfo) const;
       void DrawUsingVBO(osg::RenderInfo &renderInfo) const;
       void DrawUsingPrimitives(osg::RenderInfo &renderInfo) const;
+      void ClearTheState(osg::State& state) const;
 
       unsigned mMeshID;
       unsigned mSubmeshID;
@@ -170,7 +171,7 @@ namespace dtAnim
 
    private:
       dtCore::RefPtr<Cal3DModelWrapper> mWrapper;
-      CalHardwareModel* mHardwareModel;
+      //CalHardwareModel* mHardwareModel;
       int mMeshID;
    };
 
