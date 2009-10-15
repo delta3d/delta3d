@@ -388,19 +388,22 @@ namespace dtAnim
       functor.setVertexArray(mVertexCount[0], vertexArray);
      
       mMeshEBO->bindBuffer(0);
-      void* indexArray = glExt->glMapBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, GL_READ_WRITE_ARB);
 
-      if (sizeof(CalIndex) == sizeof(short))
+      void* indexArray = glExt->glMapBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, GL_READ_WRITE_ARB);
+      if (indexArray != NULL)
       {
-         osg::ref_ptr<osg::DrawElementsUShort> pset = new osg::DrawElementsUShort(osg::PrimitiveSet::TRIANGLES,
-                  mFaceCount[0] * 3, (GLushort*) indexArray);
-         pset->accept(functor);
-      }
-      else
-      {
-         osg::ref_ptr<osg::DrawElementsUInt> pset = new osg::DrawElementsUInt(osg::PrimitiveSet::TRIANGLES,
-                  mFaceCount[0] * 3, (GLuint*) indexArray);
-         pset->accept(functor);
+         if (sizeof(CalIndex) == sizeof(short))
+         {
+            osg::ref_ptr<osg::DrawElementsUShort> pset = new osg::DrawElementsUShort(osg::PrimitiveSet::TRIANGLES,
+                                                                   mFaceCount[0] * 3, (GLushort*) indexArray);
+            pset->accept(functor);
+         }
+         else
+         {
+            osg::ref_ptr<osg::DrawElementsUInt> pset = new osg::DrawElementsUInt(osg::PrimitiveSet::TRIANGLES,
+                                                                 mFaceCount[0] * 3, (GLuint*) indexArray);
+            pset->accept(functor);
+         }
       }
 
       glExt->glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB);
@@ -433,6 +436,21 @@ namespace dtAnim
       {
          return false;
       }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void SubmeshDrawable::ClearTheState(osg::State& state) const
+   {
+      state.unbindVertexBufferObject();
+      state.unbindElementBufferObject();
+
+      // This data could potential cause problems
+      // so we clear it out here (i.e CEGUI incompatible)
+      state.setVertexPointer(NULL);
+
+      state.setNormalPointer(NULL);
+      state.setTexCoordPointer(0, NULL);
+      state.setTexCoordPointer(1, NULL);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -482,14 +500,18 @@ namespace dtAnim
 
             const Extensions* glExt = getExtensions(state.getContextID(), true);
 
-            lodIndex = 0;
-
             state.bindVertexBufferObject(mMeshVBO);
 
             // Get the transformed vertices for this frame
             if (!initializedThisDraw)
             {
-               float* vertexArray = reinterpret_cast<float*>(glExt->glMapBuffer(GL_ARRAY_BUFFER_ARB, GL_WRITE_ONLY_ARB));              
+               float* vertexArray = reinterpret_cast<float*>(glExt->glMapBuffer(GL_ARRAY_BUFFER_ARB, GL_WRITE_ONLY_ARB));
+               if (vertexArray == NULL)
+               {
+                  ClearTheState(state);
+                  mWrapper->EndRenderingQuery();
+                  return;
+               }
 
                ///offset into the vbo to fill the correct lod.
                vertexArray += mVertexOffsets[lodIndex] * STRIDE;
@@ -515,16 +537,7 @@ namespace dtAnim
             glDrawElements(GL_TRIANGLES, mFaceCount[lodIndex] * 3U, (sizeof(CalIndex) < 4) ?
                            GL_UNSIGNED_SHORT: GL_UNSIGNED_INT, INDEX_OFFSET(3U * mFaceOffsets[lodIndex]));
 
-            state.unbindVertexBufferObject();
-            state.unbindElementBufferObject();
-
-            // This data could potential cause problems
-            // so we clear it out here (i.e CEGUI incompatible)
-            state.setVertexPointer(NULL);
-
-            state.setNormalPointer(NULL);
-            state.setTexCoordPointer(0, NULL);
-            state.setTexCoordPointer(1, NULL);
+            ClearTheState(state);
          }
       }
 
