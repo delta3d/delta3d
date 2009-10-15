@@ -303,10 +303,11 @@ namespace dtCore
    * @param firstButton  the first button
    * @param secondButton the second button
    */
-   ButtonsToButton::ButtonsToButton(Button* firstButton, Button* secondButton) :
-      mFirstButton(firstButton),
-      mSecondButton(secondButton),
-      mTargetButton(NULL)
+   ButtonsToButton::ButtonsToButton(Button* firstButton, Button* secondButton, ButtonComboEnum flag)
+      : mFirstButton(firstButton)
+      , mSecondButton(secondButton)
+      , mTargetButton(NULL)
+      , mFlag(flag)
    {}
 
    /**
@@ -435,13 +436,33 @@ namespace dtCore
    {
       if(mTargetButton.valid())
       {
-         // The target state is true if either first or second buttons are valid.
          if (mFirstButton.valid() && mSecondButton.valid())
          {
-            newState = mFirstButton->GetState() | mSecondButton->GetState();
+            switch (mFlag)
+            {
+            // Both buttons must be active at the same time.
+            case BOTH_BUTTONS:
+               newState = mFirstButton->GetState() && mSecondButton->GetState();
+               break;
+
+            // Only a single button can be active.
+            case SINGLE_BUTTON:
+               newState = mFirstButton->GetState() != mSecondButton->GetState();
+               break;
+
+            // Any combination of buttons can be active.
+            case ANY_BUTTONS:
+               newState = mFirstButton->GetState() || mSecondButton->GetState();
+               break;
+            }
          }
 
-         return mTargetButton->SetState(newState);
+         bool result = mTargetButton->SetState(newState);
+         //return mTargetButton->SetState(newState);
+
+         // We return false to make sure any other listeners listening for
+         // these buttons will also receive their messages.
+         return false;
       }
 
       return false;
@@ -456,10 +477,25 @@ namespace dtCore
       {
          bool state = false;
 
-         // The target state is true if either first or second buttons are valid.
          if (mFirstButton.valid() && mSecondButton.valid())
          {
-            state = mFirstButton->GetState() | mSecondButton->GetState();
+            switch (mFlag)
+            {
+               // Both buttons must be active at the same time.
+            case BOTH_BUTTONS:
+               state = mFirstButton->GetState() && mSecondButton->GetState();
+               break;
+
+               // Only a single button can be active.
+            case SINGLE_BUTTON:
+               state = mFirstButton->GetState() != mSecondButton->GetState();
+               break;
+
+               // Any combination of buttons can be active.
+            case ANY_BUTTONS:
+               state = mFirstButton->GetState() || mSecondButton->GetState();
+               break;
+            }
          }
 
          mTargetButton->SetState(state);
