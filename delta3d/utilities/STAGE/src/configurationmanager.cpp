@@ -333,7 +333,7 @@ void ConfigurationManager::SetDefaultConfigValues()
 {
    mGeneralVariables[CONF_MGR_MAP_FILE] = "";
    mGeneralVariables[CONF_MGR_PROJECT_CONTEXT] = "";
-   mGeneralVariables[CONF_MGR_SAVE_ON_CLOSE] = "false";
+   mGeneralVariables[CONF_MGR_SAVE_ON_CLOSE] = "true";
    mGeneralVariables[CONF_MGR_STYLESHEET] = "";
 
    mLayoutVariables[CONF_MGR_SHOW_FRONT_VIEW] = "true";

@@ -103,9 +103,12 @@ namespace dtEditQt
          {
             mSTAGEConfigFullPath = dtUtil::FileUtils::GetInstance().CurrentDirectory() + "\\" + mSTAGEConfigFullPath;
          }
-
-         ConfigurationManager::GetInstance().ReadXML(mSTAGEConfigFullPath);
       }
+      else
+      {
+         mSTAGEConfigFullPath = dtUtil::FileUtils::GetInstance().CurrentDirectory() + "\\STAGEConfig.xml";
+      }
+      ConfigurationManager::GetInstance().ReadXML(mSTAGEConfigFullPath);
 
       //Setup stylesheet based on what's in the configuration file.
       //Note that stylesheet has to be setup for qApp before ANYTHING in the 
