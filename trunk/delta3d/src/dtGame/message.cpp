@@ -211,6 +211,30 @@ namespace dtGame
       }
    }
          
+   void Message::GetParameterList(std::vector<const MessageParameter *>& paramList) const
+   {
+      paramList.clear();
+      paramList.reserve(mParameterList.size());
+
+      std::map<std::string,dtCore::RefPtr<MessageParameter> >::const_iterator itor = mParameterList.begin();
+      for (; itor != mParameterList.end(); ++itor)
+      {
+         paramList.push_back((*itor).second.get());
+      }
+   }
+       
+   void Message::GetParameterList(std::vector<MessageParameter *>& paramList)
+   {
+      paramList.clear();
+      paramList.reserve(mParameterList.size());
+
+      std::map<std::string,dtCore::RefPtr<MessageParameter> >::iterator itor = mParameterList.begin();
+      for (; itor != mParameterList.end(); ++itor)
+      {
+         paramList.push_back((*itor).second.get());
+      }
+   }
+
    void Message::CopyDataTo(Message& msg) const
    {
       //copy header stuff
