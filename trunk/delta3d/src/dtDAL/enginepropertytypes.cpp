@@ -455,7 +455,9 @@ namespace dtDAL
       else
       {
          if (value == NULL)
+         {
             SetPropFunctor("");
+         }
          else
          {
             try
