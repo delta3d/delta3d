@@ -115,7 +115,6 @@ namespace dtNetGM
       }
 
       // remove Connection
-      networkBridge.SetClientConnected(false);
       NetworkComponent::OnDisconnect(networkBridge);
    }
 
