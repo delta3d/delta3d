@@ -337,7 +337,7 @@ namespace dtEditQt
             xform.GetRotation(toAttach.mInitialCameraHPR);
 
             rotOffset.set(billBoard->GetActorRotation());
-            toAttach.mRotationOffset = rotOffset * getOrientation();
+            toAttach.mRotationOffset = rotOffset * getOrientation().conj();
          }
          else
          {
@@ -365,7 +365,7 @@ namespace dtEditQt
 
             toAttach.mActor = proxy;
             toAttach.mPositionOffset = tPos - xform.GetTranslation();
-            toAttach.mRotationOffset = rotOffset * getOrientation();
+            toAttach.mRotationOffset = rotOffset * getOrientation().conj();
             xform.GetRotation(toAttach.mInitialCameraHPR);
          }
          else
@@ -411,7 +411,7 @@ namespace dtEditQt
       mDeltaCamera->GetTransform(xform);
 
       std::list<ActorAttachment>::iterator itor;
-      osg::Quat camLookInv = getOrientation().conj();
+      osg::Quat camLookInv = getOrientation();
       osg::Vec3 camHPR;
       xform.GetRotation(camHPR);
 

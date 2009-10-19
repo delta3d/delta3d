@@ -34,8 +34,10 @@ namespace dtEditQt
       {
          if (!mViewport) return false;
 
-         if ((mLeftMouse && mRightMouse) ||
-            mViewport->GetMouseButtons() == Qt::MidButton)
+         bool bBeginNewCamera = false;
+         if (mCameraMode == NOTHING) bBeginNewCamera = true;
+
+         if ((mLeftMouse && mRightMouse) || mMiddleMouse)
          {
             mCameraMode = CAMERA_TRANSLATE;
          }
@@ -50,12 +52,17 @@ namespace dtEditQt
          else
          {
             mCameraMode = NOTHING;
+            return false;
+         }
+
+         if (bBeginNewCamera)
+         {
+            mViewport->trapMouseCursor();
+
             return true;
          }
 
-         mViewport->trapMouseCursor();
-
-         return true;
+         return false;
       }
 
       return false;
@@ -68,16 +75,14 @@ namespace dtEditQt
       {
          if (!mViewport) return false;
 
-         if (mLeftMouse && !mRightMouse)
+         if (!mLeftMouse && mRightMouse)
          {
             mCameraMode = CAMERA_LOOK;
-            mViewport->beginCameraMode(e);
             return false;
          }
-         else if (mRightMouse && !mLeftMouse)
+         else if (mLeftMouse && !mRightMouse)
          {
             mCameraMode = CAMERA_NAVIGATE;
-            mViewport->beginCameraMode(e);
             return false;
          }
          else

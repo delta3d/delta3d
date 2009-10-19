@@ -291,7 +291,7 @@ namespace dtEditQt {
       * mode will be set.
       * @param e
       */
-      void keyPressEvent(QKeyEvent* e);
+      virtual void keyPressEvent(QKeyEvent* e);
 
       /**
       * Called when the user releases a key on the keyboard in the viewport.
@@ -299,7 +299,7 @@ namespace dtEditQt {
       * updated accordingly.
       * @param e
       */
-      void keyReleaseEvent(QKeyEvent* e);
+      virtual void keyReleaseEvent(QKeyEvent* e);
 
       /** 
       * Enable or disable this Viewport.  High level control over if this

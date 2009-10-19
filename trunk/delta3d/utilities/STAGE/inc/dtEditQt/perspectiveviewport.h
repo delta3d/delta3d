@@ -66,6 +66,11 @@ namespace dtEditQt
       */
       void attachCurrentSelectionToCamera();
 
+      /**
+      * Detaches the current selection from the camera.
+      */
+      void detachCurrentSelectionFromCamera();
+
    public slots:
 
    protected:
@@ -92,33 +97,12 @@ namespace dtEditQt
       void keyPressEvent(QKeyEvent* e);
 
       /**
-      * Called from the mousePressEvent handler.  This sets the viewport state
-      * to properly respond to mouse movement events when in camera mode.
+      * Called when the user releases a key on the keyboard in the viewport.
+      * Based on the keys released, the viewport's current mode is
+      * updated accordingly.
       * @param e
       */
-      virtual bool beginCameraMode(QMouseEvent* e);
-
-      /**
-      * Called from the mouseReleaseEvent handler.  This restores the state of
-      * the viewport as it was before camera mode was entered.
-      * @param e
-      */
-      virtual bool endCameraMode(QMouseEvent* e);
-
-      /**
-       * Called from the mousePressEvent handler.  Depending on what modifier
-       * key is pressed, this puts the viewport state into a mode that enables
-       * actor manipulation.
-       * @param e
-       */
-      bool beginActorMode(QMouseEvent* e);
-
-      /**
-       * Called from the mouseReleaseEvent handler.  This restores the state of
-       * the viewport as it was before actor mode was entered.
-       * @param e
-       */
-      bool endActorMode(QMouseEvent* e);
+      void keyReleaseEvent(QKeyEvent* e);
 
    private:
       ///Allow the ViewportManager access to it can create perspective viewports.

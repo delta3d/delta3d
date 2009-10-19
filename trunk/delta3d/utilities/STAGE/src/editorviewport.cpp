@@ -714,7 +714,13 @@ namespace dtEditQt
       // released, it means we want to select actors.
       else if (getInteractionMode() == Viewport::InteractionMode::SELECT_ACTOR)
       {
-         selectActors(e);
+         setInteractionMode(Viewport::InteractionMode::NOTHING);
+
+         // Selecting actors can only be done if we don't have actors attached to the camera.
+         if (getCamera()->getNumActorAttachments() == 0)
+         {
+            selectActors(e);
+         }
       }
    }
 
@@ -736,12 +742,12 @@ namespace dtEditQt
       if (mCameraMotionModel.valid())
       {
          mCameraMotionModel->WheelEvent(e->delta());
-      }
 
-      // The motion model will not update unless the mouse moves,
-      // because of this we need to force it to update its' widget
-      // geometry.
-      mObjectMotionModel->UpdateWidgets();
+         // The motion model will not update unless the mouse moves,
+         // because of this we need to force it to update its' widget
+         // geometry.
+         mObjectMotionModel->UpdateWidgets();
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -827,7 +833,12 @@ namespace dtEditQt
       {
          if (mCameraMotionModel->EndCameraMode(e))
          {
-            mObjectMotionModel->SetInteractionEnabled(true);
+            // Only re-enable the object motion if we don't have actors attached to the camera.
+            if (getCamera()->getNumActorAttachments() == 0)
+            {
+               mObjectMotionModel->SetInteractionEnabled(true);
+            }
+
             setInteractionMode(Viewport::InteractionMode::NOTHING);
 
             return true;
@@ -943,7 +954,6 @@ namespace dtEditQt
    ////////////////////////////////////////////////////////////////////////////////
    bool EditorViewport::selectActors(QMouseEvent* e)
    {
-      setInteractionMode(Viewport::InteractionMode::NOTHING);
       mObjectMotionModel->SetInteractionEnabled(true);
 
       bool overrideDefault = false;
