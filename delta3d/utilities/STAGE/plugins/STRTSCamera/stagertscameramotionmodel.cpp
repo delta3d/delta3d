@@ -115,6 +115,8 @@ void STAGERTSCameraMotionModel::OnMessage(MessageData *data)
 
       transform.SetTranslation(mCurrentTranslation + (mFocalOffset * mCurrentDistance));
       mCamera->getDeltaCamera()->SetTransform(transform);
+      mCamera->update();
+      mViewport->GetObjectMotionModel()->UpdateWidgets();
    }
 }
 

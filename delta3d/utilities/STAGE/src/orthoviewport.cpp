@@ -113,27 +113,6 @@ namespace dtEditQt
          refresh();
       }
    }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   bool OrthoViewport::beginActorMode(QMouseEvent* e)
-   {
-      if (!EditorViewport::beginActorMode(e))
-      {
-         return false;
-      }
-
-      return true;
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   bool OrthoViewport::endActorMode(QMouseEvent* e)
-   {
-      if (!EditorViewport::endActorMode(e))
-      {
-         return false;
-      }
-
-      return true;
-   }
-
 } // namespace dtEditQt
+
+////////////////////////////////////////////////////////////////////////////////

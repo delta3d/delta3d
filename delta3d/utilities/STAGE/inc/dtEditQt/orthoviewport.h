@@ -119,22 +119,6 @@ namespace dtEditQt
        */
       virtual ~OrthoViewport() { }
 
-      /**
-      * Called from the mousePressEvent handler.  Depending on what modifier
-      * key is pressed, this puts the viewport state into a mode that enables
-      * actor manipulation.
-      * @param e
-      */
-      virtual bool beginActorMode(QMouseEvent* e);
-
-      /**
-      * Called from the mouseReleaseEvent handler.  This restores the state of
-      * the viewport as it was before actor mode was entered.
-      * @param e
-      */
-      virtual bool endActorMode(QMouseEvent* e);
-
-
    private:
       ///Allow the ViewportManager access to it can create perspective viewports.
       friend class ViewportManager;
