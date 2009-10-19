@@ -41,6 +41,7 @@
 #include <osg/ShapeDrawable>
 
 #include <cal3d/hardwaremodel.h>
+#include <cal3d/error.h>
 
 //For the bounding box class, who knew.
 #include <cal3d/vector.h>

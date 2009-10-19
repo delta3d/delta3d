@@ -40,8 +40,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #ifndef DELTA_SUBMESH_H__
 #define DELTA_SUBMESH_H__
 
-#include <osg/Drawable>
-#include <cal3d/cal3d.h>
 
 #include <dtAnim/export.h>
 #include <dtAnim/cal3dmodeldata.h>
@@ -57,7 +55,7 @@ namespace dtAnim
 
    ///Adapter that converts cal3d submeshes into osg::Drawables
 
-   /** h
+   /**
     * The easy way would be to draw all the character (CalModel) in a single
     * Drawable, but this approach lacks from state sorting. Each submesh of
     * each mesh of a model can have different state attributes. With the current
@@ -159,21 +157,6 @@ namespace dtAnim
       virtual void update (osg::NodeVisitor*, osg::Drawable* d);
    };
 
-   class SubmeshCullCallback: public osg::Drawable::CullCallback 
-   {
-   public:
-      SubmeshCullCallback(Cal3DModelWrapper& wrapper, int meshID)
-         : mWrapper(&wrapper)
-         , mMeshID(meshID)
-      {}
-
-      virtual bool cull(osg::NodeVisitor* nv, osg::Drawable* drawable, osg::RenderInfo* renderInfo) const;
-
-   private:
-      dtCore::RefPtr<Cal3DModelWrapper> mWrapper;
-      //CalHardwareModel* mHardwareModel;
-      int mMeshID;
-   };
 
    class SubmeshUserData: public osg::Object
    {

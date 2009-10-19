@@ -20,7 +20,7 @@
  */
 
 #include <dtAnim/hardwaresubmesh.h>
-#include <dtAnim/submesh.h> //for the cull callback.
+#include <dtAnim/lodcullcallback.h> //for the cull callback.
 #include <dtAnim/cal3dmodelwrapper.h>
 #include <osg/Material>
 #include <osg/Texture2D>
@@ -154,7 +154,7 @@ HardwareSubmeshDrawable::HardwareSubmeshDrawable(Cal3DModelWrapper* wrapper, Cal
    
    //set our update callback which will update the bone transforms
    setUpdateCallback(new HardwareSubmeshCallback(*mWrapper, *mHardwareModel, *mBoneTransforms, mMeshID));
-   //setCullCallback(new SubmeshCullCallback(*mWrapper, guessedMeshID)); //this only works for software mode
+   setCullCallback(new LODCullCallback(*mWrapper, guessedMeshID)); //for LOD handling
    setComputeBoundingBoxCallback(new HardwareSubmeshComputeBound(mBoundingBox));
 }
 
