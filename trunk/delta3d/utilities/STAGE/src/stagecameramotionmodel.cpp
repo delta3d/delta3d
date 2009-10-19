@@ -18,6 +18,7 @@ namespace dtEditQt
       , mViewport(NULL)
       , mLeftMouse(false)
       , mRightMouse(false)
+      , mMiddleMouse(false)
    {
       RegisterInstance(this);
 
@@ -94,6 +95,32 @@ namespace dtEditQt
       if (IsEnabled())
       {
          mRightMouse = false;
+
+         return true;
+      }
+
+      return false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool STAGECameraMotionModel::OnMiddleMousePressed(void)
+   {
+      if (IsEnabled())
+      {
+         mMiddleMouse = true;
+
+         return true;
+      }
+
+      return false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool STAGECameraMotionModel::OnMiddleMouseReleased(void)
+   {
+      if (IsEnabled())
+      {
+         mMiddleMouse = false;
 
          return true;
       }

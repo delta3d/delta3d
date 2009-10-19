@@ -111,6 +111,20 @@ namespace dtEditQt
       virtual bool OnRightMouseReleased(void);
 
       /**
+      * Event handler when the middle mouse button is pressed.
+      *
+      * @return  Returns true if manual motion is enabled.
+      */
+      virtual bool OnMiddleMousePressed(void);
+
+      /**
+      * Event handler when the middle mouse button is released.
+      *
+      * @return  Returns true if manual motion is enabled.
+      */
+      virtual bool OnMiddleMouseReleased(void);
+
+      /**
       * Event handler to enable the camera mode.
       *
       * @param[in]  e  The mouse event.
@@ -152,6 +166,7 @@ namespace dtEditQt
 
       bool  mLeftMouse;
       bool  mRightMouse;
+      bool  mMiddleMouse;
 
       dtCore::RefPtr<StageCamera> mCamera;
       EditorViewport*             mViewport;
