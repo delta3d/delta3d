@@ -1419,13 +1419,13 @@ namespace dtEditQt
             dtDAL::ActorProxy* proxy = selection[selectIndex].get();
             if (proxy)
             {
-               dtCore::DeltaDrawable* drawable;
-               proxy->GetActor(drawable);
-
-               if (drawable) ignoredDrawables.push_back(drawable);
+               // ignore both our own geometry and the geometry of our icon if they exist
+               dtCore::DeltaDrawable* drawable = proxy->GetActor();
+               dtCore::DeltaDrawable* billBoardDrawable = proxy->GetBillBoardIcon()->GetDrawable();
+               if (drawable) {ignoredDrawables.push_back(drawable);}
+               if (billBoardDrawable) {ignoredDrawables.push_back(billBoardDrawable);}
             }
          }
-
          dtDAL::ActorProxy* proxy = selection[0];
          dtDAL::TransformableActorProxy* tProxy =
             dynamic_cast<dtDAL::TransformableActorProxy*>(proxy);

@@ -26,12 +26,16 @@
 
 #include <osg/Referenced>
 #include <dtCore/refptr.h>
+#include <dtUtil/functor.h>
 
 #include <string>
 
 namespace dtAnim
 {
    class Cal3DModelWrapper;
+   class Animatable;
+
+   typedef dtUtil::Functor<void, TYPELIST_1(const dtAnim::Animatable&) > AnimationCallback;
 
    /**
     * This class is used to specify the base class of an object which has semantics for
@@ -169,6 +173,14 @@ namespace dtAnim
          void SetElapsedTime(float t);
          virtual void Recalculate() = 0;
 
+         /**
+          * Set the functor to be called when the animation ends.
+          * @param callback The functor to be called when this animation ends.
+          *        The Animatable will be passed into the callback so that
+          *        the callee can determine what animation has ended.
+          */
+         void SetEndCallback(AnimationCallback callback);
+
       protected:
 
          /**
@@ -194,7 +206,8 @@ namespace dtAnim
          std::string mName;
 
          bool mActive, mShouldPrune;
-
+         
+         AnimationCallback mEndCallback;
 
    };
 
