@@ -25,6 +25,7 @@
 
 #include "testechoserver.h"
 #include <dtGame/gamemanager.h>
+#include <dtCore/deltawin.h>
 #include <dtNetGM/servernetworkcomponent.h>
 
 #include <iostream>
@@ -49,6 +50,9 @@ EchoServer::~EchoServer()
 //////////////////////////////////////////////////////////////////////////
 void EchoServer::Config()
 {
+   dtABC::Application::Config();
+   dtABC::Application::GetWindow()->SetWindowTitle("testServer");
+ 
    mServerGM = new dtGame::GameManager(*GetScene());
    mServerGM->GetMachineInfo().SetName("EchoServer");
 
