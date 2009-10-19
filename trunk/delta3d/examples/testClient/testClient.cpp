@@ -52,6 +52,9 @@ EchoClient::~EchoClient()
 //////////////////////////////////////////////////////////////////////////
 void EchoClient::Config()
 {
+   dtABC::Application::Config();
+   dtABC::Application::GetWindow()->SetWindowTitle("testClient");
+
    mClientGM = new dtGame::GameManager(*GetScene());
    mClientGM->GetMachineInfo().SetName("EchoClient");
 
@@ -81,8 +84,6 @@ void EchoClient::Config()
    mEvent = new dtDAL::GameEvent("TestMessage");
    dtDAL::GameEventManager::GetInstance().AddEvent(*(mEvent.get()));
 
-   dtABC::Application::Config();
-   dtABC::Application::GetWindow()->SetWindowTitle("testClient");
 }
 
 
