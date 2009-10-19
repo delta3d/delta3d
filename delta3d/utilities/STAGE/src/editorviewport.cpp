@@ -629,6 +629,13 @@ namespace dtEditQt
             mCameraMotionModel->OnRightMousePressed();
          }
       }
+      else if (mMouseButton == Qt::MidButton)
+      {
+         if (mCameraMotionModel.valid())
+         {
+            mCameraMotionModel->OnMiddleMousePressed();
+         }
+      }
 
       osg::Vec2 pos = convertMousePosition(e->pos());
 
@@ -683,6 +690,13 @@ namespace dtEditQt
          if (mCameraMotionModel.valid())
          {
             mCameraMotionModel->OnRightMouseReleased();
+         }
+      }
+      else if (mMouseButton == Qt::MidButton)
+      {
+         if (mCameraMotionModel.valid())
+         {
+            mCameraMotionModel->OnMiddleMouseReleased();
          }
       }
 

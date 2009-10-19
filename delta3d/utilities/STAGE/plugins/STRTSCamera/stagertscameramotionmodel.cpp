@@ -165,8 +165,8 @@ bool STAGERTSCameraMotionModel::OnMouseMoved(float dx, float dy)
          return true;
       }
 
-      // Both mouse buttons translate the camera along the x/y plane.
-      if (mLeftMouse && mRightMouse)
+      // Both or middle mouse buttons translate the camera along the x/y plane.
+      if (mMiddleMouse || (mLeftMouse && mRightMouse))
       {
          dtCore::Transform transform;
          mCamera->getDeltaCamera()->GetTransform(transform);
