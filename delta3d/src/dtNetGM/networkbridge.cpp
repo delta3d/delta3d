@@ -80,10 +80,10 @@ namespace dtNetGM
 
    void NetworkBridge::OnDisconnect(GNE::Connection& conn)
    {
-      mConnectedClient = false;
-
       // forward to NetworkComponent
       mNetworkComponent->OnDisconnect(*this);
+
+      mConnectedClient = false;
    }
 
    void NetworkBridge::Disconnect(int waitTime)
