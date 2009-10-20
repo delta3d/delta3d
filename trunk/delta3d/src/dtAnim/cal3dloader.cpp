@@ -20,11 +20,11 @@
 #include <dtAnim/cal3dloader.h>
 #include <osgDB/ReadFile>
 #include <osg/Texture2D>
+#include <cal3d/error.h>
 #include <cal3d/model.h>
 #include <cal3d/coremodel.h>
 #include <cal3d/coreanimation.h>
 #include <dtAnim/characterfilehandler.h>
-#include <dtAnim/cal3dmodelwrapper.h>
 #include <dtAnim/animationwrapper.h>
 #include <dtAnim/animationchannel.h>
 #include <dtAnim/animationsequence.h>
@@ -35,7 +35,6 @@
 
 namespace dtAnim
 {
-
    /////////////////////////////////////////////////////////////////////////////
    Cal3DLoader::Cal3DLoader()
       : mTextures()
@@ -201,16 +200,32 @@ namespace dtAnim
          {
             data_in->SetPoseMeshFilename(path + handler.mPoseMeshFilename);
          }
-
-         return true;
       }
       else
       {
          LOG_ERROR("Unable to load character file: '" + filename + "'");
+         return false;
       }
 
+      // todo remove this if hardware isn't being used
+      LoadHardwareData(data_in);
+      
+      return true;
+   }
 
-      return false;
+   ////////////////////////////////////////////////////////////////////////////////
+   void Cal3DLoader::LoadAsynchronously(const std::string& filename, LoadCompletionCallback loadCallback)
+   {
+      OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mFileQueueMutex);
+      
+      mAsynchFilesToLoad.push(filename);
+      mAsynchCompletionCallbacks.push(loadCallback);
+
+      // Kick the thread off if it's not already running
+      if (!isRunning())
+      {
+         start();
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -411,4 +426,136 @@ namespace dtAnim
    {
       mTextures.clear();
    }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void Cal3DLoader::run()
+   {
+      std::string currentFile;
+
+      while (1) 
+      {
+         // Get the next file to load or quit
+         {
+            OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mFileQueueMutex);
+            if (mAsynchFilesToLoad.empty())
+            {
+               break;
+            }
+
+            currentFile = mAsynchFilesToLoad.front();
+            mAsynchFilesToLoad.pop();
+         }
+
+         Cal3DModelData* loadedData = NULL;
+
+         Load(currentFile, loadedData);
+
+         LoadCompletionCallback completionCallback = mAsynchCompletionCallbacks.front();
+         mAsynchCompletionCallbacks.pop();
+
+         // Return the loaded data via a callback
+         completionCallback(loadedData);
+      } 
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void Cal3DLoader::LoadHardwareData(Cal3DModelData* modelData)
+   { 
+      CalHardwareModel* hardwareModel = modelData->GetOrCreateCalHardwareModel();
+      if (!hardwareModel->getVectorHardwareMesh().empty())
+      {
+         //This could happen if we're re-creating the geometry for a character.  When
+         //we call CalHardwareModel::load(), CAL3D doesn't clear this container.
+         //CAL3D bug?  Perhaps.  We'll empty it just the same cause it'll double-up
+         //all meshes if we don't.
+         hardwareModel->getVectorHardwareMesh().clear();
+      }    
+
+      int numVerts = 0;
+      int numIndices = 0;
+
+      {
+         CalCoreModel* model = modelData->GetCoreModel();
+
+         const int meshCount = model->getCoreMeshCount();
+
+         for (int meshId = 0; meshId < meshCount; meshId++)
+         {
+            CalCoreMesh* calMesh = model->getCoreMesh(meshId);
+            int submeshCount = calMesh->getCoreSubmeshCount();
+
+            for (int submeshId = 0; submeshId < submeshCount; submeshId++)
+            {
+               CalCoreSubmesh* subMesh = calMesh->getCoreSubmesh(submeshId);
+               numVerts += subMesh->getVertexCount();
+               numIndices += 3 * subMesh->getFaceCount();
+            }
+         }
+      }
+
+      const size_t stride = 18;
+      const size_t strideBytes = stride * sizeof(float);
+
+      // Allocate data arrays for the hardware model to populate
+      modelData->CreateSourceArrays(numVerts, numIndices, stride);
+
+      // Get the pointer and fill in the data
+      float* vertexArray = modelData->GetSourceVertexArray();
+      CalIndex* indexArray = modelData->GetSourceIndexArray();
+
+      hardwareModel->setIndexBuffer(indexArray);
+
+      hardwareModel->setVertexBuffer(reinterpret_cast<char*>(vertexArray), strideBytes);
+      hardwareModel->setNormalBuffer(reinterpret_cast<char*>(vertexArray + 3), strideBytes);
+
+      hardwareModel->setTextureCoordNum(2);
+      hardwareModel->setTextureCoordBuffer(0, reinterpret_cast<char*>(vertexArray + 6), strideBytes);
+      hardwareModel->setTextureCoordBuffer(1, reinterpret_cast<char*>(vertexArray + 8), strideBytes);
+
+      hardwareModel->setWeightBuffer(reinterpret_cast<char*>(vertexArray + 10), strideBytes);
+      hardwareModel->setMatrixIndexBuffer(reinterpret_cast<char*>(vertexArray + 14), strideBytes);
+
+      // Load the data into our arrays
+      if (!hardwareModel->load(0, 0, modelData->GetShaderMaxBones()))
+      {
+         LOG_ERROR("Unable to create a hardware mesh:" + CalError::getLastErrorDescription());
+      }
+
+      InvertTextureCoordinates(hardwareModel, stride, vertexArray, modelData, indexArray);
+   }
+   
+   ////////////////////////////////////////////////////////////////////////////////
+   void Cal3DLoader::InvertTextureCoordinates(CalHardwareModel* hardwareModel, const size_t stride,
+      float* vboVertexAttr, Cal3DModelData* modelData, CalIndex*& indexArray)
+   {
+      const int numVerts = hardwareModel->getTotalVertexCount();
+      //invert texture coordinates.
+      for (unsigned i = 0; i < numVerts * stride; i += stride)
+      {
+         for (unsigned j = 15; j < 18; ++j)
+         {
+            if (vboVertexAttr[i + j] > modelData->GetShaderMaxBones())
+            {
+               vboVertexAttr[i + j] = 0;
+            }
+         }
+
+         vboVertexAttr[i + 7] = 1.0f - vboVertexAttr[i + 7]; //the odd texture coordinates in cal3d are flipped, not sure why
+         vboVertexAttr[i + 9] = 1.0f - vboVertexAttr[i + 9]; //the odd texture coordinates in cal3d are flipped, not sure why
+      }
+
+      for (int meshCount = 0; meshCount < hardwareModel->getHardwareMeshCount(); ++meshCount)
+      {
+         hardwareModel->selectHardwareMesh(meshCount);
+
+         for (int face = 0; face < hardwareModel->getFaceCount(); ++face)
+         {
+            for (int index = 0; index < 3; ++index)
+            {
+               indexArray[face * 3 + index + hardwareModel->getStartIndex()] += hardwareModel->getBaseVertexIndex();
+            }
+         }
+      }
+   }
+
 } // namespace dtAnim

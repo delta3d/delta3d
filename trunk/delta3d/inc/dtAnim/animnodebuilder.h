@@ -161,10 +161,6 @@ private:
    void CalcNumVertsAndIndices(Cal3DModelWrapper* pWrapper,
                                int& numVerts, int& numIndices);
 
-   void InvertTextureCoordinates(CalHardwareModel* hardwareModel, const size_t stride,
-                                 float* vboVertexAttr, Cal3DModelData* modelData,
-                                 CalIndex*& indexArray);
-
    ///Does the hardware support vertex buffers?
    bool SupportsVertexBuffers() const;
 

@@ -21,10 +21,12 @@
 #include <dtAnim/cal3dmodeldata.h>
 #include <dtAnim/animatable.h>
 #include <dtAnim/animationwrapper.h>
+#include <dtUtil/log.h>
 
 #include <osg/BufferObject>
 
 #include <cal3d/coremodel.h>
+#include <cal3d/hardwaremodel.h>
 
 #include <algorithm>
 
@@ -33,7 +35,11 @@
    ////////////////////////////////////////////////////////////////////////////////
    Cal3DModelData::Cal3DModelData(CalCoreModel* coreModel, const std::string& filename)
       : mFilename(filename)
+      , mIndexArray(NULL)
+      , mVertexArray(NULL)
+      , mStride(-1)
       , mCoreModel(coreModel)
+      , mHardwareModel(NULL)
       , mAnimWrappers()
       , mAnimatables()
       , mVertexBufferObject(0)
@@ -114,6 +120,49 @@
    const Cal3DModelData::AnimatableArray& Cal3DModelData::GetAnimatables() const
    {
       return mAnimatables;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   CalHardwareModel* Cal3DModelData::GetOrCreateCalHardwareModel()
+   {      
+      if (!mHardwareModel)
+      {
+         // We need a core model to make the hardware model
+         if (mCoreModel)
+         {
+            mHardwareModel = new CalHardwareModel(mCoreModel);
+         }
+         else
+         {
+            LOG_ERROR("Unable to create hardware model.");
+         }
+      }
+
+      return mHardwareModel;
+   }
+
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void Cal3DModelData::CreateSourceArrays(int numberOfVertices, int numberOfIndices, int stride)
+   {
+      if (!mVertexArray && !mIndexArray)
+      {
+         mIndexArray = new CalIndex[numberOfIndices];
+         mVertexArray = new float[stride * numberOfVertices];  
+
+         mStride = stride;
+      }
+      else
+      {
+         LOG_ERROR("Unable to create source arrays.")
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void Cal3DModelData::DestroySourceArrays()
+   {
+      delete[] mVertexArray; mVertexArray = NULL;
+      delete[] mIndexArray;  mIndexArray = NULL;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -208,4 +257,5 @@
    {
       mMaxVisibleDistance = newDistance;
    }
+
 } //namespace dtAnim

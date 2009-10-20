@@ -37,8 +37,11 @@
 
 #include <dtUtil/log.h>
 
-#include <osg/Node>
 #include <osg/Texture2D>
+
+
+#include <dtAnim/animationgameactor.h>
+#include <osg/MatrixTransform>
 
 
 namespace dtAnim
@@ -49,11 +52,13 @@ const std::string AnimationHelper::PROPERTY_SKELETAL_MESH("Skeletal Mesh");
 /////////////////////////////////////////////////////////////////////////////////
 AnimationHelper::AnimationHelper()
    : mGroundClamp(false)
+   , mLoadAsynchronous(false)
    , mNode(NULL)
    , mAnimator(NULL)
    , mSequenceMixer(new SequenceMixer())
    , mAttachmentController(new AttachmentController())
 {
+
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -69,6 +74,31 @@ void AnimationHelper::Update(float dt)
       mSequenceMixer->Update(dt);
       mAnimator->Update(dt);
       mAttachmentController->Update(*GetModelWrapper());
+   }
+
+   if (mLoadAsynchronous)
+   {
+      Cal3DDatabase& database = Cal3DDatabase::GetInstance();
+
+      // See if the data is ready yet
+      Cal3DModelData* modelData = database.GetModelData(mAsynchFile);
+
+      if (modelData)
+      {
+         // Now that we have the data, create the model wrapper
+         CalModel* model = new CalModel(modelData->GetCoreModel());
+         dtAnim::Cal3DModelWrapper* newWrapper = new Cal3DModelWrapper(model);
+
+         mAnimator = new Cal3DAnimator(newWrapper);
+         mNode = database.GetNodeBuilder().CreateNode(newWrapper);
+
+         RegisterAnimations(*modelData);
+
+         mLoadAsynchronous = false;
+
+         // Add the newly created node to the scene graph via the parent
+         mParent->addChild(mNode);
+      }
    }
 }
 
@@ -121,15 +151,7 @@ bool AnimationHelper::LoadModel(const std::string& pFilename)
             return false;
          }
 
-         const Cal3DModelData::AnimatableArray& animatables = modelData->GetAnimatables();
-
-         Cal3DModelData::AnimatableArray::const_iterator iter = animatables.begin();
-         Cal3DModelData::AnimatableArray::const_iterator end = animatables.end();
-
-         for (;iter != end; ++iter)
-         {
-            mSequenceMixer->RegisterAnimation((*iter).get());
-         }
+         RegisterAnimations(*modelData);
       }
       else
       {
@@ -143,6 +165,30 @@ bool AnimationHelper::LoadModel(const std::string& pFilename)
       mNode = NULL;
       mSequenceMixer->ClearRegisteredAnimations();
    }
+   return true;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+bool AnimationHelper::LoadModelAsynchronously(const std::string& pFilename, osg::Group& parentNode)
+{   
+   if (!pFilename.empty())
+   {
+      Cal3DDatabase& database = Cal3DDatabase::GetInstance();
+
+      database.LoadAsynchronously(pFilename);
+
+      mLoadAsynchronous = true;
+      mAsynchFile = pFilename;
+
+      // Store the parent so that we can automatically attach geometry when it's ready
+      mParent = &parentNode;
+   }
+   else
+   {
+      mAnimator = NULL;
+      mNode = NULL;
+   }
+
    return true;
 }
 
@@ -238,6 +284,20 @@ AttachmentController& AnimationHelper::GetAttachmentController()
 void AnimationHelper::SetAttachmentController(AttachmentController& newController)
 {
    mAttachmentController = &newController;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void AnimationHelper::RegisterAnimations(const Cal3DModelData& sourceData)
+{
+   const Cal3DModelData::AnimatableArray& animatables = sourceData.GetAnimatables();
+
+   Cal3DModelData::AnimatableArray::const_iterator iter = animatables.begin();
+   Cal3DModelData::AnimatableArray::const_iterator end = animatables.end();
+
+   for (;iter != end; ++iter)
+   {
+      mSequenceMixer->RegisterAnimation((*iter).get());
+   }
 }
 
 

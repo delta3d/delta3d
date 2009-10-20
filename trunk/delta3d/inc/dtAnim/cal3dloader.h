@@ -23,25 +23,30 @@
 #define DELTA_CAL3DLOADER
 
 #include <dtAnim/export.h>
-#include <string>
-#include <map>
+#include <dtAnim/cal3dmodelwrapper.h>
+#include <dtCore/refptr.h>
+#include <dtUtil/functor.h>
+
+#include <osg/Referenced>
 #include <osg/ref_ptr>
 #include <osg/Texture2D>
-#include <dtCore/refptr.h>
-#include <osg/Referenced>
+
+#include <OpenThreads/Thread>
+#include <OpenThreads/Mutex>
+
+#include <string>
+#include <map>
+#include <queue>
 
 
 class CalCoreModel;
 
-
 namespace dtAnim
 {
-   class Cal3DModelWrapper;
    class AnimationWrapper;
    class Animatable;
    class CharacterFileHandler;
    class Cal3DModelData;
-  
 
    /**
     * Loads a animation definition file and returns a valid CalModel.  Caches
@@ -49,20 +54,28 @@ namespace dtAnim
     * instances of CalModels.  If you call Load() with the same filename twice,
     * it actually only loads once.
     */
-   class DT_ANIM_EXPORT Cal3DLoader: public osg::Referenced
+   class DT_ANIM_EXPORT Cal3DLoader: public osg::Referenced, public OpenThreads::Thread
    {
       public:
+
+         typedef dtUtil::Functor<void, TYPELIST_1(Cal3DModelData*)> LoadCompletionCallback;
    
          Cal3DLoader();
          
          ///Load an animated entity definition file and return the Cal3DModelWrapper
-         bool Load(const std::string& filename, Cal3DModelData*& data_in);        
+         bool Load(const std::string& filename, Cal3DModelData*& data_in);
+
+         void LoadAsynchronously(const std::string& filename, LoadCompletionCallback loadCallback);
 
          ///empty all containers of CalCoreModels and the stored textures
          void PurgeAllCaches();
    
-      protected:      
+      protected:
+
          virtual ~Cal3DLoader();
+
+         // Threaded loading is done here
+         virtual void run();
 
       private:
          CalCoreModel* GetCoreModel(CharacterFileHandler& handler, const std::string &filename, const std::string& path);
@@ -72,10 +85,19 @@ namespace dtAnim
 
          void LoadModelData(CharacterFileHandler& handler, CalCoreModel& model, Cal3DModelData& modelData);
 
+         void LoadHardwareData(Cal3DModelData* modelData);
+
+         void InvertTextureCoordinates(CalHardwareModel* hardwareModel, const size_t stride,
+            float* vboVertexAttr, Cal3DModelData* modelData, CalIndex*& indexArray);
+
          typedef std::map<std::string, osg::ref_ptr<osg::Texture2D> > TextureMap;
          typedef TextureMap::allocator_type::value_type TextureMapping;
          TextureMap mTextures;
- 
+
+         OpenThreads::Mutex mFileQueueMutex;
+
+         std::queue<std::string> mAsynchFilesToLoad;
+         std::queue<LoadCompletionCallback> mAsynchCompletionCallbacks;
    };
 }//namespace dtAnim
 

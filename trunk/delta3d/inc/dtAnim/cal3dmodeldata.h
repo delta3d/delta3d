@@ -28,6 +28,8 @@
 #include <osg/Referenced>
 #include <osg/observer_ptr>
 
+#include <cal3d/global.h>
+
 #include <vector>
 
 namespace osg
@@ -37,6 +39,7 @@ namespace osg
 }
 
 class CalCoreModel;
+class CalHardwareModel;
 
 namespace dtAnim
 {
@@ -95,6 +98,29 @@ namespace dtAnim
          AnimatableArray& GetAnimatables();
          const AnimatableArray& GetAnimatables() const;
 
+         CalHardwareModel* GetOrCreateCalHardwareModel();
+
+         /**
+          * @return the vertex array that stores the raw vertex data
+          */
+         float* GetSourceVertexArray() { return mVertexArray; }
+
+         /**
+          * @return the vertex array that stores the raw index data
+          */
+         CalIndex* GetSourceIndexArray() { return mIndexArray; }
+
+         /**
+          * @return the number of elements between each successive source vertex row
+          */
+         int GetStride() { return mStride; }
+
+         /// Allocate memory to be used for the source arrays
+         void CreateSourceArrays(int numberOfVertices, int numberOfIndices, int stride);
+
+         /// Deletes the memory held by the vertex and index source arrays
+         void DestroySourceArrays();
+
          /**
           * @return the vbo being used with this character core model, or 0 for none.
           */
@@ -143,7 +169,7 @@ namespace dtAnim
          void SetShaderMaxBones(unsigned maxBones);
 
          LODOptions& GetLODOptions() { return mLODOptions; }
-         const LODOptions& GetLODOptions() const { return mLODOptions; }         
+         const LODOptions& GetLODOptions() const { return mLODOptions; }
          
       protected:
          virtual ~Cal3DModelData();
@@ -155,7 +181,11 @@ namespace dtAnim
          std::string mFilename;
          std::string mShaderName, mShaderGroupName;
          std::string mPoseMeshFilename;
+         CalIndex* mIndexArray;
+         float* mVertexArray;
+         int mStride;
          CalCoreModel* mCoreModel;
+         CalHardwareModel* mHardwareModel;
          AnimationWrapperArray mAnimWrappers;
          AnimatableArray mAnimatables;
          osg::observer_ptr<osg::VertexBufferObject> mVertexBufferObject;

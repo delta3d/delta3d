@@ -280,40 +280,13 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
 
    CalcNumVertsAndIndices(pWrapper, numVerts, numIndices);
 
-   const size_t stride = 18;
-   const size_t strideBytes = stride * sizeof(float);
+   CalHardwareModel* hardwareModel = modelData->GetOrCreateCalHardwareModel();
 
-   // Allocate data arrays for the hardware model to populate
-   CalIndex* indexArray = new CalIndex[numIndices];
-   float* vertexArray = new float[stride * numVerts];
+   CalIndex* indexArray = modelData->GetSourceIndexArray();
+   float* vertexArray = modelData->GetSourceVertexArray();
 
-   CalHardwareModel* hardwareModel = pWrapper->GetOrCreateCalHardwareModel();
-   if (!hardwareModel->getVectorHardwareMesh().empty())
+   // Create GPU resources from our source data
    {
-      //This could happen if we're re-creating the geometry for a character.  When
-      //we call CalHardwareModel::load(), CAL3D doesn't clear this container.
-      //CAL3D bug?  Perhaps.  We'll empty it just the same cause it'll double-up
-      //all meshes if we don't.
-      hardwareModel->getVectorHardwareMesh().clear();
-   }
-
-   hardwareModel->setIndexBuffer(indexArray);
-
-   hardwareModel->setVertexBuffer(reinterpret_cast<char*>(vertexArray), strideBytes);
-   hardwareModel->setNormalBuffer(reinterpret_cast<char*>(vertexArray + 3), strideBytes);
-
-   hardwareModel->setTextureCoordNum(2);
-   hardwareModel->setTextureCoordBuffer(0, reinterpret_cast<char*>(vertexArray + 6), strideBytes);
-   hardwareModel->setTextureCoordBuffer(1, reinterpret_cast<char*>(vertexArray + 8), strideBytes);
-
-   hardwareModel->setWeightBuffer(reinterpret_cast<char*>(vertexArray + 10), strideBytes);
-   hardwareModel->setMatrixIndexBuffer(reinterpret_cast<char*>(vertexArray + 14), strideBytes);
-
-   // Load the data into our arrays
-   if (hardwareModel->load(0, 0, modelData->GetShaderMaxBones()))
-   {
-      InvertTextureCoordinates(hardwareModel, stride, vertexArray, modelData, indexArray);
-
       osg::VertexBufferObject* vertexVBO = modelData->GetVertexBufferObject();
       osg::ElementBufferObject* indexEBO = modelData->GetElementBufferObject();
 
@@ -321,6 +294,8 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
       {
          // Either both should be NULL, or both non NULL
          assert(indexEBO == NULL);
+
+         const size_t stride = modelData->GetStride();
 
          // Create osg arrays that can be passed to create buffer objects
          osg::FloatArray* osgVertexArray = new osg::FloatArray(stride * numVerts, vertexArray);
@@ -389,14 +364,9 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
 
       geode->setComputeBoundingSphereCallback(new Cal3DBoundingSphereCalculator(*pWrapper));
    }
-   else
-   {
-      LOG_ERROR("Unable to create a hardware mesh:" + CalError::getLastErrorDescription() );
-   }
 
-   // The osg arrays copy these values, so we don't need them anymore
-   delete[] vertexArray;
-   delete[] indexArray;
+   // The osg arrays copy the source arrays so we don't need them anymore
+   modelData->DestroySourceArrays();
 
    pWrapper->EndRenderingQuery();
 
@@ -493,41 +463,6 @@ void AnimNodeBuilder::CalcNumVertsAndIndices( Cal3DModelWrapper* pWrapper,
          CalCoreSubmesh* subMesh = calMesh->getCoreSubmesh(submeshId);
          numVerts += subMesh->getVertexCount();
          numIndices += 3 * subMesh->getFaceCount();
-      }
-   }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void AnimNodeBuilder::InvertTextureCoordinates(CalHardwareModel* hardwareModel, const size_t stride,
-                                               float* vboVertexAttr, Cal3DModelData* modelData,
-                                               CalIndex*& indexArray)
-{
-   const int numVerts = hardwareModel->getTotalVertexCount();
-   //invert texture coordinates.
-   for (unsigned i = 0; i < numVerts * stride; i += stride)
-   {
-      for (unsigned j = 15; j < 18; ++j)
-      {
-         if (vboVertexAttr[i + j] > modelData->GetShaderMaxBones())
-         {
-            vboVertexAttr[i + j] = 0;
-         }
-      }
-
-      vboVertexAttr[i + 7] = 1.0f - vboVertexAttr[i + 7]; //the odd texture coordinates in cal3d are flipped, not sure why
-      vboVertexAttr[i + 9] = 1.0f - vboVertexAttr[i + 9]; //the odd texture coordinates in cal3d are flipped, not sure why
-   }
-
-   for (int meshCount = 0; meshCount < hardwareModel->getHardwareMeshCount(); ++meshCount)
-   {
-      hardwareModel->selectHardwareMesh(meshCount);
-
-      for (int face = 0; face < hardwareModel->getFaceCount(); ++face)
-      {
-         for (int index = 0; index < 3; ++index)
-         {
-            indexArray[face * 3 + index + hardwareModel->getStartIndex()] += hardwareModel->getBaseVertexIndex();
-         }
       }
    }
 }

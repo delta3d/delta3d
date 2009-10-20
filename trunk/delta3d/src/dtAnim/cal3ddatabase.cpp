@@ -31,7 +31,7 @@
 
 namespace dtAnim
 {
-   ////////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    //a custom find function that uses a functor
    template<class T, class Array>
    const typename Array::value_type::element_type* FindWithFunctor(Array a, T functor)
@@ -74,9 +74,9 @@ namespace dtAnim
       const CalCoreModel* mModel;
    };
 
-   ////////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
 
-   ////////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    Cal3DDatabase::Cal3DDatabase()
       : mModelData()
       , mFileLoader(new Cal3DLoader())
@@ -84,14 +84,15 @@ namespace dtAnim
    {
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    Cal3DDatabase::~Cal3DDatabase()
    {
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    dtCore::RefPtr<Cal3DDatabase> Cal3DDatabase::mInstance;
-   ////////////////////////////////////////////////////////////////////////////////
+
+   /////////////////////////////////////////////////////////////////////////////
    Cal3DDatabase& Cal3DDatabase::GetInstance()
    {
       if (!mInstance.valid())
@@ -101,12 +102,13 @@ namespace dtAnim
       return *mInstance;
    }
 
-   /// @return the node builder for this database.
+   /////////////////////////////////////////////////////////////////////////////
    AnimNodeBuilder& Cal3DDatabase::GetNodeBuilder()
    {
       return *mNodeBuilder;
    }
-   ///Load an animated entity definition file and return the Cal3DModelWrapper
+
+   /////////////////////////////////////////////////////////////////////////////
    dtCore::RefPtr<Cal3DModelWrapper> Cal3DDatabase::Load(const std::string& file)
    {
       std::string filename = osgDB::convertFileNameToNativeStyle(file);
@@ -115,6 +117,8 @@ namespace dtAnim
       {
          if (mFileLoader->Load(filename, data))
          {
+            // Protect the data in case another thread is accessing it
+            OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mAsynchronousLoadLock);
             mModelData.push_back(data);
          }
          else
@@ -129,24 +133,43 @@ namespace dtAnim
       return wrapper;
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
+   void Cal3DDatabase::LoadAsynchronously(const std::string& file)
+   {
+      dtUtil::Functor<void, TYPELIST_1(Cal3DModelData*)> loadCallback =
+         dtUtil::MakeFunctor(&Cal3DDatabase::OnAsynchronousLoadCompleted, this);
+      
+      mFileLoader->LoadAsynchronously(file, loadCallback);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void Cal3DDatabase::OnAsynchronousLoadCompleted(Cal3DModelData* loadedModelData)
+   {
+      OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mAsynchronousLoadLock);
+
+      dtCore::RefPtr<Cal3DModelData> newModelData = loadedModelData;
+      mModelData.push_back(newModelData);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
    void Cal3DDatabase::PurgeLoaderCaches()
    {
       mFileLoader->PurgeAllCaches();
    }
-   ////////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void Cal3DDatabase::TruncateDatabase()
    {
+      OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mAsynchronousLoadLock);
       mModelData.clear();
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    const Cal3DModelData* Cal3DDatabase::GetModelData(const Cal3DModelWrapper& wrapper) const
    {
       return Find(wrapper.GetCalModel()->getCoreModel());
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    Cal3DModelData* Cal3DDatabase::GetModelData(const Cal3DModelWrapper& wrapper)
    {
       if (!wrapper.GetCalModel())
@@ -157,28 +180,38 @@ namespace dtAnim
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   Cal3DModelData* Cal3DDatabase::GetModelData(const std::string& filename)
+   {
+      return Find(filename);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
    Cal3DModelData* Cal3DDatabase::Find(const std::string& filename)
    {
       // todo- this is ugly, get rid of it
+      OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mAsynchronousLoadLock);
       return const_cast<Cal3DModelData*>(FindWithFunctor(mModelData, findWithFilename(filename)));
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    const Cal3DModelData* Cal3DDatabase::Find(const std::string& filename) const
    {
+      OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mAsynchronousLoadLock);
       return FindWithFunctor(mModelData, findWithFilename(filename));
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    Cal3DModelData* Cal3DDatabase::Find(const CalCoreModel* coreModel)
    {
       // todo- this is ugly, get rid of it
+      OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mAsynchronousLoadLock);
       return const_cast<Cal3DModelData*>(FindWithFunctor(mModelData, findWithCoreModel(coreModel)));
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    const Cal3DModelData* Cal3DDatabase::Find(const CalCoreModel* coreModel) const
    {
+      OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mAsynchronousLoadLock);
       return FindWithFunctor(mModelData, findWithCoreModel(coreModel));
    }
 } // namespace dtAnim
