@@ -29,6 +29,7 @@
 
 #include <dtCore/refptr.h>
 
+#include <osg/Group>
 #include <osg/Referenced>
 
 #include <string>
@@ -38,6 +39,7 @@
 namespace osg
 {
    class Node;
+   class Group;
 }
 /// @endcond
 
@@ -50,8 +52,10 @@ namespace dtDAL
 namespace dtAnim
 {
    class Cal3DModelWrapper;
-   class AnimNodeBuilder;
+   class Cal3DModelData;
    class Cal3DDatabase;
+   class AnimNodeBuilder;
+   class AnimationGameActor;
 
    /**
     * The AnimationHelper class is a utility class to simplify adding animation
@@ -85,6 +89,17 @@ namespace dtAnim
           * @return whether or not we successfully loaded the file
           */
          bool LoadModel(const std::string& pFilename);
+         
+         /**
+          * This function enqueues a character XML file from string where it
+          * will be loaded in the background to create a Cal3DAnimator with 
+          * the Cal3DModelWrapper and then calls CreateGeode() on the AnimNodeBuilder
+          *
+          * @param the name of the file to load
+          * @param the osg node to add created geometry to
+          * @return whether or not we successfully loaded the file
+          */
+         bool LoadModelAsynchronously(const std::string& pFilename, osg::Group& parentNode);
 
          /**
           * This function plays the specified animation defined within the character XML
@@ -194,10 +209,15 @@ namespace dtAnim
       private:
 
          bool mGroundClamp;
+         bool mLoadAsynchronous;
+         std::string mAsynchFile;
+         dtCore::ObserverPtr<osg::Group> mParent;
          dtCore::RefPtr<osg::Node> mNode;
          dtCore::RefPtr<Cal3DAnimator> mAnimator;
          dtCore::RefPtr<SequenceMixer> mSequenceMixer;
          dtCore::RefPtr<AttachmentController> mAttachmentController;
+
+         void RegisterAnimations(const Cal3DModelData& sourceData);
 
    };
 

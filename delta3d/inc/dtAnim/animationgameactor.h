@@ -28,7 +28,6 @@
 #include <dtAnim/animationhelper.h> //for RefPtr member
 #include <string>                  // for static constants
 
-
 namespace dtAnim
 {
    /**
@@ -42,9 +41,9 @@ namespace dtAnim
 
       /**
       * Constructs an AnimationGameActor actor.
-      * @param proxy The actor proxy owning this task actor.     
+      * @param proxy The actor proxy owning this task actor.
       */
-      AnimationGameActor(dtGame::GameActorProxy &proxy);   
+      AnimationGameActor(dtGame::GameActorProxy &proxy);
 
       /**
       * Loads a model file.
@@ -57,12 +56,12 @@ namespace dtAnim
       const dtAnim::AnimationHelper* GetHelper() const;
 
 
-   protected:      
+   protected:
 
-      dtCore::RefPtr<dtAnim::AnimationHelper> mHelper;    
+      dtCore::RefPtr<dtAnim::AnimationHelper> mHelper;
 
-      /// Destroys this actor.     
-      virtual ~AnimationGameActor();    
+      /// Destroys this actor.
+      virtual ~AnimationGameActor();
 
    private:
 

@@ -27,55 +27,77 @@
 #include <dtGame/basemessages.h>
 #include <dtGame/invokable.h>
 #include <dtDAL/functor.h>
+#include <dtUtil/functor.h>
 
 #include <dtAnim/animnodebuilder.h>
 
 #include <osg/MatrixTransform>
 #include <osg/Geode>
 
+
 namespace dtAnim
 {
+   /////////////////////////////////////////////////////////////////////////////
    AnimationGameActor::AnimationGameActor(dtGame::GameActorProxy& proxy)
       : dtGame::GameActor(proxy)
       , mHelper(new dtAnim::AnimationHelper())
    {
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    AnimationGameActor::~AnimationGameActor()
    {
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    dtAnim::AnimationHelper* AnimationGameActor::GetHelper()
    {
       return mHelper.get();
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    const dtAnim::AnimationHelper* AnimationGameActor::GetHelper() const
    {
       return mHelper.get();
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void AnimationGameActor::SetModel(const std::string& modelFile)
    {
       GetMatrixNode()->removeChildren(0, GetMatrixNode()->getNumChildren());
-      //the helper handles an empty model file name.
-      mHelper->LoadModel(modelFile);
+
       if (!modelFile.empty())
       {
-         osg::Node* node = mHelper->GetNode();
-         GetMatrixNode()->addChild(node);
+         // Default to synch'ed loading, example left for setting it to asynch
+         if (1)
+         {
+            //the helper handles an empty model file name.
+            mHelper->LoadModel(modelFile);
+            if (!modelFile.empty())
+            {
+               osg::Node* node = mHelper->GetNode();
+               GetMatrixNode()->addChild(node);
+            }
+         }
+         else
+         {
+            mHelper->LoadModelAsynchronously(modelFile, *GetMatrixNode());
+         }
       }
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    AnimationGameActorProxy::AnimationGameActorProxy()
    {
       SetClassName("dtActors::AnimationGameActor");
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    AnimationGameActorProxy::~AnimationGameActorProxy()
    {
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void AnimationGameActorProxy::BuildPropertyMap()
    {
       dtGame::GameActorProxy::BuildPropertyMap();
@@ -88,9 +110,9 @@ namespace dtAnim
       AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::SKELETAL_MESH,
          "Skeletal Mesh", "Skeletal Mesh", dtDAL::MakeFunctor(actor, &AnimationGameActor::SetModel),
          "The model resource that defines the skeletal mesh", "AnimationBase"));
-
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    const dtDAL::ActorProxy::RenderMode& AnimationGameActorProxy::GetRenderMode()
    {
       dtDAL::ResourceDescriptor* resource = GetResource("Skeletal Mesh");
@@ -111,6 +133,7 @@ namespace dtAnim
       }
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    dtDAL::ActorProxyIcon* AnimationGameActorProxy::GetBillBoardIcon()
    {
       if (!mBillBoardIcon.valid())
@@ -121,6 +144,7 @@ namespace dtAnim
       return mBillBoardIcon.get();
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void AnimationGameActorProxy::CreateActor()
    {
       SetActor(*new AnimationGameActor(*this));

@@ -23,6 +23,8 @@
 #define __DELTA_CAL3DWRAPPER_H__
 
 #include <dtAnim/export.h>
+#include <dtUtil/deprecationmgr.h>
+
 #include <cal3d/model.h>
 #include <cal3d/hardwaremodel.h>
 #include <cal3d/coremodel.h>
@@ -292,7 +294,7 @@ namespace dtAnim
           *  with caution.
           *  @return The hardware model represented by this CalModel
           */
-         CalHardwareModel* GetOrCreateCalHardwareModel();
+         DEPRECATE_FUNC CalHardwareModel* GetOrCreateCalHardwareModel();
 
       protected:
          virtual ~Cal3DModelWrapper();
