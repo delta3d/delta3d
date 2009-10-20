@@ -22,9 +22,9 @@
 #define DELTA_CAL3D_MODEL_DATA
 
 #include <dtAnim/export.h>
-
 #include <dtCore/refptr.h>
 
+#include <osg/Array>
 #include <osg/Referenced>
 #include <osg/observer_ptr>
 
@@ -103,7 +103,7 @@ namespace dtAnim
          /**
           * @return the vertex array that stores the raw vertex data
           */
-         float* GetSourceVertexArray() { return mVertexArray; }
+         osg::FloatArray* GetSourceVertexArray() { return mVertexArray; }
 
          /**
           * @return the vertex array that stores the raw index data
@@ -181,15 +181,19 @@ namespace dtAnim
          std::string mFilename;
          std::string mShaderName, mShaderGroupName;
          std::string mPoseMeshFilename;
-         CalIndex* mIndexArray;
-         float* mVertexArray;
+
+         // Buffer data
          int mStride;
+         CalIndex* mIndexArray;
+         osg::ref_ptr<osg::FloatArray> mVertexArray;
+         osg::observer_ptr<osg::VertexBufferObject> mVertexBufferObject;
+         osg::observer_ptr<osg::ElementBufferObject> mElementBufferObject;
+
          CalCoreModel* mCoreModel;
          CalHardwareModel* mHardwareModel;
          AnimationWrapperArray mAnimWrappers;
          AnimatableArray mAnimatables;
-         osg::observer_ptr<osg::VertexBufferObject> mVertexBufferObject;
-         osg::observer_ptr<osg::ElementBufferObject> mElementBufferObject;
+
          unsigned mShaderMaxBones;
 
          LODOptions mLODOptions;
