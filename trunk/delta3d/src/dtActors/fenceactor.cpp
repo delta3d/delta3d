@@ -103,7 +103,7 @@ namespace dtActors
       mSegGeom->setTexCoordArray(0, NULL);
       mSegGeom->setColorArray(NULL);
       mSegGeom->setNormalArray(NULL);
-      mSegGeom->removePrimitiveSet(0, 3);
+      mSegGeom->removePrimitiveSet(0, mSegGeom->getNumPrimitiveSets());
       mSegGeom = NULL;
 
       mSegVertexList = NULL;
@@ -785,6 +785,11 @@ namespace dtActors
                dtCore::RefPtr<dtCore::Object> postMesh = geomData->mPost;
 
                postMesh->SetScale(osg::Vec3(mFenceScale, mFenceScale, mFenceScale));
+
+               if (postMesh->GetFilename() != postMeshName)
+               {
+                  postMesh->LoadFile(postMeshName);
+               }
 
                // Set the position of the object.
                postMesh->GetTransform(transform);
