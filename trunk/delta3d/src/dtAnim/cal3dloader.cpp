@@ -499,21 +499,23 @@ namespace dtAnim
       // Allocate data arrays for the hardware model to populate
       modelData->CreateSourceArrays(numVerts, numIndices, stride);
 
+      float* tempVertexArray = new float[stride * numVerts];
+
       // Get the pointer and fill in the data
-      float* vertexArray = modelData->GetSourceVertexArray();
+      osg::FloatArray* vertexArray = modelData->GetSourceVertexArray();
       CalIndex* indexArray = modelData->GetSourceIndexArray();
 
       hardwareModel->setIndexBuffer(indexArray);
 
-      hardwareModel->setVertexBuffer(reinterpret_cast<char*>(vertexArray), strideBytes);
-      hardwareModel->setNormalBuffer(reinterpret_cast<char*>(vertexArray + 3), strideBytes);
+      hardwareModel->setVertexBuffer(reinterpret_cast<char*>(tempVertexArray), strideBytes);
+      hardwareModel->setNormalBuffer(reinterpret_cast<char*>(tempVertexArray + 3), strideBytes);
 
       hardwareModel->setTextureCoordNum(2);
-      hardwareModel->setTextureCoordBuffer(0, reinterpret_cast<char*>(vertexArray + 6), strideBytes);
-      hardwareModel->setTextureCoordBuffer(1, reinterpret_cast<char*>(vertexArray + 8), strideBytes);
+      hardwareModel->setTextureCoordBuffer(0, reinterpret_cast<char*>(tempVertexArray + 6), strideBytes);
+      hardwareModel->setTextureCoordBuffer(1, reinterpret_cast<char*>(tempVertexArray + 8), strideBytes);
 
-      hardwareModel->setWeightBuffer(reinterpret_cast<char*>(vertexArray + 10), strideBytes);
-      hardwareModel->setMatrixIndexBuffer(reinterpret_cast<char*>(vertexArray + 14), strideBytes);
+      hardwareModel->setWeightBuffer(reinterpret_cast<char*>(tempVertexArray + 10), strideBytes);
+      hardwareModel->setMatrixIndexBuffer(reinterpret_cast<char*>(tempVertexArray + 14), strideBytes);
 
       // Load the data into our arrays
       if (!hardwareModel->load(0, 0, modelData->GetShaderMaxBones()))
@@ -521,7 +523,12 @@ namespace dtAnim
          LOG_ERROR("Unable to create a hardware mesh:" + CalError::getLastErrorDescription());
       }
 
-      InvertTextureCoordinates(hardwareModel, stride, vertexArray, modelData, indexArray);
+      InvertTextureCoordinates(hardwareModel, stride, tempVertexArray, modelData, indexArray);
+
+      // Move the data into the osg structure
+      vertexArray->assign(tempVertexArray, tempVertexArray + numVerts * stride);
+
+      delete[] tempVertexArray;
    }
    
    ////////////////////////////////////////////////////////////////////////////////

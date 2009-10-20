@@ -283,7 +283,7 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
    CalHardwareModel* hardwareModel = modelData->GetOrCreateCalHardwareModel();
 
    CalIndex* indexArray = modelData->GetSourceIndexArray();
-   float* vertexArray = modelData->GetSourceVertexArray();
+   osg::FloatArray* vertexArray = modelData->GetSourceVertexArray();
 
    // Create GPU resources from our source data
    {
@@ -296,9 +296,6 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
          assert(indexEBO == NULL);
 
          const size_t stride = modelData->GetStride();
-
-         // Create osg arrays that can be passed to create buffer objects
-         osg::FloatArray* osgVertexArray = new osg::FloatArray(stride * numVerts, vertexArray);
 
          vertexVBO = new osg::VertexBufferObject;
          indexEBO = new osg::ElementBufferObject;
@@ -315,7 +312,7 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
             drawElements = new osg::DrawElementsUInt(GL_TRIANGLES, numIndices, (GLuint*)indexArray);
          }
 
-         vertexVBO->addArray(osgVertexArray);
+         vertexVBO->addArray(vertexArray);
          indexEBO->addDrawElements(drawElements);
 
          // Store the buffers with the model data for possible re-use later
@@ -364,9 +361,6 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
 
       geode->setComputeBoundingSphereCallback(new Cal3DBoundingSphereCalculator(*pWrapper));
    }
-
-   // The osg arrays copy the source arrays so we don't need them anymore
-   modelData->DestroySourceArrays();
 
    pWrapper->EndRenderingQuery();
 

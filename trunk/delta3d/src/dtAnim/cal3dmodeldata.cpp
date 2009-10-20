@@ -54,6 +54,8 @@
       mCoreModel = 0;
       mAnimWrappers.clear();
       mAnimatables.clear();
+
+      DestroySourceArrays();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -148,7 +150,7 @@
       if (!mVertexArray && !mIndexArray)
       {
          mIndexArray = new CalIndex[numberOfIndices];
-         mVertexArray = new float[stride * numberOfVertices];  
+         mVertexArray = new osg::FloatArray(stride * numberOfVertices);
 
          mStride = stride;
       }
@@ -161,7 +163,7 @@
    ////////////////////////////////////////////////////////////////////////////////
    void Cal3DModelData::DestroySourceArrays()
    {
-      delete[] mVertexArray; mVertexArray = NULL;
+      mVertexArray = NULL;
       delete[] mIndexArray;  mIndexArray = NULL;
    }
 
