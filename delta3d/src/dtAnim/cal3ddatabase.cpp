@@ -56,7 +56,14 @@ namespace dtAnim
 
       bool operator()(Cal3DModelData* data)
       {
-         return data->GetFilename() == mFilename;
+         if (data == NULL)
+         {
+            return false;
+         }
+         else
+         {
+            return data->GetFilename() == mFilename;
+         }
       }
 
       const std::string& mFilename;
@@ -145,6 +152,11 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    void Cal3DDatabase::OnAsynchronousLoadCompleted(Cal3DModelData* loadedModelData)
    {
+      if (loadedModelData == NULL) 
+      { 
+         return; 
+      }
+
       OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mAsynchronousLoadLock);
 
       dtCore::RefPtr<Cal3DModelData> newModelData = loadedModelData;

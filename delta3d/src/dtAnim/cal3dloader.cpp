@@ -439,6 +439,8 @@ namespace dtAnim
             OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mFileQueueMutex);
             if (mAsynchFilesToLoad.empty())
             {
+               //no more files to load?  Better clear out the callbacks to match.
+               std::swap(mAsynchCompletionCallbacks, std::queue<LoadCompletionCallback>());
                break;
             }
 
@@ -453,8 +455,10 @@ namespace dtAnim
          LoadCompletionCallback completionCallback = mAsynchCompletionCallbacks.front();
          mAsynchCompletionCallbacks.pop();
 
-         // Return the loaded data via a callback
+         // Return the loaded data via a callback (could be NULL if not loaded correctly)
          completionCallback(loadedData);
+         
+         currentFile.clear();
       } 
    }
 
