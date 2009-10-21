@@ -44,7 +44,7 @@ namespace dtAI
    /**
     * A static class which manages all waypoints
     */
-   class DT_AI_EXPORT WaypointManager: public dtCore::DeltaDrawable
+   class DT_AI_EXPORT WaypointManager : public dtCore::DeltaDrawable
    {
    public:
       typedef std::map<WaypointID, Waypoint*> WaypointMap;
