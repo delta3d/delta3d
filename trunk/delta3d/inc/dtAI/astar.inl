@@ -56,14 +56,14 @@ private:
 
 template<class _NodeType, class _CostFunc, class _Container, class _Timer>
 AStar<_NodeType, _CostFunc, _Container, _Timer>::AStar()
-: mFuncCreateNode(this, &AStar<_NodeType, _CostFunc, _Container, _Timer>::CreateNode)
+   : mFuncCreateNode(this, &AStar<_NodeType, _CostFunc, _Container, _Timer>::CreateNode)
 {
 
 }
 
 template<class _NodeType, class _CostFunc, class _Container, class _Timer>
 AStar<_NodeType, _CostFunc, _Container, _Timer>::AStar(CreateNodeFunctor createFunc)
-: mFuncCreateNode(createFunc)
+   : mFuncCreateNode(createFunc)
 {
 }
 
@@ -85,11 +85,10 @@ AStar<_NodeType, _CostFunc, _Container, _Timer>::~AStar()
 template<class _NodeType, class _CostFunc, class _Container, class _Timer>
 void AStar<_NodeType, _CostFunc, _Container, _Timer>::FreeMem()
 {
-
-   std::for_each(mOpen.begin(), mOpen.end(), delete_func());
-   std::for_each(mClosed.begin(), mClosed.end(), delete_func());
+   std::for_each(mDeleteMe.begin(), mDeleteMe.end(), delete_func());
 
    mOpen.clear();
+   mDeleteMe.clear();
    mClosed.clear();
 }
 
@@ -127,12 +126,13 @@ void AStar<_NodeType, _CostFunc, _Container, _Timer>::Reset(const std::vector<da
 
    while (iter != endOfList)
    {
-      mOpen.push_back(mFuncCreateNode(NULL, *iter, mCostFunc(pFrom[0], *iter), mCostFunc(*iter, pTo[0]) ));
+      node_type* newNode = mFuncCreateNode(NULL, *iter, mCostFunc(pFrom[0], *iter), mCostFunc(*iter, pTo[0]));
+      mOpen.push_back(newNode);
+      mDeleteMe.push_back(newNode);
       ++iter;
    }
 
    std::make_heap(mOpen.begin(), mOpen.end(), node_type_gtr_func());
-
 }
 
 template<class _NodeType, class _CostFunc, class _Container, class _Timer>
@@ -140,13 +140,17 @@ void AStar<_NodeType, _CostFunc, _Container, _Timer>::AddNodeLink(node_type* pPa
 {
    if (!pParent)
    {
-      Insert(mOpen, mFuncCreateNode(NULL, pData, 0, mCostFunc(mConfig.Start(), mConfig.Finish())));
+      node_type* newNode = mFuncCreateNode(NULL, pData, 0, mCostFunc(mConfig.Start(), mConfig.Finish()));
+      Insert(mOpen, newNode);
+      mDeleteMe.push_back(newNode);
    }
    else
    {
       cost_type costFromParent = mCostFunc(pParent->GetData(), pData);
       cost_type costToFinish   = mCostFunc(pData, mConfig.Finish());
-      Insert(mOpen, mFuncCreateNode(pParent, pData, pParent->GetCostToNode() + costFromParent, costToFinish));
+      node_type* newNode = mFuncCreateNode(pParent, pData, pParent->GetCostToNode() + costFromParent, costToFinish);
+      Insert(mOpen, newNode);
+      mDeleteMe.push_back(newNode);
    }
 }
 
@@ -157,20 +161,29 @@ void AStar<_NodeType, _CostFunc, _Container, _Timer>::Insert(AStarContainer& pCo
    std::push_heap(pCont.begin(), pCont.end(), node_type_gtr_func());
 }
 
+template<class _NodeType, class _CostFunc, class _Container, class _Timer>
+void AStar<_NodeType, _CostFunc, _Container, _Timer>::Insert(AStarClosedContainer& pCont, const data_type& pData)
+{
+   pCont.insert(pData);
+}
+
 // This needs to be optimized once we have a more suitable container implementation
 template<class _NodeType, class _CostFunc, class _Container, class _Timer>
-typename std::vector<_NodeType*>::iterator AStar<_NodeType, _CostFunc, _Container, _Timer>::Contains(AStarContainer& pCont, data_type pNode)
+typename AStar<_NodeType, _CostFunc, _Container, _Timer>::AStarContainer::iterator AStar<_NodeType, _CostFunc, _Container, _Timer>::Contains(AStarContainer& pCont, const data_type& pData)
 {
-   return std::find_if (pCont.begin(), pCont.end(), node_type_comp_func<data_type, node_type>(pNode));
+   return std::find_if (pCont.begin(), pCont.end(), node_type_comp_func<data_type, node_type>(pData));
+}
+
+template<class _NodeType, class _CostFunc, class _Container, class _Timer>
+typename AStar<_NodeType, _CostFunc, _Container, _Timer>::AStarClosedContainer::iterator AStar<_NodeType, _CostFunc, _Container, _Timer>::Contains(AStarClosedContainer& pCont, const data_type& pData)
+{
+   return pCont.find(pData);
 }
 
 // This needs to be optimized once we have a more suitable container implementation
 template<class _NodeType, class _CostFunc, class _Container, class _Timer>
 void AStar<_NodeType, _CostFunc, _Container, _Timer>::Remove(AStarContainer& pCont, typename AStarContainer::iterator iterToErase)
 {
-   delete_func d;
-   d(*iterToErase);
-
    pCont.erase(iterToErase, iterToErase + 1);
    std::make_heap(mOpen.begin(), mOpen.end(), node_type_gtr_func());
 }
@@ -235,7 +248,7 @@ PathFindResult AStar<_NodeType, _CostFunc, _Container, _Timer>::FindPath()
       if (pHasPathToFinish || pExceededMaxCost || pHasExceededTimeLimit || pAtOrExceedingMaxDepth || (mConfig.mNodesExplored >= mConfig.mMaxNodesExplored))
       {
          // we simply add it back to the container so it will be deleted later
-         mClosed.push_back(pStart);
+         mClosed.insert(pStart->GetData());
 
          // \todo combine partial lists instead of clearing them
          mConfig.mResult.clear();
@@ -259,7 +272,7 @@ PathFindResult AStar<_NodeType, _CostFunc, _Container, _Timer>::FindPath()
          ++mConfig.mNodesExplored;
 
          // add it onto the closed list
-         Insert(mClosed, pStart);
+         Insert(mClosed, pStart->GetData());
 
          // we will iterate through the potential places this node can take us
          typename node_type::iterator iter = pStart->begin();
@@ -291,7 +304,6 @@ PathFindResult AStar<_NodeType, _CostFunc, _Container, _Timer>::FindPath()
                      Remove(mOpen, pNodeLinkIter);
                      AddNodeLink(pStart, pNode);
                   }
-
                }
             }
             ++iter;
