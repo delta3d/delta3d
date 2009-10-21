@@ -95,6 +95,7 @@ QGroupBox::title
 QTreeView
 {
    margin-top: 2ex;
+   alternate-background-color: #444444;
 }
 
 QTabWidget::pane
