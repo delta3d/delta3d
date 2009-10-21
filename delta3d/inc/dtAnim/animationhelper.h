@@ -209,9 +209,8 @@ namespace dtAnim
       private:
 
          bool mGroundClamp;
-         bool mLoadAsynchronous;
          std::string mAsynchFile;
-         dtCore::ObserverPtr<osg::Group> mParent;
+         dtCore::RefPtr<osg::Group> mParent;
          dtCore::RefPtr<osg::Node> mNode;
          dtCore::RefPtr<Cal3DAnimator> mAnimator;
          dtCore::RefPtr<SequenceMixer> mSequenceMixer;
