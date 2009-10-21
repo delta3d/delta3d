@@ -41,6 +41,7 @@ QMenu::item:selected
 
 QMenuBar
 {
+   background-color: black;
    Color: grey;
 }
 
@@ -126,9 +127,14 @@ QTabBar::tab:!selected
    margin-top: 4px; /* make non-selected tabs look smaller*/
 }
 
+QHeaderView::section
+{
+   background: black;
+   color: white;
+}
+
 /* -- Scroll bar customization doesn't work so well and looks
    pretty good with default values.
-
 
 QScrollBar:vertical
 {
