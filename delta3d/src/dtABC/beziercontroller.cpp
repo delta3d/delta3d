@@ -2,6 +2,7 @@
 #include <dtCore/scene.h>
 #include <osg/Vec3>
 #include <osg/Quat>
+#include <osg/LineWidth>
 
 #include <cmath>
 #include <assert.h>
@@ -27,6 +28,8 @@ BezierController::BezierController()
 
    osg::StateSet* ss = mGeode->getOrCreateStateSet();
    ss->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+   osg::LineWidth* lineWidth = new osg::LineWidth(3.f);
+   ss->setAttributeAndModes(lineWidth, osg::StateAttribute::ON);
 
    mNode = new osg::Group;
 }
@@ -367,11 +370,9 @@ void BezierController::BezierPathDrawable::drawImplementation(osg::RenderInfo& /
    std::list<PathData>::const_iterator iter = mPath.begin();
    std::list<PathData>::const_iterator endOfList = mPath.end();
 
-   glLineWidth(3.0f);
 
    glBegin(GL_LINES);
 
-   glColor3f(1.0f, 1.0f, 1.0f);
    glColor3f(0.0f, 1.0f, 0.35f);
 
    osg::Vec3 lastPoint = (*iter).mPoint.GetPosition();
