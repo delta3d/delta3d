@@ -440,7 +440,8 @@ namespace dtAnim
             if (mAsynchFilesToLoad.empty())
             {
                //no more files to load?  Better clear out the callbacks to match.
-               std::swap(mAsynchCompletionCallbacks, std::queue<LoadCompletionCallback>());
+               std::queue<LoadCompletionCallback> clearQueue;
+               mAsynchCompletionCallbacks = clearQueue;
                break;
             }
 

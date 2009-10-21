@@ -35,15 +35,15 @@
    ////////////////////////////////////////////////////////////////////////////////
    Cal3DModelData::Cal3DModelData(CalCoreModel* coreModel, const std::string& filename)
       : mFilename(filename)
+      , mStride(-1)
       , mIndexArray(NULL)
       , mVertexArray(NULL)
-      , mStride(-1)
+      , mVertexBufferObject(NULL)
+      , mElementBufferObject(NULL)
       , mCoreModel(coreModel)
       , mHardwareModel(NULL)
       , mAnimWrappers()
       , mAnimatables()
-      , mVertexBufferObject(0)
-      , mElementBufferObject(0)
       , mShaderMaxBones(72)
    {
    }
