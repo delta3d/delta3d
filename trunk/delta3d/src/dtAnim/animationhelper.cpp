@@ -52,7 +52,6 @@ const std::string AnimationHelper::PROPERTY_SKELETAL_MESH("Skeletal Mesh");
 /////////////////////////////////////////////////////////////////////////////////
 AnimationHelper::AnimationHelper()
    : mGroundClamp(false)
-   , mLoadAsynchronous(false)
    , mNode(NULL)
    , mAnimator(NULL)
    , mSequenceMixer(new SequenceMixer())
@@ -76,7 +75,7 @@ void AnimationHelper::Update(float dt)
       mAttachmentController->Update(*GetModelWrapper());
    }
 
-   if (mLoadAsynchronous)
+   if (!mAsynchFile.empty())
    {
       Cal3DDatabase& database = Cal3DDatabase::GetInstance();
 
@@ -94,7 +93,8 @@ void AnimationHelper::Update(float dt)
 
          RegisterAnimations(*modelData);
 
-         mLoadAsynchronous = false;
+         // Done loading, clear the file to load string
+         mAsynchFile.clear();
 
          // Add the newly created node to the scene graph via the parent
          mParent->addChild(mNode);
@@ -176,8 +176,8 @@ bool AnimationHelper::LoadModelAsynchronously(const std::string& pFilename, osg:
       Cal3DDatabase& database = Cal3DDatabase::GetInstance();
 
       database.LoadAsynchronously(pFilename);
-
-      mLoadAsynchronous = true;
+      
+      // Store the filename so that we can poll for load completion
       mAsynchFile = pFilename;
 
       // Store the parent so that we can automatically attach geometry when it's ready
