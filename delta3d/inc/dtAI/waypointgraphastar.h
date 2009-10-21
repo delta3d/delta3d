@@ -34,16 +34,16 @@ namespace dtAI
    class WaypointGraphNode: public AStarNode<WaypointGraphNode, const WaypointInterface*, WaypointGraph::ConstWaypointArray::const_iterator, float>
    {
    public:
-      //we must supply astar with a create function to use this constructor    
+      // we must supply astar with a create function to use this constructor    
       WaypointGraphNode(WaypointGraph& wpGraph, node_type* pParent, const WaypointInterface* pWaypoint, cost_type pGn, cost_type pHn)
          : BaseType(pParent, pWaypoint, pGn, pHn)
          , mWPGraph(&wpGraph)
       {
          mWaypoints.clear();
          mWPGraph->GetAllEdgesFromWaypoint(pWaypoint->GetID(), mWaypoints);
-      }      
+      }
 
-      //this constructor will be used for constrained searches
+      // this constructor will be used for constrained searches
       WaypointGraphNode(WaypointGraph& wpGraph, const NavMesh& nm, node_type* pParent, const WaypointInterface* pWaypoint, cost_type pGn, cost_type pHn)
          : BaseType(pParent, pWaypoint, pGn, pHn)
          , mWPGraph(&wpGraph)
@@ -51,18 +51,18 @@ namespace dtAI
       {
          mWaypoints.clear();
          
-         //copy paths
+         // copy paths
          NavMesh::NavMeshContainer::const_iterator nm_iter = mSearchSpace->begin(pWaypoint);
          NavMesh::NavMeshContainer::const_iterator nm_iterEnd = mSearchSpace->end(pWaypoint);
 
-         for(;nm_iter != nm_iterEnd; ++nm_iter)
+         for (;nm_iter != nm_iterEnd; ++nm_iter)
          {
             mWaypoints.push_back( (*nm_iter).second->GetWaypointTo() );
          }
       }      
 
 
-      //we need this one just to compile, probably a good sign there is some refactoring to be done
+      // we need this one just to compile, probably a good sign there is some refactoring to be done
       WaypointGraphNode(node_type* pParent, const WaypointInterface* pWaypoint, cost_type pGn, cost_type pHn)
          : BaseType(pParent, pWaypoint, pGn, pHn)
          , mWPGraph(NULL)
@@ -83,7 +83,6 @@ namespace dtAI
       WaypointGraph* mWPGraph;
       dtCore::RefPtr<const NavMesh> mSearchSpace;
       WaypointGraph::ConstWaypointArray mWaypoints;
-
    };
 
 
@@ -92,40 +91,38 @@ namespace dtAI
 
    class DT_AI_EXPORT WaypointGraphAStar: public WaypointGraphAStarBase
    {
-      public:
-         typedef WaypointGraphAStarBase::CreateNodeFunctor WaypointGraphAStarCreateFunctor;
+   public:
+      typedef WaypointGraphAStarBase::CreateNodeFunctor WaypointGraphAStarCreateFunctor;
 
-         WaypointGraphAStar(WaypointGraph& wpGraph);
-         virtual ~WaypointGraphAStar();
+      WaypointGraphAStar(WaypointGraph& wpGraph);
+      virtual ~WaypointGraphAStar();
 
-         PathFindResult HierarchicalFindPath(WaypointID from, WaypointID to, WaypointGraph::ConstWaypointArray& result);
+      PathFindResult HierarchicalFindPath(WaypointID from, WaypointID to, WaypointGraph::ConstWaypointArray& result);
 
-         PathFindResult FindSingleLevelPath(WaypointID from, WaypointID to, WaypointGraph::ConstWaypointArray& result);
+      PathFindResult FindSingleLevelPath(WaypointID from, WaypointID to, WaypointGraph::ConstWaypointArray& result);
 
-         //const WaypointInterface* FindNext(WaypointID from, WaypointID to);
+      //const WaypointInterface* FindNext(WaypointID from, WaypointID to);
 
-         WaypointGraphNode* CreateNode(WaypointGraphNode* pParent, const WaypointInterface* pWaypoint, float pGn, float pHn);
-    
-      private: 
-         typedef std::vector<WaypointID> WaypointIDArray;
+      WaypointGraphNode* CreateNode(WaypointGraphNode* pParent, const WaypointInterface* pWaypoint, float pGn, float pHn);
+   
+   private: 
+      typedef std::vector<WaypointID> WaypointIDArray;
 
-         void CreateSearchSpace(const WaypointGraph::ConstWaypointArray& pathParents, NavMesh& result);
+      void CreateSearchSpace(const WaypointGraph::ConstWaypointArray& pathParents, NavMesh& result);
 
-         void AddPaths(const WaypointCollection* from, const WaypointIDArray& wps, NavMesh& nm);
-         void FillIDArray(const WaypointGraph::ConstWaypointArray& wps, WaypointIDArray& idArray);
+      void AddPaths(const WaypointCollection* from, const WaypointIDArray& wps, NavMesh& nm);
+      void FillIDArray(const WaypointGraph::ConstWaypointArray& wps, WaypointIDArray& idArray);
 
-         PathFindResult FindSingleLevelPath(const WaypointInterface* from, const WaypointInterface* to, WaypointGraph::ConstWaypointArray& result);
-         PathFindResult HierarchicalFindPath(const WaypointInterface* from, const WaypointInterface* to, WaypointGraph::ConstWaypointCollectionArray& lhs, WaypointGraph::ConstWaypointCollectionArray& rhs, WaypointGraph::ConstWaypointArray& lastPath);
+      PathFindResult FindSingleLevelPath(const WaypointInterface* from, const WaypointInterface* to, WaypointGraph::ConstWaypointArray& result);
+      PathFindResult HierarchicalFindPath(const WaypointInterface* from, const WaypointInterface* to, WaypointGraph::ConstWaypointCollectionArray& lhs, WaypointGraph::ConstWaypointCollectionArray& rhs, WaypointGraph::ConstWaypointArray& lastPath);
 
-         //void ResolvePathAtNextLowerLevel(const WaypointInterface* from, const WaypointInterface* to, WaypointGraph::ConstWaypointArray& result);
-         //bool FindNextEdge(WaypointID from, WaypointID to, WaypointCollection::ChildEdge& result);
+      //void ResolvePathAtNextLowerLevel(const WaypointInterface* from, const WaypointInterface* to, WaypointGraph::ConstWaypointArray& result);
+      //bool FindNextEdge(WaypointID from, WaypointID to, WaypointCollection::ChildEdge& result);
 
-         bool mUseConstrainedSearch;
-         WaypointGraph& mWPGraph;
-         dtCore::RefPtr<NavMesh> mSearchSpace;
-
+      bool mUseConstrainedSearch;
+      WaypointGraph& mWPGraph;
+      dtCore::RefPtr<NavMesh> mSearchSpace;
    };
-
 
 } // namespace dtAI
 

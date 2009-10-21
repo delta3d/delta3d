@@ -89,8 +89,8 @@ namespace dtAI
             else { return myCost < otherCost; }
          }
 
-         node_type *GetParent() { return mParent; }
-         const node_type *GetParent() const { return mParent; }
+         node_type* GetParent() { return mParent; }
+         const node_type* GetParent() const { return mParent; }
 
          /**
           * This is the cost to get to the node from the start
@@ -104,8 +104,8 @@ namespace dtAI
           */
          cost_type GetCostToGoal() const { return mCostToGoal; }
 
-         data_type GetData(){return mData;}
-         const data_type GetData() const { return mData; }
+         data_type& GetData() { return mData; }
+         const data_type& GetData() const { return mData; }
 
          /**
           * returns an iterator to the first acceptable point from this node
