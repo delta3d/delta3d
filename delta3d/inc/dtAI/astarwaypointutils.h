@@ -89,10 +89,10 @@ namespace dtAI
     * is described in more detail above. The last template argument, float, is our CostType, this is
     * defined as being the type used to compute the cost between Waypoints.
     */
-   class WaypointNode: public AStarNode<WaypointNode, const WaypointInterface*, WaypointIter, float>
+   class WaypointNode : public AStarNode<WaypointNode, const WaypointInterface*, WaypointIter, float>
    {
    public:
-      WaypointNode(node_type* pParent, const WaypointInterface* pWaypoint, cost_type pGn, cost_type pHn): BaseType(pParent, pWaypoint, pGn, pHn){}
+      WaypointNode(node_type* pParent, const WaypointInterface* pWaypoint, cost_type pGn, cost_type pHn) : BaseType(pParent, pWaypoint, pGn, pHn) {}
 
       /*virtual*/ iterator begin() const
       {
@@ -103,7 +103,6 @@ namespace dtAI
       {
          return iterator(WaypointManager::GetInstance().GetNavMesh().end(mData));
       }
-
    };
 
    /**
@@ -115,7 +114,7 @@ namespace dtAI
     * be refined to use slope or even other factors such as gravitational spots
     * reflected places you want your agents to avoid or close in on.
     */
-   class WaypointCostFunc: public AStarCostFunc<const WaypointInterface*, float>
+   class WaypointCostFunc : public AStarCostFunc<const WaypointInterface*, float>
    {
    public:
       float operator()(const WaypointInterface* pWaypoint1, const WaypointInterface* pWaypoint2) const
@@ -135,8 +134,8 @@ namespace dtAI
    class AStarTimer
    {
    public:
-      void Update(){ mTime = dtCore::Timer::Instance()->Tick();}
-      double GetDT(){return dtCore::Timer::Instance()->DeltaMil(mTime, dtCore::Timer::Instance()->Tick());}
+      void Update() { mTime = dtCore::Timer::Instance()->Tick(); }
+      double GetDT() { return dtCore::Timer::Instance()->DeltaMil(mTime, dtCore::Timer::Instance()->Tick()); }
 
    private:
       dtCore::Timer_t mTime;

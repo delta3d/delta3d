@@ -30,14 +30,15 @@
 
 #include <algorithm>
 #include <vector>
+#include <set>
 
 namespace dtAI
 {
    /**
     * A generic implementation of the standard A* algorithm
-    * 
+    *
     * @brief This class can be used as a generic graph searching tool,
-    *        to do this you will need several template parameters an 
+    *        to do this you will need several template parameters an
     *        example can be found in AStarWaypointUtils.h, but I will break
     *        down the basics below.
     *
@@ -54,22 +55,22 @@ namespace dtAI
     *                   supports push_front.  A todo is to change it to take push_back.
     *
     *        Timer: This class is used for statistics info and must support Update() and GetDT()
-    *               GetDT() should give the elapsed time between two Updates().  Be aware the the 
+    *               GetDT() should give the elapsed time between two Updates().  Be aware the the
     *               granularity of time is only relevant to the user and should match the AStarConfig's
     *               MaxTime.
     *
     * @usage To find a path between two points you can call Reset() with the two points
     *        and then FindPath().  Alternatively, you can set a config type which contains
     *        the path points and holds statistical info as well as pathing constraints.  If you
-    *        do not pass it a config, a default one will be used.  To edit the default config just 
+    *        do not pass it a config, a default one will be used.  To edit the default config just
     *        call GetConfig() which passes a config by reference.  If you want to set new path points
     *        don't call Reset() on the config, call Reset() on AStar, cause this will clear the internal
     *        bookeeping members on AStar.  The main means for editing the config is to set constraints,
     *        the const GetConfig() can be used for getting the statistics from the last path creation.
     *        The constraints can be used for finding partial paths.  When a constraint is set on a config
     *        the next call to FindPath() will use the constraints and return PARTIAL_PATH if the path could
-    *        not be completed, returning the best path so far.  The next call to FindPath() will find the 
-    *        next segment from the last point in the partial path to the goal and continue to work within 
+    *        not be completed, returning the best path so far.  The next call to FindPath() will find the
+    *        next segment from the last point in the partial path to the goal and continue to work within
     *        the constraints.  When PATH_FOUND is returned from FindPath() a path to the goal has been reached
     *        else NO_PATH will indicate there is no possible path between the two points.  To obtain the path
     *        or partial path, call GetPath() or copy it off of the config from GetConfig.
@@ -88,7 +89,8 @@ namespace dtAI
       typedef typename _NodeType::cost_type cost_type;
       typedef typename _NodeType::data_type data_type;
       typedef std::vector<node_type*> AStarContainer;
-      typedef typename AStarContainer::iterator AStarIterator;      
+      typedef std::set<data_type> AStarClosedContainer;
+      typedef typename AStarContainer::iterator AStarIterator;
       typedef _CostFunc cost_function;
       typedef _Container container_type;
       typedef AStarConfig<data_type, cost_type, container_type> config_type;
@@ -102,7 +104,7 @@ namespace dtAI
        * with no constraints, and no path to goto
        */
       AStar();
-      
+
       /**
       * Use this constructor to supply a creation function for the internal nodetype
       */
@@ -119,7 +121,7 @@ namespace dtAI
        *  Resets the internal memory and copies the config class
        *  for use on the next call to FindPath()
        *
-       * @param takes an AStarConfig class 
+       * @param takes an AStarConfig class
        */
       void Reset(const config_type& pConfig);
 
@@ -132,10 +134,10 @@ namespace dtAI
       void Reset(data_type pFrom, data_type pTo);
 
       /***
-       *  Resets config using a vector of possible points to go from to a vector of 
+       *  Resets config using a vector of possible points to go from to a vector of
        *  possible points to go to.
        *  The first index in the from and to are the actual positions, where as the rest
-       *  of the vector are nearest points to the actual position, used for specifying 
+       *  of the vector are nearest points to the actual position, used for specifying
        *  procedural to and from data_type that do not exist within scope of the data_type::iterator.
        */
       void Reset(const std::vector<data_type>& pFrom, const std::vector<data_type>& pTo);
@@ -143,7 +145,7 @@ namespace dtAI
       /**
        *  Runs the AStar algorithm, using the either the current config or the
        *  the default config settings if none have been set
-       *  can check for return of false if no path is found         
+       *  can check for return of false if no path is found
        *
        * @return the result of this call to find path, NO_PATH, PATH_FOUND, or PARTIAL_PATH,
        */
@@ -160,9 +162,9 @@ namespace dtAI
        * statistics from the last run of GetPath(), also holds a container
        * of the last found path
        */
-      const config_type& GetConfig() const { return mConfig; }         
-      config_type& GetConfig() { return mConfig; }         
-      
+      const config_type& GetConfig() const { return mConfig; }
+      config_type& GetConfig() { return mConfig; }
+
 
       cost_function& GetCostFunction() { return mCostFunc; }
       const cost_function& GetCostFunction() const { return mCostFunc; }
@@ -171,22 +173,24 @@ namespace dtAI
       //AStar(const AStar&); //not implemented by design
       //AStar& operator=(const AStar&); //not implemented by design
       void FreeMem();
-   
+
       /**
        * Internal helper functions, pulled out of main loop to be optimized
        * at a later date
        */
       void AddNodeLink(node_type* pParent, data_type pData);
-      typename std::vector<_NodeType*>::iterator Contains(AStarContainer& pCont, data_type pNode);
+      typename AStarContainer::iterator Contains(AStarContainer& pCont, const data_type& pData);
+      typename AStarClosedContainer::iterator Contains(AStarClosedContainer& pCont, const data_type& pData);
       void Remove(AStarContainer& pCont, typename AStarContainer::iterator iterToErase);
       node_type* FindLowestCost(AStarContainer& pCont);
       void Insert(AStarContainer& pCont, node_type* pNode);
-      
+      void Insert(AStarClosedContainer& pCont, const data_type& pData);
+
       node_type* CreateNode(node_type* pParent, data_type datatype, cost_type pGn, cost_type pHn);
 
       config_type mConfig;
-      AStarContainer mOpen;
-      AStarContainer mClosed;
+      AStarContainer mOpen, mDeleteMe;
+      AStarClosedContainer mClosed;
       cost_function mCostFunc;
       _Timer mTimer;
 
