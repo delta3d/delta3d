@@ -869,7 +869,7 @@ namespace dtActors
                   (start.GetTranslation() + (startWidth + (startWidthN * mSegmentPointList[0].position.x() * mSegmentHeight * mFenceScale))) + (startUp * mSegmentHeight * mFenceScale * mSegmentPointList[0].position.y()),
                   (end.GetTranslation() - (endWidth + (endWidthN * mSegmentPointList[0].position.x() * mSegmentHeight * mFenceScale))) + (endUp * mSegmentHeight * mFenceScale * mSegmentPointList[0].position.y()),
                   (end.GetTranslation() + (endWidth + (endWidthN * mSegmentPointList[0].position.x() * mSegmentHeight * mFenceScale))) + (endUp * mSegmentHeight * mFenceScale * mSegmentPointList[0].position.y()),
-                  osg::Vec2(0.0f, 1.0f), osg::Vec2(length, 1.0f - mTopTextureRatio), osg::Vec2(0.0f, 1.0f), osg::Vec2(length, 1.0f - mTopTextureRatio));
+                  osg::Vec2(0.0f, 1.0f), osg::Vec2(length, 1.0f), osg::Vec2(0.0f, 1.0f - mTopTextureRatio), osg::Vec2(length, 1.0f - mTopTextureRatio));
             }
 
             // Sides
