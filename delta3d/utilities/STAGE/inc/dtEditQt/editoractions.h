@@ -88,9 +88,6 @@ namespace dtEditQt
        */
       const std::string getWindowName() const;//bool modified = false, bool includesMap = true);
 
-      // Initialized the recent items actions
-      void setupRecentItems();
-
       /// Accessor to the timer
       inline QTimer* getTimer() { return mTimer; }
 
@@ -144,29 +141,11 @@ namespace dtEditQt
       // Action - File - Change Project
       QAction* mActionFileChangeProject;
 
-      // Action - File - Recent Project0
-      QAction* mActionFileRecentProject0;
-
-      // Action - File - Recent Project1
-      QAction* mActionFileRecentProject1;
-
-      // Action - File - Recent Project2
-      QAction* mActionFileRecentProject2;
-
-      // Action - File - Recent Project3
-      QAction* mActionFileRecentProject3;
+      ///List of Actions corresponding to the recently loaded Project Contexts
+      QAction* mActionRecentProjects[5];
 
       // Action - File - Recent Map0
       QAction* mActionFileRecentMap0;
-
-      // Action - File - Recent Map1
-      QAction* mActionFileRecentMap1;
-
-      // Action - File - Recent Map2
-      QAction* mActionFileRecentMap2;
-
-      // Action - File - Recent Map3
-      QAction* mActionFileRecentMap3;
 
       // Action - File - Exit
       QAction* mActionFileExit;
@@ -415,9 +394,15 @@ namespace dtEditQt
       void slotProjectChangeContext();
 
       /**
-       * Slot - File - Recent Projects - 0 Opens a recent project
+       * Opens a recent project context, defined by the triggered Action
        */
-      void slotFileRecentProject0();
+      void slotOpenRecentProject();
+      
+      /** 
+       * Opens the Project Context defined by the supplied path
+       * @param path The full path to the Project Context to open
+       */
+      void SlotChangeProjectContext(const std::string& path);
 
       /**
        * Slot - File - Recent Maps - 0 Opens a recent map

@@ -38,6 +38,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QList>
 #include <QtCore/QPluginLoader>
+#include <QtCore/QFileInfo>
 
 namespace dtEditQt
 {
@@ -122,10 +123,12 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void EditorData::addRecentProject(std::string name)
    {
+      QFileInfo fileinfo(QString::fromStdString(name));
+
       for (std::list<std::string>::iterator i = mRecentProjects.begin();
          i != mRecentProjects.end(); ++i)
       {
-         if ((*i) == name)
+         if ((*i) == fileinfo.absoluteFilePath().toStdString())
          {
             mRecentProjects.erase(i);
             break;
@@ -134,12 +137,12 @@ namespace dtEditQt
 
       if (mRecentProjects.size() < 4)
       {
-         mRecentProjects.push_front(name);
+         mRecentProjects.push_front(fileinfo.absoluteFilePath().toStdString());
       }
       else
       {
          mRecentProjects.pop_back();
-         mRecentProjects.push_front(name);
+         mRecentProjects.push_front(fileinfo.absoluteFilePath().toStdString());
       }
    }
 
