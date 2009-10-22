@@ -174,7 +174,7 @@ namespace dtDAL
    ////////////////////////////////////////////////////////////////////////////////
    ActorProperty* ContainerActorProperty::GetProperty(int index)
    {
-      if (index >= (int)mProperties.size())
+      if (index < 0 || index >= (int)mProperties.size())
       {
          return NULL;
       }
@@ -185,7 +185,7 @@ namespace dtDAL
    ////////////////////////////////////////////////////////////////////////////////
    const ActorProperty* ContainerActorProperty::GetProperty(int index) const
    {
-      if (index >= (int)mProperties.size())
+      if (index < 0 || index >= (int)mProperties.size())
       {
          return NULL;
       }

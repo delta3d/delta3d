@@ -207,8 +207,8 @@ namespace dtActors
       , mSegmentWidth(1.0f)
       , mTopTextureRatio(0.2f)
    {
-      mSegmentPointList.push_back(osg::Vec2(0.0f, 1.0f));
-      mSegmentPointList.push_back(osg::Vec2(0.0f, 0.0f));
+      mSegmentPointList.push_back(SegmentPointData(osg::Vec2(0.0f, 1.0f)));
+      mSegmentPointList.push_back(SegmentPointData());
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -467,13 +467,13 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   std::vector<osg::Vec2> FenceActor::GetSegmentPointArray()
+   std::vector<FenceActor::SegmentPointData> FenceActor::GetSegmentPointArray()
    {
       return mSegmentPointList;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void FenceActor::SetSegmentPointArray(const std::vector<osg::Vec2>& value)
+   void FenceActor::SetSegmentPointArray(const std::vector<SegmentPointData>& value)
    {
       mSegmentPointList = value;
 
@@ -865,32 +865,42 @@ namespace dtActors
             // Top
             {
                PlaceSegmentQuad(geomData, 0,
-                  (start.GetTranslation() - (startWidth + (startWidthN * mSegmentPointList[0].x() * mSegmentHeight * mFenceScale))) + (startUp * mSegmentHeight * mFenceScale * mSegmentPointList[0].y()),
-                  (start.GetTranslation() + (startWidth + (startWidthN * mSegmentPointList[0].x() * mSegmentHeight * mFenceScale))) + (startUp * mSegmentHeight * mFenceScale * mSegmentPointList[0].y()),
-                  (end.GetTranslation() - (endWidth + (endWidthN * mSegmentPointList[0].x() * mSegmentHeight * mFenceScale))) + (endUp * mSegmentHeight * mFenceScale * mSegmentPointList[0].y()),
-                  (end.GetTranslation() + (endWidth + (endWidthN * mSegmentPointList[0].x() * mSegmentHeight * mFenceScale))) + (endUp * mSegmentHeight * mFenceScale * mSegmentPointList[0].y()),
-                  1.0f, 1.0f - mTopTextureRatio, 0.0f, length);
+                  (start.GetTranslation() - (startWidth + (startWidthN * mSegmentPointList[0].position.x() * mSegmentHeight * mFenceScale))) + (startUp * mSegmentHeight * mFenceScale * mSegmentPointList[0].position.y()),
+                  (start.GetTranslation() + (startWidth + (startWidthN * mSegmentPointList[0].position.x() * mSegmentHeight * mFenceScale))) + (startUp * mSegmentHeight * mFenceScale * mSegmentPointList[0].position.y()),
+                  (end.GetTranslation() - (endWidth + (endWidthN * mSegmentPointList[0].position.x() * mSegmentHeight * mFenceScale))) + (endUp * mSegmentHeight * mFenceScale * mSegmentPointList[0].position.y()),
+                  (end.GetTranslation() + (endWidth + (endWidthN * mSegmentPointList[0].position.x() * mSegmentHeight * mFenceScale))) + (endUp * mSegmentHeight * mFenceScale * mSegmentPointList[0].position.y()),
+                  osg::Vec2(0.0f, 1.0f), osg::Vec2(length, 1.0f - mTopTextureRatio), osg::Vec2(0.0f, 1.0f), osg::Vec2(length, 1.0f - mTopTextureRatio));
             }
 
             // Sides
             for (int index = 0; index < (int)mSegmentPointList.size() - 1; index++)
             {
-               float texTop = (1.0f - mTopTextureRatio) * mSegmentPointList[index].y();
-               float texBot = (1.0f - mTopTextureRatio) * mSegmentPointList[index + 1].y();
+               float texTop = 0.0f;
+               float texBot = 0.0f;
+
+               if(mSegmentPointList[index].textureHeight < 0.0f)
+                  texTop = (1.0f - mTopTextureRatio) * mSegmentPointList[index].position.y();
+               else
+                  texTop = (1.0f - mTopTextureRatio) * mSegmentPointList[index].textureHeight;
+
+               if(mSegmentPointList[index + 1].textureHeight < 0.0f)
+                  texBot = (1.0f - mTopTextureRatio) * mSegmentPointList[index + 1].position.y();
+               else
+                  texBot = (1.0f - mTopTextureRatio) * mSegmentPointList[index + 1].textureHeight;
 
                int quadIndex = (index * 2) + 1;
                PlaceSegmentQuad(geomData, quadIndex,
-                  (start.GetTranslation() + (startWidth + (startWidthN * mSegmentHeight * mFenceScale * mSegmentPointList[index].x()))) + (startUp * mSegmentHeight * mFenceScale * mSegmentPointList[index].y()),
-                  (start.GetTranslation() + (startWidth + (startWidthN * mSegmentHeight * mFenceScale * mSegmentPointList[index + 1].x()))) + (startUp * mSegmentHeight * mFenceScale * mSegmentPointList[index + 1].y()),
-                  (end.GetTranslation() + (endWidth + (endWidthN * mSegmentHeight * mFenceScale * mSegmentPointList[index].x()))) + (endUp * mSegmentHeight * mFenceScale * mSegmentPointList[index].y()),
-                  (end.GetTranslation() + (endWidth + (endWidthN * mSegmentHeight * mFenceScale * mSegmentPointList[index + 1].x()))) + (endUp * mSegmentHeight * mFenceScale * mSegmentPointList[index + 1].y()),
-                  texTop, texBot, 0.0f, length);
+                  (start.GetTranslation() + (startWidth + (startWidthN * mSegmentHeight * mFenceScale * mSegmentPointList[index].position.x()))) + (startUp * mSegmentHeight * mFenceScale * mSegmentPointList[index].position.y()),
+                  (start.GetTranslation() + (startWidth + (startWidthN * mSegmentHeight * mFenceScale * mSegmentPointList[index + 1].position.x()))) + (startUp * mSegmentHeight * mFenceScale * mSegmentPointList[index + 1].position.y()),
+                  (end.GetTranslation() + (endWidth + (endWidthN * mSegmentHeight * mFenceScale * mSegmentPointList[index].position.x()))) + (endUp * mSegmentHeight * mFenceScale * mSegmentPointList[index].position.y()),
+                  (end.GetTranslation() + (endWidth + (endWidthN * mSegmentHeight * mFenceScale * mSegmentPointList[index + 1].position.x()))) + (endUp * mSegmentHeight * mFenceScale * mSegmentPointList[index + 1].position.y()),
+                  osg::Vec2(0.0f, texTop), osg::Vec2(length, texTop), osg::Vec2(0.0f, texBot), osg::Vec2(length, texBot));
                PlaceSegmentQuad(geomData, quadIndex + 1,
-                  (start.GetTranslation() - (startWidth + (startWidthN * mSegmentHeight * mFenceScale * mSegmentPointList[index + 1].x()))) + (startUp * mSegmentHeight * mFenceScale * mSegmentPointList[index + 1].y()),
-                  (start.GetTranslation() - (startWidth + (startWidthN * mSegmentHeight * mFenceScale * mSegmentPointList[index].x()))) + (startUp * mSegmentHeight * mFenceScale * mSegmentPointList[index].y()),
-                  (end.GetTranslation() - (endWidth + (endWidthN * mSegmentHeight * mFenceScale * mSegmentPointList[index + 1].x()))) + (endUp * mSegmentHeight * mFenceScale * mSegmentPointList[index + 1].y()),
-                  (end.GetTranslation() - (endWidth + (endWidthN * mSegmentHeight * mFenceScale * mSegmentPointList[index].x()))) + (endUp * mSegmentHeight * mFenceScale * mSegmentPointList[index].y()),
-                  texBot, texTop, 0.0f, length);
+                  (start.GetTranslation() - (startWidth + (startWidthN * mSegmentHeight * mFenceScale * mSegmentPointList[index + 1].position.x()))) + (startUp * mSegmentHeight * mFenceScale * mSegmentPointList[index + 1].position.y()),
+                  (start.GetTranslation() - (startWidth + (startWidthN * mSegmentHeight * mFenceScale * mSegmentPointList[index].position.x()))) + (startUp * mSegmentHeight * mFenceScale * mSegmentPointList[index].position.y()),
+                  (end.GetTranslation() - (endWidth + (endWidthN * mSegmentHeight * mFenceScale * mSegmentPointList[index + 1].position.x()))) + (endUp * mSegmentHeight * mFenceScale * mSegmentPointList[index + 1].position.y()),
+                  (end.GetTranslation() - (endWidth + (endWidthN * mSegmentHeight * mFenceScale * mSegmentPointList[index].position.x()))) + (endUp * mSegmentHeight * mFenceScale * mSegmentPointList[index].position.y()),
+                  osg::Vec2(0.0f, texBot), osg::Vec2(length, texBot), osg::Vec2(0.0f, texTop), osg::Vec2(length, texTop));
             }
 
             // Now connect the geometry of this segment to the previous
@@ -920,14 +930,21 @@ namespace dtActors
                      {
                         for (int index = 0; index < quadCount; index++)
                         {
+                           // Calculate the texture coordinates.
+                           float texTop = geomData->mSegTextureList->at((index * 4) + 2).y();
+                           float texBot = geomData->mSegTextureList->at((index * 4) + 3).y();
+
+                           osg::Vec2 texTopLeft  = osg::Vec2(0.0f, texTop);
+                           osg::Vec2 texTopRight = osg::Vec2((prevGeomData->mSegVertexList->at((index * 4) + 2) - geomData->mSegVertexList->at((index * 4) + 1)).length() / mPostMaxDistance, texTop);
+                           osg::Vec2 texBotLeft  = osg::Vec2(0.0f, texBot);
+                           osg::Vec2 texBotRight = osg::Vec2((prevGeomData->mSegVertexList->at((index * 4) + 3) - geomData->mSegVertexList->at((index * 4) + 0)).length() / mPostMaxDistance, texBot);
+
                            PlaceSegmentQuad(geomData, quadCount + index,
                               prevGeomData->mSegVertexList->at((index * 4) + 2),
                               prevGeomData->mSegVertexList->at((index * 4) + 3),
                               geomData->mSegVertexList->at((index * 4) + 1),
                               geomData->mSegVertexList->at((index * 4) + 0),
-                              geomData->mSegTextureList->at((index * 4) + 2).y(),
-                              geomData->mSegTextureList->at((index * 4) + 3).y(),
-                              0.0f, 1.0f);
+                              texTopLeft, texTopRight, texBotLeft, texBotRight);
                         }
                      }
                   }
@@ -940,14 +957,20 @@ namespace dtActors
                      int halfCount = quadCount / 2 + 1;
                      for (int index = 1; index < halfCount; index++)
                      {
+                        float texTop = geomData->mSegTextureList->at((index * 8) + 1).y();
+                        float texBot = geomData->mSegTextureList->at((index * 8) + 0).y();
+
+                        osg::Vec2 texTopLeft  = osg::Vec2(0.0f, texTop);
+                        osg::Vec2 texTopRight = osg::Vec2((geomData->mSegVertexList->at((index * 8) - 4) - geomData->mSegVertexList->at((index * 8) + 1)).length() / mPostMaxDistance, texTop);
+                        osg::Vec2 texBotLeft  = osg::Vec2(0.0f, texBot);
+                        osg::Vec2 texBotRight = osg::Vec2((geomData->mSegVertexList->at((index * 8) - 3) - geomData->mSegVertexList->at((index * 8) + 0)).length() / mPostMaxDistance, texBot);
+
                         PlaceSegmentQuad(geomData, quadCount + index - 1,
                            geomData->mSegVertexList->at((index * 8) - 4),
                            geomData->mSegVertexList->at((index * 8) - 3),
                            geomData->mSegVertexList->at((index * 8) + 1),
                            geomData->mSegVertexList->at((index * 8) + 0),
-                           geomData->mSegTextureList->at((index * 8) + 1).y(),
-                           geomData->mSegTextureList->at((index * 8) + 0).y(),
-                           0.0f, 1.0f);
+                           texTopLeft, texTopRight, texBotLeft, texBotRight);
                      }
                   }
                }
@@ -975,14 +998,20 @@ namespace dtActors
                         int halfCount = quadCount / 2 + 1;
                         for (int index = 1; index < halfCount; index++)
                         {
+                           float texTop = prevGeomData->mSegTextureList->at((index * 8) + 2).y();
+                           float texBot = prevGeomData->mSegTextureList->at((index * 8) + 3).y();
+
+                           osg::Vec2 texTopLeft  = osg::Vec2(0.0f, texTop);
+                           osg::Vec2 texTopRight = osg::Vec2((prevGeomData->mSegVertexList->at((index * 8) + 2) - prevGeomData->mSegVertexList->at((index * 8) - 1)).length() / mPostMaxDistance, texTop);
+                           osg::Vec2 texBotLeft  = osg::Vec2(0.0f, texBot);
+                           osg::Vec2 texBotRight = osg::Vec2((prevGeomData->mSegVertexList->at((index * 8) + 3) - prevGeomData->mSegVertexList->at((index * 8) - 2)).length() / mPostMaxDistance, texBot);
+
                            PlaceSegmentQuad(geomData, quadCount + index - 1,
                               prevGeomData->mSegVertexList->at((index * 8) + 2),
                               prevGeomData->mSegVertexList->at((index * 8) + 3),
                               prevGeomData->mSegVertexList->at((index * 8) - 1),
                               prevGeomData->mSegVertexList->at((index * 8) - 2),
-                              prevGeomData->mSegTextureList->at((index * 8) + 2).y(),
-                              prevGeomData->mSegTextureList->at((index * 8) + 3).y(),
-                              0.0f, 1.0f);
+                              texTopLeft, texTopRight, texBotLeft, texBotRight);
                         }
                      }
                   }
@@ -1006,17 +1035,17 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void FenceActor::PlaceSegmentQuad(FencePostGeomData* geomData, int quadIndex, osg::Vec3 startTop, osg::Vec3 startBot, osg::Vec3 endTop, osg::Vec3 endBot, float texTop, float texBot, float texStart, float texEnd)
+   void FenceActor::PlaceSegmentQuad(FencePostGeomData* geomData, int quadIndex, osg::Vec3 startTop, osg::Vec3 startBot, osg::Vec3 endTop, osg::Vec3 endBot, osg::Vec2 texTopLeft, osg::Vec2 texTopRight, osg::Vec2 texBotLeft, osg::Vec2 texBotRight)
    {
       geomData->mSegVertexList->at((quadIndex * 4) + 0) = startBot;
       geomData->mSegVertexList->at((quadIndex * 4) + 1) = startTop;
       geomData->mSegVertexList->at((quadIndex * 4) + 2) = endTop;
       geomData->mSegVertexList->at((quadIndex * 4) + 3) = endBot;
 
-      geomData->mSegTextureList->at((quadIndex * 4) + 0) = (osg::Vec2(texStart, texBot));
-      geomData->mSegTextureList->at((quadIndex * 4) + 1) = (osg::Vec2(texStart, texTop));
-      geomData->mSegTextureList->at((quadIndex * 4) + 2) = (osg::Vec2(texEnd, texTop));
-      geomData->mSegTextureList->at((quadIndex * 4) + 3) = (osg::Vec2(texEnd, texBot));
+      geomData->mSegTextureList->at((quadIndex * 4) + 0) = texBotLeft; //(osg::Vec2(texStart, texBot));
+      geomData->mSegTextureList->at((quadIndex * 4) + 1) = texTopLeft; //(osg::Vec2(texStart, texTop));
+      geomData->mSegTextureList->at((quadIndex * 4) + 2) = texTopRight;//(osg::Vec2(texEnd, texTop));
+      geomData->mSegTextureList->at((quadIndex * 4) + 3) = texBotRight;//(osg::Vec2(texEnd, texBot));
 
       // Calculate the surface normal.
       osg::Vec3 bottomToTopVec = startTop - startBot;
@@ -1104,23 +1133,40 @@ namespace dtActors
          segmentResourceProp, "Fence");
       AddProperty(segmentResourceArrayProp);
 
+      // Segment Points.
       dtDAL::Vec2ActorProperty* segmentPointProp =
          new dtDAL::Vec2ActorProperty(
-         "SegmentPoint", "Segment Point",
+         "SegmentPoint", "Position",
          dtDAL::MakeFunctor(*this, &FenceActorProxy::SetSegmentPoint),
          dtDAL::MakeFunctorRet(*this, &FenceActorProxy::GetSegmentPoint),
          "Stores the point data for a segment.",
          "Fence");
 
+      dtDAL::FloatActorProperty* segmentTexProp =
+         new dtDAL::FloatActorProperty(
+         "TextureY", "Texture Y",
+         dtDAL::MakeFunctor(*this, &FenceActorProxy::SetSegmentPointTextureHeight),
+         dtDAL::MakeFunctorRet(*this, &FenceActorProxy::GetSegmentPointTextureHeight),
+         "The vertical texture coordinate.",
+         "Fence");
+
+      dtDAL::ContainerActorProperty* segmentContainerProp =
+         new dtDAL::ContainerActorProperty(
+         "SegmentPointData", "Segment Point",
+         "The segment geometry point data.",
+         "Fence");
+      segmentContainerProp->AddProperty(segmentPointProp);
+      segmentContainerProp->AddProperty(segmentTexProp);
+
       dtDAL::ArrayActorPropertyBase* segmentPointArrayProp =
-         new dtDAL::ArrayActorProperty<osg::Vec2>(
+         new dtDAL::ArrayActorProperty<FenceActor::SegmentPointData>(
          "SegmentPointArray", "Segment Point Array",
          "The list of segment points.",
          dtDAL::MakeFunctor(*this, &FenceActorProxy::SetSegmentPointIndex),
          dtDAL::MakeFunctorRet(*this, &FenceActorProxy::GetDefaultSegmentPoint),
          dtDAL::MakeFunctorRet(*actor, &FenceActor::GetSegmentPointArray),
          dtDAL::MakeFunctor(*actor, &FenceActor::SetSegmentPointArray),
-         segmentPointProp, "Fence");
+         segmentContainerProp, "Fence");
       AddProperty(segmentPointArrayProp);
 
       // Resource ID Array
@@ -1340,9 +1386,9 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   osg::Vec2 FenceActorProxy::GetDefaultSegmentPoint()
+   FenceActor::SegmentPointData FenceActorProxy::GetDefaultSegmentPoint()
    {
-      return osg::Vec2();
+      return FenceActor::SegmentPointData();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -1467,10 +1513,10 @@ namespace dtActors
       FenceActor* actor = NULL;
       GetActor(actor);
 
-      std::vector<osg::Vec2> pointArray = actor->GetSegmentPointArray();
+      std::vector<FenceActor::SegmentPointData> pointArray = actor->GetSegmentPointArray();
       if (mSegmentPointIndex < (int)pointArray.size())
       {
-         return pointArray[mSegmentPointIndex];
+         return pointArray[mSegmentPointIndex].position;
       }
 
       return osg::Vec2();
@@ -1482,10 +1528,39 @@ namespace dtActors
       FenceActor* actor = NULL;
       GetActor(actor);
 
-      std::vector<osg::Vec2> pointArray = actor->GetSegmentPointArray();
+      std::vector<FenceActor::SegmentPointData> pointArray = actor->GetSegmentPointArray();
       if (mSegmentPointIndex < (int)pointArray.size())
       {
-         pointArray[mSegmentPointIndex] = value;
+         pointArray[mSegmentPointIndex].position = value;
+         actor->SetSegmentPointArray(pointArray);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   float FenceActorProxy::GetSegmentPointTextureHeight()
+   {
+      FenceActor* actor = NULL;
+      GetActor(actor);
+
+      std::vector<FenceActor::SegmentPointData> pointArray = actor->GetSegmentPointArray();
+      if (mSegmentPointIndex < (int)pointArray.size())
+      {
+         return pointArray[mSegmentPointIndex].textureHeight;
+      }
+
+      return -1;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void FenceActorProxy::SetSegmentPointTextureHeight(float value)
+   {
+      FenceActor* actor = NULL;
+      GetActor(actor);
+
+      std::vector<FenceActor::SegmentPointData> pointArray = actor->GetSegmentPointArray();
+      if (mSegmentPointIndex < (int)pointArray.size())
+      {
+         pointArray[mSegmentPointIndex].textureHeight = value;
          actor->SetSegmentPointArray(pointArray);
       }
    }
