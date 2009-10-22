@@ -16,7 +16,6 @@
 #include <dtAI/waypoint.h>
 #include <dtAI/waypointmanager.h>
 
-
 #include <dtUtil/mathdefines.h>
 #include <dtUtil/log.h>
 #include <dtUtil/fileutils.h>
@@ -31,19 +30,17 @@ using namespace dtABC;
 using namespace dtDAL;
 using namespace dtAI;
 
-
 TestAI::TestAI(const std::string& pMapFilename, const std::string& configFilename)
    : Application(configFilename)
    , mMapFilename(pMapFilename)
    , mCharacter(0)
 {
-   //Generating a default config file if there isn't one already
-   if ( !dtUtil::FileUtils::GetInstance().FileExists( configFilename ) )
+   // Generating a default config file if there isn't one already
+   if (!dtUtil::FileUtils::GetInstance().FileExists(configFilename))
    {
       GenerateDefaultConfigFile();
    }
 }
-
 
 TestAI::~TestAI()
 {
@@ -54,29 +51,32 @@ void TestAI::Config()
 {
    Application::Config();
 
-   //initialize the Waypoint Helper
+   // initialize the Waypoint Helper
    WaypointManager::GetInstance();
    GetScene()->AddDrawable(&WaypointManager::GetInstance());
 
+   // set the waypoint manager to not (redundantly) delete waypoints
+   dtAI::WaypointManager::GetInstance().SetDeleteOnClear(false);
+
    LoadDemoMap(mMapFilename);
 
-   //turn on viewing of waypoints
+   // turn on viewing of waypoints
    WaypointManager::GetInstance().SetDrawWaypoints(true);
 
-   //by default we wont draw the navmesh
+   // by default we wont draw the navmesh
    mDrawNavMesh = false;
    WaypointManager::GetInstance().SetDrawNavMesh(mDrawNavMesh, true);
 
-   //set camera offset
+   // set camera offset
    dtCore::Transform trans;
    trans.SetTranslation(-1.0f, 5.5f, 1.5f);
    trans.SetRotation(180.0f, -2.0f, 0.0f);
    GetCamera()->SetTransform(trans);
 
-   //this is needed so OSG knows which camera can generate events
+   // this is needed so OSG knows which camera can generate events
    GetCamera()->GetOSGCamera()->setAllowEventFocus(true);
 
-   //create overhead camera and disable it by default
+   // create overhead camera and disable it by default
    dtCore::View *overheadView = new dtCore::View("overhead view");
    overheadView->SetScene( GetScene() );
    AddView( *overheadView );
@@ -86,16 +86,16 @@ void TestAI::Config()
    mOverheadCamera->SetEnabled(false);
    overheadView->SetCamera( mOverheadCamera.get() );
 
-   //this is needed so OSG knows which camera can generate events
+   // this is needed so OSG knows which camera can generate events
    mOverheadCamera->GetOSGCamera()->setAllowEventFocus(false);
 
-   //set overhead camera offset
+   // set overhead camera offset
    trans.SetTranslation(0.0f, -5.0f, 70.0f);
    trans.SetRotation(0.0f, -90.f, 0.0f);
    trans.Get(mCameraOffset);
    mOverheadCamera->GetMatrixNode()->setMatrix(mCameraOffset);
 
-   //get the first waypoint to spawn the character at
+   // get the first waypoint to spawn the character at
    const WaypointManager::WaypointMap& pContainer = WaypointManager::GetInstance().GetWaypoints();
    if (pContainer.empty())
    {
@@ -105,16 +105,16 @@ void TestAI::Config()
    WaypointManager::WaypointMap::const_iterator iter = pContainer.begin();
    const Waypoint* pWaypoint = (*iter).second;
 
-   //spawn our character
+   // spawn our character
    mCharacter = new dtAI::AICharacter(GetScene(), pWaypoint, "demoMap/SkeletalMeshes/marine.xml", 3);
 
-   //add the two Cameras as children so they get moved along with the character
+   // add the two Cameras as children so they get moved along with the character
    mCharacter->GetCharacter()->AddChild( GetCamera() );
    mCharacter->GetCharacter()->AddChild( mOverheadCamera.get() );
 
    GoToWaypoint(1);
 
-   //seed the random generator
+   // seed the random generator
    srand(4);
 
    CreateHelpLabel();
@@ -122,92 +122,79 @@ void TestAI::Config()
 
 bool TestAI::KeyPressed(const dtCore::Keyboard* keyboard, int key)
 {
-
-   switch ( key )
+   switch (key)
    {
-      case ' ':
+   case ' ':
+      if (GetCamera()->GetEnabled())
       {
-         if (GetCamera()->GetEnabled())
+         GetCamera()->SetEnabled(false);
+         mOverheadCamera->SetEnabled(true);
+         if (mLabel->GetActive())
          {
-            GetCamera()->SetEnabled(false);
-            mOverheadCamera->SetEnabled(true);
-            if (mLabel->GetActive())
-            {
-               GetCamera()->RemoveChild(mLabel.get());
-               mOverheadCamera->AddChild(mLabel.get());
-            }
+            GetCamera()->RemoveChild(mLabel.get());
+            mOverheadCamera->AddChild(mLabel.get());
          }
-         else
-         {
-            mOverheadCamera->SetEnabled(false);
-            GetCamera()->SetEnabled(true);
-            if (mLabel->GetActive())
-            {
-               mOverheadCamera->RemoveChild(mLabel.get());
-               GetCamera()->AddChild(mLabel.get());
-            }
-         }
-         return true;
       }
-
-      case 'n':
+      else
+      {
+         mOverheadCamera->SetEnabled(false);
+         GetCamera()->SetEnabled(true);
+         if (mLabel->GetActive())
          {
-            mDrawNavMesh = !mDrawNavMesh;
-            WaypointManager::GetInstance().SetDrawNavMesh(mDrawNavMesh, true);
-            return true;
+            mOverheadCamera->RemoveChild(mLabel.get());
+            GetCamera()->AddChild(mLabel.get());
          }
+      }
+      return true;
 
-      case 'a':
+   case 'n':
+      mDrawNavMesh = !mDrawNavMesh;
+      WaypointManager::GetInstance().SetDrawNavMesh(mDrawNavMesh, true);
+      return true;
+
+   case 'a':
+      if (mOverheadCamera->GetEnabled())
+      {
+         mCameraOffset(3,2) -= 1.0f;
+         mCameraOffset(3,1) -= 15.5f / 100.0f;
+         mOverheadCamera->GetMatrixNode()->setMatrix(mCameraOffset);
+      }
+      return true;
+
+   case 'z':
+      if (mOverheadCamera->GetEnabled())
+      {
+         mCameraOffset(3,2) += 1.0f;
+         mCameraOffset(3,1) += 15.5f / 100.0f;
+         mOverheadCamera->GetMatrixNode()->setMatrix(mCameraOffset);
+      }
+      return true;
+
+   case osgGA::GUIEventAdapter::KEY_Escape:
+      Quit();
+      return true;
+
+   case osgGA::GUIEventAdapter::KEY_F1:
+      mLabel->SetActive(!mLabel->GetActive());
+      if (mLabel->GetActive())
+      {
+         if (GetCamera()->GetEnabled() &&
+            GetCamera()->GetChildIndex(mLabel.get()) == GetCamera()->GetNumChildren())
          {
-            if (mOverheadCamera->GetEnabled())
-            {
-               mCameraOffset(3,2) -= 1.0f;
-               mCameraOffset(3,1) -= 15.5f / 100.0f;
-               mOverheadCamera->GetMatrixNode()->setMatrix(mCameraOffset);
-            }
-            return true;
+            mOverheadCamera->RemoveChild(mLabel.get());
+            GetCamera()->AddChild(mLabel.get());
          }
-
-      case 'z':
+         else if (mOverheadCamera->GetEnabled() &&
+            mOverheadCamera->GetChildIndex(mLabel.get()) == mOverheadCamera->GetNumChildren())
          {
-            if (mOverheadCamera->GetEnabled())
-            {
-               mCameraOffset(3,2) += 1.0f;
-               mCameraOffset(3,1) += 15.5f / 100.0f;
-               mOverheadCamera->GetMatrixNode()->setMatrix(mCameraOffset);
-            }
-            return true;
+            GetCamera()->RemoveChild(mLabel.get());
+            mOverheadCamera->AddChild(mLabel.get());
          }
+      }
+      return true;
 
-      case osgGA::GUIEventAdapter::KEY_Escape:
-         {
-            Quit();
-            return true;
-         }
-
-      case osgGA::GUIEventAdapter::KEY_F1:
-         {
-            mLabel->SetActive(!mLabel->GetActive());
-            if (mLabel->GetActive())
-            {
-               if (GetCamera()->GetEnabled() &&
-                  GetCamera()->GetChildIndex(mLabel.get()) == GetCamera()->GetNumChildren())
-               {
-                  mOverheadCamera->RemoveChild(mLabel.get());
-                  GetCamera()->AddChild(mLabel.get());
-               }
-               else if (mOverheadCamera->GetEnabled() &&
-                  mOverheadCamera->GetChildIndex(mLabel.get()) == mOverheadCamera->GetNumChildren())
-               {
-                  GetCamera()->RemoveChild(mLabel.get());
-                  mOverheadCamera->AddChild(mLabel.get());
-               }
-            }
-            return true;
-         }
-
-      default:
-         break;
+   default:
+      break;
    }
    return false;
 }
@@ -218,13 +205,12 @@ void TestAI::PreFrame( const double deltaFrameTime )
 
    if (mCharacter->GetCurrentWaypoint() == mCurrentWaypoint)
    {
-      //send the character to a random waypoint
+      // send the character to a random waypoint
       WaypointManager::WaypointMap::size_type pNumWaypoints = WaypointManager::GetInstance().GetWaypoints().size() - 1;
       unsigned pWaypointNum = dtUtil::RandRange(0U, unsigned(pNumWaypoints));
       GoToWaypoint(pWaypointNum);
    }
 }
-
 
 void TestAI::LoadDemoMap(const std::string& pStr)
 {
@@ -235,21 +221,19 @@ void TestAI::LoadDemoMap(const std::string& pStr)
       std::string pContext = Project::GetInstance().GetContext();
       Map &myMap = Project::GetInstance().GetMap(pStr);
 
-      //Since we are in an Application we can simply call...
+      // Since we are in an Application we can simply call...
       LoadMap(myMap);
    }
-   catch(const dtUtil::Exception& )
+   catch (const dtUtil::Exception&)
    {
       LOG_ERROR("ERROR: Map Not Found");
    }
 }
 
-
-
 bool TestAI::GoToWaypoint(int pWaypointNum)
 {
-   //loop through the waypoints and send our character to the one
-   //whose index is pWaypointNum in the WaypointMap contained within WaypointManager
+   // loop through the waypoints and send our character to the one
+   // whose index is pWaypointNum in the WaypointMap contained within WaypointManager
    const WaypointManager::WaypointMap& pWaypoints = WaypointManager::GetInstance().GetWaypoints();
    WaypointManager::WaypointMap::const_iterator iter = pWaypoints.begin();
    WaypointManager::WaypointMap::const_iterator endOfMap = pWaypoints.end();
@@ -301,6 +285,3 @@ std::string TestAI::CreateHelpLabelText()
 
    return testString;
 }
-
-
-
