@@ -128,6 +128,18 @@ namespace dtActors
          int      segmentID;
       };
 
+      struct SegmentPointData
+      {
+         SegmentPointData(osg::Vec2 pos = osg::Vec2(0.0f, 0.0f), float texHeight = -1)
+         {
+            position = pos;
+            textureHeight = texHeight;
+         }
+
+         osg::Vec2   position;
+         float       textureHeight;
+      };
+
       FenceActor(dtActors::LinkedPointsActorProxy* proxy, const std::string& name = "FenceActor");
 
       /**
@@ -201,12 +213,12 @@ namespace dtActors
       /**
       * Retrieves the list of segment points.
       */
-      std::vector<osg::Vec2> GetSegmentPointArray();
+      std::vector<SegmentPointData> GetSegmentPointArray();
 
       /**
       * Sets the list of segment points.
       */
-      void SetSegmentPointArray(const std::vector<osg::Vec2>& value);
+      void SetSegmentPointArray(const std::vector<SegmentPointData>& value);
 
       /**
       * Retrieves the post mesh resource of a particular post.
@@ -373,23 +385,25 @@ namespace dtActors
       /**
       * Places a quad for a segment.
       *
-      * @param[in]  geomData   The geometry data.
-      * @param[in]  quadIndex  The index of the quad.
-      * @param[in]  startTop   The top of the start point.
-      * @param[in]  startBot   The bottom of the start point.
-      * @param[in]  endTop     The top of the end point.
-      * @param[in]  endBot     The bot of the end point.
-      * @param[in]  texTop     The texture UV for the top of the quad.
-      * @param[in]  texBot     The texture UV for the bottom of the quad.
-      * @param[in]  length     The percentage of the texture to show.
+      * @param[in]  geomData     The geometry data.
+      * @param[in]  quadIndex    The index of the quad.
+      * @param[in]  startTop     The top of the start point.
+      * @param[in]  startBot     The bottom of the start point.
+      * @param[in]  endTop       The top of the end point.
+      * @param[in]  endBot       The bot of the end point.
+      * @param[in]  texTopLeft   The texture UV for the top left of the quad.
+      * @param[in]  texTopRight  The texture UV for the top right of the quad.
+      * @param[in]  texBotLeft   The texture UV for the bottom left of the quad.
+      * @param[in]  texBotRight  The texture UV for the bottom right of the quad.
+      * @param[in]  length       The percentage of the texture to show.
       */
-      void PlaceSegmentQuad(FencePostGeomData* geomData, int quadIndex, osg::Vec3 startTop, osg::Vec3 startBot, osg::Vec3 endTop, osg::Vec3 endBot, float texTop, float texBot, float texStart, float texEnd);
+      void PlaceSegmentQuad(FencePostGeomData* geomData, int quadIndex, osg::Vec3 startTop, osg::Vec3 startBot, osg::Vec3 endTop, osg::Vec3 endBot, osg::Vec2 texTopLeft, osg::Vec2 texTopRight, osg::Vec2 texBotLeft, osg::Vec2 texBotRight);
 
       std::vector<std::string>                  mPostResourceList;
       std::vector<std::string>                  mSegmentResourceList;
       std::vector<FenceActor::ResourceIDData>   mResourceIDList;
 
-      std::vector<osg::Vec2>                    mSegmentPointList;
+      std::vector<SegmentPointData>             mSegmentPointList;
 
       float mPostMinDistance;
       float mPostMaxDistance;
@@ -482,7 +496,7 @@ namespace dtActors
       /**
       * Functor to retrieve the default value for a segment point.
       */
-      osg::Vec2 GetDefaultSegmentPoint();
+      FenceActor::SegmentPointData GetDefaultSegmentPoint();
 
       /**
       * Gets and Sets the point index.
@@ -513,6 +527,12 @@ namespace dtActors
       */
       osg::Vec2 GetSegmentPoint();
       void SetSegmentPoint(const osg::Vec2& value);
+
+      /**
+      * Gets and Sets the segment points' texture height.
+      */
+      float GetSegmentPointTextureHeight();
+      void SetSegmentPointTextureHeight(float value);
 
    protected:
       virtual ~FenceActorProxy();
