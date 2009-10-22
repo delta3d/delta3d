@@ -38,6 +38,7 @@
 #include <QtGui/QMessageBox>
 #include <QtGui/QTextEdit>
 #include <QtCore/QTimer>
+#include <QtCore/QFileInfo>
 
 #include <osgDB/FileNameUtils>
 
@@ -49,6 +50,7 @@
 #include <dtEditQt/viewportmanager.h>
 #include <dtEditQt/viewportoverlay.h>
 #include <dtEditQt/editoraboutbox.h>
+#include <dtEditQt/editorsettings.h>
 #include <dtEditQt/libraryeditor.h>
 #include <dtEditQt/gameeventsdialog.h>
 #include <dtEditQt/stagecamera.h>
@@ -105,7 +107,6 @@ namespace dtEditQt
       setupWindowActions();
       SetupToolsActions();
       setupHelpActions();
-      setupRecentItems();
 
       mSaveMilliSeconds = 300000;
       mWasCancelled = false;
@@ -241,6 +242,14 @@ namespace dtEditQt
       mActionFileExit->setShortcut(tr("Alt+F4"));
       mActionFileExit->setStatusTip(tr("Exit the level editor."));
       connect(mActionFileExit, SIGNAL(triggered()), this, SLOT(slotFileExit()));
+
+      // recent Project Contexts
+      for (int i=0; i<5; i++)
+      {
+         mActionRecentProjects[i] = new QAction(this);
+         mActionRecentProjects[i]->setVisible(false);
+         connect(mActionRecentProjects[i], SIGNAL(triggered()), this, SLOT(slotOpenRecentProject()));
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -413,52 +422,30 @@ namespace dtEditQt
       connect(mActionHelpAboutQT, SIGNAL(triggered()), this, SLOT(slotHelpAboutQT()));
    }
 
-   //////////////////////////////////////////////////////////////////////////////
-   void EditorActions::setupRecentItems()
-   {
-      //std::vector<std::string> projs = EditorData::GetInstance().getMainWindow()->findRecentProjects();
-      std::list<std::string>::iterator itor;
 
-      mActionFileRecentProject0 = new QAction(tr("(Recent Project 1)"), this);
-      mActionFileRecentProject0->setEnabled(false);
-      connect(mActionFileRecentProject0, SIGNAL(triggered()), this, SLOT(slotFileRecentProject0()));
-
-      itor = EditorData::GetInstance().getRecentProjects().begin();
-      if (itor == EditorData::GetInstance().getRecentProjects().end())
-      {
-         return;
-      }
-
-      if (EditorData::GetInstance().getRecentProjects().size() > 0)
-      {
-         std::string str = (*itor);
-         mActionFileRecentProject0->setText((*itor).c_str());
-         mActionFileRecentProject0->setEnabled(true);
-         connect(mActionFileRecentProject0, SIGNAL(triggered()), this, SLOT(slotFileRecentProject0()));
-         ++itor;
-      }
-   }
 
    ///////////////////////////////////////////////////////////////////////////////
    void EditorActions::refreshRecentProjects()
    {
-      // do we have any recent projects?
-      if (EditorData::GetInstance().getRecentProjects().size() == 0)
-      {
-         return;
-      }
-      // set the text on the actions now
-      std::list<std::string>::iterator itor = EditorData::GetInstance().getRecentProjects().begin();
-      if (itor == EditorData::GetInstance().getRecentProjects().end())
-      {
-         return;
-      }
+      std::list<std::string> recentProjects = EditorData::GetInstance().getRecentProjects();
 
-      //unsigned int i = EditorData::GetInstance().getRecentProjects().size();
-      QString curText = mActionFileRecentProject0->text();
-      mActionFileRecentProject0->setText(tr((*itor).c_str()));
-      ++itor;
-      mActionFileRecentProject0->setEnabled(true);
+      int numRecentProjects = qMin(recentProjects.size(), size_t(5));
+
+      std::list<std::string>::iterator itr = recentProjects.begin();
+
+      for (int i=0; i<numRecentProjects; ++i)
+      {
+         QString path = QFileInfo(QString::fromStdString(*itr)).absoluteFilePath();
+         QString text = tr("&%1 %2").arg(i+1).arg(path);
+         mActionRecentProjects[i]->setText(text);
+         mActionRecentProjects[i]->setData(QString::fromStdString(*itr));
+         mActionRecentProjects[i]->setVisible(true);
+         ++itr;
+      }
+      for (int j=numRecentProjects; j<5; ++j)
+      {
+         mActionRecentProjects[j]->setVisible(false);
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -1631,34 +1618,56 @@ namespace dtEditQt
       ProjectContextDialog dialog((QWidget*)EditorData::GetInstance().getMainWindow());
       if (dialog.exec() == QDialog::Accepted)
       {
-         std::string contextName = dialog.getProjectPath().toStdString();
-
-         // First try to set the new project context.
-         try
-         {
-            changeMaps(EditorData::GetInstance().getCurrentMap(), NULL);
-            dtDAL::Project::GetInstance().CreateContext(contextName);
-            dtDAL::Project::GetInstance().SetContext(contextName);
-         }
-         catch (dtUtil::Exception& e)
-         {
-            QMessageBox::critical((QWidget*)EditorData::GetInstance().getMainWindow(),
-               tr("Error"), tr(e.What().c_str()), tr("OK"));
-
-            slotRestartAutosave();
-            return;
-         }
-
-         EditorData::GetInstance().setCurrentProjectContext(contextName);
-         EditorData::GetInstance().addRecentProject(contextName);
-         EditorEvents::GetInstance().emitProjectChanged();
-         refreshRecentProjects();
-
-         ConfigurationManager::GetInstance().SetVariable(
-            ConfigurationManager::GENERAL, CONF_MGR_PROJECT_CONTEXT, contextName);
+         const std::string contextName = dialog.getProjectPath().toStdString();
+         SlotChangeProjectContext(contextName);
       }      
 
       slotRestartAutosave();
+   }
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorActions::SlotChangeProjectContext(const std::string& path)
+   {
+      if (saveCurrentMapChanges(true) == QMessageBox::Cancel)
+      {
+         return;
+      }
+
+      EditorData::GetInstance().getMainWindow()->startWaitCursor();
+
+      // First try to set the new project context.
+      try
+      {
+         changeMaps(EditorData::GetInstance().getCurrentMap(), NULL);
+         dtDAL::Project::GetInstance().CreateContext(path);
+         dtDAL::Project::GetInstance().SetContext(path);
+      }
+      catch (dtUtil::Exception& e)
+      {
+         QMessageBox::critical((QWidget*)EditorData::GetInstance().getMainWindow(),
+            tr("Error"), tr(e.What().c_str()), tr("OK"));
+
+         slotRestartAutosave();
+         EditorData::GetInstance().getMainWindow()->endWaitCursor();
+
+         // Remove the recent projects entry from the settings object since it
+         // has become somehow corrupted.
+         EditorSettings settings;
+         QStringList recentProjectList = settings.value(EditorSettings::RECENT_PROJECTS).toStringList();
+         recentProjectList.removeAll(QString::fromStdString(path));
+         settings.setValue(EditorSettings::RECENT_PROJECTS, recentProjectList);
+
+         return;
+      }
+
+      EditorData::GetInstance().getMainWindow()->endWaitCursor();
+      EditorData::GetInstance().setCurrentProjectContext(path);
+      EditorData::GetInstance().addRecentProject(path);
+      EditorEvents::GetInstance().emitProjectChanged();
+      refreshRecentProjects();
+
+      ConfigurationManager::GetInstance().SetVariable(
+         ConfigurationManager::GENERAL, CONF_MGR_PROJECT_CONTEXT, path);
+
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -1739,27 +1748,13 @@ namespace dtEditQt
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void EditorActions::slotFileRecentProject0()
+   void EditorActions::slotOpenRecentProject()
    {
-      if (saveCurrentMapChanges(true) == QMessageBox::Cancel)
+      QAction *action = qobject_cast<QAction *>(sender());
+      if (action)
       {
-         return;
+         SlotChangeProjectContext(action->data().toString().toStdString());
       }
-
-      changeMaps(EditorData::GetInstance().getCurrentMap(), NULL);
-
-      EditorData::GetInstance().setCurrentProjectContext(mActionFileRecentProject0->text().toStdString());
-      try
-      {
-         dtDAL::Project::GetInstance().SetContext(mActionFileRecentProject0->text().toStdString());
-      }
-      catch (const dtUtil::Exception& ex)
-      {
-         QMessageBox::warning((QWidget*)EditorData::GetInstance().getMainWindow(),
-            tr("Project Context Open Error"), ex.What().c_str(), tr("OK"));
-         return;
-      }
-      EditorEvents::GetInstance().emitProjectChanged();
    }
 
    //////////////////////////////////////////////////////////////////////////////

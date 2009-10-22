@@ -30,7 +30,6 @@
 #define DELTA_EDITOR_SETTINGS
 
 #include <QtCore/QSettings>
-#include <osg/Referenced>
 
 namespace dtEditQt
 {

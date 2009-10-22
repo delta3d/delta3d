@@ -81,10 +81,11 @@ namespace dtEditQt
       void loadLibraryPaths();
 
       /**
-       * Finds the recently opened projects, if applicable
-       * @return The number of projects found
+       * Loads the last Project Context if there is one defined and the "load 
+       * last project" user preference is set to true.
+       * @return true if Project Context was set
        */
-      std::vector<std::string> FindRecentProjects();
+      bool LoadLastProject();
 
       /**
        * Finds the recently opened maps, if applicable
@@ -380,6 +381,11 @@ namespace dtEditQt
 
       /** Try to find and load any plugins */
       void SetupPlugins();
+
+      /** Reads the recently loaded Project Contexts from the QSettings and tells
+        * the EditorData about them.
+        */
+      void SetupRecentProjects() const;
 
       friend class EditorActions;
    };

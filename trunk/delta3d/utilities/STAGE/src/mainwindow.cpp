@@ -193,7 +193,10 @@ namespace dtEditQt
       mRecentProjs = new QMenu(tr("Recent Projects"), this);
       mRecentMaps  = new QMenu(tr("Recent Maps"),     this);
 
-      mRecentProjs->addAction(editorActions.mActionFileRecentProject0);
+      for (int i=0; i<5; i++)
+      {
+         mRecentProjs->addAction(editorActions.mActionRecentProjects[i]);
+      }
 
       mFileMenu = menuBar()->addMenu(tr("&File"));
       mFileMenu->addAction(editorActions.mActionFileNewMap);
@@ -652,68 +655,25 @@ namespace dtEditQt
             if (dtUtil::FileUtils::GetInstance().DirExists(projContextPath))
             {
                projContextPath = dtUtil::FileUtils::GetInstance().GetAbsolutePath(projContextPath);
-               // Try to set the project context specified in the config file
-               try
+               if (EditorData::GetInstance().getLoadLastProject() == true)
                {
-                  startWaitCursor();
-                  dtDAL::Project::GetInstance().SetContext(projContextPath);
-                  EditorData::GetInstance().setCurrentProjectContext(projContextPath);
-                  EditorData::GetInstance().addRecentProject(projContextPath);
-                  EditorEvents::GetInstance().emitProjectChanged();
-                  EditorActions::GetInstance().refreshRecentProjects();
-                  endWaitCursor();
-               }
-               catch(const dtUtil::Exception& e)
-               {
-                  endWaitCursor();
-                  QMessageBox::warning((QWidget*)this,
-                     tr("Error"), tr(e.What().c_str()), tr("OK"));
+                  // Try to set the project context specified in the config file
+                  EditorActions::GetInstance().SlotChangeProjectContext(projContextPath);
                }
             }
          }
-         else if (!EditorData::GetInstance().getLoadLastProject())//FindRecentProjects().empty())
+         else if (EditorData::GetInstance().getLoadLastProject() == false)
          {
-            ProjectContextDialog dialog(this);
-            if (dialog.exec() == QDialog::Accepted)
-            {
-               std::string contextName = dialog.getProjectPath().toStdString();
-
-               // First try to set the new project context.
-               try
-               {
-                  startWaitCursor();
-                  dtDAL::Project::GetInstance().SetContext(contextName);
-                  EditorData::GetInstance().setCurrentProjectContext(contextName);
-                  EditorData::GetInstance().addRecentProject(contextName);
-                  EditorEvents::GetInstance().emitProjectChanged();
-                  EditorActions::GetInstance().refreshRecentProjects();
-                  endWaitCursor();
-               }
-               catch(const dtUtil::Exception& e)
-               {
-                  endWaitCursor();
-                  QMessageBox::critical((QWidget*)this,
-                     tr("Error"), tr(e.What().c_str()), tr("OK"));
-               }
-            }
+            //Display the Project Change dialog to prompt the user
+            EditorActions::GetInstance().slotProjectChangeContext();
          }
          else
          {
             std::list<std::string>& projects = EditorData::GetInstance().getRecentProjects();
             if (!projects.empty())
             {
-               startWaitCursor();
-
-               std::string contextName = projects.front();
-               dtDAL::Project::GetInstance().SetContext(contextName);
-               EditorData::GetInstance().setCurrentProjectContext(contextName);
-               EditorData::GetInstance().addRecentProject(contextName);
-               EditorEvents::GetInstance().emitProjectChanged();
-               EditorActions::GetInstance().refreshRecentProjects();
-
-               EditorEvents::GetInstance().emitProjectChanged();
-
-               endWaitCursor();
+               const std::string path = projects.front();
+               EditorActions::GetInstance().SlotChangeProjectContext(path);
             }
          }
 
@@ -721,20 +681,25 @@ namespace dtEditQt
          EditorActions::GetInstance().refreshRecentProjects();
          endWaitCursor();
 
+         std::string mapToLoad;
          if (ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::GENERAL,
                                                              CONF_MGR_MAP_FILE) != "")
          {
-            std::string mapToLoad = ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::GENERAL,
-                                                                                    CONF_MGR_MAP_FILE);
-            checkAndLoadBackup(mapToLoad);
+            mapToLoad = ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::GENERAL,
+                                                                        CONF_MGR_MAP_FILE);
          }
-         else if (EditorData::GetInstance().getLoadLastMap())
+         else
          {
             std::list<std::string>& maps = EditorData::GetInstance().getRecentMaps();
             if (!maps.empty())
             {
-               checkAndLoadBackup(maps.front());
+               mapToLoad = maps.front();
             }
+         }
+         
+         if (EditorData::GetInstance().getLoadLastMap())
+         {
+            checkAndLoadBackup(mapToLoad);;
          }
 
          EditorActions::GetInstance().getTimer()->start();
@@ -903,21 +868,15 @@ namespace dtEditQt
       }
       settings.endArray();
 
-      // Save the recent projects unless the user does not wish to do so.
-      if (!EditorData::GetInstance().getLoadLastProject())
-      {
-         return;
-      }
-
       // Save the current project state...
-      settings.beginGroup(EditorSettings::RECENT_PROJECTS);
-      if (!EditorData::GetInstance().getRecentProjects().empty())
+      QStringList projectStringList;
+      std::list<std::string>::iterator itr = EditorData::GetInstance().getRecentProjects().begin();
+      while (itr != EditorData::GetInstance().getRecentProjects().end())
       {
-         settings.setValue(EditorSettings::RECENT_PROJECT0,
-            QVariant(QString(EditorData::GetInstance().getRecentProjects().front().c_str())));
-         EditorData::GetInstance().getRecentProjects().pop_front();
+         projectStringList << QString::fromStdString(*itr);
+         ++itr;
       }
-      settings.endGroup();
+      settings.setValue(EditorSettings::RECENT_PROJECTS, projectStringList);
 
       //Check to see if the user wants the app to remember the recently loaded map.
       if (!EditorData::GetInstance().getLoadLastMap() ||
@@ -1239,37 +1198,19 @@ namespace dtEditQt
       }
       settings.endArray();
 
+      //recent project context list
+      SetupRecentProjects();
+
       // Now check for the general preferences...
       settings.beginGroup(EditorSettings::PREFERENCES_GROUP);
-      if (settings.contains(EditorSettings::LOAD_RECENT_PROJECTS))
-      {
-         bool loadProjs = settings.value(EditorSettings::LOAD_RECENT_PROJECTS).toBool();
-         EditorData::GetInstance().setLoadLastProject(loadProjs);
 
-         if (!FindRecentProjects().empty())
-         {
-            // no point in trying to find any maps if no previous context were found
-            FindRecentMaps();
-         }
+      bool loadProjs = settings.value(EditorSettings::LOAD_RECENT_PROJECTS, true).toBool();
+      EditorData::GetInstance().setLoadLastProject(loadProjs);
 
-         if (loadProjs)
-         {
-            if (settings.contains(EditorSettings::LOAD_RECENT_MAPS))
-            {
-               bool loadMaps = settings.value(EditorSettings::LOAD_RECENT_MAPS).toBool();
-               EditorData::GetInstance().setLoadLastMap(loadMaps);
-            }
-         }
-         else
-         {
-            EditorData::GetInstance().setLoadLastMap(false);
-         }
-      }
-      else
-      {
-         EditorData::GetInstance().setLoadLastProject(true);
-         EditorData::GetInstance().setLoadLastMap(true);
-      }
+      bool loadMaps = settings.value(EditorSettings::LOAD_RECENT_MAPS, true).toBool();
+      EditorData::GetInstance().setLoadLastMap(loadMaps);
+
+      FindRecentMaps();
 
       if (settings.contains(EditorSettings::RIGID_CAMERA))
       {
@@ -1404,51 +1345,23 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   std::vector<std::string> MainWindow::FindRecentProjects()
+   bool MainWindow::LoadLastProject()
    {
-      EditorSettings settings;
-      std::vector<std::string> projects;
-      bool failedToLoadContext = false;
-
-      settings.beginGroup(EditorSettings::RECENT_PROJECTS);
-      if (settings.contains(EditorSettings::RECENT_PROJECT0))
+      bool contextLoaded = false;
+      if (EditorData::GetInstance().getLoadLastProject() == false)
       {
-         std::string project = settings.value(EditorSettings::RECENT_PROJECT0).toString().toStdString();
-
-         if (dtUtil::FileUtils::GetInstance().DirExists(project))
-         {
-            EditorData::GetInstance().addRecentProject(project);
-            if (EditorData::GetInstance().getLoadLastProject())
-            {
-               EditorData::GetInstance().setCurrentProjectContext(project);
-               try
-               {
-                  dtDAL::Project::GetInstance().SetContext(project);
-               }
-               catch (dtUtil::Exception&)
-               {
-                   failedToLoadContext = true;
-               }
-            }
-            projects.push_back(project);
-         }
+         return false;
       }
 
-      if(failedToLoadContext)
+      //try to set the last used Project Context
+      const std::string lastProject = EditorData::GetInstance().getRecentProjects().front();
+      if (dtUtil::FileUtils::GetInstance().DirExists(lastProject))
       {
-         QMessageBox::critical(this, tr("Failed to load previous context"),
-            tr("Failed to load the previous project context.\n") +
-            tr("This can happen if the last project context\n has been moved, renamed, or deleted.\n") +
-            tr("You may need to restart STAGE."),
-            tr("OK"));
-
-         // Remove the recent projects entry from the settings object since it
-         // has become somehow corrupted.
-         settings.remove(EditorSettings::RECENT_PROJECT0);
+         EditorActions::GetInstance().SlotChangeProjectContext(lastProject);
+         contextLoaded = true; //did it really load?
       }
 
-      settings.endGroup();
-      return projects;
+      return contextLoaded;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -1463,23 +1376,8 @@ namespace dtEditQt
          const std::string& mapName = settings.value(EditorSettings::RECENT_MAP0).toString().toStdString();
          if (!mapName.empty())
          {
-            if (dtDAL::Project::GetInstance().IsContextValid())
-            {
-               std::set<std::string>::const_iterator itor = dtDAL::Project::GetInstance().GetMapNames().find(mapName);
-               if (itor != dtDAL::Project::GetInstance().GetMapNames().end())
-               {
-                  maps.push_back(mapName);
-                  EditorData::GetInstance().addRecentMap(mapName);
-               }
-               else
-               {
-                  settings.setValue(EditorSettings::RECENT_MAP0, QVariant(""));
-                  QMessageBox::critical(this, tr("Failed to load previous map"),
-                     tr("Failed to load the previous map.\n") +
-                     tr("This can happen if the last map has been moved, renamed, \ndeleted, or no longer in the previous project context."),
-                     QMessageBox::Ok);
-               }
-            }
+            maps.push_back(mapName);
+            EditorData::GetInstance().addRecentMap(mapName);
          }
       }
       settings.endGroup();
@@ -1489,6 +1387,11 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void MainWindow::checkAndLoadBackup(const std::string& str)
    {
+      if (str.empty())
+      {
+         return;
+      }
+
       bool hasBackup;
 
       try
@@ -1668,4 +1571,20 @@ namespace dtEditQt
       mPluginManager->StartPluginsInConfigFile();
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void MainWindow::SetupRecentProjects() const
+   {
+      EditorSettings settings;
+      QStringList recentProjectList = settings.value(EditorSettings::RECENT_PROJECTS).toStringList();
+
+      //Projects are stored with the most recently used listed first, but EditorData
+      //will store the last project added as the first.  So we have to add them
+      //with the most recently used getting added last.
+      QStringListIterator itr(recentProjectList);
+      itr.toBack();
+      while (itr.hasPrevious())
+      {
+         EditorData::GetInstance().addRecentProject(itr.previous().toStdString());
+      }
+   }
 } // namespace dtEditQt
