@@ -859,7 +859,8 @@ namespace dtEditQt
          return result;
       }
 
-      if (mObjectMotionModel->Update(position) != dtCore::ObjectMotionModel::MOTION_TYPE_MAX)
+      if (mObjectMotionModel->IsEnabled() &&
+         mObjectMotionModel->Update(position) != dtCore::ObjectMotionModel::MOTION_TYPE_MAX)
       {
          return true;
       }
