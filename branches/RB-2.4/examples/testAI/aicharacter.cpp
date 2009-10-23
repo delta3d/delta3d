@@ -37,9 +37,9 @@
 #include <cmath>
 
 /**
-* A quick functor that will be used with for_each to render
-* all waypoints in the list to green
-*/
+ * A quick functor that will be used with for_each to render
+ * all waypoints in the list to green
+ */
 struct funcRenderGreen
 {
    template<class _WayIter>
@@ -52,8 +52,6 @@ struct funcRenderGreen
       }
    }
 };
-
-
 
 namespace dtAI
 {
@@ -88,32 +86,32 @@ namespace dtAI
 
    bool AICharacter::FindPathAndGoToWaypoint(const WaypointInterface* pWaypoint)
    {
-      //to use AStar, we call reset with the two points we want to path between
+      // to use AStar, we call reset with the two points we want to path between
       mAStar.Reset(mCurrentWaypoint, pWaypoint);
 
-      //a single call to find path should return PATH_FOUND if no constraints are given
-      //and if a path exists
+      // a single call to find path should return PATH_FOUND if no constraints are given
+      // and if a path exists
       PathFindResult pHasPath = mAStar.FindPath();
 
       if (pHasPath != NO_PATH)
       {
-         //copy the resulting path
+         // copy the resulting path
          mWaypointPath = mAStar.GetPath();
 
-         //loop through the path and turn everything to render green
+         // loop through the path and turn everything to render green
          for_each(mWaypointPath.begin(), mWaypointPath.end(), funcRenderGreen());
 
          const dtAI::Waypoint* way = dynamic_cast<const dtAI::Waypoint*>(pWaypoint);
          if(way != NULL)
          {
-            //set the last waypoint to render red
+            // set the last waypoint to render red
             way->SetRenderFlag(dtAI::Waypoint::RENDER_RED);
          }
 
          return true;
       }
 
-      //we could not path to that point
+      // we could not path to that point
       return false;
    }
 
@@ -124,8 +122,8 @@ namespace dtAI
 
    void AICharacter::GoToWaypoint(float dt, const WaypointInterface* pWaypoint)
    {
-      //simple... just rotate to the waypoint over time and set a
-      //positive velocity to go there
+      // simple... just rotate to the waypoint over time and set a
+      // positive velocity to go there
       mCharacter->RotateToPoint(pWaypoint->GetPosition(), dt * 3.0f);
 
       //osg::Vec3 pVector = pWaypoint->GetPosition() - GetPosition();
@@ -169,8 +167,8 @@ namespace dtAI
 
    bool AICharacter::AmAtWaypoint(const WaypointInterface* pWaypoint)
    {
-      //a simple distance comparison to determine if we are within
-      //range of a waypoint to be considered "at it"
+      // a simple distance comparison to determine if we are within
+      // range of a waypoint to be considered "at it"
       osg::Vec3 pos = GetPosition();
       osg::Vec3 wayPos = pWaypoint->GetPosition();
 
@@ -186,36 +184,35 @@ namespace dtAI
       }
    }
 
-
    void AICharacter::Update(float dt)
    {
-      //if we have waypoints to goto
+      // if we have waypoints to goto
       if (!mWaypointPath.empty())
       {
-         //if we have gotten to the current waypoint
+         // if we have gotten to the current waypoint
          if (AmAtWaypoint(mWaypointPath.front()))
          {
-            //set it as the current waypoint
-            //meaning the last valid waypoint we visited
+            // set it as the current waypoint
+            // meaning the last valid waypoint we visited
             mCurrentWaypoint = mWaypointPath.front();
-            //remove that waypoint from the list
+            // remove that waypoint from the list
             mWaypointPath.pop_front();
-            
+
             const dtAI::Waypoint* way = dynamic_cast<const dtAI::Waypoint*>(mCurrentWaypoint);
-            //set its render flag to render blue again
+            // set its render flag to render blue again
             if(way != NULL)
             {
                way->SetRenderFlag(dtAI::Waypoint::RENDER_BLUE);
             }
          }
 
-         //if we have another waypoint to goto, goto it
+         // if we have another waypoint to goto, goto it
          if (!mWaypointPath.empty())
          {
             ApplyStringPulling();
             GoToWaypoint(dt, mWaypointPath.front());
          }
-         //else stop walking
+         // else stop walking
          else
          {
             mCharacter->SetSpeed(0);
@@ -245,7 +242,7 @@ namespace dtAI
          const WaypointInterface* pNextWaypoint = *(++(mWaypointPath.begin()));
          pIsector->SetEndPosition(pNextWaypoint->GetPosition());// - vec);
 
-         //if there is a path between the two points
+         // if there is a path between the two points
          if (!pIsector->Update())
          {
             const dtAI::Waypoint* way = dynamic_cast<const dtAI::Waypoint*>(mWaypointPath.front());
@@ -260,5 +257,4 @@ namespace dtAI
       while (mWaypointPath.size() > 2);
    }
 
-
-}//namespace dtAI
+} // namespace dtAI

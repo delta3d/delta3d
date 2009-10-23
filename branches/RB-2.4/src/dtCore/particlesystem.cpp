@@ -474,7 +474,6 @@ void ParticleSystem::ParseParticleLayers(osg::Node& ps, LayerList& layers, dtCor
             LOG_ERROR("Found a second particle system updater.  This is not supported.")
          }
          particleSystemUpdater = static_cast<osgParticle::ParticleSystemUpdater*>(searchingNode);
-
       }
 
       // See if this is the particle system of the geode
@@ -603,6 +602,17 @@ void ParticleSystem::CloneParticleSystemDrawables()
       return;
    }
 
+   dtCore::RefPtr<osgParticle::ParticleSystemUpdater> newParticleSystemUpdater = new osgParticle::ParticleSystemUpdater;
+   newParticleSystemUpdater->setNodeMask(mParticleSystemUpdater->getNodeMask());
+   newParticleSystemUpdater->setName(mParticleSystemUpdater->getName());
+   newParticleSystemUpdater->setDescriptions(mParticleSystemUpdater->getDescriptions());
+   newParticleSystemUpdater->setUserData(mParticleSystemUpdater->getUserData());
+   newParticleSystemUpdater->setUpdateCallback(mParticleSystemUpdater->getUpdateCallback());
+   newParticleSystemUpdater->setCullCallback(mParticleSystemUpdater->getCullCallback());
+   newParticleSystemUpdater->setCullingActive(mParticleSystemUpdater->getCullingActive());
+   newParticleSystemUpdater->setDataVariance(mParticleSystemUpdater->getDataVariance());
+   newParticleSystemUpdater->setEventCallback(mParticleSystemUpdater->getEventCallback());
+
    for(nextLayerIt = mLayers.begin(); nextLayerIt != mLayers.end(); ++nextLayerIt)
    {
       ParticleLayer& layer = *nextLayerIt;
@@ -611,13 +621,19 @@ void ParticleSystem::CloneParticleSystemDrawables()
          static_cast<osgParticle::ParticleSystem*>(layer.GetParticleSystem().clone(COPY_OPS_DRAWABLE));
 
       mParticleSystemUpdater->removeParticleSystem(&layer.GetParticleSystem());
-      mParticleSystemUpdater->addParticleSystem(newPSDrawable.get());
+      newParticleSystemUpdater->addParticleSystem(newPSDrawable.get());
+
       layer.GetGeode().removeDrawable(&layer.GetParticleSystem());
       layer.GetGeode().addDrawable(newPSDrawable.get());
       layer.SetParticleSystem(*newPSDrawable);
       layer.GetModularEmitter().setParticleSystem(newPSDrawable.get());
       layer.GetProgram().setParticleSystem(newPSDrawable.get());
    }
+
+   mParticleSystemUpdater->getParent(0)->addChild(newParticleSystemUpdater.get());
+   mParticleSystemUpdater->getParent(0)->removeChild(mParticleSystemUpdater.get());
+
+   mParticleSystemUpdater = newParticleSystemUpdater;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
