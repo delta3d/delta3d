@@ -55,13 +55,6 @@ public slots:
    void onActorProxyCreated(ActorProxyRefPtr proxy, bool forceNoAdjustments);
 
    /**
-   * Handles when an actor has been destroyed.
-   *
-   * @param[in]  proxy  The proxy being destroyed.
-   */
-   void onActorProxyDestroyed(ActorProxyRefPtr proxy);
-
-   /**
    * Handles when actors are selected.
    *
    * @param[in]  actors  The list of actors being selected.
