@@ -83,19 +83,6 @@ namespace dtEditQt
       }
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   //bool EditorViewport::moveCamera(float dx, float dy)
-   //{
-   //   bool overrideDefault = false;
-   //   ViewportManager::GetInstance().emitMoveCamera(this, dx, dy, &overrideDefault);
-   //   if (overrideDefault)
-   //   {
-   //      return false;
-   //   }
-
-   //   return true;
-   //}
-
    ////////////////////////////////////////////////////////////////////////////////
    void EditorViewport::setCameraMotionModel(STAGECameraMotionModel* motion)
    {
@@ -151,7 +138,6 @@ namespace dtEditQt
                   mObjectMotionModel->SetTarget(target);
                }
 
-
                // Once we determine that a target can scale, we don't need to
                // test the others.
                if (!canScale)
@@ -169,19 +155,14 @@ namespace dtEditQt
          }
 
          mObjectMotionModel->SetScaleEnabled(canScale);
-         
-         //// only enable the MotionModel for active Viewports
-         //if (GetEnabled())
-         //{
-         //   mObjectMotionModel->SetEnabled(true);
-         //}
       }
       else
       {
-         //mObjectMotionModel->SetEnabled(false);
          mObjectMotionModel->ClearTargets();
          mObjectMotionModel->SetScaleEnabled(false);
       }
+
+      mObjectMotionModel->UpdateWidgets();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -387,7 +368,6 @@ namespace dtEditQt
             }
 
             ViewportManager::GetInstance().getMasterScene()->AddDrawable(drawable);
-            //ViewportManager::GetInstance().refreshAllViewports();
          }
 
          event->accept();
@@ -402,8 +382,6 @@ namespace dtEditQt
    {
       // Remove the ghost.
       ClearGhostProxy();
-
-      //ViewportManager::GetInstance().refreshAllViewports();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -467,8 +445,6 @@ namespace dtEditQt
             {
                billBoard->SetRotation(osg::Matrix::rotate(getCamera()->getOrientation()));
             }
-
-            //ViewportManager::GetInstance().refreshAllViewports();
          }
 
          event->setDropAction(Qt::MoveAction);
@@ -552,7 +528,6 @@ namespace dtEditQt
                   ViewportManager::GetInstance().getViewportOverlay()->clearCurrentSelection();
                   ViewportManager::GetInstance().getViewportOverlay()->setMultiSelectMode(true);
                   EditorEvents::GetInstance().emitActorsSelected(proxies);
-                  //ViewportManager::GetInstance().refreshAllViewports();
                }
 
                event->setDropAction(Qt::MoveAction);
@@ -591,8 +566,6 @@ namespace dtEditQt
 
          event->setDropAction(Qt::MoveAction);
          event->accept();
-
-         //ViewportManager::GetInstance().refreshAllViewports();
       }
       else
       {
@@ -792,8 +765,6 @@ namespace dtEditQt
             // Make sure we only duplicate the actors once.
             mKeyMods = 0x0;
          }
-
-         //ViewportManager::GetInstance().refreshAllViewports();  //causes gizmo manipulations to be slow
       }
    }
 
@@ -859,7 +830,7 @@ namespace dtEditQt
          return result;
       }
 
-      if (mObjectMotionModel->IsEnabled() &&
+      if (mObjectMotionModel->IsEnabled() && mObjectMotionModel->GetNumTargets() > 0 &&
          mObjectMotionModel->Update(position) != dtCore::ObjectMotionModel::MOTION_TYPE_MAX)
       {
          return true;
@@ -976,19 +947,6 @@ namespace dtEditQt
          }
 
          pick(e->pos().x(), e->pos().y());
-         //ViewportManager::GetInstance().refreshAllViewports();
-
-         // Enable the object motion model if you have a selection.
-         if (GetEnabled())
-         {
-            ViewportOverlay* overlay = ViewportManager::GetInstance().getViewportOverlay();
-            ViewportOverlay::ActorProxyList selection = overlay->getCurrentActorSelection();
-
-            if (selection.size() > 0)
-            {
-               mObjectMotionModel->SetEnabled(true);
-            }
-         }
       }
 
       return true;
@@ -1185,7 +1143,6 @@ namespace dtEditQt
       }
 
       // Finally set the newly cloned proxies to be the current selection.
-      //ViewportManager::GetInstance().getViewportOverlay()->setMultiSelectMode(true);
       EditorEvents::GetInstance().emitActorsSelected(newSelection);
       EditorEvents::GetInstance().emitEndChangeTransaction();
 
