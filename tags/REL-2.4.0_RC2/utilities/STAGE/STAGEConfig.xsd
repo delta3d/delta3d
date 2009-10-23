@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+   targetNamespace="http://www.w3schools.com"
+   xmlns="http://www.w3schools.com"
+   elementFormDefault="qualified">
+
+<xs:element name="STAGEConfig">
+   <xs:complexType>
+      <xs:sequence>
+
+         <xs:element name="General">
+            <xs:complexType>
+               <xs:attribute name="Map" type="xs:string"/>
+               <xs:attribute name="ProjContextPath" type="xs:string"/>
+               <xs:attribute name="SaveConfigurationOnClose" type="xs:boolean"/>
+               <xs:attribute name="Stylesheet" type="xs:string"/>
+            </xs:complexType>
+         </xs:element>
+
+         <xs:element name="Layout">
+            <xs:complexType>
+               <xs:attribute name="ShowTopView" type="xs:boolean"/>
+               <xs:attribute name="ShowFrontView" type="xs:boolean"/>
+               <xs:attribute name="ShowSideView" type="xs:boolean"/>
+               <xs:attribute name="ShowPerspView" type="xs:boolean"/>
+
+               <!-- Note: if ShowActorTab is false, none of the other
+               ShowActor stuff will be visible either. -->
+               <xs:attribute name="ShowActorDockWidget" type="xs:boolean"/>
+               <xs:attribute name="ShowActorBrowserTab" type="xs:boolean"/>
+               <xs:attribute name="ShowPrefabBrowserTab" type="xs:boolean"/>
+
+               <!-- Note: if the ShowSearchTab is false, none of the other
+               Search stuff will be visible either. -->
+               <xs:attribute name="ShowSearchDockWidget" type="xs:boolean"/>
+               <xs:attribute name="ShowActorSearchTab" type="xs:boolean"/>
+               <xs:attribute name="ShowGlobalActorsTab" type="xs:boolean"/>        
+               <xs:attribute name="ShowResourceBrowser" type="xs:boolean"/>
+               <xs:attribute name="ShowPropertyEditor" type="xs:boolean"/>
+            </xs:complexType>
+         </xs:element>
+      
+		   <xs:element name="Plugins">
+            <xs:complexType>
+               <xs:attribute name="Activated" type="xs:string"/>
+            </xs:complexType>
+         </xs:element>
+
+      </xs:sequence>
+   </xs:complexType>
+</xs:element>
+
+</xs:schema>
