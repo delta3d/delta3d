@@ -255,6 +255,8 @@ namespace dtEditQt
          mClassBox->setCurrentIndex(0);
 
          EditorData::GetInstance().getMainWindow()->endWaitCursor();
+
+         searchPressed();
       }
    }
 
@@ -349,6 +351,8 @@ namespace dtEditQt
       }
 
       EditorData::GetInstance().getMainWindow()->endWaitCursor();
+
+      searchPressed();
    }
 
 } // namespace dtEditQt
