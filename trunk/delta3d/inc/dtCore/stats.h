@@ -40,7 +40,7 @@
 #include <osgText/Text>
 #include <osg/Switch>
 
-/// @cond DOXYGEN_SHOULD_SKIP_THIS
+/// @cond
 namespace osg
 {
    class Geometry;
@@ -72,8 +72,10 @@ namespace dtCore
          NO_STATS = 0,
          FRAME_RATE = 1,
          VIEWER_STATS = 2,
-         DELTA_DETAILS = 3,
-         LAST = 4
+         CAMERA_SCENE_STATS = 3,
+         VIEWER_SCENE_STATS = 4,
+         DELTA_DETAILS = 5,
+         LAST = 6
       };
 
       void Reset();
@@ -83,6 +85,8 @@ namespace dtCore
       double GetBlockMultiplier() const { return mBlockMultiplier; }
 
    private:
+      osg::Geometry* CreateBackgroundRectangle(const osg::Vec3& pos, const float width, const float height, osg::Vec4& color);
+
       osg::Geometry* CreateGeometry(const osg::Vec3& pos, float height, const osg::Vec4& colour, unsigned int numBlocks);
 
       osg::Geometry* CreateFrameMarkers(const osg::Vec3& pos, float height, const osg::Vec4& colour, unsigned int numBlocks);
@@ -92,7 +96,7 @@ namespace dtCore
       osgText::Text* CreateTextControl(osg::Geode *geode, osg::Vec4& colorFR, 
          const std::string& font, float characterSize, osg::Vec3& pos, const std::string &initialText);
 
-      osg::Node* CreateCameraStats(const std::string& font, osg::Vec3& pos, float startBlocks, bool aquireGPUStats, float characterSize, osg::Stats* viewerStats, osg::Camera* camera);
+      osg::Node* CreateCameraTimeStats(const std::string& font, osg::Vec3& pos, float startBlocks, bool aquireGPUStats, float characterSize, osg::Stats* viewerStats, osg::Camera* camera);
 
       void SetUpScene(osgViewer::ViewerBase* viewer);
 
@@ -115,10 +119,13 @@ namespace dtCore
       unsigned int                        mFrameRateChildNum;
       unsigned int                        mViewerChildNum;
       unsigned int                        mDeltaSystemChildNum;
-      unsigned int                        mSceneChildNum;
+      unsigned int                        mCameraSceneChildNum;
+      unsigned int                        mViewerSceneChildNum;
       unsigned int                        mNumBlocks;
       double                              mBlockMultiplier;
-   };
+      float                               mStatsWidth;
+      float                               mStatsHeight;
+};
 }
 
 
