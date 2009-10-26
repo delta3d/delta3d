@@ -86,7 +86,7 @@ namespace dtGame
       /**
        * Fill the vector with all the actor components.
        */
-      void GetAllComponents(std::vector<ActorComponent*> toFill);
+      void GetAllComponents(std::vector<ActorComponent*>& toFill);
 
       /**
        * Does base contain a component of given type?

@@ -80,7 +80,7 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ActorComponentBase::GetAllComponents(std::vector<ActorComponent*> toFill)
+   void ActorComponentBase::GetAllComponents(std::vector<ActorComponent*>& toFill)
    {
       toFill.reserve(toFill.size() + mComponents.size());
       ActorComponentMap::iterator i, iend;
