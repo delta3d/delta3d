@@ -133,13 +133,25 @@ namespace dtGame
       // safety check
       assert(dynamic_cast<GameActor*>(this) != NULL &&
                "ActorComponentBase must derive from dtGame::GameActor!");
+      
+      /*
+         Copy current list of components and iterate through that. 
+         Otherwise, when actor components add other actor components to the actor
+         in their OnAddedToActor method, the OnAddedToActor method of that new component
+         would be called twice: once immediately (because actor is now in game),
+         and once when they are reached by iteration.
+      */
+      std::list<ActorComponent*> components;
+      for (ActorComponentMap::iterator iter = mComponents.begin(); iter != mComponents.end(); ++iter)
+      {
+         components.push_back(iter->second);         
+      }
 
       // loop through all components and call their OnAddedToActor method
-      ActorComponentMap::iterator iter;
-      for (iter = mComponents.begin(); iter != mComponents.end(); ++iter)
+      for(std::list<ActorComponent*>::iterator iter = components.begin(); iter != components.end(); ++iter)
       {
-         (*iter).second->OnAddedToActor(*static_cast<GameActor*>(this));
-         OnActorComponentAdded(*(*iter).second);
+         (*iter)->OnAddedToActor(*static_cast<GameActor*>(this));
+         OnActorComponentAdded(**iter);
       }
    }
 
