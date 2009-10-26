@@ -88,6 +88,7 @@ class GameActorTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestOnRemovedActor);
       CPPUNIT_TEST(TestAddActorComponent);
       CPPUNIT_TEST(TestActorComponentInitialized);
+      CPPUNIT_TEST(TestGetAllActorComponents);
 
    CPPUNIT_TEST_SUITE_END();
 
@@ -111,6 +112,7 @@ public:
    void TestOnRemovedActor();
    void TestAddActorComponent();
    void TestActorComponentInitialized();
+   void TestGetAllActorComponents();
 
 private:
    static const std::string mTestGameActorLibrary;
@@ -1119,4 +1121,32 @@ void GameActorTests::TestActorComponentInitialized()
    {
       CPPUNIT_FAIL(e.What());
    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void GameActorTests::TestGetAllActorComponents()
+{
+   dtCore::RefPtr<const dtDAL::ActorType> actorType = mManager->FindActorType("ExampleActors", "Test1Actor");
+   dtCore::RefPtr<dtDAL::ActorProxy> proxy = mManager->CreateActor(*actorType);
+   dtCore::RefPtr<dtGame::GameActorProxy> gap = dynamic_cast<dtGame::GameActorProxy*>(proxy.get());
+   mManager->AddActor(*gap, true, false);
+   dtGame::GameActor* actor = &gap->GetGameActor();
+
+
+   std::vector<ActorComponent*> components;
+   actor->GetAllComponents(components);
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Actor already contains ActorComponents, but non were added",
+                                size_t(0), components.size());
+
+
+   dtCore::RefPtr<TestActorComponent1> component1 = new TestActorComponent1();
+   dtCore::RefPtr<TestActorComponent2> component2 = new TestActorComponent2();
+   actor->AddComponent(*component1);
+   actor->AddComponent(*component2);
+
+   //wipe out any old remnants
+   components = std::vector<ActorComponent*>();
+   actor->GetAllComponents(components);
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Actor didn't return back the number of added ActorComponents",
+                                size_t(2), components.size());
 }
