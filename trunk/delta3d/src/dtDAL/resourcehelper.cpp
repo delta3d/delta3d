@@ -76,8 +76,8 @@ namespace dtDAL
             throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectFileNotFound,
                    std::string("No such file:\"") + srcPath + "\".", __FILE__, __LINE__);
          }
-
-         std::string extension = osgDB::getLowerCaseFileExtension(srcPath);
+         
+         std::string extension = osgDB::getFileExtension(srcPath);
          std::string resourceFileName = newName + '.' + extension;
 
          fileUtils.FileCopy(srcPath, destCategoryPath + dtUtil::FileUtils::PATH_SEPARATOR + resourceFileName, true);
