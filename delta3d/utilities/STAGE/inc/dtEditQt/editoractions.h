@@ -234,6 +234,9 @@ namespace dtEditQt
       // Add a new external tool
       QAction* mActionAddTool;
 
+      // Action - Help - Editor Help.
+      QAction* mActionHelpEditorHelp;
+
       // Action - Help - About Delta Level Editor
       QAction* mActionHelpAboutEditor;
 
@@ -411,6 +414,11 @@ namespace dtEditQt
 
       ///Open the New External Tool editor window
       void SlotNewExternalToolEditor();
+
+      /**
+      * Slot - Help - How.  Spawns the editor help box.
+      */
+      void slotHelpEditorHelp();
 
       /**
        * Slot - Help - About Editor. Spawns the editor about box.

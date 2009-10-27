@@ -121,8 +121,8 @@ namespace dtEditQt
          }
          else if (mCameraMode == CAMERA_LOOK)
          {
-            mCamera->pitch(-dy * 0.1f * mViewport->getMouseSensitivity());
-            mCamera->yaw(-dx * 0.1f * mViewport->getMouseSensitivity());
+            mCamera->pitch(-dy * 0.1f);
+            mCamera->yaw(-dx * 0.1f);
          }
          else if (mCameraMode == CAMERA_TRANSLATE)
          {

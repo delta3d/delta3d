@@ -267,6 +267,7 @@ namespace dtEditQt
       mToolsMenu = menuBar()->addMenu(tr("&Tools"));
 
       mHelpMenu = menuBar()->addMenu(tr("&Help"));
+      mHelpMenu->addAction(editorActions.mActionHelpEditorHelp);
       mHelpMenu->addAction(editorActions.mActionHelpAboutEditor);
       mHelpMenu->addAction(editorActions.mActionHelpAboutQT);
    }
@@ -564,6 +565,7 @@ namespace dtEditQt
       EditorActions::GetInstance().mActionWindowsResourceBrowser->setEnabled(hasBoth);
       EditorActions::GetInstance().mActionWindowsResetWindows->setEnabled(true);
 
+      EditorActions::GetInstance().mActionHelpEditorHelp->setEnabled(true);
       EditorActions::GetInstance().mActionHelpAboutEditor->setEnabled(true);
       EditorActions::GetInstance().mActionHelpAboutQT->setEnabled(true);
 

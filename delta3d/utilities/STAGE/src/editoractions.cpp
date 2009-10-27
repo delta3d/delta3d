@@ -39,6 +39,7 @@
 #include <QtGui/QTextEdit>
 #include <QtCore/QTimer>
 #include <QtCore/QFileInfo>
+#include <QtCore/QProcess>
 
 #include <osgDB/FileNameUtils>
 
@@ -411,6 +412,11 @@ namespace dtEditQt
    //////////////////////////////////////////////////////////////////////////////
    void EditorActions::setupHelpActions()
    {
+      // Help - About Editor
+      mActionHelpEditorHelp = new QAction(tr("STAGE &Help..."), this);
+      mActionHelpEditorHelp->setStatusTip(tr("STAGE Help"));
+      connect(mActionHelpEditorHelp, SIGNAL(triggered()), this, SLOT(slotHelpEditorHelp()));
+
       // Help - About Editor
       mActionHelpAboutEditor = new QAction(tr("&About STAGE..."), this);
       mActionHelpAboutEditor->setStatusTip(tr("About STAGE"));
@@ -1668,6 +1674,33 @@ namespace dtEditQt
       ConfigurationManager::GetInstance().SetVariable(
          ConfigurationManager::GENERAL, CONF_MGR_PROJECT_CONTEXT, path);
 
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorActions::slotHelpEditorHelp()
+   {
+      QProcess* process = new QProcess((QWidget*)EditorData::GetInstance().getMainWindow());
+
+      //QString app = QLibraryInfo::location(QLibraryInfo::BinariesPath) + QDir::separator();
+#if !defined(Q_OS_MAC)
+      QString app = QLatin1String("assistant");
+#else
+      QString app = QLatin1String("Assistant.app/Contents/MacOS/Assistant");
+#endif
+
+      QStringList args;
+      args << QLatin1String("-collectionFile");
+      args << QLatin1String((dtCore::GetDeltaRootPath() + "/utilities/STAGE/docs/STAGEHelp.qhc").c_str());
+      args << QLatin1String("-enableRemoteControl");
+
+      process->start(app, args);
+      if (!process->waitForStarted())
+      {
+         QMessageBox::critical((QWidget*)EditorData::GetInstance().getMainWindow(),
+            tr("Remote Control"),
+            tr("Could not start Qt Assistant from %1.").arg(app));
+         return;
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////////

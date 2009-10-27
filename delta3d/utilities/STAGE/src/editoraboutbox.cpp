@@ -60,7 +60,6 @@ namespace dtEditQt
       splashLabel->setPixmap(splashImage);
       splashLabel->setFrameStyle(QFrame::StyledPanel | QFrame::Raised);
 
-      tabs->addTab(createEditorShortcutsTab(), "Shortcuts");
       tabs->addTab(createEditorInfoTab(),"About");
       tabs->addTab(createLicenseTab(),"License Agreement");
 
@@ -73,27 +72,6 @@ namespace dtEditQt
 
       connect(ok,SIGNAL(clicked()), this, SLOT(accept()));
       setModal(true);
-   }
-
-   //////////////////////////////////////////////////////////////////////////////
-   QTextEdit* EditorAboutBox::createEditorShortcutsTab()
-   {
-      QTextEdit* textEdit = new QTextEdit();
-
-      textEdit->setReadOnly(true);
-      QFile file(":/help.html");
-
-      if (!file.open(QFile::ReadOnly | QFile::Text))
-      {
-         textEdit->setPlainText("Could not locate help file.");
-      }
-      else
-      {
-         QTextStream in(&file);
-         textEdit->setHtml(in.readAll());
-      }
-
-      return textEdit;
    }
 
    //////////////////////////////////////////////////////////////////////////////
