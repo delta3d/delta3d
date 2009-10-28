@@ -1,4 +1,5 @@
-#pragma once
+#ifndef TEXT_LABEL_COMPONENT_H_
+#define TEXT_LABEL_COMPONENT_H_
 
 #include "testexport.h"
 #include <dtGame/actorcomponentbase.h>
@@ -22,7 +23,7 @@ public:
    // set the type of the actor component
    static const ActorComponent::ACType TYPE;
 
-   TextLabelComponent();     
+   TextLabelComponent();
 
    // add and remove geometry to actor
    virtual void OnAddedToActor(dtGame::GameActor& actor);
@@ -41,7 +42,7 @@ public:
       double a = ((color & 0xff000000) >> 24) / 256.;
       double r = ((color & 0x00ff0000) >> 16) / 256.;
       double g = ((color & 0x0000ff00) >>  8) / 256.;
-      double b = ((color & 0x000000ff) >>  0) / 256.;         
+      double b = ((color & 0x000000ff) >>  0) / 256.;
       mColor.set(r, g, b, a);
       Create(); 
    }
@@ -172,3 +173,5 @@ private:
    float mFlashInterval;
 
 };
+
+#endif // TEXT_LABEL_COMPONENT_H_

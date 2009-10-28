@@ -41,24 +41,25 @@ public:
             // loop through all component game actors and
             // get their text label components.
             // Toggle flashing property on components
-            typedef std::vector<dtDAL::ActorProxy*> PLIST;
-            PLIST proxies;
+            typedef std::vector<dtDAL::ActorProxy*> ProxyList;
+
+            ProxyList proxies;
             GetGameManager()->FindActorsByType(*TestActorLibraryRegistry::COMPONENT_GAME_ACTOR_TYPE.get(), proxies);
 
             // for each game actor
-            for(PLIST::iterator i = proxies.begin(); i != proxies.end(); ++i)
+            for(ProxyList::iterator proxyIter = proxies.begin(); proxyIter != proxies.end(); ++proxyIter)
             {
                // get the game actor
                ComponentGameActor* actor;
-               (*i)->GetActor(actor);
+               (*proxyIter)->GetActor(actor);
 
                // get its text label component
-               TextLabelComponent* tcomp;
-               actor->GetComponent(tcomp);
+               TextLabelComponent* textComp;
+               actor->GetComponent(textComp);
 
                // access text label component
-               tcomp->SetFlashing(!tcomp->IsFlashing());
-               tcomp->SetFlashInterval(0.2f);
+               textComp->SetFlashing(!textComp->IsFlashing());
+               textComp->SetFlashInterval(0.2f);
             }
             return true;
          }
@@ -83,7 +84,6 @@ public:
       motionModel->SetFocalPoint(TARGET_XYZ);
    }
 
-
    virtual void OnStartup(dtGame::GameApplication& app)
    {
       std::string dataPath = dtCore::GetDeltaDataPathList();
@@ -94,7 +94,6 @@ public:
 
       try
       {
-       
          // Get the screen size
          app.GetWindow()->SetWindowTitle("TestGameActorComponents");
 
@@ -102,7 +101,6 @@ public:
          dtDAL::Project::GetInstance().SetContext(context, true);
 
          gameManager.ChangeMap("MyCoolMap");
-         
       }
       catch (dtUtil::Exception& e)
       {
@@ -153,9 +151,7 @@ public:
 
       // WARNING: if you call AddACtor without the boolean arguments,
       // the OnEnteredWorld method of the game actor is not called!
-      // This sucks!
       app.GetGameManager()->AddActor(*proxy.get(),false, false);
-
    }
 
 };

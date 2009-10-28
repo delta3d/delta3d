@@ -7,54 +7,55 @@
 
 const dtGame::ActorComponent::ACType TextLabelComponent::TYPE("TextLabelComponent");
 
+////////////////////////////////////////////////////////////////////////////////
 TextLabelComponent::TextLabelComponent()
    : ActorComponent(TYPE)
    , mFontSize(0.5f)
    , mTextGeometry(new osgText::Text())
-   , mColor(osg::Vec4(1,1,1,1))
-   , mGroup(new osg::Group())
-   , mGeode(new osg::Geode())
-   , mPosition(new osg::PositionAttitudeTransform())
+   , mColor(osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f))
    , mIsFlashing(false)
    , mShow(true)
    , mText("") 
    , mFlashInterval(1)
 {
+   mGroup = new osg::Group();
+   mGeode = new osg::Geode();
+   mPosition = new osg::PositionAttitudeTransform();
+
    mGroup->addChild(mPosition.get());
    mPosition->addChild(mGeode.get());
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
 TextLabelComponent::~TextLabelComponent()
 {
    Reset();
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
 void TextLabelComponent::OnAddedToActor(dtGame::GameActor& actor)
 {
    // add text node geometry to actor
    actor.GetOSGNode()->asGroup()->addChild(mGroup.get());
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
 void TextLabelComponent::OnRemovedFromActor(dtGame::GameActor& actor)
 {
    // remove text node geometry from actor
    actor.GetOSGNode()->asGroup()->removeChild(mGroup.get());
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
 void TextLabelComponent::Reset()
 {
    // remove all drawables from geode
    mGeode->removeDrawables(0, mGeode->getNumDrawables());
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
 void TextLabelComponent::Create()
 {
-
    if(!mShow)
    {
       return;
@@ -70,7 +71,7 @@ void TextLabelComponent::Create()
    mTextGeometry->setBackdropType(osgText::Text::NONE);
    mTextGeometry->setCharacterSize(mFontSize);
    // highlight color
-   mTextGeometry->setBackdropColor(osg::Vec4(1,0.2f,0,1));
+   mTextGeometry->setBackdropColor(osg::Vec4(1.0f, 0.2f, 0.0f, 1.0f));
    
    mGeode->addDrawable(mTextGeometry.get());
 
@@ -78,19 +79,19 @@ void TextLabelComponent::Create()
    ss->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
 void TextLabelComponent::SetHighlighted(bool h)
 {
    mTextGeometry->setBackdropType(h ? osgText::Text::OUTLINE : osgText::Text::NONE);
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
 void TextLabelComponent::SetFlashing(bool b)
 {
    mIsFlashing = b; 
    if(b)
    {
-      // let game engine call the OnTickLocal method
+      // Get per frame updates to the OnTickLocal function
       RegisterForTicks();
    }
    else
@@ -100,10 +101,9 @@ void TextLabelComponent::SetFlashing(bool b)
    }
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
 void TextLabelComponent::OnTickLocal(const dtGame::TickMessage& tickMessage)
 {
-
    double time = tickMessage.GetSimulationTime();
    
    if(fmod(time, (double)mFlashInterval * 2) < (double)mFlashInterval)
@@ -116,7 +116,7 @@ void TextLabelComponent::OnTickLocal(const dtGame::TickMessage& tickMessage)
    }
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
 void TextLabelComponent::BuildPropertyMap()
 {
    dtGame::GameActor* actor;
