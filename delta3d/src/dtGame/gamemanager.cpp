@@ -510,8 +510,7 @@ namespace dtGame
          // It could listen for the ACTOR_DELETE_MESSAGE instead.
          gameActorProxy.InvokeRemovedFromWorld();
 
-         std::map< dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::iterator itor
-            = mGameActorProxyMap.find(gameActorProxy.GetId());
+         GameActorMap::iterator itor = mGameActorProxyMap.find(gameActorProxy.GetId());
 
          dtCore::UniqueId id;
          if (itor != mGameActorProxyMap.end())
@@ -1299,7 +1298,7 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::PublishActor(GameActorProxy& gameActorProxy)
    {
-      std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::iterator itor = mGameActorProxyMap.find(gameActorProxy.GetId());
+      GameActorMap::iterator itor = mGameActorProxyMap.find(gameActorProxy.GetId());
 
       if (itor == mGameActorProxyMap.end())
       {
@@ -1347,14 +1346,14 @@ namespace dtGame
          }
       }
 
-      std::map< dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::iterator itor = mGameActorProxyMap.find(actorProxy.GetId());
+      GameActorMap::iterator itor = mGameActorProxyMap.find(actorProxy.GetId());
 
       dtCore::UniqueId id;
       if (itor == mGameActorProxyMap.end())
       {
          // it's not in the game manager as a game actor proxy, maybe it's in there
          // as a regular actor proxy.
-         std::map< dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> >::iterator itor = mActorProxyMap.find(actorProxy.GetId());
+         ActorMap::iterator itor = mActorProxyMap.find(actorProxy.GetId());
 
          if (itor != mActorProxyMap.end())
          {
@@ -1468,7 +1467,7 @@ namespace dtGame
             DeleteActor(*mActorProxyMap.begin()->second);
          }
 
-         for (std::map< dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::iterator i = mGameActorProxyMap.begin();
+         for (GameActorMap::iterator i = mGameActorProxyMap.begin();
             i != mGameActorProxyMap.end(); ++i)
          {
             DeleteActor(*i->second);
@@ -1487,7 +1486,7 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::DeletePrototype(const dtCore::UniqueId& uniqueId)
    {
-      std::map< dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::iterator itor = mPrototypeActors.find(uniqueId);
+      GameActorMap::iterator itor = mPrototypeActors.find(uniqueId);
       if (itor != mPrototypeActors.end())
       {
          mPrototypeActors.erase(itor);
@@ -1501,14 +1500,14 @@ namespace dtGame
 
       // spin through the actors and add all used actor types to the set, so that we don't
       // get duplicates.
-      for (std::map< dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::const_iterator itor = mGameActorProxyMap.begin();
-         itor != mGameActorProxyMap.end(); ++itor)
+      for (GameActorMap::const_iterator itor = mGameActorProxyMap.begin();
+           itor != mGameActorProxyMap.end(); ++itor)
       {
          toFill.insert(&itor->second->GetActorType());
       }
 
-      for (std::map< dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> >::const_iterator itor = mActorProxyMap.begin();
-         itor != mActorProxyMap.end(); ++itor)
+      for (ActorMap::const_iterator itor = mActorProxyMap.begin();
+           itor != mActorProxyMap.end(); ++itor)
       {
          toFill.insert(&itor->second->GetActorType());
       }
@@ -1520,7 +1519,7 @@ namespace dtGame
       toFill.clear();
       toFill.reserve(mGameActorProxyMap.size());
 
-      std::map< dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::const_iterator itor;
+      GameActorMap::const_iterator itor;
       for (itor = mGameActorProxyMap.begin(); itor != mGameActorProxyMap.end(); ++itor)
       {
          toFill.push_back(itor->second.get());
@@ -1533,7 +1532,7 @@ namespace dtGame
       toFill.clear();
       toFill.reserve(mActorProxyMap.size());
 
-      std::map< dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> >::const_iterator itor;
+      ActorMap::const_iterator itor;
       for (itor = mActorProxyMap.begin(); itor != mActorProxyMap.end(); ++itor)
       {
          toFill.push_back(itor->second.get());
@@ -1546,13 +1545,13 @@ namespace dtGame
       toFill.clear();
       toFill.reserve(mGameActorProxyMap.size() + mActorProxyMap.size() + mPrototypeActors.size());
 
-      std::map< dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::const_iterator itor;
+      GameActorMap::const_iterator itor;
       for (itor = mGameActorProxyMap.begin(); itor != mGameActorProxyMap.end(); ++itor)
       {
          toFill.push_back(itor->second.get());
       }
 
-      std::map< dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> >::const_iterator iter;
+      ActorMap::const_iterator iter;
       for (iter = mActorProxyMap.begin(); iter != mActorProxyMap.end(); ++iter)
       {
          toFill.push_back(iter->second.get());
@@ -1576,7 +1575,7 @@ namespace dtGame
       toFill.clear();
       toFill.reserve(mPrototypeActors.size());
 
-      std::map< dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::const_iterator itor;
+      GameActorMap::const_iterator itor;
       for (itor = mPrototypeActors.begin(); itor != mPrototypeActors.end(); ++itor)
       {
          toFill.push_back(itor->second.get());
@@ -1701,7 +1700,7 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    dtDAL::ActorProxy* GameManager::FindPrototypeByID(const dtCore::UniqueId& uniqueID)
    {
-      std::map< dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::const_iterator itor = mPrototypeActors.find(uniqueID);
+      GameActorMap::const_iterator itor = mPrototypeActors.find(uniqueID);
       if (itor != mPrototypeActors.end())
       {
          return itor->second.get();
@@ -1719,7 +1718,7 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    GameActorProxy* GameManager::FindGameActorById(const dtCore::UniqueId& id) const
    {
-      std::map< dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::const_iterator itor = mGameActorProxyMap.find(id);
+      GameActorMap::const_iterator itor = mGameActorProxyMap.find(id);
       return itor == mGameActorProxyMap.end() ? NULL : itor->second.get();
    }
 
@@ -1733,7 +1732,7 @@ namespace dtGame
          return actorProxy;
       }
 
-      std::map< dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> >::const_iterator itor = mActorProxyMap.find(id);
+      ActorMap::const_iterator itor = mActorProxyMap.find(id);
       return itor == mActorProxyMap.end() ? NULL : itor->second.get();
    }
 
@@ -1864,8 +1863,7 @@ namespace dtGame
       toFill.clear();
       toFill.reserve(mGlobalMessageListeners.size());
 
-      std::multimap<const MessageType*, std::pair< dtCore::RefPtr<GameActorProxy>, std::string> >::const_iterator  itor
-         = mGlobalMessageListeners.find(&type);
+      GlobalMessageListenerMap::const_iterator itor = mGlobalMessageListeners.find(&type);
 
       while (itor != mGlobalMessageListeners.end() && itor->first == &type)
       {
@@ -1883,15 +1881,13 @@ namespace dtGame
       toFill.clear();
       toFill.reserve(mActorMessageListeners.size());
 
-      std::map< const MessageType*, std::multimap< dtCore::UniqueId, std::pair<dtCore::RefPtr<GameActorProxy>, std::string> > >::const_iterator itor
-         = mActorMessageListeners.find(&type);
+      ActorMessageListenerMap::const_iterator itor = mActorMessageListeners.find(&type);
 
       if (itor != mActorMessageListeners.end())
       {
 
          //second on itor is the internal map.
-         std::multimap< dtCore::UniqueId, std::pair<dtCore::RefPtr<GameActorProxy>, std::string> >::const_iterator itorInner
-            = itor->second.find(targetActorId);
+         ProxyInvokableMap::const_iterator itorInner = itor->second.find(targetActorId);
          while (itorInner != itor->second.end() && itorInner->first == targetActorId)
          {
             toFill.push_back(std::make_pair(itorInner->second.first.get(), itorInner->second.second));
@@ -1931,8 +1927,7 @@ namespace dtGame
    void GameManager::UnregisterForMessages(const MessageType& type, GameActorProxy& proxy,
          const std::string& invokableName)
    {
-      std::multimap< const MessageType*, std::pair<dtCore::RefPtr<GameActorProxy>, std::string> >::iterator itor
-         = mGlobalMessageListeners.find(&type);
+      GlobalMessageListenerMap::iterator itor = mGlobalMessageListeners.find(&type);
 
       while (itor != mGlobalMessageListeners.end() && itor->first == &type)
       {
@@ -1986,22 +1981,19 @@ namespace dtGame
          const dtCore::UniqueId& targetActorId, GameActorProxy& proxy,
          const std::string& invokableName)
    {
-      std::map< const MessageType*, std::multimap< dtCore::UniqueId, std::pair<dtCore::RefPtr<GameActorProxy>, std::string> > >::iterator itor
-         = mActorMessageListeners.find(&type);
+      ActorMessageListenerMap::iterator itor = mActorMessageListeners.find(&type);
 
       if (itor != mActorMessageListeners.end())
       {
          //second on itor is the internal map.
-         std::multimap< dtCore::UniqueId, std::pair<dtCore::RefPtr<GameActorProxy>, std::string> >::iterator itorInner
-            = itor->second.find(targetActorId);
+         ProxyInvokableMap::iterator itorInner = itor->second.find(targetActorId);
          while (itorInner != itor->second.end() && itorInner->first == targetActorId)
          {
             //second is a pair.
             //second.first is the game actor proxy to receive the message second.second is the name of the invokable
             if (itorInner->second.first.get() == &proxy && itorInner->second.second == invokableName)
             {
-               std::multimap< dtCore::UniqueId, std::pair<dtCore::RefPtr<GameActorProxy>, std::string> >::iterator toDelete =
-                  itorInner;
+               ProxyInvokableMap::iterator toDelete = itorInner;
                ++itorInner;
                itor->second.erase(toDelete);
             }
@@ -2016,10 +2008,10 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::UnregisterAllMessageListenersForActor(GameActorProxy& proxy)
    {
-      for (std::multimap< const MessageType*, std::pair<dtCore::RefPtr<GameActorProxy>, std::string> >::iterator i
-         = mGlobalMessageListeners.begin(); i != mGlobalMessageListeners.end();)
+      for (GlobalMessageListenerMap::iterator i = mGlobalMessageListeners.begin();
+           i != mGlobalMessageListeners.end();)
       {
-         std::multimap< const MessageType*, std::pair<dtCore::RefPtr<GameActorProxy>, std::string> >::iterator toDelete = i;
+         GlobalMessageListenerMap::iterator toDelete = i;
          ++i;
          if (toDelete->second.first.get() == &proxy)
          {
@@ -2027,13 +2019,11 @@ namespace dtGame
          }
       }
 
-      for (std::map< const MessageType*, std::multimap< dtCore::UniqueId, std::pair<dtCore::RefPtr<GameActorProxy>, std::string> > >::iterator i
-         = mActorMessageListeners.begin(); i != mActorMessageListeners.end(); ++i)
+      for (ActorMessageListenerMap::iterator i = mActorMessageListeners.begin(); i != mActorMessageListeners.end(); ++i)
       {
-         for (std::multimap< dtCore::UniqueId, std::pair<dtCore::RefPtr<GameActorProxy>, std::string> >::iterator j
-            = i->second.begin(); j != i->second.end();)
+         for (ProxyInvokableMap::iterator j = i->second.begin(); j != i->second.end();)
          {
-            std::multimap< dtCore::UniqueId, std::pair<dtCore::RefPtr<GameActorProxy>, std::string> >::iterator toDelete = j;
+            ProxyInvokableMap::iterator toDelete = j;
             ++j;
             if (toDelete->first == proxy.GetId() || toDelete->second.first.get() == &proxy)
             {
