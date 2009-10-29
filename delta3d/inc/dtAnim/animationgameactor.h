@@ -43,18 +43,17 @@ namespace dtAnim
       * Constructs an AnimationGameActor actor.
       * @param proxy The actor proxy owning this task actor.
       */
-      AnimationGameActor(dtGame::GameActorProxy &proxy);
+      AnimationGameActor(dtGame::GameActorProxy& proxy);
 
       /**
       * Loads a model file.
       * @param modelFile The filename of the model to load.
       */
-      virtual void SetModel(const std::string &modelFile);
+      virtual void SetModel(const std::string& modelFile);
 
 
       dtAnim::AnimationHelper* GetHelper();
       const dtAnim::AnimationHelper* GetHelper() const;
-
 
    protected:
 
@@ -63,8 +62,8 @@ namespace dtAnim
       /// Destroys this actor.
       virtual ~AnimationGameActor();
 
-   private:
-
+      /// Attaches newly loaded geometry to the scene
+      virtual void OnAsynchLoadCompleted();
    };
 
    /**

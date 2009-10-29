@@ -96,8 +96,8 @@ void AnimationHelper::Update(float dt)
          // Done loading, clear the file to load string
          mAsynchFile.clear();
 
-         // Add the newly created node to the scene graph via the parent
-         mParent->addChild(mNode);
+         // Alert the caller via the functor passed in on the load call
+         mAsynchCompletionCallback();
       }
    }
 }
@@ -169,7 +169,7 @@ bool AnimationHelper::LoadModel(const std::string& pFilename)
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-bool AnimationHelper::LoadModelAsynchronously(const std::string& pFilename, osg::Group& parentNode)
+bool AnimationHelper::LoadModelAsynchronously(const std::string& pFilename, AsynchLoadCompletionCallback completionCallback)
 {   
    if (!pFilename.empty())
    {
@@ -180,8 +180,8 @@ bool AnimationHelper::LoadModelAsynchronously(const std::string& pFilename, osg:
       // Store the filename so that we can poll for load completion
       mAsynchFile = pFilename;
 
-      // Store the parent so that we can automatically attach geometry when it's ready
-      mParent = &parentNode;
+      // Store the function used to alert the caller of completion
+      mAsynchCompletionCallback = completionCallback;
    }
    else
    {
