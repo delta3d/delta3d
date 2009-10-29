@@ -37,6 +37,7 @@
 #include <dtDAL/actorproxy.h>
 #include <dtQt/typedefs.h>
 #include <dtCore/refptr.h>
+#include <dtEditQt/helpbox.h>
 
 class QAction;
 class QActionGroup;
@@ -245,6 +246,9 @@ namespace dtEditQt
 
       //Group of external tool QActions
       QActionGroup* mExternalToolActionGroup;
+
+      // STAGE Help box.
+      HelpBox* mHelpBox;
 
    public slots:
 
