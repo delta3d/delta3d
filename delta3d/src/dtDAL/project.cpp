@@ -1260,6 +1260,12 @@ namespace dtDAL
          std::string("The context is not valid."), __FILE__, __LINE__);
       }
 
+      if (IsReadOnly())
+      {
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectReadOnly,
+         std::string("The context is readonly."), __FILE__, __LINE__);
+      }
+
       std::map< std::string, std::string >::iterator found = mMapList.find(mapName);
       if (found == mMapList.end())
       {
@@ -1267,9 +1273,9 @@ namespace dtDAL
          std::string("No such map: \"") + mapName + "\"", __FILE__, __LINE__);
       }
 
-      const std::string& mapFileName = found->second;
+      std::string& fileName = found->second;
 
-      const std::string backupDir = GetContext() + dtUtil::FileUtils::PATH_SEPARATOR + GetBackupDir();
+      std::string backupDir = GetContext() + dtUtil::FileUtils::PATH_SEPARATOR + GetBackupDir();
 
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
@@ -1280,18 +1286,19 @@ namespace dtDAL
 
       dtUtil::DirectoryContents dc = fileUtils.DirGetFiles(backupDir);
 
-      size_t fileNameSize = mapFileName.size();
+      size_t fileNameSize = fileName.size();
       for (dtUtil::DirectoryContents::const_iterator i = dc.begin(); i != dc.end(); ++i)
       {
          const std::string& file = *i;
-         if (file.size() > fileNameSize && file.substr(0, fileNameSize) == mapFileName)
+         if (file.size() > fileNameSize
+             && file.substr(0, fileNameSize) == fileName)
          {
+
             if (fileUtils.GetFileInfo(backupDir + dtUtil::FileUtils::PATH_SEPARATOR + file).fileType == dtUtil::REGULAR_FILE)
-            {
                fileUtils.FileDelete(backupDir + dtUtil::FileUtils::PATH_SEPARATOR + file);
-            }
          }
       }
+
    }
 
    /////////////////////////////////////////////////////////////////////////////
