@@ -698,10 +698,14 @@ namespace dtGame
       const bool isATickLocalMessage = (message.GetMessageType() == MessageType::TICK_LOCAL);
 
       // GLOBAL INVOKABLES - Process it on globally registered invokables
-      const MessageType& msgType = message.GetMessageType();
-      GlobalMessageListenerMap::iterator itor = mGlobalMessageListeners.find(&msgType);
 
-      while (itor != mGlobalMessageListeners.end() && itor->first == &msgType)
+      //find all matches of MessageType
+      typedef std::pair<GlobalMessageListenerMap::iterator, GlobalMessageListenerMap::iterator> IterPair;
+      IterPair msgTypeMatches = mGlobalMessageListeners.equal_range(&message.GetMessageType());
+
+      GlobalMessageListenerMap::iterator itor = msgTypeMatches.first;
+
+      while (itor != msgTypeMatches.second)
       {
          ProxyInvokablePair& listener = itor->second;
          ++itor;
@@ -1860,12 +1864,16 @@ namespace dtGame
    void GameManager::GetRegistrantsForMessages(const MessageType& type,
          std::vector< std::pair<GameActorProxy*, std::string> >& toFill) const
    {
+      typedef std::pair<GlobalMessageListenerMap::const_iterator,
+                        GlobalMessageListenerMap::const_iterator> IterPair;     
+      IterPair msgTypeMatches = mGlobalMessageListeners.equal_range(&type);
+
       toFill.clear();
-      toFill.reserve(mGlobalMessageListeners.size());
+      toFill.reserve(std::distance(msgTypeMatches.first, msgTypeMatches.second));
 
-      GlobalMessageListenerMap::const_iterator itor = mGlobalMessageListeners.find(&type);
+      GlobalMessageListenerMap::const_iterator itor = msgTypeMatches.first;
 
-      while (itor != mGlobalMessageListeners.end() && itor->first == &type)
+      while (itor != msgTypeMatches.second)
       {
          // add the game actor proxy and invokable name to a new pair in the vector.
          toFill.push_back(std::make_pair(itor->second.first.get(), itor->second.second));
@@ -1925,20 +1933,23 @@ namespace dtGame
 
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::UnregisterForMessages(const MessageType& type, GameActorProxy& proxy,
-         const std::string& invokableName)
+                                           const std::string& invokableName)
    {
-      GlobalMessageListenerMap::iterator itor = mGlobalMessageListeners.find(&type);
+      typedef std::pair<GlobalMessageListenerMap::iterator, GlobalMessageListenerMap::iterator> IterPair;
 
-      while (itor != mGlobalMessageListeners.end() && itor->first == &type)
+      //find all matches of MessageType
+      IterPair msgTypeMatches = mGlobalMessageListeners.equal_range(&type);
+
+      //erase the one that also match the supplied proxy and invokableName
+      for (GlobalMessageListenerMap::iterator itor = msgTypeMatches.first;
+                                              itor != msgTypeMatches.second;
+                                              ++itor)
       {
-         if (itor->second.first.get() == &proxy && itor->second.second == invokableName)
+         if (itor->second.first.get() == &proxy && 
+             itor->second.second == invokableName)
          {
             mGlobalMessageListeners.erase(itor);
             return;
-         }
-         else
-         {
-            ++itor;
          }
       }
    }
