@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dtHelp version="1.0">
+	<title>STAGE Help</title>
+	<resource>:help/</resource>
+	<home>index.html</home>
+	<contents>
+		<section title="Index" ref="index.html">
+			<section title="Setup" ref="setup.html" />
+			<section title="Maps" ref="maps.html" />
+		</section>
+	</contents>
+</dtHelp>

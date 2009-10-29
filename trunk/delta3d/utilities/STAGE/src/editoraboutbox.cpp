@@ -88,6 +88,7 @@ namespace dtEditQt
          "<h3><p align=\"center\">For more details and licensing"
          " information please visit: <a href=\"http://www.delta3d.org\">"
          "http://www.delta3d.org.</a></p></h3>");
+      textEdit->setTextInteractionFlags(Qt::TextBrowserInteraction);
 
       return textEdit;
    }

@@ -39,7 +39,6 @@
 #include <QtGui/QTextEdit>
 #include <QtCore/QTimer>
 #include <QtCore/QFileInfo>
-#include <QtCore/QProcess>
 
 #include <osgDB/FileNameUtils>
 
@@ -101,6 +100,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    EditorActions::EditorActions()
       : mExternalToolActionGroup(new QActionGroup(NULL))
+      , mHelpBox(NULL)
    {
       LOG_INFO("Initializing Editor Actions.");
       setupFileActions();
@@ -131,6 +131,12 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    EditorActions::~EditorActions()
    {
+      //if (mHelpBox)
+      //{
+      //   delete mHelpBox;
+      //   mHelpBox = NULL;
+      //}
+
       mTimer->stop();
       delete mTimer;
 
@@ -1679,28 +1685,19 @@ namespace dtEditQt
    ////////////////////////////////////////////////////////////////////////////////
    void EditorActions::slotHelpEditorHelp()
    {
-      QProcess* process = new QProcess((QWidget*)EditorData::GetInstance().getMainWindow());
+      slotPauseAutosave();
 
-      //QString app = QLibraryInfo::location(QLibraryInfo::BinariesPath) + QDir::separator();
-#if !defined(Q_OS_MAC)
-      QString app = QLatin1String("assistant");
-#else
-      QString app = QLatin1String("Assistant.app/Contents/MacOS/Assistant");
-#endif
-
-      QStringList args;
-      args << QLatin1String("-collectionFile");
-      args << QLatin1String((dtCore::GetDeltaRootPath() + "/utilities/STAGE/docs/STAGEHelp.qhc").c_str());
-      args << QLatin1String("-enableRemoteControl");
-
-      process->start(app, args);
-      if (!process->waitForStarted())
+      if (!mHelpBox)
       {
-         QMessageBox::critical((QWidget*)EditorData::GetInstance().getMainWindow(),
-            tr("Remote Control"),
-            tr("Could not start Qt Assistant from %1.").arg(app));
-         return;
+         mHelpBox = new HelpBox((dtCore::GetDeltaRootPath() + "/utilities/STAGE/docs/help/data.xml").c_str(),
+            (QWidget*)EditorData::GetInstance().getMainWindow());
+         mHelpBox->setModal(false);
       }
+
+      mHelpBox->show();
+      mHelpBox->raise();
+
+      slotRestartAutosave();
    }
 
    //////////////////////////////////////////////////////////////////////////////
