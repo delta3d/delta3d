@@ -368,6 +368,17 @@ void ProjectTests::testReadonlyFailure()
          CPPUNIT_ASSERT_MESSAGE("Exception should have been ExceptionEnum::ProjectReadOnly",
                e.TypeEnum() == dtDAL::ExceptionEnum::ProjectReadOnly);
       }
+
+      try 
+      {
+         p.ClearBackup("name-o");
+         CPPUNIT_FAIL("clearBackup should not be allowed on a readoly context.");
+      } 
+      catch (const dtUtil::Exception& e) 
+      {
+         CPPUNIT_ASSERT_MESSAGE("Exception should have been ExceptionEnum::ProjectReadOnly",
+               e.TypeEnum() == dtDAL::ExceptionEnum::ProjectReadOnly);
+      }
    } 
    catch (const dtUtil::Exception& ex) 
    {
