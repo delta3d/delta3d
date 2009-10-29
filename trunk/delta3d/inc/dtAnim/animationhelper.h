@@ -65,7 +65,10 @@ namespace dtAnim
    class DT_ANIM_EXPORT AnimationHelper: public osg::Referenced
    {
       public:
+
          static const std::string PROPERTY_SKELETAL_MESH;
+
+         typedef dtUtil::Functor<void, TYPELIST_0()> AsynchLoadCompletionCallback;
 
          /**
           * The constructor constructs a default AnimNodeBuilder, the Cal3DModelWrapper,
@@ -99,7 +102,7 @@ namespace dtAnim
           * @param the osg node to add created geometry to
           * @return whether or not we successfully loaded the file
           */
-         bool LoadModelAsynchronously(const std::string& pFilename, osg::Group& parentNode);
+         bool LoadModelAsynchronously(const std::string& pFilename, AsynchLoadCompletionCallback completionCallback);
 
          /**
           * This function plays the specified animation defined within the character XML
@@ -210,6 +213,7 @@ namespace dtAnim
 
          bool mGroundClamp;
          std::string mAsynchFile;
+         AsynchLoadCompletionCallback mAsynchCompletionCallback;
          dtCore::RefPtr<osg::Group> mParent;
          dtCore::RefPtr<osg::Node> mNode;
          dtCore::RefPtr<Cal3DAnimator> mAnimator;

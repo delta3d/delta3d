@@ -81,9 +81,19 @@ namespace dtAnim
          }
          else
          {
-            mHelper->LoadModelAsynchronously(modelFile, *GetMatrixNode());
+            dtUtil::Functor<void, TYPELIST_0()> loadCallback =
+               dtUtil::MakeFunctor(&AnimationGameActor::OnAsynchLoadCompleted, this);
+
+            mHelper->LoadModelAsynchronously(modelFile, loadCallback);
          }
       }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void AnimationGameActor::OnAsynchLoadCompleted()
+   {
+      osg::Node* node = mHelper->GetNode();
+      GetMatrixNode()->addChild(node);
    }
 
    /////////////////////////////////////////////////////////////////////////////
