@@ -81,6 +81,7 @@ namespace dtEditQt
    MainWindow::MainWindow(const std::string& stageConfigFile)
       : mPluginManager(new PluginManager(this))
       , mSTAGEConfigFullPath(stageConfigFile)
+      , mVolEditActorProxy(NULL)
       , mFileMenu(NULL)
       , mEditMenu(NULL)
       , mProjectMenu(NULL)
@@ -93,7 +94,6 @@ namespace dtEditQt
       , mActorDockWidg(NULL)
       , mActorSearchDockWidg(NULL)
       , mResourceBrowser(NULL)
-      , mVolEditActorProxy(NULL)
    {
       //Read STAGE configuration file
       if (stageConfigFile != "")
