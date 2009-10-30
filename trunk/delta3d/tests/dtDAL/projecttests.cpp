@@ -63,6 +63,7 @@ class ProjectTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST( testProject );
    CPPUNIT_TEST( testCategories );
    CPPUNIT_TEST( testResources );
+   CPPUNIT_TEST( testDeletingBackupFromReadOnlyContext );
    CPPUNIT_TEST_SUITE_END();
 
    public:
@@ -74,6 +75,7 @@ class ProjectTests : public CPPUNIT_NS::TestFixture
       void testCategories();
       void testReadonlyFailure();
       void testResources();
+      void testDeletingBackupFromReadOnlyContext();
    private:
       dtUtil::Log* logger;
       void printTree(const dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator& iter);
@@ -362,17 +364,6 @@ void ProjectTests::testReadonlyFailure()
       {
          p.CreateMap("name-o", "testFile");
          CPPUNIT_FAIL("createMap should not be allowed on a readoly context.");
-      } 
-      catch (const dtUtil::Exception& e) 
-      {
-         CPPUNIT_ASSERT_MESSAGE("Exception should have been ExceptionEnum::ProjectReadOnly",
-               e.TypeEnum() == dtDAL::ExceptionEnum::ProjectReadOnly);
-      }
-
-      try 
-      {
-         p.ClearBackup("name-o");
-         CPPUNIT_FAIL("clearBackup should not be allowed on a readoly context.");
       } 
       catch (const dtUtil::Exception& e) 
       {
@@ -820,4 +811,31 @@ void ProjectTests::testProject()
    //        CPPUNIT_FAIL(ex.what());
    //    }
 
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ProjectTests::testDeletingBackupFromReadOnlyContext()
+{
+   const std::string projectDir("TestProject");
+   const std::string mapName("mapWithBackup");
+   dtDAL::Project& proj = dtDAL::Project::GetInstance();
+
+   proj.CreateContext(projectDir);
+   proj.SetContext(projectDir, false);
+
+   //create a Map and save a backup
+   dtDAL::Map& testMap = proj.CreateMap(mapName, "mapWithBackup");
+   testMap.SetModified(true); //needs to be modified before creating a backup
+   proj.SaveMapBackup(testMap);
+
+   CPPUNIT_ASSERT_MESSAGE("Didn't find a Map backup, can't go on with test",
+                          true == proj.HasBackup(testMap));
+   
+   proj.SetContext(projectDir, true); //now we're read only
+
+   //trying to delete a Map backup in a read-only ProjectContext should throw
+   CPPUNIT_ASSERT_THROW(proj.ClearBackup(mapName), dtUtil::Exception);
+
+   proj.SetContext(projectDir, false); //now we're not read only
+   proj.ClearBackup(mapName); //this should work
 }
