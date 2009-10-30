@@ -809,13 +809,16 @@ namespace dtDAL
          UnloadUnusedLibraries(map);
       }
 
-      try
+      if (!IsReadOnly())
       {
-         ClearBackup(map.GetSavedName());
-      }
-      catch (const dtUtil::Exception& ex)
-      {
-         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Error clearing map backups when saving: %s", ex.What().c_str());
+         try
+         {
+            ClearBackup(map.GetSavedName());
+         }
+         catch (const dtUtil::Exception& ex)
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Error clearing Map backups when closing: %s", ex.What().c_str());
+         }
       }
    }
 
@@ -1260,12 +1263,6 @@ namespace dtDAL
          std::string("The context is not valid."), __FILE__, __LINE__);
       }
 
-      if (IsReadOnly())
-      {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectReadOnly,
-         std::string("The context is readonly."), __FILE__, __LINE__);
-      }
-
       std::map< std::string, std::string >::iterator found = mMapList.find(mapName);
       if (found == mMapList.end())
       {
@@ -1273,9 +1270,9 @@ namespace dtDAL
          std::string("No such map: \"") + mapName + "\"", __FILE__, __LINE__);
       }
 
-      std::string& fileName = found->second;
+      const std::string& fileName = found->second;
 
-      std::string backupDir = GetContext() + dtUtil::FileUtils::PATH_SEPARATOR + GetBackupDir();
+      const std::string backupDir = GetContext() + dtUtil::FileUtils::PATH_SEPARATOR + GetBackupDir();
 
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
@@ -1295,7 +1292,17 @@ namespace dtDAL
          {
 
             if (fileUtils.GetFileInfo(backupDir + dtUtil::FileUtils::PATH_SEPARATOR + file).fileType == dtUtil::REGULAR_FILE)
+            {
+               //If we encountered a map backup and this context is read-only, then
+               //we have a problem.
+               if (IsReadOnly())
+               {
+                  throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectReadOnly,
+                     std::string("The context is readonly."), __FILE__, __LINE__);
+               }
+
                fileUtils.FileDelete(backupDir + dtUtil::FileUtils::PATH_SEPARATOR + file);
+            }
          }
       }
 

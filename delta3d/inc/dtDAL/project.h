@@ -373,13 +373,13 @@ namespace dtDAL
 
          /**
           * @param map the map to get the backups count for.
-          * @return the number of backup files this map has currently
+          * @return true if the Map has a backup file, false otherwise
           */
          bool HasBackup(Map& map) const;
 
          /**
           * @param mapName the name map to get the backups count for.
-          * @return the number of backup files this map has currently
+          * @return true if the Map has a backup file, false otherwise
           */
          bool HasBackup(const std::string& mapName) const;
 
