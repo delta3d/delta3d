@@ -1,8 +1,8 @@
 <RCC>
     <qresource prefix="help/">
-	  <file>index.html</file>
-	  <file>setup.html</file>
-	  <file>maps.html</file>
+	  <file>tutorial.html</file>
+	  <file>tut01_start.html</file>
+	  <file>tut02_maps.html</file>
 	  <file>images/splash.png</file>
 	  <file>images/Figure1.1.png</file>
 	  <file>images/Figure1.2.png</file>

@@ -30,6 +30,8 @@
 #ifndef DELTA_HELP_BOX
 #define DELTA_HELP_BOX
 
+#include <vector>
+
 #include <dtEditQt/helpxmlreader.h>
 
 #include <dtCore/refptr.h>
@@ -38,6 +40,8 @@
 #include <QtGui/QTextEdit>
 #include <QtGui/QTreeWidget>
 #include <QtGui/QTabWidget>
+
+class QAction;
 
 namespace dtEditQt
 {
@@ -50,6 +54,12 @@ namespace dtEditQt
    {
       Q_OBJECT
 
+      struct DocHistory
+      {
+         QString page;
+         QString anchor;
+      };
+
    public:
 
       /**
@@ -58,6 +68,51 @@ namespace dtEditQt
       * @param[in]  parent  The parent widget.
       */
       DocumentText(QWidget* parent);
+
+      /**
+      * Adds a new page to the page history and sets it as the
+      * current.
+      *
+      * @param[in]  page    The page.
+      * @param[in]  anchor  The anchor.
+      */
+      void setPage(const QString& page, const QString& anchor);
+
+      /**
+      * Retrieves the data of the current page.
+      *
+      * @param[out]  page    The current page.
+      * @param[out]  anchor  The current anchor.
+      */
+      bool getPage(QString& page, QString& anchor);
+
+      /**
+      * Retrieves the previous page data from the page history and
+      * makes it the current.
+      *
+      * @param[out]  page    The previous page.
+      * @param[out]  anchor  The previous anchor.
+      *
+      * @return      Returns false if there is no previous page.
+      */
+      bool prevPage(QString& page, QString& anchor);
+
+      /**
+      * Retrieves the next page data from the page history
+      * and makes it the current.
+      *
+      * @param[out]  page    The next page.
+      * @param[out]  anchor  The next anchor.
+      *
+      * @return      Returns false if there is no next page.
+      */
+      bool nextPage(QString& page, QString& anchor);
+
+      /**
+      * Retrieves whether there is a previous or next page.
+      */
+      bool isPrevPage();
+      bool isNextPage();
 
    signals:
 
@@ -83,6 +138,9 @@ namespace dtEditQt
    private:
 
       bool mWasOverHyperlink;
+
+      std::vector<DocHistory> mHistory;
+      int                     mCurrentPage;
    };
 
    /**
@@ -110,6 +168,21 @@ namespace dtEditQt
    public slots:
 
       /**
+      * Event handler when the back button is pressed.
+      */
+      void onPrevButton();
+
+      /**
+      * Event handler when the next button is pressed.
+      */
+      void onNextButton();
+
+      /**
+      * Event handler when the home button is pressed.
+      */
+      void onHomeButton();
+
+      /**
       * Event handler when a hyper link is clicked on.
       *
       * @param[in]  link  The location of the link.
@@ -124,21 +197,52 @@ namespace dtEditQt
       */
       void onContentItemChanged(QTreeWidgetItem* current, QTreeWidgetItem* previous);
 
+      /**
+      * Event handler when the current document tab has changed.
+      *
+      * @param[in]  index  The index of the new tab.
+      */
+      void onDocumentTabChanged(int index);
+
+      /**
+      * Event handler when the current document tab has closed.
+      *
+      * @param[in]  index  The index of the closed tab.
+      */
+      void onDocumentTabClosed(int index);
+
+      /**
+      * Event handler when the document window scroll position has changed.
+      *
+      * @param[in]  value  The new scroll position.
+      */
+      void onDocumentScrolled(int value);
+
    private:
 
       /**
-      * Loads a specified page.
+      * Event handler when the mouse button is double clicked.
       *
-      * @param[in]  page  The name of the page to open.
+      * @param[in]  e  The mouse event.
       */
-      void openPage(const QString& page);
+      void mouseDoubleClickEvent(QMouseEvent *e);
 
       /**
-      * Creates a document text edit.
+      * Loads the Using Help page.
       *
-      * @param[in]  filename  The name of the document file to load.
+      * @param[in]  newPage  True to create a new tab page.
       */
-      QTextEdit* createDocument(const QString& filename);
+      void openUsingHelpPage(bool newPage = false);
+      
+      /**
+      * Loads a specified page.
+      *
+      * @param[in]  page     The name of the page to open.
+      * @param[in]  anchor   The anchor to scroll to.
+      * @param[in]  newTab   True to create a new tab for this page.
+      * @param[in]  setPage  True if we want to set this page in the browser history.
+      */
+      void openPage(const QString& page, const QString& anchor, bool newTab = false, bool setPage = true);
 
       /**
       * Sets up the table of contents.
@@ -150,17 +254,22 @@ namespace dtEditQt
       * Finds a table of contents entry that matches the given page.
       *
       * @param[in]  page    The page to find.
+      * @param[in]  anchor  The anchor of the page.
       * @param[in]  parent  The parent widget.
       *
       * @return     The tree widget item or NULL if not found.
       */
-      QTreeWidgetItem* findContents(const QString& page);
-      QTreeWidgetItem* findContents(const QString& page, QTreeWidgetItem* parent);
+      QTreeWidgetItem* findTOC(const QString& page, const QString& anchor = "", bool anchorMustMatch = false);
+      QTreeWidgetItem* findTOC(const QString& page, const QString& anchor, QTreeWidgetItem* parent, bool anchorMustMatch);
 
       QString      mResourcePrefix;
       QTreeWidget* mContentList;
       QTabWidget*  mDocumentTabs;
       HelpXMLReader* mDocument;
+
+      QAction*    mPrevPageAction;
+      QAction*    mNextPageAction;
+      QAction*    mHomeAction;
    };
 
 } // namespace dtEditQt
