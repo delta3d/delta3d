@@ -22,6 +22,7 @@
 #define DELTA_LOG
 
 #include <string>
+#include <cstdarg>
 
 #include <osg/Referenced>
 #include <dtUtil/export.h>

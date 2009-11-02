@@ -12,6 +12,7 @@
 #include <xercesc/util/XMLUni.hpp>
 
 #include <sstream>
+#include <cstdio>
 
 namespace dtEditQt
 {

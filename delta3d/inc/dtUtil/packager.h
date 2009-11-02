@@ -25,6 +25,7 @@
 
 #include <string>
 #include <vector>
+#include <cstdio>
 
 #include <dtUtil/export.h>
 
