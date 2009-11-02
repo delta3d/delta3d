@@ -186,6 +186,7 @@ INCLUDE(BuildBinding)
 
 IF(APPLE)
     FIND_LIBRARY(CARBON_LIBRARY Carbon)
+    FIND_LIBRARY(APPSERVICES_LIBRARY ApplicationServices)
     FIND_LIBRARY(IOKIT_LIBRARY IOKit)
     FIND_LIBRARY(COREFOUNDATION_LIBRARY CoreFoundation)
     FIND_LIBRARY(AGL_LIBRARY AGL)
@@ -193,7 +194,7 @@ IF(APPLE)
  
     SET(CMAKE_CXX_FLAGS "-pipe -mmacosx-version-min=10.4")
     SET(CMAKE_C_FLAGS "-pipe -mmacosx-version-min=10.4")
-    SET(CMAKE_SHARED_LINKER_FLAGS "-Wl,-single_module -compatibility_version 2 -current_version 2" )
+    SET(CMAKE_SHARED_LINKER_FLAGS "-Wl,-single_module -compatibility_version 3 -current_version 3" )
     SET(CMAKE_CXX_FLAGS_DEBUG "-gdwarf-2")
 ELSE (APPLE)
    #We only want X11 if we are not running on OSX, but still with a unix-like environment 
@@ -211,8 +212,6 @@ ENDIF(APPLE)
 IF(UNIX)
      # Some Unicies need explicit linkage to the Math library or the build fails.
     FIND_LIBRARY(MATH_LIBRARY m)
-
-    ADD_DEFINITIONS(-DSIGSLOT_PURE_ISO)
 
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-non-virtual-dtor")
 ENDIF (UNIX)
