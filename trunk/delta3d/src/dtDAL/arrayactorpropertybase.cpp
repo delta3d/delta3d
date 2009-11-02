@@ -4,6 +4,8 @@
 #include <dtUtil/stringutils.h>
 #include <dtDAL/datatype.h>
 
+#include <cstdio>
+
 using namespace dtDAL;
 
 const char OPEN_CHAR = 1;

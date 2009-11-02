@@ -3,6 +3,7 @@
 #include <dtUtil/macros.h>
 #include <cmath>
 #include <cstring>
+#include <cstdio> //for snprintf
 
 namespace dtUtil
 {
