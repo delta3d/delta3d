@@ -51,6 +51,7 @@ TARGET_LINK_LIBRARIES( ${LIB_NAME}
             ${OPENGL_LIBRARY} 
             ${MATH_LIBRARY}
             ${CARBON_LIBRARY}
+            ${APPSERVICES_LIBRARY}
             )
 
 if (X11_FOUND)

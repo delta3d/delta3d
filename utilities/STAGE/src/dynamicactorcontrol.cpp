@@ -155,7 +155,7 @@ namespace dtEditQt
             }
             else if (mIdProperty)
             {
-               mIdProperty->SetValue(proxy->GetId());
+               mIdProperty->SetValue((proxy == NULL) ? dtCore::UniqueId("") : proxy->GetId());
             }
 
             dataChanged = true;

@@ -591,6 +591,7 @@ namespace dtGame
             template <class ProxyType>
             void FindActorByName(const std::string& name, ProxyType*& proxy) const
             {
+               proxy = NULL;
                std::vector<dtDAL::ActorProxy*> toFill;
                FindActorsByName(name, toFill);
                if (!toFill.empty())
@@ -625,6 +626,7 @@ namespace dtGame
             template <class ProxyType>
             void FindActorByType(const dtDAL::ActorType& type, ProxyType*& proxy) const
             {
+               proxy = NULL;
                std::vector<dtDAL::ActorProxy*> toFill;
                FindActorsByType(type, toFill);
                if (!toFill.empty())
