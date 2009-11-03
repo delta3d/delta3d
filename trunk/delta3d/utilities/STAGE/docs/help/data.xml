@@ -38,6 +38,8 @@
 					<section title="Figure 6.6: Selecting a Large Shack for Random Actor Generation" ref="tut06_tools.html#F6.6" />
 					<section title="Figure 6.7: Random Actor Generator Tool used to Generate 10 Ground Clamped Large Shacks in an area" ref="tut06_tools.html#F6.7" />
 				</section>
+				<section title="RTS Camera" ref="tut06_tools.html#RTSCamera">
+				</section>
 			</section>
 			<section title="Contact Info" ref="tut07_contacts.html">
 			</section>
