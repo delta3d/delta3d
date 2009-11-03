@@ -36,7 +36,7 @@
 
 #include <dtCore/refptr.h>
 
-#include <QtGui/QDialog>
+#include <QtGui/QMainWindow>
 #include <QtGui/QTextEdit>
 #include <QtGui/QTreeWidget>
 #include <QtGui/QTabWidget>
@@ -195,7 +195,7 @@ namespace dtEditQt
     * @class HelpBox
     * @brief This class generates the Editor's about box.
     */
-   class HelpBox : public QDialog
+   class HelpBox : public QMainWindow
    {
       Q_OBJECT
 

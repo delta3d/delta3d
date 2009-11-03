@@ -1691,7 +1691,6 @@ namespace dtEditQt
       {
          mHelpBox = new HelpBox((dtCore::GetDeltaRootPath() + "/utilities/STAGE/docs/help/data.xml").c_str(),
             (QWidget*)EditorData::GetInstance().getMainWindow());
-         mHelpBox->setModal(false);
       }
 
       mHelpBox->show();

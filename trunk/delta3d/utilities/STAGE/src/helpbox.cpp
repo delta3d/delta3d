@@ -202,7 +202,7 @@ namespace dtEditQt
 
    //////////////////////////////////////////////////////////////////////////////
    HelpBox::HelpBox(const QString& filename, QWidget* parent)
-      : QDialog(parent)
+      : QMainWindow(parent, Qt::Window)
       , mContentList(NULL)
       , mDocumentTabs(NULL)
       , mDocument(NULL)
@@ -219,21 +219,18 @@ namespace dtEditQt
       mResourcePrefix = mDocument->getResource().c_str();
 
       // Setup the UI
-      QVBoxLayout* mainVLay      = new QVBoxLayout(this);
       QToolBar*    toolbar       = new QToolBar(this);
-      QHBoxLayout* okButtonLay   = new QHBoxLayout();
       QSplitter*   documentSplit = new QSplitter(Qt::Horizontal);
 
       mPrevPageAction            = new QAction(tr("Back"), this);
       mNextPageAction            = new QAction(tr("Forward"), this);
       mHomeAction                = new QAction(tr("Home"), this);
 
-      QPushButton* ok            = new QPushButton("OK", this);
-
       mContentList               = new QTreeWidget(documentSplit);
       mDocumentTabs              = new DocumentTabs(documentSplit, this);
 
       // Toolbar
+      addToolBar(toolbar);
       toolbar->setObjectName("Toolbar");
       toolbar->setWindowTitle(tr("Toolbar"));
 
@@ -258,21 +255,13 @@ namespace dtEditQt
       mDocumentTabs->setMovable(true);
       mDocumentTabs->setTabShape(QTabWidget::Rounded);
 
-      // Ok button.
-      okButtonLay->addStretch(1);
-      okButtonLay->addWidget(ok);
-      okButtonLay->addStretch(1);
-
       // Main layout.
-      mainVLay->addWidget(toolbar);
-      mainVLay->addWidget(documentSplit);
-      mainVLay->addLayout(okButtonLay);
+      setCentralWidget(documentSplit);
 
       // Setup our table of contents.
       setupContents();
 
       // Connect slots.
-      connect(ok, SIGNAL(clicked()), this, SLOT(accept()));
       connect(mContentList, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
          this, SLOT(onContentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
       connect(mDocumentTabs, SIGNAL(currentChanged(int)),
@@ -287,7 +276,7 @@ namespace dtEditQt
       connect(mHomeAction, SIGNAL(triggered()),
          this, SLOT(onHomeButton()));
 
-      // Open our home page to start with.
+      // Open our using help page, and also our home page.
       openUsingHelpPage(true);
       openPage("", "", true);
       onHyperlinkClicked(mDocument->getHome().c_str());
