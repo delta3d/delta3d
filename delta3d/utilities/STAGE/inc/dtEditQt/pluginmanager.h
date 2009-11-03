@@ -45,6 +45,12 @@ namespace dtEditQt
       /** is there a factory for a plugin with this name? */
       bool FactoryExists(const std::string& name);
 
+      /** Get PluginFactory for Plugin with this name.
+       * @throw dtUtil::Exception if no PluginFactory exists with that Plugin name
+       * @param name The name of the Plugin/PluginFactory to get
+       */
+      PluginFactory* GetPluginFactory(const std::string& name);
+
       /** is this plugin currently running? */
       bool IsInstantiated(const std::string& name);
 
@@ -55,7 +61,7 @@ namespace dtEditQt
       Plugin* GetPlugin(const std::string& name);
 
       /** returns all dependencies for a given plugin */
-      std::list<std::string> GetPluginDependencies(std::string name);
+      std::list<std::string> GetPluginDependencies(const std::string& name);
 
    public slots:
 
@@ -76,8 +82,6 @@ namespace dtEditQt
       /** load plugin factory from library given by path */
       PluginFactory* LoadPluginFactory(const std::string& baseLibName);
 
-      /** get factory for plugin with this name */
-      PluginFactory* GetPluginFactory(const std::string& name);
 
       /** map from plugin name -> plugin factory */
       PluginFactoryMap mFactories;

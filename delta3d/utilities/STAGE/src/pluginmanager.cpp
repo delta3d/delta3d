@@ -244,7 +244,7 @@ namespace dtEditQt
    }
 
 
-   std::list<std::string> PluginManager::GetPluginDependencies(std::string name)
+   std::list<std::string> PluginManager::GetPluginDependencies(const std::string& name)
    {
       std::list<std::string> deps;
       PluginFactory* factory = GetPluginFactory(name);
