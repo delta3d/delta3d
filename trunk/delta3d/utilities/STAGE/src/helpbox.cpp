@@ -172,6 +172,9 @@ namespace dtEditQt
       , mDocumentTabs(NULL)
       , mDocument(NULL)
    {
+      // Set the default size of the window.
+      resize(900, 600);
+
       // Attempt to load the template file.
       mDocument = new HelpXMLReader();
       mDocument->ReadXML(filename.toStdString());
@@ -510,13 +513,14 @@ namespace dtEditQt
 		         "</h2></font>"
 	         "</p>"
             "<p align=\"center\">"
-		         //"<table align=\"center\" cellpadding=\"2\" cellspacing=\"10\" border=\"0\" width=\"80%\">"
-			         "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To navigate the help library, "
-			         "use the Table of Contents menu to the left of this window or click "
-			         "on any links displayed in this view area.  You may also manage "
-			         "multiple help pages by double clicking an empty space on the tab "
-                  "bar above to create new tabs."
-		         //"</table>"
+		         "<table align=\"center\" cellpadding=\"2\" cellspacing=\"10\" border=\"0\" width=\"80%\">"
+                  "<tr><td>"
+			            "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To navigate the help library, "
+			            "use the Table of Contents menu to the left of this window.  You "
+                     "may also manage multiple help pages by double clicking an empty "
+                     "space on the tab bar above to create new tabs."
+                  "</td></tr>"
+	            "</table>"
             "</p>"
          );
       }
