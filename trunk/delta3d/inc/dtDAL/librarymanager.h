@@ -41,6 +41,7 @@ namespace dtDAL
     * @note The LibraryManager follows the Singleton design pattern.
     * @see ActorType
     * @see ActorProxy
+    * @see ActorPluginRegistry
     */
    class DT_DAL_EXPORT LibraryManager : public osg::Referenced
    {
@@ -85,6 +86,9 @@ namespace dtDAL
          /**
           * Loads an actor registry by loading a dynamic library
           * containing the actor registry implementation.
+          * @note The library file must contain two exported "C" methods: 
+          * "CreatePluginRegistry" and "DestroyPluginRegistry".  See ActorPluginRegistry
+          * for more information.
           *
           * @param libName The system independent name of the library to load.
           * @throws ProjectResourceError Throws an exception if the

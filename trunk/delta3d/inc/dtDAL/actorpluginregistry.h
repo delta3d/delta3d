@@ -32,7 +32,7 @@ namespace dtDAL
 {
    /**
     * The ActorPluginRegistry is the base class that developers extend to
-    * build their own registries.  Its main purpose is to serve as an
+    * build their own Actor registries.  Its main purpose is to serve as an
     * object factory which knows how to build ActorProxies using
     * ActorTypes as the tool by which to do so.
     * @note
@@ -40,6 +40,22 @@ namespace dtDAL
     *      construct since they are reference counted objects.
     * @see ActorType
     * @see ActorProxy
+    * @note The dynamic library file containing the Actor Registry must contain
+    *  two exported "C" methods, to create and destroy the ActorPluginRegistry.
+    *
+    * Example:
+    * @code
+    * extern "C" DT_EXAMPLE_EXPORT dtDAL::ActorPluginRegistry* CreatePluginRegistry()
+    * {
+    *    return new TestGameActorLibrary;
+    * }
+    *
+    * extern "C" DT_EXAMPLE_EXPORT void DestroyPluginRegistry(dtDAL::ActorPluginRegistry* registry)
+    * { 
+    *   if (registry != NULL)
+    *   delete registry;
+    * }
+    * @endcode
     */
    class DT_DAL_EXPORT ActorPluginRegistry
    {
