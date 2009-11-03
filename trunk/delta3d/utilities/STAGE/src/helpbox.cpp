@@ -51,6 +51,41 @@ const QString USING_HELP_TAG = "Using Help!";
 namespace dtEditQt
 {
    ////////////////////////////////////////////////////////////////////////////////
+   DocumentTabs::DocumentTabs(QWidget* parent, HelpBox* helpBox)
+      : QTabWidget(parent)
+      , mHelpBox(helpBox)
+   {
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DocumentTabs::mousePressEvent(QMouseEvent *e)
+   {
+      QTabWidget::mousePressEvent(e);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DocumentTabs::mouseReleaseEvent(QMouseEvent *e)
+   {
+      QTabWidget::mouseReleaseEvent(e);
+
+      if (e->button() == Qt::MidButton)
+      {
+         // TODO: Find the tab that you are mousing over.
+         //mHelpBox->onDocumentTabClosed(currentIndex());
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DocumentTabs::mouseDoubleClickEvent(QMouseEvent *e)
+   {
+      QTabWidget::mouseDoubleClickEvent(e);
+
+      // Create a new page and set it to the home page.
+      mHelpBox->openPage("", "", true);
+      mHelpBox->onHyperlinkClicked(mHelpBox->getHome().c_str());
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    DocumentText::DocumentText(QWidget* parent)
       : QTextEdit(parent)
       , mWasOverHyperlink(false)
@@ -196,7 +231,7 @@ namespace dtEditQt
       QPushButton* ok            = new QPushButton("OK", this);
 
       mContentList               = new QTreeWidget(documentSplit);
-      mDocumentTabs              = new QTabWidget(documentSplit);
+      mDocumentTabs              = new DocumentTabs(documentSplit, this);
 
       // Toolbar
       toolbar->setObjectName("Toolbar");
@@ -265,6 +300,96 @@ namespace dtEditQt
       {
          delete mDocument;
          mDocument = NULL;
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void HelpBox::openUsingHelpPage(bool newPage)
+   {
+      openPage("", "", newPage);
+
+      DocumentText* doc = dynamic_cast<DocumentText*>(mDocumentTabs->currentWidget());
+      if (doc)
+      {
+         doc->setPage(USING_HELP_TAG, "");
+         mDocumentTabs->setTabText(mDocumentTabs->currentIndex(), USING_HELP_TAG);
+
+         doc->setHtml(
+	         "<p align=\"left\">"
+		         "<font color=\"DarkBlue\"><h2>"
+                  "Using Help!"
+		         "</h2></font>"
+	         "</p>"
+            "<p align=\"center\">"
+		         "<table align=\"center\" cellpadding=\"2\" cellspacing=\"10\" border=\"0\" width=\"80%\">"
+                  "<tr><td>"
+			            "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To navigate the help library, "
+			            "use the Table of Contents menu to the left of this window.  You "
+                     "may also manage multiple help pages by double clicking an empty "
+                     "space on the tab bar above to create new tabs."
+                  "</td></tr>"
+	            "</table>"
+            "</p>"
+         );
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void HelpBox::openPage(const QString& page, const QString& anchor, bool newTab, bool setPage)
+   {
+      // Create a new page if we are forcing a new page or
+      // if we don't have any pages yet.
+      if (mDocumentTabs->count() < 1 || newTab)
+      {
+         DocumentText* doc = new DocumentText(this);
+
+         doc->setTextInteractionFlags(Qt::TextBrowserInteraction);
+
+         connect(doc, SIGNAL(hyperlinkClicked(const QString&)),
+            this, SLOT(onHyperlinkClicked(const QString&)));
+
+         //QScrollBar* scrollBar = doc->verticalScrollBar();
+         //if (scrollBar)
+         //{
+         //   connect(scrollBar, SIGNAL(valueChanged(int)),
+         //      this, SLOT(onDocumentScrolled(int)));
+         //}
+
+         int index = mDocumentTabs->addTab(doc, "");
+         mDocumentTabs->setCurrentIndex(index);
+      }
+
+      DocumentText* doc = dynamic_cast<DocumentText*>(mDocumentTabs->currentWidget());
+      if (doc && !page.isEmpty())
+      {
+         mDocumentTabs->setTabText(mDocumentTabs->currentIndex(), page);
+
+         if (setPage)
+         {
+            doc->setPage(page, anchor);
+         }
+
+         QFile file(mResourcePrefix + page);
+         if (!file.open(QFile::ReadOnly | QFile::Text))
+         {
+            doc->setPlainText("Could not locate file.");
+         }
+         else
+         {
+            QTextStream in(&file);
+            QString data = in.readAll();
+
+            // Prepend the resource prefix to all images referenced.
+            data.replace("<img src=\"", "<img src=\"" + mResourcePrefix, Qt::CaseInsensitive);
+
+            doc->setHtml(data);
+
+            // Scroll to an anchor if needed.
+            if (!anchor.isEmpty())
+            {
+               doc->scrollToAnchor(anchor);
+            }
+         }
       }
    }
 
@@ -485,104 +610,6 @@ namespace dtEditQt
       //      }
       //   }
       //}
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void HelpBox::mouseDoubleClickEvent(QMouseEvent *e)
-   {
-      // Create a new page and set it to the home page.
-      openPage("", "", true);
-      onHyperlinkClicked(mDocument->getHome().c_str());
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void HelpBox::openUsingHelpPage(bool newPage)
-   {
-      openPage("", "", newPage);
-
-      DocumentText* doc = dynamic_cast<DocumentText*>(mDocumentTabs->currentWidget());
-      if (doc)
-      {
-         doc->setPage(USING_HELP_TAG, "");
-         mDocumentTabs->setTabText(mDocumentTabs->currentIndex(), USING_HELP_TAG);
-
-         doc->setHtml(
-	         "<p align=\"left\">"
-		         "<font color=\"DarkBlue\"><h2>"
-                  "Using Help!"
-		         "</h2></font>"
-	         "</p>"
-            "<p align=\"center\">"
-		         "<table align=\"center\" cellpadding=\"2\" cellspacing=\"10\" border=\"0\" width=\"80%\">"
-                  "<tr><td>"
-			            "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To navigate the help library, "
-			            "use the Table of Contents menu to the left of this window.  You "
-                     "may also manage multiple help pages by double clicking an empty "
-                     "space on the tab bar above to create new tabs."
-                  "</td></tr>"
-	            "</table>"
-            "</p>"
-         );
-      }
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void HelpBox::openPage(const QString& page, const QString& anchor, bool newTab, bool setPage)
-   {
-      // Create a new page if we are forcing a new page or
-      // if we don't have any pages yet.
-      if (mDocumentTabs->count() < 1 || newTab)
-      {
-         DocumentText* doc = new DocumentText(this);
-
-         doc->setTextInteractionFlags(Qt::TextBrowserInteraction);
-
-         connect(doc, SIGNAL(hyperlinkClicked(const QString&)),
-            this, SLOT(onHyperlinkClicked(const QString&)));
-
-         //QScrollBar* scrollBar = doc->verticalScrollBar();
-         //if (scrollBar)
-         //{
-         //   connect(scrollBar, SIGNAL(valueChanged(int)),
-         //      this, SLOT(onDocumentScrolled(int)));
-         //}
-
-         int index = mDocumentTabs->addTab(doc, "");
-         mDocumentTabs->setCurrentIndex(index);
-      }
-
-      DocumentText* doc = dynamic_cast<DocumentText*>(mDocumentTabs->currentWidget());
-      if (doc && !page.isEmpty())
-      {
-         mDocumentTabs->setTabText(mDocumentTabs->currentIndex(), page);
-
-         if (setPage)
-         {
-            doc->setPage(page, anchor);
-         }
-
-         QFile file(mResourcePrefix + page);
-         if (!file.open(QFile::ReadOnly | QFile::Text))
-         {
-            doc->setPlainText("Could not locate file.");
-         }
-         else
-         {
-            QTextStream in(&file);
-            QString data = in.readAll();
-
-            // Prepend the resource prefix to all images referenced.
-            data.replace("<img src=\"", "<img src=\"" + mResourcePrefix, Qt::CaseInsensitive);
-
-            doc->setHtml(data);
-
-            // Scroll to an anchor if needed.
-            if (!anchor.isEmpty())
-            {
-               doc->scrollToAnchor(anchor);
-            }
-         }
-      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////

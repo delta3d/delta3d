@@ -45,6 +45,54 @@ class QAction;
 
 namespace dtEditQt
 {
+   class HelpBox;
+
+   /**
+   * @class DocumentTabs
+   * @brief This is the help document tab display window,
+   *        overloaded to provide functionality for adding and removing tabs.
+   */
+   class DocumentTabs : public QTabWidget
+   {
+      Q_OBJECT
+
+   public:
+
+      /**
+      * Constructs a document tabs viewer.
+      *
+      * @param[in]  parent   The parent widget.
+      * @param[in]  helpbox  The help box that owns this widget.
+      */
+      DocumentTabs(QWidget* parent, HelpBox* helpBox);
+
+   protected:
+
+      /**
+      * Event handler when the mouse button is clicked.
+      *
+      * @param[in]  e  The mouse event.
+      */
+      void mousePressEvent(QMouseEvent* e);
+
+      /**
+      * Event handler when the mouse button is released.
+      *
+      * @param[in]  e  The mouse event.
+      */
+      void mouseReleaseEvent(QMouseEvent *e);
+
+      /**
+      * Event handler when the mouse button is double clicked.
+      *
+      * @param[in]  e  The mouse event.
+      */
+      void mouseDoubleClickEvent(QMouseEvent *e);
+
+
+      HelpBox* mHelpBox;
+   };
+
    /**
    * @class DocumentText
    * @brief This is the help document text window,
@@ -165,6 +213,28 @@ namespace dtEditQt
        */
       virtual ~HelpBox();
 
+      /**
+      * Retrieves the home page.
+      */
+      std::string getHome() {return mDocument->getHome();}
+
+      /**
+      * Loads the Using Help page.
+      *
+      * @param[in]  newPage  True to create a new tab page.
+      */
+      void openUsingHelpPage(bool newPage = false);
+      
+      /**
+      * Loads a specified page.
+      *
+      * @param[in]  page     The name of the page to open.
+      * @param[in]  anchor   The anchor to scroll to.
+      * @param[in]  newTab   True to create a new tab for this page.
+      * @param[in]  setPage  True if we want to set this page in the browser history.
+      */
+      void openPage(const QString& page, const QString& anchor, bool newTab = false, bool setPage = true);
+
    public slots:
 
       /**
@@ -221,30 +291,6 @@ namespace dtEditQt
    private:
 
       /**
-      * Event handler when the mouse button is double clicked.
-      *
-      * @param[in]  e  The mouse event.
-      */
-      void mouseDoubleClickEvent(QMouseEvent *e);
-
-      /**
-      * Loads the Using Help page.
-      *
-      * @param[in]  newPage  True to create a new tab page.
-      */
-      void openUsingHelpPage(bool newPage = false);
-      
-      /**
-      * Loads a specified page.
-      *
-      * @param[in]  page     The name of the page to open.
-      * @param[in]  anchor   The anchor to scroll to.
-      * @param[in]  newTab   True to create a new tab for this page.
-      * @param[in]  setPage  True if we want to set this page in the browser history.
-      */
-      void openPage(const QString& page, const QString& anchor, bool newTab = false, bool setPage = true);
-
-      /**
       * Sets up the table of contents.
       */
       void setupContents();
@@ -262,9 +308,9 @@ namespace dtEditQt
       QTreeWidgetItem* findTOC(const QString& page, const QString& anchor = "", bool anchorMustMatch = false);
       QTreeWidgetItem* findTOC(const QString& page, const QString& anchor, QTreeWidgetItem* parent, bool anchorMustMatch);
 
-      QString      mResourcePrefix;
-      QTreeWidget* mContentList;
-      QTabWidget*  mDocumentTabs;
+      QString        mResourcePrefix;
+      QTreeWidget*   mContentList;
+      DocumentTabs*  mDocumentTabs;
       HelpXMLReader* mDocument;
 
       QAction*    mPrevPageAction;
