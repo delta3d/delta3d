@@ -14,6 +14,7 @@
 #include <osgViewer/api/Win32/GraphicsWindowWin32>
 #elif defined(__APPLE__)
 #include <osgViewer/api/Carbon/GraphicsWindowCarbon>
+#include <ApplicationServices/ApplicationServices.h>
 #else
 #include <osgViewer/api/X11/GraphicsWindowX11>
 #endif
@@ -33,6 +34,10 @@ Mouse::Mouse(const std::string& name) : InputDevice(name)
    AddFeature(new Button(this, LeftButton, "left mouse button"));
    AddFeature(new Button(this, MiddleButton, "middle mouse button"));
    AddFeature(new Button(this, RightButton, "right mouse button"));
+#ifdef __APPLE__
+      //fixes the mouse jerk issue
+      CGSetLocalEventsSuppressionInterval(0);
+#endif
 }
 
 Mouse::Mouse(dtCore::View * view, const std::string& name) : InputDevice(name), mView(view)
@@ -45,6 +50,12 @@ Mouse::Mouse(dtCore::View * view, const std::string& name) : InputDevice(name), 
    AddFeature(new Button(this, LeftButton, "left mouse button"));
    AddFeature(new Button(this, MiddleButton, "middle mouse button"));
    AddFeature(new Button(this, RightButton, "right mouse button"));
+
+#ifdef __APPLE__
+      //fixes the mouse jerk issue
+      CGSetLocalEventsSuppressionInterval(0);
+#endif
+
 }
 
 Mouse::~Mouse()
