@@ -108,6 +108,10 @@ namespace dtEditQt
       static std::string ICON_ACTOR;
       static std::string SPLASH_SCREEN;
       static std::string ICON_APPLICATION;
+      
+      static std::string ICON_NO_ICON;
+      static std::string ICON_UP_FOLDER;
+      static std::string ICON_FOLDER;
    };
 
 } // namespace dtEditQt
