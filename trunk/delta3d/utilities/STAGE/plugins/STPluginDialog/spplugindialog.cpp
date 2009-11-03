@@ -1,59 +1,54 @@
 #include "spplugindialog.h"
 #include <dtEditQt/pluginmanager.h>
+#include <QtGui/QMenu>
 #include <iostream>
 
 const std::string PluginManagerPlugin::PLUGIN_NAME = "Plugin Manager";
 
+//////////////////////////////////////////////////////////////////////////
 PluginManagerPlugin::PluginManagerPlugin(dtEditQt::MainWindow* mw)
 : mMainWindow(mw)
-, mDialog(NULL)
-, mPluginList(NULL)
 {
    // add entry to edit menu that opens up the plugin manager
    mMainWindow->GetEditMenu()->addSeparator();
-   QAction* action = mw->GetEditMenu()->addAction("Manage Plugins...");   
-   connect(action, SIGNAL(triggered()), this, SLOT(onOpenDialog()));
+   QAction* action = mw->GetEditMenu()->addAction(tr("Manage Plugins..."));   
+   connect(action, SIGNAL(triggered()), this, SLOT(OnOpenDialog()));
 }
 
 
+//////////////////////////////////////////////////////////////////////////
 PluginManagerPlugin::~PluginManagerPlugin()
 {
 }
 
-
-void PluginManagerPlugin::onOpenDialog()
-{
-   
+//////////////////////////////////////////////////////////////////////////
+void PluginManagerPlugin::OnOpenDialog()
+{   
    // create the plugin list
-   mDialog = new QDialog(mMainWindow);
+   QDialog dialog(mMainWindow);
    
    // load user interface from QT designer file
    Ui_PluginDialog ui;
-   ui.setupUi(mDialog);
-   mPluginList = ui.mPluginList;
-
-   // connect cancel and accept buttons
-   connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(onCloseDialog()));
-   connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(onApplyChanges()));
+   ui.setupUi(&dialog);
+   
    connect(ui.mPluginList, SIGNAL(itemChanged(QListWidgetItem*)),
-      this, SLOT(OnPluginChanged(QListWidgetItem*)));
+           this, SLOT(OnPluginChanged(QListWidgetItem*)));
 
-   // show the dialog
-   mDialog->setVisible(true);
 
    dtEditQt::PluginManager* manager = mMainWindow->GetPluginManager();
+   if (manager == NULL) { return; }
 
    // get a list of plugin factories
    std::list<std::string> plugins;
    manager->GetAvailablePlugins(plugins);
 
-   for(std::list<std::string>::iterator i = plugins.begin(); i != plugins.end(); ++i)
+   for (std::list<std::string>::iterator i = plugins.begin(); i != plugins.end(); ++i)
    {
       // create list entry for this plugin
       QListWidgetItem* item = new QListWidgetItem((*i).c_str());
       
       // set checkbox to checked if plugin is active
-      if(manager->IsInstantiated(*i))
+      if (manager->IsInstantiated(*i))
       {
          item->setCheckState(Qt::Checked);
       }
@@ -63,7 +58,7 @@ void PluginManagerPlugin::onOpenDialog()
       }
 
       // can't disable system plugins
-      if(!manager->IsSystemPlugin(*i))
+      if (!manager->IsSystemPlugin(*i))
       {
          item->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
       }
@@ -74,42 +69,40 @@ void PluginManagerPlugin::onOpenDialog()
       // add to list
       ui.mPluginList->addItem(item);
    }
+
+   // show the dialog
+   if (dialog.exec() == QDialog::Accepted)
+   {
+      OnApplyChanges(ui.mPluginList);
+   }
 }
 
 
-// user has closed the dialog
-void PluginManagerPlugin::onCloseDialog()
-{
-   mDialog->close();
-   mDialog->deleteLater();
-   mPluginList = NULL;
-   mDialog = NULL;
-}
-
+//////////////////////////////////////////////////////////////////////////
 // user has checked/unchecked a plugin.
-void PluginManagerPlugin::OnPluginChanged(QListWidgetItem* item)
+void PluginManagerPlugin::OnPluginChanged(QListWidgetItem* pluginItem)
 {
    dtEditQt::PluginManager* manager = mMainWindow->GetPluginManager();
    if (!manager) return;
 
-   std::string name = item->text().toStdString();
+   const std::string pluginName = pluginItem->text().toStdString();
 
    // When activating a plugin, make sure we also activate any
    // plugins that it depends on.
-   if (item->checkState() == Qt::Checked)
+   if (pluginItem->checkState() == Qt::Checked)
    {
-      std::list<std::string> deps = manager->GetPluginDependencies(name);
+      std::list<std::string> deps = manager->GetPluginDependencies(pluginName);
       while(!deps.empty())
       {
          std::string dependency = deps.front();
          deps.pop_front();
 
-         QList<QListWidgetItem*> pluginItems = mPluginList->findItems(QString(dependency.c_str()), Qt::MatchExactly);
+         QList<QListWidgetItem*> pluginItems = pluginItem->listWidget()->findItems(QString(dependency.c_str()), Qt::MatchExactly);
 
          // check if dependency can be fulfilled
          if (pluginItems.empty())
          {
-            item->setCheckState(Qt::Unchecked);
+            pluginItem->setCheckState(Qt::Unchecked);
             return;
          }
 
@@ -123,7 +116,7 @@ void PluginManagerPlugin::OnPluginChanged(QListWidgetItem* item)
                // now double check to see if those dependencies were turned on properly.
                if (pluginItem->checkState() == Qt::Unchecked)
                {
-                  item->setCheckState(Qt::Unchecked);
+                  pluginItem->setCheckState(Qt::Unchecked);
                   return;
                }
             }
@@ -134,23 +127,23 @@ void PluginManagerPlugin::OnPluginChanged(QListWidgetItem* item)
    // plugins that depend on this one.
    else
    {
-      std::list<std::string> plugins;
-      manager->GetAvailablePlugins(plugins);
-      while(!plugins.empty())
+      std::list<std::string> allPlugins;
+      manager->GetAvailablePlugins(allPlugins);
+      while (!allPlugins.empty())
       {
-         std::string plugin = plugins.front();
-         plugins.pop_front();
+         std::string plugin = allPlugins.front();
+         allPlugins.pop_front();
 
          std::list<std::string> deps = manager->GetPluginDependencies(plugin);
-         while(!deps.empty())
+         while (!deps.empty())
          {
             std::string dependency = deps.front();
             deps.pop_front();
 
             // If the active plugin depends on this plugin, then we need to stop that one too.
-            if (dependency == name)
+            if (dependency == pluginName)
             {
-               QList<QListWidgetItem*> pluginItems = mPluginList->findItems(QString(plugin.c_str()), Qt::MatchExactly);
+               QList<QListWidgetItem*> pluginItems = pluginItem->listWidget()->findItems(QString(plugin.c_str()), Qt::MatchExactly);
 
                // check if dependency can be fulfilled
                if (pluginItems.empty())
@@ -173,39 +166,37 @@ void PluginManagerPlugin::OnPluginChanged(QListWidgetItem* item)
    }
 }
 
+//////////////////////////////////////////////////////////////////////////
 // user has pressed OK button. Start and stop plugins
-void PluginManagerPlugin::onApplyChanges()
+void PluginManagerPlugin::OnApplyChanges(QListWidget* listWidget)
 {
    dtEditQt::PluginManager* manager = mMainWindow->GetPluginManager();
 
-   for(int i = 0; i < mPluginList->count(); ++i)
+   for (int i = 0; i < listWidget->count(); ++i)
    {
-      QListWidgetItem* item = mPluginList->item(i);
-      std::string name = item->text().toStdString();
+      QListWidgetItem* item = listWidget->item(i);
+      std::string pluginName = item->text().toStdString();
       bool enabled = (item->checkState() == Qt::Checked);
             
       // can't load/unload system plugins
-      if(manager->IsSystemPlugin(name))
+      if (manager->IsSystemPlugin(pluginName))
       {
          continue;
       }
 
-      if(!enabled && manager->IsInstantiated(name))
+      if (!enabled && manager->IsInstantiated(pluginName))
       {
-         manager->StopPlugin(name);
+         manager->StopPlugin(pluginName);
       }
-      else if(enabled && !manager->IsInstantiated(name))
+      else if (enabled && !manager->IsInstantiated(pluginName))
       {
-         manager->StartPlugin(name);
+         manager->StartPlugin(pluginName);
       }
    }
-
-   onCloseDialog();
 }
 
 
 /////////////////////////////////////////////////
-
 namespace PluginDialog
 {
 class DT_PLUGIN_MANAGER_EXPORT PluginFactory : public dtEditQt::PluginFactory
@@ -218,9 +209,9 @@ public:
       mIsSystemPlugin = true;
    }
 
-   ~PluginFactory() {}
+   virtual ~PluginFactory() {}
 
-   /** get the name of the plugin */
+   /** get the pluginName of the plugin */
    virtual std::string GetName() { return PluginManagerPlugin::PLUGIN_NAME; }
 
    /** get a description of the plugin */

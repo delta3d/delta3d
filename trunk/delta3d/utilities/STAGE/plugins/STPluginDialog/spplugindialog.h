@@ -5,8 +5,6 @@
 #include <dtEditQt/mainwindow.h>
 #include <dtEditQt/plugininterface.h>
 #include "ui_spplugin.h"
-#include <QtGui/QMenu>
-#include <QtGui/QWidget>
 
 /**
    This STAGE plugin adds a plugin manager to STAGE.
@@ -23,7 +21,7 @@ class DT_PLUGIN_MANAGER_EXPORT PluginManagerPlugin
 public:
 
    PluginManagerPlugin(dtEditQt::MainWindow* mw);
-   ~PluginManagerPlugin();
+   virtual ~PluginManagerPlugin();
 
    // used to identify plugin in plugin manager
    const static std::string PLUGIN_NAME;
@@ -31,27 +29,17 @@ public:
 public slots:
 
    /** when user chooses plugin manager in menu */
-   void onOpenDialog();
-
-   /** when user closes the dialog popup */
-   void onCloseDialog();
+   void OnOpenDialog();
 
    /** when user checks/unchecks a plugin in the list */
    void OnPluginChanged(QListWidgetItem* item);
 
-   /** when user presses OK button */
-   void onApplyChanges();
-
 private:
-
    dtEditQt::MainWindow* mMainWindow;
+
+   /** when user presses OK button */
+   void OnApplyChanges(QListWidget* listWidget);
    
-   /** the QT dialog window */
-   QDialog* mDialog;
-
-   /** a list widget for the plugins */
-   QListWidget* mPluginList;
-
 };
 
 #endif //PLUGIN_DIALOG_PLUGIN
