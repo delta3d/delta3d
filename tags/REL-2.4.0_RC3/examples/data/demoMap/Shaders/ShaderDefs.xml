@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<shaderlist>
+
+   <shadergroup name="DemoShaders">
+      <shader name="TestShader" default="yes">
+         <source type="Vertex">Shaders/testshader.vert</source>
+         <source type="Fragment">Shaders/testshader.frag</source>
+      </shader>   
+	  <shader name="TestLighting" default="no">
+         <source type="Vertex">Shaders/testlight.vert</source>
+         <source type="Fragment">Shaders/testlight.frag</source>
+         <parameter name="baseTexture">
+            <texture2D textureUnit="0">
+               <source type="Auto"/>
+            </texture2D>
+         </parameter>           
+      </shader>
+   </shadergroup>
+
+</shaderlist>

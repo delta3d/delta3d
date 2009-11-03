@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PoseMeshFile>
+	<PoseMesh name="Poses_Head" root="Bip01 Pelvis"  rootForwardAxis="0.0 1.0 0.0"
+	          effector="Bip01 Head" effectorForwardAxis="0.0 1.0 0.0">	
+		<Triangle>
+			<Animation>EHeadDownRight.XAF</Animation>
+			<Animation>EHeadDownLeft.XAF</Animation>
+			<Animation>EHeadRight.XAF</Animation>
+		</Triangle>	
+		<Triangle>
+			<Animation>EHeadRight.XAF</Animation>
+			<Animation>EHeadDownLeft.XAF</Animation>
+			<Animation>EHeadLeft.XAF</Animation>
+		</Triangle>	
+		<Triangle>
+			<Animation>EHeadRight.XAF</Animation>
+			<Animation>EHeadLeft.XAF</Animation>
+			<Animation>EHeadUpRight.XAF</Animation>
+		</Triangle>	
+		<Triangle>
+			<Animation>EHeadUpRight.XAF</Animation>
+			<Animation>EHeadLeft.XAF</Animation>
+			<Animation>EHeadUpLeft.XAF</Animation>
+		</Triangle>						
+	</PoseMesh>	
+	
+	<PoseMesh name="Poses_LeftEye" root="Bip01 Pelvis"  rootForwardAxis="0.0 1.0 0.0"
+	          effector="Bone_LEye" effectorForwardAxis="1.0 0.0 0.0">	
+		<Triangle>
+			<Animation>ELeftIn.XAF</Animation>
+			<Animation>ELeftMidDown.XAF</Animation>
+			<Animation>ELeftMidUp.XAF</Animation>
+		</Triangle>	
+		<Triangle>
+			<Animation>ELeftIn.XAF</Animation>
+			<Animation>ELeftMidUp.XAF</Animation>
+			<Animation>ELeftUp.XAF</Animation>
+		</Triangle>	
+		<Triangle>
+			<Animation>ELeftIn.XAF</Animation>
+			<Animation>ELeftDown.XAF</Animation>
+			<Animation>ELeftMidDown.XAF</Animation>
+		</Triangle>	
+		<Triangle>
+			<Animation>ELeftOut.XAF</Animation>
+			<Animation>ELeftMidUp.XAF</Animation>
+			<Animation>ELeftMidDown.XAF</Animation>
+		</Triangle>						
+	</PoseMesh>	
+	
+	<PoseMesh name="Poses_RightEye" root="Bip01 Pelvis"  rootForwardAxis="0.0 1.0 0.0"
+	          effector="Bone_REye" effectorForwardAxis="1.0 0.0 0.0">	
+		<Triangle>
+			<Animation>ERightIn.XAF</Animation>
+			<Animation>ERightMidUp.XAF</Animation>
+			<Animation>ERightMidDown.XAF</Animation>
+		</Triangle>	
+		<Triangle>
+			<Animation>ERightIn.XAF</Animation>
+			<Animation>ERightUp.XAF</Animation>
+			<Animation>ERightMidUp.XAF</Animation>
+		</Triangle>	
+		<Triangle>
+			<Animation>ERightIn.XAF</Animation>
+			<Animation>ERightMidDown.XAF</Animation>
+			<Animation>ERightDown.XAF</Animation>
+		</Triangle>	
+		<Triangle>
+			<Animation>ERightOut.XAF</Animation>
+			<Animation>ERightMidDown.XAF</Animation>
+			<Animation>ERightMidUp.XAF</Animation>
+		</Triangle>						
+	</PoseMesh>	
+	
+	<PoseMesh name="Poses_Torso" root="Bip01 Pelvis"  rootForwardAxis="0.0 1.0 0.0"
+	          effector="Bip01 Spine3" effectorForwardAxis="0.0 1.0 0.0">	
+		<Triangle>
+			<Animation>AtEase_rightdown.XAF</Animation>
+			<Animation>AtEase_straight.XAF</Animation>
+			<Animation>AtEase_rightup.XAF</Animation>
+		</Triangle>	
+		<Triangle>
+			<Animation>AtEase_rightup.XAF</Animation>
+			<Animation>AtEase_straight.XAF</Animation>
+			<Animation>AtEase_leftup.XAF</Animation>
+		</Triangle>	
+		<Triangle>
+			<Animation>AtEase_leftup.XAF</Animation>
+			<Animation>AtEase_straight.XAF</Animation>
+			<Animation>AtEase_leftdown.XAF</Animation>
+		</Triangle>	
+		<Triangle>
+			<Animation>AtEase_leftdown.XAF</Animation>
+			<Animation>AtEase_straight.XAF</Animation>
+			<Animation>AtEase_rightdown.XAF</Animation>
+		</Triangle>						
+	</PoseMesh>
+	
+	<PoseMesh name="Poses_Gun" root="Bip01 Pelvis"  rootForwardAxis="0.0 1.0 0.0"
+	          effector="Gun Barrel" effectorForwardAxis="-1.0 0.0 0.0">	
+    <Triangle>
+		<Animation>Squat_Aim_LeftUp.XAF</Animation>
+		<Animation>Squat_Aim_FtUp.XAF</Animation>
+		<Animation>Squat_Aim_Ft.XAF</Animation>
+	</Triangle>	
+	<Triangle>
+		<Animation>Squat_Aim_LeftUp.XAF</Animation>
+		<Animation>Squat_Aim_Ft.XAF</Animation>
+		<Animation>Squat_Aim_Left.XAF</Animation>
+	</Triangle>
+	<Triangle>
+		<Animation>Squat_Aim_Left.XAF</Animation>
+		<Animation>Squat_Aim_Ft.XAF</Animation>
+		<Animation>Squat_Aim_FtDwn.XAF</Animation>
+	</Triangle>
+	<Triangle>
+		<Animation>Squat_Aim_Left.XAF</Animation>
+		<Animation>Squat_Aim_FtDwn.XAF</Animation>
+		<Animation>Squat_Aim_LeftDwn.XAF</Animation>
+	</Triangle>
+	<Triangle>
+		<Animation>Squat_Aim_FtUp.XAF</Animation>
+		<Animation>Squat_Aim_RghtUp.XAF</Animation>
+		<Animation>Squat_Aim_Rght.XAF</Animation>
+	</Triangle>	
+	<Triangle>
+		<Animation>Squat_Aim_FtUp.XAF</Animation>
+		<Animation>Squat_Aim_Rght.XAF</Animation>
+		<Animation>Squat_Aim_Ft.XAF</Animation>
+	</Triangle>
+	<Triangle>
+		<Animation>Squat_Aim_Ft.XAF</Animation>
+		<Animation>Squat_Aim_Rght.XAF</Animation>
+		<Animation>Squat_Aim_RghtDwn.XAF</Animation>
+	</Triangle>
+	<Triangle>
+		<Animation>Squat_Aim_Ft.XAF</Animation>
+		<Animation>Squat_Aim_RghtDwn.XAF</Animation>
+		<Animation>Squat_Aim_FtDwn.XAF</Animation>
+	</Triangle>
+	</PoseMesh>	
+</PoseMeshFile>

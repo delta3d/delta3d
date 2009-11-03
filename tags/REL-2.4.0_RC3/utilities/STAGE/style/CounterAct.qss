@@ -1,0 +1,180 @@
+QWidget
+{
+   Background-color: black;
+   Color: grey;
+}
+
+QDockWidget
+{
+   Background-color: grey;
+   color: white;
+   font-weight: bold;
+}
+
+QMessageBox
+{
+   Color: white;
+}
+
+QLabel
+{
+   Color: white;
+}
+
+QIcon
+{
+   Color: white;
+}
+
+
+QMenu
+{
+   background-color: black;
+   Color: grey;
+}
+
+QMenu::item:selected
+{
+   color: black;
+   background-color: white;   
+}
+
+QMenuBar
+{
+   Color: grey;
+}
+
+QTextEdit
+{
+   Color: green;
+   Border-color: #00FF00;
+   Border-radius: 10px;
+   Border-style: solid;
+   Border-width: 2px;
+}
+
+QPushButton, QToolButton
+{
+   background-color: #1f1f1f;
+   color: white;
+}
+
+
+QPushButton:hover, QToolButton:hover
+{
+   background-color: white;
+   color: black;
+}
+
+QPushButton:pressed, QToolButton:pressed
+{
+   background-color: white;
+   color: green;
+
+   padding-left: 5px;
+   padding-top: 5px;
+}
+
+QGroupBox
+{
+   color: #00FF00;
+   font-weight: bold;
+   border-radius: 5px;
+   border-style: solid;
+   border-color: #00FF00;
+   border-width: 2px;
+   margin-top: 1ex; /* leave space at top for title */
+}
+
+QGroupBox::title
+{
+   subcontrol-origin: margin;
+   padding: 0 3px;
+}
+
+QTreeView
+{
+   margin-top: 2ex;
+}
+
+QTabWidget::pane
+{
+   border-top: 2px solid white;
+}
+
+QTabWiget::tab-bar
+{
+   left: 5px;  /* move start of tabs to the right */
+}
+
+QTabBar::tab
+{
+   background: grey;
+   border: 2px solid white;
+   border-bottom-color: white;
+   color: white;
+   border-top-left-radius: 4px;
+   border-top-right-radius: 4px;
+   /*font-size: 10pt;*/
+   min-width: 8ex;
+   padding: 2px;
+}
+
+QTabBar::tab:!selected
+{
+   margin-top: 4px; /* make non-selected tabs look smaller*/
+}
+
+/* -- Scroll bar customization doesn't work so well and looks
+   pretty good with default values.
+
+
+QScrollBar:vertical
+{
+   border: none;
+   background: white;
+   width: 15px;
+   margin: 18px 0 18px 0;
+}
+
+QScrollBar::handle:vertical
+{
+   background: grey;
+   min-height: 20px;
+   width: 15px;
+}
+
+QScrollBar::add-line:vertical
+{
+   background-image: url(:/icons/blackDownArrow.png);
+   height: 15px;   
+   subcontrol-position: bottom;
+   subcontrol-origin: margin;
+}
+
+
+QScrollBar::sub-line:vertical
+{
+   background-image: url(:/icons/blackUpArrow.png);
+   height: 15px;
+   subcontrol-position: top;
+   subcontrol-origin: margin;
+}
+
+QScrollBar::add-line:vertical:pressed
+{
+   background-image: url(:/icons/whiteDownArrow.png);
+   height: 15px;   
+   subcontrol-position: bottom;
+   subcontrol-origin: margin;
+}
+
+QScrollBar::sub-line:vertical:pressed
+{
+   background-image: url(:/icons/whiteUpArrow.png);
+   height: 15px;   
+   subcontrol-position: top;
+   subcontrol-origin: margin;
+}
+*/
+
