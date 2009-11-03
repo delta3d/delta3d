@@ -46,6 +46,19 @@ void PluginManagerPlugin::OnOpenDialog()
    {
       // create list entry for this plugin
       QListWidgetItem* item = new QListWidgetItem((*i).c_str());
+      std::string pluginDesc;
+      try
+      {
+         dtEditQt::PluginFactory* factory = manager->GetPluginFactory((*i));
+         pluginDesc = factory->GetDescription();
+      }
+      catch (...)
+      {
+         //factory doesn't exist?
+         pluginDesc = "No plugin description";
+      }
+
+      item->setToolTip(QString::fromStdString(pluginDesc));
       
       // set checkbox to checked if plugin is active
       if (manager->IsInstantiated(*i))
