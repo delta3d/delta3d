@@ -1,4 +1,4 @@
-<RCC> 
+<RCC>
     <qresource prefix="help/">
 	  <file>tutorial.html</file>
 	  <file>tut01_start.html</file>
