@@ -961,6 +961,24 @@ namespace dtEditQt
       setLocalSpace(!useGlobalOrientation);
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
+   void EditorViewport::onGotoActor(dtCore::RefPtr<dtDAL::ActorProxy> proxy)
+   {
+      Viewport::onGotoActor(proxy);
+
+      // Make sure we refresh the camera motion model with the updated camera.
+      mCameraMotionModel->SetCamera(getCamera());
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void EditorViewport::onGotoPosition(double x, double y, double z)
+   {
+      Viewport::onGotoPosition(x, y, z);
+
+      // Make sure we refresh the camera motion model with the updated camera.
+      mCameraMotionModel->SetCamera(getCamera());
+   }
+
    ////////////////////////////////////////////////////////////////////////////////
    void EditorViewport::setLocalSpace(bool enabled)
    {

@@ -159,6 +159,20 @@ namespace dtEditQt {
       void onEditorPreferencesChanged();
 
       /**
+      * Moves the camera to the specified actor.
+      *
+      * @param[in]  proxy  The actor proxy to look at.
+      */
+      void onGotoActor(ActorProxyRefPtr proxy);
+
+      /**
+      * Moves the camera to a position.
+      *
+      * @param[in]  x, y, z  The new camera position.
+      */
+      void onGotoPosition(double x, double y, double z);
+
+      /**
       * Toggles the gizmos into local or world space.
       *
       * @param[in]  enabled  True for local space, false for world.
