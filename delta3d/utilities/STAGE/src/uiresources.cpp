@@ -100,6 +100,10 @@ namespace dtEditQt
       ICON_ACTOR = ":/icons/actor_icon.png";
       SPLASH_SCREEN = ":/icons/splash.png";
       ICON_APPLICATION = ":/icons/application_icon.png";
+
+      ICON_NO_ICON = ":/icons/Icon_NoIcon64.png";
+      ICON_UP_FOLDER = ":/icons/upfolder_big.png";
+      ICON_FOLDER = ":/icons/folder.png";
    }
 
    //STATIC VARS...
@@ -168,5 +172,9 @@ namespace dtEditQt
    std::string UIResources::ICON_ACTOR("");
    std::string UIResources::SPLASH_SCREEN("");
    std::string UIResources::ICON_APPLICATION("");
+
+   std::string UIResources::ICON_NO_ICON("");
+   std::string UIResources::ICON_UP_FOLDER("");
+   std::string UIResources::ICON_FOLDER("");
 
 } // namespace dtEditQt

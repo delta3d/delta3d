@@ -13,6 +13,7 @@
       <file>icons/duplicate_large.png</file>
       <file>icons/duplicate_small.png</file>
 	  <file>icons/eye.png</file>
+	  <file>icons/folder.png</file>
       <file>icons/folderopen_tiny.png</file>
       <file>icons/folder_tiny.png</file>
       <file>icons/goto_large.png</file>
@@ -21,6 +22,7 @@
       <file>icons/gridon_small.png</file>
       <file>icons/groundclamp_small.png</file>
 	  <file>icons/group.png</file>
+	  <file>icons/Icon_NoIcon64.png</file>
       <file>icons/import_large.png</file>
       <file>icons/lightingmode_tiny.png</file>
 	  <file>icons/localspace.png</file>
@@ -57,6 +59,7 @@
       <file>icons/trash_small.png</file>
       <file>icons/undo.png</file>
       <file>icons/ungroup.png</file>
+	  <file>icons/upfolder_big.png</file>
       <file>icons/viewer.ico</file>
       <file>icons/whiteDownArrow.png</file>
       <file>icons/whiteUpArrow.png</file>

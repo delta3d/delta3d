@@ -649,7 +649,7 @@ namespace dtEditQt
       if (!dtUtil::FileUtils::GetInstance().IsSameFile(mCurrentDir, mTopPrefabDir))      
       {
          //Show a "Go up a folder" icon
-         nextIconFullPath = dtCore::GetDeltaRootPath() + "/utilities/STAGE/icons/upfolder_big.png";
+         nextIconFullPath = UIResources::ICON_UP_FOLDER;
          ResourceListWidgetItem* aWidget = new ResourceListWidgetItem(
                                            dtDAL::ResourceDescriptor(),
                                            QIcon(nextIconFullPath.c_str()),
@@ -686,7 +686,7 @@ namespace dtEditQt
             }
 
             //this file is a folder
-            nextIconFullPath = dtCore::GetDeltaRootPath() + "/utilities/STAGE/icons/folder.png";
+            nextIconFullPath = UIResources::ICON_FOLDER;
             isFolder = true;
          }
          else //this should be a regular file
@@ -715,7 +715,7 @@ namespace dtEditQt
             
             if(nextIconFullPath == "")
             {
-               nextIconFullPath = dtCore::GetDeltaRootPath() + "/utilities/STAGE/icons/Icon_NoIcon64.png";
+               nextIconFullPath = UIResources::ICON_NO_ICON.c_str();
             }            
          }
          

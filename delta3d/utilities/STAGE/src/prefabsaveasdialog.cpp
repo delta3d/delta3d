@@ -30,6 +30,7 @@
 
 #include <dtEditQt/prefabsaveasdialog.h>
 #include <prefix/dtstageprefix-src.h>
+#include <dtEditQt/uiresources.h>
 
 #include <QtGui/QFileDialog>
 #include <QtGui/QGroupBox>
@@ -94,26 +95,25 @@ namespace dtEditQt
          dtUtil::FileUtils::GetInstance().MakeDirectory(mIconFilePath + "/Prefabs/icons");
       }
 
-      mIconFilePath += "/Prefabs/icons/Icon_NoIcon64.png";
+      mIconFilePath += "/Prefabs/icons/";
 
-      //put our "empty icon" icon in the prefabs icon folder if it is missing
-      if (! dtUtil::FileUtils::GetInstance().FileExists(mIconFilePath))
-      {
-         std::string templateIconFile = dtCore::GetDeltaRootPath() +
-                                    "/utilities/STAGE/icons/Icon_NoIcon64.png";
+      ////put our "empty icon" icon in the prefabs icon folder if it is missing
+      //if (! dtUtil::FileUtils::GetInstance().FileExists(mIconFilePath))
+      //{
+      //   std::string templateIconFile = UIResources::ICON_NO_ICON;
 
-         try
-         {         
-            dtUtil::FileUtils::GetInstance().FileCopy(templateIconFile,
-                                                      mIconFilePath, false);
-         }
-         catch (dtUtil::Exception e)
-         {
-            //don't care if the no_icon icon doesn't make it, so give no message
-         }
-      }      
+      //   try
+      //   {         
+      //      dtUtil::FileUtils::GetInstance().FileCopy(templateIconFile,
+      //                                                mIconFilePath, false);
+      //   }
+      //   catch (dtUtil::Exception e)
+      //   {
+      //      //don't care if the no_icon icon doesn't make it, so give no message
+      //   }
+      //}      
       
-      mIcon = new QIcon(mIconFilePath.c_str());      
+      mIcon = new QIcon(UIResources::ICON_NO_ICON.c_str());      
       mIconButton = new QToolButton(groupBox);      
       mIconButton->setIconSize(QSize(64,64));
       mIconButton->setIcon(*mIcon);      
