@@ -838,6 +838,13 @@ namespace dtEditQt
                GetApplication()->GetCompositeViewer()->setDone(false);
             }
 
+            // Now refresh the camera motion model
+            EditorViewport* editorView = dynamic_cast<EditorViewport*>(viewport);
+            if (editorView)
+            {
+               editorView->getCameraMotionModel()->SetCamera(editorView->getCamera());
+            }
+
             return true;
          }
       }
@@ -846,6 +853,14 @@ namespace dtEditQt
          if (GetApplication()->ContainsView(*viewport->GetView()))
          {
             GetApplication()->RemoveView(*viewport->GetView());
+
+            // Now refresh the camera motion model
+            EditorViewport* editorView = dynamic_cast<EditorViewport*>(viewport);
+            if (editorView)
+            {
+               editorView->getCameraMotionModel()->SetCamera(editorView->getCamera());
+            }
+
             return true;
          }
       }
