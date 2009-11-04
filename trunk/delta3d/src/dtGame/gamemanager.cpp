@@ -708,11 +708,20 @@ namespace dtGame
       while (itor != msgTypeMatches.second)
       {
          ProxyInvokablePair& listener = itor->second;
-         ++itor;
 
          // hold onto the actor in a refptr so that the stats code
          // won't crash if the actor unregisters for the message.
          dtCore::RefPtr<GameActorProxy> listenerActorProxy = listener.first;
+
+         if (listenerActorProxy.valid() == false)
+         {
+            //Erase this value from the container and move on.
+            //Note the postfix operator to increment to the next item
+            mGlobalMessageListeners.erase(itor++);
+            continue;
+         }
+
+         ++itor;
 
          Invokable* invokable = NULL;
 
@@ -1876,7 +1885,10 @@ namespace dtGame
       while (itor != msgTypeMatches.second)
       {
          // add the game actor proxy and invokable name to a new pair in the vector.
-         toFill.push_back(std::make_pair(itor->second.first.get(), itor->second.second));
+         if (itor->second.first.valid())
+         {
+            toFill.push_back(std::make_pair(itor->second.first.get(), itor->second.second));
+         }
          ++itor;
       }
    }
@@ -1940,7 +1952,7 @@ namespace dtGame
       //find all matches of MessageType
       IterPair msgTypeMatches = mGlobalMessageListeners.equal_range(&type);
 
-      //erase the one that also match the supplied proxy and invokableName
+      //NULL out the one that also match the supplied proxy and invokableName
       for (GlobalMessageListenerMap::iterator itor = msgTypeMatches.first;
                                               itor != msgTypeMatches.second;
                                               ++itor)
@@ -1948,7 +1960,9 @@ namespace dtGame
          if (itor->second.first.get() == &proxy && 
              itor->second.second == invokableName)
          {
-            mGlobalMessageListeners.erase(itor);
+            //we'll actually erase this item next time it's invoked
+            itor->second.first = NULL;
+            itor->second.second = "";
             return;
          }
       }
