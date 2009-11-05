@@ -22,6 +22,7 @@ namespace dtEditQt
    static const dtUtil::RefString HELP_READER_SECTION("section");
    static const dtUtil::RefString HELP_READER_SECTION_TITLE("title");
    static const dtUtil::RefString HELP_READER_SECTION_REF("ref");
+   static const dtUtil::RefString HELP_READER_SECTION_EXPANDED("expanded");
 
 
    class HelpXMLReader : public xercesc::DefaultHandler
@@ -29,6 +30,7 @@ namespace dtEditQt
    public:
       struct SectionInfo
       {
+         bool        expanded;
          std::string title;
          std::string link;
 
@@ -37,6 +39,7 @@ namespace dtEditQt
 
          SectionInfo()
          {
+            expanded = false;
             title = "";
             link = "";
             parent = NULL;

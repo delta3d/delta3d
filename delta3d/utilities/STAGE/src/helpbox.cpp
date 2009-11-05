@@ -630,14 +630,17 @@ namespace dtEditQt
             mContentList->addTopLevelItem(treeItem);
             setupContents(section->children, treeItem);
 
+            if (section->expanded)
+            {
+               mContentList->expandItem(treeItem);
+            }
+
             if (mDocument->getHome() == section->link)
             {
                mContentList->setCurrentItem(treeItem);
             }
          }
       }
-
-      mContentList->expandAll();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -655,6 +658,11 @@ namespace dtEditQt
             treeItem->setStatusTip(0, section->link.c_str());
 
             setupContents(section->children, treeItem);
+
+            if (section->expanded)
+            {
+               mContentList->expandItem(treeItem);
+            }
 
             if (mDocument->getHome() == section->link)
             {

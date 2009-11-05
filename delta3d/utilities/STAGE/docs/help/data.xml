@@ -4,7 +4,7 @@
 	<resource>:help/</resource>
 	<home>tutorial.html</home>
 	<contents>
-		<section title="Tutorial" ref="tutorial.html">
+		<section title="Tutorial" ref="tutorial.html" expanded="yes">
 			<section title="Getting Started" ref="tut01_start.html">
 				<section title="Figure 1.1: STAGE Startup" ref="tut01_start.html#F1.1" />
 				<section title="Figure 1.2: Changing your Context Directory" ref="tut01_start.html#F1.2" />
