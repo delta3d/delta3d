@@ -7,7 +7,8 @@
 # $OPENTHREADS_DIR is an environment variable that would
 # correspond to the ./configure --prefix=$OPENTHREADS_DIR
 #
-# Created by Robert Osfield. 
+# Created by Robert Osfield
+#   with revisions by the Delta3D team.
 
 FIND_PATH(OPENTHREADS_INCLUDE_DIR OpenThreads/Thread
     ${OPENTHREADS_DIR}/include
@@ -16,6 +17,7 @@ FIND_PATH(OPENTHREADS_INCLUDE_DIR OpenThreads/Thread
     ${DELTA3D_EXT_DIR}/inc
     $ENV{DELTA_ROOT}/ext/inc
     $ENV{DELTA_ROOT}
+    $ENV{OSG_DIR}/include
     $ENV{OSG_ROOT}/include
     ~/Library/Frameworks
     /Library/Frameworks
@@ -43,6 +45,8 @@ FIND_LIBRARY(${MYLIBRARY}
     $ENV{DELTA_ROOT}/ext/lib
     $ENV{DELTA_ROOT}/ext/lib64
     $ENV{DELTA_ROOT}
+    $ENV{OSG_DIR}/lib
+    $ENV{OSG_DIR}/build/lib
     $ENV{OSG_ROOT}/lib
     $ENV{OSG_ROOT}/build/lib
     ~/Library/Frameworks

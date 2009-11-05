@@ -14,6 +14,7 @@ FIND_PATH(CEGUI_INCLUDE_DIR CEGUI/CEGUI.h
     $ENV{CEGUI_DIR}/include
     $ENV{CEGUIDIR}/include
     $ENV{CEGUI_ROOT}/include
+    $ENV{DELTA_ROOT}/ext/inc
     ${DELTA3D_EXT_DIR}/inc
     ${DELTA3D_EXT_DIR}/Frameworks
     ~/Library/Frameworks

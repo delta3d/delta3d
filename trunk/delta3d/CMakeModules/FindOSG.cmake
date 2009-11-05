@@ -7,7 +7,8 @@
 # $OSG_DIR is an environment variable that would
 # correspond to the ./configure --prefix=$OSG_DIR
 #
-# Created by Robert Osfield. 
+# Created by Robert Osfield
+#   with revisions by the Delta3D team.
 
 FIND_PATH(OSG_INCLUDE_DIR osg/Node
     $ENV{OSG_DIR}/include
@@ -35,6 +36,7 @@ MACRO(FIND_OSG_LIBRARY MYLIBRARY MYLIBRARYNAME)
         NAMES ${MYLIBRARYNAME}
         PATHS
         $ENV{OSG_DIR}/lib
+        $ENV{OSG_DIR}/build/lib
         $ENV{OSG_DIR}
         $ENV{OSGDIR}/lib
         $ENV{OSGDIR}
@@ -69,6 +71,7 @@ FIND_OSG_LIBRARY(OSGVIEWER_LIBRARY osgViewer)
 FIND_OSG_LIBRARY(OSGGA_LIBRARY osgGA)
 FIND_OSG_LIBRARY(OSGPARTICLE_LIBRARY osgParticle)
 FIND_OSG_LIBRARY(OSGSIM_LIBRARY osgSim)
+FIND_OSG_LIBRARY(OSGSHADOW_LIBRARY osgShadow)
 
 # Find debug libs
 FIND_OSG_LIBRARY(OSG_LIBRARY_DEBUG osgd)
@@ -81,6 +84,7 @@ FIND_OSG_LIBRARY(OSGVIEWER_LIBRARY_DEBUG osgViewerd)
 FIND_OSG_LIBRARY(OSGGA_LIBRARY_DEBUG osgGAd)
 FIND_OSG_LIBRARY(OSGPARTICLE_LIBRARY_DEBUG osgParticled)
 FIND_OSG_LIBRARY(OSGSIM_LIBRARY_DEBUG osgSimd)
+FIND_OSG_LIBRARY(OSGSHADOW_LIBRARY_DEBUG osgShadowd)
 
 SET(OSG_FOUND "NO")
 IF(OSG_LIBRARY AND OSG_INCLUDE_DIR)
