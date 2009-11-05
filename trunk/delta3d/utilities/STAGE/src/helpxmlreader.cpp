@@ -13,6 +13,8 @@
 
 #include <sstream>
 
+#include <Qt/qstring.h>
+
 namespace dtEditQt
 {
    ////////////////////////////////////////////////////////////////////////////////
@@ -120,6 +122,15 @@ namespace dtEditQt
             else if (element == HELP_READER_SECTION_REF)
             {
                section->link = value;
+            }
+            else if (element == HELP_READER_SECTION_EXPANDED)
+            {
+               QString val = value.c_str();
+               if (val.toLower() == "yes" ||
+                  val.toLower() == "true")
+               {
+                  section->expanded = true;
+               }
             }
          }
 
