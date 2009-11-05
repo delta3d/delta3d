@@ -21,6 +21,9 @@ FIND_PATH(OPENAL_INCLUDE_DIR al.h
   ${DELTA3D_EXT_DIR}/inc
   ${DELTA3D_EXT_DIR}/inc/AL
   ${DELTA3D_EXT_DIR}/inc/OpenAL
+  $ENV{DELTA_ROOT}/ext/inc
+  $ENV{DELTA_ROOT}/ext/inc/AL
+  $ENV{DELTA_ROOT}/ext/inc/OpenAL
   ~/Library/Frameworks/OpenAL.framework/Headers
   /Library/Frameworks/OpenAL.framework/Headers
   /System/Library/Frameworks/OpenAL.framework/Headers # Tiger
@@ -50,6 +53,9 @@ FIND_PATH(ALUT_INCLUDE_DIR alut.h
   $ENV{OPENALDIR}/include/OpenAL
   ${DELTA3D_EXT_DIR}/inc/AL
   ${DELTA3D_EXT_DIR}/inc/OpenAL
+  $ENV{DELTA_ROOT}/ext/inc
+  $ENV{DELTA_ROOT}/ext/inc/AL
+  $ENV{DELTA_ROOT}/ext/inc/OpenAL
   ~/Library/Frameworks/OpenAL.framework/Headers
   /Library/Frameworks/OpenAL.framework/Headers
   /System/Library/Frameworks/OpenAL.framework/Headers # Tiger
@@ -107,6 +113,7 @@ IF(${OPENAL_INCLUDE_DIR} MATCHES ".framework")
     /Library/Frameworks/ALUT.framework/Headers
 	 ${DELTA3D_EXT_DIR}/Frameworks
 	 ${DELTA3D_EXT_DIR}/lib
+	$ENV{DELTA_ROOT}/ext/lib
     $ENV{OPENALDIR}/lib
     $ENV{OPENALDIR}/libs
     /usr/local/lib
@@ -124,6 +131,7 @@ ELSE(${OPENAL_INCLUDE_DIR} MATCHES ".framework")
     NAMES openal al OpenAL32
     PATHS
     ${DELTA3D_EXT_DIR}/lib
+	$ENV{DELTA_ROOT}/ext/lib
     $ENV{OPENALDIR}/lib
     $ENV{OPENALDIR}/libs
     /usr/local/lib

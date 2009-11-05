@@ -10,8 +10,7 @@
 # Created by David Guthrie.  Based on code by Robert Osfield 
 
 FIND_PATH(CAL3D_INCLUDE_DIR cal3d.h
-    PATHS 
-    ${CAL3D_DIR}/include
+    PATHS
     $ENV{CAL3D_DIR}/include
     $ENV{CAL3D_DIR}
     ${DELTA3D_EXT_DIR}/inc
@@ -34,7 +33,6 @@ MACRO(FIND_CAL3D_LIBRARY MYLIBRARY MYLIBRARYNAME)
 FIND_LIBRARY(${MYLIBRARY} 
     NAMES ${MYLIBRARYNAME}
     PATHS
-    ${CAL3D_DIR}/lib
     $ENV{CAL3D_DIR}/lib
     $ENV{CAL3D_DIR}
     ${DELTA3D_EXT_DIR}/lib
