@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<GUILayout>
+	<Window Type='DefaultWindow' Name='testInput'>
+		<Window Type='WindowsLook/StaticImage' Name='Panel 1'>
+			<Property Name='UnifiedAreaRect' Value='{{0.000000,0.000000},{0.000000,0.000000},{1.000000,0.000000},{1.000000,0.000000}}'/>
+			<Window Type='WindowsLook/StaticText' Name='Action 1'>
+				<Property Name='UnifiedAreaRect' Value='{{0.100000,0.000000},{0.800000,0.000000},{0.300000,0.000000},{0.900000,0.000000}}'/>
+				<Property Name='Text' Value='Action 1'/>
+				<Property Name='HorzFormatting' Value='HorzCentred'/>
+			</Window>
+			<Window Type='WindowsLook/Button' Name='Action 1 Button'>
+				<Property Name='UnifiedAreaRect' Value='{{0.350000,0.000000},{0.800000,0.000000},{0.650000,0.000000},{0.900000,0.000000}}'/>
+				<Property Name='Text' Value='1'/>
+				<Property Name='ID' Value='1'/>
+			</Window>
+			<Window Type='WindowsLook/StaticImage' Name='Checkbox6'>
+				<Property Name='UnifiedAreaRect' Value='{{0.700000,0.000000},{0.800000,0.000000},{0.900000,0.000000},{0.900000,0.000000}}'/>
+			</Window>
+			<Window Type='WindowsLook/StaticText' Name='Action 2'>
+				<Property Name='UnifiedAreaRect' Value='{{0.100000,0.000000},{0.650000,0.000000},{0.300000,0.000000},{0.750000,0.000000}}'/>
+				<Property Name='Text' Value='Action 2'/>
+				<Property Name='HorzFormatting' Value='HorzCentred'/>
+			</Window>
+			<Window Type='WindowsLook/Button' Name='Action 2 Button'>
+				<Property Name='UnifiedAreaRect' Value='{{0.350000,0.000000},{0.650000,0.000000},{0.650000,0.000000},{0.750000,0.000000}}'/>
+				<Property Name='Text' Value='2'/>
+				<Property Name='ID' Value='2'/>
+			</Window>
+			<Window Type='WindowsLook/StaticImage' Name='Checkbox7'>
+				<Property Name='UnifiedAreaRect' Value='{{0.700000,0.000000},{0.650000,0.000000},{0.900000,0.000000},{0.750000,0.000000}}'/>
+			</Window>
+			<Window Type='WindowsLook/StaticText' Name='Action 3'>
+				<Property Name='UnifiedAreaRect' Value='{{0.100000,0.000000},{0.500000,0.000000},{0.300000,0.000000},{0.600000,0.000000}}'/>
+				<Property Name='Text' Value='Action 3'/>
+				<Property Name='HorzFormatting' Value='HorzCentred'/>
+			</Window>
+			<Window Type='WindowsLook/Button' Name='Action 3 Button'>
+				<Property Name='UnifiedAreaRect' Value='{{0.350000,0.000000},{0.500000,0.000000},{0.650000,0.000000},{0.600000,0.000000}}'/>
+				<Property Name='Text' Value='3'/>
+				<Property Name='ID' Value='3'/>
+			</Window>
+			<Window Type='WindowsLook/StaticImage' Name='Checkbox8'>
+				<Property Name='UnifiedAreaRect' Value='{{0.700000,0.000000},{0.500000,0.000000},{0.900000,0.000000},{0.600000,0.000000}}'/>
+			</Window>
+			<Window Type='WindowsLook/StaticText' Name='Axis 1'>
+				<Property Name='UnifiedAreaRect' Value='{{0.100000,0.000000},{0.250000,0.000000},{0.300000,0.000000},{0.350000,0.000000}}'/>
+				<Property Name='Text' Value='Axis 1'/>
+				<Property Name='HorzFormatting' Value='HorzCentred'/>
+			</Window>
+			<Window Type='WindowsLook/Button' Name='Axis 1 Button'>
+				<Property Name='UnifiedAreaRect' Value='{{0.350000,0.000000},{0.250000,0.000000},{0.650000,0.000000},{0.350000,0.000000}}'/>
+				<Property Name='Text' Value='up/down'/>
+				<Property Name='ID' Value='4'/>
+			</Window>
+			<Window Type='WindowsLook/ProgressBar' Name='Axis 1 Slider'>
+				<Property Name='UnifiedAreaRect' Value='{{0.700000,0.000000},{0.250000,0.000000},{0.900000,0.000000},{0.350000,0.000000}}'/>
+			</Window>
+			<Window Type='WindowsLook/StaticText' Name='Axis 2'>
+				<Property Name='UnifiedAreaRect' Value='{{0.100000,0.000000},{0.100000,0.000000},{0.300000,0.000000},{0.200000,0.000000}}'/>
+				<Property Name='Text' Value='Axis 2'/>
+				<Property Name='HorzFormatting' Value='HorzCentred'/>
+			</Window>
+			<Window Type='WindowsLook/Button' Name='Axis 2 Button'>
+				<Property Name='UnifiedAreaRect' Value='{{0.350000,0.000000},{0.100000,0.000000},{0.650000,0.000000},{0.200000,0.000000}}'/>
+				<Property Name='Text' Value='left/right'/>
+				<Property Name='ID' Value='5'/>
+			</Window>
+			<Window Type='WindowsLook/ProgressBar' Name='Axis 2 Slider'>
+				<Property Name='UnifiedAreaRect' Value='{{0.700000,0.000000},{0.100000,0.000000},{0.900000,0.000000},{0.200000,0.000000}}'/>
+			</Window>
+		</Window>
+	</Window>
+</GUILayout>
