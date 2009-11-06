@@ -83,12 +83,11 @@ void AudioManagerTests::TestInitialize()
 
 void CreateDeviceAndContext(ALCdevice*& device, ALCcontext*& context)
 {
-   device = alcOpenDevice(NULL);
-   ALenum error = alGetError();
-   CPPUNIT_ASSERT(error == AL_NO_ERROR);
+   device = alcOpenDevice("");
+   CPPUNIT_ASSERT(device);
+
    context = alcCreateContext(device, NULL);
-   error = alGetError();
-   CPPUNIT_ASSERT(error == AL_NO_ERROR);
+   CPPUNIT_ASSERT(context);
 }
 
 void AudioManagerTests::TestInitializeCustomContext()
