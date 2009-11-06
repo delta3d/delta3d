@@ -61,6 +61,8 @@ namespace dtCore
 
       public:
 
+         static const float MIN_DISTANCE;
+
          /**
           * Constructor.
           *

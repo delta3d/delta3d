@@ -15,6 +15,7 @@
 
 namespace dtCore
 {
+   const float OrbitMotionModel::MIN_DISTANCE = 0.01f;
 
 IMPLEMENT_MANAGEMENT_LAYER(OrbitMotionModel)
 
@@ -478,9 +479,9 @@ bool OrbitMotionModel::AxisStateChanged(const Axis* axis,
       {
          float distDelta = -float(delta * mDistance * mLinearRate);
 
-         if (mDistance + distDelta < 1.0f)
+         if (mDistance + distDelta < MIN_DISTANCE)
          {
-            distDelta = 1.0f - mDistance;
+            distDelta = MIN_DISTANCE - mDistance;
          }
 
          osg::Vec3 translation (0.0f, -distDelta, 0.0f);
