@@ -1895,23 +1895,27 @@ namespace dtGame
 
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::GetRegistrantsForMessagesAboutActor(const MessageType& type,
-         const dtCore::UniqueId& targetActorId, std::vector< std::pair<GameActorProxy*,
-         std::string> >& toFill) const
+                                                         const dtCore::UniqueId& targetActorId,
+         std::vector< std::pair<GameActorProxy*,std::string> >& toFill) const
    {
       toFill.clear();
-      toFill.reserve(mActorMessageListeners.size());
 
       ActorMessageListenerMap::const_iterator itor = mActorMessageListeners.find(&type);
 
       if (itor != mActorMessageListeners.end())
       {
+         typedef std::pair<ProxyInvokableMap::const_iterator,
+                           ProxyInvokableMap::const_iterator> IterPair;
 
          //second on itor is the internal map.
-         ProxyInvokableMap::const_iterator itorInner = itor->second.find(targetActorId);
-         while (itorInner != itor->second.end() && itorInner->first == targetActorId)
+         IterPair foundBeginEnd = itor->second.equal_range(targetActorId);
+         toFill.reserve(std::distance(foundBeginEnd.first, foundBeginEnd.second));
+
+         ProxyInvokableMap::const_iterator targetActorItor = foundBeginEnd.first;
+         while (targetActorItor != foundBeginEnd.second)
          {
-            toFill.push_back(std::make_pair(itorInner->second.first.get(), itorInner->second.second));
-            ++itorInner;
+            toFill.push_back(std::make_pair(targetActorItor->second.first.get(), targetActorItor->second.second));
+            ++targetActorItor;
          }
       }
    }
@@ -1975,30 +1979,8 @@ namespace dtGame
    {
       ValidateMessageType(type, proxy, invokableName);
 
-      ActorMessageListenerMap::iterator itor = mActorMessageListeners.find(&type);
-
-      ProxyInvokableMap* mapForType = NULL;
-
-      if (itor == mActorMessageListeners.end())
-      {
-         itor = mActorMessageListeners.insert(std::make_pair(&type, ProxyInvokableMap())).first;
-         if (itor != mActorMessageListeners.end())
-         {
-            mapForType = &itor->second;
-         }
-         else
-         {
-            // this is one of those "it should never happen" things.
-            throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION,
-               "Internal Error: Unable to find item just inserted in the map.", __FILE__, __LINE__);
-         }
-      }
-      else
-      {
-         mapForType = &itor->second;
-      }
-
-      mapForType->insert(std::make_pair(targetActorId, std::make_pair(dtCore::RefPtr<GameActorProxy>(&proxy), invokableName)));
+      ProxyInvokableMap& mapForType = mActorMessageListeners[&type];
+      mapForType.insert(std::make_pair(targetActorId, std::make_pair(dtCore::RefPtr<GameActorProxy>(&proxy), invokableName)));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
