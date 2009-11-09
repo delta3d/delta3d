@@ -51,10 +51,8 @@ _CRTIMP extern int errno;
 
 #include <dtUtil/fileutils.h>
 #include <dtUtil/exception.h>
-#include <dtUtil/stringutils.h>
 #include <dtUtil/log.h>
 
-#include <dtCore/globals.h>
 
 #include <string.h>
 #include <sys/types.h>
