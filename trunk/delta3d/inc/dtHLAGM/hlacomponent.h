@@ -33,6 +33,10 @@
 #include <RTI.hh>
 #include <NullFederateAmbassador.hh>
 
+#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+  #undef SendMessage //some RTI.hh include windows.h which typedef this
+#endif
+
 #include <string>
 #include <vector>
 #include <map>
