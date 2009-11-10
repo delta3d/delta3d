@@ -1,4 +1,5 @@
 #include <prefix/dtutilprefix-src.h>
+#include <dtUtil/datapathutils.h>
 #include <dtUtil/xercesparser.h>
 #include <dtUtil/xerceserrorhandler.h>
 #include <dtUtil/log.h>
@@ -37,15 +38,13 @@ bool XercesParser::Parse(const std::string& datafile,
                          XERCES_CPP_NAMESPACE_QUALIFIER ContentHandler& handler, 
                          const std::string& schemafile)
 {
-   std::string filename = osgDB::findDataFile(datafile);   
+   std::string filename = dtUtil::FindFileInPathList(datafile);
 
    if(filename.empty())
    {
       LOG_ERROR("Can't find file: " + datafile);
       return false;
    }
-
-   filename = osgDB::getRealPath(filename);
 
    try  // to inialize the xmlutils
    {
