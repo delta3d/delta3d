@@ -18,15 +18,11 @@
  *
  */
 #include <prefix/dtcoreprefix-src.h>
-#include <dtUtil/fileutils.h>
 #include <dtUtil/stringutils.h>
-#include <dtUtil/log.h>
 #include <dtUtil/mswinmacros.h>
-
+#include <dtUtil/datapathutils.h>
 #include <dtCore/globals.h>
 
-#include <osgDB/FileUtils>
-#include <osgDB/FileNameUtils>
 
 namespace dtCore
 {
@@ -42,29 +38,7 @@ namespace dtCore
    {
       DEPRECATE("dtCore::SetDataFilePathList", "dtUtil::SetDataFilePathList");
 
-      std::string modpath = pathList;
-      for( std::string::size_type i = 0; i < pathList.size(); i++ )
-      {
-         #ifdef DELTA_WIN32
-         try
-         {
-            if( modpath.at(i) == ':' && modpath.at(i+1) != '\\' )
-            {
-               modpath.at(i) = ';';
-            }
-         }
-         catch( std::out_of_range myexcept )
-         {
-            LOG_WARNING(myexcept.what());
-         }
-         #else
-         if( modpath[i] == ';' )
-         {
-            modpath[i] = ':'; 
-         }
-         #endif
-      }
-      osgDB::setDataFilePathList(modpath);
+      dtUtil::SetDataFilePathList(pathList);
    }
    
    /**
@@ -77,73 +51,14 @@ namespace dtCore
    {
       DEPRECATE("dtCore::GetDataFilePathList", "dtUtil::GetDataFilePathList");
 
-      osgDB::FilePathList pathList = osgDB::getDataFilePathList();
-   
-      std::string pathString = "";
-   
-      typedef std::deque<std::string> StringDeque;
-      for(StringDeque::iterator itr = pathList.begin(); itr != pathList.end(); itr++)
-      {
-         pathString += *itr;
-   
-         StringDeque::iterator next = itr + 1;
-         if( next != pathList.end() )
-         {
-            #ifdef DELTA_WIN32
-               pathString += ';';
-            #else
-               pathString += ':';
-            #endif
-         }
-      }
-   
-      return pathString;
+      return dtUtil::GetDataFilePathList();
    }
    
    DEPRECATE_FUNC std::string FindFileInPathList(const std::string& fileName)
    {
       DEPRECATE("dtCore::FindFileInPathList", "dtUtil::FindFileInPathList");
 
-      std::string filePath = osgDB::findDataFile(fileName);
-      
-      // In some cases, filePath will contain a url that is
-      // relative to the current working directory so for
-      // consistency, be sure to return the full path every time
-      if (!filePath.empty())
-      {
-         filePath = osgDB::getRealPath(filePath);
-      }
-
-      return filePath;
-   /**   
-      std::vector<std::string> pathList;
-      std::vector<std::string>::const_iterator itor;
-      
-   #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
-      dtUtil::IsDelimeter delimCheck(';');
-   #else
-      dtUtil::IsDelimeter delimCheck(':');
-   #endif
-      
-      dtUtil::StringTokenizer<dtUtil::IsDelimeter>::tokenize(pathList,
-                                                             GetDataFilePathList(),delimCheck);
-      
-      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-      
-      std::string path;
-      for (itor=pathList.begin(); itor!=pathList.end(); ++itor)
-      {
-         path = *itor;
-         //Make sure we remove any trailing slashes from the cache path.
-         if (path[path.length()-1] == '/' || path[path.length()-1] == '\\')
-            path = path.substr(0,path.length()-1);
-   
-         if (fileUtils.FileExists(path + dtUtil::FileUtils::PATH_SEPARATOR + fileName))
-            return path + dtUtil::FileUtils::PATH_SEPARATOR + fileName;
-      }     
-      
-      return std::string();
-      */
+      return dtUtil::FindFileInPathList(fileName);
    }
    
    
