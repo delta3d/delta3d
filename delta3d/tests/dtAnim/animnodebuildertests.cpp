@@ -32,9 +32,9 @@
 #include <dtAnim/submesh.h>
 
 #include <dtDAL/project.h>
+#include <dtUtil/datapathutils.h>
 
 #include <dtABC/application.h>
-#include <dtCore/globals.h>
 #include <dtCore/refptr.h>
 #include <dtCore/camera.h>
 #include <dtCore/deltawin.h>
@@ -56,9 +56,9 @@ namespace dtAnim
    class AnimNodeBuilderTests : public CPPUNIT_NS::TestFixture
    {
       
-      CPPUNIT_TEST_SUITE( AnimNodeBuilderTests );
-      CPPUNIT_TEST( TestBuildSoftware );
-      CPPUNIT_TEST( TestBuildHardware );
+      CPPUNIT_TEST_SUITE(AnimNodeBuilderTests);
+      CPPUNIT_TEST(TestBuildSoftware);
+      CPPUNIT_TEST(TestBuildHardware);
       CPPUNIT_TEST_SUITE_END();
       
       public:
@@ -74,9 +74,9 @@ namespace dtAnim
             dtCore::System::GetInstance().Start();
 
             mHelper = new AnimationHelper();
-            dtDAL::Project::GetInstance().SetContext(dtCore::GetDeltaRootPath() + "/examples/data/demoMap");
+            dtDAL::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data/demoMap");
             
-            mModelPath = dtCore::FindFileInPathList("SkeletalMeshes/marine_test.xml");
+            mModelPath = dtUtil::FindFileInPathList("SkeletalMeshes/marine_test.xml");
             CPPUNIT_ASSERT(!mModelPath.empty());
          }
          

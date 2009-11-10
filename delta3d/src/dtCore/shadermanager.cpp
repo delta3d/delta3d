@@ -26,8 +26,8 @@
 #include <osg/Texture2D>
 #include <osg/Node>
 
-#include <dtCore/globals.h>
 #include <dtCore/system.h>
+#include <dtUtil/datapathutils.h>
 
 namespace dtCore
 {
@@ -413,7 +413,7 @@ namespace dtCore
       while(geometryShaderIterator != shader.GetGeometryShaders().end())
       {
           // Load and set the geometry shader - note, this is not required         
-          path = dtCore::FindFileInPathList(*geometryShaderIterator);
+          path = dtUtil::FindFileInPathList(*geometryShaderIterator);
 
           if (!path.empty())
           {
@@ -435,7 +435,7 @@ namespace dtCore
       while(vertexShaderIterator != shader.GetVertexShaders().end())
       {
          // Load and set the vertex shader - note, this is not required
-         path = dtCore::FindFileInPathList(*vertexShaderIterator);
+         path = dtUtil::FindFileInPathList(*vertexShaderIterator);
          if (!path.empty())
          {
             vertexShader = new osg::Shader(osg::Shader::VERTEX);
@@ -453,7 +453,7 @@ namespace dtCore
       while(fragmentShaderIterator != shader.GetFragmentShaders().end())
       {
          // Load and set the fragment shader - note, this is not required
-         path = dtCore::FindFileInPathList(*fragmentShaderIterator);
+         path = dtUtil::FindFileInPathList(*fragmentShaderIterator);
          if (!path.empty())
          {
             fragmentShader = new osg::Shader(osg::Shader::FRAGMENT);
@@ -549,7 +549,7 @@ namespace dtCore
    void ShaderManager::LoadShaderDefinitions(const std::string& fileName, bool merge)
    {
       ShaderXML parser;
-      std::string path = dtCore::FindFileInPathList(fileName);
+      std::string path = dtUtil::FindFileInPathList(fileName);
       if (path.empty())
       {
          LOG_WARNING("Could not find shader definitions file: " + fileName);

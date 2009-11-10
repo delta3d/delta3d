@@ -51,7 +51,7 @@ namespace dtCore
    {
 
    public:
-      DECLARE_MANAGEMENT_LAYER( CloudDome )
+      DECLARE_MANAGEMENT_LAYER(CloudDome)
 
       /**
        * Constructor: These params initialize the noise function
@@ -59,23 +59,23 @@ namespace dtCore
        *
        * @sa dtUtil::Fractal
        */
-      CloudDome(  int   octaves,
-                  int   frequency,
-                  float amp,
-                  float persistence,
-                  float cutoff,
-                  float exponent,
-                  float radius,
-                  int   segments );
+      CloudDome(int   octaves,
+                int   frequency,
+                float amp,
+                float persistence,
+                float cutoff,
+                float exponent,
+                float radius,
+                int   segments);
 
       /**
        * Constructor
        * @param radius: the radius of the cloud dome
        * @param segments: the number of segments in the dome tesselation
        */
-      CloudDome(  float radius,
-                  int   segments,
-                  const std::string& filename );
+      CloudDome(float radius,
+                int   segments,
+                const std::string& filename);
 
    protected:
 
@@ -101,19 +101,19 @@ namespace dtCore
       void SetCloudColor(const osg::Vec3& mCC) { mCloudColor = mCC; }
       void SetShaderEnable(bool enable) { mEnable = enable; }
 
-      virtual void Repaint(   const osg::Vec3& skyColor,
-                              const osg::Vec3& fogColor,
-                              double sunAngle,
-                              double sunAzimuth,
-                              double visibility );
+      virtual void Repaint(const osg::Vec3& skyColor,
+                           const osg::Vec3& fogColor,
+                           double sunAngle,
+                           double sunAzimuth,
+                           double visibility);
 
    private:
 
       void Create();
-      osg::Geode* CreateDome( float radius, int segs );
-      void LoadShaderSource( osg::Shader* obj, const std::string& fileName );
-      virtual void OnMessage( MessageData *data );
-      void Update( const double deltaFrameTime );
+      osg::Geode* CreateDome(float radius, int segs);
+      void LoadShaderSource(osg::Shader* obj, const std::string& fileName);
+      virtual void OnMessage(MessageData* data);
+      void Update(const double deltaFrameTime);
 
       dtCore::RefPtr<osg::Geode> mDome;
       dtCore::RefPtr<osg::Image> mImage_3D;

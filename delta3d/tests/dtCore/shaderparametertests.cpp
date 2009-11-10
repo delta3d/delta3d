@@ -29,12 +29,12 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtUtil/exception.h>
 #include <dtUtil/fileutils.h>
+#include <dtUtil/datapathutils.h>
 #include <dtCore/shaderparamtexture2d.h>
 #include <dtCore/shaderparamfloat.h>
 #include <dtCore/shaderparamvec4.h>
 #include <dtCore/shaderparamint.h>
 #include <dtCore/shaderparamoscillator.h>
-#include <dtCore/globals.h>
 #include <dtCore/system.h>
 #include <dtCore/timer.h>
 
@@ -42,7 +42,7 @@
 #include <osg/Texture2D>
 #include <osg/io_utils>
 
-const std::string TESTS_DIR = dtCore::GetDeltaRootPath()+dtUtil::FileUtils::PATH_SEPARATOR+"tests";
+const std::string TESTS_DIR = dtUtil::GetDeltaRootPath()+dtUtil::FileUtils::PATH_SEPARATOR+"tests";
 const std::string projectContext = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtCore" + dtUtil::FileUtils::PATH_SEPARATOR + "WorkingProject";
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -112,8 +112,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION(ShaderParameterTests);
 ///////////////////////////////////////////////////////////////////////////////
 void ShaderParameterTests::setUp()
 {
-   dtCore::SetDataFilePathList(  dtCore::GetDeltaDataPathList() + ";" +
-                                 projectContext );
+   dtUtil::SetDataFilePathList(dtUtil::GetDeltaDataPathList() + ";" + projectContext);
 
    dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
    dtCore::System::GetInstance().Start();

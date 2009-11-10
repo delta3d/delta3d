@@ -30,13 +30,13 @@
 #include <QtGui/QSplashScreen>
 #include <QtGui/QPixmap>
 #include <sstream>
-#include <dtCore/globals.h>
 #include <dtCore/system.h>
 #include <dtCore/deltawin.h>
 #include <dtEditQt/mainwindow.h>
 #include <dtEditQt/viewportmanager.h>
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/uiresources.h>
+#include <dtUtil/datapathutils.h>
 #include <dtUtil/exception.h>
 #include <dtAudio/audiomanager.h>
 #include <dtQt/qtguiwindowsystemwrapper.h>
@@ -48,9 +48,9 @@ int main(int argc, char* argv[])
 {
    dtAudio::AudioManager::Instantiate();
 
-   dtCore::SetDataFilePathList(".;" +
-      dtCore::GetDeltaDataPathList() + ";" +
-      dtCore::GetDeltaRootPath() + "/utilities/STAGE");
+   dtUtil::SetDataFilePathList(".;" +
+      dtUtil::GetDeltaDataPathList() + ";" +
+      dtUtil::GetDeltaRootPath() + "/utilities/STAGE");
 
    int result;
    QApplication app(argc, argv);

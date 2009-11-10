@@ -33,9 +33,9 @@
 #include <dtABC/beziercontroller.h>
 #include <dtABC/labelactor.h>
 #include <dtCore/orbitmotionmodel.h>
-#include <dtCore/globals.h>
 #include <dtDAL/project.h>
 #include <dtDAL/map.h>
+#include <dtUtil/datapathutils.h>
 
 #include <iostream>
 
@@ -59,7 +59,7 @@ public:
       // 1. Set the project context, just like in the editor
       // 2. Get a reference to the map
       // 3. Load the map into the scene through the project class
-      std::string contextName = dtCore::GetDeltaRootPath() + "/examples/data/demoMap";
+      std::string contextName = dtUtil::GetDeltaRootPath() + "/examples/data/demoMap";
       Project::GetInstance().SetContext(contextName, true);
       mMap = &Project::GetInstance().GetMap("MyCoolMap");
 
@@ -163,9 +163,9 @@ private:
 
 int main()
 {
-   std::string dataPath = dtCore::GetDeltaDataPathList();
-   dtCore::SetDataFilePathList(dataPath + ";" +
-                               dtCore::GetDeltaRootPath() + "/examples/data" + ";");
+   std::string dataPath = dtUtil::GetDeltaDataPathList();
+   dtUtil::SetDataFilePathList(dataPath + ";" +
+                               dtUtil::GetDeltaRootPath() + "/examples/data" + ";");
    RefPtr<TestMap> app;
 
    try

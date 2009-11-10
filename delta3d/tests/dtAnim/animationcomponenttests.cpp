@@ -24,6 +24,7 @@
 #include <cppunit/extensions/HelperMacros.h>
 
 #include <dtUtil/log.h>
+#include <dtUtil/datapathutils.h>
 #include <dtUtil/stringutils.h>
 
 #include <dtABC/application.h>
@@ -38,7 +39,6 @@
 #include <dtCore/scene.h>
 #include <dtCore/camera.h>
 #include <dtCore/deltawin.h>
-#include <dtCore/globals.h>
 #include <dtCore/timer.h>
 
 #include <dtGame/gamemanager.h>
@@ -76,11 +76,11 @@ namespace dtAnim
 
    class AnimationComponentTests : public CPPUNIT_NS::TestFixture
    {
-      CPPUNIT_TEST_SUITE( AnimationComponentTests );
-      CPPUNIT_TEST( TestAnimationComponent );
-      CPPUNIT_TEST( TestAnimationPerformance );
-      CPPUNIT_TEST( TestRegisterUnregister );
-      CPPUNIT_TEST( TestRegisterMapUnload );
+      CPPUNIT_TEST_SUITE(AnimationComponentTests);
+      CPPUNIT_TEST(TestAnimationComponent);
+      CPPUNIT_TEST(TestAnimationPerformance);
+      CPPUNIT_TEST(TestRegisterUnregister);
+      CPPUNIT_TEST(TestRegisterMapUnload);
       CPPUNIT_TEST_SUITE_END();
 
       public:
@@ -223,7 +223,7 @@ namespace dtAnim
       try
       {
          //uses example data for now
-         std::string context = dtCore::GetDeltaRootPath() + "/examples/data/demoMap";
+         std::string context = dtUtil::GetDeltaRootPath() + "/examples/data/demoMap";
          dtDAL::Project::GetInstance().SetContext(context, true);
          mGM->ChangeMap("AnimationPerformance");
 

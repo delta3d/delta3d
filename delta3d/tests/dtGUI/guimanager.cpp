@@ -21,14 +21,14 @@
 * THE SOFTWARE.
 */
 #include <prefix/dtgameprefix-src.h>
-#include <CEGUI/CEGUISystem.h>
-#include <CEGUI/CEGUIWindowManager.h>
-#include <CEGUI/CEGUISchemeManager.h>
-#include <CEGUI/CEGUIImagesetManager.h>
-#include <CEGUI/CEGUILogger.h>
-#include <CEGUI/CEGUIExceptions.h>
-#include <CEGUI/CEGUIWindow.h>
-#include <CEGUI/CEGUITexture.h>
+#include <CEGUISystem.h>
+#include <CEGUIWindowManager.h>
+#include <CEGUISchemeManager.h>
+#include <CEGUIImagesetManager.h>
+#include <CEGUILogger.h>
+#include <CEGUIExceptions.h>
+#include <CEGUIWindow.h>
+#include <CEGUITexture.h>
 
 #include "guimanager.h"
 #include <dtUtil/log.h>

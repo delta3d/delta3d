@@ -20,7 +20,6 @@
  * THE SOFTWARE.
  */
 #include <dtCore/environment.h>
-#include <dtCore/globals.h>
 #include <dtCore/infiniteterrain.h>
 #include <dtCore/orbitmotionmodel.h>
 #include <dtCore/refptr.h>
@@ -29,6 +28,8 @@
 #include <dtABC/application.h>
 #include <dtABC/labelactor.h>
 #include <dtABC/weather.h>
+
+#include <dtUtil/datapathutils.h>
 
 using namespace dtABC;
 using namespace dtCore;
@@ -137,11 +138,11 @@ IMPLEMENT_MANAGEMENT_LAYER( TestWeatherApp )
 
 int main()
 {
-   std::string dataPath = dtCore::GetDeltaDataPathList();
-   dtCore::SetDataFilePathList(dataPath + ";" +
-      dtCore::GetDeltaRootPath() + "/examples/testWeather" + ";");
+   std::string dataPath = dtUtil::GetDeltaDataPathList();
+   dtUtil::SetDataFilePathList(dataPath + ";" +
+      dtUtil::GetDeltaRootPath() + "/examples/testWeather" + ";");
 
-   RefPtr<TestWeatherApp> app = new TestWeatherApp( "config.xml" );
+   RefPtr<TestWeatherApp> app = new TestWeatherApp("config.xml");
    app->Config();
    app->Run();
 

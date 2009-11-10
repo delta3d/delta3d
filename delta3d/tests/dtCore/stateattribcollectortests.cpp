@@ -31,7 +31,6 @@
 #include <dtCore/object.h>
 #include <dtUtil/exception.h>
 #include <osg/ref_ptr>
-#include <dtCore/globals.h>
 
 #include <osg/Group>
 #include <osgSim/DOFTransform>

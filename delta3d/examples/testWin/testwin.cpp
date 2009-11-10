@@ -23,10 +23,10 @@
 #include "testwin.h"
 
 #include <dtGUI/scriptmodule.h>
-#include <dtCore/globals.h>
+#include <dtUtil/datapathutils.h>
 #include <dtUtil/stringutils.h>
-#include <dtCore/scene.h>
 #include <dtUtil/log.h>
+#include <dtCore/scene.h>
 
 #include <sstream>
 
@@ -96,7 +96,7 @@ void TestWinApp::BuildGUI(DeltaWin::ResolutionVec &resolutions,
 {
    try
    {
-      std::string schemeFileName = dtCore::FindFileInPathList("gui/schemes/WindowsLook.scheme");
+      std::string schemeFileName = dtUtil::FindFileInPathList("gui/schemes/WindowsLook.scheme");
 
       CEGUI::SchemeManager::getSingleton().loadScheme(schemeFileName);
       CEGUI::System::getSingleton().setDefaultMouseCursor("WindowsLook", "MouseArrow");
@@ -260,14 +260,14 @@ bool TestWinApp::ChangeResolutionCB(const CEGUI::EventArgs& e)
 
 int main(int argc, char** argv)
 {
-   std::string dataPath = dtCore::GetDeltaDataPathList();
-   dtCore::SetDataFilePathList(dataPath + ";" +
-      dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
-      dtCore::GetDeltaRootPath() + "/examples/data/gui/imagesets;" +
-      dtCore::GetDeltaRootPath() + "/examples/data/gui/schemes;" +
-      dtCore::GetDeltaRootPath() + "/examples/data/gui/fonts;" +
-      dtCore::GetDeltaRootPath() + "/examples/data/gui/looknfeel;" +
-      dtCore::GetDeltaRootPath() + "/examples/testWin");
+   std::string dataPath = dtUtil::GetDeltaDataPathList();
+   dtUtil::SetDataFilePathList(dataPath + ";" +
+      dtUtil::GetDeltaRootPath() + "/examples/data" + ";" +
+      dtUtil::GetDeltaRootPath() + "/examples/data/gui/imagesets;" +
+      dtUtil::GetDeltaRootPath() + "/examples/data/gui/schemes;" +
+      dtUtil::GetDeltaRootPath() + "/examples/data/gui/fonts;" +
+      dtUtil::GetDeltaRootPath() + "/examples/data/gui/looknfeel;" +
+      dtUtil::GetDeltaRootPath() + "/examples/testWin");
 
    RefPtr<TestWinApp> app = new TestWinApp("config.xml");
 

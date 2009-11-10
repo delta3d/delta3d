@@ -25,16 +25,15 @@
 
 #include "HUDComponent.h"
 
-#include <dtUtil/macros.h>
-#include <dtCore/globals.h>
 #include <dtCore/scene.h>
+#include <dtUtil/macros.h>
 #include <dtUtil/exception.h>
+#include <dtUtil/datapathutils.h>
 
 #include <dtGame/basemessages.h>
 #include <dtGame/messagetype.h>
 #include <dtGame/exceptionenum.h>
 
-#include <dtCore/globals.h>
 #include <dtDAL/project.h>
 
 
@@ -151,7 +150,7 @@ void HUDComponent::SetupGUI(dtCore::DeltaWin* win,
 
       // get our scheme path
       std::string scheme = "gui/schemes/WindowsLook.scheme";
-      std::string path = dtCore::FindFileInPathList(scheme);
+      std::string path = dtUtil::FindFileInPathList(scheme);
       if (path.empty())
       {
          throw dtUtil::Exception(dtGame::ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION,

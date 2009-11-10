@@ -28,7 +28,6 @@
 
 #include <dtABC/application.h>
 #include <dtABC/labelactor.h>
-#include <dtCore/globals.h>
 #include <dtCore/object.h>
 #include <osg/Drawable>
 #include <osg/PrimitiveSet>
@@ -37,6 +36,7 @@
 #include <dtCore/deltawin.h>
 #include <dtCore/shadermanager.h>
 #include <dtCore/transform.h>
+#include <dtUtil/datapathutils.h>
 #include <dtDAL/project.h>
 #include <osgGA/GUIEventAdapter>
 
@@ -52,7 +52,7 @@ public:
    {
       mTotalTime = 0.0f;
 
-      std::string contextName = dtCore::GetDeltaRootPath() + "/examples/data/demoMap";
+      std::string contextName = dtUtil::GetDeltaRootPath() + "/examples/data/demoMap";
       dtDAL::Project::GetInstance().SetContext(contextName, true);
 
       //load the xml file which specifies our shaders
@@ -186,12 +186,12 @@ private:
 int main(int argc, char* argv[])
 {
 
-   std::string dataPath = dtCore::GetDeltaDataPathList();
-   dtCore::SetDataFilePathList(dataPath + ";" +
-                               dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
-                               dtCore::GetDeltaRootPath() + "/examples/testShaders");
+   std::string dataPath = dtUtil::GetDeltaDataPathList();
+   dtUtil::SetDataFilePathList(dataPath + ";" +
+                               dtUtil::GetDeltaRootPath() + "/examples/data" + ";" +
+                               dtUtil::GetDeltaRootPath() + "/examples/testShaders");
 
-   RefPtr<TestShadersApp> app = new TestShadersApp( "testshadersconfig.xml" );
+   RefPtr<TestShadersApp> app = new TestShadersApp("testshadersconfig.xml");
    app->Config();
    app->Run();
 

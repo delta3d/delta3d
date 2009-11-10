@@ -32,8 +32,8 @@
 #include <dtABC/application.h>
 #include <dtAudio/audiomanager.h>
 #include <dtCore/camera.h>
-#include <dtCore/globals.h>
 #include <dtDAL/actorproxyicon.h>
+#include <dtUtil/datapathutils.h>
 #include <fstream>
 
 ///////////////////////////////////////////////////////////
@@ -105,7 +105,7 @@ FlySequenceActor::~FlySequenceActor()
 
 void FlySequenceActor::OnEnteredWorld()
 {
-   std::string waypointsFile = dtCore::FindFileInPathList("waypoints.txt");
+   std::string waypointsFile = dtUtil::FindFileInPathList("waypoints.txt");
    std::ifstream input(waypointsFile.c_str());
    if (!input.is_open())
    {

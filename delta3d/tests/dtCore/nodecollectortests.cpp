@@ -25,11 +25,11 @@
 */
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
-#include <dtUtil/nodecollector.h>
 #include <dtCore/object.h>
 #include <dtUtil/exception.h>
+#include <dtUtil/datapathutils.h>
+#include <dtUtil/nodecollector.h>
 #include <osg/ref_ptr>
-#include <dtCore/globals.h>
 
 #include <osg/Group>
 #include <osgSim/DOFTransform>
@@ -76,8 +76,8 @@ void NodeCollectorTests::setUp()
 ///////////////////////////////////////Load an Object that contains Nodes////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
   
-   dtCore::SetDataFilePathList(dtCore::GetDeltaRootPath() + "/tests/data/ProjectContext/");
-   std::string loadFile = dtCore::FindFileInPathList("StaticMeshes/articulation_test.ive");
+   dtUtil::SetDataFilePathList(dtUtil::GetDeltaRootPath() + "/tests/data/ProjectContext/");
+   std::string loadFile = dtUtil::FindFileInPathList("StaticMeshes/articulation_test.ive");
    CPPUNIT_ASSERT(!loadFile.empty());
 
    mObj = new dtCore::Object("Object");

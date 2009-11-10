@@ -22,7 +22,6 @@
 
 #include <dtABC/application.h>
 #include <dtCore/effectmanager.h>
-#include <dtCore/globals.h>
 #include <dtCore/keyboard.h>
 #include <dtCore/object.h>
 #include <dtCore/particlesystem.h>
@@ -30,6 +29,7 @@
 #include <cmath>
 #include <dtCore/camera.h>
 #include <dtCore/system.h>
+#include <dtUtil/datapathutils.h>
 
 using namespace dtCore;
 using namespace dtABC;
@@ -179,9 +179,9 @@ public:
 
 int main()
 {
-   std::string dataPath = dtCore::GetDeltaDataPathList();
-   dtCore::SetDataFilePathList(dataPath + ";" +
-      dtCore::GetDeltaRootPath() + "/examples/data" + ";");
+   std::string dataPath = dtUtil::GetDeltaDataPathList();
+   dtUtil::SetDataFilePathList(dataPath + ";" +
+      dtUtil::GetDeltaRootPath() + "/examples/data" + ";");
 
    RefPtr<TestEffectsApp> app = new TestEffectsApp("config.xml");
 

@@ -32,16 +32,15 @@
 
 #include <cstdio>
 
-#include <dtCore/globals.h>
-
 #include <dtUtil/datetime.h>
 #include <dtUtil/stringutils.h>
-
 #include <dtUtil/tree.h>
 #include <dtUtil/log.h>
 #include <dtUtil/exception.h>
 #include <dtUtil/datetime.h>
 #include <dtUtil/fileutils.h>
+#include <dtUtil/datapathutils.h>
+
 #include <dtDAL/mapxml.h>
 #include <dtDAL/datatype.h>
 #include <dtDAL/project.h>
@@ -58,12 +57,12 @@ namespace dtDAL
 
 class ProjectTests : public CPPUNIT_NS::TestFixture
 {
-   CPPUNIT_TEST_SUITE( ProjectTests );
-   CPPUNIT_TEST( testReadonlyFailure );
-   CPPUNIT_TEST( testProject );
-   CPPUNIT_TEST( testCategories );
-   CPPUNIT_TEST( testResources );
-   CPPUNIT_TEST( testDeletingBackupFromReadOnlyContext );
+   CPPUNIT_TEST_SUITE(ProjectTests);
+   CPPUNIT_TEST(testReadonlyFailure);
+   CPPUNIT_TEST(testProject);
+   CPPUNIT_TEST(testCategories);
+   CPPUNIT_TEST(testResources);
+   CPPUNIT_TEST(testDeletingBackupFromReadOnlyContext);
    CPPUNIT_TEST_SUITE_END();
 
    public:
@@ -85,17 +84,17 @@ class ProjectTests : public CPPUNIT_NS::TestFixture
 };
 
 // Registers the fixture into the 'registry'
-CPPUNIT_TEST_SUITE_REGISTRATION( ProjectTests );
+CPPUNIT_TEST_SUITE_REGISTRATION(ProjectTests);
 
-const std::string DATA_DIR = dtCore::GetDeltaRootPath() + dtUtil::FileUtils::PATH_SEPARATOR+"examples/data";
-const std::string TESTS_DIR = dtCore::GetDeltaRootPath() + dtUtil::FileUtils::PATH_SEPARATOR+"tests";
+const std::string DATA_DIR = dtUtil::GetDeltaRootPath() + dtUtil::FileUtils::PATH_SEPARATOR+"examples/data";
+const std::string TESTS_DIR = dtUtil::GetDeltaRootPath() + dtUtil::FileUtils::PATH_SEPARATOR+"tests";
 const std::string MAPPROJECTCONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtDAL" + dtUtil::FileUtils::PATH_SEPARATOR + "WorkingMapProject";
 const std::string PROJECTCONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtDAL" + dtUtil::FileUtils::PATH_SEPARATOR + "WorkingProject";
 
 
 void ProjectTests::setUp() {
    try {
-      dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
+      dtUtil::SetDataFilePathList(dtUtil::GetDeltaDataPathList());
       std::string logName("projectTest");
 
       //        logger = &dtUtil::Log::GetInstance("project.cpp");
@@ -496,7 +495,7 @@ void ProjectTests::testResources()
 
       CPPUNIT_ASSERT_MESSAGE("Project should not be read only.", !p.IsReadOnly());
       CPPUNIT_ASSERT_MESSAGE("Delta3D search path should contain the context.",
-            dtCore::GetDataFilePathList().find(p.GetContext()) != std::string::npos);
+            dtUtil::GetDataFilePathList().find(p.GetContext()) != std::string::npos);
 
       const std::set<std::string>& mapNames = p.GetMapNames();
 
@@ -713,7 +712,7 @@ void ProjectTests::testProject()
    {
       dtDAL::Project& p = dtDAL::Project::GetInstance();
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-      std::string originalPathList = dtCore::GetDataFilePathList();
+      std::string originalPathList = dtUtil::GetDataFilePathList();
 
       std::string crapPath("/usr/:%**/../^^jojo/funky/\\\\/,/,.uchor");
       
@@ -757,9 +756,9 @@ void ProjectTests::testProject()
 
       CPPUNIT_ASSERT_MESSAGE("Project should not be read only.", !p.IsReadOnly());
       CPPUNIT_ASSERT_MESSAGE("Delta3D search path should contain the context.",
-            dtCore::GetDataFilePathList().find(p.GetContext()) != std::string::npos);
+            dtUtil::GetDataFilePathList().find(p.GetContext()) != std::string::npos);
       CPPUNIT_ASSERT_MESSAGE("Delta3D search path should contain the original path list.",
-            dtCore::GetDataFilePathList().find(originalPathList) != std::string::npos);
+            dtUtil::GetDataFilePathList().find(originalPathList) != std::string::npos);
 
       try {
          p.SetContext(projectDir, true);
@@ -769,9 +768,9 @@ void ProjectTests::testProject()
 
       CPPUNIT_ASSERT_MESSAGE("Project should be read only.", p.IsReadOnly());
       CPPUNIT_ASSERT_MESSAGE("Delta3D search path should contain the context.",
-            dtCore::GetDataFilePathList().find(p.GetContext()) != std::string::npos);
+            dtUtil::GetDataFilePathList().find(p.GetContext()) != std::string::npos);
       CPPUNIT_ASSERT_MESSAGE("Delta3D search path should contain the original path list.",
-            dtCore::GetDataFilePathList().find(originalPathList) != std::string::npos);
+            dtUtil::GetDataFilePathList().find(originalPathList) != std::string::npos);
 
       std::string projectDir2("Test2Project");
       try 
@@ -786,14 +785,14 @@ void ProjectTests::testProject()
 
       CPPUNIT_ASSERT_MESSAGE("Project should be read only.", !p.IsReadOnly());
       CPPUNIT_ASSERT_MESSAGE("Delta3D search path should contain the context.",
-            dtCore::GetDataFilePathList().find(p.GetContext()) != std::string::npos);
+            dtUtil::GetDataFilePathList().find(p.GetContext()) != std::string::npos);
 
       CPPUNIT_ASSERT_MESSAGE("Delta3D search path should contain the context.",
-            dtCore::GetDataFilePathList().find(projectDir2) != std::string::npos);
+            dtUtil::GetDataFilePathList().find(projectDir2) != std::string::npos);
       CPPUNIT_ASSERT_MESSAGE("Delta3D search path should NOT contain the old context.",
-            dtCore::GetDataFilePathList().find(projectDir) == std::string::npos);
+            dtUtil::GetDataFilePathList().find(projectDir) == std::string::npos);
       CPPUNIT_ASSERT_MESSAGE("Delta3D search path should contain the original path list.",
-            dtCore::GetDataFilePathList().find(originalPathList) != std::string::npos);
+            dtUtil::GetDataFilePathList().find(originalPathList) != std::string::npos);
 
       try {
          fileUtils.DirDelete(projectDir, true);

@@ -30,6 +30,7 @@
 
 #include <dtUtil/log.h>
 #include <dtUtil/stringutils.h>
+#include <dtUtil/datapathutils.h>
 #include <dtUtil/hotspotdefinition.h>
 #include <dtUtil/mathdefines.h>
 
@@ -40,7 +41,6 @@
 #include <dtCore/refptr.h>
 #include <dtCore/system.h>
 #include <dtCore/scene.h>
-#include <dtCore/globals.h>
 #include <dtCore/transform.h>
 #include <dtCore/transformable.h>
 
@@ -84,10 +84,10 @@ namespace dtAnim
    
    class AttachmentControllerTests : public CPPUNIT_NS::TestFixture
    {
-      CPPUNIT_TEST_SUITE( AttachmentControllerTests );
-      CPPUNIT_TEST( TestUpdate );
-      CPPUNIT_TEST( TestMotion );
-      CPPUNIT_TEST( TestAddRemove );
+      CPPUNIT_TEST_SUITE(AttachmentControllerTests);
+      CPPUNIT_TEST(TestUpdate);
+      CPPUNIT_TEST(TestMotion);
+      CPPUNIT_TEST(TestAddRemove);
       CPPUNIT_TEST_SUITE_END();
       
       public:
@@ -102,7 +102,7 @@ namespace dtAnim
             mAttach = new AttachmentControllerExtended();
             mAnimHelper->SetAttachmentController(*mAttach);
 
-            std::string context = dtCore::GetDeltaRootPath() + "/examples/data/demoMap/SkeletalMeshes/";
+            std::string context = dtUtil::GetDeltaRootPath() + "/examples/data/demoMap/SkeletalMeshes/";
             std::string filename = "marine_test.xml";
 
             mAnimHelper->LoadModel(context + filename);

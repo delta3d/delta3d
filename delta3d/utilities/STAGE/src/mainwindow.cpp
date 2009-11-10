@@ -44,13 +44,13 @@
 #include <QtCore/QTimer>
 
 #include <dtActors/volumeeditactor.h>
-#include <dtCore/globals.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/transform.h>
 #include <dtUtil/macros.h>
 #include <dtDAL/project.h>
 #include <dtDAL/librarymanager.h>
 #include <dtDAL/map.h>
+#include <dtUtil/datapathutils.h>
 #include <dtUtil/fileutils.h>
 #include <dtEditQt/configurationmanager.h>
 #include <dtEditQt/editoractions.h>
@@ -122,7 +122,7 @@ namespace dtEditQt
          if (! dtUtil::FileUtils::GetInstance().FileExists(styleSheetFile))
          {
             //file not found, assume it's in STAGE's stylesheets directory
-            styleSheetFile = dtCore::GetDeltaRootPath() + "/utilities/STAGE/style/" + styleSheetFile;
+            styleSheetFile = dtUtil::GetDeltaRootPath() + "/utilities/STAGE/style/" + styleSheetFile;
          }
 
          QFile file(styleSheetFile.c_str());         
@@ -1539,9 +1539,9 @@ namespace dtEditQt
    void MainWindow::SetupPlugins()
    {
       std::string pluginPath;
-      if (dtCore::IsEnvironment("STAGE_PLUGIN_PATH"))
+      if (dtUtil::IsEnvironment("STAGE_PLUGIN_PATH"))
       {
-         pluginPath = dtCore::GetEnvironment("STAGE_PLUGIN_PATH");;
+         pluginPath = dtUtil::GetEnvironment("STAGE_PLUGIN_PATH");;
       }
 
       if (pluginPath.empty())

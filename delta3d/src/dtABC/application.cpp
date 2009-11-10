@@ -34,12 +34,12 @@
 #include <dtCore/databasepager.h>
 #include <dtCore/camera.h>
 #include <dtCore/scene.h>
-#include <dtCore/globals.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/singletonmanager.h>
 #include <dtUtil/log.h>
 #include <dtUtil/stringutils.h>
 #include <dtUtil/xercesparser.h>
+#include <dtUtil/datapathutils.h>
 #include <dtUtil/librarysharingmanager.h>
 #include <dtCore/mouse.h>
 
@@ -383,7 +383,7 @@ bool Application::ParseConfigFile(const std::string& file, ApplicationConfigHand
       return false;
    }
 
-   const std::string foundPath = dtCore::FindFileInPathList(file);
+   const std::string foundPath = dtUtil::FindFileInPathList(file);
    if (foundPath.empty())
    {
       LOG_WARNING("Application: Can't find config file, " + file + ", using defaults instead.");
@@ -405,7 +405,7 @@ bool Application::ParseConfigFile(const std::string& file, ApplicationConfigHand
 ///////////////////////////////////////////////////////////////////////////////
 std::string dtABC::Application::GenerateDefaultConfigFile(const std::string& filename)
 {
-   std::string existingfile = dtCore::FindFileInPathList(filename);
+   std::string existingfile = dtUtil::FindFileInPathList(filename);
 
    if (!existingfile.empty())
    {
@@ -418,7 +418,7 @@ std::string dtABC::Application::GenerateDefaultConfigFile(const std::string& fil
    writer(filename, GetDefaultConfigData());
 
    // return the resource path to the new file
-   return dtCore::FindFileInPathList(filename);
+   return dtUtil::FindFileInPathList(filename);
 }
 
 

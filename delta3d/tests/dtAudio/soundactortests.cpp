@@ -35,10 +35,10 @@
 #include <dtAudio/sound.h>
 
 #include <dtGame/gamemanager.h>
-
+#include <dtUtil/datapathutils.h>
 #include <dtDAL/enginepropertytypes.h>
 
-#include <dtCore/globals.h>
+
 #include <dtCore/system.h>
 #include <dtCore/scene.h>
 
@@ -89,7 +89,7 @@ void SoundActorTests::setUp()
    {
       dtCore::Scene* scene = new dtCore::Scene();
       mGameManager = new dtGame::GameManager(*scene);
-      dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
+      dtUtil::SetDataFilePathList(dtUtil::GetDeltaDataPathList());
       mGameManager->LoadActorRegistry(LIBRARY_TEST_GAME_ACTOR);
 
       dtAudio::AudioManager::Instantiate();
@@ -256,11 +256,10 @@ void SoundActorTests::TestTimedPlay()
 {
    try
    {
-
       // Test loading a sound.
-      mProxy->LoadFile( dtCore::GetDeltaRootPath() + "/tests/data/Sounds/silence.wav" );
+      mProxy->LoadFile(dtUtil::GetDeltaRootPath() + "/tests/data/Sounds/silence.wav" );
       dtAudio::SoundActor* soundActor = NULL;
-      mProxy->GetActor( soundActor );
+      mProxy->GetActor(soundActor);
       dtAudio::Sound* sound = soundActor->GetSound();
 
       // --- Ensure the proxy returns the same sound object.
@@ -279,8 +278,8 @@ void SoundActorTests::TestTimedPlay()
       mProxy->SetMinRandomTime(0.0);
       mProxy->SetMaxRandomTime(0.0);
       mProxy->SetOffsetTime(offsetTime);
-      sound->SetLooping( true );
-      mGameManager->AddActor( *mProxy, false, false );
+      sound->SetLooping(true);
+      mGameManager->AddActor(*mProxy, false, false);
 
       double simTime = dtCore::System::GetInstance().GetSimulationTime();
       dtCore::System::GetInstance().Step();

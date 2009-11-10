@@ -2,10 +2,10 @@
 
 #include "testNestedView.h"
 #include <dtCore/object.h>
-#include <dtCore/globals.h>
 #include <dtCore/camera.h>
 #include <dtCore/scene.h>
 #include <dtCore/deltawin.h>
+#include <dtUtil/datapathutils.h>
 
 #include <osgViewer/CompositeViewer>
 
@@ -130,7 +130,7 @@ bool TestNestedView::KeyPressed(const dtCore::Keyboard* keyboard, int key)
 int main(int argc, char **argv)
 {
    //set data search path to parent directory and delta3d/data
-   dtCore::SetDataFilePathList(dtCore::GetDeltaRootPath() + "/examples/data" + ";");
+   dtUtil::SetDataFilePathList(dtUtil::GetDeltaRootPath() + "/examples/data" + ";");
 
    //Instantiate the application and look for the config file
    RefPtr<TestNestedView> app = new TestNestedView("config.xml");

@@ -20,10 +20,10 @@
 
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/shaderparamtexture3d.h>
+#include <dtUtil/datapathutils.h>
 #include <dtUtil/exception.h>
 #include <dtCore/refptr.h>
 
-#include <dtCore/globals.h>
 #include <osg/StateSet>
 #include <osg/Texture3D>
 #include <osg/Uniform>
@@ -34,8 +34,8 @@
 namespace dtCore
 {
    ///////////////////////////////////////////////////////////////////////////////
-   ShaderParamTexture3D::ShaderParamTexture3D(const std::string &name) :
-      ShaderParamTexture(name)
+   ShaderParamTexture3D::ShaderParamTexture3D(const std::string& name) 
+      : ShaderParamTexture(name)
    {
       SetShared(true); // we want to share Textures by default
       SetTextureObject(*(new osg::Texture3D()));
@@ -47,7 +47,7 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ShaderParamTexture3D::AttachToRenderState(osg::StateSet &stateSet)
+   void ShaderParamTexture3D::AttachToRenderState(osg::StateSet& stateSet)
    {
       dtCore::RefPtr<osg::Texture3D> tex3D;
 
@@ -60,7 +60,10 @@ namespace dtCore
       osg::Uniform *uniform = NULL;
 
       if (IsShared())
+      {
          uniform = GetUniformParam();
+      }
+
       // Create a new one if unshared or if shared but not set yet
       if (uniform == NULL)
       {
@@ -93,9 +96,9 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ShaderParamTexture3D::DetachFromRenderState(osg::StateSet &stateSet)
+   void ShaderParamTexture3D::DetachFromRenderState(osg::StateSet& stateSet)
    {
-      osg::Texture3D *tex3D = static_cast<osg::Texture3D*>(GetTextureObject());
+      osg::Texture3D* tex3D = static_cast<osg::Texture3D*>(GetTextureObject());
       if (tex3D != NULL)
       {
          if (!IsShared())
@@ -114,8 +117,8 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    void ShaderParamTexture3D::Update()
    {
-      osg::Uniform *uniform = GetUniformParam();
-      osg::Texture3D *tex3D = static_cast<osg::Texture3D*>(GetTextureObject());
+      osg::Uniform* uniform = GetUniformParam();
+      osg::Texture3D* tex3D = static_cast<osg::Texture3D*>(GetTextureObject());
 
       if (uniform == NULL)
       {
@@ -153,7 +156,7 @@ namespace dtCore
          RefPtr<osgDB::ReaderWriter::Options> options = new osgDB::ReaderWriter::Options;
          options->setObjectCacheHint(osgDB::ReaderWriter::Options::CACHE_ALL);
 
-         std::string filePath = dtCore::FindFileInPathList(GetTexture());
+         std::string filePath = dtUtil::FindFileInPathList(GetTexture());
          osg::Image *image = osgDB::readImageFile(filePath, options.get());
 
          if (image == NULL)
@@ -166,7 +169,7 @@ namespace dtCore
             //throw dtUtil::Exception(ShaderParameterException::INVALID_ATTRIBUTE,"Could not find image for texture at location: " + GetTexture());
          }
 
-         osg::Texture3D *tex3D = static_cast<osg::Texture3D*>(GetTextureObject());
+         osg::Texture3D* tex3D = static_cast<osg::Texture3D*>(GetTextureObject());
          tex3D->setImage(image);
 
          // we aren't dirty anymore
@@ -218,7 +221,7 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ShaderParamTexture3D::SetTexture(const std::string &path)
+   void ShaderParamTexture3D::SetTexture(const std::string& path)
    {
       mTexturePath = path;
 
@@ -227,16 +230,16 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ShaderParamTexture3D::SetAddressMode(const TextureAxis &axis, const AddressMode &mode)
+   void ShaderParamTexture3D::SetAddressMode(const TextureAxis& axis, const AddressMode& mode)
    {
       ShaderParamTexture::SetAddressMode(axis, mode);
       ApplyTexture3DValues();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   ShaderParameter *ShaderParamTexture3D::Clone()
+   ShaderParameter* ShaderParamTexture3D::Clone()
    {
-      ShaderParamTexture3D *newParam;
+      ShaderParamTexture3D* newParam;
 
       // Shared params are shared at the pointer level, exactly the same. Non shared are new instances
       if (IsShared())

@@ -20,46 +20,45 @@
 * THE SOFTWARE.
 */
 #include <dtCore/camera.h>
-#include <dtCore/globals.h>
 #include <dtCore/object.h>
 #include <dtCore/transform.h>
 #include <dtABC/application.h>
+#include <dtUtil/datapathutils.h>
 
 int main()
 {
 
-   std::string dataPath = dtCore::GetDeltaDataPathList();
-   dtCore::SetDataFilePathList(dataPath + ";" + 
-      dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
-      dtCore::GetDeltaRootPath() + "/examples/testApp/;");
-                        
- 
-   dtCore::RefPtr<dtABC::Application> app = new dtABC::Application( "config.xml" );
+   std::string dataPath = dtUtil::GetDeltaDataPathList();
+   dtUtil::SetDataFilePathList(dataPath + ";" + 
+      dtUtil::GetDeltaRootPath() + "/examples/data" + ";" +
+      dtUtil::GetDeltaRootPath() + "/examples/testApp/;");
+
+    dtCore::RefPtr<dtABC::Application> app = new dtABC::Application("config.xml");
 
 
    //load some terrain
-   dtCore::RefPtr<dtCore::Object> terrain = new dtCore::Object( "Terrain" );
-   terrain->LoadFile( "models/terrain_simple.ive" );
-   app->AddDrawable( terrain.get() );
+   dtCore::RefPtr<dtCore::Object> terrain = new dtCore::Object("Terrain");
+   terrain->LoadFile("models/terrain_simple.ive");
+   app->AddDrawable(terrain.get());
 
    //load an object
-   dtCore::RefPtr<dtCore::Object> brdm = new dtCore::Object( "BRDM" );
-   brdm->LoadFile( "models/brdm.ive" );
-   app->AddDrawable( brdm.get() );
-   osg::Vec3 brdmPosition( 0.0f, 0.0f, 3.5f );
-   osg::Vec3 brdmRotation( 90.0f, 0.0f, 0.0f );
+   dtCore::RefPtr<dtCore::Object> brdm = new dtCore::Object("BRDM");
+   brdm->LoadFile("models/brdm.ive");
+   app->AddDrawable(brdm.get());
+   osg::Vec3 brdmPosition(0.0f, 0.0f, 3.5f);
+   osg::Vec3 brdmRotation(90.0f, 0.0f, 0.0f);
    dtCore::Transform trans;
-   trans.SetTranslation( brdmPosition );
-   trans.SetRotation( brdmRotation );
-   brdm->SetTransform( trans );
+   trans.SetTranslation(brdmPosition);
+   trans.SetRotation(brdmRotation);
+   brdm->SetTransform(trans);
    
    //adjust the Camera position
    dtCore::Transform camPos;
-   osg::Vec3 camXYZ( 0.f, -30.f, 15.f );
-   osg::Vec3 lookAtXYZ ( brdmPosition );
-   osg::Vec3 upVec ( 0.f, 0.f, 1.f );
-   camPos.Set( camXYZ, lookAtXYZ, upVec );
-   app->GetCamera()->SetTransform( camPos );
+   osg::Vec3 camXYZ(0.f, -30.f, 15.f);
+   osg::Vec3 lookAtXYZ(brdmPosition);
+   osg::Vec3 upVec(0.f, 0.f, 1.f);
+   camPos.Set(camXYZ, lookAtXYZ, upVec);
+   app->GetCamera()->SetTransform(camPos);
 
    app->Config();
    app->Run();

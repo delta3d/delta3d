@@ -20,10 +20,10 @@
 
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/shaderparamtexturecubemap.h>
+#include <dtUtil/datapathutils.h>
 #include <dtUtil/exception.h>
 #include <dtCore/refptr.h>
 
-#include <dtCore/globals.h>
 #include <osg/StateSet>
 #include <osg/TextureCubeMap>
 #include <osg/Uniform>
@@ -34,8 +34,8 @@
 namespace dtCore
 {
    ///////////////////////////////////////////////////////////////////////////////
-   ShaderParamTextureCubeMap::ShaderParamTextureCubeMap(const std::string &name) :
-      ShaderParamTexture(name)
+   ShaderParamTextureCubeMap::ShaderParamTextureCubeMap(const std::string& name) 
+      : ShaderParamTexture(name)
    {
       SetShared(true); // we want to share Textures by default
       SetTextureObject(*(new osg::TextureCubeMap()));
@@ -174,7 +174,7 @@ namespace dtCore
          RefPtr<osgDB::ReaderWriter::Options> options = new osgDB::ReaderWriter::Options;
          options->setObjectCacheHint(osgDB::ReaderWriter::Options::CACHE_ALL);
 
-         std::string filePath = dtCore::FindFileInPathList(GetTexture());
+         std::string filePath = dtUtil::FindFileInPathList(GetTexture());
          osg::Image *image = osgDB::readImageFile(filePath, options.get());
 
          if (image == NULL)

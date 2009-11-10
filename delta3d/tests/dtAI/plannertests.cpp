@@ -28,8 +28,8 @@
 #include "testplannerutils.h"
 #include <dtAI/basenpc.h>
 #include <dtAI/npcparser.h>
-#include <dtCore/globals.h>
 #include <dtCore/refptr.h>
+#include <dtUtil/datapathutils.h>
 
 using namespace dtAI;
 
@@ -105,7 +105,7 @@ namespace dtTest
    {
       NPCParser parser;            
       dtCore::RefPtr<BaseNPC> pTestNPC = new BaseNPC("TestNPC");
-      pTestNPC->LoadNPCScript(dtCore::GetDeltaRootPath() + "/tests/dtAI/npcscript_test.txt");
+      pTestNPC->LoadNPCScript(dtUtil::GetDeltaRootPath() + "/tests/dtAI/npcscript_test.txt");
       pTestNPC->InitNPC();
       pTestNPC->SpawnNPC();
 

@@ -23,7 +23,6 @@
  *  Pjotr van Amerongen
  */
 
-#include <dtCore/globals.h>
 #include <dtUtil/log.h>
 #include <dtUtil/exception.h>
 

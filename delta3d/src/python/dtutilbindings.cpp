@@ -13,6 +13,7 @@ void init_NoiseBindings();
 void init_MatrixUtilBindings();
 void init_PolarDecompBindings();
 void init_LogBindings();
+//void init_TangentSpaceVisitorBindings();
 
 void init_DateTimeBindings()
 {
@@ -43,4 +44,5 @@ BOOST_PYTHON_MODULE(PyDtUtil)
    init_PolarDecompBindings();
    init_LogBindings();
    init_DateTimeBindings();
+   //init_TangentSpaceVisitorBindings();
 }

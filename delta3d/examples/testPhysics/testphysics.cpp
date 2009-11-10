@@ -24,13 +24,13 @@
 #include <dtCore/object.h>
 #include <dtCore/odebodywrap.h>
 #include <dtCore/odecontroller.h>
-#include <dtCore/globals.h>
 #include <dtCore/orbitmotionmodel.h>
 #include <dtCore/scene.h>
 #include <dtCore/camera.h>
 #include <dtCore/system.h>
 #include <dtCore/transform.h>
 #include <dtUtil/mathdefines.h>
+#include <dtUtil/datapathutils.h>
 #include <ode/ode.h>
 #include <cassert>
 #include <queue>
@@ -405,7 +405,7 @@ protected:
 
 int main(int argc, char** argv)
 {
-   dtCore::SetDataFilePathList( dtCore::GetDeltaRootPath() + "/examples/data" + ";");
+   dtUtil::SetDataFilePathList(dtUtil::GetDeltaRootPath() + "/examples/data" + ";");
 
    RefPtr<TestPhysicsApp> app = new TestPhysicsApp("config.xml");
 

@@ -14,7 +14,6 @@
 #include <dtUtil/objectfactory.h>
 #include <dtCore/refptr.h>
 #include <dtCore/system.h>
-#include <dtCore/globals.h>
 #include <dtUtil/xercesparser.h>
 #include <dtUtil/xercesutils.h>
 
@@ -327,7 +326,7 @@ namespace dtABC
    template<typename EventT, typename StateT>
    bool StateManager::Load(const std::string& filename)
    {
-      std::string fullFileName = dtCore::FindFileInPathList(filename);
+      std::string fullFileName = dtUtil::FindFileInPathList(filename);
       if (fullFileName.empty())
       {
          LOG_WARNING("StateManager - Can't find file " + filename)

@@ -29,9 +29,9 @@
 #include <dtAnim/animationchannel.h>
 #include <dtAnim/animationsequence.h>
 #include <dtAnim/cal3dmodeldata.h>
+#include <dtUtil/datapathutils.h>
 #include <dtUtil/xercesparser.h>
 #include <dtUtil/log.h>
-#include <dtCore/globals.h>
 
 namespace dtAnim
 {
@@ -67,10 +67,10 @@ namespace dtAnim
          coreModel = new CalCoreModel(handler.mName);
 
          //load skeleton
-         std::string skelFile = FindFileInPathList(path + handler.mSkeletonFilename);
+         std::string skelFile = dtUtil::FindFileInPathList(path + handler.mSkeletonFilename);
          if (!skelFile.empty())
          {
-            coreModel->loadCoreSkeleton(FindFileInPathList(path + handler.mSkeletonFilename));
+            coreModel->loadCoreSkeleton(dtUtil::FindFileInPathList(path + handler.mSkeletonFilename));
          }
          else
          {
@@ -81,7 +81,7 @@ namespace dtAnim
          std::vector<CharacterFileHandler::AnimationStruct>::iterator animItr = handler.mAnimations.begin();
          while (animItr != handler.mAnimations.end())
          {
-            std::string filename = FindFileInPathList(path + (*animItr).mFileName);
+            std::string filename = dtUtil::FindFileInPathList(path + (*animItr).mFileName);
 
             if (!filename.empty())
             {
@@ -99,7 +99,7 @@ namespace dtAnim
          std::vector<CharacterFileHandler::MorphAnimationStruct>::iterator morphAnimItr = handler.mMorphAnimations.begin();
          while (morphAnimItr != handler.mMorphAnimations.end())
          {
-            std::string filename = FindFileInPathList(path + (*morphAnimItr).mFileName);
+            std::string filename = dtUtil::FindFileInPathList(path + (*morphAnimItr).mFileName);
 
             if (!filename.empty())
             {
@@ -117,7 +117,7 @@ namespace dtAnim
          std::vector<CharacterFileHandler::MeshStruct>::iterator meshItr = handler.mMeshes.begin();
          while (meshItr != handler.mMeshes.end())
          {
-            std::string filename = FindFileInPathList(path + (*meshItr).mFileName);
+            std::string filename = dtUtil::FindFileInPathList(path + (*meshItr).mFileName);
             if (!filename.empty())
             {
                coreModel->loadCoreMesh(filename, (*meshItr).mName);
@@ -134,7 +134,7 @@ namespace dtAnim
               matItr != handler.mMaterials.end();
               ++matItr)
          {
-            std::string filename = FindFileInPathList(path + (*matItr).mFileName);
+            std::string filename = dtUtil::FindFileInPathList(path + (*matItr).mFileName);
 
             if (filename.empty())
             {

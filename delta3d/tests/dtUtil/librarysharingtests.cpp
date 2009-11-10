@@ -33,8 +33,8 @@
 #include <cstdio>
 
 #include <osg/Math>
-#include <dtCore/globals.h>
 #include <dtUtil/librarysharingmanager.h>
+#include <dtUtil/datapathutils.h>
 #include <dtDAL/librarymanager.h>
 #include <dtDAL/actortype.h>
 #include <dtDAL/actorproperty.h>
@@ -46,9 +46,9 @@
 
 class UtilTests : public CPPUNIT_NS::TestFixture 
 {
-    CPPUNIT_TEST_SUITE( UtilTests );
-    CPPUNIT_TEST( TestLibrarySharing );
-    CPPUNIT_TEST( TestPaths );
+    CPPUNIT_TEST_SUITE(UtilTests);
+    CPPUNIT_TEST(TestLibrarySharing);
+    CPPUNIT_TEST(TestPaths);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -57,7 +57,7 @@ public:
    {
       try 
       {
-         dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
+         dtUtil::SetDataFilePathList(dtUtil::GetDeltaDataPathList());
          std::string logName("UtilTests");
    
          logger = &dtUtil::Log::GetInstance();

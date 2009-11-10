@@ -6,12 +6,12 @@
 
 #include "testai.h"
 #include <dtCore/camera.h>
-#include <dtCore/globals.h>
 #include <dtCore/transform.h>
 #include <dtDAL/map.h>
 #include <dtDAL/project.h>
 #include <dtDAL/exceptionenum.h>
 #include <dtUtil/macros.h>
+#include <dtUtil/datapathutils.h>
 
 #include <dtAI/waypoint.h>
 #include <dtAI/waypointmanager.h>
@@ -216,7 +216,7 @@ void TestAI::LoadDemoMap(const std::string& pStr)
 {
    try
    {
-      std::string contextName =  dtCore::GetDeltaRootPath()+"/examples/data/demoMap";
+      std::string contextName =  dtUtil::GetDeltaRootPath()+"/examples/data/demoMap";
       Project::GetInstance().SetContext(contextName);
       std::string pContext = Project::GetInstance().GetContext();
       Map &myMap = Project::GetInstance().GetMap(pStr);

@@ -12,7 +12,6 @@
 #include <dtCore/scene.h>
 #include <dtCore/camera.h>
 #include <dtCore/orbitmotionmodel.h>
-#include <dtCore/globals.h>
 #include <dtCore/light.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/exceptionenum.h>
@@ -27,6 +26,7 @@
 #include <dtAnim/posemesh.h>
 #include <dtAnim/characterwrapper.h>
 
+#include <dtUtil/datapathutils.h>
 #include <dtUtil/xercesparser.h>
 #include <dtUtil/stringutils.h>
 #include <dtUtil/fileutils.h>
@@ -56,6 +56,12 @@
 #include <dtCore/hotspotattachment.h>
 #include <dtCore/refptr.h>
 #include <dtCore/pointaxis.h>
+
+#include <dtAnim/cal3danimator.h>
+#include <cal3d/model.h>
+#include <cal3d/mixer.h>
+#include <cal3d/skeleton.h>
+#include <cal3d/bone.h>
 
 typedef std::vector<dtCore::RefPtr<dtCore::HotSpotAttachment> > VectorHotSpot;
 
@@ -107,11 +113,11 @@ void Viewer::Config()
    //camera->setProjectionMatrixAsPerspective(30.0f,
    //         static_cast<double>(mGLWidget->width())/static_cast<double>(mGLWidget->height()), 1.0f, 10000.0f);
 
-   std::string exampleDataPath = dtCore::GetEnvironment("DELTA_ROOT");
-   std::string rootDataPath    = dtCore::GetEnvironment("DELTA_DATA");
+   std::string exampleDataPath = dtUtil::GetEnvironment("DELTA_ROOT");
+   std::string rootDataPath    = dtUtil::GetEnvironment("DELTA_DATA");
    exampleDataPath += "/examples/data;" + rootDataPath;
 
-   dtCore::SetDataFilePathList(dtCore::GetDataFilePathList() + ";" + exampleDataPath);
+   dtUtil::SetDataFilePathList(dtUtil::GetDataFilePathList() + ";" + exampleDataPath);
 
    //adjust the Camera position
    dtCore::Transform camPos;
@@ -157,7 +163,7 @@ void Viewer::OnLoadCharFile(const QString& filename)
    QDir dir(filename);
    dir.cdUp();
 
-   SetDataFilePathList(dtCore::GetDataFilePathList() + ";" +
+   SetDataFilePathList(dtUtil::GetDataFilePathList() + ";" +
                        dir.path().toStdString() + ";");
 
    OnUnloadCharFile();

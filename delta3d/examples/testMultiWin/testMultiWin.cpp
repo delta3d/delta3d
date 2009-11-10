@@ -2,11 +2,11 @@
 
 #include "testMultiWin.h"
 #include <dtCore/object.h>
-#include <dtCore/globals.h>
 #include <dtCore/camera.h>
 #include <dtCore/scene.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/transform.h>
+#include <dtUtil/datapathutils.h>
 
 #include <osgViewer/CompositeViewer>
 
@@ -100,7 +100,7 @@ void TestMultiWin::Config()
 int main()
 {
    //set data search path to parent directory and delta3d/data
-   dtCore::SetDataFilePathList(dtCore::GetDeltaRootPath() + "/examples/data" + ";");
+   dtUtil::SetDataFilePathList(dtUtil::GetDeltaRootPath() + "/examples/data" + ";");
 
    //Instantiate the application and look for the config file
    RefPtr<TestMultiWin> app = new TestMultiWin("config.xml");

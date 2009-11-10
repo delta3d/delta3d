@@ -30,7 +30,6 @@
 #include <cppunit/extensions/HelperMacros.h>
 
 #include <dtCore/refptr.h>
-#include <dtCore/globals.h>
 
 #include <dtDAL/librarymanager.h>
 #include <dtDAL/enginepropertytypes.h>

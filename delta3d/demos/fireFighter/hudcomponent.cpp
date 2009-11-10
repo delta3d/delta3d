@@ -29,9 +29,9 @@
 #include <fireFighter/scbaactor.h>
 #include <fireFighter/fireactor.h>
 #include <fireFighter/helpwindow.h>
-#include <dtCore/globals.h>
 #include <dtCore/deltawin.h>
 #include <dtActors/taskactorgameevent.h>
+#include <dtUtil/datapathutils.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/exception.h>
 #include <dtABC/application.h>
@@ -109,7 +109,7 @@ void HUDComponent::SetupGUI(dtCore::DeltaWin& win,
    try
    {
       std::string scheme = "CEGUI/schemes/WindowsLook.scheme";
-      std::string path = dtCore::FindFileInPathList(scheme);
+      std::string path = dtUtil::FindFileInPathList(scheme);
       if (path.empty())
       {
          throw dtUtil::Exception(ExceptionEnum::CEGUI_EXCEPTION,

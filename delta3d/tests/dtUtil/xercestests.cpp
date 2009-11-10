@@ -31,7 +31,7 @@
 #include <dtUtil/xercesparser.h>
 #include <dtUtil/xercesutils.h>
 #include <dtUtil/xerceswriter.h>
-#include <dtCore/globals.h>
+#include <dtUtil/datapathutils.h>
 #include <cppunit/extensions/HelperMacros.h>
 
 #include <xercesc/dom/DOMDocument.hpp>
@@ -48,11 +48,12 @@ XERCES_CPP_NAMESPACE_USE
  * @class XercesTests
  * @brief Unit tests for xercesparser, 
  */
-class XercesTests : public CPPUNIT_NS::TestFixture {
-   CPPUNIT_TEST_SUITE( XercesTests );
-   CPPUNIT_TEST( TestXercesParser );      
-   CPPUNIT_TEST( TestFindAttributeValueFor );         
-   CPPUNIT_TEST( TestXercesWriter );
+class XercesTests : public CPPUNIT_NS::TestFixture 
+{
+   CPPUNIT_TEST_SUITE(XercesTests);
+   CPPUNIT_TEST(TestXercesParser);      
+   CPPUNIT_TEST(TestFindAttributeValueFor);         
+   CPPUNIT_TEST(TestXercesWriter);
    CPPUNIT_TEST_SUITE_END();
 
    public:
@@ -112,12 +113,12 @@ class XercesTests : public CPPUNIT_NS::TestFixture {
 };
 
 // Registers the fixture into the 'registry'
-CPPUNIT_TEST_SUITE_REGISTRATION( XercesTests );
+CPPUNIT_TEST_SUITE_REGISTRATION(XercesTests);
 
 void XercesTests::TestContentHandler::startElement(const XMLCh* const uri,
-                                                     const XMLCh* const localname,
-                                                     const XMLCh* const qname,
-                                                     const Attributes& attrs)
+                                                   const XMLCh* const localname,
+                                                   const XMLCh* const qname,
+                                                   const Attributes& attrs)
 {
    if(strcmp(XMLString::transcode(localname), "TopLevel") == 0)
    {
@@ -162,7 +163,7 @@ void XercesTests::setUp()
          return;
       }
 
-      std::string root = dtCore::GetDeltaRootPath();
+      std::string root = dtUtil::GetDeltaRootPath();
       if(root.size() == 0)
       {
          CPPUNIT_FAIL("DELTA_ROOT is not set");

@@ -29,10 +29,10 @@
 #include <dtUtil/log.h>
 #include <dtUtil/macros.h>
 #include <dtUtil/fileutils.h>
+#include <dtUtil/datapathutils.h>
 #include <dtCore/refptr.h>
 #include <dtCore/scene.h>
 #include <dtCore/shadermanager.h>
-#include <dtCore/globals.h>
 #include <dtGame/gameapplication.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/defaultmessageprocessor.h>
@@ -73,7 +73,7 @@ public:
 
    void TestCleanup()
    {
-      dtCore::SetDataFilePathList(projectContext);
+      dtUtil::SetDataFilePathList(projectContext);
       dtCore::ShaderManager::GetInstance().LoadShaderDefinitions("Shaders/TestShaderDefinitions.xml",false);
 
       CPPUNIT_ASSERT(dtCore::ShaderManager::GetInstance().GetNumShaderGroupPrototypes() > 0);
@@ -101,5 +101,5 @@ private:
 CPPUNIT_TEST_SUITE_REGISTRATION(GameApplicationTests);
 
 
-const std::string GameApplicationTests::TESTS_DIR(dtCore::GetDeltaRootPath()+dtUtil::FileUtils::PATH_SEPARATOR+"tests");
+const std::string GameApplicationTests::TESTS_DIR(dtUtil::GetDeltaRootPath()+dtUtil::FileUtils::PATH_SEPARATOR+"tests");
 const std::string GameApplicationTests::projectContext(GameApplicationTests::TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "data" + dtUtil::FileUtils::PATH_SEPARATOR + "ProjectContext");

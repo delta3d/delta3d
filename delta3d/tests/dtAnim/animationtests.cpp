@@ -32,9 +32,8 @@
 #include <dtAnim/cal3dmodelwrapper.h>
 
 #include <dtDAL/project.h>
-
-#include <dtCore/globals.h>
 #include <dtCore/refptr.h>
+#include <dtUtil/datapathutils.h>
 
 #include <osg/Math>
 #include <sstream>
@@ -154,9 +153,9 @@ namespace dtAnim
    void AnimationTests::setUp()
    {      
       mHelper = new AnimationHelper();
-      dtDAL::Project::GetInstance().SetContext(dtCore::GetDeltaRootPath() + "/examples/data/demoMap");
+      dtDAL::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data/demoMap");
       
-      std::string modelPath = dtCore::FindFileInPathList("SkeletalMeshes/marine_test.xml");
+      std::string modelPath = dtUtil::FindFileInPathList("SkeletalMeshes/marine_test.xml");
       CPPUNIT_ASSERT(!modelPath.empty());
 
       mLastAnimatableCompleted = NULL;

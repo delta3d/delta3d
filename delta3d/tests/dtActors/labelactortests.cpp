@@ -37,7 +37,6 @@
 #include <dtABC/labelactor.h>
 #include <dtActors/labelactorproxy.h>
 #include <dtActors/engineactorregistry.h>
-#include <dtCore/globals.h>
 #include <dtCore/system.h>
 #include <dtDAL/librarymanager.h>
 #include <dtDAL/enginepropertytypes.h>

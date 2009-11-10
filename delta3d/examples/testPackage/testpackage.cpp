@@ -27,12 +27,10 @@
  */
 
 /// Demo application illustrating map loading and actor manipulation
-#include <dtCore/globals.h>
 #include <dtUtil/packager.h>
+#include <dtUtil/datapathutils.h>
 
 #include <iostream>
-
-using namespace dtCore;
 
 class TestPackage
 {
@@ -83,11 +81,11 @@ private:
 
 int main()
 {
-   std::string dataPath = dtCore::GetDeltaDataPathList();
-   dtCore::SetDataFilePathList(dataPath + ";" +
-                               dtCore::GetDeltaRootPath() + "/examples/data" + ";");
+   std::string dataPath = dtUtil::GetDeltaDataPathList();
+   dtUtil::SetDataFilePathList(dataPath + ";" +
+                               dtUtil::GetDeltaRootPath() + "/examples/data" + ";");
 
-   TestPackage* testPackage = new TestPackage(dtCore::GetDeltaRootPath() + "/examples/data/packager/");
+   TestPackage* testPackage = new TestPackage(dtUtil::GetDeltaRootPath() + "/examples/data/packager/");
    testPackage->run();
 
    return 0;

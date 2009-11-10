@@ -24,7 +24,6 @@
 
 #include "testprerender.h"
 
-#include <dtCore/globals.h>
 #include <dtCore/camera.h>
 #include <dtCore/scene.h>
 #include <dtCore/deltawin.h>
@@ -32,6 +31,8 @@
 
 #include <dtDAL/project.h>
 #include <dtDAL/map.h>
+
+#include <dtUtil/datapathutils.h>
 
 #include <osg/Texture2D>
 #include <osgGA/GUIEventAdapter>
@@ -148,7 +149,7 @@ void TestPreRender::CreateTextureScene()
    mTextureScene = new dtCore::Scene;
 
    // Set the root directory where our art assets are to be found
-   std::string contextName = dtCore::GetDeltaRootPath() + "/examples/data/demoMap";
+   std::string contextName = dtUtil::GetDeltaRootPath() + "/examples/data/demoMap";
    dtDAL::Project::GetInstance().SetContext(contextName, true);
 
    // Load the map into our custom scene
@@ -216,10 +217,10 @@ int main(int argc, char* argv[])
       mainObjectName = std::string(argv[1]);
    }
 
-   std::string dataPath = dtCore::GetDeltaDataPathList();
-   dtCore::SetDataFilePathList(dataPath + ";" +
-                               dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
-                               dtCore::GetDeltaRootPath() + "/examples/testPreRender");
+   std::string dataPath = dtUtil::GetDeltaDataPathList();
+   dtUtil::SetDataFilePathList(dataPath + ";" +
+                               dtUtil::GetDeltaRootPath() + "/examples/data" + ";" +
+                               dtUtil::GetDeltaRootPath() + "/examples/testPreRender");
 
    // We need to set custom display settings before the creating the app
    osg::DisplaySettings* display = osg::DisplaySettings::instance();

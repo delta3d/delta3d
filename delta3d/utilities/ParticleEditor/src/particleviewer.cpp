@@ -32,12 +32,13 @@
 
 #include <dtCore/refptr.h>
 #include <dtCore/system.h>
-#include <dtCore/globals.h>
 #include <dtCore/transform.h>
 #include <dtCore/scene.h>
 #include <dtCore/camera.h>
 #include <dtCore/light.h>
 #include <dtCore/compass.h>
+
+#include <dtUtil/datapathutils.h>
 
 ////////////////////////////////////////////////////////////////////////////////
 ParticleViewer::ParticleViewer()

@@ -6,10 +6,10 @@
 #include <dtCore/transformable.h>
 #include <dtCore/transform.h>
 #include <dtCore/system.h>
-#include <dtCore/globals.h>
 #include <dtUtil/log.h>
 #include <dtUtil/matrixutil.h>
 #include <dtUtil/stringutils.h>
+#include <dtUtil/datapathutils.h>
 
 #include <osg/Matrix>
 #include <osg/MatrixTransform>
@@ -151,7 +151,7 @@ namespace dtCore
          options->setObjectCacheHint(osgDB::ReaderWriter::Options::CACHE_IMAGES);
          osg::ref_ptr<osg::Node> node;
 
-         std::string psFile = dtCore::FindFileInPathList(found->second);
+         std::string psFile = dtUtil::FindFileInPathList(found->second);
          if (psFile.empty())
          {
             LOG_WARNING("Can't find particle effect file:" + found->second);
@@ -172,7 +172,7 @@ namespace dtCore
 
          if(parent != 0)
          {
-            node->setUpdateCallback( new DetonationUpdateCallback(detonation) );
+            node->setUpdateCallback(new DetonationUpdateCallback(detonation));
          }
          else
          {

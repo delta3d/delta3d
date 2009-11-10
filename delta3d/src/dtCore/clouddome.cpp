@@ -1,10 +1,10 @@
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/clouddome.h>
-#include <dtCore/globals.h>
 #include <dtCore/moveearthtransform.h>
 #include <dtCore/system.h>
 #include <dtUtil/log.h>
 #include <dtUtil/noisetexture.h>
+#include <dtUtil/datapathutils.h>
 
 #include <osg/BlendFunc>
 #include <osg/Geometry>
@@ -20,7 +20,7 @@ using namespace dtUtil;
 
 IMPLEMENT_MANAGEMENT_LAYER(CloudDome)
 
-// Constructor without volume texture file
+////////////////////////////////////////////////////////////////////////////////
 CloudDome::CloudDome(int   octaves,
                      int   frequency,
                      float amp,
@@ -60,13 +60,13 @@ CloudDome::CloudDome(int   octaves,
    , mOffset(.01f, .01f, 0.f)
 {
    RegisterInstance(this);
-   SetOSGNode( new osg::Group() );
-   GetOSGNode()->setName( this->GetName() );
+   SetOSGNode(new osg::Group());
+   GetOSGNode()->setName(this->GetName());
    Create();
    AddSender(&System::GetInstance());
 }
 
-// Constructor with filename of volume texture
+////////////////////////////////////////////////////////////////////////////////
 CloudDome::CloudDome(float radius,
                      int   segments,
                      const std::string& filename)
@@ -102,34 +102,37 @@ CloudDome::CloudDome(float radius,
 {
    RegisterInstance(this);
 
-   SetOSGNode( new osg::Group() );
-   GetOSGNode()->setName( this->GetName() );
+   SetOSGNode(new osg::Group());
+   GetOSGNode()->setName(this->GetName());
 
    Create();
-   AddSender( &System::GetInstance() );
+   AddSender(&System::GetInstance());
 }
 
+////////////////////////////////////////////////////////////////////////////////
 CloudDome::~CloudDome()
 {
    DeregisterInstance(this);
-   RemoveSender( &System::GetInstance() );
+   RemoveSender(&System::GetInstance());
 }
 
-void CloudDome::LoadShaderSource( osg::Shader* obj, const std::string& fileName )
+////////////////////////////////////////////////////////////////////////////////
+void CloudDome::LoadShaderSource(osg::Shader* obj, const std::string& fileName)
 {
-   std::string fqFileName = dtCore::FindFileInPathList(fileName);
-   if ( fqFileName.length() != 0 )
+   std::string fqFileName = dtUtil::FindFileInPathList(fileName);
+   if (fqFileName.length() != 0)
    {
-      obj->loadShaderSourceFromFile( fqFileName.c_str() );
+      obj->loadShaderSourceFromFile(fqFileName.c_str());
    }
    else
    {
       Log::GetInstance().LogMessage(Log::LOG_WARNING, "clouddome.cpp",
-        "File '%s' not found.", fileName.c_str() );
+        "File '%s' not found.", fileName.c_str());
    }
 }
 
-osg::Geode* CloudDome::CreateDome( float radius, int segs )
+////////////////////////////////////////////////////////////////////////////////
+osg::Geode* CloudDome::CreateDome(float radius, int segs)
 {
    int i, j;
    float lev[] = { 1.0, 5.0, 10.0, 15.0, 30.0, 45.0 , 60.0, 75, 90.0  };
@@ -150,7 +153,7 @@ osg::Geode* CloudDome::CreateDome( float radius, int segs )
 
    float x, y, z;
    float alpha, theta;
-   int nlev = sizeof( lev )/sizeof(float);
+   int nlev = sizeof(lev) / sizeof(float);
 
    RefPtr<osg::Geometry> geom = new osg::Geometry;
 
@@ -160,58 +163,58 @@ osg::Geode* CloudDome::CreateDome( float radius, int segs )
 
    int ci = 0;
 
-   for ( i = 0; i < nlev; ++i )
+   for (i = 0; i < nlev; ++i)
    {
-      for ( j = 0; j < segs; ++j, ++ci)
+      for (j = 0; j < segs; ++j, ++ci)
       {
-         alpha = osg::DegreesToRadians( lev[i] );
-         theta = osg::DegreesToRadians( float( j*360/(segs-1) ) );
+         alpha = osg::DegreesToRadians(lev[i]);
+         theta = osg::DegreesToRadians(float(j * 360 / (segs-1)));
 
-         x = radius * cosf( alpha ) * cosf( theta );
-         y = radius * cosf( alpha ) * -sinf( theta );
-         z = radius * sinf( alpha );
+         x = radius * cosf(alpha) * cosf(theta);
+         y = radius * cosf(alpha) * -sinf(theta);
+         z = radius * sinf(alpha);
 
-         (*coords)[ci].set( x, y, z );
-         (*colors)[ci].set( cc[i][0], cc[i][1], cc[i][2], cc[i][3] );
-         (*tcoords)[ci].set( float( j/segs ), float( i/float(nlev-1) ) );
-
+         (*coords)[ci].set(x, y, z);
+         (*colors)[ci].set(cc[i][0], cc[i][1], cc[i][2], cc[i][3]);
+         (*tcoords)[ci].set(float(j / segs), float(i / float(nlev-1)));
       }
    }
 
-   for ( i = 0; i < nlev-1; ++i )
+   for (i = 0; i < nlev - 1; ++i)
    {
       RefPtr<osg::DrawElementsUShort> drawElements = new osg::DrawElementsUShort(osg::PrimitiveSet::TRIANGLE_STRIP);
 
-      for ( j = 0; j < segs; ++j )
+      for (j = 0; j < segs; ++j)
       {
-         drawElements->push_back( (i+1)*segs + j );
-         drawElements->push_back( (i+0)*segs + j );
+         drawElements->push_back((i+1)*segs + j);
+         drawElements->push_back((i+0)*segs + j);
       }
 
-      geom->addPrimitiveSet( drawElements.get() );
+      geom->addPrimitiveSet(drawElements.get());
    }
 
-   geom->setVertexArray( coords.get() );
-   geom->setTexCoordArray( 0, tcoords.get() );
+   geom->setVertexArray(coords.get());
+   geom->setTexCoordArray(0, tcoords.get());
 
-   geom->setColorArray( colors.get() );
-   geom->setColorBinding( osg::Geometry::BIND_PER_VERTEX );
+   geom->setColorArray(colors.get());
+   geom->setColorBinding(osg::Geometry::BIND_PER_VERTEX);
 
    osg::Geode* geode = new osg::Geode;
-   geode->addDrawable( geom.get() );
+   geode->addDrawable(geom.get());
    geode->setName("CloudDome");
 
    return geode;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void CloudDome::Create()
 {
    mXform = new MoveEarthySkyWithEyePointTransform();
 
-   mDome = CreateDome( mRadius, mSegments );
+   mDome = CreateDome(mRadius, mSegments);
    osg::StateSet* domeStateSet = mDome->getOrCreateStateSet();
 
-   if ( mFileName != "" )
+   if (mFileName != "")
    {
       mImage_3D = osgDB::readImageFile(mFileName);
       if (!mImage_3D.valid())
@@ -233,76 +236,78 @@ void CloudDome::Create()
    mTex3D = new osg::Texture3D;
    mTex3D->setImage(mImage_3D.get());
 
-   mTex3D->setFilter( osg::Texture3D::MIN_FILTER, osg::Texture3D::LINEAR );
-   mTex3D->setFilter( osg::Texture3D::MAG_FILTER, osg::Texture3D::LINEAR );
-   mTex3D->setWrap( osg::Texture3D::WRAP_S, osg::Texture3D::REPEAT );
-   mTex3D->setWrap( osg::Texture3D::WRAP_T, osg::Texture3D::REPEAT );
-   mTex3D->setWrap( osg::Texture3D::WRAP_R, osg::Texture3D::REPEAT );
+   mTex3D->setFilter(osg::Texture3D::MIN_FILTER, osg::Texture3D::LINEAR);
+   mTex3D->setFilter(osg::Texture3D::MAG_FILTER, osg::Texture3D::LINEAR);
+   mTex3D->setWrap(osg::Texture3D::WRAP_S, osg::Texture3D::REPEAT);
+   mTex3D->setWrap(osg::Texture3D::WRAP_T, osg::Texture3D::REPEAT);
+   mTex3D->setWrap(osg::Texture3D::WRAP_R, osg::Texture3D::REPEAT);
 
-   domeStateSet->setTextureAttributeAndModes( 0, mTex3D.get(), osg::StateAttribute::ON );
+   domeStateSet->setTextureAttributeAndModes(0, mTex3D.get(), osg::StateAttribute::ON);
 
    // Blending Function
    // This operates on the fragments AFTER the frag-shader to get alpha blending
    // with the skydome background
    RefPtr<osg::BlendFunc> trans = new osg::BlendFunc();
-   trans->setFunction( osg::BlendFunc::SRC_ALPHA ,osg::BlendFunc::ONE_MINUS_SRC_ALPHA );
-   domeStateSet->setAttributeAndModes( trans.get() );
+   trans->setFunction(osg::BlendFunc::SRC_ALPHA ,osg::BlendFunc::ONE_MINUS_SRC_ALPHA);
+   domeStateSet->setAttributeAndModes(trans.get());
 
    RefPtr<osg::Program> progObj = new osg::Program;
    mProgList.push_back(progObj);
-   domeStateSet->setAttributeAndModes( progObj.get(), osg::StateAttribute::ON );
+   domeStateSet->setAttributeAndModes(progObj.get(), osg::StateAttribute::ON);
 
    // Set the program objects
    mCloudProg = new osg::Program;
    mProgList.push_back(mCloudProg);
 
-   mCloudVert = new osg::Shader( osg::Shader::VERTEX );
-   mCloudFrag = new osg::Shader( osg::Shader::FRAGMENT );
+   mCloudVert = new osg::Shader(osg::Shader::VERTEX);
+   mCloudFrag = new osg::Shader(osg::Shader::FRAGMENT);
 
-   mCloudProg->addShader( mCloudFrag.get() );
-   mCloudProg->addShader( mCloudVert.get() );
+   mCloudProg->addShader(mCloudFrag.get());
+   mCloudProg->addShader(mCloudVert.get());
 
-   LoadShaderSource( mCloudVert.get(), GetDeltaRootPath()+"/data/shaders/cloud.vert" );
-   LoadShaderSource( mCloudFrag.get(), GetDeltaRootPath()+"/data/shaders/cloud.frag" );
+   LoadShaderSource(mCloudVert.get(), dtUtil::GetDeltaRootPath()+"/data/shaders/cloud.vert");
+   LoadShaderSource(mCloudFrag.get(), dtUtil::GetDeltaRootPath()+"/data/shaders/cloud.frag");
 
-   RefPtr<osg::Uniform> scale = new osg::Uniform( "Scale", mScale / 1000 );
-   RefPtr<osg::Uniform> cutoff = new osg::Uniform( "Cutoff", mCutoff );
-   RefPtr<osg::Uniform> exponent = new osg::Uniform( "Exponent", mExponent );
-   RefPtr<osg::Uniform> bias = new osg::Uniform( "Bias", mBias );
-   RefPtr<osg::Uniform> offset = new osg::Uniform( "Offset", mOffset);
-   RefPtr<osg::Uniform> cloudColor = new osg::Uniform( "CloudColor", mCloudColor );
+   RefPtr<osg::Uniform> scale = new osg::Uniform("Scale", mScale / 1000);
+   RefPtr<osg::Uniform> cutoff = new osg::Uniform("Cutoff", mCutoff);
+   RefPtr<osg::Uniform> exponent = new osg::Uniform("Exponent", mExponent);
+   RefPtr<osg::Uniform> bias = new osg::Uniform("Bias", mBias);
+   RefPtr<osg::Uniform> offset = new osg::Uniform("Offset", mOffset);
+   RefPtr<osg::Uniform> cloudColor = new osg::Uniform("CloudColor", mCloudColor);
 
-   RefPtr<osg::Uniform> noise = new osg::Uniform( osg::Uniform::SAMPLER_3D, "Noise" );
-   noise->set( 0 );  // TODO: Change texture files at runtime
+   RefPtr<osg::Uniform> noise = new osg::Uniform(osg::Uniform::SAMPLER_3D, "Noise");
+   noise->set(0);  // TODO: Change texture files at runtime
 
-   domeStateSet->addUniform( scale.get() );
-   domeStateSet->addUniform( cutoff.get() );
-   domeStateSet->addUniform( exponent.get() );
-   domeStateSet->addUniform( bias.get() );
-   domeStateSet->addUniform( offset.get() );
-   domeStateSet->addUniform( cloudColor.get() );
-   domeStateSet->addUniform( noise.get() );
+   domeStateSet->addUniform(scale.get());
+   domeStateSet->addUniform(cutoff.get());
+   domeStateSet->addUniform(exponent.get());
+   domeStateSet->addUniform(bias.get());
+   domeStateSet->addUniform(offset.get());
+   domeStateSet->addUniform(cloudColor.get());
+   domeStateSet->addUniform(noise.get());
 
    // TODO: Add the fog uniform parameter
-   domeStateSet->setAttributeAndModes( mCloudProg.get(), osg::StateAttribute::ON );
+   domeStateSet->setAttributeAndModes(mCloudProg.get(), osg::StateAttribute::ON);
 
-   mXform->addChild( mDome.get() );
+   mXform->addChild(mDome.get());
 
-   if ( osg::Group* group = GetOSGNode()->asGroup() )
+   if (osg::Group* group = GetOSGNode()->asGroup())
    {
-      group->addChild( mXform.get() );
+      group->addChild(mXform.get());
    }
 }
 
-void CloudDome::Repaint(   const osg::Vec3& skyColor,
-                           const osg::Vec3& fogColor,
-                           double sunAngle,
-                           double sunAzimuth,
-                           double visibility )
+////////////////////////////////////////////////////////////////////////////////
+void CloudDome::Repaint(const osg::Vec3& skyColor,
+                        const osg::Vec3& fogColor,
+                        double sunAngle,
+                        double sunAzimuth,
+                        double visibility)
 {
 }
 
-void CloudDome::OnMessage( MessageData *data )
+////////////////////////////////////////////////////////////////////////////////
+void CloudDome::OnMessage(MessageData* data)
 {
    if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
    {
@@ -311,13 +316,17 @@ void CloudDome::OnMessage( MessageData *data )
    }
 }
 
-void CloudDome::Update( const double deltaFrameTime )
+////////////////////////////////////////////////////////////////////////////////
+void CloudDome::Update(const double deltaFrameTime)
 {
    ctime += deltaFrameTime;
+   
    if (ctime > INT_MAX)
+   {
       ctime = 0;
+   }
 
-   mOffset.set( ctime*mSpeedX/10, ctime*mSpeedY/20, 0.0f );
+   mOffset.set(ctime * mSpeedX / 10, ctime * mSpeedY / 20, 0.0f);
 
    osg::StateSet* domeStateSet = mDome->getOrCreateStateSet();
 
@@ -325,27 +334,29 @@ void CloudDome::Update( const double deltaFrameTime )
    {
       if (!shaders_enabled)
       {
-         for ( unsigned int i = 0; i < mProgList.size(); i++ )
+         for (unsigned int i = 0; i < mProgList.size(); i++)
          {
-            domeStateSet->setAttributeAndModes( mProgList[i].get(), osg::StateAttribute::ON );
+            domeStateSet->setAttributeAndModes(mProgList[i].get(), osg::StateAttribute::ON);
          }
          shaders_enabled = true;
       }
 
       // Set Uniform variables
-      domeStateSet->getUniform( "Offset" )->set( mOffset );
-      domeStateSet->getUniform( "Scale" )->set( mScale/1000 );
-      domeStateSet->getUniform( "Exponent" )->set( mExponent/1000 );
-      domeStateSet->getUniform( "Cutoff" )->set( mCutoff );
-      domeStateSet->getUniform( "Bias" )->set( mBias );
-      domeStateSet->getUniform( "CloudColor" )->set( mCloudColor );
+      domeStateSet->getUniform("Offset")->set(mOffset);
+      domeStateSet->getUniform("Scale")->set(mScale / 1000);
+      domeStateSet->getUniform("Exponent")->set(mExponent / 1000);
+      domeStateSet->getUniform("Cutoff")->set(mCutoff);
+      domeStateSet->getUniform("Bias")->set(mBias);
+      domeStateSet->getUniform("CloudColor")->set(mCloudColor);
    }
    else
    {
-      for ( unsigned int i = 0; i < mProgList.size(); i++ )
+      for (unsigned int i = 0; i < mProgList.size(); i++)
       {
-         domeStateSet->setAttributeAndModes( mProgList[i].get(), osg::StateAttribute::OFF );
+         domeStateSet->setAttributeAndModes(mProgList[i].get(), osg::StateAttribute::OFF);
       }
       shaders_enabled = false;
    }
 }
+
+////////////////////////////////////////////////////////////////////////////////

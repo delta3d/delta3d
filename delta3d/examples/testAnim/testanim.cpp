@@ -26,10 +26,10 @@
 #include "testanim.h"
 
 #include <dtUtil/hotspotdefinition.h>
+#include <dtUtil/datapathutils.h>
 #include <dtUtil/mathdefines.h>
 #include <dtUtil/exception.h>
 
-#include <dtCore/globals.h>
 #include <dtCore/flymotionmodel.h>
 #include <dtCore/camera.h>
 #include <dtCore/deltawin.h>
@@ -124,11 +124,11 @@ void TestAnim::OnStartup(dtGame::GameApplication& app)
 {
    app.GetWindow()->SetWindowTitle("TestAnim");
 
-   std::string dataPath = dtCore::GetDeltaDataPathList();
-   dtCore::SetDataFilePathList(dataPath + ";" +
-      dtCore::GetDeltaRootPath() + "/examples/data" + ";");
+   std::string dataPath = dtUtil::GetDeltaDataPathList();
+   dtUtil::SetDataFilePathList(dataPath + ";" +
+      dtUtil::GetDeltaRootPath() + "/examples/data" + ";");
 
-   std::string context = dtCore::GetDeltaRootPath() + "/examples/data/demoMap";
+   std::string context = dtUtil::GetDeltaRootPath() + "/examples/data/demoMap";
 
    typedef std::vector<dtDAL::ActorProxy* > ProxyContainer;
    ProxyContainer proxies;
@@ -256,13 +256,6 @@ void TestAnim::InitializeAnimationActor(dtAnim::AnimationGameActorProxy* gamePro
       {
          //we must register the helper with the animation component
          animComp->RegisterActor(*gameProxy, *helper);
-
-
-         //since we are doing hardware skinning there is no need for
-         //the physique driver
-         //TODO: this should be refactored out of here and into the place that decides
-         //      whether or not we are doing hardware skinning
-         helper->GetAnimator()->SetPhysiqueDriver(NULL);
 
          if (isPlayer)
          {

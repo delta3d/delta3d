@@ -29,10 +29,10 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/log.h>
+#include <dtUtil/datapathutils.h>
 #include <dtUtil/exception.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/exceptionenum.h>
-#include <dtCore/globals.h>
 #include <osgDB/FileNameUtils>
 #include <osg/Version>
 
@@ -82,8 +82,8 @@ class FileUtilsTests : public CPPUNIT_NS::TestFixture
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(FileUtilsTests);
 
-const std::string DATA_DIR = dtCore::GetDeltaRootPath()+dtUtil::FileUtils::PATH_SEPARATOR+"examples/data";
-const std::string TESTS_DIR = dtCore::GetDeltaRootPath()+dtUtil::FileUtils::PATH_SEPARATOR+"tests";
+const std::string DATA_DIR = dtUtil::GetDeltaRootPath()+dtUtil::FileUtils::PATH_SEPARATOR+"examples/data";
+const std::string TESTS_DIR = dtUtil::GetDeltaRootPath()+dtUtil::FileUtils::PATH_SEPARATOR+"tests";
 const std::string MAPPROJECTCONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtDAL" + dtUtil::FileUtils::PATH_SEPARATOR + "WorkingMapProject";
 const std::string PROJECTCONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtDAL" + dtUtil::FileUtils::PATH_SEPARATOR + "WorkingProject";
 
@@ -106,7 +106,7 @@ void FileUtilsTests::setUp()
 {
    try
    {
-      dtCore::SetDataFilePathList( dtCore::GetDataFilePathList() + ";" + dtCore::GetDeltaRootPath()+"/examples/data/;");
+      dtUtil::SetDataFilePathList(dtUtil::GetDataFilePathList() + ";" + dtUtil::GetDeltaRootPath()+"/examples/data/;");
       std::string logName("projectTest");
 
       logger = &dtUtil::Log::GetInstance(logName);
@@ -507,10 +507,10 @@ void FileUtilsTests::testFileIO2()
 
 void FileUtilsTests::testRelativePath()
 {
-   std::string file = dtCore::FindFileInPathList("map.xsd");
+   std::string file = dtUtil::FindFileInPathList("map.xsd");
    CPPUNIT_ASSERT(!file.empty());
 
-   std::string deltaRoot = dtCore::GetDeltaRootPath();
+   std::string deltaRoot = dtUtil::GetDeltaRootPath();
    CPPUNIT_ASSERT(!deltaRoot.empty());
 
    deltaRoot = dtUtil::FileUtils::GetInstance().GetAbsolutePath(deltaRoot);

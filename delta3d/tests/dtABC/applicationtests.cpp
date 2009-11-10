@@ -31,15 +31,15 @@
 #include <dtCore/system.h>
 #include <dtCore/keyboard.h>
 #include <dtCore/generickeyboardlistener.h>
-#include <dtCore/globals.h>
 #include <dtCore/scene.h>
 #include <dtCore/databasepager.h>
 
-#include <dtUtil/fileutils.h>                  // for verification when writing the config file
-#include <dtUtil/stringutils.h>                // for dtUtil::ToInt
-#include <dtUtil/xercesparser.h>               // for parsing
+#include <dtUtil/fileutils.h>                  
+#include <dtUtil/datapathutils.h>
+#include <dtUtil/stringutils.h>                
+#include <dtUtil/xercesparser.h>               
 #include <dtUtil/xerceswriter.h>
-#include <dtUtil/librarysharingmanager.h>      // make sure this gets configured properly.
+#include <dtUtil/librarysharingmanager.h>
 #include <dtUtil/log.h>
 
 #include <osgDB/DatabasePager>
@@ -75,16 +75,16 @@ namespace dtTest
    /// unit tests for dtCore::Application
    class ApplicationTests : public CPPUNIT_NS::TestFixture
    {
-      CPPUNIT_TEST_SUITE( ApplicationTests );
-      CPPUNIT_TEST( TestInput );
-      CPPUNIT_TEST( TestConfigProperties );
-      CPPUNIT_TEST( TestConfigSupport );
-      CPPUNIT_TEST( TestConfigSaveLoad );
-      CPPUNIT_TEST( TestReadSystemProperties );
-      CPPUNIT_TEST( TestSupplyingWindowToApplicationConstructor );
-      CPPUNIT_TEST( TestReadingBadConfigFile );
-      CPPUNIT_TEST( TestRemovingView );
-      CPPUNIT_TEST( TestGettingView );
+      CPPUNIT_TEST_SUITE(ApplicationTests);
+      CPPUNIT_TEST(TestInput);
+      CPPUNIT_TEST(TestConfigProperties);
+      CPPUNIT_TEST(TestConfigSupport);
+      CPPUNIT_TEST(TestConfigSaveLoad);
+      CPPUNIT_TEST(TestReadSystemProperties);
+      CPPUNIT_TEST(TestSupplyingWindowToApplicationConstructor);
+      CPPUNIT_TEST(TestReadingBadConfigFile);
+      CPPUNIT_TEST(TestRemovingView);
+      CPPUNIT_TEST(TestGettingView);
       CPPUNIT_TEST_SUITE_END();
 
       public:
@@ -108,19 +108,19 @@ namespace dtTest
 
          void CompareConfigData(const dtABC::ApplicationConfigData& truth, const dtABC::ApplicationConfigData& actual)
          {
-            CPPUNIT_ASSERT_EQUAL( actual.CHANGE_RESOLUTION , truth.CHANGE_RESOLUTION );
-            CPPUNIT_ASSERT_EQUAL( actual.FULL_SCREEN , truth.FULL_SCREEN );
-            CPPUNIT_ASSERT_EQUAL( actual.REALIZE_UPON_CREATE , truth.REALIZE_UPON_CREATE );
-            CPPUNIT_ASSERT_EQUAL( actual.RESOLUTION.bitDepth , truth.RESOLUTION.bitDepth );
-            CPPUNIT_ASSERT_EQUAL( actual.RESOLUTION.height , truth.RESOLUTION.height );
-            CPPUNIT_ASSERT_EQUAL( actual.RESOLUTION.refresh , truth.RESOLUTION.refresh );
-            CPPUNIT_ASSERT_EQUAL( actual.RESOLUTION.width , truth.RESOLUTION.width );
-            CPPUNIT_ASSERT_EQUAL( actual.SCENE_NAME , truth.SCENE_NAME );
-            CPPUNIT_ASSERT_EQUAL( actual.SHOW_CURSOR , truth.SHOW_CURSOR );
-            CPPUNIT_ASSERT_EQUAL( actual.WINDOW_NAME , truth.WINDOW_NAME );
-            CPPUNIT_ASSERT_EQUAL( actual.WINDOW_X , truth.WINDOW_X );
-            CPPUNIT_ASSERT_EQUAL( actual.WINDOW_Y , truth.WINDOW_Y );
-            CPPUNIT_ASSERT_EQUAL( actual.CAMERA_NAME , truth.CAMERA_NAME );
+            CPPUNIT_ASSERT_EQUAL(actual.CHANGE_RESOLUTION, truth.CHANGE_RESOLUTION);
+            CPPUNIT_ASSERT_EQUAL(actual.FULL_SCREEN, truth.FULL_SCREEN);
+            CPPUNIT_ASSERT_EQUAL(actual.REALIZE_UPON_CREATE, truth.REALIZE_UPON_CREATE);
+            CPPUNIT_ASSERT_EQUAL(actual.RESOLUTION.bitDepth, truth.RESOLUTION.bitDepth);
+            CPPUNIT_ASSERT_EQUAL(actual.RESOLUTION.height, truth.RESOLUTION.height);
+            CPPUNIT_ASSERT_EQUAL(actual.RESOLUTION.refresh, truth.RESOLUTION.refresh);
+            CPPUNIT_ASSERT_EQUAL(actual.RESOLUTION.width, truth.RESOLUTION.width);
+            CPPUNIT_ASSERT_EQUAL(actual.SCENE_NAME, truth.SCENE_NAME);
+            CPPUNIT_ASSERT_EQUAL(actual.SHOW_CURSOR, truth.SHOW_CURSOR);
+            CPPUNIT_ASSERT_EQUAL(actual.WINDOW_NAME, truth.WINDOW_NAME);
+            CPPUNIT_ASSERT_EQUAL(actual.WINDOW_X, truth.WINDOW_X);
+            CPPUNIT_ASSERT_EQUAL(actual.WINDOW_Y, truth.WINDOW_Y);
+            CPPUNIT_ASSERT_EQUAL(actual.CAMERA_NAME, truth.CAMERA_NAME);
 
             std::ostringstream ss;
             ss << "Expected map:\n";
@@ -137,11 +137,11 @@ namespace dtTest
                ss << " " << i->first << " " << i->second << std::endl;
             }
 
-            CPPUNIT_ASSERT_MESSAGE(ss.str(), truth.LOG_LEVELS == actual.LOG_LEVELS );
+            CPPUNIT_ASSERT_MESSAGE(ss.str(), truth.LOG_LEVELS == actual.LOG_LEVELS);
 
-            CPPUNIT_ASSERT_MESSAGE("Library path lists should match.", truth.LIBRARY_PATHS == actual.LIBRARY_PATHS );
+            CPPUNIT_ASSERT_MESSAGE("Library path lists should match.", truth.LIBRARY_PATHS == actual.LIBRARY_PATHS);
 
-            CPPUNIT_ASSERT_MESSAGE("Property sets should match", truth.mProperties == actual.mProperties );
+            CPPUNIT_ASSERT_MESSAGE("Property sets should match", truth.mProperties == actual.mProperties);
          }
    };
 
@@ -179,7 +179,7 @@ namespace dtTest
       {
          mPressedHit = true;
 
-         if ( key==mKey )
+         if (key == mKey)
          {
             return true;
          }
@@ -190,7 +190,7 @@ namespace dtTest
       {
          mReleasedHit = true;
 
-         if ( key==mKey )
+         if (key == mKey)
          {
             return true;
          }
@@ -208,15 +208,15 @@ namespace dtTest
    };
 
    // Registers the fixture into the 'registry'
-   CPPUNIT_TEST_SUITE_REGISTRATION( ApplicationTests );
+   CPPUNIT_TEST_SUITE_REGISTRATION(ApplicationTests);
 
    void ApplicationTests::setUp()
    {
       mLogLevel = dtUtil::Log::GetInstance().GetLogLevel();
-      dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
+      dtUtil::SetDataFilePathList(dtUtil::GetDeltaDataPathList());
       mConfigName = "test_config.xml";
       // delete the file
-      dtUtil::FileUtils::GetInstance().FileDelete( mConfigName );
+      dtUtil::FileUtils::GetInstance().FileDelete(mConfigName);
    }
 
    void ApplicationTests::tearDown()
@@ -227,7 +227,7 @@ namespace dtTest
       {
          dtUtil::LibrarySharingManager::GetInstance().RemoveFromSearchPath(paths[i]);
       }
-      dtUtil::Log::GetInstance().SetLogLevel( mLogLevel );
+      dtUtil::Log::GetInstance().SetLogLevel(mLogLevel);
    }
 
    void ApplicationTests::TestInput()
@@ -239,27 +239,27 @@ namespace dtTest
       dtCore::RefPtr<dtCore::Keyboard> kb = app->GetKeyboard();
       const dtCore::KeyboardListener* applistener = app->GetKeyboardListener();
       const dtCore::KeyboardListener* firstlistener = kb->GetListeners().front().get();
-      CPPUNIT_ASSERT_EQUAL( firstlistener , applistener );  // better be the app's listener
+      CPPUNIT_ASSERT_EQUAL(firstlistener, applistener);  // better be the app's listener
 
       app->ResetHits();
-      CPPUNIT_ASSERT( !app->GetPressedHit() );  // better not be hit
-      CPPUNIT_ASSERT( !app->GetReleasedHit() );  // better not be hit
+      CPPUNIT_ASSERT(!app->GetPressedHit());  // better not be hit
+      CPPUNIT_ASSERT(!app->GetReleasedHit());  // better not be hit
 
       // test to see if the applicaiton's pressed callback is connected
-      CPPUNIT_ASSERT( !kb->KeyDown('M') );  // better NOT handle it
-      CPPUNIT_ASSERT( app->GetPressedHit() );  // better be hit
-      CPPUNIT_ASSERT( !app->GetReleasedHit() );  // better NOT be hit
-      CPPUNIT_ASSERT( kb->KeyDown(app->GetKey()) );  // better handle it
+      CPPUNIT_ASSERT(!kb->KeyDown('M'));  // better NOT handle it
+      CPPUNIT_ASSERT(app->GetPressedHit());  // better be hit
+      CPPUNIT_ASSERT(!app->GetReleasedHit());  // better NOT be hit
+      CPPUNIT_ASSERT(kb->KeyDown(app->GetKey()));  // better handle it
 
       app->ResetHits();
-      CPPUNIT_ASSERT( !app->GetPressedHit() );  // better not be hit
-      CPPUNIT_ASSERT( !app->GetReleasedHit() );  // better not be hit
+      CPPUNIT_ASSERT(!app->GetPressedHit());  // better not be hit
+      CPPUNIT_ASSERT(!app->GetReleasedHit());  // better not be hit
 
       // test to see if the application's released callback is connected
-      CPPUNIT_ASSERT( !kb->KeyUp('M') );  // better NOT handle it
-      CPPUNIT_ASSERT( !app->GetPressedHit() );  // better be hit
-      CPPUNIT_ASSERT( app->GetReleasedHit() );  // better be hit
-      CPPUNIT_ASSERT( kb->KeyUp(app->GetKey()) );  // better handle it
+      CPPUNIT_ASSERT(!kb->KeyUp('M'));  // better NOT handle it
+      CPPUNIT_ASSERT(!app->GetPressedHit());  // better be hit
+      CPPUNIT_ASSERT(app->GetReleasedHit());  // better be hit
+      CPPUNIT_ASSERT(kb->KeyUp(app->GetKey()));  // better handle it
    }
 
    void ApplicationTests::TestConfigProperties()
@@ -287,13 +287,14 @@ namespace dtTest
    void ApplicationTests::TestConfigSupport()
    {
       //make sure the file doesn't already exist.
-      CPPUNIT_ASSERT_MESSAGE("The config file should not exist yet.", !dtUtil::FileUtils::GetInstance().FileExists( mConfigName ) );
+      CPPUNIT_ASSERT_MESSAGE("The config file should not exist yet.", 
+         !dtUtil::FileUtils::GetInstance().FileExists(mConfigName));
 
       // create the file
-      const std::string created( dtABC::Application::GenerateDefaultConfigFile( mConfigName ) );
+      const std::string created( dtABC::Application::GenerateDefaultConfigFile(mConfigName));
 
       // make sure it exists
-      CPPUNIT_ASSERT( dtUtil::FileUtils::GetInstance().FileExists( mConfigName ) );
+      CPPUNIT_ASSERT(dtUtil::FileUtils::GetInstance().FileExists(mConfigName));
 
       // machine specific, should not be tested
       //dtCore::RefPtr<dtABC::Application> app(new dtABC::Application(created));
@@ -307,7 +308,7 @@ namespace dtTest
       // test the content from the parser
       dtABC::ApplicationConfigHandler handler;
       dtUtil::XercesParser parser;
-      CPPUNIT_ASSERT( parser.Parse( mConfigName , handler , "application.xsd" ) );
+      CPPUNIT_ASSERT(parser.Parse(mConfigName, handler, "application.xsd"));
 
       // compare the content that was parsed to the advertised default values
       // in order to confirm that:
@@ -318,10 +319,10 @@ namespace dtTest
       CompareConfigData(truth, handler.mConfigData);
 
       // delete the file
-      dtUtil::FileUtils::GetInstance().FileDelete( mConfigName );
+      dtUtil::FileUtils::GetInstance().FileDelete(mConfigName);
 
       // make sure it does not exist
-      CPPUNIT_ASSERT( !dtUtil::FileUtils::GetInstance().FileExists( mConfigName ) );
+      CPPUNIT_ASSERT( !dtUtil::FileUtils::GetInstance().FileExists(mConfigName));
 
       ///\todo test applying the data to an Application instance
    }
@@ -329,7 +330,8 @@ namespace dtTest
    void ApplicationTests::TestConfigSaveLoad()
    {
       //make sure the file doesn't already exist.
-      CPPUNIT_ASSERT_MESSAGE("The config file should not exist yet.", !dtUtil::FileUtils::GetInstance().FileExists( mConfigName ) );
+      CPPUNIT_ASSERT_MESSAGE("The config file should not exist yet.", 
+         !dtUtil::FileUtils::GetInstance().FileExists(mConfigName));
 
       dtABC::ApplicationConfigData truth;
       truth.CHANGE_RESOLUTION = false;
@@ -372,13 +374,13 @@ namespace dtTest
       acw(mConfigName, truth);
 
       // make sure it exists
-      CPPUNIT_ASSERT( dtUtil::FileUtils::GetInstance().FileExists( mConfigName ) );
+      CPPUNIT_ASSERT(dtUtil::FileUtils::GetInstance().FileExists(mConfigName));
 
       // test the content from the parser
       dtABC::ApplicationConfigHandler handler;
       dtUtil::XercesParser parser;
 
-      CPPUNIT_ASSERT( parser.Parse( mConfigName , handler , "application.xsd" ) );
+      CPPUNIT_ASSERT(parser.Parse(mConfigName, handler, "application.xsd"));
 
       CompareConfigData(truth, handler.mConfigData);
 
@@ -406,10 +408,10 @@ namespace dtTest
       app = NULL;
 
       // delete the file
-      dtUtil::FileUtils::GetInstance().FileDelete( mConfigName );
+      dtUtil::FileUtils::GetInstance().FileDelete(mConfigName);
 
       // make sure it does not exist
-      CPPUNIT_ASSERT( !dtUtil::FileUtils::GetInstance().FileExists( mConfigName ) );
+      CPPUNIT_ASSERT( !dtUtil::FileUtils::GetInstance().FileExists(mConfigName));
 
    }
 
@@ -688,10 +690,10 @@ namespace dtTest
    class ApplicationSetupTests : public CPPUNIT_NS::TestFixture
    {
 
-      CPPUNIT_TEST_SUITE( ApplicationSetupTests );
-      CPPUNIT_TEST( TestInit );
-      CPPUNIT_TEST( TestReplaceScene );
-      CPPUNIT_TEST( TestReplaceCamera );
+      CPPUNIT_TEST_SUITE(ApplicationSetupTests);
+      CPPUNIT_TEST(TestInit);
+      CPPUNIT_TEST(TestReplaceScene);
+      CPPUNIT_TEST(TestReplaceCamera);
       CPPUNIT_TEST_SUITE_END();
 
    public:
@@ -707,7 +709,7 @@ namespace dtTest
    private:
    };
 
-   CPPUNIT_TEST_SUITE_REGISTRATION( ApplicationSetupTests );
+   CPPUNIT_TEST_SUITE_REGISTRATION(ApplicationSetupTests);
 
 
    void ApplicationSetupTests::TestInit()
@@ -724,14 +726,14 @@ namespace dtTest
       dtCore::RefPtr<dtABC::Application> app = new dtABC::Application();
       dtCore::RefPtr<dtCore::Scene> newScene = new dtCore::Scene();
 
-      app->SetScene( newScene.get() );
+      app->SetScene(newScene.get());
 
       CPPUNIT_ASSERT_EQUAL_MESSAGE("App didn't get the new Scene",
          newScene.get(), app->GetScene());
 
       //new scene should have ended up in the app's View
       CPPUNIT_ASSERT_EQUAL_MESSAGE("View didn't get the new Scene",
-         newScene.get(), app->GetView()->GetScene() );
+         newScene.get(), app->GetView()->GetScene());
 
       //verify the osg node's are the same too
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Scene nodes don't match",
@@ -743,20 +745,18 @@ namespace dtTest
       dtCore::RefPtr<dtABC::Application> app = new dtABC::Application();
       dtCore::RefPtr<dtCore::Camera> newCam = new dtCore::Camera();
 
-      app->SetCamera( newCam.get() );
+      app->SetCamera(newCam.get());
 
       CPPUNIT_ASSERT_EQUAL_MESSAGE("App didn't get the new Camera",
-         newCam.get(), app->GetCamera() );
+         newCam.get(), app->GetCamera());
 
       //the new Camera should have ended up in the app's View
       CPPUNIT_ASSERT_EQUAL_MESSAGE("View didn't get the new Camera",
-         newCam.get(), app->GetView()->GetCamera() );
+         newCam.get(), app->GetView()->GetCamera());
 
       //the new osgCamera should have ended up in the app's View
       CPPUNIT_ASSERT_EQUAL_MESSAGE("osgCamera's don't match",
-         newCam->GetOSGCamera(), app->GetView()->GetOsgViewerView()->getCamera() );
-
-
+         newCam->GetOSGCamera(), app->GetView()->GetOsgViewerView()->getCamera());
    }
 
 }

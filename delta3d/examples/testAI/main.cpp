@@ -22,16 +22,17 @@
 #include <fstream>
 #include <iostream>
 #include "testai.h"
-#include <dtCore/globals.h>
+
+#include <dtUtil/datapathutils.h>
 
 // we attempt to take a map name from the command line argument
 // if none is present we call the default constructor which has a default map name
-int main ( int argc, char *argv[] )
+int main (int argc, char* argv[])
 {
    // set data search path to parent delta3d/data
-   std::string dataPath = dtCore::GetDeltaDataPathList();
-   dtCore::SetDataFilePathList(dataPath + ";" + 
-      dtCore::GetDeltaRootPath() + "/examples/data/;");
+   std::string dataPath = dtUtil::GetDeltaDataPathList();
+   dtUtil::SetDataFilePathList(dataPath + ";" + 
+      dtUtil::GetDeltaRootPath() + "/examples/data/;");
 
    dtCore::RefPtr<TestAI> app;
 

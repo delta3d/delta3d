@@ -30,8 +30,7 @@
 #include <dtAnim/animationhelper.h>
 
 #include <dtDAL/project.h>
-
-#include <dtCore/globals.h>
+#include <dtUtil/datapathutils.h>
 #include <dtCore/refptr.h>
 
 #include <osg/Math>
@@ -46,17 +45,17 @@ namespace dtAnim
 
    class Cal3DModelWrapperTests : public CPPUNIT_NS::TestFixture
    {
-      CPPUNIT_TEST_SUITE( Cal3DModelWrapperTests );
-      CPPUNIT_TEST( TestAttachDetachMesh );
-      CPPUNIT_TEST( TestShowHideMesh );
+      CPPUNIT_TEST_SUITE(Cal3DModelWrapperTests);
+      CPPUNIT_TEST(TestAttachDetachMesh);
+      CPPUNIT_TEST(TestShowHideMesh);
       CPPUNIT_TEST_SUITE_END();
 
    public:
       void setUp()
       {
-         dtDAL::Project::GetInstance().SetContext(dtCore::GetDeltaRootPath() + "/examples/data/demoMap");
+         dtDAL::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data/demoMap");
 
-         std::string modelPath = dtCore::FindFileInPathList("SkeletalMeshes/marine_test.xml");
+         std::string modelPath = dtUtil::FindFileInPathList("SkeletalMeshes/marine_test.xml");
          CPPUNIT_ASSERT_MESSAGE("Could not find \"SkeletalMeshes/marine_test.xml\"", !modelPath.empty());
 
          mAnimHelper = new dtAnim::AnimationHelper();

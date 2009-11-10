@@ -18,7 +18,6 @@
 #include <CEGUI/CEGUISchemeManager.h>
 
 #include <dtCore/system.h>
-#include <dtCore/globals.h>
 #include <dtCore/mouse.h>
 #include <dtCore/camera.h>
 #include <dtCore/keyboard.h>
