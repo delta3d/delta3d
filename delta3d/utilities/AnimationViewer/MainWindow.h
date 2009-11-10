@@ -20,6 +20,7 @@ class PoseMeshView;
 class PoseMeshScene;
 class PoseMeshProperties;
 class QDoubleSpinBox;
+class QComboBox;
 class QHBoxLayout;
 
 
@@ -41,6 +42,8 @@ public:
 
    void LoadCharFile(const QString& filename);
    void SetViewer(Viewer* viewer);
+
+   void LoadAttachment(const QString& filename);
 
 protected:
    virtual void dragEnterEvent(QDragEnterEvent* event);
@@ -67,11 +70,15 @@ signals:
 
    void PlayMorphAnimation(int morphAnimID);
 
+   void AttachmentToLoad(const QString&);
+
+   void AttachmentSettingsChanged(const std::string& boneName, float offsetX, float offsetY, float offsetZ, float rotx, float roty, float rotz);
+
 public slots:
    void OnNewAnimation(unsigned int id, const QString& animationName, unsigned int trackCount,
                        unsigned int keyframes, float duration);
 
-   void OnNewMesh(int meshID, const QString& meshName);
+   void OnNewMesh(int meshID, const QString& meshName, const std::vector<std::string>& boneNames);
 
    void OnNewSubMorphTarget(int meshID, int subMeshID, 
                             int morphID, const QString& morphName);
@@ -95,11 +102,15 @@ public slots:
    void OnToggleLODScaleToolbar();
    void OnToggleSpeedScaleToolbar();
    void OnToggleScalingToolbar();
+   void OnToggleAttachmentToolbar();
    void OnToggleLightingToolbar();
    void OnDisplayError(const QString& msg);
    void OnConfiged(); ///<call when everything is up and running
 
    void OnClearCharacterData();
+
+   void OnLoadAttachment();
+   void OnChangeAttachmentSettings();
 
 private:
    void CreateMenus();
@@ -135,9 +146,19 @@ private:
    QToolBar* mLODScaleToolbar;
    QToolBar* mSpeedToolbar;
    QToolBar* mScalingToolbar;
+   QToolBar* mAttachmentToolbar;
 
    QDoubleSpinBox* mScaleFactorSpinner;
 
+   QDoubleSpinBox* mAttachmentOffsetXSpinner;
+   QDoubleSpinBox* mAttachmentOffsetYSpinner;
+   QDoubleSpinBox* mAttachmentOffsetZSpinner;
+   QDoubleSpinBox* mAttachmentRotXSpinner;
+   QDoubleSpinBox* mAttachmentRotYSpinner;
+   QDoubleSpinBox* mAttachmentRotZSpinner;
+   QComboBox* mAttachmentParent;
+   QString mCurrentAttachment;   // the currently loaded attachment mesh
+   
    QTabWidget* mTabs;
 
    AnimationTableWidget* mAnimListWidget;

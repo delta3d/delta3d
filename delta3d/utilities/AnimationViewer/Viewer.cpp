@@ -74,6 +74,7 @@ Viewer::Viewer() :
  dtABC::Application()
  , mCalDatabase(&Cal3DDatabase::GetInstance())
  , mPoseMeshes(NULL)
+   , mAttachmentObject(NULL)
 {
    dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_DEBUG);
 }
@@ -221,11 +222,16 @@ void Viewer::OnLoadCharFile(const QString& filename)
       emit AnimationLoaded(animID, nameToSend, trackCount, keyframes, dur);
    }
 
+   std::vector<std::string> bones;
+   dtAnim::Cal3DModelWrapper* modelWrapper = mCharacter->GetCal3DWrapper();
+   modelWrapper->GetCoreBoneNames(bones);
+
    //get all data for the meshes and emit
    for (int meshID = 0; meshID < wrapper->GetCoreMeshCount(); ++meshID)
    {
       QString nameToSend = QString::fromStdString(wrapper->GetCoreMeshName(meshID));
-      emit MeshLoaded(meshID, nameToSend);
+      
+      emit MeshLoaded(meshID, nameToSend, bones);
 
       const std::vector<CalCoreSubmesh *> subMeshVec = wrapper->GetCalModel()->getCoreModel()->getCoreMesh(meshID)->getVectorCoreSubmesh();
       for (size_t subMeshID = 0; subMeshID < subMeshVec.size(); ++subMeshID)
@@ -262,6 +268,45 @@ void Viewer::OnLoadCharFile(const QString& filename)
    CreateBoneBasisDisplay();
 
    LOG_DEBUG("Done loading file: " + filename.toStdString());
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////
+void Viewer::OnUnloadAttachmentFile()
+{
+   if(mAttachmentObject != NULL)
+   {
+      GetScene()->RemoveDrawable(mAttachmentObject.get());
+      mAttachmentObject = NULL;
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
+void Viewer::OnLoadAttachmentFile(const QString& filename)
+{
+   OnUnloadAttachmentFile();
+   
+   mAttachmentObject = new dtCore::Object;
+   mAttachmentObject->LoadFile(filename.toStdString());
+   GetScene()->AddDrawable(mAttachmentObject.get());
+}
+
+//////////////////////////////////////////////////////////////////////////
+void Viewer::OnAttachmentSettingsChanged(const std::string& bone, float x, float y, float z, float rotx, float roty, float rotz)
+{
+   if(mAttachmentObject == NULL)
+   {
+      return;
+   }
+
+   dtUtil::HotSpotDefinition hsd;
+   hsd.mName = "HotSpot";
+   hsd.mParentName = bone;
+   hsd.mLocalTranslation = osg::Vec3(x, y, z);
+   hsd.mLocalRotation = osg::Quat(rotx, osg::Vec3(1, 0, 0), roty, osg::Vec3(0, 1, 0), rotz, osg::Vec3(0, 0, 1));
+   mAttachmentController->RemoveAttachment(*mAttachmentObject.get());
+   mAttachmentController->AddAttachment(*mAttachmentObject.get(), hsd);
 }
 
 //////////////////////////////////////////////////////////////////////////
