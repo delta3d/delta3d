@@ -41,7 +41,6 @@
 #include <dtUtil/exception.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/datapathutils.h>
-#include <dtUtil/macros.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtGame/loggermessages.h>
 #include <dtGame/logstatus.h>

@@ -1,6 +1,6 @@
 #include <prefix/dtutilprefix-src.h>
 #include <dtUtil/stringutils.h>
-#include <dtUtil/macros.h>
+#include <dtUtil/mswinmacros.h>
 
 #include <cstdio>        // for sscanf, atoi
 #include <sstream>        // for sscanf, atoi

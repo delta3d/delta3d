@@ -36,7 +36,6 @@
 #include <osg/Math>
 #include <osg/io_utils>
 
-#include <dtUtil/macros.h>
 #include <dtUtil/exception.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/datapathutils.h>

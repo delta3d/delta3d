@@ -130,13 +130,6 @@
 #endif
 #define  UNSIGNED_INT_BIT(a)   ((unsigned int)(1L<<(unsigned int)(a)))
 
-#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
-   #define DELTA_WIN32
-   #ifndef snprintf
-      #define snprintf _snprintf
-   #endif
-
-#endif
 
 // Eliminate compiler warnings for unused variables
 #ifndef DTUNREFERENCED_PARAMETER

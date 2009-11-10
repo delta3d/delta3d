@@ -26,7 +26,6 @@
 #include "HUDComponent.h"
 
 #include <dtCore/scene.h>
-#include <dtUtil/macros.h>
 #include <dtUtil/exception.h>
 #include <dtUtil/datapathutils.h>
 

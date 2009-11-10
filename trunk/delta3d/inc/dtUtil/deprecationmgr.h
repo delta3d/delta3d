@@ -22,7 +22,7 @@
 #ifndef _DEPRECATIONMGR_H_
 #define _DEPRECATIONMGR_H_
 
-#include <dtUtil/macros.h>
+#include <dtUtil/mswinmacros.h>
 #include <dtUtil/export.h>
 
 //This will generate a compile-time warning when a function is prefaced.

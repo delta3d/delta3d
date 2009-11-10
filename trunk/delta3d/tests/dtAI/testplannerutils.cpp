@@ -24,7 +24,7 @@
 */
 #include <prefix/dtgameprefix-src.h>
 #include "testplannerutils.h"
-#include <dtUtil/macros.h>
+#include <dtUtil/mswinmacros.h>
 #include <dtAI/planner.h>
 
 #include <cassert>

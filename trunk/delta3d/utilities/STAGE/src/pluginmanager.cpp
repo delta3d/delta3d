@@ -7,6 +7,7 @@
 #include <dtUtil/librarysharingmanager.h>
 #include <dtUtil/log.h>
 #include <dtUtil/stringutils.h>
+#include <dtUtil/macros.h> //for DTUNREFERENCED_PARAMETER
 #include <iostream>
 #include <QtCore/QDir>
 #include <QtGui/QMessageBox>

@@ -2,7 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 #include <prefix/dtcoreprefix-src.h>
-#include <dtUtil/macros.h>
+#include <dtUtil/mswinmacros.h>
 #if defined(DELTA_WIN32)
 #include <dtUtil/mswin.h>
 #include <dtCore/deltawin.h>

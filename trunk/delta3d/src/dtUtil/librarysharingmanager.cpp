@@ -19,15 +19,10 @@
  * David Guthrie
  */
 #include <prefix/dtutilprefix-src.h>
-#include <dtUtil/macros.h>
+#include <dtUtil/mswinmacros.h>
 
 #if defined(DELTA_WIN32) && !defined(__CYGWIN__)
-  #include <Io.h>
-  #define WIN32_LEAN_AND_MEAN
-  #include <Windows.h>
-  #include <Winbase.h>
-  #undef GetClassName
-  #undef SendMessage
+  #include <dtUtil/mswin.h>
 #else
   #include <dlfcn.h>
 #endif

@@ -40,7 +40,6 @@
 #include <fireFighter/gamestate.h>
 #include <fireFighter/inputcomponent.h>
 #include <cppunit/extensions/HelperMacros.h>
-#include <dtUtil/macros.h>
 
 
 using dtCore::RefPtr;

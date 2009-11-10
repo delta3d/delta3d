@@ -22,7 +22,7 @@
 #include <dtUtil/fileutils.h>
 #include <dtUtil/stringutils.h>
 #include <dtUtil/log.h>
-#include <dtUtil/macros.h>
+#include <dtUtil/mswinmacros.h>
 
 #include <osgDB/FileUtils>
 #include <osgDB/FileNameUtils>
@@ -39,7 +39,7 @@ namespace dtUtil
       std::string modpath = pathList;
       for(std::string::size_type i = 0; i < pathList.size(); i++)
       {
-         #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
+         #ifdef DELTA_WIN32
          try
          {
             if(modpath.at(i) == ':' && modpath.at(i+1) != '\\')

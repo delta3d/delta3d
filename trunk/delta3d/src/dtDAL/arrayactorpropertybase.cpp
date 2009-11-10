@@ -1,6 +1,5 @@
 #include <dtDAL/arrayactorpropertybase.h>
 #include <dtUtil/log.h>
-#include <dtUtil/macros.h>
 #include <dtUtil/stringutils.h>
 #include <dtDAL/datatype.h>
 

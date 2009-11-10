@@ -24,8 +24,9 @@
 
 #include <dtLMS/lmsconnectionstate.h>
 #include <dtLMS/lmsmessage.h>
+#include <dtUtil/mswinmacros.h>
 
-#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+#ifdef DELTA_WIN32
    #include <winsock.h>
 #else
    #include <netinet/in.h>

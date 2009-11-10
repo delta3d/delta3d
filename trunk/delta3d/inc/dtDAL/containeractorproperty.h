@@ -29,8 +29,6 @@
 
 #include <dtUtil/log.h>
 
-#include <dtUtil/macros.h>
-
 namespace dtDAL
 {
    /**

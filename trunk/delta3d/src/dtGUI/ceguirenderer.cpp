@@ -1,6 +1,5 @@
 #include <dtGUI/ceguirenderer.h>
 #include <dtGUI/ceguitexture.h>
-#include <dtUtil/macros.h>
 
 //includes gl without needed the windows headers.
 #include <osg/GL>

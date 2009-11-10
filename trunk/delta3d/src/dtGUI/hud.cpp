@@ -23,7 +23,6 @@
 #include <dtCore/keyboard.h>
 #include <dtCore/deltadrawable.h>
 #include <dtUtil/log.h>
-#include <dtUtil/macros.h>
 
 #include <osg/GraphicsContext>
 #include <osg/State>

@@ -27,7 +27,7 @@
 */
 #include <prefix/dtgameprefix-src.h>
 
-#include <dtUtil/macros.h>
+#include <dtUtil/mswinmacros.h>
 
 #ifdef DELTA_WIN32
    #pragma warning(push)

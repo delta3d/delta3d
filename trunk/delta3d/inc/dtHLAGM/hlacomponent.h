@@ -32,9 +32,14 @@
 #endif
 #include <RTI.hh>
 #include <NullFederateAmbassador.hh>
+#include <dtUtil/mswinmacros.h>
 
-#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
-  #undef SendMessage //some RTI.hh include windows.h which typedef this
+#ifdef DELTA_WIN32
+   #undef GetClassName
+   #undef SendMessage
+   #undef CreateFont
+   #undef GetTimeFormat
+   #undef FindResource //due to some windows.h include which conflicts with dtTerrain::FindResource()
 #endif
 
 #include <string>

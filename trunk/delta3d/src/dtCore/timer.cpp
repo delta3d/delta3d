@@ -1,12 +1,9 @@
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/timer.h>
-#include <dtUtil/macros.h>
+#include <dtUtil/mswinmacros.h>
 
 #ifdef DELTA_WIN32
-   #define WIN32_LEAN_AND_MEAN
-   #include <Windows.h>
-   #undef GetClassName
-   #undef SendMessage
+   #include <dtUtil/mswin.h>
    void dtCore::AppSleep(unsigned int milliseconds){Sleep(milliseconds);}
 #else
    #include <unistd.h>

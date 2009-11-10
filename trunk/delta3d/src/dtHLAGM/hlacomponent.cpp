@@ -34,7 +34,7 @@
 #include <dtHLAGM/exceptionenum.h>
 
 #include <dtUtil/matrixutil.h>
-#include <dtUtil/macros.h>
+#include <dtUtil/mswinmacros.h>
 #include <dtUtil/log.h>
 #include <dtUtil/coordinates.h>
 #include <dtUtil/fileutils.h>
@@ -513,7 +513,7 @@ namespace dtHLAGM
       other.sin_family = AF_INET;
       other.sin_port = 8192;
 
-      #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
+      #ifdef DELTA_WIN32
       other.sin_addr.S_un.S_addr = 0x7F000001;
       #else
       other.sin_addr.s_addr = 0x7F000001;
@@ -523,7 +523,7 @@ namespace dtHLAGM
       {
          if(getsockname(some_socket, (sockaddr*)&me, (socklen_t*)&len) == 0)
          {
-            #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
+            #ifdef DELTA_WIN32
             mLocalIPAddress = me.sin_addr.S_un.S_addr;
             #else
             mLocalIPAddress = me.sin_addr.s_addr;
@@ -534,7 +534,7 @@ namespace dtHLAGM
                osg::swapBytes((char*)&mLocalIPAddress, sizeof(mLocalIPAddress));
             }
 
-            #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
+            #ifdef DELTA_WIN32
             mSiteIdentifier = me.sin_addr.S_un.S_un_w.s_w1;
             #else
             win_addr temp_addr;

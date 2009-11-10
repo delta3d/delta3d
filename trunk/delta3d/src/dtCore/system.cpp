@@ -6,6 +6,7 @@
 #include <dtCore/system.h>
 #include <dtUtil/log.h>
 #include <dtUtil/bits.h>
+#include <dtUtil/mswinmacros.h>
 #include <dtCore/deltawin.h>
 
 #include <osgViewer/GraphicsWindow>

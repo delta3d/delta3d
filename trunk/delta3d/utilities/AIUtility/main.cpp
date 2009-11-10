@@ -6,8 +6,6 @@
 #include "mainwindow.h"
 #include "aiutilityapp.h"
 
-#include <dtUtil/macros.h>
-
 #include <dtCore/deltawin.h>
 
 #include <dtQt/qtguiwindowsystemwrapper.h>

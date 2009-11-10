@@ -36,7 +36,6 @@
 #include <osg/Endian>
 
 #include <dtUtil/log.h>
-#include <dtUtil/macros.h>
 #include <dtUtil/datastream.h>
 #include <dtUtil/datapathutils.h>
 

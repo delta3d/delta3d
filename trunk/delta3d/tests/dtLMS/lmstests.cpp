@@ -27,7 +27,6 @@
 */
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
-#include <dtUtil/macros.h>
 #include <dtLMS/lmstaskstatus.h>
 #include <dtLMS/lmsmessage.h>
 #include <dtLMS/lmsmessagetype.h>

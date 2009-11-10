@@ -23,6 +23,7 @@
 #include <cmath>
 #include <cfloat>
 #include <osg/Math>
+#include <dtUtil/mswinmacros.h>
 
 
 #ifndef RAND_MAX
@@ -62,7 +63,7 @@ namespace dtUtil
    template <typename Real>
    inline Real Abs(Real x)
    {
-#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+#ifdef DELTA_WIN32
       return (( x < 0) ? ((Real)(-1.0) * x) : x);
 #else
       return std::abs(x);
@@ -105,7 +106,7 @@ namespace dtUtil
    template <typename T>
    bool IsFinite(const T value)
    {
-      #if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+     #ifdef DELTA_WIN32
          return _finite(value) ? true : false;
       #else
          return std::isfinite(value) ? true : false;
@@ -117,7 +118,7 @@ namespace dtUtil
    {
       for (size_t i = 0; i < VecType::num_components; ++i)
       {
-#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+#ifdef DELTA_WIN32
          if (!_finite(value[i]))
          {
             return false;

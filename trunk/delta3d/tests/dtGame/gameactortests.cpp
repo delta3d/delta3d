@@ -30,7 +30,6 @@
 #include <iostream>
 #include <osg/Math>
 #include <dtUtil/log.h>
-#include <dtUtil/macros.h>
 #include <dtUtil/datapathutils.h>
 #include <dtCore/refptr.h>
 #include <dtCore/scene.h>
@@ -89,6 +88,7 @@ class GameActorTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestAddActorComponent);
       CPPUNIT_TEST(TestActorComponentInitialized);
       CPPUNIT_TEST(TestGetAllActorComponents);
+      CPPUNIT_TEST(TestUnregisterNextInvokable);
 
    CPPUNIT_TEST_SUITE_END();
 
@@ -113,6 +113,7 @@ public:
    void TestAddActorComponent();
    void TestActorComponentInitialized();
    void TestGetAllActorComponents();
+   void TestUnregisterNextInvokable();
 
 private:
    static const std::string mTestGameActorLibrary;
@@ -1149,4 +1150,29 @@ void GameActorTests::TestGetAllActorComponents()
    actor->GetAllComponents(components);
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Actor didn't return back the number of added ActorComponents",
                                 size_t(2), components.size());
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void GameActorTests::TestUnregisterNextInvokable()
+{
+   dtCore::RefPtr<const dtDAL::ActorType> actor1Type = mManager->FindActorType("ExampleActors", "Test1Actor");
+   dtCore::RefPtr<const dtDAL::ActorType> actor2Type = mManager->FindActorType("ExampleActors", "Test1Actor");
+
+   dtCore::RefPtr<dtDAL::ActorProxy> proxy1 = mManager->CreateActor(*actor1Type);
+   dtCore::RefPtr<dtGame::GameActorProxy> gap1 = dynamic_cast<dtGame::GameActorProxy*>(proxy1.get());
+
+   dtCore::RefPtr<dtDAL::ActorProxy> proxy2 = mManager->CreateActor(*actor2Type);
+   dtCore::RefPtr<dtGame::GameActorProxy> gap2 = dynamic_cast<dtGame::GameActorProxy*>(proxy2.get());
+
+   dtGame::Invokable* invokable1 = gap1->GetInvokable(dtGame::MessageType::TICK_LOCAL.GetName());
+   dtGame::Invokable* invokable2 = gap2->GetInvokable(dtGame::MessageType::TICK_LOCAL.GetName());
+
+   mManager->AddActor(*gap1, false, false);
+   mManager->AddActor(*gap2, false, false);
+
+   mManager->RegisterForMessages(dtGame::MessageType::TICK_LOCAL, *gap1, invokable1->GetName());
+   mManager->RegisterForMessages(dtGame::MessageType::TICK_LOCAL, *gap2, invokable2->GetName());
+
+
+   dtCore::System::GetInstance().Step();
 }
