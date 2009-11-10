@@ -21,10 +21,10 @@
 
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/shaderparamtexture1d.h>
+#include <dtUtil/datapathutils.h>
 #include <dtUtil/exception.h>
 #include <dtCore/refptr.h>
 
-#include <dtCore/globals.h>
 #include <osg/StateSet>
 #include <osg/Texture1D>
 #include <osg/Uniform>
@@ -157,7 +157,7 @@ namespace dtCore
          RefPtr<osgDB::ReaderWriter::Options> options = new osgDB::ReaderWriter::Options;
          options->setObjectCacheHint(osgDB::ReaderWriter::Options::CACHE_ALL);
 
-         std::string filePath = dtCore::FindFileInPathList(GetTexture());
+         std::string filePath = dtUtil::FindFileInPathList(GetTexture());
          osg::Image* image = osgDB::readImageFile(filePath, options.get());
 
          if (image == NULL)

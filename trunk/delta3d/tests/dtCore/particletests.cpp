@@ -27,9 +27,9 @@
 */
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
-#include <dtCore/globals.h>
 #include <osg/Geode>
 #include <osgParticle/ModularEmitter>
+#include <dtUtil/datapathutils.h>
 #include <dtCore/particlesystem.h>   // for testing the Default particle template methods
 
 namespace dtTest
@@ -37,10 +37,10 @@ namespace dtTest
    /// unit tests for dtCore::Button
    class ParticleTest : public CPPUNIT_NS::TestFixture
    {
-      CPPUNIT_TEST_SUITE( ParticleTest );
-      CPPUNIT_TEST( TestProperties );
-      CPPUNIT_TEST( TestTemplates );
-      CPPUNIT_TEST( TestClone );
+      CPPUNIT_TEST_SUITE(ParticleTest);
+      CPPUNIT_TEST(TestProperties);
+      CPPUNIT_TEST(TestTemplates);
+      CPPUNIT_TEST(TestClone);
       CPPUNIT_TEST_SUITE_END();
 
       public:
@@ -54,15 +54,15 @@ namespace dtTest
    };
 }
 
-CPPUNIT_TEST_SUITE_REGISTRATION( dtTest::ParticleTest );
+CPPUNIT_TEST_SUITE_REGISTRATION(dtTest::ParticleTest);
 
 using namespace dtTest;
 
 void ParticleTest::setUp()
 {
-   dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList() + ";" + dtCore::GetDeltaRootPath() + "/examples/data/;");
+   dtUtil::SetDataFilePathList(dtUtil::GetDeltaDataPathList() + ";" + dtUtil::GetDeltaRootPath() + "/examples/data/;");
    pSystem = new dtCore::ParticleSystem();
-   std::string smokeFile = dtCore::FindFileInPathList("effects/smoke.osg");
+   std::string smokeFile = dtUtil::FindFileInPathList("effects/smoke.osg");
    CPPUNIT_ASSERT(!smokeFile.empty());
    pSystem->LoadFile(smokeFile, true);
 }

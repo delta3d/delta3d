@@ -2,16 +2,16 @@
 
 #include "testsound.h"
 #include <dtCore/keyboard.h>
-#include <dtCore/globals.h>
 #include <dtCore/transform.h>
 #include <iostream>
 #include <dtUtil/log.h>
+#include <dtUtil/datapathutils.h>
 
 // namespaces
-using namespace   dtAudio;
-using namespace   dtABC;
-using namespace   dtCore;
-using namespace   dtUtil;
+using namespace dtAudio;
+using namespace dtABC;
+using namespace dtCore;
+using namespace dtUtil;
 
 
 
@@ -21,7 +21,7 @@ const char* TestSoundApp::kSoundFile2  = "sounds/exp35.wav";
 
 
 
-IMPLEMENT_MANAGEMENT_LAYER( TestSoundApp )
+IMPLEMENT_MANAGEMENT_LAYER(TestSoundApp)
 
 
 
@@ -64,7 +64,7 @@ TestSoundApp::TestSoundApp(const std::string& configFilename /*= "config.xml"*/)
 TestSoundApp::~TestSoundApp()
 {
    // release our one sound
-   AudioManager::GetInstance().FreeSound( mSound );
+   AudioManager::GetInstance().FreeSound(mSound);
 
    // destroy the audio manager
    AudioManager::Destroy();
@@ -218,10 +218,10 @@ int
 main(int argc, const char* argv[])
 {
    // set the directory to find the sound files & config.xml
-   std::string dataPath = dtCore::GetDeltaDataPathList();
-   dtCore::SetDataFilePathList(dataPath + ";" +
-                               dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
-                               dtCore::GetDeltaRootPath() + "/examples/testSound" + ";");
+   std::string dataPath = dtUtil::GetDeltaDataPathList();
+   dtUtil::SetDataFilePathList(dataPath + ";" +
+                               dtUtil::GetDeltaRootPath() + "/examples/data" + ";" +
+                               dtUtil::GetDeltaRootPath() + "/examples/testSound" + ";");
 
    RefPtr<TestSoundApp> app = new TestSoundApp("config.xml");
 

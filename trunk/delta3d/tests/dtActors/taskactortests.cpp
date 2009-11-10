@@ -45,10 +45,10 @@
 #include <dtDAL/gameevent.h>
 #include <dtDAL/namedparameter.h>
 
-#include <dtCore/globals.h>
 #include <dtCore/system.h>
 #include <dtCore/scene.h>
 
+#include <dtUtil/datapathutils.h>
 #include <dtUtil/stringutils.h>
 #include <dtABC/application.h>
 
@@ -128,12 +128,12 @@ void TaskActorTests::setUp()
       mEventMgr = &dtDAL::GameEventManager::GetInstance();
       dtCore::Scene* scene = new dtCore::Scene();
       mGameManager = new dtGame::GameManager(*scene);
-      dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
+      dtUtil::SetDataFilePathList(dtUtil::GetDeltaDataPathList());
       mGameManager->LoadActorRegistry(mTestGameActorLibrary);
 
       // Setup the Test Component.
       mTestComp = new TestComponent("TestComponent");
-      mGameManager->AddComponent( *mTestComp, dtGame::GameManager::ComponentPriority::NORMAL );
+      mGameManager->AddComponent(*mTestComp, dtGame::GameManager::ComponentPriority::NORMAL);
 
       // Start/restart the system.
       dtCore::System::GetInstance().SetShutdownOnWindowClose(false);

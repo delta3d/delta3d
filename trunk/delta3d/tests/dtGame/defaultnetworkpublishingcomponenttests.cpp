@@ -30,12 +30,11 @@
 
 #include <dtUtil/log.h>
 #include <dtUtil/macros.h>
-
+#include <dtUtil/datapathutils.h>
 
 #include <dtCore/refptr.h>
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
-#include <dtCore/globals.h>
 
 #include <dtDAL/datatype.h>
 
@@ -107,7 +106,7 @@ namespace dtGame
    {
       try
       {
-         dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
+         dtUtil::SetDataFilePathList(dtUtil::GetDeltaDataPathList());
          mLogger = &dtUtil::Log::GetInstance("defaultnetworkpublishingcomponenttests.cpp");
 
          mGameManager = new dtGame::GameManager(*GetGlobalApplication().GetScene());

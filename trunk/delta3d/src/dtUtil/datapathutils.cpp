@@ -17,43 +17,37 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
  *
  */
-#include <prefix/dtcoreprefix-src.h>
+
+#include <dtUtil/datapathutils.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/stringutils.h>
 #include <dtUtil/log.h>
 #include <dtUtil/macros.h>
 
-#include <dtCore/globals.h>
-
 #include <osgDB/FileUtils>
 #include <osgDB/FileNameUtils>
 
-namespace dtCore
+namespace dtUtil
 {
+   static OpenThreads::Mutex gDatapathMutex;
 
-   /**
-    * Set the list of paths that dtCore should use to search for files to load.  Paths
-    * are separated with a single ";" on Win32 and a single ":" on Linux. Remember to
-    * double-up your backslashes, lest they be escaped.
-    *
-    * @param pathList : The list of all paths to be used to find data files
-    */
-   DEPRECATE_FUNC void SetDataFilePathList( const std::string& pathList )
+   /////////////////////////////////////////////////////////////////////////////
+   void SetDataFilePathList(const std::string& pathList)
    {
-      DEPRECATE("dtCore::SetDataFilePathList", "dtUtil::SetDataFilePathList");
+      OpenThreads::ScopedLock<OpenThreads::Mutex> lock(gDatapathMutex);
 
       std::string modpath = pathList;
-      for( std::string::size_type i = 0; i < pathList.size(); i++ )
+      for(std::string::size_type i = 0; i < pathList.size(); i++)
       {
          #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
          try
          {
-            if( modpath.at(i) == ':' && modpath.at(i+1) != '\\' )
+            if(modpath.at(i) == ':' && modpath.at(i+1) != '\\')
             {
                modpath.at(i) = ';';
             }
          }
-         catch( std::out_of_range myexcept )
+         catch(std::out_of_range myexcept)
          {
             LOG_WARNING(myexcept.what());
          }
@@ -67,15 +61,10 @@ namespace dtCore
       osgDB::setDataFilePathList(modpath);
    }
    
-   /**
-    * Get the list of paths that dtCore should use to search for files to load.  Paths
-    * are separated with a single ";" on Win32 and a single ":" on Linux.
-    * 
-    * @see SetDataFilePathList()
-    */
-   DEPRECATE_FUNC std::string GetDataFilePathList()
+   /////////////////////////////////////////////////////////////////////////////
+   std::string GetDataFilePathList()
    {
-      DEPRECATE("dtCore::GetDataFilePathList", "dtUtil::GetDataFilePathList");
+      OpenThreads::ScopedLock<OpenThreads::Mutex> lock(gDatapathMutex);
 
       osgDB::FilePathList pathList = osgDB::getDataFilePathList();
    
@@ -86,8 +75,7 @@ namespace dtCore
       {
          pathString += *itr;
    
-         StringDeque::iterator next = itr + 1;
-         if( next != pathList.end() )
+         StringDeque::iterator next = itr + 1;         if(next != pathList.end())
          {
             #ifdef DELTA_WIN32
                pathString += ';';
@@ -100,9 +88,10 @@ namespace dtCore
       return pathString;
    }
    
-   DEPRECATE_FUNC std::string FindFileInPathList(const std::string& fileName)
+   /////////////////////////////////////////////////////////////////////////////
+   std::string FindFileInPathList(const std::string& fileName)
    {
-      DEPRECATE("dtCore::FindFileInPathList", "dtUtil::FindFileInPathList");
+      OpenThreads::ScopedLock<OpenThreads::Mutex> lock(gDatapathMutex);
 
       std::string filePath = osgDB::findDataFile(fileName);
       
@@ -144,21 +133,12 @@ namespace dtCore
       
       return std::string();
       */
-   }
+   }   
    
-   
-   /** 
-    * Simple method to return the system environment variable.  If the env var
-    * is not set, the local path will be returned.
-    *
-    * @param env The system environment variable to be queried
-    * @return The value of the environment variable
-    */
-   DEPRECATE_FUNC std::string GetEnvironment( const std::string& env )
+   /////////////////////////////////////////////////////////////////////////////
+   std::string GetEnvironment(const std::string& env)
    {
-      DEPRECATE("dtCore::GetEnvironment", "dtUtil::GetEnvironment");
-
-      if( char* ptr = getenv( env.c_str() ) )
+      if(char* ptr = getenv(env.c_str()))
       {
          return std::string(ptr);
       }
@@ -168,11 +148,9 @@ namespace dtCore
       }
    }
   
-   //////////////////////////////////////////////////////////////////////
-   DEPRECATE_FUNC void SetEnvironment(const std::string& name, const std::string& value)
+   /////////////////////////////////////////////////////////////////////////////
+   void SetEnvironment(const std::string& name, const std::string& value)
    {
-      DEPRECATE("dtCore::SetEnvironment", "dtUtil::SetEnvironment");
-
 #ifdef DELTA_WIN32
       std::ostringstream oss;
       oss << name << "=" << value;  
@@ -188,10 +166,8 @@ namespace dtCore
     * directory will be returned.
     * @todo need to decide how paths will be handled.  We need to decide if DELTA_DATA is a list or a single item.
     */
-   DEPRECATE_FUNC std::string GetDeltaDataPathList()
+   std::string GetDeltaDataPathList()
    {
-      DEPRECATE("dtCore::GetDeltaDataPathList", "dtUtil::GetDeltaDataPathList");
-
       return GetEnvironment("DELTA_DATA");
    }
    
@@ -199,18 +175,14 @@ namespace dtCore
     * If the DELTA_ROOT environment is not set, the local directory will be
     * returned.
     */
-   DEPRECATE_FUNC std::string GetDeltaRootPath()
+   std::string GetDeltaRootPath()
    {
-      DEPRECATE("dtCore::GetDeltaRootPath", "dtUtil::GetDeltaRootPath");
-
       return GetEnvironment("DELTA_ROOT");
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
-   DEPRECATE_FUNC DT_CORE_EXPORT bool IsEnvironment(const std::string& env)
+   /////////////////////////////////////////////////////////////////////////////
+   bool IsEnvironment(const std::string& env)
    {
-      DEPRECATE("dtCore::IsEnvironment", "dtUtil::IsEnvironment");
-
       if (getenv(env.c_str()))
       {
          return true;

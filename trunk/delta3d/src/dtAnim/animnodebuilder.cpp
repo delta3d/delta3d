@@ -25,7 +25,6 @@
 #include <dtAnim/cal3ddatabase.h>
 #include <dtAnim/cal3dmodeldata.h>
 
-#include <dtCore/globals.h>
 #include <dtCore/shaderprogram.h>
 #include <dtCore/shadermanager.h>
 #include <dtCore/shadergroup.h>

@@ -4,13 +4,13 @@
 #include "componentgameactor.h"
 
 #include <dtABC/labelactor.h>
-#include <dtCore/globals.h>
 #include <dtCore/orbitmotionmodel.h>
 #include <dtCore/camera.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/system.h>
 #include <dtCore/transform.h>
 #include <dtDAL/project.h>
+#include <dtUtil/datapathutils.h>
 #include <dtGame/baseinputcomponent.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/gameapplication.h>
@@ -86,8 +86,8 @@ public:
 
    virtual void OnStartup(dtGame::GameApplication& app)
    {
-      std::string dataPath = dtCore::GetDeltaDataPathList();
-      dtCore::SetDataFilePathList(dataPath + ";" + dtCore::GetDeltaRootPath() + "/examples/data"); 
+      std::string dataPath = dtUtil::GetDeltaDataPathList();
+      dtUtil::SetDataFilePathList(dataPath + ";" + dtUtil::GetDeltaRootPath() + "/examples/data"); 
 
       dtGame::GameManager& gameManager = *app.GetGameManager();
       gameManager.LoadActorRegistry("testGameActorComponents");
@@ -97,7 +97,7 @@ public:
          // Get the screen size
          app.GetWindow()->SetWindowTitle("TestGameActorComponents");
 
-         std::string context = dtCore::GetDeltaRootPath() + "/examples/data/demoMap";
+         std::string context = dtUtil::GetDeltaRootPath() + "/examples/data/demoMap";
          dtDAL::Project::GetInstance().SetContext(context, true);
 
          gameManager.ChangeMap("MyCoolMap");

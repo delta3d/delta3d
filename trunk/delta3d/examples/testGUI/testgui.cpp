@@ -30,11 +30,11 @@
 #include <dtCore/camera.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/scene.h>
-#include <dtCore/globals.h>
 #include <dtCore/transform.h>
 #include <dtGUI/scriptmodule.h>
 #include <dtGUI/ceuidrawable.h>
 #include <dtUtil/log.h>
+#include <dtUtil/datapathutils.h>
 #include <dtUtil/mathdefines.h>
 #include <dtUtil/exception.h>
 
@@ -125,7 +125,7 @@ private:
    {
       try
       {
-         std::string schemeFileName = dtCore::FindFileInPathList("gui/schemes/WindowsLook.scheme");
+         std::string schemeFileName = dtUtil::FindFileInPathList("gui/schemes/WindowsLook.scheme");
 
          CEGUI::SchemeManager::getSingleton().loadScheme(schemeFileName);
          CEGUI::System::getSingleton().setDefaultMouseCursor("WindowsLook", "MouseArrow");
@@ -230,14 +230,14 @@ int main(int argc, const char* argv[])
 {
    //set data search path to find the required Delta3D files and the example data files
 
-   std::string dataPath = dtCore::GetDeltaDataPathList();
-   dtCore::SetDataFilePathList(dataPath + ";" +
-                               dtCore::GetDeltaRootPath() + "/examples/data;" +
-                               dtCore::GetDeltaRootPath() + "/examples/data/gui/imagesets;" +
-                               dtCore::GetDeltaRootPath() + "/examples/data/gui/schemes;" +
-                               dtCore::GetDeltaRootPath() + "/examples/data/gui/fonts;" +
-                               dtCore::GetDeltaRootPath() + "/examples/data/gui/looknfeel;" +
-                               dtCore::GetDeltaRootPath() + "/examples/testGUI;");
+   std::string dataPath = dtUtil::GetDeltaDataPathList();
+   dtUtil::SetDataFilePathList(dataPath + ";" +
+                               dtUtil::GetDeltaRootPath() + "/examples/data;" +
+                               dtUtil::GetDeltaRootPath() + "/examples/data/gui/imagesets;" +
+                               dtUtil::GetDeltaRootPath() + "/examples/data/gui/schemes;" +
+                               dtUtil::GetDeltaRootPath() + "/examples/data/gui/fonts;" +
+                               dtUtil::GetDeltaRootPath() + "/examples/data/gui/looknfeel;" +
+                               dtUtil::GetDeltaRootPath() + "/examples/testGUI;");
 
    std::string filename;
    if (argc > 1)

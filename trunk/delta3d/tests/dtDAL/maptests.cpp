@@ -39,10 +39,10 @@
 #include <dtUtil/macros.h>
 #include <dtUtil/exception.h>
 #include <dtUtil/fileutils.h>
+#include <dtUtil/datapathutils.h>
 #include <dtUtil/log.h>
 #include <dtUtil/mathdefines.h>
 
-#include <dtCore/globals.h>
 #include <dtCore/timer.h>
 #include <dtCore/scene.h>
 
@@ -74,21 +74,21 @@ extern dtABC::Application& GetGlobalApplication();
 ///////////////////////////////////////////////////////////////////////////////////////
 class MapTests : public CPPUNIT_NS::TestFixture
 {
-   CPPUNIT_TEST_SUITE( MapTests );
-      CPPUNIT_TEST( TestMapAddRemoveProxies );
-      CPPUNIT_TEST( TestMapProxySearch );
-      CPPUNIT_TEST( TestMapLibraryHandling );
-      CPPUNIT_TEST( TestMapEventsModified );
-      CPPUNIT_TEST( TestLoadMapIntoScene );
-      CPPUNIT_TEST( TestMapSaveAndLoad );
-      CPPUNIT_TEST( TestMapSaveAndLoadEvents );
-      CPPUNIT_TEST( TestMapSaveAndLoadGroup );
-      CPPUNIT_TEST( TestMapSaveAndLoadActorGroups );
-      CPPUNIT_TEST( TestLibraryMethods );
-      CPPUNIT_TEST( TestWildCard );
-      CPPUNIT_TEST( TestEnvironmentMapLoading );
-      CPPUNIT_TEST( TestLoadEnvironmentMapIntoScene );
-      CPPUNIT_TEST( TestActorProxyRemoveProperties );
+   CPPUNIT_TEST_SUITE(MapTests);
+      CPPUNIT_TEST(TestMapAddRemoveProxies);
+      CPPUNIT_TEST(TestMapProxySearch);
+      CPPUNIT_TEST(TestMapLibraryHandling);
+      CPPUNIT_TEST(TestMapEventsModified);
+      CPPUNIT_TEST(TestLoadMapIntoScene);
+      CPPUNIT_TEST(TestMapSaveAndLoad);
+      CPPUNIT_TEST(TestMapSaveAndLoadEvents);
+      CPPUNIT_TEST(TestMapSaveAndLoadGroup);
+      CPPUNIT_TEST(TestMapSaveAndLoadActorGroups);
+      CPPUNIT_TEST(TestLibraryMethods);
+      CPPUNIT_TEST(TestWildCard);
+      CPPUNIT_TEST(TestEnvironmentMapLoading);
+      CPPUNIT_TEST(TestLoadEnvironmentMapIntoScene);
+      CPPUNIT_TEST(TestActorProxyRemoveProperties);
    CPPUNIT_TEST_SUITE_END();
 
    public:
@@ -120,10 +120,10 @@ class MapTests : public CPPUNIT_NS::TestFixture
 };
 
 // Registers the fixture into the 'registry'
-CPPUNIT_TEST_SUITE_REGISTRATION( MapTests );
+CPPUNIT_TEST_SUITE_REGISTRATION(MapTests);
 
-const std::string DATA_DIR = dtCore::GetDeltaRootPath() + dtUtil::FileUtils::PATH_SEPARATOR + "examples/data";
-const std::string TESTS_DIR = dtCore::GetDeltaRootPath() + dtUtil::FileUtils::PATH_SEPARATOR + "tests";
+const std::string DATA_DIR = dtUtil::GetDeltaRootPath() + dtUtil::FileUtils::PATH_SEPARATOR + "examples/data";
+const std::string TESTS_DIR = dtUtil::GetDeltaRootPath() + dtUtil::FileUtils::PATH_SEPARATOR + "tests";
 const std::string MAPPROJECTCONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtDAL" + dtUtil::FileUtils::PATH_SEPARATOR + "WorkingMapProject";
 const std::string PROJECTCONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtDAL" + dtUtil::FileUtils::PATH_SEPARATOR + "WorkingProject";
 
@@ -134,7 +134,7 @@ void MapTests::setUp()
 {
     try
     {
-        dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
+        dtUtil::SetDataFilePathList(dtUtil::GetDeltaDataPathList());
         std::string logName("mapTest");
 
         logger = &dtUtil::Log::GetInstance(logName);

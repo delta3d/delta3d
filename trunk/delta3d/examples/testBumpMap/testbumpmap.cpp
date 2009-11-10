@@ -22,8 +22,8 @@
 #include "testbumpmap.h"
 
 #include <dtUtil/geometrycollector.h>
+#include <dtUtil/datapathutils.h>
 
-#include <dtCore/globals.h>
 #include <dtCore/camera.h>
 #include <dtCore/scene.h>
 #include <dtCore/shadermanager.h>
@@ -374,10 +374,10 @@ int main(int argc, char* argv[])
       customObjectName = std::string(argv[1]);
    }
 
-   std::string dataPath = dtCore::GetDeltaDataPathList();
-   dtCore::SetDataFilePathList(dataPath + ";" +
-                               dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
-                               dtCore::GetDeltaRootPath() + "/examples/testBumpMap");
+   std::string dataPath = dtUtil::GetDeltaDataPathList();
+   dtUtil::SetDataFilePathList(dataPath + ";" +
+                               dtUtil::GetDeltaRootPath() + "/examples/data" + ";" +
+                               dtUtil::GetDeltaRootPath() + "/examples/testBumpMap");
 
    dtCore::RefPtr<TestBumpMapApp> app = new TestBumpMapApp(customObjectName, "config.xml", true);
    app->Config();

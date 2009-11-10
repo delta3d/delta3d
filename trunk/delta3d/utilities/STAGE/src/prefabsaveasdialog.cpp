@@ -46,7 +46,6 @@
 #include <QtGui/QLabel>
 #include <QtGui/QToolButton>
 
-#include <dtCore/globals.h>
 #include <dtDAL/project.h>
 #include <dtDAL/map.h>
 #include <dtDAL/exceptionenum.h>

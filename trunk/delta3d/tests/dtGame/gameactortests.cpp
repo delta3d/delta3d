@@ -31,10 +31,10 @@
 #include <osg/Math>
 #include <dtUtil/log.h>
 #include <dtUtil/macros.h>
+#include <dtUtil/datapathutils.h>
 #include <dtCore/refptr.h>
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
-#include <dtCore/globals.h>
 #include <dtCore/camera.h>
 #include <dtCore/timer.h>
 #include <dtDAL/datatype.h>
@@ -134,7 +134,7 @@ void GameActorTests::setUp()
    {
       dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
       dtCore::System::GetInstance().Start();
-      dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
+      dtUtil::SetDataFilePathList(dtUtil::GetDeltaDataPathList());
 
       mManager = new dtGame::GameManager(*GetGlobalApplication().GetScene());
       mManager->SetApplication(GetGlobalApplication());

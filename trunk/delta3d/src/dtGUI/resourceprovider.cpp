@@ -1,13 +1,13 @@
 #include <CEGUI/CEGUIExceptions.h>
 #include <dtGUI/resourceprovider.h>
-#include <dtCore/globals.h>
+#include <dtUtil/datapathutils.h>
 #include <dtUtil/log.h>
 
 
 using namespace dtGUI;
 
-ResourceProvider::ResourceProvider():
-CEGUI::DefaultResourceProvider()
+ResourceProvider::ResourceProvider()
+   : CEGUI::DefaultResourceProvider()
 {
 
 }
@@ -29,7 +29,7 @@ void ResourceProvider::loadRawDataContainer(const CEGUI::String& filename, CEGUI
    // If there was no entry for this group, then find the full path name
    if(iter == d_resourceGroups.end())
    {
-      foundFilename = dtCore::FindFileInPathList(foundFilename);
+      foundFilename = dtUtil::FindFileInPathList(foundFilename);
       if(foundFilename.empty())
       {
          std::string errorStr = 

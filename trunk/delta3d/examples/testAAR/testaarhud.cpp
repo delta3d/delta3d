@@ -30,8 +30,8 @@
 #include "testaarexceptionenum.h"
 
 #include <dtUtil/macros.h>
+#include <dtUtil/datapathutils.h>
 #include <dtUtil/fileutils.h>
-#include <dtCore/globals.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/scene.h>
 #include <dtGame/logtag.h>
@@ -150,7 +150,7 @@ void TestAARHUD::SetupGUI(dtCore::DeltaWin& win,
       mGUI = new dtGUI::CEUIDrawable(&win, &keyboard, &mouse);
 
       std::string scheme = "gui/schemes/WindowsLook.scheme";
-      std::string path = dtCore::FindFileInPathList(scheme);
+      std::string path = dtUtil::FindFileInPathList(scheme);
       if (path.empty())
       {
          throw dtUtil::Exception(ARRHUDException::INIT_ERROR,

@@ -53,7 +53,6 @@ _CRTIMP extern int errno;
 #include <dtUtil/exception.h>
 #include <dtUtil/log.h>
 
-
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -103,7 +102,7 @@ namespace dtUtil
 #endif
 
    //temporary copy of osgDB::makeDirectory because of some bugs in it.
-   bool iMakeDirectory( const std::string &path )
+   bool iMakeDirectory(const std::string& path)
    {
       if (path.empty())
       {
@@ -126,18 +125,18 @@ namespace dtUtil
 
       std::string dir = path;
       std::stack<std::string> paths;
-      while ( true )
+      while (true)
       {
-         if ( dir.empty() )
+         if (dir.empty())
             break;
 
-         if ( stat64( dir.c_str(), &stbuf ) < 0 )
+         if (stat64(dir.c_str(), &stbuf ) < 0)
          {
-            switch ( errno )
+            switch (errno)
             {
             case ENOENT:
             case ENOTDIR:
-               paths.push( dir );
+               paths.push(dir);
                break;
 
             default:
@@ -152,11 +151,11 @@ namespace dtUtil
          dir = osgDB::getFilePath(std::string(dir));
       }
 
-      while ( !paths.empty() )
+      while (!paths.empty())
       {
          std::string dir = paths.top();
 
-         if ( mkdir( dir.c_str(), 0755 )< 0 )
+         if (mkdir(dir.c_str(), 0755) < 0)
          {
             osg::notify(osg::DEBUG_INFO) << "osgDB::makeDirectory():  "  << strerror(errno) << std::endl;
             return false;
@@ -167,14 +166,14 @@ namespace dtUtil
    }
 
    //-----------------------------------------------------------------------
-   bool FileUtils::FileExists( const std::string& strFile ) const
+   bool FileUtils::FileExists(const std::string& strFile) const
    {
       return GetFileInfo(strFile).fileType != FILE_NOT_FOUND;
    }
 
    //-----------------------------------------------------------------------
-   void FileUtils::FileCopy( const std::string& strSrc, const std::string& strDest, bool bOverwrite ) const {
-
+   void FileUtils::FileCopy(const std::string& strSrc, const std::string& strDest, bool bOverwrite) const 
+   {
       FILE* pSrcFile;
       FILE* pDestFile;
 
@@ -188,8 +187,8 @@ namespace dtUtil
                    std::string("Source file does not exist: \"") + strSrc + "\"", __FILE__, __LINE__);
 
          //Open the source file for reading.
-         pSrcFile = fopen( strSrc.c_str(), "rb" );
-         if ( pSrcFile == NULL )
+         pSrcFile = fopen(strSrc.c_str(), "rb");
+         if (pSrcFile == NULL)
          {
             throw dtUtil::Exception(FileExceptionEnum::IOException,
                    std::string("Unable to open source file for reading: \"") + strSrc + "\"", __FILE__, __LINE__);
@@ -240,7 +239,6 @@ namespace dtUtil
 
             try
             {
-
                if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                   mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, "Destination opened for reading.");
 
@@ -250,10 +248,10 @@ namespace dtUtil
                char buffer[4096];
                while (i<tagStat.st_size)
                {
-                  size_t readCount = fread(buffer, 1, 4096, pSrcFile );
+                  size_t readCount = fread(buffer, 1, 4096, pSrcFile);
                   if (readCount > 0)
                   {
-                     size_t numWritten = fwrite(buffer, 1, readCount, pDestFile );
+                     size_t numWritten = fwrite(buffer, 1, readCount, pDestFile);
                      if (numWritten<readCount)
                      {
                         throw dtUtil::Exception(FileExceptionEnum::IOException,
@@ -262,18 +260,18 @@ namespace dtUtil
                      i += readCount;
                   }
                }
-               fclose( pDestFile );
-               fclose( pSrcFile );
+               fclose(pDestFile);
+               fclose(pSrcFile);
             }
             catch (dtUtil::Exception& ex1)
             {
-               fclose( pDestFile );
+               fclose(pDestFile);
                throw ex1;
             }
          }
          catch (dtUtil::Exception& ex)
          {
-            fclose( pSrcFile );
+            fclose(pSrcFile);
             throw ex;
          }
 
@@ -285,7 +283,7 @@ namespace dtUtil
    }
 
    //-----------------------------------------------------------------------
-   void FileUtils::FileMove( const std::string& strSrc, const std::string& strDest, bool bOverwrite ) const
+   void FileUtils::FileMove(const std::string& strSrc, const std::string& strDest, bool bOverwrite) const
    {
       if (GetFileInfo(strSrc).fileType != REGULAR_FILE)
          throw dtUtil::Exception(FileExceptionEnum::FileNotFound,
@@ -330,7 +328,7 @@ namespace dtUtil
 
 
       //copy the file
-      FileCopy( strSrc, strDest, bOverwrite );
+      FileCopy(strSrc, strDest, bOverwrite);
 
       //attempt to delete the original file.
       if (unlink(strSrc.c_str()) != 0)
@@ -340,7 +338,7 @@ namespace dtUtil
    }
 
    //-----------------------------------------------------------------------
-   void FileUtils::FileDelete( const std::string& strFile ) const
+   void FileUtils::FileDelete(const std::string& strFile) const
    {
       FileType ft = GetFileInfo(strFile).fileType;
 
@@ -353,18 +351,18 @@ namespace dtUtil
                 std::string("File \"") + strFile + "\" is a directory.", __FILE__, __LINE__);
 
 
-      if ( unlink(strFile.c_str()) != 0)
+      if (unlink(strFile.c_str()) != 0)
          throw dtUtil::Exception(FileExceptionEnum::IOException,
                 std::string("Unable to delete \"") + strFile + "\".", __FILE__, __LINE__);
    }
 
    //-----------------------------------------------------------------------
-   const struct FileInfo FileUtils::GetFileInfo( const std::string& strFile) const
+   const struct FileInfo FileUtils::GetFileInfo(const std::string& strFile) const
    {
       struct FileInfo info;
 
       struct stat tagStat;
-      if ( stat( strFile.c_str(), &tagStat ) != 0 )
+      if (stat(strFile.c_str(), &tagStat) != 0)
       {
          //throw dtUtil::Exception(FileExceptionEnum::FileNotFound, std::string("Cannot open file ") + strFile);
          info.fileType = FILE_NOT_FOUND;
@@ -414,7 +412,7 @@ namespace dtUtil
       char* bufAddress = getcwd(buf, 512);
       if (buf != bufAddress)
       {
-         throw dtUtil::Exception( FileExceptionEnum::IOException, std::string("Cannot get current working directory"), __FILE__, __LINE__);
+         throw dtUtil::Exception(FileExceptionEnum::IOException, std::string("Cannot get current working directory"), __FILE__, __LINE__);
       }
 
       mCurrentDirectory = buf;
@@ -568,14 +566,16 @@ namespace dtUtil
    }
 
    //-----------------------------------------------------------------------
-   DirectoryContents FileUtils::DirGetSubs( const std::string& path ) const
+   DirectoryContents FileUtils::DirGetSubs(const std::string& path) const
    {
       DirectoryContents vec;
 
       DirectoryContents dirCont = DirGetFiles(path);
 
-      for (DirectoryContents::const_iterator i = dirCont.begin(); i != dirCont.end(); ++i) {
-         if (GetFileInfo(path + PATH_SEPARATOR + *i).fileType == DIRECTORY && (*i != ".") && (*i != "..")) {
+      for (DirectoryContents::const_iterator i = dirCont.begin(); i != dirCont.end(); ++i)
+      {
+         if (GetFileInfo(path + PATH_SEPARATOR + *i).fileType == DIRECTORY && (*i != ".") && (*i != "..")) 
+         {
             vec.push_back(*i);
          }
       }
@@ -705,7 +705,7 @@ namespace dtUtil
    }
 
    //-----------------------------------------------------------------------
-   bool FileUtils::DirDelete( const std::string& strDir, bool bRecursive )
+   bool FileUtils::DirDelete(const std::string& strDir, bool bRecursive)
    {
       if (bRecursive)
       {
@@ -750,7 +750,7 @@ namespace dtUtil
       }
 
       errno = 0;
-      if ( rmdir( strDir.c_str() ) != 0 )
+      if (rmdir(strDir.c_str()) != 0)
       {
          if (!bRecursive && errno == ENOTEMPTY)
          {
@@ -767,7 +767,6 @@ namespace dtUtil
          {
             throw dtUtil::Exception(FileExceptionEnum::IOException,
                    std::string("Unable to delete directory \"") + strDir + "\":" + strerror(errno), __FILE__, __LINE__);
-
          }
       }
 
@@ -801,7 +800,7 @@ namespace dtUtil
 
 
    //-----------------------------------------------------------------------
-   bool FileUtils::DirExists( const std::string& strDir ) const
+   bool FileUtils::DirExists(const std::string& strDir) const
    {
       return GetFileInfo(strDir).fileType == DIRECTORY;
    }
@@ -876,7 +875,7 @@ namespace dtUtil
    }
 
    //-----------------------------------------------------------------------
-   void FileUtils::RecursDeleteDir( bool bRecursive )
+   void FileUtils::RecursDeleteDir(bool bRecursive)
    {
       //this method assumes one is IN the directory that you want to delete.
       DirectoryContents dirCont = DirGetFiles(mCurrentDirectory);
@@ -896,7 +895,7 @@ namespace dtUtil
 
             }
          }
-         else if ((*i != ".") && (*i != "..") && ft == DIRECTORY && bRecursive )
+         else if ((*i != ".") && (*i != "..") && ft == DIRECTORY && bRecursive)
          {
             //if it's a directory and it's not the "." or ".." special directories,
             //change into that directory and recurse.

@@ -29,8 +29,8 @@
 #include <dtAI/basenpc.h>
 #include <dtAI/npcparser.h>
 #include <dtAI/aiparticlemanager.h>
-#include <dtCore/globals.h>
 #include <dtCore/refptr.h>
+#include <dtUtil/datapathutils.h>
 
 using namespace dtAI;
 
@@ -80,7 +80,7 @@ namespace dtTest
       static float prob = 0.5f;
 
       BaseNPC* pNewNPC = new BaseNPC("ClonedNPC");
-      pNewNPC->LoadNPCScript(dtCore::GetDeltaRootPath() + "/tests/dtAI/npcscript_test.txt");
+      pNewNPC->LoadNPCScript(dtUtil::GetDeltaRootPath() + "/tests/dtAI/npcscript_test.txt");
       pNewNPC->SetWSTemplate(pNPC.second->GetWSTemplate());
       pNewNPC->InitNPC();
       pNewNPC->SpawnNPC();
@@ -99,7 +99,7 @@ namespace dtTest
    void AIParticleManagerTests::TestAIParticleManager()
    {      
       BaseNPC* pTestNPC = new BaseNPC("TestNPC");
-      pTestNPC->LoadNPCScript(dtCore::GetDeltaRootPath() + "/tests/dtAI/npcscript_test.txt");
+      pTestNPC->LoadNPCScript(dtUtil::GetDeltaRootPath() + "/tests/dtAI/npcscript_test.txt");
       pTestNPC->InitNPC();
       pTestNPC->SpawnNPC();
 

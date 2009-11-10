@@ -35,7 +35,6 @@
 #include <dtCore/refptr.h>
 #include <dtCore/environment.h>
 #include <dtCore/flymotionmodel.h>
-#include <dtCore/globals.h>
 #include <dtCore/transform.h>
 
 #include <dtTerrain/terrain.h>
@@ -55,6 +54,7 @@
 #include <dtCore/generickeyboardlistener.h>
 
 #include <dtUtil/exception.h>
+#include <dtUtil/datapathutils.h>
 
 #include <osg/Version>
 #include <sstream>
@@ -598,10 +598,10 @@ private:
 //////////////////////////////////////////////////////////////////////////
 int main(int argc, char** argv)
 {
-   std::string dataPath = dtCore::GetDeltaDataPathList();
-   dtCore::SetDataFilePathList(dataPath + ";" +
-      dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
-      dtCore::GetDeltaRootPath() + "/examples/testTerrain" + ";");
+   std::string dataPath = dtUtil::GetDeltaDataPathList();
+   dtUtil::SetDataFilePathList(dataPath + ";" +
+      dtUtil::GetDeltaRootPath() + "/examples/data" + ";" +
+      dtUtil::GetDeltaRootPath() + "/examples/testTerrain" + ";");
 
    dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_DEBUG);
 

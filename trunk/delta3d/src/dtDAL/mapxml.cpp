@@ -43,7 +43,6 @@
 
 #include <osgDB/FileNameUtils>
 
-#include <dtCore/globals.h>
 #include <dtCore/transformable.h>
 #include <dtCore/transform.h>
 
@@ -66,6 +65,7 @@
 #include <dtDAL/transformableactorproxy.h>
 #include <dtDAL/librarymanager.h>
 
+#include <dtUtil/datapathutils.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/datetime.h>
 #include <dtUtil/xercesutils.h>
@@ -325,7 +325,7 @@ namespace dtDAL
       mXercesParser->setFeature(XMLUni::fgXercesUseCachedGrammarInParse, true);
       mXercesParser->setFeature(XMLUni::fgXercesCacheGrammarFromParse, true);
 
-      std::string schemaFileName = dtCore::FindFileInPathList("map.xsd");
+      std::string schemaFileName = dtUtil::FindFileInPathList("map.xsd");
 
       if (!dtUtil::FileUtils::GetInstance().FileExists(schemaFileName))
       {

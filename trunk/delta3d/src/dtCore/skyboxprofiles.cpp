@@ -23,7 +23,7 @@
 
 #include <dtCore/moveearthtransform.h>
 #include <dtCore/system.h>
-#include <dtCore/globals.h>
+#include <dtUtil/datapathutils.h>
 #include <dtUtil/log.h>
 
 #include <osg/Depth>
@@ -94,8 +94,8 @@ void AngularMapProfile::Config(osg::Group* pGroup)
    dtCore::RefPtr<osg::Shader> vertShader = new osg::Shader(osg::Shader::VERTEX);
    dtCore::RefPtr<osg::Shader> fragShader = new osg::Shader(osg::Shader::FRAGMENT);
 
-   std::string vertFile = dtCore::FindFileInPathList("/shaders/AngularMapSkyBox.vert");
-   std::string fragFile = dtCore::FindFileInPathList("/shaders/AngularMapSkyBox.frag");
+   std::string vertFile = dtUtil::FindFileInPathList("/shaders/AngularMapSkyBox.vert");
+   std::string fragFile = dtUtil::FindFileInPathList("/shaders/AngularMapSkyBox.frag");
 
    if (vertFile.empty())
    {
@@ -216,8 +216,8 @@ void CubeMapProfile::Config(osg::Group* pGroup)
    mProgram->addShader(vertShader.get());
    mProgram->addShader(fragShader.get());
 
-   std::string vertFile = dtCore::FindFileInPathList("/shaders/CubeMapSkyBox.vert");
-   std::string fragFile = dtCore::FindFileInPathList("/shaders/CubeMapSkyBox.frag");
+   std::string vertFile = dtUtil::FindFileInPathList("/shaders/CubeMapSkyBox.vert");
+   std::string fragFile = dtUtil::FindFileInPathList("/shaders/CubeMapSkyBox.frag");
 
    if (vertFile.empty())
    {

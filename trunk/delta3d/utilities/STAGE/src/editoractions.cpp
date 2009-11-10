@@ -75,6 +75,7 @@
 
 #include <dtUtil/log.h>
 #include <dtUtil/fileutils.h>
+#include <dtUtil/datapathutils.h>
 #include <dtUtil/librarysharingmanager.h>
 #include <dtCore/transform.h>
 #include <dtDAL/project.h>
@@ -86,7 +87,6 @@
 #include <dtDAL/environmentactor.h>
 #include <dtDAL/librarymanager.h>
 #include <dtDAL/enginepropertytypes.h>
-#include <dtCore/globals.h>
 
 #include <sstream>
 
@@ -1689,7 +1689,7 @@ namespace dtEditQt
 
       if (!mHelpBox)
       {
-         mHelpBox = new HelpBox((dtCore::GetDeltaRootPath() + "/utilities/STAGE/docs/help/data.xml").c_str(),
+         mHelpBox = new HelpBox((dtUtil::GetDeltaRootPath() + "/utilities/STAGE/docs/help/data.xml").c_str(),
             (QWidget*)EditorData::GetInstance().getMainWindow());
       }
 

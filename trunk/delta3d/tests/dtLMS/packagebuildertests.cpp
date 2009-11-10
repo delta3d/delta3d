@@ -30,7 +30,7 @@
 #include <LMS/WebPackager/package_utils.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/exception.h>
-#include <dtCore/globals.h>
+#include <dtUtil/datapathutils.h>
 #include <osgDB/FileNameUtils>
 
 #if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
@@ -82,7 +82,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION(LMSPackageBuilderTests);
 
 void LMSPackageBuilderTests::setUp()
 {
-   dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
+   dtUtil::SetDataFilePathList(dtUtil::GetDeltaDataPathList());
 }
 
 void LMSPackageBuilderTests::tearDown()
@@ -96,7 +96,7 @@ void LMSPackageBuilderTests::TestGetFilePath()
    
    const std::string &fileToUse = "map.xsd";
 
-   std::string absFilePath = dtCore::FindFileInPathList(fileToUse);
+   std::string absFilePath = dtUtil::FindFileInPathList(fileToUse);
    CPPUNIT_ASSERT(!absFilePath.empty());
 
    std::string result = GetFilePath(absFilePath);
@@ -113,7 +113,7 @@ void LMSPackageBuilderTests::TestGetFileName()
 
    const std::string &fileToUse = "map.xsd";
 
-   std::string absFilePath = dtCore::FindFileInPathList(fileToUse);
+   std::string absFilePath = dtUtil::FindFileInPathList(fileToUse);
    CPPUNIT_ASSERT(!absFilePath.empty());
 
    std::string result = GetFileName(absFilePath);
@@ -179,7 +179,7 @@ void LMSPackageBuilderTests::TestIsAbsolutePath()
 
    bool returnValue = false;
    const std::string &fileToUse = "map.xsd";
-   std::string absPath = dtCore::FindFileInPathList(fileToUse);
+   std::string absPath = dtUtil::FindFileInPathList(fileToUse);
    CPPUNIT_ASSERT(!absPath.empty());
 
    returnValue = IsAbsolutePath(absPath);
@@ -204,7 +204,7 @@ void LMSPackageBuilderTests::TestIsAbsolutePath()
 void LMSPackageBuilderTests::TestRelativeToAbsolutePath()
 {
    const std::string &fileToUse = "map.xsd";
-   std::string absPath = dtCore::FindFileInPathList(fileToUse);
+   std::string absPath = dtUtil::FindFileInPathList(fileToUse);
    CPPUNIT_ASSERT(!absPath.empty());
    std::string relativePath = "../" + fileToUse;
    // The function uses the current working directory as the parent if the 
@@ -220,7 +220,7 @@ void LMSPackageBuilderTests::TestMakeDirectoryEX()
       MakeDirectoryEX("");
       CPPUNIT_ASSERT_MESSAGE("MakeDirectoryEX should fail on empty string", !fileUtils.DirExists(""));
 
-      std::string deltaRoot = dtCore::GetDeltaRootPath();
+      std::string deltaRoot = dtUtil::GetDeltaRootPath();
       std::string dirName = deltaRoot + "/tests/dtLMS/Amaranthine";
       MakeDirectoryEX(dirName);
       CPPUNIT_ASSERT_MESSAGE("The directory should exist", fileUtils.DirExists(dirName));

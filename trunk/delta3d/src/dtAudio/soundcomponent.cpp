@@ -27,7 +27,8 @@
 #include <dtAudio/audioactorregistry.h>
 #include <dtAudio/soundactorproxy.h>
 #include <dtAudio/soundinfo.h>
-#include <dtCore/globals.h>
+
+#include <dtUtil/datapathutils.h>
 
 
 namespace dtAudio
@@ -86,7 +87,7 @@ namespace dtAudio
       bool success = false;
       dtCore::RefPtr<dtAudio::Sound> sound;
 
-      if (!dtCore::FindFileInPathList(soundFile).empty())
+      if (!dtUtil::FindFileInPathList(soundFile).empty())
       {
          // Create the sound object.
          sound = dtAudio::AudioManager::GetInstance().NewSound();

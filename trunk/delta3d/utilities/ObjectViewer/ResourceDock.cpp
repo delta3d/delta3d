@@ -43,13 +43,13 @@
 
 #include <dtCore/object.h>
 #include <dtCore/refptr.h>
-#include <dtCore/globals.h>
 #include <dtCore/shadermanager.h>
 #include <dtCore/transform.h>
-
 #include <dtCore/infinitelight.h>
 #include <dtCore/positionallight.h>
 #include <dtCore/spotlight.h>
+
+#include <dtUtil/datapathutils.h>
 
 #include <algorithm>
 #include <cctype>
@@ -1506,7 +1506,7 @@ void ResourceDock::OpenFilesInTextEditor(const std::vector<std::string>& fileLis
 {
    for (size_t fileIndex = 0; fileIndex < fileList.size(); ++fileIndex)
    {
-      std::string fileName = dtCore::FindFileInPathList(fileList[fileIndex]);
+      std::string fileName = dtUtil::FindFileInPathList(fileList[fileIndex]);
 
       TextEdit* editor = new TextEdit;
       editor->resize(700, 800);

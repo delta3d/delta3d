@@ -39,11 +39,11 @@
 #include <cppunit/TestFailure.h>
 
 #include <dtCore/timer.h>
-#include <dtCore/globals.h>
 #include <dtCore/scene.h>
 #include <dtABC/application.h>
 
 #include <dtUtil/fileutils.h>
+#include <dtUtil/datapathutils.h>
 #include <dtUtil/log.h>
 #include <dtUtil/exception.h>
 
@@ -130,13 +130,13 @@ dtABC::Application& GetGlobalApplication()
 class TimingListener : public CppUnit::TestListener
 {
   public:
-     void startTest( CppUnit::Test *test )
+     void startTest(CppUnit::Test* test)
      {
         mFailure = false;
         mTestClockStart = mTestClock.Tick();
      }
 
-      void endTest( CppUnit::Test *test )
+      void endTest(CppUnit::Test* test)
       {
          // handle timing - for checking slow tests
          std::ostringstream testResult;
@@ -153,7 +153,7 @@ class TimingListener : public CppUnit::TestListener
          std::cout << testResult.str() << std::endl;
       }
 
-      void addFailure( const CppUnit::TestFailure &failure )
+      void addFailure(const CppUnit::TestFailure& failure)
       {
          mFailure = true;
       }
@@ -194,14 +194,14 @@ int main(int argc, char* argv[])
          if(!info.path.empty())
             dtUtil::FileUtils::GetInstance().ChangeDirectory(info.path);
       }
-      catch(const dtUtil::Exception &ex)
+      catch(const dtUtil::Exception& ex)
       {
          ex.LogException(dtUtil::Log::LOG_ERROR);
       }
    }
 
    //Set delta data.
-   dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
+   dtUtil::SetDataFilePathList(dtUtil::GetDeltaDataPathList());
 
    GlobalApplication = new UnitTestApplication();
    GlobalApplication->Config();

@@ -18,41 +18,38 @@
  *
  */
 
-#ifndef DELTA_GLOBALS
-#define DELTA_GLOBALS
+#ifndef DELTA_DATA_FILE_PATH_LIST
+#define DELTA_DATA_FILE_PATH_LIST
 
-
+#include <dtUtil/export.h>
 #include <string>
 
-#include <dtCore/export.h>
-#include <dtUtil/deprecationmgr.h>
-
-namespace dtCore
+namespace dtUtil
 {
    /// Set the list of data file paths
-   DEPRECATE_FUNC DT_CORE_EXPORT void SetDataFilePathList(const std::string& pathList);
+   DT_UTIL_EXPORT void SetDataFilePathList(const std::string& pathList);
 
    /// Get the list of data file paths
-   DEPRECATE_FUNC DT_CORE_EXPORT std::string GetDataFilePathList();
+   DT_UTIL_EXPORT std::string GetDataFilePathList();
 
    /// Get the Delta Data path list (equivalent to the DELTA_DATA environment)
-   DEPRECATE_FUNC DT_CORE_EXPORT std::string GetDeltaDataPathList();
+   DT_UTIL_EXPORT std::string GetDeltaDataPathList();
 
    /// Get the root path to Delta3D (equivalent to the DELTA_ROOT environment)
-   DEPRECATE_FUNC DT_CORE_EXPORT std::string GetDeltaRootPath();
+   DT_UTIL_EXPORT std::string GetDeltaRootPath();
 
    /// Convienence method to get the supplied environment variable
-   DEPRECATE_FUNC DT_CORE_EXPORT std::string GetEnvironment(const std::string& env);
+   DT_UTIL_EXPORT std::string GetEnvironment(const std::string& env);
 
    /// Is the supplied environment variable defined?
-   DEPRECATE_FUNC DT_CORE_EXPORT bool IsEnvironment(const std::string& env);
+   DT_UTIL_EXPORT bool IsEnvironment(const std::string& env);
 
    /**
     * Sets an environment variable.
     * @param name the name of the variable to set.
     * @param value the value of the environment variable to set.
     */
-   DEPRECATE_FUNC DT_CORE_EXPORT void SetEnvironment(const std::string& name, const std::string& value);
+   DT_UTIL_EXPORT void SetEnvironment(const std::string& name, const std::string& value);
 
    /**
     * Searches for a file in the list of paths found by calling dtCore::GetDataFilePathList() 
@@ -60,7 +57,7 @@ namespace dtCore
     *  to the current Delta3D data path list.
     * @return The full path to the file requested or empty string if it's not found. 
     */
-   DEPRECATE_FUNC DT_CORE_EXPORT std::string FindFileInPathList(const std::string& fileName);
+   DT_UTIL_EXPORT std::string FindFileInPathList(const std::string& fileName);
 }
 
-#endif // DELTA_GLOBALS
+#endif // DELTA_DATA_FILE_PATH_LIST

@@ -55,7 +55,6 @@
 #include <dtEditQt/viewportoverlay.h>
 #include <dtEditQt/viewportcontainer.h>
 #include <dtEditQt/perspectiveviewport.h>
-#include <dtCore/globals.h>
 #include <dtCore/scene.h>
 #include <dtCore/object.h>
 #include <dtActors/engineactorregistry.h>
@@ -67,6 +66,7 @@
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/librarymanager.h>
+#include <dtUtil/datapathutils.h>
 #include <dtUtil/log.h>
 #include <algorithm>
 

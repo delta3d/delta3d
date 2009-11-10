@@ -32,16 +32,17 @@
 #include <osg/io_utils>
 #include <dtUtil/log.h>
 #include <dtUtil/datastream.h>
+#include <dtUtil//datapathutils.h>
 #include <dtCore/refptr.h>
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
-#include <dtCore/globals.h>
 #include <dtDAL/datatype.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/groupactorproperty.h>
 #include <dtDAL/actortype.h>
-#include <dtGame/gamemanager.h>
 #include <dtDAL/namedparameter.h>
+#include <dtGame/gamemanager.h>
+
 #include <osg/Endian>
 #include <cppunit/extensions/HelperMacros.h>
 
@@ -602,7 +603,7 @@ const char* NamedParameterTests::mTestActorLibrary="testActorLibrary";
 
 void NamedParameterTests::setUp()
 {
-   dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
+   dtUtil::SetDataFilePathList(dtUtil::GetDeltaDataPathList());
    try
    {
       dtUtil::Log* logger;

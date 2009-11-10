@@ -1,8 +1,8 @@
 #include "testlights.h"
-#include <dtCore/globals.h>
 #include <dtCore/camera.h>
 #include <dtCore/scene.h>
 #include <dtCore/transform.h>
+#include <dtUtil/datapathutils.h>
 
 #include <osgGA/GUIEventAdapter>
 
@@ -200,10 +200,9 @@ std::string TestLightsApp::CreateHelpLabelText()
 
 int main(int argc, const char* argv[])
 {
-   std::string dataPath = dtCore::GetDeltaDataPathList();
-   dtCore::SetDataFilePathList(dataPath + ";" +
-      dtCore::GetDeltaRootPath() + "/examples/data" + ";");
-
+   std::string dataPath = dtUtil::GetDeltaDataPathList();
+   dtUtil::SetDataFilePathList(dataPath + ";" +
+      dtUtil::GetDeltaRootPath() + "/examples/data" + ";");
 
    RefPtr<TestLightsApp> app = new TestLightsApp("config.xml");
    app->Config();

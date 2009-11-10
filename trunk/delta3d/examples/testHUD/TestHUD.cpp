@@ -5,15 +5,15 @@
 #include <dtCore/deltawin.h>
 #include <dtCore/scene.h>
 #include <dtCore/camera.h>
-#include <dtCore/globals.h>
 #include <dtCore/transform.h>
 #include <dtDAL/project.h>
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/map.h>
+#include <dtUtil/datapathutils.h>
 
 #include <CEGUI/CEGUIWindowManager.h>
 
-TestHUD::TestHUD( const std::string& configFilename ) : Application( configFilename )
+TestHUD::TestHUD(const std::string& configFilename) : Application(configFilename)
 {
 }
 
@@ -75,7 +75,7 @@ bool TestHUD::OnButtonClicked(const CEGUI::EventArgs&) //non-static
 
 void TestHUD::_ConfigScene()
 {
-   std::string contextName = dtCore::GetDeltaRootPath() + "/examples/data/demoMap";
+   std::string contextName = dtUtil::GetDeltaRootPath() + "/examples/data/demoMap";
    dtDAL::Project::GetInstance().SetContext(contextName, true);
    dtDAL::Map &myMap = dtDAL::Project::GetInstance().GetMap("MyCoolMap");
 
@@ -103,14 +103,14 @@ void TestHUD::_ConfigScene()
 
 int main()
 {
-   std::string dataPath = dtCore::GetDeltaDataPathList();
-   dtCore::SetDataFilePathList(dataPath + ";" +
-      dtCore::GetDeltaRootPath() + "/examples/data" + ";");
+   std::string dataPath = dtUtil::GetDeltaDataPathList();
+   dtUtil::SetDataFilePathList(dataPath + ";" +
+      dtUtil::GetDeltaRootPath() + "/examples/data" + ";");
 
    //dtGUI::HUD::SetFilePath( dtCore::GetDeltaRootPath() + "/examples/data/cegui" );
-   dtGUI::HUD::SetFilePath( dtCore::GetDeltaRootPath() + "/examples/data/gui" );
+   dtGUI::HUD::SetFilePath(dtUtil::GetDeltaRootPath() + "/examples/data/gui");
 
-   dtCore::RefPtr<TestHUD> app = new TestHUD( "test.xml" );
+   dtCore::RefPtr<TestHUD> app = new TestHUD("test.xml");
 
    app->Config();
    app->Run();

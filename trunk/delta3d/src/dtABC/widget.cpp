@@ -1,6 +1,5 @@
 #include <cassert>
 #include <dtCore/system.h>
-#include <dtCore/globals.h>
 #include <dtCore/mouse.h>
 #include <dtCore/keyboard.h>
 
@@ -8,6 +7,8 @@
 #include <dtCore/deltawin.h>
 #include <dtCore/camera.h>
 #include <dtCore/scene.h>    ///<\todo needs to be included because of some issue with BaseABC.
+
+#include <dtUtil/datapathutils.h>
 
 #if !defined(__APPLE__) && !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
 #include "X11/Xlib.h"
@@ -93,7 +94,7 @@ void Widget::Quit(void)
 
 void Widget::SetPath(const std::string& path)
 {
-   SetDataFilePathList(path);
+   dtUtil::SetDataFilePathList(path);
 }
 
 void Widget::PreFrame(const double deltaFrameTime)

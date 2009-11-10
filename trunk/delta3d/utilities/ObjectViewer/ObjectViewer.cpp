@@ -14,7 +14,6 @@
 #include <dtCore/camera.h>
 #include <dtCore/objectmotionmodel.h>
 #include <dtCore/orbitmotionmodel.h>
-#include <dtCore/globals.h>
 #include <dtCore/light.h>
 #include <dtCore/infinitelight.h>
 #include <dtCore/positionallight.h>
@@ -23,6 +22,7 @@
 #include <dtCore/exceptionenum.h>
 #include <dtCore/shadermanager.h>
 
+#include <dtUtil/datapathutils.h>
 #include <dtUtil/xercesparser.h>
 #include <dtUtil/stringutils.h>
 #include <dtUtil/fileutils.h>
@@ -73,11 +73,11 @@ void ObjectViewer::Config()
    dtABC::Application::Config();
    GetCompositeViewer()->setThreadingModel(osgViewer::CompositeViewer::SingleThreaded);
 
-   std::string exampleDataPath = dtCore::GetEnvironment("DELTA_ROOT");
-   std::string rootDataPath    = dtCore::GetEnvironment("DELTA_DATA");
+   std::string exampleDataPath = dtUtil::GetEnvironment("DELTA_ROOT");
+   std::string rootDataPath    = dtUtil::GetEnvironment("DELTA_DATA");
    exampleDataPath += ";" + rootDataPath;
 
-   dtCore::SetDataFilePathList(dtCore::GetDataFilePathList() + ";" + exampleDataPath);
+   dtUtil::SetDataFilePathList(dtUtil::GetDataFilePathList() + ";" + exampleDataPath);
 
    //adjust the Camera position
    dtCore::Transform camPos;

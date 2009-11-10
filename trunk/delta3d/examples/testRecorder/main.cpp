@@ -36,11 +36,11 @@
 
 #include "testrecorder.h"
 #include <dtUtil/log.h>
-#include <dtCore/globals.h>
+#include <dtUtil/datapathutils.h>
 
 int main(int argc, char* argv[])
 {
-   dtCore::SetDataFilePathList(dtCore::GetDeltaRootPath() + "/examples/data" + ";" );
+   dtUtil::SetDataFilePathList(dtUtil::GetDeltaRootPath() + "/examples/data" + ";" );
    dtCore::RefPtr<TestRecorder> app = new TestRecorder( "config.xml" );
 
    app->Config();

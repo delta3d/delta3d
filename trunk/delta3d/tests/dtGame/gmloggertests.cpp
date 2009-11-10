@@ -37,10 +37,10 @@
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
 #include <dtCore/sigslot.h>
-#include <dtCore/globals.h>
 #include <dtCore/timer.h>
 #include <dtUtil/exception.h>
 #include <dtUtil/fileutils.h>
+#include <dtUtil/datapathutils.h>
 #include <dtUtil/macros.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtGame/loggermessages.h>
@@ -258,7 +258,7 @@ class TestLogStream : public dtGame::LogStream
 //Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(GMLoggerTests);
 const std::string LOGFILE = "testlog";
-const std::string TESTS_DIR = dtCore::GetDeltaRootPath() + dtUtil::FileUtils::PATH_SEPARATOR + "tests";
+const std::string TESTS_DIR = dtUtil::GetDeltaRootPath() + dtUtil::FileUtils::PATH_SEPARATOR + "tests";
 
 const char* GMLoggerTests::mTestGameActorLibrary="testGameActorLibrary";
 const char* GMLoggerTests::mTestActorLibrary="testActorLibrary";
@@ -304,7 +304,7 @@ void GMLoggerTests::setUp()
    {
       mGameManager = new dtGame::GameManager(*GetGlobalApplication().GetScene());
       mGameManager->SetApplication(GetGlobalApplication());
-      dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
+      dtUtil::SetDataFilePathList(dtUtil::GetDeltaDataPathList());
       mGameManager->LoadActorRegistry(mTestGameActorLibrary);
       dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
       dtCore::System::GetInstance().Start();

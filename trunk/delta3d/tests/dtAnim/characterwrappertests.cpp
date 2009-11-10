@@ -24,10 +24,9 @@
 #include <cppunit/extensions/HelperMacros.h>
 
 #include <dtAnim/characterwrapper.h>
-
+#include <dtUtil/datapathutils.h>
 #include <dtDAL/project.h>
 
-#include <dtCore/globals.h>
 #include <dtCore/refptr.h>
 #include <dtCore/transform.h>
 
@@ -43,8 +42,8 @@ namespace dtAnim
 
    class CharacterWrapperTests : public CPPUNIT_NS::TestFixture
    {
-      CPPUNIT_TEST_SUITE( CharacterWrapperTests );
-      CPPUNIT_TEST( TestCharacterWrapper );
+      CPPUNIT_TEST_SUITE(CharacterWrapperTests);
+      CPPUNIT_TEST(TestCharacterWrapper);
       CPPUNIT_TEST_SUITE_END();
 
    public:
@@ -58,13 +57,13 @@ namespace dtAnim
    };
 
    // Registers the fixture into the 'registry'
-   CPPUNIT_TEST_SUITE_REGISTRATION( CharacterWrapperTests );
+   CPPUNIT_TEST_SUITE_REGISTRATION(CharacterWrapperTests);
 
    void CharacterWrapperTests::setUp()
    {
-      dtDAL::Project::GetInstance().SetContext(dtCore::GetDeltaRootPath() + "/examples/data/demoMap");
+      dtDAL::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data/demoMap");
 
-      std::string modelPath = dtCore::FindFileInPathList("SkeletalMeshes/marine_test.xml");
+      std::string modelPath = dtUtil::FindFileInPathList("SkeletalMeshes/marine_test.xml");
       CPPUNIT_ASSERT(!modelPath.empty());
 
       mCharacter = new CharacterWrapper(modelPath);

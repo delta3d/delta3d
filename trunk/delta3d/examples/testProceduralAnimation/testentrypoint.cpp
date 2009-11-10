@@ -25,10 +25,10 @@
 #include "proceduralanimationactor.h"
 #include "proceduralanimationcomponent.h"
 
+#include <dtUtil/datapathutils.h>
 #include <dtUtil/mathdefines.h>
 #include <dtUtil/exception.h>
 
-#include <dtCore/globals.h>
 #include <dtCore/flymotionmodel.h>
 #include <dtCore/fpsmotionmodel.h>
 #include <dtCore/camera.h>
@@ -105,9 +105,9 @@ void TestProceduralAnimation::Initialize(dtGame::GameApplication& app, int argc,
 //////////////////////////////////////////////////////////////////////////
 void TestProceduralAnimation::OnStartup(dtGame::GameApplication& app)
 {     
-   std::string dataPath = dtCore::GetDeltaDataPathList();
-   dtCore::SetDataFilePathList(dataPath + ";" + dtCore::GetDeltaRootPath() + 
-      "/examples/data" + ";" + dtCore::GetDeltaRootPath() + "/examples/testProceduralAnimation/"); 
+   std::string dataPath = dtUtil::GetDeltaDataPathList();
+   dtUtil::SetDataFilePathList(dataPath + ";" + dtUtil::GetDeltaRootPath() + 
+      "/examples/data" + ";" + dtUtil::GetDeltaRootPath() + "/examples/testProceduralAnimation/"); 
 
    typedef std::vector<dtDAL::ActorProxy*> ProxyContainer;
    ProxyContainer proxies;
@@ -130,7 +130,7 @@ void TestProceduralAnimation::OnStartup(dtGame::GameApplication& app)
       app.GetWindow()->SetPosition(x, y, 1024, 768);
       app.GetWindow()->SetWindowTitle("TestProceduralAnimation");
 
-      std::string context = dtCore::GetDeltaRootPath() + "/examples/data/demoMap";
+      std::string context = dtUtil::GetDeltaRootPath() + "/examples/data/demoMap";
       dtDAL::Project::GetInstance().SetContext(context, true);
 
       if (!mPerformanceTest)

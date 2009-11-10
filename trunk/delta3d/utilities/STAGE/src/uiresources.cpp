@@ -29,7 +29,6 @@
 #include <prefix/dtstageprefix-src.h>
 #include <dtEditQt/uiresources.h>
 #include <cstdlib>
-#include <dtCore/globals.h>
 
 namespace dtEditQt
 {

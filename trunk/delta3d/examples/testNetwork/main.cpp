@@ -25,17 +25,18 @@
 
 #include "testNetwork.h"
 #include <gnelib.h>
-#include <dtCore/globals.h>
+
+#include <dtUtil/datapathutils.h>
 
 using namespace dtCore;
 
 ///Supplying a host name as the first argument on the command line will create
 ///a client and try to connect to that server.
 ///No parameters on the command line will create a server.
-int main(int argc, char *argv[] )
+int main(int argc, char* argv[])
 {
    // set data search path to parent directory and delta3d/data
-   dtCore::SetDataFilePathList(dtCore::GetDeltaRootPath() + "/examples/data" + ";");
+   dtUtil::SetDataFilePathList(dtUtil::GetDeltaRootPath() + "/examples/data" + ";");
 
    dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ALWAYS, "",
       "Usage: testNetwork.exe [hostname]");

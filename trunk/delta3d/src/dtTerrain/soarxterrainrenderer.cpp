@@ -21,7 +21,6 @@
 #include <sstream>
 
 #include <dtCore/scene.h>
-#include <dtCore/globals.h>
 
 #include <osg/Group>
 #include <osg/Shape>
@@ -38,6 +37,7 @@
 #include <osgDB/ReadFile>
 
 #include <dtUtil/fileutils.h>
+#include <dtUtil/datapathutils.h>
 
 #include <dtTerrain/terraindatareader.h>
 #include <dtTerrain/terraindecorationlayer.h>
@@ -62,8 +62,8 @@ namespace dtTerrain
    const SoarXCacheResourceName SoarXCacheResourceName::BASE_GRADIENT_TEXTURE("basegradient.rgb");
 
    //////////////////////////////////////////////////////////////////////////    
-   SoarXTerrainRenderer::SoarXTerrainRenderer(const std::string &name) :
-      TerrainDataRenderer(name)
+   SoarXTerrainRenderer::SoarXTerrainRenderer(const std::string& name) 
+      : TerrainDataRenderer(name)
    {
       mFragShaderPath = "shaders/terrain.frag";
       mRootGroupNode = new osg::Group();
@@ -262,7 +262,7 @@ namespace dtTerrain
    void SoarXTerrainRenderer::CreateFragmentShader()
    {      
       dtCore::RefPtr<osg::Shader> fragShader = new osg::Shader(osg::Shader::FRAGMENT);
-      std::string shaderPath = dtCore::FindFileInPathList(mFragShaderPath);
+      std::string shaderPath = dtUtil::FindFileInPathList(mFragShaderPath);
       if (shaderPath.empty())
       {
          LOG_ERROR("Could not load terrain fragment shader.");

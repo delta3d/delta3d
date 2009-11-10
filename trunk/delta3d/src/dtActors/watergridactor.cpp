@@ -40,7 +40,6 @@
 #include <dtCore/shadermanager.h>
 #include <dtCore/scene.h>
 #include <dtCore/cloudplane.h>
-#include <dtCore/globals.h>
 #include <dtCore/transform.h>
 
 #include <dtABC/application.h>

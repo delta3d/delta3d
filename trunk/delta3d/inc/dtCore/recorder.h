@@ -40,9 +40,9 @@
 #include <dtCore/refptr.h>
 #include <dtCore/base.h>
 #include <dtCore/system.h>
-#include <dtCore/globals.h>
 #include <dtUtil/log.h>
 #include <dtUtil/stringutils.h>
+#include <dtUtil/datapathutils.h>
 #include <dtUtil/xerceserrorhandler.h>
 #include <dtUtil/keyframedecoder.h>
 
@@ -165,13 +165,13 @@ namespace dtCore
          mStartTime = mClock.Tick();
 
          FrameDataPtrContainer sourcedata;
-         sourcedata.reserve( mSources.size() );
+         sourcedata.reserve(mSources.size());
          typename RecordablePtrContainer::iterator iter = mSources.begin();
          typename RecordablePtrContainer::iterator enditer = mSources.end();
          while (iter != enditer)
          {
             // orders framedata the same as sources are ordered in the source container
-            sourcedata.push_back( (*iter)->CreateFrameData() );
+            sourcedata.push_back((*iter)->CreateFrameData());
             ++iter;
          }
          mKeyFrames.push_back( KeyFrame(0.0,sourcedata) );
@@ -225,7 +225,7 @@ namespace dtCore
          typename KeyFrameContainer::iterator kfend = mKeyFrames.end();
          while (kfiter != kfend)
          {
-            XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* frameelement = doc->createElement( FRAME );
+            XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* frameelement = doc->createElement(FRAME);
 
             FrameDataPtrContainer& sourcedata = (*kfiter).second;
             typename FrameDataPtrContainer::iterator fditer = sourcedata.begin();
@@ -236,18 +236,18 @@ namespace dtCore
             {
                // assumes an equal number of framedata iterators for source iterators
                FrameDataType *fdt = (*fditer).get();
-               XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* dataelement = (*srciter)->Serialize( fdt,doc );
+               XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* dataelement = (*srciter)->Serialize(fdt,doc);
                frameelement->appendChild( dataelement );
                ++fditer;
                ++srciter;
             }
 
             double timestamp = (*kfiter).first;
-            std::string timestring = dtUtil::ToString<double>( timestamp );
+            std::string timestring = dtUtil::ToString<double>(timestamp);
 
-            XMLCh* TIMESTAMP = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode( timestring.c_str() );
-            frameelement->setAttribute( TIMECODE , TIMESTAMP );
-            XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release( &TIMESTAMP );
+            XMLCh* TIMESTAMP = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(timestring.c_str());
+            frameelement->setAttribute(TIMECODE , TIMESTAMP);
+            XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&TIMESTAMP);
 
             root->appendChild(frameelement);
             ++kfiter;
@@ -257,8 +257,8 @@ namespace dtCore
          writer->WriteFile(filename);
 
          // clean up memory
-         XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release( &TIMECODE );
-         XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release( &FRAME );
+         XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&TIMECODE);
+         XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&FRAME);
       }
 
       /**
@@ -272,7 +272,7 @@ namespace dtCore
       void LoadFile(const std::string& filename)
       {
          // check to see if the file exits
-         std::string file = dtCore::FindFileInPathList(filename);
+         std::string file = dtUtil::FindFileInPathList(filename);
          if (file.empty())
          {
             LOG_WARNING("The file, " + filename + " was not found.")

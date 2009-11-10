@@ -33,7 +33,6 @@
 #include "testaarinput.h"
 #include "testaarhud.h"
 
-#include <dtCore/globals.h>
 #include <dtCore/flymotionmodel.h>
 #include <dtCore/camera.h>
 #include <dtCore/deltawin.h>
@@ -41,6 +40,7 @@
 #include <dtCore/transform.h>
 #include <dtDAL/actortype.h>
 #include <dtDAL/project.h>
+#include <dtUtil/datapathutils.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/gameapplication.h>
 #include <dtGame/logcontroller.h>
@@ -99,15 +99,15 @@ void TestAAR::Initialize(dtGame::GameApplication& app, int argc, char** argv)
 //////////////////////////////////////////////////////////////////////////
 void TestAAR::OnStartup(dtGame::GameApplication& app)
 {
-   std::string dataPath = dtCore::GetDeltaDataPathList();
-   dtCore::SetDataFilePathList(dataPath + ";" +
-                               dtCore::GetDeltaRootPath() + "/examples/data;" +
-                               dtCore::GetDeltaRootPath() + "/examples/data/gui/imagesets;" +
-                               dtCore::GetDeltaRootPath() + "/examples/data/gui/schemes;" +
-                               dtCore::GetDeltaRootPath() + "/examples/data/gui/fonts;" +
-                               dtCore::GetDeltaRootPath() + "/examples/data/gui/looknfeel;");
+   std::string dataPath = dtUtil::GetDeltaDataPathList();
+   dtUtil::SetDataFilePathList(dataPath + ";" +
+                               dtUtil::GetDeltaRootPath() + "/examples/data;" +
+                               dtUtil::GetDeltaRootPath() + "/examples/data/gui/imagesets;" +
+                               dtUtil::GetDeltaRootPath() + "/examples/data/gui/schemes;" +
+                               dtUtil::GetDeltaRootPath() + "/examples/data/gui/fonts;" +
+                               dtUtil::GetDeltaRootPath() + "/examples/data/gui/looknfeel;");
 
-   std::string context = dtCore::GetDeltaRootPath() + "/examples/testAAR/AARProject";
+   std::string context = dtUtil::GetDeltaRootPath() + "/examples/testAAR/AARProject";
 
    try
    {

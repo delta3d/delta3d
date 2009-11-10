@@ -24,7 +24,7 @@
 #include "guiapp.h"
 #include "guimanager.h"
 #include <dtGUI/scriptmodule.h>
-#include <dtCore/globals.h>
+#include <dtUtil/datapathutils.h>
 #include <string>
 
 using namespace dtTest;
@@ -34,13 +34,13 @@ GUIApp::GUIApp() : BaseClass(),
    mScriptModule(new dtGUI::ScriptModule())
 {
    // should only need this for delta .xsd files
-   std::string deltadata( dtCore::GetDeltaRootPath() + "/data" );
+   std::string deltadata(dtUtil::GetDeltaRootPath() + "/data");
 
    // need this for gui .xsd files
    std::string deltagui( "/gui" );
 
    ///\todo need to decide how paths will be handled.  We need to decide if DELTA_DATA is a list or a single item.
-   dtCore::SetDataFilePathList( dtCore::GetDeltaDataPathList() + ":" + deltadata + deltagui );
+   dtUtil::SetDataFilePathList(dtUtil::GetDeltaDataPathList() + ":" + deltadata + deltagui);
 }
 
 GUIApp::~GUIApp()

@@ -27,7 +27,6 @@
 #include <vector>
 #include <queue>
 
-#include <dtCore/globals.h>
 #include <dtAudio/sound.h>
 #include <dtABC/application.h>
 #include <dtABC/labelactor.h>
@@ -90,40 +89,40 @@ private:
    static const char* kFxDetonationType[kNumFx];
 
 public:
-   TestAudioApp(const std::string& configFilename = "config.xml" );
+   TestAudioApp(const std::string& configFilename = "config.xml");
 protected:
    virtual ~TestAudioApp();
 
 public:
-   virtual void PreFrame( const double deltaFrameTime );
-   virtual void Frame( const double deltaFrameTime );
-   virtual void PostFrame( const double deltaFrameTime );
+   virtual void PreFrame(const double deltaFrameTime);
+   virtual void Frame(const double deltaFrameTime);
+   virtual void PostFrame(const double deltaFrameTime);
    bool KeyPressed(const dtCore::Keyboard* keyboard, int key);
 
 private:
    void CreateHelpLabel();
    std::string CreateHelpLabelText();
 
-   inline void LoadPlaySound( const char* fname, unsigned int box = 0L );
-   inline void StopAllSounds( void );
-   inline void FreeAllStoppedSounds( bool forced = false );
-   inline void FlushQueuedSounds( void );
-   inline void ChangeSoundGain( float gain );
-   inline void ChangeSoundPitch( float pitch );
-   inline void ToggleSoundLooping( void );
-   inline void PauseAllSounds( void );
-   inline void RewindAllSounds( void );
+   inline void LoadPlaySound(const char* fname, unsigned int box = 0L );
+   inline void StopAllSounds(void);
+   inline void FreeAllStoppedSounds(bool forced = false);
+   inline void FlushQueuedSounds(void);
+   inline void ChangeSoundGain(float gain);
+   inline void ChangeSoundPitch(float pitch);
+   inline void ToggleSoundLooping(void);
+   inline void PauseAllSounds(void);
+   inline void RewindAllSounds(void);
 
-   inline void                                     SetUpVisuals( void );
-   inline dtCore::RefPtr<dtCore::Object>           LoadGfxFile( const char* fname );
-   inline dtCore::RefPtr<dtCore::EffectManager>    LoadFxFile( const char* fname );
-   inline dtCore::RefPtr<dtCore::ParticleSystem>   LoadPSFile( const char* fname );
-   inline void                                     InitInputDevices( void );
-   inline void                                     SetUpCamera( void );
-   inline void                                     MoveTheObject( unsigned int obj );
+   inline void                                     SetUpVisuals(void);
+   inline dtCore::RefPtr<dtCore::Object>           LoadGfxFile(const char* fname);
+   inline dtCore::RefPtr<dtCore::EffectManager>    LoadFxFile(const char* fname);
+   inline dtCore::RefPtr<dtCore::ParticleSystem>   LoadPSFile(const char* fname);
+   inline void                                     InitInputDevices(void);
+   inline void                                     SetUpCamera(void);
+   inline void                                     MoveTheObject(unsigned int obj);
 
-   static void MakeSmoke( dtAudio::Sound* sound, void* param );
-   static void StopSmoke( dtAudio::Sound* sound, void* param );
+   static void MakeSmoke(dtAudio::Sound* sound, void* param);
+   static void StopSmoke(dtAudio::Sound* sound, void* param);
 
    void StartRecording();
    void StopRecording();

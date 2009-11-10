@@ -29,10 +29,14 @@
 #include <dtABC/application.h>
 #include <dtCore/camera.h>
 #include <dtCore/system.h>
+#include <dtCore/transform.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/actorupdatemessage.h>
 #include <dtGame/basemessages.h>
 #include <dtAnim/animationhelper.h>
+#include <dtAnim/animationgameactor.h>
+#include <dtAnim/animactorregistry.h>
+#include <dtAnim/animationcomponent.h>
 #include <dtUtil/matrixutil.h>
 #include <dtCore/transform.h>
 #include <osg/Matrix>
@@ -99,7 +103,7 @@ bool TestAnimInput::HandleKeyPressed(const dtCore::Keyboard* keyBoard, int key)
       case '\\':
       case osgGA::GUIEventAdapter::KEY_Insert:
          {
-//            GetGameManager()->GetApplication().GetCamera()->SetNextStatisticsType();
+            //GetGameManager()->GetApplication().GetCamera()->SetNextStatisticsType();
             break;
          }
       case osgGA::GUIEventAdapter::KEY_Up:
@@ -155,13 +159,43 @@ bool TestAnimInput::HandleKeyReleased(const dtCore::Keyboard* keyboard, int key)
             mAnimationHelper->ClearAll(0.25f);
             mAnimationHelper->PlayAnimation("Idle");
             mIsWalking = false;
-            return false;
+            break;
          }
       case osgGA::GUIEventAdapter::KEY_Right:
       case osgGA::GUIEventAdapter::KEY_Left:
          {
             mIsTurning = false;
-            return false;
+            break;
+         }
+      case '/':
+         {
+
+            // Test code to dynamically load a model.  This can be used to test the 
+            // benefits of using asynchronous vs synchronous loading.
+
+            //dtGame::GameManager* gm = GetGameManager();
+
+            //dtCore::RefPtr<dtAnim::AnimationGameActorProxy> animProxy;
+
+            //// Create new marine
+            //gm->CreateActor(*dtAnim::AnimActorRegistry::ANIMATION_ACTOR_TYPE, animProxy);
+
+            //dtAnim::AnimationGameActor* dynamicActor;
+            //dynamicActor = dynamic_cast<dtAnim::AnimationGameActor*>(animProxy->GetActor());
+            //dynamicActor->SetModel("yourModelURL");
+
+            //dtCore::Transform newTransform;
+            //newTransform.SetTranslation(-1.0f, 50.0f, 4.4f);
+
+            //dynamicActor->SetTransform(newTransform);
+
+            //// Add marine to world
+            //gm->AddActor(*animProxy, false, false); 
+
+            //dtAnim::AnimationComponent* animComponent;
+            //gm->GetComponentByName(dtAnim::AnimationComponent::DEFAULT_NAME, animComponent);
+
+            //animComponent->RegisterActor(*animProxy, *dynamicActor->GetHelper());
          }
       default:
          break;

@@ -38,12 +38,12 @@
 #include <dtUtil/log.h>
 #include <dtUtil/macros.h>
 #include <dtUtil/datastream.h>
+#include <dtUtil/datapathutils.h>
 
 #include <dtCore/refptr.h>
 #include <dtCore/observerptr.h>
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
-#include <dtCore/globals.h>
 
 #include <dtDAL/datatype.h>
 #include <dtDAL/resourcedescriptor.h>
@@ -207,7 +207,7 @@ const std::string GameManagerTests::mTestActorLibrary="testActorLibrary";
 /////////////////////////////////////////////////
 void GameManagerTests::setUp()
 {
-   dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
+   dtUtil::SetDataFilePathList(dtUtil::GetDeltaDataPathList());
    try
    {
       dtUtil::Log* logger;

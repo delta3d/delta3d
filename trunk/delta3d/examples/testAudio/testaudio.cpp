@@ -13,15 +13,16 @@
 #include <dtCore/orbitmotionmodel.h>
 #include <dtCore/particlesystem.h>
 #include <dtCore/transform.h>
+#include <dtUtil/datapathutils.h>
 #include <osgGA/GUIEventAdapter>
 
 // name spaces
-using namespace   dtCore;
-using namespace   dtABC;
-using namespace   dtAudio;
-using namespace   dtUtil;
+using namespace dtCore;
+using namespace dtABC;
+using namespace dtAudio;
+using namespace dtUtil;
 
-IMPLEMENT_MANAGEMENT_LAYER( TestAudioApp )
+IMPLEMENT_MANAGEMENT_LAYER(TestAudioApp)
 
 // static member variables
 unsigned int   TestAudioApp::kNumSoundFiles(4L);
@@ -580,7 +581,7 @@ TestAudioApp::LoadGfxFile(const char* fname)
       return NULL;
    }
 
-   std::string filename = dtCore::FindFileInPathList(fname);
+   std::string filename = dtUtil::FindFileInPathList(fname);
    if (filename == "")
    {
       // still no file name, bail...
@@ -862,9 +863,9 @@ std::string TestAudioApp::CreateHelpLabelText()
 
 int main()
 {
-   std::string dataPath = dtCore::GetDeltaDataPathList();
-   dtCore::SetDataFilePathList(dataPath + ";" +
-      dtCore::GetDeltaRootPath() + "/examples/data" + ";");
+   std::string dataPath = dtUtil::GetDeltaDataPathList();
+   dtUtil::SetDataFilePathList(dataPath + ";" +
+      dtUtil::GetDeltaRootPath() + "/examples/data" + ";");
 
    RefPtr<TestAudioApp> app = new TestAudioApp("config.xml");
 

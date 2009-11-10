@@ -21,11 +21,11 @@
  */
 
 #include <dtUtil/log.h>
+#include <dtUtil/datapathutils.h>
 #include <dtCore/collisionmotionmodel.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/flymotionmodel.h>
 #include <dtCore/fpsmotionmodel.h>
-#include <dtCore/globals.h>
 #include <dtCore/motionmodel.h>
 #include <dtCore/object.h>
 #include <dtCore/orbitmotionmodel.h>
@@ -153,7 +153,7 @@ namespace dtExample
       {
          try
          {
-            std::string schemefile(dtCore::FindFileInPathList("gui/schemes/WindowsLook.scheme"));
+            std::string schemefile(dtUtil::FindFileInPathList("gui/schemes/WindowsLook.scheme"));
             CEGUI::SchemeManager* sm = CEGUI::SchemeManager::getSingletonPtr();
             sm->loadScheme(schemefile);  ///< populate the window factories
          }
@@ -538,14 +538,14 @@ IMPLEMENT_MANAGEMENT_LAYER(TestMotionModelsApp)
 
 int main(int argc, char** argv)
 {
-   std::string dataPath = dtCore::GetDeltaDataPathList();
-   dtCore::SetDataFilePathList(dataPath + ";" +
-                               dtCore::GetDeltaRootPath() + "/examples/data/;" +
-                               dtCore::GetDeltaRootPath() + "/examples/data/gui/imagesets;" +
-                               dtCore::GetDeltaRootPath() + "/examples/data/gui/schemes;" +
-                               dtCore::GetDeltaRootPath() + "/examples/data/gui/fonts;" +
-                               dtCore::GetDeltaRootPath() + "/examples/data/gui/looknfeel;" +
-                               dtCore::GetDeltaRootPath() + "/examples/testMotionModels/;");
+   std::string dataPath = dtUtil::GetDeltaDataPathList();
+   dtUtil::SetDataFilePathList(dataPath + ";" +
+                               dtUtil::GetDeltaRootPath() + "/examples/data/;" +
+                               dtUtil::GetDeltaRootPath() + "/examples/data/gui/imagesets;" +
+                               dtUtil::GetDeltaRootPath() + "/examples/data/gui/schemes;" +
+                               dtUtil::GetDeltaRootPath() + "/examples/data/gui/fonts;" +
+                               dtUtil::GetDeltaRootPath() + "/examples/data/gui/looknfeel;" +
+                               dtUtil::GetDeltaRootPath() + "/examples/testMotionModels/;");
 
    RefPtr<TestMotionModelsApp> app = new TestMotionModelsApp( "config.xml" );
 

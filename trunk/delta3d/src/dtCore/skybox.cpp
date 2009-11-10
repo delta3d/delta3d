@@ -24,7 +24,6 @@
 
 #include <dtCore/moveearthtransform.h>
 #include <dtCore/system.h>
-#include <dtCore/globals.h>
 #include <dtUtil/log.h>
 
 #include <osg/Depth>

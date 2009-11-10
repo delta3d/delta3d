@@ -23,7 +23,6 @@
  * @author Pjotr van Amerongen
  */
 
-#include <dtCore/globals.h>
 #include "testechoserver.h"
 
 #include <iostream>

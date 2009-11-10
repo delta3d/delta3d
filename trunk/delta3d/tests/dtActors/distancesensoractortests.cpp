@@ -41,7 +41,6 @@
 #include <dtDAL/groupactorproperty.h>
 #include <dtDAL/namedparameter.h>
 
-#include <dtCore/globals.h>
 #include <dtCore/system.h>
 #include <dtCore/scene.h>
 

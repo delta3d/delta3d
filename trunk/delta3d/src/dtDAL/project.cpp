@@ -36,11 +36,11 @@
 
 #include <osgDB/FileNameUtils>
 
-#include <dtCore/globals.h>
 #include <dtCore/scene.h>
 
 #include <dtUtil/log.h>
 #include <dtUtil/stringutils.h>
+#include <dtUtil/datapathutils.h>
 #include <dtUtil/fileutils.h>
 
 #include <dtDAL/project.h>
@@ -224,12 +224,12 @@ namespace dtDAL
       mContextReadOnly = true;
 
       //remove the old context from the data file path list.
-      std::string searchPath = dtCore::GetDataFilePathList();
+      std::string searchPath = dtUtil::GetDataFilePathList();
       size_t index = oldContext.empty() ? std::string::npos : searchPath.find(oldContext);
       if (index != std::string::npos)
       {
          searchPath.erase(index, oldContext.size());
-         dtCore::SetDataFilePathList(searchPath);
+         dtUtil::SetDataFilePathList(searchPath);
       }
 
       if (ft == dtUtil::FILE_NOT_FOUND)
@@ -293,14 +293,14 @@ namespace dtDAL
 
          mContext = dtUtil::FileUtils::GetInstance().CurrentDirectory();
          mContextReadOnly = mOpenReadOnly;
-         std::string searchPath = dtCore::GetDataFilePathList();
+         std::string searchPath = dtUtil::GetDataFilePathList();
 
          if (searchPath.empty())
          {
-            searchPath = dtCore::GetDeltaDataPathList();
+            searchPath = dtUtil::GetDeltaDataPathList();
          }
 
-         dtCore::SetDataFilePathList(searchPath + ':' + mContext);
+         dtUtil::SetDataFilePathList(searchPath + ':' + mContext);
 
          if (mParser == NULL)
          {

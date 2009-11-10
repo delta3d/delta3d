@@ -53,9 +53,10 @@
 #include <dtCore/flymotionmodel.h>
 #include <dtCore/camera.h>
 #include <dtCore/keyboard.h>
-#include <dtCore/globals.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/scene.h>
+
+#include <dtUtil/datapathutils.h>
 
 #include <dtDAL/project.h>
 #include <dtDAL/resourcedescriptor.h>
@@ -128,14 +129,14 @@ void MyGameEntryPoint::OnStartup(dtGame::GameApplication& app)
 {
    // init our file path so it can find GUI Scheme
    // add extra data paths here if you need them
-   std::string dataPath = dtCore::GetDeltaDataPathList();
-   dtCore::SetDataFilePathList(dataPath + ";" +
-                              dtCore::GetDeltaRootPath() + "/examples/data;" +
-                              dtCore::GetDeltaRootPath() + "/examples/data/gui/imagesets;" +
-                              dtCore::GetDeltaRootPath() + "/examples/data/gui/schemes;" +
-                              dtCore::GetDeltaRootPath() + "/examples/data/gui/fonts;" +
-                              dtCore::GetDeltaRootPath() + "/examples/data/gui/looknfeel;");
-   LOG_ALWAYS("Path list is: " + dtCore::GetDataFilePathList() );
+   std::string dataPath = dtUtil::GetDeltaDataPathList();
+   dtUtil::SetDataFilePathList(dataPath + ";" +
+                              dtUtil::GetDeltaRootPath() + "/examples/data;" +
+                              dtUtil::GetDeltaRootPath() + "/examples/data/gui/imagesets;" +
+                              dtUtil::GetDeltaRootPath() + "/examples/data/gui/schemes;" +
+                              dtUtil::GetDeltaRootPath() + "/examples/data/gui/fonts;" +
+                              dtUtil::GetDeltaRootPath() + "/examples/data/gui/looknfeel;");
+   LOG_ALWAYS("Path list is: " + dtUtil::GetDataFilePathList() );
 
    dtDAL::Project::GetInstance().SetContext("StageProject");
 

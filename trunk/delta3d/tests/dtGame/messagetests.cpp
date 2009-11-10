@@ -32,12 +32,12 @@
 #include <dtUtil/log.h>
 #include <dtUtil/macros.h>
 #include <dtUtil/fileutils.h>
+#include <dtUtil/datapathutils.h>
 
 #include <dtActors/engineactorregistry.h>
 #include <dtCore/refptr.h>
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
-#include <dtCore/globals.h>
 #include <dtCore/timer.h>
 
 #include <dtDAL/datatype.h>
@@ -163,7 +163,7 @@ void MessageTests::setUp()
 {
    try
    {
-      dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
+      dtUtil::SetDataFilePathList(dtUtil::GetDeltaDataPathList());
       mLogger = &dtUtil::Log::GetInstance("messagetests.cpp");
 
       mGameManager = new dtGame::GameManager(*GetGlobalApplication().GetScene());

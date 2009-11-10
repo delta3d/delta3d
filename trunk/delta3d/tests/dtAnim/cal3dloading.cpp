@@ -34,9 +34,10 @@
 #include <cal3d/mesh.h>
 #include <cal3d/submesh.h>
 #include <cal3d/physique.h>
-#include <dtCore/globals.h>
 #include <cal3d/coresubmorphtarget.h>
 #include <cal3d/morphtargetmixer.h>
+
+#include <dtUtil/datapathutils.h>
 
 #if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
    #define TEST_MORPH_TARGET
@@ -51,28 +52,28 @@
 
 class CAL3DLoadingTests : public CPPUNIT_NS::TestFixture
 {
-   CPPUNIT_TEST_SUITE( CAL3DLoadingTests );
-   CPPUNIT_TEST( TestLoadSkeleton );
-   CPPUNIT_TEST( CorrectNumberOfBones );
-   CPPUNIT_TEST( CorrectBoneIdAndName );
-   CPPUNIT_TEST( CorrectBoneData );
-   CPPUNIT_TEST( TestLoadAnimation );
-   CPPUNIT_TEST( CorrectAnimationData );
-   CPPUNIT_TEST( CorrectTrackData );
-   CPPUNIT_TEST( TestLoadMesh );
-   CPPUNIT_TEST( CorrectMeshData );
-   CPPUNIT_TEST( TestLoadMaterial );
-   CPPUNIT_TEST( CorrectMaterialData );
+   CPPUNIT_TEST_SUITE(CAL3DLoadingTests);
+   CPPUNIT_TEST(TestLoadSkeleton);
+   CPPUNIT_TEST(CorrectNumberOfBones);
+   CPPUNIT_TEST(CorrectBoneIdAndName);
+   CPPUNIT_TEST(CorrectBoneData);
+   CPPUNIT_TEST(TestLoadAnimation);
+   CPPUNIT_TEST(CorrectAnimationData);
+   CPPUNIT_TEST(CorrectTrackData);
+   CPPUNIT_TEST(TestLoadMesh);
+   CPPUNIT_TEST(CorrectMeshData);
+   CPPUNIT_TEST(TestLoadMaterial);
+   CPPUNIT_TEST(CorrectMaterialData);
 
 
 #ifdef TEST_MORPH_TARGET
-   CPPUNIT_TEST( SceneAmbientColor );
-   CPPUNIT_TEST( TestLoadMorphAnimation );
-   CPPUNIT_TEST( CorrectMorphAnimationData );
-   CPPUNIT_TEST( TestLoadMorphMesh );
-   CPPUNIT_TEST( TestMorphWeights );
-   CPPUNIT_TEST( TestScaleMorphedMesh );
-   CPPUNIT_TEST( TestPlayAnimatedMorph );
+   CPPUNIT_TEST(SceneAmbientColor);
+   CPPUNIT_TEST(TestLoadMorphAnimation);
+   CPPUNIT_TEST(CorrectMorphAnimationData);
+   CPPUNIT_TEST(TestLoadMorphMesh);
+   CPPUNIT_TEST(TestMorphWeights);
+   CPPUNIT_TEST(TestScaleMorphedMesh);
+   CPPUNIT_TEST(TestPlayAnimatedMorph);
 #endif
 
    CPPUNIT_TEST_SUITE_END();
@@ -124,13 +125,13 @@ CPPUNIT_TEST_SUITE_REGISTRATION( CAL3DLoadingTests );
 //////////////////////////////////////////////////////////////////////////
 void CAL3DLoadingTests::setUp()
 {
-   const std::string dataPath = dtCore::GetDeltaRootPath() + "/tests/data/ProjectContext/";
-   mMorphSkelFile = dtCore::FindFileInPathList(dataPath + "SkeletalMeshes/Skeleton.xsf");
-   mAnimFile = dtCore::FindFileInPathList(dataPath + "SkeletalMeshes/ERightIn.xaf");
-   mMeshFile = dtCore::FindFileInPathList(dataPath + "SkeletalMeshes/Helmet.xmf");
-   mMorphMeshFile = dtCore::FindFileInPathList(dataPath + "SkeletalMeshes/test_head.xmf");
-   mMaterialFile = dtCore::FindFileInPathList(dataPath + "SkeletalMeshes/Helmet.xrf");
-   mMorphAnimationFile = dtCore::FindFileInPathList(dataPath + "SkeletalMeshes/talking_head.xpf");
+   const std::string dataPath = dtUtil::GetDeltaRootPath() + "/tests/data/ProjectContext/";
+   mMorphSkelFile = dtUtil::FindFileInPathList(dataPath + "SkeletalMeshes/Skeleton.xsf");
+   mAnimFile = dtUtil::FindFileInPathList(dataPath + "SkeletalMeshes/ERightIn.xaf");
+   mMeshFile = dtUtil::FindFileInPathList(dataPath + "SkeletalMeshes/Helmet.xmf");
+   mMorphMeshFile = dtUtil::FindFileInPathList(dataPath + "SkeletalMeshes/test_head.xmf");
+   mMaterialFile = dtUtil::FindFileInPathList(dataPath + "SkeletalMeshes/Helmet.xrf");
+   mMorphAnimationFile = dtUtil::FindFileInPathList(dataPath + "SkeletalMeshes/talking_head.xpf");
 }
 
 

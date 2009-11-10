@@ -24,9 +24,8 @@
 #include <dtCore/shaderparameter.h>
 #include <dtCore/shadergroup.h>
 
+#include <dtUtil/datapathutils.h>
 #include <dtUtil/exception.h>
-
-#include <dtCore/globals.h>
 
 #include <osg/Program>
 #include <osg/Shader>
@@ -211,7 +210,7 @@ namespace dtCore
 	   // Geometry source is allowed to be empty - but, if a filename is set, the file needs to exist.
 	   if (!fileName.empty())
 	   {
-		   std::string path = dtCore::FindFileInPathList(fileName);
+		   std::string path = dtUtil::FindFileInPathList(fileName);
 		   if (path.empty())
 		   {
 			   throw dtUtil::Exception(ShaderException::SHADER_SOURCE_ERROR,"Could not find shader source: " +
@@ -231,7 +230,7 @@ namespace dtCore
       // Vertex source is now allowed to be empty - but, if a filename is set, the file needs to exist.
       if (!fileName.empty())
       {
-         std::string path = dtCore::FindFileInPathList(fileName);
+         std::string path = dtUtil::FindFileInPathList(fileName);
          if (path.empty())
          {
             throw dtUtil::Exception(ShaderException::SHADER_SOURCE_ERROR,"Could not find shader source: " +
@@ -252,7 +251,7 @@ namespace dtCore
       // Fragment source is now allowed to be empty - but, if a filename is set, the file needs to exist.
       if (!fileName.empty())
       {
-         std::string path = dtCore::FindFileInPathList(fileName);
+         std::string path = dtUtil::FindFileInPathList(fileName);
          if (path.empty())
          {
             throw dtUtil::Exception(ShaderException::SHADER_SOURCE_ERROR,"Could not find shader source: " +

@@ -28,9 +28,9 @@
 #include <dtGUI/ceuidrawable.h>
 #include <dtCore/keyboard.h>
 #include <dtCore/deltawin.h>
-#include <CEGUI/CEGUIInputEvent.h>
+#include <CEGUIInputEvent.h>
 #include <dtGUI/ceguikeyboardlistener.h>
-#include <CEGUI/CEGUIWindow.h>
+#include <CEGUIWindow.h>
 
 #include "guiapp.h"
 #include "guimanager.h"

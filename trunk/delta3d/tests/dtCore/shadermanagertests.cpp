@@ -28,6 +28,7 @@
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtUtil/exception.h>
+#include <dtUtil/datapathutils.h>
 #include <dtUtil/stringutils.h>
 #include <dtUtil/fileutils.h>
 
@@ -39,10 +40,9 @@
 #include <dtCore/shaderparamfloat.h>
 #include <dtCore/shaderparamvec4.h>
 #include <dtCore/shaderparamoscillator.h>
-#include <dtCore/globals.h>
 #include <osg/Geode>
 
-const std::string TESTS_DIR = dtCore::GetDeltaRootPath()+dtUtil::FileUtils::PATH_SEPARATOR+"tests";
+const std::string TESTS_DIR = dtUtil::GetDeltaRootPath()+dtUtil::FileUtils::PATH_SEPARATOR+"tests";
 const std::string projectContext = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "data" + dtUtil::FileUtils::PATH_SEPARATOR + "ProjectContext";
 
 class ShaderManagerTests : public CPPUNIT_NS::TestFixture
@@ -94,7 +94,7 @@ void ShaderManagerTests::setUp()
    {
       mShaderMgr =& dtCore::ShaderManager::GetInstance();
       //dtDAL::Project::GetInstance().SetContext(projectContext);
-      dtCore::SetDataFilePathList(projectContext);
+      dtUtil::SetDataFilePathList(projectContext);
       mShaderMgr->LoadShaderDefinitions("Shaders/TestShaderDefinitions.xml", false);
 
       dtCore::ShaderGroup* testGroup = mShaderMgr->FindShaderGroupPrototype("ParamsGroup");

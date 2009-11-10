@@ -40,9 +40,8 @@
 #include <dtAnim/cal3dmodelwrapper.h>
 
 #include <dtCore/refptr.h>
-#include <dtCore/globals.h>
-
 #include <dtDAL/project.h>
+#include <dtUtil/datapathutils.h>
 
 #include <osg/Geode>
 
@@ -52,10 +51,10 @@ namespace dtAnim
 {
    class Cal3DLoaderTests : public CPPUNIT_NS::TestFixture
    {
-      CPPUNIT_TEST_SUITE( Cal3DLoaderTests );
-         CPPUNIT_TEST( TestLoadFile );
-         CPPUNIT_TEST( TestLODOptions );
-         CPPUNIT_TEST( TestModelData );
+      CPPUNIT_TEST_SUITE(Cal3DLoaderTests);
+         CPPUNIT_TEST(TestLoadFile);
+         CPPUNIT_TEST(TestLODOptions);
+         CPPUNIT_TEST(TestModelData);
       CPPUNIT_TEST_SUITE_END();
 
       public:
@@ -65,7 +64,7 @@ namespace dtAnim
          
          void setUp()
          {
-            dtDAL::Project::GetInstance().SetContext(dtCore::GetDeltaRootPath() + "/examples/data/demoMap");
+            dtDAL::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data/demoMap");
             AnimNodeBuilder& nodeBuilder = Cal3DDatabase::GetInstance().GetNodeBuilder();
             if (nodeBuilder.SupportsSoftware())
             {
@@ -83,7 +82,7 @@ namespace dtAnim
 
          void TestLoadFile()
          {
-            std::string modelPath = dtCore::FindFileInPathList("SkeletalMeshes/marine_test.xml");
+            std::string modelPath = dtUtil::FindFileInPathList("SkeletalMeshes/marine_test.xml");
             CPPUNIT_ASSERT(!modelPath.empty());
 
             std::string animName = "Walk";
@@ -158,7 +157,7 @@ namespace dtAnim
          
          void TestModelData()
          {
-            std::string modelPath = dtCore::FindFileInPathList("SkeletalMeshes/marine_test.xml");
+            std::string modelPath = dtUtil::FindFileInPathList("SkeletalMeshes/marine_test.xml");
             CPPUNIT_ASSERT(!modelPath.empty());
 
             dtAnim::Cal3DDatabase& database = dtAnim::Cal3DDatabase::GetInstance();
