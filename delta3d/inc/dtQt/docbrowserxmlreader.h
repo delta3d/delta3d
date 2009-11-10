@@ -1,9 +1,11 @@
-#ifndef _HELP_XML_MANAGER_H__
-#define _HELP_XML_MANAGER_H__
+#ifndef _DOC_BROWSER_XML_MANAGER_H__
+#define _DOC_BROWSER_XML_MANAGER_H__
 
 #include <vector>
 #include <string>
 #include <stack>
+
+#include <dtQt/export.h>
 
 #include <dtUtil/refstring.h>
 
@@ -12,7 +14,7 @@
 #include <xercesc/sax2/DefaultHandler.hpp>
 #include <xercesc/framework/XMLFormatter.hpp>
 
-namespace dtEditQt
+namespace dtQt
 {
    static const dtUtil::RefString HELP_READER_VERSION("version");
    static const dtUtil::RefString HELP_READER_TITLE("title");
@@ -25,7 +27,7 @@ namespace dtEditQt
    static const dtUtil::RefString HELP_READER_SECTION_EXPANDED("expanded");
 
 
-   class HelpXMLReader : public xercesc::DefaultHandler
+   class DT_QT_EXPORT DocBrowserXMLReader : public xercesc::DefaultHandler
    {
    public:
       struct SectionInfo
@@ -59,12 +61,12 @@ namespace dtEditQt
       /**
       * Constructor.
       */
-      HelpXMLReader();
+      DocBrowserXMLReader();
 
       /**
       * Destructor.
       */
-      ~HelpXMLReader();
+      ~DocBrowserXMLReader();
 
       /**
       * Reads the XML file data.
@@ -79,7 +81,7 @@ namespace dtEditQt
       /**
       * Retrieves the home page.
       */
-      std::string getHome() {return mHome;}
+      std::string GetHome() {return mHome;}
 
       /**
       * Retrieves the resource prefix.
@@ -126,6 +128,6 @@ namespace dtEditQt
       SectionInfo* mCurrentSection;
    };
 
-} //namespace dtEditQt
+} //namespace dtQt
 
-#endif //_HELP_XML_MANAGER_H__
+#endif //_DOC_BROWSER_XML_MANAGER_H__

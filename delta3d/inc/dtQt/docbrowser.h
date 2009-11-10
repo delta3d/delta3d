@@ -27,12 +27,13 @@
  * Jeff Houde
  */
 
-#ifndef DELTA_HELP_BOX
-#define DELTA_HELP_BOX
+#ifndef DELTA_DOC_BROWSER
+#define DELTA_DOC_BROWSER
 
 #include <vector>
 
-#include <dtEditQt/helpxmlreader.h>
+#include <dtQt/export.h>
+#include <dtQt/docbrowserxmlreader.h>
 
 #include <dtCore/refptr.h>
 
@@ -43,16 +44,16 @@
 
 class QAction;
 
-namespace dtEditQt
+namespace dtQt
 {
-   class HelpBox;
+   class DocBrowser;
 
    /**
-   * @class DocumentTabs
+   * @class DocBrowserTabs
    * @brief This is the help document tab display window,
    *        overloaded to provide functionality for adding and removing tabs.
    */
-   class DocumentTabs : public QTabWidget
+   class DocBrowserTabs : public QTabWidget
    {
       Q_OBJECT
 
@@ -61,10 +62,10 @@ namespace dtEditQt
       /**
       * Constructs a document tabs viewer.
       *
-      * @param[in]  parent   The parent widget.
-      * @param[in]  helpbox  The help box that owns this widget.
+      * @param[in]  parent      The parent widget.
+      * @param[in]  docBrowser  The document browser that owns this widget.
       */
-      DocumentTabs(QWidget* parent, HelpBox* helpBox);
+      DocBrowserTabs(QWidget* parent, DocBrowser* docBrowser);
 
    protected:
 
@@ -90,15 +91,15 @@ namespace dtEditQt
       void mouseDoubleClickEvent(QMouseEvent *e);
 
 
-      HelpBox* mHelpBox;
+      DocBrowser* mDocBrowser;
    };
 
    /**
-   * @class DocumentText
+   * @class DocBrowserText
    * @brief This is the help document text window,
    *        overloaded to provide functionality for hyperlinks.
    */
-   class DocumentText : public QTextEdit
+   class DocBrowserText : public QTextEdit
    {
       Q_OBJECT
 
@@ -115,7 +116,7 @@ namespace dtEditQt
       *
       * @param[in]  parent  The parent widget.
       */
-      DocumentText(QWidget* parent);
+      DocBrowserText(QWidget* parent);
 
       /**
       * Adds a new page to the page history and sets it as the
@@ -124,7 +125,7 @@ namespace dtEditQt
       * @param[in]  page    The page.
       * @param[in]  anchor  The anchor.
       */
-      void setPage(const QString& page, const QString& anchor);
+      void SetPage(const QString& page, const QString& anchor);
 
       /**
       * Retrieves the data of the current page.
@@ -132,7 +133,7 @@ namespace dtEditQt
       * @param[out]  page    The current page.
       * @param[out]  anchor  The current anchor.
       */
-      bool getPage(QString& page, QString& anchor);
+      bool GetPage(QString& page, QString& anchor);
 
       /**
       * Retrieves the previous page data from the page history and
@@ -143,7 +144,7 @@ namespace dtEditQt
       *
       * @return      Returns false if there is no previous page.
       */
-      bool prevPage(QString& page, QString& anchor);
+      bool PrevPage(QString& page, QString& anchor);
 
       /**
       * Retrieves the next page data from the page history
@@ -154,13 +155,13 @@ namespace dtEditQt
       *
       * @return      Returns false if there is no next page.
       */
-      bool nextPage(QString& page, QString& anchor);
+      bool NextPage(QString& page, QString& anchor);
 
       /**
       * Retrieves whether there is a previous or next page.
       */
-      bool isPrevPage();
-      bool isNextPage();
+      bool IsPrevPageValid();
+      bool IsNextPageValid();
 
    signals:
 
@@ -169,7 +170,7 @@ namespace dtEditQt
       *
       * @param[in]  link  The location of the link.
       */
-      void hyperlinkClicked(const QString& link);
+      void OnHyperlinkClicked(const QString& link);
 
    protected:
       
@@ -192,10 +193,10 @@ namespace dtEditQt
    };
 
    /**
-    * @class HelpBox
+    * @class DocBrowser
     * @brief This class generates the Editor's about box.
     */
-   class HelpBox : public QMainWindow
+   class DT_QT_EXPORT DocBrowser : public QMainWindow
    {
       Q_OBJECT
 
@@ -206,24 +207,24 @@ namespace dtEditQt
        * @param[in]  filename  The name of the help file to load.
        * @param[in]  parent    The parent widget.
        */
-      HelpBox(const QString& filename, QWidget* parent = 0);
+      DocBrowser(const QString& filename, QWidget* parent = 0);
 
       /**
        * Destructor
        */
-      virtual ~HelpBox();
+      virtual ~DocBrowser();
 
       /**
       * Retrieves the home page.
       */
-      std::string getHome() {return mDocument->getHome();}
+      std::string GetHome() {return mDocument->GetHome();}
 
       /**
       * Loads the Using Help page.
       *
       * @param[in]  newPage  True to create a new tab page.
       */
-      void openUsingHelpPage(bool newPage = false);
+      void OpenUsingHelpPage(bool newPage = false);
       
       /**
       * Loads a specified page.
@@ -231,33 +232,33 @@ namespace dtEditQt
       * @param[in]  page     The name of the page to open.
       * @param[in]  anchor   The anchor to scroll to.
       * @param[in]  newTab   True to create a new tab for this page.
-      * @param[in]  setPage  True if we want to set this page in the browser history.
+      * @param[in]  SetPage  True if we want to set this page in the browser history.
       */
-      void openPage(const QString& page, const QString& anchor, bool newTab = false, bool setPage = true);
+      void OpenPage(const QString& page, const QString& anchor, bool newTab = false, bool SetPage = true);
 
    public slots:
 
       /**
       * Event handler when the back button is pressed.
       */
-      void onPrevButton();
+      void OnPrevButton();
 
       /**
       * Event handler when the next button is pressed.
       */
-      void onNextButton();
+      void OnNextButton();
 
       /**
       * Event handler when the home button is pressed.
       */
-      void onHomeButton();
+      void OnHomeButton();
 
       /**
       * Event handler when a hyper link is clicked on.
       *
       * @param[in]  link  The location of the link.
       */
-      void onHyperlinkClicked(const QString& link);
+      void OnHyperlinkClicked(const QString& link);
 
       /**
       * Event handler when the current item in the contents list is changed.
@@ -265,36 +266,36 @@ namespace dtEditQt
       * @param[in]  current   The new current item.
       * @param[in]  previous  The previous item.
       */
-      void onContentItemChanged(QTreeWidgetItem* current, QTreeWidgetItem* previous);
+      void OnContentItemChanged(QTreeWidgetItem* current, QTreeWidgetItem* previous);
 
       /**
       * Event handler when the current document tab has changed.
       *
       * @param[in]  index  The index of the new tab.
       */
-      void onDocumentTabChanged(int index);
+      void OnDocumentTabChanged(int index);
 
       /**
       * Event handler when the current document tab has closed.
       *
       * @param[in]  index  The index of the closed tab.
       */
-      void onDocumentTabClosed(int index);
+      void OnDocumentTabClosed(int index);
 
       /**
       * Event handler when the document window scroll position has changed.
       *
       * @param[in]  value  The new scroll position.
       */
-      void onDocumentScrolled(int value);
+      void OnDocumentScrolled(int value);
 
    private:
 
       /**
       * Sets up the table of contents.
       */
-      void setupContents();
-      void setupContents(const std::vector<HelpXMLReader::SectionInfo*>& sections, QTreeWidgetItem* parent);
+      void SetupContents();
+      void SetupContents(const std::vector<DocBrowserXMLReader::SectionInfo*>& sections, QTreeWidgetItem* parent);
 
       /**
       * Finds a table of contents entry that matches the given page.
@@ -305,19 +306,19 @@ namespace dtEditQt
       *
       * @return     The tree widget item or NULL if not found.
       */
-      QTreeWidgetItem* findTOC(const QString& page, const QString& anchor = "", bool anchorMustMatch = false);
-      QTreeWidgetItem* findTOC(const QString& page, const QString& anchor, QTreeWidgetItem* parent, bool anchorMustMatch);
+      QTreeWidgetItem* FindTOC(const QString& page, const QString& anchor = "", bool anchorMustMatch = false);
+      QTreeWidgetItem* FindTOC(const QString& page, const QString& anchor, QTreeWidgetItem* parent, bool anchorMustMatch);
 
-      QString        mResourcePrefix;
-      QTreeWidget*   mContentList;
-      DocumentTabs*  mDocumentTabs;
-      HelpXMLReader* mDocument;
+      QString              mResourcePrefix;
+      QTreeWidget*         mContentList;
+      DocBrowserTabs*      mDocumentTabs;
+      DocBrowserXMLReader* mDocument;
 
-      QAction*    mPrevPageAction;
-      QAction*    mNextPageAction;
-      QAction*    mHomeAction;
+      QAction*             mPrevPageAction;
+      QAction*             mNextPageAction;
+      QAction*             mHomeAction;
    };
 
-} // namespace dtEditQt
+} // namespace dtQt
 
-#endif // DELTA_HELP_BOX
+#endif // DELTA_DOC_BROWSER

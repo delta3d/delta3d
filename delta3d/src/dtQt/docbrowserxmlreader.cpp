@@ -1,4 +1,4 @@
-#include <dtEditQt/helpxmlreader.h>
+#include <dtQt/docbrowserxmlreader.h>
 
 #include <dtCore/refptr.h>
 #include <dtUtil/fileutils.h>
@@ -15,10 +15,10 @@
 
 #include <Qt/qstring.h>
 
-namespace dtEditQt
+namespace dtQt
 {
    ////////////////////////////////////////////////////////////////////////////////
-   HelpXMLReader::HelpXMLReader()
+   DocBrowserXMLReader::DocBrowserXMLReader()
       : mCurrentSection(NULL)
    {
       xercesc::XMLPlatformUtils::Initialize();
@@ -27,7 +27,7 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   HelpXMLReader::~HelpXMLReader()
+   DocBrowserXMLReader::~DocBrowserXMLReader()
    {
       mCurrentSection = NULL;
 
@@ -40,7 +40,7 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void HelpXMLReader::ReadXML(const std::string& fileName)
+   void DocBrowserXMLReader::ReadXML(const std::string& fileName)
    {
       xercesc::SAX2XMLReaderImpl parser;
 
@@ -69,13 +69,13 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   std::string HelpXMLReader::getTitleForRef(const std::string& ref)
+   std::string DocBrowserXMLReader::getTitleForRef(const std::string& ref)
    {
       return getTitleForRef(ref, mSections);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   std::string HelpXMLReader::getTitleForRef(const std::string& ref, const std::vector<SectionInfo*>& sections)
+   std::string DocBrowserXMLReader::getTitleForRef(const std::string& ref, const std::vector<SectionInfo*>& sections)
    {
       for (int index = 0; index < (int)sections.size(); index++)
       {
@@ -91,12 +91,12 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void HelpXMLReader::startDocument()
+   void DocBrowserXMLReader::startDocument()
    {
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void HelpXMLReader::startElement(const XMLCh* const uri,
+   void DocBrowserXMLReader::startElement(const XMLCh* const uri,
                                     const XMLCh* const localname,
                                     const XMLCh* const qname,
                                     const xercesc::Attributes& attributes)
@@ -149,7 +149,7 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void HelpXMLReader::endElement( const XMLCh* const uri,
+   void DocBrowserXMLReader::endElement( const XMLCh* const uri,
                                    const XMLCh* const localname,
                                    const XMLCh* const qname)
    {
@@ -164,7 +164,7 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void HelpXMLReader::characters(const XMLCh* const chars, const unsigned int length)
+   void DocBrowserXMLReader::characters(const XMLCh* const chars, const unsigned int length)
    {
       std::string& topEl = mElements.top();
 
@@ -183,7 +183,7 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void HelpXMLReader::error(const xercesc::SAXParseException& e)
+   void DocBrowserXMLReader::error(const xercesc::SAXParseException& e)
    {
       std::ostringstream errStrm;
       dtUtil::XMLStringConverter sysIDConverter(e.getSystemId());
@@ -199,7 +199,7 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void HelpXMLReader::fatalError(const xercesc::SAXParseException& e)
+   void DocBrowserXMLReader::fatalError(const xercesc::SAXParseException& e)
    {
       std::ostringstream errStrm;
       dtUtil::XMLStringConverter sysIDConverter(e.getSystemId());
@@ -215,7 +215,7 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void HelpXMLReader::warning(const xercesc::SAXParseException& e)
+   void DocBrowserXMLReader::warning(const xercesc::SAXParseException& e)
    {
       std::ostringstream errStrm;
       dtUtil::XMLStringConverter sysIDConverter(e.getSystemId());
@@ -231,7 +231,7 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void HelpXMLReader::SetDefault()
+   void DocBrowserXMLReader::SetDefault()
    {
       mTitle = "Help";
       mHome = "Index.html";
@@ -239,4 +239,4 @@ namespace dtEditQt
       mSections.clear();
    }
 
-} //namespace dtEditQt
+} //namespace dtQt
