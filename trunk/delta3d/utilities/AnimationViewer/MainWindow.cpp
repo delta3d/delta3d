@@ -18,6 +18,7 @@
 #include <QtGui/QApplication>
 #include <QtGui/QMenuBar>
 #include <QtGui/QAction>
+#include <QtGui/QComboBox>
 #include <QtGui/QFileDialog>
 #include <QtGui/QTableWidget>
 #include <QtCore/QSettings>
@@ -50,6 +51,12 @@ MainWindow::MainWindow()
   , mLoadCharAct(NULL)
   , mCloseCharAction(NULL)
   , mScaleFactorSpinner(NULL)
+  , mAttachmentOffsetXSpinner(NULL)
+  , mAttachmentOffsetYSpinner(NULL)
+  , mAttachmentOffsetZSpinner(NULL)
+  , mAttachmentRotXSpinner(NULL)
+  , mAttachmentRotYSpinner(NULL)
+  , mAttachmentRotZSpinner(NULL)
   , mAnimListWidget(NULL)
   , mMeshListWidget(NULL)
   , mMaterialModel(NULL)
@@ -58,6 +65,7 @@ MainWindow::MainWindow()
   , mPoseMeshViewer(NULL)
   , mPoseMeshScene(NULL)
   , mPoseMeshProperties(NULL)
+  , mCurrentAttachment("")
 {
    resize(800, 800);
 
@@ -154,6 +162,7 @@ void MainWindow::CreateMenus()
    QAction* toggleSpeedScaleToolbarAction  = toolBarMenu->addAction("Speed Scale toolbar");
    //QAction *toggleLightToolBarAction = toolBarMenu->addAction("Lighting toolbar");
    QAction* toggleScalingToolbarAction  = toolBarMenu->addAction("Scaling toolbar");
+   QAction* toggleAttachmentToolbarAction  = toolBarMenu->addAction("Attachment toolbar");
 
    toggleShadeToolbarAction->setCheckable(true);
    toggleShadeToolbarAction->setChecked(true);
@@ -165,11 +174,14 @@ void MainWindow::CreateMenus()
    //toggleLightToolBarAction->setChecked(true);
    toggleScalingToolbarAction->setCheckable(true);
    toggleScalingToolbarAction->setChecked(true);
+   toggleAttachmentToolbarAction->setCheckable(true);
+   toggleAttachmentToolbarAction->setChecked(true);
 
    connect(toggleShadeToolbarAction, SIGNAL(triggered()), this, SLOT(OnToggleShadingToolbar()));
    connect(toggleLODScaleToolbarAction, SIGNAL(triggered()), this, SLOT(OnToggleLODScaleToolbar()));
    connect(toggleSpeedScaleToolbarAction, SIGNAL(triggered()), this, SLOT(OnToggleSpeedScaleToolbar()));
    connect(toggleScalingToolbarAction, SIGNAL(triggered()), this, SLOT(OnToggleScalingToolbar()));
+   connect(toggleAttachmentToolbarAction, SIGNAL(triggered()), this, SLOT(OnToggleAttachmentToolbar()));
 
    for (int actionIndex = 0; actionIndex < 5; ++actionIndex)
    {
@@ -270,6 +282,9 @@ void MainWindow::CreateToolbars()
    mScalingToolbar = addToolBar("Scaling toolbar");
    mScalingToolbar->setToolTip("Scaling toolbar");
 
+   mAttachmentToolbar = addToolBar("Attachment toolbar");
+   mAttachmentToolbar->setToolTip("Attachment toolbar");
+
    mShadingToolbar->addAction(mWireframeAction);
    mShadingToolbar->addAction(mShadedAction);
    mShadingToolbar->addAction(mShadedWireAction);
@@ -283,6 +298,65 @@ void MainWindow::CreateToolbars()
    applyScaleFactorButton->adjustSize();
    applyScaleFactorButton->setToolTip(tr("Apply scale factor"));
    mScalingToolbar->addWidget(applyScaleFactorButton);
+  
+
+   QPushButton* loadAttachmentButton = new QPushButton(tr("Choose Attachment"), this);
+   mAttachmentToolbar->addWidget(loadAttachmentButton);
+   connect(loadAttachmentButton, SIGNAL(clicked()), this, SLOT(OnLoadAttachment()));
+   
+   mAttachmentToolbar->addSeparator();
+
+   mAttachmentParent = new QComboBox(this);
+   mAttachmentParent->setToolTip(tr("Parent Name"));
+   mAttachmentParent->setMinimumSize(QSize(150, 0));
+   mAttachmentToolbar->addWidget(mAttachmentParent);   
+   connect(mAttachmentParent, SIGNAL(currentIndexChanged(int)), this, SLOT(OnChangeAttachmentSettings()));
+
+   mAttachmentOffsetXSpinner = new QDoubleSpinBox(this);
+   mAttachmentOffsetXSpinner->setSingleStep(0.01);
+   mAttachmentOffsetXSpinner->setToolTip(tr("Attachment Offset X"));
+   mAttachmentOffsetXSpinner->setRange(-500.0, 500.0);
+   mAttachmentToolbar->addWidget(mAttachmentOffsetXSpinner);
+   connect(mAttachmentOffsetXSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnChangeAttachmentSettings()));
+
+   mAttachmentOffsetYSpinner = new QDoubleSpinBox(this);
+   mAttachmentOffsetYSpinner->setSingleStep(0.01);
+   mAttachmentOffsetYSpinner->setToolTip(tr("Attachment Offset Y"));
+   mAttachmentOffsetYSpinner->setRange(-500.0, 500.0);
+   mAttachmentToolbar->addWidget(mAttachmentOffsetYSpinner);
+   connect(mAttachmentOffsetYSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnChangeAttachmentSettings()));
+
+   mAttachmentOffsetZSpinner = new QDoubleSpinBox(this);
+   mAttachmentOffsetZSpinner->setSingleStep(0.01);
+   mAttachmentOffsetZSpinner->setToolTip(tr("Attachment Offset Z"));
+   mAttachmentOffsetZSpinner->setRange(-500.0, 500.0);
+   mAttachmentToolbar->addWidget(mAttachmentOffsetZSpinner);
+   connect(mAttachmentOffsetZSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnChangeAttachmentSettings()));
+
+   mAttachmentToolbar->addSeparator();
+
+   mAttachmentRotXSpinner = new QDoubleSpinBox(this);
+   mAttachmentRotXSpinner->setSingleStep(0.01);
+   mAttachmentRotXSpinner->setToolTip(tr("Rotation Axis X"));
+   mAttachmentRotXSpinner->setRange(-5.0, 5.0);
+   mAttachmentToolbar->addWidget(mAttachmentRotXSpinner);
+   connect(mAttachmentRotXSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnChangeAttachmentSettings()));
+
+   mAttachmentRotYSpinner = new QDoubleSpinBox(this);
+   mAttachmentRotYSpinner->setSingleStep(0.01);
+   mAttachmentRotYSpinner->setToolTip(tr("Rotation Axis Y"));
+   mAttachmentRotYSpinner->setRange(-5.0, 5.0);
+   mAttachmentToolbar->addWidget(mAttachmentRotYSpinner);
+   connect(mAttachmentRotYSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnChangeAttachmentSettings()));
+
+   mAttachmentRotZSpinner = new QDoubleSpinBox(this);
+   mAttachmentRotZSpinner->setSingleStep(0.01);
+   mAttachmentRotZSpinner->setToolTip(tr("Rotation Axis Z"));
+   mAttachmentRotZSpinner->setRange(-5.0, 5.0);
+   mAttachmentToolbar->addWidget(mAttachmentRotZSpinner);
+   connect(mAttachmentRotZSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnChangeAttachmentSettings()));
+
+   mAttachmentToolbar->addSeparator();
 
    //QIcon diffuseIcon(":/images/diffuseLight.png");
    //QIcon pointLightIcon(":/images/pointLight.png");
@@ -341,6 +415,27 @@ void MainWindow::LoadCharFile(const QString& filename)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void MainWindow::LoadAttachment(const QString& filename)
+{
+   if(mCurrentAttachment == filename)
+   {
+      return;
+   }
+
+   if (dtUtil::FileUtils::GetInstance().FileExists(filename.toStdString()))
+   {
+      emit AttachmentToLoad(filename);
+      mCurrentAttachment = filename;
+      statusBar()->showMessage(tr("Attachment loaded"), 2000);
+   }
+   else
+   {
+      QString errorString = QString("File not found: %1").arg(filename);
+      QMessageBox::warning(this, "Warning", errorString, "&Ok");
+   }   
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnNewAnimation(unsigned int id, const QString& animationName,
                                 unsigned int trackCount, unsigned int keyframes,
                                 float duration)
@@ -395,7 +490,7 @@ void MainWindow::OnNewAnimation(unsigned int id, const QString& animationName,
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void MainWindow::OnNewMesh(int meshID, const QString& meshName)
+void MainWindow::OnNewMesh(int meshID, const QString& meshName, const std::vector<std::string>& boneNames)
 {
    QListWidgetItem *meshItem = new QListWidgetItem();
    meshItem->setText(meshName);
@@ -408,6 +503,13 @@ void MainWindow::OnNewMesh(int meshID, const QString& meshName)
    meshItem->setCheckState(Qt::Checked);
 
    mMeshListWidget->addItem(meshItem);
+
+   mAttachmentParent->clear();
+   std::vector<std::string>::const_iterator i;
+   for(i = boneNames.begin(); i != boneNames.end(); ++i)
+   {
+      mAttachmentParent->addItem(i->c_str());
+   }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -774,6 +876,19 @@ void MainWindow::OnToggleScalingToolbar()
    }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnToggleAttachmentToolbar()
+{
+   if (mAttachmentToolbar->isHidden())
+   {
+      mAttachmentToolbar->show();
+   }
+   else
+   {
+      mAttachmentToolbar->hide();
+   }
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnToggleLightingToolbar()
 {
@@ -1105,6 +1220,32 @@ void MainWindow::OnClearCharacterData()
 
 }
 
+//////////////////////////////////////////////////////////////////////////
+void MainWindow::OnLoadAttachment()
+{
+   QString filename = QFileDialog::getOpenFileName(this,
+      tr("Load Attachment Mesh"), ".", tr("Meshes (*.osg *.ive *.dae *.3ds *.obj)") );
+
+   if (!filename.isEmpty())
+   {
+      LoadAttachment(filename);
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
+void MainWindow::OnChangeAttachmentSettings()
+{
+   float x = mAttachmentOffsetXSpinner->value();
+   float y = mAttachmentOffsetYSpinner->value();
+   float z = mAttachmentOffsetZSpinner->value();
+   std::string boneName = mAttachmentParent->currentText().toStdString();
+
+   float rx = mAttachmentRotXSpinner->value();
+   float ry = mAttachmentRotYSpinner->value();
+   float rz = mAttachmentRotZSpinner->value();
+   emit AttachmentSettingsChanged(boneName, x, y, z, rx, ry, rz);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 void MainWindow::SetViewer(Viewer* viewer)
 {
@@ -1134,13 +1275,18 @@ void MainWindow::SetViewer(Viewer* viewer)
 void MainWindow::SetupConnectionsWithViewer()
 {
    connect(this, SIGNAL(FileToLoad(const QString&)), mViewer, SLOT(OnLoadCharFile(const QString&)));
+   connect(this, SIGNAL(AttachmentToLoad(const QString&)), mViewer, SLOT(OnLoadAttachmentFile(const QString&)));
+   connect(this, SIGNAL(AttachmentSettingsChanged(const std::string&, float, float, float, float, float, float)),
+           mViewer, SLOT(OnAttachmentSettingsChanged(const std::string&, float, float, float, float, float, float)));
+
    connect(this, SIGNAL(UnloadFile()), mViewer, SLOT(OnUnloadCharFile()) );
    connect(mViewer, SIGNAL(ClearCharacterData()), this, SLOT(OnClearCharacterData()));
 
    connect(mViewer, SIGNAL(AnimationLoaded(unsigned int,const QString &,unsigned int,unsigned int,float)),
       this, SLOT(OnNewAnimation(unsigned int,const QString&,unsigned int,unsigned int,float)));
 
-   connect(mViewer, SIGNAL(MeshLoaded(int,const QString&)), this, SLOT(OnNewMesh(int,const QString&)));
+   connect(mViewer, SIGNAL(MeshLoaded(int,const QString&, const std::vector<std::string>&)), 
+           this, SLOT(OnNewMesh(int,const QString&, const std::vector<std::string>&)));
 
    connect(mViewer, SIGNAL(PoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*>&, dtAnim::CharDrawable*)),
       this, SLOT(OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*>&, dtAnim::CharDrawable*)));

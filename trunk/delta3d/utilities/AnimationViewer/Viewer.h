@@ -4,6 +4,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QTimer>
 
+#include <dtCore/object.h>
 #include <dtCore/refptr.h>
 #include <dtCore/system.h>
 #include <dtABC/application.h>
@@ -48,20 +49,24 @@ public:
 
 public slots:
 
-   void OnLoadCharFile    (const QString& filename);
-   void OnUnloadCharFile  ();
-   void OnLoadPoseMeshFile(const std::string& filename);
-   void OnStartAnimation  (unsigned int id, float weight, float delay);
-   void OnStopAnimation   (unsigned int id, float delay);
-   void OnStartAction     (unsigned int id, float delayIn, float delayOut);
-   void OnLODScale_Changed(float scaleValue);
-   void OnSpeedChanged    (float speedFactor);
-   void OnScaleFactorChanged (float scaleFactorValue);
+   void OnLoadCharFile        (const QString& filename);
+   void OnUnloadCharFile();
+   void OnLoadPoseMeshFile    (const std::string& filename);
+   void OnStartAnimation      (unsigned int id, float weight, float delay);
+   void OnStopAnimation       (unsigned int id, float delay);
+   void OnStartAction         (unsigned int id, float delayIn, float delayOut);
+   void OnLODScale_Changed    (float scaleValue);
+   void OnSpeedChanged        (float speedFactor);
+   void OnScaleFactorChanged  (float scaleFactorValue);
    void OnSetShaded();
    void OnSetWireframe();
    void OnSetShadedWireframe();
-   void OnSetBoneBasisDisplay(bool shouldDisplay);
-   void OnSetBoneLabelDisplay(bool shouldDisplay);
+   void OnSetBoneBasisDisplay (bool shouldDisplay);
+   void OnSetBoneLabelDisplay (bool shouldDisplay);
+
+   void OnUnloadAttachmentFile();
+   void OnLoadAttachmentFile  (const QString& filename);
+   void OnAttachmentSettingsChanged(const std::string& bone, float offsx, float offsy, float offsz, float rotx, float roty, float rotz);
 
    void OnTimeout();
 
@@ -80,7 +85,7 @@ signals:
 
    void ClearCharacterData();
 
-   void MeshLoaded(int meshID, const QString& meshName);
+   void MeshLoaded(int meshID, const QString& meshName, const std::vector<std::string>& boneNames);
 
    void SubMorphTargetLoaded(int meshID, int subMeshID, int morphID, const QString& morphName);
 
@@ -125,6 +130,8 @@ private:
    void InitShadeDecorator();
    void InitWireDecorator();
    void CreateBoneBasisDisplay();
+
+   dtCore::RefPtr<dtCore::Object> mAttachmentObject;
 };
 
 #endif // Viewer_h__
