@@ -1,6 +1,6 @@
 #include <prefix/dtutilprefix-src.h>
 #include <dtUtil/datetime.h>
-#include <dtUtil/macros.h>
+#include <dtUtil/mswinmacros.h>
 #include <cmath>
 #include <cstring>
 #include <cstdio> //for snprintf

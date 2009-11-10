@@ -22,7 +22,9 @@
 #ifndef DELTA_MSWIN
 #define DELTA_MSWIN
 
-#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+#include <dtUtil/mswinmacros.h>
+
+#ifdef DELTA_WIN32
    // Identifier was truncated to '255' characters in the debug information
    #pragma warning( disable:4786 )
    // disable warning for stl classes "needs to have dll-interface to be used by clients of class"

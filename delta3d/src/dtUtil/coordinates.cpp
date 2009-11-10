@@ -3,7 +3,6 @@
 #include <cstdio>
 #include <cfloat>
 
-#include <dtUtil/macros.h>
 #include <dtUtil/matrixutil.h>
 #include <dtUtil/coordinates.h>
 #include <dtUtil/log.h>

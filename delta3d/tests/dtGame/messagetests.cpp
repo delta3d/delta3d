@@ -30,7 +30,6 @@
 #include <iostream>
 #include <osg/Math>
 #include <dtUtil/log.h>
-#include <dtUtil/macros.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/datapathutils.h>
 

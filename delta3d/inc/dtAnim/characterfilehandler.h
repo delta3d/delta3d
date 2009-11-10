@@ -24,7 +24,7 @@
 #define DELTA_CHARACTER_FILE_HANDLER
 
 #include <dtAnim/export.h>
-#include <dtUtil/macros.h>
+#include <dtUtil/mswinmacros.h>
 #include <dtCore/refptr.h>
 #include <xercesc/sax2/ContentHandler.hpp>  // for a base class
 #include <vector>

@@ -33,7 +33,6 @@
 #include "testaargameevent.h"
 #include "testaarhud.h"
 
-#include <dtUtil/macros.h>
 #include <dtABC/application.h>
 #include <dtCore/camera.h>
 #include <dtCore/system.h>

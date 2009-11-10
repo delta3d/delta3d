@@ -29,7 +29,6 @@
 #include <dtCore/shadermanager.h>
 #include <dtCore/shadergroup.h>
 #include <dtUtil/log.h>
-#include <dtUtil/macros.h>
 
 #include <osg/Geode>
 #include <osg/State>

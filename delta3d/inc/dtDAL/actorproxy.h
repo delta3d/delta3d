@@ -22,8 +22,6 @@
 #ifndef DELTA_ACTORPROXY
 #define DELTA_ACTORPROXY
 
-//To get the windows.h undefs before anything else.
-#include <dtUtil/macros.h>
 
 #include <string>
 #include <set>

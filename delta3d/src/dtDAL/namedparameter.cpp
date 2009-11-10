@@ -26,6 +26,7 @@
 #include <dtDAL/groupactorproperty.h>
 #include <dtDAL/arrayactorpropertybase.h>
 #include <dtDAL/containeractorproperty.h>
+#include <dtUtil/mswinmacros.h>
 
 namespace dtDAL
 {

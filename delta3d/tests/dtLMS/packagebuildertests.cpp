@@ -30,12 +30,10 @@
 #include <LMS/WebPackager/package_utils.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/exception.h>
+#include <dtUtil/mswinmacros.h>
 #include <dtUtil/datapathutils.h>
 #include <osgDB/FileNameUtils>
 
-#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
-   #define W32
-#endif
 
 class LMSPackageBuilderTests : public CPPUNIT_NS::TestFixture
 {
@@ -67,7 +65,7 @@ public:
 
    void NormalizeDirectorySlashes(std::string &str)
    {
-      #ifdef W32
+      #ifdef DELTA_WIN32
       for(unsigned int i = 0; i < str.size(); i++)
       {
          

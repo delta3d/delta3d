@@ -27,7 +27,7 @@
 #include <ctime>
 #include <sstream>
 
-#include <dtUtil/macros.h>
+#include <dtUtil/mswinmacros.h>
 
 #include <cstring>
 #include <cstdlib>
@@ -53,7 +53,7 @@ namespace dtLMS
 
       mClientState = &LmsConnectionState::INITIALIZING;
 
-      #if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+      #ifdef DELTA_WIN32
          //initialize winsock
          WSADATA wsaData;
          if (WSAStartup(MAKEWORD(1, 1), &wsaData) != 0)
@@ -284,7 +284,7 @@ namespace dtLMS
 
       try
       {
-         #if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+         #ifdef DELTA_WIN32
             closesocket(mSocket);
          #else
             close(mSocket);
@@ -302,7 +302,7 @@ namespace dtLMS
    //////////////////////////////////////////////////////////////////////////
    LmsClientSocket::~LmsClientSocket()
    {
-      #if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+      #ifdef DELTA_WIN32
          WSACleanup();
       #endif
    }

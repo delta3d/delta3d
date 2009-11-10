@@ -29,7 +29,6 @@
 #include <prefix/dtgameprefix-src.h>
 
 #include <dtUtil/log.h>
-#include <dtUtil/macros.h>
 #include <dtUtil/datapathutils.h>
 
 #include <dtCore/refptr.h>

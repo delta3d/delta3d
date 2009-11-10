@@ -1,5 +1,6 @@
 // TestAI.cpp : defines the implementation of the application
-#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+#include <dtUtil/mswinmacros.h>
+#ifdef DELTA_WIN32
    #pragma warning(push)
    #pragma warning(disable : 4005)
 #endif
@@ -10,7 +11,6 @@
 #include <dtDAL/map.h>
 #include <dtDAL/project.h>
 #include <dtDAL/exceptionenum.h>
-#include <dtUtil/macros.h>
 #include <dtUtil/datapathutils.h>
 
 #include <dtAI/waypoint.h>
@@ -21,7 +21,7 @@
 #include <dtUtil/fileutils.h>
 #include <osg/MatrixTransform>
 
-#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+#ifdef DELTA_WIN32
    #pragma warning(pop)
 #endif
 

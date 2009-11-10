@@ -20,7 +20,7 @@
  */
 
 #include <prefix/dtutilprefix-src.h>
-#include <dtUtil/macros.h>
+#include <dtUtil/mswinmacros.h>
 #include <osg/Version>
 #include <algorithm>
 

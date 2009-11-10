@@ -27,7 +27,6 @@
 */
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
-#include <dtUtil/macros.h>
 #include <dtDAL/actortype.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/taskcomponent.h>

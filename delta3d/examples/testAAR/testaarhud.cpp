@@ -29,7 +29,6 @@
 #include "testaarhud.h"
 #include "testaarexceptionenum.h"
 
-#include <dtUtil/macros.h>
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/fileutils.h>
 #include <dtCore/deltawin.h>

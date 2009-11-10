@@ -46,12 +46,12 @@
 #include <dtActors/volumeeditactor.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/transform.h>
-#include <dtUtil/macros.h>
 #include <dtDAL/project.h>
 #include <dtDAL/librarymanager.h>
 #include <dtDAL/map.h>
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/fileutils.h>
+#include <dtUtil/mswinmacros.h>
 #include <dtEditQt/configurationmanager.h>
 #include <dtEditQt/editoractions.h>
 #include <dtEditQt/editorsettings.h>
