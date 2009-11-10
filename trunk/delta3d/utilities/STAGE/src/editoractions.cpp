@@ -100,7 +100,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    EditorActions::EditorActions()
       : mExternalToolActionGroup(new QActionGroup(NULL))
-      , mHelpBox(NULL)
+      , mDocBrowser(NULL)
    {
       LOG_INFO("Initializing Editor Actions.");
       setupFileActions();
@@ -131,10 +131,10 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    EditorActions::~EditorActions()
    {
-      //if (mHelpBox)
+      //if (mDocBrowser)
       //{
-      //   delete mHelpBox;
-      //   mHelpBox = NULL;
+      //   delete mDocBrowser;
+      //   mDocBrowser = NULL;
       //}
 
       mTimer->stop();
@@ -1687,14 +1687,15 @@ namespace dtEditQt
    {
       slotPauseAutosave();
 
-      if (!mHelpBox)
+      if (!mDocBrowser)
       {
-         mHelpBox = new HelpBox((dtUtil::GetDeltaRootPath() + "/utilities/STAGE/docs/help/data.xml").c_str(),
+         mDocBrowser = new dtQt::DocBrowser(
+            (dtUtil::GetDeltaRootPath() + "/utilities/STAGE/docs/help/data.xml").c_str(),
             (QWidget*)EditorData::GetInstance().getMainWindow());
       }
 
-      mHelpBox->show();
-      mHelpBox->raise();
+      mDocBrowser->show();
+      mDocBrowser->raise();
 
       slotRestartAutosave();
    }

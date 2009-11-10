@@ -11,6 +11,8 @@ set(LIB_SOURCES
 baselibrarylisteditor.cpp
 basepropertyeditor.cpp
 deltastepper.cpp
+docbrowser.cpp
+docbrowserxmlreader.cpp
 dialoglistselection.cpp
 dynamicabstractcontrol.cpp
 dynamicabstractparentcontrol.cpp

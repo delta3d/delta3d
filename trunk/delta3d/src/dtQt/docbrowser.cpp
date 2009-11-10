@@ -26,9 +26,7 @@
  *
  * Jeff Houde
  */
-#include <prefix/dtstageprefix-src.h>
-#include "dtEditQt/helpbox.h"
-#include "dtEditQt/uiresources.h"
+#include <dtQt/docbrowser.h>
 #include <QtGui/QToolBar>
 #include <QtGui/QAction>
 #include <QtGui/QVBoxLayout>
@@ -48,45 +46,45 @@
 
 const QString USING_HELP_TAG = "Using Help!";
 
-namespace dtEditQt
+namespace dtQt
 {
    ////////////////////////////////////////////////////////////////////////////////
-   DocumentTabs::DocumentTabs(QWidget* parent, HelpBox* helpBox)
+   DocBrowserTabs::DocBrowserTabs(QWidget* parent, DocBrowser* docBrowser)
       : QTabWidget(parent)
-      , mHelpBox(helpBox)
+      , mDocBrowser(docBrowser)
    {
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DocumentTabs::mousePressEvent(QMouseEvent *e)
+   void DocBrowserTabs::mousePressEvent(QMouseEvent *e)
    {
       QTabWidget::mousePressEvent(e);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DocumentTabs::mouseReleaseEvent(QMouseEvent *e)
+   void DocBrowserTabs::mouseReleaseEvent(QMouseEvent *e)
    {
       QTabWidget::mouseReleaseEvent(e);
 
       if (e->button() == Qt::MidButton)
       {
          // TODO: Find the tab that you are mousing over.
-         //mHelpBox->onDocumentTabClosed(currentIndex());
+         //mDocBrowser->OnDocumentTabClosed(currentIndex());
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DocumentTabs::mouseDoubleClickEvent(QMouseEvent *e)
+   void DocBrowserTabs::mouseDoubleClickEvent(QMouseEvent *e)
    {
       QTabWidget::mouseDoubleClickEvent(e);
 
       // Create a new page and set it to the home page.
-      mHelpBox->openPage("", "", true);
-      mHelpBox->onHyperlinkClicked(mHelpBox->getHome().c_str());
+      mDocBrowser->OpenPage("", "", true);
+      mDocBrowser->OnHyperlinkClicked(mDocBrowser->GetHome().c_str());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   DocumentText::DocumentText(QWidget* parent)
+   DocBrowserText::DocBrowserText(QWidget* parent)
       : QTextEdit(parent)
       , mWasOverHyperlink(false)
       , mCurrentPage(-1)
@@ -95,7 +93,7 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DocumentText::setPage(const QString& page, const QString& anchor)
+   void DocBrowserText::SetPage(const QString& page, const QString& anchor)
    {
       // First clear all history that is beyond our current page.
       // This removes all next pages if we have backed up any.
@@ -113,7 +111,7 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool DocumentText::getPage(QString& page, QString& anchor)
+   bool DocBrowserText::GetPage(QString& page, QString& anchor)
    {
       if (mCurrentPage > -1 && mCurrentPage < (int)mHistory.size())
       {
@@ -126,45 +124,45 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool DocumentText::prevPage(QString& page, QString& anchor)
+   bool DocBrowserText::PrevPage(QString& page, QString& anchor)
    {
-      if (isPrevPage())
+      if (IsPrevPageValid())
       {
          mCurrentPage--;
-         return getPage(page, anchor);
+         return GetPage(page, anchor);
       }
 
       return false;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool DocumentText::nextPage(QString& page, QString& anchor)
+   bool DocBrowserText::NextPage(QString& page, QString& anchor)
    {
-      if (isNextPage())
+      if (IsNextPageValid())
       {
          mCurrentPage++;
-         return getPage(page, anchor);
+         return GetPage(page, anchor);
       }
 
       return false;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool DocumentText::isPrevPage()
+   bool DocBrowserText::IsPrevPageValid()
    {
       if (mCurrentPage > 0) return true;
       return false;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool DocumentText::isNextPage()
+   bool DocBrowserText::IsNextPageValid()
    {
       if (mCurrentPage > -1 && mCurrentPage < (int)mHistory.size() - 1) return true;
       return false;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DocumentText::mouseMoveEvent(QMouseEvent *e)
+   void DocBrowserText::mouseMoveEvent(QMouseEvent *e)
    {
       QTextEdit::mouseMoveEvent(e);
 
@@ -185,7 +183,7 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DocumentText::mousePressEvent(QMouseEvent *e)
+   void DocBrowserText::mousePressEvent(QMouseEvent *e)
    {
       QTextEdit::mousePressEvent(e);
 
@@ -195,13 +193,13 @@ namespace dtEditQt
          QApplication::restoreOverrideCursor();
          mWasOverHyperlink = false;
 
-         emit hyperlinkClicked(hyperlink);
+         emit OnHyperlinkClicked(hyperlink);
       }
    }
 
 
    //////////////////////////////////////////////////////////////////////////////
-   HelpBox::HelpBox(const QString& filename, QWidget* parent)
+   DocBrowser::DocBrowser(const QString& filename, QWidget* parent)
       : QMainWindow(parent, Qt::Window)
       , mContentList(NULL)
       , mDocumentTabs(NULL)
@@ -211,7 +209,7 @@ namespace dtEditQt
       resize(900, 600);
 
       // Attempt to load the template file.
-      mDocument = new HelpXMLReader();
+      mDocument = new DocBrowserXMLReader();
       mDocument->ReadXML(filename.toStdString());
 
       setWindowTitle(mDocument->getTitle().c_str());
@@ -227,7 +225,7 @@ namespace dtEditQt
       mHomeAction                = new QAction(tr("Home"), this);
 
       mContentList               = new QTreeWidget(documentSplit);
-      mDocumentTabs              = new DocumentTabs(documentSplit, this);
+      mDocumentTabs              = new DocBrowserTabs(documentSplit, this);
 
       // Toolbar
       addToolBar(toolbar);
@@ -259,31 +257,31 @@ namespace dtEditQt
       setCentralWidget(documentSplit);
 
       // Setup our table of contents.
-      setupContents();
+      SetupContents();
 
       // Connect slots.
       connect(mContentList, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
-         this, SLOT(onContentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
+         this, SLOT(OnContentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
       connect(mDocumentTabs, SIGNAL(currentChanged(int)),
-         this, SLOT(onDocumentTabChanged(int)));
+         this, SLOT(OnDocumentTabChanged(int)));
       connect(mDocumentTabs, SIGNAL(tabCloseRequested(int)),
-         this, SLOT(onDocumentTabClosed(int)));
+         this, SLOT(OnDocumentTabClosed(int)));
 
       connect(mPrevPageAction, SIGNAL(triggered()),
-         this, SLOT(onPrevButton()));
+         this, SLOT(OnPrevButton()));
       connect(mNextPageAction, SIGNAL(triggered()),
-         this, SLOT(onNextButton()));
+         this, SLOT(OnNextButton()));
       connect(mHomeAction, SIGNAL(triggered()),
-         this, SLOT(onHomeButton()));
+         this, SLOT(OnHomeButton()));
 
       // Open our using help page, and also our home page.
-      openUsingHelpPage(true);
-      openPage("", "", true);
-      onHyperlinkClicked(mDocument->getHome().c_str());
+      OpenUsingHelpPage(true);
+      OpenPage("", "", true);
+      OnHyperlinkClicked(mDocument->GetHome().c_str());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   HelpBox::~HelpBox()
+   DocBrowser::~DocBrowser()
    {
       if (mDocument)
       {
@@ -293,14 +291,14 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void HelpBox::openUsingHelpPage(bool newPage)
+   void DocBrowser::OpenUsingHelpPage(bool newPage)
    {
-      openPage("", "", newPage);
+      OpenPage("", "", newPage);
 
-      DocumentText* doc = dynamic_cast<DocumentText*>(mDocumentTabs->currentWidget());
+      DocBrowserText* doc = dynamic_cast<DocBrowserText*>(mDocumentTabs->currentWidget());
       if (doc)
       {
-         doc->setPage(USING_HELP_TAG, "");
+         doc->SetPage(USING_HELP_TAG, "");
          mDocumentTabs->setTabText(mDocumentTabs->currentIndex(), USING_HELP_TAG);
 
          doc->setHtml(
@@ -324,38 +322,38 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void HelpBox::openPage(const QString& page, const QString& anchor, bool newTab, bool setPage)
+   void DocBrowser::OpenPage(const QString& page, const QString& anchor, bool newTab, bool SetPage)
    {
       // Create a new page if we are forcing a new page or
       // if we don't have any pages yet.
       if (mDocumentTabs->count() < 1 || newTab)
       {
-         DocumentText* doc = new DocumentText(this);
+         DocBrowserText* doc = new DocBrowserText(this);
 
          doc->setTextInteractionFlags(Qt::TextBrowserInteraction);
 
-         connect(doc, SIGNAL(hyperlinkClicked(const QString&)),
-            this, SLOT(onHyperlinkClicked(const QString&)));
+         connect(doc, SIGNAL(OnHyperlinkClicked(const QString&)),
+            this, SLOT(OnHyperlinkClicked(const QString&)));
 
          //QScrollBar* scrollBar = doc->verticalScrollBar();
          //if (scrollBar)
          //{
          //   connect(scrollBar, SIGNAL(valueChanged(int)),
-         //      this, SLOT(onDocumentScrolled(int)));
+         //      this, SLOT(OnDocumentScrolled(int)));
          //}
 
          int index = mDocumentTabs->addTab(doc, "");
          mDocumentTabs->setCurrentIndex(index);
       }
 
-      DocumentText* doc = dynamic_cast<DocumentText*>(mDocumentTabs->currentWidget());
+      DocBrowserText* doc = dynamic_cast<DocBrowserText*>(mDocumentTabs->currentWidget());
       if (doc && !page.isEmpty())
       {
          mDocumentTabs->setTabText(mDocumentTabs->currentIndex(), page);
 
-         if (setPage)
+         if (SetPage)
          {
-            doc->setPage(page, anchor);
+            doc->SetPage(page, anchor);
          }
 
          QFile file(mResourcePrefix + page);
@@ -383,19 +381,19 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void HelpBox::onPrevButton()
+   void DocBrowser::OnPrevButton()
    {
-      DocumentText* doc = dynamic_cast<DocumentText*>(mDocumentTabs->currentWidget());
+      DocBrowserText* doc = dynamic_cast<DocBrowserText*>(mDocumentTabs->currentWidget());
       if (doc)
       {
-         if (doc->isPrevPage())
+         if (doc->IsPrevPageValid())
          {
             QString page, anchor;
-            doc->prevPage(page, anchor);
-            openPage(page, anchor, false, false);
+            doc->PrevPage(page, anchor);
+            OpenPage(page, anchor, false, false);
 
             // Search the table of contents for a page that references the same link location.
-            QTreeWidgetItem* item = findTOC(page, anchor);
+            QTreeWidgetItem* item = FindTOC(page, anchor);
             if (item)
             {
                // If the page is listed in the table of contents, select that item.
@@ -408,19 +406,19 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void HelpBox::onNextButton()
+   void DocBrowser::OnNextButton()
    {
-      DocumentText* doc = dynamic_cast<DocumentText*>(mDocumentTabs->currentWidget());
+      DocBrowserText* doc = dynamic_cast<DocBrowserText*>(mDocumentTabs->currentWidget());
       if (doc)
       {
-         if (doc->isNextPage())
+         if (doc->IsNextPageValid())
          {
             QString page, anchor;
-            doc->nextPage(page, anchor);
-            openPage(page, anchor, false, false);
+            doc->NextPage(page, anchor);
+            OpenPage(page, anchor, false, false);
 
             // Search the table of contents for a page that references the same link location.
-            QTreeWidgetItem* item = findTOC(page, anchor);
+            QTreeWidgetItem* item = FindTOC(page, anchor);
             if (item)
             {
                // If the page is listed in the table of contents, select that item.
@@ -433,14 +431,14 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void HelpBox::onHomeButton()
+   void DocBrowser::OnHomeButton()
    {
       // Set the page to the home page.
-      onHyperlinkClicked(mDocument->getHome().c_str());
+      OnHyperlinkClicked(mDocument->GetHome().c_str());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void HelpBox::onHyperlinkClicked(const QString& link)
+   void DocBrowser::OnHyperlinkClicked(const QString& link)
    {
       // First parse the link to make sure we are not selecting a web page.
       if (link.contains("http:", Qt::CaseInsensitive))
@@ -471,7 +469,7 @@ namespace dtEditQt
       if (!page.isEmpty())
       {
          // Search the table of contents for a page that references the same link location.
-         QTreeWidgetItem* item = findTOC(page, anchor);
+         QTreeWidgetItem* item = FindTOC(page, anchor);
          if (item)
          {
             // If the page is listed in the table of contents, select that item.
@@ -481,12 +479,12 @@ namespace dtEditQt
          }
 
          // If the contents doesn't list this page, then just open it.
-         openPage(page, anchor);
+         OpenPage(page, anchor);
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void HelpBox::onContentItemChanged(QTreeWidgetItem* current, QTreeWidgetItem* previous)
+   void DocBrowser::OnContentItemChanged(QTreeWidgetItem* current, QTreeWidgetItem* previous)
    {
       if (!current->statusTip(0).isEmpty())
       {
@@ -494,29 +492,29 @@ namespace dtEditQt
          if (current->statusTip(0) == USING_HELP_TAG)
          {
             // Open a special page.
-            openUsingHelpPage();
+            OpenUsingHelpPage();
             return;
          }
 
-         onHyperlinkClicked(current->statusTip(0));
-         //openPage(current->statusTip(0));
+         OnHyperlinkClicked(current->statusTip(0));
+         //OpenPage(current->statusTip(0));
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void HelpBox::onDocumentTabChanged(int index)
+   void DocBrowser::OnDocumentTabChanged(int index)
    {
       if (index < mDocumentTabs->count())
       {
-         DocumentText* doc = dynamic_cast<DocumentText*>(mDocumentTabs->widget(index));
+         DocBrowserText* doc = dynamic_cast<DocBrowserText*>(mDocumentTabs->widget(index));
          if (doc)
          {
             QString page;
             QString anchor;
-            if (doc->getPage(page, anchor) && !page.isEmpty())
+            if (doc->GetPage(page, anchor) && !page.isEmpty())
             {
                // Search the table of contents for a page that references the same link location.
-               QTreeWidgetItem* item = findTOC(page, anchor);
+               QTreeWidgetItem* item = FindTOC(page, anchor);
                if (item)
                {
                   // If the page is listed in the table of contents, select that item.
@@ -531,21 +529,21 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void HelpBox::onDocumentTabClosed(int index)
+   void DocBrowser::OnDocumentTabClosed(int index)
    {
       if (index < mDocumentTabs->count())
       {
-         DocumentText* doc = dynamic_cast<DocumentText*>(mDocumentTabs->widget(index));
+         DocBrowserText* doc = dynamic_cast<DocBrowserText*>(mDocumentTabs->widget(index));
          if (doc)
          {
-            disconnect(doc, SIGNAL(hyperlinkClicked(const QString&)),
-               this, SLOT(onHyperlinkClicked(const QString&)));
+            disconnect(doc, SIGNAL(OnHyperlinkClicked(const QString&)),
+               this, SLOT(OnHyperlinkClicked(const QString&)));
 
             //QScrollBar* scrollBar = doc->verticalScrollBar();
             //if (scrollBar)
             //{
             //   disconnect(scrollBar, SIGNAL(valueChanged(int)),
-            //      this, SLOT(onDocumentScrolled(int)));
+            //      this, SLOT(OnDocumentScrolled(int)));
             //}
 
             mDocumentTabs->removeTab(index);
@@ -554,10 +552,10 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void HelpBox::onDocumentScrolled(int value)
+   void DocBrowser::OnDocumentScrolled(int value)
    {
       //// Find all anchors in the document up to our current position.
-      //DocumentText* doc = dynamic_cast<DocumentText*>(mDocumentTabs->currentWidget());
+      //DocBrowserText* doc = dynamic_cast<DocBrowserText*>(mDocumentTabs->currentWidget());
       //if (doc)
       //{
       //   // Find all anchors.
@@ -587,7 +585,7 @@ namespace dtEditQt
 
       //         {
       //            // Now find this anchor in our contents.
-      //            QTreeWidgetItem* item = findTOC(mDocumentTabs->tabText(mDocumentTabs->currentIndex()), mAnchor, true);
+      //            QTreeWidgetItem* item = FindTOC(mDocumentTabs->tabText(mDocumentTabs->currentIndex()), mAnchor, true);
       //            if (item)
       //            {
       //               // If the page is listed in the table of contents, select that item.
@@ -602,7 +600,7 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void HelpBox::setupContents()
+   void DocBrowser::SetupContents()
    {
       if (!mContentList) return;
       if (!mDocument) return;
@@ -617,10 +615,10 @@ namespace dtEditQt
       mContentList->addTopLevelItem(usingHelp);
 
       // start by adding our top level items.
-      std::vector<HelpXMLReader::SectionInfo*> sections = mDocument->getSections();
+      std::vector<DocBrowserXMLReader::SectionInfo*> sections = mDocument->getSections();
       for (int index = 0; index < (int)sections.size(); index++)
       {
-         HelpXMLReader::SectionInfo* section = sections[index];
+         DocBrowserXMLReader::SectionInfo* section = sections[index];
          if (section)
          {
             QTreeWidgetItem* treeItem = new QTreeWidgetItem(NULL);
@@ -628,14 +626,14 @@ namespace dtEditQt
             treeItem->setStatusTip(0, section->link.c_str());
 
             mContentList->addTopLevelItem(treeItem);
-            setupContents(section->children, treeItem);
+            SetupContents(section->children, treeItem);
 
             if (section->expanded)
             {
                mContentList->expandItem(treeItem);
             }
 
-            if (mDocument->getHome() == section->link)
+            if (mDocument->GetHome() == section->link)
             {
                mContentList->setCurrentItem(treeItem);
             }
@@ -644,27 +642,27 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void HelpBox::setupContents(const std::vector<HelpXMLReader::SectionInfo*>& sections, QTreeWidgetItem* parent)
+   void DocBrowser::SetupContents(const std::vector<DocBrowserXMLReader::SectionInfo*>& sections, QTreeWidgetItem* parent)
    {
       if (!parent) return;
 
       for (int index = 0; index < (int)sections.size(); index++)
       {
-         HelpXMLReader::SectionInfo* section = sections[index];
+         DocBrowserXMLReader::SectionInfo* section = sections[index];
          if (section)
          {
             QTreeWidgetItem* treeItem = new QTreeWidgetItem(parent);
             treeItem->setText(0, section->title.c_str());
             treeItem->setStatusTip(0, section->link.c_str());
 
-            setupContents(section->children, treeItem);
+            SetupContents(section->children, treeItem);
 
             if (section->expanded)
             {
                mContentList->expandItem(treeItem);
             }
 
-            if (mDocument->getHome() == section->link)
+            if (mDocument->GetHome() == section->link)
             {
                mContentList->setCurrentItem(treeItem);
             }
@@ -673,11 +671,11 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   QTreeWidgetItem* HelpBox::findTOC(const QString& page, const QString& anchor, bool anchorMustMatch)
+   QTreeWidgetItem* DocBrowser::FindTOC(const QString& page, const QString& anchor, bool anchorMustMatch)
    {
       for (int index = 0; index < mContentList->topLevelItemCount(); index++)
       {
-         QTreeWidgetItem* item = findTOC(page, anchor, mContentList->topLevelItem(index), anchorMustMatch);
+         QTreeWidgetItem* item = FindTOC(page, anchor, mContentList->topLevelItem(index), anchorMustMatch);
          if (item) return item;
       }
 
@@ -685,7 +683,7 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   QTreeWidgetItem* HelpBox::findTOC(const QString& page, const QString& anchor, QTreeWidgetItem* parent, bool anchorMustMatch)
+   QTreeWidgetItem* DocBrowser::FindTOC(const QString& page, const QString& anchor, QTreeWidgetItem* parent, bool anchorMustMatch)
    {
       if (!parent) return NULL;
 
@@ -717,7 +715,7 @@ namespace dtEditQt
             QTreeWidgetItem* child = parent->child(index);
             if (child)
             {
-               QTreeWidgetItem* found = findTOC(page, anchor, child, true);
+               QTreeWidgetItem* found = FindTOC(page, anchor, child, true);
                if (found) return found;
             }
          }
@@ -737,7 +735,7 @@ namespace dtEditQt
          QTreeWidgetItem* child = parent->child(index);
          if (child)
          {
-            QTreeWidgetItem* found = findTOC(page, anchor, child, anchorMustMatch);
+            QTreeWidgetItem* found = FindTOC(page, anchor, child, anchorMustMatch);
 
             if (found) return found;
          }
@@ -746,4 +744,4 @@ namespace dtEditQt
       return NULL;
    }
 
-} // namespace dtEditQt
+} // namespace dtQt
