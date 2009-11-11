@@ -10,10 +10,12 @@
 
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/util/XMLUni.hpp>
+#include <xercesc/framework/MemBufInputSource.hpp>
 
 #include <sstream>
 
-#include <Qt/qstring.h>
+#include <Qt/qfile.h>
+#include <Qt/qtextstream.h>
 
 namespace dtQt
 {
@@ -42,6 +44,8 @@ namespace dtQt
    ////////////////////////////////////////////////////////////////////////////////
    void DocBrowserXMLReader::ReadXML(const std::string& fileName)
    {
+      if (fileName.empty()) return;
+
       xercesc::SAX2XMLReaderImpl parser;
 
       parser.setFeature(xercesc::XMLUni::fgSAX2CoreNameSpaces, true);
@@ -54,18 +58,47 @@ namespace dtQt
       parser.setContentHandler(this);
       parser.setErrorHandler(this);
 
-      if (dtUtil::FileUtils::GetInstance().FileExists(fileName))
+      // If the filename has a colon in front of it, then consider it a QResource.
+      bool isQResource = (fileName[0] == ':')? true : false;
+
+      // Open a QResource file.
+      if (isQResource)
       {
-         parser.parse(fileName.c_str());
+         QFile file(fileName.c_str());
+         if (file.open(QFile::ReadOnly | QFile::Text))
+         {
+            QTextStream in(&file);
+            QString data = in.readAll();
+
+            char* buffer = new char[data.length() + 1];
+            memset(buffer, 0, data.length() + 1);
+            strcpy(buffer, data.toStdString().c_str());
+
+            xercesc::MemBufInputSource* memBuf = new xercesc::MemBufInputSource(
+               (const XMLByte*)buffer,
+               data.length(), "DocBrowserFile", false);
+
+            parser.parse(*memBuf);
+            delete buffer;
+            return;
+         }
       }
+      // Open a file on the disk.
       else
       {
-         std::string err = "Help File not found: ";
-         err += fileName;
+         if (dtUtil::FileUtils::GetInstance().FileExists(fileName))
+         {
+            parser.parse(fileName.c_str());
+            return;
+         }
+      }
 
-         dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ERROR,
-            __FUNCTION__, __LINE__, err);
-      }  
+      // If we get here, we didn't find the file.
+      std::string err = "Help File not found: ";
+      err += fileName;
+
+      dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ERROR,
+         __FUNCTION__, __LINE__, err);
    }
 
    ////////////////////////////////////////////////////////////////////////////////

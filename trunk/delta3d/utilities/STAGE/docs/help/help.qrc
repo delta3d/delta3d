@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="help/">
+	  <file>contents.xml</file>
+	  
 	  <file>tutorial.html</file>
 	  <file>tut01_start.html</file>
 	  <file>tut02_maps.html</file>
