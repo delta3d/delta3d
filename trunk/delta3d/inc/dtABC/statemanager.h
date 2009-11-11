@@ -12,6 +12,7 @@
 #include <dtABC/state.h>
 #include <dtUtil/log.h>
 #include <dtUtil/objectfactory.h>
+#include <dtUtil/datapathutils.h>
 #include <dtCore/refptr.h>
 #include <dtCore/system.h>
 #include <dtUtil/xercesparser.h>
