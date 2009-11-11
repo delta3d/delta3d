@@ -32,7 +32,9 @@
 #include <QtGui/QDragEnterEvent>
 #include <QtGui/QTabWidget>
 #include <QtGui/QListWidget>
+#include <QtGui/QLabel>
 #include <QtGui/QGraphicsScene>
+#include <QtGui/QGroupBox>
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QProgressBar>
 #include <QtGui/QTreeWidgetItem>
@@ -112,12 +114,8 @@ MainWindow::MainWindow()
    CreateMenus();
    statusBar();
    CreateToolbars();
+   CreateDockWidgets();
 
-   mTabs = new QTabWidget(this);
-   mTabs->addTab(mAnimListWidget, tr("Animations"));
-   mTabs->addTab(mMeshListWidget, tr("Meshes"));
-   mTabs->addTab(mMaterialView, tr("Materials"));
-   mTabs->addTab(mSubMorphTargetListWidget, tr("SubMorphTargets"));
 
    QWidget* glParent = new QWidget();
 
@@ -126,10 +124,6 @@ MainWindow::MainWindow()
    glParent->setLayout(mCentralLayout);
    setCentralWidget(glParent);
 
-   QDockWidget* tabsDockWidget = new QDockWidget();
-   tabsDockWidget->setWidget(mTabs);
-
-   addDockWidget(Qt::BottomDockWidgetArea, tabsDockWidget);
 
    //accept drag & drop operations
    setAcceptDrops(true);
@@ -158,30 +152,11 @@ void MainWindow::CreateMenus()
    windowMenu->addSeparator();
 
    QAction* toggleShadeToolbarAction = toolBarMenu->addAction("Shading toolbar");
-   QAction* toggleLODScaleToolbarAction  = toolBarMenu->addAction("LOD Scale toolbar");
-   QAction* toggleSpeedScaleToolbarAction  = toolBarMenu->addAction("Speed Scale toolbar");
-   //QAction *toggleLightToolBarAction = toolBarMenu->addAction("Lighting toolbar");
-   QAction* toggleScalingToolbarAction  = toolBarMenu->addAction("Scaling toolbar");
-   QAction* toggleAttachmentToolbarAction  = toolBarMenu->addAction("Attachment toolbar");
 
    toggleShadeToolbarAction->setCheckable(true);
    toggleShadeToolbarAction->setChecked(true);
-   toggleLODScaleToolbarAction->setCheckable(true);
-   toggleLODScaleToolbarAction->setChecked(true);
-   toggleSpeedScaleToolbarAction->setCheckable(true);
-   toggleSpeedScaleToolbarAction->setChecked(true);
-   //toggleLightToolBarAction->setCheckable(true);
-   //toggleLightToolBarAction->setChecked(true);
-   toggleScalingToolbarAction->setCheckable(true);
-   toggleScalingToolbarAction->setChecked(true);
-   toggleAttachmentToolbarAction->setCheckable(true);
-   toggleAttachmentToolbarAction->setChecked(true);
 
    connect(toggleShadeToolbarAction, SIGNAL(triggered()), this, SLOT(OnToggleShadingToolbar()));
-   connect(toggleLODScaleToolbarAction, SIGNAL(triggered()), this, SLOT(OnToggleLODScaleToolbar()));
-   connect(toggleSpeedScaleToolbarAction, SIGNAL(triggered()), this, SLOT(OnToggleSpeedScaleToolbar()));
-   connect(toggleScalingToolbarAction, SIGNAL(triggered()), this, SLOT(OnToggleScalingToolbar()));
-   connect(toggleAttachmentToolbarAction, SIGNAL(triggered()), this, SLOT(OnToggleAttachmentToolbar()));
 
    for (int actionIndex = 0; actionIndex < 5; ++actionIndex)
    {
@@ -254,36 +229,8 @@ void MainWindow::CreateActions()
 ////////////////////////////////////////////////////////////////////////////////
 void MainWindow::CreateToolbars()
 {
-   QDoubleSpinBox* lodScaleSpinner = new QDoubleSpinBox(this);
-   lodScaleSpinner->setRange(0.01, 500.0);
-   lodScaleSpinner->setSingleStep(0.01);
-   lodScaleSpinner->setValue(1);
-   lodScaleSpinner->setToolTip(tr("Level of Detail scale"));
-
-   QDoubleSpinBox* speedSpinner = new QDoubleSpinBox(this);
-   speedSpinner->setRange(0.0, 100.0);
-   speedSpinner->setSingleStep(0.01);
-   speedSpinner->setValue(1.0);
-   speedSpinner->setToolTip(tr("Animation Speed Scale Factor"));
-
-   mScaleFactorSpinner = new QDoubleSpinBox(this);
-   mScaleFactorSpinner->setRange(0.001, 500.0);
-   mScaleFactorSpinner->setSingleStep(0.01);
-   mScaleFactorSpinner->setValue(1);
-   mScaleFactorSpinner->setToolTip(tr("Scale Factor"));
-
    mShadingToolbar = addToolBar("Shading toolbar");
    mShadingToolbar->setToolTip("Shading toolbar");
-   mLODScaleToolbar= addToolBar("LOD Scale toolbar");
-   mLODScaleToolbar->setToolTip("LOD Scale toolbar");
-   mSpeedToolbar   = addToolBar("Animation Speed toolbar");
-   mSpeedToolbar->setToolTip("Animation Speed toolbar");
-   //mLightingToolbar = addToolBar("Lighting toolbar");
-   mScalingToolbar = addToolBar("Scaling toolbar");
-   mScalingToolbar->setToolTip("Scaling toolbar");
-
-   mAttachmentToolbar = addToolBar("Attachment toolbar");
-   mAttachmentToolbar->setToolTip("Attachment toolbar");
 
    mShadingToolbar->addAction(mWireframeAction);
    mShadingToolbar->addAction(mShadedAction);
@@ -291,83 +238,11 @@ void MainWindow::CreateToolbars()
    mShadingToolbar->addSeparator();
    mShadingToolbar->addAction(mBoneBasisAction);
 
-   mLODScaleToolbar->addWidget(lodScaleSpinner);
-   mSpeedToolbar->addWidget(speedSpinner);
-   mScalingToolbar->addWidget(mScaleFactorSpinner);
-   QPushButton* applyScaleFactorButton = new QPushButton(tr("Apply"), this);
-   applyScaleFactorButton->adjustSize();
-   applyScaleFactorButton->setToolTip(tr("Apply scale factor"));
-   mScalingToolbar->addWidget(applyScaleFactorButton);
-  
-
-   QPushButton* loadAttachmentButton = new QPushButton(tr("Choose Attachment"), this);
-   mAttachmentToolbar->addWidget(loadAttachmentButton);
-   connect(loadAttachmentButton, SIGNAL(clicked()), this, SLOT(OnLoadAttachment()));
-   
-   mAttachmentToolbar->addSeparator();
-
-   mAttachmentParent = new QComboBox(this);
-   mAttachmentParent->setToolTip(tr("Parent Name"));
-   mAttachmentParent->setMinimumSize(QSize(150, 0));
-   mAttachmentToolbar->addWidget(mAttachmentParent);   
-   connect(mAttachmentParent, SIGNAL(currentIndexChanged(int)), this, SLOT(OnChangeAttachmentSettings()));
-
-   mAttachmentOffsetXSpinner = new QDoubleSpinBox(this);
-   mAttachmentOffsetXSpinner->setSingleStep(0.01);
-   mAttachmentOffsetXSpinner->setToolTip(tr("Attachment Offset X"));
-   mAttachmentOffsetXSpinner->setRange(-500.0, 500.0);
-   mAttachmentToolbar->addWidget(mAttachmentOffsetXSpinner);
-   connect(mAttachmentOffsetXSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnChangeAttachmentSettings()));
-
-   mAttachmentOffsetYSpinner = new QDoubleSpinBox(this);
-   mAttachmentOffsetYSpinner->setSingleStep(0.01);
-   mAttachmentOffsetYSpinner->setToolTip(tr("Attachment Offset Y"));
-   mAttachmentOffsetYSpinner->setRange(-500.0, 500.0);
-   mAttachmentToolbar->addWidget(mAttachmentOffsetYSpinner);
-   connect(mAttachmentOffsetYSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnChangeAttachmentSettings()));
-
-   mAttachmentOffsetZSpinner = new QDoubleSpinBox(this);
-   mAttachmentOffsetZSpinner->setSingleStep(0.01);
-   mAttachmentOffsetZSpinner->setToolTip(tr("Attachment Offset Z"));
-   mAttachmentOffsetZSpinner->setRange(-500.0, 500.0);
-   mAttachmentToolbar->addWidget(mAttachmentOffsetZSpinner);
-   connect(mAttachmentOffsetZSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnChangeAttachmentSettings()));
-
-   mAttachmentToolbar->addSeparator();
-
-   mAttachmentRotXSpinner = new QDoubleSpinBox(this);
-   mAttachmentRotXSpinner->setSingleStep(0.01);
-   mAttachmentRotXSpinner->setToolTip(tr("Rotation Axis X"));
-   mAttachmentRotXSpinner->setRange(-5.0, 5.0);
-   mAttachmentToolbar->addWidget(mAttachmentRotXSpinner);
-   connect(mAttachmentRotXSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnChangeAttachmentSettings()));
-
-   mAttachmentRotYSpinner = new QDoubleSpinBox(this);
-   mAttachmentRotYSpinner->setSingleStep(0.01);
-   mAttachmentRotYSpinner->setToolTip(tr("Rotation Axis Y"));
-   mAttachmentRotYSpinner->setRange(-5.0, 5.0);
-   mAttachmentToolbar->addWidget(mAttachmentRotYSpinner);
-   connect(mAttachmentRotYSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnChangeAttachmentSettings()));
-
-   mAttachmentRotZSpinner = new QDoubleSpinBox(this);
-   mAttachmentRotZSpinner->setSingleStep(0.01);
-   mAttachmentRotZSpinner->setToolTip(tr("Rotation Axis Z"));
-   mAttachmentRotZSpinner->setRange(-5.0, 5.0);
-   mAttachmentToolbar->addWidget(mAttachmentRotZSpinner);
-   connect(mAttachmentRotZSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnChangeAttachmentSettings()));
-
-   mAttachmentToolbar->addSeparator();
-
    //QIcon diffuseIcon(":/images/diffuseLight.png");
    //QIcon pointLightIcon(":/images/pointLight.png");
 
    //mLightingToolbar->addAction(diffuseIcon, "Diffuse Light");
    //mLightingToolbar->addAction(pointLightIcon, "Point Light");
-
-   connect(lodScaleSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnLODScale_Changed(double)));
-   connect(speedSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnSpeedChanged(double)));
-   connect(applyScaleFactorButton, SIGNAL(clicked()), this, SLOT(OnChangeScaleFactor()));
-   connect(mScaleFactorSpinner, SIGNAL(editingFinished()), this, SLOT(OnChangeScaleFactor()));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -837,57 +712,6 @@ void MainWindow::OnToggleShadingToolbar()
    }
 }
 
-////////////////////////////////////////////////////////////////////////////////
-void MainWindow::OnToggleLODScaleToolbar()
-{
-   if (mLODScaleToolbar->isHidden())
-   {
-      mLODScaleToolbar->show();
-   }
-   else
-   {
-      mLODScaleToolbar->hide();
-   }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void MainWindow::OnToggleSpeedScaleToolbar()
-{
-   if (mSpeedToolbar->isHidden())
-   {
-      mSpeedToolbar->show();
-   }
-   else
-   {
-      mSpeedToolbar->hide();
-   }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void MainWindow::OnToggleScalingToolbar()
-{
-   if (mScalingToolbar->isHidden())
-   {
-      mScalingToolbar->show();
-   }
-   else
-   {
-      mScalingToolbar->hide();
-   }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void MainWindow::OnToggleAttachmentToolbar()
-{
-   if (mAttachmentToolbar->isHidden())
-   {
-      mAttachmentToolbar->show();
-   }
-   else
-   {
-      mAttachmentToolbar->hide();
-   }
-}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnToggleLightingToolbar()
@@ -1319,4 +1143,161 @@ void MainWindow::SetupConnectionsWithViewer()
    connect(this, SIGNAL(SubMorphTargetChanged(int,int,int,float)), mViewer, SLOT(OnMorphChanged(int,int,int,float)));
    connect(this, SIGNAL(PlayMorphAnimation(int)), mViewer, SLOT(OnPlayMorphAnimation(int)));
 
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::CreateDockWidgets()
+{
+   mTabs = new QTabWidget(this);
+   mTabs->addTab(mAnimListWidget, tr("Animations"));
+   mTabs->addTab(mMeshListWidget, tr("Meshes"));
+   mTabs->addTab(mMaterialView, tr("Materials"));
+   mTabs->addTab(mSubMorphTargetListWidget, tr("SubMorphTargets"));
+
+   QDockWidget* tabsDockWidget = new QDockWidget(tr("Properties"), this);
+   tabsDockWidget->setWidget(mTabs);
+
+   addDockWidget(Qt::BottomDockWidgetArea, tabsDockWidget);
+
+   QDockWidget* toolsDockWidget = new QDockWidget(tr("Tools"), this);
+   addDockWidget(Qt::LeftDockWidgetArea, toolsDockWidget);
+   QWidget* toolWidget = new QWidget();
+   toolsDockWidget->setWidget(toolWidget);
+
+   QVBoxLayout* toolVLayout = new QVBoxLayout(toolWidget);
+
+   QGridLayout* toolGridLayout = new QGridLayout();
+   toolVLayout->addLayout(toolGridLayout);
+
+   {  //LOD scaling
+      QLabel* lodScaleLabel = new QLabel("LOD Scale");
+      toolGridLayout->addWidget(lodScaleLabel, 0, 0);
+
+      QDoubleSpinBox* lodScaleSpinner = new QDoubleSpinBox();
+      lodScaleSpinner->setRange(0.01, 500.0);
+      lodScaleSpinner->setSingleStep(0.01);
+      lodScaleSpinner->setValue(1);
+      lodScaleSpinner->setToolTip(tr("Level of Detail scale"));
+      toolGridLayout->addWidget(lodScaleSpinner, 0, 1);
+      connect(lodScaleSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnLODScale_Changed(double)));
+   }
+
+   {  //animation playback scale
+      QLabel* speenLabel = new QLabel("Playback Scale");
+      toolGridLayout->addWidget(speenLabel, 1, 0);
+
+      QDoubleSpinBox* speedSpinner = new QDoubleSpinBox();
+      speedSpinner->setRange(0.0, 100.0);
+      speedSpinner->setSingleStep(0.01);
+      speedSpinner->setValue(1.0);
+      speedSpinner->setToolTip(tr("Animation Speed Scale Factor"));
+      toolGridLayout->addWidget(speedSpinner, 1, 1);
+      connect(speedSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnSpeedChanged(double)));
+   }
+
+   {  //size scale factor
+      QGroupBox* box = new QGroupBox("Size Scale");
+      toolVLayout->addWidget(box);
+
+      QGridLayout* layout = new QGridLayout();
+      box->setLayout(layout);
+      
+      mScaleFactorSpinner = new QDoubleSpinBox(this);
+      mScaleFactorSpinner->setRange(0.001, 500.0);
+      mScaleFactorSpinner->setSingleStep(0.01);
+      mScaleFactorSpinner->setValue(1);
+      mScaleFactorSpinner->setToolTip(tr("Scale Factor"));
+      layout->addWidget(mScaleFactorSpinner, 0, 0);
+      connect(mScaleFactorSpinner, SIGNAL(editingFinished()), this, SLOT(OnChangeScaleFactor()));
+
+      QPushButton* applyScaleFactorButton = new QPushButton(tr("Apply"), this);
+      applyScaleFactorButton->adjustSize();
+      applyScaleFactorButton->setToolTip(tr("Apply scale factor"));
+      layout->addWidget(applyScaleFactorButton, 0, 1);
+      connect(applyScaleFactorButton, SIGNAL(clicked()), this, SLOT(OnChangeScaleFactor()));
+   }
+
+   {  //attachments
+      QGroupBox* box = new QGroupBox("Attachments");
+      toolVLayout->addWidget(box);
+
+      QGridLayout* layout = new QGridLayout();
+      box->setLayout(layout);
+
+      QLabel* buttonLabel = new QLabel(tr("Load Model"));
+      layout->addWidget(buttonLabel, 0, 0);
+
+      QPushButton* loadAttachmentButton = new QPushButton("...");
+      layout->addWidget(loadAttachmentButton, 0, 1);
+      connect(loadAttachmentButton, SIGNAL(clicked()), this, SLOT(OnLoadAttachment()));
+
+      QLabel* parentLabel = new QLabel("Bone Parent");
+      layout->addWidget(parentLabel, 1, 0);
+
+      mAttachmentParent = new QComboBox();
+      mAttachmentParent->setToolTip(tr("Parent Name"));
+      mAttachmentParent->setMinimumSize(QSize(150, 0));
+      layout->addWidget(mAttachmentParent, 1, 1);   
+      connect(mAttachmentParent, SIGNAL(currentIndexChanged(int)), this, SLOT(OnChangeAttachmentSettings()));
+
+      QLabel* xLabel = new QLabel("X");
+      layout->addWidget(xLabel, 2, 0);
+
+      mAttachmentOffsetXSpinner = new QDoubleSpinBox();
+      mAttachmentOffsetXSpinner->setSingleStep(0.01);
+      mAttachmentOffsetXSpinner->setToolTip(tr("Attachment Offset X"));
+      mAttachmentOffsetXSpinner->setRange(-500.0, 500.0);
+      layout->addWidget(mAttachmentOffsetXSpinner, 2, 1);
+      connect(mAttachmentOffsetXSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnChangeAttachmentSettings()));
+
+      QLabel* yLabel = new QLabel("Y");
+      layout->addWidget(yLabel, 3, 0);
+
+      mAttachmentOffsetYSpinner = new QDoubleSpinBox();
+      mAttachmentOffsetYSpinner->setSingleStep(0.01);
+      mAttachmentOffsetYSpinner->setToolTip(tr("Attachment Offset Y"));
+      mAttachmentOffsetYSpinner->setRange(-500.0, 500.0);
+      layout->addWidget(mAttachmentOffsetYSpinner, 3, 1);
+      connect(mAttachmentOffsetYSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnChangeAttachmentSettings()));
+
+      QLabel* zLabel = new QLabel("Z");
+      layout->addWidget(zLabel, 4, 0);
+
+      mAttachmentOffsetZSpinner = new QDoubleSpinBox();
+      mAttachmentOffsetZSpinner->setSingleStep(0.01);
+      mAttachmentOffsetZSpinner->setToolTip(tr("Attachment Offset Z"));
+      mAttachmentOffsetZSpinner->setRange(-500.0, 500.0);
+      layout->addWidget(mAttachmentOffsetZSpinner, 4, 1);
+      connect(mAttachmentOffsetZSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnChangeAttachmentSettings()));
+
+      QLabel* xRotLabel = new QLabel("X Rot");
+      layout->addWidget(xRotLabel, 5, 0);
+
+      mAttachmentRotXSpinner = new QDoubleSpinBox();
+      mAttachmentRotXSpinner->setSingleStep(0.01);
+      mAttachmentRotXSpinner->setToolTip(tr("Rotation Axis X"));
+      mAttachmentRotXSpinner->setRange(-5.0, 5.0);
+      layout->addWidget(mAttachmentRotXSpinner, 5, 1);
+      connect(mAttachmentRotXSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnChangeAttachmentSettings()));
+
+      QLabel* yRotLabel = new QLabel("Y Rot");
+      layout->addWidget(yRotLabel, 6, 0);
+
+      mAttachmentRotYSpinner = new QDoubleSpinBox(this);
+      mAttachmentRotYSpinner->setSingleStep(0.01);
+      mAttachmentRotYSpinner->setToolTip(tr("Rotation Axis Y"));
+      mAttachmentRotYSpinner->setRange(-5.0, 5.0);
+      layout->addWidget(mAttachmentRotYSpinner, 6, 1);
+      connect(mAttachmentRotYSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnChangeAttachmentSettings()));
+
+      QLabel* zRotLabel = new QLabel("Z Rot");
+      layout->addWidget(zRotLabel, 7, 0);
+
+      mAttachmentRotZSpinner = new QDoubleSpinBox(this);
+      mAttachmentRotZSpinner->setSingleStep(0.01);
+      mAttachmentRotZSpinner->setToolTip(tr("Rotation Axis Z"));
+      mAttachmentRotZSpinner->setRange(-5.0, 5.0);
+      layout->addWidget(mAttachmentRotZSpinner, 7, 1);
+      connect(mAttachmentRotZSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnChangeAttachmentSettings()));
+   }
 }

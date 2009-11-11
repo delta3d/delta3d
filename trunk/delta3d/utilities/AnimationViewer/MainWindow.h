@@ -99,10 +99,6 @@ public slots:
    void OnChangeScaleFactor();
    void OnToggleHardwareSkinning();
    void OnToggleShadingToolbar();
-   void OnToggleLODScaleToolbar();
-   void OnToggleSpeedScaleToolbar();
-   void OnToggleScalingToolbar();
-   void OnToggleAttachmentToolbar();
    void OnToggleLightingToolbar();
    void OnDisplayError(const QString& msg);
    void OnConfiged(); ///<call when everything is up and running
@@ -116,6 +112,7 @@ private:
    void CreateMenus();
    void CreateActions();
    void CreateToolbars();
+   void CreateDockWidgets();
    void DestroyPoseResources();
    void UpdateRecentFileActions();
    void SetCurrentFile(const QString& filename);
@@ -143,10 +140,6 @@ private:
 
    QToolBar* mShadingToolbar;
    QToolBar* mLightingToolbar;
-   QToolBar* mLODScaleToolbar;
-   QToolBar* mSpeedToolbar;
-   QToolBar* mScalingToolbar;
-   QToolBar* mAttachmentToolbar;
 
    QDoubleSpinBox* mScaleFactorSpinner;
 
