@@ -1690,7 +1690,7 @@ namespace dtEditQt
       if (!mDocBrowser)
       {
          mDocBrowser = new dtQt::DocBrowser(
-            (dtUtil::GetDeltaRootPath() + "/utilities/STAGE/docs/help/data.xml").c_str(),
+            ":help/contents.xml",
             (QWidget*)EditorData::GetInstance().getMainWindow());
       }
 
