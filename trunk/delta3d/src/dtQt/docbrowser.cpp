@@ -605,11 +605,11 @@ namespace dtQt
       if (!mContentList) return;
       if (!mDocument) return;
 
-      QTreeWidgetItem* header = new QTreeWidgetItem(NULL);
+      QTreeWidgetItem* header = new QTreeWidgetItem();
       header->setText(0, "Table of Contents");
       mContentList->setHeaderItem(header);
 
-      QTreeWidgetItem* usingHelp = new QTreeWidgetItem(NULL);
+      QTreeWidgetItem* usingHelp = new QTreeWidgetItem();
       usingHelp->setText(0, "Using Help");
       usingHelp->setStatusTip(0, USING_HELP_TAG);
       mContentList->addTopLevelItem(usingHelp);
@@ -621,7 +621,7 @@ namespace dtQt
          DocBrowserXMLReader::SectionInfo* section = sections[index];
          if (section)
          {
-            QTreeWidgetItem* treeItem = new QTreeWidgetItem(NULL);
+            QTreeWidgetItem* treeItem = new QTreeWidgetItem();
             treeItem->setText(0, section->title.c_str());
             treeItem->setStatusTip(0, section->link.c_str());
 
