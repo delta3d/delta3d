@@ -306,7 +306,7 @@ namespace dtGame
              * @param priority the priority of the component.  This translates into the order of message delivery.
              * @throw dtGame::ExceptionEnum::INVALID_PARAMETER if the component lacks a unique name
              */
-            void AddComponent(GMComponent& component, const ComponentPriority& priority);
+            void AddComponent(GMComponent& component, const ComponentPriority& priority = ComponentPriority::NORMAL);
 
             /**
              * Removes a component to the list of components the game mananger
