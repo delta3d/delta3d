@@ -24,3 +24,10 @@ void dtEditQt::STAGEApplication::Config()
 
    this->RemoveView(*this->GetView(), true);
 }
+
+////////////////////////////////////////////////////////////////////////////////
+bool dtEditQt::STAGEApplication::KeyPressed(const dtCore::Keyboard* keyboard, int kc)
+{
+   //disable any inherited key press functionality.
+   return false;
+}
