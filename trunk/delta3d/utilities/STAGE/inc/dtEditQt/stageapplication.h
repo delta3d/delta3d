@@ -12,6 +12,9 @@ namespace dtEditQt
    public:
       STAGEApplication(dtCore::DeltaWin* win=NULL);
       virtual void Config();
+
+      virtual bool KeyPressed(const dtCore::Keyboard* keyboard, int kc);
+
    protected:
       virtual ~STAGEApplication();
    	
