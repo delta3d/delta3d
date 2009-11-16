@@ -1099,7 +1099,7 @@ namespace dtEditQt
       if (!action)
       {
          return;
-      }
+      }      
 
       mToolsToolBar->addAction(action);
       action->setActionGroup(mToolModeActionGroup);
@@ -1136,6 +1136,21 @@ namespace dtEditQt
    ////////////////////////////////////////////////////////////////////////////////
    void MainWindow::SetNormalToolMode()
    {
+      //Only go to normal mode if something else isn't "checked"
+      //This is because we may have switched between "Linked Tool" mode 
+      //to "Backdrop" mode and don't want to change to Normal mode. 
+      //
+      //However, if all we have done is turn off one of those modes, then we 
+      //do want to "go normal."
+      QList<QAction*> actions = mToolsToolBar->actions();
+      for (int actionIndex = 0; actionIndex < (int)actions.size(); actionIndex++)
+      {
+         if(actions[actionIndex]->isChecked())
+         {
+            return;  //something is already checked.
+         }         
+      }     
+
       mNormalToolMode->setChecked(true);
    }
 
