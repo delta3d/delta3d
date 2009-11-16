@@ -398,6 +398,7 @@ namespace dtEditQt
       connect(mActionAddTool, SIGNAL(triggered()), this, SLOT(SlotNewExternalToolEditor()));
 
       mExternalToolArgParsers.push_back(new CurrentContextArgParser());
+      mExternalToolArgParsers.push_back(new CurrentMapFilenameArgParser());
       mExternalToolArgParsers.push_back(new CurrentMapNameArgParser());
       mExternalToolArgParsers.push_back(new CurrentMeshArgParser());
       mExternalToolArgParsers.push_back(new CurrentParticleSystemArgParser());
