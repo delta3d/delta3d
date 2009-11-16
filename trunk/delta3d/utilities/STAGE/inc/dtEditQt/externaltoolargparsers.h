@@ -33,13 +33,13 @@ namespace dtEditQt
    };
 
    /**
-    * Replace "${CurrentMapFilename}" with the currently loaded map filename
+    * Replace "${CurrentMapFilename}" with the currently loaded Map filename
     */
-   class CurrentMapNameArgParser : public ExternalToolArgParser
+   class CurrentMapFilenameArgParser : public ExternalToolArgParser
    {
    public:
-      CurrentMapNameArgParser() {}
-      ~CurrentMapNameArgParser() {}
+      CurrentMapFilenameArgParser() {}
+      ~CurrentMapFilenameArgParser() {}
 
       virtual QString ExpandArguments(const QString& args) const
       {
@@ -60,6 +60,36 @@ namespace dtEditQt
          return "The filename of the currently loaded map.";
       }
    };
+
+   /**
+    * Replace "${CurrentMapFilename}" with the currently loaded Map name
+    */
+   class CurrentMapNameArgParser : public ExternalToolArgParser
+   {
+   public:
+      CurrentMapNameArgParser() {}
+      ~CurrentMapNameArgParser() {}
+
+      virtual QString ExpandArguments(const QString& args) const
+      {
+         dtDAL::Map* currentMap = EditorData::GetInstance().getCurrentMap();
+         QString mapFilename;
+         if (currentMap)
+         {
+            mapFilename = QString::fromStdString(currentMap->GetName());
+         }
+
+         return QString(args).replace(GetVariableText(), mapFilename);
+      }
+
+      virtual QString GetVariableText() const {return "${CurrentMapName}";}
+
+      virtual QString GetDescription() const
+      {
+         return "The name of the currently loaded map.";
+      }
+   };
+
 
    /**
     * Replace "${CurrentMesh}" with the currently selected mesh filename.
