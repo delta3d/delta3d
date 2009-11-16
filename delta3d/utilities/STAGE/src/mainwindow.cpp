@@ -103,12 +103,9 @@ namespace dtEditQt
          {
             mSTAGEConfigFullPath = dtUtil::FileUtils::GetInstance().CurrentDirectory() + "\\" + mSTAGEConfigFullPath;
          }
-      }
-      else
-      {
-         mSTAGEConfigFullPath = dtUtil::FileUtils::GetInstance().CurrentDirectory() + "\\STAGEConfig.xml";
-      }
-      ConfigurationManager::GetInstance().ReadXML(mSTAGEConfigFullPath);
+
+         ConfigurationManager::GetInstance().ReadXML(mSTAGEConfigFullPath);
+      }      
 
       //Setup stylesheet based on what's in the configuration file.
       //Note that stylesheet has to be setup for qApp before ANYTHING in the 
@@ -169,20 +166,7 @@ namespace dtEditQt
 
    ///////////////////////////////////////////////////////////////////////////////
    MainWindow::~MainWindow()
-   {
-      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::GENERAL,
-                                                  CONF_MGR_SAVE_ON_CLOSE) == "true")
-      {
-         //Save configuration
-
-         //Sample of how to save some STAGE config variables that we might care about:
-         //QSplitter* hSplit = mSplitters.at(0);
-         //QSize hSize = hSplit->frameSize();
-         //mCfgMgr.SetVariable(ConfigurationManager::LAYOUT, CONF_MGR_SHOW_TOP_VIEW, hSize.height());
-         //mCfgMgr.SetVariable(ConfigurationManager::LAYOUT, "HorizontalViewFrameWidth", hSize.width());
-
-         ConfigurationManager::GetInstance().WriteXML(mSTAGEConfigFullPath);
-      }
+   {      
    }
 
    ///////////////////////////////////////////////////////////////////////////////
