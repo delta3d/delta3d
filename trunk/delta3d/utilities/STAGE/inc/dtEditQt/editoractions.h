@@ -113,6 +113,23 @@ namespace dtEditQt
       bool SaveNewPrefab(std::string category, std::string prefabName,
                          std::string iconFile, std::string prefabDescrip);
 
+       /**
+       * If the current map is valid and has been modified, this method will
+       * prompt the user for asking to save the changes.
+       * @param askPermission If true a message box will be displayed asking
+       *  the user whether or not the changes should be saved.
+       * @return
+       *  If askPermission is true, the return value will be the response from
+       *  the user. This will be equal to either QMessageBox::Yes, QMessageBox::No,
+       *  or QMessageBox::Cancel.  If ask permission is false, the return value
+       *  is QMessageBox::Ignore.
+       * @note If the current map is invalid, this method will return
+       *  QMessageBox::Ignore.
+       * @note If any errors occured while saving the current map, this method
+       *  will return QMessageBox::Abort.
+       */
+      int SaveCurrentMapChanges(bool askPermission);
+
       /**
        * The actions for this class are public.  Essentially, this whole class is here
        * to create these, trap their events, and expose them.
@@ -491,22 +508,6 @@ namespace dtEditQt
 
       void HandleMissingActorsTypes(const dtDAL::Map& newMap) const;
 
-      /**
-       * If the current map is valid and has been modified, this method will
-       * prompt the user for asking to save the changes.
-       * @param askPermission If true a message box will be displayed asking
-       *  the user whether or not the changes should be saved.
-       * @return
-       *  If askPermission is true, the return value will be the response from
-       *  the user. This will be equal to either QMessageBox::Yes, QMessageBox::No,
-       *  or QMessageBox::Cancel.  If ask permission is false, the return value
-       *  is QMessageBox::Ignore.
-       * @note If the current map is invalid, this method will return
-       *  QMessageBox::Ignore.
-       * @note If any errors occured while saving the current map, this method
-       *  will return QMessageBox::Abort.
-       */
-      int saveCurrentMapChanges(bool askPermission);
 
       void setupFileActions();
       void setupEditActions();
