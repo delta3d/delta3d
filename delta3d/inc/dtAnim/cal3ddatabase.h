@@ -45,7 +45,7 @@ namespace dtAnim
          typedef std::vector<dtCore::RefPtr<Cal3DModelData> >  ModelDataArray;
 
       public:
-         /// Sigh, yes it's a singleton
+
          static Cal3DDatabase& GetInstance();
          
          ///Load an animated entity definition file and return the Cal3DModelWrapper
