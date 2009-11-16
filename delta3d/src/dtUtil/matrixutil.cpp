@@ -10,7 +10,7 @@ void MatrixUtil::Print( const osg::Matrix& matrix )
    {
       for( int j = 0; j < 4; j++ )
       {
-         std::cout << "[" << matrix(j,i) << "]";
+         std::cout << "[" << matrix(i,j) << "]";
       }
       std::cout << std::endl;
    }
