@@ -17,6 +17,7 @@ BezierController::BezierController()
    : mRenderGeode(false)
    , mPathChanged(false)
    , mShouldLoop(false)
+   , mFollowPath(false)
    , mLastPathPoint(NULL)
 {  
    mDrawable = new BezierPathDrawable;
@@ -117,26 +118,44 @@ void BezierController::ResetIterators()
 
 ////////////////////////////////////////////////////////////////////////////////
 void BezierController::MakeSegment(float time, 
-                                   float inc,
-                                   const PathPoint& p1,
-                                   const PathPoint& p2,
-                                   const PathPoint& p3,
-                                   const PathPoint& p4)
+                                   float t,
+                                   const PathPoint& p1CurrentNode,
+                                   const PathPoint& p2CurrentNodeExit,
+                                   const PathPoint& p3NextNodeEntry,
+                                   const PathPoint& p4NextNode)
 {
    osg::Vec3 pos, tangent;
 
    for (int i = 0; i < 3; ++i)
    {
-      pos[i] = (BlendFunction(inc,0) * p1.GetPosition()[i]) +
-               (BlendFunction(inc,1) * p2.GetPosition()[i]) +
-               (BlendFunction(inc,2) * p3.GetPosition()[i]) +
-               (BlendFunction(inc,3) * p4.GetPosition()[i]);
+      pos[i] = (BlendFunction(t,0) * p1CurrentNode.GetPosition()[i]) +
+               (BlendFunction(t,1) * p2CurrentNodeExit.GetPosition()[i]) +
+               (BlendFunction(t,2) * p3NextNodeEntry.GetPosition()[i]) +
+               (BlendFunction(t,3) * p4NextNode.GetPosition()[i]);
 
       //tangent[i] = (TangentFunction(inc,1) * p2.GetPosition()[i]) + (TangentFunction(inc,2) * p3.GetPosition()[i]) + (TangentFunction(inc,3) * p4.GetPosition()[i]);
+
+      if(mFollowPath) // for path following we calculate tangent to curve using derivative of blend function
+      {
+         tangent[i] = (DerivativeFunction(t,0) * p1CurrentNode.GetPosition()[i]) +
+                      (DerivativeFunction(t,1) * p2CurrentNodeExit.GetPosition()[i]) +
+                      (DerivativeFunction(t,2) * p3NextNodeEntry.GetPosition()[i]) +
+                      (DerivativeFunction(t,3) * p4NextNode.GetPosition()[i]);
+      }
    }
 
    osg::Quat quat;
-   quat.slerp(1.0 - inc, p4.GetOrientation(), p1.GetOrientation());
+   if(!mFollowPath)	   // interpolate between node orientations
+   {
+      quat.slerp(1.0 - t, p4NextNode.GetOrientation(), p1CurrentNode.GetOrientation());
+   }
+   else	// align along path
+   {
+      quat.makeRotate(atan2(tangent.y(),tangent.x()) - osg::PI_2, 0.0,0.0,1.0) ;
+      // will follow path in xy plane, future improvement may be to consider startnode orientation
+      // in the equation to enable STAGE controlled alignment of objects i.e. point the object in
+      // the direction that is "forward" and path following maintains that "forward" direction.
+   }
 
    PathData pd;
    pd.mTime = time;
@@ -149,24 +168,59 @@ void BezierController::MakeSegment(float time,
 ////////////////////////////////////////////////////////////////////////////////
 float BezierController::BlendFunction(float t, int index)
 {
+   // Calculates each part of Cubic Bézier curve depending on the indexed part of the function
    float result = 0.0f;
 
    switch (index)
    {
-   case 0:
+   case 0: // CurrentNode * (1-t)^3
       result = powf(1.0f - t, 3.0f);
       break;
 
-   case 1:
+   case 1: // CurrentNodeExit *  3 * (1 - t)^2 * t 
       result = 3.0f * t * powf(1.0f - t, 2.0f);
       break;
 
-   case 2:
+   case 2: // NextNodeEntry * 3 * (1 - t) * t^2
       result = 3.0f * powf(t, 2.0f) * (1.0f - t);
       break;
 
-   case 3:
+   case 3: // NextNode * t^3
       result = powf(t, 3.0f);
+      break;
+
+   default:
+      assert(0);
+      break;
+   }
+
+   return result;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+float BezierController::DerivativeFunction(float t, int index) const
+{  
+   // This is the derivative of the blendfunction and calculates the 
+   // derivative (tangent) of each part of Cubic Bézier curve 
+   // depending on the indexed part of the function
+   float result = 0.0f;
+
+   switch (index)
+   {
+   case 0: // CurrentNode * (-3)*(t - 1)^2
+      result = -3.f * powf(t - 1.0f, 2.0f);
+      break;
+
+   case 1: // CurrentNodeExit * 3*t*(2*t - 2) + 3*(t - 1)^2
+      result = 3.f * t * (2.f * t - 2.f) + 3.f * powf(t - 1.f, 2.f);
+      break;
+
+   case 2: // NextNodeEntry * (-2)*t*(3*t - 3) - 3*t^2
+      result = -2.f * t * (3.f * t - 3.f) - 3.f * powf(t, 2.f);
+      break;
+
+   case 3: // NextNode * 3*t^2
+      result = 3.0f * powf(t, 2.0f);
       break;
 
    default:
@@ -180,6 +234,8 @@ float BezierController::BlendFunction(float t, int index)
 ////////////////////////////////////////////////////////////////////////////////
 float BezierController::TangentFunction(float t, int index)
 {
+   // note on this code - I don't think this works?
+   // The curve is calculated using 4 points and I see only 3 used below
    float result = 0.0f;
 
    switch (index)
@@ -348,6 +404,29 @@ void BezierController::OnUnPause()
 {
 }
 
+////////////////////////////////////////////////////////////////////////////////
+void BezierController::SetFollowPath(bool pFollowPath)
+{
+   mFollowPath = pFollowPath;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool BezierController::GetFollowPath() const
+{
+   return mFollowPath;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void BezierController::SetLooping(bool shouldLoop)
+{
+   mShouldLoop = shouldLoop;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool BezierController::GetLooping() const
+{
+   return mShouldLoop;
+}
 ////////////////////////////////////////////////////////////////////////////////
 //our drawable
 void BezierController::BezierPathDrawable::drawImplementation(osg::RenderInfo& /*renderInfo*/) const
