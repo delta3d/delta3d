@@ -1,5 +1,6 @@
 #include <dtEditQt/externaltool.h>
 #include <dtEditQt/externaltoolargparser.h>
+#include <dtEditQt/editoractions.h>
 #include <QtGui/QAction>
 #include <QtGui/QMessageBox>
 #include <QtCore/QProcess>
@@ -58,6 +59,12 @@ void dtEditQt::ExternalTool::OnStartTool()
    {
       std::cout << GetTitle().toStdString() << " already running." << std::endl;
       return;
+   }
+
+   int result = dtEditQt::EditorActions::GetInstance().SaveCurrentMapChanges(true);
+   if (result == QMessageBox::Cancel)
+   {
+      return;  //just bail out
    }
 
    // Automatically surround the command with quotes, for those OS's that have

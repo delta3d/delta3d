@@ -481,7 +481,7 @@ namespace dtEditQt
    //////////////////////////////////////////////////////////////////////////////
    void EditorActions::slotFileNewMap()
    {
-      int saveResult = saveCurrentMapChanges(true);
+      int saveResult = SaveCurrentMapChanges(true);
       if (saveResult == QMessageBox::Cancel || saveResult == QMessageBox::Abort)
       {
          return;
@@ -513,7 +513,7 @@ namespace dtEditQt
       }
 
       // Check the current map for changes and save them...
-      int saveResult = saveCurrentMapChanges(true);
+      int saveResult = SaveCurrentMapChanges(true);
       if (saveResult == QMessageBox::Cancel || saveResult == QMessageBox::Abort)
       {
          return;
@@ -577,7 +577,7 @@ namespace dtEditQt
          return;
       }
 
-      saveCurrentMapChanges(EditorData::GetInstance().getCurrentMap()->IsModified());
+      SaveCurrentMapChanges(EditorData::GetInstance().getCurrentMap()->IsModified());
 
       changeMaps(EditorData::GetInstance().getCurrentMap(), NULL);
       EditorData::GetInstance().getMainWindow()->enableActions();
@@ -590,7 +590,7 @@ namespace dtEditQt
       //if (EditorData::GetInstance().getMainWindow()->isActiveWindow())
       //   EditorData::GetInstance().getMainWindow()->
       // Save the current map without asking the user for permission.
-      saveCurrentMapChanges(false);
+      SaveCurrentMapChanges(false);
       slotRestartAutosave();
    }
 
@@ -722,7 +722,7 @@ namespace dtEditQt
          return;
       }
 
-      int result = saveCurrentMapChanges(true);
+      int result = SaveCurrentMapChanges(true);
       if (result == QMessageBox::Abort)
       {
          // An error occurred during saving.
@@ -1621,7 +1621,7 @@ namespace dtEditQt
    //////////////////////////////////////////////////////////////////////////////
    void EditorActions::slotProjectChangeContext()
    {
-      int result = saveCurrentMapChanges(true);
+      int result = SaveCurrentMapChanges(true);
       if (result == QMessageBox::Cancel || result == QMessageBox::Abort)
       {
          return;
@@ -1640,7 +1640,7 @@ namespace dtEditQt
    ////////////////////////////////////////////////////////////////////////////////
    void EditorActions::SlotChangeProjectContext(const std::string& path)
    {
-      if (saveCurrentMapChanges(true) == QMessageBox::Cancel)
+      if (SaveCurrentMapChanges(true) == QMessageBox::Cancel)
       {
          return;
       }
@@ -1791,7 +1791,7 @@ namespace dtEditQt
    //////////////////////////////////////////////////////////////////////////////
    void EditorActions::slotFileRecentMap0()
    {
-      if (saveCurrentMapChanges(true) == QMessageBox::Cancel)
+      if (SaveCurrentMapChanges(true) == QMessageBox::Cancel)
       {
          return;
       }
@@ -1910,7 +1910,7 @@ namespace dtEditQt
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   int EditorActions::saveCurrentMapChanges(bool askPermission)
+   int EditorActions::SaveCurrentMapChanges(bool askPermission)
    {
       // This commits any changes in the property editor.
       PropertyEditor* propEditor = EditorData::GetInstance().getMainWindow()->GetPropertyEditor();
