@@ -85,6 +85,20 @@ public:
    /*virtual*/ void RenderProxyNode(bool enable);
    bool GetRenderProxyNode() { return mRenderGeode; }
 
+   /** Will orient the path points to align with the bezier curve, if enabled.
+     * Otherwise, the orientation of the path points will be slerp'd to the next
+     * point.
+     * @param pFollowPath True, to enable the path following - the orientation of
+     *        the nodes will be ignored.  False, to use the orientation of the
+     *        nodes to calculate the path point orientation.
+     */
+   void SetFollowPath(bool pFollowPath);
+
+   /** @return true if the BezierController is using the "Follow Path" mode.
+     *         False otherwise.
+     */
+   bool GetFollowPath() const;
+
    /***
     * Creates the path using the start node to traverse the curve
     * the time step and time between nodes is encapsulated by the
@@ -96,7 +110,17 @@ public:
 
    void GetCopyPath(std::list<PathData>& pPathIn) const { pPathIn = mPath; }
 
-   void SetLooping(bool shouldLoop) { mShouldLoop = shouldLoop; }
+   /** Set the BezierController to automatically restart the path when it reaches
+     * the end.
+     * @param shouldLoop True to automatically loop the path, false to increment
+     *                   through the path once.
+     */
+   void SetLooping(bool shouldLoop);
+
+   /** Is the BezierController set to automatically restart the path.
+     * @return true if looping, false otherwise.
+     */
+   bool GetLooping() const;
 
 protected:
    ~BezierController();
@@ -117,18 +141,19 @@ private:
    void ResetIterators();
 
    void MakeSegment(float time,
-                    float inc,
-                    const PathPoint& p1,
-                    const PathPoint& p2,
-                    const PathPoint& p3,
-                    const PathPoint& p4);
+                    float t,
+                    const PathPoint& p1CurrentNode,
+                    const PathPoint& p2CurrentNodeExit,
+                    const PathPoint& p3NextNodeEntry,
+                    const PathPoint& p4NextNode);
 
    float BlendFunction(float t, int index);
-   float TangentFunction(float t, int index);
-
+   float TangentFunction(float t, int index); 
+   float DerivativeFunction(float t, int index) const;
    bool                                mRenderGeode;
    bool                                mPathChanged;
    bool                                mShouldLoop;
+   bool                                mFollowPath; //we orient along path instead of slerping nodes
    dtCore::RefPtr<BezierNode>          mStartNode;
    dtCore::RefPtr<osg::Geode>          mGeode;
 
