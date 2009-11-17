@@ -329,12 +329,43 @@ void Application::CreateInstances(const std::string& name, int x, int y, int wid
    GetCamera()->SetWindow(mWindow.get());
 
    mCompositeViewer = new osgViewer::CompositeViewer;
-   mCompositeViewer->setUpThreading();
+
+   // Here we can set the OSG threading model.
+   // So as not to break interoperability with Qt we must for now set it here, after
+   // creating the composite viewer but prior to adding any views.
+   // As an alternative to redesigning the API we have for now exposed an environment
+   // variable "DELTA_THREADING" that provides the application programmer or end-user
+   // the means to specify the threading model.
+   // This is only a temporary, working solution.
+   {
+      const std::string deltaThreadingEnvVar = dtUtil::GetEnvironment("DELTA_THREADING");
+      if (deltaThreadingEnvVar == "SingleThreaded")
+      {
+         mCompositeViewer->setThreadingModel(osgViewer::CompositeViewer::SingleThreaded);
+      }
+      else if (deltaThreadingEnvVar == "CullDrawThreadPerContext")
+      {
+         mCompositeViewer->setThreadingModel(osgViewer::CompositeViewer::CullDrawThreadPerContext);
+      }
+      else if (deltaThreadingEnvVar == "DrawThreadPerContext")
+      {
+         mCompositeViewer->setThreadingModel(osgViewer::CompositeViewer::DrawThreadPerContext);
+      }
+      else if (deltaThreadingEnvVar == "CullThreadPerCameraDrawThreadPerContext")
+      {
+         mCompositeViewer->setThreadingModel(osgViewer::CompositeViewer::CullThreadPerCameraDrawThreadPerContext);
+      }
+      else
+      {
+         mCompositeViewer->setUpThreading();
+      }
+   }
+
    mCompositeViewer->addView(mViewList.front()->GetOsgViewerView());
 
-   //Disable OSG's default behavior of quitting when the Escape key is pressed.
-   //Not disabling this causes Delta3D and OSG to get into a bad state
-   //when the Escape key is pressed.
+   // Disable OSG's default behavior of quitting when the Escape key is pressed.
+   // Not disabling this causes Delta3D and OSG to get into a bad state when the
+   // Escape key is pressed.
    GetCompositeViewer()->setKeyEventSetsDone(0);
 
    GetKeyboard()->AddKeyboardListener(mKeyboardListener.get());
