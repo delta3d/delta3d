@@ -15,8 +15,6 @@
 
 namespace dtEditQt
 {
-static const dtUtil::RefString CONF_MGR_MAP_FILE("Map");
-static const dtUtil::RefString CONF_MGR_PROJECT_CONTEXT("ProjContextPath");
 static const dtUtil::RefString CONF_MGR_STYLESHEET("Stylesheet");
 
 static const dtUtil::RefString CONF_MGR_SHOW_FRONT_VIEW("ShowFrontView");

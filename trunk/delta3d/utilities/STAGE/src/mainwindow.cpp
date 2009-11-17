@@ -632,23 +632,7 @@ namespace dtEditQt
          findAndLoadPreferences();
          mPerspView->onEditorPreferencesChanged();
 
-         //see if there is a Project Context Path in the Configuration Manager
-         if (ConfigurationManager::GetInstance().GetVariable(
-               ConfigurationManager::GENERAL, CONF_MGR_PROJECT_CONTEXT) != "")
-         {
-            std::string projContextPath = ConfigurationManager::GetInstance().GetVariable(
-                                             ConfigurationManager::GENERAL, CONF_MGR_PROJECT_CONTEXT);
-            if (dtUtil::FileUtils::GetInstance().DirExists(projContextPath))
-            {
-               projContextPath = dtUtil::FileUtils::GetInstance().GetAbsolutePath(projContextPath);
-               if (EditorData::GetInstance().getLoadLastProject() == true)
-               {
-                  // Try to set the project context specified in the config file
-                  EditorActions::GetInstance().SlotChangeProjectContext(projContextPath);
-               }
-            }
-         }
-         else if (EditorData::GetInstance().getLoadLastProject() == false)
+         if (EditorData::GetInstance().getLoadLastProject() == false)
          {
             //Display the Project Change dialog to prompt the user
             EditorActions::GetInstance().slotProjectChangeContext();
@@ -667,25 +651,16 @@ namespace dtEditQt
          EditorActions::GetInstance().refreshRecentProjects();
          endWaitCursor();
 
-         std::string mapToLoad;
-         if (ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::GENERAL,
-                                                             CONF_MGR_MAP_FILE) != "")
+         std::string mapToLoad = "";
+         std::list<std::string>& maps = EditorData::GetInstance().getRecentMaps();
+         if (!maps.empty())
          {
-            mapToLoad = ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::GENERAL,
-                                                                        CONF_MGR_MAP_FILE);
-         }
-         else
-         {
-            std::list<std::string>& maps = EditorData::GetInstance().getRecentMaps();
-            if (!maps.empty())
-            {
-               mapToLoad = maps.front();
-            }
-         }
+            mapToLoad = maps.front();
+         }         
          
          if (EditorData::GetInstance().getLoadLastMap())
          {
-            checkAndLoadBackup(mapToLoad);;
+            checkAndLoadBackup(mapToLoad);
          }
 
          EditorActions::GetInstance().getTimer()->start();
@@ -883,6 +858,9 @@ namespace dtEditQt
          EditorData::GetInstance().getRecentMaps().pop_front();
       }
       settings.endGroup();
+
+      //Save the Plugin state
+      mPluginManager->StoreActivePluginsToConfigFile();      
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -1297,6 +1275,9 @@ namespace dtEditQt
          }
       }
       settings.endGroup();
+
+      //plugins
+      mPluginManager->StartPluginsInConfigFile();
 
       //external tools
       const int numExtTools = settings.beginReadArray(EditorSettings::EXTERNAL_TOOLS);

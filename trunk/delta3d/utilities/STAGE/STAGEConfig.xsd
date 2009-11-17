@@ -10,9 +10,6 @@
 
          <xs:element name="General">
             <xs:complexType>
-               <xs:attribute name="Map" type="xs:string"/>
-               <xs:attribute name="ProjContextPath" type="xs:string"/>
-               <xs:attribute name="SaveConfigurationOnClose" type="xs:boolean"/>
                <xs:attribute name="Stylesheet" type="xs:string"/>
             </xs:complexType>
          </xs:element>
@@ -40,12 +37,6 @@
             </xs:complexType>
          </xs:element>
       
-		   <xs:element name="Plugins">
-            <xs:complexType>
-               <xs:attribute name="Activated" type="xs:string"/>
-            </xs:complexType>
-         </xs:element>
-
       </xs:sequence>
    </xs:complexType>
 </xs:element>

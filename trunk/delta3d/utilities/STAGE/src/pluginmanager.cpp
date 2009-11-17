@@ -1,6 +1,6 @@
 #include <dtEditQt/pluginmanager.h>
 
-#include <dtEditQt/configurationmanager.h>
+#include <dtEditQt/editorsettings.h>
 #include <dtEditQt/mainwindow.h>
 #include <dtUtil/exception.h>
 #include <dtUtil/fileutils.h>
@@ -153,9 +153,12 @@ namespace dtEditQt
    /** get the list of plugins to start from config file and start them */
    void PluginManager::StartPluginsInConfigFile()
    {
-      // get config string from manager      
+      dtEditQt::EditorSettings settings;
+            
+      settings.beginGroup(EditorSettings::ACTIVE_PLUGINS);
       std::string activated = 
-         ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::PLUGINS, CONF_MGR_PLUGINS_ACTIVATED);
+         settings.value(EditorSettings::ACTIVE_PLUGINS).toString().toStdString();
+      settings.endGroup();
 
       if(activated == "")
       {
@@ -200,7 +203,10 @@ namespace dtEditQt
          }
       }
       
-      ConfigurationManager::GetInstance().SetVariable(ConfigurationManager::PLUGINS, CONF_MGR_PLUGINS_ACTIVATED, os.str());
+      dtEditQt::EditorSettings settings;
+      settings.beginGroup(EditorSettings::ACTIVE_PLUGINS);
+      settings.setValue(EditorSettings::ACTIVE_PLUGINS, os.str().c_str());
+      settings.endGroup();
    }
 
 
@@ -295,12 +301,7 @@ namespace dtEditQt
 
       // call Create() callback of plugin
       mActivePlugins[name]->Create();
-
-      // remember change
-      if(storeToConfig)
-      {
-         StoreActivePluginsToConfigFile();
-      }
+      
    }
 
 
@@ -351,12 +352,7 @@ namespace dtEditQt
 
       // erase plugin from list of active plugins
       mActivePlugins.erase(mActivePlugins.find(name));
-
-      // remember change
-      if(storeToConfig)
-      {
-         StoreActivePluginsToConfigFile();
-      }
+      
    }
 
 
