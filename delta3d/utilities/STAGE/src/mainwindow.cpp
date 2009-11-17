@@ -1143,6 +1143,34 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void MainWindow::findAndLoadPreferences()
    {
+      EditorSettings testSettings;      
+
+      //If there are no user preferences .ini file (must be the first time they
+      //have ever loaded STAGE) ... see if we can't find a default.ini file
+      testSettings.beginGroup(EditorSettings::PREFERENCES_GROUP);
+      QVariant val = testSettings.value(EditorSettings::SAVE_MILLISECONDS, -1);
+      if (val == -1)
+      {
+         //attempt to locate a "default" ini file and copy it to the 
+         //user's directory
+         std::string src = dtUtil::GetDeltaRootPath() + "/utilities/STAGE"
+                            + "/default.ini";
+         if (dtUtil::FileUtils::GetInstance().FileExists(src))
+         {
+            std::string path = testSettings.fileName().toStdString();
+
+            std::string chopThisOff = EditorSettings::APPLICATION.toStdString()
+                                        + ".ini";
+
+            path = path.substr(0, path.rfind(chopThisOff));
+
+            std::string dest = path
+               + EditorSettings::APPLICATION.toStdString() + ".ini";
+            dtUtil::FileUtils::GetInstance().FileCopy(src, dest, false);
+         }         
+      }
+      testSettings.endGroup();     
+
       EditorSettings settings;
 
       // Load settings from last session.  Reasonable defaults are specified,
