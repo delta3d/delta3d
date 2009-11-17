@@ -106,7 +106,7 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    void ActorDockWidget::closeEvent(QCloseEvent* e)
    {
-      EditorActions::GetInstance().mActionWindowsActorSearch->setChecked(false);
+      EditorActions::GetInstance().mActionWindowsActor->setChecked(false);
    }
 
 } // namespace dtEditQt
