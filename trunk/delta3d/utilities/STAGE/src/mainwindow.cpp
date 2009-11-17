@@ -1153,7 +1153,7 @@ namespace dtEditQt
       {
          //attempt to locate a "default" ini file and copy it to the 
          //user's directory
-         std::string src = dtUtil::GetDeltaRootPath() + "/utilities/STAGE"
+         std::string src = dtUtil::FileUtils::GetInstance().CurrentDirectory()
                             + "/default.ini";
          if (dtUtil::FileUtils::GetInstance().FileExists(src))
          {
