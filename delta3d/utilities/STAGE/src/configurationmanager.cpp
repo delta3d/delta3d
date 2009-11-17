@@ -331,9 +331,7 @@ void ConfigurationManager::warning(const xercesc::SAXParseException& e)
 
 ////////////////////////////////////////////////////////////////////////////////
 void ConfigurationManager::SetDefaultConfigValues()
-{
-   mGeneralVariables[CONF_MGR_MAP_FILE] = "";
-   mGeneralVariables[CONF_MGR_PROJECT_CONTEXT] = "";   
+{   
    mGeneralVariables[CONF_MGR_STYLESHEET] = "";
 
    mLayoutVariables[CONF_MGR_SHOW_FRONT_VIEW] = "true";

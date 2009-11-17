@@ -89,6 +89,7 @@ namespace dtEditQt
    const QString EditorSettings::EXTERNAL_TOOL_WORKING_DIR("WorkingDir");
    const QString EditorSettings::EXTERNAL_TOOL_ICON("Icon");
 
+   const QString EditorSettings::ACTIVE_PLUGINS("Active_Plugins");
 
    ///////////////////////////////////////////////////////////////////////////////
    EditorSettings::EditorSettings()

@@ -1677,10 +1677,7 @@ namespace dtEditQt
       EditorData::GetInstance().addRecentProject(path);
       EditorEvents::GetInstance().emitProjectChanged();
       refreshRecentProjects();
-
-      ConfigurationManager::GetInstance().SetVariable(
-         ConfigurationManager::GENERAL, CONF_MGR_PROJECT_CONTEXT, path);
-
+      
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -1885,8 +1882,6 @@ namespace dtEditQt
             dtDAL::Project::GetInstance().LoadMapIntoScene(*newMap,
                *(ViewportManager::GetInstance().getMasterScene()), true);
 
-            ConfigurationManager::GetInstance().SetVariable(
-               ConfigurationManager::GENERAL, CONF_MGR_MAP_FILE, newMap->GetName());
          }
          catch (const dtUtil::Exception& e)
          {

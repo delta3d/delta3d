@@ -113,6 +113,9 @@ namespace dtEditQt
       static const QString EXTERNAL_TOOL_WORKING_DIR;
       static const QString EXTERNAL_TOOL_ICON;
 
+      ///Plugins      
+      static const QString ACTIVE_PLUGINS;
+
       /**
        * Constructs the settings object.  This reads the settings from disk if they
        * exist.
