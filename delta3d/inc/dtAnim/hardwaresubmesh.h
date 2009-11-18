@@ -27,7 +27,7 @@
 #include <dtCore/refptr.h>
 
 
-class CalHardwareModel; 
+class CalHardwareModel;
 
  /// @cond
 namespace osg
@@ -42,40 +42,40 @@ namespace osgUtil
 }
 /// @endcond
 
-namespace dtAnim 
+namespace dtAnim
 {
    class Cal3DModelWrapper;
 
    class DT_ANIM_EXPORT HardwareSubmeshDrawable: public osg::Drawable
    {
-      public:
+   public:
+      HardwareSubmeshDrawable(Cal3DModelWrapper* wrapper, CalHardwareModel* model,
+            const std::string& boneUniformName, unsigned numBones,
+            unsigned mesh, osg::VertexBufferObject* vertexVBO, osg::ElementBufferObject* indexEBO);
 
-         HardwareSubmeshDrawable(Cal3DModelWrapper* wrapper, CalHardwareModel* model,
-               const std::string& boneUniformName, unsigned numBones,
-               unsigned mesh, osg::VertexBufferObject* vertexVBO, osg::ElementBufferObject* indexEBO);
+      void SetBoundingBox(const osg::BoundingBox& boundingBox);
 
-         void SetBoundingBox(const osg::BoundingBox& boundingBox);
+      virtual void drawImplementation(osg::RenderInfo& renderInfo) const;
 
-         virtual void drawImplementation(osg::RenderInfo& renderInfo) const;
+      virtual osg::Object* cloneType() const;
+      virtual osg::Object* clone(const osg::CopyOp&) const;
 
-         virtual osg::Object* cloneType() const;
-         virtual osg::Object* clone(const osg::CopyOp&) const;
+   protected:
+      ~HardwareSubmeshDrawable();
 
-      protected:
-         ~HardwareSubmeshDrawable();
+   private:
+      HardwareSubmeshDrawable();   ///< not implemented by design
+      void SetUpMaterial();
 
-      private:
-         HardwareSubmeshDrawable();   ///< not implemented by design
-         void SetUpMaterial();
-
-         dtCore::RefPtr<Cal3DModelWrapper> mWrapper;
-         CalHardwareModel* mHardwareModel;
-         dtCore::RefPtr<osg::Uniform> mBoneTransforms;
-         std::string mBoneUniformName;
-         osg::BoundingBox mBoundingBox;
-         unsigned int mNumBones, mMeshID;
-         osg::VertexBufferObject* mVertexVBO;
-         osg::ElementBufferObject* mIndexEBO;
+      dtCore::RefPtr<Cal3DModelWrapper> mWrapper;
+      CalHardwareModel* mHardwareModel;
+      dtCore::RefPtr<osg::Uniform> mBoneTransforms;
+      std::string mBoneUniformName;
+      osg::BoundingBox mBoundingBox;
+      unsigned int mNumBones, mMeshID;
+      osg::VertexBufferObject* mVertexVBO;
+      osg::ElementBufferObject* mIndexEBO;
+      OpenThreads::Mutex mUpdateMutex; ///Used to support rendering with multiple threads
    };
 
 }; //namespace dtAnim
