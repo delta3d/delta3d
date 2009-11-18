@@ -22,6 +22,8 @@ Listener::Listener()
 {
    SetName("Listener");
 
+   Clear();
+   
    AddSender(&dtCore::System::GetInstance());
 
    RegisterInstance(this);
