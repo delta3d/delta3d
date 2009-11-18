@@ -73,6 +73,9 @@ function(DELTA3D_FIND_PATH module header)
             /usr/include
             /usr/local/include
             ${DELTA3D_EXT_DIR} #defined in delta3d_common.cmake
+            $ENV{OSG_DIR}
+            $ENV{OSG_ROOT}
+
    )
 endfunction(DELTA3D_FIND_PATH module header)
 
@@ -99,6 +102,10 @@ function(DELTA3D_FIND_LIBRARY module library)
             ${DELTA3D_EXT_DIR}/lib64
             $ENV{DELTA_ROOT}/ext/lib
             $ENV{DELTA_ROOT}/ext/lib64
+            $ENV{OSG_DIR}/build
+            $ENV{OSG_ROOT}/build
+            $ENV{OSG_DIR}
+            $ENV{OSG_ROOT}
    )
 
    #Modify each entry to tack on "d" and "_d" for the debug file name
@@ -122,7 +129,11 @@ function(DELTA3D_FIND_LIBRARY module library)
             ${DELTA3D_EXT_DIR}/lib
             ${DELTA3D_EXT_DIR}/lib64
             $ENV{DELTA_ROOT}/ext/lib
-            $ENV{DELTA_ROOT}/ext/lib64            
+            $ENV{DELTA_ROOT}/ext/lib64
+            $ENV{OSG_DIR}/build
+            $ENV{OSG_ROOT}/build  
+            $ENV{OSG_DIR}
+            $ENV{OSG_ROOT}
     )
 
    if(NOT ${module_uc}_LIBRARY_DEBUG)
