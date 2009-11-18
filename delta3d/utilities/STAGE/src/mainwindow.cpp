@@ -840,24 +840,25 @@ namespace dtEditQt
       settings.setValue(EditorSettings::RECENT_PROJECTS, projectStringList);
 
       //Check to see if the user wants the app to remember the recently loaded map.
-      if (!EditorData::GetInstance().getLoadLastMap() ||
-         !EditorData::GetInstance().getCurrentMap())
+      if (EditorData::GetInstance().getLoadLastMap() == false ||
+          EditorData::GetInstance().getCurrentMap() == NULL)
       {
          // Error check, if they have a previous settings file with a recent map in it, it
          // needs to be deleted as to not load it next time
          settings.remove(EditorSettings::RECENT_MAPS);
-         return;
       }
-
-      //Save the current map state...
-      settings.beginGroup(EditorSettings::RECENT_MAPS);
-      if (!EditorData::GetInstance().getRecentMaps().empty())
+      else
       {
-         settings.setValue(EditorSettings::RECENT_MAP0,
-            QVariant(QString(EditorData::GetInstance().getRecentMaps().front().c_str())));
-         EditorData::GetInstance().getRecentMaps().pop_front();
+         //Save the current map state...
+         settings.beginGroup(EditorSettings::RECENT_MAPS);
+         if (!EditorData::GetInstance().getRecentMaps().empty())
+         {
+            settings.setValue(EditorSettings::RECENT_MAP0,
+                              QVariant(QString(EditorData::GetInstance().getRecentMaps().front().c_str())));
+            EditorData::GetInstance().getRecentMaps().pop_front();
+         }
+         settings.endGroup();
       }
-      settings.endGroup();
 
       //Save the Plugin state
       mPluginManager->StoreActivePluginsToConfigFile();      
