@@ -35,11 +35,9 @@
 #include <osg/CullFace>
 #include <osg/BlendFunc>
 
-///Used to support rendering with multiple threads
-OpenThreads::Mutex gUpdateMutex;
-
 namespace dtAnim
 {
+
    class HardwareSubmeshComputeBound : public osg::Drawable::ComputeBoundingBoxCallback
    {
       public:
@@ -59,29 +57,26 @@ namespace dtAnim
 
    class HardwareSubmeshCallback : public osg::Drawable::UpdateCallback
    {
-      public:
-         HardwareSubmeshCallback(Cal3DModelWrapper& wrapper, CalHardwareModel& model,
-               osg::Uniform& boneTrans, unsigned mesh)
-            : mWrapper(&wrapper)
-            , mHardwareModel(&model)
-            , mBoneTransforms(&boneTrans)
-            , mHardwareMeshID(mesh)
+   public:
+      HardwareSubmeshCallback(Cal3DModelWrapper& wrapper, CalHardwareModel& model,
+            osg::Uniform& boneTrans, unsigned mesh, OpenThreads::Mutex& updateMutex)
+         : mWrapper(&wrapper)
+         , mHardwareModel(&model)
+         , mBoneTransforms(&boneTrans)
+         , mHardwareMeshID(mesh)
+         , mUpdateMutex(updateMutex)
+      {
+      }
+
+      /** do customized update code.*/
+      virtual void update(osg::NodeVisitor*, osg::Drawable* drawable)
+      {
+         mUpdateMutex.lock();
+
+         // select the proper hardware mesh
+         if (mHardwareModel->selectHardwareMesh(mHardwareMeshID))
          {
-         }
-
-         /** do customized update code.*/
-         virtual void update(osg::NodeVisitor*, osg::Drawable* drawable)
-         {
-            gUpdateMutex.lock();
-
-            //select the proper hardware mesh
-            if (!mHardwareModel->selectHardwareMesh(mHardwareMeshID))
-            {
-               gUpdateMutex.unlock();
-               return;
-            }
-
-            //spin through the bones in the hardware mesh
+            // spin through the bones in the hardware mesh
             const int numBones = mHardwareModel->getBoneCount();
             for (int bone = 0; bone < numBones; ++bone)
             {
@@ -90,7 +85,7 @@ namespace dtAnim
                const CalQuaternion& quat = mHardwareModel->getRotationBoneSpace(bone, skel);
                const CalVector& vec = mHardwareModel->getTranslationBoneSpace(bone, skel);
 
-               //compute matrices
+               // compute matrices
                osg::Matrix matRot(osg::Quat(quat.x, quat.y, quat.z, quat.w));
 
                osg::Vec4 rotX, rotY, rotZ;
@@ -102,20 +97,22 @@ namespace dtAnim
                rotY[3] = vec.y;
                rotZ[3] = vec.z;
 
-               //set data on uniform
+               // set data on uniform
                mBoneTransforms->setElement(bone * 3 + 0, rotX);
                mBoneTransforms->setElement(bone * 3 + 1, rotY);
                mBoneTransforms->setElement(bone * 3 + 2, rotZ);
             }
-
-            gUpdateMutex.unlock();
          }
 
-      private:
-         dtCore::RefPtr<Cal3DModelWrapper> mWrapper;
-         CalHardwareModel* mHardwareModel;
-         dtCore::RefPtr<osg::Uniform> mBoneTransforms;
-         unsigned mHardwareMeshID;         
+         mUpdateMutex.unlock();
+      }
+
+   private:
+      dtCore::RefPtr<Cal3DModelWrapper> mWrapper;
+      CalHardwareModel* mHardwareModel;
+      dtCore::RefPtr<osg::Uniform> mBoneTransforms;
+      unsigned mHardwareMeshID;
+      OpenThreads::Mutex& mUpdateMutex;
    };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -139,21 +136,24 @@ HardwareSubmeshDrawable::HardwareSubmeshDrawable(Cal3DModelWrapper* wrapper, Cal
    ss->addUniform(mBoneTransforms.get());
    ss->setAttributeAndModes(new osg::CullFace);
 
-   if (mHardwareModel == NULL) {return;}
+   if (mHardwareModel == NULL)
+   {
+      return;
+   }
 
    SetUpMaterial();
 
-   int guessedMeshID = mMeshID; 
-   if (guessedMeshID >= mWrapper->GetMeshCount()) 
+   int guessedMeshID = mMeshID;
+   if (guessedMeshID >= mWrapper->GetMeshCount())
    {
-      //this is an ugly hack which attempts to get the correct mesh ID from the hardware mesh ID
-      //it is a result of the fact that there is no way to get the original mesh ID from the Cal Hardware Model
-      //this only works if there is one submesh per mesh ID
+      // this is an ugly hack which attempts to get the correct mesh ID from the hardware mesh ID
+      // it is a result of the fact that there is no way to get the original mesh ID from the Cal Hardware Model
+      // this only works if there is one submesh per mesh ID
       guessedMeshID = mWrapper->GetMeshCount() - 1;
    }
-   
-   //set our update callback which will update the bone transforms
-   setUpdateCallback(new HardwareSubmeshCallback(*mWrapper, *mHardwareModel, *mBoneTransforms, mMeshID));
+
+   // set our update callback which will update the bone transforms
+   setUpdateCallback(new HardwareSubmeshCallback(*mWrapper, *mHardwareModel, *mBoneTransforms, mMeshID, mUpdateMutex));
    setCullCallback(new LODCullCallback(*mWrapper, guessedMeshID)); //for LOD handling
    setComputeBoundingBoxCallback(new HardwareSubmeshComputeBound(mBoundingBox));
 }
@@ -172,16 +172,16 @@ void HardwareSubmeshDrawable::SetBoundingBox(const osg::BoundingBox& boundingBox
 ////////////////////////////////////////////////////////////////////////////////
 void HardwareSubmeshDrawable::drawImplementation(osg::RenderInfo& renderInfo) const
 {
-   gUpdateMutex.lock();
-      //select the appropriate mesh
+   ((OpenThreads::Mutex&)mUpdateMutex).lock();
+      // select the appropriate mesh
       if (!mHardwareModel->selectHardwareMesh(mMeshID))
       {
-         gUpdateMutex.unlock();
+         ((OpenThreads::Mutex&)mUpdateMutex).unlock();
          return;
       }
       const int faceCount = mHardwareModel->getFaceCount();
       const int startIndex = mHardwareModel->getStartIndex();
-   gUpdateMutex.unlock();
+   ((OpenThreads::Mutex&)mUpdateMutex).unlock();
 
    osg::State& state = *renderInfo.getState();
 
@@ -207,7 +207,7 @@ void HardwareSubmeshDrawable::drawImplementation(osg::RenderInfo& renderInfo) co
 
    // Make the call to render
    glDrawElements(GL_TRIANGLES,  faceCount * 3, (sizeof(CalIndex) < 4) ?
-                  GL_UNSIGNED_SHORT: GL_UNSIGNED_INT, (void*)(sizeof(CalIndex) * startIndex));  
+                  GL_UNSIGNED_SHORT: GL_UNSIGNED_INT, (void*)(sizeof(CalIndex) * startIndex));
 
    state.unbindVertexBufferObject();
    state.unbindElementBufferObject();
