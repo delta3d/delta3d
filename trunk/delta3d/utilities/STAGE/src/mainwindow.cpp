@@ -1167,14 +1167,39 @@ namespace dtEditQt
          {
             std::string path = testSettings.fileName().toStdString();
 
-            std::string chopThisOff = EditorSettings::APPLICATION.toStdString()
+            std::string chopThisOff = "/" + EditorSettings::APPLICATION.toStdString()
                                         + ".ini";
 
             path = path.substr(0, path.rfind(chopThisOff));
 
-            std::string dest = path
+            std::string dest = path + "/"
                + EditorSettings::APPLICATION.toStdString() + ".ini";
-            dtUtil::FileUtils::GetInstance().FileCopy(src, dest, false);
+
+            //make sure folder exists before attempting to copy into it
+            bool doFileCopy = true;
+            if (! dtUtil::FileUtils::GetInstance().DirExists(path))
+            {
+               try
+               {
+                  dtUtil::FileUtils::GetInstance().MakeDirectory(path);                  
+               }
+               catch (dtUtil::Exception e)
+               {
+                  doFileCopy = false;
+                  LOG_ERROR("Unable to create directory for default.ini");
+               }
+            }
+            if (doFileCopy)
+            {
+               try
+               {
+                  dtUtil::FileUtils::GetInstance().FileCopy(src, dest, false);
+               }
+               catch (dtUtil::Exception e)
+               {
+                  LOG_ERROR("Unable to copy default.ini to user preferences folder.");
+               }
+            }
          }         
       }
       testSettings.endGroup();     
