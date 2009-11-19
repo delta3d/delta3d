@@ -177,6 +177,15 @@ namespace dtCore
          CoordinateSpace GetCoordinateSpace(void);
 
          /**
+         * Sets the maximum translation distance of the object based
+         * on the camera position.
+         *
+         * @param[in]  distance  The maximum distance from the camera.
+         *                       Use -1 for infinite distance.
+         */
+         void SetMaxObjectDistanceFromCamera(float distance = -1);
+
+         /**
          * Sets the current coordinate space.
          *
          * @param[in]  coordinateSpace  The new coordinate space.
@@ -418,6 +427,7 @@ namespace dtCore
          Mouse*          mMouse;
 
          dtCore::Camera* mCamera;
+         float           mMaxDistance;
 
          osg::Vec2       mMousePos;
          bool            mIsPixelMousePos;

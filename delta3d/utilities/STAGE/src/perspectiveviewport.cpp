@@ -52,6 +52,8 @@ namespace dtEditQt
       mDefaultCameraMotionModel->SetViewport(this);
 
       mCameraMotionModel = mDefaultCameraMotionModel;
+
+      GetObjectMotionModel()->SetMaxObjectDistanceFromCamera(5000.0f);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
