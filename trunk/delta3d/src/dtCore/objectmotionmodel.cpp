@@ -21,6 +21,8 @@
 #include <dtCore/scene.h>
 #include <dtCore/transform.h>
 
+#include <iostream>
+
 using namespace dtCore;
 
 IMPLEMENT_MANAGEMENT_LAYER(ObjectMotionModel)
@@ -39,6 +41,7 @@ ObjectMotionModel::ObjectMotionModel(dtCore::View* view)
    , mSceneNode(NULL)
    , mMouse(NULL)
    , mCamera(NULL)
+   , mMaxDistance(-1)
    , mCoordinateSpace(LOCAL_SPACE)
    , mMotionType(MOTION_TYPE_MAX)
    , mHoverArrow(ARROW_TYPE_MAX)
@@ -276,6 +279,12 @@ void ObjectMotionModel::SetAutoScaleEnabled(bool enabled)
 ObjectMotionModel::CoordinateSpace ObjectMotionModel::GetCoordinateSpace(void)
 {
    return mCoordinateSpace;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectMotionModel::SetMaxObjectDistanceFromCamera(float distance)
+{
+   mMaxDistance = distance;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1195,7 +1204,11 @@ void ObjectMotionModel::UpdateTranslation(void)
       float fDistMod       = mouse      * (*plane);
       float fPlaneOffset   = targetPos  * (*plane);
 
+      // Check if the mouse vector does not intersect the plane.
       if (fDistMod == 0.0f) return;
+      if (camAt * (*plane) > 0 && mouse * (*plane) < 0) return;
+      else if (camAt * (*plane) <= 0 && mouse * (*plane) > 0) return;
+
       float fDistance      = (fPlaneOffset - fStartOffset) / fDistMod;
 
       // Find the projected point of collision on the plane.
@@ -1210,6 +1223,19 @@ void ObjectMotionModel::UpdateTranslation(void)
       dtCore::Transform transform;
       target->GetTransform(transform);
       osg::Vec3 actualPos = transform.GetTranslation();
+
+      // Clamp the desired position so it does not leave the camera range.
+      if (mMaxDistance > 0)
+      {
+         // First test the current desired distance.
+         float curDist = (camPos - desiredPos).length2();
+         if (curDist > (mMaxDistance*mMaxDistance))
+         {
+            // If we are moving it too far, find a new position that
+            // is within the bounds.
+            desiredPos = actualPos;
+         }
+      }
 
       // Snap
       if (mSnap && mSnapTranslationEnabled)
@@ -1338,7 +1364,11 @@ void ObjectMotionModel::UpdateRotation(void)
    float fDistMod       = mouse      * axis;
    float fPlaneOffset   = targetPos  * axis;
 
+   // Check if the mouse vector does not intersect the plane.
    if (fDistMod == 0.0f) return;
+   if (camAt * axis > 0 && mouse * axis < 0) return;
+   else if (camAt * axis <= 0 && mouse * axis > 0) return;
+
    float fDistance      = (fPlaneOffset - fStartOffset) / fDistMod;
 
    // Find the projected point of collision on the plane.
@@ -1348,6 +1378,8 @@ void ObjectMotionModel::UpdateRotation(void)
 
    float fDotAngle = upAxis * vector;
    float fDirection = rightAxis * vector;
+
+   std::cout << "fDistance: " << fDistance << " fDistMod: " << fDistMod << std::endl;
 
    // The first update should not cause a rotation to happen
    // unless we're in snap mode, Instead, it should set the 
@@ -1596,7 +1628,11 @@ void ObjectMotionModel::UpdateScale(void)
       float fDistMod       = mouse      * (*plane);
       float fPlaneOffset   = targetPos  * (*plane);
 
+      // Check if the mouse vector does not intersect the plane.
       if (fDistMod == 0.0f) return;
+      if (camAt * (*plane) > 0 && mouse * (*plane) < 0) return;
+      else if (camAt * (*plane) <= 0 && mouse * (*plane) > 0) return;
+
       float fDistance      = (fPlaneOffset - fStartOffset) / fDistMod;
 
       // Find the projected point of collision on the plane.
