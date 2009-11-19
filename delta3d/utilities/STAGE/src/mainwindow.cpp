@@ -231,15 +231,22 @@ namespace dtEditQt
                                              CONF_MGR_SHOW_PROPERTY_EDITOR) != "false")
       {
          mWindowMenu->addAction(editorActions.mActionWindowsPropertyEditor);
-      }
-
-      mWindowMenu->addAction(editorActions.mActionWindowsActor);
+      }      
 
       if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT,
-         CONF_MGR_SHOW_ACTOR_BROWSER) != "false")
+                                         CONF_MGR_SHOW_ACTOR_BROWSER) != "false" ||
+         ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT,
+                                         CONF_MGR_SHOW_PREFAB_BROWSER) != "false")
+      {      
+         mWindowMenu->addAction(editorActions.mActionWindowsActor);
+      }
+
+      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT,
+         CONF_MGR_SHOW_ACTOR_SEARCH) != "false")
       {
          mWindowMenu->addAction(editorActions.mActionWindowsActorSearch);
       }
+
       if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT,
          CONF_MGR_SHOW_RESOURCE_BROWSER) != "false")
       {
