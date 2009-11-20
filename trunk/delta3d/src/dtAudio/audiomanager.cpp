@@ -82,8 +82,8 @@ AudioManager::AudioManager(const std::string& name /*= "audiomanager"*/,
    , mEAXGet(NULL)
    , mNumSounds(0)
    , mIsConfigured(false)
-   , mDevice(0)
-   , mContext(0)
+   , mDevice(NULL)
+   , mContext(NULL)
    , mShutdownContexts(false)
 {
    RegisterInstance(this);
@@ -892,12 +892,11 @@ void AudioManager::CreateContext()
                       "AudioManager can't create audio context.\n");
    }
 
-   if(!alcMakeContextCurrent(mContext))
+   if (!alcMakeContextCurrent(mContext))
    {
       Log::GetInstance("audiomanager.cpp").LogMessage(Log::LOG_ERROR, __FUNCTION__,
                       "AudioManager can't make audio context current.\n");
    }
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////
