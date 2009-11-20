@@ -2,6 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 #include <dtInputPLIB/joystick.h>
+#include <plib/js.h>
 
 #include <iostream>
 #include <sstream>

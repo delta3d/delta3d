@@ -26,9 +26,12 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <string>
-#include <plib/js.h>
 #include <dtInputPLIB/export.h>
 #include <dtCore/inputdevice.h>
+
+//forward declaration
+class jsJoystick;
+
 
 /** The dtInputPLIB namespace contains classes used to read input devices
   * using the PLIB library (http://plib.sourceforge.net/)
