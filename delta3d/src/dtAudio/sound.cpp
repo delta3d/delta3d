@@ -427,7 +427,7 @@ void Sound::Stop()
 void Sound::StopImmediately()
 {
    SetState(STOP);
-   if(alIsSource(mSource))
+   if (alIsSource(mSource))
    {
       alSourceStop(mSource);
       CheckForError("Attempting to stop source", __FUNCTION__, __LINE__);
@@ -728,8 +728,23 @@ DOMElement* Sound::Serialize(const FrameData* d, XERCES_CPP_NAMESPACE_QUALIFIER 
    DOMElement* pelement = dtUtil::Serializer::ToFloat(d->mPitch, "Pitch", doc);
    element->appendChild(pelement);
 
-   DOMElement* playelement = dtUtil::Serializer::ToInt(d->mPlaying,"Playing",doc);
-   element->appendChild( playelement );
+   DOMElement* playelement = dtUtil::Serializer::ToInt(d->mPlaying, "Playing", doc);
+   element->appendChild(playelement);
 
    return element;
+}
+
+float Sound::GetDurationOfPlay() const
+{
+   int dataSize = 0, bitsPerSample = 0, numChannels = 0;
+   int samplesPerSecond = 0;
+   alGetBufferi(mBuffer, AL_SIZE,      &dataSize);         // Size in bytes of the audio buffer data.
+   alGetBufferi(mBuffer, AL_BITS,      &bitsPerSample);    // The number of bits per sample for the data contained in the buffer.
+   alGetBufferi(mBuffer, AL_CHANNELS,  &numChannels);      // The number of channels for the data contained in the buffer.
+   alGetBufferi(mBuffer, AL_FREQUENCY, &samplesPerSecond); // The number of samples per second for the data contained in the buffer.
+
+   const float nAvgBytesPerSec = float(samplesPerSecond * numChannels * bitsPerSample) / 8;
+   const float flDurationSeconds = (dataSize / nAvgBytesPerSec ) / GetPitch();
+
+   return flDurationSeconds;
 }
