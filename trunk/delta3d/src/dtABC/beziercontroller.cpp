@@ -151,10 +151,9 @@ void BezierController::MakeSegment(float time,
    }
    else	// align along path
    {
-      quat.makeRotate(atan2(tangent.y(),tangent.x()) - osg::PI_2, 0.0,0.0,1.0) ;
-      // will follow path in xy plane, future improvement may be to consider startnode orientation
-      // in the equation to enable STAGE controlled alignment of objects i.e. point the object in
-      // the direction that is "forward" and path following maintains that "forward" direction.
+      quat.makeRotate(atan2(tangent.y(),tangent.x()), 0.0,0.0,1.0);
+      quat.conj();
+      // Note: the LocalTransform of the Bezier controller can be used to orient the objects forward direction
    }
 
    PathData pd;
