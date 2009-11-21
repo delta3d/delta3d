@@ -9,7 +9,7 @@
 #
 # Created by David Guthrie.  Based on code by Robert Osfield 
 
-FIND_PATH(CAL3D_INCLUDE_DIR cal3d.h
+FIND_PATH(CAL3D_INCLUDE_DIR cal3d/cal3d.h
     PATHS
     $ENV{CAL3D_DIR}/include
     $ENV{CAL3D_DIR}
@@ -23,9 +23,8 @@ FIND_PATH(CAL3D_INCLUDE_DIR cal3d.h
     /opt/local/include # DarwinPorts
     /opt/csw/include # Blastwave
     /opt/include
-    [HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session\ Manager\\Environment;OSG_ROOT]/include
     /usr/freeware/include
-    PATH_SUFFIXES cal3d
+    PATH_SUFFIXES src
 )
 
 MACRO(FIND_CAL3D_LIBRARY MYLIBRARY MYLIBRARYNAME)
@@ -46,8 +45,7 @@ FIND_LIBRARY(${MYLIBRARY}
     /sw/lib
     /opt/local/lib
     /opt/csw/lib
-    /opt/lib
-    [HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session\ Manager\\Environment;OSG_ROOT]/lib
+    /opt/lib    
     /usr/freeware/lib64
 )
 
