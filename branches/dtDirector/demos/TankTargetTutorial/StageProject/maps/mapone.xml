@@ -1,0 +1,2112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
+    <header>
+        <name>mapone</name>
+        <description>This map is a simple map used in the GameManager tutorial.  It provides simple scenerio and allows access to a custom game actor developed throughout the tutorial.</description>
+        <author></author>
+        <comment></comment>
+        <copyright></copyright>
+        <createTimestamp>2006-04-17T12:09:25.0-06:00</createTimestamp>
+        <lastUpdateTimestamp>2007-06-03T13:30:13.0-05:00</lastUpdateTimestamp>
+        <editorVersion>1.3.0</editorVersion>
+        <schemaVersion>1.0</schemaVersion>
+    </header>
+    <libraries>
+        <library>
+            <name>TutorialLibrary</name>
+            <version></version>
+        </library>
+    </libraries>
+    <events>
+        <event>
+            <id>0e2800fa-be9f-4275-ab58-89bed75af2ad</id>
+            <name>SpeedBoost</name>
+            <description>Give the tank a small speed boost (+5) - this boost can exceed the speed cap.</description>
+        </event>
+        <event>
+            <id>253320d0-841f-4c71-ab09-4546e0632269</id>
+            <name>TestShaders</name>
+            <description>A test message to allow us to reset our shaders. Just example code for how to manipulate shaders.</description>
+        </event>
+        <event>
+            <id>541d83a1-748a-4957-93e1-048a157ae9f5</id>
+            <name>ToggleEngine</name>
+            <description>Toggles the tank engine on and off.</description>
+        </event>
+        <event>
+            <id>675b8c02-a753-4aaa-8274-9a7847a66fa5</id>
+            <name>TankFired</name>
+            <description>The tank fired a shot.  The blimps listen for this and check to see if they are the current target.  If so, they take damage, else they ignore.</description>
+        </event>
+        <event>
+            <id>e4082496-0afe-4398-a554-aa469e3c84ac</id>
+            <name>ResetStuff</name>
+            <description>Sort of restarts the level. Blimps come back alive, the tank goes back to home position, and you can blow em all up again!</description>
+        </event>
+    </events>
+    <actors>
+        <actor>
+            <type>MyActors.Targets.KillableTarget</type>
+            <id>1799e2f7-9b2b-4699-894a-44987a01fe54</id>
+            <name>KillableTarget</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>138.900009</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>39.648392</value1>
+                    <value2>66.454041</value2>
+                    <value3>-5.051708</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>0.500005</value1>
+                    <value2>0.500003</value2>
+                    <value3>0.500007</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CYLINDER</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>5000</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server+Published</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::happyBlimp.ive</resourceDisplayName>
+                <resource>StaticMeshes::happyBlimp.ive</resource>
+            </property>
+            <property>
+                <name>use cache object</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Max Health</name>
+                <integer>100</integer>
+            </property>
+            <property>
+                <name>Current Health</name>
+                <integer>0</integer>
+            </property>
+        </actor>
+        <actor>
+            <type>MyActors.Targets.KillableTarget</type>
+            <id>2051eae2-d9ec-4c79-919e-578afe30a40b</id>
+            <name>KillableTarget</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>85.199989</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-35.350986</value1>
+                    <value2>1.069977</value2>
+                    <value3>8.349913</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>0.500004</value1>
+                    <value2>0.500004</value2>
+                    <value3>0.500004</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CYLINDER</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.1887903</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server+Published</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::happyBlimp.ive</resourceDisplayName>
+                <resource>StaticMeshes::happyBlimp.ive</resource>
+            </property>
+            <property>
+                <name>use cache object</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Max Health</name>
+                <integer>100</integer>
+            </property>
+            <property>
+                <name>Current Health</name>
+                <integer>0</integer>
+            </property>
+        </actor>
+        <actor>
+            <type>MyActors.Targets.KillableTarget</type>
+            <id>28d4480b-030a-48dc-a9c6-2ab3121cf644</id>
+            <name>KillableTarget</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>60.099979</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>92.734535</value1>
+                    <value2>-155.827667</value2>
+                    <value3>-8.157757</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>0.500004</value1>
+                    <value2>0.500001</value2>
+                    <value3>0.500005</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CYLINDER</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>5000</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server+Published</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::happyBlimp.ive</resourceDisplayName>
+                <resource>StaticMeshes::happyBlimp.ive</resource>
+            </property>
+            <property>
+                <name>use cache object</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Max Health</name>
+                <integer>100</integer>
+            </property>
+            <property>
+                <name>Current Health</name>
+                <integer>0</integer>
+            </property>
+        </actor>
+        <actor>
+            <type>MyActors.Targets.KillableTarget</type>
+            <id>2ea4a301-a2ee-42a8-a440-8fc73f4b5acf</id>
+            <name>KillableTarget</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.500011</value1>
+                    <value2>-0.000000</value2>
+                    <value3>57.400196</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>48.042595</value1>
+                    <value2>-37.280075</value2>
+                    <value3>-8.157759</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>0.500002</value1>
+                    <value2>0.500000</value2>
+                    <value3>0.500003</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CYLINDER</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>5000</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server+Published</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::happyBlimp.ive</resourceDisplayName>
+                <resource>StaticMeshes::happyBlimp.ive</resource>
+            </property>
+            <property>
+                <name>use cache object</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Max Health</name>
+                <integer>100</integer>
+            </property>
+            <property>
+                <name>Current Health</name>
+                <integer>0</integer>
+            </property>
+        </actor>
+        <actor>
+            <type>MyActors.Targets.KillableTarget</type>
+            <id>302231ac-8e20-411b-ab96-7c1945b65562</id>
+            <name>KillableTarget</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>-0.830131</value1>
+                    <value2>-0.339013</value2>
+                    <value3>92.397781</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-76.050980</value1>
+                    <value2>-201.441772</value2>
+                    <value3>-8.339577</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>0.500007</value1>
+                    <value2>0.500001</value2>
+                    <value3>0.500009</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CYLINDER</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.1887903</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server+Published</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::happyBlimp.ive</resourceDisplayName>
+                <resource>StaticMeshes::happyBlimp.ive</resource>
+            </property>
+            <property>
+                <name>use cache object</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Max Health</name>
+                <integer>100</integer>
+            </property>
+            <property>
+                <name>Current Health</name>
+                <integer>0</integer>
+            </property>
+        </actor>
+        <actor>
+            <type>MyActors.Targets.KillableTarget</type>
+            <id>32297a50-3cdf-436e-9868-57e2fd7fec2d</id>
+            <name>KillableTarget</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000011</value2>
+                    <value3>41.299988</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>2.955048</value1>
+                    <value2>60.042664</value2>
+                    <value3>-8.157757</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>0.500002</value1>
+                    <value2>0.500000</value2>
+                    <value3>0.500003</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CYLINDER</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>5000</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server+Published</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::happyBlimp.ive</resourceDisplayName>
+                <resource>StaticMeshes::happyBlimp.ive</resource>
+            </property>
+            <property>
+                <name>use cache object</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Max Health</name>
+                <integer>100</integer>
+            </property>
+            <property>
+                <name>Current Health</name>
+                <integer>0</integer>
+            </property>
+        </actor>
+        <actor>
+            <type>MyActors.Targets.KillableTarget</type>
+            <id>39ae74b2-82ae-48c2-bc6a-f0a8bb8b8663</id>
+            <name>KillableTarget</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000011</value1>
+                    <value2>0.000000</value2>
+                    <value3>99.199982</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>194.626465</value1>
+                    <value2>-45.972794</value2>
+                    <value3>1.069035</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>0.500005</value1>
+                    <value2>0.500004</value2>
+                    <value3>0.500007</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CYLINDER</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>5000</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server+Published</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::happyBlimp.ive</resourceDisplayName>
+                <resource>StaticMeshes::happyBlimp.ive</resource>
+            </property>
+            <property>
+                <name>use cache object</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Max Health</name>
+                <integer>100</integer>
+            </property>
+            <property>
+                <name>Current Health</name>
+                <integer>0</integer>
+            </property>
+        </actor>
+        <actor>
+            <type>MyActors.Targets.KillableTarget</type>
+            <id>5614d5fc-f18f-42f7-a379-8f3555b9d6ec</id>
+            <name>KillableTarget</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>114.800018</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-109.460281</value1>
+                    <value2>-2.216949</value2>
+                    <value3>-3.498684</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>0.500006</value1>
+                    <value2>0.500004</value2>
+                    <value3>0.500008</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CYLINDER</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>5000</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server+Published</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::happyBlimp.ive</resourceDisplayName>
+                <resource>StaticMeshes::happyBlimp.ive</resource>
+            </property>
+            <property>
+                <name>use cache object</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Max Health</name>
+                <integer>100</integer>
+            </property>
+            <property>
+                <name>Current Health</name>
+                <integer>0</integer>
+            </property>
+        </actor>
+        <actor>
+            <type>MyActors.Targets.KillableTarget</type>
+            <id>659e2b57-9bf2-47a3-a478-9eef62ecab95</id>
+            <name>KillableTarget</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000011</value1>
+                    <value2>-0.000000</value2>
+                    <value3>42.099979</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>57.558891</value1>
+                    <value2>153.793869</value2>
+                    <value3>-2.676495</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>0.500003</value1>
+                    <value2>0.500001</value2>
+                    <value3>0.500004</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CYLINDER</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>5000</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server+Published</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::happyBlimp.ive</resourceDisplayName>
+                <resource>StaticMeshes::happyBlimp.ive</resource>
+            </property>
+            <property>
+                <name>use cache object</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Max Health</name>
+                <integer>100</integer>
+            </property>
+            <property>
+                <name>Current Health</name>
+                <integer>0</integer>
+            </property>
+        </actor>
+        <actor>
+            <type>MyActors.Targets.KillableTarget</type>
+            <id>77f3500d-cc07-4bda-8d84-ab31f66c482f</id>
+            <name>KillableTarget</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>150.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>122.602814</value1>
+                    <value2>-78.020447</value2>
+                    <value3>-0.209927</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>0.500004</value1>
+                    <value2>0.500002</value2>
+                    <value3>0.500006</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CYLINDER</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>5000</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server+Published</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::happyBlimp.ive</resourceDisplayName>
+                <resource>StaticMeshes::happyBlimp.ive</resource>
+            </property>
+            <property>
+                <name>use cache object</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Max Health</name>
+                <integer>100</integer>
+            </property>
+            <property>
+                <name>Current Health</name>
+                <integer>0</integer>
+            </property>
+        </actor>
+        <actor>
+            <type>MyActors.Targets.KillableTarget</type>
+            <id>7ab4e976-b9c8-40ff-937b-c1adbc1ac989</id>
+            <name>KillableTarget</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000011</value1>
+                    <value2>-0.000000</value2>
+                    <value3>87.899979</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>169.484970</value1>
+                    <value2>50.479889</value2>
+                    <value3>1.069035</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>0.500004</value1>
+                    <value2>0.500003</value2>
+                    <value3>0.500006</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CYLINDER</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>5000</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server+Published</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::happyBlimp.ive</resourceDisplayName>
+                <resource>StaticMeshes::happyBlimp.ive</resource>
+            </property>
+            <property>
+                <name>use cache object</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Max Health</name>
+                <integer>100</integer>
+            </property>
+            <property>
+                <name>Current Health</name>
+                <integer>0</integer>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <id>7c47d096-403b-4d72-8c97-666818541b25</id>
+            <name>Terrain</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>3.699999</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-1.547338</value1>
+                    <value2>21.363609</value2>
+                    <value3>-16.299416</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>3.000000</value1>
+                    <value2>3.000000</value2>
+                    <value3>1.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string>TerrainShaders</string>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>NONE</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>0.1</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>terrain_simple.ive</resourceDisplayName>
+                <resource>StaticMeshes::terrain_simple.ive</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>MyActors.Targets.KillableTarget</type>
+            <id>9ea3607a-0c87-4c5f-91fc-6a5120dbead8</id>
+            <name>KillableTarget</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>49.599983</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>89.942307</value1>
+                    <value2>62.796310</value2>
+                    <value3>-2.676495</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>0.500003</value1>
+                    <value2>0.500001</value2>
+                    <value3>0.500004</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CYLINDER</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>5000</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server+Published</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::happyBlimp.ive</resourceDisplayName>
+                <resource>StaticMeshes::happyBlimp.ive</resource>
+            </property>
+            <property>
+                <name>use cache object</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Max Health</name>
+                <integer>100</integer>
+            </property>
+            <property>
+                <name>Current Health</name>
+                <integer>0</integer>
+            </property>
+        </actor>
+        <actor>
+            <type>MyActors.Targets.KillableTarget</type>
+            <id>a2bc3683-d694-483e-b915-cc91d0114195</id>
+            <name>KillableTarget</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>-0.170690</value1>
+                    <value2>-0.104191</value2>
+                    <value3>3.999835</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-52.470341</value1>
+                    <value2>-77.502235</value2>
+                    <value3>-7.832746</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>0.500000</value1>
+                    <value2>0.500000</value2>
+                    <value3>0.500000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CYLINDER</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.1887903</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server+Published</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::happyBlimp.ive</resourceDisplayName>
+                <resource>StaticMeshes::happyBlimp.ive</resource>
+            </property>
+            <property>
+                <name>use cache object</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Max Health</name>
+                <integer>100</integer>
+            </property>
+            <property>
+                <name>Current Health</name>
+                <integer>0</integer>
+            </property>
+        </actor>
+        <actor>
+            <type>MyActors.Targets.KillableTarget</type>
+            <id>a4b910bc-3b8c-42c0-91a1-290788ab9591</id>
+            <name>KillableTarget</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000013</value2>
+                    <value3>17.199984</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-145.573181</value1>
+                    <value2>6.913544</value2>
+                    <value3>-6.604733</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>0.500003</value1>
+                    <value2>0.500001</value2>
+                    <value3>0.500004</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CYLINDER</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>5000</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server+Published</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::happyBlimp.ive</resourceDisplayName>
+                <resource>StaticMeshes::happyBlimp.ive</resource>
+            </property>
+            <property>
+                <name>use cache object</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Max Health</name>
+                <integer>100</integer>
+            </property>
+            <property>
+                <name>Current Health</name>
+                <integer>0</integer>
+            </property>
+        </actor>
+        <actor>
+            <type>MyActors.Targets.KillableTarget</type>
+            <id>b8d53a9f-13ac-494d-90b3-68ad49199e49</id>
+            <name>KillableTarget</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>-0.830131</value1>
+                    <value2>-0.339013</value2>
+                    <value3>110.497780</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-2.522270</value1>
+                    <value2>-166.556946</value2>
+                    <value3>-8.339577</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>0.500008</value1>
+                    <value2>0.500002</value2>
+                    <value3>0.500010</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CYLINDER</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.1887903</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server+Published</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::happyBlimp.ive</resourceDisplayName>
+                <resource>StaticMeshes::happyBlimp.ive</resource>
+            </property>
+            <property>
+                <name>use cache object</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Max Health</name>
+                <integer>100</integer>
+            </property>
+            <property>
+                <name>Current Health</name>
+                <integer>0</integer>
+            </property>
+        </actor>
+        <actor>
+            <type>MyActors.Tanks.Tank</type>
+            <id>d3a4ee9e-56fb-4ae4-b7b2-397dd6d5561e</id>
+            <name>HoverTank</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.095213</value1>
+                    <value2>-0.030589</value2>
+                    <value3>11.800034</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>37.865803</value1>
+                    <value2>-103.220123</value2>
+                    <value3>-13.734820</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000005</value1>
+                    <value2>1.000007</value2>
+                    <value3>1.000009</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>NONE</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.1887903</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server+Published</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::bmp_hover.ive</resourceDisplayName>
+                <resource>StaticMeshes::bmp_hover.ive</resource>
+            </property>
+            <property>
+                <name>use cache object</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Velocity</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Turnrate</name>
+                <float>0</float>
+            </property>
+        </actor>
+        <actor>
+            <type>MyActors.Targets.KillableTarget</type>
+            <id>e03406fd-cfc3-43d6-ae02-7e3815e630af</id>
+            <name>KillableTarget</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>-0.170690</value1>
+                    <value2>-0.104191</value2>
+                    <value3>37.899872</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-112.256470</value1>
+                    <value2>-159.039642</value2>
+                    <value3>-10.312542</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>0.500000</value1>
+                    <value2>0.500000</value2>
+                    <value3>0.500000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CYLINDER</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.1887903</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server+Published</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::happyBlimp.ive</resourceDisplayName>
+                <resource>StaticMeshes::happyBlimp.ive</resource>
+            </property>
+            <property>
+                <name>use cache object</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Max Health</name>
+                <integer>100</integer>
+            </property>
+            <property>
+                <name>Current Health</name>
+                <integer>0</integer>
+            </property>
+        </actor>
+        <actor>
+            <type>MyActors.Targets.KillableTarget</type>
+            <id>f08b3594-044a-4d63-8373-a283a8529a1e</id>
+            <name>KillableTarget</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000012</value1>
+                    <value2>0.000013</value2>
+                    <value3>17.999983</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-57.447449</value1>
+                    <value2>70.196426</value2>
+                    <value3>-1.123470</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>0.500004</value1>
+                    <value2>0.500002</value2>
+                    <value3>0.500005</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CYLINDER</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>5000</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server+Published</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::happyBlimp.ive</resourceDisplayName>
+                <resource>StaticMeshes::happyBlimp.ive</resource>
+            </property>
+            <property>
+                <name>use cache object</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Max Health</name>
+                <integer>100</integer>
+            </property>
+            <property>
+                <name>Current Health</name>
+                <integer>0</integer>
+            </property>
+        </actor>
+        <actor>
+            <type>MyActors.Targets.KillableTarget</type>
+            <id>f533c822-a528-4332-be94-cbb5d3472256</id>
+            <name>KillableTarget</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000011</value2>
+                    <value3>15.999979</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>0.860970</value1>
+                    <value2>18.944695</value2>
+                    <value3>-4.777645</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>0.500003</value1>
+                    <value2>0.500001</value2>
+                    <value3>0.500004</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CYLINDER</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>5000</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server+Published</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::happyBlimp.ive</resourceDisplayName>
+                <resource>StaticMeshes::happyBlimp.ive</resource>
+            </property>
+            <property>
+                <name>use cache object</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Max Health</name>
+                <integer>100</integer>
+            </property>
+            <property>
+                <name>Current Health</name>
+                <integer>0</integer>
+            </property>
+        </actor>
+    </actors>
+</map>

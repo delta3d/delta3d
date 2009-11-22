@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<hla xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="hlaComponent"
+     xsi:schemaLocation="hlaComponent HLAMapping.xsd">
+
+    <header>
+        <name>Tutorial</name>
+        <description>Tutorial HLA mapping</description>
+        <disEntityTypes>true</disEntityTypes>
+        <disEntityTypeAttribute>EntityType</disEntityTypeAttribute>
+        <author>David Guthrie</author>
+        <comment></comment>
+        <copyright>2006 Alion Science and Technology</copyright>
+        <schemaVersion>1.0</schemaVersion>
+    </header>
+
+    <libraries>
+      <actorLibrary>
+        <name>TutorialLibrary</name>
+        <version>1.0</version>
+      </actorLibrary>
+    </libraries>
+
+    <objects>
+        <object name="BaseEntity">
+            <abstract/>
+            <entityIdAttributeName>EntityIdentifier</entityIdAttributeName>
+            <attrToProp>
+                <hlaName>Orientation</hlaName>
+                <hlaDataType>EULER_ANGLES_TYPE</hlaDataType>
+                <gameName>Rotation</gameName>
+                <gameDataType>VEC3</gameDataType>
+            </attrToProp>
+            <attrToProp>
+                <hlaName>WorldLocation</hlaName>
+                <hlaDataType>WORLD_COORDINATE_TYPE</hlaDataType>
+                <gameName>Translation</gameName>
+                <gameDataType>VEC3</gameDataType>
+            </attrToProp>
+        </object>
+
+        <object name="PhysicalEntity" extends="BaseEntity">
+            <abstract/>
+            <attrToProp>
+                <hlaName>DamageState</hlaName>
+                <hlaDataType>UNSIGNED_INT_TYPE</hlaDataType>
+                <gameName>Current Health</gameName>
+                <gameDataType>INT</gameDataType>
+            </attrToProp>
+            <attrToProp>
+                <hlaName>Marking</hlaName>
+                <hlaDataType>MARKING_TYPE</hlaDataType>
+                <gameName>Name</gameName>
+                <gameDataType>STRING</gameDataType>
+            </attrToProp>
+        </object>
+
+        <object name="GroundVehicle" extends="PhysicalEntity">
+            <abstract/>
+        </object>
+
+        <object name="Aircraft" extends="PhysicalEntity">
+            <abstract/>
+        </object>
+
+        <object name="HoverTank" extends="GroundVehicle">
+            <objectClass>BaseEntity.PhysicalEntity.Platform.GroundVehicle</objectClass>
+            <actorType>MyActors.Tanks.Tank</actorType>
+            <disEntityEnum>
+                <kind>1</kind>
+                <domain>1</domain>
+                <country>222</country>
+                <category>2</category>
+                <subcategory>4</subcategory>
+                <specific>3</specific>
+                <extra>0</extra>
+            </disEntityEnum>
+            <attrToProp>
+                <gameName>static mesh</gameName>
+                <gameDataType>StaticMeshes</gameDataType>
+                <default>StaticMeshes::bmp_hover.ive</default>
+            </attrToProp>
+        </object>
+
+        <object name="Blimp" extends="Aircraft">
+            <objectClass>BaseEntity.PhysicalEntity.Platform.Aircraft</objectClass>
+            <actorType>MyActors.Targets.KillableTarget</actorType>
+            <remoteOnly>false</remoteOnly>
+            <disEntityEnum>
+                <kind>1</kind>
+                <domain>2</domain>
+                <country>225</country>
+                <category>1</category>
+                <subcategory>9</subcategory>
+                <specific>3</specific>
+                <extra>0</extra>
+            </disEntityEnum>
+            <attrToProp>
+                <gameName>static mesh</gameName>
+                <gameDataType>StaticMeshes</gameDataType>
+                <default>StaticMeshes::happyBlimp.ive</default>
+            </attrToProp>
+            <attrToProp>
+                <gameName>Scale</gameName>
+                <gameDataType>VEC3</gameDataType>
+                <default>0.5 0.5 0.5</default>
+            </attrToProp>
+       </object>
+
+    </objects>
+
+    <interactions>
+    </interactions>
+</hla>

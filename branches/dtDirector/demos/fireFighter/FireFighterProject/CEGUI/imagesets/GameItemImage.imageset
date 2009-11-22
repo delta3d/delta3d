@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<Imageset Name="GameItemImage" Imagefile="imagesets/usableHint.tga" NativeHorzRes="1024" NativeVertRes="550" AutoScaled="true">
+   <Image Name="GameItemImage" XPos="0" YPos="0" Width="64" Height="64" />
+</Imageset>
