@@ -146,8 +146,8 @@ TestAudioApp::PostFrame(const double deltaFrameTime)
    Application::PostFrame(deltaFrameTime);
    FreeAllStoppedSounds();
 
-   MoveTheObject(TRUCK);
-   MoveTheObject(HELO);
+   MoveTheObject(TRUCK, deltaFrameTime);
+   MoveTheObject(HELO, deltaFrameTime);
 }
 
 
@@ -292,6 +292,11 @@ bool TestAudioApp::KeyPressed(const Keyboard* keyboard, int key)
          mLabel->SetActive(!mLabel->GetActive());
          break;
       }
+
+      case '~':
+         this->SetNextStatisticsType();
+         break;
+
       default:
          break;
    }
@@ -688,21 +693,18 @@ TestAudioApp::SetUpCamera()
 
 
 
-void
-TestAudioApp::MoveTheObject(unsigned int obj)
+inline void TestAudioApp::MoveTheObject(unsigned int obj, const double deltaFrameTime)
 {
    // figure out which vehicle gets what velocity
-   static   long              X(0L);
-   static   const double      A(1.0f/2500.0f);
-   static   const double      C(1.0f/2500.0f);
-            double            D((obj==HELO)? C: A);
-            double            P(sin( double(X++) * D ));
-            double            V(cos( double(X++) * D ));
-            unsigned int      I((obj==TRUCK)? 1L: 0L);
-            Transform xform;
-            osg::Vec3         pos( 0.0f, 0.0f, 0.0f );
-            osg::Vec3         vel( 0.0f, 0.0f, 0.0f );
-            OBJ_PTR           gfx(mGfxObj[obj]);
+   static double X(0);
+   X += deltaFrameTime * 0.2; //slow down the velocity a little
+   double P(sin(X));
+   double V(cos(X));
+   unsigned int I((obj==TRUCK)? 1L: 0L);
+   Transform xform;
+   osg::Vec3 pos(0.0f, 0.0f, 0.0f);
+   osg::Vec3 vel(0.0f, 0.0f, 0.0f);
+   OBJ_PTR gfx(mGfxObj[obj]);
 
    // move the vehicle
    assert(gfx.get());
@@ -710,7 +712,7 @@ TestAudioApp::MoveTheObject(unsigned int obj)
    gfx->GetTransform(xform);
    xform.GetTranslation(pos);
 
-   pos[I]   = static_cast<double>(P * 50.0f);
+   pos[I] = P * 50.0; //scale position to cover the terrain
 
    xform.SetTranslation(pos);
    gfx->SetTransform(xform);

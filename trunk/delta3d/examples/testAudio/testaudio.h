@@ -119,7 +119,7 @@ private:
    inline dtCore::RefPtr<dtCore::ParticleSystem>   LoadPSFile(const char* fname);
    inline void                                     InitInputDevices(void);
    inline void                                     SetUpCamera(void);
-   inline void                                     MoveTheObject(unsigned int obj);
+   inline void MoveTheObject(unsigned int obj, const double deltaFrameTime);
 
    static void MakeSmoke(dtAudio::Sound* sound, void* param);
    static void StopSmoke(dtAudio::Sound* sound, void* param);
