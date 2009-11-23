@@ -382,14 +382,6 @@ void ParticleSystem::SetEnabled(bool enable)
 
    ParticleSystemParameterVisitor pspv = ParticleSystemParameterVisitor(mEnabled);
    GetOSGNode()->accept(pspv);
-
-   LayerList layerList = GetAllLayers();
-   LayerList::iterator nextLayerIt;
-
-   for(nextLayerIt = layerList.begin(); nextLayerIt != layerList.end(); ++nextLayerIt)
-   {
-      nextLayerIt->GetParticleSystem().setFrozen(!mEnabled);
-   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
