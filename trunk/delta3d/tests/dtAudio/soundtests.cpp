@@ -96,9 +96,9 @@ namespace dtAudio
       try
       {
          CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The pitch should default 1.0", 1.0f, sound->GetPitch(), 0.001f);
-         sound->SetPitch(0.01);
+         sound->SetPitch(0.01f);
          CPPUNIT_ASSERT_DOUBLES_EQUAL(0.01f, sound->GetPitch(), 0.00001f);
-         sound->SetPitch(1.5);
+         sound->SetPitch(1.5f);
          CPPUNIT_ASSERT_DOUBLES_EQUAL(1.5f, sound->GetPitch(), 0.00001f);
          sound->SetPitch(128.0f);
          sound->SetPitch(128.0f);
