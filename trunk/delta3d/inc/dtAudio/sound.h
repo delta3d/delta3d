@@ -328,6 +328,20 @@ namespace dtAudio
       float GetGain() const;
 
       /**
+       * Sets the time offset into the sound sample to start playing from (default 0).
+       *
+       * @param seconds the playback position, expressed in seconds (the value will loop back to zero for looping sources)
+       */
+      void SetPlayTimeOffset(float seconds);
+
+      /**
+       * Gets the time offset into the sound sample to start playing from (default 0).
+       *
+       * @return the playback position, expressed in seconds (the value will loop back to zero for looping sources)
+       */
+      float GetPlayTimeOffset() const;
+
+      /**
        * Sets the pitch multiplier of the sound source.
        * The value is clamped between 0.000001 and 128,
        * but some implementations inexplicably won't take a pitch greater than 2.0, so if this is called
