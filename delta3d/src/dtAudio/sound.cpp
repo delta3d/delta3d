@@ -487,6 +487,25 @@ float Sound::GetGain() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void Sound::SetPlayTimeOffset(float seconds)
+{
+   // force second offset to range from zero to the length of the sound
+   dtUtil::Clamp<float>(seconds, 0.0f, GetDurationOfPlay());
+
+   alSourcef(mSource, AL_SEC_OFFSET, seconds);
+   CheckForError("Attempt to set playback position offset in seconds on source", __FUNCTION__, __LINE__);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+float Sound::GetPlayTimeOffset() const
+{
+   float seconds;
+   alGetSourcef(mSource, AL_SEC_OFFSET, &seconds);
+   CheckForError("Attempt to get playback position offset in seconds on source", __FUNCTION__, __LINE__);
+   return seconds;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void Sound::SetPitch(float pitch)
 {
    dtUtil::Clamp(pitch, 0.000001f, 128.0f);
