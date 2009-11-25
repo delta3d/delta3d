@@ -27,7 +27,7 @@
 
 namespace dtDAL
 {
-    class ActorProxy;
+   class ActorProxy;
 }
 
 namespace dtDirector
@@ -40,55 +40,55 @@ namespace dtDirector
     *      the NodeManager. If they are not created in this fashion,
     *      the node types will not be set correctly.
     */
-    class NODE_LIBRARY_EXPORT NamedEvent : public EventNode
-    {
-    public:
+   class NODE_LIBRARY_EXPORT NamedEvent : public EventNode
+   {
+   public:
 
-        /**
-         * Constructs the Node.
-         */
-        NamedEvent();
+      /**
+       * Constructs the Node.
+       */
+      NamedEvent();
 
-        /**
-         * Initializes the Node.
-         *
-         * @param[in]  nodeType  The node type.
-         */
-        virtual void Init(const NodeType& nodeType);
+      /**
+       * Initializes the Node.
+       *
+       * @param[in]  nodeType  The node type.
+       */
+      virtual void Init(const NodeType& nodeType);
 
-         /**
-          * Called when this node is removed.
-          */
-         virtual void OnRemove() const;
+      /**
+       * Called when this node is removed.
+       */
+      virtual void OnRemove() const;
 
-         /**
-          * This method is called in init, which instructs the node
-          * to create its properties.  Methods implementing this should
-          * be sure to call their parent class's buildPropertyMap method to
-          * ensure all properties in the proxy inheritance hierarchy are
-          * correctly added to the property map.
-          *
-          * @see GetDeprecatedProperty to handle old properties that need
-          *       to be removed.
-          */
-         virtual void BuildPropertyMap();
+      /**
+       * This method is called in init, which instructs the node
+       * to create its properties.  Methods implementing this should
+       * be sure to call their parent class's buildPropertyMap method to
+       * ensure all properties in the proxy inheritance hierarchy are
+       * correctly added to the property map.
+       *
+       * @see GetDeprecatedProperty to handle old properties that need
+       *       to be removed.
+       */
+      virtual void BuildPropertyMap();
 
-         /**
-          * Accessors for the event name.
-          */
-         void SetEventName(const std::string& eventName);
-         const std::string& GetEventName() const;
+      /**
+       * Accessors for the event name.
+       */
+      void SetEventName(const std::string& eventName);
+      const std::string& GetEventName() const;
 
-      protected:
+   protected:
 
-         /**
-          *	Protected Destructor.  dtCore::RefPtr will handle its destruction.
-          */
-         virtual ~NamedEvent();
+      /**
+       *	Protected Destructor.  dtCore::RefPtr will handle its destruction.
+       */
+      virtual ~NamedEvent();
 
-      private:
+   private:
 
-          std::string mEventName;
+      std::string mEventName;
    };
 }
 

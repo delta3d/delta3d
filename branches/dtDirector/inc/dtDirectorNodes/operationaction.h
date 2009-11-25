@@ -29,72 +29,72 @@
 
 namespace dtDirector
 {
-    ////////////////////////////////////////////////////////////////////////////////
-    class NODE_LIBRARY_EXPORT OperationAction: public ActionNode
-    {
-    public:
+   ////////////////////////////////////////////////////////////////////////////////
+   class NODE_LIBRARY_EXPORT OperationAction: public ActionNode
+   {
+   public:
 
-        /**
-        * Constructor.
-        */
-        OperationAction();
+      /**
+       * Constructor.
+       */
+      OperationAction();
 
-        /**
-         * Initializes the Node.
-         *
-         * @param[in]  nodeType  The node type.
-         */
-        virtual void Init(const NodeType& nodeType);
+      /**
+       * Initializes the Node.
+       *
+       * @param[in]  nodeType  The node type.
+       */
+      virtual void Init(const NodeType& nodeType);
 
-        /**
-        * This method is called in init, which instructs the node
-        * to create its properties.  Methods implementing this should
-        * be sure to call their parent class's buildPropertyMap method to
-        * ensure all properties in the proxy inheritance hierarchy are
-        * correctly added to the property map.
-        *
-        * @see GetDeprecatedProperty to handle old properties that need
-        *       to be removed.
-        */
-        virtual void BuildPropertyMap();
+      /**
+       * This method is called in init, which instructs the node
+       * to create its properties.  Methods implementing this should
+       * be sure to call their parent class's buildPropertyMap method to
+       * ensure all properties in the proxy inheritance hierarchy are
+       * correctly added to the property map.
+       *
+       * @see GetDeprecatedProperty to handle old properties that need
+       *       to be removed.
+       */
+      virtual void BuildPropertyMap();
 
-        /**
-         * Event handler when an input of this node has
-         * been activated.
-         *
-         * @param[in]  inputIndex  The input that was activated.
-         *
-         * @note  This should be overloaded to provide functionality
-         *         of the node when an input has been activated.
-         */
-        virtual void OnInputActivated(int inputIndex);
+      /**
+       * Event handler when an input of this node has
+       * been activated.
+       *
+       * @param[in]  inputIndex  The input that was activated.
+       *
+       * @note  This should be overloaded to provide functionality
+       *         of the node when an input has been activated.
+       */
+      virtual void OnInputActivated(int inputIndex);
 
-        /**
-         * Accessors for property values.
-         */
-        void SetA(int value);
-        int GetA();
+      /**
+       * Accessors for property values.
+       */
+      void SetA(int value);
+      int GetA();
 
-        void SetB(int value);
-        int GetB();
+      void SetB(int value);
+      int GetB();
 
-        void SetResult(int value);
-        int GetResult();
+      void SetResult(int value);
+      int GetResult();
 
 
-    protected:
+   protected:
 
-       /**
+      /**
        * Destructor.
        */
-       ~OperationAction();
+      ~OperationAction();
 
-    private:
+   private:
 
-        int mValueA;
-        int mValueB;
-        int mResult;
-    };
+      int mValueA;
+      int mValueB;
+      int mResult;
+   };
 }
 
 ////////////////////////////////////////////////////////////////////////////////

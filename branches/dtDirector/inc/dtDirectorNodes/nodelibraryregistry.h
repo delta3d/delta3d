@@ -29,36 +29,32 @@
 
 namespace dtDirector
 {
-    /**
-     * Class that exports the applicable nodes to a library
-     */
-    class NODE_LIBRARY_EXPORT NodeLibraryRegistry : public dtDirector::NodePluginRegistry
-    {
-    public:
+   /**
+    * Class that exports the applicable nodes to a library
+    */
+   class NODE_LIBRARY_EXPORT NodeLibraryRegistry : public dtDirector::NodePluginRegistry
+   {
+   public:
 
-        /// Events
-        static dtCore::RefPtr<dtDirector::NodeType> NAMED_EVENT_NODE_TYPE;
+      /// Events
+      static dtCore::RefPtr<dtDirector::NodeType> NAMED_EVENT_NODE_TYPE;
 
-        /// Actions
-        static dtCore::RefPtr<dtDirector::NodeType> OPERATION_ACTION_NODE_TYPE;
+      /// Actions
+      static dtCore::RefPtr<dtDirector::NodeType> OPERATION_ACTION_NODE_TYPE;
 
-        /// Values
-        static dtCore::RefPtr<dtDirector::NodeType> INT_VALUE_NODE_TYPE;
+      /// Values
+      static dtCore::RefPtr<dtDirector::NodeType> INT_VALUE_NODE_TYPE;
 
-        /**
-         *	Constructor.
-         */
-        NodeLibraryRegistry();
+      /**
+       *	Constructor.
+       */
+      NodeLibraryRegistry();
 
-        /**
-         *	Registers all of the nodes to be exported.
-         */
-        void RegisterNodeTypes();
-    };
+      /**
+       *	Registers all of the nodes to be exported.
+       */
+      void RegisterNodeTypes();
+   };
 }
-
-////////////////////////////////////////////////////////////////////////////////
-
-
 
 #endif // NODE_LIBRARY_REGISTRY

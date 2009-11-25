@@ -23,138 +23,145 @@
 #include <algorithm>
 
 #include <dtDirector/valuelink.h>
+#include <dtDirector/valuenode.h>
 
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actorproperty.h>
 
 namespace dtDirector
 {
+   ///////////////////////////////////////////////////////////////////////////////////////
+   ValueLink::ValueLink(Node* owner, dtDAL::ActorProperty* prop, bool isOut, bool allowMultiple, bool typeCheck)
+      : mOwner(owner)
+      , mDefaultProperty(prop)
+      , mIsOut(isOut)
+      , mAllowMultiple(allowMultiple)
+      , mTypeCheck(typeCheck)
+   {
+   }
 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    ValueLink::ValueLink(Node* owner, dtDAL::ActorProperty* prop, bool isOut, bool allowMultiple, bool typeCheck)
-        : mOwner(owner)
-        , mDefaultProperty(prop)
-        , mIsOut(isOut)
-        , mAllowMultiple(allowMultiple)
-        , mTypeCheck(typeCheck)
-    {
-    }
+   ///////////////////////////////////////////////////////////////////////////////////////
+   ValueLink::~ValueLink()
+   {
+      // Disconnect all values from this link.
+      Disconnect();
+   }
 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    ValueLink::~ValueLink()
-    {
-        // Disconnect all values from this link.
-        Disconnect();
-    }
+   //////////////////////////////////////////////////////////////////////////
+   dtDAL::ActorProperty* ValueLink::GetProperty(int index)
+   {
+      if (index >= 0 && index < (int)mLinks.size())
+      {
+         ValueNode* node = mLinks[index];
+         if (node && !node->GetDisabled()) return node->mProperty;
+      }
 
-    //////////////////////////////////////////////////////////////////////////
-    dtDAL::ActorProperty* ValueLink::GetProperty(int index)
-    {
-        if (index >= 0 && index < (int)mLinks.size())
-        {
-            ValueNode* node = mLinks[index].get();
-            if (node) return node->mProperty;
-        }
+      // If we have no overriding links, and we are looking for the first
+      // instance, return the default property.
+      if (index == 0)
+      {
+         return mDefaultProperty;
+      }
 
-        // If we have no overriding links, and we are looking for the first
-        // instance, return the default property.
-        if (index == 0)
-        {
-            return mDefaultProperty;
-        }
+      return NULL;
+   }
 
-        return NULL;
-    }
+   //////////////////////////////////////////////////////////////////////////
+   dtDAL::ActorProperty* ValueLink::GetDefaultProperty()
+   {
+      return mDefaultProperty;
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    dtDAL::ActorProperty* ValueLink::GetDefaultProperty()
-    {
-        return mDefaultProperty;
-    }
+   //////////////////////////////////////////////////////////////////////////
+   void ValueLink::SetDefaultProperty(dtDAL::ActorProperty* prop)
+   {
+      mDefaultProperty = prop;
+   }
 
-    int ValueLink::GetPropertyCount()
-    {
-        // Always return at least 1, because we always have the default.
-        if (mLinks.empty())
-        {
-            return 1;
-        }
+   //////////////////////////////////////////////////////////////////////////
+   int ValueLink::GetPropertyCount()
+   {
+      // Always return at least 1, because we always have the default.
+      if (mLinks.empty())
+      {
+         return 1;
+      }
 
-        return (int)mLinks.size();
-    }
+      return (int)mLinks.size();
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    std::string ValueLink::GetName() const
-    {
-        // Always display the default property name as the current property
-        // changes based on what it is linked to.
-        if (mDefaultProperty)
-        {
-            return mDefaultProperty->GetName().Get();
-        }
+   //////////////////////////////////////////////////////////////////////////
+   std::string ValueLink::GetName() const
+   {
+      // Always display the default property name as the current property
+      // changes based on what it is linked to.
+      if (mDefaultProperty)
+      {
+         return mDefaultProperty->GetName().Get();
+      }
 
-        return "NONE";
-    }
+      return "NONE";
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    bool ValueLink::Connect(ValueNode* valueNode)
-    {
-        if (!valueNode)
-        {
-            return false;
-        }
+   //////////////////////////////////////////////////////////////////////////
+   bool ValueLink::Connect(ValueNode* valueNode)
+   {
+      if (!valueNode)
+      {
+         return false;
+      }
 
-        // Perform a type check.
-        if (mTypeCheck)
-        {
-            // Can not type check if we have no default property.
-            if (!mDefaultProperty) return false;
-            if (!valueNode->mProperty) return false;
+      // Perform a type check.
+      if (mTypeCheck)
+      {
+         // Can not type check if we have no default property.
+         if (!mDefaultProperty) return false;
+         if (!valueNode->mProperty) return false;
 
-            if (mDefaultProperty->GetDataType() != valueNode->mProperty->GetDataType()) return false;
-        }
+         if (mDefaultProperty->GetDataType() != valueNode->mProperty->GetDataType()) return false;
+      }
 
-        // If we are not allowing multiples, disconnect the current one first.
-        if (!mAllowMultiple) Disconnect();
+      // If we are not allowing multiples, disconnect the current one first.
+      if (!mAllowMultiple) Disconnect();
 
-        mLinks.push_back(valueNode);
-        valueNode->mLinks.push_back(this);
-        return true;
-    }
+      mLinks.push_back(valueNode);
+      valueNode->mLinks.push_back(this);
+      return true;
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    void ValueLink::Disconnect(ValueNode* valueNode)
-    {
-        if (!valueNode)
-        {
-            while (!mLinks.empty())
+   //////////////////////////////////////////////////////////////////////////
+   void ValueLink::Disconnect(ValueNode* valueNode)
+   {
+      if (!valueNode)
+      {
+         while (!mLinks.empty())
+         {
+            Disconnect(mLinks[0]);
+         }
+      }
+      else
+      {
+         for (int valueIndex = 0; valueIndex < (int)mLinks.size(); valueIndex++)
+         {
+            if (valueNode == mLinks[valueIndex])
             {
-                Disconnect(mLinks[0].get());
-            }
-        }
-        else
-        {
-            for (int valueIndex = 0; valueIndex < (int)mLinks.size(); valueIndex++)
-            {
-                if (valueNode == mLinks[valueIndex].get())
-                {
-                    if (valueNode)
-                    {
-                        int count = (int)valueNode->mLinks.size();
-                        for (int linkIndex = 0; linkIndex < count; linkIndex++)
-                        {
-                            if (valueNode->mLinks[linkIndex] == this)
-                            {
-                                valueNode->mLinks.erase(valueNode->mLinks.begin() + linkIndex);
-                                break;
-                            }
-                        }
-                    }
+               if (valueNode)
+               {
+                  int count = (int)valueNode->mLinks.size();
+                  for (int linkIndex = 0; linkIndex < count; linkIndex++)
+                  {
+                     if (valueNode->mLinks[linkIndex] == this)
+                     {
+                        valueNode->mLinks.erase(valueNode->mLinks.begin() + linkIndex);
+                        break;
+                     }
+                  }
+               }
 
-                    mLinks.erase(mLinks.begin() + valueIndex);
-                    break;
-                }
+               mLinks.erase(mLinks.begin() + valueIndex);
+               break;
             }
-        }
-    }
+         }
+      }
+   }
 }

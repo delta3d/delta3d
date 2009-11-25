@@ -27,10 +27,13 @@
 #include <vector>
 
 #include <dtDirector/export.h>
-#include <dtDirector/inputlink.h>
+
 
 namespace dtDirector
 {
+   class Node;
+   class InputLink;
+
    /**
     * This is the base class for all input links.
     *
@@ -39,65 +42,73 @@ namespace dtDirector
     *      the NodeManager. If they are not created in this fashion,
     *      the node types will not be set correctly.
     */
-    class DT_DIRECTOR_EXPORT OutputLink
-    {
-    public:
+   class DT_DIRECTOR_EXPORT OutputLink
+   {
+   public:
 
-        /**
-         * Constructs the link.
-         */
-        OutputLink(const std::string& name = "Out");
+      /**
+       * Constructs the link.
+       */
+      OutputLink(Node* owner, const std::string& name = "Out");
 
-        /**
-         * Destructor.
-         */
-        virtual ~OutputLink();
+      /**
+       * Destructor.
+       */
+      virtual ~OutputLink();
 
-        /**
-         * Sets the name of the link.
-         *
-         * @param[in]  name  The name of the link.
-         */
-        void SetName(const std::string& name);
+      /**
+       * Retrieves the owner of the link.
+       *
+       * @return  The owner.
+       */
+      Node* GetOwner() {return mOwner;}
 
-        /**
-         * Retrieves the name of the link.
-         *
-         * @return  The name of the link.
-         */
-        const std::string& GetName() const;
+      /**
+       * Sets the name of the link.
+       *
+       * @param[in]  name  The name of the link.
+       */
+      void SetName(const std::string& name);
 
-        /**
-         * Retrieves the list of links.
-         */
-        std::vector<InputLink*>& GetLinks() {return mLinks;}
+      /**
+       * Retrieves the name of the link.
+       *
+       * @return  The name of the link.
+       */
+      const std::string& GetName() const;
 
-        /**
-         * Activates the input.
-         */
-        void Activate();
+      /**
+       * Retrieves the list of links.
+       */
+      std::vector<InputLink*>& GetLinks() {return mLinks;}
 
-        /**
-         * Connects this output to an input.
-         *
-         * @param[in]  input  The input link to connect it to.
-         */
-        void Connect(InputLink* input);
+      /**
+       * Activates the input.
+       */
+      void Activate();
 
-        /**
-         * Disconnects this output from an input.
-         *
-         * @param[in]  input  The input link to disconnect (NULL to disconnect all).
-         */
-        void Disconnect(InputLink* input = NULL);
+      /**
+       * Connects this output to an input.
+       *
+       * @param[in]  input  The input link to connect it to.
+       */
+      void Connect(InputLink* input);
 
+      /**
+       * Disconnects this output from an input.
+       *
+       * @param[in]  input  The input link to disconnect (NULL to disconnect all).
+       */
+      void Disconnect(InputLink* input = NULL);
 
-    private:
+   private:
 
-          std::string   mName;
+        std::string  mName;
 
-          std::vector<InputLink*> mLinks;
-    };
+        Node*        mOwner;
+
+        std::vector<InputLink*> mLinks;
+   };
 }
 
 #endif

@@ -30,51 +30,50 @@
 
 namespace dtDirector
 {
+   ///////////////////////////////////////////////////////////////////////////////////////
+   NamedEvent::NamedEvent()
+       : EventNode()
+       , mEventName("Event Name")
+   {
+   }
 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    NamedEvent::NamedEvent()
-        : EventNode()
-        , mEventName("Event Name")
-    {
-    }
+   ///////////////////////////////////////////////////////////////////////////////////////
+   NamedEvent::~NamedEvent()
+   {
+   }
 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    NamedEvent::~NamedEvent()
-    {
-    }
+   ///////////////////////////////////////////////////////////////////////////////////////
+   void NamedEvent::Init(const NodeType& nodeType)
+   {
+      EventNode::Init(nodeType);
+   }
 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    void NamedEvent::Init(const NodeType& nodeType)
-    {
-        EventNode::Init(nodeType);
-    }
+   ///////////////////////////////////////////////////////////////////////////////////////
+   void NamedEvent::OnRemove() const
+   {
+   }
 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    void NamedEvent::OnRemove() const
-    {
-    }
+   ////////////////////////////////////////////////////////////////////////////////
+   void NamedEvent::BuildPropertyMap()
+   {
+      EventNode::BuildPropertyMap();
 
-    ////////////////////////////////////////////////////////////////////////////////
-    void NamedEvent::BuildPropertyMap()
-    {
-        EventNode::BuildPropertyMap();
+      AddProperty(new dtDAL::StringActorProperty(
+         "EventName", "Event Name",
+         dtDAL::StringActorProperty::SetFuncType(this, &NamedEvent::SetEventName),
+         dtDAL::StringActorProperty::GetFuncType(this, &NamedEvent::GetEventName),
+         "The name of the event.", "Event"));
+   }
 
-        AddProperty(new dtDAL::StringActorProperty(
-            "EventName", "Event Name",
-            dtDAL::StringActorProperty::SetFuncType(this, &NamedEvent::SetEventName),
-            dtDAL::StringActorProperty::GetFuncType(this, &NamedEvent::GetEventName),
-            "The name of the event.", "Event"));
-    }
+   //////////////////////////////////////////////////////////////////////////
+   void NamedEvent::SetEventName(const std::string& eventName)
+   {
+      mEventName = eventName;
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    void NamedEvent::SetEventName(const std::string& eventName)
-    {
-        mEventName = eventName;
-    }
-
-    //////////////////////////////////////////////////////////////////////////
-    const std::string& NamedEvent::GetEventName() const
-    {
-        return mEventName;
-    }
+   //////////////////////////////////////////////////////////////////////////
+   const std::string& NamedEvent::GetEventName() const
+   {
+      return mEventName;
+   }
 }

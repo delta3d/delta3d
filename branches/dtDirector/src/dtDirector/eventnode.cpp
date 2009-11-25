@@ -30,84 +30,86 @@
 
 namespace dtDirector
 {
+   ///////////////////////////////////////////////////////////////////////////////////////
+   EventNode::EventNode()
+       : Node()
+   {
+   }
 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    EventNode::EventNode()
-        : Node()
-    {
-    }
+   ///////////////////////////////////////////////////////////////////////////////////////
+   EventNode::~EventNode()
+   {
+   }
 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    EventNode::~EventNode()
-    {
-    }
+   ///////////////////////////////////////////////////////////////////////////////////////
+   void EventNode::Init(const NodeType& nodeType)
+   {
+      Node::Init(nodeType);
 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    void EventNode::Init(const NodeType& nodeType)
-    {
-        Node::Init(nodeType);
+      // Create our default output.
+      mOutputs.clear();
+      mOutputs.push_back(OutputLink(this, "Out"));
+   }
 
-        // Create our default output.
-        mOutputs.clear();
-        mOutputs.push_back(OutputLink("Out"));
-    }
+   //////////////////////////////////////////////////////////////////////////
+   void EventNode::Trigger(int outputIndex, const dtDAL::ActorProxy* instigator)
+   {
+      // Can't trigger a disabled event.
+      if (GetDisabled()) return;
 
-    //////////////////////////////////////////////////////////////////////////
-    void EventNode::Trigger(int outputIndex, const dtDAL::ActorProxy* instigator)
-    {
-        if (outputIndex < (int)mOutputs.size())
-        {
-            // TODO: Check the instigator.
+      if (outputIndex < (int)mOutputs.size())
+      {
+         // TODO: Check the instigator.
 
-            mOutputs[outputIndex].Activate();
-        }
-    }
+         mOutputs[outputIndex].Activate();
+      }
+   }
 
-    ////////////////////////////////////////////////////////////////////////////////
-    void EventNode::BuildPropertyMap()
-    {
-        Node::BuildPropertyMap();
-    }
+   ////////////////////////////////////////////////////////////////////////////////
+   void EventNode::BuildPropertyMap()
+   {
+      Node::BuildPropertyMap();
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    void EventNode::Update(float simDelta, float delta)
-    {
-        Node::Update(simDelta, delta);
-    }
+   //////////////////////////////////////////////////////////////////////////
+   void EventNode::Update(float simDelta, float delta)
+   {
+      Node::Update(simDelta, delta);
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    int EventNode::GetPropertyCount(const std::string& name)
-    {
-        // First iterate through all value links to see if this property
-        // is redirected.
-        for (int valueIndex = 0; valueIndex < (int)mValues.size(); valueIndex++)
-        {
-            dtDAL::ActorProperty* prop = mValues[valueIndex].GetDefaultProperty();
-            if (prop && prop->GetName() == name)
-            {
-                return mValues[valueIndex].GetPropertyCount();
-            }
-        }
+   //////////////////////////////////////////////////////////////////////////
+   int EventNode::GetPropertyCount(const std::string& name)
+   {
+      // First iterate through all value links to see if this property
+      // is redirected.
+      for (int valueIndex = 0; valueIndex < (int)mValues.size(); valueIndex++)
+      {
+         dtDAL::ActorProperty* prop = mValues[valueIndex].GetDefaultProperty();
+         if (prop && prop->GetName() == name)
+         {
+            return mValues[valueIndex].GetPropertyCount();
+         }
+      }
 
-        // Did not find any overrides, so return the default.
-        return Node::GetPropertyCount(name);
-    }
+      // Did not find any overrides, so return the default.
+      return Node::GetPropertyCount(name);
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    dtDAL::ActorProperty* EventNode::GetProperty(const std::string& name, int index)
-    {
-        // First iterate through all value links to see if this property
-        // is redirected.
-        for (int valueIndex = 0; valueIndex < (int)mValues.size(); valueIndex++)
-        {
-            dtDAL::ActorProperty* prop = mValues[valueIndex].GetDefaultProperty();
-            if (prop && prop->GetName() == name)
-            {
-                return mValues[valueIndex].GetProperty(index);
-            }
-        }
+   //////////////////////////////////////////////////////////////////////////
+   dtDAL::ActorProperty* EventNode::GetProperty(const std::string& name, int index)
+   {
+      // First iterate through all value links to see if this property
+      // is redirected.
+      for (int valueIndex = 0; valueIndex < (int)mValues.size(); valueIndex++)
+      {
+         dtDAL::ActorProperty* prop = mValues[valueIndex].GetDefaultProperty();
+         if (prop && prop->GetName() == name)
+         {
+            return mValues[valueIndex].GetProperty(index);
+         }
+      }
 
-        // Did not find any overrides, so return the default.
-        return Node::GetProperty(name, index);
-    }
+      // Did not find any overrides, so return the default.
+      return Node::GetProperty(name, index);
+   }
 }

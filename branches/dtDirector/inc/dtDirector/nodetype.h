@@ -28,71 +28,71 @@
 
 namespace dtDirector
 {
-    class Node;
+   class Node;
 
-    /**
-     * This class is more or less a simple data class that has information
-     * describing a particular type of Node.  Node types contain a name,
-     * category and description.
-     *
-     * @note
-     *   NodeTypes for each node must be unique.
-     */
-    class DT_DIRECTOR_EXPORT NodeType: public dtDAL::ObjectType
-    {
-    public:
+   /**
+   * This class is more or less a simple data class that has information
+   * describing a particular type of Node.  Node types contain a name,
+   * category and description.
+   *
+   * @note
+   *   NodeTypes for each node must be unique.
+   */
+   class DT_DIRECTOR_EXPORT NodeType: public dtDAL::ObjectType
+   {
+   public:
 
-        typedef Node CreateType;
+      typedef Node CreateType;
 
-        /**
-         * Constructs a new actor type object.
-         *
-         * @param[in]  name        The name of the node.
-         * @param[in]  category    The category of the node, this determines
-         *                          if this node can be used depending on
-         *                          the scripts type.
-         * @param[in]  folder      The folder that this node will fall under
-         *                          within the UI.
-         * @param[in]  desc        The description of the node.
-         * @param[in]  parentType  The parent node.
-         */
-        NodeType(const std::string& name,
-               const std::string& category,
-               const std::string& folder="",
-               const std::string& desc="",
-               const NodeType* parentType = NULL);
+      /**
+       * Constructs a new actor type object.
+       *
+       * @param[in]  name        The name of the node.
+       * @param[in]  category    The category of the node, this determines
+       *                          if this node can be used depending on
+       *                          the scripts type.
+       * @param[in]  folder      The folder that this node will fall under
+       *                          within the UI.
+       * @param[in]  desc        The description of the node.
+       * @param[in]  parentType  The parent node.
+       */
+      NodeType(const std::string& name,
+            const std::string& category,
+            const std::string& folder="",
+            const std::string& desc="",
+            const NodeType* parentType = NULL);
 
-        /**
-         * Gets the parent or "super" type of this node type.
-         */
-        const NodeType* GetParentNodeType() const;
+      /**
+       * Gets the parent or "super" type of this node type.
+       */
+      const NodeType* GetParentNodeType() const;
 
-        /**
-         * Retrieves the folder for this node.
-         *
-         * @return  The folder name.
-         */
-        const std::string& GetFolder();
+      /**
+       * Retrieves the folder for this node.
+       *
+       * @return  The folder name.
+       */
+      const std::string& GetFolder();
 
-        /**
-         * Sets the folder for this node.
-         *
-         * @param[in]  folder  The name of the folder.
-         */
-        void SetFolder(const std::string& folder);
+      /**
+       * Sets the folder for this node.
+       *
+       * @param[in]  folder  The name of the folder.
+       */
+      void SetFolder(const std::string& folder);
 
 
-    protected:
+   protected:
 
-        /**
-         * Object can only be deleted through the ref_ptr interface.	
-         */
-        virtual ~NodeType();
+      /**
+       * Object can only be deleted through the ref_ptr interface.	
+       */
+      virtual ~NodeType();
 
-    private:
+   private:
 
-        std::string mFolder;
-    };
+      std::string mFolder;
+   };
 }
 
 #endif

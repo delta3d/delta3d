@@ -36,43 +36,43 @@ using dtCore::RefPtr;
 
 namespace dtDirector
 {
-    // Events
-    RefPtr<NodeType> NodeLibraryRegistry::NAMED_EVENT_NODE_TYPE(new dtDirector::NodeType("Named Event", "General", "Events", "A simple event with a custom name."));
+   // Events
+   RefPtr<NodeType> NodeLibraryRegistry::NAMED_EVENT_NODE_TYPE(new dtDirector::NodeType("Named Event", "General", "Events", "A simple event with a custom name."));
 
-    // Actions
-    RefPtr<NodeType> NodeLibraryRegistry::OPERATION_ACTION_NODE_TYPE(new dtDirector::NodeType("Binary Operation", "General", "Math", "Performs a simple binary math operation given two values"));
+   // Actions
+   RefPtr<NodeType> NodeLibraryRegistry::OPERATION_ACTION_NODE_TYPE(new dtDirector::NodeType("Binary Operation", "General", "Math", "Performs a simple binary math operation given two values"));
 
-    // Values
-    RefPtr<NodeType> NodeLibraryRegistry::INT_VALUE_NODE_TYPE(new dtDirector::NodeType("Int", "General", "Variables", "An integer data storage."));
+   // Values
+   RefPtr<NodeType> NodeLibraryRegistry::INT_VALUE_NODE_TYPE(new dtDirector::NodeType("Int", "General", "Variables", "An integer data storage."));
 
-    //////////////////////////////////////////////////////////////////////////
-    extern "C" NODE_LIBRARY_EXPORT dtDirector::NodePluginRegistry* CreatePluginRegistry()
-    {
-       return new NodeLibraryRegistry;
-    }
+   //////////////////////////////////////////////////////////////////////////
+   extern "C" NODE_LIBRARY_EXPORT dtDirector::NodePluginRegistry* CreatePluginRegistry()
+   {
+      return new NodeLibraryRegistry;
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    extern "C" NODE_LIBRARY_EXPORT void DestroyPluginRegistry(dtDirector::NodePluginRegistry* registry)
-    {
-       delete registry;
-    }
+   //////////////////////////////////////////////////////////////////////////
+   extern "C" NODE_LIBRARY_EXPORT void DestroyPluginRegistry(dtDirector::NodePluginRegistry* registry)
+   {
+      delete registry;
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    NodeLibraryRegistry::NodeLibraryRegistry()
-       : dtDirector::NodePluginRegistry("General Nodes that can be used anywhere.")
-    {
-    }
+   //////////////////////////////////////////////////////////////////////////
+   NodeLibraryRegistry::NodeLibraryRegistry()
+      : dtDirector::NodePluginRegistry("General Nodes that can be used anywhere.")
+   {
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    void NodeLibraryRegistry::RegisterNodeTypes()
-    {
-        // Events
-        mNodeFactory->RegisterType<NamedEvent>(NAMED_EVENT_NODE_TYPE.get());
+   //////////////////////////////////////////////////////////////////////////
+   void NodeLibraryRegistry::RegisterNodeTypes()
+   {
+      // Events
+      mNodeFactory->RegisterType<NamedEvent>(NAMED_EVENT_NODE_TYPE.get());
 
-        // Actions
-        mNodeFactory->RegisterType<OperationAction>(OPERATION_ACTION_NODE_TYPE.get());
+      // Actions
+      mNodeFactory->RegisterType<OperationAction>(OPERATION_ACTION_NODE_TYPE.get());
 
-        // Values
-        mNodeFactory->RegisterType<IntValue>(INT_VALUE_NODE_TYPE.get());
-    }
+      // Values
+      mNodeFactory->RegisterType<IntValue>(INT_VALUE_NODE_TYPE.get());
+   }
 }

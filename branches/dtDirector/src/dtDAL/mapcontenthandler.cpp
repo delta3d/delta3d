@@ -360,7 +360,7 @@ namespace  dtDAL
       {
          if (mInHeader)
          {
-            if (topEl == MapXMLConstants::MAP_NAME_ELEMENT)
+            if (topEl == MapXMLConstants::NAME_ELEMENT)
             {
                mMap->SetName(dtUtil::XMLStringConverter(chars).ToString());
                //this flag is only used when the parser is just looking for the map name.

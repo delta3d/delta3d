@@ -121,7 +121,7 @@ namespace dtDAL
    protected:
       virtual ~BaseXMLWriter(); ///Protected destructor so that this could be subclassed.
 
-      class FormatTarget: public xercesc::XMLFormatTarget
+      class DT_DAL_EXPORT FormatTarget: public xercesc::XMLFormatTarget
       {
          public:
             FormatTarget();

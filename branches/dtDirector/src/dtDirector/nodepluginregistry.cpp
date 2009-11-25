@@ -23,7 +23,6 @@
 
 namespace dtDirector
 {
-
    ///////////////////////////////////////////////////////////////////////////////////
    void NodePluginRegistry::GetSupportedNodeTypes(std::vector<dtCore::RefPtr<const NodeType> > &nodes)
    {

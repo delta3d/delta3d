@@ -320,7 +320,7 @@ namespace dtDAL
 
          BeginElement(MapXMLConstants::MAP_ELEMENT, MapXMLConstants::MAP_NAMESPACE);
          BeginElement(MapXMLConstants::HEADER_ELEMENT);
-         BeginElement(MapXMLConstants::MAP_NAME_ELEMENT);
+         BeginElement(MapXMLConstants::NAME_ELEMENT);
          AddCharacters(map.GetName());
          EndElement(); // End Map Name Element.
          BeginElement(MapXMLConstants::DESCRIPTION_ELEMENT);

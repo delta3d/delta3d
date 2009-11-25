@@ -22,81 +22,93 @@
 #ifndef DIRECTOR_VALUE_NODE
 #define DIRECTOR_VALUE_NODE
 
-#include <dtDirector/node.h>
 #include <dtDirector/export.h>
+#include <dtDirector/node.h>
 
+namespace dtDAL
+{
+   class ActorProperty;
+}
 
 namespace dtDirector
 {
-    class ValueLink;
+   class ValueLink;
 
-    /**
-     * This is the base class for all value nodes.
-     *
-     * @note
-     *      Node objects must be created through the NodePluginRegistry or
-     *      the NodeManager. If they are not created in this fashion,
-     *      the node types will not be set correctly.
-     */
-    class DT_DIRECTOR_EXPORT ValueNode : public Node
-    {
-    public:
+   /**
+    * This is the base class for all value nodes.
+    *
+    * @note
+    *      Node objects must be created through the NodePluginRegistry or
+    *      the NodeManager. If they are not created in this fashion,
+    *      the node types will not be set correctly.
+    */
+   class DT_DIRECTOR_EXPORT ValueNode : public Node
+   {
+   public:
 
-        /**
-         * Constructs the Node.
-         */
-        ValueNode();
+      /**
+       * Constructs the Node.
+       */
+      ValueNode();
 
-        /**
-         * Initializes the Node.
-         *
-         * @param[in]  nodeType  The node type.
-         */
-        virtual void Init(const NodeType& nodeType);
+      /**
+       * Initializes the Node.
+       *
+       * @param[in]  nodeType  The node type.
+       */
+      virtual void Init(const NodeType& nodeType);
 
-        /**
-         * This method is called in init, which instructs the node
-         * to create its properties.  Methods implementing this should
-         * be sure to call their parent class's buildPropertyMap method to
-         * ensure all properties in the proxy inheritance hierarchy are
-         * correctly added to the property map.
-         *
-         * @see GetDeprecatedProperty to handle old properties that need
-         *       to be removed.
-         */
-        virtual void BuildPropertyMap();
+      /**
+       * This method is called in init, which instructs the node
+       * to create its properties.  Methods implementing this should
+       * be sure to call their parent class's buildPropertyMap method to
+       * ensure all properties in the proxy inheritance hierarchy are
+       * correctly added to the property map.
+       *
+       * @see GetDeprecatedProperty to handle old properties that need
+       *       to be removed.
+       */
+      virtual void BuildPropertyMap();
 
-        /**
-         * Connects this node to a specified value link.
-         *
-         * @param[in]  valueLink  The value link to connect to.
-         *
-         * @return     True if the connection was made.  Connection
-         *              can fail based on type checking.
-         */
-        bool Connect(ValueLink* valueLink);
+      /**
+       * Connects this node to a specified value link.
+       *
+       * @param[in]  valueLink  The value link to connect to.
+       *
+       * @return     True if the connection was made.  Connection
+       *              can fail based on type checking.
+       */
+      bool Connect(ValueLink* valueLink);
 
-        /**
-         * Disconnects this node from a specified value link.
-         *
-         * @param[in]  valueLink  The value link to disconnect from.
-         *                         NULL to disconnect all.
-         */
-        void Disconnect(ValueLink* valueLink = NULL);
+      /**
+       * Disconnects this node from a specified value link.
+       *
+       * @param[in]  valueLink  The value link to disconnect from.
+       *                         NULL to disconnect all.
+       */
+      void Disconnect(ValueLink* valueLink = NULL);
 
-        friend class ValueLink;
+      /**
+       * Accessors for the name of the node.
+       */
+      void SetName(const std::string& name) {mName = name;}
+      std::string GetName() {return mName;}
 
-    protected:
+      friend class ValueLink;
 
-        /**
-         *	Protected Destructor.  dtCore::RefPtr will handle its destruction.
-         */
-        virtual ~ValueNode();
+   protected:
 
-        dtDAL::ActorProperty* mProperty;
+      /**
+       *	Protected Destructor.  dtCore::RefPtr will handle its destruction.
+       */
+      virtual ~ValueNode();
 
-        std::vector<ValueLink*> mLinks;
-    };
+      std::string    mName;
+
+      dtDAL::ActorProperty* mProperty;
+
+      std::vector<ValueLink*> mLinks;
+   };
 }
 
 #endif

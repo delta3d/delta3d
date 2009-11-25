@@ -62,114 +62,115 @@ namespace dtDirector
     */
    class DT_DIRECTOR_EXPORT NodePluginRegistry
    {
-      public:
+   public:
 
-         /**
-          * Constructs the registry.  Sets the name and description for
-          * this registry.
-          */
-         NodePluginRegistry(const std::string& name, const std::string& desc = "")
-            : mName(name)
-            , mDescription(desc)
-         {
-            mNodeFactory = new dtUtil::ObjectFactory<dtCore::RefPtr<const NodeType>, Node, NodeType::RefPtrComp>;
-         }
+      /**
+       * Constructs the registry.  Sets the name and description for
+       * this registry.
+       */
+      NodePluginRegistry(const std::string& name, const std::string& desc = "")
+         : mName(name)
+         , mDescription(desc)
+      {
+         mNodeFactory = new dtUtil::ObjectFactory<dtCore::RefPtr<const NodeType>, Node, NodeType::RefPtrComp>;
+      }
 
-         /**
-          * Empty destructor. This class is not reference counted since we need
-          * to manually free pointers to the registry objects from their
-          * corresponding dynamic library, therefore, we need access to the
-          * object's destructor.
-          */
-         virtual ~NodePluginRegistry() { }
+      /**
+       * Empty destructor. This class is not reference counted since we need
+       * to manually free pointers to the registry objects from their
+       * corresponding dynamic library, therefore, we need access to the
+       * object's destructor.
+       */
+      virtual ~NodePluginRegistry() { }
 
-         /**
-          * Registers the actor types that this registry knows how to create.
-          * This method is the first method to get called by the NodeManager
-          * after it loads a dynamic library and gets a pointer to the
-          * registry object it contains.
-          */
-         virtual void RegisterNodeTypes() = 0;
+      /**
+       * Registers the actor types that this registry knows how to create.
+       * This method is the first method to get called by the NodeManager
+       * after it loads a dynamic library and gets a pointer to the
+       * registry object it contains.
+       */
+      virtual void RegisterNodeTypes() = 0;
 
-         /**
-          * Sets the name of this registry.
-          *
-          * @param[in]  name  Name to assign to the registry.
-          */
-         void SetName(const std::string& name) { mName = name; }
+      /**
+       * Sets the name of this registry.
+       *
+       * @param[in]  name  Name to assign to the registry.
+       */
+      void SetName(const std::string& name) { mName = name; }
 
-         /**
-          * Retrieves the name currently assigned to this registry.
-          */
-         const std::string& GetName() const { return mName; }
+      /**
+       * Retrieves the name currently assigned to this registry.
+       */
+      const std::string& GetName() const { return mName; }
 
-         /**
-          * Sets the description for this registry.
-          *
-          * @param[in]  desc  Description for this node registry.
-          */
-         void SetDescription(const std::string& desc) { mDescription = desc; }
+      /**
+       * Sets the description for this registry.
+       *
+       * @param[in]  desc  Description for this node registry.
+       */
+      void SetDescription(const std::string& desc) { mDescription = desc; }
 
-         /**
-          * Gets the description of this registry.
-          */
-         const std::string& GetDescription() const { return mDescription; }
+      /**
+       * Gets the description of this registry.
+       */
+      const std::string& GetDescription() const { return mDescription; }
 
-         /**
-          * Gets a list of node types that this registry supports.
-          */
-         void GetSupportedNodeTypes(std::vector<dtCore::RefPtr<const NodeType> >& nodes);
+      /**
+       * Gets a list of node types that this registry supports.
+       */
+      void GetSupportedNodeTypes(std::vector<dtCore::RefPtr<const NodeType> >& nodes);
 
-         /** 
-           * Container of <old, new> NodeType names.  First entry is the full name of the
-           * old NodeType.  Second entry is the full name of the new NodeType to
-           * use instead.
-           */
-         typedef std::vector<std::pair<std::string, std::string> > NodeTypeReplacements;
+      /** 
+        * Container of <old, new> NodeType names.  First entry is the full name of the
+        * old NodeType.  Second entry is the full name of the new NodeType to
+        * use instead.
+        */
+      typedef std::vector<std::pair<std::string, std::string> > NodeTypeReplacements;
 
-         /** 
-          * Get the NodeTypeReplacements for this NodePluginRegistry.  This list
-          * is used to provide some backwards compatibility with applications or maps
-          * referring to older, deprecated NodeTypes.  Override in derived classes
-          * if previous NodeTypes have been modified and backwards compatibility is 
-          * desired.
-          *
-          * @param[in]  replacements  The container to fill out with NodeType replacements
-          */
-         virtual void GetReplacementNodeTypes(NodeTypeReplacements &replacements) const;
+      /** 
+       * Get the NodeTypeReplacements for this NodePluginRegistry.  This list
+       * is used to provide some backwards compatibility with applications or maps
+       * referring to older, deprecated NodeTypes.  Override in derived classes
+       * if previous NodeTypes have been modified and backwards compatibility is 
+       * desired.
+       *
+       * @param[in]  replacements  The container to fill out with NodeType replacements
+       */
+      virtual void GetReplacementNodeTypes(NodeTypeReplacements &replacements) const;
 
-         /**
-          * Checks to see if this registry supports the given node type.
-          *
-          * @param[in]  type  The type to check support for.
-          *
-          * @return  True if supported, false otherwise.
-          */
-         bool IsNodeTypeSupported(dtCore::RefPtr<const NodeType> type);
+      /**
+       * Checks to see if this registry supports the given node type.
+       *
+       * @param[in]  type  The type to check support for.
+       *
+       * @return  True if supported, false otherwise.
+       */
+      bool IsNodeTypeSupported(dtCore::RefPtr<const NodeType> type);
 
-         /**
-          * Creates a new node based on the NodeType given.
-          *
-          * @param[in]  type  Type of node to create.
-          *
-          * @return  A smart pointer to the newly created Node.
-          *
-          * @throws ExceptionEnum::ObjectFactoryUnknownType
-          */
-         dtCore::RefPtr<Node> CreateNode(const NodeType& type);
+      /**
+       * Creates a new node based on the NodeType given.
+       *
+       * @param[in]  type  Type of node to create.
+       *
+       * @return  A smart pointer to the newly created Node.
+       *
+       * @throws ExceptionEnum::ObjectFactoryUnknownType
+       */
+      dtCore::RefPtr<Node> CreateNode(const NodeType& type);
 
-      protected:
-         std::string mName;
-         std::string mDescription;
+   protected:
 
-         /**
-          * Factory object which stores the node types and knows how to
-          * create them.
-          *
-          * @see ObjectFactory
-          */
-         dtCore::RefPtr<dtUtil::ObjectFactory<dtCore::RefPtr<const NodeType>,
-            Node, NodeType::RefPtrComp> > mNodeFactory;
+      std::string mName;
+      std::string mDescription;
+
+      /**
+       * Factory object which stores the node types and knows how to
+       * create them.
+       *
+       * @see ObjectFactory
+       */
+      dtCore::RefPtr<dtUtil::ObjectFactory<dtCore::RefPtr<const NodeType>,
+         Node, NodeType::RefPtrComp> > mNodeFactory;
    };
 } // namespace dtDirector
 

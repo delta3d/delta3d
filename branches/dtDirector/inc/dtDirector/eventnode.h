@@ -25,8 +25,6 @@
 #include <dtDirector/node.h>
 #include <dtDirector/export.h>
 
-#include <dtDirector/outputlink.h>
-#include <dtDirector/valuelink.h>
 
 namespace dtDAL
 {
@@ -35,108 +33,94 @@ namespace dtDAL
 
 namespace dtDirector
 {
-   /**
-    * This is the base class for all event nodes.
-    *
-    * @note
-    *      Node objects must be created through the NodePluginRegistry or
-    *      the NodeManager. If they are not created in this fashion,
-    *      the node types will not be set correctly.
-    */
-    class DT_DIRECTOR_EXPORT EventNode : public Node
-    {
-    public:
+  /**
+   * This is the base class for all event nodes.
+   *
+   * @note
+   *      Node objects must be created through the NodePluginRegistry or
+   *      the NodeManager. If they are not created in this fashion,
+   *      the node types will not be set correctly.
+   */
+   class DT_DIRECTOR_EXPORT EventNode : public Node
+   {
+   public:
 
-        /**
-         * Constructs the Node.
-         */
-        EventNode();
+      /**
+       * Constructs the Node.
+       */
+      EventNode();
 
-        /**
-         * Initializes the Node.
-         *
-         * @param[in]  nodeType  The node type.
-         */
-        virtual void Init(const NodeType& nodeType);
+      /**
+       * Initializes the Node.
+       *
+       * @param[in]  nodeType  The node type.
+       */
+      virtual void Init(const NodeType& nodeType);
 
-        /**
-         * Triggers the event.
-         *
-         * @param[in]  outputIndex  The output to trigger.
-         * @param[in]  instigator   The instigating actor.
-         */
-        virtual void Trigger(int outputIndex, const dtDAL::ActorProxy* instigator = NULL);
+      /**
+       * Triggers the event.
+       *
+       * @param[in]  outputIndex  The output to trigger.
+       * @param[in]  instigator   The instigating actor.
+       */
+      virtual void Trigger(int outputIndex, const dtDAL::ActorProxy* instigator = NULL);
 
-        /**
-         * This method is called in init, which instructs the node
-         * to create its properties.  Methods implementing this should
-         * be sure to call their parent class's buildPropertyMap method to
-         * ensure all properties in the proxy inheritance hierarchy are
-         * correctly added to the property map.
-         *
-         * @see GetDeprecatedProperty to handle old properties that need
-         *       to be removed.
-         */
-        virtual void BuildPropertyMap();
+      /**
+       * This method is called in init, which instructs the node
+       * to create its properties.  Methods implementing this should
+       * be sure to call their parent class's buildPropertyMap method to
+       * ensure all properties in the proxy inheritance hierarchy are
+       * correctly added to the property map.
+       *
+       * @see GetDeprecatedProperty to handle old properties that need
+       *       to be removed.
+       */
+      virtual void BuildPropertyMap();
 
 
-        /**
-         * Updates the node.
-         *
-         * @param[in]  simDelta  The simulation time step.
-         * @param[in]  delta     The real time step.
-         */
-        virtual void Update(float simDelta, float delta);
+      /**
+       * Updates the node.
+       *
+       * @param[in]  simDelta  The simulation time step.
+       * @param[in]  delta     The real time step.
+       */
+      virtual void Update(float simDelta, float delta);
 
-        /**
-         * Retrieves the output list.
-         */
-        std::vector<OutputLink>& GetOutputs() {return mOutputs;}
+   protected:
 
-        /**
-         * Retrieves the value list.
-         */
-        std::vector<ValueLink>& GetValues() {return mValues;}
+      /**
+       *	Protected Destructor.  dtCore::RefPtr will handle its destruction.
+       */
+      virtual ~EventNode();
 
-    protected:
+      /**
+       * Retrieves the total number of values linked to a property.
+       *
+       * @param[in]  name  The name of the property.
+       *
+       * @return     The count.
+       */
+      virtual int GetPropertyCount(const std::string& name);
 
-        /**
-         *	Protected Destructor.  dtCore::RefPtr will handle its destruction.
-         */
-        virtual ~EventNode();
+      /**
+       * Retrieves a property of the given name.  This is overloaded
+       * to provide functionality of redirected properties (from the
+       * use of ValueLink's).
+       *
+       * @param[in]  name   The name of the property.
+       * @param[in]  index  The property index, in case of multiple linking.
+       *
+       * @return     A pointer to the property, NULL if none found.
+       *
+       * @note  All properties used within nodes should be retrieved
+       *         via this method instead of directly to ensure that
+       *         the desired property is being used.
+       */
+      virtual dtDAL::ActorProperty* GetProperty(const std::string& name, int index = 0);
 
-        /**
-         * Retrieves the total number of values linked to a property.
-         *
-         * @param[in]  name  The name of the property.
-         *
-         * @return     The count.
-         */
-        virtual int GetPropertyCount(const std::string& name);
+   private:
 
-        /**
-         * Retrieves a property of the given name.  This is overloaded
-         * to provide functionality of redirected properties (from the
-         * use of ValueLink's).
-         *
-         * @param[in]  name   The name of the property.
-         * @param[in]  index  The property index, in case of multiple linking.
-         *
-         * @return     A pointer to the property, NULL if none found.
-         *
-         * @note  All properties used within nodes should be retrieved
-         *         via this method instead of directly to ensure that
-         *         the desired property is being used.
-         */
-        virtual dtDAL::ActorProperty* GetProperty(const std::string& name, int index = 0);
-
-        /// Links
-        std::vector<OutputLink> mOutputs;
-        std::vector<ValueLink>  mValues;
-
-      private:
-
-   };
+  };
 }
 
 #endif

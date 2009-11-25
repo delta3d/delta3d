@@ -23,117 +23,118 @@
 #include <algorithm>
 
 #include <dtDirector/outputlink.h>
+#include <dtDirector/inputlink.h>
 
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actorproperty.h>
 
 namespace dtDirector
 {
+   ///////////////////////////////////////////////////////////////////////////////////////
+   OutputLink::OutputLink(Node* owner, const std::string& name)
+      : mOwner(owner)
+   {
+      SetName(name);
+   }
 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    OutputLink::OutputLink(const std::string& name)
-    {
-        SetName(name);
-    }
+   ///////////////////////////////////////////////////////////////////////////////////////
+   OutputLink::~OutputLink()
+   {
+      // Disconnect this link from all inputs.
+      Disconnect();
+   }
 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    OutputLink::~OutputLink()
-    {
-        // Disconnect this link from all inputs.
-        Disconnect();
-    }
+   //////////////////////////////////////////////////////////////////////////
+   void OutputLink::SetName(const std::string& name)
+   {
+      mName = name;
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    void OutputLink::SetName(const std::string& name)
-    {
-        mName = name;
-    }
+   //////////////////////////////////////////////////////////////////////////
+   const std::string& OutputLink::GetName() const
+   {
+      return mName;
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    const std::string& OutputLink::GetName() const
-    {
-        return mName;
-    }
+   //////////////////////////////////////////////////////////////////////////
+   void OutputLink::Activate()
+   {
+      // Iterate and activate all input linkes that are connected.
+      for (int linkIndex = 0; linkIndex < (int)mLinks.size(); linkIndex++)
+      {
+         InputLink* link = mLinks[linkIndex];
+         if (link)
+         {
+            link->Activate();
+         }
+      }
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    void OutputLink::Activate()
-    {
-        // Iterate and activate all input linkes that are connected.
-        for (int linkIndex = 0; linkIndex < (int)mLinks.size(); linkIndex++)
-        {
-            InputLink* link = mLinks[linkIndex];
-            if (link)
-            {
-                link->Activate();
-            }
-        }
-    }
+   //////////////////////////////////////////////////////////////////////////
+   void OutputLink::Connect(InputLink* input)
+   {
+      // Cannot connect a NULL node.
+      if (!input)
+      {
+         return;
+      }
 
-    //////////////////////////////////////////////////////////////////////////
-    void OutputLink::Connect(InputLink* input)
-    {
-        // Cannot connect a NULL node.
-        if (!input)
-        {
+      // Make sure it isn't already connected.
+      for (int outputIndex = 0; outputIndex < (int)mLinks.size(); outputIndex++)
+      {
+         if (mLinks[outputIndex] == input)
+         {
             return;
-        }
+         }
+      }
 
-        // Make sure it isn't already connected.
-        for (int outputIndex = 0; outputIndex < (int)mLinks.size(); outputIndex++)
-        {
+      mLinks.push_back(input);
+      input->mLinks.push_back(this);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void OutputLink::Disconnect(InputLink* input)
+   {
+      // Erase all?
+      if (!input)
+      {
+         for (int outputIndex = 0; outputIndex < (int)mLinks.size(); outputIndex++)
+         {
+            input = mLinks[outputIndex];
+            if (!input) continue;
+
+            // Now remove this output from the input's list.
+            for (int inputIndex = 0; inputIndex < (int)input->mLinks.size(); outputIndex++)
+            {
+               if (input->mLinks[inputIndex] == this)
+               {
+                  input->mLinks.erase(input->mLinks.begin() + inputIndex);
+                  break;
+               }
+            }
+         }
+      }
+      else
+      {
+         // Erase a single input.
+         for (int outputIndex = 0; outputIndex < (int)mLinks.size(); outputIndex++)
+         {
             if (mLinks[outputIndex] == input)
             {
-                return;
+               mLinks.erase(mLinks.begin() + outputIndex);
+
+               // Now remove this output from the input's list.
+               for (int inputIndex = 0; inputIndex < (int)input->mLinks.size(); outputIndex++)
+               {
+                  if (input->mLinks[inputIndex] == this)
+                  {
+                     input->mLinks.erase(input->mLinks.begin() + inputIndex);
+                     break;
+                  }
+               }
+               break;
             }
-        }
-
-        mLinks.push_back(input);
-        input->mLinks.push_back(this);
-    }
-
-    //////////////////////////////////////////////////////////////////////////
-    void OutputLink::Disconnect(InputLink* input)
-    {
-        // Erase all?
-        if (!input)
-        {
-            for (int outputIndex = 0; outputIndex < (int)mLinks.size(); outputIndex++)
-            {
-                input = mLinks[outputIndex];
-                if (!input) continue;
-
-                // Now remove this output from the input's list.
-                for (int inputIndex = 0; inputIndex < (int)input->mLinks.size(); outputIndex++)
-                {
-                    if (input->mLinks[inputIndex] == this)
-                    {
-                        input->mLinks.erase(input->mLinks.begin() + inputIndex);
-                        break;
-                    }
-                }
-            }
-        }
-        else
-        {
-            // Erase a single input.
-            for (int outputIndex = 0; outputIndex < (int)mLinks.size(); outputIndex++)
-            {
-                if (mLinks[outputIndex] == input)
-                {
-                    mLinks.erase(mLinks.begin() + outputIndex);
-
-                    // Now remove this output from the input's list.
-                    for (int inputIndex = 0; inputIndex < (int)input->mLinks.size(); outputIndex++)
-                    {
-                        if (input->mLinks[inputIndex] == this)
-                        {
-                            input->mLinks.erase(input->mLinks.begin() + inputIndex);
-                            break;
-                        }
-                    }
-                    break;
-                }
-            }
-        }
-    }
+         }
+      }
+   }
 }

@@ -30,50 +30,56 @@
 
 namespace dtDirector
 {
-    ///////////////////////////////////////////////////////////////////////////////////////
-    ValueNode::ValueNode()
-        : Node()
-    {
-    }
+   ///////////////////////////////////////////////////////////////////////////////////////
+   ValueNode::ValueNode()
+       : Node()
+   {
+   }
 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    ValueNode::~ValueNode()
-    {
-        Disconnect();
-    }
+   ///////////////////////////////////////////////////////////////////////////////////////
+   ValueNode::~ValueNode()
+   {
+      Disconnect();
+   }
 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    void ValueNode::Init(const NodeType& nodeType)
-    {
-        Node::Init(nodeType);
-    }
+   ///////////////////////////////////////////////////////////////////////////////////////
+   void ValueNode::Init(const NodeType& nodeType)
+   {
+      Node::Init(nodeType);
+   }
 
-    ////////////////////////////////////////////////////////////////////////////////
-    void ValueNode::BuildPropertyMap()
-    {
-        Node::BuildPropertyMap();
-    }
+   ////////////////////////////////////////////////////////////////////////////////
+   void ValueNode::BuildPropertyMap()
+   {
+      Node::BuildPropertyMap();
 
-    //////////////////////////////////////////////////////////////////////////
-    bool ValueNode::Connect(ValueLink* valueLink)
-    {
-        if (valueLink) return valueLink->Connect(this);
-        return false;
-    }
+      AddProperty(new dtDAL::StringActorProperty(
+         "Name", "Name",
+         dtDAL::StringActorProperty::SetFuncType(this, &ValueNode::SetName),
+         dtDAL::StringActorProperty::GetFuncType(this, &ValueNode::GetName),
+         "The variables name.", "Data"));
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    void ValueNode::Disconnect(ValueLink* valueLink)
-    {
-        if (!valueLink)
-        {
-            while (!mLinks.empty())
-            {
-                mLinks[0]->Disconnect(this);
-            }
-        }
-        else
-        {
-            valueLink->Disconnect(this);
-        }
-    }
+   //////////////////////////////////////////////////////////////////////////
+   bool ValueNode::Connect(ValueLink* valueLink)
+   {
+      if (valueLink) return valueLink->Connect(this);
+      return false;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ValueNode::Disconnect(ValueLink* valueLink)
+   {
+      if (!valueLink)
+      {
+         while (!mLinks.empty())
+         {
+            mLinks[0]->Disconnect(this);
+         }
+      }
+      else
+      {
+         valueLink->Disconnect(this);
+      }
+   }
 }

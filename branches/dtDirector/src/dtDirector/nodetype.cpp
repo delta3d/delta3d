@@ -23,15 +23,14 @@
 
 namespace dtDirector
 {
-
    //////////////////////////////////////////////////////////////////////////
    NodeType::NodeType(const std::string& name,
-                        const std::string& category,
-                        const std::string& folder,
-                        const std::string& desc,
-                        const NodeType* parentType)
-    : ObjectType(name, category, desc, parentType)
-    , mFolder(folder)
+                     const std::string& category,
+                     const std::string& folder,
+                     const std::string& desc,
+                     const NodeType* parentType)
+      : ObjectType(name, category, desc, parentType)
+      , mFolder(folder)
    {
    }
 
@@ -44,13 +43,13 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    const std::string& NodeType::GetFolder()
    {
-       return mFolder;
+      return mFolder;
    }
 
    //////////////////////////////////////////////////////////////////////////
    void NodeType::SetFolder(const std::string& folder)
    {
-       mFolder = folder;
+      mFolder = folder;
    }
 
    //////////////////////////////////////////////////////////////////////////

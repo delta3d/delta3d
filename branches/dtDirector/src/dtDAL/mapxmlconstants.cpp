@@ -57,8 +57,11 @@ namespace dtDAL
    XMLCh* MapXMLConstants::PREFAB_ELEMENT = NULL;
    XMLCh* MapXMLConstants::PREFAB_NAMESPACE = NULL;
 
+   XMLCh* MapXMLConstants::DIRECTOR_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::DIRECTOR_NAMESPACE = NULL;
+
    XMLCh* MapXMLConstants::HEADER_ELEMENT = NULL;
-   XMLCh* MapXMLConstants::MAP_NAME_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::NAME_ELEMENT = NULL;
    XMLCh* MapXMLConstants::DESCRIPTION_ELEMENT = NULL;
    XMLCh* MapXMLConstants::AUTHOR_ELEMENT = NULL;
    XMLCh* MapXMLConstants::COMMENT_ELEMENT = NULL;
@@ -79,6 +82,22 @@ namespace dtDAL
    XMLCh* MapXMLConstants::EVENT_ID_ELEMENT = NULL;
    XMLCh* MapXMLConstants::EVENT_NAME_ELEMENT = NULL;
    XMLCh* MapXMLConstants::EVENT_DESCRIPTION_ELEMENT = NULL;
+
+   XMLCh* MapXMLConstants::DIRECTOR_EVENT_NODES_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::DIRECTOR_ACTION_NODES_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::DIRECTOR_VALUE_NODES_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::DIRECTOR_NODE_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::CATEGORY_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::ID_ELEMENT = NULL;
+
+   XMLCh* MapXMLConstants::DIRECTOR_LINKS_INPUT_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::DIRECTOR_LINKS_OUTPUT_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::DIRECTOR_LINKS_VALUE_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::DIRECTOR_LINK_ELEMENT = NULL;
+
+   XMLCh* MapXMLConstants::DIRECTOR_LINK_VALUE_IS_OUT_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::DIRECTOR_LINK_VALUE_ALLOW_MULTIPLE_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::DIRECTOR_LINK_VALUE_TYPE_CHECK_ELEMENT = NULL;
 
    XMLCh* MapXMLConstants::ACTORS_ELEMENT = NULL;
    XMLCh* MapXMLConstants::ACTOR_ELEMENT = NULL;
@@ -158,8 +177,11 @@ namespace dtDAL
       PREFAB_ELEMENT = xercesc::XMLString::transcode("prefab");
       PREFAB_NAMESPACE = xercesc::XMLString::transcode("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"delta3dMap\" xsi:schemaLocation=\"delta3dMap map.xsd\"");
 
+      DIRECTOR_ELEMENT = xercesc::XMLString::transcode("director");
+      DIRECTOR_NAMESPACE = xercesc::XMLString::transcode("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"delta3dDirector\" xsi:schemaLocation=\"delta3dDirector director.xsd\"");
+
       HEADER_ELEMENT = xercesc::XMLString::transcode("header");
-      MAP_NAME_ELEMENT = xercesc::XMLString::transcode("name");
+      NAME_ELEMENT = xercesc::XMLString::transcode("name");
       DESCRIPTION_ELEMENT = xercesc::XMLString::transcode("description");
       AUTHOR_ELEMENT = xercesc::XMLString::transcode("author");
       COMMENT_ELEMENT = xercesc::XMLString::transcode("comment");
@@ -180,6 +202,22 @@ namespace dtDAL
       EVENT_ID_ELEMENT = xercesc::XMLString::transcode("id");
       EVENT_NAME_ELEMENT = xercesc::XMLString::transcode("name");
       EVENT_DESCRIPTION_ELEMENT = xercesc::XMLString::transcode("description");
+
+      DIRECTOR_EVENT_NODES_ELEMENT = xercesc::XMLString::transcode("eventnodes");
+      DIRECTOR_ACTION_NODES_ELEMENT = xercesc::XMLString::transcode("actionnodes");
+      DIRECTOR_VALUE_NODES_ELEMENT = xercesc::XMLString::transcode("valuenodes");
+      DIRECTOR_NODE_ELEMENT = xercesc::XMLString::transcode("node");
+      CATEGORY_ELEMENT = xercesc::XMLString::transcode("category");
+      ID_ELEMENT = xercesc::XMLString::transcode("id");
+
+      DIRECTOR_LINKS_INPUT_ELEMENT = xercesc::XMLString::transcode("inputlink");
+      DIRECTOR_LINKS_OUTPUT_ELEMENT = xercesc::XMLString::transcode("outputlink");
+      DIRECTOR_LINKS_VALUE_ELEMENT = xercesc::XMLString::transcode("valuelink");
+      DIRECTOR_LINK_ELEMENT = xercesc::XMLString::transcode("link");
+
+      DIRECTOR_LINK_VALUE_IS_OUT_ELEMENT = xercesc::XMLString::transcode("isout");
+      DIRECTOR_LINK_VALUE_ALLOW_MULTIPLE_ELEMENT = xercesc::XMLString::transcode("allowmultiple");
+      DIRECTOR_LINK_VALUE_TYPE_CHECK_ELEMENT = xercesc::XMLString::transcode("typecheck");
 
       ACTORS_ELEMENT = xercesc::XMLString::transcode("actors");
       ACTOR_ELEMENT = xercesc::XMLString::transcode("actor");
@@ -260,8 +298,11 @@ namespace dtDAL
       xercesc::XMLString::release(&PREFAB_ELEMENT);
       xercesc::XMLString::release(&PREFAB_NAMESPACE);
 
+      xercesc::XMLString::release(&DIRECTOR_ELEMENT);
+      xercesc::XMLString::release(&DIRECTOR_NAMESPACE);
+
       xercesc::XMLString::release(&HEADER_ELEMENT);
-      xercesc::XMLString::release(&MAP_NAME_ELEMENT);
+      xercesc::XMLString::release(&NAME_ELEMENT);
       xercesc::XMLString::release(&DESCRIPTION_ELEMENT);
       xercesc::XMLString::release(&AUTHOR_ELEMENT);
       xercesc::XMLString::release(&COMMENT_ELEMENT);
@@ -281,6 +322,22 @@ namespace dtDAL
       xercesc::XMLString::release(&EVENT_ID_ELEMENT);
       xercesc::XMLString::release(&EVENT_NAME_ELEMENT);
       xercesc::XMLString::release(&EVENT_DESCRIPTION_ELEMENT);
+
+      xercesc::XMLString::release(&DIRECTOR_EVENT_NODES_ELEMENT);
+      xercesc::XMLString::release(&DIRECTOR_ACTION_NODES_ELEMENT);
+      xercesc::XMLString::release(&DIRECTOR_VALUE_NODES_ELEMENT);
+      xercesc::XMLString::release(&DIRECTOR_NODE_ELEMENT);
+      xercesc::XMLString::release(&CATEGORY_ELEMENT);
+      xercesc::XMLString::release(&ID_ELEMENT);
+
+      xercesc::XMLString::release(&DIRECTOR_LINKS_INPUT_ELEMENT);
+      xercesc::XMLString::release(&DIRECTOR_LINKS_OUTPUT_ELEMENT);
+      xercesc::XMLString::release(&DIRECTOR_LINKS_VALUE_ELEMENT);
+      xercesc::XMLString::release(&DIRECTOR_LINK_ELEMENT);
+
+      xercesc::XMLString::release(&DIRECTOR_LINK_VALUE_IS_OUT_ELEMENT);
+      xercesc::XMLString::release(&DIRECTOR_LINK_VALUE_ALLOW_MULTIPLE_ELEMENT);
+      xercesc::XMLString::release(&DIRECTOR_LINK_VALUE_TYPE_CHECK_ELEMENT);
 
       xercesc::XMLString::release(&ACTORS_ELEMENT);
       xercesc::XMLString::release(&ACTOR_ELEMENT);

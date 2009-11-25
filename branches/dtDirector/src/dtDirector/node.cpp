@@ -30,136 +30,139 @@
 
 namespace dtDirector
 {
-    ///////////////////////////////////////////////////////////////////////////////////////
-    Node::Node()
-    {
-    }
+   ///////////////////////////////////////////////////////////////////////////////////////
+   Node::Node()
+      : mDisabled(false)
+   {
+   }
 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    Node::Node(const Node& rhs)
-    {
-    }
+   ///////////////////////////////////////////////////////////////////////////////////////
+   Node::Node(const Node& rhs)
+   {
+   }
 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    Node::~Node()
-    {
-    }
+   ///////////////////////////////////////////////////////////////////////////////////////
+   Node::~Node()
+   {
+   }
 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    Node& Node::operator=(const Node& rhs)
-    {
+   ///////////////////////////////////////////////////////////////////////////////////////
+   Node& Node::operator=(const Node& rhs)
+   {
       return *this;
-    }
+   }
 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    void Node::Init(const NodeType& nodeType)
-    {
-        SetType(nodeType);
-        BuildPropertyMap();
-    }
+   ///////////////////////////////////////////////////////////////////////////////////////
+   void Node::Init(const NodeType& nodeType)
+   {
+      SetType(nodeType);
+      BuildPropertyMap();
+   }
 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    dtCore::RefPtr<Node> Node::Clone()
-    {
-        std::ostringstream error;
+   ///////////////////////////////////////////////////////////////////////////////////////
+   dtCore::RefPtr<Node> Node::Clone()
+   {
+      std::ostringstream error;
 
-        // First tell the node manager to create a new node using this
-        // nodes type.
-        dtCore::RefPtr<Node> copy;
+      // First tell the node manager to create a new node using this
+      // nodes type.
+      dtCore::RefPtr<Node> copy;
 
-        try
-        {
-            copy = NodeManager::GetInstance().CreateNode(*mType).get();
-        }
-        catch(const dtUtil::Exception &e)
-        {
-            error << "Clone of Commander Node: " << mType->GetName() << " failed. Reason was: " << e.What();
-            LOG_ERROR(error.str());
-            return NULL;
-        }
+      try
+      {
+         copy = NodeManager::GetInstance().CreateNode(*mType).get();
+      }
+      catch(const dtUtil::Exception &e)
+      {
+         error << "Clone of Commander Node: " << mType->GetName() << " failed. Reason was: " << e.What();
+         LOG_ERROR(error.str());
+         return NULL;
+      }
 
-        copy->CopyPropertiesFrom(*this);
+      copy->CopyPropertiesFrom(*this);
 
-        return copy;
-    }
+      return copy;
+   }
 
-    ////////////////////////////////////////////////////////////////////////////////
-    void Node::BuildPropertyMap()
-    {
-        AddProperty(new dtDAL::StringActorProperty(
-            "Comment", "Name",
-            dtDAL::StringActorProperty::SetFuncType(this, &Node::SetComment),
-            dtDAL::StringActorProperty::GetFuncType(this, &Node::GetComment),
-            "Generic text field used to describe this node",
-            "Base"));
+   ////////////////////////////////////////////////////////////////////////////////
+   void Node::BuildPropertyMap()
+   {
+      AddProperty(new dtDAL::StringActorProperty(
+         "Comment", "Name",
+         dtDAL::StringActorProperty::SetFuncType(this, &Node::SetComment),
+         dtDAL::StringActorProperty::GetFuncType(this, &Node::GetComment),
+         "Generic text field used to describe this node",
+         "Base"));
 
-        AddProperty(new dtDAL::BooleanActorProperty(
-            "Disabled", "Disabled",
-            dtDAL::BooleanActorProperty::SetFuncType(this, &Node::SetDisabled),
-            dtDAL::BooleanActorProperty::GetFuncType(this, &Node::GetDisabled),
-            "Disables the node from running in the script.",
-            "Base"));
-    }
+      AddProperty(new dtDAL::BooleanActorProperty(
+         "Disabled", "Disabled",
+         dtDAL::BooleanActorProperty::SetFuncType(this, &Node::SetDisabled),
+         dtDAL::BooleanActorProperty::GetFuncType(this, &Node::GetDisabled),
+         "Disables the node from running in the script.",
+         "Base"));
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    void Node::Update(float simDelta, float delta)
-    {
-    }
+   //////////////////////////////////////////////////////////////////////////
+   void Node::Update(float simDelta, float delta)
+   {
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    const NodeType& Node::GetType()
-    {
-        return *mType;
-    }
+   //////////////////////////////////////////////////////////////////////////
+   const NodeType& Node::GetType()
+   {
+      return *mType;
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    void Node::SetType(const NodeType& type)
-    {
-        mType = &type;
-    }
+   //////////////////////////////////////////////////////////////////////////
+   void Node::SetType(const NodeType& type)
+   {
+      mType = &type;
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    const std::string& Node::GetComment() const
-    {
-        return mComment;
-    }
+   //////////////////////////////////////////////////////////////////////////
+   const std::string& Node::GetComment() const
+   {
+      return mComment;
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    void Node::SetComment(const std::string& comment)
-    {
-        mComment = comment;
-    }
+   //////////////////////////////////////////////////////////////////////////
+   void Node::SetComment(const std::string& comment)
+   {
+      mComment = comment;
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    bool Node::GetDisabled() const
-    {
-        return mDisabled;
-    }
+   //////////////////////////////////////////////////////////////////////////
+   bool Node::GetDisabled() const
+   {
+      return mDisabled;
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    void Node::SetDisabled(bool disabled)
-    {
-        mDisabled = disabled;
-    }
+   //////////////////////////////////////////////////////////////////////////
+   void Node::SetDisabled(bool disabled)
+   {
+      mDisabled = disabled;
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    int Node::GetPropertyCount(const std::string& name)
-    {
-        if (dtDAL::PropertyContainer::GetProperty(name))
-        {
-            return 1;
-        }
+   //////////////////////////////////////////////////////////////////////////
+   int Node::GetPropertyCount(const std::string& name)
+   {
+      if (dtDAL::PropertyContainer::GetProperty(name))
+      {
+         return 1;
+      }
 
-        return 0;
-    }
+      return 0;
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    dtDAL::ActorProperty* Node::GetProperty(const std::string& name, int index)
-    {
-        if (index == 0)
-        {
-            return dtDAL::PropertyContainer::GetProperty(name);
-        }
-        return NULL;
-    }
+   //////////////////////////////////////////////////////////////////////////
+   dtDAL::ActorProperty* Node::GetProperty(const std::string& name, int index)
+   {
+      if (index == 0)
+      {
+         return dtDAL::PropertyContainer::GetProperty(name);
+      }
+      return NULL;
+   }
 }
+
+//////////////////////////////////////////////////////////////////////////

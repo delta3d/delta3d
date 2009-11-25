@@ -36,57 +36,57 @@ namespace dtDirector
     *      the NodeManager. If they are not created in this fashion,
     *      the node types will not be set correctly.
     */
-    class NODE_LIBRARY_EXPORT IntValue : public ValueNode
-    {
-    public:
+   class NODE_LIBRARY_EXPORT IntValue : public ValueNode
+   {
+   public:
 
-        /**
-         * Constructs the Node.
-         */
-        IntValue();
+      /**
+       * Constructs the Node.
+       */
+      IntValue();
 
-        /**
-         *	Protected Destructor.  dtCore::RefPtr will handle its destruction.
-         */
-        virtual ~IntValue();
+      /**
+       *	Protected Destructor.  dtCore::RefPtr will handle its destruction.
+       */
+      virtual ~IntValue();
 
-        /**
-         * Initializes the Node.
-         *
-         * @param[in]  nodeType  The node type.
-         */
-        virtual void Init(const NodeType& nodeType);
+      /**
+       * Initializes the Node.
+       *
+       * @param[in]  nodeType  The node type.
+       */
+      virtual void Init(const NodeType& nodeType);
 
-        /**
-         * This method is called in init, which instructs the node
-         * to create its properties.  Methods implementing this should
-         * be sure to call their parent class's buildPropertyMap method to
-         * ensure all properties in the proxy inheritance hierarchy are
-         * correctly added to the property map.
-         *
-         * @see GetDeprecatedProperty to handle old properties that need
-         *       to be removed.
-         */
-        virtual void BuildPropertyMap();
+      /**
+       * This method is called in init, which instructs the node
+       * to create its properties.  Methods implementing this should
+       * be sure to call their parent class's buildPropertyMap method to
+       * ensure all properties in the proxy inheritance hierarchy are
+       * correctly added to the property map.
+       *
+       * @see GetDeprecatedProperty to handle old properties that need
+       *       to be removed.
+       */
+      virtual void BuildPropertyMap();
 
 
-      private:
+   private:
 
-          /**
-           * Sets the value.
-           *
-           * @param[in]  value  The value.
-           */
-          void SetValue(int value);
+      /**
+       * Sets the value.
+       *
+       * @param[in]  value  The value.
+       */
+      void SetValue(int value);
 
-          /**
-           * Retrieves the value.
-           *
-           * @return  The value.
-           */
-          int GetValue();
+      /**
+       * Retrieves the value.
+       *
+       * @return  The value.
+       */
+      int GetValue();
 
-          int mValue;
+      int mValue;
    };
 }
 

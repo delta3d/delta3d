@@ -56,8 +56,11 @@ namespace dtDAL
          static XMLCh* PREFAB_ELEMENT;
          static XMLCh* PREFAB_NAMESPACE;
 
+         static XMLCh* DIRECTOR_ELEMENT;
+         static XMLCh* DIRECTOR_NAMESPACE;
+
          static XMLCh* HEADER_ELEMENT;
-         static XMLCh* MAP_NAME_ELEMENT;
+         static XMLCh* NAME_ELEMENT;
          static XMLCh* DESCRIPTION_ELEMENT;
          static XMLCh* AUTHOR_ELEMENT;
          static XMLCh* COMMENT_ELEMENT;
@@ -78,6 +81,22 @@ namespace dtDAL
          static XMLCh* EVENT_ID_ELEMENT;
          static XMLCh* EVENT_NAME_ELEMENT;
          static XMLCh* EVENT_DESCRIPTION_ELEMENT;
+
+         static XMLCh* DIRECTOR_EVENT_NODES_ELEMENT;
+         static XMLCh* DIRECTOR_ACTION_NODES_ELEMENT;
+         static XMLCh* DIRECTOR_VALUE_NODES_ELEMENT;
+         static XMLCh* DIRECTOR_NODE_ELEMENT;
+         static XMLCh* CATEGORY_ELEMENT;
+         static XMLCh* ID_ELEMENT;
+
+         static XMLCh* DIRECTOR_LINKS_INPUT_ELEMENT;
+         static XMLCh* DIRECTOR_LINKS_OUTPUT_ELEMENT;
+         static XMLCh* DIRECTOR_LINKS_VALUE_ELEMENT;
+         static XMLCh* DIRECTOR_LINK_ELEMENT;
+         
+         static XMLCh* DIRECTOR_LINK_VALUE_IS_OUT_ELEMENT;
+         static XMLCh* DIRECTOR_LINK_VALUE_ALLOW_MULTIPLE_ELEMENT;
+         static XMLCh* DIRECTOR_LINK_VALUE_TYPE_CHECK_ELEMENT;
 
          static XMLCh* ACTORS_ELEMENT;
          static XMLCh* ACTOR_ELEMENT;

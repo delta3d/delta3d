@@ -30,66 +30,66 @@
 
 namespace dtDirector
 {
+   ///////////////////////////////////////////////////////////////////////////////////////
+   InputLink::InputLink(Node* owner, const std::string& name)
+      : mOwner(owner)
+      , mActivated(false)
+   {
+      SetName(name);
+   }
 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    InputLink::InputLink(const std::string& name)
-        : mActivated(false)
-    {
-        SetName(name);
-    }
+   ///////////////////////////////////////////////////////////////////////////////////////
+   InputLink::~InputLink()
+   {
+      // Disconnect this link from all outputs.
+      Disconnect();
+   }
 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    InputLink::~InputLink()
-    {
-        // Disconnect this link from all outputs.
-        Disconnect();
-    }
+   //////////////////////////////////////////////////////////////////////////
+   void InputLink::SetName(const std::string& name)
+   {
+      mName = name;
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    void InputLink::SetName(const std::string& name)
-    {
-        mName = name;
-    }
+   //////////////////////////////////////////////////////////////////////////
+   const std::string& InputLink::GetName() const
+   {
+      return mName;
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    const std::string& InputLink::GetName() const
-    {
-        return mName;
-    }
+   //////////////////////////////////////////////////////////////////////////
+   void InputLink::Activate()
+   {
+      mActivated = true;
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    void InputLink::Activate()
-    {
-        mActivated = true;
-    }
+   //////////////////////////////////////////////////////////////////////////
+   void InputLink::Connect(OutputLink* output)
+   {
+      if (output) output->Connect(this);
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    void InputLink::Connect(OutputLink* output)
-    {
-        if (output) output->Connect(this);
-    }
+   //////////////////////////////////////////////////////////////////////////
+   void InputLink::Disconnect(OutputLink* output)
+   {
+      if (!output)
+      {
+         while (!mLinks.empty())
+         {
+            mLinks[0]->Disconnect(this);
+         }
+      }
+      else
+      {
+         output->Disconnect(this);
+      }
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    void InputLink::Disconnect(OutputLink* output)
-    {
-        if (!output)
-        {
-            while (!mLinks.empty())
-            {
-                mLinks[0]->Disconnect(this);
-            }
-        }
-        else
-        {
-            output->Disconnect(this);
-        }
-    }
-
-    //////////////////////////////////////////////////////////////////////////
-    bool InputLink::Test()
-    {
-        bool bActive = mActivated;
-        mActivated = false;
-        return bActive;
-    }
+   //////////////////////////////////////////////////////////////////////////
+   bool InputLink::Test()
+   {
+      bool bActive = mActivated;
+      mActivated = false;
+      return bActive;
+   }
 }

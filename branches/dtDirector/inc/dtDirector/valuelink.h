@@ -27,108 +27,170 @@
 #include <vector>
 
 #include <dtDirector/export.h>
-#include <dtDirector/valuenode.h>
 
-#include <dtDAL/enginepropertytypes.h>
+#include <dtCore/refptr.h>
+
+
+namespace dtDAL
+{
+   class ActorProperty;
+}
 
 namespace dtDirector
 {
-    /**
-     * This is the base class for all input links.
-     *
-     * @note
-     *      Node objects must be created through the NodePluginRegistry or
-     *      the NodeManager. If they are not created in this fashion,
-     *      the node types will not be set correctly.
-     */
-    class DT_DIRECTOR_EXPORT ValueLink
-    {
-    public:
+   class Node;
+   class ValueNode;
 
-        /**
-         * Constructs the link.
-         *
-         * @param[in]  owner          The owning node of this link.
-         * @param[in]  prop           The default property.
-         * @param[in]  isOut          True if this link will output a value.
-         * @param[in]  allowMultiple  True to allow connection with multiple value nodes.
-         * @param[in]  typeCheck      If true, editor will not allow linking
-         *                             between this and a value not of
-         *                             the same type.
-         */
-        ValueLink(Node* owner, dtDAL::ActorProperty* prop, bool isOut = false, bool allowMultiple = false, bool typeCheck = true);
+   /**
+    * This is the base class for all input links.
+    *
+    * @note
+    *      Node objects must be created through the NodePluginRegistry or
+    *      the NodeManager. If they are not created in this fashion,
+    *      the node types will not be set correctly.
+    */
+   class DT_DIRECTOR_EXPORT ValueLink
+   {
+   public:
 
-        /**
-         * Destructor.
-         */
-        virtual ~ValueLink();
+      /**
+       * Constructs the link.
+       *
+       * @param[in]  owner          The owning node of this link.
+       * @param[in]  prop           The default property.
+       * @param[in]  isOut          True if this link will output a value.
+       * @param[in]  allowMultiple  True to allow connection with multiple value nodes.
+       * @param[in]  typeCheck      If true, editor will not allow linking
+       *                             between this and a value not of
+       *                             the same type.
+       */
+      ValueLink(Node* owner, dtDAL::ActorProperty* prop, bool isOut = false, bool allowMultiple = false, bool typeCheck = true);
 
-        /**
-         * Retrieves the property.
-         *
-         * @param[in]  index  The value index.
-         *
-         * @return     The property.
-         */
-        dtDAL::ActorProperty* GetProperty(int index = 0);
+      /**
+       * Destructor.
+       */
+      virtual ~ValueLink();
 
-        /**
-         * Retrieves the default property.
-         *
-         * @return  The default property.
-         */
-        dtDAL::ActorProperty* GetDefaultProperty();
+      /**
+       * Retrieves the owner of the link.
+       *
+       * @return  The owner.
+       */
+      Node* GetOwner() {return mOwner;}
 
-        /**
-         * Retrieves the total number of values connected.
-         *
-         * @return  The property count.
-         */
-        int GetPropertyCount();
+      /**
+       * Retrieves the property.
+       *
+       * @param[in]  index  The value index.
+       *
+       * @return     The property.
+       */
+      dtDAL::ActorProperty* GetProperty(int index = 0);
 
-        /**
-         * Retrieves the name of the link.
-         *
-         * @return  The name of the link.
-         */
-        std::string GetName() const;
+      /**
+       * Retrieves the default property.
+       *
+       * @return  The default property.
+       */
+      dtDAL::ActorProperty* GetDefaultProperty();
 
-        /**
-         * Retrieves whether this link is an output link.
-         *
-         * @return  True if this is an out link.
-         */
-        bool IsOutLink() {return mIsOut;}
+      /**
+       * Sets the default property.
+       *
+       * @param[in]  prop  The default property.
+       */
+      void SetDefaultProperty(dtDAL::ActorProperty* prop);
 
-        /**
-         * Connects this link to a specified value node.
-         *
-         * @param[in]  valueNode  The value node to connect to.
-         *
-         * @return     True if the connection was made.  Connection
-         *              can fail based on type checking.
-         */
-        bool Connect(ValueNode* valueNode);
+      /**
+       * Retrieves the total number of values connected.
+       *
+       * @return  The property count.
+       */
+      int GetPropertyCount();
 
-        /**
-         * Disconnects this link from a specified value node.
-         *
-         * @param[in]  valueNode  The value node to disconnect from.
-         *                         NULL to disconnect all.
-         */
-        void Disconnect(ValueNode* valueNode = NULL);
+      /**
+       * Retrieves the name of the link.
+       *
+       * @return  The name of the link.
+       */
+      std::string GetName() const;
 
-    private:
+      /**
+       * Retrieves whether this link is an output link.
+       *
+       * @return  True if this is an out link.
+       */
+      bool IsOutLink() {return mIsOut;}
 
-        dtCore::RefPtr<Node>  mOwner;
+      /**
+       * Sets whether this link is an output link.
+       *
+       * @param[in]  isOut  True if this is an output link.
+       */
+      void SetOutLink(bool isOut) {mIsOut = isOut;}
 
-        std::vector<dtCore::RefPtr<ValueNode> > mLinks;
-        dtDAL::ActorProperty*  mDefaultProperty;
+      /**
+       * Retrieves whether this link can connect to multiple values.
+       *
+       * @return  True if this can multiple connect.
+       */
+      bool AllowMultiple() {return mAllowMultiple;}
 
-        bool mIsOut;
-        bool mAllowMultiple;
-        bool mTypeCheck;
-   };
+      /**
+       * Sets whether this link can connect to multiple values.
+       *
+       * @param[in]  allowMultiple  True to allow multiple connections.
+       */
+      void SetAllowMultiple(bool allowMultiple) {mAllowMultiple = allowMultiple;}
+
+      /**
+       * Retrieves whether this link will perform a type check.
+       *
+       * @return  True if this link performs type checking.
+       */
+      bool IsTypeChecking() {return mTypeCheck;}
+
+      /**
+       * Sets whether this link will perform type checking.
+       *
+       * @param[in]  typeCheck  True to type check.
+       */
+      void SetTypeChecking(bool typeCheck) {mTypeCheck = typeCheck;}
+
+      /**
+       * Connects this link to a specified value node.
+       *
+       * @param[in]  valueNode  The value node to connect to.
+       *
+       * @return     True if the connection was made.  Connection
+       *              can fail based on type checking.
+       */
+      bool Connect(ValueNode* valueNode);
+
+      /**
+       * Disconnects this link from a specified value node.
+       *
+       * @param[in]  valueNode  The value node to disconnect from.
+       *                         NULL to disconnect all.
+       */
+      void Disconnect(ValueNode* valueNode = NULL);
+
+      /**
+       * Retrieves the list of links.
+       */
+      std::vector<ValueNode*>& GetLinks() {return mLinks;}
+
+   private:
+
+      Node* mOwner;
+
+      std::vector<ValueNode*> mLinks;
+      dtDAL::ActorProperty* mDefaultProperty;
+
+      bool mIsOut;
+      bool mAllowMultiple;
+      bool mTypeCheck;
+  };
 }
 
 #endif

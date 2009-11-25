@@ -29,108 +29,110 @@
 
 namespace dtDirector
 {
+   ///////////////////////////////////////////////////////////////////////////////////////
+   ActionNode::ActionNode()
+       : Node()
+       , mActive(false)
+   {
+   }
 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    ActionNode::ActionNode()
-        : Node()
-        , mActive(false)
-    {
-    }
+   ///////////////////////////////////////////////////////////////////////////////////////
+   ActionNode::~ActionNode()
+   {
+   }
 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    ActionNode::~ActionNode()
-    {
-    }
+   ///////////////////////////////////////////////////////////////////////////////////////
+   void ActionNode::Init(const NodeType& nodeType)
+   {
+      Node::Init(nodeType);
 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    void ActionNode::Init(const NodeType& nodeType)
-    {
-        Node::Init(nodeType);
+      // By default, Action nodes have one input and one output.
+      mInputs.clear();
+      mInputs.push_back(InputLink(this, "In"));
 
-        // By default, Action nodes have one input and one output.
-        mInputs.clear();
-        mInputs.push_back(InputLink("In"));
+      mOutputs.clear();
+      mOutputs.push_back(OutputLink(this, "Out"));
+   }
 
-        mOutputs.clear();
-        mOutputs.push_back(OutputLink("Out"));
-    }
+   ////////////////////////////////////////////////////////////////////////////////
+   void ActionNode::BuildPropertyMap()
+   {
+      Node::BuildPropertyMap();
+   }
 
-    ////////////////////////////////////////////////////////////////////////////////
-    void ActionNode::BuildPropertyMap()
-    {
-        Node::BuildPropertyMap();
-    }
+   //////////////////////////////////////////////////////////////////////////
+   void ActionNode::Update(float simDelta, float delta)
+   {
+      Node::Update(simDelta, delta);
 
-    //////////////////////////////////////////////////////////////////////////
-    void ActionNode::Update(float simDelta, float delta)
-    {
-        Node::Update(simDelta, delta);
+      // Skip the udpate if this node is disabled.
+      if (GetDisabled()) return;
 
-        // If this node is active, perform an active update.
-        if (mActive)
-        {
-            mActive = ActiveUpdate(simDelta, delta);
-        }
+      // If this node is active, perform an active update.
+      if (mActive)
+      {
+         mActive = ActiveUpdate(simDelta, delta);
+      }
 
-        // Test all inputs for activation.
-        for (int inputIndex = 0; inputIndex < (int)mInputs.size(); inputIndex++)
-        {
-            if (mInputs[inputIndex].Test())
-            {
-                OnInputActivated(inputIndex);
-                mActive = true;
-            }
-        }
-    }
+      // Test all inputs for activation.
+      for (int inputIndex = 0; inputIndex < (int)mInputs.size(); inputIndex++)
+      {
+         if (mInputs[inputIndex].Test())
+         {
+            OnInputActivated(inputIndex);
+            mActive = true;
+         }
+      }
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    bool ActionNode::ActiveUpdate(float simDelta, float delta)
-    {
-        return false;
-    }
+   //////////////////////////////////////////////////////////////////////////
+   bool ActionNode::ActiveUpdate(float simDelta, float delta)
+   {
+      return false;
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    void ActionNode::OnInputActivated(int inputIndex)
-    {
-        if (mOutputs.size() > 0)
-        {
-            mOutputs[0].Activate();
-        }
-    }
+   //////////////////////////////////////////////////////////////////////////
+   void ActionNode::OnInputActivated(int inputIndex)
+   {
+      if (mOutputs.size() > 0)
+      {
+         mOutputs[0].Activate();
+      }
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    int ActionNode::GetPropertyCount(const std::string& name)
-    {
-        // First iterate through all value links to see if this property
-        // is redirected.
-        for (int valueIndex = 0; valueIndex < (int)mValues.size(); valueIndex++)
-        {
-            dtDAL::ActorProperty* prop = mValues[valueIndex].GetDefaultProperty();
-            if (prop && prop->GetName() == name)
-            {
-                return mValues[valueIndex].GetPropertyCount();
-            }
-        }
+   //////////////////////////////////////////////////////////////////////////
+   int ActionNode::GetPropertyCount(const std::string& name)
+   {
+      // First iterate through all value links to see if this property
+      // is redirected.
+      for (int valueIndex = 0; valueIndex < (int)mValues.size(); valueIndex++)
+      {
+         dtDAL::ActorProperty* prop = mValues[valueIndex].GetDefaultProperty();
+         if (prop && prop->GetName() == name)
+         {
+            return mValues[valueIndex].GetPropertyCount();
+         }
+      }
 
-        // Did not find any overrides, so return the default.
-        return Node::GetPropertyCount(name);
-    }
+      // Did not find any overrides, so return the default.
+      return Node::GetPropertyCount(name);
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    dtDAL::ActorProperty* ActionNode::GetProperty(const std::string& name, int index)
-    {
-        // First iterate through all value links to see if this property
-        // is redirected.
-        for (int valueIndex = 0; valueIndex < (int)mValues.size(); valueIndex++)
-        {
-            dtDAL::ActorProperty* prop = mValues[valueIndex].GetDefaultProperty();
-            if (prop && prop->GetName() == name)
-            {
-                return mValues[valueIndex].GetProperty(index);
-            }
-        }
+   //////////////////////////////////////////////////////////////////////////
+   dtDAL::ActorProperty* ActionNode::GetProperty(const std::string& name, int index)
+   {
+      // First iterate through all value links to see if this property
+      // is redirected.
+      for (int valueIndex = 0; valueIndex < (int)mValues.size(); valueIndex++)
+      {
+         dtDAL::ActorProperty* prop = mValues[valueIndex].GetDefaultProperty();
+         if (prop && prop->GetName() == name)
+         {
+            return mValues[valueIndex].GetProperty(index);
+         }
+      }
 
-        // Did not find any overrides, so return the default.
-        return Node::GetProperty(name, index);
-    }
+      // Did not find any overrides, so return the default.
+      return Node::GetProperty(name, index);
+   }
 }

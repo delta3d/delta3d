@@ -29,47 +29,47 @@
 
 namespace dtDirector
 {
-    ///////////////////////////////////////////////////////////////////////////////////////
-    IntValue::IntValue()
-        : ValueNode()
-        , mValue(0)
-    {
-    }
+   ///////////////////////////////////////////////////////////////////////////////////////
+   IntValue::IntValue()
+       : ValueNode()
+       , mValue(0)
+   {
+   }
 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    IntValue::~IntValue()
-    {
-    }
+   ///////////////////////////////////////////////////////////////////////////////////////
+   IntValue::~IntValue()
+   {
+   }
 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    void IntValue::Init(const NodeType& nodeType)
-    {
-        Node::Init(nodeType);
-    }
+   ///////////////////////////////////////////////////////////////////////////////////////
+   void IntValue::Init(const NodeType& nodeType)
+   {
+      Node::Init(nodeType);
+   }
 
-    ////////////////////////////////////////////////////////////////////////////////
-    void IntValue::BuildPropertyMap()
-    {
-        Node::BuildPropertyMap();
+   ////////////////////////////////////////////////////////////////////////////////
+   void IntValue::BuildPropertyMap()
+   {
+      Node::BuildPropertyMap();
 
-        mProperty = new dtDAL::IntActorProperty(
-            "Value", "Value",
-            dtDAL::IntActorProperty::SetFuncType(this, &IntValue::SetValue),
-            dtDAL::IntActorProperty::GetFuncType(this, &IntValue::GetValue),
-            "The value.", "Data");
+      mProperty = new dtDAL::IntActorProperty(
+         "Value", "Value",
+         dtDAL::IntActorProperty::SetFuncType(this, &IntValue::SetValue),
+         dtDAL::IntActorProperty::GetFuncType(this, &IntValue::GetValue),
+         "The value.", "Data");
 
-        AddProperty(mProperty);
-    }
+      AddProperty(mProperty);
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    void IntValue::SetValue(int value)
-    {
-        mValue = value;
-    }
+   //////////////////////////////////////////////////////////////////////////
+   void IntValue::SetValue(int value)
+   {
+      mValue = value;
+   }
 
-    //////////////////////////////////////////////////////////////////////////
-    int IntValue::GetValue()
-    {
-        return mValue;
-    }
+   //////////////////////////////////////////////////////////////////////////
+   int IntValue::GetValue()
+   {
+      return mValue;
+   }
 }
