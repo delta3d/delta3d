@@ -24,6 +24,7 @@
 #include <dtNetGM/serverconnectionlistener.h>
 #include <dtNetGM/machineinfomessage.h>
 #include <dtGame/basemessages.h>
+#include <dtCore/timer.h>
 
 namespace dtNetGM
 {
@@ -95,6 +96,13 @@ namespace dtNetGM
    void ServerNetworkComponent::OnListenFailure(const GNE::Error& error, const GNE::Address& from, const GNE::ConnectionListener::sptr& listener)
    {
       LOG_ERROR("onListenFailure");
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ServerNetworkComponent::Disconnect()
+   {
+      NetworkComponent::Disconnect();
+      dtNetGM::ServerConnectionListener::closeAllListeners();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
