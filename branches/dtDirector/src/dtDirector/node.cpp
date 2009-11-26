@@ -163,6 +163,51 @@ namespace dtDirector
       }
       return NULL;
    }
+
+   //////////////////////////////////////////////////////////////////////////
+   InputLink* Node::GetInputLink(const std::string& name)
+   {
+      int count = (int)mInputs.size();
+      for (int index = 0; index < count; index++)
+      {
+         if (mInputs[index].GetName() == name)
+         {
+            return &mInputs[index];
+         }
+      }
+
+      return NULL;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   OutputLink* Node::GetOutputLink(const std::string& name)
+   {
+      int count = (int)mOutputs.size();
+      for (int index = 0; index < count; index++)
+      {
+         if (mOutputs[index].GetName() == name)
+         {
+            return &mOutputs[index];
+         }
+      }
+
+      return NULL;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   ValueLink* Node::GetValueLink(const std::string& name)
+   {
+      int count = (int)mValues.size();
+      for (int index = 0; index < count; index++)
+      {
+         if (mValues[index].GetName() == name)
+         {
+            return &mValues[index];
+         }
+      }
+
+      return NULL;
+   }
 }
 
 //////////////////////////////////////////////////////////////////////////

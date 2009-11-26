@@ -270,17 +270,28 @@ namespace dtDirector
       /**
        * Retrieves the input list.
        */
-      std::vector<InputLink>& GetInputs() {return mInputs;}
+      std::vector<InputLink>& GetInputLinks() {return mInputs;}
 
       /**
        * Retrieves the output list.
        */
-      std::vector<OutputLink>& GetOutputs() {return mOutputs;}
+      std::vector<OutputLink>& GetOutputLinks() {return mOutputs;}
 
       /**
        * Retrieves the value list.
        */
-      std::vector<ValueLink>& GetValues() {return mValues;}
+      std::vector<ValueLink>& GetValueLinks() {return mValues;}
+
+      /**
+       * Retrieves a link of a given name.
+       *
+       * @param[in]  name  The name of the link to find.
+       *
+       * @return     A Pointer to the link, or NULL if not found.
+       */
+      InputLink* GetInputLink(const std::string& name);
+      OutputLink* GetOutputLink(const std::string& name);
+      ValueLink* GetValueLink(const std::string& name);
 
       /**
        * Allow access to the NodePluginRegistry.

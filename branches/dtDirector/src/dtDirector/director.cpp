@@ -34,6 +34,7 @@ namespace dtDirector
    Director::Director()
       : mModified(false)
    {
+      mLogger = &dtUtil::Log::GetInstance();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -46,45 +47,74 @@ namespace dtDirector
    {
       BuildPropertyMap();
 
-      dtDirector::NodeManager& nodeManager = dtDirector::NodeManager::GetInstance();
+      //dtDirector::NodeManager& nodeManager = dtDirector::NodeManager::GetInstance();
 
-      mEventNodes.push_back(dynamic_cast<dtDirector::EventNode*>(nodeManager.CreateNode("Named Event", "General").get()));
+      //mEventNodes.push_back(dynamic_cast<dtDirector::EventNode*>(nodeManager.CreateNode("Named Event", "General").get()));
 
-      mActionNodes.push_back(dynamic_cast<dtDirector::ActionNode*>(nodeManager.CreateNode("Binary Operation", "General").get()));
+      //mActionNodes.push_back(dynamic_cast<dtDirector::ActionNode*>(nodeManager.CreateNode("Binary Operation", "General").get()));
 
-      mValueNodes.push_back(dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Int", "General").get()));
-      mValueNodes.push_back(dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Int", "General").get()));
-      mValueNodes.push_back(dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Int", "General").get()));
-      mValueNodes.push_back(dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Int", "General").get()));
+      //mValueNodes.push_back(dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Int", "General").get()));
+      //mValueNodes.push_back(dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Int", "General").get()));
+      //mValueNodes.push_back(dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Int", "General").get()));
+      //mValueNodes.push_back(dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Int", "General").get()));
 
-      {
-         mValueNodes[0]->SetPropertyValue(10);
-         mValueNodes[1]->SetPropertyValue(15);
+      //{
+      //   mValueNodes[0]->SetPropertyValue(10);
+      //   mValueNodes[1]->SetPropertyValue(15);
 
-         // Connect all the nodes together.
-         mEventNodes[0]->GetOutputs()[0].Connect(&mActionNodes[0]->GetInputs()[2]);
+      //   // Connect all the nodes together.
+      //   mEventNodes[0]->GetOutputLinks()[0].Connect(&mActionNodes[0]->GetInputLinks()[2]);
 
-         mActionNodes[0]->GetValues()[0].Connect(mValueNodes[0].get());
-         mActionNodes[0]->GetValues()[1].Connect(mValueNodes[1].get());
-         mActionNodes[0]->GetValues()[2].Connect(mValueNodes[2].get());
-         mActionNodes[0]->GetValues()[2].Connect(mValueNodes[3].get());
+      //   mActionNodes[0]->GetValueLinks()[0].Connect(mValueNodes[0].get());
+      //   mActionNodes[0]->GetValueLinks()[1].Connect(mValueNodes[1].get());
+      //   mActionNodes[0]->GetValueLinks()[2].Connect(mValueNodes[2].get());
+      //   mActionNodes[0]->GetValueLinks()[2].Connect(mValueNodes[3].get());
 
-         // Trigger the event.
-         mEventNodes[0]->Trigger(0);
+      //   // Trigger the event.
+      //   mEventNodes[0]->Trigger(0);
 
-         Update(0, 0);
-         Update(0, 0);
-         Update(0, 0);
-         Update(0, 0);
+      //   Update(0, 0);
+      //   Update(0, 0);
+      //   Update(0, 0);
+      //   Update(0, 0);
 
-         int firstResult = mValueNodes[2]->GetPropertyValue<int>();
-         int secondResult = mValueNodes[3]->GetPropertyValue<int>();
-      }
+      //   int firstResult = mValueNodes[2]->GetPropertyValue<int>();
+      //   int secondResult = mValueNodes[3]->GetPropertyValue<int>();
+      //}
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool Director::LoadScript(const std::string& scriptFile)
+   bool Director::LoadScript(const std::string& scriptFile, dtDAL::Map* map)
    {
+      // First clear all our current nodes.
+      mEventNodes.clear();
+      mActionNodes.clear();
+      mValueNodes.clear();
+
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+      fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext());
+
+      DirectorParser* parser = new DirectorParser();
+      if (parser)
+      {
+         try
+         {
+            parser->Parse(this, map, "scripts/" + scriptFile + ".dtDir");
+         }
+         catch (const dtUtil::Exception& e)
+         {
+            std::string error = "Unable to parse " + scriptFile + " with error " + e.What();
+            mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, error.c_str());
+            fileUtils.PopDirectory();
+            throw e;
+         }
+
+         fileUtils.PopDirectory();
+         mModified = parser->HasDeprecatedProperty();
+         return true;
+      }
+
+      fileUtils.PopDirectory();
       return false;
    }
 
@@ -99,7 +129,7 @@ namespace dtDirector
 
          try
          {
-            writer->Save(*this, "scripts/" + scriptFile + ".dtDir");
+            writer->Save(this, "scripts/" + scriptFile + ".dtDir");
          }
          catch (const dtUtil::Exception& e)
          {
@@ -110,6 +140,8 @@ namespace dtDirector
          }
 
          fileUtils.PopDirectory();
+
+         mModified = false;
          return true;
       }
 
@@ -249,5 +281,38 @@ namespace dtDirector
          return std::string("");
 
       return i->second;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   Node* Director::GetNode(const dtCore::UniqueId& id)
+   {
+      int count = (int)mEventNodes.size();
+      for (int index = 0; index < count; index++)
+      {
+         if (mEventNodes[index]->GetID() == id)
+         {
+            return mEventNodes[index];
+         }
+      }
+
+      count = (int)mActionNodes.size();
+      for (int index = 0; index < count; index++)
+      {
+         if (mActionNodes[index]->GetID() == id)
+         {
+            return mActionNodes[index];
+         }
+      }
+
+      count = (int)mValueNodes.size();
+      for (int index = 0; index < count; index++)
+      {
+         if (mValueNodes[index]->GetID() == id)
+         {
+            return mValueNodes[index];
+         }
+      }
+
+      return NULL;
    }
 }

@@ -729,8 +729,6 @@ namespace dtDAL
    /////////////////////////////////////////////////////////////////
    void ActorPropertySerializer::AssignGroupProperties()
    {
-      if (!mMap.valid()) return;
-
       for (std::multimap<PropertyContainer*, std::pair<std::string, dtCore::RefPtr<dtDAL::NamedGroupParameter> > >::iterator i
          = mGroupParameters.begin();
          i != mGroupParameters.end(); ++i)
@@ -1595,6 +1593,7 @@ namespace dtDAL
    /////////////////////////////////////////////////////////////////
    void ActorPropertySerializer::LinkActors()
    {
+      // Can't link actors if we can't find them using the map.
       if (!mMap.valid()) return;
 
       for (std::multimap<PropertyContainer*, std::pair<std::string, dtCore::UniqueId> >::iterator i = mActorLinking.begin();

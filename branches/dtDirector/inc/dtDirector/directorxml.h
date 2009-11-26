@@ -22,9 +22,14 @@
 #ifndef DIRECTOR_XML
 #define DIRECTOR_XML
 
+#include <string>
+#include <vector>
+#include <set>
+
 #include <dtDirector/export.h>
 
 #include <dtDirector/director.h>
+#include <dtDirector/directorxmlhandler.h>
 
 #include <dtDAL/basexml.h>
 
@@ -32,89 +37,66 @@
 namespace dtDAL
 {
    class Map;
-   class MapContentHandler;
-   class ActorProxy;
    class ActorPropertySerializer;
 }
 
 namespace dtDirector
 {
-   ///**
-   // * @class DirectorParser
-   // * @brief front end class for loading a dtDirector script file.
-   // */
-   //class DT_DIRECTOR_EXPORT DirectorParser: public dtDAL::BaseXMLParser
-   //{
-   //   public:
+   /**
+    * @class DirectorParser
+    *
+    * @brief front end class for loading a dtDirector script file.
+    */
+   class DT_DIRECTOR_EXPORT DirectorParser: public dtDAL::BaseXMLParser
+   {
+   public:
 
-   //      /**
-   //       * Constructor.
-   //       */
-   //      DirectorParser();
+      /**
+       * Constructor.
+       */
+      DirectorParser();
 
-   //      /**
-   //       * Completely parses a map file.  Be sure store an dtCore::RefPtr to the map immediately, otherwise
-   //       * if the parser is deleted or another map file is parse, the map will get deleted.
-   //       * @param path The file path to the map.
-   //       * @param handler The content handler to be used when parsing.
-   //       * @return A pointer to the loaded map.
-   //       * @throws MapLoadParseError if a fatal error occurs in the parsing.
-   //       */
-   //      bool Parse(const std::string& path, Map** map);
+      /**
+       * Completely parses a Director script file.
+       *
+       * @param[in]  director  A Reference to the director.
+       * @param[in]  map       The currently loaded map.
+       * @param[in]  filePath  The path to the director script file.
+       *
+       * @throws MapLoadParseError if a fatal error occurs in the parsing.
+       */
+      bool Parse(Director* director, dtDAL::Map* map, const std::string& filePath);
+      
+      /**
+       * Retrieves all missing node types.
+       */
+      const std::set<std::string>& GetMissingNodeTypes();
 
-   //      /**
-   //      * Parses a prefab resource and places it in the given map
-   //      * at a given location.
-   //      *
-   //      * @param[in]  path       The prefab filepath.
-   //      * @param[in]  proxyList  The list of proxies loaded from the prefab.
-   //      * @param[in]  map        The map we are loading the prefab for.
-   //      */
-   //      bool ParsePrefab(const std::string& path, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >& proxyList, dtDAL::Map* map = NULL);
+      /**
+       * Retrieves all missing libraries.
+       */
+      const std::vector<std::string>& GetMissingLibraries();
 
-   //      /**
-   //      * Parses only the header of a prefab's xml file and extracts the icon
-   //      * file name.  Returns "" if no icon element is found in the header.        
-   //      */
-   //      const std::string GetPrefabIconFileName(const std::string& path);
+      /**
+       * Retrieves whether any loaded properties were deprecated.
+       */
+      bool HasDeprecatedProperty() const;
 
-   //      /**
-   //       * Reads the assigned name from the map path given.
-   //       * @param path the file path to the map.
-   //       * @return the name of the map from the file.
-   //       * @throws MapLoadParseError if any errors occurs in the parsing.
-   //       */
-   //      const std::string ParseMapName(const std::string& path);
+   protected:
 
-   //      /**
-   //       * This method exists to allow actors being parsed to access their map.  It's to help 
-   //       * with certain features of the loading process.  Using the meth
-   //       * @return the map instance that the parser is currently populating.
-   //       */
-   //      Map* GetMapBeingParsed();
-   //      
-   //      ///@see #GetMapBeingParsed
-   //      const Map* GetMapBeingParsed() const;
+      virtual ~DirectorParser();
 
-   //      const std::set<std::string>& GetMissingActorTypes(); 
-   //      const std::vector<std::string>& GetMissingLibraries();
+   private:
+      DirectorParser(const DirectorParser& copyParser);
+      DirectorParser& operator=(const DirectorParser& assignParser);
 
-   //      bool HasDeprecatedProperty() const;
-
-   //protected:
-
-   //      virtual ~DirectorParser();
-
-   //private:
-   //   DirectorParser(const DirectorParser& copyParser);
-   //   DirectorParser& operator=(const DirectorParser& assignParser);
-
-   //   dtCore::RefPtr<MapContentHandler> mMapHandler;
-   //};
+      dtCore::RefPtr<DirectorXMLHandler> mDirectorHandler;
+   };
 
 
    /**
     * @class DirectorWriter
+    *
     * @brief Writes a director script out to an XML file
     */
    class DT_DIRECTOR_EXPORT DirectorWriter: public dtDAL::BaseXMLWriter
@@ -134,7 +116,7 @@ namespace dtDirector
        *
        * @throws     ExceptionEnum::MapSaveError if any errors occur saving the file.
        */
-      void Save(Director& director, const std::string& filePath);
+      void Save(Director* director, const std::string& filePath);
          
    protected:
       virtual ~DirectorWriter(); ///Protected destructor so that this could be subclassed.

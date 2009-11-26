@@ -52,13 +52,7 @@
 
 #include <dtDAL/map.h>
 #include <dtDAL/exceptionenum.h>
-#include <dtDAL/gameevent.h>
-#include <dtDAL/gameeventmanager.h>
 #include <dtDAL/mapxmlconstants.h>
-#include <dtDAL/mapcontenthandler.h>
-#include <dtDAL/transformableactorproxy.h>
-#include <dtDAL/librarymanager.h>
-#include <dtDAL/actorpropertyserializer.h>
 
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/fileutils.h>
@@ -74,217 +68,72 @@ namespace dtDirector
 {
    static const std::string logName("directorxml.cpp");
 
-   ///////////////////////////////////////////////////////////////////
-   //DirectorParser::DirectorParser()
-   //   : BaseXMLParser()
-   //   , mMapHandler(new MapContentHandler())
-   //{
-   //   mHandler = mMapHandler.get();
+   /////////////////////////////////////////////////////////////////
+   DirectorParser::DirectorParser()
+      : dtDAL::BaseXMLParser()
+      , mDirectorHandler(new DirectorXMLHandler())
+   {
+      mHandler = mDirectorHandler.get();
 
-   //   mXercesParser->setFeature(XMLUni::fgSAX2CoreValidation, true);
-   //   mXercesParser->setFeature(XMLUni::fgXercesDynamic, false);
+      mXercesParser->setFeature(XMLUni::fgSAX2CoreValidation, true);
+      mXercesParser->setFeature(XMLUni::fgXercesDynamic, false);
 
-   //   mXercesParser->setFeature(XMLUni::fgSAX2CoreNameSpaces, true);
-   //   mXercesParser->setFeature(XMLUni::fgXercesSchema, true);
-   //   mXercesParser->setFeature(XMLUni::fgXercesSchemaFullChecking, true);
-   //   mXercesParser->setFeature(XMLUni::fgSAX2CoreNameSpacePrefixes, true);
-   //   mXercesParser->setFeature(XMLUni::fgXercesUseCachedGrammarInParse, true);
-   //   mXercesParser->setFeature(XMLUni::fgXercesCacheGrammarFromParse, true);
+      mXercesParser->setFeature(XMLUni::fgSAX2CoreNameSpaces, true);
+      mXercesParser->setFeature(XMLUni::fgXercesSchema, true);
+      mXercesParser->setFeature(XMLUni::fgXercesSchemaFullChecking, true);
+      mXercesParser->setFeature(XMLUni::fgSAX2CoreNameSpacePrefixes, true);
+      mXercesParser->setFeature(XMLUni::fgXercesUseCachedGrammarInParse, true);
+      mXercesParser->setFeature(XMLUni::fgXercesCacheGrammarFromParse, true);
 
-   //   std::string schemaFileName = dtUtil::FindFileInPathList("map.xsd");
+      std::string schemaFileName = dtUtil::FindFileInPathList("director.xsd");
 
-   //   if (!dtUtil::FileUtils::GetInstance().FileExists(schemaFileName))
-   //   {
-   //      throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectException, "Unable to load required file \"map.xsd\", can not load map.", __FILE__, __LINE__);
-   //   }
+      if (!dtUtil::FileUtils::GetInstance().FileExists(schemaFileName))
+      {
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectException, "Unable to load required file \"director.xsd\", can not load director script.", __FILE__, __LINE__);
+      }
 
-   //   XMLCh* value = XMLString::transcode(schemaFileName.c_str());
-   //   LocalFileInputSource inputSource(value);
-   //   //cache the schema
-   //   mXercesParser->loadGrammar(inputSource, Grammar::SchemaGrammarType, true);
-   //   XMLString::release(&value);
-   //}
+      XMLCh* value = XMLString::transcode(schemaFileName.c_str());
+      LocalFileInputSource inputSource(value);
+      //cache the schema
+      mXercesParser->loadGrammar(inputSource, Grammar::SchemaGrammarType, true);
+      XMLString::release(&value);
+   }
 
-   ///////////////////////////////////////////////////////////////////
-   //DirectorParser::~DirectorParser()
-   //{
-   //}
+   /////////////////////////////////////////////////////////////////
+   DirectorParser::~DirectorParser()
+   {
+   }
 
-   ///////////////////////////////////////////////////////////////////
-   //bool DirectorParser::Parse(const std::string& path, Map** map)
-   //{
-   //   mMapHandler->SetMapMode();
-   //   if (BaseXMLParser::Parse(path))
-   //   {
-   //      dtCore::RefPtr<Map> mapRef = mMapHandler->GetMap();
-   //      mMapHandler->ClearMap();
+   /////////////////////////////////////////////////////////////////
+   bool DirectorParser::Parse(Director* director, dtDAL::Map* map, const std::string& filePath)
+   {
+      mDirectorHandler->SetDirector(director);
+      mDirectorHandler->SetMap(map);
+      if (dtDAL::BaseXMLParser::Parse(filePath))
+      {
+         return true;
+      }
 
-   //      if (map)
-   //      {
-   //         *map = mapRef.release();
-   //      }
+      return false;
+   }
+   
+   /////////////////////////////////////////////////////////////////
+   const std::set<std::string>& DirectorParser::GetMissingNodeTypes()
+   {
+      return mDirectorHandler->GetMissingNodeTypes();
+   }
 
-   //      return true;
-   //   }
+   /////////////////////////////////////////////////////////////////
+   const std::vector<std::string>& DirectorParser::GetMissingLibraries()
+   {
+      return mDirectorHandler->GetMissingLibraries();
+   }
 
-   //   return false;
-   //}
-
-   ///////////////////////////////////////////////////////////////////
-
-   //bool DirectorParser::ParsePrefab(const std::string& path, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >& proxyList, dtDAL::Map* map)
-   //{
-   //   mMapHandler->SetPrefabMode(proxyList, dtDAL::MapContentHandler::PREFAB_READ_ALL, map);
-   //   if (BaseXMLParser::Parse(path))
-   //   {
-   //      dtCore::RefPtr<Map> mapRef = mMapHandler->GetMap();
-   //      mMapHandler->ClearMap();
-   //      return true;
-   //   }
-
-   //   return false;
-   //}
-
-   /////////////////////////////////////////////////////////////////////////////////
-   //const std::string DirectorParser::GetPrefabIconFileName(const std::string& path)
-   //{
-   //   std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > proxyList; //just an empty list
-   //   std::string iconFileName = "";
-
-   //   mParsing = true;
-   //   mMapHandler->SetPrefabMode(proxyList, MapContentHandler::PREFAB_ICON_ONLY);
-   //   mXercesParser->setContentHandler(mMapHandler.get());
-   //   mXercesParser->setErrorHandler(mMapHandler.get());
-
-   //   try
-   //   {
-   //      mXercesParser->parse(path.c_str());
-   //   }
-   //   catch(dtUtil::Exception iconFoundWeAreDone)
-   //   {
-   //      //Probably the icon has been found, the exception to stop parsing has
-   //      //been thrown, so there's nothing to do here.  
-   //   }
-   //   
-   //   iconFileName = mMapHandler->GetPrefabIconFileName();
-   //
-   //   mMapHandler->ClearMap();      
-   //   mParsing = false;
-
-   //   return iconFileName;
-   //}
-   //
-   ///////////////////////////////////////////////////////////////////
-   //const std::string DirectorParser::ParseMapName(const std::string& path)
-   //{
-   //   //this is a flag that will make sure
-   //   //the parser gets reset if an exception is thrown.
-   //   bool parserNeedsReset = false;
-   //   XMLPScanToken token;
-   //   try
-   //   {
-   //      mXercesParser->setContentHandler(mMapHandler.get());
-   //      mXercesParser->setErrorHandler(mMapHandler.get());
-
-   //      if (mXercesParser->parseFirst(path.c_str(), token))
-   //      {
-   //         parserNeedsReset = true;
-
-   //         bool cont = mXercesParser->parseNext(token);
-   //         while (cont && !mMapHandler->HasFoundMapName())
-   //         {
-   //            cont = mXercesParser->parseNext(token);
-   //         }
-
-   //         parserNeedsReset = false;
-   //         //reSet the parser and close the file handles.
-   //         mXercesParser->parseReset(token);
-
-   //         if (mMapHandler->HasFoundMapName())
-   //         {
-   //            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Parsing complete.");
-   //            std::string name = mMapHandler->GetMap()->GetName();
-   //            mMapHandler->ClearMap();
-   //            return name;
-   //         }
-   //         else
-   //         {
-   //            throw dtUtil::Exception(dtDAL::ExceptionEnum::MapLoadParsingError, "Parser stopped without finding the map name.", __FILE__, __LINE__);
-   //         }
-   //      }
-   //      else
-   //      {
-   //         throw dtUtil::Exception(dtDAL::ExceptionEnum::MapLoadParsingError, "Parsing to find the map name did not begin.", __FILE__, __LINE__);
-   //      }
-   //   }
-   //   catch (const OutOfMemoryException&)
-   //   {
-   //      if (parserNeedsReset)
-   //         mXercesParser->parseReset(token);
-
-   //      mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Ran out of memory parsing!");
-   //      throw dtUtil::Exception(dtDAL::ExceptionEnum::MapLoadParsingError, "Ran out of memory parsing save file.", __FILE__, __LINE__);
-   //   }
-   //   catch (const XMLException& toCatch)
-   //   {
-   //      if (parserNeedsReset)
-   //         mXercesParser->parseReset(token);
-
-   //      mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Error during parsing! %ls :\n",
-   //                          toCatch.getMessage());
-   //      throw dtUtil::Exception(dtDAL::ExceptionEnum::MapLoadParsingError, "Error while parsing map file. See log for more information.", __FILE__, __LINE__);
-   //   }
-   //   catch (const SAXParseException&)
-   //   {
-   //      if (parserNeedsReset)
-   //         mXercesParser->parseReset(token);
-
-   //      //this will already by logged by the content handler
-   //      throw dtUtil::Exception(dtDAL::ExceptionEnum::MapLoadParsingError, "Error while parsing map file. See log for more information.", __FILE__, __LINE__);
-   //   }
-   //}
-
-   ///////////////////////////////////////////////////////////////////
-   //Map* DirectorParser::GetMapBeingParsed()
-   //{
-   //   if (!IsParsing())
-   //   {
-   //      return NULL;
-   //   }
-
-   //   return mMapHandler->GetMap();
-   //}
-
-   ///////////////////////////////////////////////////////////////////
-   //const Map* DirectorParser::GetMapBeingParsed() const
-   //{
-   //   if (!IsParsing())
-   //   {
-   //      return NULL;
-   //   }
-
-   //   return mMapHandler->GetMap();
-   //}
-
-   ///////////////////////////////////////////////////////////////////
-
-   //const std::set<std::string>& DirectorParser::GetMissingActorTypes()
-   //{
-   //   return mMapHandler->GetMissingActorTypes();
-   //}
-
-   ///////////////////////////////////////////////////////////////////
-
-   //const std::vector<std::string>& DirectorParser::GetMissingLibraries()
-   //{
-   //   return mMapHandler->GetMissingLibraries();
-   //}
-
-   //////////////////////////////////////////////////////////////////////////////////
-   //bool DirectorParser::HasDeprecatedProperty() const
-   //{
-   //   return mMapHandler->HasDeprecatedProperty();
-   //}
+   ////////////////////////////////////////////////////////////////////////////////
+   bool DirectorParser::HasDeprecatedProperty() const
+   {
+      return mDirectorHandler->HasDeprecatedProperty();
+   }
 
    //////////////////////////////////////////////////////////////////////////
    //////////////////////////////////////////////////////////////////////////
@@ -302,8 +151,10 @@ namespace dtDirector
    }
 
    /////////////////////////////////////////////////////////////////
-   void DirectorWriter::Save(Director& director, const std::string& filePath)
+   void DirectorWriter::Save(Director* director, const std::string& filePath)
    {
+      if (!director) return;
+
       FILE* outfile = fopen(filePath.c_str(), "w");
 
       if (outfile == NULL)
@@ -329,11 +180,11 @@ namespace dtDirector
                // Creation timestamp.
                BeginElement(dtDAL::MapXMLConstants::CREATE_TIMESTAMP_ELEMENT);
                {
-                  if (director.GetCreateDateTime().length() == 0)
+                  if (director->GetCreateDateTime().length() == 0)
                   {
-                     director.SetCreateDateTime(utcTime);
+                     director->SetCreateDateTime(utcTime);
                   }
-                  AddCharacters(director.GetCreateDateTime());
+                  AddCharacters(director->GetCreateDateTime());
                }
                EndElement(); // End Create Timestamp Element.
 
@@ -360,7 +211,7 @@ namespace dtDirector
 
                // Properties.
                std::vector<const dtDAL::ActorProperty*> propList;
-               director.GetPropertyList(propList);
+               director->GetPropertyList(propList);
                for (std::vector<const dtDAL::ActorProperty*>::const_iterator i = propList.begin();
                   i != propList.end(); ++i)
                {
@@ -377,7 +228,7 @@ namespace dtDirector
             // Node Libraries.
             BeginElement(dtDAL::MapXMLConstants::LIBRARIES_ELEMENT);
             {
-               const std::vector<std::string>& libs = director.GetAllLibraries();
+               const std::vector<std::string>& libs = director->GetAllLibraries();
                for (std::vector<std::string>::const_iterator i = libs.begin(); i != libs.end(); ++i)
                {
                   // Library.
@@ -393,7 +244,7 @@ namespace dtDirector
                      // Library version.
                      BeginElement(dtDAL::MapXMLConstants::LIBRARY_VERSION_ELEMENT);
                      {
-                        AddCharacters(director.GetLibraryVersion(*i));
+                        AddCharacters(director->GetLibraryVersion(*i));
                      }
                      EndElement(); // End Library Version Element.
                   }
@@ -405,7 +256,7 @@ namespace dtDirector
             // Value Nodes.
             BeginElement(dtDAL::MapXMLConstants::DIRECTOR_VALUE_NODES_ELEMENT);
             {
-               const std::vector<dtCore::RefPtr<ValueNode> >& ValueNodes = director.GetValueNodes();
+               const std::vector<dtCore::RefPtr<ValueNode> >& ValueNodes = director->GetValueNodes();
                for (int nodeIndex = 0; nodeIndex < (int)ValueNodes.size(); nodeIndex++)
                {
                   SaveNode(ValueNodes[nodeIndex].get());
@@ -416,7 +267,7 @@ namespace dtDirector
             // Event Nodes.
             BeginElement(dtDAL::MapXMLConstants::DIRECTOR_EVENT_NODES_ELEMENT);
             {
-               const std::vector<dtCore::RefPtr<EventNode> >& EventNodes = director.GetEventNodes();
+               const std::vector<dtCore::RefPtr<EventNode> >& EventNodes = director->GetEventNodes();
                for (int nodeIndex = 0; nodeIndex < (int)EventNodes.size(); nodeIndex++)
                {
                   SaveNode(EventNodes[nodeIndex].get());
@@ -427,7 +278,7 @@ namespace dtDirector
             // Action Nodes.
             BeginElement(dtDAL::MapXMLConstants::DIRECTOR_ACTION_NODES_ELEMENT);
             {
-               const std::vector<dtCore::RefPtr<ActionNode> >& ActionNodes = director.GetActionNodes();
+               const std::vector<dtCore::RefPtr<ActionNode> >& ActionNodes = director->GetActionNodes();
                for (int nodeIndex = 0; nodeIndex < (int)ActionNodes.size(); nodeIndex++)
                {
                   SaveNode(ActionNodes[nodeIndex].get());
@@ -444,7 +295,7 @@ namespace dtDirector
       {
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                              "Caught Exception \"%s\" while attempting to save Director script \"%s\".",
-                             ex.What().c_str(), director.GetName().c_str());
+                             ex.What().c_str(), director->GetName().c_str());
          mFormatTarget.SetOutputFile(NULL);
          throw ex;
       }
@@ -452,9 +303,9 @@ namespace dtDirector
       {
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                              "Unknown exception while attempting to save Director script \"%s\".",
-                             director.GetName().c_str());
+                             director->GetName().c_str());
          mFormatTarget.SetOutputFile(NULL);
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::MapSaveError, std::string("Unknown exception saving Director script \"") + director.GetName() + ("\"."), __FILE__, __LINE__);
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::MapSaveError, std::string("Unknown exception saving Director script \"") + director->GetName() + ("\"."), __FILE__, __LINE__);
       }
    }
 
@@ -499,7 +350,7 @@ namespace dtDirector
          }
 
          // Save Input Links.
-         std::vector<InputLink>& inputs = node->GetInputs();
+         std::vector<InputLink>& inputs = node->GetInputLinks();
          for (int inputIndex = 0; inputIndex < (int)inputs.size(); inputIndex++)
          {
             BeginElement(dtDAL::MapXMLConstants::DIRECTOR_LINKS_INPUT_ELEMENT);
@@ -543,7 +394,7 @@ namespace dtDirector
          }
 
          // Save Output Links.
-         std::vector<OutputLink>& outputs = node->GetOutputs();
+         std::vector<OutputLink>& outputs = node->GetOutputLinks();
          for (int outputIndex = 0; outputIndex < (int)outputs.size(); outputIndex++)
          {
             BeginElement(dtDAL::MapXMLConstants::DIRECTOR_LINKS_OUTPUT_ELEMENT);
@@ -587,7 +438,7 @@ namespace dtDirector
          }
 
          // Save Value Links.
-         std::vector<ValueLink>& values = node->GetValues();
+         std::vector<ValueLink>& values = node->GetValueLinks();
          for (int valueIndex = 0; valueIndex < (int)values.size(); valueIndex++)
          {
             BeginElement(dtDAL::MapXMLConstants::DIRECTOR_LINKS_VALUE_ELEMENT);

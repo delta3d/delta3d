@@ -34,6 +34,10 @@
 
 #include <dtUtil/log.h>
 
+namespace dtDAL
+{
+   class Map;
+}
 
 namespace dtDirector
 {
@@ -63,10 +67,12 @@ namespace dtDirector
        * Loads a Director script.
        *
        * @param[in]  scriptFile  The name of the script file to load.
+       * @param[in]  map         The current map (this may be optional based
+       *                          the type of script being loaded).
        *
        * @return     True if the script was found and loaded successfuly.
        */
-      bool LoadScript(const std::string& scriptFile);
+      bool LoadScript(const std::string& scriptFile, dtDAL::Map* map);
 
       /**
        * Saves a Director script.
@@ -181,17 +187,26 @@ namespace dtDirector
       /**
        * Retrieves the list of event nodes.
        */
-      const std::vector<dtCore::RefPtr<EventNode> >& GetEventNodes() const {return mEventNodes;}
+      std::vector<dtCore::RefPtr<EventNode> >& GetEventNodes() {return mEventNodes;}
 
       /**
        * Retrieves the list of action nodes.
        */
-      const std::vector<dtCore::RefPtr<ActionNode> >& GetActionNodes() const {return mActionNodes;}
+      std::vector<dtCore::RefPtr<ActionNode> >& GetActionNodes() {return mActionNodes;}
 
       /**
        * Retrieves the list of value nodes.
        */
-      const std::vector<dtCore::RefPtr<ValueNode> >& GetValueNodes() const {return mValueNodes;}
+      std::vector<dtCore::RefPtr<ValueNode> >& GetValueNodes() {return mValueNodes;}
+
+      /**
+       * Retrieves a node of the given the id.
+       *
+       * @param[in]  id  The id of the node.
+       *
+       * @return     A pointer to the node or NULL if not found.
+       */
+      Node* GetNode(const dtCore::UniqueId& id);
 
    protected:
 

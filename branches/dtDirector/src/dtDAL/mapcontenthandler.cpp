@@ -119,7 +119,10 @@ namespace  dtDAL
    }
 
    /////////////////////////////////////////////////////////////////
-   MapContentHandler::~MapContentHandler() {}
+   MapContentHandler::~MapContentHandler()
+   {
+      delete mPropSerializer;
+   }
 
    //////////////////////////////////////////////////////////////////////////
    MapContentHandler::MapContentHandler(const MapContentHandler&) {}

@@ -50,7 +50,17 @@ public:
       director->Init();
 
       dtDAL::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data/director");
-      director->SaveScript("test");
+      director->LoadScript("test", NULL);
+
+      director->GetEventNodes()[0]->Trigger(0);
+
+      director->Update(0, 0);
+      director->Update(0, 0);
+      director->Update(0, 0);
+      director->Update(0, 0);
+
+      int firstResult = director->GetValueNodes()[2]->GetPropertyValue<int>();
+      int secondResult = director->GetValueNodes()[3]->GetPropertyValue<int>();
    }
 
 protected:

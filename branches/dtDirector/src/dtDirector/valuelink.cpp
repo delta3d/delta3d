@@ -124,6 +124,12 @@ namespace dtDirector
       // If we are not allowing multiples, disconnect the current one first.
       if (!mAllowMultiple) Disconnect();
 
+      // Make sure the link is not already made.
+      for (int index = 0; index < (int)mLinks.size(); index++)
+      {
+         if (mLinks[index] == valueNode) return true;
+      }
+
       mLinks.push_back(valueNode);
       valueNode->mLinks.push_back(this);
       return true;

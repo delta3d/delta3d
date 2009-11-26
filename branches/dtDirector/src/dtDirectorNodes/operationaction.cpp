@@ -31,6 +31,7 @@ namespace dtDirector
       : ActionNode()
       , mValueA(0.0f)
       , mValueB(0.0f)
+      , mResult(0.0f)
    {
    }
 
