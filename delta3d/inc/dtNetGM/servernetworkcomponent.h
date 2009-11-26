@@ -88,6 +88,9 @@ namespace dtNetGM
        */
       virtual void ProcessNetClientNotifyDisconnect(const dtGame::Message& msg);
 
+      /// Disconnects both open connections and the server listener.
+      virtual void Disconnect();
+
    protected:
 
       // should we accept new clients
