@@ -90,8 +90,8 @@ namespace dtDirector
       subGraph.mValueNodes.push_back(resultValue);
 
       // Give some default values for our A and B.
-      valueA->SetPropertyValue(10);
-      valueB->SetPropertyValue(15);
+      valueA->SetInt(10);
+      valueB->SetInt(15);
 
       // Connect nodes together.
       {

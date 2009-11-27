@@ -196,12 +196,11 @@ namespace dtDirector
          return result;
       }
 
-      std::string GetPropertyString(const std::string& name = "Value", int index = 0)
-      {
-         dtDAL::ActorProperty* prop = GetProperty(name, index);
-         if (prop) return prop->ToString();
-         return "";
-      }
+      bool GetBoolean(const std::string& name = "Value", int index = 0);
+      int GetInt(const std::string& name = "Value", int index = 0);
+      float GetFloat(const std::string& name = "Value", int index = 0);
+      double GetDouble(const std::string& name = "Value", int index = 0);
+      std::string GetString(const std::string& name = "Value", int index = 0);
 
       /**
        * This method is provided for ease of use, it will
@@ -243,29 +242,11 @@ namespace dtDirector
          }
       }
 
-      void SetPropertyString(const std::string& value, const std::string& name = "Value", int index = -1)
-      {
-         if (index == -1)
-         {
-            int count = GetPropertyCount(name);
-            for (index = 0; index < count; index++)
-            {
-               dtDAL::ActorProperty* prop = GetProperty(name, index);
-               if (prop)
-               {
-                  prop->FromString(value);
-               }
-            }
-         }
-         else
-         {
-            dtDAL::ActorProperty* prop = GetProperty(name, index);
-            if (prop)
-            {
-               prop->FromString(value);
-            }
-         }
-      }
+      void SetBoolean(bool value, const std::string& name = "Value", int index = -1);
+      void SetInt(int value, const std::string& name = "Value", int index = -1);
+      void SetFloat(float value, const std::string& name = "Value", int index = -1);
+      void SetDouble(double value, const std::string& name = "Value", int index = -1);
+      void SetString(const std::string& value, const std::string& name = "Value", int index = -1);
 
       /**
        * Retrieves the input list.

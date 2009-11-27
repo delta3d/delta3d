@@ -190,6 +190,87 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   bool Node::GetBoolean(const std::string& name, int index)
+   {
+      return GetPropertyValue<bool>(name, index);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   int Node::GetInt(const std::string& name, int index)
+   {
+      return GetPropertyValue<int>(name, index);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   float Node::GetFloat(const std::string& name, int index)
+   {
+      return GetPropertyValue<float>(name, index);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   double Node::GetDouble(const std::string& name, int index)
+   {
+      return GetPropertyValue<double>(name, index);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   std::string Node::GetString(const std::string& name, int index)
+   {
+      dtDAL::ActorProperty* prop = GetProperty(name, index);
+      if (prop) return prop->ToString();
+      return "";
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void Node::SetBoolean(bool value, const std::string& name, int index)
+   {
+      SetPropertyValue<bool>(value, name, index);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void Node::SetInt(int value, const std::string& name, int index)
+   {
+      SetPropertyValue<int>(value, name, index);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void Node::SetFloat(float value, const std::string& name, int index)
+   {
+      SetPropertyValue<float>(value, name, index);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void Node::SetDouble(double value, const std::string& name, int index)
+   {
+      SetPropertyValue<double>(value, name, index);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void Node::SetString(const std::string& value, const std::string& name, int index)
+   {
+      if (index == -1)
+      {
+         int count = GetPropertyCount(name);
+         for (index = 0; index < count; index++)
+         {
+            dtDAL::ActorProperty* prop = GetProperty(name, index);
+            if (prop)
+            {
+               prop->FromString(value);
+            }
+         }
+      }
+      else
+      {
+         dtDAL::ActorProperty* prop = GetProperty(name, index);
+         if (prop)
+         {
+            prop->FromString(value);
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    InputLink* Node::GetInputLink(const std::string& name)
    {
       int count = (int)mInputs.size();
