@@ -83,6 +83,7 @@ namespace dtDAL
    XMLCh* MapXMLConstants::EVENT_NAME_ELEMENT = NULL;
    XMLCh* MapXMLConstants::EVENT_DESCRIPTION_ELEMENT = NULL;
 
+   XMLCh* MapXMLConstants::DIRECTOR_GRAPH_ELEMENT = NULL;
    XMLCh* MapXMLConstants::DIRECTOR_EVENT_NODES_ELEMENT = NULL;
    XMLCh* MapXMLConstants::DIRECTOR_ACTION_NODES_ELEMENT = NULL;
    XMLCh* MapXMLConstants::DIRECTOR_VALUE_NODES_ELEMENT = NULL;
@@ -203,6 +204,7 @@ namespace dtDAL
       EVENT_NAME_ELEMENT = xercesc::XMLString::transcode("name");
       EVENT_DESCRIPTION_ELEMENT = xercesc::XMLString::transcode("description");
 
+      DIRECTOR_GRAPH_ELEMENT = xercesc::XMLString::transcode("graph");
       DIRECTOR_EVENT_NODES_ELEMENT = xercesc::XMLString::transcode("eventnodes");
       DIRECTOR_ACTION_NODES_ELEMENT = xercesc::XMLString::transcode("actionnodes");
       DIRECTOR_VALUE_NODES_ELEMENT = xercesc::XMLString::transcode("valuenodes");
@@ -323,6 +325,7 @@ namespace dtDAL
       xercesc::XMLString::release(&EVENT_NAME_ELEMENT);
       xercesc::XMLString::release(&EVENT_DESCRIPTION_ELEMENT);
 
+      xercesc::XMLString::release(&DIRECTOR_GRAPH_ELEMENT);
       xercesc::XMLString::release(&DIRECTOR_EVENT_NODES_ELEMENT);
       xercesc::XMLString::release(&DIRECTOR_ACTION_NODES_ELEMENT);
       xercesc::XMLString::release(&DIRECTOR_VALUE_NODES_ELEMENT);

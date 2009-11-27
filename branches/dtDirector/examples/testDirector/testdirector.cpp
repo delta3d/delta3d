@@ -49,20 +49,25 @@ public:
       dtCore::RefPtr<dtDirector::Director> director = new dtDirector::Director();
       director->Init();
 
+      director->CreateDebugScript();
+
       dtDAL::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data/director");
       director->SaveScript("test");
       director->LoadScript("test", NULL);
 
-      director->GetEventNodes()[0]->Trigger(0);
+      director->GetGraphData().GetEventNodes()[0]->Trigger(0);
 
       director->Update(0, 0);
       director->Update(0, 0);
       director->Update(0, 0);
       director->Update(0, 0);
+      director->Update(0, 0);
+      director->Update(0, 0);
+      director->Update(0, 0);
 
-      int firstResult = director->GetValueNodes()[2]->GetPropertyValue<int>();
-      int secondResult = director->GetValueNodes()[3]->GetPropertyValue<int>();
-      int thirdResult = director->GetValueNodes()[4]->GetPropertyValue<int>();
+      int resultValue = director->GetGraphData().mSubGraphs[0].mValueNodes[3]->GetPropertyValue<int>();
+      int extValue    = director->GetGraphData().mSubGraphs[0].mValueNodes[0]->GetPropertyValue<int>();
+      int outsideValue= director->GetGraphData().mValueNodes[0]->GetPropertyValue<int>();
    }
 
 protected:

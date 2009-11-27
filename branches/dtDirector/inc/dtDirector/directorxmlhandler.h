@@ -37,6 +37,7 @@
 namespace dtDirector
 {
    class Director;
+   class DirectorGraphData;
    class InputLink;
    class OutputLink;
    class ValueLink;
@@ -130,6 +131,9 @@ namespace dtDirector
       bool mInValueNodes;
       bool mInEventNodes;
       bool mInActionNodes;
+
+      int mInGraph;
+
       bool mInNodes;
       bool mInNode;
 
@@ -151,6 +155,8 @@ namespace dtDirector
 
       std::vector<std::string> mMissingLibraries;
       std::set<std::string> mMissingNodeTypes;
+
+      std::stack<DirectorGraphData*> mGraphs;
 
       dtDAL::ActorPropertySerializer* mPropSerializer;
 
@@ -192,6 +198,7 @@ namespace dtDirector
       void ClearLinkToValues();
 
       void EndHeaderElement(const XMLCh* const localname);
+      void EndGraphSection(const XMLCh* const localname);
       void EndNodeSection(const XMLCh* const localname);
       void EndNodesElement();
       void EndNodeElement();

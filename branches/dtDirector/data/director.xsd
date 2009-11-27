@@ -17,9 +17,7 @@
     <xsd:sequence>
       <xsd:element name="header"      type="HeaderType"/>
       <xsd:element name="libraries"   type="LibrariesType"/>
-	  <xsd:element name="valuenodes"  type="NodeType"/>
-	  <xsd:element name="eventnodes"  type="NodeType"/>
-	  <xsd:element name="actionnodes" type="NodeType"/>
+	  <xsd:element name="graph"       type="GraphType"/>
     </xsd:sequence>
   </xsd:complexType>
 
@@ -44,6 +42,16 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="GraphType">
+    <xsd:sequence>
+	  <xsd:element name="name"        type="xsd:string"/>
+	  <xsd:element name="graph"       type="GraphType"/>
+	  <xsd:element name="valuenodes"  type="NodeType"/>
+	  <xsd:element name="eventnodes"  type="NodeType"/>
+	  <xsd:element name="actionnodes" type="NodeType"/>
     </xsd:sequence>
   </xsd:complexType>
 

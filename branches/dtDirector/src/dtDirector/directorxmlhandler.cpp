@@ -155,71 +155,105 @@ namespace dtDirector
       {
          if (!mPropSerializer->ElementStarted(localname))
          {
+            // Library
             if (XMLString::compareString(localname, dtDAL::MapXMLConstants::LIBRARY_ELEMENT) == 0)
             {
                ClearLibraryValues();
             }
          }
       }
-      // Node element started.
-      else if (mInNodes)
+      // Graph element started.
+      else if (mInGraph)
       {
-         if (mInNode)
+         // Node element started.
+         if (mInNodes)
          {
-            // Check if we are starting a property element.
-            if (!mPropSerializer->ElementStarted(localname))
+            if (mInNode)
             {
+               // Check if we are starting a property element.
+               if (!mPropSerializer->ElementStarted(localname))
+               {
+               }
+            }
+            // Check if we are starting a node.
+            else if (XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_NODE_ELEMENT) == 0)
+            {
+               ClearNodeValues();
+               mInNode = true;
             }
          }
-         // Check if we are starting a node.
-         else if (XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_NODE_ELEMENT) == 0)
+         else
          {
-            ClearNodeValues();
-            mInNode = true;
+            // Value node.
+            if (XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_VALUE_NODES_ELEMENT) == 0)
+            {
+               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Value Nodes");
+               mInValueNodes = true;
+               mInNodes = true;
+            }
+            // Event node.
+            else if (XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_EVENT_NODES_ELEMENT) == 0)
+            {
+               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Event Nodes");
+               mInEventNodes = true;
+               mInNodes = true;
+            }
+            // Action node.
+            else if (XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_ACTION_NODES_ELEMENT) == 0)
+            {
+               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Action Nodes");
+               mInActionNodes = true;
+               mInNodes = true;
+            }
+            // Name.
+            else if (XMLString::compareString(localname, dtDAL::MapXMLConstants::NAME_ELEMENT) == 0)
+            {
+            }
+            // Graph.
+            else if (XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_GRAPH_ELEMENT) == 0)
+            {
+               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found a Graph");
+               mInGraph++;
+
+               DirectorGraphData* graph = mGraphs.top();
+               graph->mSubGraphs.push_back(DirectorGraphData());
+               mGraphs.push(&graph->mSubGraphs[graph->mSubGraphs.size() - 1]);
+            }
          }
       }
-      else
+      // Header.
+      else if (XMLString::compareString(localname, dtDAL::MapXMLConstants::HEADER_ELEMENT) == 0)
       {
-         if (XMLString::compareString(localname, dtDAL::MapXMLConstants::HEADER_ELEMENT) == 0)
-         {
-            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Header");
-            mInHeaders = true;
-         }
-         else if (XMLString::compareString(localname, dtDAL::MapXMLConstants::LIBRARIES_ELEMENT) == 0)
-         {
-            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Libraries");
-            mInLibraries = true;
-         }
-         else if (XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_VALUE_NODES_ELEMENT) == 0)
-         {
-            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Value Nodes");
-            mInValueNodes = true;
-            mInNodes = true;
-         }
-         else if (XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_EVENT_NODES_ELEMENT) == 0)
-         {
-            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Event Nodes");
-            mInEventNodes = true;
-            mInNodes = true;
-         }
-         else if (XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_ACTION_NODES_ELEMENT) == 0)
-         {
-            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Action Nodes");
-            mInActionNodes = true;
-            mInNodes = true;
-         }
+         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Header");
+         mInHeaders = true;
+      }
+      // Libraries.
+      else if (XMLString::compareString(localname, dtDAL::MapXMLConstants::LIBRARIES_ELEMENT) == 0)
+      {
+         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Libraries");
+         mInLibraries = true;
+      }
+      // Graph.
+      else if (XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_GRAPH_ELEMENT) == 0)
+      {
+         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found a Graph");
+         mInGraph++;
+
+         mGraphs.push(&mDirector->GetGraphData());
       }
    }
 
    /////////////////////////////////////////////////////////////////
    void DirectorXMLHandler::ElementEnded( const XMLCh* const uri,
-      const XMLCh* const localname,
-      const XMLCh* const qname)
+                                          const XMLCh* const localname,
+                                          const XMLCh* const qname)
    {
       dtDAL::BaseXMLHandler::ElementEnded(uri, localname, qname);
 
@@ -231,9 +265,16 @@ namespace dtDirector
       {
          EndLibrarySection(localname);
       }
-      else if (mInNodes)
+      else if (mInGraph)
       {
-         EndNodeSection(localname);
+         if (mInNodes)
+         {
+            EndNodeSection(localname);
+         }
+         else
+         {
+            EndGraphSection(localname);
+         }
       }
    }
 
@@ -264,153 +305,162 @@ namespace dtDirector
             mLibVersion = dtUtil::XMLStringConverter(chars).ToString();
          }
       }
-      else if (mInNode)
+      else if (mInGraph)
       {
-         // If we don't have a node yet.
-         if (!mNode.valid())
-         {
-            // Get the name of the node.
-            if (topEl == dtDAL::MapXMLConstants::NAME_ELEMENT)
-            {
-               mNodeName = dtUtil::XMLStringConverter(chars).ToString();
-            }
-            else if (topEl == dtDAL::MapXMLConstants::CATEGORY_ELEMENT)
-            {
-               mNodeCategory = dtUtil::XMLStringConverter(chars).ToString();
-            }
+         DirectorGraphData* graph = mGraphs.top();
 
-            // If we have both a name and category, create a node of the desired type.
-            if (!mNodeName.empty() && !mNodeCategory.empty())
-            {
-               dtDirector::NodeManager& nodeManager = dtDirector::NodeManager::GetInstance();
-               mNode = nodeManager.CreateNode(mNodeName, mNodeCategory).get();
-            }
-         }
-         else if (mInLink)
+         if (mInNode)
          {
-            // Linking a link to another link.
-            if (mInLinkTo)
+            // If we don't have a node yet.
+            if (!mNode.valid())
             {
-               // The other links node ID.
-               if (topEl == dtDAL::MapXMLConstants::ID_ELEMENT)
+               // Get the name of the node.
+               if (topEl == dtDAL::MapXMLConstants::NAME_ELEMENT)
                {
-                  mLinkNodeID = dtUtil::XMLStringConverter(chars).ToString();
+                  mNodeName = dtUtil::XMLStringConverter(chars).ToString();
                }
-               // The other links name.
+               else if (topEl == dtDAL::MapXMLConstants::CATEGORY_ELEMENT)
+               {
+                  mNodeCategory = dtUtil::XMLStringConverter(chars).ToString();
+               }
+
+               // If we have both a name and category, create a node of the desired type.
+               if (!mNodeName.empty() && !mNodeCategory.empty())
+               {
+                  dtDirector::NodeManager& nodeManager = dtDirector::NodeManager::GetInstance();
+                  mNode = nodeManager.CreateNode(mNodeName, mNodeCategory).get();
+               }
+            }
+            else if (mInLink)
+            {
+               // Linking a link to another link.
+               if (mInLinkTo)
+               {
+                  // The other links node ID.
+                  if (topEl == dtDAL::MapXMLConstants::ID_ELEMENT)
+                  {
+                     mLinkNodeID = dtUtil::XMLStringConverter(chars).ToString();
+                  }
+                  // The other links name.
+                  else if (topEl == dtDAL::MapXMLConstants::NAME_ELEMENT)
+                  {
+                     mLinkToName = dtUtil::XMLStringConverter(chars).ToString();
+                  }
+
+                  // If we have both an ID and a name, we can link them.
+                  if (!mLinkNodeID.empty())
+                  {
+                     // Connect a value link to a value node.
+                     if (mValueLink)
+                     {
+                        mLinkList.push_back(ToLinkData());
+                        int index = (int)mLinkList.size() - 1;
+                        mLinkList[index].linkNodeID = mLinkNodeID;
+                        mLinkList[index].valueLink = mValueLink;
+                        mLinkNodeID.clear();
+
+                        //ValueNode* valueNode = dynamic_cast<ValueNode*>(mLinkNode.get());
+                        //mValueLink->Connect(valueNode);
+                     }
+                     else if (!mLinkToName.empty())
+                     {
+                        mLinkList.push_back(ToLinkData());
+                        int index = (int)mLinkList.size() - 1;
+                        mLinkList[index].linkNodeID = mLinkNodeID;
+                        mLinkList[index].linkToName = mLinkToName;
+                        mLinkNodeID.clear();
+
+                        // Connect an input link to an output link.
+                        if (mInputLink)
+                        {
+                           mLinkList[index].inputLink = mInputLink;
+                           //OutputLink* link = mLinkNode->GetOutputLink(mLinkToName);
+                           //if (link) link->Connect(mInputLink);
+                        }
+                        // Connect an output link to an input link.
+                        else if (mOutputLink)
+                        {
+                           mLinkList[index].outputLink = mOutputLink;
+                           //InputLink* link = mLinkNode->GetInputLink(mLinkToName);
+                           //if (link) link->Connect(mOutputLink);
+                        }
+                     }
+                  }
+               }
                else if (topEl == dtDAL::MapXMLConstants::NAME_ELEMENT)
                {
-                  mLinkToName = dtUtil::XMLStringConverter(chars).ToString();
-               }
-
-               // If we have both an ID and a name, we can link them.
-               if (!mLinkNodeID.empty())
-               {
-                  // Connect a value link to a value node.
-                  if (mValueLink)
+                  if (mInInputLink)
                   {
-                     mLinkList.push_back(ToLinkData());
-                     int index = (int)mLinkList.size() - 1;
-                     mLinkList[index].linkNodeID = mLinkNodeID;
-                     mLinkList[index].valueLink = mValueLink;
-                     mLinkNodeID.clear();
-
-                     //ValueNode* valueNode = dynamic_cast<ValueNode*>(mLinkNode.get());
-                     //mValueLink->Connect(valueNode);
+                     mInputLink = mNode->GetInputLink(dtUtil::XMLStringConverter(chars).ToString());
                   }
-                  else if (!mLinkToName.empty())
+                  else if (mInOutputLink)
                   {
-                     mLinkList.push_back(ToLinkData());
-                     int index = (int)mLinkList.size() - 1;
-                     mLinkList[index].linkNodeID = mLinkNodeID;
-                     mLinkList[index].linkToName = mLinkToName;
-                     mLinkNodeID.clear();
-
-                     // Connect an input link to an output link.
-                     if (mInputLink)
-                     {
-                        mLinkList[index].inputLink = mInputLink;
-                        //OutputLink* link = mLinkNode->GetOutputLink(mLinkToName);
-                        //if (link) link->Connect(mInputLink);
-                     }
-                     // Connect an output link to an input link.
-                     else if (mOutputLink)
-                     {
-                        mLinkList[index].outputLink = mOutputLink;
-                        //InputLink* link = mLinkNode->GetInputLink(mLinkToName);
-                        //if (link) link->Connect(mOutputLink);
-                     }
+                     mOutputLink = mNode->GetOutputLink(dtUtil::XMLStringConverter(chars).ToString());
                   }
-               }
-            }
-            else if (topEl == dtDAL::MapXMLConstants::NAME_ELEMENT)
-            {
-               if (mInInputLink)
-               {
-                  mInputLink = mNode->GetInputLink(dtUtil::XMLStringConverter(chars).ToString());
-               }
-               else if (mInOutputLink)
-               {
-                  mOutputLink = mNode->GetOutputLink(dtUtil::XMLStringConverter(chars).ToString());
-               }
-               else if (mInValueLink)
-               {
-                  mValueLink = mNode->GetValueLink(dtUtil::XMLStringConverter(chars).ToString());
-
-                  // If the value link wasn't already in the node, create one instead.
-                  if (!mValueLink)
+                  else if (mInValueLink)
                   {
-                     mNode->GetValueLinks().push_back(ValueLink(mNode.get(), mNode->GetProperty(dtUtil::XMLStringConverter(chars).ToString())));
                      mValueLink = mNode->GetValueLink(dtUtil::XMLStringConverter(chars).ToString());
+
+                     // If the value link wasn't already in the node, create one instead.
+                     if (!mValueLink)
+                     {
+                        mNode->GetValueLinks().push_back(ValueLink(mNode.get(), mNode->GetProperty(dtUtil::XMLStringConverter(chars).ToString())));
+                        mValueLink = mNode->GetValueLink(dtUtil::XMLStringConverter(chars).ToString());
+                     }
                   }
                }
+               else if (mValueLink && topEl == dtDAL::MapXMLConstants::DIRECTOR_LINK_VALUE_IS_OUT_ELEMENT)
+               {
+                  mValueLink->SetOutLink(dtUtil::XMLStringConverter(chars).ToString() == "true");
+               }
+               else if (mValueLink && topEl == dtDAL::MapXMLConstants::DIRECTOR_LINK_VALUE_ALLOW_MULTIPLE_ELEMENT)
+               {
+                  mValueLink->SetAllowMultiple(dtUtil::XMLStringConverter(chars).ToString() == "true");
+               }
+               else if (mValueLink && topEl == dtDAL::MapXMLConstants::DIRECTOR_LINK_VALUE_TYPE_CHECK_ELEMENT)
+               {
+                  mValueLink->SetTypeChecking(dtUtil::XMLStringConverter(chars).ToString() == "true");
+               }
+               else if (topEl == dtDAL::MapXMLConstants::DIRECTOR_LINK_ELEMENT)
+               {
+                  mInLinkTo = true;
+               }
             }
-            else if (mValueLink && topEl == dtDAL::MapXMLConstants::DIRECTOR_LINK_VALUE_IS_OUT_ELEMENT)
+            else if (!mPropSerializer->Characters(topEl, chars, mNode.get()))
             {
-               mValueLink->SetOutLink(dtUtil::XMLStringConverter(chars).ToString() == "true");
-            }
-            else if (mValueLink && topEl == dtDAL::MapXMLConstants::DIRECTOR_LINK_VALUE_ALLOW_MULTIPLE_ELEMENT)
-            {
-               mValueLink->SetAllowMultiple(dtUtil::XMLStringConverter(chars).ToString() == "true");
-            }
-            else if (mValueLink && topEl == dtDAL::MapXMLConstants::DIRECTOR_LINK_VALUE_TYPE_CHECK_ELEMENT)
-            {
-               mValueLink->SetTypeChecking(dtUtil::XMLStringConverter(chars).ToString() == "true");
-            }
-            else if (topEl == dtDAL::MapXMLConstants::DIRECTOR_LINK_ELEMENT)
-            {
-               mInLinkTo = true;
+               if (topEl == dtDAL::MapXMLConstants::ID_ELEMENT)
+               {
+                  mNode->SetID(dtCore::UniqueId(dtUtil::XMLStringConverter(chars).ToString()));
+               }
+               else if (topEl == dtDAL::MapXMLConstants::DIRECTOR_LINKS_INPUT_ELEMENT)
+               {
+                  if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                     mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Input Link");
+
+                  mInLink = true;
+                  mInInputLink = true;
+               }
+               else if (topEl == dtDAL::MapXMLConstants::DIRECTOR_LINKS_OUTPUT_ELEMENT)
+               {
+                  if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                     mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Output Link");
+
+                  mInLink = true;
+                  mInOutputLink = true;
+               }
+               else if (topEl == dtDAL::MapXMLConstants::DIRECTOR_LINKS_VALUE_ELEMENT)
+               {
+                  if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                     mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Value Link");
+
+                  mInLink = true;
+                  mInValueLink = true;
+               }
             }
          }
-         else if (!mPropSerializer->Characters(topEl, chars, mNode.get()))
+         else if (topEl == dtDAL::MapXMLConstants::NAME_ELEMENT)
          {
-            if (topEl == dtDAL::MapXMLConstants::ID_ELEMENT)
-            {
-               mNode->SetID(dtCore::UniqueId(dtUtil::XMLStringConverter(chars).ToString()));
-            }
-            else if (topEl == dtDAL::MapXMLConstants::DIRECTOR_LINKS_INPUT_ELEMENT)
-            {
-               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Input Link");
-
-               mInLink = true;
-               mInInputLink = true;
-            }
-            else if (topEl == dtDAL::MapXMLConstants::DIRECTOR_LINKS_OUTPUT_ELEMENT)
-            {
-               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Output Link");
-
-               mInLink = true;
-               mInOutputLink = true;
-            }
-            else if (topEl == dtDAL::MapXMLConstants::DIRECTOR_LINKS_VALUE_ELEMENT)
-            {
-               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Value Link");
-
-               mInLink = true;
-               mInValueLink = true;
-            }
+            graph->mName = dtUtil::XMLStringConverter(chars).ToString();
          }
       }
    }
@@ -432,6 +482,9 @@ namespace dtDirector
       mInOutputLink = false;
       mInValueLink = false;
       mInLinkTo = false;
+
+      mInGraph = 0;
+      while(mGraphs.size()) mGraphs.pop();
 
       mInputLink = NULL;
       mOutputLink = NULL;
@@ -508,21 +561,36 @@ namespace dtDirector
       // Add the node to the director.
       if (mNode.valid())
       {
+         DirectorGraphData* graph = mGraphs.top();
+
          if (mInValueNodes)
          {
-            mDirector->GetValueNodes().push_back(dynamic_cast<ValueNode*>(mNode.get()));
+            graph->GetValueNodes().push_back(dynamic_cast<ValueNode*>(mNode.get()));
          }
          else if (mInEventNodes)
          {
-            mDirector->GetEventNodes().push_back(dynamic_cast<EventNode*>(mNode.get()));
+            graph->GetEventNodes().push_back(dynamic_cast<EventNode*>(mNode.get()));
          }
          else if (mInActionNodes)
          {
-            mDirector->GetActionNodes().push_back(dynamic_cast<ActionNode*>(mNode.get()));
+            graph->GetActionNodes().push_back(dynamic_cast<ActionNode*>(mNode.get()));
          }
       }
 
       ClearNodeValues();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DirectorXMLHandler::EndGraphSection(const XMLCh* const localname)
+   {
+      if (mInGraph)
+      {
+         if (XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_GRAPH_ELEMENT) == 0)
+         {
+            mGraphs.pop();
+            mInGraph--;
+         }
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////

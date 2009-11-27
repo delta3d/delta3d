@@ -253,38 +253,7 @@ namespace dtDirector
             }
             EndElement(); // End Libraries Element.
 
-            // Value Nodes.
-            BeginElement(dtDAL::MapXMLConstants::DIRECTOR_VALUE_NODES_ELEMENT);
-            {
-               const std::vector<dtCore::RefPtr<ValueNode> >& ValueNodes = director->GetValueNodes();
-               for (int nodeIndex = 0; nodeIndex < (int)ValueNodes.size(); nodeIndex++)
-               {
-                  SaveNode(ValueNodes[nodeIndex].get());
-               }
-            }
-            EndElement(); // End Value Nodes Element.
-
-            // Event Nodes.
-            BeginElement(dtDAL::MapXMLConstants::DIRECTOR_EVENT_NODES_ELEMENT);
-            {
-               const std::vector<dtCore::RefPtr<EventNode> >& EventNodes = director->GetEventNodes();
-               for (int nodeIndex = 0; nodeIndex < (int)EventNodes.size(); nodeIndex++)
-               {
-                  SaveNode(EventNodes[nodeIndex].get());
-               }
-            }
-            EndElement(); // End Event Nodes Element.
-
-            // Action Nodes.
-            BeginElement(dtDAL::MapXMLConstants::DIRECTOR_ACTION_NODES_ELEMENT);
-            {
-               const std::vector<dtCore::RefPtr<ActionNode> >& ActionNodes = director->GetActionNodes();
-               for (int nodeIndex = 0; nodeIndex < (int)ActionNodes.size(); nodeIndex++)
-               {
-                  SaveNode(ActionNodes[nodeIndex].get());
-               }
-            }
-            EndElement(); // End Action Nodes Element.
+            SaveGraphs(director->GetGraphData());
          }
          EndElement(); // End Director Element.
 
@@ -307,6 +276,61 @@ namespace dtDirector
          mFormatTarget.SetOutputFile(NULL);
          throw dtUtil::Exception(dtDAL::ExceptionEnum::MapSaveError, std::string("Unknown exception saving Director script \"") + director->GetName() + ("\"."), __FILE__, __LINE__);
       }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DirectorWriter::SaveGraphs(DirectorGraphData& graph)
+   {
+      // Graph.
+      BeginElement(dtDAL::MapXMLConstants::DIRECTOR_GRAPH_ELEMENT);
+      {
+         // Name Element.
+         BeginElement(dtDAL::MapXMLConstants::NAME_ELEMENT);
+         {
+            AddCharacters(graph.mName);
+         }
+         EndElement(); // End Name Element.
+
+         // Event Nodes.
+         BeginElement(dtDAL::MapXMLConstants::DIRECTOR_EVENT_NODES_ELEMENT);
+         {
+            const std::vector<dtCore::RefPtr<EventNode> >& EventNodes = graph.GetEventNodes();
+            for (int nodeIndex = 0; nodeIndex < (int)EventNodes.size(); nodeIndex++)
+            {
+               SaveNode(EventNodes[nodeIndex].get());
+            }
+         }
+         EndElement(); // End Event Nodes Element.
+
+         // Action Nodes.
+         BeginElement(dtDAL::MapXMLConstants::DIRECTOR_ACTION_NODES_ELEMENT);
+         {
+            const std::vector<dtCore::RefPtr<ActionNode> >& ActionNodes = graph.GetActionNodes();
+            for (int nodeIndex = 0; nodeIndex < (int)ActionNodes.size(); nodeIndex++)
+            {
+               SaveNode(ActionNodes[nodeIndex].get());
+            }
+         }
+         EndElement(); // End Action Nodes Element.
+
+         // Value Nodes.
+         BeginElement(dtDAL::MapXMLConstants::DIRECTOR_VALUE_NODES_ELEMENT);
+         {
+            const std::vector<dtCore::RefPtr<ValueNode> >& ValueNodes = graph.GetValueNodes();
+            for (int nodeIndex = 0; nodeIndex < (int)ValueNodes.size(); nodeIndex++)
+            {
+               SaveNode(ValueNodes[nodeIndex].get());
+            }
+         }
+         EndElement(); // End Value Nodes Element.
+
+         // Now save sub graphs.
+         for (int graphIndex = 0; graphIndex < (int)graph.GetSubGraphs().size(); graphIndex++)
+         {
+            SaveGraphs(graph.GetSubGraphs()[graphIndex]);
+         }
+      }
+      EndElement(); // End Graph.
    }
 
    //////////////////////////////////////////////////////////////////////////

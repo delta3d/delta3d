@@ -42,6 +42,97 @@ namespace dtDAL
 namespace dtDirector
 {
    /**
+    * Director Graph structure that contains all nodes
+    * within the director script.
+    */
+   class DT_DIRECTOR_EXPORT DirectorGraphData
+   {
+   public:
+
+      //////////////////////////////////////////////////////////////////////////
+      void Update(float simDelta, float delta)
+      {
+         // Update all Event nodes.
+         for (int nodeIndex = 0; nodeIndex < (int)mEventNodes.size(); nodeIndex++)
+         {
+            mEventNodes[nodeIndex]->Update(simDelta, delta);
+         }
+
+         // Update all Action nodes.
+         for (int nodeIndex = 0; nodeIndex < (int)mActionNodes.size(); nodeIndex++)
+         {
+            mActionNodes[nodeIndex]->Update(simDelta, delta);
+         }
+
+         for (int graphIndex = 0; graphIndex < (int)mSubGraphs.size(); graphIndex++)
+         {
+            mSubGraphs[graphIndex].Update(simDelta, delta);
+         }
+      }
+
+      //////////////////////////////////////////////////////////////////////////
+      Node* GetNode(const dtCore::UniqueId& id)
+      {
+         int count = (int)mEventNodes.size();
+         for (int index = 0; index < count; index++)
+         {
+            if (mEventNodes[index]->GetID() == id)
+            {
+               return mEventNodes[index];
+            }
+         }
+
+         count = (int)mActionNodes.size();
+         for (int index = 0; index < count; index++)
+         {
+            if (mActionNodes[index]->GetID() == id)
+            {
+               return mActionNodes[index];
+            }
+         }
+
+         count = (int)mValueNodes.size();
+         for (int index = 0; index < count; index++)
+         {
+            if (mValueNodes[index]->GetID() == id)
+            {
+               return mValueNodes[index];
+            }
+         }
+
+         count = (int)mSubGraphs.size();
+         for (int index = 0; index < count; index++)
+         {
+            Node* node = mSubGraphs[index].GetNode(id);
+            if (node) return node;
+         }
+
+         return NULL;
+      }
+      
+      /**
+       * Accessors for the node lists.
+       */
+      std::vector<dtCore::RefPtr<EventNode> >& GetEventNodes() {return mEventNodes;}
+      std::vector<dtCore::RefPtr<ActionNode> >& GetActionNodes() {return mActionNodes;}
+      std::vector<dtCore::RefPtr<ValueNode> >& GetValueNodes() {return mValueNodes;}
+
+      /**
+       * Accessor for sub graphs.
+       */
+      std::vector<DirectorGraphData>& GetSubGraphs() {return mSubGraphs;}
+
+      std::string mName;
+
+      std::vector<DirectorGraphData> mSubGraphs;
+
+      std::vector<dtCore::RefPtr<EventNode> >  mEventNodes;
+      std::vector<dtCore::RefPtr<ActionNode> > mActionNodes;
+      std::vector<dtCore::RefPtr<ValueNode> >  mValueNodes;
+   };
+
+
+   /**
     * This is the base class for all action nodes.
     *
     * @note
@@ -62,6 +153,8 @@ namespace dtDirector
        * Initializes the Director.
        */
       virtual void Init();
+
+      void CreateDebugScript();
 
       /**
        * Loads a Director script.
@@ -106,8 +199,8 @@ namespace dtDirector
       /**
        * Accessors for the name of the script.
        */
-      void SetName(const std::string& name) {mName = name;}
-      std::string& GetName() {return mName;}
+      void SetName(const std::string& name) {mGraph.mName = name;}
+      std::string& GetName() {return mGraph.mName;}
 
       /**
        * Accessors for the description of the script.
@@ -185,19 +278,9 @@ namespace dtDirector
       const std::string GetLibraryVersion(const std::string& mName) const;
 
       /**
-       * Retrieves the list of event nodes.
+       * Retrieves the graph data.
        */
-      std::vector<dtCore::RefPtr<EventNode> >& GetEventNodes() {return mEventNodes;}
-
-      /**
-       * Retrieves the list of action nodes.
-       */
-      std::vector<dtCore::RefPtr<ActionNode> >& GetActionNodes() {return mActionNodes;}
-
-      /**
-       * Retrieves the list of value nodes.
-       */
-      std::vector<dtCore::RefPtr<ValueNode> >& GetValueNodes() {return mValueNodes;}
+      DirectorGraphData& GetGraphData() {return mGraph;}
 
       /**
        * Retrieves a node of the given the id.
@@ -218,7 +301,6 @@ namespace dtDirector
    private:
 
       // Core Info.
-      std::string mName;
       std::string mDescription;
       std::string mAuthor;
       std::string mComment;
@@ -230,9 +312,7 @@ namespace dtDirector
       std::vector<std::string> mLibraries;
       std::map<std::string, std::string> mLibraryVersionMap;
 
-      std::vector<dtCore::RefPtr<EventNode> >  mEventNodes;
-      std::vector<dtCore::RefPtr<ActionNode> > mActionNodes;
-      std::vector<dtCore::RefPtr<ValueNode> >  mValueNodes;
+      DirectorGraphData mGraph;
 
       dtUtil::Log*   mLogger;
    };

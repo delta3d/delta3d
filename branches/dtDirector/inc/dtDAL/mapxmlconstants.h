@@ -82,6 +82,7 @@ namespace dtDAL
          static XMLCh* EVENT_NAME_ELEMENT;
          static XMLCh* EVENT_DESCRIPTION_ELEMENT;
 
+         static XMLCh* DIRECTOR_GRAPH_ELEMENT;
          static XMLCh* DIRECTOR_EVENT_NODES_ELEMENT;
          static XMLCh* DIRECTOR_ACTION_NODES_ELEMENT;
          static XMLCh* DIRECTOR_VALUE_NODES_ELEMENT;
