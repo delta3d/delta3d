@@ -42,6 +42,7 @@ namespace dtDirector
    {
       mLogger = &dtUtil::Log::GetInstance("nodemanager.cpp");
       mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, "Initializing node library manager.");
+
       LoadNodeRegistry(NODE_LIBRARY);
    }
 
@@ -192,7 +193,7 @@ namespace dtDirector
          }
          else
          {
-            mNodes.insert(std::make_pair(dtCore::RefPtr<const NodeType>(nodeTypes[i].get()),entry.registry));
+            mNodes.insert(std::make_pair(dtCore::RefPtr<const NodeType>(nodeTypes[i].get()), entry.registry));
             ++numUniqueActors;
          }
       }

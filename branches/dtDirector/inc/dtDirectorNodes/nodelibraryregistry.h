@@ -37,12 +37,15 @@ namespace dtDirector
    public:
 
       /// Events
+      static dtCore::RefPtr<dtDirector::NodeType> INPUT_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> NAMED_EVENT_NODE_TYPE;
 
       /// Actions
+      static dtCore::RefPtr<dtDirector::NodeType> OUTPUT_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> OPERATION_ACTION_NODE_TYPE;
 
       /// Values
+      static dtCore::RefPtr<dtDirector::NodeType> EXTERNAL_VALUE_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> INT_VALUE_NODE_TYPE;
 
       /**

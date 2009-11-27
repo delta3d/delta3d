@@ -169,7 +169,7 @@ namespace dtDirector
        *         via this method instead of directly to ensure that
        *         the desired property is being used.
        */
-      virtual dtDAL::ActorProperty* GetProperty(const std::string& name = "Value", int index = 0);
+      virtual dtDAL::ActorProperty* GetProperty(const std::string& name, int index = 0);
 
       /**
        * This method is provided for ease of use, it will

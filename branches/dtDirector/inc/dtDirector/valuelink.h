@@ -113,7 +113,7 @@ namespace dtDirector
        *
        * @return  The name of the link.
        */
-      std::string GetName() const;
+      std::string GetName();
 
       /**
        * Retrieves whether this link is an output link.

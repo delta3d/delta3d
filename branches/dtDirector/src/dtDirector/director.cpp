@@ -47,40 +47,52 @@ namespace dtDirector
    {
       BuildPropertyMap();
 
-      //dtDirector::NodeManager& nodeManager = dtDirector::NodeManager::GetInstance();
+      dtDirector::NodeManager& nodeManager = dtDirector::NodeManager::GetInstance();
 
-      //mEventNodes.push_back(dynamic_cast<dtDirector::EventNode*>(nodeManager.CreateNode("Named Event", "General").get()));
+      mEventNodes.push_back(dynamic_cast<dtDirector::EventNode*>(nodeManager.CreateNode("Named Event", "General").get()));
+      mEventNodes.push_back(dynamic_cast<dtDirector::EventNode*>(nodeManager.CreateNode("Input", "Core").get()));
 
-      //mActionNodes.push_back(dynamic_cast<dtDirector::ActionNode*>(nodeManager.CreateNode("Binary Operation", "General").get()));
+      mActionNodes.push_back(dynamic_cast<dtDirector::ActionNode*>(nodeManager.CreateNode("Binary Operation", "General").get()));
+      mActionNodes.push_back(dynamic_cast<dtDirector::ActionNode*>(nodeManager.CreateNode("Output", "Core").get()));
 
-      //mValueNodes.push_back(dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Int", "General").get()));
-      //mValueNodes.push_back(dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Int", "General").get()));
-      //mValueNodes.push_back(dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Int", "General").get()));
-      //mValueNodes.push_back(dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Int", "General").get()));
+      mValueNodes.push_back(dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Int", "General").get()));
+      mValueNodes.push_back(dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Int", "General").get()));
+      mValueNodes.push_back(dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("External Value", "Core").get()));
+      mValueNodes.push_back(dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Int", "General").get()));
+      mValueNodes.push_back(dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Int", "General").get()));
 
-      //{
-      //   mValueNodes[0]->SetPropertyValue(10);
-      //   mValueNodes[1]->SetPropertyValue(15);
+      {
+         mValueNodes[0]->SetPropertyValue(10);
+         mValueNodes[1]->SetPropertyValue(15);
 
-      //   // Connect all the nodes together.
-      //   mEventNodes[0]->GetOutputLinks()[0].Connect(&mActionNodes[0]->GetInputLinks()[2]);
+         // Connect all the nodes together.
+         mEventNodes[0]->GetOutputLinks()[0].Connect(&mEventNodes[1]->GetInputLinks()[0]);
+         mEventNodes[1]->GetOutputLinks()[0].Connect(&mActionNodes[0]->GetInputLinks()[2]);
 
-      //   mActionNodes[0]->GetValueLinks()[0].Connect(mValueNodes[0].get());
-      //   mActionNodes[0]->GetValueLinks()[1].Connect(mValueNodes[1].get());
-      //   mActionNodes[0]->GetValueLinks()[2].Connect(mValueNodes[2].get());
-      //   mActionNodes[0]->GetValueLinks()[2].Connect(mValueNodes[3].get());
+         mActionNodes[0]->GetValueLinks()[0].Connect(mValueNodes[0].get());
+         mActionNodes[0]->GetValueLinks()[1].Connect(mValueNodes[1].get());
+         mActionNodes[0]->GetValueLinks()[2].Connect(mValueNodes[2].get());
+         mActionNodes[0]->GetValueLinks()[2].Connect(mValueNodes[3].get());
 
-      //   // Trigger the event.
-      //   mEventNodes[0]->Trigger(0);
+         mValueNodes[2]->GetValueLinks()[0].Connect(mValueNodes[4].get());
 
-      //   Update(0, 0);
-      //   Update(0, 0);
-      //   Update(0, 0);
-      //   Update(0, 0);
+         //// Trigger the event.
+         //mEventNodes[0]->Trigger(0);
 
-      //   int firstResult = mValueNodes[2]->GetPropertyValue<int>();
-      //   int secondResult = mValueNodes[3]->GetPropertyValue<int>();
-      //}
+         //Update(0, 0);
+         //Update(0, 0);
+         //Update(0, 0);
+         //Update(0, 0);
+         //Update(0, 0);
+         //Update(0, 0);
+         //Update(0, 0);
+
+         //int firstResult = mValueNodes[2]->GetPropertyValue<int>();
+         //int secondResult = mValueNodes[3]->GetPropertyValue<int>();
+         //int thirdResult = mValueNodes[4]->GetPropertyValue<int>();
+
+         //firstResult = mValueNodes[2]->GetPropertyValue<int>();
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////

@@ -99,40 +99,4 @@ namespace dtDirector
          mOutputs[0].Activate();
       }
    }
-
-   //////////////////////////////////////////////////////////////////////////
-   int ActionNode::GetPropertyCount(const std::string& name)
-   {
-      // First iterate through all value links to see if this property
-      // is redirected.
-      for (int valueIndex = 0; valueIndex < (int)mValues.size(); valueIndex++)
-      {
-         dtDAL::ActorProperty* prop = mValues[valueIndex].GetDefaultProperty();
-         if (prop && prop->GetName() == name)
-         {
-            return mValues[valueIndex].GetPropertyCount();
-         }
-      }
-
-      // Did not find any overrides, so return the default.
-      return Node::GetPropertyCount(name);
-   }
-
-   //////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProperty* ActionNode::GetProperty(const std::string& name, int index)
-   {
-      // First iterate through all value links to see if this property
-      // is redirected.
-      for (int valueIndex = 0; valueIndex < (int)mValues.size(); valueIndex++)
-      {
-         dtDAL::ActorProperty* prop = mValues[valueIndex].GetDefaultProperty();
-         if (prop && prop->GetName() == name)
-         {
-            return mValues[valueIndex].GetProperty(index);
-         }
-      }
-
-      // Did not find any overrides, so return the default.
-      return Node::GetProperty(name, index);
-   }
 }

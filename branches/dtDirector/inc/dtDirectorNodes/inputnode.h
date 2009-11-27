@@ -19,36 +19,32 @@
  * Author: Jeff P. Houde
  */
 
-#ifndef DIRECTOR_EVENT_NODE
-#define DIRECTOR_EVENT_NODE
+#ifndef DIRECTOR_INPUT_NODE
+#define DIRECTOR_INPUT_NODE
 
-#include <dtDirector/node.h>
-#include <dtDirector/export.h>
+#include <dtDirectorNodes/nodelibraryexport.h>
+#include <dtDirector/eventnode.h>
 
-
-namespace dtDAL
-{
-    class ActorProxy;
-}
 
 namespace dtDirector
 {
-  /**
-   * This is the base class for all event nodes.
+   /**
+    * This node, when used inside a sub tier, will expose
+    * input links when viewing that tier from the outside.
    *
    * @note
    *      Node objects must be created through the NodePluginRegistry or
    *      the NodeManager. If they are not created in this fashion,
    *      the node types will not be set correctly.
    */
-   class DT_DIRECTOR_EXPORT EventNode : public Node
+   class NODE_LIBRARY_EXPORT InputNode : public EventNode
    {
    public:
 
       /**
        * Constructs the Node.
        */
-      EventNode();
+      InputNode();
 
       /**
        * Initializes the Node.
@@ -77,7 +73,6 @@ namespace dtDirector
        */
       virtual void BuildPropertyMap();
 
-
       /**
        * Updates the node.
        *
@@ -86,15 +81,22 @@ namespace dtDirector
        */
       virtual void Update(float simDelta, float delta);
 
+      /**
+       * Accessors for the name of the input node.
+       */
+      void SetName(const std::string& name) {mName = name;}
+      std::string GetName() {return mName;}
+
    protected:
 
       /**
        *	Protected Destructor.  dtCore::RefPtr will handle its destruction.
        */
-      virtual ~EventNode();
+      virtual ~InputNode();
 
    private:
 
+      std::string mName;
   };
 }
 

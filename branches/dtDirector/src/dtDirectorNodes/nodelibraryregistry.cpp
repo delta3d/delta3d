@@ -23,12 +23,15 @@
 #include <dtDirectorNodes/nodelibraryregistry.h>
 
 // Events
+#include <dtDirectorNodes/inputnode.h>
 #include <dtDirectorNodes/namedevent.h>
 
 // Actions
+#include <dtDirectorNodes/outputnode.h>
 #include <dtDirectorNodes/operationaction.h>
 
 // Values
+#include <dtDirectorNodes/externalvaluenode.h>
 #include <dtDirectorNodes/intvalue.h>
 
 
@@ -37,12 +40,15 @@ using dtCore::RefPtr;
 namespace dtDirector
 {
    // Events
+   RefPtr<NodeType> NodeLibraryRegistry::INPUT_NODE_TYPE(new dtDirector::NodeType("Input", "Core", "Links", "An Input node for a sub tier."));
    RefPtr<NodeType> NodeLibraryRegistry::NAMED_EVENT_NODE_TYPE(new dtDirector::NodeType("Named Event", "General", "Events", "A simple event with a custom name."));
 
    // Actions
-   RefPtr<NodeType> NodeLibraryRegistry::OPERATION_ACTION_NODE_TYPE(new dtDirector::NodeType("Binary Operation", "General", "Math", "Performs a simple binary math operation given two values"));
+   RefPtr<NodeType> NodeLibraryRegistry::OUTPUT_NODE_TYPE(new dtDirector::NodeType("Output", "Core", "Links", "An Output node for a sub tier."));
+   RefPtr<NodeType> NodeLibraryRegistry::OPERATION_ACTION_NODE_TYPE(new dtDirector::NodeType("Binary Operation", "General", "Math", "Performs a simple binary math operation given two values."));
 
    // Values
+   RefPtr<NodeType> NodeLibraryRegistry::EXTERNAL_VALUE_NODE_TYPE(new dtDirector::NodeType("External Value", "Core", "Links", "An External Value node for a sub tier."));
    RefPtr<NodeType> NodeLibraryRegistry::INT_VALUE_NODE_TYPE(new dtDirector::NodeType("Int", "General", "Variables", "An integer data storage."));
 
    //////////////////////////////////////////////////////////////////////////
@@ -59,7 +65,7 @@ namespace dtDirector
 
    //////////////////////////////////////////////////////////////////////////
    NodeLibraryRegistry::NodeLibraryRegistry()
-      : dtDirector::NodePluginRegistry("General Nodes that can be used anywhere.")
+      : dtDirector::NodePluginRegistry("Core set of nodes that can be used anywhere.")
    {
    }
 
@@ -67,12 +73,15 @@ namespace dtDirector
    void NodeLibraryRegistry::RegisterNodeTypes()
    {
       // Events
+      mNodeFactory->RegisterType<InputNode>(INPUT_NODE_TYPE.get());
       mNodeFactory->RegisterType<NamedEvent>(NAMED_EVENT_NODE_TYPE.get());
 
       // Actions
+      mNodeFactory->RegisterType<OutputNode>(OUTPUT_NODE_TYPE.get());
       mNodeFactory->RegisterType<OperationAction>(OPERATION_ACTION_NODE_TYPE.get());
 
       // Values
+      mNodeFactory->RegisterType<ExternalValueNode>(EXTERNAL_VALUE_NODE_TYPE.get());
       mNodeFactory->RegisterType<IntValue>(INT_VALUE_NODE_TYPE.get());
    }
 }

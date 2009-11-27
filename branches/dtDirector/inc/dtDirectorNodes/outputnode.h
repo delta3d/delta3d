@@ -19,36 +19,32 @@
  * Author: Jeff P. Houde
  */
 
-#ifndef DIRECTOR_EVENT_NODE
-#define DIRECTOR_EVENT_NODE
+#ifndef DIRECTOR_OUTPUT_NODE
+#define DIRECTOR_OUTPUT_NODE
 
-#include <dtDirector/node.h>
-#include <dtDirector/export.h>
+#include <dtDirectorNodes/nodelibraryexport.h>
+#include <dtDirector/actionnode.h>
 
-
-namespace dtDAL
-{
-    class ActorProxy;
-}
 
 namespace dtDirector
 {
-  /**
-   * This is the base class for all event nodes.
-   *
-   * @note
-   *      Node objects must be created through the NodePluginRegistry or
-   *      the NodeManager. If they are not created in this fashion,
-   *      the node types will not be set correctly.
-   */
-   class DT_DIRECTOR_EXPORT EventNode : public Node
+   /**
+    * This node, when used inside a sub tier, will expose
+    * output links when viewing that tier from the outside.
+    *
+    * @note
+    *      Node objects must be created through the NodePluginRegistry or
+    *      the NodeManager. If they are not created in this fashion,
+    *      the node types will not be set correctly.
+    */
+   class NODE_LIBRARY_EXPORT OutputNode : public ActionNode
    {
    public:
 
       /**
        * Constructs the Node.
        */
-      EventNode();
+      OutputNode();
 
       /**
        * Initializes the Node.
@@ -56,14 +52,6 @@ namespace dtDirector
        * @param[in]  nodeType  The node type.
        */
       virtual void Init(const NodeType& nodeType);
-
-      /**
-       * Triggers the event.
-       *
-       * @param[in]  outputIndex  The output to trigger.
-       * @param[in]  instigator   The instigating actor.
-       */
-      virtual void Trigger(int outputIndex, const dtDAL::ActorProxy* instigator = NULL);
 
       /**
        * This method is called in init, which instructs the node
@@ -77,25 +65,23 @@ namespace dtDirector
        */
       virtual void BuildPropertyMap();
 
-
       /**
-       * Updates the node.
-       *
-       * @param[in]  simDelta  The simulation time step.
-       * @param[in]  delta     The real time step.
+       * Accessors for the name of the input node.
        */
-      virtual void Update(float simDelta, float delta);
+      void SetName(const std::string& name) {mName = name;}
+      std::string GetName() {return mName;}
 
    protected:
 
       /**
        *	Protected Destructor.  dtCore::RefPtr will handle its destruction.
        */
-      virtual ~EventNode();
+      virtual ~OutputNode();
 
    private:
 
-  };
+      std::string mName;
+   };
 }
 
 #endif

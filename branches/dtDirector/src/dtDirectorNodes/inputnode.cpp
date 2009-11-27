@@ -22,29 +22,37 @@
 #include <sstream>
 #include <algorithm>
 
-#include <dtDirector/eventnode.h>
+#include <dtDirectorNodes/inputnode.h>
 
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/actorproxy.h>
 
+#include <dtDirector/inputlink.h>
+#include <dtDirector/outputlink.h>
+
 namespace dtDirector
 {
    ///////////////////////////////////////////////////////////////////////////////////////
-   EventNode::EventNode()
-       : Node()
+   InputNode::InputNode()
+       : EventNode()
+   {
+      mName = "In";
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////////////
+   InputNode::~InputNode()
    {
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   EventNode::~EventNode()
+   void InputNode::Init(const NodeType& nodeType)
    {
-   }
+      EventNode::Init(nodeType);
 
-   ///////////////////////////////////////////////////////////////////////////////////////
-   void EventNode::Init(const NodeType& nodeType)
-   {
-      Node::Init(nodeType);
+      // The input node is a special event node that contains an input.
+      mInputs.clear();
+      mInputs.push_back(InputLink(this, "In"));
 
       // Create our default output.
       mOutputs.clear();
@@ -52,28 +60,40 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void EventNode::Trigger(int outputIndex, const dtDAL::ActorProxy* instigator)
+   void InputNode::Trigger(int outputIndex, const dtDAL::ActorProxy* instigator)
    {
       // Can't trigger a disabled event.
       if (GetDisabled()) return;
 
-      if (outputIndex < (int)mOutputs.size())
-      {
-         // TODO: Check the instigator.
-
-         mOutputs[outputIndex].Activate();
-      }
+      // Activate the input link instead of the normal behavior.
+      if (mInputs.size()) mInputs[0].Activate();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void EventNode::BuildPropertyMap()
+   void InputNode::BuildPropertyMap()
    {
-      Node::BuildPropertyMap();
+      EventNode::BuildPropertyMap();
+
+      AddProperty(new dtDAL::StringActorProperty(
+         "Name", "Name", 
+         dtDAL::StringActorProperty::SetFuncType(this, &InputNode::SetName),
+         dtDAL::StringActorProperty::GetFuncType(this, &InputNode::GetName),
+         "The name of the input link.", "Data"));
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void EventNode::Update(float simDelta, float delta)
+   void InputNode::Update(float simDelta, float delta)
    {
-      Node::Update(simDelta, delta);
+      if (GetDisabled()) return;
+
+      EventNode::Update(simDelta, delta);
+
+      // Check to see if our input has been activated.
+      if (mInputs.size() && mInputs[0].Test())
+      {
+         if (mOutputs.size()) mOutputs[0].Activate();
+      }
    }
+
+   //////////////////////////////////////////////////////////////////////////
 }

@@ -22,58 +22,48 @@
 #include <sstream>
 #include <algorithm>
 
-#include <dtDirector/eventnode.h>
+#include <dtDirectorNodes/outputnode.h>
 
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actorproperty.h>
-#include <dtDAL/actorproxy.h>
 
 namespace dtDirector
 {
    ///////////////////////////////////////////////////////////////////////////////////////
-   EventNode::EventNode()
-       : Node()
+   OutputNode::OutputNode()
+       : ActionNode()
+   {
+      mName = "Out";
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////////////
+   OutputNode::~OutputNode()
    {
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   EventNode::~EventNode()
+   void OutputNode::Init(const NodeType& nodeType)
    {
-   }
+      ActionNode::Init(nodeType);
 
-   ///////////////////////////////////////////////////////////////////////////////////////
-   void EventNode::Init(const NodeType& nodeType)
-   {
-      Node::Init(nodeType);
+      mInputs.clear();
+      mInputs.push_back(InputLink(this, "In"));
 
-      // Create our default output.
+      // This node has an output node, but it is not visible inside the tier
+      // because nothing should be connected to it within that tier.
       mOutputs.clear();
       mOutputs.push_back(OutputLink(this, "Out"));
    }
 
-   //////////////////////////////////////////////////////////////////////////
-   void EventNode::Trigger(int outputIndex, const dtDAL::ActorProxy* instigator)
-   {
-      // Can't trigger a disabled event.
-      if (GetDisabled()) return;
-
-      if (outputIndex < (int)mOutputs.size())
-      {
-         // TODO: Check the instigator.
-
-         mOutputs[outputIndex].Activate();
-      }
-   }
-
    ////////////////////////////////////////////////////////////////////////////////
-   void EventNode::BuildPropertyMap()
+   void OutputNode::BuildPropertyMap()
    {
-      Node::BuildPropertyMap();
-   }
+      ActionNode::BuildPropertyMap();
 
-   //////////////////////////////////////////////////////////////////////////
-   void EventNode::Update(float simDelta, float delta)
-   {
-      Node::Update(simDelta, delta);
+      AddProperty(new dtDAL::StringActorProperty(
+         "Name", "Name", 
+         dtDAL::StringActorProperty::SetFuncType(this, &OutputNode::SetName),
+         dtDAL::StringActorProperty::GetFuncType(this, &OutputNode::GetName),
+         "The name of the output link.", "Data"));
    }
 }

@@ -146,6 +146,18 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    int Node::GetPropertyCount(const std::string& name)
    {
+      // First iterate through all value links to see if this property
+      // is redirected.
+      for (int valueIndex = 0; valueIndex < (int)mValues.size(); valueIndex++)
+      {
+         dtDAL::ActorProperty* prop = mValues[valueIndex].GetDefaultProperty();
+         if (prop && prop->GetName() == name)
+         {
+            return mValues[valueIndex].GetPropertyCount();
+         }
+      }
+
+      // Did not find any overrides, so return the default.
       if (dtDAL::PropertyContainer::GetProperty(name))
       {
          return 1;
@@ -157,10 +169,23 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    dtDAL::ActorProperty* Node::GetProperty(const std::string& name, int index)
    {
+      // First iterate through all value links to see if this property
+      // is redirected.
+      for (int valueIndex = 0; valueIndex < (int)mValues.size(); valueIndex++)
+      {
+         dtDAL::ActorProperty* prop = mValues[valueIndex].GetDefaultProperty();
+         if (prop && prop->GetName() == name)
+         {
+            return mValues[valueIndex].GetProperty(index);
+         }
+      }
+
+      // Did not find any overrides, so return the default.
       if (index == 0)
       {
          return dtDAL::PropertyContainer::GetProperty(name);
       }
+
       return NULL;
    }
 

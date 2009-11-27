@@ -53,14 +53,14 @@ namespace dtDirector
       if (index >= 0 && index < (int)mLinks.size())
       {
          ValueNode* node = mLinks[index];
-         if (node && !node->GetDisabled()) return node->mProperty;
+         if (node && !node->GetDisabled()) return node->GetProperty();
       }
 
       // If we have no overriding links, and we are looking for the first
       // instance, return the default property.
       if (index == 0)
       {
-         return mDefaultProperty;
+         return GetDefaultProperty();
       }
 
       return NULL;
@@ -84,20 +84,21 @@ namespace dtDirector
       // Always return at least 1, because we always have the default.
       if (mLinks.empty())
       {
-         return 1;
+         if (GetDefaultProperty()) return 1;
+         else return 0;
       }
 
       return (int)mLinks.size();
    }
 
    //////////////////////////////////////////////////////////////////////////
-   std::string ValueLink::GetName() const
+   std::string ValueLink::GetName()
    {
       // Always display the default property name as the current property
       // changes based on what it is linked to.
-      if (mDefaultProperty)
+      if (GetDefaultProperty())
       {
-         return mDefaultProperty->GetName().Get();
+         return GetDefaultProperty()->GetName().Get();
       }
 
       return "NONE";
@@ -114,11 +115,14 @@ namespace dtDirector
       // Perform a type check.
       if (mTypeCheck)
       {
-         // Can not type check if we have no default property.
-         if (!mDefaultProperty) return false;
-         if (!valueNode->mProperty) return false;
-
-         if (mDefaultProperty->GetDataType() != valueNode->mProperty->GetDataType()) return false;
+         // If this has no default property type, no type checking can be done.
+         if (GetDefaultProperty())
+         {
+            if (!valueNode->CanBeType(GetDefaultProperty()->GetDataType()))
+            {
+               return false;
+            }
+         }
       }
 
       // If we are not allowing multiples, disconnect the current one first.

@@ -132,6 +132,8 @@ namespace dtDirector
 
       mPropSerializer->LinkActors();
       mPropSerializer->AssignGroupProperties();
+
+      LinkNodes();
    }
 
    /////////////////////////////////////////////////////////////////
@@ -292,7 +294,7 @@ namespace dtDirector
                // The other links node ID.
                if (topEl == dtDAL::MapXMLConstants::ID_ELEMENT)
                {
-                  mLinkNode = mDirector->GetNode(dtCore::UniqueId(dtUtil::XMLStringConverter(chars).ToString()));
+                  mLinkNodeID = dtUtil::XMLStringConverter(chars).ToString();
                }
                // The other links name.
                else if (topEl == dtDAL::MapXMLConstants::NAME_ELEMENT)
@@ -301,27 +303,41 @@ namespace dtDirector
                }
 
                // If we have both an ID and a name, we can link them.
-               if (mLinkNode.valid())
+               if (!mLinkNodeID.empty())
                {
                   // Connect a value link to a value node.
                   if (mValueLink)
                   {
-                     ValueNode* valueNode = dynamic_cast<ValueNode*>(mLinkNode.get());
-                     mValueLink->Connect(valueNode);
+                     mLinkList.push_back(ToLinkData());
+                     int index = (int)mLinkList.size() - 1;
+                     mLinkList[index].linkNodeID = mLinkNodeID;
+                     mLinkList[index].valueLink = mValueLink;
+                     mLinkNodeID.clear();
+
+                     //ValueNode* valueNode = dynamic_cast<ValueNode*>(mLinkNode.get());
+                     //mValueLink->Connect(valueNode);
                   }
                   else if (!mLinkToName.empty())
                   {
+                     mLinkList.push_back(ToLinkData());
+                     int index = (int)mLinkList.size() - 1;
+                     mLinkList[index].linkNodeID = mLinkNodeID;
+                     mLinkList[index].linkToName = mLinkToName;
+                     mLinkNodeID.clear();
+
                      // Connect an input link to an output link.
                      if (mInputLink)
                      {
-                        OutputLink* link = mLinkNode->GetOutputLink(mLinkToName);
-                        if (link) link->Connect(mInputLink);
+                        mLinkList[index].inputLink = mInputLink;
+                        //OutputLink* link = mLinkNode->GetOutputLink(mLinkToName);
+                        //if (link) link->Connect(mInputLink);
                      }
                      // Connect an output link to an input link.
                      else if (mOutputLink)
                      {
-                        InputLink* link = mLinkNode->GetInputLink(mLinkToName);
-                        if (link) link->Connect(mOutputLink);
+                        mLinkList[index].outputLink = mOutputLink;
+                        //InputLink* link = mLinkNode->GetInputLink(mLinkToName);
+                        //if (link) link->Connect(mOutputLink);
                      }
                   }
                }
@@ -470,7 +486,7 @@ namespace dtDirector
    {
       mInLinkTo = false;
 
-      mLinkNode = NULL;
+      mLinkNodeID.clear();
       mLinkToName.clear();
    }
 
@@ -615,6 +631,41 @@ namespace dtDirector
                mLibName.c_str(), mLibVersion.c_str());
          }
          e.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DirectorXMLHandler::LinkNodes()
+   {
+      for (int index = 0; index < (int)mLinkList.size(); index++)
+      {
+         dtCore::RefPtr<Node> linkNode = mDirector->GetNode(dtCore::UniqueId(mLinkList[index].linkNodeID));
+
+         // If we have both an ID and a name, we can link them.
+         if (linkNode.valid())
+         {
+            // Connect a value link to a value node.
+            if (mLinkList[index].valueLink)
+            {
+               ValueNode* valueNode = dynamic_cast<ValueNode*>(linkNode.get());
+               mLinkList[index].valueLink->Connect(valueNode);
+            }
+            else if (!mLinkList[index].linkToName.empty())
+            {
+               // Connect an input link to an output link.
+               if (mLinkList[index].inputLink)
+               {
+                  OutputLink* link = linkNode->GetOutputLink(mLinkList[index].linkToName);
+                  if (link) link->Connect(mLinkList[index].inputLink);
+               }
+               // Connect an output link to an input link.
+               else if (mLinkList[index].outputLink)
+               {
+                  InputLink* link = linkNode->GetInputLink(mLinkList[index].linkToName);
+                  if (link) link->Connect(mLinkList[index].outputLink);
+               }
+            }
+         }
       }
    }
 }

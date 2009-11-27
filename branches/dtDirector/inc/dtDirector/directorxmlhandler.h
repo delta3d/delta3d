@@ -158,8 +158,27 @@ namespace dtDirector
       std::string mNodeName;
       std::string mNodeCategory;
 
-      dtCore::RefPtr<Node> mLinkNode;
+      std::string mLinkNodeID;
       std::string mLinkToName;
+
+      struct ToLinkData
+      {
+         ToLinkData()
+         {
+            inputLink = NULL;
+            outputLink = NULL;
+            valueLink = NULL;
+         }
+
+         std::string linkNodeID;
+         std::string linkToName;
+
+         InputLink*  inputLink;
+         OutputLink* outputLink;
+         ValueLink*  valueLink;
+      };
+
+      std::vector<ToLinkData> mLinkList;
 
       //Reset all of the internal data/state variables
       void Reset();
@@ -178,6 +197,11 @@ namespace dtDirector
       void EndNodeElement();
       void EndLibrarySection(const XMLCh* const localname);
       void EndLibraryElement();
+
+      /**
+       * Links all nodes together at the end of the load.
+       */
+      void LinkNodes();
    };
 }
 #endif

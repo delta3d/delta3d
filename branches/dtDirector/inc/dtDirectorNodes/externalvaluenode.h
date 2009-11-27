@@ -19,11 +19,11 @@
  * Author: Jeff P. Houde
  */
 
-#ifndef DIRECTOR_VALUE_NODE
-#define DIRECTOR_VALUE_NODE
+#ifndef DIRECTOR_EXTERNAL_VALUE_NODE
+#define DIRECTOR_EXTERNAL_VALUE_NODE
 
-#include <dtDirector/export.h>
-#include <dtDirector/node.h>
+#include <dtDirectorNodes/nodelibraryexport.h>
+#include <dtDirector/valuenode.h>
 
 namespace dtDAL
 {
@@ -35,21 +35,22 @@ namespace dtDirector
    class ValueLink;
 
    /**
-    * This is the base class for all value nodes.
+   * This node, when used inside a sub tier, will expose
+   * a value link when viewing that tier from the outside.
     *
     * @note
     *      Node objects must be created through the NodePluginRegistry or
     *      the NodeManager. If they are not created in this fashion,
     *      the node types will not be set correctly.
     */
-   class DT_DIRECTOR_EXPORT ValueNode : public Node
+   class NODE_LIBRARY_EXPORT ExternalValueNode : public ValueNode
    {
    public:
 
       /**
        * Constructs the Node.
        */
-      ValueNode();
+      ExternalValueNode();
 
       /**
        * Initializes the Node.
@@ -89,10 +90,29 @@ namespace dtDirector
       void Disconnect(ValueLink* valueLink = NULL);
 
       /**
-       * Accessors for the name of the node.
+       * Retrieves the total number of values linked to a property.
+       *
+       * @param[in]  name  The name of the property.
+       *
+       * @return     The count.
        */
-      void SetName(const std::string& name) {mName = name;}
-      std::string GetName() {return mName;}
+      virtual int GetPropertyCount(const std::string& name = "Value");
+
+      /**
+       * Retrieves a property of the given name.  This is overloaded
+       * to provide functionality of redirected properties (from the
+       * use of ValueLink's).
+       *
+       * @param[in]  name   The name of the property.
+       * @param[in]  index  The property index, in case of multiple linking.
+       *
+       * @return     A pointer to the property, NULL if none found.
+       *
+       * @note  All properties used within nodes should be retrieved
+       *         via this method instead of directly to ensure that
+       *         the desired property is being used.
+       */
+      virtual dtDAL::ActorProperty* GetProperty(const std::string& name, int index = 0);
 
       /**
        * Retrieves the property for this value.
@@ -117,20 +137,17 @@ namespace dtDirector
        */
       dtDAL::DataType& GetType();
 
-      friend class ValueLink;
-
    protected:
 
       /**
        *	Protected Destructor.  dtCore::RefPtr will handle its destruction.
        */
-      virtual ~ValueNode();
+      virtual ~ExternalValueNode();
 
-      std::string    mName;
+      void UpdateLinkType();
 
-      dtDAL::ActorProperty* mProperty;
-
-      std::vector<ValueLink*> mLinks;
+      bool mIsOut;
+      bool mTypeCheck;
    };
 }
 

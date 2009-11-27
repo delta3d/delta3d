@@ -33,7 +33,9 @@ namespace dtDirector
    ///////////////////////////////////////////////////////////////////////////////////////
    ValueNode::ValueNode()
        : Node()
+       , mProperty(NULL)
    {
+      mName = "Variable";
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
@@ -81,5 +83,31 @@ namespace dtDirector
       {
          valueLink->Disconnect(this);
       }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   dtDAL::ActorProperty* ValueNode::GetProperty()
+   {
+      return mProperty;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool ValueNode::CanBeType(dtDAL::DataType& type)
+   {
+      if (GetType() == type)
+      {
+         return true;
+      }
+      return false;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   dtDAL::DataType& ValueNode::GetType()
+   {
+      // By default, use the property of this node.
+      if (GetProperty()) return GetProperty()->GetDataType();
+
+      // If there is no property, return an undefined type.
+      return dtDAL::DataType::UNKNOWN;
    }
 }
