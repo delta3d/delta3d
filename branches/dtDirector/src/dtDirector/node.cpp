@@ -100,6 +100,12 @@ namespace dtDirector
          dtDAL::BooleanActorProperty::GetFuncType(this, &Node::GetDisabled),
          "Disables the node from running in the script.",
          "Base"));
+
+      AddProperty(new dtDAL::Vec2ActorProperty(
+         "Position", "Position",
+         dtDAL::Vec2ActorProperty::SetFuncType(this, &Node::SetPosition),
+         dtDAL::Vec2ActorProperty::GetFuncType(this, &Node::GetPosition),
+         "The UI Position of the Node.", "UI"));
    }
 
    //////////////////////////////////////////////////////////////////////////

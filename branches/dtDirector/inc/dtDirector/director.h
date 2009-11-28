@@ -123,6 +123,7 @@ namespace dtDirector
       std::vector<DirectorGraphData>& GetSubGraphs() {return mSubGraphs;}
 
       std::string mName;
+      osg::Vec2   mPosition;
 
       std::vector<DirectorGraphData> mSubGraphs;
 

@@ -51,11 +51,14 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void Director::CreateDebugScript()
    {
+      SetName("Debug Script");
+
       dtDirector::NodeManager& nodeManager = dtDirector::NodeManager::GetInstance();
 
       // Create a primary event node.
       dtCore::RefPtr<EventNode> primaryEvent = dynamic_cast<dtDirector::EventNode*>(nodeManager.CreateNode("Named Event", "General").get());
       mGraph.mEventNodes.push_back(primaryEvent);
+      primaryEvent->SetPosition(osg::Vec2(50, 50));
 
       // Create an outside value node.
       dtCore::RefPtr<ValueNode> outsideValue = dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Int", "General").get());
@@ -64,6 +67,7 @@ namespace dtDirector
       // Create a sub graph.
       mGraph.mSubGraphs.push_back(DirectorGraphData());
       DirectorGraphData& subGraph = mGraph.mSubGraphs[0];
+      subGraph.mName = "Sub Graph";
 
       // Create an input node.
       dtCore::RefPtr<EventNode> inputNode = dynamic_cast<dtDirector::EventNode*>(nodeManager.CreateNode("Input", "Core").get());

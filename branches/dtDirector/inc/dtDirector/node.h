@@ -40,6 +40,8 @@
 
 #include <dtDAL/propertycontainer.h>
 
+#include <osg/Vec2>
+
 
 namespace dtDirector
 {
@@ -131,6 +133,20 @@ namespace dtDirector
        * @param[in]  comment  The comment.
        */
       void SetComment(const std::string& comment);
+
+      /**
+       * Retrieves the UI position of the node.
+       *
+       * @return  The Position.
+       */
+      osg::Vec2 GetPosition() const {return mPosition;}
+
+      /**
+       * Sets the UI position of the node.
+       *
+       * @param[in]  pos  The position.
+       */
+      void SetPosition(const osg::Vec2& pos) {mPosition = pos;}
 
       /**
        * Retrieves the disabled status of the node.
@@ -320,6 +336,8 @@ namespace dtDirector
       // Properties.
       dtCore::UniqueId   mID;
       std::string        mComment;
+
+      osg::Vec2          mPosition;
 
       bool               mDisabled;
 
