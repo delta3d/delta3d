@@ -47,10 +47,13 @@ namespace dtDirector
 
       // Create multiple inputs for different operations.
       mInputs.clear();
+      //mInputs.push_back(InputLink(this, "Some Really Long Input Name for Testing"));
       mInputs.push_back(InputLink(this, "Add"));
       mInputs.push_back(InputLink(this, "Subtract"));
       mInputs.push_back(InputLink(this, "Multiply"));
       mInputs.push_back(InputLink(this, "Divide"));
+
+      mOutputs.push_back(OutputLink(this, "Some Really Long Output Name for Testing"));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -72,7 +75,7 @@ namespace dtDirector
          "The Right value.", "Data");
 
       dtDAL::IntActorProperty* resultProp = new dtDAL::IntActorProperty(
-         "Result", "Result",
+         "Result", "Result Output Val",
          dtDAL::IntActorProperty::SetFuncType(this, &OperationAction::SetResult),
          dtDAL::IntActorProperty::GetFuncType(this, &OperationAction::GetResult),
          "The Right value.", "Data");
@@ -93,8 +96,8 @@ namespace dtDirector
       ActionNode::OnInputActivated(inputIndex);
 
       // Perform math!
-      double left = GetPropertyValue<double>("A");
-      double right = GetPropertyValue<double>("B");
+      double left = GetDouble("A");
+      double right = GetDouble("B");
       double result = 0;
 
       switch (inputIndex)
@@ -113,7 +116,7 @@ namespace dtDirector
          break;
       }
 
-      SetPropertyValue(result, "Result");
+      SetDouble(result, "Result");
    }
 
    //////////////////////////////////////////////////////////////////////////

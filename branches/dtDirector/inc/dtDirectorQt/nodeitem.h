@@ -28,16 +28,20 @@
 
 #define LINK_SIZE    10
 #define LINK_LENGTH  15
-#define LINK_SPACING 5
+#define LINK_SPACING 0
 
-#define MIN_NODE_WIDTH  100
-#define MIN_NODE_HEIGHT 100
+#define MAX_VALUE_NAME_SIZE 80
+
+#define MIN_NODE_WIDTH  50
+#define MIN_NODE_HEIGHT 50
 
 #define MAX_NODE_WIDTH  500
 
 
 namespace dtDirector
 {
+   class EditorScene;
+
    /**
     * Draws a node in the graphics view.
     */
@@ -52,7 +56,7 @@ namespace dtDirector
        * @param[in]  parent  The parent item.
        * @param[in]  scene   The scene.
        */
-      NodeItem(Node* node, QGraphicsItem *parent = 0, QGraphicsScene *scene = 0);
+      NodeItem(Node* node, QGraphicsItem* parent = 0, EditorScene* scene = 0);
 
       /**
        * Draws the polygon's top geometry.
@@ -141,31 +145,51 @@ namespace dtDirector
       }
 
       /**
+       * Create Title
+       *
+       * @param[in]  text  The new title name.
+       */
+      virtual void SetTitle(const std::string text);
+
+      /**
        * Draws the title of the node.
        */
-      void DrawTitle(const std::string text);
+      void DrawTitle();
 
-      ///**
-      // * Draws the inputs of the node.
-      // */
-      //void DrawInputs();
+      /**
+       * Draws the inputs of the node.
+       */
+      void DrawInputs();
 
       /**
        * Draw the outputs of the node.
        */
       void DrawOutputs();
 
-      ///**
-      // * Calculates the height of the node item based on
-      // * output links.
-      // */
-      //int CalculateOutputHeight();
+      /**
+       * Sets up the value link data.
+       */
+      void SetupValues();
 
-      ///**
-      // * Calculates the height of the node item based on
-      // * both input and output links.
-      // */
-      //int CalculateHeight();
+      /**
+       * Draw the value links of the node.
+       */
+      void DrawValues();
+
+      /**
+       * Draws the dividers.
+       */
+      void DrawDividers();
+
+      /**
+       * Retrieves the color for a given property type.
+       *
+       * @param[in]  type  The type.
+       *
+       * @return     A color.
+       */
+      QColor GetColorForType(unsigned char type);
+      QColor GetDarkColorForType(unsigned char type);
 
    protected:
 
@@ -195,6 +219,15 @@ namespace dtDirector
          OutputLink*          link;
       };
 
+      struct ValueData
+      {
+         QGraphicsTextItem*   linkName;
+         QGraphicsPolygonItem*linkGraphic;
+         ValueLink*           link;
+      };
+
+      EditorScene* mScene;
+
       QPolygonF   mPolygon;
       QMenu*      mContextMenu;
 
@@ -207,9 +240,18 @@ namespace dtDirector
 
       std::vector<InputData>  mInputs;
       std::vector<OutputData> mOutputs;
+      std::vector<ValueData>  mValues;
+
+      QGraphicsRectItem* mLinkDivider;
+      QGraphicsRectItem* mValueDivider;
 
       int         mNodeWidth;
       int         mNodeHeight;
+
+      float       mTextHeight;
+
+      float       mLinkWidth;
+      float       mLinkHeight;
    };
 }
 

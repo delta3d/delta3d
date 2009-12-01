@@ -20,10 +20,15 @@
  */
 
 #include <dtDirectorQt/nodeitem.h>
+#include <dtDirectorQt/directoreditor.h>
+
+#include <dtDirector/valuenode.h>
 
 #include <QtGui/QGraphicsScene>
 #include <QtGui/QMenu>
 #include <QtGui/QGraphicsSceneContextMenuEvent>
+
+#include <dtDAL/datatype.h>
 
 #include <osg/Vec2>
 
@@ -31,14 +36,20 @@
 namespace dtDirector
 {
    //////////////////////////////////////////////////////////////////////////
-   NodeItem::NodeItem(Node* node, QGraphicsItem *parent, QGraphicsScene *scene)
+   NodeItem::NodeItem(Node* node, QGraphicsItem* parent, EditorScene* scene)
        : QGraphicsPolygonItem(parent, scene)
+       , mScene(scene)
        , mNode(node)
        , mTitle(NULL)
+       , mTitleBG(NULL)
        , mComment(NULL)
        , mContextMenu(NULL)
        , mNodeWidth(MIN_NODE_WIDTH)
        , mNodeHeight(MIN_NODE_HEIGHT)
+       , mLinkWidth(0)
+       , mLinkHeight(0)
+       , mLinkDivider(NULL)
+       , mValueDivider(NULL)
    {
       setFlag(QGraphicsItem::ItemIsMovable, true);
       setFlag(QGraphicsItem::ItemIsSelectable, true);
@@ -113,83 +124,373 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void NodeItem::DrawTitle(const std::string text)
+   void NodeItem::SetTitle(const std::string text)
    {
       if (!mTitle)
       {
          mTitleBG = new QGraphicsRectItem(this, scene());
          mTitle = new QGraphicsTextItem(mTitleBG, scene());
 
-         mTitleBG->setBrush(Qt::gray);
+         mTitleBG->setPen(QPen(Qt::darkGray, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+         mTitleBG->setBrush(QColor(0, 0, 0, 0));
          mTitleBG->setFlag(QGraphicsItem::ItemClipsChildrenToShape, true);
-         mTitleBG->setOpacity(0.5f);
-
-         mTitle->setFlag(QGraphicsItem::ItemIgnoresParentOpacity, true);
       }
 
       mTitle->setPlainText(text.c_str());
 
       // Create the title background.
       QRectF bounds = mTitle->boundingRect();
+      mTextHeight = bounds.height();
+
+      if (mNodeHeight < mTextHeight) mNodeHeight = mTextHeight;
 
       // Clamp the bounds to our min and max.
-      if (bounds.width() > MAX_NODE_WIDTH) bounds.setWidth(MAX_NODE_WIDTH);
-      if (bounds.width() < MIN_NODE_WIDTH) bounds.setWidth(MIN_NODE_WIDTH);
-
-      mTitleBG->setRect(bounds);
+      if (bounds.width() > MAX_NODE_WIDTH - 2) bounds.setWidth(MAX_NODE_WIDTH - 2);
+      if (bounds.width() < MIN_NODE_WIDTH - 2) bounds.setWidth(MIN_NODE_WIDTH - 2);
 
       // Resize the width of the node if it is not wide enough already.
-      if (bounds.width() > mNodeWidth)
+      if (bounds.width() + 2 > mNodeWidth)
       {
          mNodeWidth = bounds.width();
       }
    }
 
-   ////////////////////////////////////////////////////////////////////////////
-   //int NodeItem::DrawInputs()
-   //{
-   //   if (!mNode.valid()) return 0;
+   //////////////////////////////////////////////////////////////////////////
+   void NodeItem::DrawTitle()
+   {
+      if (!mTitleBG) return;
 
-   //   int height = (LINK_SPACING + LINK_SIZE) * mNode->GetInputLinks().size();
+      // Create the title background.
+      QRectF bounds = mTitle->boundingRect();
+      bounds.setWidth(mNodeWidth - 2);
 
-   //   if (height < MIN_NODE_HEIGHT) height = MIN_NODE_HEIGHT;
-   //   return height;
-   //}
+      mTitleBG->setRect(bounds);
+      mTitleBG->setPos(1.0f, 1.0f);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void NodeItem::DrawInputs()
+   {
+      if (!mNode.valid()) return;
+
+      mInputs.clear();
+      float maxSize = 0;
+      QRectF linkRect(0, 0, LINK_LENGTH, LINK_SIZE);
+
+      int count = (int)mNode->GetInputLinks().size();
+      for (int index = 0; index < count; index++)
+      {
+         InputData data;
+         data.link = &mNode->GetInputLinks()[index];
+
+         data.linkName = new QGraphicsTextItem(this, scene());
+         data.linkGraphic = new QGraphicsRectItem(data.linkName, scene());
+
+         // Create the link graphic.
+         data.linkGraphic->setRect(linkRect);
+         data.linkGraphic->setBrush(Qt::black);
+
+         // Set the link text, and position it right aligned with the link graphic.
+         data.linkName->setPlainText(data.link->GetName().c_str());
+         QRectF nameBounds = data.linkName->boundingRect();
+
+         if (maxSize < nameBounds.width()) maxSize = nameBounds.width();
+
+         float x = -linkRect.width();
+         float y = (nameBounds.height()/2) - (linkRect.height()/2);
+         data.linkGraphic->setPos(x, y);
+
+         mInputs.push_back(data);
+      }
+
+      // Resize the node width if we have to.
+      float desiredWidth = maxSize;
+      if (mNodeWidth < desiredWidth) mNodeWidth = desiredWidth;
+      mLinkWidth = desiredWidth;
+
+      // Resize the node height if we have to.
+      float desiredHeight = ((mInputs.size() + 1) * (LINK_SPACING + mTextHeight)) - (LINK_SPACING * 2);
+      if (mNodeHeight < desiredHeight) mNodeHeight = desiredHeight;
+      mLinkHeight = desiredHeight;
+
+      // Now position all of the links in a single column.
+      count = (int)mInputs.size();
+      for (int index = 0; index < count; index++)
+      {
+         InputData& data = mInputs[index];
+
+         float x = -1.0f;
+         float y = ((LINK_SPACING + mTextHeight) * (index + 1)) - LINK_SPACING;
+
+         data.linkName->setPos(x, y);
+      }
+   }
 
    //////////////////////////////////////////////////////////////////////////
    void NodeItem::DrawOutputs()
    {
-      QRectF bounds;
-
       if (!mNode.valid()) return;
+
+      mOutputs.clear();
+      float maxSize = 0;
+      QRectF linkRect(0, 0, LINK_LENGTH, LINK_SIZE);
+      float offset = 0;
 
       int count = (int)mNode->GetOutputLinks().size();
       for (int index = 0; index < count; index++)
       {
+         OutputData data;
+         data.link = &mNode->GetOutputLinks()[index];
 
+         data.linkGraphic = new QGraphicsRectItem(this, scene());
+         data.linkName = new QGraphicsTextItem(data.linkGraphic, scene());
+
+         // Create the link graphic.
+         data.linkGraphic->setRect(linkRect);
+         data.linkGraphic->setBrush(Qt::black);
+
+         // Set the link text, and position it right aligned with the link graphic.
+         data.linkName->setPlainText(data.link->GetName().c_str());
+         QRectF nameBounds = data.linkName->boundingRect();
+
+         if (maxSize < nameBounds.width()) maxSize = nameBounds.width();
+
+         float x = -nameBounds.width();
+         float y = (linkRect.height()/2) - (nameBounds.height()/2);
+         offset = -y;
+         data.linkName->setPos(x, y);
+
+         mOutputs.push_back(data);
+      }
+
+      // Resize the node width if we have to.
+      float desiredWidth = maxSize + mLinkWidth + LINK_SPACING;
+      if (mNodeWidth < desiredWidth) mNodeWidth = desiredWidth;
+
+      // Reposition the link divider if the node is already larger than we need.
+      if (mNodeWidth > desiredWidth)
+      {
+         mLinkWidth = mLinkWidth + (((mNodeWidth - maxSize + (LINK_SPACING / 2)) - mLinkWidth) / 2);
+      }
+
+      // Resize the node height if we have to.
+      float desiredHeight = ((mOutputs.size() + 1) * (LINK_SPACING + mTextHeight)) - (LINK_SPACING * 2);
+      if (mNodeHeight < desiredHeight) mNodeHeight = desiredHeight;
+      if (desiredHeight > mLinkHeight) mLinkHeight = desiredHeight;
+
+      // Now position all of the links in a single column.
+      count = (int)mOutputs.size();
+      for (int index = 0; index < count; index++)
+      {
+         OutputData& data = mOutputs[index];
+
+         float x = mNodeWidth + 1.0f;
+         float y = ((LINK_SPACING + mTextHeight) * (index + 1)) - LINK_SPACING + offset;
+
+         data.linkGraphic->setPos(x, y);
       }
    }
 
-   ////////////////////////////////////////////////////////////////////////////
-   //int NodeItem::CalculateOutputHeight()
-   //{
-   //   if (!mNode.valid()) return 0;
+   //////////////////////////////////////////////////////////////////////////
+   void NodeItem::SetupValues()
+   {
+      if (!mNode.valid()) return;
 
-   //   int height = (LINK_SPACING + LINK_SIZE) * mNode->GetOutputLinks().size();
+      mValues.clear();
+      float maxWidth = 0;
+      float maxHeight = 0;
+      QRectF linkRect(-LINK_SIZE/2, 0, LINK_SIZE, LINK_LENGTH);
 
-   //   if (height < MIN_NODE_HEIGHT) height = MIN_NODE_HEIGHT;
-   //   return height;
-   //}
+      int count = (int)mNode->GetValueLinks().size();
+      for (int index = 0; index < count; index++)
+      {
+         ValueData data;
+         data.link = &mNode->GetValueLinks()[index];
 
-   ////////////////////////////////////////////////////////////////////////////
-   //int NodeItem::CalculateHeight()
-   //{
-   //   int inputHeight = DrawInputs();
-   //   int outputHeight = CalculateOutputHeight();
+         data.linkGraphic = new QGraphicsPolygonItem(this, scene());
+         data.linkName = new QGraphicsTextItem(data.linkGraphic, scene());
 
-   //   if (inputHeight > outputHeight) return inputHeight;
-   //   else return outputHeight;
-   //}
+         // Out links are triangular shaped.
+         QPolygonF poly;
+         if (data.link->IsOutLink())
+         {
+            poly << QPointF(-LINK_SIZE/2, 0) << QPointF(LINK_SIZE/2, 0) <<
+               QPointF(0, LINK_LENGTH);
+         }
+         // In links are rectangular shaped.
+         else
+         {
+            poly << QPointF(-LINK_SIZE/2, 0) << QPointF(LINK_SIZE/2, 0) <<
+               QPointF(LINK_SIZE/2, LINK_LENGTH) << QPointF(-LINK_SIZE/2, LINK_LENGTH);
+         }
+
+         data.linkGraphic->setPolygon(poly);
+
+         // Set the color of the link based on the property type.
+         if (data.link->IsTypeChecking() && data.link->GetProperty())
+         {
+            dtDAL::DataType& type = data.link->GetProperty()->GetPropertyType();
+            data.linkGraphic->setPen(QPen(GetDarkColorForType(type.GetTypeId()), 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+         }
+         else
+         {
+            data.linkGraphic->setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+         }
+
+         // Set the color of the link based on the property type.
+         if (data.link->GetProperty())
+         {
+            dtDAL::DataType& type = data.link->GetProperty()->GetPropertyType();
+            data.linkGraphic->setBrush(GetColorForType(type.GetTypeId()));
+         }
+         else
+         {
+            data.linkGraphic->setBrush(Qt::darkGray);
+         }
+
+         // Set the link text, and position it right aligned with the link graphic.
+         data.linkName->setPlainText(data.link->GetLabel().c_str());
+         QRectF nameBounds = data.linkName->boundingRect();
+
+         if (nameBounds.width() > MAX_VALUE_NAME_SIZE)
+         {
+            data.linkName->setTextWidth(MAX_VALUE_NAME_SIZE);
+            nameBounds = data.linkName->boundingRect();
+         }
+
+         if (maxWidth < nameBounds.width()) maxWidth = nameBounds.width();
+         if (maxHeight < nameBounds.height()) maxHeight = nameBounds.height();
+
+         float x = -nameBounds.width() / 2;
+         float y = -nameBounds.height();
+         data.linkName->setPos(x, y);
+
+         mValues.push_back(data);
+      }
+
+      // Resize the node width if we have to.
+      float desiredWidth = (maxWidth + LINK_SPACING) * mValues.size() - LINK_SPACING;
+      if (mNodeWidth < desiredWidth) mNodeWidth = desiredWidth;
+
+      // Resize the node height if we have to.
+      float desiredHeight = maxHeight + LINK_SPACING + mLinkHeight;
+      if (mNodeHeight < desiredHeight) mNodeHeight = desiredHeight;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void NodeItem::DrawValues()
+   {
+      // Now position all of the links in a single row.
+      int count = (int)mValues.size();
+      float step = 0;
+      if (count > 0)
+      {
+         step = (mNodeWidth / count);
+      }
+
+      for (int index = 0; index < count; index++)
+      {
+         ValueData& data = mValues[index];
+
+         float x = step * (index + 1) - (step / 2);
+         float y = mNodeHeight + 1.0f;
+
+         data.linkGraphic->setPos(x, y);
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void NodeItem::DrawDividers()
+   {
+      if (mLinkDivider || mValueDivider) return;
+
+      // Draw the vertical divider if we are displaying both inputs and outputs.
+      if (!mInputs.empty() && !mOutputs.empty())
+      {
+         float x = mLinkWidth + (LINK_SPACING / 2);
+         float y = mTextHeight + 1;
+         float height = mLinkHeight - mTextHeight - 2;
+
+         mLinkDivider = new QGraphicsRectItem(this, scene());
+         mLinkDivider->setPos(x, y);
+         mLinkDivider->setRect(0, 0, 0, height);
+         mLinkDivider->setPen(QPen(Qt::darkGray, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+      }
+
+      // Draw the horizontal divider if we are displaying value links with inputs and/or outputs.
+      if (!mValues.empty() &&
+         (!mInputs.empty() && !mOutputs.empty()))
+      {
+         float x = 0;
+         float y = mLinkHeight - 1;
+         float width = mNodeWidth;
+
+         mValueDivider = new QGraphicsRectItem(this, scene());
+         mValueDivider->setPos(x, y);
+         mValueDivider->setRect(0, 0, width, 0);
+         mValueDivider->setPen(QPen(Qt::darkGray, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   QColor NodeItem::GetColorForType(unsigned char type)
+   {
+      switch (type)
+      {
+      case dtDAL::DataType::ACTOR_ID:
+         return QColor(255, 0, 255);
+         break;
+      case dtDAL::DataType::BOOLEAN_ID:
+         return Qt::red;
+         break;
+      case dtDAL::DataType::INT_ID:
+         return Qt::cyan;
+         break;
+      case dtDAL::DataType::FLOAT_ID:
+         return Qt::green;
+         break;
+      case dtDAL::DataType::DOUBLE_ID:
+         return Qt::darkGreen;
+         break;
+      case dtDAL::DataType::STRING_ID:
+         return Qt::magenta;
+         break;
+
+      default:
+         return Qt::gray;
+         break;
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   QColor NodeItem::GetDarkColorForType(unsigned char type)
+   {
+      switch (type)
+      {
+      case dtDAL::DataType::ACTOR_ID:
+         return QColor(150, 0, 150);
+         break;
+      case dtDAL::DataType::BOOLEAN_ID:
+         return Qt::darkRed;
+         break;
+      case dtDAL::DataType::INT_ID:
+         return Qt::darkCyan;
+         break;
+      case dtDAL::DataType::FLOAT_ID:
+         return Qt::darkGreen;
+         break;
+      case dtDAL::DataType::DOUBLE_ID:
+         return Qt::darkGreen;
+         break;
+      case dtDAL::DataType::STRING_ID:
+         return Qt::darkMagenta;
+         break;
+
+      default:
+         return Qt::darkGray;
+         break;
+      }
+   }
 
    //////////////////////////////////////////////////////////////////////////
    void NodeItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)

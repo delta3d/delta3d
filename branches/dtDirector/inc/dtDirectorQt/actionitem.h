@@ -19,8 +19,8 @@
  * Author: Jeff P. Houde
  */
 
-#ifndef DIRECTORQT_EVENT_ITEM
-#define DIRECTORQT_EVENT_ITEM
+#ifndef DIRECTORQT_ACTION_ITEM
+#define DIRECTORQT_ACTION_ITEM
 
 #include <dtDirectorQt/nodeitem.h>
 
@@ -29,7 +29,7 @@ namespace dtDirector
    /**
     * Draws a node in the graphics view.
     */
-   class EventItem : public NodeItem
+   class ActionItem : public NodeItem
    {
    public:
 
@@ -40,7 +40,7 @@ namespace dtDirector
        * @param[in]  parent  The parent item.
        * @param[in]  scene   The scene.
        */
-      EventItem(Node* node, QGraphicsItem *parent = 0, QGraphicsScene *scene = 0);
+      ActionItem(Node* node, QGraphicsItem* parent = 0, EditorScene* scene = 0);
 
    protected:
 

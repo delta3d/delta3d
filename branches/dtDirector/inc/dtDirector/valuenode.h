@@ -92,7 +92,7 @@ namespace dtDirector
        * Accessors for the name of the node.
        */
       void SetName(const std::string& name) {mName = name;}
-      std::string GetName() {return mName;}
+      virtual const std::string& GetName() {return mName;}
 
       /**
        * Retrieves the property for this value.
@@ -115,7 +115,31 @@ namespace dtDirector
        *
        * @return  The type.
        */
-      dtDAL::DataType& GetType();
+      virtual dtDAL::DataType& GetType();
+
+      /**
+       * Retrieves whether the UI should expose input links
+       * assigned to this node.
+       *
+       * @return  True to expose inputs.
+       */
+      virtual bool InputsExposed();
+
+      /**
+       * Retrieves whether the UI should expose output links
+       * assigned to this node.
+       *
+       * @return  True to expose outputs.
+       */
+      virtual bool OutputsExposed();
+
+      /**
+       * Retrieves whether the UI should expose the value links
+       * assigned to this node.
+       *
+       * @return  True to expose values.
+       */
+      virtual bool ValuesExposed();
 
       friend class ValueLink;
 

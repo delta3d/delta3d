@@ -121,6 +121,13 @@ namespace dtDirector
       const void SetID(const dtCore::UniqueId& id) {mID = id;}
 
       /**
+       * Retrieves the display name for the node.
+       *
+       * @return  The display name of the node.
+       */
+      virtual const std::string& GetName();
+
+      /**
        * Retrieves the comment for the node.
        *
        * @return  The comment of the node.
@@ -289,6 +296,30 @@ namespace dtDirector
       InputLink* GetInputLink(const std::string& name);
       OutputLink* GetOutputLink(const std::string& name);
       ValueLink* GetValueLink(const std::string& name);
+
+      /**
+       * Retrieves whether the UI should expose input links
+       * assigned to this node.
+       *
+       * @return  True to expose inputs.
+       */
+      virtual bool InputsExposed();
+
+      /**
+       * Retrieves whether the UI should expose output links
+       * assigned to this node.
+       *
+       * @return  True to expose outputs.
+       */
+      virtual bool OutputsExposed();
+
+      /**
+       * Retrieves whether the UI should expose the value links
+       * assigned to this node.
+       *
+       * @return  True to expose values.
+       */
+      virtual bool ValuesExposed();
 
       /**
        * Allow access to the NodePluginRegistry.

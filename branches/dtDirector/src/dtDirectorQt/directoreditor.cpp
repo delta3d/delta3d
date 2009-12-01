@@ -20,7 +20,8 @@
  */
 
 #include <dtDirectorQt/directoreditor.h>
-#include <dtDirectorQt/eventitem.h>
+#include <dtDirectorQt/actionitem.h>
+#include <dtDirectorQt/valueitem.h>
 
 #include <QtGui/QToolBar>
 #include <QtGui/QAction>
@@ -93,11 +94,39 @@ namespace dtDirector
 
       if (!mGraph) return;
 
-      // Create all nodes in the graph.
-      for (int index = 0; index < (int)graph->mEventNodes.size(); index++)
+      // HACK: For now, we're displaying the sub graph.
+      if (graph->GetSubGraphs().size())
       {
-         Node* node = graph->mEventNodes[index].get();
-         EventItem* item = new EventItem(node, NULL, this);
+         mGraph = &graph->GetSubGraphs()[0];
+      }
+
+      // Create all nodes in the graph.
+      for (int index = 0; index < (int)mGraph->mEventNodes.size(); index++)
+      {
+         Node* node = mGraph->mEventNodes[index].get();
+         ActionItem* item = new ActionItem(node, NULL, this);
+         if (item)
+         {
+            item->setPos(node->GetPosition().x(), node->GetPosition().y());
+            addItem(item);
+         }
+      }
+
+      for (int index = 0; index < (int)mGraph->mActionNodes.size(); index++)
+      {
+         Node* node = mGraph->mActionNodes[index].get();
+         ActionItem* item = new ActionItem(node, NULL, this);
+         if (item)
+         {
+            item->setPos(node->GetPosition().x(), node->GetPosition().y());
+            addItem(item);
+         }
+      }
+
+      for (int index = 0; index < (int)mGraph->mValueNodes.size(); index++)
+      {
+         Node* node = mGraph->mValueNodes[index].get();
+         ValueItem* item = new ValueItem(node, NULL, this);
          if (item)
          {
             item->setPos(node->GetPosition().x(), node->GetPosition().y());
@@ -216,7 +245,7 @@ namespace dtDirector
       // Remove the tab.
       if (index < mGraphTabs->count())
       {
-         EditorScene* view = dynamic_cast<EditorScene*>(mGraphTabs->widget(index));
+         EditorView* view = dynamic_cast<EditorView*>(mGraphTabs->widget(index));
          if (view)
          {
             mGraphTabs->removeTab(index);

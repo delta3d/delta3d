@@ -53,6 +53,7 @@ DirectorToolPlugin::DirectorToolPlugin(MainWindow* mw)
    mDirector = new dtDirector::Director();
    mDirector->Init();
 
+   // HACK: For now, create a default script for viewing.
    mDirector->CreateDebugScript();
 }
 

@@ -72,18 +72,28 @@ namespace dtDirector
       // Create an input node.
       dtCore::RefPtr<EventNode> inputNode = dynamic_cast<dtDirector::EventNode*>(nodeManager.CreateNode("Input", "Core").get());
       subGraph.mEventNodes.push_back(inputNode);
+      inputNode->SetPosition(osg::Vec2(50, 50));
 
       // Create an output node.
       dtCore::RefPtr<ActionNode> outputNode = dynamic_cast<dtDirector::ActionNode*>(nodeManager.CreateNode("Output", "Core").get());
       subGraph.mActionNodes.push_back(outputNode);
+      outputNode->SetPosition(osg::Vec2(600, 50));
 
       // Create an external value node.
       dtCore::RefPtr<ValueNode> extValue = dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("External Value", "Core").get());
       subGraph.mValueNodes.push_back(extValue);
+      extValue->SetName("External Connected");
+      extValue->SetPosition(osg::Vec2(500, 300));
+
+      dtCore::RefPtr<ValueNode> extValue2 = dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("External Value", "Core").get());
+      subGraph.mValueNodes.push_back(extValue2);
+      extValue2->SetName("External Not Connected");
+      extValue2->SetPosition(osg::Vec2(600, 300));
 
       // Create our action node.
       dtCore::RefPtr<ActionNode> actionNode = dynamic_cast<dtDirector::ActionNode*>(nodeManager.CreateNode("Binary Operation", "General").get());
       subGraph.mActionNodes.push_back(actionNode);
+      actionNode->SetPosition(osg::Vec2(200, 50));
 
       // Create some value nodes.
       dtCore::RefPtr<ValueNode> valueA = dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Int", "General").get());
@@ -92,6 +102,13 @@ namespace dtDirector
       subGraph.mValueNodes.push_back(valueA);
       subGraph.mValueNodes.push_back(valueB);
       subGraph.mValueNodes.push_back(resultValue);
+
+      valueA->SetName("Int A");
+      valueA->SetPosition(osg::Vec2(200, 300));
+      valueB->SetName("Int B");
+      valueB->SetPosition(osg::Vec2(300, 300));
+      resultValue->SetName("Result Int");
+      resultValue->SetPosition(osg::Vec2(400, 300));
 
       // Give some default values for our A and B.
       valueA->SetInt(10);
@@ -116,7 +133,7 @@ namespace dtDirector
          actionNode->GetValueLink("Result")->Connect(extValue);
 
          // Connect our external value node to our outside value node.
-         extValue->GetValueLinks()[0].Connect(outsideValue);
+         //extValue->GetValueLinks()[0].Connect(outsideValue);
       }
    }
 

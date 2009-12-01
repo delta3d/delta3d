@@ -94,6 +94,4 @@ namespace dtDirector
          if (mOutputs.size()) mOutputs[0].Activate();
       }
    }
-
-   //////////////////////////////////////////////////////////////////////////
 }

@@ -66,4 +66,10 @@ namespace dtDirector
          dtDAL::StringActorProperty::GetFuncType(this, &OutputNode::GetName),
          "The name of the output link.", "Data"));
    }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool OutputNode::OutputsExposed()
+   {
+      return false;
+   }
 }

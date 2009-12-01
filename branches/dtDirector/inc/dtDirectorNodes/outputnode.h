@@ -69,7 +69,15 @@ namespace dtDirector
        * Accessors for the name of the input node.
        */
       void SetName(const std::string& name) {mName = name;}
-      std::string GetName() {return mName;}
+      virtual const std::string& GetName() {return mName;}
+
+      /**
+       * Retrieves whether the UI should expose output links
+       * assigned to this node.
+       *
+       * @return  True to expose outputs.
+       */
+      virtual bool OutputsExposed();
 
    protected:
 

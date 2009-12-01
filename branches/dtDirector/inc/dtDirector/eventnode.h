@@ -86,6 +86,14 @@ namespace dtDirector
        */
       virtual void Update(float simDelta, float delta);
 
+      /**
+       * Retrieves whether the UI should expose input links
+       * assigned to this node.
+       *
+       * @return  True to expose inputs.
+       */
+      virtual bool InputsExposed();
+
    protected:
 
       /**

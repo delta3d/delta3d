@@ -19,31 +19,42 @@
  * Author: Jeff P. Houde
  */
 
-#include <dtDirectorQt/eventitem.h>
+#ifndef DIRECTORQT_VALUE_ITEM
+#define DIRECTORQT_VALUE_ITEM
 
-#include <QtGui/QGraphicsScene>
-#include <QtGui/QMenu>
-#include <QtGui/QGraphicsSceneContextMenuEvent>
+#include <dtDirectorQt/nodeitem.h>
 
-#include <osg/Vec2>
-
+#define VALUE_TITLE_LENGTH 50
 
 namespace dtDirector
 {
-   //////////////////////////////////////////////////////////////////////////
-   EventItem::EventItem(Node* node, QGraphicsItem *parent, QGraphicsScene *scene)
-       : NodeItem(node, parent, scene)
+   /**
+    * Draws a node in the graphics view.
+    */
+   class ValueItem : public NodeItem
    {
-      DrawTitle(mNode->GetType().GetName());
+   public:
 
-      DrawPolygonTop();
-      DrawPolygonRightFlat();
-      DrawPolygonBottomFlat();
-      DrawPolygonLeftRound();
+      /**
+       * Constructor.
+       *
+       * @param[in]  node    The Director Node.
+       * @param[in]  parent  The parent item.
+       * @param[in]  scene   The scene.
+       */
+      ValueItem(Node* node, QGraphicsItem* parent = 0, EditorScene* scene = 0);
 
-      setBrush(Qt::magenta);
-      setPolygon(mPolygon);
-   }
+      /**
+       * Create Title
+       *
+       * @param[in]  text  The new title name.
+       */
+      virtual void SetTitle(const std::string text);
+
+   protected:
+
+      QGraphicsPolygonItem* mValueLink;
+   };
 }
 
-//////////////////////////////////////////////////////////////////////////
+#endif

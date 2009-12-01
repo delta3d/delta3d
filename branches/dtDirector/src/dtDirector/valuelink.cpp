@@ -105,6 +105,19 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   std::string ValueLink::GetLabel()
+   {
+      // Always display the default property name as the current property
+      // changes based on what it is linked to.
+      if (GetDefaultProperty())
+      {
+         return GetDefaultProperty()->GetLabel();
+      }
+
+      return "NONE";
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    bool ValueLink::Connect(ValueNode* valueNode)
    {
       if (!valueNode)

@@ -110,4 +110,22 @@ namespace dtDirector
       // If there is no property, return an undefined type.
       return dtDAL::DataType::UNKNOWN;
    }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool ValueNode::InputsExposed()
+   {
+      return false;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool ValueNode::OutputsExposed()
+   {
+      return false;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool ValueNode::ValuesExposed()
+   {
+      return false;
+   }
 }

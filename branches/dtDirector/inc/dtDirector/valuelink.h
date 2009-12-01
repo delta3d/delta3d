@@ -116,6 +116,13 @@ namespace dtDirector
       std::string GetName();
 
       /**
+       * Retrieves the label of the link.
+       *
+       * @return  The label of the link.
+       */
+      std::string GetLabel();
+
+      /**
        * Retrieves whether this link is an output link.
        *
        * @return  True if this is an out link.

@@ -76,4 +76,10 @@ namespace dtDirector
    {
       Node::Update(simDelta, delta);
    }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool EventNode::InputsExposed()
+   {
+      return false;
+   }
 }
