@@ -336,8 +336,8 @@ namespace dtAudio
       inline bool ConfigEAX(bool eax);
 
       /**
-       * This method loads a sound buffer from the file specified
-       * in the specified sound object.
+       * This method loads the sound buffer from the Sound specified
+       * into the AudioManager's std::map of sound buffers.
        * @param snd Sound object that specifies the sound file to load.
        *        It also receives a reference to a new or an existing
        *        sound buffer.
