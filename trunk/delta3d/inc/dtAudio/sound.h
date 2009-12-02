@@ -445,7 +445,7 @@ namespace dtAudio
        * Returns the position of the Sound.
        *       
        */
-      osg::Vec3& Sound::GetPosition();
+      osg::Vec3& GetPosition();
 
       /**
        * Set the direction of sound.
@@ -486,7 +486,7 @@ namespace dtAudio
       void GetVelocity(osg::Vec3& velocity) const;
 
       /// Returns the velocity vector of the Sound.
-      osg::Vec3 Sound::GetVelocity();
+      osg::Vec3 GetVelocity();
 
       /**
        * Deprecated 02/04/2009 -- this method is misleading.  It is not
