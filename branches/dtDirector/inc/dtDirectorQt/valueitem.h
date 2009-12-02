@@ -51,6 +51,15 @@ namespace dtDirector
        */
       virtual void SetTitle(const std::string text);
 
+      /**
+       * Connects all links on this node.
+       *
+       * @param[in]  fullConnect  True to perform a full
+       *                          connection including input
+       *                          links.
+       */
+      virtual void ConnectLinks(bool fullConnect = false);
+
    protected:
 
       QGraphicsPolygonItem* mValueLink;

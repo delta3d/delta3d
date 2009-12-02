@@ -119,8 +119,11 @@ namespace dtDirector
          // Now connect our primary event to the input of our sub-graph.
          primaryEvent->GetOutputLink("Out")->Connect(inputNode->GetInputLink("In"));
 
-         // Connect the input of our sub-graph to the action node.
+         // Connect the output of our sub-graph to the action node.
          inputNode->GetOutputLink("Out")->Connect(actionNode->GetInputLink("Multiply"));
+
+         // Connect the output of action node with the output node.
+         actionNode->GetOutputLink("Out")->Connect(outputNode->GetInputLink("In"));
 
          // Connect our A and B values to the action node.
          actionNode->GetValueLink("A")->Connect(valueA);

@@ -42,6 +42,40 @@ namespace dtDirector
 {
    class EditorScene;
 
+   struct InputData
+   {
+      InputData();
+      ~InputData();
+
+      QGraphicsTextItem*   linkName;
+      QGraphicsPolygonItem*linkGraphic;
+      InputLink*           link;
+   };
+
+   struct OutputData
+   {
+      OutputData();
+      ~OutputData();
+      void ResizeLinks(int count, EditorScene* scene);
+
+      QGraphicsTextItem*   linkName;
+      QGraphicsPolygonItem*linkGraphic;
+      std::vector<QGraphicsPathItem*> linkConnectors;
+      OutputLink*          link;
+   };
+
+   struct ValueData
+   {
+      ValueData();
+      ~ValueData();
+      void ResizeLinks(int count, EditorScene* scene);
+
+      QGraphicsTextItem*   linkName;
+      QGraphicsPolygonItem*linkGraphic;
+      std::vector<QGraphicsPathItem*> linkConnectors;
+      ValueLink*           link;
+   };
+
    /**
     * Draws a node in the graphics view.
     */
@@ -57,6 +91,11 @@ namespace dtDirector
        * @param[in]  scene   The scene.
        */
       NodeItem(Node* node, QGraphicsItem* parent = 0, EditorScene* scene = 0);
+
+      /**
+       * Refreshes the node item.
+       */
+      void Refresh();
 
       /**
        * Draws the polygon's top geometry.
@@ -191,6 +230,27 @@ namespace dtDirector
       QColor GetColorForType(unsigned char type);
       QColor GetDarkColorForType(unsigned char type);
 
+      /**
+       * Retrieves the ID of the node.
+       */
+      dtCore::UniqueId GetNodeID();
+
+      /**
+       * Retrieves the links.
+       */
+      std::vector<InputData>&  GetInputs() {return mInputs;}
+      std::vector<OutputData>& GetOutputs() {return mOutputs;}
+      std::vector<ValueData>&  GetValues() {return mValues;}
+
+      /**
+       * Connects all links on this node.
+       *
+       * @param[in]  fullConnect  True to perform a full
+       *                          connection including input
+       *                          links.
+       */
+      virtual void ConnectLinks(bool fullConnect = false);
+
    protected:
 
       /**
@@ -203,30 +263,28 @@ namespace dtDirector
        */
       QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
+      /**
+       * Connects an output to an input.
+       *
+       * @param[in]  output  The output.
+       * @param[in]  input   The input.
+       * @param[in]  index   The output link index.
+       */
+      void ConnectLinks(OutputData& output, InputData& input, int index);
+
+      /**
+       * Connects a value link to a value node.
+       *
+       * @param[in]  output  The value link data.
+       * @param[in]  input   The node item.
+       * @param[in]  index   The value link index.
+       */
+      void ConnectLinks(ValueData& output, NodeItem* input, int index);
+
    protected:
 
-      struct InputData
-      {
-         QGraphicsTextItem*   linkName;
-         QGraphicsRectItem*   linkGraphic;
-         InputLink*           link;
-      };
-
-      struct OutputData
-      {
-         QGraphicsTextItem*   linkName;
-         QGraphicsRectItem*   linkGraphic;
-         OutputLink*          link;
-      };
-
-      struct ValueData
-      {
-         QGraphicsTextItem*   linkName;
-         QGraphicsPolygonItem*linkGraphic;
-         ValueLink*           link;
-      };
-
       EditorScene* mScene;
+      bool         mLoading;
 
       QPolygonF   mPolygon;
       QMenu*      mContextMenu;

@@ -89,6 +89,7 @@ namespace dtDirector
    {
       // First clear the current items.
       clear();
+      mNodes.clear();
 
       mGraph = graph;
 
@@ -101,44 +102,82 @@ namespace dtDirector
       }
 
       // Create all nodes in the graph.
-      for (int index = 0; index < (int)mGraph->mEventNodes.size(); index++)
+      int count = (int)mGraph->mEventNodes.size();
+      for (int index = 0; index < count; index++)
       {
          Node* node = mGraph->mEventNodes[index].get();
          ActionItem* item = new ActionItem(node, NULL, this);
          if (item)
          {
-            item->setPos(node->GetPosition().x(), node->GetPosition().y());
+            item->setZValue(0.0f);
+            mNodes.push_back(item);
             addItem(item);
          }
       }
 
-      for (int index = 0; index < (int)mGraph->mActionNodes.size(); index++)
+      count = (int)mGraph->mActionNodes.size();
+      for (int index = 0; index < count; index++)
       {
          Node* node = mGraph->mActionNodes[index].get();
          ActionItem* item = new ActionItem(node, NULL, this);
          if (item)
          {
-            item->setPos(node->GetPosition().x(), node->GetPosition().y());
+            item->setZValue(0.0f);
+            mNodes.push_back(item);
             addItem(item);
          }
       }
 
-      for (int index = 0; index < (int)mGraph->mValueNodes.size(); index++)
+      count = (int)mGraph->mValueNodes.size();
+      for (int index = 0; index < count; index++)
       {
          Node* node = mGraph->mValueNodes[index].get();
          ValueItem* item = new ValueItem(node, NULL, this);
          if (item)
          {
-            item->setPos(node->GetPosition().x(), node->GetPosition().y());
+            item->setZValue(1.0f);
+            mNodes.push_back(item);
             addItem(item);
          }
+      }
+
+      count = (int)mNodes.size();
+      for (int index = 0; index < count; index++)
+      {
+         NodeItem* item = mNodes[index];
+         if (item) item->ConnectLinks();
       }
    }
 
    //////////////////////////////////////////////////////////////////////////
    void EditorScene::Refresh()
    {
-      SetGraph(mGraph);
+      //SetGraph(mGraph);
+      int count = (int)mNodes.size();
+      for (int index = 0; index < count; index++)
+      {
+         NodeItem* item = mNodes[index];
+         if (item)
+         {
+            item->Refresh();
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   NodeItem* EditorScene::GetNodeItem(const dtCore::UniqueId& id)
+   {
+      int count = (int)mNodes.size();
+      for (int index = 0; index < count; index++)
+      {
+         NodeItem* item = mNodes[index];
+         if (item && item->GetNodeID() == id)
+         {
+            return item;
+         }
+      }
+
+      return NULL;
    }
 
 
@@ -202,7 +241,6 @@ namespace dtDirector
       if (mGraphTabs->count() < 1 || newTab)
       {
          EditorScene* scene = new EditorScene();
-         scene->setSceneRect(0, 0, 800, 600);
          EditorView* view = new EditorView(scene, this);
 
          int index = mGraphTabs->addTab(view, "");

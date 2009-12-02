@@ -43,6 +43,7 @@ class QAction;
 namespace dtDirector
 {
    class DirectorEditor;
+   class NodeItem;
 
    /**
    * @class GraphTabs
@@ -118,6 +119,16 @@ namespace dtDirector
        */
       void Refresh();
 
+      /**
+       * Retrieves a node item given the nodes ID.
+       *
+       * @param[in]  id  The ID of the node.
+       *
+       * @return     A pointer to the NodeItem with the matching ID,
+       *             or NULL if not found.
+       */
+      NodeItem* GetNodeItem(const dtCore::UniqueId& id);
+
    signals:
 
    protected:
@@ -126,6 +137,7 @@ namespace dtDirector
 
       dtDirector::DirectorGraphData*   mGraph;
 
+      std::vector<NodeItem*>           mNodes;
    };
 
    /**

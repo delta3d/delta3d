@@ -72,14 +72,14 @@ namespace dtDirector
       /**
        * Accessors for property values.
        */
-      void SetA(int value);
-      int GetA();
+      void SetA(double value);
+      double GetA();
 
-      void SetB(int value);
-      int GetB();
+      void SetB(double value);
+      double GetB();
 
-      void SetResult(int value);
-      int GetResult();
+      void SetResult(double value);
+      double GetResult();
 
 
    protected:
@@ -91,9 +91,9 @@ namespace dtDirector
 
    private:
 
-      int mValueA;
-      int mValueB;
-      int mResult;
+      double mValueA;
+      double mValueB;
+      double mResult;
    };
 }
 

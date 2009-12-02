@@ -118,6 +118,11 @@ namespace dtDirector
       virtual dtDAL::DataType& GetType();
 
       /**
+       * Retrieves the links list.
+       */
+      std::vector<ValueLink*>& GetLinks() {return mLinks;}
+
+      /**
        * Retrieves whether the UI should expose input links
        * assigned to this node.
        *

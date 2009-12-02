@@ -40,6 +40,8 @@ namespace dtDirector
        : NodeItem(node, parent, scene)
        , mValueLink(NULL)
    {
+      mLoading = true;
+
       SetTitle(mNode->GetName());
       DrawTitle();
 
@@ -51,7 +53,7 @@ namespace dtDirector
       ValueNode *valueNode = dynamic_cast<ValueNode *>(mNode.get());
       if (valueNode)
       {
-         setPen(QPen(GetDarkColorForType(valueNode->GetType().GetTypeId()), 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+         setPen(QPen(GetDarkColorForType(valueNode->GetType().GetTypeId()), 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
          QRadialGradient radialGradient(mNodeWidth/2, mNodeHeight, mNodeWidth, mNodeWidth/2, mNodeHeight);
          radialGradient.setColorAt(0.0, GetColorForType(valueNode->GetType().GetTypeId()));
          radialGradient.setColorAt(1.0, GetDarkColorForType(valueNode->GetType().GetTypeId()));
@@ -62,7 +64,9 @@ namespace dtDirector
          {
             QPolygonF poly;
             poly << QPointF(-LINK_SIZE/2, 0.0f) << QPointF(LINK_SIZE/2, 0.0f) <<
-               QPointF(0, -LINK_LENGTH);
+               QPointF(LINK_SIZE/2, -LINK_LENGTH + LINK_SIZE/2) <<
+               QPointF(0, -LINK_LENGTH) <<
+               QPointF(-LINK_SIZE/2, -LINK_LENGTH + LINK_SIZE/2);
 
             mValueLink->setPolygon(poly);
             mValueLink->setPos(mNodeWidth / 2, -1.0f);
@@ -72,6 +76,8 @@ namespace dtDirector
          }
       }
       setPolygon(mPolygon);
+
+      mLoading = false;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -100,6 +106,48 @@ namespace dtDirector
       if (bounds.width() + 2 > mNodeWidth)
       {
          mNodeWidth = bounds.width();
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ValueItem::ConnectLinks(bool fullConnect)
+   {
+      NodeItem::ConnectLinks(fullConnect);
+
+      if (fullConnect && mNode.valid())
+      {
+         ValueNode* valueNode = dynamic_cast<ValueNode*>(mNode.get());
+         if (valueNode)
+         {
+            int count = (int)valueNode->GetLinks().size();
+            for (int index = 0; index < count; index++)
+            {
+               ValueLink* link = valueNode->GetLinks()[index];
+               if (!link) continue;
+
+               NodeItem* item = mScene->GetNodeItem(link->GetOwner()->GetID());
+               if (!item) continue;
+
+               int valueCount = (int)item->GetValues().size();
+               for (int valueIndex = 0; valueIndex < valueCount; valueIndex++)
+               {
+                  ValueData& value = item->GetValues()[valueIndex];
+                  if (value.link)
+                  {
+                     int linkCount = (int)value.link->GetLinks().size();
+                     value.ResizeLinks(linkCount, mScene);
+                     for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
+                     {
+                        if (value.link->GetLinks()[linkIndex] == mNode.get())
+                        {
+                           NodeItem::ConnectLinks(value, this, linkIndex);
+                           break;
+                        }
+                     }
+                  }
+               }
+            }
+         }
       }
    }
 }

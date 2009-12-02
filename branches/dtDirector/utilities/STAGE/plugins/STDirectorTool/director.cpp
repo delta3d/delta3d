@@ -69,7 +69,7 @@ void DirectorToolPlugin::onToolButtonPressed()
    {
       if (!mEditor)
       {
-         mEditor = new dtDirector::DirectorEditor(mDirector, this);
+         mEditor = new dtDirector::DirectorEditor(mDirector, NULL);
       }
 
       mEditor->show();
@@ -83,6 +83,7 @@ void DirectorToolPlugin::onToolButtonPressed()
 ////////////////////////////////////////////////////////////////////////////////
 void DirectorToolPlugin::Destroy()
 {
+   if (mEditor) delete mEditor;
 }
 
 

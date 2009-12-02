@@ -36,9 +36,85 @@
 namespace dtDirector
 {
    //////////////////////////////////////////////////////////////////////////
+   InputData::InputData()
+      : linkName(NULL)
+      , linkGraphic(NULL)
+      , link(NULL)
+   {
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   InputData::~InputData()
+   {
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   OutputData::OutputData()
+      : linkName(NULL)
+      , linkGraphic(NULL)
+      , link(NULL)
+   {
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   OutputData::~OutputData()
+   {
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void OutputData::ResizeLinks(int count, EditorScene* scene)
+   {
+      while ((int)linkConnectors.size() < count)
+      {
+         QGraphicsPathItem* item = new QGraphicsPathItem(NULL, scene);
+         item->setZValue(2.0f);
+         linkConnectors.push_back(item);
+         scene->addItem(item);
+      }
+
+      while ((int)linkConnectors.size() > count)
+      {
+         scene->removeItem(linkConnectors[0]);
+         linkConnectors.erase(linkConnectors.begin());
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   ValueData::ValueData()
+      : linkName(NULL)
+      , linkGraphic(NULL)
+      , link(NULL)
+   {
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   ValueData::~ValueData()
+   {
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ValueData::ResizeLinks(int count, EditorScene* scene)
+   {
+      while ((int)linkConnectors.size() < count)
+      {
+         QGraphicsPathItem* item = new QGraphicsPathItem(NULL, scene);
+         item->setZValue(2.0f);
+         linkConnectors.push_back(item);
+         scene->addItem(item);
+      }
+
+      while ((int)linkConnectors.size() > count)
+      {
+         scene->removeItem(linkConnectors[0]);
+         linkConnectors.erase(linkConnectors.begin());
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    NodeItem::NodeItem(Node* node, QGraphicsItem* parent, EditorScene* scene)
        : QGraphicsPolygonItem(parent, scene)
        , mScene(scene)
+       , mLoading(true)
        , mNode(node)
        , mTitle(NULL)
        , mTitleBG(NULL)
@@ -51,8 +127,25 @@ namespace dtDirector
        , mLinkDivider(NULL)
        , mValueDivider(NULL)
    {
+      mLoading = true;
+
       setFlag(QGraphicsItem::ItemIsMovable, true);
       setFlag(QGraphicsItem::ItemIsSelectable, true);
+
+      setPos(node->GetPosition().x(), node->GetPosition().y());
+
+      mLoading = false;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void NodeItem::Refresh()
+   {
+      if (mNode.valid())
+      {
+         osg::Vec2 pos = mNode->GetPosition();
+
+         setPos(pos.x(), pos.y());
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -175,7 +268,11 @@ namespace dtDirector
 
       mInputs.clear();
       float maxSize = 0;
-      QRectF linkRect(0, 0, LINK_LENGTH, LINK_SIZE);
+
+      QPolygonF poly;
+      poly << QPointF(0, 0) << QPointF(LINK_LENGTH, 0) <<
+         QPointF(LINK_LENGTH, LINK_SIZE) << QPointF(0, LINK_SIZE) <<
+         QPointF(LINK_SIZE/2, LINK_SIZE/2);
 
       int count = (int)mNode->GetInputLinks().size();
       for (int index = 0; index < count; index++)
@@ -184,10 +281,10 @@ namespace dtDirector
          data.link = &mNode->GetInputLinks()[index];
 
          data.linkName = new QGraphicsTextItem(this, scene());
-         data.linkGraphic = new QGraphicsRectItem(data.linkName, scene());
+         data.linkGraphic = new QGraphicsPolygonItem(data.linkName, scene());
 
          // Create the link graphic.
-         data.linkGraphic->setRect(linkRect);
+         data.linkGraphic->setPolygon(poly);
          data.linkGraphic->setBrush(Qt::black);
 
          // Set the link text, and position it right aligned with the link graphic.
@@ -196,8 +293,8 @@ namespace dtDirector
 
          if (maxSize < nameBounds.width()) maxSize = nameBounds.width();
 
-         float x = -linkRect.width();
-         float y = (nameBounds.height()/2) - (linkRect.height()/2);
+         float x = -LINK_LENGTH;
+         float y = (nameBounds.height()/2) - (LINK_SIZE/2);
          data.linkGraphic->setPos(x, y);
 
          mInputs.push_back(data);
@@ -233,7 +330,11 @@ namespace dtDirector
 
       mOutputs.clear();
       float maxSize = 0;
-      QRectF linkRect(0, 0, LINK_LENGTH, LINK_SIZE);
+      QPolygonF poly;
+      poly << QPointF(0, 0) << QPointF(LINK_LENGTH - LINK_SIZE/2, 0) <<
+         QPointF(LINK_LENGTH, LINK_SIZE/2) <<
+         QPointF(LINK_LENGTH - LINK_SIZE/2, LINK_SIZE) <<
+         QPointF(0, LINK_SIZE);
       float offset = 0;
 
       int count = (int)mNode->GetOutputLinks().size();
@@ -242,11 +343,11 @@ namespace dtDirector
          OutputData data;
          data.link = &mNode->GetOutputLinks()[index];
 
-         data.linkGraphic = new QGraphicsRectItem(this, scene());
+         data.linkGraphic = new QGraphicsPolygonItem(this, scene());
          data.linkName = new QGraphicsTextItem(data.linkGraphic, scene());
 
          // Create the link graphic.
-         data.linkGraphic->setRect(linkRect);
+         data.linkGraphic->setPolygon(poly);
          data.linkGraphic->setBrush(Qt::black);
 
          // Set the link text, and position it right aligned with the link graphic.
@@ -256,7 +357,7 @@ namespace dtDirector
          if (maxSize < nameBounds.width()) maxSize = nameBounds.width();
 
          float x = -nameBounds.width();
-         float y = (linkRect.height()/2) - (nameBounds.height()/2);
+         float y = (LINK_SIZE/2) - (nameBounds.height()/2);
          offset = -y;
          data.linkName->setPos(x, y);
 
@@ -299,7 +400,6 @@ namespace dtDirector
       mValues.clear();
       float maxWidth = 0;
       float maxHeight = 0;
-      QRectF linkRect(-LINK_SIZE/2, 0, LINK_SIZE, LINK_LENGTH);
 
       int count = (int)mNode->GetValueLinks().size();
       for (int index = 0; index < count; index++)
@@ -315,13 +415,16 @@ namespace dtDirector
          if (data.link->IsOutLink())
          {
             poly << QPointF(-LINK_SIZE/2, 0) << QPointF(LINK_SIZE/2, 0) <<
-               QPointF(0, LINK_LENGTH);
+               QPointF(LINK_SIZE/2, LINK_LENGTH - LINK_SIZE/2) <<
+               QPointF(0, LINK_LENGTH) <<
+               QPointF(-LINK_SIZE/2, LINK_LENGTH - LINK_SIZE/2);
          }
          // In links are rectangular shaped.
          else
          {
             poly << QPointF(-LINK_SIZE/2, 0) << QPointF(LINK_SIZE/2, 0) <<
-               QPointF(LINK_SIZE/2, LINK_LENGTH) << QPointF(-LINK_SIZE/2, LINK_LENGTH);
+               QPointF(LINK_SIZE/2, LINK_LENGTH) << QPointF(0, LINK_LENGTH - LINK_SIZE/2) <<
+               QPointF(-LINK_SIZE/2, LINK_LENGTH);
          }
 
          data.linkGraphic->setPolygon(poly);
@@ -447,10 +550,10 @@ namespace dtDirector
          return Qt::cyan;
          break;
       case dtDAL::DataType::FLOAT_ID:
-         return Qt::green;
+         return Qt::yellow;
          break;
       case dtDAL::DataType::DOUBLE_ID:
-         return Qt::darkGreen;
+         return Qt::green;
          break;
       case dtDAL::DataType::STRING_ID:
          return Qt::magenta;
@@ -477,7 +580,7 @@ namespace dtDirector
          return Qt::darkCyan;
          break;
       case dtDAL::DataType::FLOAT_ID:
-         return Qt::darkGreen;
+         return Qt::darkYellow;
          break;
       case dtDAL::DataType::DOUBLE_ID:
          return Qt::darkGreen;
@@ -489,6 +592,206 @@ namespace dtDirector
       default:
          return Qt::darkGray;
          break;
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   dtCore::UniqueId NodeItem::GetNodeID()
+   {
+      if (mNode)
+      {
+         return mNode->GetID();
+      }
+
+      return dtCore::UniqueId("");
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void NodeItem::ConnectLinks(bool fullConnect)
+   {
+      int count = (int)mOutputs.size();
+      for (int outputIndex = 0; outputIndex < count; outputIndex++)
+      {
+         OutputData& output = mOutputs[outputIndex];
+         if (output.link)
+         {
+            int linkCount = (int)output.link->GetLinks().size();
+            output.ResizeLinks(linkCount, mScene);
+            for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
+            {
+               InputLink* link = output.link->GetLinks()[linkIndex];
+               if (!link) continue;
+
+               NodeItem* item = mScene->GetNodeItem(link->GetOwner()->GetID());
+               if (!item) continue;
+
+               int inputCount = (int)item->mInputs.size();
+               for (int inputIndex = 0; inputIndex < inputCount; inputIndex++)
+               {
+                  if (item->mInputs[inputIndex].link == link)
+                  {
+                     ConnectLinks(output, item->mInputs[inputIndex], linkIndex);
+                     break;
+                  }
+               }
+            }
+         }
+      }
+
+      if (fullConnect)
+      {
+         count = (int)mInputs.size();
+         for (int inputIndex = 0; inputIndex < count; inputIndex++)
+         {
+            InputData& input = mInputs[inputIndex];
+            if (input.link)
+            {
+               int linkCount = (int)input.link->GetLinks().size();
+               for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
+               {
+                  OutputLink* output = input.link->GetLinks()[linkIndex];
+                  if (!output) continue;
+
+                  NodeItem* item = mScene->GetNodeItem(output->GetOwner()->GetID());
+                  if (!item) continue;
+
+                  int outputCount = (int)item->mOutputs.size();
+                  for (int outputIndex = 0; outputIndex < outputCount; outputIndex++)
+                  {
+                     if (item->mOutputs[outputIndex].link == output)
+                     {
+                        ConnectLinks(item->mOutputs[outputIndex], input, linkIndex);
+                     }
+                  }
+               }
+            }
+         }
+      }
+
+      count = (int)mValues.size();
+      for (int valueIndex = 0; valueIndex < count; valueIndex++)
+      {
+         ValueData& value = mValues[valueIndex];
+         if (value.link)
+         {
+            int linkCount = (int)value.link->GetLinks().size();
+            value.ResizeLinks(linkCount, mScene);
+            for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
+            {
+               ValueNode* valueNode = value.link->GetLinks()[linkIndex];
+               if (!valueNode) continue;
+
+               NodeItem* item = mScene->GetNodeItem(valueNode->GetID());
+               if (!item) continue;
+
+               ConnectLinks(value, item, linkIndex);
+            }
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void NodeItem::ConnectLinks(OutputData& output, InputData& input, int index)
+   {
+      if (index < 0 || (int)output.linkConnectors.size() < index) return;
+
+      QPointF start(output.linkGraphic->scenePos());
+      QPointF end(input.linkGraphic->scenePos());
+
+      start.setX(start.x() + LINK_LENGTH);
+      start.setY(start.y() + LINK_SIZE/2);
+      end.setX(end.x() + LINK_SIZE/2);
+      end.setY(end.y() + LINK_SIZE/2);
+
+      float halfX = (start.x() + end.x()) / 2.0f;
+
+      QPainterPath path;
+      path.moveTo(start);
+      if (start.x() < end.x())
+      {
+         path.cubicTo(
+            halfX, start.y(),
+            halfX, end.y(),
+            end.x(), end.y());
+      }
+      else
+      {
+         float rightX = start.x() + (start.x() - end.x()) / 2;
+         float leftX = end.x() - (start.x() - end.x()) / 2;
+
+         float halfY = (start.y() + end.y()) / 2.0f;
+
+         path.cubicTo(
+            rightX, start.y(),
+            rightX, halfY,
+            halfX, halfY);
+         path.cubicTo(
+            leftX, halfY,
+            leftX, end.y(),
+            end.x(), end.y());
+      }
+      output.linkConnectors[index]->setPath(path);
+
+      output.linkConnectors[index]->setPen(
+         QPen(Qt::black, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void NodeItem::ConnectLinks(ValueData& output, NodeItem* input, int index)
+   {
+      if (index < 0 || (int)output.linkConnectors.size() < index) return;
+
+      QPointF start(output.linkGraphic->scenePos());
+      QPointF end(input->scenePos());
+
+      if (output.link->IsOutLink())
+      {
+         start.setY(start.y() + LINK_LENGTH);
+      }
+      else
+      {
+         start.setY(start.y() + LINK_LENGTH - LINK_SIZE/2);
+      }
+
+      end.setX(end.x() + input->mNodeWidth / 2);
+      end.setY(end.y() - LINK_LENGTH);
+
+      float halfY = (start.y() + end.y()) / 2.0f;
+
+      QPainterPath path;
+      path.moveTo(start);
+      if (start.y() < end.y())
+      {
+         path.cubicTo(
+            start.x(), halfY,
+            end.x(), halfY,
+            end.x(), end.y());
+      }
+      else
+      {
+         float bottomY = start.y() + (start.y() - end.y()) / 2;
+         float topY = end.y() - (start.y() - end.y()) / 2;
+
+         float halfX = (start.x() + end.x()) / 2.0f;
+
+         path.cubicTo(
+            start.x(), bottomY,
+            halfX, bottomY,
+            halfX, halfY);
+         path.cubicTo(
+            halfX, topY,
+            end.x(), topY,
+            end.x(), end.y());
+      }
+      output.linkConnectors[index]->setPath(path);
+
+      // Set the color of the link line to match the value type.
+      ValueNode* valueNode = dynamic_cast<ValueNode*>(input->mNode.get());
+      if (valueNode)
+      {
+         output.linkConnectors[index]->setPen(
+            QPen(GetDarkColorForType(valueNode->GetType().GetTypeId()),
+            2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
       }
    }
 
@@ -506,10 +809,15 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    QVariant NodeItem::itemChange(GraphicsItemChange change, const QVariant &value)
    {
-       if (change == QGraphicsItem::ItemPositionChange)
+       if (change == QGraphicsItem::ItemPositionHasChanged)
        {
           QPointF newPos = value.toPointF();
           mNode->SetPosition(osg::Vec2(newPos.x(), newPos.y()));
+
+          if (!mLoading)
+          {
+             ConnectLinks(true);
+          }
        }
 
        return value;

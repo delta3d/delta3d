@@ -135,9 +135,9 @@ namespace dtDirector
       // If we are linked to a value link, use the type of that link.
       if (mLinks.size())
       {
-         if (mLinks[0]->GetDefaultProperty())
+         if (mLinks[0]->GetProperty())
          {
-            return mLinks[0]->GetDefaultProperty()->GetDataType();
+            return mLinks[0]->GetProperty()->GetDataType();
          }
       }
 

@@ -35,6 +35,8 @@ namespace dtDirector
    ActionItem::ActionItem(Node* node, QGraphicsItem* parent, EditorScene* scene)
        : NodeItem(node, parent, scene)
    {
+      mLoading = true;
+
       SetTitle(mNode->GetName());
       if (mNode->InputsExposed())  DrawInputs();
       if (mNode->ValuesExposed())  SetupValues();
@@ -53,12 +55,14 @@ namespace dtDirector
 
       DrawDividers();
 
-      setPen(QPen(Qt::blue, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+      setPen(QPen(Qt::darkGray, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
       QRadialGradient radialGradient(mNodeWidth/2, mNodeHeight/2, mNodeHeight, mNodeWidth/2, mNodeHeight/2);
       radialGradient.setColorAt(0.0, Qt::cyan);
       radialGradient.setColorAt(1.0, Qt::darkCyan);
       setBrush(radialGradient);
       setPolygon(mPolygon);
+
+      mLoading = false;
    }
 }
 

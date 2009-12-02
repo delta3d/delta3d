@@ -62,22 +62,22 @@ namespace dtDirector
       ActionNode::BuildPropertyMap();
 
       // Create our value links.
-      dtDAL::IntActorProperty* leftProp = new dtDAL::IntActorProperty(
+      dtDAL::DoubleActorProperty* leftProp = new dtDAL::DoubleActorProperty(
          "A", "A",
-         dtDAL::IntActorProperty::SetFuncType(this, &OperationAction::SetA),
-         dtDAL::IntActorProperty::GetFuncType(this, &OperationAction::GetA),
+         dtDAL::DoubleActorProperty::SetFuncType(this, &OperationAction::SetA),
+         dtDAL::DoubleActorProperty::GetFuncType(this, &OperationAction::GetA),
          "The Left value.", "Data");
 
-      dtDAL::IntActorProperty* rightProp = new dtDAL::IntActorProperty(
+      dtDAL::DoubleActorProperty* rightProp = new dtDAL::DoubleActorProperty(
          "B", "B",
-         dtDAL::IntActorProperty::SetFuncType(this, &OperationAction::SetB),
-         dtDAL::IntActorProperty::GetFuncType(this, &OperationAction::GetB),
+         dtDAL::DoubleActorProperty::SetFuncType(this, &OperationAction::SetB),
+         dtDAL::DoubleActorProperty::GetFuncType(this, &OperationAction::GetB),
          "The Right value.", "Data");
 
-      dtDAL::IntActorProperty* resultProp = new dtDAL::IntActorProperty(
+      dtDAL::DoubleActorProperty* resultProp = new dtDAL::DoubleActorProperty(
          "Result", "Result Output Val",
-         dtDAL::IntActorProperty::SetFuncType(this, &OperationAction::SetResult),
-         dtDAL::IntActorProperty::GetFuncType(this, &OperationAction::GetResult),
+         dtDAL::DoubleActorProperty::SetFuncType(this, &OperationAction::SetResult),
+         dtDAL::DoubleActorProperty::GetFuncType(this, &OperationAction::GetResult),
          "The Right value.", "Data");
 
       AddProperty(leftProp);
@@ -120,37 +120,37 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void OperationAction::SetA(int value)
+   void OperationAction::SetA(double value)
    {
       mValueA = value;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   int OperationAction::GetA()
+   double OperationAction::GetA()
    {
       return mValueA;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void OperationAction::SetB(int value)
+   void OperationAction::SetB(double value)
    {
       mValueB = value;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   int OperationAction::GetB()
+   double OperationAction::GetB()
    {
       return mValueB;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void OperationAction::SetResult(int value)
+   void OperationAction::SetResult(double value)
    {
       mResult = value;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   int OperationAction::GetResult()
+   double OperationAction::GetResult()
    {
       return mResult;
    }
