@@ -460,7 +460,7 @@ DEPRECATE_FUNC ALuint AudioManager::GetSource(Sound* sound)
 
    if (sound == NULL)
    {
-      return -1;
+      return AL_NONE;
    }
 
    return sound->GetSource();
@@ -481,7 +481,7 @@ ALint AudioManager::LoadFile(const std::string& file)
    {
       // still no file name, bail...
       Log::GetInstance("audiomanager.cpp").LogMessage(Log::LOG_WARNING, __FUNCTION__, "AudioManager: can't load file %s", file.c_str());
-      return -1;
+      return AL_NONE;
    }
 
    BufferData* bd = mBufferMap[file];
@@ -501,7 +501,7 @@ ALint AudioManager::LoadFile(const std::string& file)
    if (CheckForError("AudioManager: alGenBuffers error", __FUNCTION__, __LINE__))
    {
       delete bd;
-      return -1;
+      return AL_NONE;
    }
 
    ALenum format(0);
@@ -551,7 +551,7 @@ ALint AudioManager::LoadFile(const std::string& file)
       ReleaseSoundBuffer(bd->buf, "alDeleteBuffers error", __FUNCTION__, __LINE__);
       delete bd;
 
-      return -1;
+      return AL_NONE;
    }
 
    bd->format = format;
@@ -567,7 +567,7 @@ ALint AudioManager::LoadFile(const std::string& file)
       data = NULL;
 
       delete bd;
-      return -1;
+      return AL_NONE;
    }
 
    // The ALUT documentation says you are "free" to free the allocated
@@ -734,7 +734,7 @@ int AudioManager::LoadSoundBuffer(Sound& snd)
    if (file != NULL)
    {
       // Load a new or an existing sound buffer.
-      if (LoadFile(file) > -1)
+      if (LoadFile(file) != AL_NONE)
       {
          BufferData* bd = mBufferMap[file];
          snd.SetBuffer(bd->buf);
