@@ -97,8 +97,6 @@ TestAudioApp::TestAudioApp(const std::string& configFilename /*= "config.xml"*/)
    CreateHelpLabel();
 }
 
-
-
 TestAudioApp::~TestAudioApp()
 {
    if (mSFXBinder.get())
@@ -250,6 +248,8 @@ bool TestAudioApp::KeyPressed(const Keyboard* keyboard, int key)
          break;
 
       case osgGA::GUIEventAdapter::KEY_Pause:
+      case 'p':
+      case 'P':
          PauseAllSounds();
          verdict = true;
          break;
@@ -519,7 +519,7 @@ TestAudioApp::PauseAllSounds()
          Log::GetInstance().LogMessage(Log::LOG_ALWAYS, __FUNCTION__,
             " PauseAllSounds( %s ) paused", snd->GetFilename());
       }
-      else  if (snd->IsPaused())
+      else if (snd->IsPaused())
       {
          Log::GetInstance().LogMessage(Log::LOG_ALWAYS, __FUNCTION__,
             " PauseAllSounds( %s ) un-paused", snd->GetFilename());

@@ -48,8 +48,8 @@ class SoundComponentTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestSoundManagement);
       CPPUNIT_TEST(TestSoundActorManagement);
       CPPUNIT_TEST(TestSoundCommands);
+      CPPUNIT_TEST(TestSoundPosition);
    CPPUNIT_TEST_SUITE_END();
-
 
    public:
       void setUp();
@@ -63,6 +63,7 @@ class SoundComponentTests : public CPPUNIT_NS::TestFixture
       void TestSoundManagement();
       void TestSoundActorManagement();
       void TestSoundCommands();
+      void TestSoundPosition();
 
    private:
       static const std::string LIBRARY_TEST_GAME_ACTOR;
@@ -443,11 +444,8 @@ void SoundComponentTests::TestSoundCommands()
    CPPUNIT_ASSERT(sound1->IsPlaying());
    CPPUNIT_ASSERT(!sound2->IsPlaying()); // This should still be NOT playing.
    CPPUNIT_ASSERT(sound3->IsPlaying());
-   CPPUNIT_ASSERT(!sound4->IsPlaying());
-   CPPUNIT_ASSERT(sound5->IsPlaying());
-
-   CPPUNIT_ASSERT(!sound2->IsPaused()); // This should still be NOT playing.
-   CPPUNIT_ASSERT(sound4->IsPaused());
+   CPPUNIT_ASSERT(sound4->IsPlaying());
+   CPPUNIT_ASSERT(sound5->IsPlaying());   
 
    // --- Play all Music and pause all World Effects.
    soundArray.clear();
@@ -478,6 +476,7 @@ void SoundComponentTests::TestSoundCommands()
    CPPUNIT_ASSERT(!sound1->IsStopped());
    CPPUNIT_ASSERT(!sound2->IsStopped());
    CPPUNIT_ASSERT(!sound3->IsStopped());
+   CPPUNIT_ASSERT(!sound4->IsPlaying());
    CPPUNIT_ASSERT(sound4->IsStopped());
    CPPUNIT_ASSERT(!sound5->IsStopped());
 
@@ -526,4 +525,25 @@ void SoundComponentTests::TestSoundCommands()
    CPPUNIT_ASSERT(sound3->IsStopped());
    CPPUNIT_ASSERT(sound4->IsStopped());
    CPPUNIT_ASSERT(sound5->IsStopped());
+}
+
+void SoundComponentTests::TestSoundPosition()
+{
+   const std::string testSoundFile = dtUtil::GetDeltaRootPath() + "/tests/data/Sounds/silence.wav";
+   dtCore::RefPtr<dtAudio::SoundActorProxy> sndActorProxy;
+   
+   mGM->CreateActor( *mSndActorType, sndActorProxy );
+   mGM->AddActor( *sndActorProxy, false, false );
+
+   dtAudio::Sound* snd = sndActorProxy->GetSound();
+
+   osg::Vec3 actorTrans = osg::Vec3(33.1f, 78.2f, 193.7f);
+   sndActorProxy->SetTranslation(actorTrans);
+
+   CPPUNIT_ASSERT(actorTrans != snd->GetPosition());
+
+   dtCore::System::GetInstance().Step(); // Let Audio Manager process command.
+     
+   //Verify that when the Actor moves, the sound moves with it.
+   CPPUNIT_ASSERT(actorTrans == snd->GetPosition());   
 }

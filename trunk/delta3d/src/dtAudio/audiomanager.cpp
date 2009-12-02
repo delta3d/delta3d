@@ -813,41 +813,7 @@ int AudioManager::UnloadSound(Sound* snd)
 bool AudioManager::ReleaseSoundSource(Sound& snd, const std::string& errorMessage,
    const std::string& callerFunctionName, int callerFunctionLineNum )
 {
-   bool success = false;
-
-   ALuint src = snd.GetSource();
-   if (alIsSource(src))
-   {
-      // NOTE: Deleting the buffer will fail if the sound source is still
-      // playing and thus result in a very sound memory leak and potentially
-      // mess up the the use of the sources for sounds; sources that should
-      // have been freed will essentially become locked.
-      //
-      // Therefore:  Ensure the sound source is properly stopped before the
-      // sound buffer is deleted.
-      snd.StopImmediately();
-      snd.RewindImmediately();
-      snd.SetLooping(false);
-
-      //Also ensure the sound's buffer is set to nothing:
-      snd.SetBuffer(AL_NONE);
-
-      // Free the source now so that the buffer can delete properly.
-      snd.SetSource(AL_NONE);
-      alDeleteSources(1L, &src);
-
-      // Determine if OpenAL has encountered an error.
-      success = CheckForError(errorMessage, callerFunctionName, callerFunctionLineNum);
-   }
-   else
-   {
-      std::ostringstream logMessage;
-      logMessage << "Sound source was invalid for sound \"" << snd.GetFilename() << "\".";
-      dtUtil::Log::GetInstance("audiomanager.cpp").LogMessage(callerFunctionName,
-         callerFunctionLineNum, logMessage.str(), dtUtil::Log::LOG_WARNING);
-   }
-
-   return success;
+   return snd.ReleaseSource(); 
 }
 
 ////////////////////////////////////////////////////////////////////////////////

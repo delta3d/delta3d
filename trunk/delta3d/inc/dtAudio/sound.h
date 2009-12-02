@@ -171,11 +171,18 @@ namespace dtAudio
       // Get the state of the indicated flag.
       unsigned int GetState(unsigned int flag) const { return mCommandState & BIT(flag); }
 
-      // set indicated flags in mState
-      void SetState(unsigned int flag);
+      // set indicated flags in mCommandState
+      void SetState(unsigned int flag);      
 
       // Reset indicated flags:
       void ResetState(unsigned int flag) { mCommandState &= ~BIT(flag); }
+
+      // Restore source state information... usually called right before
+	   // source is to be played.  Sources are usually deallocated on 
+      // stop in order to conserve sound hardware resources.
+      //
+      // Returns false on failure to restore source.
+      bool RestoreSource();
 
    public:
       void SetPositionFromParent();
@@ -195,7 +202,14 @@ namespace dtAudio
       void UnloadFile();
 
       ///clean up Sound for recyclying
-      void Clear();
+      void Clear();      
+
+      /* 
+       * Stops sound and releases sound source memory.
+       *
+       * @return false if something went wrong while releasing.
+       */
+      bool ReleaseSource();
 
       ///Run all commands in the Sound's command queue (also empties the queue)
       void RunAllCommandsInQueue();
@@ -263,20 +277,32 @@ namespace dtAudio
        * and sources are set automatically via the AudioManager.  Only tinker
        * with OpenAL sources directly if you know what you are doing.
        */
-      void SetSource(ALuint s) { mSource = s; }
+      void SetSource(ALuint s);
 
       /**
        * Tells the AudioManager to start playing this on the next frame step.
        */
       void Play();
-      ///Starts playing a sound without reference to the AudioManager.
-      void PlayImmediately();
+
+      /* 
+       * Starts playing a sound without reference to the AudioManager.
+       *
+       * @return true if playing successfully started, false otherwise
+       */
+      bool PlayImmediately();
 
       /**
-       * Tells the AudioManager to start playing this sound on the next frame step.
+       * Tells the AudioManager to start/stop playing this sound on the next
+       * frame step.  Note that this does NOT have an effect on the return 
+       * value of the IsPlaying method (only on the value of IsPaused).
        */
       void Pause();
-      ///Pauses the sound immediately without reference to the AudioManager.
+      
+      /*
+       * Start/stops playing this sound without reference to the AudioManager.
+       * Note that this does NOT have an effect on the return 
+       * value of the IsPlaying method (only on the value of IsPaused).
+       */
       void PauseImmediately();
 
       /**
@@ -292,11 +318,14 @@ namespace dtAudio
 
       /**
        * Tells the AudioManager to rewind to the beginning of this sound
-       * at the next frame step.
+       * at the next frame step.  The sound is also stopped.
        */
       void Rewind();
 
-      ///Rewinds a sound immediately without referencing the AudioManager
+      /* 
+	   * Rewinds a sound immediately without referencing the AudioManager.
+	   * Note that the sound is also stopped.
+	   */
       void RewindImmediately();
 
       /**
@@ -413,6 +442,12 @@ namespace dtAudio
       void GetPosition(osg::Vec3& position) const;
 
       /**
+       * Returns the position of the Sound.
+       *       
+       */
+      osg::Vec3& Sound::GetPosition();
+
+      /**
        * Set the direction of sound.
        *
        * If this is not zero, then the source is automatically considered as
@@ -431,6 +466,11 @@ namespace dtAudio
        */
       void GetDirection(osg::Vec3& direction) const;
 
+      /*
+       * Return the direction of the Sound
+       */
+      osg::Vec3 GetDirection();
+
       /**
        * Set the velocity of sound.
        *
@@ -444,6 +484,9 @@ namespace dtAudio
        * @param velocity to get
        */
       void GetVelocity(osg::Vec3& velocity) const;
+
+      /// Returns the velocity vector of the Sound.
+      osg::Vec3 Sound::GetVelocity();
 
       /**
        * Deprecated 02/04/2009 -- this method is misleading.  It is not
@@ -460,7 +503,7 @@ namespace dtAudio
        * Sets the distance where there will no longer be any attenuation of
        * the source.  Used with the Inverse Clamped Distance model.
        *
-       * @see dmINVCLAMP
+       * @see dmINVCLAMP of the AudioConfigData struct in AudioManager.h
        * @param dist the maximum distance
        */
       void SetMaxDistance(float dist);
@@ -488,7 +531,7 @@ namespace dtAudio
 
       /**
        * Set the minimum gain that sound plays at.
-       * Attenuation is clamped to this gain
+       * Attenuation is clamped to this gain.  Range is 0.0 - 1.0
        *
        * @param gain set to minimum
        */
@@ -503,7 +546,7 @@ namespace dtAudio
 
       /**
        * Set the maximum gain that sound plays at.
-       * Attenuation is clamped to this gain
+       * Attenuation is clamped to this gain.  Range is 0.0 - 1.0
        *
        * @param gain set to maximum
        */
@@ -561,12 +604,25 @@ namespace dtAudio
       void*       mStopCBData;
 
       std::queue<const char*> mCommand;
-
       unsigned int            mCommandState;
 
       ALuint                  mSource;
       ALint                   mBuffer;
       bool                    mIsInitialized;
+
+      ALfloat                 mGain;
+      ALfloat                 mPitch;
+      ALfloat                 mSecondOffset;
+      ALfloat                 mMaxDistance;
+      ALfloat                 mRolloffFactor;
+      ALfloat                 mMinGain;
+      ALfloat                 mMaxGain;
+      bool                    mListenerRelative;
+      osg::Vec3               mPosition;
+      osg::Vec3               mDirection;
+      osg::Vec3               mVelocity;      
+
+      bool                    mUserDefinedSource;
    };
 } // namespace dtAudio
 
