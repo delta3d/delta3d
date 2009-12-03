@@ -21,6 +21,7 @@
 
 #include <dtDirectorQt/valueitem.h>
 #include <dtDirectorQt/directoreditor.h>
+#include <dtDirectorQt/linkitem.h>
 
 #include <dtDirector/valuenode.h>
 
@@ -59,7 +60,7 @@ namespace dtDirector
          radialGradient.setColorAt(1.0, GetDarkColorForType(valueNode->GetType().GetTypeId()));
          setBrush(radialGradient);
 
-         mValueLink = new QGraphicsPolygonItem(this, scene);
+         mValueLink = new ValueNodeLinkItem(this, this, scene);
          if (mValueLink)
          {
             QPolygonF poly;
@@ -71,8 +72,9 @@ namespace dtDirector
             mValueLink->setPolygon(poly);
             mValueLink->setPos(mNodeWidth / 2, -1.0f);
 
-            mValueLink->setPen(QPen(GetDarkColorForType(valueNode->GetType().GetTypeId()), 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-            mValueLink->setBrush(GetColorForType(valueNode->GetType().GetTypeId()));
+            mValueLink->SetType(valueNode->GetType().GetTypeId());
+            mValueLink->setPen(QPen(GetDarkColorForType(mValueLink->GetType()), 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+            mValueLink->setBrush(GetColorForType(mValueLink->GetType()));
          }
       }
       setPolygon(mPolygon);

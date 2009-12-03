@@ -121,6 +121,7 @@ namespace dtDirector
 
          // Connect the output of our sub-graph to the action node.
          inputNode->GetOutputLink("Out")->Connect(actionNode->GetInputLink("Multiply"));
+         inputNode->GetOutputLink("Out")->Connect(actionNode->GetInputLink("Add"));
 
          // Connect the output of action node with the output node.
          actionNode->GetOutputLink("Out")->Connect(outputNode->GetInputLink("In"));

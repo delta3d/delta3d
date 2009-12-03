@@ -26,6 +26,7 @@
 
 #include <dtDirector/node.h>
 
+
 #define LINK_SIZE    10
 #define LINK_LENGTH  15
 #define LINK_SPACING 0
@@ -41,6 +42,10 @@
 namespace dtDirector
 {
    class EditorScene;
+   class InputLinkItem;
+   class OutputLinkItem;
+   class ValueLinkItem;
+   class ValueNodeLinkItem;
 
    struct InputData
    {
@@ -48,7 +53,7 @@ namespace dtDirector
       ~InputData();
 
       QGraphicsTextItem*   linkName;
-      QGraphicsPolygonItem*linkGraphic;
+      InputLinkItem*       linkGraphic;
       InputLink*           link;
    };
 
@@ -59,7 +64,7 @@ namespace dtDirector
       void ResizeLinks(int count, EditorScene* scene);
 
       QGraphicsTextItem*   linkName;
-      QGraphicsPolygonItem*linkGraphic;
+      OutputLinkItem*      linkGraphic;
       std::vector<QGraphicsPathItem*> linkConnectors;
       OutputLink*          link;
    };
@@ -71,7 +76,7 @@ namespace dtDirector
       void ResizeLinks(int count, EditorScene* scene);
 
       QGraphicsTextItem*   linkName;
-      QGraphicsPolygonItem*linkGraphic;
+      ValueLinkItem*       linkGraphic;
       std::vector<QGraphicsPathItem*> linkConnectors;
       ValueLink*           link;
    };
@@ -229,6 +234,11 @@ namespace dtDirector
        */
       QColor GetColorForType(unsigned char type);
       QColor GetDarkColorForType(unsigned char type);
+
+      /**
+       * Retrieves the node.
+       */
+      Node* GetNode() {return mNode.get();}
 
       /**
        * Retrieves the ID of the node.

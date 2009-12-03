@@ -215,7 +215,7 @@ namespace dtDirector
       /**
        * Event handler when the parent button is pressed.
        */
-      void DirectorEditor::OnParentButton();
+      void OnParentButton();
 
       /**
       * Event handler when the current document tab has changed.

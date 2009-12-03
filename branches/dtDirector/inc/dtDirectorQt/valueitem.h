@@ -28,6 +28,8 @@
 
 namespace dtDirector
 {
+   class ValueNodeLinkItem;
+
    /**
     * Draws a node in the graphics view.
     */
@@ -60,9 +62,14 @@ namespace dtDirector
        */
       virtual void ConnectLinks(bool fullConnect = false);
 
+      /**
+       * Retrieves the value link item.
+       */
+      ValueNodeLinkItem* GetValueLink() {return mValueLink;}
+
    protected:
 
-      QGraphicsPolygonItem* mValueLink;
+      ValueNodeLinkItem* mValueLink;
    };
 }
 

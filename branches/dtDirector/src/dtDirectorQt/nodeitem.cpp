@@ -21,6 +21,7 @@
 
 #include <dtDirectorQt/nodeitem.h>
 #include <dtDirectorQt/directoreditor.h>
+#include <dtDirectorQt/linkitem.h>
 
 #include <dtDirector/valuenode.h>
 
@@ -67,9 +68,8 @@ namespace dtDirector
       while ((int)linkConnectors.size() < count)
       {
          QGraphicsPathItem* item = new QGraphicsPathItem(NULL, scene);
-         item->setZValue(2.0f);
+         item->setZValue(20.0f);
          linkConnectors.push_back(item);
-         scene->addItem(item);
       }
 
       while ((int)linkConnectors.size() > count)
@@ -98,9 +98,8 @@ namespace dtDirector
       while ((int)linkConnectors.size() < count)
       {
          QGraphicsPathItem* item = new QGraphicsPathItem(NULL, scene);
-         item->setZValue(2.0f);
+         item->setZValue(20.0f);
          linkConnectors.push_back(item);
-         scene->addItem(item);
       }
 
       while ((int)linkConnectors.size() > count)
@@ -280,8 +279,8 @@ namespace dtDirector
          InputData data;
          data.link = &mNode->GetInputLinks()[index];
 
-         data.linkName = new QGraphicsTextItem(this, scene());
-         data.linkGraphic = new QGraphicsPolygonItem(data.linkName, scene());
+         data.linkName = new QGraphicsTextItem(this, mScene);
+         data.linkGraphic = new InputLinkItem(this, index, data.linkName, mScene);
 
          // Create the link graphic.
          data.linkGraphic->setPolygon(poly);
@@ -343,8 +342,9 @@ namespace dtDirector
          OutputData data;
          data.link = &mNode->GetOutputLinks()[index];
 
-         data.linkGraphic = new QGraphicsPolygonItem(this, scene());
-         data.linkName = new QGraphicsTextItem(data.linkGraphic, scene());
+         data.linkGraphic = new OutputLinkItem(this, index, this, mScene);
+         data.linkName = new QGraphicsTextItem(data.linkGraphic, mScene);
+         data.linkName->setAcceptHoverEvents(false);
 
          // Create the link graphic.
          data.linkGraphic->setPolygon(poly);
@@ -407,8 +407,9 @@ namespace dtDirector
          ValueData data;
          data.link = &mNode->GetValueLinks()[index];
 
-         data.linkGraphic = new QGraphicsPolygonItem(this, scene());
-         data.linkName = new QGraphicsTextItem(data.linkGraphic, scene());
+         data.linkGraphic = new ValueLinkItem(this, index, this, mScene);
+         data.linkName = new QGraphicsTextItem(data.linkGraphic, mScene);
+         data.linkName->setAcceptHoverEvents(false);
 
          // Out links are triangular shaped.
          QPolygonF poly;
@@ -433,11 +434,11 @@ namespace dtDirector
          if (data.link->IsTypeChecking() && data.link->GetProperty())
          {
             dtDAL::DataType& type = data.link->GetProperty()->GetPropertyType();
-            data.linkGraphic->setPen(QPen(GetDarkColorForType(type.GetTypeId()), 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+            data.linkGraphic->setPen(QPen(GetDarkColorForType(type.GetTypeId()), 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
          }
          else
          {
-            data.linkGraphic->setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+            data.linkGraphic->setPen(QPen(Qt::black, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
          }
 
          // Set the color of the link based on the property type.
@@ -640,8 +641,8 @@ namespace dtDirector
 
       if (fullConnect)
       {
-         count = (int)mInputs.size();
-         for (int inputIndex = 0; inputIndex < count; inputIndex++)
+         int inputCount = (int)mInputs.size();
+         for (int inputIndex = 0; inputIndex < inputCount; inputIndex++)
          {
             InputData& input = mInputs[inputIndex];
             if (input.link)
@@ -660,7 +661,16 @@ namespace dtDirector
                   {
                      if (item->mOutputs[outputIndex].link == output)
                      {
-                        ConnectLinks(item->mOutputs[outputIndex], input, linkIndex);
+                        int count = output->GetLinks().size();
+                        for (int index = 0; index < count; index++)
+                        {
+                           if (output->GetLinks()[index] == input.link)
+                           {
+                              ConnectLinks(item->mOutputs[outputIndex], input, index);
+                              break;
+                           }
+                        }
+                        break;
                      }
                   }
                }
@@ -789,8 +799,10 @@ namespace dtDirector
       ValueNode* valueNode = dynamic_cast<ValueNode*>(input->mNode.get());
       if (valueNode)
       {
+         output.linkGraphic->SetType(valueNode->GetType().GetTypeId());
+
          output.linkConnectors[index]->setPen(
-            QPen(GetDarkColorForType(valueNode->GetType().GetTypeId()),
+            QPen(GetDarkColorForType(output.linkGraphic->GetType()),
             2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
       }
    }
@@ -817,6 +829,17 @@ namespace dtDirector
           if (!mLoading)
           {
              ConnectLinks(true);
+          }
+       }
+       else if (change == QGraphicsItem::ItemSelectedHasChanged)
+       {
+          if (isSelected())
+          {
+             setZValue(zValue() + 9.0f);
+          }
+          else
+          {
+             setZValue(zValue() - 9.0f);
           }
        }
 

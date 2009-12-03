@@ -111,7 +111,6 @@ namespace dtDirector
          {
             item->setZValue(0.0f);
             mNodes.push_back(item);
-            addItem(item);
          }
       }
 
@@ -124,7 +123,6 @@ namespace dtDirector
          {
             item->setZValue(0.0f);
             mNodes.push_back(item);
-            addItem(item);
          }
       }
 
@@ -135,9 +133,8 @@ namespace dtDirector
          ValueItem* item = new ValueItem(node, NULL, this);
          if (item)
          {
-            item->setZValue(1.0f);
+            item->setZValue(10.0f);
             mNodes.push_back(item);
-            addItem(item);
          }
       }
 
