@@ -360,18 +360,26 @@ namespace dtUtil
    const struct FileInfo FileUtils::GetFileInfo(const std::string& strFile) const
    {
       struct FileInfo info;
-
       struct stat tagStat;
-      if (stat(strFile.c_str(), &tagStat) != 0)
+   
+      //chop trailing slashes off      
+      std::string choppedStr = strFile;
+      if (strFile.size() > 0 && (strFile[strFile.size() - 1] == '\\' ||
+                                 strFile[strFile.size() - 1] == '/'))
       {
-         //throw dtUtil::Exception(FileExceptionEnum::FileNotFound, std::string("Cannot open file ") + strFile);
+         choppedStr = strFile.substr(0, strFile.length() - 1);
+      }
+
+      if (stat(choppedStr.c_str(), &tagStat) != 0)
+      {
+         //throw dtUtil::Exception(FileExceptionEnum::FileNotFound, std::string("Cannot open file ") + choppedStr);
          info.fileType = FILE_NOT_FOUND;
          return info;
       }
 
-      info.baseName = osgDB::getSimpleFileName(strFile);
-      info.fileName = strFile;
-      info.path = osgDB::getFilePath(strFile);
+      info.baseName = osgDB::getSimpleFileName(choppedStr);
+      info.fileName = choppedStr;
+      info.path = osgDB::getFilePath(choppedStr);
 
       info.size = tagStat.st_size;
       info.lastModified = tagStat.st_mtime;
