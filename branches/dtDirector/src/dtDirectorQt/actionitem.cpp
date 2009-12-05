@@ -35,32 +35,45 @@ namespace dtDirector
    ActionItem::ActionItem(Node* node, QGraphicsItem* parent, EditorScene* scene)
        : NodeItem(node, parent, scene)
    {
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ActionItem::Draw()
+   {
+      NodeItem::Draw();
+
       mLoading = true;
 
-      SetTitle(mNode->GetName());
-      if (mNode->InputsExposed())  DrawInputs();
-      if (mNode->ValuesExposed())  SetupValues();
-      if (mNode->OutputsExposed()) DrawOutputs();
+      if (mNode.valid())
+      {
+         SetTitle(mNode->GetName());
+         if (mNode->InputsExposed())  DrawInputs();
+         if (mNode->ValuesExposed())  SetupValues();
+         if (mNode->OutputsExposed()) DrawOutputs();
 
-      // Now draw the node.
-      DrawTitle();
-      DrawValues();
+         // Now draw the node.
+         DrawTitle();
+         DrawValues();
 
-      DrawPolygonTop();
-      if (mNode->OutputsExposed()) DrawPolygonRightFlat();
-      else                         DrawPolygonRightRound();
-      DrawPolygonBottomFlat();
-      if (mNode->InputsExposed()) DrawPolygonLeftFlat();
-      else                        DrawPolygonLeftRound();
+         DrawPolygonTop();
+         if (mNode->OutputsExposed()) DrawPolygonRightFlat();
+         else                         DrawPolygonRightRound();
+         DrawPolygonBottomFlat();
+         if (mNode->InputsExposed()) DrawPolygonLeftFlat();
+         else                        DrawPolygonLeftRound();
 
-      DrawDividers();
+         DrawDividers();
 
-      setPen(QPen(Qt::darkGray, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-      QRadialGradient radialGradient(mNodeWidth/2, mNodeHeight/2, mNodeHeight, mNodeWidth/2, mNodeHeight/2);
-      radialGradient.setColorAt(0.0, Qt::cyan);
-      radialGradient.setColorAt(1.0, Qt::darkCyan);
-      setBrush(radialGradient);
-      setPolygon(mPolygon);
+         int size = mNodeWidth;
+         if (size < mNodeHeight) size = mNodeHeight;
+
+         setPen(QPen(Qt::darkGray, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+         QRadialGradient radialGradient(mNodeWidth/2, mNodeHeight/2, size, mNodeWidth/2, mNodeHeight/2);
+         radialGradient.setColorAt(0.0, Qt::cyan);
+         radialGradient.setColorAt(1.0, Qt::darkCyan);
+         setBrush(radialGradient);
+         setPolygon(mPolygon);
+      }
 
       mLoading = false;
    }

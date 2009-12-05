@@ -72,13 +72,13 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void InputNode::BuildPropertyMap()
    {
-      EventNode::BuildPropertyMap();
-
       AddProperty(new dtDAL::StringActorProperty(
          "Name", "Name", 
          dtDAL::StringActorProperty::SetFuncType(this, &InputNode::SetName),
          dtDAL::StringActorProperty::GetFuncType(this, &InputNode::GetName),
-         "The name of the input link.", "Data"));
+         "The name of the input link."));
+
+      EventNode::BuildPropertyMap();
    }
 
    //////////////////////////////////////////////////////////////////////////

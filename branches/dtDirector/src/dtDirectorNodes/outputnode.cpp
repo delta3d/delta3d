@@ -58,13 +58,13 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void OutputNode::BuildPropertyMap()
    {
-      ActionNode::BuildPropertyMap();
-
       AddProperty(new dtDAL::StringActorProperty(
          "Name", "Name", 
          dtDAL::StringActorProperty::SetFuncType(this, &OutputNode::SetName),
          dtDAL::StringActorProperty::GetFuncType(this, &OutputNode::GetName),
-         "The name of the output link.", "Data"));
+         "The name of the output link."));
+
+      ActionNode::BuildPropertyMap();
    }
 
    //////////////////////////////////////////////////////////////////////////

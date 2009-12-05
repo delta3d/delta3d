@@ -128,6 +128,20 @@ namespace dtDirector
       virtual const std::string& GetName();
 
       /**
+       * Retrieves the description for the node.
+       *
+       * @return  The description of the node.
+       */
+      const std::string& GetTypeName();
+
+      /**
+       * Retrieves the description for the node.
+       *
+       * @return  The description of the node.
+       */
+      const std::string& GetDescription();
+
+      /**
        * Retrieves the comment for the node.
        *
        * @return  The comment of the node.
@@ -140,6 +154,22 @@ namespace dtDirector
        * @param[in]  comment  The comment.
        */
       void SetComment(const std::string& comment);
+
+      /**
+       * Retrieves whether this node will output its comment
+       * to the log window.
+       *
+       * @return  True if the node will output a log.
+       */
+      bool GetLogComment() const;
+
+      /**
+       * Sets whether this node will output its comment
+       * to the log window.
+       *
+       * @param[in]  log  True to output a log.
+       */
+      void SetLogComment(bool log);
 
       /**
        * Retrieves the UI position of the node.
@@ -367,12 +397,16 @@ namespace dtDirector
       // Properties.
       dtCore::UniqueId   mID;
       std::string        mComment;
+      bool               mLogComment;
 
       osg::Vec2          mPosition;
 
       bool               mDisabled;
 
+#pragma warning (push)
+#pragma warning (disable:4251)
       dtCore::RefPtr<const NodeType>   mType;
+#pragma warning (pop)
    };
 }
 

@@ -44,20 +44,19 @@ namespace dtDirector
    ///////////////////////////////////////////////////////////////////////////////////////
    void IntValue::Init(const NodeType& nodeType)
    {
-      Node::Init(nodeType);
+      ValueNode::Init(nodeType);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void IntValue::BuildPropertyMap()
    {
-      Node::BuildPropertyMap();
+      ValueNode::BuildPropertyMap();
 
       mProperty = new dtDAL::IntActorProperty(
          "Value", "Value",
          dtDAL::IntActorProperty::SetFuncType(this, &IntValue::SetValue),
          dtDAL::IntActorProperty::GetFuncType(this, &IntValue::GetValue),
-         "The value.", "Data");
-
+         "The value.");
       AddProperty(mProperty);
    }
 

@@ -50,6 +50,12 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   void InputData::Remove()
+   {
+      if (linkName) delete linkName;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    OutputData::OutputData()
       : linkName(NULL)
       , linkGraphic(NULL)
@@ -77,6 +83,13 @@ namespace dtDirector
          scene->removeItem(linkConnectors[0]);
          linkConnectors.erase(linkConnectors.begin());
       }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void OutputData::Remove(EditorScene* scene)
+   {
+      ResizeLinks(0, scene);
+      if (linkGraphic) delete linkGraphic;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -110,6 +123,13 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   void ValueData::Remove(EditorScene* scene)
+   {
+      ResizeLinks(0, scene);
+      if (linkGraphic) delete linkGraphic;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    NodeItem::NodeItem(Node* node, QGraphicsItem* parent, EditorScene* scene)
        : QGraphicsPolygonItem(parent, scene)
        , mScene(scene)
@@ -121,30 +141,70 @@ namespace dtDirector
        , mContextMenu(NULL)
        , mNodeWidth(MIN_NODE_WIDTH)
        , mNodeHeight(MIN_NODE_HEIGHT)
-       , mLinkWidth(0)
-       , mLinkHeight(0)
+       , mTextHeight(0.0f)
+       , mLinkWidth(0.0f)
+       , mLinkHeight(0.0f)
        , mLinkDivider(NULL)
        , mValueDivider(NULL)
    {
-      mLoading = true;
-
       setFlag(QGraphicsItem::ItemIsMovable, true);
       setFlag(QGraphicsItem::ItemIsSelectable, true);
-
-      setPos(node->GetPosition().x(), node->GetPosition().y());
-
-      mLoading = false;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void NodeItem::Refresh()
+   NodeItem::~NodeItem()
    {
+      // Clear all links.
+      int count = (int)mInputs.size();
+      for (int index = 0; index < count; index++)
+      {
+         mInputs[index].Remove();
+      }
+      mInputs.clear();
+
+      count = (int)mOutputs.size();
+      for (int index = 0; index < count; index++)
+      {
+         mOutputs[index].Remove(mScene);
+      }
+      mOutputs.clear();
+
+      count = (int)mValues.size();
+      for (int index = 0; index < count; index++)
+      {
+         mValues[index].Remove(mScene);
+      }
+      mValues.clear();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void NodeItem::Draw()
+   {
+      mLoading = true;
+
       if (mNode.valid())
       {
-         osg::Vec2 pos = mNode->GetPosition();
+         mNodeWidth = MIN_NODE_WIDTH;
+         mNodeHeight = MIN_NODE_HEIGHT;
+         mTextHeight = 0.0f;
+         mLinkWidth = 0.0f;
+         mLinkHeight = 0.0f;
 
+         osg::Vec2 pos = mNode->GetPosition();
          setPos(pos.x(), pos.y());
+
+         if (mNode->GetComment().empty())
+         {
+            setToolTip(mNode->GetDescription().c_str());
+         }
+         else
+         {
+            setToolTip(QString(mNode->GetDescription().c_str()) +
+               QString("\nComment - ") + QString(mNode->GetComment().c_str()));
+         }
       }
+
+      mLoading = false;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -265,7 +325,14 @@ namespace dtDirector
    {
       if (!mNode.valid()) return;
 
+      // First clear all current inputs.
+      int count = (int)mInputs.size();
+      for (int index = 0; index < count; index++)
+      {
+         mInputs[index].Remove();
+      }
       mInputs.clear();
+
       float maxSize = 0;
 
       QPolygonF poly;
@@ -273,10 +340,12 @@ namespace dtDirector
          QPointF(LINK_LENGTH, LINK_SIZE) << QPointF(0, LINK_SIZE) <<
          QPointF(LINK_SIZE/2, LINK_SIZE/2);
 
-      int count = (int)mNode->GetInputLinks().size();
+      count = (int)mNode->GetInputLinks().size();
       for (int index = 0; index < count; index++)
       {
-         InputData data;
+         mInputs.push_back(InputData());
+         InputData& data = mInputs.back();
+         
          data.link = &mNode->GetInputLinks()[index];
 
          data.linkName = new QGraphicsTextItem(this, mScene);
@@ -295,8 +364,6 @@ namespace dtDirector
          float x = -LINK_LENGTH;
          float y = (nameBounds.height()/2) - (LINK_SIZE/2);
          data.linkGraphic->setPos(x, y);
-
-         mInputs.push_back(data);
       }
 
       // Resize the node width if we have to.
@@ -327,7 +394,14 @@ namespace dtDirector
    {
       if (!mNode.valid()) return;
 
+      // First clear all current outputs.
+      int count = (int)mOutputs.size();
+      for (int index = 0; index < count; index++)
+      {
+         mOutputs[index].Remove(mScene);
+      }
       mOutputs.clear();
+
       float maxSize = 0;
       QPolygonF poly;
       poly << QPointF(0, 0) << QPointF(LINK_LENGTH - LINK_SIZE/2, 0) <<
@@ -336,10 +410,12 @@ namespace dtDirector
          QPointF(0, LINK_SIZE);
       float offset = 0;
 
-      int count = (int)mNode->GetOutputLinks().size();
+      count = (int)mNode->GetOutputLinks().size();
       for (int index = 0; index < count; index++)
       {
-         OutputData data;
+         mOutputs.push_back(OutputData());
+         OutputData& data = mOutputs.back();
+
          data.link = &mNode->GetOutputLinks()[index];
 
          data.linkGraphic = new OutputLinkItem(this, index, this, mScene);
@@ -360,8 +436,6 @@ namespace dtDirector
          float y = (LINK_SIZE/2) - (nameBounds.height()/2);
          offset = -y;
          data.linkName->setPos(x, y);
-
-         mOutputs.push_back(data);
       }
 
       // Resize the node width if we have to.
@@ -397,11 +471,18 @@ namespace dtDirector
    {
       if (!mNode.valid()) return;
 
+      // First clear all current outputs.
+      int count = (int)mValues.size();
+      for (int index = 0; index < count; index++)
+      {
+         mValues[index].Remove(mScene);
+      }
       mValues.clear();
+
       float maxWidth = 0;
       float maxHeight = 0;
 
-      int count = (int)mNode->GetValueLinks().size();
+      count = (int)mNode->GetValueLinks().size();
       for (int index = 0; index < count; index++)
       {
          ValueData data;
@@ -821,7 +902,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    QVariant NodeItem::itemChange(GraphicsItemChange change, const QVariant &value)
    {
-       if (change == QGraphicsItem::ItemPositionHasChanged)
+       if (change == QGraphicsItem::ItemPositionChange)
        {
           QPointF newPos = value.toPointF();
           mNode->SetPosition(osg::Vec2(newPos.x(), newPos.y()));
@@ -836,10 +917,12 @@ namespace dtDirector
           if (isSelected())
           {
              setZValue(zValue() + 9.0f);
+             mScene->AddSelected(mNode.get());
           }
           else
           {
              setZValue(zValue() - 9.0f);
+             mScene->RemoveSelected(mNode.get());
           }
        }
 

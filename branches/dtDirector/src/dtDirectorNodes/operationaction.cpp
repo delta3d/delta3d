@@ -53,32 +53,30 @@ namespace dtDirector
       mInputs.push_back(InputLink(this, "Multiply"));
       mInputs.push_back(InputLink(this, "Divide"));
 
-      mOutputs.push_back(OutputLink(this, "Some Really Long Output Name for Testing"));
+      //mOutputs.push_back(OutputLink(this, "Some Really Long Output Name for Testing"));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void OperationAction::BuildPropertyMap()
    {
-      ActionNode::BuildPropertyMap();
-
       // Create our value links.
       dtDAL::DoubleActorProperty* leftProp = new dtDAL::DoubleActorProperty(
          "A", "A",
          dtDAL::DoubleActorProperty::SetFuncType(this, &OperationAction::SetA),
          dtDAL::DoubleActorProperty::GetFuncType(this, &OperationAction::GetA),
-         "The Left value.", "Data");
+         "The Left value.");
 
       dtDAL::DoubleActorProperty* rightProp = new dtDAL::DoubleActorProperty(
          "B", "B",
          dtDAL::DoubleActorProperty::SetFuncType(this, &OperationAction::SetB),
          dtDAL::DoubleActorProperty::GetFuncType(this, &OperationAction::GetB),
-         "The Right value.", "Data");
+         "The Right value.");
 
       dtDAL::DoubleActorProperty* resultProp = new dtDAL::DoubleActorProperty(
-         "Result", "Result Output Val",
+         "Result", "Result",
          dtDAL::DoubleActorProperty::SetFuncType(this, &OperationAction::SetResult),
          dtDAL::DoubleActorProperty::GetFuncType(this, &OperationAction::GetResult),
-         "The Right value.", "Data");
+         "The Right value.");
 
       AddProperty(leftProp);
       AddProperty(rightProp);
@@ -88,6 +86,8 @@ namespace dtDirector
       mValues.push_back(ValueLink(this, leftProp, false, false, false));
       mValues.push_back(ValueLink(this, rightProp, false, false, false));
       mValues.push_back(ValueLink(this, resultProp, true, true, false));
+
+      ActionNode::BuildPropertyMap();
    }
 
    //////////////////////////////////////////////////////////////////////////

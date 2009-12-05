@@ -191,7 +191,10 @@ namespace dtDirector
 
       Node* mOwner;
 
+#pragma warning (push)
+#pragma warning (disable:4251)
       std::vector<ValueNode*> mLinks;
+#pragma warning (pop)
       dtDAL::ActorProperty* mDefaultProperty;
 
       bool mIsOut;

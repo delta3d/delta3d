@@ -29,6 +29,7 @@
 #ifndef DELTA_DYNAMIC_GAME_EVENT_CONTROL
 #define DELTA_DYNAMIC_GAME_EVENT_CONTROL
 
+#include <dtEditQt/export.h>
 #include <dtQt/dynamicabstractcontrol.h>
 #include <dtQt/dynamicsubwidgets.h>
 
@@ -43,7 +44,7 @@ namespace dtEditQt
 
    class PropertyEditorModel;
 
-   class DynamicGameEventControl : public dtQt::DynamicAbstractControl
+   class DT_EDITQT_EXPORT DynamicGameEventControl : public dtQt::DynamicAbstractControl
    {
       Q_OBJECT
 

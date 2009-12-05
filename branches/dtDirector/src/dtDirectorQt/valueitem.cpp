@@ -41,43 +41,63 @@ namespace dtDirector
        : NodeItem(node, parent, scene)
        , mValueLink(NULL)
    {
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ValueItem::Draw()
+   {
+      NodeItem::Draw();
+
       mLoading = true;
 
-      SetTitle(mNode->GetName());
-      DrawTitle();
-
-      DrawPolygonTop();
-      DrawPolygonRightFlat();
-      DrawPolygonBottomRound();
-      DrawPolygonLeftFlat();
-
-      ValueNode *valueNode = dynamic_cast<ValueNode *>(mNode.get());
-      if (valueNode)
+      if (mNode.valid())
       {
-         setPen(QPen(GetDarkColorForType(valueNode->GetType().GetTypeId()), 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-         QRadialGradient radialGradient(mNodeWidth/2, mNodeHeight, mNodeWidth, mNodeWidth/2, mNodeHeight);
-         radialGradient.setColorAt(0.0, GetColorForType(valueNode->GetType().GetTypeId()));
-         radialGradient.setColorAt(1.0, GetDarkColorForType(valueNode->GetType().GetTypeId()));
-         setBrush(radialGradient);
+         SetTitle(mNode->GetName());
+         DrawTitle();
 
-         mValueLink = new ValueNodeLinkItem(this, this, scene);
-         if (mValueLink)
+         DrawPolygonTop();
+         DrawPolygonRightFlat();
+         DrawPolygonBottomRound();
+         DrawPolygonLeftFlat();
+
+         ValueNode *valueNode = dynamic_cast<ValueNode *>(mNode.get());
+         if (valueNode)
          {
-            QPolygonF poly;
-            poly << QPointF(-LINK_SIZE/2, 0.0f) << QPointF(LINK_SIZE/2, 0.0f) <<
-               QPointF(LINK_SIZE/2, -LINK_LENGTH + LINK_SIZE/2) <<
-               QPointF(0, -LINK_LENGTH) <<
-               QPointF(-LINK_SIZE/2, -LINK_LENGTH + LINK_SIZE/2);
+            int size = mNodeWidth;
+            if (size < mNodeHeight) size = mNodeHeight;
 
-            mValueLink->setPolygon(poly);
-            mValueLink->setPos(mNodeWidth / 2, -1.0f);
+            setPen(QPen(GetDarkColorForType(valueNode->GetType().GetTypeId()), 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+            QRadialGradient radialGradient(mNodeWidth/2, mNodeHeight, size, mNodeWidth/2, mNodeHeight);
+            radialGradient.setColorAt(0.0, GetColorForType(valueNode->GetType().GetTypeId()));
+            radialGradient.setColorAt(1.0, GetDarkColorForType(valueNode->GetType().GetTypeId()));
+            setBrush(radialGradient);
 
-            mValueLink->SetType(valueNode->GetType().GetTypeId());
-            mValueLink->setPen(QPen(GetDarkColorForType(mValueLink->GetType()), 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-            mValueLink->setBrush(GetColorForType(mValueLink->GetType()));
+            if (!mValueLink)
+            {
+               mValueLink = new ValueNodeLinkItem(this, this, mScene);
+            }
+
+            if (mValueLink)
+            {
+               QPolygonF poly;
+               poly << QPointF(-LINK_SIZE/2, 0.0f) << QPointF(LINK_SIZE/2, 0.0f) <<
+                  QPointF(LINK_SIZE/2, -LINK_LENGTH + LINK_SIZE/2) <<
+                  QPointF(0, -LINK_LENGTH) <<
+                  QPointF(-LINK_SIZE/2, -LINK_LENGTH + LINK_SIZE/2);
+
+               mValueLink->setPolygon(poly);
+               mValueLink->setPos(mNodeWidth / 2, -1.0f);
+
+               mValueLink->SetType(valueNode->GetType().GetTypeId());
+               mValueLink->setPen(QPen(GetDarkColorForType(mValueLink->GetType()), 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+               mValueLink->setBrush(GetColorForType(mValueLink->GetType()));
+            }
          }
+         setPolygon(mPolygon);
+
+         osg::Vec2 pos = mNode->GetPosition();
+         setPos(pos.x(), pos.y());
       }
-      setPolygon(mPolygon);
 
       mLoading = false;
    }

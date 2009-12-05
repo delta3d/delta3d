@@ -52,6 +52,8 @@ namespace dtDirector
       InputData();
       ~InputData();
 
+      void Remove();
+
       QGraphicsTextItem*   linkName;
       InputLinkItem*       linkGraphic;
       InputLink*           link;
@@ -62,6 +64,8 @@ namespace dtDirector
       OutputData();
       ~OutputData();
       void ResizeLinks(int count, EditorScene* scene);
+
+      void Remove(EditorScene* scene);
 
       QGraphicsTextItem*   linkName;
       OutputLinkItem*      linkGraphic;
@@ -74,6 +78,8 @@ namespace dtDirector
       ValueData();
       ~ValueData();
       void ResizeLinks(int count, EditorScene* scene);
+
+      void Remove(EditorScene* scene);
 
       QGraphicsTextItem*   linkName;
       ValueLinkItem*       linkGraphic;
@@ -98,9 +104,14 @@ namespace dtDirector
       NodeItem(Node* node, QGraphicsItem* parent = 0, EditorScene* scene = 0);
 
       /**
-       * Refreshes the node item.
+       * Destructor.
        */
-      void Refresh();
+      virtual ~NodeItem();
+
+      /**
+       * Draws the node.
+       */
+      virtual void Draw();
 
       /**
        * Draws the polygon's top geometry.

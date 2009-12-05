@@ -77,10 +77,15 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   EditorScene::EditorScene(QWidget* parent)
+   EditorScene::EditorScene(Director* director, PropertyEditor* propEditor, QWidget* parent)
       : QGraphicsScene(parent)
+      , mDirector(director)
+      , mPropertyEditor(propEditor)
       , mGraph(NULL)
    {
+      mSelected.push_back(mDirector.get());
+      mPropertyEditor->SetScene(this);
+
       setBackgroundBrush(Qt::lightGray);
    }
 
@@ -138,25 +143,30 @@ namespace dtDirector
          }
       }
 
-      count = (int)mNodes.size();
-      for (int index = 0; index < count; index++)
-      {
-         NodeItem* item = mNodes[index];
-         if (item) item->ConnectLinks();
-      }
+      Refresh();
    }
 
    //////////////////////////////////////////////////////////////////////////
    void EditorScene::Refresh()
    {
-      //SetGraph(mGraph);
+      // Re-draw all nodes.
       int count = (int)mNodes.size();
       for (int index = 0; index < count; index++)
       {
          NodeItem* item = mNodes[index];
          if (item)
          {
-            item->Refresh();
+            item->Draw();
+         }
+      }
+
+      // Re-connect all nodes.
+      for (int index = 0; index < count; index++)
+      {
+         NodeItem* item = mNodes[index];
+         if (item)
+         {
+            item->ConnectLinks();
          }
       }
    }
@@ -177,6 +187,50 @@ namespace dtDirector
       return NULL;
    }
 
+   //////////////////////////////////////////////////////////////////////////
+   void EditorScene::AddSelected(dtDAL::PropertyContainer* container)
+   {
+      // If we have the director container in the list, remove it.
+      if (mSelected.size() == 1 && mSelected[0].get() == mDirector.get())
+      {
+         mSelected.clear();
+      }
+
+      mSelected.push_back(container);
+
+      // Update the property editor.
+      mPropertyEditor->HandlePropertyContainersSelected(mSelected);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void EditorScene::RemoveSelected(dtDAL::PropertyContainer* container)
+   {
+      int count = (int)mSelected.size();
+      for (int index = 0; index < count; index++)
+      {
+         if (mSelected[index].get() == container)
+         {
+            mSelected.erase(mSelected.begin() + index);
+            break;
+         }
+      }
+
+      // If we have removed our last selected item, add the director.
+      if (mSelected.empty())
+      {
+         mSelected.push_back(mDirector.get());
+      }
+
+      // Update the property editor.
+      mPropertyEditor->HandlePropertyContainersSelected(mSelected);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void EditorScene::RefreshProperties()
+   {
+      mPropertyEditor->HandlePropertyContainersSelected(mSelected);
+   }
+
 
    //////////////////////////////////////////////////////////////////////////////
    DirectorEditor::DirectorEditor(Director* director, QWidget* parent)
@@ -195,6 +249,9 @@ namespace dtDirector
       mParentAction              = new QAction(tr("Parent"), this);
 
       mGraphTabs                 = new GraphTabs(this, this);
+
+      mPropertyEditor            = new PropertyEditor(this);
+      addDockWidget(Qt::BottomDockWidgetArea, mPropertyEditor);
 
       // Toolbar
       addToolBar(toolbar);
@@ -237,7 +294,7 @@ namespace dtDirector
       // if we don't have any pages yet.
       if (mGraphTabs->count() < 1 || newTab)
       {
-         EditorScene* scene = new EditorScene();
+         EditorScene* scene = new EditorScene(mDirector, mPropertyEditor);
          EditorView* view = new EditorView(scene, this);
 
          int index = mGraphTabs->addTab(view, "");

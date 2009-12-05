@@ -214,31 +214,31 @@ namespace dtDirector
          "Name", "Name",
          dtDAL::StringActorProperty::SetFuncType(this, &Director::SetName),
          dtDAL::StringActorProperty::GetFuncType(this, &Director::GetName),
-         "The Name of the Director script.", "Data"));
+         "The Name of the Director script."));
 
       AddProperty(new dtDAL::StringActorProperty(
          "Description", "Description",
          dtDAL::StringActorProperty::SetFuncType(this, &Director::SetDescription),
          dtDAL::StringActorProperty::GetFuncType(this, &Director::GetDescription),
-         "The Description of the Director script.", "Data"));
+         "The Description of the Director script."));
 
       AddProperty(new dtDAL::StringActorProperty(
          "Author", "Author",
          dtDAL::StringActorProperty::SetFuncType(this, &Director::SetAuthor),
          dtDAL::StringActorProperty::GetFuncType(this, &Director::GetAuthor),
-         "The Author of the Director script.", "Data"));
+         "The Author of the Director script."));
 
       AddProperty(new dtDAL::StringActorProperty(
          "Comment", "Comment",
          dtDAL::StringActorProperty::SetFuncType(this, &Director::SetComment),
          dtDAL::StringActorProperty::GetFuncType(this, &Director::GetComment),
-         "Comment", "Data"));
+         "Comment"));
 
       AddProperty(new dtDAL::StringActorProperty(
          "Copyright", "Copyright",
          dtDAL::StringActorProperty::SetFuncType(this, &Director::SetCopyright),
          dtDAL::StringActorProperty::GetFuncType(this, &Director::GetCopyright),
-         "Copyright information.", "Data"));
+         "Copyright information."));
    }
 
    //////////////////////////////////////////////////////////////////////////

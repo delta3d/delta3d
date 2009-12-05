@@ -29,6 +29,7 @@
 #ifndef DELTA_DYNAMICRESOURCECONTROL
 #define DELTA_DYNAMICRESOURCECONTROL
 
+#include <dtEditQt/export.h>
 #include <dtQt/dynamicresourcecontrolbase.h>
 
 namespace dtDAL
@@ -52,7 +53,7 @@ namespace dtEditQt
     * This control is not editable, but has several child controls and some of them
     * are editable.
     */
-   class DynamicResourceControl : public dtQt::DynamicResourceControlBase
+   class DT_EDITQT_EXPORT DynamicResourceControl : public dtQt::DynamicResourceControlBase
    {
       Q_OBJECT
 

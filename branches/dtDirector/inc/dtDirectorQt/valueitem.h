@@ -47,6 +47,11 @@ namespace dtDirector
       ValueItem(Node* node, QGraphicsItem* parent = 0, EditorScene* scene = 0);
 
       /**
+       * Draws the node.
+       */
+      virtual void Draw();
+
+      /**
        * Create Title
        *
        * @param[in]  text  The new title name.

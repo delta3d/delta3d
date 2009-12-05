@@ -29,7 +29,7 @@
 #include <dtDirector/director.h>
 #include <dtDirectorQt/directoreditor.h>
 
-#include <QtGui/QWidget>
+#include <QtGui/QDockWidget>
 
 
 using namespace dtEditQt;
@@ -41,7 +41,7 @@ class QAction;
  * to place a LinkedPointsActor into the world.
  */
 class DT_DIRECTOR_TOOL_EXPORT DirectorToolPlugin 
-   : public QWidget
+   : public QDockWidget
    , public Plugin
 {
    Q_OBJECT

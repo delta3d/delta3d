@@ -42,6 +42,11 @@ namespace dtDirector
        */
       ActionItem(Node* node, QGraphicsItem* parent = 0, EditorScene* scene = 0);
 
+      /**
+       * Draws the node.
+       */
+      virtual void Draw();
+
    protected:
 
    };

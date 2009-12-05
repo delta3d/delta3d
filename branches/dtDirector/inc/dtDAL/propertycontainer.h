@@ -64,6 +64,14 @@ namespace dtDAL
       void AddProperty(ActorProperty* newProp);
 
       /**
+       * Inserts a new property into the container at a given index.
+       *
+       * @param[in]  newProp  The property to insert.
+       * @param[in]  index    The index to insert.
+       */
+      void InsertProperty(ActorProperty* newProp, int index);
+
+      /**
        * Gets a property of the requested name.
        *
        * @param name Name of the property to retrieve.

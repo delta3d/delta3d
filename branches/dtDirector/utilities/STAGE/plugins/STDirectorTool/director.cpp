@@ -23,6 +23,12 @@
 
 #include <dtEditQt/pluginmanager.h>
 #include <dtEditQt/editordata.h>
+#include <dtEditQt/dynamicresourcecontrol.h>
+#include <dtEditQt/dynamicactorcontrol.h>
+#include <dtEditQt/dynamicgameeventcontrol.h>
+#include <dtEditQt/dynamicgrouppropertycontrol.h>
+
+#include <dtDAL/datatype.h>
 
 #include <Qt/qaction.h>
 #include <Qt/qtoolbar.h>
@@ -70,6 +76,28 @@ void DirectorToolPlugin::onToolButtonPressed()
       if (!mEditor)
       {
          mEditor = new dtDirector::DirectorEditor(mDirector, NULL);
+
+         // Register some custom property types.
+         dtDirector::PropertyEditor* propEditor = mEditor->GetPropertyEditor();
+         if (propEditor)
+         {
+            dtQt::DynamicControlFactory& dcfactory = propEditor->GetDynamicControlFactory();
+
+            size_t datatypeCount = dtDAL::DataType::EnumerateType().size();
+
+            for (size_t i = 0; i < datatypeCount; ++i)
+            {
+               dtDAL::DataType* dt = dtDAL::DataType::EnumerateType()[i];
+               if (dt->IsResource())
+               {
+                  dcfactory.RegisterControlForDataType<DynamicResourceControl>(*dt);
+               }
+            }
+
+            dcfactory.RegisterControlForDataType<DynamicActorControl>(dtDAL::DataType::ACTOR);
+            dcfactory.RegisterControlForDataType<DynamicGameEventControl>(dtDAL::DataType::GAME_EVENT);
+            dcfactory.RegisterControlForDataType<DynamicGroupPropertyControl>(dtDAL::DataType::GROUP);
+         }
       }
 
       mEditor->show();

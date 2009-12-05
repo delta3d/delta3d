@@ -32,7 +32,8 @@ namespace dtDirector
 {
    ///////////////////////////////////////////////////////////////////////////////////////
    Node::Node()
-      : mDisabled(false)
+      : mLogComment(false)
+      , mDisabled(false)
    {
    }
 
@@ -87,19 +88,42 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void Node::BuildPropertyMap()
    {
+      dtDAL::StringActorProperty* descProp = new dtDAL::StringActorProperty(
+         "Description", "Description",
+         dtDAL::StringActorProperty::SetFuncType(),
+         dtDAL::StringActorProperty::GetFuncType(this, &Node::GetDescription),
+         "Generic text field used to describe the basic functionality of this node.");
+      descProp->SetReadOnly(true);
+      InsertProperty(descProp, 0);
+
+      dtDAL::StringActorProperty* typeProp = new dtDAL::StringActorProperty(
+         "Type", "Type",
+         dtDAL::StringActorProperty::SetFuncType(),
+         dtDAL::StringActorProperty::GetFuncType(this, &Node::GetTypeName),
+         "The nodes type.");
+      typeProp->SetReadOnly(true);
+      InsertProperty(typeProp, 0);
+
       AddProperty(new dtDAL::StringActorProperty(
-         "Comment", "Name",
+         "Comment", "Comment",
          dtDAL::StringActorProperty::SetFuncType(this, &Node::SetComment),
          dtDAL::StringActorProperty::GetFuncType(this, &Node::GetComment),
-         "Generic text field used to describe this node",
-         "Base"));
+         "Generic text field used to describe why this node is here.",
+         "Debug"));
+
+      AddProperty(new dtDAL::BooleanActorProperty(
+         "LogComment", "Log Comment",
+         dtDAL::BooleanActorProperty::SetFuncType(this, &Node::SetLogComment),
+         dtDAL::BooleanActorProperty::GetFuncType(this, &Node::GetLogComment),
+         "Outputs the comment text to the log window when this node is activated.",
+         "Debug"));
 
       AddProperty(new dtDAL::BooleanActorProperty(
          "Disabled", "Disabled",
          dtDAL::BooleanActorProperty::SetFuncType(this, &Node::SetDisabled),
          dtDAL::BooleanActorProperty::GetFuncType(this, &Node::GetDisabled),
          "Disables the node from running in the script.",
-         "Base"));
+         "Debug"));
 
       AddProperty(new dtDAL::Vec2ActorProperty(
          "Position", "Position",
@@ -132,6 +156,18 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   const std::string& Node::GetTypeName()
+   {
+      return GetType().GetName();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   const std::string& Node::GetDescription()
+   {
+      return GetType().GetDescription();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    const std::string& Node::GetComment() const
    {
       return mComment;
@@ -141,6 +177,18 @@ namespace dtDirector
    void Node::SetComment(const std::string& comment)
    {
       mComment = comment;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool Node::GetLogComment() const
+   {
+      return mLogComment;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void Node::SetLogComment(bool log)
+   {
+      mLogComment = log;
    }
 
    //////////////////////////////////////////////////////////////////////////

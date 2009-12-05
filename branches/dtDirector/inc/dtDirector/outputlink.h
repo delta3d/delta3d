@@ -107,7 +107,10 @@ namespace dtDirector
 
         Node*        mOwner;
 
+#pragma warning (push)
+#pragma warning (disable:4251)
         std::vector<InputLink*> mLinks;
+#pragma warning (pop)
    };
 }
 

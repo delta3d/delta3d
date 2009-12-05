@@ -25,6 +25,7 @@
 #include <vector>
 
 #include <dtDirectorQt/export.h>
+#include <dtDirectorQt/propertyeditor.h>
 
 #include <dtDirector/director.h>
 
@@ -103,9 +104,11 @@ namespace dtDirector
       /**
       * Constructor.
       *
-      * @param[in]  parent  The parent widget.
+      * @param[in]  director    The Director.
+      * @param[in]  propEditor  The Property Editor.
+      * @param[in]  parent      The parent widget.
       */
-      EditorScene(QWidget* parent = 0);
+      EditorScene(Director* director, PropertyEditor* propEditor, QWidget* parent = 0);
 
       /**
        * Sets the currently viewed director graph.
@@ -129,15 +132,39 @@ namespace dtDirector
        */
       NodeItem* GetNodeItem(const dtCore::UniqueId& id);
 
+      /**
+       * Adds an item to the selected list.
+       *
+       * @param[in]  container  The item to add.
+       */
+      void AddSelected(dtDAL::PropertyContainer* container);
+
+      /**
+       * Removes an item from the selected list.
+       *
+       * @param[in]  container  The item to remove.
+       */
+      void RemoveSelected(dtDAL::PropertyContainer* container);
+
+      /**
+       * Refreshes the property editor.
+       */
+      void RefreshProperties();
+
    signals:
 
    protected:
       
    private:
 
+      dtCore::RefPtr<Director> mDirector;
+      PropertyEditor*          mPropertyEditor;
+
       dtDirector::DirectorGraphData*   mGraph;
 
       std::vector<NodeItem*>           mNodes;
+      
+      PropertyEditor::PropertyContainerRefPtrVector mSelected;
    };
 
    /**
@@ -210,6 +237,11 @@ namespace dtDirector
        */
       Director* GetDirector() {return mDirector;}
 
+      /**
+       * Accessor for the Property Editor.
+       */
+      PropertyEditor* GetPropertyEditor() {return mPropertyEditor;}
+
    public slots:
 
       /**
@@ -234,6 +266,7 @@ namespace dtDirector
    private:
 
       GraphTabs*           mGraphTabs;
+      PropertyEditor*      mPropertyEditor;
 
       dtCore::RefPtr<Director> mDirector;
 
