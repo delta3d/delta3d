@@ -72,6 +72,8 @@ namespace dtDirector
        */
       ValueNodeLinkItem* GetValueLink() {return mValueLink;}
 
+      friend class ValueNodeLinkItem;
+
    protected:
 
       ValueNodeLinkItem* mValueLink;

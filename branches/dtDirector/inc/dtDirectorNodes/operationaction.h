@@ -81,7 +81,6 @@ namespace dtDirector
       void SetResult(double value);
       double GetResult();
 
-
    protected:
 
       /**

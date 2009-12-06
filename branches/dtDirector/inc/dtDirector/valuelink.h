@@ -28,6 +28,8 @@
 
 #include <dtDirector/export.h>
 
+#include <dtDAL/datatype.h>
+
 #include <dtCore/refptr.h>
 
 
@@ -77,6 +79,13 @@ namespace dtDirector
        * @return  The owner.
        */
       Node* GetOwner() {return mOwner;}
+
+      /**
+       * Retrieves the property type of this link.
+       *
+       * @return  The property type.
+       */
+      virtual dtDAL::DataType& GetPropertyType();
 
       /**
        * Retrieves the property.
@@ -200,6 +209,8 @@ namespace dtDirector
       bool mIsOut;
       bool mAllowMultiple;
       bool mTypeCheck;
+
+      bool mGettingType;
   };
 }
 

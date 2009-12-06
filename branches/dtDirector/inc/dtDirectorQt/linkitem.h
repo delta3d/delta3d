@@ -57,6 +57,8 @@ namespace dtDirector
        */
       void SetHighlight(bool enable);
 
+      friend class OutputLinkItem;
+
    protected:
 
       /**
@@ -66,10 +68,36 @@ namespace dtDirector
       virtual void hoverEnterEvent(QGraphicsSceneHoverEvent* event);
       virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent* event);
 
+      /**
+       * Event handlers when the user presses a mouse button.
+       *
+       * @param[in]  mouseEvent  The mouse event.
+       */
+      void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent);
+
+      /**
+       * Event handler when the user releases the mouse.
+       *
+       * @param[in]  mouseEvent  The mouse event.
+       */
+      void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent);
+
+      /**
+       * Event handler when the user moves the mouse.
+       *
+       * @param[in]  mouseEvent  The mouse event.
+       */
+      void mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent);
+
       EditorScene*   mScene;
       NodeItem*      mNodeItem;
       int            mLinkIndex;
       int            mLineWidth;
+
+      bool           mAltModifier;
+
+      QGraphicsPathItem* mDrawing;
+      QGraphicsPathItem* mHighlight;
    };
 
 
@@ -99,6 +127,8 @@ namespace dtDirector
        */
       void SetHighlight(bool enable, InputLink* inputLink = NULL);
 
+      friend class InputLinkItem;
+
    protected:
 
       /**
@@ -108,10 +138,36 @@ namespace dtDirector
       virtual void hoverEnterEvent(QGraphicsSceneHoverEvent* event);
       virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent* event);
 
+      /**
+       * Event handlers when the user presses a mouse button.
+       *
+       * @param[in]  mouseEvent  The mouse event.
+       */
+      void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent);
+
+      /**
+       * Event handler when the user releases the mouse.
+       *
+       * @param[in]  mouseEvent  The mouse event.
+       */
+      void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent);
+
+      /**
+       * Event handler when the user moves the mouse.
+       *
+       * @param[in]  mouseEvent  The mouse event.
+       */
+      void mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent);
+
       EditorScene*   mScene;
       NodeItem*      mNodeItem;
       int            mLinkIndex;
       int            mLineWidth;
+
+      bool           mAltModifier;
+
+      QGraphicsPathItem* mDrawing;
+      QGraphicsPathItem* mHighlight;
    };
 
    /**
@@ -148,6 +204,8 @@ namespace dtDirector
        */
       void SetHighlight(bool enable, Node* valueNode = NULL);
 
+      friend class ValueNodeLinkItem;
+
    protected:
 
       /**
@@ -157,12 +215,38 @@ namespace dtDirector
       virtual void hoverEnterEvent(QGraphicsSceneHoverEvent* event);
       virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent* event);
 
+      /**
+       * Event handlers when the user presses a mouse button.
+       *
+       * @param[in]  mouseEvent  The mouse event.
+       */
+      void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent);
+
+      /**
+       * Event handler when the user releases the mouse.
+       *
+       * @param[in]  mouseEvent  The mouse event.
+       */
+      void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent);
+
+      /**
+       * Event handler when the user moves the mouse.
+       *
+       * @param[in]  mouseEvent  The mouse event.
+       */
+      void mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent);
+
       EditorScene*   mScene;
       NodeItem*      mNodeItem;
       int            mLinkIndex;
       int            mLineWidth;
 
+      bool           mAltModifier;
+
       unsigned char  mType;
+
+      QGraphicsPathItem* mDrawing;
+      QGraphicsPathItem* mHighlight;
    };
 
    /**
@@ -196,6 +280,8 @@ namespace dtDirector
        */
       void SetHighlight(bool enable);
 
+      friend class ValueLinkItem;
+
    protected:
 
       /**
@@ -205,11 +291,37 @@ namespace dtDirector
       virtual void hoverEnterEvent(QGraphicsSceneHoverEvent* event);
       virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent* event);
 
+      /**
+       * Event handlers when the user presses a mouse button.
+       *
+       * @param[in]  mouseEvent  The mouse event.
+       */
+      void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent);
+
+      /**
+       * Event handler when the user releases the mouse.
+       *
+       * @param[in]  mouseEvent  The mouse event.
+       */
+      void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent);
+
+      /**
+       * Event handler when the user moves the mouse.
+       *
+       * @param[in]  mouseEvent  The mouse event.
+       */
+      void mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent);
+
       EditorScene*   mScene;
       ValueItem*     mValueItem;
       int            mLineWidth;
 
+      bool           mAltModifier;
+
       unsigned char mType;
+
+      QGraphicsPathItem* mDrawing;
+      QGraphicsPathItem* mHighlight;
    };
 }
 

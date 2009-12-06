@@ -27,6 +27,7 @@
 #include <dtDAL/datatype.h>
 
 #include <QtGui/QGraphicsScene>
+#include <QtGui/QGraphicsSceneMouseEvent>
 
 
 namespace dtDirector
@@ -38,6 +39,9 @@ namespace dtDirector
       , mNodeItem(nodeItem)
       , mLinkIndex(linkIndex)
       , mLineWidth(2)
+      , mAltModifier(false)
+      , mDrawing(NULL)
+      , mHighlight(NULL)
    {
       setAcceptHoverEvents(true);
    }
@@ -124,6 +128,121 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   void InputLinkItem::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
+   {
+      if (!mouseEvent) return;
+
+      // If we are holding alt, we are deleting.
+      if (mouseEvent->modifiers() == Qt::AltModifier)
+      {
+         mAltModifier = true;
+         return;
+      }
+
+      mAltModifier = false;
+      // Begin drawing a link.
+      if (mHighlight) delete mHighlight;
+
+      mHighlight = new QGraphicsPathItem(NULL, mScene);
+      mHighlight->setZValue(40.0f);
+      mHighlight->setPen(QPen(Qt::yellow, mLineWidth + 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+
+      mDrawing = new QGraphicsPathItem(mHighlight, mScene);
+      mDrawing->setPen(QPen(Qt::black, mLineWidth, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin));
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void InputLinkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
+   {
+      if (mHighlight)
+      {
+         delete mHighlight;
+         mHighlight = NULL;
+         mDrawing = NULL;
+      }
+
+      if (!mouseEvent) return;
+
+      QPointF mousePos = mouseEvent->scenePos();
+
+      // Find and highlight any output links being hovered over.
+      QList<QGraphicsItem*> hoverList = mScene->items(mousePos.x(), mousePos.y(), 1, 1);
+      if (!hoverList.empty())
+      {
+         int count = (int)hoverList.size();
+         for (int index = 0; index < count; index++)
+         {
+            // If we're holding alt, only delete all links if we are still hovering
+            // the same input.
+            if (mAltModifier)
+            {
+               if (hoverList[index] == this)
+               {
+                  mNodeItem->GetNode()->GetInputLinks()[mLinkIndex].Disconnect();
+                  mScene->Refresh();
+                  break;
+               }
+            }
+            else
+            {
+               OutputLinkItem* item = dynamic_cast<OutputLinkItem*>(hoverList[index]);
+               if (item)
+               {
+                  // Create a new connection between these two links.
+                  mNodeItem->GetNode()->GetInputLinks()[mLinkIndex].Connect(
+                     &item->mNodeItem->GetNode()->GetOutputLinks()[item->mLinkIndex]);
+                  mNodeItem->ConnectLinks(true);
+                  break;
+               }
+            }
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void InputLinkItem::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
+   {
+      if (!mouseEvent || !mHighlight || !mDrawing) return;
+
+      // Update the drawn spline.
+      QPainterPath path;
+      if (mLinkIndex >= 0 && mLinkIndex < (int)mNodeItem->GetInputs().size())
+      {
+         InputData& data = mNodeItem->GetInputs()[mLinkIndex];
+         if (data.linkGraphic)
+         {
+            QPointF start(data.linkGraphic->scenePos());
+            QPointF end(mouseEvent->scenePos());
+            start.setX(start.x() + LINK_SIZE/2);
+            start.setY(start.y() + LINK_SIZE/2);
+
+            // Find and highlight any output links being hovered over.
+            QList<QGraphicsItem*> hoverList = mScene->items(end.x(), end.y(), 1, 1);
+            if (!hoverList.empty())
+            {
+               int count = (int)hoverList.size();
+               for (int index = 0; index < count; index++)
+               {
+                  OutputLinkItem* item = dynamic_cast<OutputLinkItem*>(hoverList[index]);
+                  if (item)
+                  {
+                     // Snap the end position to the output link.
+                     end = QPointF(item->scenePos());
+                     end.setX(end.x() + LINK_LENGTH);
+                     end.setY(end.y() + LINK_SIZE/2);
+                     break;
+                  }
+               }
+            }
+
+            QPainterPath path = mNodeItem->CreateConnectionH(end, start);
+            mHighlight->setPath(path);
+            mDrawing->setPath(path);
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    //////////////////////////////////////////////////////////////////////////
    //////////////////////////////////////////////////////////////////////////
 
@@ -134,6 +253,9 @@ namespace dtDirector
       , mNodeItem(nodeItem)
       , mLinkIndex(linkIndex)
       , mLineWidth(2)
+      , mAltModifier(false)
+      , mHighlight(NULL)
+      , mDrawing(NULL)
    {
       setAcceptHoverEvents(true);
    }
@@ -262,6 +384,121 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   void OutputLinkItem::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
+   {
+      if (!mouseEvent) return;
+
+      if (mouseEvent->modifiers() == Qt::AltModifier)
+      {
+         mAltModifier = true;
+         return;
+      }
+
+      mAltModifier = false;
+
+      // Begin drawing a link.
+      if (mHighlight) delete mHighlight;
+
+      mHighlight = new QGraphicsPathItem(NULL, mScene);
+      mHighlight->setZValue(40.0f);
+      mHighlight->setPen(QPen(Qt::yellow, mLineWidth + 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+
+      mDrawing = new QGraphicsPathItem(mHighlight, mScene);
+      mDrawing->setPen(QPen(Qt::black, mLineWidth, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin));
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void OutputLinkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
+   {
+      if (mHighlight)
+      {
+         delete mHighlight;
+         mHighlight = NULL;
+         mDrawing = NULL;
+      }
+
+      if (!mouseEvent) return;
+
+      QPointF mousePos = mouseEvent->scenePos();
+
+      // Find and highlight any output links being hovered over.
+      QList<QGraphicsItem*> hoverList = mScene->items(mousePos.x(), mousePos.y(), 1, 1);
+      if (!hoverList.empty())
+      {
+         int count = (int)hoverList.size();
+         for (int index = 0; index < count; index++)
+         {
+            // If we are holding alt, we need to make sure we are still hovering
+            // over the same item before we clear all links.
+            if (mAltModifier)
+            {
+               if (hoverList[index] == this)
+               {
+                  mNodeItem->GetNode()->GetOutputLinks()[mLinkIndex].Disconnect();
+                  mScene->Refresh();
+                  break;
+               }
+            }
+            else
+            {
+               InputLinkItem* item = dynamic_cast<InputLinkItem*>(hoverList[index]);
+               if (item)
+               {
+                  // Create a new connection between these two links.
+                  mNodeItem->GetNode()->GetOutputLinks()[mLinkIndex].Connect(
+                     &item->mNodeItem->GetNode()->GetInputLinks()[item->mLinkIndex]);
+                  mNodeItem->ConnectLinks(true);
+                  break;
+               }
+            }
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void OutputLinkItem::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
+   {
+      if (!mouseEvent || !mHighlight || !mDrawing) return;
+
+      // Update the drawn spline.
+      QPainterPath path;
+      if (mLinkIndex >= 0 && mLinkIndex < (int)mNodeItem->GetOutputs().size())
+      {
+         OutputData& data = mNodeItem->GetOutputs()[mLinkIndex];
+         if (data.linkGraphic)
+         {
+            QPointF start(data.linkGraphic->scenePos());
+            QPointF end(mouseEvent->scenePos());
+            start.setX(start.x() + LINK_LENGTH);
+            start.setY(start.y() + LINK_SIZE/2);
+
+            // Find and highlight any output links being hovered over.
+            QList<QGraphicsItem*> hoverList = mScene->items(end.x(), end.y(), 1, 1);
+            if (!hoverList.empty())
+            {
+               int count = (int)hoverList.size();
+               for (int index = 0; index < count; index++)
+               {
+                  InputLinkItem* item = dynamic_cast<InputLinkItem*>(hoverList[index]);
+                  if (item)
+                  {
+                     // Snap the end position to the output link.
+                     end = QPointF(item->scenePos());
+                     end.setX(end.x() + LINK_SIZE/2);
+                     end.setY(end.y() + LINK_SIZE/2);
+                     break;
+                  }
+               }
+            }
+
+            QPainterPath path = mNodeItem->CreateConnectionH(start, end, true);
+            mHighlight->setPath(path);
+            mDrawing->setPath(path);
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    //////////////////////////////////////////////////////////////////////////
    //////////////////////////////////////////////////////////////////////////
 
@@ -272,6 +509,10 @@ namespace dtDirector
       , mNodeItem(nodeItem)
       , mLinkIndex(linkIndex)
       , mLineWidth(2)
+      , mAltModifier(false)
+      , mType(dtDAL::DataType::UNKNOWN_ID)
+      , mHighlight(NULL)
+      , mDrawing(NULL)
    {
       setAcceptHoverEvents(true);
    }
@@ -293,9 +534,9 @@ namespace dtDirector
          if (mLinkIndex >= 0 && mLinkIndex < (int)mNodeItem->GetValues().size())
          {
             ValueData& data = mNodeItem->GetValues()[mLinkIndex];
-            if (data.link->IsTypeChecking() && data.link->GetProperty())
+            dtDAL::DataType& type = data.link->GetPropertyType();
+            if (data.link->IsTypeChecking() && type != dtDAL::DataType::UNKNOWN)
             {
-               dtDAL::DataType& type = data.link->GetProperty()->GetPropertyType();
                data.linkGraphic->setPen(QPen(mNodeItem->GetDarkColorForType(type.GetTypeId()), mLineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
             }
             else
@@ -411,6 +652,128 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   void ValueLinkItem::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
+   {
+      if (!mouseEvent) return;
+
+      if (mouseEvent->modifiers() == Qt::AltModifier)
+      {
+         mAltModifier = true;
+         return;
+      }
+
+      mAltModifier = false;
+
+      // Begin drawing a link.
+      if (mHighlight) delete mHighlight;
+
+      mHighlight = new QGraphicsPathItem(NULL, mScene);
+      mHighlight->setZValue(40.0f);
+      mHighlight->setPen(QPen(Qt::yellow, mLineWidth + 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+
+      mDrawing = new QGraphicsPathItem(mHighlight, mScene);
+      mDrawing->setPen(QPen(mNodeItem->GetDarkColorForType(mType), mLineWidth, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin));
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ValueLinkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
+   {
+      if (mHighlight)
+      {
+         delete mHighlight;
+         mHighlight = NULL;
+         mDrawing = NULL;
+      }
+
+      if (!mouseEvent) return;
+
+      QPointF mousePos = mouseEvent->scenePos();
+
+      // Find and highlight any output links being hovered over.
+      QList<QGraphicsItem*> hoverList = mScene->items(mousePos.x(), mousePos.y(), 1, 1);
+      if (!hoverList.empty())
+      {
+         int count = (int)hoverList.size();
+         for (int index = 0; index < count; index++)
+         {
+            if (mAltModifier)
+            {
+               if (hoverList[index] == this)
+               {
+                  mNodeItem->GetNode()->GetValueLinks()[mLinkIndex].Disconnect();
+                  mScene->Refresh();
+                  break;
+               }
+            }
+            else
+            {
+               ValueNodeLinkItem* item = dynamic_cast<ValueNodeLinkItem*>(hoverList[index]);
+               if (item)
+               {
+                  // Create a new connection between these two links.
+                  mNodeItem->GetNode()->GetValueLinks()[mLinkIndex].Connect(
+                     dynamic_cast<ValueNode*>(item->mValueItem->GetNode()));
+
+                  // Refresh the entire scene to make sure all nodes and links are
+                  // colored properly.
+                  mScene->Refresh();
+                  break;
+               }
+            }
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ValueLinkItem::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
+   {
+      if (!mouseEvent || !mHighlight || !mDrawing) return;
+
+      // Update the drawn spline.
+      QPainterPath path;
+      if (mLinkIndex >= 0 && mLinkIndex < (int)mNodeItem->GetValues().size())
+      {
+         ValueData& data = mNodeItem->GetValues()[mLinkIndex];
+         if (data.linkGraphic)
+         {
+            QPointF start(data.linkGraphic->scenePos());
+            QPointF end(mouseEvent->scenePos());
+
+            if (data.link->IsOutLink())
+            {
+               start.setY(start.y() + LINK_LENGTH);
+            }
+            else
+            {
+               start.setY(start.y() + LINK_LENGTH - LINK_SIZE/2);
+            }
+
+            // Find and highlight any output links being hovered over.
+            QList<QGraphicsItem*> hoverList = mScene->items(end.x(), end.y(), 1, 1);
+            if (!hoverList.empty())
+            {
+               int count = (int)hoverList.size();
+               for (int index = 0; index < count; index++)
+               {
+                  ValueNodeLinkItem* item = dynamic_cast<ValueNodeLinkItem*>(hoverList[index]);
+                  if (item)
+                  {
+                     // Snap the end position to the output link.
+                     end = QPointF(item->scenePos());
+                     end.setY(end.y() - LINK_LENGTH);
+                     break;
+                  }
+               }
+            }
+
+            QPainterPath path = mNodeItem->CreateConnectionV(start, end, true);
+            mHighlight->setPath(path);
+            mDrawing->setPath(path);
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    //////////////////////////////////////////////////////////////////////////
    //////////////////////////////////////////////////////////////////////////
 
@@ -420,6 +783,10 @@ namespace dtDirector
       , mScene(scene)
       , mValueItem(valueItem)
       , mLineWidth(2)
+      , mAltModifier(false)
+      , mType(dtDAL::DataType::UNKNOWN_ID)
+      , mHighlight(NULL)
+      , mDrawing(NULL)
    {
       setAcceptHoverEvents(true);
    }
@@ -519,6 +886,127 @@ namespace dtDirector
             }
          }
       }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ValueNodeLinkItem::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
+   {
+      if (!mouseEvent) return;
+
+      if (mouseEvent->modifiers() == Qt::AltModifier)
+      {
+         mAltModifier = true;
+         return;
+      }
+
+      mAltModifier = false;
+
+      // Begin drawing a link.
+      if (mHighlight) delete mHighlight;
+
+      mHighlight = new QGraphicsPathItem(NULL, mScene);
+      mHighlight->setZValue(40.0f);
+      mHighlight->setPen(QPen(Qt::yellow, mLineWidth + 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+
+      mDrawing = new QGraphicsPathItem(mHighlight, mScene);
+      mDrawing->setPen(QPen(mValueItem->GetDarkColorForType(mType), mLineWidth, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin));
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ValueNodeLinkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
+   {
+      if (mHighlight)
+      {
+         delete mHighlight;
+         mHighlight = NULL;
+         mDrawing = NULL;
+      }
+
+      if (!mouseEvent) return;
+
+      QPointF mousePos = mouseEvent->scenePos();
+
+      // Find and highlight any output links being hovered over.
+      QList<QGraphicsItem*> hoverList = mScene->items(mousePos.x(), mousePos.y(), 1, 1);
+      if (!hoverList.empty())
+      {
+         int count = (int)hoverList.size();
+         for (int index = 0; index < count; index++)
+         {
+            if (mAltModifier)
+            {
+               if (hoverList[index] == this)
+               {
+                  ValueNode* valueNode = dynamic_cast<ValueNode*>(mValueItem->GetNode());
+                  if (valueNode)
+                  {
+                     valueNode->Disconnect();
+                     mScene->Refresh();
+                  }
+                  break;
+               }
+            }
+            else
+            {
+               ValueLinkItem* item = dynamic_cast<ValueLinkItem*>(hoverList[index]);
+               if (item)
+               {
+                  // Create a new connection between these two links.
+                  item->mNodeItem->GetNode()->GetValueLinks()[item->mLinkIndex].Connect(
+                     dynamic_cast<ValueNode*>(mValueItem->GetNode()));
+
+                  // Refresh the entire scene to make sure all nodes and links are
+                  // colored properly.
+                  mScene->Refresh();
+                  break;
+               }
+            }
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ValueNodeLinkItem::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
+   {
+      if (!mouseEvent || !mHighlight || !mDrawing) return;
+
+      // Update the drawn spline.
+      QPointF start(mValueItem->scenePos());
+      QPointF end(mouseEvent->scenePos());
+      start.setX(start.x() + mValueItem->mNodeWidth/2);
+      start.setY(start.y() - LINK_LENGTH);
+
+      // Find and highlight any value links being hovered over.
+      QList<QGraphicsItem*> hoverList = mScene->items(end.x(), end.y(), 1, 1);
+      if (!hoverList.empty())
+      {
+         int count = (int)hoverList.size();
+         for (int index = 0; index < count; index++)
+         {
+            ValueLinkItem* item = dynamic_cast<ValueLinkItem*>(hoverList[index]);
+            if (item)
+            {
+               // Snap the end position to the output link.
+               end = QPointF(item->scenePos());
+
+               ValueData& data = item->mNodeItem->GetValues()[item->mLinkIndex];
+
+               if (data.link->IsOutLink())
+               {
+                  end.setY(end.y() + LINK_LENGTH);
+               }
+               else
+               {
+                  end.setY(end.y() + LINK_LENGTH - LINK_SIZE/2);
+               }
+               break;
+            }
+         }
+      }
+
+      QPainterPath path = mValueItem->CreateConnectionV(end, start);
+      mHighlight->setPath(path);
+      mDrawing->setPath(path);
    }
 }
 

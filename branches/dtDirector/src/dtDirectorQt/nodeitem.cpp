@@ -510,11 +510,12 @@ namespace dtDirector
          }
 
          data.linkGraphic->setPolygon(poly);
+         data.linkGraphic->SetType(data.link->GetPropertyType().GetTypeId());
 
          // Set the color of the link based on the property type.
-         if (data.link->IsTypeChecking() && data.link->GetProperty())
+         if (data.link->IsTypeChecking() && data.link->GetPropertyType() != dtDAL::DataType::UNKNOWN)
          {
-            dtDAL::DataType& type = data.link->GetProperty()->GetPropertyType();
+            dtDAL::DataType& type = data.link->GetPropertyType();
             data.linkGraphic->setPen(QPen(GetDarkColorForType(type.GetTypeId()), 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
          }
          else
@@ -523,9 +524,9 @@ namespace dtDirector
          }
 
          // Set the color of the link based on the property type.
-         if (data.link->GetProperty())
+         if (data.link->GetPropertyType() != dtDAL::DataType::UNKNOWN)
          {
-            dtDAL::DataType& type = data.link->GetProperty()->GetPropertyType();
+            dtDAL::DataType& type = data.link->GetPropertyType();
             data.linkGraphic->setBrush(GetColorForType(type.GetTypeId()));
          }
          else
@@ -740,9 +741,11 @@ namespace dtDirector
                   int outputCount = (int)item->mOutputs.size();
                   for (int outputIndex = 0; outputIndex < outputCount; outputIndex++)
                   {
-                     if (item->mOutputs[outputIndex].link == output)
+                     OutputData& outputData = item->mOutputs[outputIndex];
+                     if (outputData.link == output)
                      {
-                        int count = output->GetLinks().size();
+                        int count = (int)output->GetLinks().size();
+                        outputData.ResizeLinks(count, mScene);
                         for (int index = 0; index < count; index++)
                         {
                            if (output->GetLinks()[index] == input.link)
@@ -782,6 +785,105 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   QPainterPath NodeItem::CreateConnectionH(QPointF start, QPointF end, bool drawReverse)
+   {
+      float halfX = (start.x() + end.x()) / 2.0f;
+
+      QPainterPath path;
+
+      if (start.x() < end.x())
+      {
+         if (drawReverse)
+         {
+            QPointF temp = start;
+            start = end;
+            end = temp;
+         }
+
+         path.moveTo(start);
+         path.cubicTo(
+            halfX, start.y(),
+            halfX, end.y(),
+            end.x(), end.y());
+      }
+      else
+      {
+         if (drawReverse)
+         {
+            QPointF temp = start;
+            start = end;
+            end = temp;
+         }
+
+         float rightX = start.x() + (start.x() - end.x()) / 4;
+         float leftX = end.x() - (start.x() - end.x()) / 4;
+
+         float halfY = (start.y() + end.y()) / 2.0f;
+
+         path.moveTo(start);
+         path.cubicTo(
+            rightX, start.y(),
+            rightX, halfY,
+            halfX, halfY);
+         path.cubicTo(
+            leftX, halfY,
+            leftX, end.y(),
+            end.x(), end.y());
+      }
+
+      return path;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   QPainterPath NodeItem::CreateConnectionV(QPointF start, QPointF end, bool drawReverse)
+   {
+      float halfY = (start.y() + end.y()) / 2.0f;
+
+      QPainterPath path;
+      if (start.y() < end.y())
+      {
+         if (drawReverse)
+         {
+            QPointF temp = start;
+            start = end;
+            end = temp;
+         }
+
+         path.moveTo(start);
+         path.cubicTo(
+            start.x(), halfY,
+            end.x(), halfY,
+            end.x(), end.y());
+      }
+      else
+      {
+         if (drawReverse)
+         {
+            QPointF temp = start;
+            start = end;
+            end = temp;
+         }
+
+         float bottomY = start.y() + (start.y() - end.y()) / 4;
+         float topY = end.y() - (start.y() - end.y()) / 4;
+
+         float halfX = (start.x() + end.x()) / 2.0f;
+
+         path.moveTo(start);
+         path.cubicTo(
+            start.x(), bottomY,
+            halfX, bottomY,
+            halfX, halfY);
+         path.cubicTo(
+            halfX, topY,
+            end.x(), topY,
+            end.x(), end.y());
+      }
+
+      return path;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void NodeItem::ConnectLinks(OutputData& output, InputData& input, int index)
    {
       if (index < 0 || (int)output.linkConnectors.size() < index) return;
@@ -794,33 +896,7 @@ namespace dtDirector
       end.setX(end.x() + LINK_SIZE/2);
       end.setY(end.y() + LINK_SIZE/2);
 
-      float halfX = (start.x() + end.x()) / 2.0f;
-
-      QPainterPath path;
-      path.moveTo(start);
-      if (start.x() < end.x())
-      {
-         path.cubicTo(
-            halfX, start.y(),
-            halfX, end.y(),
-            end.x(), end.y());
-      }
-      else
-      {
-         float rightX = start.x() + (start.x() - end.x()) / 2;
-         float leftX = end.x() - (start.x() - end.x()) / 2;
-
-         float halfY = (start.y() + end.y()) / 2.0f;
-
-         path.cubicTo(
-            rightX, start.y(),
-            rightX, halfY,
-            halfX, halfY);
-         path.cubicTo(
-            leftX, halfY,
-            leftX, end.y(),
-            end.x(), end.y());
-      }
+      QPainterPath path = CreateConnectionH(start, end);
       output.linkConnectors[index]->setPath(path);
 
       output.linkConnectors[index]->setPen(
@@ -847,41 +923,13 @@ namespace dtDirector
       end.setX(end.x() + input->mNodeWidth / 2);
       end.setY(end.y() - LINK_LENGTH);
 
-      float halfY = (start.y() + end.y()) / 2.0f;
-
-      QPainterPath path;
-      path.moveTo(start);
-      if (start.y() < end.y())
-      {
-         path.cubicTo(
-            start.x(), halfY,
-            end.x(), halfY,
-            end.x(), end.y());
-      }
-      else
-      {
-         float bottomY = start.y() + (start.y() - end.y()) / 2;
-         float topY = end.y() - (start.y() - end.y()) / 2;
-
-         float halfX = (start.x() + end.x()) / 2.0f;
-
-         path.cubicTo(
-            start.x(), bottomY,
-            halfX, bottomY,
-            halfX, halfY);
-         path.cubicTo(
-            halfX, topY,
-            end.x(), topY,
-            end.x(), end.y());
-      }
+      QPainterPath path = CreateConnectionV(start, end);
       output.linkConnectors[index]->setPath(path);
 
       // Set the color of the link line to match the value type.
       ValueNode* valueNode = dynamic_cast<ValueNode*>(input->mNode.get());
       if (valueNode)
       {
-         output.linkGraphic->SetType(valueNode->GetType().GetTypeId());
-
          output.linkConnectors[index]->setPen(
             QPen(GetDarkColorForType(output.linkGraphic->GetType()),
             2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
@@ -902,7 +950,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    QVariant NodeItem::itemChange(GraphicsItemChange change, const QVariant &value)
    {
-       if (change == QGraphicsItem::ItemPositionChange)
+       if (change == QGraphicsItem::ItemPositionHasChanged)
        {
           QPointF newPos = value.toPointF();
           mNode->SetPosition(osg::Vec2(newPos.x(), newPos.y()));

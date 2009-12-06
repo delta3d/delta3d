@@ -126,18 +126,18 @@ namespace dtDirector
          // Connect the output of action node with the output node.
          actionNode->GetOutputLink("Out")->Connect(outputNode->GetInputLink("In"));
 
-         // Connect our A and B values to the action node.
-         actionNode->GetValueLink("A")->Connect(valueA);
-         actionNode->GetValueLink("B")->Connect(valueB);
+         //// Connect our A and B values to the action node.
+         //actionNode->GetValueLink("A")->Connect(valueA);
+         //actionNode->GetValueLink("B")->Connect(valueB);
 
-         // Connect our result value to the action node.
-         actionNode->GetValueLink("Result")->Connect(resultValue);
+         //// Connect our result value to the action node.
+         //actionNode->GetValueLink("Result")->Connect(resultValue);
 
-         // Connect our external value node to the action node.
-         actionNode->GetValueLink("Result")->Connect(extValue);
+         //// Connect our external value node to the action node.
+         //actionNode->GetValueLink("Result")->Connect(extValue);
 
          // Connect our external value node to our outside value node.
-         //extValue->GetValueLinks()[0].Connect(outsideValue);
+         extValue->GetValueLinks()[0].Connect(outsideValue);
       }
    }
 

@@ -113,6 +113,8 @@ namespace dtDirector
                }
             }
          }
+
+         mLinks.clear();
       }
       else
       {

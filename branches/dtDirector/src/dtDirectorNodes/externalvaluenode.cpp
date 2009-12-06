@@ -117,15 +117,12 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    bool ExternalValueNode::CanBeType(dtDAL::DataType& type)
    {
-      // If we have no connections yet, the type can be any type.
-      if (!mLinks.size() && !GetProperty())
+      if (GetType() == dtDAL::DataType::UNKNOWN ||
+         GetType() == type)
       {
          return true;
       }
       
-      // If we are linked to something, copy that type.
-      if (GetType() == type) return true;
-
       return false;
    }
 
@@ -135,9 +132,13 @@ namespace dtDirector
       // If we are linked to a value link, use the type of that link.
       if (mLinks.size())
       {
-         if (mLinks[0]->GetProperty())
+         int count = (int)mLinks.size();
+         for (int index = 0; index < count; index++)
          {
-            return mLinks[0]->GetProperty()->GetDataType();
+            if (mLinks[index]->GetPropertyType() != dtDAL::DataType::UNKNOWN)
+            {
+               return mLinks[index]->GetPropertyType();
+            }
          }
       }
 

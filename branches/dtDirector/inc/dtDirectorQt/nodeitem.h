@@ -272,6 +272,18 @@ namespace dtDirector
        */
       virtual void ConnectLinks(bool fullConnect = false);
 
+      /**
+       * Creates a path item for a connection link.
+       *
+       * @param[in]  start        The starting position.
+       * @param[in]  end          The ending position.
+       * @param[in]  drawReverse  Draws the link in reverse.
+       *
+       * @return     The resulting painter path.
+       */
+      QPainterPath CreateConnectionH(QPointF start, QPointF end, bool drawReverse = false);
+      QPainterPath CreateConnectionV(QPointF start, QPointF end, bool drawReverse = false);
+
    protected:
 
       /**

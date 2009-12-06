@@ -37,6 +37,7 @@ namespace dtDirector
       , mIsOut(isOut)
       , mAllowMultiple(allowMultiple)
       , mTypeCheck(typeCheck)
+      , mGettingType(false)
    {
    }
 
@@ -45,6 +46,36 @@ namespace dtDirector
    {
       // Disconnect all values from this link.
       Disconnect();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   dtDAL::DataType& ValueLink::GetPropertyType()
+   {
+      if (!mTypeCheck && !mGettingType)
+      {
+         mGettingType = true;
+
+         int count = (int)mLinks.size();
+         for (int index = 0; index < count; index++)
+         {
+            ValueNode* node = mLinks[index];
+            if (node && !node->GetDisabled())
+            {
+               if (node->GetType() != dtDAL::DataType::UNKNOWN)
+               {
+                  dtDAL::DataType& type = node->GetType();
+                  mGettingType = false;
+                  return type;
+               }
+            }
+         }
+
+         mGettingType = false;
+      }
+
+      if (mTypeCheck && GetDefaultProperty()) return GetDefaultProperty()->GetDataType();
+
+      return dtDAL::DataType::UNKNOWN;
    }
 
    //////////////////////////////////////////////////////////////////////////
