@@ -252,9 +252,11 @@ namespace dtDirector
       QColor GetDarkColorForType(unsigned char type);
 
       /**
-       * Retrieves the ID of the node.
+       * Checks if this item contains a node of the given ID.
+       *
+       * @param[in]  id  The ID to check.
        */
-      virtual dtCore::UniqueId GetNodeID();
+      virtual bool HasID(const dtCore::UniqueId& id);
 
       /**
        * Retrieves the links.

@@ -345,7 +345,7 @@ namespace dtDirector
          data.link = &mNode->GetInputLinks()[index];
 
          data.linkName = new QGraphicsTextItem(this, mScene);
-         data.linkGraphic = new InputLinkItem(this, index, data.linkName, mScene);
+         data.linkGraphic = new InputLinkItem(this, (int)mInputs.size(), data.linkName, mScene);
       }
 
       count = (int)mNode->GetOutputLinks().size();
@@ -356,7 +356,7 @@ namespace dtDirector
 
          data.link = &mNode->GetOutputLinks()[index];
 
-         data.linkGraphic = new OutputLinkItem(this, index, this, mScene);
+         data.linkGraphic = new OutputLinkItem(this, (int)mOutputs.size(), this, mScene);
          data.linkName = new QGraphicsTextItem(data.linkGraphic, mScene);
          data.linkName->setAcceptHoverEvents(false);
       }
@@ -369,7 +369,7 @@ namespace dtDirector
 
          data.link = &mNode->GetValueLinks()[index];
 
-         data.linkGraphic = new ValueLinkItem(this, index, this, mScene);
+         data.linkGraphic = new ValueLinkItem(this, (int)mValues.size(), this, mScene);
          data.linkName = new QGraphicsTextItem(data.linkGraphic, mScene);
          data.linkName->setAcceptHoverEvents(false);
       }
@@ -697,14 +697,14 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtCore::UniqueId NodeItem::GetNodeID()
+   bool NodeItem::HasID(const dtCore::UniqueId& id)
    {
       if (mNode)
       {
-         return mNode->GetID();
+         return id == mNode->GetID();
       }
 
-      return dtCore::UniqueId("");
+      return false;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -968,31 +968,33 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    QVariant NodeItem::itemChange(GraphicsItemChange change, const QVariant &value)
    {
-       if (change == QGraphicsItem::ItemPositionHasChanged)
-       {
-          QPointF newPos = value.toPointF();
-          mNode->SetPosition(osg::Vec2(newPos.x(), newPos.y()));
+      if (!mNode.valid()) return value;
 
-          if (!mLoading)
-          {
-             ConnectLinks(true);
-          }
-       }
-       else if (change == QGraphicsItem::ItemSelectedHasChanged)
-       {
-          if (isSelected())
-          {
-             setZValue(zValue() + 9.0f);
-             mScene->AddSelected(mNode.get());
-          }
-          else
-          {
-             setZValue(zValue() - 9.0f);
-             mScene->RemoveSelected(mNode.get());
-          }
-       }
+      if (change == QGraphicsItem::ItemPositionHasChanged)
+      {
+         QPointF newPos = value.toPointF();
+         mNode->SetPosition(osg::Vec2(newPos.x(), newPos.y()));
 
-       return value;
+         if (!mLoading)
+         {
+            ConnectLinks(true);
+         }
+      }
+      else if (change == QGraphicsItem::ItemSelectedHasChanged)
+      {
+         if (isSelected())
+         {
+            setZValue(zValue() + 9.0f);
+            mScene->AddSelected(mNode.get());
+         }
+         else
+         {
+            setZValue(zValue() - 9.0f);
+            mScene->RemoveSelected(mNode.get());
+         }
+      }
+
+      return value;
    }
 }
 

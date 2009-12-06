@@ -22,6 +22,7 @@
 #include <dtDirectorQt/directoreditor.h>
 #include <dtDirectorQt/actionitem.h>
 #include <dtDirectorQt/valueitem.h>
+#include <dtDirectorQt/macroitem.h>
 
 #include <QtGui/QToolBar>
 #include <QtGui/QAction>
@@ -98,11 +99,11 @@ namespace dtDirector
 
       mGraph = graph;
 
-      // HACK
-      if (!mGraph->mSubGraphs.empty())
-      {
-         mGraph = &mGraph->mSubGraphs[0];
-      }
+      //// HACK
+      //if (!mGraph->mSubGraphs.empty())
+      //{
+      //   mGraph = &mGraph->mSubGraphs[0];
+      //}
 
       if (!mGraph) return;
 
@@ -143,6 +144,18 @@ namespace dtDirector
          }
       }
 
+      count = (int)mGraph->mSubGraphs.size();
+      for (int index = 0; index < count; index++)
+      {
+         DirectorGraphData* graph = &mGraph->mSubGraphs[index];
+         MacroItem* item = new MacroItem(graph, NULL, this);
+         if (item)
+         {
+            item->setZValue(0.0f);
+            mNodes.push_back(item);
+         }
+      }
+
       Refresh();
    }
 
@@ -178,7 +191,7 @@ namespace dtDirector
       for (int index = 0; index < count; index++)
       {
          NodeItem* item = mNodes[index];
-         if (item && item->GetNodeID() == id)
+         if (item && item->HasID(id))
          {
             return item;
          }
