@@ -61,9 +61,9 @@ namespace dtDirector
             ValueNode* node = mLinks[index];
             if (node && !node->GetDisabled())
             {
-               if (node->GetType() != dtDAL::DataType::UNKNOWN)
+               if (node->GetPropertyType() != dtDAL::DataType::UNKNOWN)
                {
-                  dtDAL::DataType& type = node->GetType();
+                  dtDAL::DataType& type = node->GetPropertyType();
                   mGettingType = false;
                   return type;
                }

@@ -49,66 +49,23 @@ namespace dtDirector
    {
    public:
 
-      //////////////////////////////////////////////////////////////////////////
-      void Update(float simDelta, float delta)
-      {
-         // Update all Event nodes.
-         for (int nodeIndex = 0; nodeIndex < (int)mEventNodes.size(); nodeIndex++)
-         {
-            mEventNodes[nodeIndex]->Update(simDelta, delta);
-         }
+      /**
+       * Updates all nodes in the graph.
+       *
+       * @param[in]  simDelta  Elapsed sim time.
+       * @param[in]  delta     Elapsed real time.
+       */
+      void Update(float simDelta, float delta);
 
-         // Update all Action nodes.
-         for (int nodeIndex = 0; nodeIndex < (int)mActionNodes.size(); nodeIndex++)
-         {
-            mActionNodes[nodeIndex]->Update(simDelta, delta);
-         }
-
-         for (int graphIndex = 0; graphIndex < (int)mSubGraphs.size(); graphIndex++)
-         {
-            mSubGraphs[graphIndex].Update(simDelta, delta);
-         }
-      }
-
-      //////////////////////////////////////////////////////////////////////////
-      Node* GetNode(const dtCore::UniqueId& id)
-      {
-         int count = (int)mEventNodes.size();
-         for (int index = 0; index < count; index++)
-         {
-            if (mEventNodes[index]->GetID() == id)
-            {
-               return mEventNodes[index];
-            }
-         }
-
-         count = (int)mActionNodes.size();
-         for (int index = 0; index < count; index++)
-         {
-            if (mActionNodes[index]->GetID() == id)
-            {
-               return mActionNodes[index];
-            }
-         }
-
-         count = (int)mValueNodes.size();
-         for (int index = 0; index < count; index++)
-         {
-            if (mValueNodes[index]->GetID() == id)
-            {
-               return mValueNodes[index];
-            }
-         }
-
-         count = (int)mSubGraphs.size();
-         for (int index = 0; index < count; index++)
-         {
-            Node* node = mSubGraphs[index].GetNode(id);
-            if (node) return node;
-         }
-
-         return NULL;
-      }
+      /**
+       * Retrieves a node of the given ID.
+       *
+       * @param[in]  id  The ID of the node.
+       *
+       * @return     A pointer to the node found, or NULL
+       *             if not found.
+       */
+      Node* GetNode(const dtCore::UniqueId& id);
       
       /**
        * Accessors for the node lists.
@@ -116,6 +73,14 @@ namespace dtDirector
       std::vector<dtCore::RefPtr<EventNode> >& GetEventNodes() {return mEventNodes;}
       std::vector<dtCore::RefPtr<ActionNode> >& GetActionNodes() {return mActionNodes;}
       std::vector<dtCore::RefPtr<ValueNode> >& GetValueNodes() {return mValueNodes;}
+
+      /**
+       * Retrieves a list of all external input, output, or value
+       * nodes that should be visible from the parent.
+       */
+      std::vector<dtCore::RefPtr<EventNode> >  GetInputNodes();
+      std::vector<dtCore::RefPtr<ActionNode> > GetOutputNodes();
+      std::vector<dtCore::RefPtr<ValueNode> >  GetExternalValueNodes();
 
       /**
        * Accessor for sub graphs.

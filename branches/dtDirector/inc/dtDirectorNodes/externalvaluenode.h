@@ -135,7 +135,7 @@ namespace dtDirector
        *
        * @return  The type.
        */
-      virtual dtDAL::DataType& GetType();
+      virtual dtDAL::DataType& GetPropertyType();
 
    protected:
 

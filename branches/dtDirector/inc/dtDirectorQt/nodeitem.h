@@ -207,6 +207,11 @@ namespace dtDirector
       virtual void SetTitle(const std::string text);
 
       /**
+       * Finds all of the links.
+       */
+      virtual void FindLinks();
+
+      /**
        * Draws the title of the node.
        */
       void DrawTitle();
@@ -254,7 +259,7 @@ namespace dtDirector
       /**
        * Retrieves the ID of the node.
        */
-      dtCore::UniqueId GetNodeID();
+      virtual dtCore::UniqueId GetNodeID();
 
       /**
        * Retrieves the links.

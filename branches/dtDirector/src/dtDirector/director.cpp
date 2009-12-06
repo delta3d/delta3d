@@ -30,7 +30,129 @@
 
 namespace dtDirector
 {
-   ///////////////////////////////////////////////////////////////////////////////////////
+   //////////////////////////////////////////////////////////////////////////
+   void DirectorGraphData::Update(float simDelta, float delta)
+   {
+      // Update all Event nodes.
+      for (int nodeIndex = 0; nodeIndex < (int)mEventNodes.size(); nodeIndex++)
+      {
+         mEventNodes[nodeIndex]->Update(simDelta, delta);
+      }
+
+      // Update all Action nodes.
+      for (int nodeIndex = 0; nodeIndex < (int)mActionNodes.size(); nodeIndex++)
+      {
+         mActionNodes[nodeIndex]->Update(simDelta, delta);
+      }
+
+      for (int graphIndex = 0; graphIndex < (int)mSubGraphs.size(); graphIndex++)
+      {
+         mSubGraphs[graphIndex].Update(simDelta, delta);
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   Node* DirectorGraphData::GetNode(const dtCore::UniqueId& id)
+   {
+      int count = (int)mEventNodes.size();
+      for (int index = 0; index < count; index++)
+      {
+         if (mEventNodes[index]->GetID() == id)
+         {
+            return mEventNodes[index];
+         }
+      }
+
+      count = (int)mActionNodes.size();
+      for (int index = 0; index < count; index++)
+      {
+         if (mActionNodes[index]->GetID() == id)
+         {
+            return mActionNodes[index];
+         }
+      }
+
+      count = (int)mValueNodes.size();
+      for (int index = 0; index < count; index++)
+      {
+         if (mValueNodes[index]->GetID() == id)
+         {
+            return mValueNodes[index];
+         }
+      }
+
+      count = (int)mSubGraphs.size();
+      for (int index = 0; index < count; index++)
+      {
+         Node* node = mSubGraphs[index].GetNode(id);
+         if (node) return node;
+      }
+
+      return NULL;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   std::vector<dtCore::RefPtr<EventNode> > DirectorGraphData::GetInputNodes()
+   {
+      std::vector<dtCore::RefPtr<EventNode> > nodes;
+
+      // Search all event nodes for input event nodes.
+      int count = (int)mEventNodes.size();
+      for (int index = 0; index < count; index++)
+      {
+         EventNode* node = mEventNodes[index].get();
+         if (node && node->GetType().GetFullName() == "Core.Input")
+         {
+            nodes.push_back(node);
+         }
+      }
+
+      return nodes;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   std::vector<dtCore::RefPtr<ActionNode> > DirectorGraphData::GetOutputNodes()
+   {
+      std::vector<dtCore::RefPtr<ActionNode> > nodes;
+
+      // Search all action nodes for output action nodes.
+      int count = (int)mActionNodes.size();
+      for (int index = 0; index < count; index++)
+      {
+         ActionNode* node = mActionNodes[index].get();
+         if (node && node->GetType().GetFullName() == "Core.Output")
+         {
+            nodes.push_back(node);
+         }
+      }
+
+      return nodes;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   std::vector<dtCore::RefPtr<ValueNode> > DirectorGraphData::GetExternalValueNodes()
+   {
+      std::vector<dtCore::RefPtr<ValueNode> > nodes;
+
+      // Search all value nodes for external value nodes.
+      int count = (int)mValueNodes.size();
+      for (int index = 0; index < count; index++)
+      {
+         ValueNode* node = mValueNodes[index].get();
+         if (node && node->GetType().GetFullName() == "Core.External Value")
+         {
+            nodes.push_back(node);
+         }
+      }
+
+      return nodes;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   //////////////////////////////////////////////////////////////////////////
+   //////////////////////////////////////////////////////////////////////////
+
+   //////////////////////////////////////////////////////////////////////////
    Director::Director()
       : mModified(false)
    {
@@ -63,11 +185,13 @@ namespace dtDirector
       // Create an outside value node.
       dtCore::RefPtr<ValueNode> outsideValue = dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Int", "General").get());
       mGraph.mValueNodes.push_back(outsideValue);
+      outsideValue->SetPosition(osg::Vec2(100, 100));
 
       // Create a sub graph.
       mGraph.mSubGraphs.push_back(DirectorGraphData());
       DirectorGraphData& subGraph = mGraph.mSubGraphs[0];
       subGraph.mName = "Sub Graph";
+      subGraph.mPosition.set(100, 50);
 
       // Create an input node.
       dtCore::RefPtr<EventNode> inputNode = dynamic_cast<dtDirector::EventNode*>(nodeManager.CreateNode("Input", "Core").get());

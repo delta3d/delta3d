@@ -192,8 +192,8 @@ namespace dtDirector
        *
        * @param[in]  type  The type.
        */
-      void SetType(unsigned char type) {mType = type;}
-      unsigned char GetType() {return mType;}
+      void SetPropertyType(unsigned char type) {mType = type;}
+      unsigned char GetPropertyType() {return mType;}
 
       /**
        * Highlights the link.
@@ -270,8 +270,8 @@ namespace dtDirector
        *
        * @param[in]  type  The type.
        */
-      void SetType(unsigned char type) {mType = type;}
-      unsigned char GetType() {return mType;}
+      void SetPropertyType(unsigned char type) {mType = type;}
+      unsigned char GetPropertyType() {return mType;}
 
       /**
        * Highlights the link.

@@ -98,13 +98,13 @@ namespace dtDirector
 
       mGraph = graph;
 
-      if (!mGraph) return;
-
-      // HACK: For now, we're displaying the sub graph.
-      if (graph->GetSubGraphs().size())
+      // HACK
+      if (!mGraph->mSubGraphs.empty())
       {
-         mGraph = &graph->GetSubGraphs()[0];
+         mGraph = &mGraph->mSubGraphs[0];
       }
+
+      if (!mGraph) return;
 
       // Create all nodes in the graph.
       int count = (int)mGraph->mEventNodes.size();

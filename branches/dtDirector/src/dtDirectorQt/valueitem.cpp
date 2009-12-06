@@ -66,10 +66,10 @@ namespace dtDirector
             int size = mNodeWidth;
             if (size < mNodeHeight) size = mNodeHeight;
 
-            setPen(QPen(GetDarkColorForType(valueNode->GetType().GetTypeId()), 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+            setPen(QPen(GetDarkColorForType(valueNode->GetPropertyType().GetTypeId()), 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
             QRadialGradient radialGradient(mNodeWidth/2, mNodeHeight, size, mNodeWidth/2, mNodeHeight);
-            radialGradient.setColorAt(0.0, GetColorForType(valueNode->GetType().GetTypeId()));
-            radialGradient.setColorAt(1.0, GetDarkColorForType(valueNode->GetType().GetTypeId()));
+            radialGradient.setColorAt(0.0, GetColorForType(valueNode->GetPropertyType().GetTypeId()));
+            radialGradient.setColorAt(1.0, GetDarkColorForType(valueNode->GetPropertyType().GetTypeId()));
             setBrush(radialGradient);
 
             if (!mValueLink)
@@ -88,9 +88,9 @@ namespace dtDirector
                mValueLink->setPolygon(poly);
                mValueLink->setPos(mNodeWidth / 2, -1.0f);
 
-               mValueLink->SetType(valueNode->GetType().GetTypeId());
-               mValueLink->setPen(QPen(GetDarkColorForType(mValueLink->GetType()), 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-               mValueLink->setBrush(GetColorForType(mValueLink->GetType()));
+               mValueLink->SetPropertyType(valueNode->GetPropertyType().GetTypeId());
+               mValueLink->setPen(QPen(GetDarkColorForType(mValueLink->GetPropertyType()), 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+               mValueLink->setBrush(GetColorForType(mValueLink->GetPropertyType()));
             }
          }
          setPolygon(mPolygon);

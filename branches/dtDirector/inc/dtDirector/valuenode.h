@@ -111,11 +111,11 @@ namespace dtDirector
       virtual bool CanBeType(dtDAL::DataType& type);
 
       /**
-       * Retrieves the type of this value.
+       * Retrieves the property type of this value.
        *
        * @return  The type.
        */
-      virtual dtDAL::DataType& GetType();
+      virtual dtDAL::DataType& GetPropertyType();
 
       /**
        * Retrieves the links list.

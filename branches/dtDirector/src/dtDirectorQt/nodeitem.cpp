@@ -182,14 +182,16 @@ namespace dtDirector
    {
       mLoading = true;
 
+      mNodeWidth = MIN_NODE_WIDTH;
+      mNodeHeight = MIN_NODE_HEIGHT;
+      mTextHeight = 0.0f;
+      mLinkWidth = 0.0f;
+      mLinkHeight = 0.0f;
+
+      FindLinks();
+
       if (mNode.valid())
       {
-         mNodeWidth = MIN_NODE_WIDTH;
-         mNodeHeight = MIN_NODE_HEIGHT;
-         mTextHeight = 0.0f;
-         mLinkWidth = 0.0f;
-         mLinkHeight = 0.0f;
-
          osg::Vec2 pos = mNode->GetPosition();
          setPos(pos.x(), pos.y());
 
@@ -308,6 +310,72 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   void NodeItem::FindLinks()
+   {
+      // First clear all current links.
+      int count = (int)mInputs.size();
+      for (int index = 0; index < count; index++)
+      {
+         mInputs[index].Remove();
+      }
+      mInputs.clear();
+
+      count = (int)mOutputs.size();
+      for (int index = 0; index < count; index++)
+      {
+         mOutputs[index].Remove(mScene);
+      }
+      mOutputs.clear();
+
+      count = (int)mValues.size();
+      for (int index = 0; index < count; index++)
+      {
+         mValues[index].Remove(mScene);
+      }
+      mValues.clear();
+
+      if (!mNode.valid()) return;
+
+      count = (int)mNode->GetInputLinks().size();
+      for (int index = 0; index < count; index++)
+      {
+         mInputs.push_back(InputData());
+         InputData& data = mInputs.back();
+
+         data.link = &mNode->GetInputLinks()[index];
+
+         data.linkName = new QGraphicsTextItem(this, mScene);
+         data.linkGraphic = new InputLinkItem(this, index, data.linkName, mScene);
+      }
+
+      count = (int)mNode->GetOutputLinks().size();
+      for (int index = 0; index < count; index++)
+      {
+         mOutputs.push_back(OutputData());
+         OutputData& data = mOutputs.back();
+
+         data.link = &mNode->GetOutputLinks()[index];
+
+         data.linkGraphic = new OutputLinkItem(this, index, this, mScene);
+         data.linkName = new QGraphicsTextItem(data.linkGraphic, mScene);
+         data.linkName->setAcceptHoverEvents(false);
+      }
+
+      count = (int)mNode->GetValueLinks().size();
+      for (int index = 0; index < count; index++)
+      {
+         mValues.push_back(ValueData());
+         ValueData& data = mValues.back();
+
+         data.link = &mNode->GetValueLinks()[index];
+
+         data.linkGraphic = new ValueLinkItem(this, index, this, mScene);
+         data.linkName = new QGraphicsTextItem(data.linkGraphic, mScene);
+         data.linkName->setAcceptHoverEvents(false);
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void NodeItem::DrawTitle()
    {
       if (!mTitleBG) return;
@@ -323,16 +391,6 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void NodeItem::DrawInputs()
    {
-      if (!mNode.valid()) return;
-
-      // First clear all current inputs.
-      int count = (int)mInputs.size();
-      for (int index = 0; index < count; index++)
-      {
-         mInputs[index].Remove();
-      }
-      mInputs.clear();
-
       float maxSize = 0;
 
       QPolygonF poly;
@@ -340,17 +398,11 @@ namespace dtDirector
          QPointF(LINK_LENGTH, LINK_SIZE) << QPointF(0, LINK_SIZE) <<
          QPointF(LINK_SIZE/2, LINK_SIZE/2);
 
-      count = (int)mNode->GetInputLinks().size();
+      int count = (int)mInputs.size();
       for (int index = 0; index < count; index++)
       {
-         mInputs.push_back(InputData());
-         InputData& data = mInputs.back();
+         InputData& data = mInputs[index];
          
-         data.link = &mNode->GetInputLinks()[index];
-
-         data.linkName = new QGraphicsTextItem(this, mScene);
-         data.linkGraphic = new InputLinkItem(this, index, data.linkName, mScene);
-
          // Create the link graphic.
          data.linkGraphic->setPolygon(poly);
          data.linkGraphic->setBrush(Qt::black);
@@ -392,16 +444,6 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void NodeItem::DrawOutputs()
    {
-      if (!mNode.valid()) return;
-
-      // First clear all current outputs.
-      int count = (int)mOutputs.size();
-      for (int index = 0; index < count; index++)
-      {
-         mOutputs[index].Remove(mScene);
-      }
-      mOutputs.clear();
-
       float maxSize = 0;
       QPolygonF poly;
       poly << QPointF(0, 0) << QPointF(LINK_LENGTH - LINK_SIZE/2, 0) <<
@@ -410,17 +452,10 @@ namespace dtDirector
          QPointF(0, LINK_SIZE);
       float offset = 0;
 
-      count = (int)mNode->GetOutputLinks().size();
+      int count = (int)mOutputs.size();
       for (int index = 0; index < count; index++)
       {
-         mOutputs.push_back(OutputData());
-         OutputData& data = mOutputs.back();
-
-         data.link = &mNode->GetOutputLinks()[index];
-
-         data.linkGraphic = new OutputLinkItem(this, index, this, mScene);
-         data.linkName = new QGraphicsTextItem(data.linkGraphic, mScene);
-         data.linkName->setAcceptHoverEvents(false);
+         OutputData& data = mOutputs[index];
 
          // Create the link graphic.
          data.linkGraphic->setPolygon(poly);
@@ -469,28 +504,13 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void NodeItem::SetupValues()
    {
-      if (!mNode.valid()) return;
-
-      // First clear all current outputs.
-      int count = (int)mValues.size();
-      for (int index = 0; index < count; index++)
-      {
-         mValues[index].Remove(mScene);
-      }
-      mValues.clear();
-
       float maxWidth = 0;
       float maxHeight = 0;
 
-      count = (int)mNode->GetValueLinks().size();
+      int count = (int)mValues.size();
       for (int index = 0; index < count; index++)
       {
-         ValueData data;
-         data.link = &mNode->GetValueLinks()[index];
-
-         data.linkGraphic = new ValueLinkItem(this, index, this, mScene);
-         data.linkName = new QGraphicsTextItem(data.linkGraphic, mScene);
-         data.linkName->setAcceptHoverEvents(false);
+         ValueData& data = mValues[index];
 
          // Out links are triangular shaped.
          QPolygonF poly;
@@ -510,7 +530,7 @@ namespace dtDirector
          }
 
          data.linkGraphic->setPolygon(poly);
-         data.linkGraphic->SetType(data.link->GetPropertyType().GetTypeId());
+         data.linkGraphic->SetPropertyType(data.link->GetPropertyType().GetTypeId());
 
          // Set the color of the link based on the property type.
          if (data.link->IsTypeChecking() && data.link->GetPropertyType() != dtDAL::DataType::UNKNOWN)
@@ -550,8 +570,6 @@ namespace dtDirector
          float x = -nameBounds.width() / 2;
          float y = -nameBounds.height();
          data.linkName->setPos(x, y);
-
-         mValues.push_back(data);
       }
 
       // Resize the node width if we have to.
@@ -591,7 +609,7 @@ namespace dtDirector
       if (mLinkDivider || mValueDivider) return;
 
       // Draw the vertical divider if we are displaying both inputs and outputs.
-      if (!mInputs.empty() && !mOutputs.empty())
+      if (!mInputs.empty() || !mOutputs.empty())
       {
          float x = mLinkWidth + (LINK_SPACING / 2);
          float y = mTextHeight + 1;
@@ -605,7 +623,7 @@ namespace dtDirector
 
       // Draw the horizontal divider if we are displaying value links with inputs and/or outputs.
       if (!mValues.empty() &&
-         (!mInputs.empty() && !mOutputs.empty()))
+         (!mInputs.empty() || !mOutputs.empty()))
       {
          float x = 0;
          float y = mLinkHeight - 1;
@@ -931,7 +949,7 @@ namespace dtDirector
       if (valueNode)
       {
          output.linkConnectors[index]->setPen(
-            QPen(GetDarkColorForType(output.linkGraphic->GetType()),
+            QPen(GetDarkColorForType(output.linkGraphic->GetPropertyType()),
             2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
       }
    }

@@ -94,7 +94,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    bool ValueNode::CanBeType(dtDAL::DataType& type)
    {
-      if (GetType() == type)
+      if (GetPropertyType() == type)
       {
          return true;
       }
@@ -102,7 +102,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtDAL::DataType& ValueNode::GetType()
+   dtDAL::DataType& ValueNode::GetPropertyType()
    {
       // By default, use the property of this node.
       if (GetProperty()) return GetProperty()->GetDataType();

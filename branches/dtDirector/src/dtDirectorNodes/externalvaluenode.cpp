@@ -117,8 +117,9 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    bool ExternalValueNode::CanBeType(dtDAL::DataType& type)
    {
-      if (GetType() == dtDAL::DataType::UNKNOWN ||
-         GetType() == type)
+      dtDAL::DataType& myType = GetPropertyType();
+      if (myType == dtDAL::DataType::UNKNOWN ||
+         myType == type)
       {
          return true;
       }
@@ -127,7 +128,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtDAL::DataType& ExternalValueNode::GetType()
+   dtDAL::DataType& ExternalValueNode::GetPropertyType()
    {
       // If we are linked to a value link, use the type of that link.
       if (mLinks.size())
@@ -145,7 +146,7 @@ namespace dtDirector
       // If we are linked to another value node, use that value's type.
       if (mValues.size() && mValues[0].GetLinks().size())
       {
-         return mValues[0].GetLinks()[0]->GetType();
+         return mValues[0].GetLinks()[0]->GetPropertyType();
       }
 
       // If we have no connections yet, the type is undefined.

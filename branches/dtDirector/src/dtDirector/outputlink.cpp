@@ -104,7 +104,7 @@ namespace dtDirector
             if (!input) continue;
 
             // Now remove this output from the input's list.
-            for (int inputIndex = 0; inputIndex < (int)input->mLinks.size(); outputIndex++)
+            for (int inputIndex = 0; inputIndex < (int)input->mLinks.size(); inputIndex++)
             {
                if (input->mLinks[inputIndex] == this)
                {
