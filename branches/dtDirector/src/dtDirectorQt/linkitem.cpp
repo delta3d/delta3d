@@ -178,7 +178,7 @@ namespace dtDirector
             {
                if (hoverList[index] == this)
                {
-                  mNodeItem->GetNode()->GetInputLinks()[mLinkIndex].Disconnect();
+                  mNodeItem->GetInputs()[mLinkIndex].link->Disconnect();
                   mScene->Refresh();
                   break;
                }
@@ -189,8 +189,8 @@ namespace dtDirector
                if (item)
                {
                   // Create a new connection between these two links.
-                  mNodeItem->GetNode()->GetInputLinks()[mLinkIndex].Connect(
-                     &item->mNodeItem->GetNode()->GetOutputLinks()[item->mLinkIndex]);
+                  mNodeItem->GetInputs()[mLinkIndex].link->Connect(
+                     item->mNodeItem->GetOutputs()[item->mLinkIndex].link);
                   mNodeItem->ConnectLinks(true);
                   break;
                }
@@ -434,7 +434,7 @@ namespace dtDirector
             {
                if (hoverList[index] == this)
                {
-                  mNodeItem->GetNode()->GetOutputLinks()[mLinkIndex].Disconnect();
+                  mNodeItem->GetOutputs()[mLinkIndex].link->Disconnect();
                   mScene->Refresh();
                   break;
                }
@@ -445,8 +445,8 @@ namespace dtDirector
                if (item)
                {
                   // Create a new connection between these two links.
-                  mNodeItem->GetNode()->GetOutputLinks()[mLinkIndex].Connect(
-                     &item->mNodeItem->GetNode()->GetInputLinks()[item->mLinkIndex]);
+                  mNodeItem->GetOutputs()[mLinkIndex].link->Connect(
+                     item->mNodeItem->GetInputs()[item->mLinkIndex].link);
                   mNodeItem->ConnectLinks(true);
                   break;
                }
@@ -700,7 +700,7 @@ namespace dtDirector
             {
                if (hoverList[index] == this)
                {
-                  mNodeItem->GetNode()->GetValueLinks()[mLinkIndex].Disconnect();
+                  mNodeItem->GetValues()[mLinkIndex].link->Disconnect();
                   mScene->Refresh();
                   break;
                }
@@ -711,7 +711,7 @@ namespace dtDirector
                if (item)
                {
                   // Create a new connection between these two links.
-                  mNodeItem->GetNode()->GetValueLinks()[mLinkIndex].Connect(
+                  mNodeItem->GetValues()[mLinkIndex].link->Connect(
                      dynamic_cast<ValueNode*>(item->mValueItem->GetNode()));
 
                   // Refresh the entire scene to make sure all nodes and links are
@@ -952,7 +952,7 @@ namespace dtDirector
                if (item)
                {
                   // Create a new connection between these two links.
-                  item->mNodeItem->GetNode()->GetValueLinks()[item->mLinkIndex].Connect(
+                  item->mNodeItem->GetValues()[item->mLinkIndex].link->Connect(
                      dynamic_cast<ValueNode*>(mValueItem->GetNode()));
 
                   // Refresh the entire scene to make sure all nodes and links are

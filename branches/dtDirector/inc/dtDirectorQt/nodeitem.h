@@ -252,11 +252,6 @@ namespace dtDirector
       QColor GetDarkColorForType(unsigned char type);
 
       /**
-       * Retrieves the node.
-       */
-      Node* GetNode() {return mNode.get();}
-
-      /**
        * Retrieves the ID of the node.
        */
       virtual dtCore::UniqueId GetNodeID();
