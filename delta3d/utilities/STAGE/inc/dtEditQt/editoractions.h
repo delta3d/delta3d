@@ -31,29 +31,27 @@
 #ifndef DELTA_EDTIOR_ACTIONS
 #define DELTA_EDTIOR_ACTIONS
 
+#include <dtEditQt/export.h>
 #include <QtCore/QObject>
 #include <vector>
 #include <osg/Referenced>
 #include <dtDAL/actorproxy.h>
 #include <dtQt/typedefs.h>
 #include <dtCore/refptr.h>
-#include <dtQt/docbrowser.h>
 
 class QAction;
 class QActionGroup;
-class QListWidgetItem;
-class QListWidget;
-class QDialog;
 class QTimer;
 
-namespace dtCore
-{
-   class Isector;
-}
 
 namespace dtDAL
 {
    class Map;
+}
+
+namespace dtQt
+{
+   class DocBrowser;
 }
 
 namespace dtEditQt
@@ -67,7 +65,7 @@ namespace dtEditQt
     * behavior from QT.
     * @note The EditorActions class follows the Singleton pattern.
     */
-   class EditorActions : public QObject, public osg::Referenced
+   class DT_EDITQT_EXPORT EditorActions : public QObject, public osg::Referenced
    {
       Q_OBJECT
 

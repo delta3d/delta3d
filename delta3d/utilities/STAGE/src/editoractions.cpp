@@ -29,14 +29,12 @@
  */
 #include <prefix/dtstageprefix-src.h>
 #include <dtEditQt/editoractions.h>
-#include <dtEditQt/editordata.h>
 
 #include <QtGui/QAction>
 #include <QtGui/QIcon>
 #include <QtGui/QActionGroup>
 #include <QtGui/QMainWindow>
 #include <QtGui/QMessageBox>
-#include <QtGui/QTextEdit>
 #include <QtCore/QTimer>
 #include <QtCore/QFileInfo>
 
@@ -72,6 +70,7 @@
 
 #include <dtQt/dialoglistselection.h>
 #include <dtQt/librarypathseditor.h>
+#include <dtQt/docbrowser.h>
 
 #include <dtUtil/log.h>
 #include <dtUtil/fileutils.h>
