@@ -148,7 +148,7 @@ void MyGameEntryPoint::OnStartup(dtGame::GameApplication& app)
    app.GetGameManager()->AddComponent(*dmp,dtGame::GameManager::ComponentPriority::HIGHEST);
 
    // Register our messages with the Game Manager message factory - part 5
-   TutorialMessageType::RegisterMessageTypes( app.GetGameManager()->GetMessageFactory() );
+   TutorialMessageType::RegisterMessageTypes(app.GetGameManager()->GetMessageFactory());
 
    // Add Component - Input Component
    dtCore::RefPtr<InputComponent> inputComp = new InputComponent("InputComponent", mInPlaybackMode);
