@@ -122,6 +122,21 @@ namespace dtAI
 
       bool HandleEvent(const NPCEvent* pEvent);
 
+      /** 
+        *  Call entry and exit functions when a self transition takes place, 
+        *  e.g. when a transition from state A to state A takes place.
+        *  Defaults to true.
+        *  @param handle True will call OnExit()/OnEntry() when transitioning to the 
+        *  same state, false will not.
+        */
+      void SetProcessSelfTransitions(bool handle);
+
+      /** 
+        * Should self transitions be processed?
+        * @return true if transitions OnExit()/OnEntry() is called when transitioning
+        * to the same state.  False otherwise.
+        */
+      bool GetProcessSelfTransitions() const;
 
    private:
       void FreeMem();
@@ -139,6 +154,7 @@ namespace dtAI
 
       StateSet                mStates;
       TransitionMap           mTransitions;
+      bool                    mProcessSelfTransitions;
    };
 } // namespace dtAI
 
