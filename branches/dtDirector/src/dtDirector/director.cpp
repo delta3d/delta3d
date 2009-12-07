@@ -31,6 +31,33 @@
 namespace dtDirector
 {
    //////////////////////////////////////////////////////////////////////////
+   DirectorGraphData::DirectorGraphData()
+      : mParent(NULL)
+      , mName("Macro")
+   {
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DirectorGraphData::BuildPropertyMap(bool isParent)
+   {
+      AddProperty(new dtDAL::StringActorProperty(
+         "Name", "Name",
+         dtDAL::StringActorProperty::SetFuncType(this, &DirectorGraphData::SetName),
+         dtDAL::StringActorProperty::GetFuncType(this, &DirectorGraphData::GetName),
+         "The Name of the Director graph."));
+
+      // Only sub graphs have a position.
+      if (!isParent)
+      {
+         AddProperty(new dtDAL::Vec2ActorProperty(
+            "Position", "Position",
+            dtDAL::Vec2ActorProperty::SetFuncType(this, &DirectorGraphData::SetPosition),
+            dtDAL::Vec2ActorProperty::GetFuncType(this, &DirectorGraphData::GetPosition),
+            "The Position of the Director graph in its parent.", "UI"));
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void DirectorGraphData::Update(float simDelta, float delta)
    {
       // Update all Event nodes.
@@ -47,7 +74,8 @@ namespace dtDirector
 
       for (int graphIndex = 0; graphIndex < (int)mSubGraphs.size(); graphIndex++)
       {
-         mSubGraphs[graphIndex].Update(simDelta, delta);
+         DirectorGraphData* graph = mSubGraphs[graphIndex];
+         if (graph) graph->Update(simDelta, delta);
       }
    }
 
@@ -84,8 +112,12 @@ namespace dtDirector
       count = (int)mSubGraphs.size();
       for (int index = 0; index < count; index++)
       {
-         Node* node = mSubGraphs[index].GetNode(id);
-         if (node) return node;
+         DirectorGraphData* graph = mSubGraphs[index];
+         if (graph)
+         {
+            Node* node = graph->GetNode(id);
+            if (node) return node;
+         }
       }
 
       return NULL;
@@ -155,6 +187,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    Director::Director()
       : mModified(false)
+      , mGraph(new DirectorGraphData())
    {
       mLogger = &dtUtil::Log::GetInstance();
    }
@@ -168,6 +201,8 @@ namespace dtDirector
    void Director::Init()
    {
       BuildPropertyMap();
+
+      mGraph->BuildPropertyMap(true);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -179,53 +214,55 @@ namespace dtDirector
 
       // Create a primary event node.
       dtCore::RefPtr<EventNode> primaryEvent = dynamic_cast<dtDirector::EventNode*>(nodeManager.CreateNode("Named Event", "General").get());
-      mGraph.mEventNodes.push_back(primaryEvent);
+      mGraph->mEventNodes.push_back(primaryEvent);
       primaryEvent->SetPosition(osg::Vec2(50, 50));
 
       // Create an outside value node.
       dtCore::RefPtr<ValueNode> outsideValue = dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Int", "General").get());
-      mGraph.mValueNodes.push_back(outsideValue);
-      outsideValue->SetPosition(osg::Vec2(100, 100));
+      mGraph->mValueNodes.push_back(outsideValue);
+      outsideValue->SetPosition(osg::Vec2(200, 200));
 
       // Create a sub graph.
-      mGraph.mSubGraphs.push_back(DirectorGraphData());
-      DirectorGraphData& subGraph = mGraph.mSubGraphs[0];
-      subGraph.mName = "Sub Graph";
-      subGraph.mPosition.set(100, 50);
+      DirectorGraphData* subGraph = new DirectorGraphData();
+      subGraph->BuildPropertyMap();
+      subGraph->mParent = mGraph;
+      mGraph->mSubGraphs.push_back(subGraph);
+      subGraph->mName = "Sub Graph";
+      subGraph->SetPosition(osg::Vec2(200, 50));
 
       // Create an input node.
       dtCore::RefPtr<EventNode> inputNode = dynamic_cast<dtDirector::EventNode*>(nodeManager.CreateNode("Input", "Core").get());
-      subGraph.mEventNodes.push_back(inputNode);
+      subGraph->mEventNodes.push_back(inputNode);
       inputNode->SetPosition(osg::Vec2(50, 50));
 
       // Create an output node.
       dtCore::RefPtr<ActionNode> outputNode = dynamic_cast<dtDirector::ActionNode*>(nodeManager.CreateNode("Output", "Core").get());
-      subGraph.mActionNodes.push_back(outputNode);
+      subGraph->mActionNodes.push_back(outputNode);
       outputNode->SetPosition(osg::Vec2(600, 50));
 
       // Create an external value node.
       dtCore::RefPtr<ValueNode> extValue = dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("External Value", "Core").get());
-      subGraph.mValueNodes.push_back(extValue);
+      subGraph->mValueNodes.push_back(extValue);
       extValue->SetName("External Connected");
       extValue->SetPosition(osg::Vec2(500, 300));
 
       dtCore::RefPtr<ValueNode> extValue2 = dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("External Value", "Core").get());
-      subGraph.mValueNodes.push_back(extValue2);
+      subGraph->mValueNodes.push_back(extValue2);
       extValue2->SetName("External Not Connected");
       extValue2->SetPosition(osg::Vec2(600, 300));
 
       // Create our action node.
       dtCore::RefPtr<ActionNode> actionNode = dynamic_cast<dtDirector::ActionNode*>(nodeManager.CreateNode("Binary Operation", "General").get());
-      subGraph.mActionNodes.push_back(actionNode);
+      subGraph->mActionNodes.push_back(actionNode);
       actionNode->SetPosition(osg::Vec2(200, 50));
 
       // Create some value nodes.
       dtCore::RefPtr<ValueNode> valueA = dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Int", "General").get());
       dtCore::RefPtr<ValueNode> valueB = dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Int", "General").get());
       dtCore::RefPtr<ValueNode> resultValue = dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Int", "General").get());
-      subGraph.mValueNodes.push_back(valueA);
-      subGraph.mValueNodes.push_back(valueB);
-      subGraph.mValueNodes.push_back(resultValue);
+      subGraph->mValueNodes.push_back(valueA);
+      subGraph->mValueNodes.push_back(valueB);
+      subGraph->mValueNodes.push_back(resultValue);
 
       valueA->SetName("Int A");
       valueA->SetPosition(osg::Vec2(200, 300));
@@ -250,15 +287,15 @@ namespace dtDirector
          // Connect the output of action node with the output node.
          actionNode->GetOutputLink("Out")->Connect(outputNode->GetInputLink("In"));
 
-         //// Connect our A and B values to the action node.
-         //actionNode->GetValueLink("A")->Connect(valueA);
-         //actionNode->GetValueLink("B")->Connect(valueB);
+         // Connect our A and B values to the action node.
+         actionNode->GetValueLink("A")->Connect(valueA);
+         actionNode->GetValueLink("B")->Connect(valueB);
 
-         //// Connect our result value to the action node.
-         //actionNode->GetValueLink("Result")->Connect(resultValue);
+         // Connect our result value to the action node.
+         actionNode->GetValueLink("Result")->Connect(resultValue);
 
-         //// Connect our external value node to the action node.
-         //actionNode->GetValueLink("Result")->Connect(extValue);
+         // Connect our external value node to the action node.
+         actionNode->GetValueLink("Result")->Connect(extValue);
 
          // Connect our external value node to our outside value node.
          extValue->GetValueLinks()[0].Connect(outsideValue);
@@ -269,10 +306,10 @@ namespace dtDirector
    bool Director::LoadScript(const std::string& scriptFile, dtDAL::Map* map)
    {
       // First clear all our current nodes.
-      mGraph.mSubGraphs.clear();
-      mGraph.mEventNodes.clear();
-      mGraph.mActionNodes.clear();
-      mGraph.mValueNodes.clear();
+      mGraph->mEventNodes.clear();
+      mGraph->mActionNodes.clear();
+      mGraph->mValueNodes.clear();
+      mGraph->mSubGraphs.clear();
 
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
       fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext());
@@ -368,7 +405,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void Director::Update(float simDelta, float delta)
    {
-      mGraph.Update(simDelta, delta);
+      mGraph->Update(simDelta, delta);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -459,6 +496,6 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    Node* Director::GetNode(const dtCore::UniqueId& id)
    {
-      return mGraph.GetNode(id);
+      return mGraph->GetNode(id);
    }
 }

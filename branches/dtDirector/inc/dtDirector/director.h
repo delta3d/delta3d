@@ -45,9 +45,26 @@ namespace dtDirector
     * Director Graph structure that contains all nodes
     * within the director script.
     */
-   class DT_DIRECTOR_EXPORT DirectorGraphData
+   class DT_DIRECTOR_EXPORT DirectorGraphData: public dtDAL::PropertyContainer
    {
    public:
+
+      /**
+       * Constructor.
+       */
+      DirectorGraphData();
+
+      /**
+       * This method is called in init, which instructs the director
+       * to create its properties.  Methods implementing this should
+       * be sure to call their parent class's buildPropertyMap method to
+       * ensure all properties in the proxy inheritance hierarchy are
+       * correctly added to the property map.
+       *
+       * @see GetDeprecatedProperty to handle old properties that need
+       *       to be removed.
+       */
+      virtual void BuildPropertyMap(bool isParent = false);
 
       /**
        * Updates all nodes in the graph.
@@ -66,6 +83,18 @@ namespace dtDirector
        *             if not found.
        */
       Node* GetNode(const dtCore::UniqueId& id);
+
+      /**
+       * Accessors for the graph name.
+       */
+      void SetName(const std::string& name) {mName = name;}
+      const std::string& GetName() {return mName;}
+
+      /**
+       * Accessors for the graph position.
+       */
+      void SetPosition(const osg::Vec2& pos) {mPosition = pos;}
+      const osg::Vec2& GetPosition() {return mPosition;}
       
       /**
        * Accessors for the node lists.
@@ -85,12 +114,14 @@ namespace dtDirector
       /**
        * Accessor for sub graphs.
        */
-      std::vector<DirectorGraphData>& GetSubGraphs() {return mSubGraphs;}
+      std::vector<dtCore::RefPtr<DirectorGraphData> >& GetSubGraphs() {return mSubGraphs;}
+
+      DirectorGraphData* mParent;
 
       std::string mName;
       osg::Vec2   mPosition;
 
-      std::vector<DirectorGraphData> mSubGraphs;
+      std::vector<dtCore::RefPtr<DirectorGraphData> > mSubGraphs;
 
       std::vector<dtCore::RefPtr<EventNode> >  mEventNodes;
       std::vector<dtCore::RefPtr<ActionNode> > mActionNodes;
@@ -165,8 +196,8 @@ namespace dtDirector
       /**
        * Accessors for the name of the script.
        */
-      void SetName(const std::string& name) {mGraph.mName = name;}
-      std::string& GetName() {return mGraph.mName;}
+      void SetName(const std::string& name) {mGraph->SetName(name);}
+      const std::string& GetName() {return mGraph->GetName();}
 
       /**
        * Accessors for the description of the script.
@@ -246,7 +277,7 @@ namespace dtDirector
       /**
        * Retrieves the graph data.
        */
-      DirectorGraphData& GetGraphData() {return mGraph;}
+      DirectorGraphData* GetGraphData() {return mGraph.get();}
 
       /**
        * Retrieves a node of the given the id.
@@ -278,7 +309,7 @@ namespace dtDirector
       std::vector<std::string> mLibraries;
       std::map<std::string, std::string> mLibraryVersionMap;
 
-      DirectorGraphData mGraph;
+      dtCore::RefPtr<DirectorGraphData> mGraph;
 
       dtUtil::Log*   mLogger;
    };

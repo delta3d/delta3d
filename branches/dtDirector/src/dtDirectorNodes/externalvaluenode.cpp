@@ -61,20 +61,16 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool ExternalValueNode::Connect(ValueLink* valueLink)
+   void ExternalValueNode::SetName(const std::string& name)
    {
-      bool result = ValueNode::Connect(valueLink);
+      ValueNode::SetName(name);
 
-      UpdateLinkType();
-
-      return result;
+      mValues[0].SetLabel(name);
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ExternalValueNode::Disconnect(ValueLink* valueLink)
+   void ExternalValueNode::OnConnectionChange()
    {
-      ValueNode::Disconnect(valueLink);
-
       UpdateLinkType();
    }
 
@@ -156,14 +152,21 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void ExternalValueNode::UpdateLinkType()
    {
+      bool isOut = false;
+      bool isTypeChecking = false;
+
       if (mLinks.size())
       {
-         mValues[0].SetOutLink(mLinks[0]->IsOutLink());
-         mValues[0].SetTypeChecking(mLinks[0]->IsTypeChecking());
+         int count = (int)mLinks.size();
+         for (int index = 0; index < count; index++)
+         {
+            isOut |= mLinks[index]->IsOutLink();
+            isTypeChecking |= mLinks[index]->IsTypeChecking();
+         }
       }
 
       // If we are not linked, reset to defaults.
-      mValues[0].SetOutLink(false);
-      mValues[0].SetTypeChecking(true);
+      mValues[0].SetOutLink(isOut);
+      mValues[0].SetTypeChecking(isTypeChecking);
    }
 }

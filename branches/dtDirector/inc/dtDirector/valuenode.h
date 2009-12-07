@@ -89,9 +89,14 @@ namespace dtDirector
       void Disconnect(ValueLink* valueLink = NULL);
 
       /**
+       * Event handler when a connection has changed.
+       */
+      virtual void OnConnectionChange();
+
+      /**
        * Accessors for the name of the node.
        */
-      void SetName(const std::string& name) {mName = name;}
+      virtual void SetName(const std::string& name) {mName = name;}
       virtual const std::string& GetName() {return mName;}
 
       /**

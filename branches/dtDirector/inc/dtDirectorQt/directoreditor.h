@@ -45,6 +45,7 @@ namespace dtDirector
 {
    class DirectorEditor;
    class NodeItem;
+   class MacroItem;
 
    /**
    * @class GraphTabs
@@ -131,6 +132,15 @@ namespace dtDirector
        *             or NULL if not found.
        */
       NodeItem* GetNodeItem(const dtCore::UniqueId& id);
+
+      /**
+       * Retrieves a graph item for a graph.
+       *
+       * @param[in]  graph  The graph.
+       *
+       * @return     The graph item that contains this graph.
+       */
+      MacroItem* GetGraphItem(DirectorGraphData* graph);
 
       /**
        * Adds an item to the selected list.

@@ -65,13 +65,18 @@ namespace dtDirector
       virtual bool HasID(const dtCore::UniqueId& id);
 
       /**
+       * Retrieves the graph.
+       */
+      DirectorGraphData* GetGraph() {return mGraph.get();}
+
+      /**
        * Event handler when this item changes.
        */
       QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
    protected:
 
-      DirectorGraphData*   mGraph;
+      dtCore::RefPtr<DirectorGraphData> mGraph;
    };
 }
 

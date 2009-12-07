@@ -279,7 +279,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void DirectorWriter::SaveGraphs(DirectorGraphData& graph)
+   void DirectorWriter::SaveGraphs(DirectorGraphData* graph)
    {
       // Graph.
       BeginElement(dtDAL::MapXMLConstants::DIRECTOR_GRAPH_ELEMENT);
@@ -287,14 +287,14 @@ namespace dtDirector
          // Name Element.
          BeginElement(dtDAL::MapXMLConstants::NAME_ELEMENT);
          {
-            AddCharacters(graph.mName);
+            AddCharacters(graph->GetName());
          }
          EndElement(); // End Name Element.
 
          // Event Nodes.
          BeginElement(dtDAL::MapXMLConstants::DIRECTOR_EVENT_NODES_ELEMENT);
          {
-            const std::vector<dtCore::RefPtr<EventNode> >& EventNodes = graph.GetEventNodes();
+            const std::vector<dtCore::RefPtr<EventNode> >& EventNodes = graph->GetEventNodes();
             for (int nodeIndex = 0; nodeIndex < (int)EventNodes.size(); nodeIndex++)
             {
                SaveNode(EventNodes[nodeIndex].get());
@@ -305,7 +305,7 @@ namespace dtDirector
          // Action Nodes.
          BeginElement(dtDAL::MapXMLConstants::DIRECTOR_ACTION_NODES_ELEMENT);
          {
-            const std::vector<dtCore::RefPtr<ActionNode> >& ActionNodes = graph.GetActionNodes();
+            const std::vector<dtCore::RefPtr<ActionNode> >& ActionNodes = graph->GetActionNodes();
             for (int nodeIndex = 0; nodeIndex < (int)ActionNodes.size(); nodeIndex++)
             {
                SaveNode(ActionNodes[nodeIndex].get());
@@ -316,7 +316,7 @@ namespace dtDirector
          // Value Nodes.
          BeginElement(dtDAL::MapXMLConstants::DIRECTOR_VALUE_NODES_ELEMENT);
          {
-            const std::vector<dtCore::RefPtr<ValueNode> >& ValueNodes = graph.GetValueNodes();
+            const std::vector<dtCore::RefPtr<ValueNode> >& ValueNodes = graph->GetValueNodes();
             for (int nodeIndex = 0; nodeIndex < (int)ValueNodes.size(); nodeIndex++)
             {
                SaveNode(ValueNodes[nodeIndex].get());
@@ -325,9 +325,9 @@ namespace dtDirector
          EndElement(); // End Value Nodes Element.
 
          // Now save sub graphs.
-         for (int graphIndex = 0; graphIndex < (int)graph.GetSubGraphs().size(); graphIndex++)
+         for (int graphIndex = 0; graphIndex < (int)graph->GetSubGraphs().size(); graphIndex++)
          {
-            SaveGraphs(graph.GetSubGraphs()[graphIndex]);
+            SaveGraphs(graph->GetSubGraphs()[graphIndex]);
          }
       }
       EndElement(); // End Graph.

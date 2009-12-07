@@ -84,7 +84,7 @@ namespace dtDirector
       /**
        * Accessors for the name of the input node.
        */
-      void SetName(const std::string& name) {mName = name;}
+      void SetName(const std::string& name);
       virtual const std::string& GetName() {return mName;}
 
    protected:

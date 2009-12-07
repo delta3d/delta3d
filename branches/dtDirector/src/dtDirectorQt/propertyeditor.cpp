@@ -22,6 +22,7 @@
 #include <dtDirectorQt/propertyeditor.h>
 #include <dtDirectorQt/directoreditor.h>
 #include <dtDirectorQt/nodeitem.h>
+#include <dtDirectorQt/macroitem.h>
 
 #include <dtDirector/node.h>
 #include <dtDirector/director.h>
@@ -42,28 +43,41 @@ namespace dtDirector
    /////////////////////////////////////////////////////////////////////////////////
    QString PropertyEditor::GetGroupBoxLabelText(const QString& baseGroupBoxName)
    {
-      //std::vector<dtDAL::PropertyContainer*> selectedContainers;
-      //GetSelectedPropertyContainers(selectedContainers);
+      std::vector<dtDAL::PropertyContainer*> selectedContainers;
+      GetSelectedPropertyContainers(selectedContainers);
 
-      //if (selectedContainers.size() == 1)
-      //{
-      //   // set the name in the group box.
-      //   dtDAL::ActorProxy* selectedProxy = dynamic_cast<dtDAL::ActorProxy*>(selectedContainers[0]);
+      if (selectedContainers.size() == 1)
+      {
+         EventNode* eventNode = dynamic_cast<EventNode*>(selectedContainers[0]);
+         if (eventNode)
+         {
+            return "Event Node '" + tr(eventNode->GetType().GetFullName().c_str()) + "' selected";
+         }
 
-      //   if (selectedProxy != NULL)
-      //   {
-      //      QString label;
-      //      if (selectedProxy == EditorData::GetInstance().getCurrentMap()->GetEnvironmentActor())
-      //      {
-      //         label = baseGroupBoxName + " ('" + tr(selectedProxy->GetName().c_str()) + " *Environment Actor*' selected)";
-      //      }
-      //      else
-      //      {
-      //         label = baseGroupBoxName + " ('" + tr(selectedProxy->GetName().c_str()) + "' selected)";
-      //      }
-      //      return label;
-      //   }
-      //}
+         ActionNode* actionNode = dynamic_cast<ActionNode*>(selectedContainers[0]);
+         if (actionNode)
+         {
+            return "Action Node '" + tr(actionNode->GetType().GetFullName().c_str()) + "' selected";
+         }
+
+         ValueNode* valueNode = dynamic_cast<ValueNode*>(selectedContainers[0]);
+         if (valueNode)
+         {
+            return "Value Node '" + tr(valueNode->GetType().GetFullName().c_str()) + "' selected";
+         }
+
+         DirectorGraphData* graph = dynamic_cast<DirectorGraphData*>(selectedContainers[0]);
+         if (graph)
+         {
+            return "Macro '" + tr(graph->GetName().c_str()) + "' selected";
+         }
+
+         Director* director = dynamic_cast<Director*>(selectedContainers[0]);
+         if (director)
+         {
+            return "Director '" + tr(director->GetName().c_str()) + "' selected";
+         }
+      }
 
       return BaseClass::GetGroupBoxLabelText(baseGroupBoxName);
    }
@@ -108,6 +122,22 @@ namespace dtDirector
       if (node)
       {
          NodeItem* item = mScene->GetNodeItem(node->GetID());
+
+         // Re-Draw the node.
+         if (item)
+         {
+            item->Draw();
+            item->ConnectLinks(true);
+         }
+
+         return;
+      }
+
+      // Check if the container is a graph.
+      DirectorGraphData* graph = dynamic_cast<DirectorGraphData*>(&propCon);
+      if (graph)
+      {
+         MacroItem* item = mScene->GetGraphItem(graph);
 
          // Re-Draw the node.
          if (item)

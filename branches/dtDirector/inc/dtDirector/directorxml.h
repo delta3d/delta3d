@@ -128,7 +128,7 @@ namespace dtDirector
        *
        * @param[in]  graph  The graph.
        */
-      void SaveGraphs(DirectorGraphData& graph);
+      void SaveGraphs(DirectorGraphData* graph);
 
       /**
        * Saves a node.

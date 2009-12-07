@@ -74,7 +74,7 @@ namespace dtDirector
       QTabWidget::mouseDoubleClickEvent(e);
 
       // Create a new tab and set it to the home graph.
-      mEditor->OpenGraph(&mEditor->GetDirector()->GetGraphData(), true);
+      mEditor->OpenGraph(mEditor->GetDirector()->GetGraphData(), true);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -147,7 +147,7 @@ namespace dtDirector
       count = (int)mGraph->mSubGraphs.size();
       for (int index = 0; index < count; index++)
       {
-         DirectorGraphData* graph = &mGraph->mSubGraphs[index];
+         DirectorGraphData* graph = mGraph->mSubGraphs[index].get();
          MacroItem* item = new MacroItem(graph, NULL, this);
          if (item)
          {
@@ -194,6 +194,24 @@ namespace dtDirector
          if (item && item->HasID(id))
          {
             return item;
+         }
+      }
+
+      return NULL;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   MacroItem* EditorScene::GetGraphItem(DirectorGraphData* graph)
+   {
+      int count = (int)mNodes.size();
+      for (int index = 0; index < count; index++)
+      {
+         NodeItem* item = mNodes[index];
+
+         MacroItem* macro = dynamic_cast<MacroItem*>(item);
+         if (macro && macro->GetGraph() == graph)
+         {
+            return macro;
          }
       }
 
@@ -292,7 +310,8 @@ namespace dtDirector
          this, SLOT(OnParentButton()));
 
       // Open the home graph.
-      OpenGraph(&mDirector->GetGraphData());
+      OpenGraph(mDirector->GetGraphData());
+      OpenGraph(mDirector->GetGraphData()->GetSubGraphs()[0], true);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -340,6 +359,7 @@ namespace dtDirector
          if (view)
          {
             view->GetScene()->Refresh();
+            view->GetScene()->RefreshProperties();
          }
       }
    }

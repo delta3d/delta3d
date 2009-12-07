@@ -48,14 +48,14 @@ public:
       director->SaveScript("test");
       director->LoadScript("test", NULL);
 
-      director->GetGraphData().GetEventNodes()[0]->Trigger(0);
+      director->GetGraphData()->GetEventNodes()[0]->Trigger(0);
 
       director->Update(0, 0);
       director->Update(0, 0);
 
-      int resultValue = director->GetGraphData().mSubGraphs[0].mValueNodes[3]->GetInt();
-      int extValue    = director->GetGraphData().mSubGraphs[0].mValueNodes[0]->GetInt();
-      int outsideValue= director->GetGraphData().mValueNodes[0]->GetInt();
+      int resultValue = director->GetGraphData()->mSubGraphs[0]->mValueNodes[3]->GetInt();
+      int extValue    = director->GetGraphData()->mSubGraphs[0]->mValueNodes[0]->GetInt();
+      int outsideValue= director->GetGraphData()->mValueNodes[0]->GetInt();
    }
 
 protected:

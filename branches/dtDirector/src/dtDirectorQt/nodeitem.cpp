@@ -345,7 +345,7 @@ namespace dtDirector
          data.link = &mNode->GetInputLinks()[index];
 
          data.linkName = new QGraphicsTextItem(this, mScene);
-         data.linkGraphic = new InputLinkItem(this, (int)mInputs.size(), data.linkName, mScene);
+         data.linkGraphic = new InputLinkItem(this, (int)mInputs.size()-1, data.linkName, mScene);
       }
 
       count = (int)mNode->GetOutputLinks().size();
@@ -356,7 +356,7 @@ namespace dtDirector
 
          data.link = &mNode->GetOutputLinks()[index];
 
-         data.linkGraphic = new OutputLinkItem(this, (int)mOutputs.size(), this, mScene);
+         data.linkGraphic = new OutputLinkItem(this, (int)mOutputs.size()-1, this, mScene);
          data.linkName = new QGraphicsTextItem(data.linkGraphic, mScene);
          data.linkName->setAcceptHoverEvents(false);
       }
@@ -369,7 +369,7 @@ namespace dtDirector
 
          data.link = &mNode->GetValueLinks()[index];
 
-         data.linkGraphic = new ValueLinkItem(this, (int)mValues.size(), this, mScene);
+         data.linkGraphic = new ValueLinkItem(this, (int)mValues.size()-1, this, mScene);
          data.linkName = new QGraphicsTextItem(data.linkGraphic, mScene);
          data.linkName->setAcceptHoverEvents(false);
       }
@@ -606,8 +606,6 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void NodeItem::DrawDividers()
    {
-      if (mLinkDivider || mValueDivider) return;
-
       // Draw the vertical divider if we are displaying both inputs and outputs.
       if (!mInputs.empty() || !mOutputs.empty())
       {
@@ -615,10 +613,15 @@ namespace dtDirector
          float y = mTextHeight + 1;
          float height = mLinkHeight - mTextHeight - 2;
 
-         mLinkDivider = new QGraphicsRectItem(this, scene());
+         if (!mLinkDivider) mLinkDivider = new QGraphicsRectItem(this, scene());
          mLinkDivider->setPos(x, y);
          mLinkDivider->setRect(0, 0, 0, height);
          mLinkDivider->setPen(QPen(Qt::darkGray, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+      }
+      else if (mLinkDivider)
+      {
+         delete mLinkDivider;
+         mLinkDivider = NULL;
       }
 
       // Draw the horizontal divider if we are displaying value links with inputs and/or outputs.
@@ -629,10 +632,15 @@ namespace dtDirector
          float y = mLinkHeight - 1;
          float width = mNodeWidth;
 
-         mValueDivider = new QGraphicsRectItem(this, scene());
+         if (!mValueDivider) mValueDivider = new QGraphicsRectItem(this, scene());
          mValueDivider->setPos(x, y);
          mValueDivider->setRect(0, 0, width, 0);
          mValueDivider->setPen(QPen(Qt::darkGray, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+      }
+      else if (mValueDivider)
+      {
+         delete mValueDivider;
+         mValueDivider = NULL;
       }
    }
 

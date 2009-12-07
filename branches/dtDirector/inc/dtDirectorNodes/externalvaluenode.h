@@ -72,22 +72,14 @@ namespace dtDirector
       virtual void BuildPropertyMap();
 
       /**
-       * Connects this node to a specified value link.
-       *
-       * @param[in]  valueLink  The value link to connect to.
-       *
-       * @return     True if the connection was made.  Connection
-       *              can fail based on type checking.
+       * Accessors for the name of the node.
        */
-      bool Connect(ValueLink* valueLink);
+      virtual void SetName(const std::string& name);
 
       /**
-       * Disconnects this node from a specified value link.
-       *
-       * @param[in]  valueLink  The value link to disconnect from.
-       *                         NULL to disconnect all.
+       * Event handler when a connection has changed.
        */
-      void Disconnect(ValueLink* valueLink = NULL);
+      virtual void OnConnectionChange();
 
       /**
        * Retrieves the total number of values linked to a property.

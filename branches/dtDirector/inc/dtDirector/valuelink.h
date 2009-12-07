@@ -130,6 +130,7 @@ namespace dtDirector
        * @return  The label of the link.
        */
       std::string GetLabel();
+      void SetLabel(const std::string& label);
 
       /**
        * Retrieves whether this link is an output link.
@@ -199,6 +200,7 @@ namespace dtDirector
    private:
 
       Node* mOwner;
+      std::string mLabel;
 
 #pragma warning (push)
 #pragma warning (disable:4251)

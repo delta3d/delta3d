@@ -219,9 +219,12 @@ namespace dtDirector
                   mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found a Graph");
                mInGraph++;
 
-               DirectorGraphData* graph = mGraphs.top();
-               graph->mSubGraphs.push_back(DirectorGraphData());
-               mGraphs.push(&graph->mSubGraphs[graph->mSubGraphs.size() - 1]);
+               DirectorGraphData* parent = mGraphs.top();
+               DirectorGraphData* newGraph = new DirectorGraphData();
+               newGraph->mParent = parent;
+               newGraph->BuildPropertyMap();
+               parent->mSubGraphs.push_back(newGraph);
+               mGraphs.push(newGraph);
             }
          }
       }
@@ -246,7 +249,7 @@ namespace dtDirector
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found a Graph");
          mInGraph++;
 
-         mGraphs.push(&mDirector->GetGraphData());
+         mGraphs.push(mDirector->GetGraphData());
       }
    }
 

@@ -77,6 +77,9 @@ namespace dtDirector
          radialGradient.setColorAt(1.0, Qt::darkGreen);
          setBrush(radialGradient);
          setPolygon(mPolygon);
+
+         osg::Vec2 pos = mGraph->GetPosition();
+         setPos(pos.x(), pos.y());
       }
 
       mLoading = false;
@@ -88,7 +91,7 @@ namespace dtDirector
       // First clear all current links.
       NodeItem::FindLinks();
 
-      if (!mGraph) return;
+      if (!mGraph.valid()) return;
 
       std::vector<dtCore::RefPtr<EventNode> > inputs = mGraph->GetInputNodes();
       int count = (int)inputs.size();
@@ -100,7 +103,7 @@ namespace dtDirector
          data.link = &inputs[index]->GetInputLinks()[0];
 
          data.linkName = new QGraphicsTextItem(this, mScene);
-         data.linkGraphic = new InputLinkItem(this, (int)mInputs.size(), data.linkName, mScene);
+         data.linkGraphic = new InputLinkItem(this, (int)mInputs.size()-1, data.linkName, mScene);
       }
 
       std::vector<dtCore::RefPtr<ActionNode> > outputs = mGraph->GetOutputNodes();
@@ -112,7 +115,7 @@ namespace dtDirector
 
          data.link = &outputs[index]->GetOutputLinks()[0];
 
-         data.linkGraphic = new OutputLinkItem(this, (int)mOutputs.size(), this, mScene);
+         data.linkGraphic = new OutputLinkItem(this, (int)mOutputs.size()-1, this, mScene);
          data.linkName = new QGraphicsTextItem(data.linkGraphic, mScene);
          data.linkName->setAcceptHoverEvents(false);
       }
@@ -126,7 +129,7 @@ namespace dtDirector
 
          data.link = &values[index]->GetValueLinks()[0];
 
-         data.linkGraphic = new ValueLinkItem(this, (int)mValues.size(), this, mScene);
+         data.linkGraphic = new ValueLinkItem(this, (int)mValues.size()-1, this, mScene);
          data.linkName = new QGraphicsTextItem(data.linkGraphic, mScene);
          data.linkName->setAcceptHoverEvents(false);
       }
@@ -165,7 +168,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    QVariant MacroItem::itemChange(GraphicsItemChange change, const QVariant &value)
    {
-      if (!mGraph) return value;
+      if (!mGraph.valid()) return value;
 
       if (change == QGraphicsItem::ItemPositionHasChanged)
       {
@@ -177,19 +180,19 @@ namespace dtDirector
             ConnectLinks(true);
          }
       }
-      //else if (change == QGraphicsItem::ItemSelectedHasChanged)
-      //{
-      //   if (isSelected())
-      //   {
-      //      setZValue(zValue() + 9.0f);
-      //      mScene->AddSelected(mNode.get());
-      //   }
-      //   else
-      //   {
-      //      setZValue(zValue() - 9.0f);
-      //      mScene->RemoveSelected(mNode.get());
-      //   }
-      //}
+      else if (change == QGraphicsItem::ItemSelectedHasChanged)
+      {
+         if (isSelected())
+         {
+            setZValue(zValue() + 9.0f);
+            mScene->AddSelected(mGraph.get());
+         }
+         else
+         {
+            setZValue(zValue() - 9.0f);
+            mScene->RemoveSelected(mGraph.get());
+         }
+      }
 
       return value;
    }

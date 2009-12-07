@@ -33,6 +33,7 @@ namespace dtDirector
    ///////////////////////////////////////////////////////////////////////////////////////
    ValueLink::ValueLink(Node* owner, dtDAL::ActorProperty* prop, bool isOut, bool allowMultiple, bool typeCheck)
       : mOwner(owner)
+      , mLabel("NONE")
       , mDefaultProperty(prop)
       , mIsOut(isOut)
       , mAllowMultiple(allowMultiple)
@@ -67,6 +68,18 @@ namespace dtDirector
                   mGettingType = false;
                   return type;
                }
+            }
+         }
+
+         // If the owner of this link is a value node, then copy its type.
+         ValueNode* ownerValue = dynamic_cast<ValueNode*>(mOwner);
+         if (ownerValue)
+         {
+            dtDAL::DataType& type = ownerValue->GetPropertyType();
+            if (type != dtDAL::DataType::UNKNOWN)
+            {
+               mGettingType = false;
+               return type;
             }
          }
 
@@ -145,7 +158,13 @@ namespace dtDirector
          return GetDefaultProperty()->GetLabel();
       }
 
-      return "NONE";
+      return mLabel;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ValueLink::SetLabel(const std::string& label)
+   {
+      mLabel = label;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -180,6 +199,7 @@ namespace dtDirector
 
       mLinks.push_back(valueNode);
       valueNode->mLinks.push_back(this);
+      valueNode->OnConnectionChange();
       return true;
    }
 
@@ -207,12 +227,14 @@ namespace dtDirector
                      if (valueNode->mLinks[linkIndex] == this)
                      {
                         valueNode->mLinks.erase(valueNode->mLinks.begin() + linkIndex);
+                        valueNode->OnConnectionChange();
                         break;
                      }
                   }
                }
 
                mLinks.erase(mLinks.begin() + valueIndex);
+               valueNode->OnConnectionChange();
                break;
             }
          }

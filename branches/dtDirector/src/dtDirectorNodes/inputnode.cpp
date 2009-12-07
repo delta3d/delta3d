@@ -94,4 +94,11 @@ namespace dtDirector
          if (mOutputs.size()) mOutputs[0].Activate();
       }
    }
+
+   //////////////////////////////////////////////////////////////////////////
+   void InputNode::SetName(const std::string& name)
+   {
+      mName = name;
+      mInputs[0].SetName(name);
+   }
 }
