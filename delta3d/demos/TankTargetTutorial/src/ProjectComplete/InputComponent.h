@@ -40,44 +40,41 @@
  */
 class TUTORIAL_TANK_EXPORT InputComponent : public dtGame::BaseInputComponent
 {
-   public:
+public:
+   // Constructor
+   InputComponent(const std::string& name, bool inPlaybackMode);
 
-      // Constructor
-      InputComponent(const std::string& name, bool inPlaybackMode);
+   // Find our GameEvents after the map is loaded
+   void SetupEvents();
 
-      // Find our GameEvents after the map is loaded
-      void SetupEvents();
+   // We're going to handle key presses!
+   virtual bool HandleKeyPressed(const dtCore::Keyboard* keyboard, int key);
 
-      // We're going to handle key presses!
-      virtual bool HandleKeyPressed(const dtCore::Keyboard* keyboard, int key);
+   /**
+    * Handle messages if we want to
+    */
+   void ProcessMessage(const dtGame::Message& message);
 
-      /**
-       * Handle messages if we want to
-       */
-      void ProcessMessage(const dtGame::Message& message);
+protected:
+   /// Destructor
+   virtual ~InputComponent() {}
 
-   protected:
+private:
+   /**
+    * Simple helper method to fire a game event.  This method creates the game event
+    * message and sends it on to the Game Manager for processing.
+    * @param event The game event to fire.
+    */
+   void FireGameEvent(const dtDAL::GameEvent& event);
 
-      /// Destructor
-      virtual ~InputComponent() { }
+   dtCore::RefPtr<dtDAL::GameEvent> mToggleEngineEvent;
+   dtCore::RefPtr<dtDAL::GameEvent> mSpeedBoost;
+   dtCore::RefPtr<dtDAL::GameEvent> mTankFired;
+   dtCore::RefPtr<dtDAL::GameEvent> mTestShaders;
+   dtCore::RefPtr<dtDAL::GameEvent> mReset;
 
-   private:
-      /**
-       * Simple helper method to fire a game event.  This method creates the game event
-       * message and sends it on to the Game Manager for processing.
-       * @param event The game event to fire.
-       */
-      void FireGameEvent(const dtDAL::GameEvent& event);
-
-      dtCore::RefPtr<dtDAL::GameEvent> mToggleEngineEvent;
-      dtCore::RefPtr<dtDAL::GameEvent> mSpeedBoost;
-      dtCore::RefPtr<dtDAL::GameEvent> mTankFired;
-      dtCore::RefPtr<dtDAL::GameEvent> mTestShaders;
-      dtCore::RefPtr<dtDAL::GameEvent> mReset;
-
-      dtCore::RefPtr<dtGame::LogController> mLogController;
-      bool mInPlaybackMode;
+   dtCore::RefPtr<dtGame::LogController> mLogController;
+   bool mInPlaybackMode;
 };
 
-#endif
-
+#endif // __GM_TUTORIAL_INPUT_COMPONENT__

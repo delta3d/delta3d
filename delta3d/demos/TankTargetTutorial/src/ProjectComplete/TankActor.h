@@ -100,7 +100,7 @@ class TUTORIAL_TANK_EXPORT TankActor : public dtActors::GameMeshActor
       virtual void OnEnteredWorld();
 
    protected:
-      virtual ~TankActor() { } ;
+      virtual ~TankActor() {}
 
    private:
       // do our internal velocity/turn calculations based on keyboard status
@@ -133,7 +133,6 @@ class TUTORIAL_TANK_EXPORT TankActor : public dtActors::GameMeshActor
       bool mPropertiesUpdated;
 
       dtCore::RefPtr<osgSim::DOFTransform> mDOFTran;
-
 };
 
 /**
@@ -142,22 +141,22 @@ class TUTORIAL_TANK_EXPORT TankActor : public dtActors::GameMeshActor
  */
 class TUTORIAL_TANK_EXPORT TankActorProxy : public dtActors::GameMeshActorProxy
 {
-   public:
-      // Constructs the proxy.
-      TankActorProxy();
+public:
+   // Constructs the proxy.
+   TankActorProxy();
 
-      // Creates the properties that are custom to the hover tank proxy.
-      virtual void BuildPropertyMap();
+   // Creates the properties that are custom to the hover tank proxy.
+   virtual void BuildPropertyMap();
 
-   protected:
-      virtual ~TankActorProxy() { };
+protected:
+   virtual ~TankActorProxy() {}
 
-      // Creates an instance of our hover tank actor
-      virtual void CreateActor();
+   // Creates an instance of our hover tank actor
+   virtual void CreateActor();
 
-      // Called when this proxy is added to the game manager (ie, the "world")
-      // You can respond to OnEnteredWorld on either the proxy or actor or both.
-      virtual void OnEnteredWorld();
+   // Called when this proxy is added to the game manager (ie, the "world")
+   // You can respond to OnEnteredWorld on either the proxy or actor or both.
+   virtual void OnEnteredWorld();
 };
 
-#endif
+#endif // __GM_TUTORIAL_TANK_ACTOR__

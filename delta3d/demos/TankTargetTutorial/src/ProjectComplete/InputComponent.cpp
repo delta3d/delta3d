@@ -43,7 +43,6 @@ InputComponent::InputComponent(const std::string& name, bool inPlaybackMode)
 ////////////////////////////////////////////////////////////////////
 void InputComponent::SetupEvents()
 {
-
    mToggleEngineEvent = dtDAL::GameEventManager::GetInstance().FindEvent("ToggleEngine");
    if (mToggleEngineEvent == NULL)
    {
@@ -157,9 +156,11 @@ bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard, int key)
          else if (mLogController->GetLastKnownStatus().GetStateEnum()
             == dtGame::LogStateEnumeration::LOGGER_STATE_PLAYBACK)
          {
-            const std::vector<dtGame::LogKeyframe> &frames = mLogController->GetLastKnownKeyframeList();
+            const std::vector<dtGame::LogKeyframe>& frames = mLogController->GetLastKnownKeyframeList();
             if (frames.size() > 0)
+            {
                mLogController->RequestJumpToKeyframe(frames[0]);
+            }
             GetGameManager()->SetPaused(false);
          }
       }
@@ -224,7 +225,7 @@ void InputComponent::ProcessMessage(const dtGame::Message& message)
    // Once the system is started, we find the log controller so we can manipulate it later
    else if (message.GetMessageType() == dtGame::MessageType::INFO_RESTARTED)
    {
-      mLogController = dynamic_cast<dtGame::LogController*> (GetGameManager()->
+      mLogController = dynamic_cast<dtGame::LogController*>(GetGameManager()->
          GetComponentByName("LogController"));
    }
 }
