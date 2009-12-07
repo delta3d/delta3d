@@ -57,6 +57,14 @@ namespace dtGame
       /// Constructor
       GameActor(GameActorProxy& proxy);
 
+      /** Overloaded constructor will use the supplied node instead of
+         * creating one internally.
+         * @param proxy : the GameActorProxy represeting this GameActor
+         * @param node : A node this class should use internally
+         * @param name : The name of this instance
+         */
+      GameActor(GameActorProxy& proxy, TransformableNode &node, const std::string &name = "GameActor");
+
       /**
        * @return the GameActorProxy for this game actor.
        */

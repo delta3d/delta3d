@@ -840,6 +840,17 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+   GameActor::GameActor(GameActorProxy& proxy, TransformableNode &node, const std::string &name)
+      : dtCore::Physical(node, name)
+      , mProxy(&proxy)
+      , mPublished(false)
+      , mRemote(false)
+      , mLogger(dtUtil::Log::GetInstance("gameactor.cpp"))
+      , mPrototypeName("")
+   {
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////
    GameActor::~GameActor()
    {
    }
