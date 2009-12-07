@@ -13,7 +13,7 @@
             <xs:element ref="skinningShader" />
             <xs:element ref="animationChannel" minOccurs="0" maxOccurs="unbounded" />
             <xs:element ref="animationSequence" minOccurs="0" maxOccurs="unbounded" />
-			<xs:element ref="poseMesh" minOccurs="0" maxOccurs="1" />
+            <xs:element ref="poseMesh" minOccurs="0" maxOccurs="1" />
          </xs:choice>
          <xs:attribute name="name" use="optional">
             <xs:simpleType>
