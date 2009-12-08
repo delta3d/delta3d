@@ -30,7 +30,6 @@
 #include <dtCore/odespacewrap.h>
 #include <dtCore/odeworldwrap.h>
 #include <dtCore/base.h>
-#include <dtUtil/deprecationmgr.h>
 #include <dtUtil/refstring.h>
 #include <vector>
 #include <ode/common.h>
@@ -151,15 +150,6 @@ namespace dtCore
 
       ///Get a pointer to the internal ODESpaceWrap instance
       dtCore::ODESpaceWrap* GetSpaceWrapper() const;
-
-      ///DEPRECATED 1/14/2009 in favor of GetContactJointGroupID() (typo: missing t)
-      DEPRECATE_FUNC dJointGroupID GetContactJoinGroupID() const
-      {
-         DEPRECATE("dJointGroupID dtCore::ODEController::GetContactJoinGroupID() const",
-                   "dJointGroupID dtCore::ODEController::GetContactJointGroupID() const");
-
-         return this->GetContactJointGroupID();
-      }
 
       /// @return the number of instances of this class that are holding a reference to the static ODE initialization.
       static unsigned GetODERefCount();
