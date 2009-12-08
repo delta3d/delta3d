@@ -1,30 +1,31 @@
 /* -*-c++-*-
-* allTests - This source file (.h & .cpp) - Using 'The MIT License'
-* Copyright (C) 2005-2008, Alion Science and Technology Corporation
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-* 
-* This software was developed by Alion Science and Technology Corporation under
-* circumstances in which the U. S. Government may have rights in the software.
-*
-* @author David Guthrie
-*/
+ * allTests - This source file (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2005-2008, Alion Science and Technology Corporation
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * This software was developed by Alion Science and Technology Corporation under
+ * circumstances in which the U. S. Government may have rights in the software.
+ *
+ * @author David Guthrie
+ */
+
 #include <prefix/dtgameprefix-src.h>
 #include <vector>
 #include <string>
@@ -110,7 +111,7 @@ class MapTests : public CPPUNIT_NS::TestFixture
       void TestActorProxyRemoveProperties();
    private:
        static const std::string mExampleLibraryName;
-   
+
        void createActors(dtDAL::Map& map);
        dtDAL::ActorProperty* getActorProperty(dtDAL::Map& map,
          const std::string& propName, dtDAL::DataType& type, unsigned which = 0);
@@ -142,21 +143,27 @@ void MapTests::setUp()
         std::string currentDir = fileUtils.CurrentDirectory();
         std::string projectDir("dtDAL");
         if (currentDir.substr(currentDir.size() - projectDir.size()) != projectDir)
+        {
             fileUtils.PushDirectory(projectDir);
+        }
 
         std::string rbodyToDelete("WorkingMapProject/Characters/marine/marine.rbody");
 
         if (fileUtils.DirExists(rbodyToDelete))
+        {
             fileUtils.DirDelete(rbodyToDelete, true);
+        }
         else if (fileUtils.FileExists(rbodyToDelete))
+        {
             fileUtils.FileDelete(rbodyToDelete);
+        }
 
         dtDAL::Project::GetInstance().CreateContext("WorkingMapProject");
         dtDAL::Project::GetInstance().SetContext("WorkingMapProject");
         //copy the vector because the act of deleting a map will reload the map names list.
         const std::set<std::string> v = dtDAL::Project::GetInstance().GetMapNames();
 
-        for (std::set<std::string>::const_iterator i = v.begin(); i != v.end(); i++)
+        for (std::set<std::string>::const_iterator i = v.begin(); i != v.end(); ++i)
         {
             dtDAL::Project::GetInstance().DeleteMap(*i, true);
         }
@@ -173,40 +180,49 @@ void MapTests::tearDown()
 {
    dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
    bool shouldPopDir;
-   
+
    std::string currentDir = fileUtils.CurrentDirectory();
    std::string projectDir("dtDAL");
    shouldPopDir = currentDir.substr(currentDir.size() - projectDir.size()) == projectDir;
-   
+
    try
    {
       dtDAL::Project::GetInstance().SetContext("WorkingMapProject");
       //copy the vector because the act of deleting a map will reload the map names list.
       const std::set<std::string> v = dtDAL::Project::GetInstance().GetMapNames();
 
-      for (std::set<std::string>::const_iterator i = v.begin(); i != v.end(); i++) {
+      for (std::set<std::string>::const_iterator i = v.begin(); i != v.end(); ++i)
+      {
          dtDAL::Project::GetInstance().DeleteMap(*i);
       }
 
       std::string rbodyToDelete("WorkingMapProject/Characters/marine/marine.rbody");
 
       if (fileUtils.DirExists(rbodyToDelete))
+      {
          fileUtils.DirDelete(rbodyToDelete, true);
+      }
       else if (fileUtils.FileExists(rbodyToDelete))
+      {
          fileUtils.FileDelete(rbodyToDelete);
+      }
 
       if (dtDAL::LibraryManager::GetInstance().GetRegistry(mExampleLibraryName) != NULL)
       {
          dtDAL::LibraryManager::GetInstance().UnloadActorRegistry(mExampleLibraryName);
       }
-            
+
       if (shouldPopDir)
-         fileUtils.PopDirectory();      
+      {
+         fileUtils.PopDirectory();
+      }
    }
    catch (const dtUtil::Exception& e)
    {
       if (shouldPopDir)
+      {
          fileUtils.PopDirectory();
+      }
       CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
    }
 }
@@ -218,71 +234,71 @@ void MapTests::createActors(dtDAL::Map& map)
    dtDAL::LibraryManager& libMgr = dtDAL::LibraryManager::GetInstance();
    std::vector<const dtDAL::ActorType*> actorTypes;
    std::vector<dtDAL::ActorProperty*> props;
-   
+
    libMgr.GetActorTypes(actorTypes);
-   
+
    int skippedActors = 0;
    int nameCounter = 0;
    char nameAsString[21];
-   
+
    logger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, "Adding one of each proxy type to the map:");
 
    //only create half the actors :-)
    for (unsigned int i=0; i < actorTypes.size(); ++i)
    {
       // In order to keep the tests fasts, we skip the nasty slow ones.
-      if (actorTypes[i]->GetName() == dtActors::EngineActorRegistry::CLOUD_PLANE_ACTOR_TYPE->GetName() || 
+      if (actorTypes[i]->GetName() == dtActors::EngineActorRegistry::CLOUD_PLANE_ACTOR_TYPE->GetName() ||
           actorTypes[i]->GetName() == dtActors::EngineActorRegistry::CLOUD_DOME_ACTOR_TYPE->GetName()  ||
-          actorTypes[i]->GetName() == dtActors::EngineActorRegistry::WEATHER_ENVIRONMENT_ACTOR_TYPE->GetName() || 
+          actorTypes[i]->GetName() == dtActors::EngineActorRegistry::WEATHER_ENVIRONMENT_ACTOR_TYPE->GetName() ||
           actorTypes[i]->GetName() == "Test Environment Actor" ||
           actorTypes[i]->GetName() == "Waypoint" ||
-          actorTypes[i]->GetName() == "Sound Actor") 
+          actorTypes[i]->GetName() == "Sound Actor")
       {
-         skippedActors ++;
+         ++skippedActors;
          continue; // go to next actor
       }
-      
+
       dtCore::RefPtr<dtDAL::ActorProxy> proxy;
       // Test timing Stuff
       dtCore::Timer testClock;
       dtCore::Timer_t testClockStart = testClock.Tick();
-      
+
       logger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
                          "Creating actor proxy with type \"" + actorTypes[i]->GetFullName() + "\"." );
-      
+
       proxy = libMgr.CreateActorProxy(*actorTypes[i]);
       snprintf(nameAsString, 21, "%d", nameCounter);
       proxy->SetName(std::string(nameAsString));
-      nameCounter++;
-      
+      ++nameCounter;
+
       logger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
                          "Set proxy name to: %s", proxy->GetName().c_str());
-      
+
       proxy->GetPropertyList(props);
-      for (unsigned int j=0; j<props.size(); j++)
+      for (unsigned int j=0; j<props.size(); ++j)
       {
          logger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
                             "Property: Name: %s, Type: %s",
                             props[j]->GetName().c_str(), props[j]->GetDataType().GetName().c_str());
       }
-      
+
       // Temporary timing for map tests...  when we get a slow one, we should exclude it from
       // the tests so that tests don't slow down universally.
       dtCore::Timer_t testClockDone = testClock.Tick();
       double timeToCreate = testClock.DeltaSec(testClockStart, testClockDone);
       if (timeToCreate > 0.5) // more than .5 seconds is too long for 1 object in a test
          logger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__,
-                            "SLOW ACTOR CREATED IN TESTS - Type: %s, time[%f].  To ignore this slow actor in tests, modify these files (maptests.cpp, messagetests.cpp, proxytests.cpp, and gamemanagertests.cpp)", 
+                            "SLOW ACTOR CREATED IN TESTS - Type: %s, time[%f].  To ignore this slow actor in tests, modify these files (maptests.cpp, messagetests.cpp, proxytests.cpp, and gamemanagertests.cpp)",
                             actorTypes[i]->GetName().c_str(), timeToCreate);
-      
+
       map.AddProxy(*proxy);
-      
+
       CPPUNIT_ASSERT_MESSAGE("Proxy list has the wrong size.",
                              map.GetAllProxies().size() == (i + 1 - skippedActors));
       CPPUNIT_ASSERT_MESSAGE("Last proxy in the list should equal the new proxy.",
                              map.GetAllProxies().find(proxy->GetId())->second == proxy.get());
    }
-   CPPUNIT_ASSERT_MESSAGE("The actors that should have been skipped when creating the actors for the test were not found.  This code is out of date.", 
+   CPPUNIT_ASSERT_MESSAGE("The actors that should have been skipped when creating the actors for the test were not found.  This code is out of date.",
       skippedActors >= 2);
 }
 
@@ -308,7 +324,7 @@ void MapTests::TestMapAddRemoveProxies()
             map.GetProxyActorClasses().size() == copy.size() );
 
         unsigned int maxId = map.GetAllProxies().size();
-        for (unsigned int x = 0;  x < maxId; x++)
+        for (unsigned int x = 0;  x < maxId; ++x)
         {
             CPPUNIT_ASSERT_MESSAGE("Unable to remove item 0",
                 map.RemoveProxy(*map.GetAllProxies().begin()->second));
@@ -424,7 +440,7 @@ void MapTests::TestMapProxySearch()
 
         map.GetAllProxies(proxies);
 
-        for (unsigned x = 0;  x < proxies.size(); x++)
+        for (unsigned x = 0;  x < proxies.size(); ++x)
         {
             dtCore::RefPtr<dtDAL::ActorProxy> proxyPTR = map.GetProxyById(proxies[x]->GetId());
 
@@ -459,12 +475,12 @@ void MapTests::TestMapProxySearch()
                 results.front() == &proxy);
 
             map.FindProxies(results, std::string(""), cat, typeName);
-            
+
             for (unsigned j = 0; j < results.size(); ++j)
             {
                const dtDAL::ActorType& at = results[j]->GetActorType();
                std::ostringstream ss;
-               ss << "Each proxy in the results should have the type or be a subtype of \"" << cat << "." << typeName << 
+               ss << "Each proxy in the results should have the type or be a subtype of \"" << cat << "." << typeName <<
                   "\".  The result has type \"" << at << "\"";
                CPPUNIT_ASSERT_MESSAGE(ss.str(), at.InstanceOf(proxy.GetActorType()));
             }
@@ -705,7 +721,7 @@ void MapTests::TestMapEventsModified()
    {
       dtDAL::Project& project = dtDAL::Project::GetInstance();
       dtDAL::Map& map = project.CreateMap("Neato Map", "neatomap");
-      
+
       CPPUNIT_ASSERT(!map.IsModified());
 
       dtCore::RefPtr<dtDAL::GameEvent> event = new dtDAL::GameEvent("jojo", "helo");
@@ -713,7 +729,7 @@ void MapTests::TestMapEventsModified()
       CPPUNIT_ASSERT_MESSAGE("Adding an event should mark the map modified.", map.IsModified());
 
       map.SetModified(false);
-      
+
       map.GetEventManager().RemoveEvent(*event);
       CPPUNIT_ASSERT_MESSAGE("Removing an event should mark the map modified.", map.IsModified());
 
@@ -730,7 +746,7 @@ void MapTests::TestMapEventsModified()
 
       map.GetEventManager().ClearAllEvents();
       CPPUNIT_ASSERT_MESSAGE("Clearing all events should mark the map modified.", map.IsModified());
-      
+
       project.DeleteMap(map);
    }
    catch (const dtUtil::Exception& e)
@@ -787,7 +803,7 @@ void MapTests::TestMapSaveAndLoad()
         dtDAL::LibraryManager::GetInstance().LoadActorRegistry(mExampleLibraryName);
 
 
-        dtDAL::ResourceDescriptor dirtRD = project.AddResource("dirt", 
+        dtDAL::ResourceDescriptor dirtRD = project.AddResource("dirt",
            DATA_DIR + "/models/terrain_simple.ive", "dirt", dtDAL::DataType::STATIC_MESH);
 
         createActors(*map);
@@ -807,19 +823,19 @@ void MapTests::TestMapSaveAndLoad()
         ((dtDAL::DoubleActorProperty*)ap)->SetValue(39.70);
 
 
-        //ActorActorProperty
+        // ActorActorProperty
         ap = getActorProperty(*map, "", dtDAL::DataType::ACTOR);
         dtDAL::ActorActorProperty* aap = static_cast<dtDAL::ActorActorProperty*>(ap);
         const std::string& className = aap->GetDesiredActorClass();
         std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > toFill;
-        //Do a search for the class name.
+        // Do a search for the class name.
         map->FindProxies(toFill, "", "", "", className);
 
         CPPUNIT_ASSERT(toFill.size() > 0);
-        //Set the value.
+        // Set the value.
         aap->SetValue(toFill[0].get());
-        //need to clear this because it could cause a segfault if this is not deleted before a
-        //library is unloadad.
+        // need to clear this because it could cause a segfault if this is not deleted before a
+        // library is unloadad.
         toFill.clear();
 
         osg::Vec3 testVec3_1(33.5f, 12.25f, 49.125f);
@@ -834,7 +850,7 @@ void MapTests::TestMapSaveAndLoad()
         static_cast<dtDAL::Vec3ActorProperty*>(ap)->SetValue(testVec3_2);
         testVec3_2 = static_cast<dtDAL::Vec3ActorProperty*>(ap)->GetValue();
 
-        // Note - some properties, especially orientation ones, tend to mangle the 
+        // Note - some properties, especially orientation ones, tend to mangle the
         // values that we set so that we don't get back what we passed in.  To handle that
         // in the test, we get back whatever they think the value should be.
         ap = getActorProperty(*map, "", dtDAL::DataType::VEC3F);
@@ -886,7 +902,7 @@ void MapTests::TestMapSaveAndLoad()
         unsigned numProxies = map->GetAllProxies().size();
         std::map<dtCore::UniqueId, std::string> names;
         for (std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> >::const_iterator i = map->GetAllProxies().begin();
-            i != map->GetAllProxies().end(); i++)
+            i != map->GetAllProxies().end(); ++i)
         {
             names.insert(std::make_pair(i->first, i->second->GetName()));
         }
@@ -978,7 +994,7 @@ void MapTests::TestMapSaveAndLoad()
             && osg::equivalent(v3ap->GetValue()[2], testVec3_2[2], 1e-2f)
             );
 
-        // VEC3 
+        // VEC3
         ap = getActorProperty(*map, "", dtDAL::DataType::VEC3F, 0);
         if (logger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
         {
@@ -986,7 +1002,7 @@ void MapTests::TestMapSaveAndLoad()
             logger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                 "Vec3f Property values: %f, %f, %f", val[0], val[1], val[2]);
             logger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-               "Property: name [%s], label [%s], desc [%s], readonly[%d], tostring[%s], precision[%d]", 
+               "Property: name [%s], label [%s], desc [%s], readonly[%d], tostring[%s], precision[%d]",
                ap->GetName().c_str(), ap->GetLabel().c_str(), ap->GetDescription().c_str(), ap->IsReadOnly(),
                ap->ToString().c_str(), ap->GetNumberPrecision());
         }
@@ -997,7 +1013,7 @@ void MapTests::TestMapSaveAndLoad()
             && osg::equivalent(val3[2], testVec3_2_actualValues[2], 1e-2f)
             );
 
- 
+
         ap = getActorProperty(*map, "", dtDAL::DataType::VEC3D, 0);
         if (logger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
         {
@@ -1135,7 +1151,7 @@ void MapTests::TestMapSaveAndLoad()
         std::string newAuthor("Dr. Eddie");
 
         map->SetAuthor(newAuthor);
-        
+
         const std::string filenameBeforeBackup = map->GetFileName();;
         project.SaveMapBackup(*map);
 
@@ -1242,9 +1258,9 @@ void MapTests::TestMapSaveAndLoadEvents()
       dtDAL::Map* map = &project.CreateMap(mapName, mapFileName);
 
       map->SetDescription("Teague is league with a \"t\".");
-      
+
       const unsigned eventCount = 6;
-        
+
       std::vector<dtCore::RefPtr<dtDAL::GameEvent> > events;
       for (unsigned i = 0; i < eventCount; ++i)
       {
@@ -1254,24 +1270,24 @@ void MapTests::TestMapSaveAndLoadEvents()
          map->GetEventManager().AddEvent(*ge);
          events.push_back(ge);
       }
-      
+
       project.SaveMap(*map);
-      
+
       project.CloseMap(*map);
       map = NULL;
-      
+
       map = &project.GetMap(mapName);
-      
+
       CPPUNIT_ASSERT_EQUAL(eventCount, map->GetEventManager().GetNumEvents());
-            
+
       for (unsigned i = 0; i < eventCount; ++i)
       {
          dtDAL::GameEvent& expectedEvent = *events[i];
-         dtDAL::GameEvent* ge = map->GetEventManager().FindEvent(expectedEvent.GetUniqueId()); 
-         
-         CPPUNIT_ASSERT_MESSAGE("All of the game events saved should have been loaded with the same id's", 
+         dtDAL::GameEvent* ge = map->GetEventManager().FindEvent(expectedEvent.GetUniqueId());
+
+         CPPUNIT_ASSERT_MESSAGE("All of the game events saved should have been loaded with the same id's",
             ge != NULL);
-            
+
          CPPUNIT_ASSERT_EQUAL(expectedEvent.GetName(), ge->GetName());
          CPPUNIT_ASSERT_EQUAL(expectedEvent.GetDescription(), ge->GetDescription());
       }
@@ -1299,18 +1315,18 @@ void MapTests::TestMapSaveAndLoadGroup()
 
       const dtDAL::ActorType* at = dtDAL::LibraryManager::GetInstance().FindActorType("dtcore.examples", "Test All Properties");
       CPPUNIT_ASSERT(at != NULL);
-      
+
       dtCore::RefPtr<dtDAL::ActorProxy> proxy = dtDAL::LibraryManager::GetInstance().CreateActorProxy(*at);
-      
+
       dtDAL::GroupActorProperty* groupProp;
       proxy->GetProperty("TestGroup", groupProp);
-      
+
       dtDAL::ResourceDescriptor rd("StaticMeshes:Chicken:Horse.ive", "StaticMeshes:Chicken:Horse.ive");
-      
+
       dtDAL::GameEvent* ge = new dtDAL::GameEvent("cow", "chicken");
       map->GetEventManager().AddEvent(*ge);
-      
-      dtCore::RefPtr<dtDAL::NamedGroupParameter> expectedResult = new dtDAL::NamedGroupParameter("TestGroup");      
+
+      dtCore::RefPtr<dtDAL::NamedGroupParameter> expectedResult = new dtDAL::NamedGroupParameter("TestGroup");
       //static_cast<dtDAL::NamedFloatParameter&>(*expectedResult->AddParameter("SillyFloat", dtDAL::DataType::FLOAT)).SetValue(33.4f);
       static_cast<dtDAL::NamedIntParameter&>(*expectedResult->AddParameter("SillyInt", dtDAL::DataType::INT)).SetValue(24);
       static_cast<dtDAL::NamedLongIntParameter&>(*expectedResult->AddParameter("SillyLong", dtDAL::DataType::LONGINT)).SetValue(37L);
@@ -1336,25 +1352,25 @@ void MapTests::TestMapSaveAndLoadGroup()
       static_cast<dtDAL::NamedRGBAColorParameter&>(*secondInternalGroup->AddParameter("CuteColor", dtDAL::DataType::RGBACOLOR)).SetValue(osg::Vec4(1.0f, 0.6f, 0.3f, 0.11f));
       static_cast<dtDAL::NamedFloatParameter&>(*secondInternalGroup->AddParameter("CuteFloat", dtDAL::DataType::FLOAT)).SetValue(3.8f);
       static_cast<dtDAL::NamedDoubleParameter&>(*secondInternalGroup->AddParameter("CuteDouble", dtDAL::DataType::DOUBLE)).SetValue(3.8f);
-      
+
       groupProp->SetValue(*expectedResult);
-      
+
       //remove the floats so that they can compared separately using epsilons.
       expectedResult->RemoveParameter(secondInternalGroup->GetName());
-      
+
       map->AddProxy(*proxy);
-      
+
       project.SaveMap(*map);
 
       project.CloseMap(*map);
-      
+
       map = &project.GetMap(mapName);
-      
+
       std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > toFill;
-      
+
       map->GetAllProxies(toFill);
       CPPUNIT_ASSERT_EQUAL_MESSAGE("The map was saved with one proxy.  It should have one when loaded.", toFill.size(), size_t(1));
-      
+
       proxy = toFill[0];
 
       proxy->GetProperty("TestGroup", groupProp);
@@ -1365,21 +1381,21 @@ void MapTests::TestMapSaveAndLoadGroup()
 
       dtCore::RefPtr<dtDAL::NamedParameter> floatGroup = actualResult->RemoveParameter(secondInternalGroup->GetName());
       dtCore::RefPtr<dtDAL::NamedGroupParameter> actualFloatGroup(dynamic_cast<dtDAL::NamedGroupParameter*>(floatGroup.get()));
-      
+
       CPPUNIT_ASSERT_MESSAGE("The loaded result parameter should have group filled with floats.", actualFloatGroup.valid());
-            
+
       CPPUNIT_ASSERT_MESSAGE("Actual : \n" + actualResult->ToString() + " \n\n " + expectedResult->ToString(), *expectedResult == *actualResult);
-   
+
       std::vector<dtDAL::NamedParameter*> savedFloatParams;
       secondInternalGroup->GetParameters(savedFloatParams);
       for (unsigned i = 0; i < savedFloatParams.size(); ++i)
       {
          dtDAL::NamedParameter* np = actualFloatGroup->GetParameter(savedFloatParams[i]->GetName());
          CPPUNIT_ASSERT_MESSAGE(np->GetName() + " should be a parameter in the FloatGroup parameter group loaded from the map." , np != NULL);
-         CPPUNIT_ASSERT_MESSAGE(np->GetName() + " parameter should have the same data type as it did before it was saved in a map." , 
+         CPPUNIT_ASSERT_MESSAGE(np->GetName() + " parameter should have the same data type as it did before it was saved in a map." ,
             np->GetDataType() == savedFloatParams[i]->GetDataType());
       }
-      
+
       std::string valueString = actualFloatGroup->ToString() + "\n\n" + secondInternalGroup->ToString();
 
       CPPUNIT_ASSERT_MESSAGE("The loaded vec2 parameter should match the one saved: \n" + valueString,
@@ -1425,7 +1441,7 @@ void MapTests::TestMapSaveAndLoadGroup()
          dtUtil::Equivalent(
             static_cast<dtDAL::NamedRGBAColorParameter*>(secondInternalGroup->GetParameter("CuteColor"))->GetValue(),
             static_cast<dtDAL::NamedRGBAColorParameter*>(actualFloatGroup->GetParameter("CuteColor"))->GetValue(), 1e-3f));
-            
+
       CPPUNIT_ASSERT_MESSAGE("The loaded float parameter should match the one saved: \n" + valueString,
          osg::equivalent(
             static_cast<dtDAL::NamedFloatParameter*>(secondInternalGroup->GetParameter("CuteFloat"))->GetValue(),
@@ -1434,10 +1450,10 @@ void MapTests::TestMapSaveAndLoadGroup()
          osg::equivalent(
             static_cast<dtDAL::NamedDoubleParameter*>(secondInternalGroup->GetParameter("CuteDouble"))->GetValue(),
             static_cast<dtDAL::NamedDoubleParameter*>(actualFloatGroup->GetParameter("CuteDouble"))->GetValue(), 1e-3));
-            
+
       project.DeleteMap(*map, false);
-   } 
-   catch (const dtUtil::Exception& e) 
+   }
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(std::string("Error: ") + e.What());
    }
@@ -1464,7 +1480,7 @@ void MapTests::TestMapSaveAndLoadActorGroups()
 
       const dtDAL::ActorType* at = libraryManager.FindActorType("dtcore.Tasks", "Task Actor");
       CPPUNIT_ASSERT(at != NULL);
-      
+
       dtCore::RefPtr<dtDAL::ActorProxy> proxy = libraryManager.CreateActorProxy(*at);
 
       map->AddProxy(*proxy);
@@ -1490,23 +1506,23 @@ void MapTests::TestMapSaveAndLoadActorGroups()
 
       std::vector<dtCore::UniqueId> actualResult = arrayProp->GetValue();
 
-      CPPUNIT_ASSERT_EQUAL(subTasks.size(), actualResult.size());      
+      CPPUNIT_ASSERT_EQUAL(subTasks.size(), actualResult.size());
       CPPUNIT_ASSERT(subTasks == actualResult);
       project.SaveMap(*map);
       project.CloseMap(*map);
-      
+
       map = &project.GetMap(mapName);
-      
+
       //Here the old proxy will be deleted, but we get the id for it to load the new instance in the map.
       proxy = map->GetProxyById(proxy->GetId());
       CPPUNIT_ASSERT(proxy.valid());
       proxy->GetProperty("SubTaskList", arrayProp);
       actualResult = arrayProp->GetValue();
-      
-      CPPUNIT_ASSERT_EQUAL(subTasks.size() , actualResult.size());      
+
+      CPPUNIT_ASSERT_EQUAL(subTasks.size() , actualResult.size());
       CPPUNIT_ASSERT(subTasks == actualResult);
-   } 
-   catch (const dtUtil::Exception& e) 
+   }
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(std::string("Error: ") + e.What());
    }
@@ -1560,7 +1576,7 @@ void MapTests::TestLoadMapIntoScene()
         project.LoadMapIntoScene(map, scene);
 
         //spin through the scene removing each actor found from the set.
-        for (unsigned x = 0; x < (unsigned)scene.GetNumberOfAddedDrawable(); x++)
+        for (unsigned x = 0; x < (unsigned)scene.GetNumberOfAddedDrawable(); ++x)
         {
             dtCore::DeltaDrawable* dd = scene.GetDrawable(x);
             std::set<dtCore::UniqueId>::iterator found = ids.find(dd->GetUniqueId());
@@ -1600,7 +1616,7 @@ void MapTests::TestEnvironmentMapLoading()
       CPPUNIT_ASSERT(container.empty());
 
       const unsigned int numProxies = 4;
-      for(unsigned int i = 0; i < numProxies; i++)
+      for (unsigned int i = 0; i < numProxies; ++i)
       {
          dtCore::RefPtr<dtDAL::ActorProxy> p =
             dtDAL::LibraryManager::GetInstance().CreateActorProxy("dtcore.examples", "Test All Properties");
@@ -1610,8 +1626,10 @@ void MapTests::TestEnvironmentMapLoading()
 
       CPPUNIT_ASSERT(container.size() == numProxies);
 
-      for(unsigned int i = 0; i < container.size(); i++)
+      for (unsigned int i = 0; i < container.size(); ++i)
+      {
          map.AddProxy(*container[i]);
+      }
 
       std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > mapProxies;
       map.GetAllProxies(mapProxies);
@@ -1661,7 +1679,7 @@ void MapTests::TestLoadEnvironmentMapIntoScene()
    CPPUNIT_ASSERT(container.empty());
 
    const unsigned int numProxies = 4;
-   for(unsigned int i = 0; i < numProxies; i++)
+   for (unsigned int i = 0; i < numProxies; ++i)
    {
       dtCore::RefPtr<dtDAL::ActorProxy> p =
          dtDAL::LibraryManager::GetInstance().CreateActorProxy("dtcore.examples", "Test All Properties");
@@ -1671,8 +1689,10 @@ void MapTests::TestLoadEnvironmentMapIntoScene()
 
    CPPUNIT_ASSERT(container.size() == numProxies);
 
-   for(unsigned int i = 0; i < container.size(); i++)
+   for (unsigned int i = 0; i < container.size(); ++i)
+   {
       map.AddProxy(*container[i]);
+   }
 
    std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > mapProxies;
    map.GetAllProxies(mapProxies);
@@ -1710,7 +1730,7 @@ public:
    bool RemoveTheProperty(std::string& stringToRemove)
    {
       // not in the list
-      if(GetProperty(stringToRemove) == false) return false;
+      if (GetProperty(stringToRemove) == false) return false;
       // is in the list
       RemoveProperty(stringToRemove);
       return (GetProperty(stringToRemove) == NULL);
@@ -1723,7 +1743,7 @@ protected:
 ///////////////////////////////////////////////////////////////////////////////////////
 void MapTests::TestActorProxyRemoveProperties()
 {
-   dtCore::RefPtr<OverriddenActorProxy> actorProxy = new OverriddenActorProxy; 
+   dtCore::RefPtr<OverriddenActorProxy> actorProxy = new OverriddenActorProxy;
    std::string NameToRemove = dtDAL::TransformableActorProxy::PROPERTY_ROTATION;
    std::string DoesntExist = "TeagueHasAHawtMom";
    CPPUNIT_ASSERT_MESSAGE("Tried to remove a property before initialized should have returned false", actorProxy->RemoveTheProperty(NameToRemove) == false );

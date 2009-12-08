@@ -56,7 +56,7 @@ class SoundComponentTests : public CPPUNIT_NS::TestFixture
       void tearDown();
 
       // Utility Methods
-      void CreateSoundActors( int proxyTotal, bool addToGM );
+      void CreateSoundActors(int proxyTotal, bool addToGM);
       int GetGMSoundActorCount() const;
 
       // Test Methods
@@ -98,7 +98,7 @@ void SoundComponentTests::setUp()
       dtCore::System::GetInstance().Start();
 
       mSndComp = new dtAudio::SoundComponent("TestSoundComponent");
-      mGM->AddComponent( *mSndComp, dtGame::GameManager::ComponentPriority::NORMAL );
+      mGM->AddComponent(*mSndComp, dtGame::GameManager::ComponentPriority::NORMAL);
    }
    catch (const dtUtil::Exception& e)
    {
@@ -130,19 +130,19 @@ void SoundComponentTests::tearDown()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void SoundComponentTests::CreateSoundActors( int proxyTotal, bool addToGM )
+void SoundComponentTests::CreateSoundActors(int proxyTotal, bool addToGM)
 {
-   mSndProxyArray.reserve( proxyTotal );
+   mSndProxyArray.reserve(proxyTotal);
 
    dtCore::RefPtr<dtAudio::SoundActorProxy> curProxy;
-   for( int i = 0; i < proxyTotal; ++i )
+   for (int i = 0; i < proxyTotal; ++i)
    {
-      mGM->CreateActor( *mSndActorType, curProxy );
-      mSndProxyArray.push_back( curProxy.get() );
+      mGM->CreateActor(*mSndActorType, curProxy);
+      mSndProxyArray.push_back(curProxy.get());
 
-      if( addToGM )
+      if (addToGM)
       {
-         mGM->AddActor( *curProxy, false, false );
+         mGM->AddActor(*curProxy, false, false);
       }
 
       curProxy = NULL;
@@ -154,7 +154,7 @@ int SoundComponentTests::GetGMSoundActorCount() const
 {
    typedef std::vector<dtDAL::ActorProxy*> ProxyArray;
    ProxyArray proxies;
-   mGM->FindActorsByType( *mSndActorType, proxies );
+   mGM->FindActorsByType(*mSndActorType, proxies);
    return int(proxies.size());
 }
 
@@ -175,10 +175,10 @@ void SoundComponentTests::TestSoundManagement()
       const std::string name4("Sound_4");
       const std::string name5("Sound_5");
       const std::string name6("Sound_6");
-      Sound* sound1 = mSndComp->AddSound( testSoundFile ); // DEFAULT
-      Sound* sound2 = mSndComp->AddSound( testSoundFile2, SoundType::SOUND_TYPE_WORLD_EFFECT );
-      Sound* sound3 = mSndComp->AddSound( testSoundFile, name3 ); // DEFAULT
-      Sound* sound4 = mSndComp->AddSound( testSoundFile, name4, SoundType::SOUND_TYPE_VOICE );
+      Sound* sound1 = mSndComp->AddSound(testSoundFile); // DEFAULT
+      Sound* sound2 = mSndComp->AddSound(testSoundFile2, SoundType::SOUND_TYPE_WORLD_EFFECT);
+      Sound* sound3 = mSndComp->AddSound(testSoundFile, name3); // DEFAULT
+      Sound* sound4 = mSndComp->AddSound(testSoundFile, name4, SoundType::SOUND_TYPE_VOICE);
       Sound* sound5 = AudioManager::GetInstance().NewSound();
       Sound* sound6 = AudioManager::GetInstance().NewSound();
       sound5->LoadFile(testSoundFile.c_str());
@@ -220,11 +220,11 @@ void SoundComponentTests::TestSoundManagement()
       // Test adding the files again under the same names and conditions.
       CPPUNIT_ASSERT(mSndComp->AddSound(testSoundFile) == NULL);
       CPPUNIT_ASSERT(mSndComp->AddSound(testSoundFile2, SoundType::SOUND_TYPE_WORLD_EFFECT) == NULL);
-      CPPUNIT_ASSERT(mSndComp->AddSound(testSoundFile, name3 ) == NULL );
+      CPPUNIT_ASSERT(mSndComp->AddSound(testSoundFile, name3) == NULL);
       CPPUNIT_ASSERT(mSndComp->AddSound(testSoundFile, name4, SoundType::SOUND_TYPE_VOICE) == NULL);
       CPPUNIT_ASSERT(!mSndComp->AddSound(*sound5, name5));
       CPPUNIT_ASSERT(!mSndComp->AddSound(*sound6, name6, SoundType::SOUND_TYPE_MUSIC));
-      CPPUNIT_ASSERT(mSndComp->AddSound(fakeSoundFile ) == NULL);
+      CPPUNIT_ASSERT(mSndComp->AddSound(fakeSoundFile) == NULL);
 
       // Ensure the sounds can be accessed again.
       CPPUNIT_ASSERT(mSndComp->GetSound(name1) == sound1);
@@ -233,7 +233,7 @@ void SoundComponentTests::TestSoundManagement()
       CPPUNIT_ASSERT(mSndComp->GetSound(name4) == sound4);
       CPPUNIT_ASSERT(mSndComp->GetSound(name5) == sound5);
       CPPUNIT_ASSERT(mSndComp->GetSound(name6) == sound6);
-      CPPUNIT_ASSERT(mSndComp->GetSound(fakeSoundFile ) == NULL);
+      CPPUNIT_ASSERT(mSndComp->GetSound(fakeSoundFile) == NULL);
 
       // Test access to Sound Info objects containing the Sounds
       const SoundInfo* info1 = mSndComp->GetSoundInfo(name1);
@@ -271,7 +271,7 @@ void SoundComponentTests::TestSoundManagement()
       soundArray.clear();
 
       mSndComp->GetSoundsByType(SoundType::SOUND_TYPE_WORLD_EFFECT, soundArray);
-      CPPUNIT_ASSERT( soundArray.size() == 1 );
+      CPPUNIT_ASSERT(soundArray.size() == 1);
       soundArray.clear();
 
       mSndComp->GetSoundsByType(SoundType::SOUND_TYPE_VOICE, soundArray);
@@ -414,14 +414,14 @@ void SoundComponentTests::TestSoundCommands()
    CPPUNIT_ASSERT(!sound5->IsPlaying());
 
    // --- By Name
-   mSndComp->DoSoundCommand(SoundCommand::SOUND_COMMAND_PLAY, name3 );
+   mSndComp->DoSoundCommand(SoundCommand::SOUND_COMMAND_PLAY, name3);
    System::GetInstance().Step(); // Let Audio Manager process command.
    CPPUNIT_ASSERT(!sound1->IsPlaying());
    CPPUNIT_ASSERT(!sound2->IsPlaying());
    CPPUNIT_ASSERT(sound3->IsPlaying());
    CPPUNIT_ASSERT(sound4->IsPlaying());
    CPPUNIT_ASSERT(!sound5->IsPlaying());
-   
+
    // Test playing by type.
    // --- Play all World Effects
    SoundComponent::SoundArray soundArray;
@@ -445,13 +445,13 @@ void SoundComponentTests::TestSoundCommands()
    CPPUNIT_ASSERT(!sound2->IsPlaying()); // This should still be NOT playing.
    CPPUNIT_ASSERT(sound3->IsPlaying());
    CPPUNIT_ASSERT(sound4->IsPlaying());
-   CPPUNIT_ASSERT(sound5->IsPlaying());   
+   CPPUNIT_ASSERT(sound5->IsPlaying());
 
    // --- Play all Music and pause all World Effects.
    soundArray.clear();
    mSndComp->GetSoundsByType(SoundType::SOUND_TYPE_MUSIC, soundArray);
-   CPPUNIT_ASSERT(soundArray.size() == 2 );
-   mSndComp->DoSoundCommand( SoundCommand::SOUND_COMMAND_PLAY, soundArray);
+   CPPUNIT_ASSERT(soundArray.size() == 2);
+   mSndComp->DoSoundCommand(SoundCommand::SOUND_COMMAND_PLAY, soundArray);
    soundArray.clear();
    mSndComp->PauseAllSoundsByType(SoundType::SOUND_TYPE_WORLD_EFFECT);
    System::GetInstance().Step(); // Let Audio Manager process command.
@@ -498,7 +498,7 @@ void SoundComponentTests::TestSoundCommands()
 
    // Play all sounds
    soundArray.clear();
-   mSndComp->GetAllSounds( soundArray );
+   mSndComp->GetAllSounds(soundArray);
    CPPUNIT_ASSERT(soundArray.size() == 5);
    mSndComp->DoSoundCommand(SoundCommand::SOUND_COMMAND_PLAY, soundArray);
    System::GetInstance().Step(); // Let Audio Manager process command.
@@ -531,9 +531,9 @@ void SoundComponentTests::TestSoundPosition()
 {
    const std::string testSoundFile = dtUtil::GetDeltaRootPath() + "/tests/data/Sounds/silence.wav";
    dtCore::RefPtr<dtAudio::SoundActorProxy> sndActorProxy;
-   
-   mGM->CreateActor( *mSndActorType, sndActorProxy );
-   mGM->AddActor( *sndActorProxy, false, false );
+
+   mGM->CreateActor(*mSndActorType, sndActorProxy);
+   mGM->AddActor(*sndActorProxy, false, false);
 
    dtAudio::Sound* snd = sndActorProxy->GetSound();
 
@@ -543,7 +543,7 @@ void SoundComponentTests::TestSoundPosition()
    CPPUNIT_ASSERT(actorTrans != snd->GetPosition());
 
    dtCore::System::GetInstance().Step(); // Let Audio Manager process command.
-     
+
    //Verify that when the Actor moves, the sound moves with it.
-   CPPUNIT_ASSERT(actorTrans == snd->GetPosition());   
+   CPPUNIT_ASSERT(actorTrans == snd->GetPosition());
 }

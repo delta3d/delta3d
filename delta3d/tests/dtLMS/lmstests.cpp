@@ -1,30 +1,31 @@
 /* -*-c++-*-
-* allTests - This source file (.h & .cpp) - Using 'The MIT License'
-* Copyright (C) 2005-2008, Alion Science and Technology Corporation
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-* 
-* This software was developed by Alion Science and Technology Corporation under
-* circumstances in which the U. S. Government may have rights in the software.
-*
-* William E. Johnson II
-*/
+ * allTests - This source file (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2005-2008, Alion Science and Technology Corporation
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * This software was developed by Alion Science and Technology Corporation under
+ * circumstances in which the U. S. Government may have rights in the software.
+ *
+ * William E. Johnson II
+ */
+
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtLMS/lmstaskstatus.h>
@@ -47,14 +48,14 @@ class TestLmsComponent : public dtLMS::LmsComponent
 {
    public:
 
-      TestLmsComponent(const std::string &name) : 
-         dtLMS::LmsComponent(name) 
+      TestLmsComponent(const std::string& name)
+         : dtLMS::LmsComponent(name)
       {
 
-      } 
+      }
 
-      TestLmsComponent(const std::string &host, int port, bool reverseBytes) : 
-         dtLMS::LmsComponent(host, port, reverseBytes)
+      TestLmsComponent(const std::string& host, int port, bool reverseBytes)
+         : dtLMS::LmsComponent(host, port, reverseBytes)
       {
 
       }
@@ -74,12 +75,12 @@ class TestLmsComponent : public dtLMS::LmsComponent
          dtLMS::LmsComponent::SetNeedValidSocket(need);
       }
 
-      bool GetNeedValidSocket() const 
+      bool GetNeedValidSocket() const
       {
          return dtLMS::LmsComponent::GetNeedValidSocket();
       }
 
-      void SendLmsUpdate(dtGame::GameActorProxy &proxy)
+      void SendLmsUpdate(dtGame::GameActorProxy& proxy)
       {
          dtLMS::LmsComponent::SendLmsUpdate(proxy);
       }
@@ -92,7 +93,7 @@ class TestLmsComponent : public dtLMS::LmsComponent
 class LMSTests : public CPPUNIT_NS::TestFixture
 {
    CPPUNIT_TEST_SUITE(LMSTests);
-   
+
       CPPUNIT_TEST(TestTaskStatus);
       CPPUNIT_TEST(TestLmsMessage);
       CPPUNIT_TEST(TestLmsComponentHelperMethods);
@@ -124,7 +125,7 @@ void LMSTests::setUp()
 
 void LMSTests::tearDown()
 {
-   if(mGameManager.valid())
+   if (mGameManager.valid())
    {
       mGameManager->DeleteAllActors(true);
       mGameManager = NULL;
@@ -170,7 +171,7 @@ void LMSTests::TestLmsComponentHelperMethods()
 {
    dtCore::RefPtr<TestLmsComponent> lmsComp = new TestLmsComponent("TestLmsComponent");
    CPPUNIT_ASSERT(lmsComp.valid());
-   
+
    std::string id("1"), senderId("2");
    float taskScore = 5.4f;
    std::ostringstream oss;
@@ -192,7 +193,7 @@ void LMSTests::TestLmsComponentHelperMethods()
 
    std::string msgString = msg.ToString();
    oss.str("");
-   oss << msg.GetSenderID() << msg.GetDelimiter() << msg.GetMessageType().GetName() 
+   oss << msg.GetSenderID() << msg.GetDelimiter() << msg.GetMessageType().GetName()
        << msg.GetDelimiter() << msg.GetValue() << msg.GetDelimiter() << msg.GetObjectiveID();
 
    CPPUNIT_ASSERT_EQUAL(oss.str(), msgString);
@@ -211,13 +212,13 @@ void LMSTests::TestLmsComponentMessaging()
    dtCore::RefPtr<TestLmsComponent> lmsComp = new TestLmsComponent("TestLmsComponent");
    CPPUNIT_ASSERT(lmsComp.valid());
    mGameManager->AddComponent(*lmsComp, dtGame::GameManager::ComponentPriority::NORMAL);
-   
+
    CPPUNIT_ASSERT(lmsComp->GetLmsClientSocket() == NULL);
    try
    {
       lmsComp->ConnectToLms();
    }
-   catch(const dtUtil::Exception &)
+   catch(const dtUtil::Exception&)
    {
       // correct
    }
@@ -249,7 +250,7 @@ void LMSTests::TestLmsComponentMessaging()
 
    dtLMS::LmsMessage msg = msgs[0];
    CPPUNIT_ASSERT_MESSAGE("The id of the message should match the name of the proxy", msg.GetObjectiveID() == proxy->GetName());
-   CPPUNIT_ASSERT_MESSAGE("The value of the message should match the property", 
+   CPPUNIT_ASSERT_MESSAGE("The value of the message should match the property",
       msg.GetValue() == dtLMS::LmsMessageValue::ObjectiveCompletionValue::COMPLETE.GetName());
 
    static_cast<dtDAL::BooleanActorProperty*>(proxy->GetProperty("Complete"))->SetValue(false);
@@ -259,7 +260,7 @@ void LMSTests::TestLmsComponentMessaging()
 
    msg = msgs[0];
    CPPUNIT_ASSERT_MESSAGE("The id of the message should match the name of the proxy", msg.GetObjectiveID() == proxy->GetName());
-   CPPUNIT_ASSERT_MESSAGE("The value of the message should match the property", 
+   CPPUNIT_ASSERT_MESSAGE("The value of the message should match the property",
       msg.GetValue() == dtLMS::LmsMessageValue::ObjectiveCompletionValue::INCOMPLETE.GetName());
 
    static_cast<dtDAL::BooleanActorProperty*>(proxy->GetProperty("Complete"))->SetValue(false);
@@ -272,7 +273,7 @@ void LMSTests::TestLmsComponentMessaging()
    lmsComp->SendLmsUpdate(*proxy);
    lmsComp->GetMessageVector(msgs);
    CPPUNIT_ASSERT(!msgs.empty());
-   
+
    msg = msgs[0];
    std::ostringstream oss;
    oss << score;

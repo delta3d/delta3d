@@ -1,28 +1,29 @@
 /* -*-c++-*-
-* allTests - This source file (.h & .cpp) - Using 'The MIT License'
-* Copyright (C) 2006-2008, MOVES Institute
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-*
-* @author Aleksei Trunov
-* @author Chris Osborn
-*/
+ * allTests - This source file (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2006-2008, MOVES Institute
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @author Aleksei Trunov
+ * @author Chris Osborn
+ */
+
 #include <prefix/dtgameprefix-src.h>
 #include <dtUtil/exception.h>
 #include <dtUtil/generic.h>
@@ -59,12 +60,12 @@ double bf5(int i, char c, int j, double f, int k)
 class FunctorTests : public CPPUNIT_NS::TestFixture
 {
    CPPUNIT_TEST_SUITE(FunctorTests);
-   CPPUNIT_TEST(TestNonMemberFunctors);
-   CPPUNIT_TEST(TestMemberFunctors);
-   CPPUNIT_TEST(TestBinding);
-   CPPUNIT_TEST(TestMoreFunctors);
-   CPPUNIT_TEST(TestCommand);
-   CPPUNIT_TEST(TestValid);
+      CPPUNIT_TEST(TestNonMemberFunctors);
+      CPPUNIT_TEST(TestMemberFunctors);
+      CPPUNIT_TEST(TestBinding);
+      CPPUNIT_TEST(TestMoreFunctors);
+      CPPUNIT_TEST(TestCommand);
+      CPPUNIT_TEST(TestValid);
    CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -204,12 +205,11 @@ void FunctorTests::TestCommand()
    dtCore::RefPtr<dtUtil::Command0<int> > cmd = new dtUtil::Command0<int>(Command0<int>::FunctorType(&pStruct, &A::f0def));
    CPPUNIT_ASSERT(cmd->operator()() == 2);
 
-      dtCore::RefPtr<dtUtil::Command1<int, int> > cmd1 = new dtUtil::Command1<int, int>(Command1<int, int>::FunctorType(&pStruct, &A::f1def), 2);
-      CPPUNIT_ASSERT(cmd1->operator()() == 2);
+   dtCore::RefPtr<dtUtil::Command1<int, int> > cmd1 = new dtUtil::Command1<int, int>(Command1<int, int>::FunctorType(&pStruct, &A::f1def), 2);
+   CPPUNIT_ASSERT(cmd1->operator()() == 2);
 
-      dtCore::RefPtr<dtUtil::Command2<int, int, int> > cmd2 = new dtUtil::Command2<int, int, int>(Command2<int, int, int>::FunctorType(&pStruct, &A::f2def), 5, 4);
-      CPPUNIT_ASSERT(cmd2->operator()() == 9);
-
+   dtCore::RefPtr<dtUtil::Command2<int, int, int> > cmd2 = new dtUtil::Command2<int, int, int>(Command2<int, int, int>::FunctorType(&pStruct, &A::f2def), 5, 4);
+   CPPUNIT_ASSERT(cmd2->operator()() == 9);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -243,15 +243,15 @@ void FunctorTests::TestNonMemberFunctors()
    CPPUNIT_ASSERT(fn2def(1, 1) == 2);
    CPPUNIT_ASSERT(fn2def(1, 2) == 3);
    // op=
-   // Functor2 fn2 = f2def;	// error - no explicit op=
+   // Functor2 fn2 = f2def;   // error - no explicit op=
    Functor2 fn2 = Functor2(&f2def);
    CPPUNIT_ASSERT(fn2(1, 1) == 2);
    CPPUNIT_ASSERT(fn2(1, 2) == 3);
    // invalid fun ctors and op()
-   // Functor2 f2_(f1def);	// error - no such ctor
+   // Functor2 f2_(f1def);   // error - no such ctor
    Functor2 f2_(&f2def);
-   // f2_();	// error - no internal implementation for such op()
-   // f2_(1);	// error - no internal implementation for such op()
+   // f2_();   // error - no internal implementation for such op()
+   // f2_(1);   // error - no internal implementation for such op()
 
 }
 
@@ -313,7 +313,7 @@ void FunctorTests::TestMemberFunctors()
    Functor2 f2memfnconst_(&ac, &A::f2defconst);
    CPPUNIT_ASSERT(f2memfnconst_(1, 1) == 2);
    CPPUNIT_ASSERT(f2memfnconst_(1, 2) == 3);
-   // Functor2 _f2memfnconst_(&ac, &A::f2def);			// error - in FunctorCall<> could not convert pointer-to-member
+   // Functor2 _f2memfnconst_(&ac, &A::f2def);         // error - in FunctorCall<> could not convert pointer-to-member
    Functor2 f2memfnvolatile(&a, &A::f2defvolatile);
    CPPUNIT_ASSERT(f2memfnvolatile(1, 1) == 2);
    CPPUNIT_ASSERT(f2memfnvolatile(1, 2) == 3);
@@ -351,7 +351,7 @@ void FunctorTests::TestMemberFunctors()
    Functor2 f2memfn_(&b, &B::f2def);
    CPPUNIT_ASSERT(f2memfn_(1, 1) == 2);
    CPPUNIT_ASSERT(f2memfn_(1, 2) == 3);
-   // Functor2 _f2memfn_(&b, &A::f2def);	// error - in FunctorCall<> could not convert pointer-to-member
+   // Functor2 _f2memfn_(&b, &A::f2def);   // error - in FunctorCall<> could not convert pointer-to-member
    f2memfn = f2memfn_;
    CPPUNIT_ASSERT(f2memfn(1, 1) == 2);
    CPPUNIT_ASSERT(f2memfn(1, 2) == 3);
@@ -371,7 +371,7 @@ void FunctorTests::TestBinding()
    // test binding
    typedef TYPELIST_3(int, char, double) TestTL3;
    Functor<double, TestTL3> bfun3(&bf3);
-   CPPUNIT_ASSERT( osg::equivalent( bfun3(1, 'A', 2.1), bf3(1, 'A', 2.1) ) );
+   CPPUNIT_ASSERT(osg::equivalent(bfun3(1, 'A', 2.1), bf3(1, 'A', 2.1)));
 
    typedef TYPELIST_2(Int2Type<0>, Int2Type<2>) TestIdsTL;
    typedef BoundTL2<TestTL3, TestIdsTL>::Result TestBTL2;
@@ -388,19 +388,19 @@ void FunctorTests::TestBinding()
       Binder<Functor<char, TestTL3>, CreateTL<Int2Type<0>, Int2Type<2> >::Type>::Outgoing bfun11(&bf1);
       CPPUNIT_ASSERT(bfun11('A') == bf1('A'));
       Functor<double, TestUBTL2> bfun12 = Bind<0, 2>(bfun3, 1, 2.1);
-      CPPUNIT_ASSERT( osg::equivalent( bfun12('A'), bf3(1, 'A', 2.1) ) );
+      CPPUNIT_ASSERT(osg::equivalent(bfun12('A'), bf3(1, 'A', 2.1)));
       Functor<double, TYPELIST_1(char)> bfun13 = Bind<0, 2>(bfun3, 1, 2.1);
-      CPPUNIT_ASSERT( osg::equivalent( bfun13('A'), bf3(1, 'A', 2.1) ) );
+      CPPUNIT_ASSERT(osg::equivalent(bfun13('A'), bf3(1, 'A', 2.1)));
       Functor<double, TYPELIST_2(char, double)> bfun14 = Bind<0>(bfun3, 1);
-      CPPUNIT_ASSERT( osg::equivalent( bfun14('A', 2.1), bf3(1, 'A', 2.1) ) );
+      CPPUNIT_ASSERT(osg::equivalent(bfun14('A', 2.1), bf3(1, 'A', 2.1)));
    }
    {
       Functor<double, TYPELIST_2(char, double)> bfunbig = Bind<0, 2, 4>(Functor<double, TYPELIST_5(int, char, int, double, int)>(&bf5), 1, 2, 3);
-      CPPUNIT_ASSERT( osg::equivalent( bfunbig('A', 2.1), bf5(1, 'A', 2, 2.1, 3) ) );
+      CPPUNIT_ASSERT(osg::equivalent(bfunbig('A', 2.1), bf5(1, 'A', 2, 2.1, 3)));
       Functor<double, TYPELIST_0()> bfun0 = Bind<0, 1, 2, 3, 4>(Functor<double, TYPELIST_5(int, char, int, double, int)>(&bf5), 1, 'A', 2, 2.1, 3);
-      CPPUNIT_ASSERT( osg::equivalent( bfun0(), bf5(1, 'A', 2, 2.1, 3) ) );
+      CPPUNIT_ASSERT(osg::equivalent(bfun0(), bf5(1, 'A', 2, 2.1, 3)));
       Functor<double, TYPELIST_5(int, char, int, double, int)> bfun5 = Bind<>(Functor<double, TYPELIST_5(int, char, int, double, int)>(&bf5));
-      CPPUNIT_ASSERT( osg::equivalent( bfun5(1, 'A', 2, 2.1, 3), bf5(1, 'A', 2, 2.1, 3) ) );
+      CPPUNIT_ASSERT(osg::equivalent(bfun5(1, 'A', 2, 2.1, 3), bf5(1, 'A', 2, 2.1, 3)));
    }
 }
 

@@ -1113,12 +1113,10 @@ void GameActorTests::TestActorComponentInitialized()
       dtCore::AppSleep(10);
       dtCore::System::GetInstance().Step();
 
-      //Actor should be removed by now.
+      // Actor should be removed by now.
       CPPUNIT_ASSERT_MESSAGE("Actor component should be de-initialized when actor is added to game!", component1->mWasRemoved);
-
-
    }
-   catch(const dtUtil::Exception& e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.What());
    }

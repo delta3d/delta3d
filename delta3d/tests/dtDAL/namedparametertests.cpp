@@ -1,30 +1,31 @@
 /* -*-c++-*-
-* allTests - This source file (.h & .cpp) - Using 'The MIT License'
-* Copyright (C) 2005-2008, Alion Science and Technology Corporation
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-* 
-* This software was developed by Alion Science and Technology Corporation under
-* circumstances in which the U. S. Government may have rights in the software.
-*
-* @author Eddie Johnson and David Guthrie
-*/
+ * allTests - This source file (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2005-2008, Alion Science and Technology Corporation
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * This software was developed by Alion Science and Technology Corporation under
+ * circumstances in which the U. S. Government may have rights in the software.
+ *
+ * @author Eddie Johnson and David Guthrie
+ */
+
 #include <prefix/dtgameprefix-src.h>
 #include <cstdlib>
 #include <iostream>
@@ -117,9 +118,9 @@ public:
    void TestNamedVecParameter(int size)
    {
       dtCore::RefPtr<ParamType> param = new ParamType("a");
-      
+
       unsigned int expectedPrecision = 2 * sizeof(param->GetValue()[0]) + 1;
-      
+
       std::ostringstream ss;
       ss << expectedPrecision;
 
@@ -208,7 +209,7 @@ public:
       CPPUNIT_ASSERT_MESSAGE("List should have the default value as its only element,",
          testList.size() == 1);
 
-      for (i=0; i<size; i++)
+      for (i=0; i<size; ++i)
       {
          //everything has to be mode a double in the "equivalent" calls because
          //otherwise the float versions get some c++ ambiguity problems.
@@ -222,9 +223,9 @@ public:
          CPPUNIT_FAIL("Should not be allowed to get a single value from a parameter "
             "that contains a list.");
       }
-      catch (dtUtil::Exception&) 
+      catch (dtUtil::Exception&)
       {
-      
+
       }
 
       //This quick test ensures that we cannot copy a parameter with a single value
@@ -237,9 +238,9 @@ public:
          paramSingleValue->CopyFrom(*param);
          CPPUNIT_FAIL("Should not be allowed to copy a list parameter into a single value parameter.");
       }
-      catch (dtUtil::Exception&) 
-      { 
-      
+      catch (dtUtil::Exception&)
+      {
+
       }
 
       try
@@ -250,8 +251,8 @@ public:
          CPPUNIT_FAIL("Should not be allowed to copy a list parameter into a single value parameter.");
       }
       catch (dtUtil::Exception&)
-      { 
-      
+      {
+
       }
 
       valueList.push_back(t1);
@@ -266,18 +267,26 @@ public:
       CPPUNIT_ASSERT_MESSAGE("Number of values in parameter list should be 4.",
          testList.size() == 4);
 
-      for (i=0; i<size; i++)
+      for (i = 0; i < size; ++i)
+      {
          CPPUNIT_ASSERT_MESSAGE("List element 0 was not correct.",
             osg::equivalent((double)testList[0][i], (double)t1[i], 1e-2));
-      for (i=0; i<size; i++)
+      }
+      for (i = 0; i < size; ++i)
+      {
          CPPUNIT_ASSERT_MESSAGE("List element 1 was not correct.",
             osg::equivalent((double)testList[1][i], (double)t2[i], 1e-2));
-      for (i=0; i<size; i++)
+      }
+      for (i = 0; i < size; ++i)
+      {
          CPPUNIT_ASSERT_MESSAGE("List element 2 was not correct.",
             osg::equivalent((double)testList[2][i], (double)t3[i], 1e-2));
-      for (i=0; i<size; i++)
+      }
+      for (i = 0; i < size; ++i)
+      {
          CPPUNIT_ASSERT_MESSAGE("List element 3 was not correct.",
             osg::equivalent((double)testList[3][i], (double)t4[i], 1e-2));
+      }
 
       dtCore::RefPtr<ParameterType> param2 =
          new ParameterType("b",defaultValue,true);
@@ -285,18 +294,26 @@ public:
       param2->FromString(holder);
       testList = param2->GetValueList();
 
-      for (i=0; i<size; i++)
+      for (i = 0; i < size; ++i)
+      {
          CPPUNIT_ASSERT_MESSAGE("List element 0 was not correct after FromString().",
             osg::equivalent((double)testList[0][i], (double)t1[i], 1e-2));
-      for (i=0; i<size; i++)
+      }
+      for (i = 0; i < size; ++i)
+      {
          CPPUNIT_ASSERT_MESSAGE("List element 1 was not correct after FromString().",
             osg::equivalent((double)testList[1][i], (double)t2[i], 1e-2));
-      for (i=0; i<size; i++)
+      }
+      for (i = 0; i < size; ++i)
+      {
          CPPUNIT_ASSERT_MESSAGE("List element 2 was not correct after FromString().",
             osg::equivalent((double)testList[2][i], (double)t3[i], 1e-2));
-      for (i=0; i<size; i++)
+      }
+      for (i = 0; i < size; ++i)
+      {
          CPPUNIT_ASSERT_MESSAGE("List element 3 was not correct after FromString().",
             osg::equivalent((double)testList[3][i], (double)t4[i], 1e-2));
+      }
 
       param2 = NULL;
       param2 = new ParameterType("b",defaultValue,true);
@@ -306,35 +323,51 @@ public:
       param2->FromDataStream(ds);
 
       testList = param2->GetValueList();
-      for (i=0; i<size; i++)
+      for (i = 0; i < size; ++i)
+      {
          CPPUNIT_ASSERT_MESSAGE("List element 0 was not correct after FromDataString().",
             osg::equivalent((double)testList[0][i], (double)t1[i], 1e-2));
-      for (i=0; i<size; i++)
+      }
+      for (i = 0; i < size; ++i)
+      {
          CPPUNIT_ASSERT_MESSAGE("List element 1 was not correct after FromDataString().",
             osg::equivalent((double)testList[1][i], (double)t2[i], 1e-2));
-      for (i=0; i<size; i++)
+      }
+      for (i = 0; i < size; ++i)
+      {
          CPPUNIT_ASSERT_MESSAGE("List element 2 was not correct after FromDataString().",
             osg::equivalent((double)testList[2][i], (double)t3[i], 1e-2));
-      for (i=0; i<size; i++)
+      }
+      for (i = 0; i < size; ++i)
+      {
          CPPUNIT_ASSERT_MESSAGE("List element 3 was not correct after FromDataString().",
             osg::equivalent((double)testList[3][i], (double)t4[i], 1e-2));
+      }
 
       param2 = NULL;
       param2 = new ParameterType("b",defaultValue,true);
       param2->CopyFrom(*param);
       testList = param2->GetValueList();
-      for (i=0; i<size; i++)
+      for (i = 0; i < size; ++i)
+      {
          CPPUNIT_ASSERT_MESSAGE("List element 0 was not correct after param copy.",
             osg::equivalent((double)testList[0][i], (double)t1[i], 1e-2));
-      for (i=0; i<size; i++)
+      }
+      for (i = 0; i < size; ++i)
+      {
          CPPUNIT_ASSERT_MESSAGE("List element 1 was not correct after param copy.",
             osg::equivalent((double)testList[1][i], (double)t2[i], 1e-2));
-      for (i=0; i<size; i++)
+      }
+      for (i = 0; i < size; ++i)
+      {
          CPPUNIT_ASSERT_MESSAGE("List element 2 was not correct after param copy.",
             osg::equivalent((double)testList[2][i], (double)t3[i], 1e-2));
-      for (i=0; i<size; i++)
+      }
+      for (i = 0; i < size; ++i)
+      {
          CPPUNIT_ASSERT_MESSAGE("List element 3 was not correct after param copy.",
             osg::equivalent((double)testList[3][i], (double)t4[i], 1e-2));
+      }
    }
 
    /**
@@ -365,8 +398,8 @@ public:
             "that contains a list.");
       }
       catch (dtUtil::Exception&)
-      { 
-      
+      {
+
       }
 
       //This quick test ensures that we cannot copy a parameter with a single value
@@ -379,7 +412,7 @@ public:
          paramSingleValue->CopyFrom(*param);
          CPPUNIT_FAIL("Should not be allowed to copy a list parameter into a single value parameter.");
       }
-      catch (dtUtil::Exception&) 
+      catch (dtUtil::Exception&)
       {
 
       }
@@ -391,7 +424,7 @@ public:
          param->CopyFrom(*paramSingleValue);
          CPPUNIT_FAIL("Should not be allowed to copy a list parameter into a single value parameter.");
       }
-      catch (dtUtil::Exception&) 
+      catch (dtUtil::Exception&)
       {
 
       }
@@ -486,8 +519,8 @@ public:
          CPPUNIT_FAIL("Should not be allowed to get a single value from a parameter "
             "that contains a list.");
       }
-      catch (dtUtil::Exception&) 
-      { 
+      catch (dtUtil::Exception&)
+      {
          // This is correct, do not cause an error
       }
 
@@ -501,8 +534,8 @@ public:
          paramSingleValue->CopyFrom(*param);
          CPPUNIT_FAIL("Should not be allowed to copy a list parameter into a single value parameter.");
       }
-      catch (dtUtil::Exception &) 
-      { 
+      catch (dtUtil::Exception&)
+      {
          // This is correct, do not cause an error
       }
 
@@ -513,8 +546,8 @@ public:
          param->CopyFrom(*paramSingleValue);
          CPPUNIT_FAIL("Should not be allowed to copy a list parameter into a single value parameter.");
       }
-      catch (dtUtil::Exception &) 
-      { 
+      catch (dtUtil::Exception&)
+      {
          // This is correct, do not cause an error
       }
 
@@ -613,7 +646,7 @@ void NamedParameterTests::setUp()
       mManager = new dtGame::GameManager(*GetGlobalApplication().GetScene());
       mManager->SetApplication(GetGlobalApplication());
       mManager->LoadActorRegistry(mTestActorLibrary);
-      
+
       mExampleActor = mManager->CreateActor("dtcore.examples", "Test All Properties");
       CPPUNIT_ASSERT(mExampleActor.valid());
    }
@@ -696,11 +729,11 @@ void NamedParameterTests::TestNamedResourceParameter()
 
       TestResourceParameterList(dtDAL::DataType::STATIC_MESH,t1,t2,t3,t4);
    }
-   catch (dtUtil::Exception &e)
+   catch (dtUtil::Exception& e)
    {
       CPPUNIT_FAIL("Error: " + e.What());
    }
-   catch(const std::exception &e)
+   catch (const std::exception& e)
    {
       CPPUNIT_FAIL(e.what());
    }
@@ -740,11 +773,11 @@ void NamedParameterTests::TestNamedStringParameter()
       TestParameterList<dtDAL::NamedStringParameter,std::string>(
          "defaultValue","hello","from","the","stringlist");
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL("Error: " + e.What());
    }
-   catch(const std::exception &e)
+   catch (const std::exception& e)
    {
       CPPUNIT_FAIL(e.what());
    }
@@ -784,11 +817,11 @@ void NamedParameterTests::TestNamedEnumParameter()
       TestParameterList<dtDAL::NamedEnumParameter,std::string>(
          "defaultValue","enum1","enum2","enum3","enum4");
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL("Error: " + e.What());
    }
-   catch(const std::exception &e)
+   catch (const std::exception& e)
    {
       CPPUNIT_FAIL(e.what());
    }
@@ -834,11 +867,11 @@ void NamedParameterTests::TestNamedBooleanParameter()
       TestParameterList<dtDAL::NamedBooleanParameter,bool>(
          true,false,true,false,true);
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL("Error: " + e.What());
    }
-   catch(const std::exception &e)
+   catch (const std::exception& e)
    {
       CPPUNIT_FAIL(e.what());
    }
@@ -878,11 +911,11 @@ void NamedParameterTests::TestNamedUnsignedCharParameter()
       TestParameterList<dtDAL::NamedUnsignedCharParameter,unsigned char>(
          100,1,3,4,232);
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL("Error: " + e.What());
    }
-   catch(const std::exception &e)
+   catch (const std::exception& e)
    {
       CPPUNIT_FAIL(e.what());
    }
@@ -922,11 +955,11 @@ void NamedParameterTests::TestNamedUnsignedIntParameter()
       TestParameterList<dtDAL::NamedUnsignedIntParameter,unsigned int>(
          100,1,3,4,232);
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL("Error: " + e.What());
    }
-   catch(const std::exception &e)
+   catch (const std::exception& e)
    {
       CPPUNIT_FAIL(e.what());
    }
@@ -966,11 +999,11 @@ void NamedParameterTests::TestNamedIntParameter()
       TestParameterList<dtDAL::NamedIntParameter,int>(
          -100,-1,-3,-4,-232);
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL("Error: " + e.What());
    }
-   catch(const std::exception &e)
+   catch (const std::exception& e)
    {
       CPPUNIT_FAIL(e.what());
    }
@@ -1010,11 +1043,11 @@ void NamedParameterTests::TestNamedUnsignedLongIntParameter()
       TestParameterList<dtDAL::NamedUnsignedLongIntParameter,unsigned long>(
          10089,167,3784,4456323,23264);
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL("Error: " + e.What());
    }
-   catch(const std::exception &e)
+   catch (const std::exception& e)
    {
       CPPUNIT_FAIL(e.what());
    }
@@ -1054,11 +1087,11 @@ void NamedParameterTests::TestNamedLongIntParameter()
       TestParameterList<dtDAL::NamedLongIntParameter,long>(
          -10089,-167,-3784,-4456323,-23264);
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL("Error: " + e.What());
    }
-   catch(const std::exception &e)
+   catch (const std::exception& e)
    {
       CPPUNIT_FAIL(e.what());
    }
@@ -1098,11 +1131,11 @@ void NamedParameterTests::TestNamedUnsignedShortIntParameter()
       TestParameterList<dtDAL::NamedUnsignedShortIntParameter,unsigned short>(
          100,1000,10000,2000,3000);
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL("Error: " + e.What());
    }
-   catch(const std::exception &e)
+   catch (const std::exception& e)
    {
       CPPUNIT_FAIL(e.what());
    }
@@ -1142,11 +1175,11 @@ void NamedParameterTests::TestNamedShortIntParameter()
       TestParameterList<dtDAL::NamedShortIntParameter,short>(
          -10089,-167,-3784,-423,-23264);
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL("Error: " + e.What());
    }
-   catch(const std::exception &e)
+   catch (const std::exception& e)
    {
       CPPUNIT_FAIL(e.what());
    }
@@ -1191,11 +1224,11 @@ void NamedParameterTests::TestNamedFloatParameter()
       TestParameterList<dtDAL::NamedFloatParameter,float>(
          -10089.0f,167.5f,-3784.24f,-4456323.3456f,-23264.0f);
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL("Error: " + e.What());
    }
-   catch(const std::exception &e)
+   catch (const std::exception& e)
    {
       CPPUNIT_FAIL(e.what());
    }
@@ -1239,11 +1272,11 @@ void NamedParameterTests::TestNamedDoubleParameter()
       TestParameterList<dtDAL::NamedDoubleParameter,double>(
          -10089.0, -167.5, 3784.24, -4456323.3456, 23264.0);
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL("Error: " + e.What());
    }
-   catch(const std::exception &e)
+   catch (const std::exception& e)
    {
       CPPUNIT_FAIL(e.what());
    }
@@ -1275,11 +1308,11 @@ void NamedParameterTests::TestNamedVec2Parameters()
          osg::Vec2d(1234,-13241.294),osg::Vec2d(1234.234,1.523),2
       );
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL("Error: " + e.What());
    }
-//   catch(const std::exception &e)
+//   catch (const std::exception& e)
 //   {
 //      CPPUNIT_FAIL(e.what());
 //   }
@@ -1318,11 +1351,11 @@ void NamedParameterTests::TestNamedVec3Parameters()
          osg::Vec3(1234,-13241.294,2763.2134),osg::Vec3(1234.234,1.523,3423.2134),3
       );
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL("Error: " + e.What());
    }
-//   catch(const std::exception &e)
+//   catch (const std::exception& e)
 //   {
 //      CPPUNIT_FAIL(e.what());
 //   }
@@ -1361,11 +1394,11 @@ void NamedParameterTests::TestNamedVec4Parameters()
          osg::Vec4(1234,-13241.294,200.325,2352.152343),osg::Vec4(1234.234,1.523,1,2),4
       );
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL("Error: " + e.What());
    }
-//   catch(const std::exception &e)
+//   catch (const std::exception& e)
 //   {
 //      CPPUNIT_FAIL(e.what());
 //   }
@@ -1380,14 +1413,14 @@ void NamedParameterTests::TestNamedActorParameter()
 
       dtCore::RefPtr<dtDAL::ActorProxy> ap = mManager->CreateActor("dtcore.examples", "Test All Properties");
 
-      dtDAL::ActorActorProperty *aap = NULL;
+      dtDAL::ActorActorProperty* aap = NULL;
 
       std::vector<const dtDAL::ActorProperty*> props;
       ap->GetPropertyList(props);
-      for(unsigned int j = 0; j < props.size(); j++)
+      for (unsigned int j = 0; j < props.size(); ++j)
       {
-         dtDAL::DataType &dt = props[j]->GetPropertyType();
-         if(dt == dtDAL::DataType::ACTOR)
+         dtDAL::DataType& dt = props[j]->GetPropertyType();
+         if (dt == dtDAL::DataType::ACTOR)
             aap = static_cast<dtDAL::ActorActorProperty*> (const_cast<dtDAL::ActorProperty*>(props[j]));
       }
 
@@ -1414,11 +1447,11 @@ void NamedParameterTests::TestNamedActorParameter()
       TestParameterList<dtDAL::NamedActorParameter,dtCore::UniqueId>(
          id1,id2,id3,id4,id5);
    }
-   catch(const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.What());
    }
-//   catch(const std::exception &e)
+//   catch (const std::exception& e)
 //   {
 //      CPPUNIT_FAIL(e.what());
 //   }
@@ -1427,7 +1460,7 @@ void NamedParameterTests::TestNamedActorParameter()
 dtCore::RefPtr<dtDAL::NamedGroupParameter> NamedParameterTests::CreateNamedGroupParameter()
 {
    dtCore::RefPtr<dtDAL::NamedGroupParameter> groupParam = new dtDAL::NamedGroupParameter("test");
-   
+
    groupParam->AddParameter(*new dtDAL::NamedStringParameter("test1"));
    groupParam->AddParameter("test2", dtDAL::DataType::DOUBLE);
    groupParam->AddParameter(*new dtDAL::NamedFloatParameter("test3"));
@@ -1435,9 +1468,9 @@ dtCore::RefPtr<dtDAL::NamedGroupParameter> NamedParameterTests::CreateNamedGroup
 
    CPPUNIT_ASSERT_MESSAGE("Should have received 4 in list for group param messages" , groupParam->GetParameterCount() == 4);
 
-   dtCore::RefPtr<dtDAL::NamedGroupParameter> internalGroup = 
+   dtCore::RefPtr<dtDAL::NamedGroupParameter> internalGroup =
       static_cast<dtDAL::NamedGroupParameter*>(groupParam->AddParameter("test5", dtDAL::DataType::GROUP));
-   
+
    internalGroup->AddParameter(*new dtDAL::NamedStringParameter("test1"));
    internalGroup->AddParameter(*new dtDAL::NamedDoubleParameter("test9"));
    return groupParam;
@@ -1460,7 +1493,7 @@ void NamedParameterTests::TestNamedGroupParameter(dtDAL::NamedGroupParameter& gr
    CPPUNIT_ASSERT(groupParam.GetParameter("test5") != NULL);
    CPPUNIT_ASSERT(groupParam.GetParameter("test5")->GetDataType() == dtDAL::DataType::GROUP);
 
-   dtCore::RefPtr<dtDAL::NamedGroupParameter> internalGroup = 
+   dtCore::RefPtr<dtDAL::NamedGroupParameter> internalGroup =
       static_cast<dtDAL::NamedGroupParameter*>(groupParam.GetParameter("test5"));
 
    CPPUNIT_ASSERT(internalGroup->GetParameter("test1") != NULL);
@@ -1471,7 +1504,7 @@ void NamedParameterTests::TestNamedGroupParameter(dtDAL::NamedGroupParameter& gr
 
 
    CPPUNIT_ASSERT(groupParam.GetParameter("invalid-name") == NULL);
-   
+
    //Now test getting parameters as a const group
    const dtDAL::NamedGroupParameter& gmp = groupParam;
 
@@ -1499,13 +1532,13 @@ void NamedParameterTests::TestNamedGroupParameterCopy()
       TestNamedGroupParameter(*groupParam);
       dtCore::RefPtr<dtDAL::NamedGroupParameter> groupCopy = new dtDAL::NamedGroupParameter("testCopy");
       groupCopy->CopyFrom(*groupParam);
-      TestNamedGroupParameter(*groupCopy);      
+      TestNamedGroupParameter(*groupCopy);
    }
-   catch(const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.What());
    }
-//   catch(const std::exception &e)
+//   catch (const std::exception& e)
 //   {
 //      CPPUNIT_FAIL(e.what());
 //   }
@@ -1520,9 +1553,9 @@ void NamedParameterTests::TestNamedGroupParameterWithProperty()
 
       // Assign to a group property then read the value back out.
       //dtDAL::GroupActorProperty* groupProp = dynamic_cast<dtDAL::GroupActorProperty*>(mExampleActor->GetProperty("TestGroup"));
-      dtDAL::ActorProperty *prop = mExampleActor->GetProperty("TestGroup");
+      dtDAL::ActorProperty* prop = mExampleActor->GetProperty("TestGroup");
       CPPUNIT_ASSERT(prop != NULL);
-      
+
       groupParam->ApplyValueToProperty(*prop);
 
       dtCore::RefPtr<dtDAL::NamedGroupParameter> groupCopy = new dtDAL::NamedGroupParameter("testCopy");
@@ -1530,7 +1563,7 @@ void NamedParameterTests::TestNamedGroupParameterWithProperty()
 
       TestNamedGroupParameter(*groupCopy);
    }
-   catch(const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.What());
    }
@@ -1545,15 +1578,15 @@ void NamedParameterTests::TestNamedGroupParameterStream()
       TestNamedGroupParameter(*groupParam);
 
       dtUtil::DataStream ds;
-      
+
       groupParam->ToDataStream(ds);
 
       dtCore::RefPtr<dtDAL::NamedGroupParameter> groupCopy = new dtDAL::NamedGroupParameter("testCopy");
       groupCopy->FromDataStream(ds);
 
-      TestNamedGroupParameter(*groupCopy);      
+      TestNamedGroupParameter(*groupCopy);
    }
-   catch(const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.What());
    }
@@ -1569,15 +1602,15 @@ void NamedParameterTests::TestNamedGroupParameterString()
       TestNamedGroupParameter(*groupParam);
 
       std::string s;
-      
+
       s = groupParam->ToString();
 
       dtCore::RefPtr<dtDAL::NamedGroupParameter> groupCopy = new dtDAL::NamedGroupParameter("testCopy");
       groupCopy->FromString(s);
 
-      TestNamedGroupParameter(*groupCopy);      
+      TestNamedGroupParameter(*groupCopy);
    }
-   catch(const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.What());
    }

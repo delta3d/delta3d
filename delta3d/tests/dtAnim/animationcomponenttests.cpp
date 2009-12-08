@@ -1,25 +1,25 @@
 /* -*-c++-*-
-* allTests - This source file (.h & .cpp) - Using 'The MIT License'
-* Copyright (C) 2006-2008, MOVES Institute
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-*/
+ * allTests - This source file (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2006-2008, MOVES Institute
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
 
@@ -58,76 +58,72 @@ extern dtABC::Application& GetGlobalApplication();
 
 namespace dtAnim
 {
-
    class TestAnimHelper: public AnimationHelper
    {
       bool mHasBeenUpdated;
 
-      public:
-         TestAnimHelper(): mHasBeenUpdated(false) {}
+   public:
+      TestAnimHelper(): mHasBeenUpdated(false) {}
 
-         bool HasBeenUpdated(){return mHasBeenUpdated;}
+      bool HasBeenUpdated(){return mHasBeenUpdated;}
 
-         void Update(float dt)
-         {
-            mHasBeenUpdated = true;
-         }
+      void Update(float dt)
+      {
+         mHasBeenUpdated = true;
+      }
    };
 
    class AnimationComponentTests : public CPPUNIT_NS::TestFixture
    {
       CPPUNIT_TEST_SUITE(AnimationComponentTests);
-      CPPUNIT_TEST(TestAnimationComponent);
-      CPPUNIT_TEST(TestAnimationPerformance);
-      CPPUNIT_TEST(TestRegisterUnregister);
-      CPPUNIT_TEST(TestRegisterMapUnload);
+         CPPUNIT_TEST(TestAnimationComponent);
+         CPPUNIT_TEST(TestAnimationPerformance);
+         CPPUNIT_TEST(TestRegisterUnregister);
+         CPPUNIT_TEST(TestRegisterMapUnload);
       CPPUNIT_TEST_SUITE_END();
 
-      public:
-         AnimationComponentTests()
-         {
-         }
+   public:
+      AnimationComponentTests()
+      {
+      }
 
-         void setUp();
-         void tearDown();
+      void setUp();
+      void tearDown();
 
-         void TestAnimationComponent();
-         void TestAnimationPerformance();
-         void TestRegisterUnregister();
-         void TestRegisterMapUnload();
+      void TestAnimationComponent();
+      void TestAnimationPerformance();
+      void TestRegisterUnregister();
+      void TestRegisterMapUnload();
 
-      private:
+   private:
+      void SimulateMapUnloaded()
+      {
+         dtGame::MessageFactory& msgFac = mGM->GetMessageFactory();
 
-         void SimulateMapUnloaded()
-         {
-            dtGame::MessageFactory& msgFac = mGM->GetMessageFactory();
+         dtCore::RefPtr<dtGame::MapMessage> mapMsg;
+         msgFac.CreateMessage(dtGame::MessageType::INFO_MAP_UNLOADED, mapMsg);
+         mGM->SendMessage(*mapMsg);
+         dtCore::System::GetInstance().Step();
+      }
 
-            dtCore::RefPtr<dtGame::MapMessage> mapMsg;
-            msgFac.CreateMessage(dtGame::MessageType::INFO_MAP_UNLOADED, mapMsg);
-            mGM->SendMessage(*mapMsg);
-            dtCore::System::GetInstance().Step();
-         }
+      dtUtil::Log* mLogger;
+      dtCore::RefPtr<dtGame::GameManager> mGM;
+      dtCore::RefPtr<AnimationComponent> mAnimComp;
+      dtCore::RefPtr<dtGame::GameActorProxy> mTestGameActor;
+      dtCore::RefPtr<AnimationHelper> mHelper;
 
-         dtUtil::Log* mLogger;
-         dtCore::RefPtr<dtGame::GameManager> mGM;
-         dtCore::RefPtr<AnimationComponent> mAnimComp;
-         dtCore::RefPtr<dtGame::GameActorProxy> mTestGameActor;
-         dtCore::RefPtr<AnimationHelper> mHelper;
-
-         dtCore::RefPtr<dtCore::Scene>          mScene;
-         dtCore::RefPtr<dtCore::Camera>         mCamera;
-         dtCore::RefPtr<dtCore::DeltaWin>       mWin;
-         dtCore::RefPtr<dtCore::View>           mView;
-
+      dtCore::RefPtr<dtCore::Scene>          mScene;
+      dtCore::RefPtr<dtCore::Camera>         mCamera;
+      dtCore::RefPtr<dtCore::DeltaWin>       mWin;
+      dtCore::RefPtr<dtCore::View>           mView;
    };
 
    // Registers the fixture into the 'registry'
-   CPPUNIT_TEST_SUITE_REGISTRATION( AnimationComponentTests );
+   CPPUNIT_TEST_SUITE_REGISTRATION(AnimationComponentTests);
 
    void AnimationComponentTests::setUp()
    {
       mLogger = &dtUtil::Log::GetInstance("animationcomponenttests.cpp");
-
 
       dtABC::Application& app = GetGlobalApplication();
       mScene = app.GetScene();
@@ -164,7 +160,7 @@ namespace dtAnim
    void AnimationComponentTests::tearDown()
    {
       dtCore::System::GetInstance().Stop();
-      if(mGM.valid())
+      if (mGM.valid())
       {
          mHelper = NULL;
          mTestGameActor = NULL;
@@ -215,7 +211,7 @@ namespace dtAnim
 
    void AnimationComponentTests::TestAnimationPerformance()
    {
-      typedef std::vector<dtDAL::ActorProxy* > ProxyContainer;
+      typedef std::vector<dtDAL::ActorProxy*> ProxyContainer;
       ProxyContainer proxies;
       ProxyContainer groundActor;
 
@@ -254,7 +250,7 @@ namespace dtAnim
          CPPUNIT_ASSERT_MESSAGE("There should be at exactly 20 actors in the vector",
                   numToDelete >= 0);
       }
-      catch (dtUtil::Exception &e)
+      catch (dtUtil::Exception& e)
       {
          CPPUNIT_FAIL(e.ToString());
       }
@@ -265,24 +261,23 @@ namespace dtAnim
 
       //register animation actors
       ProxyContainer::iterator iter, end;
-      for(iter = proxies.begin(), end = proxies.end(); iter != end; ++iter)
+      for (iter = proxies.begin(), end = proxies.end(); iter != end; ++iter)
       {
          dtGame::GameActorProxy* gameProxy = dynamic_cast<dtGame::GameActorProxy*>(*iter);
-         if(gameProxy)
+         if (gameProxy)
          {
             dtAnim::AnimationGameActor* actor =
                dynamic_cast<dtAnim::AnimationGameActor*>(&gameProxy->GetGameActor());
 
-               if(actor)
+               if (actor)
                {
                   mAnimComp->RegisterActor(*gameProxy, *actor->GetHelper());
                   actor->GetHelper()->SetGroundClamp(true);
                }
-
          }
       }
 
-      //lets do some performance testing
+      // lets do some performance testing
       mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__,
       "Testing performance of PlayAnimation on AnimationHelper");
 
@@ -291,15 +286,15 @@ namespace dtAnim
       dtCore::Timer_t timerStart, timerEnd;
 
       timerStart = timer.Tick();
-      for(iter = proxies.begin(), end = proxies.end(); iter != end; ++iter)
+      for (iter = proxies.begin(), end = proxies.end(); iter != end; ++iter)
       {
          dtGame::GameActorProxy* gameProxy = dynamic_cast<dtGame::GameActorProxy*>(*iter);
-         if(gameProxy)
+         if (gameProxy)
          {
             dtAnim::AnimationGameActor* actor =
                dynamic_cast<dtAnim::AnimationGameActor*>(&gameProxy->GetGameActor());
 
-            if(actor)
+            if (actor)
             {
                actor->GetHelper()->PlayAnimation("Walk");
             }
@@ -319,7 +314,7 @@ namespace dtAnim
          mGM->GetMessageFactory().CreateMessage(dtGame::MessageType::TICK_LOCAL);
 
       dtGame::TickMessage* tick = dynamic_cast<dtGame::TickMessage*>(message.get());
-      if(!tick)
+      if (!tick)
       {
          CPPUNIT_FAIL("Invalid message type");
       }
@@ -330,7 +325,7 @@ namespace dtAnim
             " updates on AnimationComponent");
 
       timerStart = timer.Tick();
-      for(int i = 0; i < numUpdates; ++i)
+      for (int i = 0; i < numUpdates; ++i)
       {
          mAnimComp->ProcessMessage(*message.get());
       }
@@ -342,27 +337,26 @@ namespace dtAnim
       //////////////////////////////////////////////////////////////////////////
 
 
-      if(!groundActor.empty())
+      if (!groundActor.empty())
       {
          ProxyContainer::iterator iter = groundActor.begin();
          dtDAL::ActorProxy* proxy = dynamic_cast<dtDAL::ActorProxy*>(*iter);
-         if(proxy)
+         if (proxy)
          {
             dtCore::Transformable* transform
                = dynamic_cast<dtCore::Transformable*>(proxy->GetActor());
-            if(transform)
+            if (transform)
             {
                mAnimComp->SetTerrainActor(transform);
             }
          }
-
 
          mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__,
                "Testing performance of " + dtUtil::ToString(numUpdates) +
                " updates on AnimationComponent with ground clamping");
 
          timerStart = timer.Tick();
-         for(int i = 0; i < numUpdates; ++i)
+         for (int i = 0; i < numUpdates; ++i)
          {
             mAnimComp->ProcessMessage(*message.get());
          }
@@ -385,15 +379,15 @@ namespace dtAnim
             "Testing performance of ClearAnimation()");
 
       timerStart = timer.Tick();
-      for(iter = proxies.begin(), end = proxies.end(); iter != end; ++iter)
+      for (iter = proxies.begin(), end = proxies.end(); iter != end; ++iter)
       {
          dtGame::GameActorProxy* gameProxy = dynamic_cast<dtGame::GameActorProxy*>((*iter));
-         if(gameProxy)
+         if (gameProxy)
          {
             dtAnim::AnimationGameActor* actor
                = dynamic_cast<dtAnim::AnimationGameActor*>(&gameProxy->GetGameActor());
 
-            if(actor)
+            if (actor)
             {
                actor->GetHelper()->ClearAnimation("Walk", 0.0);
             }
@@ -410,7 +404,7 @@ namespace dtAnim
       //close map
       try
       {
-         if(!mGM->GetCurrentMap().empty())
+         if (!mGM->GetCurrentMap().empty())
          {
             dtDAL::Project::GetInstance().CloseMap(
                   dtDAL::Project::GetInstance().GetMap(mGM->GetCurrentMap()), true);
@@ -420,7 +414,6 @@ namespace dtAnim
       {
          CPPUNIT_FAIL(e.ToString());
       }
-
    }
 
-}//namespace dtAnim
+} // namespace dtAnim

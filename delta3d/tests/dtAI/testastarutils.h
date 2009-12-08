@@ -1,30 +1,32 @@
 /* -*-c++-*-
-* allTests - This source file (.h & .cpp) - Using 'The MIT License'
-* Copyright (C) 2004-2008, MOVES Institute
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-*
-* @author Bradley Anderegg 06/29/2006
-*/
+ * allTests - This source file (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2004-2008, MOVES Institute
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @author Bradley Anderegg 06/29/2006
+ */
 
 #ifndef __DELTA_ASTARTESTUTILS_H__
 #define __DELTA_ASTARTESTUTILS_H__
+
+////////////////////////////////////////////////////////////////////////////////
 
 #include <dtAI/astar.h>
 #include <dtAI/astarnode.h>
@@ -41,7 +43,6 @@ namespace dtAI
    class AStarTest_PathData
    {
    public:
-
       AStarTest_PathData(float pNumPaths): mPathData(unsigned(pNumPaths)) {}
 
       void AddPath(float pPathNum, const std::list<float>& pPath)
@@ -54,21 +55,19 @@ namespace dtAI
          return mPathData[unsigned(pPathNum)];
       }
 
-
       static AStarTest_PathData* sPathData;
 
-   private:                 
-
+   private:
       std::vector< std::list<float> > mPathData;
    };
 
 
    class TestNode: public AStarNode<TestNode, float, std::list<float>::iterator, float>
    {
-   public:      
+   public:
       TestNode(node_type* pParent, float pData, cost_type pGn, cost_type pHn): BaseType(pParent, pData, pGn, pHn){}
 
-      /*virtual*/ iterator begin() const 
+      /*virtual*/ iterator begin() const
       {
          return AStarTest_PathData::sPathData->GetPath(mData).begin();
       }
@@ -77,7 +76,6 @@ namespace dtAI
       {
          return AStarTest_PathData::sPathData->GetPath(mData).end();
       }
-
    };
 
 
@@ -92,21 +90,19 @@ namespace dtAI
       };
 
    public:
-
-
       float GetCost(float pFrom, float pTo)
       {
-         if(pFrom == pTo)
+         if (pFrom == pTo)
          {
             return 0;
          }
 
          std::vector<PathCost>::iterator iter = mCostData.begin();
          std::vector<PathCost>::iterator endOfList = mCostData.end();
-         while(iter != endOfList)
+         while (iter != endOfList)
          {
             PathCost* pCost = &*iter;
-            if(pCost->mWaypoints.first == pFrom && pCost->mWaypoints.second == pTo)
+            if (pCost->mWaypoints.first == pFrom && pCost->mWaypoints.second == pTo)
             {
                return pCost->mCost;
             }
@@ -120,12 +116,12 @@ namespace dtAI
          //check if the path cost has already been assigned
          std::vector<PathCost>::iterator iter = mCostData.begin();
          std::vector<PathCost>::iterator endOfList = mCostData.end();
-         while(iter != endOfList)
+         while (iter != endOfList)
          {
             PathCost* pCost = &*iter;
-            if(pCost->mWaypoints.first == pFrom && pCost->mWaypoints.second == pTo)
+            if (pCost->mWaypoints.first == pFrom && pCost->mWaypoints.second == pTo)
             {
-              pCost->mCost = pathCost;
+               pCost->mCost = pathCost;
                return;
             }
             ++iter;
@@ -141,23 +137,19 @@ namespace dtAI
       std::vector<PathCost> mCostData;
    };
 
-
-
    class TestCostFunc: public AStarCostFunc<float, float>
    {
    public:
       float operator()(float pIn1, float pIn2) const
-      {         
+      {
          return PathCostData::sCostData->GetCost(pIn1, pIn2);
       }
    };
 
-
    typedef std::list<float> TestContainer;
-
    typedef AStar<TestNode, TestCostFunc, TestContainer, AStarTimer > TestAStar;
+} // namespace dtAI
 
-
-}//namespace dtAI
+////////////////////////////////////////////////////////////////////////////////
 
 #endif // __DELTA_ASTARTESTUTILS_H__

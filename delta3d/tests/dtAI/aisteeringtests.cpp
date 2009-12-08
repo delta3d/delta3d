@@ -1,26 +1,26 @@
 /* -*-c++-*-
-* allTests - This source file (.h & .cpp) - Using 'The MIT License'
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-*
-* Bradley Anderegg
-*/
+ * allTests - This source file (.h & .cpp) - Using 'The MIT License'
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * Bradley Anderegg
+ */
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
 
@@ -39,7 +39,6 @@
 
 namespace dtAI
 {
-
    template <typename T>
    struct ErrorHandler: public osg::Referenced
    {
@@ -76,7 +75,7 @@ namespace dtAI
 
    struct SensorState
    {
-      SensorState(): mState(false){} 
+      SensorState(): mState(false){}
       void operator()(bool r)
       {
          mState = r;
@@ -99,14 +98,14 @@ namespace dtAI
       typedef Sensor<int, int, EvaluateIncrement, dtUtil::DoNothing<void, int>, CompareInt, SensorState*, bool> CompareSensor;
    };
 
-   struct Steering 
+   struct Steering
    {
       typedef SteeringBehavior<KinematicGoal, Kinematic, SteeringOutput, GenericSensor::CompareSensor*, bool, ErrorHandler<bool>*> BehavoirBase;
    };
 
    /**
-   *   To test the SteeringBehavoir API we create a simple derived class.
-   */
+    *   To test the SteeringBehavoir API we create a simple derived class.
+    */
    class TestSteeringBehavoir: public Steering::BehavoirBase
    {
    public:
@@ -181,7 +180,7 @@ namespace dtAI
       ~TestControls(){}
 
       //these are the control inputs
-      //all are floats from 1 to -1 
+      //all are floats from 1 to -1
       //which represents percentage of maximum
       DECLARE_PROPERTY_INLINE(float, Thrust);
       DECLARE_PROPERTY_INLINE(float, Lift);
@@ -239,7 +238,6 @@ namespace dtAI
       }
    };
 
-
    class TestControllable: public dtAI::Controllable<TestState, TestGoalState, TestControls>
    {
    public:
@@ -253,12 +251,12 @@ namespace dtAI
          resultingPath.push_back(goal);
          return true;
       }
-      
-      /*virtual*/ void OutputControl(const PathType& pathToFollow, const StateType& current_state, ControlType& result) const 
+
+      /*virtual*/ void OutputControl(const PathType& pathToFollow, const StateType& current_state, ControlType& result) const
       {
          result = mDefaultControls;
       }
-      
+
       /*virtual*/ void UpdateState(float dt, const AIControlState& steerData)
       {
          mCurrentState = mDefaultState;
@@ -292,7 +290,6 @@ namespace dtAI
       void TestSteeringBehavoirErrorHandling();
 
    private:
-
       SensorState mState;
       dtCore::RefPtr<GenericSensor::CompareSensor> mSensor;
       dtCore::RefPtr<TestSteeringBehavoir> mSteeringBehavoir;
@@ -307,10 +304,10 @@ namespace dtAI
    {
       mSensor = new GenericSensor::CompareSensor(0, 10, EvaluateIncrement(), dtUtil::DoNothing<void, int>(), CompareInt(), &mState);
       mSteeringBehavoir = new TestSteeringBehavoir();
-      
+
       mErrorHandler = new ErrorHandler<bool>(false);
       mSteeringBehavoir->AddErrorHandler(mSensor.get(), mErrorHandler.get());
-   } 
+   }
 
    void AISteeringTests::tearDown()
    {
@@ -318,25 +315,24 @@ namespace dtAI
 
    void AISteeringTests::TestSteeringBehavoirBaseClass()
    {
-
       KinematicGoal kg;
       Kinematic k;
       SteeringOutput steer;
 
       const float TestNumber = 1.0f;
       kg.SetLinearVelocity(osg::Vec3(TestNumber, 0.0f, 0.0f));
-      
-      mSteeringBehavoir->Think(TestNumber, kg, k, steer); 
-      
+
+      mSteeringBehavoir->Think(TestNumber, kg, k, steer);
+
       CPPUNIT_ASSERT(steer.mLinearVelocity[0] == TestNumber);
       CPPUNIT_ASSERT(mSteeringBehavoir->GoalAchieved(kg, k));
    }
 
    void AISteeringTests::TestKinematicGoal()
-   {  
+   {
       KinematicGoal kg;
 
-      CPPUNIT_ASSERT(!kg.HasPosition()); 
+      CPPUNIT_ASSERT(!kg.HasPosition());
       CPPUNIT_ASSERT(!kg.HasRotation());
       CPPUNIT_ASSERT(!kg.HasLinearVelocity());
       CPPUNIT_ASSERT(!kg.HasAngularVelocity());
@@ -356,7 +352,7 @@ namespace dtAI
    {
       mErrorHandler->operator()(false);
 
-      for(int i = 0; i < 9; ++i)
+      for (int i = 0; i < 9; ++i)
       {
          mSteeringBehavoir->InvokeErrorHandling();
          CPPUNIT_ASSERT_MESSAGE("Invoking Error Handling loop, no errors should be triggered "
@@ -370,11 +366,11 @@ namespace dtAI
 
       //remove the error handler and assert that the sensor does not trigger an error
       mErrorHandler->operator()(false);
-      CPPUNIT_ASSERT_MESSAGE("Resetting error handler to test remove handler", !mErrorHandler->GetValue()); 
+      CPPUNIT_ASSERT_MESSAGE("Resetting error handler to test remove handler", !mErrorHandler->GetValue());
       mSteeringBehavoir->RemoveErrorHandler(mSensor.get(), mErrorHandler.get());
 
       mSteeringBehavoir->InvokeErrorHandling();
-      CPPUNIT_ASSERT_MESSAGE("Invoking error handling should not trigger an error if the handler was succesfully removed", !mErrorHandler->GetValue()); 
-
+      CPPUNIT_ASSERT_MESSAGE("Invoking error handling should not trigger an error if the handler was succesfully removed", !mErrorHandler->GetValue());
    }
-}
+
+} // namespace dtAI

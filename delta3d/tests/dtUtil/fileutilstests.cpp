@@ -1,30 +1,31 @@
 /* -*-c++-*-
-* allTests - This source file (.h & .cpp) - Using 'The MIT License'
-* Copyright (C) 2005-2008, Alion Science and Technology Corporation
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-*
-* This software was developed by Alion Science and Technology Corporation under
-* circumstances in which the U. S. Government may have rights in the software.
-*
-* @author William E. Johnson II
-*/
+ * allTests - This source file (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2005-2008, Alion Science and Technology Corporation
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * This software was developed by Alion Science and Technology Corporation under
+ * circumstances in which the U. S. Government may have rights in the software.
+ *
+ * @author William E. Johnson II
+ */
+
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtUtil/fileutils.h>
@@ -67,11 +68,11 @@ class FileUtilsTests : public CPPUNIT_NS::TestFixture
 
    private:
 
-      void NormalizeDirectorySlashes(std::string &str)
+      void NormalizeDirectorySlashes(std::string& str)
       {
-         for(size_t i = 0; i < str.size(); i++)
+         for (size_t i = 0; i < str.size(); i++)
          {
-            if(str[i] == '\\')
+            if (str[i] == '\\')
                str[i] = '/';
          }
       }
@@ -146,14 +147,20 @@ void FileUtilsTests::tearDown()
 
    //Delete a couple other projects
    if (fileUtils.DirExists("TestProject"))
+   {
       fileUtils.DirDelete("TestProject", true);
+   }
    if (fileUtils.DirExists("Test2Project"))
+   {
       fileUtils.DirDelete("Test2Project", true);
+   }
 
    std::string currentDir = fileUtils.CurrentDirectory();
    std::string projectDir("dtDAL");
    if (currentDir.substr(currentDir.size() - projectDir.size()) == projectDir)
+   {
       fileUtils.PopDirectory();
+   }
 }
 
 void FileUtilsTests::testFileIO1()
@@ -459,9 +466,9 @@ void FileUtilsTests::testFileIO2()
 
       CPPUNIT_ASSERT_MESSAGE((Dir1 + " Should only contain 2 entries.").c_str(), dc.size() == 2);
 
-      if(!dc.empty())
+      if (!dc.empty())
       {
-         for(dtUtil::DirectoryContents::const_iterator i = dc.begin(); i != dc.end(); ++i)
+         for (dtUtil::DirectoryContents::const_iterator i = dc.begin(); i != dc.end(); ++i)
          {
             const std::string& s = *i;
             CPPUNIT_ASSERT_MESSAGE((Dir1 + " Should only contain 2 entries and they should be \"Testing1\" and \"Testing\".").c_str(),

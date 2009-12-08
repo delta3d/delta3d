@@ -1,27 +1,27 @@
 /* -*-c++-*-
-* allTests - This source file (.h & .cpp) - Using 'The MIT License'
-* Copyright (C) 2006-2008, MOVES Institute
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-*
-* @author Bradley Anderegg
-*/
+ * allTests - This source file (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2006-2008, MOVES Institute
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @author Bradley Anderegg
+ */
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
 
@@ -38,9 +38,9 @@ namespace dtTest
 {
    class PlannerTests : public CPPUNIT_NS::TestFixture
    {
-      CPPUNIT_TEST_SUITE(PlannerTests );
-      CPPUNIT_TEST(TestCreatePlan);
-      CPPUNIT_TEST(TestPlannerScript);
+      CPPUNIT_TEST_SUITE(PlannerTests);
+         CPPUNIT_TEST(TestCreatePlan);
+         CPPUNIT_TEST(TestPlannerScript);
       CPPUNIT_TEST_SUITE_END();
 
    public:
@@ -58,19 +58,18 @@ namespace dtTest
 
 
    // Registers the fixture into the 'registry'
-   CPPUNIT_TEST_SUITE_REGISTRATION( PlannerTests );
-
+   CPPUNIT_TEST_SUITE_REGISTRATION(PlannerTests);
 
 
    void PlannerTests::setUp()
    {
-      
+
    }
 
 
    void PlannerTests::tearDown()
    {
-      
+
    }
 
    void PlannerTests::TestCreatePlan()
@@ -80,10 +79,10 @@ namespace dtTest
       mNPC.SpawnNPC();
       mNPC.GeneratePlan();
       std::list<const Operator*> pOperators = mNPC.GetPlan();
-      VerifyPlan(pOperators, true);    
+      VerifyPlan(pOperators, true);
 
       //step through the plan
-      while(!mNPC.GetPlan().empty())
+      while (!mNPC.GetPlan().empty())
       {
          mNPC.Update(0.05);
       }
@@ -94,7 +93,7 @@ namespace dtTest
       VerifyPlan(pOperators, false);
 
       //step through the next plan
-      while(!mNPC.GetPlan().empty())
+      while (!mNPC.GetPlan().empty())
       {
          mNPC.Update(0.05);
       }
@@ -103,7 +102,7 @@ namespace dtTest
 
    void PlannerTests::TestPlannerScript()
    {
-      NPCParser parser;            
+      NPCParser parser;
       dtCore::RefPtr<BaseNPC> pTestNPC = new BaseNPC("TestNPC");
       pTestNPC->LoadNPCScript(dtUtil::GetDeltaRootPath() + "/tests/dtAI/npcscript_test.txt");
       pTestNPC->InitNPC();
@@ -116,7 +115,7 @@ namespace dtTest
 
    void PlannerTests::VerifyPlan(std::list<const Operator*>& pOperators, bool pCallGrandma)
    {
-      if(pCallGrandma)
+      if (pCallGrandma)
       {
          std::string callGrandma("CallGrandma");
          CPPUNIT_ASSERT_EQUAL(callGrandma, pOperators.front()->GetName());
@@ -137,4 +136,4 @@ namespace dtTest
 
    }
 
-}
+} // namespace dtTest

@@ -1,30 +1,30 @@
 /* -*-c++-*-
-* allTests - This source file (.h & .cpp) - Using 'The MIT License'
-* Copyright (C) 2007-2008, Alion Science and Technology Corporation
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-* 
-* This software was developed by Alion Science and Technology Corporation under
-* circumstances in which the U. S. Government may have rights in the software.
-*
-* @author Bradley Anderegg
-*/
+ * allTests - This source file (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2007-2008, Alion Science and Technology Corporation
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * This software was developed by Alion Science and Technology Corporation under
+ * circumstances in which the U. S. Government may have rights in the software.
+ *
+ * @author Bradley Anderegg
+ */
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtCore/system.h>
@@ -48,229 +48,223 @@ using namespace dtCore;
 
 class DummyCallback: public osg::NodeCallback
 {
-   public:
-      DummyCallback():mCallbackCalled(false){}
+public:
+   DummyCallback():mCallbackCalled(false){}
 
-      void operator()(osg::Node*, osg::NodeVisitor* nv)
-      {
-         mCallbackCalled = true;
-      }
+   void operator()(osg::Node*, osg::NodeVisitor* nv)
+   {
+      mCallbackCalled = true;
+   }
 
-      bool mCallbackCalled;
+   bool mCallbackCalled;
 };
 
 class DummyDrawable: public dtCore::DeltaDrawable
 {
-   public:
-      double m_TimeOne;
-      double m_TimeTwo;
+public:
+   double m_TimeOne;
+   double m_TimeTwo;
 
-      int mCounter;
-      bool mPreframeCalled;
-      bool mPostFrameCalled;
-      bool mFrameCalled;
-      bool mEventTraversalCalled;
-      bool mPostEventTraversalCalled;
-      bool mFrameSynchCalled;
-      bool mCameraSynchCalled;
-      bool mPauseStartCalled;
-      bool mPauseEndCalled;
-      bool mPauseCalled;
-      bool mExitCalled;
-      bool mConfigCalled;
+   int mCounter;
+   bool mPreframeCalled;
+   bool mPostFrameCalled;
+   bool mFrameCalled;
+   bool mEventTraversalCalled;
+   bool mPostEventTraversalCalled;
+   bool mFrameSynchCalled;
+   bool mCameraSynchCalled;
+   bool mPauseStartCalled;
+   bool mPauseEndCalled;
+   bool mPauseCalled;
+   bool mExitCalled;
+   bool mConfigCalled;
 
-      int mPreframeOrder;
-      int mPostFrameOrder;
-      int mFrameOrder;
-      int mEventTraversalOrder;
-      int mPostEventTraversalOrder;
-      int mFrameSynchOrder;
-      int mCameraSynchOrder;
-      int mPauseStartOrder;
-      int mPauseEndOrder;
-      int mPauseOrder;
-      int mExitOrder;
-      int mConfigOrder;
+   int mPreframeOrder;
+   int mPostFrameOrder;
+   int mFrameOrder;
+   int mEventTraversalOrder;
+   int mPostEventTraversalOrder;
+   int mFrameSynchOrder;
+   int mCameraSynchOrder;
+   int mPauseStartOrder;
+   int mPauseEndOrder;
+   int mPauseOrder;
+   int mExitOrder;
+   int mConfigOrder;
 
+   DummyDrawable()
+   {
+      m_TimeOne = 0;
+      m_TimeTwo = 0;
 
-      DummyDrawable()
-      {      
-         m_TimeOne = 0;
-         m_TimeTwo = 0;
+      ResetState();
+      AddSender(&System::GetInstance());
+   }
 
-         ResetState();
-         AddSender(&System::GetInstance());
-      }
+   ~DummyDrawable()
+   {
+      RemoveSender(&System::GetInstance());
+   }
 
-      ~DummyDrawable()
+   const osg::Node* GetOSGNode() const
+   {
+      return 0;
+   }
+
+   osg::Node* GetOSGNode()
+   {
+      return 0;
+   }
+
+   void ResetState()
+   {
+      mPreframeCalled = false;
+      mPostFrameCalled = false;
+      mFrameCalled = false;
+      mEventTraversalCalled = false;
+      mPostEventTraversalCalled = false;
+      mCameraSynchCalled = false;
+      mFrameSynchCalled = false;
+      mPauseStartCalled = false;
+      mPauseEndCalled = false;
+      mPauseCalled = false;
+      mExitCalled = false;
+      mConfigCalled = false;
+
+      mPreframeOrder = 0;
+      mPostFrameOrder = 0;
+      mFrameOrder = 0;
+      mEventTraversalOrder = 0;
+      mPostEventTraversalOrder = 0;
+      mCameraSynchOrder = 0;
+      mFrameSynchOrder = 0;
+      mPauseStartOrder = 0;
+      mPauseEndOrder = 0;
+      mPauseOrder = 0;
+      mExitOrder = 0;
+      mConfigOrder = 0;
+
+      mCounter = 0;
+   }
+
+   void OnMessage(dtCore::Base::MessageData* data)
+   {
+      if (data->message == dtCore::System::MESSAGE_EVENT_TRAVERSAL)
       {
-         RemoveSender(&System::GetInstance());
+         mEventTraversalCalled = true;
+         mEventTraversalOrder = mCounter++;
       }
-
-      const osg::Node* GetOSGNode() const
+      else if (data->message == dtCore::System::MESSAGE_POST_EVENT_TRAVERSAL)
       {
-         return 0;
+         mPostEventTraversalCalled = true;
+         mPostEventTraversalOrder = mCounter++;
       }
-
-      osg::Node* GetOSGNode()
+      else if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
       {
-         return 0;
-      }
+         mPreframeCalled = true;
+         double userData[2] = {0.0,0.0};
+         memcpy(userData, data->userData, sizeof(double) * 2);
+         m_TimeOne = userData[0];
+         m_TimeTwo = userData[1];
 
-      void ResetState()
+         mPreframeOrder = mCounter++;
+      }
+      else if (data->message == dtCore::System::MESSAGE_CAMERA_SYNCH)
       {
-         mPreframeCalled = false;
-         mPostFrameCalled = false;
-         mFrameCalled = false;
-         mEventTraversalCalled = false;
-         mPostEventTraversalCalled = false;
-         mCameraSynchCalled = false;
-         mFrameSynchCalled = false;
-         mPauseStartCalled = false;
-         mPauseEndCalled = false;
-         mPauseCalled = false;
-         mExitCalled = false;
-         mConfigCalled = false;
-
-         mPreframeOrder = 0;
-         mPostFrameOrder = 0;
-         mFrameOrder = 0;
-         mEventTraversalOrder = 0;
-         mPostEventTraversalOrder = 0;
-         mCameraSynchOrder = 0;
-         mFrameSynchOrder = 0;
-         mPauseStartOrder = 0;
-         mPauseEndOrder = 0;
-         mPauseOrder = 0;
-         mExitOrder = 0;
-         mConfigOrder = 0;
-
-
-         mCounter = 0;
+         mCameraSynchCalled = true;
+         mCameraSynchOrder = mCounter++;
       }
-
-      void OnMessage(dtCore::Base::MessageData* data)
+      else if (data->message == dtCore::System::MESSAGE_FRAME_SYNCH)
       {
-         if(data->message == dtCore::System::MESSAGE_EVENT_TRAVERSAL)
-         { 
-            mEventTraversalCalled = true;
-            mEventTraversalOrder = mCounter++;
-         }
-         else if(data->message == dtCore::System::MESSAGE_POST_EVENT_TRAVERSAL)
-         { 
-            mPostEventTraversalCalled = true;
-            mPostEventTraversalOrder = mCounter++;
-         }
-         else if(data->message == dtCore::System::MESSAGE_PRE_FRAME)
-         {
-            mPreframeCalled = true;
-            double userData[2] = {0.0,0.0};
-            memcpy(userData, data->userData, sizeof(double) * 2);
-            m_TimeOne = userData[0];
-            m_TimeTwo = userData[1];
-
-            mPreframeOrder = mCounter++;
-         }
-         else if(data->message == dtCore::System::MESSAGE_CAMERA_SYNCH)
-         { 
-            mCameraSynchCalled = true;
-            mCameraSynchOrder = mCounter++;
-         }
-         else if(data->message == dtCore::System::MESSAGE_FRAME_SYNCH)
-         { 
-            mFrameSynchCalled = true;
-            mFrameSynchOrder = mCounter++;
-         }
-         else if(data->message == dtCore::System::MESSAGE_FRAME)
-         {
-            mFrameCalled = true;
-            mFrameOrder = mCounter++;
-         }
-         else if(data->message == dtCore::System::MESSAGE_POST_FRAME)
-         { 
-            mPostFrameCalled = true;
-            mPostFrameOrder = mCounter++;
-         }                  
-         else if(data->message == dtCore::System::MESSAGE_PAUSE_START)
-         { 
-            mPauseStartCalled = true;
-            mPauseStartOrder = mCounter++;
-         }    
-         else if(data->message == dtCore::System::MESSAGE_PAUSE_END)
-         { 
-            mPauseEndCalled = true;
-            mPauseEndOrder = mCounter++;
-         }    
-         else if(data->message == dtCore::System::MESSAGE_PAUSE)
-         { 
-            mPauseCalled = true;
-            mPauseOrder = mCounter++;
-         }    
-         else if(data->message == dtCore::System::MESSAGE_CONFIG)
-         { 
-            mConfigCalled = true;
-            mConfigOrder = mCounter++;
-         }   
+         mFrameSynchCalled = true;
+         mFrameSynchOrder = mCounter++;
       }
-
+      else if (data->message == dtCore::System::MESSAGE_FRAME)
+      {
+         mFrameCalled = true;
+         mFrameOrder = mCounter++;
+      }
+      else if (data->message == dtCore::System::MESSAGE_POST_FRAME)
+      {
+         mPostFrameCalled = true;
+         mPostFrameOrder = mCounter++;
+      }
+      else if (data->message == dtCore::System::MESSAGE_PAUSE_START)
+      {
+         mPauseStartCalled = true;
+         mPauseStartOrder = mCounter++;
+      }
+      else if (data->message == dtCore::System::MESSAGE_PAUSE_END)
+      {
+         mPauseEndCalled = true;
+         mPauseEndOrder = mCounter++;
+      }
+      else if (data->message == dtCore::System::MESSAGE_PAUSE)
+      {
+         mPauseCalled = true;
+         mPauseOrder = mCounter++;
+      }
+      else if (data->message == dtCore::System::MESSAGE_CONFIG)
+      {
+         mConfigCalled = true;
+         mConfigOrder = mCounter++;
+      }
+   }
 };
 
 
 class DummyNode: public osg::ShapeDrawable
 {
-   public:
+public:
+   META_Object(osg::Drawable, DummyNode);
 
-      META_Object(osg::Drawable, DummyNode);
-
-      DummyNode()
+   DummyNode()
       : ShapeDrawable(new osg::Sphere(osg::Vec3(0.0f, 10.0f, 0.0f), 10.0f))
       , mGeode(new osg::Geode())
       , mDrawCalled(false)
-      {
-         setUseDisplayList(false);
-         ResetState();
-         mGeode->addDrawable(this);
-      }
+   {
+      setUseDisplayList(false);
+      ResetState();
+      mGeode->addDrawable(this);
+   }
 
-      ~DummyNode()
-      {
-      }
+   ~DummyNode()
+   {
+   }
 
-      DummyNode(const DummyNode& dn, const osg::CopyOp& copyop=osg::CopyOp::SHALLOW_COPY)
-      {
-         ResetState();
-      }
+   DummyNode(const DummyNode& dn, const osg::CopyOp& copyop=osg::CopyOp::SHALLOW_COPY)
+   {
+      ResetState();
+   }
 
-      void drawImplementation(osg::RenderInfo& renderInfo) const
-      {
-         osg::ShapeDrawable::drawImplementation(renderInfo);
-         mDrawCalled = true;
-      }
+   void drawImplementation(osg::RenderInfo& renderInfo) const
+   {
+      osg::ShapeDrawable::drawImplementation(renderInfo);
+      mDrawCalled = true;
+   }
 
-      const osg::Node* GetOSGNode() const
-      {
-         return mGeode.get();
-      }
+   const osg::Node* GetOSGNode() const
+   {
+      return mGeode.get();
+   }
 
-      osg::Node* GetOSGNode()
-      {
-         return mGeode.get();
-      }
+   osg::Node* GetOSGNode()
+   {
+      return mGeode.get();
+   }
 
-      void ResetState()
-      {
-         mDrawCalled = false;
-      }
+   void ResetState()
+   {
+      mDrawCalled = false;
+   }
 
-      dtCore::RefPtr<osg::Geode> mGeode;
+   dtCore::RefPtr<osg::Geode> mGeode;
 
-      mutable bool mDrawCalled;
-
+   mutable bool mDrawCalled;
 };
 
 
-
-class SystemTests : public CPPUNIT_NS::TestFixture 
+class SystemTests : public CPPUNIT_NS::TestFixture
 {
    CPPUNIT_TEST_SUITE(SystemTests);
 
@@ -281,22 +275,20 @@ class SystemTests : public CPPUNIT_NS::TestFixture
 
    CPPUNIT_TEST_SUITE_END();
 
-   public:
+public:
+   void setUp();
+   void tearDown();
+   void TestSimMode();
+   void TestProperties();
+   void TestStepping();
+   void TestSystemStages();
+   void AssertStages(int stageMask);
+   void TestStage(int stageMask);
 
-      void setUp();
-      void tearDown();
-      void TestSimMode();
-      void TestProperties();
-      void TestStepping();
-      void TestSystemStages();
-      void AssertStages(int stageMask);
-      void TestStage(int stageMask);
-
-   private:
-
-      dtCore::RefPtr<DummyNode> mDummyNode;
-      dtCore::RefPtr<DummyCallback> mDummyCallback;
-      dtCore::RefPtr<DummyDrawable> mDummyDrawable;
+private:
+   dtCore::RefPtr<DummyNode> mDummyNode;
+   dtCore::RefPtr<DummyCallback> mDummyCallback;
+   dtCore::RefPtr<DummyDrawable> mDummyDrawable;
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(SystemTests);
@@ -332,7 +324,7 @@ void SystemTests::TestStepping()
    mDummyNode->GetOSGNode()->setCullCallback(mDummyCallback.get());
 
    app->Config();
-   
+
    dtCore::System& ourSystem = dtCore::System::GetInstance();
    ourSystem.SetFrameRate(1.0/0.0321);
    ourSystem.SetMaxTimeBetweenDraws(.01);
@@ -340,10 +332,10 @@ void SystemTests::TestStepping()
 
    ourSystem.SetShutdownOnWindowClose(false);
    ourSystem.Start();
-   
+
    CPPUNIT_ASSERT(ourSystem.GetSimulationTime() == 0.0);
    CPPUNIT_ASSERT(ourSystem.GetCorrectSimulationTime() == 0.0);
-   
+
    ourSystem.SetPause(false);
    ourSystem.Step();
 
@@ -405,7 +397,7 @@ void SystemTests::TestSimMode()
 {
    dtCore::RefPtr<dtABC::Application> app = &GetGlobalApplication();
 
-   //adjust the Camera position
+   // adjust the Camera position
    dtCore::Transform camPos;
    osg::Vec3 camXYZ(0.0f, -50.0f, 20.0f);
    osg::Vec3 lookAtXYZ (0.0f, 10.f, 0.0f);
@@ -438,7 +430,7 @@ void SystemTests::TestSimMode()
    /////////////////////////////////////////////////////////////
    System::SystemStageFlags currentStages = System::GetInstance().GetSystemStages();
 
-   //turn off the STAGE_FRAME
+   // turn off the STAGE_FRAME
    System::GetInstance().SetSystemStages( dtUtil::Bits::Remove(currentStages, System::STAGE_FRAME) );
 
    mDummyCallback->mCallbackCalled = false;
@@ -472,7 +464,6 @@ void SystemTests::TestSimMode()
 //////////////////////////////////////////////////////////////////////////
 void SystemTests::TestSystemStages()
 {
-
    dtCore::RefPtr<dtABC::Application> app = &GetGlobalApplication();
 
    mDummyDrawable = new DummyDrawable();
@@ -497,7 +488,7 @@ void SystemTests::TestSystemStages()
 
    ourSystem.Start();
 
-   //test each flag corresponds to the correct message
+   // test each flag corresponds to the correct message
    TestStage(System::STAGE_EVENT_TRAVERSAL);
    TestStage(System::STAGE_POST_EVENT_TRAVERSAL);
    TestStage(System::STAGE_PREFRAME);
@@ -506,19 +497,19 @@ void SystemTests::TestSystemStages()
    TestStage(System::STAGE_FRAME);
    TestStage(System::STAGE_POSTFRAME);
 
-   //mix it up a bit, make sure it still works
-   TestStage(System::STAGE_EVENT_TRAVERSAL | System::STAGE_POST_EVENT_TRAVERSAL);   
+   // mix it up a bit, make sure it still works
+   TestStage(System::STAGE_EVENT_TRAVERSAL | System::STAGE_POST_EVENT_TRAVERSAL);
    TestStage(System::STAGE_PREFRAME | System::STAGE_CAMERA_SYNCH);
-   TestStage(System::STAGE_FRAME_SYNCH | System::STAGE_FRAME);   
+   TestStage(System::STAGE_FRAME_SYNCH | System::STAGE_FRAME);
    TestStage(System::STAGE_POSTFRAME | System::STAGE_CAMERA_SYNCH);
 
-   //test all the per frame messages and make sure the order is correct
+   // test all the per frame messages and make sure the order is correct
    TestStage(System::STAGE_EVENT_TRAVERSAL | System::STAGE_POST_EVENT_TRAVERSAL |
              System::STAGE_PREFRAME | System::STAGE_CAMERA_SYNCH |
              System::STAGE_FRAME_SYNCH | System::STAGE_FRAME |
              System::STAGE_POSTFRAME | System::STAGE_CAMERA_SYNCH);
 
-   //assert they were called in the proper order
+   // assert they were called in the proper order
    CPPUNIT_ASSERT(mDummyDrawable->mEventTraversalOrder == 0);
    CPPUNIT_ASSERT(mDummyDrawable->mPostEventTraversalOrder == 1);
    CPPUNIT_ASSERT(mDummyDrawable->mPreframeOrder == 2);
@@ -528,7 +519,7 @@ void SystemTests::TestSystemStages()
    CPPUNIT_ASSERT(mDummyDrawable->mPostFrameOrder == 6);
 
 
-   //test pause
+   // test pause
    mDummyDrawable->ResetState();
    ourSystem.SetSystemStages(System::STAGES_DEFAULT);
    ourSystem.Step();
@@ -552,7 +543,6 @@ void SystemTests::TestSystemStages()
    CPPUNIT_ASSERT(!mDummyDrawable->mPauseCalled);
    CPPUNIT_ASSERT(!mDummyDrawable->mPauseStartCalled);
    CPPUNIT_ASSERT(mDummyDrawable->mPauseEndCalled);
-
 }
 
 void SystemTests::TestStage(int stageMask)
@@ -567,8 +557,8 @@ void SystemTests::TestStage(int stageMask)
 
 void SystemTests::AssertStages( int stageMask )
 {
-   //we pass in the flag containing which stages should be set to true
-   if(stageMask & System::STAGE_CONFIG)
+   // we pass in the flag containing which stages should be set to true
+   if (stageMask & System::STAGE_CONFIG)
    {
       CPPUNIT_ASSERT(mDummyDrawable->mConfigCalled);
    }
@@ -577,7 +567,7 @@ void SystemTests::AssertStages( int stageMask )
       CPPUNIT_ASSERT(!mDummyDrawable->mConfigCalled);
    }
 
-   if(stageMask & System::STAGE_EVENT_TRAVERSAL)
+   if (stageMask & System::STAGE_EVENT_TRAVERSAL)
    {
       CPPUNIT_ASSERT(mDummyDrawable->mEventTraversalCalled);
    }
@@ -597,7 +587,4 @@ void SystemTests::AssertStages( int stageMask )
    (stageMask & System::STAGE_FRAME) ? CPPUNIT_ASSERT(mDummyDrawable->mFrameCalled) : CPPUNIT_ASSERT(!mDummyDrawable->mFrameCalled);
 
    (stageMask & System::STAGE_POSTFRAME) ? CPPUNIT_ASSERT(mDummyDrawable->mPostFrameCalled) : CPPUNIT_ASSERT(!mDummyDrawable->mPostFrameCalled);
-
-
 }
-

@@ -1,27 +1,28 @@
 /* -*-c++-*-
-* allTests - This source file (.h & .cpp) - Using 'The MIT License'
-* Copyright (C) 2006-2008, MOVES Institute
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-*
-* Bradley Anderegg
-*/
+ * allTests - This source file (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2006-2008, MOVES Institute
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * Bradley Anderegg
+ */
+
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtUtil/datetime.h>
@@ -32,11 +33,11 @@ namespace dtUtil
    class DateTimeTests : public CPPUNIT_NS::TestFixture
    {
       CPPUNIT_TEST_SUITE(DateTimeTests);
-         CPPUNIT_TEST( TestGetSetTime );
-         CPPUNIT_TEST( TestIncrementTime );
-         CPPUNIT_TEST( TestTimeToString );
-         CPPUNIT_TEST( TestAdjustTimeZones );
-         CPPUNIT_TEST( TestTimeZones );
+         CPPUNIT_TEST(TestGetSetTime);
+         CPPUNIT_TEST(TestIncrementTime);
+         CPPUNIT_TEST(TestTimeToString);
+         CPPUNIT_TEST(TestAdjustTimeZones);
+         CPPUNIT_TEST(TestTimeZones);
       CPPUNIT_TEST_SUITE_END();
 
       public:
@@ -55,7 +56,7 @@ namespace dtUtil
    };
 
    // Registers the fixture into the 'registry'
-   CPPUNIT_TEST_SUITE_REGISTRATION( DateTimeTests );
+   CPPUNIT_TEST_SUITE_REGISTRATION(DateTimeTests);
 
    void DateTimeTests::setUp()
    {
@@ -67,10 +68,10 @@ namespace dtUtil
 
    void DateTimeTests::TestGetSetTime()
    {
-      unsigned yr = 1982;
-      unsigned mo = 5;
+      unsigned yr  = 1982;
+      unsigned mo  = 5;
       unsigned day = 1;
-      unsigned hr = 14;
+      unsigned hr  = 14;
       unsigned min = 30;
       unsigned sec = 59;
 
@@ -150,20 +151,20 @@ namespace dtUtil
 
    void DateTimeTests::CompareTimes(const DateTime& lhs, const DateTime& rhs)
    {
-      CPPUNIT_ASSERT_EQUAL(lhs.GetYear(), rhs.GetYear());
-      CPPUNIT_ASSERT_EQUAL(lhs.GetMonth(), rhs.GetMonth());
-      CPPUNIT_ASSERT_EQUAL(lhs.GetDay(), rhs.GetDay());
-      CPPUNIT_ASSERT_EQUAL(lhs.GetHour(), rhs.GetHour());
+      CPPUNIT_ASSERT_EQUAL(lhs.GetYear(),   rhs.GetYear());
+      CPPUNIT_ASSERT_EQUAL(lhs.GetMonth(),  rhs.GetMonth());
+      CPPUNIT_ASSERT_EQUAL(lhs.GetDay(),    rhs.GetDay());
+      CPPUNIT_ASSERT_EQUAL(lhs.GetHour(),   rhs.GetHour());
       CPPUNIT_ASSERT_EQUAL(lhs.GetMinute(), rhs.GetMinute());
       CPPUNIT_ASSERT_EQUAL(unsigned(lhs.GetSecond()), unsigned(rhs.GetSecond()));
    }
 
    void DateTimeTests::TestIncrementTime()
    {
-      unsigned yr = 1982;
-      unsigned mo = 5;
+      unsigned yr  = 1982;
+      unsigned mo  = 5;
       unsigned day = 1;
-      unsigned hr = 14;
+      unsigned hr  = 14;
       unsigned min = 30;
       unsigned sec = 30;
 
@@ -188,17 +189,17 @@ namespace dtUtil
       testIncrementTime2.SetDay(testIncrementTime2.GetDay() + 1);
       CompareTimes(testIncrementTime1, testIncrementTime2);
 
-      yr = 1979;
-      mo = 1;
+      yr  = 1979;
+      mo  = 1;
       day = 1;
-      hr = 1;
+      hr  = 1;
       min = 1;
       sec = 1;
 
       testIncrementTime1.SetTime(yr, mo, day, hr, min, sec);
       testIncrementTime2.SetTime(yr + 1, mo, day, hr, min, sec);
 
-      for(int i = 0; i < 365; ++i)
+      for (int i = 0; i < 365; ++i)
       {
          testIncrementTime1.IncrementClock(86400.0f); //24 hours
       }
@@ -224,6 +225,5 @@ namespace dtUtil
       std::cout << "CALENDAR_DATE_AND_TIME_FORMAT: " << dt_local.ToString(DateTime::TimeFormat::CALENDAR_DATE_AND_TIME_FORMAT) << std::endl;
 
       std::cout << "END TIME OUPUT TESTS" << std::endl;
-
    }
-}
+} // namespace dtUtil
