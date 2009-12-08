@@ -43,7 +43,6 @@ class ProceduralAnimationActor;
 class ProceduralAnimationComponent : public dtGame::BaseInputComponent
 {
 public:
-
    static const std::string& NAME;
 
    /// Constructor
@@ -55,33 +54,31 @@ public:
    virtual void ProcessMessage(const dtGame::Message& message);
 
    /**
-   * KeyboardListener call back- Called when a key is pressed.
-   */
+    * KeyboardListener call back- Called when a key is pressed.
+    */
    virtual bool HandleKeyPressed(const dtCore::Keyboard* keyboard, int key);
-   
+
    /**
-   * Generate many actors to stress test the system
-   */
+    * Generate many actors to stress test the system
+    */
    void InitializePerformanceTest();
 
 protected:
-
    virtual ~ProceduralAnimationComponent();
 
-private:  
-
+private:
    typedef dtCore::RefPtr<dtAnim::PoseMeshDatabase> IKDatabase;
-  
+
    std::map<CalCoreModel*, IKDatabase> mPoseMeshMap;
    std::vector<ProceduralAnimationActor*> mActorList;
 
    dtCore::RefPtr<dtGame::BaseGroundClamper> mGroundClamper;
 
-   void OnMapLoaded();  
+   void OnMapLoaded();
    void OnMapUnloaded();
    void OnActorCreated(dtGame::GameActor* newActor);
-   
-   void CreateIKActorGrid(const osg::Vec3& startPos, const osg::Vec3& forwardDirection, 
+
+   void CreateIKActorGrid(const osg::Vec3& startPos, const osg::Vec3& forwardDirection,
       const osg::Vec3& sideDirection, int forwardCount, int sideCount, bool perturb = true);
 
    void CreateIKActorsForPerfTest();

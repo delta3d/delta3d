@@ -32,11 +32,11 @@
 #include <dtActors/engineactorregistry.h>
 #include <dtUtil/mathdefines.h>
 
-const std::string &ProceduralAnimationComponent::NAME = "ProceduralAnimationComponent";
+const std::string& ProceduralAnimationComponent::NAME = "ProceduralAnimationComponent";
 
 ////////////////////////////////////////////////////////////////////////////////
 
-ProceduralAnimationComponent::ProceduralAnimationComponent(const std::string &name)
+ProceduralAnimationComponent::ProceduralAnimationComponent(const std::string& name)
    : dtGame::BaseInputComponent(name)
 {
    // nada
@@ -49,21 +49,21 @@ ProceduralAnimationComponent::~ProceduralAnimationComponent()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ProceduralAnimationComponent::ProcessMessage(const dtGame::Message &message)
+void ProceduralAnimationComponent::ProcessMessage(const dtGame::Message& message)
 {
-   if(message.GetMessageType() == dtGame::MessageType::INFO_MAP_LOADED)
+   if (message.GetMessageType() == dtGame::MessageType::INFO_MAP_LOADED)
    {
       CreateIKActorsForAesthetics();
 
       // IK Actors need access to their pose databases so set them here
-      InitializeIKActors(); 
+      InitializeIKActors();
 
       // Set the behavior for each of the actors
       for (size_t actorIndex = 0; actorIndex < mActorList.size(); ++actorIndex)
       {
-         ProceduralAnimationActor::eMode mode = 
+         ProceduralAnimationActor::eMode mode =
             (actorIndex % 2) ? ProceduralAnimationActor::MODE_WATCH: ProceduralAnimationActor::MODE_AIM;
-         
+
          mActorList[actorIndex]->SetMode(mode);
          mActorList[actorIndex]->SetTarget(GetGameManager()->GetApplication().GetCamera());
       }
@@ -71,9 +71,9 @@ void ProceduralAnimationComponent::ProcessMessage(const dtGame::Message &message
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ProceduralAnimationComponent::CreateIKActorGrid(const osg::Vec3& startPos, 
-                                                     const osg::Vec3& forwardDirection, 
-                                                     const osg::Vec3& sideDirection, 
+void ProceduralAnimationComponent::CreateIKActorGrid(const osg::Vec3& startPos,
+                                                     const osg::Vec3& forwardDirection,
+                                                     const osg::Vec3& sideDirection,
                                                      int forwardCount, int sideCount,
                                                      bool perturb)
 {
@@ -150,7 +150,7 @@ void ProceduralAnimationComponent::CreateIKActorsForAesthetics()
    osg::Vec3 startPos(START_X, START_Y, 0.0f);
 
    CreateIKActorGrid(startPos, osg::Y_AXIS * ELEMENT_SPACE, osg::X_AXIS * ELEMENT_SPACE,
-      VERTICAL_ELEMENTS, HORIZONTAL_ELEMENTS); 
+      VERTICAL_ELEMENTS, HORIZONTAL_ELEMENTS);
 
    for (size_t actorIndex = 0; actorIndex < mActorList.size(); ++actorIndex)
    {
@@ -173,7 +173,7 @@ void ProceduralAnimationComponent::InitializeIKActors()
 {
    // Give all IK actors access to the database
    for (size_t actorIndex = 0; actorIndex < mActorList.size(); ++actorIndex)
-   {      
+   {
       dtAnim::PoseMeshDatabase* posemeshDatabase = GetPoseMeshDatabaseForActor(mActorList[actorIndex]);
 
       // IKActors typically have a pose mesh with which to do their IK
@@ -201,7 +201,7 @@ dtCore::Transformable* ProceduralAnimationComponent::GetTerrain()
    {
       LOG_WARNING("Unable to find terrain in map.");
    }
- 
+
    return NULL;
 }
 
@@ -210,7 +210,7 @@ void ProceduralAnimationComponent::SetAimTarget(const dtCore::Transformable* tra
 {
    // Give all IK actors something to aim at
    for (size_t actorIndex = 0; actorIndex < mActorList.size(); ++actorIndex)
-   {  
+   {
       mActorList[actorIndex]->SetMode(ProceduralAnimationActor::MODE_AIM);
       mActorList[actorIndex]->SetTarget(transformable);
    }
@@ -259,7 +259,7 @@ void ProceduralAnimationComponent::InitializePerformanceTest()
 
 ////////////////////////////////////////////////////////////////////////////////
 /// Each core model needs to work with its own pose mesh database.
-/// This is not necessary for this example since they all share the same mesh but 
+/// This is not necessary for this example since they all share the same mesh but
 /// is important in a real application that has more than one core model
 dtAnim::PoseMeshDatabase* ProceduralAnimationComponent::GetPoseMeshDatabaseForActor(ProceduralAnimationActor* actor)
 {

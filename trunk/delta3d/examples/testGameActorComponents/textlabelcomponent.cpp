@@ -15,7 +15,7 @@ TextLabelComponent::TextLabelComponent()
    , mColor(osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f))
    , mIsFlashing(false)
    , mShow(true)
-   , mText("") 
+   , mText("")
    , mFlashInterval(1)
 {
    mGroup = new osg::Group();
@@ -56,7 +56,7 @@ void TextLabelComponent::Reset()
 ////////////////////////////////////////////////////////////////////////////////
 void TextLabelComponent::Create()
 {
-   if(!mShow)
+   if (!mShow)
    {
       return;
    }
@@ -72,7 +72,7 @@ void TextLabelComponent::Create()
    mTextGeometry->setCharacterSize(mFontSize);
    // highlight color
    mTextGeometry->setBackdropColor(osg::Vec4(1.0f, 0.2f, 0.0f, 1.0f));
-   
+
    mGeode->addDrawable(mTextGeometry.get());
 
    osg::StateSet* ss = mGeode->getOrCreateStateSet();
@@ -88,8 +88,8 @@ void TextLabelComponent::SetHighlighted(bool h)
 ////////////////////////////////////////////////////////////////////////////////
 void TextLabelComponent::SetFlashing(bool b)
 {
-   mIsFlashing = b; 
-   if(b)
+   mIsFlashing = b;
+   if (b)
    {
       // Get per frame updates to the OnTickLocal function
       RegisterForTicks();
@@ -105,8 +105,8 @@ void TextLabelComponent::SetFlashing(bool b)
 void TextLabelComponent::OnTickLocal(const dtGame::TickMessage& tickMessage)
 {
    double time = tickMessage.GetSimulationTime();
-   
-   if(fmod(time, (double)mFlashInterval * 2) < (double)mFlashInterval)
+
+   if (fmod(time, (double)mFlashInterval * 2) < (double)mFlashInterval)
    {
       SetHighlighted(true);
    }
@@ -154,4 +154,3 @@ void TextLabelComponent::BuildPropertyMap()
       "",
       GROUPNAME));
 }
-

@@ -23,7 +23,7 @@ const int DEFAULT_WIN_HEIGHT     = 480;
 const float DEFAULT_ASPECT_RATIO = DEFAULT_WIN_WIDTH / (float)DEFAULT_WIN_HEIGHT;
 
 TestMultiWin::TestMultiWin(const std::string& configFilename)
-: Application(configFilename)
+   : Application(configFilename)
 {
 }
 
@@ -95,6 +95,22 @@ void TestMultiWin::Config()
    RefPtr<Object> terr = new Object();
    terr->LoadFile("models/terrain_simple.ive");
    GetScene()->AddDrawable(terr.get());
+}
+
+bool TestMultiWin::KeyPressed(const dtCore::Keyboard* keyboard, int kc)
+{
+   bool handled = false;
+
+   switch (kc)
+   {
+   case '~':
+   case '`':
+      SetNextStatisticsType();
+      handled = true;
+      break;
+   }
+
+   return handled;
 }
 
 int main()
