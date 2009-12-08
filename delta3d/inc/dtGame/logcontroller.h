@@ -39,224 +39,220 @@ namespace dtGame
     */
    class DT_GAME_EXPORT LogController : public GMComponent
    {
-      public:
+   public:
+      static const std::string DEFAULT_NAME;
+      LogController(const std::string& name = DEFAULT_NAME);
 
-         static const std::string DEFAULT_NAME;
-         LogController(const std::string& name = DEFAULT_NAME);
+      virtual void ProcessMessage(const Message& message);
 
-         virtual void ProcessMessage(const Message& message);
+      /**
+       * Sends a request to the server logger component to tell it to
+       * change state to PLAYBACK.  Only valid in Idle state (sends request anyway).
+       */
+      virtual void RequestChangeStateToPlayback();
 
-         /**
-          * Sends a request to the server logger component to tell it to
-          * change state to PLAYBACK.  Only valid in Idle state (sends request anyway).
-          */
-         virtual void RequestChangeStateToPlayback();
+      /**
+       * Sends a request to the server logger component to tell it to
+       * change state to RECORD.  Only valid in Idle state (sends request anyway).
+       */
+      virtual void RequestChangeStateToRecord();
 
-         /**
-          * Sends a request to the server logger component to tell it to
-          * change state to RECORD.  Only valid in Idle state (sends request anyway).
-          */
-         virtual void RequestChangeStateToRecord();
+      /**
+       * Sends a request to the server logger component to tell it to change state to
+       * IDLE.  Only valid in Record or Playback states (sends request anyway).  This
+       * message will terminate any currently active record or playback and cause
+       * all open logger files to be closed and released.
+       * Transitions to idle state from playback state will clear all playback
+       * actors from the game manager.
+       */
+      virtual void RequestChangeStateToIdle();
 
-         /**
-          * Sends a request to the server logger component to tell it to change state to
-          * IDLE.  Only valid in Record or Playback states (sends request anyway).  This
-          * message will terminate any currently active record or playback and cause
-          * all open logger files to be closed and released.
-          * Transitions to idle state from playback state will clear all playback
-          * actors from the game manager.
-          */
-         virtual void RequestChangeStateToIdle();
+      /**
+       * Sends a request to the server logger component to tell it to
+       * insert a new keyframe.  Primarily used in Record.  May work in
+       * playback mode depending on the server's implementation and the logstream.
+       * @param keyframe The keyframe information to send to the server.
+       */
+      virtual void RequestCaptureKeyframe(const LogKeyframe &keyframe);
 
-         /**
-          * Sends a request to the server logger component to tell it to
-          * insert a new keyframe.  Primarily used in Record.  May work in
-          * playback mode depending on the server's implementation and the logstream.
-          * @param keyframe The keyframe information to send to the server.
-          */
-         virtual void RequestCaptureKeyframe(const LogKeyframe &keyframe);
+      /**
+       * Sends a request to the server logger component to tell it to
+       * jump to the keyframe.  Only works in Playback.  This is a heavy operation
+       * that WILL change the state of the system.
+       * @param keyframe The keyframe information to send to the server.
+       */
+      virtual void RequestJumpToKeyframe(const LogKeyframe &keyframe);
 
-         /**
-          * Sends a request to the server logger component to tell it to
-          * jump to the keyframe.  Only works in Playback.  This is a heavy operation
-          * that WILL change the state of the system.
-          * @param keyframe The keyframe information to send to the server.
-          */
-         virtual void RequestJumpToKeyframe(const LogKeyframe &keyframe);
+      /**
+       * Sends a request to the server logger component to ask it to
+       * send out the current list of keyframes.  Valid in Playback or Record.
+       */
+      virtual void RequestServerGetKeyframes();
 
-         /**
-          * Sends a request to the server logger component to ask it to
-          * send out the current list of keyframes.  Valid in Playback or Record.
-          */
-         virtual void RequestServerGetKeyframes();
+      /**
+       * Sends a request to the server logger component to ask it to
+       * send the current logfiles.  Valid in Playback or Record.
+       */
+      virtual void RequestServerGetLogfiles();
 
-         /**
-          * Sends a request to the server logger component to ask it to
-          * send the current logfiles.  Valid in Playback or Record.
-          */
-         virtual void RequestServerGetLogfiles();
+      /**
+       * Sends a request to the server logger component to ask it to
+       * send the current tags.  Valid in Playback or Record.
+       */
+      virtual void RequestServerGetTags();
 
-         /**
-          * Sends a request to the server logger component to ask it to
-          * send the current tags.  Valid in Playback or Record.
-          */
-         virtual void RequestServerGetTags();
+      /**
+       * Sends a request to the server logger component to ask it to
+       * send a current logger status message.  Valid anytime.
+       */
+      virtual void RequestServerGetStatus();
 
-         /**
-          * Sends a request to the server logger component to ask it to
-          * send a current logger status message.  Valid anytime.
-          */
-         virtual void RequestServerGetStatus();
+      /**
+       * Sends a request to the server logger component to tell it to
+       * insert a new tag.  Primarily used in Record.  May work in
+       * playback mode depending on the server's implementation and the logstream.
+       * @param logTag The tag information to send to the server.
+       */
+      virtual void RequestInsertTag(const LogTag& tag);
 
-         /**
-          * Sends a request to the server logger component to tell it to
-          * insert a new tag.  Primarily used in Record.  May work in
-          * playback mode depending on the server's implementation and the logstream.
-          * @param logTag The tag information to send to the server.
-          */
-         virtual void RequestInsertTag(const LogTag& tag);
+      /**
+       * Sends a request to the server logger component to tell it to delete the specified
+       * log file by name.  Only valid in Idle state (sends request anyway).
+       * @param logFile The log file to tell the server to delete.
+       */
+      virtual void RequestDeleteLogFile(const std::string& logFile);
 
-         /**
-          * Sends a request to the server logger component to tell it to delete the specified
-          * log file by name.  Only valid in Idle state (sends request anyway).
-          * @param logFile The log file to tell the server to delete.
-          */
-         virtual void RequestDeleteLogFile(const std::string& logFile);
+      /**
+       * Sends a request to the server logger component to tell it to change the log
+       * file name.  Only valid in Idle state (sends request anyway).  A successful set
+       * should cause a status message, error (like not idle state) sends a reject.
+       * @param logFile The log file to send to the server.
+       */
+      virtual void RequestSetLogFile(const std::string& logFile);
 
-         /**
-          * Sends a request to the server logger component to tell it to change the log
-          * file name.  Only valid in Idle state (sends request anyway).  A successful set
-          * should cause a status message, error (like not idle state) sends a reject.
-          * @param logFile The log file to send to the server.
-          */
-         virtual void RequestSetLogFile(const std::string& logFile);
+      /**
+       * Sends a request to the server logger component to change the auto keyframe
+       * interval (in seconds).  If this interval is not 0 on the server, it will
+       * automatically log a keyframe at this interval.  It is STRONGLY recommended
+       * that you keep this interval far apart (like 5-10 minutes).  A keyframe is a
+       * fairly expensive operation.  If you set this interval small, your performance
+       * will most likely greatly suffer.
+       * @param interval The interval to send to the server.
+       */
+      virtual void RequestSetAutoKeyframeInterval(double interval);
 
-         /**
-          * Sends a request to the server logger component to change the auto keyframe
-          * interval (in seconds).  If this interval is not 0 on the server, it will
-          * automatically log a keyframe at this interval.  It is STRONGLY recommended
-          * that you keep this interval far apart (like 5-10 minutes).  A keyframe is a
-          * fairly expensive operation.  If you set this interval small, your performance
-          * will most likely greatly suffer.
-          * @param interval The interval to send to the server.
-          */
-         virtual void RequestSetAutoKeyframeInterval(double interval);
+      /**
+       * Sends a request to the server logger component to add an actor to an
+       * ignore list. The ignore list prevents all its listed actors from being
+       * recorded while the logger is in record state.
+       * @param actorID The ID of the actor to be ignored in recording.
+       */
+      virtual void RequestAddIgnoredActor(const dtCore::UniqueId& actorID);
 
-         /**
-          * Sends a request to the server logger component to add an actor to an
-          * ignore list. The ignore list prevents all its listed actors from being
-          * recorded while the logger is in record state.
-          * @param actorID The ID of the actor to be ignored in recording.
-          */
-         virtual void RequestAddIgnoredActor(const dtCore::UniqueId& actorID);
+      /**
+       * Sends a request to the server logger component to remove an actor from an
+       * ignore list. The ignore list prevents all its listed actors from being
+       * recorded while the logger is in record state.
+       * @param actorID The ID of the actor to be removed from the recording ignore list.
+       */
+      virtual void RequestRemoveIgnoredActor(const dtCore::UniqueId& actorID);
 
-         /**
-          * Sends a request to the server logger component to remove an actor from an
-          * ignore list. The ignore list prevents all its listed actors from being
-          * recorded while the logger is in record state.
-          * @param actorID The ID of the actor to be removed from the recording ignore list.
-          */
-         virtual void RequestRemoveIgnoredActor(const dtCore::UniqueId& actorID);
+      /**
+       * Sends a request to the server logger component to remove all actors from an
+       * ignore list. The ignore list prevents all its listed actors from being
+       * recorded while the logger is in record state.
+       */
+      virtual void RequestClearIgnoreList();
 
-         /**
-          * Sends a request to the server logger component to remove all actors from an
-          * ignore list. The ignore list prevents all its listed actors from being
-          * recorded while the logger is in record state.
-          */
-         virtual void RequestClearIgnoreList();
+      /**
+       * Returns the last received LogStatus.  No Set, since only this object should set it.
+       */
+      const LogStatus& GetLastKnownStatus() { return mLastKnownStatus; }
 
-         /**
-          * Returns the last received LogStatus.  No Set, since only this object should set it.
-          */
-         const LogStatus& GetLastKnownStatus() { return mLastKnownStatus; }
+      /**
+       * Gets the list of logs cached since the last query from the server logger component.
+       * @return A list of logs stored as strings.
+       */
+      const std::vector<std::string>& GetLastKnownLogList() const
+      {
+         return mLastKnownLogList;
+      }
 
-         /**
-          * Gets the list of logs cached since the last query from the server logger component.
-          * @return A list of logs stored as strings.
-          */
-         const std::vector<std::string>& GetLastKnownLogList() const
-         {
-            return mLastKnownLogList;
-         }
+      /**
+       * Gets the list of keyframes cached since the last query to the server logger
+       * component.
+       * @return A list of keyframes.
+       */
+      const std::vector<LogKeyframe>& GetLastKnownKeyframeList() const
+      {
+         return mLastKnownKeyframeList;
+      }
 
-         /**
-          * Gets the list of keyframes cached since the last query to the server logger
-          * component.
-          * @return A list of keyframes.
-          */
-         const std::vector<LogKeyframe>& GetLastKnownKeyframeList() const
-         {
-            return mLastKnownKeyframeList;
-         }
+      /**
+       * Gets the list of tags cached since the last query to the server logger
+       * component.
+       * @return A list of tags.
+       */
+      const std::vector<LogTag>& GetLastKnownTagList() const
+      {
+         return mLastKnownTagList;
+      }
 
-         /**
-          * Gets the list of tags cached since the last query to the server logger
-          * component.
-          * @return A list of tags.
-          */
-         const std::vector<LogTag>& GetLastKnownTagList() const
-         {
-            return mLastKnownTagList;
-         }
+      /**
+       * Delta3D signal/slot - sent when a logger status message is received by
+       * the logger controller component.  Bind to this with something like this:
+       *    myController->SignalReceivedStatus().connect_slot(this, &MyClass::MySlotMethod)
+       * @return the signal
+       */
+      sigslot::signal1<const LogStatus&>& SignalReceivedStatus() { return mReceivedStatus; }
 
-         /**
-          * Delta3D signal/slot - sent when a logger status message is received by
-          * the logger controller component.  Bind to this with something like this:
-          *    myController->SignalReceivedStatus().connect_slot(this, &MyClass::MySlotMethod)
-          * @return the signal
-          */
-         sigslot::signal1<const LogStatus&>& SignalReceivedStatus() { return mReceivedStatus; }
+      /**
+       * Delta3D signal/slot - sent when a tag list message is received by
+       * the logger controller component.  Bind to this with something like this:
+       *    myController->SignalReceivedTags().connect_slot(this, &MyClass::MySlotMethod)
+       * @return the signal
+       */
+      sigslot::signal1<const std::vector<LogTag>&>& SignalReceivedTags() { return mReceivedTags; }
 
-         /**
-          * Delta3D signal/slot - sent when a tag list message is received by
-          * the logger controller component.  Bind to this with something like this:
-          *    myController->SignalReceivedTags().connect_slot(this, &MyClass::MySlotMethod)
-          * @return the signal
-          */
-         sigslot::signal1<const std::vector<LogTag>&>& SignalReceivedTags() { return mReceivedTags; }
+      /**
+       * Delta3D signal/slot - sent when a keyframe list message is received by
+       * the logger controller component.  Bind to this with something like this:
+       *    myController->SignalReceivedKeyframes().connect_slot(this, &MyClass::MySlotMethod)
+       * @return the signal
+       */
+      sigslot::signal1<const std::vector<LogKeyframe>&>& SignalReceivedKeyframes() { return mReceivedKeyframes; }
 
-         /**
-          * Delta3D signal/slot - sent when a keyframe list message is received by
-          * the logger controller component.  Bind to this with something like this:
-          *    myController->SignalReceivedKeyframes().connect_slot(this, &MyClass::MySlotMethod)
-          * @return the signal
-          */
-         sigslot::signal1<const std::vector<LogKeyframe>&>& SignalReceivedKeyframes() { return mReceivedKeyframes; }
+      /**
+       * Delta3D signal/slot - sent when a logger rejection message is received by
+       * the logger controller component.  Bind to this with something like this:
+       *    myController->SignalReceivedRejection().connect_slot(this, &MyClass::MySlotMethod)
+       * @return the signal
+       */
+      sigslot::signal1<const Message&>& SignalReceivedRejection() { return mReceivedRejection; }
 
-         /**
-          * Delta3D signal/slot - sent when a logger rejection message is received by
-          * the logger controller component.  Bind to this with something like this:
-          *    myController->SignalReceivedRejection().connect_slot(this, &MyClass::MySlotMethod)
-          * @return the signal
-          */
-         sigslot::signal1<const Message&>& SignalReceivedRejection() { return mReceivedRejection; }
+   protected:
+      virtual ~LogController();
 
-      protected:
+   private:
+      LogStatus mLastKnownStatus;
 
-         virtual ~LogController();
+      // Holds the list of keyframes retreived from the last request.
+      std::vector<LogKeyframe> mLastKnownKeyframeList;
 
-      private:
-         LogStatus mLastKnownStatus;
+      // Holds the list of tags retreived from the last request.
+      std::vector<LogTag> mLastKnownTagList;
 
-         // Holds the list of keyframes retreived from the last request.
-         std::vector<LogKeyframe> mLastKnownKeyframeList;
+      // This list stores the list of logs available since the last query to the server logger component.
+      std::vector<std::string> mLastKnownLogList;
 
-         // Holds the list of tags retreived from the last request.
-         std::vector<LogTag> mLastKnownTagList;
-
-         // This list stores the list of logs available since the last query to the server logger component.
-         std::vector<std::string> mLastKnownLogList;
-
-         // The signal that gets triggered when processMessage receives a LOG_INFO_STATUS message
-         sigslot::signal1<const LogStatus&> mReceivedStatus;
-         // The signal that gets triggered when processMessage receives a LOG_INFO_TAGS message
-         sigslot::signal1<const std::vector<LogTag>&> mReceivedTags;
-         // The signal that gets triggered when processMessage receives a LOG_INFO_KEYFRAMES message
-         sigslot::signal1<const std::vector<LogKeyframe>&> mReceivedKeyframes;
-         // The signal that gets triggered when processMessage receives a rejection message
-         sigslot::signal1<const Message&> mReceivedRejection;
-
-
+      // The signal that gets triggered when processMessage receives a LOG_INFO_STATUS message
+      sigslot::signal1<const LogStatus&> mReceivedStatus;
+      // The signal that gets triggered when processMessage receives a LOG_INFO_TAGS message
+      sigslot::signal1<const std::vector<LogTag>&> mReceivedTags;
+      // The signal that gets triggered when processMessage receives a LOG_INFO_KEYFRAMES message
+      sigslot::signal1<const std::vector<LogKeyframe>&> mReceivedKeyframes;
+      // The signal that gets triggered when processMessage receives a rejection message
+      sigslot::signal1<const Message&> mReceivedRejection;
    };
 
 } // namespace dtGame

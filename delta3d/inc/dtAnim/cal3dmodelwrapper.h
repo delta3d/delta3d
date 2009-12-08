@@ -45,7 +45,7 @@
 namespace dtAnim
 {
    /**
-    * Wraps the Cal3D CalModel class. It is expected that users will use the 
+    * Wraps the Cal3D CalModel class. It is expected that users will use the
     * Cal3DModelWrapper instead of using the CalModel class directly.
     * To create a new Cal3DModelWrapper:
     * @code
@@ -54,261 +54,262 @@ namespace dtAnim
     */
    class DT_ANIM_EXPORT Cal3DModelWrapper : public osg::Referenced
    {
-      public:
-         static const int NULL_BONE = -1;
-   
-         Cal3DModelWrapper(CalModel* model);
+   public:
+      static const int NULL_BONE = -1;
 
-         void SetCalModel(CalModel* model);
+      Cal3DModelWrapper(CalModel* model);
 
-         /**
-          * Get a pointer to the internal CalModel.  For advanced users only!
-          * 
-          * Warning! This violates the protective services brought to you by the wrapper.
-          * Only modify the CalModel if you know how it will impact the rest of the 
-          * Delta3D animation system.  You have been warned.
-          * @return A pointer to the internal CalModel this class operates on.
-          */
-         CalModel* GetCalModel();
+      void SetCalModel(CalModel* model);
 
-         /** 
-          * Get a const pointer to the internal CalModel.  For advanced users only!
-          * 
-          * Warning! This violates the protective services brought to you by the wrapper.
-          * Only modify the CalModel if you know how it will impact the rest of the 
-          * Delta3D animation system.  You have been warned.
-          * @return A const pointer to the internal CalModel this class operates on.
-          */
-         const CalModel* GetCalModel() const;
+      /**
+       * Get a pointer to the internal CalModel.  For advanced users only!
+       *
+       * Warning! This violates the protective services brought to you by the wrapper.
+       * Only modify the CalModel if you know how it will impact the rest of the
+       * Delta3D animation system.  You have been warned.
+       * @return A pointer to the internal CalModel this class operates on.
+       */
+      CalModel* GetCalModel();
 
-         bool AttachMesh(int meshID); 
-         bool DetachMesh(int meshID); 
+      /**
+       * Get a const pointer to the internal CalModel.  For advanced users only!
+       *
+       * Warning! This violates the protective services brought to you by the wrapper.
+       * Only modify the CalModel if you know how it will impact the rest of the
+       * Delta3D animation system.  You have been warned.
+       * @return A const pointer to the internal CalModel this class operates on.
+       */
+      const CalModel* GetCalModel() const;
 
-         void ShowMesh(int meshID); 
-         void HideMesh(int meshID); 
-         bool IsMeshVisible(int meshID); 
+      bool AttachMesh(int meshID);
+      bool DetachMesh(int meshID);
 
-         void SetMaterialSet(int materialSetID) { mCalModel->setMaterialSet(materialSetID); }
-         void SetLODLevel(float level) { mCalModel->setLodLevel(level); }
+      void ShowMesh(int meshID);
+      void HideMesh(int meshID);
+      bool IsMeshVisible(int meshID);
 
-         /************************************************************************/
-         /// Update the Cal3D system using the CalModel's update.
-         void Update(float deltaTime) {mCalModel->update(deltaTime); }
+      void SetMaterialSet(int materialSetID) { mCalModel->setMaterialSet(materialSetID); }
+      void SetLODLevel(float level) { mCalModel->setLodLevel(level); }
 
-         /// Update just the Cal3D's animation using the mixer
-         void UpdateAnimation(float deltaTime) {mCalModel->getMixer()->updateAnimation(deltaTime);}
+      /************************************************************************/
+      /// Update the Cal3D system using the CalModel's update.
+      void Update(float deltaTime) { mCalModel->update(deltaTime); }
 
-         /// Update just Cal3D's skeleton using the mixer
-         void UpdateSkeleton() {mCalModel->getMixer()->updateSkeleton();}
+      /// Update just the Cal3D's animation using the mixer
+      void UpdateAnimation(float deltaTime) { mCalModel->getMixer()->updateAnimation(deltaTime); }
 
-         /// Update the CalModel's morph target mixer
-         void UpdateMorphTargetMixer(float deltaTime) {mCalModel->getMorphTargetMixer()->update(deltaTime);}
+      /// Update just Cal3D's skeleton using the mixer
+      void UpdateSkeleton() { mCalModel->getMixer()->updateSkeleton(); }
 
-         /// Update the CalModel's physique
-         void UpdatePhysique() {mCalModel->getPhysique()->update();}
+      /// Update the CalModel's morph target mixer
+      void UpdateMorphTargetMixer(float deltaTime) { mCalModel->getMorphTargetMixer()->update(deltaTime); }
 
-         /// Update the CalModel's spring system
-         void UpdateSpringSystem(float deltaTime) {mCalModel->getSpringSystem()->update(deltaTime);}
+      /// Update the CalModel's physique
+      void UpdatePhysique() { mCalModel->getPhysique()->update(); }
 
-         /************************************************************************/
-         bool BeginRenderingQuery() { return mRenderer->beginRendering(); } 
-         void EndRenderingQuery()   { mRenderer->endRendering(); }
+      /// Update the CalModel's spring system
+      void UpdateSpringSystem(float deltaTime) { mCalModel->getSpringSystem()->update(deltaTime); }
 
-         bool SelectMeshSubmesh(int meshID, int submeshID) {return mRenderer->selectMeshSubmesh(meshID, submeshID);}
+      /************************************************************************/
+      bool BeginRenderingQuery() { return mRenderer->beginRendering(); }
+      void EndRenderingQuery()   { mRenderer->endRendering(); }
 
-         int GetVertexCount() { return mRenderer->getVertexCount(); }
-         int GetFaceCount()   { return mRenderer->getFaceCount(); }
-         int GetMapCount()    { return mRenderer->getMapCount(); }
-         int GetMeshCount()                 { return mRenderer->getMeshCount(); }
-         int GetSubmeshCount(int submeshID) { return mRenderer->getSubmeshCount(submeshID); }
+      bool SelectMeshSubmesh(int meshID, int submeshID) { return mRenderer->selectMeshSubmesh(meshID, submeshID); }
 
-         /************************************************************************/
-         int GetCoreMeshCount() const { return mCalModel->getCoreModel()->getCoreMeshCount(); }
+      int GetVertexCount()               { return mRenderer->getVertexCount(); }
+      int GetFaceCount()                 { return mRenderer->getFaceCount(); }
+      int GetMapCount()                  { return mRenderer->getMapCount(); }
+      int GetMeshCount()                 { return mRenderer->getMeshCount(); }
+      int GetSubmeshCount(int submeshID) { return mRenderer->getSubmeshCount(submeshID); }
 
-         ///Get the name for the mesh using the supplied meshID
-         const std::string& GetCoreMeshName(int meshID) const;
+      /************************************************************************/
+      int GetCoreMeshCount() const { return mCalModel->getCoreModel()->getCoreMeshCount(); }
 
-         int GetCoreAnimationCount() const;
+      ///Get the name for the mesh using the supplied meshID
+      const std::string& GetCoreMeshName(int meshID) const;
 
-         /// Get the Cal3D rotation values.
-         /// @param animid the core animation of interest.
-         /// @param boneid the core bone within the animation, identifying the track.
-         /// @param keyframeindex the keyframe array index of interest for the animation track.
-         /// @return the rotation values that cal3d is using, converted into right hand coordinate frame.
-         osg::Quat GetCoreTrackKeyFrameQuat(unsigned int animID, unsigned int boneID, unsigned int keyframeindex) const;
+      int GetCoreAnimationCount() const;
 
-         /// @param boneID the ID for the CalBone instance.
-         osg::Quat GetBoneAbsoluteRotation(unsigned int boneID) const;
+      /// Get the Cal3D rotation values.
+      /// @param animid the core animation of interest.
+      /// @param boneid the core bone within the animation, identifying the track.
+      /// @param keyframeindex the keyframe array index of interest for the animation track.
+      /// @return the rotation values that cal3d is using, converted into right hand coordinate frame.
+      osg::Quat GetCoreTrackKeyFrameQuat(unsigned int animID, unsigned int boneID, unsigned int keyframeindex) const;
 
-         /** 
-          * Get the Cal3D rotation values.
-          * @param animid the core animation of interest.
-          * @param boneid the core bone within the animation, identifying the track.
-          * @param keyframeindex the keyframe array index of interest for the animation track.
-          * @return the rotation values that cal3d is using, converted into right hand coordinate frame.
-          */
-         osg::Quat GetBoneAbsoluteRotationForKeyFrame(int animid, int boneid, unsigned int keyframeindex) const;
+      /// @param boneID the ID for the CalBone instance.
+      osg::Quat GetBoneAbsoluteRotation(unsigned int boneID) const;
 
-         /// Get the current translation for the CalBone.
-         /// @param boneID the ID for the CalBone of interest.
-         /// @return the translation vector in a right-hand coordinate system.
-         osg::Vec3 GetBoneAbsoluteTranslation(unsigned int boneID) const;
+      /**
+       * Get the Cal3D rotation values.
+       * @param animid the core animation of interest.
+       * @param boneid the core bone within the animation, identifying the track.
+       * @param keyframeindex the keyframe array index of interest for the animation track.
+       * @return the rotation values that cal3d is using, converted into right hand coordinate frame.
+       */
+      osg::Quat GetBoneAbsoluteRotationForKeyFrame(int animid, int boneid, unsigned int keyframeindex) const;
 
-         /// @param boneID the ID for the CalBone instance.
-         osg::Quat GetBoneRelativeRotation(unsigned int boneID) const;
+      /// Get the current translation for the CalBone.
+      /// @param boneID the ID for the CalBone of interest.
+      /// @return the translation vector in a right-hand coordinate system.
+      osg::Vec3 GetBoneAbsoluteTranslation(unsigned int boneID) const;
 
-         /// Get the Cal3D CoreBone ID
-         /// @return the ID for the CoreBone.
-         int GetCoreBoneID(const std::string& name) const;
+      /// @param boneID the ID for the CalBone instance.
+      osg::Quat GetBoneRelativeRotation(unsigned int boneID) const;
 
-         /// Get all bone IDs within the CoreSkeleton.
-         /// @param toFill a vector to be filled with the bone IDs for the entire CoreSkeleton.
-         void GetCoreBoneNames(std::vector<std::string>& toFill) const;
+      /// Get the Cal3D CoreBone ID
+      /// @return the ID for the CoreBone.
+      int GetCoreBoneID(const std::string& name) const;
 
-         ///Get the name that equates to the supplied animation ID
-         const std::string& GetCoreAnimationName(int animID) const;
+      /// Get all bone IDs within the CoreSkeleton.
+      /// @param toFill a vector to be filled with the bone IDs for the entire CoreSkeleton.
+      void GetCoreBoneNames(std::vector<std::string>& toFill) const;
 
-         int GetCoreAnimationIDByName(const std::string &name) const;
+      ///Get the name that equates to the supplied animation ID
+      const std::string& GetCoreAnimationName(int animID) const;
 
-         ///Get the number of tracks this animation uses
-         unsigned int GetCoreAnimationTrackCount(int animID) const;
+      int GetCoreAnimationIDByName(const std::string &name) const;
 
-         ///Get the id of the parent to boneID
-         int GetParentBoneID(unsigned int boneID) const;
+      ///Get the number of tracks this animation uses
+      unsigned int GetCoreAnimationTrackCount(int animID) const;
 
-         /// Get the bone IDs of all children for a parent bone.
-         /// @param parentCoreBoneID the bone ID for the parent bone.
-         /// @param toFill a vector to be filled with the bone IDs for all child bones.
-         void GetCoreBoneChildrenIDs(int parentCoreBoneID, std::vector<int>& toFill) const;
+      ///Get the id of the parent to boneID
+      int GetParentBoneID(unsigned int boneID) const;
 
-         /// Get all the root bone IDs
-         /// @param toFill a container of bone IDs consisting only of root bones.
-         void GetRootBoneIDs(std::vector<int>& toFill) const;
+      /// Get the bone IDs of all children for a parent bone.
+      /// @param parentCoreBoneID the bone ID for the parent bone.
+      /// @param toFill a vector to be filled with the bone IDs for all child bones.
+      void GetCoreBoneChildrenIDs(int parentCoreBoneID, std::vector<int>& toFill) const;
 
-         ///Get the total number of keyframes in this animation
-         unsigned int GetCoreAnimationKeyframeCount(int animID) const;
+      /// Get all the root bone IDs
+      /// @param toFill a container of bone IDs consisting only of root bones.
+      void GetRootBoneIDs(std::vector<int>& toFill) const;
 
-         ///Get the number of keyframes in the animation for a particular bone
-         unsigned int GetCoreAnimationKeyframeCountForTrack(int animID, int boneID) const;
+      ///Get the total number of keyframes in this animation
+      unsigned int GetCoreAnimationKeyframeCount(int animID) const;
 
-         ///Get the duration of this animation (seconds?)
-         float GetCoreAnimationDuration(int animID) const;
+      ///Get the number of keyframes in the animation for a particular bone
+      unsigned int GetCoreAnimationKeyframeCountForTrack(int animID, int boneID) const;
 
-         int GetCoreMaterialCount() const {return mCalModel->getCoreModel()->getCoreMaterialCount();}
-         CalCoreMaterial* GetCoreMaterial(int matID) {return mCalModel->getCoreModel()->getCoreMaterial(matID); }
+      ///Get the duration of this animation (seconds?)
+      float GetCoreAnimationDuration(int animID) const;
 
-         ///Get the core material diffuse color (rgba 0-255)
-         osg::Vec4 GetCoreMaterialDiffuse(int matID) const;
+      int GetCoreMaterialCount() const {return mCalModel->getCoreModel()->getCoreMaterialCount();}
+      CalCoreMaterial* GetCoreMaterial(int matID) {return mCalModel->getCoreModel()->getCoreMaterial(matID); }
 
-         ///Get the core material ambient color (rgba 0-255)
-         osg::Vec4 GetCoreMaterialAmbient(int matID) const;
+      ///Get the core material diffuse color (rgba 0-255)
+      osg::Vec4 GetCoreMaterialDiffuse(int matID) const;
 
-         ///Get the core material specular color (rgba 0-255)
-         osg::Vec4 GetCoreMaterialSpecular(int matID) const;
+      ///Get the core material ambient color (rgba 0-255)
+      osg::Vec4 GetCoreMaterialAmbient(int matID) const;
 
-         ///Get the core material shininess
-         float GetCoreMaterialShininess(int matID) const;
+      ///Get the core material specular color (rgba 0-255)
+      osg::Vec4 GetCoreMaterialSpecular(int matID) const;
 
-         ///Get the name associated with the material using the supplied material ID
-         const std::string& GetCoreMaterialName(int matID) const {return mCalModel->getCoreModel()->getCoreMaterial(matID)->getName(); }
+      ///Get the core material shininess
+      float GetCoreMaterialShininess(int matID) const;
 
-         /// Get a bounding box the encompasses the character in its default pose
-         osg::BoundingBox GetBoundingBox();
+      ///Get the name associated with the material using the supplied material ID
+      const std::string& GetCoreMaterialName(int matID) const {return mCalModel->getCoreModel()->getCoreMaterial(matID)->getName(); }
 
-         /** 
-          * Apply a scaling factor to the core model.  May need to rebuild
-          * any local geometry after calling this.
-          * @param scaleFactor : amount to scale the character (2.0 = double the size)
-          */
-         void ApplyCoreModelScaleFactor(float scaleFactor) const;
+      /// Get a bounding box the encompasses the character in its default pose
+      osg::BoundingBox GetBoundingBox();
 
-         /************************************************************************/
-         int GetFaces(CalIndex* faces)          { return mRenderer->getFaces((CalIndex*)faces); }
-         int GetNormals(float* normals, int stride=0) { return mRenderer->getNormals(normals, stride); }
-         int GetTextureCoords(int mapID, float* coords, int stride=0) {return mRenderer->getTextureCoordinates(mapID, coords, stride);}
-         int GetVertices(float* vertBuffer, int stride=0) {return mRenderer->getVertices(vertBuffer, stride);}
+      /**
+       * Apply a scaling factor to the core model.  May need to rebuild
+       * any local geometry after calling this.
+       * @param scaleFactor : amount to scale the character (2.0 = double the size)
+       */
+      void ApplyCoreModelScaleFactor(float scaleFactor) const;
 
-         /************************************************************************/
-         void GetAmbientColor(unsigned char* colorBuffer)  {mRenderer->getAmbientColor(colorBuffer);}
-         void GetDiffuseColor(unsigned char* colorBuffer)  {mRenderer->getDiffuseColor(colorBuffer);}
-         void GetSpecularColor(unsigned char* colorBuffer) {mRenderer->getSpecularColor(colorBuffer);}
-         float GetShininess() { return mRenderer->getShininess(); }
-         void* GetMapUserData(int mapID) { return mRenderer->getMapUserData(mapID); }
+      /************************************************************************/
+      int GetFaces(CalIndex* faces)          { return mRenderer->getFaces((CalIndex*)faces); }
+      int GetNormals(float* normals, int stride=0) { return mRenderer->getNormals(normals, stride); }
+      int GetTextureCoords(int mapID, float* coords, int stride=0) { return mRenderer->getTextureCoordinates(mapID, coords, stride); }
+      int GetVertices(float* vertBuffer, int stride=0) { return mRenderer->getVertices(vertBuffer, stride); }
 
-         /************************************************************************/
+      /************************************************************************/
+      void GetAmbientColor(unsigned char* colorBuffer)  { mRenderer->getAmbientColor(colorBuffer);  }
+      void GetDiffuseColor(unsigned char* colorBuffer)  { mRenderer->getDiffuseColor(colorBuffer);  }
+      void GetSpecularColor(unsigned char* colorBuffer) { mRenderer->getSpecularColor(colorBuffer); }
+      float GetShininess() { return mRenderer->getShininess(); }
+      void* GetMapUserData(int mapID) { return mRenderer->getMapUserData(mapID); }
 
-         bool HasTrackForBone(unsigned int animID, int boneID) const;
+      /************************************************************************/
 
-         bool HasBone(int boneID) const;
+      bool HasTrackForBone(unsigned int animID, int boneID) const;
 
-         bool HasAnimation(int animID) const;
+      bool HasBone(int boneID) const;
 
-         /** 
-          * @param id : a valid ID of an animation (0 based)
-          * @param weight : the strength of this animation in relation to the other
-          *                 animations already being blended.
-          * @param delay : how long it takes for this animation to become full strength (seconds)
-          * @return true if successful, false if an error happened.
-          */
-         bool BlendCycle(int id, float weight, float delay);
+      bool HasAnimation(int animID) const;
 
-         /** 
-          * @param id : a valid ID of an animation already being blended (0 based)
-          * @param delay : how long it takes to fade this animation out (seconds)
-          * @return true if successful, false if an error happened.
-          */
-         bool ClearCycle(int id, float delay);
+      /**
+       * @param id : a valid ID of an animation (0 based)
+       * @param weight : the strength of this animation in relation to the other
+       *                 animations already being blended.
+       * @param delay : how long it takes for this animation to become full strength (seconds)
+       * @return true if successful, false if an error happened.
+       */
+      bool BlendCycle(int id, float weight, float delay);
 
-         /// Remove all existing animations from the mixer
-         void ClearAll(float delay = 0.0);
+      /**
+       * @param id : a valid ID of an animation already being blended (0 based)
+       * @param delay : how long it takes to fade this animation out (seconds)
+       * @return true if successful, false if an error happened.
+       */
+      bool ClearCycle(int id, float delay);
 
-         /** 
-          * Peform a one time animation.
-          * 
-          * @param id : a valid ID of a animation to perform one-time (0 based)
-          * @param delayIn : how long it takes to fade in this animation to full strength (seconds)
-          * @param delayOut: how long it takes to fade out this animation (seconds)
-          * @param weightTgt : the strength of this animation
-          * @param autoLock : true prevents the action from being reset and removed on the last
-          *                   key frame
-          * @return true if successful, false if an error happened.
-          */
-         bool ExecuteAction(int id, float delayIn, float delayOut,
-                            float weightTgt = 1.0f, bool autoLock = false);
+      /// Remove all existing animations from the mixer
+      void ClearAll(float delay = 0.0);
 
-         /** 
-          * Remove an existing one-time animation from the mixer
-          * 
-          * @param id : a valid ID of a one-time animation already playing (0 based)
-          * @return true if successful, false if an error happened or animation doesn't exist.
-          */
-         bool RemoveAction(int id);
+      /**
+       * Peform a one time animation.
+       *
+       * @param id : a valid ID of a animation to perform one-time (0 based)
+       * @param delayIn : how long it takes to fade in this animation to full strength (seconds)
+       * @param delayOut: how long it takes to fade out this animation (seconds)
+       * @param weightTgt : the strength of this animation
+       * @param autoLock : true prevents the action from being reset and removed on the last
+       *                   key frame
+       * @return true if successful, false if an error happened.
+       */
+      bool ExecuteAction(int id, float delayIn, float delayOut,
+                         float weightTgt = 1.0f, bool autoLock = false);
 
-         /// sets the offset time used in synchronized looping animations.
-         void SetAnimationTime(float time);
-         /// @return the offset time used when playing looping animations.
-         float GetAnimationTime();
+      /**
+       * Remove an existing one-time animation from the mixer
+       *
+       * @param id : a valid ID of a one-time animation already playing (0 based)
+       * @return true if successful, false if an error happened or animation doesn't exist.
+       */
+      bool RemoveAction(int id);
 
-         /** Get the CAL3D CalHardwareModel representation for this CalModel.
-          *  Warning! This violates the protective services brought to you by the wrapper; use
-          *  with caution.
-          *  @return The hardware model represented by this CalModel
-          */
-         DEPRECATE_FUNC CalHardwareModel* GetOrCreateCalHardwareModel();
+      /// sets the offset time used in synchronized looping animations.
+      void SetAnimationTime(float time);
+      /// @return the offset time used when playing looping animations.
+      float GetAnimationTime();
 
-      protected:
-         virtual ~Cal3DModelWrapper();
+      /** Get the CAL3D CalHardwareModel representation for this CalModel.
+       *  Warning! This violates the protective services brought to you by the wrapper; use
+       *  with caution.
+       *  @return The hardware model represented by this CalModel
+       */
+      DEPRECATE_FUNC CalHardwareModel* GetOrCreateCalHardwareModel();
 
-      private:
-         CalModel*    mCalModel;
-         CalRenderer* mRenderer;
-         CalMixer*    mMixer;
+   protected:
+      virtual ~Cal3DModelWrapper();
 
-         CalHardwareModel* mHardwareModel;
+   private:
+      CalModel*    mCalModel;
+      CalRenderer* mRenderer;
+      CalMixer*    mMixer;
 
-         typedef std::map<int, bool> MeshVisibilityMap;
-         MeshVisibilityMap mMeshVisibility;
+      CalHardwareModel* mHardwareModel;
+
+      typedef std::map<int, bool> MeshVisibilityMap;
+      MeshVisibilityMap mMeshVisibility;
    };
-}//namespace dtAnim
+
+} // namespace dtAnim
 
 #endif // __DELTA_CAL3DWRAPPER_H__

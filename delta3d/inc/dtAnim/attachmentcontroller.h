@@ -31,7 +31,6 @@
 #include <vector>
 
 
-
 namespace dtCore
 {
    class Transformable;
@@ -41,52 +40,52 @@ namespace dtCore
 namespace dtAnim
 {
    class Cal3DModelWrapper;
-   
+
    typedef std::pair<dtCore::RefPtr<dtCore::Transformable>, dtUtil::HotSpotDefinition >
       AttachmentPair;
-   
+
    /**
     * Stores a list of attachments for a cal model and can update their positions
     * based each frame based on the position of the bones.
-    * 
+    *
     * It may be subclassed to add additional features.
     */
    class DT_ANIM_EXPORT AttachmentController : public osg::Referenced
    {
-      public:
-         typedef std::vector<AttachmentPair> AttachmentContainer;
+   public:
+      typedef std::vector<AttachmentPair> AttachmentContainer;
 
-         AttachmentController();
-        
-         /**
-          * Adds a hot spot attachment to the skeleton.  This will move the
-          * attachment each time the skeleton is updated.
-          * @see dtCore::HotSpotAttachment
-          */
-         void AddAttachment(dtCore::Transformable& actor, dtUtil::HotSpotDefinition& spot);
+      AttachmentController();
 
-         /**
-          * Removes a previously added hot spot attachment.  If the spot is not
-          * in the container, this call is a no-op.
-          * @see dtCore::HotSpotAttachment
-          */
-         void RemoveAttachment(const dtCore::Transformable& actor);
+      /**
+       * Adds a hot spot attachment to the skeleton.  This will move the
+       * attachment each time the skeleton is updated.
+       * @see dtCore::HotSpotAttachment
+       */
+      void AddAttachment(dtCore::Transformable& actor, dtUtil::HotSpotDefinition& spot);
 
-         /// @return an immutable container holding the current set of hot spots.
-         const AttachmentContainer& GetAttachments() const;
-         
-         /**
-          * Update the attachments to the new positions based on the model.
-          * 
-          * This may be overridden in a subclass to modify or update the behavior.
-          */
-         virtual void Update(Cal3DModelWrapper& model);
-         
-      protected:
-         virtual ~AttachmentController();
+      /**
+       * Removes a previously added hot spot attachment.  If the spot is not
+       * in the container, this call is a no-op.
+       * @see dtCore::HotSpotAttachment
+       */
+      void RemoveAttachment(const dtCore::Transformable& actor);
 
-      private:
-         AttachmentContainer mAttachments;
+      /// @return an immutable container holding the current set of hot spots.
+      const AttachmentContainer& GetAttachments() const;
+
+      /**
+       * Update the attachments to the new positions based on the model.
+       *
+       * This may be overridden in a subclass to modify or update the behavior.
+       */
+      virtual void Update(Cal3DModelWrapper& model);
+
+   protected:
+      virtual ~AttachmentController();
+
+   private:
+      AttachmentContainer mAttachments;
    };
 
    /**
@@ -95,29 +94,31 @@ namespace dtAnim
     */
    class AttachmentMover
    {
-      public:
-         AttachmentMover(const dtAnim::Cal3DModelWrapper& model);
+   public:
+      AttachmentMover(const dtAnim::Cal3DModelWrapper& model);
 
-         AttachmentMover(const AttachmentMover& same);
+      AttachmentMover(const AttachmentMover& same);
 
-         AttachmentMover& operator =(const AttachmentMover& same);
+      AttachmentMover& operator =(const AttachmentMover& same);
 
-         /**
-          * For use with dtCore::HotSpotAttachments using for_each or similar
-          * This method takes a ref ptr because containers tend to hold then, and 
-          * it is for use with for_each or something similar.  The ref ptr is
-          * takes by reference, so it is not copied.
-          */
-         void operator()(dtCore::RefPtr<dtCore::HotSpotAttachment>& attachment);
-         /**
-          * For use with AttachmentPair typedef above using for_each or similar.
-          * This method technically passes a refptr as a parameter, but it won't be copied
-          * because its a member of the pair which is passed by reference.
-          */
-         void operator()(AttachmentPair& attachment);
-      private:
-         const dtAnim::Cal3DModelWrapper* mModel;
+      /**
+       * For use with dtCore::HotSpotAttachments using for_each or similar
+       * This method takes a ref ptr because containers tend to hold then, and
+       * it is for use with for_each or something similar.  The ref ptr is
+       * takes by reference, so it is not copied.
+       */
+      void operator()(dtCore::RefPtr<dtCore::HotSpotAttachment>& attachment);
+
+      /**
+       * For use with AttachmentPair typedef above using for_each or similar.
+       * This method technically passes a refptr as a parameter, but it won't be copied
+       * because its a member of the pair which is passed by reference.
+       */
+      void operator()(AttachmentPair& attachment);
+
+   private:
+      const dtAnim::Cal3DModelWrapper* mModel;
    };
-}
+} // namespace dtAnim
 
-#endif /*DTANIM_ATTACHMENTCONTROLLER_H_*/
+#endif // DTANIM_ATTACHMENTCONTROLLER_H_

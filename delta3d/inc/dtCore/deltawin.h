@@ -11,12 +11,12 @@
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
- *0
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
-*/
+ */
 
 #ifndef DELTA_DELTA_WIN
 #define DELTA_DELTA_WIN
@@ -43,43 +43,42 @@ namespace osgViewer
 namespace dtCore
 {
    /**
-   * \brief The rendering area that a dtCore::Camera will render to
-   *
-   * The DeltaWin class is used as a canvas for the dtCore::Cameras to render upon.
-   * The DeltaWin can be positioned and sized using SetPosition(), set to be fullscreen using
-   * SetFullScreenMode(), and the cursor can be hidden using ShowCursor().
-   * A DeltaWin can be embedded inside an existing window by derived from, or use,
-   * an osgViewer::EmbeddedGraphicsWindow, then passing the EmbeddedGraphicsWindow
-   * to the DeltaWin constructor, note you need to pass it to the dtCore::Camera too.
-   * See dtABC::Widget for more information.
-   *
-   * Typical usage:
-   * \code
-   * dtCore::RefPtr<dtCore::DeltaWin> win = new dtCore::DeltaWin("myWin");
-   * win->SetPosition(100, 100, 640, 480);
-   * win->SetWindowTitle("My example window");
-   * \endcode
-   *
-   * \see dtCore::Camera::SetWindow()
-   */
+    * \brief The rendering area that a dtCore::Camera will render to
+    *
+    * The DeltaWin class is used as a canvas for the dtCore::Cameras to render upon.
+    * The DeltaWin can be positioned and sized using SetPosition(), set to be fullscreen using
+    * SetFullScreenMode(), and the cursor can be hidden using ShowCursor().
+    * A DeltaWin can be embedded inside an existing window by derived from, or use,
+    * an osgViewer::EmbeddedGraphicsWindow, then passing the EmbeddedGraphicsWindow
+    * to the DeltaWin constructor, note you need to pass it to the dtCore::Camera too.
+    * See dtABC::Widget for more information.
+    *
+    * Typical usage:
+    * \code
+    * dtCore::RefPtr<dtCore::DeltaWin> win = new dtCore::DeltaWin("myWin");
+    * win->SetPosition(100, 100, 640, 480);
+    * win->SetWindowTitle("My example window");
+    * \endcode
+    *
+    * \see dtCore::Camera::SetWindow()
+    */
    class DT_CORE_EXPORT DeltaWin : public Base
    {
       DECLARE_MANAGEMENT_LAYER(DeltaWin)
 
    public:
-
       /**
-      * Traits - Set of window specific properties that control appearance and behavior.
-      *
-      * @param name the name of the class as well as the window title
-      * @param x the location of the window in pixels
-      * @param y the location of the window in pixels
-      * @param width the width of the window in pixels
-      * @param height the height of the window in pixels
-      * @param cursor true if you wish to use the default cursor, false if not
-      * @param fullScreen true if this window should be displayed fullscreen
-      * @param inheritedWindowData the inheritedWindowData use to embedded the window in GUI window
-      */
+       * Traits - Set of window specific properties that control appearance and behavior.
+       *
+       * @param name the name of the class as well as the window title
+       * @param x the location of the window in pixels
+       * @param y the location of the window in pixels
+       * @param width the width of the window in pixels
+       * @param height the height of the window in pixels
+       * @param cursor true if you wish to use the default cursor, false if not
+       * @param fullScreen true if this window should be displayed fullscreen
+       * @param inheritedWindowData the inheritedWindowData use to embedded the window in GUI window
+       */
       struct DeltaWinTraits
       {
          static const int DEFAULT_WIDTH  = 640;
@@ -119,7 +118,6 @@ namespace dtCore
          int displayNum;
          int screenNum;
          bool realizeUponCreate;
-
       };
 
       /**
@@ -131,19 +129,17 @@ namespace dtCore
 
 
       /**
-      * Constructor
-      *
-      * @param name : the name of the class as well as the window title
-      * @param gw : the GraphicsWindow use by this instance
-      */
+       * Constructor
+       *
+       * @param name : the name of the class as well as the window title
+       * @param gw : the GraphicsWindow use by this instance
+       */
       DeltaWin(const std::string& name, osgViewer::GraphicsWindow& gw);
 
    protected:
-
       virtual ~DeltaWin();
 
    public:
-
       /*!
        * Calculate the screen pixel coordinates given a normalized window coordinate. Screen
        * pixel coordinate (0,0) is located in the lower left of the display, which equates to
@@ -243,19 +239,18 @@ namespace dtCore
       bool IsValidResolution(const Resolution& candidate);
 
       /** Add a window resize callback to the DeltaWin.
-      * @param cb The callback to trigger after a resize
-      * @return true if cb was added correctly
-      */
+       * @param cb The callback to trigger after a resize
+       * @return true if cb was added correctly
+       */
       void AddResizeCallback(WindowResizeCallback& cb);
 
       /** Remove a window resize callback from the DeltaWin.
-      * @param cb The callback to remove
-      * @return true if cb was removed correctly
-      */
+       * @param cb The callback to remove
+       * @return true if cb was removed correctly
+       */
       void RemoveResizeCallback(WindowResizeCallback& cb);
 
    private:
-
       int mLastWindowedWidth;
       int mLastWindowedHeight;
 
@@ -284,7 +279,6 @@ namespace dtCore
       DeltaWin& operator=(const DeltaWin&);
       DeltaWin(const DeltaWin&);
    };
-}
-
+} // namespace dtCore
 
 #endif // DELTA_DELTA_WIN

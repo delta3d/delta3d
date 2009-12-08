@@ -62,63 +62,60 @@ namespace dtGame
     */
    class GameEntryPoint
    {
-      public:
+   public:
+      GameEntryPoint() {}
 
-         GameEntryPoint() {}
+      /**
+       * The destructor of the GameEntryPoint.
+       */
+      virtual ~GameEntryPoint()
+      {
+      }
 
-         /**
-          * The destructor of the GameEntryPoint.
-          */
-         virtual ~GameEntryPoint()
-         {
-         }
-
-         /**
-          * Called to initialize the game application.  This gets called from the
-          * dtGame::GameApplication::Config() method, but before
-          * dtABC::Application::Config().  This allows some defining of the
-          * default Camera and Window, such as setting up stencil buffers.
-          * Note: If you want to replace the GameManager the GameApplication
-          * uses, this is a good place to hand it off.
-          * @param app the current application
-          * @param argc number of startup arguments.
-          * @param argv array of string pointers to the arguments.
-          * @see dtGame::GameApplication::SetGameManager()
-          */
-         virtual void Initialize(GameApplication& app, int argc, char **argv) { }
+      /**
+       * Called to initialize the game application.  This gets called from the
+       * dtGame::GameApplication::Config() method, but before
+       * dtABC::Application::Config().  This allows some defining of the
+       * default Camera and Window, such as setting up stencil buffers.
+       * Note: If you want to replace the GameManager the GameApplication
+       * uses, this is a good place to hand it off.
+       * @param app the current application
+       * @param argc number of startup arguments.
+       * @param argv array of string pointers to the arguments.
+       * @see dtGame::GameApplication::SetGameManager()
+       */
+      virtual void Initialize(GameApplication& app, int argc, char **argv) { }
 
 
-         /**
-          * Called after all startup related code is run.  At this point, the
-          * dtGame::GameApplication has been configured and ready to be used.
-          * Override this method to perform any specific start up functionality that
-          * the GameEntryPoint needs to do.
-          */
-         virtual void OnStartup(GameApplication &app) = 0;
+      /**
+       * Called after all startup related code is run.  At this point, the
+       * dtGame::GameApplication has been configured and ready to be used.
+       * Override this method to perform any specific start up functionality that
+       * the GameEntryPoint needs to do.
+       */
+      virtual void OnStartup(GameApplication &app) = 0;
 
-         /**
-          * This is the notice to the GameEntryPoint that the application is
-          * quitting.  Perform any cleanup that needs to be done here.
-          * @note This is called from the GameApplication destructor and is followed
-          * by the GameEntryPoint destructor.
-          */
-         virtual void OnShutdown(GameApplication &app) { }
+      /**
+       * This is the notice to the GameEntryPoint that the application is
+       * quitting.  Perform any cleanup that needs to be done here.
+       * @note This is called from the GameApplication destructor and is followed
+       * by the GameEntryPoint destructor.
+       */
+      virtual void OnShutdown(GameApplication &app) { }
 
-      private:
+   private:
+      // Deprecated in version 1.5
+      BREAK_OVERRIDE(OnStartup(dtGame::GameManager&));
+      BREAK_OVERRIDE(OnShutdown(dtGame::GameManager&));
 
-         // Deprecated in version 1.5
-         BREAK_OVERRIDE(OnStartup(dtGame::GameManager&));
-         BREAK_OVERRIDE(OnShutdown(dtGame::GameManager&));
-
-         // Deprecated 10/02/07
-         BREAK_OVERRIDE(OnStartup());
-         BREAK_OVERRIDE(OnShutdown());
-         BREAK_OVERRIDE(CreateGameManager(dtCore::Scene& scene));
-         BREAK_OVERRIDE(GetGameManager());
-         BREAK_OVERRIDE(SetGameManager(dtGame::GameManager &));
-
+      // Deprecated 10/02/07
+      BREAK_OVERRIDE(OnStartup());
+      BREAK_OVERRIDE(OnShutdown());
+      BREAK_OVERRIDE(CreateGameManager(dtCore::Scene& scene));
+      BREAK_OVERRIDE(GetGameManager());
+      BREAK_OVERRIDE(SetGameManager(dtGame::GameManager &));
    };
 
-}
+} // namespace dtGame
 
-#endif /*DELTA_GAME_ENTRY_POINT*/
+#endif // DELTA_GAME_ENTRY_POINT

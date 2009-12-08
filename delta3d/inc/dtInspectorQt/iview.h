@@ -16,11 +16,12 @@ namespace dtInspectorQt
    public:
       QString mFilterName;
 
-      IView() {};
-      ~IView() {};
+      IView() {}
+      ~IView() {}
 
       virtual void OperateOn(dtCore::Base* b) = 0;
       virtual bool IsOfType(QString name, dtCore::Base* object) = 0;
    };
-}
+} // namespace dtInspectorQt
+
 #endif // iview_h__

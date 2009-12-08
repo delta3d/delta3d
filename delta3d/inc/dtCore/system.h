@@ -25,7 +25,6 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-
 #include <dtCore/base.h>
 #include <dtCore/timer.h>
 
@@ -77,13 +76,13 @@ namespace dtCore
     */
    class DT_CORE_EXPORT System : public Base
    {
-
    public:
       DECLARE_MANAGEMENT_LAYER(System)
 
-      /** Enumeration of the different stages the System goes through during
-        * the update loop.
-        */
+      /**
+       * Enumeration of the different stages the System goes through during
+       * the update loop.
+       */
       enum SystemStages
       {
          STAGE_NONE                   = 0x00000000, ///<No update loop stages are performed
@@ -100,41 +99,41 @@ namespace dtCore
 
       typedef unsigned int SystemStageFlags;
 
-     /**
-      * MESSAGE_EVENT_TRAVERSAL: This message is used by dtABC::Application to perform the OSG Event Traversal
-      * Users are not reccommend to listen to this event.
-      */
+      /**
+       * MESSAGE_EVENT_TRAVERSAL: This message is used by dtABC::Application to perform the OSG Event Traversal
+       * Users are not reccommend to listen to this event.
+       */
       const static dtUtil::RefString MESSAGE_EVENT_TRAVERSAL;
 
-     /**
-      * MESSAGE_POST_EVENT_TRAVERSAL: This message is sent directly after the OSG Event Traversal, this message
-      * is intended to be used when performing any behavior related to input or windowing events.
-      */
+      /**
+       * MESSAGE_POST_EVENT_TRAVERSAL: This message is sent directly after the OSG Event Traversal, this message
+       * is intended to be used when performing any behavior related to input or windowing events.
+       */
       const static dtUtil::RefString MESSAGE_POST_EVENT_TRAVERSAL;
 
-     /**
-      * MESSAGE_PRE_FRAME: This message is intended to be the main per frame simulation step or update.
-      */
+      /**
+       * MESSAGE_PRE_FRAME: This message is intended to be the main per frame simulation step or update.
+       */
       const static dtUtil::RefString MESSAGE_PRE_FRAME;
 
-     /**
-      * MESSAGE_CAMERA_SYNCH: This message is used by the camera to update its transform after the simulation step.
-      */
+      /**
+       * MESSAGE_CAMERA_SYNCH: This message is used by the camera to update its transform after the simulation step.
+       */
       const static dtUtil::RefString MESSAGE_CAMERA_SYNCH;
 
-     /**
-      * MESSAGE_FRAME_SYNCH:  This message is used to allow per frame behavior related to camera orientations or positions.
-      */
+      /**
+       * MESSAGE_FRAME_SYNCH:  This message is used to allow per frame behavior related to camera orientations or positions.
+       */
       const static dtUtil::RefString MESSAGE_FRAME_SYNCH;
 
-     /**
-      * MESSAGE_FRAME: This message is used by dtABC::Application to perform the OSG Update Traversals and OSG Rendering Traversals
-      */
+      /**
+       * MESSAGE_FRAME: This message is used by dtABC::Application to perform the OSG Update Traversals and OSG Rendering Traversals
+       */
       const static dtUtil::RefString MESSAGE_FRAME;
 
-     /**
-      * MESSAGE_POST_FRAME: This message is the last per-frame message sent, notifying the end of the frame.
-      */
+      /**
+       * MESSAGE_POST_FRAME: This message is the last per-frame message sent, notifying the end of the frame.
+       */
       const static dtUtil::RefString MESSAGE_POST_FRAME;
 
       /**
@@ -154,8 +153,8 @@ namespace dtCore
       const static dtUtil::RefString MESSAGE_PAUSE_START;
 
       /**
-      *	MESSAGE_PAUSE_START: This message is sent out immediately when SetPause(false) is called.
-      */
+       *	MESSAGE_PAUSE_START: This message is sent out immediately when SetPause(false) is called.
+       */
       const static dtUtil::RefString MESSAGE_PAUSE_END;
 
       /**
@@ -164,11 +163,9 @@ namespace dtCore
       const static dtUtil::RefString MESSAGE_EXIT;
 
    protected:
-
       virtual ~System();
 
    public:
-
       ///Perform any configuration required.  Message: "configure"
       void Config();
 
@@ -177,7 +174,8 @@ namespace dtCore
 
       static void Destroy();
 
-      /** Set which stages the system will process during an update loop.  This
+      /**
+       * Set which stages the system will process during an update loop.  This
        * can be used to turn off a particular stage for optimization e.g., if no
        * operations are required in post frame.  To use, supply a bitwise combination
        * of the stage required.
@@ -190,7 +188,8 @@ namespace dtCore
        */
       void SetSystemStages(SystemStageFlags stages);
 
-      /** Get the SystemStages the System is currently operating on.
+      /**
+       * Get the SystemStages the System is currently operating on.
        * @return The bitwise combination of stages
        */
       SystemStageFlags GetSystemStages() const;
@@ -200,18 +199,20 @@ namespace dtCore
       ///Toggles the running flag to true
       void Start();
 
-      /** Performs one System frame step, but does not perform any
-       *  DeltaWin processing.  Use this call if the DeltaWin is embedded inside a
-       *  GUI package (QT, FLTK, etc.)
-       *  Emits the "preframe", "frame", and "postframe" messages.  Requires the
-       *  Start() method is called first.
-       *  @see SetSystemStages()
+      /**
+       * Performs one System frame step, but does not perform any
+       * DeltaWin processing.  Use this call if the DeltaWin is embedded inside a
+       * GUI package (QT, FLTK, etc.)
+       * Emits the "preframe", "frame", and "postframe" messages.  Requires the
+       * Start() method is called first.
+       * @see SetSystemStages()
        */
       void Step();
 
-      /** Performs one complete System frame step and performs DeltaWin processing.  This is
-       *  useful if you wish to control the entire System's frame processing.
-       *  Emits the "preframe", "frame", and "postframe" messages.
+      /**
+       * Performs one complete System frame step and performs DeltaWin processing.  This is
+       * useful if you wish to control the entire System's frame processing.
+       * Emits the "preframe", "frame", and "postframe" messages.
        */
       void StepWindow();
 
@@ -227,23 +228,23 @@ namespace dtCore
       void SetPause(bool paused);
       bool GetPause() const;
 
-      /*!
-      * Controls shutdown behavior of the system. Normally the system will only
-      * shutdown if Stop() is called. If this function is called with 'true',
-      * then the system will perform an additional check in the system loop
-      * to see if there are any active windows. If there are none, it will
-      * shutdown. The behavior is set to 'true' by default.
-      *
-      * @param shutdown : If 'shutdown' is true, the system loop will terminate
-      * when the last window is closed. Otherwise, the console and system will
-      * remain open.
-      */
+      /**
+       * Controls shutdown behavior of the system. Normally the system will only
+       * shutdown if Stop() is called. If this function is called with 'true',
+       * then the system will perform an additional check in the system loop
+       * to see if there are any active windows. If there are none, it will
+       * shutdown. The behavior is set to 'true' by default.
+       *
+       * @param shutdown : If 'shutdown' is true, the system loop will terminate
+       * when the last window is closed. Otherwise, the console and system will
+       * remain open.
+       */
       void SetShutdownOnWindowClose(bool shutdown);
 
-      /*!
-      * Returns whether or not the system will shutdown upon the last window being
-      * closed.
-      */
+      /**
+       * Returns whether or not the system will shutdown upon the last window being
+       * closed.
+       */
       bool GetShutdownOnWindowClose() const;
 
       /**
@@ -330,7 +331,6 @@ namespace dtCore
       bool IsStatsOn();
 
    private:
-
       SystemImpl* mSystemImpl;
       System(); ///<private
       static System* mSystem;   ///<The System pointer
@@ -341,7 +341,7 @@ namespace dtCore
       /// system dependent algorithms.  The value is not necessarily human understandable.
       Timer_t mTickClockTime;
 
-      //The real world time (UTC) and a simulated, set-able version of it. They are both
+      // The real world time (UTC) and a simulated, set-able version of it. They are both
       // in microseconds since January 1, 1970.
       Timer_t mRealClockTime, mSimulationClockTime;
       Timer_t mLastDrawClockTime;
@@ -366,26 +366,26 @@ namespace dtCore
       // will step the system with a fixed time step.
       void SystemStepFixed(const double realDT);
 
-      //initializes internal variables at the start of a run.
+      // initializes internal variables at the start of a run.
       void InitVars();
 
       /**
-      * @param deltaSimTime The change in simulation time is seconds.
-      * @param deltaRealTime The change in real time in seconds.
-      */
+       * @param deltaSimTime The change in simulation time is seconds.
+       * @param deltaRealTime The change in real time in seconds.
+       */
       void EventTraversal(const double deltaSimTime, const double deltaRealTime);
 
       /**
-      * @param deltaSimTime The change in simulation time is seconds.
-      * @param deltaRealTime The change in real time in seconds.
-      */
+       * @param deltaSimTime The change in simulation time is seconds.
+       * @param deltaRealTime The change in real time in seconds.
+       */
       void PostEventTraversal(const double deltaSimTime, const double deltaRealTime);
 
       /**
-      * Stuff to do before the frame. Message: "preframe", delta real and time in seconds
-      * @param deltaSimTime The change in simulation time is seconds.
-      * @param deltaRealTime The change in real time in seconds.
-      */
+       * Stuff to do before the frame. Message: "preframe", delta real and time in seconds
+       * @param deltaSimTime The change in simulation time is seconds.
+       * @param deltaRealTime The change in real time in seconds.
+       */
       void PreFrame(const double deltaSimTime, const double deltaRealTime);
 
       /**
@@ -393,10 +393,11 @@ namespace dtCore
        * @param deltaRealTime The change in real time in seconds.
        */
       void FrameSynch(const double deltaSimTime, const double deltaRealTime);
+
       /**
-      * @param deltaSimTime The change in simulation time is seconds.
-      * @param deltaRealTime The change in real time in seconds.
-      */
+       * @param deltaSimTime The change in simulation time is seconds.
+       * @param deltaRealTime The change in real time in seconds.
+       */
       void CameraSynch(const double deltaSimTime, const double deltaRealTime);
 
       /**
@@ -422,6 +423,6 @@ namespace dtCore
       ///One System frame
       void SystemStep();
    };
-}
+} // namespace dtCore
 
 #endif // DELTA_SYSTEM

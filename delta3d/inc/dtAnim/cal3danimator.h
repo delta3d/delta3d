@@ -32,61 +32,56 @@
 namespace dtAnim
 {
 
+   class DT_ANIM_EXPORT Cal3DAnimator: public osg::Referenced
+   {
+   public:
+      Cal3DAnimator(Cal3DModelWrapper* pWrapper);
 
-class DT_ANIM_EXPORT Cal3DAnimator: public osg::Referenced
-{
+      void Update(double dt);
 
-public:
-   Cal3DAnimator(Cal3DModelWrapper* pWrapper);
+      Cal3DModelWrapper* GetWrapper();
+      const Cal3DModelWrapper* GetWrapper() const;
 
-   void Update(double dt);
+      ///Give the Animator a new Cal3DModelWrapper to operate on.
+      void SetWrapper(Cal3DModelWrapper* wrapper);
 
-   Cal3DModelWrapper* GetWrapper();
-   const Cal3DModelWrapper* GetWrapper() const;
+      // these are listed in the order in which they are called on update
+      void SetPreDriver(ICal3DDriver* pDriver);
+      ICal3DDriver* GetPreDriver() const {return mPreDriver.get(); }
 
-   ///Give the Animator a new Cal3DModelWrapper to operate on.
-   void SetWrapper(Cal3DModelWrapper* wrapper);
+      void SetAnimationDriver(ICal3DDriver* pDriver);
+      ICal3DDriver* GetAnimationDriver() const {return mAnimDriver.get(); }
 
-   // these are listed in the order in which they are called on update
-   void SetPreDriver(ICal3DDriver* pDriver);
-   ICal3DDriver* GetPreDriver() const {return mPreDriver.get(); }
+      void SetSkeletonDriver(ICal3DDriver* pDriver);
+      ICal3DDriver* GetSkeletonDriver() const {return mSkelDriver.get(); }
 
-   void SetAnimationDriver(ICal3DDriver* pDriver);
-   ICal3DDriver* GetAnimationDriver() const {return mAnimDriver.get(); }
+      void SetMorphTargetDriver(ICal3DDriver* pDriver);
+      ICal3DDriver* GetMorphTargetDriver() const {return mMorphDriver.get(); }
 
-   void SetSkeletonDriver(ICal3DDriver* pDriver);
-   ICal3DDriver* GetSkeletonDriver() const {return mSkelDriver.get(); }
+      void SetPhysiqueDriver(ICal3DDriver* pDriver);
+      ICal3DDriver* GetPhysiqueDriver() const {return mPhysiqueDriver.get(); }
 
-   void SetMorphTargetDriver(ICal3DDriver* pDriver);
-   ICal3DDriver* GetMorphTargetDriver() const {return mMorphDriver.get(); }
+      void SetSpringDriver(ICal3DDriver* pDriver);
+      ICal3DDriver* GetSpringDriver() const {return mSpringDriver.get(); }
 
-   void SetPhysiqueDriver(ICal3DDriver* pDriver);
-   ICal3DDriver* GetPhysiqueDriver() const {return mPhysiqueDriver.get(); }
+      void SetPostDriver(ICal3DDriver* pDriver);
+      ICal3DDriver* GetPostDriver() const {return mPostDriver.get(); }
 
-   void SetSpringDriver(ICal3DDriver* pDriver);
-   ICal3DDriver* GetSpringDriver() const {return mSpringDriver.get(); }
-
-   void SetPostDriver(ICal3DDriver* pDriver);
-   ICal3DDriver* GetPostDriver() const {return mPostDriver.get(); }
-
-protected:
+   protected:
       virtual ~Cal3DAnimator();
 
-private:
+   private:
+      dtCore::RefPtr<Cal3DModelWrapper> mWrapper;
 
-   dtCore::RefPtr<Cal3DModelWrapper> mWrapper;
-
-   dtCore::RefPtr<ICal3DDriver> mPreDriver;
-   dtCore::RefPtr<ICal3DDriver> mPostDriver;
-   dtCore::RefPtr<ICal3DDriver> mAnimDriver;
-   dtCore::RefPtr<ICal3DDriver> mSkelDriver;
-   dtCore::RefPtr<ICal3DDriver> mMorphDriver;
-   dtCore::RefPtr<ICal3DDriver> mSpringDriver;
-   dtCore::RefPtr<ICal3DDriver> mPhysiqueDriver;
-
-};
+      dtCore::RefPtr<ICal3DDriver> mPreDriver;
+      dtCore::RefPtr<ICal3DDriver> mPostDriver;
+      dtCore::RefPtr<ICal3DDriver> mAnimDriver;
+      dtCore::RefPtr<ICal3DDriver> mSkelDriver;
+      dtCore::RefPtr<ICal3DDriver> mMorphDriver;
+      dtCore::RefPtr<ICal3DDriver> mSpringDriver;
+      dtCore::RefPtr<ICal3DDriver> mPhysiqueDriver;
+   };
 
 } // namespace dtAnim
 
 #endif // __DELTA_CAL3DANIMATOR_H__
-
