@@ -23,6 +23,7 @@
 #define DELTA_TASKACTOR
 
 #include <dtGame/gameactor.h>
+#include <dtGame/gameactorproxy.h>
 
 
 #include <dtUtil/mathdefines.h>

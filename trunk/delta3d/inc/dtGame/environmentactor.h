@@ -24,6 +24,7 @@
 
 #include <dtGame/export.h>
 #include <dtGame/gameactor.h>
+#include <dtGame/gameactorproxy.h>
 #include <dtDAL/environmentactor.h>
 
 namespace dtGame
