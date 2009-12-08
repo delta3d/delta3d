@@ -249,7 +249,7 @@ namespace dtDAL
    {
       if(!mBillBoardIcon.valid())
       {
-         mBillBoardIcon = new ActorProxyIcon();
+         mBillBoardIcon = new ActorProxyIcon(ActorProxyIcon::IMAGE_BILLBOARD_GENERIC);
       }
 
       return mBillBoardIcon.get();

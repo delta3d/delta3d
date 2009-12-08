@@ -20,15 +20,12 @@
  */
 #include <prefix/dtdalprefix-src.h>
 #include <dtDAL/actorproxyicon.h>
-#include <dtCore/scene.h>
-#include <dtCore/transformable.h>
 #include <dtCore/transform.h>
 #include <osg/Geometry>
 #include <osg/Image>
 #include <osg/Texture2D>
 #include <osg/StateSet>
 #include <osg/PolygonMode>
-#include <osg/CullFace>
 #include <osg/ShapeDrawable>
 #include <osg/TexMat>
 #include <osgDB/ReadFile>
@@ -36,21 +33,6 @@
 
 namespace dtDAL
 {
-
-   //////////////////////////////////////////////////////////////////////////
-   IMPLEMENT_ENUM(ActorProxyIcon::IconType);
-   const ActorProxyIcon::IconType ActorProxyIcon::IconType::CHARACTER("CHARACTER_ICON");
-   const ActorProxyIcon::IconType ActorProxyIcon::IconType::GENERIC("GENERIC_ICON");
-   const ActorProxyIcon::IconType ActorProxyIcon::IconType::STATICMESH("STATICMESH_ICON");
-   const ActorProxyIcon::IconType ActorProxyIcon::IconType::SOUND("SOUND_ICON");
-   const ActorProxyIcon::IconType ActorProxyIcon::IconType::LIGHT("LIGHT_ICON");
-   const ActorProxyIcon::IconType ActorProxyIcon::IconType::PARTICLESYSTEM("PARTICLESYSTEM_ICON");
-   const ActorProxyIcon::IconType ActorProxyIcon::IconType::MESHTERRAIN("MESHTERRAIN_ICON");
-   const ActorProxyIcon::IconType ActorProxyIcon::IconType::PLAYERSTART("PLAYERSTART_ICON");
-   const ActorProxyIcon::IconType ActorProxyIcon::IconType::TRIGGER("TRIGGER_ICON");
-   const ActorProxyIcon::IconType ActorProxyIcon::IconType::CAMERA("CAMERA");
-   const ActorProxyIcon::IconType ActorProxyIcon::IconType::WAYPOINT("WAYPOINT");
-   //////////////////////////////////////////////////////////////////////////
 
    //////////////////////////////////////////////////////////////////////////
    std::string ActorProxyIcon::IMAGE_BILLBOARD_GENERIC("");
@@ -330,38 +312,6 @@ namespace dtDAL
          tx.Get(mat);
       }
       return mat;
-   }
-
-   //////////////////////////////////////////////////////////////////////////
-   const std::string& ActorProxyIcon::GetImageFilename(const IconType& iconType) const
-   {
-      //Based on the icon type, load the correct image.
-      if (&iconType == &IconType::GENERIC)
-         return IMAGE_BILLBOARD_GENERIC;
-      else if (&iconType == &IconType::CHARACTER)
-         return ActorProxyIcon::IMAGE_BILLBOARD_CHARACTER;
-      else if (&iconType == &IconType::STATICMESH)
-         return ActorProxyIcon::IMAGE_BILLBOARD_STATICMESH;
-      else if (&iconType == &IconType::SOUND)
-         return ActorProxyIcon::IMAGE_BILLBOARD_SOUND;
-      else if (&iconType == &IconType::LIGHT)
-         return ActorProxyIcon::IMAGE_BILLBOARD_LIGHT;
-      else if (&iconType == &IconType::PARTICLESYSTEM)
-         return ActorProxyIcon::IMAGE_BILLBOARD_PARTICLESYSTEM;
-      else if (&iconType == &IconType::MESHTERRAIN)
-         return ActorProxyIcon::IMAGE_BILLBOARD_MESHTERRAIN;
-      else if (&iconType == &IconType::PLAYERSTART)
-         return ActorProxyIcon::IMAGE_BILLBOARD_PLAYERSTART;
-      else if (&iconType == &IconType::TRIGGER)
-         return ActorProxyIcon::IMAGE_BILLBOARD_TRIGGER;
-      else if (&iconType == &IconType::WAYPOINT)
-         return ActorProxyIcon::IMAGE_BILLBOARD_WAYPOINT;
-      else if (&iconType == &IconType::CAMERA)
-         return ActorProxyIcon::IMAGE_BILLBOARD_CAMERA;
-
-      else
-         return IMAGE_BILLBOARD_GENERIC;
-
    }
 
 

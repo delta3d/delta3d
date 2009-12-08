@@ -1274,7 +1274,7 @@ namespace dtActors
          config.mUpVector = false;
          config.mScale = 1.0;
 
-         mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IconType::STATICMESH, config);
+         mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_STATICMESH, config);
       }
 
       return mBillBoardIcon.get();

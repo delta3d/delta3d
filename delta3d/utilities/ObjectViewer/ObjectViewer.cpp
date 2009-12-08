@@ -32,7 +32,6 @@
 #include <dtUtil/librarysharingmanager.h>
 
 #include <dtDAL/project.h>
-#include <dtDAL/actorproxyicon.h>
 #include <dtDAL/map.h>
 
 #include <osg/Geode>
