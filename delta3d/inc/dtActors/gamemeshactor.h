@@ -23,6 +23,7 @@
 #define DELTA_GAMEMESHACTOR_H
 
 #include <dtGame/gameactor.h>
+#include <dtGame/gameactorproxy.h>
 #include <dtDAL/plugin_export.h>
 #include <dtCore/loadable.h>
 #include <dtCore/model.h>

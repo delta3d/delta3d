@@ -20,6 +20,7 @@
 
 #include <dtGame/actorcomponentbase.h>
 #include <dtGame/gameactor.h>
+#include <dtGame/gameactorproxy.h>
 #include <dtUtil/exception.h>
 #include <cassert>
 #include <sstream>

@@ -30,6 +30,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include <dtDAL/plugin_export.h>
 #include <dtGame/gameactor.h>
+#include <dtGame/gameactorproxy.h>
 
 
 namespace dtActors

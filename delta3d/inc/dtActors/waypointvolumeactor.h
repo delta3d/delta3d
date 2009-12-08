@@ -22,7 +22,7 @@
 #ifndef DELTA_WAYPOINTVOLUMEACTOR
 #define DELTA_WAYPOINTVOLUMEACTOR
 
-#include <dtGame/gameactor.h>
+#include <dtGame/gameactorproxy.h>
 #include <dtUtil/mathdefines.h>
 
 #include <dtDAL/plugin_export.h>

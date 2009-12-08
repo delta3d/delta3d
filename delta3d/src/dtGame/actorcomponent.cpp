@@ -21,6 +21,7 @@
 #include <dtGame/actorcomponent.h>
 #include <cassert>
 #include <dtGame/gameactor.h>
+#include <dtGame/gameactorproxy.h>
 #include <dtDAL/functor.h>
 #include <dtGame/invokable.h>
 #include <dtGame/messagetype.h>
