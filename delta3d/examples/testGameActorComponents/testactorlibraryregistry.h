@@ -8,7 +8,6 @@
 class TEST_GA_COMPONENTS_EXPORT TestActorLibraryRegistry : public dtDAL::ActorPluginRegistry
 {
 public:
-   
    static dtCore::RefPtr<dtDAL::ActorType> COMPONENT_GAME_ACTOR_TYPE;
 
    TestActorLibraryRegistry();

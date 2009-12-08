@@ -11,7 +11,7 @@
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.a
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
@@ -36,9 +36,9 @@
 
 #include "testexport.h"
 
-namespace dtAnim 
+namespace dtAnim
 {
-   class PoseMeshDatabase; 
+   class PoseMeshDatabase;
    class PoseMeshUtility;
 }
 
@@ -54,7 +54,6 @@ class ProceduralAnimationActorProxy;
 class TEST_ANIM_EXPORT ProceduralAnimationActor : public dtAnim::AnimationGameActor
 {
 public:
-
    // This class is designed to work with pose meshes
    // that cover both watching and aiming
    enum eMode
@@ -82,29 +81,27 @@ public:
 
    /// Get the animation model
    dtAnim::Cal3DModelWrapper* GetModelWrapper();
-   
-protected:
 
+protected:
    /// Destructor
    virtual ~ProceduralAnimationActor();
 
    virtual void OnEnteredWorld();
 
 private:
-
    struct ProceduralAnimationData
    {
-      // This actor is set up to work with pose meshes 
+      // This actor is set up to work with pose meshes
       // for each of the following parts
       enum ePoseMeshPart
-      {  
+      {
          PMP_FIRST = 0,
 
          LEFT_EYE = PMP_FIRST,
-         RIGHT_EYE, 
-         HEAD, 
-         TORSO, 
-         GUN, 
+         RIGHT_EYE,
+         HEAD,
+         TORSO,
+         GUN,
 
          PMP_TOTAL
       };
@@ -153,13 +150,11 @@ private:
 
    /// Get the world space position of the head bone
    osg::Vec3 GetHeadPosition() const;
-
 };
 
 class TEST_ANIM_EXPORT ProceduralAnimationActorProxy: public dtAnim::AnimationGameActorProxy
 {
 public:
-
    /// Constructor
    ProceduralAnimationActorProxy();
 
@@ -175,10 +170,8 @@ public:
    void RegisterWithGameManager(dtGame::GameManager* gm);
 
 protected:
-
    /// Destructor
    virtual ~ProceduralAnimationActorProxy();
-
 };
 
 ////////////////////////////////////////////////////////////////////////////////

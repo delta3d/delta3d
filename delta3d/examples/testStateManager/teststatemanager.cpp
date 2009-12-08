@@ -10,7 +10,7 @@
 
 void LOG(const std::string& msg)
 {
-   dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ALWAYS,"",msg.c_str());
+   dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ALWAYS, "", msg.c_str());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -65,16 +65,16 @@ void StateWalker::DisplayEventChoicesAndWaitForInput()
       return;
    }
 
-   LOG("Current State: "+mStateManager->GetCurrentState()->GetName());
+   LOG("Current State: " + mStateManager->GetCurrentState()->GetName());
    LOG("The Event choices are:");
 
-   std::vector<const dtABC::Event::Type*> eventvec(mStateManager->GetNumOfEvents( mStateManager->GetCurrentState()));
+   std::vector<const dtABC::Event::Type*> eventvec(mStateManager->GetNumOfEvents(mStateManager->GetCurrentState()));
    mStateManager->GetEvents(mStateManager->GetCurrentState(), eventvec);
    unsigned int esize = eventvec.size();
 
    // display the Event choices for those transitions
    unsigned int i(0);
-   for (; i < esize; i++)
+   for (; i < esize; ++i)
    {
       LOG(dtUtil::ToString(i) + ": " + eventvec[i]->GetName());
    }
@@ -103,13 +103,14 @@ void StateWalker::DisplayEventChoicesAndWaitForInput()
          }
       }
       else
-      {  // some logging feedback
+      {
+         // some logging feedback
          LOG("Can not create Event of type: " + eventtype->GetName());
       }
    }
-
    else
-   {  // honor the "extra" event choices
+   {
+      // honor the "extra" event choices
       HandleExtraEventChoices(esize, eventchoice);
    }
 }

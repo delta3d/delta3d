@@ -1,23 +1,23 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
-* Copyright (C) 2009 MOVES Institute
-*
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
-* any later version.
-*
-* This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
-* details.
-*
-* You should have received a copy of the GNU Lesser General Public License
-* along with this library; if not, write to the Free Software Foundation, Inc.,
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*
-* Michael Guerrero
-*/
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2009 MOVES Institute
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * Michael Guerrero
+ */
 
 #include "testentrypoint.h"
 
@@ -66,7 +66,7 @@ TestProceduralAnimation::~TestProceduralAnimation()
 
 //////////////////////////////////////////////////////////////////////////
 void TestProceduralAnimation::Initialize(dtGame::GameApplication& app, int argc, char** argv)
-{ 
+{
    if (argc > 1)
    {
       std::string arg1(argv[1]);
@@ -104,10 +104,10 @@ void TestProceduralAnimation::Initialize(dtGame::GameApplication& app, int argc,
 
 //////////////////////////////////////////////////////////////////////////
 void TestProceduralAnimation::OnStartup(dtGame::GameApplication& app)
-{     
+{
    std::string dataPath = dtUtil::GetDeltaDataPathList();
-   dtUtil::SetDataFilePathList(dataPath + ";" + dtUtil::GetDeltaRootPath() + 
-      "/examples/data" + ";" + dtUtil::GetDeltaRootPath() + "/examples/testProceduralAnimation/"); 
+   dtUtil::SetDataFilePathList(dataPath + ";" + dtUtil::GetDeltaRootPath() +
+      "/examples/data" + ";" + dtUtil::GetDeltaRootPath() + "/examples/testProceduralAnimation/");
 
    typedef std::vector<dtDAL::ActorProxy*> ProxyContainer;
    ProxyContainer proxies;
@@ -143,7 +143,7 @@ void TestProceduralAnimation::OnStartup(dtGame::GameApplication& app)
          animationComponent->InitializePerformanceTest();
       }
    }
-   catch (dtUtil::Exception& e)
+   catch (const dtUtil::Exception& e)
    {
       LOG_ERROR("Can't find the project context or load the map. Exception follows.");
       e.LogException(dtUtil::Log::LOG_ERROR);
@@ -151,5 +151,3 @@ void TestProceduralAnimation::OnStartup(dtGame::GameApplication& app)
 
    app.SetNextStatisticsType();
 }
-
-
