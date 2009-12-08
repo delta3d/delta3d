@@ -21,9 +21,6 @@
 #ifndef DELTA_ACTOR_PROXY_ICON
 #define DELTA_ACTOR_PROXY_ICON
 
-#include <map>
-#include <dtUtil/enumeration.h>
-#include <dtUtil/deprecationmgr.h>
 #include <dtCore/deltadrawable.h>
 #include <dtCore/transformable.h>
 #include <osg/Referenced>
@@ -31,7 +28,7 @@
 #include <osg/Vec3>
 #include <osg/Matrix>
 #include <osg/Group>
-#include "dtDAL/export.h"
+#include <dtDAL/export.h>
 
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
@@ -121,33 +118,6 @@ namespace dtDAL
          static std::string IMAGE_ARROW_HEAD;
          static std::string IMAGE_ARROW_BODY;
 
-         /**
-          * This enumeration enumerates the different types of billboard icons that are
-          * supported by default by the level editor.
-          */
-         class DT_DAL_EXPORT IconType : public dtUtil::Enumeration
-         {
-               DECLARE_ENUM(IconType);
-            public:
-
-               static const IconType GENERIC;
-               static const IconType CHARACTER;
-               static const IconType STATICMESH;
-               static const IconType SOUND;
-               static const IconType LIGHT;
-               static const IconType PARTICLESYSTEM;
-               static const IconType MESHTERRAIN;
-               static const IconType PLAYERSTART;
-               static const IconType TRIGGER;
-               static const IconType CAMERA;
-               static const IconType WAYPOINT;
-
-            protected:
-               IconType(const std::string& name) : Enumeration(name)
-               {
-                  AddInstance(this);
-               }
-         };
 
          /**
          * Constructs a new actor proxy billboard icon.  This creates the
@@ -186,47 +156,6 @@ namespace dtDAL
          void SetActorRotation(const osg::Vec3& hpr);
          void SetActorRotation(const osg::Matrix& mat);
          osg::Matrix GetActorRotation();
-
-
-         ///Deprecated 11/6/08          
-         DEPRECATE_FUNC ActorProxyIcon(const IconType& type = IconType::GENERIC)
-            : mIconStateSet(0),
-            mConeStateSet(0),
-            mCylinderStateSet(0)
-         {
-            DEPRECATE("ActorProxyIcon(const IconType& type = IconType::GENERIC)",
-                      "ActorProxyIcon(const std::string& iconImageFilename)");
-
-            mIconNode = NULL;
-            mIconImageFile = GetImageFilename(type);
-            //just use a default config
-            CreateBillBoard();
-         }
-
-         ///Deprecated 11/6/08
-         DEPRECATE_FUNC ActorProxyIcon(const IconType& type, const ActorProxyIconConfig& pConfig)
-            : mIconStateSet(0)
-            , mConeStateSet(0)
-            , mCylinderStateSet(0)
-         {
-            DEPRECATE("ActorProxyIcon(const IconType& type, const ActorProxyIconConfig& pConfig)",
-                      "ActorProxyIcon(const std::string& iconImageFilename, const ActorProxyIconConfig& pConfig)");
-
-            mIconNode = NULL;
-            mConfig = pConfig;
-            mIconImageFile = GetImageFilename(type);
-            CreateBillBoard();
-         }
-
-         ///Deprecated 11/6/08
-         DEPRECATE_FUNC void SetIconType(const IconType& type)
-         {
-            DEPRECATE("void SetIconType(const IconType& type)",
-                      "n/a");
-
-            mIconImageFile = GetImageFilename(type);
-            CreateBillBoard();
-         }
 
       protected:
          virtual ~ActorProxyIcon();
@@ -267,8 +196,6 @@ namespace dtDAL
          osg::Geometry* CreateGeom(const osg::Vec3& corner, const osg::Vec3& width,
                                    const osg::Vec3& height);
 
-         ///Little helper utility.  Should be removed when IconType gets removed. DEPRECATE me.
-         const std::string& GetImageFilename(const IconType& iconType) const; 
 
          ///The filename of the icon image
          std::string mIconImageFile;

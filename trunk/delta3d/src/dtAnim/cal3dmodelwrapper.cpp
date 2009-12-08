@@ -515,6 +515,7 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    CalHardwareModel* Cal3DModelWrapper::GetOrCreateCalHardwareModel()
    {
+      //deprecated 10/20/2009
       DEPRECATE("Cal3DModelWrapper::GetOrCreateCalHardwareModel", 
          "Cal3DModelData::GetOrCreateCalHardwareModel");
 

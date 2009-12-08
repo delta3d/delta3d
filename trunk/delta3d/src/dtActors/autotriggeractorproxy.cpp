@@ -21,7 +21,6 @@
  */
 
 #include <dtActors/autotriggeractorproxy.h>
-#include <dtDAL/actorproxyicon.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/exceptionenum.h>
 #include <dtABC/autotrigger.h>
