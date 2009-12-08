@@ -284,12 +284,26 @@ namespace dtDirector
       // Graph.
       BeginElement(dtDAL::MapXMLConstants::DIRECTOR_GRAPH_ELEMENT);
       {
-         // Name Element.
-         BeginElement(dtDAL::MapXMLConstants::NAME_ELEMENT);
+         // Properties.
+         std::vector<const dtDAL::ActorProperty*> propList;
+         graph->GetPropertyList(propList);
+         for (std::vector<const dtDAL::ActorProperty*>::const_iterator i = propList.begin();
+            i != propList.end(); ++i)
          {
-            AddCharacters(graph->GetName());
+            const dtDAL::ActorProperty& property = *(*i);
+
+            // If the property is read only, skip it
+            if (property.IsReadOnly()) continue;
+
+            mPropSerializer->WriteProperty(property);
          }
-         EndElement(); // End Name Element.
+
+         //// Name Element.
+         //BeginElement(dtDAL::MapXMLConstants::NAME_ELEMENT);
+         //{
+         //   AddCharacters(graph->GetName());
+         //}
+         //EndElement(); // End Name Element.
 
          // Event Nodes.
          BeginElement(dtDAL::MapXMLConstants::DIRECTOR_EVENT_NODES_ELEMENT);

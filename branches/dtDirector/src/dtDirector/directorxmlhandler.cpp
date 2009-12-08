@@ -184,47 +184,46 @@ namespace dtDirector
          }
          else
          {
-            // Value node.
-            if (XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_VALUE_NODES_ELEMENT) == 0)
+            if (!mPropSerializer->ElementStarted(localname))
             {
-               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Value Nodes");
-               mInValueNodes = true;
-               mInNodes = true;
-            }
-            // Event node.
-            else if (XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_EVENT_NODES_ELEMENT) == 0)
-            {
-               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Event Nodes");
-               mInEventNodes = true;
-               mInNodes = true;
-            }
-            // Action node.
-            else if (XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_ACTION_NODES_ELEMENT) == 0)
-            {
-               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Action Nodes");
-               mInActionNodes = true;
-               mInNodes = true;
-            }
-            // Name.
-            else if (XMLString::compareString(localname, dtDAL::MapXMLConstants::NAME_ELEMENT) == 0)
-            {
-            }
-            // Graph.
-            else if (XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_GRAPH_ELEMENT) == 0)
-            {
-               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found a Graph");
-               mInGraph++;
+               // Value node.
+               if (XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_VALUE_NODES_ELEMENT) == 0)
+               {
+                  if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                     mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Value Nodes");
+                  mInValueNodes = true;
+                  mInNodes = true;
+               }
+               // Event node.
+               else if (XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_EVENT_NODES_ELEMENT) == 0)
+               {
+                  if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                     mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Event Nodes");
+                  mInEventNodes = true;
+                  mInNodes = true;
+               }
+               // Action node.
+               else if (XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_ACTION_NODES_ELEMENT) == 0)
+               {
+                  if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                     mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Action Nodes");
+                  mInActionNodes = true;
+                  mInNodes = true;
+               }
+               // Graph.
+               else if (XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_GRAPH_ELEMENT) == 0)
+               {
+                  if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                     mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found a Graph");
+                  mInGraph++;
 
-               DirectorGraphData* parent = mGraphs.top();
-               DirectorGraphData* newGraph = new DirectorGraphData();
-               newGraph->mParent = parent;
-               newGraph->BuildPropertyMap();
-               parent->mSubGraphs.push_back(newGraph);
-               mGraphs.push(newGraph);
+                  DirectorGraphData* parent = mGraphs.top();
+                  DirectorGraphData* newGraph = new DirectorGraphData();
+                  newGraph->mParent = parent;
+                  newGraph->BuildPropertyMap();
+                  parent->mSubGraphs.push_back(newGraph);
+                  mGraphs.push(newGraph);
+               }
             }
          }
       }
@@ -461,9 +460,12 @@ namespace dtDirector
                }
             }
          }
-         else if (topEl == dtDAL::MapXMLConstants::NAME_ELEMENT)
+         else if (!mPropSerializer->Characters(topEl, chars, graph))
          {
-            graph->mName = dtUtil::XMLStringConverter(chars).ToString();
+            //else if (topEl == dtDAL::MapXMLConstants::NAME_ELEMENT)
+            //{
+            //   graph->mName = dtUtil::XMLStringConverter(chars).ToString();
+            //}
          }
       }
    }
@@ -592,6 +594,10 @@ namespace dtDirector
          {
             mGraphs.pop();
             mInGraph--;
+         }
+         else
+         {
+            mPropSerializer->ElementEnded(localname, mGraphs.top());
          }
       }
    }

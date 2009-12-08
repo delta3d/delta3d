@@ -137,9 +137,6 @@ namespace dtDirector
       virtual ~ExternalValueNode();
 
       void UpdateLinkType();
-
-      bool mIsOut;
-      bool mTypeCheck;
    };
 }
 

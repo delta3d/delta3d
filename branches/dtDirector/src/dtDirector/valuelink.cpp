@@ -52,7 +52,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    dtDAL::DataType& ValueLink::GetPropertyType()
    {
-      if (!mTypeCheck && !mGettingType)
+      if (!mGettingType)
       {
          mGettingType = true;
 
@@ -227,7 +227,6 @@ namespace dtDirector
                      if (valueNode->mLinks[linkIndex] == this)
                      {
                         valueNode->mLinks.erase(valueNode->mLinks.begin() + linkIndex);
-                        valueNode->OnConnectionChange();
                         break;
                      }
                   }
