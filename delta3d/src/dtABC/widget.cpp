@@ -68,10 +68,17 @@ void Widget::Config(const WinData* d /*= NULL*/)
    {
       WindowData* inheritedWindowData = new WindowData(d->hwnd);
 
-      mWindow = new dtCore::DeltaWin("Widget",
-                                     d->pos_x, d->pos_y,
-                                     d->width, d->height,
-                                     true, false, inheritedWindowData);
+      dtCore::DeltaWin::DeltaWinTraits traits;
+      traits.name = "Widget";
+      traits.x = d->pos_x;
+      traits.y = d->pos_y;
+      traits.width = d->width;
+      traits.height = d->height;
+      traits.showCursor = true;
+      traits.fullScreen = false;
+      traits.inheritedWindowData = inheritedWindowData;
+
+      mWindow = new dtCore::DeltaWin(traits);
       assert(mWindow.valid());
 
       GetCamera()->SetWindow(mWindow.get());

@@ -4,7 +4,6 @@
 #include <dtCore/exceptionenum.h>
 #include <dtCore/windowresizecallback.h>
 #include <dtUtil/log.h>
-#include <dtUtil/deprecationmgr.h>
 #include <dtUtil/exception.h>
 
 #include <osgViewer/GraphicsWindow>
@@ -53,42 +52,6 @@ DeltaWin::DeltaWin(const DeltaWinTraits& windowTraits)
    CreateDeltaWindow(windowTraits);
 }
 
-////////////////////////////////////////////////////////////////////////////////
-DeltaWin::DeltaWin(const std::string& name,
-                   int x, int y,
-                   int width, int height,
-                   bool cursor, bool fullScreen,
-                   osg::Referenced* inheritedWindowData)
-   : Base(name)
-   , mLastWindowedWidth(640)
-   , mLastWindowedHeight(480)
-   , mIsFullScreen(false)
-   , mShowCursor(true)
-   , mResizeCallbackContainer(NULL)
-{
-   RegisterInstance(this);
-
-   DeltaWinTraits deltaTraits;
-   deltaTraits.name = name;
-   deltaTraits.x = x;
-   deltaTraits.y = y;
-   deltaTraits.width = width;
-   deltaTraits.height = height;
-   deltaTraits.showCursor = cursor;
-   deltaTraits.fullScreen = fullScreen;
-   deltaTraits.realizeUponCreate = true;
-   deltaTraits.inheritedWindowData = inheritedWindowData;
-   deltaTraits.contextToShare = NULL;
-
-   CreateDeltaWindow(deltaTraits);
-
-   DEPRECATE("DeltaWin::DeltaWin(const std::string& name, "
-             "int x, int y, "
-             "int width, int height, "
-             "bool cursor, bool fullScreen, "
-             "osg::Referenced* inheritedWindowData)",
-             "dtCore::DeltaWin(const DeltaWinTraits& windowTraits)");
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 void DeltaWin::CreateDeltaWindow(const DeltaWinTraits& windowTraits)

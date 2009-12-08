@@ -24,7 +24,6 @@
 #include <dtCore/base.h>
 #include <dtCore/refptr.h>
 #include <dtCore/windowresizecontainer.h>
-#include <dtUtil/deprecationmgr.h>
 #include <vector>                   // for member
 
 #include <osg/observer_ptr>
@@ -130,12 +129,6 @@ namespace dtCore
        */
       DeltaWin(const DeltaWinTraits& windowTraits = DeltaWinTraits());
 
-      /// DEPRECATED 01/14/09 in favor of dtCore::DeltaWin(const DeltaWinTraits& windowTraits)
-      DEPRECATE_FUNC DeltaWin(const std::string& name,
-               int x = 0, int y = 0,
-               int width = 640, int height = 480,
-               bool cursor = true, bool fullScreen = false,
-               osg::Referenced* inheritedWindowData = NULL);
 
       /**
       * Constructor
