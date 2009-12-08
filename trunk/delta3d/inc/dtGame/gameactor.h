@@ -44,7 +44,7 @@ namespace dtGame
     * Game Manager
     * @see dtGame::GameManager
     */
-   class DT_GAME_EXPORT GameActor 
+   class DT_GAME_EXPORT GameActor
       : public dtCore::Physical
       , public dtGame::ActorComponentBase
    {
@@ -52,12 +52,13 @@ namespace dtGame
       /// Constructor
       GameActor(GameActorProxy& proxy);
 
-      /** Overloaded constructor will use the supplied node instead of
-         * creating one internally.
-         * @param proxy : the GameActorProxy representing this GameActor
-         * @param node : A node this class should use internally
-         * @param name : The name of this instance
-         */
+      /**
+       * Overloaded constructor will use the supplied node instead of
+       * creating one internally.
+       * @param proxy : the GameActorProxy representing this GameActor
+       * @param node : A node this class should use internally
+       * @param name : The name of this instance
+       */
       GameActor(GameActorProxy& proxy, TransformableNode &node, const std::string &name = "GameActor");
 
       /**
@@ -133,22 +134,21 @@ namespace dtGame
       virtual void OnShaderGroupChanged();
 
       /**
-      * See GetPrototypeName().
-      * @param prototypeName The prototype that was used to create this actor. Set by the GM.
-      */
+       * See GetPrototypeName().
+       * @param prototypeName The prototype that was used to create this actor. Set by the GM.
+       */
       void SetPrototypeName(const std::string& prototypeName);
 
       /**
-      * This value is used for updating/creating remote actors that need to be recreated from prototype
-      * This value is set automatically by the GM when an actor is created from prototype.
-      * If the prototype is non-null, then when the actor is created by the message
-      * processor, it will attempt to look up the prototype first. Extremely useful for networking.
-      * @return The prototype that was used to create this actor. Set by the GM.
-      */
+       * This value is used for updating/creating remote actors that need to be recreated from prototype
+       * This value is set automatically by the GM when an actor is created from prototype.
+       * If the prototype is non-null, then when the actor is created by the message
+       * processor, it will attempt to look up the prototype first. Extremely useful for networking.
+       * @return The prototype that was used to create this actor. Set by the GM.
+       */
       const std::string& GetPrototypeName() const;
 
    protected:
-
       /// Destructor
       virtual ~GameActor();
 
@@ -158,7 +158,6 @@ namespace dtGame
       virtual void OnEnteredWorld() { }
 
    private:
-
       static const std::string NULL_PROXY_ERROR;
       /**
        * Sets is an actor is remote
@@ -181,7 +180,6 @@ namespace dtGame
       std::string mPrototypeName;
    };
 
+} // namespace dtGame
 
-}
-
-#endif
+#endif // DELTA_GAMEACTOR

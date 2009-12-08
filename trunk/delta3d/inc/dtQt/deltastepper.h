@@ -35,17 +35,20 @@ namespace dtQt
    class DT_QT_EXPORT DeltaStepper : public QObject
    {
       Q_OBJECT
+
    public:
       DeltaStepper();
       virtual ~DeltaStepper();
       void Start();
       void Stop();
+
    public slots:
       void Tick();
+
    private:
       QTimer mTimer;
    };
 
-}
+} // namespace dtQt
 
-#endif /* SIMTICKER_H_ */
+#endif // SIMTICKER_H_

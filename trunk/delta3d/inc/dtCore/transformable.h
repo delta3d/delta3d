@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
-*/
+ */
 
 #ifndef DELTA_TRANSFORMABLE
 #define DELTA_TRANSFORMABLE
@@ -25,7 +25,7 @@
 #include <dtCore/deltadrawable.h>
 #include <dtUtil/enumeration.h>
 
-//Must include because it's a typedef
+// Must include because it's a typedef
 #include <osg/Matrix>
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 struct dContact;
@@ -35,7 +35,6 @@ namespace osg
 }
 
 /// @endcond
-
 
 namespace dtCore
 {
@@ -60,15 +59,14 @@ namespace dtCore
    class DT_CORE_EXPORT Transformable : public DeltaDrawable
    {
    public:
-
       /**
-      * We need an enumeration to allow the user to set which type
-      * of collision geometry to use.  The other properties in this
-      * proxy such as radius, length, etc. affect the current type
-      * of collision geometry.
-      * Ideally, this enum shouldn't be here, but rather in the collision class.
-      * Its left here for backward compatibility.
-      */
+       * We need an enumeration to allow the user to set which type
+       * of collision geometry to use.  The other properties in this
+       * proxy such as radius, length, etc. affect the current type
+       * of collision geometry.
+       * Ideally, this enum shouldn't be here, but rather in the collision class.
+       * Its left here for backward compatibility.
+       */
       class DT_CORE_EXPORT CollisionGeomType : public dtUtil::Enumeration
       {
          DECLARE_ENUM(CollisionGeomType);
@@ -105,12 +103,13 @@ namespace dtCore
 
       typedef osg::MatrixTransform TransformableNode;
 
-      /** Overloaded constructor will use the supplied node instead of
-      * creating one internally.
-      * @param node : A node this class should use internally
-      * @param name : The name of this instance
-      */
-      Transformable(TransformableNode& node, const std::string &name = "Transformable");
+      /**
+       * Overloaded constructor will use the supplied node instead of
+       * creating one internally.
+       * @param node : A node this class should use internally
+       * @param name : The name of this instance
+       */
+      Transformable(TransformableNode& node, const std::string& name = "Transformable");
 
    protected:
       virtual ~Transformable();
@@ -464,6 +463,7 @@ namespace dtCore
       ///little util to remove any of the rendered collision geometry
       void RemoveRenderedCollisionGeometry();
    };
-}
+
+} // namespace dtCore
 
 #endif // DELTA_TRANSFORMABLE

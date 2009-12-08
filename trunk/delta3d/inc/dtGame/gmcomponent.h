@@ -28,93 +28,92 @@
 
 namespace dtGame
 {
+
    class Message;
 
    class DT_GAME_EXPORT GMComponent : public dtCore::Base
    {
-      public:
+   public:
+      /// Constructor
+      /// @param name client code must supply a unique name for this instance.
+      GMComponent(const std::string& name);
 
-         /// Constructor
-         /// @param name client code must supply a unique name for this instance.
-         GMComponent(const std::string& name);
+   protected:
+      /// Destructor
+      virtual ~GMComponent();
 
-      protected:
+   public:
+      /**
+       * handles a sent a message
+       * @param The message
+       */
+      virtual void DispatchNetworkMessage(const Message& message);
 
-         /// Destructor
-         virtual ~GMComponent();
+      /**
+       * handles a processed a message
+       * @param The message
+       */
+      virtual void ProcessMessage(const Message& message);
 
-      public:
+      /**
+       * Gets the game manager that owns this component
+       * @return The game manager
+       * @see dtGame::GameManager
+       */
+      const GameManager* GetGameManager() const { return mParent; }
 
-         /**
-          * handles a sent a message
-          * @param The message
-          */
-         virtual void DispatchNetworkMessage(const Message& message);
+      /**
+       * Gets the game manager that owns this component
+       * @return The game manager
+       * @see dtGame::GameManager
+       */
+      GameManager* GetGameManager() { return mParent; }
 
-         /**
-          * handles a processed a message
-          * @param The message
-          */
-         virtual void ProcessMessage(const Message& message);
+      /**
+       * Get the priority of this component.
+       * @return the value of the priority.  It is only valid when GetGameManager() is not NULL.
+       */
+      const GameManager::ComponentPriority& GetComponentPriority() const;
 
-         /**
-          * Gets the game manager that owns this component
-          * @return The game manager
-          * @see dtGame::GameManager
-          */
-         const GameManager* GetGameManager() const { return mParent; }
+      /**
+       * Called immediately after a component is added to the GM. Override this
+       * to do init type behavior that needs access to the GameManager.
+       */
+      virtual void OnAddedToGM();
 
-         /**
-          * Gets the game manager that owns this component
-          * @return The game manager
-          * @see dtGame::GameManager
-          */
-         GameManager* GetGameManager() { return mParent; }
+      /**
+       * Called immediately after a component is removed from the GM. This is
+       * where any previously allocated memory should be deallocated, files unloaded,
+       * resources free'd, etc.  This gets called when the GMComponent gets removed
+       * from the GameManager and when the GameManager gets shut down.
+       * @see GameManager::RemoveComponent()
+       * @see GameManager::Shutdown()
+       */
+      virtual void OnRemovedFromGM();
 
-         /**
-          * Get the priority of this component.
-          * @return the value of the priority.  It is only valid when GetGameManager() is not NULL.
-          */
-         const GameManager::ComponentPriority& GetComponentPriority() const;
+   private:
+      friend class GameManager;
+      /**
+       * Sets the game manager that owns this component
+       * @see dtGame::GameManager
+       */
+      void SetGameManager(GameManager* gameManager);
+      /**
+       * Sets the component priority on this component.
+       * @see dtGame::GameManager::ComponentPriority
+       */
+      void SetComponentPriority(const GameManager::ComponentPriority& newPriority);
 
-         /**
-          * Called immediately after a component is added to the GM. Override this
-          * to do init type behavior that needs access to the GameManager.
-          */
-         virtual void OnAddedToGM();
+      GameManager* mParent;
+      const GameManager::ComponentPriority* mPriority;
 
-         /**
-          * Called immediately after a component is removed from the GM. This is
-          * where any previously allocated memory should be deallocated, files unloaded,
-          * resources free'd, etc.  This gets called when the GMComponent gets removed
-          * from the GameManager and when the GameManager gets shut down.
-          * @see GameManager::RemoveComponent()
-          * @see GameManager::Shutdown()
-          */
-         virtual void OnRemovedFromGM();
-
-      private:
-         friend class GameManager;
-         /**
-          * Sets the game manager that owns this component
-          * @see dtGame::GameManager
-          */
-         void SetGameManager(GameManager* gameManager);
-         /**
-          * Sets the component priority on this component.
-          * @see dtGame::GameManager::ComponentPriority
-          */
-         void SetComponentPriority(const GameManager::ComponentPriority& newPriority);
-
-         GameManager* mParent;
-         const GameManager::ComponentPriority* mPriority;
-
-         // -----------------------------------------------------------------------
-         //  Unimplemented constructors and operators
-         // -----------------------------------------------------------------------
-         GMComponent(const GMComponent&);
-         GMComponent& operator=(const GMComponent&);
-
+      // -----------------------------------------------------------------------
+      //  Unimplemented constructors and operators
+      // -----------------------------------------------------------------------
+      GMComponent(const GMComponent&);
+      GMComponent& operator=(const GMComponent&);
    };
-}
-#endif
+
+} // namespace dtGame
+
+#endif // DELTA_GMCOMPONENT

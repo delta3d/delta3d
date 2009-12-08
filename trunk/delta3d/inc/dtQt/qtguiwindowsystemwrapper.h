@@ -33,42 +33,44 @@
 
 namespace dtQt
 {
+
    class DT_QT_EXPORT QtGuiWindowSystemWrapper: public osg::GraphicsContext::WindowingSystemInterface
    {
-      public:
+   public:
+      static void EnableQtGUIWrapper();
 
-         static void EnableQtGUIWrapper();
+      QtGuiWindowSystemWrapper(osg::GraphicsContext::WindowingSystemInterface& oldInterface);
 
-         QtGuiWindowSystemWrapper(osg::GraphicsContext::WindowingSystemInterface& oldInterface);
+      virtual unsigned int getNumScreens(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier =
+         osg::GraphicsContext::ScreenIdentifier());
 
-         virtual unsigned int getNumScreens(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier =
-            osg::GraphicsContext::ScreenIdentifier());
+      virtual void getScreenResolution(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier,
+               unsigned int& width, unsigned int& height);
 
-         virtual void getScreenResolution(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier,
-                  unsigned int& width, unsigned int& height);
+      virtual bool setScreenResolution(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier,
+               unsigned int width, unsigned int height);
 
-         virtual bool setScreenResolution(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier,
-                  unsigned int width, unsigned int height);
-
-         virtual bool setScreenRefreshRate(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier,
-                  double refreshRate);
+      virtual bool setScreenRefreshRate(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier,
+               double refreshRate);
 
    #if defined(OPENSCENEGRAPH_MAJOR_VERSION) && OPENSCENEGRAPH_MAJOR_VERSION >= 2 && defined(OPENSCENEGRAPH_MINOR_VERSION) && OPENSCENEGRAPH_MINOR_VERSION >= 8
-         virtual void getScreenSettings(const osg::GraphicsContext::ScreenIdentifier& si, osg::GraphicsContext::ScreenSettings & resolution);
+      virtual void getScreenSettings(const osg::GraphicsContext::ScreenIdentifier& si, osg::GraphicsContext::ScreenSettings & resolution);
 
-         virtual void enumerateScreenSettings(const osg::GraphicsContext::ScreenIdentifier& si, osg::GraphicsContext::ScreenSettingsList & rl);
+      virtual void enumerateScreenSettings(const osg::GraphicsContext::ScreenIdentifier& si, osg::GraphicsContext::ScreenSettingsList & rl);
    #endif
 
-         virtual osg::GraphicsContext* createGraphicsContext(osg::GraphicsContext::Traits* traits);
+      virtual osg::GraphicsContext* createGraphicsContext(osg::GraphicsContext::Traits* traits);
 
-         ///Supply a custom factory to create custom QGLWidgets.
-         void SetGLWidgetFactory(GLWidgetFactory* factory);
+      ///Supply a custom factory to create custom QGLWidgets.
+      void SetGLWidgetFactory(GLWidgetFactory* factory);
 
-      protected:
-         virtual ~QtGuiWindowSystemWrapper() {};
-      private:
-         dtCore::RefPtr<osg::GraphicsContext::WindowingSystemInterface> mInterface;
-         dtCore::RefPtr<GLWidgetFactory> mWidgetFactory;
+   protected:
+      virtual ~QtGuiWindowSystemWrapper() {};
+   private:
+      dtCore::RefPtr<osg::GraphicsContext::WindowingSystemInterface> mInterface;
+      dtCore::RefPtr<GLWidgetFactory> mWidgetFactory;
    };
-}
+
+} // namespace dtQt
+
 #endif // qtguiwindowsystemwrapper_h__

@@ -30,23 +30,20 @@
 namespace dtAnim
 {
 
-class DT_ANIM_EXPORT PhysiqueDriver: public ICal3DDriver
-{
+   class DT_ANIM_EXPORT PhysiqueDriver: public ICal3DDriver
+   {
+   public:
+      PhysiqueDriver(Cal3DModelWrapper* pWrapper);
 
-public:
-   PhysiqueDriver(Cal3DModelWrapper* pWrapper);
+      void Update(double dt);
+      void SetWrapper(Cal3DModelWrapper*);
 
-   void Update(double dt);
-   void SetWrapper(Cal3DModelWrapper*);
+   protected:
+      virtual ~PhysiqueDriver();
 
-protected:
-   virtual ~PhysiqueDriver();
-
-private:
-
-   dtCore::RefPtr<Cal3DModelWrapper> mWrapper;
-
-};
+   private:
+      dtCore::RefPtr<Cal3DModelWrapper> mWrapper;
+   };
 
 } // namespace dtAnim
 

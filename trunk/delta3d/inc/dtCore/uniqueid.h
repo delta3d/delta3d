@@ -38,37 +38,38 @@ namespace dtUtil
 
 namespace dtCore
 {
+
    ///Conforms to OSF DCE 1.1
    class DT_CORE_EXPORT UniqueId
    {
-      public:
-         UniqueId();
-         UniqueId(const UniqueId& toCopy) { mId = toCopy.mId; }
+   public:
+      UniqueId();
+      UniqueId(const UniqueId& toCopy) { mId = toCopy.mId; }
 
-         explicit UniqueId(const std::string& stringId) : mId(stringId) {}
-         virtual ~UniqueId() {}
+      explicit UniqueId(const std::string& stringId) : mId(stringId) {}
+      virtual ~UniqueId() {}
 
-         bool operator== ( const UniqueId& rhs ) const { return mId == rhs.mId; }
-         bool operator!= ( const UniqueId& rhs ) const { return mId != rhs.mId; }
-         bool operator< ( const UniqueId& rhs ) const  { return mId <  rhs.mId; }
-         bool operator> ( const UniqueId& rhs ) const  { return mId >  rhs.mId; }
+      bool operator==(const UniqueId& rhs) const { return mId == rhs.mId; }
+      bool operator!=(const UniqueId& rhs) const { return mId != rhs.mId; }
+      bool operator< (const UniqueId& rhs) const { return mId <  rhs.mId; }
+      bool operator> (const UniqueId& rhs) const { return mId >  rhs.mId; }
 
-         const std::string& ToString() const;
+      const std::string& ToString() const;
 
-         /**
-          * The assignment operator is public so that unique id's can be changed if they are
-          * member variables.  Use const to control when they are changed.
-          */
-         UniqueId& operator=(const UniqueId& rhs);
+      /**
+       * The assignment operator is public so that unique id's can be changed if they are
+       * member variables.  Use const to control when they are changed.
+       */
+      UniqueId& operator=(const UniqueId& rhs);
 
-         /**
-          * The assignment operator is public so that unique id's can be changed if they are
-          * member variables.  Use const to control when they are changed.
-          */
-         UniqueId& operator=(const std::string& rhs);
+      /**
+       * The assignment operator is public so that unique id's can be changed if they are
+       * member variables.  Use const to control when they are changed.
+       */
+      UniqueId& operator=(const std::string& rhs);
 
-    protected:
-         std::string mId;
+   protected:
+      std::string mId;
    };
 
    ////////////////////////////////////////////////////
@@ -81,6 +82,7 @@ namespace dtCore
    DT_CORE_EXPORT dtUtil::DataStream& operator << (dtUtil::DataStream& ds, const UniqueId& id);
 
    DT_CORE_EXPORT dtUtil::DataStream& operator >> (dtUtil::DataStream& ds, UniqueId& id);
-}
+
+} // namespace dtCore
 
 #endif // DELTA_UNIQUEID

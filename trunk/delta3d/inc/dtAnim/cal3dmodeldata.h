@@ -51,154 +51,154 @@ namespace dtAnim
     */
    class DT_ANIM_EXPORT LODOptions
    {
-      public:
-         LODOptions();
+   public:
+      LODOptions();
 
-         ///@return the distance at which to start decreasing the level of detail.
-         double GetStartDistance() const { return mStartDistance; }
-         void SetStartDistance(double newDistance);
+      ///@return the distance at which to start decreasing the level of detail.
+      double GetStartDistance() const { return mStartDistance; }
+      void SetStartDistance(double newDistance);
 
-         ///@return the distance at which the level of detail should be the minimum.
-         double GetEndDistance() const { return mEndDistance; }
-         void SetEndDistance(double newDistance);
+      ///@return the distance at which the level of detail should be the minimum.
+      double GetEndDistance() const { return mEndDistance; }
+      void SetEndDistance(double newDistance);
 
-         ///@return the maximum distance that the model will be drawn at all.
-         double GetMaxVisibleDistance() const { return mMaxVisibleDistance; }
-         void SetMaxVisibleDistance(double newDistance);
-         
-      private:
-         double mStartDistance, mEndDistance, mMaxVisibleDistance;
+      ///@return the maximum distance that the model will be drawn at all.
+      double GetMaxVisibleDistance() const { return mMaxVisibleDistance; }
+      void SetMaxVisibleDistance(double newDistance);
+
+   private:
+      double mStartDistance, mEndDistance, mMaxVisibleDistance;
    };
 
    class DT_ANIM_EXPORT Cal3DModelData : public osg::Referenced
    {
-      public:
-         //we will hold all the animation wrappers for each CalCoreModel
-         typedef std::vector<dtCore::RefPtr<AnimationWrapper> > AnimationWrapperArray;
-         //we will hold a vector of animatables for each CalCoreModel
-         typedef std::vector<dtCore::RefPtr<Animatable> > AnimatableArray;
+   public:
+      // we will hold all the animation wrappers for each CalCoreModel
+      typedef std::vector<dtCore::RefPtr<AnimationWrapper> > AnimationWrapperArray;
+      // we will hold a vector of animatables for each CalCoreModel
+      typedef std::vector<dtCore::RefPtr<Animatable> > AnimatableArray;
 
-      public:
-         Cal3DModelData(CalCoreModel* coreModel, const std::string& filename);
+   public:
+      Cal3DModelData(CalCoreModel* coreModel, const std::string& filename);
 
-         void Add(AnimationWrapper*);
-         void Add(Animatable*);
+      void Add(AnimationWrapper*);
+      void Add(Animatable*);
 
-         void Remove(AnimationWrapper*);
-         void Remove(Animatable*);
+      void Remove(AnimationWrapper*);
+      void Remove(Animatable*);
 
-         const std::string& GetFilename() const;
+      const std::string& GetFilename() const;
 
-         CalCoreModel* GetCoreModel();
-         const CalCoreModel* GetCoreModel() const;
+      CalCoreModel* GetCoreModel();
+      const CalCoreModel* GetCoreModel() const;
 
-         AnimationWrapperArray& GetAnimationWrappers();
-         const AnimationWrapperArray& GetAnimationWrappers() const;
+      AnimationWrapperArray& GetAnimationWrappers();
+      const AnimationWrapperArray& GetAnimationWrappers() const;
 
-         AnimatableArray& GetAnimatables();
-         const AnimatableArray& GetAnimatables() const;
+      AnimatableArray& GetAnimatables();
+      const AnimatableArray& GetAnimatables() const;
 
-         CalHardwareModel* GetOrCreateCalHardwareModel();
+      CalHardwareModel* GetOrCreateCalHardwareModel();
 
-         /**
-          * @return the vertex array that stores the raw vertex data
-          */
-         osg::FloatArray* GetSourceVertexArray() { return mVertexArray; }
+      /**
+       * @return the vertex array that stores the raw vertex data
+       */
+      osg::FloatArray* GetSourceVertexArray() { return mVertexArray; }
 
-         /**
-          * @return the vertex array that stores the raw index data
-          */
-         CalIndex* GetSourceIndexArray() { return mIndexArray; }
+      /**
+       * @return the vertex array that stores the raw index data
+       */
+      CalIndex* GetSourceIndexArray() { return mIndexArray; }
 
-         /**
-          * @return the number of elements between each successive source vertex row
-          */
-         int GetStride() { return mStride; }
+      /**
+       * @return the number of elements between each successive source vertex row
+       */
+      int GetStride() { return mStride; }
 
-         /// Allocate memory to be used for the source arrays
-         void CreateSourceArrays(int numberOfVertices, int numberOfIndices, int stride);
+      /// Allocate memory to be used for the source arrays
+      void CreateSourceArrays(int numberOfVertices, int numberOfIndices, int stride);
 
-         /// Deletes the memory held by the vertex and index source arrays
-         void DestroySourceArrays();
+      /// Deletes the memory held by the vertex and index source arrays
+      void DestroySourceArrays();
 
-         /**
-          * @return the vbo being used with this character core model, or 0 for none.
-          */
-         osg::VertexBufferObject* GetVertexBufferObject();
-         
-         /// Sets the Vertex Buffer Object being used with this character core model
-         void SetVertexBufferObject(osg::VertexBufferObject* vbo);
+      /**
+       * @return the vbo being used with this character core model, or 0 for none.
+       */
+      osg::VertexBufferObject* GetVertexBufferObject();
 
-         /**
-          * @return the ebo being used with this character core model, or 0 for none
-          */
-         osg::ElementBufferObject* GetElementBufferObject() const;
-         
-         /// Sets the Element Buffer Object being used with this character core model
-         void SetElementBufferObject(osg::ElementBufferObject* ebo);
-         
-         /**
-          * @see dtCore::ShaderManager
-          * @return the shader group used to lookup the shader for this character model.
-          */
-         const std::string& GetShaderGroupName() const;
+      /// Sets the Vertex Buffer Object being used with this character core model
+      void SetVertexBufferObject(osg::VertexBufferObject* vbo);
 
-         /// Sets the shader group name
-         void SetShaderGroupName(const std::string& groupName);
+      /**
+       * @return the ebo being used with this character core model, or 0 for none
+       */
+      osg::ElementBufferObject* GetElementBufferObject() const;
 
-         /**
-          * @see dtCore::ShaderManager
-          * @see #GetShaderGroupName
-          * @return the name of the shader within the shader group to use.
-          */
-         const std::string& GetShaderName() const;
+      /// Sets the Element Buffer Object being used with this character core model
+      void SetElementBufferObject(osg::ElementBufferObject* ebo);
 
-         /// Sets the shader group name
-         void SetShaderName(const std::string& name);
+      /**
+       * @see dtCore::ShaderManager
+       * @return the shader group used to lookup the shader for this character model.
+       */
+      const std::string& GetShaderGroupName() const;
 
-         const std::string& GetPoseMeshFilename() const;
+      /// Sets the shader group name
+      void SetShaderGroupName(const std::string& groupName);
 
-         void SetPoseMeshFilename(const std::string& name);
+      /**
+       * @see dtCore::ShaderManager
+       * @see #GetShaderGroupName
+       * @return the name of the shader within the shader group to use.
+       */
+      const std::string& GetShaderName() const;
 
-         /**
-          * @return the maximum number of bones the skinning shader supports.
-          */
-         unsigned GetShaderMaxBones() const;
+      /// Sets the shader group name
+      void SetShaderName(const std::string& name);
 
-         /// Sets the maximum number of bones the shader supports
-         void SetShaderMaxBones(unsigned maxBones);
+      const std::string& GetPoseMeshFilename() const;
 
-         LODOptions& GetLODOptions() { return mLODOptions; }
-         const LODOptions& GetLODOptions() const { return mLODOptions; }
-         
-      protected:
-         virtual ~Cal3DModelData();
+      void SetPoseMeshFilename(const std::string& name);
 
-         Cal3DModelData(const Cal3DModelData&); //not implemented
-         Cal3DModelData& operator=(const Cal3DModelData&); //not implemented
+      /**
+       * @return the maximum number of bones the skinning shader supports.
+       */
+      unsigned GetShaderMaxBones() const;
 
-      private:
-         std::string mFilename;
-         std::string mShaderName, mShaderGroupName;
-         std::string mPoseMeshFilename;
+      /// Sets the maximum number of bones the shader supports
+      void SetShaderMaxBones(unsigned maxBones);
 
-         // Buffer data
-         int mStride;
-         CalIndex* mIndexArray;
-         osg::ref_ptr<osg::FloatArray> mVertexArray;
-         osg::observer_ptr<osg::VertexBufferObject> mVertexBufferObject;
-         osg::observer_ptr<osg::ElementBufferObject> mElementBufferObject;
+      LODOptions& GetLODOptions() { return mLODOptions; }
+      const LODOptions& GetLODOptions() const { return mLODOptions; }
 
-         CalCoreModel* mCoreModel;
-         CalHardwareModel* mHardwareModel;
-         AnimationWrapperArray mAnimWrappers;
-         AnimatableArray mAnimatables;
+   protected:
+      virtual ~Cal3DModelData();
 
-         unsigned mShaderMaxBones;
+      Cal3DModelData(const Cal3DModelData&); //not implemented
+      Cal3DModelData& operator=(const Cal3DModelData&); //not implemented
 
-         LODOptions mLODOptions;
+   private:
+      std::string mFilename;
+      std::string mShaderName, mShaderGroupName;
+      std::string mPoseMeshFilename;
 
+      // Buffer data
+      int mStride;
+      CalIndex* mIndexArray;
+      osg::ref_ptr<osg::FloatArray> mVertexArray;
+      osg::observer_ptr<osg::VertexBufferObject> mVertexBufferObject;
+      osg::observer_ptr<osg::ElementBufferObject> mElementBufferObject;
+
+      CalCoreModel* mCoreModel;
+      CalHardwareModel* mHardwareModel;
+      AnimationWrapperArray mAnimWrappers;
+      AnimatableArray mAnimatables;
+
+      unsigned mShaderMaxBones;
+
+      LODOptions mLODOptions;
    };
-}
+
+} // namespace dtAnim
 
 #endif /*DELTA_CAL3D_MODEL_DATA*/

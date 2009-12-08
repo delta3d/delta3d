@@ -53,118 +53,116 @@ namespace dtAnim
    class Cal3DModelData;
    class Array;
 
-/** Class used to generate the renderable geometry for an animated character.  This
-  * class makes use of a pointer to a function which will do the actual building
-  * of the geometry.  By default, AnimNodeBuilder will try to use the default
-  * CreateSoftware(), CreateHardware, or CreateNULL() methods.  Call SetCreate()
-  * to supply a custom create method.
-  */
-class DT_ANIM_EXPORT AnimNodeBuilder: public osg::Referenced
-{
-public:
-
-   /** Prototype of the Create method.  Returns the Node containing the animated
-     * character's geometry.
-     * @code dtCore::RefPtr<osg::Node> MyCreateFunc(osg::Geode& geode, Cal3DModelWrapper* wrapper);
-     * @endcode
-     * @see CreateNode()
-     */
-   typedef dtUtil::Functor<dtCore::RefPtr<osg::Node>, TYPELIST_1(Cal3DModelWrapper*)> CreateFunc;
-
-   class DT_ANIM_EXPORT Cal3DBoundingSphereCalculator : public osg::Node::ComputeBoundingSphereCallback
-   {
-      public:
-         Cal3DBoundingSphereCalculator(Cal3DModelWrapper& wrapper);
-
-         /*virtual*/ osg::BoundingSphere computeBound(const osg::Node&) const;
-      private:
-         dtCore::RefPtr<Cal3DModelWrapper> mWrapper;
-   };
-
-   AnimNodeBuilder(); //creates default builder
-   AnimNodeBuilder(const CreateFunc& pCreate); //uses custom builder
-
-   /// @return the create function
-   CreateFunc& GetCreate();
-
-   /** Set a custom CreateFunc for the AnimNodeBuilder.  Function
-     * must remove the temporary geometry and drawcallback supplied
-     * by CreateNode.
-     * @param pCreate : the custom create function.
-     */
-   void SetCreate(const CreateFunc& pCreate);
-
-   /** Create the node that holds the animated character's geometry.  Will return
-     * a valid Node which contains temporary geometry.  Actual character geometry
-     * might not be present until the returned node is rendered in a Scene.
-     * @param pWrapper : Pointer to the Cal3DModelWrapper to be used when building
-     * the geometry.
-     * @return : RefPtr of a osg::Node which will contain the renderable geometry.  Temporary
-     * geometry is a osg::Group with a child osg::Geode which contains one osg::Drawable
-     * that has a Drawcallback assigned to it.
-     */
-   dtCore::RefPtr<osg::Node> CreateNode(Cal3DModelWrapper* pWrapper);
-
-   virtual dtCore::RefPtr<osg::Node> CreateSoftware(Cal3DModelWrapper* pWrapper);
-   virtual dtCore::RefPtr<osg::Node> CreateSoftwareNoVBO(Cal3DModelWrapper* pWrapper);
-   virtual dtCore::RefPtr<osg::Node> CreateHardware(Cal3DModelWrapper* pWrapper);
-   virtual dtCore::RefPtr<osg::Node> CreateNULL(Cal3DModelWrapper* pWrapper);
-
-
-   ///Does the hardware support hardware skinning?
-   bool SupportsHardware() const;
-
-   ///Does the hardware support software skinning?
-   bool SupportsSoftware() const;
-
-
-
-protected:
-   virtual ~AnimNodeBuilder();
-   AnimNodeBuilder(const AnimNodeBuilder&);
-   AnimNodeBuilder& operator=(const AnimNodeBuilder&);
-
-   dtCore::ShaderProgram* LoadShaders(Cal3DModelData& modelData, osg::Geode& geode) const;
-
-   virtual dtCore::RefPtr<osg::Node> CreateSoftwareInternal(Cal3DModelWrapper* pWrapper, bool vbo);
-
-private:
-
-   template <typename T>
-   class Array
+   /**
+    * Class used to generate the renderable geometry for an animated character.  This
+    * class makes use of a pointer to a function which will do the actual building
+    * of the geometry.  By default, AnimNodeBuilder will try to use the default
+    * CreateSoftware(), CreateHardware, or CreateNULL() methods.  Call SetCreate()
+    * to supply a custom create method.
+    */
+   class DT_ANIM_EXPORT AnimNodeBuilder: public osg::Referenced
    {
    public:
-      typedef T value_type;
+      /**
+       * Prototype of the Create method.  Returns the Node containing the animated
+       * character's geometry.
+       * @code dtCore::RefPtr<osg::Node> MyCreateFunc(osg::Geode& geode, Cal3DModelWrapper* wrapper);
+       * @endcode
+       * @see CreateNode()
+       */
+      typedef dtUtil::Functor<dtCore::RefPtr<osg::Node>, TYPELIST_1(Cal3DModelWrapper*)> CreateFunc;
 
-      Array(size_t size = 0): mArray(NULL)
+      class DT_ANIM_EXPORT Cal3DBoundingSphereCalculator : public osg::Node::ComputeBoundingSphereCallback
       {
-         if (size > 0)
+        public:
+          Cal3DBoundingSphereCalculator(Cal3DModelWrapper& wrapper);
+
+          /*virtual*/ osg::BoundingSphere computeBound(const osg::Node&) const;
+        private:
+          dtCore::RefPtr<Cal3DModelWrapper> mWrapper;
+      };
+
+      AnimNodeBuilder(); //creates default builder
+      AnimNodeBuilder(const CreateFunc& pCreate); //uses custom builder
+
+      /// @return the create function
+      CreateFunc& GetCreate();
+
+      /**
+       * Set a custom CreateFunc for the AnimNodeBuilder.  Function
+       * must remove the temporary geometry and drawcallback supplied
+       * by CreateNode.
+       * @param pCreate : the custom create function.
+       */
+      void SetCreate(const CreateFunc& pCreate);
+
+      /**
+       * Create the node that holds the animated character's geometry.  Will return
+       * a valid Node which contains temporary geometry.  Actual character geometry
+       * might not be present until the returned node is rendered in a Scene.
+       * @param pWrapper : Pointer to the Cal3DModelWrapper to be used when building
+       * the geometry.
+       * @return : RefPtr of a osg::Node which will contain the renderable geometry.  Temporary
+       * geometry is a osg::Group with a child osg::Geode which contains one osg::Drawable
+       * that has a Drawcallback assigned to it.
+       */
+      dtCore::RefPtr<osg::Node> CreateNode(Cal3DModelWrapper* pWrapper);
+
+      virtual dtCore::RefPtr<osg::Node> CreateSoftware(Cal3DModelWrapper* pWrapper);
+      virtual dtCore::RefPtr<osg::Node> CreateSoftwareNoVBO(Cal3DModelWrapper* pWrapper);
+      virtual dtCore::RefPtr<osg::Node> CreateHardware(Cal3DModelWrapper* pWrapper);
+      virtual dtCore::RefPtr<osg::Node> CreateNULL(Cal3DModelWrapper* pWrapper);
+
+
+      ///Does the hardware support hardware skinning?
+      bool SupportsHardware() const;
+
+      ///Does the hardware support software skinning?
+      bool SupportsSoftware() const;
+
+   protected:
+      virtual ~AnimNodeBuilder();
+      AnimNodeBuilder(const AnimNodeBuilder&);
+      AnimNodeBuilder& operator=(const AnimNodeBuilder&);
+
+      dtCore::ShaderProgram* LoadShaders(Cal3DModelData& modelData, osg::Geode& geode) const;
+
+      virtual dtCore::RefPtr<osg::Node> CreateSoftwareInternal(Cal3DModelWrapper* pWrapper, bool vbo);
+
+   private:
+      template <typename T>
+      class Array
+      {
+      public:
+        typedef T value_type;
+
+        Array(size_t size = 0): mArray(NULL)
+        {
+          if (size > 0)
             mArray = new T[size];
-      }
+        }
 
-      ~Array()
-      {
-         delete[] mArray;
-      }
+        ~Array()
+        {
+          delete[] mArray;
+        }
 
-      T& operator[](size_t index)
-      {
-         return mArray[index];
-      }
+        T& operator[](size_t index)
+        {
+          return mArray[index];
+        }
 
-      T* mArray;
+        T* mArray;
+      };
+
+      CreateFunc mCreateFunc;
+
+      void CalcNumVertsAndIndices(Cal3DModelWrapper* pWrapper,
+                           int& numVerts, int& numIndices);
+
+      ///Does the hardware support vertex buffers?
+      bool SupportsVertexBuffers() const;
    };
-
-
-   CreateFunc mCreateFunc;
-
-   void CalcNumVertsAndIndices(Cal3DModelWrapper* pWrapper,
-                               int& numVerts, int& numIndices);
-
-   ///Does the hardware support vertex buffers?
-   bool SupportsVertexBuffers() const;
-
-};
 
 } // namespace dtAnim
 

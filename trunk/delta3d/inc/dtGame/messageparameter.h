@@ -18,8 +18,11 @@
  *
  * William E. Johnson II
  */
+
 #ifndef DELTA_MESSAGEPARAMETER
 #define DELTA_MESSAGEPARAMETER
+
+////////////////////////////////////////////////////////////////////////////////
 
 #include <dtDAL/namedparameter.h>
 
@@ -53,7 +56,9 @@ namespace dtGame
    typedef dtDAL::NamedRGBAColorParameter         RGBAColorMessageParameter;
    typedef dtDAL::NamedVec4fParameter             Vec4fMessageParameter;
    typedef dtDAL::NamedVec4dParameter             Vec4dMessageParameter;
-   typedef dtDAL::NamedResourceParameter          ResourceMessageParameter; 
-
+   typedef dtDAL::NamedResourceParameter          ResourceMessageParameter;
 }
-#endif
+
+////////////////////////////////////////////////////////////////////////////////
+
+#endif // DELTA_MESSAGEPARAMETER

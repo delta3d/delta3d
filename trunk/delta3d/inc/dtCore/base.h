@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
-*/
+ */
 
 #ifndef DELTA_BASE
 #define DELTA_BASE
@@ -61,87 +61,88 @@ namespace dtCore
    {
       DECLARE_MANAGEMENT_LAYER(Base)
 
-      public:
-         ///Data that gets passed through SendMessage
-         struct DT_CORE_EXPORT MessageData
-         {
-            std::string message; ///<Textual message
-            Base* sender;        ///<Pointer to the sender
-            void* userData;      ///<Void pointer to user data
-         };
+   public:
+      ///Data that gets passed through SendMessage
+      struct DT_CORE_EXPORT MessageData
+      {
+         std::string message; ///<Textual message
+         Base* sender;        ///<Pointer to the sender
+         void* userData;      ///<Void pointer to user data
+      };
 
-         /**
-          * Constructor.
-          *
-          * @param name the instance name
-          */
-         Base(const std::string& name = "base");
+      /**
+       * Constructor.
+       *
+       * @param name the instance name
+       */
+      Base(const std::string& name = "base");
 
-      protected:
-         /**
-          * Destructor.
-          */
-         virtual ~Base();
+   protected:
+      /**
+       * Destructor.
+       */
+      virtual ~Base();
 
-      public:
-         /**
-          * Sets the name of this instance.
-          *
-          * @param name the new name
-          */
-         void SetName(const std::string& name);
+   public:
+      /**
+       * Sets the name of this instance.
+       *
+       * @param name the new name
+       */
+      void SetName(const std::string& name);
 
-         /**
-          * Returns the name of this instance.
-          *
-          * @return the current name
-          */
-         const std::string& GetName() const;
+      /**
+       * Returns the name of this instance.
+       *
+       * @return the current name
+       */
+      const std::string& GetName() const;
 
-         /**
-          * This sets the unique ID, for general purposes this should not be used.
-          */
-         void SetUniqueId(const UniqueId& id) { mId = id; };
+      /**
+       * This sets the unique ID, for general purposes this should not be used.
+       */
+      void SetUniqueId(const UniqueId& id) { mId = id; };
 
-         /**
-          * This class returns an instance the the UniqueID
-          */
-         const UniqueId& GetUniqueId() const { return mId; }
+      /**
+       * This class returns an instance the the UniqueID
+       */
+      const UniqueId& GetUniqueId() const { return mId; }
 
-         /**
-          * Override to receive messages
-          */
-         virtual void OnMessage(MessageData*) {}
+      /**
+       * Override to receive messages
+       */
+      virtual void OnMessage(MessageData*) {}
 
-         /**
-          * Receive all messages from the supplied sender instance
-          */
-         void AddSender(Base* sender);
+      /**
+       * Receive all messages from the supplied sender instance
+       */
+      void AddSender(Base* sender);
 
-         /**
-          * Stop receiving messages from the supplied sender instance
-          */
-         void RemoveSender(Base* sender);
+      /**
+       * Stop receiving messages from the supplied sender instance
+       */
+      void RemoveSender(Base* sender);
 
-         /**
-          *  Send a message to any instances that are subscribed
-          *  to this instance.  Any supplied string or void* data will be passed
-          *  to the receiver's OnMessage() method.
-          *
-          *  @param message Optional string message
-          *  @param data Optional pointer to user data
-          */
-         void SendMessage(const std::string& message = "", void* data = 0);
+      /**
+       *  Send a message to any instances that are subscribed
+       *  to this instance.  Any supplied string or void* data will be passed
+       *  to the receiver's OnMessage() method.
+       *
+       *  @param message Optional string message
+       *  @param data Optional pointer to user data
+       */
+      void SendMessage(const std::string& message = "", void* data = 0);
 
-      private:
-         ///< The name of this instance.
-         dtUtil::RefString mName;
+   private:
+      ///< The name of this instance.
+      dtUtil::RefString mName;
 
-         ///< The actual signal that gets triggered from SendMessage()
-         sigslot::signal1<MessageData*> mSendMessage;
+      ///< The actual signal that gets triggered from SendMessage()
+      sigslot::signal1<MessageData*> mSendMessage;
 
-         UniqueId mId;
+      UniqueId mId;
    };
+
 } // namespace dtCore
 
 #endif // DELTA_BASE

@@ -54,22 +54,23 @@ namespace dtABC
 
    ///Base generic Application class
 
-   /** The Application class of the dtCore Application Base Class library
-     * is the base level class for most applications.  It contains the basic
-     * components required for applications.
-     * An optional XML configuration file can be supplied on the constructor which
-     * contains the attributes for the internal DeltaWin, Camera, and Scene.
-     * A default Config File can be created by calling GenerateDefaultConfigFile().
-     * This file will contain the default parameters and can be edited, then
-     * supplied to the constructor.
-     *
-     * Typical use:
-     * \code
-     * Application *app = new Application("Mydatafile.xml");
-     * app->Config();
-     * app->Run();
-     * \endcode
-     */
+   /**
+    * The Application class of the dtCore Application Base Class library
+    * is the base level class for most applications.  It contains the basic
+    * components required for applications.
+    * An optional XML configuration file can be supplied on the constructor which
+    * contains the attributes for the internal DeltaWin, Camera, and Scene.
+    * A default Config File can be created by calling GenerateDefaultConfigFile().
+    * This file will contain the default parameters and can be edited, then
+    * supplied to the constructor.
+    *
+    * Typical use:
+    * \code
+    * Application *app = new Application("Mydatafile.xml");
+    * app->Config();
+    * app->Run();
+    * \endcode
+    */
    class DT_ABC_EXPORT Application : public dtABC::BaseABC, public dtUtil::ConfigProperties
    {
       DECLARE_MANAGEMENT_LAYER(Application)
@@ -142,45 +143,51 @@ namespace dtABC
       dtCore::GenericKeyboardListener* GetKeyboardListener() { return mKeyboardListener.get(); }
 
 
-      /** Called when a mouse button is pressed.  Overwrite for custom functionality.
-        * @param mouse Handle to the Mouse that triggered this
-        * @param button The button index
-        */
+      /**
+       * Called when a mouse button is pressed.  Overwrite for custom functionality.
+       * @param mouse Handle to the Mouse that triggered this
+       * @param button The button index
+       */
       virtual bool MouseButtonPressed(const dtCore::Mouse* mouse, dtCore::Mouse::MouseButton button);
 
-      /** Called when a mouse button is released.  Overwrite for custom functionality.
-      * @param mouse Handle to the Mouse that triggered this
-      * @param button The button index
-      */
+      /**
+       * Called when a mouse button is released.  Overwrite for custom functionality.
+       * @param mouse Handle to the Mouse that triggered this
+       * @param button The button index
+       */
       virtual bool MouseButtonReleased(const dtCore::Mouse* mouse, dtCore::Mouse::MouseButton button);
 
-      /** Called when a mouse button has been "double-clicked".  Overwrite for custom
-        * functionality.
-        * @param mouse Handle to the Mouse that triggered this
-        * @param button The button index
-        * @param clickCount : The number of times the button was clicked
-        */
+      /**
+       * Called when a mouse button has been "double-clicked".  Overwrite for custom
+       * functionality.
+       * @param mouse Handle to the Mouse that triggered this
+       * @param button The button index
+       * @param clickCount : The number of times the button was clicked
+       */
       virtual bool MouseButtonDoubleClicked(const dtCore::Mouse* mouse, dtCore::Mouse::MouseButton button, int clickCount);
 
-      /** Called when a mouse is moved.  Overwrite for custom functionality.
-      * @param mouse Handle to the Mouse that triggered this
-      * @param x The left-right distance the mouse traveled
-      * @param y The up-down distance the mouse traveled
-      */
+      /**
+       * Called when a mouse is moved.  Overwrite for custom functionality.
+       * @param mouse Handle to the Mouse that triggered this
+       * @param x The left-right distance the mouse traveled
+       * @param y The up-down distance the mouse traveled
+       */
       virtual bool MouseMoved(const dtCore::Mouse* mouse, float x, float y);
 
 
-      /** Called when a mouse is dragged (button down).  Overwrite for custom functionality.
-      * @param mouse Handle to the Mouse that triggered this
-      * @param x The left-right distance the mouse traveled
-      * @param y The up-down distance the mouse traveled
-      */
+      /**
+       * Called when a mouse is dragged (button down).  Overwrite for custom functionality.
+       * @param mouse Handle to the Mouse that triggered this
+       * @param x The left-right distance the mouse traveled
+       * @param y The up-down distance the mouse traveled
+       */
       virtual bool MouseDragged(const dtCore::Mouse* mouse, float x, float y);
 
-      /** Called when a mouse scroll wheel moved.  Overwrite for custom functionality.
-      * @param mouse Handle to the Mouse that triggered this
-      * @param delta The amount of wheel scrolled
-      */
+      /**
+       * Called when a mouse scroll wheel moved.  Overwrite for custom functionality.
+       * @param mouse Handle to the Mouse that triggered this
+       * @param delta The amount of wheel scrolled
+       */
       virtual bool MouseScrolled(const dtCore::Mouse* mouse, int delta);
 
       /// @return the instance of the mouse listener used for callbacks
@@ -203,10 +210,10 @@ namespace dtABC
       /// Add a view to the Viewer
       void AddView(dtCore::View& view);
 
-      /** 
+      /**
        * Remove a View from the Viewer.  This View will be removed during the
        * next PostFrame(), unless the "immediately" flag is set to true.  Views that
-       * are removed immediately could crash the application if removed at the 
+       * are removed immediately could crash the application if removed at the
        * incorrect time.
        * @param view The View to remove.
        * @param immediately : Advanced flag to indicate the View should be removed
@@ -228,9 +235,8 @@ namespace dtABC
       osgViewer::CompositeViewer* GetCompositeViewer() { return mCompositeViewer.get(); }
 
    protected:
-
       virtual ~Application();
-      
+
       virtual void EventTraversal(const double deltaSimTime);
 
       ///override for preframe
@@ -243,35 +249,36 @@ namespace dtABC
       virtual void PostFrame(const double deltaSimTime);
 
       ///Create basic instances and set up system hooks
-      virtual void CreateInstances(const std::string& name = "defaultWin", int x = 100, int y = 100, 
+      virtual void CreateInstances(const std::string& name = "defaultWin", int x = 100, int y = 100,
          int width = 640, int height = 480, bool cursor = true, bool fullScreen = false, bool realizeUponCreate = true);
 
-      /** Read the supplied config file, called from the constructor
-       *  Read an existing data file and setup the internal class
-       *  members with attributes from the data file.
-       *  @param file the name of the data file to be parsed.
-       *  @param handler The XML config file handler used to support the parsing
-       *  @return true if the file was read and parsed correctly, false otherwise
+      /**
+       * Read the supplied config file, called from the constructor
+       * Read an existing data file and setup the internal class
+       * members with attributes from the data file.
+       * @param file the name of the data file to be parsed.
+       * @param handler The XML config file handler used to support the parsing
+       * @return true if the file was read and parsed correctly, false otherwise
        */
       bool ParseConfigFile(const std::string& file, ApplicationConfigHandler& handler) const;
 
-      /** Apply the config file data to the previously created Application members.
-        * @param handler The handler which was used to parse the config file
-        * @return True if the data was applied correctly, false otherwise
-        */
+      /**
+       * Apply the config file data to the previously created Application members.
+       * @param handler The handler which was used to parse the config file
+       * @return True if the data was applied correctly, false otherwise
+       */
       bool ApplyConfigData(const ApplicationConfigHandler &handler);
 
        /**
-       * Forces the application to re-read the set of config properties it handles.
-       * This is virtual so a subclass can add new properties.
-       */
+        * Forces the application to re-read the set of config properties it handles.
+        * This is virtual so a subclass can add new properties.
+        */
       virtual void ReadSystemProperties();
+
    private:
-
-
       ///private method to remove a view. Must *not* be called during event traversal.
       void RemoveViewImpl(dtCore::View& view);
- 
+
       bool mFirstFrame;
       dtCore::RefPtr<osgViewer::CompositeViewer> mCompositeViewer;
 
@@ -283,9 +290,8 @@ namespace dtABC
 
       dtCore::StatsHandler *mStats; ///<for stats rendering/controlling
       ViewList mViewsToDelete; ///<list of Views to be removed at the end of the frame
-
    };
 
-}
+} // namespace dtABC
 
 #endif // DELTA_APPLICATION
