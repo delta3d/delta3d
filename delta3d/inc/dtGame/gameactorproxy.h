@@ -25,6 +25,7 @@
 
 #include <dtGame/export.h>
 #include <dtDAL/physicalactorproxy.h>
+#include <dtUtil/deprecationmgr.h>
 
 namespace dtUtil
 {
@@ -181,11 +182,6 @@ namespace dtGame
        * @param propNames  the properties to include in the update message.
        */
       virtual void NotifyPartialActorUpdate(const std::vector<dtUtil::RefString>& propNames);
-      /**
-       * Deprecated - Use NotifyPartialActorUpdate() with dtUtil::RefString instead.
-       * @see NotifyPartialActorUpdate
-       */
-      DEPRECATE_FUNC virtual void NotifyPartialActorUpdate(const std::vector<std::string>& propNames);
 
       /**
        * This is like NotifyFullActorUpdate() except that your subclass might only want to 
@@ -203,13 +199,6 @@ namespace dtGame
        */
       virtual void GetPartialUpdateProperties(std::vector<dtUtil::RefString>& propNamesToFill);
 
-      /**
-       * Deprecated - Use NotifyFullActorUpdate() for a full or NotifyPartialActorUpdate() 
-       * for a partial. 
-       * @see NotifyFullActorUpdate
-       * @see NotifyPartialActorUpdate
-       */
-      DEPRECATE_FUNC virtual void NotifyActorUpdate();
 
       /**
        * Populates an update message from the actor proxy.  When overwriting this method, be sure to call or
@@ -218,11 +207,6 @@ namespace dtGame
        * @param propNames  the properties to include in the message.
        */
       virtual void PopulateActorUpdate(ActorUpdateMessage& update, const std::vector<dtUtil::RefString>& propNames);
-      /**
-       * Deprecated - Use PopulateActorUpdate() with dtUtil::RefString instead.
-       * @see PopulateActorUpdate
-       */
-      DEPRECATE_FUNC virtual void PopulateActorUpdate(ActorUpdateMessage& update, const std::vector<std::string>& propNames);
 
       /**
        * Populates an update message from the actor proxy.  It will add all property values to the message.
@@ -386,6 +370,25 @@ namespace dtGame
        */
       bool ShouldAcceptPropertyInLocalUpdate(const dtUtil::RefString& propName) const;
 
+      /**
+       * Deprecated - Use NotifyPartialActorUpdate() with dtUtil::RefString instead.
+       * @see NotifyPartialActorUpdate
+       */
+      DEPRECATE_FUNC virtual void NotifyPartialActorUpdate(const std::vector<std::string>& propNames);
+
+      /**
+       * Deprecated - Use NotifyFullActorUpdate() for a full or NotifyPartialActorUpdate() 
+       * for a partial. 
+       * @see NotifyFullActorUpdate
+       * @see NotifyPartialActorUpdate
+       */
+      DEPRECATE_FUNC virtual void NotifyActorUpdate();
+
+      /**
+       * Deprecated - Use PopulateActorUpdate() with dtUtil::RefString instead.
+       * @see PopulateActorUpdate
+       */
+      DEPRECATE_FUNC virtual void PopulateActorUpdate(ActorUpdateMessage& update, const std::vector<std::string>& propNames);
    protected:
       /// Destructor
       virtual ~GameActorProxy();
