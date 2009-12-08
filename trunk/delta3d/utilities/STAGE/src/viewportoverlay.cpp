@@ -36,7 +36,7 @@
 #include <osg/Shader>
 
 #include <dtUtil/log.h>
-
+#include <dtUtil/mswinmacros.h> //for snprintf definition
 #include <dtActors/volumeeditactor.h>
 
 #include <dtDAL/actorproxyicon.h>

@@ -29,8 +29,6 @@ void initViewBindings()
 
    class_<View, bases<Base>, dtCore::RefPtr<View>, boost::noncopyable>("View", init<optional<const std::string&,bool> >())
       .def(init<osgViewer::View*,optional<const std::string&,bool> >())
-      .def("SetFrameBin", &View::SetFrameBin)
-      .def("GetFrameBin", &View::GetFrameBin)
       .def("SetRenderOrder", &View::SetRenderOrder)
       .def("GetRenderOrder", &View::GetRenderOrder)
       .def("AddSlave", &View::AddSlave)

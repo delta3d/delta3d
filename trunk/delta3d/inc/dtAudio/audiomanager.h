@@ -46,35 +46,6 @@
 
 #include <osg/Vec3>
 
-// configuration data
-///Deprecated feb/24/2009 -- setting Distance model with method now,
-// numSources is not something OpenAL lets you configure,
-// and EAX is handled via ConfigEAX
-struct DT_AUDIO_EXPORT AudioConfigData
-{
-   enum DistanceModel
-   {
-      dmNONE     = AL_NONE,
-      dmINVERSE  = AL_INVERSE_DISTANCE,
-      dmINVCLAMP = AL_INVERSE_DISTANCE_CLAMPED
-   };
-
-   unsigned int numSources;
-   bool         eax;
-   unsigned int distancemodel;
-
-   AudioConfigData(unsigned int ns = 16,
-      bool         ex = false,
-      unsigned int dm = dmINVERSE)
-      : numSources(ns)
-      , eax(ex)
-      , distancemodel(dm)
-   {
-      DEPRECATE("AudioConfigData",
-                "n/a");
-   }
-};
-
 
 namespace dtAudio
 {
@@ -242,15 +213,6 @@ namespace dtAudio
       /// access the global Listener
       static Listener* GetListener();
 
-      ///Deprecated feb/02/2009 in favor of Sound::IsListenerRelative()
-      DEPRECATE_FUNC bool GetListenerRelative(Sound* sound);
-
-      ///Deprecated feb/02/2009 All neccessary intialization is taken care of
-      // in AudioManager::Instantiate and configuration parameters for distance
-      // model are handled by SetDistanceModel.  ConfigEAX is still available for
-      // configuring EAX.
-      DEPRECATE_FUNC virtual void Config(const AudioConfigData& data = AudioConfigData());
-
       /**
        * Sets the OpenAL distance model.  Possible parameter values are:
        * AL_INVERSE_DISTANCE, AL_INVERSE_DISTANCE_CLAMPED, AL_LINEAR_DISTANCE,
@@ -300,9 +262,6 @@ namespace dtAudio
 
       /// free a sound that the user is finished with
       void FreeSound(Sound* sound);
-
-      ///Deprecated feb/02/2009 in favor of Sound::GetSource()
-      DEPRECATE_FUNC ALuint GetSource(Sound* sound);
 
       /*
        * Pre-load a sound file into a buffer. We only support .wav's

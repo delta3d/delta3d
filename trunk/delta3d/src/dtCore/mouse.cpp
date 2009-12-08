@@ -10,6 +10,7 @@
 
 #include <osg/Version>
 #include <osgViewer/View>
+#include <dtUtil/mswinmacros.h>
 #ifdef DELTA_WIN32
 #include <osgViewer/api/Win32/GraphicsWindowWin32>
 #elif defined(__APPLE__)

@@ -24,7 +24,6 @@
 #include <ode/common.h>
 #include <dtCore/deltadrawable.h>
 #include <dtUtil/enumeration.h>
-#include <dtUtil/deprecationmgr.h>
 
 //Must include because it's a typedef
 #include <osg/Matrix>
@@ -114,9 +113,6 @@ namespace dtCore
       Transformable(TransformableNode& node, const std::string &name = "Transformable");
 
    protected:
-      ///DEPRECATED 1/13/09.  Method is not required anymore
-      DEPRECATE_FUNC void ReplaceMatrixNode(TransformableNode* matrixTransform);
-
       virtual ~Transformable();
 
    public:

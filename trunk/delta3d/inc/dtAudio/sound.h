@@ -408,14 +408,6 @@ namespace dtAudio
        */
       void SetListenerRelative(bool relative);
 
-      ///Deprecated 1/23/2009 in favor of SetListenerRelative
-      DEPRECATE_FUNC void ListenerRelative(bool relative)
-      {
-         DEPRECATE("void dtAudio::Sound::ListenerRelative()",
-                   "void dtAudio::Sound::SetListenerRelative()");
-
-         SetListenerRelative(relative);
-      }
 
       /**
        * Set the transform position of sound.
@@ -487,17 +479,6 @@ namespace dtAudio
 
       /// Returns the velocity vector of the Sound.
       osg::Vec3 GetVelocity();
-
-      /**
-       * Deprecated 02/04/2009 -- this method is misleading.  It is not
-       * possible to set a minimum distance via OpenAL.
-       */
-      DEPRECATE_FUNC float GetMinDistance() const;
-
-      /** Deprecated 02/04/2009 -- this method never did anything.  It is not
-       *  possible to set a minimum distance via OpenAL.
-       */
-      DEPRECATE_FUNC void SetMinDistance(float dist);
 
       /**
        * Sets the distance where there will no longer be any attenuation of

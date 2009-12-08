@@ -219,61 +219,6 @@ Listener* AudioManager::GetListener()
    return static_cast<Listener*>(_Mic.get());
 }
 
-////////////////////////////////////////////////////////////////////////////////
-DEPRECATE_FUNC bool AudioManager::GetListenerRelative(Sound* sound)
-{
-   DEPRECATE("AudioManager::GetListenerRelative", "Sound::IsListenerRelative");
-
-   // No sound?  Why are you asking about the ListenerRelative flag then?
-   if (sound == NULL)
-   {
-      return false;
-   }
-
-   return sound->IsListenerRelative();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// manager configuration
-DEPRECATE_FUNC void AudioManager::Config(const AudioConfigData& data /*= _DefCfg*/)
-{
-   DEPRECATE("AudioManager::Config",  "All neccessary intialization is taken care of elsewhere now.");
-
-   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
-   if (mIsConfigured)
-   {
-      // already configured
-      return;
-   }
-
-   //Should be opened elsewhere (either automatically by alutInit (in constructor)
-   // or by SetOpenALDevice)
-   //OpenDevice();
-   //Context is automagically setup by alutInit or a call to SetOpenALDevice
-   //CreateContext();
-
-   // set up the distance model
-   switch (data.distancemodel)
-   {
-   case AL_NONE:
-      alDistanceModel(AL_NONE);
-      break;
-
-   case AL_INVERSE_DISTANCE_CLAMPED:
-      alDistanceModel(AL_INVERSE_DISTANCE_CLAMPED);
-      break;
-
-   case AL_INVERSE_DISTANCE:
-   default:
-      alDistanceModel(AL_INVERSE_DISTANCE);
-      break;
-   }
-   CheckForError("alDistanceModel Changes", __FUNCTION__, __LINE__);
-
-   // set up EAX
-   ConfigEAX(data.eax);
-   CheckForError("ConfigEAX( data.eax )", __FUNCTION__, __LINE__);
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 void AudioManager::SetDistanceModel(ALenum dm)
@@ -453,18 +398,6 @@ void AudioManager::FreeSound(Sound* sound)
    snd->Clear();
 }
 
-////////////////////////////////////////////////////////////////////////////////
-DEPRECATE_FUNC ALuint AudioManager::GetSource(Sound* sound)
-{
-   DEPRECATE("AudioManager::GetSource","Sound::GetSource");
-
-   if (sound == NULL)
-   {
-      return AL_NONE;
-   }
-
-   return sound->GetSource();
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 ALint AudioManager::LoadFile(const std::string& file)
