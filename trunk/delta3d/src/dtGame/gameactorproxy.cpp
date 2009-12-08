@@ -223,6 +223,9 @@ void GameActorProxy::SetGameManager(GameManager* gm)
 /////////////////////////////////////////////////////////////////////////////
 void GameActorProxy::NotifyActorUpdate()
 {
+   //deprecated 7/19/09
+   DEPRECATE("void GameActorProxy::NotifyActorUpdate()",
+             "void GameActorProxy::NotifyFullActorUpdate()");
    NotifyFullActorUpdate();
 }
 
@@ -264,6 +267,10 @@ void GameActorProxy::NotifyPartialActorUpdate(const std::vector<dtUtil::RefStrin
 void GameActorProxy::NotifyPartialActorUpdate(const std::vector<std::string>& propNames)
 {
    // This method is DEPRECATED - we just have to convert the vector types.
+   //deprecated 7/19/09
+   DEPRECATE("void GameActorProxy::NotifyPartialActorUpdate(const std::vector<std::string>& propNames)",
+             "void GameActorProxy::NotifyPartialActorUpdate(const std::vector<dtUtil::RefString>& propNames)");
+
    std::vector<dtUtil::RefString> refStringPropNames;
    refStringPropNames.reserve(propNames.size());
    for (unsigned i = 0; i < propNames.size(); ++i)
@@ -300,6 +307,9 @@ void GameActorProxy::PopulateActorUpdate(ActorUpdateMessage& update, const std::
 void GameActorProxy::PopulateActorUpdate(ActorUpdateMessage& update, const std::vector<std::string>& propNames)
 {
    // This method is DEPRECATED - we just have to convert the vector types.
+  //deprecated 7/19/09
+   DEPRECATE("void GameActorProxy::PopulateActorUpdate(ActorUpdateMessage&, const std::vector<std::string>&)",
+             "void GameActorProxy::PopulateActorUpdate(ActorUpdateMessage&, const std::vector<dtUtil::RefString>&)")
    std::vector<dtUtil::RefString> refStringPropNames;
    refStringPropNames.reserve(propNames.size());
    for (unsigned i = 0; i < propNames.size(); ++i)
