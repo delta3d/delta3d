@@ -1,28 +1,28 @@
 /* -*-c++-*-
-* allTests - This source file (.h & .cpp) - Using 'The MIT License'
-* Copyright (C) 2006-2008, MOVES Institute
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-*
-* @author Erik Johnson 05/16/2006
-* @edited Matthew stokes 06/18/2007
-*/
+ * allTests - This source file (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2006-2008, MOVES Institute
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @author Erik Johnson 05/16/2006
+ * @edited Matthew stokes 06/18/2007
+ */
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtCore/object.h>
@@ -62,7 +62,7 @@ private:
    dtCore::RefPtr<dtUtil::NodeCollector>  mNodeCollector3;
    dtCore::RefPtr<dtUtil::NodeCollector>  mNodeCollector4;
    dtCore::RefPtr<dtUtil::NodeCollector>  mNodeCollector5;
-   
+
    dtCore::RefPtr<dtCore::Object>         mObj;
    dtCore::RefPtr<osg::Group>             mTestTree;
    dtCore::RefPtr<osg::Geode>             mGeo;
@@ -74,8 +74,8 @@ void NodeCollectorTests::setUp()
 {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////Load an Object that contains Nodes////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
-  
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
    dtUtil::SetDataFilePathList(dtUtil::GetDeltaRootPath() + "/tests/data/ProjectContext/");
    std::string loadFile = dtUtil::FindFileInPathList("StaticMeshes/articulation_test.ive");
    CPPUNIT_ASSERT(!loadFile.empty());
@@ -83,14 +83,14 @@ void NodeCollectorTests::setUp()
    mObj = new dtCore::Object("Object");
    mObj->LoadFile(loadFile);
    mNodeCollector = new dtUtil::NodeCollector(mObj->GetOSGNode(), dtUtil::NodeCollector::AllNodeTypes);
-   
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////End Load an Object that contains Nodes/////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////Creation of a Group, DOFTransform, MatrixTransform, and Switch////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    mTestTree = new osg::Group();
    mTestTree->setName("group_01");
 
@@ -100,10 +100,10 @@ void NodeCollectorTests::setUp()
 
    osgSim::DOFTransform* trans01 = new osgSim::DOFTransform();
    trans01->setName("trans_01");
-   mTestTree->addChild(trans01); 
+   mTestTree->addChild(trans01);
 
    osg::Switch* switch01 = new osg::Switch();
-   switch01->setName("switch_01");  
+   switch01->setName("switch_01");
    mTestTree->addChild(switch01);
 
    osg::MatrixTransform* matrix01 = new osg::MatrixTransform();
@@ -120,7 +120,7 @@ void NodeCollectorTests::setUp()
 
    osgSim::DOFTransform* trans02 = new osgSim::DOFTransform();
    trans02->setName("trans_02");
-   lod01->addChild(trans02); 
+   lod01->addChild(trans02);
 
    osg::Geode* geo02 = new osg::Geode();
    geo02->setName("geo_02");
@@ -310,7 +310,7 @@ void NodeCollectorTests::TestModel()
      CPPUNIT_ASSERT_MESSAGE("This is a LOD Problem", mNodeCollector5->GetLOD("lod_01") != NULL);
      CPPUNIT_ASSERT_MESSAGE("This is a LOD Problem", mNodeCollector5->GetLOD("lod_02") != NULL);
      CPPUNIT_ASSERT_MESSAGE("This is a LOD MAP Problem", mNodeCollector5->GetLODNodeMap().empty() == false);
-     
+
 }
 
 void NodeCollectorTests::TestNodeRemoval()
@@ -318,15 +318,15 @@ void NodeCollectorTests::TestNodeRemoval()
    // Try removing nodes from unrelated mappings to ensure no other mappings are compromised.
    std::string curNodeName("group_02");
    mNodeCollector2->RemoveDOFTransform(curNodeName);
-   CPPUNIT_ASSERT( mNodeCollector2->GetGroup(curNodeName) != NULL );
+   CPPUNIT_ASSERT(mNodeCollector2->GetGroup(curNodeName) != NULL);
    mNodeCollector2->RemoveMatrixTransform(curNodeName);
-   CPPUNIT_ASSERT( mNodeCollector2->GetGroup(curNodeName) != NULL );
+   CPPUNIT_ASSERT(mNodeCollector2->GetGroup(curNodeName) != NULL);
    mNodeCollector2->RemoveSwitch(curNodeName);
-   CPPUNIT_ASSERT( mNodeCollector2->GetGroup(curNodeName) != NULL );
+   CPPUNIT_ASSERT(mNodeCollector2->GetGroup(curNodeName) != NULL);
    mNodeCollector2->RemoveGeode(curNodeName);
-   CPPUNIT_ASSERT( mNodeCollector2->GetGroup(curNodeName) != NULL );
+   CPPUNIT_ASSERT(mNodeCollector2->GetGroup(curNodeName) != NULL);
    mNodeCollector2->RemoveGroup(curNodeName);
-   CPPUNIT_ASSERT( mNodeCollector2->GetGroup(curNodeName) == NULL );
+   CPPUNIT_ASSERT(mNodeCollector2->GetGroup(curNodeName) == NULL);
 
    // Ensure all other nodes still exist
    CPPUNIT_ASSERT_MESSAGE("This is a Group Problem", mNodeCollector2->GetGroup("group_01") != NULL);

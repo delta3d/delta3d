@@ -1,28 +1,29 @@
 /* -*-c++-*-
-* allTests - This source file (.h & .cpp) - Using 'The MIT License'
-* Copyright (C) 2006-2008, MOVES Institute
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-*
-* John K. Grant
-* David Guthrie
-*/
+ * allTests - This source file (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2006-2008, MOVES Institute
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * John K. Grant
+ * David Guthrie
+ */
+
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtUtil/mathdefines.h>
@@ -45,17 +46,17 @@ namespace dtUtil
    class MathTests : public CPPUNIT_NS::TestFixture
    {
       CPPUNIT_TEST_SUITE(MathTests);
-         CPPUNIT_TEST( TestFiniteAndNAN );
-         CPPUNIT_TEST( TestVecFinite );
-         CPPUNIT_TEST( TestNormalizer );
-         CPPUNIT_TEST( TestEquivalentVec2 );
-         CPPUNIT_TEST( TestEquivalentVec3);
-         CPPUNIT_TEST( TestEquivalentVecUsingEqualVecs );
-         CPPUNIT_TEST( TestEquivalentVecUsingSlightlyDifferentVecs );
-         CPPUNIT_TEST( TestEquivalentVecUsingVeryDifferentVecs );
-         CPPUNIT_TEST( TestEquivalentVec4 );
-         CPPUNIT_TEST( TestMatrixEulerConversions );
-         CPPUNIT_TEST( TestEquivalentReals );
+         CPPUNIT_TEST(TestFiniteAndNAN);
+         CPPUNIT_TEST(TestVecFinite);
+         CPPUNIT_TEST(TestNormalizer);
+         CPPUNIT_TEST(TestEquivalentVec2);
+         CPPUNIT_TEST(TestEquivalentVec3);
+         CPPUNIT_TEST(TestEquivalentVecUsingEqualVecs);
+         CPPUNIT_TEST(TestEquivalentVecUsingSlightlyDifferentVecs);
+         CPPUNIT_TEST(TestEquivalentVecUsingVeryDifferentVecs);
+         CPPUNIT_TEST(TestEquivalentVec4);
+         CPPUNIT_TEST(TestMatrixEulerConversions);
+         CPPUNIT_TEST(TestEquivalentReals);
       CPPUNIT_TEST_SUITE_END();
 
       public:
@@ -72,13 +73,13 @@ namespace dtUtil
          void TestEquivalentVecUsingVeryDifferentVecs();
          void TestEquivalentVec4();
          void TestEquivalentReals();
-		 void TestMatrixEulerConversions();
+       void TestMatrixEulerConversions();
 
       private:
    };
 
    // Registers the fixture into the 'registry'
-   CPPUNIT_TEST_SUITE_REGISTRATION( MathTests );
+   CPPUNIT_TEST_SUITE_REGISTRATION(MathTests);
 
    void MathTests::setUp()
    {
@@ -322,48 +323,48 @@ namespace dtUtil
       float test_magic_epsilon = 1e-1f;
 
       osg::Matrix testMatrix;
-	   osg::Vec3 hprResult;
+      osg::Vec3 hprResult;
 
-	   // Test special cases with 90 degree angles
-	   osg::Vec3f hprTest1(0.0f, 89.0f, -10.0f);
-	   osg::Vec3f hprTest2(90.0f, 45.0f, 90.0f);
-	   osg::Vec3f hprTest3(5.0f, 80.0f, -10.0f);
-	   osg::Vec3f hprTest4(15.0f, 89.0f, 0.0f);
+      // Test special cases with 90 degree angles
+      osg::Vec3f hprTest1(0.0f, 89.0f, -10.0f);
+      osg::Vec3f hprTest2(90.0f, 45.0f, 90.0f);
+      osg::Vec3f hprTest3(5.0f, 80.0f, -10.0f);
+      osg::Vec3f hprTest4(15.0f, 89.0f, 0.0f);
 
       std::ostringstream ss;
       ss.precision(8);
 
-	   dtUtil::MatrixUtil::HprToMatrix(testMatrix, hprTest1);
-	   dtUtil::MatrixUtil::MatrixToHpr(hprResult, testMatrix);
+      dtUtil::MatrixUtil::HprToMatrix(testMatrix, hprTest1);
+      dtUtil::MatrixUtil::MatrixToHpr(hprResult, testMatrix);
 
       ss.str("");
       ss << "Expected \"" << hprTest1 << "\" but got \"" << hprResult << "\"";
 
-	   CPPUNIT_ASSERT_MESSAGE(ss.str(), Equivalent(hprResult, hprTest1, test_magic_epsilon));
+      CPPUNIT_ASSERT_MESSAGE(ss.str(), Equivalent(hprResult, hprTest1, test_magic_epsilon));
 
-	   dtUtil::MatrixUtil::HprToMatrix(testMatrix, hprTest2);
-	   dtUtil::MatrixUtil::MatrixToHpr(hprResult, testMatrix);
+      dtUtil::MatrixUtil::HprToMatrix(testMatrix, hprTest2);
+      dtUtil::MatrixUtil::MatrixToHpr(hprResult, testMatrix);
 
       ss.str("");
       ss << "Expected \"" << hprTest2 << "\" but got \"" << hprResult << "\"";
 
-	   CPPUNIT_ASSERT_MESSAGE(ss.str(), Equivalent(hprResult, hprTest2, test_magic_epsilon));
+      CPPUNIT_ASSERT_MESSAGE(ss.str(), Equivalent(hprResult, hprTest2, test_magic_epsilon));
 
-	   dtUtil::MatrixUtil::HprToMatrix(testMatrix, hprTest3);
-	   dtUtil::MatrixUtil::MatrixToHpr(hprResult, testMatrix);
+      dtUtil::MatrixUtil::HprToMatrix(testMatrix, hprTest3);
+      dtUtil::MatrixUtil::MatrixToHpr(hprResult, testMatrix);
 
       ss.str("");
       ss << "Expected \"" << hprTest3 << "\" but got \"" << hprResult << "\"";
 
-	   CPPUNIT_ASSERT_MESSAGE(ss.str(), Equivalent(hprResult, hprTest3, test_magic_epsilon));
+      CPPUNIT_ASSERT_MESSAGE(ss.str(), Equivalent(hprResult, hprTest3, test_magic_epsilon));
 
-	   dtUtil::MatrixUtil::HprToMatrix(testMatrix, hprTest4);
-	   dtUtil::MatrixUtil::MatrixToHpr(hprResult, testMatrix);
+      dtUtil::MatrixUtil::HprToMatrix(testMatrix, hprTest4);
+      dtUtil::MatrixUtil::MatrixToHpr(hprResult, testMatrix);
 
       ss.str("");
       ss << "Expected \"" << hprTest4 << "\" but got \"" << hprResult << "\"";
 
-	   CPPUNIT_ASSERT_MESSAGE(ss.str(), Equivalent(hprResult, hprTest4, test_magic_epsilon));
+      CPPUNIT_ASSERT_MESSAGE(ss.str(), Equivalent(hprResult, hprTest4, test_magic_epsilon));
    }
 
    void MathTests::TestEquivalentReals()
@@ -393,4 +394,4 @@ namespace dtUtil
       // Note, this should check doubles also, but I don't know the limit values for this.
    }
 
-}
+} // namespace dtUtil

@@ -1,27 +1,27 @@
 /* -*-c++-*-
-* allTests - This source file (.h & .cpp) - Using 'The MIT License'
-* Copyright (C) 2004-2008, MOVES Institute
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-*
-* Bradley Anderegg 06/29/2006
-*/
+ * allTests - This source file (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2004-2008, MOVES Institute
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * Bradley Anderegg 06/29/2006
+ */
 #include <prefix/dtgameprefix-src.h>
 #include "testplannerutils.h"
 #include <dtUtil/mswinmacros.h>
@@ -44,9 +44,9 @@ namespace dtAI
 //////////////////////////////////////////////////////////////////////////
 
    MyNPC::MyNPC()
-     : BaseNPC("MyNPC")
+      : BaseNPC("MyNPC")
    {
-     
+
    }
 
    MyNPC::~MyNPC()
@@ -56,7 +56,6 @@ namespace dtAI
 
    void MyNPC::OnInit()
    {
-
       mHelper.SetDesiredStateFunc(PlannerHelper::DesiredStateFunctor(this, &MyNPC::IsDesiredState));
       mHelper.SetRemainingCostFunc(PlannerHelper::RemainingCostFunctor(this, &MyNPC::RemainingCost));
 
@@ -65,23 +64,22 @@ namespace dtAI
       AddOperator(new Cook());
       AddOperator(new Eat());
 
-      
       mWSTemplate.AddState("Recipe", new Recipe());
       mWSTemplate.AddState("Groceries", new Groceries());
       mWSTemplate.AddState("PreparedFood", new PreparedFood());
-      mWSTemplate.AddState("HungerMeter", new HungerMeter());  
+      mWSTemplate.AddState("HungerMeter", new HungerMeter());
    }
 
    void MyNPC::MakeHungry()
    {
       IStateVariable* pState = mHelper.GetCurrentState()->GetState("HungerMeter");
-      if(pState)
+      if (pState)
       {
          HungerMeter* hm = dynamic_cast<HungerMeter*>(pState);
          assert(hm);
          hm->SetHungerLevel(0.0f);
       }
-      
+
       //std::cout << "Force Hungry" << std::endl;
    }
 
@@ -91,26 +89,26 @@ namespace dtAI
       static dtCore::RefPtr<HasPizzaGroceries> pHPG = new HasPizzaGroceries;
       static dtCore::RefPtr<HasFood> pHF = new HasFood;
       static dtCore::RefPtr<AmHungry> pAH = new AmHungry;
-      
-      if(!pAH->Evaluate(pWS))
+
+      if (!pAH->Evaluate(pWS))
       {
          return 0;
       }
 
-      if(pHF->Evaluate(pWS))
+      if (pHF->Evaluate(pWS))
       {
          return 1;
       }
 
-      if(pHPG->Evaluate(pWS))
+      if (pHPG->Evaluate(pWS))
       {
          return 2;
       }
 
-      if(pHPR->Evaluate(pWS))
+      if (pHPR->Evaluate(pWS))
       {
          return 3;
-      }         
+      }
 
       return 4;
    }
@@ -118,7 +116,7 @@ namespace dtAI
    bool MyNPC::IsDesiredState(const WorldState* pWS) const
    {
       const IStateVariable* pState = pWS->GetState("HungerMeter");
-      if(pState)
+      if (pState)
       {
          const HungerMeter* hm = dynamic_cast<const HungerMeter*>(pState);
          assert(hm);
@@ -188,7 +186,7 @@ namespace dtAI
    bool HasPizzaRecipe::Evaluate(const WorldState* pWS)
    {
       const IStateVariable* pState = pWS->GetState("Recipe");
-      if(pState)
+      if (pState)
       {
          const Recipe* rec = dynamic_cast<const Recipe*>(pState);
          assert(rec);
@@ -222,12 +220,12 @@ namespace dtAI
    bool HasPizzaGroceries::Evaluate(const WorldState* pWS)
    {
       const IStateVariable* pState = pWS->GetState("Groceries");
-      if(pState)
+      if (pState)
       {
          const Groceries* groc = dynamic_cast<const Groceries*>(pState);
          assert(groc);
          std::list<std::string> pGroc = groc->GetGroceries();
-         
+
          return (StringInList("Dough", pGroc) && StringInList("Cheese", pGroc) && StringInList("Tomato Sauce", pGroc));
       }
 
@@ -247,7 +245,7 @@ namespace dtAI
 
    HasFood::~HasFood()
    {
-   
+
    }
 
    const std::string& HasFood::GetName() const
@@ -259,7 +257,7 @@ namespace dtAI
    bool HasFood::Evaluate(const WorldState* pWS)
    {
       const IStateVariable* pState = pWS->GetState("PreparedFood");
-      if(pState)
+      if (pState)
       {
          const PreparedFood* pf = dynamic_cast<const PreparedFood*>(pState);
          assert(pf);
@@ -274,7 +272,7 @@ namespace dtAI
 //////////////////////////////////////////////////////////////////////////
 //AmHungry
 //////////////////////////////////////////////////////////////////////////
-   
+
    AmHungry::AmHungry()
    {
 
@@ -294,13 +292,13 @@ namespace dtAI
    bool AmHungry::Evaluate(const WorldState* pWS)
    {
       const IStateVariable* pState = pWS->GetState("HungerMeter");
-      if(pState)
+      if (pState)
       {
          const HungerMeter* hm = dynamic_cast<const HungerMeter*>(pState);
          assert(hm);
          return (hm->GetHungerLevel() < 0.5);
       }
-      //we shouldnt get here
+      // we shouldnt get here
       assert(false);
       return false;
    }
@@ -326,9 +324,9 @@ namespace dtAI
 
       std::list<std::string>::const_iterator iter = mRecipes.begin();
       std::list<std::string>::const_iterator endOfList = mRecipes.end();
-      while(iter != endOfList)
+      while (iter != endOfList)
       {
-         pRec->AddRecipe(*iter);   
+         pRec->AddRecipe(*iter);
          ++iter;
       }
       return pRec;
@@ -369,12 +367,12 @@ namespace dtAI
    IStateVariable* Groceries::Copy() const
    {
       Groceries* pGroc = new Groceries();
-      
+
       std::list<std::string>::const_iterator iter = mGroceries.begin();
       std::list<std::string>::const_iterator endOfList = mGroceries.end();
-      while(iter != endOfList)
+      while (iter != endOfList)
       {
-         pGroc->AddItem(*iter);   
+         pGroc->AddItem(*iter);
          ++iter;
       }
       return pGroc;
@@ -482,11 +480,11 @@ namespace dtAI
 //////////////////////////////////////////////////////////////////////////
 
    CallGrandma::CallGrandma(): Operator("CallGrandma", Operator::ApplyOperatorFunctor(this, &CallGrandma::FuncCallGrandma))
-   {      
+   {
    }
 
    bool CallGrandma::FuncCallGrandma(const Operator*, WorldState* pWSIn) const
-   { 
+   {
       IStateVariable* pStateRecipe = pWSIn->GetState("Recipe");
       assert(pStateRecipe);
       Recipe* pRecipe = dynamic_cast<Recipe*>(pStateRecipe);
@@ -541,8 +539,8 @@ namespace dtAI
       assert(pGroc && pFood);
 
       std::list<std::string> pGroceryList = pGroc->GetGroceries();
-      
-      if(StringInList("Dough", pGroceryList) && StringInList("Cheese", pGroceryList) && StringInList("Tomato Sauce", pGroceryList))
+
+      if (StringInList("Dough", pGroceryList) && StringInList("Cheese", pGroceryList) && StringInList("Tomato Sauce", pGroceryList))
       {
          pGroc->RemoveItem("Dough");
          pGroc->RemoveItem("Cheese");
@@ -579,7 +577,7 @@ namespace dtAI
       assert(hm);
 
 
-      if(!pf->HaveFood())
+      if (!pf->HaveFood())
       {
          return false;
       }
@@ -605,4 +603,4 @@ namespace dtAI
 
 
 //////////////////////////////////////////////////////////////////////////
-}//namespace dtAI
+} // namespace dtAI

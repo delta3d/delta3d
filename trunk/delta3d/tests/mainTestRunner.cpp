@@ -1,30 +1,31 @@
 /* -*-c++-*-
-* allTests - This source file (.h & .cpp) - Using 'The MIT License'
-* Copyright (C) 2005-2008, Alion Science and Technology Corporation
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-*
-* This software was developed by Alion Science and Technology Corporation under
-* circumstances in which the U. S. Government may have rights in the software.
-*
-* David Guthrie, Curtiss Murphy
-*/
+ * allTests - This source file (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2005-2008, Alion Science and Technology Corporation
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * This software was developed by Alion Science and Technology Corporation under
+ * circumstances in which the U. S. Government may have rights in the software.
+ *
+ * David Guthrie, Curtiss Murphy
+ */
+
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/CompilerOutputter.h>
 #include <cppunit/XmlOutputter.h>
@@ -64,8 +65,8 @@ static std::ostringstream mSlowTests;
 class EmbeddedWindowSystemWrapper: public osg::GraphicsContext::WindowingSystemInterface
 {
    public:
-      EmbeddedWindowSystemWrapper(osg::GraphicsContext::WindowingSystemInterface& oldInterface):
-         mInterface(&oldInterface)
+      EmbeddedWindowSystemWrapper(osg::GraphicsContext::WindowingSystemInterface& oldInterface)
+         : mInterface(&oldInterface)
       {
       }
 
@@ -76,20 +77,19 @@ class EmbeddedWindowSystemWrapper: public osg::GraphicsContext::WindowingSystemI
       }
 
 #if defined(OPENSCENEGRAPH_MAJOR_VERSION) && OPENSCENEGRAPH_MAJOR_VERSION >= 2 && defined(OPENSCENEGRAPH_MINOR_VERSION) && OPENSCENEGRAPH_MINOR_VERSION >= 8
-
-      virtual void getScreenSettings(const osg::GraphicsContext::ScreenIdentifier& si, osg::GraphicsContext::ScreenSettings & resolution)
+      virtual void getScreenSettings(const osg::GraphicsContext::ScreenIdentifier& si, osg::GraphicsContext::ScreenSettings& resolution)
       {
          mInterface->getScreenSettings(si, resolution);
       }
 
-      virtual void enumerateScreenSettings(const osg::GraphicsContext::ScreenIdentifier& si, osg::GraphicsContext::ScreenSettingsList & rl)
+      virtual void enumerateScreenSettings(const osg::GraphicsContext::ScreenIdentifier& si, osg::GraphicsContext::ScreenSettingsList& rl)
       {
          mInterface->enumerateScreenSettings(si, rl);
       }
 #endif
 
       virtual void getScreenResolution(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier,
-               unsigned int& width, unsigned int& height)
+         unsigned int& width, unsigned int& height)
       {
          mInterface->getScreenResolution(screenIdentifier, width, height);
       }
@@ -173,13 +173,17 @@ int main(int argc, char* argv[])
 
    // Get the test name from args.
    if (argc > 1)
+   {
       singleSuiteName = argv[1];
+   }
    if (argc > 2)
+   {
       singleTestName = argv[2];
+   }
 
    // We need to change our directory based on the executable
    dtUtil::FileInfo info = dtUtil::FileUtils::GetInstance().GetFileInfo(executable);
-   if(info.fileType == dtUtil::FILE_NOT_FOUND)
+   if (info.fileType == dtUtil::FILE_NOT_FOUND)
    {
       LOG_ERROR(std::string("Unable to change to the directory of application \"")
          + executable + "\": file not found.");
@@ -191,8 +195,10 @@ int main(int argc, char* argv[])
 
       try
       {
-         if(!info.path.empty())
+         if (!info.path.empty())
+         {
             dtUtil::FileUtils::GetInstance().ChangeDirectory(info.path);
+         }
       }
       catch(const dtUtil::Exception& ex)
       {
@@ -233,13 +239,13 @@ int main(int argc, char* argv[])
 
       // setup the test runner - does all the work
       CPPUNIT_NS::TestRunner testRunner;
-      CPPUNIT_NS::Test *fullTestSuite = CPPUNIT_NS::TestFactoryRegistry::getRegistry().makeTest();
+      CPPUNIT_NS::Test* fullTestSuite = CPPUNIT_NS::TestFactoryRegistry::getRegistry().makeTest();
 
       // Check for a specific test suite - if passed in, we only run the one suite
       if (singleSuiteName != "")
       {
          LOG_ALWAYS(std::string("Single suite name detected in arguments. Attempting to load a single test named [") + singleSuiteName + std::string("]."));
-         CPPUNIT_NS::Test *suiteTest = fullTestSuite->findTest(singleSuiteName);
+         CPPUNIT_NS::Test* suiteTest = fullTestSuite->findTest(singleSuiteName);
          if (suiteTest == NULL)
          {
             std::cerr << " *** FAILED to find test suite named [" << singleSuiteName <<
@@ -250,7 +256,7 @@ int main(int argc, char* argv[])
          else if (singleTestName != "")
          {
             LOG_ALWAYS(std::string("Individual test name detected in arguments. Attempting to load test [") + singleTestName + std::string("]."));
-            CPPUNIT_NS::Test *individualTest = suiteTest->findTest(singleTestName);
+            CPPUNIT_NS::Test* individualTest = suiteTest->findTest(singleTestName);
             if (individualTest == NULL)
             {
                std::cerr << " *** FAILED to individual test [" << singleTestName <<
@@ -301,22 +307,24 @@ int main(int argc, char* argv[])
       dtCore::Timer_t testsTimerStop = testsClock.Tick();
       double timeDelta = testsClock.DeltaSec(testsTimerStart, testsTimerStop);
       timeDelta = (floor(timeDelta * 10000.0)) / 10000.0; // force data truncation
-      if(!mSlowTests.str().empty())
+      if (!mSlowTests.str().empty())
       {
          std::cout << " <<< SLOW TEST RESULTS ::: START >>> " << std::endl <<
             mSlowTests.str() << " <<< SLOW TEST RESULTS ::: END ::: TotalTime[" <<
             timeDelta << "] >>> " << std::endl;
       }
       else
+      {
          std::cout << " <<< SLOW TEST RESULTS ::: ALL TESTS RAN FAST!!! WOOT! ::: TotalTime[" << timeDelta << "] >>> " << std::endl;
+      }
    }
-   catch (const std::invalid_argument &ie)
+   catch (const std::invalid_argument& ie)
    {
       std::cerr << " <<< Invalid argument occurred. Likely, the suite name or test name are invalid or not found. " <<
          " For tests, be sure to include the class name like [MyClass::TestStuff]. Or, see cppunit.sourceforge.net for more info.  Error: [" <<
          ie.what() << "]. >>> " << std::endl;
    }
-   catch (const std::exception &e)
+   catch (const std::exception& e)
    {
       std::cerr << " <<< Exception occurred. Error: [" << e.what() << "]. >>> " << std::endl;
    }

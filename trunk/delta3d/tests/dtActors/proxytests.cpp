@@ -1,31 +1,31 @@
 /* -*-c++-*-
-* allTests - This source file (.h & .cpp) - Using 'The MIT License'
-* Copyright (C) 2005-2008, Alion Science and Technology Corporation
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-* 
-* This software was developed by Alion Science and Technology Corporation under
-* circumstances in which the U. S. Government may have rights in the software.
-*
-* David Guthrie
-* William Johnson
-*/
+ * allTests - This source file (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2005-2008, Alion Science and Technology Corporation
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * This software was developed by Alion Science and Technology Corporation under
+ * circumstances in which the U. S. Government may have rights in the software.
+ *
+ * David Guthrie
+ * William Johnson
+ */
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
 
@@ -54,30 +54,29 @@ using dtCore::RefPtr;
 class ProxyTest : public CPPUNIT_NS::TestFixture
 {
    CPPUNIT_TEST_SUITE(ProxyTest);
-   CPPUNIT_TEST(TestProxies);
-   CPPUNIT_TEST(TestBezierProxies);
+      CPPUNIT_TEST(TestProxies);
+      CPPUNIT_TEST(TestBezierProxies);
    CPPUNIT_TEST_SUITE_END();
-   
-   public:
-         
-      ProxyTest();
-      virtual ~ProxyTest();
-      
-      virtual void setUp();
-      virtual void tearDown();
-      void TestProxies();
-      void TestBezierProxies();
-      
-   private:
-      dtDAL::LibraryManager &libMgr;
-      std::vector<const dtDAL::ActorType*> actors;
-      std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > proxies;
-      static const std::string mExampleLibraryName;
-      
-      void testProps(dtDAL::ActorProxy& proxy);
-      void testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, bool isElement = false);
-      void compareProxies(dtDAL::ActorProxy& ap1, dtDAL::ActorProxy& ap2);
-      void compareProperties(dtDAL::ActorProperty* prop1, dtDAL::ActorProperty* prop2);
+
+public:
+   ProxyTest();
+   virtual ~ProxyTest();
+
+   virtual void setUp();
+   virtual void tearDown();
+   void TestProxies();
+   void TestBezierProxies();
+
+private:
+   dtDAL::LibraryManager& libMgr;
+   std::vector<const dtDAL::ActorType*> actors;
+   std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > proxies;
+   static const std::string mExampleLibraryName;
+
+   void testProps(dtDAL::ActorProxy& proxy);
+   void testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, bool isElement = false);
+   void compareProxies(dtDAL::ActorProxy& ap1, dtDAL::ActorProxy& ap2);
+   void compareProperties(dtDAL::ActorProperty* prop1, dtDAL::ActorProperty* prop2);
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(ProxyTest);
@@ -113,8 +112,8 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
 {
    std::vector<dtDAL::ActorProperty*> props;
    proxy.GetPropertyList(props);
-   
-   for (unsigned int i = 0; i < props.size(); i++)
+
+   for (unsigned int i = 0; i < props.size(); ++i)
    {
       props[i]->SetNumberPrecision(24);
       CPPUNIT_ASSERT(props[i]->GetNumberPrecision() == 24);
@@ -173,7 +172,7 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
       CPPUNIT_ASSERT_MESSAGE("From datastream should fail on readonly properties", !p->FromDataStream(ds));
       return;
    }
-   
+
    if (prop->GetDataType() == DataType::FLOAT)
    {
       dtDAL::FloatActorProperty* prop1 = NULL;
@@ -193,13 +192,13 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
       CPPUNIT_ASSERT_MESSAGE(name + " property on " + proxyTypeName
                              + " should have value 0.3323233f, but it is: " + prop->ToString(),
                              osg::equivalent(prop1->GetValue(), value1, float(epsilon)));
-      
+
       std::string stringValue = prop1->ToString();
       //set some other value so we can test the string can set it back.
       float value2 = 17.3238392f;
       prop1->SetValue(value2);
       CPPUNIT_ASSERT(prop1->FromString(stringValue));
-      
+
       CPPUNIT_ASSERT_MESSAGE(name + " property on " + proxyTypeName
                              + " should have value 1.3323233f, but it is: " + prop->ToString(),
                              osg::equivalent(prop1->GetValue(), value1, float(epsilon)));
@@ -222,13 +221,13 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
       CPPUNIT_ASSERT_MESSAGE(name + " property on " + proxyTypeName
                              + " should have value 1.3323233, but it is: " + prop->ToString(),
                              osg::equivalent(prop1->GetValue(), value1, double(epsilon)));
-      
+
       std::string stringValue = prop1->ToString();
       //set some other value so we can test the string can set it back.
       double value2 = 17.3238392;
       prop1->SetValue(value2);
       CPPUNIT_ASSERT(prop1->FromString(stringValue));
-      
+
       CPPUNIT_ASSERT_MESSAGE(name + " property on " + proxyTypeName
                              + " should have value 1.3323233, but it is: " + prop->ToString(),
                              osg::equivalent(prop1->GetValue(), value1, double(epsilon)));
@@ -295,7 +294,7 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
          /// Call the GetProperty method so that we can test every type with the templated getter.
          proxy.GetProperty(prop->GetName(), prop1);
       }
-      
+
       prop1->SetValue("cache");
       CPPUNIT_ASSERT_MESSAGE(name + " property on " + proxyTypeName
                              + " should have value \"cache\", but it is: " + prop1->ToString(),
@@ -383,8 +382,8 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
 
          CPPUNIT_ASSERT_MESSAGE(std::string("Value should be NULL, but it's not"), aap->GetValue() == NULL);
 
-         const std::string &actorClass = aap->GetDesiredActorClass();
-         dtDAL::ActorProxy *tempProxy  = NULL;
+         const std::string& actorClass = aap->GetDesiredActorClass();
+         dtDAL::ActorProxy* tempProxy  = NULL;
 
          for(unsigned int i = 0; i < proxies.size(); ++i)
          {
@@ -398,7 +397,7 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
          CPPUNIT_ASSERT_MESSAGE("TempProxy should not be NULL", tempProxy != NULL);
 
          aap->SetValue(tempProxy);
-         dtDAL::ActorProxy *ap = aap->GetValue();
+         dtDAL::ActorProxy* ap = aap->GetValue();
 
          CPPUNIT_ASSERT_MESSAGE("GetValue should return what it was set to", ap == tempProxy);
 
@@ -441,14 +440,16 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
       if (name == "Direction")
          //Direction ignores the y rotation because you can't roll a vector.
          test.y() = 0.0f;
-      
+
       prop1->SetValue(test);
       osg::Vec3 result = prop1->GetValue();
-      
-      for (int x = 0; x < 3; x++)
+
+      for (int x = 0; x < 3; ++x)
       {
          if (x == 1 && name == "Direction")
+         {
             return;
+         }
          std::ostringstream ss;
          ss << proxyTypeName << " proxy TEST FAILED: Vec[" << x
             << "] property: " << name << " expected: " << test << " - actual: " << result;
@@ -460,13 +461,15 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
       //change the value so we can change it back.
       prop1->SetValue(test2);
       CPPUNIT_ASSERT(prop1->FromString(stringValue));
-      
+
       result = prop1->GetValue();
-      
-      for (int x = 0; x < 3; x++)
+
+      for (int x = 0; x < 3; ++x)
       {
          if (x == 1 && name == "Direction")
+         {
             return;
+         }
          std::ostringstream ss;
          ss << proxyTypeName << " proxy string TEST FAILED: Vec[" << x
             << "] property: " << name << " - Value: " << result;
@@ -485,19 +488,21 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
       {
          proxy.GetProperty(prop->GetName(), prop1);
       }
-      
+
       osg::Vec3f test(9.037829f, 2.02322f, 7.34324f);
       if (name == "Direction")
          //Direction ignores the y rotation because you can't roll a vector.
          test.y() = 0.0f;
-      
+
       prop1->SetValue(test);
       osg::Vec3f result = prop1->GetValue();
-      
-      for (int x = 0; x < 3; x++)
+
+      for (int x = 0; x < 3; ++x)
       {
          if (x == 1 && name == "Direction")
+         {
             return;
+         }
          std::ostringstream ss;
          ss << proxyTypeName << " proxy TEST FAILED: Vecf[" << x
             << "] property: " << name << " expected: " << test << " - actual: " << result;
@@ -509,13 +514,15 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
       //change the value so we can change it back.
       prop1->SetValue(test2);
       CPPUNIT_ASSERT(prop1->FromString(stringValue));
-      
+
       result = prop1->GetValue();
-      
-      for (int x = 0; x < 3; x++)
+
+      for (int x = 0; x < 3; ++x)
       {
          if (x == 1 && name == "Direction")
+         {
             return;
+         }
          std::ostringstream ss;
          ss << proxyTypeName << " proxy string TEST FAILED: Vec[" << x
             << "f] property: " << name << " - Value: " << result;
@@ -534,7 +541,7 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
       {
          proxy.GetProperty(prop->GetName(), prop1);
       }
-      
+
       osg::Vec3d test(9.037829, 2.02322, 7.34324);
       if (name == "Direction")
          //Direction ignores the y rotation because you can't roll a vector.
@@ -543,10 +550,12 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
       prop1->SetValue(test);
       osg::Vec3d result = prop1->GetValue();
 
-      for (int x = 0; x < 3; x++)
+      for (int x = 0; x < 3; ++x)
       {
          if (x == 1 && name == "Direction")
+         {
             return;
+         }
          std::ostringstream ss;
          ss << proxyTypeName << " proxy TEST FAILED: Vecd[" << x
             << "] property: " << name << " expected: " << test << " - actual: " << result;
@@ -561,10 +570,12 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
 
       result = prop1->GetValue();
 
-      for (int x = 0; x < 3; x++)
+      for (int x = 0; x < 3; ++x)
       {
          if (x == 1 && name == "Direction")
+         {
             return;
+         }
          std::ostringstream ss;
          ss << proxyTypeName << " proxy string TEST FAILED: Vec[" << x
             << "d] property: " << name << " - Value: " << result;
@@ -583,12 +594,12 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
       {
          proxy.GetProperty(prop->GetName(), prop1);
       }
-      
+
       osg::Vec4 test(9.037829f, 2.02322f, 7.34324f, 7.2936299f);
       prop1->SetValue(test);
       osg::Vec4 result = prop1->GetValue();
-      
-      for (int x = 0; x < 4; x++)
+
+      for (int x = 0; x < 4; ++x)
       {
          std::ostringstream ss;
          ss << proxyTypeName << " proxy TEST FAILED: Vec[" << x
@@ -601,10 +612,10 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
       //change the value so we can change it back.
       prop1->SetValue(test2);
       CPPUNIT_ASSERT(prop1->FromString(stringValue));
-      
+
       result = prop1->GetValue();
-      
-      for (int x = 0; x < 4; x++)
+
+      for (int x = 0; x < 4; ++x)
       {
          std::ostringstream ss;
          ss << proxyTypeName << " proxy string TEST FAILED: Vec[" << x
@@ -624,12 +635,12 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
       {
          proxy.GetProperty(prop->GetName(), prop1);
       }
-      
+
       osg::Vec4f test(9.037829f, 2.02322f, 7.34324f, 7.2936299f);
       prop1->SetValue(test);
       osg::Vec4f result = prop1->GetValue();
-      
-      for (int x = 0; x < 4; x++)
+
+      for (int x = 0; x < 4; ++x)
       {
          std::ostringstream ss;
          ss << proxyTypeName << " proxy TEST FAILED: Vec[" << x
@@ -642,10 +653,10 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
       //change the value so we can change it back.
       prop1->SetValue(test2);
       CPPUNIT_ASSERT(prop1->FromString(stringValue));
-      
+
       result = prop1->GetValue();
-      
-      for (int x = 0; x < 4; x++)
+
+      for (int x = 0; x < 4; ++x)
       {
          std::ostringstream ss;
          ss << proxyTypeName << " proxy string TEST FAILED: Vec[" << x
@@ -653,7 +664,7 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
          CPPUNIT_ASSERT_MESSAGE(ss.str(),
                                 osg::equivalent(result[x], test[x], epsilon));
       }
-      
+
    }
    else if (prop->GetDataType() == DataType::VEC4D)
    {
@@ -666,12 +677,12 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
       {
          proxy.GetProperty(prop->GetName(), prop1);
       }
-      
+
       osg::Vec4d test(9.037829, 2.02322, 7.34324, 7.2936299);
       prop1->SetValue(test);
       osg::Vec4d result = prop1->GetValue();
-      
-      for (int x = 0; x < 4; x++)
+
+      for (int x = 0; x < 4; ++x)
       {
          std::ostringstream ss;
          ss << proxyTypeName << " proxy TEST FAILED: Vec[" << x
@@ -684,10 +695,10 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
       //change the value so we can change it back.
       prop1->SetValue(test2);
       CPPUNIT_ASSERT(prop1->FromString(stringValue));
-      
+
       result = prop1->GetValue();
-      
-      for (int x = 0; x < 4; x++)
+
+      for (int x = 0; x < 4; ++x)
       {
          std::ostringstream ss;
          ss << proxyTypeName << " proxy string TEST FAILED: Vec[" << x
@@ -695,7 +706,7 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
          CPPUNIT_ASSERT_MESSAGE(ss.str(),
                                 osg::equivalent(double(result[x]), double(test[x]), double(epsilon)));
       }
-      
+
    }
    else if (prop->GetDataType() == DataType::VEC2)
    {
@@ -708,12 +719,12 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
       {
          proxy.GetProperty(prop->GetName(), prop1);
       }
-      
+
       osg::Vec2 test(9.35320f, 2.0323f);
       prop1->SetValue(test);
       osg::Vec2 result = prop1->GetValue();
-      
-      for (int x = 0; x < 2; x++)
+
+      for (int x = 0; x < 2; ++x)
       {
          std::ostringstream ss;
          ss << proxyTypeName << " proxy TEST FAILED: Vec[" << x
@@ -726,10 +737,10 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
       //change the value so we can change it back.
       prop1->SetValue(test2);
       CPPUNIT_ASSERT(prop1->FromString(stringValue));
-      
+
       result = prop1->GetValue();
-      
-      for (int x = 0; x < 2; x++)
+
+      for (int x = 0; x < 2; ++x)
       {
          std::ostringstream ss;
          ss << proxyTypeName << " proxy string TEST FAILED: Vec[" << x
@@ -749,12 +760,12 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
       {
          proxy.GetProperty(prop->GetName(), prop1);
       }
-      
+
       osg::Vec2 test(9.35320f, 2.0323f);
       prop1->SetValue(test);
       osg::Vec2f result = prop1->GetValue();
-      
-      for (int x = 0; x < 2; x++)
+
+      for (int x = 0; x < 2; ++x)
       {
          std::ostringstream ss;
          ss << proxyTypeName << " proxy TEST FAILED: Vec[" << x
@@ -767,10 +778,10 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
       //change the value so we can change it back.
       prop1->SetValue(test2);
       CPPUNIT_ASSERT(prop1->FromString(stringValue));
-      
+
       result = prop1->GetValue();
-      
-      for (int x = 0; x < 2; x++)
+
+      for (int x = 0; x < 2; ++x)
       {
          std::ostringstream ss;
          ss << proxyTypeName << " proxy string TEST FAILED: Vec[" << x
@@ -790,12 +801,12 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
       {
          proxy.GetProperty(prop->GetName(), prop1);
       }
-      
+
       osg::Vec2 test(9.35320, 2.0323);
       prop1->SetValue(test);
       osg::Vec2d result = prop1->GetValue();
-      
-      for (int x = 0; x < 2; x++)
+
+      for (int x = 0; x < 2; ++x)
       {
          std::ostringstream ss;
          ss << proxyTypeName << " proxy TEST FAILED: Vec[" << x
@@ -808,10 +819,10 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
       //change the value so we can change it back.
       prop1->SetValue(test2);
       CPPUNIT_ASSERT(prop1->FromString(stringValue));
-      
+
       result = prop1->GetValue();
-      
-      for (int x = 0; x < 2; x++)
+
+      for (int x = 0; x < 2; ++x)
       {
          std::ostringstream ss;
          ss << proxyTypeName << " proxy string TEST FAILED: Vec[" << x
@@ -835,8 +846,8 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
       osg::Vec4 test(6.1335543f, 0.3523333f, 5.05345f, 7323.3f);
       prop1->SetValue(test);
       osg::Vec4 result = prop1->GetValue();
-      
-      for (int x = 0; x < 4; x++)
+
+      for (int x = 0; x < 4; ++x)
       {
          std::ostringstream ss;
          ss << proxyTypeName << " proxy TEST FAILED: Vec[" << x
@@ -849,10 +860,10 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
       //change the value so we can change it back.
       prop1->SetValue(test2);
       CPPUNIT_ASSERT(prop1->FromString(stringValue));
-      
+
       result = prop1->GetValue();
-      
-      for (int x = 0; x < 4; x++)
+
+      for (int x = 0; x < 4; ++x)
       {
          std::ostringstream ss;
          ss << proxyTypeName << " proxy string TEST FAILED: Vec[" << x
@@ -872,14 +883,14 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
       {
          proxy.GetProperty(prop->GetName(), prop1);
       }
-      
+
       RefPtr<dtDAL::GameEvent> event = new dtDAL::GameEvent("TestEvent","This is a test game event.");
       dtDAL::GameEventManager::GetInstance().AddEvent(*event);
       prop1->SetValue(event.get());
 
       SimpleStringToFromDataStreamCheck(ds, *prop);
 
-      dtDAL::GameEvent *eventToCheck = prop1->GetValue();
+      dtDAL::GameEvent* eventToCheck = prop1->GetValue();
       CPPUNIT_ASSERT_MESSAGE("Game Event name was equal.",
                              eventToCheck->GetName() == event->GetName());
       CPPUNIT_ASSERT_MESSAGE("Game Event descriptions were not equal.",
@@ -915,7 +926,7 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
          {
             proxy.GetProperty(prop->GetName(), prop1);
          }
-         
+
          RefPtr<dtDAL::NamedGroupParameter> param = new dtDAL::NamedGroupParameter("TestGroup");
 
          param->AddParameter(*new dtDAL::NamedIntParameter("horse", 4));
@@ -942,9 +953,9 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
          dtDAL::NamedStringParameter* stringParam = dynamic_cast<dtDAL::NamedStringParameter*>(valParam->GetParameter("pig"));
          CPPUNIT_ASSERT(stringParam != NULL);
          CPPUNIT_ASSERT_EQUAL(std::string("hello"), stringParam->GetValue());
-         
+
          std::string stringValue = prop1->ToString();
-         
+
          CPPUNIT_ASSERT_MESSAGE("Should be able to set the string value of a group property.",
                                 prop1->FromString(stringValue));
       }
@@ -963,7 +974,7 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
 
       // Iterate between each element in the array.
       int size = prop1->GetArraySize();
-      for (int index = 0; index < size; index++)
+      for (int index = 0; index < size; ++index)
       {
          prop1->SetIndex(index);
          testProp(proxy, prop1->GetArrayProperty(), true);
@@ -985,7 +996,7 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
 
       // Iterate between each element in the container.
       int size = prop1->GetPropertyCount();
-      for (int index = 0; index < size; index++)
+      for (int index = 0; index < size; ++index)
       {
          testProp(proxy, prop1->GetProperty(index), true);
       }
@@ -998,14 +1009,14 @@ void ProxyTest::compareProxies(dtDAL::ActorProxy& ap1, dtDAL::ActorProxy& ap2)
 {
    std::vector<dtDAL::ActorProperty*> props;
    ap1.GetPropertyList(props);
-   
-   for(unsigned int i = 0; i < props.size(); i++)
+
+   for(unsigned int i = 0; i < props.size(); ++i)
    {
       std::string str = props[i]->GetName();
       dtDAL::ActorProperty* prop2 = ap2.GetProperty(str);
-      
+
       CPPUNIT_ASSERT(prop2 != NULL);
-      
+
       compareProperties(props[i], prop2);
    }
 }
@@ -1208,9 +1219,9 @@ void ProxyTest::compareProperties(dtDAL::ActorProperty* prop1, dtDAL::ActorPrope
       else
       {
          CPPUNIT_ASSERT(geProp2.GetValue() != NULL);
-         
-         CPPUNIT_ASSERT_MESSAGE("Game event properties should be equal.  But the first is " 
-                                + geProp1.GetValue()->GetName() + "; the second is " + geProp2.GetValue()->GetName() + ".", 
+
+         CPPUNIT_ASSERT_MESSAGE("Game event properties should be equal.  But the first is "
+                                + geProp1.GetValue()->GetName() + "; the second is " + geProp2.GetValue()->GetName() + ".",
                                 geProp1.GetValue() == geProp2.GetValue());
       }
    }
@@ -1220,8 +1231,8 @@ void ProxyTest::compareProperties(dtDAL::ActorProperty* prop1, dtDAL::ActorPrope
       dtDAL::GroupActorProperty& gProp2 = *static_cast<dtDAL::GroupActorProperty*>(prop2);
       CPPUNIT_ASSERT_MESSAGE("Group actor properties must not return NULL", gProp1.GetValue().valid());
       CPPUNIT_ASSERT_MESSAGE("Group actor properties must not return NULL", gProp2.GetValue().valid());
-      
-      CPPUNIT_ASSERT_MESSAGE("The Group properties should be equal.", 
+
+      CPPUNIT_ASSERT_MESSAGE("The Group properties should be equal.",
                              *gProp1.GetValue() == *gProp2.GetValue());
    }
    else if (prop1->GetDataType() == DataType::ARRAY)
@@ -1235,7 +1246,7 @@ void ProxyTest::compareProperties(dtDAL::ActorProperty* prop1, dtDAL::ActorPrope
 
       // Now iterate between each element in the array and compare those.
       int size = aProp1.GetArraySize();
-      for (int index = 0; index < size; index++)
+      for (int index = 0; index < size; ++index)
       {
          aProp1.SetIndex(index);
          aProp2.SetIndex(index);
@@ -1253,7 +1264,7 @@ void ProxyTest::compareProperties(dtDAL::ActorProperty* prop1, dtDAL::ActorPrope
 
       // Now iterate between each element in the container and compare them.
       int size = cProp1.GetPropertyCount();
-      for (int index = 0; index < size; index++)
+      for (int index = 0; index < size; ++index)
       {
          compareProperties(cProp1.GetProperty(index), cProp2.GetProperty(index));
       }
@@ -1265,29 +1276,29 @@ void ProxyTest::TestProxies()
    try
    {
       RefPtr<dtDAL::ActorProxy> proxy;
-      
-      for(unsigned int i = 0; i < actors.size(); i++)
+
+      for (unsigned int i = 0; i < actors.size(); ++i)
       {
          // In order to keep the tests fasts, we skip the nasty slow ones.
          if (actors[i]->GetName() == dtActors::EngineActorRegistry::CLOUD_PLANE_ACTOR_TYPE->GetName() ||
              actors[i]->GetName() == dtActors::EngineActorRegistry::CLOUD_DOME_ACTOR_TYPE->GetName()  ||
-             actors[i]->GetName() == dtActors::EngineActorRegistry::WEATHER_ENVIRONMENT_ACTOR_TYPE->GetName() || 
+             actors[i]->GetName() == dtActors::EngineActorRegistry::WEATHER_ENVIRONMENT_ACTOR_TYPE->GetName() ||
              actors[i]->GetName() == "Test Environment Actor" ||
              actors[i]->GetName() == "Sound Actor") //can't use the ActorType here; it adds a dependency to dtAudio, which might not exist
             continue;
-         
+
          proxy = libMgr.CreateActorProxy(*actors[i]).get();
          CPPUNIT_ASSERT(proxy != NULL);
          proxies.push_back(proxy.get());
       }
-      
-      for(unsigned int i = 0; i < proxies.size(); i++)
+
+      for (unsigned int i = 0; i < proxies.size(); ++i)
       {
          proxy = proxies[i];
          CPPUNIT_ASSERT(proxy != NULL);
          LOGN_INFO("librarymanager.cpp", std::string("Testing proxy of type: ") + proxy->GetActorType().GetFullName());
          testProps(*proxy);
-         
+
          compareProxies(*proxy, *proxy->Clone());
 
          CPPUNIT_ASSERT(!dtDAL::Project::GetInstance().GetEditMode());
@@ -1300,7 +1311,7 @@ void ProxyTest::TestProxies()
          CPPUNIT_ASSERT_MESSAGE("The proxy should return false for being in STAGE", !proxy->IsInSTAGE());
       }
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.ToString());
    }
@@ -1310,160 +1321,160 @@ void ProxyTest::TestBezierProxies()
 {
    try
    {
-      dtDAL::LibraryManager &libMgr = dtDAL::LibraryManager::GetInstance();
+      dtDAL::LibraryManager& libMgr = dtDAL::LibraryManager::GetInstance();
       RefPtr<const dtDAL::ActorType>  at    = libMgr.FindActorType("dtcore.Curve", "Bezier Node");
       CPPUNIT_ASSERT(at != NULL);
-      
+
       RefPtr<dtDAL::ActorProxy> one   = libMgr.CreateActorProxy(*at);
       RefPtr<dtDAL::ActorProxy> two   = libMgr.CreateActorProxy(*at);
       RefPtr<dtDAL::ActorProxy> three = libMgr.CreateActorProxy(*at);
-      
+
       at = libMgr.FindActorType("dtcore.Curve", "Bezier Control Point");
       CPPUNIT_ASSERT(at != NULL);
-      
+
       RefPtr<dtDAL::ActorProxy> entryBCP = libMgr.CreateActorProxy(*at);
       RefPtr<dtDAL::ActorProxy> exitBCP = libMgr.CreateActorProxy(*at);
-      
-      dtDAL::ActorActorProperty *prevProp1    = static_cast<dtDAL::ActorActorProperty*>(one->GetProperty("Previous Bezier Node"));
+
+      dtDAL::ActorActorProperty* prevProp1    = static_cast<dtDAL::ActorActorProperty*>(one->GetProperty("Previous Bezier Node"));
       CPPUNIT_ASSERT_MESSAGE("Actor type should not be NULL", prevProp1 != NULL);
-      dtDAL::ActorActorProperty *nextProp1    = static_cast<dtDAL::ActorActorProperty*>(one->GetProperty("Next Bezier Node"));
+      dtDAL::ActorActorProperty* nextProp1    = static_cast<dtDAL::ActorActorProperty*>(one->GetProperty("Next Bezier Node"));
       CPPUNIT_ASSERT_MESSAGE("Actor type should not be NULL", nextProp1 != NULL);
-      dtDAL::ActorActorProperty *entryCtrlPntProp1 = static_cast<dtDAL::ActorActorProperty*>(one->GetProperty("Entry Control Point"));
+      dtDAL::ActorActorProperty* entryCtrlPntProp1 = static_cast<dtDAL::ActorActorProperty*>(one->GetProperty("Entry Control Point"));
       CPPUNIT_ASSERT_MESSAGE("Actor type should not be NULL", entryCtrlPntProp1 != NULL);
-      dtDAL::ActorActorProperty *exitCtrlPntProp1 = static_cast<dtDAL::ActorActorProperty*>(one->GetProperty("Exit Control Point"));
+      dtDAL::ActorActorProperty* exitCtrlPntProp1 = static_cast<dtDAL::ActorActorProperty*>(one->GetProperty("Exit Control Point"));
       CPPUNIT_ASSERT_MESSAGE("Actor type should not be NULL", exitCtrlPntProp1 != NULL);
-      
-      dtDAL::ActorActorProperty *prevProp2    = static_cast<dtDAL::ActorActorProperty*>(two->GetProperty("Previous Bezier Node"));
+
+      dtDAL::ActorActorProperty* prevProp2    = static_cast<dtDAL::ActorActorProperty*>(two->GetProperty("Previous Bezier Node"));
       CPPUNIT_ASSERT_MESSAGE("Actor property should not be NULL", prevProp2 != NULL);
-      dtDAL::ActorActorProperty *nextProp2    = static_cast<dtDAL::ActorActorProperty*>(two->GetProperty("Next Bezier Node"));
+      dtDAL::ActorActorProperty* nextProp2    = static_cast<dtDAL::ActorActorProperty*>(two->GetProperty("Next Bezier Node"));
       CPPUNIT_ASSERT_MESSAGE("Actor property should not be NULL", nextProp2 != NULL);
-      dtDAL::ActorActorProperty *entryCtrlPntProp2 = static_cast<dtDAL::ActorActorProperty*>(two->GetProperty("Entry Control Point"));
+      dtDAL::ActorActorProperty* entryCtrlPntProp2 = static_cast<dtDAL::ActorActorProperty*>(two->GetProperty("Entry Control Point"));
       CPPUNIT_ASSERT_MESSAGE("Actor property should not be NULL", entryCtrlPntProp2 != NULL);
-      dtDAL::ActorActorProperty *exitCtrlPntProp2 = static_cast<dtDAL::ActorActorProperty*>(two->GetProperty("Exit Control Point"));
+      dtDAL::ActorActorProperty* exitCtrlPntProp2 = static_cast<dtDAL::ActorActorProperty*>(two->GetProperty("Exit Control Point"));
       CPPUNIT_ASSERT_MESSAGE("Actor type should not be NULL", exitCtrlPntProp2 != NULL);
-      
-      dtDAL::ActorActorProperty *prevProp3    = static_cast<dtDAL::ActorActorProperty*>(three->GetProperty("Previous Bezier Node"));
+
+      dtDAL::ActorActorProperty* prevProp3    = static_cast<dtDAL::ActorActorProperty*>(three->GetProperty("Previous Bezier Node"));
       CPPUNIT_ASSERT_MESSAGE("Actor property should not be NULL", prevProp3 != NULL);
-      dtDAL::ActorActorProperty *nextProp3    = static_cast<dtDAL::ActorActorProperty*>(three->GetProperty("Next Bezier Node"));
+      dtDAL::ActorActorProperty* nextProp3    = static_cast<dtDAL::ActorActorProperty*>(three->GetProperty("Next Bezier Node"));
       CPPUNIT_ASSERT_MESSAGE("Actor property should not be NULL", nextProp3 != NULL);
-      dtDAL::ActorActorProperty *entryCtrlPntProp3 = static_cast<dtDAL::ActorActorProperty*>(three->GetProperty("Entry Control Point"));
+      dtDAL::ActorActorProperty* entryCtrlPntProp3 = static_cast<dtDAL::ActorActorProperty*>(three->GetProperty("Entry Control Point"));
       CPPUNIT_ASSERT_MESSAGE("Actor property should not be NULL", entryCtrlPntProp3 != NULL);
-      dtDAL::ActorActorProperty *exitCtrlPntProp3 = static_cast<dtDAL::ActorActorProperty*>(three->GetProperty("Exit Control Point"));
+      dtDAL::ActorActorProperty* exitCtrlPntProp3 = static_cast<dtDAL::ActorActorProperty*>(three->GetProperty("Exit Control Point"));
       CPPUNIT_ASSERT_MESSAGE("Actor type should not be NULL", exitCtrlPntProp3 != NULL);
-      
+
       CPPUNIT_ASSERT_MESSAGE("The first proxy should not have a previous node", prevProp1->GetValue() == NULL);
       CPPUNIT_ASSERT_MESSAGE("The first proxy should not have a next node", nextProp1->GetValue() == NULL);
       CPPUNIT_ASSERT_MESSAGE("The first proxy should not have an enrty control point", entryCtrlPntProp1->GetValue() == NULL);
       CPPUNIT_ASSERT_MESSAGE("The first proxy should not have an exit control point", exitCtrlPntProp1->GetValue() == NULL);
-      
+
       CPPUNIT_ASSERT_MESSAGE("The second proxy should not have a previous node", prevProp2->GetValue() == NULL);
       CPPUNIT_ASSERT_MESSAGE("The second proxy should not have a next node", nextProp2->GetValue() == NULL);
       CPPUNIT_ASSERT_MESSAGE("The second proxy should not have an enrty control point", entryCtrlPntProp2->GetValue() == NULL);
       CPPUNIT_ASSERT_MESSAGE("The second proxy should not have an exit control point", exitCtrlPntProp2->GetValue() == NULL);
-      
+
       CPPUNIT_ASSERT_MESSAGE("The third proxy should not have a previous node", prevProp3->GetValue() == NULL);
       CPPUNIT_ASSERT_MESSAGE("The third proxy should not have a next node", nextProp3->GetValue() == NULL);
       CPPUNIT_ASSERT_MESSAGE("The third proxy should not have an enrty control point", entryCtrlPntProp3->GetValue() == NULL);
       CPPUNIT_ASSERT_MESSAGE("The third proxy should not have an exit control point", exitCtrlPntProp3->GetValue() == NULL);
-      
+
       nextProp1->SetValue(two.get());
       nextProp2->SetValue(three.get());
-      
+
       entryCtrlPntProp1->SetValue(entryBCP.get());
       exitCtrlPntProp1->SetValue(exitBCP.get());
-      
+
       CPPUNIT_ASSERT_MESSAGE("The first node's next should be the second", nextProp1->GetValue() == two.get());
       CPPUNIT_ASSERT_MESSAGE("The first next property's real actor should be the node", nextProp1->GetRealActor() == nextProp1->GetValue()->GetActor());
-      
+
       CPPUNIT_ASSERT_MESSAGE("The second node's next should be the third", nextProp2->GetValue() == three.get());
       CPPUNIT_ASSERT_MESSAGE("The second next property's real actor should be the node", nextProp2->GetRealActor() == nextProp2->GetValue()->GetActor());
-      
+
       CPPUNIT_ASSERT_MESSAGE("The third node's next should be NULL", nextProp3->GetValue() == NULL);
-      
+
       CPPUNIT_ASSERT_MESSAGE("The third node's previous should be the second", prevProp3->GetValue() == two.get());
       CPPUNIT_ASSERT_MESSAGE("The second node's previous should be the first", prevProp2->GetValue() == one.get());
       CPPUNIT_ASSERT_MESSAGE("The first node's previous should be NULL", prevProp1->GetValue() == NULL);
-      
+
       prevProp3->SetValue(two.get());
       prevProp2->SetValue(one.get());
-      
+
       CPPUNIT_ASSERT_MESSAGE("The third node's previous should be the node", prevProp3->GetRealActor() == prevProp3->GetValue()->GetActor());
       CPPUNIT_ASSERT_MESSAGE("The second node's previous should be the node", prevProp2->GetRealActor() == prevProp2->GetValue()->GetActor());
-      
+
       CPPUNIT_ASSERT_MESSAGE("The third's previous should still be the second", prevProp3->GetValue() == two.get());
       CPPUNIT_ASSERT_MESSAGE("The second's previous should still be the first", prevProp2->GetValue() == one.get());
       CPPUNIT_ASSERT_MESSAGE("The first's previous should still be NULL", prevProp1->GetValue() == NULL);
-      
+
       CPPUNIT_ASSERT_MESSAGE("The entry control point of the first node should still be set", entryCtrlPntProp1->GetValue() == entryBCP.get());
       CPPUNIT_ASSERT_MESSAGE("The exit control point of the first node should still be set", exitCtrlPntProp1->GetValue() == exitBCP.get());
-      
+
       nextProp1->SetValue(NULL);
       nextProp1->SetReadOnly(true);
       nextProp1->SetValue(two.get());
-      
+
       CPPUNIT_ASSERT_MESSAGE("The first's next property is read only, the value should still be NULL", nextProp1->GetValue() == NULL);
-      
+
       nextProp1->SetReadOnly(false);
       nextProp1->SetValue(two.get());
-      
+
       CPPUNIT_ASSERT_MESSAGE("The first's next property should have been set", nextProp1->GetValue() == two.get());
-      
+
       entryCtrlPntProp1->SetValue(NULL);
       entryCtrlPntProp1->SetReadOnly(true);
       entryCtrlPntProp1->SetValue(entryBCP.get());
-      
+
       CPPUNIT_ASSERT_MESSAGE("The first entry control point is read only, the value should still be NULL", entryCtrlPntProp1->GetValue() == NULL);
-      
+
       entryCtrlPntProp1->SetReadOnly(false);
       entryCtrlPntProp1->SetValue(entryBCP.get());
-      
+
       CPPUNIT_ASSERT_MESSAGE("The first entry control point's value should have been set", entryCtrlPntProp1->GetValue() == entryBCP.get());
-      
+
       exitCtrlPntProp1->SetValue(NULL);
       exitCtrlPntProp1->SetReadOnly(true);
       exitCtrlPntProp1->SetValue(exitBCP.get());
-      
+
       CPPUNIT_ASSERT_MESSAGE("The first exit control point is read only, the value should still be NULL", exitCtrlPntProp1->GetValue() == NULL);
-      
+
       exitCtrlPntProp1->SetReadOnly(false);
       exitCtrlPntProp1->SetValue(exitBCP.get());
-      
+
       CPPUNIT_ASSERT_MESSAGE("The first exit control point's value should have been set", exitCtrlPntProp1->GetValue() == exitBCP.get());
-      
+
       nextProp2->SetValue(NULL);
       nextProp2->SetReadOnly(true);
       nextProp2->SetValue(three.get());
-      
+
       CPPUNIT_ASSERT_MESSAGE("The seconds's next property is read only, the value should still be NULL", nextProp2->GetValue() == NULL);
-      
+
       nextProp2->SetReadOnly(false);
       nextProp2->SetValue(three.get());
-      
+
       CPPUNIT_ASSERT_MESSAGE("The seconds's next property should have been set", nextProp2->GetValue() == three.get());
-      
+
       entryCtrlPntProp2->SetValue(NULL);
       entryCtrlPntProp2->SetReadOnly(true);
       entryCtrlPntProp2->SetValue(entryBCP.get());
-      
+
       CPPUNIT_ASSERT_MESSAGE("The second's entry control point is read only, the value should still be NULL", entryCtrlPntProp2->GetValue() == NULL);
-      
+
       entryCtrlPntProp2->SetReadOnly(false);
       entryCtrlPntProp2->SetValue(entryBCP.get());
-      
+
       CPPUNIT_ASSERT_MESSAGE("The second's entry control point's value should have been set", entryCtrlPntProp2->GetValue() == entryBCP.get());
-      
+
       exitCtrlPntProp2->SetValue(NULL);
       exitCtrlPntProp2->SetReadOnly(true);
       exitCtrlPntProp2->SetValue(exitBCP.get());
-      
+
       CPPUNIT_ASSERT_MESSAGE("The second's exit control point is read only, the value should still be NULL", exitCtrlPntProp2->GetValue() == NULL);
-      
+
       exitCtrlPntProp2->SetReadOnly(false);
       exitCtrlPntProp2->SetValue(exitBCP.get());
-      
+
       CPPUNIT_ASSERT_MESSAGE("The second's exit control point's value should have been set", exitCtrlPntProp2->GetValue() == exitBCP.get());
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.ToString());
    }

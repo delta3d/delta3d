@@ -69,7 +69,7 @@ namespace dtTest
       {
          mHit = true;
          const CEGUI::KeyEventArgs& kea = static_cast<const CEGUI::KeyEventArgs&>( ea );
-         if( kea.scancode == mKey )
+         if ( kea.scancode == mKey )
          {
             return true;
          }

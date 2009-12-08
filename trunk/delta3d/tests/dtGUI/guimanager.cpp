@@ -66,13 +66,13 @@ CEGUI::Scheme* GUIManager::LoadScheme(const std::string& file)
    CEGUI::Scheme* scheme(0);
 
    std::string schemefile( dtCore::FindFileInPathList(file) );
-   if( schemefile.empty() )
+   if ( schemefile.empty() )
    {
       LOG_WARNING("Could not find: " + file )
       return scheme;
    }
 
-   if( !mDrawable.valid() )
+   if ( !mDrawable.valid() )
    {
       LOG_WARNING("GUI Scene not setup already when attempting to load: " + file )
       return scheme;
@@ -101,13 +101,13 @@ CEGUI::Window* GUIManager::LoadLayout(const std::string& file)
      */
    std::string layout( dtCore::FindFileInPathList(file) );
 
-   if( layout.empty() )
+   if ( layout.empty() )
    {
       LOG_WARNING("Could not find: " + file )
       return layoutwindow;
    }
 
-   if( CEGUI::System::getSingletonPtr()==0 )
+   if ( CEGUI::System::getSingletonPtr()==0 )
    {
       LOG_WARNING("GUI System not setup already when attempting to load: " + file )
       return layoutwindow;
@@ -116,7 +116,7 @@ CEGUI::Window* GUIManager::LoadLayout(const std::string& file)
    ///\todo perform 'find' with the full file path
    LoadedLayoutMap::iterator iter = mLoadedLayouts.find(file);
 
-   if( iter != mLoadedLayouts.end() )
+   if ( iter != mLoadedLayouts.end() )
    {
       layoutwindow = (*iter).second;
    }
@@ -195,7 +195,7 @@ CEGUI::Window* GUIManager::GetWidgetByName(const std::string &name)
 
    CEGUI::Window *win = NULL;
 
-   if( wm->isWindowPresent(name) )
+   if ( wm->isWindowPresent(name) )
    {
       win = static_cast< CEGUI::Window* >( wm->getWindow(name) );
    }
@@ -206,7 +206,7 @@ CEGUI::Event::Connection GUIManager::SubscribeEvent(CEGUI::Window *win,
                                                const CEGUI::String &eventName,
                                                CEGUI::Event::Subscriber subscriber)
 {
-   if(win==0)
+   if (win==0)
    {
       LOG_WARNING("No Window supplied to subscribe to Event '" + std::string(eventName.c_str()) + std::string("'"));
 
@@ -222,7 +222,7 @@ CEGUI::Event::Connection GUIManager::SubscribeEvent(const std::string &winName,
 {
    CEGUI::WindowManager *wm = CEGUI::WindowManager::getSingletonPtr();
 
-   if( !wm->isWindowPresent(winName) )
+   if ( !wm->isWindowPresent(winName) )
    {
       LOG_WARNING("Can't find Window '" + std::string(winName) +
          std::string("' to subscribe to Event '") + std::string(eventName.c_str()) + std::string("'"));

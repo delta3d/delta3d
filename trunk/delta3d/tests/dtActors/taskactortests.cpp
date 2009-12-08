@@ -1,30 +1,30 @@
 /* -*-c++-*-
-* allTests - This source file (.h & .cpp) - Using 'The MIT License'
-* Copyright (C) 2006-2008, Alion Science and Technology Corporation
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-*
-* This software was developed by Alion Science and Technology Corporation under
-* circumstances in which the U. S. Government may have rights in the software.
-*
-* Matthew W. Campbell, Curtiss Murphy
-*/
+ * allTests - This source file (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2006-2008, Alion Science and Technology Corporation
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * This software was developed by Alion Science and Technology Corporation under
+ * circumstances in which the U. S. Government may have rights in the software.
+ *
+ * Matthew W. Campbell, Curtiss Murphy
+ */
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
 
@@ -100,7 +100,7 @@ class TaskActorTests : public CPPUNIT_NS::TestFixture
 
    private:
       void CreateParentChildProxies();
-      dtDAL::GameEventManager *mEventMgr;
+      dtDAL::GameEventManager* mEventMgr;
       dtCore::RefPtr<dtGame::GameManager> mGameManager;
       dtCore::RefPtr<TestComponent> mTestComp;
       static const std::string mTestGameActorLibrary;
@@ -113,7 +113,7 @@ class TaskActorTests : public CPPUNIT_NS::TestFixture
       dtCore::RefPtr<dtDAL::GameEvent> mNotifyFailedEvent;
 };
 
-//Registers the fixture into the 'registry'
+// Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(TaskActorTests);
 
 const std::string TaskActorTests::mTestGameActorLibrary="testGameActorLibrary";
@@ -159,7 +159,7 @@ void TaskActorTests::tearDown()
    dtCore::System::GetInstance().Stop();
 
    // Clear the Game Manager.
-   if(mGameManager.valid())
+   if (mGameManager.valid())
    {
       mGameManager->DeleteAllActors();
       mGameManager->UnloadActorRegistry(mTestGameActorLibrary);
@@ -184,12 +184,12 @@ int TaskActorTests::GetEventCount(const dtDAL::GameEvent& gameEvent)
    const dtDAL::GameEvent* curEvent = NULL;
    MessageList::const_iterator curMessage = messageList.begin();
    MessageList::const_iterator endMessageList = messageList.end();
-   for( ; curMessage != endMessageList; ++curMessage )
+   for (; curMessage != endMessageList; ++curMessage)
    {
-      if( (*curMessage)->GetMessageType() == dtGame::MessageType::INFO_GAME_EVENT )
+      if ((*curMessage)->GetMessageType() == dtGame::MessageType::INFO_GAME_EVENT)
       {
          curEvent = static_cast<const dtGame::GameEventMessage&>(*(*curMessage)).GetGameEvent();
-         if( curEvent->GetName() == gameEvent.GetName() )
+         if (curEvent->GetName() == gameEvent.GetName())
          {
             ++total;
          }
@@ -203,10 +203,10 @@ int TaskActorTests::GetEventCount(const dtDAL::GameEvent& gameEvent)
 bool TaskActorTests::SetNotifyEventsOnTask(dtActors::TaskActorProxy& taskProxy)
 {
    dtActors::TaskActor* task = NULL;
-   taskProxy.GetActor( task );
+   taskProxy.GetActor(task);
 
-   task->SetNotifyCompletedEvent( mNotifyCompletedEvent.get() );
-   task->SetNotifyFailedEvent( mNotifyFailedEvent.get() );
+   task->SetNotifyCompletedEvent(mNotifyCompletedEvent.get());
+   task->SetNotifyFailedEvent(mNotifyFailedEvent.get());
 
    return task->GetNotifyCompletedEvent() == mNotifyCompletedEvent.get()
       && task->GetNotifyFailedEvent() == mNotifyFailedEvent.get();
@@ -225,9 +225,9 @@ void TaskActorTests::TestTaskActorDefaultValues()
       mGameManager->CreateActor(*taskActorType, proxy);
       CPPUNIT_ASSERT_MESSAGE("Could not create task actor proxy.",proxy.valid());
       dtActors::TaskActor* task = NULL;
-      proxy->GetActor( task );
+      proxy->GetActor(task);
 
-      //Make sure the correct properties exist on the proxy.
+      // Make sure the correct properties exist on the proxy.
       CPPUNIT_ASSERT_MESSAGE("Task actor should have a description property.",
          proxy->GetProperty("Description") != NULL);
       CPPUNIT_ASSERT_MESSAGE("Task actor should have a display name property.",
@@ -239,23 +239,23 @@ void TaskActorTests::TestTaskActorDefaultValues()
       CPPUNIT_ASSERT_MESSAGE("Task actor should have a weight property.",
          proxy->GetProperty("Weight") != NULL);
 
-      //Check the default values of a newly created base task actor.
-      dtDAL::StringActorProperty *descProp =
-         static_cast<dtDAL::StringActorProperty *>(proxy->GetProperty("Description"));
+      // Check the default values of a newly created base task actor.
+      dtDAL::StringActorProperty* descProp =
+         static_cast<dtDAL::StringActorProperty*>(proxy->GetProperty("Description"));
       CPPUNIT_ASSERT_MESSAGE("Task description should be empty.",descProp->GetValue().empty());
 
-      dtDAL::StringActorProperty *displayNameProp =
-         static_cast<dtDAL::StringActorProperty *>(proxy->GetProperty("DisplayName"));
+      dtDAL::StringActorProperty* displayNameProp =
+         static_cast<dtDAL::StringActorProperty*>(proxy->GetProperty("DisplayName"));
       CPPUNIT_ASSERT_MESSAGE("Task display name should be empty.",displayNameProp->GetValue().empty());
 
-      dtDAL::FloatActorProperty *valueProp =
-         static_cast<dtDAL::FloatActorProperty *>(proxy->GetProperty("PassingScore"));
+      dtDAL::FloatActorProperty* valueProp =
+         static_cast<dtDAL::FloatActorProperty*>(proxy->GetProperty("PassingScore"));
       CPPUNIT_ASSERT_MESSAGE("Task passing score should be 1.0.",valueProp->GetValue() == 1.0);
 
-      valueProp = static_cast<dtDAL::FloatActorProperty *>(proxy->GetProperty("Score"));
+      valueProp = static_cast<dtDAL::FloatActorProperty*>(proxy->GetProperty("Score"));
       CPPUNIT_ASSERT_MESSAGE("Task score should be 0.0.",valueProp->GetValue() == 0.0f);
 
-      valueProp = static_cast<dtDAL::FloatActorProperty *>(proxy->GetProperty("Weight"));
+      valueProp = static_cast<dtDAL::FloatActorProperty*>(proxy->GetProperty("Weight"));
       CPPUNIT_ASSERT_MESSAGE("Task weight should be 1.0.",valueProp->GetValue() == 1.0f);
 
       // Test Notify Completed Event Property
@@ -263,22 +263,22 @@ void TaskActorTests::TestTaskActorDefaultValues()
          (proxy->GetProperty(dtActors::TaskActorProxy::PROPERTY_EVENT_NOTIFY_COMPLETED));
       CPPUNIT_ASSERT_MESSAGE("Task Notify Completed Event should be NULL",
          eventProp->GetValue() == NULL);
-      task->SetNotifyCompletedEvent( mNotifyCompletedEvent.get() );
-      CPPUNIT_ASSERT( eventProp->GetValue() == mNotifyCompletedEvent.get() );
+      task->SetNotifyCompletedEvent(mNotifyCompletedEvent.get());
+      CPPUNIT_ASSERT(eventProp->GetValue() == mNotifyCompletedEvent.get());
 
       // Test Notify Failed Event Property
       eventProp = static_cast<dtDAL::GameEventActorProperty*>
          (proxy->GetProperty(dtActors::TaskActorProxy::PROPERTY_EVENT_NOTIFY_FAILED));
       CPPUNIT_ASSERT_MESSAGE("Task Notify Failed Event should be NULL",
          eventProp->GetValue() == NULL);
-      task->SetNotifyFailedEvent( mNotifyFailedEvent.get() );
-      CPPUNIT_ASSERT( eventProp->GetValue() == mNotifyFailedEvent.get() );
+      task->SetNotifyFailedEvent(mNotifyFailedEvent.get());
+      CPPUNIT_ASSERT(eventProp->GetValue() == mNotifyFailedEvent.get());
 
       // --- Ensure the task maintains two different events.
-      CPPUNIT_ASSERT( task->GetNotifyCompletedEvent() == mNotifyCompletedEvent.get() );
-      CPPUNIT_ASSERT( task->GetNotifyFailedEvent() == mNotifyFailedEvent.get() );
+      CPPUNIT_ASSERT(task->GetNotifyCompletedEvent() == mNotifyCompletedEvent.get());
+      CPPUNIT_ASSERT(task->GetNotifyFailedEvent() == mNotifyFailedEvent.get());
 
-      dtActors::TaskActor *actor = dynamic_cast<dtActors::TaskActor*>(proxy->GetActor());
+      dtActors::TaskActor* actor = dynamic_cast<dtActors::TaskActor*>(proxy->GetActor());
       CPPUNIT_ASSERT_MESSAGE("Complete should be false.", !actor->IsComplete());
       CPPUNIT_ASSERT_MESSAGE("Failed should be false.", !actor->IsFailed());
       CPPUNIT_ASSERT_MESSAGE("Initial completed time should be -1.0.", actor->GetCompletedTimeStamp() == -1.0);
@@ -308,8 +308,8 @@ void TaskActorTests::TestTaskSubTasks()
 
       std::vector<dtActors::TaskActorProxy* > children;
 
-      //Create a bunch of actors and add them as children.
-      for (unsigned i=0; i<25; i++)
+      // Create a bunch of actors and add them as children.
+      for (unsigned i = 0; i < 25; ++i)
       {
          dtCore::RefPtr<dtActors::TaskActorProxy> childProxy = NULL;
 
@@ -343,8 +343,8 @@ void TaskActorTests::TestTaskSubTasks()
       CPPUNIT_ASSERT_MESSAGE("The properties in the subtasks array prop should all be of type ActorIDActorProperty.",
          taskProp != NULL);
 
-      //Make sure the parent was set correctly and that we can find the task.
-      for (unsigned i = 0; i < 25; i++)
+      // Make sure the parent was set correctly and that we can find the task.
+      for (unsigned i = 0; i < 25; ++i)
       {
          CPPUNIT_ASSERT_MESSAGE("Parent was not set correctly.",children[i]->GetParentTask() == mParentProxy.get());
          CPPUNIT_ASSERT_MESSAGE("Should have found the task by unique id.",
@@ -367,7 +367,7 @@ void TaskActorTests::TestTaskSubTasks()
       std::vector<const dtActors::TaskActorProxy* > children2;
       mParentProxy->GetAllSubTasks(children2);
 
-      for (unsigned i = 0; i < children2.size(); i++)
+      for (unsigned i = 0; i < children2.size(); ++i)
       {
          mParentProxy->RemoveSubTask(children2[i]->GetGameActor().GetName());
          CPPUNIT_ASSERT_MESSAGE("Child's parent task should be NULL after removing it by name.",
@@ -386,7 +386,7 @@ void TaskActorTests::TestTaskSubTasks()
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Setting the subtasks via the property should populate the list of children.",
          subTasks.size(), children.size());
 
-      for (unsigned i = 0; i < children.size(); i++)
+      for (unsigned i = 0; i < children.size(); ++i)
       {
          CPPUNIT_ASSERT_MESSAGE("The SubTasks in the group property should have the same id's and be in the same order as the list on the proxy.",
             children[i]->GetId() == subTasks[i]);
@@ -439,11 +439,11 @@ void TaskActorTests::TestTaskReparentOnAdd()
 {
    try
    {
-      //This tests a nested hierarchy of tasks.
-      //parent
-      //   --> Child1
-      //          --> Child2
-      //                 --> Child3
+      // This tests a nested hierarchy of tasks.
+      // parent
+      //    --> Child1
+      //           --> Child2
+      //                  --> Child3
 
       CreateParentChildProxies();
 
@@ -514,7 +514,7 @@ void TaskActorTests::TestGroupPropertySubTasks()
          mChildProxy3->GetParentTask() == mParentProxy.get());
 
 
-      ///Now change the value and make sure the removed one's don't have their parent's still set set.
+      /// Now change the value and make sure the removed one's don't have their parent's still set set.
       subTasks.clear();
       subTasks.push_back(mChildProxy1->GetId());
       ap->SetValue(subTasks);
@@ -545,12 +545,12 @@ void TaskActorTests::TestGameEventTaskActor()
       CPPUNIT_ASSERT_MESSAGE("Could not find actor type.",actorType.valid());
 
       dtCore::RefPtr<dtActors::TaskActorGameEventProxy> eventTaskProxy =
-            dynamic_cast<dtActors::TaskActorGameEventProxy *>(mGameManager->CreateActor(*actorType).get());
+            dynamic_cast<dtActors::TaskActorGameEventProxy*>(mGameManager->CreateActor(*actorType).get());
       CPPUNIT_ASSERT_MESSAGE("Could not create game event task actor proxy.",eventTaskProxy.valid());
       mGameManager->AddActor(*eventTaskProxy,false,false);
 
-      //Before we can listen for any game event messages, we have to register the event
-      //with the event manager since other components rely on this behavior.
+      // Before we can listen for any game event messages, we have to register the event
+      // with the event manager since other components rely on this behavior.
       dtDAL::GameEvent* gameEvent = new dtDAL::GameEvent("TestGameEvent");
       mEventMgr->AddEvent(*gameEvent);
       dtDAL::GameEvent* failEvent = new dtDAL::GameEvent("TestFailEvent");
@@ -585,8 +585,8 @@ void TaskActorTests::TestGameEventTaskActor()
       minProp->SetValue(5);
       CPPUNIT_ASSERT_MESSAGE("Game event min occurances should have been 5.",minProp->GetValue() == 5);
 
-      //Pass a game event message on through the game manager and make sure
-      //the game event task sees it and tracks it.
+      // Pass a game event message on through the game manager and make sure
+      // the game event task sees it and tracks it.
       dtCore::RefPtr<dtGame::GameEventMessage> eventMsg = static_cast<dtGame::GameEventMessage*>
             (mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT).get());
 
@@ -594,44 +594,44 @@ void TaskActorTests::TestGameEventTaskActor()
       mGameManager->SendMessage(*eventMsg);
       dtCore::System::GetInstance().Step();
 
-      //Should be incomplete since the task should have only gotten the event once.
+      // Should be incomplete since the task should have only gotten the event once.
       CPPUNIT_ASSERT_MESSAGE("Task should not yet be complete.",
                              eventTaskProxy->GetProperty("Complete")->ToString() == "false");
 
       double currSimTime;
-      for (int i=0; i<4; i++)
+      for (int i = 0; i < 4; ++i)
       {
          mGameManager->SendMessage(*eventMsg);
          dtCore::System::GetInstance().Step();
          currSimTime = mGameManager->GetSimulationTime();
       }
 
-      //Now the task should have been marked complete.
+      // Now the task should have been marked complete.
       CPPUNIT_ASSERT_MESSAGE("Task should have been completed.",
                              eventTaskProxy->GetProperty("Complete")->ToString() == "true");
 
-      //Make sure the complete time got marked properly...
-      dtDAL::DoubleActorProperty *time = static_cast<dtDAL::DoubleActorProperty*>(eventTaskProxy->GetProperty("CompleteTime"));
+      // Make sure the complete time got marked properly...
+      dtDAL::DoubleActorProperty* time = static_cast<dtDAL::DoubleActorProperty*>(eventTaskProxy->GetProperty("CompleteTime"));
       CPPUNIT_ASSERT_MESSAGE("Task complete time stamp was not correct.",time->GetValue() == currSimTime);
 
       // Test failing by a fail event.
       dtActors::TaskActorGameEvent* task = NULL;
-      eventTaskProxy->GetActor( task );
+      eventTaskProxy->GetActor(task);
       task->SetCompletedTimeStamp(-1);
       task->SetComplete(false);
-      CPPUNIT_ASSERT( ! task->IsComplete() );
-      CPPUNIT_ASSERT( ! task->IsFailed() );
+      CPPUNIT_ASSERT(!task->IsComplete());
+      CPPUNIT_ASSERT(!task->IsFailed());
 
       // --- Send the fail event.
       eventMsg->SetGameEvent(*failEvent);
       mGameManager->SendMessage(*eventMsg);
       dtCore::System::GetInstance().Step();
 
-      CPPUNIT_ASSERT( ! task->IsComplete() );
+      CPPUNIT_ASSERT(!task->IsComplete());
       CPPUNIT_ASSERT_MESSAGE("Game Event Task should fail when receiving a failable event.",
-         task->IsFailed() );
+         task->IsFailed());
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.ToString());
    }
@@ -655,16 +655,16 @@ void TaskActorTests::TestRollupTaskActor()
       dtCore::RefPtr<const dtDAL::ActorType> rollupActorType = mGameManager->FindActorType("dtcore.Tasks","Rollup Task Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find actor type for rollup task.",rollupActorType.valid());
 
-      //Create our test rollup task...
+      // Create our test rollup task...
       dtCore::RefPtr<dtActors::TaskActorProxy> rollupTaskProxy;
       mGameManager->CreateActor(*rollupActorType, rollupTaskProxy);
       CPPUNIT_ASSERT_MESSAGE("Could not create rollup task actor proxy.",rollupTaskProxy.valid());
       mGameManager->AddActor(*rollupTaskProxy,false,false);
 
-      //Create some event tasks and add them as children to the rollup task.
-      for (i=0; i<5; i++)
+      // Create some event tasks and add them as children to the rollup task.
+      for (i = 0; i < 5; ++i)
       {
-         dtDAL::GameEvent *gameEvent = new dtDAL::GameEvent();
+         dtDAL::GameEvent* gameEvent = new dtDAL::GameEvent();
          mEventMgr->AddEvent(*gameEvent);
 
          dtCore::RefPtr<dtActors::TaskActorGameEventProxy> eventTaskProxy;
@@ -682,12 +682,12 @@ void TaskActorTests::TestRollupTaskActor()
 
       CPPUNIT_ASSERT_MESSAGE("Rollup task should have 5 child tasks.",rollupTaskProxy->GetSubTaskCount() == 5);
 
-      //Now we need to send a message for each of the 5 events.  This will cause each of the event tasks to be
-      //completed which should inform the rollup task and have it calculate the correct score each time
-      //one of its children has a score change.
-      dtDAL::FloatActorProperty *prop =
+      // Now we need to send a message for each of the 5 events.  This will cause each of the event tasks to be
+      // completed which should inform the rollup task and have it calculate the correct score each time
+      // one of its children has a score change.
+      dtDAL::FloatActorProperty* prop =
             static_cast<dtDAL::FloatActorProperty*>(rollupTaskProxy->GetProperty("Score"));
-      for (i=0; i<5; i++)
+      for (i = 0; i < 5; ++i)
       {
          dtCore::RefPtr<dtGame::GameEventMessage> eventMsg = static_cast<dtGame::GameEventMessage*>
                (mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT).get());
@@ -704,18 +704,18 @@ void TaskActorTests::TestRollupTaskActor()
                              rollupTaskProxy->GetProperty("Complete")->ToString() == "true");
 
 
-      //Reset the event and rollup tasks..
-      dtActors::TaskActor *actor = dynamic_cast<dtActors::TaskActor*>(rollupTaskProxy->GetActor());
+      // Reset the event and rollup tasks..
+      dtActors::TaskActor* actor = dynamic_cast<dtActors::TaskActor*>(rollupTaskProxy->GetActor());
       actor->Reset();
-      for (i=0; i<5; i++)
+      for (i = 0; i < 5; ++i)
       {
          actor = dynamic_cast<dtActors::TaskActor*>(eventProxyList[i]->GetActor());
          actor->Reset();
       }
 
-      //Try it again, only do not fire all the events.  This should cause the rollup task to NOT
-      //be complete since all of its subtasks are not complete.
-      for (i=0; i<3; i++)
+      // Try it again, only do not fire all the events.  This should cause the rollup task to NOT
+      // be complete since all of its subtasks are not complete.
+      for (i = 0; i < 3; ++i)
       {
          dtCore::RefPtr<dtGame::GameEventMessage> eventMsg = static_cast<dtGame::GameEventMessage*>
                (mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT).get());
@@ -761,19 +761,19 @@ void TaskActorTests::TestOrderedTaskActor()
       dtCore::RefPtr<const dtDAL::ActorType> orderedActorType = mGameManager->FindActorType("dtcore.Tasks","Ordered Task Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find actor type for ordered task.",orderedActorType.valid());
 
-      //Create our test rollup task...
+      // Create our test rollup task...
       dtCore::RefPtr<dtActors::TaskActorProxy> rollupTaskProxy;
       mGameManager->CreateActor(*rollupActorType, rollupTaskProxy);
       CPPUNIT_ASSERT_MESSAGE("Could not create rollup task actor proxy.", rollupTaskProxy.valid());
       mGameManager->AddActor(*rollupTaskProxy,false,false);
 
-      //Create our test ordered task...
+      // Create our test ordered task...
       dtCore::RefPtr<dtActors::TaskActorProxy> orderedTaskProxy;
       mGameManager->CreateActor(*orderedActorType, orderedTaskProxy);
       CPPUNIT_ASSERT_MESSAGE("Could not create ordered task actor proxy.", orderedTaskProxy.valid());
       mGameManager->AddActor(*orderedTaskProxy,false,false);
 
-      //Create our test primary event task...
+      // reate our test primary event task...
       primaryEvent = new dtDAL::GameEvent("PrimaryEvent");
       mEventMgr->AddEvent(*primaryEvent);
 
@@ -782,14 +782,14 @@ void TaskActorTests::TestOrderedTaskActor()
       primaryEventProxy->GetProperty("GameEvent")->FromString(primaryEvent->GetUniqueId().ToString());
       mGameManager->AddActor(*primaryEventProxy,false,false);
 
-      //Add an event task which must be completed before the rollup task can be completed.
+      // Add an event task which must be completed before the rollup task can be completed.
       orderedTaskProxy->AddSubTask(*primaryEventProxy);
       orderedTaskProxy->AddSubTask(*rollupTaskProxy);
 
-      //Create some event tasks and add them as children to the rollup task.
-      for (i=0; i<5; i++)
+      // Create some event tasks and add them as children to the rollup task.
+      for (i = 0; i < 5; ++i)
       {
-         dtDAL::GameEvent *gameEvent = new dtDAL::GameEvent();
+         dtDAL::GameEvent* gameEvent = new dtDAL::GameEvent();
          mEventMgr->AddEvent(*gameEvent);
 
          dtCore::RefPtr<dtActors::TaskActorGameEventProxy> eventTaskProxy;
@@ -807,12 +807,12 @@ void TaskActorTests::TestOrderedTaskActor()
 
       CPPUNIT_ASSERT_MESSAGE("Rollup task should have 5 child tasks.",rollupTaskProxy->GetSubTaskCount() == 5);
 
-      //Now we need to send a message for each of the 5 events.  This will attempt to mark each task
-      //complete which should NOT occur until the primary event task has been completed first since that
-      //is first in the ordered task's child task list.
-      dtDAL::FloatActorProperty *prop =
+      // Now we need to send a message for each of the 5 events.  This will attempt to mark each task
+      // complete which should NOT occur until the primary event task has been completed first since that
+      // is first in the ordered task's child task list.
+      dtDAL::FloatActorProperty* prop =
             static_cast<dtDAL::FloatActorProperty*>(rollupTaskProxy->GetProperty("Score"));
-      for (i=0; i<5; i++)
+      for (i = 0; i < 5; ++i)
       {
          eventMsg = static_cast<dtGame::GameEventMessage*>
                (mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT).get());
@@ -828,8 +828,8 @@ void TaskActorTests::TestOrderedTaskActor()
                dtUtil::ToString(prop->GetValue()),osg::equivalent(prop->GetValue(),0.0f,0.001f));
       }
 
-      //Now we will complete the primary event which should then allow the rollup task and its children
-      //to be evaluated.
+      // Now we will complete the primary event which should then allow the rollup task and its children
+      // to be evaluated.
       eventMsg = static_cast<dtGame::GameEventMessage*>
             (mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT).get());
 
@@ -840,8 +840,8 @@ void TaskActorTests::TestOrderedTaskActor()
       CPPUNIT_ASSERT_MESSAGE("Primary Event Task should have been complete.",
                              primaryEventProxy->GetProperty("Complete")->ToString() == "true");
 
-      //Now the rollup task and its subtasks should be "completable".
-      for (i=0; i<5; i++)
+      // Now the rollup task and its subtasks should be "completable".
+      for (i = 0; i < 5; ++i)
       {
          eventMsg = static_cast<dtGame::GameEventMessage*>
                (mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT).get());
@@ -887,10 +887,10 @@ void TaskActorTests::TestFailedAndComplete()
       mGameManager->CreateActor(*taskActorType, proxy);
       CPPUNIT_ASSERT_MESSAGE("Could not create task actor proxy.",proxy.valid());
 
-      dtActors::TaskActor *actor = dynamic_cast<dtActors::TaskActor*>(proxy->GetActor());
+      dtActors::TaskActor* actor = dynamic_cast<dtActors::TaskActor*>(proxy->GetActor());
 
       // Add notify events to the root task.
-      CPPUNIT_ASSERT( SetNotifyEventsOnTask(*proxy) );
+      CPPUNIT_ASSERT(SetNotifyEventsOnTask(*proxy));
 
       double completeTime = actor->GetCompletedTimeStamp();
 
@@ -924,9 +924,9 @@ void TaskActorTests::TestFailedAndComplete()
       // Ensure events were sent.
       dtCore::System::GetInstance().Step();
       CPPUNIT_ASSERT_MESSAGE("Notify Completed Event should NOT have been sent.",
-         GetEventCount( *mNotifyCompletedEvent ) == 0 );
+         GetEventCount(*mNotifyCompletedEvent) == 0);
       CPPUNIT_ASSERT_MESSAGE("Notify Failed Event should have been sent only once.",
-         GetEventCount( *mNotifyFailedEvent ) == 1 );
+         GetEventCount(*mNotifyFailedEvent) == 1);
       mTestComp->reset();
 
 
@@ -963,18 +963,18 @@ void TaskActorTests::TestFailedAndComplete()
       // Ensure events were sent.
       dtCore::System::GetInstance().Step();
       CPPUNIT_ASSERT_MESSAGE("Notify Completed Event should have been sent only once.",
-         GetEventCount( *mNotifyCompletedEvent ) == 1 );
+         GetEventCount(*mNotifyCompletedEvent) == 1);
       CPPUNIT_ASSERT_MESSAGE("Notify Failed Event should NOT have been sent.",
-         GetEventCount( *mNotifyFailedEvent ) == 0 );
+         GetEventCount(*mNotifyFailedEvent) == 0);
       mTestComp->reset();
 
       /// TEST the PARENT - CHILD behavior.
 
-      //Create our parent rollup task...
+      // Create our parent rollup task...
       dtCore::RefPtr<dtActors::TaskActorProxy> rollupTaskProxy;
       mGameManager->CreateActor(*rollupActorType, rollupTaskProxy);
       CPPUNIT_ASSERT_MESSAGE("Could not create rollup task actor proxy.", rollupTaskProxy.valid());
-      dtActors::TaskActor *parentActor;
+      dtActors::TaskActor* parentActor;
       rollupTaskProxy->GetActor(parentActor);
       // add the child
       rollupTaskProxy->AddSubTask(*proxy);
@@ -1021,14 +1021,14 @@ void TaskActorTests::TestMutable()
       CPPUNIT_ASSERT_MESSAGE("Could not create task actor proxy.",childProxy2.valid());
       mGameManager->AddActor(*childProxy2,false,false);
 
-      //Create our test ordered task...
+      // Create our test ordered task...
       dtCore::RefPtr<dtActors::TaskActorProxy> orderedTaskProxy;
       mGameManager->CreateActor(*orderedActorType, orderedTaskProxy);
       CPPUNIT_ASSERT_MESSAGE("Could not create ordered task actor proxy.", orderedTaskProxy.valid());
       mGameManager->AddActor(*orderedTaskProxy,false,false);
 
-      dtActors::TaskActor *childActor1 = dynamic_cast<dtActors::TaskActor*>(childProxy1->GetActor());
-      dtActors::TaskActor *childActor2 = dynamic_cast<dtActors::TaskActor*>(childProxy2->GetActor());
+      dtActors::TaskActor* childActor1 = dynamic_cast<dtActors::TaskActor*>(childProxy1->GetActor());
+      dtActors::TaskActor* childActor2 = dynamic_cast<dtActors::TaskActor*>(childProxy2->GetActor());
 
       CPPUNIT_ASSERT_MESSAGE("Should be mutable on creation.", childProxy1->IsCurrentlyMutable());
 
@@ -1067,7 +1067,7 @@ void TaskActorTests::TestMutable()
       childActor2->SetFailed(false);
 
       // Fail the parent and child 2 should not be mutable anymore
-      dtActors::TaskActorOrdered *orderedTaskActor = NULL;
+      dtActors::TaskActorOrdered* orderedTaskActor = NULL;
       orderedTaskProxy->GetActor(orderedTaskActor);
       orderedTaskActor->SetFailed(true);
       CPPUNIT_ASSERT_MESSAGE("2nd child task should NOT be mutable when ordered parent is failed.", !childProxy2->IsCurrentlyMutable());
@@ -1178,15 +1178,15 @@ void TaskActorTests::TestNestedMutable()
    CPPUNIT_ASSERT(!eventThree->IsCurrentlyMutable());
    CPPUNIT_ASSERT(!eventFour->IsCurrentlyMutable());
 
-   dtActors::TaskActor *taskActorOne;
+   dtActors::TaskActor* taskActorOne;
    subTaskOne->GetActor(taskActorOne);
    CPPUNIT_ASSERT(taskActorOne != NULL);
 
-   dtActors::TaskActorGameEvent *eventSubActorOne;
+   dtActors::TaskActorGameEvent* eventSubActorOne;
    eventSubOne->GetActor(eventSubActorOne);
    CPPUNIT_ASSERT(eventSubActorOne);
 
-   dtActors::TaskActorGameEvent *eventSubActorTwo;
+   dtActors::TaskActorGameEvent* eventSubActorTwo;
    eventSubTwo->GetActor(eventSubActorTwo);
    CPPUNIT_ASSERT(eventSubActorTwo);
 
@@ -1201,19 +1201,19 @@ void TaskActorTests::TestNestedMutable()
    CPPUNIT_ASSERT_MESSAGE("The first event should be mutable since the first subtask is completed",
       eventOne->IsCurrentlyMutable());
 
-   dtActors::TaskActorGameEvent *eventActorOne;
+   dtActors::TaskActorGameEvent* eventActorOne;
    eventOne->GetActor(eventActorOne);
    CPPUNIT_ASSERT(eventActorOne);
 
-   dtActors::TaskActorGameEvent *eventActorTwo;
+   dtActors::TaskActorGameEvent* eventActorTwo;
    eventTwo->GetActor(eventActorTwo);
    CPPUNIT_ASSERT(eventActorTwo);
 
-   dtActors::TaskActorGameEvent *eventActorThree;
+   dtActors::TaskActorGameEvent* eventActorThree;
    eventThree->GetActor(eventActorThree);
    CPPUNIT_ASSERT(eventActorThree);
 
-   dtActors::TaskActorGameEvent *eventActorFour;
+   dtActors::TaskActorGameEvent* eventActorFour;
    eventFour->GetActor(eventActorFour);
    CPPUNIT_ASSERT(eventActorFour);
 

@@ -1,30 +1,30 @@
 /* -*-c++-*-
-* allTests - This source file (.h & .cpp) - Using 'The MIT License'
-* Copyright (C) 2005-2008, Alion Science and Technology Corporation
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-* 
-* This software was developed by Alion Science and Technology Corporation under
-* circumstances in which the U. S. Government may have rights in the software.
-*
-* @author Eddie Johnson
-*/
+ * allTests - This source file (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2005-2008, Alion Science and Technology Corporation
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * This software was developed by Alion Science and Technology Corporation under
+ * circumstances in which the U. S. Government may have rights in the software.
+ *
+ * @author Eddie Johnson
+ */
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtCore/scene.h>
@@ -46,22 +46,19 @@
 class CoreTests : public CPPUNIT_NS::TestFixture
 {
    CPPUNIT_TEST_SUITE(CoreTests);
-
       CPPUNIT_TEST(TestAssignToView);
       CPPUNIT_TEST(TestScene);
       CPPUNIT_TEST(TestHeightOfTerrainWithSkybox);
       CPPUNIT_TEST(TestGettingAllDeltaDrawablesInScene);
-
    CPPUNIT_TEST_SUITE_END();
 
-   public:
-
-      void setUp();
-      void tearDown();
-      void TestAssignToView();
-      void TestScene();
-      void TestHeightOfTerrainWithSkybox();
-      void TestGettingAllDeltaDrawablesInScene();
+public:
+   void setUp();
+   void tearDown();
+   void TestAssignToView();
+   void TestScene();
+   void TestHeightOfTerrainWithSkybox();
+   void TestGettingAllDeltaDrawablesInScene();
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(CoreTests);
@@ -133,9 +130,9 @@ void CoreTests::TestScene()
    CPPUNIT_ASSERT_MESSAGE( std::string("Light number 0 should have a valid pointer but it is ")+dtUtil::ToString(light0), light0 != 0 );
 
    // The rest of the lights should be 0
-   for( int i = 1; i < dtCore::MAX_LIGHTS; ++i )
+   for (int i = 1; i < dtCore::MAX_LIGHTS; ++i)
    {
-      std::string msg(std::string("Light number ")+dtUtil::ToString(i)+" should have a 0 pointer but it is "+dtUtil::ToString(scene->GetLight(i)));
+      std::string msg(std::string("Light number ") + dtUtil::ToString(i)+ " should have a 0 pointer but it is " + dtUtil::ToString(scene->GetLight(i)));
       CPPUNIT_ASSERT_MESSAGE( msg, scene->GetLight(i) == 0 );
    }
 // TODO ledocc
@@ -213,9 +210,9 @@ void CoreTests::TestHeightOfTerrainWithSkybox()
 void CoreTests::TestGettingAllDeltaDrawablesInScene()
 {
    dtCore::RefPtr<dtCore::Scene> scene = new dtCore::Scene();
-   
-   //the Scene automatically adds a light as a DeltaDrawble.  We'll remove it
-   //so that it won't affect out test
+
+   // the Scene automatically adds a light as a DeltaDrawble.  We'll remove it
+   // so that it won't affect out test
    scene->UseSceneLight(false);
    scene->RemoveDrawable(scene->GetLight(0));
 

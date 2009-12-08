@@ -1,30 +1,30 @@
 /* -*-c++-*-
-* allTests - This source file (.h & .cpp) - Using 'The MIT License'
-* Copyright (C) 2005-2008, Alion Science and Technology Corporation
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-*
-* This software was developed by Alion Science and Technology Corporation under
-* circumstances in which the U. S. Government may have rights in the software.
-*
-* William E. Johnson II
-*/
+ * allTests - This source file (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2005-2008, Alion Science and Technology Corporation
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * This software was developed by Alion Science and Technology Corporation under
+ * circumstances in which the U. S. Government may have rights in the software.
+ *
+ * William E. Johnson II
+ */
 #include <prefix/dtgameprefix-src.h>
 #include <dtABC/application.h>
 #include <dtAudio/audiomanager.h>
@@ -41,27 +41,22 @@
 #include <fireFighter/inputcomponent.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-
 using dtCore::RefPtr;
 
 class FireFighterMessageTests : public CPPUNIT_NS::TestFixture
 {
    CPPUNIT_TEST_SUITE(FireFighterMessageTests);
-
       CPPUNIT_TEST(TestGameStateMessages);
-
    CPPUNIT_TEST_SUITE_END();
 
-   public:
+public:
+   void setUp();
+   void tearDown();
+   void TestGameStateMessages();
 
-      void setUp();
-      void tearDown();
-      void TestGameStateMessages();
-
-   private:
-
-      RefPtr<dtGame::GameManager> mGM;
-      RefPtr<dtABC::Application> mApp;
+private:
+   RefPtr<dtGame::GameManager> mGM;
+   RefPtr<dtABC::Application> mApp;
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(FireFighterMessageTests);
@@ -79,7 +74,7 @@ void FireFighterMessageTests::setUp()
 
 void FireFighterMessageTests::tearDown()
 {
-   if(mGM.valid())
+   if (mGM.valid())
    {
       mGM->DeleteAllActors(true);
       mGM = NULL;
@@ -100,16 +95,16 @@ void FireFighterMessageTests::TestGameStateMessages()
       mGM->AddComponent(*inputComp, dtGame::GameManager::ComponentPriority::NORMAL);
       mGM->AddComponent(*dmp, dtGame::GameManager::ComponentPriority::HIGHEST);
 
-      dtGame::MessageFactory &mf = mGM->GetMessageFactory();
+      dtGame::MessageFactory& mf = mGM->GetMessageFactory();
       mf.RegisterMessageType<GameStateChangedMessage>(MessageType::GAME_STATE_CHANGED);
 
-      GameState &state = inputComp->GetCurrentGameState();
+      GameState& state = inputComp->GetCurrentGameState();
       CPPUNIT_ASSERT_MESSAGE("The initial game state should be unknown", state == GameState::STATE_UNKNOWN);
 
       RefPtr<dtGame::Message> msg = mf.CreateMessage(MessageType::GAME_STATE_CHANGED);
       CPPUNIT_ASSERT(msg.valid());
 
-      GameStateChangedMessage *gscm = static_cast<GameStateChangedMessage*>(msg.get());
+      GameStateChangedMessage* gscm = static_cast<GameStateChangedMessage*>(msg.get());
       gscm->SetOldState(GameState::STATE_UNKNOWN);
       gscm->SetNewState(GameState::STATE_MENU);
       CPPUNIT_ASSERT(gscm->GetOldState() == GameState::STATE_UNKNOWN);
@@ -160,7 +155,7 @@ void FireFighterMessageTests::TestGameStateMessages()
       CPPUNIT_ASSERT_MESSAGE("The state was running, hitting escape should set the state back to the main menu",
          inputComp->GetCurrentGameState() == GameState::STATE_MENU);
    }
-   catch(const dtUtil::Exception &e)
+   catch(const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.What());
    }
