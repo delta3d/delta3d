@@ -42,8 +42,14 @@ void TestMultiWin::Config()
    GetWindow()->SetPosition(DEFAULT_FIRST_WIN_X, DEFAULT_FIRST_WIN_Y, DEFAULT_WIN_WIDTH, DEFAULT_WIN_HEIGHT);
 
    //create a new Window and Camera
-   mWin2 = new DeltaWin("testMultWin - Window 2");
-   mWin2->SetPosition(DEFAULT_SECOND_WIN_X, DEFAULT_SECOND_WIN_Y, DEFAULT_WIN_WIDTH, DEFAULT_WIN_HEIGHT * 2);
+   dtCore::DeltaWin::DeltaWinTraits win2Traits;
+   win2Traits.name = "testMultWin - Window 2";
+   win2Traits.x = DEFAULT_SECOND_WIN_X;
+   win2Traits.y = DEFAULT_SECOND_WIN_Y;
+   win2Traits.width = DEFAULT_WIN_WIDTH;
+   win2Traits.height = DEFAULT_WIN_HEIGHT * 2;
+
+   mWin2 = new DeltaWin(win2Traits);
 
    //set the first Camera position
    Transform transform(0.0f, -30.0f, 5.0f);
@@ -108,6 +114,9 @@ bool TestMultiWin::KeyPressed(const dtCore::Keyboard* keyboard, int kc)
       SetNextStatisticsType();
       handled = true;
       break;
+
+   default:
+      handled = dtABC::Application::KeyPressed(keyboard, kc);
    }
 
    return handled;
