@@ -23,7 +23,6 @@
 
 #include <dtCore/export.h>
 #include <dtCore/base.h>
-#include <dtUtil/deprecationmgr.h>
 
 #include <osg/Vec3>
 #include <osg/Vec2>
@@ -68,12 +67,6 @@ namespace dtCore
        *  This is done only when the scene's 'SceneNode' has changed.
        */
 //      void ResetCameraScenes(Scene* sceneRootChanged);
-
-      ///Deprecated Mar 10 2009 in favor of SetRenderOrder
-      DEPRECATE_FUNC void SetFrameBin(unsigned int frameBin);
-
-      ///Deprecated Mar 10 2009 in favor of GetRenderOrder
-      DEPRECATE_FUNC unsigned int GetFrameBin() const;
 
       /**
        * SetRenderOrder take an integer argument to designate the order this View

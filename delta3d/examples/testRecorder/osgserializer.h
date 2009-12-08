@@ -33,8 +33,6 @@
 #include <osg/Vec4>
 #include <osg/Matrix>
 
-#include <dtUtil/deprecationmgr.h>
-
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/dom/DOMElement.hpp>
 

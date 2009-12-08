@@ -142,22 +142,6 @@ View::~View()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-DEPRECATE_FUNC void View::SetFrameBin( unsigned int frameBin )
-{
-   DEPRECATE("View::SetFrameBin", "View::SetRenderOrder");
-
-   SetRenderOrder(frameBin);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-DEPRECATE_FUNC unsigned int View::GetFrameBin() const
-{
-   DEPRECATE("View::GetFrameBin", "View::GetRenderOrder");
-
-   return GetRenderOrder();
-}
-
-////////////////////////////////////////////////////////////////////////////////
 void View::SetRenderOrder(unsigned int rOrder)
 {
    mImpl->mRenderOrder = rOrder;

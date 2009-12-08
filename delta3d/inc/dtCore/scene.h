@@ -29,8 +29,6 @@
 
 #include <osg/Vec3>
 
-#include <dtUtil/deprecationmgr.h>
-
 #include <ode/common.h>
 #include <ode/collision_space.h>
 
@@ -240,14 +238,6 @@ namespace dtCore
       /// Use the internal scene light
       void UseSceneLight(bool lightState = true);
 
-      ///DEPRECATED 1/14/2009 in favor of GetContactJointGroupID() (typo: missing t)
-      DEPRECATE_FUNC dJointGroupID GetContactJoinGroupID() const
-      {
-         DEPRECATE("dJointGroupID dtCore::Scene::GetContactJoinGroupID() const",
-                   "dJointGroupID dtCore::Scene::GetContactJointGroupID() const");
-
-         return this->GetContactJointGroupID();
-      }
    protected:
 
       friend class View;
