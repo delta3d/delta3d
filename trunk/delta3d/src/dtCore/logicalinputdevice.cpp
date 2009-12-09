@@ -457,7 +457,7 @@ namespace dtCore
             }
          }
 
-         bool result = mTargetButton->SetState(newState);
+         mTargetButton->SetState(newState);
          //return mTargetButton->SetState(newState);
 
          // We return false to make sure any other listeners listening for
