@@ -218,7 +218,7 @@ namespace dtDirector
                   mInGraph++;
 
                   DirectorGraphData* parent = mGraphs.top();
-                  DirectorGraphData* newGraph = new DirectorGraphData();
+                  DirectorGraphData* newGraph = new DirectorGraphData(mDirector);
                   newGraph->mParent = parent;
                   newGraph->BuildPropertyMap();
                   parent->mSubGraphs.push_back(newGraph);
@@ -330,7 +330,7 @@ namespace dtDirector
                if (!mNodeName.empty() && !mNodeCategory.empty())
                {
                   dtDirector::NodeManager& nodeManager = dtDirector::NodeManager::GetInstance();
-                  mNode = nodeManager.CreateNode(mNodeName, mNodeCategory).get();
+                  mNode = nodeManager.CreateNode(mNodeName, mNodeCategory, graph).get();
                }
             }
             else if (mInLink)
@@ -564,23 +564,12 @@ namespace dtDirector
    void DirectorXMLHandler::EndNodeElement()
    {
       // Add the node to the director.
-      if (mNode.valid())
-      {
-         DirectorGraphData* graph = mGraphs.top();
+      //if (mNode.valid())
+      //{
+      //   DirectorGraphData* graph = mGraphs.top();
 
-         if (mInValueNodes)
-         {
-            graph->GetValueNodes().push_back(dynamic_cast<ValueNode*>(mNode.get()));
-         }
-         else if (mInEventNodes)
-         {
-            graph->GetEventNodes().push_back(dynamic_cast<EventNode*>(mNode.get()));
-         }
-         else if (mInActionNodes)
-         {
-            graph->GetActionNodes().push_back(dynamic_cast<ActionNode*>(mNode.get()));
-         }
-      }
+      //   graph->AddNode(mNode.get());
+      //}
 
       ClearNodeValues();
    }

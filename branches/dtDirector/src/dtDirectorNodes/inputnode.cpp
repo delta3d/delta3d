@@ -46,9 +46,9 @@ namespace dtDirector
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   void InputNode::Init(const NodeType& nodeType)
+   void InputNode::Init(const NodeType& nodeType, DirectorGraphData* graph)
    {
-      EventNode::Init(nodeType);
+      EventNode::Init(nodeType, graph);
 
       // The input node is a special event node that contains an input.
       mInputs.clear();

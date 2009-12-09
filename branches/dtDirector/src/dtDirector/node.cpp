@@ -22,6 +22,7 @@
 #include <sstream>
 #include <algorithm>
 
+#include <dtDirector/director.h>
 #include <dtDirector/node.h>
 #include <dtDirector/nodemanager.h>
 
@@ -34,6 +35,8 @@ namespace dtDirector
    Node::Node()
       : mLogComment(false)
       , mDisabled(false)
+      , mDirector(NULL)
+      , mGraph(NULL)
    {
    }
 
@@ -54,8 +57,16 @@ namespace dtDirector
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   void Node::Init(const NodeType& nodeType)
+   void Node::Init(const NodeType& nodeType, DirectorGraphData* graph)
    {
+      mGraph = graph;
+
+      if (graph)
+      {
+         graph->AddNode(this);
+         mDirector = graph->GetDirector();
+      }
+
       SetType(nodeType);
       BuildPropertyMap();
    }
@@ -71,7 +82,7 @@ namespace dtDirector
 
       try
       {
-         copy = NodeManager::GetInstance().CreateNode(*mType).get();
+         copy = NodeManager::GetInstance().CreateNode(*mType, mGraph).get();
       }
       catch(const dtUtil::Exception &e)
       {

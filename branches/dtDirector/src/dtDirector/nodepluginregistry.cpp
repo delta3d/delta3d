@@ -19,7 +19,8 @@
  * Author: Jeff P. Houde
  */
 
-#include "dtDirector/nodepluginregistry.h"
+#include <dtDirector/nodepluginregistry.h>
+#include <dtDirector/director.h>
 
 namespace dtDirector
 {
@@ -36,10 +37,10 @@ namespace dtDirector
    }
 
    ///////////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<Node> NodePluginRegistry::CreateNode(const NodeType& type)
+   dtCore::RefPtr<Node> NodePluginRegistry::CreateNode(const NodeType& type, DirectorGraphData* graph)
    {
       dtCore::RefPtr<Node> node = mNodeFactory->CreateObject(dtCore::RefPtr<const NodeType>(&type));
-      node->Init(type);
+      node->Init(type, graph);
       return node;
    }
 

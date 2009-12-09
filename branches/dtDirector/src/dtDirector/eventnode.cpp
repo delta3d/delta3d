@@ -42,9 +42,9 @@ namespace dtDirector
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   void EventNode::Init(const NodeType& nodeType)
+   void EventNode::Init(const NodeType& nodeType, DirectorGraphData* graph)
    {
-      Node::Init(nodeType);
+      Node::Init(nodeType, graph);
 
       // Create our default output.
       mOutputs.clear();

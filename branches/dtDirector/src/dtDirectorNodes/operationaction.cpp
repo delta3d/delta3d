@@ -21,6 +21,8 @@
 
 #include <dtDirectorNodes/operationaction.h>
 
+#include <dtDirector/director.h>
+
 #include <dtDAL/enginepropertytypes.h>
 
 
@@ -41,9 +43,9 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void OperationAction::Init(const NodeType& nodeType)
+   void OperationAction::Init(const NodeType& nodeType, DirectorGraphData* graph)
    {
-      ActionNode::Init(nodeType);
+      ActionNode::Init(nodeType, graph);
 
       // Create multiple inputs for different operations.
       mInputs.clear();
@@ -78,14 +80,52 @@ namespace dtDirector
          dtDAL::DoubleActorProperty::GetFuncType(this, &OperationAction::GetResult),
          "The Right value.");
 
+      dtDAL::FloatActorProperty* floatProp = new dtDAL::FloatActorProperty(
+         "Float", "Float",
+         dtDAL::FloatActorProperty::SetFuncType(this, &OperationAction::SetFloatTest),
+         dtDAL::FloatActorProperty::GetFuncType(this, &OperationAction::GetFloatTest));
+
+      dtDAL::DoubleActorProperty* doubleProp = new dtDAL::DoubleActorProperty(
+         "Double", "Double",
+         dtDAL::DoubleActorProperty::SetFuncType(this, &OperationAction::SetDoubleTest),
+         dtDAL::DoubleActorProperty::GetFuncType(this, &OperationAction::GetDoubleTest));
+
+      dtDAL::BooleanActorProperty* boolProp = new dtDAL::BooleanActorProperty(
+         "Bool", "Bool",
+         dtDAL::BooleanActorProperty::SetFuncType(this, &OperationAction::SetBoolTest),
+         dtDAL::BooleanActorProperty::GetFuncType(this, &OperationAction::GetBoolTest));
+
+      dtDAL::StringActorProperty* stringProp = new dtDAL::StringActorProperty(
+         "String", "String",
+         dtDAL::StringActorProperty::SetFuncType(this, &OperationAction::SetStringTest),
+         dtDAL::StringActorProperty::GetFuncType(this, &OperationAction::GetStringTest));
+
+      dtDAL::ActorIDActorProperty* actorProp = new dtDAL::ActorIDActorProperty(
+         "Actor", "Actor",
+         dtDAL::ActorIDActorProperty::SetFuncType(this, &OperationAction::SetActorTest),
+         dtDAL::ActorIDActorProperty::GetFuncType(this, &OperationAction::GetActorTest),
+         dtDAL::ActorIDActorProperty::GetMapType(GetDirector(), &Director::GetMap));
+
       AddProperty(leftProp);
       AddProperty(rightProp);
+
+      AddProperty(floatProp);
+      AddProperty(doubleProp);
+      AddProperty(boolProp);
+      AddProperty(stringProp);
+      AddProperty(actorProp);
 
       // This will expose the properties in the editor and allow
       // them to be connected to ValueNodes.
       mValues.push_back(ValueLink(this, leftProp, false, false, false));
       mValues.push_back(ValueLink(this, rightProp, false, false, false));
       mValues.push_back(ValueLink(this, resultProp, true, true, false));
+
+      mValues.push_back(ValueLink(this, floatProp, true, true, true));
+      mValues.push_back(ValueLink(this, doubleProp, true, true, true));
+      mValues.push_back(ValueLink(this, boolProp, true, true, true));
+      mValues.push_back(ValueLink(this, stringProp, true, true, true));
+      mValues.push_back(ValueLink(this, actorProp, true, true, true));
 
       ActionNode::BuildPropertyMap();
    }

@@ -42,9 +42,9 @@ namespace dtDirector
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   void ActionNode::Init(const NodeType& nodeType)
+   void ActionNode::Init(const NodeType& nodeType, DirectorGraphData* graph)
    {
-      Node::Init(nodeType);
+      Node::Init(nodeType, graph);
 
       // By default, Action nodes have one input and one output.
       mInputs.clear();

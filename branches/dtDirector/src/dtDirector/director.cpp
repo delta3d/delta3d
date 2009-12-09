@@ -31,9 +31,10 @@
 namespace dtDirector
 {
    //////////////////////////////////////////////////////////////////////////
-   DirectorGraphData::DirectorGraphData()
+   DirectorGraphData::DirectorGraphData(Director* director)
       : mParent(NULL)
       , mName("Macro")
+      , mDirector(director)
    {
    }
 
@@ -124,6 +125,33 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   bool DirectorGraphData::AddNode(Node* node)
+   {
+      ValueNode* valueNode = dynamic_cast<ValueNode*>(node);
+      if (valueNode)
+      {
+         mValueNodes.push_back(valueNode);
+         return true;
+      }
+
+      EventNode* eventNode = dynamic_cast<EventNode*>(node);
+      if (eventNode)
+      {
+         mEventNodes.push_back(eventNode);
+         return true;
+      }
+
+      ActionNode* actionNode = dynamic_cast<ActionNode*>(node);
+      if (actionNode)
+      {
+         mActionNodes.push_back(actionNode);
+         return true;
+      }
+
+      return false;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    std::vector<dtCore::RefPtr<EventNode> > DirectorGraphData::GetInputNodes()
    {
       std::vector<dtCore::RefPtr<EventNode> > nodes;
@@ -135,7 +163,20 @@ namespace dtDirector
          EventNode* node = mEventNodes[index].get();
          if (node && node->GetType().GetFullName() == "Core.Input")
          {
-            nodes.push_back(node);
+            bool bFound = false;
+            int sortCount = (int)nodes.size();
+            for (int sortIndex = 0; sortIndex < sortCount; sortIndex++)
+            {
+               EventNode* sortNode = nodes[sortIndex];
+               if (sortNode && sortNode->GetPosition().y() >= node->GetPosition().y())
+               {
+                  bFound = true;
+                  nodes.insert(nodes.begin() + sortIndex, node);
+                  break;
+               }
+            }
+
+            if (!bFound) nodes.push_back(node);
          }
       }
 
@@ -154,7 +195,20 @@ namespace dtDirector
          ActionNode* node = mActionNodes[index].get();
          if (node && node->GetType().GetFullName() == "Core.Output")
          {
-            nodes.push_back(node);
+            bool bFound = false;
+            int sortCount = (int)nodes.size();
+            for (int sortIndex = 0; sortIndex < sortCount; sortIndex++)
+            {
+               ActionNode* sortNode = nodes[sortIndex];
+               if (sortNode && sortNode->GetPosition().y() >= node->GetPosition().y())
+               {
+                  bFound = true;
+                  nodes.insert(nodes.begin() + sortIndex, node);
+                  break;
+               }
+            }
+
+            if (!bFound) nodes.push_back(node);
          }
       }
 
@@ -173,7 +227,20 @@ namespace dtDirector
          ValueNode* node = mValueNodes[index].get();
          if (node && node->GetType().GetFullName() == "Core.External Value")
          {
-            nodes.push_back(node);
+            bool bFound = false;
+            int sortCount = (int)nodes.size();
+            for (int sortIndex = 0; sortIndex < sortCount; sortIndex++)
+            {
+               ValueNode* sortNode = nodes[sortIndex];
+               if (sortNode && sortNode->GetPosition().x() >= node->GetPosition().x())
+               {
+                  bFound = true;
+                  nodes.insert(nodes.begin() + sortIndex, node);
+                  break;
+               }
+            }
+
+            if (!bFound) nodes.push_back(node);
          }
       }
 
@@ -187,7 +254,8 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    Director::Director()
       : mModified(false)
-      , mGraph(new DirectorGraphData())
+      , mGraph(new DirectorGraphData(this))
+      , mMap(NULL)
    {
       mLogger = &dtUtil::Log::GetInstance();
    }
@@ -198,8 +266,10 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void Director::Init()
+   void Director::Init(dtDAL::Map* map)
    {
+      SetMap(map);
+
       BuildPropertyMap();
 
       mGraph->BuildPropertyMap(true);
@@ -216,17 +286,15 @@ namespace dtDirector
       dtDirector::NodeManager& nodeManager = dtDirector::NodeManager::GetInstance();
 
       // Create a primary event node.
-      dtCore::RefPtr<EventNode> primaryEvent = dynamic_cast<dtDirector::EventNode*>(nodeManager.CreateNode("Named Event", "General").get());
-      mGraph->mEventNodes.push_back(primaryEvent);
+      dtCore::RefPtr<EventNode> primaryEvent = dynamic_cast<dtDirector::EventNode*>(nodeManager.CreateNode("Named Event", "General", mGraph).get());
       primaryEvent->SetPosition(osg::Vec2(50, 50));
 
       // Create an outside value node.
-      dtCore::RefPtr<ValueNode> outsideValue = dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Int", "General").get());
-      mGraph->mValueNodes.push_back(outsideValue);
+      dtCore::RefPtr<ValueNode> outsideValue = dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Int", "General", mGraph).get());
       outsideValue->SetPosition(osg::Vec2(200, 200));
 
       // Create a sub graph.
-      DirectorGraphData* subGraph = new DirectorGraphData();
+      DirectorGraphData* subGraph = new DirectorGraphData(this);
       subGraph->BuildPropertyMap();
       subGraph->mParent = mGraph;
       mGraph->mSubGraphs.push_back(subGraph);
@@ -234,38 +302,30 @@ namespace dtDirector
       subGraph->SetPosition(osg::Vec2(200, 50));
 
       // Create an input node.
-      dtCore::RefPtr<EventNode> inputNode = dynamic_cast<dtDirector::EventNode*>(nodeManager.CreateNode("Input", "Core").get());
-      subGraph->mEventNodes.push_back(inputNode);
+      dtCore::RefPtr<EventNode> inputNode = dynamic_cast<dtDirector::EventNode*>(nodeManager.CreateNode("Input", "Core", subGraph).get());
       inputNode->SetPosition(osg::Vec2(50, 50));
 
       // Create an output node.
-      dtCore::RefPtr<ActionNode> outputNode = dynamic_cast<dtDirector::ActionNode*>(nodeManager.CreateNode("Output", "Core").get());
-      subGraph->mActionNodes.push_back(outputNode);
+      dtCore::RefPtr<ActionNode> outputNode = dynamic_cast<dtDirector::ActionNode*>(nodeManager.CreateNode("Output", "Core", subGraph).get());
       outputNode->SetPosition(osg::Vec2(600, 50));
 
       // Create an external value node.
-      dtCore::RefPtr<ValueNode> extValue = dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("External Value", "Core").get());
-      subGraph->mValueNodes.push_back(extValue);
+      dtCore::RefPtr<ValueNode> extValue = dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("External Value", "Core", subGraph).get());
       extValue->SetName("External Connected");
       extValue->SetPosition(osg::Vec2(500, 300));
 
-      dtCore::RefPtr<ValueNode> extValue2 = dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("External Value", "Core").get());
-      subGraph->mValueNodes.push_back(extValue2);
+      dtCore::RefPtr<ValueNode> extValue2 = dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("External Value", "Core", subGraph).get());
       extValue2->SetName("External Not Connected");
       extValue2->SetPosition(osg::Vec2(600, 300));
 
       // Create our action node.
-      dtCore::RefPtr<ActionNode> actionNode = dynamic_cast<dtDirector::ActionNode*>(nodeManager.CreateNode("Binary Operation", "General").get());
-      subGraph->mActionNodes.push_back(actionNode);
+      dtCore::RefPtr<ActionNode> actionNode = dynamic_cast<dtDirector::ActionNode*>(nodeManager.CreateNode("Binary Operation", "General", subGraph).get());
       actionNode->SetPosition(osg::Vec2(200, 50));
 
       // Create some value nodes.
-      dtCore::RefPtr<ValueNode> valueA = dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Int", "General").get());
-      dtCore::RefPtr<ValueNode> valueB = dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Int", "General").get());
-      dtCore::RefPtr<ValueNode> resultValue = dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Int", "General").get());
-      subGraph->mValueNodes.push_back(valueA);
-      subGraph->mValueNodes.push_back(valueB);
-      subGraph->mValueNodes.push_back(resultValue);
+      dtCore::RefPtr<ValueNode> valueA = dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Int", "General", subGraph).get());
+      dtCore::RefPtr<ValueNode> valueB = dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Int", "General", subGraph).get());
+      dtCore::RefPtr<ValueNode> resultValue = dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Int", "General", subGraph).get());
 
       valueA->SetName("Int A");
       valueA->SetPosition(osg::Vec2(200, 300));
@@ -285,7 +345,6 @@ namespace dtDirector
 
          // Connect the output of our sub-graph to the action node.
          inputNode->GetOutputLink("Out")->Connect(actionNode->GetInputLink("Multiply"));
-         inputNode->GetOutputLink("Out")->Connect(actionNode->GetInputLink("Add"));
 
          // Connect the output of action node with the output node.
          actionNode->GetOutputLink("Out")->Connect(outputNode->GetInputLink("In"));

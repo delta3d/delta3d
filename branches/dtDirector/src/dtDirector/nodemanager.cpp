@@ -23,6 +23,7 @@
 
 #include <osgDB/FileUtils>
 
+#include <dtDirector/director.h>
 #include <dtDirector/nodemanager.h>
 #include <dtDirector/nodetype.h>
 
@@ -253,7 +254,7 @@ namespace dtDirector
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<Node> NodeManager::CreateNode(const NodeType& nodeType)
+   dtCore::RefPtr<Node> NodeManager::CreateNode(const NodeType& nodeType, DirectorGraphData* graph)
    {
       NodePluginRegistry* apr = GetRegistryForType(nodeType); 
 
@@ -266,12 +267,12 @@ namespace dtDirector
 
       // Now we know which registry to use, so tell the registry to
       // create the node and return it.
-      dtCore::RefPtr<Node> node = apr->CreateNode(nodeType).get();
+      dtCore::RefPtr<Node> node = apr->CreateNode(nodeType, graph).get();
       return node;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<Node> NodeManager::CreateNode(const std::string& name, const std::string& category)
+   dtCore::RefPtr<Node> NodeManager::CreateNode(const std::string& name, const std::string& category, DirectorGraphData* graph)
    {
       dtCore::RefPtr<const NodeType> type = FindNodeType(name, category);
       if(!type.valid())
@@ -281,7 +282,7 @@ namespace dtDirector
          category + "].", __FILE__, __LINE__);
       }
 
-      return CreateNode(*type);
+      return CreateNode(*type, graph);
    }
 
    ///////////////////////////////////////////////////////////////////////////////

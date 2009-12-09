@@ -42,9 +42,9 @@ namespace dtDirector
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   void OutputNode::Init(const NodeType& nodeType)
+   void OutputNode::Init(const NodeType& nodeType, DirectorGraphData* graph)
    {
-      ActionNode::Init(nodeType);
+      ActionNode::Init(nodeType, graph);
 
       mInputs.clear();
       mInputs.push_back(InputLink(this, "In"));
