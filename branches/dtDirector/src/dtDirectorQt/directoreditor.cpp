@@ -77,8 +77,8 @@ namespace dtDirector
       , mGraphTabs(graphTabs)
       , mView(NULL)
       , mGraph(NULL)
-      , mAllowDrag(false)
       , mDragging(false)
+      , mHasDragged(false)
       , mTranslationItem(NULL)
    {
       mSelected.push_back(mDirector.get());
@@ -268,17 +268,37 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void EditorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
    {
-      // If we are not mouse clicking on a node...
-      QGraphicsScene::mousePressEvent(event);
-
-      if (!itemAt(event->scenePos()))
+      bool bMultiSelect = false;
+      if (event->modifiers() == Qt::ShiftModifier ||
+         event->button() == Qt::RightButton)
       {
-         mAllowDrag = true;
+         bMultiSelect = true;
+         mView->setDragMode(QGraphicsView::RubberBandDrag);
+      }
+      else if(!itemAt(event->scenePos()))
+      {
+         mDragging = true;
+         mHasDragged = false;
          mDragOrigin = event->scenePos();
+
+         // This is unusual, but I have to set it to scroll
+         // drag mode so it does not un-select all selected
+         // nodes.
+         mView->setDragMode(QGraphicsView::ScrollHandDrag);
       }
       else
       {
-         mAllowDrag = false;
+         mDragging = false;
+      }
+
+      // If we are not mouse clicking on a node...
+      QGraphicsScene::mousePressEvent(event);
+
+      // If we are dragging the view, turn off the scroll hand
+      // drag mode because I am performing a custom drag instead.
+      if (mDragging)
+      {
+         mView->setDragMode(QGraphicsView::NoDrag);
       }
    }
 
@@ -287,7 +307,18 @@ namespace dtDirector
    {
       QGraphicsScene::mouseReleaseEvent(event);
 
-      mAllowDrag = false;
+      // If you have pressed and released the mouse on an empty
+      // area and did not drag, then it should clear the current
+      // selection instead.
+      if (mDragging && !mHasDragged)
+      {
+         clearSelection();
+         mSelected.clear();
+         RemoveSelected(NULL);
+      }
+
+      mView->setDragMode(QGraphicsView::NoDrag);
+      mDragging = false;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -295,28 +326,20 @@ namespace dtDirector
    {
       QGraphicsScene::mouseMoveEvent(event);
 
-      if (mDragging) return;
-
       // If we are dragging the view.
-      if (mAllowDrag && mView)
+      if (mDragging)
       {
-         mDragging = true;
+         mHasDragged = true;
+
          QPointF mousePos = event->scenePos();
          QPointF inc = mDragOrigin - mousePos;
          mDragOrigin = mousePos;
-
-         //inc = mView->matrix().map(inc);
 
          // Translate the background item to simulate the entire view moving.
          if (mTranslationItem)
          {
             mTranslationItem->setPos(mTranslationItem->pos() - inc);
          }
-
-         //mView->horizontalScrollBar()->setValue(mView->horizontalScrollBar()->value() + inc.x() / 5.0f);
-         //mView->verticalScrollBar()->setValue(mView->verticalScrollBar()->value() + inc.y() / 5.0f);
-
-         mDragging = false;
       }
    }
 
@@ -331,6 +354,8 @@ namespace dtDirector
    {
       setObjectName("Graph Tab");
       setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+
+      setTransformationAnchor(QGraphicsView::AnchorViewCenter);
 
       // Always hide the scroll bars.
       setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -368,8 +393,11 @@ namespace dtDirector
       //   QPointF mousePos = event->pos();
 
       //   QPointF translation = mousePos - centerPos;
+      //   centerPos = mapToScene(centerPos.x(), centerPos.y());
+      //   centerOn(centerPos);
+
       //   translation = mapToScene(translation.x(), translation.y());
-      //   translation *= 0.2f;
+      //   //translation *= 0.2f;
       //   mScene->GetTranslationItem()->setPos(
       //      mScene->GetTranslationItem()->pos() - translation);
       //}

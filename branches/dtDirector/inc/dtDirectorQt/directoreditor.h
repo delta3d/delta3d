@@ -214,10 +214,9 @@ namespace dtDirector
 
       std::vector<NodeItem*>           mNodes;
 
-      bool     mAllowDrag;
       bool     mDragging;
       QPointF  mDragOrigin;
-      QPointF  mDragCenter;
+      bool     mHasDragged;
 
       QGraphicsRectItem* mTranslationItem;
       
