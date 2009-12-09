@@ -196,6 +196,17 @@ namespace dtDirector
 
       return value;
    }
+
+   //////////////////////////////////////////////////////////////////////////
+   void MacroItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+   {
+      NodeItem::mouseDoubleClickEvent(event);
+
+      if (!mScene) return;
+
+      // Open the subgraph.
+      mScene->SetGraph(mGraph);
+   }
 }
 
 //////////////////////////////////////////////////////////////////////////

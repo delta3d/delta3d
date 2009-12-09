@@ -32,15 +32,14 @@
 #include <dtCore/refptr.h>
 
 #include <QtGui/QMainWindow>
-#include <QtGui/QTextEdit>
-#include <QtGui/QTreeWidget>
 #include <QtGui/QTabWidget>
-#include <QtGui/QScrollBar>
 #include <QtGui/QGraphicsScene>
 #include <QtGui/QGraphicsView>
-#include <QtGui/QGraphicsSceneMouseEvent>
 
 class QAction;
+class QMenuBar;
+class QToolBar;
+class QGraphicsSceneMouseEvent;
 
 namespace dtDirector
 {
@@ -109,10 +108,11 @@ namespace dtDirector
       *
       * @param[in]  director    The Director.
       * @param[in]  propEditor  The Property Editor.
+      * @param[in]  graphTabs   The Graph Tabs widget.
       * @param[in]  view        The scene viewer.
       * @param[in]  parent      The parent widget.
       */
-      EditorScene(Director* director, PropertyEditor* propEditor, QWidget* parent = 0);
+      EditorScene(Director* director, PropertyEditor* propEditor, GraphTabs* graphTabs, QWidget* parent = 0);
 
       /**
        * Sets the current view.
@@ -125,6 +125,13 @@ namespace dtDirector
        * @param[in]  graph  The Graph to view.
        */
       void SetGraph(dtDirector::DirectorGraphData* graph);
+
+      /**
+       * Retrieves the current graph.
+       *
+       * @return  The current graph.
+       */
+      dtDirector::DirectorGraphData* GetGraph() {return mGraph;}
 
       /**
        * Retrieves the background item.
@@ -201,6 +208,7 @@ namespace dtDirector
 
       dtCore::RefPtr<Director> mDirector;
       PropertyEditor*          mPropertyEditor;
+      GraphTabs*               mGraphTabs;
 
       dtDirector::DirectorGraphData*   mGraph;
 
@@ -300,9 +308,11 @@ namespace dtDirector
    public slots:
 
       /**
-       * Event handler when the parent button is pressed.
+       * Event handler when the visibility of the property editor is changed.
+       *
+       * @param[in]  visible  True if the editor is visible.
        */
-      void OnParentButton();
+      void OnPropertyEditorVisibilityChange(bool visible);
 
       /**
       * Event handler when the current document tab has changed.
@@ -318,6 +328,16 @@ namespace dtDirector
       */
       void OnGraphTabClosed(int index);
 
+      /**
+       * Event handler when the parent button is pressed.
+       */
+      void OnParentButton();
+
+      /**
+       * Event handler when the show property editor button is pressed.
+       */
+      void OnShowPropertyEditor();
+
    private:
 
       GraphTabs*           mGraphTabs;
@@ -325,7 +345,23 @@ namespace dtDirector
 
       dtCore::RefPtr<Director> mDirector;
 
-      QAction*             mParentAction;
+      QMenuBar* mMenuBar;
+      QToolBar* mToolbar;
+
+      QMenu*    mFileMenu;
+      QMenu*    mEditMenu;
+      QMenu*    mViewMenu;
+
+      // File Actions.
+      QAction*  mSaveAction;
+      QAction*  mLoadAction;
+      QAction*  mNewAction;
+
+      // Edit Actions.
+      QAction*  mParentAction;
+
+      // View Actions.
+      QAction*  mViewPropertiesAction;
    };
 
 } // namespace dtDirector

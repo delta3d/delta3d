@@ -26,22 +26,12 @@
 
 #include <dtUtil/mathdefines.h>
 
+#include <QtGui/QMenuBar>
 #include <QtGui/QToolBar>
 #include <QtGui/QAction>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QSplitter>
-#include <QtGui/QPushButton>
-#include <QtGui/QScrollBar>
-#include <QtGui/QLabel>
-#include <QtGui/QPixmap>
-#include <QtGui/QTextEdit>
-#include <QtGui/QTabWidget>
-#include <QtCore/QTextStream>
-#include <QtCore/QFile>
-#include <QtGui/QIcon>
+
 #include <QtGui/QMouseEvent>
-#include <QtGui/QApplication>
+#include <QtGui/QGraphicsSceneMouseEvent>
 
 namespace dtDirector
 {
@@ -80,10 +70,11 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   EditorScene::EditorScene(Director* director, PropertyEditor* propEditor, QWidget* parent)
+   EditorScene::EditorScene(Director* director, PropertyEditor* propEditor, GraphTabs* graphTabs, QWidget* parent)
       : QGraphicsScene(parent)
       , mDirector(director)
       , mPropertyEditor(propEditor)
+      , mGraphTabs(graphTabs)
       , mView(NULL)
       , mGraph(NULL)
       , mAllowDrag(false)
@@ -102,6 +93,7 @@ namespace dtDirector
       // First clear the current items.
       clear();
       mNodes.clear();
+      mSelected.clear();
 
       // The translation item is the parent class for all other items.
       // This simulates the translation of the view by moving all children
@@ -112,6 +104,9 @@ namespace dtDirector
       mGraph = graph;
 
       if (!mGraph) return;
+
+      // Update the graph tab with the current graph name.
+      mGraphTabs->setTabText(mGraphTabs->currentIndex(), graph->mName.c_str());
 
       // Create all nodes in the graph.
       int count = (int)mGraph->mEventNodes.size();
@@ -163,6 +158,7 @@ namespace dtDirector
       }
 
       Refresh();
+      RefreshProperties();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -384,34 +380,91 @@ namespace dtDirector
       : QMainWindow(parent, Qt::Window)
       , mDirector(director)
       , mGraphTabs(NULL)
+      , mMenuBar(NULL)
+      , mToolbar(NULL)
+      , mFileMenu(NULL)
+      , mEditMenu(NULL)
+      , mViewMenu(NULL)
+      , mSaveAction(NULL)
+      , mLoadAction(NULL)
+      , mNewAction(NULL)
+      , mParentAction(NULL)
+      , mViewPropertiesAction(NULL)
    {
       // Set the default size of the window.
       resize(900, 600);
 
       setWindowTitle(mDirector->GetName().c_str());
 
-      // Setup the UI
-      QToolBar*    toolbar       = new QToolBar(this);
-
-      mParentAction              = new QAction(tr("Parent"), this);
-
-      mGraphTabs                 = new GraphTabs(this, this);
-
-      mPropertyEditor            = new PropertyEditor(this);
+      // Property editor.
+      mPropertyEditor = new PropertyEditor(this);
       addDockWidget(Qt::BottomDockWidgetArea, mPropertyEditor);
 
-      // Toolbar
-      addToolBar(toolbar);
-      toolbar->setObjectName("Toolbar");
-      toolbar->setWindowTitle(tr("Toolbar"));
+      // Save Action.
+      mSaveAction = new QAction(QIcon(":/icons/save.png"), tr("&Save"), this);
+      mSaveAction->setShortcut(tr("Ctrl+S"));
+      mSaveAction->setStatusTip(tr("Saves the current Director script (Ctrl+S)."));
 
-      mParentAction->setStatusTip(tr("Returns to the parent graph"));
-      toolbar->addAction(mParentAction);
+      // Load Action.
+      mLoadAction = new QAction(QIcon(":/icons/open.png"), tr("&Load"), this);
+      mLoadAction->setShortcut(tr("Ctrl+L"));
+      mLoadAction->setStatusTip(tr("Loads a Director script from a file (Ctrl+L)."));
+
+      // New Action.
+      mNewAction = new QAction(QIcon(":/icons/new.png"), tr("&New"), this);
+      mNewAction->setShortcut(tr("Ctrl+N"));
+      mNewAction->setStatusTip(tr("Begins a new Director script (Ctrl+N)."));
+
+      // Parent Action.
+      mParentAction = new QAction(QIcon(":/icons/parent.png"), tr("Parent"), this);
+      mParentAction->setShortcut(tr("Ctrl+U"));
+      mParentAction->setStatusTip(tr("Returns to the parent graph (Ctrl+U)."));
+
+      // Show Properties Action.
+      mViewPropertiesAction = new QAction(tr("Property Editor"), this);
+      mViewPropertiesAction->setShortcut(tr("Ctrl+P"));
+      mViewPropertiesAction->setStatusTip(tr("Shows the Property Editor(Ctrl+P)."));
+      mViewPropertiesAction->setCheckable(true);
+      mViewPropertiesAction->setChecked(true);
 
       // Graph tabs.
+      mGraphTabs = new GraphTabs(this, this);
       mGraphTabs->setTabsClosable(true);
       mGraphTabs->setMovable(true);
       mGraphTabs->setTabShape(QTabWidget::Rounded);
+
+      // Menu Bar.
+      mMenuBar = new QMenuBar(this);
+      setMenuBar(mMenuBar);
+      mMenuBar->setObjectName("Menu Bar");
+      mMenuBar->setWindowTitle("Menu Bar");
+
+      // File Menu.
+      mFileMenu = mMenuBar->addMenu("&File");
+      mFileMenu->addAction(mSaveAction);
+      mFileMenu->addAction(mLoadAction);
+      mFileMenu->addAction(mNewAction);
+      mFileMenu->addSeparator();
+
+      // Edit Menu.
+      mEditMenu = mMenuBar->addMenu("&Edit");
+      mEditMenu->addAction(mParentAction);
+
+      // View Menu.
+      mViewMenu = mMenuBar->addMenu("&View");
+      mViewMenu->addAction(mViewPropertiesAction);
+
+      // Toolbar.
+      mToolbar = new QToolBar(this);
+      addToolBar(mToolbar);
+      mToolbar->setObjectName("Toolbar");
+      mToolbar->setWindowTitle(tr("Toolbar"));
+
+      mToolbar->addAction(mSaveAction);
+      mToolbar->addAction(mLoadAction);
+      mToolbar->addAction(mNewAction);
+      mToolbar->addSeparator();
+      mToolbar->addAction(mParentAction);
 
       // Main layout.
       setCentralWidget(mGraphTabs);
@@ -422,12 +475,17 @@ namespace dtDirector
       connect(mGraphTabs, SIGNAL(tabCloseRequested(int)),
          this, SLOT(OnGraphTabClosed(int)));
 
+      connect(mPropertyEditor, SIGNAL(visibilityChanged(bool)),
+         this, SLOT(OnPropertyEditorVisibilityChange(bool)));
+
       connect(mParentAction, SIGNAL(triggered()),
          this, SLOT(OnParentButton()));
 
+      connect(mViewPropertiesAction, SIGNAL(triggered()),
+         this, SLOT(OnShowPropertyEditor()));
+
       // Open the home graph.
       OpenGraph(mDirector->GetGraphData(), true);
-      OpenGraph(mDirector->GetGraphData()->GetSubGraphs()[0], true);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -442,7 +500,7 @@ namespace dtDirector
       // if we don't have any pages yet.
       if (mGraphTabs->count() < 1 || newTab)
       {
-         EditorScene* scene = new EditorScene(mDirector, mPropertyEditor);
+         EditorScene* scene = new EditorScene(mDirector, mPropertyEditor, mGraphTabs);
          EditorView* view = new EditorView(scene, this);
          scene->SetView(view);
 
@@ -453,17 +511,14 @@ namespace dtDirector
       EditorView* view = dynamic_cast<EditorView*>(mGraphTabs->currentWidget());
       if (view && graph)
       {
-         mGraphTabs->setTabText(mGraphTabs->currentIndex(), graph->mName.c_str());
-
          view->GetScene()->SetGraph(graph);
       }
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
-   void DirectorEditor::OnParentButton()
+   //////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::OnPropertyEditorVisibilityChange(bool visible)
    {
-      // TODO: Find and open the parent graph,
-      // then center the view on that child graph.
+      mViewPropertiesAction->setChecked(visible);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -496,4 +551,36 @@ namespace dtDirector
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::OnParentButton()
+   {
+      int index = mGraphTabs->currentIndex();
+      if (index >= 0 && index < mGraphTabs->count())
+      {
+         EditorView* view = dynamic_cast<EditorView*>(mGraphTabs->widget(index));
+         if (view)
+         {
+            dtDirector::DirectorGraphData* graph = view->GetScene()->GetGraph();
+            if (graph && graph->mParent)
+            {
+               view->GetScene()->SetGraph(graph->mParent);
+            }
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::OnShowPropertyEditor()
+   {
+      if (mViewPropertiesAction->isChecked())
+      {
+         mPropertyEditor->show();
+      }
+      else
+      {
+         mPropertyEditor->hide();
+      }
+   }
 } // namespace dtDirector
+
+//////////////////////////////////////////////////////////////////////////

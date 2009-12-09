@@ -76,6 +76,13 @@ namespace dtDirector
 
    protected:
 
+      /**
+       * Event handler when the user double clicks this node.
+       *
+       * @param[in]  event  The mouse event.
+       */
+      void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
+
       dtCore::RefPtr<DirectorGraphData> mGraph;
    };
 }
