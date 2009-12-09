@@ -37,9 +37,9 @@ namespace dtAnim
    *  @param elevation   - the vertical angle between our forward and our target
    */
    void DT_ANIM_EXPORT GetCelestialCoordinates(osg::Vec3 targetDirection,
-                                               const osg::Vec3 &lookForward,                                              
-                                               float &azimuth, 
-                                               float &elevation );
+                                               const osg::Vec3& lookForward,
+                                               float& azimuth, 
+                                               float& elevation);
 
    /**
    *  GetCelestialDirection    - calculates the direction that a given azimuth and elevation points
@@ -50,9 +50,9 @@ namespace dtAnim
    */
    void DT_ANIM_EXPORT GetCelestialDirection(const float azimuth,
                                              const float elevation,
-                                             const osg::Vec3 &forwardDirection,
-                                             const osg::Vec3 &upDirection,
-                                             osg::Vec3 &outDirection);   
+                                             const osg::Vec3& forwardDirection,
+                                             const osg::Vec3& upDirection,
+                                             osg::Vec3& outDirection);
 
    /**
    *  GetClosestPointOnSegment - calculates the point on a segment that is closest to a reference point
@@ -61,10 +61,10 @@ namespace dtAnim
    *  @param refPoint          - the point whose closest distance to the segment we are interested in
    *  @param closestPoint      - the final calculated point that is closest to refPoint
    */
-   void DT_ANIM_EXPORT GetClosestPointOnSegment(const osg::Vec3 &startPoint,
-                                                const osg::Vec3 &endPoint,
-                                                const osg::Vec3 &refPoint,
-                                                osg::Vec3 &closestPoint);     
+   void DT_ANIM_EXPORT GetClosestPointOnSegment(const osg::Vec3& startPoint,
+                                                const osg::Vec3& endPoint,
+                                                const osg::Vec3& refPoint,
+                                                osg::Vec3& closestPoint);
    /**
    *  IsPointBetweenVectors - determines whether a points is between the vectors origin to A and origin to B
    *  @param point          - the point that we want to test 
@@ -72,10 +72,10 @@ namespace dtAnim
    *  @param A              - the end point for the first vector
    *  @param B              - the end point for the second vector
    */
-   bool DT_ANIM_EXPORT IsPointBetweenVectors(const osg::Vec3f &point,
-                                             const osg::Vec3f &origin,
-                                             const osg::Vec3f &A,
-                                             const osg::Vec3f &B); 
+   bool DT_ANIM_EXPORT IsPointBetweenVectors(const osg::Vec3f& point,
+                                             const osg::Vec3f& origin,
+                                             const osg::Vec3f& A,
+                                             const osg::Vec3f& B); 
 
    /**
    *  MapCelestialToScreen - maps azimuth and elevation to a screen position
@@ -88,11 +88,11 @@ namespace dtAnim
    */
    void DT_ANIM_EXPORT MapCelestialToScreen(float azimuth,
                                             float elevation,
-                                            float maxDistance,                             
+                                            float maxDistance,
                                             float windowWidth,
                                             float windowHeight,
-                                            const osg::Vec2 &screenOrigin,
-                                            osg::Vec2 &outScreenPos);
+                                            const osg::Vec2& screenOrigin,
+                                            osg::Vec2& outScreenPos);
 
 }
 

@@ -80,7 +80,7 @@ float Listener::GetGain(void) const
 void Listener::OnMessage(MessageData* data)
 {
    CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
-   assert( data );
+   assert(data);
 
    if(data->message == dtCore::System::MESSAGE_FRAME)
    {
@@ -99,13 +99,13 @@ void Listener::OnMessage(MessageData* data)
          };
       } orient;
 
-      GetTransform( transform );
+      GetTransform(transform);
       osg::Vec3 tmp;
-      transform.GetTranslation( tmp );
+      transform.GetTranslation(tmp);
       pos[0] = tmp[0];
       pos[1] = tmp[1];
       pos[2] = tmp[2];
-      transform.Get( matrix );
+      transform.Get(matrix);
 
       //assign at and up vectors directly from the matrix
       orient.at[0] = matrix(1,0);
@@ -115,8 +115,8 @@ void Listener::OnMessage(MessageData* data)
       orient.up[1] = matrix(2,1);
       orient.up[2] = matrix(2,2);
 
-      alListenerfv( AL_POSITION, pos );
-      alListenerfv( AL_ORIENTATION, orient.ort );
+      alListenerfv(AL_POSITION, pos);
+      alListenerfv(AL_ORIENTATION, orient.ort);
       CheckForError("AL Listener value changing", __FUNCTION__, __LINE__);
    }
 }
