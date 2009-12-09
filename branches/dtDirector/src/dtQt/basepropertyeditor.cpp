@@ -455,6 +455,12 @@ namespace dtQt
    /////////////////////////////////////////////////////////////////////////////////
    void BasePropertyEditor::ProxyNameChanged(dtDAL::ActorProxy& propCon, std::string oldName)
    {
+      UpdateTitle();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void BasePropertyEditor::UpdateTitle()
+   {
       resetGroupBoxLabel();
       propertyTree->viewport()->update();
    }
