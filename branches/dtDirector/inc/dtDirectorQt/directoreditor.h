@@ -238,13 +238,6 @@ namespace dtDirector
        */
       EditorScene* GetScene() {return mScene;}
 
-      /**
-       * Retrieves the visible rectangle of the scene.
-       *
-       * @return  The visible rect.
-       */
-      QRectF VisibleRect();
-
    protected:
 
       /**

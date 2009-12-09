@@ -340,15 +340,6 @@ namespace dtDirector
       setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
    }
 
-   //////////////////////////////////////////////////////////////////////////
-   QRectF EditorView::VisibleRect()
-   {
-      QPointF tl(horizontalScrollBar()->value(), verticalScrollBar()->value());
-      QPointF br = tl + viewport()->rect().bottomRight();
-      QMatrix mat = matrix().inverted();
-      return mat.mapRect(QRectF(tl,br));
-   }
-
    ////////////////////////////////////////////////////////////////////////////////
    void EditorView::wheelEvent(QWheelEvent* event)
    {
