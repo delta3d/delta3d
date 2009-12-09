@@ -1379,7 +1379,8 @@ void ObjectMotionModel::UpdateRotation(void)
    float fDotAngle = upAxis * vector;
    float fDirection = rightAxis * vector;
 
-   std::cout << "fDistance: " << fDistance << " fDistMod: " << fDistMod << std::endl;
+   // Debug
+   //std::cout << "fDistance: " << fDistance << " fDistMod: " << fDistMod << std::endl;
 
    // The first update should not cause a rotation to happen
    // unless we're in snap mode, Instead, it should set the 
