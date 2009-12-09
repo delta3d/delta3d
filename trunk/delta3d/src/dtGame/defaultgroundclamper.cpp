@@ -107,7 +107,7 @@ namespace dtGame
       bool found = false;
       float diff = FLT_MAX;
       osg::Vec3 tempHit;
-      for (int i = 0; i < single.GetNumberOfHits(); ++i)
+      for (unsigned int i = 0; i < single.GetNumberOfHits(); ++i)
       {
          single.GetHitPoint(tempHit, i);
          float newDiff = std::abs(tempHit.z() - pointZ);
