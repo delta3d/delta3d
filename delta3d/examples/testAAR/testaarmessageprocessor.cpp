@@ -496,7 +496,7 @@ void TestAARMessageProcessor::UpdateTaskCamera()
 
          dtActors::TaskActorProxy& proxy =
             static_cast<dtActors::TaskActorProxy&>(mTaskMoveCamera->GetGameActorProxy());
-         proxy.NotifyActorUpdate();
+         proxy.NotifyFullActorUpdate();
       }
    }
 }

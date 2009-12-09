@@ -121,12 +121,12 @@ namespace dtABC
    /////////////////////////////////////////////////////////////////////////////
    LabelActor::LabelActor(const std::string& name)
       : BaseClass(name)
+      , mAutoBackSize(true)
       , mBackdropDims(DEFAULT_BACK_SIZE)
       , mTextNode(new osgText::Text)
       , mBackdrop(new osg::Geometry)
       , mBackdropVerts(NULL)
       , mFontFile()
-      , mAutoBackSize(true)
    {
       osg::Group* root = static_cast<osg::Group*>(GetOSGNode());
 
