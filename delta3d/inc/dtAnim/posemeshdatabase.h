@@ -40,9 +40,9 @@ namespace dtAnim
    class DT_ANIM_EXPORT PoseMeshDatabase: public osg::Referenced
    {
    public:
-      typedef std::vector<PoseMesh*> PoseMeshList;     
+      typedef std::vector<PoseMesh*> PoseMeshList;
 
-      PoseMeshDatabase( dtAnim::Cal3DModelWrapper *model );
+      PoseMeshDatabase(dtAnim::Cal3DModelWrapper* model);
       ~PoseMeshDatabase();
 
       /*
@@ -50,15 +50,15 @@ namespace dtAnim
       * @param name the name of the pose mesh whose pointer is wanted
       * @return a pointer to pose mesh with a matching name
       */
-      PoseMesh* GetPoseMeshByName( const std::string& name );
+      PoseMesh* GetPoseMeshByName(const std::string& name);
       
       PoseMeshList& GetMeshes() { return mMeshes; }
 
-      bool LoadFromFile( const std::string& file );      
+      bool LoadFromFile(const std::string& file);
 
    private:
       PoseMeshList mMeshes;
-      osg::ref_ptr<dtAnim::Cal3DModelWrapper> mModel;    
+      osg::ref_ptr<dtAnim::Cal3DModelWrapper> mModel;
    };
 }
 

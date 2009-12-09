@@ -6,12 +6,13 @@
 #include <dtGame/messagetype.h>
 #include "textlabelcomponent.h"
 
-
-ComponentGameActor::ComponentGameActor(dtGame::GameActorProxy &proxy)
+////////////////////////////////////////////////////////////////////////////////
+ComponentGameActor::ComponentGameActor(dtGame::GameActorProxy& proxy)
 : dtActors::GameMeshActor(proxy)
 {
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void ComponentGameActor::Interaction()
 {
    TextLabelComponent* tcomp;
@@ -20,12 +21,7 @@ void ComponentGameActor::Interaction()
 }
 
 
-// -----------------------------------
-
-
-
-
-/// Builds the actor properties
+////////////////////////////////////////////////////////////////////////////////
 void ComponentGameActorProxy::BuildPropertyMap()
 {
    dtActors::GameMeshActorProxy::BuildPropertyMap();  
@@ -41,7 +37,7 @@ void ComponentGameActorProxy::BuildPropertyMap()
 }
 
 
-/// Instantiates the actor
+////////////////////////////////////////////////////////////////////////////////
 void ComponentGameActorProxy::CreateActor() 
 {
    ComponentGameActor* actor = new ComponentGameActor(*this);

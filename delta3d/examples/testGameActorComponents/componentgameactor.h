@@ -8,7 +8,7 @@ class ComponentGameActor : public dtActors::GameMeshActor
   
 public:
 
-   ComponentGameActor(dtGame::GameActorProxy &proxy);
+   ComponentGameActor(dtGame::GameActorProxy& proxy);
 
    virtual void Interaction();
 
