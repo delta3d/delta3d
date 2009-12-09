@@ -73,7 +73,7 @@ namespace dtDirector
    {
       while ((int)linkConnectors.size() < count)
       {
-         QGraphicsPathItem* item = new QGraphicsPathItem(NULL, scene);
+         QGraphicsPathItem* item = new QGraphicsPathItem(scene->GetTranslationItem(), scene);
          item->setZValue(20.0f);
          linkConnectors.push_back(item);
       }
@@ -110,7 +110,7 @@ namespace dtDirector
    {
       while ((int)linkConnectors.size() < count)
       {
-         QGraphicsPathItem* item = new QGraphicsPathItem(NULL, scene);
+         QGraphicsPathItem* item = new QGraphicsPathItem(scene->GetTranslationItem(), scene);
          item->setZValue(20.0f);
          linkConnectors.push_back(item);
       }
@@ -149,6 +149,11 @@ namespace dtDirector
    {
       setFlag(QGraphicsItem::ItemIsMovable, true);
       setFlag(QGraphicsItem::ItemIsSelectable, true);
+
+      if (QT_VERSION >= 0x00040600)
+      {
+         setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -656,7 +661,7 @@ namespace dtDirector
          return Qt::red;
          break;
       case dtDAL::DataType::INT_ID:
-         return Qt::cyan;
+         return Qt::blue;
          break;
       case dtDAL::DataType::FLOAT_ID:
          return Qt::yellow;
@@ -686,7 +691,7 @@ namespace dtDirector
          return Qt::darkRed;
          break;
       case dtDAL::DataType::INT_ID:
-         return Qt::darkCyan;
+         return Qt::darkBlue;
          break;
       case dtDAL::DataType::FLOAT_ID:
          return Qt::darkYellow;
@@ -813,6 +818,11 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    QPainterPath NodeItem::CreateConnectionH(QPointF start, QPointF end, bool drawReverse)
    {
+      // Modify the positions based on the translation of the background item.
+      QPointF offset = mScene->GetTranslationItem()->scenePos();
+      start -= offset;
+      end -= offset;
+
       float halfX = (start.x() + end.x()) / 2.0f;
 
       QPainterPath path;
@@ -863,6 +873,11 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    QPainterPath NodeItem::CreateConnectionV(QPointF start, QPointF end, bool drawReverse)
    {
+      // Modify the positions based on the translation of the background item.
+      QPointF offset = mScene->GetTranslationItem()->scenePos();
+      start -= offset;
+      end -= offset;
+
       float halfY = (start.y() + end.y()) / 2.0f;
 
       QPainterPath path;

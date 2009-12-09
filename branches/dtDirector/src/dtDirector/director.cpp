@@ -209,6 +209,9 @@ namespace dtDirector
    void Director::CreateDebugScript()
    {
       SetName("Debug Script");
+      SetDescription("Debug Script for Testing purposes.");
+      SetAuthor("Jeff P. Houde");
+      SetComment("This is a code generated test script.");
 
       dtDirector::NodeManager& nodeManager = dtDirector::NodeManager::GetInstance();
 

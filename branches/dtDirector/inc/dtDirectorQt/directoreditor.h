@@ -38,11 +38,13 @@
 #include <QtGui/QScrollBar>
 #include <QtGui/QGraphicsScene>
 #include <QtGui/QGraphicsView>
+#include <QtGui/QGraphicsSceneMouseEvent>
 
 class QAction;
 
 namespace dtDirector
 {
+   class EditorView;
    class DirectorEditor;
    class NodeItem;
    class MacroItem;
@@ -107,9 +109,15 @@ namespace dtDirector
       *
       * @param[in]  director    The Director.
       * @param[in]  propEditor  The Property Editor.
+      * @param[in]  view        The scene viewer.
       * @param[in]  parent      The parent widget.
       */
       EditorScene(Director* director, PropertyEditor* propEditor, QWidget* parent = 0);
+
+      /**
+       * Sets the current view.
+       */
+      void SetView(EditorView* view) {mView = view;}
 
       /**
        * Sets the currently viewed director graph.
@@ -117,6 +125,11 @@ namespace dtDirector
        * @param[in]  graph  The Graph to view.
        */
       void SetGraph(dtDirector::DirectorGraphData* graph);
+
+      /**
+       * Retrieves the background item.
+       */
+      QGraphicsRectItem* GetTranslationItem() {return mTranslationItem;};
 
       /**
        * Refreshes the graph.
@@ -163,9 +176,28 @@ namespace dtDirector
 
    signals:
 
+   public slots:
+
    protected:
       
+      /**
+       * Mouse button events.
+       *
+       * @param[in]  event  The mouse event.
+       */
+      void mousePressEvent(QGraphicsSceneMouseEvent* event);
+      void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
+
+      /**
+       * Mouse movement event.
+       *
+       * @param[in]  event  The mouse event.
+       */
+      void mouseMoveEvent(QGraphicsSceneMouseEvent* event);  
+
    private:
+
+      EditorView*              mView;
 
       dtCore::RefPtr<Director> mDirector;
       PropertyEditor*          mPropertyEditor;
@@ -173,6 +205,13 @@ namespace dtDirector
       dtDirector::DirectorGraphData*   mGraph;
 
       std::vector<NodeItem*>           mNodes;
+
+      bool     mAllowDrag;
+      bool     mDragging;
+      QPointF  mDragOrigin;
+      QPointF  mDragCenter;
+
+      QGraphicsRectItem* mTranslationItem;
       
       PropertyEditor::PropertyContainerRefPtrVector mSelected;
    };
@@ -192,23 +231,36 @@ namespace dtDirector
        * @param[in]  scene   The scene.
        * @param[in]  parent  The parent.
        */
-      EditorView(EditorScene* scene, QWidget* parent = 0)
-         : QGraphicsView(scene, parent)
-         , mScene(scene)
-      {
-         setObjectName("Graph Tab");
-         setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
-      }
+      EditorView(EditorScene* scene, QWidget* parent = 0);
 
       /**
        * Retrieves the graphic scene.
        */
       EditorScene* GetScene() {return mScene;}
 
+      /**
+       * Retrieves the visible rectangle of the scene.
+       *
+       * @return  The visible rect.
+       */
+      QRectF VisibleRect();
+
+   protected:
+
+      /**
+       * Event handler when the mouse wheel is scrolled.
+       *
+       * @param[in]  event  The wheel event.
+       */
+      void wheelEvent(QWheelEvent* event);
+
    private:
 
       EditorScene* mScene;
 
+      float mMinScale;
+      float mMaxScale;
+      float mCurrentScale;
    };
 
    /**

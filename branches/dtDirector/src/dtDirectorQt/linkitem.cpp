@@ -213,11 +213,17 @@ namespace dtDirector
          {
             QPointF start(data.linkGraphic->scenePos());
             QPointF end(mouseEvent->scenePos());
+
+            // Modify the positions based on the translation of the background item.
+            QPointF offset = mScene->GetTranslationItem()->scenePos();
+            start += offset;
+            end += offset;
+
             start.setX(start.x() + LINK_SIZE/2);
             start.setY(start.y() + LINK_SIZE/2);
 
             // Find and highlight any output links being hovered over.
-            QList<QGraphicsItem*> hoverList = mScene->items(end.x(), end.y(), 1, 1);
+            QList<QGraphicsItem*> hoverList = mScene->items(mouseEvent->scenePos().x(), mouseEvent->scenePos().y(), 1, 1);
             if (!hoverList.empty())
             {
                int count = (int)hoverList.size();
@@ -227,7 +233,7 @@ namespace dtDirector
                   if (item)
                   {
                      // Snap the end position to the output link.
-                     end = QPointF(item->scenePos());
+                     end = QPointF(item->scenePos()) + offset;
                      end.setX(end.x() + LINK_LENGTH);
                      end.setY(end.y() + LINK_SIZE/2);
                      break;
@@ -469,11 +475,17 @@ namespace dtDirector
          {
             QPointF start(data.linkGraphic->scenePos());
             QPointF end(mouseEvent->scenePos());
+
+            // Modify the positions based on the translation of the background item.
+            QPointF offset = mScene->GetTranslationItem()->scenePos();
+            start += offset;
+            end += offset;
+
             start.setX(start.x() + LINK_LENGTH);
             start.setY(start.y() + LINK_SIZE/2);
 
             // Find and highlight any output links being hovered over.
-            QList<QGraphicsItem*> hoverList = mScene->items(end.x(), end.y(), 1, 1);
+            QList<QGraphicsItem*> hoverList = mScene->items(mouseEvent->scenePos().x(), mouseEvent->scenePos().y(), 1, 1);
             if (!hoverList.empty())
             {
                int count = (int)hoverList.size();
@@ -483,7 +495,7 @@ namespace dtDirector
                   if (item)
                   {
                      // Snap the end position to the output link.
-                     end = QPointF(item->scenePos());
+                     end = QPointF(item->scenePos()) + offset;
                      end.setX(end.x() + LINK_SIZE/2);
                      end.setY(end.y() + LINK_SIZE/2);
                      break;
@@ -739,6 +751,11 @@ namespace dtDirector
             QPointF start(data.linkGraphic->scenePos());
             QPointF end(mouseEvent->scenePos());
 
+            // Modify the positions based on the translation of the background item.
+            QPointF offset = mScene->GetTranslationItem()->scenePos();
+            start += offset;
+            end += offset;
+
             if (data.link->IsOutLink())
             {
                start.setY(start.y() + LINK_LENGTH);
@@ -749,7 +766,7 @@ namespace dtDirector
             }
 
             // Find and highlight any output links being hovered over.
-            QList<QGraphicsItem*> hoverList = mScene->items(end.x(), end.y(), 1, 1);
+            QList<QGraphicsItem*> hoverList = mScene->items(mouseEvent->scenePos().x(), mouseEvent->scenePos().y(), 1, 1);
             if (!hoverList.empty())
             {
                int count = (int)hoverList.size();
@@ -759,7 +776,7 @@ namespace dtDirector
                   if (item)
                   {
                      // Snap the end position to the output link.
-                     end = QPointF(item->scenePos());
+                     end = QPointF(item->scenePos()) + offset;
                      end.setY(end.y() - LINK_LENGTH);
                      break;
                   }
@@ -973,11 +990,17 @@ namespace dtDirector
       // Update the drawn spline.
       QPointF start(mValueItem->scenePos());
       QPointF end(mouseEvent->scenePos());
+
+      // Modify the positions based on the translation of the background item.
+      QPointF offset = mScene->GetTranslationItem()->scenePos();
+      start += offset;
+      end += offset;
+
       start.setX(start.x() + mValueItem->mNodeWidth/2);
       start.setY(start.y() - LINK_LENGTH);
 
       // Find and highlight any value links being hovered over.
-      QList<QGraphicsItem*> hoverList = mScene->items(end.x(), end.y(), 1, 1);
+      QList<QGraphicsItem*> hoverList = mScene->items(mouseEvent->scenePos().x(), mouseEvent->scenePos().y(), 1, 1);
       if (!hoverList.empty())
       {
          int count = (int)hoverList.size();
@@ -987,7 +1010,7 @@ namespace dtDirector
             if (item)
             {
                // Snap the end position to the output link.
-               end = QPointF(item->scenePos());
+               end = QPointF(item->scenePos()) + offset;
 
                ValueData& data = item->mNodeItem->GetValues()[item->mLinkIndex];
 

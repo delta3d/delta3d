@@ -24,6 +24,8 @@
 #include <dtDirectorQt/valueitem.h>
 #include <dtDirectorQt/macroitem.h>
 
+#include <dtUtil/mathdefines.h>
+
 #include <QtGui/QToolBar>
 #include <QtGui/QAction>
 #include <QtGui/QVBoxLayout>
@@ -82,7 +84,11 @@ namespace dtDirector
       : QGraphicsScene(parent)
       , mDirector(director)
       , mPropertyEditor(propEditor)
+      , mView(NULL)
       , mGraph(NULL)
+      , mAllowDrag(false)
+      , mDragging(false)
+      , mTranslationItem(NULL)
    {
       mSelected.push_back(mDirector.get());
       mPropertyEditor->SetScene(this);
@@ -97,13 +103,13 @@ namespace dtDirector
       clear();
       mNodes.clear();
 
-      mGraph = graph;
+      // The translation item is the parent class for all other items.
+      // This simulates the translation of the view by moving all children
+      // nodes with it.  When the user translates the view, this item is
+      // actually being translated instead.
+      mTranslationItem = new QGraphicsRectItem(NULL, this);
 
-      //// HACK
-      //if (!mGraph->mSubGraphs.empty())
-      //{
-      //   mGraph = &mGraph->mSubGraphs[0];
-      //}
+      mGraph = graph;
 
       if (!mGraph) return;
 
@@ -112,7 +118,7 @@ namespace dtDirector
       for (int index = 0; index < count; index++)
       {
          Node* node = mGraph->mEventNodes[index].get();
-         ActionItem* item = new ActionItem(node, NULL, this);
+         ActionItem* item = new ActionItem(node, mTranslationItem, this);
          if (item)
          {
             item->setZValue(0.0f);
@@ -124,7 +130,7 @@ namespace dtDirector
       for (int index = 0; index < count; index++)
       {
          Node* node = mGraph->mActionNodes[index].get();
-         ActionItem* item = new ActionItem(node, NULL, this);
+         ActionItem* item = new ActionItem(node, mTranslationItem, this);
          if (item)
          {
             item->setZValue(0.0f);
@@ -136,7 +142,7 @@ namespace dtDirector
       for (int index = 0; index < count; index++)
       {
          Node* node = mGraph->mValueNodes[index].get();
-         ValueItem* item = new ValueItem(node, NULL, this);
+         ValueItem* item = new ValueItem(node, mTranslationItem, this);
          if (item)
          {
             item->setZValue(10.0f);
@@ -148,7 +154,7 @@ namespace dtDirector
       for (int index = 0; index < count; index++)
       {
          DirectorGraphData* graph = mGraph->mSubGraphs[index].get();
-         MacroItem* item = new MacroItem(graph, NULL, this);
+         MacroItem* item = new MacroItem(graph, mTranslationItem, this);
          if (item)
          {
             item->setZValue(0.0f);
@@ -262,6 +268,125 @@ namespace dtDirector
       mPropertyEditor->HandlePropertyContainersSelected(mSelected);
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
+   {
+      // If we are not mouse clicking on a node...
+      QGraphicsScene::mousePressEvent(event);
+
+      if (!itemAt(event->scenePos()))
+      {
+         mAllowDrag = true;
+         mDragOrigin = event->scenePos();
+      }
+      else
+      {
+         mAllowDrag = false;
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+   {
+      QGraphicsScene::mouseReleaseEvent(event);
+
+      mAllowDrag = false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
+   {
+      QGraphicsScene::mouseMoveEvent(event);
+
+      if (mDragging) return;
+
+      // If we are dragging the view.
+      if (mAllowDrag && mView)
+      {
+         mDragging = true;
+         QPointF mousePos = event->scenePos();
+         QPointF inc = mDragOrigin - mousePos;
+         mDragOrigin = mousePos;
+
+         //inc = mView->matrix().map(inc);
+
+         // Translate the background item to simulate the entire view moving.
+         if (mTranslationItem)
+         {
+            mTranslationItem->setPos(mTranslationItem->pos() - inc);
+         }
+
+         //mView->horizontalScrollBar()->setValue(mView->horizontalScrollBar()->value() + inc.x() / 5.0f);
+         //mView->verticalScrollBar()->setValue(mView->verticalScrollBar()->value() + inc.y() / 5.0f);
+
+         mDragging = false;
+      }
+   }
+
+
+   //////////////////////////////////////////////////////////////////////////
+   EditorView::EditorView(EditorScene* scene, QWidget* parent)
+      : QGraphicsView(scene, parent)
+      , mScene(scene)
+      , mMinScale(0.1f)
+      , mMaxScale(1.0f)
+      , mCurrentScale(1.0f)
+   {
+      setObjectName("Graph Tab");
+      setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+
+      // Always hide the scroll bars.
+      setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+      setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   QRectF EditorView::VisibleRect()
+   {
+      QPointF tl(horizontalScrollBar()->value(), verticalScrollBar()->value());
+      QPointF br = tl + viewport()->rect().bottomRight();
+      QMatrix mat = matrix().inverted();
+      return mat.mapRect(QRectF(tl,br));
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorView::wheelEvent(QWheelEvent* event)
+   {
+      // Delta is in eighths of degrees
+      int numberOfDegrees = event->delta() / 8;
+
+      // Typical mice move in 15 degree steps
+      float numberOfSteps = (float)numberOfDegrees / 15.0f;
+
+      float inc = (numberOfSteps * 0.1f) + 1.0f;
+
+      // Clamp the scale to the min and max range.
+      if (mCurrentScale * inc > mMaxScale)
+      {
+         inc = mMaxScale / mCurrentScale;
+      }
+      else if (mCurrentScale * inc < mMinScale)
+      {
+         inc = mMinScale / mCurrentScale;
+      }
+
+      mCurrentScale *= inc;
+      scale(inc, inc);
+
+      // Translate the view towards the mouse cursor.
+      if (numberOfSteps > 0.0f)
+      {
+         QPointF centerPos(width()/2, height()/2);
+         QPointF mousePos = event->pos();
+
+         QPointF translation = mousePos - centerPos;
+         translation = mapToScene(translation.x(), translation.y());
+         translation *= 0.2f;
+         mScene->GetTranslationItem()->setPos(
+            mScene->GetTranslationItem()->pos() - translation);
+      }
+   }
+
 
    //////////////////////////////////////////////////////////////////////////////
    DirectorEditor::DirectorEditor(Director* director, QWidget* parent)
@@ -310,7 +435,7 @@ namespace dtDirector
          this, SLOT(OnParentButton()));
 
       // Open the home graph.
-      OpenGraph(mDirector->GetGraphData());
+      OpenGraph(mDirector->GetGraphData(), true);
       OpenGraph(mDirector->GetGraphData()->GetSubGraphs()[0], true);
    }
 
@@ -328,6 +453,7 @@ namespace dtDirector
       {
          EditorScene* scene = new EditorScene(mDirector, mPropertyEditor);
          EditorView* view = new EditorView(scene, this);
+         scene->SetView(view);
 
          int index = mGraphTabs->addTab(view, "");
          mGraphTabs->setCurrentIndex(index);
@@ -358,6 +484,7 @@ namespace dtDirector
          EditorView* view = dynamic_cast<EditorView*>(mGraphTabs->widget(index));
          if (view)
          {
+            mPropertyEditor->SetScene(view->GetScene());
             view->GetScene()->Refresh();
             view->GetScene()->RefreshProperties();
          }
