@@ -547,7 +547,7 @@ namespace dtDirector
          {
             ValueData& data = mNodeItem->GetValues()[mLinkIndex];
             dtDAL::DataType& type = data.link->GetPropertyType();
-            if (data.link->IsTypeChecking() && type != dtDAL::DataType::UNKNOWN)
+            if (data.link->IsTypeChecking())
             {
                data.linkGraphic->setPen(QPen(mNodeItem->GetDarkColorForType(type.GetTypeId()), mLineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
             }

@@ -538,9 +538,9 @@ namespace dtDirector
          data.linkGraphic->SetPropertyType(data.link->GetPropertyType().GetTypeId());
 
          // Set the color of the link based on the property type.
-         if (data.link->IsTypeChecking() && data.link->GetPropertyType() != dtDAL::DataType::UNKNOWN)
+         dtDAL::DataType& type = data.link->GetPropertyType();
+         if (data.link->IsTypeChecking())
          {
-            dtDAL::DataType& type = data.link->GetPropertyType();
             data.linkGraphic->setPen(QPen(GetDarkColorForType(type.GetTypeId()), 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
          }
          else
@@ -549,15 +549,7 @@ namespace dtDirector
          }
 
          // Set the color of the link based on the property type.
-         if (data.link->GetPropertyType() != dtDAL::DataType::UNKNOWN)
-         {
-            dtDAL::DataType& type = data.link->GetPropertyType();
-            data.linkGraphic->setBrush(GetColorForType(type.GetTypeId()));
-         }
-         else
-         {
-            data.linkGraphic->setBrush(Qt::darkGray);
-         }
+         data.linkGraphic->setBrush(GetColorForType(type.GetTypeId()));
 
          // Set the link text, and position it right aligned with the link graphic.
          data.linkName->setPlainText(data.link->GetLabel().c_str());
@@ -655,7 +647,7 @@ namespace dtDirector
       switch (type)
       {
       case dtDAL::DataType::ACTOR_ID:
-         return QColor(255, 0, 255);
+         return Qt::magenta;
          break;
       case dtDAL::DataType::BOOLEAN_ID:
          return Qt::red;
@@ -670,11 +662,12 @@ namespace dtDirector
          return Qt::green;
          break;
       case dtDAL::DataType::STRING_ID:
-         return Qt::magenta;
+         return Qt::cyan;
          break;
 
+      case dtDAL::DataType::UNKNOWN_ID:
       default:
-         return Qt::gray;
+         return Qt::white;
          break;
       }
    }
@@ -685,7 +678,7 @@ namespace dtDirector
       switch (type)
       {
       case dtDAL::DataType::ACTOR_ID:
-         return QColor(150, 0, 150);
+         return Qt::darkMagenta;
          break;
       case dtDAL::DataType::BOOLEAN_ID:
          return Qt::darkRed;
@@ -700,11 +693,12 @@ namespace dtDirector
          return Qt::darkGreen;
          break;
       case dtDAL::DataType::STRING_ID:
-         return Qt::darkMagenta;
+         return Qt::darkCyan;
          break;
 
+      case dtDAL::DataType::UNKNOWN_ID:
       default:
-         return Qt::darkGray;
+         return Qt::gray;
          break;
       }
    }

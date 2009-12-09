@@ -73,8 +73,8 @@ namespace dtDirector
 
          setPen(QPen(Qt::darkGray, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
          QRadialGradient radialGradient(mNodeWidth/2, mNodeHeight/2, size, mNodeWidth/2, mNodeHeight/2);
-         radialGradient.setColorAt(0.0, Qt::green);
-         radialGradient.setColorAt(1.0, Qt::darkGreen);
+         radialGradient.setColorAt(0.0, Qt::darkGreen);
+         radialGradient.setColorAt(1.0, Qt::green);
          setBrush(radialGradient);
          setPolygon(mPolygon);
 
