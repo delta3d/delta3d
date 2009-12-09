@@ -203,7 +203,7 @@ namespace dtQt
             // create a single label entry for each multi selected proxy
             //DynamicGroupControl* parentControl = new DynamicGroupControl(myProxy->GetName());
             // TODO fix name.
-            DynamicGroupControl* parentControl = new DynamicGroupControl("Property Container");
+            DynamicGroupControl* parentControl = new DynamicGroupControl(GetContainerGroupName(pc.get()));
 
             parentControl->InitializeData(GetRootControl(), propertyModel, pc.get(), NULL);
             //parentControl->setDisplayValues(tr(myProxy->GetActorType().GetName().c_str()), "",
@@ -247,6 +247,12 @@ namespace dtQt
       //  put the count of selections
       QString label = baseGroupBoxName + " (" + QString::number(mSelectedPC.size()) + " selected)";
       return label;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   std::string BasePropertyEditor::GetContainerGroupName(dtDAL::PropertyContainer* propertyContainer)
+   {
+      return "Property Container";
    }
 
    /////////////////////////////////////////////////////////////////////////////////

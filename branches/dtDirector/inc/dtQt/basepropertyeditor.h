@@ -139,6 +139,7 @@ namespace dtQt
       void buildDynamicControls(dtDAL::PropertyContainer& propertyContainer, const std::vector<dtDAL::ActorProperty*>& propList, DynamicGroupControl* parentControl = NULL);
 
       virtual QString GetGroupBoxLabelText(const QString& baseGroupBoxName);
+      virtual std::string GetContainerGroupName(dtDAL::PropertyContainer* propertyContainer);
 
       DynamicGroupControl* GetRootControl();
 
