@@ -49,56 +49,62 @@ namespace dtDirector
 
       if (selectedContainers.size() == 1)
       {
-         EventNode* eventNode = dynamic_cast<EventNode*>(selectedContainers[0]);
-         if (eventNode)
-         {
-            return "Event Node '" + tr(eventNode->GetType().GetFullName().c_str()) + "' selected";
-         }
-
-         ActionNode* actionNode = dynamic_cast<ActionNode*>(selectedContainers[0]);
-         if (actionNode)
-         {
-            return "Action Node '" + tr(actionNode->GetType().GetFullName().c_str()) + "' selected";
-         }
-
-         ValueNode* valueNode = dynamic_cast<ValueNode*>(selectedContainers[0]);
-         if (valueNode)
-         {
-            return "Value Node '" + tr(valueNode->GetType().GetFullName().c_str()) + "' selected";
-         }
-
-         DirectorGraphData* graph = dynamic_cast<DirectorGraphData*>(selectedContainers[0]);
-         if (graph)
-         {
-            return "Macro '" + tr(graph->GetName().c_str()) + "' selected";
-         }
-
-         Director* director = dynamic_cast<Director*>(selectedContainers[0]);
-         if (director)
-         {
-            return "Director '" + tr(director->GetName().c_str()) + "' selected";
-         }
+         return QString(GetContainerGroupName(selectedContainers[0]).c_str()) + " selected";
       }
 
-      return BaseClass::GetGroupBoxLabelText(baseGroupBoxName);
+      return BaseClass::GetGroupBoxLabelText("Multiple nodes selected");
    }
 
-   /////////////////////////////////////////////////////////////////////////////////
-   void PropertyEditor::buildDynamicControls(dtDAL::PropertyContainer& propCon, dtQt::DynamicGroupControl* parentControl)
+   //////////////////////////////////////////////////////////////////////////
+   std::string PropertyEditor::GetContainerGroupName(dtDAL::PropertyContainer* propertyContainer)
    {
-      dtQt::DynamicGroupControl* parent = GetRootControl();
-      if (parentControl != NULL)
+      EventNode* eventNode = dynamic_cast<EventNode*>(propertyContainer);
+      if (eventNode)
       {
-         parent = parentControl;
+         return std::string("Event Node '") + eventNode->GetType().GetFullName().c_str() + "'";
       }
 
-      std::vector<dtDAL::ActorProperty*> propList;
-      propCon.GetPropertyList(propList);
+      ActionNode* actionNode = dynamic_cast<ActionNode*>(propertyContainer);
+      if (actionNode)
+      {
+         return std::string("Action Node '") + actionNode->GetType().GetFullName().c_str() + "'";
+      }
 
-      //ViewportManager::GetInstance().emitModifyPropList(propCon, propList);
+      ValueNode* valueNode = dynamic_cast<ValueNode*>(propertyContainer);
+      if (valueNode)
+      {
+         return std::string("Value Node '") + valueNode->GetType().GetFullName().c_str() + "'";
+      }
 
-      BaseClass::buildDynamicControls(propCon, propList, parentControl);
+      DirectorGraphData* graph = dynamic_cast<DirectorGraphData*>(propertyContainer);
+      if (graph)
+      {
+         return std::string("Macro '") + graph->GetName().c_str() + "'";
+      }
+
+      Director* director = dynamic_cast<Director*>(propertyContainer);
+      if (director)
+      {
+         return std::string("Director '") + director->GetName().c_str() + "'";
+      }
    }
+
+   ///////////////////////////////////////////////////////////////////////////////////
+   //void PropertyEditor::buildDynamicControls(dtDAL::PropertyContainer& propCon, dtQt::DynamicGroupControl* parentControl)
+   //{
+   //   //dtQt::DynamicGroupControl* parent = GetRootControl();
+   //   //if (parentControl != NULL)
+   //   //{
+   //   //   parent = parentControl;
+   //   //}
+
+   //   //std::vector<dtDAL::ActorProperty*> propList;
+   //   //propCon.GetPropertyList(propList);
+
+   //   ////ViewportManager::GetInstance().emitModifyPropList(propCon, propList);
+
+   //   BaseClass::buildDynamicControls(propCon, propList, parentControl);
+   //}
 
    /////////////////////////////////////////////////////////////////////////////////
    void PropertyEditor::closeEvent(QCloseEvent* e)

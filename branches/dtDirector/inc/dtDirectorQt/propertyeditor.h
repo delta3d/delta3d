@@ -90,9 +90,10 @@ namespace dtDirector
 
    public slots:
    protected:
-      virtual void buildDynamicControls(dtDAL::PropertyContainer& propCon, dtQt::DynamicGroupControl* parentControl);
+      //virtual void buildDynamicControls(dtDAL::PropertyContainer& propCon, dtQt::DynamicGroupControl* parentControl);
 
       virtual QString GetGroupBoxLabelText(const QString& baseGroupBoxName);
+      virtual std::string GetContainerGroupName(dtDAL::PropertyContainer* propertyContainer);
 
       /// Called on the close event
       virtual void closeEvent(QCloseEvent* e);
