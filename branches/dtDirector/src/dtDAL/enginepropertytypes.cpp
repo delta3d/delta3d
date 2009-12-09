@@ -22,7 +22,6 @@
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/project.h>
 #include <dtDAL/exceptionenum.h>
-#include <dtDAL/map.h>
 #include <dtDAL/mapxml.h>
 #include <dtDAL/gameeventmanager.h>
 #include <dtUtil/stringutils.h>
@@ -172,9 +171,35 @@ namespace dtDAL
       , mProxy(&actorProxy)
       , SetIdFunctor(Set)
       , GetIdFunctor(Get)
+      , GetMapFunctor(this, &ActorIDActorProperty::GetMap)
       , mDesiredActorClass(desiredActorClass)
    {
+   }
 
+   ////////////////////////////////////////////////////////////////////////////
+   ActorIDActorProperty::ActorIDActorProperty(
+      const dtUtil::RefString& name,
+      const dtUtil::RefString& label,
+      SetFuncType Set,
+      GetFuncType Get,
+      GetMapType MapFunctor,
+      const dtUtil::RefString& desiredActorClass,
+      const dtUtil::RefString& desc,
+      const dtUtil::RefString& groupName)
+      : ActorProperty(DataType::ACTOR, name, label, desc, groupName)
+      , mProxy(NULL)
+      , SetIdFunctor(Set)
+      , GetIdFunctor(Get)
+      , GetMapFunctor(MapFunctor)
+      , mDesiredActorClass(desiredActorClass)
+   {
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   dtDAL::Map* ActorIDActorProperty::GetMap()
+   {
+      dtDAL::Map* map = Project::GetInstance().GetMapForActorProxy(*mProxy);
+      return map;
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -245,12 +270,11 @@ namespace dtDAL
       dtCore::UniqueId idValue = GetValue();
       try
       {
-         Map* map = Project::GetInstance().GetMapForActorProxy(*mProxy);
-
+         dtDAL::Map* map = GetMapFunctor();
          if (map == NULL)
          {
             dtUtil::Log::GetInstance("enginepropertytypes.cpp").LogMessage(dtUtil::Log::LOG_INFO,
-               __FUNCTION__, __LINE__, "Actor does not exist in a map.  Setting property %s with string value failed.",
+               __FUNCTION__, __LINE__, "Map not found.  Setting property %s with string value failed.",
                GetName().c_str());
             return false;
          }
@@ -277,7 +301,7 @@ namespace dtDAL
          else
          {
             dtUtil::Log::GetInstance("enginepropertytypes.cpp").LogMessage(dtUtil::Log::LOG_WARNING,
-               __FUNCTION__, __LINE__, "Error setting ActorActorProperty.  Setting property %s with string value failed. Error Message %s.",
+               __FUNCTION__, __LINE__, "Error setting ActorIDActorProperty.  Setting property %s with string value failed. Error Message %s.",
                GetName().c_str(), ex.What().c_str());
          }
       }
@@ -291,12 +315,11 @@ namespace dtDAL
       dtCore::UniqueId idValue = GetValue();
       try
       {
-         Map* map = Project::GetInstance().GetMapForActorProxy(*mProxy);
-
+         dtDAL::Map* map = GetMapFunctor();
          if (map == NULL)
          {
             dtUtil::Log::GetInstance("enginepropertytypes.cpp").LogMessage(dtUtil::Log::LOG_INFO,
-               __FUNCTION__, __LINE__, "Actor does not exist in a map.  Setting property %s with string value failed.",
+               __FUNCTION__, __LINE__, "Map not found.  Setting property %s with string value failed.",
                GetName().c_str());
             return false;
          }
@@ -323,7 +346,7 @@ namespace dtDAL
          else
          {
             dtUtil::Log::GetInstance("enginepropertytypes.cpp").LogMessage(dtUtil::Log::LOG_WARNING,
-               __FUNCTION__, __LINE__, "Error setting ActorActorProperty.  Setting property %s with string value failed. Error Message %s.",
+               __FUNCTION__, __LINE__, "Error setting ActorIDActorProperty.  Setting property %s with string value failed. Error Message %s.",
                GetName().c_str(), ex.What().c_str());
          }
       }
