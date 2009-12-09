@@ -50,8 +50,9 @@ namespace dtDirector
        * Initializes the Node.
        *
        * @param[in]  nodeType  The node type.
+       * @param[in]  graph     The graph that owns this node.
        */
-      virtual void Init(const NodeType& nodeType);
+      virtual void Init(const NodeType& nodeType, DirectorGraphData* graph);
 
       /**
        * Triggers the event.

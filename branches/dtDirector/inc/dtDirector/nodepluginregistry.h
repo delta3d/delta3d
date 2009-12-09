@@ -32,6 +32,8 @@
 
 namespace dtDirector
 {
+   class DirectorGraphData;
+
    /**
     * The NodePluginRegistry is the base class that developers extend to
     * build their own Node registries.  Its main purpose is to serve as an
@@ -150,13 +152,14 @@ namespace dtDirector
       /**
        * Creates a new node based on the NodeType given.
        *
-       * @param[in]  type  Type of node to create.
+       * @param[in]  type   Type of node to create.
+       * @param[in]  graph  The graph that owns this node.
        *
        * @return  A smart pointer to the newly created Node.
        *
        * @throws ExceptionEnum::ObjectFactoryUnknownType
        */
-      dtCore::RefPtr<Node> CreateNode(const NodeType& type);
+      dtCore::RefPtr<Node> CreateNode(const NodeType& type, DirectorGraphData* graph);
 
    protected:
 

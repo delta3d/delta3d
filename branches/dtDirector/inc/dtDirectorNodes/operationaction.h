@@ -43,8 +43,9 @@ namespace dtDirector
        * Initializes the Node.
        *
        * @param[in]  nodeType  The node type.
+       * @param[in]  graph     The graph that owns this node.
        */
-      virtual void Init(const NodeType& nodeType);
+      virtual void Init(const NodeType& nodeType, DirectorGraphData* graph);
 
       /**
        * This method is called in init, which instructs the node
@@ -80,6 +81,21 @@ namespace dtDirector
 
       void SetResult(double value);
       double GetResult();
+
+      void SetFloatTest(float value) {}
+      float GetFloatTest() {return 0;}
+
+      void SetDoubleTest(double value) {}
+      double GetDoubleTest() {return 0;}
+
+      void SetBoolTest(bool value) {}
+      bool GetBoolTest() {return true;}
+
+      void SetStringTest(const std::string& value) {}
+      std::string GetStringTest() {return "test";}
+
+      void SetActorTest(const dtCore::UniqueId& id) {}
+      dtCore::UniqueId GetActorTest() {return dtCore::UniqueId();}
 
    protected:
 

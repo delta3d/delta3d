@@ -45,6 +45,9 @@
 
 namespace dtDirector
 {
+   class Director;
+   class DirectorGraphData;
+
    /**
     * This is the base class for all node objects.
     *
@@ -66,8 +69,9 @@ namespace dtDirector
        * Initializes the Node.
        *
        * @param[in]  nodeType  The node type.
+       * @param[in]  graph     The graph that owns this node.
        */
-      virtual void Init(const NodeType& nodeType);
+      virtual void Init(const NodeType& nodeType, DirectorGraphData* graph);
 
       /**
        * Creates a copy of this node and returns it.  The method uses the
@@ -198,6 +202,20 @@ namespace dtDirector
        * @param[in]  disabled  True to disable.
        */
       void SetDisabled(bool disabled);
+
+      /**
+       * Retrieves the director.
+       *
+       * @return  The director.
+       */
+      Director* GetDirector() {return mDirector;}
+
+      /**
+       * Retrieves the graph.
+       *
+       * @return  The graph.
+       */
+      DirectorGraphData* GetGraph() {return mGraph;}
 
       /**
        * Retrieves the total number of values linked to a property.
@@ -402,6 +420,9 @@ namespace dtDirector
       osg::Vec2          mPosition;
 
       bool               mDisabled;
+
+      Director*          mDirector;
+      DirectorGraphData* mGraph;
 
 #pragma warning (push)
 #pragma warning (disable:4251)

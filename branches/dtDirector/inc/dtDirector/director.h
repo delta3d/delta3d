@@ -32,12 +32,10 @@
 #include <dtDirector/outputlink.h>
 #include <dtDirector/valuelink.h>
 
+#include <dtDAL/map.h>
+
 #include <dtUtil/log.h>
 
-namespace dtDAL
-{
-   class Map;
-}
 
 namespace dtDirector
 {
@@ -52,7 +50,7 @@ namespace dtDirector
       /**
        * Constructor.
        */
-      DirectorGraphData();
+      DirectorGraphData(Director* director);
 
       /**
        * This method is called in init, which instructs the director
@@ -85,6 +83,20 @@ namespace dtDirector
       Node* GetNode(const dtCore::UniqueId& id);
 
       /**
+       * Adds a node to the graph.
+       *
+       * @param[in]  node  The node.
+       */
+      bool AddNode(Node* node);
+      
+      /**
+       * Retrieves the director.
+       *
+       * @return  The director.
+       */
+      Director* GetDirector() {return mDirector;}
+
+      /**
        * Accessors for the graph name.
        */
       void SetName(const std::string& name) {mName = name;}
@@ -95,7 +107,7 @@ namespace dtDirector
        */
       void SetPosition(const osg::Vec2& pos) {mPosition = pos;}
       const osg::Vec2& GetPosition() {return mPosition;}
-      
+
       /**
        * Accessors for the node lists.
        */
@@ -116,6 +128,7 @@ namespace dtDirector
        */
       std::vector<dtCore::RefPtr<DirectorGraphData> >& GetSubGraphs() {return mSubGraphs;}
 
+      Director*          mDirector;
       DirectorGraphData* mParent;
 
       std::string mName;
@@ -148,8 +161,24 @@ namespace dtDirector
 
       /**
        * Initializes the Director.
+       *
+       * @param[in]  map  The current map.
        */
-      virtual void Init();
+      virtual void Init(dtDAL::Map* map = NULL);
+
+      /**
+       * Retrieves the map.
+       *
+       * @return the map.
+       */
+      dtDAL::Map* GetMap() {return mMap;}
+
+      /**
+       * Sets the map.
+       *
+       * @param[in]  map  The current map.
+       */
+      void SetMap(dtDAL::Map* map) {mMap = map;}
 
       void CreateDebugScript();
 
@@ -304,6 +333,7 @@ namespace dtDirector
       std::string mCopyright;
       std::string mCreationTime;
 
+      dtCore::RefPtr<dtDAL::Map> mMap;
       bool        mModified;
 
       std::vector<std::string> mLibraries;
