@@ -30,8 +30,9 @@
 namespace dtDirector
 {
    ///////////////////////////////////////////////////////////////////////////////
-   PropertyEditor::PropertyEditor(QMainWindow* parent)
+   PropertyEditor::PropertyEditor(DirectorEditor* parent)
       : dtQt::BasePropertyEditor(parent)
+      , mDirectorEditor(parent)
    {
    }
 
@@ -146,6 +147,16 @@ namespace dtDirector
             item->ConnectLinks(true);
          }
 
+         // Update all tabs to make sure their names are correct.
+         int count = mGraphTabs->count();
+         for (int index = 0; index < count; index++)
+         {
+            EditorView* view = dynamic_cast<EditorView*>(mGraphTabs->widget(index));
+            if (view && view->GetScene()->GetGraph() == graph)
+            {
+               mGraphTabs->setTabText(index, graph->GetName().c_str());
+            }
+         }
          return;
       }
 
@@ -153,6 +164,21 @@ namespace dtDirector
       Director* director = dynamic_cast<Director*>(&propCon);
       if (director)
       {
+         UpdateTitle();
+
+         mDirectorEditor->setWindowTitle(director->GetGraphData()->GetName().c_str());
+
+         // Update all tabs to make sure their names are correct.
+         int count = mGraphTabs->count();
+         for (int index = 0; index < count; index++)
+         {
+            EditorView* view = dynamic_cast<EditorView*>(mGraphTabs->widget(index));
+            if (view && view->GetScene()->GetGraph() == director->GetGraphData())
+            {
+               mGraphTabs->setTabText(index, director->GetGraphData()->GetName().c_str());
+            }
+         }
+
          return;
       }
    }

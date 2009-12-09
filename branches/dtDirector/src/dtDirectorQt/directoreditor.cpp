@@ -94,6 +94,7 @@ namespace dtDirector
       clear();
       mNodes.clear();
       mSelected.clear();
+      mSelected.push_back(mDirector.get());
 
       // The translation item is the parent class for all other items.
       // This simulates the translation of the view by moving all children
@@ -324,8 +325,8 @@ namespace dtDirector
    EditorView::EditorView(EditorScene* scene, QWidget* parent)
       : QGraphicsView(scene, parent)
       , mScene(scene)
-      , mMinScale(0.1f)
-      , mMaxScale(1.0f)
+      , mMinScale(0.01f)
+      , mMaxScale(1.5f)
       , mCurrentScale(1.0f)
    {
       setObjectName("Graph Tab");
@@ -361,17 +362,17 @@ namespace dtDirector
       scale(inc, inc);
 
       // Translate the view towards the mouse cursor.
-      if (numberOfSteps > 0.0f)
-      {
-         QPointF centerPos(width()/2, height()/2);
-         QPointF mousePos = event->pos();
+      //if (numberOfSteps > 0.0f)
+      //{
+      //   QPointF centerPos(width()/2, height()/2);
+      //   QPointF mousePos = event->pos();
 
-         QPointF translation = mousePos - centerPos;
-         translation = mapToScene(translation.x(), translation.y());
-         translation *= 0.2f;
-         mScene->GetTranslationItem()->setPos(
-            mScene->GetTranslationItem()->pos() - translation);
-      }
+      //   QPointF translation = mousePos - centerPos;
+      //   translation = mapToScene(translation.x(), translation.y());
+      //   translation *= 0.2f;
+      //   mScene->GetTranslationItem()->setPos(
+      //      mScene->GetTranslationItem()->pos() - translation);
+      //}
    }
 
 
@@ -432,6 +433,7 @@ namespace dtDirector
       mGraphTabs->setTabsClosable(true);
       mGraphTabs->setMovable(true);
       mGraphTabs->setTabShape(QTabWidget::Rounded);
+      mPropertyEditor->SetGraphTabs(mGraphTabs);
 
       // Menu Bar.
       mMenuBar = new QMenuBar(this);

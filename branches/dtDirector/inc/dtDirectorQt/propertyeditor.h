@@ -48,7 +48,9 @@ namespace dtDAL
 
 namespace dtDirector
 {
+   class DirectorEditor;
    class EditorScene;
+   class GraphTabs;
 
    /**
     * This class is the property editor for displaying and editing properties of selected objects.  It shows the
@@ -60,15 +62,21 @@ namespace dtDirector
       Q_OBJECT
    public:
       typedef dtQt::BasePropertyEditor BaseClass;
+
       /**
        * Constructor
        */
-      PropertyEditor(QMainWindow* parent);
+      PropertyEditor(DirectorEditor* parent);
 
       /**
        * Sets the scene.
        */
       void SetScene(EditorScene* scene) {mScene = scene;}
+
+      /**
+       * Sets the graph tabs widget.
+       */
+      void SetGraphTabs(GraphTabs* graphTabs) {mGraphTabs = graphTabs;}
 
       /**
        * Destructor
@@ -89,7 +97,9 @@ namespace dtDirector
       /// Called on the close event
       virtual void closeEvent(QCloseEvent* e);
 
-      EditorScene* mScene;
+      DirectorEditor* mDirectorEditor;
+      EditorScene*    mScene;
+      GraphTabs*      mGraphTabs;
    };
 
 } // namespace dtDirector
