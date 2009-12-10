@@ -191,12 +191,10 @@ namespace dtDirector
        * Loads a Director script.
        *
        * @param[in]  scriptFile  The name of the script file to load.
-       * @param[in]  map         The current map (this may be optional based
-       *                          the type of script being loaded).
        *
        * @return     True if the script was found and loaded successfuly.
        */
-      bool LoadScript(const std::string& scriptFile, dtDAL::Map* map);
+      bool LoadScript(const std::string& scriptFile);
 
       /**
        * Saves a Director script.

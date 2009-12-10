@@ -33,6 +33,10 @@
 #include <QtGui/QMouseEvent>
 #include <QtGui/QGraphicsSceneMouseEvent>
 
+#include <QtGui/QFileDialog>
+
+#include <dtDAL/project.h>
+
 namespace dtDirector
 {
    ////////////////////////////////////////////////////////////////////////////////
@@ -589,13 +593,47 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void DirectorEditor::OnSaveButton()
    {
+      QString filter = tr(".dtDir");
+      std::string context = dtDAL::Project::GetInstance().GetContext();
 
+      QFileDialog dialog;
+      QFileInfo filePath = dialog.getSaveFileName(this, tr("Director File Name"),
+         tr((context + "\\scripts\\").c_str()),
+         tr("Director Scripts (*.dtDir)"), &filter);
+
+      QString fileName = filePath.baseName();
+      if (!fileName.isEmpty())
+      {
+         mDirector->SaveScript(fileName.toStdString());
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
    void DirectorEditor::OnLoadButton()
    {
+      // TODO: Check if the undo manager has some un-committed changes first.
 
+
+      QString filter = tr(".dtDir");
+      std::string context = dtDAL::Project::GetInstance().GetContext();
+
+      QFileDialog dialog;
+      QFileInfo filePath = dialog.getOpenFileName(this, tr("Director File Name"),
+         tr((context + "\\scripts\\").c_str()),
+         tr("Director Scripts (*.dtDir)"), &filter);
+
+      QString fileName = filePath.baseName();
+      if (!fileName.isEmpty())
+      {
+         // Clear the script.
+         mDirector->Clear();
+         mGraphTabs->clear();
+
+         mDirector->LoadScript(fileName.toStdString());
+
+         // Create a single tab with the default graph.
+         OpenGraph(mDirector->GetGraphData());
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -603,10 +641,8 @@ namespace dtDirector
    {
       // TODO: Check if the undo manager has some un-committed changes first.
 
-      // Remove all tabs.
-      mGraphTabs->clear();
-
       // Clear the script.
+      mGraphTabs->clear();
       mDirector->Clear();
 
       // Create a single tab with the default graph.

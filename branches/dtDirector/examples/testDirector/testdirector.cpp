@@ -46,7 +46,7 @@ public:
 
       dtDAL::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data/director");
       director->SaveScript("test");
-      director->LoadScript("test", NULL);
+      director->LoadScript("test");
 
       director->GetGraphData()->GetEventNodes()[0]->Trigger(0);
 

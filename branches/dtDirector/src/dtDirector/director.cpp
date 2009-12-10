@@ -379,7 +379,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool Director::LoadScript(const std::string& scriptFile, dtDAL::Map* map)
+   bool Director::LoadScript(const std::string& scriptFile)
    {
       Clear();
 
@@ -391,7 +391,7 @@ namespace dtDirector
       {
          try
          {
-            parser->Parse(this, map, "scripts/" + scriptFile + ".dtDir");
+            parser->Parse(this, mMap.get(), "scripts/" + scriptFile + ".dtDir");
          }
          catch (const dtUtil::Exception& e)
          {
