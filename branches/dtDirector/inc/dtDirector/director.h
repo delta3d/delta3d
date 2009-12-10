@@ -167,6 +167,11 @@ namespace dtDirector
       virtual void Init(dtDAL::Map* map = NULL);
 
       /**
+       * Clears all data in this Director script.
+       */
+      virtual void Clear();
+
+      /**
        * Retrieves the map.
        *
        * @return the map.

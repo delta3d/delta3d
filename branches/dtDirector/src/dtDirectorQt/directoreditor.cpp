@@ -508,9 +508,14 @@ namespace dtDirector
       connect(mPropertyEditor, SIGNAL(visibilityChanged(bool)),
          this, SLOT(OnPropertyEditorVisibilityChange(bool)));
 
+      connect(mSaveAction, SIGNAL(triggered()),
+         this, SLOT(OnSaveButton()));
+      connect(mLoadAction, SIGNAL(triggered()),
+         this, SLOT(OnLoadButton()));
+      connect(mNewAction, SIGNAL(triggered()),
+         this, SLOT(OnNewButton()));
       connect(mParentAction, SIGNAL(triggered()),
          this, SLOT(OnParentButton()));
-
       connect(mViewPropertiesAction, SIGNAL(triggered()),
          this, SLOT(OnShowPropertyEditor()));
 
@@ -579,6 +584,33 @@ namespace dtDirector
             mGraphTabs->removeTab(index);
          }
       }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::OnSaveButton()
+   {
+
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::OnLoadButton()
+   {
+
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::OnNewButton()
+   {
+      // TODO: Check if the undo manager has some un-committed changes first.
+
+      // Remove all tabs.
+      mGraphTabs->clear();
+
+      // Clear the script.
+      mDirector->Clear();
+
+      // Create a single tab with the default graph.
+      OpenGraph(mDirector->GetGraphData());
    }
 
    ////////////////////////////////////////////////////////////////////////////////

@@ -57,7 +57,7 @@ DirectorToolPlugin::DirectorToolPlugin(MainWindow* mw)
    connect(mToolButton, SIGNAL(changed()), this, SLOT(onToolButtonPressed()));
 
    mDirector = new dtDirector::Director();
-   mDirector->Init();
+   mDirector->Init(dtEditQt::EditorData::GetInstance().getCurrentMap());
 
    // HACK: For now, create a default script for viewing.
    mDirector->CreateDebugScript();

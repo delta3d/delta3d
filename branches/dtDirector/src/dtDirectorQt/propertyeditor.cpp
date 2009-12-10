@@ -89,30 +89,9 @@ namespace dtDirector
       }
    }
 
-   ///////////////////////////////////////////////////////////////////////////////////
-   //void PropertyEditor::buildDynamicControls(dtDAL::PropertyContainer& propCon, dtQt::DynamicGroupControl* parentControl)
-   //{
-   //   //dtQt::DynamicGroupControl* parent = GetRootControl();
-   //   //if (parentControl != NULL)
-   //   //{
-   //   //   parent = parentControl;
-   //   //}
-
-   //   //std::vector<dtDAL::ActorProperty*> propList;
-   //   //propCon.GetPropertyList(propList);
-
-   //   ////ViewportManager::GetInstance().emitModifyPropList(propCon, propList);
-
-   //   BaseClass::buildDynamicControls(propCon, propList, parentControl);
-   //}
-
    /////////////////////////////////////////////////////////////////////////////////
    void PropertyEditor::closeEvent(QCloseEvent* e)
    {
-      //if(EditorActions::GetInstance().mActionWindowsPropertyEditor != NULL)
-      //{
-      //   EditorActions::GetInstance().mActionWindowsPropertyEditor->setChecked(false);
-      //}
    }
 
    /////////////////////////////////////////////////////////////////////////////////

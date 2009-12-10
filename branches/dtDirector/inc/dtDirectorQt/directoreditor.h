@@ -328,6 +328,21 @@ namespace dtDirector
       void OnGraphTabClosed(int index);
 
       /**
+       * Event handler when the save button is pressed.
+       */
+      void OnSaveButton();
+
+      /**
+       * Event handler when the load button is pressed.
+       */
+      void OnLoadButton();
+
+      /**
+       * Event handler when the new button is pressed.
+       */
+      void OnNewButton();
+
+      /**
        * Event handler when the parent button is pressed.
        */
       void OnParentButton();

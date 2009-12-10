@@ -268,6 +268,8 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void Director::Init(dtDAL::Map* map)
    {
+      Clear();
+
       SetMap(map);
 
       BuildPropertyMap();
@@ -276,8 +278,20 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   void Director::Clear()
+   {
+      // First clear all our current nodes.
+      mGraph->mEventNodes.clear();
+      mGraph->mActionNodes.clear();
+      mGraph->mValueNodes.clear();
+      mGraph->mSubGraphs.clear();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void Director::CreateDebugScript()
    {
+      Clear();
+
       SetName("Debug Script");
       SetDescription("Debug Script for Testing purposes.");
       SetAuthor("Jeff P. Houde");
@@ -367,11 +381,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    bool Director::LoadScript(const std::string& scriptFile, dtDAL::Map* map)
    {
-      // First clear all our current nodes.
-      mGraph->mEventNodes.clear();
-      mGraph->mActionNodes.clear();
-      mGraph->mValueNodes.clear();
-      mGraph->mSubGraphs.clear();
+      Clear();
 
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
       fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext());
