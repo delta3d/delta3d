@@ -42,19 +42,19 @@ namespace dtCore
    class SystemImpl
    {
    public:
-      SystemImpl() 
+      SystemImpl()
          : mTimerStart(0)
          , mTotalFrameTime(0.0)
-      {  
+      {
       }
-      ~SystemImpl() 
-      { 
+      ~SystemImpl()
+      {
          mStats = NULL;
       }
 
 
       /////////////////////////////////////////////////////////////////
-      float EndStatTimer(const std::string& attribName) 
+      float EndStatTimer(const std::string& attribName)
       {
          // Call this at the end of a section. User is responsible for calling StartStatTimer()
          // first.
@@ -72,9 +72,9 @@ namespace dtCore
       }
 
       /////////////////////////////////////////////////////////////////
-      void StartStatTimer() 
+      void StartStatTimer()
       {
-         // Call at the beginning of a section.  User is responsible for calling this before 
+         // Call at the beginning of a section.  User is responsible for calling this before
          // calling EndStatTimer()
          if (mStats != NULL)
          {
@@ -238,7 +238,7 @@ namespace dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void System::SetStats(osg::Stats *newValue)
+   void System::SetStats(osg::Stats* newValue)
    {
       // Holds onto stats on the impl - part of pimple pattern to hide includes
       mSystemImpl->mStats = newValue;
@@ -267,15 +267,15 @@ namespace dtCore
    ////////////////////////////////////////////////////////////////////////////////
    void System::SetPause(bool paused)
    {
-      //don't send out a message unless it actually changes.
-      if(mPaused == paused)
+      // don't send out a message unless it actually changes.
+      if (mPaused == paused)
       {
          return;
       }
 
       mPaused = paused;
 
-      if(mPaused)
+      if (mPaused)
       {
          SendMessage(MESSAGE_PAUSE_START);
       }
@@ -404,7 +404,7 @@ namespace dtCore
             mSimulationTime      += simDT;
             mSimTimeSinceStartup += simDT;
             mSimulationClockTime += Timer_t(simDT * 1000000);
-            
+
             EventTraversal(simDT, realDT);
             PostEventTraversal(simDT, realDT);
             PreFrame(simDT, realDT);
@@ -422,7 +422,7 @@ namespace dtCore
       // set our full delta processing time as an attribute
       if (IsStatsOn())
       {
-         mSystemImpl->mStats->setAttribute(mSystemImpl->mStats->getLatestFrameNumber(), 
+         mSystemImpl->mStats->setAttribute(mSystemImpl->mStats->getLatestFrameNumber(),
             "FullDeltaFrameTime", mSystemImpl->mTotalFrameTime);
       }
 
@@ -436,10 +436,10 @@ namespace dtCore
 
       // FIXME how to check if GraphicsWindow is always running ??
       // this implementation in really the good way
-      if(mShutdownOnWindowClose) 
+      if (mShutdownOnWindowClose)
       {
          bool areGraphicsWindow = false;
-         for(int i = 0; i < DeltaWin::GetInstanceCount() && !areGraphicsWindow; i++)
+         for (int i = 0; i < DeltaWin::GetInstanceCount() && !areGraphicsWindow; ++i)
          {
              areGraphicsWindow = areGraphicsWindow || DeltaWin::GetInstance(i)->GetOsgViewerGraphicsWindow()->valid();
          }
@@ -468,7 +468,7 @@ namespace dtCore
    {
       Start(); ///Automatically start the System when Run.
 
-      while(mRunning)
+      while (mRunning)
       {
          StepWindow();
       }
