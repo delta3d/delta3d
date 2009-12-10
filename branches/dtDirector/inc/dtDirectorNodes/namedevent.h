@@ -58,11 +58,6 @@ namespace dtDirector
       virtual void Init(const NodeType& nodeType, DirectorGraphData* graph);
 
       /**
-       * Called when this node is removed.
-       */
-      virtual void OnRemove() const;
-
-      /**
        * This method is called in init, which instructs the node
        * to create its properties.  Methods implementing this should
        * be sure to call their parent class's buildPropertyMap method to
