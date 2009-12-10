@@ -59,12 +59,19 @@ namespace dtDirector
       virtual void Init(const NodeType& nodeType, DirectorGraphData* graph);
 
       /**
-       * Triggers the event.
+       * Tests whether the event should trigger.
        *
        * @param[in]  outputIndex  The output to trigger.
        * @param[in]  instigator   The instigating actor ID.
        */
-      virtual void Trigger(int outputIndex, const dtDAL::ActorProxy* instigator = NULL);
+      virtual bool Test(int outputIndex, const dtDAL::ActorProxy* instigator = NULL);
+
+      /**
+       * Triggers the event.
+       *
+       * @param[in]  outputIndex  The output to trigger.
+       */
+      void Trigger(int outputIndex);
 
       /**
        * This method is called in init, which instructs the node
@@ -93,6 +100,11 @@ namespace dtDirector
        * @return  True to expose inputs.
        */
       virtual bool InputsExposed();
+
+      /**
+       * Retrieves whether this Event uses an instigator.
+       */
+      virtual bool UsesInstigator();
 
       /**
        * Accessors for the instigator property.

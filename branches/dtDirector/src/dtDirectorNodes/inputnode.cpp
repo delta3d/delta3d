@@ -101,4 +101,10 @@ namespace dtDirector
       mName = name;
       mInputs[0].SetName(name);
    }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool InputNode::UsesInstigator()
+   {
+      return false;
+   }
 }

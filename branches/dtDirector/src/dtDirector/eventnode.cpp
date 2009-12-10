@@ -54,33 +54,37 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void EventNode::Trigger(int outputIndex, const dtDAL::ActorProxy* instigator)
+   bool EventNode::Test(int outputIndex, const dtDAL::ActorProxy* instigator)
    {
       // Can't trigger a disabled event.
-      if (GetDisabled()) return;
+      if (GetDisabled()) return false;
 
       if (outputIndex < (int)mOutputs.size())
       {
-         // Check the instigator.
          bool bFound = false;
          bool bValidValue = false;
-         int count = GetPropertyCount("Instigator");
-         for (int index = 0; index < count; index++)
+
+         // Check the instigator.
+         if (UsesInstigator())
          {
-            dtCore::UniqueId id = GetActorID("Instigator", index);
-            if (id.ToString() != "")
+            int count = GetPropertyCount("Instigator");
+            for (int index = 0; index < count; index++)
             {
-               // The test is valid if we have valid connections
-               // to the instigator link.
-               bValidValue = true;
-
-               // Can't do proper matching if we have no instigator.
-               if (!instigator) break;
-
-               if (instigator->GetId() == id)
+               dtCore::UniqueId id = GetActorID("Instigator", index);
+               if (id.ToString() != "")
                {
-                  bFound = true;
-                  break;
+                  // The test is valid if we have valid connections
+                  // to the instigator link.
+                  bValidValue = true;
+
+                  // Can't do proper matching if we have no instigator.
+                  if (!instigator) break;
+
+                  if (instigator->GetId() == id)
+                  {
+                     bFound = true;
+                     break;
+                  }
                }
             }
          }
@@ -90,8 +94,19 @@ namespace dtDirector
          // actor matched an instigator connected to this node.
          if (!bValidValue || bFound)
          {
-            mOutputs[outputIndex].Activate();
+            return true;
          }
+      }
+
+      return false;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void EventNode::Trigger(int outputIndex)
+   {
+      if (outputIndex < (int)mOutputs.size())
+      {
+         mOutputs[outputIndex].Activate();
       }
    }
 
@@ -99,18 +114,21 @@ namespace dtDirector
    void EventNode::BuildPropertyMap()
    {
       Node::BuildPropertyMap();
+      mValues.clear();
 
       // Create the instigator property.
-      dtDAL::ActorIDActorProperty* instigatorProp =
-         new dtDAL::ActorIDActorProperty("Instigator", "Instigator", 
-         dtDAL::ActorIDActorProperty::SetFuncType(this, &EventNode::SetInstigator),
-         dtDAL::ActorIDActorProperty::GetFuncType(this, &EventNode::GetInstigator),
-         dtDAL::ActorIDActorProperty::GetMapType(GetDirector(), &Director::GetMap),
-         "", "The Instigator that can trigger this event.");
-      AddProperty(instigatorProp);
+      if (UsesInstigator())
+      {
+         dtDAL::ActorIDActorProperty* instigatorProp =
+            new dtDAL::ActorIDActorProperty("Instigator", "Instigator", 
+            dtDAL::ActorIDActorProperty::SetFuncType(this, &EventNode::SetInstigator),
+            dtDAL::ActorIDActorProperty::GetFuncType(this, &EventNode::GetInstigator),
+            dtDAL::ActorIDActorProperty::GetMapType(GetDirector(), &Director::GetMap),
+            "", "The Instigator that can trigger this event.");
+         AddProperty(instigatorProp);
 
-      mValues.clear();
-      mValues.push_back(ValueLink(this, instigatorProp, false, true, true));
+         mValues.push_back(ValueLink(this, instigatorProp, false, true, true));
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -123,5 +141,11 @@ namespace dtDirector
    bool EventNode::InputsExposed()
    {
       return false;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool EventNode::UsesInstigator()
+   {
+      return true;
    }
 }

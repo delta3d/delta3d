@@ -88,6 +88,11 @@ namespace dtDirector
       void SetName(const std::string& name);
       virtual const std::string& GetName() {return mName;}
 
+      /**
+       * Retrieves whether this Event uses an instigator.
+       */
+      virtual bool UsesInstigator();
+
    protected:
 
       /**
