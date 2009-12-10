@@ -276,15 +276,19 @@ namespace dtDirector
       /**
        * Constructs a new help box.
        *
-       * @param[in]  director  The director being edited.
        * @param[in]  parent    The parent widget.
        */
-      DirectorEditor(Director* director, QWidget* parent = 0);
+      DirectorEditor(QWidget* parent = 0);
 
       /**
        * Destructor
        */
       virtual ~DirectorEditor();
+
+      /**
+       * Sets the Director.
+       */
+      void SetDirector(Director* director);
 
       /**
        * Opens a Director graph.
@@ -352,7 +356,7 @@ namespace dtDirector
        */
       void OnShowPropertyEditor();
 
-   private:
+   protected:
 
       GraphTabs*           mGraphTabs;
       PropertyEditor*      mPropertyEditor;

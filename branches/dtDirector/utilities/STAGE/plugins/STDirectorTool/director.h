@@ -41,7 +41,7 @@ class QAction;
  * to place a LinkedPointsActor into the world.
  */
 class DT_DIRECTOR_TOOL_EXPORT DirectorToolPlugin 
-   : public QDockWidget
+   : public dtDirector::DirectorEditor
    , public Plugin
 {
    Q_OBJECT
@@ -56,20 +56,19 @@ public:
 
    virtual void Destroy();
 
+   /** override close event to get notified when user closes the dock */
+   virtual void closeEvent(QCloseEvent* event);
+
 public slots:
 
    /**
    * User has pressed the tool button.
    */
-   void onToolButtonPressed();
+   void OnToolButtonPressed();
 
 private:
 
    MainWindow*    mMainWindow;
-
-   dtCore::RefPtr<dtDirector::Director> mDirector;
-
-   dtDirector::DirectorEditor*   mEditor;
 
    QAction*       mToolButton;
 };

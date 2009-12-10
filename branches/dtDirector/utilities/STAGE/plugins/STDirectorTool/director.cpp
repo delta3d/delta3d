@@ -40,9 +40,30 @@ const std::string DirectorToolPlugin::PLUGIN_NAME = "Director Tool";
 ////////////////////////////////////////////////////////////////////////////////
 DirectorToolPlugin::DirectorToolPlugin(MainWindow* mw)
    : mMainWindow(mw)
-   , mDirector(new dtDirector::Director())
-   , mEditor(NULL)
+   , dtDirector::DirectorEditor(NULL)
 {
+   // Register some custom property types.
+   dtDirector::PropertyEditor* propEditor = GetPropertyEditor();
+   if (propEditor)
+   {
+      dtQt::DynamicControlFactory& dcfactory = propEditor->GetDynamicControlFactory();
+
+      size_t datatypeCount = dtDAL::DataType::EnumerateType().size();
+
+      for (size_t i = 0; i < datatypeCount; ++i)
+      {
+         dtDAL::DataType* dt = dtDAL::DataType::EnumerateType()[i];
+         if (dt->IsResource())
+         {
+            dcfactory.RegisterControlForDataType<DynamicResourceControl>(*dt);
+         }
+      }
+
+      dcfactory.RegisterControlForDataType<DynamicActorControl>(dtDAL::DataType::ACTOR);
+      dcfactory.RegisterControlForDataType<DynamicGameEventControl>(dtDAL::DataType::GAME_EVENT);
+      dcfactory.RegisterControlForDataType<DynamicGroupPropertyControl>(dtDAL::DataType::GROUP);
+   }
+
    // Add a Director editor button in the tool bar.
    mToolButton = new QAction(QIcon(":/icons/tool.png"), "Director Editor", this);
    mToolButton->setCheckable(true);
@@ -54,13 +75,15 @@ DirectorToolPlugin::DirectorToolPlugin(MainWindow* mw)
       editToolBar->addAction(mToolButton);
    }
 
-   connect(mToolButton, SIGNAL(changed()), this, SLOT(onToolButtonPressed()));
+   connect(mToolButton, SIGNAL(changed()), this, SLOT(OnToolButtonPressed()));
 
-   mDirector = new dtDirector::Director();
-   mDirector->Init(dtEditQt::EditorData::GetInstance().getCurrentMap());
+   dtDirector::Director* director = new dtDirector::Director();
+   director->Init(dtEditQt::EditorData::GetInstance().getCurrentMap());
 
    // HACK: For now, create a default script for viewing.
-   mDirector->CreateDebugScript();
+   director->CreateDebugScript();
+
+   SetDirector(director);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -69,49 +92,28 @@ DirectorToolPlugin::~DirectorToolPlugin()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void DirectorToolPlugin::onToolButtonPressed()
+void DirectorToolPlugin::OnToolButtonPressed()
 {
    if (mToolButton->isChecked())
    {
-      if (!mEditor)
-      {
-         mEditor = new dtDirector::DirectorEditor(mDirector, NULL);
-
-         // Register some custom property types.
-         dtDirector::PropertyEditor* propEditor = mEditor->GetPropertyEditor();
-         if (propEditor)
-         {
-            dtQt::DynamicControlFactory& dcfactory = propEditor->GetDynamicControlFactory();
-
-            size_t datatypeCount = dtDAL::DataType::EnumerateType().size();
-
-            for (size_t i = 0; i < datatypeCount; ++i)
-            {
-               dtDAL::DataType* dt = dtDAL::DataType::EnumerateType()[i];
-               if (dt->IsResource())
-               {
-                  dcfactory.RegisterControlForDataType<DynamicResourceControl>(*dt);
-               }
-            }
-
-            dcfactory.RegisterControlForDataType<DynamicActorControl>(dtDAL::DataType::ACTOR);
-            dcfactory.RegisterControlForDataType<DynamicGameEventControl>(dtDAL::DataType::GAME_EVENT);
-            dcfactory.RegisterControlForDataType<DynamicGroupPropertyControl>(dtDAL::DataType::GROUP);
-         }
-      }
-
-      mEditor->show();
+      show();
    }
    else
    {
-      mEditor->hide();
+      hide();
    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void DirectorToolPlugin::Destroy()
 {
-   if (mEditor) delete mEditor;
+   if (mToolButton) mToolButton->setChecked(false);
+}
+
+//////////////////////////////////////////////////////////////////////////
+void DirectorToolPlugin::closeEvent(QCloseEvent* event)
+{
+   if (mToolButton) mToolButton->setChecked(false);
 }
 
 

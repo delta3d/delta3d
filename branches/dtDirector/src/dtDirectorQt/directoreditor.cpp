@@ -418,9 +418,9 @@ namespace dtDirector
 
 
    //////////////////////////////////////////////////////////////////////////////
-   DirectorEditor::DirectorEditor(Director* director, QWidget* parent)
+   DirectorEditor::DirectorEditor(QWidget* parent)
       : QMainWindow(parent, Qt::Window)
-      , mDirector(director)
+      , mDirector(NULL)
       , mGraphTabs(NULL)
       , mMenuBar(NULL)
       , mToolbar(NULL)
@@ -436,7 +436,7 @@ namespace dtDirector
       // Set the default size of the window.
       resize(900, 600);
 
-      setWindowTitle(mDirector->GetName().c_str());
+      setWindowTitle("No Director Graph Loaded");
 
       // Property editor.
       mPropertyEditor = new PropertyEditor(this);
@@ -531,14 +531,30 @@ namespace dtDirector
          this, SLOT(OnParentButton()));
       connect(mViewPropertiesAction, SIGNAL(triggered()),
          this, SLOT(OnShowPropertyEditor()));
-
-      // Open the home graph.
-      OpenGraph(mDirector->GetGraphData(), true);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    DirectorEditor::~DirectorEditor()
    {
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::SetDirector(Director* director)
+   {
+      mDirector = director;
+
+      mGraphTabs->clear();
+      if (mDirector)
+      {
+         setWindowTitle(mDirector->GetName().c_str());
+
+         // Open the home graph.
+         OpenGraph(mDirector->GetGraphData(), true);
+      }
+      else
+      {
+         setWindowTitle("No Director Graph Loaded");
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
