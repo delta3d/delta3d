@@ -77,11 +77,11 @@ namespace dtGame
    class GMImpl
    {
    public:
-      GMImpl() 
-      {  
+      GMImpl()
+      {
       }
-      ~GMImpl() 
-      { 
+      ~GMImpl()
+      {
       }
 
       /// stats for the work of the GM - in a class so its less obtrusive to the gm
@@ -102,7 +102,6 @@ namespace dtGame
       mLibMgr = &dtDAL::LibraryManager::GetInstance();
       mLogger = &dtUtil::Log::GetInstance("gamemanager.cpp");
       AddSender(&dtCore::System::GetInstance());
-      mPaused = dtCore::System::GetInstance().GetPause();
 
       mMapChangeStateData = new MapChangeStateData(*this);
 
@@ -302,25 +301,14 @@ namespace dtGame
       }
       else if (data->message == dtCore::System::MESSAGE_PAUSE_START)
       {
-         if (!IsPaused())
-         {
-            SetPaused(true);
-         }
+         SendMessage(*GetMessageFactory().CreateMessage(MessageType::INFO_PAUSED));
       }
       else if (data->message == dtCore::System::MESSAGE_PAUSE_END)
       {
-         if (IsPaused())
-         {
-            SetPaused(false);
-         }
+         SendMessage(*GetMessageFactory().CreateMessage(MessageType::INFO_RESUMED));
       }
       else if (data->message == dtCore::System::MESSAGE_PAUSE)
       {
-         if (!IsPaused())
-         {
-            SetPaused(true);
-         }
-
          double* timeChange = (double*)data->userData;
          PreFrame(0.0, *timeChange);
       }
@@ -391,23 +379,15 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   bool GameManager::IsPaused() const
+   {
+      return dtCore::System::GetInstance().GetPause();
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    void GameManager::SetPaused(bool pause)
    {
-      if (mPaused == pause)
-      {
-         return;
-      }
-
-      mPaused = pause;
-      dtCore::System::GetInstance().SetPause(mPaused);
-      if (mPaused)
-      {
-         SendMessage(*GetMessageFactory().CreateMessage(MessageType::INFO_PAUSED));
-      }
-      else
-      {
-         SendMessage(*GetMessageFactory().CreateMessage(MessageType::INFO_RESUMED));
-      }
+      dtCore::System::GetInstance().SetPause(pause);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -1874,7 +1854,7 @@ namespace dtGame
          std::vector< std::pair<GameActorProxy*, std::string> >& toFill) const
    {
       typedef std::pair<GlobalMessageListenerMap::const_iterator,
-                        GlobalMessageListenerMap::const_iterator> IterPair;     
+                        GlobalMessageListenerMap::const_iterator> IterPair;
       IterPair msgTypeMatches = mGlobalMessageListeners.equal_range(&type);
 
       toFill.clear();
@@ -1961,7 +1941,7 @@ namespace dtGame
                                               itor != msgTypeMatches.second;
                                               ++itor)
       {
-         if (itor->second.first.get() == &proxy && 
+         if (itor->second.first.get() == &proxy &&
              itor->second.second == invokableName)
          {
             //we'll actually erase this item next time it's invoked

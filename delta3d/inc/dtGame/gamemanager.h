@@ -1003,7 +1003,7 @@ namespace dtGame
       /**
        * @return true if the GameManager is paused
        */
-      bool IsPaused() const { return mPaused; }
+      bool IsPaused() const;
 
       /**
        * Pauses or unpauses this GameManager.
@@ -1168,7 +1168,6 @@ namespace dtGame
       dtCore::RefPtr<dtDAL::LibraryManager> mLibMgr;
       MessageFactory mFactory;
 
-      bool mPaused;
       NameVector mLoadedMaps;
       dtCore::RefPtr<MapChangeStateData> mMapChangeStateData;
 
