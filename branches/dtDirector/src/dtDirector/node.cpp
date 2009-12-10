@@ -293,6 +293,13 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   dtCore::UniqueId Node::GetActorID(const std::string& name, int index)
+   {
+      dtDAL::ActorProperty* prop = GetProperty(name, index);
+      if (prop) return dtCore::UniqueId(prop->ToString());
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void Node::SetBoolean(bool value, const std::string& name, int index)
    {
       SetPropertyValue<bool>(value, name, index);
@@ -339,6 +346,12 @@ namespace dtDirector
             prop->FromString(value);
          }
       }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void Node::SetActorID(const dtCore::UniqueId& value, const std::string& name, int index)
+   {
+      SetString(value.ToString(), name, index);
    }
 
    //////////////////////////////////////////////////////////////////////////
