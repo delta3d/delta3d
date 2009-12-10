@@ -345,6 +345,8 @@ namespace dtDirector
 
       float       mLinkWidth;
       float       mLinkHeight;
+
+      float       mValueHeight;
    };
 }
 

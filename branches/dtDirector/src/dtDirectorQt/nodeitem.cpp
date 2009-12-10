@@ -80,7 +80,8 @@ namespace dtDirector
 
       while ((int)linkConnectors.size() > count)
       {
-         scene->removeItem(linkConnectors[0]);
+         QGraphicsPathItem* item = linkConnectors[0];
+         if (item) delete item;
          linkConnectors.erase(linkConnectors.begin());
       }
    }
@@ -117,7 +118,8 @@ namespace dtDirector
 
       while ((int)linkConnectors.size() > count)
       {
-         scene->removeItem(linkConnectors[0]);
+         QGraphicsPathItem* item = linkConnectors[0];
+         if (item) delete item;
          linkConnectors.erase(linkConnectors.begin());
       }
    }
@@ -144,6 +146,7 @@ namespace dtDirector
        , mTextHeight(0.0f)
        , mLinkWidth(0.0f)
        , mLinkHeight(0.0f)
+       , mValueHeight(0.0f)
        , mLinkDivider(NULL)
        , mValueDivider(NULL)
    {
@@ -160,7 +163,14 @@ namespace dtDirector
    NodeItem::~NodeItem()
    {
       // Clear all links.
-      int count = (int)mInputs.size();
+      int count = (int)mValues.size();
+      for (int index = 0; index < count; index++)
+      {
+         mValues[index].Remove(mScene);
+      }
+      mValues.clear();
+
+      count = (int)mInputs.size();
       for (int index = 0; index < count; index++)
       {
          mInputs[index].Remove();
@@ -173,13 +183,6 @@ namespace dtDirector
          mOutputs[index].Remove(mScene);
       }
       mOutputs.clear();
-
-      count = (int)mValues.size();
-      for (int index = 0; index < count; index++)
-      {
-         mValues[index].Remove(mScene);
-      }
-      mValues.clear();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -410,7 +413,8 @@ namespace dtDirector
          
          // Create the link graphic.
          data.linkGraphic->setPolygon(poly);
-         data.linkGraphic->setBrush(Qt::black);
+         data.linkGraphic->setPen(QPen(Qt::black, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+         data.linkGraphic->setBrush(QColor(50, 50, 50));
 
          // Set the link text, and position it right aligned with the link graphic.
          data.linkName->setPlainText(data.link->GetName().c_str());
@@ -464,7 +468,8 @@ namespace dtDirector
 
          // Create the link graphic.
          data.linkGraphic->setPolygon(poly);
-         data.linkGraphic->setBrush(Qt::black);
+         data.linkGraphic->setPen(QPen(Qt::black, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+         data.linkGraphic->setBrush(QColor(50, 50, 50));
 
          // Set the link text, and position it right aligned with the link graphic.
          data.linkName->setPlainText(data.link->GetName().c_str());
@@ -490,7 +495,7 @@ namespace dtDirector
 
       // Resize the node height if we have to.
       float desiredHeight = ((mOutputs.size() + 1) * (LINK_SPACING + mTextHeight)) - (LINK_SPACING * 2);
-      if (mNodeHeight < desiredHeight) mNodeHeight = desiredHeight;
+      if (mNodeHeight < desiredHeight + mValueHeight) mNodeHeight = desiredHeight + mValueHeight;
       if (desiredHeight > mLinkHeight) mLinkHeight = desiredHeight;
 
       // Now position all of the links in a single column.
@@ -510,7 +515,6 @@ namespace dtDirector
    void NodeItem::SetupValues()
    {
       float maxWidth = 0;
-      float maxHeight = 0;
 
       int count = (int)mValues.size();
       for (int index = 0; index < count; index++)
@@ -562,7 +566,7 @@ namespace dtDirector
          }
 
          if (maxWidth < nameBounds.width()) maxWidth = nameBounds.width();
-         if (maxHeight < nameBounds.height()) maxHeight = nameBounds.height();
+         if (mValueHeight < nameBounds.height()) mValueHeight = nameBounds.height();
 
          float x = -nameBounds.width() / 2;
          float y = -nameBounds.height();
@@ -574,7 +578,7 @@ namespace dtDirector
       if (mNodeWidth < desiredWidth) mNodeWidth = desiredWidth;
 
       // Resize the node height if we have to.
-      float desiredHeight = maxHeight + LINK_SPACING + mLinkHeight;
+      float desiredHeight = mValueHeight + LINK_SPACING + mLinkHeight;
       if (mNodeHeight < desiredHeight) mNodeHeight = desiredHeight;
    }
 

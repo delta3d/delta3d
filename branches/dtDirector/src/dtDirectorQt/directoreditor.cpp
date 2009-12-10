@@ -95,8 +95,17 @@ namespace dtDirector
    void EditorScene::SetGraph(dtDirector::DirectorGraphData* graph)
    {
       // First clear the current items.
-      clear();
+      int count = (int)mNodes.size();
+      for (int index = 0; index < count; index++)
+      {
+         NodeItem* node = mNodes[index];
+         if (node) delete node;
+      }
       mNodes.clear();
+
+      clear();
+
+      // Also clear the current selection.
       mSelected.clear();
       mSelected.push_back(mDirector.get());
 
@@ -114,7 +123,7 @@ namespace dtDirector
       mGraphTabs->setTabText(mGraphTabs->currentIndex(), graph->mName.c_str());
 
       // Create all nodes in the graph.
-      int count = (int)mGraph->mEventNodes.size();
+      count = (int)mGraph->mEventNodes.size();
       for (int index = 0; index < count; index++)
       {
          Node* node = mGraph->mEventNodes[index].get();
@@ -436,27 +445,27 @@ namespace dtDirector
       // Save Action.
       mSaveAction = new QAction(QIcon(":/icons/save.png"), tr("&Save"), this);
       mSaveAction->setShortcut(tr("Ctrl+S"));
-      mSaveAction->setStatusTip(tr("Saves the current Director script (Ctrl+S)."));
+      mSaveAction->setToolTip(tr("Saves the current Director script (Ctrl+S)."));
 
       // Load Action.
       mLoadAction = new QAction(QIcon(":/icons/open.png"), tr("&Load"), this);
       mLoadAction->setShortcut(tr("Ctrl+L"));
-      mLoadAction->setStatusTip(tr("Loads a Director script from a file (Ctrl+L)."));
+      mLoadAction->setToolTip(tr("Loads a Director script from a file (Ctrl+L)."));
 
       // New Action.
       mNewAction = new QAction(QIcon(":/icons/new.png"), tr("&New"), this);
       mNewAction->setShortcut(tr("Ctrl+N"));
-      mNewAction->setStatusTip(tr("Begins a new Director script (Ctrl+N)."));
+      mNewAction->setToolTip(tr("Begins a new Director script (Ctrl+N)."));
 
       // Parent Action.
-      mParentAction = new QAction(QIcon(":/icons/parent.png"), tr("Parent"), this);
+      mParentAction = new QAction(QIcon(":/icons/parent.png"), tr("Goto Parent Graph"), this);
       mParentAction->setShortcut(tr("Ctrl+U"));
-      mParentAction->setStatusTip(tr("Returns to the parent graph (Ctrl+U)."));
+      mParentAction->setToolTip(tr("Returns to the parent graph (Ctrl+U)."));
 
       // Show Properties Action.
       mViewPropertiesAction = new QAction(tr("Property Editor"), this);
       mViewPropertiesAction->setShortcut(tr("Ctrl+P"));
-      mViewPropertiesAction->setStatusTip(tr("Shows the Property Editor(Ctrl+P)."));
+      mViewPropertiesAction->setToolTip(tr("Shows the Property Editor(Ctrl+P)."));
       mViewPropertiesAction->setCheckable(true);
       mViewPropertiesAction->setChecked(true);
 
