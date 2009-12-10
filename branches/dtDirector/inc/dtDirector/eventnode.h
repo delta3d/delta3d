@@ -62,7 +62,7 @@ namespace dtDirector
        * Triggers the event.
        *
        * @param[in]  outputIndex  The output to trigger.
-       * @param[in]  instigator   The instigating actor.
+       * @param[in]  instigator   The instigating actor ID.
        */
       virtual void Trigger(int outputIndex, const dtDAL::ActorProxy* instigator = NULL);
 
@@ -77,7 +77,6 @@ namespace dtDirector
        *       to be removed.
        */
       virtual void BuildPropertyMap();
-
 
       /**
        * Updates the node.
@@ -95,6 +94,12 @@ namespace dtDirector
        */
       virtual bool InputsExposed();
 
+      /**
+       * Accessors for the instigator property.
+       */
+      void SetInstigator(const dtCore::UniqueId& id) {mInstigator = id;}
+      dtCore::UniqueId GetInstigator() {return mInstigator;}
+
    protected:
 
       /**
@@ -104,6 +109,7 @@ namespace dtDirector
 
    private:
 
+      dtCore::UniqueId mInstigator;
   };
 }
 

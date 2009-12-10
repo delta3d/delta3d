@@ -23,6 +23,7 @@
 #include <algorithm>
 
 #include <dtDirector/eventnode.h>
+#include <dtDirector/director.h>
 
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actorproperty.h>
@@ -33,6 +34,7 @@ namespace dtDirector
    ///////////////////////////////////////////////////////////////////////////////////////
    EventNode::EventNode()
        : Node()
+       , mInstigator("")
    {
    }
 
@@ -59,9 +61,37 @@ namespace dtDirector
 
       if (outputIndex < (int)mOutputs.size())
       {
-         // TODO: Check the instigator.
+         // Check the instigator.
+         bool bFound = false;
+         bool bValidValue = false;
+         int count = GetPropertyCount("Instigator");
+         for (int index = 0; index < count; index++)
+         {
+            dtCore::UniqueId id = GetActorID("Instigator", index);
+            if (id.ToString() != "")
+            {
+               // The test is valid if we have valid connections
+               // to the instigator link.
+               bValidValue = true;
 
-         mOutputs[outputIndex].Activate();
+               // Can't do proper matching if we have no instigator.
+               if (!instigator) break;
+
+               if (instigator->GetId() == id)
+               {
+                  bFound = true;
+                  break;
+               }
+            }
+         }
+
+         // Only activate the event if there is no instigator connected
+         // to the node that we care to test with, or if the instigating
+         // actor matched an instigator connected to this node.
+         if (!bValidValue || bFound)
+         {
+            mOutputs[outputIndex].Activate();
+         }
       }
    }
 
@@ -69,6 +99,18 @@ namespace dtDirector
    void EventNode::BuildPropertyMap()
    {
       Node::BuildPropertyMap();
+
+      // Create the instigator property.
+      dtDAL::ActorIDActorProperty* instigatorProp =
+         new dtDAL::ActorIDActorProperty("Instigator", "Instigator", 
+         dtDAL::ActorIDActorProperty::SetFuncType(this, &EventNode::SetInstigator),
+         dtDAL::ActorIDActorProperty::GetFuncType(this, &EventNode::GetInstigator),
+         dtDAL::ActorIDActorProperty::GetMapType(GetDirector(), &Director::GetMap),
+         "", "The Instigator that can trigger this event.");
+      AddProperty(instigatorProp);
+
+      mValues.clear();
+      mValues.push_back(ValueLink(this, instigatorProp, false, true, true));
    }
 
    //////////////////////////////////////////////////////////////////////////
