@@ -233,6 +233,39 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::Refresh()
+   {
+      // Refresh the button states.
+      RefreshButtonStates();
+
+      // Refresh the name of the window.
+      setWindowTitle(mDirector->GetName().c_str());
+
+      // Refresh the graph tabs with their graph names.
+      int count = mGraphTabs->count();
+      for (int index = 0; index < count; index++)
+      {
+         EditorView* view = dynamic_cast<EditorView*>(mGraphTabs->widget(index));
+         if (view && view->GetScene())
+         {
+            DirectorGraph* graph = view->GetScene()->GetGraph();
+            if (graph)
+            {
+               mGraphTabs->setTabText(index, graph->mName.c_str());
+            }
+         }
+      }
+
+      // Refresh the Scene.
+      mPropertyEditor->GetScene()->Refresh();
+      
+      // Refresh the Properties.
+      mPropertyEditor->GetScene()->RefreshProperties();
+
+      // Refresh the tab names.
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void DirectorEditor::RefreshButtonStates()
    {
       bool bHasParent = false;

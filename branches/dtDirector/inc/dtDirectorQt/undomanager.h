@@ -32,6 +32,11 @@
 #include <vector>
 #include <stack>
 
+namespace dtDAL
+{
+   class ActorProperty;
+}
+
 namespace dtDirector
 {
    class DirectorEditor;
@@ -137,6 +142,11 @@ namespace dtDirector
        * Destructor.
        */
       virtual ~UndoPropertyEvent();
+
+      /**
+       * Retrieves the property for the event.
+       */
+      dtDAL::ActorProperty* GetProperty();
 
       /**
        * Perform undo.

@@ -90,6 +90,11 @@ namespace dtDirector
       UndoManager* GetUndoManager() {return mUndoManager;}
 
       /**
+       * Refreshes the entire view.
+       */
+      void Refresh();
+
+      /**
        * Refreshes the state of the UI buttons.
        */
       void RefreshButtonStates();

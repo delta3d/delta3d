@@ -102,12 +102,27 @@ namespace dtDirector
    void PropertyEditor::PropertyAboutToChangeFromControl(dtDAL::PropertyContainer& propCon, dtDAL::ActorProperty& prop,
             const std::string& oldValue, const std::string& newValue)
    {
-      Node* node = dynamic_cast<Node*>(&propCon);
-      if (node)
+      dtCore::UniqueId id = dtCore::UniqueId("");
+
+      // Check if the container is for a graph.
+      DirectorGraph* graph = dynamic_cast<DirectorGraph*>(&propCon);
+      if (graph)
       {
-         mDirectorEditor->GetUndoManager()->PropertyChangeEvent(node->GetID(), prop.GetName(), oldValue, newValue);
-         mDirectorEditor->RefreshButtonStates();
+         id = graph->GetID();
       }
+      else
+      {
+         // Check if the container is for a node.
+         Node* node = dynamic_cast<Node*>(&propCon);
+         if (node)
+         {
+            id = node->GetID();
+         }
+         // If it is not a graph or a node, then it is the director.
+      }
+
+      mDirectorEditor->GetUndoManager()->PropertyChangeEvent(id, prop.GetName(), oldValue, newValue);
+      mDirectorEditor->RefreshButtonStates();
    }
 
    /////////////////////////////////////////////////////////////////////////////////

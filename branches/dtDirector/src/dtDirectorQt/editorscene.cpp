@@ -97,9 +97,6 @@ namespace dtDirector
 
       if (!mGraph) return;
 
-      // Update the graph tab with the current graph name.
-      mGraphTabs->setTabText(mGraphTabs->currentIndex(), graph->mName.c_str());
-
       // Create all nodes in the graph.
       count = (int)mGraph->mEventNodes.size();
       for (int index = 0; index < count; index++)
@@ -149,8 +146,7 @@ namespace dtDirector
          }
       }
 
-      Refresh();
-      RefreshProperties();
+      mEditor->Refresh();
    }
 
    //////////////////////////////////////////////////////////////////////////

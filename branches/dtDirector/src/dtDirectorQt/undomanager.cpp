@@ -116,35 +116,60 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void UndoPropertyEvent::Undo()
+   dtDAL::ActorProperty* UndoPropertyEvent::GetProperty()
    {
-      // Find the node.
-      Node* node = mEditor->GetDirector()->GetNode(mID);
-      if (node)
+      // If the ID is blank, then it belongs to the director.
+      if (mID.ToString() == "")
       {
-         // Restore the property back to its old value.
-         dtDAL::ActorProperty* prop = node->GetProperty(mPropName);
-         if (prop) prop->FromString(mOldValue);
+         return mEditor->GetDirector()->GetProperty(mPropName);
+      }
+      else
+      {
+         // Check if the ID belongs to a graph.
+         DirectorGraph* graph = mEditor->GetDirector()->GetGraph(mID);
+         if (graph)
+         {
+            return graph->GetProperty(mPropName);
+         }
+         else
+         {
+            // Check if the ID belongs to a node.
+            Node* node = mEditor->GetDirector()->GetNode(mID);
+            if (node)
+            {
+               // Restore the property back to its old value.
+               return node->GetProperty(mPropName);
+            }
+         }
       }
 
-      mEditor->GetPropertyEditor()->GetScene()->Refresh();
-      mEditor->GetPropertyEditor()->GetScene()->RefreshProperties();
+      return NULL;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void UndoPropertyEvent::Undo()
+   {
+      dtDAL::ActorProperty* prop = GetProperty();
+
+      if (prop)
+      {
+         prop->FromString(mOldValue);
+
+         mEditor->Refresh();
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
    void UndoPropertyEvent::Redo()
    {
-      // Find the node.
-      Node* node = mEditor->GetDirector()->GetNode(mID);
-      if (node)
-      {
-         // Restore the property back to its new value.
-         dtDAL::ActorProperty* prop = node->GetProperty(mPropName);
-         if (prop) prop->FromString(mNewValue);
-      }
+      dtDAL::ActorProperty* prop = GetProperty();
 
-      mEditor->GetPropertyEditor()->GetScene()->Refresh();
-      mEditor->GetPropertyEditor()->GetScene()->RefreshProperties();
+      if (prop)
+      {
+         prop->FromString(mNewValue);
+
+         mEditor->Refresh();
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
