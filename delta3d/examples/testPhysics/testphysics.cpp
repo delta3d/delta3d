@@ -42,7 +42,6 @@ using namespace dtUtil;
 
 class Updater : public Base
 {
-
 public:
    Updater(Scene* scene)
       : mScene(scene)
@@ -50,6 +49,7 @@ public:
       assert(mScene.valid());
       AddSender(mScene.get());
    }
+
 protected:
    virtual ~Updater()
    {
@@ -57,7 +57,6 @@ protected:
    }
 
 public:
-
    virtual void OnMessage(MessageData* data)
    {
       if (data->message == "collision")
@@ -75,91 +74,129 @@ public:
          //
       }
    }
+
 private:
    dtCore::RefPtr<Scene> mScene;
 };
 
 class TestPhysicsApp : public Application
 {
-
 public:
-
    TestPhysicsApp(const std::string& configFile = "config.xml")
       : Application(configFile)
       , mLimit(50)
+      , mGround(NULL)
+      , mRenderCollisionGeometry(false)
    {
-      //setup some default physics values
+      // setup some default physics values
       GetScene()->SetGravity(0.0f, 0.0f, -15.0f);
       GetScene()->GetPhysicsController()->GetWorldWrapper()->SetDamping(0.01f, 0.01f);
 
-      RefPtr<Object> obj1 = new Object("Ground");
-      RefPtr<Object> obj2 = new Object("FallingCrate");
-      RefPtr<Object> obj3 = new Object("GroundCrate");
-
-      obj1->LoadFile("models/terrain_simple.ive");
-      obj2->LoadFile("models/physics_crate.ive");
-      obj3->LoadFile("models/physics_crate.ive");
-
-      //position the camera
+      // position the camera
       Transform position;
       position.Set(0.0f, -20.0f, 7.0f, 0.0f, 0.0f, 0.0f);
       GetCamera()->SetTransform(position);
-
-      //position first falling crate
-      position.Set(0.55f, 0.0f, 7.0f, 0.0f, 40.0f, 0.0f);
-      obj2->SetTransform(position);
-
-      //position the crate on the ground
-      position.Set(0.0f, 0.0f, 4.f, 0.0f, 0.0f, 0.0f);
-      obj3->SetTransform(position);
 
       double lx = 1.0;
       double ly = 1.0;
       double lz = 1.0;
 
-      //create collision meshes
-      obj1->SetCollisionMesh();
-      obj2->SetCollisionBox();
-      obj3->SetCollisionBox();
-
-      //set the mass for objects
+      // configure the mass for the crates
       dMass mass;
       dMassSetBox(&mass, 1.0, lx, ly, lz);
-      obj2->SetMass(&mass);
-      obj3->SetMass(&mass);
 
-      //turn on the physics
-      obj2->EnableDynamics();
-      obj3->EnableDynamics();
+      // load ground
+      {
+         mGround = new Object("Ground");
+         mGround->LoadFile("models/terrain_simple.ive");
 
-      //Add the objects to the Scene to be rendered
-      GetScene()->AddDrawable(obj1.get());
-      GetScene()->AddDrawable(obj2.get());
-      GetScene()->AddDrawable(obj3.get());
+         // create collision mesh
+         mGround->SetCollisionMesh();
 
-      //put the falling crate in the vector of dropped objects
-      mObjects.push_back(obj2);
+         // Add the object to the Scene to be rendered
+         GetScene()->AddDrawable(mGround.get());
+
+         // render collision geometry (for debugging)
+         mGround->RenderCollisionGeometry(mRenderCollisionGeometry);
+      }
+
+      // load falling crate
+      {
+         RefPtr<Object> obj2 = new Object("FallingCrate");
+         obj2->LoadFile("models/physics_crate.ive");
+
+         // position first falling crate
+         position.Set(0.55f, 0.0f, 7.0f, 0.0f, 40.0f, 0.0f);
+         obj2->SetTransform(position);
+
+         // create collision mesh
+         obj2->SetCollisionBox();
+
+         // set the mass
+         obj2->SetMass(&mass);
+
+         // turn on the physics
+         obj2->EnableDynamics();
+
+         // Add the object to the Scene to be rendered
+         GetScene()->AddDrawable(obj2.get());
+
+         // put the falling crate in the vector of dropped objects
+         mObjects.push_back(obj2);
+
+         // render collision geometry
+         obj2->RenderCollisionGeometry(mRenderCollisionGeometry);
+      }
+
+      // load ground crate
+      {
+         RefPtr<Object> obj3 = new Object("GroundCrate");
+         obj3->LoadFile("models/physics_crate.ive");
+
+         // position the crate on the ground
+         position.Set(0.0f, 0.0f, 4.f, 0.0f, 0.0f, 0.0f);
+         obj3->SetTransform(position);
+
+         // create collision mesh
+         obj3->SetCollisionBox();
+
+         // set the mass
+         obj3->SetMass(&mass);
+
+         // turn on the physics
+         obj3->EnableDynamics();
+
+         // Add the object to the Scene to be rendered
+         GetScene()->AddDrawable(obj3.get());
+
+         // put the ground crate in the vector of dropped objects
+         mObjects.push_back(obj3);
+
+         // render collision geometry
+         obj3->RenderCollisionGeometry(mRenderCollisionGeometry);
+      }
 
       updater = new Updater(GetScene());
 
       omm = new OrbitMotionModel(GetKeyboard(), GetMouse());
       omm->SetTarget(GetCamera());
 
-      //calculate and set focal distance for orbit motion model (origin -> camera)
-      Transform trans;
-      GetCamera()->GetTransform(trans);
+      // calculate and set focal distance for orbit motion model (origin -> camera)
+      {
+         Transform trans;
+         GetCamera()->GetTransform(trans);
 
-      osg::Vec3 camLoc;
-      trans.GetTranslation(camLoc);
+         osg::Vec3 camLoc;
+         trans.GetTranslation(camLoc);
 
-      osg::Vec3 origin(0.0f, 0.0f, 0.0f);
-      omm->SetDistance((camLoc - origin).length());
+         osg::Vec3 origin(0.0f, 0.0f, 0.0f);
+         omm->SetDistance((camLoc - origin).length());
+      }
 
       CreateHelpLabel();
    }
 
 protected:
-
    virtual ~TestPhysicsApp() {}
 
    virtual void PreFrame(const double deltaFrameTiime)
@@ -181,160 +218,163 @@ protected:
 
    virtual bool KeyPressed(const dtCore::Keyboard* keyboard, int key)
    {
-     // SetCollision____ must be called before setTransform so
-     // that a dGeomID will exist before a prePhysicsUpdate, otherwise
-     // the scale will never be applied to the physics geometry
+      // SetCollision____ must be called before setTransform so
+      // that a dGeomID will exist before a prePhysicsUpdate, otherwise
+      // the scale will never be applied to the physics geometry
       bool verdict(false);
+
       switch (key)
       {
-         case 'p':
+      case 'p':
+         System::GetInstance().SetPause(!System::GetInstance().GetPause());
+         verdict = true;
+         break;
+
+      case osgGA::GUIEventAdapter::KEY_Escape:
+         while (!mToAdd.empty())
          {
-            System::GetInstance().SetPause(!System::GetInstance().GetPause());
-            verdict = true;
-            break;
+            mToAdd.pop();
          }
-         case osgGA::GUIEventAdapter::KEY_Escape:
+
+         while (!mToRemove.empty())
          {
-            while (!mToAdd.empty())
-            {
-               mToAdd.pop();
-            }
-
-            while (!mToRemove.empty())
-            {
-               mToRemove.pop();
-            }
-
-            while (!mObjects.empty())
-            {
-               mObjects.pop_front();
-            }
-
-            Quit();
-            verdict = true;
-            break;
+            mToRemove.pop();
          }
-         case 'b':
-            {
-               if (mObjects.size() < mLimit)
-               {
-                  RefPtr<Object> box = new Object("box");
-                  box->LoadFile("models/physics_crate.ive");
 
-                  float randomScale = RandFloat(0.5f, 2.0f);
-                  box->SetScale(osg::Vec3(randomScale, randomScale, randomScale));
-
-                  box->SetCollisionBox();
-                  box->SetTransform(GetStartTransform());
-                  //box->RenderCollisionGeometry();
-
-                  double lx = 1.0;
-                  double ly = 1.0;
-                  double lz = 1.0;
-
-                  dMass mass;
-                  dMassSetBox(&mass, 1.0, lx, ly, lz);
-                  box->SetMass(&mass);
-
-                  box->EnableDynamics();
-
-                  mToAdd.push(box);
-               }
-               else
-               {
-                  mToRemove.push(mObjects.front());
-               }
-               verdict = true;
-               break;
-         }
-         case 's':
+         while (!mObjects.empty())
          {
-            if (mObjects.size() < mLimit)
-            {
-               RefPtr<Object> sphere = new Object("sphere");
-               sphere->LoadFile("models/physics_happy_sphere.ive");
-
-               float randomScale = RandFloat(0.5f, 2.0f);
-               sphere->SetScale(osg::Vec3(randomScale, randomScale, randomScale));
-
-               sphere->SetCollisionSphere();
-               sphere->SetTransform(GetStartTransform());
-               //sphere->RenderCollisionGeometry(true);
-
-               double radius = 0.5;
-
-               dMass mass;
-               dMassSetSphere(&mass, 1.0, radius);
-               sphere->SetMass(&mass);
-               sphere->EnableDynamics();
-
-               mToAdd.push(sphere);
-            }
-            else
-            {
-               mToRemove.push(mObjects.front());
-            }
-            verdict = true;
-            break;
+            mObjects.pop_front();
          }
-         case 'c':
+
+         Quit();
+         verdict = true;
+         break;
+
+      case 'b':
+         if (mObjects.size() < mLimit)
          {
-            if (mObjects.size() < mLimit)
-            {
-               RefPtr<Object> cyl = new Object("cylinder");
-               cyl->LoadFile("models/physics_barrel.ive");
+            RefPtr<Object> box = new Object("box");
+            box->LoadFile("models/physics_crate.ive");
 
-               float randomScale = RandFloat(0.5f, 2.0f);
-               cyl->SetScale(osg::Vec3(randomScale, randomScale, randomScale));
+            float randomScale = RandFloat(0.5f, 2.0f);
+            box->SetScale(osg::Vec3(randomScale, randomScale, randomScale));
 
-               cyl->SetCollisionCappedCylinder();
-               cyl->SetTransform(GetStartTransform());
-               //cyl->RenderCollisionGeometry(true);
+            box->SetCollisionBox();
+            box->SetTransform(GetStartTransform());
+            box->RenderCollisionGeometry(mRenderCollisionGeometry);
 
-               double radius = 0.321;
-               double length = 1.0;
+            double lx = 1.0;
+            double ly = 1.0;
+            double lz = 1.0;
 
-               dMass mass;
-               dMassSetCappedCylinder(&mass, 1.0, 2, radius, length);
-               cyl->SetMass(&mass);
+            dMass mass;
+            dMassSetBox(&mass, 1.0, lx, ly, lz);
+            box->SetMass(&mass);
 
-               cyl->EnableDynamics();
+            box->EnableDynamics();
 
-               mToAdd.push(cyl);
-            }
-            else
-            {
-               mToRemove.push(mObjects.front());
-            }
-            verdict = true;
-            break;
+            mToAdd.push(box);
          }
-         case osgGA::GUIEventAdapter::KEY_F1:
+         else
          {
-            mLabel->SetActive(!mLabel->GetActive());
-            break;
+            mToRemove.push(mObjects.front());
          }
-         default:
+         verdict = true;
+         break;
+
+      case 's':
+         if (mObjects.size() < mLimit)
          {
-            break;
+            RefPtr<Object> sphere = new Object("sphere");
+            sphere->LoadFile("models/physics_happy_sphere.ive");
+
+            float randomScale = RandFloat(0.5f, 2.0f);
+            sphere->SetScale(osg::Vec3(randomScale, randomScale, randomScale));
+
+            sphere->SetCollisionSphere();
+            sphere->SetTransform(GetStartTransform());
+            sphere->RenderCollisionGeometry(mRenderCollisionGeometry);
+
+            double radius = 0.5;
+
+            dMass mass;
+            dMassSetSphere(&mass, 1.0, radius);
+            sphere->SetMass(&mass);
+            sphere->EnableDynamics();
+
+            mToAdd.push(sphere);
          }
+         else
+         {
+            mToRemove.push(mObjects.front());
+         }
+         verdict = true;
+         break;
+
+      case 'c':
+         if (mObjects.size() < mLimit)
+         {
+            RefPtr<Object> cyl = new Object("cylinder");
+            cyl->LoadFile("models/physics_barrel.ive");
+
+            float randomScale = RandFloat(0.5f, 2.0f);
+            cyl->SetScale(osg::Vec3(randomScale, randomScale, randomScale));
+
+            cyl->SetCollisionCappedCylinder();
+            cyl->SetTransform(GetStartTransform());
+            cyl->RenderCollisionGeometry(mRenderCollisionGeometry);
+
+            double radius = 0.321;
+            double length = 1.0;
+
+            dMass mass;
+            dMassSetCappedCylinder(&mass, 1.0, 2, radius, length);
+            cyl->SetMass(&mass);
+
+            cyl->EnableDynamics();
+
+            mToAdd.push(cyl);
+         }
+         else
+         {
+            mToRemove.push(mObjects.front());
+         }
+         verdict = true;
+         break;
+
+      case 'd':
+         // toggle drawing of all collision geometry
+         mRenderCollisionGeometry = !mRenderCollisionGeometry;
+         mGround->RenderCollisionGeometry(mRenderCollisionGeometry);
+         for (size_t i = 0; i < mObjects.size(); ++i)
+         {
+            mObjects[i]->RenderCollisionGeometry(mRenderCollisionGeometry);
+         }
+         break;
+
+      case osgGA::GUIEventAdapter::KEY_F1:
+         mLabel->SetActive(!mLabel->GetActive());
+         break;
+
+      default:
+         break;
       }
 
       return verdict;
    }
 
-   //If a physical object is picked, apply a little spinning force to it
+   // If a physical object is picked, apply a little spinning force to it
    virtual bool MouseButtonPressed(const dtCore::Mouse* mouse, dtCore::Mouse::MouseButton button)
    {
       if (button != 0) { return false; }
 
       dtCore::DeltaDrawable* drawable = GetView()->GetMousePickedObject();
-      if (drawable == NULL) { return false; } //nothing picked
+      if (drawable == NULL) { return false; } // nothing picked
 
       dtCore::Physical* phys = dynamic_cast<dtCore::Physical*>(drawable);
-      if (phys == NULL) { return false; } //didn't pick a Physical
+      if (phys == NULL) { return false; } // didn't pick a Physical
 
-      if (phys->DynamicsEnabled() == false) { return false; } //not enabled
+      if (phys->DynamicsEnabled() == false) { return false; } // not enabled
 
       phys->GetBodyWrapper()->ApplyForce(osg::Vec3(0.f, 0.f, 120.f));
       phys->GetBodyWrapper()->ApplyTorque(osg::Vec3(0.f, 0.f, 60.f));
@@ -348,7 +388,7 @@ protected:
       if (GetView()->GetMousePickPosition(xyz))
       {
          Transform xform;
-         xyz[2] += 1.f; //bump up the z so objects aren't buried underground
+         xyz[2] += 1.f; // bump up the z so objects aren't buried underground
          xform.SetTranslation(xyz);
          xform.SetRotation(RandFloat(0.0f, 180.0f),
                            RandFloat(0.0f,  90.0f),
@@ -360,36 +400,36 @@ protected:
       return Transform();
    }
 
-   private:
-      void CreateHelpLabel()
-      {
-         mLabel = new dtABC::LabelActor();
-         osg::Vec2 testSize(24.0f, 5.5f);
-         mLabel->SetBackSize(testSize);
-         mLabel->SetFontSize(0.8f);
-         mLabel->SetTextAlignment(dtABC::LabelActor::AlignmentEnum::LEFT_CENTER);
-         mLabel->SetText(CreateHelpLabelText());
-         mLabel->SetEnableDepthTesting(false);
-         mLabel->SetEnableLighting(false);
+private:
+   void CreateHelpLabel()
+   {
+      mLabel = new dtABC::LabelActor();
+      osg::Vec2 testSize(24.0f, 5.5f);
+      mLabel->SetBackSize(testSize);
+      mLabel->SetFontSize(0.8f);
+      mLabel->SetTextAlignment(dtABC::LabelActor::AlignmentEnum::LEFT_CENTER);
+      mLabel->SetText(CreateHelpLabelText());
+      mLabel->SetEnableDepthTesting(false);
+      mLabel->SetEnableLighting(false);
 
-         GetCamera()->AddChild(mLabel.get());
-         dtCore::Transform labelOffset(-17.0f, 50.0f, 10.5f, 0.0f, 90.0f, 0.0f);
-         mLabel->SetTransform(labelOffset, dtCore::Transformable::REL_CS);
-         AddDrawable(GetCamera());
-      }
+      GetCamera()->AddChild(mLabel.get());
+      dtCore::Transform labelOffset(-17.0f, 50.0f, 10.5f, 0.0f, 90.0f, 0.0f);
+      mLabel->SetTransform(labelOffset, dtCore::Transformable::REL_CS);
+      AddDrawable(GetCamera());
+   }
 
-      std::string CreateHelpLabelText()
-      {
-         std::string testString("");
-         testString += "F1: Toggle Help Screen\n";
-         testString += "\n";
-         testString += "b: Add box at mouse position\n";
-         testString += "c: Add cylinder at mouse position\n";
-         testString += "s: Add sphere at mouse position\n";
-         testString += "p: Pause System\n";
+   std::string CreateHelpLabelText()
+   {
+      std::string testString("");
+      testString += "F1: Toggle Help Screen\n";
+      testString += "\n";
+      testString += "b: Add box at mouse position\n";
+      testString += "c: Add cylinder at mouse position\n";
+      testString += "s: Add sphere at mouse position\n";
+      testString += "p: Pause System\n";
 
-         return testString;
-      }
+      return testString;
+   }
 
    const unsigned int mLimit;
 
@@ -400,6 +440,8 @@ protected:
    RefPtr<Updater> updater;
    RefPtr<OrbitMotionModel> omm;
    dtCore::RefPtr<dtABC::LabelActor> mLabel;
+   RefPtr<Object> mGround;
+   bool mRenderCollisionGeometry;
 };
 
 
