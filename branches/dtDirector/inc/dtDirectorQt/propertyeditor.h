@@ -71,6 +71,7 @@ namespace dtDirector
       /**
        * Sets the scene.
        */
+      EditorScene* GetScene() {return mScene;}
       void SetScene(EditorScene* scene) {mScene = scene;}
 
       /**

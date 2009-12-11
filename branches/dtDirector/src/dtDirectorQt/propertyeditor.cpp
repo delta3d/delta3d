@@ -21,6 +21,7 @@
 
 #include <dtDirectorQt/propertyeditor.h>
 #include <dtDirectorQt/directoreditor.h>
+#include <dtDirectorQt/undomanager.h>
 #include <dtDirectorQt/nodeitem.h>
 #include <dtDirectorQt/macroitem.h>
 
@@ -98,6 +99,12 @@ namespace dtDirector
    void PropertyEditor::PropertyAboutToChangeFromControl(dtDAL::PropertyContainer& propCon, dtDAL::ActorProperty& prop,
             const std::string& oldValue, const std::string& newValue)
    {
+      Node* node = dynamic_cast<Node*>(&propCon);
+      if (node)
+      {
+         mDirectorEditor->GetUndoManager()->PropertyChangeEvent(node->GetID(), prop.GetName(), oldValue, newValue);
+         mDirectorEditor->RefreshButtonStates();
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////////

@@ -200,6 +200,11 @@ namespace dtDirector
        */
       void SetMap(dtDAL::Map* map) {mMap = map;}
 
+      /**
+       * Retrieves the logger.
+       */
+      dtUtil::Log* GetLogger() {return mLogger;}
+
       void CreateDebugScript();
 
       /**

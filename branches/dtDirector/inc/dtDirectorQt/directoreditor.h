@@ -43,6 +43,7 @@ class QGraphicsSceneMouseEvent;
 
 namespace dtDirector
 {
+   class UndoManager;
    class EditorView;
    class DirectorEditor;
    class NodeItem;
@@ -118,6 +119,12 @@ namespace dtDirector
        * Sets the current view.
        */
       void SetView(EditorView* view) {mView = view;}
+
+      /**
+       * Accessor to the editor.
+       */
+      void SetEditor(DirectorEditor* editor) {mEditor = editor;}
+      DirectorEditor* GetEditor() {return mEditor;}
 
       /**
        * Sets the currently viewed director graph.
@@ -204,6 +211,7 @@ namespace dtDirector
 
    private:
 
+      DirectorEditor*          mEditor;
       EditorView*              mView;
 
       dtCore::RefPtr<Director> mDirector;
@@ -308,6 +316,16 @@ namespace dtDirector
        */
       PropertyEditor* GetPropertyEditor() {return mPropertyEditor;}
 
+      /**
+       * Accessor for the undo manager.
+       */
+      UndoManager* GetUndoManager() {return mUndoManager;}
+
+      /**
+       * Refreshes the state of the UI buttons.
+       */
+      void RefreshButtonStates();
+
    public slots:
 
       /**
@@ -352,14 +370,33 @@ namespace dtDirector
       void OnParentButton();
 
       /**
+       * Event handler when the undo button is pressed.
+       */
+      void OnUndo();
+
+      /**
+       * Event handler when the redo button is pressed.
+       */
+      void OnRedo();
+
+      /**
        * Event handler when the show property editor button is pressed.
        */
       void OnShowPropertyEditor();
 
    protected:
 
+      /**
+       * Event handler when a key is pressed.
+       *
+       * @param[in]  e  The key event.
+       */
+      void keyPressEvent(QKeyEvent *e);
+
+
       GraphTabs*           mGraphTabs;
       PropertyEditor*      mPropertyEditor;
+      UndoManager*         mUndoManager;
 
       dtCore::RefPtr<Director> mDirector;
 
@@ -377,6 +414,8 @@ namespace dtDirector
 
       // Edit Actions.
       QAction*  mParentAction;
+      QAction*  mUndoAction;
+      QAction*  mRedoAction;
 
       // View Actions.
       QAction*  mViewPropertiesAction;

@@ -238,7 +238,7 @@ namespace dtDirector
       if (!mScene) return;
 
       // Open the subgraph.
-      mScene->SetGraph(mGraph);
+      mScene->GetEditor()->OpenGraph(mGraph);
    }
 }
 

@@ -20,6 +20,7 @@
  */
 
 #include <dtDirectorQt/directoreditor.h>
+#include <dtDirectorQt/undomanager.h>
 #include <dtDirectorQt/actionitem.h>
 #include <dtDirectorQt/valueitem.h>
 #include <dtDirectorQt/macroitem.h>
@@ -422,6 +423,8 @@ namespace dtDirector
       : QMainWindow(parent, Qt::Window)
       , mDirector(NULL)
       , mGraphTabs(NULL)
+      , mPropertyEditor(NULL)
+      , mUndoManager(NULL)
       , mMenuBar(NULL)
       , mToolbar(NULL)
       , mFileMenu(NULL)
@@ -437,6 +440,9 @@ namespace dtDirector
       resize(900, 600);
 
       setWindowTitle("No Director Graph Loaded");
+
+      // Undo Manager.
+      mUndoManager = new UndoManager(this);
 
       // Property editor.
       mPropertyEditor = new PropertyEditor(this);
@@ -461,6 +467,16 @@ namespace dtDirector
       mParentAction = new QAction(QIcon(":/icons/parent.png"), tr("Goto Parent Graph"), this);
       mParentAction->setShortcut(tr("Ctrl+U"));
       mParentAction->setToolTip(tr("Returns to the parent graph (Ctrl+U)."));
+
+      // Undo Action.
+      mUndoAction = new QAction(QIcon(":/icons/undo.png"), tr("Undo"), this);
+      mUndoAction->setShortcut(tr("Ctrl+Z"));
+      mUndoAction->setToolTip(tr("Reverts to your last action (Ctrl+Z)."));
+
+      // Redo Action.
+      mRedoAction = new QAction(QIcon(":/icons/redo.png"), tr("Redo"), this);
+      mRedoAction->setShortcut(tr("Ctrl+Y"));
+      mRedoAction->setToolTip(tr("Reverts your last undo action (Ctrl+Y)."));
 
       // Show Properties Action.
       mViewPropertiesAction = new QAction(tr("Property Editor"), this);
@@ -492,6 +508,8 @@ namespace dtDirector
       // Edit Menu.
       mEditMenu = mMenuBar->addMenu("&Edit");
       mEditMenu->addAction(mParentAction);
+      mEditMenu->addAction(mUndoAction);
+      mEditMenu->addAction(mRedoAction);
 
       // View Menu.
       mViewMenu = mMenuBar->addMenu("&View");
@@ -508,6 +526,9 @@ namespace dtDirector
       mToolbar->addAction(mNewAction);
       mToolbar->addSeparator();
       mToolbar->addAction(mParentAction);
+      mToolbar->addSeparator();
+      mToolbar->addAction(mUndoAction);
+      mToolbar->addAction(mRedoAction);
 
       // Main layout.
       setCentralWidget(mGraphTabs);
@@ -529,6 +550,10 @@ namespace dtDirector
          this, SLOT(OnNewButton()));
       connect(mParentAction, SIGNAL(triggered()),
          this, SLOT(OnParentButton()));
+      connect(mUndoAction, SIGNAL(triggered()),
+         this, SLOT(OnUndo()));
+      connect(mRedoAction, SIGNAL(triggered()),
+         this, SLOT(OnRedo()));
       connect(mViewPropertiesAction, SIGNAL(triggered()),
          this, SLOT(OnShowPropertyEditor()));
    }
@@ -536,6 +561,8 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    DirectorEditor::~DirectorEditor()
    {
+      delete mPropertyEditor;
+      delete mUndoManager;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -566,6 +593,7 @@ namespace dtDirector
       {
          EditorScene* scene = new EditorScene(mDirector, mPropertyEditor, mGraphTabs);
          EditorView* view = new EditorView(scene, this);
+         scene->SetEditor(this);
          scene->SetView(view);
 
          int index = mGraphTabs->addTab(view, "");
@@ -577,6 +605,36 @@ namespace dtDirector
       {
          view->GetScene()->SetGraph(graph);
       }
+
+      RefreshButtonStates();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::RefreshButtonStates()
+   {
+      bool bHasParent = false;
+
+      int tabIndex = mGraphTabs->currentIndex();
+      if (tabIndex >= 0 && tabIndex < mGraphTabs->count())
+      {
+         EditorView* view = dynamic_cast<EditorView*>(mGraphTabs->widget(tabIndex));
+         if (view && view->GetScene() && view->GetScene()->GetGraph())
+         {
+            if (view->GetScene()->GetGraph()->mParent)
+            {
+               bHasParent = true;
+            }
+         }
+      }
+
+            // Parent button.
+      mParentAction->setEnabled(bHasParent);
+
+      // Undo button.
+      mUndoAction->setEnabled(mUndoManager->CanUndo());
+
+      // Redo button.
+      mRedoAction->setEnabled(mUndoManager->CanRedo());
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -597,6 +655,7 @@ namespace dtDirector
             mPropertyEditor->SetScene(view->GetScene());
             view->GetScene()->Refresh();
             view->GetScene()->RefreshProperties();
+            RefreshButtonStates();
          }
       }
    }
@@ -611,6 +670,7 @@ namespace dtDirector
          if (view)
          {
             mGraphTabs->removeTab(index);
+            RefreshButtonStates();
          }
       }
    }
@@ -687,9 +747,24 @@ namespace dtDirector
             if (graph && graph->mParent)
             {
                view->GetScene()->SetGraph(graph->mParent);
+               RefreshButtonStates();
             }
          }
       }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::OnUndo()
+   {
+      mUndoManager->Undo();
+      RefreshButtonStates();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::OnRedo()
+   {
+      mUndoManager->Redo();
+      RefreshButtonStates();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -702,6 +777,28 @@ namespace dtDirector
       else
       {
          mPropertyEditor->hide();
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::keyPressEvent(QKeyEvent* e)
+   {
+      bool holdingControl = false;
+      if (e->modifiers() & Qt::ControlModifier)
+      {
+         holdingControl = true;
+      }
+
+      bool holdingShift = false;
+      if (e->modifiers() & Qt::ShiftModifier)
+      {
+         holdingShift = true;
+      }
+
+      // Redo event.
+      if (e->key() == Qt::Key_Z && holdingControl && holdingShift)
+      {
+         OnUndo();
       }
    }
 } // namespace dtDirector
