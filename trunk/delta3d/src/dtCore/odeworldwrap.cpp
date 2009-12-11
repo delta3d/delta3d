@@ -6,8 +6,8 @@
 
 //////////////////////////////////////////////////////////////////////////
 dtCore::ODEWorldWrap::ODEWorldWrap()
-: mWorldID(0)
-, mGravity(0.f, 0.f, 0.f)
+   : mWorldID(0)
+   , mGravity(0.f, 0.f, 0.f)
 {
    mWorldID = dWorldCreate();
    SetGravity(0.f, 0.f, -9.81f);
@@ -69,9 +69,9 @@ void dtCore::ODEWorldWrap::RegisterCollidable(Transformable* collidable)
    // This should probably be some sort of virtual function.
    // Or perhaps RegisterPhysical can stick around and only do
    // this.
-   if( Physical* physical = dynamic_cast<Physical*>(collidable) )
+   if ( Physical* physical = dynamic_cast<Physical*>(collidable) )
    {
-      if(physical != NULL)
+      if (physical != NULL)
       {
          physical->SetBodyID( dBodyCreate( mWorldID ) );
       }
@@ -83,7 +83,7 @@ void dtCore::ODEWorldWrap::UnRegisterCollidable(Transformable* collidable)
 {
    if (Physical* physical = dynamic_cast<Physical*>(collidable))
    {
-      if (physical != NULL) 
+      if (physical != NULL)
       {
          physical->SetBodyID(0);
       }

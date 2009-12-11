@@ -1,11 +1,12 @@
 #ifndef odegeomwrap_h__
 #define odegeomwrap_h__
 
-#include <dtCore/export.h>
-#include <dtCore/refptr.h>
-#include <osg/Referenced>
+#include <vector>
 #include <ode/common.h>
 #include <ode/collision_trimesh.h>
+#include <osg/Referenced>
+#include <dtCore/export.h>
+#include <dtCore/refptr.h>
 #include <dtUtil/enumeration.h>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
@@ -284,11 +285,12 @@ namespace dtCore
        * The heap-allocated array of mesh vertices.
        */
       dVector3* mMeshVertices;
+      int mNumMeshVertices;
 
       /**
        * The heap-allocated array of mesh indices.
        */
-      int* mMeshIndices;
+      std::vector<int> mMeshIndices;
 
    };
 }

@@ -8,6 +8,7 @@
 #include <osg/ShapeDrawable>
 #include <osg/Material>
 #include <osg/PolygonOffset>
+#include <osg/Geometry>
 
 using namespace dtCore;
 
@@ -26,7 +27,6 @@ dtCore::ODEGeomWrap::ODEGeomWrap()
    , mOriginalGeomID(NULL)
    , mTriMeshDataID(NULL)
    , mMeshVertices(NULL)
-   , mMeshIndices(NULL)
 {
    // Setup default collision geometry stuff.
    mGeomID = dCreateGeomTransform(0); //Add support for more spaces.
@@ -45,11 +45,13 @@ dtCore::ODEGeomWrap::~ODEGeomWrap()
       dGeomTriMeshDataDestroy(mTriMeshDataID);
    }
 
-   if (mMeshVertices != NULL)
+   if (mMeshVertices)
    {
       delete[] mMeshVertices;
-      delete[] mMeshIndices;
+      mMeshVertices = NULL;
+      mNumMeshVertices = 0;
    }
+   mMeshIndices.clear();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -164,7 +166,7 @@ void dtCore::ODEGeomWrap::GetCollisionGeomDimensions(std::vector<float>& dimensi
          dReal length = dGeomRayGetLength(id);
          dGeomRayGet(id, start, dir);
 
-         dimensions.push_back( length );
+         dimensions.push_back(length);
          for (int i = 0; i < 3; i++)
          {
             dimensions.push_back(float(start[i]));
@@ -280,7 +282,7 @@ public:
             // Luckily, this behavior is redundant with OSG 1.1
             if (dynamic_cast<osg::CameraNode*>(nodePath[0]) != NULL)
             {
-               nodePath = osg::NodePath( nodePath.begin()+1, nodePath.end() );
+               nodePath = osg::NodePath(nodePath.begin()+1, nodePath.end());
             }
 #endif // OSG 1.1
 
@@ -363,7 +365,7 @@ void dtCore::ODEGeomWrap::SetCollisionSphere(osg::Node* node)
       if (sv.mFunctor.mRadius > 0)
       {
          mOriginalGeomID = dCreateSphere(0, sv.mFunctor.mRadius);
-         dGeomDisable( mOriginalGeomID );
+         dGeomDisable(mOriginalGeomID);
 
          dGeomTransformSetGeom(mGeomID, dCreateSphere(0, sv.mFunctor.mRadius));
       }
@@ -382,9 +384,9 @@ void dtCore::ODEGeomWrap::SetCollisionSphere(osg::Node* node)
 void dtCore::ODEGeomWrap::SetCollisionBox(float lx, float ly, float lz)
 {
    mOriginalGeomID = dCreateBox(0, lx, ly, lz);
-   dGeomDisable( mOriginalGeomID );
+   dGeomDisable(mOriginalGeomID);
 
-   dGeomTransformSetGeom(mGeomID, dCreateBox(0, lx, ly, lz) );
+   dGeomTransformSetGeom(mGeomID, dCreateBox(0, lx, ly, lz));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -669,32 +671,30 @@ public:
 //////////////////////////////////////////////////////////////////////////
 void dtCore::ODEGeomWrap::SetCollisionMesh(osg::Node* node)
 {
-
    if (node)
    {
       DrawableVisitor<TriangleRecorder> mv;
 
       node->accept(mv);
 
-      if (mMeshVertices != 0)
+      if (mMeshVertices != NULL)
       {
          delete[] mMeshVertices;
-         delete[] mMeshIndices;
       }
-
-      mMeshVertices = new dVector3[mv.mFunctor.mVertices.size()];
-      mMeshIndices = new int[mv.mFunctor.mTriangles.size()*3];
+      mNumMeshVertices = mv.mFunctor.mVertices.size();
+      mMeshVertices = new dVector3[mNumMeshVertices];
+      mMeshIndices.resize(mv.mFunctor.mTriangles.size()*3);
 
       if (!mv.mFunctor.mVertices.empty())
       {
-         memcpy(mMeshVertices,
+         memcpy(&mMeshVertices[0],
             &mv.mFunctor.mVertices[0],
             mv.mFunctor.mVertices.size()*sizeof(StridedVertex));
       }
 
       if (!mv.mFunctor.mTriangles.empty())
       {
-         memcpy(mMeshIndices,
+         memcpy(&mMeshIndices[0],
             &mv.mFunctor.mTriangles[0],
             mv.mFunctor.mTriangles.size()*sizeof(StridedTriangle));
       }
@@ -705,14 +705,11 @@ void dtCore::ODEGeomWrap::SetCollisionMesh(osg::Node* node)
       }
 
       dGeomTriMeshDataBuildSimple(mTriMeshDataID,
-         (dReal*)mMeshVertices,
-         mv.mFunctor.mVertices.size(),
-         (dTriIndex*)mMeshIndices,
-         mv.mFunctor.mTriangles.size()*3);
+         (dReal*)mMeshVertices, mNumMeshVertices,
+         (dTriIndex*)&mMeshIndices[0], mMeshIndices.size());
 
       dGeomTransformSetGeom(mGeomID, dCreateTriMesh(0, mTriMeshDataID, 0, 0, 0));
    }
-
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -725,7 +722,7 @@ void dtCore::ODEGeomWrap::ClearCollisionGeometry()
 //////////////////////////////////////////////////////////////////////////
 void dtCore::ODEGeomWrap::SetCollisionCategoryBits(unsigned long bits)
 {
-   dGeomSetCategoryBits( mGeomID, bits );
+   dGeomSetCategoryBits(mGeomID, bits);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -737,7 +734,7 @@ unsigned long dtCore::ODEGeomWrap::GetCollisionCategoryBits() const
 //////////////////////////////////////////////////////////////////////////
 void dtCore::ODEGeomWrap::SetCollisionCollideBits(unsigned long bits)
 {
-   dGeomSetCollideBits( mGeomID, bits );
+   dGeomSetCollideBits(mGeomID, bits);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -770,8 +767,8 @@ dtCore::RefPtr<osg::Geode> dtCore::ODEGeomWrap::CreateRenderedCollisionGeometry(
       }
 
       geomClass = dGeomGetClass(id);
-      const dReal *pos = dGeomGetPosition(id);
-      const dReal *rot = dGeomGetRotation(id);
+      const dReal* pos = dGeomGetPosition(id);
+      const dReal* rot = dGeomGetRotation(id);
 
       osg::Matrix tempMatrix;
 
@@ -837,6 +834,35 @@ dtCore::RefPtr<osg::Geode> dtCore::ODEGeomWrap::CreateRenderedCollisionGeometry(
       break;
 
    case dTriMeshClass:
+      {
+         // just use the cached mesh data
+
+         // pass the geometry to OSG
+         osg::Geometry* geom = new osg::Geometry();
+         // pack vertices
+         {
+            osg::Vec3Array* geomVertices = new osg::Vec3Array;
+            for (size_t i = 0; i < mNumMeshVertices; ++i)
+            {
+               geomVertices->push_back(osg::Vec3f(mMeshVertices[i][0], mMeshVertices[i][1], mMeshVertices[i][2]));
+            }
+            geom->setVertexArray(geomVertices);
+         }
+         // pack indices
+         {
+            osg::DrawElementsUInt* geomIndices =
+               new osg::DrawElementsUInt(osg::PrimitiveSet::TRIANGLES, 0);
+
+            for (size_t i = 0; i < mMeshIndices.size(); ++i)
+            {
+               geomIndices->push_back(mMeshIndices[i]);
+            }
+            geom->addPrimitiveSet(geomIndices);
+         }
+         geode.get()->addDrawable(geom);
+      }
+      break;
+
    case dPlaneClass:
       {
          //dVector4 result; //a*x+b*y+c*z = d
@@ -850,9 +876,9 @@ dtCore::RefPtr<osg::Geode> dtCore::ODEGeomWrap::CreateRenderedCollisionGeometry(
       }
 
    default:
-      dtUtil::Log::GetInstance().LogMessage( dtUtil::Log::LOG_WARNING, __FILE__,
+      dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_WARNING, __FILE__,
          "Transformable:Can't render unhandled geometry class:%d",
-         dGeomGetClass(id) );
+         dGeomGetClass(id));
       break;
    }
 
@@ -998,6 +1024,6 @@ void dtCore::ODEGeomWrap::GetGeomTransform(dtCore::Transform& xform) const
    newRotation(1,2) = rotation[9];
    newRotation(2,2) = rotation[10];
 
-   xform.SetTranslation( position[0], position[1], position[2] );
+   xform.SetTranslation(position[0], position[1], position[2]);
    xform.SetRotation(newRotation);
 }
