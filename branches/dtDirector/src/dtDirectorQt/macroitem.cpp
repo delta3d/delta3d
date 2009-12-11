@@ -72,9 +72,16 @@ namespace dtDirector
          if (size < mNodeHeight) size = mNodeHeight;
 
          setPen(QPen(Qt::darkGray, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+
          QRadialGradient radialGradient(mNodeWidth/2, mNodeHeight/2, size, mNodeWidth/2, mNodeHeight/2);
-         radialGradient.setColorAt(0.0, Qt::darkGreen);
-         radialGradient.setColorAt(1.0, Qt::green);
+         QColor color = Qt::darkGreen;
+         color.setAlphaF(0.80f);
+         radialGradient.setColorAt(0.0, color);
+
+         color = Qt::green;
+         color.setAlphaF(0.80f);
+         radialGradient.setColorAt(1.0, color);
+
          setBrush(radialGradient);
          setPolygon(mPolygon);
 
@@ -97,41 +104,50 @@ namespace dtDirector
       int count = (int)inputs.size();
       for (int index = 0; index < count; index++)
       {
-         mInputs.push_back(InputData());
-         InputData& data = mInputs.back();
+         if (!inputs[index]->GetDisabled())
+         {
+            mInputs.push_back(InputData());
+            InputData& data = mInputs.back();
 
-         data.link = &inputs[index]->GetInputLinks()[0];
+            data.link = &inputs[index]->GetInputLinks()[0];
 
-         data.linkName = new QGraphicsTextItem(this, mScene);
-         data.linkGraphic = new InputLinkItem(this, (int)mInputs.size()-1, data.linkName, mScene);
+            data.linkName = new QGraphicsTextItem(this, mScene);
+            data.linkGraphic = new InputLinkItem(this, (int)mInputs.size()-1, data.linkName, mScene);
+         }
       }
 
       std::vector<dtCore::RefPtr<ActionNode> > outputs = mGraph->GetOutputNodes();
       count = (int)outputs.size();
       for (int index = 0; index < count; index++)
       {
-         mOutputs.push_back(OutputData());
-         OutputData& data = mOutputs.back();
+         if (!outputs[index]->GetDisabled())
+         {
+            mOutputs.push_back(OutputData());
+            OutputData& data = mOutputs.back();
 
-         data.link = &outputs[index]->GetOutputLinks()[0];
+            data.link = &outputs[index]->GetOutputLinks()[0];
 
-         data.linkGraphic = new OutputLinkItem(this, (int)mOutputs.size()-1, this, mScene);
-         data.linkName = new QGraphicsTextItem(data.linkGraphic, mScene);
-         data.linkName->setAcceptHoverEvents(false);
+            data.linkGraphic = new OutputLinkItem(this, (int)mOutputs.size()-1, this, mScene);
+            data.linkName = new QGraphicsTextItem(data.linkGraphic, mScene);
+            data.linkName->setAcceptHoverEvents(false);
+         }
       }
 
       std::vector<dtCore::RefPtr<ValueNode> > values = mGraph->GetExternalValueNodes();
       count = (int)values.size();
       for (int index = 0; index < count; index++)
       {
-         mValues.push_back(ValueData());
-         ValueData& data = mValues.back();
+         if (!values[index]->GetDisabled())
+         {
+            mValues.push_back(ValueData());
+            ValueData& data = mValues.back();
 
-         data.link = &values[index]->GetValueLinks()[0];
+            data.link = &values[index]->GetValueLinks()[0];
 
-         data.linkGraphic = new ValueLinkItem(this, (int)mValues.size()-1, this, mScene);
-         data.linkName = new QGraphicsTextItem(data.linkGraphic, mScene);
-         data.linkName->setAcceptHoverEvents(false);
+            data.linkGraphic = new ValueLinkItem(this, (int)mValues.size()-1, this, mScene);
+            data.linkName = new QGraphicsTextItem(data.linkGraphic, mScene);
+            data.linkName->setAcceptHoverEvents(false);
+         }
       }
    }
 

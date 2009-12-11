@@ -67,10 +67,32 @@ namespace dtDirector
          int size = mNodeWidth;
          if (size < mNodeHeight) size = mNodeHeight;
 
-         setPen(QPen(Qt::darkGray, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
          QRadialGradient radialGradient(mNodeWidth/2, mNodeHeight/2, size, mNodeWidth/2, mNodeHeight/2);
-         radialGradient.setColorAt(0.0, Qt::darkCyan);
-         radialGradient.setColorAt(1.0, Qt::cyan);
+         if (!mNode->GetDisabled())
+         {
+            setPen(QPen(Qt::darkGray, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+
+            QColor color = Qt::darkCyan;
+            color.setAlphaF(0.80f);
+            radialGradient.setColorAt(0.0, color);
+
+            color = Qt::cyan;
+            color.setAlphaF(0.80f);
+            radialGradient.setColorAt(1.0, color);
+         }
+         else
+         {
+            setPen(QPen(Qt::red, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+
+            QColor color = Qt::darkCyan;
+            color.setAlphaF(0.25f);
+            radialGradient.setColorAt(0.0, color);
+
+            color = Qt::cyan;
+            color.setAlphaF(0.25f);
+            radialGradient.setColorAt(1.0, color);
+         }
+
          setBrush(radialGradient);
          setPolygon(mPolygon);
       }

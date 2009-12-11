@@ -66,10 +66,32 @@ namespace dtDirector
             int size = mNodeWidth;
             if (size < mNodeHeight) size = mNodeHeight;
 
-            setPen(QPen(GetDarkColorForType(valueNode->GetPropertyType().GetTypeId()), 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
             QRadialGradient radialGradient(mNodeWidth/2, mNodeHeight, size, mNodeWidth/2, mNodeHeight);
-            radialGradient.setColorAt(0.0, GetColorForType(valueNode->GetPropertyType().GetTypeId()));
-            radialGradient.setColorAt(1.0, GetDarkColorForType(valueNode->GetPropertyType().GetTypeId()));
+            if (!mNode->GetDisabled())
+            {
+               setPen(QPen(GetDarkColorForType(valueNode->GetPropertyType().GetTypeId()), 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+
+               QColor color = GetColorForType(valueNode->GetPropertyType().GetTypeId());
+               color.setAlphaF(0.80f);
+               radialGradient.setColorAt(0.0, color);
+
+               color = GetDarkColorForType(valueNode->GetPropertyType().GetTypeId());
+               color.setAlphaF(0.80f);
+               radialGradient.setColorAt(1.0, color);
+            }
+            else
+            {
+               setPen(QPen(Qt::red, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+
+               QColor color = GetColorForType(valueNode->GetPropertyType().GetTypeId());
+               color.setAlphaF(0.25f);
+               radialGradient.setColorAt(0.0, color);
+
+               color = GetDarkColorForType(valueNode->GetPropertyType().GetTypeId());
+               color.setAlphaF(0.25f);
+               radialGradient.setColorAt(1.0, color);
+            }
+
             setBrush(radialGradient);
 
             if (!mValueLink)
