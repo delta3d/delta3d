@@ -248,7 +248,7 @@ namespace dtDirector
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found a Graph");
          mInGraph++;
 
-         mGraphs.push(mDirector->GetGraphData());
+         mGraphs.push(mDirector->GetGraphRoot());
       }
    }
 

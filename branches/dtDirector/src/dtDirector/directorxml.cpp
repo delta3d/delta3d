@@ -253,7 +253,7 @@ namespace dtDirector
             }
             EndElement(); // End Libraries Element.
 
-            SaveGraphs(director->GetGraphData());
+            SaveGraphs(director->GetGraphRoot());
          }
          EndElement(); // End Director Element.
 

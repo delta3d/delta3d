@@ -28,6 +28,8 @@
 #include <dtDirector/actionnode.h>
 #include <dtDirector/valuenode.h>
 
+#include <dtCore/uniqueid.h>
+
 
 namespace dtDirector
 {
@@ -67,6 +69,22 @@ namespace dtDirector
       void Update(float simDelta, float delta);
 
       /**
+       * Accessors for the Graph ID.
+       */
+      void SetID(const dtCore::UniqueId& id) {mID = id;}
+      const dtCore::UniqueId& GetID() {return mID;}
+
+      /**
+       * Retrieves a graph of the given ID.
+       *
+       * @param[in]  id  The ID of the graph.
+       *
+       * @return     A pointer to the graph found, or NULL
+       *             if not found.
+       */
+      DirectorGraph* GetGraph(const dtCore::UniqueId& id);
+      
+      /**
        * Retrieves a node of the given ID.
        *
        * @param[in]  id  The ID of the node.
@@ -82,7 +100,7 @@ namespace dtDirector
        * @param[in]  node  The node.
        */
       bool AddNode(Node* node);
-      
+
       /**
        * Retrieves the director.
        *
@@ -134,7 +152,9 @@ namespace dtDirector
        */
       std::vector<dtCore::RefPtr<DirectorGraph> >& GetSubGraphs() {return mSubGraphs;}
 
-      Director*          mDirector;
+      dtCore::UniqueId mID;
+
+      Director*      mDirector;
       DirectorGraph* mParent;
 
       bool        mEnabled;

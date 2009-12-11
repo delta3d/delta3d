@@ -60,7 +60,7 @@ namespace dtDirector
       QTabWidget::mouseDoubleClickEvent(e);
 
       // Create a new tab and set it to the home graph.
-      mEditor->OpenGraph(mEditor->GetDirector()->GetGraphData(), true);
+      mEditor->OpenGraph(mEditor->GetDirector()->GetGraphRoot(), true);
    }
 } // namespace dtDirector
 

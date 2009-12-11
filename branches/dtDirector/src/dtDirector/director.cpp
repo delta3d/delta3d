@@ -345,6 +345,12 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   DirectorGraph* Director::GetGraph(const dtCore::UniqueId& id)
+   {
+      return mGraph->GetGraph(id);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    Node* Director::GetNode(const dtCore::UniqueId& id)
    {
       return mGraph->GetNode(id);

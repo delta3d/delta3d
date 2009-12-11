@@ -161,16 +161,16 @@ namespace dtDirector
       {
          UpdateTitle();
 
-         mDirectorEditor->setWindowTitle(director->GetGraphData()->GetName().c_str());
+         mDirectorEditor->setWindowTitle(director->GetGraphRoot()->GetName().c_str());
 
          // Update all tabs to make sure their names are correct.
          int count = mGraphTabs->count();
          for (int index = 0; index < count; index++)
          {
             EditorView* view = dynamic_cast<EditorView*>(mGraphTabs->widget(index));
-            if (view && view->GetScene()->GetGraph() == director->GetGraphData())
+            if (view && view->GetScene()->GetGraph() == director->GetGraphRoot())
             {
-               mGraphTabs->setTabText(index, director->GetGraphData()->GetName().c_str());
+               mGraphTabs->setTabText(index, director->GetGraphRoot()->GetName().c_str());
             }
          }
 

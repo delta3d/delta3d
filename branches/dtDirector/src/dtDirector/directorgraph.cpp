@@ -92,6 +92,21 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   DirectorGraph* DirectorGraph::GetGraph(const dtCore::UniqueId& id)
+   {
+      if (GetID() == id) return this;
+
+      int count = (int)mSubGraphs.size();
+      for (int index = 0; index < count; index++)
+      {
+         DirectorGraph* result = mSubGraphs[index]->GetGraph(id);
+         if (result) return result;
+      }
+
+      return NULL;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    Node* DirectorGraph::GetNode(const dtCore::UniqueId& id)
    {
       int count = (int)mEventNodes.size();

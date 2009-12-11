@@ -206,7 +206,16 @@ namespace dtDirector
       /**
        * Retrieves the graph data.
        */
-      DirectorGraph* GetGraphData() {return mGraph.get();}
+      DirectorGraph* GetGraphRoot() {return mGraph.get();}
+
+      /**
+       * Retrieves a graph of the given id.
+       *
+       * @param[in]  id  The id of the graph.
+       *
+       * @return     A pointer to the graph or NULL if not found.
+       */
+      DirectorGraph* GetGraph(const dtCore::UniqueId& id);
 
       /**
        * Retrieves a node of the given the id.

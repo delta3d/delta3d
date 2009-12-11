@@ -199,7 +199,7 @@ namespace dtDirector
          setWindowTitle(mDirector->GetName().c_str());
 
          // Open the home graph.
-         OpenGraph(mDirector->GetGraphData(), true);
+         OpenGraph(mDirector->GetGraphRoot(), true);
       }
       else
       {
@@ -340,7 +340,7 @@ namespace dtDirector
          mDirector->LoadScript(fileName.toStdString());
 
          // Create a single tab with the default graph.
-         OpenGraph(mDirector->GetGraphData());
+         OpenGraph(mDirector->GetGraphRoot());
       }
    }
 
@@ -354,7 +354,7 @@ namespace dtDirector
       mDirector->Clear();
 
       // Create a single tab with the default graph.
-      OpenGraph(mDirector->GetGraphData());
+      OpenGraph(mDirector->GetGraphRoot());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
