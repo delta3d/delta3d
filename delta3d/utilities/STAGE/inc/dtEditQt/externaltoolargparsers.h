@@ -3,6 +3,7 @@
 
 #include <dtEditQt/externaltoolargparser.h>
 #include <dtEditQt/editordata.h>
+#include <dtDAL/datatype.h>
 #include <dtDAL/resourcedescriptor.h>
 #include <dtDAL/project.h>
 #include <dtDAL/map.h>
@@ -102,7 +103,7 @@ namespace dtEditQt
 
       virtual QString ExpandArguments(const QString& args) const
       {
-         dtDAL::ResourceDescriptor meshDescr = EditorData::GetInstance().getCurrentMeshResource();
+         dtDAL::ResourceDescriptor meshDescr = EditorData::GetInstance().getCurrentResource(dtDAL::DataType::STATIC_MESH);
          std::string path;
          if (!meshDescr.GetResourceIdentifier().empty())
          {
@@ -131,7 +132,7 @@ namespace dtEditQt
 
       virtual QString ExpandArguments(const QString& args) const
       {
-         dtDAL::ResourceDescriptor descr = EditorData::GetInstance().getCurrentParticleResource();
+         dtDAL::ResourceDescriptor descr = EditorData::GetInstance().getCurrentResource(dtDAL::DataType::PARTICLE_SYSTEM);
          std::string path;
          if (!descr.GetResourceIdentifier().empty())
          {
@@ -160,7 +161,7 @@ namespace dtEditQt
 
       virtual QString ExpandArguments(const QString& args) const
       {
-         dtDAL::ResourceDescriptor descr = EditorData::GetInstance().getCurrentSkeletalModelResource();
+         dtDAL::ResourceDescriptor descr = EditorData::GetInstance().getCurrentResource(dtDAL::DataType::SKELETAL_MESH);
          std::string path;
          if (!descr.GetResourceIdentifier().empty())
          {

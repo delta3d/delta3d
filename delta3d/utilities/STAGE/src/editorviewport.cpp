@@ -39,6 +39,7 @@
 #include <dtEditQt/editorviewport.h>
 #include <dtDAL/transformableactorproxy.h>
 #include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/resourceactorproperty.h>
 #include <dtDAL/map.h>
 #include <dtDAL/librarymanager.h>
 #include <dtDAL/actorproxyicon.h>

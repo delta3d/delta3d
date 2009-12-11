@@ -39,6 +39,7 @@
 #include <dtEditQt/soundbrowser.h>
 //#include <dtEditQt/characterbrowser.h>
 #include <dtEditQt/terrainbrowser.h>
+#include <dtEditQt/shaderbrowser.h>
 #include <dtEditQt/editoractions.h>
 #include <dtEditQt/uiresources.h>
 
@@ -61,6 +62,7 @@ namespace dtEditQt
       mTabParticle      = new TabWrapper(this);
       mTabTexture       = new TabWrapper(this);
       mTabTerrain       = new TabWrapper(this);
+      mTabShader        = new TabWrapper(this);
 
       // widgets
       mMeshWidget       = new StaticMeshBrowser(dtDAL::DataType::STATIC_MESH, this);
@@ -69,6 +71,7 @@ namespace dtEditQt
       mParticleWidget   = new ParticleBrowser(dtDAL::DataType::PARTICLE_SYSTEM, this);
       mTextureWidget    = new TextureBrowser(dtDAL::DataType::TEXTURE, this);
       mTerrainWidget    = new TerrainBrowser(dtDAL::DataType::TERRAIN, this);
+      mShaderWidget     = new ShaderBrowser(dtDAL::DataType::SHADER, this);
 
       addTabs();
 
@@ -121,6 +124,11 @@ namespace dtEditQt
       mTabTerrain->setName("Terrain");
       mTabC->addTab(mTabTerrain);
       //mTabC->addTab(mTabTerrain, UIResources::ICON_TERRAIN_TAB.c_str());
+
+      // Shader tab
+      mTabShader->setWidget(mShaderWidget);
+      mTabShader->setName("Shader");
+      mTabC->addTab(mTabShader);
    }
 
    /////////////////////////////////////////////////////////////////////////////////

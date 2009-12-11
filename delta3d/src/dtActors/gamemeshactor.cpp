@@ -22,6 +22,7 @@
 #include <dtGame/gamemanager.h>
 #include <dtGame/actorupdatemessage.h>
 #include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/resourceactorproperty.h>
 #include <dtDAL/actorproxyicon.h>
 #include <dtCore/transform.h>
 
@@ -245,10 +246,10 @@ namespace dtActors
    ///////////////////////////////////////////////////////////////////////////////
    const dtDAL::ActorProxy::RenderMode& GameMeshActorProxy::GetRenderMode()
    {
-      dtDAL::ResourceDescriptor* resource = GetResource("static mesh");
-      if (resource != NULL)
+      dtDAL::ResourceDescriptor resource = GetResource("static mesh");
+      if (resource.IsEmpty() == false)
       {
-         if (resource->GetResourceIdentifier().empty() || GetActor()->GetOSGNode() == NULL)
+         if (resource.GetResourceIdentifier().empty() || GetActor()->GetOSGNode() == NULL)
          {
                return dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON;
          }

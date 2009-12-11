@@ -28,6 +28,7 @@
 #include <osg/Referenced>
 #include <dtUtil/enumeration.h>
 #include <dtUtil/refstring.h>
+#include <dtUtil/deprecationmgr.h>
 #include <dtCore/uniqueid.h>
 #include <dtCore/refptr.h>
 #include <dtDAL/export.h>
@@ -175,25 +176,26 @@ namespace dtDAL
          /**
           * Gets a ResourceDescriptor of the requested property name.
           * @param name Name of the resource to retrieve.
-          * @return A pointer to the resource descripter or NULL if it
-          * is not found.
+          * @return A pointer to the ResourceDescriptor.  Check ResourceDescripter.IsEmpty()
+          * to see if it's valid.
           */
-         virtual ResourceDescriptor* GetResource(const std::string& name);
+         virtual ResourceDescriptor GetResource(const std::string& name);
 
          /**
           * Gets a ResourceDescriptor of the requested property name.
           * @param name Name of the resource to retrieve.
-          * @return A pointer to the resource descripter or NULL if it
-          * is not found.
+          * @return A pointer to the ResourceDescriptor. Check ResourceDescripter.IsEmpty()
+          * to see if it's valid.
           */
-         virtual const ResourceDescriptor* GetResource(const std::string& name) const;
+         virtual const ResourceDescriptor GetResource(const std::string& name) const;
 
          /**
           * Sets a resource in the map
           * @param name The name of the resource
           * @param source The pointer to resource descriptor
           */
-         void SetResource(const std::string& name, ResourceDescriptor* source);
+         DEPRECATE_FUNC void SetResource(const std::string& name, ResourceDescriptor* source); ///Deprecated 12/11/09
+         void SetResource(const std::string& name, const ResourceDescriptor& source);
 
          /**
           * Gets a property of the requested name.

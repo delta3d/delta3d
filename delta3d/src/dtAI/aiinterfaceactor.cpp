@@ -21,7 +21,7 @@
 
 #include <dtAI/aiinterfaceactor.h>
 #include <dtAI/aiplugininterface.h>
-#include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/resourceactorproperty.h>
 #include <dtDAL/project.h>
 #include <dtAI/navmesh.h>
 #include <dtAI/waypointcollection.h>

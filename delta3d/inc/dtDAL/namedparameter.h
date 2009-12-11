@@ -42,6 +42,7 @@
 #include <dtUtil/stringutils.h>
 #include <dtUtil/exception.h>
 #include <dtUtil/datastream.h>
+#include <dtUtil/deprecationmgr.h>
 #include <dtCore/refptr.h>
 #include <dtCore/uniqueid.h>
 #include <dtDAL/datatype.h>
@@ -1073,7 +1074,7 @@ namespace dtDAL
           * You should create one on the stack, and then pass it with &.
           * The method takes NULL so that the parameter can have an empty value.
           */
-         void SetValue(const dtDAL::ResourceDescriptor* descriptor);
+         void SetValue(const dtDAL::ResourceDescriptor& descriptor);
 
          /**
           * This returns a pointer to a stack created data member, so you should copy it
@@ -1081,7 +1082,7 @@ namespace dtDAL
           * point, you could get deleted out from under you.
           * @return the resource descriptor or NULL.
           */
-         const dtDAL::ResourceDescriptor* GetValue() const;
+         const dtDAL::ResourceDescriptor GetValue() const;
 
          const std::vector<dtDAL::ResourceDescriptor>& GetValueList() const;
 
@@ -1094,6 +1095,8 @@ namespace dtDAL
 
          virtual bool operator==(const NamedParameter& toCompare) const;
 
+         ///deprecated 12/11/09
+         DEPRECATE_FUNC void SetValue(const dtDAL::ResourceDescriptor* descriptor); 
       protected:
          virtual ~NamedResourceParameter();
 

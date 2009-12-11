@@ -19,7 +19,7 @@
  * William E. Johnson II 
  */
 #include <fireFighter/firehoseactor.h>
-#include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/resourceactorproperty.h>
 #include <dtCore/particlesystem.h>
 #include <dtDAL/gameeventmanager.h>
 #include <dtDAL/map.h>

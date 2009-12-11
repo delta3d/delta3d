@@ -40,6 +40,7 @@
 #include <dtDAL/datatype.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/groupactorproperty.h>
+#include <dtDAL/resourcedescriptor.h>
 #include <dtDAL/actortype.h>
 #include <dtDAL/namedparameter.h>
 #include <dtGame/gamemanager.h>
@@ -684,10 +685,10 @@ void NamedParameterTests::TestNamedResourceParameter()
       dtDAL::ResourceDescriptor c(dtDAL::DataType::STATIC_MESH.GetName() + ":hello1",
          dtDAL::DataType::STATIC_MESH.GetName() + ":hello1");
       param->SetValue(&c);
-      const dtDAL::ResourceDescriptor* r = param->GetValue();
+      dtDAL::ResourceDescriptor r = param->GetValue();
 
-      CPPUNIT_ASSERT_MESSAGE("MessageParameter should not be NULL", r != NULL);
-      CPPUNIT_ASSERT_MESSAGE("MessageParameter should return the value that was set", c == *r);
+      CPPUNIT_ASSERT_MESSAGE("MessageParameter should not be NULL", !r.IsEmpty());
+      CPPUNIT_ASSERT_MESSAGE("MessageParameter should return the value that was set", c == r);
 
       std::string holder = param->ToString();
       std::string testValue = dtDAL::DataType::STATIC_MESH.GetName() + ":helloA";
@@ -696,26 +697,26 @@ void NamedParameterTests::TestNamedResourceParameter()
       param->FromString(holder);
 
       r = param->GetValue();
-      CPPUNIT_ASSERT_MESSAGE("MessageParameter should not be NULL", r != NULL);
-      CPPUNIT_ASSERT_MESSAGE("MessageParameter should return the value that was set", c == *r);
+      CPPUNIT_ASSERT_MESSAGE("MessageParameter should not be NULL", !r.IsEmpty());
+      CPPUNIT_ASSERT_MESSAGE("MessageParameter should return the value that was set", c == r);
 
       dtCore::RefPtr<dtDAL::NamedResourceParameter> param2 = new dtDAL::NamedResourceParameter(dtDAL::DataType::STATIC_MESH, "b");
       param2->CopyFrom(*param);
-      CPPUNIT_ASSERT_MESSAGE("Copied parameter should match the original.", *param->GetValue() == *param2->GetValue());
+      CPPUNIT_ASSERT_MESSAGE("Copied parameter should match the original.", param->GetValue() == param2->GetValue());
 
       dtUtil::DataStream ds;
       dtCore::RefPtr<dtDAL::NamedResourceParameter> param3 = new dtDAL::NamedResourceParameter(dtDAL::DataType::STATIC_MESH, "b");
 
       param->ToDataStream(ds);
       param3->FromDataStream(ds);
-      CPPUNIT_ASSERT_MESSAGE("MessageParameter should not be NULL", param->GetValue() != NULL);
-      CPPUNIT_ASSERT_MESSAGE("MessageParameter copy should not be NULL", param3->GetValue() != NULL);
-      CPPUNIT_ASSERT(*param->GetValue() == *param3->GetValue());
+      CPPUNIT_ASSERT_MESSAGE("MessageParameter should not be NULL", !param->GetValue().IsEmpty());
+      CPPUNIT_ASSERT_MESSAGE("MessageParameter copy should not be NULL", !param3->GetValue().IsEmpty());
+      CPPUNIT_ASSERT(param->GetValue() == param3->GetValue());
 
       CPPUNIT_ASSERT(param->FromString(testValue));
       r = param->GetValue();
       CPPUNIT_ASSERT_MESSAGE("Setting the resource descriptor with a single string value should work.",
-         *r == temp);
+         r == temp);
 
       //Test the list version of the resource message parameter...
       dtDAL::ResourceDescriptor t1(dtDAL::DataType::STATIC_MESH.GetName()

@@ -20,7 +20,8 @@
  */
 
 #include <dtActors/prefabactorproxy.h>
-#include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/datatype.h>
+#include <dtDAL/resourceactorproperty.h>
 #include <dtDAL/mapxml.h>
 #include <dtDAL/project.h>
 #include <dtUtil/exception.h>

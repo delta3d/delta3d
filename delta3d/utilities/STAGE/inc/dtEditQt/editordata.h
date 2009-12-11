@@ -84,160 +84,26 @@ namespace dtEditQt
        */
       void GetSelectedActors(std::vector<dtDAL::ActorProxy*>& toFill);
 
-      /**
-       * Sets the currently selected Sound resource.  This is called when the user is
-       * using the resource browser and is selecting resources.  It is used by the
-       * property editor when the user selects 'Use Current'.
-       *
-       * @param The currently selected resource.  If none, then pass in ResourceDescriptor()
-       * with empty strings.
-       * @see setMeshResource, setTextureResource, setParticleResource
+      /** 
+       * Set the currently selected resource.
+       * @param type The DataType of the resource that's selected
+       * @param selectedResource The ResourceDescriptor of what's selected
        */
-      void setCurrentSoundResource(const dtDAL::ResourceDescriptor selectedResource);
+      void setCurrentResource(const dtDAL::DataType& type,
+                              const dtDAL::ResourceDescriptor& selectedResource);
 
-      /**
-       * Sets the currently selected Mesh resource.  This is called when the user is
-       * using the resource browser and is selecting resources.  It is used by the
-       * property editor when the user selects 'Use Current'.
-       *
-       * @param The currently selected resource.  If none, then pass in ResourceDescriptor()
-       * with empty strings.
-       * @see setSoundResource, setTextureResource, setParticleResource
+      /** 
+       * Get the currently selected resource, based on supplied DataType.
+       * @param type The DataType describing the Resource you're looking for.
        */
-      void setCurrentMeshResource(const dtDAL::ResourceDescriptor selectedResource);
-
-      /**
-       * Sets the currently selected Texture resource.  This is called when the user is
-       * using the resource browser and is selecting resources.  It is used by the
-       * property editor when the user selects 'Use Current'.
-       *
-       * @param The currently selected resource.  If none, then pass in ResourceDescriptor()
-       * with empty strings.
-       * @see setSoundResource, setMeshResource, setParticleResource, setTerrainResource
-       */
-      void setCurrentTextureResource(const dtDAL::ResourceDescriptor selectedResource);
-
-      /**
-       * Sets the currently selected Particle resource.  This is called when the user is
-       * using the resource browser and is selecting resources.  It is used by the
-       * property editor when the user selects 'Use Current'.
-       *
-       * @param The currently selected resource.  If none, then pass in ResourceDescriptor()
-       * with empty strings.
-       * @see setSoundResource, setMeshResource, setTextureResource, setTerrainResource
-       */
-      void setCurrentParticleResource(const dtDAL::ResourceDescriptor selectedResource);
-
-      /**
-       * Sets the currently selected Skeletal Model resource.  This is called when the user is
-       * using the resource browser and is selecting resources.  It is used by the
-       * property editor when the user selects 'Use Current'.
-       *
-       * @param The currently selected resource.  If none, then pass in ResourceDescriptor()
-       * with empty strings.
-       * @see setSoundResource, setMeshResource, setTextureResource, setTerrainResource
-       */
-      void setCurrentSkeletalModelResource(const dtDAL::ResourceDescriptor selectedResource);
-
-      /**
-       * Sets the currently selected terrain resource.  This is called when the user is
-       * using the resource browser and is selecting resources.  It is used by the
-       * property editor when the user selects 'Use Current'.
-       *
-       * @param The currently selected resource.  If none, then pass in ResourceDescriptor()
-       * with empty strings.
-       * @see setSoundResource, setMeshResource, setTextureResource
-       */
-      void setCurrentTerrainResource(const dtDAL::ResourceDescriptor selectedResource);
-
-      /**
-      * Sets the currently selected prefab resource.  This is called when the user is
-      * using the resource browser and is selecting resources.  It is used by the
-      * property editor when the user selects 'Use Current'.
-      *
-      * @param The currently selected resource.  If none, then pass in ResourceDescriptor()
-      * with empty strings.
-      * @see setSoundResource, setMeshResource, setTextureResource
-      */
-      void setCurrentPrefabResource(const dtDAL::ResourceDescriptor selectedResource);
-
+      dtDAL::ResourceDescriptor getCurrentResource(const dtDAL::DataType& type);
+      
       /**
        * Gets the current grid size.
        * @return A power of two integer corresponding to the current grid size.
        * @note The default grid size is 16
        */
       int getGridSize() const { return mGridSize; }
-
-      /**
-       * Gets the currently selected Sound resource.  This is used by the
-       * property editor when the user selects 'Use Current'.
-       *
-       * @return The currently selected resource descriptor.  Check
-       * resource.getResourceIdentifier().empty() to see if it's actually none.
-       * @see setSoundResource, setMeshResource, setTextureResource
-       */
-      dtDAL::ResourceDescriptor getCurrentSoundResource() { return mSoundResource; }
-
-      /**
-       * Gets the currently selected Mesh resource.  This is used by the
-       * property editor when the user selects 'Use Current'.
-       *
-       * @return The currently selected resource descriptor.  Check
-       * resource.getResourceIdentifier().empty() to see if it's actually none.
-       * @see setSoundResource, setMeshResource, setTextureResource
-       */
-      dtDAL::ResourceDescriptor getCurrentMeshResource() { return mMeshResource; }
-
-      /**
-       * Gets the currently selected Texture resource.  This is used by the
-       * property editor when the user selects 'Use Current'.
-       *
-       * @return The currently selected resource descriptor.  Check
-       * resource.getResourceIdentifier().empty() to see if it's actually none.
-       * @see setSoundResource, setMeshResource, setTextureResource
-       */
-      dtDAL::ResourceDescriptor getCurrentTextureResource() { return mTextureResource; }
-
-      /**
-       * Gets the currently selected Particle resource.  This is used by the
-       * property editor when the user selects 'Use Current'.
-       *
-       * @return The currently selected resource descriptor.  Check
-       * resource.getResourceIdentifier().empty() to see if it's actually none.
-       * @see setSoundResource, setMeshResource, setTextureResource
-       */
-      dtDAL::ResourceDescriptor getCurrentParticleResource() { return mParticleResource; }
-
-
-      /**
-       * Gets the currently selected skeletal model resource.  This is used by the
-       * property editor when the user selects 'Use Current'.
-       *
-       * @return The currently selected resource descriptor.  Check
-       * resource.getResourceIdentifier().empty() to see if it's actually none.
-       * @see setSoundResource, setMeshResource, setTextureResource
-       */
-      dtDAL::ResourceDescriptor getCurrentSkeletalModelResource() { return mSkeletalModelResource; }
-
-      /**
-       * Gets the currently selected terrain resource.  This is used by the
-       * property editor when the user selects 'Use Current'.
-       *
-       * @return The currently selected resource descriptor.  Check
-       * resource.getResourceIdentifier().empty() to see if it's actually none.
-       * @see getSoundResource, getMeshResource, getTextureResource, getTerrainResource
-       */
-      dtDAL::ResourceDescriptor getCurrentTerrainResource() { return mTerrainResource; }
-
-      /**
-      * Gets the currently selected prefab resource.  This is used by the
-      * property editor when the user selects 'Use Current'.
-      *
-      * @return The currently selected resource descriptor.  Check
-      * resource.getResourceIdentifier().empty() to see if it's actually none.
-      * @see getSoundResource, getMeshResource, getTextureResource, getTerrainResource
-      */
-      dtDAL::ResourceDescriptor getCurrentPrefabResource() { return mPrefabResource; }
 
       /**
        * Returns a pointer the the main window.
@@ -377,6 +243,158 @@ namespace dtEditQt
       EditorData(const EditorData& rhs);
       EditorData& operator=(EditorData& rhs);
 
+      /**
+       * Sets the currently selected Sound resource.  This is called when the user is
+       * using the resource browser and is selecting resources.  It is used by the
+       * property editor when the user selects 'Use Current'.
+       *
+       * @param The currently selected resource.  If none, then pass in ResourceDescriptor()
+       * with empty strings.
+       * @see setMeshResource, setTextureResource, setParticleResource
+       */
+      void setCurrentSoundResource(const dtDAL::ResourceDescriptor selectedResource);
+
+      /**
+       * Gets the currently selected Sound resource.  This is used by the
+       * property editor when the user selects 'Use Current'.
+       *
+       * @return The currently selected resource descriptor.  Check
+       * resource.getResourceIdentifier().empty() to see if it's actually none.
+       * @see setSoundResource, setMeshResource, setTextureResource
+       */
+      dtDAL::ResourceDescriptor getCurrentSoundResource() { return mSoundResource; }
+
+      /**
+       * Sets the currently selected Mesh resource.  This is called when the user is
+       * using the resource browser and is selecting resources.  It is used by the
+       * property editor when the user selects 'Use Current'.
+       *
+       * @param The currently selected resource.  If none, then pass in ResourceDescriptor()
+       * with empty strings.
+       * @see setSoundResource, setTextureResource, setParticleResource
+       */
+      void setCurrentMeshResource(const dtDAL::ResourceDescriptor selectedResource);
+
+      /**
+       * Gets the currently selected Mesh resource.  This is used by the
+       * property editor when the user selects 'Use Current'.
+       *
+       * @return The currently selected resource descriptor.  Check
+       * resource.getResourceIdentifier().empty() to see if it's actually none.
+       * @see setSoundResource, setMeshResource, setTextureResource
+       */
+      dtDAL::ResourceDescriptor getCurrentMeshResource() { return mMeshResource; }
+
+      /**
+       * Sets the currently selected Texture resource.  This is called when the user is
+       * using the resource browser and is selecting resources.  It is used by the
+       * property editor when the user selects 'Use Current'.
+       *
+       * @param The currently selected resource.  If none, then pass in ResourceDescriptor()
+       * with empty strings.
+       * @see setSoundResource, setMeshResource, setParticleResource, setTerrainResource
+       */
+      void setCurrentTextureResource(const dtDAL::ResourceDescriptor selectedResource);
+      
+      /**
+       * Gets the currently selected Texture resource.  This is used by the
+       * property editor when the user selects 'Use Current'.
+       *
+       * @return The currently selected resource descriptor.  Check
+       * resource.getResourceIdentifier().empty() to see if it's actually none.
+       * @see setSoundResource, setMeshResource, setTextureResource
+       */
+      dtDAL::ResourceDescriptor getCurrentTextureResource() { return mTextureResource; }
+
+      /**
+       * Sets the currently selected Particle resource.  This is called when the user is
+       * using the resource browser and is selecting resources.  It is used by the
+       * property editor when the user selects 'Use Current'.
+       *
+       * @param The currently selected resource.  If none, then pass in ResourceDescriptor()
+       * with empty strings.
+       * @see setSoundResource, setMeshResource, setTextureResource, setTerrainResource
+       */
+      void setCurrentParticleResource(const dtDAL::ResourceDescriptor selectedResource);
+
+      /**
+       * Gets the currently selected Particle resource.  This is used by the
+       * property editor when the user selects 'Use Current'.
+       *
+       * @return The currently selected resource descriptor.  Check
+       * resource.getResourceIdentifier().empty() to see if it's actually none.
+       * @see setSoundResource, setMeshResource, setTextureResource
+       */
+      dtDAL::ResourceDescriptor getCurrentParticleResource() { return mParticleResource; }
+
+      /**
+       * Sets the currently selected Skeletal Model resource.  This is called when the user is
+       * using the resource browser and is selecting resources.  It is used by the
+       * property editor when the user selects 'Use Current'.
+       *
+       * @param The currently selected resource.  If none, then pass in ResourceDescriptor()
+       * with empty strings.
+       * @see setSoundResource, setMeshResource, setTextureResource, setTerrainResource
+       */
+      void setCurrentSkeletalModelResource(const dtDAL::ResourceDescriptor selectedResource);
+
+      /**
+       * Gets the currently selected skeletal model resource.  This is used by the
+       * property editor when the user selects 'Use Current'.
+       *
+       * @return The currently selected resource descriptor.  Check
+       * resource.getResourceIdentifier().empty() to see if it's actually none.
+       * @see setSoundResource, setMeshResource, setTextureResource
+       */
+      dtDAL::ResourceDescriptor getCurrentSkeletalModelResource() { return mSkeletalModelResource; }
+
+      /**
+       * Sets the currently selected terrain resource.  This is called when the user is
+       * using the resource browser and is selecting resources.  It is used by the
+       * property editor when the user selects 'Use Current'.
+       *
+       * @param The currently selected resource.  If none, then pass in ResourceDescriptor()
+       * with empty strings.
+       * @see setSoundResource, setMeshResource, setTextureResource
+       */
+      void setCurrentTerrainResource(const dtDAL::ResourceDescriptor selectedResource);
+ 
+      /**
+       * Gets the currently selected terrain resource.  This is used by the
+       * property editor when the user selects 'Use Current'.
+       *
+       * @return The currently selected resource descriptor.  Check
+       * resource.getResourceIdentifier().empty() to see if it's actually none.
+       * @see getSoundResource, getMeshResource, getTextureResource, getTerrainResource
+       */
+      dtDAL::ResourceDescriptor getCurrentTerrainResource() { return mTerrainResource; }
+
+      /**
+      * Sets the currently selected prefab resource.  This is called when the user is
+      * using the resource browser and is selecting resources.  It is used by the
+      * property editor when the user selects 'Use Current'.
+      *
+      * @param The currently selected resource.  If none, then pass in ResourceDescriptor()
+      * with empty strings.
+      * @see setSoundResource, setMeshResource, setTextureResource
+      */
+      void setCurrentPrefabResource(const dtDAL::ResourceDescriptor selectedResource);
+
+      /**
+      * Gets the currently selected prefab resource.  This is used by the
+      * property editor when the user selects 'Use Current'.
+      *
+      * @return The currently selected resource descriptor.  Check
+      * resource.getResourceIdentifier().empty() to see if it's actually none.
+      * @see getSoundResource, getMeshResource, getTextureResource, getTerrainResource
+      */
+      dtDAL::ResourceDescriptor getCurrentPrefabResource() { return mPrefabResource; }
+
+      void setCurrentShaderResource(const dtDAL::ResourceDescriptor selectedResource);
+
+      dtDAL::ResourceDescriptor getCurrentShaderResource() { return mShaderResource; }
+
+
       // Singleton instance of this class.
       static dtCore::RefPtr<EditorData> sInstance;
 
@@ -395,6 +413,7 @@ namespace dtEditQt
       dtDAL::ResourceDescriptor mTerrainResource;
       dtDAL::ResourceDescriptor mSkeletalModelResource;
       dtDAL::ResourceDescriptor mPrefabResource;
+      dtDAL::ResourceDescriptor mShaderResource;
 
       std::list<std::string> mRecentMaps;
       std::list<std::string> mRecentProjects;

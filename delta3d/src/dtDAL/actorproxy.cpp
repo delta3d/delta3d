@@ -143,39 +143,54 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   ResourceDescriptor* ActorProxy::GetResource(const std::string& name)
+   ResourceDescriptor ActorProxy::GetResource(const std::string& name)
    {
       ResourceMapType::iterator itor = mResourceMap.find(name);
-      return itor != mResourceMap.end() ? &itor->second : NULL;
+      return itor != mResourceMap.end() ? itor->second : dtDAL::ResourceDescriptor::NULL_RESOURCE;
    }
-
    ///////////////////////////////////////////////////////////////////////////////////////
-   const ResourceDescriptor* ActorProxy::GetResource(const std::string& name) const
+   const ResourceDescriptor ActorProxy::GetResource(const std::string& name) const
    {
       ResourceMapType::const_iterator itor = mResourceMap.find(name);
-      return itor != mResourceMap.end() ? &itor->second : NULL;
+      return itor != mResourceMap.end() ? itor->second : dtDAL::ResourceDescriptor::NULL_RESOURCE;
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
    void ActorProxy::SetResource(const std::string& name, ResourceDescriptor* source)
    {
-      if (source == NULL)
+      DEPRECATE("void ActorProxy::SetResource(const std::string&, ResourceDescriptor*)",
+                "void ActorProxy::SetResource(const std::string&, const ResourceDescriptor&)");
+
+      if (source != NULL)
+      {
+         SetResource(name, *source);
+      }
+      else
+      {
+         SetResource(name, dtDAL::ResourceDescriptor::NULL_RESOURCE);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ActorProxy::SetResource(const std::string& name, const ResourceDescriptor& source)
+   {
+      if (source.IsEmpty())
       {
          mResourceMap.erase(name);
       }
       else
       {
          //attempt to insert the value
-         std::pair<ResourceMapType::iterator, bool> result = mResourceMap.insert(std::make_pair(name, *source));
+         std::pair<ResourceMapType::iterator, bool> result = mResourceMap.insert(std::make_pair(name, source));
          // result.second tells me if it was inserted
          if (!result.second)
          {
             // if not, first of the result is the iterator to the map entry, so just change the map value.
-            result.first->second = *source;
+            result.first->second = source;
          }
       }
-   }
 
+   }
 
    ///////////////////////////////////////////////////////////////////////////////////////
    const ActorProxy* ActorProxy::GetLinkedActor(const std::string& name) const

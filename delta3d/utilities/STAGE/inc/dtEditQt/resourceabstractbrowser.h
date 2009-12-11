@@ -32,14 +32,10 @@
 
 #include <QtCore/QString>
 #include <QtGui/QWidget>
-#include <QtGui/QMessageBox>
 
 #include <QtGui/QPushButton>
 
-#include <dtDAL/project.h>
 #include <dtDAL/datatype.h>
-#include <dtEditQt/editordata.h>
-#include <dtEditQt/editorevents.h>
 #include <dtEditQt/resourceimportdialog.h>
 
 class QPushButton;

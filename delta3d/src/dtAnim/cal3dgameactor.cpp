@@ -24,6 +24,7 @@
 #include <dtGame/gamemanager.h>
 #include <dtGame/actorupdatemessage.h>
 #include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/resourceactorproperty.h>
 #include <dtDAL/actorproxyicon.h>
 #include <dtAnim/submesh.h>
 #include <dtAnim/skeletaldrawable.h>
@@ -210,10 +211,10 @@ namespace dtAnim
 
    const dtDAL::ActorProxy::RenderMode& Cal3DGameActorProxy::GetRenderMode()
    {
-      dtDAL::ResourceDescriptor* resource = GetResource("Skeletal Mesh");
-      if (resource != NULL)
+      dtDAL::ResourceDescriptor resource = GetResource("Skeletal Mesh");
+      if (resource.IsEmpty() == false)
       {
-         if (resource->GetResourceIdentifier().empty() || GetActor()->GetOSGNode() == NULL)
+         if (resource.GetResourceIdentifier().empty() || GetActor()->GetOSGNode() == NULL)
          {
             return dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON;
          }

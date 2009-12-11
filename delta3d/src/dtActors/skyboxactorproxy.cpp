@@ -20,7 +20,8 @@
 */
 
 #include "dtActors/skyboxactorproxy.h"
-#include "dtDAL/enginepropertytypes.h"
+#include <dtDAL/resourceactorproperty.h>
+#include <dtDAL/datatype.h>
 
 namespace dtActors 
 {

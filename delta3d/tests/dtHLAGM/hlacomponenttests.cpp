@@ -40,6 +40,7 @@
 #include <dtDAL/datatype.h>
 #include <dtDAL/project.h>
 #include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/resourceactorproperty.h>
 #include <dtDAL/resourcedescriptor.h>
 
 #include <dtHLAGM/ddmcameracalculatorgeographic.h>
@@ -1133,13 +1134,13 @@ void HLAComponentTests::TestReflectAttributes()
 
       dtDAL::ResourceActorProperty* rap = dynamic_cast<dtDAL::ResourceActorProperty*>(proxy->GetProperty("Mesh"));
       CPPUNIT_ASSERT(rap != NULL);
-      dtDAL::ResourceDescriptor* rd = rap->GetValue();
-      CPPUNIT_ASSERT_MESSAGE("the mesh resource should have been set.", rd != NULL);
+      dtDAL::ResourceDescriptor rd = rap->GetValue();
+      CPPUNIT_ASSERT_MESSAGE("the mesh resource should have been set.", rd.IsEmpty() == false);
       const std::string expectedMeshValue("StaticMeshes:articulation_test.ive");
-      CPPUNIT_ASSERT_EQUAL(expectedMeshValue, rd->GetResourceIdentifier());
+      CPPUNIT_ASSERT_EQUAL(expectedMeshValue, rd.GetResourceIdentifier());
 
       //Clear the resource value.
-      rap->SetValue(NULL);
+      rap->SetValue(dtDAL::ResourceDescriptor::NULL_RESOURCE);
 
       //run the same reflect call again to make sure the mesh value is not sent the second time.
       mHLAComponent->reflectAttributeValues(mObjectHandle1, *ahs, "");
@@ -1159,7 +1160,7 @@ void HLAComponentTests::TestReflectAttributes()
          static_cast<const dtGame::ActorUpdateMessage&>(*msg).GetUpdateParameter("Mesh") == NULL);
 
       CPPUNIT_ASSERT_MESSAGE("The value should still be null because it didn't send the property the second time.",
-         rap->GetValue() == NULL);
+         rap->GetValue().IsEmpty());
 
       //now test deleting the object.
       mHLAComponent->removeObjectInstance(mObjectHandle1, "");

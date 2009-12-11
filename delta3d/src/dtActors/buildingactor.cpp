@@ -3,6 +3,7 @@
 #include <dtCore/transformable.h>
 #include <dtCore/transform.h>
 #include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/resourceactorproperty.h>
 #include <dtDAL/arrayactorproperty.h>
 #include <dtDAL/containeractorproperty.h>
 #include <dtDAL/mapxml.h>

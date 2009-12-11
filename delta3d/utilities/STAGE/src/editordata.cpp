@@ -33,6 +33,7 @@
 #include <dtEditQt/groupuiregistry.h>
 #include <dtEditQt/groupuiplugin.h>
 #include <dtDAL/map.h>
+#include <dtDAL/datatype.h>
 #include <dtUtil/log.h>
 
 #include <QtCore/QObject>
@@ -235,4 +236,80 @@ namespace dtEditQt
       mSkeletalModelResource = selectedResource;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorData::setCurrentShaderResource(const dtDAL::ResourceDescriptor selectedResource)
+   {
+      mShaderResource = selectedResource;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorData::setCurrentResource(const dtDAL::DataType& type,
+                                       const dtDAL::ResourceDescriptor& selectedResource)
+   {
+      if (type == dtDAL::DataType::SOUND)
+      {
+         setCurrentSoundResource(selectedResource);
+      }
+      else if (type == dtDAL::DataType::STATIC_MESH)
+      {
+         setCurrentMeshResource(selectedResource);
+      }
+      else if (type == dtDAL::DataType::TEXTURE)
+      {
+         setCurrentTextureResource(selectedResource);
+      }
+      else if (type == dtDAL::DataType::PARTICLE_SYSTEM)
+      {
+         setCurrentParticleResource(selectedResource);
+      }
+      else if (type == dtDAL::DataType::TERRAIN)
+      {
+         setCurrentTerrainResource(selectedResource);
+      }
+      else if (type == dtDAL::DataType::SKELETAL_MESH)
+      {
+         setCurrentSkeletalModelResource(selectedResource);
+      }
+      else if (type == dtDAL::DataType::SHADER)
+      {
+         setCurrentShaderResource(selectedResource);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtDAL::ResourceDescriptor EditorData::getCurrentResource(const dtDAL::DataType& type)
+   {
+      if (type == dtDAL::DataType::SOUND)
+      {
+         return getCurrentSoundResource();
+      }
+      else if (type == dtDAL::DataType::STATIC_MESH)
+      {
+         return getCurrentMeshResource();
+      }
+      else if (type == dtDAL::DataType::TEXTURE)
+      {
+         return getCurrentTextureResource();
+      }
+      else if (type == dtDAL::DataType::PARTICLE_SYSTEM)
+      {
+         return getCurrentParticleResource();
+      }
+      else if (type == dtDAL::DataType::TERRAIN)
+      {
+         return getCurrentTerrainResource();
+      }
+      else if (type == dtDAL::DataType::SKELETAL_MESH)
+      {
+         return getCurrentSkeletalModelResource();
+      }
+      else if (type == dtDAL::DataType::SHADER)
+      {
+         return getCurrentShaderResource();
+      }
+      else
+      {
+         return dtDAL::ResourceDescriptor();
+      }
+   }
 } // namespace dtEditQt

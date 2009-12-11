@@ -27,9 +27,10 @@
 #include <dtActors/staticmeshactorproxy.h>
 
 #include <dtDAL/exceptionenum.h>
-#include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/resourceactorproperty.h>
 #include <dtDAL/resourcedescriptor.h>
 #include <dtDAL/actorproxyicon.h>
+#include <dtDAL/datatype.h>
 
 #include <dtCore/object.h>
 
@@ -241,10 +242,10 @@ namespace dtActors
     ///////////////////////////////////////////////////////////////////////////////
     const dtDAL::ActorProxy::RenderMode& StaticMeshActorProxy::GetRenderMode()
     {
-        dtDAL::ResourceDescriptor *resource = GetResource("static mesh");
-        if (resource != NULL)
+        dtDAL::ResourceDescriptor resource = GetResource("static mesh");
+        if (resource.IsEmpty() == false)
         {
-            if (resource->GetResourceIdentifier().empty() || GetActor()->GetOSGNode() == NULL)
+            if (resource.GetResourceIdentifier().empty() || GetActor()->GetOSGNode() == NULL)
                 return dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON;
             else
                 return dtDAL::ActorProxy::RenderMode::DRAW_ACTOR;
