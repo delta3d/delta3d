@@ -57,4 +57,28 @@ class Util{
 		static unsigned int					getUInt(std::string s);
 };
 
+/*
+ Iterating ReferenceTarget objects changed in version 12 (2010).
+ The following macros should be used for iterating so the code
+ can compile on older and newer versions.
+ */
+#if MAX_RELEASE >= 12000
+
+#define BEGIN_REF_ITERATE(node) {  DependentIterator di(node); \
+								   ReferenceMaker *maker = NULL; \
+								   while (NULL!=(maker=di.Next())) {
+									   
+#define END_REF_ITERATE()		} }
+
+#else
+
+#define BEGIN_REF_ITERATE(node) { RefList refList = node->GetRefList(); \
+								   RefListItem* ptr = refList.first; \
+								   while (ptr) { \
+									   ReferenceMaker *maker = ptr->maker; \
+								       if(maker) {
+#define END_REF_ITERATE()		} ptr = ptr->next; } }
+
+#endif
+
 #endif // __UTIL__H

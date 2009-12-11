@@ -822,7 +822,7 @@ osg::ref_ptr<osg::TextureCubeMap> MtlKeeper::createTextureCubeMap(Mtl* maxMtl, T
 		// 6 maps in the Up, Down, Right, Left, Front and Back slots, we will use these maps.
 		if(on){
 			for (int i = 0 ; i < 6; i++){
-				TCHAR *name;
+				const MCHAR* name = NULL;
 				pblock->GetValue(acubic_bitmap_names,t,name,iv,i);
 				filenames[i] = std::string(name);
 			}	

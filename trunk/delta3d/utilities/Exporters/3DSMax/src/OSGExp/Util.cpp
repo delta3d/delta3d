@@ -182,14 +182,12 @@ IParamBlock2* Util::isReferencedByHelperObject(INode* node, Class_ID helperID){
  */
  IParamBlock2* Util::isReferencedByHelperObjects(INode* node, std::vector<Class_ID> helperIDs){
 	IParamBlock2* pblock2;
-	RefList refList;
-	refList = node->GetRefList();
-	RefListItem* ptr = refList.first;
-	while (ptr){
-		if(ptr->maker){
-			SClass_ID sid = ptr->maker->SuperClassID();
+
+	BEGIN_REF_ITERATE(node)
+
+			SClass_ID sid = maker->SuperClassID();
 			if(sid==PARAMETER_BLOCK2_CLASS_ID){
-				pblock2 = (IParamBlock2*) ptr->maker;
+				pblock2 = (IParamBlock2*) maker;
 				ClassDesc2 * desc = pblock2->GetDesc()->cd;
 				if(desc){
 					Class_ID id  = desc->ClassID();
@@ -198,12 +196,14 @@ IParamBlock2* Util::isReferencedByHelperObject(INode* node, Class_ID helperID){
 							return pblock2;
 				}
 			}
-		}
-		ptr = ptr->next;
-	}
+
+	END_REF_ITERATE()
+
 	// Check to see if parent node is referenced.
 	if(node->IsGroupMember())
+   {
 		return isReferencedByHelperObjects(node->GetParentNode(), helperIDs);
+   }
 	return NULL;
  }
 
