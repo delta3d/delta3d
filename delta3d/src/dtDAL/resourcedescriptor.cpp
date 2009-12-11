@@ -23,6 +23,8 @@
 
 namespace dtDAL 
 {
+   ResourceDescriptor ResourceDescriptor::NULL_RESOURCE;
+
    const std::string ResourceDescriptor::GetExtension() const 
    {
       std::string ext;
@@ -45,4 +47,16 @@ namespace dtDAL
       return name;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   bool ResourceDescriptor::IsEmpty() const
+   {
+      return (GetResourceIdentifier().empty() && GetResourceName().empty());
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ResourceDescriptor::Clear()
+   {
+      mResourceIdentifier.clear();
+      mDisplayName.clear();
+   }
 }
