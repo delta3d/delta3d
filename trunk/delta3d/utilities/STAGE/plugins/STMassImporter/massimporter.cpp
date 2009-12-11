@@ -3,7 +3,7 @@
 
 #include <assert.h>
 
-#include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/resourceactorproperty.h>
 #include <dtDAL/librarymanager.h>
 #include <dtDAL/map.h>
 #include <dtEditQt/editordata.h>

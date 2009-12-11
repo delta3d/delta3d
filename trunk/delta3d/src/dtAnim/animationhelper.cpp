@@ -32,6 +32,7 @@
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actorproxy.h>
+#include <dtDAL/resourceactorproperty.h>
 
 #include <dtCore/hotspotattachment.h>
 

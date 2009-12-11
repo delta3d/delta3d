@@ -27,6 +27,7 @@
 */
 #include "testpropertyproxy.h"
 #include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/resourceactorproperty.h>
 #include <dtDAL/namedparameter.h>
 #include <dtDAL/groupactorproperty.h>
 #include <dtDAL/arrayactorproperty.h>

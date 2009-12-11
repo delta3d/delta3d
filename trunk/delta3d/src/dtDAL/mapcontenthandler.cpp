@@ -31,6 +31,7 @@
 #include <dtDAL/groupactorproperty.h>
 #include <dtDAL/arrayactorpropertybase.h>
 #include <dtDAL/containeractorproperty.h>
+#include <dtDAL/resourceactorproperty.h>
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/datatype.h>

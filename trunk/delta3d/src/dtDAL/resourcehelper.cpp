@@ -139,40 +139,6 @@ namespace dtDAL
          std::map<std::string, std::string> defFilter;
          //defFilter.insert(std::make_pair("*","Any File"));
          DataType& d = **i;
-         if (d.IsResource())
-         {
-            std::string description;
-            if (d == DataType::SOUND)
-            {
-               description = "Sound Files";
-            }
-            else if (d == DataType::STATIC_MESH)
-            {
-               description = "Static Mesh Files";
-            }
-            else if (d == DataType::SKELETAL_MESH)
-            {
-               description = "Skeletal Mesh Files";
-            }
-            else if (d == DataType::TERRAIN)
-            {
-               description = "Static Mesh Terrain Files";
-            }
-            else if (d == DataType::TEXTURE)
-            {
-               description = "Image Files";
-            }
-            else if (d == DataType::PARTICLE_SYSTEM)
-            {
-               description = "Particle Files";
-            }
-            else if (d == DataType::PREFAB)
-            {
-               description = "Prefab Files";
-            }
-            //DefaultResourceTypeHandler* def = new DefaultResourceTypeHandler(d, description, defFilter);
-            //mDefaultTypeHandlers.insert(std::make_pair(&d, dtCore::RefPtr<ResourceTypeHandler>(def)));
-         }
 
          if (d.IsResource())
          {
@@ -291,6 +257,13 @@ namespace dtDAL
                extFilter.insert(std::make_pair("dtprefab","Delta Prefab."));
                handler = new DefaultResourceTypeHandler(d, "Delta Prefab.", extFilter);
                extMap.insert(std::make_pair("dtprefab", dtCore::RefPtr<ResourceTypeHandler>(handler)));
+            }
+            else if (d == DataType::SHADER)
+            {
+               description = "Pixel Shaders";
+               extFilter.insert(std::make_pair("dtshader", "Delta3D Shaders"));
+               handler = new DefaultResourceTypeHandler(d, "Delta3D Shaders", extFilter);
+               extMap.insert(std::make_pair("dtshader", dtCore::RefPtr<ResourceTypeHandler>(handler)));
             }
 
             mTypeHandlers.insert(std::make_pair(&d, extMap));

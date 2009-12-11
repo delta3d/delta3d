@@ -56,6 +56,7 @@
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/groupactorproperty.h>
 #include <dtDAL/arrayactorproperty.h>
+#include <dtDAL/resourceactorproperty.h>
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/environmentactor.h>
 #include <dtDAL/gameeventmanager.h>
@@ -1092,12 +1093,15 @@ void MapTests::TestMapSaveAndLoad()
 
 
         ap = getActorProperty(*map, "", dtDAL::DataType::STATIC_MESH);
-        dtDAL::ResourceDescriptor* rdMeshVal = static_cast<dtDAL::ResourceActorProperty*>(ap)->GetValue();
+        dtDAL::ResourceDescriptor rdMeshVal = static_cast<dtDAL::ResourceActorProperty*>(ap)->GetValue();
         //testRD is declared in the setup section prior to the save and load.
-        if (rdMeshVal == NULL)
+        if (rdMeshVal.IsEmpty())
+        {
             CPPUNIT_FAIL("Static Mesh ResourceDescriptor should not be NULL.");
-        CPPUNIT_ASSERT_MESSAGE("The resource Descriptor does not match.  Value is :" + std::string(""), //rdVal->GetResourceIdentifier(),
-            rdMeshVal != NULL && *rdMeshVal == dirtRD);
+        }
+
+        CPPUNIT_ASSERT_MESSAGE("The resource Descriptor does not match.  Value is :" + std::string(""),
+            !rdMeshVal.IsEmpty() && rdMeshVal == dirtRD);
 
         const int value1 = 5, value2 = 27;
         ap = getActorProperty(*map, "Test_Read_Only_Int", dtDAL::DataType::INT);

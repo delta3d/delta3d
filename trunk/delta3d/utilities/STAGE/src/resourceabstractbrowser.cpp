@@ -33,13 +33,15 @@
 #include <QtGui/QHBoxLayout>
 #include <QtCore/QList>
 #include <QtGui/QMenu>
+#include <QtGui/QMessageBox>
 #include <QtGui/QAction>
 #include <QtGui/QTreeWidgetItem>
 #include <QtGui/QContextMenuEvent>
 #include <QtGui/QPixmap>
 #include <QtGui/QIcon>
 
-
+#include <dtEditQt/editordata.h>
+#include <dtEditQt/editorevents.h>
 #include <dtEditQt/resourceabstractbrowser.h>
 #include <dtDAL/resourcedescriptor.h>
 #include <dtEditQt/resourcetreewidget.h>
@@ -589,59 +591,13 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void ResourceAbstractBrowser::resetEditorDataDescriptor()
    {
-      if (*mResourceType == dtDAL::DataType::SOUND)
-      {
-         EditorData::GetInstance().setCurrentSoundResource(dtDAL::ResourceDescriptor());
-      }
-      else if (*mResourceType == dtDAL::DataType::STATIC_MESH)
-      {
-         EditorData::GetInstance().setCurrentMeshResource(dtDAL::ResourceDescriptor());
-      }
-      else if (*mResourceType == dtDAL::DataType::TEXTURE)
-      {
-         EditorData::GetInstance().setCurrentTextureResource(dtDAL::ResourceDescriptor());
-      }
-      else if (*mResourceType == dtDAL::DataType::PARTICLE_SYSTEM)
-      {
-         EditorData::GetInstance().setCurrentParticleResource(dtDAL::ResourceDescriptor());
-      }
-      else if (*mResourceType == dtDAL::DataType::TERRAIN)
-      {
-         EditorData::GetInstance().setCurrentTerrainResource(dtDAL::ResourceDescriptor());
-      }
-      else if (*mResourceType == dtDAL::DataType::SKELETAL_MESH)
-      {
-         EditorData::GetInstance().setCurrentSkeletalModelResource(dtDAL::ResourceDescriptor());
-      }
+      EditorData::GetInstance().setCurrentResource(*mResourceType, dtDAL::ResourceDescriptor());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void ResourceAbstractBrowser::setEditorDataDescriptor(dtDAL::ResourceDescriptor& descriptor)
    {
-      if (*mResourceType == dtDAL::DataType::SOUND)
-      {
-         EditorData::GetInstance().setCurrentSoundResource(descriptor);
-      }
-      else if (*mResourceType == dtDAL::DataType::STATIC_MESH)
-      {
-         EditorData::GetInstance().setCurrentMeshResource(descriptor);
-      }
-      else if (*mResourceType == dtDAL::DataType::TEXTURE)
-      {
-         EditorData::GetInstance().setCurrentTextureResource(descriptor);
-      }
-      else if (*mResourceType == dtDAL::DataType::PARTICLE_SYSTEM)
-      {
-         EditorData::GetInstance().setCurrentParticleResource(descriptor);
-      }
-      else if (*mResourceType == dtDAL::DataType::TERRAIN)
-      {
-         EditorData::GetInstance().setCurrentTerrainResource(descriptor);
-      }
-      else if (*mResourceType == dtDAL::DataType::SKELETAL_MESH)
-      {
-         EditorData::GetInstance().setCurrentSkeletalModelResource(descriptor);
-      }
+      EditorData::GetInstance().setCurrentResource(*mResourceType, descriptor);
    }
 
    ///////////////////////////////////////////////////////////////////////////////

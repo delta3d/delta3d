@@ -29,8 +29,7 @@
 #include <dtDAL/map.h>
 #include <dtDAL/project.h>
 #include <dtDAL/librarymanager.h>
-#include <dtDAL/enginepropertytypes.h>
-
+#include <dtDAL/resourceactorproperty.h>
 #include <dtAI/aiactorregistry.h>
 #include <dtAI/aiinterfaceactor.h>
 #include <dtAI/aiplugininterface.h>

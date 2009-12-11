@@ -8,6 +8,7 @@
 #include <dtDAL/mapxml.h>
 #include <dtDAL/project.h>
 #include <dtDAL/resourcedescriptor.h>
+#include <dtDAL/resourceactorproperty.h>
 #include <dtUtil/exception.h>
 #include <osgDB/ReadFile>
 

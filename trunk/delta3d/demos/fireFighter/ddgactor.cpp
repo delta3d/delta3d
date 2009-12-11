@@ -23,7 +23,9 @@
 #include <fireFighter/utilityfunctions.h>
 #include <dtAudio/sound.h>
 #include <dtCore/particlesystem.h>
-#include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/resourceactorproperty.h>
+#include <dtDAL/datatype.h>
+#include <dtUtil/log.h>
 #include <osg/MatrixTransform>
 
 /////////////////////////////////////////////////

@@ -26,7 +26,7 @@
 #include <fireFighter/hatchactor.h>
 #include <dtGame/invokable.h>
 #include <dtGame/gamemanager.h>
-#include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/resourceactorproperty.h>
 #include <dtUtil/log.h>
 #include <dtAudio/audiomanager.h>
 #include <osg/MatrixTransform>

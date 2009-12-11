@@ -20,8 +20,11 @@
  */
 
 #include "dtActors/meshterrainactorproxy.h"
-#include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/datatype.h>
+#include <dtDAL/resourceactorproperty.h>
+#include <dtDAL/resourcedescriptor.h>
 #include <dtDAL/actorproxyicon.h>
+#include <dtUtil/log.h>
 
 using namespace dtCore;
 using namespace dtDAL;
@@ -76,10 +79,10 @@ namespace dtActors
    ///////////////////////////////////////////////////////////////////////////////
    const dtDAL::ActorProxy::RenderMode& MeshTerrainActorProxy::GetRenderMode()
    {
-      dtDAL::ResourceDescriptor* resource = GetResource("terrain mesh");
-      if (resource != NULL)
+      dtDAL::ResourceDescriptor resource = GetResource("terrain mesh");
+      if (resource.IsEmpty() == false)
       {
-         if (resource->GetResourceIdentifier().empty() || GetActor()->GetOSGNode() == NULL)
+         if (resource.GetResourceIdentifier().empty() || GetActor()->GetOSGNode() == NULL)
             return dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON;
          else
             return dtDAL::ActorProxy::RenderMode::DRAW_ACTOR;

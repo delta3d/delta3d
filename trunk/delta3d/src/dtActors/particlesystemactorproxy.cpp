@@ -22,6 +22,7 @@
 #include <dtActors/particlesystemactorproxy.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actorproxyicon.h>
+#include <dtDAL/resourceactorproperty.h>
 
 using namespace dtCore;
 using namespace dtDAL;

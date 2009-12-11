@@ -39,6 +39,7 @@
 #include <dtDAL/datatype.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/resourcedescriptor.h>
+#include <dtDAL/resourceactorproperty.h>
 
 #include <dtUtil/log.h>
 
@@ -114,49 +115,15 @@ namespace dtQt
       DynamicAbstractControl::getValueAsString();
 
       // if we have no current resource, show special text that indicates the type
-      dtDAL::ResourceDescriptor* resource = mProperty->GetValue();
+      dtDAL::ResourceDescriptor resource = mProperty->GetValue();
       QString resourceTag;
-      if (resource == NULL)
+      if (resource.IsEmpty())
       {
-         QString type;
-         if (mProperty->GetDataType() == dtDAL::DataType::SOUND)
-         {
-            type = dtDAL::DataType::SOUND.GetDisplayName().c_str();
-         }
-         else if (mProperty->GetDataType() == dtDAL::DataType::STATIC_MESH)
-         {
-            type = dtDAL::DataType::STATIC_MESH.GetDisplayName().c_str();
-         }
-         else if (mProperty->GetDataType() == dtDAL::DataType::SKELETAL_MESH)
-         {
-            type = dtDAL::DataType::SKELETAL_MESH.GetDisplayName().c_str();
-         }
-         else if (mProperty->GetDataType() == dtDAL::DataType::TEXTURE)
-         {
-            type = dtDAL::DataType::TEXTURE.GetDisplayName().c_str();
-         }
-         else if (mProperty->GetDataType() == dtDAL::DataType::TERRAIN)
-         {
-            type = dtDAL::DataType::TERRAIN.GetDisplayName().c_str();
-         }
-         else if (mProperty->GetDataType() == dtDAL::DataType::PARTICLE_SYSTEM)
-         {
-            type = dtDAL::DataType::PARTICLE_SYSTEM.GetDisplayName().c_str();
-         }
-         else if (mProperty->GetDataType() == dtDAL::DataType::PREFAB)
-         {
-            type = dtDAL::DataType::PREFAB.GetDisplayName().c_str();
-         }
-         else
-         {
-            type = "Unknown Type";
-         }
-
-         resourceTag = "(NONE) - [" + type + "]";
+         resourceTag = "(NONE) - [" + QString::fromStdString(mProperty->GetDataType().GetDisplayName()) + "]";
       }
       else
       {
-         resourceTag = QString(tr(resource->GetDisplayName().c_str()));
+         resourceTag = QString(tr(resource.GetDisplayName().c_str()));
       }
 
       return resourceTag;
@@ -287,16 +254,16 @@ namespace dtQt
       NotifyParentOfPreUpdate();
 
       // get the old and the new
-      dtDAL::ResourceDescriptor* curResource = mProperty->GetValue();
+      dtDAL::ResourceDescriptor curResource = mProperty->GetValue();
       dtDAL::ResourceDescriptor newResource = getCurrentResource();
-      bool isCurEmpty = (curResource == NULL || curResource->GetResourceIdentifier().empty());
-      bool isNewEmpty = (newResource.GetResourceIdentifier().empty());
+      bool isCurEmpty = curResource.IsEmpty();
+      bool isNewEmpty = newResource.IsEmpty();
 
       // if different, than we make the change
-      if (isCurEmpty != isNewEmpty || (curResource != NULL && !((*curResource) == newResource)))
+      if (isCurEmpty != isNewEmpty || curResource != newResource)
       {
          std::string oldValue = mProperty->ToString();
-         mProperty->SetValue(&newResource);
+         mProperty->SetValue(newResource);
 
          // give undo manager the ability to create undo/redo events
          // technically, we're sending the about to change event AFTER we already
@@ -320,8 +287,8 @@ namespace dtQt
    {
       NotifyParentOfPreUpdate();
 
-      dtDAL::ResourceDescriptor* curResource = mProperty->GetValue();
-      bool isCurEmpty = (curResource == NULL || curResource->GetResourceIdentifier().empty());
+      dtDAL::ResourceDescriptor curResource = mProperty->GetValue();
+      bool isCurEmpty = curResource.IsEmpty();
 
       if (!isCurEmpty)
       {

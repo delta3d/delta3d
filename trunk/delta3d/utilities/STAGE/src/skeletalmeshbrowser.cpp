@@ -54,7 +54,7 @@
 #include <dtDAL/exceptionenum.h>
 #include <dtDAL/librarymanager.h>
 #include <dtDAL/map.h>
-#include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/resourceactorproperty.h>
 
 #include <dtCore/scene.h>
 #include <dtCore/object.h>
@@ -259,7 +259,7 @@ namespace dtEditQt
          dtDAL::Project& project = dtDAL::Project::GetInstance();
 
          // Find the currently selected tree item
-         dtDAL::ResourceDescriptor resource = EditorData::GetInstance().getCurrentMeshResource();
+         dtDAL::ResourceDescriptor resource = EditorData::GetInstance().getCurrentResource(dtDAL::DataType::STATIC_MESH);
 
          try
          {

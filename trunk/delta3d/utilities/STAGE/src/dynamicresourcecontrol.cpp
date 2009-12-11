@@ -31,7 +31,8 @@
 #include <dtEditQt/dynamicresourcecontrol.h>
 #include <dtEditQt/editordata.h>
 #include <dtDAL/datatype.h>
-#include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/resourceactorproperty.h>
+#include <dtUtil/log.h>
 
 namespace dtEditQt
 {
@@ -50,42 +51,14 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    dtDAL::ResourceDescriptor DynamicResourceControl::getCurrentResource()
    {
-      dtDAL::ResourceActorProperty& resProperty = GetProperty();
-      if (resProperty.GetDataType() == dtDAL::DataType::SOUND)
-      {
-         return EditorData::GetInstance().getCurrentSoundResource();
-      }
-      else if (resProperty.GetDataType() == dtDAL::DataType::STATIC_MESH)
-      {
-         return EditorData::GetInstance().getCurrentMeshResource();
-      }
-      else if (resProperty.GetDataType() == dtDAL::DataType::TEXTURE)
-      {
-         return EditorData::GetInstance().getCurrentTextureResource();
-      }
-      else if (resProperty.GetDataType() == dtDAL::DataType::TERRAIN)
-      {
-         return EditorData::GetInstance().getCurrentTerrainResource();
-      }
-      else if (resProperty.GetDataType() == dtDAL::DataType::PARTICLE_SYSTEM)
-      {
-         return EditorData::GetInstance().getCurrentParticleResource();
-      }
-      else if (resProperty.GetDataType() == dtDAL::DataType::SKELETAL_MESH)
-      {
-         return EditorData::GetInstance().getCurrentSkeletalModelResource();
-      }
-      else if (resProperty.GetDataType() == dtDAL::DataType::PREFAB)
-      {
-         return EditorData::GetInstance().getCurrentPrefabResource();
-      }
-      else
+
+      if (GetProperty().GetDataType() == dtDAL::DataType::UNKNOWN)
       {
          LOG_ERROR("Error setting current resource because DataType [" +
-            resProperty.GetDataType().GetName() +
-            "] is not supported for property [" + resProperty.GetName() + "].");
-         // return something so we don't crash
-         return dtDAL::ResourceDescriptor();
+                  GetProperty().GetDataType().GetName() +
+                  "] is not supported for property [" + GetProperty().GetName() + "].");
       }
+
+      return EditorData::GetInstance().getCurrentResource(GetProperty().GetDataType());
    }
 } // namespace dtEditQt

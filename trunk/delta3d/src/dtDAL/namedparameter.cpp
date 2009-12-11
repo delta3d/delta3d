@@ -26,6 +26,7 @@
 #include <dtDAL/groupactorproperty.h>
 #include <dtDAL/arrayactorpropertybase.h>
 #include <dtDAL/containeractorproperty.h>
+#include <dtDAL/resourceactorproperty.h>
 #include <dtUtil/mswinmacros.h>
 
 namespace dtDAL
@@ -1532,18 +1533,7 @@ namespace dtDAL
       ValidatePropertyType(property);
 
       dtDAL::ResourceActorProperty *vap = static_cast<dtDAL::ResourceActorProperty*> (&property);
-      if (GetValue() != NULL)
-      {
-         dtDAL::ResourceDescriptor newValue(*GetValue());
-         vap->SetValue(&newValue);
-      }
-      else
-      {
-         vap->SetValue(NULL);
-      }
-
-      //dtDAL::ResourceActorProperty *ap = static_cast<dtDAL::ResourceActorProperty*> (&property);
-      //ap->SetValue(GetValue());
+      vap->SetValue(GetValue());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -1619,9 +1609,9 @@ namespace dtDAL
       }
       else
       {
-         const dtDAL::ResourceDescriptor* r = GetValue();
-         if (r != NULL)
-            stream << r->GetDisplayName() << "/" << r->GetResourceIdentifier();
+         const dtDAL::ResourceDescriptor r = GetValue();
+         if (r.IsEmpty() == false)
+            stream << r.GetDisplayName() << "/" << r.GetResourceIdentifier();
       }
 
       return stream.str();
@@ -1636,7 +1626,7 @@ namespace dtDAL
          if (IsList())
             mValueList->clear();
          else
-            SetValue(NULL);
+            SetValue(dtDAL::ResourceDescriptor::NULL_RESOURCE);
 
          return true;
       }
@@ -1699,7 +1689,7 @@ namespace dtDAL
          dtUtil::Trim(displayName);
 
          dtDAL::ResourceDescriptor descriptor(displayName,identifier);
-         SetValue(&descriptor);
+         SetValue(descriptor);
       }
 
       return result;
@@ -1736,24 +1726,37 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    void NamedResourceParameter::SetValue(const dtDAL::ResourceDescriptor* descriptor)
    {
+      DEPRECATE("void NamedResourceParameter::SetValue(const dtDAL::ResourceDescriptor*)",
+                "void NamedResourceParameter::SetValue(const dtDAL::ResourceDescriptor&)");
+
+      if (descriptor)
+      {
+         SetValue(*descriptor);
+      }
+      else
+      {
+         SetValue(dtDAL::ResourceDescriptor::NULL_RESOURCE);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void NamedResourceParameter::SetValue(const dtDAL::ResourceDescriptor& descriptor)
+   {
       if (IsList())
          throw dtUtil::Exception(ExceptionEnum::BaseException,
          "Cannot call SetValue() on message parameter with a list of values.", __FILE__, __LINE__);
 
-      mDescriptor = descriptor == NULL ? dtDAL::ResourceDescriptor("","") : *descriptor;
-   }
+      mDescriptor = descriptor;
 
+   }
    ///////////////////////////////////////////////////////////////////////////////
-   const dtDAL::ResourceDescriptor* NamedResourceParameter::GetValue() const
+   const dtDAL::ResourceDescriptor NamedResourceParameter::GetValue() const
    {
       if (IsList())
          throw dtUtil::Exception(ExceptionEnum::BaseException,
          "Cannot call GetValue() on message parameter with a list of values.", __FILE__, __LINE__);
 
-      if (mDescriptor.GetResourceIdentifier().empty())
-         return NULL;
-      else
-         return &mDescriptor;
+      return mDescriptor;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -1791,10 +1794,7 @@ namespace dtDAL
       {
          const NamedResourceParameter& rpToCompare = static_cast<const NamedResourceParameter&>(toCompare);
 
-         if (GetValue() != NULL && rpToCompare.GetValue() != NULL)
-            return *GetValue() == *rpToCompare.GetValue();
-         else
-            return GetValue() == rpToCompare.GetValue();
+         return GetValue() == rpToCompare.GetValue();
       }
       return false;
    }

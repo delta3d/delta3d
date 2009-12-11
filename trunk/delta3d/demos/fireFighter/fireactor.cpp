@@ -25,6 +25,7 @@
 #include <fireFighter/messages.h>
 #include <fireFighter/gamestate.h>
 #include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/resourceactorproperty.h>
 #include <dtDAL/actorproxyicon.h>
 #include <dtGame/basemessages.h>
 #include <dtGame/invokable.h>

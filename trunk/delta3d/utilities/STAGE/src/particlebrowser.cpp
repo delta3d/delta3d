@@ -43,11 +43,12 @@
 #include <dtCore/scene.h>
 #include <dtCore/object.h>
 
-#include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/resourceactorproperty.h>
 #include <dtDAL/librarymanager.h>
 #include <dtDAL/map.h>
 
 #include <dtEditQt/editordata.h>
+#include <dtEditQt/editorevents.h>
 #include <dtEditQt/mainwindow.h>
 #include <dtEditQt/particlebrowser.h>
 #include <dtEditQt/perspectiveviewport.h>
@@ -192,7 +193,7 @@ namespace dtEditQt
       dtDAL::Project& project = dtDAL::Project::GetInstance();
 
       // Find the currently selected tree item
-      dtDAL::ResourceDescriptor resource = EditorData::GetInstance().getCurrentParticleResource();
+      dtDAL::ResourceDescriptor resource = EditorData::GetInstance().getCurrentResource(dtDAL::DataType::PARTICLE_SYSTEM);
       context = QString(project.GetContext().c_str());
 
       file = QString(project.GetResourcePath(resource).c_str());

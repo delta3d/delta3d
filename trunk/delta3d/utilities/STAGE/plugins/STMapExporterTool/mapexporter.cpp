@@ -4,9 +4,12 @@
 #include <dtEditQt/pluginmanager.h>
 #include <dtEditQt/editordata.h>
 
+#include <dtCore/deltadrawable.h>
+
+#include <dtDAL/datatype.h>
 #include <dtDAL/map.h>
 #include <dtDAL/project.h>
-#include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/resourceactorproperty.h>
 #include <dtDAL/containeractorproperty.h>
 #include <dtDAL/arrayactorpropertybase.h>
 
@@ -122,12 +125,12 @@ bool MapExporterPlugin::AddResourcesFromProperty(const dtDAL::ActorProperty* pro
       {
          // Since this is a resource property, extract the resource from it and add
          // it to the package.
-         dtDAL::ResourceDescriptor* descriptor = resourceProp->GetValue();
+         dtDAL::ResourceDescriptor descriptor = resourceProp->GetValue();
 
-         if (descriptor && !descriptor->GetResourceIdentifier().empty())
+         if (descriptor.IsEmpty() == false)
          {
             std::string contextPath = dtDAL::Project::GetInstance().GetContext();
-            std::string resourcePath = dtDAL::Project::GetInstance().GetResourcePath(*descriptor);
+            std::string resourcePath = dtDAL::Project::GetInstance().GetResourcePath(descriptor);
             std::string path = contextPath + '\\' + resourcePath;
 
             std::string resourceDir = osgDB::getFilePath(resourcePath);

@@ -21,6 +21,7 @@
 
 #include <dtAudio/soundactorproxy.h>
 #include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/resourceactorproperty.h>
 #include <dtDAL/actorproxyicon.h>
 #include <dtAudio/audiomanager.h>
 #include <dtGame/gamemanager.h>

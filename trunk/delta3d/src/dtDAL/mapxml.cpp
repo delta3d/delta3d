@@ -53,6 +53,7 @@
 #include <dtDAL/groupactorproperty.h>
 #include <dtDAL/arrayactorpropertybase.h>
 #include <dtDAL/containeractorproperty.h>
+#include <dtDAL/resourceactorproperty.h>
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/actortype.h>
@@ -1079,19 +1080,19 @@ namespace dtDAL
                const NamedResourceParameter& p =
                   static_cast<const NamedResourceParameter&>(parameter);
 
-               const ResourceDescriptor* rd = p.GetValue();
+               const ResourceDescriptor rd = p.GetValue();
 
                BeginElement(MapXMLConstants::ACTOR_PROPERTY_RESOURCE_TYPE_ELEMENT);
                AddCharacters(parameter.GetDataType().GetName());
                EndElement();
 
                BeginElement(MapXMLConstants::ACTOR_PROPERTY_RESOURCE_DISPLAY_ELEMENT);
-               if (rd != NULL)
-                  AddCharacters(rd->GetDisplayName());
+               if (rd.IsEmpty() == false)
+                  AddCharacters(rd.GetDisplayName());
                EndElement();
                BeginElement(MapXMLConstants::ACTOR_PROPERTY_RESOURCE_IDENTIFIER_ELEMENT);
-               if (rd != NULL)
-                  AddCharacters(rd->GetResourceIdentifier());
+               if (rd.IsEmpty() == false)
+                  AddCharacters(rd.GetResourceIdentifier());
                EndElement();
             }
             else
@@ -1320,19 +1321,19 @@ namespace dtDAL
                const ResourceActorProperty& p =
                   static_cast<const ResourceActorProperty&>(property);
 
-               ResourceDescriptor* rd = p.GetValue();
+               ResourceDescriptor rd = p.GetValue();
 
                BeginElement(MapXMLConstants::ACTOR_PROPERTY_RESOURCE_TYPE_ELEMENT);
                AddCharacters(property.GetDataType().GetName());
                EndElement();
 
                BeginElement(MapXMLConstants::ACTOR_PROPERTY_RESOURCE_DISPLAY_ELEMENT);
-               if (rd != NULL)
-                  AddCharacters(rd->GetDisplayName());
+               if (rd.IsEmpty() == false)
+                  AddCharacters(rd.GetDisplayName());
                EndElement();
                BeginElement(MapXMLConstants::ACTOR_PROPERTY_RESOURCE_IDENTIFIER_ELEMENT);
-               if (rd != NULL)
-                  AddCharacters(rd->GetResourceIdentifier());
+               if (rd.IsEmpty() == false)
+                  AddCharacters(rd.GetResourceIdentifier());
                EndElement();
             }
             else

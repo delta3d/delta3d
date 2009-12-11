@@ -64,7 +64,7 @@
 #include <dtDAL/project.h>
 #include <dtDAL/mapxml.h>
 #include <dtDAL/actorproperty.h>
-#include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/resourceactorproperty.h>
 #include <dtDAL/librarymanager.h>
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/log.h>
