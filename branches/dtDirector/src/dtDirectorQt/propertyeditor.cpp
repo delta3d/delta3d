@@ -25,6 +25,7 @@
 #include <dtDirectorQt/editorview.h>
 #include <dtDirectorQt/editorscene.h>
 #include <dtDirectorQt/undomanager.h>
+#include <dtDirectorQt/undopropertyevent.h>
 #include <dtDirectorQt/nodeitem.h>
 #include <dtDirectorQt/macroitem.h>
 
@@ -121,7 +122,8 @@ namespace dtDirector
          // If it is not a graph or a node, then it is the director.
       }
 
-      mDirectorEditor->GetUndoManager()->PropertyChangeEvent(id, prop.GetName(), oldValue, newValue);
+      dtCore::RefPtr<UndoPropertyEvent> event = new UndoPropertyEvent(mDirectorEditor, id, prop.GetName(), oldValue, newValue);
+      mDirectorEditor->GetUndoManager()->AddEvent(event.get());
       mDirectorEditor->RefreshButtonStates();
    }
 

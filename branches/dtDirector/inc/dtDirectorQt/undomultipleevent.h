@@ -19,27 +19,24 @@
  * Author: Jeff P. Houde
  */
 
-#ifndef DIRECTORQT_UNDO_MANAGER
-#define DIRECTORQT_UNDO_MANAGER
+#ifndef DIRECTORQT_UNDO_MULTIPLE_EVENT
+#define DIRECTORQT_UNDO_MULTIPLE_EVENT
 
 #include <dtDirectorQt/undoevent.h>
-#include <dtDirectorQt/undomultipleevent.h>
 
 #include <dtCore/refptr.h>
 
-#include <QtCore/QObject>
-
-#include <stack>
+#include <vector>
 
 namespace dtDirector
 {
    class DirectorEditor;
+
    /**
-    * This class handles undo and redo for the Director Editor.
+    * An undo event that holds multiple undo events.
     */
-   class UndoManager: public QObject
+   class UndoMultipleEvent: public UndoEvent
    {
-      Q_OBJECT
    public:
 
       /**
@@ -47,41 +44,25 @@ namespace dtDirector
        *
        * @param[in]  editor  The editor.
        */
-      UndoManager(DirectorEditor* editor);
-
+      UndoMultipleEvent(DirectorEditor* editor);
+         
       /**
        * Destructor.
        */
-      ~UndoManager();
+      virtual ~UndoMultipleEvent();
 
       /**
-       * Perform an undo action.
+       * Perform undo.
        */
-      void Undo();
+      virtual void Undo();
 
       /**
-       * Perform a redo action.
+       * Perform redo.
        */
-      void Redo();
+      virtual void Redo();
 
       /**
-       * Retrieves whether there are any undo events to perform.
-       */
-      bool CanUndo() {return !mUndoEvents.empty();}
-
-      /**
-       * Retrieves whether there are any redo events to perform.
-       */
-      bool CanRedo() {return !mRedoEvents.empty();}
-
-      /**
-       * Begins and ends a group of multiple transaction events.
-       */
-      void BeginMultipleEvents();
-      void EndMultipleEvents();
-
-      /**
-       * Adds an undo event to the stack.
+       * Adds an event to the stack.
        *
        * @param[in]  event  The event to add.
        */
@@ -89,15 +70,8 @@ namespace dtDirector
 
    protected:
 
-   private:
-
-      DirectorEditor*   mEditor;
-
-      std::stack<dtCore::RefPtr<UndoEvent> > mUndoEvents;
-      std::stack<dtCore::RefPtr<UndoEvent> > mRedoEvents;
-
-      std::stack<dtCore::RefPtr<UndoMultipleEvent> > mMultipleEventStack;
+      std::vector<dtCore::RefPtr<UndoEvent> > mEvents;
    };
 }
 
-#endif // DIRECTORQT_UNDO_MANAGER
+#endif // DIRECTORQT_UNDO_MULTIPLE_EVENT
