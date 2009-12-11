@@ -95,6 +95,8 @@ namespace dtDirector
 
          setBrush(radialGradient);
          setPolygon(mPolygon);
+
+         SetComment(mNode->GetComment());
       }
 
       mLoading = false;

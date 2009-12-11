@@ -298,7 +298,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void NodeItem::SetTitle(const std::string text)
+   void NodeItem::SetTitle(const std::string& text)
    {
       if (!mTitle)
       {
@@ -327,6 +327,22 @@ namespace dtDirector
       {
          mNodeWidth = bounds.width();
       }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void NodeItem::SetComment(const std::string& text)
+   {
+      if (!mComment)
+      {
+         mComment = new QGraphicsTextItem(this, scene());
+      }
+
+      mComment->setPlainText(text.c_str());
+
+      // Create the title background.
+      QRectF bounds = mComment->boundingRect();
+
+      mComment->setPos(0.0f, -bounds.height());
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -656,7 +672,7 @@ namespace dtDirector
 
          if (!mValueDivider) mValueDivider = new QGraphicsRectItem(this, scene());
          mValueDivider->setPos(x, y);
-         mValueDivider->setRect(0, 0, width, mNodeHeight - y);
+         mValueDivider->setRect(1, 0, width - 2, mNodeHeight - y - 1);
          mValueDivider->setPen(QPen(Qt::darkGray, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
       }
       else if (mValueDivider)

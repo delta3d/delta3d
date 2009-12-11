@@ -71,22 +71,39 @@ namespace dtDirector
          int size = mNodeWidth;
          if (size < mNodeHeight) size = mNodeHeight;
 
-         setPen(QPen(Qt::darkGray, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-
          QRadialGradient radialGradient(mNodeWidth/2, mNodeHeight/2, size, mNodeWidth/2, mNodeHeight/2);
-         QColor color = Qt::darkGreen;
-         color.setAlphaF(0.80f);
-         radialGradient.setColorAt(0.0, color);
+         if (mGraph->GetEnabled())
+         {
+            setPen(QPen(Qt::darkGray, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 
-         color = Qt::green;
-         color.setAlphaF(0.80f);
-         radialGradient.setColorAt(1.0, color);
+            QColor color = Qt::darkGreen;
+            color.setAlphaF(0.80f);
+            radialGradient.setColorAt(0.0, color);
+
+            color = Qt::green;
+            color.setAlphaF(0.80f);
+            radialGradient.setColorAt(1.0, color);
+         }
+         else
+         {
+            setPen(QPen(Qt::red, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+
+            QColor color = Qt::darkGreen;
+            color.setAlphaF(0.25f);
+            radialGradient.setColorAt(0.0, color);
+
+            color = Qt::green;
+            color.setAlphaF(0.25f);
+            radialGradient.setColorAt(1.0, color);
+         }
 
          setBrush(radialGradient);
          setPolygon(mPolygon);
 
          osg::Vec2 pos = mGraph->GetPosition();
          setPos(pos.x(), pos.y());
+
+         SetComment(mGraph->GetComment());
       }
 
       mLoading = false;

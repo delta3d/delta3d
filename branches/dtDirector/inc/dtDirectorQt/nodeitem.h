@@ -204,7 +204,14 @@ namespace dtDirector
        *
        * @param[in]  text  The new title name.
        */
-      virtual void SetTitle(const std::string text);
+      virtual void SetTitle(const std::string& text);
+
+      /**
+       * Creates the comment.
+       *
+       * @param[in]  text  The new comment text.
+       */
+      virtual void SetComment(const std::string& text);
 
       /**
        * Finds all of the links.

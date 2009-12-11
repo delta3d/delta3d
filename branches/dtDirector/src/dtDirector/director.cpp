@@ -33,7 +33,9 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    DirectorGraphData::DirectorGraphData(Director* director)
       : mParent(NULL)
+      , mEnabled(true)
       , mName("Macro")
+      , mComment("")
       , mDirector(director)
    {
    }
@@ -41,11 +43,23 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void DirectorGraphData::BuildPropertyMap(bool isParent)
    {
+      AddProperty(new dtDAL::BooleanActorProperty(
+         "Enabled", "Enabled",
+         dtDAL::BooleanActorProperty::SetFuncType(this, &DirectorGraphData::SetEnabled),
+         dtDAL::BooleanActorProperty::GetFuncType(this, &DirectorGraphData::GetEnabled),
+         "Enabled status of the graph."));
+
       AddProperty(new dtDAL::StringActorProperty(
          "Name", "Name",
          dtDAL::StringActorProperty::SetFuncType(this, &DirectorGraphData::SetName),
          dtDAL::StringActorProperty::GetFuncType(this, &DirectorGraphData::GetName),
          "The Name of the Director graph."));
+
+      AddProperty(new dtDAL::StringActorProperty(
+         "Comment", "Comment",
+         dtDAL::StringActorProperty::SetFuncType(this, &DirectorGraphData::SetComment),
+         dtDAL::StringActorProperty::GetFuncType(this, &DirectorGraphData::GetComment),
+         "Comment"));
 
       // Only sub graphs have a position.
       if (!isParent)
@@ -76,7 +90,7 @@ namespace dtDirector
       for (int graphIndex = 0; graphIndex < (int)mSubGraphs.size(); graphIndex++)
       {
          DirectorGraphData* graph = mSubGraphs[graphIndex];
-         if (graph) graph->Update(simDelta, delta);
+         if (graph && graph->GetEnabled()) graph->Update(simDelta, delta);
       }
    }
 

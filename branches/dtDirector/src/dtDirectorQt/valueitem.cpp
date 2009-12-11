@@ -119,6 +119,8 @@ namespace dtDirector
 
          osg::Vec2 pos = mNode->GetPosition();
          setPos(pos.x(), pos.y());
+
+         SetComment(mNode->GetComment());
       }
 
       mLoading = false;

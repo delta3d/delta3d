@@ -97,10 +97,22 @@ namespace dtDirector
       Director* GetDirector() {return mDirector;}
 
       /**
+       * Accessors for the enabled flag.
+       */
+      void SetEnabled(bool enabled) {mEnabled = enabled;}
+      bool GetEnabled() {return mEnabled;}
+
+      /**
        * Accessors for the graph name.
        */
       void SetName(const std::string& name) {mName = name;}
       const std::string& GetName() {return mName;}
+
+      /**
+       * Accessors for the comment of the script.
+       */
+      void SetComment(const std::string& comment) {mComment = comment;}
+      std::string& GetComment() {return mComment;}
 
       /**
        * Accessors for the graph position.
@@ -131,7 +143,10 @@ namespace dtDirector
       Director*          mDirector;
       DirectorGraphData* mParent;
 
+      bool        mEnabled;
+
       std::string mName;
+      std::string mComment;
       osg::Vec2   mPosition;
 
       std::vector<dtCore::RefPtr<DirectorGraphData> > mSubGraphs;
@@ -246,8 +261,8 @@ namespace dtDirector
       /**
        * Accessors for the comment of the script.
        */
-      void SetComment(const std::string& comment) {mComment = comment;}
-      std::string& GetComment() {return mComment;}
+      void SetComment(const std::string& comment) {mGraph->SetComment(comment);}
+      std::string& GetComment() {return mGraph->GetComment();}
 
       /**
        * Accessors for the copyright information of the script.
@@ -332,7 +347,6 @@ namespace dtDirector
       // Core Info.
       std::string mDescription;
       std::string mAuthor;
-      std::string mComment;
       std::string mCopyright;
       std::string mCreationTime;
 
