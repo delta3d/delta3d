@@ -21,6 +21,9 @@
 
 #include <dtDirectorQt/propertyeditor.h>
 #include <dtDirectorQt/directoreditor.h>
+#include <dtDirectorQt/graphtabs.h>
+#include <dtDirectorQt/editorview.h>
+#include <dtDirectorQt/editorscene.h>
 #include <dtDirectorQt/undomanager.h>
 #include <dtDirectorQt/nodeitem.h>
 #include <dtDirectorQt/macroitem.h>

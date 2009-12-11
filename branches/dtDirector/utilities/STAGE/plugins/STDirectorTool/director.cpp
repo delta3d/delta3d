@@ -21,6 +21,8 @@
 
 #include "director.h"
 
+#include <dtDirectorQt/propertyeditor.h>
+
 #include <dtEditQt/pluginmanager.h>
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/dynamicresourcecontrol.h>

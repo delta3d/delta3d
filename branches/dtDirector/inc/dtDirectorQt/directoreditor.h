@@ -19,257 +19,25 @@
  * Author: Jeff P. Houde
  */
 
-#ifndef DIRECTOR_EDITOR
-#define DIRECTOR_EDITOR
-
-#include <vector>
+#ifndef DIRECTORQT_EDITOR
+#define DIRECTORQT_EDITOR
 
 #include <dtDirectorQt/export.h>
-#include <dtDirectorQt/propertyeditor.h>
 
 #include <dtDirector/director.h>
 
-#include <dtCore/refptr.h>
-
 #include <QtGui/QMainWindow>
-#include <QtGui/QTabWidget>
-#include <QtGui/QGraphicsScene>
-#include <QtGui/QGraphicsView>
+
 
 class QAction;
 class QMenuBar;
 class QToolBar;
-class QGraphicsSceneMouseEvent;
 
 namespace dtDirector
 {
+   class GraphTabs;
+   class PropertyEditor;
    class UndoManager;
-   class EditorView;
-   class DirectorEditor;
-   class NodeItem;
-   class MacroItem;
-
-   /**
-   * @class GraphTabs
-   * @brief This allows multiple tabbed editing of director graphs.
-   */
-   class GraphTabs : public QTabWidget
-   {
-      Q_OBJECT
-
-   public:
-
-      /**
-      * Constructs a document tabs viewer.
-      *
-      * @param[in]  parent  The parent widget.
-      * @param[in]  editor  The director editor that owns this widget.
-      */
-      GraphTabs(QWidget* parent, DirectorEditor* editor);
-
-   protected:
-
-      /**
-      * Event handler when the mouse button is clicked.
-      *
-      * @param[in]  e  The mouse event.
-      */
-      void mousePressEvent(QMouseEvent* e);
-
-      /**
-      * Event handler when the mouse button is released.
-      *
-      * @param[in]  e  The mouse event.
-      */
-      void mouseReleaseEvent(QMouseEvent *e);
-
-      /**
-      * Event handler when the mouse button is double clicked.
-      *
-      * @param[in]  e  The mouse event.
-      */
-      void mouseDoubleClickEvent(QMouseEvent *e);
-
-
-      DirectorEditor* mEditor;
-   };
-
-
-   /**
-   * @class EditorScene
-   */
-   class EditorScene : public QGraphicsScene
-   {
-      Q_OBJECT
-
-   public:
-
-      /**
-      * Constructor.
-      *
-      * @param[in]  director    The Director.
-      * @param[in]  propEditor  The Property Editor.
-      * @param[in]  graphTabs   The Graph Tabs widget.
-      * @param[in]  view        The scene viewer.
-      * @param[in]  parent      The parent widget.
-      */
-      EditorScene(Director* director, PropertyEditor* propEditor, GraphTabs* graphTabs, QWidget* parent = 0);
-
-      /**
-       * Sets the current view.
-       */
-      void SetView(EditorView* view) {mView = view;}
-
-      /**
-       * Accessor to the editor.
-       */
-      void SetEditor(DirectorEditor* editor) {mEditor = editor;}
-      DirectorEditor* GetEditor() {return mEditor;}
-
-      /**
-       * Sets the currently viewed director graph.
-       *
-       * @param[in]  graph  The Graph to view.
-       */
-      void SetGraph(dtDirector::DirectorGraphData* graph);
-
-      /**
-       * Retrieves the current graph.
-       *
-       * @return  The current graph.
-       */
-      dtDirector::DirectorGraphData* GetGraph() {return mGraph;}
-
-      /**
-       * Retrieves the background item.
-       */
-      QGraphicsRectItem* GetTranslationItem() {return mTranslationItem;};
-
-      /**
-       * Refreshes the graph.
-       */
-      void Refresh();
-
-      /**
-       * Retrieves a node item given the nodes ID.
-       *
-       * @param[in]  id  The ID of the node.
-       *
-       * @return     A pointer to the NodeItem with the matching ID,
-       *             or NULL if not found.
-       */
-      NodeItem* GetNodeItem(const dtCore::UniqueId& id);
-
-      /**
-       * Retrieves a graph item for a graph.
-       *
-       * @param[in]  graph  The graph.
-       *
-       * @return     The graph item that contains this graph.
-       */
-      MacroItem* GetGraphItem(DirectorGraphData* graph);
-
-      /**
-       * Adds an item to the selected list.
-       *
-       * @param[in]  container  The item to add.
-       */
-      void AddSelected(dtDAL::PropertyContainer* container);
-
-      /**
-       * Removes an item from the selected list.
-       *
-       * @param[in]  container  The item to remove.
-       */
-      void RemoveSelected(dtDAL::PropertyContainer* container);
-
-      /**
-       * Refreshes the property editor.
-       */
-      void RefreshProperties();
-
-   signals:
-
-   public slots:
-
-   protected:
-      
-      /**
-       * Mouse button events.
-       *
-       * @param[in]  event  The mouse event.
-       */
-      void mousePressEvent(QGraphicsSceneMouseEvent* event);
-      void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
-
-      /**
-       * Mouse movement event.
-       *
-       * @param[in]  event  The mouse event.
-       */
-      void mouseMoveEvent(QGraphicsSceneMouseEvent* event);  
-
-   private:
-
-      DirectorEditor*          mEditor;
-      EditorView*              mView;
-
-      dtCore::RefPtr<Director> mDirector;
-      PropertyEditor*          mPropertyEditor;
-      GraphTabs*               mGraphTabs;
-
-      dtDirector::DirectorGraphData*   mGraph;
-
-      std::vector<NodeItem*>           mNodes;
-
-      bool     mDragging;
-      QPointF  mDragOrigin;
-      bool     mHasDragged;
-
-      QGraphicsRectItem* mTranslationItem;
-      
-      PropertyEditor::PropertyContainerRefPtrVector mSelected;
-   };
-
-   /**
-    * @class EditorView
-    */
-   class EditorView: public QGraphicsView
-   {
-      Q_OBJECT
-
-   public:
-
-      /**
-       * Constructor.
-       *
-       * @param[in]  scene   The scene.
-       * @param[in]  parent  The parent.
-       */
-      EditorView(EditorScene* scene, QWidget* parent = 0);
-
-      /**
-       * Retrieves the graphic scene.
-       */
-      EditorScene* GetScene() {return mScene;}
-
-   protected:
-
-      /**
-       * Event handler when the mouse wheel is scrolled.
-       *
-       * @param[in]  event  The wheel event.
-       */
-      void wheelEvent(QWheelEvent* event);
-
-   private:
-
-      EditorScene* mScene;
-
-      float mMinScale;
-      float mMaxScale;
-      float mCurrentScale;
-   };
 
    /**
     * @class DirectorEditor
@@ -423,4 +191,4 @@ namespace dtDirector
 
 } // namespace dtDirector
 
-#endif // DIRECTOR_EDITOR
+#endif // DIRECTORQT_EDITOR

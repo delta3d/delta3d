@@ -21,6 +21,7 @@
 
 #include <dtDirectorQt/linkitem.h>
 #include <dtDirectorQt/directoreditor.h>
+#include <dtDirectorQt/editorscene.h>
 
 #include <dtDirector/outputlink.h>
 

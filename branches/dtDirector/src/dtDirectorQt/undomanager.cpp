@@ -21,6 +21,8 @@
 
 #include <dtDirectorQt/undomanager.h>
 #include <dtDirectorQt/directoreditor.h>
+#include <dtDirectorQt/propertyeditor.h>
+#include <dtDirectorQt/editorscene.h>
 
 #include <dtUtil/log.h>
 

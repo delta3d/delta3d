@@ -21,6 +21,7 @@
 
 #include <dtDirectorQt/valueitem.h>
 #include <dtDirectorQt/directoreditor.h>
+#include <dtDirectorQt/editorscene.h>
 #include <dtDirectorQt/linkitem.h>
 
 #include <dtDirector/valuenode.h>
