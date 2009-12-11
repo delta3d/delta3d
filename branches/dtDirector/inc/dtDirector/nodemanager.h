@@ -34,7 +34,7 @@
 
 namespace dtDirector
 {
-   class DirectorGraphData;
+   class DirectorGraph;
 
    /**
     * This class is the main class in the dynamic node library portion of
@@ -162,7 +162,7 @@ namespace dtDirector
        * @throws  Throws a ObjectFactoryUnknownType exception if the type
        * is unknown.
        */
-      dtCore::RefPtr<Node> CreateNode(const NodeType& nodeType, DirectorGraphData* graph);
+      dtCore::RefPtr<Node> CreateNode(const NodeType& nodeType, DirectorGraph* graph);
 
       /**
        * Creates a new node.  The node type is used by the node
@@ -178,7 +178,7 @@ namespace dtDirector
        * @throws  Throws a ObjectFactoryUnknownType exception if the type
        *          is unknown.
        */
-      dtCore::RefPtr<Node> CreateNode(const std::string& name, const std::string& category, DirectorGraphData* graph);
+      dtCore::RefPtr<Node> CreateNode(const std::string& name, const std::string& category, DirectorGraph* graph);
 
       /**
        * Gets a registry currently loaded by the node manager.

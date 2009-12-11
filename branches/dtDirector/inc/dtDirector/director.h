@@ -24,13 +24,7 @@
 
 #include <dtDirector/export.h>
 
-#include <dtDirector/eventnode.h>
-#include <dtDirector/actionnode.h>
-#include <dtDirector/valuenode.h>
-
-#include <dtDirector/inputlink.h>
-#include <dtDirector/outputlink.h>
-#include <dtDirector/valuelink.h>
+#include <dtDirector/directorgraph.h>
 
 #include <dtDAL/map.h>
 
@@ -39,124 +33,6 @@
 
 namespace dtDirector
 {
-   /**
-    * Director Graph structure that contains all nodes
-    * within the director script.
-    */
-   class DT_DIRECTOR_EXPORT DirectorGraphData: public dtDAL::PropertyContainer
-   {
-   public:
-
-      /**
-       * Constructor.
-       */
-      DirectorGraphData(Director* director);
-
-      /**
-       * This method is called in init, which instructs the director
-       * to create its properties.  Methods implementing this should
-       * be sure to call their parent class's buildPropertyMap method to
-       * ensure all properties in the proxy inheritance hierarchy are
-       * correctly added to the property map.
-       *
-       * @see GetDeprecatedProperty to handle old properties that need
-       *       to be removed.
-       */
-      virtual void BuildPropertyMap(bool isParent = false);
-
-      /**
-       * Updates all nodes in the graph.
-       *
-       * @param[in]  simDelta  Elapsed sim time.
-       * @param[in]  delta     Elapsed real time.
-       */
-      void Update(float simDelta, float delta);
-
-      /**
-       * Retrieves a node of the given ID.
-       *
-       * @param[in]  id  The ID of the node.
-       *
-       * @return     A pointer to the node found, or NULL
-       *             if not found.
-       */
-      Node* GetNode(const dtCore::UniqueId& id);
-
-      /**
-       * Adds a node to the graph.
-       *
-       * @param[in]  node  The node.
-       */
-      bool AddNode(Node* node);
-      
-      /**
-       * Retrieves the director.
-       *
-       * @return  The director.
-       */
-      Director* GetDirector() {return mDirector;}
-
-      /**
-       * Accessors for the enabled flag.
-       */
-      void SetEnabled(bool enabled) {mEnabled = enabled;}
-      bool GetEnabled() {return mEnabled;}
-
-      /**
-       * Accessors for the graph name.
-       */
-      void SetName(const std::string& name) {mName = name;}
-      const std::string& GetName() {return mName;}
-
-      /**
-       * Accessors for the comment of the script.
-       */
-      void SetComment(const std::string& comment) {mComment = comment;}
-      std::string& GetComment() {return mComment;}
-
-      /**
-       * Accessors for the graph position.
-       */
-      void SetPosition(const osg::Vec2& pos) {mPosition = pos;}
-      const osg::Vec2& GetPosition() {return mPosition;}
-
-      /**
-       * Accessors for the node lists.
-       */
-      std::vector<dtCore::RefPtr<EventNode> >& GetEventNodes() {return mEventNodes;}
-      std::vector<dtCore::RefPtr<ActionNode> >& GetActionNodes() {return mActionNodes;}
-      std::vector<dtCore::RefPtr<ValueNode> >& GetValueNodes() {return mValueNodes;}
-
-      /**
-       * Retrieves a list of all external input, output, or value
-       * nodes that should be visible from the parent.
-       */
-      std::vector<dtCore::RefPtr<EventNode> >  GetInputNodes();
-      std::vector<dtCore::RefPtr<ActionNode> > GetOutputNodes();
-      std::vector<dtCore::RefPtr<ValueNode> >  GetExternalValueNodes();
-
-      /**
-       * Accessor for sub graphs.
-       */
-      std::vector<dtCore::RefPtr<DirectorGraphData> >& GetSubGraphs() {return mSubGraphs;}
-
-      Director*          mDirector;
-      DirectorGraphData* mParent;
-
-      bool        mEnabled;
-
-      std::string mName;
-      std::string mComment;
-      osg::Vec2   mPosition;
-
-      std::vector<dtCore::RefPtr<DirectorGraphData> > mSubGraphs;
-
-      std::vector<dtCore::RefPtr<EventNode> >  mEventNodes;
-      std::vector<dtCore::RefPtr<ActionNode> > mActionNodes;
-      std::vector<dtCore::RefPtr<ValueNode> >  mValueNodes;
-   };
-
-
    /**
     * This is the base class for all action nodes.
     *
@@ -205,6 +81,7 @@ namespace dtDirector
        */
       dtUtil::Log* GetLogger() {return mLogger;}
 
+      // HACK: Remove in final version.
       void CreateDebugScript();
 
       /**
@@ -329,7 +206,7 @@ namespace dtDirector
       /**
        * Retrieves the graph data.
        */
-      DirectorGraphData* GetGraphData() {return mGraph.get();}
+      DirectorGraph* GetGraphData() {return mGraph.get();}
 
       /**
        * Retrieves a node of the given the id.
@@ -361,7 +238,7 @@ namespace dtDirector
       std::vector<std::string> mLibraries;
       std::map<std::string, std::string> mLibraryVersionMap;
 
-      dtCore::RefPtr<DirectorGraphData> mGraph;
+      dtCore::RefPtr<DirectorGraph> mGraph;
 
       dtUtil::Log*   mLogger;
    };

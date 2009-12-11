@@ -70,7 +70,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void EditorScene::SetGraph(dtDirector::DirectorGraphData* graph)
+   void EditorScene::SetGraph(dtDirector::DirectorGraph* graph)
    {
       // First clear the current items.
       int count = (int)mNodes.size();
@@ -140,7 +140,7 @@ namespace dtDirector
       count = (int)mGraph->mSubGraphs.size();
       for (int index = 0; index < count; index++)
       {
-         DirectorGraphData* graph = mGraph->mSubGraphs[index].get();
+         DirectorGraph* graph = mGraph->mSubGraphs[index].get();
          MacroItem* item = new MacroItem(graph, mTranslationItem, this);
          if (item)
          {
@@ -195,7 +195,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   MacroItem* EditorScene::GetGraphItem(DirectorGraphData* graph)
+   MacroItem* EditorScene::GetGraphItem(DirectorGraph* graph)
    {
       int count = (int)mNodes.size();
       for (int index = 0; index < count; index++)

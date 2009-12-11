@@ -37,7 +37,7 @@ namespace dtDirector
    }
 
    ///////////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<Node> NodePluginRegistry::CreateNode(const NodeType& type, DirectorGraphData* graph)
+   dtCore::RefPtr<Node> NodePluginRegistry::CreateNode(const NodeType& type, DirectorGraph* graph)
    {
       dtCore::RefPtr<Node> node = mNodeFactory->CreateObject(dtCore::RefPtr<const NodeType>(&type));
       node->Init(type, graph);

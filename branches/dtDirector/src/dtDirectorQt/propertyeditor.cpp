@@ -80,7 +80,7 @@ namespace dtDirector
          return std::string("Value Node '") + valueNode->GetType().GetFullName().c_str() + "'";
       }
 
-      DirectorGraphData* graph = dynamic_cast<DirectorGraphData*>(propertyContainer);
+      DirectorGraph* graph = dynamic_cast<DirectorGraph*>(propertyContainer);
       if (graph)
       {
          return std::string("Macro '") + graph->GetName().c_str() + "'";
@@ -130,7 +130,7 @@ namespace dtDirector
       }
 
       // Check if the container is a graph.
-      DirectorGraphData* graph = dynamic_cast<DirectorGraphData*>(&propCon);
+      DirectorGraph* graph = dynamic_cast<DirectorGraph*>(&propCon);
       if (graph)
       {
          MacroItem* item = mScene->GetGraphItem(graph);

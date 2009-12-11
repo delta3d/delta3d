@@ -32,7 +32,7 @@
 
 namespace dtDirector
 {
-   class DirectorGraphData;
+   class DirectorGraph;
 
    /**
     * The NodePluginRegistry is the base class that developers extend to
@@ -159,7 +159,7 @@ namespace dtDirector
        *
        * @throws ExceptionEnum::ObjectFactoryUnknownType
        */
-      dtCore::RefPtr<Node> CreateNode(const NodeType& type, DirectorGraphData* graph);
+      dtCore::RefPtr<Node> CreateNode(const NodeType& type, DirectorGraph* graph);
 
    protected:
 

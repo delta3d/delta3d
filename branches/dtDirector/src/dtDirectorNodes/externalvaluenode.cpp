@@ -44,7 +44,7 @@ namespace dtDirector
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   void ExternalValueNode::Init(const NodeType& nodeType, DirectorGraphData* graph)
+   void ExternalValueNode::Init(const NodeType& nodeType, DirectorGraph* graph)
    {
       ValueNode::Init(nodeType, graph);
    }

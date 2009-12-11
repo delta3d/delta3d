@@ -72,7 +72,7 @@ namespace dtDirector
        * @param[in]  graph   The graph to open.
        * @param[in]  newTab  True to create a new tab for the graph.
        */
-      void OpenGraph(dtDirector::DirectorGraphData* graph, bool newTab = false);
+      void OpenGraph(dtDirector::DirectorGraph* graph, bool newTab = false);
 
       /**
        * Accessor for the Director.

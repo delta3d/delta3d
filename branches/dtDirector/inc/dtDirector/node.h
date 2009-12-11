@@ -46,7 +46,7 @@
 namespace dtDirector
 {
    class Director;
-   class DirectorGraphData;
+   class DirectorGraph;
 
    /**
     * This is the base class for all node objects.
@@ -71,7 +71,7 @@ namespace dtDirector
        * @param[in]  nodeType  The node type.
        * @param[in]  graph     The graph that owns this node.
        */
-      virtual void Init(const NodeType& nodeType, DirectorGraphData* graph);
+      virtual void Init(const NodeType& nodeType, DirectorGraph* graph);
 
       /**
        * Creates a copy of this node and returns it.  The method uses the
@@ -215,7 +215,7 @@ namespace dtDirector
        *
        * @return  The graph.
        */
-      DirectorGraphData* GetGraph() {return mGraph;}
+      DirectorGraph* GetGraph() {return mGraph;}
 
       /**
        * Retrieves the total number of values linked to a property.
@@ -424,7 +424,7 @@ namespace dtDirector
       bool               mEnabled;
 
       Director*          mDirector;
-      DirectorGraphData* mGraph;
+      DirectorGraph* mGraph;
 
 #pragma warning (push)
 #pragma warning (disable:4251)

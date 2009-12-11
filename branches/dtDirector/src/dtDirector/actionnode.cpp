@@ -42,7 +42,7 @@ namespace dtDirector
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   void ActionNode::Init(const NodeType& nodeType, DirectorGraphData* graph)
+   void ActionNode::Init(const NodeType& nodeType, DirectorGraph* graph)
    {
       Node::Init(nodeType, graph);
 

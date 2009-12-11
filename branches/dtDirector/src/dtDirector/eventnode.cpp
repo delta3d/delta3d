@@ -44,7 +44,7 @@ namespace dtDirector
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   void EventNode::Init(const NodeType& nodeType, DirectorGraphData* graph)
+   void EventNode::Init(const NodeType& nodeType, DirectorGraph* graph)
    {
       Node::Init(nodeType, graph);
 

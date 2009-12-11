@@ -208,7 +208,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void DirectorEditor::OpenGraph(dtDirector::DirectorGraphData* graph, bool newTab)
+   void DirectorEditor::OpenGraph(dtDirector::DirectorGraph* graph, bool newTab)
    {
       // Create a new page if we are forcing a new page or
       // if we don't have any pages yet.
@@ -366,7 +366,7 @@ namespace dtDirector
          EditorView* view = dynamic_cast<EditorView*>(mGraphTabs->widget(index));
          if (view)
          {
-            dtDirector::DirectorGraphData* graph = view->GetScene()->GetGraph();
+            dtDirector::DirectorGraph* graph = view->GetScene()->GetGraph();
             if (graph && graph->mParent)
             {
                view->GetScene()->SetGraph(graph->mParent);

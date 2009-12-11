@@ -26,7 +26,7 @@
 
 namespace dtDirector
 {
-   class DirectorGraphData;
+   class DirectorGraph;
 
    /**
     * Draws a macro in the graph view.
@@ -45,7 +45,7 @@ namespace dtDirector
        * @param[in]  parent  The parent item.
        * @param[in]  scene   The scene.
        */
-      MacroItem(DirectorGraphData* graph, QGraphicsItem* parent = 0, EditorScene* scene = 0);
+      MacroItem(DirectorGraph* graph, QGraphicsItem* parent = 0, EditorScene* scene = 0);
 
       /**
        * Draws the node.
@@ -67,7 +67,7 @@ namespace dtDirector
       /**
        * Retrieves the graph.
        */
-      DirectorGraphData* GetGraph() {return mGraph.get();}
+      DirectorGraph* GetGraph() {return mGraph.get();}
 
       /**
        * Event handler when this item changes.
@@ -83,7 +83,7 @@ namespace dtDirector
        */
       void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
 
-      dtCore::RefPtr<DirectorGraphData> mGraph;
+      dtCore::RefPtr<DirectorGraph> mGraph;
    };
 }
 

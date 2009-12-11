@@ -37,7 +37,7 @@
 namespace dtDirector
 {
    class Director;
-   class DirectorGraphData;
+   class DirectorGraph;
    class InputLink;
    class OutputLink;
    class ValueLink;
@@ -156,7 +156,7 @@ namespace dtDirector
       std::vector<std::string> mMissingLibraries;
       std::set<std::string> mMissingNodeTypes;
 
-      std::stack<DirectorGraphData*> mGraphs;
+      std::stack<DirectorGraph*> mGraphs;
 
       dtDAL::ActorPropertySerializer* mPropSerializer;
 

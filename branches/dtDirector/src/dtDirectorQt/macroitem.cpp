@@ -36,7 +36,7 @@
 namespace dtDirector
 {
    //////////////////////////////////////////////////////////////////////////
-   MacroItem::MacroItem(DirectorGraphData* graph, QGraphicsItem* parent, EditorScene* scene)
+   MacroItem::MacroItem(DirectorGraph* graph, QGraphicsItem* parent, EditorScene* scene)
        : NodeItem(NULL, parent, scene)
        , mGraph(graph)
    {

@@ -279,7 +279,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void DirectorWriter::SaveGraphs(DirectorGraphData* graph)
+   void DirectorWriter::SaveGraphs(DirectorGraph* graph)
    {
       // Graph.
       BeginElement(dtDAL::MapXMLConstants::DIRECTOR_GRAPH_ELEMENT);

@@ -217,8 +217,8 @@ namespace dtDirector
                      mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found a Graph");
                   mInGraph++;
 
-                  DirectorGraphData* parent = mGraphs.top();
-                  DirectorGraphData* newGraph = new DirectorGraphData(mDirector);
+                  DirectorGraph* parent = mGraphs.top();
+                  DirectorGraph* newGraph = new DirectorGraph(mDirector);
                   newGraph->mParent = parent;
                   newGraph->BuildPropertyMap();
                   parent->mSubGraphs.push_back(newGraph);
@@ -309,7 +309,7 @@ namespace dtDirector
       }
       else if (mInGraph)
       {
-         DirectorGraphData* graph = mGraphs.top();
+         DirectorGraph* graph = mGraphs.top();
 
          if (mInNode)
          {
@@ -566,7 +566,7 @@ namespace dtDirector
       // Add the node to the director.
       //if (mNode.valid())
       //{
-      //   DirectorGraphData* graph = mGraphs.top();
+      //   DirectorGraph* graph = mGraphs.top();
 
       //   graph->AddNode(mNode.get());
       //}

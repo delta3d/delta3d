@@ -41,7 +41,7 @@ namespace dtDirector
    class DirectorEditor;
    class EditorView;
    class GraphTabs;
-   class DirectorGraphData;
+   class DirectorGraph;
    class NodeItem;
    class MacroItem;
 
@@ -81,14 +81,14 @@ namespace dtDirector
        *
        * @param[in]  graph  The Graph to view.
        */
-      void SetGraph(DirectorGraphData* graph);
+      void SetGraph(DirectorGraph* graph);
 
       /**
        * Retrieves the current graph.
        *
        * @return  The current graph.
        */
-      DirectorGraphData* GetGraph() {return mGraph;}
+      DirectorGraph* GetGraph() {return mGraph;}
 
       /**
        * Retrieves the background item.
@@ -117,7 +117,7 @@ namespace dtDirector
        *
        * @return     The graph item that contains this graph.
        */
-      MacroItem* GetGraphItem(DirectorGraphData* graph);
+      MacroItem* GetGraphItem(DirectorGraph* graph);
 
       /**
        * Adds an item to the selected list.
@@ -168,7 +168,7 @@ namespace dtDirector
       PropertyEditor*          mPropertyEditor;
       GraphTabs*               mGraphTabs;
 
-      dtDirector::DirectorGraphData*   mGraph;
+      dtDirector::DirectorGraph*   mGraph;
 
       std::vector<NodeItem*>           mNodes;
 

@@ -45,7 +45,7 @@ namespace dtDirector
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   void ValueNode::Init(const NodeType& nodeType, DirectorGraphData* graph)
+   void ValueNode::Init(const NodeType& nodeType, DirectorGraph* graph)
    {
       Node::Init(nodeType, graph);
    }

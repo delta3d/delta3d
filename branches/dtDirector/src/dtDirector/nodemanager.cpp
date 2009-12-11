@@ -254,7 +254,7 @@ namespace dtDirector
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<Node> NodeManager::CreateNode(const NodeType& nodeType, DirectorGraphData* graph)
+   dtCore::RefPtr<Node> NodeManager::CreateNode(const NodeType& nodeType, DirectorGraph* graph)
    {
       NodePluginRegistry* apr = GetRegistryForType(nodeType); 
 
@@ -272,7 +272,7 @@ namespace dtDirector
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<Node> NodeManager::CreateNode(const std::string& name, const std::string& category, DirectorGraphData* graph)
+   dtCore::RefPtr<Node> NodeManager::CreateNode(const std::string& name, const std::string& category, DirectorGraph* graph)
    {
       dtCore::RefPtr<const NodeType> type = FindNodeType(name, category);
       if(!type.valid())
