@@ -80,7 +80,6 @@ void OSGExp::InitOSGNode(osg::Node& node, INode* maxNode, bool dynamicDataVarian
 void OSGExp::applyNodeMaskValue(INode* node, TimeValue t, osg::Node* osgNode)
 {
 	IParamBlock2* pblock2;
-	RefList refList;
 
 	// Check to see if the node or the node's parent is referenced by an OSG Helper NodeMask object.
 	if(pblock2 = Util::isReferencedByHelperObject(node, NODEMASK_CLASS_ID)){
@@ -88,7 +87,7 @@ void OSGExp::applyNodeMaskValue(INode* node, TimeValue t, osg::Node* osgNode)
 		Interval iv;
 		int mode;
 		unsigned int value;
-		TCHAR* pValue;
+		const MCHAR* pValue = NULL;
 		pblock2->GetValue(nodemask_mode, t, mode, iv);
 		// Swith the nodemask modes
 		switch(mode){
@@ -122,38 +121,76 @@ void OSGExp::applyNodeMaskValue(INode* node, TimeValue t, osg::Node* osgNode)
  * Method to handle nodes referenced by an OSG Helper StateSet Object.
  * The method will apply user defined properties to an OSG::StateSet.
  */
+#if MAX_RELEASE >= 12000
 void OSGExp::applyStateSetProperties(INode* node, TimeValue t, osg::StateSet* stateset)
 {
 	if(!stateset)
 		return;
 
-	IParamBlock2* pblock2;
-	RefList refList;
+	IParamBlock2* pblock2 = NULL;
+	
+   // 2010
+   DependentIterator iter(dynamic_cast<ReferenceTarget*>(node->GetTarget()));
+   ReferenceMaker* ptr = iter.Next();
 
 	// Assure the node is referenced by an OSG helper StateSet object.
-	refList = node->GetRefList();
-	RefListItem* ptr = refList.first;
-	while (ptr){
-		if(ptr->maker){
-			SClass_ID sid = ptr->maker->SuperClassID();
-			if(sid==PARAMETER_BLOCK2_CLASS_ID){
-				pblock2 = (IParamBlock2*) ptr->maker;
-				ClassDesc2 * desc = pblock2->GetDesc()->cd;
-				if(desc){
-					Class_ID id  = desc->ClassID();
-					if(id == STATESET_CLASS_ID){
-						applyStateSetRenderBinProperties(pblock2,t,stateset);
-                        applyStateSetGLModeProperties(pblock2,t,stateset);
-                        applyStateSetPolygonModeProperties(pblock2,t,stateset);
-                        applyStateSetPolygonOffsetProperties(pblock2,t,stateset);
-						break;
-					}
+	while (ptr)
+   {
+		SClass_ID sid = ptr->SuperClassID();
+		if(sid==PARAMETER_BLOCK2_CLASS_ID)
+      {
+			pblock2 = dynamic_cast<IParamBlock2*>(ptr);
+			ClassDesc2 * desc = pblock2->GetDesc()->cd;
+			if(desc)
+         {
+				Class_ID id  = desc->ClassID();
+				if(id == STATESET_CLASS_ID){
+					applyStateSetRenderBinProperties(pblock2,t,stateset);
+                     applyStateSetGLModeProperties(pblock2,t,stateset);
+                     applyStateSetPolygonModeProperties(pblock2,t,stateset);
+                     applyStateSetPolygonOffsetProperties(pblock2,t,stateset);
+					break;
 				}
 			}
 		}
-		ptr = ptr->next;
+		ptr = iter.Next();
 	}
 }
+#else
+
+void OSGExp::applyStateSetProperties(INode* node, TimeValue t, osg::StateSet* stateset)
+{
+   if(!stateset)
+      return;
+
+   IParamBlock2* pblock2;
+   RefList refList;
+
+   // Assure the node is referenced by an OSG helper StateSet object.
+   refList = node->GetRefList();
+   RefListItem* ptr = refList.first;
+   while (ptr){
+      if(ptr->maker){
+         SClass_ID sid = ptr->maker->SuperClassID();
+         if(sid==PARAMETER_BLOCK2_CLASS_ID){
+            pblock2 = (IParamBlock2*) ptr->maker;
+            ClassDesc2 * desc = pblock2->GetDesc()->cd;
+            if(desc){
+               Class_ID id  = desc->ClassID();
+               if(id == STATESET_CLASS_ID){
+                  applyStateSetRenderBinProperties(pblock2,t,stateset);
+                  applyStateSetGLModeProperties(pblock2,t,stateset);
+                  applyStateSetPolygonModeProperties(pblock2,t,stateset);
+                  applyStateSetPolygonOffsetProperties(pblock2,t,stateset);
+                  break;
+               }
+            }
+         }
+      }
+      ptr = ptr->next;
+   }
+}
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 void OSGExp::applyStateSetPolygonModeProperties(IParamBlock2* pblock2, TimeValue t, osg::StateSet* stateset)
@@ -250,7 +287,7 @@ void OSGExp::applyStateSetRenderBinProperties(IParamBlock2* pblock2, TimeValue t
     pblock2->GetValue(render_bin_enable, t, renderBinEnabled, iv);
     if(renderBinEnabled) {
 	    int renderBinNum;
-	    TCHAR* renderBinName;
+	    const MCHAR* renderBinName = NULL;
 	    int renderBinMode;
 
         pblock2->GetValue(render_bin_num, t, renderBinNum, iv);
@@ -426,7 +463,7 @@ osg::ref_ptr<osg::LOD> OSGExp::createLODFromHelperObject(
 	Interval iv;
 	osg::Vec3 center;
 	BOOL usePagedLOD;
-	TCHAR* templateFilename;
+	const MCHAR* templateFilename;
 
 	if(pblock2)
    {

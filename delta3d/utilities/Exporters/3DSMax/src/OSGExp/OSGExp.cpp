@@ -523,6 +523,7 @@ int	OSGExp::DoExport(const TCHAR *name, ExpInterface *ei,
 
 			if(res.error() && _options->getShowErrMsg()){
 				static TCHAR szBuffer[256];
+            memset(szBuffer,0,sizeof(TCHAR)*256);
 				wsprintf(szBuffer,TEXT("Error writing file %s:\n%s"), 
 					     TEXT(filename.c_str()),res.message());
 				MessageBox (GetActiveWindow(), szBuffer, TEXT("Warning"),
@@ -545,6 +546,10 @@ int	OSGExp::DoExport(const TCHAR *name, ExpInterface *ei,
 		_ip->ProgressEnd();
 	}
 
+   // TEMP:
+   // Temporarily disable the previewer if this is Max 2010, until a fix can be found.
+   // Currently the previewer prevents the exporter from loading into Max successfully.
+#if MAX_RELEASE < 12000
 	// Show quick preview
 	if(_options->getQuickView()){
 
@@ -639,6 +644,7 @@ int	OSGExp::DoExport(const TCHAR *name, ExpInterface *ei,
 		isExporting = FALSE;
 		return TRUE;
 	}
+   #endif
 }
 	isExporting = FALSE;
 	return TRUE;

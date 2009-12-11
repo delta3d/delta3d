@@ -251,6 +251,7 @@ osg::ref_ptr<osg::MatrixTransform> OSGExp::createLightObject(osg::Group* rootTra
 
 	// Create OSG light and set properties..
 	osg::ref_ptr<osg::Light> light = new osg::Light;
+   light->setName(node->GetName());
 	light->setLightNum(_nLights++);
 	light->setPosition(osg::Vec4(0.0f, 0.0f, 0.0f, 1.0f));
 	light->setDirection(osg::Vec3(0.0f, 0.0f, -1.0f));
