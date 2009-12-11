@@ -34,6 +34,9 @@ namespace dtDAL
       public:
          static const char DESCRIPTOR_SEPARATOR = ':';
 
+         ///A NULL value type, used to represent an unassigned ResourceDescriptor
+         static ResourceDescriptor NULL_RESOURCE;
+
          ResourceDescriptor() {}
 
          ResourceDescriptor(const std::string& displayName, const std::string& resourceIdentifier):
@@ -60,6 +63,11 @@ namespace dtDAL
             return mResourceIdentifier == toCompare.mResourceIdentifier;
          }
 
+         bool operator!=(const ResourceDescriptor& toCompare) const 
+         {
+            return mResourceIdentifier != toCompare.mResourceIdentifier;
+         }
+
          bool operator>(const ResourceDescriptor& toCompare) const 
          {
             return mResourceIdentifier > toCompare.mResourceIdentifier;
@@ -74,6 +82,19 @@ namespace dtDAL
          const std::string& GetResourceIdentifier() const { return mResourceIdentifier; }
          const std::string  GetExtension() const;
          const std::string  GetResourceName() const;
+
+         /**
+          * Is this ResourceDescripter not set with any value?
+          * @param true if not set, false if set
+          */
+         bool IsEmpty() const;
+
+         /** 
+          * Unset this instance.  Will erase any preivously set values.
+          * @see IsEmpty()
+          */
+         void Clear();
+
       private:
          std::string mDisplayName;
          std::string mResourceIdentifier;
