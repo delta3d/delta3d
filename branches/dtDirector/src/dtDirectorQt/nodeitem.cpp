@@ -52,8 +52,8 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void InputData::Remove()
    {
-      //if (linkName) delete linkName;
-      if (linkGraphic) delete linkGraphic;
+      if (linkName) delete linkName;
+      //if (linkGraphic) delete linkGraphic;
       linkName = NULL;
       linkGraphic = NULL;
       link = NULL;
@@ -356,42 +356,51 @@ namespace dtDirector
 
       if (!mNode.valid()) return;
 
-      count = (int)mNode->GetInputLinks().size();
-      for (int index = 0; index < count; index++)
+      if (mNode->InputsExposed())
       {
-         mInputs.push_back(InputData());
-         InputData& data = mInputs.back();
+         count = (int)mNode->GetInputLinks().size();
+         for (int index = 0; index < count; index++)
+         {
+            mInputs.push_back(InputData());
+            InputData& data = mInputs.back();
 
-         data.link = &mNode->GetInputLinks()[index];
+            data.link = &mNode->GetInputLinks()[index];
 
-         data.linkName = new QGraphicsTextItem(this, mScene);
-         data.linkGraphic = new InputLinkItem(this, (int)mInputs.size()-1, data.linkName, mScene);
+            data.linkName = new QGraphicsTextItem(this, mScene);
+            data.linkGraphic = new InputLinkItem(this, (int)mInputs.size()-1, data.linkName, mScene);
+         }
       }
 
-      count = (int)mNode->GetOutputLinks().size();
-      for (int index = 0; index < count; index++)
+      if (mNode->OutputsExposed())
       {
-         mOutputs.push_back(OutputData());
-         OutputData& data = mOutputs.back();
+         count = (int)mNode->GetOutputLinks().size();
+         for (int index = 0; index < count; index++)
+         {
+            mOutputs.push_back(OutputData());
+            OutputData& data = mOutputs.back();
 
-         data.link = &mNode->GetOutputLinks()[index];
+            data.link = &mNode->GetOutputLinks()[index];
 
-         data.linkGraphic = new OutputLinkItem(this, (int)mOutputs.size()-1, this, mScene);
-         data.linkName = new QGraphicsTextItem(data.linkGraphic, mScene);
-         data.linkName->setAcceptHoverEvents(false);
+            data.linkGraphic = new OutputLinkItem(this, (int)mOutputs.size()-1, this, mScene);
+            data.linkName = new QGraphicsTextItem(data.linkGraphic, mScene);
+            data.linkName->setAcceptHoverEvents(false);
+         }
       }
 
-      count = (int)mNode->GetValueLinks().size();
-      for (int index = 0; index < count; index++)
+      if (mNode->ValuesExposed())
       {
-         mValues.push_back(ValueData());
-         ValueData& data = mValues.back();
+         count = (int)mNode->GetValueLinks().size();
+         for (int index = 0; index < count; index++)
+         {
+            mValues.push_back(ValueData());
+            ValueData& data = mValues.back();
 
-         data.link = &mNode->GetValueLinks()[index];
+            data.link = &mNode->GetValueLinks()[index];
 
-         data.linkGraphic = new ValueLinkItem(this, (int)mValues.size()-1, this, mScene);
-         data.linkName = new QGraphicsTextItem(data.linkGraphic, mScene);
-         data.linkName->setAcceptHoverEvents(false);
+            data.linkGraphic = new ValueLinkItem(this, (int)mValues.size()-1, this, mScene);
+            data.linkName = new QGraphicsTextItem(data.linkGraphic, mScene);
+            data.linkName->setAcceptHoverEvents(false);
+         }
       }
    }
 

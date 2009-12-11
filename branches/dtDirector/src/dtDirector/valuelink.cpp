@@ -178,13 +178,9 @@ namespace dtDirector
       // Perform a type check.
       if (mTypeCheck)
       {
-         // If this has no default property type, no type checking can be done.
-         if (GetDefaultProperty())
+         if (!valueNode->CanBeType(GetPropertyType()))
          {
-            if (!valueNode->CanBeType(GetDefaultProperty()->GetDataType()))
-            {
-               return false;
-            }
+            return false;
          }
       }
 
