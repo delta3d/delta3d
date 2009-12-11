@@ -68,4 +68,5 @@ namespace dtDAL
    DataType DataType::SOUND("Sounds", "Sound", true, SOUND_ID);
    DataType DataType::PARTICLE_SYSTEM("Particles", "Particle", true, PARTICLESYSTEM_ID);
    DataType DataType::PREFAB("Prefabs", "Prefab", true, PREFAB_ID);
+   DataType DataType::SHADER("Shaders", "Shader", true, SHADER_ID);
 }
