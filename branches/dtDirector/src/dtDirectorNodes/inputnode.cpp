@@ -59,32 +59,22 @@ namespace dtDirector
       mOutputs.push_back(OutputLink(this, "Out"));
    }
 
-   //////////////////////////////////////////////////////////////////////////
-   void InputNode::Trigger(int outputIndex, const dtDAL::ActorProxy* instigator)
-   {
-      // Can't trigger a disabled event.
-      if (GetDisabled()) return;
-
-      // Activate the input link instead of the normal behavior.
-      if (mInputs.size()) mInputs[0].Activate();
-   }
-
    ////////////////////////////////////////////////////////////////////////////////
    void InputNode::BuildPropertyMap()
    {
+      EventNode::BuildPropertyMap();
+
       AddProperty(new dtDAL::StringActorProperty(
          "Name", "Name", 
          dtDAL::StringActorProperty::SetFuncType(this, &InputNode::SetName),
          dtDAL::StringActorProperty::GetFuncType(this, &InputNode::GetName),
          "The name of the input link."));
-
-      EventNode::BuildPropertyMap();
    }
 
    //////////////////////////////////////////////////////////////////////////
    void InputNode::Update(float simDelta, float delta)
    {
-      if (GetDisabled()) return;
+      if (!GetEnabled()) return;
 
       EventNode::Update(simDelta, delta);
 

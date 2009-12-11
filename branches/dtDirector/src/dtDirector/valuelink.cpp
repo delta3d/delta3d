@@ -60,7 +60,7 @@ namespace dtDirector
          for (int index = 0; index < count; index++)
          {
             ValueNode* node = mLinks[index];
-            if (node && !node->GetDisabled())
+            if (node && node->GetEnabled())
             {
                if (node->GetPropertyType() != dtDAL::DataType::UNKNOWN)
                {
@@ -97,7 +97,7 @@ namespace dtDirector
       if (index >= 0 && index < (int)mLinks.size())
       {
          ValueNode* node = mLinks[index];
-         if (node && !node->GetDisabled()) return node->GetProperty();
+         if (node && node->GetEnabled()) return node->GetProperty();
       }
 
       // If we have no overriding links, and we are looking for the first

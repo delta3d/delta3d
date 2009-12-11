@@ -66,7 +66,7 @@ namespace dtDirector
       Node::Update(simDelta, delta);
 
       // Skip the udpate if this node is disabled.
-      if (GetDisabled()) return;
+      if (!GetEnabled()) return;
 
       // If this node is active, perform an active update.
       if (mActive)

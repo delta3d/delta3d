@@ -55,14 +55,6 @@ namespace dtDirector
       virtual void Init(const NodeType& nodeType, DirectorGraphData* graph);
 
       /**
-       * Triggers the event.
-       *
-       * @param[in]  outputIndex  The output to trigger.
-       * @param[in]  instigator   The instigating actor.
-       */
-      virtual void Trigger(int outputIndex, const dtDAL::ActorProxy* instigator = NULL);
-
-      /**
        * This method is called in init, which instructs the node
        * to create its properties.  Methods implementing this should
        * be sure to call their parent class's buildPropertyMap method to

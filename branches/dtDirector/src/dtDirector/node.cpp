@@ -34,7 +34,7 @@ namespace dtDirector
    ///////////////////////////////////////////////////////////////////////////////////////
    Node::Node()
       : mLogComment(false)
-      , mDisabled(false)
+      , mEnabled(true)
       , mDirector(NULL)
       , mGraph(NULL)
    {
@@ -99,28 +99,33 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void Node::BuildPropertyMap()
    {
-      dtDAL::StringActorProperty* descProp = new dtDAL::StringActorProperty(
-         "Description", "Description",
-         dtDAL::StringActorProperty::SetFuncType(),
-         dtDAL::StringActorProperty::GetFuncType(this, &Node::GetDescription),
-         "Generic text field used to describe the basic functionality of this node.");
-      descProp->SetReadOnly(true);
-      InsertProperty(descProp, 0);
-
-      dtDAL::StringActorProperty* typeProp = new dtDAL::StringActorProperty(
-         "Type", "Type",
-         dtDAL::StringActorProperty::SetFuncType(),
-         dtDAL::StringActorProperty::GetFuncType(this, &Node::GetTypeName),
-         "The nodes type.");
-      typeProp->SetReadOnly(true);
-      InsertProperty(typeProp, 0);
+      AddProperty(new dtDAL::BooleanActorProperty(
+         "Enabled", "Enabled",
+         dtDAL::BooleanActorProperty::SetFuncType(this, &Node::SetEnabled),
+         dtDAL::BooleanActorProperty::GetFuncType(this, &Node::GetEnabled),
+         "Enabled status of this Node (Disabled nodes will not run during graph execution)."));
 
       AddProperty(new dtDAL::StringActorProperty(
          "Comment", "Comment",
          dtDAL::StringActorProperty::SetFuncType(this, &Node::SetComment),
          dtDAL::StringActorProperty::GetFuncType(this, &Node::GetComment),
-         "Generic text field used to describe why this node is here.",
-         "Debug"));
+         "Generic text field used to describe why this node is here."));
+
+      dtDAL::StringActorProperty* typeProp = new dtDAL::StringActorProperty(
+         "Type", "Type",
+         dtDAL::StringActorProperty::SetFuncType(),
+         dtDAL::StringActorProperty::GetFuncType(this, &Node::GetTypeName),
+         "The nodes type.", "Debug");
+      typeProp->SetReadOnly(true);
+      AddProperty(typeProp);
+
+      dtDAL::StringActorProperty* descProp = new dtDAL::StringActorProperty(
+         "Description", "Description",
+         dtDAL::StringActorProperty::SetFuncType(),
+         dtDAL::StringActorProperty::GetFuncType(this, &Node::GetDescription),
+         "Generic text field used to describe the basic functionality of this node.", "Debug");
+      descProp->SetReadOnly(true);
+      AddProperty(descProp);
 
       AddProperty(new dtDAL::BooleanActorProperty(
          "LogComment", "Log Comment",
@@ -129,18 +134,11 @@ namespace dtDirector
          "Outputs the comment text to the log window when this node is activated.",
          "Debug"));
 
-      AddProperty(new dtDAL::BooleanActorProperty(
-         "Disabled", "Disabled",
-         dtDAL::BooleanActorProperty::SetFuncType(this, &Node::SetDisabled),
-         dtDAL::BooleanActorProperty::GetFuncType(this, &Node::GetDisabled),
-         "Disables the node from running in the script.",
-         "Debug"));
-
       AddProperty(new dtDAL::Vec2ActorProperty(
          "Position", "Position",
          dtDAL::Vec2ActorProperty::SetFuncType(this, &Node::SetPosition),
          dtDAL::Vec2ActorProperty::GetFuncType(this, &Node::GetPosition),
-         "The UI Position of the Node.", "UI"));
+         "The UI Position of the Node.", "Debug"));
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -203,15 +201,15 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool Node::GetDisabled() const
+   bool Node::GetEnabled() const
    {
-      return mDisabled;
+      return mEnabled;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void Node::SetDisabled(bool disabled)
+   void Node::SetEnabled(bool enabled)
    {
-      mDisabled = disabled;
+      mEnabled = enabled;
    }
 
    //////////////////////////////////////////////////////////////////////////

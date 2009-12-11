@@ -68,7 +68,7 @@ namespace dtDirector
          if (size < mNodeHeight) size = mNodeHeight;
 
          QRadialGradient radialGradient(mNodeWidth/2, mNodeHeight/2, size, mNodeWidth/2, mNodeHeight/2);
-         if (!mNode->GetDisabled())
+         if (mNode->GetEnabled())
          {
             setPen(QPen(Qt::darkGray, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 

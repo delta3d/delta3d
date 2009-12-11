@@ -190,18 +190,18 @@ namespace dtDirector
       void SetPosition(const osg::Vec2& pos) {mPosition = pos;}
 
       /**
-       * Retrieves the disabled status of the node.
+       * Retrieves the enabled status of the node.
        *
-       * @return  True if the node is disabled.
+       * @return  True if the node is enabled.
        */
-      bool GetDisabled() const;
+      bool GetEnabled() const;
 
       /**
-       * Sets the disabled status of the node.
+       * Sets the enabled status of the node.
        *
-       * @param[in]  disabled  True to disable.
+       * @param[in]  enabled   True to enable.
        */
-      void SetDisabled(bool disabled);
+      void SetEnabled(bool enabled);
 
       /**
        * Retrieves the director.
@@ -421,7 +421,7 @@ namespace dtDirector
 
       osg::Vec2          mPosition;
 
-      bool               mDisabled;
+      bool               mEnabled;
 
       Director*          mDirector;
       DirectorGraphData* mGraph;

@@ -104,7 +104,7 @@ namespace dtDirector
       int count = (int)inputs.size();
       for (int index = 0; index < count; index++)
       {
-         if (!inputs[index]->GetDisabled())
+         if (inputs[index]->GetEnabled())
          {
             mInputs.push_back(InputData());
             InputData& data = mInputs.back();
@@ -120,7 +120,7 @@ namespace dtDirector
       count = (int)outputs.size();
       for (int index = 0; index < count; index++)
       {
-         if (!outputs[index]->GetDisabled())
+         if (outputs[index]->GetEnabled())
          {
             mOutputs.push_back(OutputData());
             OutputData& data = mOutputs.back();
@@ -137,7 +137,7 @@ namespace dtDirector
       count = (int)values.size();
       for (int index = 0; index < count; index++)
       {
-         if (!values[index]->GetDisabled())
+         if (values[index]->GetEnabled())
          {
             mValues.push_back(ValueData());
             ValueData& data = mValues.back();

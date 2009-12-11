@@ -52,7 +52,11 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void InputData::Remove()
    {
-      if (linkName) delete linkName;
+      //if (linkName) delete linkName;
+      if (linkGraphic) delete linkGraphic;
+      linkName = NULL;
+      linkGraphic = NULL;
+      link = NULL;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -90,7 +94,11 @@ namespace dtDirector
    void OutputData::Remove(EditorScene* scene)
    {
       ResizeLinks(0, scene);
+      if (linkName) delete linkName;
       if (linkGraphic) delete linkGraphic;
+      linkName = NULL;
+      linkGraphic = NULL;
+      link = NULL;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -128,7 +136,11 @@ namespace dtDirector
    void ValueData::Remove(EditorScene* scene)
    {
       ResizeLinks(0, scene);
+      if (linkName) delete linkName;
       if (linkGraphic) delete linkGraphic;
+      linkName = NULL;
+      linkGraphic = NULL;
+      link = NULL;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -608,7 +620,7 @@ namespace dtDirector
    void NodeItem::DrawDividers()
    {
       // Draw the vertical divider if we are displaying both inputs and outputs.
-      if (!mInputs.empty() || !mOutputs.empty())
+      if (!mInputs.empty() && !mOutputs.empty())
       {
          float x = mLinkWidth + (LINK_SPACING / 2);
          float y = mTextHeight + 1;
@@ -635,7 +647,7 @@ namespace dtDirector
 
          if (!mValueDivider) mValueDivider = new QGraphicsRectItem(this, scene());
          mValueDivider->setPos(x, y);
-         mValueDivider->setRect(0, 0, width, 0);
+         mValueDivider->setRect(0, 0, width, mNodeHeight - y);
          mValueDivider->setPen(QPen(Qt::darkGray, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
       }
       else if (mValueDivider)

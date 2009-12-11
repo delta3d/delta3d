@@ -57,7 +57,7 @@ namespace dtDirector
          "EventName", "Event Name",
          dtDAL::StringActorProperty::SetFuncType(this, &NamedEvent::SetEventName),
          dtDAL::StringActorProperty::GetFuncType(this, &NamedEvent::GetEventName),
-         "The name of the event.", "Event"));
+         "The name of the event."));
    }
 
    //////////////////////////////////////////////////////////////////////////

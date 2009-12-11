@@ -61,6 +61,8 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void OperationAction::BuildPropertyMap()
    {
+      ActionNode::BuildPropertyMap();
+
       // Create our value links.
       dtDAL::DoubleActorProperty* leftProp = new dtDAL::DoubleActorProperty(
          "A", "A",
@@ -126,8 +128,6 @@ namespace dtDirector
       mValues.push_back(ValueLink(this, boolProp, true, true, true));
       mValues.push_back(ValueLink(this, stringProp, true, true, true));
       mValues.push_back(ValueLink(this, actorProp, true, true, true));
-
-      ActionNode::BuildPropertyMap();
    }
 
    //////////////////////////////////////////////////////////////////////////

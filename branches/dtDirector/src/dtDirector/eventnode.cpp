@@ -57,7 +57,7 @@ namespace dtDirector
    bool EventNode::Test(int outputIndex, const dtDAL::ActorProxy* instigator)
    {
       // Can't trigger a disabled event.
-      if (GetDisabled()) return false;
+      if (!GetEnabled()) return false;
 
       if (outputIndex < (int)mOutputs.size())
       {

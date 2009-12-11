@@ -53,13 +53,13 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void ValueNode::BuildPropertyMap()
    {
+      Node::BuildPropertyMap();
+
       AddProperty(new dtDAL::StringActorProperty(
          "Name", "Name",
          dtDAL::StringActorProperty::SetFuncType(this, &ValueNode::SetName),
          dtDAL::StringActorProperty::GetFuncType(this, &ValueNode::GetName),
          "The variables name."));
-
-      Node::BuildPropertyMap();
    }
 
    //////////////////////////////////////////////////////////////////////////
