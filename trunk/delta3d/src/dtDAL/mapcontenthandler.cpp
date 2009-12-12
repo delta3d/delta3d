@@ -1026,11 +1026,11 @@ namespace  dtDAL
                   if (dataValue != "" && mDescriptorDisplayName != "")
                   {
                      ResourceDescriptor rd(mDescriptorDisplayName, dataValue);
-                     p.SetValue(&rd);                     
+                     p.SetValue(rd);
                   }
                   else
                   {
-                     p.SetValue(NULL);
+                     p.SetValue(ResourceDescriptor::NULL_RESOURCE);
                   }
                }
             }
