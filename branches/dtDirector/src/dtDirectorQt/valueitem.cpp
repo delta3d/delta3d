@@ -157,6 +157,23 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   void ValueItem::SetComment(const std::string& text)
+   {
+      if (!mComment)
+      {
+         mComment = new QGraphicsTextItem(this, scene());
+      }
+
+      mComment->setPlainText(text.c_str());
+
+      // Create the title background.
+      QRectF nodeBounds = boundingRect();
+
+      mComment->setTextWidth(nodeBounds.width() * 2.0f);
+      mComment->setPos(nodeBounds.x(), nodeBounds.height());
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void ValueItem::ConnectLinks(bool fullConnect)
    {
       NodeItem::ConnectLinks(fullConnect);

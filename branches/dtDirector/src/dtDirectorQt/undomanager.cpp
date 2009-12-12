@@ -31,12 +31,41 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    UndoManager::UndoManager(DirectorEditor* editor)
       : mEditor(editor)
+      , mModifyIndex(0)
    {
    }
 
    //////////////////////////////////////////////////////////////////////////
    UndoManager::~UndoManager()
    {
+      Clear();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool UndoManager::IsModified()
+   {
+      if (mModifyIndex == -1) return true;
+
+      if (mModifyIndex != mUndoEvents.size()) return true;
+
+      return false;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void UndoManager::OnSaved()
+   {
+      // We set the modify index to the undo size so it remembers
+      // where the state was saved.
+      mModifyIndex = mUndoEvents.size();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void UndoManager::Clear()
+   {
+      while (!mUndoEvents.empty()) mUndoEvents.pop();
+      while (!mRedoEvents.empty()) mRedoEvents.pop();
+      while (!mMultipleEventStack.empty()) mMultipleEventStack.pop();
+      mModifyIndex = 0;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -44,7 +73,7 @@ namespace dtDirector
    {
       if (mUndoEvents.empty()) return;
 
-      dtCore::RefPtr<UndoEvent> event = mUndoEvents.top().get();
+      dtCore::RefPtr<UndoEvent> event = mUndoEvents.top();
       mUndoEvents.pop();
 
       if (event.valid())
@@ -100,6 +129,13 @@ namespace dtDirector
    void UndoManager::AddEvent(UndoEvent* event)
    {
       if (!event) return;
+
+      // If we had redo events, since they will be cleared now,
+      // there is no way to restore your graphs back to their
+      // last saved state, so we set the modify index to -1
+      // so the IsModified method will always return true.
+      if (!mRedoEvents.empty() &&
+         mModifyIndex > mUndoEvents.size()) mModifyIndex = -1;
 
       // Any time we add new events, we need to clear any redo events
       // we may have.

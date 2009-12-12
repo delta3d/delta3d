@@ -35,9 +35,8 @@
 namespace dtDirector
 {
    ////////////////////////////////////////////////////////////////////////////////
-   EditorScene::EditorScene(Director* director, PropertyEditor* propEditor, GraphTabs* graphTabs, QWidget* parent)
+   EditorScene::EditorScene(PropertyEditor* propEditor, GraphTabs* graphTabs, QWidget* parent)
       : QGraphicsScene(parent)
-      , mDirector(director)
       , mPropertyEditor(propEditor)
       , mGraphTabs(graphTabs)
       , mView(NULL)
@@ -46,7 +45,6 @@ namespace dtDirector
       , mHasDragged(false)
       , mTranslationItem(NULL)
    {
-      mSelected.push_back(mDirector.get());
       mPropertyEditor->SetScene(this);
 
       setBackgroundBrush(Qt::lightGray);
@@ -62,6 +60,9 @@ namespace dtDirector
    void EditorScene::SetEditor(DirectorEditor* editor)
    {
       mEditor = editor;
+
+      mSelected.clear();
+      mSelected.push_back(mEditor->GetDirector());
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -86,7 +87,7 @@ namespace dtDirector
 
       // Also clear the current selection.
       mSelected.clear();
-      mSelected.push_back(mDirector.get());
+      mSelected.push_back(mEditor->GetDirector());
 
       // The translation item is the parent class for all other items.
       // This simulates the translation of the view by moving all children
@@ -221,7 +222,7 @@ namespace dtDirector
    void EditorScene::AddSelected(dtDAL::PropertyContainer* container)
    {
       // If we have the director container in the list, remove it.
-      if (mSelected.size() == 1 && mSelected[0].get() == mDirector.get())
+      if (mSelected.size() == 1 && mSelected[0].get() == mEditor->GetDirector())
       {
          mSelected.clear();
       }
@@ -250,7 +251,7 @@ namespace dtDirector
       // If we have removed our last selected item, add the director.
       if (mSelected.empty())
       {
-         mSelected.push_back(mDirector.get());
+         mSelected.push_back(mEditor->GetDirector());
       }
 
       // Update the property editor.

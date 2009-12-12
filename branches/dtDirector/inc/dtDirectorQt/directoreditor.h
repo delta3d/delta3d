@@ -184,7 +184,8 @@ namespace dtDirector
       dtCore::RefPtr<Director> mDirector;
 
       QMenuBar* mMenuBar;
-      QToolBar* mToolbar;
+      QToolBar* mFileToolbar;
+      QToolBar* mEditToolbar;
 
       QMenu*    mFileMenu;
       QMenu*    mEditMenu;

@@ -250,9 +250,9 @@ namespace dtDirector
    void UndoDeleteEvent::Redo(bool isParent)
    {
       // Delete the node.
-      if (!mEditor->GetDirector()->DeleteNode(mNodeID))
+      if (!mEditor->GetDirector()->DeleteGraph(mNodeID))
       {
-         mEditor->GetDirector()->DeleteGraph(mNodeID);
+         mEditor->GetDirector()->DeleteNode(mNodeID);
       }
 
       // Remove the node from all UI's
@@ -260,7 +260,7 @@ namespace dtDirector
       for (int index = 0; index < count; index++)
       {
          EditorView* view = dynamic_cast<EditorView*>(mEditor->GetGraphTabs()->widget(index));
-         if (view && view->GetScene())
+         if (view && view->GetScene() && view->GetScene()->GetGraph())
          {
             // If the scene is displaying the contents of a graph that is deleted,
             // remove the tab.

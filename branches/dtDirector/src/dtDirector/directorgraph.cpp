@@ -47,16 +47,16 @@ namespace dtDirector
          "Enabled status of the graph."));
 
       AddProperty(new dtDAL::StringActorProperty(
-         "Name", "Name",
-         dtDAL::StringActorProperty::SetFuncType(this, &DirectorGraph::SetName),
-         dtDAL::StringActorProperty::GetFuncType(this, &DirectorGraph::GetName),
-         "The Name of the Director graph."));
-
-      AddProperty(new dtDAL::StringActorProperty(
          "Comment", "Comment",
          dtDAL::StringActorProperty::SetFuncType(this, &DirectorGraph::SetComment),
          dtDAL::StringActorProperty::GetFuncType(this, &DirectorGraph::GetComment),
          "Comment"));
+
+      AddProperty(new dtDAL::StringActorProperty(
+         "Name", "Name",
+         dtDAL::StringActorProperty::SetFuncType(this, &DirectorGraph::SetName),
+         dtDAL::StringActorProperty::GetFuncType(this, &DirectorGraph::GetName),
+         "The Name of the Director graph."));
 
       // Only sub graphs have a position.
       if (!isParent)

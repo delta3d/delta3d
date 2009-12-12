@@ -342,11 +342,13 @@ namespace dtDirector
       }
 
       mComment->setPlainText(text.c_str());
+      mComment->setTextWidth(500);
 
       // Create the title background.
-      QRectF bounds = mComment->boundingRect();
+      QRectF commentBounds = mComment->boundingRect();
+      QRectF nodeBounds = boundingRect();
 
-      mComment->setPos(0.0f, -bounds.height());
+      mComment->setPos(nodeBounds.x(), -commentBounds.height());
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -1081,12 +1083,12 @@ namespace dtDirector
       {
          if (isSelected())
          {
-            setZValue(zValue() + 9.0f);
+            setZValue(zValue() + 100.0f);
             mScene->AddSelected(mNode.get());
          }
          else
          {
-            setZValue(zValue() - 9.0f);
+            setZValue(zValue() - 100.0f);
             mScene->RemoveSelected(mNode.get());
          }
       }

@@ -107,6 +107,16 @@ namespace dtDirector
          setPos(pos.x(), pos.y());
 
          SetComment(mGraph->GetComment());
+
+         if (mGraph->GetComment().empty())
+         {
+            setToolTip("A Macro.  Double click this node to step in and view this macro's contents.");
+         }
+         else
+         {
+            setToolTip(QString("A Macro.  Double click this node to step in and view this macro's contents.") +
+               QString("\nComment - ") + QString(mGraph->GetComment().c_str()));
+         }
       }
 
       mLoading = false;
@@ -255,12 +265,12 @@ namespace dtDirector
       {
          if (isSelected())
          {
-            setZValue(zValue() + 9.0f);
+            setZValue(zValue() + 100.0f);
             mScene->AddSelected(mGraph.get());
          }
          else
          {
-            setZValue(zValue() - 9.0f);
+            setZValue(zValue() - 100.0f);
             mScene->RemoveSelected(mGraph.get());
          }
       }

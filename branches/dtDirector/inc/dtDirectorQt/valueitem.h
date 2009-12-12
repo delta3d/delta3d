@@ -59,6 +59,13 @@ namespace dtDirector
       virtual void SetTitle(const std::string text);
 
       /**
+       * Creates the comment.
+       *
+       * @param[in]  text  The new comment text.
+       */
+      virtual void SetComment(const std::string& text);
+
+      /**
        * Connects all links on this node.
        *
        * @param[in]  fullConnect  True to perform a full

@@ -50,7 +50,8 @@ namespace dtDirector
       , mPropertyEditor(NULL)
       , mUndoManager(NULL)
       , mMenuBar(NULL)
-      , mToolbar(NULL)
+      , mFileToolbar(NULL)
+      , mEditToolbar(NULL)
       , mFileMenu(NULL)
       , mEditMenu(NULL)
       , mViewMenu(NULL)
@@ -58,6 +59,9 @@ namespace dtDirector
       , mLoadAction(NULL)
       , mNewAction(NULL)
       , mParentAction(NULL)
+      , mUndoAction(NULL)
+      , mRedoAction(NULL)
+      , mDeleteAction(NULL)
       , mViewPropertiesAction(NULL)
    {
       // Set the default size of the window.
@@ -147,22 +151,28 @@ namespace dtDirector
       mViewMenu = mMenuBar->addMenu("&View");
       mViewMenu->addAction(mViewPropertiesAction);
 
-      // Toolbar.
-      mToolbar = new QToolBar(this);
-      addToolBar(mToolbar);
-      mToolbar->setObjectName("Toolbar");
-      mToolbar->setWindowTitle(tr("Toolbar"));
+      // File Toolbar.
+      mFileToolbar = new QToolBar(this);
+      addToolBar(mFileToolbar);
+      mFileToolbar->setObjectName("File Toolbar");
+      mFileToolbar->setWindowTitle(tr("File Toolbar"));
 
-      mToolbar->addAction(mSaveAction);
-      mToolbar->addAction(mLoadAction);
-      mToolbar->addAction(mNewAction);
-      mToolbar->addSeparator();
-      mToolbar->addAction(mParentAction);
-      mToolbar->addSeparator();
-      mToolbar->addAction(mUndoAction);
-      mToolbar->addAction(mRedoAction);
-      mToolbar->addSeparator();
-      mToolbar->addAction(mDeleteAction);
+      mFileToolbar->addAction(mSaveAction);
+      mFileToolbar->addAction(mLoadAction);
+      mFileToolbar->addAction(mNewAction);
+
+      // Edit Toolbar.
+      mEditToolbar = new QToolBar(this);
+      addToolBar(mEditToolbar);
+      mEditToolbar->setObjectName("Edit Toolbar");
+      mEditToolbar->setWindowTitle(tr("Edit Toolbar"));
+
+      mEditToolbar->addAction(mParentAction);
+      mEditToolbar->addSeparator();
+      mEditToolbar->addAction(mUndoAction);
+      mEditToolbar->addAction(mRedoAction);
+      mEditToolbar->addSeparator();
+      mEditToolbar->addAction(mDeleteAction);
 
       // Main layout.
       setCentralWidget(mGraphTabs);
@@ -227,7 +237,7 @@ namespace dtDirector
       // if we don't have any pages yet.
       if (mGraphTabs->count() < 1 || newTab)
       {
-         EditorScene* scene = new EditorScene(mDirector, mPropertyEditor, mGraphTabs);
+         EditorScene* scene = new EditorScene(mPropertyEditor, mGraphTabs);
          EditorView* view = new EditorView(scene, this);
          scene->SetEditor(this);
          scene->SetView(view);
@@ -250,9 +260,6 @@ namespace dtDirector
    {
       // Refresh the button states.
       RefreshButtonStates();
-
-      // Refresh the name of the window.
-      setWindowTitle(mDirector->GetName().c_str());
 
       // Refresh the graph tabs with their graph names.
       int count = mGraphTabs->count();
@@ -281,6 +288,11 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void DirectorEditor::RefreshButtonStates()
    {
+      // Refresh the name of the window.
+      QString title = mDirector->GetName().c_str();
+      if (mUndoManager->IsModified()) title += "*";
+      setWindowTitle(title);
+
       bool bHasParent = false;
       bool bCanDelete = false;
 
@@ -368,6 +380,9 @@ namespace dtDirector
       if (!fileName.isEmpty())
       {
          mDirector->SaveScript(fileName.toStdString());
+         mUndoManager->OnSaved();
+
+         RefreshButtonStates();
       }
    }
 
@@ -391,6 +406,7 @@ namespace dtDirector
          // Clear the script.
          mDirector->Clear();
          mGraphTabs->clear();
+         mUndoManager->Clear();
 
          mDirector->LoadScript(fileName.toStdString());
 
@@ -407,6 +423,7 @@ namespace dtDirector
       // Clear the script.
       mGraphTabs->clear();
       mDirector->Clear();
+      mUndoManager->Clear();
 
       // Create a single tab with the default graph.
       OpenGraph(mDirector->GetGraphRoot());

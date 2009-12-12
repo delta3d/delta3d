@@ -34,6 +34,7 @@
 namespace dtDirector
 {
    class DirectorEditor;
+
    /**
     * This class handles undo and redo for the Director Editor.
     */
@@ -53,6 +54,21 @@ namespace dtDirector
        * Destructor.
        */
       ~UndoManager();
+
+      /**
+       * Retrieves whether the script has been modified.
+       */
+      bool IsModified();
+
+      /**
+       * Event handler for when the graph has been saved.
+       */
+      void OnSaved();
+
+      /**
+       * Clears all undo/redo events.
+       */
+      void Clear();
 
       /**
        * Perform an undo action.
@@ -92,6 +108,7 @@ namespace dtDirector
    private:
 
       DirectorEditor*   mEditor;
+      int               mModifyIndex;
 
       std::stack<dtCore::RefPtr<UndoEvent> > mUndoEvents;
       std::stack<dtCore::RefPtr<UndoEvent> > mRedoEvents;

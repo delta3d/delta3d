@@ -57,13 +57,11 @@ namespace dtDirector
       /**
       * Constructor.
       *
-      * @param[in]  director    The Director.
       * @param[in]  propEditor  The Property Editor.
       * @param[in]  graphTabs   The Graph Tabs widget.
-      * @param[in]  view        The scene viewer.
       * @param[in]  parent      The parent widget.
       */
-      EditorScene(Director* director, PropertyEditor* propEditor, GraphTabs* graphTabs, QWidget* parent = 0);
+      EditorScene(PropertyEditor* propEditor, GraphTabs* graphTabs, QWidget* parent = 0);
 
       /**
        * Sets the current view.
@@ -180,7 +178,6 @@ namespace dtDirector
       DirectorEditor*            mEditor;
       EditorView*                mView;
 
-      dtCore::RefPtr<Director>   mDirector;
       PropertyEditor*            mPropertyEditor;
       GraphTabs*                 mGraphTabs;
 
