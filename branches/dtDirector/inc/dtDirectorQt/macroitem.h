@@ -77,11 +77,17 @@ namespace dtDirector
       DirectorGraph* GetGraph() {return mGraph.get();}
 
       /**
+       * Event handlers when the user is moving this node.
+       */
+      virtual void BeginMoveEvent();
+      virtual void EndMoveEvent();
+
+   protected:
+
+      /**
        * Event handler when this item changes.
        */
       QVariant itemChange(GraphicsItemChange change, const QVariant &value);
-
-   protected:
 
       /**
        * Event handler when the user double clicks this node.

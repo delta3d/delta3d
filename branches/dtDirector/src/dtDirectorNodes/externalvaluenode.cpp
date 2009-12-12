@@ -90,7 +90,8 @@ namespace dtDirector
    {
       if (mValues.size())
       {
-         return mValues[0].GetProperty(index);
+         dtDAL::ActorProperty* prop = mValues[0].GetProperty(index);
+         if (prop && prop->GetName() == name) return prop;
       }
 
       return Node::GetProperty(name, index);

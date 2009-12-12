@@ -72,10 +72,6 @@ namespace dtDirector
        */
       ValueNodeLinkItem* GetValueLink() {return mValueLink;}
 
-      /**
-       * Retrieves the node.
-       */
-      Node* GetNode() {return mNode.get();}
 
       friend class ValueNodeLinkItem;
 

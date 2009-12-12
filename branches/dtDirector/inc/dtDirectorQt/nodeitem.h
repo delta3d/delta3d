@@ -307,6 +307,12 @@ namespace dtDirector
       QPainterPath CreateConnectionH(QPointF start, QPointF end, bool drawReverse = false);
       QPainterPath CreateConnectionV(QPointF start, QPointF end, bool drawReverse = false);
 
+      /**
+       * Event handlers when the user is moving this node.
+       */
+      virtual void BeginMoveEvent();
+      virtual void EndMoveEvent();
+
    protected:
 
       /**
@@ -341,6 +347,8 @@ namespace dtDirector
 
       EditorScene* mScene;
       bool         mLoading;
+
+      std::string  mOldPosition;
 
       QPolygonF   mPolygon;
       QMenu*      mContextMenu;

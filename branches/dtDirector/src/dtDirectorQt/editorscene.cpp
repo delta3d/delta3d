@@ -22,6 +22,7 @@
 #include <dtDirectorQt/editorscene.h>
 #include <dtDirectorQt/directoreditor.h>
 #include <dtDirectorQt/propertyeditor.h>
+#include <dtDirectorQt/undomanager.h>
 #include <dtDirectorQt/editorview.h>
 #include <dtDirectorQt/graphtabs.h>
 #include <dtDirectorQt/actionitem.h>
@@ -290,6 +291,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void EditorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
    {
+      mHasDragged = false;
       bool bMultiSelect = false;
       if (event->modifiers() == Qt::ShiftModifier ||
          event->button() == Qt::RightButton)
@@ -300,7 +302,6 @@ namespace dtDirector
       else if(!itemAt(event->scenePos()))
       {
          mDragging = true;
-         mHasDragged = false;
          mDragOrigin = event->scenePos();
 
          // This is unusual, but I have to set it to scroll
@@ -322,6 +323,16 @@ namespace dtDirector
       {
          mView->setDragMode(QGraphicsView::NoDrag);
       }
+      else
+      {
+         QList<QGraphicsItem*> itemList = selectedItems();
+         int count = (int)itemList.size();
+         for (int index = 0; index < count; index++)
+         {
+            NodeItem* item = dynamic_cast<NodeItem*>(itemList[index]);
+            if (item) item->BeginMoveEvent();
+         }
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -332,11 +343,29 @@ namespace dtDirector
       // If you have pressed and released the mouse on an empty
       // area and did not drag, then it should clear the current
       // selection instead.
-      if (mDragging && !mHasDragged)
+      if (mDragging)
       {
-         clearSelection();
-         mSelected.clear();
-         RemoveSelected(NULL);
+         if (!mHasDragged)
+         {
+            clearSelection();
+            mSelected.clear();
+            RemoveSelected(NULL);
+         }
+      }
+      else if (mHasDragged)
+      {
+         mEditor->GetUndoManager()->BeginMultipleEvents();
+
+         QList<QGraphicsItem*> itemList = selectedItems();
+         int count = (int)itemList.size();
+         for (int index = 0; index < count; index++)
+         {
+            NodeItem* item = dynamic_cast<NodeItem*>(itemList[index]);
+            if (item) item->EndMoveEvent();
+         }
+
+         mEditor->GetUndoManager()->EndMultipleEvents();
+         mEditor->RefreshButtonStates();
       }
 
       mView->setDragMode(QGraphicsView::NoDrag);
@@ -348,11 +377,11 @@ namespace dtDirector
    {
       QGraphicsScene::mouseMoveEvent(event);
 
+      mHasDragged = true;
+
       // If we are dragging the view.
       if (mDragging)
       {
-         mHasDragged = true;
-
          QPointF mousePos = event->scenePos();
          QPointF inc = mDragOrigin - mousePos;
          mDragOrigin = mousePos;

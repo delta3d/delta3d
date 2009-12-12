@@ -24,6 +24,9 @@
 #include <dtDirectorQt/editorscene.h>
 #include <dtDirectorQt/linkitem.h>
 
+#include <dtDirectorQt/undomanager.h>
+#include <dtDirectorQt/undopropertyevent.h>
+
 #include <dtDirector/valuenode.h>
 
 #include <QtGui/QGraphicsScene>
@@ -969,6 +972,30 @@ namespace dtDirector
       }
 
       return path;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void NodeItem::BeginMoveEvent()
+   {
+      dtDAL::ActorProperty* prop = mNode->GetProperty("Position");
+      if (prop) mOldPosition = prop->ToString();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void NodeItem::EndMoveEvent()
+   {
+      dtDAL::ActorProperty* prop = mNode->GetProperty("Position");
+      if (prop)
+      {
+         std::string value = prop->ToString();
+
+         // Ignore the property if the node did not move.
+         if (value == mOldPosition) return;
+
+         // Notify the undo manager of the property changes.
+         dtCore::RefPtr<UndoPropertyEvent> event = new UndoPropertyEvent(mScene->GetEditor(), mNode->GetID(), prop->GetName(), mOldPosition, value);
+         mScene->GetEditor()->GetUndoManager()->AddEvent(event.get());
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
