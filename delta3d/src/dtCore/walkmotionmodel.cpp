@@ -15,7 +15,8 @@
 #include <dtCore/transformable.h>
 
 #include <osg/Vec3>
-#include <osgUtil/IntersectVisitor>
+#include <osgUtil/IntersectionVisitor>
+#include <osgUtil/LineSegmentIntersector>
 
 namespace dtCore
 {
@@ -418,7 +419,7 @@ void WalkMotionModel::OnMessage(MessageData* data)
 
       if (mScene.get() != 0)
       {
-         osgUtil::IntersectVisitor iv;
+         osgUtil::IntersectionVisitor iv;
 
          osg::Vec3 start(
             xyz[0],
@@ -432,17 +433,21 @@ void WalkMotionModel::OnMessage(MessageData* data)
             xyz[2] - 10000.0f
          );
 
-         osg::LineSegment* seg = new osg::LineSegment(start, end);
-
-         iv.addLineSegment(seg);
+         osgUtil::LineSegmentIntersector* lineSegmentIntersector;
+         {
+            lineSegmentIntersector = new osgUtil::LineSegmentIntersector(
+               start, end);
+            iv.setIntersector(lineSegmentIntersector);
+         }
 
          mScene->GetSceneNode()->accept(iv);
 
          float height = 0.0f;
 
-         if (iv.hits())
+         if (lineSegmentIntersector->containsIntersections())
          {
-            height = iv.getHitList(seg)[0].getWorldIntersectPoint()[2];
+            osgUtil::LineSegmentIntersector::Intersection& intersection = lineSegmentIntersector->getFirstIntersection();
+            height = intersection.getWorldIntersectPoint()[2];
          }
 
          height += mHeightAboveTerrain;

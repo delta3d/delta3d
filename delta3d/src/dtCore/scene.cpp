@@ -8,7 +8,6 @@
 #include <osg/PolygonMode>
 #include <osgDB/DatabasePager>
 #include <osgParticle/ParticleSystemUpdater>
-#include <osgUtil/IntersectVisitor>
 #include <osg/Group>
 #include <osgViewer/View>
 
@@ -39,7 +38,6 @@ const int SCENE_INTERSECT_MASK = 0x0fffffff;
 class DT_CORE_EXPORT ParticleSystemFreezer : public osg::NodeVisitor
 {
 public:
-
    ParticleSystemFreezer();
    void SetFreezing(bool freeze) { mFreezing = freeze; }
    bool GetFreezing() const { return mFreezing; }
@@ -47,7 +45,6 @@ public:
    virtual void apply(osg::Node& node);
 
 private:
-
    bool mFreezing;
 
    typedef std::map<osgParticle::ParticleSystem*, bool> ParticleSystemBoolMap;
@@ -59,13 +56,12 @@ class SceneImpl
 {
 public:
    SceneImpl(dtCore::ODEController* physicsController)
-   : mPhysicsController(physicsController)
-   , mSceneNode(new osg::Group)
-   , mLights(MAX_LIGHTS)
-   , mRenderMode(Scene::POINT)
-   , mRenderFace(Scene::FRONT)
+      : mPhysicsController(physicsController)
+      , mSceneNode(new osg::Group)
+      , mLights(MAX_LIGHTS)
+      , mRenderMode(Scene::POINT)
+      , mRenderFace(Scene::FRONT)
    {
-
    }
 
    ///The physics controller to use for physics integration (can be NULL)
@@ -423,7 +419,7 @@ void Scene::UnRegisterCollidable(Transformable* collidable) const
    }
 }
 
-/*!
+/**
  * Get the height of terrain at the specified (X,Y).  This essentially
  * does an intersection check of the whole scene from (X,Y,10k) to (X,Y,-10k).
  * Any geometry that intersects is considered the "terrain".
@@ -435,27 +431,30 @@ void Scene::UnRegisterCollidable(Transformable* collidable) const
  */
 float Scene::GetHeightOfTerrain(float x, float y)
 {
-   float HOT = 0.f;
-   osgUtil::IntersectVisitor iv;
-   RefPtr<osg::LineSegment> segDown = new osg::LineSegment;
+   float heightOfTerrain = 0.f;
+   osgUtil::IntersectionVisitor iv;
 
-   segDown->set(osg::Vec3(x, y, 10000.f),osg::Vec3(x,y, -10000.f));
-   iv.addLineSegment(segDown.get());
+   osgUtil::LineSegmentIntersector* lineSegmentIntersector;
+   {
+      lineSegmentIntersector = new osgUtil::LineSegmentIntersector(
+         osg::Vec3(x, y, 10000.f), osg::Vec3(x,y, -10000.f));
+      iv.setIntersector(lineSegmentIntersector);
+   }
    iv.setTraversalMask(SCENE_INTERSECT_MASK);
 
    mImpl->mSceneNode->accept(iv);
 
-   if (iv.hits())
+   if (lineSegmentIntersector->containsIntersections())
    {
-      osgUtil::IntersectVisitor::HitList& hitList = iv.getHitList(segDown.get());
-      if (!hitList.empty())
+      osgUtil::LineSegmentIntersector::Intersection& intersection = lineSegmentIntersector->getFirstIntersection();
       {
-         osg::Vec3 ip = hitList.front().getWorldIntersectPoint();
-         osg::Vec3 np = hitList.front().getWorldIntersectNormal();
-         HOT = ip.z();
+         const osg::Vec3& ip = intersection.getWorldIntersectPoint();
+         const osg::Vec3& np = intersection.getWorldIntersectNormal();
+         heightOfTerrain = ip.z();
       }
    }
-   return HOT;
+
+   return heightOfTerrain;
 }
 /////////////////////////////////////////////
 void Scene::SetGravity(const osg::Vec3& gravity) const
