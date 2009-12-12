@@ -101,6 +101,11 @@ namespace dtDirector
       mRedoAction->setShortcut(tr("Ctrl+Y"));
       mRedoAction->setToolTip(tr("Reverts your last undo action (Ctrl+Y)."));
 
+      // Delete Action.
+      mDeleteAction = new QAction(QIcon(":/icons/delete.png"), tr("Delete"), this);
+      mDeleteAction->setShortcut(tr("Delete"));
+      mDeleteAction->setToolTip(tr("Reverts your last undo action (Delete)."));
+
       // Show Properties Action.
       mViewPropertiesAction = new QAction(tr("Property Editor"), this);
       mViewPropertiesAction->setShortcut(tr("Ctrl+P"));
@@ -131,8 +136,11 @@ namespace dtDirector
       // Edit Menu.
       mEditMenu = mMenuBar->addMenu("&Edit");
       mEditMenu->addAction(mParentAction);
+      mEditMenu->addSeparator();
       mEditMenu->addAction(mUndoAction);
       mEditMenu->addAction(mRedoAction);
+      mEditMenu->addSeparator();
+      mEditMenu->addAction(mDeleteAction);
 
       // View Menu.
       mViewMenu = mMenuBar->addMenu("&View");
@@ -152,6 +160,8 @@ namespace dtDirector
       mToolbar->addSeparator();
       mToolbar->addAction(mUndoAction);
       mToolbar->addAction(mRedoAction);
+      mToolbar->addSeparator();
+      mToolbar->addAction(mDeleteAction);
 
       // Main layout.
       setCentralWidget(mGraphTabs);
@@ -177,6 +187,8 @@ namespace dtDirector
          this, SLOT(OnUndo()));
       connect(mRedoAction, SIGNAL(triggered()),
          this, SLOT(OnRedo()));
+      connect(mDeleteAction, SIGNAL(triggered()),
+         this, SLOT(OnDelete()));
       connect(mViewPropertiesAction, SIGNAL(triggered()),
          this, SLOT(OnShowPropertyEditor()));
    }
@@ -269,6 +281,7 @@ namespace dtDirector
    void DirectorEditor::RefreshButtonStates()
    {
       bool bHasParent = false;
+      bool bCanDelete = false;
 
       int tabIndex = mGraphTabs->currentIndex();
       if (tabIndex >= 0 && tabIndex < mGraphTabs->count())
@@ -280,10 +293,15 @@ namespace dtDirector
             {
                bHasParent = true;
             }
+
+            if (view->GetScene()->HasSelection())
+            {
+               bCanDelete = true;
+            }
          }
       }
 
-            // Parent button.
+      // Parent button.
       mParentAction->setEnabled(bHasParent);
 
       // Undo button.
@@ -291,6 +309,9 @@ namespace dtDirector
 
       // Redo button.
       mRedoAction->setEnabled(mUndoManager->CanRedo());
+
+      // Delete button.
+      mDeleteAction->setEnabled(bCanDelete);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -421,6 +442,77 @@ namespace dtDirector
    {
       mUndoManager->Redo();
       RefreshButtonStates();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::OnDelete()
+   {
+      // Get the current selection.
+      EditorScene* scene = mPropertyEditor->GetScene();
+      if (!scene) return;
+
+      QList<QGraphicsItem*> selection = scene->selectedItems();
+      int count = (int)selection.size();
+      for (int index = 0; index < count; index++)
+      {
+         NodeItem* item = dynamic_cast<NodeItem*>(selection[index]);
+         if (item)
+         {
+            dtCore::UniqueId id;
+
+            // Remove the node from the graph.
+            if (item->GetNode())
+            {
+               id = item->GetNode()->GetID();
+
+               // Delete the node.
+               mDirector->DeleteNode(id);
+            }
+            else
+            {
+               // Check if the item is a graph.
+               MacroItem* macro = dynamic_cast<MacroItem*>(item);
+               if (macro && macro->GetGraph())
+               {
+                  id = macro->GetGraph()->GetID();
+                  mDirector->DeleteGraph(id);
+               }
+               else
+               {
+                  // Should never go here, it means the item
+                  // is not a node or a graph.
+                  continue;
+               }
+            }
+
+            // Remove the node from all UI's
+            int graphCount = mGraphTabs->count();
+            for (int graphIndex = 0; graphIndex < graphCount; graphIndex++)
+            {
+               EditorView* view = dynamic_cast<EditorView*>(mGraphTabs->widget(graphIndex));
+               if (view && view->GetScene())
+               {
+                  // If the scene is displaying the contents of a graph that is deleted,
+                  // remove the tab.
+                  if (view->GetScene()->GetGraph()->GetID() == id)
+                  {
+                     mGraphTabs->removeTab(graphIndex);
+                     graphIndex--;
+                     continue;
+                  }
+                  else
+                  {
+                     // We need to find the node item that belongs to the scene.
+                     NodeItem* nodeItem = view->GetScene()->GetNodeItem(id, true);
+                     if (nodeItem) view->GetScene()->DeleteNode(nodeItem);
+                  }
+               }
+            }
+         }
+      }
+
+      // Refresh the current view.
+      Refresh();
    }
 
    //////////////////////////////////////////////////////////////////////////

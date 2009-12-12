@@ -178,6 +178,79 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   bool DirectorGraph::DeleteGraph(const dtCore::UniqueId& id)
+   {
+      // Check sub graphs
+      int count = (int)mSubGraphs.size();
+      for (int index = 0; index < count; index++)
+      {
+         DirectorGraph* graph = mSubGraphs[index];
+         if (graph && graph->GetID() == id)
+         {
+            // Remove the sub graph.
+            mSubGraphs.erase(mSubGraphs.begin() + index);
+
+            return true;
+         }
+
+         // Recurse through sub graphs.
+         if (graph->DeleteGraph(id))
+         {
+            return true;
+         }
+      }
+
+      return false;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool DirectorGraph::DeleteNode(const dtCore::UniqueId& id)
+   {
+      // Search for the node and remove it from the list.
+      int count = (int)mEventNodes.size();
+      for (int index = 0; index < count; index++)
+      {
+         if (mEventNodes[index]->GetID() == id)
+         {
+            mEventNodes.erase(mEventNodes.begin() + index);
+            return true;
+         }
+      }
+
+      count = (int)mActionNodes.size();
+      for (int index = 0; index < count; index++)
+      {
+         if (mActionNodes[index]->GetID() == id)
+         {
+            mActionNodes.erase(mActionNodes.begin() + index);
+            return true;
+         }
+      }
+
+      count = (int)mValueNodes.size();
+      for (int index = 0; index < count; index++)
+      {
+         if (mValueNodes[index]->GetID() == id)
+         {
+            mValueNodes.erase(mValueNodes.begin() + index);
+            return true;
+         }
+      }
+
+      // Check sub graphs
+      count = (int)mSubGraphs.size();
+      for (int index = 0; index < count; index++)
+      {
+         if (mSubGraphs[index]->DeleteNode(id))
+         {
+            return true;
+         }
+      }
+
+      return false;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    std::vector<dtCore::RefPtr<EventNode> > DirectorGraph::GetInputNodes()
    {
       std::vector<dtCore::RefPtr<EventNode> > nodes;

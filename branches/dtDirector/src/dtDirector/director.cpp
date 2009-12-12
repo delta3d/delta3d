@@ -355,4 +355,16 @@ namespace dtDirector
    {
       return mGraph->GetNode(id);
    }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool Director::DeleteGraph(const dtCore::UniqueId& id)
+   {
+      return mGraph->DeleteGraph(id);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool Director::DeleteNode(const dtCore::UniqueId& id)
+   {
+      return mGraph->DeleteNode(id);
+   }
 }

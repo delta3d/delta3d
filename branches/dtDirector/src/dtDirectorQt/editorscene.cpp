@@ -175,15 +175,22 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   NodeItem* EditorScene::GetNodeItem(const dtCore::UniqueId& id)
+   NodeItem* EditorScene::GetNodeItem(const dtCore::UniqueId& id, bool exactMatch)
    {
       int count = (int)mNodes.size();
       for (int index = 0; index < count; index++)
       {
          NodeItem* item = mNodes[index];
-         if (item && item->HasID(id))
+         if (item)
          {
-            return item;
+            if (!exactMatch)
+            {
+               if (item->HasID(id)) return item;
+            }
+            else
+            {
+               if (item->GetID() == id) return item;
+            }
          }
       }
 
@@ -191,7 +198,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   MacroItem* EditorScene::GetGraphItem(DirectorGraph* graph)
+   MacroItem* EditorScene::GetGraphItem(const dtCore::UniqueId& id)
    {
       int count = (int)mNodes.size();
       for (int index = 0; index < count; index++)
@@ -199,7 +206,8 @@ namespace dtDirector
          NodeItem* item = mNodes[index];
 
          MacroItem* macro = dynamic_cast<MacroItem*>(item);
-         if (macro && macro->GetGraph() == graph)
+         if (macro && macro->GetGraph() &&
+            macro->GetGraph()->GetID() == id)
          {
             return macro;
          }
@@ -221,6 +229,8 @@ namespace dtDirector
 
       // Update the property editor.
       mPropertyEditor->HandlePropertyContainersSelected(mSelected);
+
+      mEditor->RefreshButtonStates();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -244,6 +254,31 @@ namespace dtDirector
 
       // Update the property editor.
       mPropertyEditor->HandlePropertyContainersSelected(mSelected);
+
+      mEditor->RefreshButtonStates();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void EditorScene::DeleteNode(NodeItem* node)
+   {
+      if (!node) return;
+
+      int count = (int)mNodes.size();
+      for (int index = 0; index < count; index++)
+      {
+         if (mNodes[index] == node)
+         {
+            mNodes.erase(mNodes.begin() + index);
+            delete node;
+            break;
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool EditorScene::HasSelection()
+   {
+      return !selectedItems().isEmpty();
    }
 
    //////////////////////////////////////////////////////////////////////////

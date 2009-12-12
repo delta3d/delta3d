@@ -218,6 +218,11 @@ namespace dtDirector
       DirectorGraph* GetGraph() {return mGraph;}
 
       /**
+       * Disconnects all links from this node.
+       */
+      virtual void Disconnect();
+
+      /**
        * Retrieves the total number of values linked to a property.
        *
        * @param[in]  name  The name of the property.

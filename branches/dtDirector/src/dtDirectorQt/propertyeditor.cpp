@@ -150,7 +150,7 @@ namespace dtDirector
       DirectorGraph* graph = dynamic_cast<DirectorGraph*>(&propCon);
       if (graph)
       {
-         MacroItem* item = mScene->GetGraphItem(graph);
+         MacroItem* item = mScene->GetGraphItem(graph->GetID());
 
          // Re-Draw the node.
          if (item)

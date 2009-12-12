@@ -153,6 +153,11 @@ namespace dtDirector
       void OnRedo();
 
       /**
+       * Event handler when the delete button is pressed.
+       */
+      void OnDelete();
+
+      /**
        * Event handler when the show property editor button is pressed.
        */
       void OnShowPropertyEditor();
@@ -189,6 +194,7 @@ namespace dtDirector
       QAction*  mParentAction;
       QAction*  mUndoAction;
       QAction*  mRedoAction;
+      QAction*  mDeleteAction;
 
       // View Actions.
       QAction*  mViewPropertiesAction;

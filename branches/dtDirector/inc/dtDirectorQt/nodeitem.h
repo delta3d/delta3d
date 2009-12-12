@@ -259,6 +259,20 @@ namespace dtDirector
       QColor GetDarkColorForType(unsigned char type);
 
       /**
+       * Retrieves the node.
+       *
+       * @return  The node.
+       */
+      Node* GetNode() {return mNode.get();}
+
+      /**
+       * Retrieves the ID of the node item contained.
+       *
+       * @return  The ID.
+       */
+      virtual dtCore::UniqueId GetID();
+
+      /**
        * Checks if this item contains a node of the given ID.
        *
        * @param[in]  id  The ID to check.

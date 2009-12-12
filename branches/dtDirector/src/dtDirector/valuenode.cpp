@@ -70,6 +70,14 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   void ValueNode::Disconnect()
+   {
+      Node::Disconnect();
+
+      Disconnect(NULL);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void ValueNode::Disconnect(ValueLink* valueLink)
    {
       if (!valueLink)

@@ -103,21 +103,23 @@ namespace dtDirector
       /**
        * Retrieves a node item given the nodes ID.
        *
-       * @param[in]  id  The ID of the node.
+       * @param[in]  id          The ID of the node.
+       * @param[in]  exactMatch  True to only search for exact nodes with that ID.
+       *                         False to find any graph nodes that have a node with that ID.
        *
        * @return     A pointer to the NodeItem with the matching ID,
        *             or NULL if not found.
        */
-      NodeItem* GetNodeItem(const dtCore::UniqueId& id);
+      NodeItem* GetNodeItem(const dtCore::UniqueId& id, bool exactMatch = false);
 
       /**
        * Retrieves a graph item for a graph.
        *
-       * @param[in]  graph  The graph.
+       * @param[in]  id  The ID of the graph.
        *
        * @return     The graph item that contains this graph.
        */
-      MacroItem* GetGraphItem(DirectorGraph* graph);
+      MacroItem* GetGraphItem(const dtCore::UniqueId& id);
 
       /**
        * Adds an item to the selected list.
@@ -132,6 +134,20 @@ namespace dtDirector
        * @param[in]  container  The item to remove.
        */
       void RemoveSelected(dtDAL::PropertyContainer* container);
+
+      /**
+       * Deletes a node from the list.
+       *
+       * @param[in]  node  The node to delete.
+       */
+      void DeleteNode(NodeItem* node);
+
+      /**
+       * Retrieves whether there are nodes selected.
+       *
+       * @return   True if there is at least one node selected.
+       */
+      bool HasSelection();
 
       /**
        * Refreshes the property editor.
@@ -161,16 +177,16 @@ namespace dtDirector
 
    private:
 
-      DirectorEditor*          mEditor;
-      EditorView*              mView;
+      DirectorEditor*            mEditor;
+      EditorView*                mView;
 
-      dtCore::RefPtr<Director> mDirector;
-      PropertyEditor*          mPropertyEditor;
-      GraphTabs*               mGraphTabs;
+      dtCore::RefPtr<Director>   mDirector;
+      PropertyEditor*            mPropertyEditor;
+      GraphTabs*                 mGraphTabs;
 
-      dtDirector::DirectorGraph*   mGraph;
+      dtDirector::DirectorGraph* mGraph;
 
-      std::vector<NodeItem*>           mNodes;
+      std::vector<NodeItem*>     mNodes;
 
       bool     mDragging;
       QPointF  mDragOrigin;

@@ -213,6 +213,31 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   void Node::Disconnect()
+   {
+      // Disconnect inputs.
+      int count = (int)mInputs.size();
+      for (int index = 0; index < count; index++)
+      {
+         mInputs[index].Disconnect();
+      }
+
+      // Disconnect outputs.
+      count = (int)mOutputs.size();
+      for (int index = 0; index < count; index++)
+      {
+         mOutputs[index].Disconnect();
+      }
+
+      // Disconnect values.
+      count = (int)mValues.size();
+      for (int index = 0; index < count; index++)
+      {
+         mValues[index].Disconnect();
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    int Node::GetPropertyCount(const std::string& name)
    {
       // First iterate through all value links to see if this property

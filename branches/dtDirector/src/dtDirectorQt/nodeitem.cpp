@@ -54,7 +54,7 @@ namespace dtDirector
    void InputData::Remove()
    {
       if (linkName) delete linkName;
-      //if (linkGraphic) delete linkGraphic;
+      if (linkGraphic) delete linkGraphic;
       linkName = NULL;
       linkGraphic = NULL;
       link = NULL;
@@ -383,8 +383,8 @@ namespace dtDirector
 
             data.link = &mNode->GetInputLinks()[index];
 
-            data.linkName = new QGraphicsTextItem(this, mScene);
-            data.linkGraphic = new InputLinkItem(this, (int)mInputs.size()-1, data.linkName, mScene);
+            data.linkGraphic = new InputLinkItem(this, (int)mInputs.size()-1, this, mScene);
+            data.linkName = new QGraphicsTextItem(data.linkGraphic, mScene);
          }
       }
 
@@ -460,9 +460,9 @@ namespace dtDirector
 
          if (maxSize < nameBounds.width()) maxSize = nameBounds.width();
 
-         float x = -LINK_LENGTH;
-         float y = (nameBounds.height()/2) - (LINK_SIZE/2);
-         data.linkGraphic->setPos(x, y);
+         float x = LINK_LENGTH;
+         float y = -(nameBounds.height()/2) + (LINK_SIZE/2);
+         data.linkName->setPos(x, y);
       }
 
       // Resize the node width if we have to.
@@ -481,10 +481,10 @@ namespace dtDirector
       {
          InputData& data = mInputs[index];
 
-         float x = -1.0f;
-         float y = ((LINK_SPACING + mTextHeight) * (index + 1)) - LINK_SPACING;
+         float x = -LINK_LENGTH;
+         float y = ((LINK_SPACING + mTextHeight) * (index + 1)) + LINK_SIZE/2;
 
-         data.linkName->setPos(x, y);
+         data.linkGraphic->setPos(x, y);
       }
    }
 
@@ -746,9 +746,20 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   dtCore::UniqueId NodeItem::GetID()
+   {
+      if (mNode.valid())
+      {
+         return mNode->GetID();
+      }
+
+      return dtCore::UniqueId();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    bool NodeItem::HasID(const dtCore::UniqueId& id)
    {
-      if (mNode)
+      if (mNode.valid())
       {
          return id == mNode->GetID();
       }

@@ -129,8 +129,8 @@ namespace dtDirector
 
             data.link = &inputs[index]->GetInputLinks()[0];
 
-            data.linkName = new QGraphicsTextItem(this, mScene);
-            data.linkGraphic = new InputLinkItem(this, (int)mInputs.size()-1, data.linkName, mScene);
+            data.linkGraphic = new InputLinkItem(this, (int)mInputs.size()-1, this, mScene);
+            data.linkName = new QGraphicsTextItem(data.linkGraphic, mScene);
          }
       }
 
@@ -167,6 +167,17 @@ namespace dtDirector
             data.linkName->setAcceptHoverEvents(false);
          }
       }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   dtCore::UniqueId MacroItem::GetID()
+   {
+      if (mGraph.valid())
+      {
+         return mGraph->GetID();
+      }
+
+      return NodeItem::GetID();
    }
 
    //////////////////////////////////////////////////////////////////////////

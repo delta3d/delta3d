@@ -102,6 +102,24 @@ namespace dtDirector
       bool AddNode(Node* node);
 
       /**
+       * Deletes a graph.
+       *
+       * @param[in]  graph  The graph to remove.
+       *
+       * @return     True if the graph was found and removed.
+       */
+      bool DeleteGraph(const dtCore::UniqueId& id);
+
+      /**
+       * Deletes a node.
+       *
+       * @param[in]  node  The node to remove.
+       *
+       * @return     True if the node was found and removed.
+       */
+      bool DeleteNode(const dtCore::UniqueId& id);
+
+      /**
        * Retrieves the director.
        *
        * @return  The director.
