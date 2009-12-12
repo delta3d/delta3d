@@ -134,6 +134,18 @@ namespace dtDirector
       void RemoveSelected(dtDAL::PropertyContainer* container);
 
       /**
+       * Creates a new node.
+       *
+       * @param[in]  name      The name of the node.
+       * @param[in]  category  The category of the node.
+       * @param[in[  x, y      Starting UI coordinates to spawn the node.
+       *
+       * @return     A pointer to the new node.  NULL if node could
+       *             not be created.
+       */
+      Node* CreateNode(const std::string& name, const std::string& category, float x, float y);
+
+      /**
        * Deletes a node from the list.
        *
        * @param[in]  node  The node to delete.
@@ -156,6 +168,16 @@ namespace dtDirector
 
    public slots:
 
+      /**
+       * Event handler when a menu item is triggered.
+       */
+      void OnMenuEvent(QAction* action);
+
+      /**
+       * Event handler when a node creation menu item is triggered.
+       */
+      void OnCreateNodeEvent(QAction* action);
+
    protected:
       
       /**
@@ -173,6 +195,12 @@ namespace dtDirector
        */
       void mouseMoveEvent(QGraphicsSceneMouseEvent* event);  
 
+      /**
+       * Event handler when the context menu event has triggered.
+       */
+      void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
+
+
    private:
 
       DirectorEditor*            mEditor;
@@ -189,6 +217,7 @@ namespace dtDirector
       QPointF  mDragOrigin;
       bool     mHasDragged;
 
+      QPointF            mMenuPos;
       QGraphicsRectItem* mTranslationItem;
       
       PropertyEditor::PropertyContainerRefPtrVector mSelected;

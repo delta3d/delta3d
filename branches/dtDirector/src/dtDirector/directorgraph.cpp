@@ -260,7 +260,7 @@ namespace dtDirector
       for (int index = 0; index < count; index++)
       {
          EventNode* node = mEventNodes[index].get();
-         if (node && node->GetType().GetFullName() == "Core.Input")
+         if (node && node->GetType().GetFullName() == "Core.Input Link")
          {
             bool bFound = false;
             int sortCount = (int)nodes.size();
@@ -292,7 +292,7 @@ namespace dtDirector
       for (int index = 0; index < count; index++)
       {
          ActionNode* node = mActionNodes[index].get();
-         if (node && node->GetType().GetFullName() == "Core.Output")
+         if (node && node->GetType().GetFullName() == "Core.Output Link")
          {
             bool bFound = false;
             int sortCount = (int)nodes.size();
@@ -324,7 +324,7 @@ namespace dtDirector
       for (int index = 0; index < count; index++)
       {
          ValueNode* node = mValueNodes[index].get();
-         if (node && node->GetType().GetFullName() == "Core.External Value")
+         if (node && node->GetType().GetFullName() == "Core.Value Link")
          {
             bool bFound = false;
             int sortCount = (int)nodes.size();

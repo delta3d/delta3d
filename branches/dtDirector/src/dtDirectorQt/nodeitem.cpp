@@ -169,10 +169,9 @@ namespace dtDirector
       setFlag(QGraphicsItem::ItemIsMovable, true);
       setFlag(QGraphicsItem::ItemIsSelectable, true);
 
-      if (QT_VERSION >= 0x00040600)
-      {
-         setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
-      }
+#if QT_VERSION >= 0x00040600
+      setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
+#endif
    }
 
    //////////////////////////////////////////////////////////////////////////

@@ -72,7 +72,7 @@ namespace dtDirector
        *
        * @return  The folder name.
        */
-      const std::string& GetFolder();
+      const std::string& GetFolder() const;
 
       /**
        * Sets the folder for this node.

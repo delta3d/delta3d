@@ -95,19 +95,19 @@ namespace dtDirector
       subGraph->SetPosition(osg::Vec2(200, 50));
 
       // Create an input node.
-      dtCore::RefPtr<EventNode> inputNode = dynamic_cast<dtDirector::EventNode*>(nodeManager.CreateNode("Input", "Core", subGraph).get());
+      dtCore::RefPtr<EventNode> inputNode = dynamic_cast<dtDirector::EventNode*>(nodeManager.CreateNode("Input Link", "Core", subGraph).get());
       inputNode->SetPosition(osg::Vec2(50, 50));
 
       // Create an output node.
-      dtCore::RefPtr<ActionNode> outputNode = dynamic_cast<dtDirector::ActionNode*>(nodeManager.CreateNode("Output", "Core", subGraph).get());
+      dtCore::RefPtr<ActionNode> outputNode = dynamic_cast<dtDirector::ActionNode*>(nodeManager.CreateNode("Output Link", "Core", subGraph).get());
       outputNode->SetPosition(osg::Vec2(600, 50));
 
       // Create an external value node.
-      dtCore::RefPtr<ValueNode> extValue = dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("External Value", "Core", subGraph).get());
+      dtCore::RefPtr<ValueNode> extValue = dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Value Link", "Core", subGraph).get());
       extValue->SetName("External Connected");
       extValue->SetPosition(osg::Vec2(500, 300));
 
-      dtCore::RefPtr<ValueNode> extValue2 = dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("External Value", "Core", subGraph).get());
+      dtCore::RefPtr<ValueNode> extValue2 = dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Value Link", "Core", subGraph).get());
       extValue2->SetName("External Not Connected");
       extValue2->SetPosition(osg::Vec2(600, 300));
 

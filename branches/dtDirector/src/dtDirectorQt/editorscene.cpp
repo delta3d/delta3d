@@ -29,7 +29,11 @@
 #include <dtDirectorQt/valueitem.h>
 #include <dtDirectorQt/macroitem.h>
 
+#include <dtDirector/nodemanager.h>
+#include <dtDirector/nodetype.h>
+
 #include <QtGui/QGraphicsSceneMouseEvent>
+#include <QtGui/QMenu>
 
 
 namespace dtDirector
@@ -261,6 +265,38 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   Node* EditorScene::CreateNode(const std::string& name, const std::string& category, float x, float y)
+   {
+      dtCore::RefPtr<Node> node = NodeManager::GetInstance().CreateNode(name, category, mGraph);
+      if (node.valid())
+      {
+         node->SetPosition(osg::Vec2(x, y));
+
+         // Add the node creation to the undo manager.
+
+         // Now refresh the all editors that view the same graph.
+         int count = mEditor->GetGraphTabs()->count();
+         for (int index = 0; index < count; index++)
+         {
+            EditorView* view = dynamic_cast<EditorView*>(mEditor->GetGraphTabs()->widget(index));
+            if (view && view->GetScene())
+            {
+               if (view->GetScene()->GetGraph() == mGraph)
+               {
+                  // First remember the position of the translation node.
+                  QPointF trans = view->GetScene()->GetTranslationItem()->pos();
+                  view->GetScene()->SetGraph(mGraph);
+                  view->GetScene()->GetTranslationItem()->setPos(trans);
+               }
+            }
+         }
+         mEditor->Refresh();
+      }
+
+      return node.get();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void EditorScene::DeleteNode(NodeItem* node)
    {
       if (!node) return;
@@ -287,6 +323,33 @@ namespace dtDirector
    void EditorScene::RefreshProperties()
    {
       mPropertyEditor->HandlePropertyContainersSelected(mSelected);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void EditorScene::OnMenuEvent(QAction* action)
+   {
+      if (!action) return;
+      
+      if (action->text() == "Test")
+      {
+
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void EditorScene::OnCreateNodeEvent(QAction* action)
+   {
+      if (!action) return;
+
+      std::string name = action->text().toStdString();
+      std::string category = action->statusTip().toStdString();
+
+      Node* node = CreateNode(name, category, mMenuPos.x(), mMenuPos.y());
+      if (node)
+      {
+         // Set the position of the node to match the context menu position.
+         //node->SetPosition(mMenuPos.x(), mMenuPos.y());
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -394,6 +457,91 @@ namespace dtDirector
          }
       }
    }
+
+   //////////////////////////////////////////////////////////////////////////
+   void EditorScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+   {
+      QGraphicsScene::contextMenuEvent(event);
+
+      // If none of the child nodes have accepted this event, then
+      // produce the default menu.
+      if (!event->isAccepted())
+      {
+         QMenu menu;
+         QMenu* nodeMenu = menu.addMenu("Create Node");
+
+         if (nodeMenu)
+         {
+            std::map<std::string, QMenu*> folders;
+
+            // Get the list of available nodes to create.
+            std::vector<const NodeType*> nodes;
+            NodeManager::GetInstance().GetNodeTypes(nodes);
+
+            int count = (int)nodes.size();
+            for (int index = 0; index < count; index++)
+            {
+               const NodeType* node = nodes[index];
+               if (node)
+               {
+                  // Special case, the parent graph does not get the link
+                  // nodes, because they have no effect.
+                  if (!mGraph->mParent && node->GetFolder() == "Links")
+                  {
+                     continue;
+                  }
+
+                  // Find the folder.
+                  if (folders.find(node->GetFolder()) == folders.end())
+                  {
+                     //QMenu* folder = nodeMenu->addMenu(node->GetFolder().c_str());
+                     folders[node->GetFolder()] = new QMenu(node->GetFolder().c_str());
+                  }
+
+                  QMenu* folder = folders[node->GetFolder()];
+                  if (folder)
+                  {
+                     QAction* action = folder->addAction(node->GetName().c_str());
+                     if (action)
+                     {
+                        action->setStatusTip(node->GetCategory().c_str());
+                        action->setToolTip(node->GetDescription().c_str());
+                     }
+                  }
+               }
+            }
+
+            std::map<std::string, QMenu*>::iterator i = folders.begin();
+            for (i = folders.begin(); i != folders.end(); i++)
+            {
+               QMenu* folder = i->second;
+               if (i->first == "Links")
+               {
+                  menu.addMenu(folder);
+
+                  connect(folder, SIGNAL(triggered(QAction*)),
+                     this, SLOT(OnCreateNodeEvent(QAction*)));
+               }
+               else
+               {
+                  nodeMenu->addMenu(folder);
+               }
+            }
+
+            connect(nodeMenu, SIGNAL(triggered(QAction*)),
+               this, SLOT(OnCreateNodeEvent(QAction*)));
+         }
+
+         connect(&menu, SIGNAL(triggered(QAction*)),
+            this, SLOT(OnMenuEvent(QAction*)));
+
+         // Execute the menu.
+         mMenuPos = event->scenePos();
+         mMenuPos -= mTranslationItem->scenePos();
+         menu.exec(event->screenPos());
+      }
+   }
+
 } // namespace dtDirector
 
 //////////////////////////////////////////////////////////////////////////

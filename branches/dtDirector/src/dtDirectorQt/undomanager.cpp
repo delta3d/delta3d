@@ -135,7 +135,7 @@ namespace dtDirector
       // last saved state, so we set the modify index to -1
       // so the IsModified method will always return true.
       if (!mRedoEvents.empty() &&
-         mModifyIndex > mUndoEvents.size()) mModifyIndex = -1;
+         mModifyIndex > (int)mUndoEvents.size()) mModifyIndex = -1;
 
       // Any time we add new events, we need to clear any redo events
       // we may have.

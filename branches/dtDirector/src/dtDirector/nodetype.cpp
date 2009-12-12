@@ -41,7 +41,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   const std::string& NodeType::GetFolder()
+   const std::string& NodeType::GetFolder() const
    {
       return mFolder;
    }

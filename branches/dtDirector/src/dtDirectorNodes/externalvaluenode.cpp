@@ -34,7 +34,7 @@ namespace dtDirector
    ExternalValueNode::ExternalValueNode()
        : ValueNode()
    {
-      mName = "External Variable";
+      mName = "External Value";
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////

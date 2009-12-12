@@ -40,15 +40,15 @@ using dtCore::RefPtr;
 namespace dtDirector
 {
    // Events
-   RefPtr<NodeType> NodeLibraryRegistry::INPUT_NODE_TYPE(new dtDirector::NodeType("Input", "Core", "Links", "This node creates an input link connector in its parent graph."));
+   RefPtr<NodeType> NodeLibraryRegistry::INPUT_NODE_TYPE(new dtDirector::NodeType("Input Link", "Core", "Links", "This node creates an input link connector in its parent graph."));
    RefPtr<NodeType> NodeLibraryRegistry::NAMED_EVENT_NODE_TYPE(new dtDirector::NodeType("Named Event", "General", "Events", "An Event that can be found by a custom name."));
 
    // Actions
-   RefPtr<NodeType> NodeLibraryRegistry::OUTPUT_NODE_TYPE(new dtDirector::NodeType("Output", "Core", "Links", "This node creates an output link connector in its parent graph."));
+   RefPtr<NodeType> NodeLibraryRegistry::OUTPUT_NODE_TYPE(new dtDirector::NodeType("Output Link", "Core", "Links", "This node creates an output link connector in its parent graph."));
    RefPtr<NodeType> NodeLibraryRegistry::OPERATION_ACTION_NODE_TYPE(new dtDirector::NodeType("Binary Operation", "General", "Math", "Performs a simple operation between two values A and B and outputs to Result."));
 
    // Values
-   RefPtr<NodeType> NodeLibraryRegistry::EXTERNAL_VALUE_NODE_TYPE(new dtDirector::NodeType("External Value", "Core", "Links", "This node creates a value link connector in its parent graph."));
+   RefPtr<NodeType> NodeLibraryRegistry::EXTERNAL_VALUE_NODE_TYPE(new dtDirector::NodeType("Value Link", "Core", "Links", "This node creates a value link connector in its parent graph."));
    RefPtr<NodeType> NodeLibraryRegistry::INT_VALUE_NODE_TYPE(new dtDirector::NodeType("Int", "General", "Variables", "An integer value."));
 
    //////////////////////////////////////////////////////////////////////////
