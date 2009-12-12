@@ -80,6 +80,11 @@ namespace dtDirector
       Director* GetDirector() {return mDirector;}
 
       /**
+       * Accessor for the graph tab widget.
+       */
+      GraphTabs* GetGraphTabs() {return mGraphTabs;}
+
+      /**
        * Accessor for the Property Editor.
        */
       PropertyEditor* GetPropertyEditor() {return mPropertyEditor;}

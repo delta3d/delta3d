@@ -58,11 +58,6 @@ namespace dtDirector
                         const std::string& newValue);
 
       /**
-       * Destructor.
-       */
-      virtual ~UndoPropertyEvent();
-
-      /**
        * Retrieves the property for the event.
        */
       dtDAL::ActorProperty* GetProperty();
@@ -78,6 +73,11 @@ namespace dtDirector
       virtual void Redo();
 
    protected:
+
+      /**
+       * Destructor.
+       */
+      virtual ~UndoPropertyEvent();
 
       dtCore::UniqueId mID;
       std::string      mPropName;

@@ -43,11 +43,6 @@ namespace dtDirector
       UndoEvent(DirectorEditor* editor);
 
       /**
-       * Destructor.
-       */
-      virtual ~UndoEvent() = 0;
-
-      /**
        * Perform undo.
        */
       virtual void Undo() = 0;
@@ -58,6 +53,11 @@ namespace dtDirector
       virtual void Redo() = 0;
 
    protected:
+
+      /**
+       * Destructor.
+       */
+      virtual ~UndoEvent() = 0;
 
       DirectorEditor*   mEditor;
    };

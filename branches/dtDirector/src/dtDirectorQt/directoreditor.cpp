@@ -24,6 +24,7 @@
 #include <dtDirectorQt/editorview.h>
 #include <dtDirectorQt/editorscene.h>
 #include <dtDirectorQt/undomanager.h>
+#include <dtDirectorQt/undodeleteevent.h>
 
 #include <dtDirectorQt/actionitem.h>
 #include <dtDirectorQt/valueitem.h>
@@ -451,6 +452,8 @@ namespace dtDirector
       EditorScene* scene = mPropertyEditor->GetScene();
       if (!scene) return;
 
+      mUndoManager->BeginMultipleEvents();
+
       QList<QGraphicsItem*> selection = scene->selectedItems();
       int count = (int)selection.size();
       for (int index = 0; index < count; index++)
@@ -459,14 +462,13 @@ namespace dtDirector
          if (item)
          {
             dtCore::UniqueId id;
+            dtCore::UniqueId parentID;
 
-            // Remove the node from the graph.
+            // Find the node IDs.
             if (item->GetNode())
             {
                id = item->GetNode()->GetID();
-
-               // Delete the node.
-               mDirector->DeleteNode(id);
+               parentID = item->GetNode()->GetGraph()->GetID();
             }
             else
             {
@@ -475,7 +477,7 @@ namespace dtDirector
                if (macro && macro->GetGraph())
                {
                   id = macro->GetGraph()->GetID();
-                  mDirector->DeleteGraph(id);
+                  parentID = macro->GetGraph()->mParent->GetID();
                }
                else
                {
@@ -484,6 +486,14 @@ namespace dtDirector
                   continue;
                }
             }
+
+            // Create an undo event.
+            dtCore::RefPtr<UndoDeleteEvent> event = new UndoDeleteEvent(this, id, parentID);
+            mUndoManager->AddEvent(event);
+
+            // Delete the node or graph.
+            mDirector->DeleteNode(id);
+            mDirector->DeleteGraph(id);
 
             // Remove the node from all UI's
             int graphCount = mGraphTabs->count();
@@ -510,6 +520,8 @@ namespace dtDirector
             }
          }
       }
+
+      mUndoManager->EndMultipleEvents();
 
       // Refresh the current view.
       Refresh();

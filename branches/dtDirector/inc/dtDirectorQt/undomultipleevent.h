@@ -45,11 +45,6 @@ namespace dtDirector
        * @param[in]  editor  The editor.
        */
       UndoMultipleEvent(DirectorEditor* editor);
-         
-      /**
-       * Destructor.
-       */
-      virtual ~UndoMultipleEvent();
 
       /**
        * Perform undo.
@@ -69,6 +64,11 @@ namespace dtDirector
       void AddEvent(UndoEvent* event);
 
    protected:
+         
+      /**
+       * Destructor.
+       */
+      virtual ~UndoMultipleEvent();
 
       std::vector<dtCore::RefPtr<UndoEvent> > mEvents;
    };

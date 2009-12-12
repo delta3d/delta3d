@@ -413,7 +413,7 @@ namespace dtDirector
       int count = (int)mValues.size();
       for (int index = 0; index < count; index++)
       {
-         if (mValues[index].GetName() == name)
+         if (mValues[index].GetLabel() == name)
          {
             return &mValues[index];
          }
