@@ -87,7 +87,7 @@ void OSGExp::applyNodeMaskValue(INode* node, TimeValue t, osg::Node* osgNode)
 		Interval iv;
 		int mode;
 		unsigned int value;
-		const MCHAR* pValue = NULL;
+		MCHAR* pValue = NULL;
 		pblock2->GetValue(nodemask_mode, t, mode, iv);
 		// Swith the nodemask modes
 		switch(mode){
@@ -287,7 +287,7 @@ void OSGExp::applyStateSetRenderBinProperties(IParamBlock2* pblock2, TimeValue t
     pblock2->GetValue(render_bin_enable, t, renderBinEnabled, iv);
     if(renderBinEnabled) {
 	    int renderBinNum;
-	    const MCHAR* renderBinName = NULL;
+	    MCHAR* renderBinName = NULL;
 	    int renderBinMode;
 
         pblock2->GetValue(render_bin_num, t, renderBinNum, iv);
@@ -463,7 +463,7 @@ osg::ref_ptr<osg::LOD> OSGExp::createLODFromHelperObject(
 	Interval iv;
 	osg::Vec3 center;
 	BOOL usePagedLOD;
-	const MCHAR* templateFilename;
+	MCHAR* templateFilename;
 
 	if(pblock2)
    {
