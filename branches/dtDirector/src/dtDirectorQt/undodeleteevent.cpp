@@ -250,7 +250,10 @@ namespace dtDirector
    void UndoDeleteEvent::Redo(bool isParent)
    {
       // Delete the node.
-      mEditor->GetDirector()->DeleteNode(mNodeID);
+      if (!mEditor->GetDirector()->DeleteNode(mNodeID))
+      {
+         mEditor->GetDirector()->DeleteGraph(mNodeID);
+      }
 
       // Remove the node from all UI's
       int count = mEditor->GetGraphTabs()->count();
