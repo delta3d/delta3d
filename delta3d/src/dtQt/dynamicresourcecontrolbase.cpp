@@ -293,7 +293,7 @@ namespace dtQt
       if (!isCurEmpty)
       {
          std::string oldValue = mProperty->ToString();
-         mProperty->SetValue(NULL);
+         mProperty->SetValue(dtDAL::ResourceDescriptor::NULL_RESOURCE);
 
          // give undo manager the ability to create undo/redo events
          // technically, we're sending the about to change event AFTER we already

@@ -79,6 +79,9 @@ void ResourceActorProperty::CopyFrom(const ActorProperty& otherProp)
 ////////////////////////////////////////////////////////////////////////////
 void ResourceActorProperty::SetValue(ResourceDescriptor* value)
 {
+   DEPRECATE("void ResourceActorProperty::SetValue(ResourceDescriptor*)",
+             "void ResourceActorProperty::SetValue(const ResourceDescriptor&)");
+
    if (value)
    {
       SetValue(*value);
@@ -164,7 +167,7 @@ bool ResourceActorProperty::FromString(const std::string& value)
    bool result = true;
    if (value.empty() || value == "NULL")
    {
-      SetValue(NULL);
+      SetValue(dtDAL::ResourceDescriptor::NULL_RESOURCE);
    }
    else
    {
@@ -197,7 +200,7 @@ bool ResourceActorProperty::FromString(const std::string& value)
       dtUtil::Trim(displayName);
 
       dtDAL::ResourceDescriptor descriptor(displayName, identifier);
-      SetValue(&descriptor);
+      SetValue(descriptor);
 
    }
 

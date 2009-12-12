@@ -27,6 +27,7 @@
 #include <dtDAL/export.h>
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/functor.h>
+#include <dtUtil/deprecationmgr.h>
 
 namespace dtDAL
 {
@@ -147,7 +148,6 @@ namespace dtDAL
           * @param value the value to set or NULL to clear it.  The passed in pointer is
           * not stored.  The values are extracted and stored in a separate object.
           */
-         void SetValue(ResourceDescriptor* value);
          void SetValue(const ResourceDescriptor& value);
 
          /**
@@ -172,6 +172,10 @@ namespace dtDAL
           * @see #FromString
           */
          virtual const std::string ToString() const;
+
+         ///Deprecated 12/11/09
+         DEPRECATE_FUNC void SetValue(ResourceDescriptor* value);
+
 
       private:
          ActorProxy* mProxy;
