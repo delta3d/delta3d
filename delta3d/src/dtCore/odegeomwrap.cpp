@@ -699,6 +699,13 @@ void dtCore::ODEGeomWrap::SetCollisionMesh(osg::Node* node)
             mv.mFunctor.mTriangles.size()*sizeof(StridedTriangle));
       }
 
+      if (mMeshIndices.empty())
+      {
+         //no collision mesh to build!
+         return;
+      }
+      
+
       if (mTriMeshDataID == NULL)
       {
          mTriMeshDataID = dGeomTriMeshDataCreate();
