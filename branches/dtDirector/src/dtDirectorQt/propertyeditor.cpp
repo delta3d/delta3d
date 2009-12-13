@@ -124,7 +124,6 @@ namespace dtDirector
 
       dtCore::RefPtr<UndoPropertyEvent> event = new UndoPropertyEvent(mDirectorEditor, id, prop.GetName(), oldValue, newValue);
       mDirectorEditor->GetUndoManager()->AddEvent(event.get());
-      mDirectorEditor->RefreshButtonStates();
    }
 
    /////////////////////////////////////////////////////////////////////////////////

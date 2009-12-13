@@ -81,6 +81,8 @@ namespace dtDirector
          event->Undo();
          mRedoEvents.push(event);
       }
+
+      mEditor->RefreshButtonStates();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -96,6 +98,8 @@ namespace dtDirector
          event->Redo();
          mUndoEvents.push(event.get());
       }
+
+      mEditor->RefreshButtonStates();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -154,6 +158,7 @@ namespace dtDirector
 
       // If not, add it to the normal stack.
       mUndoEvents.push(event);
+      mEditor->RefreshButtonStates();
    }
 }
 

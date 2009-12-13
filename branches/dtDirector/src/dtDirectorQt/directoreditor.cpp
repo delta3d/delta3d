@@ -452,14 +452,12 @@ namespace dtDirector
    void DirectorEditor::OnUndo()
    {
       mUndoManager->Undo();
-      RefreshButtonStates();
    }
 
    //////////////////////////////////////////////////////////////////////////
    void DirectorEditor::OnRedo()
    {
       mUndoManager->Redo();
-      RefreshButtonStates();
    }
 
    //////////////////////////////////////////////////////////////////////////

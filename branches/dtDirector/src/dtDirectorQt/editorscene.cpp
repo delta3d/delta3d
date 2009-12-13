@@ -23,6 +23,7 @@
 #include <dtDirectorQt/directoreditor.h>
 #include <dtDirectorQt/propertyeditor.h>
 #include <dtDirectorQt/undomanager.h>
+#include <dtDirectorQt/undocreateevent.h>
 #include <dtDirectorQt/editorview.h>
 #include <dtDirectorQt/graphtabs.h>
 #include <dtDirectorQt/actionitem.h>
@@ -347,8 +348,8 @@ namespace dtDirector
       Node* node = CreateNode(name, category, mMenuPos.x(), mMenuPos.y());
       if (node)
       {
-         // Set the position of the node to match the context menu position.
-         //node->SetPosition(mMenuPos.x(), mMenuPos.y());
+         dtCore::RefPtr<UndoCreateEvent> event = new UndoCreateEvent(mEditor, node->GetID(), mGraph->GetID());
+         mEditor->GetUndoManager()->AddEvent(event);
       }
    }
 
@@ -429,7 +430,6 @@ namespace dtDirector
          }
 
          mEditor->GetUndoManager()->EndMultipleEvents();
-         mEditor->RefreshButtonStates();
       }
 
       mView->setDragMode(QGraphicsView::NoDrag);
@@ -468,7 +468,7 @@ namespace dtDirector
       if (!event->isAccepted())
       {
          QMenu menu;
-         QMenu* nodeMenu = menu.addMenu("Create Node");
+         QMenu* nodeMenu = new QMenu("Create Node");
 
          if (nodeMenu)
          {
@@ -527,6 +527,8 @@ namespace dtDirector
                   nodeMenu->addMenu(folder);
                }
             }
+
+            menu.addMenu(nodeMenu);
 
             connect(nodeMenu, SIGNAL(triggered(QAction*)),
                this, SLOT(OnCreateNodeEvent(QAction*)));
