@@ -190,7 +190,8 @@ namespace dtDirector
       // Make sure the link is not already made.
       for (int index = 0; index < (int)mLinks.size(); index++)
       {
-         if (mLinks[index] == valueNode) return true;
+         // Return fail because the connection is already made.
+         if (mLinks[index] == valueNode) return false;
       }
 
       mLinks.push_back(valueNode);
@@ -200,14 +201,17 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ValueLink::Disconnect(ValueNode* valueNode)
+   bool ValueLink::Disconnect(ValueNode* valueNode)
    {
       if (!valueNode)
       {
+         bool result = false;
          while (!mLinks.empty())
          {
-            Disconnect(mLinks[0]);
+            result |= Disconnect(mLinks[0]);
          }
+
+         return result;
       }
       else
       {
@@ -230,9 +234,11 @@ namespace dtDirector
 
                mLinks.erase(mLinks.begin() + valueIndex);
                valueNode->OnConnectionChange();
-               break;
+               return true;
             }
          }
       }
+
+      return false;
    }
 }

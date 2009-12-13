@@ -100,6 +100,13 @@ namespace dtDirector
       void Refresh();
 
       /**
+       * Refreshes all scenes that view a given graph.
+       *
+       * @param[in]  graph  The graph to refresh.
+       */
+      void RefreshGraph(DirectorGraph* graph);
+
+      /**
        * Refreshes the state of the UI buttons.
        */
       void RefreshButtonStates();

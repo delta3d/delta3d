@@ -419,17 +419,21 @@ namespace dtDirector
       }
       else if (mHasDragged)
       {
-         mEditor->GetUndoManager()->BeginMultipleEvents();
-
          QList<QGraphicsItem*> itemList = selectedItems();
          int count = (int)itemList.size();
-         for (int index = 0; index < count; index++)
-         {
-            NodeItem* item = dynamic_cast<NodeItem*>(itemList[index]);
-            if (item) item->EndMoveEvent();
-         }
 
-         mEditor->GetUndoManager()->EndMultipleEvents();
+         if (count > 0)
+         {
+            mEditor->GetUndoManager()->BeginMultipleEvents();
+
+            for (int index = 0; index < count; index++)
+            {
+               NodeItem* item = dynamic_cast<NodeItem*>(itemList[index]);
+               if (item) item->EndMoveEvent();
+            }
+
+            mEditor->GetUndoManager()->EndMultipleEvents();
+         }
       }
 
       mView->setDragMode(QGraphicsView::NoDrag);

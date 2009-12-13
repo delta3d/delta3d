@@ -286,6 +286,27 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::RefreshGraph(DirectorGraph* graph)
+   {
+      // Now refresh the all editors that view the same graph.
+      int count = mGraphTabs->count();
+      for (int index = 0; index < count; index++)
+      {
+         EditorView* view = dynamic_cast<EditorView*>(mGraphTabs->widget(index));
+         if (view && view->GetScene())
+         {
+            if (view->GetScene()->GetGraph() == graph)
+            {
+               // First remember the position of the translation node.
+               QPointF trans = view->GetScene()->GetTranslationItem()->pos();
+               view->GetScene()->SetGraph(graph);
+               view->GetScene()->GetTranslationItem()->setPos(trans);
+            }
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void DirectorEditor::RefreshButtonStates()
    {
       // Refresh the name of the window.

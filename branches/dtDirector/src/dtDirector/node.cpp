@@ -213,28 +213,32 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void Node::Disconnect()
+   bool Node::Disconnect()
    {
+      bool result = false;
+
       // Disconnect inputs.
       int count = (int)mInputs.size();
       for (int index = 0; index < count; index++)
       {
-         mInputs[index].Disconnect();
+         result |= mInputs[index].Disconnect();
       }
 
       // Disconnect outputs.
       count = (int)mOutputs.size();
       for (int index = 0; index < count; index++)
       {
-         mOutputs[index].Disconnect();
+         result |= mOutputs[index].Disconnect();
       }
 
       // Disconnect values.
       count = (int)mValues.size();
       for (int index = 0; index < count; index++)
       {
-         mValues[index].Disconnect();
+         result |= mValues[index].Disconnect();
       }
+
+      return result;
    }
 
    //////////////////////////////////////////////////////////////////////////

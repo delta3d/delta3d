@@ -220,22 +220,7 @@ namespace dtDirector
       // Save the refreshing for the parent event only.
       if (isParent)
       {
-         // Now refresh the all editors that view the same graph.
-         count = mEditor->GetGraphTabs()->count();
-         for (int index = 0; index < count; index++)
-         {
-            EditorView* view = dynamic_cast<EditorView*>(mEditor->GetGraphTabs()->widget(index));
-            if (view && view->GetScene())
-            {
-               if (view->GetScene()->GetGraph() == parent)
-               {
-                  // First remember the position of the translation node.
-                  QPointF trans = view->GetScene()->GetTranslationItem()->pos();
-                  view->GetScene()->SetGraph(parent);
-                  view->GetScene()->GetTranslationItem()->setPos(trans);
-               }
-            }
-         }
+         mEditor->RefreshGraph(parent);
          mEditor->Refresh();
       }
    }

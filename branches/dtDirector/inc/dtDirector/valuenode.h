@@ -87,8 +87,8 @@ namespace dtDirector
        * @param[in]  valueLink  The value link to disconnect from.
        *                         NULL to disconnect all.
        */
-      virtual void Disconnect();
-      void Disconnect(ValueLink* valueLink);
+      virtual bool Disconnect();
+      bool Disconnect(ValueLink* valueLink);
 
       /**
        * Event handler when a connection has changed.

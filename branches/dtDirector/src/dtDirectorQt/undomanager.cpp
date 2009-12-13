@@ -108,7 +108,6 @@ namespace dtDirector
       dtCore::RefPtr<UndoMultipleEvent> event = new UndoMultipleEvent(mEditor);
       if (event.valid())
       {
-         AddEvent(event.get());
          mMultipleEventStack.push(event.get());
       }
    }
@@ -126,7 +125,11 @@ namespace dtDirector
          return;
       }
 
+      dtCore::RefPtr<UndoMultipleEvent> event = mMultipleEventStack.top();
       mMultipleEventStack.pop();
+
+      // Only add the multiple event if it contains events.
+      if (event->HasEvents()) AddEvent(event.get());
    }
 
    //////////////////////////////////////////////////////////////////////////

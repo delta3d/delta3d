@@ -64,25 +64,31 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void InputLink::Connect(OutputLink* output)
+   bool InputLink::Connect(OutputLink* output)
    {
-      if (output) output->Connect(this);
+      if (output) return output->Connect(this);
+      return false;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void InputLink::Disconnect(OutputLink* output)
+   bool InputLink::Disconnect(OutputLink* output)
    {
       if (!output)
       {
+         bool result = false;
          while (!mLinks.empty())
          {
-            mLinks[0]->Disconnect(this);
+            result |= mLinks[0]->Disconnect(this);
          }
+
+         return result;
       }
       else
       {
-         output->Disconnect(this);
+         return output->Disconnect(this);
       }
+
+      return false;
    }
 
    //////////////////////////////////////////////////////////////////////////

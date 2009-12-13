@@ -70,27 +70,35 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ValueNode::Disconnect()
+   bool ValueNode::Disconnect()
    {
-      Node::Disconnect();
+      bool result = false;
+      result |= Node::Disconnect();
 
-      Disconnect(NULL);
+      result |= Disconnect(NULL);
+
+      return result;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ValueNode::Disconnect(ValueLink* valueLink)
+   bool ValueNode::Disconnect(ValueLink* valueLink)
    {
       if (!valueLink)
       {
+         bool result = false;
          while (!mLinks.empty())
          {
-            mLinks[0]->Disconnect(this);
+            result |= mLinks[0]->Disconnect(this);
          }
+
+         return result;
       }
       else
       {
-         valueLink->Disconnect(this);
+         return valueLink->Disconnect(this);
       }
+
+      return false;
    }
 
    //////////////////////////////////////////////////////////////////////////

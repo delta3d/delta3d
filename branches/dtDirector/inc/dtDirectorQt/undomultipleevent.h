@@ -63,6 +63,12 @@ namespace dtDirector
        */
       void AddEvent(UndoEvent* event);
 
+      /**
+       * Retrieves whether this event contains events.
+       */
+      bool HasEvents() {return !mEvents.empty();}
+
+
    protected:
          
       /**

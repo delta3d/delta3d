@@ -91,15 +91,19 @@ namespace dtDirector
        * Connects this output to an input.
        *
        * @param[in]  input  The input link to connect it to.
+       *
+       * @return     True if a connection was made.
        */
-      void Connect(InputLink* input);
+      bool Connect(InputLink* input);
 
       /**
        * Disconnects this output from an input.
        *
        * @param[in]  input  The input link to disconnect (NULL to disconnect all).
+       *
+       * @return     True if a connection was disconnected.
        */
-      void Disconnect(InputLink* input = NULL);
+      bool Disconnect(InputLink* input = NULL);
 
    private:
 

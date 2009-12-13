@@ -71,33 +71,32 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void OutputLink::Connect(InputLink* input)
+   bool OutputLink::Connect(InputLink* input)
    {
       // Cannot connect a NULL node.
       if (!input)
       {
-         return;
+         return false;
       }
 
       // Make sure it isn't already connected.
       for (int outputIndex = 0; outputIndex < (int)mLinks.size(); outputIndex++)
       {
-         if (mLinks[outputIndex] == input)
-         {
-            return;
-         }
+         if (mLinks[outputIndex] == input) return false;
       }
 
       mLinks.push_back(input);
       input->mLinks.push_back(this);
+      return true;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void OutputLink::Disconnect(InputLink* input)
+   bool OutputLink::Disconnect(InputLink* input)
    {
       // Erase all?
       if (!input)
       {
+         bool result = false;
          for (int outputIndex = 0; outputIndex < (int)mLinks.size(); outputIndex++)
          {
             input = mLinks[outputIndex];
@@ -109,12 +108,14 @@ namespace dtDirector
                if (input->mLinks[inputIndex] == this)
                {
                   input->mLinks.erase(input->mLinks.begin() + inputIndex);
+                  result = true;
                   break;
                }
             }
          }
 
          mLinks.clear();
+         return result;
       }
       else
       {
@@ -134,9 +135,12 @@ namespace dtDirector
                      break;
                   }
                }
-               break;
+
+               return true;
             }
          }
       }
+
+      return false;
    }
 }

@@ -219,8 +219,10 @@ namespace dtDirector
 
       /**
        * Disconnects all links from this node.
+       *
+       * @return  True if disconnections were made.
        */
-      virtual void Disconnect();
+      virtual bool Disconnect();
 
       /**
        * Retrieves the total number of values linked to a property.

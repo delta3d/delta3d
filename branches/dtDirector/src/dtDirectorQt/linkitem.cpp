@@ -22,6 +22,8 @@
 #include <dtDirectorQt/linkitem.h>
 #include <dtDirectorQt/directoreditor.h>
 #include <dtDirectorQt/editorscene.h>
+#include <dtDirectorQt/undomanager.h>
+#include <dtDirectorQt/undolinkevent.h>
 
 #include <dtDirector/outputlink.h>
 
@@ -179,8 +181,32 @@ namespace dtDirector
             {
                if (hoverList[index] == this)
                {
-                  mNodeItem->GetInputs()[mLinkIndex].link->Disconnect();
-                  mScene->Refresh();
+                  InputLink* input = mNodeItem->GetInputs()[mLinkIndex].link;
+
+                  if (input->GetLinks().size())
+                  {
+                     mScene->GetEditor()->GetUndoManager()->BeginMultipleEvents();
+
+                     while (!input->GetLinks().empty())
+                     {
+                        OutputLink* output = input->GetLinks()[0];
+                        if (input->Disconnect(output))
+                        {
+                           dtCore::RefPtr<UndoLinkEvent> event = new UndoLinkEvent(
+                              mScene->GetEditor(),
+                              UndoLinkEvent::INPUT_LINK,
+                              input->GetOwner()->GetID(),
+                              output->GetOwner()->GetID(),
+                              input->GetName(),
+                              output->GetName(),
+                              false);
+                           mScene->GetEditor()->GetUndoManager()->AddEvent(event);
+                        }
+                     }
+
+                     mScene->GetEditor()->GetUndoManager()->EndMultipleEvents();
+                     mScene->Refresh();
+                  }
                   break;
                }
             }
@@ -189,9 +215,22 @@ namespace dtDirector
                OutputLinkItem* item = dynamic_cast<OutputLinkItem*>(hoverList[index]);
                if (item)
                {
+                  InputLink* input = mNodeItem->GetInputs()[mLinkIndex].link;
+                  OutputLink* output = item->mNodeItem->GetOutputs()[item->mLinkIndex].link;
+
                   // Create a new connection between these two links.
-                  mNodeItem->GetInputs()[mLinkIndex].link->Connect(
-                     item->mNodeItem->GetOutputs()[item->mLinkIndex].link);
+                  if (input->Connect(output))
+                  {
+                     dtCore::RefPtr<UndoLinkEvent> event = new UndoLinkEvent(
+                        mScene->GetEditor(),
+                        UndoLinkEvent::INPUT_LINK,
+                        input->GetOwner()->GetID(),
+                        output->GetOwner()->GetID(),
+                        input->GetName(),
+                        output->GetName(),
+                        true);
+                     mScene->GetEditor()->GetUndoManager()->AddEvent(event);
+                  }
                   mNodeItem->ConnectLinks(true);
                   break;
                }
@@ -441,8 +480,32 @@ namespace dtDirector
             {
                if (hoverList[index] == this)
                {
-                  mNodeItem->GetOutputs()[mLinkIndex].link->Disconnect();
-                  mScene->Refresh();
+                  OutputLink* output = mNodeItem->GetOutputs()[mLinkIndex].link;
+
+                  if (output->GetLinks().size())
+                  {
+                     mScene->GetEditor()->GetUndoManager()->BeginMultipleEvents();
+
+                     while (!output->GetLinks().empty())
+                     {
+                        InputLink* input = output->GetLinks()[0];
+                        if (input->Disconnect(output))
+                        {
+                           dtCore::RefPtr<UndoLinkEvent> event = new UndoLinkEvent(
+                              mScene->GetEditor(),
+                              UndoLinkEvent::INPUT_LINK,
+                              input->GetOwner()->GetID(),
+                              output->GetOwner()->GetID(),
+                              input->GetName(),
+                              output->GetName(),
+                              false);
+                           mScene->GetEditor()->GetUndoManager()->AddEvent(event);
+                        }
+                     }
+
+                     mScene->GetEditor()->GetUndoManager()->EndMultipleEvents();
+                     mScene->Refresh();
+                  }
                   break;
                }
             }
@@ -451,9 +514,22 @@ namespace dtDirector
                InputLinkItem* item = dynamic_cast<InputLinkItem*>(hoverList[index]);
                if (item)
                {
+                  InputLink* input = item->mNodeItem->GetInputs()[item->mLinkIndex].link;
+                  OutputLink* output = mNodeItem->GetOutputs()[mLinkIndex].link;
+
                   // Create a new connection between these two links.
-                  mNodeItem->GetOutputs()[mLinkIndex].link->Connect(
-                     item->mNodeItem->GetInputs()[item->mLinkIndex].link);
+                  if (input->Connect(output))
+                  {
+                     dtCore::RefPtr<UndoLinkEvent> event = new UndoLinkEvent(
+                        mScene->GetEditor(),
+                        UndoLinkEvent::INPUT_LINK,
+                        input->GetOwner()->GetID(),
+                        output->GetOwner()->GetID(),
+                        input->GetName(),
+                        output->GetName(),
+                        true);
+                     mScene->GetEditor()->GetUndoManager()->AddEvent(event);
+                  }
                   mNodeItem->ConnectLinks(true);
                   break;
                }
@@ -713,8 +789,32 @@ namespace dtDirector
             {
                if (hoverList[index] == this)
                {
-                  mNodeItem->GetValues()[mLinkIndex].link->Disconnect();
-                  mScene->Refresh();
+                  ValueLink* input = mNodeItem->GetValues()[mLinkIndex].link;
+
+                  if (input->GetLinks().size())
+                  {
+                     mScene->GetEditor()->GetUndoManager()->BeginMultipleEvents();
+
+                     while (!input->GetLinks().empty())
+                     {
+                        ValueNode* output = input->GetLinks()[0];
+                        if (input->Disconnect(output))
+                        {
+                           dtCore::RefPtr<UndoLinkEvent> event = new UndoLinkEvent(
+                              mScene->GetEditor(),
+                              UndoLinkEvent::VALUE_LINK,
+                              input->GetOwner()->GetID(),
+                              output->GetID(),
+                              input->GetLabel(),
+                              output->GetName(),
+                              false);
+                           mScene->GetEditor()->GetUndoManager()->AddEvent(event);
+                        }
+                     }
+
+                     mScene->GetEditor()->GetUndoManager()->EndMultipleEvents();
+                     mScene->Refresh();
+                  }
                   break;
                }
             }
@@ -723,9 +823,22 @@ namespace dtDirector
                ValueNodeLinkItem* item = dynamic_cast<ValueNodeLinkItem*>(hoverList[index]);
                if (item)
                {
+                  ValueLink* input = mNodeItem->GetValues()[mLinkIndex].link;
+                  ValueNode* output = dynamic_cast<ValueNode*>(item->mValueItem->GetNode());
+
                   // Create a new connection between these two links.
-                  mNodeItem->GetValues()[mLinkIndex].link->Connect(
-                     dynamic_cast<ValueNode*>(item->mValueItem->GetNode()));
+                  if (input->Connect(output))
+                  {
+                     dtCore::RefPtr<UndoLinkEvent> event = new UndoLinkEvent(
+                        mScene->GetEditor(),
+                        UndoLinkEvent::VALUE_LINK,
+                        input->GetOwner()->GetID(),
+                        output->GetID(),
+                        input->GetLabel(),
+                        output->GetName(),
+                        true);
+                     mScene->GetEditor()->GetUndoManager()->AddEvent(event);
+                  }
 
                   // Refresh the entire scene to make sure all nodes and links are
                   // colored properly.
@@ -955,10 +1068,30 @@ namespace dtDirector
             {
                if (hoverList[index] == this)
                {
-                  ValueNode* valueNode = dynamic_cast<ValueNode*>(mValueItem->GetNode());
-                  if (valueNode)
+                  ValueNode* output = dynamic_cast<ValueNode*>(mValueItem->GetNode());
+
+                  if (output->GetLinks().size())
                   {
-                     valueNode->Disconnect();
+                     mScene->GetEditor()->GetUndoManager()->BeginMultipleEvents();
+
+                     while (!output->GetLinks().empty())
+                     {
+                        ValueLink* input = output->GetLinks()[0];
+                        if (input->Disconnect(output))
+                        {
+                           dtCore::RefPtr<UndoLinkEvent> event = new UndoLinkEvent(
+                              mScene->GetEditor(),
+                              UndoLinkEvent::VALUE_LINK,
+                              input->GetOwner()->GetID(),
+                              output->GetID(),
+                              input->GetLabel(),
+                              output->GetName(),
+                              false);
+                           mScene->GetEditor()->GetUndoManager()->AddEvent(event);
+                        }
+                     }
+
+                     mScene->GetEditor()->GetUndoManager()->EndMultipleEvents();
                      mScene->Refresh();
                   }
                   break;
@@ -969,9 +1102,22 @@ namespace dtDirector
                ValueLinkItem* item = dynamic_cast<ValueLinkItem*>(hoverList[index]);
                if (item)
                {
+                  ValueLink* input = item->mNodeItem->GetValues()[item->mLinkIndex].link;
+                  ValueNode* output = dynamic_cast<ValueNode*>(mValueItem->GetNode());
+
                   // Create a new connection between these two links.
-                  item->mNodeItem->GetValues()[item->mLinkIndex].link->Connect(
-                     dynamic_cast<ValueNode*>(mValueItem->GetNode()));
+                  if (input->Connect(output))
+                  {
+                     dtCore::RefPtr<UndoLinkEvent> event = new UndoLinkEvent(
+                        mScene->GetEditor(),
+                        UndoLinkEvent::VALUE_LINK,
+                        input->GetOwner()->GetID(),
+                        output->GetID(),
+                        input->GetLabel(),
+                        output->GetName(),
+                        true);
+                     mScene->GetEditor()->GetUndoManager()->AddEvent(event);
+                  }
 
                   // Refresh the entire scene to make sure all nodes and links are
                   // colored properly.

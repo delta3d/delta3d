@@ -189,8 +189,10 @@ namespace dtDirector
        *
        * @param[in]  valueNode  The value node to disconnect from.
        *                         NULL to disconnect all.
+       *
+       * @return     True if any disconnections were made.
        */
-      void Disconnect(ValueNode* valueNode = NULL);
+      bool Disconnect(ValueNode* valueNode = NULL);
 
       /**
        * Retrieves the list of links.
