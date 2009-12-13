@@ -174,8 +174,7 @@ namespace dtDirector
             graph->SetID(mNodeID);
 
             // Add the graph back to its parent.
-            parent->GetSubGraphs().push_back(graph);
-            graph->mParent = parent;
+            parent->AddGraph(graph);
          }
       }
       else

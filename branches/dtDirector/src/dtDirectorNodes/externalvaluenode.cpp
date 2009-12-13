@@ -58,6 +58,8 @@ namespace dtDirector
       // externally with any values outside of it.
       mValues.clear();
       mValues.push_back(ValueLink(this, NULL, false, false, false));
+
+      SetName(mName);
    }
 
    //////////////////////////////////////////////////////////////////////////

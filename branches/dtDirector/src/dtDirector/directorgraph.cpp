@@ -251,6 +251,47 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   DirectorGraph* DirectorGraph::AddGraph(DirectorGraph* graph)
+   {
+      if (!graph)
+      {
+         graph = new DirectorGraph(GetDirector());
+         graph->BuildPropertyMap();
+      }
+
+      // First remove the graph from their parents.
+      if (graph->mParent)
+      {
+         graph->mParent->RemoveGraph(graph);
+      }
+
+      graph->mParent = this;
+      mSubGraphs.push_back(graph);
+
+      return graph;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DirectorGraph::RemoveGraph(DirectorGraph* graph)
+   {
+      if (!graph) return;
+
+      if (graph->mParent == this)
+      {
+         int count = (int)mSubGraphs.size();
+         for (int index = 0; index < count; index++)
+         {
+            if (mSubGraphs[index] == graph)
+            {
+               mSubGraphs.erase(mSubGraphs.begin() + index);
+               graph->mParent = NULL;
+               return;
+            }
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    std::vector<dtCore::RefPtr<EventNode> > DirectorGraph::GetInputNodes()
    {
       std::vector<dtCore::RefPtr<EventNode> > nodes;

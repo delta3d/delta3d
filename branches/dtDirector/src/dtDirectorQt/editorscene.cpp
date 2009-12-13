@@ -331,9 +331,18 @@ namespace dtDirector
    {
       if (!action) return;
       
-      if (action->text() == "Test")
+      if (action->text() == "Create Macro")
       {
+         DirectorGraph* graph = mGraph->AddGraph();
+         if (graph)
+         {
+            graph->SetPosition(osg::Vec2(mMenuPos.x(), mMenuPos.y()));
+            mEditor->RefreshGraph(mGraph);
+            mEditor->Refresh();
 
+            dtCore::RefPtr<UndoCreateEvent> event = new UndoCreateEvent(mEditor, graph->GetID(), mGraph->GetID());
+            mEditor->GetUndoManager()->AddEvent(event);
+         }
       }
    }
 
@@ -533,6 +542,7 @@ namespace dtDirector
             }
 
             menu.addMenu(nodeMenu);
+            QAction* createMacroAction = menu.addAction("Create Macro");
 
             connect(nodeMenu, SIGNAL(triggered(QAction*)),
                this, SLOT(OnCreateNodeEvent(QAction*)));

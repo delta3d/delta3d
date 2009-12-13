@@ -151,6 +151,23 @@ namespace dtDirector
       const osg::Vec2& GetPosition() {return mPosition;}
 
       /**
+       * Adds a sub-graph to this graph.
+       *
+       * @param[in]  graph  The graph to add, use NULL
+       *                    to create a new one.
+       *
+       * @return     A pointer to the graph that was added.
+       */
+      DirectorGraph* AddGraph(DirectorGraph* graph = NULL);
+
+      /**
+       * Removes a sub-graph from this graph.
+       *
+       * @param[in]  graph  The graph to remove.
+       */
+      void RemoveGraph(DirectorGraph* graph);
+
+      /**
        * Accessors for the node lists.
        */
       std::vector<dtCore::RefPtr<EventNode> >& GetEventNodes() {return mEventNodes;}
