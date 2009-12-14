@@ -20,6 +20,7 @@
  */
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/shadermanager.h>
+#include <dtCore/deltadrawable.h>
 #include <dtCore/shaderxml.h>
 #include <dtCore/shaderparameter.h>
 
@@ -570,6 +571,63 @@ namespace dtCore
       catch (const dtUtil::Exception& e)
       {
          throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR, e.ToString(), __FILE__, __LINE__);
+      }
+
+      //store the loaded ShaderGroups 
+      const ShaderXML::ShaderContainer &shaders = parser.GetLoadedShaders();
+      ShaderXML::ShaderContainer::const_iterator itr = shaders.begin();
+      while (itr != shaders.end())
+      {
+         AddShaderGroupPrototype(*(*itr));
+         ++itr;
+      }
+
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ShaderManager::LoadAndAssignShader(DeltaDrawable& drawable,
+                                           const std::string& shaderResource)
+   {
+      //find it
+      const std::string path = dtUtil::FindFileInPathList(shaderResource);
+      if (path.empty())
+      {
+         LOG_WARNING("Could not find shader definitions file: " + shaderResource);
+         return;
+      }
+
+      //parse it
+      ShaderXML parser;
+      parser.ParseXML(path);
+
+      const ShaderXML::ShaderContainer &shaders = parser.GetLoadedShaders();
+      if (shaders.empty())
+      {
+         //nothing loaded?
+         return;
+      }
+
+      //we'll just use the first shader defined
+      const std::string newlyLoadedShaderName = shaders[0]->GetName();
+      ShaderGroup* shaderGroupToAssign = FindShaderGroupPrototype(newlyLoadedShaderName);
+
+      //if it doesn't already exist in our list, add it
+      if (shaderGroupToAssign == NULL)
+      {
+         AddShaderGroupPrototype(*shaders[0]);
+
+         shaderGroupToAssign = FindShaderGroupPrototype(newlyLoadedShaderName);
+      }     
+
+      //Apply the first ShaderProgram in the ShaderGroup
+      if (shaderGroupToAssign->GetNumShaders() > 0 && drawable.GetOSGNode())
+      {
+         std::vector<dtCore::RefPtr<ShaderProgram> > shadersInGroup;
+         shaderGroupToAssign->GetAllShaders(shadersInGroup);
+
+         //apply it to the supplied drawable
+         AssignShaderFromPrototype(*shadersInGroup[0],
+                                   *drawable.GetOSGNode());
       }
    }
 }
