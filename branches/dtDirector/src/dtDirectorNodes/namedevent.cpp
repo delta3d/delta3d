@@ -33,7 +33,6 @@ namespace dtDirector
    ///////////////////////////////////////////////////////////////////////////////////////
    NamedEvent::NamedEvent()
        : EventNode()
-       , mEventName("Event Name")
    {
    }
 
@@ -46,6 +45,8 @@ namespace dtDirector
    void NamedEvent::Init(const NodeType& nodeType, DirectorGraph* graph)
    {
       EventNode::Init(nodeType, graph);
+
+      SetEventName("Event Name");
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -64,11 +65,18 @@ namespace dtDirector
    void NamedEvent::SetEventName(const std::string& eventName)
    {
       mEventName = eventName;
+      mLabel = GetType().GetName() + " (" + mEventName + ")";
    }
 
    //////////////////////////////////////////////////////////////////////////
    const std::string& NamedEvent::GetEventName() const
    {
       return mEventName;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   const std::string& NamedEvent::GetName()
+   {
+      return mLabel;
    }
 }

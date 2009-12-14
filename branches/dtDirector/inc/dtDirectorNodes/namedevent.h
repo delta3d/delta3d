@@ -75,6 +75,13 @@ namespace dtDirector
       void SetEventName(const std::string& eventName);
       const std::string& GetEventName() const;
 
+      /**
+       * Retrieves the display name for the node.
+       *
+       * @return  The display name of the node.
+       */
+      virtual const std::string& GetName();
+
    protected:
 
       /**
@@ -84,6 +91,7 @@ namespace dtDirector
 
    private:
 
+      std::string mLabel;
       std::string mEventName;
    };
 }
