@@ -1,20 +1,20 @@
-/* 
- * Delta3D Open Source Game and Simulation Engine 
- * Copyright (C) 2004-2005 MOVES Institute 
+/*
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2004-2005 MOVES Institute
  *
  * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free 
- * Software Foundation; either version 2.1 of the License, or (at your option) 
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
  *
  * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this library; if not, write to the Free Software Foundation, Inc., 
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  */
 
@@ -40,7 +40,7 @@ namespace dtCore
    class Scene;
 
    /**
-      This class is used to check for intersections of a line segment with 
+      This class is used to check for intersections of a line segment with
       geometry.  Supply the starting position, the direction vector, the length
       of the Isector, and the geometry to intersect with.
 
@@ -49,7 +49,7 @@ namespace dtCore
       After calling Update(), the results of the intersection may be queried with
       GetHitPoint().
 
-   \note Although derived from Transformable, this class does not use any 
+   \note Although derived from Transformable, this class does not use any
       inherited functionality from Transformable at this point.
 
 
@@ -74,6 +74,7 @@ namespace dtCore
       DECLARE_MANAGEMENT_LAYER(Isector)
 
    public:
+      typedef osgUtil::IntersectVisitor::HitList HitList;
 
       /**
        * Constructs a new intersection query.
@@ -103,17 +104,15 @@ namespace dtCore
       Isector(Scene *scene, const osg::Vec3 &start, const osg::Vec3 &end);
 
    protected:
-
       virtual ~Isector();
 
    public:
-
       /**
        * Sets a drawable as the root of the intersection tests.  If this is specified,
        * it will take precedence over the currently assigned Delta3D scene.
        * @param drawable The drawable to intersect.
        */
-      void SetGeometry(DeltaDrawable *drawable) 
+      void SetGeometry(DeltaDrawable *drawable)
       {
          mSceneRoot = drawable;
       }
@@ -121,7 +120,7 @@ namespace dtCore
       /**
        * Clears the currently assigned root drawable of the intersection tests.
        */
-      void ClearQueryRoot() 
+      void ClearQueryRoot()
       {
          mSceneRoot = NULL;
       }
@@ -129,7 +128,7 @@ namespace dtCore
       /**
        * @return the root of the scene to query.  It will return if this is using the entire scene.
        */
-      DeltaDrawable* GetQueryRoot() 
+      DeltaDrawable* GetQueryRoot()
       {
          return mSceneRoot.get();
       }
@@ -144,7 +143,7 @@ namespace dtCore
 
       ///Sets the scene to use as the base for the scene query.
       void SetScene(Scene* newScene);
-      
+
       ///@return the scene being queried.
       Scene* GetScene()
       {
@@ -171,7 +170,7 @@ namespace dtCore
        * Gets the starting position of the intersection ray.
        * @return A vector containing the start position of the intersection ray.
        */
-      const osg::Vec3 GetEyePoint() const 
+      const osg::Vec3 GetEyePoint() const
       {
          return mIntersectVisitor.getEyePoint();
       }
@@ -201,7 +200,7 @@ namespace dtCore
        * Gets the starting position of the intersection ray.
        * @return A vector containing the start position of the intersection ray.
        */
-      const osg::Vec3 &GetStartPosition() const 
+      const osg::Vec3& GetStartPosition() const
       {
          return mStart;
       }
@@ -229,7 +228,7 @@ namespace dtCore
        * Gets the direction of the intersection ray.
        * @return The direction unit vector.
        */
-      const osg::Vec3& GetDirection() const 
+      const osg::Vec3& GetDirection() const
       {
          return mDirection;
       }
@@ -273,21 +272,21 @@ namespace dtCore
       void Reset();
 
       /**
-       * Gets the DeltaDrawable that is closest to the query's starting point 
+       * Gets the DeltaDrawable that is closest to the query's starting point
        * along the intersection ray.
        * @return A valid DeltaDrawable.
        */
-      DeltaDrawable *GetClosestDeltaDrawable()
+      DeltaDrawable* GetClosestDeltaDrawable()
       {
          return mClosestDrawable.get();
       }
 
       /**
-       * Gets the DeltaDrawable that is closest to the query's starting point 
+       * Gets the DeltaDrawable that is closest to the query's starting point
        * along the intersection ray.
        * @return A valid DeltaDrawable.
        */
-      const DeltaDrawable *GetClosestDeltaDrawable() const
+      const DeltaDrawable* GetClosestDeltaDrawable() const
       {
          return mClosestDrawable.get();
       }
@@ -296,7 +295,7 @@ namespace dtCore
        * Gets the line segment used for this intersection query.
        * @return
        */
-      const osg::LineSegment *GetLineSegment() const
+      const osg::LineSegment* GetLineSegment() const
       {
          return mLineSegment.get();
       }
@@ -306,7 +305,7 @@ namespace dtCore
        * detailed description of the intersection tests are required.
        * @return
        */
-      osgUtil::IntersectVisitor &GetIntersectVisitor()
+      osgUtil::IntersectVisitor& GetIntersectVisitor()
       {
          return mIntersectVisitor;
       }
@@ -316,30 +315,29 @@ namespace dtCore
        * @param geode The node to search for.
        * @return A valid DeltaDrawable if one was found or 0 otherwise.
        */
-      DeltaDrawable *MapNodePathToDrawable(osg::NodePath &geode);
+      DeltaDrawable* MapNodePathToDrawable(osg::NodePath& geode);
 
       /**
        * Get the Hitlist member. Do not assume this list is sorted based on distance from
        * the starting point.
        * @return a const reference to the entire hit list
        */
-      const osgUtil::IntersectVisitor::HitList& GetHitList() const { return mHitList; }
+      const HitList& GetHitList() const { return mHitList; }
 
       /**
        * Get the Hitlist member. Do not assume this list is sorted based on distance from
        * the starting point.
        * @return a non-const reference to the entire hit list
        */
-      osgUtil::IntersectVisitor::HitList& GetHitList() { return mHitList; }
+      HitList& GetHitList() { return mHitList; }
 
    private:
-
       // Disallowed to prevent compile errors on VS2003. It apparently
       // creates this functions even if they are not used, and if
       // this class is forward declared, these implicit functions will
       // cause compiler errors for missing calls to "ref".
-      Isector& operator=( const Isector& ); 
-      Isector( const Isector& );
+      Isector& operator=(const Isector&);
+      Isector(const Isector&);
 
       osg::Vec3 mStart;
       osg::Vec3 mDirection;
@@ -351,7 +349,7 @@ namespace dtCore
       dtCore::ObserverPtr<DeltaDrawable> mSceneRoot;
       dtCore::ObserverPtr<DeltaDrawable> mClosestDrawable;
       osgUtil::IntersectVisitor mIntersectVisitor;
-      osgUtil::IntersectVisitor::HitList mHitList; 
+      HitList mHitList;
       void CalcLineSegment();
    };
 }

@@ -32,13 +32,6 @@
 
 #include <dtCore/fpsmotionmodel.h>
 
-/// @cond DOXYGEN_SHOULD_SKIP_THIS
-namespace osg
-{
-   class IntersectVisitor;
-}
-/// @endcond
-
 namespace dtCore
 {
    class Axis;
@@ -53,49 +46,45 @@ namespace dtCore
    class Isector;
 
    /**
-   * Collision Motion Model uses ode collision meshes to allow typical FPS Camera interaction with the environment
-   */
+    * Collision Motion Model uses ode collision meshes to allow typical FPS Camera interaction with the environment
+    */
    class DT_CORE_EXPORT CollisionMotionModel : public FPSMotionModel
    {
-
       DECLARE_MANAGEMENT_LAYER(CollisionMotionModel);
 
    public:
       enum eMode{WALKING = 0, FALLING, SLIDING};
 
    public:
-
       /**
-      * Constructor.
-      * @param height, the height of the character and camera, in meters      
-      * @param radius, the width of our character  
-      * @param k the distance from the bottom of the knees to the ground, this represents the maximum step up height
-      * @param theta the collision amount to maintain below the ground (note: this should be less then half of k,
-      *        something small like 0.1 is recommended)
-      * @param Scene is used to get the gravity and the ode space
-      * @param keyboard the keyboard instance, or 0 to
-      * avoid creating default input mappings
-      * @param mouse the mouse instance, or 0 to avoid
-      * creating default input mappings
-      */
+       * Constructor.
+       * @param height, the height of the character and camera, in meters
+       * @param radius, the width of our character
+       * @param k the distance from the bottom of the knees to the ground, this represents the maximum step up height
+       * @param theta the collision amount to maintain below the ground (note: this should be less then half of k,
+       *        something small like 0.1 is recommended)
+       * @param Scene is used to get the gravity and the ode space
+       * @param keyboard the keyboard instance, or 0 to
+       * avoid creating default input mappings
+       * @param mouse the mouse instance, or 0 to avoid
+       * creating default input mappings
+       */
       CollisionMotionModel(float pHeight, float pRadius, float k, float theta, dtCore::Scene* pScene, Keyboard* keyboard, Mouse* mouse);
 
    protected:
-
       /**
-      * Destructor.
-      */
+       * Destructor.
+       */
       virtual ~CollisionMotionModel();
 
    public:
-
       /**
-      * This method can be overriden in subclasses to produce
-      * desired translation behavior
-      * Note: Any collision detection/response and other physical
-      * constraints should be applied here
-      * @param deltaTime The time change
-      */
+       * This method can be overriden in subclasses to produce
+       * desired translation behavior
+       * Note: Any collision detection/response and other physical
+       * constraints should be applied here
+       * @param deltaTime The time change
+       */
       virtual void PerformTranslation(const double deltaTime);
 
       FPSCollider& GetFPSCollider();
@@ -117,7 +106,6 @@ namespace dtCore
       FPSCollider mCollider;
       bool mCanJump;
    };
-}
-
+} // namespace dtCore
 
 #endif // __DELTA_collisionmotionmodel_H__
