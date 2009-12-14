@@ -151,17 +151,11 @@ namespace dtCore
       void GetBoundingSphere(osg::Vec3* center, float* radius);
 
       /**
-       * Get the bounding box information for this Drawable.
-       * 
-       * NOTE: When this method successfully returns a BoundingBox pointer
-       * it has allocated new memory.  The user of this method is responsible
-       * to ensure this memory is freed up via a delete call when the
-       * BoundingBox is no longer needed.
+       * Get the bounding box information for this Drawable.              
        *
-       * @return BoundingBox that encloses the Drawable.  The method returns
-       *  NULL if there is no geometry associated with the Drawable.
+       * @return BoundingBox that encloses the Drawable.  
        */
-      osg::BoundingBox* GetBoundingBox();      
+      osg::BoundingBox GetBoundingBox();      
 
       /**
        * Make this DeltaDrawable "active" or "inactive".  The default

@@ -4,7 +4,10 @@
 
 #include <python/dtpython.h>
 #include <dtCore/deltadrawable.h>
+#include <dtCore/refptr.h>
 #include <dtCore/scene.h>
+
+#include <osg/BoundingBox>
 //#include <osgViewer/GraphicsWindow>
 
 using namespace boost::python;
@@ -48,6 +51,15 @@ class DeltaDrawableWrap : public DeltaDrawable
          DeltaDrawable::RemoveChild(child);
       }
 
+      osg::BoundingBox* GetBoundingBoxWrap()
+      {
+         osg::BoundingBox* bb = new osg::BoundingBox();         
+
+         *bb = this->GetBoundingBox();
+
+         return bb;
+      }
+
    protected:
 
       PyObject* mSelf;
@@ -81,8 +93,8 @@ void initDeltaDrawableBindings()
       .def("CanBeChild", &DeltaDrawable::CanBeChild)
       .def("RenderProxyNode", &DeltaDrawable::RenderProxyNode, RPN_overloads())
       .def("Emancipate", &DeltaDrawable::Emancipate)
-      .def("GetBoundingSphere", &DeltaDrawable::GetBoundingSphere)
-      .def("GetBoundingBox", &DeltaDrawable::GetBoundingBox, return_internal_reference<>())
+      .def("GetBoundingSphere", &DeltaDrawable::GetBoundingSphere)      
+      .def("GetBoundingBox", &DeltaDrawableWrap::GetBoundingBoxWrap, return_internal_reference<>())
       .def("SetActive", &DeltaDrawable::SetActive)
       .def("GetActive", &DeltaDrawable::GetActive)
       ;
