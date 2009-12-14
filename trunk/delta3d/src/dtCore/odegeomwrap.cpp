@@ -680,9 +680,13 @@ void dtCore::ODEGeomWrap::SetCollisionMesh(osg::Node* node)
       if (mMeshVertices != NULL)
       {
          delete[] mMeshVertices;
+         mMeshVertices = NULL;
       }
       mNumMeshVertices = mv.mFunctor.mVertices.size();
-      mMeshVertices = new dVector3[mNumMeshVertices];
+      if (mNumMeshVertices > 0)
+      {
+         mMeshVertices = new dVector3[mNumMeshVertices];
+      }
       mMeshIndices.resize(mv.mFunctor.mTriangles.size()*3);
 
       if (!mv.mFunctor.mVertices.empty())
@@ -699,13 +703,6 @@ void dtCore::ODEGeomWrap::SetCollisionMesh(osg::Node* node)
             mv.mFunctor.mTriangles.size()*sizeof(StridedTriangle));
       }
 
-      if (mMeshIndices.empty())
-      {
-         //no collision mesh to build!
-         return;
-      }
-      
-
       if (mTriMeshDataID == NULL)
       {
          mTriMeshDataID = dGeomTriMeshDataCreate();
@@ -713,7 +710,7 @@ void dtCore::ODEGeomWrap::SetCollisionMesh(osg::Node* node)
 
       dGeomTriMeshDataBuildSimple(mTriMeshDataID,
          (dReal*)mMeshVertices, mNumMeshVertices,
-         (dTriIndex*)&mMeshIndices[0], mMeshIndices.size());
+         mMeshIndices.size() > 0 ? (dTriIndex*)&mMeshIndices[0] : NULL, mMeshIndices.size());
 
       dGeomTransformSetGeom(mGeomID, dCreateTriMesh(0, mTriMeshDataID, 0, 0, 0));
    }
@@ -849,7 +846,7 @@ dtCore::RefPtr<osg::Geode> dtCore::ODEGeomWrap::CreateRenderedCollisionGeometry(
          // pack vertices
          {
             osg::Vec3Array* geomVertices = new osg::Vec3Array;
-            for (size_t i = 0; i < mNumMeshVertices; ++i)
+            for (int i = 0; i < mNumMeshVertices; ++i)
             {
                geomVertices->push_back(osg::Vec3f(mMeshVertices[i][0], mMeshVertices[i][1], mMeshVertices[i][2]));
             }
