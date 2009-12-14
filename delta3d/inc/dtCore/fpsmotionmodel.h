@@ -35,13 +35,6 @@
 
 #include <osg/Vec3>
 
-/// @cond DOXYGEN_SHOULD_SKIP_THIS
-namespace osg
-{
-   class IntersectVisitor;
-}
-/// @endcond
-
 ////////////////////////////////////////////////////////////////////////////////
 
 namespace dtCore
@@ -139,9 +132,10 @@ namespace dtCore
          Keyboard* GetKeyboard() const { return mKeyboard.get(); }
 
          ///internal class, used by FPSMotionModel for InputDevice listening
-         /** Helper class used to call the supplied functor when an axis value
-           * changes.  Used only by the FPSMotionModel.
-           */
+         /**
+          * Helper class used to call the supplied functor when an axis value
+          * changes.  Used only by the FPSMotionModel.
+          */
          class DT_CORE_EXPORT FPSAxisListener :  public dtCore::AxisListener
          {
          public:
@@ -346,7 +340,7 @@ namespace dtCore
           * we'll let gravity take over. (defaults to 1.0 meter)
           * @param fallingHeight: The distance above terrain at which point we're falling (meters)
           */
-         void SetFallingHeight( float fallingHeight );
+         void SetFallingHeight(float fallingHeight);
 
          ///Get the distance above terrain at which point we're falling.
          float GetFallingHeight() const;
@@ -512,7 +506,7 @@ namespace dtCore
          bool mUseMouseButtons;
 
          ///private method used to ground clamp or adjust the falling velocity/position
-         void AdjustElevation(osg::Vec3 &xyz, double deltaFrameTime);
+         void AdjustElevation(osg::Vec3& xyz, double deltaFrameTime);
    };
 } // namespace dtCore
 

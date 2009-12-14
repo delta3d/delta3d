@@ -170,7 +170,7 @@ namespace dtEditQt
    {
       if (GetQGLWidget() != NULL)
       {
-         GetQGLWidget()->updateGL(); 
+         GetQGLWidget()->updateGL();
       }
    }
 
@@ -557,7 +557,7 @@ namespace dtEditQt
    ////////////////////////////////////////////////////////////////////////////////
    bool Viewport::getPickPosition(osg::Vec3& position, std::vector<dtCore::DeltaDrawable*> ignoredDrawables)
    {
-      osgUtil::IntersectVisitor::HitList& hitList = mIsector->GetHitList();
+      dtCore::Isector::HitList& hitList = mIsector->GetHitList();
       for (int index = 0; index < (int)hitList.size(); index++)
       {
          osg::NodePath &nodePath = hitList[index].getNodePath();
@@ -774,7 +774,7 @@ namespace dtEditQt
       mLastMouseUpdateLocation = mousePos;
 
       //refresh();
-      renderFrame(); 
+      renderFrame();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
