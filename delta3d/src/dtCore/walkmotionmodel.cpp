@@ -446,7 +446,7 @@ void WalkMotionModel::OnMessage(MessageData* data)
 
          if (lineSegmentIntersector->containsIntersections())
          {
-            osgUtil::LineSegmentIntersector::Intersection& intersection = lineSegmentIntersector->getFirstIntersection();
+            osgUtil::LineSegmentIntersector::Intersection intersection = lineSegmentIntersector->getFirstIntersection();
             height = intersection.getWorldIntersectPoint()[2];
          }
 
