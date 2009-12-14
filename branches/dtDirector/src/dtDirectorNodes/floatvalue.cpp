@@ -22,7 +22,7 @@
 #include <sstream>
 #include <algorithm>
 
-#include <dtDirectorNodes/intvalue.h>
+#include <dtDirectorNodes/floatvalue.h>
 
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actorproperty.h>
@@ -30,45 +30,45 @@
 namespace dtDirector
 {
    ///////////////////////////////////////////////////////////////////////////////////////
-   IntValue::IntValue()
+   FloatValue::FloatValue()
        : ValueNode()
-       , mValue(0)
+       , mValue(0.0f)
    {
-      mName = "Integer";
+      mName = "Float";
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   IntValue::~IntValue()
+   FloatValue::~FloatValue()
    {
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   void IntValue::Init(const NodeType& nodeType, DirectorGraph* graph)
+   void FloatValue::Init(const NodeType& nodeType, DirectorGraph* graph)
    {
       ValueNode::Init(nodeType, graph);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void IntValue::BuildPropertyMap()
+   void FloatValue::BuildPropertyMap()
    {
       ValueNode::BuildPropertyMap();
 
-      mProperty = new dtDAL::IntActorProperty(
+      mProperty = new dtDAL::FloatActorProperty(
          "Value", "Value",
-         dtDAL::IntActorProperty::SetFuncType(this, &IntValue::SetValue),
-         dtDAL::IntActorProperty::GetFuncType(this, &IntValue::GetValue),
+         dtDAL::FloatActorProperty::SetFuncType(this, &FloatValue::SetValue),
+         dtDAL::FloatActorProperty::GetFuncType(this, &FloatValue::GetValue),
          "The value.");
       AddProperty(mProperty);
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void IntValue::SetValue(int value)
+   void FloatValue::SetValue(float value)
    {
       mValue = value;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   int IntValue::GetValue()
+   float FloatValue::GetValue()
    {
       return mValue;
    }

@@ -47,7 +47,14 @@ namespace dtDirector
 
       /// Values
       static dtCore::RefPtr<dtDirector::NodeType> EXTERNAL_VALUE_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> BOOLEAN_VALUE_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> INT_VALUE_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> FLOAT_VALUE_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> DOUBLE_VALUE_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> STRING_VALUE_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> ACTOR_VALUE_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> RESOURCE_VALUE_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> VEC_VALUE_NODE_TYPE;
 
       /**
        *	Constructor.

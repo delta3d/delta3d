@@ -224,7 +224,9 @@ namespace dtDAL
 
       if (value.empty() || value == "NULL")
       {
-         SetValue(dtCore::UniqueId());
+         dtCore::UniqueId id;
+         id = "";
+         SetValue(id);
          return true;
       }
 

@@ -22,7 +22,7 @@
 #include <sstream>
 #include <algorithm>
 
-#include <dtDirectorNodes/intvalue.h>
+#include <dtDirectorNodes/doublevalue.h>
 
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actorproperty.h>
@@ -30,45 +30,45 @@
 namespace dtDirector
 {
    ///////////////////////////////////////////////////////////////////////////////////////
-   IntValue::IntValue()
+   DoubleValue::DoubleValue()
        : ValueNode()
-       , mValue(0)
+       , mValue(0.0)
    {
-      mName = "Integer";
+      mName = "Double";
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   IntValue::~IntValue()
+   DoubleValue::~DoubleValue()
    {
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   void IntValue::Init(const NodeType& nodeType, DirectorGraph* graph)
+   void DoubleValue::Init(const NodeType& nodeType, DirectorGraph* graph)
    {
       ValueNode::Init(nodeType, graph);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void IntValue::BuildPropertyMap()
+   void DoubleValue::BuildPropertyMap()
    {
       ValueNode::BuildPropertyMap();
 
-      mProperty = new dtDAL::IntActorProperty(
+      mProperty = new dtDAL::DoubleActorProperty(
          "Value", "Value",
-         dtDAL::IntActorProperty::SetFuncType(this, &IntValue::SetValue),
-         dtDAL::IntActorProperty::GetFuncType(this, &IntValue::GetValue),
+         dtDAL::DoubleActorProperty::SetFuncType(this, &DoubleValue::SetValue),
+         dtDAL::DoubleActorProperty::GetFuncType(this, &DoubleValue::GetValue),
          "The value.");
       AddProperty(mProperty);
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void IntValue::SetValue(int value)
+   void DoubleValue::SetValue(double value)
    {
       mValue = value;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   int IntValue::GetValue()
+   double DoubleValue::GetValue()
    {
       return mValue;
    }

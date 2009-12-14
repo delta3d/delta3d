@@ -35,6 +35,7 @@ namespace dtDirector
    EventNode::EventNode()
        : Node()
    {
+      mInstigator = "";
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
@@ -105,7 +106,7 @@ namespace dtDirector
             for (int index = 0; index < count; index++)
             {
                dtCore::UniqueId id = GetActorID("Instigator", index);
-               if (id != mInstigator)
+               if (id.ToString() != "")
                {
                   // The test is valid if we have valid connections
                   // to the instigator link.
@@ -151,5 +152,17 @@ namespace dtDirector
    bool EventNode::UsesInstigator()
    {
       return true;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void EventNode::SetInstigator(const dtCore::UniqueId& id)
+   {
+      mInstigator = id;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   dtCore::UniqueId EventNode::GetInstigator()
+   {
+      return mInstigator;
    }
 }

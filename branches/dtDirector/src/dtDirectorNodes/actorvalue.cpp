@@ -22,7 +22,9 @@
 #include <sstream>
 #include <algorithm>
 
-#include <dtDirectorNodes/intvalue.h>
+#include <dtDirectorNodes/actorvalue.h>
+
+#include <dtDirector/director.h>
 
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actorproperty.h>
@@ -30,45 +32,56 @@
 namespace dtDirector
 {
    ///////////////////////////////////////////////////////////////////////////////////////
-   IntValue::IntValue()
+   ActorValue::ActorValue()
        : ValueNode()
-       , mValue(0)
    {
-      mName = "Integer";
+      mName = "Actor";
+      mValue = "";
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   IntValue::~IntValue()
+   ActorValue::~ActorValue()
    {
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   void IntValue::Init(const NodeType& nodeType, DirectorGraph* graph)
+   void ActorValue::Init(const NodeType& nodeType, DirectorGraph* graph)
    {
       ValueNode::Init(nodeType, graph);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void IntValue::BuildPropertyMap()
+   void ActorValue::BuildPropertyMap()
    {
       ValueNode::BuildPropertyMap();
 
-      mProperty = new dtDAL::IntActorProperty(
+      mProperty = new dtDAL::ActorIDActorProperty(
          "Value", "Value",
-         dtDAL::IntActorProperty::SetFuncType(this, &IntValue::SetValue),
-         dtDAL::IntActorProperty::GetFuncType(this, &IntValue::GetValue),
-         "The value.");
+         dtDAL::ActorIDActorProperty::SetFuncType(this, &ActorValue::SetValue),
+         dtDAL::ActorIDActorProperty::GetFuncType(this, &ActorValue::GetValue),
+         dtDAL::ActorIDActorProperty::GetMapType(GetDirector(), &Director::GetMap),
+         "", "The value.");
       AddProperty(mProperty);
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void IntValue::SetValue(int value)
+   std::string ActorValue::GetValueLabel()
+   {
+      std::string label = "";
+      dtDAL::ActorIDActorProperty* prop = dynamic_cast<dtDAL::ActorIDActorProperty*>(mProperty);
+      if (prop && prop->GetRealActor()) label = " (" + prop->GetRealActor()->GetName() + ")";
+
+      return label;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ActorValue::SetValue(const dtCore::UniqueId& value)
    {
       mValue = value;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   int IntValue::GetValue()
+   const dtCore::UniqueId& ActorValue::GetValue()
    {
       return mValue;
    }

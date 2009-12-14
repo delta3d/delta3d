@@ -48,6 +48,8 @@ namespace dtDirector
    void ValueNode::Init(const NodeType& nodeType, DirectorGraph* graph)
    {
       Node::Init(nodeType, graph);
+
+      SetValueName(mName);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -57,8 +59,8 @@ namespace dtDirector
 
       AddProperty(new dtDAL::StringActorProperty(
          "Name", "Name",
-         dtDAL::StringActorProperty::SetFuncType(this, &ValueNode::SetName),
-         dtDAL::StringActorProperty::GetFuncType(this, &ValueNode::GetName),
+         dtDAL::StringActorProperty::SetFuncType(this, &ValueNode::SetValueName),
+         dtDAL::StringActorProperty::GetFuncType(this, &ValueNode::GetValueName),
          "The variables name."));
    }
 
@@ -104,7 +106,34 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void ValueNode::OnConnectionChange()
    {
+   }
 
+   //////////////////////////////////////////////////////////////////////////
+   void ValueNode::SetValueName(const std::string& name)
+   {
+      mName = name;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   const std::string& ValueNode::GetValueName()
+   {
+      return mName;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   const std::string& ValueNode::GetName()
+   {
+      mLabel = mName + GetValueLabel();
+      return mLabel;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   std::string ValueNode::GetValueLabel()
+   {
+      std::string label = "";
+      if (mProperty && !mProperty->ToString().empty()) label = " (" + mProperty->ToString() + ")";
+
+      return label;
    }
 
    //////////////////////////////////////////////////////////////////////////

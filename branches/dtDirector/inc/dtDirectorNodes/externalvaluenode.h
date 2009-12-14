@@ -75,7 +75,8 @@ namespace dtDirector
       /**
        * Accessors for the name of the node.
        */
-      virtual void SetName(const std::string& name);
+      virtual void SetValueName(const std::string& name);
+      virtual std::string GetValueLabel();
 
       /**
        * Event handler when a connection has changed.

@@ -329,6 +329,10 @@ namespace dtDirector
    {
       dtDAL::ActorProperty* prop = GetProperty(name, index);
       if (prop) return dtCore::UniqueId(prop->ToString());
+
+      dtCore::UniqueId emptyID;
+      emptyID = "";
+      return emptyID;
    }
 
    //////////////////////////////////////////////////////////////////////////

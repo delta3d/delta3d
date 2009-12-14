@@ -62,6 +62,11 @@ public:
 public slots:
 
    /**
+    * Event handler when the map has changed.
+    */
+   void OnMapChanged();
+
+   /**
    * User has pressed the tool button.
    */
    void OnToolButtonPressed();

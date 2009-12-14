@@ -22,7 +22,7 @@
 #include <sstream>
 #include <algorithm>
 
-#include <dtDirectorNodes/intvalue.h>
+#include <dtDirectorNodes/stringvalue.h>
 
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actorproperty.h>
@@ -30,45 +30,45 @@
 namespace dtDirector
 {
    ///////////////////////////////////////////////////////////////////////////////////////
-   IntValue::IntValue()
+   StringValue::StringValue()
        : ValueNode()
-       , mValue(0)
+       , mValue("")
    {
-      mName = "Integer";
+      mName = "String";
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   IntValue::~IntValue()
+   StringValue::~StringValue()
    {
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   void IntValue::Init(const NodeType& nodeType, DirectorGraph* graph)
+   void StringValue::Init(const NodeType& nodeType, DirectorGraph* graph)
    {
       ValueNode::Init(nodeType, graph);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void IntValue::BuildPropertyMap()
+   void StringValue::BuildPropertyMap()
    {
       ValueNode::BuildPropertyMap();
 
-      mProperty = new dtDAL::IntActorProperty(
+      mProperty = new dtDAL::StringActorProperty(
          "Value", "Value",
-         dtDAL::IntActorProperty::SetFuncType(this, &IntValue::SetValue),
-         dtDAL::IntActorProperty::GetFuncType(this, &IntValue::GetValue),
+         dtDAL::StringActorProperty::SetFuncType(this, &StringValue::SetValue),
+         dtDAL::StringActorProperty::GetFuncType(this, &StringValue::GetValue),
          "The value.");
       AddProperty(mProperty);
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void IntValue::SetValue(int value)
+   void StringValue::SetValue(const std::string& value)
    {
       mValue = value;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   int IntValue::GetValue()
+   const std::string& StringValue::GetValue()
    {
       return mValue;
    }

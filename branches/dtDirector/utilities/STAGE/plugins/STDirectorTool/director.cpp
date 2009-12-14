@@ -25,6 +25,7 @@
 
 #include <dtEditQt/pluginmanager.h>
 #include <dtEditQt/editordata.h>
+#include <dtEditQt/editorevents.h>
 #include <dtEditQt/dynamicresourcecontrol.h>
 #include <dtEditQt/dynamicactorcontrol.h>
 #include <dtEditQt/dynamicgameeventcontrol.h>
@@ -78,6 +79,8 @@ DirectorToolPlugin::DirectorToolPlugin(MainWindow* mw)
    }
 
    connect(mToolButton, SIGNAL(changed()), this, SLOT(OnToolButtonPressed()));
+   connect(&dtEditQt::EditorEvents::GetInstance(), SIGNAL(currentMapChanged()),
+      this, SLOT(OnMapChanged()));
 
    dtDirector::Director* director = new dtDirector::Director();
    director->Init(dtEditQt::EditorData::GetInstance().getCurrentMap());
@@ -91,6 +94,12 @@ DirectorToolPlugin::DirectorToolPlugin(MainWindow* mw)
 ////////////////////////////////////////////////////////////////////////////////
 DirectorToolPlugin::~DirectorToolPlugin()
 {
+}
+
+//////////////////////////////////////////////////////////////////////////
+void DirectorToolPlugin::OnMapChanged()
+{
+   GetDirector()->SetMap(dtEditQt::EditorData::GetInstance().getCurrentMap());
 }
 
 ////////////////////////////////////////////////////////////////////////////////

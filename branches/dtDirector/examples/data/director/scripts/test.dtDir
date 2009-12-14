@@ -2,7 +2,7 @@
 <director xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dDirector" xsi:schemaLocation="delta3dDirector director.xsd">
     <header>
         <createTimestamp>2009-12-14T12:16:35-08:00</createTimestamp>
-        <lastUpdateTimestamp>2009-12-14T12:16:35-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2009-12-14T14:21:46-08:00</lastUpdateTimestamp>
         <editorVersion>2.4.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
         <property>
@@ -66,7 +66,7 @@
                 </property>
                 <property>
                     <name>Instigator</name>
-                    <actorId>8d95bee2-ddb4-4a8c-bbbc-21f9a806c5ef</actorId>
+                    <actorId></actorId>
                 </property>
                 <property>
                     <name>EventName</name>
@@ -139,7 +139,7 @@
                     <allowmultiple>false</allowmultiple>
                     <typecheck>false</typecheck>
                     <link>
-                        <id>793a42e3-92ac-4ab7-89a7-01b30205262d</id>
+                        <id>54830cea-b993-460e-9703-880bd34a3a40</id>
                     </link>
                 </valuelink>
             </node>
@@ -170,7 +170,7 @@
                 </property>
                 <property>
                     <name>Name</name>
-                    <string>Variable</string>
+                    <string>Outside Result Int</string>
                 </property>
                 <property>
                     <name>Value</name>
@@ -178,16 +178,16 @@
                 </property>
             </node>
             <node>
-                <name>Int</name>
+                <name>Float</name>
                 <category>General</category>
-                <id>793a42e3-92ac-4ab7-89a7-01b30205262d</id>
+                <id>54830cea-b993-460e-9703-880bd34a3a40</id>
                 <property>
                     <name>Enabled</name>
                     <boolean>true</boolean>
                 </property>
                 <property>
                     <name>Comment</name>
-                    <string>2 Seconds</string>
+                    <string></string>
                 </property>
                 <property>
                     <name>LogComment</name>
@@ -197,7 +197,7 @@
                     <name>Position</name>
                     <vec2>
                         <value1>332.000000</value1>
-                        <value2>277.000000</value2>
+                        <value2>272.000000</value2>
                     </vec2>
                 </property>
                 <property>
@@ -206,7 +206,7 @@
                 </property>
                 <property>
                     <name>Value</name>
-                    <integer>2</integer>
+                    <float>2</float>
                 </property>
             </node>
         </valuenodes>

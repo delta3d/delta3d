@@ -22,7 +22,7 @@
 #include <sstream>
 #include <algorithm>
 
-#include <dtDirectorNodes/intvalue.h>
+#include <dtDirectorNodes/booleanvalue.h>
 
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actorproperty.h>
@@ -30,45 +30,45 @@
 namespace dtDirector
 {
    ///////////////////////////////////////////////////////////////////////////////////////
-   IntValue::IntValue()
+   BooleanValue::BooleanValue()
        : ValueNode()
-       , mValue(0)
+       , mValue(false)
    {
-      mName = "Integer";
+      mName = "Boolean";
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   IntValue::~IntValue()
+   BooleanValue::~BooleanValue()
    {
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   void IntValue::Init(const NodeType& nodeType, DirectorGraph* graph)
+   void BooleanValue::Init(const NodeType& nodeType, DirectorGraph* graph)
    {
       ValueNode::Init(nodeType, graph);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void IntValue::BuildPropertyMap()
+   void BooleanValue::BuildPropertyMap()
    {
       ValueNode::BuildPropertyMap();
 
-      mProperty = new dtDAL::IntActorProperty(
+      mProperty = new dtDAL::BooleanActorProperty(
          "Value", "Value",
-         dtDAL::IntActorProperty::SetFuncType(this, &IntValue::SetValue),
-         dtDAL::IntActorProperty::GetFuncType(this, &IntValue::GetValue),
+         dtDAL::BooleanActorProperty::SetFuncType(this, &BooleanValue::SetValue),
+         dtDAL::BooleanActorProperty::GetFuncType(this, &BooleanValue::GetValue),
          "The value.");
       AddProperty(mProperty);
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void IntValue::SetValue(int value)
+   void BooleanValue::SetValue(bool value)
    {
       mValue = value;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   int IntValue::GetValue()
+   bool BooleanValue::GetValue()
    {
       return mValue;
    }

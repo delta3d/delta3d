@@ -33,7 +33,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    Director::Director()
       : mModified(false)
-      , mGraph(new DirectorGraph(this))
+      , mGraph(NULL)
       , mMap(NULL)
    {
       mLogger = &dtUtil::Log::GetInstance();
@@ -47,6 +47,8 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void Director::Init(dtDAL::Map* map)
    {
+      if (!mGraph.valid()) mGraph = new DirectorGraph(this);
+
       Clear();
 
       SetMap(map);
@@ -104,11 +106,11 @@ namespace dtDirector
 
       // Create an external value node.
       dtCore::RefPtr<ValueNode> extValue = dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Value Link", "Core", subGraph).get());
-      extValue->SetName("External Connected");
+      extValue->SetValueName("External Connected");
       extValue->SetPosition(osg::Vec2(500, 300));
 
       dtCore::RefPtr<ValueNode> extValue2 = dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Value Link", "Core", subGraph).get());
-      extValue2->SetName("External Not Connected");
+      extValue2->SetValueName("External Not Connected");
       extValue2->SetPosition(osg::Vec2(600, 300));
 
       // Create our action node.
@@ -120,11 +122,11 @@ namespace dtDirector
       dtCore::RefPtr<ValueNode> valueB = dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Int", "General", subGraph).get());
       dtCore::RefPtr<ValueNode> resultValue = dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Int", "General", subGraph).get());
 
-      valueA->SetName("Int A");
+      valueA->SetValueName("Int A");
       valueA->SetPosition(osg::Vec2(200, 300));
-      valueB->SetName("Int B");
+      valueB->SetValueName("Int B");
       valueB->SetPosition(osg::Vec2(300, 300));
-      resultValue->SetName("Result Int");
+      resultValue->SetValueName("Result Int");
       resultValue->SetPosition(osg::Vec2(400, 300));
 
       // Give some default values for our A and B.

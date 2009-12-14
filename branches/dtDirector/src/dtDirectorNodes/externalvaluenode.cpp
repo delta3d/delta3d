@@ -58,16 +58,32 @@ namespace dtDirector
       // externally with any values outside of it.
       mValues.clear();
       mValues.push_back(ValueLink(this, NULL, false, false, false));
-
-      SetName(mName);
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ExternalValueNode::SetName(const std::string& name)
+   void ExternalValueNode::SetValueName(const std::string& name)
    {
-      ValueNode::SetName(name);
+      ValueNode::SetValueName(name);
 
       mValues[0].SetLabel(name);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   std::string ExternalValueNode::GetValueLabel()
+   {
+      if (mValues.size())
+      {
+         if (!mValues[0].GetLinks().empty())
+         {
+            ValueNode* valueNode = dynamic_cast<ValueNode*>(mValues[0].GetLinks()[0]);
+            if (valueNode)
+            {
+               return valueNode->GetValueLabel();
+            }
+         }
+      }
+
+      return "";
    }
 
    //////////////////////////////////////////////////////////////////////////

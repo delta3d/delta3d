@@ -33,7 +33,14 @@
 
 // Values
 #include <dtDirectorNodes/externalvaluenode.h>
+#include <dtDirectorNodes/booleanvalue.h>
 #include <dtDirectorNodes/intvalue.h>
+#include <dtDirectorNodes/floatvalue.h>
+#include <dtDirectorNodes/doublevalue.h>
+#include <dtDirectorNodes/stringvalue.h>
+#include <dtDirectorNodes/actorvalue.h>
+#include <dtDirectorNodes/resourcevalue.h>
+#include <dtDirectorNodes/vecvalue.h>
 
 
 using dtCore::RefPtr;
@@ -58,7 +65,14 @@ namespace dtDirector
 
    // Values
    RefPtr<NodeType> NodeLibraryRegistry::EXTERNAL_VALUE_NODE_TYPE(new dtDirector::NodeType("Value Link", "Core", "Links", "This node creates a value link connector in its parent graph."));
+   RefPtr<NodeType> NodeLibraryRegistry::BOOLEAN_VALUE_NODE_TYPE(new dtDirector::NodeType("Boolean", "General", "Variables", "A boolean value."));
    RefPtr<NodeType> NodeLibraryRegistry::INT_VALUE_NODE_TYPE(new dtDirector::NodeType("Int", "General", "Variables", "An integer value."));
+   RefPtr<NodeType> NodeLibraryRegistry::FLOAT_VALUE_NODE_TYPE(new dtDirector::NodeType("Float", "General", "Variables", "A float value."));
+   RefPtr<NodeType> NodeLibraryRegistry::DOUBLE_VALUE_NODE_TYPE(new dtDirector::NodeType("Double", "General", "Variables", "A double value."));
+   RefPtr<NodeType> NodeLibraryRegistry::STRING_VALUE_NODE_TYPE(new dtDirector::NodeType("String", "General", "Variables", "A string value."));
+   RefPtr<NodeType> NodeLibraryRegistry::ACTOR_VALUE_NODE_TYPE(new dtDirector::NodeType("Actor", "General", "Variables", "An actor value."));
+   RefPtr<NodeType> NodeLibraryRegistry::RESOURCE_VALUE_NODE_TYPE(new dtDirector::NodeType("Resource", "General", "Variables", "A resource value."));
+   RefPtr<NodeType> NodeLibraryRegistry::VEC_VALUE_NODE_TYPE(new dtDirector::NodeType("Vector", "General", "Variables", "A vector value."));
 
    //////////////////////////////////////////////////////////////////////////
    extern "C" NODE_LIBRARY_EXPORT dtDirector::NodePluginRegistry* CreatePluginRegistry()
@@ -92,6 +106,13 @@ namespace dtDirector
 
       // Values
       mNodeFactory->RegisterType<ExternalValueNode>(EXTERNAL_VALUE_NODE_TYPE.get());
+      mNodeFactory->RegisterType<BooleanValue>(BOOLEAN_VALUE_NODE_TYPE.get());
       mNodeFactory->RegisterType<IntValue>(INT_VALUE_NODE_TYPE.get());
+      mNodeFactory->RegisterType<FloatValue>(FLOAT_VALUE_NODE_TYPE.get());
+      mNodeFactory->RegisterType<DoubleValue>(DOUBLE_VALUE_NODE_TYPE.get());
+      mNodeFactory->RegisterType<StringValue>(STRING_VALUE_NODE_TYPE.get());
+      mNodeFactory->RegisterType<ActorValue>(ACTOR_VALUE_NODE_TYPE.get());
+      mNodeFactory->RegisterType<ResourceValue>(RESOURCE_VALUE_NODE_TYPE.get());
+      mNodeFactory->RegisterType<VecValue>(VEC_VALUE_NODE_TYPE.get());
    }
 }

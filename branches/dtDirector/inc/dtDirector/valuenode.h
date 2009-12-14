@@ -98,8 +98,10 @@ namespace dtDirector
       /**
        * Accessors for the name of the node.
        */
-      virtual void SetName(const std::string& name) {mName = name;}
-      virtual const std::string& GetName() {return mName;}
+      virtual void SetValueName(const std::string& name);
+      virtual const std::string& GetValueName();
+      virtual const std::string& GetName();
+      virtual std::string GetValueLabel();
 
       /**
        * Retrieves the property for this value.
@@ -163,6 +165,7 @@ namespace dtDirector
       virtual ~ValueNode();
 
       std::string    mName;
+      std::string    mLabel;
 
       dtDAL::ActorProperty* mProperty;
 

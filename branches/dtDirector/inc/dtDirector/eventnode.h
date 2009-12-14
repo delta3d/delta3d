@@ -115,8 +115,8 @@ namespace dtDirector
       /**
        * Accessors for the instigator property.
        */
-      void SetInstigator(const dtCore::UniqueId& id) {mInstigator = id;}
-      dtCore::UniqueId GetInstigator() {return mInstigator;}
+      void SetInstigator(const dtCore::UniqueId& id);
+      dtCore::UniqueId GetInstigator();
 
    protected:
 

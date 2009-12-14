@@ -92,6 +92,8 @@ namespace dtDirector
       {
          return std::string("Director '") + director->GetName().c_str() + "'";
       }
+
+      return "Unknown Container";
    }
 
    /////////////////////////////////////////////////////////////////////////////////
