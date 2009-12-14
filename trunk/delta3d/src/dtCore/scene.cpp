@@ -446,10 +446,9 @@ float Scene::GetHeightOfTerrain(float x, float y)
 
    if (lineSegmentIntersector->containsIntersections())
    {
-      osgUtil::LineSegmentIntersector::Intersection& intersection = lineSegmentIntersector->getFirstIntersection();
+      osgUtil::LineSegmentIntersector::Intersection intersection = lineSegmentIntersector->getFirstIntersection();
       {
          const osg::Vec3& ip = intersection.getWorldIntersectPoint();
-         const osg::Vec3& np = intersection.getWorldIntersectNormal();
          heightOfTerrain = ip.z();
       }
    }
