@@ -43,6 +43,7 @@ namespace dtDirector
       /// Actions
       static dtCore::RefPtr<dtDirector::NodeType> OUTPUT_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> OPERATION_ACTION_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> DELAY_ACTION_NODE_TYPE;
 
       /// Values
       static dtCore::RefPtr<dtDirector::NodeType> EXTERNAL_VALUE_NODE_TYPE;

@@ -84,15 +84,15 @@ namespace dtDirector
 
       // Create an outside value node.
       dtCore::RefPtr<ValueNode> outsideValue = dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Int", "General", mGraph).get());
-      outsideValue->SetPosition(osg::Vec2(200, 200));
+      outsideValue->SetPosition(osg::Vec2(300, 200));
 
       // Create a sub graph.
       DirectorGraph* subGraph = new DirectorGraph(this);
       subGraph->BuildPropertyMap();
       subGraph->mParent = mGraph;
       mGraph->mSubGraphs.push_back(subGraph);
-      subGraph->mName = "Sub Graph";
-      subGraph->SetPosition(osg::Vec2(200, 50));
+      subGraph->mName = "Macro";
+      subGraph->SetPosition(osg::Vec2(300, 50));
 
       // Create an input node.
       dtCore::RefPtr<EventNode> inputNode = dynamic_cast<dtDirector::EventNode*>(nodeManager.CreateNode("Input Link", "Core", subGraph).get());
@@ -281,6 +281,9 @@ namespace dtDirector
                   {
                      InputLink* input = output->GetLinks()[linkIndex];
                      if (!input) continue;
+
+                     // Disabled nodes are ignored.
+                     if (!input->GetOwner()->GetEnabled()) continue;
 
                      int inputCount = (int)input->GetOwner()->GetInputLinks().size();
                      int inputIndex = 0;

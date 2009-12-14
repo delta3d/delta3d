@@ -406,8 +406,12 @@ namespace dtDirector
                      // If the value link wasn't already in the node, create one instead.
                      if (!mValueLink)
                      {
-                        mNode->GetValueLinks().push_back(ValueLink(mNode.get(), mNode->GetProperty(dtUtil::XMLStringConverter(chars).ToString())));
-                        mValueLink = mNode->GetValueLink(dtUtil::XMLStringConverter(chars).ToString());
+                        dtDAL::ActorProperty* prop = mNode->GetProperty(dtUtil::XMLStringConverter(chars).ToString());
+                        if (prop)
+                        {
+                           mNode->GetValueLinks().push_back(ValueLink(mNode.get(), prop));
+                           mValueLink = mNode->GetValueLink(dtUtil::XMLStringConverter(chars).ToString());
+                        }
                      }
                   }
                }

@@ -131,6 +131,11 @@ namespace dtDirector
       void BeginThread(Node* node, int index);
 
       /**
+       * Retrieves whether there are any active threads running.
+       */
+      bool IsRunning() {return !mThreads.empty();}
+
+      /**
        * Accessors for the name of the script.
        */
       void SetName(const std::string& name) {mGraph->SetName(name);}

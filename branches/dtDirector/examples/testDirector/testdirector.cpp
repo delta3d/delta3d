@@ -42,10 +42,10 @@ public:
       dtCore::RefPtr<dtDirector::Director> director = new dtDirector::Director();
       director->Init();
 
-      director->CreateDebugScript();
+      //director->CreateDebugScript();
 
       dtDAL::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data/director");
-      director->SaveScript("test");
+      //director->SaveScript("test");
       director->LoadScript("test");
 
       dtDirector::DirectorGraph* graph = director->GetGraphRoot();
@@ -54,17 +54,18 @@ public:
          graph->GetEventNodes()[0]->Trigger();
       }
 
-      director->Update(0.5f, 0.5f);
-      director->Update(0.5f, 0.5f);
-      director->Update(0.5f, 0.5f);
-      director->Update(0.5f, 0.5f);
-      director->Update(0.5f, 0.5f);
-      director->Update(0.5f, 0.5f);
-      director->Update(0.5f, 0.5f);
+      int resultValue  = 0;
+      int extValue     = 0;
+      int outsideValue = 0;
 
-      int resultValue = director->GetGraphRoot()->mSubGraphs[0]->mValueNodes[4]->GetInt();
-      int extValue    = director->GetGraphRoot()->mSubGraphs[0]->mValueNodes[0]->GetInt();
-      int outsideValue= director->GetGraphRoot()->mValueNodes[0]->GetInt();
+      while (director->IsRunning())
+      {
+         director->Update(0.5f, 0.5f);
+
+         resultValue  = director->GetGraphRoot()->mSubGraphs[0]->mValueNodes[4]->GetInt();
+         extValue     = director->GetGraphRoot()->mSubGraphs[0]->mValueNodes[0]->GetInt();
+         outsideValue = director->GetGraphRoot()->mValueNodes[0]->GetInt();
+      }
    }
 
 protected:

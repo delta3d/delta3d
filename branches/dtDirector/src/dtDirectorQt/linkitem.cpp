@@ -247,6 +247,7 @@ namespace dtDirector
                if (hoverList[index] == this)
                {
                   Disconnect();
+                  mScene->Refresh();
                   break;
                }
             }
@@ -615,6 +616,7 @@ namespace dtDirector
                if (hoverList[index] == this)
                {
                   Disconnect();
+                  mScene->Refresh();
                   break;
                }
             }

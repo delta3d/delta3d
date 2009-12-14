@@ -19,26 +19,25 @@
  * Author: Jeff P. Houde
  */
 
-#ifndef OPERATION_ACTION_NODE
-#define OPERATION_ACTION_NODE
+#ifndef DELAY_ACTION_NODE
+#define DELAY_ACTION_NODE
 
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <dtDirector/actionnode.h>
 #include <dtDirectorNodes/nodelibraryexport.h>
-#include <dtDAL/actorproperty.h>
 
 namespace dtDirector
 {
    ////////////////////////////////////////////////////////////////////////////////
-   class NODE_LIBRARY_EXPORT OperationAction: public ActionNode
+   class NODE_LIBRARY_EXPORT DelayAction: public ActionNode
    {
    public:
 
       /**
        * Constructor.
        */
-      OperationAction();
+      DelayAction();
 
       /**
        * Initializes the Node.
@@ -76,33 +75,29 @@ namespace dtDirector
       /**
        * Accessors for property values.
        */
-      void SetA(double value);
-      double GetA();
+      void SetDelay(float value);
+      float GetDelay();
 
-      void SetB(double value);
-      double GetB();
-
-      void SetResult(double value);
-      double GetResult();
-
+      void SetUseSimTime(bool value);
+      bool GetUseSimTime();
 
    protected:
 
       /**
        * Destructor.
        */
-      ~OperationAction();
+      ~DelayAction();
 
    private:
 
-      double mValueA;
-      double mValueB;
-      double mResult;
-      
-      dtCore::RefPtr<dtDAL::ActorProperty> mResultProp;
+      float mDelay;
+      float mElapsedTime;
+      bool  mUseSimTime;
+
+      bool  mIsActive;
    };
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#endif // OPERATION_ACTION_NODE
+#endif // DELAY_ACTION_NODE
