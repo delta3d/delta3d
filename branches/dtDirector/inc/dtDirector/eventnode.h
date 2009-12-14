@@ -59,21 +59,6 @@ namespace dtDirector
       virtual void Init(const NodeType& nodeType, DirectorGraph* graph);
 
       /**
-       * Tests whether the event should trigger.
-       *
-       * @param[in]  outputIndex  The output to trigger.
-       * @param[in]  instigator   The instigating actor ID.
-       */
-      virtual bool Test(int outputIndex, const dtDAL::ActorProxy* instigator = NULL);
-
-      /**
-       * Triggers the event.
-       *
-       * @param[in]  outputIndex  The output to trigger.
-       */
-      void Trigger(int outputIndex);
-
-      /**
        * This method is called in init, which instructs the node
        * to create its properties.  Methods implementing this should
        * be sure to call their parent class's buildPropertyMap method to
@@ -86,12 +71,33 @@ namespace dtDirector
       virtual void BuildPropertyMap();
 
       /**
-       * Updates the node.
+       * Triggers the event.
        *
-       * @param[in]  simDelta  The simulation time step.
-       * @param[in]  delta     The real time step.
+       * @param[in]  outputName  The output to trigger.
+       * @param[in]  instigator  The instigating actor ID.
        */
-      virtual void Update(float simDelta, float delta);
+      void Trigger(const std::string& outputName = "Out", const dtDAL::ActorProxy* instigator = NULL);
+
+      /**
+       * Tests whether the event should trigger.
+       *
+       * @param[in]  outputName  The output to trigger.
+       * @param[in]  instigator  The instigating actor ID.
+       */
+      virtual bool Test(const std::string& outputName, const dtDAL::ActorProxy* instigator = NULL);
+
+      /**
+       * Updates the node.
+       * @note  Parent implementation will auto activate any trigger
+       *        with the "Out" label by default.
+       *
+       * @param[in]  simDelta    The simulation time step.
+       * @param[in]  delta       The real time step.
+       * @param[in]  inputIndex  The index to the active input.
+       *
+       * @return     True if the current node should remain active.
+       */
+      virtual bool Update(float simDelta, float delta, int inputIndex);
 
       /**
        * Retrieves whether the UI should expose input links

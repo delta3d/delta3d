@@ -486,7 +486,7 @@ namespace dtDirector
                // Link Name.
                BeginElement(dtDAL::MapXMLConstants::NAME_ELEMENT);
                {
-                  AddCharacters(value.GetName());
+                  AddCharacters(value.GetLabel());
                }
                EndElement(); // End Link Name.
 

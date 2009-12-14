@@ -48,10 +48,19 @@ public:
       director->SaveScript("test");
       director->LoadScript("test");
 
-      director->GetGraphRoot()->GetEventNodes()[0]->Trigger(0);
+      dtDirector::DirectorGraph* graph = director->GetGraphRoot();
+      if (graph && !graph->GetEventNodes().empty())
+      {
+         graph->GetEventNodes()[0]->Trigger();
+      }
 
-      director->Update(0, 0);
-      director->Update(0, 0);
+      director->Update(0.5f, 0.5f);
+      director->Update(0.5f, 0.5f);
+      director->Update(0.5f, 0.5f);
+      director->Update(0.5f, 0.5f);
+      director->Update(0.5f, 0.5f);
+      director->Update(0.5f, 0.5f);
+      director->Update(0.5f, 0.5f);
 
       int resultValue = director->GetGraphRoot()->mSubGraphs[0]->mValueNodes[4]->GetInt();
       int extValue    = director->GetGraphRoot()->mSubGraphs[0]->mValueNodes[0]->GetInt();

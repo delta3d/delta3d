@@ -131,10 +131,8 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void OperationAction::OnInputActivated(int inputIndex)
+   bool OperationAction::Update(float simDelta, float delta, int inputIndex)
    {
-      ActionNode::OnInputActivated(inputIndex);
-
       // Perform math!
       double left = GetDouble("A");
       double right = GetDouble("B");
@@ -157,6 +155,8 @@ namespace dtDirector
       }
 
       SetDouble(result, "Result");
+
+      return ActionNode::Update(simDelta, delta, inputIndex);
    }
 
    //////////////////////////////////////////////////////////////////////////

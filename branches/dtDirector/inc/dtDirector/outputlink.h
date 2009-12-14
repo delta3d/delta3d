@@ -88,6 +88,14 @@ namespace dtDirector
       void Activate();
 
       /**
+       * This will retrieve the total activation count for the
+       * node and will then clear that count.
+       * 
+       * @return  Activation count.
+       */
+      int Test();
+
+      /**
        * Connects this output to an input.
        *
        * @param[in]  input  The input link to connect it to.
@@ -107,9 +115,11 @@ namespace dtDirector
 
    private:
 
-        std::string  mName;
+      std::string  mName;
 
-        Node*        mOwner;
+      int          mActiveCount;
+
+      Node*        mOwner;
 
 #pragma warning (push)
 #pragma warning (disable:4251)

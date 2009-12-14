@@ -34,7 +34,6 @@ namespace dtDirector
    ///////////////////////////////////////////////////////////////////////////////////////
    EventNode::EventNode()
        : Node()
-       , mInstigator("")
    {
    }
 
@@ -53,13 +52,48 @@ namespace dtDirector
       mOutputs.push_back(OutputLink(this, "Out"));
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void EventNode::BuildPropertyMap()
+   {
+      Node::BuildPropertyMap();
+      mValues.clear();
+
+      // Create the instigator property.
+      if (UsesInstigator())
+      {
+         dtDAL::ActorIDActorProperty* instigatorProp =
+            new dtDAL::ActorIDActorProperty("Instigator", "Instigator", 
+            dtDAL::ActorIDActorProperty::SetFuncType(this, &EventNode::SetInstigator),
+            dtDAL::ActorIDActorProperty::GetFuncType(this, &EventNode::GetInstigator),
+            dtDAL::ActorIDActorProperty::GetMapType(GetDirector(), &Director::GetMap),
+            "", "The Instigator that can trigger this event.");
+         AddProperty(instigatorProp);
+
+         mValues.push_back(ValueLink(this, instigatorProp, false, true, true));
+      }
+   }
+
    //////////////////////////////////////////////////////////////////////////
-   bool EventNode::Test(int outputIndex, const dtDAL::ActorProxy* instigator)
+   void EventNode::Trigger(const std::string& outputName, const dtDAL::ActorProxy* instigator)
    {
       // Can't trigger a disabled event.
-      if (!GetEnabled()) return false;
+      if (!GetEnabled()) return;
 
-      if (outputIndex < (int)mOutputs.size())
+      if (Test(outputName, instigator))
+      {
+         // Begin a new thread.
+         GetDirector()->BeginThread(this, 0);
+
+         OutputLink* link = GetOutputLink(outputName);
+         if (link) link->Activate();
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool EventNode::Test(const std::string& outputName, const dtDAL::ActorProxy* instigator)
+   {
+      OutputLink* link = GetOutputLink(outputName);
+      if (link)
       {
          bool bFound = false;
          bool bValidValue = false;
@@ -71,7 +105,7 @@ namespace dtDirector
             for (int index = 0; index < count; index++)
             {
                dtCore::UniqueId id = GetActorID("Instigator", index);
-               if (id.ToString() != "")
+               if (id != mInstigator)
                {
                   // The test is valid if we have valid connections
                   // to the instigator link.
@@ -102,39 +136,9 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void EventNode::Trigger(int outputIndex)
+   bool EventNode::Update(float simDelta, float delta, int inputIndex)
    {
-      if (outputIndex < (int)mOutputs.size())
-      {
-         mOutputs[outputIndex].Activate();
-      }
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void EventNode::BuildPropertyMap()
-   {
-      Node::BuildPropertyMap();
-      mValues.clear();
-
-      // Create the instigator property.
-      if (UsesInstigator())
-      {
-         dtDAL::ActorIDActorProperty* instigatorProp =
-            new dtDAL::ActorIDActorProperty("Instigator", "Instigator", 
-            dtDAL::ActorIDActorProperty::SetFuncType(this, &EventNode::SetInstigator),
-            dtDAL::ActorIDActorProperty::GetFuncType(this, &EventNode::GetInstigator),
-            dtDAL::ActorIDActorProperty::GetMapType(GetDirector(), &Director::GetMap),
-            "", "The Instigator that can trigger this event.");
-         AddProperty(instigatorProp);
-
-         mValues.push_back(ValueLink(this, instigatorProp, false, true, true));
-      }
-   }
-
-   //////////////////////////////////////////////////////////////////////////
-   void EventNode::Update(float simDelta, float delta)
-   {
-      Node::Update(simDelta, delta);
+      return false;
    }
 
    //////////////////////////////////////////////////////////////////////////

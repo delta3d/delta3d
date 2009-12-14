@@ -60,15 +60,17 @@ namespace dtDirector
       virtual void BuildPropertyMap();
 
       /**
-       * Event handler when an input of this node has
-       * been activated.
+       * Updates the node.
+       * @note  Parent implementation will auto activate any trigger
+       *        with the "Out" label by default.
        *
-       * @param[in]  inputIndex  The input that was activated.
+       * @param[in]  simDelta    The simulation time step.
+       * @param[in]  delta       The real time step.
+       * @param[in]  inputIndex  The index to the active input.
        *
-       * @note  This should be overloaded to provide functionality
-       *         of the node when an input has been activated.
+       * @return     True if the current node should remain active.
        */
-      virtual void OnInputActivated(int inputIndex);
+      virtual bool Update(float simDelta, float delta, int inputIndex);
 
       /**
        * Accessors for property values.

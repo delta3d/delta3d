@@ -33,6 +33,7 @@ namespace dtDirector
    ///////////////////////////////////////////////////////////////////////////////////////
    OutputLink::OutputLink(Node* owner, const std::string& name)
       : mOwner(owner)
+      , mActiveCount(0)
    {
       SetName(name);
    }
@@ -59,15 +60,15 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void OutputLink::Activate()
    {
-      // Iterate and activate all input linkes that are connected.
-      for (int linkIndex = 0; linkIndex < (int)mLinks.size(); linkIndex++)
-      {
-         InputLink* link = mLinks[linkIndex];
-         if (link)
-         {
-            link->Activate();
-         }
-      }
+      mActiveCount++;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   int OutputLink::Test()
+   {
+      int result = mActiveCount;
+      mActiveCount = 0;
+      return result;
    }
 
    //////////////////////////////////////////////////////////////////////////

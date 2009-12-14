@@ -256,7 +256,85 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void Director::Update(float simDelta, float delta)
    {
-      mGraph->Update(simDelta, delta);
+      int count = (int)mThreads.size();
+      for (int index = 0; index < count; index++)
+      {
+         ThreadData& data = mThreads[index];
+         if (data.node)
+         {
+            Node* currentNode = data.node;
+
+            // If the update result is true, then we want to immediately
+            // create a new thread on any new events.  Otherwise, our first
+            // new thread will be a continuation of the current active thread.
+            bool makeNewThread = currentNode->Update(simDelta, delta, data.index);
+
+            // Check for activated outputs and create new threads for them.
+            int outputCount = (int)currentNode->GetOutputLinks().size();
+            for (int outputIndex = 0; outputIndex < outputCount; outputIndex++)
+            {
+               OutputLink* output = &currentNode->GetOutputLinks()[outputIndex];
+               if (int activeCount = output->Test())
+               {
+                  int linkCount = (int)output->GetLinks().size();
+                  for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
+                  {
+                     InputLink* input = output->GetLinks()[linkIndex];
+                     if (!input) continue;
+
+                     int inputCount = (int)input->GetOwner()->GetInputLinks().size();
+                     int inputIndex = 0;
+                     for (inputIndex = 0; inputIndex < inputCount; inputIndex++)
+                     {
+                        if (input == &input->GetOwner()->GetInputLinks()[inputIndex])
+                        {
+                           break;
+                        }
+                     }
+
+                     if (inputIndex < inputCount)
+                     {
+                        for (int activeIndex = 0; activeIndex < activeCount; activeIndex++)
+                        {
+                           // Create a new thread.
+                           if (makeNewThread)
+                           {
+                              BeginThread(input->GetOwner(), inputIndex);
+                           }
+                           // If we are continuing the current thread, continue it.
+                           else
+                           {
+                              data.node = input->GetOwner();
+                              data.index = inputIndex;
+
+                              // From now on, all new active outputs create their own threads.
+                              makeNewThread = true;
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+
+            // If we have not made a new thread yet, it means we need to remove
+            // the current.
+            if (!makeNewThread)
+            {
+               mThreads.erase(mThreads.begin() + index);
+               index--;
+               count--;
+            }
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void Director::BeginThread(Node* node, int index)
+   {
+      ThreadData data;
+      data.node = node;
+      data.index = index;
+      mThreads.push_back(data);
    }
 
    //////////////////////////////////////////////////////////////////////////

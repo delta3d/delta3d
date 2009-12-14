@@ -72,17 +72,9 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void InputNode::Update(float simDelta, float delta)
+   bool InputNode::Update(float simDelta, float delta, int inputIndex)
    {
-      if (!GetEnabled()) return;
-
-      EventNode::Update(simDelta, delta);
-
-      // Check to see if our input has been activated.
-      if (mInputs.size() && mInputs[0].Test())
-      {
-         if (mOutputs.size()) mOutputs[0].Activate();
-      }
+      return Node::Update(simDelta, delta, inputIndex);
    }
 
    //////////////////////////////////////////////////////////////////////////

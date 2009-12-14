@@ -85,11 +85,6 @@ namespace dtDirector
       std::vector<OutputLink*>& GetLinks() {return mLinks;}
 
       /**
-       * Activates the input.
-       */
-      void Activate();
-
-      /**
        * Connects this input to an output.
        *
        * @param[in]  output  The output link to connect it to.
@@ -107,21 +102,12 @@ namespace dtDirector
        */
       bool Disconnect(OutputLink* output = NULL);
 
-      /**
-       * Tests whether the input is activated.
-       * This will automatically deactivate the input after.
-       *
-       * @return  True if the link is active.
-       */
-      bool Test();
-
       // Output Link needs access to the mLinks list.
       friend class OutputLink;
 
    private:
 
       std::string mName;
-      bool        mActivated;
 
       Node*       mOwner;
 

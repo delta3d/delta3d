@@ -65,70 +65,12 @@ namespace dtDirector
        */
       virtual void BuildPropertyMap();
 
-      /**
-       * Updates the node.
-       *
-       * @param[in]  simDelta  The simulation time step.
-       * @param[in]  delta     The real time step.
-       *
-       * @note  This should not be overloaded, instead, use the
-       *         ActiveUpdate method.
-       *
-       * @note  This method will test all inputs and call
-       *         the OnInputActivated method for all
-       *         active inputs.
-       *
-       * @note  Any time an input is active, the mActive flag
-       *         on the node will also become active.  While
-       *         the node is active, this will call the ActiveUpdate
-       *         method until that method returns false.
-       */
-      virtual void Update(float simDelta, float delta);
-
-      /**
-       * Updates the node while it is active.
-       *
-       * @param[in]  simDelta  The simulation time step.
-       * @param[in]  delta     The real time step.
-       *
-       * @return     True if the node should remain active.
-       *
-       * @note  This method is called by the Update method
-       *         only if the bActive flag is set true.
-       *
-       * @note  By default, this call will return false to
-       *         deactivate the node.
-       *
-       * @note  This method can be overloaded by custom nodes
-       *         to provide continuous updates while the node
-       *         is active.
-       */
-      virtual bool ActiveUpdate(float simDelta, float delta);
-
-      /**
-       * Event handler when an input of this node has
-       * been activated.
-       *
-       * @param[in]  inputIndex  The input that was activated.
-       *
-       * @note  This should be overloaded to provide functionality
-       *         of the node when an input has been activated.
-       *
-       * @note  By default, this method will activate the first
-       *         output.  Inherited actions can choose not to
-       *         perform this parent implementation if this result
-       *         is not desired.
-       */
-      virtual void OnInputActivated(int inputIndex);
-
    protected:
 
       /**
        *	Protected Destructor.  dtCore::RefPtr will handle its destruction.
        */
       virtual ~ActionNode();
-
-      bool    mActive;
 
    private:
 

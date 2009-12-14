@@ -97,11 +97,16 @@ namespace dtDirector
 
       /**
        * Updates the node.
+       * @note  Parent implementation will auto activate any trigger
+       *        with the "Out" label by default.
        *
-       * @param[in]  simDelta  The simulation time step.
-       * @param[in]  delta     The real time step.
+       * @param[in]  simDelta    The simulation time step.
+       * @param[in]  delta       The real time step.
+       * @param[in]  inputIndex  The index to the active input.
+       *
+       * @return     True if the current node should remain active.
        */
-      virtual void Update(float simDelta, float delta);
+      virtual bool Update(float simDelta, float delta, int inputIndex);
 
       /**
        * Retrieves the type of this node.

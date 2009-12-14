@@ -32,7 +32,6 @@ namespace dtDirector
    ///////////////////////////////////////////////////////////////////////////////////////
    ActionNode::ActionNode()
        : Node()
-       , mActive(false)
    {
    }
 
@@ -59,44 +58,7 @@ namespace dtDirector
    {
       Node::BuildPropertyMap();
    }
-
-   //////////////////////////////////////////////////////////////////////////
-   void ActionNode::Update(float simDelta, float delta)
-   {
-      Node::Update(simDelta, delta);
-
-      // Skip the udpate if this node is disabled.
-      if (!GetEnabled()) return;
-
-      // If this node is active, perform an active update.
-      if (mActive)
-      {
-         mActive = ActiveUpdate(simDelta, delta);
-      }
-
-      // Test all inputs for activation.
-      for (int inputIndex = 0; inputIndex < (int)mInputs.size(); inputIndex++)
-      {
-         if (mInputs[inputIndex].Test())
-         {
-            OnInputActivated(inputIndex);
-            mActive = true;
-         }
-      }
-   }
-
-   //////////////////////////////////////////////////////////////////////////
-   bool ActionNode::ActiveUpdate(float simDelta, float delta)
-   {
-      return false;
-   }
-
-   //////////////////////////////////////////////////////////////////////////
-   void ActionNode::OnInputActivated(int inputIndex)
-   {
-      if (mOutputs.size() > 0)
-      {
-         mOutputs[0].Activate();
-      }
-   }
 }
+
+//////////////////////////////////////////////////////////////////////////
+

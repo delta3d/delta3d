@@ -120,7 +120,15 @@ namespace dtDirector
        * @param[in]  simDelta  The simulation time step.
        * @param[in]  delta     The real time step.
        */
-      virtual void Update(float simDelta, float delta);
+      void Update(float simDelta, float delta);
+
+      /**
+       * Starts a new update thread.
+       *
+       * @param[in]  node   The starting node to update.
+       * @param[in]  index  The index of the input being activated.
+       */
+      void BeginThread(Node* node, int index);
 
       /**
        * Accessors for the name of the script.
@@ -252,6 +260,14 @@ namespace dtDirector
       virtual ~Director();
 
    private:
+
+      // Execution threads.
+      struct ThreadData
+      {
+         Node* node;
+         int   index;
+      };
+      std::vector<ThreadData> mThreads;
 
       // Core Info.
       std::string mDescription;

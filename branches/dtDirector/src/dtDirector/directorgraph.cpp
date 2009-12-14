@@ -70,28 +70,6 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void DirectorGraph::Update(float simDelta, float delta)
-   {
-      // Update all Event nodes.
-      for (int nodeIndex = 0; nodeIndex < (int)mEventNodes.size(); nodeIndex++)
-      {
-         mEventNodes[nodeIndex]->Update(simDelta, delta);
-      }
-
-      // Update all Action nodes.
-      for (int nodeIndex = 0; nodeIndex < (int)mActionNodes.size(); nodeIndex++)
-      {
-         mActionNodes[nodeIndex]->Update(simDelta, delta);
-      }
-
-      for (int graphIndex = 0; graphIndex < (int)mSubGraphs.size(); graphIndex++)
-      {
-         DirectorGraph* graph = mSubGraphs[graphIndex];
-         if (graph && graph->GetEnabled()) graph->Update(simDelta, delta);
-      }
-   }
-
-   //////////////////////////////////////////////////////////////////////////
    DirectorGraph* DirectorGraph::GetGraph(const dtCore::UniqueId& id)
    {
       if (GetID() == id) return this;

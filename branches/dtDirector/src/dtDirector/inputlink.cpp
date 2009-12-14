@@ -33,7 +33,6 @@ namespace dtDirector
    ///////////////////////////////////////////////////////////////////////////////////////
    InputLink::InputLink(Node* owner, const std::string& name)
       : mOwner(owner)
-      , mActivated(false)
    {
       SetName(name);
    }
@@ -55,12 +54,6 @@ namespace dtDirector
    const std::string& InputLink::GetName() const
    {
       return mName;
-   }
-
-   //////////////////////////////////////////////////////////////////////////
-   void InputLink::Activate()
-   {
-      mActivated = true;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -89,13 +82,5 @@ namespace dtDirector
       }
 
       return false;
-   }
-
-   //////////////////////////////////////////////////////////////////////////
-   bool InputLink::Test()
-   {
-      bool bActive = mActivated;
-      mActivated = false;
-      return bActive;
    }
 }

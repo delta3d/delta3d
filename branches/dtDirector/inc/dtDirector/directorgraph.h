@@ -61,14 +61,6 @@ namespace dtDirector
       virtual void BuildPropertyMap(bool isParent = false);
 
       /**
-       * Updates all nodes in the graph.
-       *
-       * @param[in]  simDelta  Elapsed sim time.
-       * @param[in]  delta     Elapsed real time.
-       */
-      void Update(float simDelta, float delta);
-
-      /**
        * Accessors for the Graph ID.
        */
       void SetID(const dtCore::UniqueId& id) {mID = id;}
