@@ -44,6 +44,7 @@ namespace osg
 
 namespace dtCore
 {
+   class DeltaDrawable;
 
    /**
     * Defines the various exceptions that may be thrown when working with the shaders in the
@@ -271,6 +272,17 @@ namespace dtCore
           *    be added to the list of shaders already in the manager. (true by default).
           */
          void LoadShaderDefinitions(const std::string& fileName, bool merge = true);
+
+         /** 
+          * Loads the supplied shader file and applies the first ShaderProgram in 
+          * the first ShaderGroup to the supplied DeltaDrawable.
+          * @param drawable The DeltaDrawable to apply the ShaderProgram to
+          * @param shaderResource The shader definition file to load. Uses similar 
+          * format as the file supplied to LoadShaderDefinitions(), but will only
+          * use the first ShaderProgram of the first ShaderGroup found.
+          */
+         void LoadAndAssignShader(dtCore::DeltaDrawable& drawable,
+                                  const std::string& shaderResource);
 
          /**
           * This method is kind of weird and should be used ONLY for testing. It 

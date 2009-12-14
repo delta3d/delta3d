@@ -25,6 +25,7 @@
 #include <dtCore/refptr.h>
 #include <dtCore/shaderparamtexture.h>
 #include <string>
+#include <vector>
 
 #include <xercesc/dom/DOMElement.hpp>
 
@@ -32,6 +33,7 @@ namespace dtCore
 {
    class ShaderProgram;
    class ShaderGroup;
+   class ShaderParameter;
 
    class DT_CORE_EXPORT ShaderXML
    {
@@ -52,6 +54,14 @@ namespace dtCore
           * @param fileName Full path to the xml file to parse.
           */
          void ParseXML(const std::string& fileName);
+
+         typedef std::vector<dtCore::RefPtr<ShaderGroup> >  ShaderContainer;
+
+         /** 
+          * Get the container of ShaderGroups defined from the loaded file
+          * @return The container of loaded ShaderGroups (could be empty)
+          */
+         const ShaderContainer& GetLoadedShaders() const;
 
       private:
 
@@ -257,6 +267,8 @@ namespace dtCore
          //Disable the copy constructor and assignment operator.
          ShaderXML(const ShaderXML& rhs) { }
          ShaderXML& operator=(const ShaderXML& rhs) { return *this; }
+
+         ShaderContainer mShaderGroupContainer; ///<container of loaded ShaderGroups
    };
 }
 

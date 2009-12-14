@@ -20,7 +20,7 @@
  */
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/shaderxml.h>
-#include <dtCore/shadermanager.h>
+#include <dtCore/shadermanager.h> //needed for exception defintions
 #include <dtCore/shaderprogram.h>
 #include <dtCore/shadergroup.h>
 #include <dtCore/shaderparamtexture1d.h>
@@ -32,7 +32,9 @@
 #include <dtCore/shaderparamint.h>
 #include <dtCore/shaderparamoscillator.h>
 
+#include <dtUtil/exception.h>
 #include <dtUtil/xercesutils.h>
+#include <dtUtil/xerceserrorhandler.h>
 
 #include <xercesc/dom/DOM.hpp>
 #include <xercesc/dom/DOMDocument.hpp>
@@ -161,12 +163,15 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    void ShaderXML::ParseXML(const std::string& fileName)
    {
-      xercesc::XercesDOMParser parser;
+      mShaderGroupContainer.clear();
 
+      xercesc::XercesDOMParser parser;
+      dtUtil::XercesErrorHandler errorHandler;
       parser.setValidationScheme(xercesc::XercesDOMParser::Val_Never);
       parser.setDoNamespaces(false);
       parser.setDoSchema(false);
       parser.setLoadExternalDTD(false);
+      parser.setErrorHandler(&errorHandler);
 
       try
       {
@@ -273,7 +278,8 @@ namespace dtCore
          }
       }
 
-      ShaderManager::GetInstance().AddShaderGroupPrototype(*newGroup);
+      //store the ShaderGroup in our container
+      mShaderGroupContainer.push_back(newGroup);
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -1155,5 +1161,11 @@ namespace dtCore
       {
          return NULL;
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const ShaderXML::ShaderContainer& ShaderXML::GetLoadedShaders() const
+   {
+      return mShaderGroupContainer;
    }
 }
