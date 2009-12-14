@@ -95,6 +95,17 @@ namespace dtDirector
       UndoManager* GetUndoManager() {return mUndoManager;}
 
       /**
+       * Retrieves actions.
+       */
+      QAction* GetParentAction() {return mParentAction;}
+      QAction* GetUndoAction()   {return mUndoAction;}
+      QAction* GetRedoAction()   {return mRedoAction;}
+      QAction* GetCutAction()    {return mCutAction;}
+      QAction* GetCopyAction()   {return mCopyAction;}
+      QAction* GetPasteAction()  {return mPasteAction;}
+      QAction* GetDeleteAction() {return mDeleteAction;}
+
+      /**
        * Refreshes the entire view.
        */
       void Refresh();
@@ -208,6 +219,10 @@ namespace dtDirector
       QAction*  mUndoAction;
       QAction*  mRedoAction;
       QAction*  mDeleteAction;
+
+      QAction*  mCutAction;
+      QAction*  mCopyAction;
+      QAction*  mPasteAction;
 
       // View Actions.
       QAction*  mViewPropertiesAction;

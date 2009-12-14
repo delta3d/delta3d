@@ -365,6 +365,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void EditorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
    {
+      mDragging = false;
       mHasDragged = false;
       bool bMultiSelect = false;
       if (event->modifiers() == Qt::ShiftModifier ||
@@ -372,6 +373,7 @@ namespace dtDirector
       {
          bMultiSelect = true;
          mView->setDragMode(QGraphicsView::RubberBandDrag);
+         mMenuPos = event->screenPos();
       }
       else if(!itemAt(event->scenePos()))
       {
@@ -382,10 +384,6 @@ namespace dtDirector
          // drag mode so it does not un-select all selected
          // nodes.
          mView->setDragMode(QGraphicsView::ScrollHandDrag);
-      }
-      else
-      {
-         mDragging = false;
       }
 
       // If we are not mouse clicking on a node...
@@ -474,6 +472,13 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void EditorScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
    {
+      // If we are rubber band selecting, we don't want a context menu.
+      if (!mDragging && mMenuPos != event->screenPos())
+      {
+         event->accept();
+         return;
+      }
+
       QGraphicsScene::contextMenuEvent(event);
 
       // If none of the child nodes have accepted this event, then
@@ -481,6 +486,14 @@ namespace dtDirector
       if (!event->isAccepted())
       {
          QMenu menu;
+         
+         // If this is a child graph, show the goto parent option.
+         if (mGraph->mParent)
+         {
+            menu.addAction(mEditor->GetParentAction());
+            menu.addSeparator();
+         }
+
          QMenu* nodeMenu = new QMenu("Create Node");
 
          if (nodeMenu)
@@ -547,6 +560,11 @@ namespace dtDirector
             connect(nodeMenu, SIGNAL(triggered(QAction*)),
                this, SLOT(OnCreateNodeEvent(QAction*)));
          }
+
+         // Add the undo and redo options.
+         menu.addSeparator();
+         menu.addAction(mEditor->GetUndoAction());
+         menu.addAction(mEditor->GetRedoAction());
 
          connect(&menu, SIGNAL(triggered(QAction*)),
             this, SLOT(OnMenuEvent(QAction*)));

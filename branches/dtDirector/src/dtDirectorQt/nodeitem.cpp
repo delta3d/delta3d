@@ -156,7 +156,6 @@ namespace dtDirector
        , mTitle(NULL)
        , mTitleBG(NULL)
        , mComment(NULL)
-       , mContextMenu(NULL)
        , mNodeWidth(MIN_NODE_WIDTH)
        , mNodeHeight(MIN_NODE_HEIGHT)
        , mTextHeight(0.0f)
@@ -1055,12 +1054,13 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void NodeItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
    {
-      if (mContextMenu)
-      {
-         scene()->clearSelection();
-         setSelected(true);
-         mContextMenu->exec(event->screenPos());
-      }
+      QMenu menu;
+      menu.addAction(mScene->GetEditor()->GetCutAction());
+      menu.addAction(mScene->GetEditor()->GetCopyAction());
+      menu.addAction(mScene->GetEditor()->GetPasteAction());
+      menu.addSeparator();
+      menu.addAction(mScene->GetEditor()->GetDeleteAction());
+      menu.exec(event->screenPos());
    }
 
    //////////////////////////////////////////////////////////////////////////

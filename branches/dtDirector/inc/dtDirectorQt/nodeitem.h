@@ -23,6 +23,7 @@
 #define DIRECTORQT_NODE_ITEM
 
 #include <QtGui/QGraphicsPolygonItem>
+#include <QtGui/QWidget>
 
 #include <dtDirector/node.h>
 
@@ -90,8 +91,11 @@ namespace dtDirector
    /**
     * Draws a node in the graphics view.
     */
-   class NodeItem : public QGraphicsPolygonItem
+   class NodeItem
+      : public QWidget
+      , public QGraphicsPolygonItem
    {
+      Q_OBJECT
    public:
 
       /**
@@ -326,6 +330,15 @@ namespace dtDirector
       QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
       /**
+       * Re-implementations of functions that are ambiguous to both
+       * inherited classes.
+       */
+      void setToolTip(const QString &tip) {QGraphicsPolygonItem::setToolTip(tip);}
+      void mousePressEvent(QGraphicsSceneMouseEvent *event) {QGraphicsPolygonItem::mousePressEvent(event);}
+      void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {QGraphicsPolygonItem::mouseReleaseEvent(event);}
+      void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) {QGraphicsPolygonItem::mouseDoubleClickEvent(event);}
+
+      /**
        * Connects an output to an input.
        *
        * @param[in]  output  The output.
@@ -351,7 +364,6 @@ namespace dtDirector
       std::string  mOldPosition;
 
       QPolygonF   mPolygon;
-      QMenu*      mContextMenu;
 
       QGraphicsTextItem* mTitle;
       QGraphicsRectItem* mTitleBG;

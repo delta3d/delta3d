@@ -31,6 +31,8 @@
 
 #include <QtGui/QGraphicsScene>
 #include <QtGui/QGraphicsSceneMouseEvent>
+#include <QtGui/QContextMenuEvent>
+#include <QtGui/QMenu>
 
 
 namespace dtDirector
@@ -59,6 +61,69 @@ namespace dtDirector
       else
       {
          setPen(QPen(Qt::black, mLineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void InputLinkItem::Disconnect(OutputLink* output)
+   {
+      InputLink* input = mNodeItem->GetInputs()[mLinkIndex].link;
+      if (!input) return;
+
+      if (!output)
+      {
+         if (input->GetLinks().size())
+         {
+            mScene->GetEditor()->GetUndoManager()->BeginMultipleEvents();
+
+            while (!input->GetLinks().empty())
+            {
+               output = input->GetLinks()[0];
+               Disconnect(output);
+            }
+
+            mScene->GetEditor()->GetUndoManager()->EndMultipleEvents();
+         }
+      }
+      else
+      {
+         if (input->Disconnect(output))
+         {
+            dtCore::RefPtr<UndoLinkEvent> event = new UndoLinkEvent(
+               mScene->GetEditor(),
+               UndoLinkEvent::INPUT_LINK,
+               input->GetOwner()->GetID(),
+               output->GetOwner()->GetID(),
+               input->GetName(),
+               output->GetName(),
+               false);
+            mScene->GetEditor()->GetUndoManager()->AddEvent(event);
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void InputLinkItem::Disconnect(QAction* action)
+   {
+      if (action->text() == "Disconnect All")
+      {
+         Disconnect();
+         mScene->Refresh();
+      }
+      else
+      {
+         InputLink* input = mNodeItem->GetInputs()[mLinkIndex].link;
+         if (!input) return;
+         int count = (int)input->GetLinks().size();
+         for (int index = 0; index < count; index++)
+         {
+            if (input->GetLinks()[index]->GetName() == action->statusTip().toStdString())
+            {
+               Disconnect(input->GetLinks()[index]);
+               mScene->Refresh();
+               break;
+            }
+         }
       }
    }
 
@@ -181,32 +246,7 @@ namespace dtDirector
             {
                if (hoverList[index] == this)
                {
-                  InputLink* input = mNodeItem->GetInputs()[mLinkIndex].link;
-
-                  if (input->GetLinks().size())
-                  {
-                     mScene->GetEditor()->GetUndoManager()->BeginMultipleEvents();
-
-                     while (!input->GetLinks().empty())
-                     {
-                        OutputLink* output = input->GetLinks()[0];
-                        if (input->Disconnect(output))
-                        {
-                           dtCore::RefPtr<UndoLinkEvent> event = new UndoLinkEvent(
-                              mScene->GetEditor(),
-                              UndoLinkEvent::INPUT_LINK,
-                              input->GetOwner()->GetID(),
-                              output->GetOwner()->GetID(),
-                              input->GetName(),
-                              output->GetName(),
-                              false);
-                           mScene->GetEditor()->GetUndoManager()->AddEvent(event);
-                        }
-                     }
-
-                     mScene->GetEditor()->GetUndoManager()->EndMultipleEvents();
-                     mScene->Refresh();
-                  }
+                  Disconnect();
                   break;
                }
             }
@@ -289,6 +329,37 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   void InputLinkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+   {
+      InputLink* input = mNodeItem->GetInputs()[mLinkIndex].link;
+      if (input)
+      {
+         QMenu menu;
+         QMenu* dcMenu = menu.addMenu("Disconnect");
+         QAction* dcAll = dcMenu->addAction("Disconnect All");
+         dcMenu->addSeparator();
+
+         int count = (int)input->GetLinks().size();
+         dcMenu->setEnabled(count > 0);
+         for (int index = 0; index < count; index++)
+         {
+            QString nodeName = input->GetLinks()[index]->GetOwner()->GetName().c_str();
+            QString linkName = input->GetLinks()[index]->GetName().c_str();
+            QAction* dcAction = dcMenu->addAction(QString("Disconnect from \'") +
+               linkName + "\' on node \'" + nodeName + "\'");
+            dcAction->setStatusTip(linkName);
+         }
+
+         connect(dcMenu, SIGNAL(triggered(QAction*)), this, SLOT(Disconnect(QAction*)));
+
+         menu.exec(event->screenPos());
+         return;
+      }
+
+      QGraphicsPolygonItem::contextMenuEvent(event);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    //////////////////////////////////////////////////////////////////////////
    //////////////////////////////////////////////////////////////////////////
 
@@ -356,6 +427,69 @@ namespace dtDirector
                      }
                   }
                }
+            }
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void OutputLinkItem::Disconnect(InputLink* input)
+   {
+      OutputLink* output = mNodeItem->GetOutputs()[mLinkIndex].link;
+      if (!output) return;
+
+      if (!input)
+      {
+         if (output->GetLinks().size())
+         {
+            mScene->GetEditor()->GetUndoManager()->BeginMultipleEvents();
+
+            while (!output->GetLinks().empty())
+            {
+               input = output->GetLinks()[0];
+               Disconnect(input);
+            }
+
+            mScene->GetEditor()->GetUndoManager()->EndMultipleEvents();
+         }
+      }
+      else
+      {
+         if (input->Disconnect(output))
+         {
+            dtCore::RefPtr<UndoLinkEvent> event = new UndoLinkEvent(
+               mScene->GetEditor(),
+               UndoLinkEvent::INPUT_LINK,
+               input->GetOwner()->GetID(),
+               output->GetOwner()->GetID(),
+               input->GetName(),
+               output->GetName(),
+               false);
+            mScene->GetEditor()->GetUndoManager()->AddEvent(event);
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void OutputLinkItem::Disconnect(QAction* action)
+   {
+      if (action->text() == "Disconnect All")
+      {
+         Disconnect();
+         mScene->Refresh();
+      }
+      else
+      {
+         OutputLink* output = mNodeItem->GetOutputs()[mLinkIndex].link;
+         if (!output) return;
+         int count = (int)output->GetLinks().size();
+         for (int index = 0; index < count; index++)
+         {
+            if (output->GetLinks()[index]->GetName() == action->statusTip().toStdString())
+            {
+               Disconnect(output->GetLinks()[index]);
+               mScene->Refresh();
+               break;
             }
          }
       }
@@ -480,32 +614,7 @@ namespace dtDirector
             {
                if (hoverList[index] == this)
                {
-                  OutputLink* output = mNodeItem->GetOutputs()[mLinkIndex].link;
-
-                  if (output->GetLinks().size())
-                  {
-                     mScene->GetEditor()->GetUndoManager()->BeginMultipleEvents();
-
-                     while (!output->GetLinks().empty())
-                     {
-                        InputLink* input = output->GetLinks()[0];
-                        if (input->Disconnect(output))
-                        {
-                           dtCore::RefPtr<UndoLinkEvent> event = new UndoLinkEvent(
-                              mScene->GetEditor(),
-                              UndoLinkEvent::INPUT_LINK,
-                              input->GetOwner()->GetID(),
-                              output->GetOwner()->GetID(),
-                              input->GetName(),
-                              output->GetName(),
-                              false);
-                           mScene->GetEditor()->GetUndoManager()->AddEvent(event);
-                        }
-                     }
-
-                     mScene->GetEditor()->GetUndoManager()->EndMultipleEvents();
-                     mScene->Refresh();
-                  }
+                  Disconnect();
                   break;
                }
             }
@@ -585,6 +694,37 @@ namespace dtDirector
             mDrawing->setPath(path);
          }
       }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void OutputLinkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+   {
+      OutputLink* output = mNodeItem->GetOutputs()[mLinkIndex].link;
+      if (output)
+      {
+         QMenu menu;
+         QMenu* dcMenu = menu.addMenu("Disconnect");
+         QAction* dcAll = dcMenu->addAction("Disconnect All");
+         dcMenu->addSeparator();
+
+         int count = (int)output->GetLinks().size();
+         dcMenu->setEnabled(count > 0);
+         for (int index = 0; index < count; index++)
+         {
+            QString nodeName = output->GetLinks()[index]->GetOwner()->GetName().c_str();
+            QString linkName = output->GetLinks()[index]->GetName().c_str();
+            QAction* dcAction = dcMenu->addAction(QString("Disconnect from \'") +
+               linkName + "\' on node \'" + nodeName + "\'");
+            dcAction->setStatusTip(linkName);
+         }
+
+         connect(dcMenu, SIGNAL(triggered(QAction*)), this, SLOT(Disconnect(QAction*)));
+
+         menu.exec(event->screenPos());
+         return;
+      }
+
+      QGraphicsPolygonItem::contextMenuEvent(event);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -682,6 +822,69 @@ namespace dtDirector
       }
    }
    
+   //////////////////////////////////////////////////////////////////////////
+   void ValueLinkItem::Disconnect(ValueNode* output)
+   {
+      ValueLink* input = mNodeItem->GetValues()[mLinkIndex].link;
+      if (!input) return;
+
+      if (!output)
+      {
+         if (input->GetLinks().size())
+         {
+            mScene->GetEditor()->GetUndoManager()->BeginMultipleEvents();
+
+            while (!input->GetLinks().empty())
+            {
+               ValueNode* output = input->GetLinks()[0];
+               Disconnect(output);
+            }
+
+            mScene->GetEditor()->GetUndoManager()->EndMultipleEvents();
+         }
+      }
+      else
+      {
+         if (input->Disconnect(output))
+         {
+            dtCore::RefPtr<UndoLinkEvent> event = new UndoLinkEvent(
+               mScene->GetEditor(),
+               UndoLinkEvent::VALUE_LINK,
+               input->GetOwner()->GetID(),
+               output->GetID(),
+               input->GetLabel(),
+               output->GetName(),
+               false);
+            mScene->GetEditor()->GetUndoManager()->AddEvent(event);
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ValueLinkItem::Disconnect(QAction* action)
+   {
+      if (action->text() == "Disconnect All")
+      {
+         Disconnect();
+         mScene->Refresh();
+      }
+      else
+      {
+         ValueLink* input = mNodeItem->GetValues()[mLinkIndex].link;
+         if (!input) return;
+         int count = (int)input->GetLinks().size();
+         for (int index = 0; index < count; index++)
+         {
+            if (input->GetLinks()[index]->GetName() == action->statusTip().toStdString())
+            {
+               Disconnect(input->GetLinks()[index]);
+               mScene->Refresh();
+               break;
+            }
+         }
+      }
+   }
+
    //////////////////////////////////////////////////////////////////////////
    void ValueLinkItem::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
    {
@@ -789,32 +992,8 @@ namespace dtDirector
             {
                if (hoverList[index] == this)
                {
-                  ValueLink* input = mNodeItem->GetValues()[mLinkIndex].link;
-
-                  if (input->GetLinks().size())
-                  {
-                     mScene->GetEditor()->GetUndoManager()->BeginMultipleEvents();
-
-                     while (!input->GetLinks().empty())
-                     {
-                        ValueNode* output = input->GetLinks()[0];
-                        if (input->Disconnect(output))
-                        {
-                           dtCore::RefPtr<UndoLinkEvent> event = new UndoLinkEvent(
-                              mScene->GetEditor(),
-                              UndoLinkEvent::VALUE_LINK,
-                              input->GetOwner()->GetID(),
-                              output->GetID(),
-                              input->GetLabel(),
-                              output->GetName(),
-                              false);
-                           mScene->GetEditor()->GetUndoManager()->AddEvent(event);
-                        }
-                     }
-
-                     mScene->GetEditor()->GetUndoManager()->EndMultipleEvents();
-                     mScene->Refresh();
-                  }
+                  Disconnect();
+                  mScene->Refresh();
                   break;
                }
             }
@@ -904,6 +1083,37 @@ namespace dtDirector
       }
    }
 
+
+   //////////////////////////////////////////////////////////////////////////
+   void ValueLinkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+   {
+      ValueLink* input = mNodeItem->GetValues()[mLinkIndex].link;
+      if (input)
+      {
+         QMenu menu;
+         QMenu* dcMenu = menu.addMenu("Disconnect");
+         QAction* dcAll = dcMenu->addAction("Disconnect All");
+         dcMenu->addSeparator();
+
+         int count = (int)input->GetLinks().size();
+         dcMenu->setEnabled(count > 0);
+         for (int index = 0; index < count; index++)
+         {
+            QString linkName = input->GetLinks()[index]->GetName().c_str();
+            QAction* dcAction = dcMenu->addAction(QString("Disconnect from \'") +
+               linkName + "\'");
+            dcAction->setStatusTip(linkName);
+         }
+
+         connect(dcMenu, SIGNAL(triggered(QAction*)), this, SLOT(Disconnect(QAction*)));
+
+         menu.exec(event->screenPos());
+         return;
+      }
+
+      QGraphicsPolygonItem::contextMenuEvent(event);
+   }
+
    //////////////////////////////////////////////////////////////////////////
    //////////////////////////////////////////////////////////////////////////
    //////////////////////////////////////////////////////////////////////////
@@ -932,6 +1142,69 @@ namespace dtDirector
       else
       {
          setPen(QPen(mValueItem->GetDarkColorForType(mType), mLineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ValueNodeLinkItem::Disconnect(ValueLink* input)
+   {
+      ValueNode* output = dynamic_cast<ValueNode*>(mValueItem->GetNode());
+      if (!output) return;
+
+      if (!input)
+      {
+         if (output->GetLinks().size())
+         {
+            mScene->GetEditor()->GetUndoManager()->BeginMultipleEvents();
+
+            while (!output->GetLinks().empty())
+            {
+               ValueLink* input = output->GetLinks()[0];
+               Disconnect(input);
+            }
+
+            mScene->GetEditor()->GetUndoManager()->EndMultipleEvents();
+         }
+      }
+      else
+      {
+         if (input->Disconnect(output))
+         {
+            dtCore::RefPtr<UndoLinkEvent> event = new UndoLinkEvent(
+               mScene->GetEditor(),
+               UndoLinkEvent::VALUE_LINK,
+               input->GetOwner()->GetID(),
+               output->GetID(),
+               input->GetLabel(),
+               output->GetName(),
+               false);
+            mScene->GetEditor()->GetUndoManager()->AddEvent(event);
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ValueNodeLinkItem::Disconnect(QAction* action)
+   {
+      if (action->text() == "Disconnect All")
+      {
+         Disconnect();
+         mScene->Refresh();
+      }
+      else
+      {
+         ValueNode* output = dynamic_cast<ValueNode*>(mValueItem->GetNode());
+         if (!output) return;
+         int count = (int)output->GetLinks().size();
+         for (int index = 0; index < count; index++)
+         {
+            if (output->GetLinks()[index]->GetName() == action->statusTip().toStdString())
+            {
+               Disconnect(output->GetLinks()[index]);
+               mScene->Refresh();
+               break;
+            }
+         }
       }
    }
 
@@ -1068,32 +1341,8 @@ namespace dtDirector
             {
                if (hoverList[index] == this)
                {
-                  ValueNode* output = dynamic_cast<ValueNode*>(mValueItem->GetNode());
-
-                  if (output->GetLinks().size())
-                  {
-                     mScene->GetEditor()->GetUndoManager()->BeginMultipleEvents();
-
-                     while (!output->GetLinks().empty())
-                     {
-                        ValueLink* input = output->GetLinks()[0];
-                        if (input->Disconnect(output))
-                        {
-                           dtCore::RefPtr<UndoLinkEvent> event = new UndoLinkEvent(
-                              mScene->GetEditor(),
-                              UndoLinkEvent::VALUE_LINK,
-                              input->GetOwner()->GetID(),
-                              output->GetID(),
-                              input->GetLabel(),
-                              output->GetName(),
-                              false);
-                           mScene->GetEditor()->GetUndoManager()->AddEvent(event);
-                        }
-                     }
-
-                     mScene->GetEditor()->GetUndoManager()->EndMultipleEvents();
-                     mScene->Refresh();
-                  }
+                  Disconnect();
+                  mScene->Refresh();
                   break;
                }
             }
@@ -1177,6 +1426,37 @@ namespace dtDirector
       QPainterPath path = mValueItem->CreateConnectionV(end, start);
       mHighlight->setPath(path);
       mDrawing->setPath(path);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ValueNodeLinkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+   {
+      ValueNode* output = dynamic_cast<ValueNode*>(mValueItem->GetNode());
+      if (output)
+      {
+         QMenu menu;
+         QMenu* dcMenu = menu.addMenu("Disconnect");
+         QAction* dcAll = dcMenu->addAction("Disconnect All");
+         dcMenu->addSeparator();
+
+         int count = (int)output->GetLinks().size();
+         dcMenu->setEnabled(count > 0);
+         for (int index = 0; index < count; index++)
+         {
+            QString nodeName = output->GetLinks()[index]->GetOwner()->GetName().c_str();
+            QString linkName = output->GetLinks()[index]->GetName().c_str();
+            QAction* dcAction = dcMenu->addAction(QString("Disconnect from \'") +
+               linkName + "\' on node \'" + nodeName + "\'");
+            dcAction->setStatusTip(linkName);
+         }
+
+         connect(dcMenu, SIGNAL(triggered(QAction*)), this, SLOT(Disconnect(QAction*)));
+
+         menu.exec(event->screenPos());
+         return;
+      }
+
+      QGraphicsPolygonItem::contextMenuEvent(event);
    }
 }
 

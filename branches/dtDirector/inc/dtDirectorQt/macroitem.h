@@ -36,6 +36,7 @@ namespace dtDirector
     */
    class MacroItem : public NodeItem
    {
+      Q_OBJECT
    public:
 
       /**
@@ -82,7 +83,19 @@ namespace dtDirector
       virtual void BeginMoveEvent();
       virtual void EndMoveEvent();
 
+   public slots:
+
+      /**
+       * Opens the macro.
+       */
+      void OpenMacro();
+
    protected:
+
+      /**
+       * Event handler when the context menu event has triggered.
+       */
+      void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
 
       /**
        * Event handler when this item changes.

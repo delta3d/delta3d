@@ -62,6 +62,9 @@ namespace dtDirector
       , mUndoAction(NULL)
       , mRedoAction(NULL)
       , mDeleteAction(NULL)
+      , mCutAction(NULL)
+      , mCopyAction(NULL)
+      , mPasteAction(NULL)
       , mViewPropertiesAction(NULL)
    {
       // Set the default size of the window.
@@ -111,6 +114,21 @@ namespace dtDirector
       mDeleteAction->setShortcut(tr("Delete"));
       mDeleteAction->setToolTip(tr("Reverts your last undo action (Delete)."));
 
+      // Cut Action.
+      mCutAction = new QAction(QIcon(":/icon/cut.png"), tr("Cut"), this);
+      mCutAction->setShortcut(tr("Ctrl+X"));
+      mCutAction->setToolTip(tr("Cuts the currently selected nodes to the clipboard (Ctrl+X)."));
+
+      // Copy Action.
+      mCopyAction = new QAction(QIcon(":/icon/copy.png"), tr("Copy"), this);
+      mCopyAction->setShortcut(tr("Ctrl+C"));
+      mCopyAction->setToolTip(tr("Copies the currently selected nodes to the clipboard (Ctrl+C)."));
+
+      // Cut Action.
+      mPasteAction = new QAction(QIcon(":/icon/paste.png"), tr("Paste"), this);
+      mPasteAction->setShortcut(tr("Ctrl+V"));
+      mPasteAction->setToolTip(tr("Pastes the nodes saved in the clipboard to the current graph (Ctrl+V)."));
+
       // Show Properties Action.
       mViewPropertiesAction = new QAction(tr("Property Editor"), this);
       mViewPropertiesAction->setShortcut(tr("Ctrl+P"));
@@ -144,6 +162,10 @@ namespace dtDirector
       mEditMenu->addSeparator();
       mEditMenu->addAction(mUndoAction);
       mEditMenu->addAction(mRedoAction);
+      mEditMenu->addSeparator();
+      mEditMenu->addAction(mCutAction);
+      mEditMenu->addAction(mCopyAction);
+      mEditMenu->addAction(mPasteAction);
       mEditMenu->addSeparator();
       mEditMenu->addAction(mDeleteAction);
 
@@ -316,6 +338,8 @@ namespace dtDirector
 
       bool bHasParent = false;
       bool bCanDelete = false;
+      bool bCanCopy = false;
+      bool bCanPaste = false;
 
       int tabIndex = mGraphTabs->currentIndex();
       if (tabIndex >= 0 && tabIndex < mGraphTabs->count())
@@ -332,6 +356,11 @@ namespace dtDirector
             {
                bCanDelete = true;
             }
+
+            if (view->GetScene()->HasSelection())
+            {
+               bCanCopy = true;
+            }
          }
       }
 
@@ -343,6 +372,13 @@ namespace dtDirector
 
       // Redo button.
       mRedoAction->setEnabled(mUndoManager->CanRedo());
+
+      // Copy and Cut buttons.
+      mCutAction->setEnabled(bCanCopy);
+      mCopyAction->setEnabled(bCanCopy);
+
+      // Paste button.
+      mPasteAction->setEnabled(bCanPaste);
 
       // Delete button.
       mDeleteAction->setEnabled(bCanDelete);

@@ -36,8 +36,11 @@ namespace dtDirector
    /**
     * Handles an input link in the UI.
     */
-   class InputLinkItem: public QGraphicsPolygonItem
+   class InputLinkItem
+      : public QWidget
+      , public QGraphicsPolygonItem
    {
+      Q_OBJECT
    public:
 
       /**
@@ -57,7 +60,24 @@ namespace dtDirector
        */
       void SetHighlight(bool enable);
 
+      /**
+       * Disconnects a link.
+       *
+       * @param[in]  output  The link to disconnected, use NULL to
+       *                     disconnect all.
+       */
+      void Disconnect(OutputLink* output = NULL);
+
       friend class OutputLinkItem;
+
+   public slots:
+
+      /**
+       * Event handler when a link is disconnected.
+       *
+       * @param[in]  action  The disconnect action.
+       */
+      void Disconnect(QAction* action);
 
    protected:
 
@@ -89,6 +109,14 @@ namespace dtDirector
        */
       void mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent);
 
+      /**
+       * Event handler for the context menu event.
+       *
+       * @param[in]  event  The event.
+       */
+      void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
+
+
       EditorScene*   mScene;
       NodeItem*      mNodeItem;
       int            mLinkIndex;
@@ -104,8 +132,11 @@ namespace dtDirector
    /**
     * Handles an output link in the UI.
     */
-   class OutputLinkItem: public QGraphicsPolygonItem
+   class OutputLinkItem
+      : public QWidget
+      , public QGraphicsPolygonItem
    {
+      Q_OBJECT
    public:
 
       /**
@@ -127,7 +158,24 @@ namespace dtDirector
        */
       void SetHighlight(bool enable, InputLink* inputLink = NULL);
 
+      /**
+       * Disconnects a link.
+       *
+       * @param[in]  input  The link to disconnected, use NULL to
+       *                     disconnect all.
+       */
+      void Disconnect(InputLink* input = NULL);
+
       friend class InputLinkItem;
+
+   public slots:
+
+      /**
+       * Event handler when a link is disconnected.
+       *
+       * @param[in]  action  The disconnect action.
+       */
+      void Disconnect(QAction* action);
 
    protected:
 
@@ -159,6 +207,14 @@ namespace dtDirector
        */
       void mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent);
 
+      /**
+       * Event handler for the context menu event.
+       *
+       * @param[in]  event  The event.
+       */
+      void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
+
+
       EditorScene*   mScene;
       NodeItem*      mNodeItem;
       int            mLinkIndex;
@@ -173,8 +229,11 @@ namespace dtDirector
    /**
     * Handles a value link in the UI.
     */
-   class ValueLinkItem: public QGraphicsPolygonItem
+   class ValueLinkItem
+      : public QWidget
+      , public QGraphicsPolygonItem
    {
+      Q_OBJECT
    public:
 
       /**
@@ -204,7 +263,24 @@ namespace dtDirector
        */
       void SetHighlight(bool enable, Node* valueNode = NULL);
 
+      /**
+       * Disconnects a link.
+       *
+       * @param[in]  input  The link to disconnected, use NULL to
+       *                     disconnect all.
+       */
+      void Disconnect(ValueNode* output = NULL);
+
       friend class ValueNodeLinkItem;
+
+   public slots:
+
+      /**
+       * Event handler when a link is disconnected.
+       *
+       * @param[in]  action  The disconnect action.
+       */
+      void Disconnect(QAction* action);
 
    protected:
 
@@ -236,6 +312,13 @@ namespace dtDirector
        */
       void mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent);
 
+      /**
+       * Event handler for the context menu event.
+       *
+       * @param[in]  event  The event.
+       */
+      void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
+
       EditorScene*   mScene;
       NodeItem*      mNodeItem;
       int            mLinkIndex;
@@ -252,8 +335,11 @@ namespace dtDirector
    /**
     * Handles a value node link in the UI.
     */
-   class ValueNodeLinkItem: public QGraphicsPolygonItem
+   class ValueNodeLinkItem
+      : public QWidget
+      , public QGraphicsPolygonItem
    {
+      Q_OBJECT
    public:
 
       /**
@@ -280,7 +366,24 @@ namespace dtDirector
        */
       void SetHighlight(bool enable);
 
+      /**
+       * Disconnects a link.
+       *
+       * @param[in]  input  The link to disconnected, use NULL to
+       *                     disconnect all.
+       */
+      void Disconnect(ValueLink* input = NULL);
+
       friend class ValueLinkItem;
+
+   public slots:
+
+      /**
+       * Event handler when a link is disconnected.
+       *
+       * @param[in]  action  The disconnect action.
+       */
+      void Disconnect(QAction* action);
 
    protected:
 
@@ -311,6 +414,13 @@ namespace dtDirector
        * @param[in]  mouseEvent  The mouse event.
        */
       void mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent);
+
+      /**
+       * Event handler for the context menu event.
+       *
+       * @param[in]  event  The event.
+       */
+      void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
 
       EditorScene*   mScene;
       ValueItem*     mValueItem;

@@ -247,6 +247,30 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   void MacroItem::OpenMacro()
+   {
+      if (!mScene) return;
+
+      // Open the subgraph.
+      mScene->GetEditor()->OpenGraph(mGraph);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void MacroItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+   {
+      QMenu menu;
+      QAction* stepInAction = menu.addAction("Step Inside Macro");
+      connect(stepInAction, SIGNAL(triggered()), this, SLOT(OpenMacro()));
+      menu.addSeparator();
+      menu.addAction(mScene->GetEditor()->GetCutAction());
+      menu.addAction(mScene->GetEditor()->GetCopyAction());
+      menu.addAction(mScene->GetEditor()->GetPasteAction());
+      menu.addSeparator();
+      menu.addAction(mScene->GetEditor()->GetDeleteAction());
+      menu.exec(event->screenPos());
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    QVariant MacroItem::itemChange(GraphicsItemChange change, const QVariant &value)
    {
       if (!mGraph.valid()) return value;
@@ -282,11 +306,7 @@ namespace dtDirector
    void MacroItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
    {
       NodeItem::mouseDoubleClickEvent(event);
-
-      if (!mScene) return;
-
-      // Open the subgraph.
-      mScene->GetEditor()->OpenGraph(mGraph);
+      OpenMacro();
    }
 }
 
