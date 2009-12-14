@@ -28,6 +28,7 @@
 #include <dtCore/base.h>
 #include <dtCore/refptr.h>
 
+#include <osg/BoundingBox>
 #include <osg/Vec3>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
@@ -148,6 +149,19 @@ namespace dtCore
        * @param radius : float pointer to fill out with the sphere's radius
        */
       void GetBoundingSphere(osg::Vec3* center, float* radius);
+
+      /**
+       * Get the bounding box information for this Drawable.
+       * 
+       * NOTE: When this method successfully returns a BoundingBox pointer
+       * it has allocated new memory.  The user of this method is responsible
+       * to ensure this memory is freed up via a delete call when the
+       * BoundingBox is no longer needed.
+       *
+       * @return BoundingBox that encloses the Drawable.  The method returns
+       *  NULL if there is no geometry associated with the Drawable.
+       */
+      osg::BoundingBox* GetBoundingBox();      
 
       /**
        * Make this DeltaDrawable "active" or "inactive".  The default

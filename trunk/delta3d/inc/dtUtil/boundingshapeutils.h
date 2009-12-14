@@ -21,56 +21,24 @@
 #ifndef BOUNDING_SHAPE_UTILS
 #define BOUNDING_SHAPE_UTILS
 
-#include <osg/NodeVisitor>
+#include <osg/ComputeBoundsVisitor>
 #include <osg/BoundingBox>
-#include <osg/Geode>
-#include <osg/MatrixTransform>
-#include <osg/Version>
 
 namespace dtUtil
 {
-   class BoundingBoxVisitor : public osg::NodeVisitor
+   //TODO: Deprecate me in favor of osg::ComputeBoundsVisitor
+   class BoundingBoxVisitor : public osg::ComputeBoundsVisitor
    {
    public:
 
-      BoundingBoxVisitor()
-         : osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ALL_CHILDREN)
-      {}
-
-      /**
-      * Visits the specified geode.
-      *
-      * @param node the geode to visit
-      */
-      virtual void apply(osg::Geode& node)
+      BoundingBoxVisitor(TraversalMode tMode = osg::NodeVisitor::TRAVERSE_ALL_CHILDREN)
+         : osg::ComputeBoundsVisitor()
+         , mBoundingBox(_bb)  //little hack to maintain backwards compatibility
       {
-         osg::NodePath nodePath = getNodePath();
+      }      
 
-#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR == 1 && OSG_VERSION_MINOR == 0
-         // Luckily, this behavior is redundant with OSG 1.1
-         if (std::string(nodePath[0]->className()) == std::string("CameraNode"))
-         {
-            nodePath = osg::NodePath(nodePath.begin()+1, nodePath.end());
-         }
-#endif // OSG 1.1
-
-         osg::Matrix matrix = osg::computeLocalToWorld(nodePath);
-
-         for (unsigned int i = 0; i < node.getNumDrawables(); ++i)
-         {
-            for (unsigned int j = 0; j < 8; ++j)
-            {
-               mBoundingBox.expandBy(node.getDrawable(i)->getBound().corner(j) * matrix);
-            }
-         }
-      }
-
-      /**
-      * The aggregate bounding box.
-      */
-      osg::BoundingBox mBoundingBox;
-   };
-
+      osg::BoundingBox& mBoundingBox;
+   };   
 }
 
 #endif // BOUNDING_SHAPE_UTILS
