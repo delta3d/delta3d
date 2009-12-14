@@ -5,6 +5,8 @@
 #include <dtCore/deltadrawable.h>
 #include <dtCore/scene.h>
 #include <dtUtil/log.h>
+
+#include <osg/ComputeBoundsVisitor>
 #include <osg/Node>
 #include <osg/Switch>
 
@@ -591,19 +593,43 @@ void DeltaDrawable::Emancipate()
 }
 
 
+//////////////////////////////////////////////////////////////////////////
 void DeltaDrawable::SetProxyNode(osg::Node* proxyNode)
 {
    mPvt->SetProxyNode(proxyNode);
 }
 
+//////////////////////////////////////////////////////////////////////////
 void DeltaDrawable::OnOrphaned()
 {
    mPvt->OnOrphaned();
 }
 
+//////////////////////////////////////////////////////////////////////////
 void DeltaDrawable::GetBoundingSphere(osg::Vec3* center, float* radius)
 {
    mPvt->GetBoundingSphere(center, radius, GetOSGNode());
+}
+
+//////////////////////////////////////////////////////////////////////////
+osg::BoundingBox* DeltaDrawable::GetBoundingBox()
+{
+   osg::Node* topNode = this->GetOSGNode();   
+
+   if (topNode == NULL)
+   {
+      LOG_WARNING("Can't calculate Bounding Box, there is no geometry associated with this DeltaDrawable");
+      return NULL;
+   }
+
+   osg::ComputeBoundsVisitor cbv;
+   topNode->accept(cbv);
+
+   osg::BoundingBox* bb = new osg::BoundingBox();
+
+   *bb = cbv.getBoundingBox();
+
+   return bb; 
 }
 
 //////////////////////////////////////////////////////////////////////////
