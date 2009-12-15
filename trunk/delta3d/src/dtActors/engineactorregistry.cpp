@@ -30,6 +30,7 @@
 
 #include <dtActors/infiniteterrainactorproxy.h>
 #include <dtActors/autotriggeractorproxy.h>
+#include <dtActors/backdropactor.h>
 #include <dtActors/beziercontrolleractorproxy.h>
 #include <dtActors/meshterrainactorproxy.h>
 #include <dtActors/clouddomeactorproxy.h>
@@ -99,6 +100,7 @@ namespace dtActors
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::LINKED_POINTS_ACTOR_TYPE(new dtDAL::ActorType("LinkedPoints", "dtActors", "dtActors.LinkedPoints actor"));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::FENCE_ACTOR_TYPE(new dtDAL::ActorType("Fence", "dtActors", "dtActors.Fence actor"));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::BUILDING_ACTOR_TYPE(new dtDAL::ActorType("Building", "dtActors", "dtActors.Building actor"));
+   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::BACKDROP_ACTOR_TYPE(new dtDAL::ActorType("Backdrop", "dtActors", "dtActors.Backdrop actor"));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::WATER_GRID_ACTOR_TYPE(new dtDAL::ActorType("Water", "dtActors", "dtActors.Water actor"));
 
    /// deprecated types
@@ -185,6 +187,7 @@ namespace dtActors
       mActorFactory->RegisterType<PrefabActorProxy>(PREFAB_ACTOR_TYPE.get());
       mActorFactory->RegisterType<VolumeEditActorProxy>(VOLUME_EDIT_ACTOR_TYPE.get());
       mActorFactory->RegisterType<LinkedPointsActorProxy>(LINKED_POINTS_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<BackdropActorProxy>(BACKDROP_ACTOR_TYPE.get());
       mActorFactory->RegisterType<FenceActorProxy>(FENCE_ACTOR_TYPE.get());
       mActorFactory->RegisterType<BuildingActorProxy>(BUILDING_ACTOR_TYPE.get());
       mActorFactory->RegisterType<WaterGridActorProxy>(WATER_GRID_ACTOR_TYPE.get());

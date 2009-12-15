@@ -75,6 +75,7 @@ namespace dtActors
        static dtCore::RefPtr<dtDAL::ActorType> LINKED_POINTS_ACTOR_TYPE;
        static dtCore::RefPtr<dtDAL::ActorType> FENCE_ACTOR_TYPE;
        static dtCore::RefPtr<dtDAL::ActorType> BUILDING_ACTOR_TYPE;
+       static dtCore::RefPtr<dtDAL::ActorType> BACKDROP_ACTOR_TYPE;
        static dtCore::RefPtr<dtDAL::ActorType> WATER_GRID_ACTOR_TYPE;
 
         /**

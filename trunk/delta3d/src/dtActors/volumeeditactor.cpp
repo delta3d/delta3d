@@ -262,7 +262,7 @@ void VolumeEditActorProxy::BuildPropertyMap()
    VolumeEditActor *actor = dynamic_cast<VolumeEditActor*> (GetActor());
    if(!actor)
    {
-      printf("Actor was initialized incorrectly\n");
+      LOG_ERROR("VolumeEditActor was initialized incorrectly");
       return;
    }
 
