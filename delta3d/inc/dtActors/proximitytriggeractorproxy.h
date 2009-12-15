@@ -72,7 +72,7 @@ namespace dtActors
         /**
         * Wrapper to set the Action on the internal Trigger.
         */
-        void SetAction( dtDAL::ActorProxy* action );
+        void SetAction(dtDAL::ActorProxy* action);
 
         /**
         * Wrapper to get the Action on the internal Trigger.
@@ -92,7 +92,7 @@ namespace dtActors
          * by a sub-class of ProximityTriggerActorProxy.
          * @param trigger The new trigger created in CreateActor that needs special initializations performed.
          */
-        virtual void InitializeTrigger( dtABC::ProximityTrigger& trigger );
+        virtual void InitializeTrigger(dtABC::ProximityTrigger& trigger);
 
         /**
          * Destructor
