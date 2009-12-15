@@ -27,11 +27,11 @@
 #define DELTA_TEST_TRIGGER
 
 #include <dtABC/application.h>
-#include <dtABC/proximitytrigger.h>
 #include <dtCore/object.h>
 #include <dtCore/positionallight.h>
 #include <dtCore/refptr.h>
 #include <dtCore/walkmotionmodel.h>
+#include <dtActors/triggervolumeactor.h>
 
 namespace dtCore
 {
@@ -78,7 +78,7 @@ class TestTrigger : public dtABC::Application
       dtCore::RefPtr<dtCore::Object>          mHappySphere;
       dtCore::RefPtr<dtCore::PositionalLight> mPositionalLight;
       dtCore::RefPtr<dtCore::WalkMotionModel> mWalkMotionModel;
-      dtCore::RefPtr<dtABC::ProximityTrigger> mProximityTrigger;
+      dtCore::RefPtr<dtActors::TriggerVolumeActor> mTriggerVolume;
 };
 
 #endif // DELTA_TEST_TRIGGER

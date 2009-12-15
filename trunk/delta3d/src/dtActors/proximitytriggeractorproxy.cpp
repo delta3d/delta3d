@@ -44,7 +44,7 @@ namespace dtActors
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ProximityTriggerActorProxy::InitializeTrigger( ProximityTrigger& trigger )
+   void ProximityTriggerActorProxy::InitializeTrigger(ProximityTrigger& trigger)
    {
       static int mNumTriggers = 0;
       std::ostringstream ss;
@@ -55,34 +55,34 @@ namespace dtActors
       Transformable::CollisionGeomType* type = trigger.GetCollisionGeomType();
 
       std::vector<float> dimensions;
-      trigger.GetCollisionGeomDimensions( dimensions );
+      trigger.GetCollisionGeomDimensions(dimensions);
 
-      if( type == &Transformable::CollisionGeomType::SPHERE && 
-         dimensions.size() == 1 )
+      if(type == &Transformable::CollisionGeomType::SPHERE && 
+         dimensions.size() == 1)
       {
-         SetCollisionRadius( dimensions[0] );  
+         SetCollisionRadius(dimensions[0]);  
       }
-      else if( type == &Transformable::CollisionGeomType::CYLINDER && 
-         dimensions.size() == 2  )
+      else if(type == &Transformable::CollisionGeomType::CYLINDER && 
+         dimensions.size() == 2)
       {
-         SetCollisionRadius( dimensions[0] );
-         SetCollisionLength( dimensions[1] );
+         SetCollisionRadius(dimensions[0]);
+         SetCollisionLength(dimensions[1]);
       }
-      else if( type == &Transformable::CollisionGeomType::CUBE && 
-         dimensions.size() == 3  )
+      else if(type == &Transformable::CollisionGeomType::CUBE && 
+         dimensions.size() == 3)
       {
-         if( (dimensions[0] == dimensions[1]) &&
+         if((dimensions[0] == dimensions[1]) &&
             (dimensions[0] == dimensions[2]) &&
-            (dimensions[1] == dimensions[2]) )
+            (dimensions[1] == dimensions[2]))
          {
-            SetCollisionLength( dimensions[0] );
+            SetCollisionLength(dimensions[0]);
          }
       }
 
       // The collision type of this actor proxy must be set after the dimensions
       // have been set. Otherwise it'll always use a default of 0.0 for all of
       // them and attempt to auto-generate the collision geometry.
-      SetCollisionType( *type );
+      SetCollisionType(*type);
    }
    
    ///////////////////////////////////////////////////////////////////////////////
@@ -92,7 +92,7 @@ namespace dtActors
 
       TransformableActorProxy::BuildPropertyMap();
 
-      ProximityTrigger *trigger = static_cast<ProximityTrigger*>(GetActor());
+      ProximityTrigger* trigger = static_cast<ProximityTrigger*>(GetActor());
 
       AddProperty(new ActorActorProperty(*this, "Action","Action",
          MakeFunctor(*this ,&ProximityTriggerActorProxy::SetAction),
@@ -127,7 +127,7 @@ namespace dtActors
    {
       SetLinkedActor("Action", action);
 
-      ProximityTrigger* proximityTrigger = static_cast<ProximityTrigger*>( GetActor() );
+      ProximityTrigger* proximityTrigger = static_cast<ProximityTrigger*>(GetActor());
       
       Action* a = NULL;
       if(action)
@@ -140,7 +140,7 @@ namespace dtActors
 
    DeltaDrawable* ProximityTriggerActorProxy::GetAction()
    {
-      ProximityTrigger* proximityTrigger = static_cast<ProximityTrigger*>( GetActor() );
+      ProximityTrigger* proximityTrigger = static_cast<ProximityTrigger*>(GetActor());
 
       return proximityTrigger->GetTrigger()->GetAction();
    }

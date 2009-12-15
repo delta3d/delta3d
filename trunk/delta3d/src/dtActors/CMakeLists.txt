@@ -46,6 +46,8 @@ SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/taskactorordered.h
     ${HEADER_PATH}/taskactorrollup.h
     ${HEADER_PATH}/triggeractorproxy.h
+    ${HEADER_PATH}/triggervolumeactor.h
+    ${HEADER_PATH}/triggervolumeactorproxy.h
     ${HEADER_PATH}/tripodactorproxy.h
     ${HEADER_PATH}/volumeeditactor.h
     ${HEADER_PATH}/watergridactor.h
@@ -95,6 +97,8 @@ SET(LIB_SOURCES
     ${SOURCE_PATH}/taskactorordered.cpp
     ${SOURCE_PATH}/taskactorrollup.cpp
     ${SOURCE_PATH}/triggeractorproxy.cpp
+    ${SOURCE_PATH}/triggervolumeactor.cpp
+    ${SOURCE_PATH}/triggervolumeactorproxy.cpp
     ${SOURCE_PATH}/tripodactorproxy.cpp
     ${SOURCE_PATH}/volumeeditactor.cpp
     ${SOURCE_PATH}/watergridactor.cpp
