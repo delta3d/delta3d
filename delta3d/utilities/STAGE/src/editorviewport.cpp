@@ -350,7 +350,7 @@ namespace dtEditQt
             dataStream >> resourceIdentity;
 
             dtDAL::ResourceDescriptor descriptor = dtDAL::ResourceDescriptor(resourceIdentity.toStdString());
-            resourceProp->SetValue(&descriptor);
+            resourceProp->SetValue(descriptor);
          }
 
          // Setup the drawable to be visible in the scene.
