@@ -174,6 +174,9 @@ namespace dtDAL
    ////////////////////////////////////////////////////////////////////////////////
    void ActorProxy::SetResource(const std::string& name, const ResourceDescriptor& source)
    {
+      //TODO Should probably deprecate this functionality.  The ResourceDescripter value should
+      //be stored in the Actor, not generically in the ActorProxy.
+
       if (source.IsEmpty())
       {
          mResourceMap.erase(name);

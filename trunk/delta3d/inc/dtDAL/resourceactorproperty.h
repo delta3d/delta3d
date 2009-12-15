@@ -42,16 +42,16 @@ namespace dtDAL
     * class MyActor
     * {
     *    ...
-    *    void SetResource(const dtDAL::ResourceDescriptor* res);
-    *    dtDAL::ResourceDescriptor* GetResource();
+    *    void SetResource(const dtDAL::ResourceDescriptor& res);
+    *    dtDAL::ResourceDescriptor GetResource();
     *    ...
     * };
     * 
-    * class Proxy : publid dtDAL::ActorProxy
+    * class Proxy : public dtDAL::ActorProxy
     * {
     *   void BuildPropertyMap()
     *   {
-    *      AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::SHADER,
+    *      AddProperty(new dtDAL::ResourceActorProperty(NULL, dtDAL::DataType::SHADER,
     *                   "Resource", "A Resource", 
     *                   dtDAL::ResourceActorProperty::SetDescFuncType(&ga, &MyActor::SetResource),
     *                   dtDAL::ResourceActorProperty::GetDescFuncType(&ga, &MyActor::GetResource),
@@ -113,20 +113,22 @@ namespace dtDAL
                                const dtUtil::RefString& groupName = "");
 
          /**
-         * Modified constructor that allows you to specify both Get and Set
-         * callback functions, both passing the resource descriptor pointer.
+         * Preferred constructor that allows you to specify both Get and Set
+         * callback functions, both passing the ResourceDescriptor.
          *
-         * @param actorProxy The actor proxy.
+         * @note Will not store the ResourceDescriptor in the ActorProxy.  ActorProxy::GetResource()
+         * will return NULL.  It is preferred to store the ResourceDescriptor in
+         * the actor itself.
+         *
          * @param type The type of resource this contains.
          * @param name The name of the property.
          * @param label The label displayed for this property in the UI.
-         * @param Set The Setter callback function that receives resource descriptor.
-         * @param Get The Getter callback function that returns a resource descriptor.
+         * @param Set The Setter callback function that receives a ResourceDescriptor.
+         * @param Get The Getter callback function that returns a ResourceDescriptor.
          * @param desc The description of the property.
          * @param groupName The group that this property will fall under.
          */
-         ResourceActorProperty(ActorProxy& actorProxy,
-                               DataType& type,
+         ResourceActorProperty(DataType& type,
                                const dtUtil::RefString& name,
                                const dtUtil::RefString& label,
                                SetDescFuncType Set,

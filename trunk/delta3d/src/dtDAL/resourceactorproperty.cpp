@@ -45,8 +45,7 @@ ResourceActorProperty::ResourceActorProperty(ActorProxy& actorProxy,
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-ResourceActorProperty::ResourceActorProperty(ActorProxy& actorProxy,
-                                             DataType& type,
+ResourceActorProperty::ResourceActorProperty(DataType& type,
                                              const dtUtil::RefString& name,
                                              const dtUtil::RefString& label,
                                              SetDescFuncType Set,
@@ -54,7 +53,7 @@ ResourceActorProperty::ResourceActorProperty(ActorProxy& actorProxy,
                                              const dtUtil::RefString& desc,
                                              const dtUtil::RefString& groupName)
 : ActorProperty(type, name, label, desc, groupName)
-, mProxy(&actorProxy)
+, mProxy(NULL)
 , mHasGetFunctor(false)
 , mUsingDescFunctors(true)
 , SetDescPropFunctor(Set)
@@ -101,7 +100,10 @@ void ResourceActorProperty::SetValue(const ResourceDescriptor& value)
       return;
    }
 
-   mProxy->SetResource(GetName(), value);
+   if (mProxy)
+   {
+      mProxy->SetResource(GetName(), value);
+   }
 
    if (mUsingDescFunctors)
    {
@@ -127,7 +129,10 @@ void ResourceActorProperty::SetValue(const ResourceDescriptor& value)
          }
          catch(const dtUtil::Exception& ex)
          {
-            mProxy->SetResource(GetName(), dtDAL::ResourceDescriptor::NULL_RESOURCE);
+            if (mProxy)
+            {
+               mProxy->SetResource(GetName(), dtDAL::ResourceDescriptor::NULL_RESOURCE);
+            }
             SetPropFunctor("");
             dtUtil::Log::GetInstance("EnginePropertyTypes.h").LogMessage(dtUtil::Log::LOG_WARNING,
                __FUNCTION__, __LINE__, "Resource %s not found.  Setting property %s to NULL. Error Message %s.",
@@ -149,10 +154,20 @@ ResourceDescriptor ResourceActorProperty::GetValue() const
    {
       std::string resName = GetPropFunctor();
       dtDAL::ResourceDescriptor descriptor(resName);
-      mProxy->SetResource(GetName(), descriptor);
+      if (mProxy)
+      {
+         mProxy->SetResource(GetName(), descriptor);
+      }
    }
 
-   return mProxy->GetResource(GetName());
+   if (mProxy)
+   {
+      return mProxy->GetResource(GetName());
+   }
+   else
+   {
+      return dtDAL::ResourceDescriptor::NULL_RESOURCE;
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////
