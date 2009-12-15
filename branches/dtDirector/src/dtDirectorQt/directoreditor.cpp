@@ -38,6 +38,7 @@
 #include <QtGui/QAction>
 #include <QtGui/QKeyEvent>
 #include <QtGui/QFileDialog>
+#include <QtGui/QMessageBox>
 
 #include <dtDAL/project.h>
 
@@ -148,7 +149,7 @@ namespace dtDirector
       // Hide Links Action.
       mHideLinks = new QAction(QIcon(":/icons/hidelinks.png"), tr("Hide Links"), this);
       mHideLinks->setShortcut(tr("Ctrl+H"));
-      mHideLinks->setToolTip(tr("Hides all unconnected links on selected nodes (Ctrl+H)."));
+      mHideLinks->setToolTip(tr("Hides all unused links on selected nodes (Ctrl+H)."));
 
       // Show Properties Action.
       mRefreshAction = new QAction(QIcon(":/icons/refresh.png"), tr("Refresh"), this);
@@ -556,65 +557,59 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void DirectorEditor::OnSaveButton()
    {
-      QString filter = tr(".dtDir");
-      std::string context = dtDAL::Project::GetInstance().GetContext();
-
-      QFileDialog dialog;
-      QFileInfo filePath = dialog.getSaveFileName(this, tr("Director File Name"),
-         tr((context + "\\scripts\\").c_str()),
-         tr("Director Scripts (*.dtDir)"), &filter);
-
-      QString fileName = filePath.baseName();
-      if (!fileName.isEmpty())
-      {
-         mDirector->SaveScript(fileName.toStdString());
-         mUndoManager->OnSaved();
-
-         RefreshButtonStates();
-      }
+      SaveScript();
    }
 
    //////////////////////////////////////////////////////////////////////////
    void DirectorEditor::OnLoadButton()
    {
-      // TODO: Check if the undo manager has some un-committed changes first.
-
-
-      QString filter = tr(".dtDir");
-      std::string context = dtDAL::Project::GetInstance().GetContext();
-
-      QFileDialog dialog;
-      QFileInfo filePath = dialog.getOpenFileName(this, tr("Director File Name"),
-         tr((context + "\\scripts\\").c_str()),
-         tr("Director Scripts (*.dtDir)"), &filter);
-
-      QString fileName = filePath.baseName();
-      if (!fileName.isEmpty())
+      // Check if the undo manager has some un-committed changes first.
+      if (mUndoManager->IsModified())
       {
-         // Clear the script.
-         mDirector->Clear();
-         mGraphTabs->clear();
-         mUndoManager->Clear();
+         QMessageBox confirmationBox("Save Changes?",
+            "Would you like to save your current Director Graph first?",
+            QMessageBox::Question,
+            QMessageBox::Yes,
+            QMessageBox::No,
+            QMessageBox::Cancel, this);
 
-         mDirector->LoadScript(fileName.toStdString());
-
-         // Create a single tab with the default graph.
-         OpenGraph(mDirector->GetGraphRoot());
+         switch (confirmationBox.exec())
+         {
+         case QMessageBox::Yes:
+            if (!SaveScript()) return;
+            break;
+         case QMessageBox::Cancel:
+            return;
+         }
       }
+
+      LoadScript();
    }
 
    //////////////////////////////////////////////////////////////////////////
    void DirectorEditor::OnNewButton()
    {
-      // TODO: Check if the undo manager has some un-committed changes first.
+      // Check if the undo manager has some un-committed changes first.
+      if (mUndoManager->IsModified())
+      {
+         QMessageBox confirmationBox("Save Changes?",
+            "Would you like to save your current Director Graph first?",
+            QMessageBox::Question,
+            QMessageBox::Yes,
+            QMessageBox::No,
+            QMessageBox::Cancel, this);
 
-      // Clear the script.
-      mGraphTabs->clear();
-      mDirector->Clear();
-      mUndoManager->Clear();
+         switch (confirmationBox.exec())
+         {
+         case QMessageBox::Yes:
+            if (!SaveScript()) return;
+            break;
+         case QMessageBox::Cancel:
+            return;
+         }
+      }
 
-      // Create a single tab with the default graph.
-      OpenGraph(mDirector->GetGraphRoot());
+      ClearScript();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -940,6 +935,71 @@ namespace dtDirector
       {
          OnUndo();
       }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::ClearScript()
+   {
+      // Clear the script.
+      mGraphTabs->clear();
+      mDirector->Clear();
+      mUndoManager->Clear();
+
+      // Create a single tab with the default graph.
+      OpenGraph(mDirector->GetGraphRoot());
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool DirectorEditor::SaveScript()
+   {
+      QString filter = tr(".dtDir");
+      std::string context = dtDAL::Project::GetInstance().GetContext();
+
+      QFileDialog dialog;
+      QFileInfo filePath = dialog.getSaveFileName(this, tr("Save a Director Graph File"),
+         tr((context + "\\scripts\\").c_str()),
+         tr("Director Scripts (*.dtDir)"), &filter);
+
+      QString fileName = filePath.baseName();
+      if (!fileName.isEmpty())
+      {
+         mDirector->SaveScript(fileName.toStdString());
+         mUndoManager->OnSaved();
+
+         RefreshButtonStates();
+         return true;
+      }
+
+      return false;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool DirectorEditor::LoadScript()
+   {
+      QString filter = tr(".dtDir");
+      std::string context = dtDAL::Project::GetInstance().GetContext();
+
+      QFileDialog dialog;
+      QFileInfo filePath = dialog.getOpenFileName(this, tr("Load a Director Graph File"),
+         tr((context + "\\scripts\\").c_str()),
+         tr("Director Scripts (*.dtDir)"), &filter);
+
+      QString fileName = filePath.baseName();
+      if (!fileName.isEmpty())
+      {
+         // Clear the script.
+         mDirector->Clear();
+         mGraphTabs->clear();
+         mUndoManager->Clear();
+
+         mDirector->LoadScript(fileName.toStdString());
+
+         // Create a single tab with the default graph.
+         OpenGraph(mDirector->GetGraphRoot());
+         return true;
+      }
+
+      return false;
    }
 } // namespace dtDirector
 

@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
+		<file>icons/cut.png</file>
 		<file>icons/delete.png</file>
 		<file>icons/duplicate.png</file>
 		<file>icons/group.png</file>

@@ -568,6 +568,10 @@ namespace dtDirector
          menu.addSeparator();
          menu.addAction(mEditor->GetUndoAction());
          menu.addAction(mEditor->GetRedoAction());
+         menu.addSeparator();
+         menu.addAction(mEditor->GetPasteAction());
+         menu.addSeparator();
+         menu.addAction(mEditor->GetRefreshAction());
 
          connect(&menu, SIGNAL(triggered(QAction*)),
             this, SLOT(OnMenuEvent(QAction*)));

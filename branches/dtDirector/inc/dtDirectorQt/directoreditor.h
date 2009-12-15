@@ -106,6 +106,7 @@ namespace dtDirector
       QAction* GetDeleteAction()   {return mDeleteAction;}
       QAction* GetShowLinkAction() {return mShowLinks;}
       QAction* GetHideLinkAction() {return mHideLinks;}
+      QAction* GetRefreshAction()  {return mRefreshAction;}
 
       /**
        * Refreshes the entire view.
@@ -225,6 +226,25 @@ namespace dtDirector
        * @param[in]  e  The key event.
        */
       void keyPressEvent(QKeyEvent *e);
+
+      /**
+       * Clears the contents of the current script.
+       */
+      void ClearScript();
+
+      /**
+       * Saves the current script.
+       *
+       * @return  True if the script was saved.
+       */
+      bool SaveScript();
+
+      /**
+       * Loads an existing script.
+       *
+       * @return  True if a script was loaded.
+       */
+      bool LoadScript();
 
 
       GraphTabs*           mGraphTabs;
