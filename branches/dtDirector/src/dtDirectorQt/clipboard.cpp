@@ -318,8 +318,9 @@ namespace dtDirector
             if (mIDOldToNew.find(owner->GetID()) == mIDOldToNew.end())
             {
                // If we did not copy the node that it is linked to, then link it
-               // to the old one instead.
-               newOwner = owner;
+               // to the old one instead only if the old node is within the same graph.
+               if (owner->GetGraph() == parent)
+                  newOwner = owner;
             }
             else
             {
@@ -351,7 +352,8 @@ namespace dtDirector
             {
                // If we did not copy the node that it is linked to, then link it
                // to the old one instead.
-               newOwner = owner;
+               if (owner->GetGraph() == parent)
+                  newOwner = owner;
             }
             else
             {
@@ -383,7 +385,8 @@ namespace dtDirector
             {
                // If we did not copy the node that it is linked to, then link it
                // to the old one instead.
-               newOwner = dynamic_cast<ValueNode*>(owner);
+               if (owner->GetGraph() == parent)
+                  newOwner = dynamic_cast<ValueNode*>(owner);
             }
             else
             {
