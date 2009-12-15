@@ -273,8 +273,6 @@ namespace dtDirector
       {
          node->SetPosition(osg::Vec2(x, y));
 
-         // Add the node creation to the undo manager.
-
          // Now refresh the all editors that view the same graph.
          int count = mEditor->GetGraphTabs()->count();
          for (int index = 0; index < count; index++)
@@ -292,6 +290,10 @@ namespace dtDirector
             }
          }
          mEditor->Refresh();
+
+         // Auto select the new node.
+         NodeItem* item = GetNodeItem(node->GetID());
+         if (item) item->setSelected(true);
       }
 
       return node.get();
@@ -307,6 +309,7 @@ namespace dtDirector
       {
          if (mNodes[index] == node)
          {
+            node->setSelected(false);
             mNodes.erase(mNodes.begin() + index);
             delete node;
             break;
