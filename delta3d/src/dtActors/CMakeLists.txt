@@ -8,6 +8,7 @@ SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/src/${LIB_NAME})
 SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/actionactorproxy.h
     ${HEADER_PATH}/autotriggeractorproxy.h
+    ${HEADER_PATH}/backdropactor.h
     ${HEADER_PATH}/baselightactorproxy.h
     ${HEADER_PATH}/basewateractor.h
     ${HEADER_PATH}/beziercontrolleractorproxy.h
@@ -56,6 +57,7 @@ SET(LIB_PUBLIC_HEADERS
 SET(LIB_SOURCES
     ${SOURCE_PATH}/actionactorproxy.cpp
     ${SOURCE_PATH}/autotriggeractorproxy.cpp
+    ${SOURCE_PATH}/backdropactor.cpp
     ${SOURCE_PATH}/baselightactorproxy.cpp
     ${SOURCE_PATH}/basewateractor.cpp
     ${SOURCE_PATH}/beziercontrolleractorproxy.cpp

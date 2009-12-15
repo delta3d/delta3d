@@ -31,6 +31,8 @@
 
 #include <string>
 
+#include <dtEditQt/export.h>
+
 namespace dtEditQt
 {
 
@@ -38,7 +40,7 @@ namespace dtEditQt
     * This class contains static strings that define locations to resources such as
     * icons.
     */
-   class UIResources
+   class DT_EDITQT_EXPORT UIResources
    {
    public:
       static void staticInitialize();
