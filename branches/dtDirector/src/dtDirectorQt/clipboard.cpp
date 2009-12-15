@@ -195,8 +195,8 @@ namespace dtDirector
          newNode->CopyPropertiesFrom(*node);
 
          // Map the ID between the two.
-         mIDNewToOld[newNode->GetID()] = node->GetID();
-         mIDOldToNew[node->GetID()] = newNode->GetID();
+         mIDNewToOld[newNode->GetID()] = node;
+         mIDOldToNew[node->GetID()] = newNode;
          mPasted.push_back(newNode.get());
 
          // Offset the position of the new node based on our offset and position.
@@ -271,8 +271,7 @@ namespace dtDirector
    {
       if (!node || !parent) return;
 
-      dtCore::UniqueId otherID = mIDNewToOld[node->GetID()];
-      Node* fromNode = parent->GetNode(otherID);
+      Node* fromNode = mIDNewToOld[node->GetID()];
       if (!fromNode) return;
 
       // Link outputs to inputs.
@@ -306,7 +305,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void Clipboard::LinkInputs(InputLink* link, InputLink* fromLink, DirectorGraph* parent)
    {
-      if (!link || !fromLink) return;
+      if (!link || !fromLink || !parent) return;
 
       int count = (int)fromLink->GetLinks().size();
       for (int index = 0; index < count; index++)
@@ -319,12 +318,14 @@ namespace dtDirector
             {
                // If we did not copy the node that it is linked to, then link it
                // to the old one instead only if the old node is within the same graph.
-               if (owner->GetGraph() == parent)
+               if (owner->GetGraph() == parent ||
+                  owner->GetGraph()->mParent == parent ||
+                  parent->mParent == owner->GetGraph())
                   newOwner = owner;
             }
             else
             {
-               newOwner = parent->GetNode(mIDOldToNew[owner->GetID()]);
+               newOwner = mIDOldToNew[owner->GetID()];
             }
 
             if (newOwner)
@@ -339,7 +340,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void Clipboard::LinkOutputs(OutputLink* link, OutputLink* fromLink, DirectorGraph* parent)
    {
-      if (!link || !fromLink) return;
+      if (!link || !fromLink || !parent) return;
 
       int count = (int)fromLink->GetLinks().size();
       for (int index = 0; index < count; index++)
@@ -351,13 +352,15 @@ namespace dtDirector
             if (mIDOldToNew.find(owner->GetID()) == mIDOldToNew.end())
             {
                // If we did not copy the node that it is linked to, then link it
-               // to the old one instead.
-               if (owner->GetGraph() == parent)
+               // to the old one instead only if the old node is within the same graph.
+               if (owner->GetGraph() == parent ||
+                  owner->GetGraph()->mParent == parent ||
+                  parent->mParent == owner->GetGraph())
                   newOwner = owner;
             }
             else
             {
-               newOwner = parent->GetNode(mIDOldToNew[owner->GetID()]);
+               newOwner = mIDOldToNew[owner->GetID()];
             }
 
             if (newOwner)
@@ -372,7 +375,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void Clipboard::LinkValues(ValueLink* link, ValueLink* fromLink, DirectorGraph* parent)
    {
-      if (!link || !fromLink) return;
+      if (!link || !fromLink || !parent) return;
 
       int count = (int)fromLink->GetLinks().size();
       for (int index = 0; index < count; index++)
@@ -384,13 +387,15 @@ namespace dtDirector
             if (mIDOldToNew.find(owner->GetID()) == mIDOldToNew.end())
             {
                // If we did not copy the node that it is linked to, then link it
-               // to the old one instead.
-               if (owner->GetGraph() == parent)
+               // to the old one instead only if the old node is within the same graph.
+               if (owner->GetGraph() == parent ||
+                  owner->GetGraph()->mParent == parent ||
+                  parent->mParent == owner->GetGraph())
                   newOwner = dynamic_cast<ValueNode*>(owner);
             }
             else
             {
-               newOwner = dynamic_cast<ValueNode*>(parent->GetNode(mIDOldToNew[owner->GetID()]));
+               newOwner = dynamic_cast<ValueNode*>(mIDOldToNew[owner->GetID()]);
             }
 
             if (newOwner) link->Connect(newOwner);

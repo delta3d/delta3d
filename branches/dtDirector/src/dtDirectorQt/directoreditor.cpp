@@ -586,8 +586,11 @@ namespace dtDirector
          EditorScene* scene = view->GetScene();
          if (!scene) return;
 
+         QPointF pos = view->mapToScene(view->width()/2, view->height()/2);
+         pos -= scene->GetTranslationItem()->scenePos();
+
          std::vector<dtDAL::PropertyContainer*> newSelection;
-         newSelection = clipboard.PasteObjects(scene->GetGraph(), mUndoManager);
+         newSelection = clipboard.PasteObjects(scene->GetGraph(), mUndoManager, osg::Vec2(pos.x(), pos.y()));
 
          scene->clearSelection();
 
