@@ -233,12 +233,6 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void UndoDeleteEvent::Redo(bool isParent)
    {
-      // Delete the node.
-      if (!mEditor->GetDirector()->DeleteGraph(mNodeID))
-      {
-         mEditor->GetDirector()->DeleteNode(mNodeID);
-      }
-
       // Remove the node from all UI's
       int count = mEditor->GetGraphTabs()->count();
       for (int index = 0; index < count; index++)
@@ -261,6 +255,12 @@ namespace dtDirector
                if (nodeItem) view->GetScene()->DeleteNode(nodeItem);
             }
          }
+      }
+
+      // Delete the node.
+      if (!mEditor->GetDirector()->DeleteGraph(mNodeID))
+      {
+         mEditor->GetDirector()->DeleteNode(mNodeID);
       }
 
       // Now execute all sub events.

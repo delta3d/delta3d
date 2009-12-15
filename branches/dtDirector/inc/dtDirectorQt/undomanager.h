@@ -91,6 +91,11 @@ namespace dtDirector
       bool CanRedo() {return !mRedoEvents.empty();}
 
       /**
+       * Retrieves the editor.
+       */
+      DirectorEditor* GetEditor() {return mEditor;}
+
+      /**
        * Begins and ends a group of multiple transaction events.
        */
       void BeginMultipleEvents();

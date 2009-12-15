@@ -176,6 +176,21 @@ namespace dtDirector
       void OnRedo();
 
       /**
+       * Event handler when the cut button is pressed.
+       */
+      void OnCut();
+
+      /**
+       * Event handler when the copy button is pressed.
+       */
+      void OnCopy();
+
+      /**
+       * Event handler when the paste button is pressed.
+       */
+      void OnPaste();
+
+      /**
        * Event handler when the delete button is pressed.
        */
       void OnDelete();
@@ -184,6 +199,11 @@ namespace dtDirector
        * Event handler when the show property editor button is pressed.
        */
       void OnShowPropertyEditor();
+
+      /**
+       * Event handler when the refresh button is pressed.
+       */
+      void OnRefresh();
 
    protected:
 
@@ -226,6 +246,7 @@ namespace dtDirector
 
       // View Actions.
       QAction*  mViewPropertiesAction;
+      QAction*  mRefreshAction;
    };
 
 } // namespace dtDirector

@@ -160,6 +160,11 @@ namespace dtDirector
       bool HasSelection();
 
       /**
+       * Retrieves the current selection.
+       */
+      std::vector<dtCore::RefPtr<dtDAL::PropertyContainer> >& GetSelection() {return mSelected;}
+
+      /**
        * Refreshes the property editor.
        */
       void RefreshProperties();

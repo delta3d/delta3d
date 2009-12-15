@@ -25,6 +25,7 @@
 #include <dtDirectorQt/editorscene.h>
 #include <dtDirectorQt/undomanager.h>
 #include <dtDirectorQt/undodeleteevent.h>
+#include <dtDirectorQt/clipboard.h>
 
 #include <dtDirectorQt/actionitem.h>
 #include <dtDirectorQt/valueitem.h>
@@ -66,6 +67,7 @@ namespace dtDirector
       , mCopyAction(NULL)
       , mPasteAction(NULL)
       , mViewPropertiesAction(NULL)
+      , mRefreshAction(NULL)
    {
       // Set the default size of the window.
       resize(900, 600);
@@ -115,17 +117,17 @@ namespace dtDirector
       mDeleteAction->setToolTip(tr("Reverts your last undo action (Delete)."));
 
       // Cut Action.
-      mCutAction = new QAction(QIcon(":/icon/cut.png"), tr("Cut"), this);
+      mCutAction = new QAction(QIcon(":/icons/cut.png"), tr("Cut"), this);
       mCutAction->setShortcut(tr("Ctrl+X"));
       mCutAction->setToolTip(tr("Cuts the currently selected nodes to the clipboard (Ctrl+X)."));
 
       // Copy Action.
-      mCopyAction = new QAction(QIcon(":/icon/copy.png"), tr("Copy"), this);
+      mCopyAction = new QAction(QIcon(":/icons/duplicate.png"), tr("Copy"), this);
       mCopyAction->setShortcut(tr("Ctrl+C"));
       mCopyAction->setToolTip(tr("Copies the currently selected nodes to the clipboard (Ctrl+C)."));
 
       // Cut Action.
-      mPasteAction = new QAction(QIcon(":/icon/paste.png"), tr("Paste"), this);
+      mPasteAction = new QAction(QIcon(":/icons/paste.png"), tr("Paste"), this);
       mPasteAction->setShortcut(tr("Ctrl+V"));
       mPasteAction->setToolTip(tr("Pastes the nodes saved in the clipboard to the current graph (Ctrl+V)."));
 
@@ -135,6 +137,11 @@ namespace dtDirector
       mViewPropertiesAction->setToolTip(tr("Shows the Property Editor(Ctrl+P)."));
       mViewPropertiesAction->setCheckable(true);
       mViewPropertiesAction->setChecked(true);
+
+      // Show Properties Action.
+      mRefreshAction = new QAction(QIcon(":/icons/refresh.png"), tr("Refresh"), this);
+      mRefreshAction->setShortcut(tr("Ctrl+R"));
+      mRefreshAction->setToolTip(tr("Refresh the current view (Ctrl+R)."));
 
       // Graph tabs.
       mGraphTabs = new GraphTabs(this, this);
@@ -172,6 +179,8 @@ namespace dtDirector
       // View Menu.
       mViewMenu = mMenuBar->addMenu("&View");
       mViewMenu->addAction(mViewPropertiesAction);
+      mViewMenu->addSeparator();
+      mViewMenu->addAction(mRefreshAction);
 
       // File Toolbar.
       mFileToolbar = new QToolBar(this);
@@ -194,7 +203,14 @@ namespace dtDirector
       mEditToolbar->addAction(mUndoAction);
       mEditToolbar->addAction(mRedoAction);
       mEditToolbar->addSeparator();
+      mEditToolbar->addAction(mCutAction);
+      mEditToolbar->addAction(mCopyAction);
+      mEditToolbar->addAction(mPasteAction);
+      mEditToolbar->addSeparator();
       mEditToolbar->addAction(mDeleteAction);
+
+      mEditToolbar->addSeparator();
+      mEditToolbar->addAction(mRefreshAction);
 
       // Main layout.
       setCentralWidget(mGraphTabs);
@@ -220,10 +236,18 @@ namespace dtDirector
          this, SLOT(OnUndo()));
       connect(mRedoAction, SIGNAL(triggered()),
          this, SLOT(OnRedo()));
+      connect(mCutAction, SIGNAL(triggered()),
+         this, SLOT(OnCut()));
+      connect(mCopyAction, SIGNAL(triggered()),
+         this, SLOT(OnCopy()));
+      connect(mPasteAction, SIGNAL(triggered()),
+         this, SLOT(OnPaste()));
       connect(mDeleteAction, SIGNAL(triggered()),
          this, SLOT(OnDelete()));
       connect(mViewPropertiesAction, SIGNAL(triggered()),
          this, SLOT(OnShowPropertyEditor()));
+      connect(mRefreshAction, SIGNAL(triggered()),
+         this, SLOT(OnRefresh()));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -303,8 +327,6 @@ namespace dtDirector
       
       // Refresh the Properties.
       mPropertyEditor->GetScene()->RefreshProperties();
-
-      // Refresh the tab names.
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -339,7 +361,6 @@ namespace dtDirector
       bool bHasParent = false;
       bool bCanDelete = false;
       bool bCanCopy = false;
-      bool bCanPaste = false;
 
       int tabIndex = mGraphTabs->currentIndex();
       if (tabIndex >= 0 && tabIndex < mGraphTabs->count())
@@ -378,7 +399,7 @@ namespace dtDirector
       mCopyAction->setEnabled(bCanCopy);
 
       // Paste button.
-      mPasteAction->setEnabled(bCanPaste);
+      mPasteAction->setEnabled(Clipboard::GetInstance().CanPaste());
 
       // Delete button.
       mDeleteAction->setEnabled(bCanDelete);
@@ -518,6 +539,85 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::OnCut()
+   {
+      // First copy the contents.
+      OnCopy();
+      OnDelete();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::OnCopy()
+   {
+      Clipboard& clipboard = Clipboard::GetInstance();
+      clipboard.Clear();
+
+      int index = mGraphTabs->currentIndex();
+      if (index >= 0 && index < mGraphTabs->count())
+      {
+         EditorView* view = dynamic_cast<EditorView*>(mGraphTabs->widget(index));
+         if (!view) return;
+
+         EditorScene* scene = view->GetScene();
+         if (!scene) return;
+
+         std::vector<dtCore::RefPtr<dtDAL::PropertyContainer> >& selection = scene->GetSelection();
+         int count = (int)selection.size();
+         for (int index = 0; index < count; index++)
+         {
+            clipboard.AddObject(selection[index].get());
+         }
+      }
+
+      RefreshButtonStates();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::OnPaste()
+   {
+      Clipboard& clipboard = Clipboard::GetInstance();
+
+      int index = mGraphTabs->currentIndex();
+      if (index >= 0 && index < mGraphTabs->count())
+      {
+         EditorView* view = dynamic_cast<EditorView*>(mGraphTabs->widget(index));
+         if (!view) return;
+
+         EditorScene* scene = view->GetScene();
+         if (!scene) return;
+
+         std::vector<dtDAL::PropertyContainer*> newSelection;
+         newSelection = clipboard.PasteObjects(scene->GetGraph(), mUndoManager);
+
+         scene->clearSelection();
+
+         // Refresh the graph to create all the newly created node items.
+         RefreshGraph(scene->GetGraph());
+         
+         // Now auto-select the newly created nodes.
+         int count = (int)newSelection.size();
+         for (index = 0; index < count; index++)
+         {
+            Node* node = dynamic_cast<Node*>(newSelection[index]);
+            if (node)
+            {
+               NodeItem* item = scene->GetNodeItem(node->GetID(), true);
+               if (item) item->setSelected(true);
+            }
+            else
+            {
+               DirectorGraph* graph = dynamic_cast<DirectorGraph*>(newSelection[index]);
+               if (graph)
+               {
+                  MacroItem* item = scene->GetGraphItem(graph->GetID());
+                  if (item) item->setSelected(true);
+               }
+            }
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void DirectorEditor::OnDelete()
    {
       // Get the current selection.
@@ -610,6 +710,12 @@ namespace dtDirector
       {
          mPropertyEditor->hide();
       }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::OnRefresh()
+   {
+      Refresh();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
