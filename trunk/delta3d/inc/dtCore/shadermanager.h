@@ -241,7 +241,13 @@ namespace dtCore
           * previously called AssignShaderFromPrototype(). If the node is unassigned, it is a NO-OP.
           * @param node The node you previously called AssignShaderFromPrototype() on.
           */
-         void UnassignShaderFromNode(osg::Node& node); 
+         void UnassignShaderFromNode(osg::Node& node);
+
+         /** 
+          * Remove a previously assigned ShaderProgram from the supplied DeltaDrawable.
+          * @param drawable A DeltaDrawable that has an existing ShaderProgram applied
+          */
+         void UnassignShader(dtCore::DeltaDrawable& drawable);
 
          /**
           * Gets the number of shader prototypes currently managed by the shader manager.  This 
@@ -311,7 +317,17 @@ namespace dtCore
           * @param node The node that was previously used with AssignShaderFromPrototype()
           * @return The unique shader instance for this node. NULL if none found for this node.
           */
-         dtCore::ShaderProgram* GetShaderInstanceForNode(osg::Node* node);
+         dtCore::ShaderProgram* GetShaderInstanceForNode(const osg::Node* node);
+
+         /**
+          * Attempts to find an active shader instance for the supplied DeltaDrawable. Active shaders are 
+          * created by calling AssignShaderFromPrototype(). The returned shader
+          * is a unique instance for this DeltaDrawable. To change the behavior of your shader, simply access
+          * the parameters of your instance and set their value directly.
+          * @param drawable The DeltaDrawable that was previously used with AssignShaderFromPrototype()
+          * @return The unique shader instance for this DeltaDrawable. NULL if none found.
+          */
+         dtCore::ShaderProgram* GetShaderInstanceForDrawable(const dtCore::DeltaDrawable &drawable);
 
       protected:
 
