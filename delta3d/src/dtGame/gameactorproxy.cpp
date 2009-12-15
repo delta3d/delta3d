@@ -26,6 +26,7 @@
 #include <dtGame/exceptionenum.h>
 #include <dtGame/gameactor.h>
 #include <dtGame/gamemanager.h>
+#include <dtGame/shaderactorcomponent.h>
 
 #include <dtGame/invokable.h>
 #include <dtDAL/enginepropertytypes.h>
@@ -120,6 +121,9 @@ public:
 void GameActorProxy::BuildPropertyMap()
 {
    GameActor& ga = GetGameActor();
+   
+   //TODO should be in the CreateActor() method
+   ga.AddComponent(*new ShaderActorComponent());
 
    dtDAL::PhysicalActorProxy::BuildPropertyMap();
 

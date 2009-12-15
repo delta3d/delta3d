@@ -1134,8 +1134,7 @@ void GameActorTests::TestGetAllActorComponents()
 
    std::vector<ActorComponent*> components;
    actor->GetAllComponents(components);
-   CPPUNIT_ASSERT_EQUAL_MESSAGE("Actor already contains ActorComponents, but non were added",
-                                size_t(0), components.size());
+   const size_t startingSize = components.size();
 
 
    dtCore::RefPtr<TestActorComponent1> component1 = new TestActorComponent1();
@@ -1147,7 +1146,7 @@ void GameActorTests::TestGetAllActorComponents()
    components = std::vector<ActorComponent*>();
    actor->GetAllComponents(components);
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Actor didn't return back the number of added ActorComponents",
-                                size_t(2), components.size());
+                                startingSize + 2, components.size());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
