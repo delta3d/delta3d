@@ -79,7 +79,7 @@ public:
 
    void DisableShaders()
    {
-      dtCore::ShaderManager::GetInstance().UnassignShaderFromNode(*mObject->GetOSGNode());
+      dtCore::ShaderManager::GetInstance().UnassignShader(*mObject);
       mEnabled = false;
    }
 

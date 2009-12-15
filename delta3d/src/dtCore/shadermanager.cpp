@@ -274,8 +274,7 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   // Curt - Add a method to get an active shader for a given node
-   dtCore::ShaderProgram *ShaderManager::GetShaderInstanceForNode(osg::Node *node)
+   dtCore::ShaderProgram *ShaderManager::GetShaderInstanceForNode(const osg::Node *node)
    {
       // Try to find the node in the active node list.
       for (int i = mActiveNodeList.size() - 1; i >= 0 && node != NULL; i--)
@@ -288,6 +287,13 @@ namespace dtCore
       }
 
       return NULL;
+   }
+
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtCore::ShaderProgram* ShaderManager::GetShaderInstanceForDrawable(const dtCore::DeltaDrawable &drawable)
+   {
+      return GetShaderInstanceForNode(drawable.GetOSGNode());
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -628,6 +634,15 @@ namespace dtCore
          //apply it to the supplied drawable
          AssignShaderFromPrototype(*shadersInGroup[0],
                                    *drawable.GetOSGNode());
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ShaderManager::UnassignShader(dtCore::DeltaDrawable& drawable)
+   {
+      if (drawable.GetOSGNode())
+      {
+         UnassignShaderFromNode(*drawable.GetOSGNode());
       }
    }
 }
