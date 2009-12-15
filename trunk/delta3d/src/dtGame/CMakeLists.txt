@@ -49,6 +49,7 @@ SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/messageparameter.h
     ${HEADER_PATH}/messagetype.h
     ${HEADER_PATH}/serverloggercomponent.h
+    ${HEADER_PATH}/shaderactorcomponent.h
     ${HEADER_PATH}/taskcomponent.h
 )
 
@@ -87,6 +88,7 @@ SET(LIB_SOURCES
     ${SOURCE_PATH}/messagetype.cpp
     ${SOURCE_PATH}/precomp.cpp
     ${SOURCE_PATH}/serverloggercomponent.cpp
+    ${SOURCE_PATH}/shaderactorcomponent.cpp
     ${SOURCE_PATH}/taskcomponent.cpp
 )
 
