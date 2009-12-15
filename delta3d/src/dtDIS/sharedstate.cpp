@@ -43,12 +43,12 @@ bool ResourceMapConfig::RemoveResourceMapping(const DIS::EntityType& eid)
    return( mMap.erase( eid )>0 );
 }
 
-bool ResourceMapConfig::GetMappedResource(const DIS::EntityType& eid, const dtDAL::ResourceDescriptor*& toWrite) const
+bool ResourceMapConfig::GetMappedResource(const DIS::EntityType& eid, dtDAL::ResourceDescriptor& toWrite) const
 {
    ResourceMap::const_iterator iter = mMap.find( eid );
    if( iter != mMap.end() )
    {
-      toWrite = &(iter->second);
+      toWrite = (iter->second);
       return true;
    }
 

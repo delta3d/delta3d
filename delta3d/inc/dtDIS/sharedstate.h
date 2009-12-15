@@ -124,7 +124,7 @@ namespace dtDIS
       /// @param toWrite Overwritten with the instance of the mapped resource identifier.
       /// @param eid The key being stored.
       /// @return true if eid was found in the map.  false if it was not found.
-      bool GetMappedResource(const DIS::EntityType& eid, const dtDAL::ResourceDescriptor*& toWrite) const;
+      bool GetMappedResource(const DIS::EntityType& eid, dtDAL::ResourceDescriptor& toWrite) const;
 
    private:
       typedef std::map<DIS::EntityType,dtDAL::ResourceDescriptor,details::EntityTypeCompare> ResourceMap;

@@ -47,12 +47,12 @@ void FullApplicator::operator ()(const DIS::EntityStatePdu& source,
       if (config != NULL)
       {
          const ResourceMapConfig& resources = config->GetResourceMap();
-         const dtDAL::ResourceDescriptor* rdPtr = NULL;
-         bool found = resources.GetMappedResource( source.getEntityType(), rdPtr ) ;
-         if( found )
+         dtDAL::ResourceDescriptor resource = dtDAL::ResourceDescriptor::NULL_RESOURCE;
+         bool found = resources.GetMappedResource(source.getEntityType(), resource);
+         if (found)
          {
             dtDAL::NamedResourceParameter* nrp = static_cast<dtDAL::NamedResourceParameter*>( mp );
-            nrp->SetValue( rdPtr );
+            nrp->SetValue(resource);
          }
       }
    }
