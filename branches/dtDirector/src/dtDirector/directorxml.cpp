@@ -387,49 +387,56 @@ namespace dtDirector
             mPropSerializer->WriteProperty(property);
          }
 
-         //// Save Input Links.
-         //std::vector<InputLink>& inputs = node->GetInputLinks();
-         //for (int inputIndex = 0; inputIndex < (int)inputs.size(); inputIndex++)
-         //{
-         //   BeginElement(dtDAL::MapXMLConstants::DIRECTOR_LINKS_INPUT_ELEMENT);
-         //   {
-         //      InputLink& input = inputs[inputIndex];
+         // Save Input Links.
+         std::vector<InputLink>& inputs = node->GetInputLinks();
+         for (int inputIndex = 0; inputIndex < (int)inputs.size(); inputIndex++)
+         {
+            BeginElement(dtDAL::MapXMLConstants::DIRECTOR_LINKS_INPUT_ELEMENT);
+            {
+               InputLink& input = inputs[inputIndex];
 
-         //      // Link Name.
-         //      BeginElement(dtDAL::MapXMLConstants::NAME_ELEMENT);
-         //      {
-         //         AddCharacters(input.GetName());
-         //      }
-         //      EndElement(); // End Link Name.
+               // Link Name.
+               BeginElement(dtDAL::MapXMLConstants::NAME_ELEMENT);
+               {
+                  AddCharacters(input.GetName());
+               }
+               EndElement(); // End Link Name.
 
-         //      // Links.
-         //      std::vector<OutputLink*>& links = input.GetLinks();
-         //      for (int linkIndex = 0; linkIndex < (int)links.size(); linkIndex++)
-         //      {
-         //         OutputLink* link = links[linkIndex];
-         //         if (!link) continue;
+               // Visibility
+               BeginElement(dtDAL::MapXMLConstants::DIRECTOR_LINK_VISIBLE_ELEMENT);
+               {
+                  AddCharacters(input.GetVisible()? "true": "false");
+               }
+               EndElement(); // End Visibility.
 
-         //         BeginElement(dtDAL::MapXMLConstants::DIRECTOR_LINK_ELEMENT);
-         //         {
-         //            // Linked Nodes ID.
-         //            BeginElement(dtDAL::MapXMLConstants::ID_ELEMENT);
-         //            {
-         //               AddCharacters(link->GetOwner()->GetID().ToString());
-         //            }
-         //            EndElement(); // End ID Element.
+               // Links.
+               std::vector<OutputLink*>& links = input.GetLinks();
+               for (int linkIndex = 0; linkIndex < (int)links.size(); linkIndex++)
+               {
+                  OutputLink* link = links[linkIndex];
+                  if (!link) continue;
 
-         //            // Linked Link Name.
-         //            BeginElement(dtDAL::MapXMLConstants::NAME_ELEMENT);
-         //            {
-         //               AddCharacters(link->GetName());
-         //            }
-         //            EndElement(); // End Linked Link Name.
-         //         }
-         //         EndElement(); // End Link Element.
-         //      }
-         //   }
-         //   EndElement(); // End Input Links Element.
-         //}
+                  BeginElement(dtDAL::MapXMLConstants::DIRECTOR_LINK_ELEMENT);
+                  {
+                     // Linked Nodes ID.
+                     BeginElement(dtDAL::MapXMLConstants::ID_ELEMENT);
+                     {
+                        AddCharacters(link->GetOwner()->GetID().ToString());
+                     }
+                     EndElement(); // End ID Element.
+
+                     // Linked Link Name.
+                     BeginElement(dtDAL::MapXMLConstants::NAME_ELEMENT);
+                     {
+                        AddCharacters(link->GetName());
+                     }
+                     EndElement(); // End Linked Link Name.
+                  }
+                  EndElement(); // End Link Element.
+               }
+            }
+            EndElement(); // End Input Links Element.
+         }
 
          // Save Output Links.
          std::vector<OutputLink>& outputs = node->GetOutputLinks();
@@ -445,6 +452,13 @@ namespace dtDirector
                   AddCharacters(output.GetName());
                }
                EndElement(); // End Link Name.
+
+               // Visibility
+               BeginElement(dtDAL::MapXMLConstants::DIRECTOR_LINK_VISIBLE_ELEMENT);
+               {
+                  AddCharacters(output.GetVisible()? "true": "false");
+               }
+               EndElement(); // End Visibility.
 
                // Links.
                std::vector<InputLink*>& links = output.GetLinks();
@@ -489,6 +503,13 @@ namespace dtDirector
                   AddCharacters(value.GetLabel());
                }
                EndElement(); // End Link Name.
+
+               // Visibility
+               BeginElement(dtDAL::MapXMLConstants::DIRECTOR_LINK_VISIBLE_ELEMENT);
+               {
+                  AddCharacters(value.GetVisible()? "true": "false");
+               }
+               EndElement(); // End Visibility.
 
                // Is Out Value.
                BeginElement(dtDAL::MapXMLConstants::DIRECTOR_LINK_VALUE_IS_OUT_ELEMENT);

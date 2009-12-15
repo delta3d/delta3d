@@ -33,6 +33,7 @@ namespace dtDirector
    ///////////////////////////////////////////////////////////////////////////////////////
    InputLink::InputLink(Node* owner, const std::string& name)
       : mOwner(owner)
+      , mVisible(true)
    {
       SetName(name);
    }

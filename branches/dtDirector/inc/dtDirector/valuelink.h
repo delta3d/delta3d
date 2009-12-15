@@ -133,6 +133,12 @@ namespace dtDirector
       void SetLabel(const std::string& label);
 
       /**
+       * Accessors for the visible status of the link.
+       */
+      void SetVisible(bool visible) {mVisible = visible;}
+      bool GetVisible() {return mVisible;}
+
+      /**
        * Retrieves whether this link is an output link.
        *
        * @return  True if this is an out link.
@@ -203,6 +209,7 @@ namespace dtDirector
 
       Node* mOwner;
       std::string mLabel;
+      bool mVisible;
 
 #pragma warning (push)
 #pragma warning (disable:4251)

@@ -78,6 +78,12 @@ namespace dtDirector
       const std::string& GetName() const;
 
       /**
+       * Accessors for the visible status of the link.
+       */
+      void SetVisible(bool visible) {mVisible = visible;}
+      bool GetVisible() {return mVisible;}
+
+      /**
        * Retrieves the list of links.
        */
       std::vector<InputLink*>& GetLinks() {return mLinks;}
@@ -116,6 +122,7 @@ namespace dtDirector
    private:
 
       std::string  mName;
+      bool         mVisible;
 
       int          mActiveCount;
 

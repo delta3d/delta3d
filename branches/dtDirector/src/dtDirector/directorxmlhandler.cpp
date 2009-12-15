@@ -415,6 +415,36 @@ namespace dtDirector
                      }
                   }
                }
+               else if (topEl == dtDAL::MapXMLConstants::DIRECTOR_LINK_VISIBLE_ELEMENT)
+               {
+                  if (mInInputLink)
+                  {
+                     if (!mInputLink)
+                     {
+                        if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_ERROR))
+                           mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Attempted to set value on input link when the link was not loaded.");
+                     }
+                     mInputLink->SetVisible(dtUtil::XMLStringConverter(chars).ToString() == "true");
+                  }
+                  else if (mInOutputLink)
+                  {
+                     if (!mOutputLink)
+                     {
+                        if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_ERROR))
+                           mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Attempted to set value on output link when the link was not loaded.");
+                     }
+                     mOutputLink->SetVisible(dtUtil::XMLStringConverter(chars).ToString() == "true");
+                  }
+                  else if (mInValueLink)
+                  {
+                     if (!mValueLink)
+                     {
+                        if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_ERROR))
+                           mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Attempted to set value on value link when the link was not loaded.");
+                     }
+                     mValueLink->SetVisible(dtUtil::XMLStringConverter(chars).ToString() == "true");
+                  }
+               }
                else if (mValueLink && topEl == dtDAL::MapXMLConstants::DIRECTOR_LINK_VALUE_IS_OUT_ELEMENT)
                {
                   mValueLink->SetOutLink(dtUtil::XMLStringConverter(chars).ToString() == "true");

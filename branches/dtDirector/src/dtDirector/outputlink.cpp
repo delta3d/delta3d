@@ -33,6 +33,7 @@ namespace dtDirector
    ///////////////////////////////////////////////////////////////////////////////////////
    OutputLink::OutputLink(Node* owner, const std::string& name)
       : mOwner(owner)
+      , mVisible(true)
       , mActiveCount(0)
    {
       SetName(name);

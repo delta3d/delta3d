@@ -2,7 +2,7 @@
 <director xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dDirector" xsi:schemaLocation="delta3dDirector director.xsd">
     <header>
         <createTimestamp>2009-12-14T12:16:35-08:00</createTimestamp>
-        <lastUpdateTimestamp>2009-12-14T14:21:46-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2009-12-14T23:25:28-08:00</lastUpdateTimestamp>
         <editorVersion>2.4.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
         <property>
@@ -74,6 +74,7 @@
                 </property>
                 <outputlink>
                     <name>Out</name>
+                    <visible>true</visible>
                     <link>
                         <id>766d9a2c-5335-4461-a813-8367c25b9d53</id>
                         <name>Start</name>
@@ -85,6 +86,7 @@
                 </outputlink>
                 <valuelink>
                     <name>Instigator</name>
+                    <visible>false</visible>
                     <isout>false</isout>
                     <allowmultiple>true</allowmultiple>
                     <typecheck>true</typecheck>
@@ -119,8 +121,25 @@
                     <name>Delay</name>
                     <float>1</float>
                 </property>
+                <inputlink>
+                    <name>Start</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>6ee6ac47-29ec-4e12-a7c9-02532e2073d9</id>
+                        <name>Out</name>
+                    </link>
+                </inputlink>
+                <inputlink>
+                    <name>Stop</name>
+                    <visible>false</visible>
+                </inputlink>
+                <inputlink>
+                    <name>Pause</name>
+                    <visible>false</visible>
+                </inputlink>
                 <outputlink>
                     <name>Out</name>
+                    <visible>true</visible>
                     <link>
                         <id>1f1a2172-768d-4a56-ab70-35fa2582e252</id>
                         <name>Subtract</name>
@@ -128,6 +147,7 @@
                 </outputlink>
                 <outputlink>
                     <name>Time Elapsed</name>
+                    <visible>true</visible>
                     <link>
                         <id>18957df1-82dd-446f-b061-fc07f59b9507</id>
                         <name>Multiply</name>
@@ -135,6 +155,7 @@
                 </outputlink>
                 <valuelink>
                     <name>Delay</name>
+                    <visible>true</visible>
                     <isout>false</isout>
                     <allowmultiple>false</allowmultiple>
                     <typecheck>false</typecheck>
@@ -196,8 +217,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>332.000000</value1>
-                        <value2>272.000000</value2>
+                        <value1>329.000000</value1>
+                        <value2>240.000000</value2>
                     </vec2>
                 </property>
                 <property>
@@ -258,8 +279,17 @@
                         <name>Name</name>
                         <string>Multiply</string>
                     </property>
+                    <inputlink>
+                        <name>Multiply</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>766d9a2c-5335-4461-a813-8367c25b9d53</id>
+                            <name>Time Elapsed</name>
+                        </link>
+                    </inputlink>
                     <outputlink>
                         <name>Out</name>
+                        <visible>true</visible>
                         <link>
                             <id>4669e214-ebdc-4b41-9aa3-2f0cbbc0d880</id>
                             <name>Multiply</name>
@@ -293,8 +323,17 @@
                         <name>Name</name>
                         <string>Add</string>
                     </property>
+                    <inputlink>
+                        <name>Add</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>6ee6ac47-29ec-4e12-a7c9-02532e2073d9</id>
+                            <name>Out</name>
+                        </link>
+                    </inputlink>
                     <outputlink>
                         <name>Out</name>
+                        <visible>true</visible>
                         <link>
                             <id>4669e214-ebdc-4b41-9aa3-2f0cbbc0d880</id>
                             <name>Add</name>
@@ -328,8 +367,17 @@
                         <name>Name</name>
                         <string>Subtract</string>
                     </property>
+                    <inputlink>
+                        <name>Subtract</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>766d9a2c-5335-4461-a813-8367c25b9d53</id>
+                            <name>Out</name>
+                        </link>
+                    </inputlink>
                     <outputlink>
                         <name>Out</name>
+                        <visible>true</visible>
                         <link>
                             <id>4669e214-ebdc-4b41-9aa3-2f0cbbc0d880</id>
                             <name>Subtract</name>
@@ -357,16 +405,25 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>409.000000</value1>
-                            <value2>51.000000</value2>
+                            <value1>397.000000</value1>
+                            <value2>80.000000</value2>
                         </vec2>
                     </property>
                     <property>
                         <name>Name</name>
                         <string>Out</string>
                     </property>
+                    <inputlink>
+                        <name>In</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>4669e214-ebdc-4b41-9aa3-2f0cbbc0d880</id>
+                            <name>Out</name>
+                        </link>
+                    </inputlink>
                     <outputlink>
                         <name>Out</name>
+                        <visible>false</visible>
                     </outputlink>
                 </node>
                 <node>
@@ -388,8 +445,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>200.000000</value1>
-                            <value2>50.000000</value2>
+                            <value1>195.000000</value1>
+                            <value2>79.000000</value2>
                         </vec2>
                     </property>
                     <property>
@@ -400,8 +457,37 @@
                         <name>B</name>
                         <double>0</double>
                     </property>
+                    <inputlink>
+                        <name>Add</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>6fe8ea05-464d-41d2-a032-a6434130b886</id>
+                            <name>Out</name>
+                        </link>
+                    </inputlink>
+                    <inputlink>
+                        <name>Subtract</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>1f1a2172-768d-4a56-ab70-35fa2582e252</id>
+                            <name>Out</name>
+                        </link>
+                    </inputlink>
+                    <inputlink>
+                        <name>Multiply</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>18957df1-82dd-446f-b061-fc07f59b9507</id>
+                            <name>Out</name>
+                        </link>
+                    </inputlink>
+                    <inputlink>
+                        <name>Divide</name>
+                        <visible>false</visible>
+                    </inputlink>
                     <outputlink>
                         <name>Out</name>
+                        <visible>true</visible>
                         <link>
                             <id>66db9853-70bb-460e-b5d5-31e01f04ada3</id>
                             <name>In</name>
@@ -409,6 +495,7 @@
                     </outputlink>
                     <valuelink>
                         <name>A</name>
+                        <visible>true</visible>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>false</typecheck>
@@ -418,6 +505,7 @@
                     </valuelink>
                     <valuelink>
                         <name>B</name>
+                        <visible>true</visible>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>false</typecheck>
@@ -427,6 +515,7 @@
                     </valuelink>
                     <valuelink>
                         <name>Result</name>
+                        <visible>true</visible>
                         <isout>true</isout>
                         <allowmultiple>true</allowmultiple>
                         <typecheck>false</typecheck>
@@ -469,6 +558,7 @@
                     </property>
                     <valuelink>
                         <name>External Connected</name>
+                        <visible>true</visible>
                         <isout>true</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>false</typecheck>
@@ -506,6 +596,7 @@
                     </property>
                     <valuelink>
                         <name>External Not Connected</name>
+                        <visible>false</visible>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>false</typecheck>

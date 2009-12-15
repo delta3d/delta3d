@@ -209,6 +209,7 @@ namespace dtDirector
       mTextHeight = 0.0f;
       mLinkWidth = 0.0f;
       mLinkHeight = 0.0f;
+      mValueHeight = 0.0f;
 
       FindLinks();
 
@@ -388,6 +389,7 @@ namespace dtDirector
 
             data.linkGraphic = new InputLinkItem(this, (int)mInputs.size()-1, this, mScene);
             data.linkName = new QGraphicsTextItem(data.linkGraphic, mScene);
+            data.linkName->setAcceptHoverEvents(false);
          }
       }
 
@@ -447,11 +449,14 @@ namespace dtDirector
          QPointF(LINK_LENGTH, LINK_SIZE) << QPointF(0, LINK_SIZE) <<
          QPointF(LINK_SIZE/2, LINK_SIZE/2);
 
+      int visibleCount = 0;
       int count = (int)mInputs.size();
       for (int index = 0; index < count; index++)
       {
          InputData& data = mInputs[index];
+         if (!data.link || !data.link->GetVisible()) continue;
          
+         visibleCount++;
          // Create the link graphic.
          data.linkGraphic->setPolygon(poly);
          data.linkGraphic->setPen(QPen(Qt::black, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
@@ -474,20 +479,24 @@ namespace dtDirector
       mLinkWidth = desiredWidth;
 
       // Resize the node height if we have to.
-      float desiredHeight = ((mInputs.size() + 1) * (LINK_SPACING + mTextHeight)) - (LINK_SPACING * 2);
+      float desiredHeight = ((visibleCount + 1) * (LINK_SPACING + mTextHeight)) - (LINK_SPACING * 2);
       if (mNodeHeight < desiredHeight) mNodeHeight = desiredHeight;
       mLinkHeight = desiredHeight;
 
       // Now position all of the links in a single column.
       count = (int)mInputs.size();
+      visibleCount = 0;
       for (int index = 0; index < count; index++)
       {
          InputData& data = mInputs[index];
+         if (!data.link || !data.link->GetVisible()) continue;
 
          float x = -LINK_LENGTH;
-         float y = ((LINK_SPACING + mTextHeight) * (index + 1)) + LINK_SIZE/2;
+         float y = ((LINK_SPACING + mTextHeight) * (visibleCount + 1)) + LINK_SIZE/2;
 
          data.linkGraphic->setPos(x, y);
+
+         visibleCount++;
       }
    }
 
@@ -502,11 +511,14 @@ namespace dtDirector
          QPointF(0, LINK_SIZE);
       float offset = 0;
 
+      int visibleCount = 0;
       int count = (int)mOutputs.size();
       for (int index = 0; index < count; index++)
       {
          OutputData& data = mOutputs[index];
+         if (!data.link || !data.link->GetVisible()) continue;
 
+         visibleCount++;
          // Create the link graphic.
          data.linkGraphic->setPolygon(poly);
          data.linkGraphic->setPen(QPen(Qt::black, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
@@ -535,20 +547,24 @@ namespace dtDirector
       }
 
       // Resize the node height if we have to.
-      float desiredHeight = ((mOutputs.size() + 1) * (LINK_SPACING + mTextHeight)) - (LINK_SPACING * 2);
+      float desiredHeight = ((visibleCount + 1) * (LINK_SPACING + mTextHeight)) - (LINK_SPACING * 2);
       if (mNodeHeight < desiredHeight + mValueHeight) mNodeHeight = desiredHeight + mValueHeight;
       if (desiredHeight > mLinkHeight) mLinkHeight = desiredHeight;
 
       // Now position all of the links in a single column.
+      visibleCount = 0;
       count = (int)mOutputs.size();
       for (int index = 0; index < count; index++)
       {
          OutputData& data = mOutputs[index];
+         if (!data.link || !data.link->GetVisible()) continue;
 
          float x = mNodeWidth + 1.0f;
-         float y = ((LINK_SPACING + mTextHeight) * (index + 1)) - LINK_SPACING + offset;
+         float y = ((LINK_SPACING + mTextHeight) * (visibleCount + 1)) - LINK_SPACING + offset;
 
          data.linkGraphic->setPos(x, y);
+
+         visibleCount++;
       }
    }
 
@@ -557,11 +573,14 @@ namespace dtDirector
    {
       float maxWidth = 0;
 
+      int visibleCount = 0;
       int count = (int)mValues.size();
       for (int index = 0; index < count; index++)
       {
          ValueData& data = mValues[index];
+         if (!data.link || !data.link->GetVisible()) continue;
 
+         visibleCount++;
          // Out links are triangular shaped.
          QPolygonF poly;
          if (data.link->IsOutLink())
@@ -615,7 +634,7 @@ namespace dtDirector
       }
 
       // Resize the node width if we have to.
-      float desiredWidth = (maxWidth + LINK_SPACING) * mValues.size() - LINK_SPACING;
+      float desiredWidth = (maxWidth + LINK_SPACING) * visibleCount - LINK_SPACING;
       if (mNodeWidth < desiredWidth) mNodeWidth = desiredWidth;
 
       // Resize the node height if we have to.
@@ -628,20 +647,30 @@ namespace dtDirector
    {
       // Now position all of the links in a single row.
       int count = (int)mValues.size();
-      float step = 0;
-      if (count > 0)
+      int visibleCount = 0;
+      for (int index = 0; index < count; index++)
       {
-         step = (mNodeWidth / count);
+         if (!mValues[index].link || !mValues[index].link->GetVisible()) continue;
+         visibleCount++;
       }
 
+      float step = 0;
+      if (visibleCount > 0)
+      {
+         step = (mNodeWidth / visibleCount);
+      }
+
+      visibleCount = 0;
       for (int index = 0; index < count; index++)
       {
          ValueData& data = mValues[index];
-
-         float x = step * (index + 1) - (step / 2);
+         if (!mValues[index].link || !mValues[index].link->GetVisible()) continue;
+         float x = step * (visibleCount + 1) - (step / 2);
          float y = mNodeHeight + 1.0f;
 
          data.linkGraphic->setPos(x, y);
+
+         visibleCount++;
       }
    }
 
@@ -1058,6 +1087,9 @@ namespace dtDirector
       menu.addAction(mScene->GetEditor()->GetCutAction());
       menu.addAction(mScene->GetEditor()->GetCopyAction());
       menu.addAction(mScene->GetEditor()->GetPasteAction());
+      menu.addSeparator();
+      menu.addAction(mScene->GetEditor()->GetShowLinkAction());
+      menu.addAction(mScene->GetEditor()->GetHideLinkAction());
       menu.addSeparator();
       menu.addAction(mScene->GetEditor()->GetDeleteAction());
       menu.exec(event->screenPos());

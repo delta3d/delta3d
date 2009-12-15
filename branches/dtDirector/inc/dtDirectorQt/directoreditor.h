@@ -97,13 +97,15 @@ namespace dtDirector
       /**
        * Retrieves actions.
        */
-      QAction* GetParentAction() {return mParentAction;}
-      QAction* GetUndoAction()   {return mUndoAction;}
-      QAction* GetRedoAction()   {return mRedoAction;}
-      QAction* GetCutAction()    {return mCutAction;}
-      QAction* GetCopyAction()   {return mCopyAction;}
-      QAction* GetPasteAction()  {return mPasteAction;}
-      QAction* GetDeleteAction() {return mDeleteAction;}
+      QAction* GetParentAction()   {return mParentAction;}
+      QAction* GetUndoAction()     {return mUndoAction;}
+      QAction* GetRedoAction()     {return mRedoAction;}
+      QAction* GetCutAction()      {return mCutAction;}
+      QAction* GetCopyAction()     {return mCopyAction;}
+      QAction* GetPasteAction()    {return mPasteAction;}
+      QAction* GetDeleteAction()   {return mDeleteAction;}
+      QAction* GetShowLinkAction() {return mShowLinks;}
+      QAction* GetHideLinkAction() {return mHideLinks;}
 
       /**
        * Refreshes the entire view.
@@ -201,6 +203,16 @@ namespace dtDirector
       void OnShowPropertyEditor();
 
       /**
+       * Event handler when the show links button is pressed.
+       */
+      void OnShowLinks();
+
+      /**
+       * Event handler when the hide links button is pressed.
+       */
+      void OnHideLinks();
+
+      /**
        * Event handler when the refresh button is pressed.
        */
       void OnRefresh();
@@ -246,6 +258,8 @@ namespace dtDirector
 
       // View Actions.
       QAction*  mViewPropertiesAction;
+      QAction*  mShowLinks;
+      QAction*  mHideLinks;
       QAction*  mRefreshAction;
    };
 

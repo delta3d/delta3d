@@ -67,6 +67,8 @@ namespace dtDirector
       , mCopyAction(NULL)
       , mPasteAction(NULL)
       , mViewPropertiesAction(NULL)
+      , mShowLinks(NULL)
+      , mHideLinks(NULL)
       , mRefreshAction(NULL)
    {
       // Set the default size of the window.
@@ -138,6 +140,16 @@ namespace dtDirector
       mViewPropertiesAction->setCheckable(true);
       mViewPropertiesAction->setChecked(true);
 
+      // Show Links Action.
+      mShowLinks = new QAction(QIcon(":/icons/showlinks.png"), tr("Show Links"), this);
+      mShowLinks->setShortcut(tr("Ctrl+U"));
+      mShowLinks->setToolTip(tr("Shows all hidden links on selected nodes (Ctrl+U)."));
+
+      // Hide Links Action.
+      mHideLinks = new QAction(QIcon(":/icons/hidelinks.png"), tr("Hide Links"), this);
+      mHideLinks->setShortcut(tr("Ctrl+H"));
+      mHideLinks->setToolTip(tr("Hides all unconnected links on selected nodes (Ctrl+H)."));
+
       // Show Properties Action.
       mRefreshAction = new QAction(QIcon(":/icons/refresh.png"), tr("Refresh"), this);
       mRefreshAction->setShortcut(tr("Ctrl+R"));
@@ -180,6 +192,9 @@ namespace dtDirector
       mViewMenu = mMenuBar->addMenu("&View");
       mViewMenu->addAction(mViewPropertiesAction);
       mViewMenu->addSeparator();
+      mViewMenu->addAction(mShowLinks);
+      mViewMenu->addAction(mHideLinks);
+      mViewMenu->addSeparator();
       mViewMenu->addAction(mRefreshAction);
 
       // File Toolbar.
@@ -209,6 +224,9 @@ namespace dtDirector
       mEditToolbar->addSeparator();
       mEditToolbar->addAction(mDeleteAction);
 
+      mEditToolbar->addSeparator();
+      mEditToolbar->addAction(mShowLinks);
+      mEditToolbar->addAction(mHideLinks);
       mEditToolbar->addSeparator();
       mEditToolbar->addAction(mRefreshAction);
 
@@ -246,6 +264,10 @@ namespace dtDirector
          this, SLOT(OnDelete()));
       connect(mViewPropertiesAction, SIGNAL(triggered()),
          this, SLOT(OnShowPropertyEditor()));
+      connect(mShowLinks, SIGNAL(triggered()),
+         this, SLOT(OnShowLinks()));
+      connect(mHideLinks, SIGNAL(triggered()),
+         this, SLOT(OnHideLinks()));
       connect(mRefreshAction, SIGNAL(triggered()),
          this, SLOT(OnRefresh()));
    }
@@ -362,25 +384,109 @@ namespace dtDirector
       bool bCanDelete = false;
       bool bCanCopy = false;
 
+      bool bCanShowLinks = false;
+      bool bCanHideLinks = false;
+
       int tabIndex = mGraphTabs->currentIndex();
       if (tabIndex >= 0 && tabIndex < mGraphTabs->count())
       {
          EditorView* view = dynamic_cast<EditorView*>(mGraphTabs->widget(tabIndex));
          if (view && view->GetScene() && view->GetScene()->GetGraph())
          {
-            if (view->GetScene()->GetGraph()->mParent)
+            EditorScene* scene = view->GetScene();
+
+            if (scene->GetGraph()->mParent)
             {
                bHasParent = true;
             }
 
-            if (view->GetScene()->HasSelection())
+            if (scene->HasSelection())
             {
                bCanDelete = true;
             }
 
-            if (view->GetScene()->HasSelection())
+            if (scene->HasSelection())
             {
                bCanCopy = true;
+            }
+
+            QList<QGraphicsItem*> selection = scene->selectedItems();
+            int count = (int)selection.size();
+            for (int index = 0; index < count; index++)
+            {
+               NodeItem* node = dynamic_cast<NodeItem*>(selection[index]);
+               if (node)
+               {
+                  bool inputsExposed = true;
+                  bool outputsExposed = true;
+                  bool valuesExposed = true;
+                  if (node->GetNode())
+                  {
+                     inputsExposed = node->GetNode()->InputsExposed();
+                     outputsExposed = node->GetNode()->OutputsExposed();
+                     valuesExposed = node->GetNode()->ValuesExposed();
+                  }
+
+                  if (inputsExposed)
+                  {
+                     int linkCount = node->GetInputs().size();
+                     for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
+                     {
+                        InputLink* link = node->GetInputs()[linkIndex].link;
+                        if (link)
+                        {
+                           if (link->GetVisible())
+                           {
+                              if (link->GetLinks().empty()) bCanHideLinks = true;
+                           }
+                           else
+                           {
+                              bCanShowLinks = true;
+                           }
+                        }
+                     }
+                  }
+
+                  if (outputsExposed)
+                  {
+                     int linkCount = node->GetOutputs().size();
+                     for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
+                     {
+                        OutputLink* link = node->GetOutputs()[linkIndex].link;
+                        if (link)
+                        {
+                           if (link->GetVisible())
+                           {
+                              if (link->GetLinks().empty()) bCanHideLinks = true;
+                           }
+                           else
+                           {
+                              bCanShowLinks = true;
+                           }
+                        }
+                     }
+                  }
+
+                  if (valuesExposed)
+                  {
+                     int linkCount = node->GetValues().size();
+                     for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
+                     {
+                        ValueLink* link = node->GetValues()[linkIndex].link;
+                        if (link)
+                        {
+                           if (link->GetVisible())
+                           {
+                              if (link->GetLinks().empty()) bCanHideLinks = true;
+                           }
+                           else
+                           {
+                              bCanShowLinks = true;
+                           }
+                        }
+                     }
+                  }
+               }
             }
          }
       }
@@ -403,6 +509,10 @@ namespace dtDirector
 
       // Delete button.
       mDeleteAction->setEnabled(bCanDelete);
+
+      // Show Links
+      mShowLinks->setEnabled(bCanShowLinks);
+      mHideLinks->setEnabled(bCanHideLinks);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -713,6 +823,95 @@ namespace dtDirector
       {
          mPropertyEditor->hide();
       }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::OnShowLinks()
+   {
+      // Get the current selection.
+      EditorScene* scene = mPropertyEditor->GetScene();
+      if (!scene) return;
+
+      QList<QGraphicsItem*> selection = scene->selectedItems();
+      int count = (int)selection.size();
+      for (int index = 0; index < count; index++)
+      {
+         NodeItem* node = dynamic_cast<NodeItem*>(selection[index]);
+         if (node)
+         {
+            int linkCount = node->GetInputs().size();
+            for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
+            {
+               InputLink* link = node->GetInputs()[linkIndex].link;
+               if (link) link->SetVisible(true);
+            }
+
+            linkCount = node->GetOutputs().size();
+            for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
+            {
+               OutputLink* link = node->GetOutputs()[linkIndex].link;
+               if (link) link->SetVisible(true);
+            }
+
+            linkCount = node->GetValues().size();
+            for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
+            {
+               ValueLink* link = node->GetValues()[linkIndex].link;
+               if (link) link->SetVisible(true);
+            }
+         }
+      }
+
+      Refresh();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::OnHideLinks()
+   {
+      // Get the current selection.
+      EditorScene* scene = mPropertyEditor->GetScene();
+      if (!scene) return;
+
+      QList<QGraphicsItem*> selection = scene->selectedItems();
+      int count = (int)selection.size();
+      for (int index = 0; index < count; index++)
+      {
+         NodeItem* node = dynamic_cast<NodeItem*>(selection[index]);
+         if (node)
+         {
+            int linkCount = node->GetInputs().size();
+            for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
+            {
+               InputLink* link = node->GetInputs()[linkIndex].link;
+               if (link && link->GetLinks().empty())
+               {
+                  link->SetVisible(false);
+               }
+            }
+
+            linkCount = node->GetOutputs().size();
+            for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
+            {
+               OutputLink* link = node->GetOutputs()[linkIndex].link;
+               if (link && link->GetLinks().empty())
+               {
+                  link->SetVisible(false);
+               }
+            }
+
+            linkCount = node->GetValues().size();
+            for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
+            {
+               ValueLink* link = node->GetValues()[linkIndex].link;
+               if (link && link->GetLinks().empty())
+               {
+                  link->SetVisible(false);
+               }
+            }
+         }
+      }
+
+      Refresh();
    }
 
    //////////////////////////////////////////////////////////////////////////

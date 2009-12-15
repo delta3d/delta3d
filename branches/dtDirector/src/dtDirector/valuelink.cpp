@@ -35,6 +35,7 @@ namespace dtDirector
       : mOwner(owner)
       , mLabel("NONE")
       , mDefaultProperty(prop)
+      , mVisible(true)
       , mIsOut(isOut)
       , mAllowMultiple(allowMultiple)
       , mTypeCheck(typeCheck)

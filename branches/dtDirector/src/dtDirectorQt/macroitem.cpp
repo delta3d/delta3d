@@ -143,6 +143,7 @@ namespace dtDirector
 
             data.linkGraphic = new InputLinkItem(this, (int)mInputs.size()-1, this, mScene);
             data.linkName = new QGraphicsTextItem(data.linkGraphic, mScene);
+            data.linkName->setAcceptHoverEvents(false);
          }
       }
 
@@ -265,6 +266,9 @@ namespace dtDirector
       menu.addAction(mScene->GetEditor()->GetCutAction());
       menu.addAction(mScene->GetEditor()->GetCopyAction());
       menu.addAction(mScene->GetEditor()->GetPasteAction());
+      menu.addSeparator();
+      menu.addAction(mScene->GetEditor()->GetShowLinkAction());
+      menu.addAction(mScene->GetEditor()->GetHideLinkAction());
       menu.addSeparator();
       menu.addAction(mScene->GetEditor()->GetDeleteAction());
       menu.exec(event->screenPos());
