@@ -11,7 +11,6 @@
 #include <osg/PolygonMode>
 #include <osg/Depth>
 #include <osg/BlendFunc>
-#include <osgUtil/LineSegmentIntersector>
 #include <osgViewer/GraphicsWindow>
 
 #include <dtCore/system.h>
@@ -20,6 +19,7 @@
 #include <dtCore/camera.h>
 #include <dtCore/scene.h>
 #include <dtCore/transform.h>
+#include <dtCore/isector.h>
 
 #include <iostream>
 
@@ -248,7 +248,7 @@ float ObjectMotionModel::GetCameraDistanceToTarget(void)
    }
 
    dtCore::Transform transform;
-   mCamera->GetTransform(transform);   
+   mCamera->GetTransform(transform);
    osg::Vec3 camPos = transform.GetTranslation();
 
    dtCore::Transformable* target = GetTarget();
@@ -842,47 +842,41 @@ dtCore::DeltaDrawable* ObjectMotionModel::MousePick(void)
    GetMouseLine(GetMousePosition(), startPoint, endPoint);
 
    // Can't do anything if we don't have a valid mouse line.
-   if (startPoint == endPoint) return NULL;
-
-   osg::ref_ptr<osgUtil::LineSegmentIntersector> picker = new osgUtil::LineSegmentIntersector(osgUtil::Intersector::MODEL, startPoint, endPoint);
-
-   osgUtil::IntersectionVisitor iv(picker.get());
-   iv.setTraversalMask(ARROW_NODE_MASK);
-
-   mTargetTransform->accept(iv);
-
-   osgUtil::LineSegmentIntersector::Intersections hitList;
-   if (picker->containsIntersections())
+   if (startPoint != endPoint)
    {
-      hitList = picker->getIntersections();
+      dtCore::RefPtr<dtCore::Isector> isector = new dtCore::Isector(mView->GetScene(), startPoint, endPoint);
 
-      for (std::multiset<osgUtil::LineSegmentIntersector::Intersection>::const_iterator hitItr = hitList.begin();
-         hitItr != hitList.end();
-         ++hitItr)
+      if (isector->Update())
       {
-         for (osg::NodePath::const_reverse_iterator nodeItr = hitItr->nodePath.rbegin();
-            nodeItr != hitItr->nodePath.rend();
-            ++nodeItr)
+         const dtCore::Isector::HitList& hitlist = isector->GetHitList();
+         for (dtCore::Isector::HitList::const_reverse_iterator hitItr = hitlist.rbegin();
+            hitItr != hitlist.rend();
+            ++hitItr)
          {
-            osg::Node* node = (*nodeItr);
-            if (node == mScaleTransform->GetOSGNode())
+            for (osg::NodePath::const_reverse_iterator nodeItr = hitItr->getNodePath().rbegin();
+               nodeItr != hitItr->getNodePath().rend();
+               ++nodeItr)
             {
-               return mScaleTransform.get();
-            }
+               osg::Node* node = (*nodeItr);
+               if (node == mScaleTransform->GetOSGNode())
+               {
+                  return mScaleTransform.get();
+               }
 
-            for (int ArrowIndex = 0; ArrowIndex < ARROW_TYPE_MAX; ArrowIndex++)
-            {
-               if (node == mArrows[ArrowIndex].translationTransform->GetOSGNode())
+               for (int ArrowIndex = 0; ArrowIndex < ARROW_TYPE_MAX; ArrowIndex++)
                {
-                  return mArrows[ArrowIndex].translationTransform.get();
-               }
-               else if (node == mArrows[ArrowIndex].rotationTransform->GetOSGNode())
-               {
-                  return mArrows[ArrowIndex].rotationTransform.get();
-               }
-               else if (node == mArrows[ArrowIndex].scaleTransform->GetOSGNode())
-               {
-                  return mArrows[ArrowIndex].scaleTransform.get();
+                  if (node == mArrows[ArrowIndex].translationTransform->GetOSGNode())
+                  {
+                     return mArrows[ArrowIndex].translationTransform.get();
+                  }
+                  else if (node == mArrows[ArrowIndex].rotationTransform->GetOSGNode())
+                  {
+                     return mArrows[ArrowIndex].rotationTransform.get();
+                  }
+                  else if (node == mArrows[ArrowIndex].scaleTransform->GetOSGNode())
+                  {
+                     return mArrows[ArrowIndex].scaleTransform.get();
+                  }
                }
             }
          }
@@ -1365,9 +1359,9 @@ void ObjectMotionModel::UpdateRotation(void)
    float fPlaneOffset   = targetPos  * axis;
 
    // Check if the mouse vector does not intersect the plane.
-   if (fDistMod == 0.0f) return;
-   if (camAt * axis > 0 && mouse * axis < 0) return;
-   else if (camAt * axis <= 0 && mouse * axis > 0) return;
+   if (fDistMod == 0.0f) { return; }
+   if (camAt * axis > 0 && mouse * axis < 0) { return; }
+   else if (camAt * axis <= 0 && mouse * axis > 0) { return; }
 
    float fDistance      = (fPlaneOffset - fStartOffset) / fDistMod;
 
@@ -1383,7 +1377,7 @@ void ObjectMotionModel::UpdateRotation(void)
    //std::cout << "fDistance: " << fDistance << " fDistMod: " << fDistMod << std::endl;
 
    // The first update should not cause a rotation to happen
-   // unless we're in snap mode, Instead, it should set the 
+   // unless we're in snap mode, Instead, it should set the
    // current mouse position to be the current angle.
    if (mMouseOffset.x() != 0.0f || mMouseOffset.y() != 0.0f)
    {
@@ -1630,9 +1624,9 @@ void ObjectMotionModel::UpdateScale(void)
       float fPlaneOffset   = targetPos  * (*plane);
 
       // Check if the mouse vector does not intersect the plane.
-      if (fDistMod == 0.0f) return;
-      if (camAt * (*plane) > 0 && mouse * (*plane) < 0) return;
-      else if (camAt * (*plane) <= 0 && mouse * (*plane) > 0) return;
+      if (fDistMod == 0.0f) { return; }
+      if (camAt * (*plane) > 0 && mouse * (*plane) < 0) { return; }
+      else if (camAt * (*plane) <= 0 && mouse * (*plane) > 0) { return; }
 
       float fDistance      = (fPlaneOffset - fStartOffset) / fDistMod;
 
@@ -1673,7 +1667,7 @@ void ObjectMotionModel::UpdateScale(void)
 void ObjectMotionModel::OnTranslate(osg::Vec3 delta)
 {
    dtCore::Transformable* target = GetTarget();
-   
+
    if (target)
    {
       dtCore::Transform transform;
