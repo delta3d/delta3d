@@ -20,18 +20,10 @@
  * THE SOFTWARE.
  */
 
-//////////////////////////////////////////////////////////////////////////////
-// NOTE - This test is provided for historical reference. The ability to
-// use shaders is now provided via the ShaderManager functionality. This is used
-// in a variety of examples, demos and test apps. See Tutorial Library.
-//////////////////////////////////////////////////////////////////////////////
 
 #include <dtABC/application.h>
 #include <dtABC/labelactor.h>
 #include <dtCore/object.h>
-#include <osg/Drawable>
-#include <osg/PrimitiveSet>
-#include <osg/Program>
 #include <dtCore/camera.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/shadermanager.h>
@@ -54,10 +46,6 @@ public:
 
       std::string contextName = dtUtil::GetDeltaRootPath() + "/examples/data/demoMap";
       dtDAL::Project::GetInstance().SetContext(contextName, true);
-
-      //load the xml file which specifies our shaders
-      dtCore::ShaderManager& sm = dtCore::ShaderManager::GetInstance();
-      sm.LoadShaderDefinitions("Shaders/ShaderDefs.xml");
 
       LoadGeometry();
       EnableShaders();
@@ -85,20 +73,13 @@ public:
 
    void EnableShaders()
    {
-      dtCore::ShaderManager& sm = dtCore::ShaderManager::GetInstance();
-      dtCore::ShaderProgram* sp = sm.FindShaderPrototype("TestShader", "DemoShaders");
-
-      if (sp != NULL)
-      {
-         sm.AssignShaderFromPrototype(*sp, *mObject->GetOSGNode());
-         mEnabled = true;
-      }
+      dtCore::ShaderManager::GetInstance().LoadAndAssignShader(*mObject, "Shaders/testshader.dtshader");
+      mEnabled = true;
    }
 
    void DisableShaders()
    {
-      dtCore::ShaderManager& sm = dtCore::ShaderManager::GetInstance();
-      sm.UnassignShaderFromNode(*mObject->GetOSGNode());
+      dtCore::ShaderManager::GetInstance().UnassignShaderFromNode(*mObject->GetOSGNode());
       mEnabled = false;
    }
 
@@ -112,8 +93,6 @@ public:
       }
       else if (key == osgGA::GUIEventAdapter::KEY_Space)
       {
-         //osg::StateSet* ss = mObject->GetOSGNode()->getOrCreateStateSet();
-
          if (mEnabled)
          {
             DisableShaders();
@@ -180,7 +159,6 @@ private:
    float                  mTotalTime;
    bool                   mEnabled;
 
-   DeltaWin::Resolution   mRes;
 };
 
 int main(int argc, char* argv[])
