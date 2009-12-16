@@ -28,7 +28,6 @@
 
 #include <QtGui/QGraphicsScene>
 #include <QtGui/QMenu>
-#include <QtGui/QGraphicsSceneContextMenuEvent>
 
 #include <dtDAL/datatype.h>
 
@@ -132,7 +131,7 @@ namespace dtDirector
    {
       if (!mTitle)
       {
-         mTitle = new QGraphicsTextItem(this, scene());
+         mTitle = new GraphicsTextItem(this, scene());
          mTitle->setTextWidth(VALUE_TITLE_LENGTH);
          mTitle->setFlag(QGraphicsItem::ItemIgnoresParentOpacity, true);
       }
@@ -161,7 +160,7 @@ namespace dtDirector
    {
       if (!mComment)
       {
-         mComment = new QGraphicsTextItem(this, scene());
+         mComment = new GraphicsTextItem(this, scene());
       }
 
       mComment->setPlainText(text.c_str());

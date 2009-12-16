@@ -31,7 +31,6 @@
 
 #include <QtGui/QGraphicsScene>
 #include <QtGui/QMenu>
-#include <QtGui/QGraphicsSceneContextMenuEvent>
 
 #include <dtDAL/datatype.h>
 
@@ -306,7 +305,7 @@ namespace dtDirector
       if (!mTitle)
       {
          mTitleBG = new QGraphicsRectItem(this, scene());
-         mTitle = new QGraphicsTextItem(mTitleBG, scene());
+         mTitle = new GraphicsTextItem(mTitleBG, scene());
 
          mTitleBG->setPen(QPen(Qt::darkGray, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
          mTitleBG->setBrush(QColor(0, 0, 0, 0));
@@ -337,7 +336,7 @@ namespace dtDirector
    {
       if (!mComment)
       {
-         mComment = new QGraphicsTextItem(this, scene());
+         mComment = new GraphicsTextItem(this, scene());
       }
 
       mComment->setPlainText(text.c_str());
@@ -388,7 +387,7 @@ namespace dtDirector
             data.link = &mNode->GetInputLinks()[index];
 
             data.linkGraphic = new InputLinkItem(this, (int)mInputs.size()-1, this, mScene);
-            data.linkName = new QGraphicsTextItem(data.linkGraphic, mScene);
+            data.linkName = new GraphicsTextItem(data.linkGraphic, mScene);
             data.linkName->setAcceptHoverEvents(false);
          }
       }
@@ -404,7 +403,7 @@ namespace dtDirector
             data.link = &mNode->GetOutputLinks()[index];
 
             data.linkGraphic = new OutputLinkItem(this, (int)mOutputs.size()-1, this, mScene);
-            data.linkName = new QGraphicsTextItem(data.linkGraphic, mScene);
+            data.linkName = new GraphicsTextItem(data.linkGraphic, mScene);
             data.linkName->setAcceptHoverEvents(false);
          }
       }
@@ -420,7 +419,7 @@ namespace dtDirector
             data.link = &mNode->GetValueLinks()[index];
 
             data.linkGraphic = new ValueLinkItem(this, (int)mValues.size()-1, this, mScene);
-            data.linkName = new QGraphicsTextItem(data.linkGraphic, mScene);
+            data.linkName = new GraphicsTextItem(data.linkGraphic, mScene);
             data.linkName->setAcceptHoverEvents(false);
          }
       }

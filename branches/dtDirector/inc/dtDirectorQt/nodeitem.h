@@ -23,7 +23,9 @@
 #define DIRECTORQT_NODE_ITEM
 
 #include <QtGui/QGraphicsPolygonItem>
+#include <QtGui/QGraphicsTextItem>
 #include <QtGui/QWidget>
+#include <QtGui/QGraphicsSceneContextMenuEvent>
 
 #include <dtDirector/node.h>
 
@@ -48,6 +50,21 @@ namespace dtDirector
    class ValueLinkItem;
    class ValueNodeLinkItem;
 
+   /**
+    * Inherited Graphics Text Item that ignores context menu events.
+    */
+   class GraphicsTextItem: public QGraphicsTextItem
+   {
+   public:
+      GraphicsTextItem(QGraphicsItem* parent, QGraphicsScene* scene)
+         : QGraphicsTextItem(parent, scene) {}
+   protected:
+      void contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+      {
+         event->ignore();
+      }
+   };
+
    struct InputData
    {
       InputData();
@@ -55,7 +72,7 @@ namespace dtDirector
 
       void Remove();
 
-      QGraphicsTextItem*   linkName;
+      GraphicsTextItem*    linkName;
       InputLinkItem*       linkGraphic;
       InputLink*           link;
    };
@@ -68,7 +85,7 @@ namespace dtDirector
 
       void Remove(EditorScene* scene);
 
-      QGraphicsTextItem*   linkName;
+      GraphicsTextItem*    linkName;
       OutputLinkItem*      linkGraphic;
       std::vector<QGraphicsPathItem*> linkConnectors;
       OutputLink*          link;
@@ -82,7 +99,7 @@ namespace dtDirector
 
       void Remove(EditorScene* scene);
 
-      QGraphicsTextItem*   linkName;
+      GraphicsTextItem*    linkName;
       ValueLinkItem*       linkGraphic;
       std::vector<QGraphicsPathItem*> linkConnectors;
       ValueLink*           link;
@@ -365,10 +382,10 @@ namespace dtDirector
 
       QPolygonF   mPolygon;
 
-      QGraphicsTextItem* mTitle;
+      GraphicsTextItem* mTitle;
       QGraphicsRectItem* mTitleBG;
 
-      QGraphicsTextItem* mComment;
+      GraphicsTextItem* mComment;
 
       dtCore::RefPtr<Node> mNode;
 

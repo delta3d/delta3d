@@ -30,7 +30,6 @@
 
 #include <QtGui/QGraphicsScene>
 #include <QtGui/QMenu>
-#include <QtGui/QGraphicsSceneContextMenuEvent>
 
 #include <osg/Vec2>
 
@@ -142,7 +141,7 @@ namespace dtDirector
             data.link = &inputs[index]->GetInputLinks()[0];
 
             data.linkGraphic = new InputLinkItem(this, (int)mInputs.size()-1, this, mScene);
-            data.linkName = new QGraphicsTextItem(data.linkGraphic, mScene);
+            data.linkName = new GraphicsTextItem(data.linkGraphic, mScene);
             data.linkName->setAcceptHoverEvents(false);
          }
       }
@@ -159,7 +158,7 @@ namespace dtDirector
             data.link = &outputs[index]->GetOutputLinks()[0];
 
             data.linkGraphic = new OutputLinkItem(this, (int)mOutputs.size()-1, this, mScene);
-            data.linkName = new QGraphicsTextItem(data.linkGraphic, mScene);
+            data.linkName = new GraphicsTextItem(data.linkGraphic, mScene);
             data.linkName->setAcceptHoverEvents(false);
          }
       }
@@ -176,7 +175,7 @@ namespace dtDirector
             data.link = &values[index]->GetValueLinks()[0];
 
             data.linkGraphic = new ValueLinkItem(this, (int)mValues.size()-1, this, mScene);
-            data.linkName = new QGraphicsTextItem(data.linkGraphic, mScene);
+            data.linkName = new GraphicsTextItem(data.linkGraphic, mScene);
             data.linkName->setAcceptHoverEvents(false);
          }
       }
