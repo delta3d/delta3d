@@ -1012,7 +1012,7 @@ namespace  dtDAL
                                          actorProperty->GetName().c_str(), mActorProxy->GetName().c_str(),
                                          dataValue.c_str(), p.GetDataType().GetName().c_str());
                      //make it ignore the rest of the mElements.
-                     p.SetValue(NULL);
+                     p.SetValue(dtDAL::ResourceDescriptor::NULL_RESOURCE);
                      (*dataType) = NULL;
                   }                  
                }
@@ -1220,11 +1220,11 @@ namespace  dtDAL
                   if (dataValue != "" && mDescriptorDisplayName != "")
                   {
                      ResourceDescriptor rd(mDescriptorDisplayName, dataValue);
-                     p.SetValue(&rd);
+                     p.SetValue(rd);
                   }
                   else
                   {
-                     p.SetValue(NULL);
+                     p.SetValue(dtDAL::ResourceDescriptor::NULL_RESOURCE);
                   }
                }
             }
