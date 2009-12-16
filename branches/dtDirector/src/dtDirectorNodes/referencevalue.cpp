@@ -35,7 +35,7 @@ namespace dtDirector
    ReferenceValue::ReferenceValue()
        : ValueNode()
    {
-      mName = "Reference Value";
+      mName = "Ref";
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////

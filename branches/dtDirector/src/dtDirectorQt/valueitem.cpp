@@ -23,6 +23,8 @@
 #include <dtDirectorQt/directoreditor.h>
 #include <dtDirectorQt/editorscene.h>
 #include <dtDirectorQt/linkitem.h>
+#include <dtDirectorQt/undomanager.h>
+#include <dtDirectorQt/undocreateevent.h>
 
 #include <dtDirector/valuenode.h>
 
@@ -242,9 +244,95 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   void ValueItem::OnGotoReference()
+   {
+      dtDAL::ActorProperty* prop = mNode->GetProperty("Reference");
+      if (prop)
+      {
+         // Find the referenced value node.
+         std::string name = prop->ToString();
+         Node* refNode = mScene->GetEditor()->GetDirector()->GetValueNode(name);
+         if (refNode)
+         {
+            // Center the view on the referenced node.
+            EditorScene* scene = mScene;
+            scene->SetGraph(refNode->GetGraph());
+            NodeItem* item = scene->GetNodeItem(refNode->GetID(), true);
+            if (item)
+            {
+               scene->clearSelection();
+               item->setSelected(true);
+               scene->CenterSelection();
+            }
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ValueItem::OnCreateReference()
+   {
+      EditorScene* scene = mScene;
+      std::string name = mNode->GetName();
+
+      // If the value is already a reference, make sure we reference
+      // the actual value instead of the reference.
+      const NodeType& type = mNode->GetType();
+      if (type.GetFullName() == "Core.Reference")
+      {
+         Node* node = mNode.get();
+
+         // Keep looping until we find an actual value, or no value.
+         while (node)
+         {
+            dtDAL::ActorProperty* prop = node->GetProperty("Reference");
+            if (prop) name = prop->ToString();
+
+            node = scene->GetEditor()->GetDirector()->GetValueNode(name);
+            if (!node || node->GetType() != type)
+            {
+               break;
+            }
+         }
+      }
+
+      osg::Vec2 position = mNode->GetPosition();
+
+      Node* node = scene->CreateNode("Reference", "Core", position.x() + 20.0f, position.y() + 20.0f);
+      if (node)
+      {
+         dtDAL::ActorProperty* prop = node->GetProperty("Reference");
+         if (prop) prop->FromString(name);
+
+         scene->Refresh();
+
+         // Create an undo event for this creation event.
+         UndoManager* undoManager = scene->GetEditor()->GetUndoManager();
+         if (undoManager)
+         {
+            dtCore::RefPtr<UndoCreateEvent> event = new UndoCreateEvent(undoManager->GetEditor(), node->GetID(), scene->GetGraph()->GetID());
+            undoManager->AddEvent(event);
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void ValueItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
    {
       QMenu menu;
+      bool hasDefault = false;
+      if (mNode->GetType().GetFullName() == "Core.Reference")
+      {
+         QAction* gotoRefAction = menu.addAction("Go to Referenced Value");
+         menu.setDefaultAction(gotoRefAction);
+         hasDefault = true;
+         connect(gotoRefAction, SIGNAL(triggered()), this, SLOT(OnGotoReference()));
+      }
+
+      QAction* refAction = menu.addAction("Create Reference");
+      connect(refAction, SIGNAL(triggered()), this, SLOT(OnCreateReference()));
+      if (!hasDefault) menu.setDefaultAction(refAction);
+
+      menu.addSeparator();
       menu.addAction(mScene->GetMacroSelectionAction());
       menu.addSeparator();
       menu.addAction(mScene->GetEditor()->GetCutAction());
@@ -252,6 +340,22 @@ namespace dtDirector
       menu.addSeparator();
       menu.addAction(mScene->GetEditor()->GetDeleteAction());
       menu.exec(event->screenPos());
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ValueItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+   {
+      NodeItem::mouseDoubleClickEvent(event);
+
+      // This only does anything if the value item is a reference value.
+      if (mNode->GetType().GetFullName() == "Core.Reference")
+      {
+         OnGotoReference();
+      }
+      else
+      {
+         OnCreateReference();
+      }
    }
 }
 

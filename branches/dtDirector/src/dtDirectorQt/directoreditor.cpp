@@ -394,6 +394,8 @@ namespace dtDirector
          EditorView* view = dynamic_cast<EditorView*>(mGraphTabs->widget(tabIndex));
          if (view && view->GetScene() && view->GetScene()->GetGraph())
          {
+            bool bCanCreateSubMacro = false;
+
             EditorScene* scene = view->GetScene();
 
             if (scene->GetGraph()->mParent)
@@ -404,12 +406,11 @@ namespace dtDirector
             if (scene->HasSelection())
             {
                bCanDelete = true;
+               bCanCopy = true;
+               bCanCreateSubMacro = true;
             }
 
-            if (scene->HasSelection())
-            {
-               bCanCopy = true;
-            }
+            scene->GetMacroSelectionAction()->setEnabled(bCanCreateSubMacro);
 
             QList<QGraphicsItem*> selection = scene->selectedItems();
             int count = (int)selection.size();

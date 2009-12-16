@@ -57,7 +57,7 @@ namespace dtDirector
 
       setSceneRect(0, 0, 10000, 10000);
 
-      mMacroSelectionAction = new QAction("Move Selection to Macro", this);
+      mMacroSelectionAction = new QAction("Create Macro with Selection", this);
 
       connect(mMacroSelectionAction, SIGNAL(triggered()),
          this, SLOT(OnCreateMacro()));

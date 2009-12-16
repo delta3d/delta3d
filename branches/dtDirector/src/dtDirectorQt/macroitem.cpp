@@ -264,6 +264,7 @@ namespace dtDirector
       QMenu menu;
       QAction* stepInAction = menu.addAction("Step Inside Macro");
       connect(stepInAction, SIGNAL(triggered()), this, SLOT(OpenMacro()));
+      menu.setDefaultAction(stepInAction);
       menu.addSeparator();
       menu.addAction(mScene->GetMacroSelectionAction());
       menu.addSeparator();

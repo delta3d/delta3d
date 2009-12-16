@@ -2,7 +2,7 @@
 <director xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dDirector" xsi:schemaLocation="delta3dDirector director.xsd">
     <header>
         <createTimestamp>2009-12-14T12:16:35-08:00</createTimestamp>
-        <lastUpdateTimestamp>2009-12-16T10:57:36-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2009-12-16T14:18:58-08:00</lastUpdateTimestamp>
         <editorVersion>2.4.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
         <property>
@@ -548,7 +548,7 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>358.000000</value1>
+                            <value1>385.000000</value1>
                             <value2>301.000000</value2>
                         </vec2>
                     </property>
@@ -565,41 +565,6 @@
                         <link>
                             <id>fea368fc-eddf-4c31-ab17-b2084390a090</id>
                         </link>
-                    </valuelink>
-                </node>
-                <node>
-                    <name>Value Link</name>
-                    <category>Core</category>
-                    <id>dd88d312-4c8d-46c4-acbe-a73e37ebf1aa</id>
-                    <property>
-                        <name>Enabled</name>
-                        <boolean>true</boolean>
-                    </property>
-                    <property>
-                        <name>Comment</name>
-                        <string></string>
-                    </property>
-                    <property>
-                        <name>LogComment</name>
-                        <boolean>false</boolean>
-                    </property>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>458.000000</value1>
-                            <value2>301.000000</value2>
-                        </vec2>
-                    </property>
-                    <property>
-                        <name>Name</name>
-                        <string>External Not Connected</string>
-                    </property>
-                    <valuelink>
-                        <name>External Not Connected</name>
-                        <visible>false</visible>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>false</typecheck>
                     </valuelink>
                 </node>
                 <node>
@@ -717,20 +682,20 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>556.000000</value1>
-                            <value2>153.000000</value2>
+                            <value1>323.000000</value1>
+                            <value2>301.000000</value2>
                         </vec2>
                     </property>
                     <property>
                         <name>Name</name>
-                        <string>Reference Value</string>
+                        <string>Ref</string>
                     </property>
                     <property>
                         <name>Reference</name>
                         <string>Result Int</string>
                     </property>
                     <valuelink>
-                        <name>Reference Value</name>
+                        <name>Ref</name>
                         <visible>true</visible>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>

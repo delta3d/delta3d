@@ -42,10 +42,7 @@ public:
       dtCore::RefPtr<dtDirector::Director> director = new dtDirector::Director();
       director->Init();
 
-      //director->CreateDebugScript();
-
       dtDAL::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data/director");
-      //director->SaveScript("test");
       director->LoadScript("test");
 
       dtDirector::DirectorGraph* graph = director->GetGraphRoot();
@@ -54,18 +51,15 @@ public:
          graph->GetEventNodes()[0]->Trigger();
       }
 
-      int resultValue  = 0;
-      int extValue     = 0;
-      int outsideValue = 0;
-
       while (director->IsRunning())
       {
          director->Update(0.5f, 0.5f);
-
-         resultValue  = director->GetGraphRoot()->GetSubGraphs()[0]->GetValueNodes()[4]->GetInt();
-         extValue     = director->GetGraphRoot()->GetSubGraphs()[0]->GetValueNodes()[0]->GetInt();
-         outsideValue = director->GetGraphRoot()->GetValueNodes()[0]->GetInt();
       }
+
+      dtDirector::ValueNode* resultInt = director->GetValueNode("Result Int");
+      dtDirector::ValueNode* extValue  = director->GetValueNode("External Connected");
+      dtDirector::ValueNode* refValue  = director->GetValueNode("Reference Value");
+      dtDirector::ValueNode* outsideValue = director->GetValueNode("Outside Result Int");
    }
 
 protected:

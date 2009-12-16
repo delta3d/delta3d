@@ -33,6 +33,7 @@ namespace dtDirector
     */
    class ValueItem : public NodeItem
    {
+      Q_OBJECT
    public:
 
       /**
@@ -84,6 +85,17 @@ namespace dtDirector
        */
       ValueNodeLinkItem* GetValueLink() {return mValueLink;}
 
+   public slots:
+
+      /**
+       * Event handler when the "Goto Referenced Value" option is pressed.
+       */
+      void OnGotoReference();
+
+      /**
+       * Event handler when the "Create Reference" option is pressed.
+       */
+      void OnCreateReference();
 
       friend class ValueNodeLinkItem;
 
@@ -93,6 +105,13 @@ namespace dtDirector
        * Event handler when the context menu event has triggered.
        */
       void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
+
+      /**
+       * Event handler when the user double clicks this node.
+       *
+       * @param[in]  event  The mouse event.
+       */
+      void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
 
       GraphicsTextItem*  mValueText;
 
