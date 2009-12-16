@@ -73,7 +73,16 @@ public:
 
    void EnableShaders()
    {
-      dtCore::ShaderManager::GetInstance().LoadAndAssignShader(*mObject, "Shaders/testshader.dtshader");
+      dtCore::ShaderManager& shaderManager = dtCore::ShaderManager::GetInstance();
+      shaderManager.LoadAndAssignShader(*mObject, "Shaders/testshader.dtshader");
+      
+      dtCore::ShaderProgram* testProgram = shaderManager.FindShaderPrototype("TestShader");
+      osg::Program* osgProgram = testProgram->GetShaderProgram();
+
+      osgProgram->setParameter(GL_GEOMETRY_VERTICES_OUT_EXT, 3);
+      osgProgram->setParameter(GL_GEOMETRY_INPUT_TYPE_EXT, GL_TRIANGLES);
+      osgProgram->setParameter(GL_GEOMETRY_OUTPUT_TYPE_EXT, GL_TRIANGLES);
+
       mEnabled = true;
    }
 
