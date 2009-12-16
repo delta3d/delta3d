@@ -99,6 +99,11 @@ namespace dtDirector
       void Refresh();
 
       /**
+       * Retrieves the Create Macro with Selection Action.
+       */
+      QAction* GetMacroSelectionAction() {return mMacroSelectionAction;}
+
+      /**
        * Retrieves a node item given the nodes ID.
        *
        * @param[in]  id          The ID of the node.
@@ -174,14 +179,14 @@ namespace dtDirector
    public slots:
 
       /**
-       * Event handler when a menu item is triggered.
-       */
-      void OnMenuEvent(QAction* action);
-
-      /**
        * Event handler when a node creation menu item is triggered.
        */
       void OnCreateNodeEvent(QAction* action);
+
+      /**
+       * Event handler to create a macro.
+       */
+      void OnCreateMacro();
 
    protected:
       
@@ -221,6 +226,8 @@ namespace dtDirector
       bool     mDragging;
       QPointF  mDragOrigin;
       bool     mHasDragged;
+
+      QAction* mMacroSelectionAction;
 
       QPointF            mMenuPos;
       QGraphicsRectItem* mTranslationItem;

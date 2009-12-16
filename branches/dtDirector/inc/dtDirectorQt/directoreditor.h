@@ -246,6 +246,13 @@ namespace dtDirector
        */
       bool LoadScript();
 
+   public:
+
+      /**
+       * Pastes the contents of the clipboard to the current scene.
+       */
+      void PasteNodes(bool createLinks = false);
+
 
       GraphTabs*           mGraphTabs;
       PropertyEditor*      mPropertyEditor;

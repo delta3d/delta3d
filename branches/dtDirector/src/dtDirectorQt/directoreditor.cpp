@@ -680,49 +680,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void DirectorEditor::OnPaste()
    {
-      Clipboard& clipboard = Clipboard::GetInstance();
-
-      int index = mGraphTabs->currentIndex();
-      if (index >= 0 && index < mGraphTabs->count())
-      {
-         EditorView* view = dynamic_cast<EditorView*>(mGraphTabs->widget(index));
-         if (!view) return;
-
-         EditorScene* scene = view->GetScene();
-         if (!scene) return;
-
-         QPointF pos = view->mapToScene(view->width()/2, view->height()/2);
-         pos -= scene->GetTranslationItem()->scenePos();
-
-         std::vector<dtDAL::PropertyContainer*> newSelection;
-         newSelection = clipboard.PasteObjects(scene->GetGraph(), mUndoManager, osg::Vec2(pos.x(), pos.y()));
-
-         scene->clearSelection();
-
-         // Refresh the graph to create all the newly created node items.
-         RefreshGraph(scene->GetGraph());
-         
-         // Now auto-select the newly created nodes.
-         int count = (int)newSelection.size();
-         for (index = 0; index < count; index++)
-         {
-            Node* node = dynamic_cast<Node*>(newSelection[index]);
-            if (node)
-            {
-               NodeItem* item = scene->GetNodeItem(node->GetID(), true);
-               if (item) item->setSelected(true);
-            }
-            else
-            {
-               DirectorGraph* graph = dynamic_cast<DirectorGraph*>(newSelection[index]);
-               if (graph)
-               {
-                  MacroItem* item = scene->GetGraphItem(graph->GetID());
-                  if (item) item->setSelected(true);
-               }
-            }
-         }
-      }
+      PasteNodes();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -782,20 +740,23 @@ namespace dtDirector
                EditorView* view = dynamic_cast<EditorView*>(mGraphTabs->widget(graphIndex));
                if (view && view->GetScene())
                {
-                  // If the scene is displaying the contents of a graph that is deleted,
-                  // remove the tab.
-                  if (view->GetScene()->GetGraph()->GetID() == id)
+                  // If the current graph or any of its parents are being deleted,
+                  // change the current graph to the parent of that parent.
+                  DirectorGraph* graph = view->GetScene()->GetGraph();
+                  while (graph)
                   {
-                     mGraphTabs->removeTab(graphIndex);
-                     graphIndex--;
-                     continue;
+                     if (graph->GetID() == id)
+                     {
+                        view->GetScene()->SetGraph(graph->mParent);
+                        break;
+                     }
+
+                     graph = graph->mParent;
                   }
-                  else
-                  {
-                     // We need to find the node item that belongs to the scene.
-                     NodeItem* nodeItem = view->GetScene()->GetNodeItem(id, true);
-                     if (nodeItem) view->GetScene()->DeleteNode(nodeItem);
-                  }
+
+                  // We need to find the node item that belongs to the scene.
+                  NodeItem* nodeItem = view->GetScene()->GetNodeItem(id, true);
+                  if (nodeItem) view->GetScene()->DeleteNode(nodeItem);
                }
             }
          }
@@ -1000,6 +961,54 @@ namespace dtDirector
       }
 
       return false;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::PasteNodes(bool createLinks)
+   {
+      Clipboard& clipboard = Clipboard::GetInstance();
+
+      int index = mGraphTabs->currentIndex();
+      if (index >= 0 && index < mGraphTabs->count())
+      {
+         EditorView* view = dynamic_cast<EditorView*>(mGraphTabs->widget(index));
+         if (!view) return;
+
+         EditorScene* scene = view->GetScene();
+         if (!scene) return;
+
+         QPointF pos = view->mapToScene(view->width()/2, view->height()/2);
+         pos -= scene->GetTranslationItem()->scenePos();
+
+         std::vector<dtDAL::PropertyContainer*> newSelection;
+         newSelection = clipboard.PasteObjects(scene->GetGraph(), mUndoManager, osg::Vec2(pos.x(), pos.y()), createLinks);
+
+         scene->clearSelection();
+
+         // Refresh the graph to create all the newly created node items.
+         RefreshGraph(scene->GetGraph());
+
+         // Now auto-select the newly created nodes.
+         int count = (int)newSelection.size();
+         for (index = 0; index < count; index++)
+         {
+            Node* node = dynamic_cast<Node*>(newSelection[index]);
+            if (node)
+            {
+               NodeItem* item = scene->GetNodeItem(node->GetID(), true);
+               if (item) item->setSelected(true);
+            }
+            else
+            {
+               DirectorGraph* graph = dynamic_cast<DirectorGraph*>(newSelection[index]);
+               if (graph)
+               {
+                  MacroItem* item = scene->GetGraphItem(graph->GetID());
+                  if (item) item->setSelected(true);
+               }
+            }
+         }
+      }
    }
 } // namespace dtDirector
 

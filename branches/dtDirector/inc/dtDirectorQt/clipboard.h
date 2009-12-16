@@ -76,10 +76,12 @@ namespace dtDirector
        * @param[in]  parent       The parent Director Graph to copy to.
        * @param[in]  undoManager  The undo manager.
        * @param[in]  position     The top/left most position to paste nodes.
+       * @param[in]  createLinks  If True, will create link nodes to bridge link
+       *                           connections between parent and sub-graph.
        *
        * @return     The list of nodes that were newly created.
        */
-      std::vector<dtDAL::PropertyContainer*> PasteObjects(DirectorGraph* graph, UndoManager* undoManager, const osg::Vec2& position = osg::Vec2());
+      std::vector<dtDAL::PropertyContainer*> PasteObjects(DirectorGraph* graph, UndoManager* undoManager, const osg::Vec2& position = osg::Vec2(), bool createLinks = false);
 
       /**
        * Retrieves whether there are items copied to the clipboard.
@@ -102,37 +104,67 @@ namespace dtDirector
       /**
        * Connects all the links on a pasted node.
        *
-       * @param[in]  node    The node to link.
-       * @param[in]  parent  The parent Director Graph to copy to.
+       * @param[in]  node         The node to link.
+       * @param[in]  parent       The parent Director Graph to copy to.
+       * @param[in]  undoManager  The undo manager.
+       * @param[in]  linkNodes    The list of link nodes created.
+       * @param[in]  createLinks  If True, will create link nodes to bridge link
+       *                           connections between parent and sub-graph.
+       *
        */
-      void LinkNode(Node* node, DirectorGraph* parent);
+      void LinkNode(Node* node, DirectorGraph* parent, UndoManager* undoManager, std::vector<dtDAL::PropertyContainer*>& linkNodes, bool createLinks);
 
       /**
        * Links all inputs to outputs for a node.
        *
-       * @param[in]  link      The new link that needs connecting.
-       * @param[in]  fromLink  The original link with connections to copy from.
-       * @param[in]  parent    The parent Director Graph to copy to.
+       * @param[in]  link         The new link that needs connecting.
+       * @param[in]  fromLink     The original link with connections to copy from.
+       * @param[in]  parent       The parent Director Graph to copy to.
+       * @param[in]  undoManager  The undo manager.
+       * @param[in]  linkNodes    The list of link nodes created.
+       * @param[in]  createLinks  If True, will create link nodes to bridge link
+       *                           connections between parent and sub-graph.
        */
-      void LinkInputs(InputLink* link, InputLink* fromLink, DirectorGraph* parent);
+      void LinkInputs(InputLink* link, InputLink* fromLink, DirectorGraph* parent, UndoManager* undoManager, std::vector<dtDAL::PropertyContainer*>& linkNodes, bool createLinks);
 
       /**
        * Links all outputs to inputs for a node.
        *
-       * @param[in]  link      The new link that needs connecting.
-       * @param[in]  fromLink  The original link with connections to copy from.
-       * @param[in]  parent    The parent Director Graph to copy to.
+       * @param[in]  link         The new link that needs connecting.
+       * @param[in]  fromLink     The original link with connections to copy from.
+       * @param[in]  parent       The parent Director Graph to copy to.
+       * @param[in]  undoManager  The undo manager.
+       * @param[in]  linkNodes    The list of link nodes created.
+       * @param[in]  createLinks  If True, will create link nodes to bridge link
+       *                           connections between parent and sub-graph.
        */
-      void LinkOutputs(OutputLink* link, OutputLink* fromLink, DirectorGraph* parent);
+      void LinkOutputs(OutputLink* link, OutputLink* fromLink, DirectorGraph* parent, UndoManager* undoManager, std::vector<dtDAL::PropertyContainer*>& linkNodes, bool createLinks);
 
       /**
        * Links all value links with value nodes.
        *
-       * @param[in]  link      The new link that needs connecting.
-       * @param[in]  fromLink  The original link with connections to copy from.
-       * @param[in]  parent    The parent Director Graph to copy to.
+       * @param[in]  link         The new link that needs connecting.
+       * @param[in]  fromLink     The original link with connections to copy from.
+       * @param[in]  parent       The parent Director Graph to copy to.
+       * @param[in]  undoManager  The undo manager.
+       * @param[in]  linkNodes    The list of link nodes created.
+       * @param[in]  createLinks  If True, will create link nodes to bridge link
+       *                           connections between parent and sub-graph.
        */
-      void LinkValues(ValueLink* link, ValueLink* fromLink, DirectorGraph* parent);
+      void LinkValues(ValueLink* link, ValueLink* fromLink, DirectorGraph* parent, UndoManager* undoManager, std::vector<dtDAL::PropertyContainer*>& linkNodes, bool createLinks);
+
+      /**
+       * Links the value node with value links.
+       *
+       * @param[in]  node         The new node that needs connecting.
+       * @param[in]  fromNode     The original node with connections to copy from.
+       * @param[in]  parent       The parent Director Graph to copy to.
+       * @param[in]  undoManager  The undo manager.
+       * @param[in]  linkNodes    The list of link nodes created.
+       * @param[in]  createLinks  If True, will create link nodes to bridge link
+       *                           connections between parent and sub-graph.
+       */
+      void LinkValueNode(ValueNode* node, ValueNode* fromNode, DirectorGraph* parent, UndoManager* undoManager, std::vector<dtDAL::PropertyContainer*>& linkNodes, bool createLinks);
 
       std::vector<dtCore::RefPtr<dtDAL::PropertyContainer> > mCopied;
       osg::Vec2  mOffset;

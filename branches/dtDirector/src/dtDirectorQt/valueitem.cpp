@@ -214,6 +214,19 @@ namespace dtDirector
          }
       }
    }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ValueItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+   {
+      QMenu menu;
+      menu.addAction(mScene->GetMacroSelectionAction());
+      menu.addSeparator();
+      menu.addAction(mScene->GetEditor()->GetCutAction());
+      menu.addAction(mScene->GetEditor()->GetCopyAction());
+      menu.addSeparator();
+      menu.addAction(mScene->GetEditor()->GetDeleteAction());
+      menu.exec(event->screenPos());
+   }
 }
 
 //////////////////////////////////////////////////////////////////////////

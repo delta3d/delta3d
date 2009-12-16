@@ -117,7 +117,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   std::vector<dtDAL::PropertyContainer*> Clipboard::PasteObjects(DirectorGraph* parent, UndoManager* undoManager, const osg::Vec2& position)
+   std::vector<dtDAL::PropertyContainer*> Clipboard::PasteObjects(DirectorGraph* parent, UndoManager* undoManager, const osg::Vec2& position, bool createLinks)
    {
       std::vector<dtDAL::PropertyContainer*> result;
 
@@ -138,7 +138,7 @@ namespace dtDirector
       count = (int)mPasted.size();
       for (int index = 0; index < count; index++)
       {
-         LinkNode(mPasted[index], parent);
+         LinkNode(mPasted[index], parent, undoManager, result, createLinks);
       }
 
       // Now add all created nodes to the undo manager.
@@ -267,7 +267,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void Clipboard::LinkNode(Node* node, DirectorGraph* parent)
+   void Clipboard::LinkNode(Node* node, DirectorGraph* parent, UndoManager* undoManager, std::vector<dtDAL::PropertyContainer*>& linkNodes, bool createLinks)
    {
       if (!node || !parent) return;
 
@@ -280,7 +280,7 @@ namespace dtDirector
       {
          InputLink* fromLink = &fromNode->GetInputLinks()[index];
          InputLink* link = &node->GetInputLinks()[index];
-         LinkInputs(link, fromLink, parent);
+         LinkInputs(link, fromLink, parent, undoManager, linkNodes, createLinks);
       }
 
       // Link outputs to inputs.
@@ -289,7 +289,7 @@ namespace dtDirector
       {
          OutputLink* fromLink = &fromNode->GetOutputLinks()[index];
          OutputLink* link = &node->GetOutputLinks()[index];
-         LinkOutputs(link, fromLink, parent);
+         LinkOutputs(link, fromLink, parent, undoManager, linkNodes, createLinks);
       }
 
       // Link values.
@@ -298,12 +298,22 @@ namespace dtDirector
       {
          ValueLink* fromLink = &fromNode->GetValueLinks()[index];
          ValueLink* link = &node->GetValueLinks()[index];
-         LinkValues(link, fromLink, parent);
+         LinkValues(link, fromLink, parent, undoManager, linkNodes, createLinks);
       }
+
+      // Link value nodes.
+      ValueNode* valueNode = dynamic_cast<ValueNode*>(fromNode);
+      if (valueNode)
+      {
+         LinkValueNode(dynamic_cast<ValueNode*>(node),
+            valueNode, parent, undoManager, linkNodes, createLinks);
+      }
+
+      return;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void Clipboard::LinkInputs(InputLink* link, InputLink* fromLink, DirectorGraph* parent)
+   void Clipboard::LinkInputs(InputLink* link, InputLink* fromLink, DirectorGraph* parent, UndoManager* undoManager, std::vector<dtDAL::PropertyContainer*>& linkNodes, bool createLinks)
    {
       if (!link || !fromLink || !parent) return;
 
@@ -316,12 +326,61 @@ namespace dtDirector
             Node* newOwner = NULL;
             if (mIDOldToNew.find(owner->GetID()) == mIDOldToNew.end())
             {
-               // If we did not copy the node that it is linked to, then link it
-               // to the old one instead only if the old node is within the same graph.
-               if (owner->GetGraph() == parent ||
-                  owner->GetGraph()->mParent == parent ||
-                  parent->mParent == owner->GetGraph())
+               DirectorGraph* myNodeGraph = link->GetOwner()->GetGraph();
+               DirectorGraph* otherNodeGraph = owner->GetGraph();
+
+               // If my new node is an input link node, it can only
+               // connect its input to a node that is on its parent graph.
+               if (link->GetOwner()->GetType().GetFullName() == "Core.Input Link")
+               {
+                  myNodeGraph = myNodeGraph->mParent;
+               }
+               // If the other node is an output link node, it can only
+               // connect its output to a node that is on its parent graph.
+               if (owner->GetType().GetFullName() == "Core.Output Link")
+               {
+                  otherNodeGraph = otherNodeGraph->mParent;
+               }
+
+               // The two nodes can only link together if their connecting
+               // links are on the same graph.
+               if (myNodeGraph == otherNodeGraph)
+               {
                   newOwner = owner;
+               }
+
+               // If we are creating new link nodes, then create
+               // a new input link node and connect them together.
+               if (createLinks && !newOwner &&
+                  otherNodeGraph == parent->mParent)
+               {
+                  dtCore::RefPtr<Node> rampNode = NodeManager::GetInstance().CreateNode("Input Link", "Core", parent);
+                  if (rampNode.valid())
+                  {
+                     // Position the new node to the left of the current.
+                     rampNode->SetPosition(osg::Vec2(
+                        link->GetOwner()->GetPosition().x() - 300,
+                        link->GetOwner()->GetPosition().y()));
+
+                     // Link them together.
+                     OutputLink* output = owner->GetOutputLink(fromLink->GetLinks()[index]->GetName());
+                     rampNode->GetInputLink("In")->Connect(output);
+                     
+                     output = rampNode->GetOutputLink("Out");
+                     if (output) link->Connect(output);
+
+                     // Copy the name of the input to the input node.
+                     dtDAL::ActorProperty* prop = rampNode->GetProperty("Name");
+                     if (prop) prop->FromString(link->GetName());
+
+                     // Create an undo event for this creation event.
+                     if (undoManager)
+                     {
+                        dtCore::RefPtr<UndoCreateEvent> event = new UndoCreateEvent(undoManager->GetEditor(), rampNode->GetID(), parent->GetID());
+                        undoManager->AddEvent(event);
+                     }
+                  }
+               }
             }
             else
             {
@@ -338,7 +397,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void Clipboard::LinkOutputs(OutputLink* link, OutputLink* fromLink, DirectorGraph* parent)
+   void Clipboard::LinkOutputs(OutputLink* link, OutputLink* fromLink, DirectorGraph* parent, UndoManager* undoManager, std::vector<dtDAL::PropertyContainer*>& linkNodes, bool createLinks)
    {
       if (!link || !fromLink || !parent) return;
 
@@ -351,12 +410,61 @@ namespace dtDirector
             Node* newOwner = NULL;
             if (mIDOldToNew.find(owner->GetID()) == mIDOldToNew.end())
             {
-               // If we did not copy the node that it is linked to, then link it
-               // to the old one instead only if the old node is within the same graph.
-               if (owner->GetGraph() == parent ||
-                  owner->GetGraph()->mParent == parent ||
-                  parent->mParent == owner->GetGraph())
+               DirectorGraph* myNodeGraph = link->GetOwner()->GetGraph();
+               DirectorGraph* otherNodeGraph = owner->GetGraph();
+
+               // If my new node is an output link node, it can only
+               // connect its outputs to a node that is on its parent graph.
+               if (link->GetOwner()->GetType().GetFullName() == "Core.Output Link")
+               {
+                  myNodeGraph = myNodeGraph->mParent;
+               }
+               // If the other node is an input link node, it can only
+               // connect its input to a node that is on its parent graph.
+               if (owner->GetType().GetFullName() == "Core.Input Link")
+               {
+                  otherNodeGraph = otherNodeGraph->mParent;
+               }
+
+               // The two nodes can only link together if their connecting
+               // links are on the same graph.
+               if (myNodeGraph == otherNodeGraph)
+               {
                   newOwner = owner;
+               }
+
+               // If we are creating new link nodes, then create
+               // a new output link node and connect them together.
+               if (createLinks && !newOwner &&
+                  otherNodeGraph == parent->mParent)
+               {
+                  dtCore::RefPtr<Node> rampNode = NodeManager::GetInstance().CreateNode("Output Link", "Core", parent);
+                  if (rampNode.valid())
+                  {
+                     // Position the new node to the right of the current.
+                     rampNode->SetPosition(osg::Vec2(
+                        link->GetOwner()->GetPosition().x() + 500,
+                        link->GetOwner()->GetPosition().y()));
+
+                     // Link them together.
+                     InputLink* input = owner->GetInputLink(fromLink->GetLinks()[index]->GetName());
+                     rampNode->GetOutputLink("Out")->Connect(input);
+
+                     input = rampNode->GetInputLink("In");
+                     if (input) link->Connect(input);
+
+                     // Copy the name of the output to the output node.
+                     dtDAL::ActorProperty* prop = rampNode->GetProperty("Name");
+                     if (prop) prop->FromString(link->GetName());
+
+                     // Create an undo event for this creation event.
+                     if (undoManager)
+                     {
+                        dtCore::RefPtr<UndoCreateEvent> event = new UndoCreateEvent(undoManager->GetEditor(), rampNode->GetID(), parent->GetID());
+                        undoManager->AddEvent(event);
+                     }
+                  }
+               }
             }
             else
             {
@@ -373,7 +481,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void Clipboard::LinkValues(ValueLink* link, ValueLink* fromLink, DirectorGraph* parent)
+   void Clipboard::LinkValues(ValueLink* link, ValueLink* fromLink, DirectorGraph* parent, UndoManager* undoManager, std::vector<dtDAL::PropertyContainer*>& linkNodes, bool createLinks)
    {
       if (!link || !fromLink || !parent) return;
 
@@ -386,12 +494,54 @@ namespace dtDirector
             ValueNode* newOwner = NULL;
             if (mIDOldToNew.find(owner->GetID()) == mIDOldToNew.end())
             {
-               // If we did not copy the node that it is linked to, then link it
-               // to the old one instead only if the old node is within the same graph.
-               if (owner->GetGraph() == parent ||
-                  owner->GetGraph()->mParent == parent ||
-                  parent->mParent == owner->GetGraph())
+               DirectorGraph* myNodeGraph = link->GetOwner()->GetGraph();
+               DirectorGraph* otherNodeGraph = owner->GetGraph();
+
+               // If my new node is a value link node, it can only
+               // connect its value to a node that is on its parent graph.
+               if (link->GetOwner()->GetType().GetFullName() == "Core.Value Link")
+               {
+                  myNodeGraph = myNodeGraph->mParent;
+               }
+
+               // The two nodes can only link together if their connecting
+               // links are on the same graph.
+               if (myNodeGraph == otherNodeGraph)
+               {
                   newOwner = dynamic_cast<ValueNode*>(owner);
+               }
+
+               // If we are creating new link nodes, then create
+               // a new input link node and connect them together.
+               if (createLinks && !newOwner &&
+                  otherNodeGraph == parent->mParent)
+               {
+                  dtCore::RefPtr<ValueNode> rampNode = dynamic_cast<ValueNode*>(NodeManager::GetInstance().CreateNode("Value Link", "Core", parent).get());
+                  if (rampNode.valid())
+                  {
+                     // Position the new node underneath the current.
+                     rampNode->SetPosition(osg::Vec2(
+                        link->GetOwner()->GetPosition().x(),
+                        link->GetOwner()->GetPosition().y() + 300));
+
+                     // Link them together.
+                     ValueNode* ownerValue = dynamic_cast<ValueNode*>(owner);
+                     rampNode->GetValueLinks()[0].Connect(ownerValue);
+
+                     link->Connect(rampNode);
+
+                     // Copy the name of the value link to the value node.
+                     dtDAL::ActorProperty* prop = ((Node*)rampNode)->GetProperty("Name");
+                     if (prop) prop->FromString(link->GetLabel());
+
+                     // Create an undo event for this creation event.
+                     if (undoManager)
+                     {
+                        dtCore::RefPtr<UndoCreateEvent> event = new UndoCreateEvent(undoManager->GetEditor(), rampNode->GetID(), parent->GetID());
+                        undoManager->AddEvent(event);
+                     }
+                  }
+               }
             }
             else
             {
@@ -399,6 +549,51 @@ namespace dtDirector
             }
 
             if (newOwner) link->Connect(newOwner);
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void Clipboard::LinkValueNode(ValueNode* node, ValueNode* fromNode, DirectorGraph* parent, UndoManager* undoManager, std::vector<dtDAL::PropertyContainer*>& linkNodes, bool createLinks)
+   {
+      if (!node || !fromNode || !parent) return;
+
+      int count = (int)fromNode->GetLinks().size();
+      for (int index = 0; index < count; index++)
+      {
+         ValueLink* valueLink = fromNode->GetLinks()[index];
+         if (valueLink)
+         {
+            Node* newOwner = NULL;
+            if (mIDOldToNew.find(valueLink->GetOwner()->GetID()) == mIDOldToNew.end())
+            {
+               DirectorGraph* myNodeGraph = node->GetGraph();
+               DirectorGraph* otherNodeGraph = valueLink->GetOwner()->GetGraph();
+
+               // If the other node is a value link node, it can only
+               // connect its value to a node that is on its parent graph.
+               if (valueLink->GetOwner()->GetType().GetFullName() == "Core.Value Link")
+               {
+                  otherNodeGraph = otherNodeGraph->mParent;
+               }
+
+               // The two nodes can only link together if their connecting
+               // links are on the same graph.
+               if (myNodeGraph == otherNodeGraph)
+               {
+                  newOwner = valueLink->GetOwner();
+               }
+            }
+            else
+            {
+               newOwner = mIDOldToNew[valueLink->GetOwner()->GetID()];
+            }
+
+            if (newOwner)
+            {
+               valueLink = newOwner->GetValueLink(fromNode->GetLinks()[index]->GetLabel());
+               if (valueLink) valueLink->Connect(node);
+            }
          }
       }
    }

@@ -49,10 +49,16 @@ namespace dtDirector
       , mDragging(false)
       , mHasDragged(false)
       , mTranslationItem(NULL)
+      , mMacroSelectionAction(NULL)
    {
       mPropertyEditor->SetScene(this);
 
       setBackgroundBrush(Qt::lightGray);
+
+      mMacroSelectionAction = new QAction("Move Selection to Macro", this);
+
+      connect(mMacroSelectionAction, SIGNAL(triggered()),
+         this, SLOT(OnCreateMacro()));
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -330,26 +336,6 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void EditorScene::OnMenuEvent(QAction* action)
-   {
-      if (!action) return;
-      
-      if (action->text() == "Create Macro")
-      {
-         DirectorGraph* graph = mGraph->AddGraph();
-         if (graph)
-         {
-            graph->SetPosition(osg::Vec2(mMenuPos.x(), mMenuPos.y()));
-            mEditor->RefreshGraph(mGraph);
-            mEditor->Refresh();
-
-            dtCore::RefPtr<UndoCreateEvent> event = new UndoCreateEvent(mEditor, graph->GetID(), mGraph->GetID());
-            mEditor->GetUndoManager()->AddEvent(event);
-         }
-      }
-   }
-
-   //////////////////////////////////////////////////////////////////////////
    void EditorScene::OnCreateNodeEvent(QAction* action)
    {
       if (!action) return;
@@ -362,6 +348,54 @@ namespace dtDirector
       {
          dtCore::RefPtr<UndoCreateEvent> event = new UndoCreateEvent(mEditor, node->GetID(), mGraph->GetID());
          mEditor->GetUndoManager()->AddEvent(event);
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void EditorScene::OnCreateMacro()
+   {
+      DirectorGraph* parent = mGraph;
+      DirectorGraph* graph = mGraph->AddGraph();
+      if (graph)
+      {
+         QList<QGraphicsItem*> selection = selectedItems();
+         if (!selection.empty())
+         {
+            // Set the graph position to the top left most item.
+            mMenuPos = selection[0]->pos();
+
+            int count = (int)selection.size();
+            for (int index = 0; index < count; index++)
+            {
+               if (selection[index]->pos().x() < mMenuPos.x())
+               {
+                  mMenuPos.setX(selection[index]->pos().x());
+               }
+               if (selection[index]->pos().y() < mMenuPos.y())
+               {
+                  mMenuPos.setY(selection[index]->pos().y());
+               }
+            }
+         }
+
+         graph->SetPosition(osg::Vec2(mMenuPos.x(), mMenuPos.y()));
+
+         mEditor->GetUndoManager()->BeginMultipleEvents();
+         dtCore::RefPtr<UndoCreateEvent> event = new UndoCreateEvent(mEditor, graph->GetID(), mGraph->GetID());
+         mEditor->GetUndoManager()->AddEvent(event);
+
+         // If there are any nodes selected, cut them.
+         mEditor->OnCut();
+
+         // Switch the current graph to the new macro.
+         SetGraph(graph);
+
+         // If there are nodes selected, move them into the macro.
+         mEditor->PasteNodes(true);
+         mEditor->GetUndoManager()->EndMultipleEvents();
+
+         mEditor->RefreshGraph(parent);
+         mEditor->Refresh();
       }
    }
 
@@ -560,6 +594,9 @@ namespace dtDirector
             menu.addMenu(nodeMenu);
             QAction* createMacroAction = menu.addAction("Create Macro");
 
+            connect(createMacroAction, SIGNAL(triggered()),
+               this, SLOT(OnCreateMacro()));
+
             connect(nodeMenu, SIGNAL(triggered(QAction*)),
                this, SLOT(OnCreateNodeEvent(QAction*)));
          }
@@ -572,9 +609,6 @@ namespace dtDirector
          menu.addAction(mEditor->GetPasteAction());
          menu.addSeparator();
          menu.addAction(mEditor->GetRefreshAction());
-
-         connect(&menu, SIGNAL(triggered(QAction*)),
-            this, SLOT(OnMenuEvent(QAction*)));
 
          // Execute the menu.
          mMenuPos = event->scenePos();

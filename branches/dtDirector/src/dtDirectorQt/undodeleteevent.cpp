@@ -240,20 +240,23 @@ namespace dtDirector
          EditorView* view = dynamic_cast<EditorView*>(mEditor->GetGraphTabs()->widget(index));
          if (view && view->GetScene() && view->GetScene()->GetGraph())
          {
-            // If the scene is displaying the contents of a graph that is deleted,
-            // remove the tab.
-            if (view->GetScene()->GetGraph()->GetID() == mNodeID)
+            // If the current graph or any of its parents are being deleted,
+            // change the current graph to the parent of that parent.
+            DirectorGraph* graph = view->GetScene()->GetGraph();
+            while (graph)
             {
-               mEditor->GetGraphTabs()->removeTab(index);
-               index--;
-               continue;
+               if (graph->GetID() == mNodeID)
+               {
+                  view->GetScene()->SetGraph(graph->mParent);
+                  break;
+               }
+
+               graph = graph->mParent;
             }
-            else
-            {
-               // We need to find the node item that belongs to the scene.
-               NodeItem* nodeItem = view->GetScene()->GetNodeItem(mNodeID, true);
-               if (nodeItem) view->GetScene()->DeleteNode(nodeItem);
-            }
+
+            // We need to find the node item that belongs to the scene.
+            NodeItem* nodeItem = view->GetScene()->GetNodeItem(mNodeID, true);
+            if (nodeItem) view->GetScene()->DeleteNode(nodeItem);
          }
       }
 

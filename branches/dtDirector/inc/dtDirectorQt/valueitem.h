@@ -84,6 +84,11 @@ namespace dtDirector
 
    protected:
 
+      /**
+       * Event handler when the context menu event has triggered.
+       */
+      void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
+
       ValueNodeLinkItem* mValueLink;
    };
 }

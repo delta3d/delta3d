@@ -263,9 +263,10 @@ namespace dtDirector
       QAction* stepInAction = menu.addAction("Step Inside Macro");
       connect(stepInAction, SIGNAL(triggered()), this, SLOT(OpenMacro()));
       menu.addSeparator();
+      menu.addAction(mScene->GetMacroSelectionAction());
+      menu.addSeparator();
       menu.addAction(mScene->GetEditor()->GetCutAction());
       menu.addAction(mScene->GetEditor()->GetCopyAction());
-      menu.addAction(mScene->GetEditor()->GetPasteAction());
       menu.addSeparator();
       menu.addAction(mScene->GetEditor()->GetShowLinkAction());
       menu.addAction(mScene->GetEditor()->GetHideLinkAction());

@@ -1084,9 +1084,10 @@ namespace dtDirector
    void NodeItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
    {
       QMenu menu;
+      menu.addAction(mScene->GetMacroSelectionAction());
+      menu.addSeparator();
       menu.addAction(mScene->GetEditor()->GetCutAction());
       menu.addAction(mScene->GetEditor()->GetCopyAction());
-      menu.addAction(mScene->GetEditor()->GetPasteAction());
       menu.addSeparator();
       menu.addAction(mScene->GetEditor()->GetShowLinkAction());
       menu.addAction(mScene->GetEditor()->GetHideLinkAction());
