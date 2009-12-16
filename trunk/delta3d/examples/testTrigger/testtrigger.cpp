@@ -1,11 +1,8 @@
 #include "testtrigger.h"
 
-#include <dtActors/triggervolumeactorproxy.h>
-
 #include <dtCore/keyboard.h>
 #include <dtCore/camera.h>
 #include <dtCore/transform.h>
-
 
 using namespace dtCore;
 using namespace dtABC;
@@ -37,7 +34,7 @@ TestTrigger::TestTrigger(const std::string& configFilename)
    , mHappySphere(0)
    , mPositionalLight(0)
    , mWalkMotionModel(0)
-   , mTriggerVolume(0)
+   , mProximityTrigger(0)
 {
 }
 
@@ -70,28 +67,26 @@ void TestTrigger::Config()
    mWalkMotionModel->SetEnabled(true);
 
    // Create our trigger. We want this to fire when the Camera hits it.
-   //mProximityTrigger = new ProximityTrigger("ProximityTrigger");
-   mTriggerVolume = new dtActors::TriggerVolumeActor(*new dtActors::TriggerVolumeActorProxy);
-   mTriggerVolume->RenderCollisionGeometry(true);
+   mProximityTrigger = new ProximityTrigger("ProximityTrigger");
 
    // Let's make the collision shape a tad smaller (default is a sphere of 5.0f).
    // This makes it slightly bigger than the happy sphere.
-   mTriggerVolume->SetCollisionSphere(1.0f);
+   mProximityTrigger->SetCollisionSphere(1.0f);
 
    // Set the collide bits of this ProximityTrigger to match the category bits of Camera.
    // If you want this ProximityTrigger to hit more than once class, just do the OR of all
    // the relavent category bits. See the docs for Transformable::SetCollisionCollideBits
    // for more info.
-   mTriggerVolume->SetCollisionCollideBits(GetCamera()->GetCollisionCategoryBits());
+   mProximityTrigger->SetCollisionCollideBits(GetCamera()->GetCollisionCategoryBits());
 
    // Assign our custom action to the internal trigger.
-   mTriggerVolume->SetEnterAction(new LightAction(mPositionalLight.get()));
+   mProximityTrigger->GetTrigger()->SetAction(new LightAction(mPositionalLight.get()));
 
    // Make the trigger activate an unlimited number of times.
-   //mTriggerVolume->GetTrigger()->SetTimesActive(-1);
+   mProximityTrigger->GetTrigger()->SetTimesActive(-1);
 
    // Let's attach the trigger to the sphere, just in case we want to move the sphere.
-   mHappySphere->AddChild(mTriggerVolume.get());
+   mHappySphere->AddChild(mProximityTrigger.get());
 
    // Position the default camera location inside the warehouse.
    Transform xform(4.0f, 17.5f, 2.5f, -180.0f, 0.0f, 0.0f);
