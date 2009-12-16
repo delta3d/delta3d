@@ -129,6 +129,32 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   ValueNode* DirectorGraph::GetValueNode(const std::string& name)
+   {
+      int count = (int)mValueNodes.size();
+      for (int index = 0; index < count; index++)
+      {
+         if (mValueNodes[index]->GetValueName() == name)
+         {
+            return mValueNodes[index];
+         }
+      }
+
+      count = (int)mSubGraphs.size();
+      for (int index = 0; index < count; index++)
+      {
+         DirectorGraph* graph = mSubGraphs[index];
+         if (graph)
+         {
+            ValueNode* node = graph->GetValueNode(name);
+            if (node) return node;
+         }
+      }
+
+      return NULL;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    bool DirectorGraph::AddNode(Node* node)
    {
       ValueNode* valueNode = dynamic_cast<ValueNode*>(node);

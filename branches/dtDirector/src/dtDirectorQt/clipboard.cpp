@@ -532,7 +532,7 @@ namespace dtDirector
 
                      // Copy the name of the value link to the value node.
                      dtDAL::ActorProperty* prop = ((Node*)rampNode)->GetProperty("Name");
-                     if (prop) prop->FromString(link->GetLabel());
+                     if (prop) prop->FromString(link->GetName());
 
                      // Create an undo event for this creation event.
                      if (undoManager)
@@ -591,7 +591,7 @@ namespace dtDirector
 
             if (newOwner)
             {
-               valueLink = newOwner->GetValueLink(fromNode->GetLinks()[index]->GetLabel());
+               valueLink = newOwner->GetValueLink(fromNode->GetLinks()[index]->GetName());
                if (valueLink) valueLink->Connect(node);
             }
          }

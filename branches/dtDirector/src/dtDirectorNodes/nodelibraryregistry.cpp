@@ -33,6 +33,7 @@
 
 // Values
 #include <dtDirectorNodes/externalvaluenode.h>
+#include <dtDirectorNodes/referencevalue.h>
 #include <dtDirectorNodes/booleanvalue.h>
 #include <dtDirectorNodes/intvalue.h>
 #include <dtDirectorNodes/floatvalue.h>
@@ -65,6 +66,7 @@ namespace dtDirector
 
    // Values
    RefPtr<NodeType> NodeLibraryRegistry::EXTERNAL_VALUE_NODE_TYPE(new dtDirector::NodeType("Value Link", "Core", "Links", "This node creates a value link connector in its parent graph."));
+   RefPtr<NodeType> NodeLibraryRegistry::REFERENCE_VALUE_NODE_TYPE(new dtDirector::NodeType("Reference", "General", "Variables", "This will reference another value in the script."));
    RefPtr<NodeType> NodeLibraryRegistry::BOOLEAN_VALUE_NODE_TYPE(new dtDirector::NodeType("Boolean", "General", "Variables", "A boolean value."));
    RefPtr<NodeType> NodeLibraryRegistry::INT_VALUE_NODE_TYPE(new dtDirector::NodeType("Int", "General", "Variables", "An integer value."));
    RefPtr<NodeType> NodeLibraryRegistry::FLOAT_VALUE_NODE_TYPE(new dtDirector::NodeType("Float", "General", "Variables", "A float value."));
@@ -106,6 +108,7 @@ namespace dtDirector
 
       // Values
       mNodeFactory->RegisterType<ExternalValueNode>(EXTERNAL_VALUE_NODE_TYPE.get());
+      mNodeFactory->RegisterType<ReferenceValue>(REFERENCE_VALUE_NODE_TYPE.get());
       mNodeFactory->RegisterType<BooleanValue>(BOOLEAN_VALUE_NODE_TYPE.get());
       mNodeFactory->RegisterType<IntValue>(INT_VALUE_NODE_TYPE.get());
       mNodeFactory->RegisterType<FloatValue>(FLOAT_VALUE_NODE_TYPE.get());

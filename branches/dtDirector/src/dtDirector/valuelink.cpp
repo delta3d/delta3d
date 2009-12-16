@@ -146,21 +146,21 @@ namespace dtDirector
          return GetDefaultProperty()->GetName().Get();
       }
 
-      return "NONE";
-   }
-
-   //////////////////////////////////////////////////////////////////////////
-   std::string ValueLink::GetLabel()
-   {
-      // Always display the default property name as the current property
-      // changes based on what it is linked to.
-      if (GetDefaultProperty())
-      {
-         return GetDefaultProperty()->GetLabel();
-      }
-
       return mLabel;
    }
+
+   ////////////////////////////////////////////////////////////////////////////
+   //std::string ValueLink::GetLabel()
+   //{
+   //   // Always display the default property name as the current property
+   //   // changes based on what it is linked to.
+   //   if (GetDefaultProperty())
+   //   {
+   //      return GetDefaultProperty()->GetLabel();
+   //   }
+
+   //   return mLabel;
+   //}
 
    //////////////////////////////////////////////////////////////////////////
    void ValueLink::SetLabel(const std::string& label)

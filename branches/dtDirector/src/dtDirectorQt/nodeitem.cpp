@@ -615,7 +615,7 @@ namespace dtDirector
          data.linkGraphic->setBrush(GetColorForType(type.GetTypeId()));
 
          // Set the link text, and position it right aligned with the link graphic.
-         data.linkName->setPlainText(data.link->GetLabel().c_str());
+         data.linkName->setPlainText(data.link->GetName().c_str());
          QRectF nameBounds = data.linkName->boundingRect();
 
          if (nameBounds.width() > MAX_VALUE_NAME_SIZE)

@@ -338,7 +338,7 @@ namespace dtDirector
             data.mSourceID = link.GetOwner()->GetID();
             data.mDestID = destNode->GetID();
 
-            data.mSource = link.GetLabel();
+            data.mSource = link.GetName();
             data.mDest = "";
             mValues.push_back(data);
          }
@@ -360,7 +360,7 @@ namespace dtDirector
             data.mSourceID = link->GetOwner()->GetID();
             data.mDestID = node->GetID();
 
-            data.mSource = link->GetLabel();
+            data.mSource = link->GetName();
             data.mDest = "";
             mValues.push_back(data);
          }

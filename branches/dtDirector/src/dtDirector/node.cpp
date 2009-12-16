@@ -152,6 +152,12 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   void Node::OnLinkValueChanged(const std::string& linkName)
+   {
+      // Default implementation does nothing.
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    const NodeType& Node::GetType()
    {
       return *mType;
@@ -426,7 +432,7 @@ namespace dtDirector
       int count = (int)mValues.size();
       for (int index = 0; index < count; index++)
       {
-         if (mValues[index].GetLabel() == name)
+         if (mValues[index].GetName() == name)
          {
             return &mValues[index];
          }

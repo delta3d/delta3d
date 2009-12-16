@@ -19,11 +19,11 @@
  * Author: Jeff P. Houde
  */
 
-#ifndef DIRECTOR_VALUE_NODE
-#define DIRECTOR_VALUE_NODE
+#ifndef DIRECTOR_REFERENCE_VALUE_NODE
+#define DIRECTOR_REFERENCE_VALUE_NODE
 
-#include <dtDirector/export.h>
-#include <dtDirector/node.h>
+#include <dtDirectorNodes/nodelibraryexport.h>
+#include <dtDirector/valuenode.h>
 
 namespace dtDAL
 {
@@ -35,21 +35,26 @@ namespace dtDirector
    class ValueLink;
 
    /**
-    * This is the base class for all value nodes.
+    * This node finds and references another script value node
+    * found elsewhere in the Director graph.  If multiple
+    * value nodes with the same name are found, it will choose
+    * the first one (top most tier) it finds.  This can reference
+    * any value found in the entire Director graph including all
+    * sub-graphs.
     *
     * @note
     *      Node objects must be created through the NodePluginRegistry or
     *      the NodeManager. If they are not created in this fashion,
     *      the node types will not be set correctly.
     */
-   class DT_DIRECTOR_EXPORT ValueNode : public Node
+   class NODE_LIBRARY_EXPORT ReferenceValue : public ValueNode
    {
    public:
 
       /**
        * Constructs the Node.
        */
-      ValueNode();
+      ReferenceValue();
 
       /**
        * Initializes the Node.
@@ -72,23 +77,10 @@ namespace dtDirector
       virtual void BuildPropertyMap();
 
       /**
-       * Connects this node to a specified value link.
-       *
-       * @param[in]  valueLink  The value link to connect to.
-       *
-       * @return     True if the connection was made.  Connection
-       *              can fail based on type checking.
+       * Accessors for the name of the node.
        */
-      bool Connect(ValueLink* valueLink);
-
-      /**
-       * Disconnects this node from a specified value link.
-       *
-       * @param[in]  valueLink  The value link to disconnect from.
-       *                         NULL to disconnect all.
-       */
-      virtual bool Disconnect();
-      bool Disconnect(ValueLink* valueLink);
+      virtual void SetValueName(const std::string& name);
+      virtual std::string GetValueLabel();
 
       /**
        * Event handler when a connection has changed.
@@ -96,12 +88,29 @@ namespace dtDirector
       virtual void OnConnectionChange();
 
       /**
-       * Accessors for the name of the node.
+       * Retrieves the total number of values linked to a property.
+       *
+       * @param[in]  name  The name of the property.
+       *
+       * @return     The count.
        */
-      virtual void SetValueName(const std::string& name);
-      virtual const std::string& GetValueName();
-      virtual const std::string& GetName();
-      virtual std::string GetValueLabel();
+      virtual int GetPropertyCount(const std::string& name = "Value");
+
+      /**
+       * Retrieves a property of the given name.  This is overloaded
+       * to provide functionality of redirected properties (from the
+       * use of ValueLink's).
+       *
+       * @param[in]  name   The name of the property.
+       * @param[in]  index  The property index, in case of multiple linking.
+       *
+       * @return     A pointer to the property, NULL if none found.
+       *
+       * @note  All properties used within nodes should be retrieved
+       *         via this method instead of directly to ensure that
+       *         the desired property is being used.
+       */
+      virtual dtDAL::ActorProperty* GetProperty(const std::string& name, int index = 0);
 
       /**
        * Retrieves the property for this value.
@@ -120,66 +129,39 @@ namespace dtDirector
       virtual bool CanBeType(dtDAL::DataType& type);
 
       /**
-       * Retrieves the property type of this value.
+       * Retrieves the type of this value.
        *
        * @return  The type.
        */
       virtual dtDAL::DataType& GetPropertyType();
-
-      /**
-       * Retrieves the links list.
-       */
-      std::vector<ValueLink*>& GetLinks() {return mLinks;}
-
-      /**
-       * Event handler when the value has changed.  This will
-       * notify all nodes that it is linked to that this value
-       * has been changed.
-       *
-       * @note  Inherited classes should call this function after
-       *        the property value has changed.
-       */
-      void OnValueChanged();
-
-      /**
-       * Retrieves whether the UI should expose input links
-       * assigned to this node.
-       *
-       * @return  True to expose inputs.
-       */
-      virtual bool InputsExposed();
-
-      /**
-       * Retrieves whether the UI should expose output links
-       * assigned to this node.
-       *
-       * @return  True to expose outputs.
-       */
-      virtual bool OutputsExposed();
-
-      /**
-       * Retrieves whether the UI should expose the value links
-       * assigned to this node.
-       *
-       * @return  True to expose values.
-       */
-      virtual bool ValuesExposed();
-
-      friend class ValueLink;
 
    protected:
 
       /**
        *	Protected Destructor.  dtCore::RefPtr will handle its destruction.
        */
-      virtual ~ValueNode();
+      virtual ~ReferenceValue();
 
-      std::string    mName;
-      std::string    mLabel;
+      void UpdateLinkType();
 
-      dtDAL::ActorProperty* mProperty;
+      /**
+       * Sets the referenced value.
+       *
+       * @param[in]  value  The referenced value name.
+       */
+      void SetReference(const std::string& value);
 
-      std::vector<ValueLink*> mLinks;
+      /**
+       * Retrieves the current referenced value name.
+       */
+      const std::string& GetReference();
+
+      /**
+       * Updates the reference node we are linked to.
+       */
+      void UpdateReference();
+
+      std::string mReference;
    };
 }
 

@@ -109,6 +109,14 @@ namespace dtDirector
       virtual bool Update(float simDelta, float delta, int inputIndex);
 
       /**
+       * This event is called by value nodes that are linked via
+       * value links when that value has changed.
+       *
+       * @param[in]  linkName  The name of the value link that is changing.
+       */
+      virtual void OnLinkValueChanged(const std::string& linkName);
+
+      /**
        * Retrieves the type of this node.
        *
        * @return  The type of this node.

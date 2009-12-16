@@ -87,6 +87,17 @@ namespace dtDirector
       Node* GetNode(const dtCore::UniqueId& id);
 
       /**
+       * Retrieves a value node with the given name.
+       * @note  If there are more than one value with the
+       *         same name, only the first one will be returned.
+       *
+       * @param[in]  name  The name of the value to find.
+       *
+       * @return     A pointer to the value node, NULL if not found.
+       */
+      ValueNode* GetValueNode(const std::string& name);
+
+      /**
        * Adds a node to the graph.
        *
        * @param[in]  node  The node.

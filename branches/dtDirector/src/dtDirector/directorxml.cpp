@@ -500,7 +500,7 @@ namespace dtDirector
                // Link Name.
                BeginElement(dtDAL::MapXMLConstants::NAME_ELEMENT);
                {
-                  AddCharacters(value.GetLabel());
+                  AddCharacters(value.GetName());
                }
                EndElement(); // End Link Name.
 

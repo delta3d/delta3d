@@ -22,7 +22,8 @@
 #include <sstream>
 #include <algorithm>
 
-#include <dtDirectorNodes/externalvaluenode.h>
+#include <dtDirectorNodes/referencevalue.h>
+#include <dtDirector/director.h>
 #include <dtDirector/valuelink.h>
 
 #include <dtDAL/enginepropertytypes.h>
@@ -31,28 +32,35 @@
 namespace dtDirector
 {
    ///////////////////////////////////////////////////////////////////////////////////////
-   ExternalValueNode::ExternalValueNode()
+   ReferenceValue::ReferenceValue()
        : ValueNode()
    {
-      mName = "External Value";
+      mName = "Reference Value";
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   ExternalValueNode::~ExternalValueNode()
+   ReferenceValue::~ReferenceValue()
    {
       Disconnect();
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   void ExternalValueNode::Init(const NodeType& nodeType, DirectorGraph* graph)
+   void ReferenceValue::Init(const NodeType& nodeType, DirectorGraph* graph)
    {
       ValueNode::Init(nodeType, graph);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void ExternalValueNode::BuildPropertyMap()
+   void ReferenceValue::BuildPropertyMap()
    {
       ValueNode::BuildPropertyMap();
+
+      dtDAL::StringActorProperty* refProp = new dtDAL::StringActorProperty(
+         "Reference", "Referenced Value",
+         dtDAL::StringActorProperty::SetFuncType(this, &ReferenceValue::SetReference),
+         dtDAL::StringActorProperty::GetFuncType(this, &ReferenceValue::GetReference),
+         "This will set the referenced value, set this to the same name as the value you want to reference.");
+      AddProperty(refProp);
 
       // The external value requires a value link so it can use it to link
       // externally with any values outside of it.
@@ -61,7 +69,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ExternalValueNode::SetValueName(const std::string& name)
+   void ReferenceValue::SetValueName(const std::string& name)
    {
       ValueNode::SetValueName(name);
 
@@ -69,7 +77,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   std::string ExternalValueNode::GetValueLabel()
+   std::string ReferenceValue::GetValueLabel()
    {
       if (mValues.size())
       {
@@ -78,7 +86,7 @@ namespace dtDirector
             ValueNode* valueNode = dynamic_cast<ValueNode*>(mValues[0].GetLinks()[0]);
             if (valueNode)
             {
-               return valueNode->GetValueLabel();
+               return std::string(" (") + mReference + valueNode->GetValueLabel() + ")";
             }
          }
       }
@@ -87,14 +95,14 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ExternalValueNode::OnConnectionChange()
+   void ReferenceValue::OnConnectionChange()
    {
       UpdateLinkType();
       ValueNode::OnConnectionChange();
    }
 
    //////////////////////////////////////////////////////////////////////////
-   int ExternalValueNode::GetPropertyCount(const std::string& name)
+   int ReferenceValue::GetPropertyCount(const std::string& name)
    {
       if (mValues.size())
       {
@@ -105,7 +113,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProperty* ExternalValueNode::GetProperty(const std::string& name, int index)
+   dtDAL::ActorProperty* ReferenceValue::GetProperty(const std::string& name, int index)
    {
       if (mValues.size())
       {
@@ -117,7 +125,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProperty* ExternalValueNode::GetProperty()
+   dtDAL::ActorProperty* ReferenceValue::GetProperty()
    {
       if (mValues.size())
       {
@@ -131,7 +139,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool ExternalValueNode::CanBeType(dtDAL::DataType& type)
+   bool ReferenceValue::CanBeType(dtDAL::DataType& type)
    {
       dtDAL::DataType& myType = GetPropertyType();
       if (myType == dtDAL::DataType::UNKNOWN ||
@@ -144,8 +152,14 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtDAL::DataType& ExternalValueNode::GetPropertyType()
+   dtDAL::DataType& ReferenceValue::GetPropertyType()
    {
+      // If we are linked to another value node, use that value's type.
+      if (mValues.size() && mValues[0].GetLinks().size())
+      {
+         return mValues[0].GetLinks()[0]->GetPropertyType();
+      }
+
       // If we are linked to a value link, use the type of that link.
       if (mLinks.size())
       {
@@ -159,18 +173,12 @@ namespace dtDirector
          }
       }
 
-      // If we are linked to another value node, use that value's type.
-      if (mValues.size() && mValues[0].GetLinks().size())
-      {
-         return mValues[0].GetLinks()[0]->GetPropertyType();
-      }
-
       // If we have no connections yet, the type is undefined.
       return dtDAL::DataType::UNKNOWN;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ExternalValueNode::UpdateLinkType()
+   void ReferenceValue::UpdateLinkType()
    {
       bool isOut = false;
       bool isTypeChecking = false;
@@ -188,5 +196,58 @@ namespace dtDirector
       // If we are not linked, reset to defaults.
       mValues[0].SetOutLink(isOut);
       mValues[0].SetTypeChecking(isTypeChecking);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ReferenceValue::SetReference(const std::string& value)
+   {
+      mReference = value;
+
+      // Now attempt to find the actual value and link with it.
+      UpdateReference();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   const std::string& ReferenceValue::GetReference()
+   {
+      // Now attempt to find the actual value and link with it.
+      UpdateReference();
+
+      return mReference;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ReferenceValue::UpdateReference()
+   {
+      ValueNode* node = NULL;
+      if (!mReference.empty() &&
+         (node = GetDirector()->GetValueNode(mReference)))
+      {
+         // Disconnect all links that are no longer valid based on type.
+         if (mLinks.size())
+         {
+            dtDAL::DataType& type = node->GetPropertyType();
+
+            int count = (int)mLinks.size();
+            for (int index = 0; index < count; index++)
+            {
+               dtDAL::DataType& testType = mLinks[index]->GetPropertyType();
+               if (testType != type && testType != dtDAL::DataType::UNKNOWN)
+               {
+                  mLinks[index]->Disconnect(this);
+                  index--;
+                  count--;
+               }
+            }
+         }
+
+         mValues[0].Connect(node);
+      }
+      // If we can't find the node, make sure we are not
+      // connected to anything.
+      else
+      {
+         mValues[0].Disconnect();
+      }
    }
 }

@@ -854,7 +854,7 @@ namespace dtDirector
                UndoLinkEvent::VALUE_LINK,
                input->GetOwner()->GetID(),
                output->GetID(),
-               input->GetLabel(),
+               input->GetName(),
                output->GetName(),
                false);
             mScene->GetEditor()->GetUndoManager()->AddEvent(event);
@@ -1015,7 +1015,7 @@ namespace dtDirector
                         UndoLinkEvent::VALUE_LINK,
                         input->GetOwner()->GetID(),
                         output->GetID(),
-                        input->GetLabel(),
+                        input->GetName(),
                         output->GetName(),
                         true);
                      mScene->GetEditor()->GetUndoManager()->AddEvent(event);
@@ -1177,7 +1177,7 @@ namespace dtDirector
                UndoLinkEvent::VALUE_LINK,
                input->GetOwner()->GetID(),
                output->GetID(),
-               input->GetLabel(),
+               input->GetName(),
                output->GetName(),
                false);
             mScene->GetEditor()->GetUndoManager()->AddEvent(event);
@@ -1364,7 +1364,7 @@ namespace dtDirector
                         UndoLinkEvent::VALUE_LINK,
                         input->GetOwner()->GetID(),
                         output->GetID(),
-                        input->GetLabel(),
+                        input->GetName(),
                         output->GetName(),
                         true);
                      mScene->GetEditor()->GetUndoManager()->AddEvent(event);

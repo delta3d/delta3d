@@ -129,7 +129,7 @@ namespace dtDirector
        *
        * @return  The label of the link.
        */
-      std::string GetLabel();
+      //std::string GetLabel();
       void SetLabel(const std::string& label);
 
       /**

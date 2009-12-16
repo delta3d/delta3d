@@ -440,6 +440,12 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   ValueNode* Director::GetValueNode(const std::string& name)
+   {
+      return mGraph->GetValueNode(name);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    bool Director::DeleteGraph(const dtCore::UniqueId& id)
    {
       return mGraph->DeleteGraph(id);

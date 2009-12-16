@@ -64,6 +64,7 @@ namespace dtDirector
    void VecValue::SetValue(const osg::Vec4& value)
    {
       mValue = value;
+      ValueNode::OnValueChanged();
    }
 
    //////////////////////////////////////////////////////////////////////////

@@ -28,6 +28,7 @@
 #include <dtDirectorQt/undopropertyevent.h>
 #include <dtDirectorQt/nodeitem.h>
 #include <dtDirectorQt/macroitem.h>
+#include <dtDirectorQt/valueitem.h>
 
 #include <dtDirector/node.h>
 #include <dtDirector/director.h>
@@ -137,11 +138,20 @@ namespace dtDirector
       {
          NodeItem* item = mScene->GetNodeItem(node->GetID());
 
-         // Re-Draw the node.
-         if (item)
+         // If the item is a value node, we have to refresh the entire scene
+         // just in case a value link was changed.
+         if (dynamic_cast<ValueItem*>(item))
          {
-            item->Draw();
-            item->ConnectLinks(true);
+            mScene->Refresh();
+         }
+         else
+         {
+            // Re-Draw the node.
+            if (item)
+            {
+               item->Draw();
+               item->ConnectLinks(true);
+            }
          }
 
          return;

@@ -78,6 +78,7 @@ namespace dtDirector
    void ActorValue::SetValue(const dtCore::UniqueId& value)
    {
       mValue = value;
+      ValueNode::OnValueChanged();
    }
 
    //////////////////////////////////////////////////////////////////////////

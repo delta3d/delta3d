@@ -106,6 +106,9 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void ValueNode::OnConnectionChange()
    {
+      // Notify all new connections that this value has changed, just in case
+      // they need to initialize on this node's current value.
+      OnValueChanged();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -160,6 +163,17 @@ namespace dtDirector
 
       // If there is no property, return an undefined type.
       return dtDAL::DataType::UNKNOWN;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ValueNode::OnValueChanged()
+   {
+      int count = (int)mLinks.size();
+      for (int index = 0; index < count; index++)
+      {
+         ValueLink* link = mLinks[index];
+         if (link) link->GetOwner()->OnLinkValueChanged(link->GetName());
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
