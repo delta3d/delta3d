@@ -98,6 +98,9 @@ namespace dtDAL
 
       mInActorProperty = false;
 
+      mActorProperty = NULL;
+      mActorPropertyType = NULL;
+
       ClearParameterValues();
 
       //This should NOT be done in the Actor Value because this should
@@ -108,9 +111,6 @@ namespace dtDAL
    //////////////////////////////////////////////////////////////////////////
    void ActorPropertySerializer::ClearParameterValues()
    {
-      mActorProperty = NULL;
-      mActorPropertyType = NULL;
-
       mInGroupProperty = false;
       mInArrayProperty = 0;
       mInContainerProperty = 0;

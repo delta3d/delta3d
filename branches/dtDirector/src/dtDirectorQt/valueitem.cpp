@@ -180,18 +180,6 @@ namespace dtDirector
       }
 
       mValueText->setPos(0, y + 11);
-      //if (mNodeHeight < mTextHeight + bounds.height())
-      //   mNodeHeight = mTextHeight + bounds.height();
-
-      // Clamp the bounds to our min and max.
-      if (bounds.width() > MAX_NODE_WIDTH - 2) bounds.setWidth(MAX_NODE_WIDTH - 2);
-      if (bounds.width() < MIN_NODE_WIDTH - 2) bounds.setWidth(MIN_NODE_WIDTH - 2);
-
-      // Resize the width of the node if it is not wide enough already.
-      if (bounds.width() + 2 > mNodeWidth)
-      {
-         mNodeWidth = bounds.width();
-      }
    }
 
    //////////////////////////////////////////////////////////////////////////

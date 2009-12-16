@@ -62,9 +62,9 @@ public:
       {
          director->Update(0.5f, 0.5f);
 
-         resultValue  = director->GetGraphRoot()->mSubGraphs[0]->mValueNodes[4]->GetInt();
-         extValue     = director->GetGraphRoot()->mSubGraphs[0]->mValueNodes[0]->GetInt();
-         outsideValue = director->GetGraphRoot()->mValueNodes[0]->GetInt();
+         resultValue  = director->GetGraphRoot()->GetSubGraphs()[0]->GetValueNodes()[4]->GetInt();
+         extValue     = director->GetGraphRoot()->GetSubGraphs()[0]->GetValueNodes()[0]->GetInt();
+         outsideValue = director->GetGraphRoot()->GetValueNodes()[0]->GetInt();
       }
    }
 

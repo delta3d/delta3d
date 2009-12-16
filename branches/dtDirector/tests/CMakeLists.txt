@@ -11,6 +11,10 @@ IF(DTDIS_AVAILABLE)
                      ${HAWKNL_INCLUDE_DIR} ) 
 ENDIF(DTDIS_AVAILABLE)
 
+IF(DTDIRECTOR_AVAILABLE)
+  SET(DIRS ${DIRS} dtDirector)
+ENDIF(DTDIRECTOR_AVAILABLE)
+
 file(GLOB TEMP_SOURCES "*.cpp" "*.h")
 SET(ALL_SOURCES ${TEMP_SOURCES}
   ${DELTA3D_SOURCE_DIR}/utilities/LMS/WebPackager/package_utils.h
@@ -69,6 +73,13 @@ TARGET_LINK_LIBRARIES( ${PROG_NAME}
                        ${TEST_ACTOR_LIBRARY}
                        ${TEST_GAME_ACTOR_LIBRARY}
                      )
+
+IF(DTDIRECTOR_AVAILABLE)
+  TARGET_LINK_LIBRARIES(${PROG_NAME}
+                        ${DTDIRECTOR_LIBRARY}
+                        )
+ENDIF(DTDIRECTOR_AVAILABLE)
+					 
 IF(DTDIS_AVAILABLE)
    TARGET_LINK_LIBRARIES(${PROG_NAME}
                          ${DTDIS_LIBRARY}

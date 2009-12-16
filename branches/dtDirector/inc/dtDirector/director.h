@@ -82,7 +82,7 @@ namespace dtDirector
       dtUtil::Log* GetLogger() {return mLogger;}
 
       // HACK: Remove in final version.
-      void CreateDebugScript();
+      //void CreateDebugScript();
 
       /**
        * Loads a Director script.

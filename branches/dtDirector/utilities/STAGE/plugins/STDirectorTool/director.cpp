@@ -85,9 +85,6 @@ DirectorToolPlugin::DirectorToolPlugin(MainWindow* mw)
    dtDirector::Director* director = new dtDirector::Director();
    director->Init(dtEditQt::EditorData::GetInstance().getCurrentMap());
 
-   // HACK: For now, create a default script for viewing.
-   director->CreateDebugScript();
-
    SetDirector(director);
 }
 

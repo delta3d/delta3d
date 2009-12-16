@@ -68,96 +68,96 @@ namespace dtDirector
       mGraph->mSubGraphs.clear();
    }
 
-   //////////////////////////////////////////////////////////////////////////
-   void Director::CreateDebugScript()
-   {
-      Clear();
+   ////////////////////////////////////////////////////////////////////////////
+   //void Director::CreateDebugScript()
+   //{
+   //   Clear();
 
-      SetName("Debug Script");
-      SetDescription("Debug Script for Testing purposes.");
-      SetAuthor("Jeff P. Houde");
-      SetComment("This is a code generated test script.");
+   //   SetName("Debug Script");
+   //   SetDescription("Debug Script for Testing purposes.");
+   //   SetAuthor("Jeff P. Houde");
+   //   SetComment("This is a code generated test script.");
 
-      dtDirector::NodeManager& nodeManager = dtDirector::NodeManager::GetInstance();
+   //   dtDirector::NodeManager& nodeManager = dtDirector::NodeManager::GetInstance();
 
-      // Create a primary event node.
-      dtCore::RefPtr<EventNode> primaryEvent = dynamic_cast<dtDirector::EventNode*>(nodeManager.CreateNode("Named Event", "General", mGraph).get());
-      primaryEvent->SetPosition(osg::Vec2(50, 50));
+   //   // Create a primary event node.
+   //   dtCore::RefPtr<EventNode> primaryEvent = dynamic_cast<dtDirector::EventNode*>(nodeManager.CreateNode("Named Event", "General", mGraph).get());
+   //   primaryEvent->SetPosition(osg::Vec2(50, 50));
 
-      // Create an outside value node.
-      dtCore::RefPtr<ValueNode> outsideValue = dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Int", "General", mGraph).get());
-      outsideValue->SetPosition(osg::Vec2(300, 200));
+   //   // Create an outside value node.
+   //   dtCore::RefPtr<ValueNode> outsideValue = dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Int", "General", mGraph).get());
+   //   outsideValue->SetPosition(osg::Vec2(300, 200));
 
-      // Create a sub graph.
-      DirectorGraph* subGraph = new DirectorGraph(this);
-      subGraph->BuildPropertyMap();
-      subGraph->mParent = mGraph;
-      mGraph->mSubGraphs.push_back(subGraph);
-      subGraph->mName = "Macro";
-      subGraph->SetPosition(osg::Vec2(300, 50));
+   //   // Create a sub graph.
+   //   DirectorGraph* subGraph = new DirectorGraph(this);
+   //   subGraph->BuildPropertyMap();
+   //   subGraph->mParent = mGraph;
+   //   mGraph->mSubGraphs.push_back(subGraph);
+   //   subGraph->mName = "Macro";
+   //   subGraph->SetPosition(osg::Vec2(300, 50));
 
-      // Create an input node.
-      dtCore::RefPtr<EventNode> inputNode = dynamic_cast<dtDirector::EventNode*>(nodeManager.CreateNode("Input Link", "Core", subGraph).get());
-      inputNode->SetPosition(osg::Vec2(50, 50));
+   //   // Create an input node.
+   //   dtCore::RefPtr<EventNode> inputNode = dynamic_cast<dtDirector::EventNode*>(nodeManager.CreateNode("Input Link", "Core", subGraph).get());
+   //   inputNode->SetPosition(osg::Vec2(50, 50));
 
-      // Create an output node.
-      dtCore::RefPtr<ActionNode> outputNode = dynamic_cast<dtDirector::ActionNode*>(nodeManager.CreateNode("Output Link", "Core", subGraph).get());
-      outputNode->SetPosition(osg::Vec2(600, 50));
+   //   // Create an output node.
+   //   dtCore::RefPtr<ActionNode> outputNode = dynamic_cast<dtDirector::ActionNode*>(nodeManager.CreateNode("Output Link", "Core", subGraph).get());
+   //   outputNode->SetPosition(osg::Vec2(600, 50));
 
-      // Create an external value node.
-      dtCore::RefPtr<ValueNode> extValue = dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Value Link", "Core", subGraph).get());
-      extValue->SetValueName("External Connected");
-      extValue->SetPosition(osg::Vec2(500, 300));
+   //   // Create an external value node.
+   //   dtCore::RefPtr<ValueNode> extValue = dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Value Link", "Core", subGraph).get());
+   //   extValue->SetValueName("External Connected");
+   //   extValue->SetPosition(osg::Vec2(500, 300));
 
-      dtCore::RefPtr<ValueNode> extValue2 = dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Value Link", "Core", subGraph).get());
-      extValue2->SetValueName("External Not Connected");
-      extValue2->SetPosition(osg::Vec2(600, 300));
+   //   dtCore::RefPtr<ValueNode> extValue2 = dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Value Link", "Core", subGraph).get());
+   //   extValue2->SetValueName("External Not Connected");
+   //   extValue2->SetPosition(osg::Vec2(600, 300));
 
-      // Create our action node.
-      dtCore::RefPtr<ActionNode> actionNode = dynamic_cast<dtDirector::ActionNode*>(nodeManager.CreateNode("Binary Operation", "General", subGraph).get());
-      actionNode->SetPosition(osg::Vec2(200, 50));
+   //   // Create our action node.
+   //   dtCore::RefPtr<ActionNode> actionNode = dynamic_cast<dtDirector::ActionNode*>(nodeManager.CreateNode("Binary Operation", "General", subGraph).get());
+   //   actionNode->SetPosition(osg::Vec2(200, 50));
 
-      // Create some value nodes.
-      dtCore::RefPtr<ValueNode> valueA = dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Int", "General", subGraph).get());
-      dtCore::RefPtr<ValueNode> valueB = dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Int", "General", subGraph).get());
-      dtCore::RefPtr<ValueNode> resultValue = dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Int", "General", subGraph).get());
+   //   // Create some value nodes.
+   //   dtCore::RefPtr<ValueNode> valueA = dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Int", "General", subGraph).get());
+   //   dtCore::RefPtr<ValueNode> valueB = dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Int", "General", subGraph).get());
+   //   dtCore::RefPtr<ValueNode> resultValue = dynamic_cast<dtDirector::ValueNode*>(nodeManager.CreateNode("Int", "General", subGraph).get());
 
-      valueA->SetValueName("Int A");
-      valueA->SetPosition(osg::Vec2(200, 300));
-      valueB->SetValueName("Int B");
-      valueB->SetPosition(osg::Vec2(300, 300));
-      resultValue->SetValueName("Result Int");
-      resultValue->SetPosition(osg::Vec2(400, 300));
+   //   valueA->SetValueName("Int A");
+   //   valueA->SetPosition(osg::Vec2(200, 300));
+   //   valueB->SetValueName("Int B");
+   //   valueB->SetPosition(osg::Vec2(300, 300));
+   //   resultValue->SetValueName("Result Int");
+   //   resultValue->SetPosition(osg::Vec2(400, 300));
 
-      // Give some default values for our A and B.
-      valueA->SetInt(10);
-      valueB->SetInt(15);
+   //   // Give some default values for our A and B.
+   //   valueA->SetInt(10);
+   //   valueB->SetInt(15);
 
-      // Connect nodes together.
-      {
-         // Now connect our primary event to the input of our sub-graph.
-         primaryEvent->GetOutputLink("Out")->Connect(inputNode->GetInputLink("In"));
+   //   // Connect nodes together.
+   //   {
+   //      // Now connect our primary event to the input of our sub-graph.
+   //      primaryEvent->GetOutputLink("Out")->Connect(inputNode->GetInputLink("In"));
 
-         // Connect the output of our sub-graph to the action node.
-         inputNode->GetOutputLink("Out")->Connect(actionNode->GetInputLink("Multiply"));
+   //      // Connect the output of our sub-graph to the action node.
+   //      inputNode->GetOutputLink("Out")->Connect(actionNode->GetInputLink("Multiply"));
 
-         // Connect the output of action node with the output node.
-         actionNode->GetOutputLink("Out")->Connect(outputNode->GetInputLink("In"));
+   //      // Connect the output of action node with the output node.
+   //      actionNode->GetOutputLink("Out")->Connect(outputNode->GetInputLink("In"));
 
-         // Connect our A and B values to the action node.
-         actionNode->GetValueLink("A")->Connect(valueA);
-         actionNode->GetValueLink("B")->Connect(valueB);
+   //      // Connect our A and B values to the action node.
+   //      actionNode->GetValueLink("A")->Connect(valueA);
+   //      actionNode->GetValueLink("B")->Connect(valueB);
 
-         // Connect our result value to the action node.
-         actionNode->GetValueLink("Result")->Connect(resultValue);
+   //      // Connect our result value to the action node.
+   //      actionNode->GetValueLink("Result")->Connect(resultValue);
 
-         // Connect our external value node to the action node.
-         actionNode->GetValueLink("Result")->Connect(extValue);
+   //      // Connect our external value node to the action node.
+   //      actionNode->GetValueLink("Result")->Connect(extValue);
 
-         // Connect our external value node to our outside value node.
-         extValue->GetValueLinks()[0].Connect(outsideValue);
-      }
-   }
+   //      // Connect our external value node to our outside value node.
+   //      extValue->GetValueLinks()[0].Connect(outsideValue);
+   //   }
+   //}
 
    //////////////////////////////////////////////////////////////////////////
    bool Director::LoadScript(const std::string& scriptFile)
@@ -172,7 +172,7 @@ namespace dtDirector
       {
          try
          {
-            parser->Parse(this, mMap.get(), "scripts/" + scriptFile + ".dtDir");
+            parser->Parse(this, mMap.get(), "directors/" + scriptFile + ".dtDir");
          }
          catch (const dtUtil::Exception& e)
          {
@@ -202,7 +202,7 @@ namespace dtDirector
 
          try
          {
-            writer->Save(this, "scripts/" + scriptFile + ".dtDir");
+            writer->Save(this, "directors/" + scriptFile + ".dtDir");
          }
          catch (const dtUtil::Exception& e)
          {

@@ -943,7 +943,7 @@ namespace dtDirector
 
       QFileDialog dialog;
       QFileInfo filePath = dialog.getSaveFileName(this, tr("Save a Director Graph File"),
-         tr((context + "\\scripts\\").c_str()),
+         tr((context + "\\directors\\").c_str()),
          tr("Director Scripts (*.dtDir)"), &filter);
 
       QString fileName = filePath.baseName();
@@ -967,7 +967,7 @@ namespace dtDirector
 
       QFileDialog dialog;
       QFileInfo filePath = dialog.getOpenFileName(this, tr("Load a Director Graph File"),
-         tr((context + "\\scripts\\").c_str()),
+         tr((context + "\\directors\\").c_str()),
          tr("Director Scripts (*.dtDir)"), &filter);
 
       QString fileName = filePath.baseName();
