@@ -38,8 +38,8 @@ ResourceActorProperty::ResourceActorProperty(ActorProxy& actorProxy,
 : ActorProperty(type, name, label, desc, groupName)
 , mProxy(&actorProxy)
 , SetPropFunctor(Set)
-, GetPropFunctor(Get)
 , mHasGetFunctor(true)
+, GetPropFunctor(Get)
 , mUsingDescFunctors(false)
 {
 }
