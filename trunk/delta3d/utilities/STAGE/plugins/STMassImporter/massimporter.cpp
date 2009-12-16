@@ -179,7 +179,7 @@ void MassImporterPlugin::CreateActorFromMesh(const dtDAL::ActorType& type, const
    else
    {
       dtDAL::ResourceDescriptor meshDescriptor(relPath.toStdString());
-      resourceProperty->SetValue(&meshDescriptor);
+      resourceProperty->SetValue(meshDescriptor);
       EditorEvents::GetInstance().emitActorPropertyChanged(proxy, resourceProperty);
    }
 }

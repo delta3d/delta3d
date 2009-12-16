@@ -684,7 +684,7 @@ void NamedParameterTests::TestNamedResourceParameter()
       dtCore::RefPtr<dtDAL::NamedResourceParameter>  param = new dtDAL::NamedResourceParameter(dtDAL::DataType::STATIC_MESH, "a");
       dtDAL::ResourceDescriptor c(dtDAL::DataType::STATIC_MESH.GetName() + ":hello1",
          dtDAL::DataType::STATIC_MESH.GetName() + ":hello1");
-      param->SetValue(&c);
+      param->SetValue(c);
       dtDAL::ResourceDescriptor r = param->GetValue();
 
       CPPUNIT_ASSERT_MESSAGE("MessageParameter should not be NULL", !r.IsEmpty());
@@ -693,7 +693,7 @@ void NamedParameterTests::TestNamedResourceParameter()
       std::string holder = param->ToString();
       std::string testValue = dtDAL::DataType::STATIC_MESH.GetName() + ":helloA";
       dtDAL::ResourceDescriptor temp(testValue, testValue);
-      param->SetValue(&temp);
+      param->SetValue(temp);
       param->FromString(holder);
 
       r = param->GetValue();

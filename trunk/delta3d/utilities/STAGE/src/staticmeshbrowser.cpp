@@ -405,7 +405,7 @@ namespace dtEditQt
 
                if (resourceProp != NULL)
                {
-                  resourceProp->SetValue(&mSelection->getResourceDescriptor());
+                  resourceProp->SetValue(mSelection->getResourceDescriptor());
                }
 
                // add the new proxy to the map
