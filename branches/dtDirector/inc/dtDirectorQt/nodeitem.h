@@ -225,7 +225,7 @@ namespace dtDirector
        *
        * @param[in]  text  The new title name.
        */
-      virtual void SetTitle(const std::string& text);
+      virtual void SetTitle(std::string text);
 
       /**
        * Creates the comment.
@@ -405,6 +405,8 @@ namespace dtDirector
       float       mLinkHeight;
 
       float       mValueHeight;
+
+      bool        mHasHiddenLinks;
    };
 }
 

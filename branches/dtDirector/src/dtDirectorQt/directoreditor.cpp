@@ -291,7 +291,7 @@ namespace dtDirector
          setWindowTitle(mDirector->GetName().c_str());
 
          // Open the home graph.
-         OpenGraph(mDirector->GetGraphRoot(), true);
+         //OpenGraph(mDirector->GetGraphRoot(), true);
       }
       else
       {
@@ -626,6 +626,20 @@ namespace dtDirector
             {
                view->GetScene()->SetGraph(graph->mParent);
                RefreshButtonStates();
+               
+               // Find the sub graph that we just zoomed out of, and center on it.
+               QList<QGraphicsItem*> nodes = view->GetScene()->items();
+               int count = nodes.count();
+               for (int index = 0; index < count; index++)
+               {
+                  MacroItem* macro = dynamic_cast<MacroItem*>(nodes[index]);
+                  if (macro && macro->GetGraph() == graph)
+                  {
+                     macro->setSelected(true);
+                     view->GetScene()->CenterSelection();
+                     break;
+                  }
+               }
             }
          }
       }
@@ -895,6 +909,17 @@ namespace dtDirector
       if (e->key() == Qt::Key_Z && holdingControl && holdingShift)
       {
          OnUndo();
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::showEvent(QShowEvent* event)
+   {
+      QMainWindow::showEvent(event);
+
+      if (mDirector.valid() && mGraphTabs->count() == 0)
+      {
+         OpenGraph(mDirector->GetGraphRoot());
       }
    }
 

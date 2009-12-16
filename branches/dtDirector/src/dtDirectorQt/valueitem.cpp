@@ -39,6 +39,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    ValueItem::ValueItem(Node* node, QGraphicsItem* parent, EditorScene* scene)
        : NodeItem(node, parent, scene)
+       , mValueText(NULL)
        , mValueLink(NULL)
    {
    }
@@ -50,9 +51,11 @@ namespace dtDirector
 
       mLoading = true;
 
-      if (mNode.valid())
+      ValueNode *valueNode = dynamic_cast<ValueNode *>(mNode.get());
+      if (valueNode)
       {
          SetTitle(mNode->GetName());
+         SetValueText(valueNode->GetValueLabel());
          DrawTitle();
 
          DrawPolygonTop();
@@ -60,61 +63,58 @@ namespace dtDirector
          DrawPolygonBottomRound();
          DrawPolygonLeftFlat();
 
-         ValueNode *valueNode = dynamic_cast<ValueNode *>(mNode.get());
-         if (valueNode)
+         int size = mNodeWidth;
+         if (size < mNodeHeight) size = mNodeHeight;
+
+         QRadialGradient radialGradient(mNodeWidth/2, mNodeHeight, size, mNodeWidth/2, mNodeHeight);
+         if (mNode->GetEnabled())
          {
-            int size = mNodeWidth;
-            if (size < mNodeHeight) size = mNodeHeight;
+            setPen(QPen(GetDarkColorForType(valueNode->GetPropertyType().GetTypeId()), 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 
-            QRadialGradient radialGradient(mNodeWidth/2, mNodeHeight, size, mNodeWidth/2, mNodeHeight);
-            if (mNode->GetEnabled())
-            {
-               setPen(QPen(GetDarkColorForType(valueNode->GetPropertyType().GetTypeId()), 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+            QColor color = GetColorForType(valueNode->GetPropertyType().GetTypeId());
+            color.setAlphaF(0.80f);
+            radialGradient.setColorAt(0.0, color);
 
-               QColor color = GetColorForType(valueNode->GetPropertyType().GetTypeId());
-               color.setAlphaF(0.80f);
-               radialGradient.setColorAt(0.0, color);
-
-               color = GetDarkColorForType(valueNode->GetPropertyType().GetTypeId());
-               color.setAlphaF(0.80f);
-               radialGradient.setColorAt(1.0, color);
-            }
-            else
-            {
-               setPen(QPen(Qt::red, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-
-               QColor color = GetColorForType(valueNode->GetPropertyType().GetTypeId());
-               color.setAlphaF(0.25f);
-               radialGradient.setColorAt(0.0, color);
-
-               color = GetDarkColorForType(valueNode->GetPropertyType().GetTypeId());
-               color.setAlphaF(0.25f);
-               radialGradient.setColorAt(1.0, color);
-            }
-
-            setBrush(radialGradient);
-
-            if (!mValueLink)
-            {
-               mValueLink = new ValueNodeLinkItem(this, this, mScene);
-            }
-
-            if (mValueLink)
-            {
-               QPolygonF poly;
-               poly << QPointF(-LINK_SIZE/2, 0.0f) << QPointF(LINK_SIZE/2, 0.0f) <<
-                  QPointF(LINK_SIZE/2, -LINK_LENGTH + LINK_SIZE/2) <<
-                  QPointF(0, -LINK_LENGTH) <<
-                  QPointF(-LINK_SIZE/2, -LINK_LENGTH + LINK_SIZE/2);
-
-               mValueLink->setPolygon(poly);
-               mValueLink->setPos(mNodeWidth / 2, -1.0f);
-
-               mValueLink->SetPropertyType(valueNode->GetPropertyType().GetTypeId());
-               mValueLink->setPen(QPen(GetDarkColorForType(mValueLink->GetPropertyType()), 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-               mValueLink->setBrush(GetColorForType(mValueLink->GetPropertyType()));
-            }
+            color = GetDarkColorForType(valueNode->GetPropertyType().GetTypeId());
+            color.setAlphaF(0.80f);
+            radialGradient.setColorAt(1.0, color);
          }
+         else
+         {
+            setPen(QPen(Qt::red, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+
+            QColor color = GetColorForType(valueNode->GetPropertyType().GetTypeId());
+            color.setAlphaF(0.25f);
+            radialGradient.setColorAt(0.0, color);
+
+            color = GetDarkColorForType(valueNode->GetPropertyType().GetTypeId());
+            color.setAlphaF(0.25f);
+            radialGradient.setColorAt(1.0, color);
+         }
+
+         setBrush(radialGradient);
+
+         if (!mValueLink)
+         {
+            mValueLink = new ValueNodeLinkItem(this, this, mScene);
+         }
+
+         if (mValueLink)
+         {
+            QPolygonF poly;
+            poly << QPointF(-LINK_SIZE/2, 0.0f) << QPointF(LINK_SIZE/2, 0.0f) <<
+               QPointF(LINK_SIZE/2, -LINK_LENGTH + LINK_SIZE/2) <<
+               QPointF(0, -LINK_LENGTH) <<
+               QPointF(-LINK_SIZE/2, -LINK_LENGTH + LINK_SIZE/2);
+
+            mValueLink->setPolygon(poly);
+            mValueLink->setPos(mNodeWidth / 2, -1.0f);
+
+            mValueLink->SetPropertyType(valueNode->GetPropertyType().GetTypeId());
+            mValueLink->setPen(QPen(GetDarkColorForType(mValueLink->GetPropertyType()), 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+            mValueLink->setBrush(GetColorForType(mValueLink->GetPropertyType()));
+         }
+
          setPolygon(mPolygon);
 
          osg::Vec2 pos = mNode->GetPosition();
@@ -127,22 +127,61 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ValueItem::SetTitle(const std::string text)
+   void ValueItem::SetTitle(std::string text)
    {
       if (!mTitle)
       {
          mTitle = new GraphicsTextItem(this, scene());
-         mTitle->setTextWidth(VALUE_TITLE_LENGTH);
+         mTitle->setTextWidth(MIN_NODE_WIDTH);
          mTitle->setFlag(QGraphicsItem::ItemIgnoresParentOpacity, true);
       }
 
-      mTitle->setPlainText(text.c_str());
+      mTitle->setHtml((std::string("<center>") + text + "</center>").c_str());
 
       // Create the title background.
       QRectF bounds = mTitle->boundingRect();
       mTextHeight = bounds.height();
 
       if (mNodeHeight < mTextHeight) mNodeHeight = mTextHeight;
+
+      // Clamp the bounds to our min and max.
+      if (bounds.width() > MAX_NODE_WIDTH - 2) bounds.setWidth(MAX_NODE_WIDTH - 2);
+      if (bounds.width() < MIN_NODE_WIDTH - 2) bounds.setWidth(MIN_NODE_WIDTH - 2);
+
+      // Resize the width of the node if it is not wide enough already.
+      if (bounds.width() + 2 > mNodeWidth)
+      {
+         mNodeWidth = bounds.width();
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ValueItem::SetValueText(const std::string& text)
+   {
+      if (!mValueText)
+      {
+         mValueText = new GraphicsTextItem(this, scene());
+         mValueText->setTextWidth(MIN_NODE_WIDTH);
+         mValueText->setFlag(QGraphicsItem::ItemIgnoresParentOpacity, true);
+      }
+
+      mValueText->setHtml((std::string("<center>") + text + "</center>").c_str());
+
+      if (text.empty()) return;
+
+      // Create the title background.
+      QRectF bounds = mValueText->boundingRect();
+
+      float y = mNodeHeight - bounds.height();
+      if (y < mTextHeight)
+      {
+         mNodeHeight += mTextHeight - y;
+         y = mTextHeight;
+      }
+
+      mValueText->setPos(0, y + 11);
+      //if (mNodeHeight < mTextHeight + bounds.height())
+      //   mNodeHeight = mTextHeight + bounds.height();
 
       // Clamp the bounds to our min and max.
       if (bounds.width() > MAX_NODE_WIDTH - 2) bounds.setWidth(MAX_NODE_WIDTH - 2);

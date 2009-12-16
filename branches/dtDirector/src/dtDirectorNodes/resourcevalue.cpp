@@ -32,7 +32,7 @@ namespace dtDirector
    ///////////////////////////////////////////////////////////////////////////////////////
    ResourceValue::ResourceValue()
        : ValueNode()
-       , mValue(0)
+       , mValue("")
    {
       mName = "Resource";
    }

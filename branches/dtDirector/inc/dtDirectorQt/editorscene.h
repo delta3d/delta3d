@@ -94,6 +94,30 @@ namespace dtDirector
       QGraphicsRectItem* GetTranslationItem() {return mTranslationItem;};
 
       /**
+       * Calculates the center of a list of node items.
+       *
+       * @param[in]  nodes  List of node items.
+       *
+       * @return     The center of all nodes.
+       */
+      QPointF GetCenter(QList<QGraphicsItem*>& nodes);
+
+      /**
+       * Focuses the view on the center of all node items.
+       */
+      void CenterAll();
+
+      /**
+       * Focuses the view on the current selection.
+       */
+      void CenterSelection();
+
+      /**
+       * Centers the view on a given position.
+       */
+      void CenterOn(const QPointF& pos);
+
+      /**
        * Refreshes the graph.
        */
       void Refresh();

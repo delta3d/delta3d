@@ -126,15 +126,15 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    const std::string& ValueNode::GetName()
    {
-      mLabel = mName + GetValueLabel();
-      return mLabel;
+      //mLabel = mName + GetValueLabel();
+      return mName;
    }
 
    //////////////////////////////////////////////////////////////////////////
    std::string ValueNode::GetValueLabel()
    {
       std::string label = "";
-      if (mProperty && !mProperty->ToString().empty()) label = " (" + mProperty->ToString() + ")";
+      if (mProperty && !mProperty->ToString().empty()) label = "(" + mProperty->ToString() + ")";
 
       return label;
    }

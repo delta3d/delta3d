@@ -139,6 +139,7 @@ namespace dtDirector
             InputData& data = mInputs.back();
 
             data.link = &inputs[index]->GetInputLinks()[0];
+            if (!data.link->GetVisible()) mHasHiddenLinks = true;
 
             data.linkGraphic = new InputLinkItem(this, (int)mInputs.size()-1, this, mScene);
             data.linkName = new GraphicsTextItem(data.linkGraphic, mScene);
@@ -156,6 +157,7 @@ namespace dtDirector
             OutputData& data = mOutputs.back();
 
             data.link = &outputs[index]->GetOutputLinks()[0];
+            if (!data.link->GetVisible()) mHasHiddenLinks = true;
 
             data.linkGraphic = new OutputLinkItem(this, (int)mOutputs.size()-1, this, mScene);
             data.linkName = new GraphicsTextItem(data.linkGraphic, mScene);
@@ -173,6 +175,7 @@ namespace dtDirector
             ValueData& data = mValues.back();
 
             data.link = &values[index]->GetValueLinks()[0];
+            if (!data.link->GetVisible()) mHasHiddenLinks = true;
 
             data.linkGraphic = new ValueLinkItem(this, (int)mValues.size()-1, this, mScene);
             data.linkName = new GraphicsTextItem(data.linkGraphic, mScene);

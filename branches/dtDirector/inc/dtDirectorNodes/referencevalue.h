@@ -77,9 +77,18 @@ namespace dtDirector
       virtual void BuildPropertyMap();
 
       /**
+       * This event is called by value nodes that are linked via
+       * value links when that value has changed.
+       *
+       * @param[in]  linkName  The name of the value link that is changing.
+       */
+      virtual void OnLinkValueChanged(const std::string& linkName);
+
+      /**
        * Accessors for the name of the node.
        */
       virtual void SetValueName(const std::string& name);
+      virtual const std::string& GetName();
       virtual std::string GetValueLabel();
 
       /**

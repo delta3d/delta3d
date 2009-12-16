@@ -228,6 +228,11 @@ namespace dtDirector
       void keyPressEvent(QKeyEvent *e);
 
       /**
+       * Event handler when the view is shown or hidden.
+       */
+      void showEvent(QShowEvent* event);
+
+      /**
        * Clears the contents of the current script.
        */
       void ClearScript();

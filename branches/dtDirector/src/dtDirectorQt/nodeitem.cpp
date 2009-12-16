@@ -163,6 +163,7 @@ namespace dtDirector
        , mValueHeight(0.0f)
        , mLinkDivider(NULL)
        , mValueDivider(NULL)
+       , mHasHiddenLinks(false)
    {
       setFlag(QGraphicsItem::ItemIsMovable, true);
       setFlag(QGraphicsItem::ItemIsSelectable, true);
@@ -300,7 +301,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void NodeItem::SetTitle(const std::string& text)
+   void NodeItem::SetTitle(std::string text)
    {
       if (!mTitle)
       {
@@ -312,7 +313,8 @@ namespace dtDirector
          mTitleBG->setFlag(QGraphicsItem::ItemClipsChildrenToShape, true);
       }
 
-      mTitle->setPlainText(text.c_str());
+      if (mHasHiddenLinks) text += "*";
+      mTitle->setHtml((std::string("<center>") + text + "</center>").c_str());
 
       // Create the title background.
       QRectF bounds = mTitle->boundingRect();
@@ -374,6 +376,8 @@ namespace dtDirector
       }
       mValues.clear();
 
+      mHasHiddenLinks = false;
+
       if (!mNode.valid()) return;
 
       if (mNode->InputsExposed())
@@ -385,6 +389,7 @@ namespace dtDirector
             InputData& data = mInputs.back();
 
             data.link = &mNode->GetInputLinks()[index];
+            if (!data.link->GetVisible()) mHasHiddenLinks = true;
 
             data.linkGraphic = new InputLinkItem(this, (int)mInputs.size()-1, this, mScene);
             data.linkName = new GraphicsTextItem(data.linkGraphic, mScene);
@@ -401,6 +406,7 @@ namespace dtDirector
             OutputData& data = mOutputs.back();
 
             data.link = &mNode->GetOutputLinks()[index];
+            if (!data.link->GetVisible()) mHasHiddenLinks = true;
 
             data.linkGraphic = new OutputLinkItem(this, (int)mOutputs.size()-1, this, mScene);
             data.linkName = new GraphicsTextItem(data.linkGraphic, mScene);
@@ -417,6 +423,7 @@ namespace dtDirector
             ValueData& data = mValues.back();
 
             data.link = &mNode->GetValueLinks()[index];
+            if (!data.link->GetVisible()) mHasHiddenLinks = true;
 
             data.linkGraphic = new ValueLinkItem(this, (int)mValues.size()-1, this, mScene);
             data.linkName = new GraphicsTextItem(data.linkGraphic, mScene);

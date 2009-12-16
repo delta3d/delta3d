@@ -55,6 +55,8 @@ namespace dtDirector
 
       setBackgroundBrush(Qt::lightGray);
 
+      setSceneRect(0, 0, 10000, 10000);
+
       mMacroSelectionAction = new QAction("Move Selection to Macro", this);
 
       connect(mMacroSelectionAction, SIGNAL(triggered()),
@@ -160,6 +162,58 @@ namespace dtDirector
       }
 
       mEditor->Refresh();
+      CenterAll();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   QPointF EditorScene::GetCenter(QList<QGraphicsItem*>& nodes)
+   {
+      QPointF topLeft;
+      QPointF botRight;
+
+      int count = (int)nodes.size();
+
+      if (count) topLeft = botRight = nodes[0]->pos();
+      for (int index = 0; index < count; index++)
+      {
+         QPointF pos = nodes[index]->pos();
+         QRectF bounds = nodes[index]->boundingRect();
+
+         if (topLeft.x() > pos.x()) topLeft.setX(pos.x());
+         if (topLeft.y() > pos.y()) topLeft.setY(pos.y());
+         if (botRight.x() < pos.x() + bounds.width()) botRight.setX(pos.x() + bounds.width());
+         if (botRight.y() < pos.y() + bounds.height()) botRight.setY(pos.y() + bounds.height());
+      }
+
+      QPointF center = (topLeft + botRight) / 2;
+      return center;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void EditorScene::CenterAll()
+   {
+      QPointF topLeft;
+      QPointF botRight;
+
+      CenterOn(GetCenter(items()));
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void EditorScene::CenterSelection()
+   {
+      QPointF topLeft;
+      QPointF botRight;
+
+      CenterOn(GetCenter(selectedItems()));
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void EditorScene::CenterOn(const QPointF& pos)
+   {
+      QPointF center = mView->mapToScene(mView->width()/2, mView->height()/2);
+
+      QPointF trans = -pos + center;
+      mTranslationItem->setPos(trans);
    }
 
    //////////////////////////////////////////////////////////////////////////

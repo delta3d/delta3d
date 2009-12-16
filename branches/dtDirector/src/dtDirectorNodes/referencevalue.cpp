@@ -69,6 +69,15 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   void ReferenceValue::OnLinkValueChanged(const std::string& linkName)
+   {
+      ValueNode::OnLinkValueChanged(linkName);
+
+      // If the linked value has changed, make sure we notify.
+      OnValueChanged();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void ReferenceValue::SetValueName(const std::string& name)
    {
       ValueNode::SetValueName(name);
@@ -77,8 +86,18 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   const std::string& ReferenceValue::GetName()
+   {
+      //mLabel = GetValueLabel();
+      //if (mLabel.empty()) mLabel = mName;
+      return mName;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    std::string ReferenceValue::GetValueLabel()
    {
+      UpdateReference();
+
       if (mValues.size())
       {
          if (!mValues[0].GetLinks().empty())
@@ -86,7 +105,7 @@ namespace dtDirector
             ValueNode* valueNode = dynamic_cast<ValueNode*>(mValues[0].GetLinks()[0]);
             if (valueNode)
             {
-               return std::string(" (") + mReference + valueNode->GetValueLabel() + ")";
+               return mReference + "<br>" + valueNode->GetValueLabel();
             }
          }
       }
@@ -127,6 +146,8 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    dtDAL::ActorProperty* ReferenceValue::GetProperty()
    {
+      UpdateReference();
+
       if (mValues.size())
       {
          if (mValues[0].GetLinks().size())
@@ -210,9 +231,6 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    const std::string& ReferenceValue::GetReference()
    {
-      // Now attempt to find the actual value and link with it.
-      UpdateReference();
-
       return mReference;
    }
 

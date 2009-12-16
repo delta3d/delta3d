@@ -24,8 +24,6 @@
 
 #include <dtDirectorQt/nodeitem.h>
 
-#define VALUE_TITLE_LENGTH 50
-
 namespace dtDirector
 {
    class ValueNodeLinkItem;
@@ -56,7 +54,14 @@ namespace dtDirector
        *
        * @param[in]  text  The new title name.
        */
-      virtual void SetTitle(const std::string text);
+      virtual void SetTitle(std::string text);
+
+      /**
+       * Creates the value text.
+       *
+       * @param[in]  text  The value text.
+       */
+      virtual void SetValueText(const std::string& text);
 
       /**
        * Creates the comment.
@@ -88,6 +93,8 @@ namespace dtDirector
        * Event handler when the context menu event has triggered.
        */
       void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
+
+      GraphicsTextItem*  mValueText;
 
       ValueNodeLinkItem* mValueLink;
    };

@@ -61,6 +61,15 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   void ExternalValueNode::OnLinkValueChanged(const std::string& linkName)
+   {
+      ValueNode::OnLinkValueChanged(linkName);
+
+      // If the linked value has changed, make sure we notify.
+      OnValueChanged();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void ExternalValueNode::SetValueName(const std::string& name)
    {
       ValueNode::SetValueName(name);
