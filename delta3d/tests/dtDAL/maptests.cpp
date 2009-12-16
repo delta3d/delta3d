@@ -898,7 +898,7 @@ void MapTests::TestMapSaveAndLoad()
            logger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, "Enum only has one value.");
 
         ap = getActorProperty(*map, "", dtDAL::DataType::STATIC_MESH);
-        static_cast<dtDAL::ResourceActorProperty*>(ap)->SetValue(&dirtRD);
+        static_cast<dtDAL::ResourceActorProperty*>(ap)->SetValue(dirtRD);
 
         unsigned numProxies = map->GetAllProxies().size();
         std::map<dtCore::UniqueId, std::string> names;
@@ -1335,8 +1335,8 @@ void MapTests::TestMapSaveAndLoadGroup()
       static_cast<dtDAL::NamedIntParameter&>(*expectedResult->AddParameter("SillyInt", dtDAL::DataType::INT)).SetValue(24);
       static_cast<dtDAL::NamedLongIntParameter&>(*expectedResult->AddParameter("SillyLong", dtDAL::DataType::LONGINT)).SetValue(37L);
       static_cast<dtDAL::NamedStringParameter&>(*expectedResult->AddParameter("SillyString", dtDAL::DataType::STRING)).SetValue("Jojo");
-      static_cast<dtDAL::NamedResourceParameter&>(*expectedResult->AddParameter("SillyResource1", dtDAL::DataType::STATIC_MESH)).SetValue(&rd);
-      static_cast<dtDAL::NamedResourceParameter&>(*expectedResult->AddParameter("SillyResource2", dtDAL::DataType::TEXTURE)).SetValue(NULL);
+      static_cast<dtDAL::NamedResourceParameter&>(*expectedResult->AddParameter("SillyResource1", dtDAL::DataType::STATIC_MESH)).SetValue(rd);
+      static_cast<dtDAL::NamedResourceParameter&>(*expectedResult->AddParameter("SillyResource2", dtDAL::DataType::TEXTURE)).SetValue(dtDAL::ResourceDescriptor::NULL_RESOURCE);
       dtDAL::NamedGroupParameter& internalGroup = static_cast<dtDAL::NamedGroupParameter&>(*expectedResult->AddParameter("SillyGroup", dtDAL::DataType::GROUP));
       static_cast<dtDAL::NamedEnumParameter&>(*internalGroup.AddParameter("CuteEnum", dtDAL::DataType::ENUMERATION)).SetValue("Just a string");
       static_cast<dtDAL::NamedGameEventParameter&>(*internalGroup.AddParameter("CuteEvent", dtDAL::DataType::GAME_EVENT)).SetValue(ge->GetUniqueId());

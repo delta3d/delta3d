@@ -431,8 +431,7 @@ namespace dtEditQt
             resourceProp = dynamic_cast<dtDAL::ResourceActorProperty*>(proxy->GetProperty("PrefabResource"));
             if (resourceProp)
             {
-               dtDAL::ResourceDescriptor descriptor = selectedWidget->getResourceDescriptor();               
-               resourceProp->SetValue(&descriptor);
+               resourceProp->SetValue(selectedWidget->getResourceDescriptor());
             }
 
             // let the world know that a new proxy exists
