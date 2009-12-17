@@ -30,6 +30,8 @@
 
 #include <dtUtil/log.h>
 
+#include <stack>
+
 
 namespace dtDirector
 {
@@ -43,6 +45,9 @@ namespace dtDirector
     */
    class DT_DIRECTOR_EXPORT Director: public dtDAL::PropertyContainer
    {
+   private:
+      struct ThreadData;
+
    public:
 
       /**
@@ -129,6 +134,14 @@ namespace dtDirector
        * @param[in]  index  The index of the input being activated.
        */
       void BeginThread(Node* node, int index);
+
+      /**
+       * Pushes a new item to the thread stack.
+       *
+       * @param[in]  node   The new stacks starting node.
+       * @param[in]  index  The new stacks started input.
+       */
+      void PushStack(Node* node, int index);
 
       /**
        * Retrieves whether there are any active threads running.
@@ -240,6 +253,15 @@ namespace dtDirector
       Node* GetNode(const dtCore::UniqueId& id);
 
       /**
+       * Retrieves a list of nodes that are of a certain type.
+       *
+       * @param[in]   name      The type name of the node.
+       * @param[in]   category  The type category of the node.
+       * @param[out]  outNodes  A list of nodes found.
+       */
+      void GetNodes(const std::string& name, const std::string& category, std::vector<Node*>& outNodes);
+
+      /**
        * Retrieves a value node with the given name.
        * @note  If there are more than one value with the
        *         same name, only the first one will be returned.
@@ -275,15 +297,36 @@ namespace dtDirector
        */
       virtual ~Director();
 
+      /**
+       * Updates a thread.
+       *
+       * @param[in]  data      The thread data.
+       * @param[in]  simDelta  The simulation time step.
+       * @param[in]  delta     The real time step.
+       *
+       * @return     Returns false if the thread should stop.
+       */
+      bool UpdateThread(ThreadData& data, float simDelta, float delta);
+
    private:
+
+      // Thread stacks.
+      struct StackData
+      {
+         Node* node;
+         int   index;
+
+         std::vector<ThreadData> subThreads;
+         int currentThread;
+      };
 
       // Execution threads.
       struct ThreadData
       {
-         Node* node;
-         int   index;
+         std::stack<StackData> stack;
       };
       std::vector<ThreadData> mThreads;
+      int mCurrentThread;
 
       // Core Info.
       std::string mDescription;

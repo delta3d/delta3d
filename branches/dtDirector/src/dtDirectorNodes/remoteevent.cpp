@@ -22,7 +22,7 @@
 #include <sstream>
 #include <algorithm>
 
-#include <dtDirectorNodes/namedevent.h>
+#include <dtDirectorNodes/remoteevent.h>
 
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actorproperty.h>
@@ -31,18 +31,18 @@
 namespace dtDirector
 {
    ///////////////////////////////////////////////////////////////////////////////////////
-   NamedEvent::NamedEvent()
+   RemoteEvent::RemoteEvent()
        : EventNode()
    {
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   NamedEvent::~NamedEvent()
+   RemoteEvent::~RemoteEvent()
    {
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   void NamedEvent::Init(const NodeType& nodeType, DirectorGraph* graph)
+   void RemoteEvent::Init(const NodeType& nodeType, DirectorGraph* graph)
    {
       EventNode::Init(nodeType, graph);
 
@@ -50,32 +50,32 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void NamedEvent::BuildPropertyMap()
+   void RemoteEvent::BuildPropertyMap()
    {
       EventNode::BuildPropertyMap();
 
       AddProperty(new dtDAL::StringActorProperty(
          "EventName", "Event Name",
-         dtDAL::StringActorProperty::SetFuncType(this, &NamedEvent::SetEventName),
-         dtDAL::StringActorProperty::GetFuncType(this, &NamedEvent::GetEventName),
+         dtDAL::StringActorProperty::SetFuncType(this, &RemoteEvent::SetEventName),
+         dtDAL::StringActorProperty::GetFuncType(this, &RemoteEvent::GetEventName),
          "The name of the event."));
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void NamedEvent::SetEventName(const std::string& eventName)
+   void RemoteEvent::SetEventName(const std::string& eventName)
    {
       mEventName = eventName;
       mLabel = GetType().GetName() + " (" + mEventName + ")";
    }
 
    //////////////////////////////////////////////////////////////////////////
-   const std::string& NamedEvent::GetEventName() const
+   const std::string& RemoteEvent::GetEventName() const
    {
       return mEventName;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   const std::string& NamedEvent::GetName()
+   const std::string& RemoteEvent::GetName()
    {
       return mLabel;
    }

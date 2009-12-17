@@ -106,30 +106,36 @@ void DirectorTests::TestRunScript()
       // A pre-defined script should be loaded.
       CPPUNIT_ASSERT(mDirector->GetGraphRoot());
       CPPUNIT_ASSERT(!mDirector->GetGraphRoot()->GetEventNodes().empty());
-      CPPUNIT_ASSERT(!mDirector->GetGraphRoot()->GetValueNodes().empty());
-      CPPUNIT_ASSERT(!mDirector->GetGraphRoot()->GetSubGraphs().empty());
 
-      dtDirector::ValueNode* resultInt = mDirector->GetValueNode("Result Int");
-      dtDirector::ValueNode* extValue  = mDirector->GetValueNode("External Connected");
-      dtDirector::ValueNode* refValue  = mDirector->GetValueNode("Reference Value");
-      dtDirector::ValueNode* outsideValue = mDirector->GetValueNode("Outside Result Int");
+      std::vector<dtDirector::Node*> nodes;
+      mDirector->GetNodes("Remote Event", "Core", nodes);
+      CPPUNIT_ASSERT(!nodes.empty());
 
-      CPPUNIT_ASSERT(resultInt);
-      CPPUNIT_ASSERT(extValue);
-      CPPUNIT_ASSERT(refValue);
-      CPPUNIT_ASSERT(outsideValue);
-
-      mDirector->GetGraphRoot()->GetEventNodes()[0]->Trigger();
+      int count = (int)nodes.size();
+      for (int index = 0; index < count; index++)
+      {
+         dtDirector::EventNode* event = dynamic_cast<dtDirector::EventNode*>(nodes[index]);
+         if (event)
+         {
+            dtDAL::ActorProperty* prop = event->GetProperty("EventName");
+            if (prop && prop->ToString() == "First")
+            {
+               event->Trigger();
+               break;
+            }
+         }
+      }
 
       while (mDirector->IsRunning())
       {
          mDirector->Update(0.5f, 0.5f);
       }
 
-      CPPUNIT_ASSERT(resultInt->GetInt() == 150);
-      CPPUNIT_ASSERT(extValue->GetInt() == 150);
-      CPPUNIT_ASSERT(refValue->GetInt() == 150);
-      CPPUNIT_ASSERT(outsideValue->GetInt() == 150);
+      dtDirector::ValueNode* result = mDirector->GetValueNode("Result");
+      CPPUNIT_ASSERT(result);
+
+      float resultValue = result->GetDouble();
+      CPPUNIT_ASSERT(resultValue == 100);
    }
    catch (const dtUtil::Exception& e)
    {

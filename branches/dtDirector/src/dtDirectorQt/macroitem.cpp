@@ -267,6 +267,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void MacroItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
    {
+      setSelected(true);
       QMenu menu;
       QAction* stepInAction = menu.addAction("Step Inside Macro");
       connect(stepInAction, SIGNAL(triggered()), this, SLOT(OpenMacro()));

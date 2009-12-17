@@ -19,8 +19,8 @@
  * Author: Jeff P. Houde
  */
 
-#ifndef DIRECTOR_NAMED_EVENT_NODE
-#define DIRECTOR_NAMED_EVENT_NODE
+#ifndef DIRECTOR_REMOTE_EVENT_NODE
+#define DIRECTOR_REMOTE_EVENT_NODE
 
 #include <dtDirector/eventnode.h>
 #include <dtDirectorNodes/nodelibraryexport.h>
@@ -40,14 +40,14 @@ namespace dtDirector
     *      the NodeManager. If they are not created in this fashion,
     *      the node types will not be set correctly.
     */
-   class NODE_LIBRARY_EXPORT NamedEvent : public EventNode
+   class NODE_LIBRARY_EXPORT RemoteEvent : public EventNode
    {
    public:
 
       /**
        * Constructs the Node.
        */
-      NamedEvent();
+      RemoteEvent();
 
       /**
        * Initializes the Node.
@@ -87,7 +87,7 @@ namespace dtDirector
       /**
        *	Protected Destructor.  dtCore::RefPtr will handle its destruction.
        */
-      virtual ~NamedEvent();
+      virtual ~RemoteEvent();
 
    private:
 

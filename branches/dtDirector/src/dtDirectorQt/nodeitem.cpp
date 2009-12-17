@@ -1095,6 +1095,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void NodeItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
    {
+      setSelected(true);
       QMenu menu;
       menu.addAction(mScene->GetMacroSelectionAction());
       menu.addSeparator();

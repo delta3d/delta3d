@@ -129,6 +129,50 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   void DirectorGraph::GetNodes(const std::string& name, const std::string& category, std::vector<Node*>& outNodes)
+   {
+      int count = (int)mEventNodes.size();
+      for (int index = 0; index < count; index++)
+      {
+         if (mEventNodes[index]->GetType().GetName() == name &&
+            mEventNodes[index]->GetType().GetCategory() == category)
+         {
+             outNodes.push_back(mEventNodes[index]);
+         }
+      }
+
+      count = (int)mActionNodes.size();
+      for (int index = 0; index < count; index++)
+      {
+         if (mActionNodes[index]->GetType().GetName() == name &&
+            mActionNodes[index]->GetType().GetCategory() == category)
+         {
+            outNodes.push_back(mActionNodes[index]);
+         }
+      }
+
+      count = (int)mValueNodes.size();
+      for (int index = 0; index < count; index++)
+      {
+         if (mValueNodes[index]->GetType().GetName() == name &&
+            mValueNodes[index]->GetType().GetCategory() == category)
+         {
+            outNodes.push_back(mValueNodes[index]);
+         }
+      }
+
+      count = (int)mSubGraphs.size();
+      for (int index = 0; index < count; index++)
+      {
+         DirectorGraph* graph = mSubGraphs[index];
+         if (graph)
+         {
+            graph->GetNodes(name, category, outNodes);
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    ValueNode* DirectorGraph::GetValueNode(const std::string& name)
    {
       int count = (int)mValueNodes.size();

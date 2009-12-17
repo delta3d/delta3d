@@ -24,11 +24,13 @@
 
 // Events
 #include <dtDirectorNodes/inputnode.h>
-#include <dtDirectorNodes/namedevent.h>
+#include <dtDirectorNodes/remoteevent.h>
 
 // Actions
 #include <dtDirectorNodes/outputnode.h>
+#include <dtDirectorNodes/callremoteeventaction.h>
 #include <dtDirectorNodes/operationaction.h>
+#include <dtDirectorNodes/comparevalueaction.h>
 #include <dtDirectorNodes/delayaction.h>
 
 // Values
@@ -49,20 +51,28 @@ using dtCore::RefPtr;
 namespace dtDirector
 {
    // Category naming convention:
-   //  Core    - All Core nodes are nodes that are specifically referenced
-   //            in Director and are special cases.
+   //  Core        - All Core nodes are nodes that are specifically referenced
+   //                in Director and are special cases.
    //
-   //  General - General nodes provide general functionality that can be used
-   //            in most, if not all, script types.
+   //  General     - General nodes provide general functionality that can be used
+   //                in most, if not all, script types.
+   //
+   //  Math        - Math nodes are any nodes that perform an operation between
+   //                values and then outputs another.
+   //
+   //  Conditional - Conditional nodes have multiple outputs that get triggered
+   //                when a condition is met.
 
    // Events
    RefPtr<NodeType> NodeLibraryRegistry::INPUT_NODE_TYPE(new dtDirector::NodeType("Input Link", "Core", "Links", "This node creates an input link connector in its parent graph."));
-   RefPtr<NodeType> NodeLibraryRegistry::NAMED_EVENT_NODE_TYPE(new dtDirector::NodeType("Named Event", "General", "Events", "An Event that can be found by a custom name."));
+   RefPtr<NodeType> NodeLibraryRegistry::REMOTE_EVENT_NODE_TYPE(new dtDirector::NodeType("Remote Event", "Core", "Events", "An remote event."));
 
    // Actions
    RefPtr<NodeType> NodeLibraryRegistry::OUTPUT_NODE_TYPE(new dtDirector::NodeType("Output Link", "Core", "Links", "This node creates an output link connector in its parent graph."));
+   RefPtr<NodeType> NodeLibraryRegistry::CALL_REMOTE_EVENT_ACTION_NODE_TYPE(new dtDirector::NodeType("Call Remote Event", "Core", "Actions", "Calls all remote event nodes with a given name in parallel, and waits until their entire chains are finished before continuing."));
    RefPtr<NodeType> NodeLibraryRegistry::OPERATION_ACTION_NODE_TYPE(new dtDirector::NodeType("Binary Operation", "General", "Math", "Performs a simple operation between two values A and B and outputs to Result."));
-   RefPtr<NodeType> NodeLibraryRegistry::DELAY_ACTION_NODE_TYPE(new dtDirector::NodeType("Delay", "General", "General", "Performs a time delay."));
+   RefPtr<NodeType> NodeLibraryRegistry::COMPARE_VALUE_ACTION_NODE_TYPE(new dtDirector::NodeType("Compare Value", "General", "Condition", "Compares two values A and B."));
+   RefPtr<NodeType> NodeLibraryRegistry::DELAY_ACTION_NODE_TYPE(new dtDirector::NodeType("Delay", "General", "Actions", "Performs a time delay."));
 
    // Values
    RefPtr<NodeType> NodeLibraryRegistry::EXTERNAL_VALUE_NODE_TYPE(new dtDirector::NodeType("Value Link", "Core", "Links", "This node creates a value link connector in its parent graph."));
@@ -99,11 +109,13 @@ namespace dtDirector
    {
       // Events
       mNodeFactory->RegisterType<InputNode>(INPUT_NODE_TYPE.get());
-      mNodeFactory->RegisterType<NamedEvent>(NAMED_EVENT_NODE_TYPE.get());
+      mNodeFactory->RegisterType<RemoteEvent>(REMOTE_EVENT_NODE_TYPE.get());
 
       // Actions
       mNodeFactory->RegisterType<OutputNode>(OUTPUT_NODE_TYPE.get());
+      mNodeFactory->RegisterType<CallRemoteEventAction>(CALL_REMOTE_EVENT_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<OperationAction>(OPERATION_ACTION_NODE_TYPE.get());
+      mNodeFactory->RegisterType<CompareValueAction>(COMPARE_VALUE_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<DelayAction>(DELAY_ACTION_NODE_TYPE.get());
 
       // Values

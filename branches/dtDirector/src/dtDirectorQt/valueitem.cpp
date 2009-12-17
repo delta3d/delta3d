@@ -318,6 +318,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void ValueItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
    {
+      setSelected(true);
       QMenu menu;
       bool hasDefault = false;
       if (mNode->GetType().GetFullName() == "Core.Reference")

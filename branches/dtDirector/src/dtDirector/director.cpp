@@ -35,6 +35,7 @@ namespace dtDirector
       : mModified(false)
       , mGraph(NULL)
       , mMap(NULL)
+      , mCurrentThread(-1)
    {
       mLogger = &dtUtil::Log::GetInstance();
    }
@@ -258,88 +259,80 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void Director::Update(float simDelta, float delta)
    {
+      // Update all threads.
       int count = (int)mThreads.size();
-      for (int index = 0; index < count; index++)
+      for (mCurrentThread = 0; mCurrentThread < count; mCurrentThread++)
       {
-         ThreadData& data = mThreads[index];
-         if (data.node)
+         if (!UpdateThread(mThreads[mCurrentThread], simDelta, delta))
          {
-            Node* currentNode = data.node;
-
-            // If the update result is true, then we want to immediately
-            // create a new thread on any new events.  Otherwise, our first
-            // new thread will be a continuation of the current active thread.
-            bool makeNewThread = currentNode->Update(simDelta, delta, data.index);
-
-            // Check for activated outputs and create new threads for them.
-            int outputCount = (int)currentNode->GetOutputLinks().size();
-            for (int outputIndex = 0; outputIndex < outputCount; outputIndex++)
-            {
-               OutputLink* output = &currentNode->GetOutputLinks()[outputIndex];
-               if (int activeCount = output->Test())
-               {
-                  int linkCount = (int)output->GetLinks().size();
-                  for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
-                  {
-                     InputLink* input = output->GetLinks()[linkIndex];
-                     if (!input) continue;
-
-                     // Disabled nodes are ignored.
-                     if (!input->GetOwner()->GetEnabled()) continue;
-
-                     int inputCount = (int)input->GetOwner()->GetInputLinks().size();
-                     int inputIndex = 0;
-                     for (inputIndex = 0; inputIndex < inputCount; inputIndex++)
-                     {
-                        if (input == &input->GetOwner()->GetInputLinks()[inputIndex])
-                        {
-                           break;
-                        }
-                     }
-
-                     if (inputIndex < inputCount)
-                     {
-                        for (int activeIndex = 0; activeIndex < activeCount; activeIndex++)
-                        {
-                           // Create a new thread.
-                           if (makeNewThread)
-                           {
-                              BeginThread(input->GetOwner(), inputIndex);
-                           }
-                           // If we are continuing the current thread, continue it.
-                           else
-                           {
-                              data.node = input->GetOwner();
-                              data.index = inputIndex;
-
-                              // From now on, all new active outputs create their own threads.
-                              makeNewThread = true;
-                           }
-                        }
-                     }
-                  }
-               }
-            }
-
-            // If we have not made a new thread yet, it means we need to remove
-            // the current.
-            if (!makeNewThread)
-            {
-               mThreads.erase(mThreads.begin() + index);
-               index--;
-               count--;
-            }
+            // Pop the first callstack item from the thread.
+            mThreads.erase(mThreads.begin() + mCurrentThread);
+            mCurrentThread--;
+            count--;
          }
       }
+
+      // We reset the current thread value so any new threads created outside
+      // of the update will generate a brand new main thread.
+      mCurrentThread = -1;
    }
 
    //////////////////////////////////////////////////////////////////////////
    void Director::BeginThread(Node* node, int index)
    {
       ThreadData data;
-      data.node = node;
-      data.index = index;
-      mThreads.push_back(data);
+      StackData stack;
+      stack.node = node;
+      stack.index = index;
+      stack.currentThread = -1;
+      data.stack.push(stack);
+
+      std::vector<ThreadData>* threadList = &mThreads;
+      int curThread = mCurrentThread;
+
+      while (curThread > -1)
+      {
+         ThreadData& t = (*threadList)[curThread];
+         if (!t.stack.empty())
+         {
+            StackData& s = t.stack.top();
+            curThread = s.currentThread;
+            threadList = &s.subThreads;
+         }
+         else break;
+      }
+
+      if (!curThread) return;
+      threadList->push_back(data);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void Director::PushStack(Node* node, int index)
+   {
+      StackData stack;
+      stack.node = node;
+      stack.index = index;
+      stack.currentThread = -1;
+
+      std::vector<ThreadData>* threadList = &mThreads;
+      int curThread = mCurrentThread;
+
+      while (curThread > -1)
+      {
+         ThreadData& t = (*threadList)[curThread];
+         if (t.stack.top().currentThread == -1)
+         {
+            t.stack.push(stack);
+            return;
+         }
+         else if (!t.stack.empty())
+         {
+            StackData& s = t.stack.top();
+            curThread = s.currentThread;
+            threadList = &s.subThreads;
+         }
+         else break;
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -440,6 +433,12 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   void Director::GetNodes(const std::string& name, const std::string& category, std::vector<Node*>& outNodes)
+   {
+      mGraph->GetNodes(name, category, outNodes);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    ValueNode* Director::GetValueNode(const std::string& name)
    {
       return mGraph->GetValueNode(name);
@@ -455,5 +454,109 @@ namespace dtDirector
    bool Director::DeleteNode(const dtCore::UniqueId& id)
    {
       return mGraph->DeleteNode(id);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool Director::UpdateThread(ThreadData& data, float simDelta, float delta)
+   {
+      // If there is no stack, this thread is finished.
+      if (data.stack.empty()) return false;
+
+      StackData& stack = data.stack.top();
+      // Update all the sub-threads in the stack.
+      int count = (int)stack.subThreads.size();
+      for (stack.currentThread = 0; stack.currentThread < count; stack.currentThread++)
+      {
+         if (!UpdateThread(stack.subThreads[stack.currentThread], simDelta, delta))
+         {
+            stack.subThreads.erase(stack.subThreads.begin() + stack.currentThread);
+            stack.currentThread--;
+            count--;
+         }
+      }
+      stack.currentThread = -1;
+
+      bool makeNewThread = false;
+
+      // Threads always update the first item in the stack,
+      // all other stack items are "sleeping".
+      if (stack.node)
+      {
+         Node* currentNode = stack.node;
+
+         // If the update result is true, then we want to immediately
+         // create a new thread on any new events.  Otherwise, our first
+         // new thread will be a continuation of the current active thread.
+         makeNewThread = currentNode->Update(simDelta, delta, stack.index);
+
+         // Check for activated outputs and create new threads for them.
+         int outputCount = (int)currentNode->GetOutputLinks().size();
+         for (int outputIndex = 0; outputIndex < outputCount; outputIndex++)
+         {
+            OutputLink* output = &currentNode->GetOutputLinks()[outputIndex];
+            if (output->Test())
+            {
+               int linkCount = (int)output->GetLinks().size();
+               for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
+               {
+                  InputLink* input = output->GetLinks()[linkIndex];
+                  if (!input) continue;
+
+                  // Disabled nodes are ignored.
+                  if (!input->GetOwner()->GetEnabled()) continue;
+
+                  int inputCount = (int)input->GetOwner()->GetInputLinks().size();
+                  int inputIndex = 0;
+                  for (inputIndex = 0; inputIndex < inputCount; inputIndex++)
+                  {
+                     if (input == &input->GetOwner()->GetInputLinks()[inputIndex])
+                     {
+                        break;
+                     }
+                  }
+
+                  if (inputIndex < inputCount)
+                  {
+                     // Create a new thread.
+                     if (makeNewThread)
+                     {
+                        BeginThread(input->GetOwner(), inputIndex);
+                     }
+                     // If we are continuing the current thread, continue it.
+                     else
+                     {
+                        stack.node = input->GetOwner();
+                        stack.index = inputIndex;
+
+                        // From now on, all new active outputs create their own threads.
+                        makeNewThread = true;
+                     }
+                  }
+               }
+            }
+         }
+
+         // If we did not continue this current thread, stop it.
+         if (!makeNewThread)
+         {
+            stack.node = NULL;
+         }
+      }
+
+      // If we did not continue the current stack, and we don't have any more
+      // sub-threads in this stack.
+      if (!makeNewThread && stack.subThreads.empty())
+      {
+         // Pop this stack from the list.
+         data.stack.pop();
+
+         // If we do not have any remaining stack items, we can remove this thread.
+         if (data.stack.empty())
+         {
+            return false;
+         }
+      }
+
+      return true;
    }
 }

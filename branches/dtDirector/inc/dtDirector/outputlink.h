@@ -94,12 +94,9 @@ namespace dtDirector
       void Activate();
 
       /**
-       * This will retrieve the total activation count for the
-       * node and will then clear that count.
-       * 
-       * @return  Activation count.
+       * This will test whether this link is active or not.
        */
-      int Test();
+      bool Test();
 
       /**
        * Connects this output to an input.

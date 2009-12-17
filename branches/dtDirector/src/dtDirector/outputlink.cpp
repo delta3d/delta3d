@@ -65,11 +65,15 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   int OutputLink::Test()
+   bool OutputLink::Test()
    {
-      int result = mActiveCount;
-      mActiveCount = 0;
-      return result;
+      if (mActiveCount > 0)
+      {
+         mActiveCount--;
+         return true;
+      }
+
+      return false;
    }
 
    //////////////////////////////////////////////////////////////////////////

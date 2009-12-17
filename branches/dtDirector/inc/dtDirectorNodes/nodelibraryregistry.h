@@ -38,11 +38,13 @@ namespace dtDirector
 
       /// Events
       static dtCore::RefPtr<dtDirector::NodeType> INPUT_NODE_TYPE;
-      static dtCore::RefPtr<dtDirector::NodeType> NAMED_EVENT_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> REMOTE_EVENT_NODE_TYPE;
 
       /// Actions
       static dtCore::RefPtr<dtDirector::NodeType> OUTPUT_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> CALL_REMOTE_EVENT_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> OPERATION_ACTION_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> COMPARE_VALUE_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> DELAY_ACTION_NODE_TYPE;
 
       /// Values

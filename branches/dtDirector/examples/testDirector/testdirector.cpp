@@ -42,13 +42,24 @@ public:
       dtCore::RefPtr<dtDirector::Director> director = new dtDirector::Director();
       director->Init();
 
-      dtDAL::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data/director");
+      dtDAL::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/tests/data/ProjectContext");
       director->LoadScript("test");
 
-      dtDirector::DirectorGraph* graph = director->GetGraphRoot();
-      if (graph && !graph->GetEventNodes().empty())
+      std::vector<dtDirector::Node*> nodes;
+      director->GetNodes("Remote Event", "Core", nodes);
+      int count = (int)nodes.size();
+      for (int index = 0; index < count; index++)
       {
-         graph->GetEventNodes()[0]->Trigger();
+         dtDirector::EventNode* event = dynamic_cast<dtDirector::EventNode*>(nodes[index]);
+         if (event)
+         {
+            dtDAL::ActorProperty* prop = event->GetProperty("EventName");
+            if (prop && prop->ToString() == "First")
+            {
+               event->Trigger();
+               break;
+            }
+         }
       }
 
       while (director->IsRunning())
@@ -56,10 +67,8 @@ public:
          director->Update(0.5f, 0.5f);
       }
 
-      dtDirector::ValueNode* resultInt = director->GetValueNode("Result Int");
-      dtDirector::ValueNode* extValue  = director->GetValueNode("External Connected");
-      dtDirector::ValueNode* refValue  = director->GetValueNode("Reference Value");
-      dtDirector::ValueNode* outsideValue = director->GetValueNode("Outside Result Int");
+      dtDirector::ValueNode* result = director->GetValueNode("Result");
+      float resultValue = result->GetDouble();
    }
 
 protected:
