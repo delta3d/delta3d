@@ -179,148 +179,65 @@ namespace dtDirector
          return position;
       }
 
+      bool isValue = false;
+      if (dynamic_cast<ValueItem*>(item))
+      {
+         isValue = true;
+      }
+
       // Find all of the smart snap positions first.
       std::vector<float> mSnapTargetsX;
       std::vector<float> mSnapTargetsY;
 
-      int count = (int)item->GetInputs().size();
+      QList<QGraphicsItem*> nodes = items();
+      int count = (int)nodes.size();
       for (int index = 0; index < count; index++)
       {
-         InputData& data = item->GetInputs()[index];
-         if (!data.link) continue;
-
-         int linkCount = data.link->GetLinks().size();
-         for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
+         NodeItem* nodeItem = dynamic_cast<NodeItem*>(nodes[index]);
+         if (nodeItem && nodeItem != item)
          {
-            OutputLink* link = data.link->GetLinks()[linkIndex];
-            if (!link) continue;
-
-            Node* node = link->GetOwner();
-            if (!node) continue;
-
-            NodeItem* nodeItem = GetNodeItem(node->GetID());
-            if (!nodeItem) continue;
-
+            // Snap align with the top of this node.
             mSnapTargetsY.push_back(nodeItem->GetPosition().y());
 
-            int outputCount = (int)nodeItem->GetOutputs().size();
-            for (int outputIndex = 0; outputIndex < outputCount; outputIndex++)
+            // Snap align with the bottom of this node.
+            mSnapTargetsY.push_back(nodeItem->GetPosition().y() + nodeItem->GetNodeHeight() - item->GetNodeHeight());
+
+            // Snap align with the left side of this node.
+            mSnapTargetsX.push_back(nodeItem->GetPosition().x());
+
+            // Snap align with the right side of this node.
+            mSnapTargetsX.push_back(nodeItem->GetPosition().x() + nodeItem->GetNodeWidth() - item->GetNodeWidth());
+
+            // If the snapping node is a value, snap this node to all
+            // value link positions as well.
+            if (isValue)
             {
-               link = nodeItem->GetOutputs()[outputIndex].link;
-               if (!link) continue;
-
-               int inputCount = (int)link->GetLinks().size();
-               for (int inputIndex = 0; inputIndex < inputCount; inputIndex++)
-               {
-                  InputLink* input = link->GetLinks()[inputIndex];
-                  if (!input) continue;
-
-                  Node* inputNode = input->GetOwner();
-                  if (!inputNode) continue;
-
-                  NodeItem* inputItem = GetNodeItem(inputNode->GetID());
-                  if (!inputItem || inputItem == item) continue;
-
-                  mSnapTargetsX.push_back(inputItem->GetPosition().x());
-               }
-            }
-         }
-      }
-
-      count = (int)item->GetOutputs().size();
-      for (int index = 0; index < count; index++)
-      {
-         OutputData& data = item->GetOutputs()[index];
-         if (!data.link) continue;
-
-         int linkCount = data.link->GetLinks().size();
-         for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
-         {
-            InputLink* link = data.link->GetLinks()[linkIndex];
-            if (!link) continue;
-
-            Node* node = link->GetOwner();
-            if (!node) continue;
-
-            NodeItem* nodeItem = GetNodeItem(node->GetID());
-            if (!nodeItem) continue;
-
-            mSnapTargetsY.push_back(nodeItem->GetPosition().y());
-
-            int inputCount = (int)nodeItem->GetInputs().size();
-            for (int inputIndex = 0; inputIndex < inputCount; inputIndex++)
-            {
-               link = nodeItem->GetInputs()[inputIndex].link;
-               if (!link) continue;
-
-               int outputCount = (int)link->GetLinks().size();
-               for (int outputIndex = 0; outputIndex < outputCount; outputIndex++)
-               {
-                  OutputLink* output = link->GetLinks()[outputIndex];
-                  if (!output) continue;
-
-                  Node* outputNode = output->GetOwner();
-                  if (!outputNode) continue;
-
-                  NodeItem* outputItem = GetNodeItem(outputNode->GetID());
-                  if (!outputItem || outputItem == item) continue;
-
-                  float x = outputItem->GetPosition().x();
-                  x += outputItem->GetNodeWidth();
-                  x -= item->GetNodeWidth();
-                  mSnapTargetsX.push_back(x);
-               }
-            }
-         }
-      }
-
-      ValueItem* valueItem = dynamic_cast<ValueItem*>(item);
-      if (valueItem)
-      {
-         ValueNode* valueNode = dynamic_cast<ValueNode*>(item->GetNode());
-         if (valueNode)
-         {
-            count = (int)valueNode->GetLinks().size();
-            for (int index = 0; index < count; index++)
-            {
-               ValueLink* link = valueNode->GetLinks()[index];
-               if (!link) continue;
-
-               // Find the position of the UI link.
-               Node* node = link->GetOwner();
-               if (!node) continue;
-
-               NodeItem* nodeItem = GetNodeItem(node->GetID());
-               if (!nodeItem) continue;
-
                int valueCount = (int)nodeItem->GetValues().size();
-               for (int valueIndex = 0; valueIndex < valueCount; valueIndex++)
-               {
-                  if (link == nodeItem->GetValues()[valueIndex].link)
-                  {
-                     float x = nodeItem->GetValues()[valueIndex].linkGraphic->scenePos().x();
-                     x -= mTranslationItem->pos().x();
-                     x -= item->GetNodeWidth()/2;
-                     mSnapTargetsX.push_back(x);
-                     break;
-                  }
-               }
-
-               // Now find all other value nodes connected, and snap to their heights.
-               valueCount = nodeItem->GetValues().size();
                for (int valueIndex = 0; valueIndex < valueCount; valueIndex++)
                {
                   ValueData& data = nodeItem->GetValues()[valueIndex];
 
-                  int linkCount = (int)data.link->GetLinks().size();
-                  for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
-                  {
-                     ValueNode* linkedNode = data.link->GetLinks()[linkIndex];
-                     if (linkedNode && linkedNode != valueNode)
-                     {
-                        mSnapTargetsY.push_back(linkedNode->GetPosition().y());
-                     }
-                  }
+                  float x = data.linkGraphic->scenePos().x();
+                  x -= mTranslationItem->pos().x();
+                  x -= item->GetNodeWidth()/2;
+                  mSnapTargetsX.push_back(x);
+               }
+            }
+
+            // If the test node is a value node, snap align the moving
+            // node's value links with this value.
+            if (dynamic_cast<ValueItem*>(nodeItem))
+            {
+               int valueCount = (int)item->GetValues().size();
+               for (int valueIndex = 0; valueIndex < valueCount; valueIndex++)
+               {
+                  ValueData& data = item->GetValues()[valueIndex];
+
+                  float offset = data.linkGraphic->scenePos().x() - item->scenePos().x();
+
+                  float x = nodeItem->GetNodeWidth()/2 + nodeItem->GetPosition().x();
+                  x -= offset;
+                  mSnapTargetsX.push_back(x);
                }
             }
          }
