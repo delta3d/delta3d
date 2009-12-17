@@ -59,6 +59,11 @@ namespace dtDirector
       virtual void FindLinks();
 
       /**
+       * Retrieves the position of the node.
+       */
+      virtual osg::Vec2 GetPosition();
+
+      /**
        * Retrieves the ID of the node item contained.
        *
        * @return  The ID.

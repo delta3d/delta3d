@@ -68,8 +68,9 @@ namespace dtDirector
       , mCopyAction(NULL)
       , mPasteAction(NULL)
       , mViewPropertiesAction(NULL)
-      , mShowLinks(NULL)
-      , mHideLinks(NULL)
+      , mSnapGridAction(NULL)
+      , mShowLinksAction(NULL)
+      , mHideLinksAction(NULL)
       , mRefreshAction(NULL)
    {
       // Set the default size of the window.
@@ -142,14 +143,21 @@ namespace dtDirector
       mViewPropertiesAction->setChecked(true);
 
       // Show Links Action.
-      mShowLinks = new QAction(QIcon(":/icons/showlinks.png"), tr("Show Links"), this);
-      mShowLinks->setShortcut(tr("Ctrl+U"));
-      mShowLinks->setToolTip(tr("Shows all hidden links on selected nodes (Ctrl+U)."));
+      mSnapGridAction = new QAction(QIcon(":/icons/snapgrid.png"), tr("Smart Grid Snap"), this);
+      mSnapGridAction->setShortcut(tr("Ctrl+G"));
+      mSnapGridAction->setToolTip(tr("Snaps nodes to a smart grid determined by the placement of other nodes (Ctrl+G)."));
+      mSnapGridAction->setCheckable(true);
+      mSnapGridAction->setChecked(true);
+
+      // Show Links Action.
+      mShowLinksAction = new QAction(QIcon(":/icons/showlinks.png"), tr("Show Links"), this);
+      mShowLinksAction->setShortcut(tr("Ctrl+U"));
+      mShowLinksAction->setToolTip(tr("Shows all hidden links on selected nodes (Ctrl+U)."));
 
       // Hide Links Action.
-      mHideLinks = new QAction(QIcon(":/icons/hidelinks.png"), tr("Hide Links"), this);
-      mHideLinks->setShortcut(tr("Ctrl+H"));
-      mHideLinks->setToolTip(tr("Hides all unused links on selected nodes (Ctrl+H)."));
+      mHideLinksAction = new QAction(QIcon(":/icons/hidelinks.png"), tr("Hide Links"), this);
+      mHideLinksAction->setShortcut(tr("Ctrl+H"));
+      mHideLinksAction->setToolTip(tr("Hides all unused links on selected nodes (Ctrl+H)."));
 
       // Show Properties Action.
       mRefreshAction = new QAction(QIcon(":/icons/refresh.png"), tr("Refresh"), this);
@@ -193,8 +201,10 @@ namespace dtDirector
       mViewMenu = mMenuBar->addMenu("&View");
       mViewMenu->addAction(mViewPropertiesAction);
       mViewMenu->addSeparator();
-      mViewMenu->addAction(mShowLinks);
-      mViewMenu->addAction(mHideLinks);
+      mViewMenu->addAction(mSnapGridAction);
+      mViewMenu->addSeparator();
+      mViewMenu->addAction(mShowLinksAction);
+      mViewMenu->addAction(mHideLinksAction);
       mViewMenu->addSeparator();
       mViewMenu->addAction(mRefreshAction);
 
@@ -226,8 +236,10 @@ namespace dtDirector
       mEditToolbar->addAction(mDeleteAction);
 
       mEditToolbar->addSeparator();
-      mEditToolbar->addAction(mShowLinks);
-      mEditToolbar->addAction(mHideLinks);
+      mEditToolbar->addAction(mSnapGridAction);
+      mEditToolbar->addSeparator();
+      mEditToolbar->addAction(mShowLinksAction);
+      mEditToolbar->addAction(mHideLinksAction);
       mEditToolbar->addSeparator();
       mEditToolbar->addAction(mRefreshAction);
 
@@ -265,9 +277,9 @@ namespace dtDirector
          this, SLOT(OnDelete()));
       connect(mViewPropertiesAction, SIGNAL(triggered()),
          this, SLOT(OnShowPropertyEditor()));
-      connect(mShowLinks, SIGNAL(triggered()),
+      connect(mShowLinksAction, SIGNAL(triggered()),
          this, SLOT(OnShowLinks()));
-      connect(mHideLinks, SIGNAL(triggered()),
+      connect(mHideLinksAction, SIGNAL(triggered()),
          this, SLOT(OnHideLinks()));
       connect(mRefreshAction, SIGNAL(triggered()),
          this, SLOT(OnRefresh()));
@@ -322,6 +334,18 @@ namespace dtDirector
       }
 
       RefreshButtonStates();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   osg::Vec2 DirectorEditor::GetSnapPosition(osg::Vec2 position)
+   {
+      if (mSnapGridAction->isChecked())
+      {
+         position.x() = float(int(position.x() / 10) * 10);
+         position.y() = float(int(position.y() / 10) * 10);
+      }
+
+      return position;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -513,8 +537,8 @@ namespace dtDirector
       mDeleteAction->setEnabled(bCanDelete);
 
       // Show Links
-      mShowLinks->setEnabled(bCanShowLinks);
-      mHideLinks->setEnabled(bCanHideLinks);
+      mShowLinksAction->setEnabled(bCanShowLinks);
+      mHideLinksAction->setEnabled(bCanHideLinks);
    }
 
    //////////////////////////////////////////////////////////////////////////

@@ -185,6 +185,12 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   osg::Vec2 MacroItem::GetPosition()
+   {
+      return mGraph->GetPosition();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    dtCore::UniqueId MacroItem::GetID()
    {
       if (mGraph.valid())

@@ -498,7 +498,7 @@ namespace dtDirector
          if (!data.link || !data.link->GetVisible()) continue;
 
          float x = -LINK_LENGTH;
-         float y = ((LINK_SPACING + mTextHeight) * (visibleCount + 1)) + LINK_SIZE/2;
+         float y = ((LINK_SPACING + mTextHeight) * (visibleCount + 1)) + LINK_SIZE/2 + 1;
 
          data.linkGraphic->setPos(x, y);
 
@@ -781,6 +781,12 @@ namespace dtDirector
          return Qt::gray;
          break;
       }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   osg::Vec2 NodeItem::GetPosition()
+   {
+      return mNode->GetPosition();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -1110,6 +1116,7 @@ namespace dtDirector
       if (change == QGraphicsItem::ItemPositionHasChanged)
       {
          QPointF newPos = value.toPointF();
+
          mNode->SetPosition(osg::Vec2(newPos.x(), newPos.y()));
 
          if (!mLoading)

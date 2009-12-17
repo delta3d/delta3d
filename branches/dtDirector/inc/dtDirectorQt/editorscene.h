@@ -94,6 +94,15 @@ namespace dtDirector
       QGraphicsRectItem* GetTranslationItem() {return mTranslationItem;};
 
       /**
+       * Calculates a snapped position.
+       *
+       * @param[in]  item  The item.
+       *
+       * Return      A smart position.
+       */
+      osg::Vec2 GetSmartSnapPosition(NodeItem* item);
+
+      /**
        * Calculates the center of a list of node items.
        *
        * @param[in]  nodes  List of node items.

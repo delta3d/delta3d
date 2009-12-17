@@ -29,6 +29,7 @@
 #include <dtDirectorQt/actionitem.h>
 #include <dtDirectorQt/valueitem.h>
 #include <dtDirectorQt/macroitem.h>
+#include <dtDirectorQt/linkitem.h>
 
 #include <dtDirector/nodemanager.h>
 #include <dtDirector/nodetype.h>
@@ -163,6 +164,195 @@ namespace dtDirector
 
       mEditor->Refresh();
       CenterAll();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   osg::Vec2 EditorScene::GetSmartSnapPosition(NodeItem* item)
+   {
+      if (!item) return osg::Vec2();
+
+      osg::Vec2 position = item->GetPosition();
+
+      // If snap to grid is disabled, then don't snap.
+      if (!mEditor->GetSnapGridAction()->isChecked())
+      {
+         return position;
+      }
+
+      // Find all of the smart snap positions first.
+      std::vector<float> mSnapTargetsX;
+      std::vector<float> mSnapTargetsY;
+
+      int count = (int)item->GetInputs().size();
+      for (int index = 0; index < count; index++)
+      {
+         InputData& data = item->GetInputs()[index];
+         if (!data.link) continue;
+
+         int linkCount = data.link->GetLinks().size();
+         for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
+         {
+            OutputLink* link = data.link->GetLinks()[linkIndex];
+            if (!link) continue;
+
+            Node* node = link->GetOwner();
+            if (!node) continue;
+
+            NodeItem* nodeItem = GetNodeItem(node->GetID());
+            if (!nodeItem) continue;
+
+            mSnapTargetsY.push_back(nodeItem->GetPosition().y());
+
+            int outputCount = (int)nodeItem->GetOutputs().size();
+            for (int outputIndex = 0; outputIndex < outputCount; outputIndex++)
+            {
+               link = nodeItem->GetOutputs()[outputIndex].link;
+               if (!link) continue;
+
+               int inputCount = (int)link->GetLinks().size();
+               for (int inputIndex = 0; inputIndex < inputCount; inputIndex++)
+               {
+                  InputLink* input = link->GetLinks()[inputIndex];
+                  if (!input) continue;
+
+                  Node* inputNode = input->GetOwner();
+                  if (!inputNode) continue;
+
+                  NodeItem* inputItem = GetNodeItem(inputNode->GetID());
+                  if (!inputItem || inputItem == item) continue;
+
+                  mSnapTargetsX.push_back(inputItem->GetPosition().x());
+               }
+            }
+         }
+      }
+
+      count = (int)item->GetOutputs().size();
+      for (int index = 0; index < count; index++)
+      {
+         OutputData& data = item->GetOutputs()[index];
+         if (!data.link) continue;
+
+         int linkCount = data.link->GetLinks().size();
+         for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
+         {
+            InputLink* link = data.link->GetLinks()[linkIndex];
+            if (!link) continue;
+
+            Node* node = link->GetOwner();
+            if (!node) continue;
+
+            NodeItem* nodeItem = GetNodeItem(node->GetID());
+            if (!nodeItem) continue;
+
+            mSnapTargetsY.push_back(nodeItem->GetPosition().y());
+
+            int inputCount = (int)nodeItem->GetInputs().size();
+            for (int inputIndex = 0; inputIndex < inputCount; inputIndex++)
+            {
+               link = nodeItem->GetInputs()[inputIndex].link;
+               if (!link) continue;
+
+               int outputCount = (int)link->GetLinks().size();
+               for (int outputIndex = 0; outputIndex < outputCount; outputIndex++)
+               {
+                  OutputLink* output = link->GetLinks()[outputIndex];
+                  if (!output) continue;
+
+                  Node* outputNode = output->GetOwner();
+                  if (!outputNode) continue;
+
+                  NodeItem* outputItem = GetNodeItem(outputNode->GetID());
+                  if (!outputItem || outputItem == item) continue;
+
+                  float x = outputItem->GetPosition().x();
+                  x += outputItem->GetNodeWidth();
+                  x -= item->GetNodeWidth();
+                  mSnapTargetsX.push_back(x);
+               }
+            }
+         }
+      }
+
+      ValueItem* valueItem = dynamic_cast<ValueItem*>(item);
+      if (valueItem)
+      {
+         ValueNode* valueNode = dynamic_cast<ValueNode*>(item->GetNode());
+         if (valueNode)
+         {
+            count = (int)valueNode->GetLinks().size();
+            for (int index = 0; index < count; index++)
+            {
+               ValueLink* link = valueNode->GetLinks()[index];
+               if (!link) continue;
+
+               // Find the position of the UI link.
+               Node* node = link->GetOwner();
+               if (!node) continue;
+
+               NodeItem* nodeItem = GetNodeItem(node->GetID());
+               if (!nodeItem) continue;
+
+               int valueCount = (int)nodeItem->GetValues().size();
+               for (int valueIndex = 0; valueIndex < valueCount; valueIndex++)
+               {
+                  if (link == nodeItem->GetValues()[valueIndex].link)
+                  {
+                     float x = nodeItem->GetValues()[valueIndex].linkGraphic->scenePos().x();
+                     x -= mTranslationItem->pos().x();
+                     x -= item->GetNodeWidth()/2;
+                     mSnapTargetsX.push_back(x);
+                     break;
+                  }
+               }
+
+               // Now find all other value nodes connected, and snap to their heights.
+               valueCount = nodeItem->GetValues().size();
+               for (int valueIndex = 0; valueIndex < valueCount; valueIndex++)
+               {
+                  ValueData& data = nodeItem->GetValues()[valueIndex];
+
+                  int linkCount = (int)data.link->GetLinks().size();
+                  for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
+                  {
+                     ValueNode* linkedNode = data.link->GetLinks()[linkIndex];
+                     if (linkedNode && linkedNode != valueNode)
+                     {
+                        mSnapTargetsY.push_back(linkedNode->GetPosition().y());
+                     }
+                  }
+               }
+            }
+         }
+      }
+
+      // Find the best snap position.
+      float nearest = 15.0f;
+      osg::Vec2 newPos = position;
+      count = (int)mSnapTargetsY.size();
+      for (int index = 0; index < count; index++)
+      {
+         float y = mSnapTargetsY[index];
+         if (fabs(y - position.y()) < nearest)
+         {
+            nearest = fabs(y - position.y());
+            newPos.y() = y;
+         }
+      }
+
+      nearest = 15.0f;
+      count = (int)mSnapTargetsX.size();
+      for (int index = 0; index < count; index++)
+      {
+         float x = mSnapTargetsX[index];
+         if (fabs(x - position.x()) < nearest)
+         {
+            nearest = fabs(x - position.x());
+            newPos.x() = x;
+         }
+      }
+
+      return newPos;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -527,7 +717,12 @@ namespace dtDirector
             for (int index = 0; index < count; index++)
             {
                NodeItem* item = dynamic_cast<NodeItem*>(itemList[index]);
-               if (item) item->EndMoveEvent();
+               if (item)
+               {
+                  osg::Vec2 position = GetSmartSnapPosition(item);
+                  item->setPos(position.x(), position.y());
+                  item->EndMoveEvent();
+               }
             }
 
             mEditor->GetUndoManager()->EndMultipleEvents();

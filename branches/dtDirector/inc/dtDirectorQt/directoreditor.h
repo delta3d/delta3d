@@ -104,9 +104,19 @@ namespace dtDirector
       QAction* GetCopyAction()     {return mCopyAction;}
       QAction* GetPasteAction()    {return mPasteAction;}
       QAction* GetDeleteAction()   {return mDeleteAction;}
-      QAction* GetShowLinkAction() {return mShowLinks;}
-      QAction* GetHideLinkAction() {return mHideLinks;}
+      QAction* GetSnapGridAction() {return mSnapGridAction;}
+      QAction* GetShowLinkAction() {return mShowLinksAction;}
+      QAction* GetHideLinkAction() {return mHideLinksAction;}
       QAction* GetRefreshAction()  {return mRefreshAction;}
+
+      /**
+       * Calculates a snapped position.
+       *
+       * @param[in]  position  The original position.
+       *
+       * Return      A snapped position, only if snap is enabled.
+       */
+      osg::Vec2 GetSnapPosition(osg::Vec2 position);
 
       /**
        * Refreshes the entire view.
@@ -290,8 +300,9 @@ namespace dtDirector
 
       // View Actions.
       QAction*  mViewPropertiesAction;
-      QAction*  mShowLinks;
-      QAction*  mHideLinks;
+      QAction*  mSnapGridAction;
+      QAction*  mShowLinksAction;
+      QAction*  mHideLinksAction;
       QAction*  mRefreshAction;
    };
 

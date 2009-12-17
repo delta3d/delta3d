@@ -364,6 +364,7 @@ namespace dtDirector
                      output = rampNode->GetOutputLink("Out");
                      if (output) link->Connect(output);
 
+                     // Position the new node to the left of the current.
                      osg::Vec2 position = link->GetOwner()->GetPosition();
                      position.x() -= 300.0f;
 
@@ -376,7 +377,6 @@ namespace dtDirector
                         }
                      }
 
-                     // Position the new node to the left of the current.
                      rampNode->SetPosition(position);
 
                      // Copy the name of the input to the input node.
@@ -458,6 +458,7 @@ namespace dtDirector
                      input = rampNode->GetInputLink("In");
                      if (input) link->Connect(input);
 
+                     // Position the new node to the right of the current.
                      osg::Vec2 position = link->GetOwner()->GetPosition();
                      position.x() += 500.0f;
 
@@ -470,7 +471,6 @@ namespace dtDirector
                         }
                      }
 
-                     // Position the new node to the left of the current.
                      rampNode->SetPosition(position);
 
                      // Copy the name of the output to the output node.
@@ -546,6 +546,7 @@ namespace dtDirector
 
                      link->Connect(rampNode);
 
+                     // Position the new node to the bottom of the current.
                      osg::Vec2 position = link->GetOwner()->GetPosition();
                      position.y() += 300.0f;
 
@@ -558,7 +559,6 @@ namespace dtDirector
                         }
                      }
 
-                     // Position the new node to the left of the current.
                      rampNode->SetPosition(position);
 
                      // Copy the name of the value link to the value node.

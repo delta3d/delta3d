@@ -287,6 +287,21 @@ namespace dtDirector
       Node* GetNode() {return mNode.get();}
 
       /**
+       * Retrieves the position of the node.
+       */
+      virtual osg::Vec2 GetPosition();
+
+      /**
+       * Retrieves the width of the node.
+       */
+      float GetNodeWidth() {return mNodeWidth;}
+
+      /**
+       * Retrieves the height of the node.
+       */
+      float GetNodeHeight() {return mNodeHeight;}
+
+      /**
        * Retrieves the ID of the node item contained.
        *
        * @return  The ID.
