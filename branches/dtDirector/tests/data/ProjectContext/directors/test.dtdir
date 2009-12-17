@@ -2,7 +2,7 @@
 <director xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dDirector" xsi:schemaLocation="delta3dDirector director.xsd">
     <header>
         <createTimestamp>2009-12-16T22:35:23-08:00</createTimestamp>
-        <lastUpdateTimestamp>2009-12-16T22:57:26-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2009-12-17T09:55:06-08:00</lastUpdateTimestamp>
         <editorVersion>2.4.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
         <property>
@@ -91,7 +91,7 @@
             <node>
                 <name>Remote Event</name>
                 <category>Core</category>
-                <id>11f2e66f-5dc1-46ce-ade6-31fc9b354247</id>
+                <id>1242c6d3-3312-4518-8bac-f33c60026e8f</id>
                 <property>
                     <name>Enabled</name>
                     <boolean>true</boolean>
@@ -107,8 +107,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>-115.935097</value1>
-                        <value2>186.129562</value2>
+                        <value1>-116.954361</value1>
+                        <value2>217.999802</value2>
                     </vec2>
                 </property>
                 <property>
@@ -117,7 +117,7 @@
                 </property>
                 <property>
                     <name>EventName</name>
-                    <string>Second</string>
+                    <string>Third</string>
                 </property>
                 <outputlink>
                     <name>Out</name>
@@ -254,7 +254,7 @@
                     <allowmultiple>false</allowmultiple>
                     <typecheck>false</typecheck>
                     <link>
-                        <id>ff0b7ec5-0d21-4bd8-8f9d-e5d1b3cc27d9</id>
+                        <id>0e27a978-1ee3-4c3d-a69f-bb75b876a45c</id>
                     </link>
                 </valuelink>
                 <valuelink>
@@ -284,7 +284,7 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>438.000000</value1>
+                        <value1>435.755341</value1>
                         <value2>82.000000</value2>
                     </vec2>
                 </property>
@@ -370,8 +370,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>460.500153</value1>
-                        <value2>227.831284</value2>
+                        <value1>458.255402</value1>
+                        <value2>225.586609</value2>
                     </vec2>
                 </property>
                 <property>
@@ -386,7 +386,7 @@
             <node>
                 <name>Reference</name>
                 <category>Core</category>
-                <id>ff0b7ec5-0d21-4bd8-8f9d-e5d1b3cc27d9</id>
+                <id>0e27a978-1ee3-4c3d-a69f-bb75b876a45c</id>
                 <property>
                     <name>Enabled</name>
                     <boolean>true</boolean>
@@ -402,8 +402,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>298.500153</value1>
-                        <value2>228.769562</value2>
+                        <value1>297.499939</value1>
+                        <value2>226.129578</value2>
                     </vec2>
                 </property>
                 <property>
@@ -412,7 +412,7 @@
                 </property>
                 <property>
                     <name>Reference</name>
-                    <string>Count</string>
+                    <string>Complete</string>
                 </property>
                 <valuelink>
                     <name>Ref</name>
@@ -421,7 +421,7 @@
                     <allowmultiple>false</allowmultiple>
                     <typecheck>false</typecheck>
                     <link>
-                        <id>31d24ae2-3dc1-4504-b8fd-cb9adb01ff3f</id>
+                        <id>bcf86582-441b-4572-8029-c82dff68e00a</id>
                     </link>
                 </valuelink>
             </node>
@@ -437,13 +437,13 @@
             </property>
             <property>
                 <name>Name</name>
-                <string>Macro</string>
+                <string>Third</string>
             </property>
             <property>
                 <name>Position</name>
                 <vec2>
-                    <value1>77.064903</value1>
-                    <value2>186.129562</value2>
+                    <value1>83.545609</value1>
+                    <value2>217.999802</value2>
                 </vec2>
             </property>
             <eventnodes>
@@ -478,7 +478,7 @@
                         <name>Start</name>
                         <visible>true</visible>
                         <link>
-                            <id>11f2e66f-5dc1-46ce-ade6-31fc9b354247</id>
+                            <id>1242c6d3-3312-4518-8bac-f33c60026e8f</id>
                             <name>Out</name>
                         </link>
                     </inputlink>
@@ -706,6 +706,358 @@
                     <property>
                         <name>Value</name>
                         <double>2</double>
+                    </property>
+                </node>
+            </valuenodes>
+        </graph>
+        <graph>
+            <property>
+                <name>Enabled</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Comment</name>
+                <string></string>
+            </property>
+            <property>
+                <name>Name</name>
+                <string>Second</string>
+            </property>
+            <property>
+                <name>Position</name>
+                <vec2>
+                    <value1>96.590141</value1>
+                    <value2>149.341064</value2>
+                </vec2>
+            </property>
+            <eventnodes>
+                <node>
+                    <name>Remote Event</name>
+                    <category>Core</category>
+                    <id>e61d5767-0e82-43c0-a7b5-5a7e49565544</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>LogComment</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>0.000000</value1>
+                            <value2>0.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>Instigator</name>
+                        <actorId></actorId>
+                    </property>
+                    <property>
+                        <name>EventName</name>
+                        <string>Second</string>
+                    </property>
+                    <outputlink>
+                        <name>Out</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>b8c6e064-7b30-4eb5-8129-ff0df07d7745</id>
+                            <name>Call Event</name>
+                        </link>
+                    </outputlink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>false</visible>
+                        <isout>false</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+            </eventnodes>
+            <actionnodes>
+                <node>
+                    <name>Call Remote Event</name>
+                    <category>Core</category>
+                    <id>b8c6e064-7b30-4eb5-8129-ff0df07d7745</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>LogComment</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>194.500000</value1>
+                            <value2>0.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>EventName</name>
+                        <string>Third</string>
+                    </property>
+                    <inputlink>
+                        <name>Call Event</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>e61d5767-0e82-43c0-a7b5-5a7e49565544</id>
+                            <name>Out</name>
+                        </link>
+                    </inputlink>
+                    <outputlink>
+                        <name>Event Finished</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>bfbf31c8-6944-4bcb-bf0d-fa9d9edf43df</id>
+                            <name>In</name>
+                        </link>
+                    </outputlink>
+                    <valuelink>
+                        <name>EventName</name>
+                        <visible>false</visible>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Compare Value</name>
+                    <category>General</category>
+                    <id>bfbf31c8-6944-4bcb-bf0d-fa9d9edf43df</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>LogComment</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>395.499969</value1>
+                            <value2>0.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>A</name>
+                        <double>0</double>
+                    </property>
+                    <property>
+                        <name>B</name>
+                        <double>0</double>
+                    </property>
+                    <inputlink>
+                        <name>In</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>b8c6e064-7b30-4eb5-8129-ff0df07d7745</id>
+                            <name>Event Finished</name>
+                        </link>
+                    </inputlink>
+                    <outputlink>
+                        <name>A > B</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>3b5eaea2-5d07-4d82-85aa-454a7460d23e</id>
+                            <name>Add</name>
+                        </link>
+                    </outputlink>
+                    <outputlink>
+                        <name>A = B</name>
+                        <visible>false</visible>
+                    </outputlink>
+                    <outputlink>
+                        <name>B > A</name>
+                        <visible>false</visible>
+                    </outputlink>
+                    <valuelink>
+                        <name>A</name>
+                        <visible>true</visible>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>false</typecheck>
+                        <link>
+                            <id>81355d8f-44fc-410d-88db-910cd373b484</id>
+                        </link>
+                    </valuelink>
+                    <valuelink>
+                        <name>B</name>
+                        <visible>false</visible>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>false</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Binary Operation</name>
+                    <category>General</category>
+                    <id>3b5eaea2-5d07-4d82-85aa-454a7460d23e</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>LogComment</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>543.500000</value1>
+                            <value2>0.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>A</name>
+                        <double>0</double>
+                    </property>
+                    <property>
+                        <name>B</name>
+                        <double>1</double>
+                    </property>
+                    <inputlink>
+                        <name>Add</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>bfbf31c8-6944-4bcb-bf0d-fa9d9edf43df</id>
+                            <name>A > B</name>
+                        </link>
+                    </inputlink>
+                    <inputlink>
+                        <name>Subtract</name>
+                        <visible>false</visible>
+                    </inputlink>
+                    <inputlink>
+                        <name>Multiply</name>
+                        <visible>false</visible>
+                    </inputlink>
+                    <inputlink>
+                        <name>Divide</name>
+                        <visible>false</visible>
+                    </inputlink>
+                    <outputlink>
+                        <name>Out</name>
+                        <visible>false</visible>
+                    </outputlink>
+                    <valuelink>
+                        <name>A</name>
+                        <visible>false</visible>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>false</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>B</name>
+                        <visible>false</visible>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>false</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Result</name>
+                        <visible>true</visible>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>false</typecheck>
+                        <link>
+                            <id>bcf86582-441b-4572-8029-c82dff68e00a</id>
+                        </link>
+                    </valuelink>
+                </node>
+            </actionnodes>
+            <valuenodes>
+                <node>
+                    <name>Reference</name>
+                    <category>Core</category>
+                    <id>81355d8f-44fc-410d-88db-910cd373b484</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>LogComment</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>412.999969</value1>
+                            <value2>130.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>Name</name>
+                        <string>Ref</string>
+                    </property>
+                    <property>
+                        <name>Reference</name>
+                        <string>Count</string>
+                    </property>
+                    <valuelink>
+                        <name>Ref</name>
+                        <visible>true</visible>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>false</typecheck>
+                        <link>
+                            <id>31d24ae2-3dc1-4504-b8fd-cb9adb01ff3f</id>
+                        </link>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Boolean</name>
+                    <category>General</category>
+                    <id>bcf86582-441b-4572-8029-c82dff68e00a</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>LogComment</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>566.000000</value1>
+                            <value2>134.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>Name</name>
+                        <string>Complete</string>
+                    </property>
+                    <property>
+                        <name>Value</name>
+                        <boolean>false</boolean>
                     </property>
                 </node>
             </valuenodes>

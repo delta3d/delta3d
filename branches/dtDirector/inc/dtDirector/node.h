@@ -282,6 +282,14 @@ namespace dtDirector
          if (prop)
          {
             std::string val = prop->ToString();
+            
+            // Special case for boolean values.
+            if (prop->GetDataType() == dtDAL::DataType::BOOLEAN)
+            {
+               if (val == "true") val = "1";
+               else if (val == "false") val = "0";
+            }
+
             result = dtUtil::ToType<T>(val);
          }
          return result;
