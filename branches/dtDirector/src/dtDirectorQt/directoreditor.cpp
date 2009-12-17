@@ -61,6 +61,7 @@ namespace dtDirector
       , mLoadAction(NULL)
       , mNewAction(NULL)
       , mParentAction(NULL)
+      , mSnapGridAction(NULL)
       , mUndoAction(NULL)
       , mRedoAction(NULL)
       , mDeleteAction(NULL)
@@ -68,7 +69,6 @@ namespace dtDirector
       , mCopyAction(NULL)
       , mPasteAction(NULL)
       , mViewPropertiesAction(NULL)
-      , mSnapGridAction(NULL)
       , mShowLinksAction(NULL)
       , mHideLinksAction(NULL)
       , mRefreshAction(NULL)
@@ -104,6 +104,13 @@ namespace dtDirector
       mParentAction = new QAction(QIcon(":/icons/parent.png"), tr("Goto Parent Graph"), this);
       mParentAction->setShortcut(tr("Ctrl+U"));
       mParentAction->setToolTip(tr("Returns to the parent graph (Ctrl+U)."));
+
+      // Show Links Action.
+      mSnapGridAction = new QAction(QIcon(":/icons/snapgrid.png"), tr("Smart Grid Snap"), this);
+      mSnapGridAction->setShortcut(tr("Ctrl+G"));
+      mSnapGridAction->setToolTip(tr("Snaps nodes to a smart grid determined by the placement of other nodes (Ctrl+G)."));
+      mSnapGridAction->setCheckable(true);
+      mSnapGridAction->setChecked(true);
 
       // Undo Action.
       mUndoAction = new QAction(QIcon(":/icons/undo.png"), tr("Undo"), this);
@@ -141,13 +148,6 @@ namespace dtDirector
       mViewPropertiesAction->setToolTip(tr("Shows the Property Editor(Ctrl+P)."));
       mViewPropertiesAction->setCheckable(true);
       mViewPropertiesAction->setChecked(true);
-
-      // Show Links Action.
-      mSnapGridAction = new QAction(QIcon(":/icons/snapgrid.png"), tr("Smart Grid Snap"), this);
-      mSnapGridAction->setShortcut(tr("Ctrl+G"));
-      mSnapGridAction->setToolTip(tr("Snaps nodes to a smart grid determined by the placement of other nodes (Ctrl+G)."));
-      mSnapGridAction->setCheckable(true);
-      mSnapGridAction->setChecked(true);
 
       // Show Links Action.
       mShowLinksAction = new QAction(QIcon(":/icons/showlinks.png"), tr("Show Links"), this);
@@ -188,6 +188,8 @@ namespace dtDirector
       mEditMenu = mMenuBar->addMenu("&Edit");
       mEditMenu->addAction(mParentAction);
       mEditMenu->addSeparator();
+      mEditMenu->addAction(mSnapGridAction);
+      mEditMenu->addSeparator();
       mEditMenu->addAction(mUndoAction);
       mEditMenu->addAction(mRedoAction);
       mEditMenu->addSeparator();
@@ -200,8 +202,6 @@ namespace dtDirector
       // View Menu.
       mViewMenu = mMenuBar->addMenu("&View");
       mViewMenu->addAction(mViewPropertiesAction);
-      mViewMenu->addSeparator();
-      mViewMenu->addAction(mSnapGridAction);
       mViewMenu->addSeparator();
       mViewMenu->addAction(mShowLinksAction);
       mViewMenu->addAction(mHideLinksAction);
@@ -226,6 +226,8 @@ namespace dtDirector
 
       mEditToolbar->addAction(mParentAction);
       mEditToolbar->addSeparator();
+      mEditToolbar->addAction(mSnapGridAction);
+      mEditToolbar->addSeparator();
       mEditToolbar->addAction(mUndoAction);
       mEditToolbar->addAction(mRedoAction);
       mEditToolbar->addSeparator();
@@ -235,8 +237,6 @@ namespace dtDirector
       mEditToolbar->addSeparator();
       mEditToolbar->addAction(mDeleteAction);
 
-      mEditToolbar->addSeparator();
-      mEditToolbar->addAction(mSnapGridAction);
       mEditToolbar->addSeparator();
       mEditToolbar->addAction(mShowLinksAction);
       mEditToolbar->addAction(mHideLinksAction);
