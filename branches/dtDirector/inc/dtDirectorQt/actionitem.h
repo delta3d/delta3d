@@ -31,6 +31,7 @@ namespace dtDirector
     */
    class ActionItem : public NodeItem
    {
+      Q_OBJECT
    public:
 
       /**
@@ -47,7 +48,26 @@ namespace dtDirector
        */
       virtual void Draw();
 
+   public slots:
+      
+      /**
+       * Event handler when you want to jump to an event.
+       */
+      void OnGotoEvent();
+
    protected:
+
+      /**
+       * Event handler when the context menu event has triggered.
+       */
+      void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
+
+      /**
+       * Event handler when the user double clicks this node.
+       *
+       * @param[in]  event  The mouse event.
+       */
+      void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
 
    };
 }

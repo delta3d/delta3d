@@ -82,33 +82,32 @@ namespace dtDirector
       OutputLink* link = GetOutputLink("Event Finished");
       if (link) link->Activate();
 
-      // Find the remote event that we want to trigger.
-      std::vector<Node*> nodes;
-      GetDirector()->GetNodes("Remote Event", "Core", nodes);
-
       std::string eventName = GetString("EventName");
       if (eventName.empty()) return false;
+
+      // Find the remote event that we want to trigger.
+      std::vector<Node*> nodes;
+      GetDirector()->GetNodes("Remote Event", "Core", "EventName", eventName, nodes);
 
       bool madeStack = false;
       int count = (int)nodes.size();
       for (int index = 0; index < count; index++)
       {
-         RemoteEvent* event = dynamic_cast<RemoteEvent*>(nodes[index]);
-         if (event && event->GetEventName() == eventName)
-         {
-            // If we have not created a new call stack yet, create it.
-            if (!madeStack)
-            {
-               // I use a NULL node here, because when I trigger the
-               // event later, it will cause the event to be in
-               // two separate threads.
-               GetDirector()->PushStack(NULL, 0);
-               madeStack = true;
-            }
+         EventNode* event = dynamic_cast<EventNode*>(nodes[index]);
+         if (!event) continue;
 
-            // Now trigger the event.
-            event->Trigger();
+         // If we have not created a new call stack yet, create it.
+         if (!madeStack)
+         {
+            // I use a NULL node here, because when I trigger the
+            // event later, it will cause the event to be in
+            // two separate threads.
+            GetDirector()->PushStack(NULL, 0);
+            madeStack = true;
          }
+
+         // Now trigger the event.
+         event->Trigger();
       }
 
       return ActionNode::Update(simDelta, delta, inputIndex);

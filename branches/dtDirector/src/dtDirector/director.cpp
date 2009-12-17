@@ -439,6 +439,26 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   void Director::GetNodes(const std::string& name, const std::string& category, const std::string& property, const std::string& value, std::vector<Node*>& outNodes)
+   {
+      std::vector<Node*> nodes;
+      mGraph->GetNodes(name, category, nodes);
+
+      int count = (int)nodes.size();
+      for (int index = 0; index < count; index++)
+      {
+         Node* node = nodes[index];
+         if (!node) continue;
+
+         dtDAL::ActorProperty* prop = node->GetProperty(property);
+         if (prop && prop->ToString() == value)
+         {
+            outNodes.push_back(node);
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    ValueNode* Director::GetValueNode(const std::string& name)
    {
       return mGraph->GetValueNode(name);

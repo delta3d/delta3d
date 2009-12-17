@@ -262,6 +262,18 @@ namespace dtDirector
       void GetNodes(const std::string& name, const std::string& category, std::vector<Node*>& outNodes);
 
       /**
+       * Retrieves a list of nodes that are of a certain type,
+       * and contain a property with a given value.
+       *
+       * @param[in]   name      The type name of the node.
+       * @param[in]   category  The type category of the node.
+       * @param[in]   property  The name of the property to find.
+       * @param[in]   value     The value of the property.
+       * @param[out]  outNodes  A list of nodes found.
+       */
+      void GetNodes(const std::string& name, const std::string& category, const std::string& property, const std::string& value, std::vector<Node*>& outNodes);
+
+      /**
        * Retrieves a value node with the given name.
        * @note  If there are more than one value with the
        *         same name, only the first one will be returned.

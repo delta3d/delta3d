@@ -328,6 +328,12 @@ namespace dtDirector
          hasDefault = true;
          connect(gotoRefAction, SIGNAL(triggered()), this, SLOT(OnGotoReference()));
       }
+      else if (mNode->GetType().GetFullName() == "Core.Value Link")
+      {
+         menu.addAction(mScene->GetEditor()->GetParentAction());
+         menu.setDefaultAction(mScene->GetEditor()->GetParentAction());
+         hasDefault = true;
+      }
 
       QAction* refAction = menu.addAction("Create Reference");
       connect(refAction, SIGNAL(triggered()), this, SLOT(OnCreateReference()));
@@ -352,6 +358,10 @@ namespace dtDirector
       if (mNode->GetType().GetFullName() == "Core.Reference")
       {
          OnGotoReference();
+      }
+      else if (mNode->GetType().GetFullName() == "Core.Value Link")
+      {
+         mScene->GetEditor()->OnParentButton();
       }
       else
       {

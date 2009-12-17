@@ -101,7 +101,7 @@ namespace dtDirector
       mNewAction->setToolTip(tr("Begins a new Director script (Ctrl+N)."));
 
       // Parent Action.
-      mParentAction = new QAction(QIcon(":/icons/parent.png"), tr("Goto Parent Graph"), this);
+      mParentAction = new QAction(QIcon(":/icons/parent.png"), tr("Step out of Graph"), this);
       mParentAction->setShortcut(tr("Ctrl+U"));
       mParentAction->setToolTip(tr("Returns to the parent graph (Ctrl+U)."));
 
