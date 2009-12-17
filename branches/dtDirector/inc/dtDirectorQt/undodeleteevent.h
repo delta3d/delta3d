@@ -120,6 +120,8 @@ namespace dtDirector
 
          std::string mSource;
          std::string mDest;
+
+         bool mVisible;
       };
 
       dtCore::UniqueId mParentID;

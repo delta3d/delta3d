@@ -113,6 +113,12 @@ namespace dtDirector
       virtual bool UsesInstigator();
 
       /**
+       * Accessors for the trigger count property.
+       */
+      void SetTriggerCount(int value) {mMaxTriggerCount = value;}
+      int GetTriggerCount() {return mMaxTriggerCount;}
+
+      /**
        * Accessors for the instigator property.
        */
       void SetInstigator(const dtCore::UniqueId& id);
@@ -127,6 +133,8 @@ namespace dtDirector
 
    private:
 
+      int mMaxTriggerCount;
+      int mTriggerCount;
       dtCore::UniqueId mInstigator;
   };
 }

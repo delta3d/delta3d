@@ -280,6 +280,8 @@ namespace dtDirector
       {
          InputLink* fromLink = &fromNode->GetInputLinks()[index];
          InputLink* link = &node->GetInputLinks()[index];
+
+         link->SetVisible(fromLink->GetVisible());
          LinkInputs(link, fromLink, parent, undoManager, linkNodes, createLinks);
       }
 
@@ -289,6 +291,8 @@ namespace dtDirector
       {
          OutputLink* fromLink = &fromNode->GetOutputLinks()[index];
          OutputLink* link = &node->GetOutputLinks()[index];
+
+         link->SetVisible(fromLink->GetVisible());
          LinkOutputs(link, fromLink, parent, undoManager, linkNodes, createLinks);
       }
 
@@ -298,6 +302,8 @@ namespace dtDirector
       {
          ValueLink* fromLink = &fromNode->GetValueLinks()[index];
          ValueLink* link = &node->GetValueLinks()[index];
+
+         link->SetVisible(fromLink->GetVisible());
          LinkValues(link, fromLink, parent, undoManager, linkNodes, createLinks);
       }
 

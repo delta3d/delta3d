@@ -34,6 +34,8 @@ namespace dtDirector
    ///////////////////////////////////////////////////////////////////////////////////////
    EventNode::EventNode()
        : Node()
+       , mMaxTriggerCount(0)
+       , mTriggerCount(0)
    {
       mInstigator = "";
    }
@@ -59,6 +61,13 @@ namespace dtDirector
       Node::BuildPropertyMap();
       mValues.clear();
 
+      dtDAL::IntActorProperty* triggerCountProp =
+         new dtDAL::IntActorProperty("TriggerCount", "Max Trigger Count",
+         dtDAL::IntActorProperty::SetFuncType(this, &EventNode::SetTriggerCount),
+         dtDAL::IntActorProperty::GetFuncType(this, &EventNode::GetTriggerCount),
+         "The maximum number of times this event can be triggered before it is disabled (Zero = no limit).");
+      AddProperty(triggerCountProp);
+
       // Create the instigator property.
       if (UsesInstigator())
       {
@@ -79,6 +88,19 @@ namespace dtDirector
    {
       // Can't trigger a disabled event.
       if (!GetEnabled()) return;
+
+      // If this event has a trigger count limit,
+      // disable the event when that limit is met.
+      if (mMaxTriggerCount > 0)
+      {
+         mTriggerCount++;
+
+         if (mTriggerCount >= mMaxTriggerCount)
+         {
+            mTriggerCount = 0;
+            SetEnabled(false);
+         }
+      }
 
       if (Test(outputName, instigator))
       {

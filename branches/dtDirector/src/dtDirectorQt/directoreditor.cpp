@@ -57,9 +57,9 @@ namespace dtDirector
       , mFileMenu(NULL)
       , mEditMenu(NULL)
       , mViewMenu(NULL)
-      , mSaveAction(NULL)
-      , mLoadAction(NULL)
       , mNewAction(NULL)
+      , mLoadAction(NULL)
+      , mSaveAction(NULL)
       , mParentAction(NULL)
       , mSnapGridAction(NULL)
       , mUndoAction(NULL)
@@ -85,20 +85,20 @@ namespace dtDirector
       mPropertyEditor = new PropertyEditor(this);
       addDockWidget(Qt::BottomDockWidgetArea, mPropertyEditor);
 
-      // Save Action.
-      mSaveAction = new QAction(QIcon(":/icons/save.png"), tr("&Save"), this);
-      mSaveAction->setShortcut(tr("Ctrl+S"));
-      mSaveAction->setToolTip(tr("Saves the current Director script (Ctrl+S)."));
+      // New Action.
+      mNewAction = new QAction(QIcon(":/icons/new.png"), tr("&New"), this);
+      mNewAction->setShortcut(tr("Ctrl+N"));
+      mNewAction->setToolTip(tr("Begins a new Director script (Ctrl+N)."));
 
       // Load Action.
       mLoadAction = new QAction(QIcon(":/icons/open.png"), tr("&Load"), this);
       mLoadAction->setShortcut(tr("Ctrl+L"));
       mLoadAction->setToolTip(tr("Loads a Director script from a file (Ctrl+L)."));
 
-      // New Action.
-      mNewAction = new QAction(QIcon(":/icons/new.png"), tr("&New"), this);
-      mNewAction->setShortcut(tr("Ctrl+N"));
-      mNewAction->setToolTip(tr("Begins a new Director script (Ctrl+N)."));
+      // Save Action.
+      mSaveAction = new QAction(QIcon(":/icons/save.png"), tr("&Save"), this);
+      mSaveAction->setShortcut(tr("Ctrl+S"));
+      mSaveAction->setToolTip(tr("Saves the current Director script (Ctrl+S)."));
 
       // Parent Action.
       mParentAction = new QAction(QIcon(":/icons/parent.png"), tr("Step out of Graph"), this);
@@ -179,9 +179,9 @@ namespace dtDirector
 
       // File Menu.
       mFileMenu = mMenuBar->addMenu("&File");
-      mFileMenu->addAction(mSaveAction);
-      mFileMenu->addAction(mLoadAction);
       mFileMenu->addAction(mNewAction);
+      mFileMenu->addAction(mLoadAction);
+      mFileMenu->addAction(mSaveAction);
       mFileMenu->addSeparator();
 
       // Edit Menu.
@@ -214,9 +214,9 @@ namespace dtDirector
       mFileToolbar->setObjectName("File Toolbar");
       mFileToolbar->setWindowTitle(tr("File Toolbar"));
 
-      mFileToolbar->addAction(mSaveAction);
-      mFileToolbar->addAction(mLoadAction);
       mFileToolbar->addAction(mNewAction);
+      mFileToolbar->addAction(mLoadAction);
+      mFileToolbar->addAction(mSaveAction);
 
       // Edit Toolbar.
       mEditToolbar = new QToolBar(this);

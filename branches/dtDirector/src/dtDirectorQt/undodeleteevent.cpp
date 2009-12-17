@@ -288,6 +288,14 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void UndoDeleteEvent::SaveLink(InputLink& link)
    {
+      LinkData mainData;
+      mainData.mSourceID = link.GetOwner()->GetID();
+      mainData.mDestID = "";
+      mainData.mSource = link.GetName();
+      mainData.mDest = "";
+      mainData.mVisible = link.GetVisible();
+      mInputs.push_back(mainData);
+
       int count = link.GetLinks().size();
       for (int index = 0; index < count; index++)
       {
@@ -295,19 +303,30 @@ namespace dtDirector
          if (destLink)
          {
             LinkData data;
-            data.mSourceID = link.GetOwner()->GetID();
+            data.mSourceID = mainData.mSourceID;
             data.mDestID = destLink->GetOwner()->GetID();
 
-            data.mSource = link.GetName();
+            data.mVisible = mainData.mVisible;
+
+            data.mSource = mainData.mSource;
             data.mDest = destLink->GetName();
             mInputs.push_back(data);
          }
       }
+
    }
 
    //////////////////////////////////////////////////////////////////////////
    void UndoDeleteEvent::SaveLink(OutputLink& link)
    {
+      LinkData mainData;
+      mainData.mSourceID = link.GetOwner()->GetID();
+      mainData.mDestID = "";
+      mainData.mSource = link.GetName();
+      mainData.mDest = "";
+      mainData.mVisible = link.GetVisible();
+      mOutputs.push_back(mainData);
+
       int count = link.GetLinks().size();
       for (int index = 0; index < count; index++)
       {
@@ -315,11 +334,13 @@ namespace dtDirector
          if (destLink)
          {
             LinkData data;
-            data.mSourceID = link.GetOwner()->GetID();
+            data.mSourceID = mainData.mSourceID;
             data.mDestID = destLink->GetOwner()->GetID();
 
-            data.mSource = link.GetName();
+            data.mSource = mainData.mSource;
             data.mDest = destLink->GetName();
+
+            data.mVisible = mainData.mVisible;
             mOutputs.push_back(data);
          }
       }
@@ -328,6 +349,14 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void UndoDeleteEvent::SaveLink(ValueLink& link)
    {
+      LinkData mainData;
+      mainData.mSourceID = link.GetOwner()->GetID();
+      mainData.mDestID = "";
+      mainData.mSource = link.GetName();
+      mainData.mDest = "";
+      mainData.mVisible = link.GetVisible();
+      mValues.push_back(mainData);
+
       int count = link.GetLinks().size();
       for (int index = 0; index < count; index++)
       {
@@ -335,11 +364,13 @@ namespace dtDirector
          if (destNode)
          {
             LinkData data;
-            data.mSourceID = link.GetOwner()->GetID();
+            data.mSourceID = mainData.mSourceID;
             data.mDestID = destNode->GetID();
 
-            data.mSource = link.GetName();
+            data.mSource = mainData.mSource;
             data.mDest = "";
+
+            data.mVisible = mainData.mVisible;
             mValues.push_back(data);
          }
       }
@@ -362,6 +393,8 @@ namespace dtDirector
 
             data.mSource = link->GetName();
             data.mDest = "";
+
+            data.mVisible = true;
             mValues.push_back(data);
          }
       }
@@ -378,14 +411,19 @@ namespace dtDirector
          Node* sourceNode = mEditor->GetDirector()->GetNode(data.mSourceID);
          Node* destNode = mEditor->GetDirector()->GetNode(data.mDestID);
 
-         if (sourceNode && destNode)
+         if (sourceNode)
          {
             InputLink* sourceLink = sourceNode->GetInputLink(data.mSource);
-            OutputLink* destLink = destNode->GetOutputLink(data.mDest);
+            if (sourceLink) sourceLink->SetVisible(data.mVisible);
 
-            if (sourceLink && destLink)
+            if (destNode)
             {
-               sourceLink->Connect(destLink);
+               OutputLink* destLink = destNode->GetOutputLink(data.mDest);
+
+               if (sourceLink && destLink)
+               {
+                  sourceLink->Connect(destLink);
+               }
             }
          }
       }
@@ -398,14 +436,19 @@ namespace dtDirector
          Node* sourceNode = mEditor->GetDirector()->GetNode(data.mSourceID);
          Node* destNode = mEditor->GetDirector()->GetNode(data.mDestID);
 
-         if (sourceNode && destNode)
+         if (sourceNode)
          {
             OutputLink* sourceLink = sourceNode->GetOutputLink(data.mSource);
-            InputLink* destLink = destNode->GetInputLink(data.mDest);
-
-            if (sourceLink && destLink)
+            if (sourceLink) sourceLink->SetVisible(data.mVisible);
+            
+            if (destNode)
             {
-               sourceLink->Connect(destLink);
+               InputLink* destLink = destNode->GetInputLink(data.mDest);
+
+               if (sourceLink && destLink)
+               {
+                  sourceLink->Connect(destLink);
+               }
             }
          }
       }
@@ -418,13 +461,17 @@ namespace dtDirector
          Node* sourceNode = mEditor->GetDirector()->GetNode(data.mSourceID);
          Node* destNode = mEditor->GetDirector()->GetNode(data.mDestID);
 
-         if (sourceNode && destNode)
+         if (sourceNode)
          {
             ValueLink* sourceLink = sourceNode->GetValueLink(data.mSource);
-
             if (sourceLink)
             {
-               sourceLink->Connect(dynamic_cast<ValueNode*>(destNode));
+               sourceLink->SetVisible(data.mVisible);
+
+               if (destNode)
+               {
+                  sourceLink->Connect(dynamic_cast<ValueNode*>(destNode));
+               }
             }
          }
       }

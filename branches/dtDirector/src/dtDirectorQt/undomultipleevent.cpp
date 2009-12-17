@@ -38,7 +38,7 @@ namespace dtDirector
    void UndoMultipleEvent::Undo()
    {
       int count = (int)mEvents.size();
-      for (int index = 0; index < count; index++)
+      for (int index = count-1; index >= 0; index--)
       {
          mEvents[index]->Undo();
       }
@@ -48,7 +48,7 @@ namespace dtDirector
    void UndoMultipleEvent::Redo()
    {
       int count = (int)mEvents.size();
-      for (int index = 0; index < count; index++)
+      for (int index = count-1; index >= 0; index--)
       {
          mEvents[index]->Redo();
       }

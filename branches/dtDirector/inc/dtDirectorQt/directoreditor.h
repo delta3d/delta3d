@@ -284,12 +284,13 @@ namespace dtDirector
       QMenu*    mViewMenu;
 
       // File Actions.
-      QAction*  mSaveAction;
-      QAction*  mLoadAction;
       QAction*  mNewAction;
+      QAction*  mLoadAction;
+      QAction*  mSaveAction;
 
       // Edit Actions.
       QAction*  mParentAction;
+      QAction*  mSnapGridAction;
       QAction*  mUndoAction;
       QAction*  mRedoAction;
       QAction*  mDeleteAction;
@@ -300,7 +301,6 @@ namespace dtDirector
 
       // View Actions.
       QAction*  mViewPropertiesAction;
-      QAction*  mSnapGridAction;
       QAction*  mShowLinksAction;
       QAction*  mHideLinksAction;
       QAction*  mRefreshAction;
