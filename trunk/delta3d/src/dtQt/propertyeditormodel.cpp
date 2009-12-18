@@ -287,4 +287,4 @@ namespace dtQt
       return foo;
    }
 
-} // namespace dtEditQt
+} // namespace dtQt

@@ -38,6 +38,7 @@
 #include <dtDAL/gameevent.h>
 #include <dtDAL/export.h>
 #include <dtDAL/functor.h>
+#include <dtDAL/map.h>
 
 namespace dtDAL
 {
@@ -136,6 +137,23 @@ namespace dtDAL
    public:
       typedef dtUtil::Functor<void, TYPELIST_1(const dtCore::UniqueId&)> SetFuncType;
       typedef dtUtil::Functor<dtCore::UniqueId, TYPELIST_0()> GetFuncType;
+
+      typedef dtUtil::Functor<dtDAL::Map*, TYPELIST_0()> GetMapType;
+
+      /**
+       * Constructor.
+       *
+       * @param[in]  actorProxy         The actor proxy that belongs to the map.
+       * @param[in]  name               The name of the property.
+       * @param[in]  label              The displayed name of the property.
+       * @param[in]  Set                Set callback functor.
+       * @param[in]  Get                Get callback functor.
+       * @param[in]  MapFunctor         A callback functor to retrieve the map.
+       * @param[in]  desiredActorClass  This is the actor class type that
+       *                                will be valid for this property.
+       * @param[in]  desc               Description of the property.
+       * @param[in]  groupName          The group category to place this property.
+       */
       ActorIDActorProperty(ActorProxy& actorProxy,
          const dtUtil::RefString& name,
          const dtUtil::RefString& label,
@@ -144,6 +162,23 @@ namespace dtDAL
          const dtUtil::RefString& desiredActorClass = "",
          const dtUtil::RefString& desc = "",
          const dtUtil::RefString& groupName = "");
+
+      ActorIDActorProperty(
+         const dtUtil::RefString& name,
+         const dtUtil::RefString& label,
+         SetFuncType Set,
+         GetFuncType Get,
+         GetMapType MapFunctor,
+         const dtUtil::RefString& desiredActorClass = "",
+         const dtUtil::RefString& desc = "",
+         const dtUtil::RefString& groupName = "");
+
+      /**
+       * Retrieves the map.
+       *
+       * @return  The map.
+       */
+      dtDAL::Map* GetMap();
 
       /**
       * Copies an ActorActorProperty value to this one from the property
@@ -216,6 +251,7 @@ namespace dtDAL
       ActorProxy* mProxy;
       SetFuncType SetIdFunctor;
       GetFuncType GetIdFunctor;
+      GetMapType GetMapFunctor;
       dtUtil::RefString mDesiredActorClass;
 
    protected:

@@ -21,6 +21,10 @@ namespace dtDAL
    ExceptionEnum ExceptionEnum::MapSaveError("Error saving map file.");
    ExceptionEnum ExceptionEnum::MapException("General Map Exception");
 
+   ExceptionEnum ExceptionEnum::XMLLoadParsingError("Error parsing XML file.");
+   ExceptionEnum ExceptionEnum::XMLSaveError("Error saving XML file.");
+   ExceptionEnum ExceptionEnum::XMLException("General XML Exception");
+
    ExceptionEnum ExceptionEnum::ObjectFactoryUnknownType("Unknown Object Type");
    ExceptionEnum ExceptionEnum::InvalidActorException("Invalid Actor Type");
    ExceptionEnum ExceptionEnum::InvalidParameter("Invalid Parameter");

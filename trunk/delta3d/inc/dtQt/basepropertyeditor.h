@@ -124,6 +124,7 @@ namespace dtQt
          dtDAL::ActorProperty& property);
 
       void ProxyNameChanged(dtDAL::ActorProxy& pc, std::string oldName);
+      void UpdateTitle();
 
       virtual void PropertyAboutToChangeFromControl(dtDAL::PropertyContainer&, dtDAL::ActorProperty&,
                const std::string& oldValue, const std::string& newValue) = 0;
@@ -138,6 +139,7 @@ namespace dtQt
       void buildDynamicControls(dtDAL::PropertyContainer& propertyContainer, const std::vector<dtDAL::ActorProperty*>& propList, DynamicGroupControl* parentControl = NULL);
 
       virtual QString GetGroupBoxLabelText(const QString& baseGroupBoxName);
+      virtual std::string GetContainerGroupName(dtDAL::PropertyContainer* propertyContainer);
 
       DynamicGroupControl* GetRootControl();
 

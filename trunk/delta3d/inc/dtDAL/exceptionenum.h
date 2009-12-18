@@ -45,6 +45,10 @@ namespace dtDAL
          static ExceptionEnum MapSaveError;
          static ExceptionEnum MapException;
 
+         static ExceptionEnum XMLLoadParsingError;
+         static ExceptionEnum XMLSaveError;
+         static ExceptionEnum XMLException;
+
          static ExceptionEnum ObjectFactoryUnknownType;
 
          static ExceptionEnum InvalidActorException;

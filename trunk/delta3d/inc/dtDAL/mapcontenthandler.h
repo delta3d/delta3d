@@ -22,26 +22,11 @@
 #ifndef DELTA_MAP_CONTENT_HANDLER
 #define DELTA_MAP_CONTENT_HANDLER
 
-#include <vector>
-#include <string>
-#include <stack>
-#include <map>
-#include <set>
-
+#include <dtDAL/basexmlhandler.h>
 #include <dtDAL/map.h>
-#include <dtDAL/export.h>
+#include <dtDAL/actorpropertyserializer.h>
+
 #include <dtCore/uniqueid.h>
-#include <dtCore/refptr.h>
-#include <osg/Referenced>
-
-#include <xercesc/sax2/ContentHandler.hpp>
-#include <xercesc/sax/ErrorHandler.hpp>
-#include <xercesc/sax/EntityResolver.hpp>
-
-namespace dtUtil
-{
-   class Log;
-}
 
 namespace dtDAL
 {
@@ -61,8 +46,7 @@ namespace dtDAL
     * @class MapContentHandler
     * @brief The SAX2 content handler for loading maps.
     */
-   class DT_DAL_EXPORT MapContentHandler: public xercesc::ContentHandler, public xercesc::ErrorHandler,
-                                          public xercesc::EntityResolver, public osg::Referenced
+   class DT_DAL_EXPORT MapContentHandler: public BaseXMLHandler
    {
       public:
 
@@ -74,45 +58,6 @@ namespace dtDAL
          ///Constructor
          MapContentHandler();
 
-         virtual const std::vector<std::string>& GetMissingLibraries() { return mMissingLibraries; }
-         virtual const std::set<std::string>& GetMissingActorTypes() { return mMissingActorTypes; }
-
-         /**
-          * @see DocumentHandler#characters
-          */
-         virtual void characters(const XMLCh* const chars, const unsigned int length);
-
-         /**
-          * @see DocumentHandler#endDocument
-          */
-         virtual void endDocument();
-
-         /**
-          * @see DocumentHandler#endElement
-          */
-         virtual void endElement(const XMLCh* const uri, const XMLCh* const localname, const XMLCh* const qname);
-
-         /**
-          * @see DocumentHandler#ignorableWhitespace
-          */
-         virtual void ignorableWhitespace(const XMLCh* const chars, const unsigned int length);
-
-         /**
-          * @see DocumentHandler#processingInstruction
-          */
-         virtual void processingInstruction(const   XMLCh* const target, const XMLCh* const   data);
-
-         /**
-          * Any previously held onto map created during parsing will be deleted.
-          * @see DocumentHandler#resetDocument
-          */
-         virtual void resetDocument();
-
-         /**
-          * @see Locator
-          */
-         virtual void setDocumentLocator(const xercesc::Locator* const locator);
-
          /**
           * Any map held onto by a previous parsing will be deleted here and new map created.
           * @see DocumentHandler#startDocument
@@ -120,77 +65,42 @@ namespace dtDAL
          virtual void startDocument();
 
          /**
+          * @see DocumentHandler#endDocument
+          */
+         virtual void endDocument();
+
+         /**
           * @see DocumentHandler#startElement
           */
-         virtual void startElement( const XMLCh*  const  uri,
+         virtual void ElementStarted( const XMLCh*  const  uri,
                                     const XMLCh*  const  localname,
                                     const XMLCh*  const  qname,
                                     const xercesc::Attributes& attrs );
 
          /**
-          * @see DocumentHandler#startPrefixMapping
+          * @see DocumentHandler#endElement
           */
-         virtual void startPrefixMapping(const XMLCh* const prefix, const XMLCh* const uri);
+         virtual void ElementEnded(const XMLCh* const uri, const XMLCh* const localname, const XMLCh* const qname);
 
          /**
-          * @see DocumentHandler#endPrefixMapping
+          * @see DocumentHandler#characters
           */
-         virtual void endPrefixMapping(const XMLCh* const prefix);
+         virtual void characters(const XMLCh* const chars, const unsigned int length);
 
          /**
-          * @see DocumentHandler#skippedEntity
+          * Retrieves a list of missing libraries.
           */
-         virtual void skippedEntity(const XMLCh* const name);
-
-         //@}
-
-         /** @name Default implementation of the EntityResolver interface. */
-
-         //@{
-         /**
-          * @see EntityResolver#resolveEntity
-          */
-         virtual xercesc::InputSource* resolveEntity(
-            const XMLCh* const publicId,
-            const XMLCh* const systemId);
-
-         //@}
-
-         /** @name Default implementation of the ErrorHandler interface */
-         //@{
-         /**
-          * @see xercesc::ErrorHandler#warning
-          * @see xercesc::SAXParseException#SAXParseException
-          */
-         virtual void error(const xercesc::SAXParseException& exc);
+         virtual const std::vector<std::string>& GetMissingLibraries() { return mMissingLibraries; }
 
          /**
-          * @see xercesc::ErrorHandler#fatalError
-          * @see xercesc::SAXParseException#SAXParseException
+          * Retrieves a list of missing actor types.
           */
-         virtual void fatalError(const xercesc::SAXParseException& exc);
-
-         /**
-          * @see xercesc::ErrorHandler#warning
-          * @see xercesc::SAXParseException#SAXParseException
-          */
-         virtual void warning(const xercesc::SAXParseException& exc);
-
-         /**
-          * @see xercesc::ErrorHandler#resetErrors
-          */
-         virtual void resetErrors();
-
+         virtual const std::set<std::string>& GetMissingActorTypes() { return mMissingActorTypes; }
 
          /**
           * @return true if the map parsing has come across the map name yet.
           */
          bool HasFoundMapName() const { return mFoundMapName; };
-
-         /**
-         * Returns whether or not the map had a temporary property in it.
-         */
-         bool HasDeprecatedProperty() const { return mHasDeprecatedProperty; }
 
          /**
          * Initializes the content handler to load a map.
@@ -217,6 +127,11 @@ namespace dtDAL
          const Map* GetMap() const;
 
          /**
+          * Returns whether or not the map had a temporary property in it.
+          */
+         bool HasDeprecatedProperty() const { return mPropSerializer->HasDeprecatedProperty(); }
+
+         /**
           * This causes the parser to release its reference to the map.
           */
          void ClearMap();
@@ -226,9 +141,6 @@ namespace dtDAL
          virtual ~MapContentHandler();
 
       private:
-         //A string using the xerces multibyte character.  This allows
-         //for easier coding.
-         typedef std::basic_string<XMLCh> xmlCharString;
          // -----------------------------------------------------------------------
          //  Unimplemented constructors and operators
          // -----------------------------------------------------------------------
@@ -247,50 +159,20 @@ namespace dtDAL
          bool mInGroup;
          bool mInPresetCameras;
          bool mIgnoreCurrentActor;
-         bool mInActorProperty;
-         bool mPreparingProp;
-         bool mInGroupProperty;
-         bool mHasDeprecatedProperty;
-         int  mInArrayProperty;     // Since arrays can be nested, we need to keep track of how deep we are.
-         int  mInContainerProperty; // Since containers can be nested, we need to keep track of how deep we are.
 
          std::string mLibName;
          std::string mLibVersion;
 
          dtCore::UniqueId mEnvActorId;
 
-         std::stack<xmlCharString> mElements;
-
          std::vector<std::string> mMissingLibraries;
          std::set<std::string> mMissingActorTypes;
 
-         //data for actor linking is not completely available until all actors have been created, so it
-         //is stored until the end.
-         std::multimap<dtCore::UniqueId, std::pair<std::string, dtCore::UniqueId> > mActorLinking;
-         //The data for group parameters is like linked actors, it needs to be set only after the map is done loading
-         //so things are not in a bad state.
-         std::multimap<dtCore::UniqueId, std::pair<std::string, dtCore::RefPtr<dtDAL::NamedGroupParameter> > > mGroupParameters;
-
-         std::string mCurrentPropName;
-         bool mCurrentPropIsVector;
-
-         std::string mDescriptorDisplayName;
+         ActorPropertySerializer* mPropSerializer;
 
          dtCore::RefPtr<GameEvent> mGameEvent;
 
          dtCore::RefPtr<ActorProxy> mActorProxy;
-         DataType* mActorPropertyType;
-         dtCore::RefPtr<ActorProperty> mActorProperty;
-
-         std::stack<dtCore::RefPtr<NamedParameter> > mParameterStack;
-         std::string mParameterNameToCreate;
-         DataType* mParameterTypeToCreate;
-
-         dtUtil::Log* mLogger;
-
-         int mErrorCount;
-         int mFatalErrorCount;
-         int mWarningCount;
 
          int mGroupIndex;
 
@@ -311,46 +193,16 @@ namespace dtDAL
          void ClearLibraryValues();
          //reset/clear all of the actor data/state variables
          void ClearActorValues();
-         //reset/clear all of the parameter data/state variables
-         void ClearParameterValues();
-         //returns true if a property in the actor is the same as the XML expects and adjusts the value.
-         bool IsPropertyCorrectType(dtDAL::DataType** dataType, dtDAL::ActorProperty* actorProperty);
          //Called from characters when the state says we are inside an actor element.
          void ActorCharacters(const XMLCh* const chars);
          //Called from characters when the state says we are inside a preset camera element.
          void PresetCameraCharacters(const XMLCh* const chars);
-         //Called from characters when the state says we are inside a parameter of a group actor property.
-         void ParameterCharacters(const XMLCh* const chars);
-         //parses the text data from the xml and stores it in the property.
-         void ParsePropertyData(std::string& dataValue, dtDAL::DataType** dataType, dtDAL::ActorProperty* actorProperty);
-         //parses the text data from the xml and stores it in the property.
-         void ParseParameterData(std::string& dataValue);
-         //parses one item out of the xml and stores it in the proper element of the osg Vec#.
-         template <typename VecType>
-         void ParseVec(const std::string& dataValue, VecType& vec, size_t vecSize);
-         //parses the data for an array property.
-         void ParseArray(std::string& dataValue, ArrayActorPropertyBase* arrayProp);
-         //parses the data for a container property.
-         void ParseContainer(std::string& dataValue, ContainerActorProperty* arrayProp);
-         //processes the mActorLinking multimap to set ActorActorProperties.
-         void LinkActors();
-         //processes the mGroupProperties multimap to set GroupActorProperties.
-         void AssignGroupProperties();
-         //decides on a property's datatype base on the name of the element.
-         DataType* ParsePropertyType(const XMLCh* const localname, bool errorIfNotFound = true);
-         //Creates a named parameter based on the name and type last parsed and pushes it to the top of the stack.
-         void CreateAndPushParameter();
-         // Workaround for properties where empty data would result in the property not being set.
-         void NonEmptyDefaultWorkaround();
 
          void EndHeaderElement(const XMLCh* const localname);
          void EndActorSection(const XMLCh* const localname);
          void EndActorsElement();
          void EndActorElement();
          void EndActorPropertySection(const XMLCh* const localname);
-         void EndActorPropertyGroupElement();
-         void EndActorPropertyParameterElement();
-         void EndActorPropertyElement();
          void EndGroupSection(const XMLCh* const localname);
          void EndGroupElement();
          void EndPresetCameraSection(const XMLCh* const localname);

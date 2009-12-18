@@ -29,6 +29,7 @@
 #ifndef DELTA_DYNAMICNAMECONTROL
 #define DELTA_DYNAMICNAMECONTROL
 
+#include <dtEditQt/export.h>
 #include <dtQt/dynamicabstractcontrol.h>
 #include <dtQt/dynamicsubwidgets.h>
 
@@ -39,7 +40,7 @@ namespace dtEditQt
     * @class DynamicNameControl
     * @brief This is not really a dynamic control at all.  It is used to edit the proxies name in the tree.
     */
-    class DynamicNameControl : public dtQt::DynamicAbstractControl
+    class DT_EDITQT_EXPORT DynamicNameControl : public dtQt::DynamicAbstractControl
     {
         Q_OBJECT
 

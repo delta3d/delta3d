@@ -43,6 +43,12 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////////////
    void PropertyContainer::AddProperty(ActorProperty* newProp)
    {
+      InsertProperty(newProp, -1);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void PropertyContainer::InsertProperty(ActorProperty* newProp, int index)
+   {
       if(newProp == NULL)
       {
          throw dtUtil::Exception(ExceptionEnum::InvalidParameter,
@@ -61,7 +67,15 @@ namespace dtDAL
       else
       {
          mPropertyMap.insert(std::make_pair(dtUtil::RefString(newProp->GetName()),newProp));
-         mProperties.push_back(newProp);
+
+         if (index >= 0 && index < (int)mProperties.size())
+         {
+            mProperties.insert(mProperties.begin() + index, newProp);
+         }
+         else
+         {
+            mProperties.push_back(newProp);
+         }
       }
    }
 

@@ -423,12 +423,10 @@ namespace dtDAL
                    std::string("Map file \"") + fullPath + "\" not found.", __FILE__, __LINE__);
          }
 
-         map = mParser->Parse(fullPath);
-
-         if (map == NULL)
+         if (!mParser->Parse(fullPath, &map) || map == NULL)
          {
             throw dtUtil::Exception(dtDAL::ExceptionEnum::MapLoadParsingError,
-                   "Map loading didn't throw an exception, but the result is NULL", __FILE__, __LINE__);
+               "Map loading didn't throw an exception, but the result is NULL", __FILE__, __LINE__);
          }
 
          mOpenMaps.insert(std::make_pair(name, dtCore::RefPtr<Map>(map)));
