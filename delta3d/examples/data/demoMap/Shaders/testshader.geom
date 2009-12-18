@@ -4,13 +4,19 @@
 varying in vec4 color[];
 varying out vec4 colorOut;
 
+uniform float osg_FrameTime;
+
 // a passthrough geometry shader for color and position
 void main()
 { 
+  vec4 faceEdgeA = gl_PositionIn[1] - gl_PositionIn[0];
+  vec4 faceEdgeB = gl_PositionIn[2] - gl_PositionIn[0];
+  vec3 faceNormal = normalize(cross(faceEdgeB.xyz, faceEdgeA.xyz));
+
   for(int i = 0; i < gl_VerticesIn; ++i)
   {
-    // copy position
     gl_Position = gl_PositionIn[i];
+    gl_Position.xyz += faceNormal * abs(sin(2.0 * osg_FrameTime));
 
     colorOut = color[i];
 

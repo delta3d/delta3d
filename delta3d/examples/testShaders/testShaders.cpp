@@ -55,7 +55,8 @@ public:
 
       GetWindow()->SetWindowTitle("testShaders");
 
-      CreateHelpLabel();
+      // This is somehow incompatible with the geometry shader
+      //CreateHelpLabel();
    }
 
 protected:
@@ -78,10 +79,7 @@ public:
       
       dtCore::ShaderProgram* testProgram = shaderManager.FindShaderPrototype("TestShader");
       osg::Program* osgProgram = testProgram->GetShaderProgram();
-
       osgProgram->setParameter(GL_GEOMETRY_VERTICES_OUT_EXT, 3);
-      osgProgram->setParameter(GL_GEOMETRY_INPUT_TYPE_EXT, GL_TRIANGLES);
-      osgProgram->setParameter(GL_GEOMETRY_OUTPUT_TYPE_EXT, GL_TRIANGLES);
 
       mEnabled = true;
    }
@@ -114,7 +112,8 @@ public:
       }
       else if (key == osgGA::GUIEventAdapter::KEY_F1)
       {
-         mLabel->SetActive(!mLabel->GetActive());
+         // Disable until the gui is compatible with the geom shader
+         //mLabel->SetActive(!mLabel->GetActive());
          verdict = true;
       }
 
