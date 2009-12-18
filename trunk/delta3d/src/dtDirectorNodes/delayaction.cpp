@@ -114,6 +114,8 @@ namespace dtDirector
             OutputLink* link = GetOutputLink("Time Elapsed");
             if (link) link->Activate();
 
+            mIsActive = false;
+
             // Return false so this node does not remain active.
             return false;
          }
