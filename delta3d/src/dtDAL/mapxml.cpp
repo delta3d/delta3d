@@ -49,22 +49,13 @@
 #include <dtDAL/mapxml.h>
 #include <dtDAL/map.h>
 #include <dtDAL/exceptionenum.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/groupactorproperty.h>
-#include <dtDAL/arrayactorpropertybase.h>
-#include <dtDAL/containeractorproperty.h>
-#include <dtDAL/resourceactorproperty.h>
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/actortype.h>
-#include <dtDAL/datatype.h>
 #include <dtDAL/gameevent.h>
 #include <dtDAL/gameeventmanager.h>
-#include <dtDAL/namedparameter.h>
 #include <dtDAL/mapxmlconstants.h>
 #include <dtDAL/mapcontenthandler.h>
 #include <dtDAL/transformableactorproxy.h>
 #include <dtDAL/librarymanager.h>
+#include <dtDAL/actorpropertyserializer.h>
 
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/fileutils.h>
@@ -82,107 +73,73 @@ namespace dtDAL
    static const std::string logName("mapxml.cpp");
 
    /////////////////////////////////////////////////////////////////
-
-   void MapParser::StaticInit()
+   MapParser::MapParser()
+      : BaseXMLParser()
+      , mMapHandler(new MapContentHandler())
    {
-      try
+      mHandler = mMapHandler.get();
+
+      mXercesParser->setFeature(XMLUni::fgSAX2CoreValidation, true);
+      mXercesParser->setFeature(XMLUni::fgXercesDynamic, false);
+
+      mXercesParser->setFeature(XMLUni::fgSAX2CoreNameSpaces, true);
+      mXercesParser->setFeature(XMLUni::fgXercesSchema, true);
+      mXercesParser->setFeature(XMLUni::fgXercesSchemaFullChecking, true);
+      mXercesParser->setFeature(XMLUni::fgSAX2CoreNameSpacePrefixes, true);
+      mXercesParser->setFeature(XMLUni::fgXercesUseCachedGrammarInParse, true);
+      mXercesParser->setFeature(XMLUni::fgXercesCacheGrammarFromParse, true);
+
+      std::string schemaFileName = dtUtil::FindFileInPathList("map.xsd");
+
+      if (!dtUtil::FileUtils::GetInstance().FileExists(schemaFileName))
       {
-         XMLPlatformUtils::Initialize();
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectException, "Unable to load required file \"map.xsd\", can not load map.", __FILE__, __LINE__);
       }
-      catch (const XMLException& toCatch)
-      {
-         //if this happens, something is very very wrong.
-         char* message = XMLString::transcode( toCatch.getMessage() );
-         std::string msg(message);
-         LOG_ERROR("Error during parser initialization!: "+ msg)
-            XMLString::release( &message );
-         return;
-      }
+
+      XMLCh* value = XMLString::transcode(schemaFileName.c_str());
+      LocalFileInputSource inputSource(value);
+      //cache the schema
+      mXercesParser->loadGrammar(inputSource, Grammar::SchemaGrammarType, true);
+      XMLString::release(&value);
    }
 
    /////////////////////////////////////////////////////////////////
-
-   void MapParser::StaticShutdown()
+   MapParser::~MapParser()
    {
-      //This causes too many problems and it in only called at app shutdown
-      //so the memory leak in not a problem.
-      //XMLPlatformUtils::Terminate();
    }
 
    /////////////////////////////////////////////////////////////////
-
-   Map* MapParser::Parse(const std::string& path)
+   bool MapParser::Parse(const std::string& path, Map** map)
    {
-      try
+      mMapHandler->SetMapMode();
+      if (BaseXMLParser::Parse(path))
       {
-         mParsing = true;
-         mHandler->SetMapMode();
-         mXercesParser->setContentHandler(mHandler.get());
-         mXercesParser->setErrorHandler(mHandler.get());
-         mXercesParser->parse(path.c_str());
-         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Parsing complete.\n");
-         dtCore::RefPtr<Map> mapRef = mHandler->GetMap();
-         mHandler->ClearMap();
-         mParsing = false;
-         return mapRef.release();
+         dtCore::RefPtr<Map> mapRef = mMapHandler->GetMap();
+         mMapHandler->ClearMap();
+
+         if (map)
+         {
+            *map = mapRef.release();
+         }
+
+         return true;
       }
-      catch (const OutOfMemoryException&)
-      {
-         mParsing = false;
-         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Ran out of memory parsing!");
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::MapLoadParsingError, "Ran out of memory parsing save file.", __FILE__, __LINE__);
-      }
-      catch (const XMLException& toCatch)
-      {
-         mParsing = false;
-         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Error during parsing! %ls :\n",
-                             toCatch.getMessage());
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::MapLoadParsingError, "Error while parsing map file. See log for more information.", __FILE__, __LINE__);
-      }
-      catch (const SAXParseException&)
-      {
-         mParsing = false;
-         //this will already by logged by the
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::MapLoadParsingError, "Error while parsing map file. See log for more information.", __FILE__, __LINE__);
-      }
-      return NULL;
+
+      return false;
    }
 
    /////////////////////////////////////////////////////////////////
 
    bool MapParser::ParsePrefab(const std::string& path, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >& proxyList, dtDAL::Map* map)
    {
-      try
+      mMapHandler->SetPrefabMode(proxyList, dtDAL::MapContentHandler::PREFAB_READ_ALL, map);
+      if (BaseXMLParser::Parse(path))
       {
-         mParsing = true;
-         mHandler->SetPrefabMode(proxyList, dtDAL::MapContentHandler::PREFAB_READ_ALL, map);
-         mXercesParser->setContentHandler(mHandler.get());
-         mXercesParser->setErrorHandler(mHandler.get());
-         mXercesParser->parse(path.c_str());
-         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Parsing complete.\n");
-         mHandler->ClearMap();
-         mParsing = false;
+         dtCore::RefPtr<Map> mapRef = mMapHandler->GetMap();
+         mMapHandler->ClearMap();
          return true;
       }
-      catch (const OutOfMemoryException&)
-      {
-         mParsing = false;
-         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Ran out of memory parsing!");
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::MapLoadParsingError, "Ran out of memory parsing save file.", __FILE__, __LINE__);
-      }
-      catch (const XMLException& toCatch)
-      {
-         mParsing = false;
-         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Error during parsing! %ls :\n",
-            toCatch.getMessage());
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::MapLoadParsingError, "Error while parsing map file. See log for more information.", __FILE__, __LINE__);
-      }
-      catch (const SAXParseException&)
-      {
-         mParsing = false;
-         //this will already by logged by the
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::MapLoadParsingError, "Error while parsing map file. See log for more information.", __FILE__, __LINE__);
-      }
+
       return false;
    }
 
@@ -193,9 +150,9 @@ namespace dtDAL
       std::string iconFileName = "";
 
       mParsing = true;
-      mHandler->SetPrefabMode(proxyList, MapContentHandler::PREFAB_ICON_ONLY);
-      mXercesParser->setContentHandler(mHandler.get());
-      mXercesParser->setErrorHandler(mHandler.get());
+      mMapHandler->SetPrefabMode(proxyList, MapContentHandler::PREFAB_ICON_ONLY);
+      mXercesParser->setContentHandler(mMapHandler.get());
+      mXercesParser->setErrorHandler(mMapHandler.get());
 
       try
       {
@@ -207,9 +164,9 @@ namespace dtDAL
          //been thrown, so there's nothing to do here.  
       }
       
-      iconFileName = mHandler->GetPrefabIconFileName();
+      iconFileName = mMapHandler->GetPrefabIconFileName();
    
-      mHandler->ClearMap();      
+      mMapHandler->ClearMap();      
       mParsing = false;
 
       return iconFileName;
@@ -224,15 +181,15 @@ namespace dtDAL
       XMLPScanToken token;
       try
       {
-         mXercesParser->setContentHandler(mHandler.get());
-         mXercesParser->setErrorHandler(mHandler.get());
+         mXercesParser->setContentHandler(mMapHandler.get());
+         mXercesParser->setErrorHandler(mMapHandler.get());
 
          if (mXercesParser->parseFirst(path.c_str(), token))
          {
             parserNeedsReset = true;
 
             bool cont = mXercesParser->parseNext(token);
-            while (cont && !mHandler->HasFoundMapName())
+            while (cont && !mMapHandler->HasFoundMapName())
             {
                cont = mXercesParser->parseNext(token);
             }
@@ -241,11 +198,11 @@ namespace dtDAL
             //reSet the parser and close the file handles.
             mXercesParser->parseReset(token);
 
-            if (mHandler->HasFoundMapName())
+            if (mMapHandler->HasFoundMapName())
             {
                mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Parsing complete.");
-               std::string name = mHandler->GetMap()->GetName();
-               mHandler->ClearMap();
+               std::string name = mMapHandler->GetMap()->GetName();
+               mMapHandler->ClearMap();
                return name;
             }
             else
@@ -293,7 +250,7 @@ namespace dtDAL
          return NULL;
       }
 
-      return mHandler->GetMap();
+      return mMapHandler->GetMap();
    }
 
    /////////////////////////////////////////////////////////////////
@@ -304,198 +261,45 @@ namespace dtDAL
          return NULL;
       }
 
-      return mHandler->GetMap();
-   }
-
-   /////////////////////////////////////////////////////////////////
-   MapParser::MapParser()
-      : mHandler(new MapContentHandler())
-      , mParsing(false)
-   {
-      mLogger = &dtUtil::Log::GetInstance(logName);
-
-      mXercesParser = XMLReaderFactory::createXMLReader();
-
-      mXercesParser->setFeature(XMLUni::fgSAX2CoreValidation, true);
-      mXercesParser->setFeature(XMLUni::fgXercesDynamic, false);
-
-      mXercesParser->setFeature(XMLUni::fgSAX2CoreNameSpaces, true);
-      mXercesParser->setFeature(XMLUni::fgXercesSchema, true);
-      mXercesParser->setFeature(XMLUni::fgXercesSchemaFullChecking, true);
-      mXercesParser->setFeature(XMLUni::fgSAX2CoreNameSpacePrefixes, true);
-      mXercesParser->setFeature(XMLUni::fgXercesUseCachedGrammarInParse, true);
-      mXercesParser->setFeature(XMLUni::fgXercesCacheGrammarFromParse, true);
-
-      std::string schemaFileName = dtUtil::FindFileInPathList("map.xsd");
-
-      if (!dtUtil::FileUtils::GetInstance().FileExists(schemaFileName))
-      {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectException, "Unable to load required file \"map.xsd\", can not load map.", __FILE__, __LINE__);
-      }
-
-      XMLCh* value = XMLString::transcode(schemaFileName.c_str());
-      LocalFileInputSource inputSource(value);
-      //cache the schema
-      mXercesParser->loadGrammar(inputSource, Grammar::SchemaGrammarType, true);
-      XMLString::release(&value);
-   }
-
-   /////////////////////////////////////////////////////////////////
-
-   MapParser::~MapParser()
-   {
-      delete mXercesParser;
+      return mMapHandler->GetMap();
    }
 
    /////////////////////////////////////////////////////////////////
 
    const std::set<std::string>& MapParser::GetMissingActorTypes()
    {
-      return mHandler->GetMissingActorTypes();
+      return mMapHandler->GetMissingActorTypes();
    }
 
    /////////////////////////////////////////////////////////////////
 
    const std::vector<std::string>& MapParser::GetMissingLibraries()
    {
-      return mHandler->GetMissingLibraries();
+      return mMapHandler->GetMissingLibraries();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    bool MapParser::HasDeprecatedProperty() const
    {
-      return mHandler->HasDeprecatedProperty();
+      return mMapHandler->HasDeprecatedProperty();
    }
 
-   /////////////////////////////////////////////////////////////////
-   /////////////////////////////////////////////////////////////////
+   //////////////////////////////////////////////////////////////////////////
+   //////////////////////////////////////////////////////////////////////////
 
-   MapWriter::MapFormatTarget::MapFormatTarget(): mOutFile(NULL)
+   //////////////////////////////////////////////////////////////////////////
+   MapWriter::MapWriter()
+      : BaseXMLWriter()
    {
-      mLogger = &dtUtil::Log::GetInstance(logName);
+      mPropSerializer = new ActorPropertySerializer(this);
    }
 
-   /////////////////////////////////////////////////////////////////
-
-   MapWriter::MapFormatTarget::~MapFormatTarget()
-   {
-      SetOutputFile(NULL);
-   }
-
-   /////////////////////////////////////////////////////////////////
-
-   void MapWriter::MapFormatTarget::SetOutputFile(FILE* newFile)
-   {
-      if (mOutFile != NULL)
-         fclose(mOutFile);
-
-      mOutFile = newFile;
-   }
-
-   /////////////////////////////////////////////////////////////////
-
-   void MapWriter::MapFormatTarget::writeChars(
-      const XMLByte* const toWrite,
-      const unsigned int count,
-      xercesc::XMLFormatter* const formatter)
-   {
-      if (mOutFile != NULL)
-      {
-         size_t size = fwrite((char *) toWrite, sizeof(char), (size_t)count, mOutFile);
-         if (size < (size_t)count)
-         {
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                                "Error writing to file.  Write count less than expected.");
-         }
-
-         //fflush(mOutFile);
-      }
-      else
-      {
-         XERCES_STD_QUALIFIER cout.write((char *) toWrite, (int) count);
-         XERCES_STD_QUALIFIER cout.flush();
-      }
-   }
-
-   /////////////////////////////////////////////////////////////////
-
-   void MapWriter::MapFormatTarget::flush()
-   {
-      if (mOutFile != NULL)
-      {
-         fflush(mOutFile);
-      }
-      else
-      {
-         XERCES_STD_QUALIFIER cout.flush();
-      }
-   }
-
-   //////////////////////////////////////////////////
-
-   MapWriter::MapWriter():
-      mFormatter("UTF-8", NULL, &mFormatTarget, XMLFormatter::NoEscapes, XMLFormatter::DefaultUnRep)
-   {
-      mLogger = &dtUtil::Log::GetInstance(logName);
-   }
-   /////////////////////////////////////////////////////////////////
-
-
+   //////////////////////////////////////////////////////////////////////////
    MapWriter::~MapWriter()
    {
    }
 
    /////////////////////////////////////////////////////////////////
-
-   template <typename VecType>
-   void MapWriter::WriteVec(const VecType& vec, char* numberConversionBuffer, const size_t bufferMax)
-   {
-      switch (VecType::num_components) {
-      case 2:
-         BeginElement(MapXMLConstants::ACTOR_PROPERTY_VEC2_ELEMENT);
-         break;
-      case 3:
-         BeginElement(MapXMLConstants::ACTOR_PROPERTY_VEC3_ELEMENT);
-         break;
-      case 4:
-         BeginElement(MapXMLConstants::ACTOR_PROPERTY_VEC4_ELEMENT);
-         break;
-      default:
-         //LOG error
-         return;
-      }
-
-      BeginElement(MapXMLConstants::ACTOR_VEC_1_ELEMENT);
-      snprintf(numberConversionBuffer, bufferMax, "%f", vec[0]);
-      AddCharacters(numberConversionBuffer);
-      EndElement();
-
-      BeginElement(MapXMLConstants::ACTOR_VEC_2_ELEMENT);
-      snprintf(numberConversionBuffer, bufferMax, "%f", vec[1]);
-      AddCharacters(numberConversionBuffer);
-      EndElement();
-
-      if (VecType::num_components > 2)
-      {
-         BeginElement(MapXMLConstants::ACTOR_VEC_3_ELEMENT);
-         snprintf(numberConversionBuffer, bufferMax, "%f", vec[2]);
-         AddCharacters(numberConversionBuffer);
-         EndElement();
-      }
-
-      if (VecType::num_components > 3)
-      {
-         BeginElement(MapXMLConstants::ACTOR_VEC_4_ELEMENT);
-         snprintf(numberConversionBuffer, bufferMax, "%f", vec[3]);
-         AddCharacters(numberConversionBuffer);
-         EndElement();
-      }
-
-      EndElement();
-   }
-
-   /////////////////////////////////////////////////////////////////
-
    void MapWriter::Save(Map& map, const std::string& filePath)
    {
       FILE* outfile = fopen(filePath.c_str(), "w");
@@ -516,7 +320,7 @@ namespace dtDAL
 
          BeginElement(MapXMLConstants::MAP_ELEMENT, MapXMLConstants::MAP_NAMESPACE);
          BeginElement(MapXMLConstants::HEADER_ELEMENT);
-         BeginElement(MapXMLConstants::MAP_NAME_ELEMENT);
+         BeginElement(MapXMLConstants::NAME_ELEMENT);
          AddCharacters(map.GetName());
          EndElement(); // End Map Name Element.
          BeginElement(MapXMLConstants::DESCRIPTION_ELEMENT);
@@ -637,7 +441,7 @@ namespace dtDAL
                if (property.IsReadOnly())
                   continue;
 
-               WriteProperty(property);
+               mPropSerializer->WriteProperty(property);
 
             }
             EndElement(); // End Actor Element.
@@ -952,7 +756,7 @@ namespace dtDAL
                if (property.IsReadOnly())
                   continue;
 
-               WriteProperty(property);
+               mPropSerializer->WriteProperty(property);
             }
             EndElement(); // End Actor Element.
 
@@ -986,436 +790,6 @@ namespace dtDAL
          throw dtUtil::Exception(dtDAL::ExceptionEnum::MapSaveError, std::string("Unknown exception saving map \"") + filePath + ("\"."), __FILE__, __LINE__);
       }
    }
-
-   /////////////////////////////////////////////////////////////////
-
-   void MapWriter::WriteParameter(const NamedParameter& parameter)
-   {
-      const size_t bufferMax = 512;
-      char numberConversionBuffer[bufferMax];
-      const DataType& dataType = parameter.GetDataType();
-
-      BeginElement(MapXMLConstants::ACTOR_PROPERTY_PARAMETER_ELEMENT);
-
-      BeginElement(MapXMLConstants::ACTOR_PROPERTY_NAME_ELEMENT);
-      AddCharacters(parameter.GetName());
-      if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-      {
-         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                             "Found Parameter of GroupActorProperty Named: %s", parameter.GetName().c_str());
-      }
-      EndElement();
-
-      switch (dataType.GetTypeId())
-      {
-         case DataType::FLOAT_ID:
-         case DataType::DOUBLE_ID:
-         case DataType::INT_ID:
-         case DataType::LONGINT_ID:
-         case DataType::STRING_ID:
-         case DataType::BOOLEAN_ID:
-         case DataType::ACTOR_ID:
-         case DataType::GAMEEVENT_ID:
-         case DataType::ENUMERATION_ID:
-            WriteSimple(parameter);
-            break;
-         case DataType::VEC2_ID:
-            WriteVec(static_cast<const NamedVec2Parameter&>(parameter).GetValue(), numberConversionBuffer, bufferMax);
-            break;
-         case DataType::VEC2F_ID:
-            WriteVec(static_cast<const NamedVec2fParameter&>(parameter).GetValue(), numberConversionBuffer, bufferMax);
-            break;
-         case DataType::VEC2D_ID:
-            WriteVec(static_cast<const NamedVec2dParameter&>(parameter).GetValue(), numberConversionBuffer, bufferMax);
-            break;
-         case DataType::VEC3_ID:
-            WriteVec(static_cast<const NamedVec3Parameter&>(parameter).GetValue(), numberConversionBuffer, bufferMax);
-            break;
-         case DataType::VEC3F_ID:
-            WriteVec(static_cast<const NamedVec3fParameter&>(parameter).GetValue(), numberConversionBuffer, bufferMax);
-            break;
-         case DataType::VEC3D_ID:
-            WriteVec(static_cast<const NamedVec3dParameter&>(parameter).GetValue(), numberConversionBuffer, bufferMax);
-            break;
-         case DataType::VEC4_ID:
-            WriteVec(static_cast<const NamedVec4Parameter&>(parameter).GetValue(), numberConversionBuffer, bufferMax);
-            break;
-         case DataType::VEC4F_ID:
-            WriteVec(static_cast<const NamedVec4fParameter&>(parameter).GetValue(), numberConversionBuffer, bufferMax);
-            break;
-         case DataType::VEC4D_ID:
-            WriteVec(static_cast<const NamedVec4dParameter&>(parameter).GetValue(), numberConversionBuffer, bufferMax);
-            break;
-         case DataType::RGBACOLOR_ID:
-            WriteColorRGBA(static_cast<const NamedRGBAColorParameter&>(parameter), numberConversionBuffer, bufferMax);
-            break;
-         case DataType::GROUP_ID:
-         {
-            BeginElement(MapXMLConstants::ACTOR_PROPERTY_GROUP_ELEMENT);
-            std::vector<const NamedParameter*> parameters;
-            static_cast<const NamedGroupParameter&>(parameter).GetParameters(parameters);
-            for (size_t i = 0; i < parameters.size(); ++i)
-            {
-               WriteParameter(*parameters[i]);
-            }
-            EndElement();
-            break;
-         }
-         case DataType::ARRAY_ID:
-         {
-            // BeginElement(MapXMLConstants::ACTOR_PROPERTY_ARRAY_ELEMENT);
-            // TODO ARRAY: Save an array that was part of a group.
-            break;
-         }
-         case DataType::CONTAINER_ID:
-         {
-            //BeginElement(MapXMLConstants::ACTOR_PROPERTY_CONTAINER_ELEMENT);
-            // TODO CONTAINER: Save a container that was part of a group.
-            break;
-         }
-         default:
-         {
-            if (dataType.IsResource())
-            {
-               const NamedResourceParameter& p =
-                  static_cast<const NamedResourceParameter&>(parameter);
-
-               const ResourceDescriptor rd = p.GetValue();
-
-               BeginElement(MapXMLConstants::ACTOR_PROPERTY_RESOURCE_TYPE_ELEMENT);
-               AddCharacters(parameter.GetDataType().GetName());
-               EndElement();
-
-               BeginElement(MapXMLConstants::ACTOR_PROPERTY_RESOURCE_DISPLAY_ELEMENT);
-               if (rd.IsEmpty() == false)
-                  AddCharacters(rd.GetDisplayName());
-               EndElement();
-               BeginElement(MapXMLConstants::ACTOR_PROPERTY_RESOURCE_IDENTIFIER_ELEMENT);
-               if (rd.IsEmpty() == false)
-                  AddCharacters(rd.GetResourceIdentifier());
-               EndElement();
-            }
-            else
-            {
-               mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                                    "Unhandled datatype in MapWriter: %s.",
-                                    dataType.GetName().c_str());
-            }
-         }
-      }
-      //End the parameter element.
-      EndElement();
-   }
-
-   /////////////////////////////////////////////////////////////////
-
-   template <typename Type>
-   void MapWriter::WriteColorRGBA(const Type& holder, char* numberConversionBuffer, size_t bufferMax)
-   {
-      osg::Vec4f val = holder.GetValue();
-
-      BeginElement(MapXMLConstants::ACTOR_PROPERTY_COLOR_RGBA_ELEMENT);
-
-      BeginElement(MapXMLConstants::ACTOR_COLOR_R_ELEMENT);
-      snprintf(numberConversionBuffer, bufferMax, "%f", val[0]);
-      AddCharacters(numberConversionBuffer);
-      EndElement();
-
-      BeginElement(MapXMLConstants::ACTOR_COLOR_G_ELEMENT);
-      snprintf(numberConversionBuffer, bufferMax, "%f", val[1]);
-      AddCharacters(numberConversionBuffer);
-      EndElement();
-
-      BeginElement(MapXMLConstants::ACTOR_COLOR_B_ELEMENT);
-      snprintf(numberConversionBuffer, bufferMax, "%f", val[2]);
-      AddCharacters(numberConversionBuffer);
-      EndElement();
-
-      BeginElement(MapXMLConstants::ACTOR_COLOR_A_ELEMENT);
-      snprintf(numberConversionBuffer, bufferMax, "%f", val[3]);
-      AddCharacters(numberConversionBuffer);
-      EndElement();
-
-      EndElement();
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void MapWriter::WriteArray(const ArrayActorPropertyBase& arrayProp, char* numberConversionBuffer, size_t bufferMax)
-   {
-      BeginElement(MapXMLConstants::ACTOR_PROPERTY_ARRAY_ELEMENT);
-
-      BeginElement(MapXMLConstants::ACTOR_ARRAY_SIZE_ELEMENT);
-      int arraySize = arrayProp.GetArraySize();
-      snprintf(numberConversionBuffer, bufferMax, "%d", arraySize);
-      AddCharacters(numberConversionBuffer);
-      EndElement();
-
-      // Save out the data for each index.
-      for (int index = 0; index < arraySize; index++)
-      {
-         // Save out the index number.
-         BeginElement(MapXMLConstants::ACTOR_ARRAY_ELEMENT);
-
-         BeginElement(MapXMLConstants::ACTOR_ARRAY_INDEX_ELEMENT);
-         snprintf(numberConversionBuffer, bufferMax, "%d", index);
-         AddCharacters(numberConversionBuffer);
-         EndElement();
-
-         // Write the data for the current property.
-         arrayProp.SetIndex(index);
-         WriteProperty(*arrayProp.GetArrayProperty());
-
-         EndElement();
-      }
-
-      EndElement();
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void MapWriter::WriteContainer(const ContainerActorProperty& arrayProp, char* numberConversionBuffer, size_t bufferMax)
-   {
-      BeginElement(MapXMLConstants::ACTOR_PROPERTY_CONTAINER_ELEMENT);
-
-      // Save out the data for each index.
-      for (int index = 0; index < arrayProp.GetPropertyCount(); index++)
-      {
-         // Write the data for the current property.
-         WriteProperty(*arrayProp.GetProperty(index));
-      }
-
-      EndElement();
-   }
-
-   /////////////////////////////////////////////////////////////////
-   void MapWriter::WriteSimple(const AbstractParameter& holder)
-   {
-      switch (holder.GetDataType().GetTypeId())
-      {
-         case DataType::FLOAT_ID:
-            BeginElement(MapXMLConstants::ACTOR_PROPERTY_FLOAT_ELEMENT);
-            break;
-         case DataType::DOUBLE_ID:
-            BeginElement(MapXMLConstants::ACTOR_PROPERTY_DOUBLE_ELEMENT);
-            break;
-         case DataType::INT_ID:
-            BeginElement(MapXMLConstants::ACTOR_PROPERTY_INTEGER_ELEMENT);
-            break;
-         case DataType::LONGINT_ID:
-            BeginElement(MapXMLConstants::ACTOR_PROPERTY_LONG_ELEMENT);
-            break;
-         case DataType::STRING_ID:
-            BeginElement(MapXMLConstants::ACTOR_PROPERTY_STRING_ELEMENT);
-            break;
-         case DataType::BOOLEAN_ID:
-            BeginElement(MapXMLConstants::ACTOR_PROPERTY_BOOLEAN_ELEMENT);
-            break;
-         case DataType::ACTOR_ID:
-            BeginElement(MapXMLConstants::ACTOR_PROPERTY_ACTOR_ID_ELEMENT);
-            break;
-         case DataType::GAMEEVENT_ID:
-            BeginElement(MapXMLConstants::ACTOR_PROPERTY_GAMEEVENT_ELEMENT);
-            break;
-         case DataType::ENUMERATION_ID:
-            BeginElement(MapXMLConstants::ACTOR_PROPERTY_ENUM_ELEMENT);
-            break;
-         default:
-            //LOG ERROR
-            return;
-      }
-      AddCharacters(holder.ToString());
-      EndElement();
-   }
-
-   /////////////////////////////////////////////////////////////////
-
-   void MapWriter::WriteProperty(const ActorProperty& property)
-   {
-      const size_t bufferMax = 512;
-      char numberConversionBuffer[bufferMax];
-      const DataType& propertyType = property.GetDataType();
-
-      BeginElement(MapXMLConstants::ACTOR_PROPERTY_ELEMENT);
-
-      BeginElement(MapXMLConstants::ACTOR_PROPERTY_NAME_ELEMENT);
-      AddCharacters(property.GetName());
-      if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-      {
-         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                             "Found Property Named: %s", property.GetName().c_str());
-      }
-      EndElement();
-
-      switch (propertyType.GetTypeId())
-      {
-         case DataType::FLOAT_ID:
-         case DataType::DOUBLE_ID:
-         case DataType::INT_ID:
-         case DataType::LONGINT_ID:
-         case DataType::STRING_ID:
-         case DataType::BOOLEAN_ID:
-         case DataType::ACTOR_ID:
-         case DataType::GAMEEVENT_ID:
-         case DataType::ENUMERATION_ID:
-            WriteSimple(property);
-            break;
-         case DataType::VEC2_ID:
-            WriteVec(static_cast<const Vec2ActorProperty&>(property).GetValue(), numberConversionBuffer, bufferMax);
-            break;
-         case DataType::VEC2F_ID:
-            WriteVec(static_cast<const Vec2fActorProperty&>(property).GetValue(), numberConversionBuffer, bufferMax);
-            break;
-         case DataType::VEC2D_ID:
-            WriteVec(static_cast<const Vec2dActorProperty&>(property).GetValue(), numberConversionBuffer, bufferMax);
-            break;
-         case DataType::VEC3_ID:
-            WriteVec(static_cast<const Vec3ActorProperty&>(property).GetValue(), numberConversionBuffer, bufferMax);
-            break;
-         case DataType::VEC3F_ID:
-            WriteVec(static_cast<const Vec3fActorProperty&>(property).GetValue(), numberConversionBuffer, bufferMax);
-            break;
-         case DataType::VEC3D_ID:
-            WriteVec(static_cast<const Vec3dActorProperty&>(property).GetValue(), numberConversionBuffer, bufferMax);
-            break;
-         case DataType::VEC4_ID:
-            WriteVec(static_cast<const Vec4ActorProperty&>(property).GetValue(), numberConversionBuffer, bufferMax);
-            break;
-         case DataType::VEC4F_ID:
-            WriteVec(static_cast<const Vec4fActorProperty&>(property).GetValue(), numberConversionBuffer, bufferMax);
-            break;
-         case DataType::VEC4D_ID:
-            WriteVec(static_cast<const Vec4dActorProperty&>(property).GetValue(), numberConversionBuffer, bufferMax);
-            break;
-         case DataType::RGBACOLOR_ID:
-            WriteColorRGBA(static_cast<const ColorRgbaActorProperty&>(property), numberConversionBuffer, bufferMax);
-            break;
-         case DataType::GROUP_ID:
-         {
-            BeginElement(MapXMLConstants::ACTOR_PROPERTY_GROUP_ELEMENT);
-            dtCore::RefPtr<NamedGroupParameter> gp = static_cast<const GroupActorProperty&>(property).GetValue();
-            if (gp.valid())
-            {
-               std::vector<const NamedParameter*> parameters;
-               gp->GetParameters(parameters);
-               for (size_t i = 0; i < parameters.size(); ++i)
-               {
-                  WriteParameter(*parameters[i]);
-               }
-            }
-            EndElement();
-            break;
-         }
-         case DataType::ARRAY_ID:
-         {
-            WriteArray(static_cast<const ArrayActorPropertyBase&>(property), numberConversionBuffer, bufferMax);
-            break;
-         }
-         case DataType::CONTAINER_ID:
-         {
-            WriteContainer(static_cast<const ContainerActorProperty&>(property), numberConversionBuffer, bufferMax);
-            break;
-         }
-         default:
-         {
-            if (propertyType.IsResource())
-            {
-               const ResourceActorProperty& p =
-                  static_cast<const ResourceActorProperty&>(property);
-
-               ResourceDescriptor rd = p.GetValue();
-
-               BeginElement(MapXMLConstants::ACTOR_PROPERTY_RESOURCE_TYPE_ELEMENT);
-               AddCharacters(property.GetDataType().GetName());
-               EndElement();
-
-               BeginElement(MapXMLConstants::ACTOR_PROPERTY_RESOURCE_DISPLAY_ELEMENT);
-               if (rd.IsEmpty() == false)
-                  AddCharacters(rd.GetDisplayName());
-               EndElement();
-               BeginElement(MapXMLConstants::ACTOR_PROPERTY_RESOURCE_IDENTIFIER_ELEMENT);
-               if (rd.IsEmpty() == false)
-                  AddCharacters(rd.GetResourceIdentifier());
-               EndElement();
-            }
-            else
-            {
-               mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                                    "Unhandled datatype in MapWriter: %s.",
-                                    propertyType.GetName().c_str());
-            }
-         }
-      }
-
-      //end property element
-      EndElement();
-   }
-
-   /////////////////////////////////////////////////////////////////
-
-   void MapWriter::BeginElement(const XMLCh* name, const XMLCh* attributes)
-   {
-      xmlCharString s(name);
-      mElements.push(name);
-      AddIndent();
-
-      mFormatter << chOpenAngle << name;
-      if (attributes != NULL)
-         mFormatter << chSpace << attributes;
-
-      mFormatter << chCloseAngle;
-   }
-
-   /////////////////////////////////////////////////////////////////
-
-   void MapWriter::EndElement()
-   {
-      const xmlCharString& name = mElements.top();
-      if (mLastCharWasLF)
-         AddIndent();
-
-      mFormatter << MapXMLConstants::END_XML_ELEMENT << name.c_str() << chCloseAngle << chLF;
-      mLastCharWasLF = true;
-      mElements.pop();
-   }
-
-   /////////////////////////////////////////////////////////////////
-
-   void MapWriter::AddIndent()
-   {
-      if (!mLastCharWasLF)
-         mFormatter << chLF;
-
-      mLastCharWasLF = false;
-
-      size_t indentCount = mElements.size() - 1;
-
-      if (mElements.empty())
-      {
-         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Invalid end element when saving a map: ending with no beginning.");
-
-         indentCount = 0;
-      }
-      for (size_t x = 0; x < indentCount; x++)
-      {
-         for (int y = 0; y < MapWriter::indentSize; y++)
-            mFormatter << chSpace;
-      }
-   }
-
-   /////////////////////////////////////////////////////////////////
-
-   void MapWriter::AddCharacters(const xmlCharString& string)
-   {
-      mLastCharWasLF = false;
-      mFormatter << string.c_str();
-   }
-
-   /////////////////////////////////////////////////////////////////
-
-   void MapWriter::AddCharacters(const std::string& string)
-   {
-      mLastCharWasLF = false;
-      XMLCh * stringX = XMLString::transcode(string.c_str());
-      mFormatter << stringX;
-      XMLString::release(&stringX);
-   }
 }
+
+//////////////////////////////////////////////////////////////////////////

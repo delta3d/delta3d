@@ -29,6 +29,7 @@
 #ifndef DELTA_DYNAMIC_ACTOR_CONTROL
 #define DELTA_DYNAMIC_ACTOR_CONTROL
 
+#include <dtEditQt/export.h>
 #include <dtQt/dynamicabstractcontrol.h>
 #include <dtQt/dynamicsubwidgets.h>
 
@@ -43,7 +44,7 @@ namespace dtEditQt
 {
    class PropertyEditorModel;
 
-   class DynamicActorControl : public dtQt::DynamicAbstractControl
+   class DT_EDITQT_EXPORT DynamicActorControl : public dtQt::DynamicAbstractControl
    {
       Q_OBJECT
 

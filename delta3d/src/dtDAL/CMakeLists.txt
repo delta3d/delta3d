@@ -9,11 +9,14 @@ SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/abstractparameter.h
     ${HEADER_PATH}/actorpluginregistry.h
     ${HEADER_PATH}/actorproperty.h
+    ${HEADER_PATH}/actorpropertyserializer.h
     ${HEADER_PATH}/actorproxy.h
     ${HEADER_PATH}/actorproxyicon.h
     ${HEADER_PATH}/actortype.h
     ${HEADER_PATH}/arrayactorproperty.h
     ${HEADER_PATH}/arrayactorpropertybase.h
+    ${HEADER_PATH}/basexml.h
+    ${HEADER_PATH}/basexmlhandler.h
     ${HEADER_PATH}/containeractorproperty.h
     ${HEADER_PATH}/datatype.h
     ${HEADER_PATH}/directoryresourcetypehandler.h
@@ -51,10 +54,13 @@ SET(LIB_PUBLIC_HEADERS
 SET(LIB_SOURCES
     ${SOURCE_PATH}/actorpluginregistry.cpp
     ${SOURCE_PATH}/actorproperty.cpp
+    ${SOURCE_PATH}/actorpropertyserializer.cpp
     ${SOURCE_PATH}/actorproxy.cpp
     ${SOURCE_PATH}/actorproxyicon.cpp
     ${SOURCE_PATH}/actortype.cpp
     ${SOURCE_PATH}/arrayactorpropertybase.cpp
+    ${SOURCE_PATH}/basexml.cpp
+    ${SOURCE_PATH}/basexmlhandler.cpp
     ${SOURCE_PATH}/containeractorproperty.cpp
     ${SOURCE_PATH}/datatype.cpp
     ${SOURCE_PATH}/directoryresourcetypehandler.cpp
