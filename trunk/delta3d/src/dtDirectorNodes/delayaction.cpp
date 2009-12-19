@@ -140,6 +140,33 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   bool DelayAction::CanConnectValue(ValueLink* link, ValueNode* value)
+   {
+      if (Node::CanConnectValue(link, value))
+      {
+         // Delay link can only connect to basic types.
+         if (link == GetValueLink("Delay"))
+         {
+            dtDAL::DataType& type = value->GetPropertyType();
+            switch (type.GetTypeId())
+            {
+            case dtDAL::DataType::INT_ID:
+            case dtDAL::DataType::FLOAT_ID:
+            case dtDAL::DataType::DOUBLE_ID:
+               return true;
+
+            default:
+               return false;
+            }
+         }
+
+         return true;
+      }
+
+      return false;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void DelayAction::SetDelay(float value)
    {
       mDelay = value;
