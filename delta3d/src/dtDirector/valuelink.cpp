@@ -177,12 +177,9 @@ namespace dtDirector
       }
 
       // Perform a type check.
-      if (mTypeCheck)
+      if (!mOwner->CanConnectValue(this, valueNode))
       {
-         if (!valueNode->CanBeType(GetPropertyType()))
-         {
-            return false;
-         }
+         return false;
       }
 
       // If we are not allowing multiples, disconnect the current one first.

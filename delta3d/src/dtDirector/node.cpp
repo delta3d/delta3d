@@ -152,6 +152,22 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   bool Node::CanConnectValue(ValueLink* link, ValueNode* value)
+   {
+      if (!link || !value) return false;
+
+      if (link->IsTypeChecking())
+      {
+         if (!value->CanBeType(link->GetPropertyType()))
+         {
+            return false;
+         }
+      }
+
+      return true;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void Node::OnLinkValueChanged(const std::string& linkName)
    {
       // Default implementation does nothing.

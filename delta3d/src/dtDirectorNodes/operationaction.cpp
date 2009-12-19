@@ -123,6 +123,28 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   bool OperationAction::CanConnectValue(ValueLink* link, ValueNode* value)
+   {
+      if (Node::CanConnectValue(link, value))
+      {
+         dtDAL::DataType& type = value->GetPropertyType();
+         switch (type.GetTypeId())
+         {
+         case dtDAL::DataType::BOOLEAN_ID:
+         case dtDAL::DataType::INT_ID:
+         case dtDAL::DataType::FLOAT_ID:
+         case dtDAL::DataType::DOUBLE_ID:
+            return true;
+
+         default:
+            return false;
+         }
+      }
+
+      return false;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void OperationAction::SetA(double value)
    {
       mValueA = value;
