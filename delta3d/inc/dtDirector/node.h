@@ -200,6 +200,18 @@ namespace dtDirector
       void SetLogComment(bool log);
 
       /**
+       * Retrieves the authors of this node.
+       */
+      const std::string& GetAuthors() {return mAuthors;}
+
+      /**
+       * Adds an author for this node.
+       *
+       * @param[in]  author  The author.
+       */
+      void AddAuthor(const std::string& author);
+
+      /**
        * Retrieves the UI position of the node.
        *
        * @return  The Position.
@@ -457,6 +469,8 @@ namespace dtDirector
       dtCore::UniqueId   mID;
       std::string        mComment;
       bool               mLogComment;
+      std::string        mAuthors;
+      std::vector<std::string> mAuthorList;
 
       osg::Vec2          mPosition;
 

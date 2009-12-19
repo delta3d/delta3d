@@ -99,6 +99,14 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void Node::BuildPropertyMap()
    {
+      dtDAL::StringActorProperty* authorProp = 
+         new dtDAL::StringActorProperty("Authors", "Author(s)",
+         dtDAL::StringActorProperty::SetFuncType(),
+         dtDAL::StringActorProperty::GetFuncType(this, &Node::GetAuthors),
+         "The author(s) of this node, as well as all inherited nodes.");
+      authorProp->SetReadOnly(true);
+      AddProperty(authorProp);
+
       AddProperty(new dtDAL::BooleanActorProperty(
          "Enabled", "Enabled",
          dtDAL::BooleanActorProperty::SetFuncType(this, &Node::SetEnabled),
@@ -225,6 +233,38 @@ namespace dtDirector
    void Node::SetLogComment(bool log)
    {
       mLogComment = log;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void Node::AddAuthor(const std::string& author)
+   {
+      if (author.empty()) return;
+
+      // Check if this author already exists.
+      int count = (int)mAuthorList.size();
+      for (int index = 0; index < count; index++)
+      {
+         if (mAuthorList[index] == author)
+         {
+            // Remove the author from the list,
+            // so it will be re-added to the end.
+            mAuthorList.erase(mAuthorList.begin() + index);
+            break;
+         }
+      }
+
+      // Push the new author to the list.
+      mAuthorList.push_back(author);
+
+      // Now set the author string.  We do last to first order
+      // because more recent authors are appended to the end.
+      mAuthors.clear();
+      count = (int)mAuthorList.size();
+      for (int index = count - 1; index >= 0; index--)
+      {
+         if (index < count - 1) mAuthors += ", ";
+         mAuthors += mAuthorList[index];
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////

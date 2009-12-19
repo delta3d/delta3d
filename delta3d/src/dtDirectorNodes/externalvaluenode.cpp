@@ -35,6 +35,7 @@ namespace dtDirector
        : ValueNode()
    {
       mName = "External Value";
+      AddAuthor("Jeff P. Houde");
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////

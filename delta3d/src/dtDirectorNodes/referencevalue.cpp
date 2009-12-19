@@ -36,6 +36,7 @@ namespace dtDirector
        : ValueNode()
    {
       mName = "Ref";
+      AddAuthor("Jeff P. Houde");
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
@@ -244,13 +245,13 @@ namespace dtDirector
          // Disconnect all links that are no longer valid based on type.
          if (mLinks.size())
          {
-            dtDAL::DataType& type = node->GetPropertyType();
-
             int count = (int)mLinks.size();
             for (int index = 0; index < count; index++)
             {
-               dtDAL::DataType& testType = mLinks[index]->GetPropertyType();
-               if (testType != type && testType != dtDAL::DataType::UNKNOWN)
+               ValueLink* link = mLinks[index];
+               if (!link || !link->GetOwner()) continue;
+
+               if (!link->GetOwner()->CanConnectValue(link, node))
                {
                   mLinks[index]->Disconnect(this);
                   index--;

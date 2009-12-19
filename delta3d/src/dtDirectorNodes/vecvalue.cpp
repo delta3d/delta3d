@@ -34,6 +34,7 @@ namespace dtDirector
        : ValueNode()
    {
       mName = "Vector";
+      AddAuthor("Jeff P. Houde");
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////

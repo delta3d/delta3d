@@ -33,6 +33,7 @@ namespace dtDirector
    CallRemoteEventAction::CallRemoteEventAction()
       : ActionNode()
    {
+      AddAuthor("Jeff P. Houde");
    }
 
    ////////////////////////////////////////////////////////////////////////////////
