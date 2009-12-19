@@ -737,7 +737,10 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void DirectorXMLHandler::LinkNodes()
    {
-      for (int index = 0; index < (int)mLinkList.size(); index++)
+      std::vector<ToLinkData> failedLinks;
+
+      int count = (int)mLinkList.size();
+      for (int index = 0; index < count; index++)
       {
          dtCore::RefPtr<Node> linkNode = mDirector->GetNode(dtCore::UniqueId(mLinkList[index].linkNodeID));
 
@@ -748,7 +751,13 @@ namespace dtDirector
             if (mLinkList[index].valueLink)
             {
                ValueNode* valueNode = dynamic_cast<ValueNode*>(linkNode.get());
-               mLinkList[index].valueLink->Connect(valueNode);
+               if (!mLinkList[index].valueLink->Connect(valueNode))
+               {
+                  // If the connection failed, it may require another link
+                  // connection before it can be made.  Add to the failed
+                  // list and try this again later.
+                  failedLinks.push_back(mLinkList[index]);
+               }
             }
             else if (!mLinkList[index].linkToName.empty())
             {
@@ -766,6 +775,15 @@ namespace dtDirector
                }
             }
          }
+      }
+
+      // If we have any failed links, but we also had some successful ones,
+      // then we should try to link them again.
+      if (failedLinks.size() > 0 &&
+         failedLinks.size() != count)
+      {
+         mLinkList = failedLinks;
+         LinkNodes();
       }
    }
 }
