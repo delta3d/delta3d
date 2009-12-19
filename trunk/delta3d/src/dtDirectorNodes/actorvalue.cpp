@@ -37,6 +37,7 @@ namespace dtDirector
    {
       mName = "Actor";
       mValue = "";
+      AddAuthor("Jeff P. Houde");
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////

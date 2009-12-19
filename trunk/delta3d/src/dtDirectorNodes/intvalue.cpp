@@ -35,6 +35,7 @@ namespace dtDirector
        , mValue(0)
    {
       mName = "Integer";
+      AddAuthor("Jeff P. Houde");
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////

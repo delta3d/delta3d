@@ -35,6 +35,7 @@ namespace dtDirector
       , mDelay(1.0f)
       , mElapsedTime(0.0f)
    {
+      AddAuthor("Jeff P. Houde");
    }
 
    ////////////////////////////////////////////////////////////////////////////////

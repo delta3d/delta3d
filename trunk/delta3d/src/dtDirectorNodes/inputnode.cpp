@@ -38,6 +38,7 @@ namespace dtDirector
        : EventNode()
    {
       mName = "In";
+      AddAuthor("Jeff P. Houde");
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////

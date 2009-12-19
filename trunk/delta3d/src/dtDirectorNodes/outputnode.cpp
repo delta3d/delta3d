@@ -34,6 +34,7 @@ namespace dtDirector
        : ActionNode()
    {
       mName = "Out";
+      AddAuthor("Jeff P. Houde");
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////

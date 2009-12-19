@@ -34,6 +34,7 @@ namespace dtDirector
    RemoteEvent::RemoteEvent()
        : EventNode()
    {
+      AddAuthor("Jeff P. Houde");
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////

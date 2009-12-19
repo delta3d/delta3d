@@ -36,6 +36,7 @@ namespace dtDirector
       , mResult(0.0f)
       , mResultProp(NULL)
    {
+      AddAuthor("Jeff P. Houde");
    }
 
    ////////////////////////////////////////////////////////////////////////////////
