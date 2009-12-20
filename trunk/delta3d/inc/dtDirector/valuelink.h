@@ -125,12 +125,16 @@ namespace dtDirector
       std::string GetName();
 
       /**
-       * Retrieves the label of the link.
+       * Sets the label of the link.
        *
        * @return  The label of the link.
        */
-      //std::string GetLabel();
       void SetLabel(const std::string& label);
+
+      /**
+       * Retrieves the display name of the link.
+       */
+      std::string GetDisplayName();
 
       /**
        * Accessors for the visible status of the link.

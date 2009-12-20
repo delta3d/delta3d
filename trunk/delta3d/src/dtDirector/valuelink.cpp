@@ -141,31 +141,35 @@ namespace dtDirector
    {
       // Always display the default property name as the current property
       // changes based on what it is linked to.
-      if (GetDefaultProperty())
+      dtDAL::ActorProperty* prop = GetDefaultProperty();
+      if (prop)
       {
-         return GetDefaultProperty()->GetName().Get();
+         return prop->GetName().Get();
       }
 
       return mLabel;
    }
 
-   ////////////////////////////////////////////////////////////////////////////
-   //std::string ValueLink::GetLabel()
-   //{
-   //   // Always display the default property name as the current property
-   //   // changes based on what it is linked to.
-   //   if (GetDefaultProperty())
-   //   {
-   //      return GetDefaultProperty()->GetLabel();
-   //   }
-
-   //   return mLabel;
-   //}
-
    //////////////////////////////////////////////////////////////////////////
    void ValueLink::SetLabel(const std::string& label)
    {
       mLabel = label;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   std::string ValueLink::GetDisplayName()
+   {
+      // Always display the default property name as the current property
+      // changes based on what it is linked to.
+      dtDAL::ActorProperty* prop = GetDefaultProperty();
+      if (prop)
+      {
+         std::string label = prop->GetName().Get();
+         label += "<br>(" + prop->ToString() + ")";
+         SetLabel(label);
+      }
+
+      return mLabel;
    }
 
    //////////////////////////////////////////////////////////////////////////
