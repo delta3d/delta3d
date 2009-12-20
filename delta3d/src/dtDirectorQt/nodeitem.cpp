@@ -622,7 +622,7 @@ namespace dtDirector
          data.linkGraphic->setBrush(GetColorForType(type.GetTypeId()));
 
          // Set the link text, and position it right aligned with the link graphic.
-         data.linkName->setPlainText(data.link->GetName().c_str());
+         data.linkName->setHtml((std::string("<center>") + data.link->GetDisplayName() + "</center>").c_str());
          QRectF nameBounds = data.linkName->boundingRect();
 
          if (nameBounds.width() > MAX_VALUE_NAME_SIZE)
@@ -670,9 +670,16 @@ namespace dtDirector
       for (int index = 0; index < count; index++)
       {
          ValueData& data = mValues[index];
+
+         float x = -step / 2;
+         float y = data.linkName->pos().y();
+         data.linkName->setTextWidth(step);
+         data.linkName->setPos(x, y);
+
+         data.linkName->setHtml(data.linkName->toHtml());
          if (!mValues[index].link || !mValues[index].link->GetVisible()) continue;
-         float x = step * (visibleCount + 1) - (step / 2);
-         float y = mNodeHeight + 1.0f;
+         x = step * (visibleCount + 1) - (step / 2);
+         y = mNodeHeight + 1.0f;
 
          data.linkGraphic->setPos(x, y);
 
