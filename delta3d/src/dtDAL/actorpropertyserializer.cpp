@@ -277,8 +277,8 @@ namespace dtDAL
             else if (XMLString::compareString(localname,
                MapXMLConstants::ACTOR_PROPERTY_GROUP_ELEMENT) == 0)
             {
-               mInGroupProperty = true;
                ClearParameterValues();
+               mInGroupProperty = true;
                mParameterStack.push(new NamedGroupParameter(mActorProperty->GetName()));
 
             }
