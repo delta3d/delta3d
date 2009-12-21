@@ -83,7 +83,7 @@ namespace dtCore
        * @note The default ray has a starting position of (0,0,0) and a
        *  direction of (0,1,0).
        */
-      Isector(Scene *scene = NULL);
+      Isector(Scene* scene = NULL);
 
       /**
        * Constructs a new intersection query using a ray constructed with the
@@ -92,7 +92,7 @@ namespace dtCore
        * @param dir The direction the ray is traveling.
        * @param scene The Delta3D scene to intersect.
        */
-      Isector(const osg::Vec3 &start, const osg::Vec3 &dir, Scene *scene = NULL);
+      Isector(const osg::Vec3& start, const osg::Vec3& dir, Scene* scene = NULL);
 
       /**
        * Constructs a new intersection query using a line segment with the
@@ -101,7 +101,7 @@ namespace dtCore
        * @param start The start of the line segment.
        * @param end The end point of the line segment.
        */
-      Isector(Scene *scene, const osg::Vec3 &start, const osg::Vec3 &end);
+      Isector(Scene* scene, const osg::Vec3& start, const osg::Vec3& end);
 
    protected:
       virtual ~Isector();
@@ -205,7 +205,7 @@ namespace dtCore
          return mStart;
       }
 
-      //sets a new end position
+      // sets a new end position
       void SetEndPosition(const osg::Vec3& endXYZ)
       {
          mDirection = endXYZ-mStart;
@@ -245,6 +245,19 @@ namespace dtCore
       {
          return mLineLength;
       }
+
+      /**
+       * Set the mask defining what geometry types to test for intersection.
+       *
+       * @param mask The bit mask defining what geometry types to test for intersection.
+       */
+      void SetTraversalMask(int mask);
+
+      /**
+       * Get the mask defining what geometry types to test for intersection.
+       * @return The bit mask defining what geometry types to test for intersection.
+       */
+      int GetTraversalMask() const;
 
       ///@return the intersected point
       void GetHitPoint(osg::Vec3& xyz, int pointNum = 0) const;
@@ -315,7 +328,7 @@ namespace dtCore
        * @param geode The node to search for.
        * @return A valid DeltaDrawable if one was found or 0 otherwise.
        */
-      DeltaDrawable* MapNodePathToDrawable(osg::NodePath& geode);
+      DeltaDrawable* MapNodePathToDrawable(const osg::NodePath& geode);
 
       /**
        * Get the Hitlist member. Do not assume this list is sorted based on distance from
@@ -352,7 +365,6 @@ namespace dtCore
       HitList mHitList;
       void CalcLineSegment();
    };
-}
-
+} // namespace dtCore
 
 #endif // DELTA_ISECTOR

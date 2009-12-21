@@ -4,28 +4,17 @@
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/scene.h>
 
-#include <osg/FrameStamp>
 #include <osg/PolygonMode>
-#include <osgDB/DatabasePager>
 #include <osgParticle/ParticleSystemUpdater>
-#include <osg/Group>
-#include <osgViewer/View>
 
-#include <dtCore/camera.h>
 #include <dtCore/infinitelight.h>
-#include <dtCore/light.h>
 #include <dtCore/system.h>
 #include <dtCore/odecontroller.h>
-#include <dtCore/deltadrawable.h>
 #include <dtCore/databasepager.h>
-#include <dtCore/light.h>
 #include <dtCore/view.h>
+#include <dtCore/isector.h>
 
-
-#include <dtUtil/configproperties.h>
 #include <dtUtil/log.h>
-
-#include <cassert>
 
 using namespace dtUtil;
 
@@ -75,7 +64,7 @@ public:
    typedef std::vector< RefPtr<DeltaDrawable> > DrawableList;
    DrawableList mAddedDrawables; ///<The list of Drawable directly added
 
-   typedef std::list<osg::observer_ptr<View> > ViewSet;
+   typedef std::list< osg::observer_ptr<View> > ViewSet;
    ViewSet mViewSet;
 
    Scene::Mode mRenderMode;
@@ -191,14 +180,14 @@ void Scene::Ctor()
 
    AddSender(&System::GetInstance());
 
-   //TODO set default render face, mode
+   // TODO set default render face, mode
 }
 
 /////////////////////////////////////////////
 void Scene::SetSceneNode(osg::Group* newSceneNode)
 {
-   //remove all children from our current scene node
-   //and add them to the new scene node
+   // remove all children from our current scene node
+   // and add them to the new scene node
 
 //   osg::Group* sceneData = mOsgViewerScene->getSceneData()->asGroup();
    unsigned numChildren = mImpl->mSceneNode->getNumChildren();
@@ -311,7 +300,7 @@ unsigned int Scene::GetNumberOfAddedDrawable() const
 void Scene::GetDrawableChildren(std::vector<dtCore::DeltaDrawable*>& children,
                                 dtCore::DeltaDrawable& parent) const
 {
-   for (unsigned int childIdx=0; childIdx<parent.GetNumChildren(); ++childIdx)
+   for (unsigned int childIdx = 0; childIdx < parent.GetNumChildren(); ++childIdx)
    {
       DeltaDrawable* child = parent.GetChild(childIdx);
       if (child != NULL)
@@ -328,7 +317,7 @@ std::vector<dtCore::DeltaDrawable*> Scene::GetAllDrawablesInTheScene() const
 {
    std::vector<dtCore::DeltaDrawable*> drawables;
 
-   for (unsigned int drawableIdx=0; drawableIdx<GetNumberOfAddedDrawable(); drawableIdx++)
+   for (unsigned int drawableIdx = 0; drawableIdx < GetNumberOfAddedDrawable(); drawableIdx++)
    {
       DeltaDrawable* drawable = GetDrawable(drawableIdx);
       if (drawable != NULL)
@@ -432,24 +421,21 @@ void Scene::UnRegisterCollidable(Transformable* collidable) const
 float Scene::GetHeightOfTerrain(float x, float y)
 {
    float heightOfTerrain = 0.f;
-   osgUtil::IntersectionVisitor iv;
 
-   osgUtil::LineSegmentIntersector* lineSegmentIntersector;
+   // use an isector to calculate the height of the terrain
    {
-      lineSegmentIntersector = new osgUtil::LineSegmentIntersector(
-         osg::Vec3(x, y, 10000.f), osg::Vec3(x,y, -10000.f));
-      iv.setIntersector(lineSegmentIntersector);
-   }
-   iv.setTraversalMask(SCENE_INTERSECT_MASK);
+      const osg::Vec3 start(x, y, 10000.f); // way up in the sky
+      const osg::Vec3 end(x, y, -10000.f); // way down below
+      dtCore::RefPtr<dtCore::Isector> isector = new dtCore::Isector(this, start, end);
 
-   mImpl->mSceneNode->accept(iv);
+      // set the traversal mask so we don't collide with the skybox
+      isector->SetTraversalMask(SCENE_INTERSECT_MASK);
 
-   if (lineSegmentIntersector->containsIntersections())
-   {
-      osgUtil::LineSegmentIntersector::Intersection intersection = lineSegmentIntersector->getFirstIntersection();
+      if (isector->Update())
       {
-         const osg::Vec3& ip = intersection.getWorldIntersectPoint();
-         heightOfTerrain = ip.z();
+         osg::Vec3 hitPoint;
+         isector->GetHitPoint(hitPoint);
+         heightOfTerrain = hitPoint.z();
       }
    }
 
@@ -572,7 +558,8 @@ void Scene::OnMessage(MessageData* data)
 }
 
 /////////////////////////////////////////////
-/** The supplied function will be used instead of the built-in collision
+/**
+ * The supplied function will be used instead of the built-in collision
  *  callback.
  * @param func : The function to handle collision detection
  * @param data : A void pointer to user data.  This gets passed directly to func.
@@ -619,7 +606,6 @@ struct HasName : public std::binary_function<dtCore::RefPtr<T>, std::string, boo
       }
    }
 };
-
 
 //////////////////////////////////////////////////////////////////////////
 Light* Scene::GetLight(const int number)
@@ -785,7 +771,5 @@ dtCore::ODEController* Scene::GetPhysicsController() const
 {
    return mImpl->mPhysicsController.get();
 }
-
-
 
 } // namespace dtCore
