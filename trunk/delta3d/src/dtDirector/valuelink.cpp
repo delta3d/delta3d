@@ -165,7 +165,19 @@ namespace dtDirector
       if (prop)
       {
          std::string label = prop->GetName().Get();
-         label += "<br>(" + prop->ToString() + ")";
+         dtDAL::ActorIDActorProperty* actorProp = dynamic_cast<dtDAL::ActorIDActorProperty*>(prop);
+         if (actorProp)
+         {
+            if (actorProp->GetRealActor())
+            {
+               label += "<br>(" + actorProp->GetRealActor()->GetName() + ")";
+            }
+         }
+         else
+         {
+            label += "<br>(" + prop->ToString() + ")";
+         }
+
          SetLabel(label);
       }
 
