@@ -138,8 +138,6 @@ namespace dtDAL
       typedef dtUtil::Functor<void, TYPELIST_1(const dtCore::UniqueId&)> SetFuncType;
       typedef dtUtil::Functor<dtCore::UniqueId, TYPELIST_0()> GetFuncType;
 
-      typedef dtUtil::Functor<dtDAL::Map*, TYPELIST_0()> GetMapType;
-
       /**
        * Constructor.
        *
@@ -168,17 +166,9 @@ namespace dtDAL
          const dtUtil::RefString& label,
          SetFuncType Set,
          GetFuncType Get,
-         GetMapType MapFunctor,
          const dtUtil::RefString& desiredActorClass = "",
          const dtUtil::RefString& desc = "",
          const dtUtil::RefString& groupName = "");
-
-      /**
-       * Retrieves the map.
-       *
-       * @return  The map.
-       */
-      dtDAL::Map* GetMap();
 
       /**
       * Copies an ActorActorProperty value to this one from the property
@@ -251,7 +241,6 @@ namespace dtDAL
       ActorProxy* mProxy;
       SetFuncType SetIdFunctor;
       GetFuncType GetIdFunctor;
-      GetMapType GetMapFunctor;
       dtUtil::RefString mDesiredActorClass;
 
    protected:

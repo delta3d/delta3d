@@ -171,7 +171,6 @@ namespace dtDAL
       , mProxy(&actorProxy)
       , SetIdFunctor(Set)
       , GetIdFunctor(Get)
-      , GetMapFunctor(this, &ActorIDActorProperty::GetMap)
       , mDesiredActorClass(desiredActorClass)
    {
    }
@@ -182,7 +181,6 @@ namespace dtDAL
       const dtUtil::RefString& label,
       SetFuncType Set,
       GetFuncType Get,
-      GetMapType MapFunctor,
       const dtUtil::RefString& desiredActorClass,
       const dtUtil::RefString& desc,
       const dtUtil::RefString& groupName)
@@ -190,16 +188,8 @@ namespace dtDAL
       , mProxy(NULL)
       , SetIdFunctor(Set)
       , GetIdFunctor(Get)
-      , GetMapFunctor(MapFunctor)
       , mDesiredActorClass(desiredActorClass)
    {
-   }
-
-   //////////////////////////////////////////////////////////////////////////
-   dtDAL::Map* ActorIDActorProperty::GetMap()
-   {
-      dtDAL::Map* map = Project::GetInstance().GetMapForActorProxy(*mProxy);
-      return map;
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -270,9 +260,13 @@ namespace dtDAL
    dtDAL::ActorProxy* ActorIDActorProperty::GetActorProxy()
    {
       dtCore::UniqueId idValue = GetValue();
+      if (idValue.ToString() == "") return NULL;
+
       try
       {
-         dtDAL::Map* map = GetMapFunctor();
+         // TODO: Retrieve the actor proxy from the game manager, or global
+         // actor manager, instead of one that is loaded from a map file.
+         dtDAL::Map* map = Project::GetInstance().GetMapForActorProxy(idValue);
          if (map == NULL)
          {
             dtUtil::Log::GetInstance("enginepropertytypes.cpp").LogMessage(dtUtil::Log::LOG_INFO,
@@ -315,9 +309,13 @@ namespace dtDAL
    const dtDAL::ActorProxy* ActorIDActorProperty::GetActorProxy() const
    {
       dtCore::UniqueId idValue = GetValue();
+      if (idValue.ToString() == "") return NULL;
+
       try
       {
-         dtDAL::Map* map = GetMapFunctor();
+         // TODO: Retrieve the actor proxy from the game manager, or global
+         // actor manager, instead of one that is loaded from a map file.
+         dtDAL::Map* map = Project::GetInstance().GetMapForActorProxy(idValue);
          if (map == NULL)
          {
             dtUtil::Log::GetInstance("enginepropertytypes.cpp").LogMessage(dtUtil::Log::LOG_INFO,
