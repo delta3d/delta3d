@@ -30,8 +30,6 @@
 
 #include <dtUtil/log.h>
 
-#include <stack>
-
 
 namespace dtDirector
 {
@@ -335,7 +333,7 @@ namespace dtDirector
       // Execution threads.
       struct ThreadData
       {
-         std::stack<StackData> stack;
+         std::vector<StackData> stack;
       };
       std::vector<ThreadData> mThreads;
       int mCurrentThread;
