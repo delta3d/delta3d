@@ -280,13 +280,6 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void Director::BeginThread(Node* node, int index)
    {
-      ThreadData data;
-      StackData stack;
-      stack.node = node;
-      stack.index = index;
-      stack.currentThread = -1;
-      data.stack.push(stack);
-
       std::vector<ThreadData>* threadList = &mThreads;
       int curThread = mCurrentThread;
 
@@ -295,14 +288,32 @@ namespace dtDirector
          ThreadData& t = (*threadList)[curThread];
          if (!t.stack.empty())
          {
-            StackData& s = t.stack.top();
+            StackData& s = t.stack[t.stack.size()-1];
             curThread = s.currentThread;
             threadList = &s.subThreads;
+
+            // If this is the current running stack item, and it does
+            // not have an active running node, use this instead
+            // of creating a new sub-thread.
+            if (curThread == -1 && !s.node)
+            {
+               s.node = node;
+               s.index = index;
+               return;
+            }
          }
          else break;
       }
 
       if (!curThread) return;
+
+      ThreadData data;
+      StackData stack;
+      stack.node = node;
+      stack.index = index;
+      stack.currentThread = -1;
+      data.stack.push_back(stack);
+
       threadList->push_back(data);
    }
 
@@ -320,14 +331,14 @@ namespace dtDirector
       while (curThread > -1)
       {
          ThreadData& t = (*threadList)[curThread];
-         if (t.stack.top().currentThread == -1)
+         if (t.stack[t.stack.size()-1].currentThread == -1)
          {
-            t.stack.push(stack);
+            t.stack.push_back(stack);
             return;
          }
          else if (!t.stack.empty())
          {
-            StackData& s = t.stack.top();
+            StackData& s = t.stack[t.stack.size()-1];
             curThread = s.currentThread;
             threadList = &s.subThreads;
          }
@@ -482,7 +493,11 @@ namespace dtDirector
       // If there is no stack, this thread is finished.
       if (data.stack.empty()) return false;
 
-      StackData& stack = data.stack.top();
+      int stackIndex = data.stack.size() - 1;
+      if (stackIndex < 0) return false;
+
+      StackData& stack = data.stack[stackIndex];
+
       // Update all the sub-threads in the stack.
       int count = (int)stack.subThreads.size();
       for (stack.currentThread = 0; stack.currentThread < count; stack.currentThread++)
@@ -545,6 +560,7 @@ namespace dtDirector
                      // If we are continuing the current thread, continue it.
                      else
                      {
+                        StackData& stack = data.stack[stackIndex];
                         stack.node = input->GetOwner();
                         stack.index = inputIndex;
 
@@ -559,16 +575,16 @@ namespace dtDirector
          // If we did not continue this current thread, stop it.
          if (!makeNewThread)
          {
-            stack.node = NULL;
+            data.stack[stackIndex].node = NULL;
          }
       }
 
       // If we did not continue the current stack, and we don't have any more
       // sub-threads in this stack.
-      if (!makeNewThread && stack.subThreads.empty())
+      if (!makeNewThread && data.stack[stackIndex].subThreads.empty())
       {
          // Pop this stack from the list.
-         data.stack.pop();
+         data.stack.erase(data.stack.begin() + stackIndex);
 
          // If we do not have any remaining stack items, we can remove this thread.
          if (data.stack.empty())
