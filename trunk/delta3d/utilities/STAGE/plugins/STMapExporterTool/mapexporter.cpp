@@ -204,7 +204,9 @@ bool MapExporterPlugin::AddResourcesFromProperty(const dtDAL::ActorProperty* pro
 ////////////////////////////////////////////////////////////////////////////////
 bool MapExporterPlugin::AddResourcesFromNode(osg::Node* node, dtUtil::Packager& packager)
 {
-   if (!node) return false;
+   bool foundShader = false;
+
+   if (!node) { return foundShader; }
 
    // Get the state set of this node and find any shaders assigned.
    osg::StateSet* ss = node->getStateSet();
@@ -251,6 +253,7 @@ bool MapExporterPlugin::AddResourcesFromNode(osg::Node* node, dtUtil::Packager& 
                      std::string resourceDir = "shaders";
 
                      packager.AddFile(path, resourceDir);
+                     foundShader = true;
                   }
                }
             }
@@ -264,9 +267,11 @@ bool MapExporterPlugin::AddResourcesFromNode(osg::Node* node, dtUtil::Packager& 
    {
       for (int childIndex = 0; childIndex < (int)group->getNumChildren(); childIndex++)
       {
-         AddResourcesFromNode(group->getChild(childIndex), packager);
+         foundShader = AddResourcesFromNode(group->getChild(childIndex), packager) || foundShader;
       }
    }
+
+   return foundShader;
 }
 
 ////////////////////////////////////////////////////////////
@@ -276,7 +281,6 @@ namespace MapExporter
 class DT_MAP_EXPORTER_EXPORT PluginFactory : public dtEditQt::PluginFactory
 {
 public:
-
    PluginFactory() {}
    ~PluginFactory() {}
 
@@ -290,7 +294,7 @@ public:
    {
    }
 
-    /** construct the plugin and return a pointer to it */
+   /** construct the plugin and return a pointer to it */
    virtual Plugin* Create(MainWindow* mw) 
    {
       mPlugin = new MapExporterPlugin(mw);
@@ -303,7 +307,6 @@ public:
    }
 
 private:
-
    Plugin* mPlugin;
 }; 
 } //namespace MapExporterPlugin
