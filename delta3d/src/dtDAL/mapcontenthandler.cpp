@@ -300,8 +300,6 @@ namespace  dtDAL
    {
       BaseXMLHandler::ElementEnded(uri, localname, qname);
 
-      const XMLCh* lname = mElements.top().c_str();
-
       if (mInHeader)
       {
          EndHeaderElement(localname);
