@@ -752,6 +752,15 @@ namespace dtDirector
          return Qt::cyan;
          break;
 
+      case dtDAL::DataType::STATICMESH_ID:
+      case dtDAL::DataType::SKELETAL_MESH_ID:
+      case dtDAL::DataType::TEXTURE_ID:
+      case dtDAL::DataType::SOUND_ID:
+      case dtDAL::DataType::PARTICLESYSTEM_ID:
+      case dtDAL::DataType::PREFAB_ID:
+      case dtDAL::DataType::SHADER_ID:
+         return Qt::magenta;
+
       case dtDAL::DataType::UNKNOWN_ID:
       default:
          return Qt::white;
@@ -782,6 +791,15 @@ namespace dtDirector
       case dtDAL::DataType::STRING_ID:
          return Qt::darkCyan;
          break;
+
+      case dtDAL::DataType::STATICMESH_ID:
+      case dtDAL::DataType::SKELETAL_MESH_ID:
+      case dtDAL::DataType::TEXTURE_ID:
+      case dtDAL::DataType::SOUND_ID:
+      case dtDAL::DataType::PARTICLESYSTEM_ID:
+      case dtDAL::DataType::PREFAB_ID:
+      case dtDAL::DataType::SHADER_ID:
+         return Qt::darkMagenta;
 
       case dtDAL::DataType::UNKNOWN_ID:
       default:

@@ -177,7 +177,7 @@ namespace dtDirector
       std::string    mName;
       std::string    mLabel;
 
-      dtDAL::ActorProperty* mProperty;
+      dtCore::RefPtr<dtDAL::ActorProperty> mProperty;
 
       std::vector<ValueLink*> mLinks;
    };

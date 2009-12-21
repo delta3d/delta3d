@@ -42,7 +42,7 @@
 #include <dtDirectorNodes/doublevalue.h>
 #include <dtDirectorNodes/stringvalue.h>
 #include <dtDirectorNodes/actorvalue.h>
-#include <dtDirectorNodes/resourcevalue.h>
+#include <dtDirectorNodes/staticmeshvalue.h>
 #include <dtDirectorNodes/vecvalue.h>
 
 
@@ -83,7 +83,7 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::DOUBLE_VALUE_NODE_TYPE(new dtDirector::NodeType("Double", "General", "Variables", "A double value."));
    RefPtr<NodeType> NodeLibraryRegistry::STRING_VALUE_NODE_TYPE(new dtDirector::NodeType("String", "General", "Variables", "A string value."));
    RefPtr<NodeType> NodeLibraryRegistry::ACTOR_VALUE_NODE_TYPE(new dtDirector::NodeType("Actor", "General", "Variables", "An actor value."));
-   RefPtr<NodeType> NodeLibraryRegistry::RESOURCE_VALUE_NODE_TYPE(new dtDirector::NodeType("Resource", "General", "Variables", "A resource value."));
+   RefPtr<NodeType> NodeLibraryRegistry::STATIC_MESH_VALUE_NODE_TYPE(new dtDirector::NodeType("Static Mesh", "General", "Variables", "A Static Mesh resource value."));
    RefPtr<NodeType> NodeLibraryRegistry::VEC_VALUE_NODE_TYPE(new dtDirector::NodeType("Vector", "General", "Variables", "A vector value."));
 
    //////////////////////////////////////////////////////////////////////////
@@ -127,7 +127,7 @@ namespace dtDirector
       mNodeFactory->RegisterType<DoubleValue>(DOUBLE_VALUE_NODE_TYPE.get());
       mNodeFactory->RegisterType<StringValue>(STRING_VALUE_NODE_TYPE.get());
       mNodeFactory->RegisterType<ActorValue>(ACTOR_VALUE_NODE_TYPE.get());
-      mNodeFactory->RegisterType<ResourceValue>(RESOURCE_VALUE_NODE_TYPE.get());
+      mNodeFactory->RegisterType<StaticMeshValue>(STATIC_MESH_VALUE_NODE_TYPE.get());
       mNodeFactory->RegisterType<VecValue>(VEC_VALUE_NODE_TYPE.get());
    }
 }

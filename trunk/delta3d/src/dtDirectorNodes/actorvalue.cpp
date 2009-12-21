@@ -69,7 +69,7 @@ namespace dtDirector
    std::string ActorValue::GetValueLabel()
    {
       std::string label = "";
-      dtDAL::ActorIDActorProperty* prop = dynamic_cast<dtDAL::ActorIDActorProperty*>(mProperty);
+      dtDAL::ActorIDActorProperty* prop = dynamic_cast<dtDAL::ActorIDActorProperty*>(mProperty.get());
       if (prop && prop->GetRealActor()) label = "(" + prop->GetRealActor()->GetName() + ")";
 
       return label;

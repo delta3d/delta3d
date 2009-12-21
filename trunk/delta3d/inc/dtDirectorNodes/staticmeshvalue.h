@@ -25,30 +25,31 @@
 #include <dtDirector/valuenode.h>
 #include <dtDirectorNodes/nodelibraryexport.h>
 
+#include <dtDAL/resourcedescriptor.h>
 
 namespace dtDirector
 {
    /**
-    * This is the base class for all value nodes.
+    * A Resource Value of a Static Mesh.
     *
     * @note
     *      Node objects must be created through the NodePluginRegistry or
     *      the NodeManager. If they are not created in this fashion,
     *      the node types will not be set correctly.
     */
-   class NODE_LIBRARY_EXPORT ResourceValue : public ValueNode
+   class NODE_LIBRARY_EXPORT StaticMeshValue : public ValueNode
    {
    public:
 
       /**
        * Constructs the Node.
        */
-      ResourceValue();
+      StaticMeshValue();
 
       /**
        *	Protected Destructor.  dtCore::RefPtr will handle its destruction.
        */
-      virtual ~ResourceValue();
+      virtual ~StaticMeshValue();
 
       /**
        * Initializes the Node.
@@ -70,7 +71,6 @@ namespace dtDirector
        */
       virtual void BuildPropertyMap();
 
-
    private:
 
       /**
@@ -78,16 +78,16 @@ namespace dtDirector
        *
        * @param[in]  value  The value.
        */
-      void SetValue(const std::string& value);
+      void SetValue(const dtDAL::ResourceDescriptor& value);
 
       /**
        * Retrieves the value.
        *
        * @return  The value.
        */
-      const std::string& GetValue();
+      dtDAL::ResourceDescriptor GetValue();
 
-      std::string mValue;
+      dtDAL::ResourceDescriptor mValue;
    };
 }
 

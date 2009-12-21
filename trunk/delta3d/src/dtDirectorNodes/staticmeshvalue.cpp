@@ -22,57 +22,55 @@
 #include <sstream>
 #include <algorithm>
 
-#include <dtDirectorNodes/resourcevalue.h>
+#include <dtDirectorNodes/staticmeshvalue.h>
 
 #include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/actorproperty.h>
+#include <dtDAL/resourceactorproperty.h>
 
 namespace dtDirector
 {
    ///////////////////////////////////////////////////////////////////////////////////////
-   ResourceValue::ResourceValue()
+   StaticMeshValue::StaticMeshValue()
        : ValueNode()
-       , mValue("")
+       , mValue(dtDAL::ResourceDescriptor::NULL_RESOURCE)
    {
-      mName = "Resource";
+      mName = "Static Mesh";
       AddAuthor("Jeff P. Houde");
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   ResourceValue::~ResourceValue()
+   StaticMeshValue::~StaticMeshValue()
    {
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   void ResourceValue::Init(const NodeType& nodeType, DirectorGraph* graph)
+   void StaticMeshValue::Init(const NodeType& nodeType, DirectorGraph* graph)
    {
       ValueNode::Init(nodeType, graph);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void ResourceValue::BuildPropertyMap()
+   void StaticMeshValue::BuildPropertyMap()
    {
       ValueNode::BuildPropertyMap();
 
-      // HACK: For now, it's a string because our current resource property
-      // requires an actor proxy.
-      mProperty = new dtDAL::StringActorProperty(
-         "Value", "Value",
-         dtDAL::StringActorProperty::SetFuncType(this, &ResourceValue::SetValue),
-         dtDAL::StringActorProperty::GetFuncType(this, &ResourceValue::GetValue),
-         "The value.");
+      mProperty = new dtDAL::ResourceActorProperty(
+         dtDAL::DataType::STATIC_MESH, "Resource", "Resource",
+         dtDAL::ResourceActorProperty::SetDescFuncType(this, &StaticMeshValue::SetValue),
+         dtDAL::ResourceActorProperty::GetDescFuncType(this, &StaticMeshValue::GetValue),
+         "The resource.");
       AddProperty(mProperty);
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ResourceValue::SetValue(const std::string& value)
+   void StaticMeshValue::SetValue(const dtDAL::ResourceDescriptor& value)
    {
       mValue = value;
       ValueNode::OnValueChanged();
    }
 
    //////////////////////////////////////////////////////////////////////////
-   const std::string& ResourceValue::GetValue()
+   dtDAL::ResourceDescriptor StaticMeshValue::GetValue()
    {
       return mValue;
    }
