@@ -56,7 +56,7 @@ namespace dtDirector
       static dtCore::RefPtr<dtDirector::NodeType> DOUBLE_VALUE_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> STRING_VALUE_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> ACTOR_VALUE_NODE_TYPE;
-      static dtCore::RefPtr<dtDirector::NodeType> RESOURCE_VALUE_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> STATIC_MESH_VALUE_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> VEC_VALUE_NODE_TYPE;
 
       /**
