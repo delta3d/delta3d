@@ -27,6 +27,8 @@
 
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actorproperty.h>
+#include <dtDAL/resourceactorproperty.h>
+#include <dtDAL/resourcedescriptor.h>
 
 namespace dtDirector
 {
@@ -175,7 +177,19 @@ namespace dtDirector
          }
          else
          {
-            label += "<br>(" + prop->ToString() + ")";
+            dtDAL::ResourceActorProperty* resourceProp = dynamic_cast<dtDAL::ResourceActorProperty*>(prop);
+            if (resourceProp)
+            {
+               dtDAL::ResourceDescriptor rd = resourceProp->GetValue();
+               if (!rd.IsEmpty())
+               {
+                  label += "<br>(" + rd.GetResourceName() + ")";
+               }
+            }
+            else
+            {
+               label += "<br>(" + prop->ToString() + ")";
+            }
          }
 
          SetLabel(label);

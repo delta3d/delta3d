@@ -63,6 +63,23 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   std::string StaticMeshValue::GetValueLabel()
+   {
+      std::string label = "";
+      dtDAL::ResourceActorProperty* prop = dynamic_cast<dtDAL::ResourceActorProperty*>(mProperty.get());
+      if (prop)
+      {
+         dtDAL::ResourceDescriptor rd = prop->GetValue();
+         if (!rd.IsEmpty())
+         {
+            label = "(" + rd.GetResourceName() + ")";
+         }
+      }
+
+      return label;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void StaticMeshValue::SetValue(const dtDAL::ResourceDescriptor& value)
    {
       mValue = value;
