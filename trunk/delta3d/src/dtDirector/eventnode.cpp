@@ -71,15 +71,14 @@ namespace dtDirector
       // Create the instigator property.
       if (UsesInstigator())
       {
-         //dtDAL::ActorIDActorProperty* instigatorProp =
-         //   new dtDAL::ActorIDActorProperty("Instigator", "Instigator", 
-         //   dtDAL::ActorIDActorProperty::SetFuncType(this, &EventNode::SetInstigator),
-         //   dtDAL::ActorIDActorProperty::GetFuncType(this, &EventNode::GetInstigator),
-         //   dtDAL::ActorIDActorProperty::GetMapType(GetDirector(), &Director::GetMap),
-         //   "", "The Instigator that can trigger this event.");
-         //AddProperty(instigatorProp);
+         dtDAL::ActorIDActorProperty* instigatorProp =
+            new dtDAL::ActorIDActorProperty("Instigator", "Instigator", 
+            dtDAL::ActorIDActorProperty::SetFuncType(this, &EventNode::SetInstigator),
+            dtDAL::ActorIDActorProperty::GetFuncType(this, &EventNode::GetInstigator),
+            "", "The Instigator that can trigger this event.");
+         AddProperty(instigatorProp);
 
-         //mValues.push_back(ValueLink(this, instigatorProp, false, true, true));
+         mValues.push_back(ValueLink(this, instigatorProp, false, true, true));
       }
    }
 

@@ -56,13 +56,12 @@ namespace dtDirector
    {
       ValueNode::BuildPropertyMap();
 
-      //mProperty = new dtDAL::ActorIDActorProperty(
-      //   "Value", "Value",
-      //   dtDAL::ActorIDActorProperty::SetFuncType(this, &ActorValue::SetValue),
-      //   dtDAL::ActorIDActorProperty::GetFuncType(this, &ActorValue::GetValue),
-      //   dtDAL::ActorIDActorProperty::GetMapType(GetDirector(), &Director::GetMap),
-      //   "", "The value.");
-      //AddProperty(mProperty);
+      mProperty = new dtDAL::ActorIDActorProperty(
+         "Value", "Value",
+         dtDAL::ActorIDActorProperty::SetFuncType(this, &ActorValue::SetValue),
+         dtDAL::ActorIDActorProperty::GetFuncType(this, &ActorValue::GetValue),
+         "", "The value.");
+      AddProperty(mProperty);
    }
 
    //////////////////////////////////////////////////////////////////////////
