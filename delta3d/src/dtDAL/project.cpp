@@ -1307,6 +1307,70 @@ namespace dtDAL
    }
 
    /////////////////////////////////////////////////////////////////////////////
+   Map* Project::GetMapForActorProxy(const dtCore::UniqueId& id)
+   {
+      if (!mValidContext)
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext,
+         std::string("The context is not valid."), __FILE__, __LINE__);
+
+      if (mParser->IsParsing())
+      {
+         Map* m = mParser->GetMapBeingParsed();
+         if (m != NULL)
+         {
+            ActorProxy* ap = m->GetProxyById(id);
+            if (ap != NULL)
+               return m;
+         }
+      }
+
+      std::map< std::string, dtCore::RefPtr<Map> >::iterator i = mOpenMaps.begin();
+      while (i != mOpenMaps.end())
+      {
+         ActorProxy* ap = i->second->GetProxyById(id);
+         if (ap != NULL)
+            return i->second.get();
+
+         i++;
+      }
+      return NULL;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   const Map* Project::GetMapForActorProxy(const dtCore::UniqueId& id) const
+   {
+      if (!mValidContext)
+      {
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext,
+            std::string("The context is not valid."), __FILE__, __LINE__);
+      }
+
+      if (mParser->IsParsing())
+      {
+         const Map* m = mParser->GetMapBeingParsed();
+         if (m != NULL)
+         {
+            const ActorProxy* ap = m->GetProxyById(id);
+            if (ap != NULL)
+               return m;
+         }
+      }
+
+      std::map< std::string, dtCore::RefPtr<Map> >::const_iterator i = mOpenMaps.begin();
+      while (i != mOpenMaps.end())
+      {
+         const ActorProxy* ap = i->second->GetProxyById(id);
+         if (ap != NULL)
+         {
+            return i->second.get();
+         }
+
+         i++;
+      }
+      return NULL;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
    Map* Project::GetMapForActorProxy(const ActorProxy& proxy)
    {
       if (!mValidContext)
@@ -1330,6 +1394,8 @@ namespace dtDAL
          ActorProxy* ap = i->second->GetProxyById(proxy.GetId());
          if (ap != NULL)
             return i->second.get();
+         
+         i++;
       }
       return NULL;
    }
@@ -1362,6 +1428,8 @@ namespace dtDAL
          {
             return i->second.get();
          }
+
+         i++;
       }
       return NULL;
    }

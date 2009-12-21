@@ -29,6 +29,7 @@
 
 #include <osg/Referenced>
 
+#include <dtCore/uniqueid.h>
 #include <dtUtil/tree.h>
 #include <dtDAL/resourcetreenode.h>
 #include <dtDAL/resourcehelper.h>
@@ -394,6 +395,20 @@ namespace dtDAL
           * @param mapName the name of the map to clear the backups for.
           */
          void ClearBackup(const std::string& mapName);
+
+         /**
+          * This will search all open maps until is finds the one that contains the given proxy id.
+          * @return the map that contains a given actor proxy or NULL if it's not found.
+          * @param id the id of the proxy to search for.
+          */
+         Map* GetMapForActorProxy(const dtCore::UniqueId& id);
+
+         /**
+          * This will search all open maps until is finds the one that contains the given proxy id.
+          * @return the map that contains a given actor proxy or NULL if it's not found.
+          * @param id the id of the proxy to search for.
+          */
+         const Map* GetMapForActorProxy(const dtCore::UniqueId& id) const;
 
          /**
           * This will search all open maps until is finds the one that contains the given proxy.
