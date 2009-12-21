@@ -52,6 +52,7 @@
 #include <dtUtil/xercesutils.h>
 
 #include <iostream>
+#include <typeinfo>
 
 XERCES_CPP_NAMESPACE_USE
 
