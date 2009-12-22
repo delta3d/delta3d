@@ -1,0 +1,1906 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
+    <header>
+        <name>TestDirector</name>
+        <description></description>
+        <author></author>
+        <comment></comment>
+        <copyright></copyright>
+        <createTimestamp>2009-12-21T16:14:44-08:00</createTimestamp>
+        <lastUpdateTimestamp>2009-12-22T12:18:24-08:00</lastUpdateTimestamp>
+        <editorVersion>2.4.0</editorVersion>
+        <schemaVersion>1.0</schemaVersion>
+    </header>
+    <libraries></libraries>
+    <actors>
+        <actor>
+            <type>dtcore.Player Start</type>
+            <id>1af6ec4e-1270-44b3-b30b-20ebbfac269d</id>
+            <name>PlayerStart</name>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>12.137858</value1>
+                    <value2>10.903046</value2>
+                    <value3>3.010427</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>NONE</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>1b61b5e1-d329-487d-b0ec-07720f8a6dbf</id>
+            <name>StaticMesh_11</name>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-179.999954</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>0.015388</value1>
+                    <value2>7.097543</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>MESH</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.1887903</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>1.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Model Rotation</name>
+                <vec3>
+                    <value1>-0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Model Translation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Door_Pivot_Room.IVE</resourceDisplayName>
+                <resource>StaticMeshes::Door_Pivot_Room.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>352f2d91-2296-45cc-ad31-4b38d43d88d7</id>
+            <name>StaticMesh_01</name>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>14.966557</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>MESH</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.1887903</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>1.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Model Rotation</name>
+                <vec3>
+                    <value1>-0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Model Translation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Door_Pivot_Room.IVE</resourceDisplayName>
+                <resource>StaticMeshes::Door_Pivot_Room.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>44072ca2-c5ad-46e7-ac8e-29985790e03f</id>
+            <name>StaticMesh_03</name>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>16.030802</value1>
+                    <value2>14.966557</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>MESH</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.1887903</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>1.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Model Rotation</name>
+                <vec3>
+                    <value1>-0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Model Translation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Door_Pivot_Room.IVE</resourceDisplayName>
+                <resource>StaticMeshes::Door_Pivot_Room.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>46281d40-658d-40a8-b033-5434a7153b33</id>
+            <name>StaticMesh_13</name>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-179.999954</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>16.046186</value1>
+                    <value2>7.097547</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>MESH</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.1887903</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>1.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Model Rotation</name>
+                <vec3>
+                    <value1>-0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Model Translation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Door_Pivot_Room.IVE</resourceDisplayName>
+                <resource>StaticMeshes::Door_Pivot_Room.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>4ad8b969-83c2-42e1-9174-fd50f4cd2416</id>
+            <name>door_02</name>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>7.555044</value1>
+                    <value2>7.079894</value2>
+                    <value3>0.001683</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.1887903</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>1.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Model Rotation</name>
+                <vec3>
+                    <value1>-0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Model Translation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Door_Pivot.IVE</resourceDisplayName>
+                <resource>StaticMeshes::Door_Pivot.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>58552008-f8df-446c-a48f-cf2ff4100a24</id>
+            <name>StaticMesh_14</name>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-179.999954</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>24.063629</value1>
+                    <value2>7.101710</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>MESH</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.1887903</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>1.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Model Rotation</name>
+                <vec3>
+                    <value1>-0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Model Translation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Door_Pivot_Room.IVE</resourceDisplayName>
+                <resource>StaticMeshes::Door_Pivot_Room.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>7e4d26e9-c882-4178-9e28-9f420e48b5f5</id>
+            <name>door_07</name>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>23.584461</value1>
+                    <value2>14.973146</value2>
+                    <value3>0.001683</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.1887903</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>1.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Model Rotation</name>
+                <vec3>
+                    <value1>-0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Model Translation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Door_Pivot.IVE</resourceDisplayName>
+                <resource>StaticMeshes::Door_Pivot.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>82ce6904-557d-40de-b861-13b93be82aa7</id>
+            <name>door_06</name>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>7.555044</value1>
+                    <value2>14.973146</value2>
+                    <value3>0.001683</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.1887903</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>1.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Model Rotation</name>
+                <vec3>
+                    <value1>-0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Model Translation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Door_Pivot.IVE</resourceDisplayName>
+                <resource>StaticMeshes::Door_Pivot.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>aa68b82e-e9b0-43aa-9e4f-4093bd6a58cd</id>
+            <name>StaticMesh_12</name>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-179.999954</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>8.032827</value1>
+                    <value2>7.101707</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>MESH</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.1887903</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>1.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Model Rotation</name>
+                <vec3>
+                    <value1>-0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Model Translation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Door_Pivot_Room.IVE</resourceDisplayName>
+                <resource>StaticMeshes::Door_Pivot_Room.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>b2acefd8-12a5-47a1-8035-b6537de811d7</id>
+            <name>StaticMesh_02</name>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>8.017442</value1>
+                    <value2>14.970718</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>MESH</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.1887903</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>1.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Model Rotation</name>
+                <vec3>
+                    <value1>-0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Model Translation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Door_Pivot_Room.IVE</resourceDisplayName>
+                <resource>StaticMeshes::Door_Pivot_Room.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>b636db5e-420e-4eb1-959f-c90907f243cf</id>
+            <name>door_05</name>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-0.467612</value1>
+                    <value2>14.973146</value2>
+                    <value3>0.001683</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.1887903</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>1.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Model Rotation</name>
+                <vec3>
+                    <value1>-0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Model Translation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Door_Pivot.IVE</resourceDisplayName>
+                <resource>StaticMeshes::Door_Pivot.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>b8e97236-f4f7-4ed1-a720-d6de419470a2</id>
+            <name>door_01</name>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-0.467612</value1>
+                    <value2>7.079894</value2>
+                    <value3>0.001683</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.1887903</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>1.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Model Rotation</name>
+                <vec3>
+                    <value1>-0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Model Translation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Door_Pivot.IVE</resourceDisplayName>
+                <resource>StaticMeshes::Door_Pivot.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <id>d537beab-999d-4606-8404-7b3ff282b5f5</id>
+            <name>StaticMesh_15</name>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-1.163607</value1>
+                    <value2>21.271139</value2>
+                    <value3>-6.033682</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>MESH</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.1887903</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server Local</enumerated>
+            </property>
+            <property>
+                <name>Local Actor Update Policy</name>
+                <enumerated>ACCEPT_ALL</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string></string>
+            </property>
+            <property>
+                <name>CurrentShader</name>
+                <resourceType>Shaders</resourceType>
+                <resourceDisplayName></resourceDisplayName>
+                <resource></resource>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::terrain_simple.ive</resourceDisplayName>
+                <resource>StaticMeshes::terrain_simple.ive</resource>
+            </property>
+            <property>
+                <name>use cache object</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>1.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>d92ca978-6864-4ba6-86b0-500d20069db6</id>
+            <name>door_03</name>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>23.584461</value1>
+                    <value2>7.079894</value2>
+                    <value3>0.001683</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.1887903</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>1.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Model Rotation</name>
+                <vec3>
+                    <value1>-0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Model Translation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Door_Pivot.IVE</resourceDisplayName>
+                <resource>StaticMeshes::Door_Pivot.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>db497d67-d757-40a8-8c0e-894e0f491b9c</id>
+            <name>StaticMesh_04</name>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>24.048241</value1>
+                    <value2>14.970718</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>MESH</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.1887903</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>1.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Model Rotation</name>
+                <vec3>
+                    <value1>-0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Model Translation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Door_Pivot_Room.IVE</resourceDisplayName>
+                <resource>StaticMeshes::Door_Pivot_Room.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>e51674f5-5dd6-4088-af8f-dbbe5a3d1d0d</id>
+            <name>door_04</name>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>15.561790</value1>
+                    <value2>7.079894</value2>
+                    <value3>0.001683</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.1887903</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>1.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Model Rotation</name>
+                <vec3>
+                    <value1>-0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Model Translation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Door_Pivot.IVE</resourceDisplayName>
+                <resource>StaticMeshes::Door_Pivot.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>f2588a57-5422-48da-9bdc-09ab214081e4</id>
+            <name>door_08</name>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>15.561790</value1>
+                    <value2>14.973146</value2>
+                    <value3>0.001683</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.1887903</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>1.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Model Rotation</name>
+                <vec3>
+                    <value1>-0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Model Translation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Door_Pivot.IVE</resourceDisplayName>
+                <resource>StaticMeshes::Door_Pivot.IVE</resource>
+            </property>
+        </actor>
+    </actors>
+    <groups></groups>
+    <presetCameras></presetCameras>
+</map>
