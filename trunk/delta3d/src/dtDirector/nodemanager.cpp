@@ -279,7 +279,7 @@ namespace dtDirector
       {
          mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, 
             "No node exists of the specified name \"%s\" and category \"%s\".", 
-            name, category);
+            name.c_str(), category.c_str());
       }
 
       return CreateNode(*type, graph);
