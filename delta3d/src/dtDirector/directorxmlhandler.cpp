@@ -331,6 +331,8 @@ namespace dtDirector
                {
                   dtDirector::NodeManager& nodeManager = dtDirector::NodeManager::GetInstance();
                   mNode = nodeManager.CreateNode(mNodeName, mNodeCategory, graph).get();
+                  mNodeName = "";
+                  mNodeCategory = "";
                }
             }
             else if (mInLink)
