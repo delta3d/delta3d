@@ -75,7 +75,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool CallRemoteEventAction::Update(float simDelta, float delta, int inputIndex)
+   bool CallRemoteEventAction::Update(float simDelta, float delta, int input, bool firstUpdate)
    {
       // No matter what, call the finished event.  This will work because
       // this thread will be pushed lower on the stack if a remote event
@@ -111,7 +111,7 @@ namespace dtDirector
          event->Trigger();
       }
 
-      return ActionNode::Update(simDelta, delta, inputIndex);
+      return ActionNode::Update(simDelta, delta, input, firstUpdate);
    }
 
    //////////////////////////////////////////////////////////////////////////

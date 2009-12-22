@@ -95,32 +95,32 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool OperationAction::Update(float simDelta, float delta, int inputIndex)
+   bool OperationAction::Update(float simDelta, float delta, int input, bool firstUpdate)
    {
       // Perform math!
       double left = GetDouble("A");
       double right = GetDouble("B");
       double result = 0;
 
-      switch (inputIndex)
+      switch (input)
       {
-      case 0: // Add
+      case INPUT_ADD:
          result = left + right;
          break;
-      case 1: // Subtract
+      case INPUT_SUB:
          result = left - right;
          break;
-      case 2: // Multiply
+      case INPUT_MUL:
          result = left * right;
          break;
-      case 3: // Divide
+      case INPUT_DIV:
          if (right != 0) result = left / right;
          break;
       }
 
       SetDouble(result, "Result");
 
-      return ActionNode::Update(simDelta, delta, inputIndex);
+      return ActionNode::Update(simDelta, delta, input, firstUpdate);
    }
 
    //////////////////////////////////////////////////////////////////////////

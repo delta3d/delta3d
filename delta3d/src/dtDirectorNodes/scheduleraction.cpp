@@ -112,14 +112,14 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool SchedulerAction::Update(float simDelta, float delta, int inputIndex)
+   bool SchedulerAction::Update(float simDelta, float delta, int input, bool firstUpdate)
    {
       bool result = false;
 
       float elapsedTime = simDelta;
       if (!mUseSimTime) elapsedTime = delta;
 
-      switch (inputIndex)
+      switch (input)
       {
       case INPUT_PLAY:
       case INPUT_REVERSE:
@@ -130,37 +130,44 @@ namespace dtDirector
             // the "Out" output once at the beginning.
             if (!mIsActive)
             {
-               mIsActive = true;
-
-               if (inputIndex == INPUT_PLAY)
+               if (firstUpdate)
                {
-                  // If we are playing from the beginning and our
-                  // elapsed time is at the end, reset it back
-                  // to the start.
-                  if (mElapsedTime >= mTotalTime)
-                  {
-                     mElapsedTime = 0.0f;
-                  }
-               }
-               else if (inputIndex == INPUT_REVERSE)
-               {
-                  // If we are playing in reverse and our elapsed time
-                  // is at the beginning, flip it to start at the end.
-                  if (mElapsedTime <= 0.0f)
-                  {
-                     mElapsedTime = mTotalTime;
-                  }
-               }
+                  mIsActive = true;
 
-               // Call the parent so the default "Out" link is triggered.
-               ActionNode::Update(simDelta, delta, inputIndex);
-               result = true;
+                  if (input == INPUT_PLAY)
+                  {
+                     // If we are playing from the beginning and our
+                     // elapsed time is at the end, reset it back
+                     // to the start.
+                     if (mElapsedTime >= mTotalTime)
+                     {
+                        mElapsedTime = 0.0f;
+                     }
+                  }
+                  else if (input == INPUT_REVERSE)
+                  {
+                     // If we are playing in reverse and our elapsed time
+                     // is at the beginning, flip it to start at the end.
+                     if (mElapsedTime <= 0.0f)
+                     {
+                        mElapsedTime = mTotalTime;
+                     }
+                  }
+
+                  result = true;
+               }
+               // If this is not the first update for this node, then
+               // we must be paused or stopped, so we want to stop this update.
+               else
+               {
+                  return false;
+               }
             }
 
             float start = 0.0f;
             float end = 0.0f;
 
-            if (inputIndex == INPUT_PLAY)
+            if (input == INPUT_PLAY)
             {
                start = mElapsedTime;
                mElapsedTime += elapsedTime;
@@ -179,8 +186,8 @@ namespace dtDirector
 
             // Test if the desired time has elapsed.
             result = true;
-            if ((inputIndex == INPUT_PLAY && mElapsedTime >= mTotalTime) ||
-               (inputIndex == INPUT_REVERSE && mElapsedTime <= 0))
+            if ((input == INPUT_PLAY && mElapsedTime >= mTotalTime) ||
+               (input == INPUT_REVERSE && mElapsedTime <= 0))
             {
                mIsActive = false;
 

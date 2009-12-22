@@ -325,6 +325,7 @@ namespace dtDirector
       {
          Node* node;
          int   index;
+         bool  first;
 
          std::vector<ThreadData> subThreads;
          int currentThread;
