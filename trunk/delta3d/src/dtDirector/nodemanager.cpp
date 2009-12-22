@@ -277,9 +277,9 @@ namespace dtDirector
       dtCore::RefPtr<const NodeType> type = FindNodeType(name, category);
       if(!type.valid())
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ObjectFactoryUnknownType, 
-         "No node exists of the specified name [" + name + "] and category[" + 
-         category + "].", __FILE__, __LINE__);
+         mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, 
+            "No node exists of the specified name \"%s\" and category \"%s\".", 
+            name, category);
       }
 
       return CreateNode(*type, graph);
