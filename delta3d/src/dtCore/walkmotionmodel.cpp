@@ -13,10 +13,9 @@
 
 #include <dtCore/system.h>
 #include <dtCore/transformable.h>
+#include <dtCore/isector.h>
 
 #include <osg/Vec3>
-#include <osgUtil/IntersectionVisitor>
-#include <osgUtil/LineSegmentIntersector>
 
 namespace dtCore
 {
@@ -419,35 +418,30 @@ void WalkMotionModel::OnMessage(MessageData* data)
 
       if (mScene.get() != 0)
       {
-         osgUtil::IntersectionVisitor iv;
+         float height = 0.0f;
 
-         osg::Vec3 start(
+         const osg::Vec3 start(
             xyz[0],
             xyz[1],
             xyz[2] + mMaximumStepUpDistance - mHeightAboveTerrain
          );
 
-         osg::Vec3 end(
+         const osg::Vec3 end(
             xyz[0],
             xyz[1],
             xyz[2] - 10000.0f
          );
 
-         osgUtil::LineSegmentIntersector* lineSegmentIntersector;
+         // compute the hieight via Isector
          {
-            lineSegmentIntersector = new osgUtil::LineSegmentIntersector(
-               start, end);
-            iv.setIntersector(lineSegmentIntersector);
-         }
+            dtCore::RefPtr<dtCore::Isector> isector = new dtCore::Isector(GetScene(), start, end);
 
-         mScene->GetSceneNode()->accept(iv);
-
-         float height = 0.0f;
-
-         if (lineSegmentIntersector->containsIntersections())
-         {
-            osgUtil::LineSegmentIntersector::Intersection intersection = lineSegmentIntersector->getFirstIntersection();
-            height = intersection.getWorldIntersectPoint()[2];
+            if (isector->Update())
+            {
+               osg::Vec3 hitPoint;
+               isector->GetHitPoint(hitPoint);
+               height = hitPoint.z();
+            }
          }
 
          height += mHeightAboveTerrain;
