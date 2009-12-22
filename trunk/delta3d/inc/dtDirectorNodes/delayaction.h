@@ -34,6 +34,13 @@ namespace dtDirector
    {
    public:
 
+      enum InputType
+      {
+         INPUT_START = 0,
+         INPUT_STOP,
+         INPUT_PAUSE,
+      };
+
       /**
        * Constructor.
        */
@@ -64,13 +71,14 @@ namespace dtDirector
        * @note  Parent implementation will auto activate any trigger
        *        with the "Out" label by default.
        *
-       * @param[in]  simDelta    The simulation time step.
-       * @param[in]  delta       The real time step.
-       * @param[in]  inputIndex  The index to the active input.
+       * @param[in]  simDelta     The simulation time step.
+       * @param[in]  delta        The real time step.
+       * @param[in]  input        The index to the input that is active.
+       * @param[in]  firstUpdate  True if this input was just activated,
        *
        * @return     True if the current node should remain active.
        */
-      virtual bool Update(float simDelta, float delta, int inputIndex);
+      virtual bool Update(float simDelta, float delta, int input, bool firstUpdate);
 
       /**
        * Determines whether a value link on this node can connect

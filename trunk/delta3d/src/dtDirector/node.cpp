@@ -150,7 +150,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool Node::Update(float simDelta, float delta, int inputIndex)
+   bool Node::Update(float simDelta, float delta, int input, bool firstUpdate)
    {
       // Trigger the default out link.
       OutputLink* link = GetOutputLink("Out");

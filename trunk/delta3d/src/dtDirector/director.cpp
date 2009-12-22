@@ -311,6 +311,7 @@ namespace dtDirector
       StackData stack;
       stack.node = node;
       stack.index = index;
+      stack.first = true;
       stack.currentThread = -1;
       data.stack.push_back(stack);
 
@@ -323,6 +324,7 @@ namespace dtDirector
       StackData stack;
       stack.node = node;
       stack.index = index;
+      stack.first = true;
       stack.currentThread = -1;
 
       std::vector<ThreadData>* threadList = &mThreads;
@@ -522,7 +524,8 @@ namespace dtDirector
          // If the update result is true, then we want to immediately
          // create a new thread on any new events.  Otherwise, our first
          // new thread will be a continuation of the current active thread.
-         makeNewThread = currentNode->Update(simDelta, delta, stack.index);
+         makeNewThread = currentNode->Update(simDelta, delta, stack.index, stack.first);
+         stack.first = false;
 
          // Check for activated outputs and create new threads for them.
          int outputCount = (int)currentNode->GetOutputLinks().size();
@@ -563,6 +566,7 @@ namespace dtDirector
                         StackData& stack = data.stack[stackIndex];
                         stack.node = input->GetOwner();
                         stack.index = inputIndex;
+                        stack.first = true;
 
                         // From now on, all new active outputs create their own threads.
                         makeNewThread = true;

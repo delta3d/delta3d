@@ -81,7 +81,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool CompareValueAction::Update(float simDelta, float delta, int inputIndex)
+   bool CompareValueAction::Update(float simDelta, float delta, int input, bool firstUpdate)
    {
       double valueA = GetDouble("A");
       double valueB = GetDouble("B");

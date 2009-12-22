@@ -158,7 +158,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool EventNode::Update(float simDelta, float delta, int inputIndex)
+   bool EventNode::Update(float simDelta, float delta, int input, bool firstUpdate)
    {
       return false;
    }

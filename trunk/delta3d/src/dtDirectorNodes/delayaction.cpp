@@ -83,14 +83,14 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool DelayAction::Update(float simDelta, float delta, int inputIndex)
+   bool DelayAction::Update(float simDelta, float delta, int input, bool firstUpdate)
    {
       float elapsedTime = simDelta;
       if (!mUseSimTime) elapsedTime = delta;
 
-      switch (inputIndex)
+      switch (input)
       {
-      case 0: // Start
+      case INPUT_START:
          {
             bool result = false;
 
@@ -100,17 +100,27 @@ namespace dtDirector
             // the "Out" output once at the beginning.
             if (!mIsActive)
             {
-               mIsActive = true;
+               if (firstUpdate)
+               {
+                  mIsActive = true;
 
-               // Call the parent so the default "Out" link is triggered.
-               ActionNode::Update(simDelta, delta, inputIndex);
-               result = true;
+                  // Call the parent so the default "Out" link is triggered.
+                  ActionNode::Update(simDelta, delta, input, firstUpdate);
+                  result = true;
+               }
+               // If this is not the first update for this node, then
+               // we must be paused or stopped, so we want to stop this update.
+               else
+               {
+                  return false;
+               }
             }
 
             // Continue the timer.
             mElapsedTime += elapsedTime;
 
             // Test if the desired time has elapsed.
+            result = true;
             if (mElapsedTime >= GetFloat("Delay"))
             {
                // Reset the time and trigger the "Time Elapsed" output.
@@ -127,7 +137,8 @@ namespace dtDirector
             // return true to keep this node active in the current thread.
             return result;
          }
-      case 1: // Stop
+
+      case INPUT_STOP:
          // Reset the elapsed time and deactivate it.
          if (mIsActive)
          {
@@ -135,13 +146,14 @@ namespace dtDirector
             mIsActive = false;
          }
          return false;
-      case 2: // Pause
+
+      case INPUT_PAUSE:
          // Deactivate the node, but do not reset the timer.
          mIsActive = false;
          return false;
       }
 
-      return ActionNode::Update(simDelta, delta, inputIndex);
+      return ActionNode::Update(simDelta, delta, input, firstUpdate);
    }
 
    //////////////////////////////////////////////////////////////////////////
