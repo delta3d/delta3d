@@ -68,14 +68,14 @@ namespace dtDirector
          dtDAL::FloatActorProperty::SetFuncType(this, &DelayAction::SetDelay),
          dtDAL::FloatActorProperty::GetFuncType(this, &DelayAction::GetDelay),
          "The time delay (in seconds).");
+      AddProperty(delayProp);
 
       dtDAL::BooleanActorProperty* simTimeProp = new dtDAL::BooleanActorProperty(
          "UseSimTime", "Use Sim Time",
          dtDAL::BooleanActorProperty::SetFuncType(this, &DelayAction::SetUseSimTime),
          dtDAL::BooleanActorProperty::GetFuncType(this, &DelayAction::GetUseSimTime),
          "True to use game/sim time, false to use real time.");
-
-      AddProperty(delayProp);
+      AddProperty(simTimeProp);
 
       // This will expose the properties in the editor and allow
       // them to be connected to ValueNodes.
@@ -91,38 +91,42 @@ namespace dtDirector
       switch (inputIndex)
       {
       case 0: // Start
-         // We need to check the current active status because this node
-         // will be updated multiple times using this same index until
-         // the desired time has elapsed.  And we only want to trigger
-         // the "Out" output once at the beginning.
-         if (!mIsActive)
          {
-            mIsActive = true;
+            bool result = false;
 
-            // Call the parent so the default "Out" link is triggered.
-            ActionNode::Update(simDelta, delta, inputIndex);
-            return true;
+            // We need to check the current active status because this node
+            // will be updated multiple times using this same index until
+            // the desired time has elapsed.  And we only want to trigger
+            // the "Out" output once at the beginning.
+            if (!mIsActive)
+            {
+               mIsActive = true;
+
+               // Call the parent so the default "Out" link is triggered.
+               ActionNode::Update(simDelta, delta, inputIndex);
+               result = true;
+            }
+
+            // Continue the timer.
+            mElapsedTime += elapsedTime;
+
+            // Test if the desired time has elapsed.
+            if (mElapsedTime >= GetFloat("Delay"))
+            {
+               // Reset the time and trigger the "Time Elapsed" output.
+               mElapsedTime = 0.0f;
+               OutputLink* link = GetOutputLink("Time Elapsed");
+               if (link) link->Activate();
+
+               mIsActive = false;
+
+               // Return false so this node does not remain active.
+               result = false;
+            }
+
+            // return true to keep this node active in the current thread.
+            return result;
          }
-
-         // Continue the timer.
-         mElapsedTime += elapsedTime;
-
-         // Test if the desired time has elapsed.
-         if (mElapsedTime >= GetFloat("Delay"))
-         {
-            // Reset the time and trigger the "Time Elapsed" output.
-            mElapsedTime = 0.0f;
-            OutputLink* link = GetOutputLink("Time Elapsed");
-            if (link) link->Activate();
-
-            mIsActive = false;
-
-            // Return false so this node does not remain active.
-            return false;
-         }
-
-         // return true to keep this node active in the current thread.
-         return true;
       case 1: // Stop
          // Reset the elapsed time and deactivate it.
          if (mIsActive)
