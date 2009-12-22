@@ -71,7 +71,14 @@ namespace dtDirector
          QRadialGradient radialGradient(mNodeWidth/2, mNodeHeight, size, mNodeWidth/2, mNodeHeight);
          if (mNode->GetEnabled())
          {
-            setPen(QPen(GetDarkColorForType(valueNode->GetPropertyType().GetTypeId()), 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+            if (mNode->GetNodeLogging())
+            {
+               setPen(QPen(Qt::green, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+            }
+            else
+            {
+               setPen(QPen(GetDarkColorForType(valueNode->GetPropertyType().GetTypeId()), 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+            }
 
             QColor color = GetColorForType(valueNode->GetPropertyType().GetTypeId());
             color.setAlphaF(0.80f);
@@ -190,6 +197,8 @@ namespace dtDirector
       if (!mComment)
       {
          mComment = new GraphicsTextItem(this, scene());
+
+         mComment->setDefaultTextColor(Qt::darkGreen);
       }
 
       mComment->setPlainText(text.c_str());

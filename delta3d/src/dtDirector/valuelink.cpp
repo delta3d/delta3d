@@ -22,6 +22,7 @@
 #include <sstream>
 #include <algorithm>
 
+#include <dtDirector/director.h>
 #include <dtDirector/valuelink.h>
 #include <dtDirector/valuenode.h>
 
@@ -29,6 +30,9 @@
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/resourceactorproperty.h>
 #include <dtDAL/resourcedescriptor.h>
+
+#include <dtUtil/log.h>
+
 
 namespace dtDirector
 {
@@ -95,12 +99,21 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProperty* ValueLink::GetProperty(int index)
+   dtDAL::ActorProperty* ValueLink::GetProperty(int index, ValueNode** outNode)
    {
       if (index >= 0 && index < (int)mLinks.size())
       {
          ValueNode* node = mLinks[index];
-         if (node && node->GetEnabled()) return node->GetProperty();
+         if (node && node->GetEnabled())
+         {
+            if (outNode) *outNode = node;
+
+            dtDAL::ActorProperty* prop = node->GetProperty();
+            if (prop)
+            {
+               return prop;
+            }
+         }
       }
 
       // If we have no overriding links, and we are looking for the first
@@ -166,32 +179,7 @@ namespace dtDirector
       dtDAL::ActorProperty* prop = GetDefaultProperty();
       if (prop)
       {
-         std::string label = prop->GetName().Get();
-         dtDAL::ActorIDActorProperty* actorProp = dynamic_cast<dtDAL::ActorIDActorProperty*>(prop);
-         if (actorProp)
-         {
-            if (actorProp->GetRealActor())
-            {
-               label += "<br>(" + actorProp->GetRealActor()->GetName() + ")";
-            }
-         }
-         else
-         {
-            dtDAL::ResourceActorProperty* resourceProp = dynamic_cast<dtDAL::ResourceActorProperty*>(prop);
-            if (resourceProp)
-            {
-               dtDAL::ResourceDescriptor rd = resourceProp->GetValue();
-               if (!rd.IsEmpty())
-               {
-                  label += "<br>(" + rd.GetResourceName() + ")";
-               }
-            }
-            else
-            {
-               label += "<br>(" + prop->ToString() + ")";
-            }
-         }
-
+         std::string label = prop->GetName().Get() + "<br>(" + prop->GetValueString() + ")";
          SetLabel(label);
       }
 

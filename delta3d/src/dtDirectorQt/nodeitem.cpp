@@ -339,6 +339,8 @@ namespace dtDirector
       if (!mComment)
       {
          mComment = new GraphicsTextItem(this, scene());
+
+         mComment->setDefaultTextColor(Qt::darkGreen);
       }
 
       mComment->setPlainText(text.c_str());

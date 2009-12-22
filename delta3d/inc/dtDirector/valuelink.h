@@ -90,11 +90,12 @@ namespace dtDirector
       /**
        * Retrieves the property.
        *
-       * @param[in]  index  The value index.
+       * @param[in]  index    The value index.
+       * @param[in]  outNode  If provided, will retrieve the value node that owns this property (if any).
        *
        * @return     The property.
        */
-      dtDAL::ActorProperty* GetProperty(int index = 0);
+      dtDAL::ActorProperty* GetProperty(int index = 0, ValueNode** outNode = NULL);
 
       /**
        * Retrieves the default property.

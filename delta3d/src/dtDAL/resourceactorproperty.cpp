@@ -231,3 +231,15 @@ const std::string ResourceActorProperty::ToString() const
    else
       return r.GetDisplayName() + "/" + r.GetResourceIdentifier();
 }
+
+//////////////////////////////////////////////////////////////////////////
+std::string ResourceActorProperty::GetValueString()
+{
+   ResourceDescriptor r = GetValue();
+   if (!r.IsEmpty())
+   {
+      return r.GetResourceName();
+   }
+
+   return "None";
+}

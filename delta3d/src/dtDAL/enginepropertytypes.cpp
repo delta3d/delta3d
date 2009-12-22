@@ -232,6 +232,18 @@ namespace dtDAL
       return id.ToString();
    }
 
+   //////////////////////////////////////////////////////////////////////////
+   std::string ActorIDActorProperty::GetValueString()
+   {
+      dtCore::DeltaDrawable* drawable = GetRealActor();
+      if (drawable)
+      {
+         return drawable->GetName();
+      }
+
+      return "None";
+   }
+
    ////////////////////////////////////////////////////////////////////////////
    dtCore::DeltaDrawable* ActorIDActorProperty::GetRealActor()
    {

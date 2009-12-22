@@ -65,16 +65,6 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   std::string ActorValue::GetValueLabel()
-   {
-      std::string label = "";
-      dtDAL::ActorIDActorProperty* prop = dynamic_cast<dtDAL::ActorIDActorProperty*>(mProperty.get());
-      if (prop && prop->GetRealActor()) label = "(" + prop->GetRealActor()->GetName() + ")";
-
-      return label;
-   }
-
-   //////////////////////////////////////////////////////////////////////////
    void ActorValue::SetValue(const dtCore::UniqueId& value)
    {
       mValue = value;
@@ -85,5 +75,6 @@ namespace dtDirector
    const dtCore::UniqueId& ActorValue::GetValue()
    {
       return mValue;
+      ValueNode::OnValueRetrieved();
    }
 }

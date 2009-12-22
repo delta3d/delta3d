@@ -183,6 +183,12 @@ namespace dtDirector
       std::string& GetCreateDateTime() {return mCreationTime;}
 
       /**
+       * Accessors for the node logging flag.
+       */
+      void SetNodeLogging(bool enabled) {mLogNodes = enabled;}
+      bool GetNodeLogging() {return mLogNodes;}
+
+      /**
        * Inserts a node library with the given name at the given position.
        * If a library of the given name is already listed, the version
        * will be updated and the order adjusted to match the iterator.
@@ -318,6 +324,17 @@ namespace dtDirector
        */
       bool UpdateThread(ThreadData& data, float simDelta, float delta);
 
+      /**
+       * Processes an updated node.
+       *
+       * @param[in]  node       The node.
+       * @param[in]  first      True if this is the nodes first update.
+       * @param[in]  continued  True if this node will continue to update.
+       * @param[in]  input      The input index that was fired.
+       * @param[in]  outputs    A list of outputs that were activated.
+       */
+      void ProcessUpdatedNode(Node* node, bool first, bool continued, int input, std::vector<OutputLink*> outputs);
+
    private:
 
       // Thread stacks.
@@ -353,6 +370,7 @@ namespace dtDirector
 
       dtCore::RefPtr<DirectorGraph> mGraph;
 
+      bool           mLogNodes;
       dtUtil::Log*   mLogger;
    };
 }

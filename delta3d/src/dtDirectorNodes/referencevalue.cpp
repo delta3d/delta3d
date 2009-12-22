@@ -89,8 +89,6 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    const std::string& ReferenceValue::GetName()
    {
-      //mLabel = GetValueLabel();
-      //if (mLabel.empty()) mLabel = mName;
       return mName;
    }
 

@@ -36,6 +36,7 @@ namespace dtDirector
       , mGraph(NULL)
       , mMap(NULL)
       , mCurrentThread(-1)
+      , mLogNodes(false)
    {
       mLogger = &dtUtil::Log::GetInstance();
    }
@@ -520,20 +521,26 @@ namespace dtDirector
       if (stack.node)
       {
          Node* currentNode = stack.node;
+         int   input       = stack.index;
+         bool  first       = stack.first;
+         stack.first = false;
 
          // If the update result is true, then we want to immediately
          // create a new thread on any new events.  Otherwise, our first
          // new thread will be a continuation of the current active thread.
-         makeNewThread = currentNode->Update(simDelta, delta, stack.index, stack.first);
-         stack.first = false;
+         makeNewThread = currentNode->Update(simDelta, delta, input, first);
+         bool continued = makeNewThread;
 
          // Check for activated outputs and create new threads for them.
+         std::vector<OutputLink*> outputs;
          int outputCount = (int)currentNode->GetOutputLinks().size();
          for (int outputIndex = 0; outputIndex < outputCount; outputIndex++)
          {
             OutputLink* output = &currentNode->GetOutputLinks()[outputIndex];
             if (output->Test())
             {
+               outputs.push_back(output);
+
                int linkCount = (int)output->GetLinks().size();
                for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
                {
@@ -576,6 +583,8 @@ namespace dtDirector
             }
          }
 
+         ProcessUpdatedNode(currentNode, first, continued, input, outputs);
+
          // If we did not continue this current thread, stop it.
          if (!makeNewThread)
          {
@@ -598,5 +607,76 @@ namespace dtDirector
       }
 
       return true;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void Director::ProcessUpdatedNode(Node* node, bool first, bool continued, int input, std::vector<OutputLink*> outputs)
+   {
+      // If this node is flagged to log its comment, log it.
+      if (GetNodeLogging() && node->GetNodeLogging())
+      {
+         std::string message;
+         // If this is the first execution of this node.
+         if (first)
+         {
+            // If we are only updating this node once.
+            if (!continued)
+            {
+               message = "Executed ";
+            }
+            // If we are going to keep the thread on this node.
+            else
+            {
+               message = "Began ";
+            }
+         }
+         // If this is not the first execution of this node, then only
+         // print the log if this node is finishing.
+         else if (!continued)
+         {
+            message = "Finished ";
+         }
+         // If we have triggered any outputs, then we need to log it.
+         else if (outputs.size())
+         {
+            message = "Updated ";
+         }
+
+         // If we are logging a message.
+         if (!message.empty())
+         {
+            if (input < (int)node->GetInputLinks().size())
+            {
+               InputLink* link = &node->GetInputLinks()[input];
+               if (link)
+               {
+                  message += "Input (" + link->GetName() + ") on ";
+               }
+            }
+
+            message += "Node \'" + node->GetType().GetFullName();
+            if (!node->GetComment().empty())
+            {
+               message += " - " + node->GetComment() + "\' ";
+            }
+            else message += "\'";
+
+            if (outputs.size())
+            {
+               message += "and Output (";
+
+               int count = (int)outputs.size();
+               for (int index = 0; index < count; index++)
+               {
+                  message += outputs[index]->GetName();
+
+                  if (index < count - 1) message += ", ";
+               }
+               message += ")";
+            }
+
+            mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, "dtDirector::Director::UpdateThread", 531, message);
+         }
+      }
    }
 }

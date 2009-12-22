@@ -142,6 +142,11 @@ namespace dtDirector
       void OnValueChanged();
 
       /**
+       * Event handler when the value has been retrieved.
+       */
+      void OnValueRetrieved();
+
+      /**
        * Retrieves whether the UI should expose input links
        * assigned to this node.
        *

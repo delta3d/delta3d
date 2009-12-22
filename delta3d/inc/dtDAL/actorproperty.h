@@ -60,6 +60,11 @@ namespace dtDAL
          DataType& GetPropertyType() const { return GetDataType(); }
 
          /**
+          * Retrieves a human readable version of the property's value.
+          */
+         virtual std::string GetValueString() {return ToString();}
+
+         /**
           * Assigns the value of this property the value contained in the
           * specified property.
           * @param otherProp The property containing the value to copy.
