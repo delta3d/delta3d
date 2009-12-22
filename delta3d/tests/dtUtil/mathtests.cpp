@@ -59,23 +59,23 @@ namespace dtUtil
          CPPUNIT_TEST(TestEquivalentReals);
       CPPUNIT_TEST_SUITE_END();
 
-      public:
-         void setUp();
-         void tearDown();
+   public:
+      void setUp();
+      void tearDown();
 
-         void TestFiniteAndNAN();
-         void TestVecFinite();
-         void TestNormalizer();
-         void TestEquivalentVec2();
-         void TestEquivalentVec3();
-         void TestEquivalentVecUsingEqualVecs();
-         void TestEquivalentVecUsingSlightlyDifferentVecs();
-         void TestEquivalentVecUsingVeryDifferentVecs();
-         void TestEquivalentVec4();
-         void TestEquivalentReals();
-       void TestMatrixEulerConversions();
+      void TestFiniteAndNAN();
+      void TestVecFinite();
+      void TestNormalizer();
+      void TestEquivalentVec2();
+      void TestEquivalentVec3();
+      void TestEquivalentVecUsingEqualVecs();
+      void TestEquivalentVecUsingSlightlyDifferentVecs();
+      void TestEquivalentVecUsingVeryDifferentVecs();
+      void TestEquivalentVec4();
+      void TestEquivalentReals();
+    void TestMatrixEulerConversions();
 
-      private:
+   private:
    };
 
    // Registers the fixture into the 'registry'
@@ -130,7 +130,7 @@ namespace dtUtil
 
    void MathTests::TestFiniteAndNAN()
    {
-      float f1 = 5.1;
+      float f1 = 5.1f;
       double d1 = 6.1;
 
       CPPUNIT_ASSERT(dtUtil::IsFinite(f1));
@@ -266,7 +266,7 @@ namespace dtUtil
    {
       const osg::Vec3 v1(1.f, 2.f, 3.f);
 
-      //easy case, this *better* be true
+      // easy case, this *better* be true
       CPPUNIT_ASSERT_MESSAGE("dtUtil::Equivalent(Vec3,Vec3) did not correctly compare equal Vec3",
                               Equivalent(v1, v1) == true );
    }
@@ -277,7 +277,7 @@ namespace dtUtil
       const osg::Vec3 v1(1.f, 2.f, 3.f);
       const osg::Vec3 v2(1.0000001f, 2.0000001f, 3.0000001f);
 
-      //numbers are really close, should be equivalent
+      // numbers are really close, should be equivalent
       CPPUNIT_ASSERT_MESSAGE("dtUtil::Equivalent(Vec3,Vec3) did not correctly compare slightly different Vec3",
                                Equivalent(v1, v2) == true );
    }
@@ -288,7 +288,7 @@ namespace dtUtil
       const osg::Vec3 v1(1.f, 2.f, 3.f);
       const osg::Vec3 v2(10.f, 20.f, 30.f);
 
-      //numbers are really different, should *not* be equivalent
+      // numbers are really different, should *not* be equivalent
       CPPUNIT_ASSERT_MESSAGE("dtUtil::Equivalent(Vec3,Vec3) did not correctly compare very different Vec3",
                              Equivalent(v1, v2) == false );
    }
@@ -393,5 +393,4 @@ namespace dtUtil
 
       // Note, this should check doubles also, but I don't know the limit values for this.
    }
-
 } // namespace dtUtil
