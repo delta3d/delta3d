@@ -99,8 +99,6 @@ namespace dtAudio
       return mSound.get();
    }
 
-
-
    ///////////////////////////////////////////////////////////////////////////////
    // PROXY CODE
    ///////////////////////////////////////////////////////////////////////////////
@@ -109,15 +107,7 @@ namespace dtAudio
       , mMinRandomTime(SoundActorProxy::DEFAULT_RANDOM_TIME_MIN)
       , mMaxRandomTime(SoundActorProxy::DEFAULT_RANDOM_TIME_MAX)
       , mOffsetTime(0.0f)
-      , mPlaySoundAtStartup(true)
-      , mGain(0.0)
-      , mPitch(0.0)
-      , mMaxDistance(0.0)
-      , mRolloffFactor(0.0)
-      , mMinGain(0.0)
-      , mMaxGain(0.0)
-      , mLooping(true)
-      , mListenerRelative(false)
+      , mPlaySoundAtStartup(true)      
    {
       /**
        * @note You must instantiate, configure, and shutdown the
@@ -150,17 +140,7 @@ namespace dtAudio
     {
        SoundActor* actor = new SoundActor(*this);
        SetActor(*actor);
-       Sound* sound = GetSound();
-
-       //Read the defaults.
-       mLooping = sound->IsLooping();
-       mListenerRelative = sound->IsListenerRelative();
-       mRolloffFactor = sound->GetRolloffFactor();
-       mGain = sound->GetGain();
-       mPitch = sound->GetPitch();
-       mMaxGain = sound->GetMaxGain();
-       mMinGain = sound->GetMinGain();
-       mMaxDistance = sound->GetMaxDistance();
+       Sound* sound = GetSound();       
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -281,6 +261,8 @@ namespace dtAudio
         // This property manipulates the minimum gain of a sound. It uses
         // a float type to represent the minimum gain.
         // Default is 0.0f
+        // TODO: Remove this eventually.  Min Gain is not a a settable
+        // value in OpenAL.
         AddProperty(new FloatActorProperty(
            PROPERTY_MIN_GAIN,
            PROPERTY_MIN_GAIN,
@@ -459,111 +441,111 @@ namespace dtAudio
     void SoundActorProxy::SetLooping(bool looping)
     {
        Sound* snd = GetSound();
-       snd->SetLooping(looping);
-       mLooping = looping;
+       snd->SetLooping(looping);       
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     bool SoundActorProxy::IsLooping() const
     {
-       return mLooping;
+       return GetSound()->IsLooping();
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     void SoundActorProxy::SetGain(float gain)
     {
        Sound* snd = GetSound();
-       snd->SetGain(gain);
-       mGain = gain;
+       snd->SetGain(gain);       
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     float SoundActorProxy::GetGain() const
     {
-       return mGain;
+       return GetSound()->GetGain();
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     void SoundActorProxy::SetPitch(float pitch)
     {
        Sound* snd = GetSound();
-       snd->SetPitch(pitch);
-       mPitch = pitch;
+       snd->SetPitch(pitch);       
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     float SoundActorProxy::GetPitch() const
     {
-       return mPitch;
+       return GetSound()->GetPitch();
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     void SoundActorProxy::SetListenerRelative(bool lisrel)
     {
        Sound* snd = GetSound();
-       snd->SetListenerRelative(lisrel);
-       mListenerRelative = lisrel;
+       snd->SetListenerRelative(lisrel);       
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     bool SoundActorProxy::IsListenerRelative() const
     {
-       return mListenerRelative;
+       return GetSound()->IsListenerRelative();
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     void SoundActorProxy::SetMaxDistance(float max)
     {
        Sound* snd = GetSound();
-       snd->SetMaxDistance(max);
-       mMaxDistance = max;
+       snd->SetMaxDistance(max);       
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     float SoundActorProxy::GetMaxDistance() const
     {
-       return mMaxDistance;
+       return GetSound()->GetMaxDistance();
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     void SoundActorProxy::SetRolloffFactor(float rolloff)
     {
        Sound* snd = GetSound();
-       snd->SetRolloffFactor(rolloff);
-       mRolloffFactor = rolloff;
+       snd->SetRolloffFactor(rolloff);       
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     float SoundActorProxy::GetRolloffFactor() const
     {
-       return mRolloffFactor;
+       return GetSound()->GetRolloffFactor();
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     void SoundActorProxy::SetMinGain(float min)
     {
+       //deprecated 12/21/2009
+       DEPRECATE("SoundActorProxy::SetMinGain", 
+          "OpenAL doesn't have a MinGain value.");
+
        Sound* snd = GetSound();
-       snd->SetMinGain(min);
-       mMinGain = min;
+       snd->SetMinGain(min);       
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     float SoundActorProxy::GetMinGain() const
     {
-       return mMinGain;
+       //deprecated 12/21/2009
+       DEPRECATE("SoundActorProxy::GetMinGain", 
+          "OpenAL doesn't have a MinGain value.");
+
+       return GetSound()->GetMinGain();
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     void SoundActorProxy::SetMaxGain(float max)
     {
        Sound* snd = GetSound();
-       snd->SetMaxGain(max);
-       mMaxGain = max;
+       snd->SetMaxGain(max);       
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     float SoundActorProxy::GetMaxGain() const
     {
-       return mMaxGain;
+       return GetSound()->GetMaxGain();
     }
 }

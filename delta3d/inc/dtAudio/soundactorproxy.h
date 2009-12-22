@@ -48,15 +48,8 @@ namespace dtAudio
 
    private:
 
-      dtCore::RefPtr<dtAudio::Sound> mSound;
-
-      float mGain, mPitch, mMaxDistance, mRolloffFactor, mMinGain, mMaxGain;
-
-      bool mLooping;
-      bool mListenerRelative;
+      dtCore::RefPtr<dtAudio::Sound> mSound;      
    };
-
-
 
    /**
    * @class SoundActorProxy
@@ -252,8 +245,8 @@ namespace dtAudio
       void SetRolloffFactor(float rolloff);
       float GetRolloffFactor() const;
 
-      void SetMinGain(float min);
-      float GetMinGain() const;
+      DEPRECATE_FUNC void SetMinGain(float min);
+      DEPRECATE_FUNC float GetMinGain() const;
 
       void SetMaxGain(float max);
       float GetMaxGain() const;
@@ -290,11 +283,7 @@ namespace dtAudio
 
       /// Flag that determines whether or not the sound begins at app startup
       bool mPlaySoundAtStartup;
-
-      float mGain, mPitch, mMaxDistance, mRolloffFactor, mMinGain, mMaxGain;
-
-      bool mLooping;
-      bool mListenerRelative;
+      
    };
 } // namespace dtAudio
 
