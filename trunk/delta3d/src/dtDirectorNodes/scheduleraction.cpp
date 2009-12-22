@@ -350,6 +350,8 @@ namespace dtDirector
    void SchedulerAction::UpdateOutputs()
    {
       mTotalTime = 0.0f;
+
+      std::vector<OutputLink> outputs = mOutputs;
       mOutputs.clear();
 
       int count = (int)mEventList.size();
@@ -362,7 +364,19 @@ namespace dtDirector
          OutputLink* link = GetOutputLink(data.name);
          if (!link)
          {
-            mOutputs.push_back(OutputLink(this, data.name));
+            bool found = false;
+            int linkCount = (int)outputs.size();
+            for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
+            {
+               if (outputs[linkIndex].GetName() == data.name)
+               {
+                  found = true;
+                  mOutputs.push_back(outputs[linkIndex]);
+                  break;
+               }
+            }
+
+            if (!found) mOutputs.push_back(OutputLink(this, data.name));
          }
 
          // Update the total time
