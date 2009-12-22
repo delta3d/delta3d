@@ -1,20 +1,20 @@
-/* 
- * Delta3D Open Source Game and Simulation Engine 
- * Copyright (C) 2004-2006 MOVES Institute 
+/*
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2004-2006 MOVES Institute
  *
  * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free 
- * Software Foundation; either version 2.1 of the License, or (at your option) 
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
  *
  * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this library; if not, write to the Free Software Foundation, Inc., 
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  */
 #include <prefix/dtcoreprefix-src.h>
@@ -40,11 +40,11 @@ namespace dtCore
 
       dtUtil::SetDataFilePathList(pathList);
    }
-   
+
    /**
     * Get the list of paths that dtCore should use to search for files to load.  Paths
     * are separated with a single ";" on Win32 and a single ":" on Linux.
-    * 
+    *
     * @see SetDataFilePathList()
     */
    DEPRECATE_FUNC std::string GetDataFilePathList()
@@ -53,27 +53,27 @@ namespace dtCore
 
       return dtUtil::GetDataFilePathList();
    }
-   
+
    DEPRECATE_FUNC std::string FindFileInPathList(const std::string& fileName)
    {
       DEPRECATE("dtCore::FindFileInPathList", "dtUtil::FindFileInPathList");
 
       return dtUtil::FindFileInPathList(fileName);
    }
-   
-   
-   /** 
+
+
+   /**
     * Simple method to return the system environment variable.  If the env var
     * is not set, the local path will be returned.
     *
     * @param env The system environment variable to be queried
     * @return The value of the environment variable
     */
-   DEPRECATE_FUNC std::string GetEnvironment( const std::string& env )
+   DEPRECATE_FUNC std::string GetEnvironment(const std::string& env)
    {
       DEPRECATE("dtCore::GetEnvironment", "dtUtil::GetEnvironment");
 
-      if( char* ptr = getenv( env.c_str() ) )
+      if (char* ptr = getenv(env.c_str()))
       {
          return std::string(ptr);
       }
@@ -82,7 +82,7 @@ namespace dtCore
          return std::string("./");
       }
    }
-  
+
    //////////////////////////////////////////////////////////////////////
    DEPRECATE_FUNC void SetEnvironment(const std::string& name, const std::string& value)
    {
@@ -90,15 +90,15 @@ namespace dtCore
 
 #ifdef DELTA_WIN32
       std::ostringstream oss;
-      oss << name << "=" << value;  
-      putenv(oss.str().c_str());
+      oss << name << "=" << value;
+      _putenv(oss.str().c_str());
 #else
       setenv(name.c_str(), value.c_str(), true);
 #endif
    }
-   
+
    /**
-    * Get the Delta Data file path.  This comes directly from the environment 
+    * Get the Delta Data file path.  This comes directly from the environment
     * variable "DELTA_DATA".  If the environment variable is not set, the local
     * directory will be returned.
     * @todo need to decide how paths will be handled.  We need to decide if DELTA_DATA is a list or a single item.
@@ -107,10 +107,10 @@ namespace dtCore
    {
       DEPRECATE("dtCore::GetDeltaDataPathList", "dtUtil::GetDeltaDataPathList");
 
-      return GetEnvironment("DELTA_DATA");
+      return dtUtil::GetEnvironment("DELTA_DATA");
    }
-   
-   /** 
+
+   /**
     * If the DELTA_ROOT environment is not set, the local directory will be
     * returned.
     */
@@ -118,7 +118,7 @@ namespace dtCore
    {
       DEPRECATE("dtCore::GetDeltaRootPath", "dtUtil::GetDeltaRootPath");
 
-      return GetEnvironment("DELTA_ROOT");
+      return dtUtil::GetEnvironment("DELTA_ROOT");
    }
 
    ////////////////////////////////////////////////////////////////////////////////

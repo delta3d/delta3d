@@ -49,11 +49,11 @@ namespace dtUtil
       ResetToDefaultValues();
       mTimeOrigin = &to;
 
-      if(mTimeOrigin == &TimeOrigin::GMT_TIME)
+      if (mTimeOrigin == &TimeOrigin::GMT_TIME)
       {
          SetToGMTTime();
       }
-      else if(mTimeOrigin == &TimeOrigin::LOCAL_TIME)
+      else if (mTimeOrigin == &TimeOrigin::LOCAL_TIME)
       {
          SetToLocalTime();
       }
@@ -376,10 +376,10 @@ namespace dtUtil
    void DateTime::SetGMTOffset(tm& timeParts, bool factorLocalDayLightSavingsIntoGMTOffset)
    {
       #ifdef DELTA_WIN32
-            tzset();
+            _tzset();
             long tz = timezone * -1;
             mGMTOffset = tz / 3600.0f;
-            if(factorLocalDayLightSavingsIntoGMTOffset)
+            if (factorLocalDayLightSavingsIntoGMTOffset)
             {
                mGMTOffset += timeParts.tm_isdst;
             }
@@ -389,7 +389,7 @@ namespace dtUtil
             // subtract it back out.
             long tz = timeParts.tm_gmtoff;
             mGMTOffset = tz / 3600.0f;
-            if(!factorLocalDayLightSavingsIntoGMTOffset)
+            if (!factorLocalDayLightSavingsIntoGMTOffset)
             {
                mGMTOffset -= timeParts.tm_isdst;
             }
@@ -400,7 +400,7 @@ namespace dtUtil
    void DateTime::SetGMTOffset(double lattitude, double longitude, bool dayLightSavings)
    {
       double offset = 7.5;
-      if(longitude < 0.0f) offset = -offset;
+      if (longitude < 0.0f) { offset = -offset; }
       mGMTOffset = float(int(dayLightSavings) + int((longitude + offset) / 15.0));
    }
 
@@ -558,7 +558,7 @@ namespace dtUtil
       struct tm timeParts = *this; //conversion operator
       std::string str;
 
-      if(tf == TimeFormat::CALENDAR_DATE_AND_TIME_FORMAT)
+      if (tf == TimeFormat::CALENDAR_DATE_AND_TIME_FORMAT)
       {
          //this case we must handle specially because the msvc compiler insists on
          //writing out the time zone for %z as opposed to printing the actual offset
@@ -577,39 +577,38 @@ namespace dtUtil
       }
       else
       {
-         if(tf == TimeFormat::LOCAL_DATE_AND_TIME_FORMAT)
+         if (tf == TimeFormat::LOCAL_DATE_AND_TIME_FORMAT)
          {
             strftime(buffer, 80, "%c", &timeParts);
          }
-         else if(tf == TimeFormat::CLOCK_TIME_12_HOUR_FORMAT)
+         else if (tf == TimeFormat::CLOCK_TIME_12_HOUR_FORMAT)
          {
             strftime(buffer, 80, "%I:%M:%S %p", &timeParts);
          }
-         else if(tf == TimeFormat::LOCAL_DATE_FORMAT)
+         else if (tf == TimeFormat::LOCAL_DATE_FORMAT)
          {
             strftime(buffer, 80, "%x", &timeParts);
          }
-         else if(tf == TimeFormat::LEXICAL_DATE_FORMAT)
+         else if (tf == TimeFormat::LEXICAL_DATE_FORMAT)
          {
             strftime(buffer, 80, "%B %d, %Y", &timeParts);
          }
-         else if(tf == TimeFormat::CALENDAR_DATE_FORMAT)
+         else if (tf == TimeFormat::CALENDAR_DATE_FORMAT)
          {
             strftime(buffer, 80, "%Y-%m-%d", &timeParts);
          }
-         else if(tf == TimeFormat::CLOCK_TIME_24_HOUR_FORMAT)
+         else if (tf == TimeFormat::CLOCK_TIME_24_HOUR_FORMAT)
          {
             strftime(buffer, 80, "%H:%M:%S", &timeParts);
          }
-         else if(tf == TimeFormat::WEEK_DATE_FORMAT)
+         else if (tf == TimeFormat::WEEK_DATE_FORMAT)
          {
             strftime(buffer, 80, "%Y-W%U-%w", &timeParts);
          }
-         else if(tf == TimeFormat::ORDINAL_DATE_FORMAT)
+         else if (tf == TimeFormat::ORDINAL_DATE_FORMAT)
          {
             strftime(buffer, 80, "%Y-%j", &timeParts);
          }
-
       }
 
       str.assign(buffer);
@@ -620,10 +619,10 @@ namespace dtUtil
 
    void DateTime::GetGMTTime(time_t* t, tm& timeParts) const
    {
-      if(t != NULL)
+      if (t != NULL)
       {
          struct tm* temp = gmtime(t);
-         if(temp != NULL)
+         if (temp != NULL)
          {
             timeParts = *temp;
             return;
@@ -636,10 +635,10 @@ namespace dtUtil
 
    void DateTime::GetLocalTime(time_t* t, tm& timeParts) const
    {
-      if(t != NULL)
+      if (t != NULL)
       {
          struct tm* temp = localtime(t);
-         if(temp != NULL)
+         if (temp != NULL)
          {
             timeParts = *temp;
             return;
@@ -648,5 +647,5 @@ namespace dtUtil
 
       memset(&timeParts, 0, sizeof(tm));
    }
-}
 
+} // namespace dtUtil
