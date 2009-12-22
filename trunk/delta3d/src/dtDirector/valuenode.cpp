@@ -28,6 +28,7 @@
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actorproperty.h>
 
+
 namespace dtDirector
 {
    ///////////////////////////////////////////////////////////////////////////////////////
@@ -134,8 +135,7 @@ namespace dtDirector
    std::string ValueNode::GetValueLabel()
    {
       std::string label = "";
-      if (mProperty && !mProperty->ToString().empty()) label = "(" + mProperty->ToString() + ")";
-
+      if (mProperty) label = "(" + mProperty->GetValueString() + ")";
       return label;
    }
 
@@ -174,6 +174,11 @@ namespace dtDirector
          ValueLink* link = mLinks[index];
          if (link) link->GetOwner()->OnLinkValueChanged(link->GetName());
       }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ValueNode::OnValueRetrieved()
+   {
    }
 
    //////////////////////////////////////////////////////////////////////////

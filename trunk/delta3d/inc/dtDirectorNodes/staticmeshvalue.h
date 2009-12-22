@@ -71,11 +71,6 @@ namespace dtDirector
        */
       virtual void BuildPropertyMap();
 
-      /**
-       * Accessors for the name of the node.
-       */
-      virtual std::string GetValueLabel();
-
    private:
 
       /**

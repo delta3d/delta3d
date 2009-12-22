@@ -233,6 +233,11 @@ namespace dtDAL
       virtual const std::string ToString() const;
 
       /**
+       * Retrieves a human readable version of the property's value.
+       */
+      virtual std::string GetValueString();
+
+      /**
       * @return the class of proxy this expects so that the UI can filter the list.
       */
       const std::string& GetDesiredActorClass() const { return mDesiredActorClass; }

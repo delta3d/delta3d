@@ -33,7 +33,7 @@ namespace dtDirector
 {
    ///////////////////////////////////////////////////////////////////////////////////////
    Node::Node()
-      : mLogComment(false)
+      : mLogNode(false)
       , mEnabled(true)
       , mDirector(NULL)
       , mGraph(NULL)
@@ -100,7 +100,7 @@ namespace dtDirector
    void Node::BuildPropertyMap()
    {
       dtDAL::StringActorProperty* authorProp = 
-         new dtDAL::StringActorProperty("Authors", "Author(s)",
+         new dtDAL::StringActorProperty("Authors", "Node Author(s)",
          dtDAL::StringActorProperty::SetFuncType(),
          dtDAL::StringActorProperty::GetFuncType(this, &Node::GetAuthors),
          "The author(s) of this node, as well as all inherited nodes.");
@@ -119,11 +119,17 @@ namespace dtDirector
          dtDAL::StringActorProperty::GetFuncType(this, &Node::GetComment),
          "Generic text field used to describe why this node is here."));
 
+      AddProperty(new dtDAL::BooleanActorProperty(
+         "LogNode", "Log Node",
+         dtDAL::BooleanActorProperty::SetFuncType(this, &Node::SetNodeLogging),
+         dtDAL::BooleanActorProperty::GetFuncType(this, &Node::GetNodeLogging),
+         "Prints a log message when this node is executed."));
+
       dtDAL::StringActorProperty* typeProp = new dtDAL::StringActorProperty(
          "Type", "Type",
          dtDAL::StringActorProperty::SetFuncType(),
          dtDAL::StringActorProperty::GetFuncType(this, &Node::GetTypeName),
-         "The nodes type.", "Debug");
+         "The nodes type.", "Info");
       typeProp->SetReadOnly(true);
       AddProperty(typeProp);
 
@@ -131,22 +137,15 @@ namespace dtDirector
          "Description", "Description",
          dtDAL::StringActorProperty::SetFuncType(),
          dtDAL::StringActorProperty::GetFuncType(this, &Node::GetDescription),
-         "Generic text field used to describe the basic functionality of this node.", "Debug");
+         "Generic text field used to describe the basic functionality of this node.", "Info");
       descProp->SetReadOnly(true);
       AddProperty(descProp);
-
-      AddProperty(new dtDAL::BooleanActorProperty(
-         "LogComment", "Log Comment",
-         dtDAL::BooleanActorProperty::SetFuncType(this, &Node::SetLogComment),
-         dtDAL::BooleanActorProperty::GetFuncType(this, &Node::GetLogComment),
-         "Outputs the comment text to the log window when this node is activated.",
-         "Debug"));
 
       AddProperty(new dtDAL::Vec2ActorProperty(
          "Position", "Position",
          dtDAL::Vec2ActorProperty::SetFuncType(this, &Node::SetPosition),
          dtDAL::Vec2ActorProperty::GetFuncType(this, &Node::GetPosition),
-         "The UI Position of the Node.", "Debug"));
+         "The UI Position of the Node.", "Info"));
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -224,15 +223,15 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool Node::GetLogComment() const
+   bool Node::GetNodeLogging() const
    {
-      return mLogComment;
+      return mLogNode;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void Node::SetLogComment(bool log)
+   void Node::SetNodeLogging(bool log)
    {
-      mLogComment = log;
+      mLogNode = log;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -332,7 +331,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProperty* Node::GetProperty(const std::string& name, int index)
+   dtDAL::ActorProperty* Node::GetProperty(const std::string& name, int index, ValueNode** outNode)
    {
       // First iterate through all value links to see if this property
       // is redirected.
@@ -341,7 +340,7 @@ namespace dtDirector
          dtDAL::ActorProperty* prop = mValues[valueIndex].GetDefaultProperty();
          if (prop && prop->GetName() == name)
          {
-            return mValues[valueIndex].GetProperty(index);
+            return mValues[valueIndex].GetProperty(index, outNode);
          }
       }
 

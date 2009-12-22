@@ -190,7 +190,7 @@ namespace dtDirector
        *
        * @return  True if the node will output a log.
        */
-      bool GetLogComment() const;
+      bool GetNodeLogging() const;
 
       /**
        * Sets whether this node will output its comment
@@ -198,7 +198,7 @@ namespace dtDirector
        *
        * @param[in]  log  True to output a log.
        */
-      void SetLogComment(bool log);
+      void SetNodeLogging(bool log);
 
       /**
        * Retrieves the authors of this node.
@@ -275,8 +275,9 @@ namespace dtDirector
        * to provide functionality of redirected properties (from the
        * use of ValueLink's).
        *
-       * @param[in]  name   The name of the property.
-       * @param[in]  index  The property index, in case of multiple linking.
+       * @param[in]  name     The name of the property.
+       * @param[in]  index    The property index, in case of multiple linking.
+       * @param[in]  outNode  If provided, will retrieve the value node that owns this property (if any).
        *
        * @return     A pointer to the property, NULL if none found.
        *
@@ -284,7 +285,7 @@ namespace dtDirector
        *         via this method instead of directly to ensure that
        *         the desired property is being used.
        */
-      virtual dtDAL::ActorProperty* GetProperty(const std::string& name, int index = 0);
+      virtual dtDAL::ActorProperty* GetProperty(const std::string& name, int index = 0, ValueNode** outNode = NULL);
 
       /**
        * This method is provided for ease of use, it will
@@ -302,7 +303,8 @@ namespace dtDirector
       T GetPropertyValue(const std::string& name = "Value", int index = 0)
       {
          T result = 0;
-         dtDAL::ActorProperty* prop = GetProperty(name, index);
+         ValueNode* node = NULL;
+         dtDAL::ActorProperty* prop = GetProperty(name, index, &node);
          if (prop)
          {
             std::string val = prop->ToString();
@@ -315,6 +317,22 @@ namespace dtDirector
             }
 
             result = dtUtil::ToType<T>(val);
+
+            // Log the comment for this value.
+            if (GetDirector()->GetNodeLogging() && node && node->GetNodeLogging())
+            {
+               dtUtil::Log* logger = node->GetDirector()->GetLogger();
+               if (logger)
+               {
+                  std::string message = "Value Node \'" + node->GetName();
+                  if (!node->GetComment().empty())
+                  {
+                     message += " - " + node->GetComment();
+                  }
+                  message += "\' retrieved " + prop->GetValueString();
+                  logger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, message);
+               }
+            }
          }
          return result;
       }
@@ -347,11 +365,30 @@ namespace dtDirector
             int count = GetPropertyCount(name);
             for (index = 0; index < count; index++)
             {
-               dtDAL::ActorProperty* prop = GetProperty(name, index);
+               ValueNode* node = NULL;
+               dtDAL::ActorProperty* prop = GetProperty(name, index, &node);
                if (prop)
                {
+                  std::string oldVal = prop->GetValueString();
+
                   std::string val = dtUtil::ToString(value);
                   prop->FromString(val);
+
+                  // Log the comment for this value.
+                  if (GetDirector()->GetNodeLogging() && node && node->GetNodeLogging())
+                  {
+                     dtUtil::Log* logger = node->GetDirector()->GetLogger();
+                     if (logger)
+                     {
+                        std::string message = "Value Node \'" + node->GetName();
+                        if (!node->GetComment().empty())
+                        {
+                           message += " - " + node->GetComment();
+                        }
+                        message += "\' was changed from " + oldVal + " to " + prop->GetValueString();
+                        logger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, message);
+                     }
+                  }
                }
             }
          }
@@ -469,7 +506,7 @@ namespace dtDirector
       // Properties.
       dtCore::UniqueId   mID;
       std::string        mComment;
-      bool               mLogComment;
+      bool               mLogNode;
       std::string        mAuthors;
       std::vector<std::string> mAuthorList;
 

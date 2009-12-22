@@ -73,7 +73,14 @@ namespace dtDirector
          QRadialGradient radialGradient(mNodeWidth/2, mNodeHeight/2, size, mNodeWidth/2, mNodeHeight/2);
          if (mNode->GetEnabled())
          {
-            setPen(QPen(Qt::darkGray, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+            if (mNode->GetNodeLogging())
+            {
+               setPen(QPen(Qt::green, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+            }
+            else
+            {
+               setPen(QPen(Qt::darkGray, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+            }
 
             QColor color = Qt::darkCyan;
             color.setAlphaF(0.80f);
