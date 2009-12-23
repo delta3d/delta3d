@@ -754,7 +754,8 @@ void Transformable::PrePhysicsStepUpdate()
 }
 
 /////////////////////////////////////////////////////////////
-void Transformable::RenderCollisionGeometry(bool enable)
+void Transformable::RenderCollisionGeometry(bool enable /* = true */,
+   bool wireFrame /*= false */)
 {
    TransformableNode *xform = this->GetMatrixNode();
 
@@ -774,7 +775,8 @@ void Transformable::RenderCollisionGeometry(bool enable)
          RemoveRenderedCollisionGeometry();
       }
 
-      mImpl->mGeomGeod = mImpl->mGeomWrap->CreateRenderedCollisionGeometry();
+      mImpl->mGeomGeod = 
+         mImpl->mGeomWrap->CreateRenderedCollisionGeometry(wireFrame);
 
       if (mImpl->mGeomGeod.valid())
       {

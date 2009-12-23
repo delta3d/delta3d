@@ -100,6 +100,7 @@ namespace dtEditQt
    EditorActions::EditorActions()
       : mExternalToolActionGroup(new QActionGroup(NULL))
       , mDocBrowser(NULL)
+      , mShowingTriggerVolumes(false)
    {
       LOG_INFO("Initializing Editor Actions.");
       setupFileActions();
@@ -395,6 +396,11 @@ namespace dtEditQt
       mActionAddTool = new QAction(tr("&External Tools..."), this);
       mActionAddTool->setStatusTip(tr("Add/edit external tools"));
       connect(mActionAddTool, SIGNAL(triggered()), this, SLOT(SlotNewExternalToolEditor()));
+
+      // Tool - Hide/Show trigger volumes
+      mActionHideShowTriggers = new QAction(QIcon(UIResources::ICON_EYE.c_str()), tr("Show/Hide Triggers"), this);
+      mActionHideShowTriggers->setStatusTip(tr("Show/Hide Triggers"));
+      connect(mActionHideShowTriggers, SIGNAL(triggered()), this, SLOT(slotShowHideTriggers()));
 
       mExternalToolArgParsers.push_back(new CurrentContextArgParser());
       mExternalToolArgParsers.push_back(new CurrentMapFilenameArgParser());
@@ -1383,6 +1389,55 @@ namespace dtEditQt
       ViewportManager::GetInstance().refreshAllViewports();
    }
 
+   //////////////////////////////////////////////////////////////////////////////
+   void EditorActions::slotShowHideTriggers()
+   {
+      dtDAL::Map* map;
+      map = dtEditQt::EditorData::GetInstance().getCurrentMap();
+
+      if (! map)
+      {
+         return;
+      }      
+      
+      std::vector< dtCore::RefPtr<dtDAL::ActorProxy > > actorProxies;
+      map->GetAllProxies(actorProxies);
+
+      if (mShowingTriggerVolumes)
+      {
+         mShowingTriggerVolumes = false;         
+      }
+      else
+      {
+         mShowingTriggerVolumes = true;         
+      }
+
+      for(size_t i = 0; i < actorProxies.size(); ++i)
+      {         
+         if (actorProxies[i]->GetActorType().GetName() == "Trigger Volume Actor")
+         {
+            dtCore::Transformable* actr = 
+               dynamic_cast<dtCore::Transformable* >(actorProxies[i]->GetActor());
+
+            if (actr)
+            {  
+               if (mShowingTriggerVolumes)
+               { 
+                  //show trigger volumes
+                  actr->RenderCollisionGeometry(true, true);                  
+               }
+               else
+               {
+                  //hide trigger volumes
+                  actr->RenderCollisionGeometry(false);                  
+               }
+            }
+         }
+      }
+
+      //update all view windows
+      dtEditQt::ViewportManager::GetInstance().refreshAllViewports();
+   }
 
    //////////////////////////////////////////////////////////////////////////////
    void EditorActions::slotTaskEditor()
