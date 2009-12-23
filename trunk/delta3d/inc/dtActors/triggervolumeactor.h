@@ -49,7 +49,7 @@ namespace dtActors
       TriggerVolumeActor(dtActors::TriggerVolumeActorProxy& proxy);
 
       void SetMaxTriggerCount(int maxTriggercount) { mMaxTriggerCount = maxTriggercount; }
-      int GetMaxTriggerCount() const               { return mTriggerCount; }
+      int GetMaxTriggerCount() const               { return mMaxTriggerCount; }
 
       virtual void OnMessage(dtCore::Base::MessageData* data);
 

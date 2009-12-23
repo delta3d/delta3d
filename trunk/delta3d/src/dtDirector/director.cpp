@@ -38,6 +38,7 @@ namespace dtDirector
       , mCurrentThread(-1)
       , mLogNodes(false)
    {
+      mPlayer = "";
       mLogger = &dtUtil::Log::GetInstance();
    }
 
