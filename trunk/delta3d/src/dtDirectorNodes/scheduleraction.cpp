@@ -137,43 +137,43 @@ namespace dtDirector
             // will be updated multiple times using this same index until
             // the desired time has elapsed.  And we only want to trigger
             // the "Out" output once at the beginning.
-            if (!mIsActive)
+            if (firstUpdate)
             {
-               if (firstUpdate)
-               {
-                  mIsActive = true;
+               mIsActive = true;
 
-                  if (input == INPUT_PLAY)
-                  {
-                     // If we are playing from the beginning and our
-                     // elapsed time is at the end, reset it back
-                     // to the start.
-                     if (mElapsedTime >= mTotalTime)
-                     {
-                        mElapsedTime = 0.0f;
-                     }
-                  }
-                  else if (input == INPUT_REVERSE)
-                  {
-                     // If we are playing in reverse and our elapsed time
-                     // is at the beginning, flip it to start at the end.
-                     if (mElapsedTime <= 0.0f)
-                     {
-                        mElapsedTime = mTotalTime;
-                     }
-                  }
-
-                  OutputLink* link = GetOutputLink("Started");
-                  if (link) link->Activate();
-                  result = true;
-               }
-               // If this is not the first update for this node, then
-               // we must be paused or stopped, so we want to stop this update.
-               else
+               if (input == INPUT_PLAY)
                {
-                  return false;
+                  // If we are playing from the beginning and our
+                  // elapsed time is at the end, reset it back
+                  // to the start.
+                  if (mElapsedTime >= mTotalTime)
+                  {
+                     mElapsedTime = 0.0f;
+                  }
                }
+               else if (input == INPUT_REVERSE)
+               {
+                  // If we are playing in reverse and our elapsed time
+                  // is at the beginning, flip it to start at the end.
+                  if (mElapsedTime <= 0.0f)
+                  {
+                     mElapsedTime = mTotalTime;
+                  }
+               }
+
+               mPlayDirection = input;
+
+               OutputLink* link = GetOutputLink("Started");
+               if (link) link->Activate();
+               result = true;
             }
+
+            // If we are not active, stop this thread.
+            if (!mIsActive) return false;
+
+            // If we are updating a thread that is flowing in the wrong director,
+            // close that thread.
+            if (mPlayDirection != input) return false;
 
             float start = 0.0f;
             float end = 0.0f;
