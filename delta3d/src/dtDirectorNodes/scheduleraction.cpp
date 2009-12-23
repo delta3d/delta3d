@@ -59,6 +59,8 @@ namespace dtDirector
       mInputs.push_back(InputLink(this, "Pause"));
 
       mOutputs.clear();
+      mOutputs.push_back(OutputLink(this, "Started"));
+      mOutputs.push_back(OutputLink(this, "Ended"));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -72,6 +74,13 @@ namespace dtDirector
          dtDAL::FloatActorProperty::SetFuncType(this, &SchedulerAction::SetTime),
          dtDAL::FloatActorProperty::GetFuncType(this, &SchedulerAction::GetTime),
          "The current time (in seconds).");
+
+      dtDAL::FloatActorProperty* totalTimeProp = new dtDAL::FloatActorProperty(
+         "TotalTime", "Total Time",
+         dtDAL::FloatActorProperty::SetFuncType(this, &SchedulerAction::SetTotalTime),
+         dtDAL::FloatActorProperty::GetFuncType(this, &SchedulerAction::GetTotalTime),
+         "The total time (in seconds).");
+      AddProperty(totalTimeProp);
 
       dtDAL::BooleanActorProperty* simTimeProp = new dtDAL::BooleanActorProperty(
          "UseSimTime", "Use Sim Time",
@@ -108,7 +117,7 @@ namespace dtDirector
 
       // This will expose the properties in the editor and allow
       // them to be connected to ValueNodes.
-      mValues.push_back(ValueLink(this, timeProp, true, true, false));
+      mValues.push_back(ValueLink(this, timeProp, true, true, true));
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -154,6 +163,8 @@ namespace dtDirector
                      }
                   }
 
+                  OutputLink* link = GetOutputLink("Started");
+                  if (link) link->Activate();
                   result = true;
                }
                // If this is not the first update for this node, then
@@ -195,6 +206,10 @@ namespace dtDirector
                if (mElapsedTime < 0.0f) mElapsedTime = 0.0f;
                else if (mElapsedTime > mTotalTime) mElapsedTime = mTotalTime;
 
+               // Fire the "Stopped" output
+               OutputLink* link = GetOutputLink("Ended");
+               if (link) link->Activate();
+
                // Return false so this node does not remain active.
                result = false;
             }
@@ -210,6 +225,10 @@ namespace dtDirector
             mElapsedTime = 0.0f;
             SetFloat(mElapsedTime, "Time");
             mIsActive = false;
+
+            // Fire the "Stopped" output
+            OutputLink* link = GetOutputLink("Ended");
+            if (link) link->Activate();
          }
          break;
 
@@ -258,6 +277,18 @@ namespace dtDirector
    float SchedulerAction::GetTime()
    {
       return mElapsedTime;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void SchedulerAction::SetTotalTime(float value)
+   {
+      mTotalTime = value;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   float SchedulerAction::GetTotalTime()
+   {
+      return mTotalTime;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -349,10 +380,16 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void SchedulerAction::UpdateOutputs()
    {
-      mTotalTime = 0.0f;
+      OutputLink startOutput(this, "Started");
+      OutputLink endOutput(this, "Ended");
+      OutputLink* link = GetOutputLink("Started");
+      if (link) startOutput = *link;
+      link = GetOutputLink("Ended");
+      if (link) endOutput = *link;
 
       std::vector<OutputLink> outputs = mOutputs;
       mOutputs.clear();
+      mOutputs.push_back(startOutput);
 
       int count = (int)mEventList.size();
       for (int index = 0; index < count; index++)
@@ -385,6 +422,8 @@ namespace dtDirector
             mTotalTime = data.time;
          }
       }
+
+      mOutputs.push_back(endOutput);
    }
 
    ////////////////////////////////////////////////////////////////////////////////

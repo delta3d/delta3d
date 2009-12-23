@@ -19,32 +19,31 @@
  * Author: Jeff P. Houde
  */
 
-#ifndef DIRECTOR_OUTPUT_NODE
-#define DIRECTOR_OUTPUT_NODE
+#ifndef LERP_ACTOR_ROTATION_ACTION_NODE
+#define LERP_ACTOR_ROTATION_ACTION_NODE
 
-#include <dtDirectorNodes/nodelibraryexport.h>
+////////////////////////////////////////////////////////////////////////////////
+
 #include <dtDirector/actionnode.h>
-
+#include <dtDirectorNodes/nodelibraryexport.h>
 
 namespace dtDirector
 {
-   /**
-    * This node, when used inside a sub tier, will expose
-    * output links when viewing that tier from the outside.
-    *
-    * @note
-    *      Node objects must be created through the NodePluginRegistry or
-    *      the NodeManager. If they are not created in this fashion,
-    *      the node types will not be set correctly.
-    */
-   class NODE_LIBRARY_EXPORT OutputNode : public ActionNode
+   ////////////////////////////////////////////////////////////////////////////////
+   class NODE_LIBRARY_EXPORT LerpActorRotationAction: public ActionNode
    {
    public:
 
+      enum InputType
+      {
+         INPUT_START = 0,
+         INPUT_STOP,
+      };
+
       /**
-       * Constructs the Node.
+       * Constructor.
        */
-      OutputNode();
+      LerpActorRotationAction();
 
       /**
        * Initializes the Node.
@@ -81,30 +80,54 @@ namespace dtDirector
       virtual bool Update(float simDelta, float delta, int input, bool firstUpdate);
 
       /**
-       * Accessors for the name of the input node.
-       */
-      void SetName(const std::string& name);
-      virtual const std::string& GetName() {return mName;}
+      * Initializes the lerp.
+      */
+      void InitLerp();
 
       /**
-       * Retrieves whether the UI should expose output links
-       * assigned to this node.
-       *
-       * @return  True to expose outputs.
+       * Accessors for property values.
        */
-      virtual bool OutputsExposed();
+      void SetLerpActor(const dtCore::UniqueId& value);
+      dtCore::UniqueId GetLerpActor();
+
+      void SetStartTime(float value);
+      float GetStartTime();
+
+      void SetEndTime(float value);
+      float GetEndTime();
+
+      void SetTime(float value);
+      float GetTime();
+
+      void SetStartRot(const osg::Vec4& value);
+      osg::Vec4 GetStartRot();
+
+      void SetEndRot(const osg::Vec4& value);
+      osg::Vec4 GetEndRot();
 
    protected:
 
       /**
-       *	Protected Destructor.  dtCore::RefPtr will handle its destruction.
+       * Destructor.
        */
-      virtual ~OutputNode();
+      ~LerpActorRotationAction();
 
    private:
 
-      std::string mName;
+      dtCore::UniqueId mLerpActor;
+      float            mStartTime;
+      float            mEndTime;
+      float            mTime;
+      osg::Vec4        mStartRot;
+      osg::Vec4        mEndRot;
+
+      float            mLerpTimeScalar;
+      bool             mWaitingForStart;
+
+      bool mIsActive;
    };
 }
 
-#endif
+////////////////////////////////////////////////////////////////////////////////
+
+#endif // LERP_ACTOR_ROTATION_ACTION_NODE

@@ -68,6 +68,13 @@ namespace dtDirector
          "The name of the output link."));
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   bool OutputNode::Update(float simDelta, float delta, int input, bool firstUpdate)
+   {
+      mOutputs[0].Activate();
+      return false;
+   }
+
    //////////////////////////////////////////////////////////////////////////
    void OutputNode::SetName(const std::string& name)
    {

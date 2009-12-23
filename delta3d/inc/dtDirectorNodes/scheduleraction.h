@@ -104,6 +104,9 @@ namespace dtDirector
       void SetTime(float value);
       float GetTime();
 
+      void SetTotalTime(float value);
+      float GetTotalTime();
+
       void SetUseSimTime(bool value);
       bool GetUseSimTime();
 
