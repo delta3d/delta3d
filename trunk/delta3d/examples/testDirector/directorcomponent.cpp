@@ -54,6 +54,7 @@ void DirectorComponent::ProcessMessage(const dtGame::Message& message)
 
       // Update Director with both sim and real time
       mDirector->Update(tickMessage.GetDeltaSimTime(), tickMessage.GetDeltaRealTime());
+      mFireDirector->Update(tickMessage.GetDeltaSimTime(), tickMessage.GetDeltaRealTime());
    }
    else if (message.GetMessageType() == dtGame::MessageType::INFO_MAP_LOADED)
    {
@@ -98,6 +99,9 @@ void DirectorComponent::OnAddedToGM()
 
    mDirector = new dtDirector::Director();
    mDirector->Init();
+
+   mFireDirector = new dtDirector::Director();
+   mFireDirector->Init();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -141,6 +145,16 @@ void DirectorComponent::OnMapLoaded()
       //actor->RenderCollisionGeometry(true);
    }
 
+   std::vector<dtDAL::ActorProxy*> particleSysProxyList;
+   gm->FindActorsByType(*dtActors::EngineActorRegistry::PARTICLE_SYSTEM_ACTOR_TYPE, particleSysProxyList);
+   for (size_t proxyIndex = 0; proxyIndex < particleSysProxyList.size(); ++proxyIndex)
+   {
+      dtCore::Transformable* actor = 
+         dynamic_cast<dtCore::Transformable*>(particleSysProxyList[proxyIndex]->GetActor());
+
+     actor->SetActive(false);
+   }
+
    // Get the player start position
    dtDAL::ActorProxy* playerStartProxy = NULL;
    gm->FindActorByType(*dtActors::EngineActorRegistry::PLAYER_START_ACTOR_TYPE, playerStartProxy);
@@ -160,10 +174,15 @@ void DirectorComponent::LoadDirectorScript()
 {
    dtGame::GameManager* gm = GetGameManager();
    dtCore::Camera* camera  = gm->GetApplication().GetCamera();
+
    mDirector->SetPlayer(camera->GetUniqueId());
+   mFireDirector->SetPlayer(camera->GetUniqueId());
 
    mDirector->LoadScript("doors");
+   mFireDirector->LoadScript("fires");
+
    mDirector->SetNodeLogging(true);
+   mFireDirector->SetNodeLogging(true);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
