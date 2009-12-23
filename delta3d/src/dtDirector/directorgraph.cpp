@@ -173,7 +173,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   ValueNode* DirectorGraph::GetValueNode(const std::string& name)
+   ValueNode* DirectorGraph::GetValueNode(const std::string& name, bool searchSubgraphs)
    {
       int count = (int)mValueNodes.size();
       for (int index = 0; index < count; index++)
@@ -184,14 +184,17 @@ namespace dtDirector
          }
       }
 
-      count = (int)mSubGraphs.size();
-      for (int index = 0; index < count; index++)
+      if (searchSubgraphs)
       {
-         DirectorGraph* graph = mSubGraphs[index];
-         if (graph)
+         count = (int)mSubGraphs.size();
+         for (int index = 0; index < count; index++)
          {
-            ValueNode* node = graph->GetValueNode(name);
-            if (node) return node;
+            DirectorGraph* graph = mSubGraphs[index];
+            if (graph)
+            {
+               ValueNode* node = graph->GetValueNode(name);
+               if (node) return node;
+            }
          }
       }
 

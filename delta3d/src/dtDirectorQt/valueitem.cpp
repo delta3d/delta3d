@@ -260,7 +260,19 @@ namespace dtDirector
       {
          // Find the referenced value node.
          std::string name = prop->ToString();
-         Node* refNode = mScene->GetEditor()->GetDirector()->GetValueNode(name);
+
+         // Search for the referenced node anywhere in the current graph
+         // or any of its parents.
+         Node* refNode = NULL;
+         DirectorGraph* graph = mNode->GetGraph();
+         while (graph)
+         {
+            refNode = graph->GetValueNode(name, false);
+            if (refNode) break;
+
+            graph = graph->mParent;
+         }
+
          if (refNode)
          {
             // Center the view on the referenced node.

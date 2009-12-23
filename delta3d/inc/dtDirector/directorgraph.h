@@ -100,11 +100,12 @@ namespace dtDirector
        * @note  If there are more than one value with the
        *         same name, only the first one will be returned.
        *
-       * @param[in]  name  The name of the value to find.
+       * @param[in]  name             The name of the value to find.
+       * @param[in]  searchSubgraphs  True if you wish to search for the value node in any subgraphs.
        *
        * @return     A pointer to the value node, NULL if not found.
        */
-      ValueNode* GetValueNode(const std::string& name);
+      ValueNode* GetValueNode(const std::string& name, bool searchSubgraphs = true);
 
       /**
        * Adds a node to the graph.

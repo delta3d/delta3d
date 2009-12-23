@@ -49,6 +49,7 @@ namespace dtDirector
       static dtCore::RefPtr<dtDirector::NodeType> DELAY_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> SCHEDULER_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> LERP_ACTOR_ROTATION_ACTION_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> LERP_ACTOR_TRANSLATION_ACTION_NODE_TYPE;
 
       /// Values
       static dtCore::RefPtr<dtDirector::NodeType> EXTERNAL_VALUE_NODE_TYPE;
