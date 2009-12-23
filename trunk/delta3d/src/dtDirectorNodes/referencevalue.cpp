@@ -236,29 +236,42 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void ReferenceValue::UpdateReference()
    {
-      ValueNode* node = NULL;
-      if (!mReference.empty() &&
-         (node = GetDirector()->GetValueNode(mReference)))
+      if (!mReference.empty())
       {
-         // Disconnect all links that are no longer valid based on type.
-         if (mLinks.size())
+         // Search for the referenced node anywhere in the current graph
+         // or any of its parents.
+         ValueNode* node = NULL;
+         DirectorGraph* graph = GetGraph();
+         while (graph)
          {
-            int count = (int)mLinks.size();
-            for (int index = 0; index < count; index++)
-            {
-               ValueLink* link = mLinks[index];
-               if (!link || !link->GetOwner()) continue;
+            node = graph->GetValueNode(mReference, false);
+            if (node) break;
 
-               if (!link->GetOwner()->CanConnectValue(link, node))
-               {
-                  mLinks[index]->Disconnect(this);
-                  index--;
-                  count--;
-               }
-            }
+            graph = graph->mParent;
          }
 
-         mValues[0].Connect(node);
+         if (node)
+         {
+            // Disconnect all links that are no longer valid based on type.
+            if (mLinks.size())
+            {
+               int count = (int)mLinks.size();
+               for (int index = 0; index < count; index++)
+               {
+                  ValueLink* link = mLinks[index];
+                  if (!link || !link->GetOwner()) continue;
+
+                  if (!link->GetOwner()->CanConnectValue(link, node))
+                  {
+                     mLinks[index]->Disconnect(this);
+                     index--;
+                     count--;
+                  }
+               }
+            }
+
+            mValues[0].Connect(node);
+         }
       }
       // If we can't find the node, make sure we are not
       // connected to anything.

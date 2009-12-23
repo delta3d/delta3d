@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
     <header>
         <name>TestDirector</name>
@@ -8,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2009-12-21T16:14:44-08:00</createTimestamp>
-        <lastUpdateTimestamp>2009-12-23T10:25:46-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2009-12-23T11:21:20-08:00</lastUpdateTimestamp>
         <editorVersion>2.4.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -287,6 +286,105 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes::Door_Pivot_Room.IVE</resourceDisplayName>
                 <resource>StaticMeshes::Door_Pivot_Room.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtActors.Trigger Volume Actor</type>
+            <id>439d5910-68e3-4efe-a122-893f9a0de0c6</id>
+            <name>Physical_02</name>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>0.028912</value1>
+                    <value2>14.962203</value2>
+                    <value3>-0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>5.000000</value1>
+                    <value2>5.000000</value2>
+                    <value3>5.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.1887903</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server Local</enumerated>
+            </property>
+            <property>
+                <name>Local Actor Update Policy</name>
+                <enumerated>ACCEPT_ALL</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string></string>
+            </property>
+            <property>
+                <name>CurrentShader</name>
+                <resourceType>Shaders</resourceType>
+                <resourceDisplayName></resourceDisplayName>
+                <resource></resource>
+            </property>
+            <property>
+                <name>MaxTriggerCount</name>
+                <integer>0</integer>
             </property>
         </actor>
         <actor>
@@ -1995,5 +2093,126 @@
         </actor>
     </actors>
     <groups></groups>
-    <presetCameras></presetCameras>
+    <presetCameras>
+        <presetCamera>
+            <index>1</index>
+            <perspectiveView>
+                <positionX>-0.465649</positionX>
+                <positionY>8.850134</positionY>
+                <positionZ>5.131255</positionZ>
+                <rotationX>-0.334522</rotationX>
+                <rotationY>0.008468</rotationY>
+                <rotationZ>-0.023846</rotationZ>
+                <rotationW>0.942048</rotationW>
+            </perspectiveView>
+            <topView>
+                <positionX>0.000000</positionX>
+                <positionY>0.000000</positionY>
+                <positionZ>0.000000</positionZ>
+                <zoom>1.000000</zoom>
+            </topView>
+            <sideView>
+                <positionX>0.000000</positionX>
+                <positionY>0.000000</positionY>
+                <positionZ>0.000000</positionZ>
+                <zoom>1.000000</zoom>
+            </sideView>
+            <frontView>
+                <positionX>0.000000</positionX>
+                <positionY>0.000000</positionY>
+                <positionZ>0.000000</positionZ>
+                <zoom>1.000000</zoom>
+            </frontView>
+        </presetCamera>
+        <presetCamera>
+            <index>2</index>
+            <perspectiveView>
+                <positionX>7.934584</positionX>
+                <positionY>8.741132</positionY>
+                <positionZ>5.286903</positionZ>
+                <rotationX>-0.332952</rotationX>
+                <rotationY>0.004649</rotationY>
+                <rotationZ>-0.013165</rotationZ>
+                <rotationW>0.942840</rotationW>
+            </perspectiveView>
+            <topView>
+                <positionX>0.000000</positionX>
+                <positionY>0.000000</positionY>
+                <positionZ>0.000000</positionZ>
+                <zoom>1.000000</zoom>
+            </topView>
+            <sideView>
+                <positionX>0.000000</positionX>
+                <positionY>0.000000</positionY>
+                <positionZ>0.000000</positionZ>
+                <zoom>1.000000</zoom>
+            </sideView>
+            <frontView>
+                <positionX>0.000000</positionX>
+                <positionY>0.000000</positionY>
+                <positionZ>0.000000</positionZ>
+                <zoom>1.000000</zoom>
+            </frontView>
+        </presetCamera>
+        <presetCamera>
+            <index>3</index>
+            <perspectiveView>
+                <positionX>15.538631</positionX>
+                <positionY>8.780010</positionY>
+                <positionZ>5.598201</positionZ>
+                <rotationX>-0.332952</rotationX>
+                <rotationY>0.004649</rotationY>
+                <rotationZ>-0.013165</rotationZ>
+                <rotationW>0.942840</rotationW>
+            </perspectiveView>
+            <topView>
+                <positionX>0.000000</positionX>
+                <positionY>0.000000</positionY>
+                <positionZ>0.000000</positionZ>
+                <zoom>1.000000</zoom>
+            </topView>
+            <sideView>
+                <positionX>0.000000</positionX>
+                <positionY>0.000000</positionY>
+                <positionZ>0.000000</positionZ>
+                <zoom>1.000000</zoom>
+            </sideView>
+            <frontView>
+                <positionX>0.000000</positionX>
+                <positionY>0.000000</positionY>
+                <positionZ>0.000000</positionZ>
+                <zoom>1.000000</zoom>
+            </frontView>
+        </presetCamera>
+        <presetCamera>
+            <index>4</index>
+            <perspectiveView>
+                <positionX>23.532007</positionX>
+                <positionY>8.431090</positionY>
+                <positionZ>5.442552</positionZ>
+                <rotationX>-0.332952</rotationX>
+                <rotationY>0.004649</rotationY>
+                <rotationZ>-0.013165</rotationZ>
+                <rotationW>0.942840</rotationW>
+            </perspectiveView>
+            <topView>
+                <positionX>0.000000</positionX>
+                <positionY>0.000000</positionY>
+                <positionZ>0.000000</positionZ>
+                <zoom>1.000000</zoom>
+            </topView>
+            <sideView>
+                <positionX>0.000000</positionX>
+                <positionY>0.000000</positionY>
+                <positionZ>0.000000</positionZ>
+                <zoom>1.000000</zoom>
+            </sideView>
+            <frontView>
+                <positionX>0.000000</positionX>
+                <positionY>0.000000</positionY>
+                <positionZ>0.000000</positionZ>
+                <zoom>1.000000</zoom>
+            </frontView>
+        </presetCamera>
+    </presetCameras>
 </map>

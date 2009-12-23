@@ -595,8 +595,7 @@ namespace dtDirector
    {
       if (!node || !fromNode || !parent) return;
 
-      int count = (int)fromNode->GetLinks().size();
-      for (int index = 0; index < count; index++)
+      for (int index = 0; index < (int)fromNode->GetLinks().size(); index++)
       {
          ValueLink* valueLink = fromNode->GetLinks()[index];
          if (valueLink)
