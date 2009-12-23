@@ -73,10 +73,11 @@ namespace dtDirector
       /**
        * Triggers the event.
        *
-       * @param[in]  outputName  The output to trigger.
-       * @param[in]  instigator  The instigating actor ID.
+       * @param[in]  outputName    The output to trigger.
+       * @param[in]  instigator    The instigating actor ID.
+       * @param[in]  countTrigger  True if you want this trigger to count towards the max trigger count.
        */
-      void Trigger(const std::string& outputName = "Out", const dtDAL::ActorProxy* instigator = NULL);
+      void Trigger(const std::string& outputName = "Out", const dtCore::UniqueId* instigator = NULL, bool countTrigger = true);
 
       /**
        * Tests whether the event should trigger.
@@ -84,7 +85,7 @@ namespace dtDirector
        * @param[in]  outputName  The output to trigger.
        * @param[in]  instigator  The instigating actor ID.
        */
-      virtual bool Test(const std::string& outputName, const dtDAL::ActorProxy* instigator = NULL);
+      virtual bool Test(const std::string& outputName, const dtCore::UniqueId* instigator);
 
       /**
        * Updates the node.

@@ -141,6 +141,7 @@ void DirectorComponent::OnMapLoaded()
    dtCore::Transform startTransform;
    playerStart->GetTransform(startTransform);
    camera->SetTransform(startTransform);
+   camera->SetCollisionCollideBits(COLLISION_CATEGORY_MASK_OBJECT);
 
    LoadDirectorScript();
 }
@@ -150,19 +151,6 @@ void DirectorComponent::LoadDirectorScript()
 {
    mDirector->LoadScript("doors");
    mDirector->SetNodeLogging(true);
-
-   std::vector<dtDirector::Node*> nodes;
-   mDirector->GetNodes("Remote Event", "Core", "EventName", "Play", nodes);
-  
-   // Trigger initial events
-   for (size_t index = 0; index < nodes.size(); index++)
-   {
-      dtDirector::EventNode* event = dynamic_cast<dtDirector::EventNode*>(nodes[index]);
-      if (event)
-      {
-         event->Trigger();
-      }
-   }   
 }
 
 ////////////////////////////////////////////////////////////////////////////////

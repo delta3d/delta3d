@@ -25,6 +25,7 @@
 // Events
 #include <dtDirectorNodes/inputnode.h>
 #include <dtDirectorNodes/remoteevent.h>
+#include <dtDirectorNodes/triggervolumeevent.h>
 
 // Actions
 #include <dtDirectorNodes/outputnode.h>
@@ -70,7 +71,8 @@ namespace dtDirector
 
    // Events
    RefPtr<NodeType> NodeLibraryRegistry::INPUT_NODE_TYPE(new dtDirector::NodeType("Input Link", "Core", "Links", "This node creates an input link connector in its parent graph."));
-   RefPtr<NodeType> NodeLibraryRegistry::REMOTE_EVENT_NODE_TYPE(new dtDirector::NodeType("Remote Event", "Core", "Events", "An remote event."));
+   RefPtr<NodeType> NodeLibraryRegistry::REMOTE_EVENT_NODE_TYPE(new dtDirector::NodeType("Remote Event", "Core", "Events", "A remote event."));
+   RefPtr<NodeType> NodeLibraryRegistry::TRIGGER_VOLUME_EVENT_NODE_TYPE(new dtDirector::NodeType("Trigger Volume Event", "General", "Events", "A trigger volume event."));
 
    // Actions
    RefPtr<NodeType> NodeLibraryRegistry::OUTPUT_NODE_TYPE(new dtDirector::NodeType("Output Link", "Core", "Links", "This node creates an output link connector in its parent graph."));
@@ -117,6 +119,7 @@ namespace dtDirector
       // Events
       mNodeFactory->RegisterType<InputNode>(INPUT_NODE_TYPE.get());
       mNodeFactory->RegisterType<RemoteEvent>(REMOTE_EVENT_NODE_TYPE.get());
+      mNodeFactory->RegisterType<TriggerVolumeEvent>(TRIGGER_VOLUME_EVENT_NODE_TYPE.get());
 
       // Actions
       mNodeFactory->RegisterType<OutputNode>(OUTPUT_NODE_TYPE.get());

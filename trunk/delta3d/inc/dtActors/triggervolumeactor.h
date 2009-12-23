@@ -25,7 +25,7 @@
 
 #include <dtGame/gameactor.h>
 #include <dtCore/observerptr.h>
-#include <dtABC/action.h>
+#include <dtDAL/functor.h>
 
 #include <osg/NodeVisitor>
 
@@ -38,20 +38,18 @@ namespace dtActors
       DECLARE_MANAGEMENT_LAYER(TriggerVolumeActor)
 
    public:
+      enum TriggerEventType
+      {
+         ENTER_EVENT,
+         LEAVE_EVENT,
+      };
+
+      typedef dtUtil::Functor<void, TYPELIST_2(dtCore::Transformable*, TriggerEventType)> EventFuncType;
 
       TriggerVolumeActor(dtActors::TriggerVolumeActorProxy& proxy);
 
-      void SetEnterAction(dtABC::Action* action) { mEnterAction = action; }
-      void SetExitAction(dtABC::Action* action)  { mExitAction = action; }
-
       void SetMaxTriggerCount(int maxTriggercount) { mMaxTriggerCount = maxTriggercount; }
       int GetMaxTriggerCount() const               { return mTriggerCount; }
-
-      dtABC::Action* GetEnterAction()             { return mEnterAction.get(); }
-      const dtABC::Action* GetEnterAction() const { return mEnterAction.get(); }
-
-      dtABC::Action* GetExitAction()             { return mExitAction.get(); }
-      const dtABC::Action* GetExitAction() const { return mExitAction.get(); }
 
       virtual void OnMessage(dtCore::Base::MessageData* data);
 
@@ -62,16 +60,40 @@ namespace dtActors
       */
       virtual bool FilterContact(dContact* contact, Transformable* collider);
 
+      /**
+      * Registers a listener for trigger events caused by this volume.
+      *
+      * @param[in]  receiver       The receiver of the events.
+      * @param[in]  eventCallback  The event callback functor to call.
+      *
+      * @param[in]  Returns false if the receiver was already registered.
+      */
+      bool RegisterListener(void* receiver, EventFuncType eventCallback);
+
+      /**
+      * Unregisters a listener from this trigger.
+      *
+      * @param[in]  receiver  The receiver of the events.
+      *
+      * @return     Returns false if the receiver was not registered.
+      */
+      bool UnregisterListener(void* receiver);
+
    protected:
 
        virtual ~TriggerVolumeActor() {}
 
-   private: 
+   private:
+
+      struct RegisterData
+      {
+         void*          receiver;
+         EventFuncType  onEvent;
+      };
 
       std::vector<dtCore::ObserverPtr<dtCore::Transformable> > mOccupancyList;
 
-      dtCore::RefPtr<dtABC::Action> mEnterAction;
-      dtCore::RefPtr<dtABC::Action> mExitAction;
+      std::vector<RegisterData> mListenerList;
 
       int mMaxTriggerCount;
       int mTriggerCount;
@@ -79,7 +101,7 @@ namespace dtActors
       bool IsActorInVolume(dtCore::Transformable* actor);
       bool IsActorAnOccupant(dtCore::Transformable* actor);
 
-      void TriggerAction(dtABC::Action& actionToFire);
+      void TriggerEvent(dtCore::Transformable* instigator, TriggerEventType eventType);
    };
 }
 

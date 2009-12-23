@@ -83,26 +83,24 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void EventNode::Trigger(const std::string& outputName, const dtDAL::ActorProxy* instigator)
+   void EventNode::Trigger(const std::string& outputName, const dtCore::UniqueId* instigator, bool countTrigger)
    {
       // Can't trigger a disabled event.
       if (!GetEnabled()) return;
 
-      // If this event has a trigger count limit,
-      // disable the event when that limit is met.
-      if (mMaxTriggerCount > 0)
-      {
-         mTriggerCount++;
-
-         if (mTriggerCount >= mMaxTriggerCount)
-         {
-            mTriggerCount = 0;
-            SetEnabled(false);
-         }
-      }
-
       if (Test(outputName, instigator))
       {
+         // If this event has a trigger count limit,
+         // disable the event when that limit is met.
+         if (countTrigger && mMaxTriggerCount > 0)
+         {
+            if (mTriggerCount >= mMaxTriggerCount)
+            {
+               return;
+            }
+            mTriggerCount++;
+         }
+
          // Begin a new thread.
          GetDirector()->BeginThread(this, 0);
 
@@ -112,7 +110,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool EventNode::Test(const std::string& outputName, const dtDAL::ActorProxy* instigator)
+   bool EventNode::Test(const std::string& outputName, const dtCore::UniqueId* instigator)
    {
       OutputLink* link = GetOutputLink(outputName);
       if (link)
@@ -134,9 +132,9 @@ namespace dtDirector
                   bValidValue = true;
 
                   // Can't do proper matching if we have no instigator.
-                  if (!instigator) break;
+                  if (!instigator || instigator->ToString().empty()) break;
 
-                  if (instigator->GetId() == id)
+                  if (*instigator == id)
                   {
                      bFound = true;
                      break;

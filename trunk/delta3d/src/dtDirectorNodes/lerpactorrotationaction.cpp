@@ -74,7 +74,7 @@ namespace dtDirector
          "Actor", "Actor",
          dtDAL::ActorIDActorProperty::SetFuncType(this, &LerpActorRotationAction::SetLerpActor),
          dtDAL::ActorIDActorProperty::GetFuncType(this, &LerpActorRotationAction::GetLerpActor),
-         "", "The actor to linearly interpolate.");
+         "dtCore::Transformable", "The actor to linearly interpolate.");
       AddProperty(actorProp);
 
       dtDAL::FloatActorProperty* startTimeProp = new dtDAL::FloatActorProperty(

@@ -42,15 +42,13 @@ void TriggerVolumeActor::OnMessage(dtCore::Base::MessageData* data)
       // Check to see if any occupants have left the volume
       for (size_t actorIndex = 0; actorIndex < mOccupancyList.size(); ++actorIndex)
       {
-         if (!IsActorInVolume(mOccupancyList[actorIndex].get()))
-         {  
-            // Trigger the exit action
-            if (mExitAction.valid())
-            {
-               TriggerAction(*mExitAction);
-            }
-
+         dtCore::Transformable* occupant = mOccupancyList[actorIndex].get();
+         if (!IsActorInVolume(occupant))
+         {
             mOccupancyList.erase(mOccupancyList.begin() + actorIndex);
+            actorIndex--;
+
+            TriggerEvent(occupant, LEAVE_EVENT);
          }
       }
    }
@@ -59,15 +57,59 @@ void TriggerVolumeActor::OnMessage(dtCore::Base::MessageData* data)
 ////////////////////////////////////////////////////////////////////////////////
 bool TriggerVolumeActor::FilterContact(dContact* contact, Transformable* collider)
 {
+   // Do not trigger this event if we have reached our trigger limit.
+   if (mMaxTriggerCount != 0 && mTriggerCount >= mMaxTriggerCount)
+   {
+      return false;
+   }
+
    // Is this actor in the volume for the first time?
    if (!IsActorAnOccupant(collider))
    {
       mOccupancyList.push_back(collider);
 
-      // Trigger the "Enter" action
-      if (mEnterAction.valid())
+      TriggerEvent(collider, ENTER_EVENT);
+   }
+
+   return false;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool TriggerVolumeActor::RegisterListener(void* receiver, EventFuncType eventCallback)
+{
+   // Make sure the listener is not already registered.
+   int count = (int)mListenerList.size();
+   for (int index = 0; index < count; index++)
+   {
+      RegisterData& data = mListenerList[index];
+      if (data.receiver == receiver)
       {
-         TriggerAction(*mEnterAction);
+         data.onEvent = eventCallback;
+         return false;
+      }
+   }
+
+   // Register the listener.
+   RegisterData data;
+   data.receiver = receiver;
+   data.onEvent = eventCallback;
+   mListenerList.push_back(data);
+
+   return true;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool TriggerVolumeActor::UnregisterListener(void* receiver)
+{
+   // Make sure the listener is not already registered.
+   int count = (int)mListenerList.size();
+   for (int index = 0; index < count; index++)
+   {
+      RegisterData& data = mListenerList[index];
+      if (data.receiver == receiver)
+      {
+         mListenerList.erase(mListenerList.begin() + index);
+         return true;
       }
    }
 
@@ -110,17 +152,34 @@ bool TriggerVolumeActor::IsActorAnOccupant(dtCore::Transformable* actor)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void TriggerVolumeActor::TriggerAction(dtABC::Action& actionToFire)
+void TriggerVolumeActor::TriggerEvent(dtCore::Transformable* instigator, TriggerEventType eventType)
 {
-   if (actionToFire.CanStart())
+   // Increment the trigger cound whenever an occupant has entered the volume.
+   if (eventType == ENTER_EVENT)
    {
-      actionToFire.Start();
       ++mTriggerCount;
+   }
 
+   // Notify all registered listeners of the triggered event.
+   int count = (int)mListenerList.size();
+   for (int index = 0; index < count; index++)
+   {
+      RegisterData& data = mListenerList[index];
+      data.onEvent(instigator, eventType);
+   }
+
+   // If an occupant is leaving, we have exceeded our maximum trigger count,
+   // and there are no more occupants, de-register this volume from receiving
+   // messages.
+   if (eventType == LEAVE_EVENT)
+   {
       // If this trigger has expired, it no longer needs update messages
       if (mMaxTriggerCount != 0 && mTriggerCount >= mMaxTriggerCount)
       {
-         DeregisterInstance(this);
+         if (mOccupancyList.empty())
+         {
+            DeregisterInstance(this);
+         }
       }
    }
 }

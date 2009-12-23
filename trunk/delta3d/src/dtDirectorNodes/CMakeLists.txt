@@ -18,6 +18,7 @@ TARGET_LINK_LIBRARIES( ${LIB_NAME}
                        ${DTDAL_LIBRARY}
 					   ${DTDIRECTOR_LIBRARY}
                        ${DTGAME_LIBRARY}
+					   ${DTACTORS_LIBRARY}
                      )
 
 SET_TARGET_PROPERTIES(${LIB_NAME}
