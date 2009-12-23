@@ -100,7 +100,6 @@ void DirectorComponent::OnAddedToGM()
    mDirector->Init();
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////
 void DirectorComponent::OnMapLoaded()
 {
@@ -108,9 +107,18 @@ void DirectorComponent::OnMapLoaded()
    dtABC::Application& app = gm->GetApplication();
    dtCore::Camera* camera  = gm->GetApplication().GetCamera();
 
+   // Make sure collision detection is performed on the camera and with the trigger
+   camera->SetCollisionSphere(1.0f);
+   camera->SetCollisionCollideBits(COLLISION_CATEGORY_MASK_PROXIMITYTRIGGER);
+   app.GetScene()->AddDrawable(camera);
+
    // Allow the player to walk around the level and collide with objects
    dtCore::CollisionMotionModel* motionModel = 
-      new dtCore::CollisionMotionModel(1.5f, 0.25f, 0.1f, 0.05f, app.GetScene(), app.GetKeyboard(), app.GetMouse());
+      new dtCore::CollisionMotionModel(1.5f, 0.2f, 0.1f, 0.05f, app.GetScene(), app.GetKeyboard(), app.GetMouse());
+
+   // Prevent the motion model from colliding with the camera
+   motionModel->GetFPSCollider().SetCollisionBitsForFeet(COLLISION_CATEGORY_MASK_OBJECT);
+   motionModel->GetFPSCollider().SetCollisionBitsForTorso(COLLISION_CATEGORY_MASK_OBJECT);  
 
    motionModel->SetScene(&gm->GetScene());
    motionModel->SetTarget(camera);
@@ -128,7 +136,9 @@ void DirectorComponent::OnMapLoaded()
       dtCore::Transformable* actor = 
          dynamic_cast<dtCore::Transformable*>(proxyList[proxyIndex]->GetActor());
 
-      actor->SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_CAMERA);
+      actor->SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_OBJECT);
+      actor->SetCollisionCollideBits(COLLISION_CATEGORY_MASK_CAMERA);
+      //actor->RenderCollisionGeometry(true);
    }
 
    // Get the player start position
@@ -141,7 +151,6 @@ void DirectorComponent::OnMapLoaded()
    dtCore::Transform startTransform;
    playerStart->GetTransform(startTransform);
    camera->SetTransform(startTransform);
-   camera->SetCollisionCollideBits(COLLISION_CATEGORY_MASK_OBJECT);
 
    LoadDirectorScript();
 }
