@@ -42,6 +42,10 @@
 
 #include <osg/Vec2>
 
+namespace dtDAL
+{
+   class ActorProxy;
+}
 
 namespace dtDirector
 {
@@ -342,7 +346,9 @@ namespace dtDirector
       float GetFloat(const std::string& name = "Value", int index = 0);
       double GetDouble(const std::string& name = "Value", int index = 0);
       std::string GetString(const std::string& name = "Value", int index = 0);
+      osg::Vec4 GetVec(const std::string& name = "Value", int index = 0);
       dtCore::UniqueId GetActorID(const std::string& name = "Value", int index = 0);
+      dtDAL::ActorProxy* GetActor(const std::string& name = "Value", int index = 0);
 
       /**
        * This method is provided for ease of use, it will
@@ -407,6 +413,7 @@ namespace dtDirector
       void SetInt(int value, const std::string& name = "Value", int index = -1);
       void SetFloat(float value, const std::string& name = "Value", int index = -1);
       void SetDouble(double value, const std::string& name = "Value", int index = -1);
+      void SetVec(osg::Vec4 value, const std::string& name = "Value", int index = -1);
       void SetString(const std::string& value, const std::string& name = "Value", int index = -1);
       void SetActorID(const dtCore::UniqueId& value, const std::string& name = "Value", int index = -1);
 

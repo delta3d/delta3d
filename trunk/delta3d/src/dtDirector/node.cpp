@@ -385,6 +385,19 @@ namespace dtDirector
       return "";
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   osg::Vec4 Node::GetVec(const std::string& name, int index)
+   {
+      dtDAL::ActorProperty* prop = GetProperty(name, index);
+      dtDAL::Vec4ActorProperty* vecProp = dynamic_cast<dtDAL::Vec4ActorProperty*>(prop);
+      if (vecProp)
+      {
+         return vecProp->GetValue();
+      }
+
+      return osg::Vec4();
+   }
+
    //////////////////////////////////////////////////////////////////////////
    dtCore::UniqueId Node::GetActorID(const std::string& name, int index)
    {
@@ -394,6 +407,21 @@ namespace dtDirector
       dtCore::UniqueId emptyID;
       emptyID = "";
       return emptyID;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtDAL::ActorProxy* Node::GetActor(const std::string& name, int index)
+   {
+      dtDAL::ActorProperty* prop = GetProperty(name, index);
+      if (!prop) return NULL;
+
+      dtDAL::ActorIDActorProperty* actorIdProp = dynamic_cast<dtDAL::ActorIDActorProperty*>(prop);
+      if (actorIdProp)
+      {
+         return actorIdProp->GetActorProxy();
+      }
+
+      return NULL;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -441,6 +469,33 @@ namespace dtDirector
          if (prop)
          {
             prop->FromString(value);
+         }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void Node::SetVec(osg::Vec4 value, const std::string& name, int index)
+   {
+      if (index == -1)
+      {
+         int count = GetPropertyCount(name);
+         for (index = 0; index < count; index++)
+         {
+            dtDAL::ActorProperty* prop = GetProperty(name, index);
+            dtDAL::Vec4ActorProperty* vecProp = dynamic_cast<dtDAL::Vec4ActorProperty*>(prop);
+            if (vecProp)
+            {
+               vecProp->SetValue(value);
+            }
+         }
+      }
+      else
+      {
+         dtDAL::ActorProperty* prop = GetProperty(name, index);
+         dtDAL::Vec4ActorProperty* vecProp = dynamic_cast<dtDAL::Vec4ActorProperty*>(prop);
+         if (vecProp)
+         {
+            vecProp->SetValue(value);
          }
       }
    }
