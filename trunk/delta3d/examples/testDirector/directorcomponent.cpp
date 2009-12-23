@@ -149,6 +149,10 @@ void DirectorComponent::OnMapLoaded()
 ////////////////////////////////////////////////////////////////////////////////
 void DirectorComponent::LoadDirectorScript()
 {
+   dtGame::GameManager* gm = GetGameManager();
+   dtCore::Camera* camera  = gm->GetApplication().GetCamera();
+   mDirector->SetPlayer(camera->GetUniqueId());
+
    mDirector->LoadScript("doors");
    mDirector->SetNodeLogging(true);
 }
