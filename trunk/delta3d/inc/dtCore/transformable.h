@@ -390,9 +390,11 @@ namespace dtCore
        * detection routine is using.
        *
        * @param enable If true, the scene will now render the collision
-       * geomertry.
+       * geometry.
+       * @param wireFrame Determines whether collision geometry is rendered as 
+       * wire frame or as solid transparent.       
        */
-      void RenderCollisionGeometry(bool enable = true);
+      void RenderCollisionGeometry(bool enable = true, bool wireFrame = false);
 
       /**
        * Are we currently rendering the collision geometry?

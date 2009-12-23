@@ -223,6 +223,9 @@ namespace dtEditQt
       // Action - Brush - Hide/Show Brush
       QAction* mActionHideShowBrush;
 
+      // Action - Tools - Hide/Show Trigger Volumes
+      QAction* mActionHideShowTriggers;
+
       // Action - File - Library Paths Dialog
       QAction* mActionFileEditLibraryPaths;
 
@@ -406,6 +409,11 @@ namespace dtEditQt
       void slotShowHideBrush();
 
       /**
+       * Slot - Show/Hide Trigger Volumes
+       */
+      void slotShowHideTriggers();
+
+      /**
        * Slot - File Library Paths event.  Spawns the edit library paths dialog.
        */
       void slotFileEditLibraryPaths();
@@ -521,6 +529,8 @@ namespace dtEditQt
 
       QList<ExternalTool*> mTools;
       QList<const ExternalToolArgParser*> mExternalToolArgParsers;
+
+      bool mShowingTriggerVolumes;
    };
 
 } // namespace dtEditQt

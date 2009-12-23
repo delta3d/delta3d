@@ -7,6 +7,7 @@
 #include <osg/Geode>
 #include <osg/ShapeDrawable>
 #include <osg/Material>
+#include <osg/PolygonMode>
 #include <osg/PolygonOffset>
 #include <osg/Geometry>
 
@@ -748,7 +749,7 @@ unsigned long dtCore::ODEGeomWrap::GetCollisionCollideBits() const
 }
 
 //////////////////////////////////////////////////////////////////////////
-dtCore::RefPtr<osg::Geode> dtCore::ODEGeomWrap::CreateRenderedCollisionGeometry() const
+dtCore::RefPtr<osg::Geode> dtCore::ODEGeomWrap::CreateRenderedCollisionGeometry(bool asWireFrame /* = false */) const
 {
    dtCore::RefPtr<osg::Geode> geode = new osg::Geode();
 
@@ -903,6 +904,14 @@ dtCore::RefPtr<osg::Geode> dtCore::ODEGeomWrap::CreateRenderedCollisionGeometry(
    ss->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
    ss->setAttributeAndModes(polyoffset,osg::StateAttribute::OVERRIDE |
       osg::StateAttribute::PROTECTED | osg::StateAttribute::ON);
+
+   if (asWireFrame)
+   {
+      osg::PolygonMode* pm = new osg::PolygonMode();
+      pm->setMode(osg::PolygonMode::FRONT_AND_BACK,osg::PolygonMode::LINE);
+      ss->setAttributeAndModes(pm,
+         osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+   }
 
    return geode;
 }

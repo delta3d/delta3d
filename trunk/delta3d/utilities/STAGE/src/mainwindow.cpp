@@ -316,6 +316,7 @@ namespace dtEditQt
       mToolsToolBar->setObjectName("ToolsToolBar");
       mToolsToolBar->setWindowTitle(tr("Tools Toolbar"));
       mToolsToolBar->setMinimumWidth(10);
+      mToolsToolBar->addAction(EditorActions::GetInstance().mActionHideShowTriggers);
       addToolBar(mToolsToolBar);
 
       mToolModeActionGroup = new QActionGroup(this);

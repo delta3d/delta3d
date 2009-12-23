@@ -241,10 +241,12 @@ namespace dtCore
       /** Create a renderable shape to match the collision shape.
         * ODEGeomWrap does not maintain ownership of the returned
         * object.
+        * @param asWireFrame  Render the collision shape as wire frame
+		* instead of solid transparent.
         * @return A renderable geometry node which matches the current
         * collision geometry shape.
         */
-      dtCore::RefPtr<osg::Geode> CreateRenderedCollisionGeometry() const;
+      dtCore::RefPtr<osg::Geode> CreateRenderedCollisionGeometry(bool asWireFrame = false) const;
 
       /** If needed, set the ODE Geom position and rotation to match the
         * supplied Transform. If a Transformable's position or rotation is manually
