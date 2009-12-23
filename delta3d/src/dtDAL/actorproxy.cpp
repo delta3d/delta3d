@@ -369,11 +369,17 @@ namespace dtDAL
       dtCore::DeltaDrawable* actor = GetActor();
 
       AddProperty(new StringActorProperty(
-                      ActorProxy::DESCRIPTION_PROPERTY.Get(),
-                      "Description",
-                      StringActorProperty::SetFuncType(actor, &dtCore::DeltaDrawable::SetDescription),
-                      StringActorProperty::GetFuncType(actor, &dtCore::DeltaDrawable::GetDescription),
-                      "Generic text field used to describe this object",
-                      "DeltaDrawable"));
+                  ActorProxy::DESCRIPTION_PROPERTY.Get(),
+                  "Description",
+                  StringActorProperty::SetFuncType(actor, &dtCore::DeltaDrawable::SetDescription),
+                  StringActorProperty::GetFuncType(actor, &dtCore::DeltaDrawable::GetDescription),
+                  "Generic text field used to describe this object",
+                  "DeltaDrawable"));
+
+      AddProperty(new dtDAL::BooleanActorProperty(
+                  "IsActive", "IsActive",
+                  dtDAL::BooleanActorProperty::SetFuncType(actor, &dtCore::DeltaDrawable::SetActive),
+                  dtDAL::BooleanActorProperty::GetFuncType(actor, &dtCore::DeltaDrawable::GetActive),
+                  "Determines whether the drawable will render."));
    }
 }

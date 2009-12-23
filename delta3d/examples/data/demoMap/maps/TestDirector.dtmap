@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
     <header>
         <name>TestDirector</name>
@@ -7,7 +8,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2009-12-21T16:14:44-08:00</createTimestamp>
-        <lastUpdateTimestamp>2009-12-23T12:46:44-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2009-12-23T15:28:25-08:00</lastUpdateTimestamp>
         <editorVersion>2.4.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -22,6 +23,10 @@
                 <string></string>
             </property>
             <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
@@ -33,7 +38,7 @@
                 <name>Translation</name>
                 <vec3>
                     <value1>12.137858</value1>
-                    <value2>10.903046</value2>
+                    <value2>18.950794</value2>
                     <value3>3.010427</value3>
                 </vec3>
             </property>
@@ -81,6 +86,10 @@
             <property>
                 <name>Description</name>
                 <string></string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
             </property>
             <property>
                 <name>Rotation</name>
@@ -190,6 +199,10 @@
                 <string></string>
             </property>
             <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
@@ -287,6 +300,10 @@
             <property>
                 <name>Description</name>
                 <string></string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
             </property>
             <property>
                 <name>Rotation</name>
@@ -396,6 +413,10 @@
                 <string></string>
             </property>
             <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
@@ -493,6 +514,10 @@
             <property>
                 <name>Description</name>
                 <string></string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
             </property>
             <property>
                 <name>Rotation</name>
@@ -602,6 +627,10 @@
                 <string></string>
             </property>
             <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
@@ -709,6 +738,10 @@
                 <string></string>
             </property>
             <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
@@ -808,12 +841,119 @@
             </property>
         </actor>
         <actor>
+            <type>dtActors.Trigger Volume Actor</type>
+            <id>52ef136e-479b-4548-8040-4dd48444bce0</id>
+            <name>particleTrigger</name>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>8.021546</value1>
+                    <value2>21.364502</value2>
+                    <value3>1.047551</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>3.000000</value1>
+                    <value2>3.000000</value2>
+                    <value3>2.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.1887903</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server Local</enumerated>
+            </property>
+            <property>
+                <name>Local Actor Update Policy</name>
+                <enumerated>ACCEPT_ALL</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string></string>
+            </property>
+            <property>
+                <name>CurrentShader</name>
+                <resourceType>Shaders</resourceType>
+                <resourceDisplayName></resourceDisplayName>
+                <resource></resource>
+            </property>
+            <property>
+                <name>MaxTriggerCount</name>
+                <integer>0</integer>
+            </property>
+        </actor>
+        <actor>
             <type>dtcore.Static Mesh</type>
             <id>58552008-f8df-446c-a48f-cf2ff4100a24</id>
             <name>StaticMesh_14</name>
             <property>
                 <name>Description</name>
                 <string></string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
             </property>
             <property>
                 <name>Rotation</name>
@@ -923,6 +1063,10 @@
                 <string></string>
             </property>
             <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
@@ -1028,6 +1172,10 @@
             <property>
                 <name>Description</name>
                 <string></string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
             </property>
             <property>
                 <name>Rotation</name>
@@ -1137,6 +1285,10 @@
                 <string></string>
             </property>
             <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
@@ -1242,6 +1394,10 @@
             <property>
                 <name>Description</name>
                 <string></string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
             </property>
             <property>
                 <name>Rotation</name>
@@ -1351,6 +1507,10 @@
                 <string></string>
             </property>
             <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
@@ -1456,6 +1616,10 @@
             <property>
                 <name>Description</name>
                 <string></string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
             </property>
             <property>
                 <name>Rotation</name>
@@ -1565,6 +1729,10 @@
                 <string></string>
             </property>
             <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
@@ -1672,6 +1840,10 @@
                 <string></string>
             </property>
             <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
@@ -1763,12 +1935,95 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Particle System</type>
+            <id>cb9a3920-0a56-497c-92b5-6f1446366bdc</id>
+            <name>ParticleSystem_01</name>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>8.016129</value1>
+                    <value2>23.058815</value2>
+                    <value3>0.191630</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>NONE</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Parent Relative</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Particle(s) File</name>
+                <resourceType>Particles</resourceType>
+                <resourceDisplayName>Particles::fire.osg</resourceDisplayName>
+                <resource>Particles::fire.osg</resource>
+            </property>
+        </actor>
+        <actor>
             <type>dtActors.Trigger Volume Actor</type>
             <id>d0c5545f-07fa-4f37-9012-3c577d76b8e2</id>
             <name>Trigger_2SwingDoor_Side0</name>
             <property>
                 <name>Description</name>
                 <string></string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
             </property>
             <property>
                 <name>Rotation</name>
@@ -1868,6 +2123,10 @@
             <property>
                 <name>Description</name>
                 <string></string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
             </property>
             <property>
                 <name>Rotation</name>
@@ -1977,6 +2236,10 @@
                 <string></string>
             </property>
             <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
@@ -2084,6 +2347,10 @@
                 <string></string>
             </property>
             <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
@@ -2181,6 +2448,10 @@
             <property>
                 <name>Description</name>
                 <string></string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
             </property>
             <property>
                 <name>Rotation</name>
@@ -2288,6 +2559,10 @@
             <property>
                 <name>Description</name>
                 <string></string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
             </property>
             <property>
                 <name>Rotation</name>

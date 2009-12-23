@@ -33,6 +33,7 @@
 #include <dtDirectorNodes/operationaction.h>
 #include <dtDirectorNodes/comparevalueaction.h>
 #include <dtDirectorNodes/delayaction.h>
+#include <dtDirectorNodes/toggleaction.h>
 #include <dtDirectorNodes/scheduleraction.h>
 #include <dtDirectorNodes/lerpactorrotationaction.h>
 #include <dtDirectorNodes/lerpactortranslationaction.h>
@@ -82,6 +83,7 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::OPERATION_ACTION_NODE_TYPE(new dtDirector::NodeType("Binary Operation", "General", "Math", "Performs a simple operation between two values A and B and outputs to Result."));
    RefPtr<NodeType> NodeLibraryRegistry::COMPARE_VALUE_ACTION_NODE_TYPE(new dtDirector::NodeType("Compare Value", "General", "Condition", "Compares two values A and B."));
    RefPtr<NodeType> NodeLibraryRegistry::DELAY_ACTION_NODE_TYPE(new dtDirector::NodeType("Delay", "General", "Actions", "Performs a time delay."));
+   RefPtr<NodeType> NodeLibraryRegistry::TOGGLE_ACTION_NODE_TYPE(new dtDirector::NodeType("Toggle", "General", "Actions", "Sets a boolean value."));
    RefPtr<NodeType> NodeLibraryRegistry::SCHEDULER_ACTION_NODE_TYPE(new dtDirector::NodeType("Scheduler", "Cinematic", "Cinematic", "Schedules a sequence of timed events."));
    RefPtr<NodeType> NodeLibraryRegistry::LERP_ACTOR_ROTATION_ACTION_NODE_TYPE(new dtDirector::NodeType("Lerp Actor Rotation", "Cinematic", "Cinematic", "Linearly interpolates the rotation of an actor."));
    RefPtr<NodeType> NodeLibraryRegistry::LERP_ACTOR_TRANSLATION_ACTION_NODE_TYPE(new dtDirector::NodeType("Lerp Actor Translation", "Cinematic", "Cinematic", "Linearly interpolates the position of an actor."));
@@ -131,6 +133,7 @@ namespace dtDirector
       mNodeFactory->RegisterType<OperationAction>(OPERATION_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<CompareValueAction>(COMPARE_VALUE_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<DelayAction>(DELAY_ACTION_NODE_TYPE.get());
+      mNodeFactory->RegisterType<ToggleAction>(TOGGLE_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<SchedulerAction>(SCHEDULER_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<LerpActorRotationAction>(LERP_ACTOR_ROTATION_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<LerpActorTranslationAction>(LERP_ACTOR_TRANSLATION_ACTION_NODE_TYPE.get());

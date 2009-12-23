@@ -71,6 +71,7 @@ protected:
 private:   
    
    dtCore::RefPtr<dtDirector::Director> mDirector;
+   dtCore::RefPtr<dtDirector::Director> mFireDirector;
    dtCore::RefPtr<dtCore::MotionModel> mMotionModel;
 
    void OnMapLoaded();
