@@ -35,6 +35,12 @@ TriggerVolumeActor::TriggerVolumeActor(dtActors::TriggerVolumeActorProxy& proxy)
 ////////////////////////////////////////////////////////////////////////////////
 void TriggerVolumeActor::OnMessage(dtCore::Base::MessageData* data)
 {
+   // Do not send events in STAGE.
+   if (GetGameActorProxy().IsInSTAGE())
+   {
+      return;
+   }
+
    if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
    {
       double dt = *static_cast<double*>(data->userData);
@@ -59,6 +65,12 @@ bool TriggerVolumeActor::FilterContact(dContact* contact, Transformable* collide
 {
    // Do not trigger this event if we have reached our trigger limit.
    if (mMaxTriggerCount != 0 && mTriggerCount >= mMaxTriggerCount)
+   {
+      return false;
+   }
+
+   // Do not send events in STAGE.
+   if (GetGameActorProxy().IsInSTAGE())
    {
       return false;
    }

@@ -7,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2009-12-21T16:14:44-08:00</createTimestamp>
-        <lastUpdateTimestamp>2009-12-23T12:06:25-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2009-12-23T12:46:44-08:00</lastUpdateTimestamp>
         <editorVersion>2.4.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -182,9 +182,9 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Particle System</type>
-            <id>293f9495-5421-41c8-abf0-55a5199be96d</id>
-            <name>ParticleSystem_02</name>
+            <type>dtActors.Trigger Volume Actor</type>
+            <id>31a1ae1c-5e42-42c6-bd68-9f5ed791ed1a</id>
+            <name>Trigger_2SwingDoor_Side1</name>
             <property>
                 <name>Description</name>
                 <string></string>
@@ -200,9 +200,9 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>24.089222</value1>
-                    <value2>22.911499</value2>
-                    <value3>0.156029</value3>
+                    <value1>16.106716</value1>
+                    <value2>16.950262</value2>
+                    <value3>0.000000</value3>
                 </vec3>
             </property>
             <property>
@@ -215,7 +215,7 @@
             </property>
             <property>
                 <name>Collision Type</name>
-                <enumerated>NONE</enumerated>
+                <enumerated>CUBE</enumerated>
             </property>
             <property>
                 <name>Collision Radius</name>
@@ -228,32 +228,56 @@
             <property>
                 <name>Collision Box</name>
                 <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
+                    <value1>5.000000</value1>
+                    <value2>3.000000</value2>
+                    <value3>5.000000</value3>
                 </vec3>
             </property>
             <property>
                 <name>Enable Collision</name>
-                <boolean>false</boolean>
+                <boolean>true</boolean>
             </property>
             <property>
                 <name>Render Proxy Node</name>
                 <boolean>false</boolean>
             </property>
             <property>
-                <name>Enable</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Parent Relative</name>
+                <name>Enable Dynamics</name>
                 <boolean>false</boolean>
             </property>
             <property>
-                <name>Particle(s) File</name>
-                <resourceType>Particles</resourceType>
-                <resourceDisplayName>Particles::fire.osg</resourceDisplayName>
-                <resource>Particles::fire.osg</resource>
+                <name>Mass</name>
+                <float>4.1887903</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server Local</enumerated>
+            </property>
+            <property>
+                <name>Local Actor Update Policy</name>
+                <enumerated>ACCEPT_ALL</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string></string>
+            </property>
+            <property>
+                <name>CurrentShader</name>
+                <resourceType>Shaders</resourceType>
+                <resourceDisplayName></resourceDisplayName>
+                <resource></resource>
+            </property>
+            <property>
+                <name>MaxTriggerCount</name>
+                <integer>0</integer>
             </property>
         </actor>
         <actor>
@@ -366,7 +390,7 @@
         <actor>
             <type>dtActors.Trigger Volume Actor</type>
             <id>439d5910-68e3-4efe-a122-893f9a0de0c6</id>
-            <name>Physical_02</name>
+            <name>Trigger_SlideDoor</name>
             <property>
                 <name>Description</name>
                 <string></string>
@@ -888,81 +912,6 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes::Door_Pivot_Room.IVE</resourceDisplayName>
                 <resource>StaticMeshes::Door_Pivot_Room.IVE</resource>
-            </property>
-        </actor>
-        <actor>
-            <type>dtcore.Particle System</type>
-            <id>5f225dde-a39e-4dc2-9090-c24dd8947e34</id>
-            <name>ParticleSystem_04</name>
-            <property>
-                <name>Description</name>
-                <string></string>
-            </property>
-            <property>
-                <name>Rotation</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Translation</name>
-                <vec3>
-                    <value1>8.061243</value1>
-                    <value2>22.911499</value2>
-                    <value3>0.156029</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Normal Rescaling</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Show Collision Geometry</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>NONE</enumerated>
-            </property>
-            <property>
-                <name>Collision Radius</name>
-                <float>0</float>
-            </property>
-            <property>
-                <name>Collision Length</name>
-                <float>0</float>
-            </property>
-            <property>
-                <name>Collision Box</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Render Proxy Node</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Enable</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Parent Relative</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Particle(s) File</name>
-                <resourceType>Particles</resourceType>
-                <resourceDisplayName>Particles::fire.osg</resourceDisplayName>
-                <resource>Particles::fire.osg</resource>
             </property>
         </actor>
         <actor>
@@ -1715,84 +1664,9 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Particle System</type>
-            <id>ba30a168-56b6-427b-a757-f61a52e82e47</id>
-            <name>ParticleSystem_01</name>
-            <property>
-                <name>Description</name>
-                <string></string>
-            </property>
-            <property>
-                <name>Rotation</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Translation</name>
-                <vec3>
-                    <value1>16.061390</value1>
-                    <value2>22.911499</value2>
-                    <value3>0.156029</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Normal Rescaling</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Show Collision Geometry</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>NONE</enumerated>
-            </property>
-            <property>
-                <name>Collision Radius</name>
-                <float>0</float>
-            </property>
-            <property>
-                <name>Collision Length</name>
-                <float>0</float>
-            </property>
-            <property>
-                <name>Collision Box</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Render Proxy Node</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Enable</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Parent Relative</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Particle(s) File</name>
-                <resourceType>Particles</resourceType>
-                <resourceDisplayName>Particles::fire.osg</resourceDisplayName>
-                <resource>Particles::fire.osg</resource>
-            </property>
-        </actor>
-        <actor>
             <type>dtActors.Trigger Volume Actor</type>
             <id>bc26bde5-a331-4bca-b824-381626683d69</id>
-            <name>Physical_01</name>
+            <name>Trigger_SwingDoor</name>
             <property>
                 <name>Description</name>
                 <string></string>
@@ -1808,9 +1682,9 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>24.113546</value1>
-                    <value2>14.694738</value2>
-                    <value3>1.453474</value3>
+                    <value1>24.075626</value1>
+                    <value2>15.041836</value2>
+                    <value3>0.156029</value3>
                 </vec3>
             </property>
             <property>
@@ -1827,7 +1701,7 @@
             </property>
             <property>
                 <name>Collision Radius</name>
-                <float>4</float>
+                <float>0</float>
             </property>
             <property>
                 <name>Collision Length</name>
@@ -1836,9 +1710,108 @@
             <property>
                 <name>Collision Box</name>
                 <vec3>
-                    <value1>6.000000</value1>
-                    <value2>6.000000</value2>
-                    <value3>3.000000</value3>
+                    <value1>5.000000</value1>
+                    <value2>5.000000</value2>
+                    <value3>5.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.1887903</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server Local</enumerated>
+            </property>
+            <property>
+                <name>Local Actor Update Policy</name>
+                <enumerated>ACCEPT_ALL</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string></string>
+            </property>
+            <property>
+                <name>CurrentShader</name>
+                <resourceType>Shaders</resourceType>
+                <resourceDisplayName></resourceDisplayName>
+                <resource></resource>
+            </property>
+            <property>
+                <name>MaxTriggerCount</name>
+                <integer>0</integer>
+            </property>
+        </actor>
+        <actor>
+            <type>dtActors.Trigger Volume Actor</type>
+            <id>d0c5545f-07fa-4f37-9012-3c577d76b8e2</id>
+            <name>Trigger_2SwingDoor_Side0</name>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>16.106716</value1>
+                    <value2>13.163614</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>5.000000</value1>
+                    <value2>3.000000</value2>
+                    <value3>5.000000</value3>
                 </vec3>
             </property>
             <property>
@@ -2103,6 +2076,105 @@
             </property>
         </actor>
         <actor>
+            <type>dtActors.Trigger Volume Actor</type>
+            <id>e2afc2e9-de77-4137-87a9-a4e05d4e11c9</id>
+            <name>Trigger_2SwingDoor_Outer</name>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>16.052822</value1>
+                    <value2>14.946301</value2>
+                    <value3>0.079724</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>8.000000</value1>
+                    <value2>8.000000</value2>
+                    <value3>8.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.1887903</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server Local</enumerated>
+            </property>
+            <property>
+                <name>Local Actor Update Policy</name>
+                <enumerated>ACCEPT_ALL</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string></string>
+            </property>
+            <property>
+                <name>CurrentShader</name>
+                <resourceType>Shaders</resourceType>
+                <resourceDisplayName></resourceDisplayName>
+                <resource></resource>
+            </property>
+            <property>
+                <name>MaxTriggerCount</name>
+                <integer>0</integer>
+            </property>
+        </actor>
+        <actor>
             <type>dtcore.Static Mesh</type>
             <id>e51674f5-5dd6-4088-af8f-dbbe5a3d1d0d</id>
             <name>door_04</name>
@@ -2207,81 +2279,6 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes::Door_Pivot.IVE</resourceDisplayName>
                 <resource>StaticMeshes::Door_Pivot.IVE</resource>
-            </property>
-        </actor>
-        <actor>
-            <type>dtcore.Particle System</type>
-            <id>e9e31f2a-7dec-4371-ac8d-d0c4b14030bc</id>
-            <name>ParticleSystem_03</name>
-            <property>
-                <name>Description</name>
-                <string></string>
-            </property>
-            <property>
-                <name>Rotation</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Translation</name>
-                <vec3>
-                    <value1>0.033411</value1>
-                    <value2>22.911499</value2>
-                    <value3>0.156029</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Normal Rescaling</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Show Collision Geometry</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>NONE</enumerated>
-            </property>
-            <property>
-                <name>Collision Radius</name>
-                <float>0</float>
-            </property>
-            <property>
-                <name>Collision Length</name>
-                <float>0</float>
-            </property>
-            <property>
-                <name>Collision Box</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Render Proxy Node</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Enable</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Parent Relative</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Particle(s) File</name>
-                <resourceType>Particles</resourceType>
-                <resourceDisplayName>Particles::fire.osg</resourceDisplayName>
-                <resource>Particles::fire.osg</resource>
             </property>
         </actor>
         <actor>

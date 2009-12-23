@@ -378,6 +378,8 @@ namespace dtDAL
    //////////////////////////////////////////////////////////////////////////
    bool ActorPropertySerializer::Characters(BaseXMLHandler::xmlCharString& topEl, const XMLCh* const chars, PropertyContainer* propContainer)
    {
+      if (!propContainer) return false;
+
       if (mInActorProperty)
       {
          if (mInGroupProperty)
