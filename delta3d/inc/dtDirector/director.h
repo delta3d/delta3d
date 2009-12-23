@@ -189,6 +189,18 @@ namespace dtDirector
       bool GetNodeLogging() {return mLogNodes;}
 
       /**
+       * Sets the player.
+       *
+       * @param[in]  player  The player.
+       */
+      void SetPlayer(const dtCore::UniqueId& player) {mPlayer = player;}
+
+      /**
+       * Retrieves the player.
+       */
+      dtCore::UniqueId GetPlayer() {return mPlayer;}
+
+      /**
        * Inserts a node library with the given name at the given position.
        * If a library of the given name is already listed, the version
        * will be updated and the order adjusted to match the iterator.
@@ -355,6 +367,8 @@ namespace dtDirector
       };
       std::vector<ThreadData> mThreads;
       int mCurrentThread;
+
+      dtCore::UniqueId mPlayer;
 
       // Core Info.
       std::string mDescription;

@@ -2,7 +2,7 @@
 <director xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dDirector" xsi:schemaLocation="delta3dDirector director.xsd">
     <header>
         <createTimestamp>2009-12-22T14:26:31-08:00</createTimestamp>
-        <lastUpdateTimestamp>2009-12-22T18:13:31-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2009-12-22T21:42:15-08:00</lastUpdateTimestamp>
         <editorVersion>2.4.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
         <property>
@@ -60,7 +60,7 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>-141.506897</value1>
+                        <value1>-195.506897</value1>
                         <value2>-35.000000</value2>
                     </vec2>
                 </property>
@@ -94,10 +94,13 @@
                 </outputlink>
                 <valuelink>
                     <name>Instigator</name>
-                    <visible>false</visible>
+                    <visible>true</visible>
                     <isout>false</isout>
                     <allowmultiple>true</allowmultiple>
                     <typecheck>true</typecheck>
+                    <link>
+                        <id>d9dd528e-a663-44ce-aceb-317357b6e32d</id>
+                    </link>
                 </valuelink>
                 <valuelink>
                     <name>TriggerVolume</name>
@@ -132,8 +135,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>-109.506889</value1>
-                        <value2>116.205101</value2>
+                        <value1>-109.506866</value1>
+                        <value2>131.205109</value2>
                     </vec2>
                 </property>
                 <property>
@@ -143,6 +146,30 @@
                 <property>
                     <name>Value</name>
                     <actorId>bc26bde5-a331-4bca-b824-381626683d69</actorId>
+                </property>
+            </node>
+            <node>
+                <name>Player</name>
+                <category>Core</category>
+                <id>d9dd528e-a663-44ce-aceb-317357b6e32d</id>
+                <property>
+                    <name>Enabled</name>
+                    <boolean>true</boolean>
+                </property>
+                <property>
+                    <name>Comment</name>
+                    <string></string>
+                </property>
+                <property>
+                    <name>LogNode</name>
+                    <boolean>false</boolean>
+                </property>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>-183.506866</value1>
+                        <value2>131.205109</value2>
+                    </vec2>
                 </property>
             </node>
         </valuenodes>

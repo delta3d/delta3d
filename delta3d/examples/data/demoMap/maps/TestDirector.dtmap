@@ -7,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2009-12-21T16:14:44-08:00</createTimestamp>
-        <lastUpdateTimestamp>2009-12-22T18:02:18-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2009-12-22T21:46:02-08:00</lastUpdateTimestamp>
         <editorVersion>2.4.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -1370,8 +1370,8 @@
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
-                    <value2>-0.000000</value2>
-                    <value3>-0.000000</value3>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
                 </vec3>
             </property>
             <property>
@@ -1388,7 +1388,7 @@
             </property>
             <property>
                 <name>Show Collision Geometry</name>
-                <boolean>true</boolean>
+                <boolean>false</boolean>
             </property>
             <property>
                 <name>Collision Type</name>
@@ -1454,7 +1454,7 @@
             </property>
             <property>
                 <name>MaxTriggerCount</name>
-                <integer>23</integer>
+                <integer>0</integer>
             </property>
         </actor>
         <actor>
