@@ -2,7 +2,7 @@
 <director xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dDirector" xsi:schemaLocation="delta3dDirector director.xsd">
     <header>
         <createTimestamp>2009-12-22T14:26:31-08:00</createTimestamp>
-        <lastUpdateTimestamp>2009-12-22T21:42:15-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2009-12-23T10:11:11-08:00</lastUpdateTimestamp>
         <editorVersion>2.4.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
         <property>
@@ -317,7 +317,7 @@
                     </property>
                     <property>
                         <name>TotalTime</name>
-                        <float>5</float>
+                        <float>3</float>
                     </property>
                     <property>
                         <name>UseSimTime</name>
@@ -403,7 +403,7 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>237.685181</value1>
+                            <value1>113.018555</value1>
                             <value2>0.000000</value2>
                         </vec2>
                     </property>
@@ -413,11 +413,11 @@
                     </property>
                     <property>
                         <name>StartTime</name>
-                        <float>1</float>
+                        <float>0</float>
                     </property>
                     <property>
                         <name>EndTime</name>
-                        <float>4</float>
+                        <float>3</float>
                     </property>
                     <property>
                         <name>StartRotation</name>
@@ -468,16 +468,7 @@
                         <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
                         <link>
-                            <id>a23f9147-0303-4d51-8b72-5ef82c81546e</id>
-                        </link>
-                        <link>
-                            <id>6fb02328-8e50-46b9-81c6-aae1d2625f40</id>
-                        </link>
-                        <link>
                             <id>3449067c-a847-4404-b0c3-8e36969a577d</id>
-                        </link>
-                        <link>
-                            <id>eeeebd79-fc8c-4f79-a832-6f2776935278</id>
                         </link>
                     </valuelink>
                     <valuelink>
@@ -538,7 +529,7 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>17.500000</value1>
+                            <value1>5.500000</value1>
                             <value2>69.000000</value2>
                         </vec2>
                     </property>
@@ -580,8 +571,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-115.000000</value1>
-                            <value2>149.000000</value2>
+                            <value1>-114.999840</value1>
+                            <value2>152.333328</value2>
                         </vec2>
                     </property>
                     <property>
@@ -612,8 +603,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>407.133942</value1>
-                            <value2>148.586777</value2>
+                            <value1>169.018555</value1>
+                            <value2>152.333328</value2>
                         </vec2>
                     </property>
                     <property>
@@ -638,70 +629,6 @@
                 <node>
                     <name>Actor</name>
                     <category>General</category>
-                    <id>6fb02328-8e50-46b9-81c6-aae1d2625f40</id>
-                    <property>
-                        <name>Enabled</name>
-                        <boolean>true</boolean>
-                    </property>
-                    <property>
-                        <name>Comment</name>
-                        <string></string>
-                    </property>
-                    <property>
-                        <name>LogNode</name>
-                        <boolean>false</boolean>
-                    </property>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>212.685181</value1>
-                            <value2>148.586777</value2>
-                        </vec2>
-                    </property>
-                    <property>
-                        <name>Name</name>
-                        <string>Actor</string>
-                    </property>
-                    <property>
-                        <name>Value</name>
-                        <actorId>82ce6904-557d-40de-b861-13b93be82aa7</actorId>
-                    </property>
-                </node>
-                <node>
-                    <name>Actor</name>
-                    <category>General</category>
-                    <id>a23f9147-0303-4d51-8b72-5ef82c81546e</id>
-                    <property>
-                        <name>Enabled</name>
-                        <boolean>true</boolean>
-                    </property>
-                    <property>
-                        <name>Comment</name>
-                        <string></string>
-                    </property>
-                    <property>
-                        <name>LogNode</name>
-                        <boolean>false</boolean>
-                    </property>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>157.839386</value1>
-                            <value2>148.586777</value2>
-                        </vec2>
-                    </property>
-                    <property>
-                        <name>Name</name>
-                        <string>Actor</string>
-                    </property>
-                    <property>
-                        <name>Value</name>
-                        <actorId>b636db5e-420e-4eb1-959f-c90907f243cf</actorId>
-                    </property>
-                </node>
-                <node>
-                    <name>Actor</name>
-                    <category>General</category>
                     <id>3449067c-a847-4404-b0c3-8e36969a577d</id>
                     <property>
                         <name>Enabled</name>
@@ -718,8 +645,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>269.785309</value1>
-                            <value2>148.586777</value2>
+                            <value1>115.018555</value1>
+                            <value2>152.333328</value2>
                         </vec2>
                     </property>
                     <property>
@@ -729,38 +656,6 @@
                     <property>
                         <name>Value</name>
                         <actorId>7e4d26e9-c882-4178-9e28-9f420e48b5f5</actorId>
-                    </property>
-                </node>
-                <node>
-                    <name>Actor</name>
-                    <category>General</category>
-                    <id>eeeebd79-fc8c-4f79-a832-6f2776935278</id>
-                    <property>
-                        <name>Enabled</name>
-                        <boolean>true</boolean>
-                    </property>
-                    <property>
-                        <name>Comment</name>
-                        <string></string>
-                    </property>
-                    <property>
-                        <name>LogNode</name>
-                        <boolean>false</boolean>
-                    </property>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>326.133942</value1>
-                            <value2>148.586777</value2>
-                        </vec2>
-                    </property>
-                    <property>
-                        <name>Name</name>
-                        <string>Actor</string>
-                    </property>
-                    <property>
-                        <name>Value</name>
-                        <actorId>f2588a57-5422-48da-9bdc-09ab214081e4</actorId>
                     </property>
                 </node>
             </valuenodes>

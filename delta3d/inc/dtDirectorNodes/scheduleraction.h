@@ -149,6 +149,7 @@ namespace dtDirector
       bool  mUseSimTime;
 
       bool  mIsActive;
+      int   mPlayDirection;
 
       std::vector<OutputEventData> mEventList;
       int                          mEventIndex;
