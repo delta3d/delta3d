@@ -110,7 +110,7 @@ void DirectorComponent::OnMapLoaded()
 
    // Allow the player to walk around the level and collide with objects
    dtCore::CollisionMotionModel* motionModel = 
-      new dtCore::CollisionMotionModel(1.5f, 0.25f, 0.3f, 0.1f, app.GetScene(), app.GetKeyboard(), app.GetMouse());
+      new dtCore::CollisionMotionModel(1.5f, 0.25f, 0.1f, 0.05f, app.GetScene(), app.GetKeyboard(), app.GetMouse());
 
    motionModel->SetScene(&gm->GetScene());
    motionModel->SetTarget(camera);
@@ -148,10 +148,11 @@ void DirectorComponent::OnMapLoaded()
 ////////////////////////////////////////////////////////////////////////////////
 void DirectorComponent::LoadDirectorScript()
 {
-   mDirector->LoadScript("test");
+   mDirector->LoadScript("doors");
+   mDirector->SetNodeLogging(true);
 
    std::vector<dtDirector::Node*> nodes;
-   mDirector->GetNodes("Remote Event", "Core", nodes);
+   mDirector->GetNodes("Remote Event", "Core", "EventName", "Play", nodes);
   
    // Trigger initial events
    for (size_t index = 0; index < nodes.size(); index++)
@@ -159,12 +160,7 @@ void DirectorComponent::LoadDirectorScript()
       dtDirector::EventNode* event = dynamic_cast<dtDirector::EventNode*>(nodes[index]);
       if (event)
       {
-         dtDAL::ActorProperty* prop = event->GetProperty("EventName");
-         if (prop && prop->ToString() == "First")
-         {
-            event->Trigger();
-            break;
-         }
+         event->Trigger();
       }
    }   
 }
