@@ -8,7 +8,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2009-12-21T16:14:44-08:00</createTimestamp>
-        <lastUpdateTimestamp>2009-12-23T10:11:26-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2009-12-23T10:25:46-08:00</lastUpdateTimestamp>
         <editorVersion>2.4.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -933,6 +933,113 @@
         </actor>
         <actor>
             <type>dtcore.Static Mesh</type>
+            <id>918bd2b0-7783-4244-97c9-5ad8e43d1861</id>
+            <name>terrain</name>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-3.418139</value1>
+                    <value2>24.003057</value2>
+                    <value3>-5.444206</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>MESH</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.1887903</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>1.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Model Rotation</name>
+                <vec3>
+                    <value1>-0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Model Translation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::terrain_simple.ive</resourceDisplayName>
+                <resource>StaticMeshes::terrain_simple.ive</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
             <id>aa68b82e-e9b0-43aa-9e4f-4093bd6a58cd</id>
             <name>StaticMesh_12</name>
             <property>
@@ -1456,119 +1563,6 @@
             <property>
                 <name>MaxTriggerCount</name>
                 <integer>0</integer>
-            </property>
-        </actor>
-        <actor>
-            <type>dtcore.Game.Actors.Game Mesh Actor</type>
-            <id>d537beab-999d-4606-8404-7b3ff282b5f5</id>
-            <name>StaticMesh_15</name>
-            <property>
-                <name>Description</name>
-                <string></string>
-            </property>
-            <property>
-                <name>Rotation</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Translation</name>
-                <vec3>
-                    <value1>-1.163607</value1>
-                    <value2>21.271139</value2>
-                    <value3>-6.033682</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Normal Rescaling</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Show Collision Geometry</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>MESH</enumerated>
-            </property>
-            <property>
-                <name>Collision Radius</name>
-                <float>0</float>
-            </property>
-            <property>
-                <name>Collision Length</name>
-                <float>0</float>
-            </property>
-            <property>
-                <name>Collision Box</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Render Proxy Node</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Enable Dynamics</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Mass</name>
-                <float>4.1887903</float>
-            </property>
-            <property>
-                <name>Center of Gravity</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Initial Ownership</name>
-                <enumerated>Server Local</enumerated>
-            </property>
-            <property>
-                <name>Local Actor Update Policy</name>
-                <enumerated>ACCEPT_ALL</enumerated>
-            </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string></string>
-            </property>
-            <property>
-                <name>CurrentShader</name>
-                <resourceType>Shaders</resourceType>
-                <resourceDisplayName></resourceDisplayName>
-                <resource></resource>
-            </property>
-            <property>
-                <name>static mesh</name>
-                <resourceType>StaticMeshes</resourceType>
-                <resourceDisplayName>StaticMeshes::terrain_simple.ive</resourceDisplayName>
-                <resource>StaticMeshes::terrain_simple.ive</resource>
-            </property>
-            <property>
-                <name>use cache object</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Scale</name>
-                <vec3>
-                    <value1>1.000000</value1>
-                    <value2>1.000000</value2>
-                    <value3>1.000000</value3>
-                </vec3>
             </property>
         </actor>
         <actor>
