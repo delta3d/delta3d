@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
     <header>
         <name>TestDirector</name>
@@ -8,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2009-12-21T16:14:44-08:00</createTimestamp>
-        <lastUpdateTimestamp>2009-12-23T15:28:25-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2009-12-23T21:00:27-08:00</lastUpdateTimestamp>
         <editorVersion>2.4.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -31,14 +30,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>0.000000</value3>
+                    <value3>-45.000061</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>12.137858</value1>
-                    <value2>18.950794</value2>
+                    <value1>-2.938191</value1>
+                    <value2>9.433326</value2>
                     <value3>3.010427</value3>
                 </vec3>
             </property>
@@ -730,6 +729,96 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Label</type>
+            <id>4a3beb7c-397d-493d-93ee-f826184dbb6d</id>
+            <name>LabelActor_01</name>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>90.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>0.046323</value1>
+                    <value2>14.907762</value2>
+                    <value3>2.530122</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Text</name>
+                <string>This door slides open!</string>
+            </property>
+            <property>
+                <name>Font</name>
+                <string>Arial.ttf</string>
+            </property>
+            <property>
+                <name>Font Size</name>
+                <float>0.2</float>
+            </property>
+            <property>
+                <name>Text Color</name>
+                <vec4>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>1.000000</value3>
+                    <value4>1.000000</value4>
+                </vec4>
+            </property>
+            <property>
+                <name>Back Color</name>
+                <vec4>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                    <value4>1.000000</value4>
+                </vec4>
+            </property>
+            <property>
+                <name>Back Size</name>
+                <vec2>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                </vec2>
+            </property>
+            <property>
+                <name>Back Visible</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Lighting Enabled</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Depth Testing Enabled</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Text Alignment</name>
+                <enumerated>CENTER_CENTER</enumerated>
+            </property>
+        </actor>
+        <actor>
             <type>dtcore.Static Mesh</type>
             <id>4ad8b969-83c2-42e1-9174-fd50f4cd2416</id>
             <name>door_02</name>
@@ -941,6 +1030,96 @@
             <property>
                 <name>MaxTriggerCount</name>
                 <integer>0</integer>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Label</type>
+            <id>56d33af5-b7ee-4b0f-821a-c69feec1bfc8</id>
+            <name>LabelActor_07</name>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>90.000000</value1>
+                    <value2>-179.999725</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>24.036285</value1>
+                    <value2>15.032043</value2>
+                    <value3>2.551423</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Text</name>
+                <string>This door swings open in one direction!</string>
+            </property>
+            <property>
+                <name>Font</name>
+                <string>Arial.ttf</string>
+            </property>
+            <property>
+                <name>Font Size</name>
+                <float>0.2</float>
+            </property>
+            <property>
+                <name>Text Color</name>
+                <vec4>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>1.000000</value3>
+                    <value4>1.000000</value4>
+                </vec4>
+            </property>
+            <property>
+                <name>Back Color</name>
+                <vec4>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                    <value4>1.000000</value4>
+                </vec4>
+            </property>
+            <property>
+                <name>Back Size</name>
+                <vec2>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                </vec2>
+            </property>
+            <property>
+                <name>Back Visible</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Lighting Enabled</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Depth Testing Enabled</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Text Alignment</name>
+                <enumerated>CENTER_CENTER</enumerated>
             </property>
         </actor>
         <actor>
@@ -1277,6 +1456,96 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Label</type>
+            <id>83a6d006-251b-4c4c-a25b-f677ebb5792b</id>
+            <name>LabelActor_03</name>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>90.000000</value1>
+                    <value2>0.000067</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>8.129975</value1>
+                    <value2>22.817513</value2>
+                    <value3>1.850232</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Text</name>
+                <string>This fireplace lights when you are near!</string>
+            </property>
+            <property>
+                <name>Font</name>
+                <string>Arial.ttf</string>
+            </property>
+            <property>
+                <name>Font Size</name>
+                <float>0.2</float>
+            </property>
+            <property>
+                <name>Text Color</name>
+                <vec4>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>1.000000</value3>
+                    <value4>1.000000</value4>
+                </vec4>
+            </property>
+            <property>
+                <name>Back Color</name>
+                <vec4>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                    <value4>1.000000</value4>
+                </vec4>
+            </property>
+            <property>
+                <name>Back Size</name>
+                <vec2>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                </vec2>
+            </property>
+            <property>
+                <name>Back Visible</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Lighting Enabled</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Depth Testing Enabled</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Text Alignment</name>
+                <enumerated>CENTER_CENTER</enumerated>
+            </property>
+        </actor>
+        <actor>
             <type>dtcore.Static Mesh</type>
             <id>918bd2b0-7783-4244-97c9-5ad8e43d1861</id>
             <name>terrain</name>
@@ -1385,6 +1654,96 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes::terrain_simple.ive</resourceDisplayName>
                 <resource>StaticMeshes::terrain_simple.ive</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Label</type>
+            <id>943607cb-8995-4430-87c4-dec814ecf147</id>
+            <name>LabelActor_08</name>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>90.000000</value1>
+                    <value2>0.000323</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>24.036285</value1>
+                    <value2>14.909307</value2>
+                    <value3>2.551423</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Text</name>
+                <string>This door swings open in one direction!</string>
+            </property>
+            <property>
+                <name>Font</name>
+                <string>Arial.ttf</string>
+            </property>
+            <property>
+                <name>Font Size</name>
+                <float>0.2</float>
+            </property>
+            <property>
+                <name>Text Color</name>
+                <vec4>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>1.000000</value3>
+                    <value4>1.000000</value4>
+                </vec4>
+            </property>
+            <property>
+                <name>Back Color</name>
+                <vec4>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                    <value4>1.000000</value4>
+                </vec4>
+            </property>
+            <property>
+                <name>Back Size</name>
+                <vec2>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                </vec2>
+            </property>
+            <property>
+                <name>Back Visible</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Lighting Enabled</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Depth Testing Enabled</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Text Alignment</name>
+                <enumerated>CENTER_CENTER</enumerated>
             </property>
         </actor>
         <actor>
@@ -2117,6 +2476,96 @@
             </property>
         </actor>
         <actor>
+            <type>dtcore.Label</type>
+            <id>d5e7ee35-a239-4a36-891b-d203796e0054</id>
+            <name>LabelActor_02</name>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>90.000000</value1>
+                    <value2>-179.999954</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>0.046323</value1>
+                    <value2>14.987495</value2>
+                    <value3>2.530122</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Text</name>
+                <string>This door slides open!</string>
+            </property>
+            <property>
+                <name>Font</name>
+                <string>Arial.ttf</string>
+            </property>
+            <property>
+                <name>Font Size</name>
+                <float>0.2</float>
+            </property>
+            <property>
+                <name>Text Color</name>
+                <vec4>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>1.000000</value3>
+                    <value4>1.000000</value4>
+                </vec4>
+            </property>
+            <property>
+                <name>Back Color</name>
+                <vec4>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                    <value4>1.000000</value4>
+                </vec4>
+            </property>
+            <property>
+                <name>Back Size</name>
+                <vec2>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                </vec2>
+            </property>
+            <property>
+                <name>Back Visible</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Lighting Enabled</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Depth Testing Enabled</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Text Alignment</name>
+                <enumerated>CENTER_CENTER</enumerated>
+            </property>
+        </actor>
+        <actor>
             <type>dtcore.Static Mesh</type>
             <id>d92ca978-6864-4ba6-86b0-500d20069db6</id>
             <name>door_03</name>
@@ -2336,6 +2785,96 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes::Door_Pivot_Room.IVE</resourceDisplayName>
                 <resource>StaticMeshes::Door_Pivot_Room.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Label</type>
+            <id>ddf0485c-611c-4030-b0a3-8f87a572d866</id>
+            <name>LabelActor_05</name>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>90.000000</value1>
+                    <value2>0.000067</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>16.046375</value1>
+                    <value2>14.945932</value2>
+                    <value3>2.539727</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Text</name>
+                <string>This door swings both ways!</string>
+            </property>
+            <property>
+                <name>Font</name>
+                <string>Arial.ttf</string>
+            </property>
+            <property>
+                <name>Font Size</name>
+                <float>0.2</float>
+            </property>
+            <property>
+                <name>Text Color</name>
+                <vec4>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>1.000000</value3>
+                    <value4>1.000000</value4>
+                </vec4>
+            </property>
+            <property>
+                <name>Back Color</name>
+                <vec4>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                    <value4>1.000000</value4>
+                </vec4>
+            </property>
+            <property>
+                <name>Back Size</name>
+                <vec2>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                </vec2>
+            </property>
+            <property>
+                <name>Back Visible</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Lighting Enabled</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Depth Testing Enabled</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Text Alignment</name>
+                <enumerated>CENTER_CENTER</enumerated>
             </property>
         </actor>
         <actor>
@@ -2661,6 +3200,96 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes::Door_Pivot.IVE</resourceDisplayName>
                 <resource>StaticMeshes::Door_Pivot.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Label</type>
+            <id>fd47deb5-7e71-4959-975f-c0c3909b1580</id>
+            <name>LabelActor_06</name>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>90.000000</value1>
+                    <value2>-179.999725</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>16.046377</value1>
+                    <value2>15.032004</value2>
+                    <value3>2.539727</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Text</name>
+                <string>This door swings both ways!</string>
+            </property>
+            <property>
+                <name>Font</name>
+                <string>Arial.ttf</string>
+            </property>
+            <property>
+                <name>Font Size</name>
+                <float>0.2</float>
+            </property>
+            <property>
+                <name>Text Color</name>
+                <vec4>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>1.000000</value3>
+                    <value4>1.000000</value4>
+                </vec4>
+            </property>
+            <property>
+                <name>Back Color</name>
+                <vec4>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                    <value4>1.000000</value4>
+                </vec4>
+            </property>
+            <property>
+                <name>Back Size</name>
+                <vec2>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                </vec2>
+            </property>
+            <property>
+                <name>Back Visible</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Lighting Enabled</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Depth Testing Enabled</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Text Alignment</name>
+                <enumerated>CENTER_CENTER</enumerated>
             </property>
         </actor>
     </actors>

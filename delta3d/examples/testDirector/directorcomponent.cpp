@@ -43,7 +43,8 @@ DirectorComponent::DirectorComponent(const std::string& name)
 ////////////////////////////////////////////////////////////////////////////////
 DirectorComponent::~DirectorComponent()
 {
-   mDirector->SaveRecording("DoorRecording");
+   // Save our recorded script for debugging later.
+   mDoorDirector->SaveRecording("DoorRecording");
    mFireDirector->SaveRecording("FireRecording");
 }
 
@@ -55,7 +56,7 @@ void DirectorComponent::ProcessMessage(const dtGame::Message& message)
       const dtGame::TickMessage& tickMessage = static_cast<const dtGame::TickMessage&>(message);
 
       // Update Director with both sim and real time
-      mDirector->Update(tickMessage.GetDeltaSimTime(), tickMessage.GetDeltaRealTime());
+      mDoorDirector->Update(tickMessage.GetDeltaSimTime(), tickMessage.GetDeltaRealTime());
       mFireDirector->Update(tickMessage.GetDeltaSimTime(), tickMessage.GetDeltaRealTime());
    }
    else if (message.GetMessageType() == dtGame::MessageType::INFO_MAP_LOADED)
@@ -99,8 +100,11 @@ void DirectorComponent::OnAddedToGM()
    // Must call this to actually receive input
    BaseInputComponent::OnAddedToGM();
 
-   mDirector = new dtDirector::Director();
-   mDirector->Init();
+   // Creating and initializing our Director scripts.
+   // In this case, we have two running in parallel.
+   // One for the doors and the other for the fire places.
+   mDoorDirector = new dtDirector::Director();
+   mDoorDirector->Init();
 
    mFireDirector = new dtDirector::Director();
    mFireDirector->Init();
@@ -177,16 +181,28 @@ void DirectorComponent::LoadDirectorScript()
    dtGame::GameManager* gm = GetGameManager();
    dtCore::Camera* camera  = gm->GetApplication().GetCamera();
 
-   mDirector->SetPlayer(camera->GetUniqueId());
+   // Here we set the player so any Player Value script nodes
+   // used in any scripts will know who the player is.  In this
+   // case, the camera represents our player so we will use that.
+   mDoorDirector->SetPlayer(camera->GetUniqueId());
    mFireDirector->SetPlayer(camera->GetUniqueId());
 
-   mDirector->LoadScript("doors");
+   // Load our doors.dtDir and fires.dtDir script files.
+   mDoorDirector->LoadScript("doors");
    mFireDirector->LoadScript("fires");
 
-   mDirector->SetNodeLogging(true);
+   // For debug purposes, set Node Logging to true if you want
+   // all nodes that are flagged to log their output, to print
+   // a log message in the console when they are executed.
+   mDoorDirector->SetNodeLogging(true);
    mFireDirector->SetNodeLogging(true);
 
-   mDirector->StartRecording();
+   // For further debugging, we can start recording the entire execution
+   // of the script.  When we close this application, we will then save
+   // the recorded data to a file.  Later, we can load the recorded data
+   // file in the Director Graph Editor and step through all of the nodes
+   // that were executed during this recording.
+   mDoorDirector->StartRecording();
    mFireDirector->StartRecording();
 }
 
