@@ -23,13 +23,12 @@
 #define DIRECTOR_DIRECTOR
 
 #include <dtDirector/export.h>
-
 #include <dtDirector/directorgraph.h>
 
 #include <dtDAL/map.h>
-
 #include <dtUtil/log.h>
 
+#include <cstdio>
 
 namespace dtDirector
 {
@@ -46,6 +45,7 @@ namespace dtDirector
    private:
       struct ThreadData;
       struct RecordThreadData;
+      struct RecordNodeData;
 
    public:
 
@@ -226,6 +226,17 @@ namespace dtDirector
       bool SaveRecording(const std::string& filename);
 
       /**
+      * Loads any recorded data for this script.
+      * @note  All recorded nodes must match the current loaded script
+      *        or this will fail.
+      *
+      * @param[in]  filename  The name of the file to load.
+      *
+      * @return     Returns true if the file was loaded.
+      */
+      bool LoadRecording(const std::string& filename);
+
+      /**
        * Inserts a node library with the given name at the given position.
        * If a library of the given name is already listed, the version
        * will be updated and the order adjusted to match the iterator.
@@ -371,6 +382,62 @@ namespace dtDirector
        * @param[in]  outputs    A list of outputs that were activated.
        */
       void ProcessUpdatedNode(Node* node, bool first, bool continued, int input, std::vector<OutputLink*> outputs);
+
+      /**
+      * Writes a list of recorded thread data.
+      *
+      * @param[in]  file     The file to save to.
+      * @param[in]  threads  The list of threads.
+      *
+      * @return     True if the file was saved successfully.
+      */
+      bool WriteRecordThreads(FILE* file, std::vector<RecordThreadData>& threads);
+
+      /**
+      * Reads a list of recorded thread data.
+      *
+      * @param[in]  file     The file to load from.
+      * @param[in]  threads  The list of threads to output.
+      *
+      * @return     True if the file was loaded successfully.
+      */
+      bool ReadRecordThreads(FILE* file, std::vector<RecordThreadData>& threads);
+
+      /**
+      * Writes a list of recorded node data.
+      *
+      * @param[in]  file   The file to save to.
+      * @param[in]  nodes  The list of nodes.
+      *
+      * @return     True if the file was saved successfully.
+      */
+      bool WriteRecordNodes(FILE* file, std::vector<RecordNodeData>& nodes);
+
+      /**
+      * Reads a list of recorded node data.
+      *
+      * @param[in]  file   The file to read from.
+      * @param[in]  nodes  The list of nodes to output.
+      *
+      * @return     True if the file was saved successfully.
+      */
+      bool ReadRecordNodes(FILE* file, std::vector<RecordNodeData>& nodes);
+
+      /**
+      * Writes a string to a file.
+      *
+      * @param[in]  file  The file.
+      * @param[in]  str   The string to write.
+      */
+      bool WriteString(FILE* file, const std::string& str);
+
+      /**
+      * Reads a string from a file.
+      *
+      * @param[in]  file  The file.
+      * @param[in]  str   The string to read.
+      */
+      bool ReadString(FILE* file, std::string& str);
 
    private:
 

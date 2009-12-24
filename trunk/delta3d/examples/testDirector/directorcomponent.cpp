@@ -43,6 +43,8 @@ DirectorComponent::DirectorComponent(const std::string& name)
 ////////////////////////////////////////////////////////////////////////////////
 DirectorComponent::~DirectorComponent()
 {
+   mDirector->SaveRecording("DoorRecording");
+   mFireDirector->SaveRecording("FireRecording");
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -183,6 +185,9 @@ void DirectorComponent::LoadDirectorScript()
 
    mDirector->SetNodeLogging(true);
    mFireDirector->SetNodeLogging(true);
+
+   mDirector->StartRecording();
+   mFireDirector->StartRecording();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
