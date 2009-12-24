@@ -151,16 +151,6 @@ void DirectorComponent::OnMapLoaded()
       //actor->RenderCollisionGeometry(true);
    }
 
-   std::vector<dtDAL::ActorProxy*> particleSysProxyList;
-   gm->FindActorsByType(*dtActors::EngineActorRegistry::PARTICLE_SYSTEM_ACTOR_TYPE, particleSysProxyList);
-   for (size_t proxyIndex = 0; proxyIndex < particleSysProxyList.size(); ++proxyIndex)
-   {
-      dtCore::Transformable* actor = 
-         dynamic_cast<dtCore::Transformable*>(particleSysProxyList[proxyIndex]->GetActor());
-
-     actor->SetActive(false);
-   }
-
    // Get the player start position
    dtDAL::ActorProxy* playerStartProxy = NULL;
    gm->FindActorByType(*dtActors::EngineActorRegistry::PLAYER_START_ACTOR_TYPE, playerStartProxy);
