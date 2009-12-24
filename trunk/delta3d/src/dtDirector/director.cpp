@@ -36,6 +36,7 @@ namespace dtDirector
       , mGraph(NULL)
       , mMap(NULL)
       , mCurrentThread(-1)
+      , mQueueingThreads(false)
       , mRecording(false)
       , mLogNodes(false)
    {
@@ -195,6 +196,18 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void Director::BeginThread(Node* node, int index)
    {
+      // If we are queuing threads now, add the new thread data to the queue
+      // for later.
+      if (mQueueingThreads)
+      {
+         ThreadQueue queue;
+         queue.node = node;
+         queue.input = index;
+         queue.isStack = false;
+         mThreadQueue.push_back(queue);
+         return;
+      }
+
       std::vector<ThreadData>* threadList = &mThreads;
       int curThread = mCurrentThread;
 
@@ -216,17 +229,6 @@ namespace dtDirector
             {
                s.node = node;
                s.index = index;
-
-               if (t.record > -1 && t.record < (int)recordList->size())
-               {
-                  RecordThreadData& recordThreadData = (*recordList)[t.record];
-                  if (!recordThreadData.nodes.empty())
-                  {
-                     RecordNodeData& recordNodeData = recordThreadData.nodes[recordThreadData.nodes.size()-1];
-                     recordNodeData.nodeID = node->GetID();
-                  }
-               }
-
                return;
             }
 
@@ -244,7 +246,7 @@ namespace dtDirector
          else break;
       }
 
-      if (!curThread) return;
+      if (!threadList) return;
 
       ThreadData data;
       data.record = -1;
@@ -271,6 +273,18 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void Director::PushStack(Node* node, int index)
    {
+      // If we are queuing threads now, add the new stack data to the queue
+      // for later.
+      if (mQueueingThreads)
+      {
+         ThreadQueue queue;
+         queue.node = node;
+         queue.input = index;
+         queue.isStack = true;
+         mThreadQueue.push_back(queue);
+         return;
+      }
+
       StackData stack;
       stack.node = node;
       stack.index = index;
@@ -537,6 +551,7 @@ namespace dtDirector
          // If the update result is true, then we want to immediately
          // create a new thread on any new events.  Otherwise, our first
          // new thread will be a continuation of the current active thread.
+         mQueueingThreads = true;
          makeNewThread = currentNode->Update(simDelta, delta, input, first);
          bool continued = makeNewThread;
 
@@ -593,6 +608,24 @@ namespace dtDirector
          }
 
          ProcessUpdatedNode(currentNode, first, continued, input, outputs);
+
+         // Process our queued threads.
+         mQueueingThreads = false;
+         count = (int)mThreadQueue.size();
+         for (int index = 0; index < count; index++)
+         {
+            ThreadQueue& queue = mThreadQueue[index];
+
+            if (queue.isStack)
+            {
+               PushStack(queue.node, queue.input);
+            }
+            else
+            {
+               BeginThread(queue.node, queue.input);
+            }
+         }
+         mThreadQueue.clear();
 
          // If we did not continue this current thread, stop it.
          if (!makeNewThread)

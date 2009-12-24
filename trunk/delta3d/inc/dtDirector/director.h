@@ -459,6 +459,14 @@ namespace dtDirector
 
    private:
 
+      // Thread Queue.
+      struct ThreadQueue
+      {
+         Node* node;
+         int   input;
+         bool  isStack;
+      };
+
       // Thread stacks.
       struct StackData
       {
@@ -481,6 +489,9 @@ namespace dtDirector
       // Thread Data.
       std::vector<ThreadData> mThreads;
       int mCurrentThread;
+
+      std::vector<ThreadQueue> mThreadQueue;
+      bool mQueueingThreads;
 
       // Recording Data.
       bool  mRecording;
