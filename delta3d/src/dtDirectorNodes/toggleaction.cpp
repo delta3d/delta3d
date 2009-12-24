@@ -87,17 +87,27 @@ namespace dtDirector
    bool ToggleAction::Update(float simDelta, float delta, int input, bool firstUpdate)
    {
       bool onOrOff = false;
+      bool shouldToggle = false;
+
+      int count = GetPropertyCount("Actor");
 
       switch (input)
       {
-      case INPUT_TURN_ON:
+      case INPUT_TOGGLE:
          {
             // Set to true and continue without break
-            onOrOff = true;
+            shouldToggle = true;
+         }
+      case INPUT_TURN_ON:
+         {
+            if (!shouldToggle)
+            {
+               // Set to true and continue without break
+               onOrOff = true;
+            }
          }
       case INPUT_TURN_OFF:
          {
-            int count = GetPropertyCount("Actor");
             for (int index = 0; index < count; index++)
             {
                dtDAL::ActorProxy* proxy = GetActor("Actor", index);
@@ -110,16 +120,16 @@ namespace dtDirector
 
                   if (toggleProperty)
                   {
+                     // If this is a toggle negate the current value
+                     if (shouldToggle)
+                     {
+                        onOrOff = !toggleProperty->GetValue();
+                     }
+
                      toggleProperty->SetValue(onOrOff);
                   }
                }
             }
-         }
-         break;
-
-      case INPUT_TOGGLE:
-         {
-            // find out what the value is and then negate it
          }
          break;
       }
