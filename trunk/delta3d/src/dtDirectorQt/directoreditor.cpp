@@ -73,6 +73,7 @@ namespace dtDirector
       , mCopyAction(NULL)
       , mPasteAction(NULL)
       , mViewPropertiesAction(NULL)
+      , mViewGraphBrowserAction(NULL)
       , mShowLinksAction(NULL)
       , mHideLinksAction(NULL)
       , mRefreshAction(NULL)
@@ -161,9 +162,16 @@ namespace dtDirector
       // Show Properties Action.
       mViewPropertiesAction = new QAction(tr("Property Editor"), this);
       mViewPropertiesAction->setShortcut(tr("Ctrl+P"));
-      mViewPropertiesAction->setToolTip(tr("Shows the Property Editor(Ctrl+P)."));
+      mViewPropertiesAction->setToolTip(tr("Shows the Property Editor (Ctrl+P)."));
       mViewPropertiesAction->setCheckable(true);
       mViewPropertiesAction->setChecked(true);
+
+      // Show Properties Action.
+      mViewGraphBrowserAction = new QAction(tr("Graph Browser"), this);
+      mViewGraphBrowserAction->setShortcut(tr("Ctrl+B"));
+      mViewGraphBrowserAction->setToolTip(tr("Shows the Graph Browser (Ctrl+B)."));
+      mViewGraphBrowserAction->setCheckable(true);
+      mViewGraphBrowserAction->setChecked(true);
 
       // Show Links Action.
       mShowLinksAction = new QAction(QIcon(":/icons/showlinks.png"), tr("Show Links"), this);
@@ -220,6 +228,7 @@ namespace dtDirector
       // View Menu.
       mViewMenu = mMenuBar->addMenu("&View");
       mViewMenu->addAction(mViewPropertiesAction);
+      mViewMenu->addAction(mViewGraphBrowserAction);
       mViewMenu->addSeparator();
       mViewMenu->addAction(mShowLinksAction);
       mViewMenu->addAction(mHideLinksAction);
@@ -272,6 +281,8 @@ namespace dtDirector
 
       connect(mPropertyEditor, SIGNAL(visibilityChanged(bool)),
          this, SLOT(OnPropertyEditorVisibilityChange(bool)));
+      connect(mGraphBrowser, SIGNAL(visibilityChanged(bool)),
+         this, SLOT(OnGraphBrowserVisibilityChange(bool)));
 
       connect(mSaveAction, SIGNAL(triggered()),
          this, SLOT(OnSaveButton()));
@@ -300,6 +311,8 @@ namespace dtDirector
          this, SLOT(OnDelete()));
       connect(mViewPropertiesAction, SIGNAL(triggered()),
          this, SLOT(OnShowPropertyEditor()));
+      connect(mViewGraphBrowserAction, SIGNAL(triggered()),
+         this, SLOT(OnShowGraphBrowser()));
       connect(mShowLinksAction, SIGNAL(triggered()),
          this, SLOT(OnShowLinks()));
       connect(mHideLinksAction, SIGNAL(triggered()),
@@ -573,6 +586,12 @@ namespace dtDirector
    void DirectorEditor::OnPropertyEditorVisibilityChange(bool visible)
    {
       mViewPropertiesAction->setChecked(visible);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::OnGraphBrowserVisibilityChange(bool visible)
+   {
+      mViewGraphBrowserAction->setChecked(visible);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -886,6 +905,19 @@ namespace dtDirector
       else
       {
          mPropertyEditor->hide();
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::OnShowGraphBrowser()
+   {
+      if (mViewGraphBrowserAction->isChecked())
+      {
+         mGraphBrowser->show();
+      }
+      else
+      {
+         mGraphBrowser->hide();
       }
    }
 
