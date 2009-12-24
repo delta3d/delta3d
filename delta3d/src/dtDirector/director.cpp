@@ -408,7 +408,42 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    bool Director::SaveRecording(const std::string& filename)
    {
-      return false;
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+      fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext());
+
+      bool result = false;
+      FILE* file = NULL;
+      fopen_s(&file, (std::string("directors/") + filename + ".dtDirReplay").c_str(), "wb");
+      if (file)
+      {
+         result = WriteRecordThreads(file, mRecordThreads);
+         fclose(file);
+      }
+
+      fileUtils.PopDirectory();
+      return result;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Director::LoadRecording(const std::string& filename)
+   {
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+      fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext());
+
+      bool result = false;
+      FILE* file = NULL;
+      fopen_s(&file, (std::string("directors/") + filename + ".dtDirReplay").c_str(), "rb");
+      if (file)
+      {
+         // First clear all current recording data.
+         mRecordThreads.clear();
+
+         result = ReadRecordThreads(file, mRecordThreads);
+         fclose(file);
+      }
+
+      fileUtils.PopDirectory();
+      return result;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -808,5 +843,175 @@ namespace dtDirector
             mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, "dtDirector::Director::UpdateThread", 531, message);
          }
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Director::WriteRecordThreads(FILE* file, std::vector<RecordThreadData>& threads)
+   {
+      if (!file) return false;
+
+      int count = (int)threads.size();
+      fwrite(&count, sizeof(int), 1, file);
+
+      for (int index = 0; index < count; index++)
+      {
+         std::vector<RecordNodeData>& nodes = threads[index].nodes;
+         if (!WriteRecordNodes(file, nodes))
+         {
+            return false;
+         }
+      }
+
+      return true;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Director::ReadRecordThreads(FILE* file, std::vector<RecordThreadData>& threads)
+   {
+      if (!file) return false;
+
+      int count = 0;
+      fread(&count, sizeof(int), 1, file);
+
+      for (int index = 0; index < count; index++)
+      {
+         RecordThreadData threadData;
+         if (!ReadRecordNodes(file, threadData.nodes))
+         {
+            return false;
+         }
+
+         threads.push_back(threadData);
+      }
+
+      return true;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Director::WriteRecordNodes(FILE* file, std::vector<RecordNodeData>& nodes)
+   {
+      if (!file) return false;
+
+      int count = (int)nodes.size();
+      fwrite(&count, sizeof(int), 1, file);
+
+      for (int index = 0; index < count; index++)
+      {
+         RecordNodeData& node = nodes[index];
+
+         if (!WriteString(file, node.nodeID.ToString()))
+         {
+            return false;
+         }
+
+         if (!WriteString(file, node.input))
+         {
+            return false;
+         }
+
+         int outCount = (int)node.outputs.size();
+         fwrite(&outCount, sizeof(int), 1, file);
+
+         for (int outIndex = 0; outIndex < outCount; outIndex++)
+         {
+            if (!WriteString(file, node.outputs[outIndex]))
+            {
+               return false;
+            }
+         }
+
+         if (!WriteRecordThreads(file, node.subThreads))
+         {
+            return false;
+         }
+      }
+
+      return true;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Director::ReadRecordNodes(FILE* file, std::vector<RecordNodeData>& nodes)
+   {
+      if (!file) return false;
+
+      int count = 0;
+      fread(&count, sizeof(int), 1, file);
+
+      for (int index = 0; index < count; index++)
+      {
+         RecordNodeData node;
+
+         std::string token;
+         if (!ReadString(file, token))
+         {
+            return false;
+         }
+         node.nodeID = token;
+
+         // Make sure a node with this ID exists in the current script.
+         if (!GetNode(node.nodeID))
+         {
+            return false;
+         }
+
+         if (!ReadString(file, node.input))
+         {
+            return false;
+         }
+
+         int outCount = 0;
+         fread(&outCount, sizeof(int), 1, file);
+
+         for (int outIndex = 0; outIndex < outCount; outIndex++)
+         {
+            std::string outName;
+            if (!ReadString(file, outName))
+            {
+               return false;
+            }
+
+            node.outputs.push_back(outName);
+         }
+
+         if (!ReadRecordThreads(file, node.subThreads))
+         {
+            return false;
+         }
+
+         nodes.push_back(node);
+      }
+
+      return true;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Director::WriteString(FILE* file, const std::string& str)
+   {
+      if (!file) return false;
+
+      size_t len = str.length();
+      fwrite(&len, sizeof(size_t), 1, file);
+
+      if (len <= 0) return true;
+      fwrite(str.c_str(), sizeof(char), len, file);
+
+      return true;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Director::ReadString(FILE* file, std::string& str)
+   {
+      if (!file) return false;
+
+      size_t len;
+      fread(&len, sizeof(size_t), 1, file);
+
+      if (len > 0)
+      {
+         str.resize(len);
+         fread(&str[0], sizeof(char), len, file);
+      }
+
+      return true;
    }
 }
