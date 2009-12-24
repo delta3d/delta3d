@@ -174,6 +174,11 @@ namespace dtDirector
       void OnNewButton();
 
       /**
+       * Event handler when the load button is pressed.
+       */
+      void OnLoadRecordingButton();
+
+      /**
        * Event handler when the parent button is pressed.
        */
       void OnParentButton();
@@ -287,6 +292,8 @@ namespace dtDirector
       QAction*  mNewAction;
       QAction*  mLoadAction;
       QAction*  mSaveAction;
+
+      QAction*  mLoadRecordingAction;
 
       // Edit Actions.
       QAction*  mParentAction;
