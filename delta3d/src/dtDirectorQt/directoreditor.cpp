@@ -21,6 +21,7 @@
 
 #include <dtDirectorQt/directoreditor.h>
 #include <dtDirectorQt/graphtabs.h>
+#include <dtDirectorQt/graphbrowser.h>
 #include <dtDirectorQt/editorview.h>
 #include <dtDirectorQt/editorscene.h>
 #include <dtDirectorQt/undomanager.h>
@@ -50,6 +51,7 @@ namespace dtDirector
       , mDirector(NULL)
       , mGraphTabs(NULL)
       , mPropertyEditor(NULL)
+      , mGraphBrowser(NULL)
       , mUndoManager(NULL)
       , mMenuBar(NULL)
       , mFileToolbar(NULL)
@@ -86,6 +88,10 @@ namespace dtDirector
       // Property editor.
       mPropertyEditor = new PropertyEditor(this);
       addDockWidget(Qt::BottomDockWidgetArea, mPropertyEditor);
+
+      // Graph browser.
+      mGraphBrowser = new GraphBrowser(this);
+      addDockWidget(Qt::BottomDockWidgetArea, mGraphBrowser);
 
       // New Action.
       mNewAction = new QAction(QIcon(":/icons/new.png"), tr("&New"), this);
@@ -315,12 +321,11 @@ namespace dtDirector
       mDirector = director;
 
       mGraphTabs->clear();
+
       if (mDirector)
       {
          setWindowTitle(mDirector->GetName().c_str());
-
-         // Open the home graph.
-         //OpenGraph(mDirector->GetGraphRoot(), true);
+         mGraphBrowser->BuildGraphList(mDirector->GetGraphRoot());
       }
       else
       {
@@ -391,6 +396,9 @@ namespace dtDirector
       
       // Refresh the Properties.
       mPropertyEditor->GetScene()->RefreshProperties();
+
+      // Refresh the graph list.
+      mGraphBrowser->SelectGraph(mPropertyEditor->GetScene()->GetGraph());
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -412,6 +420,9 @@ namespace dtDirector
             }
          }
       }
+
+      // Now make sure we re-build our graph list.
+      mGraphBrowser->BuildGraphList(graph);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -781,6 +792,8 @@ namespace dtDirector
       EditorScene* scene = mPropertyEditor->GetScene();
       if (!scene) return;
 
+      bool graphsDeleted = false;
+
       mUndoManager->BeginMultipleEvents();
 
       QList<QGraphicsItem*> selection = scene->selectedItems();
@@ -807,6 +820,7 @@ namespace dtDirector
                {
                   id = macro->GetGraph()->GetID();
                   parentID = macro->GetGraph()->mParent->GetID();
+                  graphsDeleted = true;
                }
                else
                {
@@ -857,6 +871,9 @@ namespace dtDirector
 
       // Refresh the current view.
       Refresh();
+
+      // If we deleted any graphs, then we must re-build the graph browser.
+      mGraphBrowser->BuildGraphList(scene->GetGraph());
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -1076,6 +1093,7 @@ namespace dtDirector
 
          // Create a single tab with the default graph.
          OpenGraph(mDirector->GetGraphRoot());
+         mGraphBrowser->BuildGraphList(mDirector->GetGraphRoot());
          return true;
       }
 
