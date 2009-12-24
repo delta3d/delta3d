@@ -37,6 +37,7 @@ namespace dtDirector
 {
    class GraphTabs;
    class PropertyEditor;
+   class GraphBrowser;
    class UndoManager;
 
    /**
@@ -283,6 +284,7 @@ namespace dtDirector
 
       GraphTabs*           mGraphTabs;
       PropertyEditor*      mPropertyEditor;
+      GraphBrowser*        mGraphBrowser;
       UndoManager*         mUndoManager;
 
       dtCore::RefPtr<Director> mDirector;

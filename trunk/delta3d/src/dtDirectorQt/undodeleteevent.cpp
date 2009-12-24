@@ -280,7 +280,10 @@ namespace dtDirector
       // Save the refresh for the parent event only.
       if (isParent)
       {
+         DirectorGraph* parent = mEditor->GetDirector()->GetGraph(mParentID);
+
          // Refresh the editor.
+         mEditor->RefreshGraph(parent);
          mEditor->Refresh();
       }
    }

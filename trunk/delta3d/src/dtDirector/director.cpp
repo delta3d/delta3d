@@ -52,7 +52,11 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void Director::Init(dtDAL::Map* map)
    {
-      if (!mGraph.valid()) mGraph = new DirectorGraph(this);
+      if (!mGraph.valid())
+      {
+         mGraph = new DirectorGraph(this);
+         mGraph->SetName("Director Script");
+      }
 
       Clear();
 
