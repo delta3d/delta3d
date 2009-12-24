@@ -44,8 +44,24 @@ namespace dtDirector
    {
    private:
       struct ThreadData;
+
+   public:
       struct RecordThreadData;
-      struct RecordNodeData;
+
+      // Recording Data.
+      struct RecordNodeData
+      {
+         dtCore::UniqueId nodeID;
+         std::string input;
+         std::vector<std::string> outputs;
+
+         std::vector<RecordThreadData> subThreads;
+      };
+
+      struct RecordThreadData
+      {
+         std::vector<RecordNodeData> nodes;
+      };
 
    public:
 
@@ -232,6 +248,11 @@ namespace dtDirector
       * @return     Returns true if the file was loaded.
       */
       bool LoadRecording(const std::string& filename);
+
+      /**
+      * Retrieves the recording data.
+      */
+      std::vector<Director::RecordThreadData> GetRecordingData() {return mRecordThreads;};
 
       /**
        * Inserts a node library with the given name at the given position.
@@ -456,28 +477,17 @@ namespace dtDirector
 
          int record;
       };
+
+      // Thread Data.
       std::vector<ThreadData> mThreads;
       int mCurrentThread;
 
-      dtCore::UniqueId mPlayer;
-
       // Recording Data.
-      struct RecordNodeData
-      {
-         dtCore::UniqueId nodeID;
-         std::string input;
-         std::vector<std::string> outputs;
-
-         std::vector<RecordThreadData> subThreads;
-      };
-
-      struct RecordThreadData
-      {
-         std::vector<RecordNodeData> nodes;
-      };
-
       bool  mRecording;
       std::vector<RecordThreadData> mRecordThreads;
+
+      // Other Data.
+      dtCore::UniqueId mPlayer;
 
       // Core Info.
       std::string mDescription;
