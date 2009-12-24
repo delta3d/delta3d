@@ -60,6 +60,7 @@ namespace dtDirector
       , mNewAction(NULL)
       , mLoadAction(NULL)
       , mSaveAction(NULL)
+      , mLoadRecordingAction(NULL)
       , mParentAction(NULL)
       , mSnapGridAction(NULL)
       , mUndoAction(NULL)
@@ -99,6 +100,10 @@ namespace dtDirector
       mSaveAction = new QAction(QIcon(":/icons/save.png"), tr("&Save"), this);
       mSaveAction->setShortcut(tr("Ctrl+S"));
       mSaveAction->setToolTip(tr("Saves the current Director script (Ctrl+S)."));
+
+      // Load Recording Action.
+      mLoadRecordingAction = new QAction(QIcon(":/icons/open.png"), tr("&Load Recording"), this);
+      mLoadRecordingAction->setToolTip(tr("Loads recorded script data."));
 
       // Parent Action.
       mParentAction = new QAction(QIcon(":/icons/parent.png"), tr("Step out of Graph"), this);
@@ -183,6 +188,7 @@ namespace dtDirector
       mFileMenu->addAction(mLoadAction);
       mFileMenu->addAction(mSaveAction);
       mFileMenu->addSeparator();
+      mFileMenu->addAction(mLoadRecordingAction);
 
       // Edit Menu.
       mEditMenu = mMenuBar->addMenu("&Edit");
@@ -261,6 +267,9 @@ namespace dtDirector
          this, SLOT(OnLoadButton()));
       connect(mNewAction, SIGNAL(triggered()),
          this, SLOT(OnNewButton()));
+      connect(mLoadRecordingAction, SIGNAL(triggered()),
+         this, SLOT(OnLoadRecordingButton()));
+
       connect(mParentAction, SIGNAL(triggered()),
          this, SLOT(OnParentButton()));
       connect(mUndoAction, SIGNAL(triggered()),
@@ -635,6 +644,35 @@ namespace dtDirector
       }
 
       ClearScript();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::OnLoadRecordingButton()
+   {
+      QString filter = tr(".dtDirReplay");
+      std::string context = dtDAL::Project::GetInstance().GetContext();
+
+      QFileDialog dialog;
+      QFileInfo filePath = dialog.getOpenFileName(this, tr("Load a Director Graph Replay File"),
+         tr((context + "\\directors\\").c_str()),
+         tr("Director Graph Replay (*.dtDirReplay)"), &filter);
+
+      QString fileName = filePath.baseName();
+      if (!fileName.isEmpty())
+      {
+         if (!mDirector->LoadRecording(fileName.toStdString()))
+         {
+            QMessageBox okBox("Failed",
+               "The Replay file failed to load.  This could be because you are "
+               "loading a replay for a script that is not loaded, or has been modified.",
+               QMessageBox::Critical,
+               QMessageBox::Ok,
+               QMessageBox::NoButton,
+               QMessageBox::NoButton, this);
+
+            okBox.exec();
+         }
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////

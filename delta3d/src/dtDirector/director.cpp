@@ -70,6 +70,9 @@ namespace dtDirector
       mGraph->mActionNodes.clear();
       mGraph->mValueNodes.clear();
       mGraph->mSubGraphs.clear();
+
+      mThreads.clear();
+      mRecordThreads.clear();
    }
 
    ////////////////////////////////////////////////////////////////////////////
