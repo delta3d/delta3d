@@ -164,6 +164,11 @@ namespace dtDirector
       void OnSaveButton();
 
       /**
+      * Event handler when the save as button is pressed.
+      */
+      void OnSaveAsButton();
+
+      /**
        * Event handler when the load button is pressed.
        */
       void OnLoadButton();
@@ -255,9 +260,11 @@ namespace dtDirector
       /**
        * Saves the current script.
        *
+       * @param[in]  saveAs  True if we want to show the file dialog.
+       * 
        * @return  True if the script was saved.
        */
-      bool SaveScript();
+      bool SaveScript(bool saveAs = false);
 
       /**
        * Loads an existing script.
@@ -279,6 +286,7 @@ namespace dtDirector
       UndoManager*         mUndoManager;
 
       dtCore::RefPtr<Director> mDirector;
+      std::string              mFileName;
 
       QMenuBar* mMenuBar;
       QToolBar* mFileToolbar;
@@ -292,6 +300,7 @@ namespace dtDirector
       QAction*  mNewAction;
       QAction*  mLoadAction;
       QAction*  mSaveAction;
+      QAction*  mSaveAsAction;
 
       QAction*  mLoadRecordingAction;
 

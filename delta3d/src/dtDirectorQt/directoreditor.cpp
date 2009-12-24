@@ -60,6 +60,7 @@ namespace dtDirector
       , mNewAction(NULL)
       , mLoadAction(NULL)
       , mSaveAction(NULL)
+      , mSaveAsAction(NULL)
       , mLoadRecordingAction(NULL)
       , mParentAction(NULL)
       , mSnapGridAction(NULL)
@@ -100,6 +101,10 @@ namespace dtDirector
       mSaveAction = new QAction(QIcon(":/icons/save.png"), tr("&Save"), this);
       mSaveAction->setShortcut(tr("Ctrl+S"));
       mSaveAction->setToolTip(tr("Saves the current Director script (Ctrl+S)."));
+
+      // Save Action.
+      mSaveAsAction = new QAction(QIcon(":/icons/save.png"), tr("&Save as..."), this);
+      mSaveAsAction->setToolTip(tr("Saves the current Director script."));
 
       // Load Recording Action.
       mLoadRecordingAction = new QAction(QIcon(":/icons/open.png"), tr("&Load Recording"), this);
@@ -187,6 +192,7 @@ namespace dtDirector
       mFileMenu->addAction(mNewAction);
       mFileMenu->addAction(mLoadAction);
       mFileMenu->addAction(mSaveAction);
+      mFileMenu->addAction(mSaveAsAction);
       mFileMenu->addSeparator();
       mFileMenu->addAction(mLoadRecordingAction);
 
@@ -263,6 +269,8 @@ namespace dtDirector
 
       connect(mSaveAction, SIGNAL(triggered()),
          this, SLOT(OnSaveButton()));
+      connect(mSaveAsAction, SIGNAL(triggered()),
+         this, SLOT(OnSaveAsButton()));
       connect(mLoadAction, SIGNAL(triggered()),
          this, SLOT(OnLoadButton()));
       connect(mNewAction, SIGNAL(triggered()),
@@ -592,6 +600,12 @@ namespace dtDirector
    void DirectorEditor::OnSaveButton()
    {
       SaveScript();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::OnSaveAsButton()
+   {
+      SaveScript(true);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -999,20 +1013,36 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool DirectorEditor::SaveScript()
+   bool DirectorEditor::SaveScript(bool saveAs)
    {
-      QString filter = tr(".dtDir");
-      std::string context = dtDAL::Project::GetInstance().GetContext();
+      bool showFiles = saveAs;
 
-      QFileDialog dialog;
-      QFileInfo filePath = dialog.getSaveFileName(this, tr("Save a Director Graph File"),
-         tr((context + "\\directors\\").c_str()),
-         tr("Director Scripts (*.dtDir)"), &filter);
+      QString fileName = mFileName.c_str();
 
-      QString fileName = filePath.baseName();
+      // We must show the file dialog if there is no Director loaded.
+      if (!showFiles && fileName.isEmpty())
+      {
+         showFiles = true;
+      }
+
+      if (showFiles)
+      {
+         QString filter = tr(".dtDir");
+         std::string context = dtDAL::Project::GetInstance().GetContext();
+
+         QFileDialog dialog;
+         QFileInfo filePath = dialog.getSaveFileName(this, tr("Save a Director Graph File"),
+            tr((context + "\\directors\\").c_str()),
+            tr("Director Scripts (*.dtDir)"), &filter);
+
+         fileName = filePath.baseName();
+      }
+
       if (!fileName.isEmpty())
       {
          mDirector->SaveScript(fileName.toStdString());
+         mFileName = fileName.toStdString();
+
          mUndoManager->OnSaved();
 
          RefreshButtonStates();
@@ -1042,6 +1072,7 @@ namespace dtDirector
          mUndoManager->Clear();
 
          mDirector->LoadScript(fileName.toStdString());
+         mFileName = fileName.toStdString();
 
          // Create a single tab with the default graph.
          OpenGraph(mDirector->GetGraphRoot());
