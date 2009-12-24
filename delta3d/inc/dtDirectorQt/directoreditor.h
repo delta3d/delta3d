@@ -146,6 +146,13 @@ namespace dtDirector
       void OnPropertyEditorVisibilityChange(bool visible);
 
       /**
+       * Event handler when the visibility of the graph browser is changed.
+       *
+       * @param[in]  visible  True if the browser is visible.
+       */
+      void OnGraphBrowserVisibilityChange(bool visible);
+
+      /**
       * Event handler when the current document tab has changed.
       *
       * @param[in]  index  The index of the new tab.
@@ -223,6 +230,11 @@ namespace dtDirector
        * Event handler when the show property editor button is pressed.
        */
       void OnShowPropertyEditor();
+
+      /**
+       * Event handler when the show graph browser button is pressed.
+       */
+      void OnShowGraphBrowser();
 
       /**
        * Event handler when the show links button is pressed.
@@ -319,6 +331,7 @@ namespace dtDirector
 
       // View Actions.
       QAction*  mViewPropertiesAction;
+      QAction*  mViewGraphBrowserAction;
       QAction*  mShowLinksAction;
       QAction*  mHideLinksAction;
       QAction*  mRefreshAction;
