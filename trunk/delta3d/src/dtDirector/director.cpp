@@ -36,6 +36,7 @@ namespace dtDirector
       , mGraph(NULL)
       , mMap(NULL)
       , mCurrentThread(-1)
+      , mRecording(false)
       , mLogNodes(false)
    {
       mPlayer = "";
@@ -285,6 +286,8 @@ namespace dtDirector
       std::vector<ThreadData>* threadList = &mThreads;
       int curThread = mCurrentThread;
 
+      std::vector<RecordThreadData>* recordList = &mRecordThreads;
+
       while (curThread > -1)
       {
          ThreadData& t = (*threadList)[curThread];
@@ -297,11 +300,33 @@ namespace dtDirector
             // If this is the current running stack item, and it does
             // not have an active running node, use this instead
             // of creating a new sub-thread.
-            if (curThread == -1 && !s.node)
+            if (curThread == -1 && !s.node && node)
             {
                s.node = node;
                s.index = index;
+
+               if (t.record > -1 && t.record < (int)recordList->size())
+               {
+                  RecordThreadData& recordThreadData = (*recordList)[t.record];
+                  if (!recordThreadData.nodes.empty())
+                  {
+                     RecordNodeData& recordNodeData = recordThreadData.nodes[recordThreadData.nodes.size()-1];
+                     recordNodeData.nodeID = node->GetID();
+                  }
+               }
+
                return;
+            }
+
+            if (t.record > -1 && t.record < (int)recordList->size())
+            {
+               RecordThreadData& recordThreadData = (*recordList)[t.record];
+               if (!recordThreadData.nodes.empty())
+               {
+                  RecordNodeData& recordNodeData = recordThreadData.nodes[recordThreadData.nodes.size()-1];
+
+                  recordList = &recordNodeData.subThreads;
+               }
             }
          }
          else break;
@@ -310,6 +335,17 @@ namespace dtDirector
       if (!curThread) return;
 
       ThreadData data;
+      data.record = -1;
+
+      // If we are recording, start recording this new thread.
+      if (mRecording && recordList)
+      {
+         data.record = (int)recordList->size();
+
+         RecordThreadData recordThread;
+         recordList->push_back(recordThread);
+      }
+
       StackData stack;
       stack.node = node;
       stack.index = index;
@@ -348,6 +384,31 @@ namespace dtDirector
          }
          else break;
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void Director::StartRecording()
+   {
+      mRecording = true;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void Director::PauseRecording()
+   {
+      mRecording = false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void Director::StopRecording()
+   {
+      mRecording = false;
+      mRecordThreads.clear();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Director::SaveRecording(const std::string& filename)
+   {
+      return false;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -613,6 +674,74 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void Director::ProcessUpdatedNode(Node* node, bool first, bool continued, int input, std::vector<OutputLink*> outputs)
    {
+      // If we are recording, then record this node.
+      if (mRecording)
+      {
+         bool doRecord = false;
+
+         // If this is the first execution of this node, we always want to record this.
+         // otherwise, only record if this node is triggering any outputs.
+         if (first || outputs.size())
+         {
+            doRecord = true;
+         }
+
+         if (doRecord)
+         {
+            // Find the current thread recording.
+            std::vector<ThreadData>* threadList = &mThreads;
+            int curThread = mCurrentThread;
+
+            std::vector<RecordThreadData>* recordList = &mRecordThreads;
+            RecordThreadData* recordThread = NULL;
+
+            while (curThread > -1)
+            {
+               ThreadData& t = (*threadList)[curThread];
+               if (!t.stack.empty())
+               {
+                  StackData& s = t.stack[t.stack.size()-1];
+                  curThread = s.currentThread;
+                  threadList = &s.subThreads;
+
+                  if (t.record > -1 && t.record < (int)recordList->size())
+                  {
+                     recordThread = &(*recordList)[t.record];
+                     if (!recordThread->nodes.empty())
+                     {
+                        RecordNodeData& recordNodeData = recordThread->nodes[recordThread->nodes.size()-1];
+
+                        recordList = &recordNodeData.subThreads;
+                     }
+                  }
+               }
+               else break;
+            }
+
+            if (recordThread)
+            {
+               RecordNodeData nodeData;
+               nodeData.nodeID = node->GetID();
+               nodeData.input = "";
+
+               if (input > -1 && input < (int)node->GetInputLinks().size())
+               {
+                  InputLink& link = node->GetInputLinks()[input];
+                  nodeData.input = link.GetName();
+               }
+
+               int count = (int)outputs.size();
+               for (int index = 0; index < count; index++)
+               {
+                  OutputLink* link = outputs[index];
+                  if (link) nodeData.outputs.push_back(link->GetName());
+               }
+
+               recordThread->nodes.push_back(nodeData);
+            }
+         }
+      }
+
       // If this node is flagged to log its comment, log it.
       if (GetNodeLogging() && node->GetNodeLogging())
       {

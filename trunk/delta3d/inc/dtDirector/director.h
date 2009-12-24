@@ -45,6 +45,7 @@ namespace dtDirector
    {
    private:
       struct ThreadData;
+      struct RecordThreadData;
 
    public:
 
@@ -199,6 +200,30 @@ namespace dtDirector
        * Retrieves the player.
        */
       dtCore::UniqueId GetPlayer() {return mPlayer;}
+
+      /**
+      * Begins recording of the Director graphs.
+      */
+      void StartRecording();
+
+      /**
+      * Pauses the recording of the Director graphs.
+      */
+      void PauseRecording();
+
+      /**
+      * Ends the recording of the Director graphs.
+      */
+      void StopRecording();
+
+      /**
+      * Saves any recorded data to a file.
+      *
+      * @param[in]  filename  The name of the file to save.
+      *
+      * @return     Returns true if the file was saved.
+      */
+      bool SaveRecording(const std::string& filename);
 
       /**
        * Inserts a node library with the given name at the given position.
@@ -364,11 +389,31 @@ namespace dtDirector
       struct ThreadData
       {
          std::vector<StackData> stack;
+
+         int record;
       };
       std::vector<ThreadData> mThreads;
       int mCurrentThread;
 
       dtCore::UniqueId mPlayer;
+
+      // Recording Data.
+      struct RecordNodeData
+      {
+         dtCore::UniqueId nodeID;
+         std::string input;
+         std::vector<std::string> outputs;
+
+         std::vector<RecordThreadData> subThreads;
+      };
+
+      struct RecordThreadData
+      {
+         std::vector<RecordNodeData> nodes;
+      };
+
+      bool  mRecording;
+      std::vector<RecordThreadData> mRecordThreads;
 
       // Core Info.
       std::string mDescription;
