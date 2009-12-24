@@ -68,7 +68,7 @@ namespace dtDirector
          "Actor", "Actor",
          dtDAL::ActorIDActorProperty::SetFuncType(this, &ToggleAction::SetToggleActor),
          dtDAL::ActorIDActorProperty::GetFuncType(this, &ToggleAction::GetToggleActor),
-         "dtCore::Transformable", "The actor to with a property to toggle.");
+         "dtCore::Transformable", "The actor with a property to toggle.");
       AddProperty(actorProp);
 
       dtDAL::StringActorProperty* toggleActorProp = new dtDAL::StringActorProperty(

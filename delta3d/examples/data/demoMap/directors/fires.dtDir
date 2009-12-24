@@ -2,7 +2,7 @@
 <director xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dDirector" xsi:schemaLocation="delta3dDirector director.xsd">
     <header>
         <createTimestamp>2009-12-23T15:09:12-08:00</createTimestamp>
-        <lastUpdateTimestamp>2009-12-23T15:19:09-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2009-12-24T10:42:26-08:00</lastUpdateTimestamp>
         <editorVersion>2.4.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
         <property>
@@ -83,6 +83,10 @@
                         <id>65e4f452-978d-43e5-9c56-b796d910b79d</id>
                         <name>TurnOn</name>
                     </link>
+                    <link>
+                        <id>fd20a387-fa2b-47d1-8699-fa47e6bcfb73</id>
+                        <name>Play</name>
+                    </link>
                 </outputlink>
                 <outputlink>
                     <name>Leave</name>
@@ -90,6 +94,10 @@
                     <link>
                         <id>65e4f452-978d-43e5-9c56-b796d910b79d</id>
                         <name>TurnOff</name>
+                    </link>
+                    <link>
+                        <id>fd20a387-fa2b-47d1-8699-fa47e6bcfb73</id>
+                        <name>Stop</name>
                     </link>
                 </outputlink>
                 <valuelink>
@@ -131,8 +139,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>145.000000</value1>
-                        <value2>21.000000</value2>
+                        <value1>137.222229</value1>
+                        <value2>172.111115</value2>
                     </vec2>
                 </property>
                 <property>
@@ -178,6 +186,72 @@
                     </link>
                 </valuelink>
             </node>
+            <node>
+                <name>Sound</name>
+                <category>General</category>
+                <id>fd20a387-fa2b-47d1-8699-fa47e6bcfb73</id>
+                <property>
+                    <name>Enabled</name>
+                    <boolean>true</boolean>
+                </property>
+                <property>
+                    <name>Comment</name>
+                    <string></string>
+                </property>
+                <property>
+                    <name>LogNode</name>
+                    <boolean>false</boolean>
+                </property>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>137.222229</value1>
+                        <value2>-158.110992</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>Actor</name>
+                    <actorId></actorId>
+                </property>
+                <inputlink>
+                    <name>Play</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>7fe84139-de64-4e60-a6ba-60af2dbcb099</id>
+                        <name>Enter</name>
+                    </link>
+                </inputlink>
+                <inputlink>
+                    <name>Stop</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>7fe84139-de64-4e60-a6ba-60af2dbcb099</id>
+                        <name>Leave</name>
+                    </link>
+                </inputlink>
+                <inputlink>
+                    <name>Pause</name>
+                    <visible>true</visible>
+                </inputlink>
+                <outputlink>
+                    <name>Out</name>
+                    <visible>true</visible>
+                </outputlink>
+                <outputlink>
+                    <name>Finished</name>
+                    <visible>true</visible>
+                </outputlink>
+                <valuelink>
+                    <name>Actor</name>
+                    <visible>true</visible>
+                    <isout>true</isout>
+                    <allowmultiple>true</allowmultiple>
+                    <typecheck>true</typecheck>
+                    <link>
+                        <id>bff409fd-cb99-421e-849b-dd9a43ca4002</id>
+                    </link>
+                </valuelink>
+            </node>
         </actionnodes>
         <valuenodes>
             <node>
@@ -199,8 +273,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>92.500000</value1>
-                        <value2>235.000000</value2>
+                        <value1>147.722000</value1>
+                        <value2>372.777771</value2>
                     </vec2>
                 </property>
                 <property>
@@ -234,6 +308,38 @@
                         <value1>-192.000000</value1>
                         <value2>207.000000</value2>
                     </vec2>
+                </property>
+            </node>
+            <node>
+                <name>Actor</name>
+                <category>General</category>
+                <id>bff409fd-cb99-421e-849b-dd9a43ca4002</id>
+                <property>
+                    <name>Enabled</name>
+                    <boolean>true</boolean>
+                </property>
+                <property>
+                    <name>Comment</name>
+                    <string></string>
+                </property>
+                <property>
+                    <name>LogNode</name>
+                    <boolean>false</boolean>
+                </property>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>154.222336</value1>
+                        <value2>34.111240</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>Name</name>
+                    <string>Actor</string>
+                </property>
+                <property>
+                    <name>Value</name>
+                    <actorId>9b275918-e1ba-4352-acf1-34c88f488eb0</actorId>
                 </property>
             </node>
         </valuenodes>

@@ -8,7 +8,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2009-12-21T16:14:44-08:00</createTimestamp>
-        <lastUpdateTimestamp>2009-12-24T08:54:14-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2009-12-24T10:29:47-08:00</lastUpdateTimestamp>
         <editorVersion>2.4.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -1745,6 +1745,179 @@
             <property>
                 <name>Text Alignment</name>
                 <enumerated>CENTER_CENTER</enumerated>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Environment.Sound Actor</type>
+            <id>9b275918-e1ba-4352-acf1-34c88f488eb0</id>
+            <name>fireSound</name>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>8.081909</value1>
+                    <value2>23.062239</value2>
+                    <value3>1.966518</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>NONE</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.1887903</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server Local</enumerated>
+            </property>
+            <property>
+                <name>Local Actor Update Policy</name>
+                <enumerated>ACCEPT_ALL</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string></string>
+            </property>
+            <property>
+                <name>CurrentShader</name>
+                <resourceType>Shaders</resourceType>
+                <resourceDisplayName></resourceDisplayName>
+                <resource></resource>
+            </property>
+            <property>
+                <name>Looping</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Gain</name>
+                <float>1</float>
+            </property>
+            <property>
+                <name>Pitch</name>
+                <float>1</float>
+            </property>
+            <property>
+                <name>Listener Relative</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Max Distance</name>
+                <float>3.4028235e+038</float>
+            </property>
+            <property>
+                <name>Rolloff Factor</name>
+                <float>1</float>
+            </property>
+            <property>
+                <name>Min Gain</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Max Gain</name>
+                <float>1</float>
+            </property>
+            <property>
+                <name>Direction</name>
+                <vec3>
+                    <value1>-0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Velocity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Max Random Time</name>
+                <float>30</float>
+            </property>
+            <property>
+                <name>Min Random Time</name>
+                <float>5</float>
+            </property>
+            <property>
+                <name>Initial offset Time</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Play As Random SFX</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Play Sound at Startup</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>The Sound Effect</name>
+                <resourceType>Sounds</resourceType>
+                <resourceDisplayName>Sounds::fire.wav</resourceDisplayName>
+                <resource>Sounds::fire.wav</resource>
             </property>
         </actor>
         <actor>

@@ -9,16 +9,17 @@ file(GLOB LIB_SOURCES "*.cpp")
 list(REMOVE_ITEM LIB_SOURCES ${SOURCE_PATH}/precomp.cpp)
 
 
-ADD_LIBRARY(${LIB_NAME} SHARED                        
-    ${LIB_PUBLIC_HEADERS}                         
+ADD_LIBRARY(${LIB_NAME} SHARED
+    ${LIB_PUBLIC_HEADERS}
     ${LIB_SOURCES}
 )
 
-TARGET_LINK_LIBRARIES( ${LIB_NAME}
-                       ${DTDAL_LIBRARY}
-					   ${DTDIRECTOR_LIBRARY}
-                       ${DTGAME_LIBRARY}
-					   ${DTACTORS_LIBRARY}
+TARGET_LINK_LIBRARIES(${LIB_NAME}
+                      ${DTDAL_LIBRARY}
+                      ${DTDIRECTOR_LIBRARY}
+                      ${DTGAME_LIBRARY}
+                      ${DTACTORS_LIBRARY}
+                      ${DTAUDIO_LIBRARY}
                      )
 
 SET_TARGET_PROPERTIES(${LIB_NAME}
