@@ -483,7 +483,8 @@ namespace dtDirector
       {
          std::vector<StackData> stack;
 
-         int record;
+         int recordThread;
+         int recordNode;
       };
 
       // Thread Data.

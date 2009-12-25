@@ -135,6 +135,8 @@ namespace dtDirector
                {
                   InitLerp();
                   mIsActive = true;
+
+                  ActionNode::Update(simDelta, delta, input, firstUpdate);
                }
                else
                {

@@ -22,6 +22,7 @@
 #include <dtDirectorQt/directoreditor.h>
 #include <dtDirectorQt/graphtabs.h>
 #include <dtDirectorQt/graphbrowser.h>
+#include <dtDirectorQt/replaybrowser.h>
 #include <dtDirectorQt/editorview.h>
 #include <dtDirectorQt/editorscene.h>
 #include <dtDirectorQt/undomanager.h>
@@ -52,7 +53,9 @@ namespace dtDirector
       , mGraphTabs(NULL)
       , mPropertyEditor(NULL)
       , mGraphBrowser(NULL)
+      , mReplayBrowser(NULL)
       , mUndoManager(NULL)
+      , mReplayMode(false)
       , mMenuBar(NULL)
       , mFileToolbar(NULL)
       , mEditToolbar(NULL)
@@ -74,6 +77,7 @@ namespace dtDirector
       , mPasteAction(NULL)
       , mViewPropertiesAction(NULL)
       , mViewGraphBrowserAction(NULL)
+      , mViewReplayBrowserAction(NULL)
       , mShowLinksAction(NULL)
       , mHideLinksAction(NULL)
       , mRefreshAction(NULL)
@@ -93,6 +97,11 @@ namespace dtDirector
       // Graph browser.
       mGraphBrowser = new GraphBrowser(this);
       addDockWidget(Qt::BottomDockWidgetArea, mGraphBrowser);
+
+      // Replay browser.
+      mReplayBrowser = new ReplayBrowser(this);
+      addDockWidget(Qt::RightDockWidgetArea, mReplayBrowser);
+      mReplayBrowser->hide();
 
       // New Action.
       mNewAction = new QAction(QIcon(":/icons/new.png"), tr("&New"), this);
@@ -166,12 +175,19 @@ namespace dtDirector
       mViewPropertiesAction->setCheckable(true);
       mViewPropertiesAction->setChecked(true);
 
-      // Show Properties Action.
+      // Show Graph browser Action.
       mViewGraphBrowserAction = new QAction(tr("Graph Browser"), this);
       mViewGraphBrowserAction->setShortcut(tr("Ctrl+B"));
       mViewGraphBrowserAction->setToolTip(tr("Shows the Graph Browser (Ctrl+B)."));
       mViewGraphBrowserAction->setCheckable(true);
       mViewGraphBrowserAction->setChecked(true);
+
+      // Show Replay browser Action.
+      mViewReplayBrowserAction = new QAction(tr("Replay Browser"), this);
+      mViewReplayBrowserAction->setShortcut(tr("Ctrl+R"));
+      mViewReplayBrowserAction->setToolTip(tr("Shows the Replay Browser (Ctrl+R)."));
+      mViewReplayBrowserAction->setCheckable(true);
+      mViewReplayBrowserAction->setChecked(false);
 
       // Show Links Action.
       mShowLinksAction = new QAction(QIcon(":/icons/showlinks.png"), tr("Show Links"), this);
@@ -183,10 +199,10 @@ namespace dtDirector
       mHideLinksAction->setShortcut(tr("Ctrl+H"));
       mHideLinksAction->setToolTip(tr("Hides all unused links on selected nodes (Ctrl+H)."));
 
-      // Show Properties Action.
+      // Show refresh Action.
       mRefreshAction = new QAction(QIcon(":/icons/refresh.png"), tr("Refresh"), this);
-      mRefreshAction->setShortcut(tr("Ctrl+R"));
-      mRefreshAction->setToolTip(tr("Refresh the current view (Ctrl+R)."));
+      mRefreshAction->setShortcut(tr("F5"));
+      mRefreshAction->setToolTip(tr("Refresh the current view (F5)."));
 
       // Graph tabs.
       mGraphTabs = new GraphTabs(this, this);
@@ -229,6 +245,7 @@ namespace dtDirector
       mViewMenu = mMenuBar->addMenu("&View");
       mViewMenu->addAction(mViewPropertiesAction);
       mViewMenu->addAction(mViewGraphBrowserAction);
+      mViewMenu->addAction(mViewReplayBrowserAction);
       mViewMenu->addSeparator();
       mViewMenu->addAction(mShowLinksAction);
       mViewMenu->addAction(mHideLinksAction);
@@ -283,6 +300,8 @@ namespace dtDirector
          this, SLOT(OnPropertyEditorVisibilityChange(bool)));
       connect(mGraphBrowser, SIGNAL(visibilityChanged(bool)),
          this, SLOT(OnGraphBrowserVisibilityChange(bool)));
+      connect(mReplayBrowser, SIGNAL(visibilityChanged(bool)),
+         this, SLOT(OnReplayBrowserVisibilityChange(bool)));
 
       connect(mSaveAction, SIGNAL(triggered()),
          this, SLOT(OnSaveButton()));
@@ -313,6 +332,8 @@ namespace dtDirector
          this, SLOT(OnShowPropertyEditor()));
       connect(mViewGraphBrowserAction, SIGNAL(triggered()),
          this, SLOT(OnShowGraphBrowser()));
+      connect(mViewReplayBrowserAction, SIGNAL(triggered()),
+         this, SLOT(OnShowReplayBrowser()));
       connect(mShowLinksAction, SIGNAL(triggered()),
          this, SLOT(OnShowLinks()));
       connect(mHideLinksAction, SIGNAL(triggered()),
@@ -412,6 +433,8 @@ namespace dtDirector
 
       // Refresh the graph list.
       mGraphBrowser->SelectGraph(mPropertyEditor->GetScene()->GetGraph());
+
+      mReplayBrowser->BuildThreadList();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -436,6 +459,7 @@ namespace dtDirector
 
       // Now make sure we re-build our graph list.
       mGraphBrowser->BuildGraphList(graph);
+      mReplayBrowser->BuildThreadList();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -594,6 +618,19 @@ namespace dtDirector
       mViewGraphBrowserAction->setChecked(visible);
    }
 
+   //////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::OnReplayBrowserVisibilityChange(bool visible)
+   {
+      mViewReplayBrowserAction->setChecked(visible);
+      mReplayMode = visible;
+
+      // Refresh the replay browser.
+      mReplayBrowser->BuildThreadList();
+
+      // Always refresh all the scenes.
+      Refresh();
+   }
+
    ////////////////////////////////////////////////////////////////////////////////
    void DirectorEditor::OnGraphTabChanged(int index)
    {
@@ -606,6 +643,7 @@ namespace dtDirector
             mPropertyEditor->SetScene(view->GetScene());
             view->GetScene()->Refresh();
             view->GetScene()->RefreshProperties();
+            mReplayBrowser->BuildThreadList();
             RefreshButtonStates();
          }
       }
@@ -704,6 +742,7 @@ namespace dtDirector
       QString fileName = filePath.baseName();
       if (!fileName.isEmpty())
       {
+         mReplayMode = false;
          if (!mDirector->LoadRecording(fileName.toStdString()))
          {
             QMessageBox okBox("Failed",
@@ -715,6 +754,13 @@ namespace dtDirector
                QMessageBox::NoButton, this);
 
             okBox.exec();
+         }
+         else
+         {
+            mReplayBrowser->show();
+            
+            // Make sure we refresh all the views for replay mode.
+            Refresh();
          }
       }
    }
@@ -893,6 +939,8 @@ namespace dtDirector
 
       // If we deleted any graphs, then we must re-build the graph browser.
       mGraphBrowser->BuildGraphList(scene->GetGraph());
+
+      mReplayBrowser->BuildThreadList();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -918,6 +966,19 @@ namespace dtDirector
       else
       {
          mGraphBrowser->hide();
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::OnShowReplayBrowser()
+   {
+      if (mViewReplayBrowserAction->isChecked())
+      {
+         mReplayBrowser->show();
+      }
+      else
+      {
+         mReplayBrowser->hide();
       }
    }
 
@@ -1125,6 +1186,7 @@ namespace dtDirector
 
          // Create a single tab with the default graph.
          OpenGraph(mDirector->GetGraphRoot());
+         mReplayBrowser->BuildThreadList();
          mGraphBrowser->BuildGraphList(mDirector->GetGraphRoot());
          return true;
       }

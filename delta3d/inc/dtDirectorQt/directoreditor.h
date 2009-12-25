@@ -39,6 +39,7 @@ namespace dtDirector
    class PropertyEditor;
    class GraphBrowser;
    class UndoManager;
+   class ReplayBrowser;
 
    /**
     * @class DirectorEditor
@@ -96,6 +97,16 @@ namespace dtDirector
       UndoManager* GetUndoManager() {return mUndoManager;}
 
       /**
+       * Accessor for the replay browser.
+       */
+      ReplayBrowser* GetReplayBrowser() {return mReplayBrowser;}
+
+      /**
+       * Retrieves whether we are in replay mode.
+       */
+      bool GetReplayMode() {return mReplayMode;}
+
+      /**
        * Retrieves actions.
        */
       QAction* GetParentAction()   {return mParentAction;}
@@ -151,6 +162,13 @@ namespace dtDirector
        * @param[in]  visible  True if the browser is visible.
        */
       void OnGraphBrowserVisibilityChange(bool visible);
+
+      /**
+       * Event handler when the visibility of the replay browser is changed.
+       *
+       * @param[in]  visible  True if the browser is visible.
+       */
+      void OnReplayBrowserVisibilityChange(bool visible);
 
       /**
       * Event handler when the current document tab has changed.
@@ -237,6 +255,11 @@ namespace dtDirector
       void OnShowGraphBrowser();
 
       /**
+       * Event handler when the show replay browser button is pressed.
+       */
+      void OnShowReplayBrowser();
+
+      /**
        * Event handler when the show links button is pressed.
        */
       void OnShowLinks();
@@ -297,10 +320,13 @@ namespace dtDirector
       GraphTabs*           mGraphTabs;
       PropertyEditor*      mPropertyEditor;
       GraphBrowser*        mGraphBrowser;
+      ReplayBrowser*       mReplayBrowser;
       UndoManager*         mUndoManager;
 
       dtCore::RefPtr<Director> mDirector;
       std::string              mFileName;
+
+      bool      mReplayMode;
 
       QMenuBar* mMenuBar;
       QToolBar* mFileToolbar;
@@ -332,6 +358,7 @@ namespace dtDirector
       // View Actions.
       QAction*  mViewPropertiesAction;
       QAction*  mViewGraphBrowserAction;
+      QAction*  mViewReplayBrowserAction;
       QAction*  mShowLinksAction;
       QAction*  mHideLinksAction;
       QAction*  mRefreshAction;
