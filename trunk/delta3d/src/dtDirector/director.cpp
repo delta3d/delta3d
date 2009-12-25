@@ -216,6 +216,7 @@ namespace dtDirector
       int curThread = mCurrentThread;
 
       std::vector<RecordThreadData>* recordList = &mRecordThreads;
+      int recordNode = -1;
 
       while (curThread > -1)
       {
@@ -236,12 +237,13 @@ namespace dtDirector
                return;
             }
 
-            if (t.record > -1 && t.record < (int)recordList->size())
+            if (t.recordThread > -1 && t.recordThread < (int)recordList->size())
             {
-               RecordThreadData& recordThreadData = (*recordList)[t.record];
+               RecordThreadData& recordThreadData = (*recordList)[t.recordThread];
                if (!recordThreadData.nodes.empty())
                {
-                  RecordNodeData& recordNodeData = recordThreadData.nodes[recordThreadData.nodes.size()-1];
+                  recordNode = recordThreadData.nodes.size() - 1;
+                  RecordNodeData& recordNodeData = recordThreadData.nodes[recordNode];
 
                   recordList = &recordNodeData.subThreads;
                }
@@ -253,12 +255,13 @@ namespace dtDirector
       if (!threadList) return;
 
       ThreadData data;
-      data.record = -1;
+      data.recordThread = -1;
+      data.recordNode = recordNode;
 
       // If we are recording, start recording this new thread.
       if (mRecording && recordList)
       {
-         data.record = (int)recordList->size();
+         data.recordThread = (int)recordList->size();
 
          RecordThreadData recordThread;
          recordList->push_back(recordThread);
@@ -688,12 +691,18 @@ namespace dtDirector
                   curThread = s.currentThread;
                   threadList = &s.subThreads;
 
-                  if (t.record > -1 && t.record < (int)recordList->size())
+                  int recordNode = -1;
+                  if (curThread > -1)
                   {
-                     recordThread = &(*recordList)[t.record];
-                     if (!recordThread->nodes.empty())
+                     recordNode = (*threadList)[curThread].recordNode;
+                  }
+
+                  if (t.recordThread > -1 && t.recordThread < (int)recordList->size())
+                  {
+                     recordThread = &(*recordList)[t.recordThread];
+                     if (recordNode > -1 && recordNode < (int)recordThread->nodes.size())
                      {
-                        RecordNodeData& recordNodeData = recordThread->nodes[recordThread->nodes.size()-1];
+                        RecordNodeData& recordNodeData = recordThread->nodes[recordNode];
 
                         recordList = &recordNodeData.subThreads;
                      }
@@ -896,12 +905,6 @@ namespace dtDirector
             return false;
          }
          node.nodeID = token;
-
-         // Make sure a node with this ID exists in the current script.
-         if (!GetNode(node.nodeID))
-         {
-            return false;
-         }
 
          if (!ReadString(file, node.input))
          {

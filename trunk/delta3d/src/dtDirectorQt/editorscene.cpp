@@ -404,7 +404,7 @@ namespace dtDirector
       // Update the property editor.
       mPropertyEditor->HandlePropertyContainersSelected(mSelected);
 
-      mEditor->RefreshButtonStates();
+      mEditor->Refresh();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -429,7 +429,7 @@ namespace dtDirector
       // Update the property editor.
       mPropertyEditor->HandlePropertyContainersSelected(mSelected);
 
-      mEditor->RefreshButtonStates();
+      mEditor->Refresh();
    }
 
    //////////////////////////////////////////////////////////////////////////
