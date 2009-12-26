@@ -527,10 +527,28 @@ namespace dtDirector
          if (!data.link || !data.link->GetVisible()) continue;
 
          visibleCount++;
+
          // Create the link graphic.
          data.linkGraphic->setPolygon(poly);
          data.linkGraphic->setPen(QPen(Qt::black, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
          data.linkGraphic->setBrush(QColor(50, 50, 50));
+
+         data.linkGraphic->SetAlwaysHighlight(false);
+         if (mScene->GetEditor()->GetReplayMode() &&
+            mScene->GetEditor()->GetReplayOutput() &&
+            mScene->GetEditor()->GetReplayOutput() == data.link)
+         {
+            int linkCount = (int)data.link->GetLinks().size();
+            for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
+            {
+               InputLink* link = data.link->GetLinks()[linkIndex];
+               if (link && link->GetOwner()->GetID() == mScene->GetEditor()->GetReplayNode().nodeID)
+               {
+                  data.linkGraphic->SetAlwaysHighlight(true);
+                  break;
+               }
+            }
+         }
 
          // Set the link text, and position it right aligned with the link graphic.
          data.linkName->setPlainText(data.link->GetName().c_str());
@@ -1084,6 +1102,8 @@ namespace dtDirector
 
       output.linkConnectors[index]->setPen(
          QPen(Qt::black, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+
+      input.linkGraphic->InitHighlight();
    }
 
    //////////////////////////////////////////////////////////////////////////

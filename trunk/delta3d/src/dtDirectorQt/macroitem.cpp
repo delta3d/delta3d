@@ -74,6 +74,7 @@ namespace dtDirector
          if (size < mNodeHeight) size = mNodeHeight;
 
          QRadialGradient radialGradient(mNodeWidth/2, mNodeHeight/2, size, mNodeWidth/2, mNodeHeight/2);
+         
          if (mGraph->GetEnabled())
          {
             setPen(QPen(Qt::darkGray, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
@@ -97,6 +98,14 @@ namespace dtDirector
             color = Qt::green;
             color.setAlphaF(0.25f);
             radialGradient.setColorAt(1.0, color);
+         }
+
+         // If we are in replay mode and if this node is the current node,
+         // make sure we highlight it with a special color.
+         if (mScene->GetEditor()->GetReplayMode() &&
+            HasID(mScene->GetEditor()->GetReplayNode().nodeID))
+         {
+            setPen(QPen(Qt::yellow, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
          }
 
          setBrush(radialGradient);

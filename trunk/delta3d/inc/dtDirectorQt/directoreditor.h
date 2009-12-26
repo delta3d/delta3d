@@ -107,6 +107,24 @@ namespace dtDirector
       bool GetReplayMode() {return mReplayMode;}
 
       /**
+       * Retrieves the output that triggered the replay node.
+       */
+      const OutputLink* GetReplayOutput() {return mReplayOutput;}
+
+      /**
+       * Retrieves the current replay item.
+       */
+      const Director::RecordNodeData& GetReplayNode() {return mReplayNode;}
+
+      /**
+       * Sets the current replay node data.
+       *
+       * @param[in]  replayNode  The replay node.
+       * @param[in]  output      The name of the output that is firing this node.
+       */
+      void SetReplayNode(Director::RecordNodeData* replayNode, OutputLink* output);
+
+      /**
        * Retrieves actions.
        */
       QAction* GetParentAction()   {return mParentAction;}
@@ -326,7 +344,9 @@ namespace dtDirector
       dtCore::RefPtr<Director> mDirector;
       std::string              mFileName;
 
-      bool      mReplayMode;
+      bool                     mReplayMode;
+      Director::RecordNodeData mReplayNode;
+      OutputLink*              mReplayOutput;
 
       QMenuBar* mMenuBar;
       QToolBar* mFileToolbar;

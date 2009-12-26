@@ -48,12 +48,30 @@ namespace dtDirector
        * @param[in]  node       The node.
        * @param[in]  parent     The parent.
        */
-      ReplayThreadItem(DirectorEditor* editor, Director::RecordNodeData* node, QListWidget* parent);
+      ReplayThreadItem(DirectorEditor* editor, Director::RecordNodeData* node, OutputLink* output, QListWidget* parent);
+
+      /**
+       * Retrieves the node data.
+       */
+      Director::RecordNodeData& GetNode() {return mNode;}
+
+      /**
+       * Retrieves the output link that triggered the node.
+       */
+      OutputLink* GetOutput() {return mOutput;}
+
+      /**
+       * Retrieves whether this has a valid node.
+       */
+      bool IsValid() {return mValid;}
+
 
    private:
 
       DirectorEditor*             mEditor;
-      Director::RecordNodeData*   mNode;
+      Director::RecordNodeData    mNode;
+      OutputLink*                 mOutput;
+      bool                        mValid;
    };
 
    /**
@@ -76,8 +94,10 @@ namespace dtDirector
 
       /**
        * Builds the Graph list.
+       *
+       * @param[in]  keepThread  True to filter by the current thread.
        */
-      void BuildThreadList();
+      void BuildThreadList(bool keepThread = false);
 
    public slots:
       
@@ -88,6 +108,13 @@ namespace dtDirector
        * @param[in]  previous  The previous item.
        */
       void OnItemChanged(QListWidgetItem* current, QListWidgetItem* previous);
+
+      /**
+       * Event handler when an item is double clicked.
+       *
+       * @param[in]  item  The item.
+       */
+      void OnItemDoubleClicked(QListWidgetItem* item);
 
    private:
 
@@ -108,8 +135,9 @@ namespace dtDirector
        * @param[in]   nodeID    The ID of the node to search for.
        * @param[in]   thread    The thread to search.
        * @param[out]  outNodes  A list of sub-threads to display.
+       * @param[out]  outLinks  A list of output links that triggered the nodes.
        */
-      bool TestThreadNode(const dtCore::UniqueId& nodeID, Director::RecordThreadData& thread, std::vector<Director::RecordNodeData*>& outNodes);
+      bool TestThreadNode(const dtCore::UniqueId& nodeID, Director::RecordThreadData& thread, std::vector<Director::RecordNodeData*>& outNodes, std::vector<OutputLink*>& outLinks);
 
       DirectorEditor* mEditor;
       Director::RecordThreadData* mCurrentThread;
