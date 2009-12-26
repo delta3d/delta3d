@@ -52,6 +52,46 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   void InputLinkItem::InitHighlight()
+   {
+      // Highlight all connected output links.
+      if (mLinkIndex >= 0 && mLinkIndex < (int)mNodeItem->GetInputs().size())
+      {
+         InputData& data = mNodeItem->GetInputs()[mLinkIndex];
+         if (data.link)
+         {
+            int linkCount = (int)data.link->GetLinks().size();
+            for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
+            {
+               OutputLink* output = data.link->GetLinks()[linkIndex];
+               if (!output) continue;
+
+               NodeItem* item = mScene->GetNodeItem(output->GetOwner()->GetID());
+               if (!item) continue;
+
+               int outputCount = (int)item->GetOutputs().size();
+               for (int outputIndex = 0; outputIndex < outputCount; outputIndex++)
+               {
+                  if (item->GetOutputs()[outputIndex].link == output)
+                  {
+                     item->GetOutputs()[outputIndex].linkGraphic->SetHighlight(false, data.link);
+
+                     if (item->GetOutputs()[outputIndex].linkGraphic->GetAlwaysHighlight())
+                     {
+                        if (mNodeItem->HasID(mScene->GetEditor()->GetReplayNode().nodeID))
+                        {
+                           SetHighlight(true);
+                        }
+                     }
+                     break;
+                  }
+               }
+            }
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void InputLinkItem::SetHighlight(bool enable)
    {
       if (enable)
@@ -374,20 +414,35 @@ namespace dtDirector
       , mAltModifier(false)
       , mHighlight(NULL)
       , mDrawing(NULL)
+      , mAlwaysHighlight(false)
    {
       setAcceptHoverEvents(true);
    }
 
    //////////////////////////////////////////////////////////////////////////
+   void OutputLinkItem::SetAlwaysHighlight(bool enabled)
+   {
+      mAlwaysHighlight = enabled;
+
+      if (enabled)
+      {
+         SetHighlight(enabled);
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void OutputLinkItem::SetHighlight(bool enable, InputLink* inputLink)
    {
-      if (enable)
+      QPen highlightPen = QPen(Qt::yellow, mLineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+      QPen normalPen = QPen(Qt::black, mLineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+
+      if (enable || mAlwaysHighlight)
       {
-         setPen(QPen(Qt::yellow, mLineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+         setPen(highlightPen);
       }
       else
       {
-         setPen(QPen(Qt::black, mLineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+         setPen(normalPen);
       }
 
       // Highlight all connection splines.
@@ -402,10 +457,16 @@ namespace dtDirector
                QGraphicsPathItem* connector = data.linkConnectors[index];
                if (connector)
                {
-                  connector->setPen(pen());
-
-                  if (enable) connector->setZValue(connector->zValue() + 9);
-                  else        connector->setZValue(connector->zValue() - 9);
+                  if (enable)
+                  {
+                     connector->setPen(highlightPen);
+                     connector->setZValue(connector->zValue() + 9);
+                  }
+                  else
+                  {
+                     connector->setPen(normalPen);
+                     connector->setZValue(connector->zValue() - 9);
+                  }
                }
             }
          }
@@ -418,13 +479,29 @@ namespace dtDirector
                {
                   if (index < (int)data.linkConnectors.size())
                   {
+                     bool forceHighlight = false;
+                     if (mAlwaysHighlight)
+                     {
+                        if (inputLink->GetOwner()->GetID() ==
+                           mScene->GetEditor()->GetReplayNode().nodeID)
+                        {
+                           forceHighlight = true;
+                        }
+                     }
+
                      QGraphicsPathItem* connector = data.linkConnectors[index];
                      if (connector)
                      {
-                        connector->setPen(pen());
-
-                        if (enable) connector->setZValue(connector->zValue() + 9);
-                        else        connector->setZValue(connector->zValue() - 9);
+                        if (forceHighlight || enable)
+                        {
+                           connector->setPen(highlightPen);
+                           connector->setZValue(connector->zValue() + 9);
+                        }
+                        else
+                        {
+                           connector->setPen(normalPen);
+                           connector->setZValue(connector->zValue() - 9);
+                        }
                      }
                   }
                }

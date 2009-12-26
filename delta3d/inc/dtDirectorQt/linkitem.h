@@ -54,6 +54,11 @@ namespace dtDirector
       InputLinkItem(NodeItem* nodeItem, int linkIndex, QGraphicsItem* parent, EditorScene* scene);
 
       /**
+       * Sets the default highlight on the link.
+       */
+      void InitHighlight();
+
+      /**
        * Highlights the link.
        *
        * @param[in]  enable  True to highlight.
@@ -150,6 +155,18 @@ namespace dtDirector
       OutputLinkItem(NodeItem* nodeItem, int linkIndex, QGraphicsItem* parent, EditorScene* scene);
 
       /**
+       * Sets the link to always highlight.
+       *
+       * @param[in]  enabled  True to always highlight.
+       */
+      void SetAlwaysHighlight(bool enabled);
+
+      /**
+       * Retrieves whether this link should always highlight.
+       */
+      bool GetAlwaysHighlight() {return mAlwaysHighlight;}
+
+      /**
        * Highlights the link.
        *
        * @param[in]  enable     True to highlight.
@@ -221,6 +238,7 @@ namespace dtDirector
       int            mLineWidth;
 
       bool           mAltModifier;
+      bool           mAlwaysHighlight;
 
       QGraphicsPathItem* mDrawing;
       QGraphicsPathItem* mHighlight;

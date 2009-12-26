@@ -56,6 +56,7 @@ namespace dtDirector
       , mReplayBrowser(NULL)
       , mUndoManager(NULL)
       , mReplayMode(false)
+      , mReplayOutput(NULL)
       , mMenuBar(NULL)
       , mFileToolbar(NULL)
       , mEditToolbar(NULL)
@@ -390,6 +391,24 @@ namespace dtDirector
       }
 
       RefreshButtonStates();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::SetReplayNode(Director::RecordNodeData* replayNode, OutputLink* output)
+   {
+      if (!replayNode)
+      {
+         mReplayNode.input = "";
+         mReplayNode.nodeID = "";
+         mReplayNode.outputs.clear();
+         mReplayNode.subThreads.clear();
+      }
+      else
+      {
+         mReplayNode = *replayNode;
+      }
+
+      mReplayOutput = output;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -742,7 +761,6 @@ namespace dtDirector
       QString fileName = filePath.baseName();
       if (!fileName.isEmpty())
       {
-         mReplayMode = false;
          if (!mDirector->LoadRecording(fileName.toStdString()))
          {
             QMessageBox okBox("Failed",
