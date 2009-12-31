@@ -56,6 +56,7 @@ namespace dtDirector
       , mReplayBrowser(NULL)
       , mUndoManager(NULL)
       , mReplayMode(false)
+      , mReplayInput(NULL)
       , mReplayOutput(NULL)
       , mMenuBar(NULL)
       , mFileToolbar(NULL)
@@ -394,7 +395,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void DirectorEditor::SetReplayNode(Director::RecordNodeData* replayNode, OutputLink* output)
+   void DirectorEditor::SetReplayNode(Director::RecordNodeData* replayNode, InputLink* input, OutputLink* output)
    {
       if (!replayNode)
       {
@@ -408,6 +409,7 @@ namespace dtDirector
          mReplayNode = *replayNode;
       }
 
+      mReplayInput = input;
       mReplayOutput = output;
    }
 

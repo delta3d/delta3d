@@ -30,6 +30,8 @@
 #include <QtGui/QDockWidget>
 #include <QtGui/QListWidgetItem>
 
+#include <stack>
+
 class QGroupBox;
 class QListWidget;
 
@@ -44,16 +46,19 @@ namespace dtDirector
       /**
        * Constructor.
        *
-       * @param[in]  editor     The editor.
-       * @param[in]  node       The node.
-       * @param[in]  parent     The parent.
+       * @param[in]  editor  The editor.
+       * @param[in]  thread  The thread.
+       * @param[in]  node    The node.
+       * @param[in]  output  The output link that triggered this thread node.
+       * @param[in]  time    The current thread time.
+       * @param[in]  parent  The parent.
        */
-      ReplayThreadItem(DirectorEditor* editor, Director::RecordNodeData* node, OutputLink* output, QListWidget* parent);
+      ReplayThreadItem(DirectorEditor* editor, Director::RecordThreadData* thread, Director::RecordNodeData* node, OutputLink* output, float time, QListWidget* parent);
 
       /**
        * Retrieves the node data.
        */
-      Director::RecordNodeData& GetNode() {return mNode;}
+      Director::RecordNodeData* GetNode() {return mNode;}
 
       /**
        * Retrieves the output link that triggered the node.
@@ -61,16 +66,27 @@ namespace dtDirector
       OutputLink* GetOutput() {return mOutput;}
 
       /**
+       * Retrieves the thread for this node.
+       */
+      Director::RecordThreadData* GetThread() {return mThread;}
+
+      /**
        * Retrieves whether this has a valid node.
        */
       bool IsValid() {return mValid;}
+
+      /**
+       * Retrieves whether this item is the back option.
+       */
+      bool IsBackOption() {return !mEditor;}
 
 
    private:
 
       DirectorEditor*             mEditor;
-      Director::RecordNodeData    mNode;
+      Director::RecordNodeData*   mNode;
       OutputLink*                 mOutput;
+      Director::RecordThreadData* mThread;
       bool                        mValid;
    };
 
@@ -94,10 +110,8 @@ namespace dtDirector
 
       /**
        * Builds the Graph list.
-       *
-       * @param[in]  keepThread  True to filter by the current thread.
        */
-      void BuildThreadList(bool keepThread = false);
+      void BuildThreadList();
 
    public slots:
       
@@ -121,26 +135,31 @@ namespace dtDirector
       /**
        * Tests a thread for a specific starting graph.
        *
-       * @param[in]   graph    The graph to test for.
-       * @param[in]   thread   The thread.
-       * @param[out]  outNode  The root node for this thread.
+       * @param[in]   graph   The graph to test for.
+       * @param[in]   thread  The thread.
        *
        * @return     Returns true if the graph matches the thread.
        */
-      bool TestThreadGraph(DirectorGraph* graph, Director::RecordThreadData& thread, Director::RecordNodeData** outNode);
+      bool TestThreadGraph(DirectorGraph* graph, Director::RecordThreadData* thread);
 
       /**
        * Tests a thread for a specific node.
        *
-       * @param[in]   nodeID    The ID of the node to search for.
-       * @param[in]   thread    The thread to search.
-       * @param[out]  outNodes  A list of sub-threads to display.
-       * @param[out]  outLinks  A list of output links that triggered the nodes.
+       * @param[in]  nodeID             The ID of the node to search for.
+       * @param[in]  thread             The thread to search.
+       * @param[in]  testCurrentThread  True to test the current thread.
        */
-      bool TestThreadNode(const dtCore::UniqueId& nodeID, Director::RecordThreadData& thread, std::vector<Director::RecordNodeData*>& outNodes, std::vector<OutputLink*>& outLinks);
+      bool TestThreadNode(const dtCore::UniqueId& nodeID, Director::RecordThreadData* thread, bool testCurrentThread = true);
+
+      struct ThreadPathData
+      {
+         Director::RecordNodeData* node;
+         OutputLink*               output;
+      };
 
       DirectorEditor* mEditor;
-      Director::RecordThreadData* mCurrentThread;
+      ThreadPathData             mCurrentNode;
+      std::stack<ThreadPathData> mNodePath;
 
       QGroupBox*     mGroupBox;
       QListWidget*   mThreadList;

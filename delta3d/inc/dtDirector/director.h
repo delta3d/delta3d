@@ -51,11 +51,12 @@ namespace dtDirector
       // Recording Data.
       struct RecordNodeData
       {
+         float time;
          dtCore::UniqueId nodeID;
          std::string input;
          std::vector<std::string> outputs;
 
-         std::vector<RecordThreadData> subThreads;
+         std::vector<RecordThreadData*> subThreads;
       };
 
       struct RecordThreadData
@@ -81,6 +82,13 @@ namespace dtDirector
        * Clears all data in this Director script.
        */
       virtual void Clear();
+
+      /**
+       * Clears all recording data.
+       *
+       * @param[in]  threads  The recording threadlist to clear.
+       */
+      void ClearRecordingData(std::vector<RecordThreadData*>& threads);
 
       /**
        * Retrieves the map.
@@ -252,7 +260,7 @@ namespace dtDirector
       /**
       * Retrieves the recording data.
       */
-      std::vector<Director::RecordThreadData> GetRecordingData() {return mRecordThreads;};
+      std::vector<Director::RecordThreadData*> GetRecordingData() {return mRecordThreads;};
 
       /**
        * Inserts a node library with the given name at the given position.
@@ -409,7 +417,7 @@ namespace dtDirector
       *
       * @return     True if the file was saved successfully.
       */
-      bool WriteRecordThreads(FILE* file, std::vector<RecordThreadData>& threads);
+      bool WriteRecordThreads(FILE* file, std::vector<RecordThreadData*>& threads);
 
       /**
       * Reads a list of recorded thread data.
@@ -419,7 +427,7 @@ namespace dtDirector
       *
       * @return     True if the file was loaded successfully.
       */
-      bool ReadRecordThreads(FILE* file, std::vector<RecordThreadData>& threads);
+      bool ReadRecordThreads(FILE* file, std::vector<RecordThreadData*>& threads);
 
       /**
       * Writes a list of recorded node data.
@@ -483,8 +491,7 @@ namespace dtDirector
       {
          std::vector<StackData> stack;
 
-         int recordThread;
-         int recordNode;
+         RecordThreadData* recordThread;
       };
 
       // Thread Data.
@@ -496,7 +503,8 @@ namespace dtDirector
 
       // Recording Data.
       bool  mRecording;
-      std::vector<RecordThreadData> mRecordThreads;
+      float mRecordTime;
+      std::vector<RecordThreadData*> mRecordThreads;
 
       // Other Data.
       dtCore::UniqueId mPlayer;

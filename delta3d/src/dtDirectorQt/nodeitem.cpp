@@ -533,6 +533,7 @@ namespace dtDirector
          data.linkGraphic->setPen(QPen(Qt::black, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
          data.linkGraphic->setBrush(QColor(50, 50, 50));
 
+         bool alwaysHighlight = false;
          data.linkGraphic->SetAlwaysHighlight(false);
          if (mScene->GetEditor()->GetReplayMode() &&
             mScene->GetEditor()->GetReplayOutput() &&
@@ -543,6 +544,25 @@ namespace dtDirector
             {
                InputLink* link = data.link->GetLinks()[linkIndex];
                if (link && link->GetOwner()->GetID() == mScene->GetEditor()->GetReplayNode().nodeID)
+               {
+                  data.linkGraphic->SetAlwaysHighlight(true);
+                  alwaysHighlight = true;
+                  break;
+               }
+            }
+         }
+
+         if (!alwaysHighlight)
+         {
+            int linkCount = (int)data.link->GetLinks().size();
+            for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
+            {
+               InputLink* link = data.link->GetLinks()[linkIndex];
+
+               if (mScene->GetEditor()->GetReplayMode() &&
+                  mScene->GetEditor()->GetReplayInput() &&
+                  mScene->GetEditor()->GetReplayInput() == link &&
+                  mScene->GetEditor()->GetReplayOutput() == data.link)
                {
                   data.linkGraphic->SetAlwaysHighlight(true);
                   break;
