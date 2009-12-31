@@ -179,7 +179,7 @@ namespace dtDirector
       dtDAL::ActorProperty* prop = GetDefaultProperty();
       if (prop)
       {
-         std::string label = prop->GetName().Get() + "<br>(" + prop->GetValueString() + ")";
+         std::string label = prop->GetLabel() + "<br>(" + prop->GetValueString() + ")";
          SetLabel(label);
       }
 
