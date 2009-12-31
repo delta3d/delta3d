@@ -25,6 +25,8 @@
 #include <dtDirectorQt/propertyeditor.h>
 #include <dtDirectorQt/nodeitem.h>
 
+#include <dtUtil/stringutils.h>
+
 #include <QtGui/QWidget>
 #include <QtGui/QGroupBox>
 #include <QtGui/QGridLayout>
@@ -35,19 +37,28 @@
 namespace dtDirector
 {
    //////////////////////////////////////////////////////////////////////////
-   ReplayThreadItem::ReplayThreadItem(DirectorEditor* editor, Director::RecordNodeData* nodeData, OutputLink* output, QListWidget* parent)
+   ReplayThreadItem::ReplayThreadItem(DirectorEditor* editor, Director::RecordThreadData* thread, Director::RecordNodeData* nodeData, OutputLink* output, float time, QListWidget* parent)
       : QListWidgetItem(parent)
       , mEditor(editor)
+      , mNode(NULL)
       , mValid(false)
       , mOutput(output)
+      , mThread(thread)
    {
       if (nodeData)
       {
-         mNode = *nodeData;
+         mNode = nodeData;
          mValid = true;
       }
 
-      if (nodeData && mEditor && mEditor->GetDirector())
+      if (!mEditor)
+      {
+         setText("<--Back");
+         setTextColor(Qt::blue);
+         return;
+      }
+
+      if (nodeData && mEditor->GetDirector())
       {
          Node* node = mEditor->GetDirector()->GetNode(nodeData->nodeID);
          if (!node)
@@ -59,9 +70,15 @@ namespace dtDirector
 
          std::string text;
 
+         if (time < nodeData->time)
+         {
+            float elapsedTime = nodeData->time - time;
+            text += "[+" + dtUtil::ToString(elapsedTime) + "]: ";
+         }
+
          if (!nodeData->input.empty())
          {
-            text = "Fired (" + nodeData->input + ") on ";
+            text += "Fired (" + nodeData->input + ") on ";
          }
 
          if (dynamic_cast<EventNode*>(node))
@@ -99,8 +116,9 @@ namespace dtDirector
       , mEditor(parent)
       , mGroupBox(NULL)
       , mThreadList(NULL)
-      , mCurrentThread(NULL)
    {
+      mCurrentNode.node = NULL;
+
       setWindowTitle("Replay Browser");
 
       QWidget* mainAreaWidget = new QWidget(this);
@@ -121,24 +139,30 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ReplayBrowser::BuildThreadList(bool keepThread)
+   void ReplayBrowser::BuildThreadList()
    {
       if (!mEditor) return;
-
-      if (!keepThread) mCurrentThread = false;
 
       disconnect(mThreadList, SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)),
          this, SLOT(OnItemChanged(QListWidgetItem*, QListWidgetItem*)));
 
-      mEditor->SetReplayNode(NULL, NULL);
+      mEditor->SetReplayNode();
       mEditor->GetPropertyEditor()->GetScene()->Refresh();
 
       mThreadList->clear();
 
+      if (!mCurrentNode.node)
+      {
+         while (!mNodePath.empty())
+         {
+            mNodePath.pop();
+         }
+      }
+
       Director* director = mEditor->GetDirector();
       if (!director) return;
 
-      std::vector<Director::RecordThreadData> threads = director->GetRecordingData();
+      std::vector<Director::RecordThreadData*> threads = director->GetRecordingData();
 
       // Get the currently selected items.
       QList<QGraphicsItem*> selected = mEditor->GetPropertyEditor()->GetScene()->selectedItems();
@@ -150,13 +174,9 @@ namespace dtDirector
          int threadCount = (int)threads.size();
          for (int threadIndex = 0; threadIndex < threadCount; threadIndex++)
          {
-            Director::RecordThreadData& thread = threads[threadIndex];
+            Director::RecordThreadData* thread = threads[threadIndex];
 
-            Director::RecordNodeData* node;
-            if (TestThreadGraph(mEditor->GetPropertyEditor()->GetScene()->GetGraph(), thread, &node))
-            {
-               ReplayThreadItem* item = new ReplayThreadItem(mEditor, node, NULL, mThreadList);
-            }
+            TestThreadGraph(mEditor->GetPropertyEditor()->GetScene()->GetGraph(), thread);
          }
       }
       else
@@ -170,28 +190,29 @@ namespace dtDirector
                int threadCount = (int)threads.size();
                for (int threadIndex = 0; threadIndex < threadCount; threadIndex++)
                {
-                  if (addSpacer)
-                  {
-                     ReplayThreadItem* item = new ReplayThreadItem(mEditor, NULL, NULL, mThreadList);
-                     addSpacer = false;
-                  }
+                  int currentCount = mThreadList->count();
 
-                  Director::RecordThreadData& thread = threads[threadIndex];
+                  Director::RecordThreadData* thread = threads[threadIndex];
 
-                  std::vector<Director::RecordNodeData*> newNodes;
-                  std::vector<OutputLink*> newLinks;
-                  if (TestThreadNode(nodeItem->GetID(), thread, newNodes, newLinks))
+                  if (TestThreadNode(nodeItem->GetID(), thread))
                   {
-                     int newNodeCount = (int)newNodes.size();
-                     for (int newNodeIndex = 0; newNodeIndex < newNodeCount; newNodeIndex++)
+                     if (addSpacer)
                      {
-                        Director::RecordNodeData* newNode = newNodes[newNodeIndex];
-                        ReplayThreadItem* item = new ReplayThreadItem(mEditor, newNode, newLinks[newNodeIndex], mThreadList);
-                        addSpacer = true;
+                        ReplayThreadItem* item = new ReplayThreadItem(mEditor, NULL, NULL, NULL, 0, NULL);
+                        mThreadList->insertItem(currentCount, item);
                      }
+
+                     addSpacer = true;
                   }
                }
             }
+         }
+
+         // If there are any threads to return back to, add the back option.
+         if (mNodePath.size() > 1)
+         {
+            new ReplayThreadItem(mEditor, NULL, NULL, NULL, 0, mThreadList);
+            new ReplayThreadItem(NULL, NULL, NULL, NULL, 0, mThreadList);
          }
       }
 
@@ -205,11 +226,27 @@ namespace dtDirector
       ReplayThreadItem* item = dynamic_cast<ReplayThreadItem*>(current);
       if (item && item->IsValid())
       {
-         mEditor->SetReplayNode(&item->GetNode(), item->GetOutput());
+         mEditor->SetReplayNode(item->GetNode(), NULL, item->GetOutput());
+      }
+      else if (item && item->IsBackOption() && mNodePath.size() > 1)
+      {
+         ThreadPathData curNode = mNodePath.top();
+         mNodePath.pop();
+
+         Node* node = mEditor->GetDirector()->GetNode(curNode.node->nodeID);
+         if (node)
+         {
+            InputLink* input = node->GetInputLink(curNode.node->input);
+            OutputLink* output = curNode.output;
+
+            mEditor->SetReplayNode(mNodePath.top().node, input, output);
+         }
+
+         mNodePath.push(curNode);
       }
       else
       {
-         mEditor->SetReplayNode(NULL, NULL);
+         mEditor->SetReplayNode();
       }
       mEditor->GetPropertyEditor()->GetScene()->Refresh();
    }
@@ -218,40 +255,63 @@ namespace dtDirector
    void ReplayBrowser::OnItemDoubleClicked(QListWidgetItem* current)
    {
       ReplayThreadItem* item = dynamic_cast<ReplayThreadItem*>(current);
-      if (item && item->IsValid())
+      if (item)
       {
-         mEditor->SetReplayNode(NULL, NULL);
-
-         Node* node = mEditor->GetDirector()->GetNode(item->GetNode().nodeID);
-         if (node)
+         if (item->IsValid() || item->IsBackOption())
          {
-            mEditor->GetPropertyEditor()->GetScene()->SetGraph(node->GetGraph());
-            NodeItem* nodeItem = mEditor->GetPropertyEditor()->GetScene()->GetNodeItem(node->GetID(), true);
-            if (nodeItem)
-            {
-               nodeItem->setSelected(true);
-               mEditor->GetPropertyEditor()->GetScene()->CenterSelection();
-            }
-         }
+            mEditor->SetReplayNode();
 
-         //mEditor->GetPropertyEditor()->GetScene()->Refresh();
+            mCurrentNode.node = NULL;
+            if (item->IsValid())
+            {
+               mCurrentNode.node   = item->GetNode();
+               mCurrentNode.output = item->GetOutput();
+
+               mNodePath.push(mCurrentNode);
+            }
+            else if (mNodePath.size() > 1)
+            {
+               mNodePath.pop();
+
+               mCurrentNode = mNodePath.top();
+            }
+
+            if (mCurrentNode.node)
+            {
+               Node* node = mEditor->GetDirector()->GetNode(mCurrentNode.node->nodeID);
+               if (node)
+               {
+                  mEditor->GetPropertyEditor()->GetScene()->SetGraph(node->GetGraph());
+                  NodeItem* nodeItem = mEditor->GetPropertyEditor()->GetScene()->GetNodeItem(node->GetID(), true);
+                  if (nodeItem)
+                  {
+                     nodeItem->setSelected(true);
+                     mEditor->GetPropertyEditor()->GetScene()->CenterSelection();
+                  }
+               }
+            }
+
+            mCurrentNode.node = NULL;
+         }
       }
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool ReplayBrowser::TestThreadGraph(DirectorGraph* graph, Director::RecordThreadData& thread, Director::RecordNodeData** outNode)
+   bool ReplayBrowser::TestThreadGraph(DirectorGraph* graph, Director::RecordThreadData* thread)
    {
+      if (!thread) return false;
+
       // Find the first valid node within this thread.
-      int count = (int)thread.nodes.size();
+      int count = (int)thread->nodes.size();
       for (int index = 0; index < count; index++)
       {
-         Director::RecordNodeData& nodeData = thread.nodes[index];
+         Director::RecordNodeData& nodeData = thread->nodes[index];
          Node* node = mEditor->GetDirector()->GetNode(nodeData.nodeID);
          if (node)
          {
             if (node->GetGraph() == graph)
             {
-               if (outNode) *outNode = &nodeData;
+               new ReplayThreadItem(mEditor, thread, &nodeData, NULL, 0, mThreadList);
                return true;
             }
             return false;
@@ -262,19 +322,52 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool ReplayBrowser::TestThreadNode(const dtCore::UniqueId& nodeID, Director::RecordThreadData& thread, std::vector<Director::RecordNodeData*>& outNodes, std::vector<OutputLink*>& outLinks)
+   bool ReplayBrowser::TestThreadNode(const dtCore::UniqueId& nodeID, Director::RecordThreadData* thread, bool testCurrentThread)
    {
+      if (!thread) return false;
+
       // Search this thread for the node.
       bool result = false;
-      int nodeCount = (int)thread.nodes.size();
+      int nodeCount = (int)thread->nodes.size();
+      float nodeTime = -1.0f;
+
       for (int nodeIndex = 0; nodeIndex < nodeCount; nodeIndex++)
       {
-         Director::RecordNodeData& node = thread.nodes[nodeIndex];
+         Director::RecordNodeData& node = thread->nodes[nodeIndex];
          
+         // If we are in a specific thread, only look for things that are a branch
+         // of the current.
+         if (testCurrentThread && mCurrentNode.node && mCurrentNode.node != &node)
+         {
+            int threadCount = (int)node.subThreads.size();
+            for (int threadIndex = 0; threadIndex < threadCount; threadIndex++)
+            {
+               Director::RecordThreadData* subThread = node.subThreads[threadIndex];
+
+               if (TestThreadNode(nodeID, subThread, true))
+               {
+                  result = true;
+               }
+            }
+
+            continue;
+         }
+         else
+         {
+            // Make sure that any sub-thread tested from this point does not
+            // check the current thread, as they are all children of that thread.
+            testCurrentThread = false;
+         }
+
          // If we have found our node.
          if (nodeID == node.nodeID)
          {
             Node* curNode = mEditor->GetDirector()->GetNode(node.nodeID);
+
+            if (nodeTime == -1.0f)
+            {
+               nodeTime = node.time;
+            }
 
             bool pushedNode = false;
             int linkCount = 0;
@@ -282,14 +375,12 @@ namespace dtDirector
             // First push the next node into the list.
             if (nodeIndex + 1 < nodeCount)
             {
-               Director::RecordNodeData& nextNode = thread.nodes[nodeIndex + 1];
+               Director::RecordNodeData& nextNode = thread->nodes[nodeIndex + 1];
 
                if (nextNode.nodeID != nodeID)
                {
-                  outNodes.push_back(&nextNode);
                   pushedNode = true;
 
-                  bool pushedLink = false;
                   if (curNode)
                   {
                      int linkIndex = -1;
@@ -305,6 +396,7 @@ namespace dtDirector
                            continue;
                         }
 
+                        bool pushedLink = false;
                         int outputCount = (int)link->GetLinks().size();
                         for (int outputIndex = 0; outputIndex < outputCount; outputIndex++)
                         {
@@ -312,18 +404,19 @@ namespace dtDirector
 
                            if (linkIndex == linkCount)
                            {
-                              outLinks.push_back(link);
+                              new ReplayThreadItem(mEditor, thread, &nextNode, link, nodeTime, mThreadList);
                               pushedLink = true;
                               linkCount++;
+                              result = true;
                               break;
                            }
                         }
-                     }
-                  }
 
-                  if (!pushedLink)
-                  {
-                     outLinks.push_back(NULL);
+                        if (!pushedLink)
+                        {
+                           new ReplayThreadItem(mEditor, thread, &nextNode, NULL, nodeTime, mThreadList);
+                        }
+                     }
                   }
                }
             }
@@ -332,7 +425,7 @@ namespace dtDirector
             int threadCount = (int)node.subThreads.size();
             for (int threadIndex = 0; threadIndex < threadCount; threadIndex++)
             {
-               Director::RecordThreadData* subThread = &node.subThreads[threadIndex];
+               Director::RecordThreadData* subThread = node.subThreads[threadIndex];
                if (subThread)
                {
                   int subNodeCount = (int)subThread->nodes.size();
@@ -341,10 +434,8 @@ namespace dtDirector
                      Director::RecordNodeData* subNode = &subThread->nodes[subNodeIndex];
                      if (subNode)
                      {
-                        outNodes.push_back(subNode);
                         pushedNode = true;
 
-                        bool pushedLink = false;
                         if (curNode)
                         {
                            int linkIndex = -1;
@@ -360,6 +451,7 @@ namespace dtDirector
                                  continue;
                               }
 
+                              bool pushedLink = false;
                               int outputCount = (int)link->GetLinks().size();
                               for (int outputIndex = 0; outputIndex < outputCount; outputIndex++)
                               {
@@ -367,26 +459,25 @@ namespace dtDirector
 
                                  if (linkIndex == linkCount)
                                  {
-                                    outLinks.push_back(link);
+                                    new ReplayThreadItem(mEditor, thread, subNode, link, nodeTime, mThreadList);
                                     pushedLink = true;
                                     linkCount++;
+                                    result = true;
                                     break;
                                  }
                               }
-                           }
-                        }
 
-                        if (!pushedLink)
-                        {
-                           outLinks.push_back(NULL);
+                              if (!pushedLink)
+                              {
+                                 new ReplayThreadItem(mEditor, thread, subNode, NULL, nodeTime, mThreadList);
+                              }
+                           }
                         }
                         break;
                      }
                   }
                }
             }
-
-            result = true;
          }
          // If we did not find the node, check all of the current node's
          // sub-threads.
@@ -395,9 +486,9 @@ namespace dtDirector
             int threadCount = (int)node.subThreads.size();
             for (int threadIndex = 0; threadIndex < threadCount; threadIndex++)
             {
-               Director::RecordThreadData& subThread = node.subThreads[threadIndex];
+               Director::RecordThreadData* subThread = node.subThreads[threadIndex];
 
-               if (TestThreadNode(nodeID, subThread, outNodes, outLinks))
+               if (TestThreadNode(nodeID, subThread, testCurrentThread))
                {
                   result = true;
                }

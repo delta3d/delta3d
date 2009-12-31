@@ -2,7 +2,7 @@
 <director xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dDirector" xsi:schemaLocation="delta3dDirector director.xsd">
     <header>
         <createTimestamp>2009-12-22T14:26:31-08:00</createTimestamp>
-        <lastUpdateTimestamp>2009-12-23T17:27:55-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2009-12-30T15:21:23-08:00</lastUpdateTimestamp>
         <editorVersion>2.4.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
         <property>
@@ -1052,7 +1052,7 @@
                     </outputlink>
                     <outputlink>
                         <name>Finished</name>
-                        <visible>false</visible>
+                        <visible>true</visible>
                     </outputlink>
                     <valuelink>
                         <name>Actor</name>
@@ -1123,7 +1123,7 @@
                         <name>Position</name>
                         <vec2>
                             <value1>110.500000</value1>
-                            <value2>259.666656</value2>
+                            <value2>263.666656</value2>
                         </vec2>
                     </property>
                     <property>
@@ -1178,7 +1178,7 @@
                     </outputlink>
                     <outputlink>
                         <name>Finished</name>
-                        <visible>false</visible>
+                        <visible>true</visible>
                     </outputlink>
                     <valuelink>
                         <name>Actor</name>

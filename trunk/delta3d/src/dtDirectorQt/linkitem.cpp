@@ -78,7 +78,8 @@ namespace dtDirector
 
                      if (item->GetOutputs()[outputIndex].linkGraphic->GetAlwaysHighlight())
                      {
-                        if (mNodeItem->HasID(mScene->GetEditor()->GetReplayNode().nodeID))
+                        if (mScene->GetEditor()->GetReplayInput() == data.link ||
+                           mNodeItem->HasID(mScene->GetEditor()->GetReplayNode().nodeID))
                         {
                            SetHighlight(true);
                         }
@@ -483,7 +484,9 @@ namespace dtDirector
                      if (mAlwaysHighlight)
                      {
                         if (inputLink->GetOwner()->GetID() ==
-                           mScene->GetEditor()->GetReplayNode().nodeID)
+                           mScene->GetEditor()->GetReplayNode().nodeID ||
+                           (mScene->GetEditor()->GetReplayInput() == inputLink &&
+                           mScene->GetEditor()->GetReplayOutput() == data.link))
                         {
                            forceHighlight = true;
                         }

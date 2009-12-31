@@ -2,7 +2,7 @@
 <director xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dDirector" xsi:schemaLocation="delta3dDirector director.xsd">
     <header>
         <createTimestamp>2009-12-14T12:16:35-08:00</createTimestamp>
-        <lastUpdateTimestamp>2009-12-23T19:15:03-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2009-12-29T14:11:08-08:00</lastUpdateTimestamp>
         <editorVersion>2.4.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
         <property>
@@ -203,10 +203,6 @@
                 <outputlink>
                     <name>Time Elapsed</name>
                     <visible>true</visible>
-                    <link>
-                        <id>7bfca859-550d-4573-8f7f-f257e6de2e88</id>
-                        <name>In</name>
-                    </link>
                     <link>
                         <id>a9f3f4e2-a26f-4cae-a1e2-ef249c391800</id>
                         <name>In</name>

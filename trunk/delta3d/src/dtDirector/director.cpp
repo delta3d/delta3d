@@ -38,6 +38,7 @@ namespace dtDirector
       , mCurrentThread(-1)
       , mQueueingThreads(false)
       , mRecording(false)
+      , mRecordTime(0.0f)
       , mLogNodes(false)
    {
       mPlayer = "";
@@ -47,6 +48,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    Director::~Director()
    {
+      Clear();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -77,7 +79,35 @@ namespace dtDirector
       mGraph->mSubGraphs.clear();
 
       mThreads.clear();
-      mRecordThreads.clear();
+
+      ClearRecordingData(mRecordThreads);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void Director::ClearRecordingData(std::vector<RecordThreadData*>& threads)
+   {
+      // Iterate through each thread.
+      int threadCount = (int)threads.size();
+      for (int threadIndex = 0; threadIndex < threadCount; threadIndex++)
+      {
+         RecordThreadData* thread = threads[threadIndex];
+         if (thread)
+         {
+            // Iterate through all of the nodes in this thread.
+            int nodeCount = (int)thread->nodes.size();
+            for (int nodeIndex = 0; nodeIndex < nodeCount; nodeIndex++)
+            {
+               RecordNodeData& node = thread->nodes[nodeIndex];
+
+               // Recursively clear the sub threads first.
+               ClearRecordingData(node.subThreads);
+            }
+
+            // No free our thread memory.
+            delete thread;
+         }
+      }
+      threads.clear();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -179,6 +209,8 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void Director::Update(float simDelta, float delta)
    {
+      mRecordTime += delta;
+
       // Update all threads.
       int count = (int)mThreads.size();
       for (mCurrentThread = 0; mCurrentThread < count; mCurrentThread++)
@@ -215,8 +247,7 @@ namespace dtDirector
       std::vector<ThreadData>* threadList = &mThreads;
       int curThread = mCurrentThread;
 
-      std::vector<RecordThreadData>* recordList = &mRecordThreads;
-      int recordNode = -1;
+      RecordThreadData* recordThread = NULL;
 
       while (curThread > -1)
       {
@@ -226,6 +257,7 @@ namespace dtDirector
             StackData& s = t.stack[t.stack.size()-1];
             curThread = s.currentThread;
             threadList = &s.subThreads;
+            recordThread = t.recordThread;
 
             // If this is the current running stack item, and it does
             // not have an active running node, use this instead
@@ -236,18 +268,6 @@ namespace dtDirector
                s.index = index;
                return;
             }
-
-            if (t.recordThread > -1 && t.recordThread < (int)recordList->size())
-            {
-               RecordThreadData& recordThreadData = (*recordList)[t.recordThread];
-               if (!recordThreadData.nodes.empty())
-               {
-                  recordNode = recordThreadData.nodes.size() - 1;
-                  RecordNodeData& recordNodeData = recordThreadData.nodes[recordNode];
-
-                  recordList = &recordNodeData.subThreads;
-               }
-            }
          }
          else break;
       }
@@ -255,25 +275,35 @@ namespace dtDirector
       if (!threadList) return;
 
       ThreadData data;
-      data.recordThread = -1;
-      data.recordNode = recordNode;
-
-      // If we are recording, start recording this new thread.
-      if (mRecording && recordList)
-      {
-         data.recordThread = (int)recordList->size();
-
-         RecordThreadData recordThread;
-         recordList->push_back(recordThread);
-      }
-
       StackData stack;
       stack.node = node;
       stack.index = index;
       stack.first = true;
       stack.currentThread = -1;
-      data.stack.push_back(stack);
 
+      data.recordThread = NULL;
+
+      // If we are recording, start recording this new thread.
+      if (mRecording)
+      {
+         RecordThreadData* newRecordThread = new RecordThreadData();
+         data.recordThread = newRecordThread;
+
+         if (recordThread)
+         {
+            if (!recordThread->nodes.empty())
+            {
+               RecordNodeData& recordNode = recordThread->nodes[recordThread->nodes.size()-1];
+               recordNode.subThreads.push_back(newRecordThread);
+            }
+         }
+         else
+         {
+            mRecordThreads.push_back(newRecordThread);
+         }
+      }
+
+      data.stack.push_back(stack);
       threadList->push_back(data);
    }
 
@@ -335,7 +365,8 @@ namespace dtDirector
    void Director::StopRecording()
    {
       mRecording = false;
-      mRecordThreads.clear();
+
+      ClearRecordingData(mRecordThreads);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -369,7 +400,7 @@ namespace dtDirector
       if (file)
       {
          // First clear all current recording data.
-         mRecordThreads.clear();
+         ClearRecordingData(mRecordThreads);
 
          result = ReadRecordThreads(file, mRecordThreads);
          fclose(file);
@@ -679,7 +710,6 @@ namespace dtDirector
             std::vector<ThreadData>* threadList = &mThreads;
             int curThread = mCurrentThread;
 
-            std::vector<RecordThreadData>* recordList = &mRecordThreads;
             RecordThreadData* recordThread = NULL;
 
             while (curThread > -1)
@@ -690,23 +720,7 @@ namespace dtDirector
                   StackData& s = t.stack[t.stack.size()-1];
                   curThread = s.currentThread;
                   threadList = &s.subThreads;
-
-                  int recordNode = -1;
-                  if (curThread > -1)
-                  {
-                     recordNode = (*threadList)[curThread].recordNode;
-                  }
-
-                  if (t.recordThread > -1 && t.recordThread < (int)recordList->size())
-                  {
-                     recordThread = &(*recordList)[t.recordThread];
-                     if (recordNode > -1 && recordNode < (int)recordThread->nodes.size())
-                     {
-                        RecordNodeData& recordNodeData = recordThread->nodes[recordNode];
-
-                        recordList = &recordNodeData.subThreads;
-                     }
-                  }
+                  recordThread = t.recordThread;
                }
                else break;
             }
@@ -714,6 +728,7 @@ namespace dtDirector
             if (recordThread)
             {
                RecordNodeData nodeData;
+               nodeData.time = mRecordTime;
                nodeData.nodeID = node->GetID();
                nodeData.input = "";
 
@@ -804,7 +819,7 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool Director::WriteRecordThreads(FILE* file, std::vector<RecordThreadData>& threads)
+   bool Director::WriteRecordThreads(FILE* file, std::vector<RecordThreadData*>& threads)
    {
       if (!file) return false;
 
@@ -813,7 +828,7 @@ namespace dtDirector
 
       for (int index = 0; index < count; index++)
       {
-         std::vector<RecordNodeData>& nodes = threads[index].nodes;
+         std::vector<RecordNodeData>& nodes = threads[index]->nodes;
          if (!WriteRecordNodes(file, nodes))
          {
             return false;
@@ -824,7 +839,7 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool Director::ReadRecordThreads(FILE* file, std::vector<RecordThreadData>& threads)
+   bool Director::ReadRecordThreads(FILE* file, std::vector<RecordThreadData*>& threads)
    {
       if (!file) return false;
 
@@ -833,8 +848,8 @@ namespace dtDirector
 
       for (int index = 0; index < count; index++)
       {
-         RecordThreadData threadData;
-         if (!ReadRecordNodes(file, threadData.nodes))
+         RecordThreadData* threadData = new RecordThreadData();
+         if (!ReadRecordNodes(file, threadData->nodes))
          {
             return false;
          }
@@ -856,6 +871,8 @@ namespace dtDirector
       for (int index = 0; index < count; index++)
       {
          RecordNodeData& node = nodes[index];
+
+         fwrite(&node.time, sizeof(float), 1, file);
 
          if (!WriteString(file, node.nodeID.ToString()))
          {
@@ -898,6 +915,8 @@ namespace dtDirector
       for (int index = 0; index < count; index++)
       {
          RecordNodeData node;
+
+         fread(&node.time, sizeof(float), 1, file);
 
          std::string token;
          if (!ReadString(file, token))

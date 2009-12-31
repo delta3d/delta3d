@@ -107,6 +107,11 @@ namespace dtDirector
       bool GetReplayMode() {return mReplayMode;}
 
       /**
+       * Retrieves the input that was triggered on the replay node.
+       */
+      const InputLink* GetReplayInput() {return mReplayInput;}
+
+      /**
        * Retrieves the output that triggered the replay node.
        */
       const OutputLink* GetReplayOutput() {return mReplayOutput;}
@@ -120,9 +125,10 @@ namespace dtDirector
        * Sets the current replay node data.
        *
        * @param[in]  replayNode  The replay node.
+       * @param[in]  input       The name of the input that is being fired.
        * @param[in]  output      The name of the output that is firing this node.
        */
-      void SetReplayNode(Director::RecordNodeData* replayNode, OutputLink* output);
+      void SetReplayNode(Director::RecordNodeData* replayNode = NULL, InputLink* input = NULL, OutputLink* output = NULL);
 
       /**
        * Retrieves actions.
@@ -346,6 +352,7 @@ namespace dtDirector
 
       bool                     mReplayMode;
       Director::RecordNodeData mReplayNode;
+      InputLink*               mReplayInput;
       OutputLink*              mReplayOutput;
 
       QMenuBar* mMenuBar;
