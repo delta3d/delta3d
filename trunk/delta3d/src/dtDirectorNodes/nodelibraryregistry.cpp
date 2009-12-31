@@ -30,6 +30,7 @@
 // Actions
 #include <dtDirectorNodes/outputnode.h>
 #include <dtDirectorNodes/callremoteeventaction.h>
+#include <dtDirectorNodes/setvalueaction.h>
 #include <dtDirectorNodes/operationaction.h>
 #include <dtDirectorNodes/comparevalueaction.h>
 #include <dtDirectorNodes/delayaction.h>
@@ -81,6 +82,7 @@ namespace dtDirector
    // Actions
    RefPtr<NodeType> NodeLibraryRegistry::OUTPUT_NODE_TYPE(new dtDirector::NodeType("Output Link", "Core", "Links", "This node creates an output link connector in its parent graph."));
    RefPtr<NodeType> NodeLibraryRegistry::CALL_REMOTE_EVENT_ACTION_NODE_TYPE(new dtDirector::NodeType("Call Remote Event", "Core", "Actions", "Calls all remote event nodes with a given name in parallel, and waits until their entire chains are finished before continuing."));
+   RefPtr<NodeType> NodeLibraryRegistry::SET_VALUE_ACTION_NODE_TYPE(new dtDirector::NodeType("Set Value", "General", "Math", "Copies the value of the Source value into the Destination value."));
    RefPtr<NodeType> NodeLibraryRegistry::OPERATION_ACTION_NODE_TYPE(new dtDirector::NodeType("Binary Operation", "General", "Math", "Performs a simple operation between two values A and B and outputs to Result."));
    RefPtr<NodeType> NodeLibraryRegistry::COMPARE_VALUE_ACTION_NODE_TYPE(new dtDirector::NodeType("Compare Value", "General", "Condition", "Compares two values A and B."));
    RefPtr<NodeType> NodeLibraryRegistry::DELAY_ACTION_NODE_TYPE(new dtDirector::NodeType("Delay", "General", "Actions", "Performs a time delay."));
@@ -132,6 +134,7 @@ namespace dtDirector
       // Actions
       mNodeFactory->RegisterType<OutputNode>(OUTPUT_NODE_TYPE.get());
       mNodeFactory->RegisterType<CallRemoteEventAction>(CALL_REMOTE_EVENT_ACTION_NODE_TYPE.get());
+      mNodeFactory->RegisterType<SetValueAction>(SET_VALUE_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<OperationAction>(OPERATION_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<CompareValueAction>(COMPARE_VALUE_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<DelayAction>(DELAY_ACTION_NODE_TYPE.get());

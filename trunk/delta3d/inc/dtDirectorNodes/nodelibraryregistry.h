@@ -44,6 +44,7 @@ namespace dtDirector
       /// Actions
       static dtCore::RefPtr<dtDirector::NodeType> OUTPUT_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> CALL_REMOTE_EVENT_ACTION_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> SET_VALUE_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> OPERATION_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> COMPARE_VALUE_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> DELAY_ACTION_NODE_TYPE;
