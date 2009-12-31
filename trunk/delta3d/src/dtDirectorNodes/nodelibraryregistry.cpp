@@ -65,8 +65,8 @@ namespace dtDirector
    //  General     - General nodes provide general functionality that can be used
    //                in most, if not all, script types.
    //
-   //  Math        - Math nodes are any nodes that perform an operation between
-   //                values and then outputs another.
+   //  Value Ops   - Value Operation nodes are any nodes that perform an operation
+   //                on values.
    //
    //  Conditional - Conditional nodes have multiple outputs that get triggered
    //                when a condition is met.
@@ -75,35 +75,35 @@ namespace dtDirector
    //                cinematic editor tool.
 
    // Events
-   RefPtr<NodeType> NodeLibraryRegistry::INPUT_NODE_TYPE(new dtDirector::NodeType("Input Link", "Core", "Links", "This node creates an input link connector in its parent graph."));
-   RefPtr<NodeType> NodeLibraryRegistry::REMOTE_EVENT_NODE_TYPE(new dtDirector::NodeType("Remote Event", "Core", "Events", "A remote event."));
-   RefPtr<NodeType> NodeLibraryRegistry::TRIGGER_VOLUME_EVENT_NODE_TYPE(new dtDirector::NodeType("Trigger Volume Event", "General", "Events", "A trigger volume event."));
+   RefPtr<NodeType> NodeLibraryRegistry::INPUT_NODE_TYPE(                        new dtDirector::NodeType("Input Link",                "Core",        "Links",       "This node creates an input link connector in its parent graph."));
+   RefPtr<NodeType> NodeLibraryRegistry::REMOTE_EVENT_NODE_TYPE(                 new dtDirector::NodeType("Remote Event",              "Core",        "Events",      "A remote event."));
+   RefPtr<NodeType> NodeLibraryRegistry::TRIGGER_VOLUME_EVENT_NODE_TYPE(         new dtDirector::NodeType("Trigger Volume Event",      "General",     "Events",      "A trigger volume event."));
 
    // Actions
-   RefPtr<NodeType> NodeLibraryRegistry::OUTPUT_NODE_TYPE(new dtDirector::NodeType("Output Link", "Core", "Links", "This node creates an output link connector in its parent graph."));
-   RefPtr<NodeType> NodeLibraryRegistry::CALL_REMOTE_EVENT_ACTION_NODE_TYPE(new dtDirector::NodeType("Call Remote Event", "Core", "Actions", "Calls all remote event nodes with a given name in parallel, and waits until their entire chains are finished before continuing."));
-   RefPtr<NodeType> NodeLibraryRegistry::SET_VALUE_ACTION_NODE_TYPE(new dtDirector::NodeType("Set Value", "General", "Math", "Copies the value of the Source value into the Destination value."));
-   RefPtr<NodeType> NodeLibraryRegistry::OPERATION_ACTION_NODE_TYPE(new dtDirector::NodeType("Binary Operation", "General", "Math", "Performs a simple operation between two values A and B and outputs to Result."));
-   RefPtr<NodeType> NodeLibraryRegistry::COMPARE_VALUE_ACTION_NODE_TYPE(new dtDirector::NodeType("Compare Value", "General", "Condition", "Compares two values A and B."));
-   RefPtr<NodeType> NodeLibraryRegistry::DELAY_ACTION_NODE_TYPE(new dtDirector::NodeType("Delay", "General", "Actions", "Performs a time delay."));
-   RefPtr<NodeType> NodeLibraryRegistry::SOUND_ACTION_NODE_TYPE(new dtDirector::NodeType("Sound", "General", "Actions", "Control a sound resource."));
-   RefPtr<NodeType> NodeLibraryRegistry::TOGGLE_ACTION_NODE_TYPE(new dtDirector::NodeType("Toggle", "General", "Actions", "Sets a boolean value."));
-   RefPtr<NodeType> NodeLibraryRegistry::SCHEDULER_ACTION_NODE_TYPE(new dtDirector::NodeType("Scheduler", "Cinematic", "Cinematic", "Schedules a sequence of timed events."));
-   RefPtr<NodeType> NodeLibraryRegistry::LERP_ACTOR_ROTATION_ACTION_NODE_TYPE(new dtDirector::NodeType("Lerp Actor Rotation", "Cinematic", "Cinematic", "Linearly interpolates the rotation of an actor."));
-   RefPtr<NodeType> NodeLibraryRegistry::LERP_ACTOR_TRANSLATION_ACTION_NODE_TYPE(new dtDirector::NodeType("Lerp Actor Translation", "Cinematic", "Cinematic", "Linearly interpolates the position of an actor."));
+   RefPtr<NodeType> NodeLibraryRegistry::OUTPUT_NODE_TYPE(                       new dtDirector::NodeType("Output Link",               "Core",        "Links",       "This node creates an output link connector in its parent graph."));
+   RefPtr<NodeType> NodeLibraryRegistry::CALL_REMOTE_EVENT_ACTION_NODE_TYPE(     new dtDirector::NodeType("Call Remote Event",         "Core",        "Actions",     "Calls all remote event nodes with a given name in parallel, and waits until their entire chains are finished before continuing."));
+   RefPtr<NodeType> NodeLibraryRegistry::DELAY_ACTION_NODE_TYPE(                 new dtDirector::NodeType("Delay",                     "General",     "Actions",     "Performs a time delay."));
+   RefPtr<NodeType> NodeLibraryRegistry::SOUND_ACTION_NODE_TYPE(                 new dtDirector::NodeType("Sound",                     "General",     "Actions",     "Control a sound resource."));
+   RefPtr<NodeType> NodeLibraryRegistry::SET_VALUE_ACTION_NODE_TYPE(             new dtDirector::NodeType("Set Value",                 "General",     "Value Ops",   "Copies the value of the Source value into the Destination value."));
+   RefPtr<NodeType> NodeLibraryRegistry::OPERATION_ACTION_NODE_TYPE(             new dtDirector::NodeType("Binary Operation",          "General",     "Value Ops",   "Performs a simple operation between two values A and B and outputs to Result."));
+   RefPtr<NodeType> NodeLibraryRegistry::TOGGLE_ACTION_NODE_TYPE(                new dtDirector::NodeType("Toggle",                    "General",     "Value Ops",   "Sets a boolean value."));
+   RefPtr<NodeType> NodeLibraryRegistry::COMPARE_VALUE_ACTION_NODE_TYPE(         new dtDirector::NodeType("Compare Value",             "General",     "Condition",   "Compares two values A and B."));
+   RefPtr<NodeType> NodeLibraryRegistry::SCHEDULER_ACTION_NODE_TYPE(             new dtDirector::NodeType("Scheduler",                 "Cinematic",   "Cinematic",   "Schedules a sequence of timed events."));
+   RefPtr<NodeType> NodeLibraryRegistry::LERP_ACTOR_ROTATION_ACTION_NODE_TYPE(   new dtDirector::NodeType("Lerp Actor Rotation",       "Cinematic",   "Cinematic",   "Linearly interpolates the rotation of an actor."));
+   RefPtr<NodeType> NodeLibraryRegistry::LERP_ACTOR_TRANSLATION_ACTION_NODE_TYPE(new dtDirector::NodeType("Lerp Actor Translation",    "Cinematic",   "Cinematic",   "Linearly interpolates the position of an actor."));
 
    // Values
-   RefPtr<NodeType> NodeLibraryRegistry::EXTERNAL_VALUE_NODE_TYPE(new dtDirector::NodeType("Value Link", "Core", "Links", "This node creates a value link connector in its parent graph."));
-   RefPtr<NodeType> NodeLibraryRegistry::REFERENCE_VALUE_NODE_TYPE(new dtDirector::NodeType("Reference", "Core", "Variables", "This will reference another value in the script."));
-   RefPtr<NodeType> NodeLibraryRegistry::PLAYER_VALUE_NODE_TYPE(new dtDirector::NodeType("Player", "Core", "Variables", "This player actor."));
-   RefPtr<NodeType> NodeLibraryRegistry::BOOLEAN_VALUE_NODE_TYPE(new dtDirector::NodeType("Boolean", "General", "Variables", "A boolean value."));
-   RefPtr<NodeType> NodeLibraryRegistry::INT_VALUE_NODE_TYPE(new dtDirector::NodeType("Int", "General", "Variables", "An integer value."));
-   RefPtr<NodeType> NodeLibraryRegistry::FLOAT_VALUE_NODE_TYPE(new dtDirector::NodeType("Float", "General", "Variables", "A float value."));
-   RefPtr<NodeType> NodeLibraryRegistry::DOUBLE_VALUE_NODE_TYPE(new dtDirector::NodeType("Double", "General", "Variables", "A double value."));
-   RefPtr<NodeType> NodeLibraryRegistry::STRING_VALUE_NODE_TYPE(new dtDirector::NodeType("String", "General", "Variables", "A string value."));
-   RefPtr<NodeType> NodeLibraryRegistry::ACTOR_VALUE_NODE_TYPE(new dtDirector::NodeType("Actor", "General", "Variables", "An actor value."));
-   RefPtr<NodeType> NodeLibraryRegistry::STATIC_MESH_VALUE_NODE_TYPE(new dtDirector::NodeType("Static Mesh", "General", "Variables", "A Static Mesh resource value."));
-   RefPtr<NodeType> NodeLibraryRegistry::VEC_VALUE_NODE_TYPE(new dtDirector::NodeType("Vector", "General", "Variables", "A vector value."));
+   RefPtr<NodeType> NodeLibraryRegistry::EXTERNAL_VALUE_NODE_TYPE(               new dtDirector::NodeType("Value Link",                "Core",        "Links",       "This node creates a value link connector in its parent graph."));
+   RefPtr<NodeType> NodeLibraryRegistry::REFERENCE_VALUE_NODE_TYPE(              new dtDirector::NodeType("Reference",                 "Core",        "Variables",   "This will reference another value in the script."));
+   RefPtr<NodeType> NodeLibraryRegistry::PLAYER_VALUE_NODE_TYPE(                 new dtDirector::NodeType("Player",                    "Core",        "Variables",   "This player actor."));
+   RefPtr<NodeType> NodeLibraryRegistry::BOOLEAN_VALUE_NODE_TYPE(                new dtDirector::NodeType("Boolean",                   "General",     "Variables",   "A boolean value."));
+   RefPtr<NodeType> NodeLibraryRegistry::INT_VALUE_NODE_TYPE(                    new dtDirector::NodeType("Int",                       "General",     "Variables",   "An integer value."));
+   RefPtr<NodeType> NodeLibraryRegistry::FLOAT_VALUE_NODE_TYPE(                  new dtDirector::NodeType("Float",                     "General",     "Variables",   "A float value."));
+   RefPtr<NodeType> NodeLibraryRegistry::DOUBLE_VALUE_NODE_TYPE(                 new dtDirector::NodeType("Double",                    "General",     "Variables",   "A double value."));
+   RefPtr<NodeType> NodeLibraryRegistry::STRING_VALUE_NODE_TYPE(                 new dtDirector::NodeType("String",                    "General",     "Variables",   "A string value."));
+   RefPtr<NodeType> NodeLibraryRegistry::ACTOR_VALUE_NODE_TYPE(                  new dtDirector::NodeType("Actor",                     "General",     "Variables",   "An actor value."));
+   RefPtr<NodeType> NodeLibraryRegistry::STATIC_MESH_VALUE_NODE_TYPE(            new dtDirector::NodeType("Static Mesh",               "General",     "Variables",   "A Static Mesh resource value."));
+   RefPtr<NodeType> NodeLibraryRegistry::VEC_VALUE_NODE_TYPE(                    new dtDirector::NodeType("Vector",                    "General",     "Variables",   "A vector value."));
 
    //////////////////////////////////////////////////////////////////////////
    extern "C" NODE_LIBRARY_EXPORT dtDirector::NodePluginRegistry* CreatePluginRegistry()
@@ -119,7 +119,7 @@ namespace dtDirector
 
    //////////////////////////////////////////////////////////////////////////
    NodeLibraryRegistry::NodeLibraryRegistry()
-      : dtDirector::NodePluginRegistry("Core set of nodes that can be used anywhere.")
+      : dtDirector::NodePluginRegistry("dtDirectorNodes", "Core set of nodes that can be used anywhere.")
    {
    }
 
@@ -134,12 +134,12 @@ namespace dtDirector
       // Actions
       mNodeFactory->RegisterType<OutputNode>(OUTPUT_NODE_TYPE.get());
       mNodeFactory->RegisterType<CallRemoteEventAction>(CALL_REMOTE_EVENT_ACTION_NODE_TYPE.get());
-      mNodeFactory->RegisterType<SetValueAction>(SET_VALUE_ACTION_NODE_TYPE.get());
-      mNodeFactory->RegisterType<OperationAction>(OPERATION_ACTION_NODE_TYPE.get());
-      mNodeFactory->RegisterType<CompareValueAction>(COMPARE_VALUE_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<DelayAction>(DELAY_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<SoundAction>(SOUND_ACTION_NODE_TYPE.get());
+      mNodeFactory->RegisterType<SetValueAction>(SET_VALUE_ACTION_NODE_TYPE.get());
+      mNodeFactory->RegisterType<OperationAction>(OPERATION_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<ToggleAction>(TOGGLE_ACTION_NODE_TYPE.get());
+      mNodeFactory->RegisterType<CompareValueAction>(COMPARE_VALUE_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<SchedulerAction>(SCHEDULER_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<LerpActorRotationAction>(LERP_ACTOR_ROTATION_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<LerpActorTranslationAction>(LERP_ACTOR_TRANSLATION_ACTION_NODE_TYPE.get());

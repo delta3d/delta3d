@@ -269,6 +269,11 @@ namespace dtDirector
       void OnDelete();
 
       /**
+       * Event handler when the manager libraries button is pressed.
+       */
+      void OnManageLibraries();
+
+      /**
        * Event handler when the show property editor button is pressed.
        */
       void OnShowPropertyEditor();
@@ -381,6 +386,8 @@ namespace dtDirector
       QAction*  mCutAction;
       QAction*  mCopyAction;
       QAction*  mPasteAction;
+
+      QAction*  mLibrariesAction;
 
       // View Actions.
       QAction*  mViewPropertiesAction;

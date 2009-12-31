@@ -80,6 +80,9 @@ namespace dtDirector
 
       mThreads.clear();
 
+      mLibraries.clear();
+      mLibraryVersionMap.clear();
+
       ClearRecordingData(mRecordThreads);
    }
 
@@ -531,6 +534,12 @@ namespace dtDirector
             outNodes.push_back(node);
          }
       }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void Director::GetAllNodes(std::vector<Node*>& outNodes)
+   {
+      mGraph->GetAllNodes(outNodes);
    }
 
    //////////////////////////////////////////////////////////////////////////

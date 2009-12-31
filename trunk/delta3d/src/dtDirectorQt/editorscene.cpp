@@ -711,8 +711,16 @@ namespace dtDirector
             for (int index = 0; index < count; index++)
             {
                const NodeType* node = nodes[index];
+
                if (node)
                {
+                  // Make sure the node we found is a type valid for this script.
+                  NodePluginRegistry* reg = NodeManager::GetInstance().GetRegistryForType(*node);
+                  if (!reg || (reg->GetName() != "dtDirectorNodes" && !mEditor->GetDirector()->HasLibrary(reg->GetName())))
+                  {
+                     continue;
+                  }
+
                   // Special case, the parent graph does not get the link
                   // nodes, because they have no effect.
                   if (!mGraph->mParent && node->GetFolder() == "Links")
