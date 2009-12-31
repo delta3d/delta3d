@@ -28,6 +28,7 @@
 #include <dtDirectorQt/undomanager.h>
 #include <dtDirectorQt/undodeleteevent.h>
 #include <dtDirectorQt/clipboard.h>
+#include <dtDirectorQt/libraryeditor.h>
 
 #include <dtDirectorQt/actionitem.h>
 #include <dtDirectorQt/valueitem.h>
@@ -77,6 +78,7 @@ namespace dtDirector
       , mCutAction(NULL)
       , mCopyAction(NULL)
       , mPasteAction(NULL)
+      , mLibrariesAction(NULL)
       , mViewPropertiesAction(NULL)
       , mViewGraphBrowserAction(NULL)
       , mViewReplayBrowserAction(NULL)
@@ -170,6 +172,10 @@ namespace dtDirector
       mPasteAction->setShortcut(tr("Ctrl+V"));
       mPasteAction->setToolTip(tr("Pastes the nodes saved in the clipboard to the current graph (Ctrl+V)."));
 
+      // Libraries Action.
+      mLibrariesAction = new QAction("Manage Libraries...", this);
+      mLibrariesAction->setToolTip(tr("Manages the Node Libraries for the script."));
+
       // Show Properties Action.
       mViewPropertiesAction = new QAction(tr("Property Editor"), this);
       mViewPropertiesAction->setShortcut(tr("Ctrl+P"));
@@ -242,6 +248,8 @@ namespace dtDirector
       mEditMenu->addAction(mPasteAction);
       mEditMenu->addSeparator();
       mEditMenu->addAction(mDeleteAction);
+      mEditMenu->addSeparator();
+      mEditMenu->addAction(mLibrariesAction);
 
       // View Menu.
       mViewMenu = mMenuBar->addMenu("&View");
@@ -330,6 +338,9 @@ namespace dtDirector
          this, SLOT(OnPaste()));
       connect(mDeleteAction, SIGNAL(triggered()),
          this, SLOT(OnDelete()));
+      connect(mLibrariesAction, SIGNAL(triggered()),
+         this, SLOT(OnManageLibraries()));
+
       connect(mViewPropertiesAction, SIGNAL(triggered()),
          this, SLOT(OnShowPropertyEditor()));
       connect(mViewGraphBrowserAction, SIGNAL(triggered()),
@@ -961,6 +972,22 @@ namespace dtDirector
       mGraphBrowser->BuildGraphList(scene->GetGraph());
 
       mReplayBrowser->BuildThreadList();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::OnManageLibraries()
+   {
+      // We need a director to manager libraries.
+      if (!GetDirector())
+      {
+         QMessageBox::critical(NULL, tr("Failure"),
+            tr("A Director must be open in order to manage libraries"),
+            tr("OK"));
+         return;
+      }
+
+      LibraryEditor libEdit(this);
+      libEdit.exec();
    }
 
    //////////////////////////////////////////////////////////////////////////

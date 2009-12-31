@@ -96,6 +96,13 @@ namespace dtDirector
       void GetNodes(const std::string& name, const std::string& category, std::vector<Node*>& outNodes);
 
       /**
+       * Retrieves a list of all nodes in the graph.
+       *
+       * @param[out]  outNodes  A list of nodes found.
+       */
+      void GetAllNodes(std::vector<Node*>& outNodes);
+
+      /**
        * Retrieves a value node with the given name.
        * @note  If there are more than one value with the
        *         same name, only the first one will be returned.
