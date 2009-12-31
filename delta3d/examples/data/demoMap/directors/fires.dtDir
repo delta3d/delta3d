@@ -2,7 +2,7 @@
 <director xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dDirector" xsi:schemaLocation="delta3dDirector director.xsd">
     <header>
         <createTimestamp>2009-12-23T15:09:12-08:00</createTimestamp>
-        <lastUpdateTimestamp>2009-12-24T12:11:18-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2009-12-30T21:49:59-08:00</lastUpdateTimestamp>
         <editorVersion>2.4.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
         <property>
@@ -87,6 +87,10 @@
                         <id>fd20a387-fa2b-47d1-8699-fa47e6bcfb73</id>
                         <name>Play</name>
                     </link>
+                    <link>
+                        <id>7416f338-ce42-4227-a1c7-153b7fa7dfb5</id>
+                        <name>In</name>
+                    </link>
                 </outputlink>
                 <outputlink>
                     <name>Leave</name>
@@ -98,6 +102,10 @@
                     <link>
                         <id>fd20a387-fa2b-47d1-8699-fa47e6bcfb73</id>
                         <name>Stop</name>
+                    </link>
+                    <link>
+                        <id>f081e490-d612-4567-9e22-ecfc43edaf6f</id>
+                        <name>In</name>
                     </link>
                 </outputlink>
                 <valuelink>
@@ -204,8 +212,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>137.222229</value1>
-                        <value2>172.111115</value2>
+                        <value1>291.697723</value1>
+                        <value2>99.938095</value2>
                     </vec2>
                 </property>
                 <property>
@@ -270,8 +278,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>329.000000</value1>
-                        <value2>54.966324</value2>
+                        <value1>420.165924</value1>
+                        <value2>2.000000</value2>
                     </vec2>
                 </property>
                 <property>
@@ -430,6 +438,222 @@
                     </link>
                 </valuelink>
             </node>
+            <node>
+                <name>Set Actor Property</name>
+                <category>General</category>
+                <id>eaedf82f-f24e-43a6-8831-70ee93fb681e</id>
+                <property>
+                    <name>Enabled</name>
+                    <boolean>true</boolean>
+                </property>
+                <property>
+                    <name>Comment</name>
+                    <string></string>
+                </property>
+                <property>
+                    <name>LogNode</name>
+                    <boolean>false</boolean>
+                </property>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>252.344055</value1>
+                        <value2>-259.244598</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>PropertyName</name>
+                    <string>Text</string>
+                </property>
+                <property>
+                    <name>Actor</name>
+                    <actorId></actorId>
+                </property>
+                <property>
+                    <name>NewValue</name>
+                    <string></string>
+                </property>
+                <inputlink>
+                    <name>In</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>7416f338-ce42-4227-a1c7-153b7fa7dfb5</id>
+                        <name>Out</name>
+                    </link>
+                </inputlink>
+                <outputlink>
+                    <name>Out</name>
+                    <visible>true</visible>
+                </outputlink>
+                <outputlink>
+                    <name>Failed</name>
+                    <visible>true</visible>
+                </outputlink>
+                <valuelink>
+                    <name>Actor</name>
+                    <visible>true</visible>
+                    <isout>true</isout>
+                    <allowmultiple>true</allowmultiple>
+                    <typecheck>true</typecheck>
+                    <link>
+                        <id>ab98c260-cdf0-4451-a2f5-2d0e6cf67030</id>
+                    </link>
+                </valuelink>
+                <valuelink>
+                    <name>NewValue</name>
+                    <visible>true</visible>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>false</typecheck>
+                    <link>
+                        <id>b80abdb4-2910-4e33-96fa-1ea41ec07893</id>
+                    </link>
+                </valuelink>
+            </node>
+            <node>
+                <name>Set Actor Property</name>
+                <category>General</category>
+                <id>f081e490-d612-4567-9e22-ecfc43edaf6f</id>
+                <property>
+                    <name>Enabled</name>
+                    <boolean>true</boolean>
+                </property>
+                <property>
+                    <name>Comment</name>
+                    <string></string>
+                </property>
+                <property>
+                    <name>LogNode</name>
+                    <boolean>false</boolean>
+                </property>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>72.125473</value1>
+                        <value2>178.298325</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>PropertyName</name>
+                    <string>Text</string>
+                </property>
+                <property>
+                    <name>Actor</name>
+                    <actorId></actorId>
+                </property>
+                <property>
+                    <name>NewValue</name>
+                    <string></string>
+                </property>
+                <inputlink>
+                    <name>In</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>7fe84139-de64-4e60-a6ba-60af2dbcb099</id>
+                        <name>Leave</name>
+                    </link>
+                </inputlink>
+                <outputlink>
+                    <name>Out</name>
+                    <visible>true</visible>
+                </outputlink>
+                <outputlink>
+                    <name>Failed</name>
+                    <visible>true</visible>
+                </outputlink>
+                <valuelink>
+                    <name>Actor</name>
+                    <visible>true</visible>
+                    <isout>true</isout>
+                    <allowmultiple>true</allowmultiple>
+                    <typecheck>true</typecheck>
+                    <link>
+                        <id>7b5e758a-6697-4627-921b-9c54a4eb5c76</id>
+                    </link>
+                </valuelink>
+                <valuelink>
+                    <name>NewValue</name>
+                    <visible>true</visible>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>false</typecheck>
+                    <link>
+                        <id>71b0aa7e-9a66-4746-aae4-368ef79b2aac</id>
+                    </link>
+                </valuelink>
+            </node>
+            <node>
+                <name>Get Actor Property</name>
+                <category>General</category>
+                <id>7416f338-ce42-4227-a1c7-153b7fa7dfb5</id>
+                <property>
+                    <name>Enabled</name>
+                    <boolean>true</boolean>
+                </property>
+                <property>
+                    <name>Comment</name>
+                    <string></string>
+                </property>
+                <property>
+                    <name>LogNode</name>
+                    <boolean>false</boolean>
+                </property>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>87.990143</value1>
+                        <value2>-259.244598</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>PropertyName</name>
+                    <string>Text</string>
+                </property>
+                <property>
+                    <name>Actor</name>
+                    <actorId></actorId>
+                </property>
+                <inputlink>
+                    <name>In</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>7fe84139-de64-4e60-a6ba-60af2dbcb099</id>
+                        <name>Enter</name>
+                    </link>
+                </inputlink>
+                <outputlink>
+                    <name>Out</name>
+                    <visible>true</visible>
+                    <link>
+                        <id>eaedf82f-f24e-43a6-8831-70ee93fb681e</id>
+                        <name>In</name>
+                    </link>
+                </outputlink>
+                <outputlink>
+                    <name>Failed</name>
+                    <visible>true</visible>
+                </outputlink>
+                <valuelink>
+                    <name>Actor</name>
+                    <visible>true</visible>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                    <link>
+                        <id>5e8b5978-4626-4304-b3d0-e549b3cfc7a6</id>
+                    </link>
+                </valuelink>
+                <valuelink>
+                    <name>Result</name>
+                    <visible>true</visible>
+                    <isout>true</isout>
+                    <allowmultiple>true</allowmultiple>
+                    <typecheck>false</typecheck>
+                    <link>
+                        <id>de28e2b0-05ca-4720-808e-3f0adfe43ac8</id>
+                    </link>
+                </valuelink>
+            </node>
         </actionnodes>
         <valuenodes>
             <node>
@@ -451,8 +675,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>147.722000</value1>
-                        <value2>372.777771</value2>
+                        <value1>302.197723</value1>
+                        <value2>300.604736</value2>
                     </vec2>
                 </property>
                 <property>
@@ -507,8 +731,8 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>346.000000</value1>
-                        <value2>271.202515</value2>
+                        <value1>437.165985</value1>
+                        <value2>207.000000</value2>
                     </vec2>
                 </property>
                 <property>
@@ -1119,6 +1343,228 @@
                         <value2>-226.381180</value2>
                     </vec2>
                 </property>
+            </node>
+            <node>
+                <name>Actor</name>
+                <category>General</category>
+                <id>ab98c260-cdf0-4451-a2f5-2d0e6cf67030</id>
+                <property>
+                    <name>Enabled</name>
+                    <boolean>true</boolean>
+                </property>
+                <property>
+                    <name>Comment</name>
+                    <string></string>
+                </property>
+                <property>
+                    <name>LogNode</name>
+                    <boolean>false</boolean>
+                </property>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>255.844055</value1>
+                        <value2>-104.350555</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>Name</name>
+                    <string>Fire Label</string>
+                </property>
+                <property>
+                    <name>Value</name>
+                    <actorId>83a6d006-251b-4c4c-a25b-f677ebb5792b</actorId>
+                </property>
+            </node>
+            <node>
+                <name>String</name>
+                <category>General</category>
+                <id>b80abdb4-2910-4e33-96fa-1ea41ec07893</id>
+                <property>
+                    <name>Enabled</name>
+                    <boolean>true</boolean>
+                </property>
+                <property>
+                    <name>Comment</name>
+                    <string></string>
+                </property>
+                <property>
+                    <name>LogNode</name>
+                    <boolean>false</boolean>
+                </property>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>312.844055</value1>
+                        <value2>-104.350555</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>Name</name>
+                    <string>String</string>
+                </property>
+                <property>
+                    <name>Value</name>
+                    <string>HOT!</string>
+                </property>
+            </node>
+            <node>
+                <name>Reference</name>
+                <category>Core</category>
+                <id>5e8b5978-4626-4304-b3d0-e549b3cfc7a6</id>
+                <property>
+                    <name>Enabled</name>
+                    <boolean>true</boolean>
+                </property>
+                <property>
+                    <name>Comment</name>
+                    <string></string>
+                </property>
+                <property>
+                    <name>LogNode</name>
+                    <boolean>false</boolean>
+                </property>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>87.490059</value1>
+                        <value2>-104.350555</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>Name</name>
+                    <string>Ref</string>
+                </property>
+                <property>
+                    <name>Reference</name>
+                    <string>Fire Label</string>
+                </property>
+                <valuelink>
+                    <name>Ref</name>
+                    <visible>true</visible>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                    <link>
+                        <id>ab98c260-cdf0-4451-a2f5-2d0e6cf67030</id>
+                    </link>
+                </valuelink>
+            </node>
+            <node>
+                <name>String</name>
+                <category>General</category>
+                <id>de28e2b0-05ca-4720-808e-3f0adfe43ac8</id>
+                <property>
+                    <name>Enabled</name>
+                    <boolean>true</boolean>
+                </property>
+                <property>
+                    <name>Comment</name>
+                    <string></string>
+                </property>
+                <property>
+                    <name>LogNode</name>
+                    <boolean>false</boolean>
+                </property>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>136.990143</value1>
+                        <value2>-104.350555</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>Name</name>
+                    <string>Original Fire Text</string>
+                </property>
+                <property>
+                    <name>Value</name>
+                    <string></string>
+                </property>
+            </node>
+            <node>
+                <name>Reference</name>
+                <category>Core</category>
+                <id>71b0aa7e-9a66-4746-aae4-368ef79b2aac</id>
+                <property>
+                    <name>Enabled</name>
+                    <boolean>true</boolean>
+                </property>
+                <property>
+                    <name>Comment</name>
+                    <string></string>
+                </property>
+                <property>
+                    <name>LogNode</name>
+                    <boolean>false</boolean>
+                </property>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>132.625244</value1>
+                        <value2>333.192352</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>Name</name>
+                    <string>Ref</string>
+                </property>
+                <property>
+                    <name>Reference</name>
+                    <string>Original Fire Text</string>
+                </property>
+                <valuelink>
+                    <name>Ref</name>
+                    <visible>true</visible>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>false</typecheck>
+                    <link>
+                        <id>de28e2b0-05ca-4720-808e-3f0adfe43ac8</id>
+                    </link>
+                </valuelink>
+            </node>
+            <node>
+                <name>Reference</name>
+                <category>Core</category>
+                <id>7b5e758a-6697-4627-921b-9c54a4eb5c76</id>
+                <property>
+                    <name>Enabled</name>
+                    <boolean>true</boolean>
+                </property>
+                <property>
+                    <name>Comment</name>
+                    <string></string>
+                </property>
+                <property>
+                    <name>LogNode</name>
+                    <boolean>false</boolean>
+                </property>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>75.625580</value1>
+                        <value2>333.192352</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>Name</name>
+                    <string>Ref</string>
+                </property>
+                <property>
+                    <name>Reference</name>
+                    <string>Fire Label</string>
+                </property>
+                <valuelink>
+                    <name>Ref</name>
+                    <visible>true</visible>
+                    <isout>true</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                    <link>
+                        <id>ab98c260-cdf0-4451-a2f5-2d0e6cf67030</id>
+                    </link>
+                </valuelink>
             </node>
         </valuenodes>
     </graph>

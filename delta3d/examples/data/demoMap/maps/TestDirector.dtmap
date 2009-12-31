@@ -7,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2009-12-21T16:14:44-08:00</createTimestamp>
-        <lastUpdateTimestamp>2009-12-24T12:24:55-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2009-12-30T21:51:43-08:00</lastUpdateTimestamp>
         <editorVersion>2.4.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -1538,8 +1538,8 @@
             <property>
                 <name>Collision Box</name>
                 <vec3>
-                    <value1>3.000000</value1>
-                    <value2>3.000000</value2>
+                    <value1>5.000000</value1>
+                    <value2>5.000000</value2>
                     <value3>2.000000</value3>
                 </vec3>
             </property>
@@ -5587,8 +5587,8 @@
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
-                    <value2>-0.000000</value2>
-                    <value3>-0.000000</value3>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
                 </vec3>
             </property>
             <property>

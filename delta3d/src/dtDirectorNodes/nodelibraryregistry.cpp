@@ -31,6 +31,8 @@
 #include <dtDirectorNodes/outputnode.h>
 #include <dtDirectorNodes/callremoteeventaction.h>
 #include <dtDirectorNodes/setvalueaction.h>
+#include <dtDirectorNodes/getactorpropertyaction.h>
+#include <dtDirectorNodes/setactorpropertyaction.h>
 #include <dtDirectorNodes/operationaction.h>
 #include <dtDirectorNodes/comparevalueaction.h>
 #include <dtDirectorNodes/delayaction.h>
@@ -85,6 +87,8 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::DELAY_ACTION_NODE_TYPE(                 new dtDirector::NodeType("Delay",                     "General",     "Actions",     "Performs a time delay."));
    RefPtr<NodeType> NodeLibraryRegistry::SOUND_ACTION_NODE_TYPE(                 new dtDirector::NodeType("Sound",                     "General",     "Actions",     "Control a sound resource."));
    RefPtr<NodeType> NodeLibraryRegistry::SET_VALUE_ACTION_NODE_TYPE(             new dtDirector::NodeType("Set Value",                 "General",     "Value Ops",   "Copies the value of the Source value into the Destination value."));
+   RefPtr<NodeType> NodeLibraryRegistry::GET_ACTOR_PROPERTY_ACTION_NODE_TYPE(    new dtDirector::NodeType("Get Actor Property",        "General",     "Value Ops",   "Retrieves the value of a property from an actor."));
+   RefPtr<NodeType> NodeLibraryRegistry::SET_ACTOR_PROPERTY_ACTION_NODE_TYPE(    new dtDirector::NodeType("Set Actor Property",        "General",     "Value Ops",   "Sets the value of a property from an actor."));
    RefPtr<NodeType> NodeLibraryRegistry::OPERATION_ACTION_NODE_TYPE(             new dtDirector::NodeType("Binary Operation",          "General",     "Value Ops",   "Performs a simple operation between two values A and B and outputs to Result."));
    RefPtr<NodeType> NodeLibraryRegistry::TOGGLE_ACTION_NODE_TYPE(                new dtDirector::NodeType("Toggle",                    "General",     "Value Ops",   "Sets a boolean value."));
    RefPtr<NodeType> NodeLibraryRegistry::COMPARE_VALUE_ACTION_NODE_TYPE(         new dtDirector::NodeType("Compare Value",             "General",     "Condition",   "Compares two values A and B."));
@@ -137,6 +141,8 @@ namespace dtDirector
       mNodeFactory->RegisterType<DelayAction>(DELAY_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<SoundAction>(SOUND_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<SetValueAction>(SET_VALUE_ACTION_NODE_TYPE.get());
+      mNodeFactory->RegisterType<GetActorPropertyAction>(GET_ACTOR_PROPERTY_ACTION_NODE_TYPE.get());
+      mNodeFactory->RegisterType<SetActorPropertyAction>(SET_ACTOR_PROPERTY_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<OperationAction>(OPERATION_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<ToggleAction>(TOGGLE_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<CompareValueAction>(COMPARE_VALUE_ACTION_NODE_TYPE.get());
