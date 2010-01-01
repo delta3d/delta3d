@@ -49,6 +49,7 @@ namespace dtDirector
       , mGraph(NULL)
       , mDragging(false)
       , mHasDragged(false)
+      , mBandSelecting(false)
       , mTranslationItem(NULL)
       , mMacroSelectionAction(NULL)
    {
@@ -404,7 +405,7 @@ namespace dtDirector
       // Update the property editor.
       mPropertyEditor->HandlePropertyContainersSelected(mSelected);
 
-      mEditor->Refresh();
+      if (!mBandSelecting) mEditor->Refresh();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -429,7 +430,7 @@ namespace dtDirector
       // Update the property editor.
       mPropertyEditor->HandlePropertyContainersSelected(mSelected);
 
-      mEditor->Refresh();
+      if (!mBandSelecting) mEditor->Refresh();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -565,11 +566,11 @@ namespace dtDirector
    {
       mDragging = false;
       mHasDragged = false;
-      bool bMultiSelect = false;
+      mBandSelecting = false;
       if (event->modifiers() == Qt::ShiftModifier ||
          event->button() == Qt::RightButton)
       {
-         bMultiSelect = true;
+         mBandSelecting = true;
          mView->setDragMode(QGraphicsView::RubberBandDrag);
          mMenuPos = event->screenPos();
       }
@@ -644,6 +645,12 @@ namespace dtDirector
 
             mEditor->GetUndoManager()->EndMultipleEvents();
          }
+      }
+
+      if (mBandSelecting)
+      {
+         mBandSelecting = false;
+         mEditor->Refresh();
       }
 
       mView->setDragMode(QGraphicsView::NoDrag);
