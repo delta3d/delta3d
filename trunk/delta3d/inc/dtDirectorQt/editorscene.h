@@ -259,6 +259,7 @@ namespace dtDirector
       bool     mDragging;
       QPointF  mDragOrigin;
       bool     mHasDragged;
+      bool     mBandSelecting;
 
       QAction* mMacroSelectionAction;
 
