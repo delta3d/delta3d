@@ -274,7 +274,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   QPointF EditorScene::GetCenter(QList<QGraphicsItem*>& nodes)
+   QPointF EditorScene::GetCenter(QList<QGraphicsItem*> &nodes)
    {
       QPointF topLeft;
       QPointF botRight;
