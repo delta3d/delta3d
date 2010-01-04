@@ -27,7 +27,7 @@
 #include <vector>
 
 #include <dtDirector/export.h>
-
+#include <dtUtil/mswinmacros.h>
 
 namespace dtDirector
 {
@@ -125,10 +125,13 @@ namespace dtDirector
 
       Node*        mOwner;
 
+#if defined DELTA_WIN32
 #pragma warning (push)
 #pragma warning (disable:4251)
-        std::vector<InputLink*> mLinks;
+      std::vector<InputLink*> mLinks;
 #pragma warning (pop)
+#endif //DELTA_WIN32
+
    };
 }
 

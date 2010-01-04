@@ -37,6 +37,7 @@
 #include <dtCore/refptr.h>
 
 #include <dtUtil/stringutils.h>
+#include <dtUtil/mswinmacros.h>
 
 #include <dtDAL/propertycontainer.h>
 
@@ -524,10 +525,12 @@ namespace dtDirector
       Director*          mDirector;
       DirectorGraph* mGraph;
 
+#if defined DELTA_WIN32
 #pragma warning (push)
 #pragma warning (disable:4251)
       dtCore::RefPtr<const NodeType>   mType;
 #pragma warning (pop)
+#endif //DELTA_WIN32
    };
 }
 
