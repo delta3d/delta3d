@@ -41,9 +41,9 @@ namespace dtDirector
       : QListWidgetItem(parent)
       , mEditor(editor)
       , mNode(NULL)
-      , mValid(false)
       , mOutput(output)
       , mThread(thread)
+      , mValid(false)
    {
       if (nodeData)
       {

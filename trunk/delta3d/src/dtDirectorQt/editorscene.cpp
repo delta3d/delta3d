@@ -42,15 +42,16 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    EditorScene::EditorScene(PropertyEditor* propEditor, GraphTabs* graphTabs, QWidget* parent)
       : QGraphicsScene(parent)
+      , mEditor(NULL)
+      , mView(NULL)
       , mPropertyEditor(propEditor)
       , mGraphTabs(graphTabs)
-      , mView(NULL)
       , mGraph(NULL)
       , mDragging(false)
       , mHasDragged(false)
       , mBandSelecting(false)
-      , mTranslationItem(NULL)
       , mMacroSelectionAction(NULL)
+      , mTranslationItem(NULL)
    {
       mPropertyEditor->SetScene(this);
 

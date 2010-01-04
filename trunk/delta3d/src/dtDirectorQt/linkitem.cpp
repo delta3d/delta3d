@@ -378,7 +378,7 @@ namespace dtDirector
       {
          QMenu menu;
          QMenu* dcMenu = menu.addMenu("Disconnect");
-         QAction* dcAll = dcMenu->addAction("Disconnect All");
+         dcMenu->addAction("Disconnect All");
          dcMenu->addSeparator();
 
          int count = (int)input->GetLinks().size();
@@ -413,9 +413,9 @@ namespace dtDirector
       , mLinkIndex(linkIndex)
       , mLineWidth(2)
       , mAltModifier(false)
-      , mHighlight(NULL)
-      , mDrawing(NULL)
       , mAlwaysHighlight(false)
+      , mDrawing(NULL)
+      , mHighlight(NULL)
    {
       setAcceptHoverEvents(true);
    }
@@ -786,7 +786,7 @@ namespace dtDirector
       {
          QMenu menu;
          QMenu* dcMenu = menu.addMenu("Disconnect");
-         QAction* dcAll = dcMenu->addAction("Disconnect All");
+         dcMenu->addAction("Disconnect All");
          dcMenu->addSeparator();
 
          int count = (int)output->GetLinks().size();
@@ -822,8 +822,8 @@ namespace dtDirector
       , mLineWidth(2)
       , mAltModifier(false)
       , mType(dtDAL::DataType::UNKNOWN_ID)
-      , mHighlight(NULL)
       , mDrawing(NULL)
+      , mHighlight(NULL)
    {
       setAcceptHoverEvents(true);
    }
@@ -1174,7 +1174,7 @@ namespace dtDirector
       {
          QMenu menu;
          QMenu* dcMenu = menu.addMenu("Disconnect");
-         QAction* dcAll = dcMenu->addAction("Disconnect All");
+         dcMenu->addAction("Disconnect All");
          dcMenu->addSeparator();
 
          int count = (int)input->GetLinks().size();
@@ -1208,8 +1208,8 @@ namespace dtDirector
       , mLineWidth(2)
       , mAltModifier(false)
       , mType(dtDAL::DataType::UNKNOWN_ID)
-      , mHighlight(NULL)
       , mDrawing(NULL)
+      , mHighlight(NULL)
    {
       setAcceptHoverEvents(true);
    }
@@ -1518,7 +1518,7 @@ namespace dtDirector
       {
          QMenu menu;
          QMenu* dcMenu = menu.addMenu("Disconnect");
-         QAction* dcAll = dcMenu->addAction("Disconnect All");
+         dcMenu->addAction("Disconnect All");
          dcMenu->addSeparator();
 
          int count = (int)output->GetLinks().size();

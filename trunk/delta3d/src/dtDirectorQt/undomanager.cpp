@@ -46,7 +46,7 @@ namespace dtDirector
    {
       if (mModifyIndex == -1) return true;
 
-      if (mModifyIndex != mUndoEvents.size()) return true;
+      if (mModifyIndex != (int)mUndoEvents.size()) return true;
 
       return false;
    }
