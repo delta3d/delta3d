@@ -34,12 +34,12 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    LerpActorTranslationAction::LerpActorTranslationAction()
       : ActionNode()
-      , mIsActive(false)
       , mStartTime(0.0f)
       , mEndTime(1.0f)
       , mTime(0.0f)
       , mLerpTimeScalar(1.0f)
       , mWaitingForStart(true)
+      , mIsActive(false)
    {
       mLerpActor = "";
 
