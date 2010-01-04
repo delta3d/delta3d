@@ -32,14 +32,15 @@ namespace dtDirector
 {
    //////////////////////////////////////////////////////////////////////////
    Director::Director()
-      : mModified(false)
-      , mGraph(NULL)
-      , mMap(NULL)
-      , mCurrentThread(-1)
+      :  mCurrentThread(-1)
       , mQueueingThreads(false)
       , mRecording(false)
       , mRecordTime(0.0f)
+      , mMap(NULL)
+      , mModified(false)
+      , mGraph(NULL)
       , mLogNodes(false)
+      , mLogger(NULL)
    {
       mPlayer = "";
       mLogger = &dtUtil::Log::GetInstance();
