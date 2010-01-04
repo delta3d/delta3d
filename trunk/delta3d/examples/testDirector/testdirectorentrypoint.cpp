@@ -29,7 +29,7 @@
 #include <dtGame/gamemanager.h>
 #include <dtGame/gameapplication.h>
 #include <dtGame/exceptionenum.h>
-
+#include <dtAudio/audiomanager.h>
 #include <dtDirector/director.h>
 
 extern "C" TEST_DIRECTOR_EXPORT dtGame::GameEntryPoint* CreateGameEntryPoint()
@@ -52,6 +52,11 @@ TestDirector::TestDirector()
 ////////////////////////////////////////////////////////////////////////////////
 TestDirector::~TestDirector()
 {
+   if (dtAudio::AudioManager::GetInstance().IsInitialized())
+   {
+      dtAudio::AudioManager::Destroy();
+   }
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
