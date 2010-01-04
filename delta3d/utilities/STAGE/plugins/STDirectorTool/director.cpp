@@ -42,8 +42,8 @@ const std::string DirectorToolPlugin::PLUGIN_NAME = "Director Tool";
 
 ////////////////////////////////////////////////////////////////////////////////
 DirectorToolPlugin::DirectorToolPlugin(MainWindow* mw)
-   : mMainWindow(mw)
-   , dtDirector::DirectorEditor(NULL)
+   : dtDirector::DirectorEditor(NULL)
+   ,  mMainWindow(mw)
 {
    // Register some custom property types.
    dtDirector::PropertyEditor* propEditor = GetPropertyEditor();
