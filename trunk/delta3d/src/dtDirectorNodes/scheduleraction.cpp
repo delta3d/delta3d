@@ -33,10 +33,10 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    SchedulerAction::SchedulerAction()
       : ActionNode()
-      , mIsActive(false)
-      , mEventIndex(-1)
       , mElapsedTime(0.0f)
       , mTotalTime(0.0f)
+      , mIsActive(false)
+      , mEventIndex(-1)
    {
       AddAuthor("Jeff P. Houde");
    }

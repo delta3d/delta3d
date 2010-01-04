@@ -31,9 +31,9 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    DelayAction::DelayAction()
       : ActionNode()
-      , mIsActive(false)
       , mDelay(1.0f)
       , mElapsedTime(0.0f)
+      , mIsActive(false)
    {
       AddAuthor("Jeff P. Houde");
    }
