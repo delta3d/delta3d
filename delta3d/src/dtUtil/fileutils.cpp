@@ -35,9 +35,9 @@
 #   if defined(_MT) || defined(_DLL)
 _CRTIMP extern int * __cdecl _errno(void);
 #      define errno   (*_errno())
-#   else   /* ndef _MT && ndef _DLL */
+#   else   // ndef _MT && ndef _DLL
 _CRTIMP extern int errno;
-#   endif  /* _MT || _DLL */
+#   endif  // _MT || _DLL
 
 //Linux and Mac OS X
 #else
@@ -101,7 +101,7 @@ namespace dtUtil
    const char FileUtils::PATH_SEPARATOR = '/';
 #endif
 
-   //temporary copy of osgDB::makeDirectory because of some bugs in it.
+   // temporary copy of osgDB::makeDirectory because of some bugs in it.
    bool iMakeDirectory(const std::string& path)
    {
       if (path.empty())
@@ -111,10 +111,12 @@ namespace dtUtil
       }
 
       struct stat64 stbuf;
-      if ( stat64( path.c_str(), &stbuf ) == 0 )
+      if (stat64(path.c_str(), &stbuf) == 0)
       {
-         if ( S_ISDIR(stbuf.st_mode))
+         if (S_ISDIR(stbuf.st_mode))
+         {
             return true;
+         }
          else
          {
             osg::notify(osg::DEBUG_INFO) << "osgDB::makeDirectory():  "  <<
@@ -128,9 +130,11 @@ namespace dtUtil
       while (true)
       {
          if (dir.empty())
+         {
             break;
+         }
 
-         if (stat64(dir.c_str(), &stbuf ) < 0)
+         if (stat64(dir.c_str(), &stbuf) < 0)
          {
             switch (errno)
             {
@@ -172,21 +176,23 @@ namespace dtUtil
    }
 
    //-----------------------------------------------------------------------
-   void FileUtils::FileCopy(const std::string& strSrc, const std::string& strDest, bool bOverwrite) const 
+   void FileUtils::FileCopy(const std::string& strSrc, const std::string& strDest, bool bOverwrite) const
    {
       FILE* pSrcFile;
       FILE* pDestFile;
 
       struct stat tagStat;
 
-      //Make absolutely certain these two strings don't point to the same file.
-      if(!IsSameFile(strSrc, strDest))
+      // Make absolutely certain these two strings don't point to the same file.
+      if (!IsSameFile(strSrc, strDest))
       {
          if (!FileExists(strSrc))
+         {
             throw dtUtil::Exception(FileExceptionEnum::FileNotFound,
                    std::string("Source file does not exist: \"") + strSrc + "\"", __FILE__, __LINE__);
+         }
 
-         //Open the source file for reading.
+         // Open the source file for reading.
          pSrcFile = fopen(strSrc.c_str(), "rb");
          if (pSrcFile == NULL)
          {
@@ -197,29 +203,39 @@ namespace dtUtil
          try
          {
             if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            {
                mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Source file exists.");
+            }
 
             std::string destFile = strDest;
 
             FileType ft = GetFileInfo(strDest).fileType;
 
-            //Check to see if the destination is a file or directory.
+            // Check to see if the destination is a file or directory.
             if (ft == DIRECTORY)
             {
                if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+               {
                   mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Destination is a directory.");
+               }
 
-               //If the file is a directory, append the base name of the source file to the destination
-               //to make the new file name.
+               // If the file is a directory, append the base name of the source file to the destination
+               // to make the new file name.
                if (strDest[strDest.size()-1] != FileUtils::PATH_SEPARATOR)
+               {
                   destFile = strDest + FileUtils::PATH_SEPARATOR + osgDB::getSimpleFileName(strSrc);
+               }
                else
+               {
                   destFile = strDest + osgDB::getSimpleFileName(strSrc);
+               }
             }
             else
             {
                if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+               {
                   mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Destination is a file.");
+               }
             }
 
             if (FileExists(destFile) && !bOverwrite)
@@ -228,11 +244,11 @@ namespace dtUtil
                       std::string("Destination file exists, but overwriting is turned off: \"") + destFile + "\"", __FILE__, __LINE__);
             }
 
-            pDestFile = fopen( destFile.c_str(), "wb" );
+            pDestFile = fopen(destFile.c_str(), "wb");
 
-            if ( pDestFile == NULL )
+            if (pDestFile == NULL)
             {
-               //make sure to close the source file.
+               // make sure to close the source file.
                throw dtUtil::Exception(FileExceptionEnum::IOException,
                       std::string("Unable to open destination for writing: \"") + destFile + "\"", __FILE__, __LINE__);
             }
@@ -240,19 +256,20 @@ namespace dtUtil
             try
             {
                if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+               {
                   mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, "Destination opened for reading.");
+               }
 
-
-               stat( strSrc.c_str(), &tagStat );
+               stat(strSrc.c_str(), &tagStat);
                long i = 0;
                char buffer[4096];
-               while (i<tagStat.st_size)
+               while (i < tagStat.st_size)
                {
                   size_t readCount = fread(buffer, 1, 4096, pSrcFile);
                   if (readCount > 0)
                   {
                      size_t numWritten = fwrite(buffer, 1, readCount, pDestFile);
-                     if (numWritten<readCount)
+                     if (numWritten < readCount)
                      {
                         throw dtUtil::Exception(FileExceptionEnum::IOException,
                                std::string("Unable to write to destinate file: \"") + destFile + "\"", __FILE__, __LINE__);
@@ -276,8 +293,8 @@ namespace dtUtil
          }
 
       }
-      //if the source equals the destination, this method is really a noop.
-      //(Not to mention the fact that if you attempt to copy a file onto itself
+      // if the source equals the destination, this method is really a noop.
+      // (Not to mention the fact that if you attempt to copy a file onto itself
       // in this manner then you will end up blowing it away).
 
    }
@@ -286,55 +303,70 @@ namespace dtUtil
    void FileUtils::FileMove(const std::string& strSrc, const std::string& strDest, bool bOverwrite) const
    {
       if (GetFileInfo(strSrc).fileType != REGULAR_FILE)
+      {
          throw dtUtil::Exception(FileExceptionEnum::FileNotFound,
                 std::string("Source file was not found or is a Directory: \"") + strSrc + "\"", __FILE__, __LINE__);
+      }
 
       FileType ft = GetFileInfo(strDest).fileType;
 
       std::string destFile = strDest;
 
-      //Check to see if the destination is a directory.
+      // Check to see if the destination is a directory.
       if (ft == DIRECTORY)
       {
          if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         {
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Destination is a directory.");
+         }
 
-         //Check to see if the destination is a file or directory.
+         // Check to see if the destination is a file or directory.
          if (strDest[strDest.size()-1] != FileUtils::PATH_SEPARATOR)
+         {
             destFile = strDest + FileUtils::PATH_SEPARATOR + osgDB::getSimpleFileName(strSrc);
+         }
          else
+         {
             destFile = strDest + osgDB::getSimpleFileName(strSrc);
+         }
 
          ft = GetFileInfo(destFile).fileType;
-
       }
       else
       {
          if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         {
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Destination is a file.");
+         }
       }
 
       if (ft != FILE_NOT_FOUND && !bOverwrite)
+      {
          throw dtUtil::Exception(FileExceptionEnum::IOException,
                 std::string("Destination file exists and the call was not set to overwrite: \"") + strDest + "\"", __FILE__, __LINE__);
+      }
 
 
-      //first check to see if the file can be moved without copying it.
+      // first check to see if the file can be moved without copying it.
       if (rename(strSrc.c_str(), destFile.c_str()) == 0)
+      {
          return;
+      }
 
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+      {
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, "Rename failed, attempting to copy file and delete the source");
+      }
 
-
-      //copy the file
+      // copy the file
       FileCopy(strSrc, strDest, bOverwrite);
 
-      //attempt to delete the original file.
+      // attempt to delete the original file.
       if (unlink(strSrc.c_str()) != 0)
+      {
          throw dtUtil::Exception(FileExceptionEnum::IOException,
                 std::string("Unable to delete \"") + strSrc + "\" but file copied to new location.", __FILE__, __LINE__);
-
+      }
    }
 
    //-----------------------------------------------------------------------
@@ -342,18 +374,23 @@ namespace dtUtil
    {
       FileType ft = GetFileInfo(strFile).fileType;
 
-      //If the file does not exist, then ignore.
+      // If the file does not exist, then ignore.
       if (ft == FILE_NOT_FOUND)
+      {
          return;
+      }
 
       if (ft != REGULAR_FILE)
+      {
          throw dtUtil::Exception(FileExceptionEnum::IOException,
                 std::string("File \"") + strFile + "\" is a directory.", __FILE__, __LINE__);
-
+      }
 
       if (unlink(strFile.c_str()) != 0)
+      {
          throw dtUtil::Exception(FileExceptionEnum::IOException,
                 std::string("Unable to delete \"") + strFile + "\".", __FILE__, __LINE__);
+      }
    }
 
    //-----------------------------------------------------------------------
@@ -361,8 +398,8 @@ namespace dtUtil
    {
       struct FileInfo info;
       struct stat tagStat;
-   
-      //chop trailing slashes off      
+
+      // chop trailing slashes off
       std::string choppedStr = strFile;
       if (strFile.size() > 0 && (strFile[strFile.size() - 1] == '\\' ||
                                  strFile[strFile.size() - 1] == '/'))
@@ -372,7 +409,7 @@ namespace dtUtil
 
       if (stat(choppedStr.c_str(), &tagStat) != 0)
       {
-         //throw dtUtil::Exception(FileExceptionEnum::FileNotFound, std::string("Cannot open file ") + choppedStr);
+         // throw dtUtil::Exception(FileExceptionEnum::FileNotFound, std::string("Cannot open file ") + choppedStr);
          info.fileType = FILE_NOT_FOUND;
          return info;
       }
@@ -385,16 +422,19 @@ namespace dtUtil
       info.lastModified = tagStat.st_mtime;
 
       if (S_ISDIR(tagStat.st_mode))
+      {
          info.fileType = DIRECTORY;
+      }
       else
-         //Anything else is a regular file, including special files
-         //this is incomplete, but not a case that we deemed necessary to handle.
-         //Symbolic links should NOT show up because stat was called, not lstat.
+      {
+         // Anything else is a regular file, including special files
+         // this is incomplete, but not a case that we deemed necessary to handle.
+         // Symbolic links should NOT show up because stat was called, not lstat.
          info.fileType = REGULAR_FILE;
+      }
 
       return info;
    }
-
 
    //-----------------------------------------------------------------------
    void FileUtils::ChangeDirectory(const std::string& path)
@@ -433,6 +473,7 @@ namespace dtUtil
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, message.c_str());
       }
    }
+
    //-----------------------------------------------------------------------
    void FileUtils::PushDirectory(const std::string& path)
    {
@@ -457,7 +498,9 @@ namespace dtUtil
       }
 
       if (mStackOfDirectories.empty())
+      {
          return;
+      }
 
       ChangeDirectoryInternal(mStackOfDirectories.back());
       mStackOfDirectories.pop_back();
@@ -476,9 +519,9 @@ namespace dtUtil
          }
          char buf[512];
          char* bufAddress = getcwd(buf, 512);
-         if ( bufAddress != buf )
+         if (bufAddress != buf)
          {
-            throw dtUtil::Exception( FileExceptionEnum::IOException, std::string("Cannot get current working directory"), __FILE__, __LINE__);
+            throw dtUtil::Exception(FileExceptionEnum::IOException, std::string("Cannot get current working directory"), __FILE__, __LINE__);
          }
          result = buf;
       }
@@ -547,7 +590,7 @@ namespace dtUtil
       }
 
       DirectoryContents filteredContents;
-      //iterate over contents, looking for files that have the requested extensions
+      // iterate over contents, looking for files that have the requested extensions
       DirectoryContents::iterator dirItr = dirContents.begin();
       while (dirItr != dirContents.end())
       {
@@ -561,8 +604,8 @@ namespace dtUtil
             if (testExt == validExt)
             {
                filteredContents.push_back((*dirItr));
-               //stop when we find at least one match, to avoid duplicate file entries, in
-               //case extensions contains duplicate entries.
+               // stop when we find at least one match, to avoid duplicate file entries, in
+               // case extensions contains duplicate entries.
                break;
             }
             ++extItr;
@@ -582,7 +625,7 @@ namespace dtUtil
 
       for (DirectoryContents::const_iterator i = dirCont.begin(); i != dirCont.end(); ++i)
       {
-         if (GetFileInfo(path + PATH_SEPARATOR + *i).fileType == DIRECTORY && (*i != ".") && (*i != "..")) 
+         if (GetFileInfo(path + PATH_SEPARATOR + *i).fileType == DIRECTORY && (*i != ".") && (*i != ".."))
          {
             vec.push_back(*i);
          }
@@ -599,17 +642,23 @@ namespace dtUtil
       //std::cout << "Copying " << srcPath << " to " << destPath << std::endl;
 
       if (destFileType == REGULAR_FILE)
+      {
          throw dtUtil::Exception(FileExceptionEnum::FileNotFound,
                 std::string("The destination path must be a directory: \"") + destPath + "\"", __FILE__, __LINE__);
+      }
 
       if (destFileType == FILE_NOT_FOUND)
+      {
          MakeDirectory(destPath);
+      }
 
       DirectoryContents contents = DirGetFiles(srcPath);
       for (DirectoryContents::iterator i = contents.begin(); i != contents.end(); ++i)
       {
          if (*i == "." || *i == "..")
+         {
             continue;
+         }
          const std::string newSrcPath = srcPath + PATH_SEPARATOR + *i;
          const std::string newDestPath = destPath + PATH_SEPARATOR + *i;
          FileInfo fi = GetFileInfo(newSrcPath);
@@ -620,7 +669,9 @@ namespace dtUtil
                 (destPath.size() == newSrcPath.size() || destPath[newSrcPath.size()] == PATH_SEPARATOR))
             {
                if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_WARNING))
+               {
                   mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, "Can't copy %s into itself.", newSrcPath.c_str());
+               }
             }
             else
             {
@@ -639,21 +690,27 @@ namespace dtUtil
                            const std::string& destPath, bool bOverwrite, bool copyContentsOnly) const
    {
       if (!DirExists(srcPath))
+      {
          throw dtUtil::Exception(FileExceptionEnum::FileNotFound,
                 std::string("Source directory does not exist: \"") + srcPath + "\"", __FILE__, __LINE__);
+      }
 
       FileType destFileType = GetFileInfo(destPath).fileType;
 
       if (destFileType == REGULAR_FILE)
+      {
          throw dtUtil::Exception(FileExceptionEnum::FileNotFound,
                 std::string("The destination path must be a directory: \"") + destPath + "\"", __FILE__, __LINE__);
+      }
 
       bool createDest = destFileType == FILE_NOT_FOUND;
 
       std::string fullSrcPath = GetAbsolutePath(srcPath);
-      //from here, the code can assume srcPath exists.
+      // from here, the code can assume srcPath exists.
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+      {
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Source directory \"%s\" exists.", fullSrcPath.c_str());
+      }
 
       std::string fullDestPath;
 
@@ -662,18 +719,22 @@ namespace dtUtil
          MakeDirectory(destPath);
          fullDestPath = GetAbsolutePath(destPath);
          if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         {
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Destination directory \"%s\" has been created.",
                                 fullDestPath.c_str());
+         }
       }
       else
       {
          fullDestPath = GetAbsolutePath(destPath);
          if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         {
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Destination directory \"%s\" exists.",
                                 fullDestPath.c_str());
+         }
 
-         if ( (copyContentsOnly && fullSrcPath == fullDestPath)
-              || (!copyContentsOnly && osgDB::getFilePath(fullSrcPath) == fullDestPath) )
+         if ((copyContentsOnly && fullSrcPath == fullDestPath)
+              || (!copyContentsOnly && osgDB::getFilePath(fullSrcPath) == fullDestPath))
          {
             throw dtUtil::Exception(FileExceptionEnum::IOException,
                    std::string("The source equals the destination: \"") + srcPath + "\"", __FILE__, __LINE__);
@@ -684,7 +745,7 @@ namespace dtUtil
             const std::string& srcName = osgDB::getSimpleFileName(fullSrcPath);
             fullDestPath += PATH_SEPARATOR + srcName;
 
-            if(DirExists(fullDestPath) && !bOverwrite)
+            if (DirExists(fullDestPath) && !bOverwrite)
             {
                throw dtUtil::Exception(FileExceptionEnum::IOException,
                            std::string("Cannot overwrite directory (overwrite flag is false): \"") + srcPath + "\"",
@@ -692,22 +753,27 @@ namespace dtUtil
             }
 
             if (!DirExists(fullDestPath))
+            {
                MakeDirectory(fullDestPath);
+            }
 
             if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            {
                mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                                    "Destination directory \"%s\" created - copyContentsOnly is false.",
                                    fullDestPath.c_str());
+            }
          }
          else
          {
             if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            {
                mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                                    "Destination directory \"%s\" exists - copyContentsOnly is true.",
                                    fullDestPath.c_str());
+            }
          }
       }
-
 
       InternalDirCopy(fullSrcPath, fullDestPath, bOverwrite);
    }
@@ -718,8 +784,10 @@ namespace dtUtil
       if (bRecursive)
       {
          if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         {
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                                 "Attempting to recursively delete %s.", strDir.c_str());
+         }
          try
          {
             PushDirectory(strDir);
@@ -737,24 +805,30 @@ namespace dtUtil
          }
          catch (const dtUtil::Exception& ex)
          {
-            //if we get a file not found trying to recurse into the top directory
-            //then the directory does not exist, so there is no need to throw an exception.
+            // if we get a file not found trying to recurse into the top directory
+            // then the directory does not exist, so there is no need to throw an exception.
             if (ex.TypeEnum() == FileExceptionEnum::FileNotFound && !DirExists(strDir))
             {
                if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+               {
                   mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                                       "Directory %s doesn't exist to delete. Ignoring.", strDir.c_str());
+               }
                return true;
             }
             else
+            {
                throw ex;
+            }
          }
       }
       else
       {
          if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         {
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                                 "Attempting to delete %s, but not recursively.", strDir.c_str());
+         }
       }
 
       errno = 0;
@@ -767,8 +841,10 @@ namespace dtUtil
          else if (errno == ENOENT)
          {
             if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            {
                mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                                    "Directory %s doesn't exist to delete. Ignoring.", strDir.c_str());
+            }
             return true;
          }
          else
@@ -787,8 +863,10 @@ namespace dtUtil
       {
          FileType ft = GetFileInfo(strDir).fileType;
          if (ft == REGULAR_FILE)
+         {
             throw dtUtil::Exception(FileExceptionEnum::IOException, std::string("Cannot create directory. ")
                    + strDir + " is an existing non-directory file.", __FILE__, __LINE__);
+         }
          else if (ft == DIRECTORY)
          {
             return;
@@ -814,7 +892,7 @@ namespace dtUtil
    }
 
    //-----------------------------------------------------------------------
-   std::string FileUtils::RelativePath(const std::string &absolutePath, const std::string &file) const
+   std::string FileUtils::RelativePath(const std::string& absolutePath, const std::string& file) const
    {
       std::string relativePath;
 
@@ -823,9 +901,13 @@ namespace dtUtil
          if (file[i] != absolutePath[i])
          {
             if (file[i] == '/')
+            {
                relativePath = file.substr(i + 1);
+            }
             else
+            {
                relativePath = file.substr(i);
+            }
 
             break;
          }
@@ -837,45 +919,47 @@ namespace dtUtil
    //-----------------------------------------------------------------------
    bool FileUtils::IsSameFile(const std::string& file1, const std::string& file2) const
    {
-      //If path names are different, we still could be pointing at the same file
-      //on disk.
+      // If path names are different, we still could be pointing at the same file
+      // on disk.
       struct stat stat1 = {0};
       struct stat stat2 = {0};
 
-      if(stat(file1.c_str(), &stat1) != 0)
+      if (stat(file1.c_str(), &stat1) != 0)
       {
          return false;
       }
 
-      if(stat(file2.c_str(), &stat2) != 0)
+      if (stat(file2.c_str(), &stat2) != 0)
       {
          return false;
       }
 
-//only Unix variants support inodes
+// only Unix variants support inodes
 #ifndef WIN32
-      if(stat1.st_ino == stat2.st_ino)
+      if (stat1.st_ino == stat2.st_ino)
       {
          return true;
       }
-#else //WIN32 -- No inodes in Windows -- we'll have to imitate an inode's functionality.
-      if(stat1.st_atime == stat2.st_atime &&
-         stat1.st_ctime == stat2.st_ctime &&
-         stat1.st_mtime == stat2.st_mtime &&
-         stat1.st_gid   == stat2.st_gid   &&
-         stat1.st_uid   == stat2.st_uid   &&
-         stat1.st_mode  == stat2.st_mode  &&
-         stat1.st_size  == stat2.st_size)
+#else // WIN32 -- No inodes in Windows -- we'll have to imitate an inode's functionality.
+      if (stat1.st_atime == stat2.st_atime &&
+          stat1.st_ctime == stat2.st_ctime &&
+          stat1.st_mtime == stat2.st_mtime &&
+          stat1.st_gid   == stat2.st_gid   &&
+          stat1.st_uid   == stat2.st_uid   &&
+          stat1.st_mode  == stat2.st_mode  &&
+          stat1.st_size  == stat2.st_size)
       {
-         //also make sure the file names (NOT paths) are the same
+         // also make sure the file names (NOT paths) are the same
          std::string file1Name = file1.substr(file1.find_last_of("\\/"));
-         //Windows is case insensitive
+         // Windows is case insensitive
          std::transform(file1Name.begin(), file1Name.end(), file1Name.begin(), tolower);
          std::string file2Name = file2.substr(file2.find_last_of("\\/"));
          std::transform(file2Name.begin(), file2Name.end(), file2Name.begin(), tolower);
 
          if (file1Name == file2Name)
+         {
             return true;
+         }
       }
 #endif
 
@@ -885,39 +969,40 @@ namespace dtUtil
    //-----------------------------------------------------------------------
    void FileUtils::RecursDeleteDir(bool bRecursive)
    {
-      //this method assumes one is IN the directory that you want to delete.
+      // this method assumes one is IN the directory that you want to delete.
       DirectoryContents dirCont = DirGetFiles(mCurrentDirectory);
 
-      //iterate over all of the directory contents.
+      // iterate over all of the directory contents.
       for (DirectoryContents::const_iterator i = dirCont.begin(); i != dirCont.end(); ++i)
       {
          FileType ft = GetFileInfo(*i).fileType;
          if (ft == REGULAR_FILE)
          {
-            //Delete regular files.
+            // Delete regular files.
             errno = 0;
             if (unlink(i->c_str()) < 0)
             {
                throw dtUtil::Exception(FileExceptionEnum::IOException,
                       std::string("Unable to delete directory \"") + *i + "\":" + strerror(errno), __FILE__, __LINE__);
-
             }
          }
          else if ((*i != ".") && (*i != "..") && ft == DIRECTORY && bRecursive)
          {
-            //if it's a directory and it's not the "." or ".." special directories,
-            //change into that directory and recurse.
+            // if it's a directory and it's not the "." or ".." special directories,
+            // change into that directory and recurse.
             ChangeDirectoryInternal(*i);
-            RecursDeleteDir( true );
-            //now that the directory is empty, remove it.
+            RecursDeleteDir(true);
+            // now that the directory is empty, remove it.
             errno = 0;
-            if ( rmdir( i->c_str() ) != 0 )
+            if (rmdir(i->c_str()) != 0)
             {
                if (errno == ENOENT)
                {
                   if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                  {
                      mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                                          "Directory %s doesn't exist to delete. Ignoring.", (mCurrentDirectory + PATH_SEPARATOR + *i).c_str());
+                  }
                   return;
                }
                else
@@ -930,7 +1015,7 @@ namespace dtUtil
          }
       }
 
-      //change up so that when the method ends, the directory is ready to be removed.
+      // change up so that when the method ends, the directory is ready to be removed.
       ChangeDirectoryInternal(std::string(".."));
    }
 
@@ -938,14 +1023,14 @@ namespace dtUtil
    FileUtils::FileUtils()
    {
       mLogger = &dtUtil::Log::GetInstance(std::string("fileutils.cpp"));
-      //assign the current directory
+      // assign the current directory
       ChangeDirectory(".");
    }
 
    //-----------------------------------------------------------------------
    FileUtils::~FileUtils() {}
 
-   /*void FileUtils::AbsoluteToRelative(const std::string &pcAbsPath, std::string& relPath)
+   /*void FileUtils::AbsoluteToRelative(const std::string& pcAbsPath, std::string& relPath)
    {
       char pcRelPath[MAX_PATH];
       char acTmpCurrDir[MAX_PATH];
@@ -953,10 +1038,12 @@ namespace dtUtil
       int count = 0;
       std::string curDir = CurrentDirectory();
 
-      for (size_t i = 0; i < curDir.size(); i++)
+      for (size_t i = 0; i < curDir.size(); ++i)
       {
          if (curDir[i] == '\\')
+         {
             curDir[i] = '/';
+         }
       }
 
       strcpy(acTmpCurrDir, curDir.c_str());
@@ -967,9 +1054,9 @@ namespace dtUtil
       std::stack<char*> tmpStackOutput;
       std::queue<char*> tmpMatchQueue;
 
-      const char *pathSep = "/";
+      const char* pathSep = "/";
 
-      char *sTmp = strtok(acTmpAbsPath, pathSep);
+      char* sTmp = strtok(acTmpAbsPath, pathSep);
       while (sTmp)
       {
          tmpStackAbsPath.push(sTmp);
@@ -984,7 +1071,7 @@ namespace dtUtil
       }
 
       sTmp = pcRelPath;
-      while (tmpStackCurrPath.size() > tmpStackAbsPath.size() )
+      while (tmpStackCurrPath.size() > tmpStackAbsPath.size())
       {
          *sTmp++ = '.';
          *sTmp++ = '.';
@@ -992,17 +1079,19 @@ namespace dtUtil
          tmpStackCurrPath.pop();
       }
 
-      while (tmpStackAbsPath.size() > tmpStackCurrPath.size() )
+      while (tmpStackAbsPath.size() > tmpStackCurrPath.size())
       {
-         char *pcTmp = tmpStackAbsPath.top();
+         char* pcTmp = tmpStackAbsPath.top();
          tmpStackOutput.push(pcTmp);
          tmpStackAbsPath.pop();
       }
 
       while (!tmpStackAbsPath.empty())
       {
-         if (strcmp(tmpStackAbsPath.top(),tmpStackCurrPath.top())== 0  )
+         if (strcmp(tmpStackAbsPath.top(),tmpStackCurrPath.top()) == 0)
+         {
             tmpMatchQueue.push(tmpStackAbsPath.top());
+         }
          else
          {
             while (!tmpMatchQueue.empty())
@@ -1020,9 +1109,11 @@ namespace dtUtil
       }
       while (!tmpStackOutput.empty())
       {
-         char *pcTmp= tmpStackOutput.top();
+         char* pcTmp= tmpStackOutput.top();
          while (*pcTmp != '\0')
+         {
             sTmp[count++] = *pcTmp++;
+         }
          tmpStackOutput.pop();
          sTmp[count++] = '/';
       }
@@ -1030,4 +1121,4 @@ namespace dtUtil
 
       relPath = sTmp;
    }*/
-}
+} // namespace dtUtil

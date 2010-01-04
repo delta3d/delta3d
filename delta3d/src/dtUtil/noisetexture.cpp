@@ -3,7 +3,7 @@
 // Modified to support 2d noise and to to be tile-able to every
 // dimension
 
- 
+
 #include <prefix/dtutilprefix-src.h>
 #include <dtUtil/noisetexture.h>
 #include <cmath>
@@ -17,21 +17,20 @@ using namespace dtUtil;
 NoiseTexture::NoiseTexture() { }
 
 NoiseTexture::NoiseTexture(int    octaves,
-                               int    frequency,
-                               double amp,
-                               double persistence,
-                               int    width,
-                               int    height,
-                               int    slices)
-   : mWidth(width),
-     mHeight(height),
-     mSlices(slices),
-     mOctaves(octaves),
-     mFrequency(frequency),
-     mAmplitude(amp),
-     mPersistence(persistence)
+                           int    frequency,
+                           double amp,
+                           double persistence,
+                           int    width,
+                           int    height,
+                           int    slices)
+   : mWidth(width)
+   , mHeight(height)
+   , mSlices(slices)
+   , mOctaves(octaves)
+   , mFrequency(frequency)
+   , mAmplitude(amp)
+   , mPersistence(persistence)
 {
-   
 }
 
 NoiseTexture::~NoiseTexture() {}
@@ -42,11 +41,11 @@ NoiseTexture::~NoiseTexture() {}
 // Note - Do NOT try to create very large 3d textures
 // A 3d texture of 512^3 with only one component (like ALPHA),
 // results in a dds file of 134,217,728 bytes (128 Mbytes)
-osg::Image *NoiseTexture::MakeNoiseTexture(GLenum format)
+osg::Image* NoiseTexture::MakeNoiseTexture(GLenum format)
 {
 
     mImage = new osg::Image;
-    
+
     int freq   = mFrequency;
     double amp = mAmplitude;
 
@@ -59,11 +58,11 @@ osg::Image *NoiseTexture::MakeNoiseTexture(GLenum format)
     double inci, incj, inck;
     double ni[3];
 
-    /* Make sure 0's are written in the image's data segment*/
+    // Make sure 0's are written in the image's data segment
     int imageSize = mWidth * mHeight * mSlices * components;
-    unsigned char * dataPtr = new unsigned char[imageSize], *ptr, data;
+    unsigned char* dataPtr = new unsigned char[imageSize], *ptr, data;
     unsigned char charToFill = 0;
-    memset(dataPtr, charToFill, imageSize);  
+    memset(dataPtr, charToFill, imageSize);
 
     for (f = 0; f < mOctaves; ++f, freq *= 2, amp *= mPersistence)
     {
@@ -75,8 +74,8 @@ osg::Image *NoiseTexture::MakeNoiseTexture(GLenum format)
         incj = (float)freq / mHeight;
         inck = (float)freq / mWidth;
 
-        
-        for (i = 0; i < mSlices; ++i, ni[2] += inci, ni[1] =  0)
+
+        for (i = 0; i < mSlices; ++i, ni[2] += inci, ni[1] = 0)
         {
             for (j = 0; j < mHeight; ++j, ni[1] += incj, ni[0] = 0)
             {
@@ -84,7 +83,7 @@ osg::Image *NoiseTexture::MakeNoiseTexture(GLenum format)
                 {
                    data = (unsigned char) (((mNoise.GetNoise(osg::Vec3f(ni[0], ni[1], ni[2]), freq) + 1.0) * amp) * 128);
 
-                    switch(format)
+                    switch (format)
                     {
                     case GL_RGB:
                         if (*(ptr) + data >  255)
@@ -95,33 +94,37 @@ osg::Image *NoiseTexture::MakeNoiseTexture(GLenum format)
                         }
                         else
                         {
-                            *(ptr++) +=  data;
-                            *(ptr++) +=  data;
-                            *(ptr++) +=  data;
+                            *(ptr++) += data;
+                            *(ptr++) += data;
+                            *(ptr++) += data;
                         }
                         break;
                     case GL_RGBA:
                         if (*(ptr) + data >  255)  // Clamping because wrapping could occur
                         {
-                            *(ptr++) = 255;  //R
-                            *(ptr++) = 255;  //G
-                            *(ptr++) = 255;  //B
-                            *(ptr++) = 255;  //A
+                            *(ptr++) = 255; // R
+                            *(ptr++) = 255; // G
+                            *(ptr++) = 255; // B
+                            *(ptr++) = 255; // A
                         }
-                        else  
+                        else
                         {
-                            *(ptr++) +=  data;  //R
-                            *(ptr++) +=  data;  //G
-                            *(ptr++) +=  data;  //B
-                            *(ptr++) = 255;     //A
+                            *(ptr++) += data; // R
+                            *(ptr++) += data; // G
+                            *(ptr++) += data; // B
+                            *(ptr++)  = 255;  // A
                         }
                         break;
                     case GL_ALPHA:
                     case GL_LUMINANCE:
                         if (*(ptr) + data >  255)
+                        {
                             *(ptr++) = 255;
+                        }
                         else
+                        {
                             *(ptr++) +=  data;
+                        }
 
                         break;
 
@@ -132,11 +135,9 @@ osg::Image *NoiseTexture::MakeNoiseTexture(GLenum format)
             }
         }
     }
-    
+
     mImage->setImage(mWidth, mHeight, mSlices, pixelFormat, internalTextureFormat, dataType,
         dataPtr, osg::Image::USE_NEW_DELETE);
 
     return mImage;
 }
-
-
