@@ -31,7 +31,7 @@
 #include <dtDAL/datatype.h>
 
 #include <dtCore/refptr.h>
-
+#include <dtUtil/mswinmacros.h>
 
 namespace dtDAL
 {
@@ -216,10 +216,13 @@ namespace dtDirector
       std::string mLabel;
       bool mVisible;
 
+#if defined DELTA_WIN32
 #pragma warning (push)
 #pragma warning (disable:4251)
       std::vector<ValueNode*> mLinks;
 #pragma warning (pop)
+#endif //DELTA_WIN32
+
       dtDAL::ActorProperty* mDefaultProperty;
 
       bool mIsOut;
