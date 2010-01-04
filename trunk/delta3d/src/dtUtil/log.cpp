@@ -1,23 +1,23 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
-* Copyright (C) 2005, BMH Associates, Inc.
-*
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
-* any later version.
-*
-* This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
-* details.
-*
-* You should have received a copy of the GNU Lesser General Public License
-* along with this library; if not, write to the Free Software Foundation, Inc.,
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*
-* Matthew W. Campbell
-*/
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2005, BMH Associates, Inc.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * Matthew W. Campbell
+ */
 #include <prefix/dtutilprefix-src.h>
 #include <dtUtil/log.h>
 #include <dtUtil/bits.h>
@@ -171,9 +171,11 @@ namespace dtUtil
       //std::cout << "LogFile try to change files to " << name << std::endl;
 
       sLogFileName = name.c_str();
-      if (manager == NULL) {
+      if (manager == NULL)
+      {
          manager = new LogManager;
-      } else {
+      } else
+      {
          manager->OpenFile();
       }
    }
@@ -214,8 +216,8 @@ namespace dtUtil
    //////////////////////////////////////////////////////////////////////////
 
    Log::Log(const std::string& name)
-   : mLevel(Log::LOG_WARNING)
-   , mImpl(new LogImpl(name))
+      : mLevel(Log::LOG_WARNING)
+      , mImpl(new LogImpl(name))
    {
    }
 
@@ -232,10 +234,14 @@ namespace dtUtil
                 LogMessageType msgType) const
    {
       if (mImpl->mOutputStreamBit == Log::NO_OUTPUT)
+      {
          return;
+      }
 
       if (msgType < mLevel)
+      {
          return;
+      }
 
       struct tm *t;
       time_t cTime;
@@ -265,7 +271,6 @@ namespace dtUtil
       case LOG_ALWAYS:
          color = "<b><font color=#000000>";
          break;
-
       }
 
       OpenThreads::ScopedLock<OpenThreads::Mutex> lock(manager->mMutex);
@@ -282,13 +287,13 @@ namespace dtUtil
             }
          }
 
-         static const std::string htmlNewline ( "<br>\n" );
-         std::string htmlMsg ( msg );
-         for ( size_t lineEnd = htmlMsg.find( '\n' );
+         static const std::string htmlNewline ("<br>\n");
+         std::string htmlMsg (msg);
+         for (size_t lineEnd = htmlMsg.find('\n');
               lineEnd != std::string::npos;
-              lineEnd = htmlMsg.find( '\n', lineEnd ) )
+              lineEnd = htmlMsg.find('\n', lineEnd))
          {
-            htmlMsg.replace ( lineEnd, 1, htmlNewline );
+            htmlMsg.replace (lineEnd, 1, htmlNewline);
             lineEnd += htmlNewline.size() + 1;
          }
          manager->logFile << color << GetLogLevelString(msgType) << ": "
@@ -297,7 +302,9 @@ namespace dtUtil
             << std::setw(2) << std::setfill('0') << t->tm_sec << ": &lt;"
             << source;
          if (line > 0)
+         {
             manager->logFile << ":" << line;
+         }
 
          manager->logFile << "&gt; " << htmlMsg << "</font></b><br>" << std::endl;
 
@@ -317,7 +324,6 @@ namespace dtUtil
          }
          std::cout << ">" << msg << std::endl;
       }
-
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -340,7 +346,6 @@ namespace dtUtil
       va_start(list,msg);
       LogMessage(msgType, source, -1, msg, list);
       va_end(list);
-
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -367,10 +372,14 @@ namespace dtUtil
    void Log::LogHorizRule()
    {
       if (!manager->logFile.is_open())
+      {
          return;
+      }
 
       if (mImpl->mOutputStreamBit == Log::NO_OUTPUT)
+      {
          return;
+      }
 
       if (dtUtil::Bits::Has(mImpl->mOutputStreamBit, Log::TO_FILE))
       {
@@ -388,7 +397,9 @@ namespace dtUtil
    Log& Log::GetInstance(const std::string& name)
    {
       if (manager == NULL)
+      {
          manager = new LogManager;
+      }
 
       Log* l = manager->GetInstance(name);
       if (l == NULL)
@@ -401,11 +412,11 @@ namespace dtUtil
    }
 
    //////////////////////////////////////////////////////////////////////////
-   const std::string Log::GetLogLevelString( Log::LogMessageType msgType) const
+   const std::string Log::GetLogLevelString(Log::LogMessageType msgType) const
    {
       std::string lev;
 
-      switch(msgType)
+      switch (msgType)
       {
       case Log::LOG_ALWAYS:  lev = "Always";  break;
       case Log::LOG_ERROR:   lev = "Error";   break;
@@ -420,20 +431,32 @@ namespace dtUtil
    }
 
    //////////////////////////////////////////////////////////////////////////
-   Log::LogMessageType Log::GetLogLevelForString( const std::string& levelString) const
+   Log::LogMessageType Log::GetLogLevelForString(const std::string& levelString) const
    {
       if (levelString == "Always" || levelString == "ALWAYS")
+      {
          return LOG_ALWAYS;
+      }
       else if (levelString == "Error" || levelString == "ERROR")
+      {
          return LOG_ERROR;
+      }
       else if (levelString == "Warn" || levelString == "WARN" || levelString == "Warning" || levelString == "WARNING")
+      {
          return LOG_WARNING;
+      }
       else if (levelString == "Info" || levelString == "INFO")
+      {
          return LOG_INFO;
+      }
       else if (levelString == "Debug" || levelString == "DEBUG")
+      {
          return LOG_DEBUG;
-
-      else return LOG_WARNING;
+      }
+      else
+      {
+         return LOG_WARNING;
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////
@@ -454,4 +477,4 @@ namespace dtUtil
       return mImpl->mName;
    }
 
-} //end namespace
+} // namespace dtUtil

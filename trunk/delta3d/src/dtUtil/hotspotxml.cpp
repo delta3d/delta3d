@@ -19,8 +19,8 @@ const char HotSpotFileHandler::HOT_SPOT_PARENT_NODE_NAME[] = { "Parent\0" };
 const char HotSpotFileHandler::LOCAL_TRANSLATION_NODE_NAME[] = { "LocalTranslation\0" };
 const char HotSpotFileHandler::LOCAL_ROTATION_NODE_NAME[] = { "LocalRotation\0" };
 
-void HotSpotFileHandler::startElement( const XMLCh* const uri,const XMLCh* const localname,
-                                       const XMLCh* const qname, const XERCES_CPP_NAMESPACE_QUALIFIER Attributes& attrs )
+void HotSpotFileHandler::startElement(const XMLCh* const uri,const XMLCh* const localname,
+                                      const XMLCh* const qname, const XERCES_CPP_NAMESPACE_QUALIFIER Attributes& attrs)
 {
    dtUtil::XMLStringConverter elementName(localname);
    const std::string elementStr = elementName.ToString();
@@ -31,14 +31,14 @@ void HotSpotFileHandler::startElement( const XMLCh* const uri,const XMLCh* const
 
    HotSpotNode currentNode(NODE_UNKNOWN);
 
-   if( elementStr == HOT_SPOT_NODE_NAME )
+   if (elementStr == HOT_SPOT_NODE_NAME)
    {
       currentNode = NODE_HOT_SPOT;
 
       mCurrentData = HotSpotDefinition();
       results = search(attrs);
       resultIter = results.find(NAME_ATTRIBUTE_NAME);
-      if( resultIter != results.end() )
+      if (resultIter != results.end())
       {
          mCurrentData.mName = resultIter->second;
       }
@@ -47,20 +47,20 @@ void HotSpotFileHandler::startElement( const XMLCh* const uri,const XMLCh* const
          mCurrentData.mName = DEFAULT_VALUE;
       }
    }
-   else if( elementStr == HOT_SPOT_PARENT_NODE_NAME )
+   else if (elementStr == HOT_SPOT_PARENT_NODE_NAME)
    {
       currentNode = NODE_HOT_SPOT_PARENT;
    }
-   else if( elementStr == LOCAL_TRANSLATION_NODE_NAME )
+   else if (elementStr == LOCAL_TRANSLATION_NODE_NAME)
    {
       currentNode = NODE_HOT_SPOT_LOCAL_TRANSLATION;
    }
-   else if( elementStr == LOCAL_ROTATION_NODE_NAME )
+   else if (elementStr == LOCAL_ROTATION_NODE_NAME)
    {
       currentNode = NODE_HOT_SPOT_LOCAL_ROTATION;
    }
 
-   mNodeStack.push( currentNode );
+   mNodeStack.push(currentNode);
 }
 
 void HotSpotFileHandler::endElement(const XMLCh* const uri,const XMLCh* const localname,const XMLCh* const qname)
@@ -68,9 +68,9 @@ void HotSpotFileHandler::endElement(const XMLCh* const uri,const XMLCh* const lo
    dtUtil::XMLStringConverter elementName(localname);
    const std::string elementStr = elementName.ToString();
 
-   if( elementStr == HOT_SPOT_NODE_NAME )
+   if (elementStr == HOT_SPOT_NODE_NAME)
    {
-      mHotSpots.push_back( mCurrentData );
+      mHotSpots.push_back(mCurrentData);
    }
 
    mNodeStack.pop();
@@ -78,7 +78,7 @@ void HotSpotFileHandler::endElement(const XMLCh* const uri,const XMLCh* const lo
 
 void HotSpotFileHandler::characters(const XMLCh* const chars, const unsigned int length)
 {
-   switch( mNodeStack.top() )
+   switch (mNodeStack.top())
    {
    case NODE_HOT_SPOT_PARENT:
       {
@@ -90,7 +90,7 @@ void HotSpotFileHandler::characters(const XMLCh* const chars, const unsigned int
       {
          dtUtil::XMLStringConverter data(chars);
          std::istringstream iss;
-         iss.str( data.ToString() );
+         iss.str(data.ToString());
          float x, y, z;
          iss >> x >> y >> z;
          mCurrentData.mLocalTranslation.set(x,y,z);
@@ -100,7 +100,7 @@ void HotSpotFileHandler::characters(const XMLCh* const chars, const unsigned int
       {
          dtUtil::XMLStringConverter data(chars);
          std::istringstream iss;
-         iss.str( data.ToString() );
+         iss.str(data.ToString());
          float heading, pitch, roll;
          iss >> heading >> pitch >> roll;
 
@@ -111,8 +111,7 @@ void HotSpotFileHandler::characters(const XMLCh* const chars, const unsigned int
 
    case NODE_UNKNOWN:
    default:
-      {
-      } break;
+      break;
    }
 }
 
@@ -132,5 +131,4 @@ HotSpotFileHandler::HotSpotDefinitionVector& HotSpotFileHandler::GetData()
    return mHotSpots;
 }
 
-}
-
+} // namespace dtUtil

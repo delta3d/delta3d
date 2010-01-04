@@ -608,7 +608,7 @@ namespace dtUtil
 
       if (str.length() > SHRT_MAX)
       {
-         LOGN_WARNING(LOGNAME, 
+         LOGN_WARNING(LOGNAME,
             "Attempting to write string a string longer than the max size for messages, truncating.");
       }
 
@@ -740,7 +740,7 @@ namespace dtUtil
    ///////////////////////////////////////////////////////////////////////////////
    unsigned int DataStream::WriteBinary(const char* pBuffer, const unsigned int size)
    {
-      if(mBufferCapacity - mWritePos < size)
+      if (mBufferCapacity - mWritePos < size)
       {
          IncreaseBufferSize(size - (mBufferCapacity - mWritePos));
       }
@@ -754,11 +754,11 @@ namespace dtUtil
    unsigned int DataStream::ReadBinary(char* pBuffer, const unsigned int size)
    {
       unsigned int readSize = 0;
-      if( (mBufferSize - mReadPos) < size)
+      if ( (mBufferSize - mReadPos) < size)
       {
          readSize = mBufferSize - mReadPos;
       }
-      else 
+      else
       {
          readSize = size;
       }
@@ -839,7 +839,7 @@ namespace dtUtil
    unsigned int DataStream::ResizeBuffer(unsigned int size)
    {
       unsigned int newSize = 0;
-      if(size == 0)
+      if (size == 0)
       {
          newSize = mBufferCapacity * 2;
       }
@@ -851,11 +851,11 @@ namespace dtUtil
       char *newBuffer = new char[newSize];
 
       // copy old buffercontents
-      if(newSize < mBufferCapacity)
+      if (newSize < mBufferCapacity)
       {
          memcpy(&newBuffer[0],&mBuffer[0],newSize);
       }
-      else 
+      else
       {
          memcpy(&newBuffer[0],&mBuffer[0],mBufferCapacity);
       }
@@ -868,7 +868,7 @@ namespace dtUtil
       mBuffer = newBuffer;
       mBufferCapacity = newSize;
       return mBufferCapacity;
-   } 
+   }
 
    unsigned int DataStream::IncreaseBufferSize(const unsigned int size)
    {
@@ -876,8 +876,8 @@ namespace dtUtil
    }
 
    unsigned int DataStream::GetRemainingReadSize()
-   { 
-      return mBufferSize - mReadPos; 
+   {
+      return mBufferSize - mReadPos;
    }
 
    unsigned int DataStream::ClearBuffer()
@@ -893,4 +893,4 @@ namespace dtUtil
       IncreaseBufferSize(dataStream.GetBufferSize());
       return WriteBinary(dataStream.GetBuffer(), dataStream.GetBufferSize());
    }
-}
+} // namespace dtUtil

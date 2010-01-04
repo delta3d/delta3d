@@ -18,15 +18,15 @@ using namespace dtUtil;
 XERCES_CPP_NAMESPACE_USE
 
 ////////////////////////////////////////////////////////////////////////////////
-XercesParser::XercesParser():
-mParser(NULL)
+XercesParser::XercesParser()
+   : mParser(NULL)
 {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 XercesParser::~XercesParser()
 {
-   if (mParser!=NULL)
+   if (mParser != NULL)
    {
       delete mParser;
       mParser = NULL;
@@ -34,13 +34,13 @@ XercesParser::~XercesParser()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool XercesParser::Parse(const std::string& datafile, 
-                         XERCES_CPP_NAMESPACE_QUALIFIER ContentHandler& handler, 
+bool XercesParser::Parse(const std::string& datafile,
+                         XERCES_CPP_NAMESPACE_QUALIFIER ContentHandler& handler,
                          const std::string& schemafile)
 {
    std::string filename = dtUtil::FindFileInPathList(datafile);
 
-   if(filename.empty())
+   if (filename.empty())
    {
       LOG_ERROR("Can't find file: " + datafile);
       return false;
@@ -50,22 +50,22 @@ bool XercesParser::Parse(const std::string& datafile,
    {
       XMLPlatformUtils::Initialize();
    }
-   catch (const XMLException& e) 
+   catch (const XMLException& e)
    {
       char* message = XMLString::transcode(e.getMessage());
       LOG_ERROR(message)
       XMLString::release(&message);
       return false;
    }
-   catch(...)
+   catch (...)
    {
       LOG_ERROR("An exception occurred while trying to initialize Xerces.");
       return false;
    }
 
    dtUtil::XercesErrorHandler xmlerror;                         // instantiate the error handler
-   
-   try  // to create a reader
+
+   try // to create a reader
    {
       mParser = XMLReaderFactory::createXMLReader();        // allocate the mParser
       mParser->setContentHandler(&handler);
@@ -74,13 +74,13 @@ bool XercesParser::Parse(const std::string& datafile,
       if (!schemafile.empty())
       {
          std::string schema = osgDB::findDataFile(schemafile);
-        
-         if(schema.empty())
+
+         if (schema.empty())
          {
             LOG_WARNING("Scheme file, " + schemafile + ", not found, check your DELTA_DATA environment variable, schema checking disabled.")
          }
-         else   // turn on schema checking
-         {        
+         else // turn on schema checking
+         {
             // In some cases, schema will contain a url that is
             // relative to the current working directory which
             // may cause problems with xerces correctly finding it
@@ -97,25 +97,25 @@ bool XercesParser::Parse(const std::string& datafile,
          }
       }
    }
-   catch(const XMLException& e)
+   catch (const XMLException& e)
    {
-      char* message = XMLString::transcode( e.getMessage() );
+      char* message = XMLString::transcode(e.getMessage());
       std::string msg(message);
       LOG_ERROR("An exception occurred during XMLReaderFactory::createXMLReader() with message: " + msg);
-      XMLString::release( &message );
+      XMLString::release(&message);
       return false;
    }
-   catch(...)
+   catch (...)
    {
       LOG_ERROR("Could not create a Xerces SAX2XMLReader")
       return false;
    }
 
    bool retVal(false);
-   try  // to parse the file
+   try // to parse the file
    {
       LOG_DEBUG("About to parse file: " + filename)
-      mParser->parse( filename.c_str() );
+      mParser->parse(filename.c_str());
       LOG_DEBUG("...done parsing file: " + filename)
       retVal = true;
    }
@@ -127,8 +127,8 @@ bool XercesParser::Parse(const std::string& datafile,
    }
    catch (const SAXParseException&)
    {
-      //problem with the xml parsing.  Not much to do here since the XercesErrorHandler
-      //will report it for us.
+      // problem with the xml parsing.  Not much to do here since the XercesErrorHandler
+      // will report it for us.
       retVal = false;
    }
 

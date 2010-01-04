@@ -14,20 +14,22 @@
 XERCES_CPP_NAMESPACE_USE
 using namespace dtUtil;
 
-XercesWriter::XercesWriter(): mImplementation(0), mDocument(0)
+XercesWriter::XercesWriter()
+   : mImplementation(0)
+   , mDocument(0)
 {
-   try  // to initialize the xml tools
+   try // to initialize the xml tools
    {
       XMLPlatformUtils::Initialize();
    }
-   catch(const XMLException& e)
+   catch (const XMLException& e)
    {
-      char* message = XMLString::transcode( e.getMessage() );
+      char* message = XMLString::transcode(e.getMessage());
       std::string msg(message);
       LOG_ERROR("An exception occurred during XMLPlatformUtils::Initialize() with message: " + msg);
-      XMLString::release( &message );
+      XMLString::release(&message);
    }
-   catch(...)
+   catch (...)
    {
       LOG_ERROR("An exception occurred during XMLPlatformUtils::Initialize()");
       return;
@@ -37,13 +39,12 @@ XercesWriter::XercesWriter(): mImplementation(0), mDocument(0)
    {
       DOMImplementation* impl;
       XMLCh* CORE = XMLString::transcode("Core");  // xerces example used "Core", no idea if that is necessary.
-      impl = DOMImplementationRegistry::getDOMImplementation( CORE );
-      XMLString::release( &CORE );
+      impl = DOMImplementationRegistry::getDOMImplementation(CORE);
+      XMLString::release(&CORE);
 
       mImplementation = impl;
    }
-
-   catch(...)
+   catch (...)
    {
       LOG_ERROR("There was a problem creating a Xerces DOMImplementation.")
       mImplementation = 0;
@@ -53,31 +54,33 @@ XercesWriter::XercesWriter(): mImplementation(0), mDocument(0)
 XercesWriter::~XercesWriter()
 {
    // clean up the _document stuff
-   if( mDocument )
+   if (mDocument)
+   {
       mDocument->release();
+   }
 }
 
 void XercesWriter::CreateDocument(const std::string& rootname)
 {
-   if( mImplementation )
+   if (mImplementation)
    {
-      if( mDocument )
-      {  // blow away the old document
+      if (mDocument)
+      {
+         // blow away the old document
          mDocument->release();
       }
 
       try
       {
-         XMLCh* ROOTNAME = XMLString::transcode( rootname.c_str() );
-         mDocument = mImplementation->createDocument(0,ROOTNAME,0);
-         XMLString::release( &ROOTNAME );
+         XMLCh* ROOTNAME = XMLString::transcode(rootname.c_str());
+         mDocument = mImplementation->createDocument(0, ROOTNAME, 0);
+         XMLString::release(&ROOTNAME);
       }
-      catch(...)
+      catch (...)
       {
          LOG_ERROR("There was a problem creating a new Xerces DOMDocument.")
       }
    }
-
    else
    {
       LOG_ERROR("Could not create the XML document because the requested Xerces implementation is not valid.");
@@ -86,12 +89,13 @@ void XercesWriter::CreateDocument(const std::string& rootname)
 
 void XercesWriter::WriteFile(const std::string& outputfile)
 {
-   if( mImplementation )
-   {  // log it?
+   if (mImplementation)
+   {
+      // log it?
    }
    else
    {
-      LOG_ERROR("Can not write file, "+ outputfile +", because the requested Xerces implementation is not valid.");
+      LOG_ERROR("Can not write file, " + outputfile + ", because the requested Xerces implementation is not valid.");
       return;
    }
 
@@ -101,28 +105,30 @@ void XercesWriter::WriteFile(const std::string& outputfile)
    XMLCh* OUTPUT;
    try
    {
-      OUTPUT = XMLString::transcode( outputfile.c_str() );
-      xmlstream = new LocalFileFormatTarget( OUTPUT );
+      OUTPUT = XMLString::transcode(outputfile.c_str());
+      xmlstream = new LocalFileFormatTarget(OUTPUT);
       writer = mImplementation->createDOMWriter();
    }
-   catch(...)
+   catch (...)
    {
-      if( OUTPUT )
-         XMLString::release( &OUTPUT );
-      LOG_ERROR("Can not write file, "+ outputfile +", because creation of a writing tools failed.");
+      if (OUTPUT)
+      {
+         XMLString::release(&OUTPUT);
+      }
+      LOG_ERROR("Can not write file, " + outputfile + ", because creation of a writing tools failed.");
       return;
    }
 
    // turn on pretty print
-   if( writer->canSetFeature(XMLUni::fgDOMWRTFormatPrettyPrint,true) )
+   if (writer->canSetFeature(XMLUni::fgDOMWRTFormatPrettyPrint, true))
    {
-      writer->setFeature(XMLUni::fgDOMWRTFormatPrettyPrint,true);
+      writer->setFeature(XMLUni::fgDOMWRTFormatPrettyPrint, true);
    }
 
    // write it!
    try
    {
-      if( !writer->writeNode(xmlstream, *mDocument) )
+      if (!writer->writeNode(xmlstream, *mDocument))
       {
          LOG_ERROR("There was a problem writing file, " + outputfile)
       }
@@ -132,10 +138,10 @@ void XercesWriter::WriteFile(const std::string& outputfile)
    }
    catch (const OutOfMemoryException& e)
    {
-      char* message = XMLString::transcode( e.getMessage() );
-      std::string msg( message );
-      XMLString::release( &message );
-      LOG_ERROR("When writing file," +outputfile+ ", an OutOfMemoryException occurred." + msg);
+      char* message = XMLString::transcode(e.getMessage());
+      std::string msg(message);
+      XMLString::release(&message);
+      LOG_ERROR("When writing file," + outputfile + ", an OutOfMemoryException occurred." + msg);
       delete xmlstream;
    }
 //    catch (const XERCES_CPP_NAMESPACE_QUALIFIER DOMException&)
@@ -145,8 +151,7 @@ void XercesWriter::WriteFile(const std::string& outputfile)
 //    }
    catch (...)
    {
-      LOG_ERROR("When writing file," +outputfile+ ", an exception occurred.");
+      LOG_ERROR("When writing file," + outputfile + ", an exception occurred.");
       delete xmlstream;
    }
 }
-
