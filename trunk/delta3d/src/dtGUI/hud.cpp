@@ -112,12 +112,12 @@ HUD::~HUD()
          CEGUI::System* system = CEGUI::System::getSingletonPtr();
          CEGUI::Renderer* renderer = system->getRenderer();
 
+         delete system;
+
          if (renderer != NULL)
          {
             delete renderer;
          }
-
-         delete system;
       }
    }
 
