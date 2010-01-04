@@ -353,6 +353,46 @@ namespace dtDirector
       return NULL;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void Node::LogValueRetrieved(ValueNode* valueNode, dtDAL::ActorProperty* prop)
+   {
+      // Log the comment for this value.
+      if (GetDirector()->GetNodeLogging() && valueNode && valueNode->GetNodeLogging())
+      {
+         dtUtil::Log* logger = valueNode->GetDirector()->GetLogger();
+         if (logger)
+         {
+            std::string message = "Value Node \'" + valueNode->GetName();
+            if (!valueNode->GetComment().empty())
+            {
+               message += " - " + valueNode->GetComment();
+            }
+            message += "\' retrieved " + prop->GetValueString();
+            logger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, message);
+         }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void Node::LogValueChanged(ValueNode* valueNode, dtDAL::ActorProperty* prop, const std::string& oldVal)
+   {
+      // Log the comment for this value.
+      if (GetDirector()->GetNodeLogging() && valueNode && valueNode->GetNodeLogging())
+      {
+         dtUtil::Log* logger = valueNode->GetDirector()->GetLogger();
+         if (logger)
+         {
+            std::string message = "Value Node \'" + valueNode->GetName();
+            if (!valueNode->GetComment().empty())
+            {
+               message += " - " + valueNode->GetComment();
+            }
+            message += "\' was changed from " + oldVal + " to " + prop->GetValueString();
+            logger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, message);
+         }
+      }
+   }
+
    //////////////////////////////////////////////////////////////////////////
    bool Node::GetBoolean(const std::string& name, int index)
    {

@@ -293,6 +293,22 @@ namespace dtDirector
       virtual dtDAL::ActorProperty* GetProperty(const std::string& name, int index = 0, ValueNode** outNode = NULL);
 
       /**
+      * Logs when a value is retrieved.
+      *
+      * @param[in]  valueNode  The value node that was retrieved.
+      * @param[in]  prop       The property of that value node.
+      */
+      void LogValueRetrieved(ValueNode* valueNode, dtDAL::ActorProperty* prop);
+
+      /**
+      * Logs when a value is changed.
+      *
+      * @param[in]  valueNode  The value node that was retrieved.
+      * @param[in]  prop       The property of that value node.
+      */
+      void LogValueChanged(ValueNode* valueNode, dtDAL::ActorProperty* prop, const std::string& oldVal);
+
+      /**
        * This method is provided for ease of use, it will
        * retrieve a property's value and convert it to the type of
        * your choice.
@@ -323,21 +339,7 @@ namespace dtDirector
 
             result = dtUtil::ToType<T>(val);
 
-            // Log the comment for this value.
-            if (GetDirector()->GetNodeLogging() && node && node->GetNodeLogging())
-            {
-               dtUtil::Log* logger = node->GetDirector()->GetLogger();
-               if (logger)
-               {
-                  std::string message = "Value Node \'" + node->GetName();
-                  if (!node->GetComment().empty())
-                  {
-                     message += " - " + node->GetComment();
-                  }
-                  message += "\' retrieved " + prop->GetValueString();
-                  logger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, message);
-               }
-            }
+            LogValueRetrieved(node, prop);
          }
          return result;
       }
@@ -381,21 +383,7 @@ namespace dtDirector
                   std::string val = dtUtil::ToString(value);
                   prop->FromString(val);
 
-                  // Log the comment for this value.
-                  if (GetDirector()->GetNodeLogging() && node && node->GetNodeLogging())
-                  {
-                     dtUtil::Log* logger = node->GetDirector()->GetLogger();
-                     if (logger)
-                     {
-                        std::string message = "Value Node \'" + node->GetName();
-                        if (!node->GetComment().empty())
-                        {
-                           message += " - " + node->GetComment();
-                        }
-                        message += "\' was changed from " + oldVal + " to " + prop->GetValueString();
-                        logger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, message);
-                     }
-                  }
+                  LogValueChanged(node, prop, oldVal);
                }
             }
          }
@@ -523,7 +511,7 @@ namespace dtDirector
       bool               mEnabled;
 
       Director*          mDirector;
-      DirectorGraph* mGraph;
+      DirectorGraph*     mGraph;
 
 #if defined DELTA_WIN32
 #pragma warning (push)
