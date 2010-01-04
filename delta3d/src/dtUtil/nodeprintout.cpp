@@ -217,4 +217,4 @@ namespace dtUtil
       dtUtil::FileUtils::GetInstance().FileDelete(tempFile);
    }
 
-} namespace dtUtil
+} // namespace dtUtil
