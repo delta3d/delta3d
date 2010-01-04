@@ -32,8 +32,8 @@ namespace dtDirector
 {
    ///////////////////////////////////////////////////////////////////////////////////////
    InputLink::InputLink(Node* owner, const std::string& name)
-      : mOwner(owner)
-      , mVisible(true)
+      : mVisible(true)
+      , mOwner(owner)
    {
       SetName(name);
    }

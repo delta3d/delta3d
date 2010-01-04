@@ -29,11 +29,11 @@ namespace dtDirector
 {
    //////////////////////////////////////////////////////////////////////////
    DirectorGraph::DirectorGraph(Director* director)
-      : mParent(NULL)
+      : mDirector(director)
+      , mParent(NULL)
       , mEnabled(true)
       , mName("Macro")
       , mComment("")
-      , mDirector(director)
    {
    }
 

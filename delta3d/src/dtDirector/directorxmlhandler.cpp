@@ -99,8 +99,8 @@ namespace dtDirector
    /////////////////////////////////////////////////////////////////
    DirectorXMLHandler::DirectorXMLHandler()
       : dtDAL::BaseXMLHandler()
-      , mNode(NULL)
       , mMap(NULL)
+      , mNode(NULL)
    {
       mPropSerializer = new dtDAL::ActorPropertySerializer(this);
    }
@@ -781,8 +781,8 @@ namespace dtDirector
 
       // If we have any failed links, but we also had some successful ones,
       // then we should try to link them again.
-      if (failedLinks.size() > 0 &&
-         failedLinks.size() != count)
+      if (!failedLinks.empty() &&
+         (int)failedLinks.size() != count)
       {
          mLinkList = failedLinks;
          LinkNodes();
