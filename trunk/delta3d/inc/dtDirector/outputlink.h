@@ -128,7 +128,9 @@ namespace dtDirector
 #if defined DELTA_WIN32
 #pragma warning (push)
 #pragma warning (disable:4251)
+#endif //DELTA_WIN32
       std::vector<InputLink*> mLinks;
+#if defined DELTA_WIN32
 #pragma warning (pop)
 #endif //DELTA_WIN32
 
