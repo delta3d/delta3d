@@ -26,9 +26,13 @@
 #include <dtDirector/directorgraph.h>
 
 #include <dtDAL/map.h>
-#include <dtUtil/log.h>
 
 #include <cstdio>
+
+namespace dtUtil
+{
+   class Log;
+}
 
 namespace dtDirector
 {
@@ -95,26 +99,26 @@ namespace dtDirector
        *
        * @return the map.
        */
-      dtDAL::Map* GetMap() {return mMap;}
+      dtDAL::Map* GetMap();
 
       /**
        * Sets the map.
        *
        * @param[in]  map  The current map.
        */
-      void SetMap(dtDAL::Map* map) {mMap = map;}
+      void SetMap(dtDAL::Map* map);
 
       /**
        * Retrieves the logger.
        */
-      dtUtil::Log* GetLogger() {return mLogger;}
+      dtUtil::Log* GetLogger();
 
       /**
        * Loads a Director script.
        *
        * @param[in]  scriptFile  The name of the script file to load.
        *
-       * @return     True if the script was found and loaded successfuly.
+       * @return     True if the script was found and loaded successfully.
        */
       bool LoadScript(const std::string& scriptFile);
 
@@ -123,7 +127,7 @@ namespace dtDirector
        *
        * @param[in]  scriptFile  The name of the script file to save.
        *
-       * @return     True if the script was saved successfuly.
+       * @return     True if the script was saved successfully.
        */
       bool SaveScript(const std::string& scriptFile);
 
@@ -166,61 +170,61 @@ namespace dtDirector
       /**
        * Retrieves whether there are any active threads running.
        */
-      bool IsRunning() {return !mThreads.empty();}
+      bool IsRunning();
 
       /**
        * Accessors for the name of the script.
        */
-      void SetName(const std::string& name) {mGraph->SetName(name);}
-      const std::string& GetName() {return mGraph->GetName();}
+      void SetName(const std::string& name);
+      const std::string& GetName();
 
       /**
        * Accessors for the description of the script.
        */
-      void SetDescription(const std::string& description) {mDescription = description;}
-      std::string& GetDescription() {return mDescription;}
+      void SetDescription(const std::string& description);
+      std::string& GetDescription();
 
       /**
        * Accessors for the Author of the script.
        */
-      void SetAuthor(const std::string& author) {mAuthor = author;}
-      std::string& GetAuthor() {return mAuthor;}
+      void SetAuthor(const std::string& author);
+      std::string& GetAuthor();
 
       /**
        * Accessors for the comment of the script.
        */
-      void SetComment(const std::string& comment) {mGraph->SetComment(comment);}
-      std::string& GetComment() {return mGraph->GetComment();}
+      void SetComment(const std::string& comment);
+      std::string& GetComment();
 
       /**
        * Accessors for the copyright information of the script.
        */
-      void SetCopyright(const std::string& copyright) {mCopyright = copyright;}
-      std::string& GetCopyright() {return mCopyright;}
+      void SetCopyright(const std::string& copyright);
+      std::string& GetCopyright();
 
       /**
        * Accessors for the scripts creation time.
        */
-      void SetCreateDateTime(const std::string& time) {mCreationTime = time;}
-      std::string& GetCreateDateTime() {return mCreationTime;}
+      void SetCreateDateTime(const std::string& time);
+      std::string& GetCreateDateTime();
 
       /**
        * Accessors for the node logging flag.
        */
-      void SetNodeLogging(bool enabled) {mLogNodes = enabled;}
-      bool GetNodeLogging() {return mLogNodes;}
+      void SetNodeLogging(bool enabled);
+      bool GetNodeLogging();
 
       /**
        * Sets the player.
        *
        * @param[in]  player  The player.
        */
-      void SetPlayer(const dtCore::UniqueId& player) {mPlayer = player;}
+      void SetPlayer(const dtCore::UniqueId& player);
 
       /**
        * Retrieves the player.
        */
-      dtCore::UniqueId GetPlayer() {return mPlayer;}
+      dtCore::UniqueId GetPlayer();
 
       /**
       * Begins recording of the Director graphs.
@@ -260,7 +264,7 @@ namespace dtDirector
       /**
       * Retrieves the recording data.
       */
-      std::vector<Director::RecordThreadData*> GetRecordingData() {return mRecordThreads;};
+      std::vector<Director::RecordThreadData*> GetRecordingData();
 
       /**
        * Inserts a node library with the given name at the given position.
@@ -310,7 +314,7 @@ namespace dtDirector
       /**
        * Retrieves the graph data.
        */
-      DirectorGraph* GetGraphRoot() {return mGraph.get();}
+      DirectorGraph* GetGraphRoot();
 
       /**
        * Retrieves a graph of the given id.
