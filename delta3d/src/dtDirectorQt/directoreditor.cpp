@@ -50,12 +50,12 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////////
    DirectorEditor::DirectorEditor(QWidget* parent)
       : QMainWindow(parent, Qt::Window)
-      , mDirector(NULL)
       , mGraphTabs(NULL)
       , mPropertyEditor(NULL)
       , mGraphBrowser(NULL)
       , mReplayBrowser(NULL)
       , mUndoManager(NULL)
+      , mDirector(NULL)
       , mReplayMode(false)
       , mReplayInput(NULL)
       , mReplayOutput(NULL)

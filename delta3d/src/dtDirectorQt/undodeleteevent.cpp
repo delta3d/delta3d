@@ -40,8 +40,8 @@ namespace dtDirector
                                     const dtCore::UniqueId& nodeID,
                                     const dtCore::UniqueId& parentID)
       : UndoEvent(editor)
-      , mNodeID(nodeID)
       , mParentID(parentID)
+      , mNodeID(nodeID)
       , mName("")
       , mCategory("")
    {
