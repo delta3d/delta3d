@@ -517,22 +517,14 @@ namespace dtAudio
 
     ///////////////////////////////////////////////////////////////////////////////
     void SoundActorProxy::SetMinGain(float min)
-    {
-       //deprecated 12/21/2009
-       DEPRECATE("SoundActorProxy::SetMinGain", 
-          "OpenAL doesn't have a MinGain value.");
-
+    {       
        Sound* snd = GetSound();
        snd->SetMinGain(min);       
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     float SoundActorProxy::GetMinGain() const
-    {
-       //deprecated 12/21/2009
-       DEPRECATE("SoundActorProxy::GetMinGain", 
-          "OpenAL doesn't have a MinGain value.");
-
+    {       
        return GetSound()->GetMinGain();
     }
 
