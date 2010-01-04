@@ -245,8 +245,8 @@ namespace dtAudio
       void SetRolloffFactor(float rolloff);
       float GetRolloffFactor() const;
 
-      DEPRECATE_FUNC void SetMinGain(float min);
-      DEPRECATE_FUNC float GetMinGain() const;
+      void SetMinGain(float min);
+      float GetMinGain() const;
 
       void SetMaxGain(float max);
       float GetMaxGain() const;
