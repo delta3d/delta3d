@@ -23,11 +23,10 @@
 #define DIRECTORQT_MACRO_ITEM
 
 #include <dtDirectorQt/nodeitem.h>
+#include <dtDirector/directorgraph.h>
 
 namespace dtDirector
 {
-   class DirectorGraph;
-
    /**
     * Draws a macro in the graph view.
     *

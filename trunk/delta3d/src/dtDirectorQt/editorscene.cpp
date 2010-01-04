@@ -37,7 +37,6 @@
 #include <QtGui/QGraphicsSceneMouseEvent>
 #include <QtGui/QMenu>
 
-
 namespace dtDirector
 {
    ////////////////////////////////////////////////////////////////////////////////
@@ -274,7 +273,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   QPointF EditorScene::GetCenter(QList<QGraphicsItem*> &nodes)
+   QPointF EditorScene::GetCenter(const QList<QGraphicsItem*>& nodes)
    {
       QPointF topLeft;
       QPointF botRight;
