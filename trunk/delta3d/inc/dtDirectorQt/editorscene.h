@@ -109,7 +109,7 @@ namespace dtDirector
        *
        * @return     The center of all nodes.
        */
-      QPointF GetCenter(QList<QGraphicsItem*>& nodes);
+      QPointF GetCenter(QList<QGraphicsItem*> &nodes);
 
       /**
        * Focuses the view on the center of all node items.
