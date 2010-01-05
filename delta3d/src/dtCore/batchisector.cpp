@@ -35,20 +35,26 @@
 namespace dtCore
 {
    ///////////////////////////////////////////////////////////////////////////////
-   BatchIsector::BatchIsector(dtCore::Scene *scene) :
-      mScene(scene)
-      ,mFixedArraySize(32)
-      {
-      for(int i = 0 ; i < mFixedArraySize; ++i)
+   BatchIsector::BatchIsector(dtCore::Scene* scene)
+      : mScene(scene)
+      , mFixedArraySize(32)
+   {
+      for (int i = 0 ; i < mFixedArraySize; ++i)
       {
          mISectors[i] = new SingleISector(i);
       }
+
+      // initialize traversal mask with default OSG value
+      {
+         osgUtil::IntersectVisitor intersectVisitor;
+         mTraversalMask = intersectVisitor.getTraversalMask();
       }
+   }
 
    ///////////////////////////////////////////////////////////////////////////////
    BatchIsector::~BatchIsector()
    {
-      for(int i = 0 ; i < mFixedArraySize; ++i)
+      for (int i = 0 ; i < mFixedArraySize; ++i)
       {
          mISectors[i] = NULL;
       }
@@ -83,6 +89,7 @@ namespace dtCore
       }
 
       intersectVisitor.setEyePoint(cameraEyePoint);
+      intersectVisitor.setTraversalMask(mTraversalMask);
 
       if (mQueryRoot.valid())
       {
@@ -252,6 +259,7 @@ namespace dtCore
 
       xyz = mHitList[pointNum].getWorldIntersectPoint();
    }
+
    ///////////////////////////////////////////////////////////////////////////////
    void BatchIsector::SingleISector::GetHitPointNormal(osg::Vec3& normal, int pointNum) const
    {

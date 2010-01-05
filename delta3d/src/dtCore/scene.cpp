@@ -12,7 +12,7 @@
 #include <dtCore/odecontroller.h>
 #include <dtCore/databasepager.h>
 #include <dtCore/view.h>
-#include <dtCore/isector.h>
+#include <dtCore/batchisector.h>
 
 #include <dtUtil/log.h>
 
@@ -417,7 +417,8 @@ float Scene::GetHeightOfTerrain(float x, float y)
    {
       const osg::Vec3 start(x, y, 10000.f); // way up above
       const osg::Vec3 end(x, y, -10000.f); // way down below
-      dtCore::RefPtr<dtCore::Isector> isector = new dtCore::Isector(this, start, end);
+      dtCore::RefPtr<dtCore::BatchIsector> isector = new dtCore::BatchIsector(this);
+      isector->EnableAndGetISector(0).SetSectorAsLineSegment(start, end);
 
       // set the traversal mask so we don't collide with the skybox
       isector->SetTraversalMask(SCENE_INTERSECT_MASK);
@@ -425,7 +426,7 @@ float Scene::GetHeightOfTerrain(float x, float y)
       if (isector->Update())
       {
          osg::Vec3 hitPoint;
-         isector->GetHitPoint(hitPoint);
+         isector->GetSingleISector(0).GetHitPoint(hitPoint);
          heightOfTerrain = hitPoint.z();
       }
    }
@@ -442,7 +443,8 @@ bool Scene::GetHeightOfTerrain(float& heightOfTerrain, float x, float y, float m
    {
       const osg::Vec3 start(x, y, maxZ);
       const osg::Vec3 end(x, y, minZ);
-      dtCore::RefPtr<dtCore::Isector> isector = new dtCore::Isector(this, start, end);
+      dtCore::RefPtr<dtCore::BatchIsector> isector = new dtCore::BatchIsector(this);
+      isector->EnableAndGetISector(0).SetSectorAsLineSegment(start, end);
 
       // set the traversal mask so we don't collide with the skybox
       isector->SetTraversalMask(SCENE_INTERSECT_MASK);
@@ -450,7 +452,7 @@ bool Scene::GetHeightOfTerrain(float& heightOfTerrain, float x, float y, float m
       if (heightFound = isector->Update())
       {
          osg::Vec3 hitPoint;
-         isector->GetHitPoint(hitPoint);
+         isector->GetSingleISector(0).GetHitPoint(hitPoint);
          heightOfTerrain = hitPoint.z();
       }
    }

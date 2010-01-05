@@ -28,7 +28,7 @@
 #include <dtAI/waypoint.h>
 #include <dtUtil/matrixutil.h>
 
-#include <dtCore/isector.h>
+#include <dtCore/batchisector.h>
 
 #include <osg/MatrixTransform>
 
@@ -231,28 +231,30 @@ namespace dtAI
    {
       if (mWaypointPath.size() < 2) return;
 
-      dtCore::RefPtr<dtCore::Isector> pIsector = new dtCore::Isector(mScene.get());
+      dtCore::RefPtr<dtCore::BatchIsector> pIsector = new dtCore::BatchIsector(mScene.get());
       do
       {
          pIsector->Reset();
          //osg::Vec3 vec = mWaypointPath.front()->GetPosition() - GetPosition();
          //vec.normalize();
-         pIsector->SetStartPosition(GetPosition());// + vec);
 
          const WaypointInterface* pNextWaypoint = *(++(mWaypointPath.begin()));
-         pIsector->SetEndPosition(pNextWaypoint->GetPosition());// - vec);
+         pIsector->EnableAndGetISector(0).SetSectorAsLineSegment(GetPosition(), pNextWaypoint->GetPosition());
 
          // if there is a path between the two points
          if (!pIsector->Update())
          {
             const dtAI::Waypoint* way = dynamic_cast<const dtAI::Waypoint*>(mWaypointPath.front());
-            if(way != NULL)
+            if (way != NULL)
             {
                way->SetRenderFlag(Waypoint::RENDER_BLUE);
             }
             mWaypointPath.pop_front();
          }
-         else break;
+         else
+         {
+            break;
+         }
       }
       while (mWaypointPath.size() > 2);
    }
