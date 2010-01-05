@@ -26,6 +26,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <dtCore/base.h>
+#include <dtUtil/deprecationmgr.h>
 
 #include <osg/Vec3>
 
@@ -140,7 +141,8 @@ namespace dtCore
        */
       unsigned int GetNumberOfAddedDrawable() const;
 
-      /** Get all the DeltaDrawables that are currently in the scene.  This will
+      /**
+       * Get all the DeltaDrawables that are currently in the scene.  This will
        * return all the DeltaDrawables added by AddDrawable(), plus their DeltaDrawable
        * children.
        * @see GetDrawable(), GetNumberOfAddedDrawable()
@@ -154,8 +156,33 @@ namespace dtCore
       ///Get a pointer to the internal scene node
       const std::pair<Face,Mode> GetRenderState() const;
 
-      ///Get the height of terrain at a given x,y
-      float GetHeightOfTerrain(float x, float y);
+      /**
+       * Get the height of terrain at the specified (X,Y). This essentially does
+       * an intersection check of the whole scene from (X,Y,10k) to (X,Y,-10k).
+       * Any geometry that intersects is considered the "terrain".
+       *
+       * @param x : The X location to check for height of terrain
+       * @param y : The Y location to check for height of terrain
+       *
+       * @return float  : The found Height of Terrain (or 0 if no intersection)
+       */
+      DEPRECATE_FUNC float GetHeightOfTerrain(float x, float y);
+
+      /**
+       * Get the height of terrain at the specified (X,Y) below given height range
+       * [minZ, maxZ] (default [10k, -10k]). This essentially does an intersection
+       * check of the whole scene from (X,Y,maxZ) to (X,Y,minZ). Any geometry that
+       * intersects first is considered the "terrain".
+       *
+       * @param heightOfTerrain : The found height of terrain, if found
+       * @param x : The X location to check for height of terrain
+       * @param y : The Y location to check for height of terrain
+       * @param maxZ : The Z location to check below for height of terrain
+       * @param minZ : The Z location to check above for height of terrain
+       *
+       * @return bool : true if and only if a height was found
+       */
+      bool GetHeightOfTerrain(float& heightOfTerrain, float x, float y, float maxZ = 10000.f, float minZ = -10000);
 
       ///Get the ODE space ID
       dSpaceID GetSpaceID() const;

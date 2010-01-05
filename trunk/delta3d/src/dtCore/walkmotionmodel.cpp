@@ -13,7 +13,6 @@
 
 #include <dtCore/system.h>
 #include <dtCore/transformable.h>
-#include <dtCore/isector.h>
 
 #include <osg/Vec3>
 
@@ -432,17 +431,8 @@ void WalkMotionModel::OnMessage(MessageData* data)
             xyz[2] - 10000.0f
          );
 
-         // compute the hieight via Isector
-         {
-            dtCore::RefPtr<dtCore::Isector> isector = new dtCore::Isector(GetScene(), start, end);
-
-            if (isector->Update())
-            {
-               osg::Vec3 hitPoint;
-               isector->GetHitPoint(hitPoint);
-               height = hitPoint.z();
-            }
-         }
+         // get the height of the terrain
+         GetScene()->GetHeightOfTerrain(height, start.x(), start.y(), start.z(), end.z());
 
          height += mHeightAboveTerrain;
 

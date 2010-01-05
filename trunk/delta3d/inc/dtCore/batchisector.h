@@ -108,10 +108,10 @@ namespace dtCore
          void ResetSingleISector();
 
          ///@return the intersected point
-         void GetHitPoint( osg::Vec3& xyz, int pointNum = 0 ) const;
+         void GetHitPoint(osg::Vec3& xyz, int pointNum = 0) const;
 
          ///@return the normal at the intersected point
-         void GetHitPointNormal( osg::Vec3& normal, int pointNum = 0 ) const;
+         void GetHitPointNormal(osg::Vec3& normal, int pointNum = 0) const;
 
          ///Get the number of intersected items
          unsigned GetNumberOfHits() const;
@@ -128,7 +128,8 @@ namespace dtCore
          ////////////////////////////////////////////////////////////////////
          osg::LineSegment* GetLineSegment()  { return mLineSegment.get(); }
          DeltaDrawable* GetClosestDrawable() { return mClosestDrawable.get(); }
-         osgUtil::IntersectVisitor::HitList& GetHitList() {return mHitList; }
+         osgUtil::IntersectVisitor::HitList& GetHitList() { return mHitList; }
+         const osgUtil::IntersectVisitor::HitList& GetHitList() const { return mHitList; }
          bool CheckForClosestDrawable()      { return mCheckClosestDrawables; }
          std::string GetReferenceName()      { return mNameForReference; }
          int GetReferenceID()                { return mIDForReference; }
@@ -145,7 +146,7 @@ namespace dtCore
          /**
           * Assigns the hitlist for this single isector.
           */
-         void SetHitList(osgUtil::IntersectVisitor::HitList& newList);
+         void SetHitList(HitList& newList);
 
       protected:
          dtCore::RefPtr<osg::LineSegment>    mLineSegment;
@@ -197,12 +198,14 @@ namespace dtCore
       /**
        * Ray traces the scene.
        *
+       * @param cameraEyePoint The eye point to be used for LOD calculations, if used
+       * @param useHighestLvlOfDetail If false, use eye point for LOD calculations
        * @return True if any intersections were detected.
        * @note If the query root has been set, only the query root drawable and its
        *  children are candidates for intersection.  If not, all drawables in the scene
        *  are possibilities.
        */
-      bool Update(const osg::Vec3& cameraEyePoint, bool useHighestLvlOfDetail = true);
+      bool Update(const osg::Vec3& cameraEyePoint = osg::Vec3(0,0,0), bool useHighestLvlOfDetail = true);
 
       /**
        * Resets the intersection query.  Call this in between disjoint intersection

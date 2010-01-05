@@ -30,7 +30,6 @@
 #include <dtCore/system.h>
 #include <dtCore/transformable.h>
 #include <dtCore/transform.h>
-#include <dtCore/isector.h>
 #include <dtUtil/mathdefines.h>
 #include <dtUtil/matrixutil.h>
 
@@ -41,17 +40,17 @@ namespace dtCore
 IMPLEMENT_MANAGEMENT_LAYER(CollisionMotionModel);
 
 /**
-* Constructor.
-*
-* @param keyboard the keyboard instance, or 0 to
-* avoid creating default input mappings
-* @param mouse the mouse instance, or 0 to avoid
-* creating default input mappings
-*/
+ * Constructor.
+ *
+ * @param keyboard the keyboard instance, or 0 to
+ * avoid creating default input mappings
+ * @param mouse the mouse instance, or 0 to avoid
+ * creating default input mappings
+ */
 CollisionMotionModel::CollisionMotionModel(float pHeight, float pRadius, float k, float theta, dtCore::Scene* pScene, Keyboard* keyboard, Mouse* mouse)
-      : FPSMotionModel(keyboard, mouse, 5.0f, 1.5f, 5.0f, pHeight, k)
-      , mCollider(pHeight, pRadius, k, theta, pScene)
-      , mCanJump(true)
+   : FPSMotionModel(keyboard, mouse, 5.0f, 1.5f, 5.0f, pHeight, k)
+   , mCollider(pHeight, pRadius, k, theta, pScene)
+   , mCanJump(true)
 {
    // parent class FPSMotionModel has set name as "FPSMotionModel" in its constructor;
    // so now manually reset name correctly here
