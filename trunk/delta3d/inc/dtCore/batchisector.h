@@ -174,6 +174,19 @@ namespace dtCore
       ///@return the root of the scene to query.  It will return if this is using the entire scene.
       const DeltaDrawable* GetQueryRoot() const { return mQueryRoot.get(); }
 
+      /**
+       * Set the mask defining what geometry types to test for intersection.
+       *
+       * @param mask The bit mask defining what geometry types to test for intersection.
+       */
+      void SetTraversalMask(int mask) { mTraversalMask = mask; }
+
+      /**
+       * Get the mask defining what geometry types to test for intersection.
+       * @return The bit mask defining what geometry types to test for intersection.
+       */
+      int GetTraversalMask() const { return mTraversalMask; }
+
       ///Sets the scene to use as the base for the scene query.
       void SetScene(Scene* newScene) { mScene = newScene; }
 
@@ -232,6 +245,7 @@ namespace dtCore
       dtCore::ObserverPtr<DeltaDrawable>  mQueryRoot;
       dtCore::RefPtr<SingleISector>       mISectors[32];    // all the isectors to be sent down in one batch call.
       const int                           mFixedArraySize;
+      int                                 mTraversalMask;
    };
 
 } // namespace dtCore
