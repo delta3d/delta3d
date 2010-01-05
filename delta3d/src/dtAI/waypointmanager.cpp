@@ -29,7 +29,7 @@
 #include <osg/Version>
 
 #include <dtCore/scene.h>
-#include <dtCore/isector.h>
+#include <dtCore/batchisector.h>
 
 #include <dtUtil/log.h>
 
@@ -346,7 +346,7 @@ namespace dtAI
    {
       float maxDistBetweenWaypoints = AvgDistBetweenWaypoints();
 
-      osg::ref_ptr<dtCore::Isector> pIsector = new dtCore::Isector(pScene);
+      dtCore::RefPtr<dtCore::BatchIsector> pIsector = new dtCore::BatchIsector(pScene);
 
       WaypointIterator iter = mWaypoints.begin();
       WaypointIterator endOfMap = mWaypoints.end();
@@ -368,13 +368,14 @@ namespace dtAI
 
                if (WaypointPair(pWaypoint1, pWaypoint2).Get3DDistance() < maxDistBetweenWaypoints)
                {
-                  //added special case to avoid colliding with the billboards
+                  // added special case to avoid colliding with the billboards
                   osg::Vec3 vec = pWaypoint2->GetPosition() - pWaypoint1->GetPosition();
                   vec.normalize();
-                  pIsector->SetStartPosition(pWaypoint1->GetPosition() + vec);
-                  pIsector->SetEndPosition(pWaypoint2->GetPosition() - vec);
+                  pIsector->EnableAndGetISector(0).SetSectorAsLineSegment(
+                     pWaypoint1->GetPosition() + vec,
+                     pWaypoint2->GetPosition() - vec);
 
-                  //if there is a path between the two points
+                  // if there is a path between the two points
                   if (!pIsector->Update())
                   {
                      mNavMesh->AddPathSegment(pWaypoint1, pWaypoint2);

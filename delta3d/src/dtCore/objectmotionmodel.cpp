@@ -19,7 +19,7 @@
 #include <dtCore/camera.h>
 #include <dtCore/scene.h>
 #include <dtCore/transform.h>
-#include <dtCore/isector.h>
+#include <dtCore/batchisector.h>
 
 #include <iostream>
 
@@ -844,12 +844,13 @@ dtCore::DeltaDrawable* ObjectMotionModel::MousePick(void)
    // Can't do anything if we don't have a valid mouse line.
    if (startPoint != endPoint)
    {
-      dtCore::RefPtr<dtCore::Isector> isector = new dtCore::Isector(mView->GetScene(), startPoint, endPoint);
+      dtCore::RefPtr<dtCore::BatchIsector> isector = new dtCore::BatchIsector(mView->GetScene());
+      isector->EnableAndGetISector(0).SetSectorAsLineSegment(startPoint, endPoint);
 
       if (isector->Update())
       {
-         const dtCore::Isector::HitList& hitlist = isector->GetHitList();
-         for (dtCore::Isector::HitList::const_reverse_iterator hitItr = hitlist.rbegin();
+         const dtCore::BatchIsector::HitList& hitlist = isector->GetSingleISector(0).GetHitList();
+         for (dtCore::BatchIsector::HitList::const_reverse_iterator hitItr = hitlist.rbegin();
             hitItr != hitlist.rend();
             ++hitItr)
          {
@@ -863,7 +864,7 @@ dtCore::DeltaDrawable* ObjectMotionModel::MousePick(void)
                   return mScaleTransform.get();
                }
 
-               for (int ArrowIndex = 0; ArrowIndex < ARROW_TYPE_MAX; ArrowIndex++)
+               for (int ArrowIndex = 0; ArrowIndex < ARROW_TYPE_MAX; ++ArrowIndex)
                {
                   if (node == mArrows[ArrowIndex].translationTransform->GetOSGNode())
                   {

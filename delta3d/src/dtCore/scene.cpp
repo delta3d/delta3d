@@ -408,23 +408,14 @@ void Scene::UnRegisterCollidable(Transformable* collidable) const
    }
 }
 
-/**
- * Get the height of terrain at the specified (X,Y).  This essentially
- * does an intersection check of the whole scene from (X,Y,10k) to (X,Y,-10k).
- * Any geometry that intersects is considered the "terrain".
- *
- * @param x : The X location to check for HOT
- * @param y : The Y location to check for HOT
- *
- * @return float  : The found Height of Terrain (or 0 if no intersection)
- */
+/////////////////////////////////////////////
 float Scene::GetHeightOfTerrain(float x, float y)
 {
    float heightOfTerrain = 0.f;
 
    // use an isector to calculate the height of the terrain
    {
-      const osg::Vec3 start(x, y, 10000.f); // way up in the sky
+      const osg::Vec3 start(x, y, 10000.f); // way up above
       const osg::Vec3 end(x, y, -10000.f); // way down below
       dtCore::RefPtr<dtCore::Isector> isector = new dtCore::Isector(this, start, end);
 
@@ -441,6 +432,32 @@ float Scene::GetHeightOfTerrain(float x, float y)
 
    return heightOfTerrain;
 }
+
+/////////////////////////////////////////////
+bool Scene::GetHeightOfTerrain(float& heightOfTerrain, float x, float y, float maxZ, float minZ)
+{
+   bool heightFound = false;
+
+   // use an isector to calculate the height of the terrain
+   {
+      const osg::Vec3 start(x, y, maxZ);
+      const osg::Vec3 end(x, y, minZ);
+      dtCore::RefPtr<dtCore::Isector> isector = new dtCore::Isector(this, start, end);
+
+      // set the traversal mask so we don't collide with the skybox
+      isector->SetTraversalMask(SCENE_INTERSECT_MASK);
+
+      if (heightFound = isector->Update())
+      {
+         osg::Vec3 hitPoint;
+         isector->GetHitPoint(hitPoint);
+         heightOfTerrain = hitPoint.z();
+      }
+   }
+
+   return heightFound;
+}
+
 /////////////////////////////////////////////
 void Scene::SetGravity(const osg::Vec3& gravity) const
 {

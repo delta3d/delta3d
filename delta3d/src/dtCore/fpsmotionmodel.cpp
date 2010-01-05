@@ -110,10 +110,6 @@ FPSMotionModel::FPSMotionModel(Keyboard* keyboard,
 
    mMouse    = mouse;
    mKeyboard = keyboard;
-
-   mIsector = new Isector();
-   mIsector->SetDirection(osg::Vec3(0.f, 0.f, -1.f));
-   mIsector->SetLength(1000.f);
 }
 
 /**
@@ -144,8 +140,6 @@ FPSMotionModel::~FPSMotionModel()
       delete mForwardBackwardListener;
    }
 
-   mIsector->SetScene(0);
-
    DeregisterInstance(this);
 }
 
@@ -157,7 +151,6 @@ FPSMotionModel::~FPSMotionModel()
 void FPSMotionModel::SetScene(Scene* scene)
 {
    mScene = scene;
-   mIsector->SetScene(mScene.get());
 }
 
 /**
@@ -168,16 +161,6 @@ void FPSMotionModel::SetScene(Scene* scene)
 Scene* FPSMotionModel::GetScene()
 {
    return mScene.get();
-}
-
-/**
-* Returns the isector used for collision testing.
-*
-* @return the active Scene
-*/
-dtCore::Isector* FPSMotionModel::GetISector() const
-{
-   return mIsector.get();
 }
 
 /**
@@ -831,63 +814,50 @@ void FPSMotionModel::PerformTranslation(const double deltaTime)
 ///Update the MotionModel's elevation by either ground clamping, or "falling"
 void FPSMotionModel::AdjustElevation(osg::Vec3& xyz, double deltaFrameTime)
 {
-   mIsector->Reset();
-
    osg::Vec3 start(
       xyz[0],
       xyz[1],
       xyz[2] + mMaximumStepUpDistance - mHeightAboveTerrain
    );
 
-   mIsector->SetStartPosition(start);
-
-   float hot = 0.0f;
-
-   if (mIsector->Update() == true)
+   float heightOfTerrain = 0.0f;
+   if (!mScene->GetHeightOfTerrain(heightOfTerrain, start.x(), start.y(), start.z(), start.z() - 10000))
    {
-      osg::Vec3 hitPt;
-      mIsector->GetHitPoint(hitPt, 0);
-      hot = hitPt[2];
-   }
-   else
-   {
-      //no intersection - lets just stay at the same elevation
-      hot = xyz[2]-mHeightAboveTerrain;
+      // no intersection - lets just stay at the same elevation
+      heightOfTerrain = xyz[2] - mHeightAboveTerrain;
    }
 
-   //add in the offset distance off the height of terrain
-   const float targetHeight = hot + mHeightAboveTerrain;
+   // add in the offset distance off the height of terrain
+   const float targetHeight = heightOfTerrain + mHeightAboveTerrain;
 
-   //if we're too high off the terrain, then let gravity take over
-   if ((xyz[2]-targetHeight) > mFallingHeight)
+   // if we're too high off the terrain, then let gravity take over
+   if ((xyz[2] - targetHeight) > mFallingHeight)
    {
       mFalling = true;
    }
 
    if (mFalling)
    {
-      //adjust the position based on the gravity vector
+      // adjust the position based on the gravity vector
 
       osg::Vec3 gravityVec;
       mScene->GetGravity(gravityVec);
 
       mFallingVec += gravityVec * deltaFrameTime;
 
-      //modify our position using the falling vector
+      // modify our position using the falling vector
       xyz += mFallingVec * deltaFrameTime;
 
-      //make sure didn't fall below the terrain
+      // make sure didn't fall below the terrain
       if (xyz[2] <= targetHeight)
       {
-         //stop falling
+         // stop falling
          mFallingVec.set(0.f, 0.f, 0.f);
          xyz[2] = targetHeight;
          mFalling = false;
       }
    }
-
-   //otherwise, lets clamp to the terrain
-   else
+   else // otherwise, lets clamp to the terrain
    {
       mFallingVec.set(0.f, 0.f, 0.f);
       xyz[2] = targetHeight;
@@ -896,14 +866,14 @@ void FPSMotionModel::AdjustElevation(osg::Vec3& xyz, double deltaFrameTime)
 
 bool FPSMotionModel::HasMouseMoved(const osg::Vec2& diff)
 {
-   //this is overly complicated and rather annoying however it fixes the 'drifting' bug
-   //the use case is resizing the window with the motion model active and the camera will
-   //drift indefinitely.  This is caused by setting the mouse position to (0.0, 0.0) which
-   //does not work in the case that the window width or height is an odd number.  When the
-   //window width or height is odd then the center of the screen is not an even number of pixels.
-   //The result is that the mouse will get a difference of 1/width or 1/height for whichever is odd
-   //it will then recenter the mouse again and we drift.  This code here uses an accumulated mouse movement
-   //so the user has to move the mouse at least one pixel to get the motion model to update.
+   // this is overly complicated and rather annoying however it fixes the 'drifting' bug
+   // the use case is resizing the window with the motion model active and the camera will
+   // drift indefinitely.  This is caused by setting the mouse position to (0.0, 0.0) which
+   // does not work in the case that the window width or height is an odd number.  When the
+   // window width or height is odd then the center of the screen is not an even number of pixels.
+   // The result is that the mouse will get a difference of 1/width or 1/height for whichever is odd
+   // it will then recenter the mouse again and we drift.  This code here uses an accumulated mouse movement
+   // so the user has to move the mouse at least one pixel to get the motion model to update.
 
    dtCore::View* viewPtr = mMouse->GetView();
 
