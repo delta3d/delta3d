@@ -231,7 +231,7 @@ namespace dtCore
        * @param geode The node to search for.
        * @return A valid DeltaDrawable if one was found or 0 otherwise.
        */
-      DeltaDrawable* MapNodePathToDrawable(osg::NodePath& geode);
+      DeltaDrawable* MapNodePathToDrawable(const osg::NodePath& geode);
 
    private:
       // Disallowed to prevent compile errors on VS2003. It apparently

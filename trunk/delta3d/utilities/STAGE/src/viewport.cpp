@@ -48,7 +48,7 @@
 
 
 #include <dtCore/scene.h>
-#include <dtCore/isector.h>
+#include <dtCore/batchisector.h>
 #include <dtCore/transform.h>
 
 #include <dtDAL/exceptionenum.h>
@@ -96,7 +96,7 @@ namespace dtEditQt
       , mIsMouseTrapped(false)
       , mScene(new dtCore::Scene())
       , mView(new dtCore::View(name))
-      , mIsector(new dtCore::Isector())
+      , mIsector(new dtCore::BatchIsector())
    {
       mMouseSensitivity = 1.0f;
       mInteractionMode = &InteractionMode::NOTHING;
@@ -520,16 +520,12 @@ namespace dtEditQt
    {
       mIsector->Reset();
       mIsector->SetScene(getScene());
-      mIsector->SetStartPosition(nearPoint);
-      mIsector->SetDirection(farPoint-nearPoint);
+      mIsector->EnableAndGetISector(0).SetSectorAsLineSegment(nearPoint, farPoint);
 
       // If we found no intersections no need to continue so emit an empty selection
       // and return.
-      if (!mIsector->Update())
-      {
-         return false;
-      }
-      return true;
+      const bool intersectionsFound = mIsector->Update();
+      return intersectionsFound;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -557,10 +553,10 @@ namespace dtEditQt
    ////////////////////////////////////////////////////////////////////////////////
    bool Viewport::getPickPosition(osg::Vec3& position, std::vector<dtCore::DeltaDrawable*> ignoredDrawables)
    {
-      dtCore::Isector::HitList& hitList = mIsector->GetHitList();
+      const dtCore::BatchIsector::HitList& hitList = mIsector->GetSingleISector(0).GetHitList();
       for (int index = 0; index < (int)hitList.size(); index++)
       {
-         osg::NodePath &nodePath = hitList[index].getNodePath();
+         const osg::NodePath& nodePath = hitList[index].getNodePath();
          dtCore::DeltaDrawable* drawable = mIsector->MapNodePathToDrawable(nodePath);
          dtCore::DeltaDrawable* lastDrawable = drawable;
 
@@ -626,14 +622,15 @@ namespace dtEditQt
    ////////////////////////////////////////////////////////////////////////////////
    dtCore::DeltaDrawable* Viewport::getPickDrawable()
    {
-      if (mIsector->GetClosestDeltaDrawable() == NULL)
+      dtCore::DeltaDrawable* closestDrawable = mIsector->EnableAndGetISector(0).GetClosestDrawable();
+
+      if (closestDrawable == NULL)
       {
          LOG_ERROR("Intersection query reported an intersection but returned an "
             "invalid DeltaDrawable.");
-         return NULL;
       }
 
-      return mIsector->GetClosestDeltaDrawable();
+      return closestDrawable;
    }
 
 

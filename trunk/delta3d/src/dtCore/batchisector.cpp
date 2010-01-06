@@ -122,7 +122,7 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtCore::DeltaDrawable* BatchIsector::MapNodePathToDrawable(osg::NodePath& nodePath)
+   dtCore::DeltaDrawable* BatchIsector::MapNodePathToDrawable(const osg::NodePath& nodePath)
    {
       if ((!mQueryRoot.valid() && mScene == NULL) || nodePath.empty())
       {
@@ -130,18 +130,19 @@ namespace dtCore
       }
 
       std::set<osg::Node*> nodeCache;
-      osg::NodePath::iterator itor;
       std::stack<dtCore::DeltaDrawable*> drawables;
 
       // Create a cache of the nodepath for quicker lookups since we are doing
       // quite a few.
-      for (itor = nodePath.begin(); itor != nodePath.end(); ++itor)
+      for (osg::NodePath::const_iterator itor = nodePath.begin();
+           itor != nodePath.end();
+           ++itor)
       {
          nodeCache.insert(*itor);
       }
 
       // In order to find the DeltaDrawable we first check the drawables at the
-      // top level of the scene.  Then, keep on going though the hierarchy, in order
+      // top level of the scene. Then, keep on going though the hierarchy, in order
       // to find the Delta Drawable deeper in the graph (the closest to the 
       // intersection point)
       dtCore::DeltaDrawable* pCurrClosest = NULL;
