@@ -99,7 +99,7 @@ void dtInspectorQt::SceneView::OnRenderStateChanged(int mode)
       case 0: faceEnum = dtCore::Scene::FRONT; 	break;
       case 1: faceEnum = dtCore::Scene::BACK; 	break;
       case 2: faceEnum = dtCore::Scene::FRONT_AND_BACK; 	break;
-      default: break;
+      default: return;
       }
 
       dtCore::Scene::Mode modeEnum;
@@ -108,7 +108,7 @@ void dtInspectorQt::SceneView::OnRenderStateChanged(int mode)
       case 0: modeEnum = dtCore::Scene::POINT; 	break;
       case 1: modeEnum = dtCore::Scene::LINE; 	break;
       case 2: modeEnum = dtCore::Scene::FILL; 	break;
-      default: break;
+      default: return;
       }
 
       mOperateOn->SetRenderState(faceEnum, modeEnum);
