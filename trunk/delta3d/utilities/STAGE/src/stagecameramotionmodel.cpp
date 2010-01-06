@@ -14,11 +14,11 @@ namespace dtEditQt
    ////////////////////////////////////////////////////////////////////////////////
    STAGECameraMotionModel::STAGECameraMotionModel(const std::string& name)
       : dtCore::MotionModel(name)
-      , mCamera(NULL)
-      , mViewport(NULL)
       , mLeftMouse(false)
       , mRightMouse(false)
       , mMiddleMouse(false)
+      , mCamera(NULL)
+      , mViewport(NULL)
    {
       RegisterInstance(this);
 

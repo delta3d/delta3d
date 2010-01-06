@@ -171,7 +171,6 @@ namespace dtActors
    ////////////////////////////////////////////////////////////////////////////////
    WaterGridActor::WaterGridActor(WaterGridActorProxy& proxy)
       : BaseClass(proxy)
-      , mWaterColor(10.0 / 256.0, 69.0 / 256.0, 39.0 / 256.0, 1.0)
       , mElapsedTime(0.0f)
       , mDeltaTime(0.0f)
       , mRenderWaveTexture(false)
@@ -179,9 +178,6 @@ namespace dtActors
       , mDeveloperMode(false)
       , mComputedRadialDistance(0.0)
       , mTextureWaveAmpOverLength(1.0 / 64.0)
-      , mGeometry()
-      , mGeode()
-      , mWaves()
       , mModForWaveLength(1.0f)
       , mModForSpeed(1.0f)
       , mModForSteepness(1.0f)
@@ -189,7 +185,11 @@ namespace dtActors
       , mModForDirectionInDegrees(0.0f)
       , mModForFOV(1.0f)
       , mCameraFoVScalar(1.0f)
+      , mWaterColor(10.0 / 256.0, 69.0 / 256.0, 39.0 / 256.0, 1.0)
       , mChoppinessEnum(&WaterGridActor::ChoppinessSettings::CHOP_FLAT)
+      , mGeometry()
+      , mGeode()
+      , mWaves()
    {
       SetName("WaterGridActor"); // Set a default name
 
@@ -598,7 +598,6 @@ namespace dtActors
 
       osg::Uniform* textureWaveArray = ss->getOrCreateUniform(UNIFORM_TEXTURE_WAVE_ARRAY, osg::Uniform::FLOAT_VEC4, MAX_TEXTURE_WAVES);
 
-      int numWaves = float(mTextureWaves.size());
       TextureWaveArray::iterator tw_iter = mTextureWaves.begin();
       TextureWaveArray::iterator tw_endIter = mTextureWaves.end();
 
@@ -740,8 +739,6 @@ namespace dtActors
       osg::Uniform* hprUniform = ss->getOrCreateUniform("cameraHPR", osg::Uniform::FLOAT_VEC3);
 
       osg::Matrix matWorld, matView, matViewInverse, matProj, matProjInverse, matViewProj, matViewProjInverse;
-
-      osg::View* view = pCamera.GetOSGCamera()->getView();
 
       typedef std::vector<osg::Matrix> MatrixList;
       MatrixList list = pCamera.GetOSGCamera()->getWorldMatrices();
