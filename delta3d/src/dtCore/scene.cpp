@@ -411,25 +411,15 @@ void Scene::UnRegisterCollidable(Transformable* collidable) const
 /////////////////////////////////////////////
 float Scene::GetHeightOfTerrain(float x, float y)
 {
+   // Deprecated January 4th, 2010
+   DEPRECATE(
+      "float dtCore::Scene::GetHeightOfTerrain(float x, float y)",
+      "bool dtCore::Scene::GetHeightOfTerrain(float& heightOfTerrain, float x, float y, float maxZ, float minZ)");
+
    float heightOfTerrain = 0.f;
 
-   // use an isector to calculate the height of the terrain
-   {
-      const osg::Vec3 start(x, y, 10000.f); // way up above
-      const osg::Vec3 end(x, y, -10000.f); // way down below
-      dtCore::RefPtr<dtCore::BatchIsector> isector = new dtCore::BatchIsector(this);
-      isector->EnableAndGetISector(0).SetSectorAsLineSegment(start, end);
-
-      // set the traversal mask so we don't collide with the skybox
-      isector->SetTraversalMask(SCENE_INTERSECT_MASK);
-
-      if (isector->Update())
-      {
-         osg::Vec3 hitPoint;
-         isector->GetSingleISector(0).GetHitPoint(hitPoint);
-         heightOfTerrain = hitPoint.z();
-      }
-   }
+   // max and min z stretch from "way up high" to "way down low"
+   GetHeightOfTerrain(heightOfTerrain, x, y, 10000.f, -10000.f);
 
    return heightOfTerrain;
 }
