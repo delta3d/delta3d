@@ -840,7 +840,27 @@ BOOL OSGExp::nodeEnum(osg::Group* rootTransform, INode* node, osg::Group* parent
             default:
                break;
 			}
-		}
+      }
+
+      // Add "User Defined Properties" if they exist.
+      if(child.valid())
+      {
+         MSTR textBuffer;
+         node->GetUserPropBuffer(textBuffer);
+         if(textBuffer.isNull() != TRUE)
+         {
+            if(obj->SuperClassID() == GEOMOBJECT_CLASS_ID && child->getNumChildren() > 0)
+            {
+               // The geode is the immediate child to the matrix transform node that was just created.
+               // Put the description directly on the geode.
+               child->getChild(0)->addDescription(textBuffer.data());
+            }
+            else // Put it on the regular node, which is usually a matrix transform node.
+            {
+               child->addDescription(textBuffer.data());
+            }
+         }
+      }
 	}
 
    for(int c = 0; c < node->NumberOfChildren(); c++)
