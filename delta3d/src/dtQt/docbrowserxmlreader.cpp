@@ -197,7 +197,11 @@ namespace dtQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+#if XERCES_VERSION_MAJOR < 3
    void DocBrowserXMLReader::characters(const XMLCh* const chars, const unsigned int length)
+#else
+   void DocBrowserXMLReader::characters(const XMLCh* const chars, const XMLSize_t length)
+#endif
    {
       std::string& topEl = mElements.top();
 

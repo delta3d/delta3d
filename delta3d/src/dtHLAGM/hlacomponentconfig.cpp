@@ -44,7 +44,9 @@
 #include <xercesc/util/OutOfMemoryException.hpp>
 #include <xercesc/sax2/XMLReaderFactory.hpp>
 #include <xercesc/framework/LocalFileInputSource.hpp>
+#if XERCES_VERSION_MAJOR < 3
 #include <xercesc/internal/XMLGrammarPoolImpl.hpp>
+#endif
 
 namespace dtHLAGM
 {

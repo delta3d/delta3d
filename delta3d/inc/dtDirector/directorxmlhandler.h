@@ -83,7 +83,11 @@ namespace dtDirector
       /**
        * @see DocumentHandler#characters
        */
+#if XERCES_VERSION_MAJOR < 3
       virtual void characters(const XMLCh* const chars, const unsigned int length);
+#else
+      virtual void characters(const XMLCh* const chars, const XMLSize_t length);
+#endif
 
       /**
        * Sets the Director.

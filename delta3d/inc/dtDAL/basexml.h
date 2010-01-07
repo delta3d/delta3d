@@ -130,11 +130,17 @@ namespace dtDAL
                   void SetOutputFile(FILE* newFile);
             const FILE* GetOutputFile(FILE* newFile) const { return mOutFile; }
 
+#if XERCES_VERSION_MAJOR < 3
             virtual void writeChars(
                const XMLByte* const toWrite,
                const unsigned int count,
                xercesc::XMLFormatter* const formatter);
-
+#else
+            virtual void writeChars(
+               const XMLByte* const toWrite,
+               const XMLSize_t count,
+               xercesc::XMLFormatter* const formatter);
+#endif
             virtual void flush();
 
          private:

@@ -492,7 +492,11 @@ namespace dtHLAGM
       }
    }
 
+#if XERCES_VERSION_MAJOR < 3
    void HLAFOMConfigContentHandler::characters(const XMLCh* const chars, const unsigned int length)
+#else
+   void HLAFOMConfigContentHandler::characters(const XMLCh* const chars, const XMLSize_t length)
+#endif
    {
       dtUtil::XMLStringConverter charsConverter(chars);
       const std::string sChars(charsConverter.c_str());
@@ -1300,7 +1304,11 @@ namespace dtHLAGM
                          "Parsing HLA FOM Configuration Document Ended.\n");
    }
 
+#if XERCES_VERSION_MAJOR < 3
    void HLAFOMConfigContentHandler::ignorableWhitespace(const XMLCh* const chars, const unsigned int length)
+#else
+   void HLAFOMConfigContentHandler::ignorableWhitespace(const XMLCh* const chars, const XMLSize_t length)
+#endif
    {
       //okay, so I'm ignoring it.
    }

@@ -47,7 +47,11 @@ const dtDIS::ConnectionData& ConnectionXMLHandler::GetConnectionData() const
    return mConnectionData;
 }
 
+#if XERCES_VERSION_MAJOR < 3
 void ConnectionXMLHandler::characters(const XMLCh* const chars, const unsigned int length)
+#else
+void ConnectionXMLHandler::characters(const XMLCh* const chars, const XMLSize_t length)
+#endif
 {
    if( mNodeStack.empty() )
    {
@@ -116,7 +120,11 @@ void ConnectionXMLHandler::endElement(const XMLCh* const uri,const XMLCh* const 
    mNodeStack.pop();
 }
 
+#if XERCES_VERSION_MAJOR < 3
 void ConnectionXMLHandler::ignorableWhitespace(const XMLCh* const chars, const unsigned int length)
+#else
+void ConnectionXMLHandler::ignorableWhitespace(const XMLCh* const chars, const XMLSize_t length)
+#endif
 {
 }
 
@@ -230,7 +238,11 @@ EntityMapXMLHandler::~EntityMapXMLHandler()
 {
 }
 
+#if XERCES_VERSION_MAJOR < 3
 void EntityMapXMLHandler::characters(const XMLCh* const chars, const unsigned int length)
+#else
+void EntityMapXMLHandler::characters(const XMLCh* const chars, const XMLSize_t length)
+#endif
 {
    if( mNodeStack.empty() )
    {
@@ -432,7 +444,11 @@ void EntityMapXMLHandler::endElement(const XMLCh* const uri,const XMLCh* const l
    mNodeStack.pop();
 }
 
+#if XERCES_VERSION_MAJOR < 3
 void EntityMapXMLHandler::ignorableWhitespace(const XMLCh* const chars, const unsigned int length)
+#else
+void EntityMapXMLHandler::ignorableWhitespace(const XMLCh* const chars, const XMLSize_t length)
+#endif
 {
 }
 

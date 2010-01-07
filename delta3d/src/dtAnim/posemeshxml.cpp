@@ -104,7 +104,11 @@ void PoseMeshFileHandler::endElement(const XMLCh* const uri,const XMLCh* const l
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+#if XERCES_VERSION_MAJOR < 3
 void PoseMeshFileHandler::characters(const XMLCh* const chars, const unsigned int length)
+#else
+void PoseMeshFileHandler::characters(const XMLCh* const chars, const XMLSize_t length)
+#endif
 {
    switch (mNodeStack.top())
    {

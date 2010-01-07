@@ -6,7 +6,12 @@
 #include <xercesc/dom/DOMImplementationRegistry.hpp>
 #include <xercesc/dom/DOMImplementation.hpp>
 #include <xercesc/dom/DOMDocument.hpp>
+#if XERCES_VERSION_MAJOR >= 3
+#include <xercesc/dom/DOMLSSerializer.hpp>
+#include <xercesc/dom/DOMLSOutput.hpp>
+#else
 #include <xercesc/dom/DOMWriter.hpp>
+#endif
 #include <xercesc/util/XMLUni.hpp>
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/util/OutOfMemoryException.hpp>
@@ -99,6 +104,59 @@ void XercesWriter::WriteFile(const std::string& outputfile)
       return;
    }
 
+#if XERCES_VERSION_MAJOR >= 3
+   DOMLSSerializer* writer;
+   DOMLSOutput* xmlstream;
+   XMLCh* OUTPUT;
+   try
+   {
+      OUTPUT = XMLString::transcode( outputfile.c_str() );
+      xmlstream = mImplementation->createLSOutput();
+      xmlstream->setSystemId( OUTPUT );
+      writer = mImplementation->createLSSerializer();
+   }
+   catch(...)
+   {
+      if( OUTPUT )
+         XMLString::release( &OUTPUT );
+      LOG_ERROR("Can not write file, "+ outputfile +", because creation of a writing tools failed.");
+      return;
+   }
+
+   // turn on pretty print
+   DOMConfiguration* dc = writer->getDomConfig();
+   dc->setParameter(XMLUni::fgDOMWRTFormatPrettyPrint,true);
+
+   // write it!
+   try
+   {
+      if( !writer->write(mDocument, xmlstream) )
+      {
+         LOG_ERROR("There was a problem writing file, " + outputfile)
+      }
+
+      writer->release();
+      xmlstream->release();
+   }
+   catch (const OutOfMemoryException& e)
+   {
+      char* message = XMLString::transcode( e.getMessage() );
+      std::string msg( message );
+      XMLString::release( &message );
+      LOG_ERROR("When writing file," +outputfile+ ", an OutOfMemoryException occurred." + msg);
+      delete xmlstream;
+   }
+//    catch (const XERCES_CPP_NAMESPACE_QUALIFIER DOMException&)
+//    {
+//       //XERCES_STD_QUALIFIER cerr << "DOMException code is:  " << e.code << XERCES_STD_QUALIFIER endl;
+//       LOG_ERROR("When writing file, " +outputfile+ ", a DOMException occurred");
+//    }
+   catch (...)
+   {
+      LOG_ERROR("When writing file," +outputfile+ ", an exception occurred.");
+      delete xmlstream;
+   }
+#else
    // make a writer
    DOMWriter* writer;
    LocalFileFormatTarget* xmlstream;
@@ -154,4 +212,5 @@ void XercesWriter::WriteFile(const std::string& outputfile)
       LOG_ERROR("When writing file," + outputfile + ", an exception occurred.");
       delete xmlstream;
    }
+#endif
 }

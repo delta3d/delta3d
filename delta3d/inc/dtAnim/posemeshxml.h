@@ -76,15 +76,20 @@ namespace dtAnim
       PoseMeshFileHandler();
       ~PoseMeshFileHandler();
 
+#if XERCES_VERSION_MAJOR < 3
       void characters(const XMLCh* const chars, const unsigned int length);
+      void ignorableWhitespace(const XMLCh* const chars, const unsigned int length) {}
+#else
+      void characters(const XMLCh* const chars, const XMLSize_t length);
+      void ignorableWhitespace(const XMLCh* const chars, const XMLSize_t length) {}
+#endif
 
       void startElement(const XMLCh* const uri,const XMLCh* const localname,
-         const XMLCh* const qname, const XERCES_CPP_NAMESPACE_QUALIFIER Attributes& attrs);
+                        const XMLCh* const qname, const XERCES_CPP_NAMESPACE_QUALIFIER Attributes& attrs);
 
       void endElement(const XMLCh* const uri,const XMLCh* const localname,const XMLCh* const qname);
 
       // Required functions
-      void ignorableWhitespace(const XMLCh* const chars, const unsigned int length) {}
       void processingInstruction(const XMLCh* const target, const XMLCh* const data) {}
       void setDocumentLocator(const XERCES_CPP_NAMESPACE_QUALIFIER Locator* const locator) {}
       void startPrefixMapping(const XMLCh* const prefix, const XMLCh* const uri) {};

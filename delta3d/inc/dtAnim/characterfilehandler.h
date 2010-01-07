@@ -122,9 +122,14 @@ namespace dtAnim
       CharacterFileHandler();
       ~CharacterFileHandler();
 
+#if XERCES_VERSION_MAJOR < 3
       virtual void characters(const XMLCh* const chars, const unsigned int length);
+      virtual void ignorableWhitespace(const XMLCh* const /*chars*/, const unsigned int/*length*/) {};
+#else
+      virtual void characters(const XMLCh* const chars, const XMLSize_t length);
+      virtual void ignorableWhitespace(const XMLCh* const /*chars*/, const XMLSize_t /*length*/) {};
+#endif
       virtual void endDocument();
-      virtual void ignorableWhitespace(const XMLCh* const /*chars*/, const unsigned int /*length*/) {};
       virtual void processingInstruction(const XMLCh* const /*target*/, const XMLCh* const /*data*/) {};
       virtual void setDocumentLocator(const XERCES_CPP_NAMESPACE_QUALIFIER Locator* const /*locator*/) {};
       virtual void startDocument();
