@@ -7,6 +7,7 @@
 // for date/time
 #include <python/dtpython.h>
 #include <dtUtil/datetime.h>
+#include <dtUtil/datapathutils.h>
 
 void initEnumerationBindings();
 void init_NoiseBindings();
@@ -38,6 +39,13 @@ void init_DateTimeBindings()
 
 BOOST_PYTHON_MODULE(PyDtUtil)
 {
+   using namespace boost::python;
+   def("SetDataFilePathList", dtUtil::SetDataFilePathList);
+   def("GetDataFilePathList", dtUtil::GetDataFilePathList);
+   def("GetDeltaDataPathList", dtUtil::GetDeltaDataPathList);
+   def("GetDeltaRootPath", dtUtil::GetDeltaRootPath);
+   def("GetEnvironment", dtUtil::GetEnvironment);
+
    initEnumerationBindings();
    init_NoiseBindings();
    init_MatrixUtilBindings();
