@@ -195,8 +195,12 @@ namespace  dtDAL
    }
 
    /////////////////////////////////////////////////////////////////
+#if XERCES_VERSION_MAJOR < 3
    void BaseXMLHandler::characters(const XMLCh* const chars, const unsigned int length)
-   {
+#else
+   void BaseXMLHandler::characters(const XMLCh* const chars, const XMLSize_t length)
+#endif
+{
       xmlCharString& topEl = mElements.top();
 
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
@@ -205,9 +209,6 @@ namespace  dtDAL
             "Found characters for element \"%s\" \"%s\"", dtUtil::XMLStringConverter(topEl.c_str()).c_str(), dtUtil::XMLStringConverter(chars).c_str());
       }
    }
-
-   //////////////////////////////////////////////////////////////////////////
-   void BaseXMLHandler::ignorableWhitespace(const XMLCh* const chars, const unsigned int length) {}
 
    //////////////////////////////////////////////////////////////////////////
    void BaseXMLHandler::processingInstruction(const XMLCh* const target, const XMLCh* const data) {}

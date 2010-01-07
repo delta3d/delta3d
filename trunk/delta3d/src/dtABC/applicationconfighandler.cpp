@@ -41,8 +41,11 @@ namespace dtABC
    ApplicationConfigHandler::~ApplicationConfigHandler()
    {
    }
-
+#if XERCES_VERSION_MAJOR < 3
    void ApplicationConfigHandler::characters(const XMLCh* const chars, const unsigned int length)
+#else
+   void ApplicationConfigHandler::characters(const XMLCh* const chars, const XMLSize_t length)
+#endif
    {
       if (mCurrentElement == ApplicationConfigSchema::LIBRARY_PATH)
       {
@@ -61,7 +64,12 @@ namespace dtABC
       mPropertyName.clear();
    }
 
+#if XERCES_VERSION_MAJOR < 3
    void ApplicationConfigHandler::ignorableWhitespace(const XMLCh* const chars, const unsigned int length) {}
+#else
+   void ApplicationConfigHandler::ignorableWhitespace(const XMLCh* const chars, const XMLSize_t length) {}
+#endif
+
    void ApplicationConfigHandler::processingInstruction(const XMLCh* const target, const XMLCh* const data) {}
    void ApplicationConfigHandler::setDocumentLocator(const XERCES_CPP_NAMESPACE_QUALIFIER Locator* const locator) {}
    void ApplicationConfigHandler::startDocument() {}

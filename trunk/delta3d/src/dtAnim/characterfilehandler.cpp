@@ -407,8 +407,13 @@ void CharacterFileHandler::endElement(const XMLCh* const uri,
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+#if XERCES_VERSION_MAJOR < 3
 void CharacterFileHandler::characters(const XMLCh* const chars,
                                       const unsigned int length)
+#else
+void CharacterFileHandler::characters(const XMLCh* const chars,
+                                      const XMLSize_t length)
+#endif
 {
    if (mElements.empty())
    {

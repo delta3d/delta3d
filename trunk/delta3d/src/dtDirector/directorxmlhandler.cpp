@@ -281,7 +281,11 @@ namespace dtDirector
    }
 
    /////////////////////////////////////////////////////////////////
+#if XERCES_VERSION_MAJOR < 3
    void DirectorXMLHandler::characters(const XMLCh* const chars, const unsigned int length)
+#else
+   void DirectorXMLHandler::characters(const XMLCh* const chars, const XMLSize_t length)
+#endif
    {
       dtDAL::BaseXMLHandler::characters(chars, length);
 

@@ -34,7 +34,9 @@
 #include <xercesc/util/OutOfMemoryException.hpp>
 #include <xercesc/sax2/XMLReaderFactory.hpp>
 #include <xercesc/framework/LocalFileInputSource.hpp>
-#include <xercesc/internal/XMLGrammarPoolImpl.hpp>
+#if XERCES_VERSION_MAJOR < 3
+#   include <xercesc/internal/XMLGrammarPoolImpl.hpp>
+#endif
 #include <xercesc/sax/SAXParseException.hpp>
 
 #ifdef _MSC_VER

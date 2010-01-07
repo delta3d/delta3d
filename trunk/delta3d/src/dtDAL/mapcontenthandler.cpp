@@ -352,7 +352,11 @@ namespace  dtDAL
    }
 
    /////////////////////////////////////////////////////////////////
+#if XERCES_VERSION_MAJOR < 3
    void MapContentHandler::characters(const XMLCh* const chars, const unsigned int length)
+#else
+   void MapContentHandler::characters(const XMLCh* const chars, const XMLSize_t length)
+#endif
    {
       BaseXMLHandler::characters(chars, length);
 
