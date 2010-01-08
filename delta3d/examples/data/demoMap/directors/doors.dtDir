@@ -2,7 +2,7 @@
 <director xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dDirector" xsi:schemaLocation="delta3dDirector director.xsd">
     <header>
         <createTimestamp>2009-12-22T14:26:31-08:00</createTimestamp>
-        <lastUpdateTimestamp>2009-12-30T21:41:06-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2010-01-08T15:01:11-08:00</lastUpdateTimestamp>
         <editorVersion>2.4.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
         <property>
@@ -151,10 +151,6 @@
                     <link>
                         <id>bf455b27-1207-425d-af9b-cb6bc3ba908c</id>
                         <name>Play</name>
-                    </link>
-                    <link>
-                        <id>dec9cfec-44c6-4666-adb4-d5f9fda0b931</id>
-                        <name>In</name>
                     </link>
                 </outputlink>
                 <outputlink>
@@ -1457,8 +1453,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-648.802490</value1>
-                            <value2>-72.765434</value2>
+                            <value1>-647.265808</value1>
+                            <value2>-74.000000</value2>
                         </vec2>
                     </property>
                     <property>
@@ -1607,8 +1603,8 @@
                         <name>Out</name>
                         <visible>true</visible>
                         <link>
-                            <id>d8a44e8c-6524-4a4b-ad79-234438b443b2</id>
-                            <name>Add</name>
+                            <id>94de37a4-0456-4192-8592-b3c33962cdd7</id>
+                            <name>In</name>
                         </link>
                     </outputlink>
                     <valuelink>
@@ -1658,8 +1654,8 @@
                         <name>Out</name>
                         <visible>true</visible>
                         <link>
-                            <id>96f71ce5-46b4-470c-b11c-911829572058</id>
-                            <name>Add</name>
+                            <id>9e0ada97-80bb-4f89-90ef-5fc9cf64e473</id>
+                            <name>In</name>
                         </link>
                     </outputlink>
                     <valuelink>
@@ -1893,166 +1889,6 @@
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>false</typecheck>
-                    </valuelink>
-                </node>
-                <node>
-                    <name>Binary Operation</name>
-                    <category>General</category>
-                    <id>d8a44e8c-6524-4a4b-ad79-234438b443b2</id>
-                    <property>
-                        <name>Enabled</name>
-                        <boolean>true</boolean>
-                    </property>
-                    <property>
-                        <name>Comment</name>
-                        <string>Flag the door as opened</string>
-                    </property>
-                    <property>
-                        <name>LogNode</name>
-                        <boolean>false</boolean>
-                    </property>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>871.246582</value1>
-                            <value2>-411.000000</value2>
-                        </vec2>
-                    </property>
-                    <property>
-                        <name>A</name>
-                        <double>0</double>
-                    </property>
-                    <property>
-                        <name>B</name>
-                        <double>1</double>
-                    </property>
-                    <inputlink>
-                        <name>Add</name>
-                        <visible>true</visible>
-                        <link>
-                            <id>eb8ec32f-3333-4e32-92d9-f85eb6b2a2eb</id>
-                            <name>Out</name>
-                        </link>
-                    </inputlink>
-                    <inputlink>
-                        <name>Subtract</name>
-                        <visible>false</visible>
-                    </inputlink>
-                    <inputlink>
-                        <name>Multiply</name>
-                        <visible>false</visible>
-                    </inputlink>
-                    <inputlink>
-                        <name>Divide</name>
-                        <visible>false</visible>
-                    </inputlink>
-                    <outputlink>
-                        <name>Out</name>
-                        <visible>false</visible>
-                    </outputlink>
-                    <valuelink>
-                        <name>A</name>
-                        <visible>false</visible>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>false</typecheck>
-                    </valuelink>
-                    <valuelink>
-                        <name>B</name>
-                        <visible>false</visible>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>false</typecheck>
-                    </valuelink>
-                    <valuelink>
-                        <name>Result</name>
-                        <visible>true</visible>
-                        <isout>true</isout>
-                        <allowmultiple>true</allowmultiple>
-                        <typecheck>false</typecheck>
-                        <link>
-                            <id>62444f9a-3a28-4966-bdfb-fcf9126b10b0</id>
-                        </link>
-                    </valuelink>
-                </node>
-                <node>
-                    <name>Binary Operation</name>
-                    <category>General</category>
-                    <id>96f71ce5-46b4-470c-b11c-911829572058</id>
-                    <property>
-                        <name>Enabled</name>
-                        <boolean>true</boolean>
-                    </property>
-                    <property>
-                        <name>Comment</name>
-                        <string>Flag the door as closed</string>
-                    </property>
-                    <property>
-                        <name>LogNode</name>
-                        <boolean>false</boolean>
-                    </property>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>865.746582</value1>
-                            <value2>-107.000000</value2>
-                        </vec2>
-                    </property>
-                    <property>
-                        <name>A</name>
-                        <double>0</double>
-                    </property>
-                    <property>
-                        <name>B</name>
-                        <double>0</double>
-                    </property>
-                    <inputlink>
-                        <name>Add</name>
-                        <visible>true</visible>
-                        <link>
-                            <id>60b2ccc8-9896-4971-9fd9-fe411a014d18</id>
-                            <name>Out</name>
-                        </link>
-                    </inputlink>
-                    <inputlink>
-                        <name>Subtract</name>
-                        <visible>false</visible>
-                    </inputlink>
-                    <inputlink>
-                        <name>Multiply</name>
-                        <visible>false</visible>
-                    </inputlink>
-                    <inputlink>
-                        <name>Divide</name>
-                        <visible>false</visible>
-                    </inputlink>
-                    <outputlink>
-                        <name>Out</name>
-                        <visible>false</visible>
-                    </outputlink>
-                    <valuelink>
-                        <name>A</name>
-                        <visible>false</visible>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>false</typecheck>
-                    </valuelink>
-                    <valuelink>
-                        <name>B</name>
-                        <visible>false</visible>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>false</typecheck>
-                    </valuelink>
-                    <valuelink>
-                        <name>Result</name>
-                        <visible>true</visible>
-                        <isout>true</isout>
-                        <allowmultiple>true</allowmultiple>
-                        <typecheck>false</typecheck>
-                        <link>
-                            <id>794bdaf8-11a5-4504-bce5-ff636486d247</id>
-                        </link>
                     </valuelink>
                 </node>
                 <node>
@@ -2543,6 +2379,120 @@
                         </link>
                     </valuelink>
                 </node>
+                <node>
+                    <name>Set Value</name>
+                    <category>General</category>
+                    <id>94de37a4-0456-4192-8592-b3c33962cdd7</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>LogNode</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>852.746582</value1>
+                            <value2>-411.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>Source</name>
+                        <string>true</string>
+                    </property>
+                    <inputlink>
+                        <name>In</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>eb8ec32f-3333-4e32-92d9-f85eb6b2a2eb</id>
+                            <name>Out</name>
+                        </link>
+                    </inputlink>
+                    <outputlink>
+                        <name>Out</name>
+                        <visible>true</visible>
+                    </outputlink>
+                    <valuelink>
+                        <name>Source</name>
+                        <visible>true</visible>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>false</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Destination</name>
+                        <visible>true</visible>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>false</typecheck>
+                        <link>
+                            <id>62444f9a-3a28-4966-bdfb-fcf9126b10b0</id>
+                        </link>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Set Value</name>
+                    <category>General</category>
+                    <id>9e0ada97-80bb-4f89-90ef-5fc9cf64e473</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>LogNode</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>854.746582</value1>
+                            <value2>-107.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>Source</name>
+                        <string>false</string>
+                    </property>
+                    <inputlink>
+                        <name>In</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>60b2ccc8-9896-4971-9fd9-fe411a014d18</id>
+                            <name>Out</name>
+                        </link>
+                    </inputlink>
+                    <outputlink>
+                        <name>Out</name>
+                        <visible>true</visible>
+                    </outputlink>
+                    <valuelink>
+                        <name>Source</name>
+                        <visible>true</visible>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>false</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Destination</name>
+                        <visible>true</visible>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>false</typecheck>
+                        <link>
+                            <id>794bdaf8-11a5-4504-bce5-ff636486d247</id>
+                        </link>
+                    </valuelink>
+                </node>
             </actionnodes>
             <valuenodes>
                 <node>
@@ -2718,7 +2668,7 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>893.746582</value1>
+                            <value1>908.746521</value1>
                             <value2>-276.794891</value2>
                         </vec2>
                     </property>
@@ -2760,8 +2710,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>888.246582</value1>
-                            <value2>30.205109</value2>
+                            <value1>910.746521</value1>
+                            <value2>27.110243</value2>
                         </vec2>
                     </property>
                     <property>
