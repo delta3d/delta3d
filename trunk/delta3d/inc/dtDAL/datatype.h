@@ -44,7 +44,7 @@ namespace dtDAL
             VEC4_ID, VEC3_ID, VEC2_ID, VEC4F_ID, VEC3F_ID, VEC2F_ID, VEC4D_ID, VEC3D_ID, VEC2D_ID,
             RGBCOLOR_ID, RGBACOLOR_ID, GROUP_ID, ACTOR_ID, ENUMERATION_ID, GAMEEVENT_ID,
             STATICMESH_ID, TEXTURE_ID, TERRAIN_ID, SOUND_ID, PARTICLESYSTEM_ID,
-            SKELETAL_MESH_ID, ARRAY_ID, CONTAINER_ID, PREFAB_ID, SHADER_ID
+            SKELETAL_MESH_ID, ARRAY_ID, CONTAINER_ID, PREFAB_ID, SHADER_ID, DIRECTOR_ID,
          };
 
          /**
@@ -240,6 +240,11 @@ namespace dtDAL
           *  A pixel shader definition
           */
          static DataType SHADER;
+
+         /**
+         * A Director Graph resource.
+         */
+         static DataType DIRECTOR;
 
          /**
           * @return true if this datatype represents a resource

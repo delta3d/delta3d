@@ -116,7 +116,7 @@ namespace dtEditQt
       QIcon icon = item->icon();
       QPixmap pixmap = icon.pixmap(16);
       dtDAL::ResourceDescriptor resource = item->getResourceDescriptor();
-      QString resourceIdentity = resource.GetResourceIdentifier().c_str();
+      QString resourceIdentity = resource.GetDisplayName().c_str();
 
       dataStream << resourceIdentity;
 

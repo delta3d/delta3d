@@ -265,6 +265,13 @@ namespace dtDAL
                handler = new DefaultResourceTypeHandler(d, "Delta3D Shaders", extFilter);
                extMap.insert(std::make_pair("dtshader", dtCore::RefPtr<ResourceTypeHandler>(handler)));
             }
+            else if (d == DataType::DIRECTOR)
+            {
+               description = "Director Graphs";
+               extFilter.insert(std::make_pair("dtdir", "Director Graphs"));
+               handler = new DefaultResourceTypeHandler(d, "Director Graphs", extFilter);
+               extMap.insert(std::make_pair("dtdir", dtCore::RefPtr<ResourceTypeHandler>(handler)));
+            }
 
             mTypeHandlers.insert(std::make_pair(&d, extMap));
          }
