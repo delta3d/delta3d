@@ -79,7 +79,7 @@ namespace dtDirector
       // Perform math!
       std::string source = GetString("Source");
 
-      SetString(source, "Result");
+      SetString(source, "Destination");
 
       return ActionNode::Update(simDelta, delta, input, firstUpdate);
    }
