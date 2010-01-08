@@ -43,23 +43,12 @@ DirectorComponent::DirectorComponent(const std::string& name)
 ////////////////////////////////////////////////////////////////////////////////
 DirectorComponent::~DirectorComponent()
 {
-   // Save our recorded script for debugging later.
-   mDoorDirector->SaveRecording("DoorRecording");
-   mFireDirector->SaveRecording("FireRecording");
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void DirectorComponent::ProcessMessage(const dtGame::Message& message)
 {
-   if (message.GetMessageType() == dtGame::MessageType::TICK_LOCAL)
-   {
-      const dtGame::TickMessage& tickMessage = static_cast<const dtGame::TickMessage&>(message);
-
-      // Update Director with both sim and real time
-      mDoorDirector->Update(tickMessage.GetDeltaSimTime(), tickMessage.GetDeltaRealTime());
-      mFireDirector->Update(tickMessage.GetDeltaSimTime(), tickMessage.GetDeltaRealTime());
-   }
-   else if (message.GetMessageType() == dtGame::MessageType::INFO_MAP_LOADED)
+   if (message.GetMessageType() == dtGame::MessageType::INFO_MAP_LOADED)
    {
       OnMapLoaded();
    }
@@ -95,24 +84,13 @@ bool DirectorComponent::HandleKeyPressed(const dtCore::Keyboard* keyBoard, int k
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void DirectorComponent::OnAddedToGM()
-{
-   // Must call this to actually receive input
-   BaseInputComponent::OnAddedToGM();
-
-   // Creating and initializing our Director scripts.
-   // In this case, we have two running in parallel.
-   // One for the doors and the other for the fire places.
-   mDoorDirector = new dtDirector::Director();
-   mDoorDirector->Init();
-
-   mFireDirector = new dtDirector::Director();
-   mFireDirector->Init();
-}
-
-////////////////////////////////////////////////////////////////////////////////
 void DirectorComponent::OnMapLoaded()
 {
+   // Here we are setting up our camera motion model so it is an FPS style
+   // game.  Note that we do nothing specific for Director.  That is because
+   // the map itself contains a Director Actor inside it, this actor handles
+   // the execution of a Director Script while the map is loaded.
+
    dtGame::GameManager* gm = GetGameManager();
    dtABC::Application& app = gm->GetApplication();
    dtCore::Camera* camera  = gm->GetApplication().GetCamera();
@@ -161,39 +139,6 @@ void DirectorComponent::OnMapLoaded()
    dtCore::Transform startTransform;
    playerStart->GetTransform(startTransform);
    camera->SetTransform(startTransform);
-
-   LoadDirectorScript();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void DirectorComponent::LoadDirectorScript()
-{
-   dtGame::GameManager* gm = GetGameManager();
-   dtCore::Camera* camera  = gm->GetApplication().GetCamera();
-
-   // Here we set the player so any Player Value script nodes
-   // used in any scripts will know who the player is.  In this
-   // case, the camera represents our player so we will use that.
-   mDoorDirector->SetPlayer(camera->GetUniqueId());
-   mFireDirector->SetPlayer(camera->GetUniqueId());
-
-   // Load our doors.dtDir and fires.dtDir script files.
-   mDoorDirector->LoadScript("doors");
-   mFireDirector->LoadScript("fires");
-
-   // For debug purposes, set Node Logging to true if you want
-   // all nodes that are flagged to log their output, to print
-   // a log message in the console when they are executed.
-   mDoorDirector->SetNodeLogging(true);
-   mFireDirector->SetNodeLogging(true);
-
-   // For further debugging, we can start recording the entire execution
-   // of the script.  When we close this application, we will then save
-   // the recorded data to a file.  Later, we can load the recorded data
-   // file in the Director Graph Editor and step through all of the nodes
-   // that were executed during this recording.
-   mDoorDirector->StartRecording();
-   mFireDirector->StartRecording();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

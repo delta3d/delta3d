@@ -62,21 +62,11 @@ protected:
 
    virtual ~DirectorComponent();
 
-   /**
-   * Called immediately after a component is added to the GM. Override this
-   * to do init type behavior that needs access to the GameManager.
-   */
-   virtual void OnAddedToGM();
-
 private:   
    
-   dtCore::RefPtr<dtDirector::Director> mDoorDirector;
-   dtCore::RefPtr<dtDirector::Director> mFireDirector;
    dtCore::RefPtr<dtCore::MotionModel> mMotionModel;
 
    void OnMapLoaded();
-
-   void LoadDirectorScript();
 };
 
 ////////////////////////////////////////////////////////////////////////////////
