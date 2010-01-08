@@ -243,6 +243,12 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void EditorData::setCurrentDirectorResource(const dtDAL::ResourceDescriptor selectedResource)
+   {
+      mDirectorResource = selectedResource;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void EditorData::setCurrentResource(const dtDAL::DataType& type,
                                        const dtDAL::ResourceDescriptor& selectedResource)
    {
@@ -273,6 +279,10 @@ namespace dtEditQt
       else if (type == dtDAL::DataType::SHADER)
       {
          setCurrentShaderResource(selectedResource);
+      }
+      else if (type == dtDAL::DataType::DIRECTOR)
+      {
+         setCurrentDirectorResource(selectedResource);
       }
    }
 
@@ -306,6 +316,10 @@ namespace dtEditQt
       else if (type == dtDAL::DataType::SHADER)
       {
          return getCurrentShaderResource();
+      }
+      else if (type == dtDAL::DataType::DIRECTOR)
+      {
+         return getCurrentDirectorResource();
       }
       else
       {

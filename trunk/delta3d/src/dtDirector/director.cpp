@@ -73,6 +73,12 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void Director::Clear()
    {
+      // Save out any currently recorded data if it exists.
+      if (mRecording)
+      {
+         SaveRecording(mScriptName);
+      }
+
       // First clear all our current nodes.
       mGraph->mEventNodes.clear();
       mGraph->mActionNodes.clear();
@@ -85,6 +91,8 @@ namespace dtDirector
       mLibraryVersionMap.clear();
 
       ClearRecordingData(mRecordThreads);
+
+      mScriptName = "";
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -138,6 +146,14 @@ namespace dtDirector
    {
       Clear();
 
+      if (scriptFile.empty()) return false;
+
+      // Remove any extension.
+      std::string name = scriptFile;
+      std::size_t index = scriptFile.find_last_of('.');
+      if (index >= 0 && index < scriptFile.size()-1)
+         name = scriptFile.substr(0, index);
+
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
       fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext());
 
@@ -146,7 +162,7 @@ namespace dtDirector
       {
          try
          {
-            parser->Parse(this, mMap.get(), "directors/" + scriptFile + ".dtDir");
+            parser->Parse(this, mMap.get(), "directors/" + name + ".dtDir");
          }
          catch (const dtUtil::Exception& e)
          {
@@ -158,6 +174,7 @@ namespace dtDirector
 
          fileUtils.PopDirectory();
          mModified = parser->HasDeprecatedProperty();
+         mScriptName = name;
          return true;
       }
 

@@ -394,6 +394,11 @@ namespace dtEditQt
 
       dtDAL::ResourceDescriptor getCurrentShaderResource() { return mShaderResource; }
 
+      void setCurrentDirectorResource(const dtDAL::ResourceDescriptor selectedResource);
+
+      dtDAL::ResourceDescriptor getCurrentDirectorResource() { return mDirectorResource; }
+
+
 
       // Singleton instance of this class.
       static dtCore::RefPtr<EditorData> sInstance;
@@ -414,6 +419,7 @@ namespace dtEditQt
       dtDAL::ResourceDescriptor mSkeletalModelResource;
       dtDAL::ResourceDescriptor mPrefabResource;
       dtDAL::ResourceDescriptor mShaderResource;
+      dtDAL::ResourceDescriptor mDirectorResource;
 
       std::list<std::string> mRecentMaps;
       std::list<std::string> mRecentProjects;

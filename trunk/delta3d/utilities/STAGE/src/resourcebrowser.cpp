@@ -40,6 +40,7 @@
 //#include <dtEditQt/characterbrowser.h>
 #include <dtEditQt/terrainbrowser.h>
 #include <dtEditQt/shaderbrowser.h>
+#include <dteditQt/directorbrowser.h>
 #include <dtEditQt/editoractions.h>
 #include <dtEditQt/uiresources.h>
 
@@ -63,6 +64,7 @@ namespace dtEditQt
       mTabTexture       = new TabWrapper(this);
       mTabTerrain       = new TabWrapper(this);
       mTabShader        = new TabWrapper(this);
+      mTabDirector      = new TabWrapper(this);
 
       // widgets
       mMeshWidget       = new StaticMeshBrowser(dtDAL::DataType::STATIC_MESH, this);
@@ -72,6 +74,7 @@ namespace dtEditQt
       mTextureWidget    = new TextureBrowser(dtDAL::DataType::TEXTURE, this);
       mTerrainWidget    = new TerrainBrowser(dtDAL::DataType::TERRAIN, this);
       mShaderWidget     = new ShaderBrowser(dtDAL::DataType::SHADER, this);
+      mDirectorWidget   = new DirectorBrowser(dtDAL::DataType::DIRECTOR, this);
 
       addTabs();
 
@@ -129,6 +132,11 @@ namespace dtEditQt
       mTabShader->setWidget(mShaderWidget);
       mTabShader->setName("Shader");
       mTabC->addTab(mTabShader);
+
+      // Director tab
+      mTabDirector->setWidget(mDirectorWidget);
+      mTabDirector->setName("Director");
+      mTabC->addTab(mTabDirector);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
