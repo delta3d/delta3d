@@ -62,6 +62,7 @@
 #include <dtActors/buildingactor.h>
 #include <dtActors/watergridactor.h>
 #include <dtActors/triggervolumeactorproxy.h>
+#include <dtActors/directoractorproxy.h>
 
 namespace dtActors
 { // "display name", "category", "description/tooltip"
@@ -104,6 +105,7 @@ namespace dtActors
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::BACKDROP_ACTOR_TYPE(new dtDAL::ActorType("Backdrop", "dtActors", "dtActors.Backdrop actor"));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::WATER_GRID_ACTOR_TYPE(new dtDAL::ActorType("Water", "dtActors", "dtActors.Water actor"));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::TRIGGER_VOLUME_ACTOR_TYPE(new dtDAL::ActorType("Trigger Volume Actor", "dtActors", "dtActors.Trigger Volume Actor"));
+   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::DIRECTOR_ACTOR_TYPE(new dtDAL::ActorType("Director Actor", "dtActors", "dtActors.Director Actor"));
 
    /// deprecated types
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::ENVIRONMENT_ACTOR_TYPE(new dtDAL::ActorType("Environment", "dtcore.Environment", "dtCore::BasicEnvironment Actor."));
@@ -194,6 +196,7 @@ namespace dtActors
       mActorFactory->RegisterType<BuildingActorProxy>(BUILDING_ACTOR_TYPE.get());
       mActorFactory->RegisterType<WaterGridActorProxy>(WATER_GRID_ACTOR_TYPE.get());
       mActorFactory->RegisterType<TriggerVolumeActorProxy>(TRIGGER_VOLUME_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<DirectorActorProxy>(DIRECTOR_ACTOR_TYPE.get());
 
       // Base Game Mesh actor - typically subclassed (maybe shouldn't even be registered)
       mActorFactory->RegisterType<GameMeshActorProxy>(GAME_MESH_ACTOR_TYPE.get());

@@ -47,6 +47,7 @@ namespace dtEditQt
    //class CharacterBrowser;
    class TerrainBrowser;
    class ShaderBrowser;
+   class DirectorBrowser;
 
    /**
     * @class ResourceBrowser
@@ -87,6 +88,7 @@ namespace dtEditQt
       TabWrapper*   mTabTexture;
       TabWrapper*   mTabTerrain;
       TabWrapper*   mTabShader;
+      TabWrapper*   mTabDirector;
       TabContainer* mTabC;
 
       StaticMeshBrowser*   mMeshWidget;
@@ -96,6 +98,7 @@ namespace dtEditQt
       TextureBrowser*      mTextureWidget;
       TerrainBrowser*      mTerrainWidget;
       ShaderBrowser*       mShaderWidget;
+      DirectorBrowser*     mDirectorWidget;
 
       void closeEvent(QCloseEvent* e);
    };

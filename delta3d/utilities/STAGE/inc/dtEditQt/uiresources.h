@@ -99,6 +99,7 @@ namespace dtEditQt
       static std::string ICON_CHARACTER_RESOURCE;
       static std::string ICON_PARTICLE_RESOURCE;
       static std::string ICON_TERRAIN_RESOURCE;
+      static std::string ICON_DIRECTOR_RESOURCE;
 
       static std::string ICON_SOUND_TAB;
       static std::string ICON_STATICMESH_TAB;

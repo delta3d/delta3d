@@ -88,6 +88,7 @@ namespace dtEditQt
       ICON_TEXTURE_RESOURCE = ":/icons/texture_resource.png";
       ICON_PARTICLE_RESOURCE = ":/icons/particle_resource.png";
       ICON_TERRAIN_RESOURCE = ":/icons/terrain_resource.png";
+      ICON_DIRECTOR_RESOURCE = ":/icons/director_resource.png";
 
       ICON_SOUND_TAB = ":/icons/sound_tab.png";
       ICON_STATICMESH_TAB = ":/icons/staticmesh_tab.png";
@@ -160,6 +161,7 @@ namespace dtEditQt
    std::string UIResources::ICON_TEXTURE_RESOURCE("");
    std::string UIResources::ICON_PARTICLE_RESOURCE("");
    std::string UIResources::ICON_TERRAIN_RESOURCE("");
+   std::string UIResources::ICON_DIRECTOR_RESOURCE("");
 
    std::string UIResources::ICON_SOUND_TAB("");
    std::string UIResources::ICON_STATICMESH_TAB("");

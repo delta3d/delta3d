@@ -54,6 +54,7 @@
 #include <dtDAL/mapxml.h>
 #include <dtDAL/project.h>
 #include <dtActors/prefabactorproxy.h>
+#include <dtDAL/arrayactorproperty.h>
 
 
 namespace dtEditQt
@@ -339,6 +340,30 @@ namespace dtEditQt
             mGhostProxy->GetActor(drawable);
          }
       }
+      // Create a ghost of the object being dragged into the view.
+      if (event->mimeData()->hasFormat("Director"))
+      {
+         validDrag = true;
+         ClearGhostProxy();
+
+         mGhostProxy = dtDAL::LibraryManager::GetInstance().CreateActorProxy("dtActors", "Director Actor");
+         if (mGhostProxy.valid())
+         {
+            ghostData = event->mimeData()->data("Director");
+            dtDAL::ArrayActorProperty<dtDAL::ResourceDescriptor>* arrayProp = dynamic_cast<dtDAL::ArrayActorProperty<dtDAL::ResourceDescriptor>* >(mGhostProxy->GetProperty("DirectorArray"));
+            if (arrayProp)
+            {
+               if (arrayProp->GetArraySize() == 0)
+               {
+                  arrayProp->Insert(0);
+               }
+
+               arrayProp->SetIndex(0);
+               resourceProp = dynamic_cast<dtDAL::ResourceActorProperty*>(arrayProp->GetArrayProperty());
+            }
+            mGhostProxy->GetActor(drawable);
+         }
+      }
 
       if (validDrag)
       {
@@ -393,7 +418,8 @@ namespace dtEditQt
          event->mimeData()->hasFormat("SkeletalMesh") ||
          event->mimeData()->hasFormat("Particle")     ||
          event->mimeData()->hasFormat("Sound")        ||
-         event->mimeData()->hasFormat("Actor"))
+         event->mimeData()->hasFormat("Actor")        ||
+         event->mimeData()->hasFormat("Director"))
       {
          // Move the position of the ghost.
          if (mGhostProxy.valid())
@@ -465,7 +491,8 @@ namespace dtEditQt
          event->mimeData()->hasFormat("SkeletalMesh") ||
          event->mimeData()->hasFormat("Particle")     ||
          event->mimeData()->hasFormat("Sound")        ||
-         event->mimeData()->hasFormat("Actor"))
+         event->mimeData()->hasFormat("Actor")        ||
+         event->mimeData()->hasFormat("Director"))
       {
          if (mGhostProxy.valid())
          {

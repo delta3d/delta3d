@@ -114,6 +114,11 @@ namespace dtDirector
       dtUtil::Log* GetLogger();
 
       /**
+      * Retrieves the currently loaded script.
+      */
+      const std::string& GetScriptName() {return mScriptName;}
+
+      /**
        * Loads a Director script.
        *
        * @param[in]  scriptFile  The name of the script file to load.
@@ -521,6 +526,7 @@ namespace dtDirector
       dtCore::UniqueId mPlayer;
 
       // Core Info.
+      std::string mScriptName;
       std::string mDescription;
       std::string mAuthor;
       std::string mCopyright;
