@@ -154,6 +154,8 @@ namespace dtDAL
    ////////////////////////////////////////////////////////////////////////////
    ActorProxy* ActorActorProperty::GetValue() const
    {
+      if (!mProxy) return NULL;
+
       return mProxy->GetLinkedActor(GetName());
    }
 

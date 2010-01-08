@@ -1,9 +1,6 @@
 ADD_SUBDIRECTORY(plugins/STBuildingTool)
 
-IF (DTDIRECTOR_AVAILABLE)
-	ADD_SUBDIRECTORY(plugins/STDirectorTool)
-ENDIF (DTDIRECTOR_AVAILABLE)
-
+ADD_SUBDIRECTORY(plugins/STDirectorTool)
 ADD_SUBDIRECTORY(plugins/STFenceTool)
 ADD_SUBDIRECTORY(plugins/STLinkedPointsActorTool)
 ADD_SUBDIRECTORY(plugins/STMapExporterTool)
