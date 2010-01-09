@@ -372,6 +372,12 @@ void ProxyTest::testProp(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty* prop, b
       else
       {
          proxy.GetProperty(prop->GetName(), aap);
+
+         if (aap == NULL)
+         {
+            proxy.GetProperty(prop->GetName(), aidap);
+            CPPUNIT_ASSERT(aidap != NULL);
+         }
       }
 
       if (aap != NULL)
