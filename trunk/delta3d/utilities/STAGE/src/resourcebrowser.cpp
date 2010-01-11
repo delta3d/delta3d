@@ -40,7 +40,7 @@
 //#include <dtEditQt/characterbrowser.h>
 #include <dtEditQt/terrainbrowser.h>
 #include <dtEditQt/shaderbrowser.h>
-#include <dteditQt/directorbrowser.h>
+#include <dtEditQt/directorbrowser.h>
 #include <dtEditQt/editoractions.h>
 #include <dtEditQt/uiresources.h>
 
