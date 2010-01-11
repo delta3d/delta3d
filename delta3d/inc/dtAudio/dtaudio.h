@@ -21,6 +21,7 @@
 #ifndef  DELTA_DTAUDIO
 #define  DELTA_DTAUDIO
 
+#include <dtAudio/export.h>
 #include <dtAudio/sound.h>
 #include <dtAudio/listener.h>
 #include <dtAudio/audiomanager.h>
@@ -38,7 +39,7 @@ const std::string ERROR_CLEARING_STRING = "Clearing Error code "
    "method was called.";
 
 //implemented in audiomanager.cpp
-inline bool CheckForError(const std::string& userMessage,
+inline bool DT_AUDIO_EXPORT CheckForError(const std::string& userMessage,
                           const std::string& msgFunction,
                           int lineNumber);
 
