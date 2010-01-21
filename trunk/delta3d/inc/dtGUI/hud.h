@@ -237,6 +237,15 @@ class DT_GUI_EXPORT HUD : public dtCore::Base,
                          static-wrappers (additional gui management)
          ********************************************************************************/
 
+        /// shortcut/wrapper to CEGUI::ImagesetManager::createImageset
+        static void LoadImageset(const std::string& sFileName, const std::string& resourceGroup = "");
+
+        /// shortcut/wrapper to CEGUI::ImagesetManager::destroyImageset
+        static void UnloadImageset(const std::string& sFileName);
+
+        /// shortcut/wrapper to CEGUI::ImagesetManager::destroyAllImagesets
+        static void UnloadAllImagesets();
+
         /// shortcut/wrapper to CEGUI::SchemeManager::loadScheme
         static void LoadScheme(const std::string&);
 
@@ -257,6 +266,15 @@ class DT_GUI_EXPORT HUD : public dtCore::Base,
 
         /// shortcut/wrapper to CEGUI::System::getSingleton().setMouseCursor
         static void SetMouseCursor(const std::string& sImagesetName, const std::string& sImageName);
+
+        // shortcut/wrapper to CEGUI::ImagesetManager::getSingleton().isImagesetPresent
+        static bool IsImagesetPresent(const std::string& sImagesetName);
+
+        // shortcut/wrapper to CEGUI::SchemeManager::getSingleton().isSchemePresent
+        static bool IsSchemePresent(const std::string& sSchemeName);
+
+        // shortcut/wrapper to CEGUI::WindowManager::getSingleton().isWindowPresent
+        static bool IsWindowPresent(const std::string& sWindowName);
 
    protected:
          ///destructs an existing gui object
