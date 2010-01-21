@@ -467,6 +467,27 @@ osg::Texture2D* HUD::GetOrCreateOSGTexture(const std::string& sWidgetName)
  ********************************************************************************/
 
 ////////////////////////////////////////////////////////////////////////////////
+void HUD::LoadImageset(const std::string& sFileName, const std::string& resourceGroup /*= ""*/)
+{
+   _SetupSystemAndRenderer();
+   CEGUI::ImagesetManager::getSingleton().createImageset(sFileName, resourceGroup);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void HUD::UnloadImageset(const std::string& sFileName)
+{
+   _SetupSystemAndRenderer();
+   CEGUI::ImagesetManager::getSingleton().destroyImageset(sFileName);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void HUD::UnloadAllImagesets()
+{
+   _SetupSystemAndRenderer();
+   CEGUI::ImagesetManager::getSingleton().destroyAllImagesets();
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void HUD::LoadScheme(const std::string& sFileName)
 {
    _SetupSystemAndRenderer();
@@ -513,6 +534,27 @@ void HUD::SetMouseCursor(const std::string &sImagesetName, const std::string &sI
 {
    _SetupSystemAndRenderer();
    CEGUI::System::getSingletonPtr()->setDefaultMouseCursor(sImagesetName, sImageName);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool HUD::IsImagesetPresent(const std::string& sImagesetName)
+{
+   _SetupSystemAndRenderer();
+   return CEGUI::ImagesetManager::getSingleton().isImagesetPresent(sImagesetName);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool HUD::IsSchemePresent(const std::string& sSchemeName)
+{
+   _SetupSystemAndRenderer();
+   return CEGUI::SchemeManager::getSingleton().isSchemePresent(sSchemeName);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool HUD::IsWindowPresent(const std::string& sWindowName)
+{
+   _SetupSystemAndRenderer();
+   return CEGUI::WindowManager::getSingleton().isWindowPresent(sWindowName);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
