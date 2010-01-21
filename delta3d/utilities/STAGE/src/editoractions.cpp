@@ -839,7 +839,7 @@ namespace dtEditQt
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void EditorActions::slotEditDuplicateActors()
+   void EditorActions::slotEditDuplicateActors(bool jitterClone /*= true*/)
    {
       LOG_INFO("Duplicating current actor selection.");
 
@@ -850,7 +850,7 @@ namespace dtEditQt
          propEditor->CommitCurrentEdits();
       }
 
-      ViewportOverlay::ActorProxyList& selection =ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
+      ViewportOverlay::ActorProxyList selection = ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
       dtCore::Scene* scene = ViewportManager::GetInstance().getMasterScene();
       dtCore::RefPtr<dtDAL::Map> currMap = EditorData::GetInstance().getCurrentMap();
       StageCamera* worldCam = ViewportManager::GetInstance().getWorldViewCamera();
@@ -868,17 +868,20 @@ namespace dtEditQt
          return;
       }
 
-      // Create our offset vector which is used to jitter the cloned
-      // proxies providing better feedback to the user.
-      float actorCreationOffset = EditorData::GetInstance().GetActorCreationOffset();
-      osg::Vec3 offset;
-      if (worldCam != NULL)
+      osg::Vec3 offset(0, 0, 0);
+      if (jitterClone)
       {
-         offset = worldCam->getRightDir() * actorCreationOffset;
-      }
-      else
-      {
-         offset = osg::Vec3(actorCreationOffset, 0, 0);
+         // Create our offset vector which is used to jitter the cloned
+         // proxies providing better feedback to the user.
+         float actorCreationOffset = EditorData::GetInstance().GetActorCreationOffset();
+         if (worldCam != NULL)
+         {
+            offset = worldCam->getRightDir() * actorCreationOffset;
+         }
+         else
+         {
+            offset = osg::Vec3(actorCreationOffset, 0, 0);
+         }
       }
 
       // We're about to do a LOT of work, especially if lots of things are select

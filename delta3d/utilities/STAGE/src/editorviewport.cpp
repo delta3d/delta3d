@@ -788,7 +788,12 @@ namespace dtEditQt
          // them instead.
          if (mKeyMods == Qt::AltModifier)
          {
-            DuplicateActors();
+            bool overrideDefault = false;
+            ViewportManager::GetInstance().emitDuplicateActors(this, &overrideDefault);
+            if (!overrideDefault)
+            {
+               EditorActions::GetInstance().slotEditDuplicateActors(false);
+            }
 
             // Make sure we only duplicate the actors once.
             mKeyMods = 0x0;
@@ -1081,120 +1086,6 @@ namespace dtEditQt
 
       disconnect(editorEvents, SIGNAL(editorPreferencesChanged()),
          this, SLOT(onEditorPreferencesChanged()));
-   }
-
-   //////////////////////////////////////////////////////////////////////////////
-   bool EditorViewport::DuplicateActors()
-   {
-      bool overrideDefault = false;
-      ViewportManager::GetInstance().emitDuplicateActors(this, &overrideDefault);
-      if (overrideDefault)
-      {
-         return false;
-      }
-
-      LOG_INFO("Duplicating current actor selection.");
-
-      // This commits any changes in the property editor.
-      PropertyEditor* propEditor = EditorData::GetInstance().getMainWindow()->GetPropertyEditor();
-      if(propEditor != NULL)
-      {
-         propEditor->CommitCurrentEdits();
-      }
-
-      ViewportOverlay::ActorProxyList selection = ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
-      dtCore::RefPtr<dtDAL::Map> currMap = EditorData::GetInstance().getCurrentMap();
-      ViewportOverlay* overlay = ViewportManager::GetInstance().getViewportOverlay();
-
-      // Make sure we have valid data.
-      if (!currMap.valid())
-      {
-         LOG_ERROR("Current map is not valid.");
-         return true;
-      }
-
-      // We're about to do a LOT of work, especially if lots of things are select
-      // so, start a change transaction.
-      EditorData::GetInstance().getMainWindow()->startWaitCursor();
-      EditorEvents::GetInstance().emitBeginChangeTransaction();
-
-      // Once we have a reference to the current selection and the scene,
-      // clone each proxy, add it to the scene, make the newly cloned
-      // proxy(s) the current selection.
-      ViewportOverlay::ActorProxyList::iterator itor, itorEnd;
-      itor    = selection.begin();
-      itorEnd = selection.end();
-
-      std::map<int, int> groupMap;
-
-      std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > newSelection;
-      for (; itor != itorEnd; ++itor)
-      {
-         dtDAL::ActorProxy* proxy = const_cast<dtDAL::ActorProxy*>(itor->get());
-         dtCore::RefPtr<dtDAL::ActorProxy> copy = proxy->Clone();
-         if (!copy.valid())
-         {
-            LOG_ERROR("Error duplicating proxy: " + proxy->GetName());
-            continue;
-         }
-
-         // Un-highlight the currently selected proxy.
-         if (overlay->isActorSelected(proxy))
-         {
-            overlay->removeActorFromCurrentSelection(proxy);
-         }
-
-         newSelection.push_back(copy);
-
-         osg::Vec3 oldPosition;
-         // Store the original location of the proxy so we can position after
-         // it has been added to the scene.
-         dtDAL::TransformableActorProxy* tProxy =
-            dynamic_cast<dtDAL::TransformableActorProxy*>(proxy);
-         if (tProxy)
-         {
-            oldPosition = tProxy->GetTranslation();
-         }
-
-         // Add the new proxy to the map and send out a create event.
-         currMap->AddProxy(*copy, true);
-
-         EditorEvents::GetInstance().emitActorProxyCreated(copy, false);
-
-         // Preserve the group data for new proxies.
-         int groupIndex = currMap->FindGroupForActor(proxy);
-         if (groupIndex > -1)
-         {
-            // If we already have this group index mapped, then we have
-            // already created a new group for the copied proxies.
-            if (groupMap.find(groupIndex) != groupMap.end())
-            {
-               int newGroup = groupMap[groupIndex];
-               currMap->AddActorToGroup(newGroup, copy.get());
-            }
-            else
-            {
-               // Create a new group and map it.
-               int newGroup = currMap->GetGroupCount();
-               currMap->AddActorToGroup(newGroup, copy.get());
-               groupMap[groupIndex] = newGroup;
-            }
-         }
-
-         // Move the newly duplicated actor to where it is supposed to go.
-         if (tProxy)
-         {
-            tProxy->SetTranslation(oldPosition);
-         }
-      }
-
-      // Finally set the newly cloned proxies to be the current selection.
-      EditorEvents::GetInstance().emitActorsSelected(newSelection);
-      EditorEvents::GetInstance().emitEndChangeTransaction();
-
-      EditorData::GetInstance().getMainWindow()->endWaitCursor();
-
-      return true;
    }
 
    ///////////////////////////////////////////////////////////////////////////////

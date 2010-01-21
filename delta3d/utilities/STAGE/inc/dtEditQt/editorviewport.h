@@ -295,11 +295,6 @@ namespace dtEditQt {
       virtual void disconnectInteractionModeSlots();
 
       /**
-      * Duplicates the selected actors.
-      */
-      virtual bool DuplicateActors();
-
-      /**
       * Called when the user presses a key on the keyboard in the viewport.
       * Based on the combination of keys pressed, the viewport's current
       * mode will be set.

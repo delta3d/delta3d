@@ -319,7 +319,7 @@ namespace dtEditQt
        * Slot - Edit - Duplicate event.  Copies the current actor selection and added the
        * copies to the scene.
        */
-      void slotEditDuplicateActors();
+      void slotEditDuplicateActors(bool jitterClone = true);
 
       /**
        * Slot - Edit - Delete event.  Removes the current actor selection from the scene.
