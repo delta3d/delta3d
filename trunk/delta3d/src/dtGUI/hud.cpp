@@ -172,17 +172,17 @@ Widget* HUD::CreateWidget(Widget* pParentWidget, const std::string& sWidgetTypeN
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-Widget* HUD::LoadLayout(Widget* pParentWidget, const std::string& sFileName, const std::string& sPrefix)
+Widget* HUD::LoadLayout(Widget* pParentWidget, const std::string& sFileName, const std::string& sPrefix, const std::string& sResourceGroup /*= ""*/)
 {
-   Widget* pNewLayout = CEGUI::WindowManager::getSingleton().loadWindowLayout(sFileName, GetCEGUIPrefix(m_pRootsheet) + sPrefix);
+   Widget* pNewLayout = CEGUI::WindowManager::getSingleton().loadWindowLayout(sFileName, GetCEGUIPrefix(m_pRootsheet) + sPrefix, sResourceGroup);
    pParentWidget->addChildWindow(pNewLayout);
    return pNewLayout;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-Widget* HUD::LoadLayout(const std::string& sFileName, const std::string& sPrefix)
+Widget* HUD::LoadLayout(const std::string& sFileName, const std::string& sPrefix, const std::string& sResourceGroup /*= ""*/)
 {
-   return LoadLayout(m_pRootsheet, sFileName, sPrefix);
+   return LoadLayout(m_pRootsheet, sFileName, sPrefix, sResourceGroup);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -467,10 +467,10 @@ osg::Texture2D* HUD::GetOrCreateOSGTexture(const std::string& sWidgetName)
  ********************************************************************************/
 
 ////////////////////////////////////////////////////////////////////////////////
-void HUD::LoadImageset(const std::string& sFileName, const std::string& resourceGroup /*= ""*/)
+void HUD::LoadImageset(const std::string& sFileName, const std::string& sResourceGroup /*= ""*/)
 {
    _SetupSystemAndRenderer();
-   CEGUI::ImagesetManager::getSingleton().createImageset(sFileName, resourceGroup);
+   CEGUI::ImagesetManager::getSingleton().createImageset(sFileName, sResourceGroup);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -488,10 +488,10 @@ void HUD::UnloadAllImagesets()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void HUD::LoadScheme(const std::string& sFileName)
+void HUD::LoadScheme(const std::string& sFileName, const std::string& sResourceGroup /*= ""*/)
 {
    _SetupSystemAndRenderer();
-   CEGUI::SchemeManager::getSingleton().loadScheme(sFileName);
+   CEGUI::SchemeManager::getSingleton().loadScheme(sFileName, sResourceGroup);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
