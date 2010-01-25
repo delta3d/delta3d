@@ -103,16 +103,20 @@ public:
       //generate (temporary) signature
       CEGUIMemberSignature<T> signature(pEventSet, sEventName, pObjectMember, pObject);
 
-      //delete all connections which mathes the signature:
+      //delete all connections which match the signature:
       MemberToConnectionMap::iterator it = m_mapMemberToConnection.begin();
       while (it != m_mapMemberToConnection.end())
       {
-         if ( signature.match(pEventSet, sEventName, pObjectMember, pObject) )
+         // If we didn't get an ObjectMember or an Object, then just compare the event set and name
+         // Otherwise check if the signatures matched
+         if ( ((!pObjectMember || !pObject) && (it->first->GetEventSet() == pEventSet) &&
+            ((it->first->GetEventName() == sEventName) || (sEventName == ""))) ||
+            *(it->first) == signature )
          {
             //if connected, disconnect
-            if ((*it).second->connected())
+            if (it->second->connected())
             {
-               (*it).second->disconnect();
+               it->second->disconnect();
             }
             //deleted signature allocated by the manager
             delete it->first;
