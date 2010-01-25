@@ -58,16 +58,22 @@ void CEGUIConnectionManager::Disconnect(CEGUI::EventSet *pEventSet, const std::s
     StaticToConnectionMap::iterator it = m_mapStaticToConnection.begin();
     while(it != m_mapStaticToConnection.end())
     {
-        if( signature.match(pEventSet, sEventName, pFunction) )
-        {
-            if( (*it).second->connected() )
-                (*it).second->disconnect();
-            delete it->first;
-            m_mapStaticToConnection.erase(it);
-            it = m_mapStaticToConnection.begin();
-        }
-        else 
-            it++;
+       if ( (!pFunction && (it->first->GetEventSet() == pEventSet) &&
+          ((it->first->GetEventName() == sEventName) || (sEventName == ""))) ||
+          *(it->first) == signature )
+       {
+          if( it->second->connected() )
+          {
+             it->second->disconnect();
+          }
+          delete it->first;
+          m_mapStaticToConnection.erase(it);
+          it = m_mapStaticToConnection.begin();
+       }
+       else
+       {
+          it++;
+       }
     }
 }
 
