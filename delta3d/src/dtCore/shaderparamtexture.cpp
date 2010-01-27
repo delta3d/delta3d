@@ -20,7 +20,6 @@
  */
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/shaderparamtexture.h>
-#include <dtCore/refptr.h>
 
 #include <osg/StateSet>
 #include <osg/Uniform>
