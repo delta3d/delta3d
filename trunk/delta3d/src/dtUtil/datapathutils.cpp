@@ -19,13 +19,13 @@
  */
 
 #include <dtUtil/datapathutils.h>
-#include <dtUtil/fileutils.h>
-#include <dtUtil/stringutils.h>
 #include <dtUtil/log.h>
 #include <dtUtil/mswinmacros.h>
 
 #include <osgDB/FileUtils>
 #include <osgDB/FileNameUtils>
+
+#include <sstream>
 
 namespace dtUtil
 {
