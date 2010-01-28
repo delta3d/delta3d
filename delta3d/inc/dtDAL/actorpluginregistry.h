@@ -85,6 +85,15 @@ namespace dtDAL
           * This method is the first method to get called by the LibraryManager
           * after it loads a dynamic library and gets a pointer to the
           * registry object it contains.
+          * Overwrite and use the inherited mActorFactor to register the mapping
+          * of concrete ActorProxy to ActorType.
+          * @code
+          * dtCore::RefPtr<dtDAL::ActorType> MY_ACTOR_TYPE(new dtDAL::ActorType("My Actor", "My category", "An Actor"));
+          * void MyRegistry::RegisterActorTypes()
+          * {
+          *    mActorFactory->RegisterType<MyActorProxy>(MY_ACTOR_TYPE.get());
+          * }
+          * @endcode
           */
          virtual void RegisterActorTypes() = 0;
 
