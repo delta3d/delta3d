@@ -385,7 +385,16 @@ namespace dtDAL
          virtual ~ActorProxy();
 
          /**
-          * Initializes the actor.
+          * Create the Actor this ActorProxy is managing.  It's typical to overwrite
+          * this method, instantiate the actor, and supply it to SetActor().
+          * @code
+          * void MyProxy::CreateActor()
+          * { 
+          *    MyActor* actor = new MyActor();
+          *    assert(actor);
+          *    SetActor(*actor);
+          * }
+          * @endcode
           */
          virtual void CreateActor() = 0;
 
