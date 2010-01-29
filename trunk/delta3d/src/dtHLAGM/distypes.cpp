@@ -636,9 +636,11 @@ namespace dtHLAGM
     */
    void WorldCoordinate::Decode(const char* buf)
    {
-      double newX = *(double *)(&buf[0]),
-        newY = *(double *)(&buf[8]),
-        newZ = *(double *)(&buf[16]);
+      double newX, newY, newZ;
+      // must memcpy floats due to compilers trying to interpret the data before it is byteswapped.
+      memcpy(&newX, &buf[0], sizeof(double));
+      memcpy(&newY, &buf[8], sizeof(double));
+      memcpy(&newZ, &buf[16], sizeof(double));
 
       if(getCpuByteOrder() == LittleEndian)
       {
@@ -765,9 +767,11 @@ namespace dtHLAGM
     */
    void EulerAngles::Decode(const char* buf)
    {
-      float psi = *(float *)(&buf[0]),
-        theta = *(float *)(&buf[4]),
-        phi = *(float *)(&buf[8]);
+      float psi, theta, phi;
+      // must memcpy floats due to compilers trying to interpret the data before it is byteswapped.
+      memcpy(&psi, &buf[0], sizeof(float));
+      memcpy(&theta, &buf[4], sizeof(float));
+      memcpy(&phi, &buf[8], sizeof(float));
 
       if(getCpuByteOrder() == LittleEndian)
       {
@@ -894,9 +898,10 @@ namespace dtHLAGM
     */
    void VelocityVector::Decode(const char* buf)
    {
-      float deX = *(float *)(&buf[0]),
-        deY = *(float *)(&buf[4]),
-        deZ = *(float *)(&buf[8]);
+      float deX, deY, deZ;
+      memcpy(&deX, &buf[0], sizeof(float));
+      memcpy(&deY, &buf[1 * sizeof(float)], sizeof(float));
+      memcpy(&deZ, &buf[2 * sizeof(float)], sizeof(float));
 
       if(getCpuByteOrder() == LittleEndian)
       {
@@ -1026,10 +1031,12 @@ namespace dtHLAGM
     */
    void ArticulatedParts::Decode(const char* buf)
    {
-      unsigned int tClass = *(unsigned int *)(&buf[0]),
-        typeMetric = *(unsigned int *)(&buf[4]);
+      unsigned int tClass, typeMetric;
+      memcpy(&tClass, &buf[0], sizeof(unsigned));
+      memcpy(&typeMetric, &buf[4], sizeof(unsigned));
 
-      float value = *(float *)(&buf[8]);
+      float value;
+      memcpy(&value, &buf[8], sizeof(float));
 
       if(getCpuByteOrder() == LittleEndian)
       {
