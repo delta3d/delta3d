@@ -1598,7 +1598,8 @@ namespace dtGame
 
       bool operator()(dtDAL::ActorProxy& proxy)
       {
-         return dtUtil::Match(const_cast<char*>(mName.c_str()), const_cast<char*>(proxy.GetName().c_str()));
+         const std::string& name = proxy.GetName();
+         return dtUtil::Match(const_cast<char*>(mName.c_str()), const_cast<char*>(name.c_str()));
       }
 
       const std::string& mName;
