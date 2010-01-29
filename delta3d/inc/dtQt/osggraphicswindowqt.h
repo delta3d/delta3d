@@ -104,6 +104,8 @@ namespace dtQt
       virtual void useCursor(bool cursorOn);
       virtual void setCursor(osgViewer::GraphicsWindow::MouseCursor mouseCursor);
 
+      virtual void requestWarpPointer(float x, float y);
+
    private:
       bool mValid;
       bool mRealized;

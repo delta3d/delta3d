@@ -396,4 +396,10 @@ namespace dtQt
       }
    }
 
+   ////////////////////////////////////////////////////////////
+   void OSGGraphicsWindowQt::requestWarpPointer(float x, float y)
+   {
+      mQWidget->cursor().setPos(x,y);
+      getEventQueue()->mouseWarped(x,y);
+   }
 }
