@@ -14,8 +14,8 @@
 
 #include <sstream>
 
-#include <Qt/qfile.h>
-#include <Qt/qtextstream.h>
+#include <QtCore/QFile>
+#include <QtCore/QTextStream>
 
 namespace dtQt
 {
