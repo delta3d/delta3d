@@ -33,8 +33,8 @@
 
 #include <dtDAL/datatype.h>
 
-#include <Qt/qaction.h>
-#include <Qt/qtoolbar.h>
+#include <QtGui/QAction>
+#include <QtGui/QToolBar>
 
 
 const std::string DirectorToolPlugin::PLUGIN_NAME = "Director Tool";
