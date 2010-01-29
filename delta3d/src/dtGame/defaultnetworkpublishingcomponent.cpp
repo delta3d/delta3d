@@ -24,6 +24,7 @@
 #include <dtGame/messagetype.h>
 #include <dtGame/basemessages.h>
 #include <dtGame/actorupdatemessage.h>
+#include <dtDAL/actortype.h>
 #include <dtUtil/log.h>
 
 namespace dtGame
@@ -123,6 +124,12 @@ namespace dtGame
    /////////////////////////////////////////////
    void DefaultNetworkPublishingComponent::ProcessPublishActor(const Message& msg, GameActorProxy& gap)
    {
+      if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_INFO))
+      {
+         mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
+                  "Publishing Actor \"" + gap.GetName() + "\" With type \"" + gap.GetActorType().GetFullName() + "\"");
+      }
+
       dtCore::RefPtr<Message> newMsg = GetGameManager()->GetMessageFactory().CreateMessage(MessageType::INFO_ACTOR_CREATED);
       gap.PopulateActorUpdate(static_cast<ActorUpdateMessage&>(*newMsg));
       GetGameManager()->SendNetworkMessage(*newMsg);
