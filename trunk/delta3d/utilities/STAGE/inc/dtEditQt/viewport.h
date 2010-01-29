@@ -57,7 +57,7 @@ namespace osg
 
 namespace dtCore
 {
-   class BatchIsector;
+   class Isector;
    class Scene;
 }
 
@@ -596,9 +596,9 @@ namespace dtEditQt
        * overlays and other objects that are editor specific and are not
        * a part of the actual scene.
        */
-      osg::ref_ptr<osg::Group>             mRootNodeGroup;
+      osg::ref_ptr<osg::Group>         mRootNodeGroup;
 
-      dtCore::RefPtr<dtCore::BatchIsector> mIsector;
+      dtCore::RefPtr<dtCore::Isector>  mIsector;
    };
 
 } // namespace dtEditQt
