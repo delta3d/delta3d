@@ -113,7 +113,7 @@ namespace dtAudio
          CPPUNIT_ASSERT(!sound->IsLooping());
          CPPUNIT_ASSERT(!sound->IsPaused());
          CPPUNIT_ASSERT(!sound->IsPlaying());
-         CPPUNIT_ASSERT(sound->IsStopped());         
+         CPPUNIT_ASSERT(sound->IsStopped());
 
          sound->SetInitialized(true);
          CPPUNIT_ASSERT(sound->IsInitialized());
@@ -198,6 +198,8 @@ namespace dtAudio
       sound->StopImmediately();
       CPPUNIT_ASSERT(AL_NONE == sound->GetSource());
 
+      // clear any errors.
+      alGetError();
       //Create a custom source and ensure that its original source DOESN'T ever
       //ever get deallocated after a Stop
       ALuint cSrc;
