@@ -142,7 +142,10 @@ namespace dtDirector
       {
          mTitle = new GraphicsTextItem(this, scene());
          mTitle->setTextWidth(MIN_NODE_WIDTH);
+
+#if(QT_VERSION >= 0x00040500)
          mTitle->setFlag(QGraphicsItem::ItemIgnoresParentOpacity, true);
+#endif
       }
 
       mTitle->setHtml((std::string("<center>") + text + "</center>").c_str());
@@ -171,7 +174,10 @@ namespace dtDirector
       {
          mValueText = new GraphicsTextItem(this, scene());
          mValueText->setTextWidth(MIN_NODE_WIDTH);
+
+#if(QT_VERSION >= 0x00040500)
          mValueText->setFlag(QGraphicsItem::ItemIgnoresParentOpacity, true);
+#endif
       }
 
       mValueText->setHtml((std::string("<center>") + text + "</center>").c_str());
