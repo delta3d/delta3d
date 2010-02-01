@@ -240,6 +240,9 @@ class DT_GUI_EXPORT HUD : public dtCore::Base,
         /// shortcut/wrapper to CEGUI::ImagesetManager::createImageset
         static void LoadImageset(const std::string& sFileName, const std::string& sResourceGroup = "");
 
+        /// shortcut/wrapper to CEGUI::ImagesetManager::createImageset
+        static void CreateImageset(const std::string& sImagesetName, const std::string& sFileName, const std::string& sResourceGroup = "");
+
         /// shortcut/wrapper to CEGUI::ImagesetManager::destroyImageset
         static void UnloadImageset(const std::string& sFileName);
 

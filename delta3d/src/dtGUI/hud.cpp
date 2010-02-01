@@ -474,6 +474,13 @@ void HUD::LoadImageset(const std::string& sFileName, const std::string& sResourc
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void HUD::CreateImageset(const std::string& sImagesetName, const std::string& sFileName, const std::string& sResourceGroup /*= ""*/)
+{
+   _SetupSystemAndRenderer();
+   CEGUI::ImagesetManager::getSingleton().createImagesetFromImageFile(sImagesetName, sFileName, sResourceGroup);
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void HUD::UnloadImageset(const std::string& sFileName)
 {
    _SetupSystemAndRenderer();
