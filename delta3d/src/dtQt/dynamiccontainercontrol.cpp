@@ -75,6 +75,8 @@ namespace dtQt
                DynamicAbstractControl* propertyControl = GetDynamicControlFactory()->CreateDynamicControl(*propType);
                if (propertyControl != NULL)
                {
+                  propertyControl->SetTreeView(mPropertyTree);
+                  propertyControl->SetDynamicControlFactory(GetDynamicControlFactory());
                   propertyControl->InitializeData(this, newModel, newPC, propType);
 
                   connect(propertyControl, SIGNAL(PropertyAboutToChange(dtDAL::PropertyContainer&, dtDAL::ActorProperty&,
