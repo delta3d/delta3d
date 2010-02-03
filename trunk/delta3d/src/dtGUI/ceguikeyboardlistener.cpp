@@ -489,7 +489,7 @@ CEGUI::Key::Scan CEGUIKeyboardListener::KeyboardKeyToKeyScan( int key )
 ////////////////////////////////////////////////////////////////////////////////
 void dtGUI::CEGUIKeyboardListener::MakeCurrent()
 {
-#if CEGUI_VERSION_MAJOR >= 0 && CEGUI_VERSION_MINOR <= 7
+#if CEGUI_VERSION_MAJOR >= 0 && CEGUI_VERSION_MINOR == 6
   if (m_pGUI != NULL)
    {
       m_pGUI->MakeCurrent();
