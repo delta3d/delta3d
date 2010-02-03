@@ -23,19 +23,24 @@
 
 #include <dtCore/mouse.h>  // for base class
 #include <dtGUI/export.h>                   // for export symbols
-
+#include <CEGUI/CEGUIVersion.h>
 namespace dtGUI
 {
 
+#if CEGUI_VERSION_MAJOR >= 0 && CEGUI_VERSION_MINOR < 7
    class HUD;
+#endif
 
    /// A mouse device listener to inject input to CEGUI.
    ///\todo Why maintain mWidth AND mHalfWidth?
    class DT_GUI_EXPORT CEGUIMouseListener : public dtCore::MouseListener
    {
    public:
-      CEGUIMouseListener(HUD *pGui=NULL);
-
+#if CEGUI_VERSION_MAJOR >= 0 && CEGUI_VERSION_MINOR >= 7
+      CEGUIMouseListener();
+#else
+      CEGUIMouseListener(HUD *pGui=NULL); //old
+#endif
       void SetWindowSize(unsigned int width, unsigned int height);
 
       ///\todo test System for null, throw exception if null.
@@ -57,7 +62,12 @@ namespace dtGUI
       ~CEGUIMouseListener();
 
    private:
-      HUD*  m_pGUI;
+      void UpdateWindowSize();
+      void MakeCurrent();
+
+#if CEGUI_VERSION_MAJOR >= 0 && CEGUI_VERSION_MINOR < 7
+      HUD*  m_pGUI; //old
+#endif
       int   mWidth; ///<the width of the Window
       int   mHeight; ///<The height of the Window
       int   mHalfWidth; ///<the width of the Window

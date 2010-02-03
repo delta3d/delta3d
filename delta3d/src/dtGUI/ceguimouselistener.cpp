@@ -1,11 +1,23 @@
 #include <dtGUI/ceguimouselistener.h>
-#include <dtGUI/hud.h>
+#if CEGUI_VERSION_MAJOR >= 0 && CEGUI_VERSION_MINOR < 7
+#include <dtGUI/hud.h> //old
+#endif
 #include <CEGUI/CEGUIInputEvent.h>       // for internal type, CEGUI::Key::Scan
 #include <CEGUI/CEGUISystem.h>
-#include <dtUtil/mathdefines.h>          // for fast math function
 
 using namespace dtGUI;
 
+#if CEGUI_VERSION_MAJOR >= 0 && CEGUI_VERSION_MINOR >= 7
+CEGUIMouseListener::CEGUIMouseListener():
+mWidth(0)
+,mHeight(0)
+,mHalfWidth(0)
+,mHalfHeight(0)
+,mMouseX(0)
+,mMouseY(0)
+{
+}
+#else
 CEGUIMouseListener::CEGUIMouseListener(HUD *pGui):
 m_pGUI(pGui)
 ,mWidth(0)
@@ -16,6 +28,7 @@ m_pGUI(pGui)
 ,mMouseY(0)
 {
 }
+#endif
 
 CEGUIMouseListener::~CEGUIMouseListener()
 {
@@ -31,10 +44,7 @@ void CEGUIMouseListener::SetWindowSize(unsigned int width, unsigned int height)
 
 bool CEGUIMouseListener::HandleMouseMoved(const dtCore::Mouse* mouse, float x, float y)
 {
-   if (m_pGUI != NULL)
-   {
-      m_pGUI->MakeCurrent();
-   }
+   MakeCurrent();
 
    mMouseX = x - mMouseX;
    mMouseY = y - mMouseY;
@@ -53,11 +63,9 @@ bool CEGUIMouseListener::HandleMouseDragged(const dtCore::Mouse* mouse, float x,
 
 bool CEGUIMouseListener::HandleButtonPressed(const dtCore::Mouse* mouse, dtCore::Mouse::MouseButton button)
 {
-   if (m_pGUI != NULL)
-   {
-      m_pGUI->MakeCurrent();
-   }
-   SetWindowSize( CEGUI::System::getSingleton().getRenderer()->getWidth(), CEGUI::System::getSingleton().getRenderer()->getHeight() );
+   MakeCurrent();
+
+   UpdateWindowSize();
 
    switch( button )
    {
@@ -77,11 +85,9 @@ bool CEGUIMouseListener::HandleButtonPressed(const dtCore::Mouse* mouse, dtCore:
 
 bool CEGUIMouseListener::HandleButtonReleased(const dtCore::Mouse* mouse, dtCore::Mouse::MouseButton button)
 {
-   if (m_pGUI != NULL)
-   {
-      m_pGUI->MakeCurrent();
-   }
-   SetWindowSize( CEGUI::System::getSingleton().getRenderer()->getWidth(), CEGUI::System::getSingleton().getRenderer()->getHeight() );
+   MakeCurrent();
+
+   UpdateWindowSize();
    
    switch(button)
    {
@@ -106,11 +112,9 @@ bool CEGUIMouseListener::HandleButtonReleased(const dtCore::Mouse* mouse, dtCore
 
 bool CEGUIMouseListener::HandleMouseScrolled(const dtCore::Mouse* mouse, int delta)
 {
-   if (m_pGUI != NULL)
-   {
-      m_pGUI->MakeCurrent();
-   }
-   SetWindowSize( CEGUI::System::getSingleton().getRenderer()->getWidth(), CEGUI::System::getSingleton().getRenderer()->getHeight() );
+   MakeCurrent();
+
+   UpdateWindowSize();
 
    return CEGUI::System::getSingleton().injectMouseWheelChange( (float)delta );
 }
@@ -147,4 +151,26 @@ bool CEGUIMouseListener::HandleButtonClicked(const dtCore::Mouse* mouse, dtCore:
    }
 
    return handled;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void dtGUI::CEGUIMouseListener::UpdateWindowSize()
+{
+#if CEGUI_VERSION_MAJOR >= 0 && CEGUI_VERSION_MINOR >= 7
+   CEGUI::Size size = CEGUI::System::getSingleton().getRenderer()->getDisplaySize();
+   SetWindowSize(size.d_width, size.d_height);
+#else
+   SetWindowSize( CEGUI::System::getSingleton().getRenderer()->getWidth(), CEGUI::System::getSingleton().getRenderer()->getHeight() );
+#endif
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void dtGUI::CEGUIMouseListener::MakeCurrent()
+{
+#if CEGUI_VERSION_MAJOR >= 0 && CEGUI_VERSION_MINOR == 6
+   if (m_pGUI != NULL)
+   {
+      m_pGUI->MakeCurrent();
+   }
+#endif;
 }
