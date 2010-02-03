@@ -141,6 +141,7 @@ CEGUI::Window* GUIManager::LoadLayout(const std::string& file)
 }
 #endif // 0
 
+#if 0
 CEGUI::Imageset* GUIManager::CreateImageset(const std::string& name, void* buffer, int width, int height)
 {
    CEGUI::Texture* cetex = CEGUI::System::getSingletonPtr()->getRenderer()->createTexture();
@@ -154,6 +155,7 @@ CEGUI::Imageset* GUIManager::CreateImageset(const std::string& name, void* buffe
 
    return imgset;
 }
+#endif //0
 
 //static
 CEGUI::Window* GUIManager::CreateGUIWindow(const std::string& wtype, const std::string& wname)
