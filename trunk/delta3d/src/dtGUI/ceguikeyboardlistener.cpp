@@ -1,15 +1,24 @@
 #include <dtGUI/ceguikeyboardlistener.h>
+#if defined(CEGUI_VERSION_MAJOR) && CEGUI_VERSION_MAJOR >= 0 && defined(CEGUI_VERSION_MINOR) && CEGUI_VERSION_MINOR == 6
 #include <dtGUI/hud.h>
+#endif
 #include <CEGUI/CEGUISystem.h>
 
 #include <osgGA/GUIEventAdapter>
 
 using namespace dtGUI;
 
-CEGUIKeyboardListener::CEGUIKeyboardListener(HUD *pGUI):
-m_pGUI(pGUI)
-{
-}
+#if CEGUI_VERSION_MAJOR >= 0 && CEGUI_VERSION_MINOR >= 7
+   CEGUIKeyboardListener::CEGUIKeyboardListener()
+   {
+   }
+#else
+   CEGUIKeyboardListener::CEGUIKeyboardListener(HUD *pGUI):
+   m_pGUI(pGUI)
+   {
+   }
+#endif
+
 
 CEGUIKeyboardListener::~CEGUIKeyboardListener()
 {
@@ -19,17 +28,11 @@ bool CEGUIKeyboardListener::HandleKeyPressed(const dtCore::Keyboard* keyboard, i
 {
    if( CEGUI::Key::Scan scanKey = KeyboardKeyToKeyScan(key) )
    {
-      if (m_pGUI != NULL)
-      {
-         m_pGUI->MakeCurrent();
-      }
+      MakeCurrent();
       CEGUI::System::getSingleton().injectKeyDown(scanKey);
    }
 
-   if (m_pGUI != NULL)
-   {
-      m_pGUI->MakeCurrent();
-   }
+   MakeCurrent();
    return CEGUI::System::getSingleton().injectChar( static_cast<CEGUI::utf32>(key) );   
 }
 
@@ -38,10 +41,8 @@ bool CEGUIKeyboardListener::HandleKeyReleased(const dtCore::Keyboard* keyboard, 
    bool handled(false);
    if( CEGUI::Key::Scan scanKey = KeyboardKeyToKeyScan(key) )
    {
-      if (m_pGUI != NULL)
-      {
-         m_pGUI->MakeCurrent();
-      }
+      MakeCurrent();
+      
       handled = CEGUI::System::getSingleton().injectKeyUp(scanKey);
    }
 
@@ -484,3 +485,14 @@ CEGUI::Key::Scan CEGUIKeyboardListener::KeyboardKeyToKeyScan( int key )
    }
 }
 
+
+////////////////////////////////////////////////////////////////////////////////
+void dtGUI::CEGUIKeyboardListener::MakeCurrent()
+{
+#if CEGUI_VERSION_MAJOR >= 0 && CEGUI_VERSION_MINOR <= 7
+  if (m_pGUI != NULL)
+   {
+      m_pGUI->MakeCurrent();
+   }
+#endif
+}
