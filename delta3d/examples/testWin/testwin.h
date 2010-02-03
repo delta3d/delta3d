@@ -29,7 +29,7 @@
 #include <CEGUI/CEGUI.h>
 
 #include <dtABC/application.h>
-#include <dtGUI/ceuidrawable.h>
+#include <dtGUI/gui.h>
 #include <dtCore/deltawin.h>
 
 namespace dtGUI
@@ -50,7 +50,7 @@ public:
    virtual void PostFrame( const double deltaFrameTime );
 
 private:
-   dtCore::RefPtr<dtGUI::CEUIDrawable> mGUI;
+   dtCore::RefPtr<dtGUI::GUI> mGUI;
    dtCore::DeltaWin::ResolutionVec mResolutionVec; ///<vector of available resolutions
    dtGUI::ScriptModule* mScriptModule;
 
