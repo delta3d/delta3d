@@ -45,6 +45,7 @@ MACRO(ADD_DELTA3D_SUBFOLDERS)
    ENDIF (BUILD_DIS)  
 
    IF (BUILD_GUI)  
+      OPTION(BUILD_WITH_OLD_CEGUI  "ON = build using legacy CEGUI 0.6.x compatability, OFF = build using CEGUI 0.7.x compatibility" ON)
       FIND_PACKAGE(CEGUI)   #for dtGUI
       SET(DTGUI_AVAILABLE "YES")
       ADD_SUBDIRECTORY(src/dtGUI)
@@ -108,7 +109,11 @@ MACRO(ADD_DELTA3D_SUBFOLDERS)
    ADD_SUBDIRECTORY(src/dtABC)
    ADD_SUBDIRECTORY(src/dtDAL)
    ADD_SUBDIRECTORY(src/dtDirector)
-   ADD_SUBDIRECTORY(src/dtDirectorNodes)
+   
+   IF (DTAUDIO_AVAILABLE)
+    ADD_SUBDIRECTORY(src/dtDirectorNodes)
+   ENDIF (DTAUDIO_AVAILABLE)
+  
    ADD_SUBDIRECTORY(src/dtGame)
    ADD_SUBDIRECTORY(src/dtInputISense)
    ADD_SUBDIRECTORY(src/dtLMS)
