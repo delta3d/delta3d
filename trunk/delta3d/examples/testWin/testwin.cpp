@@ -45,7 +45,6 @@ TestWinApp::TestWinApp(const std::string& configFilename)
 
 TestWinApp::~TestWinApp()
 {
-   mGUI->ShutdownGUI();
    delete mScriptModule;
 }
 
@@ -53,26 +52,18 @@ void TestWinApp::Config()
 {
    dtABC::Application::Config();
 
-   int x,y,w,h;
-   GetWindow()->GetPosition(x, y, w, h);
    GetWindow()->ShowCursor(false);
 
-   mGUI = new dtGUI::CEUIDrawable(GetWindow(),
-                                  GetKeyboard(),
-                                  GetMouse(),
-                                  mScriptModule);
+   mGUI = new dtGUI::GUI(GetCamera(),
+                         GetKeyboard(),
+                         GetMouse());
 
-   dtGUI::ScriptModule::HandlerFunctor handler0(dtUtil::MakeFunctor( &TestWinApp::FullScreenToggleCB, this));
-   mScriptModule->AddCallback("FullScreenToggleCB", handler0);
+   CEGUI::System::getSingleton().setScriptingModule(mScriptModule);
 
-   dtGUI::ScriptModule::HandlerFunctor handler1(dtUtil::MakeFunctor( &TestWinApp::WindowPositionCB, this));
-   mScriptModule->AddCallback("WindowPositionCB", handler1);
-
-   dtGUI::ScriptModule::HandlerFunctor handler2(dtUtil::MakeFunctor( &TestWinApp::WindowTitleCB, this));
-   mScriptModule->AddCallback("WindowTitleCB", handler2);
-
-   dtGUI::ScriptModule::HandlerFunctor handler3(dtUtil::MakeFunctor(&TestWinApp::ChangeResolutionCB, this));
-   mScriptModule->AddCallback("ChangeResolutionCB", handler3);
+   mScriptModule->AddCallback("FullScreenToggleCB", ScriptModule::HandlerFunctor(this, &TestWinApp::FullScreenToggleCB));
+   mScriptModule->AddCallback("WindowPositionCB", ScriptModule::HandlerFunctor(this, &TestWinApp::WindowPositionCB ));
+   mScriptModule->AddCallback("WindowTitleCB", ScriptModule::HandlerFunctor(this, &TestWinApp::WindowTitleCB));
+   mScriptModule->AddCallback("ChangeResolutionCB", ScriptModule::HandlerFunctor(this, &TestWinApp::ChangeResolutionCB));
 
    // dump all valid resolutions into a vector
    mResolutionVec = DeltaWin::GetResolutions();
@@ -80,8 +71,6 @@ void TestWinApp::Config()
 
    //create the GUI and fill it out
    BuildGUI(mResolutionVec, currRes);
-
-   GetScene()->AddDrawable(mGUI.get());
 }
 
 void TestWinApp::PostFrame(const double deltaFrameTime)
@@ -96,18 +85,12 @@ void TestWinApp::BuildGUI(DeltaWin::ResolutionVec &resolutions,
 {
    try
    {
-      std::string schemeFileName = dtUtil::FindFileInPathList("gui/schemes/WindowsLook.scheme");
+      mGUI->LoadScheme("WindowsLook.scheme");
 
-      CEGUI::SchemeManager::getSingleton().loadScheme(schemeFileName);
-      CEGUI::System::getSingleton().setDefaultMouseCursor("WindowsLook", "MouseArrow");
-      CEGUI::System::getSingleton().setDefaultFont("DejaVuSans-10");
-
-      CEGUI::WindowManager* wm = CEGUI::WindowManager::getSingletonPtr();
-
-      CEGUI::Window* sheet = wm->loadWindowLayout("testWinLayout.xml");
-      CEGUI::System::getSingleton().setGUISheet(sheet);
-      sheet->setUserData( static_cast<TestWinApp*>(this) );
-      CEGUI::MultiColumnList* list = static_cast<CEGUI::MultiColumnList*>(wm->getWindow("List"));
+      //overwrite the default search path, to found our local layout file.
+      mGUI->SetResourceGroupDirectory("layouts", dtUtil::GetDeltaRootPath() + "/examples/testWin/");
+      CEGUI::Window* sheet = mGUI->LoadLayout("testWinLayout.xml");
+      CEGUI::MultiColumnList* list = static_cast<CEGUI::MultiColumnList*>(mGUI->GetWidget("List"));
 
       int rowNum = 0;
       std::string str;
@@ -165,10 +148,10 @@ void TestWinApp::BuildGUI(DeltaWin::ResolutionVec &resolutions,
          list->setItemSelectState(CEGUI::MCLGridRef(idx, 0), true );
       }
 
-      CEGUI::Checkbox* check = static_cast<CEGUI::Checkbox*>(wm->getWindow("FullscreenToggle"));
+      CEGUI::Checkbox* check = static_cast<CEGUI::Checkbox*>(mGUI->GetWidget("FullscreenToggle"));
       check->setSelected( GetWindow()->GetFullScreenMode() );
 
-      CEGUI::Editbox* title = static_cast<CEGUI::Editbox*>(wm->getWindow("WindowTitle"));
+      CEGUI::Editbox* title = static_cast<CEGUI::Editbox*>(mGUI->GetWidget("WindowTitle"));
       title->setText( GetWindow()->GetWindowTitle() );
 
    }
@@ -182,8 +165,6 @@ void TestWinApp::BuildGUI(DeltaWin::ResolutionVec &resolutions,
 ///called every frame
 void TestWinApp::UpdateWidgets()
 {
-   CEGUI::WindowManager* wm = CEGUI::WindowManager::getSingletonPtr();
-
    static int lastX, lastY, lastW, lastH;
 
    int x, y, w, h;
@@ -194,61 +175,54 @@ void TestWinApp::UpdateWidgets()
       // if something is different, update the widgets
       lastX = x; lastY =y; lastW = w; lastH = h;
 
-      CEGUI::Editbox* wBox = static_cast<CEGUI::Editbox*>(wm->getWindow("WindowWidth"));
+      CEGUI::Editbox* wBox = static_cast<CEGUI::Editbox*>(mGUI->GetWidget("WindowWidth"));
       wBox->setText(ToString(w).c_str());
-      CEGUI::Editbox* hBox = static_cast<CEGUI::Editbox*>(wm->getWindow("WindowHeight"));
+      CEGUI::Editbox* hBox = static_cast<CEGUI::Editbox*>(mGUI->GetWidget("WindowHeight"));
       hBox->setText(ToString(h).c_str());
-      CEGUI::Editbox* xBox = static_cast<CEGUI::Editbox*>(wm->getWindow("WindowPosX"));
+      CEGUI::Editbox* xBox = static_cast<CEGUI::Editbox*>(mGUI->GetWidget("WindowPosX"));
       xBox->setText(ToString(x).c_str());
-      CEGUI::Editbox* yBox = static_cast<CEGUI::Editbox*>(wm->getWindow("WindowPosY"));
+      CEGUI::Editbox* yBox = static_cast<CEGUI::Editbox*>(mGUI->GetWidget("WindowPosY"));
       yBox->setText(ToString(y).c_str());
    }
 }
 
 bool TestWinApp::FullScreenToggleCB(const CEGUI::EventArgs& e)
 {
-   TestWinApp* app = static_cast<TestWinApp*>(CEGUI::System::getSingleton().getGUISheet()->getUserData());
-   CEGUI::Checkbox* check = static_cast<CEGUI::Checkbox*>(CEGUI::WindowManager::getSingleton().getWindow("FullscreenToggle"));
-   app->GetWindow()->SetFullScreenMode( check->isSelected() );
+   CEGUI::Checkbox* check = static_cast<CEGUI::Checkbox*>(mGUI->GetWidget("FullscreenToggle"));
+   GetWindow()->SetFullScreenMode( check->isSelected() );
    return true;
 }
 
 bool TestWinApp::WindowPositionCB(const CEGUI::EventArgs& e)
 {
-   CEGUI::WindowManager* wm = CEGUI::WindowManager::getSingletonPtr();
-
-   TestWinApp* app = static_cast<TestWinApp*>(CEGUI::System::getSingleton().getGUISheet()->getUserData());
-
    int x, y, w, h;
 
-   CEGUI::Editbox* wBox = static_cast<CEGUI::Editbox*>(wm->getWindow("WindowWidth"));
+   CEGUI::Editbox* wBox = static_cast<CEGUI::Editbox*>(mGUI->GetWidget("WindowWidth"));
    w = atoi(wBox->getText().c_str());
 
-   CEGUI::Editbox* hBox = static_cast<CEGUI::Editbox*>(wm->getWindow("WindowHeight"));
+   CEGUI::Editbox* hBox = static_cast<CEGUI::Editbox*>(mGUI->GetWidget("WindowHeight"));
    h = atoi(hBox->getText().c_str());
 
-   CEGUI::Editbox* xBox = static_cast<CEGUI::Editbox*>(wm->getWindow("WindowPosX"));
+   CEGUI::Editbox* xBox = static_cast<CEGUI::Editbox*>(mGUI->GetWidget("WindowPosX"));
    x = atoi(xBox->getText().c_str());
 
-   CEGUI::Editbox* yBox = static_cast<CEGUI::Editbox*>(wm->getWindow("WindowPosY"));
+   CEGUI::Editbox* yBox = static_cast<CEGUI::Editbox*>(mGUI->GetWidget("WindowPosY"));
    y = atoi(yBox->getText().c_str());
 
-   app->GetWindow()->SetPosition(x, y, w, h );
+   GetWindow()->SetPosition(x, y, w, h );
    return true;
 }
 
 bool TestWinApp::WindowTitleCB( const CEGUI::EventArgs& e)
 {
-   TestWinApp* app = static_cast<TestWinApp*>(CEGUI::System::getSingleton().getGUISheet()->getUserData());
-
-   CEGUI::Editbox* box = static_cast<CEGUI::Editbox*>(CEGUI::WindowManager::getSingleton().getWindow("WindowTitle"));
-   app->GetWindow()->SetWindowTitle(box->getText().c_str());
+   CEGUI::Editbox* box = static_cast<CEGUI::Editbox*>(mGUI->GetWidget("WindowTitle"));
+   GetWindow()->SetWindowTitle(box->getText().c_str());
    return true;
 }
 
 bool TestWinApp::ChangeResolutionCB(const CEGUI::EventArgs& e)
 {
-   CEGUI::MultiColumnList* list = static_cast<CEGUI::MultiColumnList*>(CEGUI::WindowManager::getSingleton().getWindow("List"));
+   CEGUI::MultiColumnList* list = static_cast<CEGUI::MultiColumnList*>(mGUI->GetWidget("List"));
 
    CEGUI::ListboxItem* item = list->getFirstSelectedItem();
 
@@ -261,13 +235,11 @@ bool TestWinApp::ChangeResolutionCB(const CEGUI::EventArgs& e)
 int main(int argc, char** argv)
 {
    std::string dataPath = dtUtil::GetDeltaDataPathList();
-   dtUtil::SetDataFilePathList(dataPath + ";" +
-      dtUtil::GetDeltaRootPath() + "/examples/data" + ";" +
-      dtUtil::GetDeltaRootPath() + "/examples/data/gui/imagesets;" +
-      dtUtil::GetDeltaRootPath() + "/examples/data/gui/schemes;" +
-      dtUtil::GetDeltaRootPath() + "/examples/data/gui/fonts;" +
-      dtUtil::GetDeltaRootPath() + "/examples/data/gui/looknfeel;" +
-      dtUtil::GetDeltaRootPath() + "/examples/testWin");
+   dtUtil::SetDataFilePathList(
+      dtUtil::GetDeltaRootPath() + "/examples/data/;" +
+      dtUtil::GetDeltaRootPath() + "/examples/data/gui/;" +
+      dtUtil::GetDeltaRootPath() + "/examples/testWin/;" +
+      dataPath + ";");
 
    RefPtr<TestWinApp> app = new TestWinApp("config.xml");
 

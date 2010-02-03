@@ -119,6 +119,15 @@ m_pRootsheet(NULL)
 ////////////////////////////////////////////////////////////////////////////////
 dtGUI::GUI::~GUI()
 {
+   if (m_pMouse.valid())
+   {
+      m_pMouse->RemoveMouseListener(m_pMouseListener.get());
+   }
+
+   if (m_pKeyboard.valid())
+   {
+      m_pKeyboard->RemoveKeyboardListener(m_pKeyboardListener.get());
+   }
 
 }
 
