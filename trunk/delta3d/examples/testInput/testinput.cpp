@@ -4,15 +4,13 @@
 #include <CEGUI/CEGUI.h>
 
 #include <dtABC/application.h>
-#include <dtCore/globals.h>
 #include <dtCore/inputmapper.h>
 #include <dtCore/logicalinputdevice.h>
-#include <dtGUI/ceuidrawable.h>
-#include <dtCore/scene.h>
+#include <dtGUI/gui.h>
 #include <dtUtil/log.h>
+#include <dtUtil/datapathutils.h>
 #include <dtCore/keyboard.h>
 #include <dtCore/mouse.h>
-#include <dtCore/deltawin.h>
 #include <dtInputPLIB/joystick.h>
 
 using namespace dtCore;
@@ -27,7 +25,8 @@ static int KBUTTON1 = 0xAAAA;
 static int KBUTTON2 = 0xAAAB;
 static int KBUTTON3 = 0xAAAC;
 
-class TestInputApp* app;
+class TestInputApp;
+dtCore::RefPtr<TestInputApp> app;
 
 /**
  * The input test application.
@@ -122,7 +121,10 @@ public:
 
 protected:
 
-   virtual ~TestInputApp() {}
+   virtual ~TestInputApp() 
+   {
+      mConnections.clear();
+   }
 
 public:
    /**
@@ -132,31 +134,20 @@ public:
    {
       Application::Config();
 
-      int x, y, w, h;
-
-      GetWindow()->GetPosition(x, y, w, h);
-
-      mUIDrawable = new dtGUI::CEUIDrawable(GetWindow(),GetKeyboard(), GetMouse());
+      mUIDrawable = new dtGUI::GUI(GetCamera(),GetKeyboard(), GetMouse());
 
       try
       {
-         std::string schemeFileName = dtCore::FindFileInPathList("gui/schemes/WindowsLook.scheme");
-         CEGUI::SchemeManager::getSingleton().loadScheme(schemeFileName);
+         mUIDrawable->LoadScheme("WindowsLook.scheme");
 
-         CEGUI::System::getSingleton().setDefaultMouseCursor("WindowsLook", "MouseArrow");
-         CEGUI::System::getSingleton().setDefaultFont("DejaVuSans-10");
+         //overwrite the default search path, to found our local layout file.
+         mUIDrawable->SetResourceGroupDirectory("layouts", dtUtil::GetDeltaRootPath() + "/examples/testInput/");
 
-         CEGUI::Window* sheet = CEGUI::WindowManager::getSingleton().createWindow("DefaultGUISheet", "root_wnd");
-         CEGUI::System::getSingleton().setGUISheet(sheet);
-
-         std::string gui = dtCore::FindFileInPathList("gui.xml");
-         CEGUI::Window* w = CEGUI::WindowManager::getSingleton().loadWindowLayout(gui);
+         CEGUI::Window* w = mUIDrawable->LoadLayout("gui.xml");
          if (w != NULL)
          {
             mGUILoaded = true;
-            sheet->addChildWindow(w);
          }
-
       }
       // catch to prevent exit (errors will be logged).
       catch(CEGUI::Exception& e)
@@ -168,14 +159,11 @@ public:
 
       if (!mGUILoaded) { return; }
 
-      CEGUI::WindowManager* wm = CEGUI::WindowManager::getSingletonPtr();
-      wm->getWindow("Action 1 Button")->subscribeEvent(CEGUI::PushButton::EventClicked, &CallbackHandler);
-      wm->getWindow("Action 2 Button")->subscribeEvent(CEGUI::PushButton::EventClicked, &CallbackHandler);
-      wm->getWindow("Action 3 Button")->subscribeEvent(CEGUI::PushButton::EventClicked, &CallbackHandler);
-      wm->getWindow("Axis 1 Button")->subscribeEvent(CEGUI::PushButton::EventClicked, &CallbackHandler);
-      wm->getWindow("Axis 2 Button")->subscribeEvent(CEGUI::PushButton::EventClicked, &CallbackHandler);
-
-      GetScene()->AddDrawable(mUIDrawable.get());
+      mConnections.push_back(mUIDrawable->SubscribeEvent("Action 1 Button", CEGUI::PushButton::EventClicked.c_str(), &CallbackHandler));
+      mConnections.push_back(mUIDrawable->SubscribeEvent("Action 2 Button", CEGUI::PushButton::EventClicked.c_str(), &CallbackHandler));
+      mConnections.push_back(mUIDrawable->SubscribeEvent("Action 3 Button", CEGUI::PushButton::EventClicked.c_str(), &CallbackHandler));
+      mConnections.push_back(mUIDrawable->SubscribeEvent("Axis 1 Button", CEGUI::PushButton::EventClicked.c_str(), &CallbackHandler));
+      mConnections.push_back(mUIDrawable->SubscribeEvent("Axis 2 Button", CEGUI::PushButton::EventClicked.c_str(), &CallbackHandler));
    }
 
    bool IsGUILoaded()
@@ -198,7 +186,7 @@ public:
 
       if ( ButtonToButton* b2b = dynamic_cast<ButtonToButton*>(mapping) )
       {
-         CEGUI::Window *b = CEGUI::WindowManager::getSingleton().getWindow(mButtonName);
+         CEGUI::Window *b = mUIDrawable->GetWidget(mButtonName);
 
          b->setText( b2b->GetSourceButton()->GetDescription() );
       }
@@ -219,7 +207,7 @@ public:
 
       if (AxisToAxis* a2a = dynamic_cast<AxisToAxis*>(mapping))
       {
-         CEGUI::Window* b = CEGUI::WindowManager::getSingleton().getWindow(mAxisName);
+         CEGUI::Window* b = mUIDrawable->GetWidget(mAxisName);
 
          b->setText(a2a->GetSourceAxis()->GetDescription().c_str());
       }
@@ -238,7 +226,7 @@ protected:
       dtInputPLIB::Joystick::PollInstances();
 
       {
-         CEGUI::Window* w = CEGUI::WindowManager::getSingleton().getWindow("Checkbox6");
+         CEGUI::Window* w = mUIDrawable->GetWidget("Checkbox6");
          if (mApplicationInputDevice->GetButton(KBUTTON1)->GetState())
          {
             w->setProperty("BackgroundColours", "tl:FFFF0000 tr:FFFF0000 bl:FFFF0000 br:FFFF0000" );
@@ -250,7 +238,7 @@ protected:
       }
 
       {
-         CEGUI::Window* w = CEGUI::WindowManager::getSingleton().getWindow("Checkbox7");
+         CEGUI::Window* w = mUIDrawable->GetWidget("Checkbox7");
          if (mApplicationInputDevice->GetButton(KBUTTON2)->GetState())
          {
             w->setProperty("BackgroundColours", "tl:FFFF0000 tr:FFFF0000 bl:FFFF0000 br:FFFF0000" );
@@ -262,7 +250,7 @@ protected:
       }
 
       {
-         CEGUI::Window* w = CEGUI::WindowManager::getSingleton().getWindow("Checkbox8");
+         CEGUI::Window* w = mUIDrawable->GetWidget("Checkbox8");
          if (mApplicationInputDevice->GetButton(KBUTTON3)->GetState())
          {
             w->setProperty("BackgroundColours", "tl:FFFF0000 tr:FFFF0000 bl:FFFF0000 br:FFFF0000" );
@@ -274,11 +262,11 @@ protected:
       }
 
 
-      CEGUI::ProgressBar* bar1 = static_cast<CEGUI::ProgressBar*>(CEGUI::WindowManager::getSingleton().getWindow("Axis 1 Slider"));
+      CEGUI::ProgressBar* bar1 = static_cast<CEGUI::ProgressBar*>(mUIDrawable->GetWidget("Axis 1 Slider"));
       bar1->setProgress((mApplicationInputDevice->GetAxis(0)->GetState() + 1.f) * 0.5f);
 
 
-      CEGUI::ProgressBar* bar2 = static_cast<CEGUI::ProgressBar*>(CEGUI::WindowManager::getSingleton().getWindow("Axis 2 Slider"));
+      CEGUI::ProgressBar* bar2 = static_cast<CEGUI::ProgressBar*>(mUIDrawable->GetWidget("Axis 2 Slider"));
       bar2->setProgress((mApplicationInputDevice->GetAxis(1)->GetState() + 1.f) * 0.5f);
 
    }
@@ -364,7 +352,7 @@ private:
    /**
     * The user interface.
     */
-   RefPtr<dtGUI::CEUIDrawable> mUIDrawable;
+   RefPtr<dtGUI::GUI> mUIDrawable;
 
    /**
     * The index of the button/axis being mapped.
@@ -373,18 +361,17 @@ private:
    std::string mButtonName, mAxisName;
    bool mGUILoaded;
 
+   std::vector<CEGUI::Event::Connection> mConnections;
+
 };
 
 int main(int argc, char** argv)
 {
-   std::string dataPath = dtCore::GetDeltaDataPathList();
-   dtCore::SetDataFilePathList(dataPath + ";" +
-                               dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
-                               dtCore::GetDeltaRootPath() + "/examples/data/gui/imagesets;" +
-                               dtCore::GetDeltaRootPath() + "/examples/data/gui/schemes;" +
-                               dtCore::GetDeltaRootPath() + "/examples/data/gui/fonts;" +
-                               dtCore::GetDeltaRootPath() + "/examples/data/gui/looknfeel;" +
-                               dtCore::GetDeltaRootPath() + "/examples/testInput");
+   std::string dataPath = dtUtil::GetDeltaDataPathList();
+   dtUtil::SetDataFilePathList(dtUtil::GetDeltaRootPath() + "/examples/data/;" +
+                               dtUtil::GetDeltaRootPath() + "/examples/data/gui/;" +
+                               dtUtil::GetDeltaRootPath() + "/examples/testInput" +
+                               dataPath + ";");
 
    app = new TestInputApp("config.xml");
 
