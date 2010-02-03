@@ -32,7 +32,7 @@
 #include <dtCore/scene.h>
 #include <dtCore/transform.h>
 #include <dtGUI/scriptmodule.h>
-#include <dtGUI/ceuidrawable.h>
+#include <dtGUI/gui.h>
 #include <dtUtil/log.h>
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/mathdefines.h>
@@ -43,8 +43,10 @@
 #include <CEGUI/CEGUIWindowManager.h>
 #include <CEGUI/CEGUIWindow.h>
 #include <CEGUI/CEGUIExceptions.h>
+#include <CEGUI/CEGUIFont.h>
 #include <CEGUI/elements/CEGUIScrollbar.h>
 #include <CEGUI/elements/CEGUIPushButton.h>
+#include <CEGUI/CEGUIDefaultResourceProvider.h>
 
 using namespace dtCore;
 using namespace dtABC;
@@ -57,14 +59,17 @@ class TestGUIApp : public dtABC::Application
 public:
    TestGUIApp(const std::string& configFilename = "")
       : Application(configFilename)
-      , mScriptModule(new ScriptModule())
    {
    }
 
    virtual ~TestGUIApp()
    {
-      mGUI->ShutdownGUI();
-      delete mScriptModule;
+      CEGUI::ScriptModule* sm = CEGUI::System::getSingleton().getScriptingModule();
+      if (sm)
+      {
+         CEGUI::System::getSingleton().setScriptingModule(NULL);
+         delete sm;
+      }
    }
 
    virtual void Config()
@@ -83,18 +88,9 @@ public:
       ///lets hide the stock cursor and just use CEGUI's rendered cursor
       GetWindow()->ShowCursor(false);
 
-      ///We'll make a new ScriptModule which will handle subscribing callbacks
-      ///to widgets when it loads the Layout file.
-      mScriptModule->AddCallback("quitHandler", &quitHandler);
-      mScriptModule->AddCallback("sliderHandler", &sliderHandler);
-
       try
       {
-         ///make a new drawable, supplying the DeltaWin and the ScriptModule
-         mGUI = new dtGUI::CEUIDrawable(GetWindow(),
-                                        GetKeyboard(),
-                                        GetMouse(),
-                                        mScriptModule);
+         mGUI = new dtGUI::GUI(GetCamera(), GetKeyboard(), GetMouse());
       }
       catch (dtUtil::Exception& e)
       {
@@ -105,9 +101,6 @@ public:
 
       ///make some cool UI
       BuildGUI();
-
-      ///and finally add the CEUIDrawable to the Scene for rendering
-      GetScene()->AddDrawable(mGUI.get());
    }
 
 
@@ -117,43 +110,48 @@ public:
    }
 
 private:
-   RefPtr<dtGUI::CEUIDrawable> mGUI;
+   RefPtr<dtGUI::GUI> mGUI;
    std::string mLayoutFilename;
-   dtGUI::ScriptModule* mScriptModule;
 
    void BuildGUI(void)
    {
       try
       {
-         std::string schemeFileName = dtUtil::FindFileInPathList("gui/schemes/WindowsLook.scheme");
+         mGUI->LoadScheme("WindowsLook.scheme");
 
-         CEGUI::SchemeManager::getSingleton().loadScheme(schemeFileName);
-         CEGUI::System::getSingleton().setDefaultMouseCursor("WindowsLook", "MouseArrow");
-         CEGUI::System::getSingleton().setDefaultFont("DejaVuSans-10");
+         mGUI->SetMouseCursor("WindowsLook", "MouseArrow");
+
          CEGUI::System::getSingleton().getDefaultFont()->setProperty("PointSize", "20");
 
-         CEGUI::WindowManager* wm = CEGUI::WindowManager::getSingletonPtr();
-
-         CEGUI::Window* sheet = wm->createWindow("DefaultGUISheet", "root_wnd");
-         CEGUI::System::getSingleton().setGUISheet(sheet);
+         CEGUI::Window* sheet = mGUI->GetRootSheet();
 
          if (!mLayoutFilename.empty())
          {
+            //overwrite the default "layouts" directory search path to find the supplied layout filename
+            CEGUI::DefaultResourceProvider* rp = dynamic_cast<CEGUI::DefaultResourceProvider*>
+                                                  (CEGUI::System::getSingleton().getResourceProvider());
+            rp->setResourceGroupDirectory("layouts",  dtUtil::GetDeltaRootPath() + "/examples/testGUI");
+
+            ///We'll make a new ScriptModule which will handle subscribing callbacks
+            ///to widgets when it loads the Layout file.
+            dtGUI::ScriptModule* sm = new dtGUI::ScriptModule();
+            sm->AddCallback("quitHandler", &quitHandler);
+            sm->AddCallback("sliderHandler", &sliderHandler);
+
+            CEGUI::System::getSingleton().setScriptingModule(sm);
+
             //load GUI layout from file
-            CEGUI::Window* w = wm->loadWindowLayout( mLayoutFilename.c_str() );
-            sheet->addChildWindow(w);
+            mGUI->LoadLayout(sheet, mLayoutFilename);
          }
          else
          {
             // background panel
-            CEGUI::Window* panel = wm->createWindow("WindowsLook/StaticImage", "Panel 1");
-            sheet->addChildWindow(panel);
+            CEGUI::Window* panel = mGUI->CreateWidget("WindowsLook/StaticImage", "Panel 1");
             panel->setPosition(CEGUI::UVector2(cegui_reldim(0.f), cegui_reldim(0.f)));
             panel->setSize(CEGUI::UVector2(cegui_reldim(1.f), cegui_reldim(1.f)));
 
             //Delta3D text
-            CEGUI::Window* st = wm->createWindow("WindowsLook/StaticText","Delta_3D");
-            panel->addChildWindow(st);
+            CEGUI::Window* st = mGUI->CreateWidget(panel, "WindowsLook/StaticText","Delta_3D");
             st->setPosition(CEGUI::UVector2(cegui_reldim(0.2f), cegui_reldim(0.3f)));
             st->setSize(CEGUI::UVector2(cegui_reldim(0.6f), cegui_reldim(0.2f)));
             st->setText("Delta 3D");
@@ -162,15 +160,13 @@ private:
             st->setProperty("HorzFormatting", "HorzCentred");
 
             // Edit box for text entry
-            CEGUI::Window* eb = wm->createWindow("WindowsLook/Editbox", "EditBox");
-            panel->addChildWindow(eb);
+            CEGUI::Window* eb = mGUI->CreateWidget(panel, "WindowsLook/Editbox", "EditBox");
             eb->setPosition(CEGUI::UVector2(cegui_reldim(0.3f), cegui_reldim(0.55f)));
             eb->setSize(CEGUI::UVector2(cegui_reldim(0.4f), cegui_reldim(0.1f)));
             eb->setText("Editable text box");
 
             //slider
-            CEGUI::Window* slider = wm->createWindow("WindowsLook/HorizontalScrollbar", "slider1");
-            panel->addChildWindow(slider);
+            CEGUI::Window* slider = mGUI->CreateWidget(panel, "WindowsLook/HorizontalScrollbar", "slider1");
             slider->setPosition(CEGUI::UVector2(cegui_reldim(0.12f), cegui_reldim(0.1f)));
             slider->setSize(CEGUI::UVector2(cegui_reldim(0.76f), cegui_reldim(0.05f)));
             slider->setProperty("DocumentSize", "100");
@@ -181,8 +177,7 @@ private:
             slider->subscribeEvent(CEGUI::Scrollbar::EventScrollPositionChanged, &sliderHandler);
 
             // quit button
-            CEGUI::Window* btn = wm->createWindow("WindowsLook/Button", "QuitButton");
-            panel->addChildWindow(btn);
+            CEGUI::Window* btn = mGUI->CreateWidget(panel, "WindowsLook/Button", "QuitButton");
             btn->setText("Exit");
             btn->setPosition( CEGUI::UVector2(cegui_reldim(0.4f), cegui_reldim(0.7f)));
             btn->setSize( CEGUI::UVector2(cegui_reldim(0.2f), cegui_reldim(0.1f)));
@@ -238,6 +233,8 @@ int main(int argc, const char* argv[])
                                dtUtil::GetDeltaRootPath() + "/examples/data/gui/fonts;" +
                                dtUtil::GetDeltaRootPath() + "/examples/data/gui/looknfeel;" +
                                dtUtil::GetDeltaRootPath() + "/examples/testGUI;");
+
+   dtGUI::GUI::SetFilePath(dtUtil::GetDeltaRootPath() + "/examples/data/gui");
 
    std::string filename;
    if (argc > 1)
