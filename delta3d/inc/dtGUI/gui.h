@@ -7,6 +7,7 @@
 #include <dtGUI/ceguimouselistener.h>
 #include <dtGUI/ceguikeyboardlistener.h>
 #include <dtGUI/widget.h>
+#include <CEGUI/CEGUIEvent.h>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
@@ -73,6 +74,14 @@ namespace dtGUI
 
       ///creates/adds a widget to root-sheet
       Widget* CreateWidget(const std::string& sWidgetTypeName, const std::string& sWidgetName="");
+
+      ///searches widget by it's name
+      Widget* GetWidget(const std::string& sWidgetName);
+
+      static void SetResourceGroupDirectory(const std::string& resourceType, const std::string& directory);
+
+      typedef CEGUI::Event::Subscriber Subscriber;
+      CEGUI::Event::Connection SubscribeEvent(const std::string& widgetName, const std::string& event, GUI::Subscriber subscriber);
 
    protected:
       virtual ~GUI();

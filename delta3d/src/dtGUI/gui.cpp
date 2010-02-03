@@ -4,6 +4,7 @@
 #include <dtCore/keyboard.h>
 #include <dtCore/mouse.h>
 #include <dtUtil/log.h>
+#include <dtUtil/datapathutils.h>
 
 #include <osg/Drawable>
 #include <osg/StateSet>
@@ -210,28 +211,28 @@ void dtGUI::GUI::_SetupSystemAndRenderer()
    if (!CEGUI::System::getSingletonPtr())
    {
       CEGUI::OpenGLRenderer& pRenderer = CEGUI::OpenGLRenderer::create();
-      pRenderer.enableExtraStateSettings(true); //TODO what's this?
+      pRenderer.enableExtraStateSettings(true);
       CEGUI::System::create(pRenderer);
 
       CEGUI::DefaultResourceProvider* pRP = static_cast<CEGUI::DefaultResourceProvider*>(CEGUI::System::getSingleton().getResourceProvider());
 
       CEGUI::Imageset::setDefaultResourceGroup("imagesets");
-      pRP->setResourceGroupDirectory("imagesets", FilePath + "/imagesets/");
+      SetResourceGroupDirectory("imagesets", dtUtil::FindFileInPathList("imagesets"));
 
       CEGUI::WidgetLookManager::setDefaultResourceGroup("looknfeels");
-      pRP->setResourceGroupDirectory("looknfeels", FilePath + "/looknfeel/");
+      SetResourceGroupDirectory("looknfeels", dtUtil::FindFileInPathList("looknfeel"));
 
       CEGUI::WindowManager::setDefaultResourceGroup("layouts");
-      pRP->setResourceGroupDirectory("layouts", FilePath + "/layouts/");
+      SetResourceGroupDirectory("layouts", dtUtil::FindFileInPathList("layouts"));
 
       CEGUI::ScriptModule::setDefaultResourceGroup("lua_scripts");
-      pRP->setResourceGroupDirectory("lua_scripts", FilePath + "/lua_scripts/");
+      SetResourceGroupDirectory("lua_scripts", dtUtil::FindFileInPathList("lua_scripts"));
 
       CEGUI::Scheme::setDefaultResourceGroup("schemes");
-      pRP->setResourceGroupDirectory("schemes", FilePath + "/schemes/");
+      SetResourceGroupDirectory("schemes", dtUtil::FindFileInPathList("schemes"));
 
       CEGUI::Font::setDefaultResourceGroup("fonts");
-      pRP->setResourceGroupDirectory("fonts", FilePath + "/fonts/");
+      SetResourceGroupDirectory("fonts", dtUtil::FindFileInPathList("fonts"));
 
       SystemAndRendererCreatedByHUD = true;
    }
@@ -265,7 +266,7 @@ void dtGUI::GUI::_SetupDefaultUI()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void dtGUI::GUI::LoadScheme(const std::string& sFileName, const std::string& sResourceGroup /*= ""*/)
+void dtGUI::GUI::LoadScheme(const std::string& sFileName, const std::string& sResourceGroup)
 {
    _SetupSystemAndRenderer();
    CEGUI::SchemeManager::getSingleton().create(sFileName, sResourceGroup);
@@ -331,4 +332,45 @@ void dtGUI::GUI::OnMessage(dtCore::Base::MessageData *data)
 
       CEGUI::System::getSingletonPtr()->injectTimePulse(static_cast<float>(dDeltaTime));
    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void dtGUI::GUI::SetResourceGroupDirectory(const std::string& resourceType, const std::string& directory)
+{
+   if (CEGUI::System::getSingletonPtr() == NULL)
+   {
+      return;
+   }
+
+   CEGUI::DefaultResourceProvider* pRP = static_cast<CEGUI::DefaultResourceProvider*>(CEGUI::System::getSingleton().getResourceProvider());
+
+   pRP->setResourceGroupDirectory(resourceType, directory);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+Widget* dtGUI::GUI::GetWidget(const std::string& sWidgetName)
+{
+   if (!CEGUI::WindowManager::getSingleton().isWindowPresent(sWidgetName))
+   {
+      LOG_ERROR(sWidgetName + " is not available in gui \"" + this->GetName() + "\"\n");
+      return 0;
+   }
+
+   return CEGUI::WindowManager::getSingleton().getWindow(sWidgetName);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+CEGUI::Event::Connection dtGUI::GUI::SubscribeEvent(const std::string& widgetName, 
+                                const std::string& event,
+                                GUI::Subscriber subscriber)
+{
+   CEGUI::Window* w = GetWidget(widgetName);
+   if (w)
+   {
+      return w->subscribeEvent(event, subscriber);
+   }
+
+   
+   LOG_ERROR("Could not find widget for event subscription: " + widgetName);
+   return CEGUI::Event::Connection();
 }
