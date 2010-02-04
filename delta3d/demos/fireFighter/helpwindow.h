@@ -31,12 +31,17 @@ namespace CEGUI
    class Window;
 }
 
+namespace dtGUI
+{
+   class GUI;
+}
+
 class FIRE_FIGHTER_EXPORT HelpWindow : public osg::Referenced
 {
    public:
 
       /// Constructor
-      HelpWindow(CEGUI::Window *mainWindow);
+      HelpWindow(dtGUI::GUI& gui, CEGUI::Window *mainWindow);
 
       /**
          * Enables and disables the help window
@@ -63,7 +68,7 @@ class FIRE_FIGHTER_EXPORT HelpWindow : public osg::Referenced
       /**
          * Private helper method to save clutter in the constructor
          */
-      void InitGui(CEGUI::Window *mainWindow);
+      void InitGui(dtGUI::GUI& gui, CEGUI::Window *mainWindow);
 
       bool mIsEnabled;
 

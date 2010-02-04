@@ -27,9 +27,13 @@
 #undef None
 #endif
 
-#include <CEGUI.h>
+#include <CEGUI/elements/CEGUIFrameWindow.h>
+#include <CEGUI/elements/CEGUIPushButton.h>
+#include <CEGUI/CEGUIExceptions.h>
+#include <dtGUI/gui.h>
+#include <sstream>
 
-HelpWindow::HelpWindow(CEGUI::Window* mainWindow)
+HelpWindow::HelpWindow(dtGUI::GUI& gui, CEGUI::Window* mainWindow)
    : mIsEnabled(false)
    , mOverlay(NULL)
    , mHeaderText(NULL)
@@ -41,7 +45,7 @@ HelpWindow::HelpWindow(CEGUI::Window* mainWindow)
    , mMagnifyModels(NULL)
 {
    mMainWindow = NULL;
-   InitGui(mainWindow);
+   InitGui(gui, mainWindow);
 }
 
 HelpWindow::~HelpWindow()
@@ -76,35 +80,22 @@ void HelpWindow::Enable(bool enable)
    mIsEnabled ? mOverlay->show() : mOverlay->hide();
 }
 
-void HelpWindow::InitGui(CEGUI::Window* mainWindow)
+void HelpWindow::InitGui(dtGUI::GUI& gui, CEGUI::Window* mainWindow)
 {
    try
    {
       mMainWindow = mainWindow;
-      CEGUI::WindowManager* wm = CEGUI::WindowManager::getSingletonPtr();
-      mOverlay = static_cast<CEGUI::FrameWindow*>(wm->createWindow("WindowsLook/FrameWindow", "help_window"));
+      mOverlay = static_cast<CEGUI::FrameWindow*>(gui.CreateWidget(mMainWindow, "WindowsLook/FrameWindow", "help_window"));
       mOverlay->setProperty("AlwaysOnTop", "True");
 
-      if (mMainWindow != NULL)
-      {
-         mMainWindow->addChildWindow(mOverlay);
-      }
+      mHeaderText       = gui.CreateWidget(mOverlay, "WindowsLook/StaticText", "header_helptext");
+      mBinocsText       = gui.CreateWidget(mOverlay, "WindowsLook/StaticText", "binocs_helptext");
+      mLRFText          = gui.CreateWidget(mOverlay, "WindowsLook/StaticText", "lrf_helptext");
+      mCompassText      = gui.CreateWidget(mOverlay, "WindowsLook/StaticText", "compass_helptext");
+      mGPSText          = gui.CreateWidget(mOverlay, "WindowsLook/StaticText", "gps_helptext");
+      mToggleFullScreen = gui.CreateWidget(mOverlay, "WindowsLook/StaticText", "fullscreen_helptext");
+      mMagnifyModels    = gui.CreateWidget(mOverlay, "WindowsLook/StaticText", "magnifiy_helptext");
 
-      mHeaderText       = wm->createWindow("WindowsLook/StaticText", "header_helptext");
-      mBinocsText       = wm->createWindow("WindowsLook/StaticText", "binocs_helptext");
-      mLRFText          = wm->createWindow("WindowsLook/StaticText", "lrf_helptext");
-      mCompassText      = wm->createWindow("WindowsLook/StaticText", "compass_helptext");
-      mGPSText          = wm->createWindow("WindowsLook/StaticText", "gps_helptext");
-      mToggleFullScreen = wm->createWindow("WindowsLook/StaticText", "fullscreen_helptext");
-      mMagnifyModels    = wm->createWindow("WindowsLook/StaticText", "magnifiy_helptext");
-
-      mOverlay->addChildWindow(mHeaderText);
-      mOverlay->addChildWindow(mBinocsText);
-      mOverlay->addChildWindow(mLRFText);
-      mOverlay->addChildWindow(mCompassText);
-      mOverlay->addChildWindow(mGPSText);
-      mOverlay->addChildWindow(mToggleFullScreen);
-      mOverlay->addChildWindow(mMagnifyModels);
       mOverlay->setPosition(CEGUI::UVector2(cegui_reldim(0.0f), cegui_reldim(0.0f)));
       mOverlay->setSize(CEGUI::UVector2(cegui_reldim(1.0f), cegui_reldim(1.0f)));
       //mOverlay->setFrameEnabled(false);
@@ -165,14 +156,13 @@ void HelpWindow::InitGui(CEGUI::Window* mainWindow)
       mMagnifyModels->setProperty("BackgroundEnabled", "false");
       mMagnifyModels->setHorizontalAlignment(CEGUI::HA_LEFT);
 
-      mCloseButton = static_cast<CEGUI::PushButton*>(wm->createWindow("WindowsLook/Button", "Close Button"));
+      mCloseButton = static_cast<CEGUI::PushButton*>(gui.CreateWidget(mOverlay, "WindowsLook/Button", "Close Button"));
       mCloseButton->setText("Close");
       mCloseButton->setSize(CEGUI::UVector2(cegui_reldim(0.1f), cegui_reldim(0.1f)));
       mCloseButton->setPosition(CEGUI::UVector2(cegui_reldim(0.0f), cegui_reldim(0.8f)));
       mCloseButton->setMouseCursor(NULL);
       mCloseButton->setHorizontalAlignment(CEGUI::HA_CENTRE);
 
-      mOverlay->addChildWindow(mCloseButton);
       mOverlay->setDragMovingEnabled(false);
       mOverlay->setSizingBorderThickness(0);
       mOverlay->setSizingEnabled(false);

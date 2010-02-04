@@ -37,14 +37,12 @@ namespace CEGUI
 
 namespace dtGUI
 {
-   class CEUIDrawable;
+   class GUI;
 }
 
-namespace dtCore
+namespace dtABC
 {
-   class DeltaWin;
-   class Keyboard;
-   class Mouse;
+   class BaseABC;;
 }
 
 namespace dtActors
@@ -63,16 +61,11 @@ class FIRE_FIGHTER_EXPORT HUDComponent : public dtGame::GMComponent
       static const std::string NAME;
 
       /// Constructor
-      HUDComponent(dtCore::DeltaWin &win,
-                  dtCore::Keyboard &keyboard,
-                  dtCore::Mouse &mouse,
+      HUDComponent(dtABC::BaseABC& app,
                   const std::string &name = NAME);
 
       /// Processes incoming messages
       virtual void ProcessMessage(const dtGame::Message &msg);
-
-      /// Override 
-      virtual void OnAddedToGM();
 
    protected:
 
@@ -119,9 +112,7 @@ class FIRE_FIGHTER_EXPORT HUDComponent : public dtGame::GMComponent
       /**
        * Private helper method to init the GUI
        */
-      void SetupGUI(dtCore::DeltaWin &win,
-                    dtCore::Keyboard &keyboard,
-                    dtCore::Mouse &mouse);
+      void SetupGUI(dtABC::BaseABC& app);
 
       /**
        * Callback for when the start button is clicked
@@ -253,7 +244,7 @@ class FIRE_FIGHTER_EXPORT HUDComponent : public dtGame::GMComponent
 
       CEGUI::Window *mAppHeader, *mDebriefHeaderText, *mIntroText;
 
-      dtCore::RefPtr<dtGUI::CEUIDrawable> mGUI;
+      dtCore::RefPtr<dtGUI::GUI> mGUI;
 
       bool mShowObjectives;
       GameState *mCurrentState;
