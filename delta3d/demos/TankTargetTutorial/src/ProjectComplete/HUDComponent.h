@@ -27,9 +27,7 @@
 
 
 #include "export.h"
-#include <dtGame/message.h>
 #include <dtGame/gmcomponent.h>
-#include <dtGame/logcontroller.h>
 
 
 // This is for the CEGUI headers.
@@ -37,10 +35,28 @@
 #undef None
 #endif
 
-#include <dtGUI/dtgui.h>
-#include <CEGUI/CEGUI.h>
 
 #define HUDCONTROLMAXTEXTSIZE 100
+
+namespace dtABC
+{
+   class BaseABC;
+}
+
+namespace dtGUI
+{
+   class GUI;
+}
+
+namespace dtGame
+{
+   class LogController;
+}
+
+namespace CEGUI
+{
+   class Window;
+}
 
 /**
  * This component draws the HUD for the Tutorial app. It draws
@@ -50,9 +66,7 @@ class TUTORIAL_TANK_EXPORT HUDComponent : public dtGame::GMComponent
 {
 public:
    // Constructor
-   HUDComponent(dtCore::DeltaWin* win,
-                dtCore::Keyboard* keyboard,
-                dtCore::Mouse* mouse,
+   HUDComponent(dtABC::BaseABC& app,
                 const std::string& name);
 
 protected:
@@ -62,11 +76,6 @@ protected:
 public:
    // Get messages from the Game Manager
    virtual void ProcessMessage(const dtGame::Message& message);
-
-   // returns the main GUI to be added to the scene.
-   dtCore::RefPtr<dtGUI::CEUIDrawable> GetGUIDrawable() { return mGUI; }
-
-   void OnAddedToGM();
 
 protected:
    /**
@@ -88,11 +97,9 @@ private:
    void UpdateLastMessageName(const std::string& messageName);
 
    // Sets up the GUI during construction
-   void SetupGUI(dtCore::DeltaWin* win,
-                 dtCore::Keyboard* keyboard,
-                 dtCore::Mouse* mouse);
+   void SetupGUI(dtABC::BaseABC& app);
 
-   dtCore::RefPtr<dtGUI::CEUIDrawable> mGUI;
+   dtCore::RefPtr<dtGUI::GUI> mGUI;
    CEGUI::Window* mMainWindow;
    CEGUI::Window* mOverlay;
 
