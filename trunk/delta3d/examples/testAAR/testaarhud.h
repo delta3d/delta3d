@@ -37,9 +37,9 @@
 #ifdef None
 #undef None
 #endif
-//#include <CEGUI/CEGUI.h>
+
 #include <CEGUI/CEGUIWindow.h>
-#include <dtGUI/ceuidrawable.h>
+#include <dtGUI/gui.h>
 #include "export.h"
 
 #define HUDCONTROLMAXTEXTSIZE 100
@@ -48,6 +48,12 @@ namespace dtCore
 {
    class Keyboard;
    class Mouse;
+   class DeltaWin;
+}
+
+namespace dtABC
+{
+   class BaseABC;
 }
 
 namespace dtActors
@@ -93,9 +99,7 @@ class TEST_AAR_EXPORT TestAARHUD : public dtGame::GMComponent
       /**
        * Constructs the test application.
        */
-      TestAARHUD(dtCore::DeltaWin& win, 
-                 dtCore::Keyboard& keyboard,
-                 dtCore::Mouse& mouse,
+      TestAARHUD(dtABC::BaseABC& app,
                  dtGame::LogController& logController, 
                  dtGame::TaskComponent& taskComponent,
                  dtGame::ServerLoggerComponent& serverLogger);
@@ -116,9 +120,7 @@ class TEST_AAR_EXPORT TestAARHUD : public dtGame::GMComponent
       /**
        * Sets up the basic GUI.
        */
-      void SetupGUI(dtCore::DeltaWin& win,
-                    dtCore::Keyboard& keyboard,
-                    dtCore::Mouse& mouse);
+      void SetupGUI(dtCore::Camera& cam, dtCore::Keyboard& keyboard, dtCore::Mouse& mouse);
 
       /**
        * Cycles HUD state to the next most data.  From minimal, to moderate, to max,
@@ -129,7 +131,7 @@ class TEST_AAR_EXPORT TestAARHUD : public dtGame::GMComponent
       void SetHUDState(HUDState& newState) { mHUDState = &newState;  UpdateState(); }
       HUDState& GetHUDState() { return *mHUDState; }
 
-      dtGUI::CEUIDrawable* GetGUIDrawable() { return mGUI.get(); }
+      dtGUI::GUI* GetGUIDrawable() { return mGUI.get(); }
 
       void TickHUD();
 
@@ -188,7 +190,7 @@ class TEST_AAR_EXPORT TestAARHUD : public dtGame::GMComponent
 
       dtCore::DeltaWin* mWin;
       CEGUI::Window* mMainWindow;
-      dtCore::RefPtr<dtGUI::CEUIDrawable> mGUI;
+      dtCore::RefPtr<dtGUI::GUI> mGUI;
       CEGUI::Window* mHUDOverlay;
       CEGUI::Window* mHelpOverlay;
 
