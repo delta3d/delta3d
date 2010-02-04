@@ -91,7 +91,6 @@ namespace dtGUI
 
 
 //default path where to find the layout/looknfeel/../images-files
-std::string dtGUI::GUI::FilePath=std::string("./data/gui/");
 bool dtGUI::GUI::SystemAndRendererCreatedByHUD = false;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -316,18 +315,6 @@ Widget* dtGUI::GUI::CreateWidget(const std::string& sWidgetTypeName, const std::
    Widget* pNewWidget = CEGUI::WindowManager::getSingleton().createWindow(sWidgetTypeName, sWidgetName);
    m_pRootsheet->addChildWindow(pNewWidget);
    return pNewWidget;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void dtGUI::GUI::SetFilePath(const std::string& sPath)
-{
-   FilePath = sPath;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-const std::string& dtGUI::GUI::GetFilePath()
-{
-   return FilePath;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
