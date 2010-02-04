@@ -6,7 +6,7 @@
  * the terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
- *
+ * 
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
@@ -133,7 +133,7 @@ namespace dtAudio
          VELOCITY,
          ABS,
          REL,
-         MIN_DIST,
+         REF_DIST,
          MAX_DIST,
          ROL_FACT,
          MIN_GAIN,
@@ -497,6 +497,22 @@ namespace dtAudio
       float GetMaxDistance() const;
 
       /**
+       * Sets the distance from the source position where there will be no 
+       * attenuation of the source. 
+       * Used with the Inverse Clamped Distance model.
+       *
+       * @param dist the reference distance
+       */
+      void SetReferenceDistance(float dist); 
+
+      /**
+       * Get the reference distance that a sound plays at max_gain.
+       *
+       * @return distance reference
+       */
+      float GetReferenceDistance() const;
+
+      /**
        * Set the rolloff factor describing attenuation curve.
        *
        * @param rolloff factor to set
@@ -595,6 +611,7 @@ namespace dtAudio
       ALfloat                 mPitch;
       ALfloat                 mSecondOffset;
       ALfloat                 mMaxDistance;
+      ALfloat                 mReferenceDistance;
       ALfloat                 mRolloffFactor;
       ALfloat                 mMinGain;
       ALfloat                 mMaxGain;
