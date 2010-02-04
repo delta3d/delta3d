@@ -96,8 +96,8 @@ void FireFighterGameEntryPoint::Initialize(dtGame::GameApplication& app, int arg
    app.GetWindow()->SetWindowTitle("Fire Fighter Application");
 
    dtDAL::Project::GetInstance().SetContext("demos/fireFighter/FireFighterProject");
-   dtUtil::SetDataFilePathList(dtUtil::GetDataFilePathList() + ";" +
-      dtDAL::Project::GetInstance().GetContext() + "/CEGUI");
+   dtUtil::SetDataFilePathList(dtDAL::Project::GetInstance().GetContext() + "/CEGUI/;" + 
+                              dtUtil::GetDataFilePathList() + ";");
 }
 
 void FireFighterGameEntryPoint::OnStartup(dtGame::GameApplication& app)
@@ -119,9 +119,7 @@ void FireFighterGameEntryPoint::OnStartup(dtGame::GameApplication& app)
    gameManager.GetMessageFactory().RegisterMessageType<dtGame::Message>(MessageType::HELP_WINDOW_CLOSED);
 
    // Create the components and add them to the game manager
-   RefPtr<HUDComponent>   hudComp   = new HUDComponent(*app.GetWindow(),
-                                                      *app.GetKeyboard(),
-                                                      *app.GetMouse());
+   RefPtr<HUDComponent>   hudComp   = new HUDComponent(app);
    RefPtr<InputComponent> inputComp = new InputComponent;
    RefPtr<dtGame::DefaultMessageProcessor> dmp = new dtGame::DefaultMessageProcessor("DefaultMessageProcessor");
    mLmsComponent = new dtLMS::LmsComponent("LMSComponent");
