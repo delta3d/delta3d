@@ -7,7 +7,6 @@ file(GLOB PROG_SOURCES "src/*.cpp" "*.rc")
 list(REMOVE_ITEM PROG_SOURCES ${SOURCE_PATH}/precomp.cpp)
 
 INCLUDE_DIRECTORIES(${SOURCE_PATH}/inc ${QT_INCLUDE_DIR}
-                                  ${CAL3D_INCLUDE_DIR} #for dtAnim
                                   ${CMAKE_CURRENT_BINARY_DIR} # for ui*.h files
                                   )
 
