@@ -226,15 +226,11 @@ int main(int argc, const char* argv[])
    //set data search path to find the required Delta3D files and the example data files
 
    std::string dataPath = dtUtil::GetDeltaDataPathList();
-   dtUtil::SetDataFilePathList(dataPath + ";" +
+   dtUtil::SetDataFilePathList(
                                dtUtil::GetDeltaRootPath() + "/examples/data;" +
-                               dtUtil::GetDeltaRootPath() + "/examples/data/gui/imagesets;" +
-                               dtUtil::GetDeltaRootPath() + "/examples/data/gui/schemes;" +
-                               dtUtil::GetDeltaRootPath() + "/examples/data/gui/fonts;" +
-                               dtUtil::GetDeltaRootPath() + "/examples/data/gui/looknfeel;" +
-                               dtUtil::GetDeltaRootPath() + "/examples/testGUI;");
-
-   dtGUI::GUI::SetFilePath(dtUtil::GetDeltaRootPath() + "/examples/data/gui");
+                               dtUtil::GetDeltaRootPath() + "/examples/data/gui/;" +
+                               dtUtil::GetDeltaRootPath() + "/examples/testGUI;" +
+                               dataPath + ";");
 
    std::string filename;
    if (argc > 1)
