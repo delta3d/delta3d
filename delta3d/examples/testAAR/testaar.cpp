@@ -100,12 +100,9 @@ void TestAAR::Initialize(dtGame::GameApplication& app, int argc, char** argv)
 void TestAAR::OnStartup(dtGame::GameApplication& app)
 {
    std::string dataPath = dtUtil::GetDeltaDataPathList();
-   dtUtil::SetDataFilePathList(dataPath + ";" +
-                               dtUtil::GetDeltaRootPath() + "/examples/data;" +
-                               dtUtil::GetDeltaRootPath() + "/examples/data/gui/imagesets;" +
-                               dtUtil::GetDeltaRootPath() + "/examples/data/gui/schemes;" +
-                               dtUtil::GetDeltaRootPath() + "/examples/data/gui/fonts;" +
-                               dtUtil::GetDeltaRootPath() + "/examples/data/gui/looknfeel;");
+   dtUtil::SetDataFilePathList(dtUtil::GetDeltaRootPath() + "/examples/data/;" +
+                               dtUtil::GetDeltaRootPath() + "/examples/data/gui/;" +
+                               dataPath + ";" );
 
    std::string context = dtUtil::GetDeltaRootPath() + "/examples/testAAR/AARProject";
 
@@ -124,8 +121,7 @@ void TestAAR::OnStartup(dtGame::GameApplication& app)
    dtCore::RefPtr<dtGame::LogController> logCtrl = new dtGame::LogController("LogController");
    dtCore::RefPtr<dtGame::BinaryLogStream> logStream = new dtGame::BinaryLogStream(gameManager.GetMessageFactory());
    dtCore::RefPtr<dtGame::ServerLoggerComponent> srvrLog = new dtGame::ServerLoggerComponent(*logStream, "ServerLogger");
-   dtCore::RefPtr<TestAARHUD> hudComp = new TestAARHUD(*app.GetWindow(),  *app.GetKeyboard(), *app.GetMouse(),
-                                                       *logCtrl, *mLmsComponent, *srvrLog);
+   dtCore::RefPtr<TestAARHUD> hudComp = new TestAARHUD(app, *logCtrl, *mLmsComponent, *srvrLog);
 
    dtCore::RefPtr<TestAARInput> inputComp = new TestAARInput("TestInputComponent", *logCtrl, *hudComp);
    dtCore::RefPtr<TestAARMessageProcessor> mp = new TestAARMessageProcessor(*mLmsComponent, *logCtrl, *srvrLog);
