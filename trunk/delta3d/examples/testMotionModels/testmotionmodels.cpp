@@ -41,10 +41,8 @@
 #include <CEGUI/elements/CEGUIRadioButton.h>
 #include <CEGUI/CEGUIExceptions.h>
 #include <CEGUI/CEGUISystem.h>
-#include <CEGUI/CEGUISchemeManager.h>
-#include <CEGUI/CEGUIWindowManager.h>
 #include <CEGUI/CEGUIEventArgs.h>
-#include <dtGUI/ceuidrawable.h>
+#include <dtGUI/gui.h>
 
 #include <iostream>
 
@@ -72,7 +70,7 @@ namespace dtExample
    public:
       typedef dtUtil::Functor<void,TYPELIST_1(MotionModelType)> ForwardingFunctor;
 
-      QuickMenuManager(const ForwardingFunctor& ff)
+      QuickMenuManager(const ForwardingFunctor& ff, dtGUI::GUI& gui)
          :mPausedUI(NULL)
          , mUseSimTimeUI(NULL)
          , mWalk(NULL)
@@ -83,6 +81,7 @@ namespace dtExample
          , mCollision(NULL)
          , mRTS(NULL)
          , mForwardingFunctor(ff)
+         , mGUI(&gui)
       {
       }
 
@@ -153,13 +152,11 @@ namespace dtExample
       {
          try
          {
-            std::string schemefile(dtUtil::FindFileInPathList("gui/schemes/WindowsLook.scheme"));
-            CEGUI::SchemeManager* sm = CEGUI::SchemeManager::getSingletonPtr();
-            sm->loadScheme(schemefile);  ///< populate the window factories
+            mGUI->LoadScheme("WindowsLook.scheme");  ///< populate the window factories
          }
-         catch(CEGUI::Exception&)
+         catch(CEGUI::Exception& e)
          {
-            LOG_ERROR("A problem occurred loading the scheme.")
+            LOG_ERROR("A problem occurred loading the scheme." + std::string(e.getMessage().c_str()))
          }
 
          try
@@ -187,49 +184,56 @@ namespace dtExample
             walk->setArea(CEGUI::UVector2(cegui_reldim(0.05),cegui_reldim(0)),
                           CEGUI::UVector2(cegui_reldim(0.2),cegui_reldim(1.0)));
             walk->setText("WALK (1)");
-            walk->subscribeEvent(CEGUI::RadioButton::EventSelectStateChanged, CEGUI::Event::Subscriber(&QuickMenuManager::ChangeMotionModelCB,this));
+            mGUI->SubscribeEvent(*walk, CEGUI::RadioButton::EventSelectStateChanged.c_str(),
+                                 dtGUI::GUI::Subscriber(&QuickMenuManager::ChangeMotionModelCB,this));
             menu->addChildWindow( walk );
 
             CEGUI::Window* fly = CreateWidget("WindowsLook/RadioButton","FLY");
             fly->setArea(CEGUI::UVector2(cegui_reldim(0.25),cegui_reldim(0)),
                          CEGUI::UVector2(cegui_reldim(0.2),cegui_reldim(1.0)));
             fly->setText("FLY (2)");
-            fly->subscribeEvent(CEGUI::RadioButton::EventSelectStateChanged, CEGUI::Event::Subscriber(&QuickMenuManager::ChangeMotionModelCB,this));
+            mGUI->SubscribeEvent(*fly, CEGUI::RadioButton::EventSelectStateChanged.c_str(),
+                                 dtGUI::GUI::Subscriber(&QuickMenuManager::ChangeMotionModelCB,this));
             menu->addChildWindow( fly );
 
             CEGUI::Window* ufo = CreateWidget("WindowsLook/RadioButton","UFO");
             ufo->setArea(CEGUI::UVector2(cegui_reldim(0.45),cegui_reldim(0)),
                          CEGUI::UVector2(cegui_reldim(0.2),cegui_reldim(1.0)));
             ufo->setText("UFO (3)");
-            ufo->subscribeEvent(CEGUI::RadioButton::EventSelectStateChanged, CEGUI::Event::Subscriber(&QuickMenuManager::ChangeMotionModelCB,this));
+            mGUI->SubscribeEvent(*ufo, CEGUI::RadioButton::EventSelectStateChanged.c_str(),
+                                 dtGUI::GUI::Subscriber(&QuickMenuManager::ChangeMotionModelCB,this));
             menu->addChildWindow( ufo );
 
             CEGUI::Window* orb = CreateWidget("WindowsLook/RadioButton","ORBIT");
             orb->setArea(CEGUI::UVector2(cegui_reldim(0.65),cegui_reldim(0)),
                          CEGUI::UVector2(cegui_reldim(0.2),cegui_reldim(1.0)));
             orb->setText("ORBIT (4)");
-            orb->subscribeEvent(CEGUI::RadioButton::EventSelectStateChanged, CEGUI::Event::Subscriber(&QuickMenuManager::ChangeMotionModelCB,this));
+            mGUI->SubscribeEvent(*orb, CEGUI::RadioButton::EventSelectStateChanged.c_str(),
+                                 dtGUI::GUI::Subscriber(&QuickMenuManager::ChangeMotionModelCB,this));
             menu->addChildWindow( orb );
 
             CEGUI::Window* fps = CreateWidget("WindowsLook/RadioButton","FPS");
             fps->setArea(CEGUI::UVector2(cegui_reldim(0.85),cegui_reldim(0)),
                          CEGUI::UVector2(cegui_reldim(0.2),cegui_reldim(1.0)));
             fps->setText("FPS (5)");
-            fps->subscribeEvent(CEGUI::RadioButton::EventSelectStateChanged, CEGUI::Event::Subscriber(&QuickMenuManager::ChangeMotionModelCB,this));
+            mGUI->SubscribeEvent(*fps, CEGUI::RadioButton::EventSelectStateChanged.c_str(),
+                                 dtGUI::GUI::Subscriber(&QuickMenuManager::ChangeMotionModelCB,this));
             menu->addChildWindow( fps );
 
             CEGUI::Window* col = CreateWidget("WindowsLook/RadioButton","COLLISION");
             col->setArea(CEGUI::UVector2(cegui_reldim(0.05),cegui_reldim(0.25)),
                          CEGUI::UVector2(cegui_reldim(0.2),cegui_reldim(1.0)));
             col->setText("COLLISION (6)");
-            col->subscribeEvent(CEGUI::RadioButton::EventSelectStateChanged, CEGUI::Event::Subscriber(&QuickMenuManager::ChangeMotionModelCB,this));
+            mGUI->SubscribeEvent(*col, CEGUI::RadioButton::EventSelectStateChanged.c_str(),
+                                 dtGUI::GUI::Subscriber(&QuickMenuManager::ChangeMotionModelCB,this));
             menu->addChildWindow( col );
 
             CEGUI::Window* rts = CreateWidget("WindowsLook/RadioButton","RTS");
             rts->setArea(CEGUI::UVector2(cegui_reldim(0.25),cegui_reldim(0.25)),
                          CEGUI::UVector2(cegui_reldim(0.2),cegui_reldim(1.0)));
             rts->setText("RTS (7)");
-            rts->subscribeEvent(CEGUI::RadioButton::EventSelectStateChanged, CEGUI::Event::Subscriber(&QuickMenuManager::ChangeMotionModelCB,this));
+            mGUI->SubscribeEvent(*rts, CEGUI::RadioButton::EventSelectStateChanged.c_str(),
+                                 dtGUI::GUI::Subscriber(&QuickMenuManager::ChangeMotionModelCB,this));
             menu->addChildWindow( rts );
 
 
@@ -285,12 +289,11 @@ namespace dtExample
 
       CEGUI::Window* CreateWidget(const std::string& wtype, const std::string& wname)
       {
-         CEGUI::WindowManager* wmgr = CEGUI::WindowManager::getSingletonPtr();
          CEGUI::Window* w = NULL;
 
          try
          {
-            w = wmgr->createWindow(wtype, wname);
+            w = mGUI->CreateWidget(wtype, wname);
          }
          catch (CEGUI::Exception& e)
          {
@@ -320,6 +323,7 @@ namespace dtExample
       CEGUI::RadioButton* mRTS;
 
       ForwardingFunctor mForwardingFunctor;
+      dtCore::RefPtr<dtGUI::GUI> mGUI;
    };
 }
 
@@ -339,8 +343,6 @@ public:
       , mUseSimTime(false)
       , mCurrentMotionModelIndex(0)
    {
-      dtExample::QuickMenuManager::ForwardingFunctor ff(this, &TestMotionModelsApp::SetMotionModel);
-      mMenuManager = new dtExample::QuickMenuManager(ff);
    }
 
    void Config()
@@ -388,10 +390,13 @@ public:
       }
 
       // show a HUD
-      mGUIDrawable = new dtGUI::CEUIDrawable(GetWindow(), GetKeyboard(), GetMouse());
-      AddDrawable(mGUIDrawable.get());
+      mGUIDrawable = new dtGUI::GUI(GetCamera(), GetKeyboard(), GetMouse());
+
+      dtExample::QuickMenuManager::ForwardingFunctor ff(this, &TestMotionModelsApp::SetMotionModel);
+      mMenuManager = new dtExample::QuickMenuManager(ff, *mGUIDrawable);
       mMenuManager->BuildMenu();
       mMenuManager->SetSelected(dtExample::WALK);
+
    }
 
    /**
@@ -482,7 +487,6 @@ public:
    protected:
       ~TestMotionModelsApp()
       {
-         mGUIDrawable->ShutdownGUI();
       }
 
 
@@ -525,7 +529,7 @@ private:
    std::vector< RefPtr<MotionModel> > mMotionModels;
 
    /// Tool for rendering GUI.
-   dtCore::RefPtr<dtGUI::CEUIDrawable> mGUIDrawable;
+   dtCore::RefPtr<dtGUI::GUI> mGUIDrawable;
 
    dtCore::RefPtr<dtExample::QuickMenuManager> mMenuManager;
 
@@ -539,13 +543,10 @@ IMPLEMENT_MANAGEMENT_LAYER(TestMotionModelsApp)
 int main(int argc, char** argv)
 {
    std::string dataPath = dtUtil::GetDeltaDataPathList();
-   dtUtil::SetDataFilePathList(dataPath + ";" +
-                               dtUtil::GetDeltaRootPath() + "/examples/data/;" +
-                               dtUtil::GetDeltaRootPath() + "/examples/data/gui/imagesets;" +
-                               dtUtil::GetDeltaRootPath() + "/examples/data/gui/schemes;" +
-                               dtUtil::GetDeltaRootPath() + "/examples/data/gui/fonts;" +
-                               dtUtil::GetDeltaRootPath() + "/examples/data/gui/looknfeel;" +
-                               dtUtil::GetDeltaRootPath() + "/examples/testMotionModels/;");
+   dtUtil::SetDataFilePathList(dtUtil::GetDeltaRootPath() + "/examples/data/;" +
+                               dtUtil::GetDeltaRootPath() + "/examples/data/gui/;" +
+                               dtUtil::GetDeltaRootPath() + "/examples/testMotionModels/;" +
+                               dataPath + ";");
 
    RefPtr<TestMotionModelsApp> app = new TestMotionModelsApp( "config.xml" );
 

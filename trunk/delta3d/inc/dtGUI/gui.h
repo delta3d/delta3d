@@ -82,6 +82,7 @@ namespace dtGUI
 
       typedef CEGUI::Event::Subscriber Subscriber;
       CEGUI::Event::Connection SubscribeEvent(const std::string& widgetName, const std::string& event, GUI::Subscriber subscriber);
+      CEGUI::Event::Connection SubscribeEvent(Widget& widget, const std::string& event, GUI::Subscriber subscriber);
 
    protected:
       virtual ~GUI();

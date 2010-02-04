@@ -370,16 +370,23 @@ Widget* dtGUI::GUI::GetWidget(const std::string& sWidgetName)
 
 ////////////////////////////////////////////////////////////////////////////////
 CEGUI::Event::Connection dtGUI::GUI::SubscribeEvent(const std::string& widgetName, 
-                                const std::string& event,
-                                GUI::Subscriber subscriber)
+                                                    const std::string& event,
+                                                    GUI::Subscriber subscriber)
 {
    CEGUI::Window* w = GetWidget(widgetName);
    if (w)
    {
-      return w->subscribeEvent(event, subscriber);
+      return SubscribeEvent(*w, event, subscriber);
    }
-
    
    LOG_ERROR("Could not find widget for event subscription: " + widgetName);
    return CEGUI::Event::Connection();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+CEGUI::Event::Connection dtGUI::GUI::SubscribeEvent(Widget& widget,
+                                                    const std::string& event,
+                                                    GUI::Subscriber subscriber)
+{
+   return widget.subscribeEvent(event, subscriber);
 }
