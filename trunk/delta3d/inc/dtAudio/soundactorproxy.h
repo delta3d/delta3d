@@ -6,7 +6,7 @@
  * the terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
- *
+ * 
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
@@ -66,6 +66,7 @@ namespace dtAudio
       static const dtUtil::RefString PROPERTY_LISTENER_RELATIVE;
       static const dtUtil::RefString PROPERTY_LOOPING;
       static const dtUtil::RefString PROPERTY_MAX_DISTANCE;
+      static const dtUtil::RefString PROPERTY_REFERENCE_DISTANCE;
       static const dtUtil::RefString PROPERTY_MAX_GAIN;
       static const dtUtil::RefString PROPERTY_MIN_GAIN;
       static const dtUtil::RefString PROPERTY_MAX_RANDOM_TIME;
@@ -241,6 +242,10 @@ namespace dtAudio
 
       void SetMaxDistance(float max);
       float GetMaxDistance() const;
+
+      void SetReferenceDistance(float max);
+      float GetReferenceDistance() const;
+
 
       void SetRolloffFactor(float rolloff);
       float GetRolloffFactor() const;

@@ -1,7 +1,7 @@
 /*
  * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2005, BMH Associates, Inc.
- *
+ * 
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation; either version 2.1 of the License, or (at your option)
@@ -44,6 +44,7 @@ namespace dtAudio
    const dtUtil::RefString SoundActorProxy::PROPERTY_LISTENER_RELATIVE("Listener Relative"); // "Listener Relative"
    const dtUtil::RefString SoundActorProxy::PROPERTY_LOOPING("Looping"); // "Looping"
    const dtUtil::RefString SoundActorProxy::PROPERTY_MAX_DISTANCE("Max Distance"); // "Max Distance"
+   const dtUtil::RefString SoundActorProxy::PROPERTY_REFERENCE_DISTANCE("Reference Distance"); // "Reference Distance"
    const dtUtil::RefString SoundActorProxy::PROPERTY_MAX_GAIN("Max Gain"); // "Max Gain"
    const dtUtil::RefString SoundActorProxy::PROPERTY_MIN_GAIN("Min Gain"); // "Min Gain"
    const dtUtil::RefString SoundActorProxy::PROPERTY_MAX_RANDOM_TIME("Max Random Time"); // "Max Random Time"
@@ -247,6 +248,17 @@ namespace dtAudio
             MakeFunctor(*this, &SoundActorProxy::SetMaxDistance),
             MakeFunctorRet(*this, &SoundActorProxy::GetMaxDistance),
             "Sets the maximum distance of a sound.", GROUPNAME));
+
+        // This property manipulates the reference distance of a sound. It uses
+        // a float type to represent the reference distance.
+        // Default is 1.0.
+        AddProperty(new FloatActorProperty(
+           PROPERTY_REFERENCE_DISTANCE,
+           PROPERTY_REFERENCE_DISTANCE,
+            MakeFunctor(*this, &SoundActorProxy::SetReferenceDistance),
+            MakeFunctorRet(*this, &SoundActorProxy::GetReferenceDistance),
+            "Sets the reference distance of a sound.", GROUPNAME));
+
 
         // This property manipulates the roll off factor of a sound. It uses
         // a float type to represent the roll off factor.
@@ -503,6 +515,19 @@ namespace dtAudio
     }
 
     ///////////////////////////////////////////////////////////////////////////////
+    void SoundActorProxy::SetReferenceDistance(float max)
+    {
+       Sound* snd = GetSound();
+       snd->SetReferenceDistance(max);       
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    float SoundActorProxy::GetReferenceDistance() const
+    {
+       return GetSound()->GetReferenceDistance();
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
     void SoundActorProxy::SetRolloffFactor(float rolloff)
     {
        Sound* snd = GetSound();
@@ -517,14 +542,14 @@ namespace dtAudio
 
     ///////////////////////////////////////////////////////////////////////////////
     void SoundActorProxy::SetMinGain(float min)
-    {       
+    {
        Sound* snd = GetSound();
        snd->SetMinGain(min);       
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     float SoundActorProxy::GetMinGain() const
-    {       
+    {
        return GetSound()->GetMinGain();
     }
 

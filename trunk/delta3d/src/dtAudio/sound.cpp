@@ -1,5 +1,5 @@
 // sound.cpp: Implementation of the Sound class.
-//
+// 
 //////////////////////////////////////////////////////////////////////
 
 #include <cfloat>
@@ -28,7 +28,7 @@ const char* Sound::kCommand[kNumCommands] =
    "rewind",   "loop",      "unloop",
    "queue",    "gain",      "pitch",
    "position", "direction", "velocity",
-   "absolute", "relative",  "mindist",
+   "absolute", "relative",  "refdist",
    "maxdist",  "rolloff",   "mingain",
    "maxgain"
 };
@@ -73,6 +73,7 @@ Sound::Sound()
    , mPitch(1.0f)
    , mSecondOffset(0.0f)
    , mMaxDistance(FLT_MAX)
+   , mReferenceDistance(1.0f) //GK added
    , mRolloffFactor(1.0f)
    , mMinGain(0.0f)
    , mMaxGain(1.0f)
@@ -97,6 +98,7 @@ Sound::Sound()
    SetMaxDistance(FLT_MAX);
    SetMinGain(0.0f);
    SetMaxGain(1.0f);
+   SetReferenceDistance(1.0f); //GK added
 
    SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_SOUND);
 }
@@ -249,6 +251,7 @@ bool Sound::RestoreSource()
    SetPitch(mPitch);
    SetPlayTimeOffset(mSecondOffset);
    SetMaxDistance(mMaxDistance);
+   SetReferenceDistance(mReferenceDistance); //GK added
    SetRolloffFactor(mRolloffFactor);
    SetMinGain(mMinGain);
    SetMaxGain(mMaxGain);
@@ -824,6 +827,29 @@ void Sound::SetMaxDistance(float dist)
 float Sound::GetMaxDistance() const
 {
    return mMaxDistance;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// GK added
+void Sound::SetReferenceDistance(float dist)
+{
+   //make sure max distance is never negative
+   float max = dtUtil::Max<float>( 0.0f, dist );
+
+   if (alIsSource(mSource) == AL_TRUE)
+   {
+      alSourcef(mSource, AL_REFERENCE_DISTANCE, max);
+      CheckForError("Setting source reference distance", __FUNCTION__, __LINE__);
+   }
+
+   mReferenceDistance = max;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// GK added
+float Sound::GetReferenceDistance() const
+{
+   return mReferenceDistance;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
