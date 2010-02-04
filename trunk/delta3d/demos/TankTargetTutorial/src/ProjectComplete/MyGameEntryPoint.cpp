@@ -130,12 +130,11 @@ void MyGameEntryPoint::OnStartup(dtGame::GameApplication& app)
    // init our file path so it can find GUI Scheme
    // add extra data paths here if you need them
    std::string dataPath = dtUtil::GetDeltaDataPathList();
-   dtUtil::SetDataFilePathList(dataPath + ";" +
+   dtUtil::SetDataFilePathList(
                               dtUtil::GetDeltaRootPath() + "/examples/data;" +
-                              dtUtil::GetDeltaRootPath() + "/examples/data/gui/imagesets;" +
-                              dtUtil::GetDeltaRootPath() + "/examples/data/gui/schemes;" +
-                              dtUtil::GetDeltaRootPath() + "/examples/data/gui/fonts;" +
-                              dtUtil::GetDeltaRootPath() + "/examples/data/gui/looknfeel;");
+                              dtUtil::GetDeltaRootPath() + "/examples/data/gui/;" +
+                              dataPath + ";");
+
    LOG_ALWAYS("Path list is: " + dtUtil::GetDataFilePathList() );
 
    dtDAL::Project::GetInstance().SetContext("StageProject");
@@ -190,9 +189,7 @@ void MyGameEntryPoint::OnStartup(dtGame::GameApplication& app)
 #endif
 
    // Add Component - HUD Component
-   dtCore::RefPtr<HUDComponent> hudComp = new HUDComponent(app.GetWindow(),
-                                                           app.GetKeyboard(),
-                                                           app.GetMouse(),
+   dtCore::RefPtr<HUDComponent> hudComp = new HUDComponent(app,
                                                            "HUDComponent");
    app.GetGameManager()->AddComponent(*hudComp, dtGame::GameManager::ComponentPriority::NORMAL);
 
