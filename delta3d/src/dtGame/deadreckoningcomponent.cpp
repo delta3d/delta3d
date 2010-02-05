@@ -293,12 +293,13 @@ namespace dtGame
          BaseGroundClamper::GroundClampingType* groundClampingType = &BaseGroundClamper::GroundClampingType::NONE;
          bool transformChanged = helper.DoDR(gameActor, xform, mLogger, groundClampingType);
 
-
          // Only ground clamp and move remote objects.
          if(helper.GetEffectiveUpdateMode(gameActor.IsRemote())
                == DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR)
          {
             // Get the object's velocity for the current frame.
+            // Curt - This line is bogus. The velocity changes based on the DR... need to access
+            // the instantaneous velocity.
             osg::Vec3 velocity( helper.GetLastKnownVelocity() + helper.GetLastKnownAcceleration() * simTimeDelta );
 
             // Call the ground clamper for the current object.
