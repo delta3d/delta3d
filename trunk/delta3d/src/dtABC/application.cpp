@@ -569,6 +569,10 @@ bool AppXMLApplicator::operator ()(const ApplicationConfigData& data, dtABC::App
       {
          dwin->ChangeScreenResolution(data.RESOLUTION);
       }
+      else
+      {
+         LOG_WARNING("Cannot change screen resolution: invalid resolution specified in config file.");
+      }
    }
 
    bool valid = true; //optimistic
