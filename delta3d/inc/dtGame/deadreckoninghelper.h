@@ -399,22 +399,18 @@ namespace dtGame
          void SetUseCubicSplineTransBlend(bool newValue) { mUseCubicSplineTransBlend = newValue; }
 
          /**
-         * When this is true, the DR algorithm will maintain a constant smoothing time 
-         * by using the MaxSmoothingTime. Rotation & Translation each have their own 
-         * max value. Keeping a constant smoothing time will significantly reduce anomalies
-         * when dealing with frequent updates. If false (the default & old behavior), it will 
-         * use the avg update time if that is smaller than the max smoothing time.
-         * @return true if maintaining constant smothing time, false (default) if using avg update time.
-         */
+          * @return true if maintaining constant smoothing time, false (default) if using avg update time.
+          */
          bool GetAlwaysUseMaxSmoothingTime() const { return mAlwaysUseMaxSmoothingTime; }
 
          /**
          * When this is true, the DR algorithm will maintain a constant smoothing time 
          * by using the MaxSmoothingTime. Rotation & Translation each have their own 
          * max value. Keeping a constant smoothing time will significantly reduce anomalies
-         * when dealing with frequent updates. If false (the default & old behavior), it will 
-         * use the avg update time if that is smaller than the max smoothing time.
-         * @param newValue true if maintaining constant smothing time, false (default) if using avg update time.
+         * when sending updates at a rate close to the visual framerate.
+         * If false (the default), it will use the avg update time if that is smaller than the max smoothing time.
+         * This works better in the general case because the smoothing time should be about the same as the update.
+         * @param newValue true if maintaining constant smoothing time, false (default) if using avg update time.
          */
          void SetAlwaysUseMaxSmoothingTime(bool newValue) { mAlwaysUseMaxSmoothingTime = newValue; }
 
@@ -477,7 +473,7 @@ namespace dtGame
          float mMaxTranslationSmoothingTime;
          ///The maximum amount of time to use when smoothing rotation.
          float mMaxRotationSmoothingTime;
-         // True means we maintain constant smoothing time for blending. Uses Max Rot or Trans as appropriate
+         /// True means we maintain constant smoothing time for blending. Uses Max Rot or Trans as appropriate
          bool mAlwaysUseMaxSmoothingTime;
 
          ///the amount of time since this actor started smoothing.
