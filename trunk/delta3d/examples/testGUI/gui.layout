@@ -1,42 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <GUILayout >
-    <Window Type="DefaultWindow" Name="testCEG" >
+    <Window Type="DefaultWindow" Name="Root" >
         <Property Name="InheritsAlpha" Value="True" />
         <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
         <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
-        <Window Type="WindowsLook/StaticImage" Name="Panel 1" >
+        <Window Type="WindowsLook/FrameWindow" Name="Framewindow" >
+            <Property Name="TitlebarFont" Value="DejaVuSans-10" />
             <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
-            <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
-            <Window Type="WindowsLook/StaticText" Name="Delta_3D" >
-                <Property Name="Text" Value="Delta 3D" />
-                <Property Name="FrameEnabled" Value="False" />
-                <Property Name="HorzFormatting" Value="HorzCentred" />
+            <Property Name="TitlebarEnabled" Value="True" />
+            <Property Name="UnifiedAreaRect" Value="{{0.506614,0},{0.356753,0},{0.972197,0},{0.867717,0}}" />
+            <Window Type="WindowsLook/StaticImage" Name="camera1target" >
                 <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
-                <Property Name="UnifiedAreaRect" Value="{{0.2,0},{0.3,0},{0.8,0},{0.5,0}}" />
-                <Property Name="BackgroundEnabled" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0.0680095,0},{0.118035,0},{0.939226,0},{0.80926,0}}" />
             </Window>
-            <Window Type="WindowsLook/Editbox" Name="EditBox" >
-                <Property Name="Text" Value="Editable text box" />
-                <Property Name="MaxTextLength" Value="1073741823" />
+            <Window Type="WindowsLook/Button" Name="MyButton" >
                 <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
-                <Property Name="UnifiedAreaRect" Value="{{0.3,0},{0.55,0},{0.7,0},{0.65,0}}" />
-            </Window>
-            <Window Type="WindowsLook/HorizontalScrollbar" Name="slider1" >
-                <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
-                <Property Name="UnifiedAreaRect" Value="{{0.12,0},{0.1,0},{0.8,0},{0.15,0}}" />
-                <Property Name="DocumentSize" Value="256.0" />
-                <Property Name="PageSize" Value="16.0" />
-                <Property Name="StepSize" Value="1.0" />
-                <Property Name="OverlapSize" Value="1.0" />
-                <Property Name="ScrollPosition" Value="255.0" />
-                <Event Name="ScrollPosChanged" Function="sliderHandler" />
-            </Window>
-            <Window Type="WindowsLook/Button" Name="QuitButton" >
-                <Property Name="Text" Value="Exit" />
-                <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
-                <Property Name="UnifiedAreaRect" Value="{{0.4,0},{0.7,0},{0.6,0},{0.8,0}}" />
-                  <Event Name="Clicked" Function="quitHandler" />
+                <Property Name="UnifiedAreaRect" Value="{{0.2,0},{0.834887,0},{0.791582,0},{0.966374,0}}" />
+                <Property Name="Text" Value="Exit"/>
+                <Event Name="Clicked" Function="quitHandler" />
             </Window>
         </Window>
     </Window>
