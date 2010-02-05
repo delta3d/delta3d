@@ -26,7 +26,6 @@
 #endif
 
 #include <dtABC/application.h>
-#include <dtCore/object.h>
 #include <dtCore/camera.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/scene.h>
@@ -35,18 +34,19 @@
 #include <dtGUI/gui.h>
 #include <dtUtil/log.h>
 #include <dtUtil/datapathutils.h>
-#include <dtUtil/mathdefines.h>
-#include <dtUtil/exception.h>
 
-#include <CEGUI/CEGUISchemeManager.h>
-#include <CEGUI/CEGUISystem.h>
-#include <CEGUI/CEGUIWindowManager.h>
 #include <CEGUI/CEGUIWindow.h>
 #include <CEGUI/CEGUIExceptions.h>
-#include <CEGUI/CEGUIFont.h>
-#include <CEGUI/elements/CEGUIScrollbar.h>
-#include <CEGUI/elements/CEGUIPushButton.h>
 #include <CEGUI/CEGUIDefaultResourceProvider.h>
+
+#include <CEGUI/CEGUIImagesetManager.h>
+#include <CEGUI/CEGUITexture.h>
+#include <CEGUI/CEGUIPropertyHelper.h>
+#include <CEGUI/RendererModules/OpenGL/CEGUIOpenGLTexture.h>
+#include <osg/Texture2D>
+#include <osgViewer/GraphicsWindow>
+#include <dtDAL/project.h>
+#include <dtDAL/map.h>
 
 using namespace dtCore;
 using namespace dtABC;
@@ -76,113 +76,67 @@ public:
    {
       dtABC::Application::Config();
 
-      ///put something in the background to look at
-      RefPtr<Object> helo = new Object("Helo");
-      helo->LoadFile("models/uh-1n.ive");
-      AddDrawable(helo.get());
+      std::string contextName = dtUtil::GetDeltaRootPath() + "/examples/data/demoMap";
+      dtDAL::Project::GetInstance().SetContext(contextName, true);
+      dtDAL::Map &myMap = dtDAL::Project::GetInstance().GetMap("MyCoolMap");
 
-      ///move the camera around to see the side of the 3D Object
-      Transform xform(-30.0f, 0.0f, 0.0f, -90.0f, 0.0f, 0.0f);
-      GetCamera()->SetTransform(xform);
+      //Since we are in an Application we can simply call...
+      LoadMap(myMap);
+
+      // translate the camera to the predefined start position
+      {
+         std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > proxies;
+         myMap.FindProxies(proxies, "startPosition");
+         if (!proxies.empty())
+         {
+            dtCore::Transformable *startPoint;
+            proxies[0]->GetActor(startPoint);
+
+            if (startPoint != NULL)
+            {
+               dtCore::Transform xform;
+               startPoint->GetTransform(xform);
+               GetCamera()->SetTransform(xform);
+            }
+         }
+      }
 
       ///lets hide the stock cursor and just use CEGUI's rendered cursor
       GetWindow()->ShowCursor(false);
 
-      try
-      {
-         mGUI = new dtGUI::GUI(GetCamera(), GetKeyboard(), GetMouse());
-      }
-      catch (dtUtil::Exception& e)
-      {
-         LOG_ERROR("Something bad happened when creating the CEUIDrawable.  I can't go on!\n" +
-                   e.What());
-         exit(1);
-      }
+      mGUI = new dtGUI::GUI(GetCamera(), GetKeyboard(), GetMouse());
 
       ///make some cool UI
       BuildGUI();
    }
 
-
-   void SetLayoutFilename(const std::string& filename)
-   {
-      mLayoutFilename = filename;
-   }
-
 private:
    RefPtr<dtGUI::GUI> mGUI;
-   std::string mLayoutFilename;
+   RefPtr<dtCore::Camera> mRTTCamera;
 
    void BuildGUI(void)
    {
       try
       {
          mGUI->LoadScheme("WindowsLook.scheme");
-
          mGUI->SetMouseCursor("WindowsLook", "MouseArrow");
-
-         CEGUI::System::getSingleton().getDefaultFont()->setProperty("PointSize", "20");
 
          CEGUI::Window* sheet = mGUI->GetRootSheet();
 
-         if (!mLayoutFilename.empty())
-         {
-            //overwrite the default "layouts" directory search path to find the supplied layout filename
-            CEGUI::DefaultResourceProvider* rp = dynamic_cast<CEGUI::DefaultResourceProvider*>
-                                                  (CEGUI::System::getSingleton().getResourceProvider());
-            rp->setResourceGroupDirectory("layouts",  dtUtil::GetDeltaRootPath() + "/examples/testGUI");
+         //overwrite the default "layouts" directory search path to find the supplied layout filename
+         CEGUI::DefaultResourceProvider* rp = dynamic_cast<CEGUI::DefaultResourceProvider*>
+            (CEGUI::System::getSingleton().getResourceProvider());
+         rp->setResourceGroupDirectory("layouts",  dtUtil::GetDeltaRootPath() + "/examples/testGUI");
 
-            ///We'll make a new ScriptModule which will handle subscribing callbacks
-            ///to widgets when it loads the Layout file.
-            dtGUI::ScriptModule* sm = new dtGUI::ScriptModule();
-            sm->AddCallback("quitHandler", &quitHandler);
-            sm->AddCallback("sliderHandler", &sliderHandler);
+         ///We'll make a new ScriptModule which will handle subscribing callbacks
+         ///to widgets when it loads the Layout file.
+         dtGUI::ScriptModule* sm = new dtGUI::ScriptModule();
+         sm->AddCallback("quitHandler", &quitHandler);
 
-            CEGUI::System::getSingleton().setScriptingModule(sm);
+         CEGUI::System::getSingleton().setScriptingModule(sm);
 
-            //load GUI layout from file
-            mGUI->LoadLayout(sheet, mLayoutFilename);
-         }
-         else
-         {
-            // background panel
-            CEGUI::Window* panel = mGUI->CreateWidget("WindowsLook/StaticImage", "Panel 1");
-            panel->setPosition(CEGUI::UVector2(cegui_reldim(0.f), cegui_reldim(0.f)));
-            panel->setSize(CEGUI::UVector2(cegui_reldim(1.f), cegui_reldim(1.f)));
-
-            //Delta3D text
-            CEGUI::Window* st = mGUI->CreateWidget(panel, "WindowsLook/StaticText","Delta_3D");
-            st->setPosition(CEGUI::UVector2(cegui_reldim(0.2f), cegui_reldim(0.3f)));
-            st->setSize(CEGUI::UVector2(cegui_reldim(0.6f), cegui_reldim(0.2f)));
-            st->setText("Delta 3D");
-            st->setProperty("FrameEnabled", "false");
-            st->setProperty("BackgroundEnabled", "false");
-            st->setProperty("HorzFormatting", "HorzCentred");
-
-            // Edit box for text entry
-            CEGUI::Window* eb = mGUI->CreateWidget(panel, "WindowsLook/Editbox", "EditBox");
-            eb->setPosition(CEGUI::UVector2(cegui_reldim(0.3f), cegui_reldim(0.55f)));
-            eb->setSize(CEGUI::UVector2(cegui_reldim(0.4f), cegui_reldim(0.1f)));
-            eb->setText("Editable text box");
-
-            //slider
-            CEGUI::Window* slider = mGUI->CreateWidget(panel, "WindowsLook/HorizontalScrollbar", "slider1");
-            slider->setPosition(CEGUI::UVector2(cegui_reldim(0.12f), cegui_reldim(0.1f)));
-            slider->setSize(CEGUI::UVector2(cegui_reldim(0.76f), cegui_reldim(0.05f)));
-            slider->setProperty("DocumentSize", "100");
-            slider->setProperty("PageSize", "16");
-            slider->setProperty("StepSize", "1");
-            slider->setProperty("OverlapSize", "1");
-            slider->setProperty("ScrollPosition", "100");
-            slider->subscribeEvent(CEGUI::Scrollbar::EventScrollPositionChanged, &sliderHandler);
-
-            // quit button
-            CEGUI::Window* btn = mGUI->CreateWidget(panel, "WindowsLook/Button", "QuitButton");
-            btn->setText("Exit");
-            btn->setPosition( CEGUI::UVector2(cegui_reldim(0.4f), cegui_reldim(0.7f)));
-            btn->setSize( CEGUI::UVector2(cegui_reldim(0.2f), cegui_reldim(0.1f)));
-            btn->subscribeEvent(CEGUI::PushButton::EventClicked, &quitHandler);
-         }
+         //load GUI layout from file
+         mGUI->LoadLayout("gui.layout");
       }
 
       // catch to prevent exit (errors will be logged).
@@ -191,6 +145,43 @@ private:
          Log::GetInstance().LogMessage(Log::LOG_WARNING, __FUNCTION__,
             "CEGUI::%s", e.getMessage().c_str() );
       }
+
+      //create a new CEGUI Texture and apply it to a loaded widget
+      CEGUI::Window* w = mGUI->GetWidget("camera1target");
+      CEGUI::Texture& texture = CEGUI::System::getSingleton().getRenderer()->createTexture(w->getPixelSize());
+      CEGUI::Imageset& imageset = CEGUI::ImagesetManager::getSingleton().create("RTT", texture);
+      imageset.defineImage("RTTImage", CEGUI::Point(0,0), texture.getSize(), CEGUI::Point(0,0) );
+      w->setProperty("Image",  CEGUI::PropertyHelper::imageToString(&imageset.getImage("RTTImage")));
+
+      // create/allocate/setup osg-texture-rendertarget
+      osg::Texture2D* rttTexture = new osg::Texture2D();
+      osgViewer::GraphicsWindow* gc = GetWindow()->GetOsgViewerGraphicsWindow();
+      rttTexture->setTextureSize(w->getPixelSize().d_width, w->getPixelSize().d_height);
+      rttTexture->setInternalFormat(GL_RGBA);
+      rttTexture->setFilter(osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR);
+      rttTexture->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR);
+      rttTexture->apply(*gc->getState());
+
+      //tell the CEGUI texture to use our OSG Texture
+      GLuint textureID = rttTexture->getTextureObject(gc->getState()->getContextID())->_id;
+      static_cast<CEGUI::OpenGLTexture&>(texture).setOpenGLTexture(textureID, w->getPixelSize());
+
+      //make a new Camera to render the RTT
+      mRTTCamera = new dtCore::Camera("RttCamera");
+      dtCore::Transform xform;
+      GetCamera()->GetTransform(xform);
+      mRTTCamera->SetTransform(xform);
+
+      osg::Camera* osgCam = mRTTCamera->GetOSGCamera();
+      osgCam->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
+      osgCam->setClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+      osgCam->setViewport(0, 0, w->getPixelSize().d_width, w->getPixelSize().d_height);
+      osgCam->setRenderTargetImplementation(osg::Camera::FRAME_BUFFER_OBJECT);
+      osgCam->setRenderOrder(osg::Camera::PRE_RENDER);
+      osgCam->attach(osg::Camera::COLOR_BUFFER, rttTexture);
+
+      osgCam->addChild(GetScene()->GetSceneNode());
+      GetCamera()->GetOSGCamera()->addChild(osgCam);   
    }
 
    //quit!
@@ -200,31 +191,12 @@ private:
       return true;
    }
 
-   //the scrollbar has changed positions, do something cool like change the alpha value.
-   static bool sliderHandler(const CEGUI::EventArgs& e)
-   {
-      CEGUI::Scrollbar* slider = (CEGUI::Scrollbar*)((const CEGUI::WindowEventArgs&)e).window;
-
-      //get the scrollbar position (0..1)
-      float alphaPercent = slider->getScrollPosition() / slider->getDocumentSize();
-
-      //we don't want alpha of 0.0, so map it to something greater.
-      float alphaVal = dtUtil::MapRangeValue(alphaPercent, 0.f, 1.f, 0.2f, 1.f);
-
-      CEGUI::Window* sheet = CEGUI::System::getSingleton().getGUISheet();
-
-      if (sheet) { sheet->setAlpha(alphaVal); }
-
-      return true;
-   }
 };
-
 
 
 int main(int argc, const char* argv[])
 {
    //set data search path to find the required Delta3D files and the example data files
-
    std::string dataPath = dtUtil::GetDeltaDataPathList();
    dtUtil::SetDataFilePathList(
                                dtUtil::GetDeltaRootPath() + "/examples/data;" +
@@ -232,162 +204,11 @@ int main(int argc, const char* argv[])
                                dtUtil::GetDeltaRootPath() + "/examples/testGUI;" +
                                dataPath + ";");
 
-   std::string filename;
-   if (argc > 1)
-   {
-      Log::GetInstance().LogMessage(Log::LOG_ALWAYS, __FUNCTION__,
-         "Using GUI file %s...",argv[1]);
-      filename = argv[1];
-   }
-
    //Instantiate the application and look for the config file
    RefPtr<TestGUIApp> app = new TestGUIApp("config.xml");
-   app->SetLayoutFilename(filename);
 
    app->Config(); //configuring the application
    app->Run(); // running the simulation loop
 
    return 0;
 }
-
-/** \page testGUI GUI Tutorial
- * \dontinclude testgui.cpp
- * This tutorial will break down the testgui example and explain some of the more
- * interesting features of the dtGUI namespace.  You can find the whole example code
- * in the delta3d/examples/testgui folder.
- *
- * Below is a screen of the application.  You should see the same if you run the
- * application yourself.
- * \image html testGui.jpg
- *
- * We need to include some header files to define the classes we'll be using.
- * \skip <dtABC/application.h
- * \until <dtUtil/exception.h>
- *
- * Now includes the headers for the CEGUI classes we'll be using.
- * \skip <CEGUI/CEGUISchemeManager.h>
- * \until <CEGUI/elements/CEGUIPushButton.h>
- *
- *
- * Lets also tell the compiler about the namespaces we're using so we don't have to
- * type as much.
- * \skip using namespace dtCore
- * \until using namespace dtGUI
- *
- * Now we can create the standard dtABC::Application derivative:
- * \skip class
- * \until Application::Config()
- *
- * Lets add something to the dtCore::Scene to make things interesting.  In this case,
- * we'll add a helicopter by creating a new dtCore::Object, loading a 3D file, and
- * adding it to the dtCore::Scene.
- * \skip new Object
- * \until AddDrawable
- *
- * We better move our dtCore::Camera around a little to see the Object we just loaded.
- * Here we move it down the negative X axis and rotate the heading \e clockwise.
- * \skip Transform
- * \until SetTransform
- *
- * Since CEGUI will render a cursor, we should probably turn off the rendering of the
- * Operating System cursor.  Otherwise we'll see two cursors at once.
- * \skipline ShowCursor
- *
- * Now we can start registering some functions for CEGUI to call.  Here, we add two static
- * functions and give them a string "name".  We can also use non-static member functions if
- * we want.  See the docs for dtGUI::ScriptModule::AddCallback for more information.  These
- * functions will now be available for use when we load a CEGUI layout file.
- *
- * For example, we can
- * have a CEGUI::PushButton call our quitHandler when the button is pressed by adding in the
- * the following line in our .xml Layout file:
- * <tt> Event Name="Clicked" Function="quitHandler" </tt>
- * \skipline AddCallback
- * \skipline AddCallback
- *
- * Finally, can create an instance of the drawable which will actually render the GUI.  To do this,
- * we create a new CEGUIDrawable, call a member function to create some GUI, then
- * add it to the dtCore::Scene for rendering.  Notice we're passing the dtCore::DeltaWin and the
- * dtGUI::ScriptModule to the CEGUIDrawable's constructor.  By supplying the Window,
- * CEGUI will automatically resize its rendering area to match the pixel size of the
- * Window.
- * \skip mGUI
- * \until }
- *
- * This is a little method used to store the filename of a CEGUI .xml layout file.
- * The application will load this file if a valid name is supplied.
- * \skip SetLayoutFilename
- * \until }
- *
- * Here we dive into the world of CEGUI.  The first thing we need to do is load the
- * CEGUI scheme, default cursor, and font.  We absolutely have to have a Scheme file
- * loaded before we can continue.
- * \skip BuildGUI
- * \until getDefaultFont
- * \note Notice we use the dtCore::FindFileInPathList method to find the .scheme file. This will
- * use the search paths we supplied to find the file.
- *
- * Now we can create a default, root widget to hold our UI.  We'll use the CEGUI::WindowManager
- * to create the wigets for us.
- * \skip WindowManager
- * \until createWindow
- *
- * ..and once thats been created, lets tell CEGUI to use it.
- * \skipline setGUISheet(
- *
- * Since this application can optionally take in an xml Layout file on the command line,
- * lets see if it has been supplied and try to load it.  Once its loaded, we can add the
- * returned Window to the default root window we created before.
- * \skip mLayoutFilename.empty
- * \until }
- *
- * Otherwise, we'll have to create all the widgets by hand.  At this point, you may wish to
- * see the API doc for CEGUI at http://www.cegui.org.uk/api_reference/.  Here, we'll create
- * a handfull of widgets, including a Scrollbar and a PushButton which we subscribe to.
- * \skip else
- * \until }
- *
- * CEGUI like to throw exceptions when bad things happen.  Make sure to catch them!
- * \skip catch
- * \until }
- *
- * Here's our quit function.  We'll just get the first instance of a dtABC::Application
- * and tell it to quit.  Returning true tells CEGUI that we have handled this Event.
- * \skip quitHandler
- * \until }
- *
- * This is a little example of how to get the actual widget that triggered the event.
- * \skip sliderHandler
- * \until CEGUI::Scrollbar
- *
- * Once we have the widget, we can do a little math and convert the value of the Scrollbar
- * into a value we can use for alpha coloring.
- * \skip alphaPercent
- * \until alphaVal
- *
- * Lets use this value to set the overall alpha transparency of the GUI.  To do that, we'll
- * grab a handle to the highest widget in the hierarchy, and simply set it's alpha.
- * \skip sheet
- * \until };
- *
- * Here is the typical Delta3D main:
- * \skip main
- * \until SetDataFilePathList
- * \note Notice we added a search path to the Delta3D/data/ folder.  We have to do this
- * to pickup some schema and GUI files.  If CEGUI can't find the schema files, exceptions
- * will be thrown all over the place.
- *
- * Now we simply see if a GUI layout filename was supplied on the command line and save
- * it for later use:
- * \skip filename
- * \until }
- *
- * Lets create our cool little application, making sure to store it in a dtCore::RefPtr.  We
- * also supply the filename of any command line parameters that might have been set.
- * \skip TestGUIApp
- * \until Run(
- *
- * \skip return
- * \until }
- */
-
