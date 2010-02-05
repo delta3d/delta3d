@@ -455,11 +455,15 @@ namespace dtUtil
                   "Buffer underflow detected.", __FILE__, __LINE__);
       }
 
-      f = *((float *)(&mBuffer[mReadPos]));
+      memcpy(&f, &mBuffer[mReadPos], sizeof(float));
+      // The following line was unsafe - it actually corrupts your data on Windows!
+      // Apparently, MS makes sure it's not an invalid float (ie NAN) when it casts. 
+      // If it is invalid, it can CHANGE a bit to make it valid.
+      //f = *((float *)((char *)&mBuffer[mReadPos]));
 
       if (mForceLittleEndian ^ mIsLittleEndian)
       {
-         osg::swapBytes((char*)&f, sizeof(f));
+         osg::swapBytes((char*)&f, sizeof(float));
       }
 
       mReadPos += sizeof(float);
@@ -473,12 +477,14 @@ namespace dtUtil
          ResizeBuffer();
       }
 
+      memcpy(&mBuffer[mWritePos], &f, sizeof(float));
       if (mForceLittleEndian ^ mIsLittleEndian)
       {
-         osg::swapBytes((char*)&f, sizeof(f));
+         osg::swapBytes4(&mBuffer[mWritePos]);
       }
 
-      *((float *)(&mBuffer[mWritePos])) = f;
+      // Memcpy is safer (see Read(float))
+      //*((float *)(&mBuffer[mWritePos])) = f;
       mWritePos += sizeof(float);
       if (mWritePos > mBufferSize)
       {

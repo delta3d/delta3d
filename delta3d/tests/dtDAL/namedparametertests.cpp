@@ -1,31 +1,30 @@
 /* -*-c++-*-
- * allTests - This source file (.h & .cpp) - Using 'The MIT License'
- * Copyright (C) 2005-2008, Alion Science and Technology Corporation
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- *
- * This software was developed by Alion Science and Technology Corporation under
- * circumstances in which the U. S. Government may have rights in the software.
- *
- * @author Eddie Johnson and David Guthrie
- */
-
+* allTests - This source file (.h & .cpp) - Using 'The MIT License'
+* Copyright (C) 2005-2008, Alion Science and Technology Corporation
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+*
+* The above copyright notice and this permission notice shall be included in
+* all copies or substantial portions of the Software.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+* THE SOFTWARE.
+* 
+* This software was developed by Alion Science and Technology Corporation under
+* circumstances in which the U. S. Government may have rights in the software.
+*
+* @author Eddie Johnson and David Guthrie and Curtiss Murphy
+*/
 #include <prefix/dtgameprefix-src.h>
 #include <cstdlib>
 #include <iostream>
@@ -47,6 +46,7 @@
 
 #include <osg/Endian>
 #include <cppunit/extensions/HelperMacros.h>
+#include <dtUtil/mathdefines.h>
 
 #include <dtABC/application.h>
 extern dtABC::Application& GetGlobalApplication();
@@ -82,6 +82,10 @@ class NamedParameterTests : public CPPUNIT_NS::TestFixture
 
       CPPUNIT_TEST(TestNamedActorParameter);
 
+      CPPUNIT_TEST(TestNamedFloatToFromDataStream);
+      CPPUNIT_TEST(TestNamedVec3ToFromDataStream);
+      CPPUNIT_TEST(TestFloatByteSwappedTypeCasts);
+      CPPUNIT_TEST(TestDoubleByteSwappedTypeCasts);
 
    CPPUNIT_TEST_SUITE_END();
 
@@ -113,6 +117,12 @@ public:
    void TestNamedVec4Parameters();
 
    void TestNamedActorParameter();
+
+   void TestNamedFloatToFromDataStream();
+   void TestNamedVec3ToFromDataStream();
+   void TestFloatByteSwappedTypeCasts();
+   void TestDoubleByteSwappedTypeCasts();
+
 
    //this templated function can be used for an osg vector type and NamedVecParameter subclass.
    template <class VecType, class ParamType>
@@ -189,6 +199,41 @@ public:
             osg::equivalent((double)param->GetValue()[i], (double)param3->GetValue()[i], 1e-2));
       }
    }
+
+   //////////////////////////////////////////////////////////////////
+   /// This is diff from above in that is allows you to pass in values to more 
+   /// thoroughly test the ToDataStream() & FromDataStream(). There was an error in here
+   template <class VecType, class ParamType>
+   void TestNamedVecParameterToFromStream(int size, VecType testValue, unsigned int iterationNum)
+   {
+      dtCore::RefPtr<ParamType> param = new ParamType("a");
+
+      // Test the basics. Can we set/get the values.
+      param->SetValue(testValue);
+      VecType readValue = param->GetValue();
+      for (int i = 0; i < size; ++i)
+      {
+         std::ostringstream ss1;
+         ss1 << "Testing param - GetValue [" << readValue[i] << "] should match SetValue [" << testValue[i] << "].";
+         CPPUNIT_ASSERT_MESSAGE(ss1.str(),osg::equivalent(testValue[i], readValue[i], 1e-2f));
+      }
+
+      dtUtil::DataStream ds;
+      ds.SetForceLittleEndian(true);
+      dtCore::RefPtr<ParamType> param2 = new ParamType("b");
+
+      // Test the to/from data stream
+      param->ToDataStream(ds);
+      param2->FromDataStream(ds);
+      readValue = param2->GetValue();
+      for (int i = 0; i < size; ++i)
+      {
+         std::ostringstream ss1;
+         ss1 << "Test #[" << iterationNum << "] vector#[" << i << "] FromDataStream value [" << readValue[i] << "] should match ToDataStream original [" << testValue[i] << "].";
+         CPPUNIT_ASSERT_MESSAGE(ss1.str(), osg::equivalent(testValue[i], readValue[i], 1e-2f));
+      }
+   }
+
 
    /**
     * This templated method is very similar to the method for testing vector
@@ -1617,3 +1662,133 @@ void NamedParameterTests::TestNamedGroupParameterString()
    }
 
 }
+
+///////////////////////////////////////////////////////////////////////
+void NamedParameterTests::TestNamedFloatToFromDataStream()
+{
+   float baseValue(41.0213f);
+
+   // do a loop - 1000 times is better, but 250 will eventually catch the error
+   for (unsigned int counter = 0; counter < 250; counter ++)
+   {
+      // multiply base by some number
+      float randMult = dtUtil::RandFloat(0.001f, 2.003f);
+      float testValue = baseValue * randMult;
+
+      dtCore::RefPtr<dtDAL::NamedFloatParameter> param = new dtDAL::NamedFloatParameter("a");
+      param->SetValue(testValue);
+      CPPUNIT_ASSERT_MESSAGE("Param GetValue() should be the same", 
+         osg::equivalent(testValue, param->GetValue(), 1e-2f));
+
+
+      // Test ToFrom Data Stream
+      dtUtil::DataStream ds;
+      //ds.SetForceLittleEndian(true);
+      dtCore::RefPtr<dtDAL::NamedFloatParameter> param2 = new dtDAL::NamedFloatParameter("b");
+
+      //if (counter == 29)
+      //   std::cout << " used to fail here. " << std::endl;
+      param->ToDataStream(ds);
+      param2->FromDataStream(ds);
+      std::ostringstream ss1;
+      ss1.precision(32);
+      ss1 << "Float DataStream Test #[" << counter << "] - GetValue [" << 
+         param2->GetValue() << "] should match SetValue [" << testValue << "].";
+      CPPUNIT_ASSERT_MESSAGE(ss1.str(), osg::equivalent(testValue, param2->GetValue(), 1e-2f));
+   }
+}
+
+///////////////////////////////////////////////////////////////////////
+void NamedParameterTests::TestFloatByteSwappedTypeCasts()
+{
+   // This tests the most basic part of assigning a number that was previously 
+   // byte swapped. This is for the fix in datastream.cpp.
+
+   char tempBuffer[4];
+
+   float baseValue(41.0213f);
+   // do a loop - 1000 times is better, but 250 will eventually catch the error
+   for (unsigned int counter = 0; counter < 250; counter ++)
+   {
+      // multiply base by some number
+      float randMult = dtUtil::RandFloat(0.001f, 2.003f);
+      float testValue = baseValue * randMult;
+
+      // Put our value into the buffer & byte swap it
+      memcpy(tempBuffer, &testValue, sizeof(float));
+      osg::swapBytes4(tempBuffer);
+      
+      // Pull our value out of the buffer, THEN byte swap (the order matters for the test)
+      float resultValue;
+      // The following exact syntax used to be in datastream.cpp. It doesn't work. See DataStream::Read(float) for more info.
+      //resultValue = *((float *)((char *)tempBuffer));
+      memcpy(&resultValue, tempBuffer, sizeof(float));
+      osg::swapBytes((char*)&resultValue, sizeof(float));
+
+      std::ostringstream ss1;
+      ss1.precision(32);
+      ss1 << "Float Byte Swapping Test #[" << counter << "] - Result [" << 
+         resultValue << "] should match the test [" << testValue << "].";
+      CPPUNIT_ASSERT_MESSAGE(ss1.str(), osg::equivalent(testValue, resultValue, 1e-2f));
+   }
+}
+
+///////////////////////////////////////////////////////////////////////
+void NamedParameterTests::TestDoubleByteSwappedTypeCasts()
+{
+   // This tests the most basic part of assigning a number that was previously 
+   // byte swapped. This is for the fix in datastream.cpp.
+
+   char tempBuffer[sizeof(double)];
+
+   srand(time(NULL));
+
+   double baseValue(41.02131118583832828583921558128f);
+   // do a loop - 1000 times is better, but ... and, double's never fail anyway.
+   for (unsigned int counter = 0; counter < 250; counter ++)
+   {
+      // multiply base by some number
+      double randMult = (double) dtUtil::RandFloat(0.001f, 2.003f);
+      double testValue = baseValue * randMult;
+
+      // Put our value into the buffer & byte swap it
+      memcpy(tempBuffer, &testValue, sizeof(double));
+      osg::swapBytes(tempBuffer, sizeof(double));
+
+      // Pull our value out of the buffer, THEN byte swap (the order matters for the test)
+      double resultValue;
+      // The following exact syntax used to be in datastream.cpp. It doesn't work. See DataStream::Read(float) for more info.
+      resultValue = *((double *)((char *)tempBuffer));
+      //memcpy(&resultValue, tempBuffer, sizeof(double));
+      osg::swapBytes((char*)&resultValue, sizeof(double));
+
+      std::ostringstream ss1;
+      ss1.precision(32);
+      ss1 << "DOUBLE Byte Swapping Test #[" << counter << "] - Result [" << 
+         resultValue << "] should match the test [" << testValue << "].";
+      CPPUNIT_ASSERT_MESSAGE(ss1.str(), osg::equivalent(testValue, resultValue, (double)1e-2f));
+   }
+}
+
+
+///////////////////////////////////////////////////////////////////////
+void NamedParameterTests::TestNamedVec3ToFromDataStream()
+{
+   // This only tests the float value - we are only worried about the to/from stream 
+   // at this point. Other tests hit the float, double, etc...
+
+   osg::Vec3f baseValue(196.0123f, 37.2345f, 1.02f);
+   unsigned int counter;
+
+   // do a loop - 1000 times is better, but 250 is faster and will eventually catch the error
+   for (counter = 0; counter < 250; counter ++)
+   {
+      // multiply base by some number
+      float randMult = dtUtil::RandFloat(0.001f, 2.003f);
+      osg::Vec3f testValue = baseValue * randMult;
+
+      TestNamedVecParameterToFromStream<osg::Vec3f,  dtDAL::NamedVec3fParameter>(3, testValue, counter);
+   }
+}
+
+
