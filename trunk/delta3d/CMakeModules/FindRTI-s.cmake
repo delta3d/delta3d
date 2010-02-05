@@ -14,17 +14,21 @@
 
 OPTION(RTIS_SINGLE_LIBRARY "flags the build to assume that rtis is built as one single library" OFF)
 
-FIND_PATH(RTIS_ROOT_DIR NAMES include/1.3/RTI.hh
+FIND_PATH(RTIS_ROOT_DIR NAMES include/1.3/RTI.hh include/rtis/RTI.hh
    PATHS 
    $ENV{RTI} 
    $ENV{RTI_HOME} 
    ${RTI_INCLUDE_DIR}/..
+   /usr/local
 )	
 
 FIND_PATH(RTI_INCLUDE_DIR RTI.hh
+    PATH_SUFFIXES 1.3 rtis
     PATHS
-    ${RTIS_ROOT_DIR}/include/1.3
-    ${RTIS_ROOT_DIR}/include/rtis
+    ${RTIS_ROOT_DIR}/include
+    /usr/local/include
+    /usr/include
+    /opt/include    
 )
 
 IF (APPLE)
