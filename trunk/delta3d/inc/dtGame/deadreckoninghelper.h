@@ -47,6 +47,8 @@ namespace dtGame
    class DeadReckoningComponent;
    class GameActor;
 
+   class DeadReckoningHelperImpl;
+
    class DT_GAME_EXPORT DeadReckoningAlgorithm : public dtUtil::Enumeration
    {
       DECLARE_ENUM(DeadReckoningAlgorithm);
@@ -362,7 +364,7 @@ namespace dtGame
 
          //void SetTranslationCurrentSmoothingTime(float smoothing) { mTranslationCurrentSmoothingTime=smoothing; }
          //float GetTranslationCurrentSmoothingTime() const { return mTranslationCurrentSmoothingTime; }
-         void SetTranslationElapsedTimeSinceUpdate(float value) { mTranslationElapsedTimeSinceUpdate = value; }
+         void SetTranslationElapsedTimeSinceUpdate(float value);// { mTranslationElapsedTimeSinceUpdate = value; }
          float GetTranslationElapsedTimeSinceUpdate() const { return mTranslationElapsedTimeSinceUpdate; }
 
          void SetRotationElapsedTimeSinceUpdate(float value) { mRotationElapsedTimeSinceUpdate = value; }
@@ -380,8 +382,45 @@ namespace dtGame
          GroundClampingData& GetGroundClampingData() { return mGroundClampingData; }
          const GroundClampingData& GetGroundClampingData() const { return mGroundClampingData; }
 
+         /**
+          * When this is true, the DR algorithm uses a Cartmull-Rom Cubic Spline to interpret 
+          * between points. It accounts for vel and accel. If false, it uses the older, straight 
+          * forward linear blend of pos and vel.  This has no effect on rotation. Defaults to true.
+          * @return true if currently using the cubic spline blend. False if using simple linear blend. 
+          */
+         bool GetUseCubicSplineTransBlend() const { return mUseCubicSplineTransBlend; }
+
+         /**
+         * When set to true, the DR algorithm uses a Cartmull-Rom Cubic Spline to interpret 
+         * between points. It accounts for vel and accel. If set to false, it uses the older, straight 
+         * forward linear blend of pos and vel.  This has no effect on rotation. Defaults to true.
+         * @param newValue (default) True to use cartmull-rom splines. False for simple linear blend.
+         */
+         void SetUseCubicSplineTransBlend(bool newValue) { mUseCubicSplineTransBlend = newValue; }
+
+         /**
+         * When this is true, the DR algorithm will maintain a constant smoothing time 
+         * by using the MaxSmoothingTime. Rotation & Translation each have their own 
+         * max value. Keeping a constant smoothing time will significantly reduce anomalies
+         * when dealing with frequent updates. If false (the default & old behavior), it will 
+         * use the avg update time if that is smaller than the max smoothing time.
+         * @return true if maintaining constant smothing time, false (default) if using avg update time.
+         */
+         bool GetAlwaysUseMaxSmoothingTime() const { return mAlwaysUseMaxSmoothingTime; }
+
+         /**
+         * When this is true, the DR algorithm will maintain a constant smoothing time 
+         * by using the MaxSmoothingTime. Rotation & Translation each have their own 
+         * max value. Keeping a constant smoothing time will significantly reduce anomalies
+         * when dealing with frequent updates. If false (the default & old behavior), it will 
+         * use the avg update time if that is smaller than the max smoothing time.
+         * @param newValue true if maintaining constant smothing time, false (default) if using avg update time.
+         */
+         void SetAlwaysUseMaxSmoothingTime(bool newValue) { mAlwaysUseMaxSmoothingTime = newValue; }
+
+
       protected:
-         virtual ~DeadReckoningHelper() {}
+         virtual ~DeadReckoningHelper();// {}
 
          ///perform static dead-reckoning, which means applying the new position directly and ground clamping.  xform will be updated.
          void DRStatic(GameActor& gameActor, dtCore::Transform& xform, dtUtil::Log* pLogger);
@@ -410,7 +449,14 @@ namespace dtGame
           */
          void DeadReckonThePosition( osg::Vec3& pos, dtUtil::Log* pLogger, GameActor &gameActor );
 
+         /// Used by DeadReckonThePosition if we are using splines NEW WAY
+         void DeadReckonThePositionUsingSplines(osg::Vec3& pos, dtUtil::Log* pLogger, GameActor &gameActor);
+         /// Used by DeadReckonThePosition for straight blend. OLD WAY
+         void DeadReckonThePositionUsingLinearBlend(osg::Vec3& pos, dtUtil::Log* pLogger, GameActor &gameActor);
+
       private:
+         DeadReckoningHelperImpl* mDRImpl;
+
          /// The list of DeadReckoningDOFs, might want to change to has table of list later.
          std::list<dtCore::RefPtr<DeadReckoningDOF> > mDeadReckonDOFS;
 
@@ -418,8 +464,6 @@ namespace dtGame
          dtCore::RefPtr<dtUtil::NodeCollector> mDOFDeadReckoning;
 
          GroundClampingData mGroundClampingData;
-
-         double mLastTimeTag;
 
          ///the simulation time this was last updated.
          double mLastTranslationUpdatedTime;
@@ -433,6 +477,8 @@ namespace dtGame
          float mMaxTranslationSmoothingTime;
          ///The maximum amount of time to use when smoothing rotation.
          float mMaxRotationSmoothingTime;
+         // True means we maintain constant smoothing time for blending. Uses Max Rot or Trans as appropriate
+         bool mAlwaysUseMaxSmoothingTime;
 
          ///the amount of time since this actor started smoothing.
          float mTranslationElapsedTimeSinceUpdate;
@@ -489,6 +535,8 @@ namespace dtGame
          bool mFlying;
          // if the rotation has been resolved to the last updated version.
          bool mRotationResolved;
+         bool mUseCubicSplineTransBlend; // true is NEW WAY (default) - should we use simple linear or cubic spline blend?
+
          // -----------------------------------------------------------------------
          //  Unimplemented constructors and operators
          // -----------------------------------------------------------------------

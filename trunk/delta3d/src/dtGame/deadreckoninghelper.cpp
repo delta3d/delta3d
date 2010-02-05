@@ -66,28 +66,156 @@ namespace dtGame
       DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR("CALCULATE_AND_MOVE_ACTOR");
 
    //////////////////////////////////////////////////////////////////////
-   DeadReckoningHelper::DeadReckoningHelper() :
-      mLastTimeTag(0.0),
-      mLastTranslationUpdatedTime(0.0),
-      mLastRotationUpdatedTime(0.0),
-      mAverageTimeBetweenTranslationUpdates(0.0f),
-      mAverageTimeBetweenRotationUpdates(0.0f),
-      mMaxTranslationSmoothingTime(DEFAULT_MAX_SMOOTHING_TIME_POS),
-      mMaxRotationSmoothingTime(DEFAULT_MAX_SMOOTHING_TIME_ROT),
-      mTranslationElapsedTimeSinceUpdate(0.0f),
-      mRotationElapsedTimeSinceUpdate(0.0f),
-      mTranslationEndSmoothingTime(0.0f),
-      mRotationEndSmoothingTime(0.0f),
-      mMinDRAlgorithm(&DeadReckoningAlgorithm::NONE),
-      mUpdateMode(&DeadReckoningHelper::UpdateMode::AUTO),
-      mTranslationInitiated(false),
-      mRotationInitiated(false),
-      mUpdated(false),
-      mTranslationUpdated(false),
-      mRotationUpdated(false),
-      mFlying(false),
-      mRotationResolved(true)
-   {}
+   //////////////////////////////////////////////////////////////////////
+   //////////////////////////////////////////////////////////////////////
+   /// A wrapper for private data to prevent includes wherever deadreckoninghelper.h is used - uses the pimple pattern (like system.cpp)
+   class DeadReckoningHelperImpl
+   {
+   public:
+      DeadReckoningHelperImpl() 
+         : mPosSplineXA(0.0f)
+         , mPosSplineXB(0.0f)
+         , mPosSplineXC(0.0f)
+         , mPosSplineXD(0.0f)
+         , mPosSplineYA(0.0f)
+         , mPosSplineYB(0.0f)
+         , mPosSplineYC(0.0f)
+         , mPosSplineYD(0.0f)
+         , mPosSplineZA(0.0f)
+         , mPosSplineZB(0.0f)
+         , mPosSplineZC(0.0f)
+         , mPosSplineZD(0.0f)
+         , mCurTimeDelta(0.0f)
+         , mInstantTimeBetweenTransUpdates(0.0f)
+      {  
+      }
+      ~DeadReckoningHelperImpl() 
+      { 
+      }
+
+      /// Called when the trans or vel changes to recompute the parametric values used during spline blending.  
+      void RecomputeTransSplineValues(const osg::Vec3 &transBeforeLastUpdate, const osg::Vec3 &velBeforeLastUpdate, 
+         const osg::Vec3 &lastTrans, const osg::Vec3 &lastVel, float transEndSmoothingTime, 
+         const osg::Vec3 &currentAccel)
+      {        
+         // The following method is an implementation of Catmull-Rom splines. 
+         // We will pre-compute four values, ABCD, and use them in a simple equation: 
+         //    pos = A*t^3 + B*t^2 + C*t + D;
+         // This equation should interpret between coord 1 and coord 2 along a smooth curve which 
+         // factors in coord0 and coord 3. The path should be consistent over time, unlike the cubic bezier curve. 
+
+         osg::Vec3 distanceFromAcceleration = currentAccel * 0.5f * transEndSmoothingTime * transEndSmoothingTime;
+
+         osg::Vec3 coord0; // Start pos - velBeforeLastUpdate
+         coord0 = transBeforeLastUpdate - velBeforeLastUpdate * transEndSmoothingTime;
+         osg::Vec3 coord1; // Start Pos
+         coord1 = transBeforeLastUpdate;
+         // Coord 2 and 3 will seem wierd because we also project forward along our velocity to 
+         // where we 'should' be at this time. We don't want to be chasing behind
+         osg::Vec3 projectForwardDistance = distanceFromAcceleration + lastVel * transEndSmoothingTime;
+         osg::Vec3 coord2 = lastTrans + projectForwardDistance; //End Pos (desired)
+         osg::Vec3 coord3 = coord2 + projectForwardDistance; // End Pos plus projected (again)
+
+         // Given these 4 coords, we can compute the 12 parameters to our parametric equation.
+         mPosSplineXA = 0.5f * (-coord0.x() + 3.0f * coord1.x() - 3.0f * coord2.x() + coord3.x());
+         mPosSplineXB = coord0.x() - 2.5f*coord1.x() + 2.0f*coord2.x() - 0.5f*coord3.x();
+         mPosSplineXC = 0.5f * (-coord0.x() + coord2.x());
+         mPosSplineXD = coord1.x();
+
+         mPosSplineYA = 0.5f * (-coord0.y() + 3.0f * coord1.y() - 3.0f * coord2.y() + coord3.y());
+         mPosSplineYB = coord0.y() - 2.5f*coord1.y() + 2.0f*coord2.y() - 0.5f*coord3.y();
+         mPosSplineYC = 0.5f * (-coord0.y() + coord2.y());
+         mPosSplineYD = coord1.y();
+
+         mPosSplineZA = 0.5f * (-coord0.z() + 3.0f * coord1.z() - 3.0f * coord2.z() + coord3.z());
+         mPosSplineZB = coord0.z() - 2.5f*coord1.z() + 2.0f*coord2.z() - 0.5f*coord3.z();
+         mPosSplineZC = 0.5f * (-coord0.z() + coord2.z());
+         mPosSplineZD = coord1.z();
+
+         /// Below are 2 alternate methods that were fully implemented but discarded due to failures
+
+         /* 
+         Alternate method 1 - has smooth curves, but the curves have visual discontinuities between them
+         This technique uses 4 coordinates from a start point and initial velocity and an end point and final vel. 
+         The following link goes over the math along with visuals. It explains the process pretty well:
+         http://local.wasp.uwa.edu.au/~pbourke/miscellaneous/interpolation/
+         */
+
+         /*
+         // A 2nd alternate method follows. This method has a nice curve with no discontinuities, 
+         // but, it doesn't follow the path smoothly with respect to time T. So, it produces 
+         // noticeable accel/decel effects which feel like jerks.
+         //
+         // The following bezier cubic spline math is based on two articles: 
+         // 1) Nick Caldwell from Gamedev.net entitled 'Defeating Lag with Cubic Splines' published 2/14/2000.
+         // 2) http://www.tinaja.com/glib/cubemath.pdf - 'The Math Behind Bezier Cubic Splines'
+         // Note - There are some minor typos/math errors in Nick Caldwells paper
+
+         // we re-normalize the velocity based on the smoothing time & a weight, else the control points become too strong
+         float velNormalizer = (transEndSmoothingTime > 0.0f) ? 0.1 * transEndSmoothingTime : 1.0f;
+         osg::Vec3 distanceFromAcceleration = currentAccel * 0.5f * transEndSmoothingTime * transEndSmoothingTime;
+         osg::Vec3 coord0; // Start pos
+         coord0 = transBeforeLastUpdate;
+         osg::Vec3 coord1; // Start Pos + velBeforeLastUpdate
+         coord1 = transBeforeLastUpdate + velBeforeLastUpdate * velNormalizer;
+         osg::Vec3 coord2; // coord3 - (lastvel * time)    // 
+         coord2 = lastTrans + distanceFromAcceleration;
+         osg::Vec3 coord3; // End Pos = last trans + (lastvel * time) + distanceFromAcceleration. //project forward
+         coord3 = coord2 + lastVel * velNormalizer;
+         // Given these 4 coords, we can compute the 12 parameters to our parametric equation.
+         mPosSplineXA = coord3.x() - 3.0f * coord2.x() + 3.0f * coord1.x() - coord0.x();
+         mPosSplineXB = 3.0f * coord2.x() - 6.0f * coord1.x() + 3.0f * coord0.x();
+         mPosSplineXC = 3.0f * coord1.x() - 3.0f * coord0.x();
+         mPosSplineXD = coord0.x();
+         // etc for YA, YB, ... ZA, ZB, ...
+         */
+      }
+
+      // The following variables are used to compute the 'cubic spline' that represents the blended position
+      float mPosSplineXA, mPosSplineXB, mPosSplineXC, mPosSplineXD; // x spline pre-compute values
+      float mPosSplineYA, mPosSplineYB, mPosSplineYC, mPosSplineYD; // y spline pre-compute values
+      float mPosSplineZA, mPosSplineZB, mPosSplineZC, mPosSplineZD; // z spline pre-compute values
+      osg::Vec3 mPreviousInstantVel;
+      float mCurTimeDelta; // Tracks how long this process step is for. Used to compute instant vel.
+      float mInstantTimeBetweenTransUpdates;
+      //std::ostringstream oss;
+   };
+
+
+
+   //////////////////////////////////////////////////////////////////////
+   DeadReckoningHelper::DeadReckoningHelper()
+   : mLastTranslationUpdatedTime(0.0)
+   , mLastRotationUpdatedTime(0.0)
+   , mAverageTimeBetweenTranslationUpdates(0.0f)
+   , mAverageTimeBetweenRotationUpdates(0.0f)
+   , mMaxTranslationSmoothingTime(DEFAULT_MAX_SMOOTHING_TIME_POS)
+   , mMaxRotationSmoothingTime(DEFAULT_MAX_SMOOTHING_TIME_ROT)
+   , mAlwaysUseMaxSmoothingTime(false)
+   , mTranslationElapsedTimeSinceUpdate(0.0f)
+   , mRotationElapsedTimeSinceUpdate(0.0f)
+   , mTranslationEndSmoothingTime(0.0f)
+   , mRotationEndSmoothingTime(0.0f)
+   , mMinDRAlgorithm(&DeadReckoningAlgorithm::NONE)
+   , mUpdateMode(&DeadReckoningHelper::UpdateMode::AUTO)
+   , mTranslationInitiated(false)
+   , mRotationInitiated(false)
+   , mUpdated(false)
+   , mTranslationUpdated(false)
+   , mRotationUpdated(false)
+   , mFlying(false)
+   , mRotationResolved(true)
+   , mUseCubicSplineTransBlend(true)
+   {
+
+      mDRImpl = new DeadReckoningHelperImpl();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   DeadReckoningHelper::~DeadReckoningHelper()
+   {
+      delete mDRImpl;
+   }
 
 
    //////////////////////////////////////////////////////////////////////
@@ -133,19 +261,13 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////
    void DeadReckoningHelper::SetLastKnownTranslation(const osg::Vec3 &vec)
    {
-      // If multiple updates are received before the DR component
-      // is able to process them, i.e. in the same frame, it can result in a jitter/warp
-      // this if fixes the jitter.
-      if (!mTranslationUpdated)
+      if (mTranslationInitiated)
       {
-         if (mTranslationInitiated)
-         {
-            mTransBeforeLastUpdate = mCurrentDeadReckonedTranslation;
-         }
-         else
-         {
-            mTransBeforeLastUpdate = vec;
-         }
+         mTransBeforeLastUpdate = mCurrentDeadReckonedTranslation;
+      }
+      else
+      {
+         mTransBeforeLastUpdate = vec;
       }
 
       mTranslationInitiated = true;
@@ -161,20 +283,16 @@ namespace dtGame
       dtCore::Transform xform;
       xform.SetRotation(vec);
       xform.GetRotation(mLastRotationMatrix);
-      // If multiple updates are received before the DR component
-      // is able to process them, i.e. in the same frame, it can result in a jitter/warp
-      // this if fixes the jitter.
-      if (!mRotationUpdated)
+
+      if (mRotationInitiated)
       {
-         if (mRotationInitiated)
-         {
-            mRotQuatBeforeLastUpdate = mCurrentDeadReckonedRotation;
-         }
-         else
-         {
-            mLastRotationMatrix.get(mRotQuatBeforeLastUpdate);
-         }
+         mRotQuatBeforeLastUpdate = mCurrentDeadReckonedRotation;
       }
+      else
+      {
+         mLastRotationMatrix.get(mRotQuatBeforeLastUpdate);
+      }
+
       mLastRotation = vec;
       mLastRotationMatrix.get(mLastQuatRotation);
       mRotationElapsedTimeSinceUpdate = 0.0;
@@ -186,10 +304,7 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////
    void DeadReckoningHelper::SetLastKnownVelocity(const osg::Vec3 &vec)
    {
-      // This technically suffers from the same jitter problem as the rotation and translation, but
-      // because the velocity takes time to change anyway, and because if updates are coming in frequently
-      // velocity blending won't do much, there is no need to fix it.
-      mVelocityBeforeLastUpdate = mLastVelocity;
+      mVelocityBeforeLastUpdate = mDRImpl->mPreviousInstantVel;
       mLastVelocity = vec;
       mTranslationElapsedTimeSinceUpdate = 0.0;
       // If velocity is updated, the effect is the same as if the trans was updated
@@ -279,7 +394,9 @@ namespace dtGame
    void DeadReckoningHelper::SetLastTranslationUpdatedTime(double newUpdatedTime)
    {
       //the average of the last average and the current time since an update.
-      mAverageTimeBetweenTranslationUpdates = 0.5f * (float(newUpdatedTime - mLastTranslationUpdatedTime) + mAverageTimeBetweenTranslationUpdates);
+      float timeDelta = float(newUpdatedTime - mLastTranslationUpdatedTime);
+      mAverageTimeBetweenTranslationUpdates = 0.5f * timeDelta + 0.5f * mAverageTimeBetweenTranslationUpdates;
+      mDRImpl->mInstantTimeBetweenTransUpdates = timeDelta;
       mLastTranslationUpdatedTime = newUpdatedTime;
    }
 
@@ -287,8 +404,18 @@ namespace dtGame
    void DeadReckoningHelper::SetLastRotationUpdatedTime(double newUpdatedTime)
    {
       //the average of the last average and the current time since an update.
-      mAverageTimeBetweenRotationUpdates = 0.5f * (float(newUpdatedTime - mLastRotationUpdatedTime) + mAverageTimeBetweenRotationUpdates);
+      float timeDelta = float(newUpdatedTime - mLastRotationUpdatedTime);
+      mAverageTimeBetweenRotationUpdates = 0.5f * timeDelta + 0.5f * mAverageTimeBetweenRotationUpdates;
       mLastRotationUpdatedTime = newUpdatedTime;
+   }
+
+   //////////////////////////////////////////////////////////////////////
+   void DeadReckoningHelper::SetTranslationElapsedTimeSinceUpdate(float value)
+   { 
+      /// Compute time delta for this step of DR. Should be the same as DeltaTime in the component
+      mDRImpl->mCurTimeDelta = dtUtil::Max(value - mTranslationElapsedTimeSinceUpdate, 0.0f);
+
+      mTranslationElapsedTimeSinceUpdate = value; 
    }
 
    //////////////////////////////////////////////////////////////////////
@@ -579,14 +706,25 @@ namespace dtGame
          if (IsUpdated())
          {
             CalculateSmoothingTimes(xform);
+         
+            if (GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::VELOCITY_AND_ACCELERATION)
+            {  // Use Accel
+               mDRImpl->RecomputeTransSplineValues(mTransBeforeLastUpdate,mVelocityBeforeLastUpdate, 
+                  mLastTranslation, mLastVelocity, mTranslationEndSmoothingTime, mAccelerationVector);
+            }
+            else // or don't
+            {
+               osg::Vec3 zeroAccel;
+               mDRImpl->RecomputeTransSplineValues(mTransBeforeLastUpdate,mVelocityBeforeLastUpdate, 
+                  mLastTranslation, mLastVelocity, mTranslationEndSmoothingTime, zeroAccel);
+            }
 
             if (pLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
             {
                std::ostringstream ss;
                ss << "Actor " << gameActor.GetUniqueId() << " - " << gameActor.GetName() << " got an update " << std::endl
                   << "      Rotation \"" << mLastRotation  << "\" " << std::endl
-                  << "      Position \"" << mLastTranslation << "\" " << std::endl
-                  << "Tag Time \"" << mLastTimeTag << "\"";
+                  << "      Position \"" << mLastTranslation << "\" " << std::endl;
                pLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
             }
          }
@@ -612,33 +750,48 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////
    void DeadReckoningHelper::CalculateSmoothingTimes(const dtCore::Transform& xform)
    {
-      // ROTATION
-      if (GetMaxRotationSmoothingTime() < mAverageTimeBetweenRotationUpdates)
-         mRotationEndSmoothingTime = GetMaxRotationSmoothingTime();
-      else
-         mRotationEndSmoothingTime = mAverageTimeBetweenRotationUpdates;
+      // Dev Note - When the blend time changes drastically (ex 0.1 one time then 
+      // 1.0 the next), it can inject significant issues when DR'ing - whether with 
+      // catmull-rom splines or linear. Recommended use case is for mAlwaysUseMaxSmoothingTime = true
 
-      // For angular acceleration, do a similar compare
-      if (GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::VELOCITY_AND_ACCELERATION &&
-         (mAngularVelocityVector.length2() * (mRotationEndSmoothingTime * mRotationEndSmoothingTime)) <
-            0.1 * ((mLastQuatRotation-mCurrentDeadReckonedRotation).length2()))
+      // ROTATION
+      mRotationEndSmoothingTime = GetMaxRotationSmoothingTime();
+      if (!mAlwaysUseMaxSmoothingTime)
       {
-         mRotationEndSmoothingTime = std::min(1.0f, mAverageTimeBetweenRotationUpdates);
+         // Use our avg update time if it's smaller than our max
+         if (GetMaxRotationSmoothingTime() > mAverageTimeBetweenRotationUpdates)
+            mRotationEndSmoothingTime = mAverageTimeBetweenRotationUpdates;
+
+         // Way-Out-Of-Bounds check For angular acceleration. 
+         if (GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::VELOCITY_AND_ACCELERATION &&
+            (mAngularVelocityVector.length2() * (mRotationEndSmoothingTime * mRotationEndSmoothingTime)) <
+            0.1 * ((mLastQuatRotation-mCurrentDeadReckonedRotation).length2()))
+         {
+            mRotationEndSmoothingTime = std::min(1.0f, mRotationEndSmoothingTime);
+            //mRotationEndSmoothingTime = std::min(1.0f, mAverageTimeBetweenRotationUpdates);
+         }
       }
 
       // TRANSLATION
-      if (GetMaxTranslationSmoothingTime() < mAverageTimeBetweenTranslationUpdates)
-         mTranslationEndSmoothingTime = GetMaxTranslationSmoothingTime();
-      else
-         mTranslationEndSmoothingTime = mAverageTimeBetweenTranslationUpdates;
+      mTranslationEndSmoothingTime = GetMaxTranslationSmoothingTime();
+      if (!mAlwaysUseMaxSmoothingTime)
+      {
+         // Use our avg update time if it's smaller than our max
+         if (GetMaxTranslationSmoothingTime() > mAverageTimeBetweenTranslationUpdates)
+         {
+            mTranslationEndSmoothingTime = mAverageTimeBetweenTranslationUpdates;
+         }
 
-      osg::Vec3 pos;
-      xform.GetTranslation(pos);
+         osg::Vec3 pos;
+         xform.GetTranslation(pos);
 
-      //Order of magnitude check - if the entity could not possibly get to the new position
-      // in max smoothing time based on the magnitude of it's velocity, then smooth quicker (ie 1 second).
-      if (mLastVelocity.length2() * (mTranslationEndSmoothingTime*mTranslationEndSmoothingTime) < (mLastTranslation - pos).length2() )
-         mTranslationEndSmoothingTime = std::min(1.0f, mTranslationEndSmoothingTime);
+         //Order of magnitude check - if the entity could not possibly get to the new position
+         // in max smoothing time based on the magnitude of it's velocity, then smooth quicker (ie 1 second).
+         if (mLastVelocity.length2() * (mTranslationEndSmoothingTime*mTranslationEndSmoothingTime) < (mLastTranslation - pos).length2() )
+         {
+            mTranslationEndSmoothingTime = std::min(1.0f, mTranslationEndSmoothingTime);
+         }
+      }
    }
 
    //////////////////////////////////////////////////////////////////////
@@ -655,7 +808,7 @@ namespace dtGame
          // For vel and Accel, we use the angular velocity to compute a dead reckoning matrix to slerp to
          // assuming that we have an angular velocity at all...
          if (GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::VELOCITY_AND_ACCELERATION &&
-            mAngularVelocityVector.length2() < 1e-6)
+            mAngularVelocityVector.length2() > 1e-6)
          {
             // if we're here, we had some sort of change, however small
             isRotationChangedByAccel = true;
@@ -663,7 +816,8 @@ namespace dtGame
             // Compute The change in the rotation based Dead Reckoning matrix
             // The Dead Reckoning Matrix
             osg::Matrix angularRotation;
-            ComputeRotationChangeWithAngularVelocity(mRotationElapsedTimeSinceUpdate, angularRotation);
+            float actualRotationTime = std::min(mRotationElapsedTimeSinceUpdate, mRotationEndSmoothingTime);
+            ComputeRotationChangeWithAngularVelocity(actualRotationTime, angularRotation);
 
             // Expected DR'ed rotation - Take the last rot and add the change over time
             osg::Quat angularRotAsQuat;
@@ -709,7 +863,96 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////
    void DeadReckoningHelper::DeadReckonThePosition( osg::Vec3& pos, dtUtil::Log* pLogger, GameActor &gameActor )
    {
+      if (mUseCubicSplineTransBlend)
+      {
+         DeadReckonThePositionUsingSplines(pos, pLogger, gameActor);
+      }
+      else // Old Way
+      {
+         DeadReckonThePositionUsingLinearBlend(pos, pLogger, gameActor);
+      }
+       
+      // Compute our instantaneous velocity for this frame == change in pos / time. Used when we get a new vel update.
+      if (mDRImpl->mCurTimeDelta > 0.0f) // if delta <= 0 then just use prev values
+      {
+         osg::Vec3 instantVel = (pos - mCurrentDeadReckonedTranslation) / mDRImpl->mCurTimeDelta;
+         mDRImpl->mPreviousInstantVel = instantVel;
+      }
+
+      mCurrentDeadReckonedTranslation = pos;
+
+      // DEBUG STUFF
+      if (pLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+      {
+         std::ostringstream ss;
+         ss << "Actor " << gameActor.GetUniqueId() << " - " << gameActor.GetName() << " current pos "
+            << "\"" << pos << "\", temp\"" << mLastTranslationUpdatedTime + mTranslationElapsedTimeSinceUpdate << "\"";
+         pLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////
+   void DeadReckoningHelper::DeadReckonThePositionUsingSplines(osg::Vec3& pos, dtUtil::Log* pLogger, GameActor &gameActor)
+   {
+      //////////////////////////////////////////////////
+      // Best mode - use Catmull-Rom Cubic Splines to DR the trans.
+      // With cubic splines, we work with 4 points and several pre-computed values
+      // Then, we interpret along the cubic spline based on time T. 
+      // See DRImpl->RecomputeTransSplineValues() for the actual algorithm
+      //////////////////////////////////////////////////
+
+      // If we have blending time remaining...
+      if ((mTranslationEndSmoothingTime > 0.0f) && (mTranslationElapsedTimeSinceUpdate <= mTranslationEndSmoothingTime))
+      {
+         // The formula for X, Y, and Z is ... x = A*t^3 + B*t^2 + C*t + D.
+         // Note - t is normalized between 0 and 1. 
+         // Note - Acceleration is accounted for in RecomputeTransSplineValues()
+         // Note - if mTranslationEndSmoothingTime changes often, this may cause anomalies
+         // due to the velocity of the changes in T. Set mRotationEndSmoothingTime to fix.
+         float timeT = mTranslationElapsedTimeSinceUpdate/(mTranslationEndSmoothingTime);
+         float timeTT = timeT * timeT;
+         float timeTTT = timeTT * timeT;
+         pos.x() = mDRImpl->mPosSplineXA * timeTTT + mDRImpl->mPosSplineXD +
+            mDRImpl->mPosSplineXB * timeTT + mDRImpl->mPosSplineXC * timeT;
+         pos.y() = mDRImpl->mPosSplineYA * timeTTT + mDRImpl->mPosSplineYD +
+            mDRImpl->mPosSplineYB * timeTT + mDRImpl->mPosSplineYC * timeT;
+         pos.z() = mDRImpl->mPosSplineZA * timeTTT + mDRImpl->mPosSplineZD +
+            mDRImpl->mPosSplineZB * timeTT + mDRImpl->mPosSplineZC * timeT;
+
+         if (pLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         {
+            std::ostringstream ss;
+            ss << "Actor \"" << gameActor.GetUniqueId() << " - " << gameActor.GetName() << "\" has pos " << "\"" << pos << "\"";
+            pLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
+         }
+      }
+
+      // Out of time, so calc directly. The bezier cubic spline has a curve, but at the end, 
+      // it should have the same vel, so we just keep adding vel based for the delta time. 
+      else  
+      {
+         osg::Vec3 accelerationEffect;
+         // Should we add accel or not? Using this could put us further away on long updates
+         if (GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::VELOCITY_AND_ACCELERATION)
+         {
+            accelerationEffect = ((mAccelerationVector * 0.5f) * (mDRImpl->mCurTimeDelta * mDRImpl->mCurTimeDelta));
+         }
+
+         // We are past our time, so we keep on our last path. Note - mDRImpl->mPreviousInstantVel may push you too far away over time
+         osg::Vec3 posChangeThisFrame = mLastVelocity * mDRImpl->mCurTimeDelta + accelerationEffect; 
+         pos = mCurrentDeadReckonedTranslation + posChangeThisFrame;
+      }
+
+   }
+
+   //////////////////////////////////////////////////////////////////////
+   void DeadReckoningHelper::DeadReckonThePositionUsingLinearBlend(osg::Vec3& pos, dtUtil::Log* pLogger, GameActor &gameActor)
+   {
+      osg::Vec3 drPos;
       osg::Vec3 accelerationEffect;
+
+      /// The old way is just to use the velocities and project forward, then blend together.
+
       if (GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::VELOCITY_AND_ACCELERATION)
       {
          accelerationEffect = ((mAccelerationVector * 0.5f) *
@@ -723,7 +966,7 @@ namespace dtGame
 
       // COMPUTE BLENDED VELOCITY - this smooths out some of the harsh blends. We do
       // it in a fraction of the time of the translation else we get big overblown curves.
-      osg::Vec3 mBlendedVelocity = mLastVelocity;
+      osg::Vec3 mBlendedVelocity = mLastVelocity; //mVelocityBeforeLastUpdate;
       float velBlendTime = mTranslationEndSmoothingTime/3.0f;
       if ((velBlendTime > 0.0f) && (mTranslationElapsedTimeSinceUpdate < velBlendTime))
       {
@@ -739,7 +982,7 @@ namespace dtGame
       truePositionChange = mLastVelocity * mTranslationElapsedTimeSinceUpdate + accelerationEffect;
       blendedPositionChange = mBlendedVelocity * mTranslationElapsedTimeSinceUpdate + accelerationEffect;
 
-      osg::Vec3 drPos = mLastTranslation + truePositionChange;
+      drPos = mLastTranslation + truePositionChange;
 
       // If we still have time left in our smoothing, then
       // blend the positions.
@@ -760,18 +1003,6 @@ namespace dtGame
       else // Out of time or no move, so just set it.
       {
          pos = drPos;
-      }
-      mCurrentDeadReckonedTranslation = pos;
-
-      // DEBUG STUFF
-      if (pLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-      {
-         std::ostringstream ss;
-         ss << "Actor " << gameActor.GetUniqueId() << " - " << gameActor.GetName() << " target pos "
-            << "\"" << drPos << "\", temp\"" << mLastTranslationUpdatedTime + mTranslationElapsedTimeSinceUpdate << "\"\n";
-         ss << "Actor " << gameActor.GetUniqueId() << " - " << gameActor.GetName() << " current pos "
-            << "\"" << pos << "\", temp\"" << mLastTranslationUpdatedTime + mTranslationElapsedTimeSinceUpdate << "\"";
-         pLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
       }
    }
 
