@@ -78,6 +78,15 @@ namespace dtGUI
       CEGUI::Event::Connection SubscribeEvent(const std::string& widgetName, const std::string& event, GUI::Subscriber subscriber);
       CEGUI::Event::Connection SubscribeEvent(Widget& widget, const std::string& event, GUI::Subscriber subscriber);
 
+      // shortcut/wrapper to CEGUI::WindowManager::getSingleton().isWindowPresent
+      static bool IsWindowPresent(const std::string& sWindowName);
+
+      // shortcut/wrapper to CEGUI::ImagesetManager::getSingleton().isImagesetPresent
+      static bool IsImagesetPresent(const std::string& sImagesetName);
+
+      /// shortcut/wrapper to CEGUI::ImagesetManager::createImageset
+      static void CreateImageset(const std::string& sImagesetName, const std::string& sFileName, const std::string& sResourceGroup = "");
+
    protected:
       virtual ~GUI();
    	
