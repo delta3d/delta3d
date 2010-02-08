@@ -377,3 +377,24 @@ CEGUI::Event::Connection dtGUI::GUI::SubscribeEvent(Widget& widget,
 {
    return widget.subscribeEvent(event, subscriber);
 }
+
+////////////////////////////////////////////////////////////////////////////////
+bool dtGUI::GUI::IsWindowPresent(const std::string& sWindowName)
+{
+   _SetupSystemAndRenderer();
+   return CEGUI::WindowManager::getSingleton().isWindowPresent(sWindowName);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool dtGUI::GUI::IsImagesetPresent(const std::string& sImagesetName)
+{
+   _SetupSystemAndRenderer();
+   return CEGUI::ImagesetManager::getSingleton().isDefined(sImagesetName);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void dtGUI::GUI::CreateImageset(const std::string& sImagesetName, const std::string& sFileName, const std::string& sResourceGroup)
+{
+   _SetupSystemAndRenderer();
+   CEGUI::ImagesetManager::getSingleton().createFromImageFile(sImagesetName, sFileName, sResourceGroup);
+}
