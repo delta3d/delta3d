@@ -27,13 +27,22 @@ FIND_PATH(DELTA_DIR inc/dtCore/dt.h
     /usr/freeware/include
 )
 
-FIND_PATH(DELTA3D_INCLUDE_DIR dtCore/dt.h
-    ${DELTA_DIR}/inc
+FIND_PATH(DELTA3D_INCLUDE_DIR NAMES dtCore/dt.h
+    PATHS
+       ${DELTA_DIR}
+    PATH_SUFFIXES
+       inc
+       include
 )
 
-FIND_FILE( DELTA3D_LIB_DIR NAMES lib
+FIND_PATH( DELTA3D_LIB_DIR NAMES libdtCore.so libdtCore.dylib dtCore.dll .
     PATHS
-    ${DELTA_DIR}
+       ${DELTA_DIR}
+    PATH_SUFFIXES
+       Build/lib
+       Debug/lib
+       Release/lib
+       lib
     NO_DEFAULT_PATH
 )
 
