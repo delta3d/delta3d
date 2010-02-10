@@ -90,12 +90,11 @@ namespace dtGUI
 }
 
 
-//default path where to find the layout/looknfeel/../images-files
 bool dtGUI::GUI::SystemAndRendererCreatedByHUD = false;
 
 ////////////////////////////////////////////////////////////////////////////////
 dtGUI::GUI::GUI(dtCore::Camera* pTargetCamera,
-                dtCore::Keyboard* pObservedKeyboard ,
+                dtCore::Keyboard* pObservedKeyboard,
                 dtCore::Mouse* pObservedMouse):
 m_pRootsheet(NULL)
 {
@@ -143,7 +142,6 @@ void dtGUI::GUI::_SetupInternalGraph()
    m_pInternalGraph->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 
    m_pInternalGraph->addDrawable(new HUDDrawable());
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -294,7 +292,9 @@ Widget* dtGUI::GUI::LoadLayout(const std::string& sFileName, const std::string& 
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-Widget* dtGUI::GUI::LoadLayout(Widget* pWidgetParent, const std::string& sFileName, const std::string& sPrefix, const std::string& sResourceGroup)
+Widget* dtGUI::GUI::LoadLayout(Widget* pWidgetParent, const std::string& sFileName,
+                               const std::string& sPrefix,
+                               const std::string& sResourceGroup)
 {
    Widget* pNewLayout = CEGUI::WindowManager::getSingleton().loadWindowLayout(sFileName, sPrefix, sResourceGroup);
    pWidgetParent->addChildWindow(pNewLayout);
@@ -302,7 +302,8 @@ Widget* dtGUI::GUI::LoadLayout(Widget* pWidgetParent, const std::string& sFileNa
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-Widget* dtGUI::GUI::CreateWidget(Widget* pParentWidget, const std::string& sWidgetTypeName, const std::string& sWidgetName)
+Widget* dtGUI::GUI::CreateWidget(Widget* pParentWidget, const std::string& sWidgetTypeName,
+                                 const std::string& sWidgetName)
 {
    Widget* pNewWidget = CreateWidget(sWidgetTypeName, sWidgetName);
    if (pParentWidget) { pParentWidget->addChildWindow(pNewWidget); }
@@ -393,7 +394,9 @@ bool dtGUI::GUI::IsImagesetPresent(const std::string& sImagesetName)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void dtGUI::GUI::CreateImageset(const std::string& sImagesetName, const std::string& sFileName, const std::string& sResourceGroup)
+void dtGUI::GUI::CreateImageset(const std::string& sImagesetName, 
+                                const std::string& sFileName,
+                                const std::string& sResourceGroup)
 {
    _SetupSystemAndRenderer();
    CEGUI::ImagesetManager::getSingleton().createFromImageFile(sImagesetName, sFileName, sResourceGroup);
