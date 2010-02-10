@@ -45,6 +45,7 @@
 #include <CEGUI/RendererModules/OpenGL/CEGUIOpenGLTexture.h>
 #include <osg/Texture2D>
 #include <osgViewer/GraphicsWindow>
+#include <osgViewer/View>
 #include <dtDAL/project.h>
 #include <dtDAL/map.h>
 
@@ -150,7 +151,8 @@ private:
       CEGUI::Window* w = mGUI->GetWidget("camera1target");
       CEGUI::Texture& texture = CEGUI::System::getSingleton().getRenderer()->createTexture(w->getPixelSize());
       CEGUI::Imageset& imageset = CEGUI::ImagesetManager::getSingleton().create("RTT", texture);
-      imageset.defineImage("RTTImage", CEGUI::Point(0,0), texture.getSize(), CEGUI::Point(0,0) );
+      imageset.defineImage("RTTImage", CEGUI::Point(0,texture.getSize().d_height),
+         CEGUI::Size(texture.getSize().d_width, -texture.getSize().d_height), CEGUI::Point(0,0));  //note: flipped upside down
       w->setProperty("Image",  CEGUI::PropertyHelper::imageToString(&imageset.getImage("RTTImage")));
 
       // create/allocate/setup osg-texture-rendertarget
@@ -167,7 +169,13 @@ private:
       static_cast<CEGUI::OpenGLTexture&>(texture).setOpenGLTexture(textureID, w->getPixelSize());
 
       //make a new Camera to render the RTT
-      mRTTCamera = new dtCore::Camera("RttCamera");
+      dtCore::View *rttView = new dtCore::View("rttView");
+      mRTTCamera = new dtCore::Camera();
+      mRTTCamera->SetWindow(GetWindow());
+      rttView->SetCamera(mRTTCamera.get());
+      rttView->SetScene(GetScene());
+      AddView(*rttView);
+
       dtCore::Transform xform;
       GetCamera()->GetTransform(xform);
       mRTTCamera->SetTransform(xform);
@@ -179,9 +187,6 @@ private:
       osgCam->setRenderTargetImplementation(osg::Camera::FRAME_BUFFER_OBJECT);
       osgCam->setRenderOrder(osg::Camera::PRE_RENDER);
       osgCam->attach(osg::Camera::COLOR_BUFFER, rttTexture);
-
-      osgCam->addChild(GetScene()->GetSceneNode());
-      GetCamera()->GetOSGCamera()->addChild(osgCam);   
    }
 
    //quit!
@@ -191,6 +196,14 @@ private:
       return true;
    }
 
+protected:
+   virtual void PreFrame(const double deltaSimTime)
+   { 
+      // staticImage is unfortenately static and must be invalidated every frame to show animated models
+      //TODO: if RTT-Scenes are added the imageWindow(s) should updated by/inside CEGUIDrawable
+      CEGUI::Window* imageWindow = mGUI->GetWidget( "camera1target" );
+      if (imageWindow) {imageWindow->invalidate();}
+   }
 };
 
 
