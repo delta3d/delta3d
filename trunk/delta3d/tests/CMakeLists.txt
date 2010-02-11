@@ -135,7 +135,7 @@ ELSE (MSVC)
 ENDIF (MSVC)
 
 IF (PCHSupport_FOUND)
-   ADD_PRECOMPILED_HEADER(${PROG_NAME} precomp.cpp prefix/dtgameprefix-src.h true)
+   ADD_PRECOMPILED_HEADER(${PROG_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/precomp.cpp prefix/dtgameprefix-src.h true)
 ENDIF (PCHSupport_FOUND)
 
 #This will automatically run the unit test executable upon successfull compile/link

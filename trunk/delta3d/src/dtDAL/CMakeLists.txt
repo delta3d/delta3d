@@ -113,5 +113,5 @@ IF (MSVC_IDE)
 ENDIF (MSVC_IDE)
 
 IF (PCHSupport_FOUND)
-   ADD_PRECOMPILED_HEADER(${LIB_NAME} precomp.cpp prefix/dtdalprefix-src.h true)
+   ADD_PRECOMPILED_HEADER(${LIB_NAME} ${SOURCE_PATH}/precomp.cpp prefix/dtdalprefix-src.h true)
 ENDIF (PCHSupport_FOUND)
