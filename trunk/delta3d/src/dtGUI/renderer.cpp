@@ -22,6 +22,8 @@ using namespace dtGUI;
 
 Renderer::Renderer(unsigned int max_quads, int width, int height): OpenGLRenderer(max_quads)
 {
+   DEPRECATE("dtGUI::Renderer",
+              "n/a");
 }
 
 CEGUI::ResourceProvider* Renderer::createResourceProvider(void)

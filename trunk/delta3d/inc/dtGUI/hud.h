@@ -11,6 +11,7 @@
 #include <dtGUI/widget.h>
 #include <dtCore/refptr.h>
 #include <dtCore/base.h>
+#include <dtUtil/deprecationmgr.h>
 
 namespace dtCore
 {
@@ -71,41 +72,11 @@ class DT_GUI_EXPORT HUD : public dtCore::Base,
 
         DECLARE_MANAGEMENT_LAYER(HUD)
 
-        /**
-         * @brief
-         *     constructs a new gui object 
-         *
-         * @param pTargetCamera
-         *     camera where the gui is drawn as hud
-         *
-         * @param pObservedKeyboard 
-         *     observed keyboard-object for input
-         *
-         * @param pObservedMouse
-         *     observed mouse-object for input   
-         *
-         * @param sName
-         *     delta3D-name of the gui-object
-         */
-        HUD(osg::Camera* pTargetCamera, dtCore::Keyboard* pObservedKeyboard = 0, dtCore::Mouse* pObservedMouse = 0, const std::string& sName="HUD");
+        ///deprecated 2/12/10
+        DEPRECATE_FUNC HUD(osg::Camera* pTargetCamera, dtCore::Keyboard* pObservedKeyboard = 0, dtCore::Mouse* pObservedMouse = 0, const std::string& sName="HUD");
 
-        /**
-         * @brief
-         *     constructs a new gui object 
-         *
-         * @param pTargetCamera
-         *     camera where the gui will show up (as hud)
-         *
-         * @param pObservedKeyboard 
-         *     observed keyboard-object for input
-         *
-         * @param pObservedMouse
-         *     observed mouse-object for input   
-         *
-         * @param sName
-         *     delta3D-name of the gui-object
-         */
-        HUD(dtCore::Camera* pTargetCamera, dtCore::Keyboard* pObservedKeyboard = 0, dtCore::Mouse* pObservedMouse = 0, const std::string& sName="HUD");
+        ///deprecated 2/12/10
+        DEPRECATE_FUNC HUD(dtCore::Camera* pTargetCamera, dtCore::Keyboard* pObservedKeyboard = 0, dtCore::Mouse* pObservedMouse = 0, const std::string& sName="HUD");
 
         /********************************************************************************
                                     widget creation & management

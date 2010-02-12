@@ -23,7 +23,7 @@
 #include <dtCore/deltadrawable.h>           // for base class
 #include <dtCore/refptr.h>                  // for members
 #include <dtGUI/export.h>                   // for export symbols
-
+#include <dtUtil/deprecationmgr.h>
 #include <osg/Drawable>                     // for base class
 #include <osg/CopyOp>
 #include <osg/Node>                         //for member
@@ -70,6 +70,8 @@ namespace dtGUI
     *
     *  NOTE: The CEGUIDrawable class must be instantiated *after* the application
     *  has created a valid OpenGL context (i.e., during dtABC::Application::Config()).
+    *
+    * @note CEUIDrawable has been deprecated in favor of dtGUI::GUI
     * 
     */
    class DT_GUI_EXPORT CEUIDrawable : public dtCore::DeltaDrawable
@@ -77,8 +79,8 @@ namespace dtGUI
    public:
       DECLARE_MANAGEMENT_LAYER(CEUIDrawable)
 
-      ///Overloaded constructor, will automatically update CEGUI when the supplied Window is resized
-      CEUIDrawable(dtCore::DeltaWin* win,
+      ///deprecated 2/12/10
+      DEPRECATE_FUNC CEUIDrawable(dtCore::DeltaWin* win,
                   dtCore::Keyboard* keyboard,
                   dtCore::Mouse* mouse,
                   dtGUI::BaseScriptModule* sm = 0);

@@ -13,6 +13,7 @@
 #include <CEGUI/CEGUIEventArgs.h>
 #include <CEGUI/CEGUISubscriberSlot.h>
 #include <dtUtil/log.h>
+#include <dtUtil/deprecationmgr.h>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace CEGUI
@@ -167,8 +168,12 @@ protected:
                            construction/destruction
     ********************************************************************************/
 
-   ///constructs the a connection-manager
-   CEGUIConnectionManager() {}
+   ///deprecated 2/12/10
+   DEPRECATE_FUNC CEGUIConnectionManager() 
+   {
+      DEPRECATE("dtGUI::CEGUIConnectionManager",
+                "n/a");
+   }
 
    ///destructs/clean up the connection-manager
    virtual ~CEGUIConnectionManager();

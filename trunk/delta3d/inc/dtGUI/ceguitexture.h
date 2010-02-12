@@ -4,6 +4,7 @@
 #include <dtGUI/export.h>
 #include <osg/Texture2D>
 #include <CEGUI/CEGUITexture.h>
+#include <dtUtil/deprecationmgr.h>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
@@ -25,8 +26,8 @@ public:
    /********************************************************************************
                               construction/destruction
    ********************************************************************************/
-
-   CEGUITexture(CEGUI::Renderer*);
+   ///deprecated 2/12/10
+   DEPRECATE_FUNC CEGUITexture(CEGUI::Renderer*);
 
    ~CEGUITexture();
 

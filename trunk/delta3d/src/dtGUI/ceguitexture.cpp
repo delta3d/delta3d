@@ -17,6 +17,9 @@ CEGUITexture::CEGUITexture(CEGUI::Renderer *pRenderer)
    : CEGUI::Texture(pRenderer)
    , m_bFlipHorizontal(false)
 {
+   DEPRECATE("dtGUI::CEGUITexture",
+             "n/a");
+
     m_pTexture = new osg::Texture2D();
     m_pTexture->setInternalFormat(GL_RGBA);
     m_pTexture->setFilter(osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR);
