@@ -50,6 +50,7 @@ public class ApplicationConfiguration
 	private Level _loggingLevel = Level.WARNING;
 	private String _librarySubdirectory = "";
 	private ArrayList<String> _libraryList = null;
+	private String _generalLaunchParams = "";
 	
 	/*
 	 * An accessor method that returns the url of the JavaLaunch configuration file.
@@ -178,6 +179,14 @@ public class ApplicationConfiguration
 	 */
 	public ArrayList<String> GetLibraryList() {return _libraryList;}
 	
+	/*
+	 * An accessor method that returns the string of additional launch parameters
+	 * defined in the config.xml file
+	 * 
+	 * @return An array list of strings containing the name of the code libraries to pre-load into memory.
+	 */
+	public String GetGeneralLaunchParams() {return _generalLaunchParams;}
+
 	/*
 	 * Constructs the ApplicationConfiguration object, and extracts the url of the JavaLaunch
 	 * configuration file from the command line arguments passed in as a parameter. Also, it
@@ -389,6 +398,13 @@ public class ApplicationConfiguration
 			{
 				_libraryList.add(node.getFirstChild().getNodeValue());
 			}
+		}
+		
+		//read in general launch parameters
+		NodeList generalLaunchParamDirNodes = document.getElementsByTagName("generalLaunchParameters");
+		if (generalLaunchParamDirNodes.getLength() > 0)
+		{
+			_generalLaunchParams = generalLaunchParamDirNodes.item(0).getFirstChild().getNodeValue();
 		}
 		
 		return true;

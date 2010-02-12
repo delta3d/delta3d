@@ -23,6 +23,8 @@ package org.delta3d.lms.JavaLaunch;
 import java.io.*;
 import java.util.*;
 import java.util.jar.*;
+import java.net.URL;
+import java.net.JarURLConnection;
 
 public class JarExtractor
 {
@@ -72,9 +74,12 @@ public class JarExtractor
         try
         {
         	NativeLibraryLaunch.logger.info("In Extract with " + _jarFile);
-        	
-            JarFile jar = new JarFile(_jarFile);
-            
+
+			URL jarURL = new URL(_jarFile);
+			JarURLConnection connection = (JarURLConnection)jarURL.openConnection();
+
+			JarFile jar = connection.getJarFile();
+
             //ensure directory name ends with '/'
             if (!(_extractDirectory.endsWith("/") || _extractDirectory.endsWith("\\")))
             {

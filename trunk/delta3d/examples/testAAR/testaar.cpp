@@ -180,12 +180,11 @@ void TestAAR::ParseCommandLineOptions(int argc, char** argv) const
          "Command Line Error.", __FILE__, __LINE__);
    }
 
-
    argParser.reportRemainingOptionsAsUnrecognized();
    if (argParser.errors())
    {
-      argParser.writeErrorMessages(std::cout);
-      throw dtUtil::Exception(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR,
-         "Command Line Error.", __FILE__, __LINE__);
+      std::ostringstream oss;
+      argParser.writeErrorMessages(oss);
+      LOG_ERROR("Command line error: " + oss.str());
    }
 }

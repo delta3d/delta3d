@@ -73,7 +73,7 @@ void JobJNLP::Execute( PackageProfile *profile )
       // launching app
       resource = AddElement( root, "resources" );
       curr = AddElement( resource, "j2se" );
-      SetAttribute( curr, "version", "1.5.0" );
+      SetAttribute( curr, "version", "1.6.0" );
       SetAttribute( curr, "java-vm-args", "-esa -Xnoclassgc" );
       curr = AddElement( resource, "jar" );
       SetAttribute( curr, "href", launch );
@@ -84,7 +84,7 @@ void JobJNLP::Execute( PackageProfile *profile )
       {
          resource = AddElement( root, "resources" );
          curr = AddElement( resource, "j2se" );
-         SetAttribute( curr, "version", "1.5.0" );
+         SetAttribute( curr, "version", "1.6.0" );
          SetAttribute( curr, "java-vm-args", "-esa -Xnoclassgc" );
          curr = AddElement( resource, "jar" );
          SetFileExtension( files[i], "jar" );
