@@ -43,6 +43,9 @@ CEGUIRenderer::CEGUIRenderer(CEGUI::uint max_quads, CEGUI::ImageCodec*  codec)
    , m_imageCodec(codec)
    , m_imageCodecModule(0)
    {
+      DEPRECATE("dtGUI::CEGUIRenderer",
+                "n/a");
+
       GLint vp[4];
 
       // initialise renderer size
@@ -66,6 +69,9 @@ CEGUIRenderer::CEGUIRenderer(CEGUI::uint max_quads,int width, int height, CEGUI:
    , m_imageCodec(codec)
    , m_imageCodecModule(0)
    {
+      DEPRECATE("dtGUI::CEGUIRenderer",
+                "n/a");
+
       GLint vp[4];
 
       // initialise renderer size

@@ -79,6 +79,9 @@ CEUIDrawable::CEUIDrawable(dtCore::DeltaWin* win,
    , mKeyboardListener(new CEGUIKeyboardListener())
    , mMouseListener(new CEGUIMouseListener()) 
 {
+   DEPRECATE("dtGUI::CEUIDrawable",
+             "dtGUI::GUI");
+
    AddSender(&dtCore::System::GetInstance());
 
    RegisterInstance(this);

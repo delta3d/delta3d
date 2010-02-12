@@ -8,6 +8,7 @@
 #include <osg/GraphicsContext>
 
 #include <CEGUI/CEGUIRenderer.h>
+#include <dtUtil/deprecationmgr.h>
 
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
@@ -36,10 +37,10 @@ namespace dtGUI
    {
 
       public:
-
-         CEGUIRenderer(CEGUI::uint max_quads, CEGUI::ImageCodec* codec = 0);
-
-         CEGUIRenderer(CEGUI::uint max_quads, int width, int height, CEGUI::ImageCodec* codec = 0);
+         ///deprecated 2/12/10
+         DEPRECATE_FUNC CEGUIRenderer(CEGUI::uint max_quads, CEGUI::ImageCodec* codec = 0);
+         ///deprecated 2/12/10
+         DEPRECATE_FUNC CEGUIRenderer(CEGUI::uint max_quads, int width, int height, CEGUI::ImageCodec* codec = 0);
 
          virtual ~CEGUIRenderer(void);
 

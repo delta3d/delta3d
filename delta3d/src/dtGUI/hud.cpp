@@ -53,6 +53,9 @@ HUD::HUD(osg::Camera* pTargetCamera, dtCore::Keyboard* pObservedKeyboard, dtCore
    , m_pMouse(0)
    , mIsMouseCursorVisible(true)
 {
+   DEPRECATE("dtGUI::HUD",
+             "dtGUI::GUI");
+
    m_pMouseListener    = new dtGUI::CEGUIMouseListener(this);
    m_pKeyboardListener = new dtGUI::CEGUIKeyboardListener(this);
 
@@ -78,6 +81,9 @@ HUD::HUD(dtCore::Camera* pTargetCamera, dtCore::Keyboard* pObservedKeyboard, dtC
    , m_pKeyboard(0)
    , m_pMouse(0)
 {
+   DEPRECATE("dtGUI::HUD",
+             "dtGUI::GUI");
+
    m_pMouseListener = new CEGUIMouseListener(this);
    m_pKeyboardListener = new CEGUIKeyboardListener(this);
 

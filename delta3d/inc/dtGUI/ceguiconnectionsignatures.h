@@ -2,6 +2,8 @@
 #define DTHUD_CEGUICONNECTIONSIGNATURES_H
 
 #include <string>
+#include <dtUtil/deprecationmgr.h>
+
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace CEGUI
 {
@@ -21,12 +23,13 @@ class CEGUIMemberSignatureBase
 {
 public:
 
-   ///constructs a signature for an object-member-function
-   CEGUIMemberSignatureBase(CEGUI::EventSet* pEventSet, const std::string &sEventName)
+   ///deprecated 2/12/10
+   DEPRECATE_FUNC CEGUIMemberSignatureBase(CEGUI::EventSet* pEventSet, const std::string &sEventName)
       : m_pEventSet(pEventSet)
       , m_sEventName(sEventName)
    {
-
+      DEPRECATE("dtGUI::CEGUIMemberSignatureBase",
+                 "n/a");
    }
 
    ///compares member-signatures

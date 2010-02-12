@@ -9,7 +9,8 @@ using namespace dtGUI;
 ResourceProvider::ResourceProvider()
    : CEGUI::DefaultResourceProvider()
 {
-
+   DEPRECATE("dtGUI::ResourceProvider",
+              "n/a");
 }
 
 

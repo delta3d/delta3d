@@ -33,6 +33,7 @@
       #include <CEGUI/renderers/OpenGLGUIRenderer/openglrenderer.h>
    #endif
 #endif
+#include <dtUtil/deprecationmgr.h>
 
 #ifdef APIENTRY
 #undef APIENTRY
@@ -49,7 +50,7 @@ namespace dtGUI
    {
    public:
       ///\todo deprecate this unnecessary ctor
-      Renderer(unsigned int max_quads=0, int width=0, int height=0);
+      DEPRECATE_FUNC Renderer(unsigned int max_quads=0, int width=0, int height=0);
       ~Renderer() {};
 
       ///Create the ResourceProvider (a dtGUI::ResourceProvider)
