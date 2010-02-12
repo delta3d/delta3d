@@ -1,15 +1,15 @@
 /**
  * @author ECS, Inc. ( Joseph Del Rocco )
- * @date 2006/07/10 - 13:55
+ * @date 2006/07/10 - 13:37
  *
- * @file job_launchconfig.h
- * @version 1.0 
+ * @file job_sgml.h
+ * @version 1.0
  */
-#ifndef PACKAGER_JOB_LAUNCH_CONFIG
-#define PACKAGER_JOB_LAUNCH_CONFIG
+#ifndef PACKAGER_JOB_SGML
+#define PACKAGER_JOB_SGML
 
 // local
-#include "job_xml.h"
+#include <job_base.h>
 
 
 //======================================
@@ -24,21 +24,19 @@ class PackageProfile;
 // CLASS
 //======================================
 
-class JobLaunchConfig : public JobXML
+class JobSGML : public JobBase
 {
    public:
-      JobLaunchConfig();
-      ~JobLaunchConfig();
+      JobSGML();
+      ~JobSGML();
 
       /**
        * Kicks off the batch job for this class.
        * @param profile The object containing the package configuration file.
        */
-      void Execute( PackageProfile *profile );
+      virtual void Execute( PackageProfile *profile );
 
    private:
-      std::string removeDebugCharFromFilename( const std::string &filename );
-      std::string removeLibAndExtension( const std::string &filename );
 };
 
 #endif

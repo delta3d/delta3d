@@ -49,9 +49,11 @@ namespace dtUtil
     */
    struct FileInfo
    {
-      std::string fileName; //< the complete file name
+      std::string fileName; //< the file name with full path
       std::string path; //< the path to the file
-      std::string baseName; //< the file name without the extension
+      std::string baseName; //< the file name with extension
+      std::string extensionlessFileName; //< the file name with extension
+      std::string extension; //< the file extension
       size_t size; //< the size of the file in bytes.
       time_t lastModified; //< when the file was last modified.
       FileType fileType;
@@ -140,6 +142,32 @@ namespace dtUtil
        * @see dtUtil::FileInfo
        */
       const struct FileInfo GetFileInfo(const std::string& strFile) const;
+
+      /**
+       * Ensure that the passed in string is fit for use as a file or dir string.
+       * In our case we want all separators to be the '/' character and we do not want
+       * a separator at the end.
+       * @param strFileOrDir The string to cleanup.
+       * @note The original string passed in is changed.
+       */
+      void CleanupFileString( std::string &strFileOrDir );
+
+      /**
+       * Query whether a given string is an absolute path or not.
+       * @param strFileOrDir The path to check.
+       * @return True if absolute, False if relative.
+       * @note This maybe a subjective determination, may need to add to this later.
+       */
+      bool IsAbsolutePath( std::string strFileOrDir );
+
+      /**
+       * A more powerful version of the standard mkdir.  This function will check to
+       * see if the directory exists first and only create if needed.  Also, it will
+       * recursively create all subdirectories needed to create the final directory in
+       * the passed in string.
+       * @param strDir The directory to create.
+       */
+      void MakeDirectoryEX( std::string strDir );
 
       /**
        * Changes the current directory to the one given in "path."

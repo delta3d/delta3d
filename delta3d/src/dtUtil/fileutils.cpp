@@ -414,9 +414,11 @@ namespace dtUtil
          return info;
       }
 
+      info.extensionlessFileName = osgDB::getStrippedName(choppedStr);
       info.baseName = osgDB::getSimpleFileName(choppedStr);
       info.fileName = choppedStr;
       info.path = osgDB::getFilePath(choppedStr);
+      info.extension = osgDB::getFileExtension(choppedStr);
 
       info.size = tagStat.st_size;
       info.lastModified = tagStat.st_mtime;
@@ -434,6 +436,113 @@ namespace dtUtil
       }
 
       return info;
+   }
+
+   //-----------------------------------------------------------------------
+   void FileUtils::CleanupFileString(std::string& strFileOrDir)
+   {
+      if (strFileOrDir.empty())
+      {
+         return;
+      }
+
+      // convert all separators to unix-style for conformity
+      for (unsigned int i = 0; i < strFileOrDir.length(); ++i)
+      {
+         if (strFileOrDir[i] == '\\')
+         {
+            strFileOrDir[i] = '/';
+         }
+      }
+
+      // get rid of trailing separators
+      if (strFileOrDir[strFileOrDir.length()-1] == '/')
+      {
+         strFileOrDir = strFileOrDir.substr(0, strFileOrDir.length()-1);
+      }
+   }
+
+   //-----------------------------------------------------------------------
+   bool FileUtils::IsAbsolutePath(std::string strFileOrDir)
+   {
+      // just in case, make sure we are using a valid path
+      CleanupFileString(strFileOrDir);
+
+      dtUtil::FileInfo info = GetFileInfo(strFileOrDir);
+      if (info.fileType == dtUtil::FILE_NOT_FOUND)
+      {
+         return false;
+      }
+
+      // handle unix-style paths
+      if (strFileOrDir.length() > 0 && strFileOrDir[0] == '/')
+      {
+         return true;
+      }
+
+      // handle windows-style paths
+      else if (strFileOrDir.length() > 1 && strFileOrDir[1] == ':')
+      {
+         return true;
+      }
+
+      return false;
+   }
+
+   //-----------------------------------------------------------------------
+   void FileUtils::MakeDirectoryEX(std::string strDir)
+   {
+      if (strDir.empty())
+      {
+         return;
+      }
+
+      // first make sure the directory string is clean
+      CleanupFileString(strDir);
+
+      // this generated string is used to check each subdirectory in the path
+      std::string dir;
+
+      // prepare tokenizer
+      char* buffer = new char[strDir.length()+1];
+      strcpy(buffer, strDir.c_str());
+      char* tok = strtok(buffer, "/");
+
+      // setup root directory
+      if (strDir[0] == '/')
+      {
+         dir = "/";
+         dir += tok;
+      }
+      else
+      {
+         dir = tok;
+         dir += "/";
+      }
+
+      // traverse each subdirectory in path and create directories as needed
+      while (tok)
+      {
+         // debug
+         //std::cout << tok << std::endl;
+
+         // create directory if necessary
+         if (!DirExists(dir))
+         {
+            MakeDirectory(dir);
+         }
+
+         // get next subdirectory
+         tok = strtok(NULL, "/");
+         if (tok)
+         {
+            if (dir[dir.length()-1] != '/') { dir += '/'; }
+            dir += tok;
+         }
+      }
+
+      // cleanup
+      delete [] buffer;
    }
 
    //-----------------------------------------------------------------------

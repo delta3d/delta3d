@@ -7,9 +7,9 @@
  */
 
 // local
-#include "job_jardata.h"
-#include "package_profile.h"
-#include "package_utils.h"
+#include <job_jardata.h>
+#include <package_profile.h>
+#include <package_utils.h>
 // delta3d
 #include <dtUtil/fileutils.h>
 #include <dtUtil/exception.h>

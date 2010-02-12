@@ -1,16 +1,15 @@
 /**
  * @author ECS, Inc. ( Joseph Del Rocco )
- * @date 2006/07/10 - 13:48
+ * @date 2006/07/10 - 13:44
  *
- * @file job_html.h
+ * @file job_jarlib.h
  * @version 1.0
- * @brief Description..
  */
-#ifndef PACKAGER_JOB_HTML
-#define PACKAGER_JOB_HTML
+#ifndef PACKAGER_JOB_JAR_LIBRARY
+#define PACKAGER_JOB_JAR_LIBRARY
 
 // local
-#include "job_sgml.h"
+#include <job_jar.h>
 
 
 //======================================
@@ -25,17 +24,17 @@ class PackageProfile;
 // CLASS
 //======================================
 
-class JobHTML : public JobSGML
+class JobJARLibrary : public JobJAR
 {
    public:
-      JobHTML();
-      ~JobHTML();
+      JobJARLibrary();
+      ~JobJARLibrary();
 
       /**
        * Kicks off the batch job for this class.
        * @param profile The object containing the package configuration file.
        */
-      virtual void Execute( PackageProfile *profile );
+      void Execute( PackageProfile *profile );
 
    private:
 };

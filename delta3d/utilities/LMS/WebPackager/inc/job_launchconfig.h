@@ -1,15 +1,15 @@
 /**
  * @author ECS, Inc. ( Joseph Del Rocco )
- * @date 2006/07/10 - 13:35
+ * @date 2006/07/10 - 13:55
  *
- * @file job_jar.h
- * @version 1.0
+ * @file job_launchconfig.h
+ * @version 1.0 
  */
-#ifndef PACKAGER_JOB_JAR
-#define PACKAGER_JOB_JAR
+#ifndef PACKAGER_JOB_LAUNCH_CONFIG
+#define PACKAGER_JOB_LAUNCH_CONFIG
 
 // local
-#include "job_base.h"
+#include <job_xml.h>
 
 
 //======================================
@@ -24,24 +24,21 @@ class PackageProfile;
 // CLASS
 //======================================
 
-class JobJAR : public JobBase
+class JobLaunchConfig : public JobXML
 {
    public:
-      JobJAR();
-      ~JobJAR();
+      JobLaunchConfig();
+      ~JobLaunchConfig();
 
       /**
        * Kicks off the batch job for this class.
        * @param profile The object containing the package configuration file.
        */
-      virtual void Execute( PackageProfile *profile );
-
-      /**
-       * Sign the JAR file for security and permissions.
-       */
-      void Sign();
+      void Execute( PackageProfile *profile );
 
    private:
+      std::string removeDebugCharFromFilename( const std::string &filename );
+      std::string removeLibAndExtension( const std::string &filename );
 };
 
 #endif

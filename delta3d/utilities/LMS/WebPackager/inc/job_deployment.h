@@ -9,7 +9,7 @@
 #define PACKAGER_JOB_DEPLOYMENT
 
 // local
-#include "job_base.h"
+#include <job_base.h>
 // ansi
 #include <string>
 

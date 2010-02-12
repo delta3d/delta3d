@@ -7,9 +7,9 @@
  */
 
 // local
-#include "job_manifest.h"
-#include "package_profile.h"
-#include "package_utils.h"
+#include <job_manifest.h>
+#include <package_profile.h>
+#include <package_utils.h>
 // delta-3d
 #include <dtUtil/fileutils.h>
 // ansi

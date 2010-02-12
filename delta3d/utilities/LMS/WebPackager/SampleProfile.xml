@@ -70,19 +70,19 @@
             <!--The list of third party Windows libraries required for your app-->
             <JarFile name="TestAAR_ThirdParty_Win32.jar" platform="windows">
                 <InputDirectory location="$(DELTA_ROOT)/ext/bin">
-                    <Library>CEGUIBase_d.dll</Library>
-                    <Library>CEGUIOpenGLRenderer_d.dll</Library>
-                    <Library>ode_singled.dll</Library>
-                    <Library>xerces-c_2_8D.dll</Library>
-                    <Library>osg55-osgd.dll</Library>
-                    <Library>osg55-osgdbd.dll</Library>
-                    <Library>osg55-osggad.dll</Library>
-                    <Library>osg55-osgparticled.dll</Library>
-                    <Library>osg55-osgsimd.dll</Library>
-                    <Library>osg55-osgtextd.dll</Library>
-                    <Library>osg55-osgutild.dll</Library>
-                    <Library>osg55-osgviewerd.dll</Library>
-                    <Library>ot11-openthreadsd.dll</Library>
+                    <Library>CEGUIBase.dll</Library>
+                    <Library>CEGUIOpenGLRenderer.dll</Library>
+                    <Library>ode_single.dll</Library>
+                    <Library>xerces-c_2_8.dll</Library>
+                    <Library>osg55-osg.dll</Library>
+                    <Library>osg55-osgdb.dll</Library>
+                    <Library>osg55-osgga.dll</Library>
+                    <Library>osg55-osgparticle.dll</Library>
+                    <Library>osg55-osgsim.dll</Library>
+                    <Library>osg55-osgtext.dll</Library>
+                    <Library>osg55-osgutil.dll</Library>
+                    <Library>osg55-osgviewer.dll</Library>
+                    <Library>ot11-openthreads.dll</Library>
                 </InputDirectory>
             </JarFile>
 
@@ -97,15 +97,15 @@
             <!--The list of Delta Windows libraries required for your app-->
             <JarFile name="TestAAR_Delta3D_Win32.jar" platform="windows">
                 <InputDirectory location="$(DELTA_ROOT)/build/bin">
-                    <Library>dtABCd.dll</Library>
-                    <Library>dtActorsd.dll</Library>
-                    <Library>dtCored.dll</Library>
-                    <Library>dtDALd.dll</Library>
-                    <Library>dtDirectord.dll</Library>
-                    <Library>dtGamed.dll</Library>
-                    <Library>dtGUId.dll</Library>
-                    <Library>dtLMSd.dll</Library>
-                    <Library>dtUtild.dll</Library>
+                    <Library>dtABC.dll</Library>
+                    <Library>dtActors.dll</Library>
+                    <Library>dtCore.dll</Library>
+                    <Library>dtDAL.dll</Library>
+                    <Library>dtDirector.dll</Library>
+                    <Library>dtGame.dll</Library>
+                    <Library>dtGUI.dll</Library>
+                    <Library>dtLMS.dll</Library>
+                    <Library>dtUtil.dll</Library>
                 </InputDirectory>
             </JarFile>
 
@@ -136,7 +136,7 @@
             <!--Your application's Windows library file-->
             <JarFile name="TestAAR_Application_Win32.jar" platform="windows">
                 <InputDirectory location="$(DELTA_ROOT)/build/bin">
-                    <GameLibrary entrypoint="true" removeDebugChar="true">testAARd.dll</GameLibrary>
+                    <GameLibrary entrypoint="true">testAAR.dll</GameLibrary>
                 </InputDirectory>
             </JarFile>
 

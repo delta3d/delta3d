@@ -1,17 +1,18 @@
 /**
  * @author ECS, Inc. ( Joseph Del Rocco )
- * @date 2006/07/10 - 13:47
+ * @date 2006/07/10 - 13:50
  *
- * @file job_jardata.h
+ * @file job_manifest.h
  * @version 1.0
  */
-#ifndef PACKAGER_JOB_JAR_DATA
-#define PACKAGER_JOB_JAR_DATA
+#ifndef PACKAGER_JOB_MANIFEST
+#define PACKAGER_JOB_MANIFEST
 
 // local
-#include "job_jar.h"
+#include <job_xml.h>
 // ansi
 #include <string>
+#include <vector>
 
 
 //======================================
@@ -26,11 +27,11 @@ class PackageProfile;
 // CLASS
 //======================================
 
-class JobJARData : public JobJAR
+class JobManifest : public JobXML
 {
    public:
-      JobJARData();
-      ~JobJARData();
+      JobManifest();
+      ~JobManifest();
 
       /**
        * Kicks off the batch job for this class.
@@ -39,10 +40,7 @@ class JobJARData : public JobJAR
       void Execute( PackageProfile *profile );
 
    private:
-      void appendAllFiles(const std::string &inputDir, 
-                          const std::string &srcDir,
-                          std::string &listOfFiles, 
-                          const std::string &ignore );
+      void collectAllFiles( std::string srcDir, std::string relativeDir, std::vector<std::string> &filenames );
 };
 
 #endif

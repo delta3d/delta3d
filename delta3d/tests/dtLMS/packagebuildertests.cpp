@@ -28,7 +28,6 @@
 
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
-#include <LMS/WebPackager/package_utils.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/exception.h>
 #include <dtUtil/mswinmacros.h>
@@ -43,10 +42,8 @@ class LMSPackageBuilderTests : public CPPUNIT_NS::TestFixture
      CPPUNIT_TEST(TestGetFileName);
      CPPUNIT_TEST(TestGetFileNameNoExt);
      CPPUNIT_TEST(TestGetFileExtension);
-     CPPUNIT_TEST(TestSetFileExtension);
      CPPUNIT_TEST(TestCleanupFileString);
      CPPUNIT_TEST(TestIsAbsolutePath);
-     CPPUNIT_TEST(TestRelativeToAbsolutePath);
      CPPUNIT_TEST(TestMakeDirectoryEX);
    CPPUNIT_TEST_SUITE_END();
 
@@ -58,25 +55,9 @@ public:
    void TestGetFileName();
    void TestGetFileNameNoExt();
    void TestGetFileExtension();
-   void TestSetFileExtension();
    void TestCleanupFileString();
    void TestIsAbsolutePath();
-   void TestRelativeToAbsolutePath();
    void TestMakeDirectoryEX();
-
-   void NormalizeDirectorySlashes(std::string& str)
-   {
-      #ifdef DELTA_WIN32
-      for (unsigned int i = 0; i < str.size(); i++)
-      {
-
-         if (str[i] == '"\"' || str[i] == '\\')
-         {
-            str[i] = '/';
-         }
-      }
-      #endif
-   }
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(LMSPackageBuilderTests);
@@ -93,124 +74,112 @@ void LMSPackageBuilderTests::tearDown()
 
 void LMSPackageBuilderTests::TestGetFilePath()
 {
-   CPPUNIT_ASSERT_MESSAGE("GetFilePath should return empty string", GetFilePath("").empty());
+   dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+   CPPUNIT_ASSERT_MESSAGE("GetFilePath should return empty string", fileUtils.GetFileInfo("").path.empty());
 
    const std::string& fileToUse = "map.xsd";
 
    std::string absFilePath = dtUtil::FindFileInPathList(fileToUse);
    CPPUNIT_ASSERT(!absFilePath.empty());
 
-   std::string result = GetFilePath(absFilePath);
+   std::string result = fileUtils.GetFileInfo(absFilePath).path;
    CPPUNIT_ASSERT(!result.empty());
 
    std::string filePath = absFilePath.substr(0, absFilePath.length() - (fileToUse.length() + 1));
-   NormalizeDirectorySlashes(filePath);
    CPPUNIT_ASSERT_MESSAGE("The file path should be correct", result == filePath);
 }
 
 void LMSPackageBuilderTests::TestGetFileName()
 {
-   CPPUNIT_ASSERT_MESSAGE("GetFileName should return empty string", GetFileName("").empty());
+   dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+   CPPUNIT_ASSERT_MESSAGE("GetFileName should return empty string", fileUtils.GetFileInfo("").fileName.empty());
 
    const std::string& fileToUse = "map.xsd";
 
    std::string absFilePath = dtUtil::FindFileInPathList(fileToUse);
    CPPUNIT_ASSERT(!absFilePath.empty());
 
-   std::string result = GetFileName(absFilePath);
+   std::string result = fileUtils.GetFileInfo(absFilePath).baseName;
    CPPUNIT_ASSERT_MESSAGE("GetFileName should be correct", result == fileToUse);
 }
 
 void LMSPackageBuilderTests::TestGetFileNameNoExt()
 {
-   CPPUNIT_ASSERT_MESSAGE("GetFileName should return empty string", GetFileNameNoExt("").empty());
+   dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+   CPPUNIT_ASSERT_MESSAGE("GetFileName should return empty string", fileUtils.GetFileInfo("").baseName.empty());
 
    const std::string& fileToUse = "map.xsd";
+
+   std::string absFilePath = dtUtil::FindFileInPathList(fileToUse);
+   CPPUNIT_ASSERT(!absFilePath.empty());
+
    std::string noExtName = osgDB::getStrippedName(fileToUse);
 
-   std::string result = GetFileNameNoExt(fileToUse);
+   std::string result = fileUtils.GetFileInfo(absFilePath).extensionlessFileName;
    CPPUNIT_ASSERT_MESSAGE("GetFileNameNoExt should be correct", result == noExtName);
 }
 
 void LMSPackageBuilderTests::TestGetFileExtension()
 {
-   CPPUNIT_ASSERT_MESSAGE("GetFileName should return empty string", GetFileExtension("").empty());
+   dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+   CPPUNIT_ASSERT_MESSAGE("GetFileName should return empty string", fileUtils.GetFileInfo("").extension.empty());
 
    const std::string& fileToUse = "map.xsd";
+
+   std::string absFilePath = dtUtil::FindFileInPathList(fileToUse);
+   CPPUNIT_ASSERT(!absFilePath.empty());
+
    std::string ext = osgDB::getFileExtension(fileToUse);
 
-   std::string result = GetFileExtension(fileToUse);
+   std::string result = fileUtils.GetFileInfo(absFilePath).extension;
    CPPUNIT_ASSERT_MESSAGE("GetFileExtension should be correct", result == ext);
-}
-
-void LMSPackageBuilderTests::TestSetFileExtension()
-{
-   std::string emptyString;
-   SetFileExtension(emptyString, "wav");
-   CPPUNIT_ASSERT(!emptyString.empty());
-   CPPUNIT_ASSERT_MESSAGE("Empty string should have the right extension", emptyString == ".wav");
-
-   std::string band = "Amaranthine";
-   SetFileExtension(band, "rules");
-   CPPUNIT_ASSERT(band == "Amaranthine.rules");
-   SetFileExtension(band, "isBetterThanYourBand");
-   CPPUNIT_ASSERT_MESSAGE("SetFileExtension should have replaced the current extension", band == "Amaranthine.isBetterThanYourBand");
 }
 
 void LMSPackageBuilderTests::TestCleanupFileString()
 {
+   dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
    std::string emptyString;
-   CleanupFileString(emptyString);
+   fileUtils.CleanupFileString(emptyString);
    CPPUNIT_ASSERT_MESSAGE("CleanupFileString should not break on an empty string", emptyString.empty());
 
    std::string path = "C:/Documents and Settings/some file/";
-   CleanupFileString(path);
+   fileUtils.CleanupFileString(path);
    CPPUNIT_ASSERT_MESSAGE("CleanupFileString should be correct", path == "C:/Documents and Settings/some file");
 
    path = "//";
-   CleanupFileString(path);
+   fileUtils.CleanupFileString(path);
    CPPUNIT_ASSERT(path == "/");
-   CleanupFileString(path);
+   fileUtils.CleanupFileString(path);
    CPPUNIT_ASSERT(path.empty());
 }
 
 void LMSPackageBuilderTests::TestIsAbsolutePath()
 {
-   CPPUNIT_ASSERT_MESSAGE("IsAbsolutePath should return false for empty string", !IsAbsolutePath(""));
+   dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+   CPPUNIT_ASSERT_MESSAGE("IsAbsolutePath should return false for empty string", !fileUtils.IsAbsolutePath(""));
 
    bool returnValue = false;
    const std::string& fileToUse = "map.xsd";
    std::string absPath = dtUtil::FindFileInPathList(fileToUse);
    CPPUNIT_ASSERT(!absPath.empty());
 
-   returnValue = IsAbsolutePath(absPath);
+   returnValue = fileUtils.IsAbsolutePath(absPath);
    CPPUNIT_ASSERT_MESSAGE("IsAbsolutePath should return true", returnValue);
 
    std::string filePath = osgDB::getFilePath(absPath);
-   returnValue = IsAbsolutePath(filePath);
+   returnValue = fileUtils.IsAbsolutePath(filePath);
    CPPUNIT_ASSERT_MESSAGE("IsAbsoluePath should return true", returnValue);
 
-   returnValue = IsAbsolutePath(fileToUse);
+   returnValue = fileUtils.IsAbsolutePath(fileToUse);
    CPPUNIT_ASSERT(!returnValue);
 
    filePath += "/";
-   returnValue = IsAbsolutePath(filePath);
+   returnValue = fileUtils.IsAbsolutePath(filePath);
    CPPUNIT_ASSERT(returnValue);
 
    filePath += "Paris Hilton made the worst cd ever. Not that I've heard it.";
-   returnValue = IsAbsolutePath(filePath);
+   returnValue = fileUtils.IsAbsolutePath(filePath);
    CPPUNIT_ASSERT_MESSAGE("IsAbsolutePath should return false", !returnValue);
-}
-
-void LMSPackageBuilderTests::TestRelativeToAbsolutePath()
-{
-   const std::string& fileToUse = "map.xsd";
-   std::string absPath = dtUtil::FindFileInPathList(fileToUse);
-   CPPUNIT_ASSERT(!absPath.empty());
-   std::string relativePath = "../" + fileToUse;
-   // The function uses the current working directory as the parent if the
-   // parent string is empty. Test that first
-   std::string result = RelativeToAbsolutePath(relativePath, "");
 }
 
 void LMSPackageBuilderTests::TestMakeDirectoryEX()
@@ -218,12 +187,12 @@ void LMSPackageBuilderTests::TestMakeDirectoryEX()
    try
    {
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-      MakeDirectoryEX("");
+      fileUtils.MakeDirectoryEX("");
       CPPUNIT_ASSERT_MESSAGE("MakeDirectoryEX should fail on empty string", !fileUtils.DirExists(""));
 
       std::string deltaRoot = dtUtil::GetDeltaRootPath();
       std::string dirName = deltaRoot + "/tests/dtLMS/Amaranthine";
-      MakeDirectoryEX(dirName);
+      fileUtils.MakeDirectoryEX(dirName);
       CPPUNIT_ASSERT_MESSAGE("The directory should exist", fileUtils.DirExists(dirName));
 
       CPPUNIT_ASSERT(fileUtils.DirDelete(dirName, false));

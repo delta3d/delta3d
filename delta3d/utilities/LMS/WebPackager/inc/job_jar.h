@@ -1,18 +1,15 @@
 /**
  * @author ECS, Inc. ( Joseph Del Rocco )
- * @date 2006/07/10 - 13:43
+ * @date 2006/07/10 - 13:35
  *
- * @file job_jnlp.h
+ * @file job_jar.h
  * @version 1.0
- * @brief Description..
  */
-#ifndef PACKAGER_JOB_JNLP
-#define PACKAGER_JOB_JNLP
+#ifndef PACKAGER_JOB_JAR
+#define PACKAGER_JOB_JAR
 
 // local
-#include "job_xml.h"
-// ansi
-#include <string>
+#include <job_base.h>
 
 
 //======================================
@@ -22,28 +19,29 @@
 // forward refs
 class PackageProfile;
 
-// constants
-#define JNLP_FILENAME   "ApplicationLaunch.jnlp"
-
 
 //======================================
 // CLASS
 //======================================
 
-class JobJNLP : public JobXML
+class JobJAR : public JobBase
 {
    public:
-      JobJNLP();
-      ~JobJNLP();
+      JobJAR();
+      ~JobJAR();
 
       /**
        * Kicks off the batch job for this class.
        * @param profile The object containing the package configuration file.
        */
-      void Execute( PackageProfile *profile );
+      virtual void Execute( PackageProfile *profile );
+
+      /**
+       * Sign the JAR file for security and permissions.
+       */
+      void Sign();
 
    private:
-      void removeSpaces( std::string &str );
 };
 
 #endif

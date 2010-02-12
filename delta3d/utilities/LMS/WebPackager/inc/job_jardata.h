@@ -1,15 +1,17 @@
 /**
  * @author ECS, Inc. ( Joseph Del Rocco )
- * @date 2006/07/10 - 13:44
+ * @date 2006/07/10 - 13:47
  *
- * @file job_jarlib.h
+ * @file job_jardata.h
  * @version 1.0
  */
-#ifndef PACKAGER_JOB_JAR_LIBRARY
-#define PACKAGER_JOB_JAR_LIBRARY
+#ifndef PACKAGER_JOB_JAR_DATA
+#define PACKAGER_JOB_JAR_DATA
 
 // local
-#include "job_jar.h"
+#include <job_jar.h>
+// ansi
+#include <string>
 
 
 //======================================
@@ -24,11 +26,11 @@ class PackageProfile;
 // CLASS
 //======================================
 
-class JobJARLibrary : public JobJAR
+class JobJARData : public JobJAR
 {
    public:
-      JobJARLibrary();
-      ~JobJARLibrary();
+      JobJARData();
+      ~JobJARData();
 
       /**
        * Kicks off the batch job for this class.
@@ -37,6 +39,10 @@ class JobJARLibrary : public JobJAR
       void Execute( PackageProfile *profile );
 
    private:
+      void appendAllFiles(const std::string &inputDir, 
+                          const std::string &srcDir,
+                          std::string &listOfFiles, 
+                          const std::string &ignore );
 };
 
 #endif
