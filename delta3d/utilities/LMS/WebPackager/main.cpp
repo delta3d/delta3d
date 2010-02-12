@@ -41,6 +41,7 @@ int main( int argc, const char **args )
    packager.Initialize();
    packager.Build( std::string(args[1]), std::string(args[2]) );
    packager.Shutdown();
+   system("pause");
 
    return 0;
 }

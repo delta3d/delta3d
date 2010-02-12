@@ -46,6 +46,7 @@ public class ClassDirectoryFinder
         
         //get the url location of the given object's bytecode file
         String classUrl = _object.getClass().getProtectionDomain().getCodeSource().getLocation().toString();
+        String classProtocol = _object.getClass().getProtectionDomain().getCodeSource().getLocation().getProtocol().toString();
         
         NativeLibraryLaunch.logger.info("classUrl: " + classUrl);
         
@@ -71,7 +72,7 @@ public class ClassDirectoryFinder
         
         NativeLibraryLaunch.logger.info("classDirectory: " + classDirectory);
         
-        return classDirectory;
+        return classProtocol + "://" + classDirectory;
     }
     
     private String GetDirectoryJavaWebStart(String classUrl)

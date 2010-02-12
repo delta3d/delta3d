@@ -21,9 +21,12 @@
 package org.delta3d.lms.JavaLaunch;
 
 import java.util.logging.*;
+import java.util.StringTokenizer;
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
+import java.net.URL;
+import java.net.MalformedURLException;
 
 //for debugging message box
 //Example Usage: JOptionPane.showMessageDialog(new JFrame(), "Exiting...");
@@ -256,6 +259,18 @@ public class NativeLibraryLaunch
         	
         	_cmdLineArgs[startPosition + 5] = Utility.StripExtension(appLibrary);
         }
+		
+		//add general launch parameters to the list of command arguments
+		if (!_appConfig.GetGeneralLaunchParams().equals(""))
+		{
+			int argIndex = 6;
+			StringTokenizer generalLaunchParams = new StringTokenizer(_appConfig.GetGeneralLaunchParams());
+			while(generalLaunchParams.hasMoreTokens())
+			{
+				_cmdLineArgs = (String[])Utility.ArrayExpand(_cmdLineArgs, 1);
+				_cmdLineArgs[startPosition + argIndex++] = generalLaunchParams.nextToken();
+			}
+		}
     }
 
     /*
@@ -279,10 +294,10 @@ public class NativeLibraryLaunch
         
         for (String dataJar : _appConfig.GetDataExtractFiles())
         {
-            String extractJar = classDirectory + prepend + dataJar;
-            
+            String extractJar = "jar:" + classDirectory + prepend + dataJar + "!/";
+
             NativeLibraryLaunch.logger.info("extractJar: " + extractJar);
-            
+
             //extract data jar into data directory
             JarExtractor jarExtractor = new JarExtractor(extractJar, _appConfig.GetProgramDirectory(), _appConfig.GetDataOverwrite());
             jarExtractor.Extract();
