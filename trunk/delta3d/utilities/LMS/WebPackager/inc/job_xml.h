@@ -11,7 +11,7 @@
 #define PACKAGER_JOB_XML
 
 // local
-#include "job_sgml.h"
+#include <job_sgml.h>
 // xerces
 #include <xercesc/util/XercesDefs.hpp>
 #include <xercesc/dom/DOM.hpp>

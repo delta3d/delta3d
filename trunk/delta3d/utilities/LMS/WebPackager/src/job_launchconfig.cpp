@@ -7,9 +7,9 @@
  */
 
 // local
-#include "job_launchconfig.h"
-#include "package_profile.h"
-#include "package_utils.h"
+#include <job_launchconfig.h>
+#include <package_profile.h>
+#include <package_utils.h>
 // ansi
 #include <iostream>
 #include <cctype> //for toupper()

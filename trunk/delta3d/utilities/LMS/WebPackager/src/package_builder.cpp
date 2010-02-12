@@ -7,14 +7,14 @@
  */
 
 // local
-#include "package_builder.h"
-#include "package_profile.h"
-#include "job_jarlib.h"
-#include "job_jardata.h"
-#include "job_launchconfig.h"
-#include "job_jnlp.h"
-#include "job_manifest.h"
-#include "job_deployment.h"
+#include <package_builder.h>
+#include <package_profile.h>
+#include <job_jarlib.h>
+#include <job_jardata.h>
+#include <job_launchconfig.h>
+#include <job_jnlp.h>
+#include <job_manifest.h>
+#include <job_deployment.h>
 // xerces
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/util/XMLException.hpp>

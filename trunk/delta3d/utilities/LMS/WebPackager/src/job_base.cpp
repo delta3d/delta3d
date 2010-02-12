@@ -2,13 +2,13 @@
  * @author ECS, Inc. ( Joseph Del Rocco )
  * @date 2006/07/07 - 11:33
  *
- * @file job_html.cpp
+ * @file job_base.cpp
  * @version 1.0
  */
 
 // local
-#include "job_html.h"
-#include "package_profile.h"
+#include <job_base.h>
+#include <package_profile.h>
 
 
 //======================================
@@ -19,15 +19,15 @@
 // PUBLIC FUNCTIONS
 //======================================
 
-JobHTML::JobHTML() : JobSGML()
+JobBase::JobBase()
 {
 }
 
-JobHTML::~JobHTML()
+JobBase::~JobBase()
 { 
 }
 
-void JobHTML::Execute( PackageProfile *profile )
+void JobBase::Execute( PackageProfile *profile )
 {
    // do something
 }

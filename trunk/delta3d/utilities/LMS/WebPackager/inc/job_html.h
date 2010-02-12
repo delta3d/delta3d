@@ -1,18 +1,16 @@
 /**
  * @author ECS, Inc. ( Joseph Del Rocco )
- * @date 2006/07/10 - 13:50
+ * @date 2006/07/10 - 13:48
  *
- * @file job_manifest.h
+ * @file job_html.h
  * @version 1.0
+ * @brief Description..
  */
-#ifndef PACKAGER_JOB_MANIFEST
-#define PACKAGER_JOB_MANIFEST
+#ifndef PACKAGER_JOB_HTML
+#define PACKAGER_JOB_HTML
 
 // local
-#include "job_xml.h"
-// ansi
-#include <string>
-#include <vector>
+#include <job_sgml.h>
 
 
 //======================================
@@ -27,20 +25,19 @@ class PackageProfile;
 // CLASS
 //======================================
 
-class JobManifest : public JobXML
+class JobHTML : public JobSGML
 {
    public:
-      JobManifest();
-      ~JobManifest();
+      JobHTML();
+      ~JobHTML();
 
       /**
        * Kicks off the batch job for this class.
        * @param profile The object containing the package configuration file.
        */
-      void Execute( PackageProfile *profile );
+      virtual void Execute( PackageProfile *profile );
 
    private:
-      void collectAllFiles( std::string srcDir, std::string relativeDir, std::vector<std::string> &filenames );
 };
 
 #endif

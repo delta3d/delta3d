@@ -7,8 +7,8 @@
  */
 
 // local
-#include "package_profile.h"
-#include "package_utils.h"
+#include <package_profile.h>
+#include <package_utils.h>
 // xerces
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/util/XMLUniDefs.hpp>

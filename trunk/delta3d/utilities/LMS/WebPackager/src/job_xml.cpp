@@ -9,7 +9,7 @@
  */
 
 // local
-#include "job_xml.h"
+#include <job_xml.h>
 // xerces
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/util/XMLUniDefs.hpp>

@@ -1,14 +1,14 @@
 /**
  * @author ECS, Inc. ( Joseph Del Rocco )
- * @date 2006/07/10 - 13:38
+ * @date 2006/07/07 - 11:33
  *
- * @file job_sgml.cpp
+ * @file job_launchpage.cpp
  * @version 1.0
  */
 
 // local
-#include "job_sgml.h"
-#include "package_profile.h"
+#include <job_launchpage.h>
+#include <package_profile.h>
 
 
 //======================================
@@ -19,15 +19,15 @@
 // PUBLIC FUNCTIONS
 //======================================
 
-JobSGML::JobSGML() : JobBase()
+JobLaunchPage::JobLaunchPage() : JobHTML()
 {
 }
 
-JobSGML::~JobSGML()
+JobLaunchPage::~JobLaunchPage()
 { 
 }
 
-void JobSGML::Execute( PackageProfile *profile )
+void JobLaunchPage::Execute( const PackageProfile *profile )
 {
    // do something
 }

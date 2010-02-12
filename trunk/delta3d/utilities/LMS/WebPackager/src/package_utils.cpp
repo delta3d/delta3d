@@ -31,7 +31,7 @@
  */
 
 // local
-#include "package_utils.h"
+#include <package_utils.h>
 // delta3d
 #include <dtUtil/fileutils.h>
 #include <osgDB/FileNameUtils>
