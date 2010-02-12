@@ -420,6 +420,7 @@ osg::ref_ptr<osg::GraphicsContext::Traits> DeltaWin::CreateOSGTraits(const Delta
    traits->samples = ds->getNumMultiSamples();
    traits->inheritedWindowData = deltaTraits.inheritedWindowData;
    traits->setInheritedWindowPixelFormat = true;
+   traits->vsync = deltaTraits.vsync;
 
    if (ds->getStereo())
    {

@@ -100,6 +100,7 @@ namespace dtCore
             , displayNum(0)
             , screenNum(0)
             , realizeUponCreate(true)
+            , vsync(true)
          {
          }
 
@@ -118,6 +119,7 @@ namespace dtCore
          int displayNum;
          int screenNum;
          bool realizeUponCreate;
+         bool vsync;  ///<vertial sync
       };
 
       /**
