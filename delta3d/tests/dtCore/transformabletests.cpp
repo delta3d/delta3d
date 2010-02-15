@@ -62,6 +62,7 @@ class TransformableTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST(TestTransRotScaleGetSet);
    CPPUNIT_TEST(TestConstructorTakingMatrixNode);
    CPPUNIT_TEST(TestValueOperators);
+   CPPUNIT_TEST(TestValid);
    CPPUNIT_TEST(TestRows);
    CPPUNIT_TEST(TestDistance);
    CPPUNIT_TEST(TestGetTransformWithDisabledCamera);
@@ -93,6 +94,7 @@ public:
    void TestConstructorTakingMatrixNode();
    void TestSetMatrix();
    void TestValueOperators();
+   void TestValid();
    void TestRows();
    void TestDistance();
    void TestGetTransformWithDisabledCamera();
@@ -628,6 +630,26 @@ void TransformableTests::TestRows()
    CPPUNIT_ASSERT(dtUtil::Equivalent(row4Expected, row4, TEST_EPSILON));
 }
 
+void TransformableTests::TestValid()
+{
+   dtCore::Transform xform;
+   xform.MakeIdentity();
+
+   for (unsigned i = 0; i < 4; ++i)
+   {
+      for (unsigned j = 0; j < 4; ++j)
+      {
+         xform(i, j) = NAN;
+         CPPUNIT_ASSERT(!xform.IsValid());
+         // It doesn't work for infinity
+         //xform(i, j) = INFINITY;
+         //CPPUNIT_ASSERT(!xform.IsValid());
+         xform.MakeIdentity();
+         CPPUNIT_ASSERT(xform.IsValid());
+      }
+   }
+
+}
 //////////////////////////////////////////////////////////////////////////
 void TransformableTests::TestDistance()
 {
