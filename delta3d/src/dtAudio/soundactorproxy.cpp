@@ -141,7 +141,6 @@ namespace dtAudio
     {
        SoundActor* actor = new SoundActor(*this);
        SetActor(*actor);
-       Sound* sound = GetSound();       
     }
 
     ///////////////////////////////////////////////////////////////////////

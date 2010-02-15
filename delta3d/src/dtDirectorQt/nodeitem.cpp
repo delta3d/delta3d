@@ -320,7 +320,7 @@ namespace dtDirector
       QRectF bounds = mTitle->boundingRect();
       mTextHeight = bounds.height();
 
-      if (mNodeHeight < mTextHeight) mNodeHeight = mTextHeight;
+      if (mNodeHeight < int(mTextHeight)) mNodeHeight = int(mTextHeight);
 
       // Clamp the bounds to our min and max.
       if (bounds.width() > MAX_NODE_WIDTH - 2) bounds.setWidth(MAX_NODE_WIDTH - 2);
@@ -329,7 +329,7 @@ namespace dtDirector
       // Resize the width of the node if it is not wide enough already.
       if (bounds.width() + 2 > mNodeWidth)
       {
-         mNodeWidth = bounds.width();
+         mNodeWidth = int(bounds.width());
       }
    }
 

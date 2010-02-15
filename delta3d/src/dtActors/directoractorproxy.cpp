@@ -45,9 +45,9 @@ namespace dtActors
    /////////////////////////////////////////////////////////////////////////////
    DirectorActor::DirectorActor(dtGame::GameActorProxy& parent)
       : BaseClass(parent)
-      , mResourceIndex(0)
       , mNodeLogging(false)
       , mRecording(false)
+      , mResourceIndex(0)
    {
       SetName("Director_Graph_Actor");
       mPlayerActor = "";

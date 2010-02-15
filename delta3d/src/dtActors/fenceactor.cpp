@@ -406,7 +406,7 @@ namespace dtActors
                         float fullLen = (start - end).length();
 
                         float index = posLen / mPostMaxDistance;
-                        subIndex = floor(index);
+                        subIndex = int(floor(index));
 
                         float len = fullLen - (subIndex * mPostMaxDistance);
                         if (len <= mPostMinDistance)

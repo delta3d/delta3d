@@ -43,7 +43,7 @@ void TriggerVolumeActor::OnMessage(dtCore::Base::MessageData* data)
 
    if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
    {
-      double dt = *static_cast<double*>(data->userData);
+      //double dt = *static_cast<double*>(data->userData);
 
       // Check to see if any occupants have left the volume
       for (size_t actorIndex = 0; actorIndex < mOccupancyList.size(); ++actorIndex)

@@ -88,7 +88,7 @@ namespace dtAI
       osg::Vec3 waypointPos(2.0f, 4.9f, 1.9f);
       WaypointInterface* wp01 = mAIInterface->CreateWaypoint(waypointPos, *(objectTypes[0]));
       CPPUNIT_ASSERT(wp01 != NULL);
-      int numWaypoints = 1;
+      unsigned numWaypoints = 1;
 
       //test no duplicate create
       osg::Vec3 waypointPos2(1.9f, 4.9f, 1.9f);

@@ -22,8 +22,7 @@
 #include <dtUtil/log.h>
 #include <dtUtil/exception.h>
 #include <dtUtil/fileutils.h>
-
-#include <dtCore/globals.h>
+#include <dtUtil/datapathutils.h>
 
 #include <dtDAL/actorproperty.h>
 
@@ -85,7 +84,7 @@ namespace dtHLAGM
       mXercesParser->setFeature(xercesc_dt::XMLUni::fgXercesUseCachedGrammarInParse, true);
       mXercesParser->setFeature(xercesc_dt::XMLUni::fgXercesCacheGrammarFromParse, true);
 
-      std::string schemaFileName = dtCore::FindFileInPathList("Federations/HLAMapping.xsd");
+      std::string schemaFileName = dtUtil::FindFileInPathList("Federations/HLAMapping.xsd");
 
       if (!dtUtil::FileUtils::GetInstance().FileExists(schemaFileName))
       {
@@ -112,7 +111,7 @@ namespace dtHLAGM
    {
         try
         {
-            std::string path = dtCore::FindFileInPathList(dataFilePath);
+            std::string path = dtUtil::FindFileInPathList(dataFilePath);
             if (!dtUtil::FileUtils::GetInstance().FileExists(path))
             {
                mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,

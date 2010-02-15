@@ -293,7 +293,7 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
          // Either both should be NULL, or both non NULL
          assert(indexEBO == NULL);
 
-         const size_t stride = modelData->GetStride();
+         //const size_t stride = modelData->GetStride();
 
          vertexVBO = new osg::VertexBufferObject;
          indexEBO = new osg::ElementBufferObject;

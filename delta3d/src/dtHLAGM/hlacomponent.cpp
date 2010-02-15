@@ -38,9 +38,9 @@
 #include <dtUtil/log.h>
 #include <dtUtil/coordinates.h>
 #include <dtUtil/fileutils.h>
+#include <dtUtil/datapathutils.h>
 
 #include <dtCore/uniqueid.h>
-#include <dtCore/globals.h>
 
 #include <dtDAL/actortype.h>
 #include <dtDAL/actorproperty.h>
@@ -492,7 +492,7 @@ namespace dtHLAGM
 
             std::string absPath = dtUtil::FileUtils::GetInstance().GetAbsolutePath(path);
 
-            dtCore::SetEnvironment("RTI_RID_FILE", absPath + dtUtil::FileUtils::PATH_SEPARATOR + fi.baseName);
+            dtUtil::SetEnvironment("RTI_RID_FILE", absPath + dtUtil::FileUtils::PATH_SEPARATOR + fi.baseName);
          }
          catch(const dtUtil::Exception &e)
          {
@@ -548,7 +548,7 @@ namespace dtHLAGM
 
       try
       {
-         std::string fedFile = dtCore::FindFileInPathList(fedFilename).c_str();
+         std::string fedFile = dtUtil::FindFileInPathList(fedFilename).c_str();
          mRTIAmbassador->createFederationExecution(executionName.c_str(), fedFile.c_str());
          //some other rti's want the data in more of this format.
          //mRTIAmbassador->createFederationExecution(osgDB::getStrippedName(fedFile).c_str(), ".fed");

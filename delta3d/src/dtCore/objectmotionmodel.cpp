@@ -215,7 +215,7 @@ float ObjectMotionModel::GetAutoScaleSize(void)
          {
             if (camera->getViewport())
             {
-               int width = camera->getViewport()->width();
+               int width = int(camera->getViewport()->width());
                if (width > 0)
                {
                   double windowSize = right - left;
@@ -1242,7 +1242,7 @@ void ObjectMotionModel::UpdateTranslation(void)
          {
             float trans = targetPos[index];
 
-            int mul = floorf((trans / mSnapTranslation) + 0.5f);
+            int mul = int(floorf((trans / mSnapTranslation) + 0.5f));
             trans = mSnapTranslation * mul;
 
             targetPos[index] = trans;
@@ -1648,7 +1648,7 @@ void ObjectMotionModel::UpdateScale(void)
             {
                float len = scaleAxis[index] * fDistance;
 
-               int mul = floorf((len / mSnapScale) + 0.5f);
+               int mul = int(floorf((len / mSnapScale) + 0.5f));
                scaleAxis[index] = (mSnapScale * mul) / fDistance;
             }
          }
