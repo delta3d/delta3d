@@ -63,9 +63,9 @@ namespace dtDAL
    //////////////////////////////////////////////////////////////////////////
    ActorPropertySerializer::ActorPropertySerializer(BaseXMLWriter* writer)
       : mWriter(writer)
-      , mHasDeprecatedProperty(false)
-      , mActorProperty(NULL)
       , mActorPropertyType(NULL)
+      , mParameterTypeToCreate(NULL)
+      , mHasDeprecatedProperty(false)
       , mInActorProperty(false)
       , mInGroupProperty(false)
    {
@@ -74,9 +74,9 @@ namespace dtDAL
    //////////////////////////////////////////////////////////////////////////
    ActorPropertySerializer::ActorPropertySerializer(BaseXMLHandler* parser)
       : mParser(parser)
-      , mHasDeprecatedProperty(false)
-      , mActorProperty(NULL)
       , mActorPropertyType(NULL)
+      , mParameterTypeToCreate(NULL)
+      , mHasDeprecatedProperty(false)
       , mInActorProperty(false)
       , mInGroupProperty(false)
    {
@@ -1242,11 +1242,11 @@ namespace dtDAL
                   if (dataValue != "" && mDescriptorDisplayName != "")
                   {
                      ResourceDescriptor rd(mDescriptorDisplayName, dataValue);
-                     p.SetValue(&rd);
+                     p.SetValue(rd);
                   }
                   else
                   {
-                     p.SetValue(NULL);
+                     p.SetValue(ResourceDescriptor::NULL_RESOURCE);
                   }
                }
             }
