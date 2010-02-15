@@ -537,7 +537,15 @@ bool AppXMLApplicator::operator ()(const ApplicationConfigData& data, dtABC::App
    {
       dtUtil::Log& logger = dtUtil::Log::GetInstance(i->first);
 
-      logger.SetLogLevel(logger.GetLogLevelForString(i->second));
+      // Setting the default log level has 2 effects: 1) sets the global default, 2) change ALL log levels
+      if (i->first == dtUtil::Log::GetInstance().GetName())
+      {
+         dtUtil::Log::SetGlobalDefaultLogLevel(logger.GetLogLevelForString(i->second));
+      }
+      else
+      {
+         logger.SetLogLevel(logger.GetLogLevelForString(i->second));
+      }
    }
 
    dtUtil::LibrarySharingManager& lsm = dtUtil::LibrarySharingManager::GetInstance();

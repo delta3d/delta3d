@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  *
- * @author John K. Grant
+ * @author John K. Grant, Curtiss Murphy
  */
 
 #include <prefix/dtgameprefix-src.h>
@@ -80,6 +80,7 @@ namespace dtTest
       CPPUNIT_TEST(TestConfigProperties);
       CPPUNIT_TEST(TestConfigSupport);
       CPPUNIT_TEST(TestConfigSaveLoad);
+      CPPUNIT_TEST(TestConfigLogLevelDefaultOverride);
       CPPUNIT_TEST(TestReadSystemProperties);
       CPPUNIT_TEST(TestSupplyingWindowToApplicationConstructor);
       CPPUNIT_TEST(TestReadingBadConfigFile);
@@ -94,6 +95,7 @@ namespace dtTest
          void TestConfigProperties();
          void TestConfigSupport();
          void TestConfigSaveLoad();
+         void TestConfigLogLevelDefaultOverride();
          void TestReadSystemProperties();
          void TestSupplyingWindowToApplicationConstructor();
          void TestReadingBadConfigFile();
@@ -355,7 +357,9 @@ namespace dtTest
       truth.WINDOW_INSTANCE = "SomeWin";
       truth.CAMERA_INSTANCE = "SomeCam";
 
-      truth.LOG_LEVELS.insert(std::make_pair(dtUtil::Log::GetInstance().GetName(), "ERROR"));
+      // Can't write the default to the config file or it will overwrite all other log values.
+      // Behavior tested in TestConfigLogLevelDefaultOverride.
+      //truth.LOG_LEVELS.insert(std::make_pair(dtUtil::Log::GetInstance().GetName(), "ERROR"));
       truth.LOG_LEVELS.insert(std::make_pair("SomeName", "Warn"));
       truth.LOG_LEVELS.insert(std::make_pair("AnotherName", "Error"));
       truth.LOG_LEVELS.insert(std::make_pair("horse", "Info"));
@@ -387,7 +391,9 @@ namespace dtTest
       //create an app to parse the config and actually load the values
       dtCore::RefPtr<dtABC::Application> app = new dtABC::Application(mConfigName);
 
-      CPPUNIT_ASSERT_EQUAL(dtUtil::Log::LOG_ERROR, dtUtil::Log::GetInstance().GetLogLevel());
+      // Can't write the default to the config file or it will overwrite all other log values.
+      // Behavior tested in TestConfigLogLevelDefaultOverride.
+      //CPPUNIT_ASSERT_EQUAL(dtUtil::Log::LOG_ERROR, dtUtil::Log::GetInstance().GetLogLevel());
       CPPUNIT_ASSERT_EQUAL(dtUtil::Log::LOG_WARNING, dtUtil::Log::GetInstance("SomeName").GetLogLevel());
       CPPUNIT_ASSERT_EQUAL(dtUtil::Log::LOG_ERROR, dtUtil::Log::GetInstance("AnotherName").GetLogLevel());
       CPPUNIT_ASSERT_EQUAL(dtUtil::Log::LOG_INFO, dtUtil::Log::GetInstance("horse").GetLogLevel());
@@ -414,6 +420,60 @@ namespace dtTest
       CPPUNIT_ASSERT( !dtUtil::FileUtils::GetInstance().FileExists(mConfigName));
 
    }
+
+   ////////////////////////////////////////////////////////////////////
+   void ApplicationTests::TestConfigLogLevelDefaultOverride()
+   {
+      //make sure the file doesn't already exist.
+      CPPUNIT_ASSERT_MESSAGE("The config file should not exist yet.", 
+         !dtUtil::FileUtils::GetInstance().FileExists(mConfigName));
+
+      dtABC::ApplicationConfigData truth;
+      // Can't write the default to the config file or it will overwrite all other log values.
+      truth.LOG_LEVELS.insert(std::make_pair(dtUtil::Log::GetInstance().GetName(), "ERROR"));
+      truth.LOG_LEVELS.insert(std::make_pair("SomeName", "Warn"));
+      truth.LOG_LEVELS.insert(std::make_pair("AnotherName", "Debug"));
+      truth.LOG_LEVELS.insert(std::make_pair("horse", "Info"));
+      truth.LOG_LEVELS.insert(std::make_pair("cow", "Debug"));
+      truth.LOG_LEVELS.insert(std::make_pair("chicken", "Always"));
+
+      dtABC::ApplicationConfigWriter acw;
+      acw(mConfigName, truth);
+
+      // make sure it exists
+      CPPUNIT_ASSERT(dtUtil::FileUtils::GetInstance().FileExists(mConfigName));
+
+      // test the content from the parser
+      dtABC::ApplicationConfigHandler handler;
+      dtUtil::XercesParser parser;
+
+      CPPUNIT_ASSERT(parser.Parse(mConfigName, handler, "application.xsd"));
+
+      CompareConfigData(truth, handler.mConfigData);
+
+      //create an app to parse the config and actually load the values
+      dtCore::RefPtr<dtABC::Application> app = new dtABC::Application(mConfigName);
+
+      // The Global default should be "ERROR"
+      CPPUNIT_ASSERT_EQUAL(dtUtil::Log::LOG_ERROR, dtUtil::Log::GetInstance().GetLogLevel());
+
+      // Check that the global default overrode one or more of the saved log levels.
+      // The log levels are not written in the order they are added to the list, so check to make 
+      // sure that at least ONE of the values is wrong and equals ERROR. 
+      bool log1IsError = dtUtil::Log::LOG_ERROR == dtUtil::Log::GetInstance("SomeName").GetLogLevel();
+      bool log2IsError = dtUtil::Log::LOG_ERROR == dtUtil::Log::GetInstance("AnotherName").GetLogLevel();
+      bool log3IsError = dtUtil::Log::LOG_ERROR == dtUtil::Log::GetInstance("horse").GetLogLevel();
+      bool log4IsError = dtUtil::Log::LOG_ERROR == dtUtil::Log::GetInstance("cow").GetLogLevel();
+      bool log5IsError = dtUtil::Log::LOG_ERROR == dtUtil::Log::GetInstance("chicken").GetLogLevel();
+      CPPUNIT_ASSERT_MESSAGE("At least one of the log levels should have been overridden and set to ERROR by the global default log level.", 
+         (log1IsError || log2IsError || log3IsError || log4IsError || log5IsError));
+ 
+      app = NULL;
+
+      // delete the file
+      dtUtil::FileUtils::GetInstance().FileDelete(mConfigName);
+   }
+
 
    void ApplicationTests::ResetConfigPropertyDefaults(dtABC::Application& app)
    {
