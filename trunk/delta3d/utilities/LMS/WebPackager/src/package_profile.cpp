@@ -17,6 +17,8 @@
 // ansi
 #include <iostream>
 
+#include <dtUtil/mswinmacros.h>
+
 
 //======================================
 // STARTUP FUNCTIONS
@@ -572,7 +574,7 @@ void PackageProfile::GetEntryPointLibrary( LibraryType libType,
    for ( unsigned int i=0; i<libraries.size(); i++ )
    {
       std::string val = libopts[i].Get( "entrypoint" );
-      if ( val.length() != 0 && _stricmp( val.c_str(), "true" ) == 0 )
+      if ( val.length() != 0 && stricmp( val.c_str(), "true" ) == 0 )
       {
          lib = libraries[i];
          options = libopts[i];
