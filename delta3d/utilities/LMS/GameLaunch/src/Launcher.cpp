@@ -79,7 +79,7 @@ void Launcher::PrependWorkingDirToPath(const char* workingDirectory)
 
    std::string newPath;
    newPath += workingDirectory;
-#ifdef DELTA_WIN
+#ifdef DELTA_WIN32
    newPath += ";";
 #else
    newPath += ":";
