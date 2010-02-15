@@ -37,7 +37,7 @@
 #include <osg/io_utils>
 #include <ode/collision.h>
 #include <sstream>
-#include <cmath>
+#include <limits>
 
 using namespace dtCore;
 
@@ -639,7 +639,7 @@ void TransformableTests::TestValid()
    {
       for (unsigned j = 0; j < 4; ++j)
       {
-         xform(i, j) = NAN;
+         xform(i, j) = std::numeric_limits<float>::signaling_NaN();
          CPPUNIT_ASSERT(!xform.IsValid());
          // It doesn't work for infinity
          //xform(i, j) = INFINITY;
