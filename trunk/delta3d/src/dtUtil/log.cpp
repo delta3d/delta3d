@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * Matthew W. Campbell
+ * Matthew W. Campbell, Curtiss Murphy
  */
 #include <prefix/dtutilprefix-src.h>
 #include <dtUtil/log.h>
@@ -52,6 +52,7 @@ namespace dtUtil
    public:
       std::ofstream logFile;
 
+      ////////////////////////////////////////////////////////////////
       LogManager()
       {
          //std::cout << "Creating logger" << std::endl;
@@ -63,6 +64,7 @@ namespace dtUtil
          //std::cout.flush();
       }
 
+      ////////////////////////////////////////////////////////////////
       ~LogManager()
       {
          mInstances.clear();
@@ -77,12 +79,14 @@ namespace dtUtil
          }
       }
 
+      ////////////////////////////////////////////////////////////////
       void EndFile()
       {
          logFile << "</body></html>" << std::endl;
          logFile.flush();
       }
 
+      ////////////////////////////////////////////////////////////////
       void OpenFile()
       {
          //std::cout << "LogManager try to open file to " << sLogFileName << std::endl;
@@ -121,6 +125,7 @@ namespace dtUtil
          //std::cout.flush();
       }
 
+      ////////////////////////////////////////////////////////////////
       void TimeTag(std::string prefix){
 
          struct tm *t;
@@ -140,11 +145,13 @@ namespace dtUtil
          logFile.flush();
       }
 
+      ////////////////////////////////////////////////////////////////
       bool AddInstance(const std::string& name, Log* log)
       {
          return mInstances.insert(std::make_pair(name, dtCore::RefPtr<Log>(log))).second;
       }
 
+      ////////////////////////////////////////////////////////////////
       Log* GetInstance(const std::string& name)
       {
          std::map<std::string, dtCore::RefPtr<Log> >::iterator i = mInstances.find(name);
@@ -155,12 +162,32 @@ namespace dtUtil
          return i->second.get();
       }
 
+      ////////////////////////////////////////////////////////////////
+      void SetAllLogLevels(const Log::LogMessageType &newLevel)
+      {
+         std::map<std::string, dtCore::RefPtr<Log> >::iterator i, iend;
+
+         i = mInstances.begin();
+         iend = mInstances.end();
+
+         for (;i != iend; i++)
+         {
+            Log* log = i->second.get();
+            log->SetLogLevel(newLevel);
+         }
+      }
+
       OpenThreads::Mutex mMutex;
    private:
       std::map<std::string, dtCore::RefPtr<Log> > mInstances;
    };
 
    static dtCore::RefPtr<LogManager> manager(NULL);
+   static Log::LogMessageType globalDefaultLogLevel(Log::LOG_WARNING);
+
+
+   ////////////////////////////////////////////////////////////////////
+   ////////////////////////////////////////////////////////////////////
 
    /** This will close the existing file (if opened) and create a new file with
     *  the supplied filename.
@@ -405,10 +432,23 @@ namespace dtUtil
       if (l == NULL)
       {
          l = new Log(name);
+         // All new logs should be created with the global default log level. 
+         l->SetLogLevel(globalDefaultLogLevel);
          manager->AddInstance(name, l);
       }
 
       return *l;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void Log::SetGlobalDefaultLogLevel(Log::LogMessageType newLevel, bool bSetAllExisting)
+   {
+      globalDefaultLogLevel = newLevel;
+
+      if (bSetAllExisting)
+      {
+         manager->SetAllLogLevels(newLevel);
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////

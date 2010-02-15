@@ -207,6 +207,9 @@ namespace dtUtil
        */
       static Log& GetInstance(const std::string& name);
 
+      ///Sets the default value for new logs and if (bSetAllExisting), will set ALL existing logs too.
+      static void SetGlobalDefaultLogLevel(LogMessageType newLevel, bool bSetAllExisting = true);
+
       enum OutputStreamOptions
       {
          NO_OUTPUT =   0x00000000, ///<Log messages don't get written to any device
