@@ -22,7 +22,7 @@
 #include "Launcher.h"
 #include "ParameterParser.h"
 #include <dtUtil/fileutils.h>
-#include <dtCore/globals.h>
+#include <dtUtil/datapathutils.h>
 
 Launcher::Launcher(int argc, char** argv)
 {
@@ -75,20 +75,24 @@ void Launcher::PrependWorkingDirToPath(const std::string &workingDirectory)
 
 void Launcher::PrependWorkingDirToPath(const char* workingDirectory)
 {
-   const std::string &path = getenv("PATH");
+   const std::string path = dtUtil::GetEnvironment("PATH");
 
-   std::string newPath = "PATH=";
+   std::string newPath;
    newPath += workingDirectory;
+#ifdef DELTA_WIN
    newPath += ";";
+#else
+   newPath += ":";
+#endif
    newPath += path;
 
-   int retVal = putenv(newPath.c_str());
+   dtUtil::SetEnvironment("PATH", newPath);
 }
 
 void Launcher::Launch()
 {
    //set Delta3D data path
-   dtCore::SetDataFilePathList(mParser->GetDataDirectory());
+   dtUtil::SetDataFilePathList(mParser->GetDataDirectory());
 
    //launch game application library
    dtCore::RefPtr<dtGame::GameApplication> app = new dtGame::GameApplication(mArgc, mArgv);

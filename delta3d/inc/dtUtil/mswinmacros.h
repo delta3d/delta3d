@@ -26,6 +26,9 @@
    #ifndef snprintf
       #define snprintf _snprintf
    #endif
+   #ifndef stricmp
+      #define stricmp _stricmp
+   #endif
 #endif
 
 #endif // mswinmacros_h__
