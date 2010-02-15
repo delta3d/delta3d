@@ -180,6 +180,9 @@ namespace dtCore
        */
       bool EpsilonEquals(const Transform& transform, float epsilon = 0.0001f) const;
 
+      /// @return true if the all the elements are valid floats, i.e. not NAN
+      bool IsValid() const { return mTransform.valid(); };
+
       /// @return the refernce to the position in the transform matrix
       osg::Matrix::value_type& operator()(unsigned i, unsigned j) { return mTransform(i, j); }
 
