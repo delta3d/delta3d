@@ -398,6 +398,11 @@ osg::ref_ptr<osg::StateSet> MtlKeeper::convertStdMaterial(Mtl* maxMtl, Options* 
 		blendAmount = stdMtl->GetTexmapAmt(ID_RL,t);
 		convertMap(maxMtl, maxMtl->GetSubTexmap(ID_RL), blendAmount, stateset.get(), options, t);
 	}
+   // Convert any maps in the bump slot.
+	if(maxMtl->GetSubTexmap(ID_BU) && maxMtl->SubTexmapOn(ID_BU)){
+		blendAmount = stdMtl->GetTexmapAmt(ID_BU,t);
+		convertMap(maxMtl, maxMtl->GetSubTexmap(ID_BU), blendAmount, stateset.get(), options, t);
+	}
 	return stateset;	
 }
 
