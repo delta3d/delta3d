@@ -17,6 +17,7 @@
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/util/OutOfMemoryException.hpp>
 #include <xercesc/framework/LocalFileFormatTarget.hpp>
+#include <xercesc/util/XercesVersion.hpp>
 // ansi
 #include <iostream>
 
@@ -81,14 +82,103 @@ void JobXML::CloseDocument()
    unload();
 }
 
-void JobXML::SaveToFile( std::string strFile )
+void JobXML::SaveToFile(std::string strFile)
 {
    // error check filename
-   if ( strFile.length() == 0 )
+   if (strFile.empty())
    {      
       std::cout << "[Error] Filename: '" << strFile << "' is not valid." << std::endl; 
       return;
    }
+
+#if XERCES_VERSION_MAJOR >= 3
+   DOMLSSerializer* writer;
+   DOMLSOutput* xmlstream;
+   XMLCh* OUTPUT;
+
+   try
+   {
+      OUTPUT = XMLString::transcode(strFile.c_str());
+      xmlstream = mDOMImplementor->createLSOutput();
+      xmlstream->setSystemId(OUTPUT);
+      writer = mDOMImplementor->createLSSerializer();
+   }
+   catch (const OutOfMemoryException &e)
+   {
+      char* message = XMLString::transcode(e.getMessage());
+      std::cout << "[Error] XML writer error:\n  " << message << std::endl;
+      XMLString::release(&message);
+      return;
+   }
+   catch (const DOMException &e)
+   {
+      char* message = XMLString::transcode(e.getMessage());
+      std::cout << "[Error] XML writer error:\n  " << message << std::endl;
+      XMLString::release(&message);
+      return;
+   }
+   catch (...)
+   {      
+      std::cout << "[Error] Creating XML document!" << std::endl;
+      return;
+   }
+
+   // set writer features
+#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
+   XMLCh *newline = XMLString::transcode( "\r\n" );
+   writer->setNewLine( newline );
+   XMLString::release( &newline );
+#else
+   XMLCh *newline = XMLString::transcode( "\n" );
+   writer->setNewLine( newline );
+   XMLString::release( &newline );
+#endif
+
+   if (writer->getDomConfig()->canSetParameter(XMLUni::fgDOMWRTCanonicalForm, true))
+   {
+      writer->getDomConfig()->setParameter(XMLUni::fgDOMWRTCanonicalForm, true);
+   }
+   if (writer->getDomConfig()->canSetParameter(XMLUni::fgDOMCDATASections, true))
+   {
+      writer->getDomConfig()->setParameter(XMLUni::fgDOMCDATASections, true);
+   }
+   if (writer->getDomConfig()->canSetParameter(XMLUni::fgDOMWRTDiscardDefaultContent, true))
+   {
+      writer->getDomConfig()->setParameter(XMLUni::fgDOMWRTDiscardDefaultContent, true);
+   }
+   if (writer->getDomConfig()->canSetParameter(XMLUni::fgDOMWRTFormatPrettyPrint, true))
+   {
+      writer->getDomConfig()->setParameter(XMLUni::fgDOMWRTFormatPrettyPrint, true);
+   }
+   if (writer->getDomConfig()->canSetParameter(XMLUni::fgDOMWRTBOM, true))
+   {
+      writer->getDomConfig()->setParameter(XMLUni::fgDOMWRTBOM, true);
+   }
+
+   try
+   {
+      if (!writer->write(mDocument, xmlstream))
+      {
+         std::cout << "[Error] There was a problem writing file, " << strFile;
+      }
+   }
+   catch (const OutOfMemoryException& e)
+   {
+      char* message = XMLString::transcode(e.getMessage());
+      std::string msg(message);
+      XMLString::release(&message);
+      std::cout << "[Error] When writing file," << strFile << ", an OutOfMemoryException occurred." + msg;
+      delete xmlstream;
+   }
+   catch (...)
+   {
+      std::cout << "[Error] When writing file," << strFile << ", an exception occurred.";
+      delete xmlstream;
+   }
+
+   XMLString::release(&OUTPUT);
+   writer->release();
+#else
 
    // locals
    DOMWriter *writer = NULL;
@@ -136,8 +226,6 @@ void JobXML::SaveToFile( std::string strFile )
    // set writer features
    if ( writer->canSetFeature( XMLUni::fgDOMWRTCanonicalForm, true ) )
       writer->setFeature( XMLUni::fgDOMWRTCanonicalForm, true );
-   //if ( writer->canSetFeature( XMLUni::fgDOMXMLDeclaration, true ) )
-   //   writer->setFeature( XMLUni::fgDOMXMLDeclaration, true );
    if ( writer->canSetFeature( XMLUni::fgDOMWRTSplitCdataSections, true ) )
       writer->setFeature( XMLUni::fgDOMWRTSplitCdataSections, true );
    if ( writer->canSetFeature( XMLUni::fgDOMWRTDiscardDefaultContent, true ) )
@@ -147,19 +235,6 @@ void JobXML::SaveToFile( std::string strFile )
    if ( writer->canSetFeature( XMLUni::fgDOMWRTBOM, true ) )
       writer->setFeature( XMLUni::fgDOMWRTBOM, true ); // byte-order-mark
 
-   /*
-   // set filter
-   DOMWriterFilter *filter = new DOMWriterFilter(
-      DOMNodeFilter::SHOW_ALL       |
-      DOMNodeFilter::SHOW_DOCUMENT  |
-      DOMNodeFilter::SHOW_ELEMENT   |
-      DOMNodeFilter::SHOW_ATTRIBUTE |
-      DOMNodeFilter::SHOW_DOCUMENT_TYPE );
-   writer->setFilter( filter );
-   */
-
-   // is this necessary?
-   //mDocument->normalizeDocument();
 
    // do it
    XMLCh *filename = XMLString::transcode( strFile.c_str() );   
@@ -167,7 +242,9 @@ void JobXML::SaveToFile( std::string strFile )
    XMLString::release( &filename );
 
    // cleanup
-   writer->release();   
+   writer->release();
+#endif
+
 }
 
 XMLNode *JobXML::AddElement( XMLNode *parent, std::string element, std::string content )

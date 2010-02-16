@@ -43,16 +43,27 @@ bool PackageProfile::LoadPackageProfile(const std::string &filename)
 
    // create parser
    static const XMLCh gLS[] = { chLatin_L, chLatin_S, chNull };
-   DOMImplementation *impl=DOMImplementationRegistry::getDOMImplementation(gLS);
+   DOMImplementation *impl = DOMImplementationRegistry::getDOMImplementation(gLS);
+
+#if XERCES_VERSION_MAJOR >= 3
+   mParser = impl->createLSParser(DOMImplementationLS::MODE_SYNCHRONOUS, NULL);
+   // initialize parser
+   mParser->getDomConfig()->setParameter(XMLUni::fgDOMNamespaces, false);
+   mParser->getDomConfig()->setParameter(XMLUni::fgXercesSchema, false);
+   mParser->getDomConfig()->setParameter(XMLUni::fgXercesSchemaFullChecking, false);
+   mParser->getDomConfig()->setParameter(XMLUni::fgDOMValidate, false);
+   mParser->getDomConfig()->setParameter(XMLUni::fgDOMDatatypeNormalization, false);
+#else
    mParser = ((DOMImplementationLS*)impl)->createDOMBuilder(
       DOMImplementationLS::MODE_SYNCHRONOUS, 0 );
-
    // initialize parser
    mParser->setFeature( XMLUni::fgDOMNamespaces, false );
    mParser->setFeature( XMLUni::fgXercesSchema, false );
    mParser->setFeature( XMLUni::fgXercesSchemaFullChecking, false );
    mParser->setFeature( XMLUni::fgDOMValidation, false );
    mParser->setFeature( XMLUni::fgDOMDatatypeNormalization, false );
+#endif
+
 
    std::string resolvedFilename = ResolveEnvironmentVariables(filename);
 
