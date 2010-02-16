@@ -16,6 +16,7 @@
 // xerces
 #include <xercesc/util/XercesDefs.hpp>
 #include <xercesc/dom/DOM.hpp>
+#include <xercesc/util/XercesVersion.hpp>
 // ansi
 #include <string>
 #include <vector>
@@ -354,7 +355,11 @@ class PackageProfile
                                    std::vector<Options> &options );
 
    private:
+#if XERCES_VERSION_MAJOR >= 3
+      DOMLSParser*                 mParser;
+#else
       DOMBuilder*                  mParser;
+#endif
       DOMDocument*                 mDocument;
       std::vector<const XMLNode*>  mXmlSearchQueue;
       std::string                  mOutput;
