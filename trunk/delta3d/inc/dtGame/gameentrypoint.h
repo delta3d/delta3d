@@ -21,20 +21,10 @@
 
 #ifndef DELTA_GAME_ENTRY_POINT
 #define DELTA_GAME_ENTRY_POINT
-
-#include <dtCore/refptr.h>
-#include <dtUtil/exception.h>
-#include <dtUtil/breakoverride.h>
-#include <dtGame/gamemanager.h>
-
-namespace dtCore
-{
-   class Scene;
-}
+#include <dtGame/export.h>
 
 namespace dtGame
 {
-   //class GameManager;
    class GameApplication;
 
    /**
@@ -60,7 +50,7 @@ namespace dtGame
     * @endcode
     * @see dtGame::GameApplication::Config()
     */
-   class GameEntryPoint
+   class DT_GAME_EXPORT GameEntryPoint
    {
    public:
       GameEntryPoint() {}
@@ -103,17 +93,6 @@ namespace dtGame
        */
       virtual void OnShutdown(GameApplication &app) { }
 
-   private:
-      // Deprecated in version 1.5
-      BREAK_OVERRIDE(OnStartup(dtGame::GameManager&));
-      BREAK_OVERRIDE(OnShutdown(dtGame::GameManager&));
-
-      // Deprecated 10/02/07
-      BREAK_OVERRIDE(OnStartup());
-      BREAK_OVERRIDE(OnShutdown());
-      BREAK_OVERRIDE(CreateGameManager(dtCore::Scene& scene));
-      BREAK_OVERRIDE(GetGameManager());
-      BREAK_OVERRIDE(SetGameManager(dtGame::GameManager &));
    };
 
 } // namespace dtGame
