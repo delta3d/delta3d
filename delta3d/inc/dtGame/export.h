@@ -25,7 +25,7 @@
 /**
  * This is modeled from the DT_EXPORT macro found in dtCore/export.h.
  * We define another due to conflicts with using the DT_EXPORT while
- * trying to import Delta3D symbols.  The DT_GAME_LIB macro should be used
+ * trying to import Delta3D symbols.  The DT_GAME_EXPORT macro should be used
  * in front of any classes that are to be exported from this library.
  * Also note that DT_GAME_LIBRARY should be defined in the compiler
  * preprocessor #defines.
