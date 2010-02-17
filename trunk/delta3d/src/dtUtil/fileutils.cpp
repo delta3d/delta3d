@@ -197,7 +197,7 @@ namespace dtUtil
          pSrcFile = fopen(strSrc.c_str(), "rb");
          if (pSrcFile == NULL)
          {
-            throw dtUtil::FileIOException(
+            throw dtUtil::FileUtilIOException(
                    std::string("Unable to open source file for reading: \"") + strSrc + "\"", __FILE__, __LINE__);
          }
 
@@ -241,7 +241,7 @@ namespace dtUtil
 
             if (FileExists(destFile) && !bOverwrite)
             {
-               throw dtUtil::FileIOException(
+               throw dtUtil::FileUtilIOException(
                       std::string("Destination file exists, but overwriting is turned off: \"") + destFile + "\"", __FILE__, __LINE__);
             }
 
@@ -250,7 +250,7 @@ namespace dtUtil
             if (pDestFile == NULL)
             {
                // make sure to close the source file.
-               throw dtUtil::FileIOException(
+               throw dtUtil::FileUtilIOException(
                       std::string("Unable to open destination for writing: \"") + destFile + "\"", __FILE__, __LINE__);
             }
 
@@ -272,7 +272,7 @@ namespace dtUtil
                      size_t numWritten = fwrite(buffer, 1, readCount, pDestFile);
                      if (numWritten < readCount)
                      {
-                        throw dtUtil::FileIOException(
+                        throw dtUtil::FileUtilIOException(
                                std::string("Unable to write to destinate file: \"") + destFile + "\"", __FILE__, __LINE__);
                      }
                      i += readCount;
@@ -343,7 +343,7 @@ namespace dtUtil
 
       if (ft != FILE_NOT_FOUND && !bOverwrite)
       {
-         throw dtUtil::FileIOException(
+         throw dtUtil::FileUtilIOException(
                 std::string("Destination file exists and the call was not set to overwrite: \"") + strDest + "\"", __FILE__, __LINE__);
       }
 
@@ -365,7 +365,7 @@ namespace dtUtil
       // attempt to delete the original file.
       if (unlink(strSrc.c_str()) != 0)
       {
-         throw dtUtil::FileIOException(
+         throw dtUtil::FileUtilIOException(
                 std::string("Unable to delete \"") + strSrc + "\" but file copied to new location.", __FILE__, __LINE__);
       }
    }
@@ -383,13 +383,13 @@ namespace dtUtil
 
       if (ft != REGULAR_FILE)
       {
-         throw dtUtil::FileIOException(
+         throw dtUtil::FileUtilIOException(
                 std::string("File \"") + strFile + "\" is a directory.", __FILE__, __LINE__);
       }
 
       if (unlink(strFile.c_str()) != 0)
       {
-         throw dtUtil::FileIOException(
+         throw dtUtil::FileUtilIOException(
                 std::string("Unable to delete \"") + strFile + "\".", __FILE__, __LINE__);
       }
    }
@@ -570,7 +570,7 @@ namespace dtUtil
       char* bufAddress = getcwd(buf, 512);
       if (buf != bufAddress)
       {
-         throw dtUtil::FileIOException( std::string("Cannot get current working directory"), __FILE__, __LINE__);
+         throw dtUtil::FileUtilIOException( std::string("Cannot get current working directory"), __FILE__, __LINE__);
       }
 
       mCurrentDirectory = buf;
@@ -631,7 +631,7 @@ namespace dtUtil
          char* bufAddress = getcwd(buf, 512);
          if (bufAddress != buf)
          {
-            throw dtUtil::FileIOException( std::string("Cannot get current working directory"), __FILE__, __LINE__);
+            throw dtUtil::FileUtilIOException( std::string("Cannot get current working directory"), __FILE__, __LINE__);
          }
          result = buf;
       }
@@ -689,7 +689,7 @@ namespace dtUtil
       }
       else if (ft.fileType == REGULAR_FILE)
       {
-         throw dtUtil::FileIOException(
+         throw dtUtil::FileUtilIOException(
                 std::string("Path does not specify a directory: \"") + path + "\".", __FILE__, __LINE__);
       }
 
@@ -846,7 +846,7 @@ namespace dtUtil
          if ((copyContentsOnly && fullSrcPath == fullDestPath)
               || (!copyContentsOnly && osgDB::getFilePath(fullSrcPath) == fullDestPath))
          {
-            throw dtUtil::FileIOException(
+            throw dtUtil::FileUtilIOException(
                    std::string("The source equals the destination: \"") + srcPath + "\"", __FILE__, __LINE__);
          }
 
@@ -857,7 +857,7 @@ namespace dtUtil
 
             if (DirExists(fullDestPath) && !bOverwrite)
             {
-               throw dtUtil::FileIOException(
+               throw dtUtil::FileUtilIOException(
                            std::string("Cannot overwrite directory (overwrite flag is false): \"") + srcPath + "\"",
                            __FILE__, __LINE__);
             }
@@ -961,7 +961,7 @@ namespace dtUtil
          }
          else
          {
-            throw dtUtil::FileIOException(
+            throw dtUtil::FileUtilIOException(
                    std::string("Unable to delete directory \"") + strDir + "\":" + strerror(errno), __FILE__, __LINE__);
          }
       }
@@ -976,7 +976,7 @@ namespace dtUtil
          FileType ft = GetFileInfo(strDir).fileType;
          if (ft == REGULAR_FILE)
          {
-            throw dtUtil::FileIOException( std::string("Cannot create directory. ")
+            throw dtUtil::FileUtilIOException( std::string("Cannot create directory. ")
                    + strDir + " is an existing non-directory file.", __FILE__, __LINE__);
          }
          else if (ft == DIRECTORY)
@@ -991,7 +991,7 @@ namespace dtUtil
          }
          else
          {
-            throw dtUtil::FileIOException( std::string("Cannot create directory ") + strDir + ".", __FILE__, __LINE__);
+            throw dtUtil::FileUtilIOException( std::string("Cannot create directory ") + strDir + ".", __FILE__, __LINE__);
          }
       }
    }
@@ -1094,7 +1094,7 @@ namespace dtUtil
             errno = 0;
             if (unlink(i->c_str()) < 0)
             {
-               throw dtUtil::FileIOException(
+               throw dtUtil::FileUtilIOException(
                       std::string("Unable to delete directory \"") + *i + "\":" + strerror(errno), __FILE__, __LINE__);
             }
          }
@@ -1119,7 +1119,7 @@ namespace dtUtil
                }
                else
                {
-                  throw dtUtil::FileIOException(
+                  throw dtUtil::FileUtilIOException(
                          std::string("Unable to delete directory \"") + mCurrentDirectory + PATH_SEPARATOR + *i + "\":" + strerror(errno), __FILE__, __LINE__);
 
                }
@@ -1235,7 +1235,7 @@ namespace dtUtil
    }*/
 
    ////////////////////////////////////////////////////////////////////////////////
-   FileIOException::FileIOException(const std::string& message, const std::string& filename, unsigned int linenum)
+   FileUtilIOException::FileUtilIOException(const std::string& message, const std::string& filename, unsigned int linenum)
       : dtUtil::Exception(message, filename, linenum)
    {
       mType = &dtUtil::FileExceptionEnum::IOException;

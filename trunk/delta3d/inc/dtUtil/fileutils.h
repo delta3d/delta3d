@@ -80,11 +80,11 @@ namespace dtUtil
          }
    };
 
-   class FileIOException : public dtUtil::Exception
+   class FileUtilIOException : public dtUtil::Exception
    {
    public:
-   	FileIOException(const std::string& message, const std::string& filename, unsigned int linenum);
-   	virtual ~FileIOException() {};
+   	FileUtilIOException(const std::string& message, const std::string& filename, unsigned int linenum);
+   	virtual ~FileUtilIOException() {};
    };
    
    class FileNotFoundException : public dtUtil::Exception
