@@ -23,11 +23,13 @@
 #define DELTA_LMS_EXCEPTION_ENUM
 
 #include <dtUtil/enumeration.h>
+#include <dtUtil/exception.h>
 #include <dtLMS/export.h>
 
 namespace dtLMS
 {
    /**
+    * DEPRECATE 2/16/10 use derived Exceptions instead
     * This class is an enumeration which defines LmsClientSocket exceptions.
     */
    class DT_LMS_EXPORT LmsExceptionEnum : public dtUtil::Enumeration
@@ -47,7 +49,23 @@ namespace dtLMS
          AddInstance(this);
       }
    };
+
+   ///Exception enumeration used for general game manager exceptions.
+   class LMSConnectionException : public dtUtil::Exception
+   {
+   public:
+   	LMSConnectionException(const std::string& message, const std::string& filename, unsigned int linenum);
+   	virtual ~LMSConnectionException() {};
+   };
+   
+   ///Exception enumeration used for method invalid parameters.
+   class LMSInvalidMessageException : public dtUtil::Exception
+   {
+   public:
+   	LMSInvalidMessageException(const std::string& message, const std::string& filename, unsigned int linenum);
+   	virtual ~LMSInvalidMessageException() {};
+   };
+   
 } // namespace dtLMS
 
 #endif // DELTA_LMS_EXCEPTION_ENUM
-/*DELTA_GAME_LMS_throw dtUtil::ExceptionION_ENUM*/

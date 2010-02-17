@@ -53,7 +53,7 @@ namespace dtCore
       dtCore::RefPtr<osg::Texture2D> tex2D;
 
       if (GetTexture().empty() && GetTextureSourceType() != ShaderParamTexture::TextureSourceType::AUTO)
-         throw dtUtil::Exception(ShaderParameterException::INVALID_ATTRIBUTE,"Cannot attach to render state.  Texture "
+         throw dtCore::ShaderParameterInvalidAttributeException("Cannot attach to render state.  Texture "
                "for parameter " + GetName() + " has not been specified.", __FILE__, __LINE__);
 
       osg::Uniform *uniform = NULL;
@@ -162,7 +162,7 @@ namespace dtCore
             image = new osg::Image(); // gotta have some sort of image placeholder
             LOG_ALWAYS("Could not find image for shader parameter [" + GetName() + "] at location [" + 
                GetTexture() + "].");
-            //throw dtUtil::Exception(ShaderParameterException::INVALID_ATTRIBUTE,"Could not find image for texture at location: " + GetTexture());
+            //throw dtCore::ShaderParameterInvalidAttributeException("Could not find image for texture at location: " + GetTexture());
          }
 
          osg::Texture2D *tex2D = static_cast<osg::Texture2D*>(GetTextureObject());

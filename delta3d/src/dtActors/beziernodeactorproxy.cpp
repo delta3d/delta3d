@@ -121,7 +121,7 @@ namespace dtActors
       {
          bcp = dynamic_cast<dtABC::BezierControlPoint*> (controlPoint->GetActor());
          if (bcp == NULL)
-            throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+            throw dtDAL::InvalidActorException( 
                "Actor should be type dtABC::BezierControlPoint", __FILE__, __LINE__);
       }
       //set the actual node on the control point.
@@ -168,7 +168,7 @@ namespace dtActors
       {
          bcp = dynamic_cast<dtABC::BezierControlPoint*> (controlPoint->GetActor());
          if (bcp == NULL)
-            throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+            throw dtDAL::InvalidActorException( 
                "Actor should be type dtABC::BezierControlPoint", __FILE__, __LINE__);
       }
 
@@ -216,7 +216,7 @@ namespace dtActors
       {
          nbn = dynamic_cast<dtABC::BezierNode*> (node->GetActor());
          if (nbn == NULL)
-            throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+            throw dtDAL::InvalidActorException( 
                "Actor should be type dtABC::BezierNode", __FILE__, __LINE__);
       }
 

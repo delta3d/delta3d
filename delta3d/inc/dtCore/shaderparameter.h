@@ -23,6 +23,7 @@
 
 #include <dtCore/export.h>
 #include <dtUtil/enumeration.h>
+#include <dtUtil/exception.h>
 #include <dtCore/refptr.h>
 #include <osg/Referenced>
 #include <string>
@@ -41,6 +42,7 @@ namespace dtCore
    class ShaderProgram;
 
    /**
+    * DEPRECATE 2/16/10 use derived Exceptions instead
     * Exceptions a shader parameter may throw.
     */
    class DT_CORE_EXPORT ShaderParameterException : public dtUtil::Enumeration
@@ -58,6 +60,14 @@ namespace dtCore
             AddInstance(this);
          }
    };
+
+   class ShaderParameterInvalidAttributeException : public dtUtil::Exception
+   {
+   public:
+   	ShaderParameterInvalidAttributeException(const std::string& message, const std::string& filename, unsigned int linenum);
+   	virtual ~ShaderParameterInvalidAttributeException() {};
+   };
+   
 
    /**
     * This class wraps parameters that may be passed on to Delta3D

@@ -27,6 +27,7 @@
 #include <dtCore/refptr.h>
 #include <osg/Referenced>
 #include <dtUtil/enumeration.h>
+#include <dtUtil/exception.h>
 #include <dtUtil/export.h>
 
 namespace dtUtil
@@ -62,6 +63,7 @@ namespace dtUtil
    };
 
    /**
+    * DEPRECATE 2/16/10 use derived Exceptions instead
     * @brief An enumeration of exception types that will be thrown by fileutils.
     */
    class DT_UTIL_EXPORT FileExceptionEnum : public dtUtil::Enumeration
@@ -77,6 +79,21 @@ namespace dtUtil
             AddInstance(this);
          }
    };
+
+   class FileIOException : public dtUtil::Exception
+   {
+   public:
+   	FileIOException(const std::string& message, const std::string& filename, unsigned int linenum);
+   	virtual ~FileIOException() {};
+   };
+   
+   class FileNotFoundException : public dtUtil::Exception
+   {
+   public:
+   	FileNotFoundException(const std::string& message, const std::string& filename, unsigned int linenum);
+   	virtual ~FileNotFoundException() {};
+   };
+   
 
    /**
     * @name FileUtils

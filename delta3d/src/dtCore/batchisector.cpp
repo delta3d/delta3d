@@ -196,7 +196,7 @@ namespace dtCore
    {
       if (CheckBoundsOnArray(nIndexID) == false)
       {
-         throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_PARAMETER,
+         throw dtCore::InvalidParameterException(
                   "EnableAndGetISector sent in bad index", __FILE__, __LINE__);
       }
       mISectors[nIndexID]->ToggleIsOn(true);
@@ -208,7 +208,7 @@ namespace dtCore
    {
       if (CheckBoundsOnArray(nIndexID) == false)
       {
-         throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_PARAMETER,
+         throw dtCore::InvalidParameterException(
                   "EnableAndGetISector sent in bad index", __FILE__, __LINE__);
       }
       return *mISectors[nIndexID].get();

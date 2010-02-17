@@ -419,7 +419,7 @@ namespace dtActors
    void TaskActorProxy::AddSubTask(TaskActorProxy &subTask)
    {
       if (FindSubTask(subTask.GetGameActor().GetUniqueId()) != NULL)
-         throw dtUtil::Exception(dtGame::ExceptionEnum::INVALID_PARAMETER,
+         throw dtGame::InvalidParameterException(
          "Cannot add a duplicate sub task." , __FILE__, __LINE__);
 
       if (subTask.GetParentTask() != NULL)
@@ -433,7 +433,7 @@ namespace dtActors
    void TaskActorProxy::AddSubTask(dtCore::UniqueId id)
    {
       if (FindSubTask(id) != NULL)
-         throw dtUtil::Exception(dtGame::ExceptionEnum::INVALID_PARAMETER,
+         throw dtGame::InvalidParameterException(
          "Cannot add a duplicate sub task." , __FILE__, __LINE__);
 
       mSubTasks.push_back(id);

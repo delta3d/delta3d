@@ -53,6 +53,22 @@ namespace dtGame
                virtual ~MessageFactoryException() {}
          };
 
+         class MessageTypeAlreadyRegisteredException : public dtUtil::Exception
+         {
+         public:
+         	MessageTypeAlreadyRegisteredException(const std::string& message, const std::string& filename, unsigned int linenum);
+         	virtual ~MessageTypeAlreadyRegisteredException() {};
+         };
+
+         class MessageTypeNotRegisteredException : public dtUtil::Exception
+         {
+         public:
+         	MessageTypeNotRegisteredException(const std::string& message, const std::string& filename, unsigned int linenum);
+         	virtual ~MessageTypeNotRegisteredException() {};
+         };
+         
+         
+
          /// Constructor
          MessageFactory(const std::string& name, const MachineInfo& machine, const std::string& desc = "");
 

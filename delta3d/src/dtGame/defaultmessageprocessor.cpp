@@ -143,7 +143,7 @@ namespace dtGame
          GetGameManager()->FindPrototypeByName(prototypeName, prototypeProxy);
          if (prototypeProxy == NULL)
          {
-            throw dtUtil::Exception(dtGame::ExceptionEnum::INVALID_PARAMETER, "The prototypeName parameter with value \""
+            throw dtGame::InvalidParameterException( "The prototypeName parameter with value \""
                + prototypeName + "\" is invalid. No such prototype exists. Remote actor will not be created.", __FILE__, __LINE__);
          }
 
@@ -159,7 +159,7 @@ namespace dtGame
             const std::string& typeName = msg.GetActorTypeName();
             const std::string& catName = msg.GetActorTypeCategory();
 
-            throw dtUtil::Exception(dtGame::ExceptionEnum::INVALID_PARAMETER, "The actor type parameters with value \""
+            throw dtGame::InvalidParameterException( "The actor type parameters with value \""
               + catName + "." + typeName + "\" are invalid because no such actor type is registered.", __FILE__, __LINE__);
          }
          gap = GetGameManager()->CreateRemoteGameActor(*type);
@@ -217,8 +217,7 @@ namespace dtGame
             }
             catch (const dtUtil::Exception& ex)
             {
-               LOG_ERROR(ex.TypeEnum().GetName()
-                  + " exception encountered trying to create a remote actor.  The actor will be ignored. Message: " + ex.What());
+               LOG_ERROR("Exception encountered trying to create a remote actor.  The actor will be ignored. Message: " + ex.What());
             }
          }
       }

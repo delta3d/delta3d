@@ -385,7 +385,7 @@ namespace dtGame
             mLogStatus.SetCurrentRecordDuration(mLogStream->GetRecordDuration());
             if (kfList.empty())
             {
-               throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION, "Malformed log.  No initial "
+               throw dtGame::LogStreamIOException( "Malformed log.  No initial "
                   "keyframe could be found in the log.", __FILE__, __LINE__);
             }
 
@@ -900,7 +900,7 @@ namespace dtGame
       dtCore::RefPtr<Message> kfMsg = mLogStream->ReadMessage(simTime);
       if (!kfMsg.valid() || kfMsg->GetMessageType() != MessageType::LOG_COMMAND_BEGIN_LOADKEYFRAME_TRANS)
       {
-         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION, "Malformed keyframe detected in the log "
+         throw dtGame::LogStreamIOException( "Malformed keyframe detected in the log "
             "stream.  Cannot proceed.", __FILE__, __LINE__);
       }
 

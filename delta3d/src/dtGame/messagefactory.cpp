@@ -147,7 +147,7 @@ namespace dtGame
       if (msg == NULL)
       {
          LOGN_ERROR("messagefactory.cpp", "Object factory returned NULL, the message could not be created");
-         throw dtUtil::Exception(MessageFactory::MessageFactoryException::TYPE_NOT_REGISTERED,
+         throw dtGame::MessageFactory::MessageTypeNotRegisteredException(
             std::string("Could not create type ") + msgType.GetName(), __FILE__, __LINE__);
       }
       msg->SetMessageType(msgType);
@@ -190,7 +190,7 @@ namespace dtGame
          std::ostringstream ss;
          ss << "Message ID: " << id << " was not found in the message "
             "type map.";
-         throw dtUtil::Exception(MessageFactoryException::TYPE_NOT_REGISTERED,ss.str(), __FILE__, __LINE__);
+         throw dtGame::MessageFactory::MessageTypeNotRegisteredException(ss.str(), __FILE__, __LINE__);
       }
 
       return *itor->second;
@@ -213,7 +213,25 @@ namespace dtGame
    {
       std::ostringstream ss;
       ss << "A MessageType with id " << type.GetId() << " has already been registered.";
-      throw dtUtil::Exception(MessageFactory::MessageFactoryException::TYPE_ALREADY_REGISTERED,
+      throw dtGame::MessageFactory::MessageTypeAlreadyRegisteredException(
          ss.str(), __FILE__, __LINE__);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   MessageFactory::MessageTypeAlreadyRegisteredException::MessageTypeAlreadyRegisteredException(const std::string& message,
+                                                                                                const std::string& filename,
+                                                                                                unsigned int linenum)
+      :dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &MessageFactory::MessageFactoryException::TYPE_ALREADY_REGISTERED;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   MessageFactory::MessageTypeNotRegisteredException::MessageTypeNotRegisteredException(const std::string& message,
+                                                                                        const std::string& filename,
+                                                                                        unsigned int linenum)
+      :dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &MessageFactory::MessageFactoryException::TYPE_NOT_REGISTERED;
    }
 }

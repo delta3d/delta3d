@@ -27,4 +27,18 @@ namespace dtLMS
 
    LmsExceptionEnum LmsExceptionEnum::LMS_CONNECTION_EXCEPTION("Lms Connectivity Exception");
    LmsExceptionEnum LmsExceptionEnum::INVALID_LMS_MESSAGE_EXCEPTION("Invalid Lms Message Exception");   
+
+   ////////////////////////////////////////////////////////////////////////////////
+   LMSConnectionException::LMSConnectionException(const std::string& message, const std::string& filename, unsigned int linenum)
+      : dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &LmsExceptionEnum::LMS_CONNECTION_EXCEPTION;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   LMSInvalidMessageException::LMSInvalidMessageException(const std::string& message, const std::string& filename, unsigned int linenum)
+      : dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &LmsExceptionEnum::INVALID_LMS_MESSAGE_EXCEPTION;
+   }
 }

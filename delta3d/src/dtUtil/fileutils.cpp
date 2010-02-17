@@ -21,6 +21,7 @@
 
 #include <prefix/dtutilprefix-src.h>
 #include <dtUtil/mswinmacros.h>
+#include <dtUtil/macros.h> //for DTUNREFERENCED_PARAMETER
 #include <osg/Version>
 #include <algorithm>
 
@@ -188,7 +189,7 @@ namespace dtUtil
       {
          if (!FileExists(strSrc))
          {
-            throw dtUtil::Exception(FileExceptionEnum::FileNotFound,
+            throw dtUtil::FileNotFoundException(
                    std::string("Source file does not exist: \"") + strSrc + "\"", __FILE__, __LINE__);
          }
 
@@ -196,7 +197,7 @@ namespace dtUtil
          pSrcFile = fopen(strSrc.c_str(), "rb");
          if (pSrcFile == NULL)
          {
-            throw dtUtil::Exception(FileExceptionEnum::IOException,
+            throw dtUtil::FileIOException(
                    std::string("Unable to open source file for reading: \"") + strSrc + "\"", __FILE__, __LINE__);
          }
 
@@ -240,7 +241,7 @@ namespace dtUtil
 
             if (FileExists(destFile) && !bOverwrite)
             {
-               throw dtUtil::Exception(FileExceptionEnum::IOException,
+               throw dtUtil::FileIOException(
                       std::string("Destination file exists, but overwriting is turned off: \"") + destFile + "\"", __FILE__, __LINE__);
             }
 
@@ -249,7 +250,7 @@ namespace dtUtil
             if (pDestFile == NULL)
             {
                // make sure to close the source file.
-               throw dtUtil::Exception(FileExceptionEnum::IOException,
+               throw dtUtil::FileIOException(
                       std::string("Unable to open destination for writing: \"") + destFile + "\"", __FILE__, __LINE__);
             }
 
@@ -271,7 +272,7 @@ namespace dtUtil
                      size_t numWritten = fwrite(buffer, 1, readCount, pDestFile);
                      if (numWritten < readCount)
                      {
-                        throw dtUtil::Exception(FileExceptionEnum::IOException,
+                        throw dtUtil::FileIOException(
                                std::string("Unable to write to destinate file: \"") + destFile + "\"", __FILE__, __LINE__);
                      }
                      i += readCount;
@@ -304,7 +305,7 @@ namespace dtUtil
    {
       if (GetFileInfo(strSrc).fileType != REGULAR_FILE)
       {
-         throw dtUtil::Exception(FileExceptionEnum::FileNotFound,
+         throw dtUtil::FileNotFoundException(
                 std::string("Source file was not found or is a Directory: \"") + strSrc + "\"", __FILE__, __LINE__);
       }
 
@@ -342,7 +343,7 @@ namespace dtUtil
 
       if (ft != FILE_NOT_FOUND && !bOverwrite)
       {
-         throw dtUtil::Exception(FileExceptionEnum::IOException,
+         throw dtUtil::FileIOException(
                 std::string("Destination file exists and the call was not set to overwrite: \"") + strDest + "\"", __FILE__, __LINE__);
       }
 
@@ -364,7 +365,7 @@ namespace dtUtil
       // attempt to delete the original file.
       if (unlink(strSrc.c_str()) != 0)
       {
-         throw dtUtil::Exception(FileExceptionEnum::IOException,
+         throw dtUtil::FileIOException(
                 std::string("Unable to delete \"") + strSrc + "\" but file copied to new location.", __FILE__, __LINE__);
       }
    }
@@ -382,13 +383,13 @@ namespace dtUtil
 
       if (ft != REGULAR_FILE)
       {
-         throw dtUtil::Exception(FileExceptionEnum::IOException,
+         throw dtUtil::FileIOException(
                 std::string("File \"") + strFile + "\" is a directory.", __FILE__, __LINE__);
       }
 
       if (unlink(strFile.c_str()) != 0)
       {
-         throw dtUtil::Exception(FileExceptionEnum::IOException,
+         throw dtUtil::FileIOException(
                 std::string("Unable to delete \"") + strFile + "\".", __FILE__, __LINE__);
       }
    }
@@ -409,7 +410,7 @@ namespace dtUtil
 
       if (stat(choppedStr.c_str(), &tagStat) != 0)
       {
-         // throw dtUtil::Exception(FileExceptionEnum::FileNotFound, std::string("Cannot open file ") + choppedStr);
+         // throw dtUtil::FileNotFoundException( std::string("Cannot open file ") + choppedStr);
          info.fileType = FILE_NOT_FOUND;
          return info;
       }
@@ -563,13 +564,13 @@ namespace dtUtil
    {
       if (chdir(path.c_str()) == -1)
       {
-         throw dtUtil::Exception(FileExceptionEnum::FileNotFound, std::string("Cannot open directory ") + path, __FILE__, __LINE__);
+         throw dtUtil::FileNotFoundException( std::string("Cannot open directory ") + path, __FILE__, __LINE__);
       }
       char buf[512];
       char* bufAddress = getcwd(buf, 512);
       if (buf != bufAddress)
       {
-         throw dtUtil::Exception(FileExceptionEnum::IOException, std::string("Cannot get current working directory"), __FILE__, __LINE__);
+         throw dtUtil::FileIOException( std::string("Cannot get current working directory"), __FILE__, __LINE__);
       }
 
       mCurrentDirectory = buf;
@@ -624,13 +625,13 @@ namespace dtUtil
       {
          if (chdir(relativePath.c_str()) == -1)
          {
-            throw dtUtil::Exception(FileExceptionEnum::FileNotFound, std::string("Cannot open directory ") + relativePath, __FILE__, __LINE__);
+            throw dtUtil::FileNotFoundException( std::string("Cannot open directory ") + relativePath, __FILE__, __LINE__);
          }
          char buf[512];
          char* bufAddress = getcwd(buf, 512);
          if (bufAddress != buf)
          {
-            throw dtUtil::Exception(FileExceptionEnum::IOException, std::string("Cannot get current working directory"), __FILE__, __LINE__);
+            throw dtUtil::FileIOException( std::string("Cannot get current working directory"), __FILE__, __LINE__);
          }
          result = buf;
       }
@@ -683,12 +684,12 @@ namespace dtUtil
       FileInfo ft = GetFileInfo(path);
       if (ft.fileType == FILE_NOT_FOUND)
       {
-         throw dtUtil::Exception(FileExceptionEnum::FileNotFound,
+         throw dtUtil::FileNotFoundException(
                 std::string("Path not Found: \"") + path + "\".", __FILE__, __LINE__);
       }
       else if (ft.fileType == REGULAR_FILE)
       {
-         throw dtUtil::Exception(FileExceptionEnum::IOException,
+         throw dtUtil::FileIOException(
                 std::string("Path does not specify a directory: \"") + path + "\".", __FILE__, __LINE__);
       }
 
@@ -752,7 +753,7 @@ namespace dtUtil
 
       if (destFileType == REGULAR_FILE)
       {
-         throw dtUtil::Exception(FileExceptionEnum::FileNotFound,
+         throw dtUtil::FileNotFoundException(
                 std::string("The destination path must be a directory: \"") + destPath + "\"", __FILE__, __LINE__);
       }
 
@@ -800,7 +801,7 @@ namespace dtUtil
    {
       if (!DirExists(srcPath))
       {
-         throw dtUtil::Exception(FileExceptionEnum::FileNotFound,
+         throw dtUtil::FileNotFoundException(
                 std::string("Source directory does not exist: \"") + srcPath + "\"", __FILE__, __LINE__);
       }
 
@@ -808,7 +809,7 @@ namespace dtUtil
 
       if (destFileType == REGULAR_FILE)
       {
-         throw dtUtil::Exception(FileExceptionEnum::FileNotFound,
+         throw dtUtil::FileNotFoundException(
                 std::string("The destination path must be a directory: \"") + destPath + "\"", __FILE__, __LINE__);
       }
 
@@ -845,7 +846,7 @@ namespace dtUtil
          if ((copyContentsOnly && fullSrcPath == fullDestPath)
               || (!copyContentsOnly && osgDB::getFilePath(fullSrcPath) == fullDestPath))
          {
-            throw dtUtil::Exception(FileExceptionEnum::IOException,
+            throw dtUtil::FileIOException(
                    std::string("The source equals the destination: \"") + srcPath + "\"", __FILE__, __LINE__);
          }
 
@@ -856,7 +857,7 @@ namespace dtUtil
 
             if (DirExists(fullDestPath) && !bOverwrite)
             {
-               throw dtUtil::Exception(FileExceptionEnum::IOException,
+               throw dtUtil::FileIOException(
                            std::string("Cannot overwrite directory (overwrite flag is false): \"") + srcPath + "\"",
                            __FILE__, __LINE__);
             }
@@ -912,23 +913,25 @@ namespace dtUtil
 
             PopDirectory();
          }
-         catch (const dtUtil::Exception& ex)
+         catch (const dtUtil::FileNotFoundException& ex)
          {
+            DTUNREFERENCED_PARAMETER(ex); //squelch "unreferenced" warning
+
             // if we get a file not found trying to recurse into the top directory
             // then the directory does not exist, so there is no need to throw an exception.
-            if (ex.TypeEnum() == FileExceptionEnum::FileNotFound && !DirExists(strDir))
+            if (!DirExists(strDir))
             {
                if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                {
                   mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                                      "Directory %s doesn't exist to delete. Ignoring.", strDir.c_str());
+                     "Directory %s doesn't exist to delete. Ignoring.", strDir.c_str());
                }
                return true;
-            }
-            else
-            {
-               throw ex;
-            }
+           }
+         }
+         catch (const dtUtil::Exception& ex)
+         {
+            throw ex;
          }
       }
       else
@@ -958,7 +961,7 @@ namespace dtUtil
          }
          else
          {
-            throw dtUtil::Exception(FileExceptionEnum::IOException,
+            throw dtUtil::FileIOException(
                    std::string("Unable to delete directory \"") + strDir + "\":" + strerror(errno), __FILE__, __LINE__);
          }
       }
@@ -973,7 +976,7 @@ namespace dtUtil
          FileType ft = GetFileInfo(strDir).fileType;
          if (ft == REGULAR_FILE)
          {
-            throw dtUtil::Exception(FileExceptionEnum::IOException, std::string("Cannot create directory. ")
+            throw dtUtil::FileIOException( std::string("Cannot create directory. ")
                    + strDir + " is an existing non-directory file.", __FILE__, __LINE__);
          }
          else if (ft == DIRECTORY)
@@ -983,12 +986,12 @@ namespace dtUtil
 
          if (!DirExists(osgDB::getFilePath(strDir)))
          {
-            throw dtUtil::Exception(FileExceptionEnum::FileNotFound, std::string("Cannot create directory ")
+            throw dtUtil::FileNotFoundException( std::string("Cannot create directory ")
                    + strDir + ". Parent directory doesn't exist.", __FILE__, __LINE__);
          }
          else
          {
-            throw dtUtil::Exception(FileExceptionEnum::IOException, std::string("Cannot create directory ") + strDir + ".", __FILE__, __LINE__);
+            throw dtUtil::FileIOException( std::string("Cannot create directory ") + strDir + ".", __FILE__, __LINE__);
          }
       }
    }
@@ -1091,7 +1094,7 @@ namespace dtUtil
             errno = 0;
             if (unlink(i->c_str()) < 0)
             {
-               throw dtUtil::Exception(FileExceptionEnum::IOException,
+               throw dtUtil::FileIOException(
                       std::string("Unable to delete directory \"") + *i + "\":" + strerror(errno), __FILE__, __LINE__);
             }
          }
@@ -1116,7 +1119,7 @@ namespace dtUtil
                }
                else
                {
-                  throw dtUtil::Exception(FileExceptionEnum::IOException,
+                  throw dtUtil::FileIOException(
                          std::string("Unable to delete directory \"") + mCurrentDirectory + PATH_SEPARATOR + *i + "\":" + strerror(errno), __FILE__, __LINE__);
 
                }
@@ -1230,4 +1233,18 @@ namespace dtUtil
 
       relPath = sTmp;
    }*/
+
+   ////////////////////////////////////////////////////////////////////////////////
+   FileIOException::FileIOException(const std::string& message, const std::string& filename, unsigned int linenum)
+      : dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &dtUtil::FileExceptionEnum::IOException;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   FileNotFoundException::FileNotFoundException(const std::string& message, const std::string& filename, unsigned int linenum)
+      : dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &dtUtil::FileExceptionEnum::FileNotFound;
+   }
 } // namespace dtUtil

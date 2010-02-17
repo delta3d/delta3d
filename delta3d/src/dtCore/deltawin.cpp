@@ -87,7 +87,7 @@ void DeltaWin::CreateGraphicsWindow(osg::GraphicsContext::Traits& traits,
 
    if (gc.valid() == false)
    {
-      throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_CONTEXT,
+      throw dtCore::InvalidContextException(
          "The graphics context could not be created.",
          __FILE__, __LINE__);
    }

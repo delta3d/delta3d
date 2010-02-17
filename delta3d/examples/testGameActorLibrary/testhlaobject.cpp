@@ -49,7 +49,7 @@ void TestHLAObjectProxy::BuildPropertyMap()
    TestHLAObject* actor = dynamic_cast<TestHLAObject*> (GetActor());
    if (actor == NULL)
    {
-      throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type TestHLAObject", __FILE__, __LINE__);
+      throw dtDAL::InvalidActorException( "Actor should be type TestHLAObject", __FILE__, __LINE__);
    }
 
    AddProperty(
@@ -92,7 +92,7 @@ void TestHLAObjectProxy::SetLastKnownRotation(const osg::Vec3& vec)
    TestHLAObject* e = dynamic_cast<TestHLAObject*> (GetActor());
    if (e == NULL)
    {
-      throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException,
+      throw dtDAL::InvalidActorException(
       "Actor should be type TestHLAObject", __FILE__, __LINE__);
    }
 
@@ -104,7 +104,7 @@ osg::Vec3 TestHLAObjectProxy::GetLastKnownRotation() const
    const TestHLAObject* e = dynamic_cast<const TestHLAObject*> (GetActor());
    if (e == NULL)
    {
-      throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException,
+      throw dtDAL::InvalidActorException(
       "Actor should be type TestHLAObject", __FILE__, __LINE__);
    }
 

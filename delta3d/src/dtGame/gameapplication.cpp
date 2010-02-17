@@ -99,7 +99,7 @@ namespace dtGame
 
       if (libName.empty())
       {
-         throw dtUtil::Exception(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR,
+         throw dtGame::GameApplicationConfigException(
             "The game library name must be set before configuring a application.", __FILE__, __LINE__);
       }
 
@@ -112,7 +112,7 @@ namespace dtGame
       {
          msg.str("");
          msg << "Unable to load game library " << libName;
-         throw dtUtil::Exception(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR,
+         throw dtGame::GameApplicationConfigException(
             msg.str(), __FILE__, __LINE__);
       }
 
@@ -128,7 +128,7 @@ namespace dtGame
          msg.str("");
          msg << "Game libraries must implement the function " <<
                 " \"CreateGameEntryPoint.\"";
-         throw dtUtil::Exception(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR,
+         throw dtGame::GameApplicationConfigException(
             msg.str(), __FILE__, __LINE__);
       }
 
@@ -137,7 +137,7 @@ namespace dtGame
          msg.str("");
          msg << "Game libraries must implement the function " <<
                 " \"DestroyGameEntryPoint.\"";
-         throw dtUtil::Exception(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR,
+         throw dtGame::GameApplicationConfigException(
             msg.str(), __FILE__, __LINE__);
       }
 

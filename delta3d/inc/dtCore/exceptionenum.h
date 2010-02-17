@@ -24,10 +24,12 @@
 
 #include <dtUtil/enumeration.h>
 #include <dtCore/export.h>
+#include <dtUtil/exception.h>
 
 namespace dtCore
 {
    /**
+    * DEPRECATE 2/16/10 use derived Exceptions instead
     * Exceptions for the dtCore namespace
     */
    class DT_CORE_EXPORT ExceptionEnum : public dtUtil::Enumeration
@@ -45,6 +47,21 @@ namespace dtCore
       }
    
    };
+
+   class InvalidParameterException : public dtUtil::Exception
+   {
+   public:
+   	InvalidParameterException(const std::string& message, const std::string& filename, unsigned int linenum);
+   	virtual ~InvalidParameterException() {};
+   };
+   
+   class InvalidContextException : public dtUtil::Exception
+   {
+   public:
+   	InvalidContextException(const std::string& message, const std::string& filename, unsigned int linenum);
+   	virtual ~InvalidContextException() {};
+   };
+   
 }//namespace dtCore
 
-#endif // __DELTA_CORE_throw dtUtil::ExceptionIONENUM_H__
+#endif // __DELTA_CORE_EXCEPTION_ENUM_H__

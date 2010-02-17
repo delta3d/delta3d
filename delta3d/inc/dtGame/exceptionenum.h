@@ -22,11 +22,13 @@
 #define DELTA_GAME_EXCEPTION_ENUM
 
 #include <dtUtil/enumeration.h>
+#include <dtUtil/exception.h>
 #include <dtGame/export.h>
 
 namespace dtGame
 {
 
+   ///DEPRECATE 2/16/10 use derived Exception classes instead
    class DT_GAME_EXPORT ExceptionEnum : public dtUtil::Enumeration
    {
       DECLARE_ENUM(ExceptionEnum);
@@ -46,10 +48,10 @@ namespace dtGame
          ///Exception enumeration used when actors are in invalid states and code can't continue.
          static ExceptionEnum INVALID_ACTOR_STATE;
 
-         ///Game applcation was unable to initialize for some reason.
+         ///Game application was unable to initialize for some reason.
          static ExceptionEnum GAME_APPLICATION_CONFIG_ERROR;
 
-         ///Used when an error occures working with the dead reckoing component.
+         ///Used when an error occurs working with the dead reckoning component.
          static ExceptionEnum DEAD_RECKONING_EXCEPTION;
       protected:
          ExceptionEnum(const std::string &name) : Enumeration(name)
@@ -58,6 +60,61 @@ namespace dtGame
          }
    };
 
+   ///Exception enumeration used for general game manager exceptions.
+   class GeneralGameManagerException : public dtUtil::Exception
+   {
+   public:
+   	GeneralGameManagerException(const std::string& message, const std::string& filename, unsigned int linenum);
+      virtual ~GeneralGameManagerException() {};
+   };
+
+   ///Exception enumeration used for method invalid parameters.
+   class DT_GAME_EXPORT InvalidParameterException : public dtUtil::Exception
+   {
+   public:
+      InvalidParameterException(const std::string& message, const std::string& filename, unsigned int linenum);
+      virtual ~InvalidParameterException() {};
+   }; 
+
+   ///Exception enumeration used when trying to create a actor on the game manager with an unknown type.
+   class UnknownActorTypeException : public dtUtil::Exception
+   {
+   public:
+      UnknownActorTypeException(const std::string& message, const std::string& filename, unsigned int linenum);
+      virtual ~UnknownActorTypeException() {};
+   };
+
+   ///Exception enumeration used when an actor is remote and an operation only applicable to local actors is requested.
+   class ActorIsRemoteException : public dtUtil::Exception
+   {
+   public:
+      ActorIsRemoteException(const std::string& message, const std::string& filename, unsigned int linenum);
+      virtual ~ActorIsRemoteException() {};
+   };
+
+   ///Exception enumeration used when actors are in invalid states and code can't continue.
+   class InvalidActorStateException : public dtUtil::Exception
+   {
+   public:
+      InvalidActorStateException(const std::string& message, const std::string& filename, unsigned int linenum);
+      virtual ~InvalidActorStateException() {};
+   };
+
+   ///Game application was unable to initialize for some reason.
+   class GameApplicationConfigException : public dtUtil::Exception
+   {
+   public:
+      GameApplicationConfigException(const std::string& message, const std::string& filename, unsigned int linenum);
+      virtual ~GameApplicationConfigException() {};
+   };
+
+   ///Used when an error occurs working with the dead reckoning component.
+   class DeadReckoningException : public dtUtil::Exception
+   {
+   public:
+      DeadReckoningException(const std::string& message, const std::string& filename, unsigned int linenum);
+      virtual ~DeadReckoningException() {};
+   };
 }
 
 #endif /*DELTA_GAME_EXCEPTION_ENUM*/
