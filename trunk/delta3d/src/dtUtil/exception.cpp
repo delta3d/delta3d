@@ -33,18 +33,21 @@ namespace dtUtil
    //////////////////////////////////////////////////////////////////////////
    Exception::Exception(Enumeration& type, const std::string& message, const std::string& filename,
          unsigned int lineNum)
-      : mType(type)
+      : mType(&type)
       , mMessage(message)
       , mFileName(filename)
       , mLineNum(lineNum)
    {
+      DEPRECATE("dtUtil::Exception(dtUtil::Enumeration&, const std::string&, const std::string&, unsigned int)",
+                "dtUtil::Exception(const std::string&, const std::string&, unsigned int)");
+
       LogException(dtUtil::Log::LOG_DEBUG, dtUtil::Log::GetInstance());
    }
 
    //////////////////////////////////////////////////////////////////////////
    Exception::Exception(const std::string& message, const std::string& filename,
          unsigned int lineNum)
-      : mType(BaseExceptionType::GENERAL_EXCEPTION)
+      : mType(&BaseExceptionType::GENERAL_EXCEPTION)
       , mMessage(message)
       , mFileName(filename)
       , mLineNum(lineNum)
@@ -86,10 +89,41 @@ namespace dtUtil
       if (logger.IsLevelEnabled(level))
       {
          logger.LogMessage(level,__FUNCTION__, __LINE__,
-               "Exception Thrown: %s File: %s  Line: %d  Type: %s",
-               mMessage.c_str(), mFileName.c_str(), mLineNum,
-               mType.GetName().c_str());
+               "Exception Thrown: %s File: %s  Line: %d",
+               mMessage.c_str(), mFileName.c_str(), mLineNum);
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   Exception::~Exception()
+   {
+
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const std::string& Exception::What() const
+   {
+      return mMessage;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const std::string& Exception::File() const
+   {
+      return mFileName;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   unsigned int Exception::Line() const
+   {
+      return mLineNum;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const Enumeration& Exception::TypeEnum() const
+   {
+      DEPRECATE("const dtUtil::Enumeration& dtUtil::Exception::TypeEnum() const",
+                "N/A");
+      return *mType;
    }
 
    //////////////////////////////////////////////////////////////////////////

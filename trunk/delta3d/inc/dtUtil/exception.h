@@ -27,6 +27,7 @@
 #include <dtUtil/export.h>
 #include <dtUtil/enumeration.h>
 #include <dtUtil/log.h>
+#include <dtUtil/deprecationmgr.h>
 
 namespace dtUtil
 {
@@ -48,25 +49,13 @@ namespace dtUtil
    };
 
    /*
-    * This is the exception class used throughout the dtDAL module.
-    * In most cases the DAL module gracefully handles exceptions and
-    * logs them for you.  However, applications using the dtDAL module
-    * should excercise proper exception handling.
+    * This is the exception class used throughout Delta3D.  Users should derive
+    * and create concrete instances.
     */
    class DT_UTIL_EXPORT Exception
    {
       public:
 
-         /**
-          * Constructor - Initializes the exception and logs it.
-          *  @param type - the type of exception being thrown.
-          *  @param message - Message to display about the exception.
-          *  @param filename - File the exception was thrown from.
-          *  @param linenum - Line number in the file from which the
-          *  exception was thrown.
-          */
-         Exception(Enumeration& type, const std::string& message, const std::string& filename,
-               unsigned int linenum);
 
          /**
           * Constructor - Initializes the exception and logs it.
@@ -75,33 +64,27 @@ namespace dtUtil
           *  @param linenum - Line number in the file from which the
           *  exception was thrown.
           */
-         Exception(const std::string& message, const std::string& filename,
-               unsigned int linenum);
+         Exception(const std::string& message, const std::string& filename, unsigned int linenum);
 
          /*
-          * Destructor - Empty
+          * Destructor
           */
-         virtual ~Exception() { }
+         virtual ~Exception();
 
          /*
           * @return the message to be displayed when this exception is thrown.
           */
-         const std::string& What() const { return mMessage; }
+         const std::string& What() const;
 
          /*
           * @return the filename associated with this exception.
           */
-         const std::string& File() const { return mFileName; }
+         const std::string& File() const;
 
          /**
           * @return the line number associated with this exception.
           */
-         unsigned int Line() const { return mLineNum; }
-
-         /**
-          * @return the enumerated type of the exception.
-          */
-         const Enumeration& TypeEnum() const { return mType; }
+         unsigned int Line() const;
 
          /**
           * Converts this exception to a string.  The string contains the reason,
@@ -135,8 +118,19 @@ namespace dtUtil
           */
          void LogException(dtUtil::Log::LogMessageType level, dtUtil::Log& logger) const;
 
+
+          /**
+           * Deprecated 2/16/10 in favor of Exception(const std::string&, const std::string&, unsigned int) 
+           */
+         /*DEPRECATE_FUNC*/ Exception(Enumeration& type, const std::string& message, const std::string& filename, unsigned int linenum);
+
+         /**
+          * Deprecated 2/16/10
+          */
+         /*DEPRECATE_FUNC*/ const Enumeration& TypeEnum() const;
+
       protected:
-         Enumeration& mType;
+         Enumeration* mType; ///<Deprecated 2/16/10
          std::string mMessage, mFileName;
          unsigned int mLineNum;
    };
