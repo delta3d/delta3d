@@ -179,7 +179,7 @@ namespace dtAI
                            }
                            else if(prop == NULL)
                            {
-                              throw dtUtil::Exception(dtDAL::ExceptionEnum::BaseException,
+                              throw dtDAL::BaseException(
                                  "Error reading Waypoint file '" + filename + ".", __FILE__, __LINE__);
                            }
                         }
@@ -204,7 +204,7 @@ namespace dtAI
                   }
                   else
                   {
-                     throw dtUtil::Exception(dtDAL::ExceptionEnum::BaseException,
+                     throw dtDAL::BaseException(
                         "Error reading Waypoint file '" + filename + ".", __FILE__, __LINE__);
                   }
                }
@@ -212,7 +212,7 @@ namespace dtAI
                ds.Read(fileStart);
                if(fileStart != WaypointFileHeader::FILE_START_END_CHAR)
                {
-                  throw dtUtil::Exception(dtDAL::ExceptionEnum::BaseException,
+                  throw dtDAL::BaseException(
                      "Error reading Waypoint file '" + filename + ".", __FILE__, __LINE__);
                }
 
@@ -267,7 +267,7 @@ namespace dtAI
             }
             else
             {
-               throw dtUtil::Exception(dtDAL::ExceptionEnum::BaseException,
+               throw dtDAL::BaseException(
                   "Error Assigning WaypointCollection children while loading file", __FILE__, __LINE__);
             }
          }
@@ -427,7 +427,7 @@ namespace dtAI
          }
          else
          {
-            throw dtUtil::Exception(dtDAL::ExceptionEnum::BaseException,
+            throw dtDAL::BaseException(
                "Error reading Waypoint file.", __FILE__, __LINE__);
          }
       }

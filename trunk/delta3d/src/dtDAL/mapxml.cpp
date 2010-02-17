@@ -95,7 +95,7 @@ namespace dtDAL
 
       if (!dtUtil::FileUtils::GetInstance().FileExists(schemaFileName))
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectException, "Unable to load required file \"map.xsd\", can not load map.", __FILE__, __LINE__);
+         throw dtDAL::ProjectException( "Unable to load required file \"map.xsd\", can not load map.", __FILE__, __LINE__);
       }
 
       XMLCh* value = XMLString::transcode(schemaFileName.c_str());
@@ -209,12 +209,12 @@ namespace dtDAL
             }
             else
             {
-               throw dtUtil::Exception(dtDAL::ExceptionEnum::MapLoadParsingError, "Parser stopped without finding the map name.", __FILE__, __LINE__);
+               throw dtDAL::MapParsingException( "Parser stopped without finding the map name.", __FILE__, __LINE__);
             }
          }
          else
          {
-            throw dtUtil::Exception(dtDAL::ExceptionEnum::MapLoadParsingError, "Parsing to find the map name did not begin.", __FILE__, __LINE__);
+            throw dtDAL::MapParsingException( "Parsing to find the map name did not begin.", __FILE__, __LINE__);
          }
       }
       catch (const OutOfMemoryException&)
@@ -223,7 +223,7 @@ namespace dtDAL
             mXercesParser->parseReset(token);
 
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Ran out of memory parsing!");
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::MapLoadParsingError, "Ran out of memory parsing save file.", __FILE__, __LINE__);
+         throw dtDAL::MapParsingException( "Ran out of memory parsing save file.", __FILE__, __LINE__);
       }
       catch (const XMLException& toCatch)
       {
@@ -232,7 +232,7 @@ namespace dtDAL
 
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Error during parsing! %ls :\n",
                              toCatch.getMessage());
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::MapLoadParsingError, "Error while parsing map file. See log for more information.", __FILE__, __LINE__);
+         throw dtDAL::MapParsingException( "Error while parsing map file. See log for more information.", __FILE__, __LINE__);
       }
       catch (const SAXParseException&)
       {
@@ -240,7 +240,7 @@ namespace dtDAL
             mXercesParser->parseReset(token);
 
          //this will already by logged by the content handler
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::MapLoadParsingError, "Error while parsing map file. See log for more information.", __FILE__, __LINE__);
+         throw dtDAL::MapParsingException( "Error while parsing map file. See log for more information.", __FILE__, __LINE__);
       }
    }
 
@@ -308,7 +308,7 @@ namespace dtDAL
 
       if (outfile == NULL)
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::MapSaveError, std::string("Unable to open map file \"") + filePath + "\" for writing.", __FILE__, __LINE__);
+         throw dtDAL::MapSaveException( std::string("Unable to open map file \"") + filePath + "\" for writing.", __FILE__, __LINE__);
       }
 
       mFormatTarget.SetOutputFile(outfile);
@@ -629,7 +629,7 @@ namespace dtDAL
                              "Unknown exception while attempting to save map \"%s\".",
                              map.GetName().c_str());
          mFormatTarget.SetOutputFile(NULL);
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::MapSaveError, std::string("Unknown exception saving map \"") + map.GetName() + ("\"."), __FILE__, __LINE__);
+         throw dtDAL::MapSaveException( std::string("Unknown exception saving map \"") + map.GetName() + ("\"."), __FILE__, __LINE__);
       }
    }
 
@@ -642,7 +642,7 @@ namespace dtDAL
 
       if (outfile == NULL)
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::MapSaveError, std::string("Unable to open map file \"") + filePath + "\" for writing.", __FILE__, __LINE__);
+         throw dtDAL::MapSaveException( std::string("Unable to open map file \"") + filePath + "\" for writing.", __FILE__, __LINE__);
       }
 
       mFormatTarget.SetOutputFile(outfile);
@@ -789,7 +789,7 @@ namespace dtDAL
             "Unknown exception while attempting to save prefab \"%s\".",
             filePath.c_str());
          mFormatTarget.SetOutputFile(NULL);
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::MapSaveError, std::string("Unknown exception saving map \"") + filePath + ("\"."), __FILE__, __LINE__);
+         throw dtDAL::MapSaveException( std::string("Unknown exception saving map \"") + filePath + ("\"."), __FILE__, __LINE__);
       }
    }
 }

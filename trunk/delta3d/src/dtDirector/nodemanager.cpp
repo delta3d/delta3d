@@ -114,7 +114,7 @@ namespace dtDirector
          msg.clear();
          msg.str("");
          msg << "Unable to load node registry " << libName;
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectResourceError,msg.str(), __FILE__, __LINE__);
+         throw dtDAL::ProjectResourceErrorException(msg.str(), __FILE__, __LINE__);
       }
         
       dtUtil::LibrarySharingManager::LibraryHandle::SYMBOL_ADDRESS createFn;
@@ -130,7 +130,7 @@ namespace dtDirector
          msg.str("");
          msg << "Node plugin libraries must implement the function " <<
             " CreatePluginRegistry.";
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectResourceError, msg.str(), __FILE__, __LINE__);
+         throw dtDAL::ProjectResourceErrorException( msg.str(), __FILE__, __LINE__);
       }
 
       if (!destroyFn)
@@ -139,7 +139,7 @@ namespace dtDirector
          msg.str("");
          msg << "Node plugin libraries must implement the function " <<
             " DestroyPluginRegistry.";
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectResourceError,msg.str(), __FILE__, __LINE__);
+         throw dtDAL::ProjectResourceErrorException(msg.str(), __FILE__, __LINE__);
       }
 
       // Well we made it here so that means the plugin was loaded
@@ -154,7 +154,7 @@ namespace dtDirector
          msg.str("");
          msg << "Can't add Registry Entry: " << libName << " to Registry. " <<
             "Possibly it might have been added already.";
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectResourceError, msg.str(), __FILE__, __LINE__);
+         throw dtDAL::ProjectResourceErrorException( msg.str(), __FILE__, __LINE__);
       }
    }
 
@@ -325,7 +325,7 @@ namespace dtDirector
       {
          error << "Requested actor type: \"" << nodeType.GetCategory() << "." <<  nodeType.GetName() <<
             "\" but is unknown or has not been registered.";
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ObjectFactoryUnknownType,error.str(), __FILE__, __LINE__);
+         throw dtDAL::ObjectFactoryUnknownTypeException(error.str(), __FILE__, __LINE__);
       }
 
       return found->second;        

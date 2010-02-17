@@ -61,6 +61,7 @@ namespace dtCore
           *    with the same name already exists in the group, an exception is thrown.
           * @param isDefault If true, this shader is set as the default shader.
           * @see GetDefaultShader()
+          * @throw ShaderSourceException
           */
          void AddShader(ShaderProgram &shader, bool isDefault = false);
 

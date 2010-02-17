@@ -51,7 +51,7 @@ namespace dtDAL
    {
       if(newProp == NULL)
       {
-         throw dtUtil::Exception(ExceptionEnum::InvalidParameter,
+         throw dtDAL::InvalidParameterException(
             "AddProperty cannot add a NULL property", __FILE__, __LINE__);
       }
 

@@ -91,7 +91,7 @@ namespace dtDirector
 
       if (!dtUtil::FileUtils::GetInstance().FileExists(schemaFileName))
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectException, "Unable to load required file \"director.xsd\", can not load director script.", __FILE__, __LINE__);
+         throw dtDAL::ProjectException( "Unable to load required file \"director.xsd\", can not load director script.", __FILE__, __LINE__);
       }
 
       XMLCh* value = XMLString::transcode(schemaFileName.c_str());
@@ -161,7 +161,7 @@ namespace dtDirector
 
       if (outfile == NULL)
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::MapSaveError, std::string("Unable to open map file \"") + filePath + "\" for writing.", __FILE__, __LINE__);
+         throw dtDAL::MapSaveException( std::string("Unable to open map file \"") + filePath + "\" for writing.", __FILE__, __LINE__);
       }
 
       mFormatTarget.SetOutputFile(outfile);
@@ -276,7 +276,7 @@ namespace dtDirector
                              "Unknown exception while attempting to save Director script \"%s\".",
                              director->GetName().c_str());
          mFormatTarget.SetOutputFile(NULL);
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::MapSaveError, std::string("Unknown exception saving Director script \"") + director->GetName() + ("\"."), __FILE__, __LINE__);
+         throw dtDAL::MapSaveException( std::string("Unknown exception saving Director script \"") + director->GetName() + ("\"."), __FILE__, __LINE__);
       }
    }
 

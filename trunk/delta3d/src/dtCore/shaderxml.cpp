@@ -138,7 +138,7 @@ namespace dtCore
          std::ostringstream error;
          error << "Error initializing XML toolkit: " << message;
          xercesc::XMLString::release(&message);
-         throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,error.str(), __FILE__, __LINE__);
+         throw ShaderXmlParserException(error.str(), __FILE__, __LINE__);
       }
    }
 
@@ -156,7 +156,7 @@ namespace dtCore
          std::ostringstream error;
          error << "Error shutting down XML toolkit: " << message;
          xercesc::XMLString::release(&message);
-         throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,error.str(), __FILE__, __LINE__);
+         throw ShaderXmlParserException(error.str(), __FILE__, __LINE__);
       }
    }
 
@@ -182,14 +182,14 @@ namespace dtCore
          
          if (shaderList == NULL)
          {
-            throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Shader XML document is empty.", __FILE__, __LINE__);
+            throw ShaderXmlParserException("Shader XML document is empty.", __FILE__, __LINE__);
          }
 
          dtUtil::XMLStringConverter strConv(shaderList->getTagName());
 
          if (strConv.ToString() != ShaderXML::SHADERLIST_ELEMENT)
          {
-            throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Malformed shader list element tag name.", __FILE__, __LINE__);
+            throw ShaderXmlParserException("Malformed shader list element tag name.", __FILE__, __LINE__);
          }
 
          xercesc::DOMNodeList *children = shaderList->getChildNodes();
@@ -221,7 +221,7 @@ namespace dtCore
             message;
 
          xercesc::XMLString::release(&message);
-         throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR, error.str(), __FILE__, __LINE__);
+         throw ShaderXmlParserException( error.str(), __FILE__, __LINE__);
       }
       catch (const xercesc::DOMException& e)
       {
@@ -231,7 +231,7 @@ namespace dtCore
          error << "Error processing DOM:  Reason: " << message;
 
          xercesc::XMLString::release(&message);
-         throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,error.str(), __FILE__, __LINE__);
+         throw ShaderXmlParserException(error.str(), __FILE__, __LINE__);
       }
    }
 
@@ -240,7 +240,7 @@ namespace dtCore
    {
       dtUtil::XMLStringConverter strConv(shaderGroupElem->getTagName());
       if (strConv.ToString() != ShaderXML::SHADERGROUP_ELEMENT)
-         throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Malformed shader group element tag name.", __FILE__, __LINE__);
+         throw ShaderXmlParserException("Malformed shader group element tag name.", __FILE__, __LINE__);
 
       //Shader elements only have one attribute (the name) so parse it and continue on.
       std::string groupName = GetElementAttribute(*shaderGroupElem,
@@ -274,7 +274,7 @@ namespace dtCore
          }
          else
          {
-            throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Foreign element found in shader XML source.", __FILE__, __LINE__);
+            throw ShaderXmlParserException("Foreign element found in shader XML source.", __FILE__, __LINE__);
          }
       }
 
@@ -322,7 +322,7 @@ namespace dtCore
          }
          else
          {
-            throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Foreign element found in shader XML source.", __FILE__, __LINE__);
+            throw ShaderXmlParserException("Foreign element found in shader XML source.", __FILE__, __LINE__);
          }
       }
 
@@ -346,7 +346,7 @@ namespace dtCore
 
       if (children->getLength() != 1 || children->item(0)->getNodeType() != xercesc::DOMNode::TEXT_NODE)
       {
-         throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,
+         throw ShaderXmlParserException(
             "Shader source should only have one child text element.", __FILE__, __LINE__);
       }
 
@@ -429,7 +429,7 @@ namespace dtCore
          }
          else
          {
-            throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,
+            throw ShaderXmlParserException(
             "Unknown parameter type element found: '"+toString+"'",
             __FILE__, __LINE__);
          }
@@ -447,7 +447,7 @@ namespace dtCore
             }
             else
             {
-               throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Invalid option for 'shared' on parameter [" +
+               throw ShaderXmlParserException("Invalid option for 'shared' on parameter [" +
                   newParam->GetName() + "]. Shared is optional, to override the default for this parameter type, use 'yes' or 'no'.",
                   __FILE__, __LINE__);
             }
@@ -508,7 +508,7 @@ namespace dtCore
                if (children->getLength() != 1 ||
                   children->item(0)->getNodeType() != xercesc::DOMNode::TEXT_NODE)
                {
-                  throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Shader source should only have one child text element.", __FILE__, __LINE__);
+                  throw ShaderXmlParserException("Shader source should only have one child text element.", __FILE__, __LINE__);
                }
 
                xercesc::DOMText* file = static_cast<xercesc::DOMText*>(children->item(0));
@@ -523,7 +523,7 @@ namespace dtCore
             }
             else
             {
-               throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Unknown texture1D source type.", __FILE__, __LINE__);
+               throw ShaderXmlParserException("Unknown texture1D source type.", __FILE__, __LINE__);
             }
          }
          else if (elemName == ShaderXML::TEXTURE1D_WRAP_ELEMENT)
@@ -538,12 +538,12 @@ namespace dtCore
 
                if (wrapMode == NULL)
                {
-                  throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR, "Invalid address mode of: " + mode +
+                  throw ShaderXmlParserException( "Invalid address mode of: " + mode +
                      " specified for shader parameter: " + paramName, __FILE__, __LINE__);
                }
                if (texAxis == NULL)
                {
-                  throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR, "Invalid texture axis: " + axis +
+                  throw ShaderXmlParserException( "Invalid texture axis: " + axis +
                      " specified for shader parameter: " + paramName, __FILE__, __LINE__);
                }
 
@@ -552,7 +552,7 @@ namespace dtCore
          }
          else
          {
-            throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,
+            throw ShaderXmlParserException(
                "Unknown element in Texture2D parameter.", __FILE__, __LINE__);
          }
       }
@@ -611,7 +611,7 @@ namespace dtCore
                if (children->getLength() != 1 ||
                   children->item(0)->getNodeType() != xercesc::DOMNode::TEXT_NODE)
                {
-                  throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Shader source should only have one child text element.", __FILE__, __LINE__);
+                  throw ShaderXmlParserException("Shader source should only have one child text element.", __FILE__, __LINE__);
                }
 
                xercesc::DOMText* file = static_cast<xercesc::DOMText*>(children->item(0));
@@ -626,7 +626,7 @@ namespace dtCore
             }
             else
             {
-               throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Unknown texture2D source type.", __FILE__, __LINE__);
+               throw ShaderXmlParserException("Unknown texture2D source type.", __FILE__, __LINE__);
             }
          }
          else if (elemName == ShaderXML::TEXTURE2D_WRAP_ELEMENT)
@@ -641,12 +641,12 @@ namespace dtCore
 
                if (wrapMode == NULL)
                {
-                  throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Invalid address mode of: " + mode +
+                  throw ShaderXmlParserException("Invalid address mode of: " + mode +
                         " specified for shader parameter: " + paramName, __FILE__, __LINE__);
                }
                if (texAxis == NULL)
                {
-                  throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Invalid texture axis: " + axis +
+                  throw ShaderXmlParserException("Invalid texture axis: " + axis +
                         " specified for shader parameter: " + paramName, __FILE__, __LINE__);
                }
 
@@ -655,7 +655,7 @@ namespace dtCore
          }
          else
          {
-            throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,
+            throw ShaderXmlParserException(
                "Unknown element in Texture2D parameter.", __FILE__, __LINE__);
          }
       }
@@ -716,7 +716,7 @@ namespace dtCore
                if (children->getLength() != 1 ||
                   children->item(0)->getNodeType() != xercesc::DOMNode::TEXT_NODE)
                {
-                  throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Shader source should only have one child text element.", __FILE__, __LINE__);
+                  throw ShaderXmlParserException("Shader source should only have one child text element.", __FILE__, __LINE__);
                }
 
                xercesc::DOMText* file = static_cast<xercesc::DOMText*>(children->item(0));
@@ -731,7 +731,7 @@ namespace dtCore
             }
             else
             {
-               throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Unknown texture3D source type.", __FILE__, __LINE__);
+               throw ShaderXmlParserException("Unknown texture3D source type.", __FILE__, __LINE__);
             }
          }
          else if (elemName == ShaderXML::TEXTURE3D_WRAP_ELEMENT)
@@ -746,12 +746,12 @@ namespace dtCore
 
                if (wrapMode == NULL)
                {
-                  throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Invalid address mode of: " + mode +
+                  throw ShaderXmlParserException("Invalid address mode of: " + mode +
                         " specified for shader parameter: " + paramName, __FILE__, __LINE__);
                }
                if (texAxis == NULL)
                {
-                  throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Invalid texture axis: " + axis +
+                  throw ShaderXmlParserException("Invalid texture axis: " + axis +
                         " specified for shader parameter: " + paramName, __FILE__, __LINE__);
                }
 
@@ -760,7 +760,7 @@ namespace dtCore
          }
          else
          {
-            throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,
+            throw ShaderXmlParserException(
                "Unknown element in Texture2D parameter.", __FILE__, __LINE__);
          }
       }
@@ -826,7 +826,7 @@ namespace dtCore
                if (children->getLength() != 1 ||
                   children->item(0)->getNodeType() != xercesc::DOMNode::TEXT_NODE)
                {
-                  throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Shader source should only have one child text element.", __FILE__, __LINE__);
+                  throw ShaderXmlParserException("Shader source should only have one child text element.", __FILE__, __LINE__);
                }
 
                xercesc::DOMText* file = static_cast<xercesc::DOMText*>(children->item(0));
@@ -865,7 +865,7 @@ namespace dtCore
             }
             else
             {
-               throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Unknown texture3D source type.", __FILE__, __LINE__);
+               throw ShaderXmlParserException("Unknown texture3D source type.", __FILE__, __LINE__);
             }
          }
          else if (elemName == ShaderXML::TEXTURECUBEMAP_WRAP_ELEMENT)
@@ -880,12 +880,12 @@ namespace dtCore
 
                if (wrapMode == NULL)
                {
-                  throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Invalid address mode of: " + mode +
+                  throw ShaderXmlParserException("Invalid address mode of: " + mode +
                         " specified for shader parameter: " + paramName, __FILE__, __LINE__);
                }
                if (texAxis == NULL)
                {
-                  throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Invalid texture axis: " + axis +
+                  throw ShaderXmlParserException("Invalid texture axis: " + axis +
                         " specified for shader parameter: " + paramName, __FILE__, __LINE__);
                }
 
@@ -894,7 +894,7 @@ namespace dtCore
          }
          else
          {
-            throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,
+            throw ShaderXmlParserException(
                "Unknown element in TextureCubeMap parameter.", __FILE__, __LINE__);
          }
       }
@@ -1030,7 +1030,7 @@ namespace dtCore
             std::ostringstream error;
             error << "Error parseing floattimer on parameter [" << paramName <<
                "] for trigger attribute [" << valueString << "]. Should be 'auto' or 'manual'.";
-            throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR, error.str(), __FILE__, __LINE__);
+            throw ShaderXmlParserException( error.str(), __FILE__, __LINE__);
          }
       }
 
@@ -1051,7 +1051,7 @@ namespace dtCore
             std::ostringstream error;
             error << "Error parsing floattimer on parameter [" << paramName <<
                "] for userealtime attribute [" << valueString << "].  Should be 'true' or 'false'.";
-            throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,error.str(), __FILE__, __LINE__);
+            throw ShaderXmlParserException(error.str(), __FILE__, __LINE__);
          }
       }
 
@@ -1080,7 +1080,7 @@ namespace dtCore
             std::ostringstream error;
             error << "Error parsing floattimer on parameter [" << paramName <<
                "] for oscillation attribute [" << valueString << "].  Should be 'Up', 'Down', 'UpAndDown', or 'DownAndUp'.";
-            throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,error.str(), __FILE__, __LINE__);
+            throw ShaderXmlParserException(error.str(), __FILE__, __LINE__);
          }
       }
 

@@ -294,7 +294,7 @@ namespace dtDAL
             //other parameter does and vice versa.
             if ((IsList() && !otherParam.IsList()) ||(!IsList() && otherParam.IsList()))
             {
-               throw dtUtil::Exception(ExceptionEnum::BaseException,
+               throw dtDAL::BaseException(
                   "Cannot assign two parameters with one being a list of values and the other not.", __FILE__, __LINE__);
             }
 
@@ -322,7 +322,7 @@ namespace dtDAL
          {
             if (IsList())
             {
-               throw dtUtil::Exception(ExceptionEnum::BaseException,
+               throw dtDAL::BaseException(
                   "Cannot call SetValue() on message parameter with a list of values.", __FILE__, __LINE__);
             }
 
@@ -333,7 +333,7 @@ namespace dtDAL
          {
             if (IsList())
             {
-               throw dtUtil::Exception(ExceptionEnum::BaseException,
+               throw dtDAL::BaseException(
                   "Cannot call GetValue() on message parameter with a list of values.", __FILE__, __LINE__);
             }
 
@@ -344,7 +344,7 @@ namespace dtDAL
          {
             if (!IsList())
             {
-               throw dtUtil::Exception(ExceptionEnum::BaseException,
+               throw dtDAL::BaseException(
                   "Cannot retrieve the parameters value list.  Parameter does not contain a list.", __FILE__, __LINE__);
             }
             return *mValueList;
@@ -354,7 +354,7 @@ namespace dtDAL
          {
             if (!IsList())
             {
-               throw dtUtil::Exception(ExceptionEnum::BaseException,
+               throw dtDAL::BaseException(
                   "Cannot retrieve the parameters value list.  Parameter does not contain a list.", __FILE__, __LINE__);
             }
             return *mValueList;
@@ -364,7 +364,7 @@ namespace dtDAL
          {
             if (!IsList())
             {
-               throw dtUtil::Exception(ExceptionEnum::BaseException,
+               throw dtDAL::BaseException(
                   "Cannot set a list of new values on a parameter that is not a list.", __FILE__, __LINE__);
             }
 

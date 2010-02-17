@@ -721,21 +721,24 @@ namespace dtDirector
          mDirector->AddLibrary(mLibName, mLibVersion);
          ClearLibraryValues();
       }
+      catch (const dtDAL::ProjectResourceErrorException& e)
+      {
+         mMissingLibraries.push_back(mLibName);
+
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+            "Error loading node library %s version %s in the director node manager.  Exception message to follow.",
+            mLibName.c_str(), mLibVersion.c_str());
+
+         e.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
+      }
       catch (const dtUtil::Exception& e)
       {
          mMissingLibraries.push_back(mLibName);
-         if (dtDAL::ExceptionEnum::ProjectResourceError == e.TypeEnum())
-         {
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-               "Error loading node library %s version %s in the director node manager.  Exception message to follow.",
-               mLibName.c_str(), mLibVersion.c_str());
-         }
-         else
-         {
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-               "Unknown exception loading node library %s version %s in the director node manager.  Exception message to follow.",
-               mLibName.c_str(), mLibVersion.c_str());
-         }
+
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+            "Unknown exception loading node library %s version %s in the director node manager.  Exception message to follow.",
+            mLibName.c_str(), mLibVersion.c_str());
+
          e.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
       }
    }

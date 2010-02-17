@@ -124,20 +124,20 @@ namespace dtDAL
       {
          mParsing = false;
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Ran out of memory parsing!");
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::XMLLoadParsingError, "Ran out of memory parsing save file.", __FILE__, __LINE__);
+         throw dtDAL::XMLLoadParsingException( "Ran out of memory parsing save file.", __FILE__, __LINE__);
       }
       catch (const XMLException& toCatch)
       {
          mParsing = false;
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Error during parsing! %ls :\n",
                              toCatch.getMessage());
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::XMLLoadParsingError, "Error while parsing XML file. See log for more information.", __FILE__, __LINE__);
+         throw dtDAL::XMLLoadParsingException( "Error while parsing XML file. See log for more information.", __FILE__, __LINE__);
       }
       catch (const SAXParseException&)
       {
          mParsing = false;
          //this will already by logged by the
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::XMLLoadParsingError, "Error while parsing XML file. See log for more information.", __FILE__, __LINE__);
+         throw dtDAL::XMLLoadParsingException( "Error while parsing XML file. See log for more information.", __FILE__, __LINE__);
       }
       return false;
    }

@@ -47,8 +47,7 @@ namespace dtCore
    class DeltaDrawable;
 
    /**
-    * Defines the various exceptions that may be thrown when working with the shaders in the
-    * Shader Manager.
+    * DEPRECATE 2/16/10  Use the concrete dtUtil::Exceptions instead
     */
    class DT_CORE_EXPORT ShaderException : public dtUtil::Enumeration
    {
@@ -72,6 +71,34 @@ namespace dtCore
          {
             AddInstance(this);
          }
+   };
+
+   class ShaderSourceException : public dtUtil::Exception
+   {
+   public:
+   	ShaderSourceException(const std::string& message, const std::string& filename, unsigned int linenum);
+      virtual ~ShaderSourceException() {};
+   };
+
+   class DuplicateShaderGroupException : public dtUtil::Exception
+   {
+   public:
+      DuplicateShaderGroupException(const std::string& message, const std::string& filename, unsigned int linenum);
+      virtual ~DuplicateShaderGroupException() {};
+   };
+
+   class ShaderXmlParserException : public dtUtil::Exception
+   {
+   public:
+      ShaderXmlParserException(const std::string& message, const std::string& filename, unsigned int linenum);
+      virtual ~ShaderXmlParserException() {};
+   };
+
+   class DuplicateShaderParameterException : public dtUtil::Exception
+   {
+   public:
+      DuplicateShaderParameterException(const std::string& message, const std::string& filename, unsigned int linenum);
+      virtual ~DuplicateShaderParameterException() {};
    };
 
    /**
@@ -148,6 +175,7 @@ namespace dtCore
           * @param shaderGroup The new shader group prototype to add.
           * @note An exception is thrown if the specified shader group does not have a unique
           *    name.
+          * @throw DuplicateShaderGroupException
           */
          void AddShaderGroupPrototype(ShaderGroup& shaderGroup);
 
@@ -276,6 +304,7 @@ namespace dtCore
           * @param merge If false, this method will first clear the current list of shaders
           *    in the manager.  If true, the shaders loaded from the shader file will
           *    be added to the list of shaders already in the manager. (true by default).
+          * @throw ShaderXmlParserException if the file is not parsed correctly.
           */
          void LoadShaderDefinitions(const std::string& fileName, bool merge = true);
 
@@ -343,6 +372,7 @@ namespace dtCore
           * Checks the shader program cache for the compiled programs for the specified
           * shader.  If none are found, a new cache entry is created.
           * @param shader The shader to resolve.
+          * @throw ShaderSourceException
           */
          void ResolveShaderPrograms(ShaderProgram& shader, const std::string& groupName);
 
