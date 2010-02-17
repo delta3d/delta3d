@@ -32,6 +32,7 @@
 
 #include <dtGame/gameentrypoint.h>
 #include "export.h"
+#include <dtCore/refptr.h>
 
 // Foward declarations
 namespace dtCore
