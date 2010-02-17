@@ -197,7 +197,7 @@ namespace dtGame
    {
       if (mApplication == NULL)
       {
-         throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION,
+         throw dtGame::GeneralGameManagerException(
          "No Application was ever assigned to the GameManager.", __FILE__, __LINE__);
       }
 
@@ -209,7 +209,7 @@ namespace dtGame
    {
       if (mApplication == NULL)
       {
-         throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION,
+         throw dtGame::GeneralGameManagerException(
          "No Application was ever assigned to the GameManager.", __FILE__, __LINE__);
       }
 
@@ -934,7 +934,7 @@ namespace dtGame
       {
          std::string errorText = "A component was already registered with the Game Manager with the name: " + component.GetName();
          LOG_ERROR(errorText);
-         throw dtUtil::Exception(ExceptionEnum::INVALID_PARAMETER, errorText, __FILE__, __LINE__);
+         throw dtGame::InvalidParameterException( errorText, __FILE__, __LINE__);
       }
 
       component.SetGameManager(this);
@@ -1041,7 +1041,7 @@ namespace dtGame
       }
       else
       {
-         throw dtUtil::Exception(dtGame::ExceptionEnum::INVALID_PARAMETER, "The actor type \""
+         throw dtGame::InvalidParameterException( "The actor type \""
             + actorType.GetFullName() + "\" is invalid because it is not a game actor type."
             , __FILE__, __LINE__);
       }
@@ -1064,7 +1064,7 @@ namespace dtGame
             }
             else
             {
-               throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION,
+               throw dtGame::GeneralGameManagerException(
                "ERROR: Actor has the type of a GameActor, but casting it to a GameActorProxy failed.", __FILE__, __LINE__);
             }
          }
@@ -1084,7 +1084,7 @@ namespace dtGame
       dtCore::RefPtr<const dtDAL::ActorType> type = FindActorType(category, name);
       if (!type.valid())
       {
-         throw dtUtil::Exception(ExceptionEnum::UNKNOWN_ACTOR_TYPE,
+         throw dtGame::UnknownActorTypeException(
             "No actor exists of the specified name and category", __FILE__, __LINE__);
       }
 
@@ -1096,7 +1096,7 @@ namespace dtGame
    {
       if (actorProxy.GetId().ToString().empty())
       {
-         throw dtUtil::Exception(ExceptionEnum::INVALID_ACTOR_STATE,
+         throw dtGame::InvalidActorStateException(
             "Actors may not be added the GM with an empty unique id", __FILE__, __LINE__);
       }
 
@@ -1131,7 +1131,7 @@ namespace dtGame
    {
       if (gameActorProxy.GetId().ToString().empty())
       {
-         throw dtUtil::Exception(ExceptionEnum::INVALID_ACTOR_STATE,
+         throw dtGame::InvalidActorStateException(
             "Actors may not be added the GM with an empty unique id", __FILE__, __LINE__);
       }
 
@@ -1139,7 +1139,7 @@ namespace dtGame
       // clean up the actor.
       if (publish && isRemote)
       {
-         throw dtUtil::Exception(ExceptionEnum::ACTOR_IS_REMOTE, "A remote game actor may not be published", __FILE__, __LINE__);
+         throw dtGame::ActorIsRemoteException( "A remote game actor may not be published", __FILE__, __LINE__);
       }
 
       gameActorProxy.SetGameManager(this);
@@ -1295,13 +1295,13 @@ namespace dtGame
 
       if (itor == mGameActorProxyMap.end())
       {
-         throw dtUtil::Exception(ExceptionEnum::INVALID_ACTOR_STATE,
+         throw dtGame::InvalidActorStateException(
             "A GameActor may only be published if it's added to the GameManager as a game actor.", __FILE__, __LINE__);
       }
 
       if (gameActorProxy.IsRemote())
       {
-         throw dtUtil::Exception(ExceptionEnum::ACTOR_IS_REMOTE, "A remote game actor may not be published", __FILE__, __LINE__);
+         throw dtGame::ActorIsRemoteException( "A remote game actor may not be published", __FILE__, __LINE__);
       }
 
       gameActorProxy.SetPublished(true);
@@ -1749,7 +1749,7 @@ namespace dtGame
       {
          static std::string changeMessage("You may not close the map while a map change is already in progress.");
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, changeMessage.c_str());
-         throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION, changeMessage, __FILE__, __LINE__);
+         throw dtGame::GeneralGameManagerException( changeMessage, __FILE__, __LINE__);
       }
       std::vector<std::string> emptyVec;
       mMapChangeStateData->BeginMapChange(mLoadedMaps, emptyVec, false);
@@ -1768,7 +1768,7 @@ namespace dtGame
    {
       if (mapNames.empty())
       {
-         throw dtUtil::Exception(ExceptionEnum::INVALID_PARAMETER, "At least one map must be passed to ChangeMapSet.", __FILE__, __LINE__);
+         throw dtGame::InvalidParameterException( "At least one map must be passed to ChangeMapSet.", __FILE__, __LINE__);
       }
 
       std::vector<std::string>::const_iterator i = mapNames.begin();
@@ -1777,7 +1777,7 @@ namespace dtGame
       {
          if (i->empty())
          {
-            throw dtUtil::Exception(ExceptionEnum::INVALID_PARAMETER, "Empty string is not a valid map name.", __FILE__, __LINE__);
+            throw dtGame::InvalidParameterException( "Empty string is not a valid map name.", __FILE__, __LINE__);
          }
       }
 
@@ -1785,7 +1785,7 @@ namespace dtGame
       {
          static std::string changeMessage("You may not change the map set while a map change is already in progress.");
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, changeMessage.c_str());
-         throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION, changeMessage, __FILE__, __LINE__);
+         throw dtGame::GeneralGameManagerException( changeMessage, __FILE__, __LINE__);
       }
 
       mMapChangeStateData->BeginMapChange(mLoadedMaps, mapNames, addBillboards);

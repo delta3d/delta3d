@@ -33,6 +33,7 @@
 namespace dtGame
 {
    /**
+    * DEPRECATE 2/16/10 use the derived Exceptions instead
     * This exception enumeration defines the possible exceptions that may
     * be thrown by LogStream operations.
     */
@@ -51,6 +52,15 @@ namespace dtGame
       {
          AddInstance(this);
       }
+   };
+
+   ///Thrown when an error occurs while performing IO operations on the stream.
+   ///This includes creating or opening a stream.
+   class LogStreamIOException : public dtUtil::Exception
+   {
+   public:
+   	LogStreamIOException(const std::string& message, const std::string& filename, unsigned int linenum);
+      virtual ~LogStreamIOException() {};
    };
 
    /**

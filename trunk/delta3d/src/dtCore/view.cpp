@@ -159,13 +159,13 @@ bool View::AddSlave(Camera* camera)
 {
    if (camera == NULL)
    {
-      throw dtUtil::Exception(ExceptionEnum::INVALID_PARAMETER,
+      throw dtCore::InvalidParameterException(
          "Supplied dtCore::Camera is invalid", __FILE__, __LINE__);
    }
 
    if (camera->GetOSGCamera() == NULL)
    {
-      throw dtUtil::Exception(ExceptionEnum::INVALID_PARAMETER,
+      throw dtCore::InvalidParameterException(
          "Supplied dtCore::Camera::GetOsgCamera() is invalid", __FILE__, __LINE__);
    }
 

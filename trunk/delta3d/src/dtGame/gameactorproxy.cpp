@@ -776,7 +776,7 @@ void GameActorProxy::InvokeEnteredWorld()
    if (ga == NULL)
    {
       // throw exception
-      throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION,
+      throw dtGame::GeneralGameManagerException(
          "ERROR: Actor has the type of a GameActor, but casting it to a GameActorProxy failed.", __FILE__, __LINE__);
    }
 
@@ -797,7 +797,7 @@ void GameActorProxy::InvokeRemovedFromWorld()
    if (ga == NULL)
    {
       // throw exception
-      throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION,
+      throw dtGame::GeneralGameManagerException(
          "ERROR: Actor has the type of a GameActor, but casting it to a GameActorProxy failed.", __FILE__, __LINE__);
    }
 

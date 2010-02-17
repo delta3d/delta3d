@@ -65,7 +65,7 @@ namespace dtActors
       MotionAction* mo = static_cast< MotionAction* >( GetActor() );
       if( mo == 0 )
       {
-         throw dtUtil::Exception( ExceptionEnum::InvalidActorException,
+         throw dtDAL::InvalidActorException(
             "Actor should be type dtABC::MotionAction", __FILE__, __LINE__);
       }
 
@@ -77,7 +77,7 @@ namespace dtActors
       MotionAction * mo = static_cast< MotionAction* >( GetActor() );
       if( mo == 0 )
       {
-         throw dtUtil::Exception( ExceptionEnum::InvalidActorException,
+         throw dtDAL::InvalidActorException(
             "Actor should be type dtABC::MotionAction" , __FILE__, __LINE__);
       }
 
@@ -211,7 +211,7 @@ namespace dtActors
    {
       dtABC::MotionAction *t = static_cast<dtABC::MotionAction*>(GetActor());
       if (t == NULL)
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type "
+         throw dtDAL::InvalidActorException( "Actor should be type "
          " dtABC::MotionAction", __FILE__, __LINE__);
 
       osg::Vec3 trans;

@@ -70,7 +70,7 @@ namespace dtGame
    {
       if (!mProxy.valid())
       {
-         throw dtUtil::Exception(ExceptionEnum::INVALID_ACTOR_STATE,
+         throw dtGame::InvalidActorStateException(
                   NULL_PROXY_ERROR,
                   __FILE__, __LINE__);
       }
@@ -82,7 +82,7 @@ namespace dtGame
    {
       if (!mProxy.valid())
       {
-         throw dtUtil::Exception(ExceptionEnum::INVALID_ACTOR_STATE,
+         throw dtGame::InvalidActorStateException(
                   NULL_PROXY_ERROR,
                   __FILE__, __LINE__);
       }

@@ -163,7 +163,7 @@ namespace dtGame
    {
       if (param == NULL)
       {
-         throw dtUtil::Exception(ExceptionEnum::INVALID_PARAMETER,
+         throw dtGame::InvalidParameterException(
          "NULL parameters are not legal.", __FILE__, __LINE__);
       }
       

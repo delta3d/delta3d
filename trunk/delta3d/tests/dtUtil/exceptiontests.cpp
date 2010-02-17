@@ -120,7 +120,7 @@ void ExceptionTests::TestThrow()
    try
    {
       mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__,  __LINE__, "Testing Throwing Exception.\n");
-      throw dtUtil::Exception(TestEnumType::ENUM, "Test throw", "enumerationtests.cpp", __LINE__);
+      throw dtUtil::Exception("Test throw", "enumerationtests.cpp", __LINE__);
 
    }
    catch (const dtUtil::Exception&)
@@ -139,7 +139,7 @@ void ExceptionTests::TestLogAndPrintFunctions()
 {
    try
    {
-      dtUtil::Exception testException(TestEnumType::ENUM, "test exception", __FILE__, __LINE__);
+      dtUtil::Exception testException("test exception", __FILE__, __LINE__);
       testException.LogException(dtUtil::Log::LOG_INFO);
       testException.LogException(dtUtil::Log::LOG_INFO, "__+default+__");
       testException.LogException(dtUtil::Log::LOG_INFO, *mLogger);
@@ -161,6 +161,7 @@ void ExceptionTests::TestLogAndPrintFunctions()
 ///////////////////////////////////////////////////////////////////////////////
 void ExceptionTests::TestEnum()
 {
+    //to be DEPRECATE
    try
    {
       dtUtil::Exception testException(TestEnumType::ENUM, "test exception", "enumerationtests.cpp", __LINE__);

@@ -117,7 +117,7 @@ namespace dtGame
       mMessagesFile = fopen(mMessagesFileName.c_str(), "wb");
       if (mMessagesFile == NULL)
       {
-         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION, "Could not create the messages"
+         throw dtGame::LogStreamIOException( "Could not create the messages"
             " database file: " + mMessagesFileName, __FILE__, __LINE__);
       }
 
@@ -127,7 +127,7 @@ namespace dtGame
       mIndexTablesFile = fopen(mIndexTablesFileName.c_str(), "wb");
       if (mIndexTablesFile == NULL)
       {
-         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION, "Could not create the logger"
+         throw dtGame::LogStreamIOException( "Could not create the logger"
             " index file: " + mIndexTablesFileName, __FILE__, __LINE__);
       }
 
@@ -162,7 +162,7 @@ namespace dtGame
       // ferror if it couldn't write the data.
       if (written < count)
       {
-         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION, "Error writing to IO stream.  Data not written. "
+         throw dtGame::LogStreamIOException( "Error writing to IO stream.  Data not written. "
             "Check to see if the log file is in write mode.", __FILE__, __LINE__);
       }
    }
@@ -187,7 +187,7 @@ namespace dtGame
       mMessagesFile = fopen(mMessagesFileName.c_str(), "rb");
       if (mMessagesFile == NULL)
       {
-         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION, "Could not open the messages"
+         throw dtGame::LogStreamIOException( "Could not open the messages"
             " database file: " + mMessagesFileName, __FILE__, __LINE__);
       }
 
@@ -199,7 +199,7 @@ namespace dtGame
       mIndexTablesFile = fopen(mIndexTablesFileName.c_str(), "rb");
       if (mIndexTablesFile == NULL)
       {
-         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION, "Could not open the logger"
+         throw dtGame::LogStreamIOException( "Could not open the logger"
             " index file: " + mIndexTablesFileName, __FILE__, __LINE__);
       }
 
@@ -264,7 +264,7 @@ namespace dtGame
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
       if (!fileUtils.DirExists(logsPath))
       {
-         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION, "Could not get available log"
+         throw dtGame::LogStreamIOException( "Could not get available log"
             " files.  Log Directory: " + logsPath + " does not exist.", __FILE__, __LINE__);
       }
 
@@ -311,7 +311,7 @@ namespace dtGame
    {
       if (mMessagesFile == NULL)
       {
-         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION, "Failed to read messages "
+         throw dtGame::LogStreamIOException( "Failed to read messages "
             "database header.  File is not valid.", __FILE__, __LINE__);
       }
 
@@ -343,7 +343,7 @@ namespace dtGame
       std::string errorString;
       if (!header.validate(errorString))
       {
-         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION, "Malformed message database"
+         throw dtGame::LogStreamIOException( "Malformed message database"
             " header. Reason: " + errorString, __FILE__, __LINE__);
       }
    }
@@ -353,14 +353,14 @@ namespace dtGame
    {
       if (mMessagesFile == NULL)
       {
-         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION, "Failed to write messages "
+         throw dtGame::LogStreamIOException( "Failed to write messages "
             "database header.  File is not valid.", __FILE__, __LINE__);
       }
 
       std::string errorString;
       if (!header.validate(errorString))
       {
-         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION, "Malformed message database"
+         throw dtGame::LogStreamIOException( "Malformed message database"
             " header. Reason: " + errorString, __FILE__, __LINE__);
       }
 
@@ -382,7 +382,7 @@ namespace dtGame
    {
       if (mIndexTablesFile == NULL)
       {
-         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION, "Failed to read index "
+         throw dtGame::LogStreamIOException( "Failed to read index "
             "tables header.  File is not valid.", __FILE__, __LINE__);
       }
 
@@ -413,7 +413,7 @@ namespace dtGame
       std::string errorString;
       if (!header.validate(errorString))
       {
-         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION, "Malformed index database"
+         throw dtGame::LogStreamIOException( "Malformed index database"
             " header. Reason: " + errorString, __FILE__, __LINE__);
       }
    }
@@ -423,14 +423,14 @@ namespace dtGame
    {
       if (mIndexTablesFile == NULL)
       {
-         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION, "Failed to write index "
+         throw dtGame::LogStreamIOException( "Failed to write index "
             "tables header.  File is not valid.", __FILE__, __LINE__);
       }
 
       std::string errorString;
       if (!header.validate(errorString))
       {
-         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION, "Malformed message database"
+         throw dtGame::LogStreamIOException( "Malformed message database"
             " header. Reason: " + errorString, __FILE__, __LINE__);
       }
 
@@ -451,7 +451,7 @@ namespace dtGame
       // Make sure we have a valid file.
       if (mMessagesFile == NULL)
       {
-         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION, "Failed to write message. "
+         throw dtGame::LogStreamIOException( "Failed to write message. "
             "Message database file is not valid.", __FILE__, __LINE__);
       }
 
@@ -485,7 +485,7 @@ namespace dtGame
       // Make sure we have a valid file.
       if (mMessagesFile == NULL)
       {
-         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION, "Failed to read message. "
+         throw dtGame::LogStreamIOException( "Failed to read message. "
             "Message database file is not valid.", __FILE__, __LINE__);
       }
 
@@ -506,7 +506,7 @@ namespace dtGame
       CheckFileStatus(mMessagesFile);
       if (dEID != BinaryLogStream::MESSAGE_DEID)
       {
-         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION, "Failed to read message. "
+         throw dtGame::LogStreamIOException( "Failed to read message. "
             "Invalid message element identifier found.", __FILE__, __LINE__);
       }
 
@@ -550,7 +550,7 @@ namespace dtGame
       // Make sure we have a valid file.
       if (mIndexTablesFile == NULL)
       {
-         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION, "Failed to read index table. "
+         throw dtGame::LogStreamIOException( "Failed to read index table. "
             "Index table file is not valid.", __FILE__, __LINE__);
       }
 
@@ -570,7 +570,7 @@ namespace dtGame
             break;
 
          default:
-            throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION, "Malformed index tables file. "
+            throw dtGame::LogStreamIOException( "Malformed index tables file. "
                "Encountered an invalid data element id.", __FILE__, __LINE__);
             break;
          }
@@ -588,10 +588,10 @@ namespace dtGame
       int error = ferror(fp);
       if (error != 0)
       {
-         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION, std::string(strerror(error)), __FILE__, __LINE__);
+         throw dtGame::LogStreamIOException( std::string(strerror(error)), __FILE__, __LINE__);
       }
       //else if (feof(fp))
-      //   throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION, "End of file unexpectedly reached.", __FILE__, __LINE__);
+      //   throw dtGame::LogStreamIOException( "End of file unexpectedly reached.", __FILE__, __LINE__);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -644,7 +644,7 @@ namespace dtGame
    {
       if (mMessagesFile == NULL)
       {
-         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION, "Could not insert a new keyframe. "
+         throw dtGame::LogStreamIOException( "Could not insert a new keyframe. "
             "The messages database file is invalid.", __FILE__, __LINE__);
       }
 
@@ -657,7 +657,7 @@ namespace dtGame
    {
       if (mMessagesFile == NULL)
       {
-         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION, "Could not jump to the keyframe. "
+         throw dtGame::LogStreamIOException( "Could not jump to the keyframe. "
             "The messages database file is invalid.", __FILE__, __LINE__);
       }
 
@@ -688,7 +688,7 @@ namespace dtGame
 
       if (!validKeyFrame)
       {
-         throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION, "Cannot jump to keyframe:" +
+         throw dtGame::LogStreamIOException( "Cannot jump to keyframe:" +
             keyFrame.GetName() + " .  The Keyframe has not been added.", __FILE__, __LINE__);
       }
 
@@ -713,7 +713,7 @@ namespace dtGame
             mIndexTablesFile = fopen(mIndexTablesFileName.c_str(), "ab");
             if (mIndexTablesFile == NULL)
             {
-               throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION, "Cannot flush the stream. "
+               throw dtGame::LogStreamIOException( "Cannot flush the stream. "
                   "Index tables file is invalid.", __FILE__, __LINE__);
             }
          }

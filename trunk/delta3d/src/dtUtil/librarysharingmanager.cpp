@@ -238,7 +238,7 @@ namespace dtUtil
    {
       if (mShuttingDown)
       {
-         throw dtUtil::Exception(LibrarySharingManager::ExceptionEnum::LibraryLoadingError,
+         throw dtUtil::LibrarySharingManager::LibraryLoadingException(
             "Library Manager is shutting down.", __FILE__, __LINE__);
       }
 
@@ -276,7 +276,7 @@ namespace dtUtil
             msg.clear();
             msg.str("");
             msg << "Unable to load library " << actualLibName;
-            throw dtUtil::Exception(LibrarySharingManager::ExceptionEnum::LibraryLoadingError,
+            throw dtUtil::LibrarySharingManager::LibraryLoadingException(
                msg.str(), __FILE__, __LINE__);
          }
          else
@@ -414,5 +414,12 @@ namespace dtUtil
 #else
       return string(iName.begin()+3,iName.end());
 #endif
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   LibrarySharingManager::LibraryLoadingException::LibraryLoadingException(const std::string& message, const std::string& filename, unsigned int linenum)
+      : dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &ExceptionEnum::LibraryLoadingError;
    }
 } // namespace dtUtil

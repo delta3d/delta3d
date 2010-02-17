@@ -61,7 +61,7 @@ namespace dtGame
       {
          std::string msg("The Game Manager used by the MapChangeStateData class has been deleted, but the BeginMapChange was called.");
          LOGN_ERROR("gamemanager.cpp", msg);
-         throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION, msg, __FUNCTION__, __LINE__);
+         throw dtGame::GeneralGameManagerException( msg, __FUNCTION__, __LINE__);
       }
 
       // set the app to pause so we dont get a huge timestep when we're through
@@ -85,7 +85,7 @@ namespace dtGame
             {
                mCurrentState = &MapChangeState::IDLE;
                std::string msg = *i + " is not a valid map.";
-               throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION, msg, __FUNCTION__, __LINE__);
+               throw dtGame::GeneralGameManagerException( msg, __FUNCTION__, __LINE__);
             }
          }
 
@@ -264,7 +264,7 @@ namespace dtGame
       {
          std::string msg("The Game Manager used by the MapChangeStateData class has been deleted, but ContinueMapChange was called.");
          LOGN_ERROR("gamemanager.cpp", msg);
-         throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION, msg, __FUNCTION__, __LINE__);
+         throw dtGame::GeneralGameManagerException( msg, __FUNCTION__, __LINE__);
       }
 
       // This shouldn't be called, but it should definitely not do anything.

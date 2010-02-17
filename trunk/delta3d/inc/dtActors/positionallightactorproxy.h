@@ -84,7 +84,7 @@ namespace dtActors
             dtCore::PositionalLight *pl = dynamic_cast<dtCore::PositionalLight*>(GetActor());
             if (!pl)
             {
-                throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException,
+                throw dtDAL::InvalidActorException(
                 "Actor should be type dtCore::PositionalLight", __FILE__, __LINE__);
             }
 
@@ -100,7 +100,7 @@ namespace dtActors
             dtCore::PositionalLight *pl = dynamic_cast<dtCore::PositionalLight*>(GetActor());
             if (!pl)
             {
-                throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException,
+                throw dtDAL::InvalidActorException(
                 "Actor should be type dtCore::PositionalLight", __FILE__, __LINE__);
             }
 

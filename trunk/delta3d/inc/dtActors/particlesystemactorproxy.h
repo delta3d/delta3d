@@ -56,7 +56,7 @@ namespace dtActors
          dtCore::ParticleSystem* ps = dynamic_cast<dtCore::ParticleSystem*>(GetActor());
          if (!ps)
          {
-            throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException,
+            throw dtDAL::InvalidActorException(
             "Actor should be type dtCore::ParticleSystem", __FILE__, __LINE__);
          }
 
