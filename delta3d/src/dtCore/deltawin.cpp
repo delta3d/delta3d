@@ -384,6 +384,13 @@ osg::ref_ptr<osg::GraphicsContext::Traits> DeltaWin::CreateOSGTraits(const Delta
    //Favor the value of the environment variable "DISPLAY" to set the
    //diplayNum, screenNum, and host name, unless it fails, in which case use the
    //passed in value.  Format is "host:displayNum.screenNum".
+
+   //Doing this first because sometimes readDISPLAY doesn't set displayNum
+   //and screenNum to -1 when DISPLAY isn't defined (even though it claims
+   //to in the OSG docs).
+   traits->displayNum = deltaTraits.displayNum;
+   traits->screenNum = deltaTraits.screenNum;
+
    traits->readDISPLAY();
 
    if (traits->displayNum < 0)
