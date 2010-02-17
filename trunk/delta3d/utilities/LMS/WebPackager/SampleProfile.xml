@@ -73,7 +73,7 @@
                     <Library>CEGUIBase.dll</Library>
                     <Library>CEGUIOpenGLRenderer.dll</Library>
                     <Library>ode_single.dll</Library>
-                    <Library>xerces-c_2_8.dll</Library>
+                    <Library>xerces-c_3_0.dll</Library>
                     <Library>osg55-osg.dll</Library>
                     <Library>osg55-osgdb.dll</Library>
                     <Library>osg55-osgga.dll</Library>
