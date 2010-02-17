@@ -63,7 +63,7 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    void NamedParameter::SetFromProperty(const dtDAL::ActorProperty& property)
    {
-      throw dtUtil::Exception(ExceptionEnum::InvalidParameter,
+      throw dtDAL::InvalidParameterException(
          "Message parameter[" + GetName() + "] of type[" + GetDataType().GetName() +
          "] does not have an associated actor property type in SetFromProperty()", __FILE__, __LINE__);
    }
@@ -71,7 +71,7 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    void NamedParameter::ApplyValueToProperty(dtDAL::ActorProperty& property) const
    {
-      throw dtUtil::Exception(ExceptionEnum::InvalidParameter,
+      throw dtDAL::InvalidParameterException(
          "Message parameter[" + GetName() + "] of type[" + GetDataType().GetName() +
          "] does not have an associated actor property type in ApplyValueToProperty()", __FILE__, __LINE__);
    }
@@ -81,7 +81,7 @@ namespace dtDAL
    {
       if (property.GetDataType() != GetDataType())
       {
-         throw dtUtil::Exception(ExceptionEnum::InvalidParameter,
+         throw dtDAL::InvalidParameterException(
             "Actor Property [" + property.GetName() + "] with Data Type [" + property.GetDataType().GetName() +
             "] does not match the Message Parameter [" + GetName() +
             "] with Data Type [" + GetDataType().GetName() + "]", __FILE__, __LINE__);
@@ -190,7 +190,7 @@ namespace dtDAL
          param = new NamedResourceParameter(type,name,isList);
          break;
       default:
-         throw dtUtil::Exception(ExceptionEnum::InvalidParameter, "Type " + type.GetName() + " is not supported by the MessageParameter class.", __FILE__, __LINE__);
+         throw dtDAL::InvalidParameterException( "Type " + type.GetName() + " is not supported by the MessageParameter class.", __FILE__, __LINE__);
          break;
       }
 
@@ -259,7 +259,7 @@ namespace dtDAL
          }
          if (type == NULL) //|| type == &dtDAL::DataType::UNKNOWN)
          {
-            throw dtUtil::Exception(ExceptionEnum::BaseException, "The datatype was not found in the stream", __FILE__, __LINE__);
+            throw dtDAL::BaseException( "The datatype was not found in the stream", __FILE__, __LINE__);
             okay = false;
          }
 
@@ -386,7 +386,7 @@ namespace dtDAL
    void NamedGroupParameter::CopyFrom(const NamedParameter& otherParam)
    {
       if (otherParam.GetDataType() != GetDataType())
-         throw dtUtil::Exception(ExceptionEnum::InvalidParameter,
+         throw dtDAL::InvalidParameterException(
          "The msg parameter must be of type GROUP.", __FILE__, __LINE__);
 
       const NamedGroupParameter& gpm = static_cast<const NamedGroupParameter&>(otherParam);
@@ -412,7 +412,7 @@ namespace dtDAL
          if (newParameter == NULL)
             //This case should not happen, the method above should throw an exception if it doesn't work, but
             //this is a case of paranoid programming.
-            throw dtUtil::Exception(ExceptionEnum::BaseException,
+            throw dtDAL::BaseException(
             "Unable to create parameter of type " + i->second->GetDataType().GetName(),
             __FILE__, __LINE__);
 
@@ -450,7 +450,7 @@ namespace dtDAL
    void NamedGroupParameter::AddParameter(NamedParameter& newParam)
    {
       if (!mParameterList.insert(std::make_pair(newParam.GetName(), &newParam)).second)
-         throw dtUtil::Exception(ExceptionEnum::InvalidParameter,
+         throw dtDAL::InvalidParameterException(
          "Could not add new parameter: "+ newParam.GetName() +
          ". A parameter with that name already exists.", __FILE__, __LINE__);
    }
@@ -1047,7 +1047,7 @@ namespace dtDAL
       else
       {
 
-         throw dtUtil::Exception(ExceptionEnum::InvalidParameter,
+         throw dtDAL::InvalidParameterException(
             "Cannot call ApplyValueToProperty()on an ActorMessageParameter.  See the GameActor::ApplyActorUpdate() for an example of how to do this.",
             __FILE__, __LINE__);
       }
@@ -1705,7 +1705,7 @@ namespace dtDAL
       //First make sure this parameter does not have a list if the
       //other parameter does and vice versa.
       if ((IsList() && !otherParam.IsList()) ||(!IsList() && otherParam.IsList()))
-         throw dtUtil::Exception(ExceptionEnum::BaseException,
+         throw dtDAL::BaseException(
          "Cannot assign two parameters with one being a list of values and the other not.",
          __FILE__, __LINE__);
 
@@ -1743,7 +1743,7 @@ namespace dtDAL
    void NamedResourceParameter::SetValue(const dtDAL::ResourceDescriptor& descriptor)
    {
       if (IsList())
-         throw dtUtil::Exception(ExceptionEnum::BaseException,
+         throw dtDAL::BaseException(
          "Cannot call SetValue() on message parameter with a list of values.", __FILE__, __LINE__);
 
       mDescriptor = descriptor;
@@ -1753,7 +1753,7 @@ namespace dtDAL
    const dtDAL::ResourceDescriptor NamedResourceParameter::GetValue() const
    {
       if (IsList())
-         throw dtUtil::Exception(ExceptionEnum::BaseException,
+         throw dtDAL::BaseException(
          "Cannot call GetValue() on message parameter with a list of values.", __FILE__, __LINE__);
 
       return mDescriptor;
@@ -1763,7 +1763,7 @@ namespace dtDAL
    const std::vector<dtDAL::ResourceDescriptor> &NamedResourceParameter::GetValueList() const
    {
       if (!IsList())
-         throw dtUtil::Exception(ExceptionEnum::BaseException,
+         throw dtDAL::BaseException(
          "Cannot retrieve the parameters value list.  Parameter does not contain a list.", __FILE__, __LINE__);
       return *mValueList;
    }
@@ -1772,7 +1772,7 @@ namespace dtDAL
    std::vector<dtDAL::ResourceDescriptor> &NamedResourceParameter::GetValueList()
    {
       if (!IsList())
-         throw dtUtil::Exception(ExceptionEnum::BaseException,
+         throw dtDAL::BaseException(
          "Cannot retrieve the parameters value list.  Parameter does not contain a list.", __FILE__, __LINE__);
       return *mValueList;
    }
@@ -1781,7 +1781,7 @@ namespace dtDAL
    void NamedResourceParameter::SetValueList(const std::vector<dtDAL::ResourceDescriptor> &newValues)
    {
       if (!IsList())
-         throw dtUtil::Exception(ExceptionEnum::BaseException,
+         throw dtDAL::BaseException(
          "Cannot set a list of new values on a parameter that is not a list.", __FILE__, __LINE__);
 
       *mValueList = newValues;

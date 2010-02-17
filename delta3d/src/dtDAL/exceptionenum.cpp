@@ -29,5 +29,89 @@ namespace dtDAL
    ExceptionEnum ExceptionEnum::InvalidActorException("Invalid Actor Type");
    ExceptionEnum ExceptionEnum::InvalidParameter("Invalid Parameter");
 
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtDAL::BaseException::BaseException(const std::string& message, const std::string& filename, unsigned int linenum)
+      : dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &dtDAL::ExceptionEnum::BaseException;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtDAL::ProjectInvalidContextException::ProjectInvalidContextException(const std::string& message, const std::string& filename, unsigned int linenum)
+      : dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &dtDAL::ExceptionEnum::ProjectInvalidContext;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtDAL::ProjectReadOnlyException::ProjectReadOnlyException(const std::string& message, const std::string& filename, unsigned int linenum)
+      : dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &dtDAL::ExceptionEnum::ProjectReadOnly;
+   }
+    
+   ////////////////////////////////////////////////////////////////////////////////
+   dtDAL::ProjectFileNotFoundException::ProjectFileNotFoundException(const std::string& message, const std::string& filename, unsigned int linenum)
+      : dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &dtDAL::ExceptionEnum::ProjectFileNotFound;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtDAL::ProjectResourceErrorException::ProjectResourceErrorException(const std::string& message, const std::string& filename, unsigned int linenum)
+      : dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &dtDAL::ExceptionEnum::ProjectResourceError;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtDAL::ProjectException::ProjectException(const std::string& message, const std::string& filename, unsigned int linenum)
+      : dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &dtDAL::ExceptionEnum::ProjectException;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtDAL::MapParsingException::MapParsingException(const std::string& message, const std::string& filename, unsigned int linenum)
+      : dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &dtDAL::ExceptionEnum::MapLoadParsingError;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtDAL::MapSaveException::MapSaveException(const std::string& message, const std::string& filename, unsigned int linenum)
+      : dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &dtDAL::ExceptionEnum::MapSaveError;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtDAL::XMLLoadParsingException::XMLLoadParsingException(const std::string& message, const std::string& filename, unsigned int linenum)
+      : dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &dtDAL::ExceptionEnum::XMLLoadParsingError;
+   } 
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtDAL::ObjectFactoryUnknownTypeException::ObjectFactoryUnknownTypeException(const std::string& message, const std::string& filename, unsigned int linenum)
+      : dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &dtDAL::ExceptionEnum::ObjectFactoryUnknownType;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtDAL::InvalidActorException::InvalidActorException(const std::string& message, const std::string& filename, unsigned int linenum)
+      : dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &dtDAL::ExceptionEnum::InvalidActorException;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtDAL::InvalidParameterException::InvalidParameterException(const std::string& message, const std::string& filename, unsigned int linenum)
+      : dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &dtDAL::ExceptionEnum::InvalidParameter;
+   }
 }//namespace dtDAL
 

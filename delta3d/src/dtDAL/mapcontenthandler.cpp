@@ -172,7 +172,7 @@ namespace  dtDAL
             IEnvironmentActor *ea = dynamic_cast<IEnvironmentActor*>(proxy->GetActor());
             if (ea == NULL)
             {
-               throw dtUtil::Exception(ExceptionEnum::InvalidActorException,
+               throw dtDAL::InvalidActorException(
                   "The environment actor proxy's actor should be an environment, but a dynamic_cast failed", __FILE__, __LINE__);
             }
             mMap->SetEnvironmentActor(proxy.get());
@@ -917,21 +917,24 @@ namespace  dtDAL
          if (mMap.valid()) mMap->AddLibrary(mLibName, mLibVersion);
          ClearLibraryValues();
       }
+      catch (const dtDAL::ProjectResourceErrorException &e)
+      {
+         mMissingLibraries.push_back(mLibName);
+
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+            "Error loading library %s version %s in the library manager.  Exception message to follow.",
+            mLibName.c_str(), mLibVersion.c_str());
+
+         e.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
+      }
       catch (const dtUtil::Exception& e)
       {
          mMissingLibraries.push_back(mLibName);
-         if (dtDAL::ExceptionEnum::ProjectResourceError == e.TypeEnum())
-         {
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-               "Error loading library %s version %s in the library manager.  Exception message to follow.",
-               mLibName.c_str(), mLibVersion.c_str());
-         }
-         else
-         {
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-               "Unknown exception loading library %s version %s in the library manager.  Exception message to follow.",
-               mLibName.c_str(), mLibVersion.c_str());
-         }
+
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+            "Unknown exception loading library %s version %s in the library manager.  Exception message to follow.",
+            mLibName.c_str(), mLibVersion.c_str());
+
          e.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
       }
    }

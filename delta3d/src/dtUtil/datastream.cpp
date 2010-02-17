@@ -68,14 +68,12 @@ namespace dtUtil
    {
       if (bufferSize == 0)
       {
-         throw dtUtil::Exception(DataStreamException::BUFFER_INVALID,
-            "Buffer size cannot be zero.", __FILE__, __LINE__);
+         throw DataStreamBufferInvalid("Buffer size cannot be zero.", __FILE__, __LINE__);
       }
 
       if (buffer == NULL)
       {
-         throw dtUtil::Exception(DataStreamException::BUFFER_INVALID,
-            "Source buffer is not valid.", __FILE__, __LINE__);
+         throw DataStreamBufferInvalid("Source buffer is not valid.", __FILE__, __LINE__);
       }
 
       mIsLittleEndian = osg::getCpuByteOrder() == osg::LittleEndian;
@@ -92,8 +90,10 @@ namespace dtUtil
    {
       if (this != &rhs)
       {
-         if (rhs.mBufferSize == 0) throw dtUtil::Exception(DataStreamException::BUFFER_INVALID,
-            "Attempted to copy an invalid data stream.  BufferSize is zero.", __FILE__, __LINE__);
+         if (rhs.mBufferSize == 0) 
+         {
+            throw DataStreamBufferInvalid("Attempted to copy an invalid data stream.  BufferSize is zero.", __FILE__, __LINE__);
+         }
 
          mBufferCapacity = rhs.mBufferCapacity;
          mBufferSize = rhs.mBufferSize;
@@ -143,8 +143,7 @@ namespace dtUtil
    {
       if (mReadPos + sizeof(unsigned char) > mBufferSize)
       {
-         throw dtUtil::Exception(DataStreamException::BUFFER_READ_ERROR,
-                  "Buffer underflow detected.", __FILE__, __LINE__);
+         throw DataStreamBufferReadError("Buffer underflow detected.", __FILE__, __LINE__);
       }
 
       c = *((unsigned char *)(&mBuffer[mReadPos]));
@@ -181,8 +180,7 @@ namespace dtUtil
    {
       if (mReadPos + sizeof(char) > mBufferSize)
       {
-         throw dtUtil::Exception(DataStreamException::BUFFER_READ_ERROR,
-                  "Buffer underflow detected.", __FILE__, __LINE__);
+         throw DataStreamBufferReadError("Buffer underflow detected.", __FILE__, __LINE__);
       }
 
       c = *((char *)(&mBuffer[mReadPos]));
@@ -210,8 +208,7 @@ namespace dtUtil
    {
       if (mReadPos + sizeof(short) > mBufferSize)
       {
-         throw dtUtil::Exception(DataStreamException::BUFFER_READ_ERROR,
-                  "Buffer underflow detected.", __FILE__, __LINE__);
+         throw DataStreamBufferReadError("Buffer underflow detected.", __FILE__, __LINE__);
       }
 
       s = *((short *)(&mBuffer[mReadPos]));
@@ -250,8 +247,7 @@ namespace dtUtil
    {
       if (mReadPos + sizeof(unsigned short) > mBufferSize)
       {
-         throw dtUtil::Exception(DataStreamException::BUFFER_READ_ERROR,
-                  "Buffer underflow detected.", __FILE__, __LINE__);
+         throw DataStreamBufferReadError("Buffer underflow detected.", __FILE__, __LINE__);
       }
 
       s = *((unsigned short *)(&mBuffer[mReadPos]));
@@ -291,8 +287,7 @@ namespace dtUtil
    {
       if (mReadPos + sizeof(int) > mBufferSize)
       {
-         throw dtUtil::Exception(DataStreamException::BUFFER_READ_ERROR,
-                  "Buffer underflow detected.", __FILE__, __LINE__);
+         throw DataStreamBufferReadError("Buffer underflow detected.", __FILE__, __LINE__);
       }
 
       i = *((int *)(&mBuffer[mReadPos]));
@@ -332,8 +327,7 @@ namespace dtUtil
 
       if (mReadPos + sizeof(unsigned) > mBufferSize)
       {
-         throw dtUtil::Exception(DataStreamException::BUFFER_READ_ERROR,
-                  "Buffer underflow detected.", __FILE__, __LINE__);
+         throw DataStreamBufferReadError("Buffer underflow detected.", __FILE__, __LINE__);
       }
 
       i = *((unsigned*)(&mBuffer[mReadPos]));
@@ -370,8 +364,7 @@ namespace dtUtil
    {
       if (mReadPos + sizeof(long) > mBufferSize)
       {
-         throw dtUtil::Exception(DataStreamException::BUFFER_READ_ERROR,
-                  "Buffer underflow detected.", __FILE__, __LINE__);
+         throw DataStreamBufferReadError("Buffer underflow detected.", __FILE__, __LINE__);
       }
 
       i = *((long *)(&mBuffer[mReadPos]));
@@ -411,8 +404,7 @@ namespace dtUtil
 
       if (mReadPos + sizeof(unsigned long) > mBufferSize)
       {
-         throw dtUtil::Exception(DataStreamException::BUFFER_READ_ERROR,
-                  "Buffer underflow detected.", __FILE__, __LINE__);
+         throw DataStreamBufferReadError("Buffer underflow detected.", __FILE__, __LINE__);
       }
 
       i = *((unsigned long*)(&mBuffer[mReadPos]));
@@ -451,8 +443,7 @@ namespace dtUtil
    {
       if (mReadPos + sizeof(float) > mBufferSize)
       {
-         throw dtUtil::Exception(DataStreamException::BUFFER_READ_ERROR,
-                  "Buffer underflow detected.", __FILE__, __LINE__);
+         throw DataStreamBufferReadError("Buffer underflow detected.", __FILE__, __LINE__);
       }
 
       memcpy(&f, &mBuffer[mReadPos], sizeof(float));
@@ -497,8 +488,7 @@ namespace dtUtil
    {
       if (mReadPos + sizeof(double) > mBufferSize)
       {
-         throw dtUtil::Exception(DataStreamException::BUFFER_READ_ERROR,
-                  "Buffer underflow detected.", __FILE__, __LINE__);
+         throw DataStreamBufferReadError("Buffer underflow detected.", __FILE__, __LINE__);
       }
 
       d = *((double *)(&mBuffer[mReadPos]));
@@ -537,8 +527,7 @@ namespace dtUtil
    {
       if (mReadPos + sizeof(long long) > mBufferSize)
       {
-         throw dtUtil::Exception(DataStreamException::BUFFER_READ_ERROR,
-         "Buffer underflow detected.", __FILE__, __LINE__);
+         throw DataStreamBufferReadError("Buffer underflow detected.", __FILE__, __LINE__);
       }
 
       d = *((long long *)(&mBuffer[mReadPos]));
@@ -577,8 +566,7 @@ namespace dtUtil
    {
       if (mReadPos + sizeof(unsigned char) > mBufferSize)
       {
-         throw dtUtil::Exception(DataStreamException::BUFFER_READ_ERROR,
-                  "Buffer underflow detected.", __FILE__, __LINE__);
+         throw DataStreamBufferReadError("Buffer underflow detected.", __FILE__, __LINE__);
       }
 
       signed char c = *((signed char *)(&mBuffer[mReadPos]));
@@ -781,8 +769,7 @@ namespace dtUtil
       {
          if (offset > mBufferSize)
          {
-            throw dtUtil::Exception(DataStreamException::BUFFER_INVALID_POS,
-                     "Write position cannot be greater than the current data size.", __FILE__, __LINE__);
+            throw DataStreamBufferInvalidPos("Write position cannot be greater than the current data size.", __FILE__, __LINE__);
          }
 
          mWritePos = offset;
@@ -791,8 +778,7 @@ namespace dtUtil
       {
          if (mWritePos + offset > mBufferSize)
          {
-            throw dtUtil::Exception(DataStreamException::BUFFER_INVALID_POS,
-                     "Write position cannot be greater than the current data size.", __FILE__, __LINE__);
+            throw DataStreamBufferInvalidPos("Write position cannot be greater than the current data size.", __FILE__, __LINE__);
          }
 
          mWritePos += offset;
@@ -801,8 +787,7 @@ namespace dtUtil
       {
          if (offset > mBufferSize)
          {
-            throw dtUtil::Exception(DataStreamException::BUFFER_INVALID_POS,
-                     "Specified offset is greater than the current data size.", __FILE__, __LINE__);
+            throw DataStreamBufferInvalidPos("Specified offset is greater than the current data size.", __FILE__, __LINE__);
          }
          mWritePos = mBufferSize - offset;
       }
@@ -816,8 +801,7 @@ namespace dtUtil
       {
          if (offset > mBufferSize)
          {
-            throw dtUtil::Exception(DataStreamException::BUFFER_INVALID_POS,
-                     "Read position cannot be greater than the current data size.", __FILE__, __LINE__);
+            throw DataStreamBufferInvalidPos("Read position cannot be greater than the current data size.", __FILE__, __LINE__);
          }
          mReadPos = offset;
       }
@@ -825,8 +809,7 @@ namespace dtUtil
       {
          if (mReadPos + offset > mBufferSize)
          {
-            throw dtUtil::Exception(DataStreamException::BUFFER_INVALID_POS,
-                     "Read position cannot be greater than the current data size.", __FILE__, __LINE__);
+            throw DataStreamBufferInvalidPos("Read position cannot be greater than the current data size.", __FILE__, __LINE__);
          }
          mReadPos += offset;
       }
@@ -834,8 +817,7 @@ namespace dtUtil
       {
          if (offset > mBufferSize)
          {
-            throw dtUtil::Exception(DataStreamException::BUFFER_INVALID_POS,
-                     "Specified offset is greater than the current data size.", __FILE__, __LINE__);
+            throw DataStreamBufferInvalidPos("Specified offset is greater than the current data size.", __FILE__, __LINE__);
          }
          mReadPos = mBufferSize - offset;
       }
@@ -898,5 +880,33 @@ namespace dtUtil
    {
       IncreaseBufferSize(dataStream.GetBufferSize());
       return WriteBinary(dataStream.GetBuffer(), dataStream.GetBufferSize());
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   DataStreamBufferInvalid::DataStreamBufferInvalid(const std::string& message, const std::string& filename, unsigned int linenum) 
+      : dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &DataStreamException::BUFFER_INVALID;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   DataStreamBufferReadError::DataStreamBufferReadError(const std::string& message, const std::string& filename, unsigned int linenum)
+      : dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &DataStreamException::BUFFER_READ_ERROR;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   DataStreamBufferWriteError::DataStreamBufferWriteError(const std::string& message, const std::string& filename, unsigned int linenum)
+      : dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &DataStreamException::BUFFER_WRITE_ERROR;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   DataStreamBufferInvalidPos::DataStreamBufferInvalidPos(const std::string& message, const std::string& filename, unsigned int linenum)
+      : dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &DataStreamException::BUFFER_INVALID_POS;
    }
 } // namespace dtUtil

@@ -103,8 +103,7 @@ namespace dtCore
 
       if (itor != mParameters.end())
       {
-         throw dtUtil::Exception(ShaderException::DUPLICATE_SHADER_PARAMETER_FOUND,
-            "Shader parameters must have unique names.", __FILE__, __LINE__);
+         throw DuplicateShaderGroupException("Shader parameters must have unique names.", __FILE__, __LINE__);
       }
 
       mParameters.insert(std::make_pair(newParam.GetName(),&newParam));
@@ -207,21 +206,21 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    void ShaderProgram::AddGeometryShader(const std::string& fileName)
    {
-	   // Geometry source is allowed to be empty - but, if a filename is set, the file needs to exist.
-	   if (!fileName.empty())
-	   {
-		   std::string path = dtUtil::FindFileInPathList(fileName);
-		   if (path.empty())
-		   {
-			   throw dtUtil::Exception(ShaderException::SHADER_SOURCE_ERROR,"Could not find shader source: " +
-				   fileName + " in path list.", __FILE__, __LINE__);
-		   }
-		   else
-		   {
-			   mGeometryShaderFileName.push_back(fileName);
-			   mGeometryCacheKey += fileName;
-		   }
-	   }
+      // Geometry source is allowed to be empty - but, if a filename is set, the file needs to exist.
+      if (!fileName.empty())
+      {
+         std::string path = dtUtil::FindFileInPathList(fileName);
+         if (path.empty())
+         {
+            throw ShaderSourceException("Could not find shader source: " +
+               fileName + " in path list.", __FILE__, __LINE__);
+         }
+         else
+         {
+            mGeometryShaderFileName.push_back(fileName);
+            mGeometryCacheKey += fileName;
+         }
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -233,7 +232,7 @@ namespace dtCore
          std::string path = dtUtil::FindFileInPathList(fileName);
          if (path.empty())
          {
-            throw dtUtil::Exception(ShaderException::SHADER_SOURCE_ERROR,"Could not find shader source: " +
+            throw ShaderSourceException("Could not find shader source: " +
                fileName + " in path list.", __FILE__, __LINE__);
          }
          else
@@ -254,7 +253,7 @@ namespace dtCore
          std::string path = dtUtil::FindFileInPathList(fileName);
          if (path.empty())
          {
-            throw dtUtil::Exception(ShaderException::SHADER_SOURCE_ERROR,"Could not find shader source: " +
+            throw ShaderSourceException("Could not find shader source: " +
                fileName + " in path list.", __FILE__, __LINE__);
          }
          else

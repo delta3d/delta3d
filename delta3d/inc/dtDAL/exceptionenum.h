@@ -28,6 +28,7 @@
 
 namespace dtDAL
 {
+   ///DEPRECATE 2/16/10 Use concrete dtUtil::Exceptions instead
    class DT_DAL_EXPORT ExceptionEnum : public dtUtil::Enumeration
    {
          DECLARE_ENUM(ExceptionEnum);
@@ -61,6 +62,90 @@ namespace dtDAL
          }
    };
 
+   class DT_DAL_EXPORT BaseException : public dtUtil::Exception
+   {
+   public:
+   	BaseException(const std::string& message, const std::string& filename, unsigned int linenum);
+      virtual ~BaseException() {};
+   };
+
+   class DT_DAL_EXPORT ProjectInvalidContextException : public dtUtil::Exception
+   {
+   public:
+      ProjectInvalidContextException(const std::string& message, const std::string& filename, unsigned int linenum);
+      virtual ~ProjectInvalidContextException() {};
+   };
+
+   class DT_DAL_EXPORT ProjectReadOnlyException : public dtUtil::Exception
+   {
+   public:
+      ProjectReadOnlyException(const std::string& message, const std::string& filename, unsigned int linenum);
+      virtual ~ProjectReadOnlyException() {};
+   };
+
+   class DT_DAL_EXPORT ProjectFileNotFoundException : public dtUtil::Exception
+   {
+   public:
+      ProjectFileNotFoundException(const std::string& message, const std::string& filename, unsigned int linenum);
+      virtual ~ProjectFileNotFoundException() {};
+   };
+
+   class DT_DAL_EXPORT ProjectResourceErrorException : public dtUtil::Exception
+   {
+   public:
+      ProjectResourceErrorException(const std::string& message, const std::string& filename, unsigned int linenum);
+      virtual ~ProjectResourceErrorException() {};
+   };
+
+   class DT_DAL_EXPORT ProjectException : public dtUtil::Exception
+   {
+   public:
+      ProjectException(const std::string& message, const std::string& filename, unsigned int linenum);
+      virtual ~ProjectException() {};
+   };
+
+   class DT_DAL_EXPORT MapParsingException : public dtUtil::Exception
+   {
+   public:
+      MapParsingException(const std::string& message, const std::string& filename, unsigned int linenum);
+      virtual ~MapParsingException() {};
+   };
+
+   class DT_DAL_EXPORT MapSaveException : public dtUtil::Exception
+   {
+   public:
+      MapSaveException(const std::string& message, const std::string& filename, unsigned int linenum);
+      virtual ~MapSaveException() {};
+   };
+
+   class DT_DAL_EXPORT XMLLoadParsingException : public dtUtil::Exception
+   {
+   public:
+      XMLLoadParsingException(const std::string& message, const std::string& filename, unsigned int linenum);
+      virtual ~XMLLoadParsingException() {};
+   };
+
+   class DT_DAL_EXPORT ObjectFactoryUnknownTypeException : public dtUtil::Exception
+   {
+   public:
+      ObjectFactoryUnknownTypeException(const std::string& message, const std::string& filename, unsigned int linenum);
+      virtual ~ObjectFactoryUnknownTypeException() {};
+   };
+
+   class DT_DAL_EXPORT InvalidActorException : public dtUtil::Exception
+   {
+   public:
+      InvalidActorException(const std::string& message, const std::string& filename, unsigned int linenum);
+      virtual ~InvalidActorException() {};
+   };
+
+   class DT_DAL_EXPORT InvalidParameterException : public dtUtil::Exception
+   {
+   public:
+      InvalidParameterException(const std::string& message, const std::string& filename, unsigned int linenum);
+      virtual ~InvalidParameterException() {};
+   };
+
 }//namespace dtDAL
 
-#endif //__throw dtUtil::ExceptionION_ENUM_H__
+#endif //DELTA_EXCEPTION_ENUM

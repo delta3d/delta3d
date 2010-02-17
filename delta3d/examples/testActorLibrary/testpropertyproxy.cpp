@@ -67,7 +67,7 @@ void ExampleTestPropertyProxy::BuildPropertyMap()
 
    Object *obj = dynamic_cast<Object*>(GetActor());
    if (obj == NULL)
-      throw dtUtil::Exception(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Object", __FILE__, __LINE__);
+      throw dtDAL::InvalidActorException( "Actor should be type dtCore::Object", __FILE__, __LINE__);
 
    AddProperty(new BooleanActorProperty("Test_Boolean", "Test Boolean",
       MakeFunctor(*this, &ExampleTestPropertyProxy::SetTestBool),

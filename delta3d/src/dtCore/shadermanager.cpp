@@ -147,8 +147,7 @@ namespace dtCore
       //Do not allow shader groups with the same name...
       if (itor != mShaderGroups.end())
       {
-         throw dtUtil::Exception(ShaderException::DUPLICATE_SHADERGROUP_FOUND,
-         "Shader groups must have unique names.  The conflicting name is \"" +
+         throw DuplicateShaderGroupException("Shader groups must have unique names.  The conflicting name is \"" +
          shaderGroup.GetName() + "\".", __FILE__, __LINE__);
       }
 
@@ -427,7 +426,7 @@ namespace dtCore
               geometryShader = new osg::Shader(osg::Shader::GEOMETRY);
               if (!geometryShader->loadShaderSourceFromFile(path))
               {
-                  throw dtUtil::Exception(ShaderException::SHADER_SOURCE_ERROR,"Error loading geometry shader file: " +
+                  throw ShaderSourceException("Error loading geometry shader file: " +
                   *geometryShaderIterator + " from shader: " + shader.GetName(), __FILE__, __LINE__);
               }
 
@@ -447,7 +446,7 @@ namespace dtCore
          {
             vertexShader = new osg::Shader(osg::Shader::VERTEX);
             if (!vertexShader->loadShaderSourceFromFile(path))
-               throw dtUtil::Exception(ShaderException::SHADER_SOURCE_ERROR,"Error loading vertex shader file: " +
+               throw ShaderSourceException("Error loading vertex shader file: " +
                   *vertexShaderIterator + " from shader: " + shader.GetName(), __FILE__, __LINE__);
             vertexShader->setName(*vertexShaderIterator);
             program->addShader(vertexShader.get());
@@ -465,7 +464,7 @@ namespace dtCore
          {
             fragmentShader = new osg::Shader(osg::Shader::FRAGMENT);
             if (!fragmentShader->loadShaderSourceFromFile(path))
-               throw dtUtil::Exception(ShaderException::SHADER_SOURCE_ERROR,"Error loading fragment shader file: " +
+               throw ShaderSourceException("Error loading fragment shader file: " +
                   *fragmentShaderIterator + " from shader: " + shader.GetName(), __FILE__, __LINE__);
             fragmentShader->setName(*fragmentShaderIterator);
             program->addShader(fragmentShader.get());
@@ -576,7 +575,7 @@ namespace dtCore
       }
       catch (const dtUtil::Exception& e)
       {
-         throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR, e.ToString(), __FILE__, __LINE__);
+         throw ShaderXmlParserException(e.ToString(), __FILE__, __LINE__);
       }
 
       //store the loaded ShaderGroups 
@@ -644,5 +643,33 @@ namespace dtCore
       {
          UnassignShaderFromNode(*drawable.GetOSGNode());
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   ShaderSourceException::ShaderSourceException(const std::string& message, const std::string& filename, unsigned int linenum)
+      :dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &ShaderException::SHADER_SOURCE_ERROR;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   DuplicateShaderGroupException::DuplicateShaderGroupException(const std::string& message, const std::string& filename, unsigned int linenum)
+      :dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &ShaderException::DUPLICATE_SHADERGROUP_FOUND;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   ShaderXmlParserException::ShaderXmlParserException(const std::string& message, const std::string& filename, unsigned int linenum)
+      :dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &ShaderException::XML_PARSER_ERROR;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   DuplicateShaderParameterException::DuplicateShaderParameterException(const std::string& message, const std::string& filename, unsigned int linenum)
+      :dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &ShaderException::DUPLICATE_SHADER_PARAMETER_FOUND;
    }
 }

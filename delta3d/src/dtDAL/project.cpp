@@ -114,14 +114,14 @@ namespace dtDAL
          {
             std::ostringstream ss;
             ss << "Unable to create directory " << path << ". Error: " << ex.What();
-            throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext, ss.str(), __FILE__, __LINE__);
+            throw dtDAL::ProjectInvalidContextException(ss.str(), __FILE__, __LINE__);
          }
       }
       else if (ft == dtUtil::REGULAR_FILE)
       {
          std::string s(path);
          s.append(" is not a directory");
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext, s, __FILE__, __LINE__);
+         throw dtDAL::ProjectInvalidContextException(s, __FILE__, __LINE__);
       }
 
       // from this point on, we know we have a valid directory
@@ -149,7 +149,7 @@ namespace dtDAL
             {
                std::ostringstream ss;
                ss << "Unable to create directory " << Project::MAP_DIRECTORY << ". Error: " << ex.What();
-               throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext,
+               throw dtDAL::ProjectInvalidContextException(
                   ss.str(), __FILE__, __LINE__);
             }
          }
@@ -167,7 +167,7 @@ namespace dtDAL
                {
                   std::ostringstream ss;
                   ss << "Unable to create directory " << Project::MAP_DIRECTORY << ". Error: " << ex.What();
-                  throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext, ss.str(), __FILE__, __LINE__);
+                  throw dtDAL::ProjectInvalidContextException(ss.str(), __FILE__, __LINE__);
                }
             }
             else if (fileUtils.GetFileInfo(Project::MAP_DIRECTORY).fileType != dtUtil::DIRECTORY)
@@ -185,7 +185,7 @@ namespace dtDAL
                   s.append(" cannot be created.");
                }
 
-               throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext, s, __FILE__, __LINE__);
+               throw dtDAL::ProjectInvalidContextException(s, __FILE__, __LINE__);
             }
          }
       }
@@ -236,14 +236,14 @@ namespace dtDAL
       {
          std::ostringstream ss;
          ss << "Directory \"" << path << "\" does not exist";
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext, ss.str(), __FILE__, __LINE__);
+         throw dtDAL::ProjectInvalidContextException(ss.str(), __FILE__, __LINE__);
       }
 
       if (ft == dtUtil::REGULAR_FILE)
       {
          std::string s(path);
          s.append(" is not a directory");
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext, s, __FILE__, __LINE__);
+         throw dtDAL::ProjectInvalidContextException(s, __FILE__, __LINE__);
       }
 
       //from this point on, we know the path is a valid directory, so we now check the structure.
@@ -266,7 +266,7 @@ namespace dtDAL
          {
             std::string s(path);
             s.append(" is not a valid project directory.");
-            throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext, s, __FILE__, __LINE__);
+            throw dtDAL::ProjectInvalidContextException(s, __FILE__, __LINE__);
          }
          else
          {
@@ -285,7 +285,7 @@ namespace dtDAL
                   s.append(" directory does not exist.");
                }
 
-               throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext, s, __FILE__, __LINE__);
+               throw dtDAL::ProjectInvalidContextException(s, __FILE__, __LINE__);
             }
          }
 
@@ -327,7 +327,7 @@ namespace dtDAL
    {
       if (!mValidContext)
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext,
+         throw dtDAL::ProjectInvalidContextException(
          std::string("The context is not valid."), __FILE__, __LINE__);
       }
 
@@ -356,7 +356,7 @@ namespace dtDAL
    {
       if (!mValidContext)
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext,
+         throw dtDAL::ProjectInvalidContextException(
          std::string("The context is not valid."), __FILE__, __LINE__);
       }
 
@@ -419,13 +419,13 @@ namespace dtDAL
       {
          if (fileUtils.GetFileInfo(fullPath).fileType != dtUtil::REGULAR_FILE)
          {
-            throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectFileNotFound,
+            throw dtDAL::ProjectFileNotFoundException(
                    std::string("Map file \"") + fullPath + "\" not found.", __FILE__, __LINE__);
          }
 
          if (!mParser->Parse(fullPath, &map) || map == NULL)
          {
-            throw dtUtil::Exception(dtDAL::ExceptionEnum::MapLoadParsingError,
+            throw dtDAL::MapParsingException(
                "Map loading didn't throw an exception, but the result is NULL", __FILE__, __LINE__);
          }
 
@@ -466,7 +466,7 @@ namespace dtDAL
    {
       if (!mValidContext)
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext,
+         throw dtDAL::ProjectInvalidContextException(
          std::string("The context is not valid."), __FILE__, __LINE__);
       }
 
@@ -482,7 +482,7 @@ namespace dtDAL
 
       if (mapIter == mMapList.end())
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectFileNotFound,
+         throw dtDAL::ProjectFileNotFoundException(
                 std::string("Map named ") + name + " does not exist.", __FILE__, __LINE__);
       }
 
@@ -501,7 +501,7 @@ namespace dtDAL
    {
       if (!mValidContext)
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext,
+         throw dtDAL::ProjectInvalidContextException(
          std::string("The context is not valid."), __FILE__, __LINE__);
       }
 
@@ -518,7 +518,7 @@ namespace dtDAL
 
       if (mapIter == mMapList.end())
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectFileNotFound,
+         throw dtDAL::ProjectFileNotFoundException(
                 std::string("Map named ") + name + " does not exist.", __FILE__, __LINE__);
       }
 
@@ -538,25 +538,25 @@ namespace dtDAL
    {
       if (!mValidContext)
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext,
+         throw dtDAL::ProjectInvalidContextException(
          std::string("The context is not valid."), __FILE__, __LINE__);
       }
 
       if (IsReadOnly())
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectReadOnly,
+         throw dtDAL::ProjectReadOnlyException(
          std::string("The context is readonly."), __FILE__, __LINE__);
       }
 
       if (name == "")
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectException,
+         throw dtDAL::ProjectException(
                 "Maps may not have an empty name.", __FILE__, __LINE__);
       }
 
       if (fileName == "")
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectException,
+         throw dtDAL::ProjectException(
          std::string("Maps may not have an empty fileName."), __FILE__, __LINE__);
       }
 
@@ -567,12 +567,12 @@ namespace dtDAL
       {
          if (mapIter->first == name)
          {
-            throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectException,
+            throw dtDAL::ProjectException(
                    std::string("Map named ") + name + " already exists.", __FILE__, __LINE__);
          }
          else if (mapIter->second == map->GetFileName())
          {
-            throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectException,
+            throw dtDAL::ProjectException(
                    std::string("A map with file name ") + fileName + " already exists.", __FILE__, __LINE__);
          }
       }
@@ -655,7 +655,7 @@ namespace dtDAL
                {
                   IEnvironmentActor *ea = dynamic_cast<IEnvironmentActor*>(map.GetEnvironmentActor()->GetActor());
                   if (ea == NULL)
-                     throw dtUtil::Exception(ExceptionEnum::InvalidActorException,
+                     throw dtDAL::InvalidActorException(
                      "Actor should be of type dtDAL::EnvironmentActor", __FILE__, __LINE__);
 
                   ea->AddActor(*proxy.GetActor());
@@ -674,7 +674,7 @@ namespace dtDAL
                IEnvironmentActor *ea = dynamic_cast<IEnvironmentActor*>(map.GetEnvironmentActor()->GetActor());
                if (ea == NULL)
                {
-                  throw dtUtil::Exception(ExceptionEnum::InvalidActorException,
+                  throw dtDAL::InvalidActorException(
                   "Actor should be of type dtDAL::EnvironmentActor", __FILE__, __LINE__);
                }
 
@@ -825,14 +825,14 @@ namespace dtDAL
    {
       if (!mValidContext)
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext,
+         throw dtDAL::ProjectInvalidContextException(
          std::string("The context is not valid."), __FILE__, __LINE__);
       }
 
       std::map<std::string, dtCore::RefPtr<Map> >::iterator mapIter = mOpenMaps.find(map.GetSavedName());
       if (mapIter == mOpenMaps.end() || (mapIter->second.get() != &map))
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext,
+         throw dtDAL::ProjectInvalidContextException(
                 std::string("A map named \"") + map.GetSavedName() + "\" exists, but this is not the instance.", __FILE__, __LINE__);
       }
       else
@@ -862,13 +862,13 @@ namespace dtDAL
    {
       if (!mValidContext)
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext,
+         throw dtDAL::ProjectInvalidContextException(
          std::string("The context is not valid."), __FILE__, __LINE__);
       }
 
       if (IsReadOnly())
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectReadOnly,
+         throw dtDAL::ProjectReadOnlyException(
          std::string("The context is readonly."), __FILE__, __LINE__);
       }
 
@@ -894,13 +894,13 @@ namespace dtDAL
    {
       if (!mValidContext)
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext,
+         throw dtDAL::ProjectInvalidContextException(
          std::string("The context is not valid."), __FILE__, __LINE__);
       }
 
       if (IsReadOnly())
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectReadOnly,
+         throw dtDAL::ProjectReadOnlyException(
          std::string("The context is readonly."), __FILE__, __LINE__);
       }
 
@@ -919,7 +919,7 @@ namespace dtDAL
       std::map<std::string, std::string>::iterator i = mMapList.find(mapName);
       if (i == mMapList.end())
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectFileNotFound,
+         throw dtDAL::ProjectFileNotFoundException(
             std::string("No such map: \"") + mapName + "\"", __FILE__, __LINE__);
       }
       else
@@ -971,13 +971,13 @@ namespace dtDAL
    {
       if (!mValidContext)
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext,
+         throw dtDAL::ProjectInvalidContextException(
          std::string("The context is not valid."), __FILE__, __LINE__);
       }
 
       if (IsReadOnly())
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectReadOnly,
+         throw dtDAL::ProjectReadOnlyException(
          std::string("The context is readonly."), __FILE__, __LINE__);
       }
 
@@ -992,7 +992,7 @@ namespace dtDAL
 
       if (map.GetSavedName() == newName)
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectException, std::string("Map named ")
+         throw dtDAL::ProjectException( std::string("Map named ")
                 + map.GetSavedName() + " cannot be saved again as the same name", __FILE__, __LINE__);
       }
 
@@ -1003,7 +1003,7 @@ namespace dtDAL
       if (currentFileName.substr(0, currentFileName.size() - Map::MAP_FILE_EXTENSION.size())
           == newFileNameCopy)
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectException, std::string("Map named ") + map.GetSavedName()
+         throw dtDAL::ProjectException( std::string("Map named ") + map.GetSavedName()
                 + " cannot be saved as a different map with the same file name.", __FILE__, __LINE__);
       }
 
@@ -1011,7 +1011,7 @@ namespace dtDAL
            i != mMapList.end(); ++i )
       {
          if (newFileNameCopy == i->second.substr(0, i->second.size() - Map::MAP_FILE_EXTENSION.size()))
-            throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectException, std::string("Map named ")
+            throw dtDAL::ProjectException( std::string("Map named ")
                    + map.GetSavedName() + " cannot be saved with file name "
                    + newFileName + " because it matches another map.", __FILE__, __LINE__);
       }
@@ -1044,13 +1044,13 @@ namespace dtDAL
    {
       if (!mValidContext)
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext,
+         throw dtDAL::ProjectInvalidContextException(
          std::string("The context is not valid."), __FILE__, __LINE__);
       }
 
       if (IsReadOnly())
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectReadOnly,
+         throw dtDAL::ProjectReadOnlyException(
          std::string("The context is readonly."), __FILE__, __LINE__);
       }
 
@@ -1068,20 +1068,20 @@ namespace dtDAL
    {
       if (!mValidContext)
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext,
+         throw dtDAL::ProjectInvalidContextException(
          std::string("The context is not valid."), __FILE__, __LINE__);
       }
 
       if (!readonlyAllowed && IsReadOnly())
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectReadOnly,
+         throw dtDAL::ProjectReadOnlyException(
          std::string("The context is readonly."), __FILE__, __LINE__);
       }
 
       std::map<std::string, std::string>::const_iterator mapListIter = mMapList.find(map.GetSavedName());
       if (mapListIter == mMapList.end())
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectFileNotFound,
+         throw dtDAL::ProjectFileNotFoundException(
             std::string("No such map: \"") + map.GetSavedName() + "\"", __FILE__, __LINE__);
       }
 
@@ -1089,14 +1089,14 @@ namespace dtDAL
 
       if (mapIter == mOpenMaps.end())
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext,
+         throw dtDAL::ProjectInvalidContextException(
             std::string("A map named \"") + map.GetSavedName()
                 + "\" exists but is not currently open.", __FILE__, __LINE__);
 
       }
       else if (mapIter->second.get() != &map)
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext, std::string("A map named \"") + map.GetSavedName()
+         throw dtDAL::ProjectInvalidContextException(std::string("A map named \"") + map.GetSavedName()
                 + "\" exists, but this is not the instance.", __FILE__, __LINE__);
       }
    }
@@ -1110,7 +1110,7 @@ namespace dtDAL
       {
          if (mMapList.find(map.GetName()) != mMapList.end())
          {
-            throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectException,
+            throw dtDAL::ProjectException(
                "You may not save a map with a name that matches another map.", __FILE__, __LINE__);
          }
       }
@@ -1159,13 +1159,12 @@ namespace dtDAL
       {
          ClearBackup(map.GetSavedName());
       }
-      catch (const dtUtil::Exception& ex)
+      catch (const dtDAL::ProjectFileNotFoundException& ex)
       {
          //if the map in new, the following exception will be thrown
          //so don't print an error in that case.
-         if (ex.TypeEnum() != dtDAL::ExceptionEnum::ProjectFileNotFound)
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                                "Error clearing map backups when saving: %s", ex.What().c_str());
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                            "Error clearing map backups when saving: %s", ex.What().c_str());
       }
    }
 
@@ -1225,14 +1224,14 @@ namespace dtDAL
    {
       if (!mValidContext)
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext,
+         throw dtDAL::ProjectInvalidContextException(
          std::string("The context is not valid."), __FILE__, __LINE__);
       }
 
       std::map< std::string, std::string >::const_iterator found = mMapList.find(mapName);
       if (found == mMapList.end())
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectFileNotFound,
+         throw dtDAL::ProjectFileNotFoundException(
          std::string("No such map: \"") + mapName + "\"", __FILE__, __LINE__);
       }
 
@@ -1257,14 +1256,14 @@ namespace dtDAL
    {
       if (!mValidContext)
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext,
+         throw dtDAL::ProjectInvalidContextException(
          std::string("The context is not valid."), __FILE__, __LINE__);
       }
 
       std::map< std::string, std::string >::iterator found = mMapList.find(mapName);
       if (found == mMapList.end())
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectFileNotFound,
+         throw dtDAL::ProjectFileNotFoundException(
          std::string("No such map: \"") + mapName + "\"", __FILE__, __LINE__);
       }
 
@@ -1295,7 +1294,7 @@ namespace dtDAL
                //we have a problem.
                if (IsReadOnly())
                {
-                  throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectReadOnly,
+                  throw dtDAL::ProjectReadOnlyException(
                      std::string("The context is readonly."), __FILE__, __LINE__);
                }
 
@@ -1310,7 +1309,7 @@ namespace dtDAL
    Map* Project::GetMapForActorProxy(const dtCore::UniqueId& id)
    {
       if (!mValidContext)
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext,
+         throw dtDAL::ProjectInvalidContextException(
          std::string("The context is not valid."), __FILE__, __LINE__);
 
       if (mParser->IsParsing())
@@ -1341,7 +1340,7 @@ namespace dtDAL
    {
       if (!mValidContext)
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext,
+         throw dtDAL::ProjectInvalidContextException(
             std::string("The context is not valid."), __FILE__, __LINE__);
       }
 
@@ -1374,7 +1373,7 @@ namespace dtDAL
    Map* Project::GetMapForActorProxy(const ActorProxy& proxy)
    {
       if (!mValidContext)
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext,
+         throw dtDAL::ProjectInvalidContextException(
          std::string("The context is not valid."), __FILE__, __LINE__);
 
       if (mParser->IsParsing())
@@ -1405,7 +1404,7 @@ namespace dtDAL
    {
       if (!mValidContext)
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext,
+         throw dtDAL::ProjectInvalidContextException(
          std::string("The context is not valid."), __FILE__, __LINE__);
       }
 
@@ -1457,7 +1456,7 @@ namespace dtDAL
    {
       if (!mValidContext)
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext,
+         throw dtDAL::ProjectInvalidContextException(
          std::string("The context is not valid."), __FILE__, __LINE__);
       }
 
@@ -1475,12 +1474,12 @@ namespace dtDAL
          {
             if (ftype == dtUtil::FILE_NOT_FOUND)
             {
-               throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectFileNotFound,
+               throw dtDAL::ProjectFileNotFoundException(
                       std::string("The specified resource was not found: ") + path, __FILE__, __LINE__);
             }
             else if (ftype == dtUtil::DIRECTORY)
             {
-               throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectResourceError,
+               throw dtDAL::ProjectResourceErrorException(
                       std::string("The resource identifier does not specify a resource file: ") + path, __FILE__, __LINE__);
             }
          }
@@ -1502,19 +1501,19 @@ namespace dtDAL
    {
       if (!mValidContext)
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext,
+         throw dtDAL::ProjectInvalidContextException(
          std::string("The context is not valid."), __FILE__, __LINE__);
       }
 
       if (IsReadOnly())
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectReadOnly,
+         throw dtDAL::ProjectReadOnlyException(
          std::string("The context is readonly."), __FILE__, __LINE__);
       }
 
       if (!type.IsResource())
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectResourceError, std::string("Unable to add resource of type ") + type.GetName()
+         throw dtDAL::ProjectResourceErrorException( std::string("Unable to add resource of type ") + type.GetName()
                 + ". It is not a resource type.", __FILE__, __LINE__);
       }
 
@@ -1549,19 +1548,19 @@ namespace dtDAL
 
       if (!mValidContext)
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext,
+         throw dtDAL::ProjectInvalidContextException(
                 std::string("The context is not valid."), __FILE__, __LINE__);
       }
 
       if (IsReadOnly())
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectReadOnly,
+         throw dtDAL::ProjectReadOnlyException(
                 std::string("The context is readonly."), __FILE__, __LINE__);
       }
 
       if (!type.IsResource())
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectResourceError, std::string("Unable to add resource of type ") + type.GetName()
+         throw dtDAL::ProjectResourceErrorException( std::string("Unable to add resource of type ") + type.GetName()
                 + ". It is not a resource type.", __FILE__, __LINE__);
       }
 
@@ -1600,19 +1599,19 @@ namespace dtDAL
 
       if (!mValidContext)
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext,
+         throw dtDAL::ProjectInvalidContextException(
                 std::string("The context is not valid."), __FILE__, __LINE__);
       }
 
       if (IsReadOnly())
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectReadOnly,
+         throw dtDAL::ProjectReadOnlyException(
                 std::string("The context is readonly."), __FILE__, __LINE__);
       }
 
       if (!type.IsResource())
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectResourceError,
+         throw dtDAL::ProjectResourceErrorException(
                 std::string("Unable to add resource of type ") + type.GetName()
                 + ". It is not a resource type.", __FILE__, __LINE__);
       }
@@ -1646,13 +1645,13 @@ namespace dtDAL
    {
       if (!mValidContext)
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext,
+         throw dtDAL::ProjectInvalidContextException(
          std::string("The context is not valid."), __FILE__, __LINE__);
       }
 
       if (IsReadOnly())
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectReadOnly,
+         throw dtDAL::ProjectReadOnlyException(
          std::string("The context is readonly."), __FILE__, __LINE__);
       }
 
@@ -1717,7 +1716,7 @@ namespace dtDAL
       {
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                              "ERROR: call getResourcesOfType ended with no valid results!");
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectException,
+         throw dtDAL::ProjectException(
             "ERROR: call GetResourcesOfType ended with no valid results!", __FILE__, __LINE__);
       }
 
@@ -1730,7 +1729,7 @@ namespace dtDAL
    {
       if (!mValidContext)
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext,
+         throw dtDAL::ProjectInvalidContextException(
          std::string("The context is not valid."), __FILE__, __LINE__);
       }
 
@@ -1795,7 +1794,7 @@ namespace dtDAL
    {
       if (!mValidContext)
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext,
+         throw dtDAL::ProjectInvalidContextException(
          std::string("The context is not valid."), __FILE__, __LINE__);
       }
 
@@ -1807,7 +1806,7 @@ namespace dtDAL
    {
       if (!mValidContext)
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectInvalidContext,
+         throw dtDAL::ProjectInvalidContextException(
          std::string("The context is not valid."), __FILE__, __LINE__);
       }
 

@@ -101,21 +101,18 @@ namespace dtDAL
          SetValue(newProxyValue);
          return true;
       }
+      catch (const dtDAL::ProjectInvalidContextException& ex)
+      {
+         dtUtil::Log::GetInstance("enginepropertytypes.cpp").LogMessage(dtUtil::Log::LOG_WARNING,
+            __FUNCTION__, __LINE__, "Project context is not set, unable to lookup actors.  Setting property %s with string value failed. Error Message %s.",
+            GetName().c_str(), ex.What().c_str());
+
+      }
       catch (const dtUtil::Exception& ex)
       {
-         if (ex.TypeEnum() == ExceptionEnum::ProjectInvalidContext)
-         {
-            dtUtil::Log::GetInstance("enginepropertytypes.cpp").LogMessage(dtUtil::Log::LOG_WARNING,
-                                                                           __FUNCTION__, __LINE__, "Project context is not set, unable to lookup actors.  Setting property %s with string value failed. Error Message %s.",
-                                                                           GetName().c_str(), ex.What().c_str());
-         }
-         else
-         {
-            dtUtil::Log::GetInstance("enginepropertytypes.cpp").LogMessage(dtUtil::Log::LOG_WARNING,
-                                                                           __FUNCTION__, __LINE__, "Error setting ActorActorProperty.  Setting property %s with string value failed. Error Message %s.",
-                                                                           GetName().c_str(), ex.What().c_str());
-         }
-
+         dtUtil::Log::GetInstance("enginepropertytypes.cpp").LogMessage(dtUtil::Log::LOG_WARNING,
+            __FUNCTION__, __LINE__, "Error setting ActorActorProperty.  Setting property %s with string value failed. Error Message %s.",
+            GetName().c_str(), ex.What().c_str());
       }
 
       return false;
@@ -300,20 +297,17 @@ namespace dtDAL
 
          return proxyValue;
       }
+      catch (const dtDAL::ProjectInvalidContextException& ex)
+      {
+         dtUtil::Log::GetInstance("enginepropertytypes.cpp").LogMessage(dtUtil::Log::LOG_WARNING,
+            __FUNCTION__, __LINE__, "Project context is not set, unable to lookup actors.  Setting property %s with string value failed. Error Message %s.",
+            GetName().c_str(), ex.What().c_str());
+      }
       catch (const dtUtil::Exception& ex)
       {
-         if (ex.TypeEnum() == ExceptionEnum::ProjectInvalidContext)
-         {
-            dtUtil::Log::GetInstance("enginepropertytypes.cpp").LogMessage(dtUtil::Log::LOG_WARNING,
-               __FUNCTION__, __LINE__, "Project context is not set, unable to lookup actors.  Setting property %s with string value failed. Error Message %s.",
-               GetName().c_str(), ex.What().c_str());
-         }
-         else
-         {
-            dtUtil::Log::GetInstance("enginepropertytypes.cpp").LogMessage(dtUtil::Log::LOG_WARNING,
-               __FUNCTION__, __LINE__, "Error setting ActorIDActorProperty.  Setting property %s with string value failed. Error Message %s.",
-               GetName().c_str(), ex.What().c_str());
-         }
+         dtUtil::Log::GetInstance("enginepropertytypes.cpp").LogMessage(dtUtil::Log::LOG_WARNING,
+            __FUNCTION__, __LINE__, "Error setting ActorIDActorProperty.  Setting property %s with string value failed. Error Message %s.",
+            GetName().c_str(), ex.What().c_str());
       }
 
       return NULL;
@@ -349,20 +343,17 @@ namespace dtDAL
 
          return proxyValue;
       }
+      catch (const dtDAL::ProjectInvalidContextException& ex)
+      {
+         dtUtil::Log::GetInstance("enginepropertytypes.cpp").LogMessage(dtUtil::Log::LOG_WARNING,
+            __FUNCTION__, __LINE__, "Project context is not set, unable to lookup actors.  Setting property %s with string value failed. Error Message %s.",
+            GetName().c_str(), ex.What().c_str());
+      }
       catch (const dtUtil::Exception& ex)
       {
-         if (ex.TypeEnum() == ExceptionEnum::ProjectInvalidContext)
-         {
-            dtUtil::Log::GetInstance("enginepropertytypes.cpp").LogMessage(dtUtil::Log::LOG_WARNING,
-               __FUNCTION__, __LINE__, "Project context is not set, unable to lookup actors.  Setting property %s with string value failed. Error Message %s.",
-               GetName().c_str(), ex.What().c_str());
-         }
-         else
-         {
-            dtUtil::Log::GetInstance("enginepropertytypes.cpp").LogMessage(dtUtil::Log::LOG_WARNING,
-               __FUNCTION__, __LINE__, "Error setting ActorIDActorProperty.  Setting property %s with string value failed. Error Message %s.",
-               GetName().c_str(), ex.What().c_str());
-         }
+         dtUtil::Log::GetInstance("enginepropertytypes.cpp").LogMessage(dtUtil::Log::LOG_WARNING,
+            __FUNCTION__, __LINE__, "Error setting ActorIDActorProperty.  Setting property %s with string value failed. Error Message %s.",
+            GetName().c_str(), ex.What().c_str());
       }
 
       return NULL;

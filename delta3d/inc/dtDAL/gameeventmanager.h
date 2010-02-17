@@ -67,6 +67,7 @@ namespace dtDAL
          /**
           * Adds a new event to the game event manager.
           * @param event The new event to register with the manager.
+          * @throw dtDAL::BaseException
           */
          virtual void AddEvent(GameEvent& event);
 
