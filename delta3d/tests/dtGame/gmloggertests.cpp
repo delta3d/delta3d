@@ -242,7 +242,7 @@ class TestLogStream : public dtGame::LogStream
       {
          if (mExceptionEnabled)
          {
-            throw dtUtil::Exception(dtGame::LogStreamException::LOGGER_IO_EXCEPTION,
+            throw dtGame::LogStreamIOException(
             "Test Exception - Not an Error!", __FILE__, __LINE__);
          }
       }

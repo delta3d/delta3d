@@ -181,7 +181,7 @@ void HUDComponent::SetupGUI(dtABC::BaseABC& app)
    {
       std::ostringstream oss;
       oss << "CEGUI while setting up GUI: " << e.getMessage().c_str();
-      throw dtUtil::Exception(dtGame::ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION,
+      throw dtGame::GeneralGameManagerException(
          oss.str(), __FILE__, __LINE__);
    }
 

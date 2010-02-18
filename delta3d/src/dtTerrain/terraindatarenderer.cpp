@@ -42,4 +42,11 @@ namespace dtTerrain
       
    }
    
+
+   ////////////////////////////////////////////////////////////////////////////////
+   InvalidHeightfieldDataException::InvalidHeightfieldDataException(const std::string& message, const std::string& filename, unsigned int linenum) 
+      : dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &TerrainRendererException::INVALID_HEIGHTFIELD_DATA;
+   }
 }

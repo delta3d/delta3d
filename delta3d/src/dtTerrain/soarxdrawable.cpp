@@ -287,8 +287,10 @@ namespace dtTerrain
       unsigned int i,j;
 
       if (mDetailNoise == NULL)
-         throw dtUtil::Exception(TerrainException::NULL_POINTER,"MUST specify detail noise data before "
+      {
+         throw dtTerrain::NullPointerException("MUST specify detail noise data before "
             "building rendering data structures.  Cannot build tile.", __FILE__, __LINE__);
+      }
 
       Clear();
 

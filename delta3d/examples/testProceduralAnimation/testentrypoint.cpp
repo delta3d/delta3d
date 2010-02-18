@@ -77,7 +77,7 @@ void TestProceduralAnimation::Initialize(dtGame::GameApplication& app, int argc,
       else
       {
          std::cout << std::endl<< "Usage: " << argv[0] << " testAnim [--performanceTest]" << std::endl;
-         throw dtUtil::Exception(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR,"Usage error", __FILE__, __LINE__);
+         throw dtGame::GameApplicationConfigException("Usage error", __FILE__, __LINE__);
       }
    }
 

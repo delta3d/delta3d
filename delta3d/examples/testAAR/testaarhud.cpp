@@ -300,7 +300,7 @@ void TestAARHUD::SetupGUI(dtCore::Camera& cam, dtCore::Keyboard& keyboard, dtCor
    {
       std::ostringstream oss;
       oss << "CEGUI while setting up AAR GUI: " << e.getMessage().c_str();
-      throw dtUtil::Exception(ARRHUDException::INIT_ERROR,oss.str(), __FILE__, __LINE__);
+      throw AARHUDInitException(oss.str(), __FILE__, __LINE__);
    }
 
 }

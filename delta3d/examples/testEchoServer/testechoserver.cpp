@@ -31,10 +31,6 @@
 #include <iostream>
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_ENUM(AppException);
-AppException AppException::INIT_ERROR("INIT_ERROR");
-
-//////////////////////////////////////////////////////////////////////////
 EchoServer::EchoServer()
    : dtABC::Application("config.xml")
 {
@@ -65,7 +61,7 @@ void EchoServer::Config()
    bool bServer = mServerComp->SetupServer(5555);
    if (!bServer)
    {
-      throw dtUtil::Exception(AppException::INIT_ERROR, "\nError setting up server!!", __FILE__, __LINE__);
+      throw AppInitException("\nError setting up server!!", __FILE__, __LINE__);
    }
    else
    {
@@ -80,4 +76,11 @@ void EchoServer::Quit()
    mServerComp->ShutdownNetwork();
 
    Application::Quit();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+AppInitException::AppInitException(const std::string& message, const std::string& filename, unsigned int linenum) 
+: dtUtil::Exception(message, filename, linenum)
+{
+
 }

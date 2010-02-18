@@ -26,5 +26,18 @@ namespace dtHLAGM
 
    ExceptionEnum ExceptionEnum::XML_INTERNAL_EXCEPTION("XML Internal Exception");
    ExceptionEnum ExceptionEnum::XML_CONFIG_EXCEPTION("XML Config Exception");
-   
+
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtHLAGM::XmlInternalException::XmlInternalException(const std::string& message, const std::string& filename, unsigned int linenum)
+      : dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &dtHLAGM::ExceptionEnum::XML_INTERNAL_EXCEPTION;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtHLAGM::XmlConfigException::XmlConfigException(const std::string& message, const std::string& filename, unsigned int linenum)
+      : dtUtil::Exception(message, filename, linenum)   {
+      mType = &dtHLAGM::ExceptionEnum::XML_CONFIG_EXCEPTION;
+   }
 }

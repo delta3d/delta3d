@@ -22,6 +22,7 @@
 #define DELTA_HLAGM_EXCEPTION_ENUM
 
 #include <dtUtil/enumeration.h>
+#include <dtUtil/exception.h>
 #include <dtHLAGM/export.h>
 
 namespace dtHLAGM
@@ -42,6 +43,21 @@ namespace dtHLAGM
             AddInstance(this);
          }
    };
+
+   class XmlInternalException : public dtUtil::Exception
+   {
+   public:
+   	XmlInternalException(const std::string& message, const std::string& filename, unsigned int linenum);
+   	virtual ~XmlInternalException() {};
+   };
+   
+   class XmlConfigException : public dtUtil::Exception
+   {
+   public:
+   	XmlConfigException(const std::string& message, const std::string& filename, unsigned int linenum);
+   	virtual ~XmlConfigException() {};
+   };
+   
 
 }
 

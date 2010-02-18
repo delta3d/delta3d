@@ -507,7 +507,7 @@ namespace dtTerrain
       int height2 = mask_image.t();
 
       if ((width!=width2) || (height!=height2))
-         throw dtUtil::Exception(ImageUtilException::INVALID_IMAGE_DIMENSIONS,"Source and mask image must be of the "
+         throw dtTerrain::InvalidImageDimensionsException("Source and mask image must be of the "
             "same dimensions.", __FILE__, __LINE__);
 
       dtCore::RefPtr<osg::Image> dst_image = new osg::Image;
@@ -833,7 +833,7 @@ namespace dtTerrain
             error << "Image file: " << gslcc.mFileName << " has an invalid raster format. NumBands = "
                << bands;
             delete ds;
-            throw dtUtil::Exception(ImageUtilException::INVALID_RASTER_FORMAT,error.str(), __FILE__, __LINE__);
+            throw dtTerrain::InvalidRasterFormatException(error.str(), __FILE__, __LINE__);
          }
 
          delete ds;
@@ -844,7 +844,7 @@ namespace dtTerrain
          std::string errorFile = gslcc.mFileName;
          if (gslcc.mFileName.empty())
             errorFile = "nil";
-         throw dtUtil::Exception(ImageUtilException::LOAD_FAILED,"Failed to load: " + errorFile, __FILE__, __LINE__);
+         throw dtTerrain::LoadFailedException("Failed to load: " + errorFile, __FILE__, __LINE__);
       }
 
       double d = gslcc.mGeoTransform[1]*gslcc.mGeoTransform[5] -
@@ -863,5 +863,26 @@ namespace dtTerrain
 
       gslcc.mInverseGeoTransform[4] = -gslcc.mGeoTransform[4]/d;
       gslcc.mInverseGeoTransform[5] = gslcc.mGeoTransform[1]/d;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   InvalidImageDimensionsException::InvalidImageDimensionsException(const std::string& message, const std::string& filename, unsigned int linenum)
+      : dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &ImageUtilException::INVALID_IMAGE_DIMENSIONS;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   InvalidRasterFormatException::InvalidRasterFormatException(const std::string& message, const std::string& filename, unsigned int linenum)
+      : dtUtil::Exception(message, filename, linenum)   
+   {
+      mType = &ImageUtilException::INVALID_RASTER_FORMAT;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   LoadFailedException::LoadFailedException(const std::string& message, const std::string& filename, unsigned int linenum)
+      : dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &ImageUtilException::LOAD_FAILED;
    }
 }

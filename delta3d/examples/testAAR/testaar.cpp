@@ -176,7 +176,7 @@ void TestAAR::ParseCommandLineOptions(int argc, char** argv) const
    if (argParser.read("-h") || argParser.read("--help") || argParser.argc() == 0)
    {
       argParser.getApplicationUsage()->write(std::cerr);
-      throw dtUtil::Exception(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR,
+      throw dtGame::GameApplicationConfigException(
          "Command Line Error.", __FILE__, __LINE__);
    }
 

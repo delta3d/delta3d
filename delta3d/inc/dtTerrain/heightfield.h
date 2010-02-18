@@ -24,11 +24,13 @@
 #include <vector>
 #include <osg/Referenced>
 #include <osg/Image>
-#include "dtUtil/enumeration.h"
+#include <dtUtil/enumeration.h>
+#include <dtUtil/exception.h>
 
 namespace dtTerrain
 {
    /**
+    * DEPRECATE 2/16/10
     * This enumeration defines the different types of exceptions the height field may
     * throw if an error occurs.
     */
@@ -54,6 +56,28 @@ namespace dtTerrain
             AddInstance(this);
          }
    };
+
+   class HeightFieldOutOfBoundsException : public dtUtil::Exception
+   {
+   public:
+   	HeightFieldOutOfBoundsException(const std::string& message, const std::string& filename, unsigned int linenum);
+   	virtual ~HeightFieldOutOfBoundsException() {};
+   };
+   
+   class HeightFieldInvalidException : public dtUtil::Exception
+   {
+   public:
+   	HeightFieldInvalidException(const std::string& message, const std::string& filename, unsigned int linenum);
+   	virtual ~HeightFieldInvalidException() {};
+   };
+   
+   class HeightFieldInvalidImageException : public dtUtil::Exception
+   {
+   public:
+   	HeightFieldInvalidImageException(const std::string& message, const std::string& filename, unsigned int linenum);
+   	virtual ~HeightFieldInvalidImageException() {};
+   };
+   
    
    /**
     * This class wraps an array of elevation posts.  The elevation data is 16-bit short values,

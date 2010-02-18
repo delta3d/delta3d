@@ -76,7 +76,7 @@ namespace dtTerrain
    bool LCCAnalyzer::ProcessLCCData(const PagedTerrainTile &tile, LCCType &type)
    {
       if (!tile.IsCachingEnabled())
-         throw dtUtil::Exception(LCCAnalyzerException::INVALID_CACHE,"Must enable terrain caching for "
+         throw dtTerrain::LCCInvalidCacheException("Must enable terrain caching for "
             " the LCC analyzer to function properly.", __FILE__, __LINE__);
 
       //First, we need to check and see if we have a combined image for the
@@ -571,4 +571,18 @@ namespace dtTerrain
       return false;
    }
 
+
+   ////////////////////////////////////////////////////////////////////////////////
+   LCCInvalidCacheException::LCCInvalidCacheException(const std::string& message, const std::string& filename, unsigned int linenum)
+      : dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &LCCAnalyzerException::INVALID_CACHE;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   LCCNoValidGeoImagesException::LCCNoValidGeoImagesException(const std::string& message, const std::string& filename, unsigned int linenum)
+      : dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &LCCAnalyzerException::NO_VALID_GEO_IMAGES;
+   }
 }
