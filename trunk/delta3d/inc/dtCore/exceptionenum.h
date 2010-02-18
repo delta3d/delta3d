@@ -48,14 +48,14 @@ namespace dtCore
    
    };
 
-   class InvalidParameterException : public dtUtil::Exception
+   class DT_CORE_EXPORT InvalidParameterException : public dtUtil::Exception
    {
    public:
    	InvalidParameterException(const std::string& message, const std::string& filename, unsigned int linenum);
    	virtual ~InvalidParameterException() {};
    };
    
-   class InvalidContextException : public dtUtil::Exception
+   class DT_CORE_EXPORT InvalidContextException : public dtUtil::Exception
    {
    public:
    	InvalidContextException(const std::string& message, const std::string& filename, unsigned int linenum);

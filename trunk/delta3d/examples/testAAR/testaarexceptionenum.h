@@ -32,42 +32,15 @@
 #include <dtUtil/exception.h>
 #include "export.h"
 
-/**
- * Exceptions that may be thrown by the demo.
- */
-class TEST_AAR_EXPORT AppException : public dtUtil::Enumeration
-{
-   DECLARE_ENUM(AppException);
-  
-   public:
-     
-      static AppException INIT_ERROR;
-   
-   private:
-      AppException(const std::string &name) : dtUtil::Enumeration(name)
-      {
-         AddInstance(this);
-      }
-};
 
 /**
  * Exception that may be thrown by the HUD.
  */
-class TEST_AAR_EXPORT ARRHUDException : public dtUtil::Enumeration
+class AARHUDInitException : public dtUtil::Exception
 {
-   DECLARE_ENUM(ARRHUDException);
-   
-   public:
-      
-      static ARRHUDException INIT_ERROR;
-      static ARRHUDException RUNTIME_ERROR;
-
-   private:
-      
-      ARRHUDException(const std::string &name) : dtUtil::Enumeration(name)
-      {
-         AddInstance(this);
-      }
+public:
+	AARHUDInitException(const std::string& message, const std::string& filename, unsigned int linenum);
+	virtual ~AARHUDInitException() {};
 };
 
 #endif

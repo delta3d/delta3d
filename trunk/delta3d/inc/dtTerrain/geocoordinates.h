@@ -24,11 +24,13 @@
 #include <osg/Vec3>
 #include <osg/Vec3d>
 #include <dtUtil/enumeration.h>
+#include <dtUtil/exception.h>
 #include <dtTerrain/terrain_export.h>
 
 namespace dtTerrain
 {
    /**
+    * DEPRECATE 2/16/10 use derived Exceptions instead
     * This class contains the various types of exceptions that the
     * coordinate system class may throw during a given operation.  
     */
@@ -45,6 +47,13 @@ namespace dtTerrain
          {
             AddInstance(this);
          }
+   };
+   
+   class GeoCoordinatesOutOfBoundsException : public dtUtil::Exception
+   {
+   public:
+   	GeoCoordinatesOutOfBoundsException(const std::string& message, const std::string& filename, unsigned int linenum);
+   	virtual ~GeoCoordinatesOutOfBoundsException() {};
    };
    
    /**

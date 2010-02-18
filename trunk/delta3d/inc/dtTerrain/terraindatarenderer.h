@@ -34,6 +34,7 @@ namespace dtTerrain
    class Terrain;
    
    /**
+    * DEPRECATE 2/16/10
     * This enumeration contains generic errors that could occur in terrain
     * renderers.  Subclass this enumeration for specific error handling
     * identification.
@@ -55,6 +56,14 @@ namespace dtTerrain
             AddInstance(this);
          }
    };
+
+   class InvalidHeightfieldDataException : public dtUtil::Exception
+   {
+   public:
+   	InvalidHeightfieldDataException(const std::string& message, const std::string& filename, unsigned int linenum);
+   	virtual ~InvalidHeightfieldDataException() {};
+   };
+   
    
    /**
     * This class is the interface for a terrain renderer.  A terrain renderer handles

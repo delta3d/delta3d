@@ -47,6 +47,7 @@ namespace dtTerrain
    class PagedTerrainTile;
 
    /**
+    * DEPRECATE 2/16/10
     * This class enumerates the different exceptions that can be thrown by
     * terrain instances.
     */
@@ -82,6 +83,36 @@ namespace dtTerrain
             AddInstance(this);
          }
    };
+
+   class NullPointerException : public dtUtil::Exception
+   {
+   public:
+   	NullPointerException(const std::string& message, const std::string& filename, unsigned int linenum);
+   	virtual ~NullPointerException() {};
+   };
+
+   class InvalidDataReaderException : public dtUtil::Exception
+   {
+   public:
+   	InvalidDataReaderException(const std::string& message, const std::string& filename, unsigned int linenum);
+   	virtual ~InvalidDataReaderException() {};
+   };
+   
+   
+   class InvalidDataRendererException : public dtUtil::Exception
+   {
+   public:
+   	InvalidDataRendererException(const std::string& message, const std::string& filename, unsigned int linenum);
+   	virtual ~InvalidDataRendererException() {};
+   };
+   
+   class InvalidDecorationLayerException : public dtUtil::Exception
+   {
+   public:
+   	InvalidDecorationLayerException(const std::string& message, const std::string& filename, unsigned int linenum);
+   	virtual ~InvalidDecorationLayerException() {};
+   };
+   
 
    /**
     * This is the base terrain class that provides most of the functionlity

@@ -61,6 +61,7 @@ namespace dtTerrain
    };
 
    /**
+    * DEPRECATE 2/16/10
     * Defines the exceptions thrown by the lcc analyzer.
     */
    class LCCAnalyzerException : public dtUtil::Enumeration
@@ -82,6 +83,21 @@ namespace dtTerrain
             AddInstance(this);
          }
    };
+   
+   class LCCInvalidCacheException : public dtUtil::Exception
+   {
+   public:
+   	LCCInvalidCacheException(const std::string& message, const std::string& filename, unsigned int linenum);
+   	virtual ~LCCInvalidCacheException() {};
+   };
+
+   class LCCNoValidGeoImagesException : public dtUtil::Exception
+   {
+   public:
+   	LCCNoValidGeoImagesException(const std::string& message, const std::string& filename, unsigned int linenum);
+   	virtual ~LCCNoValidGeoImagesException() {};
+   };
+   
 
    /**
     * The LCC Analyzer calculates LCC data for use in the

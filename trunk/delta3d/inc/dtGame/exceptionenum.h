@@ -61,7 +61,7 @@ namespace dtGame
    };
 
    ///Exception enumeration used for general game manager exceptions.
-   class GeneralGameManagerException : public dtUtil::Exception
+   class DT_GAME_EXPORT GeneralGameManagerException : public dtUtil::Exception
    {
    public:
    	GeneralGameManagerException(const std::string& message, const std::string& filename, unsigned int linenum);
@@ -77,7 +77,7 @@ namespace dtGame
    }; 
 
    ///Exception enumeration used when trying to create a actor on the game manager with an unknown type.
-   class UnknownActorTypeException : public dtUtil::Exception
+   class DT_GAME_EXPORT UnknownActorTypeException : public dtUtil::Exception
    {
    public:
       UnknownActorTypeException(const std::string& message, const std::string& filename, unsigned int linenum);
@@ -85,7 +85,7 @@ namespace dtGame
    };
 
    ///Exception enumeration used when an actor is remote and an operation only applicable to local actors is requested.
-   class ActorIsRemoteException : public dtUtil::Exception
+   class DT_GAME_EXPORT ActorIsRemoteException : public dtUtil::Exception
    {
    public:
       ActorIsRemoteException(const std::string& message, const std::string& filename, unsigned int linenum);
@@ -93,7 +93,7 @@ namespace dtGame
    };
 
    ///Exception enumeration used when actors are in invalid states and code can't continue.
-   class InvalidActorStateException : public dtUtil::Exception
+   class DT_GAME_EXPORT InvalidActorStateException : public dtUtil::Exception
    {
    public:
       InvalidActorStateException(const std::string& message, const std::string& filename, unsigned int linenum);
@@ -101,7 +101,7 @@ namespace dtGame
    };
 
    ///Game application was unable to initialize for some reason.
-   class GameApplicationConfigException : public dtUtil::Exception
+   class DT_GAME_EXPORT GameApplicationConfigException : public dtUtil::Exception
    {
    public:
       GameApplicationConfigException(const std::string& message, const std::string& filename, unsigned int linenum);
@@ -109,7 +109,7 @@ namespace dtGame
    };
 
    ///Used when an error occurs working with the dead reckoning component.
-   class DeadReckoningException : public dtUtil::Exception
+   class DT_GAME_EXPORT DeadReckoningException : public dtUtil::Exception
    {
    public:
       DeadReckoningException(const std::string& message, const std::string& filename, unsigned int linenum);

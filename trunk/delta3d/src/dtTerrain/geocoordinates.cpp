@@ -53,15 +53,15 @@ namespace dtTerrain
    void GeoCoordinates::SetLatitude(int degrees, int minutes, int seconds)
    {
       if (degrees < -90 || degrees > 90)
-         throw dtUtil::Exception(GeoCoordinatesException::OUT_OF_BOUNDS,
+         throw dtTerrain::GeoCoordinatesOutOfBoundsException(
          "Latitude degrees must be in the range of -90 to 90 inclusive.", __FILE__, __LINE__);
 
       if (minutes < 0 || minutes > 59)
-         throw dtUtil::Exception(GeoCoordinatesException::OUT_OF_BOUNDS,
+         throw dtTerrain::GeoCoordinatesOutOfBoundsException(
          "Latitude minutes must be in the range of 0 to 59.", __FILE__, __LINE__);
 
       if (seconds < 0 || seconds > 59)
-         throw dtUtil::Exception(GeoCoordinatesException::OUT_OF_BOUNDS,
+         throw dtTerrain::GeoCoordinatesOutOfBoundsException(
          "Latitude seconds must be in the range of 0 to 59.", __FILE__, __LINE__);
 
       if (degrees < 0)
@@ -89,15 +89,15 @@ namespace dtTerrain
    void GeoCoordinates::SetLongitude(int degrees, int minutes, int seconds)
    {
       if (degrees < -180 || degrees > 180)
-         throw dtUtil::Exception(GeoCoordinatesException::OUT_OF_BOUNDS,
+         throw dtTerrain::GeoCoordinatesOutOfBoundsException(
          "Longitude degrees must be in the range of -180 to 180 inclusive.", __FILE__, __LINE__);
 
       if (minutes < 0 || minutes > 59)
-         throw dtUtil::Exception(GeoCoordinatesException::OUT_OF_BOUNDS,
+         throw dtTerrain::GeoCoordinatesOutOfBoundsException(
          "Longitude minutes must be in the range of 0 to 59.", __FILE__, __LINE__);
 
       if (seconds < 0 || seconds > 59)
-         throw dtUtil::Exception(GeoCoordinatesException::OUT_OF_BOUNDS,
+         throw dtTerrain::GeoCoordinatesOutOfBoundsException(
          "Longitude seconds must be in the range of 0 to 59.", __FILE__, __LINE__);
 
       if (degrees < 0)
@@ -215,4 +215,11 @@ namespace dtTerrain
       return ost.str();
    }
 
+
+   ////////////////////////////////////////////////////////////////////////////////
+   GeoCoordinatesOutOfBoundsException::GeoCoordinatesOutOfBoundsException(const std::string& message, const std::string& filename, unsigned int linenum)
+      : dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &GeoCoordinatesException::OUT_OF_BOUNDS;
+   }
 }

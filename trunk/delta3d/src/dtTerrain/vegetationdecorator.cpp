@@ -67,7 +67,7 @@ namespace dtTerrain
    {
       if (mLCCTypes.empty())
       {
-         throw dtUtil::Exception(VegetationException::INVALID_LCC_TYPES,"No LCC types have been specified "
+         throw dtTerrain::VegetationInvalidLCCTypesException("No LCC types have been specified "
             "for this decorator.  Therefore, no LCC vegetation placement can occur.", __FILE__, __LINE__);
       }
 
@@ -422,5 +422,17 @@ namespace dtTerrain
          break;
       }
       return 1;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   VegetationInvalidLCCTypesException::VegetationInvalidLCCTypesException(const std::string& message, const std::string& filename, unsigned int linenum) : dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &VegetationException::INVALID_LCC_TYPES;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   VegetationInvalidSlopeAspectImageException::VegetationInvalidSlopeAspectImageException(const std::string& message, const std::string& filename, unsigned int linenum) : dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &VegetationException::INVALID_SLOPE_ASPECT_IMAGE;
    }
 }

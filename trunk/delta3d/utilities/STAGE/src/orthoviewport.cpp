@@ -107,7 +107,7 @@ namespace dtEditQt
       {
          if (!isInitialized())
          {
-            throw dtUtil::Exception(dtDAL::ExceptionEnum::BaseException,"Cannot refresh the viewport. "
+            throw dtDAL::BaseException("Cannot refresh the viewport. "
                "It has not been initialized.", __FILE__, __LINE__);
          }
          refresh();

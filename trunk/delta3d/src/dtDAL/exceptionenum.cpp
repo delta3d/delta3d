@@ -87,6 +87,13 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   dtDAL::MapException::MapException(const std::string& message, const std::string& filename, unsigned int linenum)
+      : dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &dtDAL::ExceptionEnum::MapException;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    dtDAL::XMLLoadParsingException::XMLLoadParsingException(const std::string& message, const std::string& filename, unsigned int linenum)
       : dtUtil::Exception(message, filename, linenum)
    {

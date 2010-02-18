@@ -19,7 +19,6 @@
 * Matthew W. Campbell
 */
 #include "dtTerrain/heightfield.h"
-#include "dtUtil/exception.h"
 
 #include <iostream>
 #include <sstream>
@@ -58,7 +57,7 @@ namespace dtTerrain
    void HeightField::Allocate(unsigned int numCols, unsigned int numRows)
    {
       if (numCols == 0 || numRows == 0) 
-         throw dtUtil::Exception(HeightFieldException::OUT_OF_BOUNDS,"Cannot allocate heightfield. "
+         throw dtTerrain::HeightFieldOutOfBoundsException("Cannot allocate heightfield. "
             "Width and height must be greater than zero.", __FILE__, __LINE__);
       
       if (mNumColumns != numCols || mNumRows != numRows)
@@ -73,7 +72,7 @@ namespace dtTerrain
    short HeightField::GetHeight(unsigned int c, unsigned int r) const
    {
       if (mData.capacity() == 0)
-         throw dtUtil::Exception(HeightFieldException::INVALID_HEIGHTFIELD,
+         throw dtTerrain::HeightFieldInvalidException(
          "Height field data is null.", __FILE__, __LINE__);
          
       if (c >= mNumColumns)
@@ -88,7 +87,7 @@ namespace dtTerrain
             << r << ")  is greater that the heightfield dimensions (" << mNumColumns << ","
             << mNumRows << ").";
             
-         throw dtUtil::Exception(HeightFieldException::OUT_OF_BOUNDS,errorString.str());
+         throw dtTerrain::HeightFieldOutOfBoundsException(errorString.str());
       }*/
       
       return mData[c+(r*mNumColumns)];      
@@ -98,7 +97,7 @@ namespace dtTerrain
    void HeightField::SetHeight(unsigned int c, unsigned int r, short newHeight)
    {
       if (mData.capacity() == 0)
-         throw dtUtil::Exception(HeightFieldException::INVALID_HEIGHTFIELD,
+         throw dtTerrain::HeightFieldInvalidException(
          "Height field data is null.", __FILE__, __LINE__);
          
       if (c >= mNumColumns || r >= mNumRows)
@@ -108,7 +107,7 @@ namespace dtTerrain
             << r << ")  is greater that the heightfield dimensions (" << mNumColumns << ","
             << mNumRows << ").";
             
-         throw dtUtil::Exception(HeightFieldException::OUT_OF_BOUNDS,errorString.str(), __FILE__, __LINE__);
+         throw dtTerrain::HeightFieldOutOfBoundsException(errorString.str(), __FILE__, __LINE__);
       }
       
       mData[c+(r*mNumColumns)] = newHeight;
@@ -166,5 +165,26 @@ namespace dtTerrain
       float v34 = v3 + (v4-v3)*(x-fx);
 
       return v12 + (v34-v12)*(y-fy);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   HeightFieldOutOfBoundsException::HeightFieldOutOfBoundsException(const std::string& message, const std::string& filename, unsigned int linenum)
+      :dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &HeightFieldException::OUT_OF_BOUNDS;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   HeightFieldInvalidException::HeightFieldInvalidException(const std::string& message, const std::string& filename, unsigned int linenum)
+      :dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &HeightFieldException::INVALID_HEIGHTFIELD;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   HeightFieldInvalidImageException::HeightFieldInvalidImageException(const std::string& message, const std::string& filename, unsigned int linenum)
+      :dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &HeightFieldException::INVALID_IMAGE_FORMAT;
    }
 }

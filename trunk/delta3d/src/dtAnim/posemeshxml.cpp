@@ -195,7 +195,7 @@ void dtAnim::PoseMeshFileHandler::ReadPoseMeshNode(const XERCES_CPP_NAMESPACE_QU
    // Report errors
    if (!success)
    {
-      throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_PARAMETER,
+      throw dtCore::InvalidParameterException(
          "Invalid or missing parameter in PoseMesh file.",
          __FILE__, __LINE__);
    }

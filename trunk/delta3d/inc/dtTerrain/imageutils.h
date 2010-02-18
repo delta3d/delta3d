@@ -30,6 +30,7 @@
 namespace dtTerrain
 {
    /**
+    * DEPRECATE 2/16/10
     * Defines exceptions that may be thrown from the image utility methods.
     */
    class ImageUtilException : public dtUtil::Enumeration
@@ -51,6 +52,28 @@ namespace dtTerrain
             AddInstance(this);
          }
    };
+
+   class InvalidImageDimensionsException : public dtUtil::Exception
+   {
+   public:
+   	InvalidImageDimensionsException(const std::string& message, const std::string& filename, unsigned int linenum);
+   	virtual ~InvalidImageDimensionsException() {};
+   };
+   
+   class InvalidRasterFormatException : public dtUtil::Exception
+   {
+   public:
+   	InvalidRasterFormatException(const std::string& message, const std::string& filename, unsigned int linenum);
+   	virtual ~InvalidRasterFormatException() {};
+   };
+   
+   class LoadFailedException : public dtUtil::Exception
+   {
+   public:
+   	LoadFailedException(const std::string& message, const std::string& filename, unsigned int linenum);
+   	virtual ~LoadFailedException() {};
+   };
+   
    
    /**
     * This class is a static class containing many methods for creating images

@@ -34,6 +34,7 @@
 namespace dtTerrain
 {
    /**
+    * DEPRECATE 2/16/10
     * Defines the exception used by the vegetation decorator.
     */
    class DT_TERRAIN_EXPORT VegetationException : public dtUtil::Enumeration
@@ -54,6 +55,21 @@ namespace dtTerrain
             AddInstance(this);
          }
    };
+
+   class VegetationInvalidLCCTypesException : public dtUtil::Exception
+   {
+   public:
+   	VegetationInvalidLCCTypesException(const std::string& message, const std::string& filename, unsigned int linenum);
+   	virtual ~VegetationInvalidLCCTypesException() {};
+   };
+   
+   class VegetationInvalidSlopeAspectImageException : public dtUtil::Exception
+   {
+   public:
+   	VegetationInvalidSlopeAspectImageException(const std::string& message, const std::string& filename, unsigned int linenum);
+   	virtual ~VegetationInvalidSlopeAspectImageException() {};
+   };
+   
 
    /**
     * This class is the vegetation decorator layer. It is responsible

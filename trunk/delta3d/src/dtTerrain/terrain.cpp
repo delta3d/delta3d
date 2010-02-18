@@ -129,7 +129,7 @@ namespace dtTerrain
    float Terrain::GetHeight(float x, float y)
    {
       if (!mDataRenderer.valid())
-         throw dtUtil::Exception(TerrainException::INVALID_DATA_RENDERER,
+         throw dtTerrain::InvalidDataRendererException(
          "Cannot retrieve the height of the terrain.", __FILE__, __LINE__);
 
       return mDataRenderer->GetHeight(x,y);  
@@ -385,11 +385,11 @@ namespace dtTerrain
       //tile (heightfield, decorators, etc.) may still load assuming they are not
       //dependent on the failed stages.
       if (!mDataReader.valid())
-         throw dtUtil::Exception(TerrainException::INVALID_DATA_READER,
+         throw dtTerrain::InvalidDataReaderException(
          "Cannot flush the terrain tile load queue.  The terrain reader is not valid.", __FILE__, __LINE__);
 
       if (!mDataRenderer.valid())
-         throw dtUtil::Exception(TerrainException::INVALID_DATA_RENDERER,
+         throw dtTerrain::InvalidDataRendererException(
          "Cannot flush the terrain tile load queue.  The terrain renderer is not valid.", __FILE__, __LINE__);
 
       while (!mTilesToLoadQ.empty())      
@@ -524,11 +524,11 @@ namespace dtTerrain
       //allows each stage to possibly cache data before unloading and perform
       //any necessary clean up operations that should occur.      
       if (!mDataReader.valid())
-         throw dtUtil::Exception(TerrainException::INVALID_DATA_READER,
+         throw dtTerrain::InvalidDataReaderException(
          "Cannot flush the terrain tile load queue.  The terrain reader is not valid.", __FILE__, __LINE__);
 
       if (!mDataRenderer.valid())
-         throw dtUtil::Exception(TerrainException::INVALID_DATA_RENDERER,
+         throw dtTerrain::InvalidDataRendererException(
          "Cannot flush the terrain tile load queue.  The terrain renderer is not valid.", __FILE__, __LINE__);
 
       while (!mTilesToUnloadQ.empty())
@@ -629,7 +629,7 @@ namespace dtTerrain
    void Terrain::AddDecorationLayer(TerrainDecorationLayer *newLayer)
    {
       if (newLayer == NULL)
-         throw dtUtil::Exception(TerrainException::INVALID_DECORATION_LAYER,
+         throw dtTerrain::InvalidDecorationLayerException(
          "Cannot add NULL decoration layer.", __FILE__, __LINE__);
 
       //First make sure we have a unique name for the new layer.      
@@ -810,5 +810,33 @@ namespace dtTerrain
 
       // Walked full ray, so clear LOS
       return true;
+   }
+
+
+   ////////////////////////////////////////////////////////////////////////////////
+   NullPointerException::NullPointerException(const std::string& message, const std::string& filename, unsigned int linenum)
+      : dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &TerrainException::NULL_POINTER;
+   }
+    ////////////////////////////////////////////////////////////////////////////////
+   InvalidDataRendererException::InvalidDataRendererException(const std::string& message, const std::string& filename, unsigned int linenum) 
+      : dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &TerrainException::INVALID_DATA_RENDERER;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   InvalidDataReaderException::InvalidDataReaderException(const std::string& message, const std::string& filename, unsigned int linenum) 
+      : dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &TerrainException::INVALID_DATA_READER;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   InvalidDecorationLayerException::InvalidDecorationLayerException(const std::string& message, const std::string& filename, unsigned int linenum) 
+      : dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &TerrainException::INVALID_DECORATION_LAYER;
    }
 }

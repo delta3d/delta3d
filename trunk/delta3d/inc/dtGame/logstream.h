@@ -56,7 +56,7 @@ namespace dtGame
 
    ///Thrown when an error occurs while performing IO operations on the stream.
    ///This includes creating or opening a stream.
-   class LogStreamIOException : public dtUtil::Exception
+   class DT_GAME_EXPORT LogStreamIOException : public dtUtil::Exception
    {
    public:
    	LogStreamIOException(const std::string& message, const std::string& filename, unsigned int linenum);

@@ -34,6 +34,7 @@ namespace dtTerrain
    class Terrain;
 
    /**
+    * DEPRECATE 2/16/10 use derived Exceptions instead
     * These exceptions are used by terrain data readers when an error occurs
     * during the load process.
     */
@@ -59,6 +60,28 @@ namespace dtTerrain
             AddInstance(this);
          }
    };
+
+   class TerrainDataResourceNotFoundException : public dtUtil::Exception
+   {
+   public:
+   	TerrainDataResourceNotFoundException(const std::string& message, const std::string& filename, unsigned int linenum);
+   	virtual ~TerrainDataResourceNotFoundException() {};
+   };
+   
+   class TerrainCouldNotReadDataException : public dtUtil::Exception
+   {
+   public:
+   	TerrainCouldNotReadDataException(const std::string& message, const std::string& filename, unsigned int linenum);
+   	virtual ~TerrainCouldNotReadDataException() {};
+   };
+   
+   class TerrainReaderPluginNotFoundException : public dtUtil::Exception
+   {
+   public:
+   	TerrainReaderPluginNotFoundException(const std::string& message, const std::string& filename, unsigned int linenum);
+   	virtual ~TerrainReaderPluginNotFoundException() {};
+   };
+   
 
    /**
     * This enumeration specifies the valid resize policies the data readers should

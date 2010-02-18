@@ -97,7 +97,7 @@ void MyGameEntryPoint::Initialize(dtGame::GameApplication& app, int argc, char**
       parser.argc() == 0)
    {
       parser.getApplicationUsage()->write(std::cerr);
-      throw dtUtil::Exception(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR, "Command Line Error.", __FILE__, __LINE__);
+      throw dtGame::GameApplicationConfigException("Command Line Error.", __FILE__, __LINE__);
    }
 
    mMapName.reserve(512);
@@ -170,7 +170,7 @@ void MyGameEntryPoint::OnStartup(dtGame::GameApplication& app)
    {
       std::ostringstream ss;
       ss << "Unable to load HLA Mapping resource " << rd.GetDisplayName();
-      throw dtUtil::Exception(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR, ss.str(), __FILE__, __LINE__);
+      throw dtGame::GameApplicationConfigException( ss.str(), __FILE__, __LINE__);
    }
 
    dtDAL::ResourceDescriptor rd2("Federations:RPR-FOM.fed", "Federations:RPR-FOM.fed");
@@ -184,7 +184,7 @@ void MyGameEntryPoint::OnStartup(dtGame::GameApplication& app)
    {
       std::ostringstream ss;
       ss << "Unable to load HLA Mapping resource " << rd2.GetDisplayName();
-      throw dtUtil::Exception(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR, ss.str(), __FILE__, __LINE__);
+      throw dtGame::GameApplicationConfigException(ss.str(), __FILE__, __LINE__);
    }
 #endif
 

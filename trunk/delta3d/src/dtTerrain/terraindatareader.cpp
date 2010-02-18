@@ -138,4 +138,25 @@ namespace dtTerrain
       
       return v12 + (v34-v12)*(y-fy);
    }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   TerrainDataResourceNotFoundException::TerrainDataResourceNotFoundException(const std::string& message, const std::string& filename, unsigned int linenum)
+      : dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &dtTerrain::TerrainDataReaderException::DATA_RESOURCE_NOT_FOUND;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   TerrainCouldNotReadDataException::TerrainCouldNotReadDataException(const std::string& message, const std::string& filename, unsigned int linenum)
+      : dtUtil::Exception(message, filename, linenum)   
+   {
+      mType = &dtTerrain::TerrainDataReaderException::COULD_NOT_READ_DATA;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   TerrainReaderPluginNotFoundException::TerrainReaderPluginNotFoundException(const std::string& message, const std::string& filename, unsigned int linenum)
+      : dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &dtTerrain::TerrainDataReaderException::READER_PLUGIN_NOT_FOUND;
+   }
 }

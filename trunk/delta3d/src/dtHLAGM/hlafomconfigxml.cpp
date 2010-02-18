@@ -285,7 +285,7 @@ namespace dtHLAGM
                   {
                      std::ostringstream ss;
                      ss << "Unable to extend from mapping named " << extendsName << " because no such mapping has been found in the XML.";
-                     throw dtUtil::Exception(ExceptionEnum::XML_CONFIG_EXCEPTION, ss.str(), __FILE__, __LINE__);
+                     throw dtHLAGM::XmlConfigException( ss.str(), __FILE__, __LINE__);
                   }
                }
 
@@ -388,7 +388,7 @@ namespace dtHLAGM
                   {
                      std::ostringstream ss;
                      ss << "Unable to extend from mapping named " << extendsName << " because no such mapping has been found in the XML.";
-                     throw dtUtil::Exception(ExceptionEnum::XML_CONFIG_EXCEPTION, ss.str(), __FILE__, __LINE__);
+                     throw dtHLAGM::XmlConfigException( ss.str(), __FILE__, __LINE__);
                   }
                }
 
@@ -657,7 +657,7 @@ namespace dtHLAGM
          {
             std::ostringstream ss;
             ss << "Actor Type: \"" << characters.c_str() << "\" does not exist.";
-            throw dtUtil::Exception(ExceptionEnum::XML_CONFIG_EXCEPTION, ss.str(), __FILE__, __LINE__);
+            throw dtHLAGM::XmlConfigException( ss.str(), __FILE__, __LINE__);
          }
          else
          {
@@ -735,7 +735,7 @@ namespace dtHLAGM
          {
             std::ostringstream ss;
             ss << "Unable to lookup message type " << characters << ".  No GameManager assigned to the target translator.";
-            throw dtUtil::Exception(ExceptionEnum::XML_CONFIG_EXCEPTION, ss.str(), __FILE__, __LINE__);
+            throw dtHLAGM::XmlConfigException( ss.str(), __FILE__, __LINE__);
          }
          else
          {
@@ -746,7 +746,7 @@ namespace dtHLAGM
             {
                std::ostringstream ss;
                ss << "Message type " << characters << " does not exist.";
-               throw dtUtil::Exception(ExceptionEnum::XML_CONFIG_EXCEPTION, ss.str(), __FILE__, __LINE__);
+               throw dtHLAGM::XmlConfigException( ss.str(), __FILE__, __LINE__);
             }
             else
             {
@@ -802,7 +802,7 @@ namespace dtHLAGM
          {
             std::ostringstream ss;
             ss << "No dtHLAGM::AttributeType with name " << characters << " exists.";
-            throw dtUtil::Exception(ExceptionEnum::XML_CONFIG_EXCEPTION, ss.str(), __FILE__, __LINE__);
+            throw dtHLAGM::XmlConfigException( ss.str(), __FILE__, __LINE__);
          }
          else if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
          {
@@ -849,7 +849,7 @@ namespace dtHLAGM
          {
             std::ostringstream ss;
             ss << "No dtDAL::DataType with name " << characters << " exists.";
-            throw dtUtil::Exception(ExceptionEnum::XML_CONFIG_EXCEPTION, ss.str(), __FILE__, __LINE__);
+            throw dtHLAGM::XmlConfigException( ss.str(), __FILE__, __LINE__);
          }
       }
       else if (elementName == ONE_TO_MANY_GAME_REQUIRED_ELEMENT)
@@ -950,7 +950,7 @@ namespace dtHLAGM
          ss << "Attempting to pop elements off of stack and the stack is empty."
             << "It should at least contain element "
             << dtUtil::XMLStringConverter(localname).c_str();
-         throw dtUtil::Exception(ExceptionEnum::XML_CONFIG_EXCEPTION, ss.str(), __FILE__, __LINE__);
+         throw dtHLAGM::XmlConfigException( ss.str(), __FILE__, __LINE__);
       }
 
       dtUtil::XMLStringConverter localNameConverter(localname);
@@ -970,7 +970,7 @@ namespace dtHLAGM
          ss << "Attempting to pop mElements off of stack and the element "
             << "at the top (" << lname << ") is not the same as the element ending ("
             << sLocalName << ").";
-         throw dtUtil::Exception(ExceptionEnum::XML_CONFIG_EXCEPTION, ss.str(), __FILE__, __LINE__);
+         throw dtHLAGM::XmlConfigException( ss.str(), __FILE__, __LINE__);
       }
 
       if (mInHLAConfig)
@@ -1001,7 +1001,7 @@ namespace dtHLAGM
                               << mCurrentObjectToActor->GetObjectClassName()
                               << "\" to Actor Type \"" << mCurrentObjectToActor->GetActorType()
                               << "\" is invalid because it has no attribute mappings.";
-                           throw dtUtil::Exception(ExceptionEnum::XML_CONFIG_EXCEPTION, ss.str(), __FILE__, __LINE__);
+                           throw dtHLAGM::XmlConfigException( ss.str(), __FILE__, __LINE__);
                         }
                         mTargetTranslator->RegisterActorMapping(*mCurrentObjectToActor);
                      }
@@ -1078,7 +1078,7 @@ namespace dtHLAGM
                               << mCurrentInteractionToMessage->GetInteractionName()
                               << "\" to Message Type \"" << mCurrentInteractionToMessage->GetMessageType().GetName()
                               << "\" is invalid because has it no parameter mappings.";
-                           throw dtUtil::Exception(ExceptionEnum::XML_CONFIG_EXCEPTION, ss.str(), __FILE__, __LINE__);
+                           throw dtHLAGM::XmlConfigException( ss.str(), __FILE__, __LINE__);
                         }
                         mTargetTranslator->RegisterMessageMapping(*mCurrentInteractionToMessage);
                      }
@@ -1281,7 +1281,7 @@ namespace dtHLAGM
             msg.str("");
             msg << "Actor plugin libraries must implement the function " <<
                " CreateParameterTranslator.";
-            throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectResourceError, msg.str(), __FILE__, __LINE__);
+            throw dtDAL::ProjectResourceErrorException(msg.str(), __FILE__, __LINE__);
          }
 
           mTargetTranslator->AddParameterTranslator(*((ParameterTranslator*(*)())createFn)());

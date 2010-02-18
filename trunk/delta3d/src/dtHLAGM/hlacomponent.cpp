@@ -950,7 +950,7 @@ namespace dtHLAGM
                   << objectToActor.GetObjectClassName() <<  ".  "
                   << "A mapping already exists.  Set the mapping to remote only.";
 
-               throw dtUtil::Exception(dtHLAGM::ExceptionEnum::XML_CONFIG_EXCEPTION, ss.str(), __FILE__, __LINE__);
+               throw dtHLAGM::XmlConfigException(ss.str(), __FILE__, __LINE__);
             }
             else
             {
@@ -961,7 +961,7 @@ namespace dtHLAGM
                   << objectToActor.GetObjectClassName() <<  ".  "
                   << "A mapping already exists.  Mapping will be ignored.";
 
-               throw dtUtil::Exception(dtHLAGM::ExceptionEnum::XML_CONFIG_EXCEPTION, ss.str(), __FILE__, __LINE__);
+               throw dtHLAGM::XmlConfigException(ss.str(), __FILE__, __LINE__);
             }
          }
       }
@@ -982,7 +982,7 @@ namespace dtHLAGM
                ss << ".\"  A mapping with both the same object name and DIS ID (if enabled) exists.  "
                << "Set one to <localOnly/> if both mappings are required.";
 
-            throw dtUtil::Exception(dtHLAGM::ExceptionEnum::XML_CONFIG_EXCEPTION, ss.str(), __FILE__, __LINE__);
+            throw dtHLAGM::XmlConfigException(ss.str(), __FILE__, __LINE__);
          }
          mObjectToActorMap.insert(std::make_pair(objectToActor.GetObjectClassName(), &objectToActor));
       }

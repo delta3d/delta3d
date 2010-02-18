@@ -123,7 +123,7 @@ namespace dtEditQt
             dtDAL::Map* curMap = EditorData::GetInstance().getCurrentMap();
             if (curMap == NULL)
             {
-               throw dtUtil::Exception(dtDAL::ExceptionEnum::MapException,
+               throw dtDAL::MapException(
                "There is no map open, there shouldn't be any controls", __FILE__, __LINE__);
             }
 
@@ -357,7 +357,7 @@ namespace dtEditQt
 
       if (!curMap.valid())
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::MapException,
+         throw dtDAL::MapException(
          "There is no map open, there shouldn't be any controls", __FILE__, __LINE__);
       }
 

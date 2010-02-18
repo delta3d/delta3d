@@ -118,6 +118,13 @@ namespace dtDAL
       virtual ~MapSaveException() {};
    };
 
+   class DT_DAL_EXPORT MapException : public dtUtil::Exception
+   {
+   public:
+      MapException(const std::string& message, const std::string& filename, unsigned int linenum);
+      virtual ~MapException() {};
+   };
+
    class DT_DAL_EXPORT XMLLoadParsingException : public dtUtil::Exception
    {
    public:

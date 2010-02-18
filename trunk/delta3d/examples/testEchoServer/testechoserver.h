@@ -27,7 +27,7 @@
 #define DELTA_EXAMPLE_TESTECHOSERVER
 
 #include <dtABC/application.h>
-#include <dtUtil/enumeration.h>
+#include <dtUtil/exception.h>
 
 #include "echomessageprocessor.h"
 
@@ -44,17 +44,13 @@ namespace dtNetGM
 /**
  * Exceptions that may be thrown by the demo.
  */
-class AppException : public dtUtil::Enumeration
+class AppInitException : public dtUtil::Exception
 {
-   DECLARE_ENUM(AppException);
-   public:
-      static AppException INIT_ERROR;
-   private:
-      AppException(const std::string& name) : dtUtil::Enumeration(name)
-      {
-         AddInstance(this);
-      }
+public:
+	AppInitException(const std::string& message, const std::string& filename, unsigned int linenum);
+	virtual ~AppInitException() {};
 };
+
 
 /**
  * This Delta3D application tests the after review support of Delta3D.

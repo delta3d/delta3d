@@ -28,13 +28,9 @@
 
 #include "testaarexceptionenum.h"
 
-//////////////////////////////////////////////////////////////////////////
-IMPLEMENT_ENUM(AppException);
-AppException AppException::INIT_ERROR("INIT_ERROR");
+////////////////////////////////////////////////////////////////////////////////
+AARHUDInitException::AARHUDInitException(const std::string& message, const std::string& filename, unsigned int linenum) 
+: dtUtil::Exception(message, filename, linenum)
+{
 
-//////////////////////////////////////////////////////////////////////////
-IMPLEMENT_ENUM(ARRHUDException);
-ARRHUDException ARRHUDException::INIT_ERROR("INIT_ERROR");
-ARRHUDException ARRHUDException::RUNTIME_ERROR("RUNTIME_ERROR");
-
-
+}
