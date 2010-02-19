@@ -132,7 +132,7 @@ private:
          ///We'll make a new ScriptModule which will handle subscribing callbacks
          ///to widgets when it loads the Layout file.
          dtGUI::ScriptModule* sm = new dtGUI::ScriptModule();
-         sm->AddCallback("quitHandler", &quitHandler);
+         sm->AddCallback("quitHandler", CEGUI::SubscriberSlot(&TestGUIApp::quitHandler, this));
 
          CEGUI::System::getSingleton().setScriptingModule(sm);
 
@@ -190,7 +190,7 @@ private:
    }
 
    //quit!
-   static bool quitHandler(const CEGUI::EventArgs& e)
+   bool quitHandler(const CEGUI::EventArgs& e)
    {
       dtABC::Application::GetInstance(0)->Quit();
       return true;

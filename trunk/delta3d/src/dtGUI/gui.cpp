@@ -87,140 +87,141 @@ namespace dtGUI
 
    private:
    };
-}
+
+};
 
 
-bool dtGUI::GUI::SystemAndRendererCreatedByHUD = false;
+bool GUI::SystemAndRendererCreatedByHUD = false;
 
 ////////////////////////////////////////////////////////////////////////////////
-dtGUI::GUI::GUI(dtCore::Camera* pTargetCamera,
-                dtCore::Keyboard* pObservedKeyboard,
-                dtCore::Mouse* pObservedMouse):
-m_pRootsheet(NULL)
+GUI::GUI(dtCore::Camera* camera,
+         dtCore::Keyboard* keyboard,
+         dtCore::Mouse* mouse):
+mRootSheet(NULL)
 {
-   m_pMouseListener    = new dtGUI::CEGUIMouseListener();
-   m_pKeyboardListener = new dtGUI::CEGUIKeyboardListener();
+   mMouseListener    = new CEGUIMouseListener();
+   mKeyboardListener = new CEGUIKeyboardListener();
 
    AddSender(&dtCore::System::GetInstance());
    RegisterInstance(this);
 
    _SetupInternalGraph();
 
-   SetCamera(pTargetCamera);
-   SetKeyboard(pObservedKeyboard);
-   SetMouse(pObservedMouse);
+   SetCamera(camera);
+   SetKeyboard(keyboard);
+   SetMouse(mouse);
 
    _SetupSystemAndRenderer();
    _SetupDefaultUI();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-dtGUI::GUI::~GUI()
+GUI::~GUI()
 {
-   if (m_pMouse.valid())
+   if (mMouse.valid())
    {
-      m_pMouse->RemoveMouseListener(m_pMouseListener.get());
+      mMouse->RemoveMouseListener(mMouseListener.get());
    }
 
-   if (m_pKeyboard.valid())
+   if (mKeyboard.valid())
    {
-      m_pKeyboard->RemoveKeyboardListener(m_pKeyboardListener.get());
+      mKeyboard->RemoveKeyboardListener(mKeyboardListener.get());
    }
 
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void dtGUI::GUI::_SetupInternalGraph()
+void GUI::_SetupInternalGraph()
 {
-   m_pInternalGraph = new osg::Geode();
+   mInternalGraph = new osg::Geode();
 
    //m_pInternalGraph->setName("internal_GUI_Geode");
-   m_pInternalGraph->getOrCreateStateSet()->setMode(GL_DEPTH_TEST,osg::StateAttribute::OFF);
-   m_pInternalGraph->getOrCreateStateSet()->setRenderBinDetails(11, "RenderBin");
-   m_pInternalGraph->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
-   m_pInternalGraph->getOrCreateStateSet()->setTextureMode(0, GL_TEXTURE_2D, osg::StateAttribute::ON);
-   m_pInternalGraph->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+   mInternalGraph->getOrCreateStateSet()->setMode(GL_DEPTH_TEST,osg::StateAttribute::OFF);
+   mInternalGraph->getOrCreateStateSet()->setRenderBinDetails(11, "RenderBin");
+   mInternalGraph->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+   mInternalGraph->getOrCreateStateSet()->setTextureMode(0, GL_TEXTURE_2D, osg::StateAttribute::ON);
+   mInternalGraph->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 
-   m_pInternalGraph->addDrawable(new HUDDrawable());
+   mInternalGraph->addDrawable(new HUDDrawable());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void dtGUI::GUI::SetCamera(dtCore::Camera* pTargetCamera)
+void GUI::SetCamera(dtCore::Camera* camera)
 {
    // if this was already a child of another camera remove itself from there:
-   if (m_pCamera.valid())
+   if (mCamera.valid())
    {
-      m_pCamera->removeChild(m_pInternalGraph);
+      mCamera->removeChild(mInternalGraph);
    }
 
    // set ("parent") camera
-   m_pCamera = pTargetCamera == NULL ? NULL : pTargetCamera->GetOSGCamera();
+   mCamera = camera == NULL ? NULL : camera->GetOSGCamera();
 
    // that'll force the camera to draw this gui via the HUDDrawable-object
-   if (m_pCamera)
+   if (mCamera)
    {
-      m_pCamera->addChild(m_pInternalGraph);
+      mCamera->addChild(mInternalGraph);
    }
 
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void dtGUI::GUI::SetMouse(dtCore::Mouse* pObservedMouse)
+void GUI::SetMouse(dtCore::Mouse* mouse)
 {
-   if (m_pMouse.valid())
+   if (mMouse.valid())
    {
-      m_pMouse->RemoveMouseListener(m_pMouseListener.get());
+      mMouse->RemoveMouseListener(mMouseListener.get());
    }
 
-   m_pMouse = pObservedMouse;
+   mMouse = mouse;
 
-   if (m_pMouse.valid())
+   if (mMouse.valid())
    {
-      if (m_pMouse->GetListeners().empty())
+      if (mMouse->GetListeners().empty())
       {
-         m_pMouse->AddMouseListener(m_pMouseListener.get());
+         mMouse->AddMouseListener(mMouseListener.get());
       }
       else
       {
-         m_pMouse->InsertMouseListener(m_pMouse->GetListeners().front() , m_pMouseListener.get());
+         mMouse->InsertMouseListener(mMouse->GetListeners().front() , mMouseListener.get());
       }
    }
 
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void dtGUI::GUI::SetKeyboard(dtCore::Keyboard* pObservedKeyboard)
+void GUI::SetKeyboard(dtCore::Keyboard* keyboard)
 {
-   if (m_pKeyboard.valid())
+   if (mKeyboard.valid())
    {
-      m_pKeyboard->RemoveKeyboardListener(m_pKeyboardListener.get());
+      mKeyboard->RemoveKeyboardListener(mKeyboardListener.get());
    }
 
-   m_pKeyboard = pObservedKeyboard;
+   mKeyboard = keyboard;
 
-   if (m_pKeyboard.valid())
+   if (mKeyboard.valid())
    {
-      if (m_pKeyboard->GetListeners().empty())
+      if (mKeyboard->GetListeners().empty())
       {
-         m_pKeyboard->AddKeyboardListener(m_pKeyboardListener.get());
+         mKeyboard->AddKeyboardListener(mKeyboardListener.get());
       }
       else
       {
-         m_pKeyboard->InsertKeyboardListener(m_pKeyboard->GetListeners().front(), m_pKeyboardListener.get());
+         mKeyboard->InsertKeyboardListener(mKeyboard->GetListeners().front(), mKeyboardListener.get());
       }
    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void dtGUI::GUI::_SetupSystemAndRenderer()
+void GUI::_SetupSystemAndRenderer()
 {
    if (!CEGUI::System::getSingletonPtr())
    {
-      CEGUI::OpenGLRenderer& pRenderer = CEGUI::OpenGLRenderer::create();
-      pRenderer.enableExtraStateSettings(true);
-      CEGUI::System::create(pRenderer);
+      CEGUI::OpenGLRenderer& renderer = CEGUI::OpenGLRenderer::create();
+      renderer.enableExtraStateSettings(true);
+      CEGUI::System::create(renderer);
 
-      CEGUI::DefaultResourceProvider* pRP = static_cast<CEGUI::DefaultResourceProvider*>(CEGUI::System::getSingleton().getResourceProvider());
+      CEGUI::DefaultResourceProvider* rp = static_cast<CEGUI::DefaultResourceProvider*>(CEGUI::System::getSingleton().getResourceProvider());
 
       CEGUI::Imageset::setDefaultResourceGroup("imagesets");
       SetResourceGroupDirectory("imagesets", dtUtil::FindFileInPathList("imagesets"));
@@ -245,10 +246,10 @@ void dtGUI::GUI::_SetupSystemAndRenderer()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void dtGUI::GUI::_SetupDefaultUI()
+void GUI::_SetupDefaultUI()
 {
    //generate unique root-window-name:
-   std::string sGeneratedUniquePrefix="";
+   std::string generatedUniquePrefix="";
 
    //generate unqiue prefix
    for (unsigned int i = 0; i < 65000; i++)
@@ -257,147 +258,167 @@ void dtGUI::GUI::_SetupDefaultUI()
       ssTryName << "gui" << i;
       if (!CEGUI::WindowManager::getSingleton().isWindowPresent(ssTryName.str()+"rootsheet"))
       {
-         sGeneratedUniquePrefix = ssTryName.str();
+         generatedUniquePrefix = ssTryName.str();
          break;
       }
    }
-   if (sGeneratedUniquePrefix=="")
+   if (generatedUniquePrefix=="")
    {
       LOG_ERROR("cannot generate prefix");
       return;
    }
 
-   m_pRootsheet = CEGUI::WindowManager::getSingleton().createWindow("DefaultGUISheet", std::string(sGeneratedUniquePrefix + "rootsheet").c_str());
-   CEGUI::System::getSingleton().setGUISheet(m_pRootsheet);
+   mRootSheet = CEGUI::WindowManager::getSingleton().createWindow("DefaultGUISheet", std::string(generatedUniquePrefix + "rootsheet").c_str());
+   CEGUI::System::getSingleton().setGUISheet(mRootSheet);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void dtGUI::GUI::LoadScheme(const std::string& sFileName, const std::string& sResourceGroup)
+void GUI::LoadScheme(const std::string& fileName, const std::string& resourceGroup)
 {
    _SetupSystemAndRenderer();
-   CEGUI::SchemeManager::getSingleton().create(sFileName, sResourceGroup);
+   CEGUI::SchemeManager::getSingleton().create(fileName, resourceGroup);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void dtGUI::GUI::SetMouseCursor(const std::string& sImagesetName, const std::string& sImageName)
+void GUI::SetMouseCursor(const std::string& imagesetName, const std::string& imageName)
 {
    _SetupSystemAndRenderer();
-   CEGUI::System::getSingletonPtr()->setDefaultMouseCursor(sImagesetName, sImageName);
+   CEGUI::System::getSingletonPtr()->setDefaultMouseCursor(imagesetName, imageName);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-Widget* dtGUI::GUI::LoadLayout(const std::string& sFileName, const std::string& sPrefix, const std::string& sResourceGroup)
+CEGUI::Window* GUI::LoadLayout(const std::string& fileName, const std::string& prefix, const std::string& resourceGroup)
 {
-   return LoadLayout(m_pRootsheet, sFileName, sPrefix, sResourceGroup);
+   return LoadLayout(mRootSheet, fileName, prefix, resourceGroup);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-Widget* dtGUI::GUI::LoadLayout(Widget* pWidgetParent, const std::string& sFileName,
-                               const std::string& sPrefix,
-                               const std::string& sResourceGroup)
+CEGUI::Window* GUI::LoadLayout(Widget* parent, const std::string& fileName,
+                               const std::string& prefix,
+                               const std::string& resourceGroup)
 {
-   Widget* pNewLayout = CEGUI::WindowManager::getSingleton().loadWindowLayout(sFileName, sPrefix, sResourceGroup);
-   pWidgetParent->addChildWindow(pNewLayout);
-   return pNewLayout;
+   CEGUI::Window* layout = CEGUI::WindowManager::getSingleton().loadWindowLayout(fileName, prefix, resourceGroup);
+   
+   parent->addChildWindow(layout);
+   
+   return layout;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-Widget* dtGUI::GUI::CreateWidget(Widget* pParentWidget, const std::string& sWidgetTypeName,
-                                 const std::string& sWidgetName)
+Widget* dtGUI::GUI::CreateWidget(Widget* parent, const std::string& typeName,
+                                 const std::string& name)
 {
-   Widget* pNewWidget = CreateWidget(sWidgetTypeName, sWidgetName);
-   if (pParentWidget) { pParentWidget->addChildWindow(pNewWidget); }
-   return pNewWidget;
+   Widget* newWidget = CreateWidget(typeName, name);
+   if (parent)
+   { 
+      parent->addChildWindow(newWidget); 
+   }
+   return newWidget;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+Widget* dtGUI::GUI::CreateWidget(const std::string& typeName, const std::string& name)
+{
+   CEGUI::Window* window = CEGUI::WindowManager::getSingleton().createWindow(typeName, name);
+
+   mRootSheet->addChildWindow(window);
+   
+   return window;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-Widget* dtGUI::GUI::CreateWidget(const std::string& sWidgetTypeName, const std::string& sWidgetName)
+void GUI::OnMessage(dtCore::Base::MessageData *data)
 {
-   Widget* pNewWidget = CEGUI::WindowManager::getSingleton().createWindow(sWidgetTypeName, sWidgetName);
-   m_pRootsheet->addChildWindow(pNewWidget);
-   return pNewWidget;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void dtGUI::GUI::OnMessage(dtCore::Base::MessageData *data)
-{
-   if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
+   if( data->message == dtCore::System::MESSAGE_PRE_FRAME )
    {
       //_CheckCamera();
 
-      const double dDeltaTime = *static_cast<const double*>(data->userData);
+      const double deltaTime = *static_cast<const double*>(data->userData);
 
-      CEGUI::System::getSingletonPtr()->injectTimePulse(static_cast<float>(dDeltaTime));
+      CEGUI::System::getSingletonPtr()->injectTimePulse(static_cast<float>(deltaTime));
    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void dtGUI::GUI::SetResourceGroupDirectory(const std::string& resourceType, const std::string& directory)
+void GUI::SetResourceGroupDirectory(const std::string& resourceType, const std::string& directory)
 {
    if (CEGUI::System::getSingletonPtr() == NULL)
    {
       return;
    }
 
-   CEGUI::DefaultResourceProvider* pRP = static_cast<CEGUI::DefaultResourceProvider*>(CEGUI::System::getSingleton().getResourceProvider());
+   CEGUI::DefaultResourceProvider* rp = static_cast<CEGUI::DefaultResourceProvider*>(CEGUI::System::getSingleton().getResourceProvider());
 
-   pRP->setResourceGroupDirectory(resourceType, directory);
+   rp->setResourceGroupDirectory(resourceType, directory);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-Widget* dtGUI::GUI::GetWidget(const std::string& sWidgetName)
+Widget* dtGUI::GUI::GetWidget(const std::string& name)
 {
-   if (!CEGUI::WindowManager::getSingleton().isWindowPresent(sWidgetName))
+   if (!CEGUI::WindowManager::getSingleton().isWindowPresent(name))
    {
-      LOG_ERROR(sWidgetName + " is not available in gui \"" + this->GetName() + "\"\n");
+      LOG_ERROR(name + " is not available in gui \"" + this->GetName() + "\"\n");
       return 0;
    }
 
-   return CEGUI::WindowManager::getSingleton().getWindow(sWidgetName);
+   return CEGUI::WindowManager::getSingleton().getWindow(name);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-CEGUI::Event::Connection dtGUI::GUI::SubscribeEvent(const std::string& widgetName, 
-                                                    const std::string& event,
-                                                    GUI::Subscriber subscriber)
+Widget* dtGUI::GUI::GetRootSheet()
 {
-   CEGUI::Window* w = GetWidget(widgetName);
-   if (w)
-   {
-      return SubscribeEvent(*w, event, subscriber);
-   }
+   return mRootSheet;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+const Widget* dtGUI::GUI::GetRootSheet() const
+{
+   return mRootSheet;
+}
+////////////////////////////////////////////////////////////////////////////////
+CEGUI::Event::Connection GUI::SubscribeEvent(const std::string& widgetName, 
+                                             const std::string& event,
+                                             GUI::Subscriber subscriber)
+{
+   CEGUI::Window* window = GetWidget(widgetName);
+   
+   if (window)
+      return SubscribeEvent(*window, event, subscriber);
    
    LOG_ERROR("Could not find widget for event subscription: " + widgetName);
    return CEGUI::Event::Connection();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-CEGUI::Event::Connection dtGUI::GUI::SubscribeEvent(Widget& widget,
-                                                    const std::string& event,
-                                                    GUI::Subscriber subscriber)
+CEGUI::Event::Connection GUI::SubscribeEvent(CEGUI::Window& window,
+                                             const std::string& event,
+                                             GUI::Subscriber subscriber)
 {
-   return widget.subscribeEvent(event, subscriber);
+   return window.subscribeEvent(event, subscriber);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool dtGUI::GUI::IsWindowPresent(const std::string& sWindowName)
+bool GUI::IsWindowPresent(const std::string& widgetName)
 {
    _SetupSystemAndRenderer();
-   return CEGUI::WindowManager::getSingleton().isWindowPresent(sWindowName);
+   return CEGUI::WindowManager::getSingleton().isWindowPresent(widgetName);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool dtGUI::GUI::IsImagesetPresent(const std::string& sImagesetName)
+bool GUI::IsImagesetPresent(const std::string& imagesetName)
 {
    _SetupSystemAndRenderer();
-   return CEGUI::ImagesetManager::getSingleton().isDefined(sImagesetName);
+   return CEGUI::ImagesetManager::getSingleton().isDefined(imagesetName);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void dtGUI::GUI::CreateImageset(const std::string& sImagesetName, 
-                                const std::string& sFileName,
-                                const std::string& sResourceGroup)
+void GUI::CreateImageset(const std::string& imagesetName, 
+                                const std::string& fileName,
+                                const std::string& resourceGroup)
 {
    _SetupSystemAndRenderer();
-   CEGUI::ImagesetManager::getSingleton().createFromImageFile(sImagesetName, sFileName, sResourceGroup);
+   CEGUI::ImagesetManager::getSingleton().createFromImageFile(imagesetName, fileName, resourceGroup);
 }
+
+

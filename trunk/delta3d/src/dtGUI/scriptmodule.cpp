@@ -1,105 +1,79 @@
 #include <dtGUI/scriptmodule.h>
-
 #include <dtUtil/log.h>
 #include <CEGUI/CEGUIEventSet.h>
 
+
 using namespace dtGUI;
 
-ScriptModule::ScriptModule(): BaseScriptModule(), mCallbacks()
+//////////////////////////////////////////////////////////////////////////
+bool ScriptModule::executeScriptedEventHandler(const CEGUI::String& handlerName, const CEGUI::EventArgs& eventArgs)
 {
-   d_identifierString = "dtGUI/ScriptModule";
-}
+   const std::map<std::string, CEGUI::SubscriberSlot>::iterator iter = mCallbacks.find( handlerName.c_str());
 
-ScriptModule::~ScriptModule()
-{
-}
-
-void ScriptModule::executeScriptFile(const CEGUI::String& filename, const CEGUI::String& resourceGroup)
-{
-   LOG_WARNING("Script File Event not handled");
-}
-
-int ScriptModule::executeScriptGlobal(const CEGUI::String& function_name)
-{
-   LOG_WARNING("Script Global Event not handled");
-   return 0;
-}
-
-void ScriptModule::executeString(const CEGUI::String& str)
-{
-   LOG_WARNING("String Event not handled");
-}
-
-/** Uses the map of strings to functions to execute a function to handle the EventArgs.
- * This function is called by CEGUI::System when a CEGUI::Window throws an CEGUI::Event*/
-bool ScriptModule::executeScriptedEventHandler(const CEGUI::String& handler_name, const CEGUI::EventArgs& ea)
-{
-   CallbackRegistry::iterator iter = mCallbacks.find( handler_name.c_str() );
-   if( iter != mCallbacks.end() )
+   if (iter == mCallbacks.end())
    {
-      CallbackRegistry::value_type::second_type aFunction = (*iter).second;
-      return aFunction( ea );
-   }
-   else
-   {
-      dtUtil::Log::GetInstance().LogMessage( dtUtil::Log::LOG_WARNING, __FUNCTION__,
-         "ScriptModule: function '%s' not found in registry.", handler_name.c_str() );
+      LOG_WARNING(std::string(handlerName.c_str() ) + "is no valid function.");
       return false;
    }
-}
-
-#if defined(CEGUI_VERSION_MAJOR) && CEGUI_VERSION_MAJOR >= 0 && defined(CEGUI_VERSION_MINOR) && CEGUI_VERSION_MINOR >= 5
-CEGUI::Event::Connection ScriptModule::subscribeEvent(   CEGUI::EventSet* target,
-                                                         const CEGUI::String& name,
-                                                         const CEGUI::String& subscriber_name)
-{
-   CEGUI::Event::Connection con;
    
-   CallbackRegistry::iterator iter = mCallbacks.find( subscriber_name.c_str() );
-   if( iter != mCallbacks.end() )
+   return iter->second(eventArgs);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+CEGUI::Event::Connection ScriptModule::subscribeEvent(CEGUI::EventSet* window,
+                                                      const CEGUI::String& eventName,
+                                                      CEGUI::Event::Group groupName,
+                                                      const CEGUI::String& subscriberName)
+{
+   const std::map<std::string, CEGUI::SubscriberSlot>::iterator iter = mCallbacks.find(subscriberName.c_str());
+
+   if (iter == mCallbacks.end())
    {
-      CallbackRegistry::value_type::second_type aFunction = (*iter).second;
-      con = target->subscribeEvent(name, CEGUI::Event::Subscriber(aFunction));
+      LOG_WARNING(std::string(subscriberName.c_str() ) + "is no valid callback.");
+      return NULL;
    }
+
+   if (groupName)
+      return window->subscribeEvent(eventName, groupName, iter->second);
    else
-   {
-      dtUtil::Log::GetInstance().LogMessage( dtUtil::Log::LOG_WARNING, __FUNCTION__,
-         "ScriptModule: function '%s' not found in registry.", subscriber_name.c_str() );
-   }
-
-   return con;
+      return window->subscribeEvent(eventName, iter->second);
 }
 
-CEGUI::Event::Connection ScriptModule::subscribeEvent(CEGUI::EventSet* target,
-                                                      const CEGUI::String& name,
-                                                      CEGUI::Event::Group group,
-                                                      const CEGUI::String& subscriber_name)
-{
-   CEGUI::Event::Connection con;
-
-   CallbackRegistry::iterator iter = mCallbacks.find( subscriber_name.c_str() );
-   if( iter != mCallbacks.end() )
-   {
-      CallbackRegistry::value_type::second_type aFunction = (*iter).second;
-      con = target->subscribeEvent(name, group, CEGUI::Event::Subscriber(aFunction));
-   }
-   else
-   {
-      dtUtil::Log::GetInstance().LogMessage( dtUtil::Log::LOG_WARNING, __FUNCTION__,
-         "ScriptModule: function '%s' not found in registry.", subscriber_name.c_str() );
-   }
-
-   return con;
-}
-#endif // CEGUI 0.5.0
-
-bool ScriptModule::AddCallback(const std::string& name, STATIC_FUNCTION f)
-{
-   HandlerFunctor hf( f );
-   return mCallbacks.insert( CallbackRegistry::value_type( name , hf ) ).second;
+//////////////////////////////////////////////////////////////////////////
+bool ScriptModule::AddCallback(const std::string& callbackName, CEGUI::SubscriberSlot subscriberSlot)
+{ 
+   return mCallbacks.insert(std::pair<std::string, CEGUI::SubscriberSlot>(callbackName.c_str(), subscriberSlot)).second; 
 }
 
-bool ScriptModule::AddCallback(const std::string& name, const HandlerFunctor& callback)
+////////////////////////////////////////////////////////////////////////////////
+CEGUI::Event::Connection dtGUI::ScriptModule::subscribeEvent(CEGUI::EventSet* window,
+                                                             const CEGUI::String& eventName,
+                                                             const CEGUI::String& subscriberName)
 {
-   return mCallbacks.insert( CallbackRegistry::value_type( name , callback ) ).second;
+   return subscribeEvent(window, eventName, NULL, subscriberName);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool dtGUI::ScriptModule::NotSupported(const std::string& methodName)
+{
+   LOG_WARNING( methodName + " not handled."); return false;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void dtGUI::ScriptModule::executeScriptFile(const CEGUI::String &fileName, const CEGUI::String &resourceGroup/*="" */)
+{
+   NotSupported( __FUNCTION__ );
+}
+
+////////////////////////////////////////////////////////////////////////////////
+int dtGUI::ScriptModule::executeScriptGlobal(const CEGUI::String& functionName)
+{
+   return NotSupported( __FUNCTION__ );
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void dtGUI::ScriptModule::executeString(const CEGUI::String &str)
+{
+   NotSupported( __FUNCTION__ );
 }
