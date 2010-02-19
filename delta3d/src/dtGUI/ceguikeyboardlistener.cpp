@@ -6,8 +6,10 @@
 
 #include <osgGA/GUIEventAdapter>
 
+////////////////////////////////////////////////////////////////////////////////
 using namespace dtGUI;
 
+////////////////////////////////////////////////////////////////////////////////
 #if CEGUI_VERSION_MAJOR >= 0 && CEGUI_VERSION_MINOR >= 7
    CEGUIKeyboardListener::CEGUIKeyboardListener()
    {
@@ -20,10 +22,12 @@ using namespace dtGUI;
 #endif
 
 
+////////////////////////////////////////////////////////////////////////////////
 CEGUIKeyboardListener::~CEGUIKeyboardListener()
 {
 }
 
+////////////////////////////////////////////////////////////////////////////////
 bool CEGUIKeyboardListener::HandleKeyPressed(const dtCore::Keyboard* keyboard, int key)
 {
    if( CEGUI::Key::Scan scanKey = KeyboardKeyToKeyScan(key) )
@@ -36,6 +40,7 @@ bool CEGUIKeyboardListener::HandleKeyPressed(const dtCore::Keyboard* keyboard, i
    return CEGUI::System::getSingleton().injectChar( static_cast<CEGUI::utf32>(key) );   
 }
 
+////////////////////////////////////////////////////////////////////////////////
 bool CEGUIKeyboardListener::HandleKeyReleased(const dtCore::Keyboard* keyboard, int key)
 {
    bool handled(false);
@@ -49,11 +54,13 @@ bool CEGUIKeyboardListener::HandleKeyReleased(const dtCore::Keyboard* keyboard, 
    return handled;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 bool CEGUIKeyboardListener::HandleKeyTyped(const dtCore::Keyboard* keyboard, int key)
 {
    return false;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 CEGUI::Key::Scan CEGUIKeyboardListener::KeyboardKeyToKeyScan( int key )
 {
    switch(key)
@@ -487,7 +494,7 @@ CEGUI::Key::Scan CEGUIKeyboardListener::KeyboardKeyToKeyScan( int key )
 
 
 ////////////////////////////////////////////////////////////////////////////////
-void dtGUI::CEGUIKeyboardListener::MakeCurrent()
+void CEGUIKeyboardListener::MakeCurrent()
 {
 #if CEGUI_VERSION_MAJOR >= 0 && CEGUI_VERSION_MINOR == 6
   if (m_pGUI != NULL)
@@ -496,3 +503,6 @@ void dtGUI::CEGUIKeyboardListener::MakeCurrent()
    }
 #endif
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
