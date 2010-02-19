@@ -42,6 +42,7 @@
 class StringUtilTests : public CPPUNIT_NS::TestFixture {
    CPPUNIT_TEST_SUITE(StringUtilTests);
    CPPUNIT_TEST(TestTrim);
+   CPPUNIT_TEST(TestStrCompare);
    CPPUNIT_TEST(TestToString);
    CPPUNIT_TEST(TestToType);
    CPPUNIT_TEST(TestMatch);
@@ -59,6 +60,11 @@ class StringUtilTests : public CPPUNIT_NS::TestFixture {
        * Tests Trim function
        */
       void TestTrim();
+
+      /**
+       * Tests Trim function
+       */
+      void TestStrCompare();
 
       /**
        * Tests ToString with all the basic types
@@ -208,6 +214,19 @@ void StringUtilTests::TestTrim()
       CPPUNIT_FAIL((std::string("Error: ") + e.what()).c_str());
    }
 
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void StringUtilTests::TestStrCompare()
+{
+   std::string first = "joe";
+   std::string second = "Joe";
+
+   CPPUNIT_ASSERT(dtUtil::StrCompare(first, second) > 0.0);
+   CPPUNIT_ASSERT(dtUtil::StrCompare(second, first) < 0.0);
+
+   CPPUNIT_ASSERT(dtUtil::StrCompare(second, first, false) == 0.0);
+   CPPUNIT_ASSERT(dtUtil::StrCompare(first, second, false) == 0.0);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
