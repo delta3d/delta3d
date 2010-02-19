@@ -30,7 +30,11 @@
 #include <dtCore/transform.h>
 #include <dtUtil/datapathutils.h>
 #include <dtDAL/project.h>
+
+#include <osg/Geode>
+#include <osg/ShapeDrawable>
 #include <osgGA/GUIEventAdapter>
+
 
 using namespace dtABC;
 using namespace dtCore;
@@ -50,13 +54,22 @@ public:
       LoadGeometry();
       EnableShaders();
 
-      Transform xform(0.0f, -3.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+      Transform xform(0.0f, -6.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+
       GetCamera()->SetTransform(xform);
+
+      // Auto near far does not take into account changes from the geometry shader
+      GetCamera()->SetNearFarCullingMode(dtCore::Camera::NO_AUTO_NEAR_FAR);
+
+      double vfov, aspectRatio, nearClip, farClip;
+      GetCamera()->GetPerspectiveParams(vfov, aspectRatio, nearClip, farClip);
+
+      // The geometry shader seems to be very sensitive to the value for the near plane
+      GetCamera()->SetPerspectiveParams(vfov, aspectRatio, 2.0, 100.0); 
 
       GetWindow()->SetWindowTitle("testShaders");
 
-      // This is somehow incompatible with the geometry shader
-      //CreateHelpLabel();
+      CreateHelpLabel();
    }
 
 protected:
@@ -67,8 +80,18 @@ public:
 
    void LoadGeometry()
    {
-      mObject = new dtCore::Object("Happy Sphere");
-      mObject->LoadFile("models/physics_happy_sphere.ive");
+      osg::Sphere* sphere = new osg::Sphere;
+      
+      osg::ShapeDrawable* sphereDrawable = new osg::ShapeDrawable(sphere);
+      sphereDrawable->setUseDisplayList(false);
+      sphereDrawable->setUseVertexBufferObjects(true);
+
+      mGeode = new osg::Geode;
+      mGeode->addDrawable(sphereDrawable);
+
+      mObject = new dtCore::Transformable;
+      mObject->GetMatrixNode()->addChild(mGeode);
+      
       AddDrawable(mObject.get());
    }
 
@@ -113,7 +136,7 @@ public:
       else if (key == osgGA::GUIEventAdapter::KEY_F1)
       {
          // Disable until the gui is compatible with the geom shader
-         //mLabel->SetActive(!mLabel->GetActive());
+         mLabel->SetActive(!mLabel->GetActive());
          verdict = true;
       }
 
@@ -160,7 +183,8 @@ private:
       return testString;
    }
 
-   RefPtr<dtCore::Object> mObject;
+   RefPtr<dtCore::Transformable> mObject;
+   RefPtr<osg::Geode> mGeode;
 
    RefPtr<dtABC::LabelActor> mLabel;
 
