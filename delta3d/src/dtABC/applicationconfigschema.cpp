@@ -55,6 +55,7 @@ namespace dtABC
    const std::string ApplicationConfigSchema::CAMERAINSTANCE="CameraInstance";
    
    const std::string ApplicationConfigSchema::LOG_LEVEL="Level";
+   const std::string ApplicationConfigSchema::GLOBAL_LOG_LEVEL="GlobalLogLevel";
 
    const std::string ApplicationConfigSchema::APP_PROPERTIES="Properties";
    const std::string ApplicationConfigSchema::APP_PROPERTY="Property";

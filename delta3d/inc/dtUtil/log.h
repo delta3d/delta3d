@@ -175,7 +175,7 @@ namespace dtUtil
        * output
        * @param msgType the type of message to query about.
        */
-      bool IsLevelEnabled(LogMessageType msgType) const { return msgType >= mLevel; }
+      bool IsLevelEnabled(LogMessageType msgType) const;
 
       /**
        * Sets the lowest level of logging that will be logged.
@@ -183,21 +183,21 @@ namespace dtUtil
        * errors will be sent.
        * @param msgType the new logging level
        */
-      void SetLogLevel(LogMessageType msgType)  { mLevel = msgType; }
+      void SetLogLevel(LogMessageType msgType);
 
       /**
        * @return the lowest level of logging that will be logged.
        */
-      LogMessageType GetLogLevel() const { return mLevel; }
+      LogMessageType GetLogLevel() const;
 
-      ///@return a string version of a log level.
-      const std::string GetLogLevelString( LogMessageType msgType) const;
+      ///@return a string version of a LogMessageType.
+      static const std::string GetLogLevelString(LogMessageType msgType);
 
-      ///@return the log level matching a string or WARNING if there is no match.
-      LogMessageType GetLogLevelForString( const std::string& levelString) const;
+      ///@return the LogMessageType matching a string or WARNING if there is no match.
+      static LogMessageType GetLogLevelForString(const std::string& levelString);
 
       /*
-       * Retrieve singleton instance of the log class.
+       * Retrieve the default singleton instance of the log class.
        */
       static Log& GetInstance();
 
@@ -207,8 +207,14 @@ namespace dtUtil
        */
       static Log& GetInstance(const std::string& name);
 
-      ///Sets the default value for new logs and if (bSetAllExisting), will set ALL existing logs too.
-      static void SetGlobalDefaultLogLevel(LogMessageType newLevel, bool bSetAllExisting = true);
+      ///Sets the default LogMessageType for new logs
+      static void SetDefaultLogLevel(LogMessageType newLevel);
+
+      /** 
+        *  Set the LogMessageType for all existing Log instances.  
+        *  @see SetLogLevel()
+        */
+      static void SetAllLogLevels(LogMessageType newLevel);
 
       enum OutputStreamOptions
       {
@@ -239,6 +245,7 @@ namespace dtUtil
    protected:
       /**
        * Opens the log file and writes the html header information.
+       * All new logs are created with the global default log level. 
        */
       Log(const std::string& name);
 

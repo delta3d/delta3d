@@ -62,6 +62,7 @@ namespace dtABC
       static const std::string CAMERAINSTANCE;
       
       static const std::string LOG_LEVEL;
+      static const std::string GLOBAL_LOG_LEVEL;
 
       static const std::string APP_PROPERTIES;
       static const std::string APP_PROPERTY;

@@ -532,21 +532,21 @@ bool AppXMLApplicator::operator ()(const ApplicationConfigData& data, dtABC::App
    // apply the window settings
    dtCore::DeltaWin* dwin = app->GetWindow();
 
+   //set the default log level for all future Log instances
+   dtUtil::Log::SetDefaultLogLevel(dtUtil::Log::GetLogLevelForString(data.GLOBAL_LOG_LEVEL));
+   
+   //Also set the level for any existing Log instances
+   dtUtil::Log::SetAllLogLevels(dtUtil::Log::GetLogLevelForString(data.GLOBAL_LOG_LEVEL));
+
+   //Set the log level for any specifically defined Log instances, overwriting the default level
    for (std::map<std::string, std::string>::const_iterator i = data.LOG_LEVELS.begin();
       i != data.LOG_LEVELS.end(); ++i)
    {
       dtUtil::Log& logger = dtUtil::Log::GetInstance(i->first);
 
-      // Setting the default log level has 2 effects: 1) sets the global default, 2) change ALL log levels
-      if (i->first == dtUtil::Log::GetInstance().GetName())
-      {
-         dtUtil::Log::SetGlobalDefaultLogLevel(logger.GetLogLevelForString(i->second));
-      }
-      else
-      {
-         logger.SetLogLevel(logger.GetLogLevelForString(i->second));
-      }
+      logger.SetLogLevel(logger.GetLogLevelForString(i->second));
    }
+
 
    dtUtil::LibrarySharingManager& lsm = dtUtil::LibrarySharingManager::GetInstance();
    for (std::vector<std::string>::const_iterator i = data.LIBRARY_PATHS.begin();
