@@ -129,9 +129,14 @@ namespace dtUtil
     */
    DT_UTIL_EXPORT const std::string& Trim(std::string& toTrim);
 
-   /// Call Trim instead
-   DEPRECATE_FUNC inline const std::string& trim(std::string& toTrim) { return Trim(toTrim); }
-
+   /**
+    * Compares strings like strcmp or stricmp or strcasecmp.
+    * @param one the first string to compare
+    * @param two the string to compare one to.
+    * @param caseSenstive optional parameter to specify case sensitivity, which defaults to on.
+    * @return 0 for equal, negative for one less that two, and positive for one > two.
+    */
+   DT_UTIL_EXPORT int StrCompare(const std::string& one, const std::string& two, bool caseSensitive = true);
 
    /**
     * A templated function for taking any of the osg vector types and reading the data from a string.

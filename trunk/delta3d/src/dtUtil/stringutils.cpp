@@ -18,6 +18,12 @@ namespace dtUtil
    const std::string IsSpace::DEFAULT_LOCALE_NAME("en_US.UTF-8");
 #endif
 
+#ifndef DELTA_WIN32
+#ifndef stricmp
+#define stricmp strcasecmp
+#endif
+#endif
+
    ////////////////////////////////////////////////////////////////////
    const std::string& Trim(std::string& toTrim)
    {
@@ -33,6 +39,22 @@ namespace dtUtil
 
       return toTrim;
    }
+
+   ////////////////////////////////////////////////////////////////////
+   int StrCompare(const std::string& one, const std::string& two, bool caseSensitive)
+   {
+      int result = 0;
+      if (caseSensitive)
+      {
+         result = one.compare(two.c_str());
+      }
+      else
+      {
+         result = stricmp(one.c_str(), two.c_str());
+      }
+      return result;
+   }
+
 
    ////////////////////////////////////////////////////////////////////
    static bool Scan(const char*& wildCards, const char*& str)
