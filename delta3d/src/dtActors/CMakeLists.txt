@@ -16,11 +16,12 @@ SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/beziernodeactorproxy.h
     ${HEADER_PATH}/buildingactor.h
     ${HEADER_PATH}/cameraactorproxy.h
+    ${HEADER_PATH}/cameradataactor.h    
     ${HEADER_PATH}/clouddomeactorproxy.h
     ${HEADER_PATH}/cloudplaneactorproxy.h
     ${HEADER_PATH}/coordinateconfigactor.h
     ${HEADER_PATH}/deltaobjectactorproxy.h
-	${HEADER_PATH}/directoractorproxy.h
+    ${HEADER_PATH}/directoractorproxy.h
     ${HEADER_PATH}/distancesensoractor.h
     ${HEADER_PATH}/engineactorregistry.h
     ${HEADER_PATH}/enveffectactorproxy.h
@@ -68,11 +69,12 @@ SET(LIB_SOURCES
     ${SOURCE_PATH}/beziernodeactorproxy.cpp
     ${SOURCE_PATH}/buildingactor.cpp
     ${SOURCE_PATH}/cameraactorproxy.cpp
+    ${SOURCE_PATH}/cameradataactor.cpp
     ${SOURCE_PATH}/clouddomeactorproxy.cpp
     ${SOURCE_PATH}/cloudplaneactorproxy.cpp
     ${SOURCE_PATH}/coordinateconfigactor.cpp
     ${SOURCE_PATH}/deltaobjectactorproxy.cpp
-	${SOURCE_PATH}/directoractorproxy.cpp
+    ${SOURCE_PATH}/directoractorproxy.cpp
     ${SOURCE_PATH}/distancesensoractor.cpp
     ${SOURCE_PATH}/engineactorregistry.cpp
     ${SOURCE_PATH}/enveffectactorproxy.cpp

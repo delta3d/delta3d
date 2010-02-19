@@ -42,6 +42,7 @@
 #include <dtActors/triggeractorproxy.h>
 #include <dtActors/proximitytriggeractorproxy.h>
 #include <dtActors/cameraactorproxy.h>
+#include <dtActors/cameradataactor.h>
 #include <dtActors/tripodactorproxy.h>
 #include <dtActors/taskactor.h>
 #include <dtActors/taskactorgameevent.h>
@@ -88,6 +89,7 @@ namespace dtActors
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::PROXIMITY_TRIGGER_ACTOR_TYPE(new dtDAL::ActorType("Proximity Trigger","dtcore.Triggers", "dtABC::ProximityTrigger Actor."));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::AUTOTRIGGER_ACTOR_TYPE(new dtDAL::ActorType("AutoTrigger", "dtcore.Triggers", "dtABC::AutoTrigger Actor."));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::CAMERA_ACTOR_TYPE(new dtDAL::ActorType("Camera", "dtcore", "dtCore::Camera Actor."));
+   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::CAMERA_DATA_ACTOR_TYPE(new dtDAL::ActorType("CameraData", "dtActors", "dtActors::CameraData Actor."));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::TRIPOD_ACTOR_TYPE(new dtDAL::ActorType("Tripod", "dtcore", "dtCore::Tripod Actor."));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::WEATHER_ENVIRONMENT_ACTOR_TYPE(new dtDAL::ActorType("WeatherEnvironment", "dtcore.Environment", "dtCore::Environment controlled by dtABC::Weather"));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::SKYDOME_ENVIRONMENT_ACTOR_TYPE(new dtDAL::ActorType("SkyDomeEnvironment", "dtcore.Environment", "dtCore::Environment plus a SkyDome"));
@@ -181,6 +183,7 @@ namespace dtActors
       mActorFactory->RegisterType<ProximityTriggerActorProxy>(PROXIMITY_TRIGGER_ACTOR_TYPE.get());
       mActorFactory->RegisterType<AutoTriggerActorProxy>(AUTOTRIGGER_ACTOR_TYPE.get());
       mActorFactory->RegisterType<CameraActorProxy>(CAMERA_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<CameraDataActorProxy>(CAMERA_DATA_ACTOR_TYPE.get());
       mActorFactory->RegisterType<TripodActorProxy>(TRIPOD_ACTOR_TYPE.get());
       mActorFactory->RegisterType<WeatherEnvironmentActorProxy>(WEATHER_ENVIRONMENT_ACTOR_TYPE.get());
       mActorFactory->RegisterType<SkyDomeEnvironmentActorProxy>(SKYDOME_ENVIRONMENT_ACTOR_TYPE.get());
