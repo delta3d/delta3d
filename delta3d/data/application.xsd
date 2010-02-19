@@ -67,7 +67,7 @@
         </xs:element>
         
         <!--All existing and new Log instances will have their log level set to this, unless otherwise specified.-->
-        <xs:element minOccurs="0" maxOccurs="1" name="GlobalLogLevel">
+        <xs:element minOccurs="0" maxOccurs="1" name="GlobalLog">
           <xs:complexType>
             <xs:attribute form="unqualified" name="Level" type="xs:string" use="required" />
           </xs:complexType>
