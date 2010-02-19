@@ -26,7 +26,7 @@
 #include <dtGame/gamemanager.h>
 #include <dtCore/scene.h>
 #include <dtUtil/xercesparser.h>
-#include <dtCore/globals.h>
+#include <dtUtil/datapathutils.h>
 #include <dtActors/engineactorregistry.h>
 
 namespace dtDIS
@@ -66,8 +66,8 @@ namespace dtDIS
    {
       const std::string startPropertyName = dtDIS::EnginePropertyName::ENTITY_LOCATION;
 
-      dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList() + ":" + dtCore::GetDeltaRootPath() + "/tests/data");
-      std::string path = dtCore::FindFileInPathList("disPropertyNameOverwrites.xml");
+      dtUtil::SetDataFilePathList(dtUtil::GetDeltaDataPathList() + ":" + dtUtil::GetDeltaRootPath() + "/tests/data");
+      std::string path = dtUtil::FindFileInPathList("disPropertyNameOverwrites.xml");
       CPPUNIT_ASSERT(dtUtil::FileUtils::GetInstance().FileExists(path));
 
       dtDIS::SharedState config("", path);
@@ -88,8 +88,8 @@ namespace dtDIS
    {
       //example file maps the DIS EntityType below to a StaticMesh actor
 
-      dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList() + ":" + dtCore::GetDeltaRootPath() + "/tests/data");
-      std::string path = dtCore::FindFileInPathList("disActorTypeMapping.xml");
+      dtUtil::SetDataFilePathList(dtUtil::GetDeltaDataPathList() + ":" + dtUtil::GetDeltaRootPath() + "/tests/data");
+      std::string path = dtUtil::FindFileInPathList("disActorTypeMapping.xml");
       CPPUNIT_ASSERT(dtUtil::FileUtils::GetInstance().FileExists(path));
 
       dtDIS::SharedState config("", path);
