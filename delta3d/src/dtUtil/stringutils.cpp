@@ -21,6 +21,7 @@ namespace dtUtil
 #ifndef DELTA_WIN32
 #ifndef stricmp
 #define stricmp strcasecmp
+#include <strings.h>
 #endif
 #endif
 
