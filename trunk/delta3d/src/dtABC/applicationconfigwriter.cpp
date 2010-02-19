@@ -133,6 +133,10 @@ namespace dtABC
          app->appendChild( log );
       }
 
+      DOMElement* globalLogLevel = doc->createElement(sch.GLOBAL_LOG_LEVEL);
+      globalLogLevel->setAttribute(sch.LOG_LEVEL, dtUtil::StringToXMLConverter(data.GLOBAL_LOG_LEVEL).ToXmlString());
+      app->appendChild(globalLogLevel);
+
       for (std::vector<std::string>::const_iterator i = data.LIBRARY_PATHS.begin();
          i != data.LIBRARY_PATHS.end(); ++i)
       {
@@ -188,6 +192,7 @@ namespace dtABC
       CAMERAINSTANCE = XMLString::transcode( ApplicationConfigSchema::CAMERAINSTANCE.c_str() );
 
       LOG_LEVEL = XMLString::transcode( ApplicationConfigSchema::LOG_LEVEL.c_str() );
+      GLOBAL_LOG_LEVEL = XMLString::transcode( ApplicationConfigSchema::GLOBAL_LOG_LEVEL.c_str() );
 
       APP_PROPERTIES = XMLString::transcode( ApplicationConfigSchema::APP_PROPERTIES.c_str() );
       APP_PROPERTY = XMLString::transcode( ApplicationConfigSchema::APP_PROPERTY.c_str() );

@@ -71,6 +71,7 @@ namespace dtABC
          XMLCh* SCENEINSTANCE;
          XMLCh* CAMERAINSTANCE;
 
+         XMLCh* GLOBAL_LOG_LEVEL;
          XMLCh* LOG_LEVEL;
 
          XMLCh* APP_PROPERTIES;

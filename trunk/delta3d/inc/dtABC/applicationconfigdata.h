@@ -43,6 +43,7 @@ namespace dtABC
       int VIEWPORT_X, VIEWPORT_Y, VIEWPORT_W, VIEWPORT_H;
       
       std::map<std::string, std::string> LOG_LEVELS;
+      std::string GLOBAL_LOG_LEVEL;
       std::vector<std::string> LIBRARY_PATHS;
       
       std::map<std::string, std::string> mProperties;

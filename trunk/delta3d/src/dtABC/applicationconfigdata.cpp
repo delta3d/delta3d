@@ -42,6 +42,7 @@ namespace dtABC
    , VIEWPORT_Y(0)
    , VIEWPORT_W(-1)
    , VIEWPORT_H(-1)
+   , GLOBAL_LOG_LEVEL("Warn")
    {
    }
    

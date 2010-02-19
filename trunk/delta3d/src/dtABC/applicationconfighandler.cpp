@@ -311,6 +311,25 @@ namespace dtABC
             LOG_WARNING("No level defined for log named \"" + name + "\", the default value will be used.");
          }
       }
+      else if (mCurrentElement == ApplicationConfigSchema::GLOBAL_LOG_LEVEL)
+      {
+         // push some keys
+         dtUtil::AttributeSearch logAttrs;
+
+         // do the attribute search, catch the results
+         dtUtil::AttributeSearch::ResultMap results = logAttrs(attrs);
+
+         dtUtil::AttributeSearch::ResultMap::iterator iter;
+         iter = results.find(ApplicationConfigSchema::LOG_LEVEL);
+         if (iter != results.end())
+         {
+            mConfigData.GLOBAL_LOG_LEVEL = iter->second;
+         }
+         else
+         {
+            LOG_WARNING("No global log level defined, the default value will be used.");
+         }
+      }
       else if ( mCurrentElement == ApplicationConfigSchema::APP_PROPERTY )
       {
          // push some keys

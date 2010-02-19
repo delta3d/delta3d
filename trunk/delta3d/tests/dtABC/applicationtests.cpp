@@ -424,18 +424,25 @@ namespace dtTest
    ////////////////////////////////////////////////////////////////////
    void ApplicationTests::TestConfigLogLevelDefaultOverride()
    {
+      //Create, write, and load an application config file.
+      //Verify that specified Log instances retain their log levels, while
+      //unspecified Log instances get the defined default level.  Also check
+      //that new Log instances use the default log level.
+
+      using namespace dtUtil;
+
       //make sure the file doesn't already exist.
       CPPUNIT_ASSERT_MESSAGE("The config file should not exist yet.", 
          !dtUtil::FileUtils::GetInstance().FileExists(mConfigName));
 
-      dtABC::ApplicationConfigData truth;
-      // Can't write the default to the config file or it will overwrite all other log values.
-      truth.LOG_LEVELS.insert(std::make_pair(dtUtil::Log::GetInstance().GetName(), "ERROR"));
+      dtABC::ApplicationConfigData truth = dtABC::Application::GetDefaultConfigData();
+      truth.LOG_LEVELS.insert(std::make_pair("", "ERROR"));
       truth.LOG_LEVELS.insert(std::make_pair("SomeName", "Warn"));
       truth.LOG_LEVELS.insert(std::make_pair("AnotherName", "Debug"));
       truth.LOG_LEVELS.insert(std::make_pair("horse", "Info"));
       truth.LOG_LEVELS.insert(std::make_pair("cow", "Debug"));
       truth.LOG_LEVELS.insert(std::make_pair("chicken", "Always"));
+      truth.GLOBAL_LOG_LEVEL = "ERROR";
 
       dtABC::ApplicationConfigWriter acw;
       acw(mConfigName, truth);
@@ -451,23 +458,30 @@ namespace dtTest
 
       CompareConfigData(truth, handler.mConfigData);
 
+      //make a new Log instance that doesn't have it's log level set by the config
+      dtUtil::Log::GetInstance("ShouldBeSetByGlobalLevel");
+
       //create an app to parse the config and actually load the values
       dtCore::RefPtr<dtABC::Application> app = new dtABC::Application(mConfigName);
 
-      // The Global default should be "ERROR"
-      CPPUNIT_ASSERT_EQUAL(dtUtil::Log::LOG_ERROR, dtUtil::Log::GetInstance().GetLogLevel());
+      // Ensure the specified log levels were *not* changed
+      std::map<std::string, std::string>::iterator itr = truth.LOG_LEVELS.begin();
+      while (itr != truth.LOG_LEVELS.end())
+      {
+         CPPUNIT_ASSERT_EQUAL(Log::GetLogLevelForString(itr->second), Log::GetInstance(itr->first).GetLogLevel());
+         
+         ++itr;
+      }
 
-      // Check that the global default overrode one or more of the saved log levels.
-      // The log levels are not written in the order they are added to the list, so check to make 
-      // sure that at least ONE of the values is wrong and equals ERROR. 
-      bool log1IsError = dtUtil::Log::LOG_ERROR == dtUtil::Log::GetInstance("SomeName").GetLogLevel();
-      bool log2IsError = dtUtil::Log::LOG_ERROR == dtUtil::Log::GetInstance("AnotherName").GetLogLevel();
-      bool log3IsError = dtUtil::Log::LOG_ERROR == dtUtil::Log::GetInstance("horse").GetLogLevel();
-      bool log4IsError = dtUtil::Log::LOG_ERROR == dtUtil::Log::GetInstance("cow").GetLogLevel();
-      bool log5IsError = dtUtil::Log::LOG_ERROR == dtUtil::Log::GetInstance("chicken").GetLogLevel();
-      CPPUNIT_ASSERT_MESSAGE("At least one of the log levels should have been overridden and set to ERROR by the global default log level.", 
-         (log1IsError || log2IsError || log3IsError || log4IsError || log5IsError));
- 
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The unspecified Log instance should have it's level set by the global default level",
+                                   dtUtil::Log::GetLogLevelForString(truth.GLOBAL_LOG_LEVEL),
+                                   dtUtil::Log::GetInstance("ShouldBeSetByGlobalLevel").GetLogLevel());
+
+      //A brand new Log should have it's level the same as the default, after the config.xml has been loaded
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("A new Log instance should have it's level set by the global default level",
+                                    dtUtil::Log::GetLogLevelForString(truth.GLOBAL_LOG_LEVEL),
+                                    dtUtil::Log::GetInstance("BrandNewLog").GetLogLevel());
+
       app = NULL;
 
       // delete the file

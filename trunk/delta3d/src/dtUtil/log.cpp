@@ -182,8 +182,8 @@ namespace dtUtil
       std::map<std::string, dtCore::RefPtr<Log> > mInstances;
    };
 
-   static dtCore::RefPtr<LogManager> manager(NULL);
-   static Log::LogMessageType globalDefaultLogLevel(Log::LOG_WARNING);
+   static dtCore::RefPtr<LogManager> LOG_MANAGER(NULL);
+   static Log::LogMessageType DEFAULT_LOG_LEVEL(Log::LOG_WARNING);
 
 
    ////////////////////////////////////////////////////////////////////
@@ -198,12 +198,12 @@ namespace dtUtil
       //std::cout << "LogFile try to change files to " << name << std::endl;
 
       sLogFileName = name.c_str();
-      if (manager == NULL)
+      if (LOG_MANAGER == NULL)
       {
-         manager = new LogManager;
+         LOG_MANAGER = new LogManager;
       } else
       {
-         manager->OpenFile();
+         LOG_MANAGER->OpenFile();
       }
    }
 
@@ -243,7 +243,7 @@ namespace dtUtil
    //////////////////////////////////////////////////////////////////////////
 
    Log::Log(const std::string& name)
-      : mLevel(Log::LOG_WARNING)
+      : mLevel(DEFAULT_LOG_LEVEL)
       , mImpl(new LogImpl(name))
    {
    }
@@ -300,15 +300,15 @@ namespace dtUtil
          break;
       }
 
-      OpenThreads::ScopedLock<OpenThreads::Mutex> lock(manager->mMutex);
+      OpenThreads::ScopedLock<OpenThreads::Mutex> lock(LOG_MANAGER->mMutex);
 
       if (dtUtil::Bits::Has(mImpl->mOutputStreamBit, Log::TO_FILE))
       {
-         if (!manager->logFile.is_open())
+         if (!LOG_MANAGER->logFile.is_open())
          {
-            manager->OpenFile();
+            LOG_MANAGER->OpenFile();
 
-            if (!manager->logFile.is_open())
+            if (!LOG_MANAGER->logFile.is_open())
             {
                return;
             }
@@ -323,19 +323,19 @@ namespace dtUtil
             htmlMsg.replace (lineEnd, 1, htmlNewline);
             lineEnd += htmlNewline.size() + 1;
          }
-         manager->logFile << color << GetLogLevelString(msgType) << ": "
+         LOG_MANAGER->logFile << color << GetLogLevelString(msgType) << ": "
             << std::setw(2) << std::setfill('0') << t->tm_hour << ":"
             << std::setw(2) << std::setfill('0') << t->tm_min << ":"
             << std::setw(2) << std::setfill('0') << t->tm_sec << ": &lt;"
             << source;
          if (line > 0)
          {
-            manager->logFile << ":" << line;
+            LOG_MANAGER->logFile << ":" << line;
          }
 
-         manager->logFile << "&gt; " << htmlMsg << "</font></b><br>" << std::endl;
+         LOG_MANAGER->logFile << "&gt; " << htmlMsg << "</font></b><br>" << std::endl;
 
-         manager->logFile.flush(); //Make sure everything is written, in case of a crash.
+         LOG_MANAGER->logFile.flush(); //Make sure everything is written, in case of a crash.
       }
 
       if (dtUtil::Bits::Has(mImpl->mOutputStreamBit, Log::TO_CONSOLE))
@@ -398,7 +398,7 @@ namespace dtUtil
    //////////////////////////////////////////////////////////////////////////
    void Log::LogHorizRule()
    {
-      if (!manager->logFile.is_open())
+      if (!LOG_MANAGER->logFile.is_open())
       {
          return;
       }
@@ -410,7 +410,7 @@ namespace dtUtil
 
       if (dtUtil::Bits::Has(mImpl->mOutputStreamBit, Log::TO_FILE))
       {
-         manager->logFile << "<hr>" << std::endl;
+         LOG_MANAGER->logFile << "<hr>" << std::endl;
       }
    }
 
@@ -423,36 +423,29 @@ namespace dtUtil
    //////////////////////////////////////////////////////////////////////////
    Log& Log::GetInstance(const std::string& name)
    {
-      if (manager == NULL)
+      if (LOG_MANAGER == NULL)
       {
-         manager = new LogManager;
+         LOG_MANAGER = new LogManager;
       }
 
-      Log* l = manager->GetInstance(name);
+      Log* l = LOG_MANAGER->GetInstance(name);
       if (l == NULL)
       {
          l = new Log(name);
-         // All new logs should be created with the global default log level. 
-         l->SetLogLevel(globalDefaultLogLevel);
-         manager->AddInstance(name, l);
+         LOG_MANAGER->AddInstance(name, l);
       }
 
       return *l;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void Log::SetGlobalDefaultLogLevel(Log::LogMessageType newLevel, bool bSetAllExisting)
+   void Log::SetDefaultLogLevel(LogMessageType newLevel)
    {
-      globalDefaultLogLevel = newLevel;
-
-      if (bSetAllExisting)
-      {
-         manager->SetAllLogLevels(newLevel);
-      }
+      DEFAULT_LOG_LEVEL = newLevel;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   const std::string Log::GetLogLevelString(Log::LogMessageType msgType) const
+   const std::string Log::GetLogLevelString(Log::LogMessageType msgType) //static
    {
       std::string lev;
 
@@ -471,7 +464,7 @@ namespace dtUtil
    }
 
    //////////////////////////////////////////////////////////////////////////
-   Log::LogMessageType Log::GetLogLevelForString(const std::string& levelString) const
+   Log::LogMessageType Log::GetLogLevelForString(const std::string& levelString)  //static
    {
       if (levelString == "Always" || levelString == "ALWAYS")
       {
@@ -517,4 +510,30 @@ namespace dtUtil
       return mImpl->mName;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Log::IsLevelEnabled(LogMessageType msgType) const
+   {
+      return msgType >= mLevel;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void Log::SetLogLevel(LogMessageType msgType)
+   {
+      mLevel = msgType;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtUtil::Log::LogMessageType Log::GetLogLevel() const
+   {
+      return mLevel;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void Log::SetAllLogLevels(LogMessageType newLevel) //static
+   {
+      if (LOG_MANAGER.valid())
+      {
+         LOG_MANAGER->SetAllLogLevels(newLevel);
+      }
+   }
 } // namespace dtUtil
