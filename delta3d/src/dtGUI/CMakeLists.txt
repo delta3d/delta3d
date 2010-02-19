@@ -6,7 +6,6 @@ SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/src/${LIB_NAME})
 
 IF (NOT BUILD_WITH_OLD_CEGUI)
   SET(LIB_PUBLIC_HEADERS
-      ${HEADER_PATH}/basescriptmodule.h
       ${HEADER_PATH}/ceguikeyboardlistener.h
       ${HEADER_PATH}/ceguimouselistener.h
       ${HEADER_PATH}/export.h

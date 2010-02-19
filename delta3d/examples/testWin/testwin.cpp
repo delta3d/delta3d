@@ -60,10 +60,10 @@ void TestWinApp::Config()
 
    CEGUI::System::getSingleton().setScriptingModule(mScriptModule);
 
-   mScriptModule->AddCallback("FullScreenToggleCB", ScriptModule::HandlerFunctor(this, &TestWinApp::FullScreenToggleCB));
-   mScriptModule->AddCallback("WindowPositionCB", ScriptModule::HandlerFunctor(this, &TestWinApp::WindowPositionCB ));
-   mScriptModule->AddCallback("WindowTitleCB", ScriptModule::HandlerFunctor(this, &TestWinApp::WindowTitleCB));
-   mScriptModule->AddCallback("ChangeResolutionCB", ScriptModule::HandlerFunctor(this, &TestWinApp::ChangeResolutionCB));
+   mScriptModule->AddCallback("FullScreenToggleCB",   CEGUI::SubscriberSlot(&TestWinApp::FullScreenToggleCB, this));
+   mScriptModule->AddCallback("WindowPositionCB", CEGUI::SubscriberSlot(&TestWinApp::WindowPositionCB, this));
+   mScriptModule->AddCallback("WindowTitleCB", CEGUI::SubscriberSlot(&TestWinApp::WindowTitleCB, this));
+   mScriptModule->AddCallback("ChangeResolutionCB", CEGUI::SubscriberSlot(&TestWinApp::ChangeResolutionCB, this));
 
    // dump all valid resolutions into a vector
    mResolutionVec = DeltaWin::GetResolutions();

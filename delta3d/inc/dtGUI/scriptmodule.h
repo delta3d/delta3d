@@ -1,16 +1,12 @@
 #ifndef DT_GUI_SCRIPTMODULE_INCLUDE
 #define DT_GUI_SCRIPTMODULE_INCLUDE
 
-#if defined(_MSC_VER)
-#   pragma warning(push)
-#   pragma warning(disable : 4251)     // for "warning C4251: 'dtGUI::ScriptModule::mCallbacks' : class 'std::map<_Kty,_Ty>' needs to have dll-interface to be used by clients of class 'dtGUI::ScriptModule' "
-#endif
 
-#include <dtGUI/basescriptmodule.h>   // for base class
-#include <map>                        // for std::map type
-#include <queue>                      // for member
-#include <string>                     // for std::string type
-#include <dtUtil/functor.h>           // for typedef, member
+#include <dtGUI/export.h>
+#include <CEGUI/CEGUIScriptModule.h>
+#include <map>
+#include <string>
+
 
 namespace dtGUI
 {
@@ -18,88 +14,54 @@ namespace dtGUI
     * Create an instance of this class, and provide it as a parameter during construction of a CEUIDrawable instance.
     * Add new handlers with the AddCallback function.
     */
-   class DT_GUI_EXPORT ScriptModule : public BaseScriptModule
+   class DT_GUI_EXPORT ScriptModule : public CEGUI::ScriptModule
    {
-   public:
-      ///\todo test to know if this typedef can support just NonMemberFunction, not requiring them to be static.
-      typedef bool (*STATIC_FUNCTION)(const CEGUI::EventArgs &e);
-      typedef dtUtil::Functor<bool,TYPELIST_1(const CEGUI::EventArgs&)> HandlerFunctor;
-      typedef std::map<std::string,HandlerFunctor> CallbackRegistry;
+      public:
+         virtual CEGUI::Event::Connection subscribeEvent(CEGUI::EventSet* window,
+                                                         const CEGUI::String& eventName,
+                                                         CEGUI::Event::Group groupName,
+                                                         const CEGUI::String& subscriberName);
 
-      ScriptModule();
-      virtual ~ScriptModule();
+         virtual CEGUI::Event::Connection subscribeEvent(CEGUI::EventSet* window,
+                                                         const CEGUI::String& eventName,
+                                                         const CEGUI::String& subscriberName);
 
-      /**
-       * Add a static callback handler.
-       * Example:
-       * @code
-       * class MyClass
-       * {
-       *   ...
-       *   static bool OnClick( const CEGUI::EventArgs &e );
-       *   ...
-       * }
-       *
-       *  ...
-       *  mScriptModule->AddCallback("OnDoSomething", &OnClick);
-       *  ...
-       * @endcode
-       * @param name is the string representation of the handler function to be executed for the CEGUI::Event.
-       * @param func is the pointer to the function to be called when the CEGUI::Event is activated.
-       */
-      bool AddCallback(const std::string& name, STATIC_FUNCTION func);
+         virtual bool executeScriptedEventHandler(const CEGUI::String& handlerName,
+                                                  const CEGUI::EventArgs& eventArgs);
 
-      /**
-       * Add a non-static callback handler.
-       * Example:
-       * @code
-       * class App
-       * {
-       *   ...
-       *  public:
-       *   bool OnClick( const CEGUI::EventArgs &e );
-       *   ...
-       * }
-       *
-       *  ...
-       *  App *mApp = new App();
-       *
-       *  dtGUI::ScriptModule::HandlerFunctor handler( dtUtil::MakeFunctor( &App::OnClick, mApp ) );
-       *  mScriptModule->AddCallback("OnDoSomething", handler );
-       * ...
-       * @endcode
-       * @param name is the string representation of the handler function to be executed for the CEGUI::Event.
-       * @param func is an instance of a function object to be called when the CEGUI::Event is activated.
-       * @attention An attempt was make an implemenation with the signature template<typename InstT> bool
-       * AddCallback(const std::string& name, bool (InstT::*MemFun)(const CEGUI::EventArgs&), InstT* instance)
-       * but somehow creating the HandleFunctor intenal to the function caused some problems.
-       */
-      bool AddCallback(const std::string& name, const HandlerFunctor& callback);
+         virtual void executeScriptFile (const CEGUI::String &fileName,
+                                        const CEGUI::String &resourceGroup="");
 
-      /**
-       * Returns the StaticRegistry.
-       */
-      const CallbackRegistry& GetRegistry() const { return mCallbacks; }
+         virtual int executeScriptGlobal (const CEGUI::String& functionName);
 
-      // inherited methods
-      virtual void executeScriptFile(const CEGUI::String& filename, const CEGUI::String& resourceGroup = "");
-      virtual int  executeScriptGlobal(const CEGUI::String& function_name);
-      virtual void executeString(const CEGUI::String& str);
-      virtual bool executeScriptedEventHandler(const CEGUI::String& handler_name, const CEGUI::EventArgs& ea);
+         virtual void executeString(const CEGUI::String &str);
 
-      #if defined(CEGUI_VERSION_MAJOR) && CEGUI_VERSION_MAJOR >= 0 && defined(CEGUI_VERSION_MINOR) && CEGUI_VERSION_MINOR >= 5
-      virtual CEGUI::Event::Connection subscribeEvent(CEGUI::EventSet* target, const CEGUI::String& name, const CEGUI::String& subscriber_name);
-      virtual CEGUI::Event::Connection subscribeEvent(CEGUI::EventSet* target, const CEGUI::String& name, CEGUI::Event::Group group, const CEGUI::String& subscriber_name);
-      #endif // CEGUI 0.5.0
+         /**
+         * Add a callback handler.
+         * Example:
+         * @code
+         * class MyClass
+         * {
+         *   ...
+         *   static bool OnClickStatic (const CEGUI::EventArgs &e);
+         *   bool OnClick (const CEGUI::EventArgs &e);
+         *   ...
+         * }
+         *
+         * mScriptModule->AddCallback("OnDoSomething", &OnClickStatic);
+         * mScriptModule->AddCallback("OnDoSomething", CEGUI::SubscriberSlot(&OnClick, this));
+         * @endcode
+         *
+         * @param callbackName is the string representation of the handler function to be executed for the CEGUI::Event.
+         * @param subscriberSlot function to be called when the CEGUI::Event is activated.
+         */
+         bool AddCallback(const std::string& callbackName, CEGUI::SubscriberSlot subscriberSlot);
 
-   private:
-      ScriptModule(const ScriptModule&);  // not implemented by design
-      CallbackRegistry mCallbacks;
+      private:
+         bool NotSupported(const std::string& methodName);
+
+         std::map<std::string, CEGUI::SubscriberSlot> mCallbacks;
    };
 }
-
-#if defined(_MSC_VER)
-#   pragma warning(pop)
-#endif
 
 #endif  // DT_GUI_SCRIPTMODULE_INCLUDE
