@@ -16,7 +16,7 @@ void main()
   for(int i = 0; i < gl_VerticesIn; ++i)
   {
     gl_Position = gl_PositionIn[i];
-    gl_Position.xyz += faceNormal * abs(sin(2.0 * osg_FrameTime));
+    gl_Position.xyz += faceNormal * 3.0 * abs(sin(2.0 * osg_FrameTime));
 
     colorOut = color[i];
 
