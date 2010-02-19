@@ -164,7 +164,7 @@ void Viewer::OnLoadCharFile(const QString& filename)
    QDir dir(filename);
    dir.cdUp();
 
-   SetDataFilePathList(dtUtil::GetDataFilePathList() + ";" +
+   dtUtil::SetDataFilePathList(dtUtil::GetDataFilePathList() + ";" +
                        dir.path().toStdString() + ";");
 
    OnUnloadCharFile();

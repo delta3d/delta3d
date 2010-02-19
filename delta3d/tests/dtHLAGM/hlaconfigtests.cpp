@@ -34,7 +34,7 @@
 #include <algorithm>
 
 #include <dtUtil/coordinates.h>
-#include <dtCore/globals.h>
+#include <dtUtil/datapathutils.h>
 #include <dtCore/scene.h>
 #include <dtABC/application.h>
 #include <dtDAL/actortype.h>
@@ -122,7 +122,7 @@ const char* const HLAConfigTests::mHLAActorRegistry="testGameActorLibrary";
 void HLAConfigTests::setUp()
 {
 
-   dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList() + ":" + dtCore::GetDeltaRootPath() + "/tests/data");
+   dtUtil::SetDataFilePathList(dtUtil::GetDeltaDataPathList() + ":" + dtUtil::GetDeltaRootPath() + "/tests/data");
    std::string logName("HLAConfigTest");
    //Uncomment this to turn on config xml logging.
    //dtUtil::Log::GetInstance("hlafomconfigxml.cpp").SetLogLevel(dtUtil::Log::LOG_DEBUG);
@@ -292,7 +292,7 @@ void HLAConfigTests::TestBroken(const std::string& brokenFile, const std::string
 
    try
    {
-      std::string path = dtCore::FindFileInPathList(brokenFile);
+      std::string path = dtUtil::FindFileInPathList(brokenFile);
       CPPUNIT_ASSERT(dtUtil::FileUtils::GetInstance().FileExists(path));
 
       config.LoadConfiguration(*mTranslator, path);

@@ -66,11 +66,10 @@
 
 #include <dtCore/camera.h>
 #include <dtCore/system.h>
-#include <dtCore/globals.h>
 #include <dtCore/transform.h>
 
 #include <dtUtil/coordinates.h>
-
+#include <dtUtil/datapathutils.h>
 #include <dtABC/application.h>
 extern dtABC::Application& GetGlobalApplication();
 
@@ -233,7 +232,7 @@ void HLAComponentTests::setUp()
    {
       dtDAL::Project::GetInstance().CreateContext("data/ProjectContext");
       dtDAL::Project::GetInstance().SetContext("data/ProjectContext");
-      dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList() + ":" + dtCore::GetDeltaRootPath() + "/tests/data");
+      dtUtil::SetDataFilePathList(dtUtil::GetDeltaDataPathList() + ":" + dtUtil::GetDeltaRootPath() + "/tests/data");
       std::string logName("HLAComponentTests");
       logger = &dtUtil::Log::GetInstance(logName);
       dtUtil::Log::GetInstance("hlacomponent.cpp").SetLogLevel(dtUtil::Log::LOG_DEBUG);
@@ -273,8 +272,8 @@ void HLAComponentTests::setUp()
    try
    {
       const std::string fom = "RPR-FOM.fed";
-      const std::string fedFile = dtCore::FindFileInPathList(fom);
-      const std::string ridFile = dtCore::FindFileInPathList("testRID.rid");
+      const std::string fedFile = dtUtil::FindFileInPathList(fom);
+      const std::string ridFile = dtUtil::FindFileInPathList("testRID.rid");
       CPPUNIT_ASSERT_MESSAGE("Couldn't find \"" + fom +
                              "\", make sure you install the Delta3D data package and set the DELTA_DATA environment var.",
                              !fedFile.empty());

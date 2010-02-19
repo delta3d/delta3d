@@ -35,7 +35,7 @@
 
 #include <dtUtil/coordinates.h>
 #include <dtCore/system.h>
-#include <dtCore/globals.h>
+#include <dtUtil/datapathutils.h>
 #include <dtDAL/datatype.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/gmcomponent.h>
@@ -72,7 +72,7 @@ class MappingClassTests : public CPPUNIT_NS::TestFixture
    public:
       void setUp()
       {
-         dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
+         dtUtil::SetDataFilePathList(dtUtil::GetDeltaDataPathList());
          std::string logName("HLAConfigTest");
          logger = &dtUtil::Log::GetInstance(logName);
 
