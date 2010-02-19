@@ -61,6 +61,7 @@ namespace dtActors
        static dtCore::RefPtr<dtDAL::ActorType> PROXIMITY_TRIGGER_ACTOR_TYPE;
        static dtCore::RefPtr<dtDAL::ActorType> AUTOTRIGGER_ACTOR_TYPE;
        static dtCore::RefPtr<dtDAL::ActorType> CAMERA_ACTOR_TYPE;
+       static dtCore::RefPtr<dtDAL::ActorType> CAMERA_DATA_ACTOR_TYPE;
        static dtCore::RefPtr<dtDAL::ActorType> TRIPOD_ACTOR_TYPE;
        static dtCore::RefPtr<dtDAL::ActorType> WEATHER_ENVIRONMENT_ACTOR_TYPE;
        static dtCore::RefPtr<dtDAL::ActorType> SKYDOME_ENVIRONMENT_ACTOR_TYPE;
