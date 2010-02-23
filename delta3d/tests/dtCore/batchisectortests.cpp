@@ -143,25 +143,12 @@ class BatchISectorTests : public CPPUNIT_NS::TestFixture
 //         CPPUNIT_ASSERT(iSector.GetNumberOfHits() == 0);
 //         CPPUNIT_ASSERT(iSector.GetClosestDrawable() == NULL);
 
-         try 
-         {
-            mBatchIsector->EnableAndGetISector(33);
-         }
-         catch (const dtUtil::Exception& ex)
-         {
-            //  correct
-            CPPUNIT_ASSERT_MESSAGE(ex.ToString().c_str(), ex.TypeEnum() == dtCore::ExceptionEnum::INVALID_PARAMETER);
-         }
 
-         try 
-         {
-            mBatchIsector->EnableAndGetISector(-1);
-         }
-         catch (const dtUtil::Exception& ex)
-         {
-            //  correct
-            CPPUNIT_ASSERT_MESSAGE(ex.ToString().c_str(), ex.TypeEnum() == dtCore::ExceptionEnum::INVALID_PARAMETER);
-         }
+         CPPUNIT_ASSERT_THROW_MESSAGE("BatchIsector should have thrown exception on EnableAndGetISector(33)",
+                                      mBatchIsector->EnableAndGetISector(33), dtCore::InvalidParameterException);
+
+         CPPUNIT_ASSERT_THROW_MESSAGE("BatchIsector should have thrown exception on EnableAndGetISector(-1)",
+                                       mBatchIsector->EnableAndGetISector(-1), dtCore::InvalidParameterException);
       }
 
 
