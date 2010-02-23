@@ -54,6 +54,7 @@ namespace dtCore
 namespace dtGUI
 {
    class BaseScriptModule;
+   class ScriptModule;
    class CEGUIRenderer;
    class CEGUIKeyboardListener;
    class CEGUIMouseListener;
@@ -84,6 +85,12 @@ namespace dtGUI
                   dtCore::Keyboard* keyboard,
                   dtCore::Mouse* mouse,
                   dtGUI::BaseScriptModule* sm = 0);
+
+      ///deprecated 2/12/10
+      DEPRECATE_FUNC CEUIDrawable(dtCore::DeltaWin* win,
+                                  dtCore::Keyboard* keyboard,
+                                  dtCore::Mouse* mouse,
+                                  dtGUI::ScriptModule* sm);
 
    protected:
       virtual ~CEUIDrawable();
@@ -150,7 +157,8 @@ namespace dtGUI
       CEGUI::System* mUI; ///<Pointer to the CUI_UI
 
       CEGUIRenderer* mRenderer; ///<The opengl renderer we're using
-      dtGUI::BaseScriptModule* mScriptModule;
+      dtGUI::ScriptModule* mScriptModule;
+      dtGUI::BaseScriptModule* mBaseScriptModule;
       dtCore::RefPtr<osg::Projection> mProjection;
       dtCore::RefPtr<osg::MatrixTransform> mTransform;
       dtCore::RefPtr<dtCore::DeltaWin> mWindow; ///<The window this UI is being rendered in

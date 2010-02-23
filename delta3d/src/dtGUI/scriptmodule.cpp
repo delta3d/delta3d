@@ -77,3 +77,9 @@ void dtGUI::ScriptModule::executeString(const CEGUI::String &str)
 {
    NotSupported( __FUNCTION__ );
 }
+
+////////////////////////////////////////////////////////////////////////////////
+const dtGUI::ScriptModule::CallbackRegistry& dtGUI::ScriptModule::GetRegistry() const
+{
+   return mCallbacks;
+}

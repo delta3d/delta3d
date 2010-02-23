@@ -48,7 +48,7 @@ namespace dtCore
 
 namespace dtGUI
 {
-   class BaseScriptModule;
+   class ScriptModule;
    class CEUIDrawable;
 
    /** A class responsible for drawing a GUI
@@ -68,7 +68,7 @@ namespace dtGUI
       void InitializeGUI(dtCore::DeltaWin* dwin, 
                         dtCore::Keyboard *keyboard,
                         dtCore::Mouse *mouse,
-                        dtGUI::BaseScriptModule* sm=0);
+                        dtGUI::ScriptModule* sm=0);
 
       ///Returns the instance of the class responsible for drawing the GUI scene.
       dtGUI::CEUIDrawable* GetGUIDrawable();
