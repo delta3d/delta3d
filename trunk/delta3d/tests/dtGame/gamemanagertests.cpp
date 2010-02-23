@@ -390,15 +390,10 @@ void GameManagerTests::TestPrototypeActors()
 /////////////////////////////////////////////////
 void GameManagerTests::TestApplicationMember()
 {
-   try
-   {
-      mManager->GetApplication();
-      CPPUNIT_FAIL("Trying to get the application when it's NULL should fail.");
-   }
-   catch (const dtUtil::Exception& ex)
-   {
-      CPPUNIT_ASSERT(ex.TypeEnum() == dtGame::ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION);
-   }
+
+   CPPUNIT_ASSERT_THROW_MESSAGE("Trying to get the application when it's NULL should fail.",
+                                mManager->GetApplication(), dtGame::GeneralGameManagerException);
+
 
    dtCore::RefPtr<dtABC::Application> app = &GetGlobalApplication();
 
@@ -981,17 +976,15 @@ void GameManagerTests::TestAddActor()
          {
             mManager->PublishActor(*proxy);
          }
+         catch (const dtGame::ActorIsRemoteException&)
+         {
+            CPPUNIT_FAIL("Exception thrown saying the actor is remote, but the actor should not be remote.");
+         }
          catch (const dtUtil::Exception& ex)
          {
-            if (ex.TypeEnum() == dtGame::ExceptionEnum::ACTOR_IS_REMOTE)
-            {
-               CPPUNIT_FAIL("Exception thrown saying the actor is remote, but the actor should not be remote.");
-            }
-            else
-            {
-               CPPUNIT_FAIL(std::string("Unknown Exception thrown publishing an actor: ") + ex.TypeEnum().GetName() + " " + ex.What());
-            }
+            CPPUNIT_FAIL(std::string("Unknown Exception thrown publishing an actor: ") + ex.What());
          }
+
          CPPUNIT_ASSERT_MESSAGE("Actor should not be remote.", !proxy->IsRemote());
          CPPUNIT_ASSERT_MESSAGE("Actor should be published.", proxy->IsPublished());
 
@@ -1042,19 +1035,10 @@ void GameManagerTests::TestAddActor()
          CPPUNIT_ASSERT_MESSAGE("The actor should have been added to the scene.",
             mManager->GetScene().GetDrawableIndex(proxy->GetActor()) != mManager->GetScene().GetNumberOfAddedDrawable());
 
-         try
-         {
-            mManager->PublishActor(*proxy);
-            CPPUNIT_FAIL("An actor may not be published if it's remote.");
-         }
-         catch (const dtUtil::Exception& ex)
-         {
-            if (ex.TypeEnum() != dtGame::ExceptionEnum::ACTOR_IS_REMOTE)
-            {
-               CPPUNIT_FAIL(std::string("Unknown Exception thrown publishing an actor: ") + ex.TypeEnum().GetName() + " " + ex.What());
-            }
-            //OK
-         }
+
+         CPPUNIT_ASSERT_THROW_MESSAGE("An actor may not be published if it's remote.",
+                                      mManager->PublishActor(*proxy), dtGame::ActorIsRemoteException);
+
          mManager->DeleteActor(*proxy);
 
          bool testIsInGM = proxy->IsInGM();
@@ -1083,7 +1067,7 @@ void GameManagerTests::TestAddActor()
          }
          catch (const dtUtil::Exception& ex)
          {
-            CPPUNIT_FAIL(std::string("Unknown Exception thrown adding an actor: ") + ex.TypeEnum().GetName() + " " + ex.What());
+            CPPUNIT_FAIL(std::string("Unknown Exception thrown adding an actor: ") + ex.What());
          }
          dtCore::RefPtr<dtDAL::ActorProxy> proxyFound = mManager->FindActorById(proxy->GetId());
          CPPUNIT_ASSERT(proxyFound != NULL);
@@ -1093,19 +1077,10 @@ void GameManagerTests::TestAddActor()
          CPPUNIT_ASSERT_MESSAGE("The actor should have been added to the scene.",
             mManager->GetScene().GetDrawableIndex(proxy->GetActor()) != mManager->GetScene().GetNumberOfAddedDrawable());
 
-         try
-         {
-            mManager->PublishActor(*proxy);
-            CPPUNIT_FAIL("An actor may not be published if it's not added as a game actor.");
-         }
-         catch (const dtUtil::Exception& ex)
-         {
-            if (ex.TypeEnum() != dtGame::ExceptionEnum::INVALID_ACTOR_STATE)
-            {
-               CPPUNIT_FAIL(std::string("Unknown Exception thrown publishing an actor: ") + ex.TypeEnum().GetName() + " " + ex.What());
-            }
-            //OK
-         }
+
+         CPPUNIT_ASSERT_THROW_MESSAGE("An actor may not be published if it's not added as a game actor.",
+                                       mManager->PublishActor(*proxy), dtGame::InvalidActorStateException);
+
          mManager->DeleteActor(static_cast<dtDAL::ActorProxy&>(*proxy));
          CPPUNIT_ASSERT_MESSAGE("The proxy should not still be in the game manager", mManager->FindActorById(proxy->GetId()) == NULL);
          CPPUNIT_ASSERT_MESSAGE("The actor should not still be in the scene.",
