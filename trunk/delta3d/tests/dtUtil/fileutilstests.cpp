@@ -177,15 +177,8 @@ void FileUtilsTests::testFileIO1()
       const std::string file2("flatdirt.ive");
 
       //cleanup
-      try
-      {
-         fileUtils.DirDelete(Dir1, true);
-      }
-      catch (const dtUtil::Exception& ex)
-      {
-         CPPUNIT_ASSERT_MESSAGE((ex.ToString() + ": Error deleting Directory, but file exists.").c_str(),
-            ex.TypeEnum() == dtDAL::ExceptionEnum::ProjectFileNotFound);
-      }
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Deleting a non-existent directory returned as a failure.",
+                                    true, fileUtils.DirDelete(Dir1, true));
       fileUtils.MakeDirectory(Dir1);
       fileUtils.MakeDirectory(Dir2);
 
@@ -195,13 +188,12 @@ void FileUtilsTests::testFileIO1()
 
       try
       {
+         //normally doesn't throw an exception
          fileUtils.GetFileInfo(file2 + "euaoeuaiao.ao.u");
       }
       catch (const dtUtil::Exception& ex)
-      {
-         //this should throw a file not found.
-         CPPUNIT_ASSERT_MESSAGE(ex.ToString().c_str(), ex.TypeEnum() == dtDAL::ExceptionEnum::ProjectFileNotFound);
-         //correct
+      {         
+         CPPUNIT_FAIL(ex.ToString());
       }
 
       CPPUNIT_ASSERT_MESSAGE("terrain_simple.ive should exist.", fileUtils.FileExists(file1));
@@ -277,12 +269,12 @@ void FileUtilsTests::testFileIO2()
       //cleanup
       try
       {
+         //Shouldn't throw, even if the directory doesn't exist
          fileUtils.DirDelete(Dir1, true);
       }
       catch (const dtUtil::Exception& ex)
       {
-         CPPUNIT_ASSERT_MESSAGE((ex.ToString() + ": Error deleting Directory, but file exists.").c_str(),
-            ex.TypeEnum() == dtDAL::ExceptionEnum::ProjectFileNotFound);
+         CPPUNIT_FAIL((ex.ToString() + ": Error deleting Directory, but file exists.").c_str());
       }
 
       fileUtils.MakeDirectory(Dir1);

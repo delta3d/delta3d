@@ -139,15 +139,9 @@ public:
       //make it initialize.
       dtUtil::LibrarySharingManager& lsm = dtUtil::LibrarySharingManager::GetInstance();
       
-      try
-      {
-         dtCore::RefPtr<dtUtil::LibrarySharingManager::LibraryHandle> junk = lsm.LoadSharedLibrary("some gobbelty gook library");
-         CPPUNIT_FAIL("Loading a missing library should have failed.");
-      }
-      catch (dtUtil::Exception& ex)
-      {
-         CPPUNIT_ASSERT_MESSAGE("The exception enumeration is incorrect.", ex.TypeEnum() == dtUtil::LibrarySharingManager::ExceptionEnum::LibraryLoadingError);
-      }
+      CPPUNIT_ASSERT_THROW_MESSAGE("Loading a missing library should have failed.",
+                                    lsm.LoadSharedLibrary("some gobbelty gook library"),
+                                    dtUtil::LibrarySharingManager::LibraryLoadingException);
       
       dtCore::RefPtr<dtUtil::LibrarySharingManager::LibraryHandle> lib1 = lsm.LoadSharedLibrary(mActorLibraryName);
       dtCore::RefPtr<dtUtil::LibrarySharingManager::LibraryHandle> lib2 = lsm.LoadSharedLibrary(mExampleLibraryName);
