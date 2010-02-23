@@ -704,15 +704,10 @@ void MessageTests::TestActorPublish()
       dtCore::RefPtr<dtGame::GameActorProxy> gap = dynamic_cast<dtGame::GameActorProxy*>(ap.get());
       CPPUNIT_ASSERT(gap != NULL);
 
-      try
-      {
-         mGameManager->AddActor(*gap, true, true);
-         CPPUNIT_FAIL("Adding an actor with both remote and true should fail.");
-      }
-      catch (const dtUtil::Exception& ex)
-      {
-         CPPUNIT_ASSERT(ex.TypeEnum() == dtGame::ExceptionEnum::ACTOR_IS_REMOTE);
-      }
+
+      CPPUNIT_ASSERT_THROW_MESSAGE("Adding an actor with both remote and true should fail.",
+                                   mGameManager->AddActor(*gap, true, true), dtGame::ActorIsRemoteException);
+
 
       //now we really add the actor as published.
       mGameManager->AddActor(*gap, false, true);
