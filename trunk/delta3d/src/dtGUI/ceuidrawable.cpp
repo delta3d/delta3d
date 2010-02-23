@@ -31,6 +31,7 @@
 #include <dtGUI/ceguimouselistener.h>       // for member
 #include <dtGUI/ceguikeyboardlistener.h>    // for member
 #include <dtGUI/basescriptmodule.h>
+#include <dtGUI/scriptmodule.h>
 #include <dtGUI/guiexceptionenum.h>
 #include <dtGUI/resourceprovider.h>
 #include <dtGUI/ceguirenderer.h>
@@ -67,7 +68,7 @@ CEUIDrawable::CEUIDrawable(dtCore::DeltaWin* win,
    : DeltaDrawable("CEUIDrawable")
    , mUI(NULL)
    , mRenderer(new dtGUI::CEGUIRenderer(0))
-   , mScriptModule(sm)
+   , mBaseScriptModule(sm)
    , mProjection(new osg::Projection())
    , mTransform(new osg::MatrixTransform(osg::Matrix::identity()))
    , mWindow(win)
@@ -86,6 +87,39 @@ CEUIDrawable::CEUIDrawable(dtCore::DeltaWin* win,
 
    RegisterInstance(this);
    
+   mProjection->setName("CEUIDrawable_Projection");
+   mTransform->setName("CEUIDrawable_MatrixTransform");
+
+   Config();
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+DEPRECATE_FUNC dtGUI::CEUIDrawable::CEUIDrawable(dtCore::DeltaWin* win,
+                                                 dtCore::Keyboard* keyboard,
+                                                 dtCore::Mouse* mouse,
+                                                 dtGUI::ScriptModule* sm)
+ : DeltaDrawable("CEUIDrawable")
+ , mUI(NULL)
+ , mRenderer(new dtGUI::CEGUIRenderer(0))
+ , mScriptModule(sm)
+ , mProjection(new osg::Projection())
+ , mTransform(new osg::MatrixTransform(osg::Matrix::identity()))
+ , mWindow(win)
+ , mMouse(mouse)
+ , mKeyboard(keyboard)
+ , mWidth(0)
+ , mHeight(0)
+ , mAutoResize(true)
+ , mKeyboardListener(new CEGUIKeyboardListener())
+ , mMouseListener(new CEGUIMouseListener()) 
+{
+   DEPRECATE("dtGUI::CEUIDrawable",
+             "dtGUI::GUI");
+   AddSender(&dtCore::System::GetInstance());
+
+   RegisterInstance(this);
+
    mProjection->setName("CEUIDrawable_Projection");
    mTransform->setName("CEUIDrawable_MatrixTransform");
 
@@ -120,9 +154,19 @@ void CEUIDrawable::Config()
             #if defined(CEGUI_VERSION_MAJOR) && CEGUI_VERSION_MAJOR >= 0 && defined(CEGUI_VERSION_MINOR) && CEGUI_VERSION_MINOR >= 5
             // CEGUI 0.5.0 introduces a "unified" constructor. 
             // The new 0 here is for using the default ResourceProvider as well as the default XML parser.
-            new CEGUI::System(mRenderer, new dtGUI::ResourceProvider(), NULL, mScriptModule);          
+               new CEGUI::System(mRenderer, new dtGUI::ResourceProvider(), NULL, mScriptModule);          
             #else
                new CEGUI::System(mRenderer,mScriptModule);
+            #endif // CEGUI 0.5.0
+         }
+         else if(mBaseScriptModule)
+         {
+            #if defined(CEGUI_VERSION_MAJOR) && CEGUI_VERSION_MAJOR >= 0 && defined(CEGUI_VERSION_MINOR) && CEGUI_VERSION_MINOR >= 5
+            // CEGUI 0.5.0 introduces a "unified" constructor. 
+            // The new 0 here is for using the default ResourceProvider as well as the default XML parser.
+              new CEGUI::System(mRenderer, new dtGUI::ResourceProvider(), NULL, mBaseScriptModule);          
+            #else
+              new CEGUI::System(mRenderer,mBaseScriptModule);
             #endif // CEGUI 0.5.0
          }
          else

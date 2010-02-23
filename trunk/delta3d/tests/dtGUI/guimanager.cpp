@@ -53,7 +53,7 @@ dtGUI::CEUIDrawable* GUIManager::GetGUIDrawable()
 void GUIManager::InitializeGUI(dtCore::DeltaWin* dwin, 
                                dtCore::Keyboard *keyboard,
                                dtCore::Mouse *mouse,
-                               dtGUI::BaseScriptModule* sm)
+                               dtGUI::ScriptModule* sm)
 {
    // this code could start the system, but that code is in the drawable
    mDrawable = new dtGUI::CEUIDrawable(dwin, keyboard, mouse, sm);

@@ -3,6 +3,7 @@
 
 
 #include <dtGUI/export.h>
+#include <dtUtil/functor.h>           // for typedef, member
 #include <CEGUI/CEGUIScriptModule.h>
 #include <map>
 #include <string>
@@ -35,6 +36,9 @@ namespace dtGUI
          virtual int executeScriptGlobal (const CEGUI::String& functionName);
 
          virtual void executeString(const CEGUI::String &str);
+ 
+         ///Deprecated 2/23/10
+         typedef dtUtil::Functor<bool,TYPELIST_1(const CEGUI::EventArgs&)> HandlerFunctor;
 
          /**
          * Add a callback handler.
@@ -57,10 +61,17 @@ namespace dtGUI
          */
          bool AddCallback(const std::string& callbackName, CEGUI::SubscriberSlot subscriberSlot);
 
+         typedef std::map<std::string,CEGUI::SubscriberSlot> CallbackRegistry;
+         
+         /**
+          * Returns the StaticRegistry.
+          */
+         const CallbackRegistry& GetRegistry() const;
+
       private:
          bool NotSupported(const std::string& methodName);
 
-         std::map<std::string, CEGUI::SubscriberSlot> mCallbacks;
+         CallbackRegistry mCallbacks;
    };
 }
 
