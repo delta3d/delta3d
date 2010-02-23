@@ -287,95 +287,31 @@ void ProjectTests::testReadonlyFailure()
          CPPUNIT_FAIL(std::string("Project should have been able to call GetResourcesOfType: ") + e.ToString());
       }
 
-      try 
-      {
-         p.DeleteMap("mojo");
-         CPPUNIT_FAIL("deleteMap should not be allowed on a readoly context.");
-      } 
-      catch (const dtUtil::Exception& e) 
-      {
-         CPPUNIT_ASSERT_MESSAGE("Exception should have been ExceptionEnum::ProjectReadOnly",
-               e.TypeEnum() == dtDAL::ExceptionEnum::ProjectReadOnly);
-      }
+      CPPUNIT_ASSERT_THROW_MESSAGE("DeleteMap() should have thrown exception on a ReadOnly ProjectContext",
+                                   p.DeleteMap("mojo"), dtDAL::ProjectReadOnlyException);
 
-      try 
-      {
-         p.SaveMap("mojo");
-         CPPUNIT_FAIL("deleteMap should not be allowed on a readoly context.");
-      } 
-      catch (const dtUtil::Exception& e) 
-      {
-         CPPUNIT_ASSERT_MESSAGE("Exception should have been ExceptionEnum::ProjectReadOnly",
-               e.TypeEnum() == dtDAL::ExceptionEnum::ProjectReadOnly);
-      }
+      CPPUNIT_ASSERT_THROW_MESSAGE("SaveMap() should have thrown exception on a ReadOnly ProjectContext",
+                                    p.SaveMap("mojo"), dtDAL::ProjectReadOnlyException);
 
-      try 
-      {
-         p.SaveMapAs("mojo", "a", "b");
-         CPPUNIT_FAIL("deleteMap should not be allowed on a readoly context.");
-      } 
-      catch (const dtUtil::Exception& e) 
-      {
-         CPPUNIT_ASSERT_MESSAGE("Exception should have been ExceptionEnum::ProjectReadOnly",
-               e.TypeEnum() == dtDAL::ExceptionEnum::ProjectReadOnly);
-      }
+      CPPUNIT_ASSERT_THROW_MESSAGE("SaveMapAs() should have thrown exception on a ReadOnly ProjectContext",
+                                    p.SaveMapAs("mojo", "a", "b"), dtDAL::ProjectReadOnlyException);
 
+      CPPUNIT_ASSERT_THROW_MESSAGE("AddResource() should have thrown exception on a ReadOnly ProjectContext",
+                                    p.AddResource("mojo", "../jojo.ive","fun:bigmamajama", dtDAL::DataType::STATIC_MESH),
+                                    dtDAL::ProjectReadOnlyException);
 
-      try 
-      {
-         p.AddResource("mojo", std::string("../jojo.ive"),
-               std::string("fun:bigmamajama"), dtDAL::DataType::STATIC_MESH);
-         CPPUNIT_FAIL("addResource should not be allowed on a readoly context.");
-      } 
-      catch (const dtUtil::Exception& e) 
-      {
-         CPPUNIT_ASSERT_MESSAGE("Exception should have been ExceptionEnum::ProjectReadOnly",
-               e.TypeEnum() == dtDAL::ExceptionEnum::ProjectReadOnly);
-      }
+      CPPUNIT_ASSERT_THROW_MESSAGE("RemoveResource() should have thrown exception on a ReadOnly ProjectContext",
+                                   p.RemoveResource(dtDAL::ResourceDescriptor("","")),dtDAL::ProjectReadOnlyException);
 
-      try 
-      {
-         p.RemoveResource(dtDAL::ResourceDescriptor("",""));
-         CPPUNIT_FAIL("removeResource should not be allowed on a readoly context.");
-      } 
-      catch (const dtUtil::Exception& e) 
-      {
-         CPPUNIT_ASSERT_MESSAGE("Exception should have been ExceptionEnum::ProjectReadOnly",
-               e.TypeEnum() == dtDAL::ExceptionEnum::ProjectReadOnly);
-      }
+      CPPUNIT_ASSERT_THROW_MESSAGE("CreateResourceCategory() should have thrown exception on a ReadOnly ProjectContext",
+                                   p.CreateResourceCategory("name-o", dtDAL::DataType::STRING),dtDAL::ProjectReadOnlyException);
 
-      try 
-      {
-         p.CreateResourceCategory("name-o", dtDAL::DataType::STRING);
-         CPPUNIT_FAIL("createResourceCategory should not be allowed on a readoly context.");
-      } 
-      catch (const dtUtil::Exception& e) 
-      {
-         CPPUNIT_ASSERT_MESSAGE("Exception should have been ExceptionEnum::ProjectReadOnly",
-               e.TypeEnum() == dtDAL::ExceptionEnum::ProjectReadOnly);
-      }
+      CPPUNIT_ASSERT_THROW_MESSAGE("RemoveResourceCategory() should have thrown exception on a ReadOnly ProjectContext",
+                                   p.RemoveResourceCategory("name-o", dtDAL::DataType::SOUND, true),dtDAL::ProjectReadOnlyException);
 
-      try 
-      {
-         p.RemoveResourceCategory("name-o", dtDAL::DataType::SOUND, true);
-         CPPUNIT_FAIL("removeResourceCategory should not be allowed on a readoly context.");
-      }
-      catch (const dtUtil::Exception& e)
-      {
-         CPPUNIT_ASSERT_MESSAGE("Exception should have been ExceptionEnum::ProjectReadOnly",
-               e.TypeEnum() == dtDAL::ExceptionEnum::ProjectReadOnly);
-      }
+      CPPUNIT_ASSERT_THROW_MESSAGE("CreateMap() should have thrown exception on a ReadOnly ProjectContext",
+                                   p.CreateMap("name-o", "testFile"),dtDAL::ProjectReadOnlyException);
 
-      try 
-      {
-         p.CreateMap("name-o", "testFile");
-         CPPUNIT_FAIL("createMap should not be allowed on a readoly context.");
-      } 
-      catch (const dtUtil::Exception& e) 
-      {
-         CPPUNIT_ASSERT_MESSAGE("Exception should have been ExceptionEnum::ProjectReadOnly",
-               e.TypeEnum() == dtDAL::ExceptionEnum::ProjectReadOnly);
-      }
    } 
    catch (const dtUtil::Exception& ex) 
    {
@@ -522,24 +458,13 @@ void ProjectTests::testResources()
 
       std::string testResult;
 
-      try {
-         p.AddResource("mojo", std::string("../jojo.ive"),
-               std::string("fun:bigmamajama"), dtDAL::DataType::STATIC_MESH);
-         CPPUNIT_FAIL("The add resource call to add a non-existent file should have failed.");
-      } catch (const dtUtil::Exception& ex) {
-         CPPUNIT_ASSERT_MESSAGE(ex.ToString().c_str(), ex.TypeEnum() == dtDAL::ExceptionEnum::ProjectFileNotFound);
-         //correct otherwise
-      }
+      CPPUNIT_ASSERT_THROW_MESSAGE("The AddResource() to add a non-existent file should have failed.",
+                                   p.AddResource("mojo", "../jojo.ive", "fun:bigmamajama", dtDAL::DataType::STATIC_MESH),
+                                   dtUtil::Exception);
 
-      try {
-         p.AddResource("dirt", std::string("../terrain_simple.ive"),
-               std::string("fun:bigmamajama"), dtDAL::DataType::BOOLEAN);
-         CPPUNIT_FAIL("The add resource call to add boolean should have failed.");
-      } catch (const dtUtil::Exception& ex) {
-         //should not allow a boolean resource to be added.
-         CPPUNIT_ASSERT_MESSAGE(ex.ToString().c_str(), ex.TypeEnum() == dtDAL::ExceptionEnum::ProjectResourceError);
-         //correct otherwise
-      }
+      CPPUNIT_ASSERT_THROW_MESSAGE("The AddResource() to add a mis-matched DataType should have failed.",
+                                   p.AddResource("dirt", "../terrain_simple.ive", "fun:bigmamajama", dtDAL::DataType::BOOLEAN),
+                                   dtUtil::Exception);
 
       std::string dirtCategory = "fun:bigmamajama";
 
