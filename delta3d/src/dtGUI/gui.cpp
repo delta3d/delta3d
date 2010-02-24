@@ -118,6 +118,13 @@ mRootSheet(NULL)
 ////////////////////////////////////////////////////////////////////////////////
 GUI::~GUI()
 {
+   RemoveSender(&dtCore::System::GetInstance());
+
+   if (mCamera.valid() && mInternalGraph)
+   {
+      mCamera->removeChild(mInternalGraph);
+   }
+
    if (mMouse.valid())
    {
       mMouse->RemoveMouseListener(mMouseListener.get());
@@ -128,6 +135,20 @@ GUI::~GUI()
       mKeyboard->RemoveKeyboardListener(mKeyboardListener.get());
    }
 
+   if (mRootSheet)
+   {
+      CEGUI::WindowManager::getSingletonPtr()->destroyWindow(mRootSheet);
+      mRootSheet = NULL;
+   }
+
+   CEGUI::OpenGLRenderer* renderer = static_cast<CEGUI::OpenGLRenderer*>(CEGUI::System::getSingletonPtr()->getRenderer());
+   CEGUI::System::destroy();
+   if (renderer)
+   {
+      CEGUI::OpenGLRenderer::destroy(*renderer);
+   }
+
+   DeregisterInstance(this);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
