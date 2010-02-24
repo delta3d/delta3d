@@ -84,11 +84,11 @@ namespace dtCore
 
       /**
        * This method can be overriden in subclasses to produce
-       * desired mouse behavior
+       * desired rotation behavior
        *
        * @param deltaTime The time change
        */
-      virtual void UpdateMouse(const double deltaTime);
+      virtual void PerformRotation(const double deltaTime);
 
       /**
        * This method can be overriden in subclasses to produce
@@ -356,6 +356,16 @@ namespace dtCore
       bool GetInvertMouse() { return mInvertMouse; }
 
       /**
+       * Sets whether we should recenter the mouse on an update or not
+       */
+      void SetRecenterMouse(bool b) { mShouldRecenterMouse = b; }
+
+      /**
+       * @return whether or not the mouse gets recentered on updates
+       */
+      bool GetRecenterMouse() { return mShouldRecenterMouse; }
+
+      /**
        * Sets whether this motion model should operate even when unfocused.
        * Defaults to false (no).
        * @param operate True if motion model should operate even when unfocused
@@ -469,9 +479,8 @@ namespace dtCore
       bool mUseWASD, mUseArrowKeys;
 
       bool mOperateWhenUnfocused; // should motion model operate when unfocused? Defaults to false
-      bool mShouldResetMouse;
+      bool mShouldRecenterMouse;
 
-      osg::Vec2 mMouseMove;
       dtCore::RefPtr<Mouse>    mMouse;
       dtCore::RefPtr<Keyboard> mKeyboard;
 
@@ -479,7 +488,7 @@ namespace dtCore
       bool OnSidestepChanged(double newState, double delta);
       bool OnLookLeftRightChanged(double newState, double delta);
       bool OnLookUpDownChanged(double newState, double delta);
-      bool HasMouseMoved(const osg::Vec2& diff);
+      bool HasHeadingChanged(const osg::Vec2& diff);
       void ResetMousePosition();
 
       float mForwardBackCtrl; ///<control value for forward/back movement (-1.0, 1.0)

@@ -81,7 +81,7 @@ FPSMotionModel::FPSMotionModel(Keyboard* keyboard,
    , mUseWASD(useWASD)
    , mUseArrowKeys(useArrowKeys)
    , mOperateWhenUnfocused(false)
-   , mShouldResetMouse(true)
+   , mShouldRecenterMouse(true)
    , mForwardBackCtrl(0.f)
    , mSidestepCtrl(0.f)
    , mLookLeftRightCtrl(0.f)
@@ -173,14 +173,19 @@ void FPSMotionModel::SetEnabled(bool enabled)
 {
    if (enabled && !MotionModel::IsEnabled())
    {
-      mMouse->SetPosition(0.0f,0.0f);
+      if (mShouldRecenterMouse)
+      {
+         ResetMousePosition();
+      }
 
       if (mLookUpDownAxis.valid())
       {
+         mLookUpDownAxis->SetState(0.0f);
          mLookUpDownAxis->AddAxisListener(mLookUpDownListener);
       }
       if (mTurnLeftRightAxis.valid())
       {
+         mTurnLeftRightAxis->SetState(0.0f);
          mTurnLeftRightAxis->AddAxisListener(mLookLeftRightListener);
       }
       if (mSidestepLeftRightAxis.valid())
@@ -569,19 +574,19 @@ float FPSMotionModel::GetFallingHeight() const
 void FPSMotionModel::OnMessage(MessageData* data)
 {
    //if (IsCurrentlyActive() && data->message == dtCore::System::MESSAGE_EVENT_TRAVERSAL)
-   if (IsCurrentlyActive() && mShouldResetMouse)
-   {
-      if (GetTurnLeftRightAxis())
-      {
-         GetTurnLeftRightAxis()->SetState(0.0f);
-      }
-      if (GetLookUpDownAxis())
-      {
-         GetLookUpDownAxis()->SetState(0.0f);
-      }
-      mShouldResetMouse = false;
-   }
-   else if (IsCurrentlyActive() && data->message == dtCore::System::MESSAGE_POST_EVENT_TRAVERSAL)
+   //if (IsCurrentlyActive() && mShouldResetMouse)
+   //{
+   //   if (GetTurnLeftRightAxis())
+   //   {
+   //      GetTurnLeftRightAxis()->SetState(0.0f);
+   //   }
+   //   if (GetLookUpDownAxis())
+   //   {
+   //      GetLookUpDownAxis()->SetState(0.0f);
+   //   }
+   //   mShouldResetMouse = false;
+   //}
+   if (IsCurrentlyActive() && data->message == dtCore::System::MESSAGE_POST_EVENT_TRAVERSAL)
    {
       // use the simulated change in time, not the real time change
       // see dtCore::System for the difference.
@@ -596,7 +601,7 @@ void FPSMotionModel::OnMessage(MessageData* data)
       }
 
       // read mouse state to perform rotations (and reset mouse state)
-      UpdateMouse(deltaFrameTime);
+      PerformRotation(deltaFrameTime);
 
       // perform translations
       PerformTranslation(deltaFrameTime);
@@ -611,11 +616,11 @@ bool FPSMotionModel::IsCurrentlyActive()
    result = GetTarget() != NULL && IsEnabled() &&
       (mOperateWhenUnfocused || mMouse->GetHasFocus());
 
-   // Flag the mouse to be reset if the motion model is not currently active.
-   if (!result)
-   {
-      mShouldResetMouse = true;
-   }
+   //// Flag the mouse to be reset if the motion model is not currently active.
+   //if (!result)
+   //{
+   //   mShouldResetMouse = true;
+   //}
 
    return result;
 }
@@ -661,7 +666,7 @@ private:
 };
 
 /////////////////////////////////////////////////////////////////////////////
-void FPSMotionModel::UpdateMouse(const double deltaTime)
+void FPSMotionModel::PerformRotation(const double deltaTime)
 {
    //NOTE: This code has been commented out because it does not work with window resizing
    //if the window is resized then the mouse position which was set to (0.1, 0.0) will come
@@ -705,36 +710,34 @@ void FPSMotionModel::UpdateMouse(const double deltaTime)
    //   }
    //}
 
+   osg::Vec2 rotationMovement;
    if (GetTurnLeftRightAxis())
    {
-      mMouseMove.x() += GetTurnLeftRightAxis()->GetState();
-      GetTurnLeftRightAxis()->SetState(0.0f);
+      rotationMovement.x() += GetTurnLeftRightAxis()->GetState();
    }
    if (GetLookUpDownAxis())
    {
-      mMouseMove.y() += GetLookUpDownAxis()->GetState();
-      GetLookUpDownAxis()->SetState(0.0f);
+      rotationMovement.y() += GetLookUpDownAxis()->GetState();
    }
 
    const bool calc_new_heading_pitch = !mUseMouseButtons || mMouse->GetButtonState(Mouse::LeftButton);
-   const bool mouse_has_moved = HasMouseMoved(mMouseMove);
+   const bool heading_changed = HasHeadingChanged(rotationMovement);
 
    // Once a new mouse movement has been triggered, we no longer need to reset the mouse.
    if (mpDebugger)
    {
-      mpDebugger->Update(deltaTime, mouse_has_moved);
+      mpDebugger->Update(deltaTime, heading_changed);
    }
 
-
-   if (calc_new_heading_pitch && mouse_has_moved)
+   if (calc_new_heading_pitch && heading_changed)
    {
       Transform transform;
       GetTarget()->GetTransform(transform);
 
       osg::Matrix rot;
       transform.GetRotation(rot);
-      float deltaZ = mMouseMove[0] * mMaximumTurnSpeed;
-      float deltaX = mMouseMove[1] * mMaximumTurnSpeed;
+      float deltaZ = rotationMovement[0] * mMaximumTurnSpeed;
+      float deltaX = rotationMovement[1] * mMaximumTurnSpeed;
 
       osg::Vec3 upVector      = dtUtil::MatrixUtil::GetRow3(rot, 2);
       osg::Vec3 forwardVector = dtUtil::MatrixUtil::GetRow3(rot, 1);
@@ -770,7 +773,11 @@ void FPSMotionModel::UpdateMouse(const double deltaTime)
       transform.SetRotation(rot);
       GetTarget()->SetTransform(transform);
 
-      ResetMousePosition();
+      // Reset the mouse position if necessary
+      if (mShouldRecenterMouse)
+      {
+         ResetMousePosition();
+      }
    }
 }
 
@@ -864,7 +871,7 @@ void FPSMotionModel::AdjustElevation(osg::Vec3& xyz, double deltaFrameTime)
    }
 }
 
-bool FPSMotionModel::HasMouseMoved(const osg::Vec2& diff)
+bool FPSMotionModel::HasHeadingChanged(const osg::Vec2& diff)
 {
    // this is overly complicated and rather annoying however it fixes the 'drifting' bug
    // the use case is resizing the window with the motion model active and the camera will
@@ -904,7 +911,6 @@ bool FPSMotionModel::HasMouseMoved(const osg::Vec2& diff)
 
 void FPSMotionModel::ResetMousePosition()
 {
-   mMouseMove.set(0.0f, 0.0f);
    mMouse->SetPosition(0.0f,0.0f); // keeps cursor at center of screen
 }
 
