@@ -78,7 +78,6 @@ SET(LIB_SOURCES
     ${SOURCE_PATH}/namedparameter.cpp
     ${SOURCE_PATH}/objecttype.cpp
     ${SOURCE_PATH}/physicalactorproxy.cpp
-    ${SOURCE_PATH}/precomp.cpp
     ${SOURCE_PATH}/project.cpp
     ${SOURCE_PATH}/propertycontainer.cpp
     ${SOURCE_PATH}/resourceactorproperty.cpp
