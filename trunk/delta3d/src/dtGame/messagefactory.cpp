@@ -19,7 +19,7 @@
  * William E. Johnson II
  * David Guthrie
  */
-#include <prefix/dtgameprefix-src.h>
+#include <prefix/dtgameprefix.h>
 #include <dtGame/messagefactory.h>
 #include <dtGame/message.h>
 #include <dtGame/basemessages.h>

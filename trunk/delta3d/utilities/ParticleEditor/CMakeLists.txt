@@ -14,6 +14,8 @@ qt4_wrap_cpp(MOC_SOURCES ${PROG_HEADERS})
 QT4_ADD_RESOURCES(RCC_SOURCES particleeditor.qrc)
 QT4_WRAP_UI(UI_SOURCES particleeditor.ui)
 
+ADD_PRECOMPILED_HEADER(${APP_NAME} prefix/dtdalprefix.h prefix/dtdalprefix.cpp PROG_SOURCES)
+
 ADD_EXECUTABLE(${APP_NAME}
     ${PROG_HEADERS}
     ${PROG_SOURCES}
@@ -50,7 +52,3 @@ ENDIF (MSVC_IDE)
 IF (MSVC)
   SET_TARGET_PROPERTIES(${APP_NAME} PROPERTIES DEBUG_POSTFIX "${CMAKE_DEBUG_POSTFIX}")
 ENDIF (MSVC)
-
-IF (PCHSupport_FOUND)
-   ADD_PRECOMPILED_HEADER(${APP_NAME} ${SOURCE_PATH}/src/precomp.cpp prefix/dtstageprefix-src.h true)
-ENDIF (PCHSupport_FOUND)

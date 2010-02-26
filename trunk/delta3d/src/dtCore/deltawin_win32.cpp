@@ -1,7 +1,7 @@
 // window.cpp: implementation of the DeltaWin class.
 //
 //////////////////////////////////////////////////////////////////////
-#include <prefix/dtcoreprefix-src.h>
+#include <prefix/dtcoreprefix.h>
 #include <dtUtil/mswinmacros.h>
 #if defined(DELTA_WIN32)
 #include <dtUtil/mswin.h>

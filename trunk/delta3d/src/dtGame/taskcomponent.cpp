@@ -18,7 +18,7 @@
  *
  * Matthew W. Campbell
  */
-#include <prefix/dtgameprefix-src.h>
+#include <prefix/dtgameprefix.h>
 #include <dtGame/taskcomponent.h>
 #include <dtGame/message.h>
 #include <dtGame/messagetype.h>

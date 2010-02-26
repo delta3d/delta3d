@@ -1,4 +1,4 @@
-#include <prefix/dtcoreprefix-src.h>
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/clouddome.h>
 #include <dtCore/moveearthtransform.h>
 #include <dtCore/system.h>

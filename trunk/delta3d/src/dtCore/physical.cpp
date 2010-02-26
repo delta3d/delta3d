@@ -1,7 +1,7 @@
 // physical.cpp: Implementation of the Physical class.
 //
 //////////////////////////////////////////////////////////////////////
-#include <prefix/dtcoreprefix-src.h>
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/physical.h>
 #include <dtCore/odebodywrap.h>
 #include <dtCore/collisioncategorydefaults.h>

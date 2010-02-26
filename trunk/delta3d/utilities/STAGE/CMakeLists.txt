@@ -30,6 +30,8 @@ QT4_ADD_RESOURCES(RCC_SOURCES
 
 QT4_WRAP_UI(UI_SOURCES externaltooldialog.ui externaltoolargeditor.ui positiondialog.ui)
  
+ADD_PRECOMPILED_HEADER(${APP_NAME} prefix/dtqtprefix.h prefix/dtqtprefix.cpp PROG_SOURCES)
+ 
 ADD_EXECUTABLE(${APP_NAME}
     ${PROG_HEADERS}
     ${PROG_SOURCES}
@@ -57,7 +59,7 @@ TARGET_LINK_LIBRARIES( ${APP_NAME}
                      )
                      
 SET_TARGET_PROPERTIES(${APP_NAME}
-                     PROPERTIES DEFINE_SYMBOL DT_EDITQT_LIBRARY)                     
+                     PROPERTIES DEFINE_SYMBOL DT_EDITQT_LIBRARY)
                      
 #MESSAGE(STATUS ${QT_LIBRARIES})
 

@@ -18,7 +18,7 @@
  *
  * Matthew W. Campbell, Curtiss Murphy
  */
-#include <prefix/dtcoreprefix-src.h>
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/shaderparameter.h>
 #include <dtCore/shaderprogram.h>
 

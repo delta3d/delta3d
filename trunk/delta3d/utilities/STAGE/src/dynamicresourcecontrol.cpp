@@ -26,7 +26,7 @@
  *
  * Curtiss Murphy
  */
-#include <prefix/dtstageprefix-src.h>
+#include <prefix/dtqtprefix.h>
 
 #include <dtEditQt/dynamicresourcecontrol.h>
 #include <dtEditQt/editordata.h>

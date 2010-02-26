@@ -27,7 +27,7 @@
  * Jeffrey Houde
  */
 
-#include <prefix/dtstageprefix-src.h>
+#include <prefix/dtqtprefix.h>
 
 #include <QtGui/QWidget>
 #include <QtGui/QGridLayout>

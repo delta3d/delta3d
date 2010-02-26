@@ -29,7 +29,7 @@
 
 // had to add this header to make it compile in linux
 // not sure why.
-#include <prefix/dtstageprefix-src.h>
+#include <prefix/dtqtprefix.h>
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QGridLayout>
 #include <QtCore/QString>

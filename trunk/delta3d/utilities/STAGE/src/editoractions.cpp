@@ -27,7 +27,7 @@
  * Curtiss Murphy
  * R. Erik Johnson
  */
-#include <prefix/dtstageprefix-src.h>
+#include <prefix/dtqtprefix.h>
 #include <dtEditQt/editoractions.h>
 
 #include <QtGui/QAction>

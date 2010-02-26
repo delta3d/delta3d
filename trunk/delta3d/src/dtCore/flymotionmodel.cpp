@@ -1,7 +1,7 @@
 // flymotionmodel.cpp: Implementation of the FlyMotionModel class.
 //
 //////////////////////////////////////////////////////////////////////
-#include <prefix/dtcoreprefix-src.h>
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/flymotionmodel.h>
 
 #include <osg/Vec3>

@@ -19,7 +19,7 @@
  * Matthew W. Campbell, William E. Johnson II, David Guthrie, Curtiss Murphy
  */
 
-#include <prefix/dtgameprefix-src.h>
+#include <prefix/dtgameprefix.h>
 
 #include <dtABC/application.h>
 

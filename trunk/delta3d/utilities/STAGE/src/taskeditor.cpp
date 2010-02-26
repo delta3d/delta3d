@@ -28,7 +28,7 @@
  * David Guthrie
  */
 
-#include <prefix/dtstageprefix-src.h>
+#include <prefix/dtqtprefix.h>
 #include <dtEditQt/taskeditor.h>
 
 #include <QtGui/QGridLayout>

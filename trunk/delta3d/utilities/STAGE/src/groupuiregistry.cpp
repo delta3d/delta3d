@@ -26,7 +26,7 @@
  *
  * David Guthrie
  */
-#include <prefix/dtstageprefix-src.h>
+#include <prefix/dtqtprefix.h>
 #include <dtEditQt/groupuiregistry.h>
 #include <dtEditQt/groupuiplugin.h>
 #include <dtUtil/log.h>

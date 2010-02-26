@@ -20,7 +20,7 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
 */
-#include <prefix/dtgameprefix-src.h>
+#include <prefix/dtgameprefix.h>
 #include <CEGUISystem.h>
 #include <CEGUIWindowManager.h>
 #include <CEGUISchemeManager.h>

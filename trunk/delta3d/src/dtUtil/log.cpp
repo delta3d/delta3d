@@ -18,7 +18,7 @@
  *
  * Matthew W. Campbell, Curtiss Murphy
  */
-#include <prefix/dtutilprefix-src.h>
+#include <prefix/dtutilprefix.h>
 #include <dtUtil/log.h>
 #include <dtUtil/bits.h>
 

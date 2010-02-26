@@ -1,4 +1,4 @@
-#include <prefix/dtcoreprefix-src.h>
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/makeskydome.h>
 #include <dtCore/skydome.h>
 #include <osg/Geometry>

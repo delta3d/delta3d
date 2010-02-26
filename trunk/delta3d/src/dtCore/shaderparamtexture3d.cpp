@@ -18,7 +18,7 @@
  *
  */
 
-#include <prefix/dtcoreprefix-src.h>
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/shaderparamtexture3d.h>
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/exception.h>

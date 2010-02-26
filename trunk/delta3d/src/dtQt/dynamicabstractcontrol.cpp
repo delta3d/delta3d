@@ -26,7 +26,7 @@
  *
  * Curtiss Murphy
  */
-#include <prefix/dtstageprefix-src.h>
+#include <prefix/dtqtprefix.h>
 #include <dtQt/dynamicabstractcontrol.h>
 #include <dtQt/propertyeditortreeview.h>
 #include <dtDAL/actorproxy.h>

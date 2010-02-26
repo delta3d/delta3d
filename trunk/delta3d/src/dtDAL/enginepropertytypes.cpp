@@ -18,7 +18,7 @@
  *
  * David Guthrie
  */
-#include <prefix/dtdalprefix-src.h>
+#include <prefix/dtdalprefix.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/project.h>
 #include <dtDAL/exceptionenum.h>

@@ -1,4 +1,4 @@
-#include <prefix/dtcoreprefix-src.h>
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/view.h>
 #include <dtCore/camera.h>
 #include <dtCore/mouse.h>

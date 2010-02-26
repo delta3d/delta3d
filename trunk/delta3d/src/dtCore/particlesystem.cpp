@@ -2,7 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include <prefix/dtcoreprefix-src.h>
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/particlesystem.h>
 #include <dtCore/collisioncategorydefaults.h>
 #include <dtUtil/log.h>

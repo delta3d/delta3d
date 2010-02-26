@@ -26,7 +26,7 @@
  *
  * Matthew W. Campbell
  */
-#include <prefix/dtstageprefix-src.h>
+#include <prefix/dtqtprefix.h>
 #include <QtGui/QMouseEvent>
 #include <dtEditQt/orthoviewport.h>
 #include <dtEditQt/stagecameramotionmodel2d.h>

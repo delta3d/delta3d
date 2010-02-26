@@ -18,7 +18,7 @@
  *
  * Allen 'Morgas' Danklefsen
  */
-#include <prefix/dtcoreprefix-src.h>
+#include <prefix/dtcoreprefix.h>
 
 #include <dtCore/exceptionenum.h>
 #include <dtCore/batchisector.h>

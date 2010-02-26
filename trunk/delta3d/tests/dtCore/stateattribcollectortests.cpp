@@ -25,7 +25,7 @@
 *
 * @author Matthew Stokes June 21, 2007
 */
-#include <prefix/dtgameprefix-src.h>
+#include <prefix/dtgameprefix.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtUtil/stateattributecollector.h>
 #include <dtCore/object.h>

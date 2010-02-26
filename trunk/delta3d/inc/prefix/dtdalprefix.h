@@ -1,2 +1,1 @@
-//#error
-#warning Not using precompiled header
+#include <prefix/dtcoreprefix.h>

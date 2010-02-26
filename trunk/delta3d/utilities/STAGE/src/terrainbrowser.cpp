@@ -27,7 +27,7 @@
  * Teague Coonan
  */
 
-#include <prefix/dtstageprefix-src.h>
+#include <prefix/dtqtprefix.h>
 #include <QtCore/QDir>
 #include <QtGui/QHeaderView>
 

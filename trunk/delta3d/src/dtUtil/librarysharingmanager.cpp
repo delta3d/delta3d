@@ -18,7 +18,7 @@
  *
  * David Guthrie
  */
-#include <prefix/dtutilprefix-src.h>
+#include <prefix/dtutilprefix.h>
 #include <dtUtil/mswinmacros.h>
 
 #if defined(DELTA_WIN32) && !defined(__CYGWIN__)

@@ -1,7 +1,7 @@
 // walkmotionmodel.cpp: Implementation of the WalkMotionModel class.
 //
 //////////////////////////////////////////////////////////////////////
-#include <prefix/dtcoreprefix-src.h>
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/fpsmotionmodel.h>
 
 #include <dtCore/logicalinputdevice.h>

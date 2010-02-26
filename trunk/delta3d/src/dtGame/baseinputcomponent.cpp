@@ -18,7 +18,7 @@
  *
  * Curtiss Murphy
  */
-#include <prefix/dtgameprefix-src.h>
+#include <prefix/dtgameprefix.h>
 #include <dtGame/baseinputcomponent.h>
 #include <dtABC/application.h>
 #include <dtCore/logicalinputdevice.h>

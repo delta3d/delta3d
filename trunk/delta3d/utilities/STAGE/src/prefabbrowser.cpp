@@ -22,7 +22,7 @@
 
 #include <dtEditQt/prefabbrowser.h>
 
-#include <prefix/dtstageprefix-src.h>
+#include <prefix/dtqtprefix.h>
 #include <QtGui/QDirModel>
 #include <QtGui/QDragEnterEvent>
 #include <QtGui/QDragMoveEvent>

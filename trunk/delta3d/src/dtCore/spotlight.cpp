@@ -1,4 +1,4 @@
-#include <prefix/dtcoreprefix-src.h>
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/spotlight.h>
 #include <osg/LightSource>
 #include <dtCore/collisioncategorydefaults.h>

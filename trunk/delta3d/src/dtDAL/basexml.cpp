@@ -20,7 +20,7 @@
  * Extracted base functionality from mapxml by Jeff P. Houde
  */
 
-#include <prefix/dtdalprefix-src.h>
+#include <prefix/dtdalprefix.h>
 #include <cstdio>
 #include <cstdlib>
 #include <string>

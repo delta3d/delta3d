@@ -1,4 +1,4 @@
-#include "prefix/dtutilprefix-src.h"
+#include "prefix/dtutilprefix.h"
 #include <dtUtil/refstring.h>
 #include <ostream>
 #ifdef __GNUG__

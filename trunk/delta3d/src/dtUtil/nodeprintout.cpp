@@ -19,7 +19,7 @@
  * allen -morgas on forums- danklefsen, Curtiss Murphy
  */
 
-#include <prefix/dtutilprefix-src.h>
+#include <prefix/dtutilprefix.h>
 #include <dtUtil/nodeprintout.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/log.h>

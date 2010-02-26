@@ -1,4 +1,4 @@
-#include <prefix/dtcoreprefix-src.h>
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/infinitelight.h>
 
 #include <dtCore/transform.h>

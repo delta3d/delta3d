@@ -18,7 +18,7 @@
  *
  * @author Matthew W. Campbell and David Guthrie
  */
-#include <prefix/dtutilprefix-src.h>
+#include <prefix/dtutilprefix.h>
 #include <climits>
 #include <osg/Endian>
 #include <dtUtil/exception.h>

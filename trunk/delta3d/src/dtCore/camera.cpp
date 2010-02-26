@@ -1,7 +1,7 @@
 // camera.cpp: implementation of the Camera class.
 //
 //////////////////////////////////////////////////////////////////////
-#include <prefix/dtcoreprefix-src.h>
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/camera.h>
 
 #include <dtCore/deltawin.h>
