@@ -26,7 +26,7 @@
  *
  * Curtiss Murphy
  */
-#include <prefix/dtstageprefix-src.h>
+#include <prefix/dtqtprefix.h>
 #include <dtQt/dynamicfloatcontrol.h>
 #include <dtQt/dynamicsubwidgets.h>
 #include <dtDAL/actorproxy.h>

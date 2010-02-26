@@ -4,7 +4,7 @@
 // dimension
 
 
-#include <prefix/dtutilprefix-src.h>
+#include <prefix/dtutilprefix.h>
 #include <dtUtil/noisetexture.h>
 #include <cmath>
 #include <cstdio>

@@ -20,7 +20,7 @@
  * Chris Osborn
  */
 
-#include <prefix/dtutilprefix-src.h>
+#include <prefix/dtutilprefix.h>
 #include <dtUtil/version.h>
 #include <stdio.h>
 

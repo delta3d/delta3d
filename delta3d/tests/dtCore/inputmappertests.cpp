@@ -22,7 +22,7 @@
 *
 * @author John K. Grant
 */
-#include <prefix/dtgameprefix-src.h>
+#include <prefix/dtgameprefix.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtCore/inputmapper.h>
 

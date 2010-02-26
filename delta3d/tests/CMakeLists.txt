@@ -52,6 +52,7 @@ INCLUDE_DIRECTORIES( ${CEGUI_INCLUDE_DIR} #for dtGUI
                                     ${CAL3D_INCLUDE_DIR} #for dtAnim
                                     )
 
+ADD_PRECOMPILED_HEADER(${PROG_NAME} prefix/dtgameprefix.h prefix/dtgameprefix.cpp ALL_SOURCES)
 
 ADD_EXECUTABLE(${PROG_NAME}
     ${ALL_SOURCES}
@@ -131,10 +132,6 @@ IF (MSVC)
 ELSE (MSVC)
   SET_TARGET_PROPERTIES(${PROG_NAME} PROPERTIES PREFIX "../tests/")
 ENDIF (MSVC)
-
-IF (PCHSupport_FOUND)
-   ADD_PRECOMPILED_HEADER(${PROG_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/precomp.cpp prefix/dtgameprefix-src.h true)
-ENDIF (PCHSupport_FOUND)
 
 #This will automatically run the unit test executable upon successfull compile/link
 IF (AUTO_RUN_TESTS)

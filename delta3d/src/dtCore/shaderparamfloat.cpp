@@ -18,7 +18,7 @@
  *
  * Matthew W. Campbell, Curtiss Murphy
  */
-#include <prefix/dtcoreprefix-src.h>
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/shaderparamfloat.h>
 #include <osg/Uniform>
 #include <osg/StateSet>

@@ -18,7 +18,7 @@
  *
  * Curtiss Murphy
  */
-#include <prefix/dtcoreprefix-src.h>
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/shaderparamoscillator.h>
 #include <osg/Uniform>
 #include <osg/StateSet>

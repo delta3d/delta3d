@@ -27,7 +27,7 @@
  * Curtiss Murphy
  */
 
-#include <prefix/dtstageprefix-src.h>
+#include <prefix/dtqtprefix.h>
 #include <dtQt/propertyeditormodel.h>
 #include <QtCore/qdebug.h>
 

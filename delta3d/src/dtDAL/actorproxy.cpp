@@ -18,7 +18,7 @@
  *
  * Matthew W. Campbell
  */
-#include <prefix/dtdalprefix-src.h>
+#include <prefix/dtdalprefix.h>
 #include <dtDAL/actorproxy.h>
 #include <dtUtil/log.h>
 #include <dtDAL/enginepropertytypes.h>

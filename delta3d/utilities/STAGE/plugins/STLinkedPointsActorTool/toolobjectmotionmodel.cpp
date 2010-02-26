@@ -1,7 +1,7 @@
 // stageobjectmotionmodel.cpp: Implementation of the ToolObjectMotionModel class.
 //
 //////////////////////////////////////////////////////////////////////
-#include <prefix/dtcoreprefix-src.h>
+#include <prefix/dtcoreprefix.h>
 #include "toolobjectmotionmodel.h"
 
 #include <dtActors/linkedpointsactorproxy.h>

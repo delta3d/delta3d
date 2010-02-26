@@ -26,7 +26,7 @@
  *
  * Curtiss Murphy
  */
-#include <prefix/dtstageprefix-src.h>
+#include <prefix/dtqtprefix.h>
 #include <dtQt/dynamicgroupcontrol.h>
 #include <dtQt/propertyeditormodel.h>
 #include <QtGui/QWidget>

@@ -23,7 +23,7 @@
  * @author Erik Johnson 05/16/2006
  * @edited Matthew stokes 06/18/2007
  */
-#include <prefix/dtgameprefix-src.h>
+#include <prefix/dtgameprefix.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtCore/object.h>
 #include <dtUtil/exception.h>

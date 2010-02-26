@@ -29,7 +29,7 @@
  */
 
 #include <dtEditQt/prefabsaveasdialog.h>
-#include <prefix/dtstageprefix-src.h>
+#include <prefix/dtqtprefix.h>
 #include <dtEditQt/uiresources.h>
 
 #include <QtGui/QFileDialog>

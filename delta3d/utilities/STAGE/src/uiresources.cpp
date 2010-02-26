@@ -26,7 +26,7 @@
  *
  * Matthew W. Campbell
  */
-#include <prefix/dtstageprefix-src.h>
+#include <prefix/dtqtprefix.h>
 #include <dtEditQt/uiresources.h>
 #include <cstdlib>
 

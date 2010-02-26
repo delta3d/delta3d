@@ -148,9 +148,10 @@ OPTION(BUILD_TESTS         "Enables the building of the unit tests (requires CPP
 
 OPTION(BUILD_EXAMPLES      "Enables the building of the Delta3D example projects" ON)
 OPTION(BUILD_DEMOS         "Enables the building of the Delta3D demo projects" ON)
-OPTION(BUILD_WITH_PCH      "Enables the building of the Delta3D with precompiled headers, where applicable" OFF)
 OPTION(BUILD_WITH_QT       "Enables the building of projects that require Qt" ON)
 OPTION(BUILD_3DSMAX_PLUGIN "Build the Autodesk 3ds Max exporter plugin" OFF)
+OPTION(BUILD_WITH_PCH      "Enables use of precomplied headers, experimental" OFF)
+MARK_AS_ADVANCED(BUILD_WITH_PCH)
 
 IF (BUILD_HLA)
    OPTION(USE_RTIS "Use RTI-s for the RTI implementation" ON)
@@ -185,6 +186,7 @@ FIND_PACKAGE(OpenGL REQUIRED)
 INCLUDE(UtilityMacros)
 INCLUDE(BuildExample)
 INCLUDE(BuildBinding)
+INCLUDE(PCHMacros)
 
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
@@ -295,10 +297,6 @@ IF (BUILD_WITH_QT)
    FIND_PACKAGE(Qt4 REQUIRED)     #for STAGE, AnimationViewer, ObjectViewer, ParticleEditor
 ENDIF (BUILD_WITH_QT)
 
-
-IF (BUILD_WITH_PCH)
-   FIND_PACKAGE(PCHSupport)
-ENDIF (BUILD_WITH_PCH)
 
 #MESSAGE(STATUS "${Boost_INCLUDE_DIR} ${Boost_PYTHON_INCLUDE_DIR} ${PYTHON_INCLUDE_PATH}")
 

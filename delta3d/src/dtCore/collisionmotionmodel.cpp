@@ -19,7 +19,7 @@
  * Bradley Anderegg and Chris Darken 08/21/2006
  */
 
-#include <prefix/dtcoreprefix-src.h>
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/collisionmotionmodel.h>
 
 #include <dtCore/keyboard.h>

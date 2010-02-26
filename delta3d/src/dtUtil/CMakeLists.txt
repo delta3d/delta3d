@@ -103,6 +103,8 @@ SET( LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/xercesutils.h
     ${HEADER_PATH}/xerceswriter.h
    )
+
+ADD_PRECOMPILED_HEADER(${LIB_NAME} prefix/dtutilprefix.h prefix/dtutilprefix.cpp LIB_SOURCES)
       
 
 ADD_LIBRARY(${LIB_NAME} SHARED
@@ -118,17 +120,14 @@ LINK_WITH_VARIABLES(${LIB_NAME}
                         XERCES_LIBRARY
                         OPENTHREADS_LIBRARY)
 
-SET_TARGET_PROPERTIES(${LIB_NAME}
-                     PROPERTIES DEFINE_SYMBOL DT_UTIL_LIBRARY)
-           
 INCLUDE(ModuleInstall OPTIONAL)
 
 #little hack to get the .dll into /bin and .lib into /lib
 IF (MSVC_IDE)
+  SET_TARGET_PROPERTIES(${LIB_NAME}
+                     PROPERTIES DEFINE_SYMBOL DT_UTIL_LIBRARY)
+
   SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES PREFIX "../../bin/")
   SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES IMPORT_PREFIX "../")
 ENDIF (MSVC_IDE)
 
-IF (PCHSupport_FOUND)
-   ADD_PRECOMPILED_HEADER(${LIB_NAME} ${SOURCE_PATH}/precomp.cpp prefix/dtutilprefix-src.h true)
-ENDIF (PCHSupport_FOUND)

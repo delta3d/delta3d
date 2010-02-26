@@ -19,7 +19,7 @@
  * Curtiss Murphy
  */
 
-#include <prefix/dtgameprefix-src.h>
+#include <prefix/dtgameprefix.h>
 #include <dtGame/logcontroller.h>
 #include <dtGame/loggermessages.h>
 #include <dtGame/messagetype.h>

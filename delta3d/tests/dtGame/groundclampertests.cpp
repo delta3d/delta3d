@@ -26,7 +26,7 @@
  * David Guthrie, Chris Rodgers
  */
 
-#include <prefix/dtgameprefix-src.h>
+#include <prefix/dtgameprefix.h>
 #include <cppunit/extensions/HelperMacros.h>
 
 #include <osg/Vec3>

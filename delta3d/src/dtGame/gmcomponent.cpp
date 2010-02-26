@@ -18,7 +18,7 @@
  *
  * William E. Johnson II
  */
-#include <prefix/dtgameprefix-src.h>
+#include <prefix/dtgameprefix.h>
 #include <dtGame/gmcomponent.h>
 #include <dtGame/message.h>
 

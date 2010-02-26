@@ -1,4 +1,4 @@
-#include <prefix/dtcoreprefix-src.h>
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/pointaxis.h>
 #include <dtCore/scene.h>
 #include <dtCore/odegeomwrap.h>

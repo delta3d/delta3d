@@ -1,4 +1,4 @@
-#include <prefix/dtutilprefix-src.h>
+#include <prefix/dtutilprefix.h>
 #include <dtUtil/datetime.h>
 #include <dtUtil/mswinmacros.h>
 #include <cmath>

@@ -26,7 +26,7 @@
  *
  * Curtiss Murphy
  */
-#include <prefix/dtstageprefix-src.h>
+#include <prefix/dtqtprefix.h>
 #include <QtGui/QComboBox>
 #include <QtGui/QDirModel>
 #include <QtGui/QGridLayout>

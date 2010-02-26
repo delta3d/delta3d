@@ -29,7 +29,7 @@
  * Curtiss Murphy
  */
 
-#include <prefix/dtstageprefix-src.h>
+#include <prefix/dtqtprefix.h>
 
 #include <QtCore/QStringList>
 #include <QtGui/QTableWidget>

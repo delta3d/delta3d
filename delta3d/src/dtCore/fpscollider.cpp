@@ -19,7 +19,7 @@
  * Bradley Anderegg and Chris Darken 09/21/2006
  */
 
-#include <prefix/dtcoreprefix-src.h>
+#include <prefix/dtcoreprefix.h>
 #include <dtUtil/mathdefines.h>
 #include <dtCore/fpscollider.h>
 #include <dtCore/scene.h>

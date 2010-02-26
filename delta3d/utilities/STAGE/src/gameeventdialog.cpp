@@ -26,7 +26,7 @@
  *
  * David A. Guthrie
  */
-#include <prefix/dtstageprefix-src.h>
+#include <prefix/dtqtprefix.h>
 
 #include <dtEditQt/gameeventdialog.h>
 

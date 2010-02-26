@@ -19,7 +19,7 @@
  * Matthew "w00by" Stokes
  */
 
-#include <prefix/dtutilprefix-src.h>
+#include <prefix/dtutilprefix.h>
 #include <dtUtil/nodecollector.h>
 #include <dtUtil/collectorutil.h>
 #include <dtUtil/log.h>

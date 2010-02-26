@@ -18,7 +18,7 @@
  *
  * @author David Guthrie
  */
-#include <prefix/dtgameprefix-src.h>
+#include <prefix/dtgameprefix.h>
 #include <dtUtil/log.h>
 
 #include <dtGame/gamemanager.h>

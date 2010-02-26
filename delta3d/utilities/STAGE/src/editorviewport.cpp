@@ -27,7 +27,7 @@
  * Jeffrey P Houde
  */
 
-#include <prefix/dtstageprefix-src.h>
+#include <prefix/dtqtprefix.h>
 #include <QtGui/QMouseEvent>
 #include <dtEditQt/mainwindow.h>
 #include <dtEditQt/viewportoverlay.h>

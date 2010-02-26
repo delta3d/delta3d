@@ -1,4 +1,4 @@
-#include <prefix/dtutilprefix-src.h>
+#include <prefix/dtutilprefix.h>
 #include <dtUtil/xerceserrorhandler.h>
 #include <dtUtil/stringutils.h>
 #include <dtUtil/log.h>

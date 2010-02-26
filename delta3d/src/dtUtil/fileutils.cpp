@@ -19,7 +19,7 @@
  * David Guthrie
  */
 
-#include <prefix/dtutilprefix-src.h>
+#include <prefix/dtutilprefix.h>
 #include <dtUtil/mswinmacros.h>
 #include <dtUtil/macros.h> //for DTUNREFERENCED_PARAMETER
 #include <osg/Version>

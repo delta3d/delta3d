@@ -1,7 +1,7 @@
 // effectmanager.cpp: Implementation of the EffectManager class.
 //
 //////////////////////////////////////////////////////////////////////
-#include <prefix/dtcoreprefix-src.h>
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/effectmanager.h>
 #include <dtCore/transformable.h>
 #include <dtCore/transform.h>

@@ -26,7 +26,7 @@
  *
  * William E. Johnson II, Curtiss Murphy
  */
-#include <prefix/dtstageprefix-src.h>
+#include <prefix/dtqtprefix.h>
 #include <QtGui/QGridLayout>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QHBoxLayout>

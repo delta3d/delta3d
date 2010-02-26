@@ -1,7 +1,7 @@
 // object.cpp: implementation of the Object class.
 //
 //////////////////////////////////////////////////////////////////////
-#include <prefix/dtcoreprefix-src.h>
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/object.h>
 #include <dtCore/collisioncategorydefaults.h>
 #include <dtCore/transform.h>

@@ -18,7 +18,7 @@
  *
  * Matthew W. Campbell
  */
-#include <prefix/dtdalprefix-src.h>
+#include <prefix/dtdalprefix.h>
 #include <dtDAL/actortype.h>
 
 namespace dtDAL

@@ -26,7 +26,7 @@
  *
  * Curtiss Murphy
  */
-#include <prefix/dtstageprefix-src.h>
+#include <prefix/dtqtprefix.h>
 #include <dtUtil/enumeration.h>
 #include <dtQt/dynamicenumcontrol.h>
 #include <dtDAL/actorproxy.h>

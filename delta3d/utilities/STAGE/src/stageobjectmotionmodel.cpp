@@ -1,7 +1,7 @@
 // stageobjectmotionmodel.cpp: Implementation of the STAGEObjectMotionModel class.
 //
 //////////////////////////////////////////////////////////////////////
-#include <prefix/dtcoreprefix-src.h>
+#include <prefix/dtcoreprefix.h>
 #include <dtEditQt/stageobjectmotionmodel.h>
 
 #include <dtCore/transform.h>

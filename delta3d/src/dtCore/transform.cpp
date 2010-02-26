@@ -1,4 +1,4 @@
-#include <prefix/dtcoreprefix-src.h>
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/transform.h>
 #include <dtUtil/matrixutil.h>
 #include <dtUtil/polardecomp.h>

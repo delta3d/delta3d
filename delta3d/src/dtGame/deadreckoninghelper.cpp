@@ -18,7 +18,7 @@
  *
  * David Guthrie, Curtiss Murphy
  */
-#include <prefix/dtgameprefix-src.h>
+#include <prefix/dtgameprefix.h>
 #include <dtGame/deadreckoninghelper.h>
 #include <dtGame/deadreckoningcomponent.h>
 #include <dtDAL/actorproperty.h>

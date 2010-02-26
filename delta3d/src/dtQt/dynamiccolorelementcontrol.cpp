@@ -28,7 +28,7 @@
  */
 
 //#include <osg/Vec3>
-#include <prefix/dtstageprefix-src.h>
+#include <prefix/dtqtprefix.h>
 #include <dtQt/dynamiccolorelementcontrol.h>
 #include <dtQt/dynamicsubwidgets.h>
 #include <dtDAL/actorproxy.h>

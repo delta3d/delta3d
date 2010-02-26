@@ -27,7 +27,7 @@
  * Teague Coonan
  */
 
-#include <prefix/dtstageprefix-src.h>
+#include <prefix/dtqtprefix.h>
 #include <dtEditQt/texturebrowser.h>
 
 #include <QtGui/QHeaderView>

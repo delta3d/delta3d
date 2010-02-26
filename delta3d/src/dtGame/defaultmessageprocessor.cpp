@@ -18,7 +18,7 @@
  *
  * William E. Johnson II, Curtiss Murphy
  */
-#include <prefix/dtgameprefix-src.h>
+#include <prefix/dtgameprefix.h>
 #include <dtGame/defaultmessageprocessor.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/message.h>

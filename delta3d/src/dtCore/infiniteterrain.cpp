@@ -1,7 +1,7 @@
 // infiniteterrain.cpp: Implementation of the InfiniteTerrain class.
 //
 //////////////////////////////////////////////////////////////////////
-#include <prefix/dtcoreprefix-src.h>
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/infiniteterrain.h>
 #include <dtCore/collisioncategorydefaults.h>
 #include <dtUtil/mathdefines.h>

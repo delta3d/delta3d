@@ -20,7 +20,7 @@
  * Teague Coonan
  */
 
-#include <prefix/dtstageprefix-src.h>
+#include <prefix/dtqtprefix.h>
 
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QGridLayout>

@@ -18,7 +18,7 @@
  *
  * Curtiss Murphy, Matthew W. Campbell
  */
-#include <prefix/dtgameprefix-src.h>
+#include <prefix/dtgameprefix.h>
 #include <dtGame/serverloggercomponent.h>
 #include <dtGame/loggermessages.h>
 #include <dtGame/messagetype.h>

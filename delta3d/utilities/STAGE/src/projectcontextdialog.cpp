@@ -26,7 +26,7 @@
  *
  * William E. Johnson II
  */
-#include <prefix/dtstageprefix-src.h>
+#include <prefix/dtqtprefix.h>
 #include "dtEditQt/projectcontextdialog.h"
 
 #include <QtGui/QVBoxLayout>

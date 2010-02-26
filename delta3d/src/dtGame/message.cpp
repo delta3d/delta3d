@@ -19,7 +19,7 @@
  * Matthew W. Campbell
  */
 
-#include <prefix/dtgameprefix-src.h>
+#include <prefix/dtgameprefix.h>
 #include <dtUtil/log.h>
 #include <dtUtil/datastream.h>
 #include <dtGame/exceptionenum.h>

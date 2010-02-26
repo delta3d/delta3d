@@ -18,7 +18,7 @@
  *
  * Matthew W. Campbell
  */
-#include <prefix/dtdalprefix-src.h>
+#include <prefix/dtdalprefix.h>
 #include <dtDAL/actorproxyicon.h>
 #include <dtCore/transform.h>
 #include <osg/Geometry>

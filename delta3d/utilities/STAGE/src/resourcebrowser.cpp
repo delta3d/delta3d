@@ -26,7 +26,7 @@
  *
  * Teague Coonan
  */
-#include <prefix/dtstageprefix-src.h>
+#include <prefix/dtqtprefix.h>
 #include <QtGui/QAction>
 
 #include <dtEditQt/resourcebrowser.h>

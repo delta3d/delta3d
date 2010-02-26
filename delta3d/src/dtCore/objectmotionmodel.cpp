@@ -1,7 +1,7 @@
 // objectmotionmodel.cpp: Implementation of the ObjectMotionModel class.
 //
 //////////////////////////////////////////////////////////////////////
-#include <prefix/dtcoreprefix-src.h>
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/objectmotionmodel.h>
 
 #include <osg/Math>
