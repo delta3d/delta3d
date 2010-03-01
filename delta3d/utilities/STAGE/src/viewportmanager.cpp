@@ -377,7 +377,8 @@ namespace dtEditQt
       if (map)
       {
          dtDAL::Map::PresetCameraData data = map->GetPresetCameraData(index);
-         if (data.isValid)
+
+         if (data.isValid || index == 1)
          {
             EditorViewport* viewport = dynamic_cast<EditorViewport*>(mViewportList["Perspective View"]);
             if (viewport)
