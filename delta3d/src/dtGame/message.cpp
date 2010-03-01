@@ -112,8 +112,6 @@ namespace dtGame
          toFill.append(i->second->ToString());
          toFill.append(1, '\n');
       }
-      toFill += mSendingActorId.ToString() + "\n";
-      toFill += mAboutActorId.ToString() + "\n";
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -130,11 +128,6 @@ namespace dtGame
          std::getline(iss, line);
          okay = okay && i->second->FromString(line);
       }
-      std::string sendingActorId, aboutActorId;
-      std::getline(iss, sendingActorId);
-      std::getline(iss, aboutActorId);
-      mSendingActorId = dtCore::UniqueId(sendingActorId);
-      mAboutActorId = dtCore::UniqueId(aboutActorId);
 
       return okay;
    }
@@ -148,8 +141,6 @@ namespace dtGame
       {
          i->second->ToDataStream(stream);
       }
-      stream << mSendingActorId.ToString();
-      stream << mAboutActorId.ToString();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -163,11 +154,6 @@ namespace dtGame
       {
          okay = okay && i->second->FromDataStream(stream);
       }
-
-      std::string sendingActorId, aboutActorId;
-      stream >> sendingActorId >> aboutActorId;
-      mSendingActorId = dtCore::UniqueId(sendingActorId);
-      mAboutActorId = dtCore::UniqueId(aboutActorId);
 
       return okay;
    }
