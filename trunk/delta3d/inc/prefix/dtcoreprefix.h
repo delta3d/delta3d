@@ -1,6 +1,8 @@
 #ifndef DTCORE_PREFIX
 #define DTCORE_PREFIX
 
+#ifdef DT_USE_PCH
+
 #include <osg/Vec3f>
 #include <osg/Vec3d>
 #include <osg/Matrixf>
@@ -24,4 +26,7 @@
 //#include <iosfwd>
 #include <dtCore/base.h> 
 */
+
+#endif
+
 #endif
