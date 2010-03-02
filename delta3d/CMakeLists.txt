@@ -171,7 +171,7 @@ IF (WIN32)
    ENDIF(BUILD_WITH_MP)
 ENDIF (WIN32)
 
-# We want to build SONAMES shared librariess
+# We want to build SONAMES shared libraries
 SET(DELTA32_SONAMES TRUE)
 
 # We have some custom .cmake scripts not in the official distribution.
@@ -203,6 +203,10 @@ IF(APPLE)
    SET(CMAKE_C_FLAGS "-pipe -mmacosx-version-min=10.4")
    SET(CMAKE_SHARED_LINKER_FLAGS "-Wl,-single_module -compatibility_version 3 -current_version 3" )
    SET(CMAKE_CXX_FLAGS_DEBUG "-gdwarf-2")
+   SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -gdwarf-2")
+   SET(CMAKE_C_FLAGS_DEBUG "-gdwarf-2")
+   SET(CMAKE_C_FLAGS_RELWITHDEBINFO "-O2 -gdwarf-2")
+   INCLUDE_DIRECTORIES(/usr/include/malloc)
 ELSE (APPLE)
    #We only want X11 if we are not running on OSX, but still with a unix-like environment 
    IF(UNIX)
@@ -210,8 +214,7 @@ ELSE (APPLE)
       FIND_LIBRARY(XXF86VM_LIBRARY Xxf86vm)
       SET(X11_LIBRARIES
           ${X11_LIBRARIES}
-          ${XXF86VM_LIBRARY}
-   )
+          ${XXF86VM_LIBRARY})
    ENDIF(UNIX)
 ENDIF(APPLE)
 
@@ -300,11 +303,6 @@ ENDIF (BUILD_WITH_QT)
 
 #MESSAGE(STATUS "${Boost_INCLUDE_DIR} ${Boost_PYTHON_INCLUDE_DIR} ${PYTHON_INCLUDE_PATH}")
 
-
-
-IF (APPLE)
-   INCLUDE_DIRECTORIES(/usr/include/malloc)
-ENDIF (APPLE)
 
 LINK_DIRECTORIES( ${DELTA3D_EXT_DIR}/lib )
 
