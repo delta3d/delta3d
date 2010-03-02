@@ -719,7 +719,7 @@ namespace dtEditQt
          }
          
          nextFile = nextFile.substr(0, nextFile.rfind(".dtprefab")); //truncate dtprefab extension         
-         nextFile = nextFile.substr(0, 16);  //truncate to 16 characters         
+         //nextFile = nextFile.substr(0, 16);  //truncate to 16 characters         
          
          //folders go to the front of the list
          if (isFolder)
