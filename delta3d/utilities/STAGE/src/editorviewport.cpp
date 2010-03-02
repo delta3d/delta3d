@@ -133,11 +133,16 @@ namespace dtEditQt
             if (targetProxy)
             {
                mObjectMotionModel->AddTarget(targetProxy);
-               dtCore::Transformable* target = NULL;
-               targetProxy->GetActor(target);
-               if (target)
+
+               // Only place the widget on the latest selection.
+               if (actorIndex == 0)
                {
-                  mObjectMotionModel->SetTarget(target);
+                  dtCore::Transformable* target = NULL;
+                  targetProxy->GetActor(target);
+                  if (target)
+                  {
+                     mObjectMotionModel->SetTarget(target);
+                  }
                }
 
                // Once we determine that a target can scale, we don't need to
