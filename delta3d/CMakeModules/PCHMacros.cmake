@@ -41,7 +41,7 @@ MACRO(ADD_PRECOMPILED_HEADER Target PrecompiledHeader PrecompiledSource SourcesV
 if (BUILD_WITH_PCH)
   IF(MSVC)
     GET_FILENAME_COMPONENT(PrecompiledBasename ${CMAKE_SOURCE_DIR}/inc/${PrecompiledHeader} NAME_WE)
-    SET(PrecompiledBinary "${CMAKE_CURRENT_BINARY_DIR}/${PrecompiledBasename}.pch")
+    SET(PrecompiledBinary "${CMAKE_CFG_INTDIR}/${PrecompiledBasename}.pch") #will create .pch file in a folder corresponding with build type (debug, release, etc)
     SET(Sources ${${SourcesVar}})
 
     SET_SOURCE_FILES_PROPERTIES(${CMAKE_SOURCE_DIR}/inc/${PrecompiledSource}
