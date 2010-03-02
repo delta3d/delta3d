@@ -219,15 +219,14 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    bool ValueLink::Disconnect(ValueNode* valueNode)
    {
+      bool result = false;
+
       if (!valueNode)
       {
-         bool result = false;
          while (!mLinks.empty())
          {
             result |= Disconnect(mLinks[0]);
          }
-
-         return result;
       }
       else
       {
@@ -235,26 +234,27 @@ namespace dtDirector
          {
             if (valueNode == mLinks[valueIndex])
             {
-               if (valueNode)
+               int count = (int)valueNode->mLinks.size();
+               for (int linkIndex = 0; linkIndex < count; linkIndex++)
                {
-                  int count = (int)valueNode->mLinks.size();
-                  for (int linkIndex = 0; linkIndex < count; linkIndex++)
+                  if (valueNode->mLinks[linkIndex] == this)
                   {
-                     if (valueNode->mLinks[linkIndex] == this)
-                     {
-                        valueNode->mLinks.erase(valueNode->mLinks.begin() + linkIndex);
-                        break;
-                     }
+                     valueNode->mLinks.erase(valueNode->mLinks.begin() + linkIndex);
+                     break;
                   }
                }
-
+            
                mLinks.erase(mLinks.begin() + valueIndex);
                valueNode->OnConnectionChange();
-               return true;
+ 
+               result = true;
+               break;
             }
          }
       }
 
-      return false;
+      mOwner->OnLinkValueChanged(GetName());
+
+      return result;
    }
 }
