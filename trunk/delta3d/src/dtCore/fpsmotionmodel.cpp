@@ -601,7 +601,7 @@ void FPSMotionModel::OnMessage(MessageData* data)
       }
 
       // read mouse state to perform rotations (and reset mouse state)
-      PerformRotation(deltaFrameTime);
+      UpdateMouse(deltaFrameTime);
 
       // perform translations
       PerformTranslation(deltaFrameTime);
@@ -666,7 +666,7 @@ private:
 };
 
 /////////////////////////////////////////////////////////////////////////////
-void FPSMotionModel::PerformRotation(const double deltaTime)
+void FPSMotionModel::UpdateMouse(const double deltaTime)
 {
    //NOTE: This code has been commented out because it does not work with window resizing
    //if the window is resized then the mouse position which was set to (0.1, 0.0) will come
