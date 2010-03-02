@@ -30,7 +30,6 @@
 #include <dtUtil/export.h>
 
 #include <string>
-#include <vector>                       // for member
 #include <map>                          // for return argument
 #include <xercesc/util/XercesDefs.hpp>  // for xerces namespace macros
 #include <xercesc/sax2/Attributes.hpp>  // for parameter
