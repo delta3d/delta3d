@@ -88,7 +88,7 @@ namespace dtCore
        *
        * @param deltaTime The time change
        */
-      virtual void PerformRotation(const double deltaTime);
+      virtual void UpdateMouse(const double deltaTime);
 
       /**
        * This method can be overriden in subclasses to produce
