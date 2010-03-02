@@ -1,3 +1,4 @@
+#include <prefix/dtutilprefix.h>
 #include <dtUtil/packager.h>
 
 #include <dtUtil/fileutils.h>

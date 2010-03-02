@@ -18,6 +18,7 @@
  *
  */
 
+#include <prefix/dtutilprefix.h>
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/log.h>
 #include <dtUtil/mswinmacros.h>

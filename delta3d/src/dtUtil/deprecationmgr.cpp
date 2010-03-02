@@ -1,3 +1,4 @@
+#include <prefix/dtutilprefix.h>
 #include <dtUtil/deprecationmgr.h>
 
 #if defined(DELTA_WIN32)
