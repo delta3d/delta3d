@@ -225,7 +225,7 @@ namespace dtDirector
 #pragma warning (pop)
 #endif //DELTA_WIN32
 
-      dtDAL::ActorProperty* mDefaultProperty;
+      dtCore::RefPtr<dtDAL::ActorProperty> mDefaultProperty;
 
       bool mIsOut;
       bool mAllowMultiple;

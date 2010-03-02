@@ -271,13 +271,12 @@ namespace dtDirector
             }
 
             mValues[0].Connect(node);
+            return;
          }
       }
+
       // If we can't find the node, make sure we are not
       // connected to anything.
-      else
-      {
-         mValues[0].Disconnect();
-      }
+      mValues[0].Disconnect();
    }
 }
