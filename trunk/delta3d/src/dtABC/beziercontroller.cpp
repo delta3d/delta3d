@@ -151,7 +151,8 @@ void BezierController::MakeSegment(float time,
    }
    else	// align along path
    {
-      quat.makeRotate(atan2(tangent.y(),tangent.x()), 0.0,0.0,1.0);
+      //rotating half a pi to rotate forward to be along the +y axis
+      quat.makeRotate(atan2(tangent.y(),tangent.x())- osg::PI_2, 0.0,0.0,1.0);
       quat.conj();
       // Note: the LocalTransform of the Bezier controller can be used to orient the objects forward direction
    }
