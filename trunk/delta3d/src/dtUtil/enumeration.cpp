@@ -20,6 +20,7 @@
  * David Guthrie
  */
 
+#include <prefix/dtutilprefix.h>
 #include <dtUtil/enumeration.h>
 #include <ostream>
 
