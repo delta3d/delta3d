@@ -1,4 +1,5 @@
 #include <dtGUI/gui.h>
+#include <dtGUI/scriptmodule.h>
 #include <dtCore/system.h>
 #include <dtCore/camera.h>
 #include <dtCore/keyboard.h>
@@ -397,6 +398,16 @@ const Widget* dtGUI::GUI::GetRootSheet() const
 {
    return mRootSheet;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+void dtGUI::GUI::SetScriptModule(dtGUI::ScriptModule* scriptModule)
+{
+   if (CEGUI::System::getSingletonPtr())
+   {
+      CEGUI::System::getSingletonPtr()->setScriptingModule(scriptModule);
+   }
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 CEGUI::Event::Connection GUI::SubscribeEvent(const std::string& widgetName, 
                                              const std::string& event,

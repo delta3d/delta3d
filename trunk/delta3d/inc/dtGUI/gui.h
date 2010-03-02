@@ -48,6 +48,8 @@ namespace dtGUI
 {
    typedef CEGUI::Window Widget;
 
+   class ScriptModule;
+
    /** 
     * Used for rendering and managing on-screen, graphical user interfaces.
     */
@@ -213,6 +215,13 @@ namespace dtGUI
        * @param imageName The name of the Image defined in the ImageSet
        */
       static void SetMouseCursor(const std::string& imagesetName, const std::string& imageName);
+
+      /*
+       * Set the ScriptModule to use with CEGUI.  This is typically used to 
+       * map callbacks to CEGUI Events when loading from a .layout file.
+       * @param scriptModule : The script module to set on the CEGUI::System
+       */
+      static void SetScriptModule(dtGUI::ScriptModule* scriptModule);
 
    protected:
       virtual ~GUI();
