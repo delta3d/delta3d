@@ -714,12 +714,18 @@ void FPSMotionModel::UpdateMouse(const double deltaTime)
    if (GetTurnLeftRightAxis())
    {
       rotationMovement.x() += GetTurnLeftRightAxis()->GetState();
-      GetTurnLeftRightAxis()->SetState(0.0f);
+      if (mShouldRecenterMouse)
+      {
+         GetTurnLeftRightAxis()->SetState(0.0f);
+      }
    }
    if (GetLookUpDownAxis())
    {
       rotationMovement.y() += GetLookUpDownAxis()->GetState();
-      GetLookUpDownAxis()->SetState(0.0f);
+      if (mShouldRecenterMouse)
+      {
+         GetLookUpDownAxis()->SetState(0.0f);
+      }
    }
 
    const bool calc_new_heading_pitch = !mUseMouseButtons || mMouse->GetButtonState(Mouse::LeftButton);
