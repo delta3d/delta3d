@@ -90,23 +90,23 @@ namespace dtUtil
    {
       if (this != &rhs)
       {
-         if (rhs.mBufferSize == 0) 
+         if (rhs.mBufferSize == 0)
          {
             throw DataStreamBufferInvalid("Attempted to copy an invalid data stream.  BufferSize is zero.", __FILE__, __LINE__);
          }
 
-         mBufferCapacity = rhs.mBufferCapacity;
-         mBufferSize = rhs.mBufferSize;
-         mBuffer = new char[mBufferCapacity];
-         mWritePos = rhs.mWritePos;
-         mReadPos = rhs.mReadPos;
-         mAutoFreeBuffer = rhs.mAutoFreeBuffer;
+         mBufferCapacity    = rhs.mBufferCapacity;
+         mBufferSize        = rhs.mBufferSize;
+         mBuffer            = new char[mBufferCapacity];
+         mWritePos          = rhs.mWritePos;
+         mReadPos           = rhs.mReadPos;
+         mAutoFreeBuffer    = rhs.mAutoFreeBuffer;
          mForceLittleEndian = rhs.mForceLittleEndian;
-         mIsLittleEndian = rhs.mIsLittleEndian;
+         mIsLittleEndian    = rhs.mIsLittleEndian;
 
          if (mBufferSize > 0)
          {
-            memcpy(&mBuffer[0],&rhs.mBuffer[0],mBufferSize);
+            memcpy(&mBuffer[0], &rhs.mBuffer[0], mBufferSize);
          }
       }
 
@@ -447,7 +447,7 @@ namespace dtUtil
 
       memcpy(&f, &mBuffer[mReadPos], sizeof(float));
       // The following line was unsafe - it actually corrupts your data on Windows!
-      // Apparently, MS makes sure it's not an invalid float (ie NAN) when it casts. 
+      // Apparently, MS makes sure it's not an invalid float (ie NAN) when it casts.
       // If it is invalid, it can CHANGE a bit to make it valid.
       //f = *((float *)((char *)&mBuffer[mReadPos]));
 
@@ -597,7 +597,7 @@ namespace dtUtil
    /////////////////////////////////////////////////////////////////////////////
    void DataStream::Write(const std::string& str)
    {
-      //it will truncate any strings longer than a short can handle
+      // it will truncate any strings longer than a short can handle
 
       if (str.length() > SHRT_MAX)
       {
@@ -607,11 +607,11 @@ namespace dtUtil
 
       short strSize = (short)str.length();
 
-      //for short and long strings: write one byte for a short string and write the
-      //the negative length for the long string so that when the string is read back in, it
-      //the first bit of the size can be checked to see if one should read one or two bytes.
-      //this could technically fail if the string is longer than a signed int can hold, but one would not
-      //be wise to send a string that long.
+      // for short and long strings: write one byte for a short string and write the
+      // the negative length for the long string so that when the string is read back in, it
+      // the first bit of the size can be checked to see if one should read one or two bytes.
+      // this could technically fail if the string is longer than a signed int can hold, but one would not
+      // be wise to send a string that long.
       if (strSize < 128)
       {
          Write((unsigned char)strSize);
@@ -840,11 +840,11 @@ namespace dtUtil
       // copy old buffercontents
       if (newSize < mBufferCapacity)
       {
-         memcpy(&newBuffer[0],&mBuffer[0],newSize);
+         memcpy(&newBuffer[0], &mBuffer[0], newSize);
       }
       else
       {
-         memcpy(&newBuffer[0],&mBuffer[0],mBufferCapacity);
+         memcpy(&newBuffer[0], &mBuffer[0], mBufferCapacity);
       }
 
       if (mAutoFreeBuffer)
@@ -886,7 +886,7 @@ namespace dtUtil
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   DataStreamBufferInvalid::DataStreamBufferInvalid(const std::string& message, const std::string& filename, unsigned int linenum) 
+   DataStreamBufferInvalid::DataStreamBufferInvalid(const std::string& message, const std::string& filename, unsigned int linenum)
       : dtUtil::Exception(message, filename, linenum)
    {
       mType = &DataStreamException::BUFFER_INVALID;
