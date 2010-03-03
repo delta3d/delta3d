@@ -1161,7 +1161,8 @@ namespace dtGame
       typedef std::map<const MessageType*,  ProxyInvokableMap> ActorMessageListenerMap;
       ActorMessageListenerMap mActorMessageListeners;
 
-      std::vector<dtCore::RefPtr<GMComponent> > mComponentList;
+      typedef std::vector<dtCore::RefPtr<GMComponent> > GMComponentContainer;
+      GMComponentContainer mComponentList;
       std::queue<dtCore::RefPtr<const Message> > mSendNetworkMessageQueue;
       std::queue<dtCore::RefPtr<const Message> > mSendMessageQueue;
       dtCore::RefPtr<dtCore::Scene> mScene;

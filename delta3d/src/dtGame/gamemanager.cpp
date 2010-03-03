@@ -529,10 +529,8 @@ namespace dtGame
 
          try
          {
-            std::vector< dtCore::RefPtr<GMComponent> >::iterator i, iend;
-            i = mComponentList.begin();
-            iend = mComponentList.end();
-            for (;i != iend; ++i)
+            GMComponentContainer::iterator i = mComponentList.begin();
+            for (;i != mComponentList.end(); ++i)
             {
                /////////////////////////
                // Statistics information
@@ -581,18 +579,21 @@ namespace dtGame
       bool isATickLocalMessage = (message.GetMessageType() == MessageType::TICK_LOCAL);
 
       // Components get messages first
-      std::vector< dtCore::RefPtr<GMComponent> >::iterator i, iend;
-      i = mComponentList.begin();
-      iend = mComponentList.end();
-      for (;i != iend; ++i)
+      GMComponentContainer::iterator compItr = mComponentList.begin();
+      for (;compItr != mComponentList.end(); ++compItr)
       {
          // Statistics information
          if (logComponents)
          {
             frameTickStartCurrent = mGMImpl->mGMStatistics.mStatsTickClock.Tick();
          }
+         
+         if (compItr->valid() == false)
+         {
+            continue;
+         }
 
-         GMComponent& component = **i;
+         GMComponent& component = **compItr;
 
          try
          {
@@ -963,48 +964,33 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::RemoveComponent(GMComponent& component)
    {
-      for (std::vector< dtCore::RefPtr<GMComponent> >::iterator i = mComponentList.begin(); i != mComponentList.end(); ++i)
+      GMComponentContainer::iterator found = 
+         std::find(mComponentList.begin(), mComponentList.end(), &component);
+      
+      if (found != mComponentList.end())
       {
-         if (i->get() == &component)
-         {
-            component.OnRemovedFromGM();
-            component.SetGameManager(NULL);
-            mComponentList.erase(i);
-            return;
-         }
+         (*found)->OnRemovedFromGM();
+         (*found)->SetGameManager(NULL);
+         mComponentList.erase(found);
       }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::GetAllComponents(std::vector<GMComponent*>& toFill)
    {
-      toFill.clear();
-      unsigned int componentListSize = mComponentList.size();
-      toFill.reserve(componentListSize);
-
-      for (unsigned i = 0; i < componentListSize; ++i)
-      {
-         toFill.push_back(mComponentList[i].get());
-      }
+      toFill.assign(mComponentList.begin(), mComponentList.end());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::GetAllComponents(std::vector<const GMComponent*>& toFill) const
    {
-      toFill.clear();
-      size_t componentListSize = mComponentList.size();
-      toFill.reserve(componentListSize);
-
-      for (unsigned i = 0; i < componentListSize; ++i)
-      {
-         toFill.push_back(mComponentList[i].get());
-      }
+      toFill.assign(mComponentList.begin(), mComponentList.end());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    GMComponent* GameManager::GetComponentByName(const std::string& name)
    {
-      for (std::vector<dtCore::RefPtr<GMComponent> >::iterator i = mComponentList.begin();
+      for (GMComponentContainer::iterator i = mComponentList.begin();
           i != mComponentList.end(); ++i)
       {
          if ((*i)->GetName() == name)
@@ -1018,7 +1004,7 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    const GMComponent* GameManager::GetComponentByName(const std::string& name) const
    {
-      for (std::vector< dtCore::RefPtr<GMComponent> >::const_iterator i = mComponentList.begin();
+      for (GMComponentContainer::const_iterator i = mComponentList.begin();
          i != mComponentList.end(); ++i)
       {
          if ((*i)->GetName() == name)
