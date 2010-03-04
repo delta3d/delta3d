@@ -553,7 +553,7 @@ namespace dtGame
          }
          
          //RefPtr in case it get deleted during a Message. We need to hang onto it for a bit.
-         dtCore::RefPtr<GMComponent> component = *compItr; 
+         dtCore::RefPtr<GMComponent>& component = *compItr; 
 
          if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
          {
@@ -898,6 +898,24 @@ namespace dtGame
       DoSendMessage(*postFrame);
    }
 
+   //////////////////////////////////////////////////////////////////////////
+   //local function used to compare priorities of GMComponents
+   bool CompareComponentPriority(const dtCore::RefPtr<GMComponent>& first,
+                                 const dtCore::RefPtr<GMComponent>& second)
+   {
+      if (first.valid() && second.valid())
+      {
+         //the lower the value, the higher the priority
+         return (first->GetComponentPriority().GetOrderId() < second->GetComponentPriority().GetOrderId());
+      }
+      else
+      {         
+         return first < second;//compare pointers?  Not sure we care what happens here
+      }
+
+      return true;
+   }
+
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::AddComponent(GMComponent& component, const GameManager::ComponentPriority& priority)
    {
@@ -910,22 +928,11 @@ namespace dtGame
 
       component.SetGameManager(this);
       component.SetComponentPriority(priority);
-      // we sort the items by priority so that components of higher priority get messages first.
-      bool inserted = false;
-      for (unsigned i = 0; i < mComponentList.size(); ++i)
-      {
-         if (mComponentList[i]->GetComponentPriority().GetOrderId() > priority.GetOrderId())
-         {
-            mComponentList.insert(mComponentList.begin() + i, dtCore::RefPtr<GMComponent>(&component));
-            inserted = true;
-            break;
-         }
-      }
 
-      if (!inserted)
-      {
-         mComponentList.push_back(dtCore::RefPtr<GMComponent>(&component));
-      }
+      mComponentList.push_back(dtCore::RefPtr<GMComponent>(&component)); //vector, list 
+
+      // we sort the items by priority so that components of higher priority get messages first.
+      mComponentList.sort(CompareComponentPriority);
 
       // notify the component that it was added to the GM
       component.OnAddedToGM();

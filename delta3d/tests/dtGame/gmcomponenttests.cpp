@@ -37,6 +37,8 @@ class GMComponentTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST_SUITE(GMComponentTests);
    CPPUNIT_TEST(TestComponentRemovingItselfDuringMessage);
    CPPUNIT_TEST(TestComponentRemovingAnotherDuringMessage);
+   CPPUNIT_TEST(TestComponentAddingAnotherDuringMessage);
+   //CPPUNIT_TEST(TestComponentMessagePerformance); //disabled - just used for benchmarking
    CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -45,6 +47,8 @@ public:
 
    void TestComponentRemovingItselfDuringMessage();
    void TestComponentRemovingAnotherDuringMessage();
+   void TestComponentAddingAnotherDuringMessage();
+   void TestComponentMessagePerformance();
 };
 
 // Registers the fixture into the 'registry'
@@ -134,6 +138,87 @@ void GMComponentTests::TestComponentRemovingAnotherDuringMessage()
    gm->GetAllComponents(comps);
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Component didn't remove itself during a message",
                                 size_t(1), comps.size());
+   gm->Shutdown();
+   gm = NULL;
+   scene = NULL;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void GMComponentTests::TestComponentAddingAnotherDuringMessage()
+{
+   dtCore::RefPtr<dtCore::Scene> scene = new dtCore::Scene();
+   dtCore::RefPtr<dtGame::GameManager> gm = new dtGame::GameManager(*scene);
+
+   class CompA : public dtGame::GMComponent
+   {
+   public:
+      CompA():
+         dtGame::GMComponent("CompA")
+         {}
+   };
+
+   class CompB : public dtGame::GMComponent
+   {
+   public:
+      CompB():
+         dtGame::GMComponent("CompB"),
+         mAdded(false)
+         {}
+
+         virtual void ProcessMessage(const dtGame::Message& message)
+         {
+            if (!mAdded)
+            {
+               GetGameManager()->AddComponent(*new CompA());
+               mAdded = true;
+            }
+         }
+
+         bool mAdded;
+   };
+
+   gm->AddComponent(*new CompB());
+ 
+   dtCore::System::GetInstance().Start(); 
+   dtCore::System::GetInstance().Step();//CompA should have been added here
+   
+   std::vector<dtGame::GMComponent*> comps;
+   gm->GetAllComponents(comps);
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Component didn't add another during a message",
+                                size_t(2), comps.size());
+   gm->Shutdown();
+   gm = NULL;
+   scene = NULL;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void GMComponentTests::TestComponentMessagePerformance()
+{
+   dtCore::RefPtr<dtCore::Scene> scene = new dtCore::Scene();
+   dtCore::RefPtr<dtGame::GameManager> gm = new dtGame::GameManager(*scene);
+
+   class CompA : public dtGame::GMComponent
+   {
+   public:
+      CompA(const std::string& name):
+         dtGame::GMComponent(name)
+         {}
+   };
+
+   for (int i=0; i<100; i++)
+   {      
+      gm->AddComponent(*new CompA(dtUtil::ToString(i)));
+   }
+   
+
+   dtCore::System::GetInstance().Start(); 
+
+   for (int i=0; i<100; i++)
+   {
+      dtCore::System::GetInstance().Step();
+   }
+
    gm->Shutdown();
    gm = NULL;
    scene = NULL;
