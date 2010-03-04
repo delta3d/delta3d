@@ -25,6 +25,7 @@
 #include <set>
 #include <map>
 #include <queue>
+#include <list>
 
 #include <dtGame/export.h>
 #include <dtGame/gameactor.h>
@@ -32,7 +33,6 @@
 #include <dtGame/message.h>
 #include <dtGame/machineinfo.h>
 #include <dtGame/environmentactor.h>
-//#include <dtGame/gmstatistics.h>
 
 #include <dtCore/refptr.h>
 #include <dtCore/base.h>
@@ -1161,7 +1161,7 @@ namespace dtGame
       typedef std::map<const MessageType*,  ProxyInvokableMap> ActorMessageListenerMap;
       ActorMessageListenerMap mActorMessageListeners;
 
-      typedef std::vector<dtCore::RefPtr<GMComponent> > GMComponentContainer;
+      typedef std::list<dtCore::RefPtr<GMComponent> > GMComponentContainer;
       GMComponentContainer mComponentList;
       std::queue<dtCore::RefPtr<const Message> > mSendNetworkMessageQueue;
       std::queue<dtCore::RefPtr<const Message> > mSendMessageQueue;
