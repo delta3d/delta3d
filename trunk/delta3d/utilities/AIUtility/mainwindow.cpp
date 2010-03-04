@@ -119,7 +119,10 @@ void MainWindow::showEvent(QShowEvent* e)
          emit ProjectContextChanged(projectContext.toStdString());
       }
 
-      ChangeMap(settings.value(CURRENT_MAP_SETTING.c_str()).toString());
+      if(dtDAL::Project::GetInstance().IsContextValid())
+      {
+         ChangeMap(settings.value(CURRENT_MAP_SETTING.c_str()).toString());
+      }
 
       EnableOrDisableControls();
    }
