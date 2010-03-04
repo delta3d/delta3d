@@ -287,9 +287,6 @@ int main(int argc, char* argv[])
       // Go to it!!!  Run this puppy!
       testRunner.run(testResult);
 
-      CPPUNIT_NS::CompilerOutputter compilerOutputter(&collectedResults,std::cout);
-      compilerOutputter.write();
-
       //write out an xml report file
       #ifdef _DEBUG
          std::string filename = "unittestreportd.xml";
@@ -309,14 +306,17 @@ int main(int argc, char* argv[])
       timeDelta = (floor(timeDelta * 10000.0)) / 10000.0; // force data truncation
       if (!mSlowTests.str().empty())
       {
-         std::cout << " <<< SLOW TEST RESULTS ::: START >>> " << std::endl <<
+         std::cout << "\n\n <<< SLOW TEST RESULTS ::: START >>> " << std::endl <<
             mSlowTests.str() << " <<< SLOW TEST RESULTS ::: END ::: TotalTime[" <<
-            timeDelta << "] >>> " << std::endl;
+            timeDelta << "] >>> \n" << std::endl;
       }
       else
       {
-         std::cout << " <<< SLOW TEST RESULTS ::: ALL TESTS RAN FAST!!! WOOT! ::: TotalTime[" << timeDelta << "] >>> " << std::endl;
+         std::cout << "TotalTime[" << timeDelta << "]" << std::endl;
       }
+
+      CPPUNIT_NS::CompilerOutputter compilerOutputter(&collectedResults,std::cout);
+      compilerOutputter.write();
    }
    catch (const std::invalid_argument& ie)
    {
