@@ -1104,7 +1104,7 @@ namespace dtGame
       /// Sends a single message to components and actors.
       void DoSendMessage(const Message& message);
       /// Sends a single message just to components.
-      void DoSendMessageToComponents(const Message& message);
+      void DoSendMessageToComponents(const Message& message, bool toNetwork);
       void InvokeGlobalInvokables(const Message& message);
       void InvokeForActorInvokables(const Message& message, GameActorProxy& aboutActor);
       void InvokeOtherActorInvokables(const Message& message);

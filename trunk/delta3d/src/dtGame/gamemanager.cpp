@@ -469,7 +469,7 @@ namespace dtGame
       GetMessageFactory().CreateMessage(MessageType::TICK_END_OF_FRAME, tickEnd);
       PopulateTickMessage(*tickEnd, deltaSimTime, deltaRealTime, simulationTime);
 
-      DoSendMessageToComponents(*tickEnd);
+      DoSendMessageToComponents(*tickEnd, false);
 
       RemoveDeletedActors();
 
@@ -510,68 +510,25 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::DoSendNetworkMessages()
    {
-      // statistics stuff.
-      bool logComponents = mGMImpl->mGMStatistics.ShouldWeLogComponents();
-      dtCore::Timer_t frameTickStartCurrent(0);
       // SEND MESSAGES - Forward Send Messages to all components (no actors)
       while (!mSendNetworkMessageQueue.empty())
       {
          mGMImpl->mGMStatistics.mStatsNumSendNetworkMessages += 1;
-         dtCore::RefPtr<const Message> message = mSendNetworkMessageQueue.front();
-         mSendNetworkMessageQueue.pop();
 
-         if (!message.valid())
+         if (!mSendNetworkMessageQueue.front().valid())
          {
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                "Message in send to network queue is NULL.  Something is majorly wrong with the GameManager.");
             continue;
          }
 
-         try
-         {
-            GMComponentContainer::iterator i = mComponentList.begin();
-            for (;i != mComponentList.end(); ++i)
-            {
-               /////////////////////////
-               // Statistics information
-               if (logComponents)
-               {
-                  frameTickStartCurrent = mGMImpl->mGMStatistics.mStatsTickClock.Tick();
-               }
-
-               GMComponent& component = **i;
-
-               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-               {
-                  mLogger->LogMessage(__FUNCTION__, __LINE__,
-                           "Dispatch Net Message Type \"" + message->GetMessageType().GetName() + "\" to GMComponent \"" +
-                           component.GetName() + "\"",
-                           dtUtil::Log::LOG_DEBUG);
-               }
-               component.DispatchNetworkMessage(*message);
-
-               // Statistics information
-               if (logComponents)
-               {
-                  double frameTickDelta =
-                     mGMImpl->mGMStatistics.mStatsTickClock.DeltaSec(frameTickStartCurrent,
-                                              mGMImpl->mGMStatistics.mStatsTickClock.Tick());
-
-                  mGMImpl->mGMStatistics.UpdateDebugStats(component.GetUniqueId(),
-                                                 component.GetName(),
-                                                 frameTickDelta, true, false);
-               }
-            }
-         }
-         catch (const dtUtil::Exception& ex)
-         {
-            ex.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
-         }
+         DoSendMessageToComponents(*mSendNetworkMessageQueue.front(), true);
+         mSendNetworkMessageQueue.pop();
       }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::DoSendMessageToComponents(const Message& message)
+   void GameManager::DoSendMessageToComponents(const Message& message, bool toNetwork)
    {
       //statistics stuff.
       bool logComponents = mGMImpl->mGMStatistics.ShouldWeLogComponents();
@@ -580,31 +537,42 @@ namespace dtGame
 
       // Components get messages first
       GMComponentContainer::iterator compItr = mComponentList.begin();
-      for (;compItr != mComponentList.end(); ++compItr)
+      while (compItr != mComponentList.end())
       {
+         if (compItr->valid() == false) //set from a previous call to RemoveComponent()
+         {
+            //Erase this value from the container and move on. Iterator gets pointed to next in container.
+            compItr = mComponentList.erase(compItr);
+            continue;
+         }
+
          // Statistics information
          if (logComponents)
          {
             frameTickStartCurrent = mGMImpl->mGMStatistics.mStatsTickClock.Tick();
          }
          
-         if (compItr->valid() == false)
-         {
-            continue;
-         }
+         //RefPtr in case it get deleted during a Message. We need to hang onto it for a bit.
+         dtCore::RefPtr<GMComponent> component = *compItr; 
 
-         GMComponent& component = **compItr;
+         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         {
+            mLogger->LogMessage(__FUNCTION__, __LINE__,
+               "Sending Message Type \"" + message.GetMessageType().GetName() + "\" to GMComponent \"" +
+               component->GetName() + "\"",
+               dtUtil::Log::LOG_DEBUG);
+         }
 
          try
          {
-            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            if (toNetwork)
             {
-               mLogger->LogMessage(__FUNCTION__, __LINE__,
-                        "Sending Message Type \"" + message.GetMessageType().GetName() + "\" to GMComponent \"" +
-                        component.GetName() + "\"",
-                        dtUtil::Log::LOG_DEBUG);
+               component->DispatchNetworkMessage(message);
             }
-            component.ProcessMessage(message);
+            else
+            {
+               component->ProcessMessage(message);
+            }
          }
          catch (const dtUtil::Exception& ex)
          {
@@ -616,19 +584,21 @@ namespace dtGame
          {
             double frameTickDelta =
                mGMImpl->mGMStatistics.mStatsTickClock.DeltaSec(frameTickStartCurrent,
-                                                      mGMImpl->mGMStatistics.mStatsTickClock.Tick());
+                                                               mGMImpl->mGMStatistics.mStatsTickClock.Tick());
 
-            mGMImpl->mGMStatistics.UpdateDebugStats(component.GetUniqueId(),
-                                           component.GetName(),
-                                           frameTickDelta, true, isATickLocalMessage);
+            mGMImpl->mGMStatistics.UpdateDebugStats(component->GetUniqueId(),
+                                                    component->GetName(),
+                                                    frameTickDelta, true, isATickLocalMessage);
          }
+
+         ++compItr;
       }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::DoSendMessage(const Message& message)
    {
-      DoSendMessageToComponents(message);
+      DoSendMessageToComponents(message, false);
 
       InvokeGlobalInvokables(message);
 
@@ -971,48 +941,92 @@ namespace dtGame
       {
          (*found)->OnRemovedFromGM();
          (*found)->SetGameManager(NULL);
-         mComponentList.erase(found);
+         (*found) = NULL; //RefPtr will be erased from the container later on
       }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::GetAllComponents(std::vector<GMComponent*>& toFill)
    {
-      toFill.assign(mComponentList.begin(), mComponentList.end());
+      toFill.clear();
+      toFill.reserve(mComponentList.size());
+
+      GMComponentContainer::iterator compItr = mComponentList.begin();
+
+      while (compItr != mComponentList.end())
+      {
+         if (compItr->valid())
+         {
+            toFill.push_back(compItr->get());
+         }
+         ++compItr;
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::GetAllComponents(std::vector<const GMComponent*>& toFill) const
    {
-      toFill.assign(mComponentList.begin(), mComponentList.end());
+      toFill.clear();
+      toFill.reserve(mComponentList.size());
+
+      GMComponentContainer::const_iterator compItr = mComponentList.begin();
+
+      while (compItr != mComponentList.end())
+      {
+         if (compItr->valid())
+         {
+            toFill.push_back(compItr->get());
+         }
+         ++compItr;
+      }
    }
 
+   //////////////////////////////////////////////////////////////////////////
+   //little class used to find valid GMComponent by name
+   struct ComponentNameFind : public std::unary_function<dtCore::RefPtr<GMComponent>, bool>
+   {
+      ComponentNameFind(const std::string& name):mName(name)
+      {}
+ 
+      bool operator()(dtCore::RefPtr<GMComponent> elem) const
+      {
+         if (elem.valid() && elem->GetName() == mName) {return true;}
+         else {return false;}
+      }
+
+      std::string mName;
+   };
+    
    ///////////////////////////////////////////////////////////////////////////////
    GMComponent* GameManager::GetComponentByName(const std::string& name)
    {
-      for (GMComponentContainer::iterator i = mComponentList.begin();
-          i != mComponentList.end(); ++i)
+      GMComponentContainer::iterator found = std::find_if(mComponentList.begin(),
+                                                          mComponentList.end(),
+                                                          ComponentNameFind(name));
+      if (found != mComponentList.end())
       {
-         if ((*i)->GetName() == name)
-         {
-            return (*i).get();
-         }
+         return *found;
       }
-      return NULL;
+      else
+      {
+         return NULL;
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    const GMComponent* GameManager::GetComponentByName(const std::string& name) const
    {
-      for (GMComponentContainer::const_iterator i = mComponentList.begin();
-         i != mComponentList.end(); ++i)
+      GMComponentContainer::const_iterator found = std::find_if(mComponentList.begin(),
+                                                                mComponentList.end(),
+                                                                ComponentNameFind(name));
+      if (found != mComponentList.end()) 
       {
-         if ((*i)->GetName() == name)
-         {
-            return (*i).get();
-         }
+         return *found;
       }
-      return NULL;
+      else 
+      {
+         return NULL;
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -2106,10 +2120,19 @@ namespace dtGame
          mLoadedMaps.clear();
       }
 
-      while (!mComponentList.empty())
+      //tell all the components they've been removed
+      GMComponentContainer::iterator compItr = mComponentList.begin();
+      while (compItr != mComponentList.end())
       {
-         RemoveComponent(*mComponentList.back());
+         if (compItr->valid())
+         {
+            RemoveComponent(**compItr);
+         }
+         ++compItr;
       }
+
+      //now purge the component container for real
+      mComponentList.clear();
 
       mGMImpl->mGMStatistics.mDebugLoggerInformation.clear();
 

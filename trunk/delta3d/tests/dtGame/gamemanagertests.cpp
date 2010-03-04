@@ -771,7 +771,7 @@ void GameManagerTests::TestAddRemoveComponents()
    mManager->RemoveComponent(*rc);
 
    mManager->GetAllComponents(toFill);
-   CPPUNIT_ASSERT_MESSAGE("There should be exactly one component in the GameManager.",toFill.size() == 1);
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("There should be exactly one component in the GameManager.", size_t(1), toFill.size());
    CPPUNIT_ASSERT_MESSAGE("The one component should be the default message processor.", toFill[0] == dmc.get());
 
    CPPUNIT_ASSERT(rc->GetGameManager() == NULL);
