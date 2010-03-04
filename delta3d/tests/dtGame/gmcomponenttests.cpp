@@ -89,40 +89,40 @@ void GMComponentTests::TestComponentRemovingItselfDuringMessage()
    scene = NULL;
 }
 
+class CompA : public dtGame::GMComponent
+{
+public:
+   CompA():
+      dtGame::GMComponent("CompA")
+      {}
+};
+
+class CompB : public dtGame::GMComponent
+{
+public:
+   CompB():
+      dtGame::GMComponent("CompB")
+      ,mCompA(new CompA())
+      {}
+
+      virtual void ProcessMessage(const dtGame::Message& message)
+      {
+         GetGameManager()->RemoveComponent(*mCompA);
+      }
+
+      virtual void OnAddedToGM()
+      {
+         GetGameManager()->AddComponent(*mCompA);
+      }
+
+      dtCore::RefPtr<CompA> mCompA;
+};
+
 ////////////////////////////////////////////////////////////////////////////////
 void GMComponentTests::TestComponentRemovingAnotherDuringMessage()
 {
    dtCore::RefPtr<dtCore::Scene> scene = new dtCore::Scene();
    dtCore::RefPtr<dtGame::GameManager> gm = new dtGame::GameManager(*scene);
-
-   class CompA : public dtGame::GMComponent
-   {
-   public:
-      CompA():
-         dtGame::GMComponent("CompA")
-         {}
-   };
-
-   class CompB : public dtGame::GMComponent
-   {
-   public:
-      CompB():
-         dtGame::GMComponent("CompB")
-         ,mCompA(new CompA())
-         {}
-
-         virtual void ProcessMessage(const dtGame::Message& message)
-         {
-            GetGameManager()->RemoveComponent(*mCompA);
-         }
-
-         virtual void OnAddedToGM()
-         {
-            GetGameManager()->AddComponent(*mCompA);
-         }
-
-         dtCore::RefPtr<CompA> mCompA;
-   };
 
    gm->AddComponent(*new CompB());
 
