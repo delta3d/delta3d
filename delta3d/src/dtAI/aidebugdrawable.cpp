@@ -157,19 +157,26 @@ namespace dtAI
          {
             mWaypointGeometry->removePrimitiveSet(0);
          }
-         osg::PrimitiveSet* ps = new osg::DrawArrays(osg::PrimitiveSet::POINTS, 0, mVerts->size());
-         mWaypointGeometry->addPrimitiveSet(ps);
-         //setting it back to zero will ensure any user data does not get removed when this function is called again
-         mWaypointGeometry->setPrimitiveSet(0, ps);
+         if(!mVerts->empty())
+         {
+            osg::PrimitiveSet* ps = new osg::DrawArrays(osg::PrimitiveSet::POINTS, 0, mVerts->size());
+            mWaypointGeometry->addPrimitiveSet(ps);
+            //setting it back to zero will ensure any user data does not get removed when this function is called again
+            mWaypointGeometry->setPrimitiveSet(0, ps);
+         }
 
          if (mNavMeshGeometry->getNumPrimitiveSets() > 0)
          {
             mNavMeshGeometry->removePrimitiveSet(0);
          }
-         osg::PrimitiveSet* psLines = new osg::DrawElementsUInt(osg::PrimitiveSet::LINES, mWaypointPairs->begin(), mWaypointPairs->end());
-         mNavMeshGeometry->addPrimitiveSet(psLines);
-         //setting it back to zero will ensure any user data does not get removed when this function is called again
-         mNavMeshGeometry->setPrimitiveSet(0, psLines);
+         
+         if(!mWaypointPairs->empty())
+         {
+            osg::PrimitiveSet* psLines = new osg::DrawElementsUInt(osg::PrimitiveSet::LINES, mWaypointPairs->begin(), mWaypointPairs->end());
+            mNavMeshGeometry->addPrimitiveSet(psLines);
+            //setting it back to zero will ensure any user data does not get removed when this function is called again
+            mNavMeshGeometry->setPrimitiveSet(0, psLines);
+         }
 
          osg::Point* p = new osg::Point(mRenderInfo->GetWaypointSize());
          mWaypointGeometry->getOrCreateStateSet()->setAttribute(p, osg::StateAttribute::ON);
