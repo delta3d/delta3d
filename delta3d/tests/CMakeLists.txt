@@ -52,7 +52,7 @@ INCLUDE_DIRECTORIES( ${CEGUI_INCLUDE_DIR} #for dtGUI
                                     ${CAL3D_INCLUDE_DIR} #for dtAnim
                                     )
 
-ADD_PRECOMPILED_HEADER(${PROG_NAME} prefix/dtgameprefix.h prefix/dtgameprefix.cpp ALL_SOURCES)
+ADD_PRECOMPILED_HEADER(${PROG_NAME} prefix/unittestprefix.h prefix/unittestprefix.cpp ALL_SOURCES)
 
 ADD_EXECUTABLE(${PROG_NAME}
     ${ALL_SOURCES}

@@ -23,7 +23,7 @@
  * Chris Osborn
  */
 
-#include <prefix/dtgameprefix.h>
+#include <prefix/unittestprefix.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtUtil/mathdefines.h>
 #include <dtCore/scene.h>

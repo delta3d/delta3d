@@ -1,3 +1,4 @@
+#include <prefix/unittestprefix.h>
 #include "unittestapplication.h"
 #include <osgViewer/CompositeViewer>
 #include <dtCore/deltawin.h>

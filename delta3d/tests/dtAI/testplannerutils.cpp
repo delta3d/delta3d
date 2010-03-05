@@ -22,7 +22,7 @@
  *
  * Bradley Anderegg 06/29/2006
  */
-#include <prefix/dtgameprefix.h>
+#include <prefix/unittestprefix.h>
 #include "testplannerutils.h"
 #include <dtUtil/mswinmacros.h>
 #include <dtAI/planner.h>

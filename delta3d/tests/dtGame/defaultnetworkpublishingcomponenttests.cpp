@@ -26,7 +26,7 @@
  * @author Eddie Johnson and David Guthrie
  */
 
-#include <prefix/dtgameprefix.h>
+#include <prefix/unittestprefix.h>
 
 #include <dtUtil/log.h>
 #include <dtUtil/datapathutils.h>

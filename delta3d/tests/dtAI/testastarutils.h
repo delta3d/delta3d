@@ -23,6 +23,7 @@
  * @author Bradley Anderegg 06/29/2006
  */
 
+#include <prefix/unittestprefix.h>
 #ifndef __DELTA_ASTARTESTUTILS_H__
 #define __DELTA_ASTARTESTUTILS_H__
 

@@ -23,7 +23,7 @@
  * Bradley Anderegg
  */
 
-#include <prefix/dtgameprefix.h>
+#include <prefix/unittestprefix.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtAI/sensor.h>
 #include <dtUtil/templateutility.h>

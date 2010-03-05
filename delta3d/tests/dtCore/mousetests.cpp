@@ -22,7 +22,7 @@
  *
  * @author John K. Grant
  */
-#include <prefix/dtgameprefix.h>
+#include <prefix/unittestprefix.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtCore/mouse.h>
 #include <dtCore/genericmouselistener.h>

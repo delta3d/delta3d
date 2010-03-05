@@ -22,7 +22,7 @@
 *
 * Erik Johnson 05/16/2006
 */
-#include <prefix/dtgameprefix.h>
+#include <prefix/unittestprefix.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtABC/application.h>
 #include <dtCore/deltawin.h>
