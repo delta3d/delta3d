@@ -1,3 +1,4 @@
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/rtsmotionmodel.h>
 
 #include <dtCore/axistoaxistransformation.h>

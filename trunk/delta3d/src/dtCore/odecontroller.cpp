@@ -1,3 +1,4 @@
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/odecontroller.h>
 #include <dtCore/transformable.h>
 #include <dtCore/scene.h>

@@ -1,3 +1,4 @@
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/screenshotcallback.h>
 #include <dtCore/camera.h>
 #include <dtUtil/log.h>

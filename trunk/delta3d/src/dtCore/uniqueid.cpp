@@ -1,3 +1,4 @@
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/uniqueid.h>
 #include <dtUtil/datastream.h>
 #include <iostream>

@@ -1,3 +1,4 @@
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/odeworldwrap.h>
 #include <dtCore/transformable.h>
 #include <dtCore/physical.h>

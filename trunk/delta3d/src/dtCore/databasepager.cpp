@@ -1,3 +1,4 @@
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/databasepager.h>
 #include <dtCore/deltadrawable.h>
 #include <dtUtil/configproperties.h>
