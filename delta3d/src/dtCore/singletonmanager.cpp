@@ -1,3 +1,4 @@
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/singletonmanager.h>
 #include <dtCore/shadermanager.h>
 

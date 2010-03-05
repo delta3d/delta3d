@@ -1,3 +1,4 @@
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/axistoaxistransformation.h>
 
 namespace dtCore {

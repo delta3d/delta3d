@@ -1,3 +1,4 @@
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/odegeomwrap.h>
 #include <dtCore/transform.h>
 #include <dtUtil/boundingshapeutils.h>

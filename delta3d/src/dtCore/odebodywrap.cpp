@@ -1,3 +1,4 @@
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/odebodywrap.h>
 #include <dtCore/transform.h>
 #include <ode/objects.h>

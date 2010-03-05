@@ -1,4 +1,5 @@
 
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/sigslot.h>
 
 #include <OpenThreads/ReentrantMutex>

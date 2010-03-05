@@ -1,3 +1,4 @@
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/cameracallbackcontainer.h>
 #include <dtCore/camera.h>
 #include <dtCore/cameradrawcallback.h>

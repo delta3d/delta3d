@@ -18,6 +18,7 @@
  *
  * David Guthrie
  */
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/shaderparamvec4.h>
 #include <osg/Uniform>
 #include <osg/StateSet>

@@ -1,3 +1,4 @@
+#include <prefix/dtcoreprefix.h>
 #include <dtCore/windowresizecontainer.h>
 #include <dtCore/windowresizecallback.h>
 #include <dtCore/deltawin.h>
