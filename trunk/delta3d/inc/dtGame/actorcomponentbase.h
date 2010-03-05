@@ -119,7 +119,7 @@ namespace dtGame
       void RemoveAllComponents();
 
       /** 
-       * Loop through all ActorComponent and call their SetGameManager() methods
+       * Loop through all ActorComponent call their OnEnteredWorld()
        */
       void InitComponents();
 
@@ -132,13 +132,13 @@ namespace dtGame
        * Override this to get informed about newly added ActorComponent 
        * @param component The ActorComponent just added 
        */
-      virtual void OnActorComponentAdded(ActorComponent& component);
+      virtual void OnActorComponentAdded(ActorComponent& component) {};
 
       /** 
        * Override this to get informed about removed components
        * @param component The ActorComponent just removed 
        */
-      virtual void OnActorComponentRemoved(ActorComponent& component);
+      virtual void OnActorComponentRemoved(ActorComponent& component) {};
 
    protected:
      

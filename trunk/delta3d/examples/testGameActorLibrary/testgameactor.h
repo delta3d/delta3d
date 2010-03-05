@@ -42,8 +42,13 @@ public:
    virtual void OnAddedToActor(dtGame::GameActor& actor);
    virtual void OnRemovedFromActor(dtGame::GameActor& actor);
 
+   virtual void OnEnteredWorld();
+   virtual void OnRemovedFromWorld();
+
    bool mWasAdded;
    bool mWasRemoved;
+   bool mEnteredWorld;
+   bool mLeftWorld;
 };
 
 class DT_EXAMPLE_EXPORT TestActorComponent2 : public dtGame::ActorComponent
@@ -56,9 +61,13 @@ public:
 
    virtual void OnAddedToActor(dtGame::GameActor& actor);
    virtual void OnRemovedFromActor(dtGame::GameActor& actor);
+   virtual void OnEnteredWorld();
+   virtual void OnRemovedFromWorld();
 
    bool mWasAdded;
    bool mWasRemoved;
+   bool mEnteredWorld;
+   bool mLeftWorld;
 };
 
 class DT_EXAMPLE_EXPORT TestGameActor1 : public dtGame::GameActor
