@@ -23,6 +23,7 @@
 * Erik Johnson
 */
 
+#include <prefix/unittestprefix.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtABC/beziernode.h>
 #include <dtABC/beziercontrolpoint.h>

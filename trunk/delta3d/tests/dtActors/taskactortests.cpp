@@ -25,7 +25,7 @@
  *
  * Matthew W. Campbell, Curtiss Murphy
  */
-#include <prefix/dtgameprefix.h>
+#include <prefix/unittestprefix.h>
 #include <cppunit/extensions/HelperMacros.h>
 
 #include <dtActors/taskactor.h>

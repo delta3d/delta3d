@@ -25,6 +25,7 @@
 *
 * David Guthrie
 */
+#include <prefix/unittestprefix.h>
 #ifndef DELTA_TESTCOMPONENT
 #define DELTA_TESTCOMPONENT
 

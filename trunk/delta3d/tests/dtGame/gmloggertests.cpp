@@ -27,7 +27,7 @@
  * @author Curtiss Murphy
  */
 
-#include <prefix/dtgameprefix.h>
+#include <prefix/unittestprefix.h>
 #include <dtGame/binarylogstream.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/serverloggercomponent.h>

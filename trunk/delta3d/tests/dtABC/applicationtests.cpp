@@ -23,7 +23,7 @@
  * @author John K. Grant, Curtiss Murphy
  */
 
-#include <prefix/dtgameprefix.h>
+#include <prefix/unittestprefix.h>
 #include <dtABC/application.h>
 #include <dtABC/applicationconfighandler.h>
 #include <dtABC/applicationconfigwriter.h>

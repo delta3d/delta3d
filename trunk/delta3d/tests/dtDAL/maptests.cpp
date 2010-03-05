@@ -26,7 +26,7 @@
  * @author David Guthrie
  */
 
-#include <prefix/dtgameprefix.h>
+#include <prefix/unittestprefix.h>
 #include <vector>
 #include <string>
 #include <sstream>

@@ -25,7 +25,7 @@
 *
 * @author Eddie Johnson and David Guthrie and Curtiss Murphy
 */
-#include <prefix/dtgameprefix.h>
+#include <prefix/unittestprefix.h>
 #include <cstdlib>
 #include <iostream>
 #include <osg/Math>
