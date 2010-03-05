@@ -76,3 +76,9 @@ if (BUILD_WITH_PCH)
   ENDIF(MSVC)
 endif (BUILD_WITH_PCH)
 ENDMACRO(ADD_PRECOMPILED_HEADER)
+
+# ADD -fPIC to g++ because it's hard for the script to figure out if you are build a library or not, and
+# -fPIC will work on everything.
+IF(CMAKE_COMPILER_IS_GNUCXX)
+   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+ENDIF(CMAKE_COMPILER_IS_GNUCXX)
