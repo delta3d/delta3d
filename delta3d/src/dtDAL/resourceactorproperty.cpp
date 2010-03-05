@@ -1,3 +1,4 @@
+#include <prefix/dtdalprefix.h>
 #include <dtDAL/resourceactorproperty.h>
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/resourcedescriptor.h>

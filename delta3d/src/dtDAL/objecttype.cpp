@@ -22,6 +22,7 @@
  * David Guthrie
  */
 
+#include <prefix/dtdalprefix.h>
 #include <dtDAL/objecttype.h>
 
 #include <iostream>

@@ -19,6 +19,7 @@
  * Jeffrey Houde.
  */
 
+#include <prefix/dtdalprefix.h>
 #include <dtDAL/containeractorproperty.h>
 #include <iostream>
 #include <dtDAL/datatype.h>
