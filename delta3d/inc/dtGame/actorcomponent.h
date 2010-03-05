@@ -62,20 +62,33 @@ namespace dtGame
       const ACType& GetType() const;
 
       /** 
-       * If component base actor is already in a running game, this
-       * method is called immediately after adding the component to the actor.
-       * If the base actor is not yet in the game, this method is called when the actor
-       * enters the game.
-       * @param actor The GameActor this ActorComponent has been added to
+       * Called when this ActorComponent gets added to an GameActor.  Overwrite 
+       * to perform any custom initialization.
+       * @param actor The GameActor this ActorComponent has been added to.
        */ 
-      virtual void OnAddedToActor(dtGame::GameActor& actor);
+      virtual void OnAddedToActor(dtGame::GameActor& actor) {};
 
       /** 
-       * This method is called when owner is removed from game 
-       * or when component is removed from actor.
+       * Called when this ActorComponent is removed from the parent actor.
        * @param actor The GameActor this ActorComponent has just been removed from
        */
-      virtual void OnRemovedFromActor(dtGame::GameActor& actor);
+      virtual void OnRemovedFromActor(dtGame::GameActor& actor) {};
+
+      /** 
+       * Called when the parent actor enters the "world".
+       */
+      virtual void OnEnteredWorld() {};
+
+      /** 
+       * Called when the parent actor leaves the "world".
+       */
+      virtual void OnRemovedFromWorld() {};
+
+      /**
+       * Overwrite this to add ActorProperties to this PropertyContainer.
+       * @see PropertyContainer::AddProperty()
+       */
+      virtual void BuildPropertyMap() {};
 
 
       /**
@@ -104,6 +117,12 @@ namespace dtGame
        */
       virtual void SetOwner(ActorComponentBase* owner);
 
+
+
+   protected:
+
+      virtual ~ActorComponent();
+
       /**
        * Let GameManager call the OnTickLocal method on each tick.
        * This method can only be called when the OnAddedToActor method
@@ -120,16 +139,7 @@ namespace dtGame
        * Default update method. Override to execute stuff for
        * each physics step. Call RegisterForTicks() to let this get called.
        */
-      virtual void OnTickLocal(const TickMessage& tickMessage);
-
-      /**
-       * Overwrite this to add ActorProperty to owner's proxy
-       */
-      virtual void BuildPropertyMap();
-
-   protected:
-
-      virtual ~ActorComponent();
+      virtual void OnTickLocal(const TickMessage& tickMessage) {};
 
    private: 
 

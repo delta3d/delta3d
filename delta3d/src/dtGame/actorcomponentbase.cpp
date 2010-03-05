@@ -18,6 +18,7 @@
  *
  */
 
+#include <prefix/dtgameprefix.h>
 #include <dtGame/actorcomponentbase.h>
 #include <dtGame/gameactor.h>
 #include <dtGame/gameactorproxy.h>
@@ -57,13 +58,16 @@ namespace dtGame
       // pass the component a pointer to its owner
       component.SetOwner(this);
 
-      // if base class is a game actor and the game actor is already instantiated in game:
       GameActor* self = static_cast<GameActor*>(this);
+      
+      // initialize component
+      component.OnAddedToActor(*self);
+      OnActorComponentAdded(component);
+
+      // if base class is a game actor and the game actor is already instantiated in game:
       if (self->GetGameActorProxy().IsInGM())
       {
-         // initialize component
-         component.OnAddedToActor(*self);
-         OnActorComponentAdded(component);
+         component.OnEnteredWorld();
       }
    }
 
@@ -151,8 +155,7 @@ namespace dtGame
       // loop through all components and call their OnAddedToActor method
       for(std::list<ActorComponent*>::iterator iter = components.begin(); iter != components.end(); ++iter)
       {
-         (*iter)->OnAddedToActor(*static_cast<GameActor*>(this));
-         OnActorComponentAdded(**iter);
+         (*iter)->OnEnteredWorld();
       }
    }
 
@@ -165,15 +168,5 @@ namespace dtGame
       {
          (*iter).second->BuildPropertyMap();
       }
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void dtGame::ActorComponentBase::OnActorComponentAdded(ActorComponent& component)
-   {
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void dtGame::ActorComponentBase::OnActorComponentRemoved(ActorComponent& component)
-   {
    }
 }

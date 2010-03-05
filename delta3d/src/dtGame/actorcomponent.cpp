@@ -18,6 +18,7 @@
 *
 */
 
+#include <prefix/dtgameprefix.h>
 #include <dtGame/actorcomponent.h>
 #include <cassert>
 #include <dtGame/gameactor.h>
@@ -52,18 +53,6 @@ const dtGame::ActorComponent::ACType& dtGame::ActorComponent::GetType() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void dtGame::ActorComponent::OnAddedToActor(dtGame::GameActor& actor)
-{
-
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void dtGame::ActorComponent::OnRemovedFromActor(dtGame::GameActor& actor)
-{
-
-}
-
-////////////////////////////////////////////////////////////////////////////////
 ActorComponentBase* dtGame::ActorComponent::GetOwner() const
 {
    return mOwner;
@@ -75,17 +64,6 @@ void dtGame::ActorComponent::SetOwner(ActorComponentBase* owner)
    mOwner = owner;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-void dtGame::ActorComponent::OnTickLocal(const TickMessage& tickMessage)
-{
-
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void dtGame::ActorComponent::BuildPropertyMap()
-{
-
-}
 
 //////////////////////////////////////////////////////////////////////////
 void ActorComponent::RegisterForTicks()

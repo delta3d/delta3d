@@ -44,6 +44,8 @@ TestActorComponent1::TestActorComponent1()
 : dtGame::ActorComponent(TYPE)
 , mWasAdded(false)
 , mWasRemoved(false)
+, mEnteredWorld(false)
+, mLeftWorld(false)
 {
 }
 
@@ -57,12 +59,25 @@ void TestActorComponent1::OnRemovedFromActor(dtGame::GameActor& actor)
    mWasRemoved = true;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+void TestActorComponent1::OnEnteredWorld()
+{
+   mEnteredWorld = true;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void TestActorComponent1::OnRemovedFromWorld()
+{
+   mLeftWorld = true;
+}
 const dtGame::ActorComponent::ACType TestActorComponent2::TYPE("TestActorComponent2");
 
 TestActorComponent2::TestActorComponent2()
 : dtGame::ActorComponent(TYPE)
 , mWasAdded(false)
 , mWasRemoved(false)
+, mEnteredWorld(false)
+, mLeftWorld(false)
 {
 }
 
@@ -74,6 +89,18 @@ void TestActorComponent2::OnAddedToActor(dtGame::GameActor& actor)
 void TestActorComponent2::OnRemovedFromActor(dtGame::GameActor& actor)
 {
    mWasRemoved = true;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void TestActorComponent2::OnEnteredWorld()
+{
+   mEnteredWorld = true;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void TestActorComponent2::OnRemovedFromWorld()
+{
+   mLeftWorld = true;
 }
 ////////////////////////////////////////////////////////////////////
 // Proxy Code

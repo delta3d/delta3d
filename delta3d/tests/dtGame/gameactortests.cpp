@@ -26,7 +26,7 @@
  * @author Eddie Johnson and David Guthrie
  */
 
-#include <prefix/dtgameprefix.h>
+#include <prefix/unittestprefix.h>
 #include <iostream>
 #include <osg/Math>
 #include <dtUtil/log.h>
@@ -1036,7 +1036,6 @@ void GameActorTests::TestAddActorComponent()
       dtCore::RefPtr<const dtDAL::ActorType> actorType = mManager->FindActorType("ExampleActors", "Test1Actor");
       dtCore::RefPtr<dtDAL::ActorProxy> proxy = mManager->CreateActor(*actorType);
       dtCore::RefPtr<dtGame::GameActorProxy> gap = dynamic_cast<dtGame::GameActorProxy*>(proxy.get());
-      mManager->AddActor(*gap, true, false);
 
       dtGame::GameActor* actor = &gap->GetGameActor();
 
@@ -1069,10 +1068,6 @@ void GameActorTests::TestAddActorComponent()
       catch(const dtUtil::Exception&)
       {
       }
-
-
-      //clean up after test is finished.
-      mManager->DeleteActor(*gap);
    }
    catch(const dtUtil::Exception& e)
    {
@@ -1094,23 +1089,27 @@ void GameActorTests::TestActorComponentInitialized()
 
       dtCore::RefPtr<TestActorComponent1> component1 = new TestActorComponent1();
       actor->AddComponent(*component1);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("ActorComponent didn't get called when added to actor", true, component1->mWasAdded);
 
-      dtCore::RefPtr<TestActorComponent2> component2 = new TestActorComponent2();
-
-      CPPUNIT_ASSERT_MESSAGE("Actor component1 should not be initialized before actor is in game!", !component1->mWasAdded);
 
       mManager->AddActor(*gap, true, false);
-      CPPUNIT_ASSERT_MESSAGE("Actor component1 be initialized when actor is added to game!", component1->mWasAdded);
 
-      CPPUNIT_ASSERT_MESSAGE("Actor component2 should not be initialized before added to actor!", !component2->mWasAdded);
+      //component 1 should have entered the world now
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("ActorComponent didn't enter the world, after being added to the GM", true, component1->mEnteredWorld);
+
+      dtCore::RefPtr<TestActorComponent2> component2 = new TestActorComponent2();
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("ActorComponent shouldn't have been added to Actor yet", false, component2->mWasAdded);
+
       actor->AddComponent(*component2);
-      CPPUNIT_ASSERT_MESSAGE("Actor component2 should be initialized when added to actor!", component2->mWasAdded);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("ActorComponent didn't get added to an actor which is already in the world",true, component2->mWasAdded);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("ActorComponent didn't enter the world, after being added to an Actor already in the world", true, component2->mEnteredWorld);
+
       actor->RemoveComponent(*component2);
       CPPUNIT_ASSERT_MESSAGE("Actor component2 should be de-initialized when removed from actor!", component2->mWasRemoved);
 
       CPPUNIT_ASSERT_MESSAGE("Actor component should not be removed yet!", !component1->mWasRemoved);
       mManager->DeleteActor(*gap);
-      dtCore::AppSleep(10);
+
       dtCore::System::GetInstance().Step();
 
       // Actor should be removed by now.
