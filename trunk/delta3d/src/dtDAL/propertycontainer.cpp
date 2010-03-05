@@ -22,6 +22,7 @@
  * David Guthrie
  */
 
+#include <prefix/dtdalprefix.h>
 #include <dtDAL/propertycontainer.h>
 #include <dtDAL/exceptionenum.h>
 #include <dtUtil/exception.h>

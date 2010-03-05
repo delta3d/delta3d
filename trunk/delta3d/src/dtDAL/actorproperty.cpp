@@ -20,6 +20,7 @@
  * Matthew W. Campbell
  */
 
+#include <prefix/dtdalprefix.h>
 #include <dtDAL/actorproperty.h>
 #include <iostream>
 
