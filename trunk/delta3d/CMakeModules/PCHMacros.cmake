@@ -1,7 +1,12 @@
-MACRO(_PCH_GET_COMPILE_FLAGS BUILD_TYPE _target _out_compile_flags)
+MACRO(_PCH_GET_COMPILE_FLAGS _target _out_compile_flags)
 
-  STRING(TOUPPER "CMAKE_CXX_FLAGS_${BUILD_TYPE}" _flags_var_name)
+  STRING(TOUPPER "CMAKE_CXX_FLAGS" _flags_var_name)
   SET(${_out_compile_flags} ${${_flags_var_name}} )
+
+  if (CMAKE_BUILD_TYPE)
+     STRING(TOUPPER "CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE}" _flags_var_name)
+     SET(${_out_compile_flags} ${${_flags_var_name}} )
+  endif (CMAKE_BUILD_TYPE)
 
   GET_TARGET_PROPERTY(_targetType ${_target} TYPE)
   IF(${_targetType} STREQUAL SHARED_LIBRARY)
@@ -23,10 +28,12 @@ MACRO(_PCH_GET_COMPILE_FLAGS BUILD_TYPE _target _out_compile_flags)
     LIST(APPEND ${_out_compile_flags} "-D${item}")
   ENDFOREACH(item)
 
-  GET_DIRECTORY_PROPERTY(DIRDEF COMPILE_DEFINITIONS_${BUILD_TYPE} )
-  FOREACH(item ${DIRDEF})
-    LIST(APPEND ${_out_compile_flags} "-D${item}")
-  ENDFOREACH(item)
+  if (CMAKE_BUILD_TYPE)
+     GET_DIRECTORY_PROPERTY(DIRDEF COMPILE_DEFINITIONS_${CMAKE_BUILD_TYPE} )
+     FOREACH(item ${DIRDEF})
+        LIST(APPEND ${_out_compile_flags} "-D${item}")
+     ENDFOREACH(item)
+  endif (CMAKE_BUILD_TYPE)
 
   GET_DIRECTORY_PROPERTY(_directory_flags DEFINITIONS)
   #MESSAGE("_directory_flags ${_directory_flags}" )
@@ -58,7 +65,7 @@ if (BUILD_WITH_PCH)
     SET(PrecompiledBinary "${CMAKE_CURRENT_BINARY_DIR}/${PrecompiledBasename}.gch")
     SET(Sources ${${SourcesVar}})
     
-    _PCH_GET_COMPILE_FLAGS(${CMAKE_BUILD_TYPE} ${Target} FLAGS)
+    _PCH_GET_COMPILE_FLAGS(${Target} FLAGS)
 
     add_custom_command(OUTPUT ${PrecompiledBinary}
                      MAIN_DEPENDENCY ${CMAKE_SOURCE_DIR}/inc/${PrecompiledSource}
