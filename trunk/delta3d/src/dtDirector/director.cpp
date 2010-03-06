@@ -157,7 +157,7 @@ namespace dtDirector
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
       fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext());
 
-      DirectorParser* parser = new DirectorParser();
+      dtCore::RefPtr<DirectorParser> parser = new DirectorParser();
       if (parser)
       {
          try
