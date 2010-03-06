@@ -19,6 +19,7 @@
  * William E. Johnson II, David Guthrie, Curtiss Murphy
  */
 
+#include <prefix/dtgameprefix.h>
 #include <dtGame/gameactorproxy.h>
 #include <dtGame/actorcomponent.h>
 #include <dtGame/actorupdatemessage.h>
@@ -26,6 +27,7 @@
 #include <dtGame/exceptionenum.h>
 #include <dtGame/gameactor.h>
 #include <dtGame/gamemanager.h>
+#include <dtGame/messagefactory.h>
 #include <dtGame/shaderactorcomponent.h>
 
 #include <dtGame/invokable.h>

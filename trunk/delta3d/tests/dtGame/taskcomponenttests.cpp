@@ -28,10 +28,12 @@
 #include <prefix/unittestprefix.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtDAL/actortype.h>
+#include <dtGame/gameactorproxy.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/taskcomponent.h>
 #include <dtGame/defaultmessageprocessor.h>
 #include <dtGame/basemessages.h>
+#include <dtGame/messagefactory.h>
 #include <dtCore/system.h>
 #include <dtCore/scene.h>
 #include <dtABC/application.h>

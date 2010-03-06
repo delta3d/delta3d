@@ -29,6 +29,11 @@
 #include <string>
 #include <map>
 
+namespace dtUtil
+{
+   class Log;
+}
+
 // this is purposely not exported, should only be used by the GM
 namespace dtGame
 {
@@ -81,7 +86,9 @@ namespace dtGame
          void DebugStatisticsTurnOff(const GameManager& ourGm, bool logLastTime = false, bool clearList = false);
 
          /// print out the information from member vars
-         void DebugStatisticsPrintOut(const float gmPercentTime, const GameManager& ourGm);
+         void DebugStatisticsPrintOut(const float gmPercentTime, 
+                                      const GameManager& ourGm,
+                                      dtUtil::Log* logger=NULL);
 
          /**
           * Internal timer statistics calculation.  Computes what percent the partial time

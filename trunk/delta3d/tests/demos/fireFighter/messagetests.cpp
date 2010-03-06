@@ -35,6 +35,7 @@
 #include <dtGame/gamemanager.h>
 #include <dtGame/gmcomponent.h>
 #include <dtGame/defaultmessageprocessor.h>
+#include <dtGame/messagefactory.h>
 #include <fireFighter/messages.h>
 #include <fireFighter/messagetype.h>
 #include <fireFighter/gamestate.h>

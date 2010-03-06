@@ -37,11 +37,13 @@
 #include <dtCore/camera.h>
 #include <dtCore/system.h>
 #include <dtGame/gamemanager.h>
+#include <dtGame/gameactorproxy.h>
 #include <dtGame/actorupdatemessage.h>
 #include <dtGame/logcontroller.h>
 #include <dtGame/serverloggercomponent.h>
 #include <dtGame/basemessages.h>
 #include <dtGame/logtag.h>
+#include <dtGame/messagefactory.h>
 #include <dtLMS/lmscomponent.h>
 #include <dtDAL/gameevent.h>
 

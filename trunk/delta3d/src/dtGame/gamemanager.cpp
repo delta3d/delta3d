@@ -26,13 +26,19 @@
 #include <dtGame/gamemanager.h>
 #include <dtGame/gamemanager.inl>
 
-#include <dtGame/messagefactory.h>
 #include <dtGame/basemessages.h>
 #include <dtGame/actorupdatemessage.h>
+#include <dtGame/environmentactor.h>
 #include <dtGame/exceptionenum.h>
+#include <dtGame/gameactor.h>
+
 #include <dtGame/gmcomponent.h>
 #include <dtGame/invokable.h>
+#include <dtGame/machineinfo.h>
 #include <dtGame/mapchangestatedata.h>
+#include <dtGame/messagefactory.h>
+#include <dtGame/message.h>
+
 #include <dtGame/gmstatistics.h>
 
 #include <dtDAL/actortype.h>
@@ -41,11 +47,13 @@
 #include <dtDAL/librarymanager.h>
 
 #include <dtCore/system.h>
-#include <dtCore/camera.h>
 #include <dtCore/scene.h>
 
 #include <dtUtil/stringutils.h>
 #include <dtUtil/log.h>
+
+#include <list>
+#include <queue>
 
 namespace dtGame
 {
@@ -73,50 +81,252 @@ namespace dtGame
    const GameManager::ComponentPriority GameManager::ComponentPriority::LOWEST("LOWEST", 5);
 
 
+
    /// A wrapper for data like stats to prevent includes wherever gamemanager.h is used - uses the pimple pattern (like system)
    class GMImpl
    {
    public:
-      GMImpl()
+
+      GMImpl(dtCore::Scene& scene)
+         : mGMStatistics()
+         , mMachineInfo(new MachineInfo())
+         , mEnvironment(NULL)
+         //, mSendCreatesAndDeletes(true)
+         //, mAddActorsToScene(true)
+         , mFactory("GameManager MessageFactory", *mMachineInfo, "")
+         , mScene(&scene)
+         , mLibMgr(&dtDAL::LibraryManager::GetInstance())
+         , mApplication(NULL)
+         , mRemoveGameEventsOnMapChange(true)
+         , mLogger(&dtUtil::Log::GetInstance("gamemanager.cpp"))
       {
       }
+      
       ~GMImpl()
       {
       }
 
+      struct TimerInfo
+      {
+         std::string name;
+         dtCore::UniqueId aboutActor;
+         dtCore::Timer_t time;
+         bool repeat;
+         dtCore::Timer_t interval;
+
+         bool operator < (const TimerInfo& rhs) const
+         {
+            if (time == rhs.time)
+            {
+               return this <& rhs;
+            }
+            return time < rhs.time;
+         }
+      };
+
+      /// Does the work of ClearTimer for each of the timer info sets.
+      void ClearTimerSingleSet(std::set<TimerInfo>& timerSet,
+                               const std::string& name, const GameActorProxy* proxy);
+
+      /**
+       * Helper method to process the timers. This is called from PreFrame
+       * @param listToProcess The timer list to process
+       * @param clockTime The time to use
+       * @note The clock time should correspond to the list to be processed
+       */
+      void ProcessTimers(GameManager& gm, std::set<TimerInfo>& listToProcess, dtCore::Timer_t clockTime);
+
+      /**
+       * Removes the proxy from the scene
+       * @param proxy the proxy to remove from the scene.
+       */
+      void RemoveActorFromScene(GameManager& gm, dtDAL::ActorProxy& proxy);
+
+      /**
+       * Private helper method to send an environment changed message
+       * @param envActor The about actor of the message
+       */
+      void SendEnvironmentChangedMessage(GameManager& gm, IEnvGameActorProxy* envActor);
+
+
       /// stats for the work of the GM - in a class so its less obtrusive to the gm
       GMStatistics mGMStatistics;
+      dtCore::RefPtr<MachineInfo> mMachineInfo;
+      dtCore::RefPtr<IEnvGameActorProxy>  mEnvironment;
+      GameManager::GameActorMap mGameActorProxyMap;
+      GameManager::GameActorMap mPrototypeActors;
+      GameManager::ActorMap  mActorProxyMap;
+      std::vector<dtCore::RefPtr<GameActorProxy> > mDeleteList;
+
+      // These are used during changing the map so that
+      // the map code can modify game manager with some control.
+      //bool mSendCreatesAndDeletes;
+      //bool mAddActorsToScene;
+      std::set<TimerInfo> mSimulationTimers, mRealTimeTimers;
+      MessageFactory mFactory;
+
+      typedef std::pair<dtCore::RefPtr<GameActorProxy>, std::string> ProxyInvokablePair;
+      typedef std::multimap<const MessageType*, ProxyInvokablePair > GlobalMessageListenerMap;
+      GlobalMessageListenerMap mGlobalMessageListeners;
+
+      typedef std::multimap<dtCore::UniqueId, ProxyInvokablePair > ProxyInvokableMap;
+      typedef std::map<const MessageType*,  ProxyInvokableMap> ActorMessageListenerMap;
+      ActorMessageListenerMap mActorMessageListeners;
+
+      typedef std::list<dtCore::RefPtr<GMComponent> > GMComponentContainer;
+      GMComponentContainer mComponentList;
+
+      std::queue<dtCore::RefPtr<const Message> > mSendNetworkMessageQueue;
+      std::queue<dtCore::RefPtr<const Message> > mSendMessageQueue;
+
+      dtCore::RefPtr<dtCore::Scene> mScene;
+      dtCore::RefPtr<dtDAL::LibraryManager> mLibMgr;
+      GameManager::NameVector mLoadedMaps;
+      dtCore::RefPtr<MapChangeStateData> mMapChangeStateData;
+
+      /// application the gm has. the one and only.
+      dtABC::Application* mApplication;
+      bool mRemoveGameEventsOnMapChange;
+
+      dtUtil::Log* mLogger;
    };
 
+   //////////////////////////////////////////////////////////////////////////
+   void dtGame::GMImpl::ClearTimerSingleSet(std::set<TimerInfo> &timerSet, 
+                                       const std::string &name,
+                                       const dtGame::GameActorProxy *proxy)
+   {
+      std::set<TimerInfo>::iterator i = timerSet.begin();
+      while (i != timerSet.end())
+      {
+         std::set<TimerInfo>::iterator toDelete;
+         const TimerInfo& timer = *i;
+         if (timer.name == name &&  (proxy == NULL || timer.aboutActor == proxy->GetId()))
+         {
+            toDelete = i;
+            ++i;
+            timerSet.erase(toDelete);
+         }
+         else
+         {
+            ++i;
+         }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void GMImpl::ProcessTimers(GameManager& gm, std::set<TimerInfo>& listToProcess, dtCore::Timer_t clockTime)
+   {
+      std::set<TimerInfo>::iterator itor;
+      std::set<TimerInfo> repeatingTimers;
+      for (itor=listToProcess.begin(); itor!=listToProcess.end();)
+      {
+         if (itor->time <= clockTime)
+         {
+            dtCore::RefPtr<TimerElapsedMessage> timerMsg =
+               static_cast<TimerElapsedMessage*>(mFactory.CreateMessage(MessageType::INFO_TIMER_ELAPSED).get());
+
+            timerMsg->SetTimerName(itor->name);
+            float lateTime = float((clockTime - itor->time));
+            // convert from microseconds to seconds
+            lateTime /= 1e6;
+            timerMsg->SetLateTime(lateTime);
+            timerMsg->SetAboutActorId(itor->aboutActor);
+            gm.SendMessage(*timerMsg.get());
+            if (itor->repeat)
+            {
+               TimerInfo tInfo = *itor;
+               tInfo.time += tInfo.interval;
+               repeatingTimers.insert(tInfo);
+            }
+
+            std::set<TimerInfo>::iterator toDelete = itor;
+            ++itor;
+            listToProcess.erase(toDelete);
+         }
+         else
+         {
+            break;
+         }
+      }
+
+      // Repeating timers have to be readded so they are processed again later
+      listToProcess.insert(repeatingTimers.begin(), repeatingTimers.end());
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void GMImpl::RemoveActorFromScene(GameManager& gm, dtDAL::ActorProxy& proxy)
+   {
+      dtCore::DeltaDrawable& dd = *proxy.GetActor();
+
+      if (dd.GetSceneParent() != mScene.get())
+      {
+         return;
+      }
+
+      // find all of the children that have actor proxies associated with them to move them up
+      // one level in the scene.
+      std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > childrenToMove;
+      for (unsigned i = 0; i < dd.GetNumChildren(); ++i)
+      {
+         dtCore::DeltaDrawable& child = *dd.GetChild(i);
+         dtDAL::ActorProxy* childProxy = gm.FindActorById(child.GetUniqueId());
+         if (childProxy != NULL)
+         {
+            childrenToMove.push_back(childProxy);
+         }
+      }
+
+      if (dd.GetParent() == NULL)
+      {
+         // remove the proxy drawable
+         mScene->RemoveDrawable(&dd);
+
+         // put all the children in the base scene.
+         for (size_t i = 0; i < childrenToMove.size(); ++i)
+         {
+            mScene->AddDrawable(childrenToMove[i]->GetActor());
+         }
+      }
+      else
+      {
+         // add all the children to the parent drawable.
+         for (size_t i = 0; i < childrenToMove.size(); ++i)
+         {
+            dtCore::DeltaDrawable* child = childrenToMove[i]->GetActor();
+            child->Emancipate();
+            dd.GetParent()->AddChild(child);
+         }
+         // remove the proxy drawable from the parent.
+         dd.Emancipate();
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void GMImpl::SendEnvironmentChangedMessage(GameManager& gm, IEnvGameActorProxy* envActor)
+   {
+      dtCore::RefPtr<Message> msg = mFactory.CreateMessage(MessageType::INFO_ENVIRONMENT_CHANGED);
+      msg->SetAboutActorId(mEnvironment.valid() ? envActor->GetActor()->GetUniqueId() : dtCore::UniqueId(""));
+      msg->SetSource(*mMachineInfo);
+      gm.SendMessage(*msg);
+   }
 
    ///////////////////////////////////////////////////////////////////////////////
    GameManager::GameManager(dtCore::Scene& scene)
-      : mMachineInfo(new MachineInfo())
-      , mSendCreatesAndDeletes(true)
-      , mAddActorsToScene(true)
-      , mScene(&scene)
-      , mFactory("GameManager MessageFactory", *mMachineInfo, "")
-      , mApplication(NULL)
-      , mRemoveGameEventsOnMapChange(true)
+      : mGMImpl(new GMImpl(scene))
    {
-      mLibMgr = &dtDAL::LibraryManager::GetInstance();
-      mLogger = &dtUtil::Log::GetInstance("gamemanager.cpp");
       AddSender(&dtCore::System::GetInstance());
 
-      mMapChangeStateData = new MapChangeStateData(*this);
+      mGMImpl->mMapChangeStateData = new MapChangeStateData(*this);
 
       // when we come alive, the first message everyone gets will be INFO_RESTARTED
       dtCore::RefPtr<Message> restartMessage =
          GetMessageFactory().CreateMessage(MessageType::INFO_RESTARTED);
       SendMessage(*restartMessage);
-
-      mGMImpl = new GMImpl();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    GameManager::GameManager(const GameManager&)
-      : mMachineInfo(new MachineInfo())
-      , mFactory("GameManager MessageFactory", *mMachineInfo, "")
    {
       // THIS IS PRIVATE AND PREVENTS USE OF COPY CONSTRUCTOR. DO NOT PUT ANYTHING HERE
    }
@@ -135,49 +345,49 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::LoadActorRegistry(const std::string& libName)
    {
-      mLibMgr->LoadActorRegistry(libName);
+      mGMImpl->mLibMgr->LoadActorRegistry(libName);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::UnloadActorRegistry(const std::string& libName)
    {
-      mLibMgr->UnloadActorRegistry(libName);
+      mGMImpl->mLibMgr->UnloadActorRegistry(libName);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::GetActorTypes(std::vector<const dtDAL::ActorType*>& actorTypes)
    {
-      mLibMgr->GetActorTypes(actorTypes);
+      mGMImpl->mLibMgr->GetActorTypes(actorTypes);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    const dtDAL::ActorType* GameManager::FindActorType(const std::string& category, const std::string& name)
    {
-      return mLibMgr->FindActorType(category, name);
+      return mGMImpl->mLibMgr->FindActorType(category, name);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    dtDAL::ActorPluginRegistry* GameManager::GetRegistry(const std::string& name)
    {
-      return mLibMgr->GetRegistry(name);
+      return mGMImpl->mLibMgr->GetRegistry(name);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    dtDAL::ActorPluginRegistry* GameManager::GetRegistryForType(dtDAL::ActorType& actorType)
    {
-      return mLibMgr->GetRegistryForType(actorType);
+      return mGMImpl->mLibMgr->GetRegistryForType(actorType);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    std::string GameManager::GetPlatformSpecificLibraryName(const std::string& libBase)
    {
-      return mLibMgr->GetPlatformSpecificLibraryName(libBase);
+      return mGMImpl->mLibMgr->GetPlatformSpecificLibraryName(libBase);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    std::string GameManager::GetPlatformIndependentLibraryName(const std::string& libName)
    {
-      return mLibMgr->GetPlatformIndependentLibraryName(libName);
+      return mGMImpl->mLibMgr->GetPlatformIndependentLibraryName(libName);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -195,33 +405,33 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    dtABC::Application& GameManager::GetApplication()
    {
-      if (mApplication == NULL)
+      if (mGMImpl->mApplication == NULL)
       {
          throw dtGame::GeneralGameManagerException(
          "No Application was ever assigned to the GameManager.", __FILE__, __LINE__);
       }
 
-      return *mApplication;
+      return *mGMImpl->mApplication;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    const dtABC::Application& GameManager::GetApplication() const
    {
-      if (mApplication == NULL)
+      if (mGMImpl->mApplication == NULL)
       {
          throw dtGame::GeneralGameManagerException(
          "No Application was ever assigned to the GameManager.", __FILE__, __LINE__);
       }
 
-      return *mApplication;
+      return *mGMImpl->mApplication;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::SetApplication(dtABC::Application& application)
    {
-      mApplication = &application;
+      mGMImpl->mApplication = &application;
       std::string value;
-      value = mApplication->GetConfigPropertyValue(CONFIG_STATISTICS_INTERVAL, "0");
+      value = mGMImpl->mApplication->GetConfigPropertyValue(CONFIG_STATISTICS_INTERVAL, "0");
       int interval = dtUtil::ToType<int>(value);
       if (interval <= 0)
       {
@@ -229,9 +439,9 @@ namespace dtGame
       }
       else
       {
-         value = mApplication->GetConfigPropertyValue(CONFIG_STATISTICS_TO_CONSOLE, "true");
+         value = mGMImpl->mApplication->GetConfigPropertyValue(CONFIG_STATISTICS_TO_CONSOLE, "true");
          bool toConsole = dtUtil::ToType<bool>(value);
-         value = mApplication->GetConfigPropertyValue(CONFIG_STATISTICS_OUTPUT_FILE, "");
+         value = mGMImpl->mApplication->GetConfigPropertyValue(CONFIG_STATISTICS_OUTPUT_FILE, "");
          if (value.empty())
          {
             DebugStatisticsTurnOn(true, true, interval, toConsole);
@@ -247,34 +457,34 @@ namespace dtGame
    const std::string& GameManager::GetCurrentMap() const
    {
       static std::string emptyString;
-      if (mLoadedMaps.empty())
+      if (mGMImpl->mLoadedMaps.empty())
       {
          return emptyString;
       }
-      return mLoadedMaps[0];
+      return mGMImpl->mLoadedMaps[0];
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    const GameManager::NameVector& GameManager::GetCurrentMapSet() const
    {
-      return mLoadedMaps;
+      return mGMImpl->mLoadedMaps;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtCore::Scene& GameManager::GetScene() { return *mScene; }
+   dtCore::Scene& GameManager::GetScene() { return *mGMImpl->mScene; }
 
    ///////////////////////////////////////////////////////////////////////////////
-   const dtCore::Scene& GameManager::GetScene() const { return *mScene; }
+   const dtCore::Scene& GameManager::GetScene() const { return *mGMImpl->mScene; }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::SetScene(dtCore::Scene& newScene) { mScene = &newScene; }
+   void GameManager::SetScene(dtCore::Scene& newScene) { mGMImpl->mScene = &newScene; }
 
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::OnMessage(MessageData* data)
    {
-      if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+      if (mGMImpl->mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
-         mLogger->LogMessage(__FUNCTION__, __LINE__,
+         mGMImpl->mLogger->LogMessage(__FUNCTION__, __LINE__,
                   "GM Starting delta message \"" + data->message + "\"",
                   dtUtil::Log::LOG_DEBUG);
       }
@@ -313,9 +523,9 @@ namespace dtGame
          PreFrame(0.0, *timeChange);
       }
 
-      if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+      if (mGMImpl->mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
-         mLogger->LogMessage(__FUNCTION__, __LINE__,
+         mGMImpl->mLogger->LogMessage(__FUNCTION__, __LINE__,
                   "GM Finishing delta message \"" + data->message + "\"",
                   dtUtil::Log::LOG_DEBUG);
       }
@@ -324,13 +534,13 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::SendNetworkMessage(const Message& message)
    {
-      mSendNetworkMessageQueue.push(dtCore::RefPtr<const Message>(&message));
+      mGMImpl->mSendNetworkMessageQueue.push(dtCore::RefPtr<const Message>(&message));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::SendMessage(const Message& message)
    {
-      mSendMessageQueue.push(dtCore::RefPtr<const Message>(&message));
+      mGMImpl->mSendMessageQueue.push(dtCore::RefPtr<const Message>(&message));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -438,12 +648,12 @@ namespace dtGame
 
       DoSendNetworkMessages();
 
-      if (mMapChangeStateData.valid())
+      if (mGMImpl->mMapChangeStateData.valid())
       {
-         mMapChangeStateData->ContinueMapChange();
-         if (mMapChangeStateData->GetCurrentState() == MapChangeStateData::MapChangeState::IDLE)
+         mGMImpl->mMapChangeStateData->ContinueMapChange();
+         if (mGMImpl->mMapChangeStateData->GetCurrentState() == MapChangeStateData::MapChangeState::IDLE)
          {
-            mLoadedMaps = mMapChangeStateData->GetNewMapNames();
+            mGMImpl->mLoadedMaps = mGMImpl->mMapChangeStateData->GetNewMapNames();
          }
       }
 
@@ -460,8 +670,8 @@ namespace dtGame
       SendMessage(*tick);
       SendMessage(*tickRemote);
 
-      ProcessTimers(mRealTimeTimers, GetRealClockTime());
-      ProcessTimers(mSimulationTimers, dtCore::Timer_t(GetSimTimeSinceStartup() * 1000000.0));
+      mGMImpl->ProcessTimers(*this, mGMImpl->mRealTimeTimers, GetRealClockTime());
+      mGMImpl->ProcessTimers(*this, mGMImpl->mSimulationTimers, dtCore::Timer_t(GetSimTimeSinceStartup() * 1000000.0));
 
       DoSendMessages();
 
@@ -482,48 +692,48 @@ namespace dtGame
       // DELETE ACTORS
       // IT IS CRUCIAL TO NOT SAVE OFF THE SIZE OR CHANGE THIS TO AN ITERATOR
       // BECAUSE ACTORS CAN DELETE OTHER ACTORS IN THE ON REMOVED FROM WORLD
-      for (unsigned int i = 0; i < mDeleteList.size(); ++i)
+      for (unsigned int i = 0; i < mGMImpl->mDeleteList.size(); ++i)
       {
-         GameActorProxy& gameActorProxy = *mDeleteList[i];
+         GameActorProxy& gameActorProxy = *mGMImpl->mDeleteList[i];
 
          // Notify the Game Actor that it was removed from the world.
          // It could listen for the ACTOR_DELETE_MESSAGE instead.
          gameActorProxy.InvokeRemovedFromWorld();
 
-         GameActorMap::iterator itor = mGameActorProxyMap.find(gameActorProxy.GetId());
+         GameActorMap::iterator itor = mGMImpl->mGameActorProxyMap.find(gameActorProxy.GetId());
 
          dtCore::UniqueId id;
-         if (itor != mGameActorProxyMap.end())
+         if (itor != mGMImpl->mGameActorProxyMap.end())
          {
             id = itor->first;
             UnregisterAllMessageListenersForActor(*itor->second);
-            mGameActorProxyMap.erase(itor);
-            RemoveActorFromScene(gameActorProxy);
+            mGMImpl->mGameActorProxyMap.erase(itor);
+            mGMImpl->RemoveActorFromScene(*this, gameActorProxy);
          }
 
          gameActorProxy.SetGameManager(NULL);
       }
 
-      mDeleteList.clear();
+      mGMImpl->mDeleteList.clear();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::DoSendNetworkMessages()
    {
       // SEND MESSAGES - Forward Send Messages to all components (no actors)
-      while (!mSendNetworkMessageQueue.empty())
+      while (!mGMImpl->mSendNetworkMessageQueue.empty())
       {
          mGMImpl->mGMStatistics.mStatsNumSendNetworkMessages += 1;
 
-         if (!mSendNetworkMessageQueue.front().valid())
+         if (!mGMImpl->mSendNetworkMessageQueue.front().valid())
          {
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+            mGMImpl->mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                "Message in send to network queue is NULL.  Something is majorly wrong with the GameManager.");
             continue;
          }
 
-         DoSendMessageToComponents(*mSendNetworkMessageQueue.front(), true);
-         mSendNetworkMessageQueue.pop();
+         DoSendMessageToComponents(*mGMImpl->mSendNetworkMessageQueue.front(), true);
+         mGMImpl->mSendNetworkMessageQueue.pop();
       }
    }
 
@@ -536,13 +746,13 @@ namespace dtGame
       bool isATickLocalMessage = (message.GetMessageType() == MessageType::TICK_LOCAL);
 
       // Components get messages first
-      GMComponentContainer::iterator compItr = mComponentList.begin();
-      while (compItr != mComponentList.end())
+      GMImpl::GMComponentContainer::iterator compItr = mGMImpl->mComponentList.begin();
+      while (compItr != mGMImpl->mComponentList.end())
       {
          if (compItr->valid() == false) //set from a previous call to RemoveComponent()
          {
             //Erase this value from the container and move on. Iterator gets pointed to next in container.
-            compItr = mComponentList.erase(compItr);
+            compItr = mGMImpl->mComponentList.erase(compItr);
             continue;
          }
 
@@ -555,9 +765,9 @@ namespace dtGame
          //RefPtr in case it get deleted during a Message. We need to hang onto it for a bit.
          dtCore::RefPtr<GMComponent>& component = *compItr; 
 
-         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         if (mGMImpl->mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
          {
-            mLogger->LogMessage(__FUNCTION__, __LINE__,
+            mGMImpl->mLogger->LogMessage(__FUNCTION__, __LINE__,
                "Sending Message Type \"" + message.GetMessageType().GetName() + "\" to GMComponent \"" +
                component->GetName() + "\"",
                dtUtil::Log::LOG_DEBUG);
@@ -576,7 +786,7 @@ namespace dtGame
          }
          catch (const dtUtil::Exception& ex)
          {
-            ex.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
+            ex.LogException(dtUtil::Log::LOG_ERROR, *mGMImpl->mLogger);
          }
 
          // Statistics information
@@ -620,17 +830,17 @@ namespace dtGame
    void GameManager::DoSendMessages()
    {
       // PROCESS MESSAGES - Send all Process messages to components and interested actors
-      while (!mSendMessageQueue.empty())
+      while (!mGMImpl->mSendMessageQueue.empty())
       {
          mGMImpl->mGMStatistics.mStatsNumProcMessages += 1;
 
          // Forward to Components first
-         dtCore::RefPtr<const Message> messageRef = mSendMessageQueue.front();
-         mSendMessageQueue.pop();
+         dtCore::RefPtr<const Message> messageRef = mGMImpl->mSendMessageQueue.front();
+         mGMImpl->mSendMessageQueue.pop();
 
          if (!messageRef.valid())
          {
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+            mGMImpl->mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                "Message in send queue is NULL.  Something is majorly wrong with the GameManager.");
             continue;
          }
@@ -651,14 +861,14 @@ namespace dtGame
       // GLOBAL INVOKABLES - Process it on globally registered invokables
 
       //find all matches of MessageType
-      typedef std::pair<GlobalMessageListenerMap::iterator, GlobalMessageListenerMap::iterator> IterPair;
-      IterPair msgTypeMatches = mGlobalMessageListeners.equal_range(&message.GetMessageType());
+      typedef std::pair<GMImpl::GlobalMessageListenerMap::iterator, GMImpl::GlobalMessageListenerMap::iterator> IterPair;
+      IterPair msgTypeMatches = mGMImpl->mGlobalMessageListeners.equal_range(&message.GetMessageType());
 
-      GlobalMessageListenerMap::iterator itor = msgTypeMatches.first;
+      GMImpl::GlobalMessageListenerMap::iterator itor = msgTypeMatches.first;
 
       while (itor != msgTypeMatches.second)
       {
-         ProxyInvokablePair& listener = itor->second;
+         GMImpl::ProxyInvokablePair& listener = itor->second;
 
          // hold onto the actor in a refptr so that the stats code
          // won't crash if the actor unregisters for the message.
@@ -668,7 +878,7 @@ namespace dtGame
          {
             //Erase this value from the container and move on.
             //Note the postfix operator to increment to the next item
-            mGlobalMessageListeners.erase(itor++);
+            mGMImpl->mGlobalMessageListeners.erase(itor++);
             continue;
          }
 
@@ -692,9 +902,9 @@ namespace dtGame
 
             try
             {
-               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+               if (mGMImpl->mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                {
-                  mLogger->LogMessage(__FUNCTION__, __LINE__,
+                  mGMImpl->mLogger->LogMessage(__FUNCTION__, __LINE__,
                            "Sending Message Type \"" + message.GetMessageType().GetName() + "\" to Actor \"" +
                            listenerActorProxy->GetName() + "\" of Type \"" + listenerActorProxy->GetActorType().GetFullName()
                            + "\"",
@@ -704,7 +914,7 @@ namespace dtGame
             }
             catch (const dtUtil::Exception& ex)
             {
-               ex.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
+               ex.LogException(dtUtil::Log::LOG_ERROR, *mGMImpl->mLogger);
             }
 
             // Statistics information
@@ -724,9 +934,9 @@ namespace dtGame
          {
             if (listenerActorProxy->IsInGM())
             {
-               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_WARNING))
+               if (mGMImpl->mLogger->IsLevelEnabled(dtUtil::Log::LOG_WARNING))
                {
-                  mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                  mGMImpl->mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
                                       "Invokable named %s is registered as a listener, but "
                                       "Proxy %s does not have an invokable by that name.",
                                       listener.second.c_str(),
@@ -735,9 +945,9 @@ namespace dtGame
             }
             else
             {
-               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+               if (mGMImpl->mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                {
-                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                  mGMImpl->mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                                       "Invokable named %s is registered as a listener, "
                                       "but Proxy %s is no longer in the GM and is probably "
                                       "being deleted.",
@@ -774,9 +984,9 @@ namespace dtGame
 
          try
          {
-            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            if (mGMImpl->mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
             {
-                mLogger->LogMessage(__FUNCTION__, __LINE__,
+                mGMImpl->mLogger->LogMessage(__FUNCTION__, __LINE__,
                          "Sending Message Type \"" + message.GetMessageType().GetName() + "\" to Actor \"" +
                          aboutActor.GetName() + "\" of Type \"" + aboutActor.GetActorType().GetFullName()
                          + "\"",
@@ -786,7 +996,7 @@ namespace dtGame
          }
          catch (const dtUtil::Exception& ex)
          {
-            ex.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
+            ex.LogException(dtUtil::Log::LOG_ERROR, *mGMImpl->mLogger);
          }
 
          // Statistics information
@@ -840,9 +1050,9 @@ namespace dtGame
 
             try
             {
-               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+               if (mGMImpl->mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                {
-                   mLogger->LogMessage(__FUNCTION__, __LINE__,
+                   mGMImpl->mLogger->LogMessage(__FUNCTION__, __LINE__,
                             "Sending Message Type \"" + message.GetMessageType().GetName() + "\" to Actor \"" +
                             currentProxy.GetName() + "\" of Type \"" + currentProxy.GetActorType().GetFullName()
                             + "\"",
@@ -852,7 +1062,7 @@ namespace dtGame
             }
             catch (const dtUtil::Exception& ex)
             {
-               ex.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
+               ex.LogException(dtUtil::Log::LOG_ERROR, *mGMImpl->mLogger);
             }
 
             if (logActors)
@@ -866,18 +1076,18 @@ namespace dtGame
          }
          else if (currentProxy.IsInGM())
          {
-            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_WARNING))
+            if (mGMImpl->mLogger->IsLevelEnabled(dtUtil::Log::LOG_WARNING))
             {
-               mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+               mGMImpl->mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
                                    "Invokable named %s is registered as a listener, but Proxy %s does not have an invokable by that name.",
                                    listener.second.c_str(), currentProxy.GetActorType().GetName().c_str());
             }
          }
          else
          {
-            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            if (mGMImpl->mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
             {
-               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+               mGMImpl->mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                                    "Invokable named %s is registered as a listener, but Proxy %s is no longer in the GM and is probably being deleted.",
                                    listener.second.c_str(), currentProxy.GetActorType().GetName().c_str());
             }
@@ -929,10 +1139,10 @@ namespace dtGame
       component.SetGameManager(this);
       component.SetComponentPriority(priority);
 
-      mComponentList.push_back(dtCore::RefPtr<GMComponent>(&component)); //vector, list 
+      mGMImpl->mComponentList.push_back(dtCore::RefPtr<GMComponent>(&component)); //vector, list 
 
       // we sort the items by priority so that components of higher priority get messages first.
-      mComponentList.sort(CompareComponentPriority);
+      mGMImpl->mComponentList.sort(CompareComponentPriority);
 
       // notify the component that it was added to the GM
       component.OnAddedToGM();
@@ -941,10 +1151,10 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::RemoveComponent(GMComponent& component)
    {
-      GMComponentContainer::iterator found = 
-         std::find(mComponentList.begin(), mComponentList.end(), &component);
+      GMImpl::GMComponentContainer::iterator found = 
+         std::find(mGMImpl->mComponentList.begin(), mGMImpl->mComponentList.end(), &component);
       
-      if (found != mComponentList.end())
+      if (found != mGMImpl->mComponentList.end())
       {
          (*found)->OnRemovedFromGM();
          (*found)->SetGameManager(NULL);
@@ -956,11 +1166,11 @@ namespace dtGame
    void GameManager::GetAllComponents(std::vector<GMComponent*>& toFill)
    {
       toFill.clear();
-      toFill.reserve(mComponentList.size());
+      toFill.reserve(mGMImpl->mComponentList.size());
 
-      GMComponentContainer::iterator compItr = mComponentList.begin();
+      GMImpl::GMComponentContainer::iterator compItr = mGMImpl->mComponentList.begin();
 
-      while (compItr != mComponentList.end())
+      while (compItr != mGMImpl->mComponentList.end())
       {
          if (compItr->valid())
          {
@@ -974,11 +1184,11 @@ namespace dtGame
    void GameManager::GetAllComponents(std::vector<const GMComponent*>& toFill) const
    {
       toFill.clear();
-      toFill.reserve(mComponentList.size());
+      toFill.reserve(mGMImpl->mComponentList.size());
 
-      GMComponentContainer::const_iterator compItr = mComponentList.begin();
+      GMImpl::GMComponentContainer::const_iterator compItr = mGMImpl->mComponentList.begin();
 
-      while (compItr != mComponentList.end())
+      while (compItr != mGMImpl->mComponentList.end())
       {
          if (compItr->valid())
          {
@@ -1007,10 +1217,10 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    GMComponent* GameManager::GetComponentByName(const std::string& name)
    {
-      GMComponentContainer::iterator found = std::find_if(mComponentList.begin(),
-                                                          mComponentList.end(),
+      GMImpl::GMComponentContainer::iterator found = std::find_if(mGMImpl->mComponentList.begin(),
+                                                          mGMImpl->mComponentList.end(),
                                                           ComponentNameFind(name));
-      if (found != mComponentList.end())
+      if (found != mGMImpl->mComponentList.end())
       {
          return *found;
       }
@@ -1023,10 +1233,10 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    const GMComponent* GameManager::GetComponentByName(const std::string& name) const
    {
-      GMComponentContainer::const_iterator found = std::find_if(mComponentList.begin(),
-                                                                mComponentList.end(),
+      GMImpl::GMComponentContainer::const_iterator found = std::find_if(mGMImpl->mComponentList.begin(),
+                                                                mGMImpl->mComponentList.end(),
                                                                 ComponentNameFind(name));
-      if (found != mComponentList.end()) 
+      if (found != mGMImpl->mComponentList.end()) 
       {
          return *found;
       }
@@ -1080,7 +1290,7 @@ namespace dtGame
       }
       catch (const dtUtil::Exception& ex)
       {
-         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Error creating actor: %s", ex.What().c_str());
+         mGMImpl->mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Error creating actor: %s", ex.What().c_str());
          throw ex;
       }
    }
@@ -1107,29 +1317,29 @@ namespace dtGame
             "Actors may not be added the GM with an empty unique id", __FILE__, __LINE__);
       }
 
-      if (mEnvironment.valid())
+      if (mGMImpl->mEnvironment.valid())
       {
-         if (mEnvironment.get() != &actorProxy)
+         if (mGMImpl->mEnvironment.get() != &actorProxy)
          {
-            IEnvGameActor* ea = dynamic_cast<IEnvGameActor*>(mEnvironment->GetActor());
+            IEnvGameActor* ea = dynamic_cast<IEnvGameActor*>(mGMImpl->mEnvironment->GetActor());
             if (ea == NULL)
             {
                LOG_ERROR("An environment actor proxy has an invalid actor");
                return;
             }
             ea->AddActor(*actorProxy.GetActor());
-            mActorProxyMap.insert(std::make_pair(actorProxy.GetId(), &actorProxy));
+            mGMImpl->mActorProxyMap.insert(std::make_pair(actorProxy.GetId(), &actorProxy));
          }
          else
          {
-            mActorProxyMap.insert(std::make_pair(mEnvironment->GetId(), mEnvironment.get()));
-            SendEnvironmentChangedMessage(mEnvironment.get());
+            mGMImpl->mActorProxyMap.insert(std::make_pair(mGMImpl->mEnvironment->GetId(), mGMImpl->mEnvironment.get()));
+            mGMImpl->SendEnvironmentChangedMessage(*this, mGMImpl->mEnvironment.get());
          }
       }
       else
       {
-         mActorProxyMap.insert(std::make_pair(actorProxy.GetId(), &actorProxy));
-         mScene->AddDrawable(actorProxy.GetActor());
+         mGMImpl->mActorProxyMap.insert(std::make_pair(actorProxy.GetId(), &actorProxy));
+         mGMImpl->mScene->AddDrawable(actorProxy.GetActor());
       }
    }
 
@@ -1152,32 +1362,32 @@ namespace dtGame
       gameActorProxy.SetGameManager(this);
       gameActorProxy.SetRemote(isRemote);
 
-      if (mEnvironment.valid())
+      if (mGMImpl->mEnvironment.valid())
       {
-         if (mEnvironment.get() != &gameActorProxy)
+         if (mGMImpl->mEnvironment.get() != &gameActorProxy)
          {
-            IEnvGameActor* ea = static_cast<IEnvGameActor*>(mEnvironment->GetActor());
+            IEnvGameActor* ea = static_cast<IEnvGameActor*>(mGMImpl->mEnvironment->GetActor());
             ea->AddActor(*gameActorProxy.GetActor());
-            mGameActorProxyMap.insert(std::make_pair(gameActorProxy.GetId(), &gameActorProxy));
+            mGMImpl->mGameActorProxyMap.insert(std::make_pair(gameActorProxy.GetId(), &gameActorProxy));
          }
          else
          {
-            mGameActorProxyMap.insert(std::make_pair(mEnvironment->GetId(), mEnvironment.get()));
-            mScene->AddDrawable(mEnvironment->GetActor());
-            SendEnvironmentChangedMessage(mEnvironment.get());
+            mGMImpl->mGameActorProxyMap.insert(std::make_pair(mGMImpl->mEnvironment->GetId(), mGMImpl->mEnvironment.get()));
+            mGMImpl->mScene->AddDrawable(mGMImpl->mEnvironment->GetActor());
+            mGMImpl->SendEnvironmentChangedMessage(*this, mGMImpl->mEnvironment.get());
          }
       }
       else
       {
-         mGameActorProxyMap.insert(std::make_pair(gameActorProxy.GetId(), &gameActorProxy));
-         mScene->AddDrawable(gameActorProxy.GetActor());
+         mGMImpl->mGameActorProxyMap.insert(std::make_pair(gameActorProxy.GetId(), &gameActorProxy));
+         mGMImpl->mScene->AddDrawable(gameActorProxy.GetActor());
       }
 
       // Remote actors are normally created in response to a create message, so sending another is silly.
       // Also, this doen't currently send messages when loading a map, so check here for that state.
-      if (!isRemote && mMapChangeStateData->GetCurrentState() == MapChangeStateData::MapChangeState::IDLE)
+      if (!isRemote && mGMImpl->mMapChangeStateData->GetCurrentState() == MapChangeStateData::MapChangeState::IDLE)
       {
-         dtCore::RefPtr<Message> msg = mFactory.CreateMessage(MessageType::INFO_ACTOR_CREATED);
+         dtCore::RefPtr<Message> msg = mGMImpl->mFactory.CreateMessage(MessageType::INFO_ACTOR_CREATED);
          gameActorProxy.PopulateActorUpdate(static_cast<ActorUpdateMessage&>(*msg));
          SendMessage(*msg);
       }
@@ -1196,7 +1406,7 @@ namespace dtGame
       }
       catch (const dtUtil::Exception& ex)
       {
-         ex.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
+         ex.LogException(dtUtil::Log::LOG_ERROR, *mGMImpl->mLogger);
          DeleteActor(gameActorProxy);
          throw ex;
       }
@@ -1206,7 +1416,7 @@ namespace dtGame
    void GameManager::AddActorAsAPrototype(GameActorProxy& gameActorProxy)
    {
       gameActorProxy.SetGameManager(this);
-      mPrototypeActors.insert(std::make_pair(gameActorProxy.GetId(), &gameActorProxy));
+      mGMImpl->mPrototypeActors.insert(std::make_pair(gameActorProxy.GetId(), &gameActorProxy));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -1240,7 +1450,7 @@ namespace dtGame
       if (envActor != NULL)
       {
          // Already set? No-Op
-         if (mEnvironment == envActor)
+         if (mGMImpl->mEnvironment == envActor)
          {
             LOG_WARNING("Tried to set the internal environment proxy pointer to itself");
             return;
@@ -1248,14 +1458,14 @@ namespace dtGame
 
          IEnvGameActor* ea = static_cast<IEnvGameActor*>(envActor->GetActor());
 
-         dtCore::RefPtr<IEnvGameActorProxy> oldProxy = mEnvironment;
+         dtCore::RefPtr<IEnvGameActorProxy> oldProxy = mGMImpl->mEnvironment;
 
-         if (mEnvironment.valid())
+         if (mGMImpl->mEnvironment.valid())
          {
             // Internal pointer is valid, so we must remove all of its children and Emancipate them
             // Since the pointer is still valid, the children still think they have a valid
             // parent and otherwise the call to AddChild will fail
-            DeleteActor(*mEnvironment);
+            DeleteActor(*mGMImpl->mEnvironment);
          }
 
          // Internal pointer is not valid, we are setting a new environment
@@ -1263,8 +1473,8 @@ namespace dtGame
          // to the new environment
          std::vector<dtDAL::ActorProxy*> actors;
          GetAllActors(actors);
-         mScene->RemoveAllDrawables();
-         mScene->UseSceneLight(true);
+         mGMImpl->mScene->RemoveAllDrawables();
+         mGMImpl->mScene->UseSceneLight(true);
          size_t actorsSize = actors.size();
          for (size_t i = 0; i < actorsSize; i++)
          {
@@ -1274,10 +1484,10 @@ namespace dtGame
             }
          }
 
-         mEnvironment = envActor;
-         mEnvironment->SetGameManager(this);
-         AddActor(*mEnvironment, false, false);
-         ea = dynamic_cast<IEnvGameActor*>(mEnvironment->GetActor());
+         mGMImpl->mEnvironment = envActor;
+         mGMImpl->mEnvironment->SetGameManager(this);
+         AddActor(*mGMImpl->mEnvironment, false, false);
+         ea = dynamic_cast<IEnvGameActor*>(mGMImpl->mEnvironment->GetActor());
          if (ea == NULL)
          {
             LOG_ERROR("The environment actor proxy parameter has an invalid actor");
@@ -1287,20 +1497,26 @@ namespace dtGame
       else
       {
          // Setting current valid env actor to NULL
-         if (mEnvironment != NULL)
+         if (mGMImpl->mEnvironment != NULL)
          {
-            DeleteActor(*mEnvironment);
+            DeleteActor(*mGMImpl->mEnvironment);
          }
          // else, Currently NULL internal env actor being set to NULL. No-Op
       }
    }
 
+   //////////////////////////////////////////////////////////////////////////
+   IEnvGameActorProxy* GameManager::GetEnvironmentActor()
+   {
+      return mGMImpl->mEnvironment.get();
+   }
+
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::PublishActor(GameActorProxy& gameActorProxy)
    {
-      GameActorMap::iterator itor = mGameActorProxyMap.find(gameActorProxy.GetId());
+      GameActorMap::iterator itor = mGMImpl->mGameActorProxyMap.find(gameActorProxy.GetId());
 
-      if (itor == mGameActorProxyMap.end())
+      if (itor == mGMImpl->mGameActorProxyMap.end())
       {
          throw dtGame::InvalidActorStateException(
             "A GameActor may only be published if it's added to the GameManager as a game actor.", __FILE__, __LINE__);
@@ -1312,7 +1528,7 @@ namespace dtGame
       }
 
       gameActorProxy.SetPublished(true);
-      dtCore::RefPtr<Message> msg = mFactory.CreateMessage(MessageType::INFO_ACTOR_PUBLISHED);
+      dtCore::RefPtr<Message> msg = mGMImpl->mFactory.CreateMessage(MessageType::INFO_ACTOR_PUBLISHED);
       msg->SetDestination(&GetMachineInfo());
       msg->SetAboutActorId(gameActorProxy.GetId());
       msg->SetSendingActorId(gameActorProxy.GetId());
@@ -1324,7 +1540,7 @@ namespace dtGame
    {
       // Is it an environment actor proxy?
       IEnvGameActorProxy* eap = dynamic_cast<IEnvGameActorProxy*>(&actorProxy);
-      if (eap != NULL && mScene->GetDrawableIndex(eap->GetActor()) != mScene->GetNumberOfAddedDrawable())
+      if (eap != NULL && mGMImpl->mScene->GetDrawableIndex(eap->GetActor()) != mGMImpl->mScene->GetNumberOfAddedDrawable())
       {
          // First we have to remove all of the actors from it
          IEnvGameActor* e = dynamic_cast<IEnvGameActor*>(&eap->GetGameActor());
@@ -1336,29 +1552,29 @@ namespace dtGame
          // Also invalidate the delete environment parent by calling Emancipate
          for (size_t i = 0; i < actors.size(); ++i)
          {
-            mScene->AddDrawable(actors[i]);
+            mGMImpl->mScene->AddDrawable(actors[i]);
          }
 
          // Are we deleting the environment pointer?
-         if (eap == mEnvironment.get())
+         if (eap == mGMImpl->mEnvironment.get())
          {
-            mEnvironment = NULL;
+            mGMImpl->mEnvironment = NULL;
          }
       }
 
-      GameActorMap::iterator itor = mGameActorProxyMap.find(actorProxy.GetId());
+      GameActorMap::iterator itor = mGMImpl->mGameActorProxyMap.find(actorProxy.GetId());
 
       dtCore::UniqueId id;
-      if (itor == mGameActorProxyMap.end())
+      if (itor == mGMImpl->mGameActorProxyMap.end())
       {
          // it's not in the game manager as a game actor proxy, maybe it's in there
          // as a regular actor proxy.
-         ActorMap::iterator itor = mActorProxyMap.find(actorProxy.GetId());
+         ActorMap::iterator itor = mGMImpl->mActorProxyMap.find(actorProxy.GetId());
 
-         if (itor != mActorProxyMap.end())
+         if (itor != mGMImpl->mActorProxyMap.end())
          {
-            RemoveActorFromScene(actorProxy);
-            mActorProxyMap.erase(itor);
+            mGMImpl->RemoveActorFromScene(*this, actorProxy);
+            mGMImpl->mActorProxyMap.erase(itor);
          }
       }
       else
@@ -1367,14 +1583,14 @@ namespace dtGame
          GameActorProxy& gameActorProxy = *itor->second;
          if (gameActorProxy.IsInGM())
          {
-            mDeleteList.push_back(itor->second);
+            mGMImpl->mDeleteList.push_back(itor->second);
             gameActorProxy.SetIsInGM(false);
 
             // Remote actors are deleted in response to a delete message, so sending another is silly.
             // Also, this doen't currently send messages when closing a map, so check here for that state.
-            if (!gameActorProxy.IsRemote() && mMapChangeStateData->GetCurrentState() == MapChangeStateData::MapChangeState::IDLE)
+            if (!gameActorProxy.IsRemote() && mGMImpl->mMapChangeStateData->GetCurrentState() == MapChangeStateData::MapChangeState::IDLE)
             {
-               dtCore::RefPtr<Message> msg = mFactory.CreateMessage(MessageType::INFO_ACTOR_DELETED);
+               dtCore::RefPtr<Message> msg = mGMImpl->mFactory.CreateMessage(MessageType::INFO_ACTOR_DELETED);
                msg->SetAboutActorId(id);
 
                SendMessage(*msg);
@@ -1389,86 +1605,38 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::RemoveActorFromScene(dtDAL::ActorProxy& proxy)
-   {
-      dtCore::DeltaDrawable& dd = *proxy.GetActor();
-
-      if (dd.GetSceneParent() != mScene.get())
-      {
-         return;
-      }
-
-      // find all of the children that have actor proxies associated with them to move them up
-      // one level in the scene.
-      std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > childrenToMove;
-      for (unsigned i = 0; i < dd.GetNumChildren(); ++i)
-      {
-         dtCore::DeltaDrawable& child = *dd.GetChild(i);
-         dtDAL::ActorProxy* childProxy = FindActorById(child.GetUniqueId());
-         if (childProxy != NULL)
-         {
-            childrenToMove.push_back(childProxy);
-         }
-      }
-
-      if (dd.GetParent() == NULL)
-      {
-         // remove the proxy drawable
-         mScene->RemoveDrawable(&dd);
-
-         // put all the children in the base scene.
-         for (size_t i = 0; i < childrenToMove.size(); ++i)
-         {
-            mScene->AddDrawable(childrenToMove[i]->GetActor());
-         }
-      }
-      else
-      {
-         // add all the children to the parent drawable.
-         for (size_t i = 0; i < childrenToMove.size(); ++i)
-         {
-            dtCore::DeltaDrawable* child = childrenToMove[i]->GetActor();
-            child->Emancipate();
-            dd.GetParent()->AddChild(child);
-         }
-         // remove the proxy drawable from the parent.
-         dd.Emancipate();
-      }
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
    void GameManager::DeleteAllActors(bool immediate)
    {
       if (immediate)
       {
-         mScene->RemoveAllDrawables();
+         mGMImpl->mScene->RemoveAllDrawables();
 
-         if (mEnvironment.valid())
+         if (mGMImpl->mEnvironment.valid())
          {
-            static_cast<dtGame::IEnvGameActor&>(mEnvironment->GetGameActor()).RemoveAllActors();
-            mEnvironment = NULL;
+            static_cast<dtGame::IEnvGameActor&>(mGMImpl->mEnvironment->GetGameActor()).RemoveAllActors();
+            mGMImpl->mEnvironment = NULL;
          }
 
-         mActorProxyMap.clear();
-         mGlobalMessageListeners.clear();
-         mActorMessageListeners.clear();
-         mGameActorProxyMap.clear();
-         mRealTimeTimers.clear();
-         mSimulationTimers.clear();
+         mGMImpl->mActorProxyMap.clear();
+         mGMImpl->mGlobalMessageListeners.clear();
+         mGMImpl->mActorMessageListeners.clear();
+         mGMImpl->mGameActorProxyMap.clear();
+         mGMImpl->mRealTimeTimers.clear();
+         mGMImpl->mSimulationTimers.clear();
 
          // all the actors are deleted now, so the problems with clearing the list
          // of deleted actors is not a problem.
-         mDeleteList.clear();
+         mGMImpl->mDeleteList.clear();
       }
       else
       {
-         while (!mActorProxyMap.empty())
+         while (!mGMImpl->mActorProxyMap.empty())
          {
-            DeleteActor(*mActorProxyMap.begin()->second);
+            DeleteActor(*mGMImpl->mActorProxyMap.begin()->second);
          }
 
-         for (GameActorMap::iterator i = mGameActorProxyMap.begin();
-            i != mGameActorProxyMap.end(); ++i)
+         for (GameActorMap::iterator i = mGMImpl->mGameActorProxyMap.begin();
+            i != mGMImpl->mGameActorProxyMap.end(); ++i)
          {
             DeleteActor(*i->second);
          }
@@ -1480,16 +1648,16 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::DeleteAllPrototypes()
    {
-      mPrototypeActors.clear();
+      mGMImpl->mPrototypeActors.clear();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::DeletePrototype(const dtCore::UniqueId& uniqueId)
    {
-      GameActorMap::iterator itor = mPrototypeActors.find(uniqueId);
-      if (itor != mPrototypeActors.end())
+      GameActorMap::iterator itor = mGMImpl->mPrototypeActors.find(uniqueId);
+      if (itor != mGMImpl->mPrototypeActors.end())
       {
-         mPrototypeActors.erase(itor);
+         mGMImpl->mPrototypeActors.erase(itor);
       }
    }
 
@@ -1500,27 +1668,33 @@ namespace dtGame
 
       // spin through the actors and add all used actor types to the set, so that we don't
       // get duplicates.
-      for (GameActorMap::const_iterator itor = mGameActorProxyMap.begin();
-           itor != mGameActorProxyMap.end(); ++itor)
+      for (GameActorMap::const_iterator itor = mGMImpl->mGameActorProxyMap.begin();
+           itor != mGMImpl->mGameActorProxyMap.end(); ++itor)
       {
          toFill.insert(&itor->second->GetActorType());
       }
 
-      for (ActorMap::const_iterator itor = mActorProxyMap.begin();
-           itor != mActorProxyMap.end(); ++itor)
+      for (ActorMap::const_iterator itor = mGMImpl->mActorProxyMap.begin();
+           itor != mGMImpl->mActorProxyMap.end(); ++itor)
       {
          toFill.insert(&itor->second->GetActorType());
       }
+   }
+   
+   //////////////////////////////////////////////////////////////////////////
+   size_t GameManager::GetNumGameActors() const
+   {
+      return mGMImpl->mGameActorProxyMap.size();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::GetAllGameActors(std::vector<GameActorProxy*>& toFill) const
    {
       toFill.clear();
-      toFill.reserve(mGameActorProxyMap.size());
+      toFill.reserve(mGMImpl->mGameActorProxyMap.size());
 
       GameActorMap::const_iterator itor;
-      for (itor = mGameActorProxyMap.begin(); itor != mGameActorProxyMap.end(); ++itor)
+      for (itor = mGMImpl->mGameActorProxyMap.begin(); itor != mGMImpl->mGameActorProxyMap.end(); ++itor)
       {
          toFill.push_back(itor->second.get());
       }
@@ -1530,10 +1704,10 @@ namespace dtGame
    void GameManager::GetAllNonGameActors(std::vector<dtDAL::ActorProxy*>& toFill) const
    {
       toFill.clear();
-      toFill.reserve(mActorProxyMap.size());
+      toFill.reserve(mGMImpl->mActorProxyMap.size());
 
       ActorMap::const_iterator itor;
-      for (itor = mActorProxyMap.begin(); itor != mActorProxyMap.end(); ++itor)
+      for (itor = mGMImpl->mActorProxyMap.begin(); itor != mGMImpl->mActorProxyMap.end(); ++itor)
       {
          toFill.push_back(itor->second.get());
       }
@@ -1543,21 +1717,21 @@ namespace dtGame
    void GameManager::GetAllActors(std::vector<dtDAL::ActorProxy*>& toFill) const
    {
       toFill.clear();
-      toFill.reserve(mGameActorProxyMap.size() + mActorProxyMap.size() + mPrototypeActors.size());
+      toFill.reserve(mGMImpl->mGameActorProxyMap.size() + mGMImpl->mActorProxyMap.size() + mGMImpl->mPrototypeActors.size());
 
       GameActorMap::const_iterator itor;
-      for (itor = mGameActorProxyMap.begin(); itor != mGameActorProxyMap.end(); ++itor)
+      for (itor = mGMImpl->mGameActorProxyMap.begin(); itor != mGMImpl->mGameActorProxyMap.end(); ++itor)
       {
          toFill.push_back(itor->second.get());
       }
 
       ActorMap::const_iterator iter;
-      for (iter = mActorProxyMap.begin(); iter != mActorProxyMap.end(); ++iter)
+      for (iter = mGMImpl->mActorProxyMap.begin(); iter != mGMImpl->mActorProxyMap.end(); ++iter)
       {
          toFill.push_back(iter->second.get());
       }
 
-      //for (itor = mPrototypeActors.begin(); itor != mPrototypeActors.end(); ++itor)
+      //for (itor = mGMImpl->mPrototypeActors.begin(); itor != mGMImpl->mPrototypeActors.end(); ++itor)
       //{
       //   toFill.push_back(itor->second.get());
       //}
@@ -1566,17 +1740,17 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////////
    size_t GameManager::GetNumAllActors() const
    {
-      return mGameActorProxyMap.size() + mActorProxyMap.size();
+      return mGMImpl->mGameActorProxyMap.size() + mGMImpl->mActorProxyMap.size();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::GetAllPrototypes(std::vector<dtDAL::ActorProxy*>& toFill) const
    {
       toFill.clear();
-      toFill.reserve(mPrototypeActors.size());
+      toFill.reserve(mGMImpl->mPrototypeActors.size());
 
       GameActorMap::const_iterator itor;
-      for (itor = mPrototypeActors.begin(); itor != mPrototypeActors.end(); ++itor)
+      for (itor = mGMImpl->mPrototypeActors.begin(); itor != mGMImpl->mPrototypeActors.end(); ++itor)
       {
          toFill.push_back(itor->second.get());
       }
@@ -1586,11 +1760,11 @@ namespace dtGame
    void GameManager::GetActorsInScene(std::vector<dtCore::DeltaDrawable*>& vec) const
    {
       vec.clear();
-      vec.reserve(mScene->GetNumberOfAddedDrawable());
+      vec.reserve(mGMImpl->mScene->GetNumberOfAddedDrawable());
 
-      for (unsigned int i = 0; i < mScene->GetNumberOfAddedDrawable(); i++)
+      for (unsigned int i = 0; i < mGMImpl->mScene->GetNumberOfAddedDrawable(); i++)
       {
-         vec.push_back(mScene->GetDrawable(i));
+         vec.push_back(mGMImpl->mScene->GetDrawable(i));
       }
    }
 
@@ -1615,7 +1789,7 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::FindActorsByName(const std::string& name, std::vector<dtDAL::ActorProxy*>& toFill) const
    {
-      toFill.reserve(mGameActorProxyMap.size() + mActorProxyMap.size());
+      toFill.reserve(mGMImpl->mGameActorProxyMap.size() + mGMImpl->mActorProxyMap.size());
 
       GMWildMatchSearchFunc searchFunc(name);
       FindActorsIf(searchFunc, toFill);
@@ -1641,7 +1815,7 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::FindActorsByType(const dtDAL::ActorType& type, std::vector<dtDAL::ActorProxy*>& toFill) const
    {
-      toFill.reserve(mGameActorProxyMap.size() + mActorProxyMap.size());
+      toFill.reserve(mGMImpl->mGameActorProxyMap.size() + mGMImpl->mActorProxyMap.size());
 
       GMTypeMatchSearchFunc searchFunc(type);
       FindActorsIf(searchFunc, toFill);
@@ -1670,7 +1844,7 @@ namespace dtGame
    {
       if (!className.empty())
       {
-         toFill.reserve(mActorProxyMap.size() + mGameActorProxyMap.size());
+         toFill.reserve(mGMImpl->mActorProxyMap.size() + mGMImpl->mGameActorProxyMap.size());
          GMClassMatchSearchFunc searchFunc(className);
          FindActorsIf(searchFunc, toFill);
       }
@@ -1683,7 +1857,7 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::FindPrototypesByActorType(const dtDAL::ActorType& type, std::vector<dtDAL::ActorProxy*>& toFill) const
    {
-      toFill.reserve(mPrototypeActors.size());
+      toFill.reserve(mGMImpl->mPrototypeActors.size());
 
       GMTypeMatchSearchFunc searchFunc(type);
       FindPrototypesIf(searchFunc, toFill);
@@ -1692,7 +1866,7 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::FindPrototypesByName(const std::string& name, std::vector<dtDAL::ActorProxy*>& toFill) const
    {
-      toFill.reserve(mPrototypeActors.size());
+      toFill.reserve(mGMImpl->mPrototypeActors.size());
 
       GMWildMatchSearchFunc searchFunc(name);
       FindPrototypesIf(searchFunc, toFill);
@@ -1701,8 +1875,8 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    dtDAL::ActorProxy* GameManager::FindPrototypeByID(const dtCore::UniqueId& uniqueID)
    {
-      GameActorMap::const_iterator itor = mPrototypeActors.find(uniqueID);
-      if (itor != mPrototypeActors.end())
+      GameActorMap::const_iterator itor = mGMImpl->mPrototypeActors.find(uniqueID);
+      if (itor != mGMImpl->mPrototypeActors.end())
       {
          return itor->second.get();
       }
@@ -1719,8 +1893,8 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    GameActorProxy* GameManager::FindGameActorById(const dtCore::UniqueId& id) const
    {
-      GameActorMap::const_iterator itor = mGameActorProxyMap.find(id);
-      return itor == mGameActorProxyMap.end() ? NULL : itor->second.get();
+      GameActorMap::const_iterator itor = mGMImpl->mGameActorProxyMap.find(id);
+      return itor == mGMImpl->mGameActorProxyMap.end() ? NULL : itor->second.get();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -1733,8 +1907,8 @@ namespace dtGame
          return actorProxy;
       }
 
-      ActorMap::const_iterator itor = mActorProxyMap.find(id);
-      return itor == mActorProxyMap.end() ? NULL : itor->second.get();
+      ActorMap::const_iterator itor = mGMImpl->mActorProxyMap.find(id);
+      return itor == mGMImpl->mActorProxyMap.end() ? NULL : itor->second.get();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -1752,14 +1926,14 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::CloseCurrentMap()
    {
-      if (mMapChangeStateData->GetCurrentState() != MapChangeStateData::MapChangeState::IDLE)
+      if (mGMImpl->mMapChangeStateData->GetCurrentState() != MapChangeStateData::MapChangeState::IDLE)
       {
          static std::string changeMessage("You may not close the map while a map change is already in progress.");
-         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, changeMessage.c_str());
+         mGMImpl->mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, changeMessage.c_str());
          throw dtGame::GeneralGameManagerException( changeMessage, __FILE__, __LINE__);
       }
       std::vector<std::string> emptyVec;
-      mMapChangeStateData->BeginMapChange(mLoadedMaps, emptyVec, false);
+      mGMImpl->mMapChangeStateData->BeginMapChange(mGMImpl->mLoadedMaps, emptyVec, false);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -1788,21 +1962,21 @@ namespace dtGame
          }
       }
 
-      if (mMapChangeStateData->GetCurrentState() != MapChangeStateData::MapChangeState::IDLE)
+      if (mGMImpl->mMapChangeStateData->GetCurrentState() != MapChangeStateData::MapChangeState::IDLE)
       {
          static std::string changeMessage("You may not change the map set while a map change is already in progress.");
-         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, changeMessage.c_str());
+         mGMImpl->mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, changeMessage.c_str());
          throw dtGame::GeneralGameManagerException( changeMessage, __FILE__, __LINE__);
       }
 
-      mMapChangeStateData->BeginMapChange(mLoadedMaps, mapNames, addBillboards);
+      mGMImpl->mMapChangeStateData->BeginMapChange(mGMImpl->mLoadedMaps, mapNames, addBillboards);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::SetTimer(const std::string& name, const GameActorProxy* aboutActor,
       float time, bool repeat, bool realTime)
    {
-      TimerInfo t;
+      GMImpl::TimerInfo t;
       t.name = name;
 
       if (aboutActor == NULL)
@@ -1825,50 +1999,30 @@ namespace dtGame
       }
 
       t.repeat = repeat;
-      realTime ? mRealTimeTimers.insert(t) : mSimulationTimers.insert(t);
+      realTime ? mGMImpl->mRealTimeTimers.insert(t) : mGMImpl->mSimulationTimers.insert(t);
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::ClearTimerSingleSet(std::set<TimerInfo>& timerSet,
-         const std::string& name, const GameActorProxy* proxy)
-   {
-      std::set<TimerInfo>::iterator i = timerSet.begin();
-      while (i != timerSet.end())
-      {
-         std::set<TimerInfo>::iterator toDelete;
-         const TimerInfo& timer = *i;
-         if (timer.name == name &&  (proxy == NULL || timer.aboutActor == proxy->GetId()))
-         {
-            toDelete = i;
-            ++i;
-            timerSet.erase(toDelete);
-         }
-         else
-         {
-            ++i;
-         }
-      }
-   }
+
 
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::ClearTimer(const std::string& name, const GameActorProxy* proxy)
    {
-      ClearTimerSingleSet(mRealTimeTimers, name, proxy);
-      ClearTimerSingleSet(mSimulationTimers, name, proxy);
+      mGMImpl->ClearTimerSingleSet(mGMImpl->mRealTimeTimers, name, proxy);
+      mGMImpl->ClearTimerSingleSet(mGMImpl->mSimulationTimers, name, proxy);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::GetRegistrantsForMessages(const MessageType& type,
          std::vector< std::pair<GameActorProxy*, std::string> >& toFill) const
    {
-      typedef std::pair<GlobalMessageListenerMap::const_iterator,
-                        GlobalMessageListenerMap::const_iterator> IterPair;
-      IterPair msgTypeMatches = mGlobalMessageListeners.equal_range(&type);
+      typedef std::pair<GMImpl::GlobalMessageListenerMap::const_iterator,
+                        GMImpl::GlobalMessageListenerMap::const_iterator> IterPair;
+      IterPair msgTypeMatches = mGMImpl->mGlobalMessageListeners.equal_range(&type);
 
       toFill.clear();
       toFill.reserve(std::distance(msgTypeMatches.first, msgTypeMatches.second));
 
-      GlobalMessageListenerMap::const_iterator itor = msgTypeMatches.first;
+      GMImpl::GlobalMessageListenerMap::const_iterator itor = msgTypeMatches.first;
 
       while (itor != msgTypeMatches.second)
       {
@@ -1888,18 +2042,18 @@ namespace dtGame
    {
       toFill.clear();
 
-      ActorMessageListenerMap::const_iterator itor = mActorMessageListeners.find(&type);
+      GMImpl::ActorMessageListenerMap::const_iterator itor = mGMImpl->mActorMessageListeners.find(&type);
 
-      if (itor != mActorMessageListeners.end())
+      if (itor != mGMImpl->mActorMessageListeners.end())
       {
-         typedef std::pair<ProxyInvokableMap::const_iterator,
-                           ProxyInvokableMap::const_iterator> IterPair;
+         typedef std::pair<GMImpl::ProxyInvokableMap::const_iterator,
+                           GMImpl::ProxyInvokableMap::const_iterator> IterPair;
 
          //second on itor is the internal map.
          IterPair foundBeginEnd = itor->second.equal_range(targetActorId);
          toFill.reserve(std::distance(foundBeginEnd.first, foundBeginEnd.second));
 
-         ProxyInvokableMap::const_iterator targetActorItor = foundBeginEnd.first;
+         GMImpl::ProxyInvokableMap::const_iterator targetActorItor = foundBeginEnd.first;
          while (targetActorItor != foundBeginEnd.second)
          {
             toFill.push_back(std::make_pair(targetActorItor->second.first.get(), targetActorItor->second.second));
@@ -1929,7 +2083,7 @@ namespace dtGame
    {
       ValidateMessageType(type, proxy, invokableName);
 
-      mGlobalMessageListeners.insert(
+      mGMImpl->mGlobalMessageListeners.insert(
             std::make_pair(&type,
                   std::make_pair(dtCore::RefPtr<GameActorProxy>(&proxy), invokableName)));
 
@@ -1939,13 +2093,13 @@ namespace dtGame
    void GameManager::UnregisterForMessages(const MessageType& type, GameActorProxy& proxy,
                                            const std::string& invokableName)
    {
-      typedef std::pair<GlobalMessageListenerMap::iterator, GlobalMessageListenerMap::iterator> IterPair;
+      typedef std::pair<GMImpl::GlobalMessageListenerMap::iterator, GMImpl::GlobalMessageListenerMap::iterator> IterPair;
 
       //find all matches of MessageType
-      IterPair msgTypeMatches = mGlobalMessageListeners.equal_range(&type);
+      IterPair msgTypeMatches = mGMImpl->mGlobalMessageListeners.equal_range(&type);
 
       //NULL out the one that also match the supplied proxy and invokableName
-      for (GlobalMessageListenerMap::iterator itor = msgTypeMatches.first;
+      for (GMImpl::GlobalMessageListenerMap::iterator itor = msgTypeMatches.first;
                                               itor != msgTypeMatches.second;
                                               ++itor)
       {
@@ -1967,7 +2121,7 @@ namespace dtGame
    {
       ValidateMessageType(type, proxy, invokableName);
 
-      ProxyInvokableMap& mapForType = mActorMessageListeners[&type];
+      GMImpl::ProxyInvokableMap& mapForType = mGMImpl->mActorMessageListeners[&type];
       mapForType.insert(std::make_pair(targetActorId, std::make_pair(dtCore::RefPtr<GameActorProxy>(&proxy), invokableName)));
    }
 
@@ -1976,19 +2130,19 @@ namespace dtGame
          const dtCore::UniqueId& targetActorId, GameActorProxy& proxy,
          const std::string& invokableName)
    {
-      ActorMessageListenerMap::iterator itor = mActorMessageListeners.find(&type);
+      GMImpl::ActorMessageListenerMap::iterator itor = mGMImpl->mActorMessageListeners.find(&type);
 
-      if (itor != mActorMessageListeners.end())
+      if (itor != mGMImpl->mActorMessageListeners.end())
       {
          //second on itor is the internal map.
-         ProxyInvokableMap::iterator itorInner = itor->second.find(targetActorId);
+         GMImpl::ProxyInvokableMap::iterator itorInner = itor->second.find(targetActorId);
          while (itorInner != itor->second.end() && itorInner->first == targetActorId)
          {
             //second is a pair.
             //second.first is the game actor proxy to receive the message second.second is the name of the invokable
             if (itorInner->second.first.get() == &proxy && itorInner->second.second == invokableName)
             {
-               ProxyInvokableMap::iterator toDelete = itorInner;
+               GMImpl::ProxyInvokableMap::iterator toDelete = itorInner;
                ++itorInner;
                itor->second.erase(toDelete);
             }
@@ -2003,22 +2157,22 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::UnregisterAllMessageListenersForActor(GameActorProxy& proxy)
    {
-      for (GlobalMessageListenerMap::iterator i = mGlobalMessageListeners.begin();
-           i != mGlobalMessageListeners.end();)
+      for (GMImpl::GlobalMessageListenerMap::iterator i = mGMImpl->mGlobalMessageListeners.begin();
+           i != mGMImpl->mGlobalMessageListeners.end();)
       {
-         GlobalMessageListenerMap::iterator toDelete = i;
+         GMImpl::GlobalMessageListenerMap::iterator toDelete = i;
          ++i;
          if (toDelete->second.first.get() == &proxy)
          {
-            mGlobalMessageListeners.erase(toDelete);
+            mGMImpl->mGlobalMessageListeners.erase(toDelete);
          }
       }
 
-      for (ActorMessageListenerMap::iterator i = mActorMessageListeners.begin(); i != mActorMessageListeners.end(); ++i)
+      for (GMImpl::ActorMessageListenerMap::iterator i = mGMImpl->mActorMessageListeners.begin(); i != mGMImpl->mActorMessageListeners.end(); ++i)
       {
-         for (ProxyInvokableMap::iterator j = i->second.begin(); j != i->second.end();)
+         for (GMImpl::ProxyInvokableMap::iterator j = i->second.begin(); j != i->second.end();)
          {
-            ProxyInvokableMap::iterator toDelete = j;
+            GMImpl::ProxyInvokableMap::iterator toDelete = j;
             ++j;
             if (toDelete->first == proxy.GetId() || toDelete->second.first.get() == &proxy)
             {
@@ -2032,14 +2186,14 @@ namespace dtGame
    void GameManager::RejectMessage(const dtGame::Message& reasonMessage, const std::string& rejectDescription)
    {
       const MachineInfo& causingMachine = reasonMessage.GetSource();
-      dtCore::RefPtr<Message> rejPtrMsg = mFactory.CreateMessage(MessageType::SERVER_REQUEST_REJECTED);
+      dtCore::RefPtr<Message> rejPtrMsg = mGMImpl->mFactory.CreateMessage(MessageType::SERVER_REQUEST_REJECTED);
       ServerMessageRejected* rejectMsg = static_cast<ServerMessageRejected*>(rejPtrMsg.get());
       rejectMsg->SetCausingMessage(&reasonMessage);
       rejectMsg->SetCause(rejectDescription);
       rejectMsg->SetDestination(&causingMachine);
 
       // if it's from us, just process it
-      if (*mMachineInfo == causingMachine)
+      if (*mGMImpl->mMachineInfo == causingMachine)
       {
          SendMessage(*rejectMsg);
       }
@@ -2066,70 +2220,21 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::ProcessTimers(std::set<TimerInfo>& listToProcess, dtCore::Timer_t clockTime)
-   {
-      std::set<TimerInfo>::iterator itor;
-      std::set<TimerInfo> repeatingTimers;
-      for (itor=listToProcess.begin(); itor!=listToProcess.end();)
-      {
-         if (itor->time <= clockTime)
-         {
-            dtCore::RefPtr<TimerElapsedMessage> timerMsg =
-               static_cast<TimerElapsedMessage*>(mFactory.CreateMessage(MessageType::INFO_TIMER_ELAPSED).get());
-
-            timerMsg->SetTimerName(itor->name);
-            float lateTime = float((clockTime - itor->time));
-            // convert from microseconds to seconds
-            lateTime /= 1e6;
-            timerMsg->SetLateTime(lateTime);
-            timerMsg->SetAboutActorId(itor->aboutActor);
-            SendMessage(*timerMsg.get());
-            if (itor->repeat)
-            {
-               TimerInfo tInfo = *itor;
-               tInfo.time += tInfo.interval;
-               repeatingTimers.insert(tInfo);
-            }
-
-            std::set<TimerInfo>::iterator toDelete = itor;
-            ++itor;
-            listToProcess.erase(toDelete);
-         }
-         else
-         {
-            break;
-         }
-      }
-
-      // Repeating timers have to be readded so they are processed again later
-      listToProcess.insert(repeatingTimers.begin(), repeatingTimers.end());
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::SendEnvironmentChangedMessage(IEnvGameActorProxy* envActor)
-   {
-      dtCore::RefPtr<Message> msg = mFactory.CreateMessage(MessageType::INFO_ENVIRONMENT_CHANGED);
-      msg->SetAboutActorId(mEnvironment.valid() ? envActor->GetActor()->GetUniqueId() : dtCore::UniqueId(""));
-      msg->SetSource(*mMachineInfo);
-      SendMessage(*msg);
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
    void GameManager::Shutdown()
    {
-      if (!mLoadedMaps.empty())
+      if (!mGMImpl->mLoadedMaps.empty())
       {
          dtDAL::Project& project = dtDAL::Project::GetInstance();
 
          project.CloseAllMaps(true);
          // clear the maps vector because if someone happens to call shutdown again,
          // it will reopen all the maps.
-         mLoadedMaps.clear();
+         mGMImpl->mLoadedMaps.clear();
       }
 
       //tell all the components they've been removed
-      GMComponentContainer::iterator compItr = mComponentList.begin();
-      while (compItr != mComponentList.end())
+      GMImpl::GMComponentContainer::iterator compItr = mGMImpl->mComponentList.begin();
+      while (compItr != mGMImpl->mComponentList.end())
       {
          if (compItr->valid())
          {
@@ -2139,18 +2244,18 @@ namespace dtGame
       }
 
       //now purge the component container for real
-      mComponentList.clear();
+      mGMImpl->mComponentList.clear();
 
       mGMImpl->mGMStatistics.mDebugLoggerInformation.clear();
 
-      while (!mSendNetworkMessageQueue.empty())
+      while (!mGMImpl->mSendNetworkMessageQueue.empty())
       {
-         mSendNetworkMessageQueue.pop();
+         mGMImpl->mSendNetworkMessageQueue.pop();
       }
 
-      while (!mSendMessageQueue.empty())
+      while (!mGMImpl->mSendMessageQueue.empty())
       {
-         mSendMessageQueue.pop();
+         mGMImpl->mSendMessageQueue.pop();
       }
 
       DeleteAllActors(true);
@@ -2184,6 +2289,30 @@ namespace dtGame
       mGMImpl->mGMStatistics.DebugStatisticsTurnOff(*this, logLastTime, clearList);
    }
 
+   //////////////////////////////////////////////////////////////////////////
+   bool GameManager::GetRemoveGameEventsOnMapChange() const
+   {
+      return mGMImpl->mRemoveGameEventsOnMapChange;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void GameManager::SetRemoveGameEventsOnMapChange(const bool removeGameEventsOnMapChange) 
+   {
+      mGMImpl->mRemoveGameEventsOnMapChange = removeGameEventsOnMapChange;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   MessageFactory& GameManager::GetMessageFactory()
+   { 
+      return mGMImpl->mFactory; 
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   const MessageFactory& GameManager::GetMessageFactory() const
+   { 
+      return mGMImpl->mFactory; 
+   }
+
    //////////////////////////////////////////////////////////////////////////////
    void GameManager::DebugStatisticsTurnOn(bool logComponents, bool logActors,
       const int statisticsInterval, bool toConsole, const std::string& path)
@@ -2192,4 +2321,15 @@ namespace dtGame
          statisticsInterval, toConsole, path);
    }
 
+   //////////////////////////////////////////////////////////////////////////
+   const MachineInfo& GameManager::GetMachineInfo() const
+   {
+      return *mGMImpl->mMachineInfo;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   MachineInfo& GameManager::GetMachineInfo()
+   {
+      return *mGMImpl->mMachineInfo;
+   }
 } // namespace dtGame

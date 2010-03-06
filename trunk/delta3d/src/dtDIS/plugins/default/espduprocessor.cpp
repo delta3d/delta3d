@@ -2,7 +2,7 @@
 #include <dtDIS/plugins/default/espduapplicator.h>
 #include <dtDIS/sharedstate.h>
 #include <dtGame/gamemanager.h>
-
+#include <dtGame/gameactorproxy.h>
 #include <dtGame/actorupdatemessage.h>
 #include <DIS/EntityStatePdu.h>
 

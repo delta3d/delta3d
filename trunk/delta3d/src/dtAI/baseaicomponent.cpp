@@ -24,6 +24,7 @@
 
 #include <dtABC/application.h>
 #include <dtGame/basemessages.h>
+#include <dtGame/messagetype.h>
 
 #include <dtAI/aiactorregistry.h>
 #include <dtAI/aiinterfaceactor.h>

@@ -32,6 +32,7 @@
 #include <dtGame/gamemanager.h>
 #include <dtGame/actorupdatemessage.h>
 #include <dtGame/basemessages.h>
+#include <dtGame/messagetype.h>
 #include <dtAnim/animationhelper.h>
 #include <dtAnim/animationgameactor.h>
 #include <dtAnim/animactorregistry.h>

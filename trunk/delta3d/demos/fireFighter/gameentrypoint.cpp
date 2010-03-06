@@ -35,6 +35,8 @@
 #include <dtAudio/audiomanager.h>
 #include <dtLMS/lmscomponent.h>
 #include <dtGame/defaultmessageprocessor.h>
+#include <dtGame/messagefactory.h>
+#include <dtGame/gameactorproxy.h>
 #include <osg/ArgumentParser>
 #include <osg/ApplicationUsage>
 

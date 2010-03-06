@@ -22,7 +22,7 @@
 
 #include <dtGame/invokable.h>
 #include <dtGame/messagetype.h>
-
+#include <dtGame/messagefactory.h>
 #include <dtGame/basemessages.h>
 #include <dtGame/exceptionenum.h>
 #include <dtGame/gamemanager.h>

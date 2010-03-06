@@ -25,6 +25,7 @@
 #include <dtGame/gamemanager.h>
 #include <dtGame/message.h>
 #include <dtGame/basemessages.h>
+#include <dtGame/messagefactory.h>
 
 using dtCore::RefPtr;
 

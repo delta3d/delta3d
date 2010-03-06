@@ -36,6 +36,7 @@
 #include <dtDAL/librarymanager.h>
 #include <dtDAL/actorproperty.h>
 #include <dtGame/gamemanager.h>
+#include <dtGame/messagefactory.h>
 
 #include <dtHLAGM/ddmregioncalculator.h>
 #include <dtHLAGM/hlacomponent.h>

@@ -53,7 +53,7 @@
 
 #include <dtGame/messagetype.h>
 #include <dtGame/gmcomponent.h>
-
+#include <dtGame/messageparameter.h>
 #include <dtHLAGM/export.h>
 #include <dtHLAGM/objectruntimemappinginfo.h>
 #include <dtHLAGM/ddmregioncalculatorgroup.h>
@@ -67,6 +67,12 @@ namespace dtDAL
 {
    class ActorType;
 }
+
+namespace dtGame
+{
+   class ActorUpdateMessage;
+}
+
 
 namespace dtHLAGM
 {

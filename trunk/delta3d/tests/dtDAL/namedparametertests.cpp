@@ -33,6 +33,7 @@
 #include <dtUtil/log.h>
 #include <dtUtil/datastream.h>
 #include <dtUtil//datapathutils.h>
+#include <dtCore/observerptr.h>
 #include <dtCore/refptr.h>
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
@@ -43,7 +44,8 @@
 #include <dtDAL/actortype.h>
 #include <dtDAL/namedparameter.h>
 #include <dtGame/gamemanager.h>
-
+#include <dtGame/gameactorproxy.h>
+#include <dtGame/messageparameter.h>
 #include <osg/Endian>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtUtil/mathdefines.h>

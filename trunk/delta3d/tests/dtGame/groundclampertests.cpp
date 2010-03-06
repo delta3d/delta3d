@@ -44,6 +44,8 @@
 #include <dtCore/system.h>
 
 #include <dtGame/basemessages.h>
+#include <dtGame/gameactorproxy.h>
+#include <dtGame/gameactor.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/messagefactory.h>
 #include <dtGame/exceptionenum.h>

@@ -68,16 +68,16 @@ namespace dtGame
    inline void GameManager::ForEachActor(UnaryFunctor func) const
    {
       BindActor<UnaryFunctor, GameManager::ActorMap::value_type> actorMapBindFunc(func);
-      std::for_each(mActorProxyMap.begin(), mActorProxyMap.end(), actorMapBindFunc);
+      std::for_each(mGMImpl->mActorProxyMap.begin(), mGMImpl->mActorProxyMap.end(), actorMapBindFunc);
       BindActor<UnaryFunctor, GameManager::GameActorMap::value_type> gameActorMapBindFunc(func);
-      std::for_each(mGameActorProxyMap.begin(), mGameActorProxyMap.end(), gameActorMapBindFunc);
+      std::for_each(mGMImpl->mGameActorProxyMap.begin(), mGMImpl->mGameActorProxyMap.end(), gameActorMapBindFunc);
    }
 
    template <typename UnaryFunctor>
    inline void GameManager::ForEachPrototype(UnaryFunctor func) const
    {
       BindActor<UnaryFunctor, GameManager::GameActorMap::value_type> gameActorMapBindFunc(func);
-      std::for_each(mPrototypeActors.begin(), mPrototypeActors.end(), gameActorMapBindFunc);
+      std::for_each(mGMImpl->mPrototypeActors.begin(), mGMImpl->mPrototypeActors.end(), gameActorMapBindFunc);
    }
 
    template <typename FindFunctor>

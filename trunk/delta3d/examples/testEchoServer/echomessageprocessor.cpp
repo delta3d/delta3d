@@ -24,6 +24,8 @@
  */
 
 #include "echomessageprocessor.h"
+#include <dtGame/messagetype.h>
+#include <dtGame/messagefactory.h>
 
 EchoMessageProcessor::EchoMessageProcessor()
    : dtGame::DefaultMessageProcessor("EchoMessageProcessor")

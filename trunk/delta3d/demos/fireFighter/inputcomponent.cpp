@@ -42,6 +42,7 @@
 #include <dtCore/keyboard.h>
 #include <dtCore/system.h>
 #include <dtGame/basemessages.h>
+#include <dtGame/messagefactory.h>
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/project.h>
 #include <dtDAL/map.h>

@@ -9,6 +9,7 @@
 #include <dtGame/actorupdatemessage.h>
 #include <dtDIS/sharedstate.h>
 #include <dtGame/gamemanager.h>
+#include <dtGame/gameactorproxy.h>
 #include <dtUtil/stringutils.h>
 
 using namespace dtDIS;

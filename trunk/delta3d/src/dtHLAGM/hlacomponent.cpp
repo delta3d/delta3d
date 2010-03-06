@@ -48,7 +48,9 @@
 #include <dtGame/message.h>
 #include <dtGame/actorupdatemessage.h>
 #include <dtGame/gamemanager.h>
+#include <dtGame/gameactorproxy.h>
 #include <dtGame/machineinfo.h>
+#include <dtGame/messagefactory.h>
 
 #include <osg/Vec3d>
 #include <osg/Endian>

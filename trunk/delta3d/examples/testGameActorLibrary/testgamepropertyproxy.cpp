@@ -30,6 +30,7 @@
 #include <dtActors/deltaobjectactorproxy.h>
 #include <dtCore/scene.h>
 #include <dtCore/object.h>
+#include <dtGame/messagetype.h>
 #include <dtUtil/log.h>
 #include <sstream>
 

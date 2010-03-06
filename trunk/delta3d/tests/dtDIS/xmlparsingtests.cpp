@@ -27,6 +27,7 @@
 #include <dtCore/scene.h>
 #include <dtUtil/xercesparser.h>
 #include <dtUtil/datapathutils.h>
+#include <dtUtil/fileutils.h>
 #include <dtActors/engineactorregistry.h>
 
 namespace dtDIS

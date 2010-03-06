@@ -51,6 +51,8 @@
 #include <dtGame/exceptionenum.h>
 #include <dtGame/deadreckoningcomponent.h>
 #include <dtGame/defaultgroundclamper.h>
+#include <dtGame/gameactorproxy.h>
+#include <dtGame/gameactor.h>
 
 #include <dtABC/application.h>
 

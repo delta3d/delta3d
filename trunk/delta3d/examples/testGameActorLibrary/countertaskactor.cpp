@@ -30,7 +30,8 @@
 #include <dtGame/messagetype.h>
 #include <dtGame/actorupdatemessage.h>
 #include <dtGame/gamemanager.h>
- 
+#include <dtGame/messagefactory.h>
+
 //////////////////////////////////////////////////////////////////////////////
 CounterTaskActor::CounterTaskActor(dtGame::GameActorProxy &proxy) : dtActors::TaskActor(proxy)
 {

@@ -38,6 +38,7 @@
 #include <dtGame/logcontroller.h>
 #include <dtGame/serverloggercomponent.h>
 #include <dtGame/taskcomponent.h>
+#include <dtGame/messagetype.h>
 #include <dtActors/taskactor.h>
 #include <CEGUI/CEGUIExceptions.h>
 #include <CEGUI/CEGUIPropertyHelper.h>

@@ -19,6 +19,7 @@
  * Erik Johnson
  */
 
+#include <prefix/dtgameprefix.h>
 #include <dtGame/shaderactorcomponent.h>
 #include <dtGame/gameactor.h>
 #include <dtCore/shadermanager.h>

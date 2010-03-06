@@ -31,6 +31,7 @@
 #include <dtGame/invokable.h>
 #include <dtGame/messagetype.h>
 #include <dtGame/gamemanager.h>
+#include <dtGame/messagefactory.h>
 #include <dtCore/particlesystem.h>
 #include <dtUtil/mathdefines.h>
 #include <dtCore/positionallight.h>

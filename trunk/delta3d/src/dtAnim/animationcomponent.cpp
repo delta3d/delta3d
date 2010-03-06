@@ -22,7 +22,9 @@
 #include <dtAnim/animationcomponent.h>
 #include <dtGame/basemessages.h>
 #include <dtGame/defaultgroundclamper.h>
-
+#include <dtGame/messagetype.h>
+#include <dtGame/gameactorproxy.h>
+#include <dtGame/gameactor.h>
 #include <dtUtil/log.h>
 
 namespace dtAnim

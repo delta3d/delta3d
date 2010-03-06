@@ -22,8 +22,10 @@
 #include <dtGame/taskcomponent.h>
 #include <dtGame/message.h>
 #include <dtGame/messagetype.h>
+#include <dtGame/messagefactory.h>
 #include <dtGame/basemessages.h>
 #include <dtGame/actorupdatemessage.h>
+#include <dtGame/gameactorproxy.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actortype.h>
 
