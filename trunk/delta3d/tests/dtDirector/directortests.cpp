@@ -132,10 +132,10 @@ void DirectorTests::TestRunScript()
       }
 
       dtDirector::ValueNode* result = mDirector->GetValueNode("Result");
-      CPPUNIT_ASSERT(result);
+      CPPUNIT_ASSERT_MESSAGE("Could not get the ValueNode named 'Result'", result != NULL);
 
       float resultValue = result->GetDouble();
-      CPPUNIT_ASSERT(resultValue == 100);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("'Result' ValueNode didn't have the correct returned value", 100.f, resultValue);
    }
    catch (const dtUtil::Exception& e)
    {
