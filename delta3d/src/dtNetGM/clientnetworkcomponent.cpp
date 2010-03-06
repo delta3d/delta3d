@@ -24,7 +24,8 @@
 #include <dtNetGM/machineinfomessage.h>
 #include <dtNetGM/networkcomponent.h>
 #include <dtGame/basemessages.h>
-
+#include <dtGame/messagetype.h>
+#include <dtGame/messagefactory.h>
 
 namespace dtNetGM
 {

@@ -19,6 +19,7 @@
  * William E. Johnson II, David Guthrie
  */
 
+#include <prefix/dtgameprefix.h>
 #include <dtGame/machineinfo.h>
 
 namespace dtGame

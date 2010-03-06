@@ -43,7 +43,8 @@
 
 #include <dtGame/gamemanager.h>
 #include <dtGame/basemessages.h>
-
+#include <dtGame/messagefactory.h>
+#include <dtGame/messagetype.h>
 #include <dtDAL/map.h>
 #include <dtDAL/project.h>
 

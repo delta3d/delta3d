@@ -24,6 +24,9 @@
  */
 
 #include "clientmessageprocessor.h"
+#include <dtUtil/log.h>
+#include <dtGame/message.h>
+#include <dtGame/messagetype.h>
 
 ClientMessageProcessor::ClientMessageProcessor()
    : dtGame::DefaultMessageProcessor("ClientMessageProcessor")

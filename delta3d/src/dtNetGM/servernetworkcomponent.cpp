@@ -24,6 +24,8 @@
 #include <dtNetGM/serverconnectionlistener.h>
 #include <dtNetGM/machineinfomessage.h>
 #include <dtGame/basemessages.h>
+#include <dtGame/messagefactory.h>
+#include <dtGame/messagetype.h>
 #include <dtCore/timer.h>
 
 namespace dtNetGM

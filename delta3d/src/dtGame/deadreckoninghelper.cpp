@@ -30,6 +30,8 @@
 #include <dtDAL/functor.h>
 
 #include <osgSim/DOFTransform>
+#include <sstream>
+#include <osg/io_utils>  //for Vec3 streaming
 
 namespace dtGame
 {

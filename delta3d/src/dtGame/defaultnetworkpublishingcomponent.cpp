@@ -22,8 +22,10 @@
 #include <dtGame/defaultnetworkpublishingcomponent.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/messagetype.h>
+#include <dtGame/messagefactory.h>
 #include <dtGame/basemessages.h>
 #include <dtGame/actorupdatemessage.h>
+#include <dtGame/gameactorproxy.h>
 #include <dtDAL/actortype.h>
 #include <dtUtil/log.h>
 

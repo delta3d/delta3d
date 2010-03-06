@@ -28,6 +28,7 @@
 #include "export.h"
 #include <dtGame/baseinputcomponent.h>
 #include <dtCore/refptr.h>
+#include <dtCore/observerptr.h>
 
 namespace dtAnim
 {

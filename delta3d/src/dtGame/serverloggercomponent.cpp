@@ -23,6 +23,7 @@
 #include <dtGame/loggermessages.h>
 #include <dtGame/messagetype.h>
 #include <dtGame/gamemanager.h>
+#include <dtGame/gameactorproxy.h>
 #include <dtGame/actorupdatemessage.h>
 #include <dtGame/machineinfo.h>
 #include <dtGame/logstream.h>

@@ -34,11 +34,11 @@
 #include <dtCore/uniqueid.h>
 #include <dtCore/base.h>
 #include <dtUtil/datastream.h>
+#include <dtGame/machineinfo.h>
 
 // Forward declaration
 namespace dtGame
 {
-   class MachineInfo;
    class Message;
 }
 

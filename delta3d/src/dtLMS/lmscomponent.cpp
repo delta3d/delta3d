@@ -22,7 +22,9 @@
 #include <dtLMS/lmsclientsocket.h>
 #include <dtLMS/lmsmessagevalue.h>
 #include <dtLMS/lmsmessagetype.h>
+#include <dtGame/gameactorproxy.h>
 #include <dtGame/message.h>
+#include <dtGame/messagetype.h>
 #include <dtDAL/enginepropertytypes.h>
 
 namespace dtLMS

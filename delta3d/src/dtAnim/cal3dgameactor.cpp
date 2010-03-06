@@ -23,6 +23,7 @@
 #include <dtDAL/groupactorproperty.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/actorupdatemessage.h>
+#include <dtGame/messagetype.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/resourceactorproperty.h>
 #include <dtDAL/actorproxyicon.h>

@@ -25,6 +25,7 @@
 
 #include <dtABC/application.h>
 #include <dtGame/basemessages.h>
+#include <dtGame/messagetype.h>
 #include <dtAnim/cal3dmodelwrapper.h>
 #include <dtAnim/cal3dmodeldata.h>
 #include <dtAnim/cal3ddatabase.h>

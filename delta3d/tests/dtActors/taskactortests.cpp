@@ -37,7 +37,7 @@
 #include <dtGame/gamemanager.h>
 #include <dtGame/defaultmessageprocessor.h>
 #include <dtGame/basemessages.h>
-
+#include <dtGame/messagefactory.h>
 #include <dtDAL/librarymanager.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/arrayactorproperty.h>

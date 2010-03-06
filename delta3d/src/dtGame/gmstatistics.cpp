@@ -23,6 +23,7 @@
 #include <dtGame/gmstatistics.h>
 #include <dtGame/gamemanager.h>
 #include <dtCore/system.h>
+#include <dtUtil/log.h>
 #include <osg/Stats>
 #include <sstream>
 
@@ -154,7 +155,9 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GMStatistics::DebugStatisticsPrintOut(const float realTimeElapsed, const GameManager& ourGm)
+   void GMStatistics::DebugStatisticsPrintOut(const float realTimeElapsed,
+                                              const GameManager& ourGm,
+                                              dtUtil::Log* logger)
    {
       // Lots of divides and unnecessary stuff in here to do if we don't need to
       // Just return.
@@ -184,8 +187,8 @@ namespace dtGame
          "%, " << truncCumGMTime << "s], ReportTime[" << truncRealTime <<
          "s], Ticks[" << mStatsNumFrames << "], FPS[" << fps <<
          "], #Msgs[" << mStatsNumProcMessages << " Local/" << mStatsNumSendNetworkMessages <<
-         " Ntwrk], #Actors[" << ourGm.mActorProxyMap.size() << "/" << ourGm.mGameActorProxyMap.size() <<
-         " Game/" << ourGm.mActorProxyMap.size() << "]" << std::endl;
+         " Ntwrk], #Actors[" << ourGm.GetNumAllActors() << "/ Game/" <<
+         ourGm.GetNumGameActors() << "]" << std::endl;
 
       // reset values for next fragment
       mStatsNumFrames         = 0;
@@ -282,9 +285,9 @@ namespace dtGame
       // Do the writing
       if (mPrintFileToConsole)
       {
-         if (ourGm.mLogger != NULL)
+         if (logger != NULL)
          {
-            ourGm.mLogger->LogMessage(__FUNCTION__, __LINE__, ss.str(), dtUtil::Log::LOG_ALWAYS);
+            logger->LogMessage(__FUNCTION__, __LINE__, ss.str(), dtUtil::Log::LOG_ALWAYS);
          }
       }
       else // print to file

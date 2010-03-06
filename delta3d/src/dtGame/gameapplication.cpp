@@ -35,6 +35,7 @@
 #include <dtCore/keyboard.h>
 
 #include <iostream>
+#include <sstream>
 
 namespace dtGame
 {

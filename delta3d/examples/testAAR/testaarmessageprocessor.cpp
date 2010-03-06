@@ -46,6 +46,7 @@
 #include <dtGame/logtag.h>
 #include <dtGame/serverloggercomponent.h>
 #include <dtGame/basemessages.h>
+#include <dtGame/messagefactory.h>
 #include <dtDAL/gameeventmanager.h>
 #include <dtDAL/gameevent.h>
 #include <dtDAL/actortype.h>

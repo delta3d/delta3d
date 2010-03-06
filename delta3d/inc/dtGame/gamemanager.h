@@ -24,19 +24,13 @@
 
 #include <set>
 #include <map>
-#include <queue>
-#include <list>
 
 #include <dtGame/export.h>
-#include <dtGame/gameactor.h>
-#include <dtGame/messagefactory.h>
-#include <dtGame/message.h>
-#include <dtGame/machineinfo.h>
-#include <dtGame/environmentactor.h>
-
+#include <dtGame/gameactorproxy.h> //for RefPtr
 #include <dtCore/refptr.h>
 #include <dtCore/base.h>
 #include <dtCore/timer.h>
+#include <dtUtil/enumeration.h> //for ComponentPriority
 
 
 namespace dtUtil
@@ -47,12 +41,14 @@ namespace dtUtil
 
 namespace dtCore
 {
+   class DeltaDrawable;
    class Scene;
 }
 
 // Forward declarations
 namespace dtDAL
 {
+   class ActorProxy;
    class ActorType;
    class ActorPluginRegistry;
    class LibraryManager;
@@ -75,6 +71,11 @@ namespace dtGame
    class TickMessage;
    class GMStatistics;
    class GMImpl;
+   class MachineInfo;
+   class Message;
+   class MessageFactory;
+   class MessageType;
+   class IEnvGameActorProxy;
 
    class DT_GAME_EXPORT GameManager : public dtCore::Base
    {
@@ -88,8 +89,8 @@ namespace dtGame
       static const std::string CONFIG_STATISTICS_OUTPUT_FILE;
 
       typedef std::vector<std::string> NameVector;
-      typedef std::map< dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> > GameActorMap;
       typedef std::map< dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> > ActorMap;
+      typedef std::map< dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> > GameActorMap;
 
       class DT_GAME_EXPORT ComponentPriority : public dtUtil::Enumeration
       {
@@ -372,7 +373,7 @@ namespace dtGame
        * Gets the environment actor on the game manager
        * @return mEnvProxy or NULL if no environment actor has been set
        */
-      IEnvGameActorProxy* GetEnvironmentActor() { return mEnvironment.get(); }
+      IEnvGameActorProxy* GetEnvironmentActor();
 
       /**
        * Creates a game actor based on the actor type but sets the isRemote status to true (== remote).
@@ -504,7 +505,7 @@ namespace dtGame
        * manager.
        * @return The number of game actors in the system.
        */
-      size_t GetNumGameActors() const { return mGameActorProxyMap.size(); }
+      size_t GetNumGameActors() const;
 
       /**
        * Retrieves all the game actors added to the GM
@@ -851,7 +852,7 @@ namespace dtGame
        * @return Flag for whether we remove a map's GameEvents from
        * the GameEventManager when closing a map. (default is true)
        */
-      bool GetRemoveGameEventsOnMapChange() const { return mRemoveGameEventsOnMapChange; }
+      bool GetRemoveGameEventsOnMapChange() const;
 
       /**no
        * Sets the flag for whether we will remove the Game Events when we change a map or not.
@@ -861,33 +862,33 @@ namespace dtGame
        * @param removeGameEventsOnMapChange Flag for whether we remove a map's GameEvents from
        * the GameEventManager when closing a map. (default is true)
        */
-      void SetRemoveGameEventsOnMapChange(const bool removeGameEventsOnMapChange) { mRemoveGameEventsOnMapChange = removeGameEventsOnMapChange; }
+      void SetRemoveGameEventsOnMapChange(const bool removeGameEventsOnMapChange);
 
       /**
        * Retrieves the message factor that is controlled by the GameManager
        * @return mFactory he message factory
        * @see class dtGame::MessageFactory
        */
-      MessageFactory& GetMessageFactory()  { return mFactory; }
+      MessageFactory& GetMessageFactory();
 
       /**
        * Retrieves the message factor that is controlled by the GameManager
        * @return mFactory he message factory
        * @see class dtGame::MessageFactory
        */
-      const MessageFactory& GetMessageFactory() const { return mFactory; }
+      const MessageFactory& GetMessageFactory() const;
 
       /**
        * Gets the const version of the machine info
        * @return mMachineInfo
        */
-      const MachineInfo& GetMachineInfo() const { return *mMachineInfo; }
+      const MachineInfo& GetMachineInfo() const;
 
       /**
        * Non const version to get the machine info
        * @return mMachineInfo
        */
-      MachineInfo& GetMachineInfo() { return *mMachineInfo; }
+      MachineInfo& GetMachineInfo();
 
       /**
        * Gets the name of the first currently loaded map.  This is support apps that
@@ -1050,25 +1051,6 @@ namespace dtGame
       void Shutdown();
 
    protected:
-      struct TimerInfo
-      {
-         std::string name;
-         dtCore::UniqueId aboutActor;
-         dtCore::Timer_t time;
-         bool repeat;
-         dtCore::Timer_t interval;
-
-         bool operator < (const TimerInfo& rhs) const
-         {
-            if (time == rhs.time)
-            {
-               return this <& rhs;
-            }
-            return time < rhs.time;
-         }
-      };
-
-      dtUtil::Log* mLogger;
 
       /**
        * Implements the functionality that will happen on the PostEventTraversal event
@@ -1111,77 +1093,13 @@ namespace dtGame
       void RemoveDeletedActors();
 
    private:
-      std::set<TimerInfo>& GetSimulationTimerList() { return mSimulationTimers; }
-
-      /// Does the work of ClearTimer for each of the timer info sets.
-      void ClearTimerSingleSet(std::set<TimerInfo>& timerSet,
-               const std::string& name, const GameActorProxy* proxy);
-
-      /**
-       * Private helper method to process the timers. This is called from PreFrame
-       * @param listToProcess The timer list to process
-       * @param clockTime The time to use
-       * @note The clock time should correspond to the list to be processed
-       */
-      void ProcessTimers(std::set<TimerInfo>& listToProcess, dtCore::Timer_t clockTime);
-            GMImpl* mGMImpl; // Pimple pattern for private data
-
-      /**
-       * Removes the proxy from the scene
-       * @param proxy the proxy to remove from the scene.
-       */
-      void RemoveActorFromScene(dtDAL::ActorProxy& proxy);
-
-      /**
-       * Private helper method to send an environment changed message
-       * @param envActor The about actor of the message
-       */
-      void SendEnvironmentChangedMessage(IEnvGameActorProxy* envActor);
-
-      dtCore::RefPtr<MachineInfo>         mMachineInfo;
-      dtCore::RefPtr<IEnvGameActorProxy>  mEnvironment;
-
-      GameActorMap mGameActorProxyMap;
-      ActorMap mActorProxyMap;
-      GameActorMap mPrototypeActors;
-
-      std::vector<dtCore::RefPtr<GameActorProxy> > mDeleteList;
-      // These are used during changing the map so that
-      // the map code can modify game manager with some control.
-      bool mSendCreatesAndDeletes;
-      bool mAddActorsToScene;
-
-      std::set<TimerInfo> mSimulationTimers, mRealTimeTimers;
-
-      typedef std::pair<dtCore::RefPtr<GameActorProxy>, std::string> ProxyInvokablePair;
-      typedef std::multimap<const MessageType*, ProxyInvokablePair > GlobalMessageListenerMap;
-      GlobalMessageListenerMap mGlobalMessageListeners;
-
-      typedef std::multimap<dtCore::UniqueId, ProxyInvokablePair > ProxyInvokableMap;
-      typedef std::map<const MessageType*,  ProxyInvokableMap> ActorMessageListenerMap;
-      ActorMessageListenerMap mActorMessageListeners;
-
-      typedef std::list<dtCore::RefPtr<GMComponent> > GMComponentContainer;
-      GMComponentContainer mComponentList;
-      std::queue<dtCore::RefPtr<const Message> > mSendNetworkMessageQueue;
-      std::queue<dtCore::RefPtr<const Message> > mSendMessageQueue;
-      dtCore::RefPtr<dtCore::Scene> mScene;
-      dtCore::RefPtr<dtDAL::LibraryManager> mLibMgr;
-      MessageFactory mFactory;
-
-      NameVector mLoadedMaps;
-      dtCore::RefPtr<MapChangeStateData> mMapChangeStateData;
-
-      /// application the gm has. the one and only.
-      dtABC::Application* mApplication;
+      GMImpl* mGMImpl; // Pimple pattern for private data
 
       // -----------------------------------------------------------------------
       //  Unimplemented constructors and operators
       // -----------------------------------------------------------------------
       GameManager(const GameManager&);
       GameManager& operator=(const GameManager&);
-
-      bool mRemoveGameEventsOnMapChange;
    };
 
 } // namespace dtGame

@@ -39,6 +39,7 @@
 #include <dtGame/basemessages.h>
 #include <dtGame/invokable.h>
 #include <dtAudio/audiomanager.h>
+#include <dtGame/messagefactory.h>
 
 using dtCore::RefPtr;
 

@@ -23,6 +23,7 @@
 #include <dtGame/logcontroller.h>
 #include <dtGame/loggermessages.h>
 #include <dtGame/messagetype.h>
+#include <dtGame/messagefactory.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/logkeyframe.h>
 #include <dtGame/logtag.h>

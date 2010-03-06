@@ -38,6 +38,7 @@
 #include <dtGUI/gui.h>
 #include <dtGame/taskcomponent.h>
 #include <dtGame/exceptionenum.h>
+#include <dtGame/messagefactory.h>
 #include <dtDAL/gameevent.h>
 #include <dtDAL/project.h>
 

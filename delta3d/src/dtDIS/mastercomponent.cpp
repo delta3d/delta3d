@@ -10,7 +10,8 @@
 #include <dtDIS/plugins/default/defaultplugin.h>
 #include <dtActors/engineactorregistry.h>
 #include <dtActors/coordinateconfigactor.h>
-
+#include <dtGame/message.h>
+#include <dtGame/messagetype.h>
 
 using namespace dtDIS;
 

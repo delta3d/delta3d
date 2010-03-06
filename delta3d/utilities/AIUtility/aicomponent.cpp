@@ -26,6 +26,7 @@
 
 #include <dtABC/application.h>
 #include <dtGame/basemessages.h>
+#include <dtGame/messagetype.h>
 #include <dtDAL/map.h>
 #include <dtDAL/project.h>
 #include <dtDAL/librarymanager.h>

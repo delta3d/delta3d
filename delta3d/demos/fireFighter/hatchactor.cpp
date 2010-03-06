@@ -26,6 +26,8 @@
 #include <dtGame/gamemanager.h>
 #include <dtGame/basemessages.h>
 #include <dtGame/invokable.h>
+#include <dtGame/messagefactory.h>
+
 #include <dtDAL/gameeventmanager.h>
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/enginepropertytypes.h>

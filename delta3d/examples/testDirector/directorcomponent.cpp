@@ -23,6 +23,7 @@
 
 #include <dtABC/application.h>
 #include <dtGame/basemessages.h>
+#include <dtGame/messagetype.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/transform.h>
 #include <dtCore/collisionmotionmodel.h>

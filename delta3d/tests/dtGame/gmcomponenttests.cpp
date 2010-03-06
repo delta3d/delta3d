@@ -32,6 +32,7 @@
 #include <dtCore/system.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/gmcomponent.h>
+#include <dtUtil/stringutils.h>
 
 class GMComponentTests : public CPPUNIT_NS::TestFixture
 {

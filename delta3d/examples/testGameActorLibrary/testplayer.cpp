@@ -40,6 +40,7 @@
 #include <dtGame/basemessages.h>
 #include <dtGame/actorupdatemessage.h>
 #include <dtGame/invokable.h>
+#include <dtGame/messagefactory.h>
 
 
 #include <iostream>

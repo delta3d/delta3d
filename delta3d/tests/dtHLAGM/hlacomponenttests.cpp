@@ -60,6 +60,8 @@
 #include <dtGame/defaultmessageprocessor.h>
 #include <dtGame/basemessages.h>
 #include <dtGame/actorupdatemessage.h>
+#include <dtGame/gameactor.h>
+#include <dtGame/messagefactory.h>
 
 //Defined in the dtgame unit tests.
 #include "../dtGame/testcomponent.h"

@@ -31,7 +31,8 @@
 #include <dtDAL/gameeventmanager.h>
 #include <dtCore/deltawin.h>
 #include <dtGame/basemessages.h>
-
+#include <dtGame/messagefactory.h>
+#include <dtGame/messagetype.h>
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_ENUM(AppException);

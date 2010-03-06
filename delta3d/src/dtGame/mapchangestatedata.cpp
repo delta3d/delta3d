@@ -27,10 +27,12 @@
 #include <dtDAL/actortype.h>
 
 #include <dtGame/exceptionenum.h>
+#include <dtGame/environmentactor.h>
 #include <dtGame/mapchangestatedata.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/messagetype.h>
 #include <dtGame/basemessages.h>
+#include <dtGame/messagefactory.h>
 
 #include <dtCore/system.h>
 namespace dtGame
