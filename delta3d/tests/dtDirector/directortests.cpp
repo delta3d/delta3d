@@ -101,15 +101,15 @@ void DirectorTests::TestRunScript()
    {
       mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__,  __LINE__, "Testing Director Graph.\n");
 
-      CPPUNIT_ASSERT(mDirector->LoadScript("test"));
+      CPPUNIT_ASSERT_MESSAGE("dtDirector test script didn't load correctly", mDirector->LoadScript("test") == true);
 
       // A pre-defined script should be loaded.
-      CPPUNIT_ASSERT(mDirector->GetGraphRoot());
-      CPPUNIT_ASSERT(!mDirector->GetGraphRoot()->GetEventNodes().empty());
+      CPPUNIT_ASSERT_MESSAGE("dtDirector didn't have a Graph Root after loading the test script", mDirector->GetGraphRoot()!=NULL);
+      CPPUNIT_ASSERT_MESSAGE("dtDirector's Graph Root didn't have any EventNodes", mDirector->GetGraphRoot()->GetEventNodes().empty() == false);
 
       std::vector<dtDirector::Node*> nodes;
       mDirector->GetNodes("Remote Event", "Core", nodes);
-      CPPUNIT_ASSERT(!nodes.empty());
+      CPPUNIT_ASSERT_MESSAGE("Couldn't find the 'Core/Remote Event' nodes after loading script", nodes.empty() == false);
 
       int count = (int)nodes.size();
       for (int index = 0; index < count; index++)
@@ -135,7 +135,7 @@ void DirectorTests::TestRunScript()
       CPPUNIT_ASSERT_MESSAGE("Could not get the ValueNode named 'Result'", result != NULL);
 
       float resultValue = result->GetDouble();
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("'Result' ValueNode didn't have the correct returned value", 100.f, resultValue);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("'Result' ValueNode didn't have the correct returned value", -100.f, resultValue);
    }
    catch (const dtUtil::Exception& e)
    {
