@@ -26,7 +26,7 @@
  *
  * Jeffrey P. Houde
  */
-#include <prefix/dtqtprefix.h>
+#include <prefix/stageprefix.h>
 #include <QtGui/QAction>
 #include <QtGui/QIcon>
 #include <QtGui/QToolButton>

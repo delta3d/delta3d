@@ -26,7 +26,7 @@
  *
  * @author William E. Johnson II
  */
-#include <prefix/dtqtprefix.h>
+#include <prefix/stageprefix.h>
 #include <dtEditQt/dynamicgameeventcontrol.h>
 #include <dtEditQt/editordata.h>
 #include <dtDAL/map.h>

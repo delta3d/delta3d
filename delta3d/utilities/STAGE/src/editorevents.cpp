@@ -26,7 +26,7 @@
  *
  * Matthew W. Campbell
  */
-#include <prefix/dtqtprefix.h>
+#include <prefix/stageprefix.h>
 
 #include <dtEditQt/editorevents.h>
 #include <dtUtil/log.h>

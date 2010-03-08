@@ -1,3 +1,4 @@
+#include <prefix/stageprefix.h>
 #include <dtEditQt/configurationmanager.h>
 
 #include <dtCore/refptr.h>

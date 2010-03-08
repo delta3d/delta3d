@@ -26,7 +26,7 @@
  *
  * Teague Coonan
  */
-#include <prefix/dtqtprefix.h>
+#include <prefix/stageprefix.h>
 #include "dtEditQt/projectbrowser.h"
 
 #include <QtGui/QGridLayout>

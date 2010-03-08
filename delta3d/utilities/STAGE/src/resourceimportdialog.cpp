@@ -26,7 +26,7 @@
  *
  * Teague Coonan
  */
-#include <prefix/dtqtprefix.h>
+#include <prefix/stageprefix.h>
 #include <QtGui/QFileDialog>
 #include <QtCore/QFileInfo>
 #include <QtGui/QPushButton>

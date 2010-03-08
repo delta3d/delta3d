@@ -1,3 +1,4 @@
+#include <prefix/stageprefix.h>
 #include <dtEditQt/stageglwidget.h>
 #include <dtEditQt/editorviewport.h>
 #include <QtGui/QMouseEvent>

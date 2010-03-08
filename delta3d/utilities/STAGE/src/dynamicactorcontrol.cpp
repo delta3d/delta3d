@@ -26,8 +26,8 @@
  *
  * William E. Johnson II
  */
+#include <prefix/stageprefix.h>
 #include <dtDAL/project.h>
-#include <prefix/dtqtprefix.h>
 #include <dtEditQt/dynamicactorcontrol.h>
 #include <dtQt/propertyeditortreeview.h>
 #include <dtDAL/map.h>

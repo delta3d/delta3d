@@ -28,8 +28,8 @@
  * Jeffrey P. Houde
  */
 
+#include <prefix/stageprefix.h>
 #include <dtEditQt/prefabsaveasdialog.h>
-#include <prefix/dtqtprefix.h>
 #include <dtEditQt/uiresources.h>
 
 #include <QtGui/QFileDialog>

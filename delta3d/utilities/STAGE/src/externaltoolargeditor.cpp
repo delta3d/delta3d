@@ -1,3 +1,4 @@
+#include <prefix/stageprefix.h>
 #include <dtEditQt/externaltoolargeditor.h>
 #include <dtEditQt/externaltoolargparser.h>
 

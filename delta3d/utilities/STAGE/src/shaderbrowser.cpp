@@ -1,3 +1,4 @@
+#include <prefix/stageprefix.h>
 #include <dtEditQt/shaderbrowser.h>
 #include "dtEditQt/resourcetreewidget.h"
 

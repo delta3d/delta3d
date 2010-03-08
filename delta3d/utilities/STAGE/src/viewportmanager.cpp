@@ -26,7 +26,7 @@
  *
  * Matthew W. Campbell
  */
-#include <prefix/dtqtprefix.h>
+#include <prefix/stageprefix.h>
 #include <QtGui/QWidget>
 #include <QtOpenGL/QGLWidget>
 #include <osg/Texture>

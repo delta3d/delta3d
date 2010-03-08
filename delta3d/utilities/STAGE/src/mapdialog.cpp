@@ -26,7 +26,7 @@
  *
  * William E. Johnson II
  */
-#include <prefix/dtqtprefix.h>
+#include <prefix/stageprefix.h>
 #include <dtEditQt/mapdialog.h>
 #include <QtGui/QGroupBox>
 #include <QtGui/QLineEdit>

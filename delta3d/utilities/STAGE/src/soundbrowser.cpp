@@ -19,7 +19,7 @@
  *
  * Teague Coonan
  */
-#include <prefix/dtqtprefix.h>
+#include <prefix/stageprefix.h>
 #include <QtCore/QDir>
 #include <QtGui/QHeaderView>
 

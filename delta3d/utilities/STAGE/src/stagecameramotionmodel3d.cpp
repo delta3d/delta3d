@@ -1,6 +1,7 @@
 // stagecameramotionmodel3d.cpp: Implementation of the STAGECameraMotionModel3D class.
 //
 //////////////////////////////////////////////////////////////////////
+#include <prefix/stageprefix.h>
 #include <dtEditQt/stagecameramotionmodel3d.h>
 #include <dtEditQt/editorviewport.h>
 #include <dtEditQt/perspectiveviewport.h>

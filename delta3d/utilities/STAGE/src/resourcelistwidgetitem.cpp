@@ -26,9 +26,9 @@
  *
  */
 
+#include <prefix/stageprefix.h>
 #include "dtEditQt/resourcelistwidgetitem.h"
 
-#include <prefix/dtqtprefix.h>
 #include <QtCore/QString>
 #include <QtCore/QList>
 #include <QtGui/QPixmap>

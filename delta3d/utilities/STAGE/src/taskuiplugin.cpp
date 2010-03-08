@@ -27,7 +27,7 @@
  * William E. Johnson II
  * David Guthrie
  */
-#include <prefix/dtqtprefix.h>
+#include <prefix/stageprefix.h>
 
 #define QT_STATICPLUGIN
 

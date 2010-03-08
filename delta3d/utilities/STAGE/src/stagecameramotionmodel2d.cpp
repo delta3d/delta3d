@@ -1,6 +1,7 @@
 // stagecameramotionmodel2d.cpp: Implementation of the STAGECameraMotionModel2D class.
 //
 //////////////////////////////////////////////////////////////////////
+#include <prefix/stageprefix.h>
 #include <dtEditQt/stagecameramotionmodel2d.h>
 #include <dtEditQt/editorviewport.h>
 
