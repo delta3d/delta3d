@@ -2,7 +2,7 @@
 <director xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dDirector" xsi:schemaLocation="delta3dDirector director.xsd">
     <header>
         <createTimestamp>2009-12-16T22:35:23-08:00</createTimestamp>
-        <lastUpdateTimestamp>2009-12-17T09:55:06-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2010-03-08T10:11:33-08:00</lastUpdateTimestamp>
         <editorVersion>2.4.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
         <property>
@@ -54,7 +54,7 @@
                     <string></string>
                 </property>
                 <property>
-                    <name>LogComment</name>
+                    <name>LogNode</name>
                     <boolean>false</boolean>
                 </property>
                 <property>
@@ -63,6 +63,10 @@
                         <value1>-113.000000</value1>
                         <value2>82.000000</value2>
                     </vec2>
+                </property>
+                <property>
+                    <name>TriggerCount</name>
+                    <integer>0</integer>
                 </property>
                 <property>
                     <name>Instigator</name>
@@ -101,7 +105,7 @@
                     <string></string>
                 </property>
                 <property>
-                    <name>LogComment</name>
+                    <name>LogNode</name>
                     <boolean>false</boolean>
                 </property>
                 <property>
@@ -110,6 +114,10 @@
                         <value1>-116.954361</value1>
                         <value2>217.999802</value2>
                     </vec2>
+                </property>
+                <property>
+                    <name>TriggerCount</name>
+                    <integer>0</integer>
                 </property>
                 <property>
                     <name>Instigator</name>
@@ -150,7 +158,7 @@
                     <string></string>
                 </property>
                 <property>
-                    <name>LogComment</name>
+                    <name>LogNode</name>
                     <boolean>false</boolean>
                 </property>
                 <property>
@@ -201,7 +209,7 @@
                     <string></string>
                 </property>
                 <property>
-                    <name>LogComment</name>
+                    <name>LogNode</name>
                     <boolean>false</boolean>
                 </property>
                 <property>
@@ -254,7 +262,7 @@
                     <allowmultiple>false</allowmultiple>
                     <typecheck>false</typecheck>
                     <link>
-                        <id>0e27a978-1ee3-4c3d-a69f-bb75b876a45c</id>
+                        <id>23a50954-a7d6-4c58-81cc-e7063ff0ebf2</id>
                     </link>
                 </valuelink>
                 <valuelink>
@@ -278,7 +286,7 @@
                     <string></string>
                 </property>
                 <property>
-                    <name>LogComment</name>
+                    <name>LogNode</name>
                     <boolean>false</boolean>
                 </property>
                 <property>
@@ -345,7 +353,7 @@
                     <allowmultiple>true</allowmultiple>
                     <typecheck>false</typecheck>
                     <link>
-                        <id>8cd6ba8a-f97c-4f32-a03a-1946cf099314</id>
+                        <id>fbfa5874-9e9c-4718-90b0-e15abf87afc9</id>
                     </link>
                 </valuelink>
             </node>
@@ -364,14 +372,14 @@
                     <string></string>
                 </property>
                 <property>
-                    <name>LogComment</name>
+                    <name>LogNode</name>
                     <boolean>false</boolean>
                 </property>
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>458.255402</value1>
-                        <value2>225.586609</value2>
+                        <value1>15.999809</value1>
+                        <value2>-98.870422</value2>
                     </vec2>
                 </property>
                 <property>
@@ -384,9 +392,9 @@
                 </property>
             </node>
             <node>
-                <name>Reference</name>
-                <category>Core</category>
-                <id>0e27a978-1ee3-4c3d-a69f-bb75b876a45c</id>
+                <name>Int</name>
+                <category>General</category>
+                <id>bb68d7bf-4a16-4922-9f5c-d3d1b1857d31</id>
                 <property>
                     <name>Enabled</name>
                     <boolean>true</boolean>
@@ -396,14 +404,78 @@
                     <string></string>
                 </property>
                 <property>
-                    <name>LogComment</name>
+                    <name>LogNode</name>
                     <boolean>false</boolean>
                 </property>
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>297.499939</value1>
-                        <value2>226.129578</value2>
+                        <value1>-116.954361</value1>
+                        <value2>-98.870422</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>Name</name>
+                    <string>Count</string>
+                </property>
+                <property>
+                    <name>Value</name>
+                    <integer>0</integer>
+                </property>
+            </node>
+            <node>
+                <name>Boolean</name>
+                <category>General</category>
+                <id>77d3e2f8-a576-4d99-9d5c-ddf4c1dda1f2</id>
+                <property>
+                    <name>Enabled</name>
+                    <boolean>true</boolean>
+                </property>
+                <property>
+                    <name>Comment</name>
+                    <string></string>
+                </property>
+                <property>
+                    <name>LogNode</name>
+                    <boolean>false</boolean>
+                </property>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>-49.000000</value1>
+                        <value2>-98.870422</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>Name</name>
+                    <string>Complete</string>
+                </property>
+                <property>
+                    <name>Value</name>
+                    <boolean>false</boolean>
+                </property>
+            </node>
+            <node>
+                <name>Reference</name>
+                <category>Core</category>
+                <id>23a50954-a7d6-4c58-81cc-e7063ff0ebf2</id>
+                <property>
+                    <name>Enabled</name>
+                    <boolean>true</boolean>
+                </property>
+                <property>
+                    <name>Comment</name>
+                    <string></string>
+                </property>
+                <property>
+                    <name>LogNode</name>
+                    <boolean>false</boolean>
+                </property>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>297.499817</value1>
+                        <value2>225.586609</value2>
                     </vec2>
                 </property>
                 <property>
@@ -421,7 +493,49 @@
                     <allowmultiple>false</allowmultiple>
                     <typecheck>false</typecheck>
                     <link>
-                        <id>bcf86582-441b-4572-8029-c82dff68e00a</id>
+                        <id>77d3e2f8-a576-4d99-9d5c-ddf4c1dda1f2</id>
+                    </link>
+                </valuelink>
+            </node>
+            <node>
+                <name>Reference</name>
+                <category>Core</category>
+                <id>fbfa5874-9e9c-4718-90b0-e15abf87afc9</id>
+                <property>
+                    <name>Enabled</name>
+                    <boolean>true</boolean>
+                </property>
+                <property>
+                    <name>Comment</name>
+                    <string></string>
+                </property>
+                <property>
+                    <name>LogNode</name>
+                    <boolean>false</boolean>
+                </property>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>458.255188</value1>
+                        <value2>225.586609</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>Name</name>
+                    <string>Ref</string>
+                </property>
+                <property>
+                    <name>Reference</name>
+                    <string>Result</string>
+                </property>
+                <valuelink>
+                    <name>Ref</name>
+                    <visible>true</visible>
+                    <isout>true</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>false</typecheck>
+                    <link>
+                        <id>8cd6ba8a-f97c-4f32-a03a-1946cf099314</id>
                     </link>
                 </valuelink>
             </node>
@@ -460,7 +574,7 @@
                         <string></string>
                     </property>
                     <property>
-                        <name>LogComment</name>
+                        <name>LogNode</name>
                         <boolean>false</boolean>
                     </property>
                     <property>
@@ -469,6 +583,10 @@
                             <value1>-70.000000</value1>
                             <value2>41.000000</value2>
                         </vec2>
+                    </property>
+                    <property>
+                        <name>TriggerCount</name>
+                        <integer>0</integer>
                     </property>
                     <property>
                         <name>Name</name>
@@ -506,7 +624,7 @@
                         <string></string>
                     </property>
                     <property>
-                        <name>LogComment</name>
+                        <name>LogNode</name>
                         <boolean>false</boolean>
                     </property>
                     <property>
@@ -555,7 +673,7 @@
                         <allowmultiple>false</allowmultiple>
                         <typecheck>false</typecheck>
                         <link>
-                            <id>31d24ae2-3dc1-4504-b8fd-cb9adb01ff3f</id>
+                            <id>980b7093-7929-4dc6-ade6-3a96b7cddadb</id>
                         </link>
                     </valuelink>
                     <valuelink>
@@ -572,7 +690,7 @@
                         <allowmultiple>true</allowmultiple>
                         <typecheck>false</typecheck>
                         <link>
-                            <id>31d24ae2-3dc1-4504-b8fd-cb9adb01ff3f</id>
+                            <id>980b7093-7929-4dc6-ade6-3a96b7cddadb</id>
                         </link>
                     </valuelink>
                 </node>
@@ -589,7 +707,7 @@
                         <string></string>
                     </property>
                     <property>
-                        <name>LogComment</name>
+                        <name>LogNode</name>
                         <boolean>false</boolean>
                     </property>
                     <property>
@@ -602,6 +720,10 @@
                     <property>
                         <name>Delay</name>
                         <float>1</float>
+                    </property>
+                    <property>
+                        <name>UseSimTime</name>
+                        <boolean>true</boolean>
                     </property>
                     <inputlink>
                         <name>Start</name>
@@ -645,38 +767,6 @@
             </actionnodes>
             <valuenodes>
                 <node>
-                    <name>Int</name>
-                    <category>General</category>
-                    <id>31d24ae2-3dc1-4504-b8fd-cb9adb01ff3f</id>
-                    <property>
-                        <name>Enabled</name>
-                        <boolean>true</boolean>
-                    </property>
-                    <property>
-                        <name>Comment</name>
-                        <string></string>
-                    </property>
-                    <property>
-                        <name>LogComment</name>
-                        <boolean>false</boolean>
-                    </property>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>311.500000</value1>
-                            <value2>173.000000</value2>
-                        </vec2>
-                    </property>
-                    <property>
-                        <name>Name</name>
-                        <string>Count</string>
-                    </property>
-                    <property>
-                        <name>Value</name>
-                        <integer>0</integer>
-                    </property>
-                </node>
-                <node>
                     <name>Double</name>
                     <category>General</category>
                     <id>2553c4e8-6a5b-469c-9719-b44ae6f8d144</id>
@@ -689,7 +779,7 @@
                         <string></string>
                     </property>
                     <property>
-                        <name>LogComment</name>
+                        <name>LogNode</name>
                         <boolean>false</boolean>
                     </property>
                     <property>
@@ -707,6 +797,45 @@
                         <name>Value</name>
                         <double>2</double>
                     </property>
+                </node>
+                <node>
+                    <name>Reference</name>
+                    <category>Core</category>
+                    <id>980b7093-7929-4dc6-ade6-3a96b7cddadb</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>LogNode</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>314.500000</value1>
+                            <value2>173.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>Name</name>
+                        <string>Ref</string>
+                    </property>
+                    <property>
+                        <name>Reference</name>
+                        <string>Count</string>
+                    </property>
+                    <valuelink>
+                        <name>Ref</name>
+                        <visible>true</visible>
+                        <isout>true</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>false</typecheck>
+                    </valuelink>
                 </node>
             </valuenodes>
         </graph>
@@ -744,7 +873,7 @@
                         <string></string>
                     </property>
                     <property>
-                        <name>LogComment</name>
+                        <name>LogNode</name>
                         <boolean>false</boolean>
                     </property>
                     <property>
@@ -753,6 +882,10 @@
                             <value1>0.000000</value1>
                             <value2>0.000000</value2>
                         </vec2>
+                    </property>
+                    <property>
+                        <name>TriggerCount</name>
+                        <integer>0</integer>
                     </property>
                     <property>
                         <name>Instigator</name>
@@ -793,7 +926,7 @@
                         <string></string>
                     </property>
                     <property>
-                        <name>LogComment</name>
+                        <name>LogNode</name>
                         <boolean>false</boolean>
                     </property>
                     <property>
@@ -844,7 +977,7 @@
                         <string></string>
                     </property>
                     <property>
-                        <name>LogComment</name>
+                        <name>LogNode</name>
                         <boolean>false</boolean>
                     </property>
                     <property>
@@ -917,7 +1050,7 @@
                         <string></string>
                     </property>
                     <property>
-                        <name>LogComment</name>
+                        <name>LogNode</name>
                         <boolean>false</boolean>
                     </property>
                     <property>
@@ -980,7 +1113,7 @@
                         <allowmultiple>true</allowmultiple>
                         <typecheck>false</typecheck>
                         <link>
-                            <id>bcf86582-441b-4572-8029-c82dff68e00a</id>
+                            <id>22826e48-1f70-4e92-8b04-ce39b4169abc</id>
                         </link>
                     </valuelink>
                 </node>
@@ -999,7 +1132,7 @@
                         <string></string>
                     </property>
                     <property>
-                        <name>LogComment</name>
+                        <name>LogNode</name>
                         <boolean>false</boolean>
                     </property>
                     <property>
@@ -1024,14 +1157,14 @@
                         <allowmultiple>false</allowmultiple>
                         <typecheck>false</typecheck>
                         <link>
-                            <id>31d24ae2-3dc1-4504-b8fd-cb9adb01ff3f</id>
+                            <id>bb68d7bf-4a16-4922-9f5c-d3d1b1857d31</id>
                         </link>
                     </valuelink>
                 </node>
                 <node>
-                    <name>Boolean</name>
-                    <category>General</category>
-                    <id>bcf86582-441b-4572-8029-c82dff68e00a</id>
+                    <name>Reference</name>
+                    <category>Core</category>
+                    <id>22826e48-1f70-4e92-8b04-ce39b4169abc</id>
                     <property>
                         <name>Enabled</name>
                         <boolean>true</boolean>
@@ -1041,24 +1174,31 @@
                         <string></string>
                     </property>
                     <property>
-                        <name>LogComment</name>
+                        <name>LogNode</name>
                         <boolean>false</boolean>
                     </property>
                     <property>
                         <name>Position</name>
                         <vec2>
                             <value1>566.000000</value1>
-                            <value2>134.000000</value2>
+                            <value2>130.000000</value2>
                         </vec2>
                     </property>
                     <property>
                         <name>Name</name>
-                        <string>Complete</string>
+                        <string>Ref</string>
                     </property>
                     <property>
-                        <name>Value</name>
-                        <boolean>false</boolean>
+                        <name>Reference</name>
+                        <string>Complete</string>
                     </property>
+                    <valuelink>
+                        <name>Ref</name>
+                        <visible>true</visible>
+                        <isout>true</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>false</typecheck>
+                    </valuelink>
                 </node>
             </valuenodes>
         </graph>
