@@ -30,7 +30,7 @@ QT4_ADD_RESOURCES(RCC_SOURCES
 
 QT4_WRAP_UI(UI_SOURCES externaltooldialog.ui externaltoolargeditor.ui positiondialog.ui)
  
-ADD_PRECOMPILED_HEADER(${APP_NAME} prefix/dtqtprefix.h prefix/dtqtprefix.cpp PROG_SOURCES)
+ADD_PRECOMPILED_HEADER(${APP_NAME} prefix/stageprefix.h prefix/stageprefix.cpp PROG_SOURCES)
  
 ADD_EXECUTABLE(${APP_NAME}
     ${PROG_HEADERS}

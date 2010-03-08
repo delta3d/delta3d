@@ -26,7 +26,7 @@
  *
  * David Guthrie
  */
-#include <prefix/dtqtprefix.h>
+#include <prefix/stageprefix.h>
 
 #include <dtEditQt/dynamicgrouppropertycontrol.h>
 #include <dtQt/propertyeditormodel.h>

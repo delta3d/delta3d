@@ -23,7 +23,7 @@
  *
  * Michael Guerrero
  */
-#include <prefix/dtqtprefix.h>
+#include <prefix/stageprefix.h>
 
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QGridLayout>

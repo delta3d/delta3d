@@ -26,7 +26,7 @@
  *
  * Curtiss Murphy
  */
-#include <prefix/dtqtprefix.h>
+#include <prefix/stageprefix.h>
 #include "dtEditQt/actordockwidget.h"
 #include <dtEditQt/configurationmanager.h>
 #include "dtEditQt/tabcontainer.h"

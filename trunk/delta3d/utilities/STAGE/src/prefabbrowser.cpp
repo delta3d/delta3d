@@ -20,9 +20,9 @@
 * Jeffrey P. Houde
 */
 
+#include <prefix/stageprefix.h>
 #include <dtEditQt/prefabbrowser.h>
 
-#include <prefix/dtqtprefix.h>
 #include <QtGui/QDirModel>
 #include <QtGui/QDragEnterEvent>
 #include <QtGui/QDragMoveEvent>

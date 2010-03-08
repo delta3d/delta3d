@@ -26,7 +26,7 @@
  *
  * Curtiss Murphy
  */
-#include <prefix/dtqtprefix.h>
+#include <prefix/stageprefix.h>
 #include <dtEditQt/dynamicnamecontrol.h>
 #include <dtQt/dynamicsubwidgets.h>
 #include <dtEditQt/editorevents.h>

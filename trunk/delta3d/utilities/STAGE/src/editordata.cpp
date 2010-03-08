@@ -26,7 +26,7 @@
  *
  * Curtiss Murphy
  */
-#include <prefix/dtqtprefix.h>
+#include <prefix/stageprefix.h>
 #include <dtEditQt/mainwindow.h>
 #include <dtEditQt/propertyeditor.h>
 #include <dtEditQt/editordata.h>

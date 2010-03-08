@@ -1,3 +1,4 @@
+#include <prefix/stageprefix.h>
 #include <dtEditQt/pluginmanager.h>
 
 #include <dtEditQt/editorsettings.h>

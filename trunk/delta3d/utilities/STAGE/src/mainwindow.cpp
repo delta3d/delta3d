@@ -26,9 +26,9 @@
  *
  * Matthew W. Campbell
  */
+#include <prefix/stageprefix.h>
 #include <dtEditQt/mainwindow.h>
 
-#include <prefix/dtqtprefix.h>
 #include <QtCore/QFile>
 #include <QtGui/QApplication>
 #include <QtGui/QIcon>

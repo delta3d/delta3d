@@ -24,7 +24,7 @@
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  */
-#include <prefix/dtqtprefix.h>
+#include <prefix/stageprefix.h>
 #include <QtGui/QApplication>
 #include <QtGui/QMessageBox>
 #include <QtGui/QSplashScreen>

@@ -20,7 +20,7 @@
  * Curtiss Murphy
  */
 
-#include <prefix/dtqtprefix.h>
+#include <prefix/stageprefix.h>
 #include <QtGui/QDirModel>
 #include <QtGui/QGridLayout>
 #include <QtGui/QGroupBox>

@@ -27,7 +27,7 @@
  * Curtiss Murphy
  */
 
-#include <prefix/dtqtprefix.h>
+#include <prefix/stageprefix.h>
 #include <QtGui/QIcon>
 
 #include <dtEditQt/actortypetreewidget.h>
