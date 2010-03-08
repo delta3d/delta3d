@@ -59,6 +59,18 @@ namespace dtDirector
       virtual ~InputLink();
 
       /**
+       * Copy constructor.
+       *
+       * @param[in]  src  The source link.
+       */
+      InputLink(const InputLink& src);
+
+      /**
+       * Assignment Operator.
+       */
+      InputLink& operator=(const InputLink& src);
+
+      /**
        * Retrieves the owner of the link.
        *
        * @return  The owner.

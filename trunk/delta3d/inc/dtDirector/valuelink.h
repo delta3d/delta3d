@@ -74,6 +74,18 @@ namespace dtDirector
       virtual ~ValueLink();
 
       /**
+       * Copy constructor.
+       *
+       * @param[in]  src  The source link.
+       */
+      ValueLink(const ValueLink& src);
+
+      /**
+       * Assignment Operator.
+       */
+      ValueLink& operator=(const ValueLink& src);
+
+      /**
        * Retrieves the owner of the link.
        *
        * @return  The owner.

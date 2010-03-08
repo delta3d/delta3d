@@ -56,6 +56,48 @@ namespace dtDirector
       Disconnect();
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   ValueLink::ValueLink(const ValueLink& src)
+   {
+      mOwner = src.mOwner;
+      mLabel = src.mLabel;
+      mVisible = src.mVisible;
+
+      mDefaultProperty = src.mDefaultProperty;
+      mIsOut = src.mIsOut;
+      mAllowMultiple = src.mAllowMultiple;
+      mTypeCheck = src.mTypeCheck;
+      mGettingType = src.mGettingType;
+
+      *this = src;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   ValueLink& ValueLink::operator=(const ValueLink& src)
+   {
+      // Disconnect all values from this link.
+      Disconnect();
+
+      mOwner = src.mOwner;
+      mLabel = src.mLabel;
+      mVisible = src.mVisible;
+
+      mDefaultProperty = src.mDefaultProperty;
+      mIsOut = src.mIsOut;
+      mAllowMultiple = src.mAllowMultiple;
+      mTypeCheck = src.mTypeCheck;
+      mGettingType = src.mGettingType;
+
+      // Now connect this link to all output links connected to by the source.
+      int count = (int)src.mLinks.size();
+      for (int index = 0; index < count; index++)
+      {
+         Connect(src.mLinks[index]);
+      }
+
+      return *this;
+   }
+
    //////////////////////////////////////////////////////////////////////////
    dtDAL::DataType& ValueLink::GetPropertyType()
    {
