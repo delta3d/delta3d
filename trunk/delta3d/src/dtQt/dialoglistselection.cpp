@@ -22,6 +22,7 @@
  * David Guthrie
  * Matt Campbell
  */
+#include <prefix/dtqtprefix.h>
 #include <dtQt/dialoglistselection.h>
 
 #include <QtCore/QStringList>

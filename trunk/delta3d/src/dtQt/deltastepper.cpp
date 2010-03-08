@@ -26,6 +26,7 @@
  * David Guthrie
  */
 
+#include <prefix/dtqtprefix.h>
 #include <dtQt/deltastepper.h>
 #include <dtCore/system.h>
 

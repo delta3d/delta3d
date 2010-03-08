@@ -19,6 +19,7 @@
  * Author: Jeff P. Houde
  */
 
+#include <prefix/dtqtprefix.h>
 #include <dtQt/docbrowser.h>
 #include <QtGui/QToolBar>
 #include <QtGui/QAction>

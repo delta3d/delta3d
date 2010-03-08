@@ -20,6 +20,7 @@
 * circumstances in which the U. S. Government may have rights in the software.
  * David Guthrie
  */
+#include <prefix/dtqtprefix.h>
 #include <dtQt/osgadapterwidget.h>
 #include <osgViewer/Viewer>
 #include <osgViewer/CompositeViewer>
