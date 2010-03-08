@@ -45,6 +45,36 @@ namespace dtDirector
       Disconnect();
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   InputLink::InputLink(const InputLink& src)
+   {
+      mName = src.mName;
+      mVisible = src.mVisible;
+      mOwner = src.mOwner;
+
+      *this = src;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   InputLink& InputLink::operator=(const InputLink& src)
+   {
+      // Disconnect this link from all outputs.
+      Disconnect();
+
+      mName = src.mName;
+      mVisible = src.mVisible;
+      mOwner = src.mOwner;
+
+      // Now connect this link to all output links connected to by the source.
+      int count = (int)src.mLinks.size();
+      for (int index = 0; index < count; index++)
+      {
+         Connect(src.mLinks[index]);
+      }
+
+      return *this;
+   }
+
    //////////////////////////////////////////////////////////////////////////
    void InputLink::SetName(const std::string& name)
    {
