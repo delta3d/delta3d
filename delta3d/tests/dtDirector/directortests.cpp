@@ -108,8 +108,8 @@ void DirectorTests::TestRunScript()
       CPPUNIT_ASSERT_MESSAGE("dtDirector's Graph Root didn't have any EventNodes", mDirector->GetGraphRoot()->GetEventNodes().empty() == false);
 
       std::vector<dtDirector::Node*> nodes;
-      mDirector->GetNodes("Remote Event", "Core", nodes);
-      CPPUNIT_ASSERT_MESSAGE("Couldn't find the 'Core/Remote Event' nodes after loading script", nodes.empty() == false);
+      mDirector->GetNodes("Remote Event", "Core", "EventName", "First", nodes);
+      CPPUNIT_ASSERT_MESSAGE("Couldn't find the node Remote Event 'First' after loading script", nodes.empty() == false);
 
       int count = (int)nodes.size();
       for (int index = 0; index < count; index++)
@@ -117,12 +117,7 @@ void DirectorTests::TestRunScript()
          dtDirector::EventNode* event = dynamic_cast<dtDirector::EventNode*>(nodes[index]);
          if (event)
          {
-            dtDAL::ActorProperty* prop = event->GetProperty("EventName");
-            if (prop && prop->ToString() == "First")
-            {
-               event->Trigger();
-               break;
-            }
+            event->Trigger();
          }
       }
 
@@ -135,7 +130,7 @@ void DirectorTests::TestRunScript()
       CPPUNIT_ASSERT_MESSAGE("Could not get the ValueNode named 'Result'", result != NULL);
 
       float resultValue = result->GetDouble();
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("'Result' ValueNode didn't have the correct returned value", -100.f, resultValue);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("'Result' ValueNode didn't have the correct returned value", 100.f, resultValue);
    }
    catch (const dtUtil::Exception& e)
    {
