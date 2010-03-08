@@ -26,6 +26,7 @@
  * David Guthrie
  */
 
+#include <prefix/dtqtprefix.h>
 #include <dtQt/osggraphicswindowqt.h>
 #include <dtQt/osgadapterwidget.h>
 #include <dtUtil/log.h>

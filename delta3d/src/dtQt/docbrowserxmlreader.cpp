@@ -1,3 +1,4 @@
+#include <prefix/dtqtprefix.h>
 #include <dtQt/docbrowserxmlreader.h>
 
 #include <dtCore/refptr.h>

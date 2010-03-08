@@ -1,3 +1,4 @@
+#include <prefix/dtqtprefix.h>
 #include <dtQt/viewwindow.h>
 #include <osgViewer/Viewer>
 #include <osgViewer/CompositeViewer>
