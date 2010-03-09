@@ -1,13 +1,12 @@
 #include <dtCore/refptr.h>
 #include "testdisapp.h"
 #include <dtUtil/datapathutils.h>
-#include <osg/ArgumentParser>
 
 int main(int argc, char** argv)
 {
    std::string dataPath = dtUtil::GetDeltaDataPathList();
    dtUtil::SetDataFilePathList(dataPath + ";" +
-      dtUtil::GetDeltaRootPath() + "/examples/data" + ";" +
+      dtUtil::GetDeltaRootPath() + "/examples/data/" + ";" +
       dtUtil::GetDeltaRootPath() + "/examples/testDIS");
 
    std::string connectionConfigFile = dtUtil::FindFileInPathList("Connection.xml");

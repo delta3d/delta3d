@@ -14,6 +14,11 @@ namespace dtGame
    class DefaultMessageProcessor;
 }
 
+namespace dtCore
+{
+   class RTSMotionModel;
+}
+
 class TestDISApp : public dtABC::Application
 {
 public:
@@ -27,6 +32,7 @@ private:
    dtCore::RefPtr<dtDIS::MasterComponent> mDISComponent;
    dtCore::RefPtr<dtGame::DefaultMessageProcessor> mMessageProc;
    dtCore::RefPtr<dtGame::GameManager> mGameManager;
+   dtCore::RefPtr<dtCore::RTSMotionModel> mMotion;
    std::string mConnectionXml;
    std::string mActorTypeMapping;
 };
