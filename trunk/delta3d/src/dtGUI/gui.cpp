@@ -453,4 +453,14 @@ void GUI::CreateImageset(const std::string& imagesetName,
    CEGUI::ImagesetManager::getSingleton().createFromImageFile(imagesetName, fileName, resourceGroup);
 }
 
+////////////////////////////////////////////////////////////////////////////////
+void GUI::DestroyImageset(const std::string& imagesetName)
+{
+   _SetupSystemAndRenderer();
+   if (IsImagesetPresent(imagesetName))
+   {
+      CEGUI::ImagesetManager::getSingleton().destroy(imagesetName);
+   }
+}
+
 
