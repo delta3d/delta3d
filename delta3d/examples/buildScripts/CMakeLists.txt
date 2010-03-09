@@ -12,6 +12,8 @@ FIND_PACKAGE(dtAnim REQUIRED)
 FIND_PACKAGE(dtAudio REQUIRED)
 FIND_PACKAGE(dtCore REQUIRED)
 FIND_PACKAGE(dtDAL REQUIRED)
+FIND_PACKAGE(dtDIS) #optional
+FIND_PACKAGE(dtDirector REQUIRED)
 FIND_PACKAGE(dtGame REQUIRED)
 FIND_PACKAGE(dtGUI REQUIRED)
 FIND_PACKAGE(dtInputPLIB REQUIRED)
@@ -31,6 +33,7 @@ INCLUDE_DIRECTORIES(
                     ${DTAUDIO_INCLUDE_DIRECTORIES}
                     ${DTCORE_INCLUDE_DIRECTORIES}
                     ${DTDAL_INCLUDE_DIRECTORIES}
+                    ${DTDIRECTOR_INCLUDE_DIRECTORIES}
                     ${DTGAME_INCLUDE_DIRECTORIES}
                     ${DTGUI_INCLUDE_DIRECTORIES}
                     ${DTINPUT_PLIB_INCLUDE_DIRECTORIES}
@@ -53,12 +56,17 @@ IF(Boost_FOUND)
 ENDIF()
   
 ADD_SUBDIRECTORY(examples/testClouds)
+
+IF (DTDIS_FOUND)
+  ADD_SUBDIRECTORY(examples/testDIS)
+ENDIF (DTDIS_FOUND)
+
+#ADD_SUBDIRECTORY(examples/testDirector)  #needs GameStart
 ADD_SUBDIRECTORY(examples/testEffects)
 ADD_SUBDIRECTORY(examples/testGameActorComponents)
 ADD_SUBDIRECTORY(examples/testGameActorLibrary)
 ADD_SUBDIRECTORY(examples/testGameEnvironment)
 ADD_SUBDIRECTORY(examples/testGUI)
-ADD_SUBDIRECTORY(examples/testHUD)
 ADD_SUBDIRECTORY(examples/testInput)
 ADD_SUBDIRECTORY(examples/testLights)
 ADD_SUBDIRECTORY(examples/testMap)
