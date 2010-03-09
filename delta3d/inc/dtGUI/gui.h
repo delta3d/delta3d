@@ -202,6 +202,12 @@ namespace dtGUI
                                  const std::string& fileName,
                                  const std::string& resourceGroup = "");
 
+      /** 
+        * Destroy the supplied imageset if it exists
+        * @param imagesetName The name of ImageSet
+        */
+      static void DestroyImageset(const std::string& imagesetName);
+
       /* 
        * Shortcut to the CEGUI::SchemeManager
        * @param fileName The filename of the .scheme file to load
