@@ -275,7 +275,7 @@ namespace dtDirector
       if (!fromNode) return;
 
       // Link outputs to inputs.
-      int count = (int)fromNode->GetInputLinks().size();
+      int count = (int)std::min( fromNode->GetInputLinks().size(), node->GetInputLinks().size() );
       for (int index = 0; index < count; index++)
       {
          InputLink* fromLink = &fromNode->GetInputLinks()[index];
@@ -286,7 +286,7 @@ namespace dtDirector
       }
 
       // Link outputs to inputs.
-      count = (int)fromNode->GetOutputLinks().size();
+      count = (int)std::min( fromNode->GetOutputLinks().size(), node->GetOutputLinks().size() );
       for (int index = 0; index < count; index++)
       {
          OutputLink* fromLink = &fromNode->GetOutputLinks()[index];
@@ -297,7 +297,7 @@ namespace dtDirector
       }
 
       // Link values.
-      count = (int)fromNode->GetValueLinks().size();
+      count = (int)std::min( fromNode->GetValueLinks().size(), node->GetValueLinks().size() );
       for (int index = 0; index < count; index++)
       {
          ValueLink* fromLink = &fromNode->GetValueLinks()[index];
