@@ -32,6 +32,7 @@ SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/gamemanager.h
     ${HEADER_PATH}/gamemanager.inl
     ${HEADER_PATH}/gmcomponent.h
+    ${HEADER_PATH}/gmimpl.h
     ${HEADER_PATH}/gmstatistics.h
     ${HEADER_PATH}/invokable.h
     ${HEADER_PATH}/logcontroller.h
@@ -73,6 +74,7 @@ SET(LIB_SOURCES
     ${SOURCE_PATH}/gameapplication.cpp
     ${SOURCE_PATH}/gamemanager.cpp
     ${SOURCE_PATH}/gmcomponent.cpp
+    ${SOURCE_PATH}/gmimpl.cpp
     ${SOURCE_PATH}/gmstatistics.cpp
     ${SOURCE_PATH}/invokable.cpp
     ${SOURCE_PATH}/logcontroller.cpp
