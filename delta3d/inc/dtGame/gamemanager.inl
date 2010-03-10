@@ -23,6 +23,7 @@
 #define DELTA_GAMEMANAGER_INL
 
 #include <algorithm>
+#include <dtGame/gmimpl.h>
 
 namespace dtGame
 {
@@ -67,16 +68,16 @@ namespace dtGame
    template <typename UnaryFunctor>
    inline void GameManager::ForEachActor(UnaryFunctor func) const
    {
-      BindActor<UnaryFunctor, GameManager::ActorMap::value_type> actorMapBindFunc(func);
+      BindActor<UnaryFunctor, GMImpl::ActorMap::value_type> actorMapBindFunc(func);
       std::for_each(mGMImpl->mActorProxyMap.begin(), mGMImpl->mActorProxyMap.end(), actorMapBindFunc);
-      BindActor<UnaryFunctor, GameManager::GameActorMap::value_type> gameActorMapBindFunc(func);
+      BindActor<UnaryFunctor, GMImpl::GameActorMap::value_type> gameActorMapBindFunc(func);
       std::for_each(mGMImpl->mGameActorProxyMap.begin(), mGMImpl->mGameActorProxyMap.end(), gameActorMapBindFunc);
    }
 
    template <typename UnaryFunctor>
    inline void GameManager::ForEachPrototype(UnaryFunctor func) const
    {
-      BindActor<UnaryFunctor, GameManager::GameActorMap::value_type> gameActorMapBindFunc(func);
+      BindActor<UnaryFunctor, GMImpl::GameActorMap::value_type> gameActorMapBindFunc(func);
       std::for_each(mGMImpl->mPrototypeActors.begin(), mGMImpl->mPrototypeActors.end(), gameActorMapBindFunc);
    }
 

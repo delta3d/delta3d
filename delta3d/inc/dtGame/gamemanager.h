@@ -89,8 +89,6 @@ namespace dtGame
       static const std::string CONFIG_STATISTICS_OUTPUT_FILE;
 
       typedef std::vector<std::string> NameVector;
-      typedef std::map< dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> > ActorMap;
-      typedef std::map< dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> > GameActorMap;
 
       class DT_GAME_EXPORT ComponentPriority : public dtUtil::Enumeration
       {
