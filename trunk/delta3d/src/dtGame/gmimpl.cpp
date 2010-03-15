@@ -1,3 +1,4 @@
+#include <prefix/dtgameprefix.h>
 #include <dtGame/gmimpl.h>
 #include <dtGame/basemessages.h>
 
