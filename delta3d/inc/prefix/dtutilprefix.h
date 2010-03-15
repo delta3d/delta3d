@@ -3,16 +3,19 @@
 
 #ifdef DT_USE_PCH
 
-//#include <string>
-//#include <osgDB/FileUtils>
-#include <osg/Referenced> 
-#include <osg/Vec3>
-#include <osg/ref_ptr>
-// Stuff you get from string
-#include <memory>
-#include <algorithm>
-#include <iosfwd>
+   #ifdef _MSC_VER
+      #include <map>
+      #include <osgDB/FileUtils>
+   #else//_MSC_VER
+      #include <osg/Referenced> 
+      #include <osg/Vec3>
+      #include <osg/ref_ptr>
+      // Stuff you get from string
+      #include <memory>
+      #include <algorithm>
+      #include <iosfwd>
+   #endif//_MSC_VER
 
-#endif
+#endif //DT_USE_PCH
 
-#endif
+#endif //DTUTIL_PREFIX
