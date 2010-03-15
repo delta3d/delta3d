@@ -221,7 +221,10 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void ReferenceValue::SetReference(const std::string& value)
    {
-      mReference = value;
+      if (value != mName)
+      {
+         mReference = value;
+      }
 
       // Now attempt to find the actual value and link with it.
       UpdateReference();
