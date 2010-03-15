@@ -160,7 +160,7 @@ void RTSMotionModel::OnMessage(MessageData *data)
 {
    dtCore::Transformable *target = GetTarget();
 
-   if (  target == 0
+   if (  target == NULL
       || !IsEnabled()
       || (data->message != dtCore::System::MESSAGE_POST_EVENT_TRAVERSAL/*MESSAGE_PRE_FRAME*/
       // Note - someone commented out the paused stuff below - this model does NOTHING while paused.
