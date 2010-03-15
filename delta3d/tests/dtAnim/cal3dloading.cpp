@@ -24,6 +24,7 @@
 */
 
 
+#include <prefix/unittestprefix.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <cal3d/coremodel.h>
 #include <cal3d/model.h>

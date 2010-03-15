@@ -19,7 +19,7 @@
  * Chris Rodgers
  * Erik Johnson
  */
-#include <prefix/dtgameprefix.h>
+#include <prefix/unittestprefix.h>
 #include <cppunit/extensions/HelperMacros.h>
 
 #include <dtAudio/soundactorproxy.h>
