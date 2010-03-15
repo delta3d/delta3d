@@ -25,7 +25,7 @@
 *
 * David Guthrie
 */
-#include <prefix/dtgameprefix.h>
+#include <prefix/unittestprefix.h>
 
 #include <dtUtil/mswinmacros.h>
 
