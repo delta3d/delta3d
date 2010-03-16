@@ -113,11 +113,14 @@ namespace dtAI
       bool SetGoal(const std::string& pGoal);
 
       /**
-       * GeneratePlan() uses the Planner to generate a plan
-       * the plan is a list of Operators which can be added manually or
-       * added through LoadNPCScript with a valid script file
-       * the plan is created to be of minimal cost (uses RemainingCost()) and satisfy the
+       * GeneratePlan() uses the Planner to generate a plan.
+       * The plan is a list of Operators which can be added manually or
+       * added through LoadNPCScript with a valid script file.
+       * The plan is created to be of minimal cost (uses RemainingCost()) and satisfy the
        * IsDesiredState() function
+       * @see AddOperator()
+       * @see LoadNPSScript()
+       * @see RemainingCost()
        */
       void GeneratePlan();
 
@@ -201,23 +204,24 @@ namespace dtAI
       virtual void OnInitializeFSM();
 
       /**
-       * Called on InitNPC()
+       * Called from InitNPC().  Add all the Operators this NPC can perform here.
+       * @see AddOperator()
        */
       virtual void OnInit();
 
       /**
        * Override to register function pointers with strings which correspond to
-       * the name of this NPC's Operators using RegisterAction()
+       * the name of this NPC's Operators using RegisterAction().
        * NOTE: In order to run a generated plan you must override this and register an
-       * Action for each potential Operator
+       * Action for each potential Operator.
        */
       virtual void RegisterActions();
 
       /**
        * Used by the planner on GeneratePlan
-       * should estimate the cost remaining to achieve the desired goal
-       * the more accurate this is, the more optimized the algorithm will
-       * be able to generate a plan
+       * Should estimate the cost remaining to achieve the desired goal.
+       * The more accurate this is, the more optimized the algorithm will
+       * be able to generate a plan.
        */
       virtual float RemainingCost(const WorldState* pWS) const;
 
