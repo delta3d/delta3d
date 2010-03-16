@@ -21,13 +21,16 @@
 #ifndef DELTA_ARRAY_ACTOR_PROPERTY
 #define DELTA_ARRAY_ACTOR_PROPERTY
 
-#include <string>
-#include <dtDAL/actorproperty.h>
 #include <dtDAL/export.h>
 #include <dtDAL/arrayactorpropertybase.h>
+#include <string>
+#include <vector>
+#include <dtUtil/functor.h>
 
 namespace dtDAL
 {
+   class ActorProperty;
+
    /**
     * @brief An actor property that handles an array of data.
     */
