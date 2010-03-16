@@ -34,6 +34,10 @@ namespace dtUtil
    class Log;
 }
 
+
+/** 
+ * Provides a node-based hierarchy for script processing.
+ */
 namespace dtDirector
 {
    /**
