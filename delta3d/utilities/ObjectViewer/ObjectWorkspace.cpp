@@ -347,7 +347,7 @@ void ObjectWorkspace::UpdateResourceLists()
       if (directory.cd(QString(mContextPath.c_str()) + "/shaders"))
       {
          QStringList nameFilters;
-         nameFilters << "*.xml";
+         nameFilters << "*.dtShader" << "*.xml";
 
          QFileInfoList fileList = directory.entryInfoList(nameFilters, QDir::Files);
 
@@ -403,10 +403,8 @@ void ObjectWorkspace::UpdateResourceLists()
 ////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::OnLoadShaderDefinition()
 {
-   QString filename = QFileDialog::getOpenFileName(this,
-                                                   tr("Load Shader Definition File"),
-                                                   mContextPath.c_str(),
-                                                   tr("Shaders(*.xml)") );
+   QString filename = QFileDialog::getOpenFileName(this, tr("Load Shader Definition File"),
+      mContextPath.c_str(), tr("Shaders(*.dtShader)") + " " + tr("Shaders(*.xml)") );
 
    QString statusMessage;
 
