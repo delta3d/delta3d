@@ -162,7 +162,7 @@ namespace dtDirector
       {
          try
          {
-            parser->Parse(this, mMap.get(), "directors/" + name + ".dtDir");
+            parser->Parse(this, mMap.get(), "directors/" + name + ".dtdir");
          }
          catch (const dtUtil::Exception& e)
          {
@@ -193,7 +193,7 @@ namespace dtDirector
 
          try
          {
-            writer->Save(this, "directors/" + scriptFile + ".dtDir");
+            writer->Save(this, "directors/" + scriptFile + ".dtdir");
          }
          catch (const dtUtil::Exception& e)
          {
