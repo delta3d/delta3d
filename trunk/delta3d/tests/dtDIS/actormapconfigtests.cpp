@@ -20,6 +20,8 @@
 * THE SOFTWARE.
 */
 
+#include <prefix/unittestprefix.h>
+
 #include <cppunit/extensions/HelperMacros.h>
 #include <DIS/EntityType.h>
 #include <dtDIS/sharedstate.h>
