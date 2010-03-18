@@ -1,3 +1,4 @@
+#include <prefix/unittestprefix.h>
 #include "samplegameactorproxy.h"
 
 using namespace dtTest;

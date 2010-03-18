@@ -1,3 +1,5 @@
+#include <prefix/unittestprefix.h>
+
 #include "initializeupdatemessage.h"
 
 #include <dtGame/messageparameter.h>
