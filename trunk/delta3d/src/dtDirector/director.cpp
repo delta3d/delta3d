@@ -517,7 +517,7 @@ namespace dtDirector
       fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext());
 
       bool result = false;
-      FILE* file = fopen((std::string("directors/") + filename + ".dtDirReplay").c_str(), "wb");
+      FILE* file = fopen((std::string("directors/") + filename + ".dtdirreplay").c_str(), "wb");
       if (file)
       {
          result = WriteRecordThreads(file, mRecordThreads);
@@ -535,7 +535,7 @@ namespace dtDirector
       fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext());
 
       bool result = false;
-      FILE* file = fopen((std::string("directors/") + filename + ".dtDirReplay").c_str(), "rb");
+      FILE* file = fopen((std::string("directors/") + filename + ".dtdirreplay").c_str(), "rb");
       if (file)
       {
          // First clear all current recording data.
