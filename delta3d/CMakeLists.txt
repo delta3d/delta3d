@@ -203,6 +203,8 @@ IF(APPLE)
    FIND_LIBRARY(AGL_LIBRARY AGL)
    FIND_LIBRARY(COCOA_LIBRARY Cocoa)
 
+   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wnewline-eof")
+
    SET(CMAKE_CXX_FLAGS "-pipe -mmacosx-version-min=10.4")
    SET(CMAKE_C_FLAGS "-pipe -mmacosx-version-min=10.4")
    SET(CMAKE_SHARED_LINKER_FLAGS "-Wl,-single_module -compatibility_version 3 -current_version 3" )
@@ -226,7 +228,7 @@ IF(UNIX)
    # Some Unicies need explicit linkage to the Math library or the build fails.
    FIND_LIBRARY(MATH_LIBRARY m)
 
-   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-non-virtual-dtor -Wreturn-type -Wnewline-eof")
+   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-non-virtual-dtor -Wreturn-type")
 ENDIF (UNIX)
 
 # Common global definitions
