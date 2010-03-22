@@ -71,11 +71,46 @@ public slots:
    */
    void OnToolButtonPressed();
 
+   /**
+   * Event handler when we want to center on an actor.
+   * Note: Use the mProxy member variable to store the actor to go to.
+   */
+   void OnGotoActor();
+
+   /**
+   * Event handler when the current value node should be set to the current actor.
+   * Note: Use the mNode member variable to store the current node to be set.
+   */
+   void OnUseCurrentActor();
+
+protected:
+
+   /**
+   * Event handler when viewing the context menu of a value node.
+   *
+   * @param[in]  node  The value node.
+   *
+   * @return     True if a default action was set.
+   */
+   virtual bool OnContextValueNode(dtCore::RefPtr<dtDirector::Node> node, QMenu& menu);
+
+   /**
+   * Event handler when a node is double clicked.
+   *
+   * @param[in]  node  The node that was double clicked.
+   *
+   * @return     True if an action was performed.
+   */
+   virtual bool OnDoubleClickValueNode(dtCore::RefPtr<dtDirector::Node> node);
+
 private:
 
    MainWindow*    mMainWindow;
 
    QAction*       mToolButton;
+
+   dtCore::RefPtr<dtDAL::ActorProxy> mProxy;
+   dtDirector::Node*  mNode;
 };
 
 #endif // DIRECTOR_TOOL_PLUGIN

@@ -32,9 +32,12 @@
 #include <dtEditQt/dynamicgrouppropertycontrol.h>
 
 #include <dtDAL/datatype.h>
+#include <dtDAL/enginepropertytypes.h>
 
 #include <QtGui/QAction>
 #include <QtGui/QToolBar>
+#include <QtGui/QAction>
+#include <QtGui/QMenu>
 
 
 const std::string DirectorToolPlugin::PLUGIN_NAME = "Director Tool";
@@ -43,7 +46,9 @@ const std::string DirectorToolPlugin::PLUGIN_NAME = "Director Tool";
 ////////////////////////////////////////////////////////////////////////////////
 DirectorToolPlugin::DirectorToolPlugin(MainWindow* mw)
    : dtDirector::DirectorEditor(NULL)
-   ,  mMainWindow(mw)
+   , mMainWindow(mw)
+   , mProxy(NULL)
+   , mNode(NULL)
 {
    // Register some custom property types.
    dtDirector::PropertyEditor* propEditor = GetPropertyEditor();
@@ -110,6 +115,89 @@ void DirectorToolPlugin::OnToolButtonPressed()
    {
       hide();
    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void DirectorToolPlugin::OnGotoActor()
+{
+   if (mProxy.valid())
+   {
+      std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > toSelect;
+      toSelect.push_back(mProxy);
+
+      EditorEvents::GetInstance().emitActorsSelected(toSelect);
+      EditorEvents::GetInstance().emitGotoActor(mProxy);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void DirectorToolPlugin::OnUseCurrentActor()
+{
+   if (mNode && mNode->GetType().GetFullName() == "General.Actor")
+   {
+      std::vector<dtDAL::ActorProxy*> selection;
+      EditorData::GetInstance().GetSelectedActors(selection);
+
+      if (selection.size())
+      {
+         mProxy = selection[0];
+
+         dtDAL::ActorIDActorProperty* prop = dynamic_cast<dtDAL::ActorIDActorProperty*>(mNode->GetProperty("Value"));
+         if (prop)
+         {
+            prop->SetValue(mProxy->GetId());
+            Refresh();
+         }
+      }
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool DirectorToolPlugin::OnContextValueNode(dtCore::RefPtr<dtDirector::Node> node, QMenu& menu)
+{
+   mNode = node;
+   if (node->GetType().GetFullName() == "General.Actor" || node->GetType().GetFullName() == "Core.Player")
+   {
+      dtDAL::ActorIDActorProperty* prop = dynamic_cast<dtDAL::ActorIDActorProperty*>(node->GetProperty("Value"));
+      if (prop)
+      {
+         bool hasDefault = false;
+         mProxy = prop->GetActorProxy();
+         if (mProxy)
+         {
+            QAction* gotoActorAction = menu.addAction("Go to Referenced Actor");
+            connect(gotoActorAction, SIGNAL(triggered()), this, SLOT(OnGotoActor()));
+            menu.setDefaultAction(gotoActorAction);
+            hasDefault = true;
+         }
+
+         QAction* useCurActorAction = menu.addAction("Use current Actor");
+         connect(useCurActorAction, SIGNAL(triggered()), this, SLOT(OnUseCurrentActor()));
+
+         menu.addSeparator();
+         return hasDefault;
+      }
+   }
+   return false;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool DirectorToolPlugin::OnDoubleClickValueNode(dtCore::RefPtr<dtDirector::Node> node)
+{
+   if (node->GetType().GetFullName() == "General.Actor" || node->GetType().GetFullName() == "Core.Player")
+   {
+      dtDAL::ActorIDActorProperty* prop = dynamic_cast<dtDAL::ActorIDActorProperty*>(node->GetProperty("Value"));
+      if (prop)
+      {
+         mProxy = prop->GetActorProxy();
+         if (mProxy)
+         {
+            OnGotoActor();
+            return true;
+         }
+      }
+   }
+   return false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

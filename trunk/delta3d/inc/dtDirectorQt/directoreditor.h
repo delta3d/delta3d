@@ -171,6 +171,26 @@ namespace dtDirector
        */
       void RefreshButtonStates();
 
+      /**
+       * Event handler when viewing the context menu of a value node.
+       *
+       * @param[in]  node  The value node.
+       *
+       * @return     True if a default action was set.
+       */
+      virtual bool OnContextValueNode(dtCore::RefPtr<dtDirector::Node> node, QMenu& menu)
+      {return false;}
+
+      /**
+       * Event handler when a value node is double clicked.
+       *
+       * @param[in]  node  The value node that was double clicked.
+       *
+       * @return     True if an action was performed.
+       */
+      virtual bool OnDoubleClickValueNode(dtCore::RefPtr<dtDirector::Node> node)
+      {return false;}
+
    public slots:
 
       /**

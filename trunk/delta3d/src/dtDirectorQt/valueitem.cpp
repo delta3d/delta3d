@@ -347,19 +347,26 @@ namespace dtDirector
    {
       setSelected(true);
       QMenu menu;
-      bool hasDefault = false;
+      bool hasDefault = mScene->GetEditor()->OnContextValueNode(mNode, menu);
+
       if (mNode->GetType().GetFullName() == "Core.Reference")
       {
          QAction* gotoRefAction = menu.addAction("Go to Referenced Value");
-         menu.setDefaultAction(gotoRefAction);
-         hasDefault = true;
          connect(gotoRefAction, SIGNAL(triggered()), this, SLOT(OnGotoReference()));
+         if (!hasDefault)
+         {
+            menu.setDefaultAction(gotoRefAction);
+            hasDefault = true;
+         }
       }
       else if (mNode->GetType().GetFullName() == "Core.Value Link")
       {
          menu.addAction(mScene->GetEditor()->GetParentAction());
-         menu.setDefaultAction(mScene->GetEditor()->GetParentAction());
-         hasDefault = true;
+         if (!hasDefault)
+         {
+            menu.setDefaultAction(mScene->GetEditor()->GetParentAction());
+            hasDefault = true;
+         }
       }
 
       QAction* refAction = menu.addAction("Create Reference");
@@ -381,18 +388,24 @@ namespace dtDirector
    {
       NodeItem::mouseDoubleClickEvent(event);
 
-      // This only does anything if the value item is a reference value.
-      if (mNode->GetType().GetFullName() == "Core.Reference")
+      // Check the double click event handler first.
+      if (!mScene->GetEditor()->OnDoubleClickValueNode(mNode))
       {
-         OnGotoReference();
-      }
-      else if (mNode->GetType().GetFullName() == "Core.Value Link")
-      {
-         mScene->GetEditor()->OnParentButton();
-      }
-      else
-      {
-         OnCreateReference();
+         // If this value is a reference node, jump to its' referenced value.
+         if (mNode->GetType().GetFullName() == "Core.Reference")
+         {
+            OnGotoReference();
+         }
+         // If this value is a value link node, jump to the parent graph.
+         else if (mNode->GetType().GetFullName() == "Core.Value Link")
+         {
+            mScene->GetEditor()->OnParentButton();
+         }
+         // Anything else creates a new reference.
+         else
+         {
+            OnCreateReference();
+         }
       }
    }
 }
