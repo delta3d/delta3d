@@ -763,13 +763,13 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void DirectorEditor::OnLoadRecordingButton()
    {
-      QString filter = tr(".dtDirReplay");
+      QString filter = tr(".dtdirreplay");
       std::string context = dtDAL::Project::GetInstance().GetContext();
 
       QFileDialog dialog;
       QFileInfo filePath = dialog.getOpenFileName(this, tr("Load a Director Graph Replay File"),
          tr((context + "\\directors\\").c_str()),
-         tr("Director Graph Replay (*.dtDirReplay)"), &filter);
+         tr("Director Graph Replay (*.dtdirreplay)"), &filter);
 
       QString fileName = filePath.baseName();
       if (!fileName.isEmpty())

@@ -1,3 +1,5 @@
+#include <prefix/unittestprefix.h>
+
 #include "initializepdu.h"
 
 #include <DIS/EntityStatePdu.h>

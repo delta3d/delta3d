@@ -19,6 +19,7 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
 */
+#include <prefix/unittestprefix.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtDIS/disxml.h>
 #include <dtDIS/propertyname.h>

@@ -32,11 +32,13 @@
 
 #include <vector>
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
 {
    class VertexBufferObject;
    class ElementBufferObject;
 }
+/// @endcond
 
 class CalCoreModel;
 class CalHardwareModel;

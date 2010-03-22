@@ -338,6 +338,15 @@ Widget* dtGUI::GUI::CreateWidget(Widget* parent, const std::string& typeName,
    return newWidget;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+void dtGUI::GUI::DestroyWidget(Widget* widget)
+{
+   if(widget->getParent() != NULL)
+   {
+      widget->getParent()->removeChildWindow(widget);
+   }
+   CEGUI::WindowManager::getSingleton().destroyWindow(widget);
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 Widget* dtGUI::GUI::CreateWidget(const std::string& typeName, const std::string& name)

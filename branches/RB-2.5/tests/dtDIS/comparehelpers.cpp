@@ -1,3 +1,5 @@
+#include <prefix/unittestprefix.h>
+
 #include "comparehelpers.h"
 
 #include <dtGame/actorupdatemessage.h>
