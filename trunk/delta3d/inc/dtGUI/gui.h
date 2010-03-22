@@ -136,6 +136,12 @@ namespace dtGUI
       Widget* CreateWidget(Widget* parent, const std::string& typeName, const std::string& name="");
 
       /** 
+        * Remove widget from its parent and destroy it
+        * @param widget the widget to destroy
+        */
+      void DestroyWidget(Widget* widget);
+
+      /** 
         * Find and return the widget by widget name.
         * @param name the name of the widget to find
         * @return The found widget (or NULL, if not found)
