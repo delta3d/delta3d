@@ -409,8 +409,8 @@ void CameraTests::TestAddingThreeCallbacks()
                                 numInitialCallbacks - 2, cont->GetCallbacks().size());
 
    cam->RemovePostDrawCallback(*cb3);
-   CPPUNIT_ASSERT_EQUAL_MESSAGE("The CameraCallbackContainer's single fire callback should not get removed.  Unknown behavior.",
-      numInitialCallbacks - 2, cont->GetCallbacks().size());
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("The CameraCallbackContainer didn't get the third callback removed.",
+      numInitialCallbacks - 3, cont->GetCallbacks().size());
 }
 
 //////////////////////////////////////////////////////////////////////////

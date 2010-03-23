@@ -73,6 +73,21 @@ void CameraCallbackContainer::RemoveCallback(CameraDrawCallback &cb)
       }
       ++itr;
    }
+
+   if (!mSingleFireCallbacks.empty())
+   {
+      std::vector<RefPtr<CameraDrawCallback> >::iterator itr = mSingleFireCallbacks.begin();
+
+      while (itr != mSingleFireCallbacks.end())
+      {
+         if ((*itr) == &cb)
+         {
+            mSingleFireCallbacks.erase(itr);
+            break;
+         }
+         ++itr;
+      }
+   }
 }
 
 //////////////////////////////////////////////////////////////////////////
