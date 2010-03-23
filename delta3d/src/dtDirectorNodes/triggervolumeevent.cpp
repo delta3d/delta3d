@@ -75,7 +75,7 @@ namespace dtDirector
       switch (eventType)
       {
       case dtActors::TriggerVolumeActor::ENTER_EVENT:
-         Trigger("Enter", &instigator->GetUniqueId());
+         Trigger("Enter", &instigator->GetUniqueId(), true);
          break;
 
       case dtActors::TriggerVolumeActor::LEAVE_EVENT:

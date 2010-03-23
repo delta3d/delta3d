@@ -255,12 +255,24 @@ namespace dtDirector
       int count = (int)mThreads.size();
       for (mCurrentThread = 0; mCurrentThread < count; mCurrentThread++)
       {
-         if (!UpdateThread(mThreads[mCurrentThread], simDelta, delta))
+         float newSimDelta = simDelta;
+         float newDelta = delta;
+
+         bool continued = true;
+         while (continued)
          {
-            // Pop the first callstack item from the thread.
-            mThreads.erase(mThreads.begin() + mCurrentThread);
-            mCurrentThread--;
-            count--;
+            if (!UpdateThread(mThreads[mCurrentThread], newSimDelta, newDelta, continued))
+            {
+               // Pop the first callstack item from the thread.
+               mThreads.erase(mThreads.begin() + mCurrentThread);
+               mCurrentThread--;
+               count--;
+               continued = false;
+            }
+
+            // Only the first update should have a time elapsed value.
+            newSimDelta = 0.0f;
+            newDelta = 0.0f;
          }
       }
 
@@ -270,7 +282,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void Director::BeginThread(Node* node, int index)
+   void Director::BeginThread(Node* node, int index, bool immediate)
    {
       // If we are queuing threads now, add the new thread data to the queue
       // for later.
@@ -345,6 +357,25 @@ namespace dtDirector
 
       data.stack.push_back(stack);
       threadList->push_back(data);
+
+      if (immediate && mCurrentThread == -1 && mThreads.size() > 0)
+      {
+         mCurrentThread = mThreads.size() - 1;
+
+         bool continued = true;
+         while (continued)
+         {
+            if (!UpdateThread(mThreads[mCurrentThread], 0.0f, 0.0f, continued))
+            {
+               // Pop the first call stack item from the thread.
+               mThreads.erase(mThreads.begin() + mCurrentThread);
+               mCurrentThread--;
+               continued = false;
+            }
+         }
+
+         mCurrentThread = -1;
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -703,7 +734,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool Director::UpdateThread(ThreadData& data, float simDelta, float delta)
+   bool Director::UpdateThread(ThreadData& data, float simDelta, float delta, bool& continued)
    {
       // If there is no stack, this thread is finished.
       if (data.stack.empty()) return false;
@@ -717,16 +748,29 @@ namespace dtDirector
       int count = (int)stack.subThreads.size();
       for (stack.currentThread = 0; stack.currentThread < count; stack.currentThread++)
       {
-         if (!UpdateThread(stack.subThreads[stack.currentThread], simDelta, delta))
+         float newSimDelta = simDelta;
+         float newDelta = delta;
+
+         continued = true;
+         while (continued)
          {
-            stack.subThreads.erase(stack.subThreads.begin() + stack.currentThread);
-            stack.currentThread--;
-            count--;
+            if (!UpdateThread(stack.subThreads[stack.currentThread], newSimDelta, newDelta, continued))
+            {
+               stack.subThreads.erase(stack.subThreads.begin() + stack.currentThread);
+               stack.currentThread--;
+               count--;
+               continued = false;
+            }
+
+            // Only the first update should have a time elapsed value.
+            newSimDelta = 0.0f;
+            newDelta = 0.0f;
          }
       }
       stack.currentThread = -1;
 
       bool makeNewThread = false;
+      continued = false;
 
       // Threads always update the first item in the stack,
       // all other stack items are "sleeping".
@@ -742,7 +786,7 @@ namespace dtDirector
          // new thread will be a continuation of the current active thread.
          mQueueingThreads = true;
          makeNewThread = currentNode->Update(simDelta, delta, input, first);
-         bool continued = makeNewThread;
+         continued = !makeNewThread;
 
          // Check for activated outputs and create new threads for them.
          std::vector<OutputLink*> outputs;
@@ -833,6 +877,7 @@ namespace dtDirector
          // If we do not have any remaining stack items, we can remove this thread.
          if (data.stack.empty())
          {
+            continued = false;
             return false;
          }
       }
@@ -909,7 +954,7 @@ namespace dtDirector
          if (first)
          {
             // If we are only updating this node once.
-            if (!continued)
+            if (continued)
             {
                message = "Executed ";
             }
@@ -921,7 +966,7 @@ namespace dtDirector
          }
          // If this is not the first execution of this node, then only
          // print the log if this node is finishing.
-         else if (!continued)
+         else if (continued)
          {
             message = "Finished ";
          }
