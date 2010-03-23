@@ -163,10 +163,11 @@ namespace dtDirector
       /**
        * Starts a new update thread.
        *
-       * @param[in]  node   The starting node to update.
-       * @param[in]  index  The index of the input being activated.
+       * @param[in]  node       The starting node to update.
+       * @param[in]  index      The index of the input being activated.
+       * @param[in]  immediate  True to immediately execute the new thread.
        */
-      void BeginThread(Node* node, int index);
+      void BeginThread(Node* node, int index, bool immediate = false);
 
       /**
        * Pushes a new item to the thread stack.
@@ -410,13 +411,15 @@ namespace dtDirector
       /**
        * Updates a thread.
        *
-       * @param[in]  data      The thread data.
-       * @param[in]  simDelta  The simulation time step.
-       * @param[in]  delta     The real time step.
+       * @param[in]  data       The thread data.
+       * @param[in]  simDelta   The simulation time step.
+       * @param[in]  delta      The real time step.
+       * @param[out] continued  Return parameter that tells whether this update
+       *                        should be called again immediately.
        *
        * @return     Returns false if the thread should stop.
        */
-      bool UpdateThread(ThreadData& data, float simDelta, float delta);
+      bool UpdateThread(ThreadData& data, float simDelta, float delta, bool& continued);
 
       /**
        * Processes an updated node.
