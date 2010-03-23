@@ -37,7 +37,7 @@ namespace dtCore
         */
       void AddCallback(dtCore::CameraDrawCallback& cb, bool singleFire);
 
-      /** Remove an existing non single fire CameraDrawCallback from the container.
+      /** Remove an existing CameraDrawCallback from the container.
         * @param cb The Callback to remove from this container.
         */
       void RemoveCallback(dtCore::CameraDrawCallback &cb);
