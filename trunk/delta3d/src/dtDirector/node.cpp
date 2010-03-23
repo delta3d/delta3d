@@ -99,14 +99,6 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void Node::BuildPropertyMap()
    {
-      dtDAL::StringActorProperty* authorProp = 
-         new dtDAL::StringActorProperty("Authors", "Node Author(s)",
-         dtDAL::StringActorProperty::SetFuncType(),
-         dtDAL::StringActorProperty::GetFuncType(this, &Node::GetAuthors),
-         "The author(s) of this node, as well as all inherited nodes.");
-      authorProp->SetReadOnly(true);
-      AddProperty(authorProp);
-
       AddProperty(new dtDAL::BooleanActorProperty(
          "Enabled", "Enabled",
          dtDAL::BooleanActorProperty::SetFuncType(this, &Node::SetEnabled),
@@ -124,6 +116,14 @@ namespace dtDirector
          dtDAL::BooleanActorProperty::SetFuncType(this, &Node::SetNodeLogging),
          dtDAL::BooleanActorProperty::GetFuncType(this, &Node::GetNodeLogging),
          "Prints a log message when this node is executed."));
+
+      dtDAL::StringActorProperty* authorProp = 
+         new dtDAL::StringActorProperty("Authors", "Node Author(s)",
+         dtDAL::StringActorProperty::SetFuncType(),
+         dtDAL::StringActorProperty::GetFuncType(this, &Node::GetAuthors),
+         "The author(s) of this node, as well as all inherited nodes.", "Info");
+      authorProp->SetReadOnly(true);
+      AddProperty(authorProp);
 
       dtDAL::StringActorProperty* typeProp = new dtDAL::StringActorProperty(
          "Type", "Type",
