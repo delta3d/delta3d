@@ -349,6 +349,13 @@ namespace dtDirector
       virtual void BeginMoveEvent();
       virtual void EndMoveEvent();
 
+   public slots:
+
+      /**
+       * Event handler when a value link is being exposed.
+       */
+      void ExposeValue(QAction* action);
+
    protected:
 
       /**

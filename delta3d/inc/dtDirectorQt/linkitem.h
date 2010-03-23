@@ -84,6 +84,11 @@ namespace dtDirector
        */
       void Disconnect(QAction* action);
 
+      /**
+       * Event handler when a link is hidden.
+       */
+      void HideLink();
+
    protected:
 
       /**
@@ -194,6 +199,11 @@ namespace dtDirector
        */
       void Disconnect(QAction* action);
 
+      /**
+       * Event handler when a link is hidden.
+       */
+      void HideLink();
+
    protected:
 
       /**
@@ -299,6 +309,16 @@ namespace dtDirector
        * @param[in]  action  The disconnect action.
        */
       void Disconnect(QAction* action);
+
+      /**
+       * Event handler when a link is hidden.
+       */
+      void HideLink();
+
+      /**
+       * Event handler when a link is removed.
+       */
+      void RemoveLink();
 
    protected:
 

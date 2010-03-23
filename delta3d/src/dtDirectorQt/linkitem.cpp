@@ -168,6 +168,20 @@ namespace dtDirector
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void InputLinkItem::HideLink()
+   {
+      InputLink* input = mNodeItem->GetInputs()[mLinkIndex].link;
+      if (!input) return;
+
+      // Hide this link.
+      input->SetVisible(false);
+
+      // Disconnect all links.
+      Disconnect();
+      mScene->Refresh();
+   }
+
    //////////////////////////////////////////////////////////////////////////
    void InputLinkItem::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
    {
@@ -377,6 +391,10 @@ namespace dtDirector
       if (input)
       {
          QMenu menu;
+         QAction* hideAction = menu.addAction("Hide Link");
+         connect(hideAction, SIGNAL(triggered()), this, SLOT(HideLink()));
+         menu.addSeparator();
+
          QMenu* dcMenu = menu.addMenu("Disconnect");
          dcMenu->addAction("Disconnect All");
          dcMenu->addSeparator();
@@ -574,6 +592,20 @@ namespace dtDirector
             }
          }
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void OutputLinkItem::HideLink()
+   {
+      OutputLink* output = mNodeItem->GetOutputs()[mLinkIndex].link;
+      if (!output) return;
+
+      // Hide this link.
+      output->SetVisible(false);
+
+      // Disconnect all links.
+      Disconnect();
+      mScene->Refresh();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -785,6 +817,10 @@ namespace dtDirector
       if (output)
       {
          QMenu menu;
+         QAction* hideAction = menu.addAction("Hide Link");
+         connect(hideAction, SIGNAL(triggered()), this, SLOT(HideLink()));
+         menu.addSeparator();
+
          QMenu* dcMenu = menu.addMenu("Disconnect");
          dcMenu->addAction("Disconnect All");
          dcMenu->addSeparator();
@@ -965,6 +1001,34 @@ namespace dtDirector
             }
          }
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ValueLinkItem::HideLink()
+   {
+      ValueLink* input = mNodeItem->GetValues()[mLinkIndex].link;
+      if (!input) return;
+
+      // Hide this link.
+      input->SetVisible(false);
+
+      // Disconnect all links.
+      Disconnect();
+      mScene->Refresh();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ValueLinkItem::RemoveLink()
+   {
+      ValueLink* input = mNodeItem->GetValues()[mLinkIndex].link;
+      if (!input) return;
+
+      // Unexpose this link.
+      input->SetExposed(false);
+
+      // Disconnect all links.
+      Disconnect();
+      mScene->Refresh();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -1173,6 +1237,12 @@ namespace dtDirector
       if (input)
       {
          QMenu menu;
+         QAction* hideAction = menu.addAction("Hide Link");
+         QAction* removeAction = menu.addAction("Remove Link");
+         connect(hideAction, SIGNAL(triggered()), this, SLOT(HideLink()));
+         connect(removeAction, SIGNAL(triggered()), this, SLOT(RemoveLink()));
+         menu.addSeparator();
+
          QMenu* dcMenu = menu.addMenu("Disconnect");
          dcMenu->addAction("Disconnect All");
          dcMenu->addSeparator();

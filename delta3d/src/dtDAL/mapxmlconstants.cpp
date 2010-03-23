@@ -97,6 +97,7 @@ namespace dtDAL
    XMLCh* MapXMLConstants::DIRECTOR_LINK_ELEMENT = NULL;
 
    XMLCh* MapXMLConstants::DIRECTOR_LINK_VISIBLE_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::DIRECTOR_LINK_EXPOSED_ELEMENT = NULL;
    XMLCh* MapXMLConstants::DIRECTOR_LINK_VALUE_IS_OUT_ELEMENT = NULL;
    XMLCh* MapXMLConstants::DIRECTOR_LINK_VALUE_ALLOW_MULTIPLE_ELEMENT = NULL;
    XMLCh* MapXMLConstants::DIRECTOR_LINK_VALUE_TYPE_CHECK_ELEMENT = NULL;
@@ -219,6 +220,7 @@ namespace dtDAL
       DIRECTOR_LINK_ELEMENT = xercesc::XMLString::transcode("link");
 
       DIRECTOR_LINK_VISIBLE_ELEMENT = xercesc::XMLString::transcode("visible");
+      DIRECTOR_LINK_EXPOSED_ELEMENT = xercesc::XMLString::transcode("exposed");
       DIRECTOR_LINK_VALUE_IS_OUT_ELEMENT = xercesc::XMLString::transcode("isout");
       DIRECTOR_LINK_VALUE_ALLOW_MULTIPLE_ELEMENT = xercesc::XMLString::transcode("allowmultiple");
       DIRECTOR_LINK_VALUE_TYPE_CHECK_ELEMENT = xercesc::XMLString::transcode("typecheck");
@@ -341,6 +343,7 @@ namespace dtDAL
       xercesc::XMLString::release(&DIRECTOR_LINK_ELEMENT);
 
       xercesc::XMLString::release(&DIRECTOR_LINK_VISIBLE_ELEMENT);
+      xercesc::XMLString::release(&DIRECTOR_LINK_EXPOSED_ELEMENT);
       xercesc::XMLString::release(&DIRECTOR_LINK_VALUE_IS_OUT_ELEMENT);
       xercesc::XMLString::release(&DIRECTOR_LINK_VALUE_ALLOW_MULTIPLE_ELEMENT);
       xercesc::XMLString::release(&DIRECTOR_LINK_VALUE_TYPE_CHECK_ELEMENT);
