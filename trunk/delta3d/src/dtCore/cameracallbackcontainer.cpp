@@ -6,8 +6,8 @@
 using namespace dtCore;
 
 //////////////////////////////////////////////////////////////////////////
-CameraCallbackContainer::CameraCallbackContainer(Camera& camera):
-mCamera(&camera)
+CameraCallbackContainer::CameraCallbackContainer(Camera& camera)
+   : mCamera(&camera)
 {
 
 }
@@ -24,17 +24,39 @@ void CameraCallbackContainer::operator()(osg::RenderInfo& renderInfo) const
 {
    std::vector<RefPtr<CameraDrawCallback> >::const_iterator itr = mCallbacks.begin();
 
+   // Fire all recurring callbacks
    while (itr != mCallbacks.end())
    {
       (*(*itr))(*mCamera, renderInfo);
       ++itr;
    }
+
+   // Fire and remove all single shot callbacks
+   if (!mSingleFireCallbacks.empty())
+   {
+      std::vector<RefPtr<CameraDrawCallback> >::const_iterator itr = mSingleFireCallbacks.begin();
+
+      while (itr != mSingleFireCallbacks.end())
+      {
+         (*(*itr))(*mCamera, renderInfo);
+         ++itr;
+      }
+
+      mSingleFireCallbacks.clear();
+   }
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CameraCallbackContainer::AddCallback(CameraDrawCallback& cb)
+void CameraCallbackContainer::AddCallback(CameraDrawCallback& cb, bool singleFire)
 {
-   mCallbacks.push_back(&cb);
+   if (!singleFire)
+   {
+      mCallbacks.push_back(&cb);
+   }
+   else
+   {
+      mSingleFireCallbacks.push_back(&cb);
+   }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -56,5 +78,13 @@ void CameraCallbackContainer::RemoveCallback(CameraDrawCallback &cb)
 //////////////////////////////////////////////////////////////////////////
 std::vector<RefPtr<CameraDrawCallback> > CameraCallbackContainer::GetCallbacks() const
 {
-   return mCallbacks;
+   typedef std::vector<RefPtr<CameraDrawCallback> > CallbackList;
+
+   CallbackList allCallbacks;
+   std::back_insert_iterator<CallbackList> cbIter(allCallbacks);
+
+   std::copy(mCallbacks.begin(), mCallbacks.end(), cbIter);
+   std::copy(mSingleFireCallbacks.begin(), mSingleFireCallbacks.end(), cbIter);
+
+   return allCallbacks;
 }
