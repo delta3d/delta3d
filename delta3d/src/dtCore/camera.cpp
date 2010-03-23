@@ -547,11 +547,11 @@ namespace dtCore
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool Camera::AddPostDrawCallback(dtCore::CameraDrawCallback& cb)
+   bool Camera::AddPostDrawCallback(dtCore::CameraDrawCallback& cb, bool singleFire)
    {
       if (VerifyCallbackContainer() == false) { return false; }
 
-      mCallbackContainer->AddCallback(cb);
+      mCallbackContainer->AddCallback(cb, singleFire);
 
       return true;
    }

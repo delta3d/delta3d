@@ -60,7 +60,7 @@ class CameraTests : public CPPUNIT_NS::TestFixture
          CPPUNIT_TEST(TestSupplyingOSGCameraToConstructor);
          CPPUNIT_TEST(TestOnScreen);
          CPPUNIT_TEST(TestInitialCallbackConditions);
-         CPPUNIT_TEST(TestAddingTwoCallbacks);
+         CPPUNIT_TEST(TestAddingThreeCallbacks);
          CPPUNIT_TEST(TestTriggeringCallback);
 
       CPPUNIT_TEST_SUITE_END();
@@ -94,7 +94,7 @@ class CameraTests : public CPPUNIT_NS::TestFixture
       void TestCameraSyncCallbacks();
       void TestSettingTheCullingMode();
       void TestInitialCallbackConditions();
-      void TestAddingTwoCallbacks();
+      void TestAddingThreeCallbacks();
       void TestTriggeringCallback();
       void TestOverwritingExistingCallback();
 
@@ -381,34 +381,36 @@ protected:
 
 
 //////////////////////////////////////////////////////////////////////////
-void CameraTests::TestAddingTwoCallbacks()
+void CameraTests::TestAddingThreeCallbacks()
 {
    dtCore::RefPtr<dtCore::Camera> cam = new dtCore::Camera();
 
-   dtCore::CameraCallbackContainer *cont = dynamic_cast<dtCore::CameraCallbackContainer*>(cam->GetOSGCamera()->getPostDrawCallback());
-   if (cont == NULL)  { return; }
-
-   const size_t numInitialCallbacks = cont->GetCallbacks().size();
-
    dtCore::RefPtr<TestCB> cb1 = new TestCB();
    dtCore::RefPtr<TestCB> cb2 = new TestCB();
+   dtCore::RefPtr<TestCB> cb3 = new TestCB();
 
    cam->AddPostDrawCallback(*cb1);
    cam->AddPostDrawCallback(*cb2);
+   cam->AddPostDrawCallback(*cb3, true);
 
+   dtCore::CameraCallbackContainer *cont = dynamic_cast<dtCore::CameraCallbackContainer*>(cam->GetOSGCamera()->getPostDrawCallback());
+   const size_t numInitialCallbacks = cont->GetCallbacks().size();
 
    CPPUNIT_ASSERT_EQUAL_MESSAGE("The CameraCallbackContainer didn't get the callbacks added.",
-                           numInitialCallbacks + 2, cont->GetCallbacks().size());
+                           numInitialCallbacks, cont->GetCallbacks().size());
 
 
    cam->RemovePostDrawCallback(*cb1);
    CPPUNIT_ASSERT_EQUAL_MESSAGE("The CameraCallbackContainer didn't get the first callback removed.",
-                                numInitialCallbacks + 1, cont->GetCallbacks().size());
+                                numInitialCallbacks - 1, cont->GetCallbacks().size());
 
    cam->RemovePostDrawCallback(*cb2);
-
    CPPUNIT_ASSERT_EQUAL_MESSAGE("The CameraCallbackContainer didn't get the second callback removed.",
-                                numInitialCallbacks, cont->GetCallbacks().size());
+                                numInitialCallbacks - 2, cont->GetCallbacks().size());
+
+   cam->RemovePostDrawCallback(*cb3);
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("The CameraCallbackContainer's single fire callback should not get removed.  Unknown behavior.",
+      numInitialCallbacks - 2, cont->GetCallbacks().size());
 }
 
 //////////////////////////////////////////////////////////////////////////

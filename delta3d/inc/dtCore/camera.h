@@ -227,7 +227,7 @@ namespace dtCore
         * @param cb The callback to trigger during post-draw
         * @return true if cb was added correctly
         */
-      bool AddPostDrawCallback(dtCore::CameraDrawCallback& cb);
+      bool AddPostDrawCallback(dtCore::CameraDrawCallback& cb, bool singleFire = false);
 
       /** Remove a postdraw callback from the Camera.
         * @param cb The callback to remove

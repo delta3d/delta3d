@@ -33,10 +33,11 @@ namespace dtCore
       /** Add a CameraDrawCallback to the container.  Callbacks will be 
         * triggered in the order they are added.
         * @param cb The callback to add to this container.
+        * @param singleFire When true, the callback will only fire once.
         */
-      void AddCallback(dtCore::CameraDrawCallback& cb);
+      void AddCallback(dtCore::CameraDrawCallback& cb, bool singleFire);
 
-      /** Remove an existing CameraDrawCallback from the container.
+      /** Remove an existing non single fire CameraDrawCallback from the container.
         * @param cb The Callback to remove from this container.
         */
       void RemoveCallback(dtCore::CameraDrawCallback &cb);
@@ -44,7 +45,7 @@ namespace dtCore
       /** Get a copy of all the callbacks in this container.
        * @return a copy of the internal Callback container
        */
-      std::vector<RefPtr<CameraDrawCallback> > GetCallbacks() const;     
+      std::vector<RefPtr<CameraDrawCallback> > GetCallbacks() const;
 
    protected:
       virtual ~CameraCallbackContainer();
@@ -53,6 +54,7 @@ namespace dtCore
    
    private:
       std::vector<RefPtr<CameraDrawCallback> > mCallbacks;
+      mutable std::vector<RefPtr<CameraDrawCallback> > mSingleFireCallbacks;
    };
 }
 #endif // cameracallbackcontainer_h__
