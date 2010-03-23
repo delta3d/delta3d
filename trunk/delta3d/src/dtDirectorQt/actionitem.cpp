@@ -212,6 +212,25 @@ namespace dtDirector
       menu.addAction(mScene->GetEditor()->GetCutAction());
       menu.addAction(mScene->GetEditor()->GetCopyAction());
       menu.addSeparator();
+
+      QMenu* exposeMenu = NULL;
+      std::vector<ValueLink> &values = mNode->GetValueLinks();
+      int count = (int)values.size();
+      for (int index = 0; index < count; index++)
+      {
+         ValueLink& link = values[index];
+         if (!link.GetExposed())
+         {
+            if (!exposeMenu)
+            {
+               exposeMenu = menu.addMenu("Expose Values");
+               connect(exposeMenu, SIGNAL(triggered(QAction*)), this, SLOT(ExposeValue(QAction*)));
+            }
+
+            exposeMenu->addAction(link.GetName().c_str());
+         }
+      }
+
       menu.addAction(mScene->GetEditor()->GetShowLinkAction());
       menu.addAction(mScene->GetEditor()->GetHideLinkAction());
       menu.addSeparator();

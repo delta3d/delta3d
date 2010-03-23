@@ -451,6 +451,18 @@ namespace dtDirector
                      else mValueLink->SetVisible(dtUtil::XMLStringConverter(chars).ToString() == "true");
                   }
                }
+               else if (topEl == dtDAL::MapXMLConstants::DIRECTOR_LINK_EXPOSED_ELEMENT)
+               {
+                  if (mInValueLink)
+                  {
+                     if (!mValueLink)
+                     {
+                        if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_ERROR))
+                           mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Attempted to set value on value link when the link was not loaded.");
+                     }
+                     else mValueLink->SetExposed(dtUtil::XMLStringConverter(chars).ToString() == "true");
+                  }
+               }
                else if (mValueLink && topEl == dtDAL::MapXMLConstants::DIRECTOR_LINK_VALUE_IS_OUT_ELEMENT)
                {
                   mValueLink->SetOutLink(dtUtil::XMLStringConverter(chars).ToString() == "true");

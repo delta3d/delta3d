@@ -37,10 +37,11 @@
 namespace dtDirector
 {
    ///////////////////////////////////////////////////////////////////////////////////////
-   ValueLink::ValueLink(Node* owner, dtDAL::ActorProperty* prop, bool isOut, bool allowMultiple, bool typeCheck)
+   ValueLink::ValueLink(Node* owner, dtDAL::ActorProperty* prop, bool isOut, bool allowMultiple, bool typeCheck, bool exposed)
       : mOwner(owner)
       , mLabel("NONE")
       , mVisible(true)
+      , mExposed(exposed)
       , mDefaultProperty(prop)
       , mIsOut(isOut)
       , mAllowMultiple(allowMultiple)
@@ -62,6 +63,7 @@ namespace dtDirector
       mOwner = src.mOwner;
       mLabel = src.mLabel;
       mVisible = src.mVisible;
+      mExposed = src.mExposed;
 
       mDefaultProperty = src.mDefaultProperty;
       mIsOut = src.mIsOut;
@@ -81,6 +83,7 @@ namespace dtDirector
       mOwner = src.mOwner;
       mLabel = src.mLabel;
       mVisible = src.mVisible;
+      mExposed = src.mExposed;
 
       mDefaultProperty = src.mDefaultProperty;
       mIsOut = src.mIsOut;

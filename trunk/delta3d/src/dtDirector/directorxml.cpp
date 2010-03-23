@@ -513,6 +513,13 @@ namespace dtDirector
                }
                EndElement(); // End Visibility.
 
+               // Exposed.
+               BeginElement(dtDAL::MapXMLConstants::DIRECTOR_LINK_EXPOSED_ELEMENT);
+               {
+                  AddCharacters(value.GetExposed()? "true": "false");
+               }
+               EndElement(); // End Exposed.
+
                // Is Out Value.
                BeginElement(dtDAL::MapXMLConstants::DIRECTOR_LINK_VALUE_IS_OUT_ELEMENT);
                {

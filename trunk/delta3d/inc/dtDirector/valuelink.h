@@ -65,8 +65,9 @@ namespace dtDirector
        * @param[in]  typeCheck      If true, editor will not allow linking
        *                             between this and a value not of
        *                             the same type.
+       * @param[in]  exposed        If true, this value will be exposed by default.
        */
-      ValueLink(Node* owner, dtDAL::ActorProperty* prop, bool isOut = false, bool allowMultiple = false, bool typeCheck = true);
+      ValueLink(Node* owner, dtDAL::ActorProperty* prop, bool isOut = false, bool allowMultiple = false, bool typeCheck = true, bool exposed = true);
 
       /**
        * Destructor.
@@ -156,6 +157,12 @@ namespace dtDirector
       bool GetVisible() {return mVisible;}
 
       /**
+      * Accessors for the exposed status of the link.
+      */
+      void SetExposed(bool exposed) {mExposed = exposed;}
+      bool GetExposed() {return mExposed;}
+
+      /**
        * Retrieves whether this link is an output link.
        *
        * @return  True if this is an out link.
@@ -227,6 +234,7 @@ namespace dtDirector
       Node* mOwner;
       std::string mLabel;
       bool mVisible;
+      bool mExposed;
 
 #if defined DELTA_WIN32
 #pragma warning (push)

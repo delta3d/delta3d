@@ -421,12 +421,14 @@ namespace dtDirector
          count = (int)mNode->GetValueLinks().size();
          for (int index = 0; index < count; index++)
          {
+            ValueLink* link = &mNode->GetValueLinks()[index];
+            if (!link->GetExposed()) continue;
+            if (!link->GetVisible()) mHasHiddenLinks = true;
+
             mValues.push_back(ValueData());
             ValueData& data = mValues.back();
 
-            data.link = &mNode->GetValueLinks()[index];
-            if (!data.link->GetVisible()) mHasHiddenLinks = true;
-
+            data.link = link;
             data.linkGraphic = new ValueLinkItem(this, (int)mValues.size()-1, this, mScene);
             data.linkName = new GraphicsTextItem(data.linkGraphic, mScene);
             data.linkName->setAcceptHoverEvents(false);
@@ -1104,6 +1106,19 @@ namespace dtDirector
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void NodeItem::ExposeValue(QAction* action)
+   {
+      if (!action) return;
+
+      ValueLink* link = mNode->GetValueLink(action->text().toStdString());
+      if (link)
+      {
+         link->SetExposed(true);
+         mScene->Refresh();
+      }
+   }
+
    //////////////////////////////////////////////////////////////////////////
    void NodeItem::ConnectLinks(OutputData& output, InputData& input, int index)
    {
@@ -1169,6 +1184,25 @@ namespace dtDirector
       menu.addAction(mScene->GetEditor()->GetCutAction());
       menu.addAction(mScene->GetEditor()->GetCopyAction());
       menu.addSeparator();
+      
+      QMenu* exposeMenu = NULL;
+      std::vector<ValueLink> &values = mNode->GetValueLinks();
+      int count = (int)values.size();
+      for (int index = 0; index < count; index++)
+      {
+         ValueLink& link = values[index];
+         if (!link.GetExposed())
+         {
+            if (!exposeMenu)
+            {
+               exposeMenu = menu.addMenu("Expose Values");
+               connect(exposeMenu, SIGNAL(triggered(QAction*)), this, SLOT(ExposeValue(QAction*)));
+            }
+
+            exposeMenu->addAction(link.GetName().c_str());
+         }
+      }
+
       menu.addAction(mScene->GetEditor()->GetShowLinkAction());
       menu.addAction(mScene->GetEditor()->GetHideLinkAction());
       menu.addSeparator();
