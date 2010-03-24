@@ -225,6 +225,15 @@ osg::Vec3 dtCore::ODEBodyWrap::GetAngularVelocity() const
 }
 
 //////////////////////////////////////////////////////////////////////////
+void dtCore::ODEBodyWrap::SetAngularVelocity(const osg::Vec3& newVelocity)
+{
+   if (GetBodyID() != 0)
+   {
+      dBodySetAngularVel(GetBodyID(), newVelocity.x(), newVelocity.y(), newVelocity.z());
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
 void dtCore::ODEBodyWrap::ApplyForce(const osg::Vec3& force)
 {
    if (GetBodyID() != 0)

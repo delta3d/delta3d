@@ -130,7 +130,7 @@ namespace dtCore
       void GetInertiaTensor(osg::Matrix& dest) const;
 
       /**
-       * @return the Body's linear velocity
+       * @param the body's new linear velocity
        */
       void SetLinearVelocity(const osg::Vec3& newVelocity);
 
@@ -138,6 +138,11 @@ namespace dtCore
        * @return the Body's linear velocity
        */
       osg::Vec3 GetLinearVelocity() const;
+
+      /**
+       * @param the body's new angular velocity
+       */
+      void SetAngularVelocity(const osg::Vec3& newVelocity);
 
       /**
        * @return the Body's angular velocity
