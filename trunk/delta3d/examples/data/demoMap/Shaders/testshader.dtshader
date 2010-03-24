@@ -7,6 +7,10 @@
          <source type="Geometry">Shaders/testshader.geom</source>
          <source type="Fragment">Shaders/testshader.frag</source>
       </shader>
+      
+      <shader name="TestShaderWithoutGeomShader" default="no">
+         <source type="Vertex">Shaders/testshader.vert</source>
+         <source type="Fragment">Shaders/testshaderAlternate.frag</source>
+      </shader>
    </shadergroup>
-
 </shaderlist>
