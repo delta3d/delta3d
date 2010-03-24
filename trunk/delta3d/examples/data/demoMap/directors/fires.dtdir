@@ -26,7 +26,12 @@
             <string></string>
         </property>
     </header>
-    <libraries></libraries>
+    <libraries>
+        <library>
+            <name>dtDirectorAudioNodes</name>
+            <version></version>
+        </library>
+    </libraries>
     <graph>
         <property>
             <name>Enabled</name>
@@ -261,7 +266,7 @@
             </node>
             <node>
                 <name>Sound</name>
-                <category>General</category>
+                <category>Audio</category>
                 <id>fd20a387-fa2b-47d1-8699-fa47e6bcfb73</id>
                 <property>
                     <name>Enabled</name>
