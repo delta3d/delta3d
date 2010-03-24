@@ -19,7 +19,7 @@
  * Author: MG
  */
 
-#include <dtDirectorNodes/soundaction.h>
+#include <dtDirectorAudioNodes/soundaction.h>
 
 #include <dtDirector/director.h>
 

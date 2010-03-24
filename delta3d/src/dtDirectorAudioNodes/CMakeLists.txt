@@ -1,5 +1,5 @@
 
-SET(LIB_NAME     dtDirectorNodes)
+SET(LIB_NAME     dtDirectorAudioNodes)
 
 
 SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/inc/${LIB_NAME})
@@ -17,11 +17,12 @@ ADD_LIBRARY(${LIB_NAME} SHARED
 TARGET_LINK_LIBRARIES(${LIB_NAME}
                       ${DTDAL_LIBRARY}
                       ${DTDIRECTOR_LIBRARY}
+					  ${DTAUDIO_LIBRARY}
                       ${DTACTORS_LIBRARY}
                      )
 
 SET_TARGET_PROPERTIES(${LIB_NAME}
-                     PROPERTIES DEFINE_SYMBOL DIRECTOR_NODE_LIBRARY)
+                     PROPERTIES DEFINE_SYMBOL DIRECTOR_AUDIO_NODE_LIBRARY)
 
 
 INCLUDE(ModuleInstall OPTIONAL)

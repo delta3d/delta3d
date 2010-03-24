@@ -109,11 +109,14 @@ MACRO(ADD_DELTA3D_SUBFOLDERS)
    ADD_SUBDIRECTORY(src/dtABC)
    ADD_SUBDIRECTORY(src/dtDAL)
    ADD_SUBDIRECTORY(src/dtDirector)
-   
+
    IF (DTAUDIO_AVAILABLE)
-    ADD_SUBDIRECTORY(src/dtDirectorNodes)
+      ADD_SUBDIRECTORY(src/dtDirectorAudioNodes)
    ENDIF (DTAUDIO_AVAILABLE)
-  
+
+   ADD_SUBDIRECTORY(src/dtDirectorMsgNodes)
+   ADD_SUBDIRECTORY(src/dtDirectorNodes)
+
    ADD_SUBDIRECTORY(src/dtGame)
    ADD_SUBDIRECTORY(src/dtInputISense)
    ADD_SUBDIRECTORY(src/dtLMS)

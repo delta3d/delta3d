@@ -16,35 +16,38 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * Author: MG
+ * Author: Jeff P. Houde
  */
 
-#ifndef SOUND_ACTION_NODE
-#define SOUND_ACTION_NODE
+#ifndef DIRECTOR_ON_MESSAGE_EVENT_NODE
+#define DIRECTOR_ON_MESSAGE_EVENT_NODE
 
-////////////////////////////////////////////////////////////////////////////////
+#include <dtDirector/eventnode.h>
+#include <dtDirectorMsgNodes/nodelibraryexport.h>
 
-#include <dtDirector/actionnode.h>
-#include <dtDirectorNodes/nodelibraryexport.h>
+namespace dtDAL
+{
+   class ActorProxy;
+}
 
 namespace dtDirector
 {
-   ////////////////////////////////////////////////////////////////////////////////
-   class NODE_LIBRARY_EXPORT SoundAction: public ActionNode
+   /**
+    * This is the base class for all event nodes.
+    *
+    * @note
+    *      Node objects must be created through the NodePluginRegistry or
+    *      the NodeManager. If they are not created in this fashion,
+    *      the node types will not be set correctly.
+    */
+   class MESSAGE_NODE_LIBRARY_EXPORT OnMessageEvent : public EventNode
    {
    public:
 
-      enum InputType
-      {
-         INPUT_PLAY = 0,
-         INPUT_STOP,
-         INPUT_PAUSE
-      };
-
       /**
-       * Constructor.
+       * Constructs the Node.
        */
-      SoundAction();
+      OnMessageEvent();
 
       /**
        * Initializes the Node.
@@ -67,44 +70,24 @@ namespace dtDirector
       virtual void BuildPropertyMap();
 
       /**
-       * Updates the node.
-       * @note  Parent implementation will auto activate any trigger
-       *        with the "Out" label by default.
+       * Retrieves the display name for the node.
        *
-       * @param[in]  simDelta     The simulation time step.
-       * @param[in]  delta        The real time step.
-       * @param[in]  input        The index to the input that is active.
-       * @param[in]  firstUpdate  True if this input was just activated,
-       *
-       * @return     True if the current node should remain active.
+       * @return  The display name of the node.
        */
-      virtual bool Update(float simDelta, float delta, int input, bool firstUpdate);
-
-      /**
-       * Accessors for property values.
-       */
-      void SetSoundActor(const dtCore::UniqueId& value);
-      dtCore::UniqueId GetSoundActor();
+      virtual const std::string& GetName();
 
    protected:
 
       /**
-       * Destructor.
+       *	Protected Destructor.  dtCore::RefPtr will handle its destruction.
        */
-      ~SoundAction();
+      virtual ~OnMessageEvent();
 
    private:
 
-      dtCore::UniqueId mSoundActor;
-
-      void PlaySoundsOnActors();
-      void StopSoundsOnActors();
-      void PauseSoundsOnActors();
-
-      bool AreAnySoundsOnActorsStillPlaying();
+      std::string mLabel;
+      std::string mEventName;
    };
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-#endif // SOUND_ACTION_NODE
+#endif
