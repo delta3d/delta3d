@@ -114,11 +114,11 @@ namespace dtDirector
       // This will expose the properties in the editor and allow
       // them to be connected to ValueNodes.
       mValues.push_back(ValueLink(this, actorProp, true, true, true));
-      mValues.push_back(ValueLink(this, startTimeProp, false, false, true));
-      mValues.push_back(ValueLink(this, endTimeProp, false, false, true));
+      mValues.push_back(ValueLink(this, startTimeProp, false, false, true, false));
+      mValues.push_back(ValueLink(this, endTimeProp, false, false, true, false));
       mValues.push_back(ValueLink(this, timeProp, false, false, true));
-      mValues.push_back(ValueLink(this, startRotProp, false, false, true));
-      mValues.push_back(ValueLink(this, endRotProp, false, false, true));
+      mValues.push_back(ValueLink(this, startRotProp, false, false, true, false));
+      mValues.push_back(ValueLink(this, endRotProp, false, false, true, false));
    }
 
    //////////////////////////////////////////////////////////////////////////

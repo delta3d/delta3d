@@ -99,11 +99,12 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void Node::BuildPropertyMap()
    {
-      AddProperty(new dtDAL::BooleanActorProperty(
+      dtDAL::BooleanActorProperty* enabledProp = new dtDAL::BooleanActorProperty(
          "Enabled", "Enabled",
          dtDAL::BooleanActorProperty::SetFuncType(this, &Node::SetEnabled),
          dtDAL::BooleanActorProperty::GetFuncType(this, &Node::GetEnabled),
-         "Enabled status of this Node (Disabled nodes will not run during graph execution)."));
+         "Enabled status of this Node (Disabled nodes will not run during graph execution).");
+      AddProperty(enabledProp);
 
       AddProperty(new dtDAL::StringActorProperty(
          "Comment", "Comment",
@@ -146,6 +147,8 @@ namespace dtDirector
          dtDAL::Vec2ActorProperty::SetFuncType(this, &Node::SetPosition),
          dtDAL::Vec2ActorProperty::GetFuncType(this, &Node::GetPosition),
          "The UI Position of the Node.", "Info"));
+
+      mValues.push_back(ValueLink(this, enabledProp, false, false, true, false));
    }
 
    //////////////////////////////////////////////////////////////////////////

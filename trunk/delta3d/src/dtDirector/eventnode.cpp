@@ -67,6 +67,7 @@ namespace dtDirector
          dtDAL::IntActorProperty::GetFuncType(this, &EventNode::GetTriggerCount),
          "The maximum number of times this event can be triggered before it is disabled (Zero = no limit).");
       AddProperty(triggerCountProp);
+      mValues.push_back(ValueLink(this, triggerCountProp, false, false, true, false));
 
       // Create the instigator property.
       if (UsesInstigator())

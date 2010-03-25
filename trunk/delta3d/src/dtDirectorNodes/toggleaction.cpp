@@ -80,7 +80,8 @@ namespace dtDirector
 
       // This will expose the properties in the editor and allow
       // them to be connected to ValueNodes.
-      mValues.push_back(ValueLink(this, actorProp, true, true, true));      
+      mValues.push_back(ValueLink(this, actorProp, true, true, true));    
+      mValues.push_back(ValueLink(this, toggleActorProp, false, false, true, false));
    }
 
    /////////////////////////////////////////////////////////////////////////////
