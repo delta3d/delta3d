@@ -36,7 +36,7 @@ namespace dtAI
                 PlannerHelper::DesiredStateFunctor(this, &BaseNPC::IsDesiredState))
       , mWSTemplate()
       , mGoals()
-      , mCurrentGoal(0)
+      , mCurrentGoal(NULL)
       , mCurrentPlan()
    {
    }

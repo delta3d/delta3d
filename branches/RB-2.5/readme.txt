@@ -26,7 +26,7 @@ The Delta3D Team
 Delta3D uses CMake (http://www.cmake.org) to generate projects for the 
 libraries, examples, and utilities.  See 
 http://delta3d.wiki.sourceforge.net/Tutorials for instructions on
-how to build Delta3D from source.
+how to build Delta3D from source and which CMake build options are available.
 
 NOTE: You will *not* be able to compile the libraries or utilities
       from the Delta3D SDK package, only the examples.  See the Tutorials

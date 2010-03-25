@@ -36,16 +36,30 @@
 #include <string>
 #include <sstream>
 
+/** \file
+ * Utilities for making the use of the dtAI Planner even easier.
+ */
+
 namespace dtAI
 {
-   /**
-    * Utilities for making the use of the Planner even easier
-    */
 
+   /**
+    * Templated IStateVariable to make implementing a basic state easier.  Call
+    * Set() and Get() to access the value contained within.
+    * For example, to add a new boolean state named "StateHunger" to the WorldState:
+    * @code 
+    *   worldState->AddState("StateHunger", new dtAI::StateVar<bool>(true));
+    * @endcode
+    */
    template<typename _Type>
    class StateVar: public IStateVariable
    {
    public:
+
+      /** 
+       * @param pData : The data value this IStateVariable is managing.  Must be
+       *                of _Type type.
+       */
       StateVar(const _Type& pData) : mData(pData) {}
 
       IStateVariable* Copy() const
@@ -53,11 +67,19 @@ namespace dtAI
          return new StateVar<_Type>(mData);
       }
 
+      /** 
+       * Get the value of this state.
+       * @return The current value of type _Type
+       */
       const _Type& Get() const
       {
          return mData;
       }
 
+      /** 
+       * Set the value of this state.
+       * @param pData : The new value of type _Type
+       */
       void Set(const _Type& pData)
       {
          mData = pData;
@@ -96,18 +118,32 @@ namespace dtAI
 
 
 
+   /** Templated IConditional to make it easier implementing basic precondition
+     * checks.  Will automatically verify if an existing dtAI::StateVar in the
+     * dtAI::WorldState equates (==) to the supplied value.
+     * For example, to add a precondition to an Operation that verifies the 
+     * boolean "HasFood" StateVar is true:
+     * @code 
+     *   myOperation->AddPreCondition(new dtAI::Conditional<bool>("HasFood", true);
+     * @endcode
+     */
    template <typename _Type>
    class Conditional: public IConditional
    {
    public:
+      /** 
+        * @param pName : the name of this IConditional and the name of the 
+        *                StateVar to check.
+        * @param pData : the value of the StateVar to equate to.  Must be of _Type type.
+        */
       Conditional(const std::string& pName, const _Type& pData): mName(pName), mData(pData){}
 
-      /*virtual*/ const std::string& GetName() const
+      virtual const std::string& GetName() const
       {
          return mName;
       }
 
-      /*virtual*/ bool Evaluate(const WorldState* pWS)
+      virtual bool Evaluate(const WorldState* pWS)
       {
          const StateVar<_Type>* pStateVar = GetWorldStateVariable<_Type>(pWS, mName);
          if (pStateVar)
@@ -132,14 +168,22 @@ namespace dtAI
    };
 
 
+   /** 
+    * Templated IEffect that makes it easier to implement simple IEffects.
+    *
+    */
    template <typename _Type>
    class Eff: public IEffect
    {
    public:
+      /** 
+       * @param pName : the name of the existing StateVar to affect
+       * @param pData : The value to apply to the StateVar.  Must be of type _Type
+       */
       Eff(const std::string& pName, const _Type& pData) : mName(pName), mData(pData) {}
       ~Eff() {}
 
-      bool Apply(const Operator*, WorldState* pWSIn) const
+      virtual bool Apply(const Operator*, WorldState* pWSIn) const
       {
          StateVar<_Type>* pState = GetWorldStateVariable<_Type>(pWSIn, mName);
          pState->Set(mData);
@@ -151,11 +195,22 @@ namespace dtAI
       _Type mData;
    };
 
+   /** 
+    * A templated Conditional, used to represent a Goal state to achieve.
+    */
    template<typename _CostType, typename _Type>
    class TGoal: public Conditional<_Type>
    {
    public:
-      TGoal(const std::string& pName, const _Type& pData, _CostType pCost): Conditional<_Type>(pName, pData), mCost(pCost){}
+      /** 
+       * @param pName the name of this Conditional and the name of the StateVar this
+       *        goal is referring to
+       * @param pData The data value the StateVar should be in order for this
+       *              goal to be achieved.
+       */
+      TGoal(const std::string& pName, const _Type& pData, _CostType pCost)
+      : Conditional<_Type>(pName, pData),
+        mCost(pCost){}
 
       _CostType GetCost(){return mCost;}
 
@@ -169,9 +224,17 @@ namespace dtAI
    typedef Conditional<bool>     Interrupt;
    typedef Eff<bool>             Effect;
 
+   /** 
+    * A specialized TGoal used with dtAI::BaseNPC.  The cost type is a float
+    * and the StateVar type is a bool.
+    * @see dtAI::BaseNPC::AddGoal()
+    */
    typedef TGoal<float, bool> Goal;
 
 
+   /** 
+    * A templatized Operator that has built in ability to alter StateVar states (AddEffect()).
+    */
    template <typename _Type>
    class TOperator: public Operator
    {
@@ -182,11 +245,26 @@ namespace dtAI
       typedef std::vector< dtCore::RefPtr<InterruptType> > InterruptList;
 
    public:
+      /** 
+       * @param pName The name of this Operator.
+       */
       TOperator(const std::string& pName):
-         Operator(pName, Operator::ApplyOperatorFunctor(this, &TOperator<_Type>::Apply)) {}
+         Operator(pName, Operator::ApplyOperatorFunctor(this, &TOperator<_Type>::Apply))
+         ,mCost(0.f)
+         {}
 
       void SetCost(float pcost){mCost = pcost;}
 
+      /** 
+       * Add an "effect" to this Operator.  The list of EffectType supplied will
+       * take affect when this Operator is triggered.
+       * Example, to automatically set the boolean StateVar "StateAmountFood" to true
+       * when this operates:
+       * @code
+       *    myOp->AddEffect(new dtAI::TOperator<bool>::EffectType("StateAmountFood", true));
+       * @endcode
+       * @param pEffect : The EffectType to operate on.     
+       */
       void AddEffect(EffectType* pEffect) { mEffects.push_back(pEffect); }
       void AddInterrupt(InterruptType* pInterrupt) { mInterrupts.push_back(pInterrupt); }
 
@@ -225,7 +303,11 @@ namespace dtAI
       InterruptList mInterrupts;
    };
 
+   /**
+    *  A specialized TOperator that operates on a boolean StateVar
+    */
    typedef TOperator<bool> NPCOperator;
+
 } // namespace dtAI
 
 #endif // __DELTA_PLANNERASTARUTILS_H__
