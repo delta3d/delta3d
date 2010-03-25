@@ -10,12 +10,16 @@
 using namespace boost::python;
 using namespace dtCore;
 
+//BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(GetHOT_Overloads, GetHeightOfTerrain, 3, 5)
+
 void initSceneBindings()
 {
    Scene* (*SceneGI1)(int) = &Scene::GetInstance;
    Scene* (*SceneGI2)(std::string) = &Scene::GetInstance;
 
-   float (Scene::*GetHeightOfTerrain1)( float x, float y ) = &Scene::GetHeightOfTerrain;
+   //TODO This has 2 default arguments, but can't seem to get BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS() to work.
+   //Maybe because there's two Scene::GetHeightOfTerrain()?
+   bool (Scene::*GetHeightOfTerrain1)(float& hot, float x, float y, float maxZ, float minZ) = &Scene::GetHeightOfTerrain;
    
    void (Scene::*SetGravity1)(const osg::Vec3&) const = &Scene::SetGravity;
    void (Scene::*SetGravity2)(float, float, float) const = &Scene::SetGravity;
@@ -40,6 +44,7 @@ void initSceneBindings()
       .def("GetDrawable", &Scene::GetDrawable, return_internal_reference<>())
       .def("SetRenderState", &Scene::SetRenderState)
       .def("GetHeightOfTerrain", GetHeightOfTerrain1)
+      //.def("GetHeightOfTerrain", &Scene::GetHeightOfTerrain, GetHOT_Overloads())
       //.def("GetSpaceID", &Scene::GetSpaceID, return_value_policy<return_opaque_pointer>())
       //.def("GetWorldID", &Scene::GetWorldID, return_value_policy<return_opaque_pointer>())
       .def("SetGravity", SetGravity1)
