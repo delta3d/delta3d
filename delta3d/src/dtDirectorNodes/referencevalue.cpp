@@ -66,7 +66,7 @@ namespace dtDirector
       // The external value requires a value link so it can use it to link
       // externally with any values outside of it.
       mValues.clear();
-      mValues.push_back(ValueLink(this, NULL, false, false, false));
+      mValues.push_back(ValueLink(this, NULL, false, false, false, false));
    }
 
    //////////////////////////////////////////////////////////////////////////

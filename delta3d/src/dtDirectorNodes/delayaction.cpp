@@ -80,6 +80,7 @@ namespace dtDirector
       // This will expose the properties in the editor and allow
       // them to be connected to ValueNodes.
       mValues.push_back(ValueLink(this, delayProp, false, false, false));
+      mValues.push_back(ValueLink(this, simTimeProp, false, false, true, false));
    }
 
    //////////////////////////////////////////////////////////////////////////

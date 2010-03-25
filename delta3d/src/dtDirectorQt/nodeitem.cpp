@@ -1115,6 +1115,7 @@ namespace dtDirector
       if (link)
       {
          link->SetExposed(true);
+         link->SetVisible(true);
          mScene->Refresh();
       }
    }

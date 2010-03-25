@@ -82,6 +82,7 @@ namespace dtDirector
       // them to be connected to ValueNodes.
       mValues.push_back(ValueLink(this, actorProp, true, true, true));
       mValues.push_back(ValueLink(this, valueProp, false, false, false));
+      mValues.push_back(ValueLink(this, nameProp, false, false, true, false));
    }
 
    /////////////////////////////////////////////////////////////////////////////

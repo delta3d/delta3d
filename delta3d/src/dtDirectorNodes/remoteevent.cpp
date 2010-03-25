@@ -55,11 +55,14 @@ namespace dtDirector
    {
       EventNode::BuildPropertyMap();
 
-      AddProperty(new dtDAL::StringActorProperty(
+      dtDAL::StringActorProperty* nameProp = new dtDAL::StringActorProperty(
          "EventName", "Event Name",
          dtDAL::StringActorProperty::SetFuncType(this, &RemoteEvent::SetEventName),
          dtDAL::StringActorProperty::GetFuncType(this, &RemoteEvent::GetEventName),
-         "The name of the event."));
+         "The name of the event.");
+      AddProperty(nameProp);
+
+      mValues.push_back(ValueLink(this, nameProp, false, false, true, false));
    }
 
    //////////////////////////////////////////////////////////////////////////

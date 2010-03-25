@@ -71,7 +71,7 @@ namespace dtDirector
 
       // This will expose the properties in the editor and allow
       // them to be connected to ValueNodes.
-      mValues.push_back(ValueLink(this, eventNameProp, false, false, true));
+      mValues.push_back(ValueLink(this, eventNameProp, false, false, true, false));
    }
 
    //////////////////////////////////////////////////////////////////////////
