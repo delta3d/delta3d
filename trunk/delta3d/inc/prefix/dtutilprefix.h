@@ -7,13 +7,7 @@
       #include <map>
       #include <osgDB/FileUtils>
    #else//_MSC_VER
-      #include <osg/Referenced> 
-      #include <osg/Vec3>
-      #include <osg/ref_ptr>
-      // Stuff you get from string
-      #include <memory>
-      #include <algorithm>
-      #include <iosfwd>
+      //no big payoffs here
    #endif//_MSC_VER
 
 #endif //DT_USE_PCH

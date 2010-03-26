@@ -10,7 +10,9 @@
       #include <osg/Vec2>
       #include <osgGA/GUIEventAdapter>
    #else //_MSC_VER
-      #include <prefix/dtdalprefix.h>
+     #include <dtUtil/refstring.h>
+     #include <dtDAL/propertycontainer.h>
+     #include <dtDAL/physicalactorproxy.h>
    #endif //_MSC_VER
 
 #endif //DT_USE_PCH
