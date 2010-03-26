@@ -10,7 +10,7 @@
       #include <osg/Group>
       #include <dtUtil/xercesutils.h>
   #else //_MSC_VER
-      #include <prefix/dtcoreprefix.h>
+      #include <dtCore/deltadrawable.h>
   #endif //_MSC_VER
 
 #endif //DT_USE_PCH

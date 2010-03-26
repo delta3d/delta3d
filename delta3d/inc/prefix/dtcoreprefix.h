@@ -7,21 +7,12 @@
      #include <osg/Export>
      #include <osg/MatrixTransform>
      #include <osg/GraphicsContext>
-     #include <osg/Camera>
      #include <osgViewer/ViewerBase>
      #include <osgDB/ReadFile>
-  #else //_MSC_VER
-     #include <osg/Vec3f>
-     #include <osg/Vec3d>
-     #include <osg/Matrixf>
-     #include <osg/Matrixd>
-     #include <osg/ref_ptr>
-     #include <iosfwd>
-     #include <osg/Referenced>
-     #include <osg/Config>
-     #include <ode/common.h>
-     #include <memory>
+  #else //_MSC_VER   
   #endif //_MSC_VER
+
+  #include <osg/Camera>
 
 #endif //DT_USE_PCH
 

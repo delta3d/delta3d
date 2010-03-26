@@ -8,7 +8,8 @@
    #ifdef _MSC_VER
       #include <QtGui/QAbstractItemDelegate>
    #else //_MSC_VER
-      #include <prefix/dtdalprefix.h>
+     #include <QtCore/QObject>
+     #include <QtGui/QPushButton>
    #endif //_MSC_VER
 
 #endif//DT_USE_PCH
