@@ -25,7 +25,7 @@
  *
  * William E. Johnson II
  */
-#include <prefix/dtgameprefix.h>
+#include <prefix/unittestprefix.h>
 #include <dtABC/application.h>
 #include <dtAudio/audiomanager.h>
 #include <dtCore/system.h>
