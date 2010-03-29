@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<Application>
+
+  <Window X="100" Y="100" Width="1024" Height="768" Name="TestBumpMap" PixelDepth="24" RefreshRate="60" ShowCursor="1" ChangeDisplayResolution="0" FullScreen="0"/>
+
+  <Scene Name="defaultScene"/>
+  
+  <Camera Name="defaultCam" WindowInstance="testBumpMap"/>
+  
+  <View Name="defaultView" CameraInstance="defaultCam" SceneInstance="defaultScene"/>
+
+</Application>
