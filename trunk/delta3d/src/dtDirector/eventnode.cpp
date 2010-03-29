@@ -24,6 +24,7 @@
 
 #include <dtDirector/eventnode.h>
 #include <dtDirector/director.h>
+#include <dtDirector/messagegmcomponent.h>
 
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actorproperty.h>

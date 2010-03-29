@@ -24,8 +24,11 @@
 
 #include <dtDirector/export.h>
 #include <dtDirector/directorgraph.h>
+#include <dtDirector/messagegmcomponent.h>
 
 #include <dtDAL/map.h>
+
+#include <dtGame/gamemanager.h>
 
 #include <cstdio>
 
@@ -84,7 +87,7 @@ namespace dtDirector
        *
        * @param[in]  map  The current map.
        */
-      virtual void Init(dtDAL::Map* map = NULL);
+      virtual void Init(dtGame::GameManager* gm = NULL, dtDAL::Map* map = NULL);
 
       /**
        * Clears all data in this Director script.
@@ -101,7 +104,7 @@ namespace dtDirector
       /**
        * Retrieves the map.
        *
-       * @return the map.
+       * @return  The map.
        */
       dtDAL::Map* GetMap();
 
@@ -111,6 +114,20 @@ namespace dtDirector
        * @param[in]  map  The current map.
        */
       void SetMap(dtDAL::Map* map);
+
+      /**
+       * Retrieves the Messaging GM component.
+       *
+       * @return  The Messaging GM component.
+       */
+      dtDirector::MessageGMComponent* GetMessageGMComponent() {return mMessageGMComponent;}
+
+      /**
+       * Retrieves the Game Manager.
+       *
+       * @return  The Game Manager.
+       */
+      dtGame::GameManager* GetGameManager() {return mGameManager;}
 
       /**
        * Retrieves the logger.
@@ -549,6 +566,9 @@ namespace dtDirector
 
       bool           mLogNodes;
       dtUtil::Log*   mLogger;
+
+      dtGame::GameManager* mGameManager;
+      dtCore::RefPtr<dtDirector::MessageGMComponent> mMessageGMComponent;
    };
 }
 

@@ -116,7 +116,7 @@ namespace dtActors
          {
             dtDAL::ResourceDescriptor& descriptor = mResourceList[index];
 
-            director->Init(map);
+            director->Init(gm, map);
             director->SetPlayer(playerID);
             //director->SetCamera(cameraID);
 

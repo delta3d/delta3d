@@ -40,6 +40,7 @@ namespace dtDirector
       static dtCore::RefPtr<dtDirector::NodeType> INPUT_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> REMOTE_EVENT_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> TRIGGER_VOLUME_EVENT_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> GAME_MESSAGE_EVENT_NODE_TYPE;
 
       /// Actions
       static dtCore::RefPtr<dtDirector::NodeType> OUTPUT_NODE_TYPE;

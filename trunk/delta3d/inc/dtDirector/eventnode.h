@@ -33,6 +33,8 @@ namespace dtDAL
 
 namespace dtDirector
 {
+   class MessageGMComponent;
+
   /**
    * This is the base class for all event nodes.
    *
@@ -127,6 +129,13 @@ namespace dtDirector
        */
       void SetInstigator(const dtCore::UniqueId& id);
       dtCore::UniqueId GetInstigator();
+
+      /**
+       * Registration function for registering message types this
+       * node will receive.
+       * Note: This should be rewritten in inherited classes.
+       */
+      virtual void RegisterMessages() {}
 
    protected:
 

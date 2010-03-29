@@ -1,0 +1,154 @@
+/*
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2008 MOVES Institute
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * Author: Jeff P. Houde
+ */
+
+#include <sstream>
+#include <algorithm>
+
+#include <dtDirector/director.h>
+#include <dtDirector/messagegmcomponent.h>
+
+#include <dtDirectorNodes/gamemessageevent.h>
+
+#include <dtGame/messagetype.h>
+
+#include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/actorproperty.h>
+#include <dtDAL/actorproxy.h>
+
+namespace dtDirector
+{
+   ///////////////////////////////////////////////////////////////////////////////////////
+   GameMessageEvent::GameMessageEvent()
+       : EventNode()
+   {
+      AddAuthor("Jeff P. Houde");
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////////////
+   GameMessageEvent::~GameMessageEvent()
+   {
+      UnRegisterMessages();
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////////////
+   void GameMessageEvent::Init(const NodeType& nodeType, DirectorGraph* graph)
+   {
+      EventNode::Init(nodeType, graph);
+
+      mLabel = EventNode::GetName();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void GameMessageEvent::ProcessMessage(const dtGame::Message& message)
+   {
+      // Check if this message is a valid type that will trigger this event.
+      message.GetMessageType().GetName();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void GameMessageEvent::BuildPropertyMap()
+   {
+      EventNode::BuildPropertyMap();
+
+      dtDAL::StringActorProperty* messageTypeProp = new dtDAL::StringActorProperty(
+         "Message Type", "Message Type",
+         dtDAL::StringActorProperty::SetFuncType(this, &GameMessageEvent::SetMessageType),
+         dtDAL::StringActorProperty::GetFuncType(this, &GameMessageEvent::GetMessageType),
+         "The name of the message type.");
+      AddProperty(messageTypeProp);
+
+      mValues.push_back(ValueLink(this, messageTypeProp, false, false, true, true));
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool GameMessageEvent::UsesInstigator()
+   {
+      return false;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void GameMessageEvent::SetMessageType(const std::string& typeName)
+   {
+      mMessageType = typeName;
+
+      RegisterMessages();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   const std::string& GameMessageEvent::GetMessageType() const
+   {
+      return mMessageType;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   const std::string& GameMessageEvent::GetName()
+   {
+      return mLabel;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void GameMessageEvent::OnLinkValueChanged(const std::string& linkName)
+   {
+      if (linkName == "Message Type")
+      {
+         RegisterMessages();
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool GameMessageEvent::CanConnectValue(dtDirector::ValueLink* link, dtDirector::ValueNode* value)
+   {
+      return true;
+   }
+   
+   ////////////////////////////////////////////////////////////////////////////////
+   void GameMessageEvent::RegisterMessages()
+   {
+      UnRegisterMessages();
+      mLastMessageType = GetString("Message Type");
+
+      mLabel = GetType().GetName() + " (" + mLastMessageType + ")";
+
+      dtDirector::MessageGMComponent* component = GetDirector()->GetMessageGMComponent();
+      if (component)
+      {
+         component->RegisterMessage(mLastMessageType, this,
+            dtDirector::MessageGMComponent::MsgFunc(this, &dtDirector::GameMessageEvent::OnMessage));
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void GameMessageEvent::UnRegisterMessages()
+   {
+      dtDirector::MessageGMComponent* component = GetDirector()->GetMessageGMComponent();
+      if (component)
+      {
+         component->UnRegisterMessage(mLastMessageType, this);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void GameMessageEvent::OnMessage(const dtGame::Message& message)
+   {
+      // Trigger this event on this message.
+      Trigger();
+   }
+}
