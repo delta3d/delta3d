@@ -41,6 +41,8 @@ namespace dtDirector
       , mGraph(NULL)
       , mLogNodes(false)
       , mLogger(NULL)
+      , mGameManager(NULL)
+      , mMessageGMComponent(NULL)
    {
       mPlayer = "";
       mLogger = &dtUtil::Log::GetInstance();
@@ -49,11 +51,17 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    Director::~Director()
    {
+      if (mMessageGMComponent.valid() && mGameManager)
+      {
+         mGameManager->RemoveComponent(*mMessageGMComponent);
+         mMessageGMComponent = NULL;
+      }
+
       Clear();
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void Director::Init(dtDAL::Map* map)
+   void Director::Init(dtGame::GameManager* gm, dtDAL::Map* map)
    {
       if (!mGraph.valid())
       {
@@ -61,7 +69,22 @@ namespace dtDirector
          mGraph->SetName("Director Script");
       }
 
+      mGameManager = gm;
+
       Clear();
+
+      if (gm)
+      {
+         // First check if this component has been created already.
+         mMessageGMComponent = dynamic_cast<dtDirector::MessageGMComponent*>(gm->GetComponentByName("DirectorMessageGMComponent"));
+
+         // If it hasn't, then create one.
+         if (!mMessageGMComponent.valid())
+         {
+            mMessageGMComponent = new dtDirector::MessageGMComponent();
+            gm->AddComponent(*mMessageGMComponent);
+         }
+      }
 
       SetMap(map);
 
@@ -115,7 +138,7 @@ namespace dtDirector
                ClearRecordingData(node.subThreads);
             }
 
-            // No free our thread memory.
+            // Now free our thread memory.
             delete thread;
          }
       }

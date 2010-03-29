@@ -178,12 +178,6 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void Node::OnLinkValueChanged(const std::string& linkName)
-   {
-      // Default implementation does nothing.
-   }
-
-   //////////////////////////////////////////////////////////////////////////
    const NodeType& Node::GetType()
    {
       return *mType;

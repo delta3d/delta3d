@@ -88,7 +88,7 @@ DirectorToolPlugin::DirectorToolPlugin(MainWindow* mw)
       this, SLOT(OnMapChanged()));
 
    dtDirector::Director* director = new dtDirector::Director();
-   director->Init(dtEditQt::EditorData::GetInstance().getCurrentMap());
+   director->Init(NULL, dtEditQt::EditorData::GetInstance().getCurrentMap());
 
    SetDirector(director);
 }

@@ -615,13 +615,15 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void DirectorXMLHandler::EndNodeElement()
    {
-      // Add the node to the director.
-      //if (mNode.valid())
-      //{
-      //   DirectorGraph* graph = mGraphs.top();
-
-      //   graph->AddNode(mNode.get());
-      //}
+      // Initialize messages on event nodes.
+      if (mInEventNodes && mNode.valid())
+      {
+         dtDirector::EventNode* node = dynamic_cast<dtDirector::EventNode*>(mNode.get());
+         if (node)
+         {
+            node->RegisterMessages();
+         }
+      }
 
       ClearNodeValues();
    }
@@ -685,12 +687,12 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void DirectorXMLHandler::EndNodesElement()
    {
+      EndNodeElement();
+
       mInNodes = false;
       mInValueNodes = false;
       mInEventNodes = false;
       mInActionNodes = false;
-
-      EndNodeElement();
 
       if (mInNode)
       {

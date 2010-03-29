@@ -131,7 +131,7 @@ namespace dtDirector
        *
        * @param[in]  linkName  The name of the value link that is changing.
        */
-      virtual void OnLinkValueChanged(const std::string& linkName);
+      virtual void OnLinkValueChanged(const std::string& linkName) {}
 
       /**
        * Retrieves the type of this node.

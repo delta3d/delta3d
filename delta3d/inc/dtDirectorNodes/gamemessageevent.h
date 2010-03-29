@@ -19,11 +19,13 @@
  * Author: Jeff P. Houde
  */
 
-#ifndef DIRECTOR_ON_MESSAGE_EVENT_NODE
-#define DIRECTOR_ON_MESSAGE_EVENT_NODE
+#ifndef DIRECTOR_GAME_MESSAGE_EVENT_NODE
+#define DIRECTOR_GAME_MESSAGE_EVENT_NODE
 
 #include <dtDirector/eventnode.h>
-#include <dtDirectorMsgNodes/nodelibraryexport.h>
+#include <dtDirectorNodes/nodelibraryexport.h>
+
+#include <dtGame/message.h>
 
 namespace dtDAL
 {
@@ -32,6 +34,8 @@ namespace dtDAL
 
 namespace dtDirector
 {
+   class MessageGMComponent;
+
    /**
     * This is the base class for all event nodes.
     *
@@ -40,14 +44,14 @@ namespace dtDirector
     *      the NodeManager. If they are not created in this fashion,
     *      the node types will not be set correctly.
     */
-   class MESSAGE_NODE_LIBRARY_EXPORT OnMessageEvent : public EventNode
+   class NODE_LIBRARY_EXPORT GameMessageEvent : public EventNode
    {
    public:
 
       /**
        * Constructs the Node.
        */
-      OnMessageEvent();
+      GameMessageEvent();
 
       /**
        * Initializes the Node.
@@ -56,6 +60,11 @@ namespace dtDirector
        * @param[in]  graph     The graph that owns this node.
        */
       virtual void Init(const NodeType& nodeType, DirectorGraph* graph);
+
+      /**
+       * Handles a message event.
+       */
+      void ProcessMessage(const dtGame::Message& message);
 
       /**
        * This method is called in init, which instructs the node
@@ -70,23 +79,70 @@ namespace dtDirector
       virtual void BuildPropertyMap();
 
       /**
+       * Retrieves whether this Event uses an instigator.
+       */
+      virtual bool UsesInstigator();
+
+      /**
        * Retrieves the display name for the node.
        *
        * @return  The display name of the node.
        */
       virtual const std::string& GetName();
 
+      /**
+       * Determines whether a value link on this node can connect
+       * to a given value.
+       *
+       * @param[in]  link   The link.
+       * @param[in]  value  The value to connect to.
+       *
+       * @return     True if a connection can be made.
+       */
+      virtual bool CanConnectValue(dtDirector::ValueLink* link, dtDirector::ValueNode* value);
+
+      /**
+       * This event is called by value nodes that are linked via
+       * value links when that value has changed.
+       *
+       * @param[in]  linkName  The name of the value link that is changing.
+       */
+      virtual void OnLinkValueChanged(const std::string& linkName);
+
+      /**
+       * Registration function for registering message types this
+       * node will receive.
+       * Note: This should be rewritten in inherited classes.
+       */
+      virtual void RegisterMessages();
+      void UnRegisterMessages();
+
+      /**
+       * Accessor for the message type property.
+       */
+      void SetMessageType(const std::string& typeName);
+      const std::string& GetMessageType() const;
+
+      /**
+       * Callback to receive message events.
+       *
+       * @param[in]  message  The message data.
+       */
+      void OnMessage(const dtGame::Message& message);
+
    protected:
 
       /**
        *	Protected Destructor.  dtCore::RefPtr will handle its destruction.
        */
-      virtual ~OnMessageEvent();
+      virtual ~GameMessageEvent();
 
    private:
 
       std::string mLabel;
-      std::string mEventName;
+      std::string mMessageType;
+
+      std::string mLastMessageType;
    };
 }
 
