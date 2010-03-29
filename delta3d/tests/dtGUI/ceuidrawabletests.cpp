@@ -22,7 +22,8 @@
 *
 * @author John K. Grant
 */
-#include <prefix/dtgameprefix.h>
+#include <prefix/unittestprefix.h>
+//#include <prefix/dtgameprefix.h>
 #include <cppunit/extensions/HelperMacros.h>
 
 #include <dtGUI/ceuidrawable.h>
