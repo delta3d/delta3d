@@ -22,6 +22,7 @@
 *
 * @author John K. Grant
 */
+#include <prefix/unittestprefix.h>
 #ifndef _TESTS_GUI_APP_H_
 #define _TESTS_GUI_APP_H_
 
