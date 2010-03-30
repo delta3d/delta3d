@@ -3,6 +3,7 @@
 
 using namespace dtCore;
 
+//////////////////////////////////////////////////////////////////////////
 GenericMouseListener::GenericMouseListener() : BaseClass(),
    mPressedCB(),
    mReleasedCB(),
@@ -19,14 +20,11 @@ GenericMouseListener::GenericMouseListener() : BaseClass(),
 {
 }
 
-GenericMouseListener::~GenericMouseListener()
-{
-}
-
 // inherited stuff
+//////////////////////////////////////////////////////////////////////////
 bool GenericMouseListener::HandleButtonPressed(const dtCore::Mouse* mouse, dtCore::Mouse::MouseButton button)
 {
-   if( mPressedEnabled )
+   if (mPressedEnabled)
    {
       return mPressedCB(mouse,button);
    }
@@ -34,9 +32,10 @@ bool GenericMouseListener::HandleButtonPressed(const dtCore::Mouse* mouse, dtCor
    return false;
 }
 
+//////////////////////////////////////////////////////////////////////////
 bool GenericMouseListener::HandleButtonReleased(const dtCore::Mouse* mouse, dtCore::Mouse::MouseButton button)
 {
-   if( mReleasedEnabled )
+   if (mReleasedEnabled)
    {
       return mReleasedCB(mouse,button);
    }
@@ -44,9 +43,10 @@ bool GenericMouseListener::HandleButtonReleased(const dtCore::Mouse* mouse, dtCo
    return false;
 }
 
+//////////////////////////////////////////////////////////////////////////
 bool GenericMouseListener::HandleButtonClicked(const dtCore::Mouse* mouse, dtCore::Mouse::MouseButton button, int clickCount)
 {
-   if( mClickedEnabled )
+   if (mClickedEnabled)
    {
       return mClickedCB(mouse,button,clickCount);
    }
@@ -54,9 +54,10 @@ bool GenericMouseListener::HandleButtonClicked(const dtCore::Mouse* mouse, dtCor
    return false;
 }
 
+//////////////////////////////////////////////////////////////////////////
 bool GenericMouseListener::HandleMouseMoved(const dtCore::Mouse* mouse, float x, float y)
 {
-   if( mMovedEnabled )
+   if (mMovedEnabled)
    {
       return mMovedCB(mouse,x,y);
    }
@@ -64,9 +65,10 @@ bool GenericMouseListener::HandleMouseMoved(const dtCore::Mouse* mouse, float x,
    return false;
 }
 
+//////////////////////////////////////////////////////////////////////////
 bool GenericMouseListener::HandleMouseDragged(const dtCore::Mouse* mouse, float x, float y)
 {
-   if( mDraggedEnabled )
+   if (mDraggedEnabled)
    {
       return mDraggedCB(mouse,x,y);
    }
@@ -74,9 +76,10 @@ bool GenericMouseListener::HandleMouseDragged(const dtCore::Mouse* mouse, float 
    return false;
 }
 
+//////////////////////////////////////////////////////////////////////////
 bool GenericMouseListener::HandleMouseScrolled(const dtCore::Mouse* mouse, int delta)
 {
-   if( mScrolledEnabled )
+   if (mScrolledEnabled)
    {
       return mScrolledCB(mouse,delta);
    }
@@ -85,132 +88,156 @@ bool GenericMouseListener::HandleMouseScrolled(const dtCore::Mouse* mouse, int d
 }
 
 // pressed stuff
+//////////////////////////////////////////////////////////////////////////
 void GenericMouseListener::SetPressedCallback(const ButtonCallbackType& callback)
 {
    mPressedCB = callback;
    mPressedEnabled = true;
 }
 
+//////////////////////////////////////////////////////////////////////////
 const GenericMouseListener::ButtonCallbackType& GenericMouseListener::GetPressedCallback() const
 {
    return mPressedCB;
 }
 
+//////////////////////////////////////////////////////////////////////////
 bool GenericMouseListener::IsPressedCallbackEnabled() const
 {
    return mPressedEnabled;
 }
 
+//////////////////////////////////////////////////////////////////////////
 void GenericMouseListener::DisablePressedCallback()
 {
    mPressedEnabled = false;
 }
 
 // -- release stuff -- //
+//////////////////////////////////////////////////////////////////////////
 void GenericMouseListener::SetReleasedCallback(const ButtonCallbackType& callback)
 {
    mReleasedCB = callback;
    mReleasedEnabled = true;
 }
 
+//////////////////////////////////////////////////////////////////////////
 const GenericMouseListener::ButtonCallbackType& GenericMouseListener::GetReleasedCallback() const
 {
    return mReleasedCB;
 }
 
+//////////////////////////////////////////////////////////////////////////
 bool GenericMouseListener::IsReleasedCallbackEnabled() const
 {
    return mReleasedEnabled;
 }
 
+//////////////////////////////////////////////////////////////////////////
 void GenericMouseListener::DisableReleasedCallback()
 {
    mReleasedEnabled = false;
 }
 
 // -- click stuff -- //
+//////////////////////////////////////////////////////////////////////////
 void GenericMouseListener::SetClickedCallback(const ClickCallbackType& callback)
 {
    mClickedCB = callback;
    mClickedEnabled = true;
 }
 
+//////////////////////////////////////////////////////////////////////////
 const GenericMouseListener::ClickCallbackType& GenericMouseListener::GetClickedCallback() const
 {
    return mClickedCB;
 }
 
+//////////////////////////////////////////////////////////////////////////
 bool GenericMouseListener::IsClickedCallbackEnabled() const
 {
    return mClickedEnabled;
 }
 
+//////////////////////////////////////////////////////////////////////////
 void GenericMouseListener::DisableClickedCallback()
 {
    mClickedEnabled = false;
 }
 
 // moved stuff
+//////////////////////////////////////////////////////////////////////////
 void GenericMouseListener::SetMovedCallback(const MovementCallbackType& callback)
 {
    mMovedCB = callback;
    mMovedEnabled = true;
 }
 
+//////////////////////////////////////////////////////////////////////////
 const GenericMouseListener::MovementCallbackType& GenericMouseListener::GetMovedCallback() const
 {
    return mMovedCB;
 }
 
+//////////////////////////////////////////////////////////////////////////
 bool GenericMouseListener::IsMovedCallbackEnabled() const
 {
    return mMovedEnabled;
 }
 
+//////////////////////////////////////////////////////////////////////////
 void GenericMouseListener::DisableMovedCallback()
 {
    mMovedEnabled = false;
 }
 
 // dragged stuff
+//////////////////////////////////////////////////////////////////////////
 void GenericMouseListener::SetDraggedCallback(const MovementCallbackType& callback)
 {
    mDraggedCB = callback;
    mDraggedEnabled = true;
 }
 
+//////////////////////////////////////////////////////////////////////////
 const GenericMouseListener::MovementCallbackType& GenericMouseListener::GetDraggedCallback() const
 {
    return mDraggedCB;
 }
 
+//////////////////////////////////////////////////////////////////////////
 bool GenericMouseListener::IsDraggedCallbackEnabled() const
 {
    return mDraggedEnabled;
 }
 
+//////////////////////////////////////////////////////////////////////////
 void GenericMouseListener::DisableDraggedCallback()
 {
    mDraggedEnabled = false;
 }
 
 // scrolled stuff
+//////////////////////////////////////////////////////////////////////////
 void GenericMouseListener::SetScrolledCallback(const WheelCallbackType& callback)
 {
    mScrolledCB = callback;
    mScrolledEnabled = true;
 }
 
+//////////////////////////////////////////////////////////////////////////
 const GenericMouseListener::WheelCallbackType& GenericMouseListener::GetScrolledCallback() const
 {
    return mScrolledCB;
 }
 
+//////////////////////////////////////////////////////////////////////////
 bool GenericMouseListener::IsScrolledCallbackEnabled() const
 {
    return mScrolledEnabled;
 }
 
+//////////////////////////////////////////////////////////////////////////
 void GenericMouseListener::DisableScrolledCallback()
 {
    mScrolledEnabled = false;
