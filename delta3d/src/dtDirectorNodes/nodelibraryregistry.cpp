@@ -41,6 +41,7 @@
 #include <dtDirectorNodes/scheduleraction.h>
 #include <dtDirectorNodes/lerpactorrotationaction.h>
 #include <dtDirectorNodes/lerpactortranslationaction.h>
+#include <dtDirectorNodes/sendmessageaction.h>
 
 // Values
 #include <dtDirectorNodes/externalvaluenode.h>
@@ -80,7 +81,7 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::INPUT_NODE_TYPE(                        new dtDirector::NodeType("Input Link",                "Core",        "Links",       "This node creates an input link connector in its parent graph."));
    RefPtr<NodeType> NodeLibraryRegistry::REMOTE_EVENT_NODE_TYPE(                 new dtDirector::NodeType("Remote Event",              "Core",        "Events",      "A remote event."));
    RefPtr<NodeType> NodeLibraryRegistry::TRIGGER_VOLUME_EVENT_NODE_TYPE(         new dtDirector::NodeType("Trigger Volume Event",      "General",     "Events",      "A trigger volume event."));
-   RefPtr<NodeType> NodeLibraryRegistry::GAME_MESSAGE_EVENT_NODE_TYPE(           new dtDirector::NodeType("Game Message",              "Messages",    "Events",      "An event that responds to game messages."));
+   RefPtr<NodeType> NodeLibraryRegistry::GAME_MESSAGE_EVENT_NODE_TYPE(           new dtDirector::NodeType("Game Message Event",        "Messages",    "Events",      "An event that responds to game messages."));
 
    // Actions
    RefPtr<NodeType> NodeLibraryRegistry::OUTPUT_NODE_TYPE(                       new dtDirector::NodeType("Output Link",               "Core",        "Links",       "This node creates an output link connector in its parent graph."));
@@ -95,6 +96,7 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::SCHEDULER_ACTION_NODE_TYPE(             new dtDirector::NodeType("Scheduler",                 "Cinematic",   "Cinematic",   "Schedules a sequence of timed events."));
    RefPtr<NodeType> NodeLibraryRegistry::LERP_ACTOR_ROTATION_ACTION_NODE_TYPE(   new dtDirector::NodeType("Lerp Actor Rotation",       "Cinematic",   "Cinematic",   "Linearly interpolates the rotation of an actor."));
    RefPtr<NodeType> NodeLibraryRegistry::LERP_ACTOR_TRANSLATION_ACTION_NODE_TYPE(new dtDirector::NodeType("Lerp Actor Translation",    "Cinematic",   "Cinematic",   "Linearly interpolates the position of an actor."));
+   RefPtr<NodeType> NodeLibraryRegistry::SEND_MESSAGE_ACTION_NODE_TYPE(          new dtDirector::NodeType("Send Message Action",       "Messages",    "Actions",     "Sends a Game Message."));
 
    // Values
    RefPtr<NodeType> NodeLibraryRegistry::EXTERNAL_VALUE_NODE_TYPE(               new dtDirector::NodeType("Value Link",                "Core",        "Links",       "This node creates a value link connector in its parent graph."));
@@ -149,6 +151,7 @@ namespace dtDirector
       mNodeFactory->RegisterType<SchedulerAction>(SCHEDULER_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<LerpActorRotationAction>(LERP_ACTOR_ROTATION_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<LerpActorTranslationAction>(LERP_ACTOR_TRANSLATION_ACTION_NODE_TYPE.get());
+      mNodeFactory->RegisterType<SendMessageAction>(SEND_MESSAGE_ACTION_NODE_TYPE.get());
 
       // Values
       mNodeFactory->RegisterType<ExternalValueNode>(EXTERNAL_VALUE_NODE_TYPE.get());
