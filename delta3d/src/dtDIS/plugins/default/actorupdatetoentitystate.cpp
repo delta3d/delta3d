@@ -62,10 +62,19 @@ void ActorUpdateToEntityState::SetEntityType(const dtCore::UniqueId& uniqueID,
                                              DIS::EntityStatePdu* downcastPdu)
 {
    const dtGame::GameActorProxy* aboutProxy = mGM->FindGameActorById(uniqueID);
-   if (aboutProxy == NULL) {return;}
+   if (aboutProxy == NULL) 
+   {
+      LOG_WARNING("No matching GameActorProxy was found, for supplied UniqueID: " + uniqueID.ToString());
+      return;
+   }
 
    const dtDAL::ActorProperty* prop = aboutProxy->GetProperty(dtDIS::EntityPropertyName::ENTITY_TYPE.Get()); 
-   if (prop == NULL) {return;}
+   if (prop == NULL) 
+   {
+      LOG_WARNING("No ActorProperty named '" + dtDIS::EntityPropertyName::ENTITY_TYPE.Get() +
+                  "' exists on GameActor: '" + aboutProxy->GetName() + "'");
+      return;
+   }
 
    const dtDAL::StringActorProperty *entityTypeProp = dynamic_cast<const dtDAL::StringActorProperty*>(prop);
    if (entityTypeProp == NULL) {return;}

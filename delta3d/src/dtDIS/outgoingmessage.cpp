@@ -28,22 +28,22 @@ void OutgoingMessage::Handle(const dtGame::Message& msg)
    const dtGame::MessageType& mt = msg.GetMessageType();
 
    ///\todo use the rest of the adapters in the multimap container.
-   AdapterMap::iterator iter = mSenders.find( &mt );
-   if( iter != mSenders.end() )
+   AdapterMap::iterator iter = mSenders.find(&mt);
+   if (iter != mSenders.end())
    {
       IMessageToPacketAdapter* adapter = (iter->second);
 
-      DIS::Pdu* pdu = adapter->Convert( msg );
-      if( pdu )
+      DIS::Pdu* pdu = adapter->Convert(msg);
+      if (pdu)
       {
-         pdu->setExerciseID( mExerciseID );
+         pdu->setExerciseID(mExerciseID);
          //pdu->setTimestamp( msg.GetSource().GetTimeStamp()); //no workie
-         pdu->marshal( mData );
+         pdu->marshal(mData);
       }
    }
    else
    {
-      LOG_DEBUG("No packet adapter for Message of type " + mt.GetName() )
+      LOG_WARNING("No packet adapter for Message of type '" + mt.GetName() + "'" );
    }
 }
 
