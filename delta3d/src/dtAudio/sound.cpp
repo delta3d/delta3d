@@ -56,6 +56,15 @@ Sound::FrameData::~FrameData()
 /********************************
  ** Protected Member Functions **
  ********************************/
+ALint IsSource(ALuint source)
+{
+   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
+   ALint result = alIsSource(source);
+   // clear any errors from the alIsSource not liking the value passed in.
+   // The call to alIsSource just needs to return true if it's valid.
+   alGetError();
+   return result;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 Sound::Sound()
@@ -106,7 +115,7 @@ Sound::Sound()
 ////////////////////////////////////////////////////////////////////////////////
 Sound::~Sound()
 {
-   if (alIsSource(mSource))
+   if (IsSource(mSource))
    {
       alDeleteSources(1, &mSource);
       CheckForError("Attempt to delete an OpenAL source", __FUNCTION__, __LINE__);
@@ -128,7 +137,7 @@ void Sound::OnMessage(MessageData* data)
 
    if (data->message == dtCore::System::MESSAGE_POST_FRAME)
    {
-      if (alIsSource(mSource))
+      if (IsSource(mSource))
       {
          alGetSourcei(mSource, AL_SOURCE_STATE, &srcState);
          CheckForError("Getting source state", __FUNCTION__, __LINE__);
@@ -227,7 +236,7 @@ void Sound::SetState(unsigned int flag)
 ////////////////////////////////////////////////////////////////////////////////
 bool Sound::RestoreSource()
 {
-   int isSource = alIsSource(mSource);
+   int isSource = IsSource(mSource);
    if (CheckForError("Checking for valid source ( does a context not exist? )",
          __FUNCTION__, __LINE__))
    {
@@ -320,7 +329,7 @@ bool Sound::ReleaseSource()
 {
    bool retVal = true;   
 
-   int sourceAllocated = alIsSource(mSource);
+   int sourceAllocated = IsSource(mSource);
    retVal &= !CheckForError("Checking for valid source ( does a context not exist? )",
       __FUNCTION__, __LINE__);   
    if (sourceAllocated == AL_TRUE)
@@ -432,7 +441,7 @@ void Sound::SetBuffer(ALint b)
       return;
    }
 
-   if (alIsSource(mSource))
+   if (IsSource(mSource))
    {
       alSourcei(mSource, AL_BUFFER, b);
       CheckForError("Attempting to set buffer for source", __FUNCTION__, __LINE__);
@@ -515,7 +524,7 @@ void Sound::PauseImmediately()
    {
       SetState(PAUSE);
 
-      if (alIsSource(mSource))
+      if (IsSource(mSource))
       {
          alSourcePause(mSource);
          CheckForError("Attempting to pause source",__FUNCTION__, __LINE__);
@@ -542,7 +551,7 @@ void Sound::Stop()
 void Sound::StopImmediately()
 {
    SetState(STOP);
-   if (alIsSource(mSource) && !mUserDefinedSource)
+   if (IsSource(mSource) && !mUserDefinedSource)
    {
       //alSourceStop(mSource);
       //CheckForError("Attempting to stop source", __FUNCTION__, __LINE__);
@@ -568,7 +577,7 @@ void Sound::Rewind()
 void Sound::RewindImmediately()
 {
    SetState(REWIND);
-   if (alIsSource(mSource))
+   if (IsSource(mSource))
    {
       alSourceRewind(mSource);
       CheckForError("Attempting to rewind source", __FUNCTION__, __LINE__);
@@ -590,7 +599,7 @@ void Sound::SetLooping(bool loop)
       loopInt = 0;
    }
 
-   if (alIsSource(mSource))
+   if (IsSource(mSource))
    {
       alSourcei(mSource, AL_LOOPING, loopInt);
       CheckForError("Attempt to set source looping", __FUNCTION__, __LINE__);
@@ -603,7 +612,7 @@ void Sound::SetGain(float gain)
    // force gain to range from zero to one
    dtUtil::Clamp<float>(gain, 0.0f, 1.0f);
 
-   if (alIsSource(mSource))
+   if (IsSource(mSource))
    {
       alSourcef(mSource, AL_GAIN, gain);
       CheckForError("Attempt to set gain on source", __FUNCTION__, __LINE__);
@@ -629,7 +638,7 @@ void Sound::SetPlayTimeOffset(float seconds)
    // force second offset to range from zero to the length of the sound
    dtUtil::Clamp<float>(seconds, 0.0f, GetDurationOfPlay());   
 
-   int isSource = alIsSource(mSource);
+   int isSource = IsSource(mSource);
    CheckForError("Attempt determine if source is valid (is there a context?)",
                    __FUNCTION__, __LINE__);   
 
@@ -657,7 +666,7 @@ void Sound::SetPitch(float pitch)
 
    mPitch = pitch;
 
-   if (alIsSource(mSource) == AL_FALSE)
+   if (IsSource(mSource) == AL_FALSE)
    {
       //nothing else to do
       return;
@@ -704,7 +713,7 @@ float Sound::GetPitch() const
 ////////////////////////////////////////////////////////////////////////////////
 void Sound::SetListenerRelative(bool relative)
 {
-   if (alIsSource(mSource))
+   if (IsSource(mSource))
    {
       alSourcei(mSource, AL_SOURCE_RELATIVE, relative ? 1 : 0);
       CheckForError("Attempt to set listener relative on source",
@@ -739,7 +748,7 @@ void Sound::SetTransform(const dtCore::Transform& xform, dtCore::Transformable::
 ////////////////////////////////////////////////////////////////////////////////
 void Sound::SetPosition(const osg::Vec3& pos)
 {
-   if (alIsSource(mSource) == AL_TRUE)
+   if (IsSource(mSource) == AL_TRUE)
    {
       alSource3f(mSource, AL_POSITION, pos[0], pos[1], pos[2]);
       CheckForError("Setting source position", __FUNCTION__, __LINE__);      
@@ -763,7 +772,7 @@ osg::Vec3& Sound::GetPosition()
 ////////////////////////////////////////////////////////////////////////////////
 void Sound::SetDirection(const osg::Vec3& dir)
 {
-   if (alIsSource(mSource) == AL_TRUE)
+   if (IsSource(mSource) == AL_TRUE)
    {   
       alSource3f(mSource, AL_DIRECTION, dir[0], dir[1], dir[2]);
       CheckForError("Setting source direction", __FUNCTION__, __LINE__);      
@@ -787,7 +796,7 @@ osg::Vec3 Sound::GetDirection()
 ////////////////////////////////////////////////////////////////////////////////
 void Sound::SetVelocity(const osg::Vec3& vel)
 {
-   if (alIsSource(mSource) == AL_TRUE)
+   if (IsSource(mSource) == AL_TRUE)
    {
       alSource3f(mSource, AL_VELOCITY, vel[0], vel[1], vel[2]);
       CheckForError("Setting source velocity", __FUNCTION__, __LINE__);      
@@ -814,7 +823,7 @@ void Sound::SetMaxDistance(float dist)
    //make sure max distance is never negative
    float max = dtUtil::Max<float>( 0.0f, dist );
 
-   if (alIsSource(mSource) == AL_TRUE)
+   if (IsSource(mSource) == AL_TRUE)
    {
       alSourcef(mSource, AL_MAX_DISTANCE, max);
       CheckForError("Setting source max distance", __FUNCTION__, __LINE__);
@@ -836,7 +845,7 @@ void Sound::SetReferenceDistance(float dist)
    //make sure max distance is never negative
    float max = dtUtil::Max<float>( 0.0f, dist );
 
-   if (alIsSource(mSource) == AL_TRUE)
+   if (IsSource(mSource) == AL_TRUE)
    {
       alSourcef(mSource, AL_REFERENCE_DISTANCE, max);
       CheckForError("Setting source reference distance", __FUNCTION__, __LINE__);
@@ -858,7 +867,7 @@ void Sound::SetRolloffFactor(float rolloff)
    //make sure rolloff is never negative
    float theRolloff = dtUtil::Max<float>(0.0f, rolloff);
 
-   if (alIsSource(mSource) == AL_TRUE)
+   if (IsSource(mSource) == AL_TRUE)
    {
       alSourcef(mSource, AL_ROLLOFF_FACTOR, theRolloff);
       CheckForError("Setting source rolloff", __FUNCTION__, __LINE__);
@@ -878,7 +887,7 @@ void Sound::SetMinGain(float minGain)
 {
    dtUtil::Clamp<float>(minGain, 0.0f, 1.0f);
 
-   if (alIsSource(mSource))
+   if (IsSource(mSource))
    {
       alSourcef(mSource, AL_MIN_GAIN, minGain);
       CheckForError("Setting source min gain", __FUNCTION__, __LINE__);
@@ -898,7 +907,7 @@ void Sound::SetMaxGain(float maxGain)
 {
    dtUtil::Clamp<float>(maxGain, 0.0f, 1.0f);
 
-   if (alIsSource(mSource))
+   if (IsSource(mSource))
    {
       alSourcef(mSource, AL_MAX_GAIN, maxGain);
       CheckForError("Setting source max gain", __FUNCTION__, __LINE__);

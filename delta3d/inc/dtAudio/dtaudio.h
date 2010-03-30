@@ -34,14 +34,14 @@
  */
 namespace dtAudio
 {
-const std::string ERROR_CLEARING_STRING = "Clearing Error code "
-   "system at start of method, if this appears then an error occurred before this "
-   "method was called.";
+   static const std::string ERROR_CLEARING_STRING = "Clearing Error code "
+            "system at start of method, if this appears then an error occurred before this "
+            "method was called.";
 
-//implemented in audiomanager.cpp
-inline bool DT_AUDIO_EXPORT CheckForError(const std::string& userMessage,
-                          const std::string& msgFunction,
-                          int lineNumber);
+   //implemented in audiomanager.cpp
+   bool DT_AUDIO_EXPORT CheckForError(const std::string& userMessage,
+            const std::string& msgFunction,
+            int lineNumber);
 
 } // namespace dtAudio
 
