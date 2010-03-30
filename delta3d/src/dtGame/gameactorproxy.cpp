@@ -384,8 +384,7 @@ void GameActorProxy::PopulateActorUpdateImpl(ActorUpdateMessage& update,
       }
       catch (const dtUtil::Exception&)
       {
-         // hmm, someone should not have added a property already.
-         update.GetUpdateParameter(prop->GetName());
+         //anything to do here?
       }
    }
 }

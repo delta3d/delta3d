@@ -187,6 +187,9 @@ namespace dtDAL
       case dtDAL::DataType::SOUND_ID:
       case dtDAL::DataType::PARTICLESYSTEM_ID:
       case dtDAL::DataType::SKELETAL_MESH_ID:
+      case dtDAL::DataType::PREFAB_ID:
+      case dtDAL::DataType::SHADER_ID:
+      case dtDAL::DataType::DIRECTOR_ID:
          param = new NamedResourceParameter(type,name,isList);
          break;
       default:
