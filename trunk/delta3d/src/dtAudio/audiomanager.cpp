@@ -43,7 +43,7 @@ namespace dtAudio {
 // in multiple places throughout dtAudio. It's not in AudioManager because we
 // don't want things like Sound to directly access the AudioManager.
 // Returns true on error, false if no error
-inline bool CheckForError(const std::string& userMessage,
+bool CheckForError(const std::string& userMessage,
                           const std::string& msgFunction,
                           int lineNumber)
 {
