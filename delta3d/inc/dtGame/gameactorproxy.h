@@ -432,11 +432,12 @@ namespace dtGame
 
       /**
        * Populates an update message from the actor proxy.
-       * @param update The message to populate.
-       * @param propNames the list of properties to include in the message.
-       * @param limitProperties true if the propNames list should be respected or false if all properties should added.
+       * @param update The ActorUpdateMessage to populate with Property values
+       * @param propNames Optional list of names of Properties to include in the ActorUpdateMessage.  Default
+       *                  will use all existing Properties.
        */
-      void PopulateActorUpdate(ActorUpdateMessage& update, const std::vector<dtUtil::RefString>& propNames, bool limitProperties);
+      void PopulateActorUpdateImpl(ActorUpdateMessage& update, 
+                                   const std::vector<dtUtil::RefString>& propNames = std::vector<dtUtil::RefString>());
 
       /**
        * Sets if the actor is remote by invoking the actor implementation

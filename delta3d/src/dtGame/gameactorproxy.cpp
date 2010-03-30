@@ -265,7 +265,7 @@ void GameActorProxy::NotifyPartialActorUpdate(const std::vector<dtUtil::RefStrin
 
    dtGame::ActorUpdateMessage *message = static_cast<dtGame::ActorUpdateMessage *>(updateMsg.get());
 
-   PopulateActorUpdate(*message, propNames, true);
+   PopulateActorUpdateImpl(*message, propNames);
    GetGameManager()->SendMessage(*updateMsg);
 }
 
@@ -306,7 +306,7 @@ void GameActorProxy::GetPartialUpdateProperties(std::vector<dtUtil::RefString>& 
 /////////////////////////////////////////////////////////////////////////////
 void GameActorProxy::PopulateActorUpdate(ActorUpdateMessage& update, const std::vector<dtUtil::RefString>& propNames)
 {
-   PopulateActorUpdate(update, propNames, true);
+   PopulateActorUpdateImpl(update, propNames);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -323,17 +323,18 @@ void GameActorProxy::PopulateActorUpdate(ActorUpdateMessage& update, const std::
       refStringPropNames.push_back(propNames[i]);
    }
 
-   PopulateActorUpdate(update, refStringPropNames, true);
+   PopulateActorUpdateImpl(update, refStringPropNames);
 }
 
 /////////////////////////////////////////////////////////////////////////////
 void GameActorProxy::PopulateActorUpdate(ActorUpdateMessage& update)
 {
-   PopulateActorUpdate(update, std::vector<dtUtil::RefString>(), false);
+   PopulateActorUpdateImpl(update);
 }
 
 /////////////////////////////////////////////////////////////////////////////
-void GameActorProxy::PopulateActorUpdate(ActorUpdateMessage& update, const std::vector<dtUtil::RefString>& propNames, bool limitProperties)
+void GameActorProxy::PopulateActorUpdateImpl(ActorUpdateMessage& update, 
+                                             const std::vector<dtUtil::RefString>& propNames)
 {
    update.SetName(GetName());
    update.SetActorType(GetActorType());
@@ -343,56 +344,49 @@ void GameActorProxy::PopulateActorUpdate(ActorUpdateMessage& update, const std::
    update.SetSendingActorId(GetId());
    update.SetAboutActorId(GetId());
 
-   if (limitProperties)
+   std::vector<const dtDAL::ActorProperty*> toFill;
+   toFill.reserve(propNames.size());
+
+   //If user supplied any specific Property names, try to find them.
+   for (size_t i = 0; i < propNames.size(); ++i)
    {
-      for (unsigned i = 0; i < propNames.size(); ++i)
-      {
-         dtDAL::ActorProperty* property = GetProperty(propNames[i]);
-         if (property != NULL && !property->IsReadOnly())
-         {
-            try
-            {
-               MessageParameter* mp = update.AddUpdateParameter(property->GetName(), property->GetDataType());
-               mp->SetFromProperty(*property);
-               //if (mp != NULL)
-               //   mp->FromString(property->GetStringValue());
-            }
-            catch (const dtUtil::Exception&)
-            {
-               // hmm, someone should not have added a property already.
-               update.GetUpdateParameter(property->GetName());
-            }
-         }
-      }
+      toFill.push_back(GetProperty(propNames[i])); //note: could be NULL
    }
-   else
+
+   //If user didn't supply any Property names, just grab all that we have.
+   if (toFill.empty())
    {
-      std::vector<dtDAL::ActorProperty* > toFill;
       GetPropertyList(toFill);
-      for (unsigned i = 0; i < toFill.size(); ++i)
+   }
+
+   for (size_t i = 0; i < toFill.size(); ++i)
+   {
+      const dtDAL::ActorProperty* prop = toFill[i];
+
+      if (prop == NULL)
       {
-         dtDAL::ActorProperty& property = *toFill[i];
-
-         // don't send read-only properties
-         if (property.IsReadOnly())
-         {
-            continue;
-         }
-
-         try
-         {
-            MessageParameter* mp = update.AddUpdateParameter(property.GetName(), property.GetDataType());
-            if (mp != NULL)
-               mp->SetFromProperty(property);
-            //   mp->FromString(property.GetStringValue());
-         }
-         catch (const dtUtil::Exception&)
-         {
-            // hmm, someone should not have added a property already.
-            update.GetUpdateParameter(property.GetName());
-         }
+         continue;
       }
 
+      // don't send read-only properties
+      if (prop->IsReadOnly())
+      {
+         continue;
+      }
+
+      try
+      {
+         MessageParameter* mp = update.AddUpdateParameter(prop->GetName(), prop->GetDataType());
+         if (mp != NULL) 
+         {
+            mp->SetFromProperty(*prop);
+         }
+      }
+      catch (const dtUtil::Exception&)
+      {
+         // hmm, someone should not have added a property already.
+         update.GetUpdateParameter(prop->GetName());
+      }
    }
 }
 
