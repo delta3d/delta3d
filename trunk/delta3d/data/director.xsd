@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-	targetNamespace="delta3dDirector"
+<xsd:schema 
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns="delta3dDirector"
+  targetNamespace="delta3dDirector"
 	elementFormDefault="qualified"
 	attributeFormDefault="unqualified">
 
@@ -17,7 +19,7 @@
     <xsd:sequence>
       <xsd:element name="header"      type="HeaderType"/>
       <xsd:element name="libraries"   type="LibrariesType"/>
-	  <xsd:element name="graph"       type="GraphType"/>
+	    <xsd:element name="graph"       type="GraphType"/>
     </xsd:sequence>
   </xsd:complexType>
 
@@ -47,54 +49,63 @@
 
   <xsd:complexType name="GraphType">
     <xsd:sequence>
-      <xsd:element name="property" minOccurs="0" maxOccurs="unbounded" type="PropertyType"/>
-	  <xsd:element name="graph"       type="GraphType"/>
-	  <xsd:element name="valuenodes"  type="NodeType"/>
-	  <xsd:element name="eventnodes"  type="NodeType"/>
-	  <xsd:element name="actionnodes" type="NodeType"/>
+      <xsd:element name="property"    minOccurs="0" maxOccurs="unbounded" type="PropertyType"/>
+      <xsd:element name="eventnodes"  type="NodeType"/>
+      <xsd:element name="actionnodes" type="NodeType"/>
+      <xsd:element name="valuenodes"  type="NodeType"/>      
+	    <xsd:element name="graph"       minOccurs="0" maxOccurs="unbounded" type="GraphType"/>
     </xsd:sequence>
   </xsd:complexType>
 
   <xsd:complexType name="NodeType">
     <xsd:sequence>
-	  <xsd:element name="node" minOccurs="0" maxOccurs="unbounded">
-        <xsd:complexType>
-		  <xsd:sequence>
-		    <xsd:element name="name"      type="xsd:string"/>
-			<xsd:element name="category"  type="xsd:string"/>
-			<xsd:element name="id"        type="xsd:string"/>
-            <xsd:element name="property"   minOccurs="0" maxOccurs="unbounded" type="PropertyType"/>
-			<xsd:element name="inputlink"  minOccurs="0" maxOccurs="unbounded" type="LinkType"/>
-			<xsd:element name="outputlink" minOccurs="0" maxOccurs="unbounded" type="LinkType"/>
-			<xsd:element name="valuelink"  minOccurs="0" maxOccurs="unbounded" type="LinkType"/>
-		  </xsd:sequence>
-		</xsd:complexType>
-	  </xsd:element>
-	</xsd:sequence>
+	    <xsd:element name="node" minOccurs="0" maxOccurs="unbounded">
+       <xsd:complexType>
+		    <xsd:sequence>
+		      <xsd:element name="name"      type="xsd:string"/>
+			    <xsd:element name="category"  type="xsd:string"/>
+			    <xsd:element name="id"        type="xsd:string"/>
+          <xsd:element name="property"   minOccurs="0" maxOccurs="unbounded" type="PropertyType"/>
+			    <xsd:element name="inputlink"  minOccurs="0" maxOccurs="unbounded" type="LinkType"/>
+			    <xsd:element name="outputlink" minOccurs="0" maxOccurs="unbounded" type="LinkType"/>
+			    <xsd:element name="valuelink"  minOccurs="0" maxOccurs="unbounded" type="LinkType"/>
+		    </xsd:sequence>
+		   </xsd:complexType>
+	    </xsd:element>
+	  </xsd:sequence>
   </xsd:complexType>
   
   <xsd:complexType name="LinkType">
     <xsd:sequence>
-	  <xsd:element name="name"          type="xsd:string"/>
-	  <xsd:element name="isout"         type="xsd:boolean"/>
-	  <xsd:element name="allowmultiple" type="xsd:boolean"/>
-	  <xsd:element name="typecheck"     type="xsd:boolean"/>
-	  <xsd:element name="link" minOccurs="0" maxOccurs="unbounded">
-	    <xsd:complexType>
-	      <xsd:sequence>
-		    <xsd:element name="name" type="xsd:string"/>
+	    <xsd:element name="name"          type="xsd:string"/>
+      <xsd:element name="visible"       type="xsd:boolean"/>
+      <xsd:element name="exposed"       minOccurs="0" maxOccurs="1" type="xsd:boolean"/>
+      <xsd:element name="isout"         minOccurs="0" maxOccurs="1" type="xsd:boolean"/>
+	    <xsd:element name="allowmultiple" minOccurs="0" maxOccurs="1" type="xsd:boolean"/>
+	    <xsd:element name="typecheck"     minOccurs="0" maxOccurs="1" type="xsd:boolean"/>
+	    <xsd:element name="link"          minOccurs="0" maxOccurs="unbounded">
+	      <xsd:complexType>
+	        <xsd:sequence>
             <xsd:element name="id"   type="xsd:string"/>
-		  </xsd:sequence>
-	    </xsd:complexType>
-	  </xsd:element>
-	</xsd:sequence>
+		        <xsd:element name="name" minOccurs="0" maxOccurs="1" type="xsd:string"/>
+		      </xsd:sequence>
+	      </xsd:complexType>
+	    </xsd:element>
+	  </xsd:sequence>
   </xsd:complexType>
   
   <xsd:complexType name="PropertyType">
     <xsd:sequence>
         <xsd:element name="name" type="xsd:string" />
         <xsd:choice>
-          <xsd:element name="string" type="xsd:string" />
+          <xsd:element name="string">
+            <xsd:complexType mixed="true">
+              <xsd:sequence>
+                <xsd:any namespace="##any" minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+              </xsd:sequence>
+            </xsd:complexType>
+          </xsd:element>
+          <!--<xsd:element name="string" type="xsd:string"/>-->
           <xsd:element name="enumerated" type="xsd:string"/>
           <xsd:element name="float" type="xsd:float"/>
           <xsd:element name="double" type="xsd:double"/>
@@ -114,10 +125,27 @@
           <xsd:element name="actorId" type="xsd:string" />
           <xsd:element name="group" type="GroupType"/>
           <xsd:element name="gameevent" type="xsd:string"/>
+          <xsd:element name="array" type="ArrayType"/>
         </xsd:choice>
     </xsd:sequence>
   </xsd:complexType>
+  
+  <xsd:complexType name="ArrayType">
+    <xsd:sequence>
+      <xsd:element name="size" type="xsd:int"/>
+      <xsd:sequence>
+        <xsd:element name="element" minOccurs="0" maxOccurs="unbounded" type="ElementType"/>
+      </xsd:sequence>
+    </xsd:sequence>
+  </xsd:complexType>
 
+  <xsd:complexType name="ElementType">
+    <xsd:sequence>
+      <xsd:element name="index" type="xsd:int"/>
+      <xsd:element name="property" type="PropertyType"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  
   <xsd:complexType name="GroupType">
     <xsd:sequence>
         <xsd:element name="parameter" minOccurs="0" maxOccurs="unbounded" type="PropertyType"/>

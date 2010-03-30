@@ -103,6 +103,7 @@ namespace dtDirector
       , mNode(NULL)
    {
       mPropSerializer = new dtDAL::ActorPropertySerializer(this);
+      //mLogger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
    }
 
    /////////////////////////////////////////////////////////////////
@@ -173,6 +174,34 @@ namespace dtDirector
                // Check if we are starting a property element.
                if (!mPropSerializer->ElementStarted(localname))
                {
+                  if (XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_LINKS_INPUT_ELEMENT) == 0)
+                  {
+                     if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                        mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Input Link");
+
+                     mInLink = true;
+                     mInInputLink = true;
+                  }
+                  else if (XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_LINKS_OUTPUT_ELEMENT) == 0)
+                  {
+                     if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                        mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Output Link");
+
+                     mInLink = true;
+                     mInOutputLink = true;
+                  }
+                  else if (XMLString::compareString(localname, dtDAL::MapXMLConstants::DIRECTOR_LINKS_VALUE_ELEMENT) == 0)
+                  {
+                     if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                        mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Value Link");
+
+                     mInLink = true;
+                     mInValueLink = true;
+                  }
+                  else if (mInLink && XMLString::compareString(localname,dtDAL::MapXMLConstants::DIRECTOR_LINK_ELEMENT) == 0)
+                  {
+                     mInLinkTo = true;
+                  }
                }
             }
             // Check if we are starting a node.
@@ -475,10 +504,7 @@ namespace dtDirector
                {
                   mValueLink->SetTypeChecking(dtUtil::XMLStringConverter(chars).ToString() == "true");
                }
-               else if (topEl == dtDAL::MapXMLConstants::DIRECTOR_LINK_ELEMENT)
-               {
-                  mInLinkTo = true;
-               }
+
             }
             else if (!mPropSerializer->Characters(topEl, chars, mNode.get()))
             {
@@ -486,30 +512,7 @@ namespace dtDirector
                {
                   mNode->SetID(dtCore::UniqueId(dtUtil::XMLStringConverter(chars).ToString()));
                }
-               else if (topEl == dtDAL::MapXMLConstants::DIRECTOR_LINKS_INPUT_ELEMENT)
-               {
-                  if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-                     mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Input Link");
 
-                  mInLink = true;
-                  mInInputLink = true;
-               }
-               else if (topEl == dtDAL::MapXMLConstants::DIRECTOR_LINKS_OUTPUT_ELEMENT)
-               {
-                  if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-                     mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Output Link");
-
-                  mInLink = true;
-                  mInOutputLink = true;
-               }
-               else if (topEl == dtDAL::MapXMLConstants::DIRECTOR_LINKS_VALUE_ELEMENT)
-               {
-                  if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-                     mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Value Link");
-
-                  mInLink = true;
-                  mInValueLink = true;
-               }
             }
          }
          else if (!mPropSerializer->Characters(topEl, chars, graph))
