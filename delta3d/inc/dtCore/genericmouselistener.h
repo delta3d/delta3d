@@ -48,7 +48,7 @@ namespace dtCore
      * class Handler
      * {
      * public:
-     *    bool Pressed( const dtCore::Mouse *mouse, dtCore::Mouse::MouseButton button);
+     *    bool Pressed(const dtCore::Mouse *mouse, dtCore::Mouse::MouseButton button);
      *    {
      *       return true;
      *    }
@@ -57,12 +57,11 @@ namespace dtCore
      * Handler *h = new Handler();
      *
      * RefPtr<GenericMouseListener> ml = new GenericMouseListener();
-     * myMouse->AddMouseListener( ml.get() );
+     * myMouse->AddMouseListener(ml.get());
      * 
-     * ml->SetPressedCallback( GenericMouseListener::ButtonCallbackType(h, &Handler::Pressed) );
+     * ml->SetPressedCallback(GenericMouseListener::ButtonCallbackType(h, &Handler::Pressed));
      * @endcode
      */
-     
    class DT_CORE_EXPORT GenericMouseListener : public MouseListener
    {
    public:
@@ -75,12 +74,12 @@ namespace dtCore
       GenericMouseListener();
 
       // inherited methods
-      bool HandleButtonPressed(const Mouse* mouse, Mouse::MouseButton button);
-      bool HandleButtonReleased(const Mouse* mouse, Mouse::MouseButton button);
-      bool HandleButtonClicked(const Mouse* mouse, Mouse::MouseButton button, int clickCount);
-      bool HandleMouseMoved(const Mouse* mouse, float x, float y);
-      bool HandleMouseDragged(const Mouse* mouse, float x, float y);
-      bool HandleMouseScrolled(const Mouse* mouse, int delta);
+      virtual bool HandleButtonPressed(const Mouse* mouse, Mouse::MouseButton button);
+      virtual bool HandleButtonReleased(const Mouse* mouse, Mouse::MouseButton button);
+      virtual bool HandleButtonClicked(const Mouse* mouse, Mouse::MouseButton button, int clickCount);
+      virtual bool HandleMouseMoved(const Mouse* mouse, float x, float y);
+      virtual bool HandleMouseDragged(const Mouse* mouse, float x, float y);
+      virtual bool HandleMouseScrolled(const Mouse* mouse, int delta);
 
       // -- callback support -- //
       void SetPressedCallback(const ButtonCallbackType& callback);
@@ -114,7 +113,7 @@ namespace dtCore
       void DisableScrolledCallback();
 
    protected:
-      ~GenericMouseListener();
+      ~GenericMouseListener() {};
 
    private:
       ButtonCallbackType mPressedCB, mReleasedCB;
