@@ -1,4 +1,6 @@
-SET(TARGET_SRC testdisapp.h testdisapp.cpp main.cpp)
+SET(TARGET_SRC testdisapp.h testdisapp.cpp main.cpp
+               disactorcomponents.h disactorcomponents.cpp 
+               actormap.xml Connection.xml)
 
 
 BUILD_EXE_EXAMPLE( testDIS

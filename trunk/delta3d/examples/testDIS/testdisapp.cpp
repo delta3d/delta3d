@@ -1,8 +1,33 @@
+/* -*-c++-*-
+* Using 'The MIT License'
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+*
+* The above copyright notice and this permission notice shall be included in
+* all copies or substantial portions of the Software.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+* THE SOFTWARE.
+*/
+
 #include "testdisapp.h"
+#include "disactorcomponents.h"
 #include <dtDIS/mastercomponent.h>
 #include <dtDIS/sharedstate.h>
+#include <dtGame/gamemanager.inl>
 #include <dtGame/gamemanager.h>
 #include <dtGame/defaultmessageprocessor.h>
+#include <dtGame/defaultnetworkpublishingcomponent.h>
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/coordinates.h>
 #include <dtDAL/project.h>
@@ -14,17 +39,17 @@ TestDISApp::TestDISApp(const std::string& connectionXml,
 : mMotion(NULL)
 , mConnectionXml(connectionXml)
 , mActorTypeMapping(actorTypeMappingXml)
-
 {
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 TestDISApp::~TestDISApp()
 {
    mGameManager->RemoveComponent(*mDISComponent);
-   mGameManager->RemoveComponent( *mMessageProc );
+   mGameManager->RemoveComponent(*mMessageProc);
+   mGameManager->RemoveComponent(*mNetworkingRouter);
    mMotion->SetTarget(NULL);
+   mActorsToPublish.clear();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -47,6 +72,9 @@ void TestDISApp::Config()
    mDISComponent = new dtDIS::MasterComponent(disConfig);
    mMessageProc = new dtGame::DefaultMessageProcessor(); //need this to get messages routed around
 
+   //need this to get messages send out to the DIS component, for sending to the network
+   mNetworkingRouter = new dtGame::DefaultNetworkPublishingComponent(); 
+
    mGameManager = new dtGame::GameManager(*this->GetScene());
 
    //need to set a ProjectContext so the ResouceActorProperty can find the StaticMesh resources
@@ -56,4 +84,64 @@ void TestDISApp::Config()
 
    mGameManager->AddComponent(*mDISComponent);
    mGameManager->AddComponent(*mMessageProc, dtGame::GameManager::ComponentPriority::HIGHEST);
+   mGameManager->AddComponent(*mNetworkingRouter);
+}
+
+
+///a little class used to find a GameActor named "helo"
+class FindDISActor
+{
+public:
+   FindDISActor() {};
+   ~FindDISActor() {};
+
+   bool operator()(dtDAL::ActorProxy& proxy)
+   {
+      if (proxy.GetName().find("helo") != std::string::npos)
+      {
+         if (proxy.IsGameActorProxy())
+         {
+            return static_cast<dtGame::GameActorProxy*>(&proxy)->IsPublished();
+         }
+         else return false;
+      }
+      else {return false;}
+   }
+};
+
+////////////////////////////////////////////////////////////////////////////////
+void TestDISApp::FindActorsAndAddComponents()
+{
+   mGameManager->FindActorsIf(FindDISActor(), mActorsToPublish);
+   std::vector<dtDAL::ActorProxy*>::iterator itr = mActorsToPublish.begin();
+   while (itr != mActorsToPublish.end())
+   {
+      EntityTypeActorComponent* entityTypeComp = new EntityTypeActorComponent(1,1,222,1,2,2);
+      static_cast<dtGame::GameActorProxy*>((*itr))->GetGameActor().AddComponent(*entityTypeComp);
+
+      ++itr;
+   }    
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void TestDISApp::PostFrame(const double deltaSimTime)
+{
+   static double kTimeToSend = 0.0;
+   kTimeToSend += deltaSimTime;
+
+   if (kTimeToSend > 2.0)
+   {
+      //find any published GameActors and add some new ActorComponents to them
+      if (mActorsToPublish.empty()) { FindActorsAndAddComponents(); }
+
+      std::vector<dtDAL::ActorProxy*>::iterator itr = mActorsToPublish.begin();
+      while (itr != mActorsToPublish.end())
+      {
+         //Tell the GameActorProxy to send an ActorUpdateMessage with all of it's ActorProperties
+         static_cast<dtGame::GameActorProxy*>((*itr))->NotifyFullActorUpdate();
+         ++itr;
+      }
+
+      kTimeToSend = 0.0;
+   }
 }

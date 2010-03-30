@@ -1,5 +1,6 @@
 #ifndef testdisapp_h__
 #define testdisapp_h__
+
 #include <dtABC/application.h>
 #include <dtCore/refptr.h>
 
@@ -12,11 +13,17 @@ namespace dtGame
 {
    class GameManager;
    class DefaultMessageProcessor;
+   class DefaultNetworkPublishingComponent;
 }
 
 namespace dtCore
 {
    class RTSMotionModel;
+}
+
+namespace dtDAL
+{
+   class ActorProxy;
 }
 
 class TestDISApp : public dtABC::Application
@@ -27,13 +34,18 @@ public:
 
 protected:
    virtual ~TestDISApp();
+   virtual void PostFrame(const double deltaSimTime);
 
 private:
    dtCore::RefPtr<dtDIS::MasterComponent> mDISComponent;
    dtCore::RefPtr<dtGame::DefaultMessageProcessor> mMessageProc;
+   dtCore::RefPtr<dtGame::DefaultNetworkPublishingComponent> mNetworkingRouter;
    dtCore::RefPtr<dtGame::GameManager> mGameManager;
    dtCore::RefPtr<dtCore::RTSMotionModel> mMotion;
    std::string mConnectionXml;
    std::string mActorTypeMapping;
+   std::vector<dtDAL::ActorProxy*> mActorsToPublish;
+
+   void FindActorsAndAddComponents();
 };
 #endif // testdisapp_h__
