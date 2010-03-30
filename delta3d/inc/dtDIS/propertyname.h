@@ -40,7 +40,9 @@ namespace dtDIS
 
       static dtUtil::RefString APPEARANCE;
 
-      // entitytype stuff
+      /** Outgoing DIS packets read from this String Property for the DIS Entity Type
+       *  In the form of "<kind>/<domain>/<country>/<category>/<subcategory>/<specific>"
+       */
       static dtUtil::RefString ENTITY_TYPE;
    } ;
 

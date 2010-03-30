@@ -227,6 +227,7 @@ const char details::XMLEntityMapSchema::NODE_ENTITY_GROUND_CLAMP[] = {"EntityGro
 const char details::XMLEntityMapSchema::NODE_ENTITY_NON_DAMAGED[] = {"EntityNonDamaged\0"};
 const char details::XMLEntityMapSchema::NODE_ENTITY_DAMAGED[] = {"EntityDamaged\0"};
 const char details::XMLEntityMapSchema::NODE_ENTITY_DESTROYED[] = {"EntityDestroyed\0"};
+const char details::XMLEntityMapSchema::NODE_ENTITY_TYPE[] = {"EntityTypeProperty\0"};
 
 EntityMapXMLHandler::EntityMapXMLHandler(SharedState* config)
    : mSharedState(config)
@@ -372,6 +373,10 @@ void EntityMapXMLHandler::characters(const XMLCh* const chars, const XMLSize_t l
    case ENTITY_DESTROYED:
       {
          dtDIS::EnginePropertyName::RESOURCE_DAMAGE_DESTROYED = std::string(cstr);
+      } break;
+   case ENTITY_TYPE:
+      {
+         dtDIS::EntityPropertyName::ENTITY_TYPE = std::string(cstr);
       } break;
    default:
       {
@@ -582,6 +587,10 @@ void EntityMapXMLHandler::startElement(const XMLCh* const uri,const XMLCh* const
    else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITY_DESTROYED) )
    {
       mNodeStack.push( ENTITY_DESTROYED );
+   }
+   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITY_TYPE) )
+   {
+      mNodeStack.push( ENTITY_TYPE );
    }
 
 

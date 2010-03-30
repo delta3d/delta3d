@@ -64,6 +64,7 @@
               <xsd:element name="EntityNonDamaged" type="xsd:string" />
               <xsd:element name="EntityDamaged" type="xsd:string" />
               <xsd:element name="EntityDestroyed" type="xsd:string" />
+              <xsd:element name="EntityTypeProperty" type="xsd:string" />
             </xsd:choice>
           </xsd:complexType>
         </xsd:element>

@@ -159,6 +159,7 @@ namespace dtDIS
       static const char NODE_ENTITY_NON_DAMAGED[];
       static const char NODE_ENTITY_DAMAGED[];
       static const char NODE_ENTITY_DESTROYED[];
+      static const char NODE_ENTITY_TYPE[];
    };
    } // end namespace details
    ///@endcond
@@ -222,7 +223,8 @@ namespace dtDIS
          ENTITY_GROUND_CLAMP,
          ENTITY_NON_DAMAGED,
          ENTITY_DAMAGED,
-         ENTITY_DESTROYED
+         ENTITY_DESTROYED,
+         ENTITY_TYPE                    //<Property name override for DIS Entity Type
       };
 
       typedef std::stack<Nodes> NodeStack;
