@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
     <header>
         <name>MyCoolMap</name>
@@ -7,8 +8,8 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2005-07-20T15:24:07.0-05:00</createTimestamp>
-        <lastUpdateTimestamp>2008-09-23T13:33:12-08:00</lastUpdateTimestamp>
-        <editorVersion>2.0.0</editorVersion>
+        <lastUpdateTimestamp>2010-03-29T18:14:55-08:00</lastUpdateTimestamp>
+        <editorVersion>2.5.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
     <libraries></libraries>
@@ -17,6 +18,14 @@
             <type>dtcore.Action.Bezier Controller</type>
             <id>2b67341e-1c25-4f8f-92d6-7a57fc082d1e</id>
             <name>Controller0</name>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
             <property>
                 <name>Time Step</name>
                 <float>0.0099999998</float>
@@ -61,11 +70,27 @@
                 <name>Render Path</name>
                 <boolean>false</boolean>
             </property>
+            <property>
+                <name>Follow Path</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Set Looping</name>
+                <boolean>false</boolean>
+            </property>
         </actor>
         <actor>
             <type>dtcore.Curve.Bezier Control Point</type>
             <id>33013719-065f-4369-ab49-d17ba5b851c3</id>
             <name>ControlPoint1</name>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -124,9 +149,17 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Static Mesh</type>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>39c7f896-d8a9-493f-87dd-4d155cdf13b3</id>
             <name>helo</name>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -196,28 +229,22 @@
                 </vec3>
             </property>
             <property>
-                <name>Scale</name>
-                <vec3>
-                    <value1>1.000000</value1>
-                    <value2>1.000000</value2>
-                    <value3>1.000000</value3>
-                </vec3>
+                <name>Initial Ownership</name>
+                <enumerated>Server+Published</enumerated>
             </property>
             <property>
-                <name>Model Rotation</name>
-                <vec3>
-                    <value1>-0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>-0.000000</value3>
-                </vec3>
+                <name>Local Actor Update Policy</name>
+                <enumerated>ACCEPT_ALL</enumerated>
             </property>
             <property>
-                <name>Model Translation</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
-                </vec3>
+                <name>ShaderGroup</name>
+                <string></string>
+            </property>
+            <property>
+                <name>CurrentShader</name>
+                <resourceType>Shaders</resourceType>
+                <resourceDisplayName></resourceDisplayName>
+                <resource></resource>
             </property>
             <property>
                 <name>static mesh</name>
@@ -225,11 +252,31 @@
                 <resourceDisplayName>StaticMeshes::uh-1n.ive</resourceDisplayName>
                 <resource>StaticMeshes::uh-1n.ive</resource>
             </property>
+            <property>
+                <name>use cache object</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>1.000000</value3>
+                </vec3>
+            </property>
         </actor>
         <actor>
             <type>dtcore.Curve.Bezier Node</type>
             <id>3d2da066-2fea-4980-acf8-4c74db250795</id>
             <name>BezierNode1</name>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -311,6 +358,14 @@
             <type>dtcore.Static Mesh</type>
             <id>3ee83bce-267b-441e-ba2a-59b55c9c3373</id>
             <name>StaticMesh1</name>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -415,6 +470,14 @@
             <id>44a9a42f-46be-423e-849c-01cfb62eab87</id>
             <name>ControlPoint3</name>
             <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
@@ -476,6 +539,14 @@
             <id>4f0db0e3-80ab-4171-a446-168a8838dabb</id>
             <name>SkyBox</name>
             <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
                 <name>Top Texture</name>
                 <resourceType>Textures</resourceType>
                 <resourceDisplayName>Textures::top.jpg</resourceDisplayName>
@@ -516,6 +587,14 @@
             <type>dtcore.Curve.Bezier Node</type>
             <id>658c6682-2808-4863-bdfc-c61a2f118915</id>
             <name>BezierNode2</name>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -598,6 +677,14 @@
             <id>803a511a-3228-4c99-967d-2102220c4f2a</id>
             <name>ControlPoint0</name>
             <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
@@ -659,6 +746,14 @@
             <id>a1c5a74e-86cc-4957-99bd-d44a5e06229d</id>
             <name>AutoTrigger</name>
             <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
                 <name>Action</name>
                 <actorId>2b67341e-1c25-4f8f-92d6-7a57fc082d1e</actorId>
             </property>
@@ -671,6 +766,14 @@
             <type>dtcore.Static Mesh</type>
             <id>a215ea47-5c0b-4b47-8320-1eb943384bba</id>
             <name>terrain</name>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -775,6 +878,14 @@
             <id>a6999cb5-af09-4cf3-bc55-14b0424218f6</id>
             <name>BezierNode8</name>
             <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
@@ -855,6 +966,14 @@
             <type>dtcore.Curve.Bezier Node</type>
             <id>b44ce00a-3b08-40e7-b366-884de5ff559f</id>
             <name>BezierNode0</name>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -937,6 +1056,14 @@
             <id>c56e759a-c5ec-4597-868e-0a55035ac1e0</id>
             <name>startPosition</name>
             <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>-7.399708</value1>
@@ -993,6 +1120,14 @@
             <type>dtcore.Curve.Bezier Control Point</type>
             <id>f5e207ef-b4ba-4647-98a1-79ab291dbba5</id>
             <name>ControlPoint2</name>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -1051,4 +1186,6 @@
             </property>
         </actor>
     </actors>
+    <groups></groups>
+    <presetCameras></presetCameras>
 </map>
