@@ -1105,6 +1105,7 @@ void GameActorTests::TestActorComponentInitialized()
       CPPUNIT_ASSERT_EQUAL_MESSAGE("ActorComponent didn't enter the world, after being added to an Actor already in the world", true, component2->mEnteredWorld);
 
       actor->RemoveComponent(*component2);
+      CPPUNIT_ASSERT_MESSAGE("Actor component2 should have been removed from world when removed from actor!", component2->mLeftWorld);
       CPPUNIT_ASSERT_MESSAGE("Actor component2 should be de-initialized when removed from actor!", component2->mWasRemoved);
 
       CPPUNIT_ASSERT_MESSAGE("Actor component should not be removed yet!", !component1->mWasRemoved);
@@ -1112,8 +1113,13 @@ void GameActorTests::TestActorComponentInitialized()
 
       dtCore::System::GetInstance().Step();
 
+      CPPUNIT_ASSERT_MESSAGE("Actor component should have left the world!", component1->mLeftWorld);
+
+      // Make sure the actor is deleted
+      gap = NULL;
+      proxy = NULL;
       // Actor should be removed by now.
-      CPPUNIT_ASSERT_MESSAGE("Actor component should be de-initialized when actor is added to game!", component1->mWasRemoved);
+      CPPUNIT_ASSERT_MESSAGE("Actor component should have been removed when the actor is deleted from memory!", component1->mWasRemoved);
    }
    catch (const dtUtil::Exception& e)
    {

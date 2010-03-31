@@ -92,6 +92,13 @@ GameActorProxy::GameActorProxy()
 /////////////////////////////////////////////////////////////////////////////
 GameActorProxy::~GameActorProxy()
 {
+   GameActor* ga = NULL;
+   GetActor(ga);
+   if (ga != NULL)
+   {
+      // Removed them all by hand because they need a callback.
+      ga->RemoveAllComponents();
+   }
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -785,7 +792,7 @@ void GameActorProxy::InvokeEnteredWorld()
 void GameActorProxy::InvokeRemovedFromWorld()
 {
    /**
-   * We will preform a check to make sure this actor actually is a GameActor
+   * We will perform a check to make sure this actor actually is a GameActor
    */
 
    GameActor* ga = dynamic_cast<GameActor*>(GetActor());
@@ -796,8 +803,7 @@ void GameActorProxy::InvokeRemovedFromWorld()
          "ERROR: Actor has the type of a GameActor, but casting it to a GameActorProxy failed.", __FILE__, __LINE__);
    }
 
-   ga->RemoveAllComponents();
-
+   ga->ShutdownComponents();
    OnRemovedFromWorld();
 }
 

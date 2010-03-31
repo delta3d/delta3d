@@ -44,6 +44,10 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////////
    void ActorComponentBase::AddComponent(ActorComponent& component)
    {
+      // safety check
+      assert(dynamic_cast<GameActor*>(this) != NULL &&
+               "ActorComponentBase must derive from dtGame::GameActor!");
+
       // only one component of a type at a time!
       if (HasComponent(component.GetType()))
       {
@@ -65,7 +69,7 @@ namespace dtGame
       OnActorComponentAdded(component);
 
       // if base class is a game actor and the game actor is already instantiated in game:
-      if (self->GetGameActorProxy().IsInGM())
+      if (self != NULL && self->GetGameActorProxy().IsInGM())
       {
          component.OnEnteredWorld();
       }
@@ -107,11 +111,21 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////////
    void ActorComponentBase::RemoveComponent(const ActorComponent::ACType& type)
    {
+      // safety check
+      assert(dynamic_cast<GameActor*>(this) != NULL &&
+               "ActorComponentBase must derive from dtGame::GameActor!");
+
       ActorComponentMap::iterator iter = mComponents.find(type);
       if (iter != mComponents.end())
       {
-         iter->second->OnRemovedFromActor(*static_cast<GameActor*>(this));
-         OnActorComponentRemoved(*iter->second);
+         ActorComponent& component = (*iter->second);
+         GameActor* self = static_cast<GameActor*>(this);
+         if (self != NULL && self->GetGameActorProxy().IsInGM())
+         {
+            component.OnRemovedFromWorld();
+         }
+         component.OnRemovedFromActor(*self);
+         OnActorComponentRemoved(component);
          mComponents.erase(iter);
          return;
       }
@@ -135,27 +149,22 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////////
    void ActorComponentBase::InitComponents()
    {
-      // safety check
-      assert(dynamic_cast<GameActor*>(this) != NULL &&
-               "ActorComponentBase must derive from dtGame::GameActor!");
-      
-      /*
-         Copy current list of components and iterate through that. 
-         Otherwise, when actor components add other actor components to the actor
-         in their OnAddedToActor method, the OnAddedToActor method of that new component
-         would be called twice: once immediately (because actor is now in game),
-         and once when they are reached by iteration.
-      */
-      std::list<ActorComponent*> components;
-      for (ActorComponentMap::iterator iter = mComponents.begin(); iter != mComponents.end(); ++iter)
+      // loop through all components and call their OnEnteredWorld method
+      for(ActorComponentMap::iterator iter = mComponents.begin(); iter != mComponents.end(); ++iter)
       {
-         components.push_back(iter->second);         
+         ActorComponent& component = (*iter->second);
+         component.OnEnteredWorld();
       }
+   }
 
-      // loop through all components and call their OnAddedToActor method
-      for(std::list<ActorComponent*>::iterator iter = components.begin(); iter != components.end(); ++iter)
+   //////////////////////////////////////////////////////////////////////////
+   void ActorComponentBase::ShutdownComponents()
+   {
+      // loop through all components and call their OnEnteredWorld method
+      for(ActorComponentMap::iterator iter = mComponents.begin(); iter != mComponents.end(); ++iter)
       {
-         (*iter)->OnEnteredWorld();
+         ActorComponent& component = (*iter->second);
+         component.OnRemovedFromWorld();
       }
    }
 
