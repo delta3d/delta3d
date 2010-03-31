@@ -124,6 +124,11 @@ namespace dtGame
       void InitComponents();
 
       /**
+       * Loop through all ActorComponent call their OnRemovedWorld()
+       */
+      void ShutdownComponents();
+
+      /**
        * Call the BuildPropertyMap() method of all registered ActorComponent
        */
       void BuildComponentPropertyMaps();

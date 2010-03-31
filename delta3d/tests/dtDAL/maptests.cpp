@@ -1237,7 +1237,7 @@ void MapTests::TestMapSaveAndLoad()
         //I can delete with a changed name.
         map->SetName("some new name");
 
-        //project.DeleteMap(*map, true);
+        project.DeleteMap(*map, false);
     }
     catch (const dtUtil::Exception& e)
     {
