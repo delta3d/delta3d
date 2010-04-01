@@ -104,8 +104,12 @@ SET( LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/xerceswriter.h
    )
 
-ADD_PRECOMPILED_HEADER(${LIB_NAME} prefix/dtutilprefix.h prefix/dtutilprefix.cpp LIB_SOURCES)
-      
+
+if (MSVC)
+   # PCH doesn't help with dtUtil on g++.
+   ADD_PRECOMPILED_HEADER(${LIB_NAME} prefix/dtutilprefix.h prefix/dtutilprefix.cpp LIB_SOURCES)
+endif (MSVC)
+  
 
 ADD_LIBRARY(${LIB_NAME} SHARED
     ${LIB_PUBLIC_HEADERS} 
