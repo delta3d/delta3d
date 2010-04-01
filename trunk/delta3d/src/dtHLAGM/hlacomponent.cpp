@@ -982,7 +982,7 @@ namespace dtHLAGM
 
                }
                ss << ".\"  A mapping with both the same object name and DIS ID (if enabled) exists.  "
-               << "Set one to <localOnly/> if both mappings are required.";
+               << "Set one to <localOnly>true</localOnly> if both mappings are required.";
 
             throw dtHLAGM::XmlConfigException(ss.str(), __FILE__, __LINE__);
          }
