@@ -146,18 +146,37 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    dtDAL::ActorProperty* ValueLink::GetProperty(int index, ValueNode** outNode)
    {
-      if (index >= 0 && index < (int)mLinks.size())
+      ValueNode* valueNode = NULL;
+      int count = 0;
+      int subIndex = 0;
+      int linkCount = (int)mLinks.size();
+      for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
       {
-         ValueNode* node = mLinks[index];
-         if (node && node->GetEnabled())
+         ValueNode* vNode = mLinks[linkIndex];
+         if (vNode && vNode->GetEnabled())
          {
-            if (outNode) *outNode = node;
+            int total = vNode->GetPropertyCount();
 
-            dtDAL::ActorProperty* prop = node->GetProperty();
-            if (prop)
+            // If our desired index is within this link, find the sub index.
+            if (count + total > index)
             {
-               return prop;
+               subIndex = index - count;
+               valueNode = vNode;
+               break;
             }
+
+            count += total;
+         }
+      }
+
+      if (valueNode)
+      {
+         if (outNode) *outNode = valueNode;
+
+         dtDAL::ActorProperty* prop = valueNode->GetProperty(subIndex);
+         if (prop)
+         {
+            return prop;
          }
       }
 
@@ -193,7 +212,17 @@ namespace dtDirector
          else return 0;
       }
 
-      return (int)mLinks.size();
+      int count = 0;
+      int linkCount = (int)mLinks.size();
+      for (int index = 0; index < linkCount; index++)
+      {
+         ValueNode* vNode = mLinks[index];
+         if (vNode && vNode->GetEnabled())
+         {
+            count += vNode->GetPropertyCount();
+         }
+      }
+      return count;
    }
 
    //////////////////////////////////////////////////////////////////////////

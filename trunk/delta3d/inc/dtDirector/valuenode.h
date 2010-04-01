@@ -106,9 +106,21 @@ namespace dtDirector
       /**
        * Retrieves the property for this value.
        *
+       * @param[in]  index  The property index, in case this is an array value.
+       *
        * @return  The property.
        */
-      virtual dtDAL::ActorProperty* GetProperty();
+      dtDAL::ActorProperty* GetProperty();
+      virtual dtDAL::ActorProperty* GetProperty(int index);
+
+      /**
+       * Retrieves the total number of values linked to a property.
+       *
+       * @param[in]  name  The name of the property.
+       *
+       * @return     The count.
+       */
+      virtual int GetPropertyCount(const std::string& name = "Value");
 
       /**
        * Retrieves whether the value can be a specified type.

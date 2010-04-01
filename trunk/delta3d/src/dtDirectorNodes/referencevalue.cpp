@@ -143,7 +143,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProperty* ReferenceValue::GetProperty()
+   dtDAL::ActorProperty* ReferenceValue::GetProperty(int index)
    {
       UpdateReference();
 
@@ -151,11 +151,11 @@ namespace dtDirector
       {
          if (mValues[0].GetLinks().size())
          {
-            return mValues[0].GetLinks()[0]->GetProperty();
+            return mValues[0].GetLinks()[0]->GetProperty(index);
          }
       }
 
-      return ValueNode::GetProperty();
+      return ValueNode::GetProperty(index);
    }
 
    //////////////////////////////////////////////////////////////////////////

@@ -71,7 +71,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    const osg::Vec4& VecValue::GetValue()
    {
-      return mValue;
       ValueNode::OnValueRetrieved();
+      return mValue;
    }
 }

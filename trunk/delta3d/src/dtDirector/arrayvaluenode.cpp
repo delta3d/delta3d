@@ -22,59 +22,74 @@
 #include <sstream>
 #include <algorithm>
 
-#include <dtDirectorNodes/actorvalue.h>
-
-#include <dtDirector/director.h>
+#include <dtDirector/arrayvaluenode.h>
+#include <dtDirector/valuelink.h>
 
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actorproperty.h>
 
+
 namespace dtDirector
 {
    ///////////////////////////////////////////////////////////////////////////////////////
-   ActorValue::ActorValue()
+   ArrayValueNode::ArrayValueNode()
        : ValueNode()
-   {
-      mName = "Actor";
-      mValue = "";
-      AddAuthor("Jeff P. Houde");
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////////////
-   ActorValue::~ActorValue()
+       , mPropertyIndex(0)
+       , mArrayProperty(NULL)
    {
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   void ActorValue::Init(const NodeType& nodeType, DirectorGraph* graph)
+   ArrayValueNode::~ArrayValueNode()
+   {
+      Disconnect();
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////////////
+   void ArrayValueNode::Init(const NodeType& nodeType, DirectorGraph* graph)
    {
       ValueNode::Init(nodeType, graph);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void ActorValue::BuildPropertyMap()
+   void ArrayValueNode::BuildPropertyMap()
    {
       ValueNode::BuildPropertyMap();
-
-      mProperty = new dtDAL::ActorIDActorProperty(
-         "Value", "Value",
-         dtDAL::ActorIDActorProperty::SetFuncType(this, &ActorValue::SetValue),
-         dtDAL::ActorIDActorProperty::GetFuncType(this, &ActorValue::GetValue),
-         "", "The value.");
-      AddProperty(mProperty);
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ActorValue::SetValue(const dtCore::UniqueId& value)
+   std::string ArrayValueNode::GetValueLabel()
    {
-      mValue = value;
-      ValueNode::OnValueChanged();
+      std::string label = "";
+      int count = GetPropertyCount();
+      if (count > 0)
+      {
+         label = "[" + dtUtil::ToString(count) + "]";
+      }
+      return label;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   const dtCore::UniqueId& ActorValue::GetValue()
+   dtDAL::ActorProperty* ArrayValueNode::GetProperty(int index)
    {
-      ValueNode::OnValueRetrieved();
-      return mValue;
+      mPropertyIndex = index;
+      return ValueNode::GetProperty(index);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   int ArrayValueNode::GetPropertyCount(const std::string& name)
+   {
+      if (mArrayProperty)
+      {
+         return mArrayProperty->GetArraySize();
+      }
+
+      return 0;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ArrayValueNode::SetPropertyIndex(int index)
+   {
+      mPropertyIndex = index;
    }
 }

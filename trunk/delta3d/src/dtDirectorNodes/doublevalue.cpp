@@ -72,7 +72,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    double DoubleValue::GetValue()
    {
-      return mValue;
       ValueNode::OnValueRetrieved();
+      return mValue;
    }
 }

@@ -72,7 +72,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    int IntValue::GetValue()
    {
-      return mValue;
       ValueNode::OnValueRetrieved();
+      return mValue;
    }
 }

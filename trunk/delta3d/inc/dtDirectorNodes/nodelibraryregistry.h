@@ -71,6 +71,8 @@ namespace dtDirector
       static dtCore::RefPtr<dtDirector::NodeType> STATIC_MESH_VALUE_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> VEC_VALUE_NODE_TYPE;
 
+      static dtCore::RefPtr<dtDirector::NodeType> STRING_ARRAY_VALUE_NODE_TYPE;
+
       /**
        *	Constructor.
        */

@@ -127,17 +127,17 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProperty* ExternalValueNode::GetProperty()
+   dtDAL::ActorProperty* ExternalValueNode::GetProperty(int index)
    {
       if (mValues.size())
       {
          if (mValues[0].GetLinks().size())
          {
-            return mValues[0].GetLinks()[0]->GetProperty();
+            return mValues[0].GetLinks()[0]->GetProperty(index);
          }
       }
 
-      return ValueNode::GetProperty();
+      return ValueNode::GetProperty(index);
    }
 
    //////////////////////////////////////////////////////////////////////////

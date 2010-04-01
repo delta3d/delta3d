@@ -56,6 +56,8 @@
 #include <dtDirectorNodes/staticmeshvalue.h>
 #include <dtDirectorNodes/vecvalue.h>
 
+#include <dtDirectorNodes/stringarrayvalue.h>
+
 
 using dtCore::RefPtr;
 
@@ -111,6 +113,9 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::STATIC_MESH_VALUE_NODE_TYPE(            new dtDirector::NodeType("Static Mesh",               "General",     "Variables",   "A Static Mesh resource value."));
    RefPtr<NodeType> NodeLibraryRegistry::VEC_VALUE_NODE_TYPE(                    new dtDirector::NodeType("Vector",                    "General",     "Variables",   "A vector value."));
 
+   RefPtr<NodeType> NodeLibraryRegistry::STRING_ARRAY_VALUE_NODE_TYPE(           new dtDirector::NodeType("String Array",              "General",     "Variables",   "An array of string values."));
+
+
    //////////////////////////////////////////////////////////////////////////
    extern "C" NODE_LIBRARY_EXPORT dtDirector::NodePluginRegistry* CreatePluginRegistry()
    {
@@ -165,5 +170,7 @@ namespace dtDirector
       mNodeFactory->RegisterType<ActorValue>(ACTOR_VALUE_NODE_TYPE.get());
       mNodeFactory->RegisterType<StaticMeshValue>(STATIC_MESH_VALUE_NODE_TYPE.get());
       mNodeFactory->RegisterType<VecValue>(VEC_VALUE_NODE_TYPE.get());
+
+      mNodeFactory->RegisterType<StringArrayValue>(STRING_ARRAY_VALUE_NODE_TYPE.get());
    }
 }
