@@ -384,10 +384,6 @@ void TestAARMessageProcessor::PreFrame(const double deltaFrameTime)
 //////////////////////////////////////////////////////////////////////////
 void TestAARMessageProcessor::Reset()
 {
-   mLmsComponent->ClearTaskList();
-
-   //dtCore::System::GetInstance().Step();
-
    TestAARGameEvent::InitEvents();
 
    // setup terrain

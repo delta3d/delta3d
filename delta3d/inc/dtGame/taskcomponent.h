@@ -98,7 +98,7 @@ namespace dtGame
           *   are responded to accordingly.  Only in certain cases should this be used if
           *   for some reason the app is being prevented from getting the delete messages.
           */
-         void ClearTaskList() { mTaskList.clear(); mTopLevelTaskList.clear(); }
+         void ClearTaskList();
 
          /**
           * This method ensures that any changes to the task hierarchy are properly
