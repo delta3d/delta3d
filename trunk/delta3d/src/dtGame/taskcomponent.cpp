@@ -41,6 +41,7 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////////
    TaskComponent::~TaskComponent()
    {
+      ClearTaskList();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -129,9 +130,8 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////////
    void TaskComponent::HandleMapLoaded()
    {
-      mTopLevelTaskList.clear();
-      mTaskList.clear();
-
+      ClearTaskList();
+      
       std::vector<GameActorProxy*> toFill;
       std::vector<GameActorProxy*>::iterator itor;
       GetGameManager()->GetAllGameActors(toFill);
@@ -207,4 +207,10 @@ namespace dtGame
          return NULL;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void TaskComponent::ClearTaskList()
+   {
+      mTaskList.clear();
+      mTopLevelTaskList.clear();
+   }
 }
