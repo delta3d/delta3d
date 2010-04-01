@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * William E. Johnson II
+ * William E. Johnson II, Curtiss Murphy
  */
 
 #ifndef DELTA_MESSAGETYPE
@@ -110,6 +110,7 @@ namespace dtGame
          static const MessageType LOG_REQ_ADD_IGNORED_ACTOR;
          static const MessageType LOG_REQ_REMOVE_IGNORED_ACTOR;
          static const MessageType LOG_REQ_CLEAR_IGNORE_LIST;
+         static const MessageType LOG_INFO_PLAYBACK_END_OF_MESSAGES;
 
          //SYSTEM MESSAGES
          static const MessageType SYSTEM_POST_EVENT_TRAVERSAL;

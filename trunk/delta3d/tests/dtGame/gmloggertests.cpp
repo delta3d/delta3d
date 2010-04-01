@@ -1025,6 +1025,9 @@ void GMLoggerTests::TestPlaybackRecordCycle()
          dtCore::System::GetInstance().Step();
       }
 
+      dtCore::RefPtr<const dtGame::Message> procInfoEndOfMessages = tc->FindProcessMessageOfType(dtGame::MessageType::LOG_INFO_PLAYBACK_END_OF_MESSAGES);
+      CPPUNIT_ASSERT_MESSAGE("A LOG_INFO_PLAYBACK_END_OF_MESSAGES message should have been sent when all messages were done.", procInfoEndOfMessages != NULL);
+
       testSignal->Reset();
       logController->RequestServerGetStatus();
       dtCore::AppSleep(10); // tick the GM so it can send the messages

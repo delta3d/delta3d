@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * William E. Johnson II
+ * William E. Johnson II, Curtiss Murphy
  */
 
 #include <prefix/dtgameprefix.h>
@@ -141,6 +141,9 @@ namespace dtGame
    const MessageType MessageType::LOG_REQ_CLEAR_IGNORE_LIST("Logger - Clear Ignore List", 
       "Request", "Sent by the logger controller component (often a client) to request the logger server "
       " component to remove all actors from the recording ignore list", 221);
+   const MessageType MessageType::LOG_INFO_PLAYBACK_END_OF_MESSAGES("Logger - Info - Playback End Of Messages", "Info",
+      "Info message sent by the logger server controller when playback has run out of messages in the current "
+      "message stream.", 222);
 
    const MessageType MessageType::SYSTEM_POST_EVENT_TRAVERSAL("Post Event Traversal", "System",
       "Sent on the system message posteventtraversal.  Use this message to respond to input or window events.", 300);

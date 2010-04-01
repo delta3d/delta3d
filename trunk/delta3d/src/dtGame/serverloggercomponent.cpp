@@ -150,6 +150,10 @@ namespace dtGame
       {
          HandleClearIgnoreListMessage();
       }
+      else if (type == MessageType::LOG_INFO_PLAYBACK_END_OF_MESSAGES)
+      {
+         // Do nothing. We don't want it to log.
+      }
       else if (type == MessageType::INFO_MAP_CHANGE_BEGIN)
       {
          // Avoid recording map change events because they may cause havok
@@ -709,7 +713,7 @@ namespace dtGame
                type == MessageType::LOG_REQ_SET_LOGFILE || type == MessageType::LOG_REQ_SET_AUTOKEYFRAMEINTERVAL ||
                type == MessageType::LOG_INFO_KEYFRAMES || type == MessageType::LOG_INFO_LOGFILES ||
                type == MessageType::LOG_INFO_TAGS || type == MessageType::LOG_INFO_STATUS ||
-               type == MessageType::LOG_REQ_JUMP_TO_KEYFRAME)
+               type == MessageType::LOG_REQ_JUMP_TO_KEYFRAME || type == MessageType::LOG_INFO_PLAYBACK_END_OF_MESSAGES)
             {
                // do nothing.
             }
@@ -738,10 +742,17 @@ namespace dtGame
             mNextMessage = mLogStream->ReadMessage(mNextMessageSimTime);
          }
 
-         // if we're out of messages, then we should pause the server.
+         // NO MORE MESSAGES 
          if (mNextMessage == NULL)
          {
+            // pause the server at the end of replay.
             GetGameManager()->SetPaused(true);
+
+            // Notify others that we finished playback. 
+            dtCore::RefPtr<dtGame::Message> endOfPlaybackMsg = GetGameManager()->GetMessageFactory().
+               CreateMessage(MessageType::LOG_INFO_PLAYBACK_END_OF_MESSAGES).get();
+            GetGameManager()->SendMessage(*endOfPlaybackMsg.get());
+            GetGameManager()->SendNetworkMessage(*endOfPlaybackMsg.get());
          }
       }
    }
