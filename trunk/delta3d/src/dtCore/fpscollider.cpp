@@ -27,6 +27,7 @@
 
 namespace dtCore
 {
+   ////////////////////////////////////////////////////////////////////////////
    FPSCollider::FPSCollider(float pHeight, float pRadius, float k, float theta, dtCore::Scene* pScene)
       : mBBFeet(0)
       , mBBTorso(0)
@@ -41,19 +42,16 @@ namespace dtCore
       , mStartCollideFeet(false)
       , mLastFeetContact()
       , mJumped(false)
-      , mAirControl(0.35f)
-      , mFreeFall(false)
-      , mFreeFallCounter(0)
       , mCurrentMode(FALLING)
       , mSlideThreshold(0.65f)
       , mSlideSpeed(5.0f)
       , mJumpSpeed(5.0f)
+      , mFallSpeed(0.0f)
+      , mTerminalSpeed(-50.0f)
       , mHeightAboveTerrain(pHeight)
       , mMaxStepUpDistance(k)
-      , mTerminalVelocity(0.0f, 0.0f, -50.0f)
       , mLastVelocity(0.0f, 0.0f, 0.0f)
       , mSlideVelocity(0.0f, 0.0f, 0.0f)
-      , mFallingVelocity(0.f, 0.f, 0.f)
       , mGravity()
       , mCollisionSpace()
    {
@@ -63,7 +61,7 @@ namespace dtCore
       SetDimensions(pHeight, pRadius, k, theta);
    }
 
-
+   ////////////////////////////////////////////////////////////////////////////
    FPSCollider::FPSCollider(float pHeight, float pRadius, float k, float theta, dSpaceID pSpaceToCollideWith, const osg::Vec3& pGravity)
       : mBBFeet(0)
       , mBBTorso(0)
@@ -78,19 +76,14 @@ namespace dtCore
       , mStartCollideFeet(false)
       , mLastFeetContact()
       , mJumped(false)
-      , mAirControl(0.35f)
-      , mFreeFall(false)
-      , mFreeFallCounter(0)
       , mCurrentMode(FALLING)
       , mSlideThreshold(0.65f)
       , mSlideSpeed(9.8f/4.0f)
       , mJumpSpeed(5.0f)
       , mHeightAboveTerrain(pHeight)
       , mMaxStepUpDistance(k)
-      , mTerminalVelocity(0.0f, 0.0f, -50.0f)
       , mLastVelocity(0.0f, 0.0f, 0.0f)
       , mSlideVelocity(0.0f, 0.0f, 0.0f)
-      , mFallingVelocity(0.f, 0.f, 0.f)
       , mGravity(pGravity)
       , mCollisionSpace(pSpaceToCollideWith)
    {
@@ -98,6 +91,7 @@ namespace dtCore
       SetDimensions(pHeight, pRadius, k, theta);
    }
 
+   ////////////////////////////////////////////////////////////////////////////
    FPSCollider::~FPSCollider()
    {
       if (mBBFeet) dGeomDestroy(mBBFeet);
@@ -105,51 +99,61 @@ namespace dtCore
       if (mSpaceID) dSpaceDestroy(mSpaceID);
    }
 
+   ////////////////////////////////////////////////////////////////////////////
    dSpaceID FPSCollider::GetSpaceID() const
    {
       return mSpaceID;
    }
 
+   ////////////////////////////////////////////////////////////////////////////
    float FPSCollider::GetSlideThreshold() const
    {
       return mSlideThreshold;
    }
 
+   ////////////////////////////////////////////////////////////////////////////
    FPSCollider::eMode FPSCollider::GetMode() const
    {
       return mCurrentMode;
    }
 
+   ////////////////////////////////////////////////////////////////////////////
    void FPSCollider::SetSlideThreshold(float pSlide)
    {
       mSlideThreshold = pSlide;
    }
 
+   ////////////////////////////////////////////////////////////////////////////
    float FPSCollider::GetSlideSpeed() const
    {
       return mSlideSpeed;
    }
 
+   ////////////////////////////////////////////////////////////////////////////
    void FPSCollider::SetSlideSpeed(float pSpeed)
    {
       mSlideSpeed = pSpeed;
    }
 
+   ////////////////////////////////////////////////////////////////////////////
    float FPSCollider::GetJumpSpeed() const
    {
       return mJumpSpeed;
    }
 
+   ////////////////////////////////////////////////////////////////////////////
    void FPSCollider::SetJumpSpeed(float pSpeed)
    {
       mJumpSpeed = pSpeed;
    }
 
+   ////////////////////////////////////////////////////////////////////////////
    float FPSCollider::GetHeightAboveTerrain() const
    {
       return mHeightAboveTerrain;
    }
 
+   ////////////////////////////////////////////////////////////////////////////
    void FPSCollider::SetDimensions(float pHeight, float pRadius, float k, float theta)
    {
       if (mBBFeet) dGeomDestroy(mBBFeet);
@@ -163,44 +167,58 @@ namespace dtCore
       InitBoundingVolumes();
    }
 
+   ////////////////////////////////////////////////////////////////////////////
    unsigned long FPSCollider::GetCollisionBitsForFeet() const
    {
       return dGeomGetCollideBits(mBBFeet);
    }
 
+   ////////////////////////////////////////////////////////////////////////////
    void FPSCollider::SetCollisionBitsForFeet(unsigned long bits)
    {
       dGeomSetCollideBits(mBBFeet, bits);
    }
 
+   ////////////////////////////////////////////////////////////////////////////
    unsigned long FPSCollider::GetCollisionBitsForTorso() const
    {
       return dGeomGetCollideBits(mBBTorso);
    }
 
+   ////////////////////////////////////////////////////////////////////////////
    void FPSCollider::SetCollisionBitsForTorso(unsigned long bits)
    {
       dGeomSetCollideBits(mBBTorso, bits);
    }
 
+   /////////////////////////////////////////////////////////////////////////////
+   void FPSCollider::Reset()
+   {
+      mLastVelocity = osg::Vec3();
+      mSlideVelocity = osg::Vec3();
+      mFallSpeed = 0.0f;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
    dGeomID FPSCollider::GetFeetGeom()
    {
       return mBBFeet;
    }
 
+   ////////////////////////////////////////////////////////////////////////////
    dGeomID FPSCollider::GetTorsoGeom()
    {
       return mBBTorso;
    }
 
-
+   ////////////////////////////////////////////////////////////////////////////
    void FPSCollider::InitBoundingVolumes()
    {
       CreateCollisionCylinder((dWorldID)mCollisionSpace, mSpaceID, mBBFeet, mBBFeetLengths);
       CreateCollisionCylinder((dWorldID)mCollisionSpace, mSpaceID, mBBTorso, mBBTorsoLengths);
    }
 
-
+   ////////////////////////////////////////////////////////////////////////////
    void FPSCollider::CreateCollisionCylinder(dWorldID pWorldId, dSpaceID pSpaceId, dGeomID& pId, const osg::Vec3& pLengths)
    {
       pId = dCreateGeomTransform(0);
@@ -208,14 +226,13 @@ namespace dtCore
       dGeomTransformSetGeom(pId, dCreateCylinder(0, pLengths[1], pLengths[2]));
 
       dSpaceAdd(pSpaceId, pId);
-      dGeomSetData(pId, this );
+      dGeomSetData(pId, this);
 
-      dGeomSetCategoryBits( pId, 0 );
-      dGeomSetCollideBits( pId, 0xFFFFFFFF );
+      dGeomSetCategoryBits(pId, 0);
+      dGeomSetCollideBits(pId, 0xFFFFFFFF);
    }
 
-
-
+   ////////////////////////////////////////////////////////////////////////////
    bool FPSCollider::TestPosition(osg::Vec3& newPos, float dt)
    {
       UpdateBoundingVolumes(newPos);
@@ -273,6 +290,7 @@ namespace dtCore
       return CollideTorso();
    }
 
+   ////////////////////////////////////////////////////////////////////////////
    bool FPSCollider::CollideTorso()
    {
       mNormals.clear();
@@ -283,6 +301,7 @@ namespace dtCore
       return mNumTorsoContactPoints > 0;
    }
 
+   ////////////////////////////////////////////////////////////////////////////
    bool FPSCollider::CollideFeet()
    {
       mNormals.clear();
@@ -295,7 +314,7 @@ namespace dtCore
       return mNumFeetContactPoints > 0;
    }
 
-
+   ////////////////////////////////////////////////////////////////////////////
    void FPSCollider::HandleCollideTorso(dGeomID pFeet, dGeomID pObject)
    {
       if (pObject == GetFeetGeom()) return;
@@ -329,6 +348,7 @@ namespace dtCore
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////
    void FPSCollider::HandleCollideFeet(dGeomID pFeet, dGeomID pObject)
    {
       if (pObject == GetTorsoGeom()) return;
@@ -390,7 +410,7 @@ namespace dtCore
 
    }
 
-   // ODE collision callback
+   ////////////////////////////////////////////////////////////////////////////
    void FPSCollider::NearCallbackFeet( void* data, dGeomID o1, dGeomID o2 )
    {
       if ( data == NULL || o1 == 0 || o2 == 0 )
@@ -410,7 +430,7 @@ namespace dtCore
       }
    }
 
-   // ODE collision callback
+   ////////////////////////////////////////////////////////////////////////////
    void FPSCollider::NearCallbackTorso( void* data, dGeomID o1, dGeomID o2 )
    {
       if ( data == NULL || o1 == 0 || o2 == 0 )
@@ -430,7 +450,7 @@ namespace dtCore
       }
    }
 
-
+   ////////////////////////////////////////////////////////////////////////////
    void FPSCollider::UpdateBoundingVolumes(const osg::Vec3& xyz)
    {
       osg::Vec3 newVec = xyz - mBBFeetOffset;
@@ -440,6 +460,7 @@ namespace dtCore
       dGeomSetPosition(mBBTorso, torso[0], torso[1], torso[2]);
    }
 
+   ////////////////////////////////////////////////////////////////////////////
    void FPSCollider::dTriArrayCallback(dGeomID TriMesh, dGeomID RefObject, const int* TriIndices, int TriCount)
    {
 
@@ -468,7 +489,7 @@ namespace dtCore
 
    }
 
-
+   ////////////////////////////////////////////////////////////////////////////
    osg::Vec3 FPSCollider::Update(const osg::Vec3& p0, const osg::Vec3& velocity, float deltaFrameTime, bool pJump)
    {
       osg::Vec3 v0, v1, p1, newXYZ;
@@ -486,9 +507,12 @@ namespace dtCore
       {
       case FALLING:
          {
-            mFallingVelocity[2] = mLastVelocity[2] + mGravity[2] * deltaFrameTime;
-            if (mFallingVelocity[2] < mTerminalVelocity[2]) mFallingVelocity[2] = mTerminalVelocity[2];
-            v0 = osg::Vec3(mLastVelocity[0], mLastVelocity[1], mFallingVelocity[2]);
+            mFallSpeed = mLastVelocity[2] + mGravity[2] * deltaFrameTime;
+            if (mFallSpeed < mTerminalSpeed) 
+            {
+               mFallSpeed = mTerminalSpeed;
+            }
+            v0 = osg::Vec3(mLastVelocity[0], mLastVelocity[1], mFallSpeed);
             p1 = p0 + osg::Vec3(v0[0] * deltaFrameTime, v0[1] * deltaFrameTime, v0[2] * deltaFrameTime);
          }
          break;

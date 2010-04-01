@@ -134,8 +134,13 @@ namespace dtCore
          * @return the bits used to determine what the torso can collide with
          */
          unsigned long GetCollisionBitsForTorso() const;
-         void SetCollisionBitsForTorso(unsigned long bits);     
-   
+         void SetCollisionBitsForTorso(unsigned long bits);
+
+         /*
+         * Resets the current velocities to 0.
+         */
+         void Reset();
+
       private:
 
          void UpdateBoundingVolumes(const osg::Vec3& xyz);
@@ -183,22 +188,18 @@ namespace dtCore
 
          bool mJumped;
 
-         float mAirControl;
-         bool mFreeFall;
-         double mFreeFallCounter;
-
          eMode mCurrentMode;
 
          float mSlideThreshold;
          float mSlideSpeed;
          float mJumpSpeed;
+         float mFallSpeed;
+         float mTerminalSpeed;
          float mHeightAboveTerrain;
          float mMaxStepUpDistance;
 
-         osg::Vec3 mTerminalVelocity;
          osg::Vec3 mLastVelocity;
          osg::Vec3 mSlideVelocity;
-         osg::Vec3 mFallingVelocity;
          osg::Vec3 mGravity;
 
          dSpaceID mCollisionSpace;
