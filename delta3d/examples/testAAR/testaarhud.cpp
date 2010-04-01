@@ -229,69 +229,69 @@ void TestAARHUD::SetupGUI(dtCore::Camera& cam, dtCore::Keyboard& keyboard, dtCor
 
       // HELP - Speed Settings
       curYPos = mTextYTopOffset;
-      mHelp1Text = CreateText(std::string("Help1"), mHelpOverlay, std::string("[-] Slower (min 0.1X)"),
+      mHelp1Text = CreateText(std::string("Help1"), mHelpOverlay, std::string("\\[-] Slower (min 0.1X)"),
          5, curYPos, helpTextWidth, mTextHeight + 2);
       curYPos += mTextHeight + 2;
-      mHelp2Text = CreateText(std::string("Help2"), mHelpOverlay, std::string("[+] Faster (max 10.0X)"),
+      mHelp2Text = CreateText(std::string("Help2"), mHelpOverlay, std::string("\\[+] Faster (max 10.0X)"),
          5, curYPos, helpTextWidth, mTextHeight + 2);
       curYPos += mTextHeight + 2;
-      mHelp3Text = CreateText(std::string("Help3"), mHelpOverlay, std::string("[0] Normal Speed (1.0X)"),
+      mHelp3Text = CreateText(std::string("Help3"), mHelpOverlay, std::string("\\[0] Normal Speed (1.0X)"),
          5, curYPos, helpTextWidth, mTextHeight + 2);
       curYPos += mTextHeight + 2;
-      mHelp7Text = CreateText(std::string("Help7"), mHelpOverlay, std::string("[P] Pause/Unpause"),
+      mHelp7Text = CreateText(std::string("Help7"), mHelpOverlay, std::string("\\[P] Pause/Unpause"),
          5, curYPos, helpTextWidth, mTextHeight + 2);
 
       // HELP - Camera Movement
       curYPos += mTextHeight * 2;
-      mHelp17Text = CreateText(std::string("Help17"), mHelpOverlay, std::string("[Mouse] Turn Camera"),
+      mHelp17Text = CreateText(std::string("Help17"), mHelpOverlay, std::string("\\[Mouse] Turn Camera"),
          5, curYPos, helpTextWidth, mTextHeight + 2);
       curYPos += mTextHeight + 2;
-      mHelp13Text = CreateText(std::string("Help13"), mHelpOverlay, std::string("[A & D] Move Camera Left & Right"),
+      mHelp13Text = CreateText(std::string("Help13"), mHelpOverlay, std::string("\\[A & D] Move Camera Left & Right"),
          5, curYPos, helpTextWidth, mTextHeight + 2);
       curYPos += mTextHeight + 2;
-      mHelp14Text = CreateText(std::string("Help14"), mHelpOverlay, std::string("[W & S] Move Camera Forward and Back"),
+      mHelp14Text = CreateText(std::string("Help14"), mHelpOverlay, std::string("\\[W & S] Move Camera Forward and Back"),
          5, curYPos, helpTextWidth, mTextHeight + 2);
 
       // HELP - Player Movement
       curYPos += mTextHeight * 2;
-      mHelp15Text = CreateText(std::string("Help15"), mHelpOverlay, std::string("[J & L] Turn Player Left & Right"),
+      mHelp15Text = CreateText(std::string("Help15"), mHelpOverlay, std::string("\\[J & L] Turn Player Left & Right"),
          5, curYPos, helpTextWidth, mTextHeight + 2);
       curYPos += mTextHeight + 2;
-      mHelp16Text = CreateText(std::string("Help16"), mHelpOverlay, std::string("[I & K] Move Player Forward and Back"),
+      mHelp16Text = CreateText(std::string("Help16"), mHelpOverlay, std::string("\\[I & K] Move Player Forward and Back"),
          5, curYPos, helpTextWidth, mTextHeight + 2);
 
       // HELP - Idle, Record, and playback
       curYPos += mTextHeight * 2;
-      mHelp4Text = CreateText(std::string("Help4"), mHelpOverlay, std::string("[1] Goto IDLE Mode (Ends record & playback)"),
+      mHelp4Text = CreateText(std::string("Help4"), mHelpOverlay, std::string("\\[1] Goto IDLE Mode (Ends record & playback)"),
          5, curYPos, helpTextWidth, mTextHeight + 2);
       curYPos += mTextHeight + 2;
-      mHelp5Text = CreateText(std::string("Help5"), mHelpOverlay, std::string("[2] Begin RECORD Mode (From Idle ONLY)"),
+      mHelp5Text = CreateText(std::string("Help5"), mHelpOverlay, std::string("\\[2] Begin RECORD Mode (From Idle ONLY)"),
          5, curYPos, helpTextWidth, mTextHeight + 2);
       curYPos += mTextHeight + 2;
-      mHelp6Text = CreateText(std::string("Help6"), mHelpOverlay, std::string("[3] Begin PLAYBACK Mode (From Idle ONLY)"),
+      mHelp6Text = CreateText(std::string("Help6"), mHelpOverlay, std::string("\\[3] Begin PLAYBACK Mode (From Idle ONLY)"),
          5, curYPos, helpTextWidth, mTextHeight + 2);
       curYPos += mTextHeight + 2;
-      mHelp18Text = CreateText(std::string("Help18"), mHelpOverlay, std::string("[< & >] Prev & Next Keyframe (From Playback ONLY)"),
+      mHelp18Text = CreateText(std::string("Help18"), mHelpOverlay, std::string("\\[< & >] Prev & Next Keyframe (From Playback ONLY)"),
          5, curYPos, helpTextWidth, mTextHeight + 2);
 
       // HELP - Misc
       curYPos += mTextHeight * 2;
-      mHelp8Text = CreateText(std::string("Help8"), mHelpOverlay, std::string("[B] Place Object"),
+      mHelp8Text = CreateText(std::string("Help8"), mHelpOverlay, std::string("\\[B] Place Object"),
          5, curYPos, helpTextWidth, mTextHeight + 2);
       curYPos += mTextHeight * 2;
-      mHelp19Text = CreateText(std::string("Help19"), mHelpOverlay, std::string("[G] Place Ignorable Object"),
+      mHelp19Text = CreateText(std::string("Help19"), mHelpOverlay, std::string("\\[G] Place Ignorable Object"),
          5, curYPos, helpTextWidth, mTextHeight + 2);
       curYPos += mTextHeight + 2;
-      mHelp11Text = CreateText(std::string("Help11"), mHelpOverlay, std::string("[F] Insert Keyframe"),
+      mHelp11Text = CreateText(std::string("Help11"), mHelpOverlay, std::string("\\[F] Insert Keyframe"),
          5, curYPos, helpTextWidth, mTextHeight + 2);
       curYPos += mTextHeight + 2;
-      mHelp12Text = CreateText(std::string("Help12"), mHelpOverlay, std::string("[T] Insert Tag"),
+      mHelp12Text = CreateText(std::string("Help12"), mHelpOverlay, std::string("\\[T] Insert Tag"),
          5, curYPos, helpTextWidth, mTextHeight + 2);
       curYPos += mTextHeight + 2;
-      mHelp9Text = CreateText(std::string("Help9"), mHelpOverlay, std::string("[Enter] Toggle Statistics"),
+      mHelp9Text = CreateText(std::string("Help9"), mHelpOverlay, std::string("\\[Enter] Toggle Statistics"),
          5, curYPos, helpTextWidth, mTextHeight + 2);
       curYPos += mTextHeight + 2;
-      mHelp10Text = CreateText(std::string("Help10"), mHelpOverlay, std::string("[Space] Update Logger Status"),
+      mHelp10Text = CreateText(std::string("Help10"), mHelpOverlay, std::string("\\[Space] Update Logger Status"),
          5, curYPos, helpTextWidth, mTextHeight + 2);
 
       // finally, update our state - disable/hide to make it match current state
@@ -716,6 +716,7 @@ void TestAARHUD::UpdateState()
    }
 }
 
+#include <iostream>
 //////////////////////////////////////////////////////////////////////////
 CEGUI::Window* TestAARHUD::CreateText(const std::string& name, CEGUI::Window* parent, const std::string& text,
                                  float x, float y, float width, float height)
@@ -733,6 +734,8 @@ CEGUI::Window* TestAARHUD::CreateText(const std::string& name, CEGUI::Window* pa
    result->setProperty("TextColours", 
       CEGUI::PropertyHelper::colourToString(CEGUI::colour(1.0f, 1.0f, 1.0f)));
    result->show();
+
+   std::cout << result->getText().c_str() << std::endl;
 
    return result;
 }
