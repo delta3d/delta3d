@@ -268,8 +268,38 @@ namespace dtUtil
           */
          void GetFlatEarthOrigin(osg::Vec2d& originLLOut) const;
 
+         /**
+          *  By default, the origin rotation matrix is set using the local coordinate space
+          *  translation origin converted to remote / incoming translation. That is,
+          *  if the remote coordinate system uses a geoid-based cartesian model, and the local uses
+          *  a flat cartesian model, then the rotation conversion will drift away from correct
+          *  the farther a position is from the point of reference.  If this is set with the remote position
+          *  before converting the rotation each time, then no drift will occur.
+          *
+          *  This takes into account the incoming/remote coordinates type when calculating the matrix.
+          * @see #ReconfigureRotationMatrix
+          * @see #GetOriginRotationMatrix
+          * @see #GetOriginRotationMatrixInverse
+          */
+         void SetRemoteReferenceForOriginRotationMatrix(const osg::Vec3d& translation);
+
+         /**
+          * Set the origin rotation matrix to the default of local coordinate space translation
+          * origin converted the remote / incoming translation.
+          *
+          * This is called whenever the incoming or local coordinate types are changed.
+          * The only reason to call this from code is to reset the matrix if
+          * SetRemoteReferenceForOriginRotationMatrix is called.
+          * @see #SetRemoteReferenceForOriginRotationMatrix
+          * @see #GetOriginRotationMatrix
+          * @see #GetOriginRotationMatrixInverse
+          */
+         void ReconfigureRotationMatrix();
+
+         /// @return the rotation matrix that will convert incoming rotations to local rotations.
          const osg::Matrix& GetOriginRotationMatrix() const;
 
+         /// @return the rotation matrix that will convert local rotations to incoming rotations.
          const osg::Matrix& GetOriginRotationMatrixInverse() const;
 
          /**
@@ -564,11 +594,13 @@ namespace dtUtil
 
          osg::Vec3 ConvertMGRSToXYZ(const std::string& mgrs);
 
-         /// Called to recompute the rotation conversion matrix based on the configuration.
-         void ReconfigureRotationMatrix();
       private:
 
-         void CalculateLocalRotationMatrixLL(double latitude, double longitude);
+         /**
+          * Calculates the origin rotation matrix from a lat lon.  phi and lambda are
+          * lat and lon in radians.
+          */
+         void CalculateLocalRotationMatrixLL(double phi, double lambda);
 
          Log* mLogger;
 
