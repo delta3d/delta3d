@@ -284,6 +284,11 @@ void CoordinateTests::TestGeocentricToCartesianUTMConversions()
 
       CPPUNIT_ASSERT(dtUtil::Equivalent(result, osg::Vec3(21374.867188f, 1782.304321f, 546.114380f), 1e-4f));
       CPPUNIT_ASSERT(dtUtil::Equivalent(resultRot, osg::Vec3(0.101202436f, -0.146504357f, 0.14817293f), 1e-4f));
+      converter->SetRemoteReferenceForOriginRotationMatrix(testLoc);
+      resultRot = converter->ConvertToLocalRotation(testRot[0], testRot[1], testRot[2]);
+      CPPUNIT_ASSERT_MESSAGE("After having the reference of rotation moved to the actually location, the rotation should change slightly, and be"
+               "a bit closer to a zero rotation.",
+               dtUtil::Equivalent(resultRot, osg::Vec3(-0.0299f, -0.13204f, -0.043829f), 1e-4f));
 
       osg::Vec3d resultBack = converter->ConvertToRemoteTranslation(result);
       osg::Vec3 resultRotBack = converter->ConvertToRemoteRotation(resultRot);
@@ -303,6 +308,8 @@ void CoordinateTests::TestGeocentricToCartesianUTMConversions()
       osg::Vec3d testLoc(-2.32164e6, -4.74037e6, 3.56934e6);
       osg::Vec3 testRot(-1.1564f, 0.833645f, -2.42036f);
 
+      // clear any adjustments
+      converter->ReconfigureRotationMatrix();
       osg::Vec3 result = converter->ConvertToLocalTranslation(testLoc);
       osg::Vec3 resultRot = converter->ConvertToLocalRotation(testRot[0], testRot[1], testRot[2]);
 

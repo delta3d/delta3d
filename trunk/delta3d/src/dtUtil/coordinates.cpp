@@ -263,14 +263,14 @@ namespace dtUtil
          {
             // The incoming origin is the lat lon that is the point of reference, so it should be
             // good for this
-            CalculateLocalRotationMatrixLL(mFlatEarthOrigin[0], mFlatEarthOrigin[1]);
+            CalculateLocalRotationMatrixLL(osg::DegreesToRadians(mFlatEarthOrigin[0]), osg::DegreesToRadians(mFlatEarthOrigin[1]));
          }
          else if (*mLocalCoordinateType == LocalCoordinateType::CARTESIAN_UTM)
          {
-            double lat, lon;
+            double phi, lambda;
             //Use the configured utm zone, and local offset values to get a better approximation.
-            ConvertUTMToGeodetic(mUTMZone, mUTMHemisphere, mLocalOffset.x(), mLocalOffset.y(), lat, lon);
-            CalculateLocalRotationMatrixLL(osg::RadiansToDegrees(lat), osg::RadiansToDegrees(lon));
+            ConvertUTMToGeodetic(mUTMZone, mUTMHemisphere, mLocalOffset.x(), mLocalOffset.y(), phi, lambda);
+            CalculateLocalRotationMatrixLL(phi, lambda);
          }
          else if (*mLocalCoordinateType == LocalCoordinateType::GLOBE)
          {
@@ -307,11 +307,12 @@ namespace dtUtil
          SetUTMHemisphere('S');
       }
 
-      ConvertGeodeticToUTM(osg::DegreesToRadians(latitude),
-                           osg::DegreesToRadians(longitude), mUTMZone, mUTMHemisphere, mLocalOffset[0], mLocalOffset[1]);
+      double phi = osg::DegreesToRadians(latitude);
+      double lambda = osg::DegreesToRadians(longitude);
+      ConvertGeodeticToUTM(phi, lambda, mUTMZone, mUTMHemisphere, mLocalOffset[0], mLocalOffset[1]);
 
       mLocalOffset[2] = lle[2];
-      CalculateLocalRotationMatrixLL(latitude, longitude);
+      CalculateLocalRotationMatrixLL(phi, lambda);
       /// We just recomputed the rotation, so its not dirty.
       mRotationDirty = false;
    }
@@ -365,43 +366,72 @@ namespace dtUtil
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void Coordinates::CalculateLocalRotationMatrixLL(double latitude, double longitude)
+   void Coordinates::CalculateLocalRotationMatrixLL(double phi, double lambda)
    {
-      double lat = osg::DegreesToRadians(latitude);
-
-//      unsigned zone;
-//      char nsZone;
-//      CalculateUTMZone(latitude, longitude, zone, nsZone);
-//      double Central_Meridian;
-//      if (zone >= 31)
-//        Central_Meridian = osg::DegreesToRadians(double(6 * zone - 183));
-//      else
-//        Central_Meridian = osg::DegreesToRadians(double(6 * zone + 177));
-//
-//      if (Central_Meridian > osg::PI)
-//        Central_Meridian -= (2.0 * osg::PI);
-
-//      double lon = Central_Meridian;
-      double lon = osg::DegreesToRadians(longitude);
-
-      double sin_lat = sin(lat);
-      double cos_lat = cos(lat);
-      double sin_lon = sin(lon);
-      double cos_lon = cos(lon);
-
-      mRotationOffset.makeIdentity();
+      double sin_lat = sin(phi);
+      double cos_lat = cos(phi);
+      double sin_lon = sin(lambda);
+      double cos_lon = cos(lambda);
 
       mRotationOffset(0,0) = -sin_lon;
       mRotationOffset(0,1) = -sin_lat * cos_lon;
       mRotationOffset(0,2) =  cos_lat * cos_lon;
+      mRotationOffset(0,3) =  0.0;
+
       mRotationOffset(1,0) =  cos_lon;
       mRotationOffset(1,1) = -sin_lat * sin_lon;
       mRotationOffset(1,2) =  cos_lat * sin_lon;
-      mRotationOffset(2,0) =  0;
+      mRotationOffset(1,3) =  0.0;
+
+      mRotationOffset(2,0) =  0.0;
       mRotationOffset(2,1) =  cos_lat;
       mRotationOffset(2,2) =  sin_lat;
+      mRotationOffset(2,3) =  0.0;
+
+      mRotationOffset.setTrans(0.0, 0.0, 0.0);
+      mRotationOffset(3,3) =  1.0;
 
       mRotationOffsetInverse.invert(mRotationOffset);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void Coordinates::SetRemoteReferenceForOriginRotationMatrix(const osg::Vec3d& translation)
+   {
+      if (*mIncomingCoordinateType == IncomingCoordinateType::GEOCENTRIC ||
+               *mIncomingCoordinateType == IncomingCoordinateType::GEODETIC)
+      {
+         double phi, lambda, elevation;
+
+         if (*mIncomingCoordinateType == IncomingCoordinateType::GEOCENTRIC)
+         {
+            ConvertGeocentricToGeodetic(translation[0], translation[1], translation[2],
+                     phi, lambda, elevation);
+         }
+         else
+         {
+            phi = osg::DegreesToRadians(translation[0]);
+            lambda = osg::DegreesToRadians(translation[1]);
+         }
+
+         if (*mLocalCoordinateType == LocalCoordinateType::CARTESIAN_FLAT_EARTH ||
+                  *mLocalCoordinateType == LocalCoordinateType::CARTESIAN_UTM)
+         {
+            CalculateLocalRotationMatrixLL(phi, lambda);
+         }
+         else if (*mLocalCoordinateType == LocalCoordinateType::GLOBE)
+         {
+            // No conversion is done at all on globe, so we just make them indentity.
+            mRotationOffset.makeIdentity();
+            mRotationOffsetInverse.makeIdentity();
+         }
+      }
+      else if (*mIncomingCoordinateType == IncomingCoordinateType::UTM)
+      {
+         // UTM incoming to globe isn't supported right now, so this doesn't do anything for that.
+         mRotationOffset.makeIdentity();
+         mRotationOffsetInverse.makeIdentity();
+      }
+      mRotationDirty = false;
    }
 
    /////////////////////////////////////////////////////////////////////////////

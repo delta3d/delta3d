@@ -215,7 +215,10 @@ namespace dtHLAGM
                              position.x(), position.y(), position.z());
       }
 
-      return mCoordinates.ConvertToRemoteTranslation(position);
+      osg::Vec3d worldPos = mCoordinates.ConvertToRemoteTranslation(position);
+      // assume that rotation is always updated after translation.
+      mCoordinates.SetRemoteReferenceForOriginRotationMatrix(worldPos);
+      return worldPos;
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -736,8 +739,10 @@ namespace dtHLAGM
             dtGame::MessageParameter& parameter) const
    {
       osg::Vec3 position = mCoordinates.ConvertToLocalTranslation(worldCoord);
+      // assume that rotation is always updated after translation.
+      mCoordinates.SetRemoteReferenceForOriginRotationMatrix(worldCoord);
 
-      if(mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+      if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
          "The world coordinate was converted a local coordinate %lf %lf %lf",
             position[0], position[1], position[2]);

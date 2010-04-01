@@ -2115,7 +2115,7 @@ namespace dtHLAGM
          {
             mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
                                 "Ignoring actor '" + actorName +
-                                "' with type '" + actorType->GetName() +
+                                "' with type '" + actorType->GetFullName() +
                                 "', no mapping defined for it.");
          }
          return;
