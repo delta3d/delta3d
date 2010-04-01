@@ -111,6 +111,7 @@ namespace dtGame
       RegisterMessageType<Message>(MessageType::LOG_REQ_ADD_IGNORED_ACTOR);
       RegisterMessageType<Message>(MessageType::LOG_REQ_REMOVE_IGNORED_ACTOR);
       RegisterMessageType<Message>(MessageType::LOG_REQ_CLEAR_IGNORE_LIST);
+      RegisterMessageType<Message>(MessageType::LOG_INFO_PLAYBACK_END_OF_MESSAGES);
 
       //Game Event...
       RegisterMessageType<GameEventMessage>(MessageType::INFO_GAME_EVENT);
