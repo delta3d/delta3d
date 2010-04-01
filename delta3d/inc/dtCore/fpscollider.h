@@ -124,22 +124,27 @@ namespace dtCore
          */
          void SetDimensions(float pHeight, float pRadius, float k, float theta);
 
-         /*
+         /**
          * @return the bits used to determine what the feet can collide with
          */
          unsigned long GetCollisionBitsForFeet() const;
          void SetCollisionBitsForFeet(unsigned long bits);    
 
-         /*
+         /**
          * @return the bits used to determine what the torso can collide with
          */
          unsigned long GetCollisionBitsForTorso() const;
          void SetCollisionBitsForTorso(unsigned long bits);
 
-         /*
+         /**
          * Resets the current velocities to 0.
          */
          void Reset();
+
+         /** 
+         * @return The last velocity vector used
+         */
+         osg::Vec3 GetLastVelocity() const;
 
       private:
 

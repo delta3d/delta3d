@@ -573,5 +573,10 @@ namespace dtCore
       return newXYZ;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   osg::Vec3 FPSCollider::GetLastVelocity() const
+   {
+      return mLastVelocity;
+   }
 
 }//namespace dtCore
