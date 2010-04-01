@@ -46,12 +46,18 @@ ENDMACRO(_PCH_GET_COMPILE_FLAGS)
 
 MACRO(ADD_PRECOMPILED_HEADER Target PrecompiledHeader PrecompiledSource SourcesVar)
 if (BUILD_WITH_PCH)
+  FIND_PATH(PCH_HEADER_PATH ${PrecompiledHeader}
+    PATH_SUFFIXES inc include
+    PATHS
+    ${CMAKE_SOURCE_DIR}
+  )
+
   IF(MSVC)
-    GET_FILENAME_COMPONENT(PrecompiledBasename ${CMAKE_SOURCE_DIR}/inc/${PrecompiledHeader} NAME_WE)
+    GET_FILENAME_COMPONENT(PrecompiledBasename ${PCH_HEADER_PATH}/${PrecompiledHeader} NAME_WE)
     SET(PrecompiledBinary "${CMAKE_CFG_INTDIR}/${PrecompiledBasename}.pch") #will create .pch file in a folder corresponding with build type (debug, release, etc)
     SET(Sources ${${SourcesVar}})
 
-    SET_SOURCE_FILES_PROPERTIES(${CMAKE_SOURCE_DIR}/inc/${PrecompiledSource}
+    SET_SOURCE_FILES_PROPERTIES(${PCH_HEADER_PATH}/${PrecompiledSource}
                                 PROPERTIES COMPILE_FLAGS "/Yc\"${PrecompiledHeader}\" /Fp\"${PrecompiledBinary}\""
                                            OBJECT_OUTPUTS "${PrecompiledBinary}")
     SET_SOURCE_FILES_PROPERTIES(${Sources}
@@ -61,16 +67,16 @@ if (BUILD_WITH_PCH)
     LIST(APPEND ${SourcesVar} ${CMAKE_SOURCE_DIR}/inc/${PrecompiledSource})
   ELSE (MSVC)
     IF(CMAKE_COMPILER_IS_GNUCXX)
-    GET_FILENAME_COMPONENT(PrecompiledBasename ${CMAKE_SOURCE_DIR}/inc/${PrecompiledHeader} NAME)
+    GET_FILENAME_COMPONENT(PrecompiledBasename ${PCH_HEADER_PATH}/${PrecompiledHeader} NAME)
     SET(PrecompiledBinary "${CMAKE_CURRENT_BINARY_DIR}/${PrecompiledBasename}.gch")
     SET(Sources ${${SourcesVar}})
     
     _PCH_GET_COMPILE_FLAGS(${Target} FLAGS)
 
     add_custom_command(OUTPUT ${PrecompiledBinary}
-                     MAIN_DEPENDENCY ${CMAKE_SOURCE_DIR}/inc/${PrecompiledSource}
-                     Depends  ${CMAKE_SOURCE_DIR}/inc/${PrecompiledHeader}
-                     COMMAND ${CMAKE_CXX_COMPILER} ${FLAGS} -Winvalid-pch -x c++-header ${CMAKE_SOURCE_DIR}/inc/${PrecompiledSource} -o ${PrecompiledBinary}
+                     MAIN_DEPENDENCY $${PCH_HEADER_PATH}/${PrecompiledSource}
+                     Depends  ${PCH_HEADER_PATH}/${PrecompiledHeader}
+                     COMMAND ${CMAKE_CXX_COMPILER} ${FLAGS} -Winvalid-pch -x c++-header ${PCH_HEADER_PATH}/${PrecompiledSource} -o ${PrecompiledBinary}
                      WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
                      )
 
@@ -78,7 +84,7 @@ if (BUILD_WITH_PCH)
                                 PROPERTIES COMPILE_FLAGS "-I${CMAKE_CURRENT_BINARY_DIR} -Winvalid-pch -include ${PrecompiledBasename}"
                                            OBJECT_DEPENDS "${PrecompiledBinary}")  
     # Add precompiled header to SourcesVar
-    # LIST(APPEND ${SourcesVar} ${CMAKE_SOURCE_DIR}/inc/${PrecompiledSource})
+    # LIST(APPEND ${SourcesVar} ${PCH_HEADER_PATH}/${PrecompiledSource})
     ENDIF(CMAKE_COMPILER_IS_GNUCXX)
   ENDIF(MSVC)
 endif (BUILD_WITH_PCH)
