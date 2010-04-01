@@ -205,7 +205,9 @@ void InputComponent::OnGame()
       mMotionModel->SetUseMouseButtons(false);
       mMotionModel->SetCanJump(false);
    }
+
    mMotionModel->SetTarget(mPlayer);
+   mMotionModel->GetFPSCollider().Reset();
 
    // Turn off the scene light and use the light maps/shadow maps
    dtCore::Camera& camera = *GetGameManager()->GetApplication().GetCamera();
