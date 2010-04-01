@@ -107,7 +107,7 @@ TestAARHUD::TestAARHUD(dtABC::BaseABC& app,
    , mRightTextXOffset(180.0f)
    , mTextYTopOffset(10.0f)
    , mTextYSeparation(2.0f)
-   , mTextHeight(20.0f)
+   , mTextHeight(14.0f)
 {
    SetupGUI(*app.GetCamera(), *app.GetKeyboard(), *app.GetMouse());
 }
@@ -716,7 +716,6 @@ void TestAARHUD::UpdateState()
    }
 }
 
-#include <iostream>
 //////////////////////////////////////////////////////////////////////////
 CEGUI::Window* TestAARHUD::CreateText(const std::string& name, CEGUI::Window* parent, const std::string& text,
                                  float x, float y, float width, float height)
@@ -734,8 +733,6 @@ CEGUI::Window* TestAARHUD::CreateText(const std::string& name, CEGUI::Window* pa
    result->setProperty("TextColours", 
       CEGUI::PropertyHelper::colourToString(CEGUI::colour(1.0f, 1.0f, 1.0f)));
    result->show();
-
-   std::cout << result->getText().c_str() << std::endl;
 
    return result;
 }
