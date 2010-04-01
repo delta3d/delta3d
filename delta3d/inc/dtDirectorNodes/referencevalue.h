@@ -124,9 +124,11 @@ namespace dtDirector
       /**
        * Retrieves the property for this value.
        *
+       * @param[in]  index  The property index, in case this is an array value.
+       *
        * @return  The property.
        */
-      virtual dtDAL::ActorProperty* GetProperty();
+      virtual dtDAL::ActorProperty* GetProperty(int index);
 
       /**
        * Retrieves whether the value can be a specified type.

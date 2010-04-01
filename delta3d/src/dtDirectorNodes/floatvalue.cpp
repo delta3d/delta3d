@@ -72,7 +72,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    float FloatValue::GetValue()
    {
-      return mValue;
       ValueNode::OnValueRetrieved();
+      return mValue;
    }
 }

@@ -72,7 +72,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    dtDAL::ResourceDescriptor StaticMeshValue::GetValue()
    {
-      return mValue;
       ValueNode::OnValueRetrieved();
+      return mValue;
    }
 }

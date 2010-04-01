@@ -72,7 +72,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    const std::string& StringValue::GetValue()
    {
-      return mValue;
       ValueNode::OnValueRetrieved();
+      return mValue;
    }
 }

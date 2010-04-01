@@ -19,11 +19,13 @@
  * Author: Jeff P. Houde
  */
 
-#ifndef DIRECTOR_EXTERNAL_VALUE_NODE
-#define DIRECTOR_EXTERNAL_VALUE_NODE
+#ifndef DIRECTOR_ARRAY_VALUE_NODE
+#define DIRECTOR_ARRAY_VALUE_NODE
 
-#include <dtDirectorNodes/nodelibraryexport.h>
+#include <dtDirector/export.h>
 #include <dtDirector/valuenode.h>
+
+#include <dtDAL/arrayactorpropertybase.h>
 
 namespace dtDAL
 {
@@ -35,25 +37,24 @@ namespace dtDirector
    class ValueLink;
 
    /**
-   * This node, when used inside a sub tier, will expose
-   * a value link when viewing that tier from the outside.
+    * This is the base class for all value nodes that contain an array of values.
     *
     * @note
-    *      Node objects must be created through the NodePluginRegistry or
+    *      ValueNode objects must be created through the NodePluginRegistry or
     *      the NodeManager. If they are not created in this fashion,
     *      the node types will not be set correctly.
     */
-   class NODE_LIBRARY_EXPORT ExternalValueNode : public ValueNode
+   class DT_DIRECTOR_EXPORT ArrayValueNode : public ValueNode
    {
    public:
 
       /**
-       * Constructs the Node.
+       * Constructs the ValueNode.
        */
-      ExternalValueNode();
+      ArrayValueNode();
 
       /**
-       * Initializes the Node.
+       * Initializes the ValueNode.
        *
        * @param[in]  nodeType  The node type.
        * @param[in]  graph     The graph that owns this node.
@@ -73,48 +74,9 @@ namespace dtDirector
       virtual void BuildPropertyMap();
 
       /**
-       * This event is called by value nodes that are linked via
-       * value links when that value has changed.
-       *
-       * @param[in]  linkName  The name of the value link that is changing.
-       */
-      virtual void OnLinkValueChanged(const std::string& linkName);
-
-      /**
        * Accessors for the name of the node.
        */
-      virtual void SetValueName(const std::string& name);
       virtual std::string GetValueLabel();
-
-      /**
-       * Event handler when a connection has changed.
-       */
-      virtual void OnConnectionChange();
-
-      /**
-       * Retrieves the total number of values linked to a property.
-       *
-       * @param[in]  name  The name of the property.
-       *
-       * @return     The count.
-       */
-      virtual int GetPropertyCount(const std::string& name = "Value");
-
-      /**
-       * Retrieves a property of the given name.  This is overloaded
-       * to provide functionality of redirected properties (from the
-       * use of ValueLink's).
-       *
-       * @param[in]  name   The name of the property.
-       * @param[in]  index  The property index, in case of multiple linking.
-       *
-       * @return     A pointer to the property, NULL if none found.
-       *
-       * @note  All properties used within nodes should be retrieved
-       *         via this method instead of directly to ensure that
-       *         the desired property is being used.
-       */
-      virtual dtDAL::ActorProperty* GetProperty(const std::string& name, int index = 0);
 
       /**
        * Retrieves the property for this value.
@@ -126,29 +88,29 @@ namespace dtDirector
       virtual dtDAL::ActorProperty* GetProperty(int index);
 
       /**
-       * Retrieves whether the value can be a specified type.
+       * Retrieves the total number of values linked to a property.
        *
-       * @param[in]  type  The type to check.
+       * @param[in]  name  The name of the property.
        *
-       * @return  True if this value is the proper type.
+       * @return     The count.
        */
-      virtual bool CanBeType(dtDAL::DataType& type);
+      virtual int GetPropertyCount(const std::string& name = "Value");
 
       /**
-       * Retrieves the type of this value.
-       *
-       * @return  The type.
+       * Sets the current property index.
        */
-      virtual dtDAL::DataType& GetPropertyType();
+      void SetPropertyIndex(int index);
 
    protected:
+
 
       /**
        *	Protected Destructor.  dtCore::RefPtr will handle its destruction.
        */
-      virtual ~ExternalValueNode();
+      virtual ~ArrayValueNode();
 
-      void UpdateLinkType();
+      int   mPropertyIndex;
+      dtCore::RefPtr<dtDAL::ArrayActorPropertyBase> mArrayProperty;
    };
 }
 

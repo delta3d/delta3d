@@ -81,7 +81,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    dtCore::UniqueId PlayerValue::GetValue()
    {
-      return GetDirector()->GetPlayer();
       ValueNode::OnValueRetrieved();
+      return GetDirector()->GetPlayer();
    }
 }
