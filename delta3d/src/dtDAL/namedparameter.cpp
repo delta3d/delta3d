@@ -540,10 +540,18 @@ namespace dtDAL
          std::ostringstream stream;
          const std::vector<bool> &values = GetValueList();
 
-         if (values[0])
+         if (values.empty())
+         {
+         }
+         else if (values[0])
+         {
             stream << "true";
+         }
          else
+         {
             stream << "false";
+         }
+
          for (unsigned int i=1; i<values.size(); i++)
          {
             stream << GetParamDelimeter();
@@ -839,11 +847,18 @@ namespace dtDAL
       {
          const std::vector<std::string> &values = GetValueList();
          std::ostringstream stream;
-
-         if (values[0].empty())
+         if (values.empty())
+         {
             stream << "null";
+         }
+         else if (values[0].empty())
+         {
+            stream << "null";
+         }
          else
+         {
             stream << values[0];
+         }
 
          for (unsigned int i=1; i<values.size(); i++)
          {
@@ -1064,10 +1079,18 @@ namespace dtDAL
          std::ostringstream stream;
          const std::vector<dtCore::UniqueId> &values = GetValueList();
 
-         if (values[0].ToString().empty())
+         if (values.empty())
+         {
             stream << "null";
+         }
+         else if (values[0].ToString().empty())
+         {
+            stream << "null";
+         }
          else
+         {
             stream << values[0].ToString();
+         }
 
          for (unsigned int i=1; i<values.size(); i++)
          {
@@ -1146,10 +1169,18 @@ namespace dtDAL
          std::ostringstream stream;
          const std::vector<dtCore::UniqueId> &values = GetValueList();
 
-         if (values[0].ToString().empty())
+         if (values.empty())
+         {
             stream << "null";
+         }
+         else if (values[0].ToString().empty())
+         {
+            stream << "null";
+         }
          else
+         {
             stream << values[0].ToString();
+         }
 
          for (unsigned int i=1; i<values.size(); i++)
          {
@@ -1602,13 +1633,17 @@ namespace dtDAL
 
       if (IsList())
       {
-         const std::vector<dtDAL::ResourceDescriptor> &values =
-            GetValueList();
+         const std::vector<dtDAL::ResourceDescriptor> &values = GetValueList();
+         if (!values.empty())
+         {
+            stream << values[0].GetDisplayName() << "/" << values[0].GetResourceIdentifier();
+         }
 
-         stream << values[0].GetDisplayName() << "/" << values[0].GetResourceIdentifier();
          for (unsigned int i=1; i<values.size(); i++)
+         {
             stream << GetParamDelimeter() << values[i].GetDisplayName() <<
-            "/" << values[i].GetResourceIdentifier();
+                   "/" << values[i].GetResourceIdentifier();
+         }
       }
       else
       {
