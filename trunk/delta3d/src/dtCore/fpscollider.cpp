@@ -339,7 +339,7 @@ namespace dtCore
       }
 
       dContactGeom contactGeoms[1];
-      mNumTorsoContactPoints = dCollide(pFeet, pObject, 1, contactGeoms, sizeof(dContactGeom));
+      mNumTorsoContactPoints += dCollide(pFeet, pObject, 1, contactGeoms, sizeof(dContactGeom));
 
       if (set)
       {
@@ -398,7 +398,7 @@ namespace dtCore
             }
          }
 
-         mNumFeetContactPoints = contactPoints;
+         mNumFeetContactPoints += contactPoints;
       }
 
 
