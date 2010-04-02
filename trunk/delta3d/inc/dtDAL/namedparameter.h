@@ -456,7 +456,11 @@ namespace dtDAL
                const std::vector<ParamType>& values =
                   NamedGenericParameter<ParamType>::GetValueList();
 
-               stream << values[0];
+               if (!values.empty())
+               {
+                  stream << values[0];
+               }
+
                for (unsigned int i = 1; i < values.size(); ++i)
                {
                   stream << NamedGenericParameter<ParamType>::GetParamDelimeter()
@@ -794,7 +798,11 @@ namespace dtDAL
                const std::vector<ParamType>& values =
                   NamedGenericParameter<ParamType>::GetValueList();
 
-               ss << values[0];
+               if (!values.empty())
+               {
+                  ss << values[0];
+               }
+
                for (unsigned int i = 1; i < values.size(); ++i)
                {
                   ss << NamedGenericParameter<ParamType>::GetParamDelimeter() <<
