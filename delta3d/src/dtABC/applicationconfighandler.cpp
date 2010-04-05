@@ -26,6 +26,7 @@
 #include <dtUtil/stringutils.h>
 #include <dtUtil/log.h>
 #include <dtUtil/xercesutils.h>
+#include <dtUtil/mathdefines.h>
 
 #include <xercesc/sax2/XMLReaderFactory.hpp>
 
@@ -94,7 +95,7 @@ namespace dtABC
                      xstring("100"), ystring("100"),
                      wstring("640"), hstring("480"),
                      showstring("1"), fullstring("0"), realizestring("1"),
-                     changeres("0"), bitdepth("24"), refresh("60");
+                     changeres("0"), bitdepth("24"), refresh("60"), vsyncString("true"), multiSampleString("0");
 
          // search for specific named attributes, append the list of searched strings
          dtUtil::AttributeSearch windowattrs;
@@ -148,6 +149,14 @@ namespace dtABC
          if ( iter != results.end() )
             refresh = iter->second;
 
+         iter = results.find(ApplicationConfigSchema::VSYNC);
+         if ( iter != results.end() )
+            vsyncString = iter->second;
+
+         iter = results.find(ApplicationConfigSchema::MULTI_SAMPLE);
+         if ( iter != results.end() )
+            multiSampleString = iter->second;
+
          int winX = dtUtil::ToType<int>(xstring);
          int winY = dtUtil::ToType<int>(ystring);
          int width = dtUtil::ToType<int>(wstring);
@@ -158,6 +167,10 @@ namespace dtABC
          bool resolution_changed = dtUtil::ToType<bool>(changeres);
          int depth = dtUtil::ToType<int>(bitdepth);
          int rate = dtUtil::ToType<int>(refresh);
+         bool vsync = dtUtil::ToType<bool>(vsyncString);
+         int multiSample = dtUtil::ToType<int>(multiSampleString);
+
+         dtUtil::Clamp(multiSample, 0, 128);
 
          mConfigData.WINDOW_NAME = name;
          mConfigData.RESOLUTION.width = width;
@@ -170,6 +183,8 @@ namespace dtABC
          mConfigData.FULL_SCREEN = fullScreen;
          mConfigData.REALIZE_UPON_CREATE = realizeUponCreate;
          mConfigData.CHANGE_RESOLUTION = resolution_changed;
+         mConfigData.VSYNC = vsync;
+         mConfigData.MULTI_SAMPLE = multiSample;
       }
       else if ( mCurrentElement == ApplicationConfigSchema::SCENE )
       {

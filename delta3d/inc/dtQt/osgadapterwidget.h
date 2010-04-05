@@ -50,8 +50,11 @@ namespace dtQt
       Q_OBJECT
 
    public:
-      OSGAdapterWidget(bool drawOnSeparateThread,  QWidget* parent = NULL,
-         const QGLWidget* shareWidget = NULL, Qt::WindowFlags f = NULL );
+      OSGAdapterWidget(const QGLFormat& format, bool drawOnSeparateThread,  QWidget* parent = NULL,
+         const QGLWidget* shareWidget = NULL, Qt::WindowFlags f = NULL);
+
+      OSGAdapterWidget(bool drawOnSeparateThread, QWidget * parent = NULL,
+         const QGLWidget * shareWidget = NULL, Qt::WindowFlags f = NULL);
 
       virtual ~OSGAdapterWidget();
 

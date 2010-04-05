@@ -41,6 +41,7 @@
 #include <dtUtil/xercesparser.h>
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/librarysharingmanager.h>
+#include <dtUtil/mathdefines.h>
 #include <dtCore/mouse.h>
 
 #include <cassert>
@@ -51,6 +52,7 @@
 #include <osgViewer/Viewer>
 #include <osg/io_utils>
 #include <osg/Version>
+#include <osg/DisplaySettings>
 
 using namespace dtABC;
 XERCES_CPP_NAMESPACE_USE
@@ -97,14 +99,7 @@ Application::Application(const std::string& configFilename, dtCore::DeltaWin* wi
    if (ParseConfigFile(configFilename, handler))
    {
       //create instances using values from the parsed config file
-      CreateInstances(handler.mConfigData.WINDOW_NAME,
-                      handler.mConfigData.WINDOW_X,
-                      handler.mConfigData.WINDOW_Y,
-                      handler.mConfigData.RESOLUTION.width,
-                      handler.mConfigData.RESOLUTION.height,
-                      handler.mConfigData.SHOW_CURSOR,
-                      handler.mConfigData.FULL_SCREEN,
-                      handler.mConfigData.REALIZE_UPON_CREATE);
+      CreateInstances(handler.mConfigData);
 
       //apply the config data to the created instances
       ApplyConfigData(handler);
@@ -112,7 +107,7 @@ Application::Application(const std::string& configFilename, dtCore::DeltaWin* wi
    else
    {
       //create instances using the default values
-      CreateInstances(); 
+      CreateInstances(GetDefaultConfigData());
    }
 }
 
@@ -304,8 +299,7 @@ bool Application::MouseScrolled(const dtCore::Mouse* mouse, int delta)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void Application::CreateInstances(const std::string& name, int x, int y, int width,
-                                  int height, bool cursor, bool fullScreen, bool realizeUponCreate)
+void Application::CreateInstances(const ApplicationConfigData& data)
 {
    //create the instances and hook-up the default
    //connections.  The instance attributes may be
@@ -315,14 +309,19 @@ void Application::CreateInstances(const std::string& name, int x, int y, int wid
    if (mWindow == NULL)
    {
       dtCore::DeltaWin::DeltaWinTraits traits;
-      traits.name = name;
-      traits.x = x;
-      traits.y = y;
-      traits.width = width;
-      traits.height = height;
-      traits.showCursor = cursor;
-      traits.fullScreen = fullScreen;
-      traits.realizeUponCreate = realizeUponCreate;
+      traits.name = data.WINDOW_NAME;
+      traits.x = data.WINDOW_X;
+      traits.y = data.WINDOW_Y;
+      traits.width = data.RESOLUTION.width;
+      traits.height = data.RESOLUTION.height;
+      traits.showCursor = data.SHOW_CURSOR;
+      traits.fullScreen = data.FULL_SCREEN;
+      traits.realizeUponCreate = data.REALIZE_UPON_CREATE;
+      traits.vsync = data.VSYNC;
+
+      // pre DeltaWin creation anti-aliasing
+      osg::DisplaySettings::instance()->setNumMultiSamples(data.MULTI_SAMPLE);
+
       mWindow = new dtCore::DeltaWin(traits);
    }
 
@@ -487,6 +486,10 @@ ApplicationConfigData Application::GetDefaultConfigData()
    data.RESOLUTION.height = winTraits.DEFAULT_HEIGHT;
    data.RESOLUTION.bitDepth = 24;
    data.RESOLUTION.refresh = 60;
+
+   //Set to default in the constructor of the data.
+   //data.VSYNC
+   //data.MULTI_SAMPLE
 
    dtUtil::Log& logger = dtUtil::Log::GetInstance();
    data.LOG_LEVELS.insert(make_pair(logger.GetName(), logger.GetLogLevelString(dtUtil::Log::LOG_WARNING)));

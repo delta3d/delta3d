@@ -66,6 +66,8 @@ namespace dtABC
          XMLCh* FULLSCREEN;
          XMLCh* REALIZE_UPON_CREATE;
          XMLCh* CHANGEDISPLAYRESOLUTION;
+         XMLCh* VSYNC;
+         XMLCh* MULTI_SAMPLE;
 
          XMLCh* WINDOWINSTANCE;
          XMLCh* SCENEINSTANCE;

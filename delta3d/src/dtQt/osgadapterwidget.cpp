@@ -124,6 +124,24 @@ namespace dtQt
 
 
    //////////////////////////////////////////////////////////////////////////////////
+   OSGAdapterWidget::OSGAdapterWidget(const QGLFormat& format, bool drawOnSeparateThread, QWidget * parent,
+            const QGLWidget * shareWidget, Qt::WindowFlags f):
+               QGLWidget(format, parent, shareWidget, f),
+               mThreadGLContext(NULL),
+               mDrawOnSeparateThread(drawOnSeparateThread)
+   {
+      mTimer.setInterval(10);
+
+      //don't let Qt perform the swap buffer since OSG will be handling that
+      setAutoBufferSwap(false);
+
+      // This enables us to track mouse movement even when
+      // no button is pressed.  The motion models depend
+      // on tracking the mouse location to work properly.
+      setMouseTracking(true);
+   }
+
+   //////////////////////////////////////////////////////////////////////////////////
    OSGAdapterWidget::OSGAdapterWidget(bool drawOnSeparateThread, QWidget * parent,
             const QGLWidget * shareWidget, Qt::WindowFlags f):
                QGLWidget(parent, shareWidget, f),

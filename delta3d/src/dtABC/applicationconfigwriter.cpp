@@ -104,6 +104,17 @@ namespace dtABC
             data.CHANGE_RESOLUTION ? "1" : "0"
          ).ToXmlString()
       );
+
+      windo->setAttribute( sch.VSYNC,
+         dtUtil::StringToXMLConverter(
+            data.VSYNC ? "1" : "0"
+         ).ToXmlString()
+      );
+
+      ss.str("");
+      ss << data.MULTI_SAMPLE;
+      windo->setAttribute( sch.MULTI_SAMPLE, dtUtil::StringToXMLConverter(ss.str()).ToXmlString() );
+
       app->appendChild( windo );
 
       DOMElement* scene = doc->createElement(sch.SCENE);
@@ -186,6 +197,8 @@ namespace dtABC
       FULLSCREEN = XMLString::transcode( ApplicationConfigSchema::FULLSCREEN.c_str() );
       REALIZE_UPON_CREATE = XMLString::transcode( ApplicationConfigSchema::REALIZE_UPON_CREATE.c_str() );
       CHANGEDISPLAYRESOLUTION = XMLString::transcode( ApplicationConfigSchema::CHANGEDISPLAYRESOLUTION.c_str() );
+      VSYNC = XMLString::transcode( ApplicationConfigSchema::VSYNC.c_str() );
+      MULTI_SAMPLE = XMLString::transcode( ApplicationConfigSchema::MULTI_SAMPLE.c_str() );
 
       WINDOWINSTANCE = XMLString::transcode( ApplicationConfigSchema::WINDOWINSTANCE.c_str() );
       SCENEINSTANCE = XMLString::transcode( ApplicationConfigSchema::SCENEINSTANCE.c_str() );

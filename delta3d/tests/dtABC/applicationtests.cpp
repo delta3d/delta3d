@@ -34,10 +34,10 @@
 #include <dtCore/scene.h>
 #include <dtCore/databasepager.h>
 
-#include <dtUtil/fileutils.h>                  
+#include <dtUtil/fileutils.h>
 #include <dtUtil/datapathutils.h>
-#include <dtUtil/stringutils.h>                
-#include <dtUtil/xercesparser.h>               
+#include <dtUtil/stringutils.h>
+#include <dtUtil/xercesparser.h>
 #include <dtUtil/xerceswriter.h>
 #include <dtUtil/librarysharingmanager.h>
 #include <dtUtil/log.h>
@@ -123,6 +123,9 @@ namespace dtTest
             CPPUNIT_ASSERT_EQUAL(actual.WINDOW_X, truth.WINDOW_X);
             CPPUNIT_ASSERT_EQUAL(actual.WINDOW_Y, truth.WINDOW_Y);
             CPPUNIT_ASSERT_EQUAL(actual.CAMERA_NAME, truth.CAMERA_NAME);
+            CPPUNIT_ASSERT_EQUAL(actual.REALIZE_UPON_CREATE, truth.REALIZE_UPON_CREATE);
+            CPPUNIT_ASSERT_EQUAL(actual.VSYNC, truth.VSYNC);
+            CPPUNIT_ASSERT_EQUAL(actual.MULTI_SAMPLE, truth.MULTI_SAMPLE);
 
             std::ostringstream ss;
             ss << "Expected map:\n";
@@ -356,6 +359,8 @@ namespace dtTest
       truth.SCENE_INSTANCE = "SomeScene";
       truth.WINDOW_INSTANCE = "SomeWin";
       truth.CAMERA_INSTANCE = "SomeCam";
+      truth.VSYNC = false;
+      truth.MULTI_SAMPLE = 24;
 
       // Can't write the default to the config file or it will overwrite all other log values.
       // Behavior tested in TestConfigLogLevelDefaultOverride.
