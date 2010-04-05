@@ -249,8 +249,8 @@ namespace dtABC
       virtual void PostFrame(const double deltaSimTime);
 
       ///Create basic instances and set up system hooks
-      virtual void CreateInstances(const std::string& name = "defaultWin", int x = 100, int y = 100,
-         int width = 640, int height = 480, bool cursor = true, bool fullScreen = false, bool realizeUponCreate = true);
+      virtual void CreateInstances(const ApplicationConfigData& configData);/*const std::string& name = "defaultWin", int x = 100, int y = 100,
+         int width = 640, int height = 480, bool cursor = true, bool fullScreen = false, bool realizeUponCreate = true);*/
 
       /**
        * Read the supplied config file, called from the constructor

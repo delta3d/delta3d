@@ -27,6 +27,7 @@
 
 #include <QtOpenGL/QGLWidget>
 #include <osg/Referenced>
+#include <dtUtil/deprecationmgr.h>
 
 namespace dtQt
 {
@@ -43,9 +44,16 @@ namespace dtQt
          {
          }
 
-         ///Overwrite to generate a custom OSGAdapterWidget
-         virtual OSGAdapterWidget* CreateWidget(bool drawOnSeparateThread,  QWidget* parent = NULL,
-                                                const QGLWidget* shareWidget = NULL, Qt::WindowFlags f = NULL) = 0;
+         ///Override to generate a custom OSGAdapterWidget
+         virtual OSGAdapterWidget* CreateWidget(const QGLFormat& format, bool drawOnSeparateThread,  QWidget* parent = NULL,
+                                                const QGLWidget* shareWidget = NULL, Qt::WindowFlags f = NULL) {
+            // call the old version by default, which, unfortunately, will generate a warning.
+            return CreateWidget(drawOnSeparateThread, parent, shareWidget, f);
+         }
+
+         /// This is the old, deprecated version
+         DEPRECATE_FUNC virtual OSGAdapterWidget* CreateWidget(bool drawOnSeparateThread,  QWidget* parent = NULL,
+                                                const QGLWidget* shareWidget = NULL, Qt::WindowFlags f = NULL) { return NULL; }
 
       protected:
          ~GLWidgetFactory()

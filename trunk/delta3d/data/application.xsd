@@ -29,6 +29,8 @@
             <xs:attribute name="FullScreen" type="xs:boolean" use="required" />
             <xs:attribute name="RealizeUponCreate" type="xs:boolean" use="optional" />
             <xs:attribute name="ChangeDisplayResolution" type="xs:boolean" use="required" />
+            <xs:attribute name="VSync" type="xs:boolean" use="optional" />
+            <xs:attribute name="MultiSample" type="xs:integer" use="optional" />
           </xs:complexType>
         </xs:element>
         <xs:element name="Scene">

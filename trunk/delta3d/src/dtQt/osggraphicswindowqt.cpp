@@ -69,13 +69,25 @@ namespace dtQt
             flags |= Qt::FramelessWindowHint;
          }
 
+         QGLFormat format;
+         format.setAlpha(traits->alpha > 0);
+         format.setAlphaBufferSize(traits->alpha);
+         format.setDepth(traits->depth > 0);
+         format.setDepthBufferSize(traits->depth);
+         format.setDoubleBuffer(traits->doubleBuffer);
+         format.setStencil(traits->stencil > 0);
+         format.setStencilBufferSize(traits->stencil);
+         format.setSamples(traits->samples);
+         format.setSampleBuffers(traits->samples > 0);
+         format.setSwapInterval(traits->vsync ? 1 : 0);
+
          if (factory != NULL)
          {
-            adapter = factory->CreateWidget(false, NULL, sharedContextWidget, flags);
+            adapter = factory->CreateWidget(format, false, NULL, sharedContextWidget, flags);
          }
          else
          {
-            adapter = new dtQt::OSGAdapterWidget(false, NULL, sharedContextWidget, flags);
+            adapter = new dtQt::OSGAdapterWidget(format, false, NULL, sharedContextWidget, flags);
          }
       }
 

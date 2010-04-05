@@ -31,6 +31,7 @@ namespace dtABC
    , FULL_SCREEN(false)
    , CHANGE_RESOLUTION(false)
    , REALIZE_UPON_CREATE(false)
+   , VSYNC(true)
    , CAMERA_NAME("")
    , VIEW_NAME("")
    , SCENE_NAME("")
@@ -42,6 +43,7 @@ namespace dtABC
    , VIEWPORT_Y(0)
    , VIEWPORT_W(-1)
    , VIEWPORT_H(-1)
+   , MULTI_SAMPLE(0)
    , GLOBAL_LOG_LEVEL("Warn")
    {
    }
