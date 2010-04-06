@@ -1,0 +1,46 @@
+%!Adobe-FontList 1.04
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:Invalid
+OutlineFileName:\digi-48.font
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:TrueType
+FontName:DigitalReadoutUpright
+FamilyName:Digital Readout Upright
+StyleName:Regular
+FullName:Digital Readout Upright
+WritingScript:Roman
+OutlineFileName:\DIGIRU__.TTF
+DataFormat:sfntData
+FileLength:31376
+WeightClass:400
+WidthClass:5
+AngleClass:0
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:Invalid
+OutlineFileName:\tahoma-12.font
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:TrueType
+FontName:Tahoma
+FamilyName:Tahoma
+StyleName:Regular
+FullName:Tahoma
+WritingScript:Roman
+OutlineFileName:\tahoma.ttf
+DataFormat:sfntData
+FileLength:379588
+WeightClass:400
+WidthClass:5
+AngleClass:0
+%EndFont
+

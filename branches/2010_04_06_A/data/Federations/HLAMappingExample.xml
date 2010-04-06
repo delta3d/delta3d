@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<hla  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="HLAMapping.xsd">
+        
+    <header>
+        <name>Test</name>
+        <description>test mapping</description>
+        <disEntityTypes>true</disEntityTypes> 
+        <disEntityTypeAttribute>EntityType</disEntityTypeAttribute>
+        <author>David Guthrie</author>
+        <comment>This is for the unit tests</comment>
+        <copyright>2006 Alion</copyright>
+        <schemaVersion>1.0</schemaVersion>
+    </header>
+    
+    <libraries>
+      <actorLibrary>
+        <name>testGameActorLibrary</name>
+        <version>1.0</version>
+      </actorLibrary>
+    </libraries>
+    
+    <ddm>
+      <enabled>true</enabled>
+      <space name="Geographic">
+         <property name="Friendly Region Type">GEOGRAPHIC_SPACE</property>
+         <property name="Enemy Region Type">APP_SPACE_ONLY</property>
+         <property name="Friendly App Space">74</property>
+         <property name="Neutral App Space">11</property>
+         <property name="App Space Min">0</property>
+         <property name="App Space Max">199</property>
+      </space>
+      <space name="NoSuchSpace">
+         <property name="hi">junk</property>
+         <property name="another">rubbish</property>
+      </space>
+    </ddm>
+    
+    <objects>
+        <object name="BaseEntity">
+            <abstract/>
+            <ddmSpace>Geographic</ddmSpace>
+            <entityIdAttributeName>EntityIdentifier</entityIdAttributeName>
+            <attrToProp>
+                <hlaName>ENTITY_TYPE_ID</hlaName>
+                <hlaDataType>ENTITY_TYPE</hlaDataType>
+                <hlaRequired>true</hlaRequired>
+                <gameName>Entity Type</gameName>
+                <gameDataType>ENUMERATION</gameDataType>
+                <gameRequired>false</gameRequired>
+                <default></default>
+            </attrToProp>            
+            <attrToProp>
+                <hlaName>EntityIdentifier</hlaName>
+                <hlaDataType>ENTITY_IDENTIFIER_TYPE</hlaDataType>
+                <hlaRequired>true</hlaRequired>
+                <gameName>sendingActorId</gameName>
+                <gameDataType>ACTOR</gameDataType>
+                <gameRequired>true</gameRequired>
+                <default></default>
+            </attrToProp>            
+            <attrToProp>
+                <hlaName>DamageState</hlaName>
+                <hlaDataType>UNSIGNED_INT_TYPE</hlaDataType>
+                <hlaRequired>false</hlaRequired>
+                <gameName>Damage State</gameName>
+                <gameDataType>ENUMERATION</gameDataType>
+                <gameRequired>false</gameRequired>
+                <default>Destroyed</default>
+                <enumerationMapping>
+                    <value id="0">No Damage</value>
+                    <value id="1">Damaged</value>
+                    <value id="2">Damaged</value>
+                    <value id="3">Destroyed</value>
+                </enumerationMapping>
+            </attrToProp>            
+            <attrToProp>
+                <hlaName>Orientation</hlaName>
+                <hlaDataType>EULER_ANGLES_TYPE</hlaDataType>
+                <hlaRequired>true</hlaRequired>
+                <gameName>Rotation</gameName>
+                <gameDataType>VEC3</gameDataType>
+                <gameRequired>true</gameRequired>
+                <default></default>
+            </attrToProp>            
+            <attrToProp>
+                <hlaName>WorldLocation</hlaName>
+                <hlaDataType>WORLD_COORDINATE_TYPE</hlaDataType>
+                <hlaRequired>true</hlaRequired>
+                <gameName>Translation</gameName>
+                <gameDataType>VEC3</gameDataType>
+                <gameRequired>true</gameRequired>
+                <default></default>
+            </attrToProp>            
+        </object>
+
+        <object extends="BaseEntity" name="Test Tank">
+            <objectClass>BaseEntity.PhysicalEntity.Platform.GroundVehicle</objectClass>
+            <actorType>TestHLA.Tank</actorType>
+            <disEntityEnum>
+                <kind>1</kind>
+                <domain>1</domain>
+                <country>222</country>
+                <category>2</category>
+                <subcategory>4</subcategory>
+                <specific>6</specific>
+                <extra>0</extra>
+            </disEntityEnum>
+            <attrToProp>
+                <gameName>Mesh</gameName>   
+                <gameDataType>StaticMeshes</gameDataType>
+                <default>StaticMeshes:articulation_test.ive</default>
+            </attrToProp>
+            <attrToProp>
+               <hlaName>ENTITY_TYPE_ID</hlaName>
+               <hlaDataType>ENTITY_TYPE</hlaDataType>
+               <hlaRequired>true</hlaRequired>
+               <gameName>Entity Type As String</gameName>
+               <gameDataType>STRING</gameDataType>
+               <gameRequired>false</gameRequired>
+            </attrToProp>
+            <attrToProp>
+               <hlaName>MAPPING_NAME</hlaName>
+               <hlaDataType>STRING_TYPE</hlaDataType>
+               <hlaRequired>false</hlaRequired>
+               <gameName>Object Mapping Name</gameName>
+               <gameDataType>STRING</gameDataType>
+               <gameRequired>false</gameRequired>
+            </attrToProp>
+        </object>
+
+        <object extends="BaseEntity" name="F18">
+            <objectClass>BaseEntity.PhysicalEntity.Platform.Aircraft</objectClass>
+            <actorType>TestHLA.Jet</actorType>
+            <disEntityEnum>
+                <kind>1</kind>
+                <domain>2</domain>
+                <country>225</country>
+                <category>1</category>
+                <subcategory>9</subcategory>
+                <specific>4</specific>
+                <extra>0</extra>
+            </disEntityEnum>
+            <attrToProp>
+                <hlaName>VelocityVector</hlaName>
+                <hlaDataType>VELOCITY_VECTOR_TYPE</hlaDataType>
+                <gameName>Velocity Vector</gameName>
+                <gameDataType>VEC3D</gameDataType>
+                <default></default>
+            </attrToProp>            
+        </object>
+
+        <object extends="BaseEntity" name="localHelo">
+            <objectClass>BaseEntity.PhysicalEntity.Platform.Aircraft</objectClass>
+            <actorType>TestHLA.Helicopter</actorType>
+            <localOnly>true</localOnly>
+            <disEntityEnum>
+                <kind>1</kind>
+                <domain>2</domain>
+                <country>222</country>
+                <category>20</category>
+                <subcategory>2</subcategory>
+                <specific>6</specific>
+                <extra>0</extra>
+            </disEntityEnum>
+            <ddmSpace>Another Space</ddmSpace>
+            <entityIdAttributeName>EntityIdentifier</entityIdAttributeName>
+            <attrToProp>
+                <hlaName>VelocityVector</hlaName>
+                <hlaDataType>VELOCITY_VECTOR_TYPE</hlaDataType>
+                <gameName>Velocity Vector</gameName>
+                <gameDataType>VEC3D</gameDataType>
+                <default></default>
+            </attrToProp>            
+        </object>
+
+        <object extends="BaseEntity" name="remoteHelo">
+            <objectClass>BaseEntity.PhysicalEntity.Platform.Aircraft</objectClass>
+            <actorType>TestHLA.Helicopter</actorType>
+            <remoteOnly>true</remoteOnly>
+            <disEntityEnum>
+                <kind>1</kind>
+                <domain>2</domain>
+                <country>222</country>
+                <category>20</category>
+                <subcategory>2</subcategory>
+                <specific>6</specific>
+                <extra>0</extra>
+            </disEntityEnum>
+            <ddmSpace>Another Space</ddmSpace>
+            <entityIdAttributeName>EntityIdentifier</entityIdAttributeName>
+            <attrToProp>
+                <hlaName>VelocityVector</hlaName>
+                <hlaDataType>VELOCITY_VECTOR_TYPE</hlaDataType>
+                <gameName>Velocity Vector</gameName>
+                <gameDataType>VEC3D</gameDataType>
+                <default></default>
+            </attrToProp>            
+        </object>
+
+        <object>
+            <objectClass>BaseEntity.PhysicalEntity.Platform.Aircraft</objectClass>
+            <actorType>TestHLA.Jet</actorType>
+            <remoteOnly>true</remoteOnly>
+            <disEntityEnum>
+                <kind>1</kind>
+                <domain>2</domain>
+                <country>225</country>
+                <category>0</category>
+                <subcategory>0</subcategory>
+                <specific>0</specific>
+                <extra>0</extra>
+            </disEntityEnum>
+            <attrToProp>
+                <hlaName>VelocityVector</hlaName>
+                <hlaDataType>VELOCITY_VECTOR_TYPE</hlaDataType>
+                <gameName>Velocity Vector</gameName>
+                <gameDataType>VEC3D</gameDataType>
+                <default></default>
+            </attrToProp>
+            <!-- this is an example for the unit tests 
+                 to handle.  The handler for VELOCITY_VECTOR_TYPE current 
+                 doesn't support having three parameters. SPATIAL_TYPE does,
+                 however, work with it.-->            
+            <attrToProp>
+                <hlaName>AccelerationVector</hlaName>
+                <hlaDataType>VELOCITY_VECTOR_TYPE</hlaDataType>
+                <parameter>
+                   <gameName>accelX</gameName>
+                   <gameDataType>FLOAT</gameDataType>
+                </parameter>
+                <parameter>
+                   <gameName>accelY</gameName>
+                   <gameDataType>FLOAT</gameDataType>
+                </parameter>
+                <parameter>
+                   <gameName>accelZ</gameName>
+                   <gameDataType>FLOAT</gameDataType>
+                </parameter>
+            </attrToProp>
+        </object>
+
+        <object>
+            <objectClass>BaseEntity.PhysicalEntity.CulturalFeature</objectClass>
+            <actorType>TestHLA.CulturalFeature</actorType>
+            <remoteOnly>false</remoteOnly>
+            <!-- Every class must have a mapped attribute or it can't be
+                 published or subscribed to -->
+            <attrToProp>
+                <hlaName>Orientation</hlaName>
+                <hlaDataType>EULER_ANGLES_TYPE</hlaDataType>
+                <hlaRequired>true</hlaRequired>
+                <gameName>Rotation</gameName>
+                <gameDataType>VEC3</gameDataType>
+                <gameRequired>true</gameRequired>
+                <default></default>
+            </attrToProp>            
+        </object>
+
+        <object>
+            <objectClass>BaseEntity.PhysicalEntity.Sensor</objectClass>
+            <actorType>TestHLA.Sensor</actorType>
+            <remoteOnly>false</remoteOnly>
+            <!-- Every class must have a mapped attribute or it can't be
+                 published or subscribed to -->
+            <attrToProp>
+                <hlaName>Orientation</hlaName>
+                <hlaDataType>EULER_ANGLES_TYPE</hlaDataType>
+                <hlaRequired>true</hlaRequired>
+                <gameName>Rotation</gameName>
+                <gameDataType>VEC3</gameDataType>
+                <gameRequired>true</gameRequired>
+                <default></default>
+            </attrToProp>            
+        </object>
+    </objects>
+    
+    <interactions>
+
+    	<interaction name="DetonationLoc" >
+    	    <abstract/>
+          <ddmSpace>Geographic</ddmSpace>
+    	    <paramToParam>
+    	        <hlaName>DetonationLocation</hlaName>
+    	        <hlaDataType>WORLD_COORDINATE_TYPE</hlaDataType>
+    	        <hlaRequired>true</hlaRequired>
+    	        <gameName>Location</gameName>
+    	        <gameDataType>VEC3</gameDataType>
+    	        <gameRequired>true</gameRequired>
+    	    </paramToParam>
+    	</interaction>
+
+    	<interaction extends="DetonationLoc">
+    	    <interactionClass>MunitionDetonation</interactionClass>
+    	    <messageType>Restarted</messageType>
+    	</interaction>
+
+        <interaction>
+           <interactionClass>WeaponFire</interactionClass>
+           <messageType>Timer Elapsed</messageType>
+           <ddmSpace>Geographic</ddmSpace>
+           <paramToParam>
+              <hlaName>FiringObjectIdentifier</hlaName>
+              <hlaDataType>ENTITY_IDENTIFIER_TYPE</hlaDataType>
+              <hlaRequired>true</hlaRequired>
+              <gameName>aboutActorId</gameName>
+              <gameDataType>ACTOR</gameDataType>
+              <gameRequired>true</gameRequired>
+           </paramToParam>
+           <paramToParam>
+              <hlaName>FireControlSolutionRange</hlaName>
+              <hlaDataType>FLOAT_TYPE</hlaDataType>
+              <hlaRequired>true</hlaRequired>
+              <gameName>LateTime</gameName>
+              <gameDataType>FLOAT</gameDataType>
+              <gameRequired>true</gameRequired>
+           </paramToParam>
+           <paramToParam>
+              <hlaName>MunitionType</hlaName>
+              <hlaDataType>ENTITY_TYPE</hlaDataType>
+              <hlaRequired>true</hlaRequired>
+              <gameName>TestProp</gameName>
+              <gameDataType>ENUMERATION</gameDataType>
+              <gameRequired>true</gameRequired>
+              <default>LARGE EXPLOSION</default>
+              <enumerationMapping>
+                 <value id="2 2 225 2 2 0 0">LARGE BULLET</value>
+                 <value id="2 9 225 2 14 0 0">SHORT SMOKE</value>
+                 <value id="2 9 225 2 14 1 0">LONG SMOKE</value>
+              </enumerationMapping>
+           </paramToParam>
+           <paramToParam>
+              <hlaName>MAPPING_NAME</hlaName>
+              <hlaDataType>STRING_TYPE</hlaDataType>
+              <hlaRequired>false</hlaRequired>
+              <gameName>Mapping Name</gameName>
+              <gameDataType>STRING</gameDataType>
+              <gameRequired>false</gameRequired>
+           </paramToParam>
+        </interaction>
+    </interactions>
+
+
+</hla>
