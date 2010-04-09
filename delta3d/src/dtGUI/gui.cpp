@@ -409,12 +409,23 @@ const Widget* dtGUI::GUI::GetRootSheet() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void dtGUI::GUI::SetScriptModule(dtGUI::ScriptModule* scriptModule)
+void dtGUI::GUI::SetScriptModule(BaseScriptModule* scriptModule)
 {
    if (CEGUI::System::getSingletonPtr())
    {
       CEGUI::System::getSingletonPtr()->setScriptingModule(scriptModule);
    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+BaseScriptModule* dtGUI::GUI::GetScriptModule()
+{
+   if (CEGUI::System::getSingletonPtr())
+   {
+      return CEGUI::System::getSingletonPtr()->getScriptingModule();
+   }
+
+   return NULL;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

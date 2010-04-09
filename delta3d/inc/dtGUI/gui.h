@@ -47,6 +47,7 @@ namespace dtCore
 namespace dtGUI
 {
    typedef CEGUI::Window Widget;
+   typedef CEGUI::ScriptModule BaseScriptModule;
 
    class ScriptModule;
 
@@ -214,26 +215,32 @@ namespace dtGUI
         */
       static void DestroyImageset(const std::string& imagesetName);
 
-      /* 
+      /**
        * Shortcut to the CEGUI::SchemeManager
        * @param fileName The filename of the .scheme file to load
        * @param resourceGroup The name of the optional resource group this belongs to
        */
       static void LoadScheme(const std::string& fileName, const std::string& resourceGroup = "");
 
-      /* 
+      /**
        * Set the image for the rendered mouse cursor.
        * @param imagesetName The ImageSet name
        * @param imageName The name of the Image defined in the ImageSet
        */
       static void SetMouseCursor(const std::string& imagesetName, const std::string& imageName);
 
-      /*
+      /**
        * Set the ScriptModule to use with CEGUI.  This is typically used to 
        * map callbacks to CEGUI Events when loading from a .layout file.
        * @param scriptModule : The script module to set on the CEGUI::System
        */
-      static void SetScriptModule(dtGUI::ScriptModule* scriptModule);
+      static void SetScriptModule(BaseScriptModule* scriptModule);
+
+      /** 
+       * Get the currently assigned ScriptModule used by CEGUI.
+       * @return The currently assigned ScriptModule, could be NULL
+       */
+      static BaseScriptModule* GetScriptModule();
 
    protected:
       virtual ~GUI();
