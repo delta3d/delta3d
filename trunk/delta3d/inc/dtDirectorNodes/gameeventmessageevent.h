@@ -19,8 +19,8 @@
  * Author: Jeff P. Houde
  */
 
-#ifndef DIRECTOR_GAME_MESSAGE_EVENT_NODE
-#define DIRECTOR_GAME_MESSAGE_EVENT_NODE
+#ifndef DIRECTOR_GAME_EVENT_MESSAGE_EVENT_NODE
+#define DIRECTOR_GAME_EVENT_MESSAGE_EVENT_NODE
 
 #include <dtDirector/eventnode.h>
 #include <dtDirectorNodes/nodelibraryexport.h>
@@ -30,6 +30,7 @@
 namespace dtDAL
 {
    class ActorProxy;
+   class GameEvent;
 }
 
 namespace dtDirector
@@ -44,14 +45,14 @@ namespace dtDirector
     *      the NodeManager. If they are not created in this fashion,
     *      the node types will not be set correctly.
     */
-   class NODE_LIBRARY_EXPORT GameMessageEvent : public EventNode
+   class NODE_LIBRARY_EXPORT GameEventMessageEvent : public EventNode
    {
    public:
 
       /**
        * Constructs the Node.
        */
-      GameMessageEvent();
+      GameEventMessageEvent();
 
       /**
        * Initializes the Node.
@@ -115,8 +116,8 @@ namespace dtDirector
       /**
        * Accessor for the message type property.
        */
-      void SetMessageType(const std::string& typeName);
-      const std::string& GetMessageType() const;
+      void SetEvent(dtDAL::GameEvent* value);
+      dtDAL::GameEvent* GetEvent() const;
 
       /**
        * Callback to receive message events.
@@ -125,19 +126,22 @@ namespace dtDirector
        */
       void OnMessage(const dtGame::Message& message);
 
+      /**
+       * Updates the label.
+       */
+      void UpdateLabel();
+
    protected:
 
       /**
        *	Protected Destructor.  dtCore::RefPtr will handle its destruction.
        */
-      virtual ~GameMessageEvent();
+      virtual ~GameEventMessageEvent();
 
    private:
 
       std::string mLabel;
-      std::string mMessageType;
-
-      std::string mLastMessageType;
+      dtDAL::GameEvent* mEvent;
    };
 }
 

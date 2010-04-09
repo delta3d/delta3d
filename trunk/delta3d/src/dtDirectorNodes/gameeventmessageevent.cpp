@@ -25,9 +25,10 @@
 #include <dtDirector/director.h>
 #include <dtDirector/messagegmcomponent.h>
 
-#include <dtDirectorNodes/gamemessageevent.h>
+#include <dtDirectorNodes/gameeventmessageevent.h>
 
 #include <dtGame/messagetype.h>
+#include <dtGame/basemessages.h>
 
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actorproperty.h>
@@ -36,20 +37,21 @@
 namespace dtDirector
 {
    ///////////////////////////////////////////////////////////////////////////////////////
-   GameMessageEvent::GameMessageEvent()
+   GameEventMessageEvent::GameEventMessageEvent()
        : EventNode()
+       , mEvent(NULL)
    {
       AddAuthor("Jeff P. Houde");
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   GameMessageEvent::~GameMessageEvent()
+   GameEventMessageEvent::~GameEventMessageEvent()
    {
       UnRegisterMessages();
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   void GameMessageEvent::Init(const NodeType& nodeType, DirectorGraph* graph)
+   void GameEventMessageEvent::Init(const NodeType& nodeType, DirectorGraph* graph)
    {
       EventNode::Init(nodeType, graph);
 
@@ -57,91 +59,107 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void GameMessageEvent::BuildPropertyMap()
+   void GameEventMessageEvent::BuildPropertyMap()
    {
       EventNode::BuildPropertyMap();
 
-      dtDAL::StringActorProperty* messageTypeProp = new dtDAL::StringActorProperty(
-         "Message Type", "Message Type",
-         dtDAL::StringActorProperty::SetFuncType(this, &GameMessageEvent::SetMessageType),
-         dtDAL::StringActorProperty::GetFuncType(this, &GameMessageEvent::GetMessageType),
-         "The name of the message type.");
-      AddProperty(messageTypeProp);
+      dtDAL::GameEventActorProperty* eventProp = new dtDAL::GameEventActorProperty(
+         GetDirector()->GetMap(), "Event", "Event",
+         dtDAL::GameEventActorProperty::SetFuncType(this, &GameEventMessageEvent::SetEvent),
+         dtDAL::GameEventActorProperty::GetFuncType(this, &GameEventMessageEvent::GetEvent),
+         "The Game Event.  Entries are set in the map properties.");
+      AddProperty(eventProp);
 
-      mValues.push_back(ValueLink(this, messageTypeProp, false, false, true, false));
+      mValues.push_back(ValueLink(this, eventProp, false, false, true, false));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool GameMessageEvent::UsesInstigator()
+   bool GameEventMessageEvent::UsesInstigator()
    {
       return false;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void GameMessageEvent::SetMessageType(const std::string& typeName)
+   void GameEventMessageEvent::SetEvent(dtDAL::GameEvent* value)
    {
-      mMessageType = typeName;
+      mEvent = value;
 
-      RegisterMessages();
+      UpdateLabel();
    }
 
    //////////////////////////////////////////////////////////////////////////
-   const std::string& GameMessageEvent::GetMessageType() const
+   dtDAL::GameEvent* GameEventMessageEvent::GetEvent() const
    {
-      return mMessageType;
+      return mEvent;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   const std::string& GameMessageEvent::GetName()
+   const std::string& GameEventMessageEvent::GetName()
    {
       return mLabel;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void GameMessageEvent::OnLinkValueChanged(const std::string& linkName)
+   void GameEventMessageEvent::OnLinkValueChanged(const std::string& linkName)
    {
-      if (linkName == "Message Type")
+      if (linkName == "Event")
       {
-         RegisterMessages();
+         UpdateLabel();
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool GameMessageEvent::CanConnectValue(dtDirector::ValueLink* link, dtDirector::ValueNode* value)
+   bool GameEventMessageEvent::CanConnectValue(dtDirector::ValueLink* link, dtDirector::ValueNode* value)
    {
       return true;
    }
    
    ////////////////////////////////////////////////////////////////////////////////
-   void GameMessageEvent::RegisterMessages()
-   {
-      UnRegisterMessages();
-      mLastMessageType = GetString("Message Type");
-
-      mLabel = GetType().GetName() + " (" + mLastMessageType + ")";
-
-      dtDirector::MessageGMComponent* component = GetDirector()->GetMessageGMComponent();
-      if (component)
-      {
-         component->RegisterMessage(mLastMessageType, this,
-            dtDirector::MessageGMComponent::MsgFunc(this, &dtDirector::GameMessageEvent::OnMessage));
-      }
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void GameMessageEvent::UnRegisterMessages()
+   void GameEventMessageEvent::RegisterMessages()
    {
       dtDirector::MessageGMComponent* component = GetDirector()->GetMessageGMComponent();
       if (component)
       {
-         component->UnRegisterMessage(mLastMessageType, this);
+         component->RegisterMessage("Game Event", this,
+            dtDirector::MessageGMComponent::MsgFunc(this, &dtDirector::GameEventMessageEvent::OnMessage));
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void GameMessageEvent::OnMessage(const dtGame::Message& message)
+   void GameEventMessageEvent::UnRegisterMessages()
    {
-      // Trigger this event on this message.
-      Trigger();
+      dtDirector::MessageGMComponent* component = GetDirector()->GetMessageGMComponent();
+      if (component)
+      {
+         component->UnRegisterMessage("Game Event", this);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void GameEventMessageEvent::OnMessage(const dtGame::Message& message)
+   {
+      if (message.GetMessageType() == dtGame::MessageType::INFO_GAME_EVENT)
+      {
+         const dtGame::GameEventMessage& eventMsg =
+            static_cast<const dtGame::GameEventMessage&>(message);
+
+         dtDAL::GameEvent* gameEvent = GetGameEvent("Event");
+         if (eventMsg.GetGameEvent() == gameEvent)
+         {
+            Trigger();
+         }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void GameEventMessageEvent::UpdateLabel()
+   {
+      std::string eventName = "";
+      dtDAL::GameEvent* gameEvent = GetGameEvent("Event");
+      if (gameEvent)
+      {
+         eventName = gameEvent->GetName();
+      }
+      mLabel = GetType().GetName() + " (" + eventName + ")";
    }
 }

@@ -46,6 +46,7 @@
 namespace dtDAL
 {
    class ActorProxy;
+   class GameEvent;
 }
 
 namespace dtDirector
@@ -352,6 +353,7 @@ namespace dtDirector
       osg::Vec4 GetVec(const std::string& name = "Value", int index = 0);
       dtCore::UniqueId GetActorID(const std::string& name = "Value", int index = 0);
       dtDAL::ActorProxy* GetActor(const std::string& name = "Value", int index = 0);
+      dtDAL::GameEvent* GetGameEvent(const std::string& name = "Value", int index = 0);
 
       /**
        * This method is provided for ease of use, it will
@@ -405,6 +407,7 @@ namespace dtDirector
       void SetVec(osg::Vec4 value, const std::string& name = "Value", int index = -1);
       void SetString(const std::string& value, const std::string& name = "Value", int index = -1);
       void SetActorID(const dtCore::UniqueId& value, const std::string& name = "Value", int index = -1);
+      void SetGameEvent(dtDAL::GameEvent* value, const std::string& name = "Value", int index = -1);
 
       /**
        * Retrieves the input list.

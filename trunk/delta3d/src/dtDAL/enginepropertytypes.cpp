@@ -383,7 +383,13 @@ namespace dtDAL
       GameEvent *event = GameEventManager::GetInstance().FindEvent(dtCore::UniqueId(value));
       if(event == NULL)
       {
-         Map *map = Project::GetInstance().GetMapForActorProxy(*mProxy);
+         Map* map = mMap;
+
+         if (mProxy)
+         {
+            map = Project::GetInstance().GetMapForActorProxy(*mProxy);
+         }
+
          if(map != NULL)
             event = map->GetEventManager().FindEvent(dtCore::UniqueId(value));
       }
@@ -396,6 +402,18 @@ namespace dtDAL
    const std::string GameEventActorProperty::ToString() const
    {
       return GetValue() == NULL ? "" : GetValue()->GetUniqueId().ToString();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   std::string GameEventActorProperty::GetValueString()
+   {
+      GameEvent* gameEvent = GetValue();
+      if (gameEvent)
+      {
+         return gameEvent->GetName();
+      }
+
+      return "None";
    }
 
 
