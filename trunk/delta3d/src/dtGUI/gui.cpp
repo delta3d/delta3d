@@ -10,6 +10,7 @@
 #include <osg/Drawable>
 #include <osg/StateSet>
 #include <osg/Geode>
+#include <osgDB/FileNameUtils>
 
 #include <CEGUI/CEGUISystem.h>
 #include <CEGUI/RendererModules/OpenGL/CEGUIOpenGLRenderer.h>  // for base class
@@ -383,6 +384,26 @@ void GUI::SetResourceGroupDirectory(const std::string& resourceType, const std::
 
    rp->setResourceGroupDirectory(resourceType, directory);
 }
+
+
+////////////////////////////////////////////////////////////////////////////////
+std::string dtGUI::GUI::SetResourceGroupFromResource(const std::string& resourceGroup,
+                                                     const std::string& resourceToFind)
+{
+   //using data file search paths, find the resource and set the resourceGroup to that path
+   const std::string fullPath = dtUtil::FindFileInPathList(resourceToFind);
+   if (fullPath.empty())
+   {
+      //file not found
+      return std::string();
+   }
+
+   const std::string path = osgDB::getFilePath(fullPath);
+
+   SetResourceGroupDirectory(resourceGroup, path);
+   return path;
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 Widget* dtGUI::GUI::GetWidget(const std::string& name)
