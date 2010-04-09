@@ -111,6 +111,10 @@ namespace dtGame
          static const MessageType LOG_REQ_REMOVE_IGNORED_ACTOR;
          static const MessageType LOG_REQ_CLEAR_IGNORE_LIST;
          static const MessageType LOG_INFO_PLAYBACK_END_OF_MESSAGES;
+         static const MessageType LOG_REQ_ADD_IGNORED_MESSAGETYPE;
+         static const MessageType LOG_REQ_REMOVE_IGNORED_MESSAGETYPE;
+         static const MessageType LOG_REQ_CLEAR_IGNORED_MESSAGETYPE_LIST;
+
 
          //SYSTEM MESSAGES
          static const MessageType SYSTEM_POST_EVENT_TRAVERSAL;

@@ -67,6 +67,7 @@ namespace dtGame
 
       mRecordIgnoreList.clear();
       mPlaybackList.clear();
+      mIgnoredMessageTypeList.clear();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -180,6 +181,18 @@ namespace dtGame
             SetToIdleState();
             DoSendStatusMessage(NULL); // notify the world of our status change
          }
+      }
+      else if (type == MessageType::LOG_REQ_ADD_IGNORED_MESSAGETYPE)
+      {
+         HandleAddIgnoredMessageTypeMessage(message);
+      }
+      else if (type == MessageType::LOG_REQ_REMOVE_IGNORED_MESSAGETYPE)
+      {
+         HandleRemoveIgnoredMessageTypeMessage(message);
+      }
+      else if (type == MessageType::LOG_REQ_CLEAR_IGNORED_MESSAGETYPE_LIST)
+      {
+         HandleClearIgnoredMessageTypeMessage();
       }
       else
       {
@@ -1011,25 +1024,24 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////////
    void ServerLoggerComponent::DoRecordMessage(const Message& message)
    {
-      if (mLogStatus.GetStateEnum() == LogStateEnumeration::LOGGER_STATE_RECORD)
+      if (!OkToRecord(message))
       {
-         if (!IsActorIdInList(message.GetAboutActorId(), mRecordIgnoreList))
-         {
-            try
-            {
-               mLogStream->WriteMessage(message, mLogStatus.GetCurrentSimTime());
-               mLogStatus.SetNumMessages(mLogStatus.GetNumMessages() + 1);
-            }
-            catch (const dtUtil::Exception& e)
-            {
-               std::string messageString;
-               message.ToString(messageString);
-               LOG_ERROR("Server Logger: Error writing message in Record mode: Message[" +
-                  message.GetMessageType().GetName() + "], MsgData[" +
-                  messageString + "], Exception[" + e.What() + "]");
-            }
-         }
+         return;
       }
+
+      try
+      {
+         mLogStream->WriteMessage(message, mLogStatus.GetCurrentSimTime());
+         mLogStatus.SetNumMessages(mLogStatus.GetNumMessages() + 1);
+      }
+      catch (const dtUtil::Exception& e)
+      {
+         std::string messageString;
+         message.ToString(messageString);
+         LOG_ERROR("Server Logger: Error writing message in Record mode: Message[" +
+            message.GetMessageType().GetName() + "], MsgData[" +
+            messageString + "], Exception[" + e.What() + "]");
+      }      
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -1161,4 +1173,51 @@ namespace dtGame
       return deleteCount;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   bool ServerLoggerComponent::OkToRecord(const Message& message) const
+   {
+      if (mLogStatus.GetStateEnum() != LogStateEnumeration::LOGGER_STATE_RECORD)
+      {
+         return false;
+      }
+
+      if (IsActorIdInList(message.GetAboutActorId(), mRecordIgnoreList))
+      {
+         return false;
+      }
+
+      if (mIgnoredMessageTypeList.find(&message.GetMessageType()) != mIgnoredMessageTypeList.end())
+      {
+         return false;
+      }
+
+      return true;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ServerLoggerComponent::HandleAddIgnoredMessageTypeMessage(const Message& message)
+   {
+      const LogIgnoreMessageTypeMessage* ignoreMessage = static_cast<const LogIgnoreMessageTypeMessage*>(&message);
+      const dtGame::MessageType& msgType = GetGameManager()->GetMessageFactory().GetMessageTypeById(ignoreMessage->GetIgnoredMessageType());
+      mIgnoredMessageTypeList.insert(&msgType);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ServerLoggerComponent::HandleRemoveIgnoredMessageTypeMessage(const Message& message)
+   {
+      const LogIgnoreMessageTypeMessage* ignoreMessage = static_cast<const LogIgnoreMessageTypeMessage*>(&message);
+      const dtGame::MessageType& msgType = GetGameManager()->GetMessageFactory().GetMessageTypeById(ignoreMessage->GetIgnoredMessageType());
+
+      std::set<const dtGame::MessageType*>::const_iterator itr = mIgnoredMessageTypeList.find(&msgType);
+      if (itr != mIgnoredMessageTypeList.end())
+      {
+         mIgnoredMessageTypeList.erase(itr);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ServerLoggerComponent::HandleClearIgnoredMessageTypeMessage()
+   {
+      mIgnoredMessageTypeList.clear();
+   }
 } // namespace dtGame

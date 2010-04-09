@@ -273,4 +273,40 @@ namespace dtGame
       GetGameManager()->SendNetworkMessage(*message);
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void LogController::RequestAddIgnoredMessageType(const dtGame::MessageType& msgType)
+   {
+      dtCore::RefPtr<Message> message =
+         GetGameManager()->GetMessageFactory().CreateMessage(
+         MessageType::LOG_REQ_ADD_IGNORED_MESSAGETYPE);
+
+      static_cast<LogIgnoreMessageTypeMessage*>(message.get())->SetIgnoredMessageType(msgType);
+
+      GetGameManager()->SendMessage(*message);
+      GetGameManager()->SendNetworkMessage(*message);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void LogController::RequestRemoveIgnoredMessageType(const dtGame::MessageType& msgType)
+   {
+      dtCore::RefPtr<Message> message =
+         GetGameManager()->GetMessageFactory().CreateMessage(
+         MessageType::LOG_REQ_REMOVE_IGNORED_MESSAGETYPE);
+
+      static_cast<LogIgnoreMessageTypeMessage*>(message.get())->SetIgnoredMessageType(msgType);
+
+      GetGameManager()->SendMessage(*message);
+      GetGameManager()->SendNetworkMessage(*message);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void LogController::RequestClearIgnoredMessageTypeList()
+   {
+      dtCore::RefPtr<Message> message =
+         GetGameManager()->GetMessageFactory().CreateMessage(
+         MessageType::LOG_REQ_CLEAR_IGNORED_MESSAGETYPE_LIST);
+
+      GetGameManager()->SendMessage(*message);
+      GetGameManager()->SendNetworkMessage(*message);
+   }
 } // namespace dtGame

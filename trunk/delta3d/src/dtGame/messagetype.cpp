@@ -144,6 +144,15 @@ namespace dtGame
    const MessageType MessageType::LOG_INFO_PLAYBACK_END_OF_MESSAGES("Logger - Info - Playback End Of Messages", "Info",
       "Info message sent by the logger server controller when playback has run out of messages in the current "
       "message stream.", 222);
+   const MessageType MessageType::LOG_REQ_ADD_IGNORED_MESSAGETYPE("Logger - Add MessageType to Ignore List", 
+      "Request", "Sent by the logger controller component (often a client) to request the logger server "
+      " component to add an MessageType to the recording ignore list", 223);
+   const MessageType MessageType::LOG_REQ_REMOVE_IGNORED_MESSAGETYPE("Logger - Remove MessageType from Ignore List", 
+      "Request", "Sent by the logger controller component (often a client) to request the logger server "
+      " component to remove an MessageType from the recording ignore list", 224);
+   const MessageType MessageType::LOG_REQ_CLEAR_IGNORED_MESSAGETYPE_LIST("Logger - Clear Ignore MessageType List", 
+      "Request", "Sent by the logger controller component (often a client) to request the logger server "
+      " component to remove all MessageTypes from the recording ignore list", 225);
 
    const MessageType MessageType::SYSTEM_POST_EVENT_TRAVERSAL("Post Event Traversal", "System",
       "Sent on the system message posteventtraversal.  Use this message to respond to input or window events.", 300);

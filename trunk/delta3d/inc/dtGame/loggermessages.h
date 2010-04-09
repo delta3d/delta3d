@@ -529,6 +529,23 @@ namespace dtGame
       protected:      
          virtual ~LogEndLoadKeyframeMessage() { }
    };
+
+
+   /** 
+    * A Message that contains a MessageType the ServerLoggerController should ignore
+    * or stop ignoring.
+    */
+   class DT_GAME_EXPORT LogIgnoreMessageTypeMessage : public Message
+   {
+   public:
+      LogIgnoreMessageTypeMessage();
+      void SetIgnoredMessageType(const dtGame::MessageType& ignoredMsgType);
+      void SetIgnoredMessageType(unsigned short ignoredMsgTypeID);
+      unsigned short GetIgnoredMessageType() const; 
+
+   protected:
+      virtual ~LogIgnoreMessageTypeMessage() {};
+   };
    
 }
 
