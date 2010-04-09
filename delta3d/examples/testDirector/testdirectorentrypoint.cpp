@@ -88,7 +88,12 @@ void TestDirector::OnStartup(dtGame::GameApplication& app)
       std::string context = dtUtil::GetDeltaRootPath() + "/examples/data/demoMap";
       dtDAL::Project::GetInstance().SetContext(context, true);
     
-      app.GetGameManager()->ChangeMap("TestDirector");
+      std::vector<std::string> mapNames;
+      mapNames.push_back("TestDirector");
+      mapNames.push_back("TestDirectorScript");
+
+      app.GetGameManager()->ChangeMapSet(mapNames);
+      //app.GetGameManager()->ChangeMap("TestDirector");
    }
    catch (const dtUtil::Exception& e)
    {

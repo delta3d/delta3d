@@ -380,18 +380,33 @@ namespace dtDAL
    ////////////////////////////////////////////////////////////////////////////
    bool GameEventActorProperty::FromString(const std::string& value)
    {
-      GameEvent *event = GameEventManager::GetInstance().FindEvent(dtCore::UniqueId(value));
+      dtCore::UniqueId id = dtCore::UniqueId(value);
+      GameEvent *event = GameEventManager::GetInstance().FindEvent(id);
       if(event == NULL)
       {
-         Map* map = mMap;
-
          if (mProxy)
          {
-            map = Project::GetInstance().GetMapForActorProxy(*mProxy);
+            Map* map = Project::GetInstance().GetMapForActorProxy(*mProxy);
+            if (map)
+            {
+               event = map->GetEventManager().FindEvent(id);
+            }
          }
+         else
+         {
+            // Find the event.
+            std::set<std::string> mapNames = Project::GetInstance().GetMapNames();
+            std::set<std::string>::iterator mapIter = mapNames.begin();
 
-         if(map != NULL)
-            event = map->GetEventManager().FindEvent(dtCore::UniqueId(value));
+            for (; mapIter != mapNames.end(); ++mapIter)
+            {
+               std::string& mapName = *mapIter;
+
+               Map& map = Project::GetInstance().GetMap(mapName);
+               event = map.GetEventManager().FindEvent(id);
+               if (event) break;
+            }
+         }
       }
 
       SetValue(event);

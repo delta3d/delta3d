@@ -48,6 +48,7 @@
 #include <dtDAL/mapcontenthandler.h>
 #include <dtDAL/transformableactorproxy.h>
 #include <dtDAL/propertycontainer.h>
+#include <dtDAL/project.h>
 
 #include <dtUtil/xercesutils.h>
 
@@ -882,9 +883,26 @@ namespace dtDAL
       case DataType::GAMEEVENT_ID:
          {
             GameEventActorProperty& geProp = static_cast<GameEventActorProperty&>(*actorProperty);
-            if (mMap.valid() && !dtUtil::Trim(dataValue).empty())
+            if (!dtUtil::Trim(dataValue).empty())
             {
-               GameEvent *e = mMap->GetEventManager().FindEvent(dtCore::UniqueId(dataValue));
+               dtCore::UniqueId id = dtCore::UniqueId(dataValue);
+               GameEvent *e = GameEventManager::GetInstance().FindEvent(id);
+               if(e == NULL)
+               {
+                  // Find the event.
+                  std::set<std::string> mapNames = Project::GetInstance().GetMapNames();
+                  std::set<std::string>::iterator mapIter = mapNames.begin();
+
+                  for (; mapIter != mapNames.end(); ++mapIter)
+                  {
+                     std::string& mapName = *mapIter;
+
+                     Map& map = Project::GetInstance().GetMap(mapName);
+                     e = map.GetEventManager().FindEvent(id);
+                     if (e) break;
+                  }
+               }
+
                if (e != NULL)
                {
                   geProp.SetValue(e);
@@ -1110,9 +1128,26 @@ namespace dtDAL
       case DataType::GAMEEVENT_ID:
          {
             NamedGameEventParameter& geParam = static_cast<NamedGameEventParameter&>(np);
-            if (mMap.valid() && !dtUtil::Trim(dataValue).empty())
+            if (!dtUtil::Trim(dataValue).empty())
             {
-               GameEvent *e = mMap->GetEventManager().FindEvent(dtCore::UniqueId(dataValue));
+               dtCore::UniqueId id = dtCore::UniqueId(dataValue);
+               GameEvent *e = GameEventManager::GetInstance().FindEvent(id);
+               if(e == NULL)
+               {
+                  // Find the event.
+                  std::set<std::string> mapNames = Project::GetInstance().GetMapNames();
+                  std::set<std::string>::iterator mapIter = mapNames.begin();
+
+                  for (; mapIter != mapNames.end(); ++mapIter)
+                  {
+                     std::string& mapName = *mapIter;
+
+                     Map& map = Project::GetInstance().GetMap(mapName);
+                     e = map.GetEventManager().FindEvent(id);
+                     if (e) break;
+                  }
+               }
+
                if (e != NULL)
                {
                   geParam.SetValue(dtCore::UniqueId(dataValue));

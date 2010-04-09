@@ -2,8 +2,8 @@
 <director xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dDirector" xsi:schemaLocation="delta3dDirector director.xsd">
     <header>
         <createTimestamp>2009-12-22T14:26:31-08:00</createTimestamp>
-        <lastUpdateTimestamp>2010-01-08T15:01:11-08:00</lastUpdateTimestamp>
-        <editorVersion>2.4.0</editorVersion>
+        <lastUpdateTimestamp>2010-04-09T14:07:01-08:00</lastUpdateTimestamp>
+        <editorVersion>2.5.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
         <property>
             <name>Name</name>
@@ -93,8 +93,17 @@
                     </link>
                 </outputlink>
                 <valuelink>
+                    <name>TriggerCount</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
                     <name>Instigator</name>
                     <visible>true</visible>
+                    <exposed>true</exposed>
                     <isout>false</isout>
                     <allowmultiple>true</allowmultiple>
                     <typecheck>true</typecheck>
@@ -105,6 +114,7 @@
                 <valuelink>
                     <name>TriggerVolume</name>
                     <visible>true</visible>
+                    <exposed>true</exposed>
                     <isout>false</isout>
                     <allowmultiple>true</allowmultiple>
                     <typecheck>true</typecheck>
@@ -162,8 +172,17 @@
                     </link>
                 </outputlink>
                 <valuelink>
+                    <name>TriggerCount</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
                     <name>Instigator</name>
                     <visible>true</visible>
+                    <exposed>true</exposed>
                     <isout>false</isout>
                     <allowmultiple>true</allowmultiple>
                     <typecheck>true</typecheck>
@@ -174,6 +193,7 @@
                 <valuelink>
                     <name>TriggerVolume</name>
                     <visible>true</visible>
+                    <exposed>true</exposed>
                     <isout>false</isout>
                     <allowmultiple>true</allowmultiple>
                     <typecheck>true</typecheck>
@@ -205,6 +225,14 @@
                         <value2>131.205109</value2>
                     </vec2>
                 </property>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
             </node>
             <node>
                 <name>Player</name>
@@ -229,6 +257,14 @@
                         <value2>131.205109</value2>
                     </vec2>
                 </property>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
             </node>
         </valuenodes>
         <graph>
@@ -299,6 +335,14 @@
                             <name>Play</name>
                         </link>
                     </outputlink>
+                    <valuelink>
+                        <name>TriggerCount</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
                 </node>
                 <node>
                     <name>Input Link</name>
@@ -347,6 +391,14 @@
                             <name>Reverse</name>
                         </link>
                     </outputlink>
+                    <valuelink>
+                        <name>TriggerCount</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
                 </node>
             </eventnodes>
             <actionnodes>
@@ -432,14 +484,55 @@
                         </link>
                     </outputlink>
                     <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
                         <name>Time</name>
                         <visible>true</visible>
+                        <exposed>true</exposed>
                         <isout>true</isout>
                         <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
                         <link>
                             <id>c7c49728-cef5-485b-9f82-55d53d9bda2d</id>
                         </link>
+                    </valuelink>
+                    <valuelink>
+                        <name>TotalTime</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>false</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>UseSimTime</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>TotalTime</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>false</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>TotalTime</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>false</typecheck>
                     </valuelink>
                 </node>
                 <node>
@@ -520,8 +613,17 @@
                         <visible>false</visible>
                     </outputlink>
                     <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
                         <name>Actor</name>
                         <visible>true</visible>
+                        <exposed>true</exposed>
                         <isout>true</isout>
                         <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
@@ -532,6 +634,7 @@
                     <valuelink>
                         <name>StartTime</name>
                         <visible>false</visible>
+                        <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
@@ -539,6 +642,7 @@
                     <valuelink>
                         <name>EndTime</name>
                         <visible>false</visible>
+                        <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
@@ -546,6 +650,7 @@
                     <valuelink>
                         <name>Time</name>
                         <visible>true</visible>
+                        <exposed>true</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
@@ -556,6 +661,7 @@
                     <valuelink>
                         <name>StartRotation</name>
                         <visible>false</visible>
+                        <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
@@ -563,6 +669,7 @@
                     <valuelink>
                         <name>EndRotation</name>
                         <visible>false</visible>
+                        <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
@@ -607,6 +714,14 @@
                         <name>Finished</name>
                         <visible>true</visible>
                     </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
                 </node>
             </actionnodes>
             <valuenodes>
@@ -641,6 +756,14 @@
                         <name>Value</name>
                         <float>0</float>
                     </property>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
                 </node>
                 <node>
                     <name>Actor</name>
@@ -673,6 +796,14 @@
                         <name>Value</name>
                         <actorId>7e4d26e9-c882-4178-9e28-9f420e48b5f5</actorId>
                     </property>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
                 </node>
                 <node>
                     <name>Reference</name>
@@ -708,6 +839,7 @@
                     <valuelink>
                         <name>Ref</name>
                         <visible>true</visible>
+                        <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
@@ -734,7 +866,7 @@
             <property>
                 <name>Position</name>
                 <vec2>
-                    <value1>560.000000</value1>
+                    <value1>561.000000</value1>
                     <value2>-36.897446</value2>
                 </vec2>
             </property>
@@ -758,8 +890,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-300.000000</value1>
-                            <value2>0.000000</value2>
+                            <value1>-452.720642</value1>
+                            <value2>-157.293121</value2>
                         </vec2>
                     </property>
                     <property>
@@ -782,10 +914,18 @@
                         <name>Out</name>
                         <visible>true</visible>
                         <link>
-                            <id>20ba1ae0-1ccc-47b8-9818-688a0b5b4ae1</id>
-                            <name>Play</name>
+                            <id>9e60edd0-8fb6-4cdd-a223-850e39239b09</id>
+                            <name>In</name>
                         </link>
                     </outputlink>
+                    <valuelink>
+                        <name>TriggerCount</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
                 </node>
                 <node>
                     <name>Input Link</name>
@@ -806,8 +946,8 @@
                     <property>
                         <name>Position</name>
                         <vec2>
-                            <value1>-300.000000</value1>
-                            <value2>69.000000</value2>
+                            <value1>-452.720642</value1>
+                            <value2>-91.036598</value2>
                         </vec2>
                     </property>
                     <property>
@@ -830,10 +970,130 @@
                         <name>Out</name>
                         <visible>true</visible>
                         <link>
+                            <id>5eeeb26f-73ff-4e3b-90d0-2df59ef9b295</id>
+                            <name>In</name>
+                        </link>
+                    </outputlink>
+                    <valuelink>
+                        <name>TriggerCount</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Game Event Message Event</name>
+                    <category>Messages</category>
+                    <id>6251035b-6bdc-45af-ab77-dda6aa7c7825</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>LogNode</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>-452.530853</value1>
+                            <value2>0.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>TriggerCount</name>
+                        <integer>0</integer>
+                    </property>
+                    <property>
+                        <name>Event</name>
+                        <gameevent>15348d9e-07a2-4a73-a695-4c11f0223d90</gameevent>
+                    </property>
+                    <outputlink>
+                        <name>Out</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>20ba1ae0-1ccc-47b8-9818-688a0b5b4ae1</id>
+                            <name>Play</name>
+                        </link>
+                    </outputlink>
+                    <valuelink>
+                        <name>TriggerCount</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Event</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Game Event Message Event</name>
+                    <category>Messages</category>
+                    <id>eb9fcbfc-3965-45cf-9472-20bdee012e47</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>LogNode</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>-452.530853</value1>
+                            <value2>65.289894</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>TriggerCount</name>
+                        <integer>0</integer>
+                    </property>
+                    <property>
+                        <name>Event</name>
+                        <gameevent>93f3bcf8-018d-4973-babe-efc350e755f5</gameevent>
+                    </property>
+                    <outputlink>
+                        <name>Out</name>
+                        <visible>true</visible>
+                        <link>
                             <id>20ba1ae0-1ccc-47b8-9818-688a0b5b4ae1</id>
                             <name>Reverse</name>
                         </link>
                     </outputlink>
+                    <valuelink>
+                        <name>TriggerCount</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Event</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
                 </node>
             </eventnodes>
             <actionnodes>
@@ -878,7 +1138,7 @@
                         <name>Play</name>
                         <visible>true</visible>
                         <link>
-                            <id>bf455b27-1207-425d-af9b-cb6bc3ba908c</id>
+                            <id>6251035b-6bdc-45af-ab77-dda6aa7c7825</id>
                             <name>Out</name>
                         </link>
                     </inputlink>
@@ -886,7 +1146,7 @@
                         <name>Reverse</name>
                         <visible>true</visible>
                         <link>
-                            <id>03917940-8afd-4c54-ba0a-6ceacd674c08</id>
+                            <id>eb9fcbfc-3965-45cf-9472-20bdee012e47</id>
                             <name>Out</name>
                         </link>
                     </inputlink>
@@ -927,14 +1187,55 @@
                         </link>
                     </outputlink>
                     <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
                         <name>Time</name>
                         <visible>true</visible>
+                        <exposed>true</exposed>
                         <isout>true</isout>
                         <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
                         <link>
                             <id>8317b138-84fd-417b-9cc7-4e330c75d99a</id>
                         </link>
+                    </valuelink>
+                    <valuelink>
+                        <name>TotalTime</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>false</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>UseSimTime</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>TotalTime</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>false</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>TotalTime</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>false</typecheck>
                     </valuelink>
                 </node>
                 <node>
@@ -976,6 +1277,14 @@
                         <name>Finished</name>
                         <visible>true</visible>
                     </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
                 </node>
                 <node>
                     <name>Lerp Actor Translation</name>
@@ -1055,8 +1364,17 @@
                         <visible>true</visible>
                     </outputlink>
                     <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
                         <name>Actor</name>
                         <visible>true</visible>
+                        <exposed>true</exposed>
                         <isout>true</isout>
                         <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
@@ -1067,6 +1385,7 @@
                     <valuelink>
                         <name>StartTime</name>
                         <visible>false</visible>
+                        <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
@@ -1074,6 +1393,7 @@
                     <valuelink>
                         <name>EndTime</name>
                         <visible>false</visible>
+                        <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
@@ -1081,6 +1401,7 @@
                     <valuelink>
                         <name>Time</name>
                         <visible>true</visible>
+                        <exposed>true</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
@@ -1091,6 +1412,7 @@
                     <valuelink>
                         <name>StartPosition</name>
                         <visible>false</visible>
+                        <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
@@ -1098,6 +1420,7 @@
                     <valuelink>
                         <name>EndPosition</name>
                         <visible>false</visible>
+                        <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
@@ -1181,8 +1504,17 @@
                         <visible>true</visible>
                     </outputlink>
                     <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
                         <name>Actor</name>
                         <visible>true</visible>
+                        <exposed>true</exposed>
                         <isout>true</isout>
                         <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
@@ -1193,6 +1525,7 @@
                     <valuelink>
                         <name>StartTime</name>
                         <visible>false</visible>
+                        <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
@@ -1200,6 +1533,7 @@
                     <valuelink>
                         <name>EndTime</name>
                         <visible>false</visible>
+                        <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
@@ -1207,6 +1541,7 @@
                     <valuelink>
                         <name>Time</name>
                         <visible>true</visible>
+                        <exposed>true</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
@@ -1217,6 +1552,7 @@
                     <valuelink>
                         <name>StartPosition</name>
                         <visible>false</visible>
+                        <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
@@ -1224,6 +1560,135 @@
                     <valuelink>
                         <name>EndPosition</name>
                         <visible>false</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Send Event Message Action</name>
+                    <category>Messages</category>
+                    <id>9e60edd0-8fb6-4cdd-a223-850e39239b09</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>LogNode</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>-350.549622</value1>
+                            <value2>-157.293121</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>Event</name>
+                        <gameevent>15348d9e-07a2-4a73-a695-4c11f0223d90</gameevent>
+                    </property>
+                    <inputlink>
+                        <name>In</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>bf455b27-1207-425d-af9b-cb6bc3ba908c</id>
+                            <name>Out</name>
+                        </link>
+                    </inputlink>
+                    <outputlink>
+                        <name>Out</name>
+                        <visible>false</visible>
+                    </outputlink>
+                    <outputlink>
+                        <name>Success</name>
+                        <visible>false</visible>
+                    </outputlink>
+                    <outputlink>
+                        <name>Failed</name>
+                        <visible>false</visible>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Event</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Send Event Message Action</name>
+                    <category>Messages</category>
+                    <id>5eeeb26f-73ff-4e3b-90d0-2df59ef9b295</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>LogNode</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>-350.549622</value1>
+                            <value2>-91.036598</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>Event</name>
+                        <gameevent>93f3bcf8-018d-4973-babe-efc350e755f5</gameevent>
+                    </property>
+                    <inputlink>
+                        <name>In</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>03917940-8afd-4c54-ba0a-6ceacd674c08</id>
+                            <name>Out</name>
+                        </link>
+                    </inputlink>
+                    <outputlink>
+                        <name>Out</name>
+                        <visible>false</visible>
+                    </outputlink>
+                    <outputlink>
+                        <name>Success</name>
+                        <visible>false</visible>
+                    </outputlink>
+                    <outputlink>
+                        <name>Failed</name>
+                        <visible>false</visible>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Event</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
@@ -1262,6 +1727,14 @@
                         <name>Value</name>
                         <float>0</float>
                     </property>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
                 </node>
                 <node>
                     <name>Actor</name>
@@ -1294,6 +1767,14 @@
                         <name>Value</name>
                         <actorId>b636db5e-420e-4eb1-959f-c90907f243cf</actorId>
                     </property>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
                 </node>
                 <node>
                     <name>Reference</name>
@@ -1329,6 +1810,7 @@
                     <valuelink>
                         <name>Ref</name>
                         <visible>true</visible>
+                        <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
@@ -1371,6 +1853,7 @@
                     <valuelink>
                         <name>Ref</name>
                         <visible>true</visible>
+                        <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
@@ -1410,6 +1893,14 @@
                         <name>Value</name>
                         <actorId>b636db5e-420e-4eb1-959f-c90907f243cf</actorId>
                     </property>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
                 </node>
             </valuenodes>
         </graph>
@@ -1482,8 +1973,17 @@
                         </link>
                     </outputlink>
                     <valuelink>
+                        <name>TriggerCount</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
                         <name>Instigator</name>
                         <visible>true</visible>
+                        <exposed>true</exposed>
                         <isout>false</isout>
                         <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
@@ -1494,6 +1994,7 @@
                     <valuelink>
                         <name>TriggerVolume</name>
                         <visible>true</visible>
+                        <exposed>true</exposed>
                         <isout>false</isout>
                         <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
@@ -1547,8 +2048,17 @@
                         <visible>true</visible>
                     </outputlink>
                     <valuelink>
+                        <name>TriggerCount</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
                         <name>Instigator</name>
                         <visible>true</visible>
+                        <exposed>true</exposed>
                         <isout>false</isout>
                         <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
@@ -1559,6 +2069,7 @@
                     <valuelink>
                         <name>TriggerVolume</name>
                         <visible>true</visible>
+                        <exposed>true</exposed>
                         <isout>false</isout>
                         <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
@@ -1608,10 +2119,27 @@
                         </link>
                     </outputlink>
                     <valuelink>
+                        <name>TriggerCount</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
                         <name>Instigator</name>
                         <visible>false</visible>
+                        <exposed>true</exposed>
                         <isout>false</isout>
                         <allowmultiple>true</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>EventName</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
                 </node>
@@ -1659,10 +2187,27 @@
                         </link>
                     </outputlink>
                     <valuelink>
+                        <name>TriggerCount</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
                         <name>Instigator</name>
                         <visible>false</visible>
+                        <exposed>true</exposed>
                         <isout>false</isout>
                         <allowmultiple>true</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>EventName</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
                 </node>
@@ -1714,8 +2259,17 @@
                         <visible>true</visible>
                     </outputlink>
                     <valuelink>
+                        <name>TriggerCount</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
                         <name>Instigator</name>
                         <visible>true</visible>
+                        <exposed>true</exposed>
                         <isout>false</isout>
                         <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
@@ -1726,6 +2280,7 @@
                     <valuelink>
                         <name>TriggerVolume</name>
                         <visible>true</visible>
+                        <exposed>true</exposed>
                         <isout>false</isout>
                         <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
@@ -1801,8 +2356,17 @@
                         <visible>true</visible>
                     </outputlink>
                     <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
                         <name>A</name>
                         <visible>true</visible>
+                        <exposed>true</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>false</typecheck>
@@ -1813,6 +2377,7 @@
                     <valuelink>
                         <name>B</name>
                         <visible>true</visible>
+                        <exposed>true</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>false</typecheck>
@@ -1874,8 +2439,17 @@
                         <visible>false</visible>
                     </outputlink>
                     <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
                         <name>A</name>
                         <visible>true</visible>
+                        <exposed>true</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>false</typecheck>
@@ -1886,6 +2460,7 @@
                     <valuelink>
                         <name>B</name>
                         <visible>false</visible>
+                        <exposed>true</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>false</typecheck>
@@ -1931,8 +2506,17 @@
                         <visible>false</visible>
                     </outputlink>
                     <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
                         <name>EventName</name>
                         <visible>false</visible>
+                        <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
@@ -1994,8 +2578,17 @@
                         <visible>false</visible>
                     </outputlink>
                     <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
                         <name>A</name>
                         <visible>true</visible>
+                        <exposed>true</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>false</typecheck>
@@ -2006,6 +2599,7 @@
                     <valuelink>
                         <name>B</name>
                         <visible>false</visible>
+                        <exposed>true</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>false</typecheck>
@@ -2051,8 +2645,17 @@
                         <visible>false</visible>
                     </outputlink>
                     <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
                         <name>EventName</name>
                         <visible>false</visible>
+                        <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
@@ -2122,11 +2725,28 @@
                         </link>
                     </outputlink>
                     <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
                         <name>Delay</name>
                         <visible>false</visible>
+                        <exposed>true</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>false</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>UseSimTime</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
                     </valuelink>
                 </node>
                 <node>
@@ -2169,8 +2789,17 @@
                         <visible>false</visible>
                     </outputlink>
                     <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
                         <name>EventName</name>
                         <visible>false</visible>
+                        <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
@@ -2232,8 +2861,17 @@
                         <visible>false</visible>
                     </outputlink>
                     <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
                         <name>A</name>
                         <visible>true</visible>
+                        <exposed>true</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>false</typecheck>
@@ -2244,6 +2882,7 @@
                     <valuelink>
                         <name>B</name>
                         <visible>false</visible>
+                        <exposed>true</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>false</typecheck>
@@ -2297,8 +2936,17 @@
                         </link>
                     </outputlink>
                     <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
                         <name>Source</name>
                         <visible>true</visible>
+                        <exposed>true</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>false</typecheck>
@@ -2306,6 +2954,7 @@
                     <valuelink>
                         <name>Destination</name>
                         <visible>true</visible>
+                        <exposed>true</exposed>
                         <isout>true</isout>
                         <allowmultiple>true</allowmultiple>
                         <typecheck>false</typecheck>
@@ -2362,8 +3011,17 @@
                         </link>
                     </outputlink>
                     <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
                         <name>Source</name>
                         <visible>true</visible>
+                        <exposed>true</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>false</typecheck>
@@ -2371,6 +3029,7 @@
                     <valuelink>
                         <name>Destination</name>
                         <visible>true</visible>
+                        <exposed>true</exposed>
                         <isout>true</isout>
                         <allowmultiple>true</allowmultiple>
                         <typecheck>false</typecheck>
@@ -2419,8 +3078,17 @@
                         <visible>true</visible>
                     </outputlink>
                     <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
                         <name>Source</name>
                         <visible>true</visible>
+                        <exposed>true</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>false</typecheck>
@@ -2428,6 +3096,7 @@
                     <valuelink>
                         <name>Destination</name>
                         <visible>true</visible>
+                        <exposed>true</exposed>
                         <isout>true</isout>
                         <allowmultiple>true</allowmultiple>
                         <typecheck>false</typecheck>
@@ -2476,8 +3145,17 @@
                         <visible>true</visible>
                     </outputlink>
                     <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
                         <name>Source</name>
                         <visible>true</visible>
+                        <exposed>true</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>false</typecheck>
@@ -2485,6 +3163,7 @@
                     <valuelink>
                         <name>Destination</name>
                         <visible>true</visible>
+                        <exposed>true</exposed>
                         <isout>true</isout>
                         <allowmultiple>true</allowmultiple>
                         <typecheck>false</typecheck>
@@ -2518,6 +3197,14 @@
                             <value2>107.439674</value2>
                         </vec2>
                     </property>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
                 </node>
                 <node>
                     <name>Boolean</name>
@@ -2550,6 +3237,14 @@
                         <name>Value</name>
                         <boolean>false</boolean>
                     </property>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
                 </node>
                 <node>
                     <name>Player</name>
@@ -2574,6 +3269,14 @@
                             <value2>-232.794891</value2>
                         </vec2>
                     </property>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
                 </node>
                 <node>
                     <name>Reference</name>
@@ -2609,6 +3312,7 @@
                     <valuelink>
                         <name>Ref</name>
                         <visible>true</visible>
+                        <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>false</typecheck>
@@ -2648,6 +3352,14 @@
                         <name>Value</name>
                         <boolean>false</boolean>
                     </property>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
                 </node>
                 <node>
                     <name>Reference</name>
@@ -2683,6 +3395,7 @@
                     <valuelink>
                         <name>Ref</name>
                         <visible>true</visible>
+                        <exposed>false</exposed>
                         <isout>true</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>false</typecheck>
@@ -2725,6 +3438,7 @@
                     <valuelink>
                         <name>Ref</name>
                         <visible>true</visible>
+                        <exposed>false</exposed>
                         <isout>true</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>false</typecheck>
@@ -2756,6 +3470,14 @@
                             <value2>431.415009</value2>
                         </vec2>
                     </property>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
                 </node>
                 <node>
                     <name>Reference</name>
@@ -2791,6 +3513,7 @@
                     <valuelink>
                         <name>Ref</name>
                         <visible>true</visible>
+                        <exposed>false</exposed>
                         <isout>true</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>false</typecheck>
@@ -2833,6 +3556,7 @@
                     <valuelink>
                         <name>Ref</name>
                         <visible>true</visible>
+                        <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>false</typecheck>
@@ -2875,6 +3599,7 @@
                     <valuelink>
                         <name>Ref</name>
                         <visible>true</visible>
+                        <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>false</typecheck>
@@ -2952,6 +3677,14 @@
                                 <name>Play</name>
                             </link>
                         </outputlink>
+                        <valuelink>
+                            <name>TriggerCount</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
                     </node>
                     <node>
                         <name>Input Link</name>
@@ -3000,6 +3733,14 @@
                                 <name>Reverse</name>
                             </link>
                         </outputlink>
+                        <valuelink>
+                            <name>TriggerCount</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
                     </node>
                 </eventnodes>
                 <actionnodes>
@@ -3085,14 +3826,55 @@
                             </link>
                         </outputlink>
                         <valuelink>
+                            <name>Enabled</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
+                        <valuelink>
                             <name>Time</name>
                             <visible>true</visible>
+                            <exposed>true</exposed>
                             <isout>true</isout>
                             <allowmultiple>true</allowmultiple>
                             <typecheck>true</typecheck>
                             <link>
                                 <id>9de4b755-56a2-4650-bd19-4dc5bd13e203</id>
                             </link>
+                        </valuelink>
+                        <valuelink>
+                            <name>TotalTime</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>false</typecheck>
+                        </valuelink>
+                        <valuelink>
+                            <name>UseSimTime</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
+                        <valuelink>
+                            <name>TotalTime</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>false</typecheck>
+                        </valuelink>
+                        <valuelink>
+                            <name>TotalTime</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>false</typecheck>
                         </valuelink>
                     </node>
                     <node>
@@ -3173,8 +3955,17 @@
                             <visible>false</visible>
                         </outputlink>
                         <valuelink>
+                            <name>Enabled</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
+                        <valuelink>
                             <name>Actor</name>
                             <visible>true</visible>
+                            <exposed>true</exposed>
                             <isout>true</isout>
                             <allowmultiple>true</allowmultiple>
                             <typecheck>true</typecheck>
@@ -3185,6 +3976,7 @@
                         <valuelink>
                             <name>StartTime</name>
                             <visible>false</visible>
+                            <exposed>false</exposed>
                             <isout>false</isout>
                             <allowmultiple>false</allowmultiple>
                             <typecheck>true</typecheck>
@@ -3192,6 +3984,7 @@
                         <valuelink>
                             <name>EndTime</name>
                             <visible>false</visible>
+                            <exposed>false</exposed>
                             <isout>false</isout>
                             <allowmultiple>false</allowmultiple>
                             <typecheck>true</typecheck>
@@ -3199,6 +3992,7 @@
                         <valuelink>
                             <name>Time</name>
                             <visible>true</visible>
+                            <exposed>true</exposed>
                             <isout>false</isout>
                             <allowmultiple>false</allowmultiple>
                             <typecheck>true</typecheck>
@@ -3209,6 +4003,7 @@
                         <valuelink>
                             <name>StartRotation</name>
                             <visible>false</visible>
+                            <exposed>false</exposed>
                             <isout>false</isout>
                             <allowmultiple>false</allowmultiple>
                             <typecheck>true</typecheck>
@@ -3216,6 +4011,7 @@
                         <valuelink>
                             <name>EndRotation</name>
                             <visible>false</visible>
+                            <exposed>false</exposed>
                             <isout>false</isout>
                             <allowmultiple>false</allowmultiple>
                             <typecheck>true</typecheck>
@@ -3260,6 +4056,14 @@
                             <name>Finished</name>
                             <visible>true</visible>
                         </outputlink>
+                        <valuelink>
+                            <name>Enabled</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
                     </node>
                 </actionnodes>
                 <valuenodes>
@@ -3294,6 +4098,14 @@
                             <name>Value</name>
                             <float>0</float>
                         </property>
+                        <valuelink>
+                            <name>Enabled</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
                     </node>
                     <node>
                         <name>Actor</name>
@@ -3326,6 +4138,14 @@
                             <name>Value</name>
                             <actorId>f2588a57-5422-48da-9bdc-09ab214081e4</actorId>
                         </property>
+                        <valuelink>
+                            <name>Enabled</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
                     </node>
                     <node>
                         <name>Reference</name>
@@ -3361,6 +4181,7 @@
                         <valuelink>
                             <name>Ref</name>
                             <visible>true</visible>
+                            <exposed>false</exposed>
                             <isout>false</isout>
                             <allowmultiple>false</allowmultiple>
                             <typecheck>true</typecheck>
@@ -3439,6 +4260,14 @@
                                 <name>Play</name>
                             </link>
                         </outputlink>
+                        <valuelink>
+                            <name>TriggerCount</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
                     </node>
                     <node>
                         <name>Input Link</name>
@@ -3487,6 +4316,14 @@
                                 <name>Reverse</name>
                             </link>
                         </outputlink>
+                        <valuelink>
+                            <name>TriggerCount</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
                     </node>
                 </eventnodes>
                 <actionnodes>
@@ -3572,14 +4409,55 @@
                             </link>
                         </outputlink>
                         <valuelink>
+                            <name>Enabled</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
+                        <valuelink>
                             <name>Time</name>
                             <visible>true</visible>
+                            <exposed>true</exposed>
                             <isout>true</isout>
                             <allowmultiple>true</allowmultiple>
                             <typecheck>true</typecheck>
                             <link>
                                 <id>3f50bff9-ddcb-43fa-9d48-635e467f9d91</id>
                             </link>
+                        </valuelink>
+                        <valuelink>
+                            <name>TotalTime</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>false</typecheck>
+                        </valuelink>
+                        <valuelink>
+                            <name>UseSimTime</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
+                        <valuelink>
+                            <name>TotalTime</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>false</typecheck>
+                        </valuelink>
+                        <valuelink>
+                            <name>TotalTime</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>false</typecheck>
                         </valuelink>
                     </node>
                     <node>
@@ -3660,8 +4538,17 @@
                             <visible>false</visible>
                         </outputlink>
                         <valuelink>
+                            <name>Enabled</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
+                        <valuelink>
                             <name>Actor</name>
                             <visible>true</visible>
+                            <exposed>true</exposed>
                             <isout>true</isout>
                             <allowmultiple>true</allowmultiple>
                             <typecheck>true</typecheck>
@@ -3672,6 +4559,7 @@
                         <valuelink>
                             <name>StartTime</name>
                             <visible>false</visible>
+                            <exposed>false</exposed>
                             <isout>false</isout>
                             <allowmultiple>false</allowmultiple>
                             <typecheck>true</typecheck>
@@ -3679,6 +4567,7 @@
                         <valuelink>
                             <name>EndTime</name>
                             <visible>false</visible>
+                            <exposed>false</exposed>
                             <isout>false</isout>
                             <allowmultiple>false</allowmultiple>
                             <typecheck>true</typecheck>
@@ -3686,6 +4575,7 @@
                         <valuelink>
                             <name>Time</name>
                             <visible>true</visible>
+                            <exposed>true</exposed>
                             <isout>false</isout>
                             <allowmultiple>false</allowmultiple>
                             <typecheck>true</typecheck>
@@ -3696,6 +4586,7 @@
                         <valuelink>
                             <name>StartRotation</name>
                             <visible>false</visible>
+                            <exposed>false</exposed>
                             <isout>false</isout>
                             <allowmultiple>false</allowmultiple>
                             <typecheck>true</typecheck>
@@ -3703,6 +4594,7 @@
                         <valuelink>
                             <name>EndRotation</name>
                             <visible>false</visible>
+                            <exposed>false</exposed>
                             <isout>false</isout>
                             <allowmultiple>false</allowmultiple>
                             <typecheck>true</typecheck>
@@ -3747,6 +4639,14 @@
                             <name>Finished</name>
                             <visible>true</visible>
                         </outputlink>
+                        <valuelink>
+                            <name>Enabled</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
                     </node>
                 </actionnodes>
                 <valuenodes>
@@ -3781,6 +4681,14 @@
                             <name>Value</name>
                             <float>0</float>
                         </property>
+                        <valuelink>
+                            <name>Enabled</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
                     </node>
                     <node>
                         <name>Actor</name>
@@ -3813,6 +4721,14 @@
                             <name>Value</name>
                             <actorId>f2588a57-5422-48da-9bdc-09ab214081e4</actorId>
                         </property>
+                        <valuelink>
+                            <name>Enabled</name>
+                            <visible>true</visible>
+                            <exposed>false</exposed>
+                            <isout>false</isout>
+                            <allowmultiple>false</allowmultiple>
+                            <typecheck>true</typecheck>
+                        </valuelink>
                     </node>
                     <node>
                         <name>Reference</name>
@@ -3848,6 +4764,7 @@
                         <valuelink>
                             <name>Ref</name>
                             <visible>true</visible>
+                            <exposed>false</exposed>
                             <isout>false</isout>
                             <allowmultiple>false</allowmultiple>
                             <typecheck>true</typecheck>
