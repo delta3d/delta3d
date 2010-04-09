@@ -150,6 +150,22 @@ namespace dtGUI
       Widget* GetWidget(const std::string& name);
 
       /** 
+        * Searches and return all Widgets that have the supplied text as part
+        * of their name.
+        * @param subName Part of the name of the Widgets to find
+        * @param toFill The found Widgets with subName in their names (or empty, if none found)
+        */
+      void FindWidgets(const std::string& subName, std::vector<Widget*>& toFill);
+
+      /** 
+        * Searches and return the first Widget that has the supplied text as part
+        * of its  name.
+        * @param subName Part of the name of the Widget to find
+        * @return The first found Widget (or NULL, if not found)
+        */
+      Widget* FindWidget(const std::string& subName);
+
+      /** 
         * Set the directory for the supplied resource type.
         * @code
         * dtGUI::GUI::SetResourceGroupDirectory("layouts", "c:\temp\layouts");

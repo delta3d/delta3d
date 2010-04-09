@@ -396,6 +396,44 @@ Widget* dtGUI::GUI::GetWidget(const std::string& name)
    return CEGUI::WindowManager::getSingleton().getWindow(name);
 }
 
+
+////////////////////////////////////////////////////////////////////////////////
+void dtGUI::GUI::FindWidgets(const std::string& subName, std::vector<Widget*>& toFill)
+{
+   for (CEGUI::WindowManager::WindowIterator iter = CEGUI::WindowManager::getSingleton().getIterator(); !iter.isAtEnd(); ++iter)
+   {
+      Widget* win = iter.getCurrentValue();
+
+      if (win->getName().find(subName) != CEGUI::String::npos)
+      {
+         toFill.push_back(win);
+      }
+   }
+
+   if (!toFill.empty())
+   {
+      return;
+   }
+
+   LOG_ERROR(subName + " is not available in gui \"" + this->GetName() + "\"\n");
+   return;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+Widget* dtGUI::GUI::FindWidget(const std::string& subName)
+{
+   std::vector<Widget*> toFill;
+   FindWidgets(subName, toFill);
+
+   if (!toFill.empty())
+   {
+      return toFill.front();
+   }
+
+   LOG_ERROR(subName + " is not available in gui \"" + this->GetName() + "\"\n"); 
+   return NULL;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 Widget* dtGUI::GUI::GetRootSheet()
 {
