@@ -275,6 +275,18 @@ namespace dtDAL
                                 const dtUtil::RefString& groupName = "")
             : BaseClass(DataType::GAME_EVENT, name, label, set, get, desc, groupName)
             , mProxy(&actorProxy)
+            , mMap(NULL)
+         {
+         }
+
+         GameEventActorProperty(Map* map,
+                                const dtUtil::RefString& name, const dtUtil::RefString& label,
+                                SetFuncType set, GetFuncType get,
+                                const dtUtil::RefString& desc = "",
+                                const dtUtil::RefString& groupName = "")
+            : BaseClass(DataType::GAME_EVENT, name, label, set, get, desc, groupName)
+            , mProxy(NULL)
+            , mMap(map)
          {
          }
 
@@ -294,12 +306,18 @@ namespace dtDAL
          */
          virtual const std::string ToString() const;
 
+         /**
+          * Retrieves a human readable version of the property's value.
+          */
+         virtual std::string GetValueString();
+
       protected:
          virtual ~GameEventActorProperty() { }
 
       private:
 
          ActorProxy* mProxy;
+         Map*        mMap;
    };
 
 

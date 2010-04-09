@@ -75,7 +75,7 @@ namespace dtDirector
       ValueNode::OnLinkValueChanged(linkName);
 
       // If the linked value has changed, make sure we notify.
-      OnValueChanged();
+      //OnValueChanged();
    }
 
    //////////////////////////////////////////////////////////////////////////

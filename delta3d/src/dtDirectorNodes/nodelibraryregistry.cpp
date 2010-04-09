@@ -27,6 +27,7 @@
 #include <dtDirectorNodes/remoteevent.h>
 #include <dtDirectorNodes/triggervolumeevent.h>
 #include <dtDirectorNodes/gamemessageevent.h>
+#include <dtDirectorNodes/gameeventmessageevent.h>
 
 // Actions
 #include <dtDirectorNodes/outputnode.h>
@@ -42,6 +43,7 @@
 #include <dtDirectorNodes/lerpactorrotationaction.h>
 #include <dtDirectorNodes/lerpactortranslationaction.h>
 #include <dtDirectorNodes/sendmessageaction.h>
+#include <dtDirectorNodes/sendeventmessageaction.h>
 
 // Values
 #include <dtDirectorNodes/externalvaluenode.h>
@@ -84,6 +86,7 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::REMOTE_EVENT_NODE_TYPE(                 new dtDirector::NodeType("Remote Event",              "Core",        "Events",      "A remote event."));
    RefPtr<NodeType> NodeLibraryRegistry::TRIGGER_VOLUME_EVENT_NODE_TYPE(         new dtDirector::NodeType("Trigger Volume Event",      "General",     "Events",      "A trigger volume event."));
    RefPtr<NodeType> NodeLibraryRegistry::GAME_MESSAGE_EVENT_NODE_TYPE(           new dtDirector::NodeType("Game Message Event",        "Messages",    "Events",      "An event that responds to game messages."));
+   RefPtr<NodeType> NodeLibraryRegistry::GAME_EVENT_MESSAGE_EVENT_NODE_TYPE(     new dtDirector::NodeType("Game Event Message Event",  "Messages",    "Events",      "An event that responds to game event messages."));
 
    // Actions
    RefPtr<NodeType> NodeLibraryRegistry::OUTPUT_NODE_TYPE(                       new dtDirector::NodeType("Output Link",               "Core",        "Links",       "This node creates an output link connector in its parent graph."));
@@ -99,6 +102,7 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::LERP_ACTOR_ROTATION_ACTION_NODE_TYPE(   new dtDirector::NodeType("Lerp Actor Rotation",       "Cinematic",   "Cinematic",   "Linearly interpolates the rotation of an actor."));
    RefPtr<NodeType> NodeLibraryRegistry::LERP_ACTOR_TRANSLATION_ACTION_NODE_TYPE(new dtDirector::NodeType("Lerp Actor Translation",    "Cinematic",   "Cinematic",   "Linearly interpolates the position of an actor."));
    RefPtr<NodeType> NodeLibraryRegistry::SEND_MESSAGE_ACTION_NODE_TYPE(          new dtDirector::NodeType("Send Message Action",       "Messages",    "Actions",     "Sends a Game Message."));
+   RefPtr<NodeType> NodeLibraryRegistry::SEND_EVENT_MESSAGE_ACTION_NODE_TYPE(    new dtDirector::NodeType("Send Event Message Action", "Messages",    "Actions",     "Sends a Game Event Message."));
 
    // Values
    RefPtr<NodeType> NodeLibraryRegistry::EXTERNAL_VALUE_NODE_TYPE(               new dtDirector::NodeType("Value Link",                "Core",        "Links",       "This node creates a value link connector in its parent graph."));
@@ -142,6 +146,7 @@ namespace dtDirector
       mNodeFactory->RegisterType<RemoteEvent>(REMOTE_EVENT_NODE_TYPE.get());
       mNodeFactory->RegisterType<TriggerVolumeEvent>(TRIGGER_VOLUME_EVENT_NODE_TYPE.get());
       mNodeFactory->RegisterType<GameMessageEvent>(GAME_MESSAGE_EVENT_NODE_TYPE.get());
+      mNodeFactory->RegisterType<GameEventMessageEvent>(GAME_EVENT_MESSAGE_EVENT_NODE_TYPE.get());
 
       // Actions
       mNodeFactory->RegisterType<OutputNode>(OUTPUT_NODE_TYPE.get());
@@ -157,6 +162,7 @@ namespace dtDirector
       mNodeFactory->RegisterType<LerpActorRotationAction>(LERP_ACTOR_ROTATION_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<LerpActorTranslationAction>(LERP_ACTOR_TRANSLATION_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<SendMessageAction>(SEND_MESSAGE_ACTION_NODE_TYPE.get());
+      mNodeFactory->RegisterType<SendEventMessageAction>(SEND_EVENT_MESSAGE_ACTION_NODE_TYPE.get());
 
       // Values
       mNodeFactory->RegisterType<ExternalValueNode>(EXTERNAL_VALUE_NODE_TYPE.get());

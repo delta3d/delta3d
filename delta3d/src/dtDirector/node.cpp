@@ -28,6 +28,7 @@
 
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actorproperty.h>
+#include <dtDAL/gameevent.h>
 
 namespace dtDirector
 {
@@ -461,6 +462,21 @@ namespace dtDirector
       return NULL;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   dtDAL::GameEvent* Node::GetGameEvent(const std::string& name, int index)
+   {
+      dtDAL::ActorProperty* prop = GetProperty(name, index);
+      if (!prop) return NULL;
+
+      dtDAL::GameEventActorProperty* eventProp = dynamic_cast<dtDAL::GameEventActorProperty*>(prop);
+      if (eventProp)
+      {
+         return eventProp->GetValue();
+      }
+
+      return NULL;
+   }
+
    //////////////////////////////////////////////////////////////////////////
    void Node::SetBoolean(bool value, const std::string& name, int index)
    {
@@ -541,6 +557,33 @@ namespace dtDirector
    void Node::SetActorID(const dtCore::UniqueId& value, const std::string& name, int index)
    {
       SetString(value.ToString(), name, index);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void Node::SetGameEvent(dtDAL::GameEvent* value, const std::string& name, int index)
+   {
+      if (index == -1)
+      {
+         int count = GetPropertyCount(name);
+         for (index = 0; index < count; index++)
+         {
+            dtDAL::ActorProperty* prop = GetProperty(name, index);
+            dtDAL::GameEventActorProperty* eventProp = dynamic_cast<dtDAL::GameEventActorProperty*>(prop);
+            if (eventProp)
+            {
+               eventProp->SetValue(value);
+            }
+         }
+      }
+      else
+      {
+         dtDAL::ActorProperty* prop = GetProperty(name, index);
+         dtDAL::GameEventActorProperty* eventProp = dynamic_cast<dtDAL::GameEventActorProperty*>(prop);
+         if (eventProp)
+         {
+            eventProp->SetValue(value);
+         }
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
