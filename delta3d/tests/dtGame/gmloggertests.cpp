@@ -97,6 +97,7 @@ class GMLoggerTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestControllerSignals);
       CPPUNIT_TEST(TestServerLogger);
       CPPUNIT_TEST(TestServerLogger2);
+      CPPUNIT_TEST(TestAddRemoveIgnoredMessageTypeToLogger);
    CPPUNIT_TEST_SUITE_END();
 
    public:
@@ -129,6 +130,7 @@ class GMLoggerTests : public CPPUNIT_NS::TestFixture
       void TestControllerSignals();
       void TestServerLogger();
       void TestServerLogger2();
+      void TestAddRemoveIgnoredMessageTypeToLogger();
 
       void CompareKeyframeLists(const std::vector<dtGame::LogKeyframe> listOne,
          const std::vector<dtGame::LogKeyframe> listTwo);
@@ -2675,4 +2677,96 @@ void GMLoggerTests::TestServerLogger2()
    //{
    //   CPPUNIT_FAIL(std::string("Caught exception of type: ") + typeid(e).name() + " " + e.what());
    //}
+}
+
+//////////////////////////////////////////////////////////////////////////
+class MessageCaptureLogStream : public dtGame::LogStream
+{
+public:
+   MessageCaptureLogStream(dtGame::MessageFactory& msgFactory)
+      :dtGame::LogStream(msgFactory)
+   {
+   };
+
+   virtual void Close() {};
+   virtual void Create(const std::string& logsPath, const std::string& logResourceName) {};
+   virtual void Open(const std::string& logsPath, const std::string& logResourceName) {};
+   virtual void Delete(const std::string& logsPath, const std::string& logResourceName) {};
+   virtual void WriteMessage(const dtGame::Message& msg, double timeStamp)
+   {
+      mWrittenMsgs.push_back(&msg.GetMessageType());
+   };
+
+   virtual dtCore::RefPtr<dtGame::Message> ReadMessage(double& timeStamp)
+   {
+      dtCore::RefPtr<dtGame::Message> msg = new dtGame::Message();
+      return msg;
+   }
+
+   virtual void InsertTag(dtGame::LogTag& newTag) {};
+   virtual void InsertKeyFrame(dtGame::LogKeyframe& newKeyFrame) {};
+   virtual void JumpToKeyFrame(const dtGame::LogKeyframe& keyFrame) {};
+   virtual void GetTagIndex(std::vector<dtGame::LogTag>& tags) {};
+   virtual void GetKeyFrameIndex(std::vector<dtGame::LogKeyframe>& keyFrames) {};
+   virtual void GetAvailableLogs(const std::string& logsPath,std::vector<std::string>& logs) {};
+   virtual void Flush() {};
+
+   bool ReceivedMsgType(const dtGame::MessageType& msgType) const
+   {
+      return std::find(mWrittenMsgs.begin(), mWrittenMsgs.end(), &msgType) != mWrittenMsgs.end();
+   }
+
+   std::vector<const dtGame::MessageType*> mWrittenMsgs;
+
+protected:
+   virtual ~MessageCaptureLogStream() {};	
+};
+
+////////////////////////////////////////////////////////////////////////////////
+void GMLoggerTests::TestAddRemoveIgnoredMessageTypeToLogger()
+{
+   dtCore::RefPtr<dtGame::LogController> logController = new dtGame::LogController();
+   dtCore::RefPtr<MessageCaptureLogStream> stream = new MessageCaptureLogStream(mGameManager->GetMessageFactory());
+   dtCore::RefPtr<dtGame::ServerLoggerComponent> serverController = new dtGame::ServerLoggerComponent(*stream);
+
+   mGameManager->AddComponent(*logController, dtGame::GameManager::ComponentPriority::NORMAL);
+   mGameManager->AddComponent(*serverController, dtGame::GameManager::ComponentPriority::NORMAL);
+   mGameManager->AddComponent(*new dtGame::DefaultMessageProcessor(), dtGame::GameManager::ComponentPriority::HIGHEST);
+
+   logController->RequestChangeStateToRecord();
+
+   dtCore::RefPtr<dtGame::Message> testMsg = 
+      mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT);
+   mGameManager->SendMessage(*testMsg);
+
+   dtCore::System::GetInstance().Step();
+
+   //LogStream should have received a INFO_GAME_EVENT
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("ServerLogger shouldn't have filtered out the received Message",
+                                true, stream->ReceivedMsgType(dtGame::MessageType::INFO_GAME_EVENT));
+
+   stream->mWrittenMsgs.clear();
+
+   //request that we ignore this MessageType
+   logController->RequestAddIgnoredMessageType(dtGame::MessageType::INFO_GAME_EVENT);
+   mGameManager->SendMessage(*testMsg);
+   dtCore::System::GetInstance().Step();
+
+   //LogStream shouldn't receive a INFO_GAME_EVENT now
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("ServerLogger didn't filter out the requested MessageType",
+                                false, stream->ReceivedMsgType(dtGame::MessageType::INFO_GAME_EVENT));
+
+   stream->mWrittenMsgs.clear();
+
+   //request that we stop ignoring this MessageType
+   logController->RequestRemoveIgnoredMessageType(dtGame::MessageType::INFO_GAME_EVENT);
+   mGameManager->SendMessage(*testMsg);
+   dtCore::System::GetInstance().Step();
+
+   //LogStream should have received a INFO_GAME_EVENT
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("ServerLogger shouldn't have filtered out the received Message",
+                                true, stream->ReceivedMsgType(dtGame::MessageType::INFO_GAME_EVENT));
+
+   mGameManager->RemoveComponent(*logController);
+   mGameManager->RemoveComponent(*serverController);
 }

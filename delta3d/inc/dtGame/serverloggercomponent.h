@@ -317,6 +317,23 @@ namespace dtGame
        */
       void HandleClearIgnoreListMessage();
 
+      /** 
+       *  Add a MessageType to the list of Messages to not record.
+       *  @param message a LogIgnoreMessageTypeMessage containing the MessageType to ignore
+       */
+      void HandleAddIgnoredMessageTypeMessage(const Message& message);
+
+      /** 
+       *  Remove a MessageType to the list of Messages to not record.
+       *  @param message a LogIgnoreMessageTypeMessage containing the MessageType to stop ignoring
+       */
+      void HandleRemoveIgnoredMessageTypeMessage(const Message& message);
+
+      /** 
+       *  Stop ignoring all previously ignored MessageTypes
+       */
+      void HandleClearIgnoredMessageTypeMessage();
+
       /**
        * Called when a message we received in ProcessMessage() is a candidate for writing.
        * It determines what state we're in and write the message.  A failure here does
@@ -338,6 +355,12 @@ namespace dtGame
        * @return Total number of actors requested to be deleted.
        */
       int RequestDeletePlaybackActors();
+
+      /** 
+       * Check if the supplied Message is okay to record.
+       * @return true if message should be written, false otherwise
+       */
+      bool OkToRecord(const Message& message) const;
 
    private:
       /**
@@ -375,6 +398,9 @@ namespace dtGame
 
       //The ignore list for actors to be ignored during the record state.
       std::set<dtCore::UniqueId> mRecordIgnoreList;
+
+      ///The list of MessageTypes that should be ignored during the record state.
+      std::set<const dtGame::MessageType*> mIgnoredMessageTypeList;
 
       //The list of actor ids of actors who join the simulation during
       //the playback state.

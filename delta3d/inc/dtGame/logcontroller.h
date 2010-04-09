@@ -164,6 +164,28 @@ namespace dtGame
        */
       virtual void RequestClearIgnoreList();
 
+      /** 
+       *  Sends a request to the ServerLoggerComponent to ignore incoming Message
+       *  of the supplied type.  This will prevent future Messages of that type
+       *  from being logged.
+       *  @param msgType The type of Message to not record
+       */
+      virtual void RequestAddIgnoredMessageType(const dtGame::MessageType& msgType);
+
+      /** 
+       *  Sends a request to the ServerLoggerComponent to stop ignoring incoming Messages
+       *  of the supplied type.  This will allow future Messages of that type
+       *  to be logged.
+       *  @param msgType The type of Message to begin recording again
+       */
+      virtual void RequestRemoveIgnoredMessageType(const dtGame::MessageType& msgType);
+
+      /** 
+       *  Sends a request to the ServerLoggerComponent to stop ignoring
+       *  all previously ignored Messages. 
+       */
+      virtual void RequestClearIgnoredMessageTypeList();
+
       /**
        * Returns the last received LogStatus.  No Set, since only this object should set it.
        */

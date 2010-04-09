@@ -24,6 +24,7 @@
 #include <dtGame/logkeyframe.h>
 #include <dtGame/logstatus.h>
 #include <dtGame/exceptionenum.h>
+#include <dtGame/messagetype.h>
 #include <dtUtil/datastream.h>
 
 namespace dtGame
@@ -600,5 +601,35 @@ namespace dtGame
       okay = okay && Message::FromDataStream(stream);
       UpdateInternalTagList();
       return okay;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   LogIgnoreMessageTypeMessage::LogIgnoreMessageTypeMessage()
+   {
+      AddParameter(new UnsignedShortIntMessageParameter("IgnoredMessageTypeID"));
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void LogIgnoreMessageTypeMessage::SetIgnoredMessageType(const dtGame::MessageType& ignoredMsgType)
+   {
+      SetIgnoredMessageType(ignoredMsgType.GetId());
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void LogIgnoreMessageTypeMessage::SetIgnoredMessageType(unsigned short ignoredMsgTypeID)
+   {
+      UnsignedShortIntMessageParameter *p = 
+         static_cast<UnsignedShortIntMessageParameter*>(GetParameter("IgnoredMessageTypeID"));
+
+      p->SetValue(ignoredMsgTypeID);   
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   unsigned short LogIgnoreMessageTypeMessage::GetIgnoredMessageType() const
+   {
+      const UnsignedShortIntMessageParameter *p = 
+         static_cast<const UnsignedShortIntMessageParameter*>(GetParameter("IgnoredMessageTypeID"));
+
+      return p->GetValue();
    }
 }
