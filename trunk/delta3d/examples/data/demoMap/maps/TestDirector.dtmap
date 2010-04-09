@@ -7,11 +7,23 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2009-12-21T16:14:44-08:00</createTimestamp>
-        <lastUpdateTimestamp>2010-01-08T13:56:41-08:00</lastUpdateTimestamp>
-        <editorVersion>2.4.0</editorVersion>
+        <lastUpdateTimestamp>2010-04-09T14:07:13-08:00</lastUpdateTimestamp>
+        <editorVersion>2.5.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
     <libraries></libraries>
+    <events>
+        <event>
+            <id>15348d9e-07a2-4a73-a695-4c11f0223d90</id>
+            <name>Slide Door Open</name>
+            <description></description>
+        </event>
+        <event>
+            <id>93f3bcf8-018d-4973-babe-efc350e755f5</id>
+            <name>Slide Door Close</name>
+            <description></description>
+        </event>
+    </events>
     <actors>
         <actor>
             <type>dtcore.Game.Actors.Game Mesh Actor</type>
@@ -128,145 +140,6 @@
                     <value2>1.000000</value2>
                     <value3>1.000000</value3>
                 </vec3>
-            </property>
-        </actor>
-        <actor>
-            <type>dtActors.Director Actor</type>
-            <id>0c3a2f66-415e-4519-abb6-1bd0048b6d48</id>
-            <name>Director_Graph_Actor_01</name>
-            <property>
-                <name>Description</name>
-                <string></string>
-            </property>
-            <property>
-                <name>IsActive</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Rotation</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Translation</name>
-                <vec3>
-                    <value1>2.109623</value1>
-                    <value2>13.057766</value2>
-                    <value3>-0.000000</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Normal Rescaling</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Show Collision Geometry</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>NONE</enumerated>
-            </property>
-            <property>
-                <name>Collision Radius</name>
-                <float>0</float>
-            </property>
-            <property>
-                <name>Collision Length</name>
-                <float>0</float>
-            </property>
-            <property>
-                <name>Collision Box</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Render Proxy Node</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Enable Dynamics</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Mass</name>
-                <float>4.1887903</float>
-            </property>
-            <property>
-                <name>Center of Gravity</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Initial Ownership</name>
-                <enumerated>Server Local</enumerated>
-            </property>
-            <property>
-                <name>Local Actor Update Policy</name>
-                <enumerated>ACCEPT_ALL</enumerated>
-            </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string></string>
-            </property>
-            <property>
-                <name>CurrentShader</name>
-                <resourceType>Shaders</resourceType>
-                <resourceDisplayName></resourceDisplayName>
-                <resource></resource>
-            </property>
-            <property>
-                <name>NodeLogging</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Recording</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>PlayerActor</name>
-                <actorId></actorId>
-            </property>
-            <property>
-                <name>CameraActor</name>
-                <actorId></actorId>
-            </property>
-            <property>
-                <name>DirectorArray</name>
-                <array>
-                    <size>2</size>
-                    <element>
-                        <index>0</index>
-                        <property>
-                            <name>DirectorGraph</name>
-                            <resourceType>Directors</resourceType>
-                            <resourceDisplayName>Directors::doors.dtDir</resourceDisplayName>
-                            <resource>Directors::doors.dtDir</resource>
-                        </property>
-                    </element>
-                    <element>
-                        <index>1</index>
-                        <property>
-                            <name>DirectorGraph</name>
-                            <resourceType>Directors</resourceType>
-                            <resourceDisplayName>Directors::fires.dtDir</resourceDisplayName>
-                            <resource>Directors::fires.dtDir</resource>
-                        </property>
-                    </element>
-                </array>
             </property>
         </actor>
         <actor>
@@ -411,7 +284,7 @@
                 <vec3>
                     <value1>-2.938191</value1>
                     <value2>9.433326</value2>
-                    <value3>3.010427</value3>
+                    <value3>2.503318</value3>
                 </vec3>
             </property>
             <property>
@@ -3379,6 +3252,10 @@
             <property>
                 <name>Max Distance</name>
                 <float>3.4028235e+038</float>
+            </property>
+            <property>
+                <name>Reference Distance</name>
+                <float>1</float>
             </property>
             <property>
                 <name>Rolloff Factor</name>

@@ -275,18 +275,15 @@ namespace dtDAL
                                 const dtUtil::RefString& groupName = "")
             : BaseClass(DataType::GAME_EVENT, name, label, set, get, desc, groupName)
             , mProxy(&actorProxy)
-            , mMap(NULL)
          {
          }
 
-         GameEventActorProperty(Map* map,
-                                const dtUtil::RefString& name, const dtUtil::RefString& label,
+         GameEventActorProperty(const dtUtil::RefString& name, const dtUtil::RefString& label,
                                 SetFuncType set, GetFuncType get,
                                 const dtUtil::RefString& desc = "",
                                 const dtUtil::RefString& groupName = "")
             : BaseClass(DataType::GAME_EVENT, name, label, set, get, desc, groupName)
             , mProxy(NULL)
-            , mMap(map)
          {
          }
 
@@ -317,7 +314,6 @@ namespace dtDAL
       private:
 
          ActorProxy* mProxy;
-         Map*        mMap;
    };
 
 

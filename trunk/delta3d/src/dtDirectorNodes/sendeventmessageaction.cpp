@@ -61,7 +61,7 @@ namespace dtDirector
       ActionNode::BuildPropertyMap();
 
       dtDAL::GameEventActorProperty* eventProp = new dtDAL::GameEventActorProperty(
-         GetDirector()->GetMap(), "Event", "Event",
+         "Event", "Event",
          dtDAL::GameEventActorProperty::SetFuncType(this, &SendEventMessageAction::SetEvent),
          dtDAL::GameEventActorProperty::GetFuncType(this, &SendEventMessageAction::GetEvent),
          "The Game Event.  Entries are set in the map properties.");
