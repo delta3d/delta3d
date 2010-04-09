@@ -176,6 +176,23 @@ namespace dtGUI
         */
       static void SetResourceGroupDirectory(const std::string& resourceType, const std::string& directory);
 
+      /** 
+        * Set a directory for the supplied named resourceGroup by finding a 
+        * file or directory using the Delta3D data file search paths.  If the
+        * resourceToFind is found, its full path will be used as the ResourceGroup's
+        * path.
+        * @code
+        * std::string path = dtGUI::GUI::SetResourceGroupFromResource("MyResourceGroup", "testImage.png");
+        * if (!path.empty()) dtGUI::GUI::CreateImageset("MyImageset", "testImage.png", "MyResourceGroup");
+        * @endcode
+        * @param resourceGroup The name of a ResourceGroup to set the directory on
+        * @param resourceToFind The file name or directory to find, using the data file search paths
+        * @return The path used for the ResourceGroup or empty() if the resourceToFind wasn't found.
+        * @see SetResourceGroupDirectory()
+        * @see dtUtil::SetDataFilePathList()
+        */
+      static std::string SetResourceGroupFromResource(const std::string& resourceGroup, const std::string& resourceToFind);
+
       typedef CEGUI::SubscriberSlot Subscriber;
       /** 
         * Subscribe a callback to the supplied widget's event.  
