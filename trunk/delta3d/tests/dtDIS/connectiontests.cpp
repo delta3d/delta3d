@@ -81,7 +81,7 @@ void ConnectionTests::TestConnection()
    // write to the port
    discon.Send( &(outbuf[0]), outbuf.size() );
 
-   dtCore::AppSleep(20);
+   dtCore::AppSleep(1);
 
    // read from the port
    char ibuffer[mtu];    /// needs to be the same as mtu
