@@ -51,9 +51,14 @@ namespace dtQt
             return CreateWidget(drawOnSeparateThread, parent, shareWidget, f);
          }
 
-         /// This is the old, deprecated version
+         /// This is the old, deprecated version.  Deprecated 4/5/2010
          DEPRECATE_FUNC virtual OSGAdapterWidget* CreateWidget(bool drawOnSeparateThread,  QWidget* parent = NULL,
-                                                const QGLWidget* shareWidget = NULL, Qt::WindowFlags f = NULL) { return NULL; }
+                                                const QGLWidget* shareWidget = NULL, Qt::WindowFlags f = NULL) 
+         { 
+            DEPRECATE("virtual OSGAdapterWidget* CreateWidget(bool,  QWidget*, const QGLWidget*, Qt::WindowFlags f)",
+                      "N/A");
+            return NULL;
+         }
 
       protected:
          ~GLWidgetFactory()
