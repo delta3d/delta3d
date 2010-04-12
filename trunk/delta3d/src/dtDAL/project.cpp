@@ -1433,6 +1433,54 @@ namespace dtDAL
       return NULL;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   GameEvent* Project::GetGameEvent(const dtCore::UniqueId& id)
+   {
+      GameEvent* e = GameEventManager::GetInstance().FindEvent(id);
+      if (e)
+      {
+         return e;
+      }
+
+      std::map<std::string, dtCore::RefPtr<Map> >::iterator i = mOpenMaps.begin();
+      for (; i != mOpenMaps.end(); ++i)
+      {
+         dtCore::RefPtr<Map>& map = i->second;
+
+         e = map->GetEventManager().FindEvent(id);
+         if (e)
+         {
+            return e;
+         }
+      }
+
+      return NULL;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   GameEvent* Project::GetGameEvent(const std::string& eventName)
+   {
+      GameEvent* e = GameEventManager::GetInstance().FindEvent(eventName);
+      if (e)
+      {
+         return e;
+      }
+
+      std::map<std::string, dtCore::RefPtr<Map> >::iterator i = mOpenMaps.begin();
+      for (; i != mOpenMaps.end(); ++i)
+      {
+         dtCore::RefPtr<Map>& map = i->second;
+
+         e = map->GetEventManager().FindEvent(eventName);
+         if (e)
+         {
+            return e;
+         }
+      }
+
+      return NULL;
+   }
+
    /////////////////////////////////////////////////////////////////////////////
    void Project::GetHandlersForDataType(const DataType& resourceType, std::vector<const ResourceTypeHandler* >& toFill) const
    {

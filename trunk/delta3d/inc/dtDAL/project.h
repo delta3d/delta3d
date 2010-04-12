@@ -56,6 +56,7 @@ namespace dtDAL
    class LibraryManager;
    class ActorProxy;
    class ResourceDescriptor;
+   class GameEvent;
 
    /**
     * @class Project
@@ -423,6 +424,18 @@ namespace dtDAL
           * @param proxy the proxy to search for.
           */
          const Map* GetMapForActorProxy(const ActorProxy& proxy) const;
+
+         /**
+          * This will search for a map event in all currently loaded maps.
+          * @param the unique id of the.
+          */
+         GameEvent* GetGameEvent(const dtCore::UniqueId& id);
+
+         /**
+          * This will search for a map event in all currently loaded maps.
+          * @param the name of the event.
+          */
+         GameEvent* GetGameEvent(const std::string& eventName);
 
          /**
           * @param resourceType the type of resource.  The datatype passed in MUST be a resource type.
