@@ -885,9 +885,20 @@ namespace dtDAL
             GameEventActorProperty& geProp = static_cast<GameEventActorProperty&>(*actorProperty);
             if (!dtUtil::Trim(dataValue).empty())
             {
+               GameEvent *e = NULL;
                dtCore::UniqueId id = dtCore::UniqueId(dataValue);
-               GameEvent *e = GameEventManager::GetInstance().FindEvent(id);
-               if(e == NULL)
+
+               if (mMap.valid())
+               {
+                  e = mMap->GetEventManager().FindEvent(id);
+               }
+
+               if (e == NULL)
+               {
+                  e = GameEventManager::GetInstance().FindEvent(id);
+               }
+
+               if (e == NULL)
                {
                   // Find the event.
                   std::set<std::string> mapNames = Project::GetInstance().GetMapNames();
@@ -1130,9 +1141,20 @@ namespace dtDAL
             NamedGameEventParameter& geParam = static_cast<NamedGameEventParameter&>(np);
             if (!dtUtil::Trim(dataValue).empty())
             {
+               GameEvent *e = NULL;
                dtCore::UniqueId id = dtCore::UniqueId(dataValue);
-               GameEvent *e = GameEventManager::GetInstance().FindEvent(id);
-               if(e == NULL)
+
+               if (mMap.valid())
+               {
+                  e = mMap->GetEventManager().FindEvent(id);
+               }
+
+               if (e == NULL)
+               {
+                  e = GameEventManager::GetInstance().FindEvent(id);
+               }
+
+               if (e == NULL)
                {
                   // Find the event.
                   std::set<std::string> mapNames = Project::GetInstance().GetMapNames();
