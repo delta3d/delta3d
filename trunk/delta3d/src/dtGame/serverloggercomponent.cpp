@@ -629,7 +629,10 @@ namespace dtGame
 
          // Update our cache.
          std::set<std::string>::iterator itor = mLogCache.find(actual.GetLogFileName());
-         mLogCache.erase(itor);
+         if (itor != mLogCache.end())
+         {
+            mLogCache.erase(itor);
+         }
       }
       catch(const dtUtil::Exception& e)
       {
