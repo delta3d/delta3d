@@ -25,6 +25,8 @@
 #include <dtDIS/connection.h>
 #include <DIS/DataStream.h>
 
+#include <dtCore/timer.h>
+
 #include <cstdlib>  // for NULL
 
 
@@ -78,6 +80,8 @@ void ConnectionTests::TestConnection()
 
    // write to the port
    discon.Send( &(outbuf[0]), outbuf.size() );
+
+   dtCore::AppSleep(20);
 
    // read from the port
    char ibuffer[mtu];    /// needs to be the same as mtu
