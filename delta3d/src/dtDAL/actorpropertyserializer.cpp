@@ -895,23 +895,7 @@ namespace dtDAL
 
                if (e == NULL)
                {
-                  e = GameEventManager::GetInstance().FindEvent(id);
-               }
-
-               if (e == NULL)
-               {
-                  // Find the event.
-                  std::set<std::string> mapNames = Project::GetInstance().GetMapNames();
-                  std::set<std::string>::iterator mapIter = mapNames.begin();
-
-                  for (; mapIter != mapNames.end(); ++mapIter)
-                  {
-                     std::string& mapName = *mapIter;
-
-                     Map& map = Project::GetInstance().GetMap(mapName);
-                     e = map.GetEventManager().FindEvent(id);
-                     if (e) break;
-                  }
+                  e = Project::GetInstance().GetGameEvent(id);
                }
 
                if (e != NULL)
@@ -1151,23 +1135,7 @@ namespace dtDAL
 
                if (e == NULL)
                {
-                  e = GameEventManager::GetInstance().FindEvent(id);
-               }
-
-               if (e == NULL)
-               {
-                  // Find the event.
-                  std::set<std::string> mapNames = Project::GetInstance().GetMapNames();
-                  std::set<std::string>::iterator mapIter = mapNames.begin();
-
-                  for (; mapIter != mapNames.end(); ++mapIter)
-                  {
-                     std::string& mapName = *mapIter;
-
-                     Map& map = Project::GetInstance().GetMap(mapName);
-                     e = map.GetEventManager().FindEvent(id);
-                     if (e) break;
-                  }
+                  e = Project::GetInstance().GetGameEvent(id);
                }
 
                if (e != NULL)
