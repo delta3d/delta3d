@@ -223,6 +223,11 @@ namespace dtCore
          int height; ///<In pixels
          int bitDepth; ///<number of color bits
          int refresh; ///<refresh rate in Hz
+
+         bool operator == (const dtCore::DeltaWin::Resolution& res) const
+         {
+            return width == res.width && height == res.height && bitDepth == res.bitDepth && refresh == res.refresh;
+         }
       };
 
       typedef std::vector<Resolution> ResolutionVec;
