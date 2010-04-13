@@ -62,32 +62,133 @@ namespace dtDAL
    const std::string Project::MAP_DIRECTORY("maps");
    const std::string Project::MAP_BACKUP_SUB_DIRECTORY("backups");
 
+   struct MapFileData
+   {
+      std::string mOrigName;
+      std::string mFileName;
+      Project::ContextSlot mSlotId;
+   };
+
+   class ProjectImpl {
+   public:
+      ProjectImpl()
+      : mContextReadOnly(true)
+      , mResourcesIndexed(false)
+      , mEditMode(false)
+      {
+         MapParser::StaticInit();
+         MapXMLConstants::StaticInit();
+
+         mWriter = new MapWriter;
+         libraryManager = &LibraryManager::GetInstance();
+         mLogger = &dtUtil::Log::GetInstance(Project::LOG_NAME);
+      }
+
+      ~ProjectImpl()
+      {
+         MapXMLConstants::StaticShutdown();
+         MapParser::StaticShutdown();
+         //make sure the maps get closed before
+         //the library manager is deleted
+         mOpenMaps.clear();
+
+      }
+
+      std::vector<std::string> mContexts;
+
+      bool mContextReadOnly;
+      mutable bool mResourcesIndexed;
+
+      //set to true if we are running via stage - banderegg
+      bool mEditMode;
+
+      typedef std::map<std::string, MapFileData> MapListType;
+      MapListType mMapList; //< The list of maps by name mapped to the file names.
+      mutable std::set<std::string> mMapNames; //< The list of map names.
+
+      std::map<std::string, dtCore::RefPtr<Map> > mOpenMaps; //< A vector of the maps currently loaded.
+      mutable dtUtil::tree<ResourceTreeNode> mResources; //< a tree of all the resources.  This is more of a cache.
+
+      dtCore::RefPtr<MapParser> mParser;
+      dtCore::RefPtr<MapWriter> mWriter;
+      //This is here to make sure the library manager is deleted AFTER the maps are closed.
+      //so that libraries won't be closed and the proxies deleted out from under the map.
+      dtCore::RefPtr<LibraryManager> libraryManager;
+      ResourceHelper mResourceHelper;
+
+      dtUtil::Log* mLogger;
+
+      // Internal context add that doesn't refresh
+      Project::ContextSlot InternalAddContext(const std::string& path);
+      // Internal context remove that doesn't refresh
+      void InternalRemoveContext(Project::ContextSlot slot);
+
+      //internal handling for saving a map.
+      void InternalSaveMap(Map& map, Project::ContextSlot slot);
+      //internal handling for deleting a map.
+      void InternalDeleteMap(const MapFileData& mapFileData);
+
+      //internal handling for loading a map.
+      Map& InternalLoadMap(const MapFileData& fileData, bool backup, bool clearModified);
+
+      //internal handling of closing a sincle map.
+      void InternalCloseMap(Map& map, bool unloadLibraries);
+
+      void UnloadUnusedLibraries(Map& mapToClose);
+
+      //internal method to get the pointer to the subtree for a given datatype.
+      dtUtil::tree<ResourceTreeNode>& GetResourcesOfType(const DataType& datatype) const;
+      //Checks to see if a map is actually one the current project knows about.
+      Project::ContextSlot CheckMapValidity(const Map& map, bool allowReadonly = false) const;
+      //re-reads the map names from project.
+      void ReloadMapNames() const;
+      //indexes all the resources in the project.
+      void IndexResources() const;
+      //recursive helper method for the other indexResources
+      //The category AND the categoryPath are passed so that
+      //they won't have to be converted on every recursive call.
+      void IndexResources(dtUtil::FileUtils& fileUtils, dtUtil::tree<ResourceTreeNode>::iterator& i,
+               const DataType& dt, const std::string& categoryPath,const std::string& category) const;
+
+      //Gets the list of backup map files.
+      void GetBackupMapFilesList(dtUtil::DirectoryContents& toFill) const;
+      void ListMapsForContextDir(Project::ContextSlot slot);
+
+      //searches the resource tree for a category node and returns
+      //an iterator to it or resources.end() if not found.
+      dtUtil::tree<ResourceTreeNode>::iterator FindTreeNodeFromCategory(
+               const DataType* dt, const std::string& category) const;
+
+
+      const std::string GetBackupDir() const;
+
+      bool mIsInSTAGE;
+
+      // for the get context method.
+      static const std::string EMPTY_STRING;
+
+      //Later
+      /*    dtUtil::tree<ResourceTreeNode>* getMatchingBranch(
+         dtUtil::tree<ResourceTreeNode>::iterator level,
+         const DataType& type,
+         const std::string& partialName,
+         const std::string& extension) const;*/
+   };
+   const std::string ProjectImpl::EMPTY_STRING;
+
    dtCore::RefPtr<Project> Project::mInstance(NULL);
 
    /////////////////////////////////////////////////////////////////////////////
    Project::Project() 
-      : mValidContext(false)
-      , mContext("")
-      , mContextReadOnly(true)
-      , mResourcesIndexed(false)
-      , mEditMode(false)
+   : mImpl(new ProjectImpl())
    {
-      MapParser::StaticInit();
-      MapXMLConstants::StaticInit();
-
-      mWriter = new MapWriter;
-      libraryManager = &LibraryManager::GetInstance();
-      mLogger = &dtUtil::Log::GetInstance(Project::LOG_NAME);
    }
 
    /////////////////////////////////////////////////////////////////////////////
    Project::~Project()
    {
-      MapXMLConstants::StaticShutdown();
-      MapParser::StaticShutdown();
-      //make sure the maps get closed before
-      //the library manager is deleted
-      mOpenMaps.clear();
+      delete mImpl;
+      mImpl = NULL;
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -198,39 +299,39 @@ namespace dtDAL
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void Project::SetContext(const std::string& path, bool mOpenReadOnly)
+   bool Project::IsContextValid(ContextSlot slot) const
+   {
+      if (slot == DEFAULT_SLOT_VALUE)
+      {
+         return !mImpl->mContexts.empty();
+      }
+
+      return slot >= 0 && mImpl->mContexts.size() > slot;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void Project::SetContext(const std::string& path, bool openReadOnly)
+   {
+      ClearAllContexts();
+
+      SetReadOnly(openReadOnly);
+
+      AddContext(path);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   Project::ContextSlot Project::AddContext(const std::string& path)
+   {
+      Project::ContextSlot slot = mImpl->InternalAddContext(path);
+      Refresh();
+      return slot;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   Project::ContextSlot ProjectImpl::InternalAddContext(const std::string& path)
    {
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
       dtUtil::FileType ft = fileUtils.GetFileInfo(path).fileType;
-
-      if (mValidContext)
-      {
-         mOpenMaps.clear();
-         //clear the references to all the open maps
-         mMapList.clear();
-         mMapNames.clear();
-
-         //clear out the list of mResources.
-         mResources.clear();
-         mResourcesIndexed = false;
-      }
-
-      //save the old context for later.
-      std::string oldContext = mContext;
-
-      //unset the current mContext.
-      mValidContext = false;
-      mContext = "";
-      mContextReadOnly = true;
-
-      //remove the old context from the data file path list.
-      std::string searchPath = dtUtil::GetDataFilePathList();
-      size_t index = oldContext.empty() ? std::string::npos : searchPath.find(oldContext);
-      if (index != std::string::npos)
-      {
-         searchPath.erase(index, oldContext.size());
-         dtUtil::SetDataFilePathList(searchPath);
-      }
 
       if (ft == dtUtil::FILE_NOT_FOUND)
       {
@@ -289,10 +390,8 @@ namespace dtDAL
             }
          }
 
-         mValidContext = true;
-
-         mContext = dtUtil::FileUtils::GetInstance().CurrentDirectory();
-         mContextReadOnly = mOpenReadOnly;
+         mContexts.push_back(dtUtil::FileUtils::GetInstance().CurrentDirectory());
+         const std::string& context = mContexts.back();
          std::string searchPath = dtUtil::GetDataFilePathList();
 
          if (searchPath.empty())
@@ -300,7 +399,7 @@ namespace dtDAL
             searchPath = dtUtil::GetDeltaDataPathList();
          }
 
-         dtUtil::SetDataFilePathList(searchPath + ':' + mContext);
+         dtUtil::SetDataFilePathList(searchPath + ':' + context);
 
          if (mParser == NULL)
          {
@@ -311,7 +410,6 @@ namespace dtDAL
             mParser = new MapParser;
          }
 
-         GetMapNames();
       }
       catch (const dtUtil::Exception& ex)
       {
@@ -320,32 +418,96 @@ namespace dtDAL
       }
       dtUtil::FileUtils::GetInstance().PopDirectory();
 
+      return mContexts.size() - 1U;
+
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void Project::RemoveContext(ContextSlot slot)
+   {
+      if (slot < mImpl->mContexts.size())
+      {
+         mImpl->InternalRemoveContext(slot);
+         Refresh();
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void ProjectImpl::InternalRemoveContext(Project::ContextSlot slot)
+   {
+      if (slot < mContexts.size())
+      {
+         //remove the old context from the data file path list.
+         std::string searchPath = dtUtil::GetDataFilePathList();
+         const std::string& oldContext = mContexts[slot];
+         size_t index = oldContext.empty() ? std::string::npos : searchPath.find(oldContext);
+         if (index != std::string::npos)
+         {
+            searchPath.erase(index, oldContext.size());
+            dtUtil::SetDataFilePathList(searchPath);
+         }
+         mContexts.erase(mContexts.begin() + slot);
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void Project::ClearAllContexts()
+   {
+      mImpl->mOpenMaps.clear();
+      //clear the references to all the open maps
+      mImpl->mMapList.clear();
+      mImpl->mMapNames.clear();
+
+      //clear out the list of mResources.
+      mImpl->mResources.clear();
+      mImpl->mResourcesIndexed = false;
+
+      while (!mImpl->mContexts.empty())
+      {
+         mImpl->InternalRemoveContext(0);
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   const std::string& Project::GetContext(ContextSlot slot) const
+   {
+      if (slot == DEFAULT_SLOT_VALUE)
+      {
+         slot = 0U;
+      }
+
+      if (slot < mImpl->mContexts.size())
+      {
+         return mImpl->mContexts[slot];
+      }
+
+      return ProjectImpl::EMPTY_STRING;
    }
 
    /////////////////////////////////////////////////////////////////////////////
    void Project::Refresh()
    {
-      if (!mValidContext)
+      if (!IsContextValid())
       {
          throw dtDAL::ProjectInvalidContextException(
          std::string("The context is not valid."), __FILE__, __LINE__);
       }
 
       //clear the references to all the open maps
-      mMapList.clear();
-      mMapNames.clear();
+      mImpl->mMapList.clear();
+      mImpl->mMapNames.clear();
       GetMapNames();
 
       //clear out the list of mResources.
-      mResources.clear();
-      mResourcesIndexed = false;
+      mImpl->mResources.clear();
+      mImpl->mResourcesIndexed = false;
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void Project::ReloadMapNames() const
+   void ProjectImpl::ReloadMapNames() const
    {
       mMapNames.clear();
-      for (std::map<std::string,std::string>::const_iterator i = mMapList.begin(); i != mMapList.end(); ++i)
+      for (MapListType::const_iterator i = mMapList.begin(); i != mMapList.end(); ++i)
       {
          mMapNames.insert(i->first);
       }
@@ -354,38 +516,73 @@ namespace dtDAL
    /////////////////////////////////////////////////////////////////////////////
    const std::set<std::string>& Project::GetMapNames()
    {
-      if (!mValidContext)
+      if (!IsContextValid())
       {
          throw dtDAL::ProjectInvalidContextException(
          std::string("The context is not valid."), __FILE__, __LINE__);
       }
 
-      if (mMapList.empty())
+      if (mImpl->mMapList.empty())
       {
-         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+         mImpl->mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                              "The list of map names is empty, so the project is preparing to load the list.");
-         dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-         fileUtils.PushDirectory(mContext);
 
-         try
+         for (Project::ContextSlot i = 0; i < mImpl->mContexts.size(); ++i)
          {
-            dtUtil::FileExtensionList extensions; ///list of acceptable file extensions
-            extensions.push_back(dtDAL::Map::MAP_FILE_EXTENSION);
-            extensions.push_back(".xml");
+            mImpl->ListMapsForContextDir(i);
+         }
 
-            const dtUtil::DirectoryContents contents = fileUtils.DirGetFiles(Project::MAP_DIRECTORY, extensions);
+         mImpl->ReloadMapNames();
+      }
+
+      return mImpl->mMapNames;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void ProjectImpl::ListMapsForContextDir(Project::ContextSlot slot)
+   {
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+      fileUtils.PushDirectory(mContexts[slot]);
+
+      try
+      {
+         dtUtil::FileExtensionList extensions; ///list of acceptable file extensions
+         extensions.push_back(dtDAL::Map::MAP_FILE_EXTENSION);
+         extensions.push_back(".xml");
+
+         dtUtil::FileInfo fi = fileUtils.GetFileInfo(Project::MAP_DIRECTORY);
+         // It may not have a maps directory, so we have to check.
+         if (fi.fileType == dtUtil::DIRECTORY)
+         {
+            const dtUtil::DirectoryContents contents = fileUtils.DirGetFiles(fi.fileName, extensions);
 
             for (dtUtil::DirectoryContents::const_iterator fileIter = contents.begin(); fileIter < contents.end(); ++fileIter)
             {
                const std::string& filename = *fileIter;
 
-               std::string fullPath = Project::MAP_DIRECTORY + dtUtil::FileUtils::PATH_SEPARATOR + filename;
+               std::string fullPath = fi.fileName + dtUtil::FileUtils::PATH_SEPARATOR + filename;
                if (fileUtils.GetFileInfo(fullPath).fileType == dtUtil::REGULAR_FILE)
                {
                   try
                   {
-                     const std::string& mapName = mParser->ParseMapName(fullPath);
-                     mMapList.insert(make_pair(mapName, filename));
+                     std::string mapName = mParser->ParseMapName(fullPath);
+
+                     MapFileData fileData;
+                     fileData.mOrigName = mapName;
+                     fileData.mFileName = filename;
+                     fileData.mSlotId = slot;
+
+                     // resolve name collisions.
+                     std::string mapNameBuffer = mapName;
+                     int suffix = 1;
+                     while (mMapList.find(mapNameBuffer) != mMapList.end())
+                     {
+                        mapNameBuffer = mapName;
+                        dtUtil::MakeIndexString(suffix, mapNameBuffer, 0);
+                        ++suffix;
+                     }
+
+                     mMapList.insert(make_pair(mapNameBuffer, fileData));
                   }
                   catch (const dtUtil::Exception& e)
                   {
@@ -395,25 +592,36 @@ namespace dtDAL
                }
             }
          }
-         catch (const dtUtil::Exception& ex)
-         {
-            fileUtils.PopDirectory();
-            throw ex;
-         }
-         fileUtils.PopDirectory();
-
-         ReloadMapNames();
       }
-
-      return mMapNames;
+      catch (const dtUtil::Exception& ex)
+      {
+         fileUtils.PopDirectory();
+         throw ex;
+      }
+      fileUtils.PopDirectory();
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   Map& Project::InternalLoadMap(const std::string& name, const std::string& fullPath, bool clearModified)
+   Map& ProjectImpl::InternalLoadMap(const MapFileData& fileData, bool backup, bool clearModified)
    {
-      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-      fileUtils.PushDirectory(this->mContext);
+      std::string fullPath = mContexts[fileData.mSlotId] + dtUtil::FileUtils::PATH_SEPARATOR;
 
+      if (backup)
+      {
+         fullPath += GetBackupDir();
+      }
+      else
+      {
+         fullPath += Project::MAP_DIRECTORY;
+      }
+
+      fullPath += dtUtil::FileUtils::PATH_SEPARATOR + fileData.mFileName;
+      if (backup)
+      {
+         fullPath += ".backup";
+      }
+
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
       Map* map = NULL;
       try
       {
@@ -429,7 +637,8 @@ namespace dtDAL
                "Map loading didn't throw an exception, but the result is NULL", __FILE__, __LINE__);
          }
 
-         mOpenMaps.insert(std::make_pair(name, dtCore::RefPtr<Map>(map)));
+         // TODO the name here should be the disabiguated name?
+         mOpenMaps.insert(std::make_pair(fileData.mOrigName, dtCore::RefPtr<Map>(map)));
 
          //Clearing the modified flag must be done because setting the
          //map properties at load will make the map look modified.
@@ -451,92 +660,91 @@ namespace dtDAL
       }
       catch (const dtUtil::Exception& e)
       {
-         std::string error = "Unable to parse " + fullPath + " with error " + e.What();
+         std::string error = "Unable to parse \"" + fullPath + "\" with error \"" + e.What() + "\"";
          mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, error.c_str());
-         fileUtils.PopDirectory();
          throw e;
       }
 
-      fileUtils.PopDirectory();
       return *map;
    }
 
    /////////////////////////////////////////////////////////////////////////////
    Map& Project::GetMap(const std::string& name)
    {
-      if (!mValidContext)
+      if (!IsContextValid())
       {
          throw dtDAL::ProjectInvalidContextException(
          std::string("The context is not valid."), __FILE__, __LINE__);
       }
 
-      std::map<std::string, dtCore::RefPtr<Map> >::iterator openMapI = mOpenMaps.find(name);
+      std::map<std::string, dtCore::RefPtr<Map> >::iterator openMapI = mImpl->mOpenMaps.find(name);
 
       //map is already open.
-      if (openMapI != mOpenMaps.end())
+      if (openMapI != mImpl->mOpenMaps.end())
       {
          return *(openMapI->second);
       }
 
-      std::map<std::string,std::string>::iterator mapIter = mMapList.find(name);
+      ProjectImpl::MapListType::iterator mapIter = mImpl->mMapList.find(name);
 
-      if (mapIter == mMapList.end())
+      if (mapIter == mImpl->mMapList.end())
       {
          throw dtDAL::ProjectFileNotFoundException(
                 std::string("Map named ") + name + " does not exist.", __FILE__, __LINE__);
       }
 
-      const std::string& mapFileName = mapIter->second;
+      MapFileData& fileData = mapIter->second;
 
-      const std::string& fullPath = Project::MAP_DIRECTORY + dtUtil::FileUtils::PATH_SEPARATOR + mapFileName;
+      Map& map = mImpl->InternalLoadMap(fileData, false, true);
 
-      Map& map = InternalLoadMap(name, fullPath, true);
-
-      map.SetFileName(mapFileName);
+      map.SetFileName(fileData.mFileName);
       return map;
    }
 
    /////////////////////////////////////////////////////////////////////////////
    Map& Project::OpenMapBackup(const std::string& name)
    {
-      if (!mValidContext)
+      if (!IsContextValid())
       {
          throw dtDAL::ProjectInvalidContextException(
          std::string("The context is not valid."), __FILE__, __LINE__);
       }
 
-      std::map<std::string, dtCore::RefPtr<Map> >::iterator openMapI = mOpenMaps.find(name);
+      std::map<std::string, dtCore::RefPtr<Map> >::iterator openMapI = mImpl->mOpenMaps.find(name);
 
       //map is already open.
-      if (openMapI != mOpenMaps.end())
+      if (openMapI != mImpl->mOpenMaps.end())
       {
          //close the map if it's open.
-         mOpenMaps.erase(openMapI);
+         mImpl->mOpenMaps.erase(openMapI);
       }
 
-      std::map<std::string,std::string>::iterator mapIter = mMapList.find(name);
+      ProjectImpl::MapListType::iterator mapIter = mImpl->mMapList.find(name);
 
-      if (mapIter == mMapList.end())
+      if (mapIter == mImpl->mMapList.end())
       {
          throw dtDAL::ProjectFileNotFoundException(
                 std::string("Map named ") + name + " does not exist.", __FILE__, __LINE__);
       }
 
-      const std::string& mapFileName = mapIter->second;
+      const MapFileData& fileData = mapIter->second;
 
-      const std::string& fullPath = GetBackupDir() + dtUtil::FileUtils::PATH_SEPARATOR + mapFileName + ".backup";
-
-      Map& map = InternalLoadMap(name, fullPath, false);
-      map.SetFileName(mapFileName);
+      Map& map = mImpl->InternalLoadMap(fileData, true, false);
+      map.SetFileName(fileData.mFileName);
       map.SetSavedName(name);
       return map;
 
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   Map& Project::CreateMap(const std::string& name, const std::string& fileName)
+   Map& Project::CreateMap(const std::string& name, const std::string& fileName, ContextSlot slot)
    {
-      if (!mValidContext)
+      if (slot == DEFAULT_SLOT_VALUE)
+      {
+         slot = 0;
+      }
+
+      if (!IsContextValid(slot))
       {
          throw dtDAL::ProjectInvalidContextException(
          std::string("The context is not valid."), __FILE__, __LINE__);
@@ -548,13 +756,13 @@ namespace dtDAL
          std::string("The context is readonly."), __FILE__, __LINE__);
       }
 
-      if (name == "")
+      if (name.empty())
       {
          throw dtDAL::ProjectException(
                 "Maps may not have an empty name.", __FILE__, __LINE__);
       }
 
-      if (fileName == "")
+      if (fileName.empty())
       {
          throw dtDAL::ProjectException(
          std::string("Maps may not have an empty fileName."), __FILE__, __LINE__);
@@ -563,14 +771,14 @@ namespace dtDAL
       //assign it to a refptr so that if I except, it will get deleted
       dtCore::RefPtr<Map> map(new Map(fileName, name));
 
-      for (std::map<std::string, std::string>::iterator mapIter = mMapList.begin(); mapIter != mMapList.end(); ++mapIter)
+      for (ProjectImpl::MapListType::iterator mapIter = mImpl->mMapList.begin(); mapIter != mImpl->mMapList.end(); ++mapIter)
       {
-         if (mapIter->first == name)
+         if (mapIter->first == name || mapIter->second.mOrigName == name)
          {
             throw dtDAL::ProjectException(
                    std::string("Map named ") + name + " already exists.", __FILE__, __LINE__);
          }
-         else if (mapIter->second == map->GetFileName())
+         else if (mapIter->second.mFileName == map->GetFileName())
          {
             throw dtDAL::ProjectException(
                    std::string("A map with file name ") + fileName + " already exists.", __FILE__, __LINE__);
@@ -578,13 +786,17 @@ namespace dtDAL
       }
 
 
-      InternalSaveMap(*map);
+      mImpl->InternalSaveMap(*map, slot);
 
-      mOpenMaps.insert(make_pair(name, dtCore::RefPtr<Map>(map.get())));
+      mImpl->mOpenMaps.insert(make_pair(name, dtCore::RefPtr<Map>(map.get())));
       //The map can add extensions and such to the file name, so it
       //must be fetched back from the map object before being added to the name-file map.
-      mMapList.insert(make_pair(name, map->GetFileName()));
-      mMapNames.insert(name);
+      MapFileData fileData;
+      fileData.mFileName = map->GetFileName();
+      fileData.mSlotId = slot;
+      fileData.mOrigName = name;
+      mImpl->mMapList.insert(make_pair(name, fileData));
+      mImpl->mMapNames.insert(name);
 
       return *map;
 
@@ -601,7 +813,7 @@ namespace dtDAL
    /////////////////////////////////////////////////////////////////////////////
    void Project::LoadMapIntoScene(Map& map, dtCore::Scene& scene, bool addBillBoards)
    {
-      CheckMapValidity(map, true);
+      mImpl->CheckMapValidity(map, true);
       std::vector<dtCore::RefPtr<ActorProxy> > container;
       map.GetAllProxies(container);
 
@@ -630,7 +842,7 @@ namespace dtDAL
 
                if (billBoard == NULL)
                {
-                  mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                  mImpl->mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                                       "Proxy [%s] billboard was NULL.", proxy.GetName().c_str());
                }
                else
@@ -698,7 +910,7 @@ namespace dtDAL
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void Project::UnloadUnusedLibraries(Map& mapToClose)
+   void ProjectImpl::UnloadUnusedLibraries(Map& mapToClose)
    {
       std::vector<dtCore::RefPtr<ActorProxy> > proxies;
       mapToClose.GetAllProxies(proxies);
@@ -800,18 +1012,18 @@ namespace dtDAL
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void Project::InternalCloseMap(Map& map, bool unloadLibraries)
+   void ProjectImpl::InternalCloseMap(Map& map, bool unloadLibraries)
    {
       if (unloadLibraries)
       {
          UnloadUnusedLibraries(map);
       }
 
-      if (!IsReadOnly())
+      if (!mContextReadOnly)
       {
          try
          {
-            ClearBackup(map.GetSavedName());
+            Project::mInstance->ClearBackup(map.GetSavedName());
          }
          catch (const dtUtil::Exception& ex)
          {
@@ -823,36 +1035,36 @@ namespace dtDAL
    /////////////////////////////////////////////////////////////////////////////
    void Project::CloseMap(Map& map, bool unloadLibraries)
    {
-      if (!mValidContext)
+      if (!IsContextValid())
       {
          throw dtDAL::ProjectInvalidContextException(
          std::string("The context is not valid."), __FILE__, __LINE__);
       }
 
-      std::map<std::string, dtCore::RefPtr<Map> >::iterator mapIter = mOpenMaps.find(map.GetSavedName());
-      if (mapIter == mOpenMaps.end() || (mapIter->second.get() != &map))
+      std::map<std::string, dtCore::RefPtr<Map> >::iterator mapIter = mImpl->mOpenMaps.find(map.GetSavedName());
+      if (mapIter == mImpl->mOpenMaps.end() || (mapIter->second.get() != &map))
       {
          throw dtDAL::ProjectInvalidContextException(
                 std::string("A map named \"") + map.GetSavedName() + "\" exists, but this is not the instance.", __FILE__, __LINE__);
       }
       else
       {
-         InternalCloseMap(map, unloadLibraries);
-         mOpenMaps.erase(mapIter);
+         mImpl->InternalCloseMap(map, unloadLibraries);
+         mImpl->mOpenMaps.erase(mapIter);
       }
    }
 
    /////////////////////////////////////////////////////////////////////////////
    void Project::CloseAllMaps(bool unloadLibraries)
    {
-      std::map<std::string, dtCore::RefPtr<Map> >::iterator mapIter = mOpenMaps.begin();
-      std::map<std::string, dtCore::RefPtr<Map> >::iterator mapIterEnd = mOpenMaps.end();
+      std::map<std::string, dtCore::RefPtr<Map> >::iterator mapIter = mImpl->mOpenMaps.begin();
+      std::map<std::string, dtCore::RefPtr<Map> >::iterator mapIterEnd = mImpl->mOpenMaps.end();
       while (mapIter != mapIterEnd)
       {
          std::map<std::string, dtCore::RefPtr<Map> >::iterator inext = mapIter;
          ++inext;
-         InternalCloseMap(*mapIter->second, unloadLibraries);
-         mOpenMaps.erase(mapIter);
+         mImpl->InternalCloseMap(*mapIter->second, unloadLibraries);
+         mImpl->mOpenMaps.erase(mapIter);
          mapIter = inext;
       }
    }
@@ -860,7 +1072,7 @@ namespace dtDAL
    /////////////////////////////////////////////////////////////////////////////
    void Project::DeleteMap(Map& map, bool unloadLibraries)
    {
-      if (!mValidContext)
+      if (!IsContextValid())
       {
          throw dtDAL::ProjectInvalidContextException(
          std::string("The context is not valid."), __FILE__, __LINE__);
@@ -872,27 +1084,28 @@ namespace dtDAL
          std::string("The context is readonly."), __FILE__, __LINE__);
       }
 
-      // Do not access the map variable again after this line, it will be corrupted
+      // TODO There is an issue with maps having the same name and getting numbers tacked on the end.
       std::string mapSavedName = map.GetSavedName();
 
+      // Do not access the map variable again after this line, it will be corrupted
       CloseMap(map, unloadLibraries);
 
-      std::map<std::string, std::string>::iterator mapIter = mMapList.find(mapSavedName);
-      if (mapIter == mMapList.end())
+      ProjectImpl::MapListType::iterator mapIter = mImpl->mMapList.find(mapSavedName);
+      if (mapIter == mImpl->mMapList.end())
       {
-         mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+         mImpl->mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
                              "Map was found in the list of open maps, but not in map to fileName mapping");
       }
       else
       {
-         mMapList.erase(mapIter);
+         mImpl->mMapList.erase(mapIter);
       }
    }
 
    /////////////////////////////////////////////////////////////////////////////
    void Project::DeleteMap(const std::string& mapName, bool unloadLibraries)
    {
-      if (!mValidContext)
+      if (!IsContextValid())
       {
          throw dtDAL::ProjectInvalidContextException(
          std::string("The context is not valid."), __FILE__, __LINE__);
@@ -904,8 +1117,8 @@ namespace dtDAL
          std::string("The context is readonly."), __FILE__, __LINE__);
       }
 
-      std::map<std::string, dtCore::RefPtr<Map> >::iterator mapIter = mOpenMaps.find(mapName);
-      if (mapIter != mOpenMaps.end())
+      std::map<std::string, dtCore::RefPtr<Map> >::iterator mapIter = mImpl->mOpenMaps.find(mapName);
+      if (mapIter != mImpl->mOpenMaps.end())
       {
          CloseMap(*mapIter->second, unloadLibraries);
       }
@@ -914,36 +1127,37 @@ namespace dtDAL
          ClearBackup(mapName);
       }
 
-      std::string mapFileName;
+      MapFileData mapFileData;
 
-      std::map<std::string, std::string>::iterator i = mMapList.find(mapName);
-      if (i == mMapList.end())
+      ProjectImpl::MapListType::iterator i = mImpl->mMapList.find(mapName);
+      if (i == mImpl->mMapList.end())
       {
          throw dtDAL::ProjectFileNotFoundException(
             std::string("No such map: \"") + mapName + "\"", __FILE__, __LINE__);
       }
       else
       {
-         mapFileName = i->second;
-         mMapList.erase(i);
+         mapFileData = i->second;
+         mImpl->mMapList.erase(i);
       }
 
-      InternalDeleteMap(mapFileName);
+      // TODO need the context path.
+      mImpl->InternalDeleteMap(mapFileData);
 
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void Project::InternalDeleteMap(const std::string& mapFileName)
+   void ProjectImpl::InternalDeleteMap(const MapFileData& mapFileData)
    {
       ReloadMapNames();
 
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-      fileUtils.PushDirectory(this->mContext + dtUtil::FileUtils::PATH_SEPARATOR + Project::MAP_DIRECTORY);
+      fileUtils.PushDirectory(mContexts[mapFileData.mSlotId] + dtUtil::FileUtils::PATH_SEPARATOR + Project::MAP_DIRECTORY);
       try
       {
-         if (fileUtils.FileExists(mapFileName))
+         if (fileUtils.FileExists(mapFileData.mFileName))
          {
-            fileUtils.FileDelete(mapFileName);
+            fileUtils.FileDelete(mapFileData.mFileName);
          }
          else
          {
@@ -962,14 +1176,14 @@ namespace dtDAL
    /////////////////////////////////////////////////////////////////////////////
    void Project::SaveMap(Map& map)
    {
-      CheckMapValidity(map);
-      InternalSaveMap(map);
+      Project::ContextSlot slot = mImpl->CheckMapValidity(map);
+      mImpl->InternalSaveMap(map, slot);
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void Project::SaveMapAs(const std::string& mapName, const std::string& newName, const std::string& newFileName)
+   void Project::SaveMapAs(const std::string& mapName, const std::string& newName, const std::string& newFileName, ContextSlot slot)
    {
-      if (!mValidContext)
+      if (!IsContextValid())
       {
          throw dtDAL::ProjectInvalidContextException(
          std::string("The context is not valid."), __FILE__, __LINE__);
@@ -986,9 +1200,9 @@ namespace dtDAL
 
    }
    //////////////////////////////////////////////////////////
-   void Project::SaveMapAs(Map& map, const std::string& newName, const std::string& newFileName)
+   void Project::SaveMapAs(Map& map, const std::string& newName, const std::string& newFileName, ContextSlot slot)
    {
-      CheckMapValidity(map);
+      mImpl->CheckMapValidity(map);
 
       if (map.GetSavedName() == newName)
       {
@@ -1007,26 +1221,33 @@ namespace dtDAL
                 + " cannot be saved as a different map with the same file name.", __FILE__, __LINE__);
       }
 
-      for (std::map<std::string,std::string>::const_iterator i = mMapList.begin();
-           i != mMapList.end(); ++i )
+      for (ProjectImpl::MapListType::const_iterator i = mImpl->mMapList.begin();
+           i != mImpl->mMapList.end(); ++i )
       {
-         if (newFileNameCopy == i->second.substr(0, i->second.size() - Map::MAP_FILE_EXTENSION.size()))
+         const std::string& mapFileNameRef = i->second.mFileName;
+         if (newFileNameCopy == mapFileNameRef.substr(0, mapFileNameRef.size() - Map::MAP_FILE_EXTENSION.size()))
             throw dtDAL::ProjectException( std::string("Map named ")
                    + map.GetSavedName() + " cannot be saved with file name "
                    + newFileName + " because it matches another map.", __FILE__, __LINE__);
       }
 
       std::string oldMapName = map.GetSavedName();
-      std::string oldFileName = map.GetFileName();
+
+      MapFileData oldFileData = mImpl->mMapList[oldMapName];
 
       map.SetName(newName);
       map.SetFileName(newFileNameCopy);
+      if (slot == DEFAULT_SLOT_VALUE)
+      {
+         slot = oldFileData.mSlotId;
+      }
 
-      InternalSaveMap(map);
+      mImpl->InternalSaveMap(map, slot);
+
       //re-add the old map to the list of saved maps
       //since saving with a new name will remove the old entry.
-      mMapList.insert(std::make_pair(oldMapName, oldFileName));
-      mMapNames.insert(oldMapName);
+      mImpl->mMapList.insert(std::make_pair(oldMapName, oldFileData));
+      mImpl->mMapNames.insert(oldMapName);
 
       try
       {
@@ -1034,7 +1255,7 @@ namespace dtDAL
       }
       catch (const dtUtil::Exception& ex)
       {
-         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Error clearing map backups when saving %s as %s: %s",
+         mImpl->mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Error clearing map backups when saving %s as %s: %s",
                              oldMapName.c_str(), newName.c_str(), ex.What().c_str());
       }
    }
@@ -1042,7 +1263,7 @@ namespace dtDAL
    /////////////////////////////////////////////////////////////////////////////
    void Project::SaveMap(const std::string& mapName)
    {
-      if (!mValidContext)
+      if (!IsContextValid())
       {
          throw dtDAL::ProjectInvalidContextException(
          std::string("The context is not valid."), __FILE__, __LINE__);
@@ -1054,36 +1275,39 @@ namespace dtDAL
          std::string("The context is readonly."), __FILE__, __LINE__);
       }
 
-      std::map<std::string, dtCore::RefPtr<Map> >::iterator mapIter = mOpenMaps.find(mapName);
-      if (mapIter == mOpenMaps.end())
+      std::map<std::string, dtCore::RefPtr<Map> >::iterator mapIter = mImpl->mOpenMaps.find(mapName);
+      if (mapIter == mImpl->mOpenMaps.end())
       {
          return; //map is not in memory, so it doesn't need to be saved.
       }
 
-      InternalSaveMap(*(mapIter->second));
+      Map& m = *(mapIter->second);
+      mImpl->InternalSaveMap(m, mImpl->CheckMapValidity(m));
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void Project::CheckMapValidity(const Map& map, bool readonlyAllowed) const
+   Project::ContextSlot ProjectImpl::CheckMapValidity(const Map& map, bool readonlyAllowed) const
    {
-      if (!mValidContext)
+      if (!Project::mInstance->IsContextValid())
       {
          throw dtDAL::ProjectInvalidContextException(
          std::string("The context is not valid."), __FILE__, __LINE__);
       }
 
-      if (!readonlyAllowed && IsReadOnly())
+      if (!readonlyAllowed && Project::mInstance->IsReadOnly())
       {
          throw dtDAL::ProjectReadOnlyException(
          std::string("The context is readonly."), __FILE__, __LINE__);
       }
 
-      std::map<std::string, std::string>::const_iterator mapListIter = mMapList.find(map.GetSavedName());
+      ProjectImpl::MapListType::const_iterator mapListIter = mMapList.find(map.GetSavedName());
       if (mapListIter == mMapList.end())
       {
          throw dtDAL::ProjectFileNotFoundException(
             std::string("No such map: \"") + map.GetSavedName() + "\"", __FILE__, __LINE__);
       }
+
+      Project::ContextSlot slot = mapListIter->second.mSlotId;
 
       std::map<std::string, dtCore::RefPtr<Map> >::const_iterator mapIter = mOpenMaps.find(map.GetSavedName());
 
@@ -1099,10 +1323,12 @@ namespace dtDAL
          throw dtDAL::ProjectInvalidContextException(std::string("A map named \"") + map.GetSavedName()
                 + "\" exists, but this is not the instance.", __FILE__, __LINE__);
       }
+
+      return slot;
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void Project::InternalSaveMap(Map& map)
+   void ProjectImpl::InternalSaveMap(Map& map, Project::ContextSlot slot)
    {
       MapWriter& mw = *mWriter;
 
@@ -1119,7 +1345,8 @@ namespace dtDAL
       std::string fullPathSaving = fullPath + ".saving";
 
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-      fileUtils.PushDirectory(mContext);
+      // TODO need path.
+      fileUtils.PushDirectory(mContexts[slot]);
       try
       {
          //save the file to a separate name first so that
@@ -1138,12 +1365,16 @@ namespace dtDAL
 
       //Update the internal lists to make sure that
       //map is keyed properly by name.
-      if (map.GetSavedName() != "" && map.GetName() != map.GetSavedName())
+      if (!map.GetSavedName().empty() && map.GetName() != map.GetSavedName())
       {
          if (!mMapList.empty())
          {
+            MapFileData fileData;
+            fileData.mFileName = map.GetFileName();
+            fileData.mOrigName = map.GetName();
+            fileData.mSlotId = slot;
             mMapList.erase(mMapList.find(map.GetSavedName()));
-            mMapList.insert(make_pair(map.GetName(), map.GetFileName()));
+            mMapList.insert(make_pair(map.GetName(), fileData));
             ReloadMapNames();
          }
 
@@ -1157,7 +1388,7 @@ namespace dtDAL
 
       try
       {
-         ClearBackup(map.GetSavedName());
+         Project::mInstance->ClearBackup(map.GetSavedName());
       }
       catch (const dtDAL::ProjectFileNotFoundException& ex)
       {
@@ -1171,21 +1402,22 @@ namespace dtDAL
    /////////////////////////////////////////////////////////////////////////////
    void Project::SaveMapBackup(Map& map)
    {
-      CheckMapValidity(map);
+      Project::ContextSlot slot = mImpl->CheckMapValidity(map);
 
-      MapWriter& mw = *mWriter;
+      MapWriter& mw = *mImpl->mWriter;
 
       if (!map.IsModified())
       {
          return;
       }
 
-      std::string backupDir = GetBackupDir();
+      std::string backupDir = mImpl->GetBackupDir();
 
       std::string path = backupDir + dtUtil::FileUtils::PATH_SEPARATOR + map.GetFileName();
 
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-      fileUtils.PushDirectory(mContext);
+
+      fileUtils.PushDirectory(mImpl->mContexts[slot]);
       try
       {
          if (!fileUtils.DirExists(backupDir))
@@ -1205,7 +1437,7 @@ namespace dtDAL
       }
       catch (const dtUtil::Exception& e)
       {
-         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, e.What().c_str());
+         mImpl->mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, e.What().c_str());
          fileUtils.PopDirectory();
          throw e;
       }
@@ -1215,29 +1447,29 @@ namespace dtDAL
    /////////////////////////////////////////////////////////////////////////////
    bool Project::HasBackup(Map& map) const
    {
-      CheckMapValidity(map, true);
+      mImpl->CheckMapValidity(map, true);
       return HasBackup(map.GetSavedName());
    }
 
    /////////////////////////////////////////////////////////////////////////////
    bool Project::HasBackup(const std::string& mapName) const
    {
-      if (!mValidContext)
+      if (!IsContextValid())
       {
          throw dtDAL::ProjectInvalidContextException(
          std::string("The context is not valid."), __FILE__, __LINE__);
       }
 
-      std::map< std::string, std::string >::const_iterator found = mMapList.find(mapName);
-      if (found == mMapList.end())
+      ProjectImpl::MapListType::const_iterator found = mImpl->mMapList.find(mapName);
+      if (found == mImpl->mMapList.end())
       {
          throw dtDAL::ProjectFileNotFoundException(
          std::string("No such map: \"") + mapName + "\"", __FILE__, __LINE__);
       }
 
-      const std::string& fileName = found->second;
+      const std::string& fileName = found->second.mFileName;
 
-      std::string backupDir = GetContext() + dtUtil::FileUtils::PATH_SEPARATOR + GetBackupDir();
+      std::string backupDir = mImpl->mContexts[found->second.mSlotId] + dtUtil::FileUtils::PATH_SEPARATOR + mImpl->GetBackupDir();
 
       const std::string& backupFileName = backupDir + dtUtil::FileUtils::PATH_SEPARATOR + fileName + ".backup";
 
@@ -1247,29 +1479,29 @@ namespace dtDAL
    /////////////////////////////////////////////////////////////////////////////
    void Project::ClearBackup(Map& map)
    {
-      CheckMapValidity(map);
+      mImpl->CheckMapValidity(map);
       ClearBackup(map.GetSavedName());
    }
 
    /////////////////////////////////////////////////////////////////////////////
    void Project::ClearBackup(const std::string& mapName)
    {
-      if (!mValidContext)
+      if (!IsContextValid())
       {
          throw dtDAL::ProjectInvalidContextException(
          std::string("The context is not valid."), __FILE__, __LINE__);
       }
 
-      std::map< std::string, std::string >::iterator found = mMapList.find(mapName);
-      if (found == mMapList.end())
+      ProjectImpl::MapListType::iterator found = mImpl->mMapList.find(mapName);
+      if (found == mImpl->mMapList.end())
       {
          throw dtDAL::ProjectFileNotFoundException(
          std::string("No such map: \"") + mapName + "\"", __FILE__, __LINE__);
       }
 
-      const std::string& fileName = found->second;
+      const std::string& fileName = found->second.mFileName;
 
-      const std::string backupDir = GetContext() + dtUtil::FileUtils::PATH_SEPARATOR + GetBackupDir();
+      std::string backupDir = mImpl->mContexts[found->second.mSlotId] + dtUtil::FileUtils::PATH_SEPARATOR + mImpl->GetBackupDir();
 
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
@@ -1308,13 +1540,13 @@ namespace dtDAL
    /////////////////////////////////////////////////////////////////////////////
    Map* Project::GetMapForActorProxy(const dtCore::UniqueId& id)
    {
-      if (!mValidContext)
+      if (!IsContextValid())
          throw dtDAL::ProjectInvalidContextException(
          std::string("The context is not valid."), __FILE__, __LINE__);
 
-      if (mParser->IsParsing())
+      if (mImpl->mParser->IsParsing())
       {
-         Map* m = mParser->GetMapBeingParsed();
+         Map* m = mImpl->mParser->GetMapBeingParsed();
          if (m != NULL)
          {
             ActorProxy* ap = m->GetProxyById(id);
@@ -1323,8 +1555,8 @@ namespace dtDAL
          }
       }
 
-      std::map< std::string, dtCore::RefPtr<Map> >::iterator i = mOpenMaps.begin();
-      while (i != mOpenMaps.end())
+      std::map< std::string, dtCore::RefPtr<Map> >::iterator i = mImpl->mOpenMaps.begin();
+      while (i != mImpl->mOpenMaps.end())
       {
          ActorProxy* ap = i->second->GetProxyById(id);
          if (ap != NULL)
@@ -1338,15 +1570,15 @@ namespace dtDAL
    /////////////////////////////////////////////////////////////////////////////
    const Map* Project::GetMapForActorProxy(const dtCore::UniqueId& id) const
    {
-      if (!mValidContext)
+      if (!IsContextValid())
       {
          throw dtDAL::ProjectInvalidContextException(
             std::string("The context is not valid."), __FILE__, __LINE__);
       }
 
-      if (mParser->IsParsing())
+      if (mImpl->mParser->IsParsing())
       {
-         const Map* m = mParser->GetMapBeingParsed();
+         const Map* m = mImpl->mParser->GetMapBeingParsed();
          if (m != NULL)
          {
             const ActorProxy* ap = m->GetProxyById(id);
@@ -1355,8 +1587,8 @@ namespace dtDAL
          }
       }
 
-      std::map< std::string, dtCore::RefPtr<Map> >::const_iterator i = mOpenMaps.begin();
-      while (i != mOpenMaps.end())
+      std::map< std::string, dtCore::RefPtr<Map> >::const_iterator i = mImpl->mOpenMaps.begin();
+      while (i != mImpl->mOpenMaps.end())
       {
          const ActorProxy* ap = i->second->GetProxyById(id);
          if (ap != NULL)
@@ -1372,13 +1604,13 @@ namespace dtDAL
    /////////////////////////////////////////////////////////////////////////////
    Map* Project::GetMapForActorProxy(const ActorProxy& proxy)
    {
-      if (!mValidContext)
+      if (!IsContextValid())
          throw dtDAL::ProjectInvalidContextException(
          std::string("The context is not valid."), __FILE__, __LINE__);
 
-      if (mParser->IsParsing())
+      if (mImpl->mParser->IsParsing())
       {
-         Map* m = mParser->GetMapBeingParsed();
+         Map* m = mImpl->mParser->GetMapBeingParsed();
          if (m != NULL)
          {
             ActorProxy* ap = m->GetProxyById(proxy.GetId());
@@ -1387,8 +1619,8 @@ namespace dtDAL
          }
       }
 
-      std::map< std::string, dtCore::RefPtr<Map> >::iterator i = mOpenMaps.begin();
-      while (i != mOpenMaps.end())
+      std::map< std::string, dtCore::RefPtr<Map> >::iterator i = mImpl->mOpenMaps.begin();
+      while (i != mImpl->mOpenMaps.end())
       {
          ActorProxy* ap = i->second->GetProxyById(proxy.GetId());
          if (ap != NULL)
@@ -1402,15 +1634,15 @@ namespace dtDAL
    /////////////////////////////////////////////////////////////////////////////
    const Map* Project::GetMapForActorProxy(const ActorProxy& proxy) const
    {
-      if (!mValidContext)
+      if (!IsContextValid())
       {
          throw dtDAL::ProjectInvalidContextException(
          std::string("The context is not valid."), __FILE__, __LINE__);
       }
 
-      if (mParser->IsParsing())
+      if (mImpl->mParser->IsParsing())
       {
-         const Map* m = mParser->GetMapBeingParsed();
+         const Map* m = mImpl->mParser->GetMapBeingParsed();
          if (m != NULL)
          {
             const ActorProxy* ap = m->GetProxyById(proxy.GetId());
@@ -1419,8 +1651,8 @@ namespace dtDAL
          }
       }
 
-      std::map< std::string, dtCore::RefPtr<Map> >::const_iterator i = mOpenMaps.begin();
-      while (i != mOpenMaps.end())
+      std::map< std::string, dtCore::RefPtr<Map> >::const_iterator i = mImpl->mOpenMaps.begin();
+      while (i != mImpl->mOpenMaps.end())
       {
          const ActorProxy* ap = i->second->GetProxyById(proxy.GetId());
          if (ap != NULL)
@@ -1437,13 +1669,18 @@ namespace dtDAL
    GameEvent* Project::GetGameEvent(const dtCore::UniqueId& id)
    {
       GameEvent* e = GameEventManager::GetInstance().FindEvent(id);
-      if (e)
+      if (e != NULL)
       {
          return e;
       }
 
-      std::map<std::string, dtCore::RefPtr<Map> >::iterator i = mOpenMaps.begin();
-      for (; i != mOpenMaps.end(); ++i)
+      if (!IsContextValid())
+      {
+         return NULL;
+      }
+
+      std::map<std::string, dtCore::RefPtr<Map> >::iterator i = mImpl->mOpenMaps.begin();
+      for (; i != mImpl->mOpenMaps.end(); ++i)
       {
          dtCore::RefPtr<Map>& map = i->second;
 
@@ -1466,8 +1703,13 @@ namespace dtDAL
          return e;
       }
 
-      std::map<std::string, dtCore::RefPtr<Map> >::iterator i = mOpenMaps.begin();
-      for (; i != mOpenMaps.end(); ++i)
+      if (!IsContextValid())
+      {
+         return NULL;
+      }
+
+      std::map<std::string, dtCore::RefPtr<Map> >::iterator i = mImpl->mOpenMaps.begin();
+      for (; i != mImpl->mOpenMaps.end(); ++i)
       {
          dtCore::RefPtr<Map>& map = i->second;
 
@@ -1484,17 +1726,17 @@ namespace dtDAL
    /////////////////////////////////////////////////////////////////////////////
    void Project::GetHandlersForDataType(const DataType& resourceType, std::vector<const ResourceTypeHandler* >& toFill) const
    {
-      mResourceHelper.GetHandlersForDataType(resourceType, toFill);
+      mImpl->mResourceHelper.GetHandlersForDataType(resourceType, toFill);
    }
 
    /////////////////////////////////////////////////////////////////////////////
    void Project::RegisterResourceTypeHander(ResourceTypeHandler& handler)
    {
-      mResourceHelper.RegisterResourceTypeHander(handler);
+      mImpl->mResourceHelper.RegisterResourceTypeHander(handler);
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   const std::string Project::GetBackupDir() const
+   const std::string ProjectImpl::GetBackupDir() const
    {
       return Project::MAP_DIRECTORY + dtUtil::FileUtils::PATH_SEPARATOR + Project::MAP_BACKUP_SUB_DIRECTORY;
    }
@@ -1502,52 +1744,77 @@ namespace dtDAL
    /////////////////////////////////////////////////////////////////////////////
    const std::string Project::GetResourcePath(const ResourceDescriptor& resource) const
    {
-      if (!mValidContext)
+      if (!IsContextValid())
       {
          throw dtDAL::ProjectInvalidContextException(
          std::string("The context is not valid."), __FILE__, __LINE__);
       }
 
-      const std::string& path = mResourceHelper.GetResourcePath(resource);
+      const std::string& path = mImpl->mResourceHelper.GetResourcePath(resource);
 
 
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-      fileUtils.PushDirectory(mContext);
 
-      try
+      // Init to file not found.
+      dtUtil::FileType ftype = dtUtil::FILE_NOT_FOUND;
+      //for proper error handling.
+      bool foundADir = false;
+      std::string pathContext;
+
+      std::vector<std::string>::const_iterator i, iend;
+      i = mImpl->mContexts.begin();
+      iend = mImpl->mContexts.end();
+      for (; i != iend && ftype != dtUtil::REGULAR_FILE; ++i)
       {
-         dtUtil::FileType ftype = fileUtils.GetFileInfo(path).fileType;
+         fileUtils.PushDirectory(*i);
 
-         if (ftype != dtUtil::REGULAR_FILE)
+         try
          {
-            if (ftype == dtUtil::FILE_NOT_FOUND)
+            ftype = fileUtils.GetFileInfo(path).fileType;
+            if (ftype == dtUtil::DIRECTORY)
             {
-               throw dtDAL::ProjectFileNotFoundException(
-                      std::string("The specified resource was not found: ") + path, __FILE__, __LINE__);
+               // didn't find the resource, but found a directory with that same name.
+               // This is only an error if no file is found in a later path.
+               foundADir = true;
             }
-            else if (ftype == dtUtil::DIRECTORY)
+
+            if (ftype == dtUtil::REGULAR_FILE)
             {
-               throw dtDAL::ProjectResourceErrorException(
-                      std::string("The resource identifier does not specify a resource file: ") + path, __FILE__, __LINE__);
+               pathContext = *i + dtUtil::FileUtils::PATH_SEPARATOR;
             }
          }
-      }
-      catch (const dtUtil::Exception& ex)
-      {
-         //we have to make sure this happens before excepting
+         catch (const dtUtil::Exception& ex)
+         {
+            //we have to make sure this happens before excepting
+            fileUtils.PopDirectory();
+            // eat the exception because we'll go on to the next directory and then
+            // throw at the end.
+         }
          fileUtils.PopDirectory();
-         throw ex;
       }
-      fileUtils.PopDirectory();
 
-      return path;
+      if (ftype != dtUtil::REGULAR_FILE)
+      {
+         if (!foundADir)
+         {
+            throw dtDAL::ProjectFileNotFoundException(
+                   std::string("The specified resource was not found: ") + path, __FILE__, __LINE__);
+         }
+         else
+         {
+            throw dtDAL::ProjectResourceErrorException(
+                   std::string("The resource identifier specifies a category or directory: ") + path, __FILE__, __LINE__);
+         }
+      }
+
+      return pathContext + path;
    }
 
 
    /////////////////////////////////////////////////////////////////////////////
-   void Project::CreateResourceCategory(const std::string& category, const DataType& type)
+   void Project::CreateResourceCategory(const std::string& category, const DataType& type, ContextSlot slot)
    {
-      if (!mValidContext)
+      if (!IsContextValid(slot))
       {
          throw dtDAL::ProjectInvalidContextException(
          std::string("The context is not valid."), __FILE__, __LINE__);
@@ -1556,7 +1823,7 @@ namespace dtDAL
       if (IsReadOnly())
       {
          throw dtDAL::ProjectReadOnlyException(
-         std::string("The context is readonly."), __FILE__, __LINE__);
+         std::string("The project is readonly."), __FILE__, __LINE__);
       }
 
       if (!type.IsResource())
@@ -1566,35 +1833,52 @@ namespace dtDAL
       }
 
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-      fileUtils.PushDirectory(mContext);
-
-      try
+      std::vector<std::string>::const_iterator i, iend;
+      if (slot == Project::DEFAULT_SLOT_VALUE)
       {
-         dtUtil::tree<ResourceTreeNode>* categoryInTree;
-         dtUtil::tree<ResourceTreeNode>* dataTypeTree = NULL;
+         i = mImpl->mContexts.begin();
+         iend = mImpl->mContexts.end();
+      }
+      else
+      {
+         //if you specify a slot, just loop over the one index.
+         i = mImpl->mContexts.begin() + slot;
+         iend = mImpl->mContexts.begin() + slot + 1;
+      }
 
-         if (mResourcesIndexed)
+      for (; i != iend; ++i)
+      {
+         fileUtils.PushDirectory(*i);
+
+         try
          {
-            dataTypeTree = &GetResourcesOfType(type);
-         }
+            dtUtil::tree<ResourceTreeNode>* categoryInTree;
+            dtUtil::tree<ResourceTreeNode>* dataTypeTree = NULL;
 
-         mResourceHelper.CreateResourceCategory(category, type, dataTypeTree, categoryInTree);
-      }
-      catch (const dtUtil::Exception& ex)
-      {
-         //we have to make sure this happens before excepting
+            if (mImpl->mResourcesIndexed)
+            {
+               dataTypeTree = &mImpl->GetResourcesOfType(type);
+            }
+
+            // TODO see what this does if it thinks it has this resource already.
+            mImpl->mResourceHelper.CreateResourceCategory(category, type, dataTypeTree, categoryInTree);
+         }
+         catch (const dtUtil::Exception& ex)
+         {
+            //we have to make sure this happens before excepting
+            fileUtils.PopDirectory();
+            throw ex;
+         }
          fileUtils.PopDirectory();
-         throw ex;
       }
-      fileUtils.PopDirectory();
    }
 
    /////////////////////////////////////////////////////////////////////////////
    bool Project::RemoveResourceCategory(const std::string& category,
-                                        const DataType& type, bool recursive)
+                                        const DataType& type, bool recursive, ContextSlot slot)
    {
 
-      if (!mValidContext)
+      if (!IsContextValid(slot))
       {
          throw dtDAL::ProjectInvalidContextException(
                 std::string("The context is not valid."), __FILE__, __LINE__);
@@ -1613,39 +1897,73 @@ namespace dtDAL
       }
 
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-      fileUtils.PushDirectory(mContext);
-
-      bool result;
-
-      try
+      std::vector<std::string>::const_iterator i, iend;
+      if (slot == Project::DEFAULT_SLOT_VALUE)
       {
-         dtUtil::tree<ResourceTreeNode>* dataTypeTree = NULL;
-         if (mResourcesIndexed)
+         // Default remove from instances.
+         i = mImpl->mContexts.begin();
+         iend = mImpl->mContexts.end();
+      }
+      else
+      {
+         //if you specify a slot, just loop over the one index.
+         i = mImpl->mContexts.begin() + slot;
+         iend = mImpl->mContexts.begin() + slot + 1;
+      }
+
+      // default to true because it's only false if it was unable to remove the category
+      // due to a directory not being empty.
+      // TODO not sure what to do if a category exists in several but is not empty in only
+      // some.
+      bool result = true;
+
+      for (; i != iend; ++i)
+      {
+         fileUtils.PushDirectory(*i);
+
+         try
          {
-            dataTypeTree = &GetResourcesOfType(type);
+            dtUtil::tree<ResourceTreeNode>* dataTypeTree = NULL;
+            if (mImpl->mResourcesIndexed)
+            {
+               dataTypeTree = &mImpl->GetResourcesOfType(type);
+            }
+
+            // TODO see what it does if it things it's already removed it.
+            result = result && mImpl->mResourceHelper.RemoveResourceCategory(category, type, recursive, dataTypeTree);
          }
-
-         result = mResourceHelper.RemoveResourceCategory(category, type, recursive, dataTypeTree);
-      }
-      catch (const dtUtil::Exception& ex)
-      {
-         //we have to make sure this happens before excepting
+         catch (const dtUtil::Exception& ex)
+         {
+            //we have to make sure this happens before excepting
+            fileUtils.PopDirectory();
+            throw ex;
+         }
          fileUtils.PopDirectory();
-         throw ex;
       }
-      fileUtils.PopDirectory();
-
       return result;
 
    }
 
    /////////////////////////////////////////////////////////////////////////////
+   const dtUtil::tree<ResourceTreeNode>& Project::GetAllResources() const
+   {
+      if (!mImpl->mResourcesIndexed)
+      {
+         mImpl->IndexResources();
+      }
+
+      return mImpl->mResources;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
    const ResourceDescriptor Project::AddResource(const std::string& newName,
                                                  const std::string& pathToFile, const std::string& category,
-                                                 const DataType& type)
+                                                 const DataType& type,
+                                                 ContextSlot slot)
    {
 
-      if (!mValidContext)
+      if (slot == Project::DEFAULT_SLOT_VALUE) { slot = 0; }
+      if (!IsContextValid(slot))
       {
          throw dtDAL::ProjectInvalidContextException(
                 std::string("The context is not valid."), __FILE__, __LINE__);
@@ -1665,16 +1983,16 @@ namespace dtDAL
       }
 
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-      fileUtils.PushDirectory(mContext);
+      fileUtils.PushDirectory(mImpl->mContexts[slot]);
 
       ResourceDescriptor result;
       try
       {
          dtUtil::tree<ResourceTreeNode>* dataTypeTree = NULL;
-         if (mResourcesIndexed)
-            dataTypeTree = &GetResourcesOfType(type);
+         if (mImpl->mResourcesIndexed)
+            dataTypeTree = &mImpl->GetResourcesOfType(type);
 
-         result = mResourceHelper.AddResource(newName, pathToFile, category, type, dataTypeTree);
+         result = mImpl->mResourceHelper.AddResource(newName, pathToFile, category, type, dataTypeTree);
 
       }
       catch (const dtUtil::Exception& ex)
@@ -1689,9 +2007,10 @@ namespace dtDAL
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void Project::RemoveResource(const ResourceDescriptor& resource)
+   void Project::RemoveResource(const ResourceDescriptor& resource, ContextSlot slot)
    {
-      if (!mValidContext)
+      if (slot == Project::DEFAULT_SLOT_VALUE) { slot = 0; }
+      if (!IsContextValid(slot))
       {
          throw dtDAL::ProjectInvalidContextException(
          std::string("The context is not valid."), __FILE__, __LINE__);
@@ -1704,17 +2023,17 @@ namespace dtDAL
       }
 
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-      fileUtils.PushDirectory(mContext);
+      fileUtils.PushDirectory(mImpl->mContexts[slot]);
       try
       {
 
          dtUtil::tree<ResourceTreeNode>* resourceTree = NULL;
-         if (mResourcesIndexed)
+         if (mImpl->mResourcesIndexed)
          {
-            resourceTree = &mResources;
+            resourceTree = &mImpl->mResources;
          }
 
-         mResourceHelper.RemoveResource(resource, resourceTree);
+         mImpl->mResourceHelper.RemoveResource(resource, resourceTree);
       }
       catch (const dtUtil::Exception& ex)
       {
@@ -1725,32 +2044,40 @@ namespace dtDAL
    }
 
    //////////////////////////////////////////////////////////
-   void Project::IndexResources() const
+   void ProjectImpl::IndexResources() const
    {
       if (mResourcesIndexed)
       {
          return;
       }
 
+      mResources.clear();
+
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-      fileUtils.PushDirectory(GetContext());
-      try
+      std::vector<std::string>::const_iterator i, iend;
+      i = mContexts.begin();
+      iend = mContexts.end();
+      for (; i != iend; ++i)
       {
-         mResources.clear();
-         mResourceHelper.IndexResources(mResources);
-      }
-      catch (const dtUtil::Exception& ex)
-      {
+         fileUtils.PushDirectory(*i);
+         try
+         {
+            // TODO ? break up the resources somehow by context rather than merging them all?
+            mResourceHelper.IndexResources(mResources);
+         }
+         catch (const dtUtil::Exception& ex)
+         {
+            fileUtils.PopDirectory();
+            throw ex;
+         }
          fileUtils.PopDirectory();
-         throw ex;
       }
-      fileUtils.PopDirectory();
 
       mResourcesIndexed = true;
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   dtUtil::tree<ResourceTreeNode>& Project::GetResourcesOfType(const DataType& dataType) const
+   dtUtil::tree<ResourceTreeNode>& ProjectImpl::GetResourcesOfType(const DataType& dataType) const
    {
       if (!mResourcesIndexed)
       {
@@ -1775,7 +2102,7 @@ namespace dtDAL
    /////////////////////////////////////////////////////////////////////////////
    void Project::GetResourcesOfType(const DataType& type, dtUtil::tree<ResourceTreeNode>& toFill) const
    {
-      if (!mValidContext)
+      if (!IsContextValid())
       {
          throw dtDAL::ProjectInvalidContextException(
          std::string("The context is not valid."), __FILE__, __LINE__);
@@ -1787,7 +2114,7 @@ namespace dtDAL
          return;
       }
 
-      toFill = GetResourcesOfType(type);
+      toFill = mImpl->GetResourcesOfType(type);
 
    }
 
@@ -1840,7 +2167,7 @@ namespace dtDAL
    /////////////////////////////////////////////////////////////////////////////
    bool Project::IsArchive() const
    {
-      if (!mValidContext)
+      if (!IsContextValid())
       {
          throw dtDAL::ProjectInvalidContextException(
          std::string("The context is not valid."), __FILE__, __LINE__);
@@ -1852,20 +2179,24 @@ namespace dtDAL
    /////////////////////////////////////////////////////////////////////////////
    bool Project::IsReadOnly() const
    {
-      if (!mValidContext)
-      {
-         throw dtDAL::ProjectInvalidContextException(
-         std::string("The context is not valid."), __FILE__, __LINE__);
-      }
+      return mImpl->mContextReadOnly;
+   }
 
-      return mContextReadOnly;
+   /////////////////////////////////////////////////////////////////////////////
+   void Project::SetReadOnly(bool newReadOnly)
+   {
+      mImpl->mContextReadOnly = newReadOnly;
    }
 
    /////////////////////////////////////////////////////////////////////////////
    void Project::SetEditMode(bool pInStage)
    {
-      mEditMode = pInStage;
+      mImpl->mEditMode = pInStage;
    }
 
    /////////////////////////////////////////////////////////////////////////////
+   bool Project::GetEditMode() const
+   {
+      return mImpl->mEditMode;
+   }
 }

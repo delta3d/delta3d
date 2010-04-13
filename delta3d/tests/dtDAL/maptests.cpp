@@ -979,9 +979,7 @@ void MapTests::TestMapSaveAndLoad()
         ss.str("");
         ss << v3ap->GetValue() << "." ;
         CPPUNIT_ASSERT_MESSAGE(ap->GetName() + " value should be 33.5f, 12.25f, 49.125f but it is " + ss.str(),
-            osg::equivalent(v3ap->GetValue()[0], testVec3_1[0], 1e-2f)
-            && osg::equivalent(v3ap->GetValue()[1], testVec3_1[1], 1e-2f )
-            && osg::equivalent(v3ap->GetValue()[2], testVec3_1[2], 1e-2f )
+                 dtUtil::Equivalent(v3ap->GetValue(), testVec3_1, 1e-2f)
             );
 
         ap = getActorProperty(*map, dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION, dtDAL::DataType::VEC3, 1);
@@ -990,9 +988,7 @@ void MapTests::TestMapSaveAndLoad()
         ss.str("");
         ss << v3ap->GetValue() << "." ;
         CPPUNIT_ASSERT_MESSAGE(ap->GetName() + " value should be -34.75f, 96.03125f, 8.0f the value is " + ss.str(),
-            osg::equivalent(v3ap->GetValue()[0], testVec3_2[0], 1e-2f)
-            && osg::equivalent(v3ap->GetValue()[1], testVec3_2[1], 1e-2f)
-            && osg::equivalent(v3ap->GetValue()[2], testVec3_2[2], 1e-2f)
+                 dtUtil::Equivalent(v3ap->GetValue(), testVec3_2, 1e-2f)
             );
 
         // VEC3
@@ -1009,9 +1005,7 @@ void MapTests::TestMapSaveAndLoad()
         }
         osg::Vec3 val3 = static_cast<dtDAL::Vec3fActorProperty*>(ap)->GetValue();
         CPPUNIT_ASSERT_MESSAGE(ap->GetName() + " value should be -34.75f, 96.03125f, 8.0f (unless mangled)",
-            osg::equivalent(val3[0], testVec3_2_actualValues[0], 1e-2f)
-            && osg::equivalent(val3[1], testVec3_2_actualValues[1], 1e-2f)
-            && osg::equivalent(val3[2], testVec3_2_actualValues[2], 1e-2f)
+                 dtUtil::Equivalent(val3, testVec3_2, 1e-2f)
             );
 
 
@@ -1040,10 +1034,7 @@ void MapTests::TestMapSaveAndLoad()
         ss.str("");
         ss << testVec4_2 << " but it is " << colorProp1->GetValue() << "." ;
         CPPUNIT_ASSERT_MESSAGE(ap->GetName() + " value should be " + ss.str(),
-            osg::equivalent(double(colorProp1->GetValue()[0]), double(testVec4_2[0]), 1e-2)
-            && osg::equivalent(double(colorProp1->GetValue()[1]), double(testVec4_2[1]), 1e-2)
-            && osg::equivalent(double(colorProp1->GetValue()[2]), double(testVec4_2[2]), 1e-2)
-            && osg::equivalent(double(colorProp1->GetValue()[3]), double(testVec4_2[3]), 1e-2)
+                 dtUtil::Equivalent(colorProp1->GetValue(), testVec4_2, 1e-2f)
             );
 
         ap = getActorProperty(*map, "Test_Vec4", dtDAL::DataType::VEC4, 0);
@@ -1051,10 +1042,7 @@ void MapTests::TestMapSaveAndLoad()
         ss.str("");
         ss << testVec4_1 << " but it is " << v4 << "." ;
         CPPUNIT_ASSERT_MESSAGE(ap->GetName() + " value should be " + ss.str(),
-           osg::equivalent(v4[0], testVec4_1[0], 1e-2f)
-            && osg::equivalent(v4[1], testVec4_1[1], 1e-2f)
-            && osg::equivalent(v4[2], testVec4_1[2], 1e-2f)
-            && osg::equivalent(v4[3], testVec4_1[3], 1e-2f)
+           dtUtil::Equivalent(v4, testVec4_1, 1e-2f)
             );
 
         ap = getActorProperty(*map, "Test_Vec4f", dtDAL::DataType::VEC4F, 0);
@@ -1062,10 +1050,7 @@ void MapTests::TestMapSaveAndLoad()
         ss.str("");
         ss << ap->GetName() << " value should be " << testVec4f_1 << " but it is " << v4f << "." ;
         CPPUNIT_ASSERT_MESSAGE(ss.str(),
-            osg::equivalent(v4f[0], testVec4f_1[0], 1e-2f)
-            && osg::equivalent(v4f[1], testVec4f_1[1], 1e-2f)
-            && osg::equivalent(v4f[2], testVec4f_1[2], 1e-2f)
-            && osg::equivalent(v4f[3], testVec4f_1[3], 1e-2f)
+                 dtUtil::Equivalent(v4f, testVec4f_1, 1e-2f)
             );
 
         ap = getActorProperty(*map, "Test_Vec4d", dtDAL::DataType::VEC4D, 0);
@@ -1074,10 +1059,7 @@ void MapTests::TestMapSaveAndLoad()
         ss.str("");
         ss << testVec4d_1 << " but it is " << v4d << "." ;
         CPPUNIT_ASSERT_MESSAGE(ap->GetName() + " value should be " + ss.str(),
-            osg::equivalent(v4d[0], testVec4d_1[0], 1e-2)
-            && osg::equivalent(v4d[1], testVec4d_1[1], 1e-2)
-            && osg::equivalent(v4d[2], testVec4d_1[2], 1e-2)
-            && osg::equivalent(v4d[3], testVec4d_1[3], 1e-2)
+                 dtUtil::Equivalent(v4d, testVec4d_1, 1e-2)
             );
 
         ap = getActorProperty(*map, "Test_Int", dtDAL::DataType::INT);
@@ -1241,7 +1223,7 @@ void MapTests::TestMapSaveAndLoad()
     }
     catch (const dtUtil::Exception& e)
     {
-        CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
+        CPPUNIT_FAIL((std::string("Error: ") + e.ToString()));
     }
 //    catch (const std::exception& ex) {
 //        LOGN_ERROR("maptests.cpp", ex.what());

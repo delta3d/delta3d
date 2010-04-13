@@ -383,7 +383,7 @@ namespace dtDAL
       dtCore::UniqueId id = dtCore::UniqueId(value);
       GameEvent *event = NULL;
 
-      if (mProxy)
+      if (mProxy && Project::GetInstance().IsContextValid())
       {
          Map* map = Project::GetInstance().GetMapForActorProxy(*mProxy);
          if (map)
