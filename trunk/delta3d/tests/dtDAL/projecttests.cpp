@@ -58,23 +58,25 @@ namespace dtDAL
 class ProjectTests : public CPPUNIT_NS::TestFixture
 {
    CPPUNIT_TEST_SUITE(ProjectTests);
-   CPPUNIT_TEST(testReadonlyFailure);
-   CPPUNIT_TEST(testProject);
-   CPPUNIT_TEST(testCategories);
-   CPPUNIT_TEST(testResources);
-   CPPUNIT_TEST(testDeletingBackupFromReadOnlyContext);
+   CPPUNIT_TEST(TestReadonlyFailure);
+   CPPUNIT_TEST(TestProject);
+   CPPUNIT_TEST(TestMultipleContexts);
+   CPPUNIT_TEST(TestCategories);
+   CPPUNIT_TEST(TestResources);
+   CPPUNIT_TEST(TestDeletingBackupFromReadOnlyContext);
    CPPUNIT_TEST_SUITE_END();
 
    public:
       void setUp();
       void tearDown();
 
-      void testProject();
-      void testFileIO();
-      void testCategories();
-      void testReadonlyFailure();
-      void testResources();
-      void testDeletingBackupFromReadOnlyContext();
+      void TestProject();
+      void TestMultipleContexts();
+      void TestFileIO();
+      void TestCategories();
+      void TestReadonlyFailure();
+      void TestResources();
+      void TestDeletingBackupFromReadOnlyContext();
    private:
       dtUtil::Log* logger;
       void printTree(const dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator& iter);
@@ -143,6 +145,14 @@ void ProjectTests::tearDown()
    if (fileUtils.DirExists("TestProject"))
    {
       fileUtils.DirDelete("TestProject", true);
+   }
+   if (fileUtils.DirExists("TestProject1"))
+   {
+      fileUtils.DirDelete("TestProject1", true);
+   }
+   if (fileUtils.DirExists("TestProject2"))
+   {
+      fileUtils.DirDelete("TestProject2", true);
    }
    if (fileUtils.DirExists("Test2Project"))
    {
@@ -228,7 +238,7 @@ void ProjectTests::printTree(const dtUtil::tree<dtDAL::ResourceTreeNode>::const_
    }
 }
 
-void ProjectTests::testReadonlyFailure()
+void ProjectTests::TestReadonlyFailure()
 {
    try 
    {
@@ -323,7 +333,7 @@ void ProjectTests::testReadonlyFailure()
 
 }
 
-void ProjectTests::testCategories()
+void ProjectTests::TestCategories()
 {
    try
    {
@@ -331,11 +341,14 @@ void ProjectTests::testCategories()
 
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
-      std::string projectDir("TestProject");
+      std::string projectDir1("TestProject");
+      std::string projectDir2("TestProject2");
 
       try {
-         p.CreateContext(projectDir);
-         p.SetContext(projectDir);
+         p.CreateContext(projectDir1);
+         p.CreateContext(projectDir2);
+         p.SetContext(projectDir1);
+         p.AddContext(projectDir2);
       } catch (const dtUtil::Exception& e) {
          CPPUNIT_FAIL(std::string(std::string("Project should have been able to set context. Exception: ") + e.ToString()).c_str());
       }
@@ -349,12 +362,10 @@ void ProjectTests::testCategories()
             p.GetAllResources();
 
          if (!d.IsResource()) {
-            try {
-               p.CreateResourceCategory("littleFoot", d);
-               CPPUNIT_FAIL("Project should not be able to create a category for a primitive type.");
-            } catch (const dtUtil::Exception&) {
-               //correct
-            }
+            const std::string PRIM_CATEGORY_MSG("Project should not be able to create a category for a primitive type.");
+            CPPUNIT_ASSERT_THROW_MESSAGE(PRIM_CATEGORY_MSG, p.CreateResourceCategory("littleFoot", d), dtUtil::Exception);
+            CPPUNIT_ASSERT_THROW_MESSAGE(PRIM_CATEGORY_MSG, p.CreateResourceCategory("littleFoot", d, 0), dtUtil::Exception);
+            CPPUNIT_ASSERT_THROW_MESSAGE(PRIM_CATEGORY_MSG, p.CreateResourceCategory("littleFoot", d, 1), dtUtil::Exception);
          } else {
             p.CreateResourceCategory("abomb", d);
 
@@ -368,7 +379,10 @@ void ProjectTests::testCategories()
                   "attempting to remove a simple category should succeed.",
                   p.RemoveResourceCategory("abomb:hbomb", d, false));
 
-            std::string catPath(p.GetContext() + dtUtil::FileUtils::PATH_SEPARATOR
+            std::string catPath(p.GetContext(0) + dtUtil::FileUtils::PATH_SEPARATOR
+                  + d.GetName() + dtUtil::FileUtils::PATH_SEPARATOR + "abomb");
+
+            std::string catPath2(p.GetContext(1) + dtUtil::FileUtils::PATH_SEPARATOR
                   + d.GetName() + dtUtil::FileUtils::PATH_SEPARATOR + "abomb");
 
             CPPUNIT_ASSERT_MESSAGE("Static mesh category abomb should exist.",
@@ -414,7 +428,12 @@ void ProjectTests::testCategories()
 
 }
 
-void ProjectTests::testResources()
+void ProjectTests::TestMultipleContexts()
+{
+
+}
+
+void ProjectTests::TestResources()
 {
    try
    {
@@ -524,8 +543,8 @@ void ProjectTests::testResources()
 
       testResult = p.GetResourcePath(rd);
 
-      CPPUNIT_ASSERT_MESSAGE("Getting the resource path returned the wrong value: " + testResult,
-            testResult == dtDAL::DataType::STATIC_MESH.GetName() + dtUtil::FileUtils::PATH_SEPARATOR
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Getting the resource path returned the wrong value",
+            testResult, p.GetContext(0) + dtUtil::FileUtils::PATH_SEPARATOR + dtDAL::DataType::STATIC_MESH.GetName() + dtUtil::FileUtils::PATH_SEPARATOR
             + "fun" + dtUtil::FileUtils::PATH_SEPARATOR + "bigmamajama"
             + dtUtil::FileUtils::PATH_SEPARATOR + "flatdirt.ive");
 
@@ -586,8 +605,9 @@ void ProjectTests::testResources()
       rd = p.AddResource("pow", std::string(DATA_DIR + "/sounds/pow.wav"), std::string("tea:money"), dtDAL::DataType::SOUND);
       testResult = p.GetResourcePath(rd);
 
-      CPPUNIT_ASSERT_MESSAGE("Getting the resource path returned the wrong value: " + testResult ,
-            testResult == dtDAL::DataType::SOUND.GetName() + dtUtil::FileUtils::PATH_SEPARATOR
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Getting the resource path returned the wrong value: ",
+            testResult, p.GetContext(0) + dtUtil::FileUtils::PATH_SEPARATOR +
+            dtDAL::DataType::SOUND.GetName() + dtUtil::FileUtils::PATH_SEPARATOR
             + "tea" + dtUtil::FileUtils::PATH_SEPARATOR
             + "money" + dtUtil::FileUtils::PATH_SEPARATOR + "pow.wav");
 
@@ -595,8 +615,9 @@ void ProjectTests::testResources()
             std::string("tee:cash"), dtDAL::DataType::SOUND);
       testResult = p.GetResourcePath(rd1);
 
-      CPPUNIT_ASSERT_MESSAGE("Getting the resource path returned the wrong value: " + testResult,
-            testResult == dtDAL::DataType::SOUND.GetName() + dtUtil::FileUtils::PATH_SEPARATOR + "tee"
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Getting the resource path returned the wrong value:",
+            testResult, p.GetContext(0) + dtUtil::FileUtils::PATH_SEPARATOR +
+            dtDAL::DataType::SOUND.GetName() + dtUtil::FileUtils::PATH_SEPARATOR + "tee"
             + dtUtil::FileUtils::PATH_SEPARATOR + "cash" + dtUtil::FileUtils::PATH_SEPARATOR + "bang.wav");
 
       p.Refresh();
@@ -638,7 +659,7 @@ void ProjectTests::testResources()
 }
 
 
-void ProjectTests::testProject()
+void ProjectTests::TestProject()
 {
    try
    {
@@ -745,7 +766,7 @@ void ProjectTests::testProject()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ProjectTests::testDeletingBackupFromReadOnlyContext()
+void ProjectTests::TestDeletingBackupFromReadOnlyContext()
 {
    const std::string projectDir("TestProject");
    const std::string mapName("mapWithBackup");

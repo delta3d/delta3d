@@ -201,9 +201,13 @@ namespace dtActors
    ////////////////////////////////////////////////////////////////////////////////
    WaterGridActor::~WaterGridActor()
    {
-      dtABC::Application::GetInstance("Application")->GetScene()->GetSceneNode()->addChild(mWaveCamera.get());
-      dtABC::Application::GetInstance("Application")->GetScene()->GetSceneNode()->addChild(mWaveCameraScreen.get());
-      dtABC::Application::GetInstance("Application")->GetScene()->GetSceneNode()->addChild(mReflectionCamera.get());
+      dtABC::Application* app = dtABC::Application::GetInstance("Application");
+      if (app != NULL)
+      {
+         app->GetScene()->GetSceneNode()->removeChild(mWaveCamera.get());
+         app->GetScene()->GetSceneNode()->removeChild(mWaveCameraScreen.get());
+         app->GetScene()->GetSceneNode()->removeChild(mReflectionCamera.get());
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////

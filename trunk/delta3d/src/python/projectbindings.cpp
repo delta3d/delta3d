@@ -20,10 +20,10 @@ void initProjectBindings()
    void ( Project::*DM2 )( const std::string&, bool ) = &Project::DeleteMap;
 
    void ( Project::*SM1 )( Map& ) = &Project::SaveMap;
-   void ( Project::*SMA1 )( Map&, const std::string&, const std::string& ) = &Project::SaveMapAs;
+   void ( Project::*SMA1 )( Map&, const std::string&, const std::string&, Project::ContextSlot ) = &Project::SaveMapAs;
 
    void ( Project::*SM2 )( const std::string& ) = &Project::SaveMap;
-   void ( Project::*SMA2 )( const std::string&, const std::string&, const std::string& ) = &Project::SaveMapAs;
+   void ( Project::*SMA2 )( const std::string&, const std::string&, const std::string&, Project::ContextSlot ) = &Project::SaveMapAs;
 
    bool ( Project::*HB1 )( Map& ) const = &Project::HasBackup;
    bool ( Project::*HB2 )( const std::string& ) const = &Project::HasBackup;

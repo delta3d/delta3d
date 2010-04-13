@@ -504,6 +504,7 @@ namespace dtDAL
 
       protected:
          friend class Project;
+         friend class ProjectImpl;
 
          /**
           * Assigns the file name this map should be saved to. It should not have
