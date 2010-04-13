@@ -7,6 +7,7 @@
 #include <dtUtil/mswin.h>
 #include <dtCore/deltawin.h>
 #include <dtUtil/log.h>
+#include <algorithm>
 
 using namespace dtCore;
 using namespace dtUtil;
@@ -40,36 +41,33 @@ void DeltaWin::KillGLWindow()
    //}
 }
 
+//////////////////////////////////////////////////////////////////////////
 DeltaWin::ResolutionVec DeltaWin::GetResolutions()
 {
    HDC hDC = GetDC(GetDesktopWindow());
 
-   Resolution currentRes = GetCurrentResolution();
-   int currentDepth = currentRes.bitDepth;
-
    DEVMODE dm;
    ResolutionVec rv;
 
-   int i = 0;
-
-   for( i = 0; EnumDisplaySettings( 0, i, &dm ); i++ )
+   for (int i = 0; EnumDisplaySettings(0, i, &dm); i++)
    {
-
       Resolution r = { dm.dmPelsWidth,
-         dm.dmPelsHeight,
-         dm.dmBitsPerPel,
-         dm.dmDisplayFrequency };
+                       dm.dmPelsHeight,
+                       dm.dmBitsPerPel,
+                       dm.dmDisplayFrequency };
 
-      rv.push_back( r );
+      if (std::find(rv.begin(), rv.end(), r) == rv.end())
+      {
+         rv.push_back(r);
+      }
    }
-
-   int numResolutions = i;
 
    ReleaseDC(GetDesktopWindow(), hDC);
 
    return rv;
 }
 
+//////////////////////////////////////////////////////////////////////////
 bool DeltaWin::ChangeScreenResolution( int width, int height, int colorDepth, int refreshRate )
 {
    //Note: If a window is fullscreen, we have to trick it a little in order
