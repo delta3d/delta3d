@@ -131,6 +131,7 @@ namespace dtUtil
 
       protected:
          Enumeration* mType; ///<Deprecated 2/16/10
+      private:
          std::string mMessage, mFileName;
          unsigned int mLineNum;
    };
