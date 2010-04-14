@@ -1211,7 +1211,7 @@ namespace dtGame
       const LogIgnoreMessageTypeMessage* ignoreMessage = static_cast<const LogIgnoreMessageTypeMessage*>(&message);
       const dtGame::MessageType& msgType = GetGameManager()->GetMessageFactory().GetMessageTypeById(ignoreMessage->GetIgnoredMessageType());
 
-      std::set<const dtGame::MessageType*>::const_iterator itr = mIgnoredMessageTypeList.find(&msgType);
+      std::set<const dtGame::MessageType*>::iterator itr = mIgnoredMessageTypeList.find(&msgType);
       if (itr != mIgnoredMessageTypeList.end())
       {
          mIgnoredMessageTypeList.erase(itr);
