@@ -207,11 +207,6 @@ namespace dtActors
       virtual void BuildPropertyMap();
 
       /**
-      * Event handler when the map has finished loading.
-      */
-      void OnMapLoadEnd();
-
-      /**
       * Event handler when this actor has entered the world.
       */
       void OnEnteredWorld();
@@ -220,6 +215,13 @@ namespace dtActors
       * Build all invokables.
       */
       void BuildInvokables();
+
+      /**
+       * Retrieves the render mode for this proxy.
+       *
+       * @return  The render mode.
+       */
+      virtual const RenderMode& GetRenderMode();
 
       /**
       * Retrieves the billboard icon for this proxy.
