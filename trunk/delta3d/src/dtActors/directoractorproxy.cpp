@@ -276,21 +276,6 @@ namespace dtActors
       AddProperty(scriptArrayProp);
    }
 
-   //////////////////////////////////////////////////////////////////////////
-   void DirectorActorProxy::OnMapLoadEnd()
-   {
-      BaseClass::OnMapLoadEnd();
-
-      //// We only care the load the Director's if we are not editing in STAGE.
-      //if (!IsInSTAGE())
-      //{
-      //   DirectorActor* actor = NULL;
-      //   GetActor(actor);
-
-      //   actor->LoadDirectors();
-      //}
-   }
-
    //////////////////////////////////////////////////////////////////////////////
    void DirectorActorProxy::OnEnteredWorld()
    {
@@ -317,6 +302,12 @@ namespace dtActors
          AddInvokable(*new dtGame::Invokable("Map Loaded",
             dtDAL::MakeFunctor(*actor, &DirectorActor::LoadDirectors)));   
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const dtDAL::ActorProxy::RenderMode& DirectorActorProxy::GetRenderMode()
+   {
+      return dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON;
    }
 
    //////////////////////////////////////////////////////////////////////////
