@@ -35,6 +35,7 @@ namespace dtDirector
       : mVisible(true)
       , mActiveCount(0)
       , mOwner(owner)
+      , mRedirector(NULL)
    {
       SetName(name);
    }
@@ -53,6 +54,7 @@ namespace dtDirector
       mVisible = src.mVisible;
       mActiveCount = src.mActiveCount;
       mOwner = src.mOwner;
+      mRedirector = src.mRedirector;
 
       *this = src;
    }
@@ -67,6 +69,7 @@ namespace dtDirector
       mVisible = src.mVisible;
       mActiveCount = src.mActiveCount;
       mOwner = src.mOwner;
+      mRedirector = src.mRedirector;
 
       // Now connect this link to all output links connected to by the source.
       int count = (int)src.mLinks.size();

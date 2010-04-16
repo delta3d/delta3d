@@ -94,6 +94,20 @@ namespace dtDirector
       Node* GetOwner() {return mOwner;}
 
       /**
+       * Sets the proxy owner.
+       *
+       * @param[in]  proxy  The proxy owner.
+       */
+      void SetProxyOwner(Node* proxy) {mProxyOwner = proxy;}
+
+      /**
+       * Sets the link this link will redirect to.
+       *
+       * @param[in]  redirector  The link to redirect to.
+       */
+      void RedirectLink(ValueLink* redirector);
+
+      /**
        * Retrieves the property type of this link.
        *
        * @return  The property type.
@@ -227,14 +241,17 @@ namespace dtDirector
       /**
        * Retrieves the list of links.
        */
-      std::vector<ValueNode*>& GetLinks() {return mLinks;}
+      std::vector<ValueNode*>& GetLinks();
 
    private:
 
       Node* mOwner;
+      Node* mProxyOwner;
       std::string mLabel;
       bool mVisible;
       bool mExposed;
+
+      ValueLink* mRedirector;
 
 #if defined DELTA_WIN32
 #pragma warning (push)

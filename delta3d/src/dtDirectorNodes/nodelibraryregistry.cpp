@@ -32,6 +32,7 @@
 // Actions
 #include <dtDirectorNodes/outputnode.h>
 #include <dtDirectorNodes/callremoteeventaction.h>
+#include <dtDirectorNodes/referencescriptaction.h>
 #include <dtDirectorNodes/setvalueaction.h>
 #include <dtDirectorNodes/getactorpropertyaction.h>
 #include <dtDirectorNodes/setactorpropertyaction.h>
@@ -91,6 +92,7 @@ namespace dtDirector
    // Actions
    RefPtr<NodeType> NodeLibraryRegistry::OUTPUT_NODE_TYPE(                       new dtDirector::NodeType("Output Link",               "Core",        "Links",       "This node creates an output link connector in its parent graph."));
    RefPtr<NodeType> NodeLibraryRegistry::CALL_REMOTE_EVENT_ACTION_NODE_TYPE(     new dtDirector::NodeType("Call Remote Event",         "Core",        "Actions",     "Calls all remote event nodes with a given name in parallel, and waits until their entire chains are finished before continuing."));
+   RefPtr<NodeType> NodeLibraryRegistry::REFERENCE_SCRIPT_ACTION_NODE_TYPE(      new dtDirector::NodeType("Reference Script Action",   "Core",        "Macros",      "References an external Director script resource."));
    RefPtr<NodeType> NodeLibraryRegistry::DELAY_ACTION_NODE_TYPE(                 new dtDirector::NodeType("Delay",                     "General",     "Actions",     "Performs a time delay."));
    RefPtr<NodeType> NodeLibraryRegistry::SET_VALUE_ACTION_NODE_TYPE(             new dtDirector::NodeType("Set Value",                 "General",     "Value Ops",   "Copies the value of the Source value into the Destination value."));
    RefPtr<NodeType> NodeLibraryRegistry::GET_ACTOR_PROPERTY_ACTION_NODE_TYPE(    new dtDirector::NodeType("Get Actor Property",        "General",     "Value Ops",   "Retrieves the value of a property from an actor."));
@@ -151,6 +153,7 @@ namespace dtDirector
       // Actions
       mNodeFactory->RegisterType<OutputNode>(OUTPUT_NODE_TYPE.get());
       mNodeFactory->RegisterType<CallRemoteEventAction>(CALL_REMOTE_EVENT_ACTION_NODE_TYPE.get());
+      mNodeFactory->RegisterType<ReferenceScriptAction>(REFERENCE_SCRIPT_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<DelayAction>(DELAY_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<SetValueAction>(SET_VALUE_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<GetActorPropertyAction>(GET_ACTOR_PROPERTY_ACTION_NODE_TYPE.get());

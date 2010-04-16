@@ -802,6 +802,19 @@ namespace dtDirector
       case dtDAL::DataType::PREFAB_ID:
       case dtDAL::DataType::SHADER_ID:
          return Qt::magenta;
+         break;
+
+      case dtDAL::DataType::VEC2_ID:
+      case dtDAL::DataType::VEC3_ID:
+      case dtDAL::DataType::VEC4_ID:
+      case dtDAL::DataType::VEC2F_ID:
+      case dtDAL::DataType::VEC3F_ID:
+      case dtDAL::DataType::VEC4F_ID:
+      case dtDAL::DataType::VEC2D_ID:
+      case dtDAL::DataType::VEC3D_ID:
+      case dtDAL::DataType::VEC4D_ID:
+         return Qt::magenta;
+         break;
 
       case dtDAL::DataType::UNKNOWN_ID:
       default:
@@ -842,6 +855,19 @@ namespace dtDirector
       case dtDAL::DataType::PREFAB_ID:
       case dtDAL::DataType::SHADER_ID:
          return Qt::darkMagenta;
+         break;
+
+      case dtDAL::DataType::VEC2_ID:
+      case dtDAL::DataType::VEC3_ID:
+      case dtDAL::DataType::VEC4_ID:
+      case dtDAL::DataType::VEC2F_ID:
+      case dtDAL::DataType::VEC3F_ID:
+      case dtDAL::DataType::VEC4F_ID:
+      case dtDAL::DataType::VEC2D_ID:
+      case dtDAL::DataType::VEC3D_ID:
+      case dtDAL::DataType::VEC4D_ID:
+         return Qt::darkMagenta;
+         break;
 
       case dtDAL::DataType::UNKNOWN_ID:
       default:

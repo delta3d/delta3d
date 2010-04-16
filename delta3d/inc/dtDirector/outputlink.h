@@ -76,6 +76,20 @@ namespace dtDirector
       Node* GetOwner() {return mOwner;}
 
       /**
+       * Redirects this to another output link.
+       *
+       * @param[in]  redirector  The redirected link.
+       */
+      void RedirectLink(OutputLink* redirector) {mRedirector = redirector;}
+
+      /**
+       * Retrieves the redirected link.
+       *
+       * @return  The redirected link.
+       */
+      OutputLink* GetRedirectLink() {return mRedirector;}
+
+      /**
        * Sets the name of the link.
        *
        * @param[in]  name  The name of the link.
@@ -136,6 +150,8 @@ namespace dtDirector
       int          mActiveCount;
 
       Node*        mOwner;
+
+      OutputLink*  mRedirector;
 
 #if defined DELTA_WIN32
 #pragma warning (push)

@@ -565,6 +565,12 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   bool Director::IsRecording()
+   {
+      return mRecording;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    bool Director::SaveRecording(const std::string& filename)
    {
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
@@ -819,6 +825,9 @@ namespace dtDirector
             OutputLink* output = &currentNode->GetOutputLinks()[outputIndex];
             if (output->Test())
             {
+               // Check for redirection of the output.
+               if (output->GetRedirectLink()) output = output->GetRedirectLink();
+
                outputs.push_back(output);
 
                int linkCount = (int)output->GetLinks().size();
@@ -826,6 +835,9 @@ namespace dtDirector
                {
                   InputLink* input = output->GetLinks()[linkIndex];
                   if (!input) continue;
+
+                  // Check for redirection of the input.
+                  if (input->GetRedirectLink()) input = input->GetRedirectLink();
 
                   // Disabled nodes are ignored.
                   if (!input->GetOwner()->GetEnabled()) continue;

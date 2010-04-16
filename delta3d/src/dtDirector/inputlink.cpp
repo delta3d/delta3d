@@ -34,6 +34,7 @@ namespace dtDirector
    InputLink::InputLink(Node* owner, const std::string& name)
       : mVisible(true)
       , mOwner(owner)
+      , mRedirector(NULL)
    {
       SetName(name);
    }
@@ -51,6 +52,7 @@ namespace dtDirector
       mName = src.mName;
       mVisible = src.mVisible;
       mOwner = src.mOwner;
+      mRedirector = src.mRedirector;
 
       *this = src;
    }
@@ -64,6 +66,7 @@ namespace dtDirector
       mName = src.mName;
       mVisible = src.mVisible;
       mOwner = src.mOwner;
+      mRedirector = src.mRedirector;
 
       // Now connect this link to all output links connected to by the source.
       int count = (int)src.mLinks.size();

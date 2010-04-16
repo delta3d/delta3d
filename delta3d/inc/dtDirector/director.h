@@ -269,6 +269,13 @@ namespace dtDirector
       void StopRecording();
 
       /**
+       * Retrieves whether this Director is recording.
+       *
+       * @return  True if we are recording.
+       */
+      bool IsRecording();
+
+      /**
       * Saves any recorded data to a file.
       *
       * @param[in]  filename  The name of the file to save.

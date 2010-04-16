@@ -78,6 +78,20 @@ namespace dtDirector
       Node* GetOwner() {return mOwner;}
 
       /**
+       * Redirects this link to another input link.
+       *
+       * @param[in]  redirector  The link to redirect to.
+       */
+      void RedirectLink(InputLink* redirector) {mRedirector = redirector;}
+
+      /**
+       * Retrieves the redirected link.
+       *
+       * @return  The redirected link.
+       */
+      InputLink* GetRedirectLink() {return mRedirector;}
+
+      /**
        * Sets the name of the link.
        *
        * @param[in]  name  The name of the link.
@@ -131,6 +145,8 @@ namespace dtDirector
       Node*       mOwner;
 
       std::vector<OutputLink*> mLinks;
+
+      InputLink*  mRedirector;
    };
 }
 
