@@ -720,30 +720,38 @@ namespace dtDirector
 
          if (nodeMenu)
          {
-            std::map<std::string, QMenu*> folders;
+            std::map<std::string, QMenu*> eventFolders;
+            std::map<std::string, QMenu*> actionFolders;
+            std::map<std::string, QMenu*> valueFolders;
+            std::map<std::string, QMenu*> macroFolders;
+            std::map<std::string, QMenu*> linkFolders;
 
+            // Events.
             QMenu* eventMenu = nodeMenu->addMenu("Events");
-            folders["Events"] = eventMenu;
+            eventFolders["Events"] = eventMenu;
             connect(eventMenu, SIGNAL(triggered(QAction*)), this, SLOT(OnCreateNodeEvent(QAction*)));
 
+            // Actions.
             QMenu* actionMenu = nodeMenu->addMenu("Actions");
+            actionFolders["Actions"] = actionMenu;
             connect(actionMenu, SIGNAL(triggered(QAction*)), this, SLOT(OnCreateNodeEvent(QAction*)));
 
+            // Values.
             QMenu* valueMenu = nodeMenu->addMenu("Variables");
-            folders["Variables"] = valueMenu;
+            valueFolders["Variables"] = valueMenu;
             connect(valueMenu, SIGNAL(triggered(QAction*)), this, SLOT(OnCreateNodeEvent(QAction*)));
 
-            // Create Macro folder goes in a special location.
+            // Macros.
             QMenu* macroMenu = nodeMenu->addMenu("Macros");
-            folders["Macros"] = macroMenu;
+            macroFolders["Macros"] = macroMenu;
             connect(macroMenu, SIGNAL(triggered(QAction*)), this, SLOT(OnCreateNodeEvent(QAction*)));
 
             QAction* createMacroAction = macroMenu->addAction("Normal Macro");
             connect(createMacroAction, SIGNAL(triggered()), this, SLOT(OnCreateMacro()));
 
-            // Create Link folder goes in a special location.
+            // Links.
             QMenu* linkMenu = nodeMenu->addMenu("Links");
-            folders["Links"] = linkMenu;
+            linkFolders["Links"] = linkMenu;
             connect(linkMenu, SIGNAL(triggered(QAction*)), this, SLOT(OnCreateNodeEvent(QAction*)));
 
             // Get the list of available nodes to create.
@@ -764,42 +772,94 @@ namespace dtDirector
                      continue;
                   }
 
-                  //// Special case, the parent graph does not get the link
-                  //// nodes, because they have no effect.
-                  //if (!mGraph->mParent && node->GetFolder() == "Links")
-                  //{
-                  //   continue;
-                  //}
-
                   // Find the folder.
-                  if (folders.find(node->GetFolder()) == folders.end())
+                  std::map<std::string, QMenu*>* folderMap = NULL;
+
+                  if (node->GetNodeType() == NodeType::EVENT_NODE)
                   {
-                     //QMenu* folder = nodeMenu->addMenu(node->GetFolder().c_str());
-                     folders[node->GetFolder()] = new QMenu(node->GetFolder().c_str());
+                     folderMap = &eventFolders;
+                  }
+                  else if (node->GetNodeType() == NodeType::ACTION_NODE)
+                  {
+                     folderMap = &actionFolders;
+                  }
+                  else if (node->GetNodeType() == NodeType::VALUE_NODE)
+                  {
+                     folderMap = &valueFolders;
+                  }
+                  else if (node->GetNodeType() == NodeType::MACRO_NODE)
+                  {
+                     folderMap = &macroFolders;
+                  }
+                  else if (node->GetNodeType() == NodeType::LINK_NODE)
+                  {
+                     folderMap = &linkFolders;
                   }
 
-                  QMenu* folder = folders[node->GetFolder()];
-                  if (folder)
+                  if (folderMap)
                   {
-                     QAction* action = folder->addAction(node->GetName().c_str());
-                     if (action)
+                     if (folderMap->find(node->GetFolder()) == folderMap->end())
                      {
-                        action->setStatusTip(node->GetCategory().c_str());
-                        action->setToolTip(node->GetDescription().c_str());
+                        (*folderMap)[node->GetFolder()] = new QMenu(node->GetFolder().c_str());
+                     }
+
+                     QMenu* folder = (*folderMap)[node->GetFolder()];
+                     if (folder)
+                     {
+                        QAction* action = folder->addAction(node->GetName().c_str());
+                        if (action)
+                        {
+                           action->setStatusTip(node->GetCategory().c_str());
+                           action->setToolTip(node->GetDescription().c_str());
+                        }
                      }
                   }
                }
             }
 
-            std::map<std::string, QMenu*>::iterator i = folders.begin();
-            for (i = folders.begin(); i != folders.end(); i++)
+            std::map<std::string, QMenu*>::iterator i = eventFolders.begin();
+            for (i = eventFolders.begin(); i != eventFolders.end(); i++)
             {
-               // If the folder does not already have a parent, add it to
-               // the main menu.
+               QMenu* folder = i->second;
+               if (!folder->parent())
+               {
+                  eventMenu->addMenu(folder);
+               }
+            }
+
+            for (i = actionFolders.begin(); i != actionFolders.end(); i++)
+            {
                QMenu* folder = i->second;
                if (!folder->parent())
                {
                   actionMenu->addMenu(folder);
+               }
+            }
+
+            for (i = valueFolders.begin(); i != valueFolders.end(); i++)
+            {
+               QMenu* folder = i->second;
+               if (!folder->parent())
+               {
+                  valueMenu->addMenu(folder);
+               }
+            }
+
+            for (i = macroFolders.begin(); i != macroFolders.end(); i++)
+            {
+               QMenu* folder = i->second;
+               if (!folder->parent())
+               {
+                  macroMenu->addMenu(folder);
+               }
+            }
+
+            for (i = linkFolders.begin(); i != linkFolders.end(); i++)
+            {
+               QMenu* folder = i->second;
+               if (!folder->parent())
+               {
+                  linkMenu->addMenu(folder);
                }
             }
          }

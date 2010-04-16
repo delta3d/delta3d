@@ -44,9 +44,21 @@ namespace dtDirector
 
       typedef Node CreateType;
 
+      enum NodeTypeEnum
+      {
+         EVENT_NODE,
+         ACTION_NODE,
+         VALUE_NODE,
+         MACRO_NODE,
+         LINK_NODE,
+
+         UNKNOWN_NODE,
+      };
+
       /**
        * Constructs a new actor type object.
        *
+       * @param[in]  type        The type of node.
        * @param[in]  name        The name of the node.
        * @param[in]  category    The category of the node, this determines
        *                          if this node can be used depending on
@@ -56,7 +68,8 @@ namespace dtDirector
        * @param[in]  desc        The description of the node.
        * @param[in]  parentType  The parent node.
        */
-      NodeType(const std::string& name,
+      NodeType(NodeTypeEnum type,
+            const std::string& name,
             const std::string& category,
             const std::string& folder="",
             const std::string& desc="",
@@ -66,6 +79,11 @@ namespace dtDirector
        * Gets the parent or "super" type of this node type.
        */
       const NodeType* GetParentNodeType() const;
+
+      /**
+       * Gets the node type.
+       */
+      NodeTypeEnum GetNodeType() const;
 
       /**
        * Retrieves the folder for this node.
@@ -91,7 +109,8 @@ namespace dtDirector
 
    private:
 
-      std::string mFolder;
+      std::string    mFolder;
+      NodeTypeEnum   mType;
    };
 }
 
