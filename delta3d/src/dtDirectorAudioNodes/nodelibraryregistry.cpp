@@ -53,7 +53,7 @@ namespace dtDirector
    // Events
 
    // Actions
-   RefPtr<NodeType> NodeLibraryRegistry::SOUND_ACTION_NODE_TYPE(new dtDirector::NodeType("Sound", "Audio", "Audio", "Control a sound resource."));
+   RefPtr<NodeType> NodeLibraryRegistry::SOUND_ACTION_NODE_TYPE(new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Sound", "Audio", "Audio", "Control a sound resource."));
 
    // Values
 

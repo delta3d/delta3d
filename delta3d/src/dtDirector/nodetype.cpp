@@ -24,13 +24,15 @@
 namespace dtDirector
 {
    //////////////////////////////////////////////////////////////////////////
-   NodeType::NodeType(const std::string& name,
+   NodeType::NodeType(NodeType::NodeTypeEnum type,
+                     const std::string& name,
                      const std::string& category,
                      const std::string& folder,
                      const std::string& desc,
                      const NodeType* parentType)
       : ObjectType(name, category, desc, parentType)
       , mFolder(folder)
+      , mType(type)
    {
    }
 
@@ -38,6 +40,12 @@ namespace dtDirector
    const NodeType* NodeType::GetParentNodeType() const
    {
       return dynamic_cast<const NodeType*>(GetParentType());
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   NodeType::NodeTypeEnum NodeType::GetNodeType() const
+   {
+      return mType;
    }
 
    //////////////////////////////////////////////////////////////////////////

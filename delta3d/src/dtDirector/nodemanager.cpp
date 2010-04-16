@@ -224,7 +224,7 @@ namespace dtDirector
    ///////////////////////////////////////////////////////////////////////////////
    const NodeType* NodeManager::FindNodeType(const std::string& name, const std::string& category)
    {
-      dtCore::RefPtr<const NodeType> typeToFind = new NodeType(name, category);
+      dtCore::RefPtr<const NodeType> typeToFind = new NodeType(NodeType::UNKNOWN_NODE, name, category);
       NodeTypeMapItor itor = mNodes.find(typeToFind);
       if (itor != mNodes.end())
       {
