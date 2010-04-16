@@ -722,21 +722,29 @@ namespace dtDirector
          {
             std::map<std::string, QMenu*> folders;
 
+            QMenu* eventMenu = nodeMenu->addMenu("Events");
+            folders["Events"] = eventMenu;
+            connect(eventMenu, SIGNAL(triggered(QAction*)), this, SLOT(OnCreateNodeEvent(QAction*)));
+
+            QMenu* actionMenu = nodeMenu->addMenu("Actions");
+            connect(actionMenu, SIGNAL(triggered(QAction*)), this, SLOT(OnCreateNodeEvent(QAction*)));
+
+            QMenu* valueMenu = nodeMenu->addMenu("Variables");
+            folders["Variables"] = valueMenu;
+            connect(valueMenu, SIGNAL(triggered(QAction*)), this, SLOT(OnCreateNodeEvent(QAction*)));
+
             // Create Macro folder goes in a special location.
-            QMenu* macroMenu = menu.addMenu("Create Macro");
+            QMenu* macroMenu = nodeMenu->addMenu("Macros");
             folders["Macros"] = macroMenu;
-            connect(macroMenu, SIGNAL(triggered(QAction*)),
-               this, SLOT(OnCreateNodeEvent(QAction*)));
+            connect(macroMenu, SIGNAL(triggered(QAction*)), this, SLOT(OnCreateNodeEvent(QAction*)));
 
             QAction* createMacroAction = macroMenu->addAction("Normal Macro");
-            connect(createMacroAction, SIGNAL(triggered()),
-               this, SLOT(OnCreateMacro()));
+            connect(createMacroAction, SIGNAL(triggered()), this, SLOT(OnCreateMacro()));
 
             // Create Link folder goes in a special location.
-            QMenu* linkMenu = menu.addMenu("Create Link");
+            QMenu* linkMenu = nodeMenu->addMenu("Links");
             folders["Links"] = linkMenu;
-            connect(linkMenu, SIGNAL(triggered(QAction*)),
-               this, SLOT(OnCreateNodeEvent(QAction*)));
+            connect(linkMenu, SIGNAL(triggered(QAction*)), this, SLOT(OnCreateNodeEvent(QAction*)));
 
             // Get the list of available nodes to create.
             std::vector<const NodeType*> nodes;
@@ -791,12 +799,9 @@ namespace dtDirector
                QMenu* folder = i->second;
                if (!folder->parent())
                {
-                  nodeMenu->addMenu(folder);
+                  actionMenu->addMenu(folder);
                }
             }
-
-            connect(nodeMenu, SIGNAL(triggered(QAction*)),
-               this, SLOT(OnCreateNodeEvent(QAction*)));
          }
 
          // Add the undo and redo options.
