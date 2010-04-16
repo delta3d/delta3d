@@ -120,8 +120,6 @@ namespace dtDirector
       mValues.push_back(ValueLink(this, timeProp, true, true, true));
       mValues.push_back(ValueLink(this, totalTimeProp, false, false, false, false));
       mValues.push_back(ValueLink(this, simTimeProp, false, false, true, false));
-      mValues.push_back(ValueLink(this, totalTimeProp, false, false, false, false));
-      mValues.push_back(ValueLink(this, totalTimeProp, false, false, false, false));
    }
 
    //////////////////////////////////////////////////////////////////////////

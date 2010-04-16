@@ -27,6 +27,7 @@
 #include <dtDirectorQt/undomanager.h>
 #include <dtDirectorQt/undopropertyevent.h>
 #include <dtDirectorQt/nodeitem.h>
+#include <dtDirectorQt/scriptitem.h>
 #include <dtDirectorQt/macroitem.h>
 #include <dtDirectorQt/valueitem.h>
 
@@ -138,9 +139,8 @@ namespace dtDirector
       {
          NodeItem* item = mScene->GetNodeItem(node->GetID());
 
-         // If the item is a value node, we have to refresh the entire scene
-         // just in case a value link was changed.
-         if (dynamic_cast<ValueItem*>(item))
+         // If the item is a value node or a reference script, we have to refresh the entire scene
+         if (dynamic_cast<ValueItem*>(item) || dynamic_cast<ScriptItem*>(item))
          {
             mScene->Refresh();
          }

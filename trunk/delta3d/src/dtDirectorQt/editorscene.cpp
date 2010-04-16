@@ -27,6 +27,7 @@
 #include <dtDirectorQt/editorview.h>
 #include <dtDirectorQt/graphtabs.h>
 #include <dtDirectorQt/actionitem.h>
+#include <dtDirectorQt/scriptitem.h>
 #include <dtDirectorQt/valueitem.h>
 #include <dtDirectorQt/macroitem.h>
 #include <dtDirectorQt/linkitem.h>
@@ -131,7 +132,18 @@ namespace dtDirector
       for (int index = 0; index < count; index++)
       {
          Node* node = mGraph->mActionNodes[index].get();
-         ActionItem* item = new ActionItem(node, mTranslationItem, this);
+         NodeItem* item = NULL;
+
+         // Special case for reference script nodes.
+         if (node && node->GetType().GetFullName() == "Core.Reference Script Action")
+         {
+            item = new ScriptItem(node, mTranslationItem, this);
+         }
+         else
+         {
+            item = new ActionItem(node, mTranslationItem, this);
+         }
+
          if (item)
          {
             item->setZValue(0.0f);
@@ -704,11 +716,27 @@ namespace dtDirector
             menu.addSeparator();
          }
 
-         QMenu* nodeMenu = new QMenu("Create Node");
+         QMenu* nodeMenu = menu.addMenu("Create Node");
 
          if (nodeMenu)
          {
             std::map<std::string, QMenu*> folders;
+
+            // Create Macro folder goes in a special location.
+            QMenu* macroMenu = menu.addMenu("Create Macro");
+            folders["Macros"] = macroMenu;
+            connect(macroMenu, SIGNAL(triggered(QAction*)),
+               this, SLOT(OnCreateNodeEvent(QAction*)));
+
+            QAction* createMacroAction = macroMenu->addAction("Normal Macro");
+            connect(createMacroAction, SIGNAL(triggered()),
+               this, SLOT(OnCreateMacro()));
+
+            // Create Link folder goes in a special location.
+            QMenu* linkMenu = menu.addMenu("Create Link");
+            folders["Links"] = linkMenu;
+            connect(linkMenu, SIGNAL(triggered(QAction*)),
+               this, SLOT(OnCreateNodeEvent(QAction*)));
 
             // Get the list of available nodes to create.
             std::vector<const NodeType*> nodes;
@@ -728,12 +756,12 @@ namespace dtDirector
                      continue;
                   }
 
-                  // Special case, the parent graph does not get the link
-                  // nodes, because they have no effect.
-                  if (!mGraph->mParent && node->GetFolder() == "Links")
-                  {
-                     continue;
-                  }
+                  //// Special case, the parent graph does not get the link
+                  //// nodes, because they have no effect.
+                  //if (!mGraph->mParent && node->GetFolder() == "Links")
+                  //{
+                  //   continue;
+                  //}
 
                   // Find the folder.
                   if (folders.find(node->GetFolder()) == folders.end())
@@ -758,25 +786,14 @@ namespace dtDirector
             std::map<std::string, QMenu*>::iterator i = folders.begin();
             for (i = folders.begin(); i != folders.end(); i++)
             {
+               // If the folder does not already have a parent, add it to
+               // the main menu.
                QMenu* folder = i->second;
-               if (i->first == "Links")
-               {
-                  menu.addMenu(folder);
-
-                  connect(folder, SIGNAL(triggered(QAction*)),
-                     this, SLOT(OnCreateNodeEvent(QAction*)));
-               }
-               else
+               if (!folder->parent())
                {
                   nodeMenu->addMenu(folder);
                }
             }
-
-            menu.addMenu(nodeMenu);
-            QAction* createMacroAction = menu.addAction("Create Macro");
-
-            connect(createMacroAction, SIGNAL(triggered()),
-               this, SLOT(OnCreateMacro()));
 
             connect(nodeMenu, SIGNAL(triggered(QAction*)),
                this, SLOT(OnCreateNodeEvent(QAction*)));

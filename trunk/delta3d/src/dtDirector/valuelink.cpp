@@ -39,9 +39,11 @@ namespace dtDirector
    ///////////////////////////////////////////////////////////////////////////////////////
    ValueLink::ValueLink(Node* owner, dtDAL::ActorProperty* prop, bool isOut, bool allowMultiple, bool typeCheck, bool exposed)
       : mOwner(owner)
+      , mProxyOwner(NULL)
       , mLabel("NONE")
       , mVisible(true)
       , mExposed(exposed)
+      , mRedirector(NULL)
       , mDefaultProperty(prop)
       , mIsOut(isOut)
       , mAllowMultiple(allowMultiple)
@@ -61,9 +63,11 @@ namespace dtDirector
    ValueLink::ValueLink(const ValueLink& src)
    {
       mOwner = src.mOwner;
+      mProxyOwner = NULL;
       mLabel = src.mLabel;
       mVisible = src.mVisible;
       mExposed = src.mExposed;
+      mRedirector = NULL;
 
       mDefaultProperty = src.mDefaultProperty;
       mIsOut = src.mIsOut;
@@ -71,7 +75,12 @@ namespace dtDirector
       mTypeCheck = src.mTypeCheck;
       mGettingType = src.mGettingType;
 
-      *this = src;
+      // Now connect this link to all output links connected to by the source.
+      int count = (int)src.mLinks.size();
+      for (int index = 0; index < count; index++)
+      {
+         Connect(src.mLinks[index]);
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -81,9 +90,11 @@ namespace dtDirector
       Disconnect();
 
       mOwner = src.mOwner;
+      mProxyOwner = NULL;
       mLabel = src.mLabel;
       mVisible = src.mVisible;
       mExposed = src.mExposed;
+      mRedirector = NULL;
 
       mDefaultProperty = src.mDefaultProperty;
       mIsOut = src.mIsOut;
@@ -99,6 +110,22 @@ namespace dtDirector
       }
 
       return *this;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ValueLink::RedirectLink(ValueLink* redirector)
+   {
+      if (mRedirector)
+      {
+         mRedirector->SetProxyOwner(NULL);
+      }
+
+      mRedirector = redirector;
+
+      if (mRedirector)
+      {
+         mRedirector->SetProxyOwner(GetOwner());
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -124,7 +151,18 @@ namespace dtDirector
          }
 
          // If the owner of this link is a value node, then copy its type.
-         ValueNode* ownerValue = dynamic_cast<ValueNode*>(mOwner);
+         ValueNode* ownerValue = NULL;
+         
+         // Use the proxy if it exists.
+         if (mProxyOwner)
+         {
+            ownerValue = dynamic_cast<ValueNode*>(mProxyOwner);
+         }
+         else
+         {
+            ownerValue = dynamic_cast<ValueNode*>(mOwner);
+         }
+
          if (ownerValue)
          {
             dtDAL::DataType& type = ownerValue->GetPropertyType();
@@ -146,6 +184,12 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    dtDAL::ActorProperty* ValueLink::GetProperty(int index, ValueNode** outNode)
    {
+      // Redirect if needed.
+      if (mRedirector)
+      {
+         return mRedirector->GetProperty(index, outNode);
+      }
+
       ValueNode* valueNode = NULL;
       int count = 0;
       int subIndex = 0;
@@ -193,18 +237,31 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    dtDAL::ActorProperty* ValueLink::GetDefaultProperty()
    {
+      if (mRedirector) return mRedirector->GetDefaultProperty();
+
       return mDefaultProperty;
    }
 
    //////////////////////////////////////////////////////////////////////////
    void ValueLink::SetDefaultProperty(dtDAL::ActorProperty* prop)
    {
+      if (mRedirector)
+      {
+         mRedirector->SetDefaultProperty(prop);
+         return;
+      }
+
       mDefaultProperty = prop;
    }
 
    //////////////////////////////////////////////////////////////////////////
    int ValueLink::GetPropertyCount()
    {
+      if (mRedirector)
+      {
+         return mRedirector->GetPropertyCount();
+      }
+
       // Always return at least 1, because we always have the default.
       if (mLinks.empty())
       {
@@ -228,6 +285,11 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    std::string ValueLink::GetName()
    {
+      if (mRedirector)
+      {
+         return mRedirector->GetName();
+      }
+
       // Always display the default property name as the current property
       // changes based on what it is linked to.
       dtDAL::ActorProperty* prop = GetDefaultProperty();
@@ -242,12 +304,23 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void ValueLink::SetLabel(const std::string& label)
    {
+      if (mRedirector)
+      {
+         mRedirector->SetLabel(label);
+         return;
+      }
+
       mLabel = label;
    }
 
    //////////////////////////////////////////////////////////////////////////
    std::string ValueLink::GetDisplayName()
    {
+      if (mRedirector)
+      {
+         return mRedirector->GetDisplayName();
+      }
+
       // Always display the default property name as the current property
       // changes based on what it is linked to.
       dtDAL::ActorProperty* prop = GetDefaultProperty();
@@ -269,9 +342,19 @@ namespace dtDirector
       }
 
       // Perform a type check.
-      if (!mOwner->CanConnectValue(this, valueNode))
+      if (mProxyOwner)
       {
-         return false;
+         if (!mProxyOwner->CanConnectValue(this, valueNode))
+         {
+            return false;
+         }
+      }
+      else
+      {
+         if (!mOwner->CanConnectValue(this, valueNode))
+         {
+            return false;
+         }
       }
 
       // If we are not allowing multiples, disconnect the current one first.
@@ -327,8 +410,17 @@ namespace dtDirector
          }
       }
 
-      mOwner->OnLinkValueChanged(GetName());
+      if (mProxyOwner) mProxyOwner->OnLinkValueChanged(GetName());
+      else mOwner->OnLinkValueChanged(GetName());
 
       return result;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   std::vector<ValueNode*>& ValueLink::GetLinks()
+   {
+      if (mRedirector) return mRedirector->GetLinks();
+
+      return mLinks;
    }
 }

@@ -89,11 +89,12 @@ namespace dtDirector
       /**
        * Retrieves a list of nodes that are of a certain type.
        *
-       * @param[in]   name      The type name of the node.
-       * @param[in]   category  The type category of the node.
-       * @param[out]  outNodes  A list of nodes found.
+       * @param[in]   name             The type name of the node.
+       * @param[in]   category         The type category of the node.
+       * @param[out]  outNodes         A list of nodes found.
+       * @param[in]   searchSubGraphs  True to recursively check sub graphs for nodes.
        */
-      void GetNodes(const std::string& name, const std::string& category, std::vector<Node*>& outNodes);
+      void GetNodes(const std::string& name, const std::string& category, std::vector<Node*>& outNodes, bool searchSubGraphs = true);
 
       /**
        * Retrieves a list of all nodes in the graph.
