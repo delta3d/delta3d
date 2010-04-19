@@ -76,7 +76,7 @@ namespace dtGame
     *    physical file.
     * @see BinaryLogStream
     */
-   class LogStream : public osg::Referenced
+   class DT_GAME_EXPORT LogStream : public osg::Referenced
    {
    public:
       /**
@@ -188,31 +188,35 @@ namespace dtGame
       virtual void Flush() = 0;
 
       /**
+       * Overwrite to indicate when the LogStream has reached the end of it's Log.
        * @return True if the end of the log stream has been reached.
        */
-      virtual bool IsEndOfStream() const { return mEndOfStream; }
+      virtual bool IsEndOfStream() const;
 
       /**
        * Gets the amount of recorded simulation time contained within this
        * log stream.
        * @return The total record time.
        */
-      virtual double GetRecordDuration() const { return mRecordDuration; }
+      virtual double GetRecordDuration() const;
 
       /**
        * Sets the record duration reflected by this log stream.
        * @param value The record duration.
        */
-      virtual void SetRecordDuration(double value) { mRecordDuration = value; }
+      virtual void SetRecordDuration(double value);
 
       /**
-       * Gets a reference to this stream's message factory.
-       * @return The message factory assigned to this stream.
+       * Gets a reference to this stream's MessageFactory.
+       * @return The MessageFactory assigned to this stream.
        */
-      MessageFactory& GetMessageFactory()
-      {
-         return *mMessageFactory;
-      }
+      MessageFactory& GetMessageFactory();
+      
+      /**
+       * Gets a const reference to this stream's MessageFactory.
+       * @return The MessageFactory assigned to this stream.
+       */
+      const MessageFactory& GetMessageFactory() const;
 
    protected:
        ///Empty Destructor...
