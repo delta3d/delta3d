@@ -33,4 +33,34 @@ namespace dtGame
    {
       mType = &LogStreamException::LOGGER_IO_EXCEPTION;
    }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool LogStream::IsEndOfStream() const
+   {
+      return mEndOfStream;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   double LogStream::GetRecordDuration() const
+   {
+      return mRecordDuration;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void LogStream::SetRecordDuration(double value)
+   {
+      mRecordDuration = value;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   MessageFactory& LogStream::GetMessageFactory()
+   {
+      return *mMessageFactory;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const MessageFactory& LogStream::GetMessageFactory() const
+   {
+      return *mMessageFactory;
+   }
 }
