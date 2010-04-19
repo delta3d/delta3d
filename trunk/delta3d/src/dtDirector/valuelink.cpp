@@ -154,9 +154,9 @@ namespace dtDirector
          ValueNode* ownerValue = NULL;
          
          // Use the proxy if it exists.
-         if (mProxyOwner)
+         if (mProxyOwner.valid())
          {
-            ownerValue = dynamic_cast<ValueNode*>(mProxyOwner);
+            ownerValue = dynamic_cast<ValueNode*>(mProxyOwner.get());
          }
          else
          {
@@ -342,7 +342,7 @@ namespace dtDirector
       }
 
       // Perform a type check.
-      if (mProxyOwner)
+      if (mProxyOwner.valid())
       {
          if (!mProxyOwner->CanConnectValue(this, valueNode))
          {
@@ -410,7 +410,7 @@ namespace dtDirector
          }
       }
 
-      if (mProxyOwner) mProxyOwner->OnLinkValueChanged(GetName());
+      if (mProxyOwner.valid()) mProxyOwner->OnLinkValueChanged(GetName());
       else mOwner->OnLinkValueChanged(GetName());
 
       return result;

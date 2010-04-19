@@ -31,6 +31,7 @@
 #include <dtDAL/datatype.h>
 
 #include <dtCore/refptr.h>
+#include <dtCore/observerptr.h>
 #include <dtUtil/mswinmacros.h>
 
 namespace dtDAL
@@ -246,7 +247,7 @@ namespace dtDirector
    private:
 
       Node* mOwner;
-      Node* mProxyOwner;
+      dtCore::ObserverPtr<Node> mProxyOwner;
       std::string mLabel;
       bool mVisible;
       bool mExposed;
