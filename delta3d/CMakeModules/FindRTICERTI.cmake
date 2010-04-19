@@ -20,7 +20,8 @@ SET(CERTI_PATHS
       /usr/local/lib 
       /usr/lib 
       "$ENV{PROGRAMFILES}/certi 3.3.2/lib"
-      $ENV{CERTI_HOME}/release)
+      $ENV{CERTI_HOME}/release
+      ENV{CERTI_HOME}/lib)
 
 
 FIND_LIBRARY(RTI_LIBRARY
