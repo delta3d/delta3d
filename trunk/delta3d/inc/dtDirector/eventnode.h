@@ -136,6 +136,7 @@ namespace dtDirector
        * Note: This should be rewritten in inherited classes.
        */
       virtual void RegisterMessages() {}
+      virtual void UnRegisterMessages() {}
 
    protected:
 

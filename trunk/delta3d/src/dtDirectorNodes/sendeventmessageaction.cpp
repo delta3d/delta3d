@@ -67,13 +67,6 @@ namespace dtDirector
          "The Game Event.  Entries are set in the map properties.");
       AddProperty(eventProp);
 
-      //dtDAL::StringActorProperty* eventNameProp = new dtDAL::StringActorProperty(
-      //   "Event Name", "Event Name",
-      //   dtDAL::StringActorProperty::SetFuncType(this, &SendEventMessageAction::SetEventName),
-      //   dtDAL::StringActorProperty::GetFuncType(this, &SendEventMessageAction::GetEventName),
-      //   "The name of the message type.");
-      //AddProperty(eventNameProp);
-
       mValues.push_back(ValueLink(this, eventProp, false, false, true, false));
    }
 
