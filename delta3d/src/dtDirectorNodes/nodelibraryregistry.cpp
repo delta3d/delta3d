@@ -90,7 +90,7 @@ namespace dtDirector
 
    // Actions
    RefPtr<NodeType> NodeLibraryRegistry::OUTPUT_NODE_TYPE(                       new dtDirector::NodeType(dtDirector::NodeType::LINK_NODE,   "Output Link",               "Core",        "Links",       "This node creates an output link connector in its parent graph."));
-   RefPtr<NodeType> NodeLibraryRegistry::REFERENCE_SCRIPT_ACTION_NODE_TYPE(      new dtDirector::NodeType(dtDirector::NodeType::MACRO_NODE,  "Reference Script Action",   "Core",        "Macros",      "References an external Director script resource."));
+   RefPtr<NodeType> NodeLibraryRegistry::REFERENCE_SCRIPT_ACTION_NODE_TYPE(      new dtDirector::NodeType(dtDirector::NodeType::MACRO_NODE,  "Reference Script",          "Core",        "Macros",      "References an external Director script resource."));
    RefPtr<NodeType> NodeLibraryRegistry::CALL_REMOTE_EVENT_ACTION_NODE_TYPE(     new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Call Remote Event",         "Core",        "Actions",     "Calls all remote event nodes with a given name in parallel, and waits until their entire chains are finished before continuing."));
    RefPtr<NodeType> NodeLibraryRegistry::DELAY_ACTION_NODE_TYPE(                 new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Delay",                     "General",     "Actions",     "Performs a time delay."));
    RefPtr<NodeType> NodeLibraryRegistry::SET_VALUE_ACTION_NODE_TYPE(             new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Set Value",                 "General",     "Operations",  "Copies the value of the Source value into the Destination value."));

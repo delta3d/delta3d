@@ -456,7 +456,21 @@ namespace dtDirector
       dtDAL::ActorIDActorProperty* actorIdProp = dynamic_cast<dtDAL::ActorIDActorProperty*>(prop);
       if (actorIdProp)
       {
-         return actorIdProp->GetActorProxy();
+         dtDAL::ActorProxy* proxy = NULL;
+
+         dtCore::UniqueId id = actorIdProp->GetValue();
+
+         if (GetDirector()->GetGameManager())
+         {
+            GetDirector()->GetGameManager()->FindActorById(id, proxy);
+         }
+
+         if (!proxy)
+         {
+            proxy = actorIdProp->GetActorProxy();
+         }
+
+         return proxy;
       }
 
       return NULL;

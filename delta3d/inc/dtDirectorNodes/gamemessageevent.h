@@ -110,7 +110,7 @@ namespace dtDirector
        * Note: This should be rewritten in inherited classes.
        */
       virtual void RegisterMessages();
-      void UnRegisterMessages();
+      virtual void UnRegisterMessages();
 
       /**
        * Accessor for the message type property.
