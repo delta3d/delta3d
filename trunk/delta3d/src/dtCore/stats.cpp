@@ -105,6 +105,7 @@ bool StatsHandler::SelectNextType()
          stats->collectStats("GMTotal", false);
          stats->collectStats("GMActors", false);
          stats->collectStats("GMComponents", false);
+         stats->collectStats("GMNumActors", false);
 
          mCamera->setNodeMask(0x0); 
          mSwitch->setAllChildrenOff();
@@ -194,6 +195,7 @@ bool StatsHandler::SelectNextType()
          stats->collectStats("GMTotal", true);
          stats->collectStats("GMActors", true);
          stats->collectStats("GMComponents", true);
+         stats->collectStats("GMNumActors", true);
          mCamera->setNodeMask(0xffffffff);
          mSwitch->setValue(mDeltaSystemChildNum, true);
          break;
@@ -306,6 +308,48 @@ struct AveragedValueTextDrawCallback : public virtual osg::Drawable::DrawCallbac
    int                         _frameDelta;
    bool                        _averageInInverseSpace;
    double                      _multiplier;
+   mutable char                _tmpText[128];
+   mutable osg::Timer_t        _tickLastUpdated;
+};
+
+struct SimpleIntTextDrawCallback : public virtual osg::Drawable::DrawCallback
+{
+   SimpleIntTextDrawCallback(osg::Stats* stats, const std::string& name)
+      : _stats(stats)
+      , _attributeName(name)
+      , _tickLastUpdated(0)
+   {
+   }
+
+   /** do customized draw code.*/
+   virtual void drawImplementation(osg::RenderInfo& renderInfo,const osg::Drawable* drawable) const
+   {
+      osgText::Text* text = (osgText::Text*)drawable;
+
+      osg::Timer_t tick = osg::Timer::instance()->tick();
+      double delta = osg::Timer::instance()->delta_m(_tickLastUpdated, tick);
+
+      if (delta>250) // update less often.
+      {
+         _tickLastUpdated = tick;
+         double value;
+         if (_stats->getAttribute( _stats->getLatestFrameNumber()-1, _attributeName, value))
+         {
+            int intValue = (int) value;
+            sprintf(_tmpText,"(%d)", intValue);
+            text->setText(_tmpText);
+         }
+         else
+         {
+            text->setText("");
+         }
+      }
+
+      text->drawImplementation(renderInfo);
+   }
+
+   osg::ref_ptr<osg::Stats>    _stats;
+   std::string                 _attributeName;
    mutable char                _tmpText[128];
    mutable osg::Timer_t        _tickLastUpdated;
 };
@@ -1547,13 +1591,19 @@ void StatsHandler::SetUpScene(osgViewer::ViewerBase* viewer)
       pos.x() = text->getBound().xMax();
       text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "0.0"); // Value
       text->setDrawCallback(new AveragedValueTextDrawCallback(stats,"GMActors",-1, true, 1.0));
-      // GM Actors
       pos.x() += 50.0f;
+      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "(1234)"); // Value
+      text->setDrawCallback(new SimpleIntTextDrawCallback(stats, "GMNumActors"));
+      // GM Components
+      pos.x() += 65.0f;
       text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "Comps: "); // label
       pos.x() = text->getBound().xMax();
       text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "0.0"); // Value
       text->setDrawCallback(new AveragedValueTextDrawCallback(stats,"GMComponents",-1, true, 1.0));
       pos.x() += 50.0f;
+      //text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "(1234)"); // Value
+      //text->setDrawCallback(new SimpleIntTextDrawCallback(stats, "GMNumComponents"));
+      //pos.x() += 60.0f;
       text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "]"); // label
       pos.y() -= characterSize * 1.5f;
 

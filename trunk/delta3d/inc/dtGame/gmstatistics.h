@@ -108,7 +108,7 @@ namespace dtGame
          bool ShouldWeLogToConsole() const;
 
          ///If fragment time occured, dump out the GM statistics
-         void FragmentTimeDump(dtCore::Timer_t& frameTickStart, const GameManager& ourGm);
+         void FragmentTimeDump(dtCore::Timer_t& frameTickStart, const GameManager& ourGm, dtUtil::Log* logger);
 
       private:
 
