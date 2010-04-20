@@ -455,7 +455,7 @@ namespace dtGame
 
       RemoveDeletedActors();
 
-      mGMImpl->mGMStatistics.FragmentTimeDump(frameTickStart, *this);
+      mGMImpl->mGMStatistics.FragmentTimeDump(frameTickStart, *this, mGMImpl->mLogger);
    }
 
    ///////////////////////////////////////////////////////////////////////////////

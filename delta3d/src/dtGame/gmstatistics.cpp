@@ -325,7 +325,8 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GMStatistics::FragmentTimeDump(dtCore::Timer_t& frameTickStart, const GameManager& ourGm)
+   void GMStatistics::FragmentTimeDump(dtCore::Timer_t& frameTickStart, const GameManager& ourGm, 
+      dtUtil::Log* logger)
    {
       // STATISTICS - If fragment time occured, dump out the GM statistics
       if (mStatisticsInterval > 0)
@@ -350,9 +351,12 @@ namespace dtGame
             float actorTimeThisTickInMillis = mStatsCurFrameActorTotal * 1000.f; // actor total is in secs.
             stats->setAttribute(stats->getLatestFrameNumber(), "GMActors", actorTimeThisTickInMillis);
             mStatsCurFrameActorTotal = 0.0f; // reset for next frame.
+            stats->setAttribute(stats->getLatestFrameNumber(), "GMNumActors", ourGm.GetNumAllActors());
+
             float compTimeThisTickInMillis = mStatsCurFrameCompTotal * 1000.f; // comp total is in secs.
             stats->setAttribute(stats->getLatestFrameNumber(), "GMComponents", compTimeThisTickInMillis);
             mStatsCurFrameCompTotal = 0.0f; // reset for next frame.
+            //stats->setAttribute(stats->getLatestFrameNumber(), "GMNumComponents", ourGm.GetNumAllActors());
          }
 
          // handle weird case of wrap around (just to be safe)
@@ -364,7 +368,7 @@ namespace dtGame
          {
             dtCore::Timer_t realTimeElapsed = dtCore::Timer_t(fragmentDelta);
 
-            DebugStatisticsPrintOut(realTimeElapsed, ourGm);
+            DebugStatisticsPrintOut(realTimeElapsed, ourGm, logger);
             mStatsLastFragmentDump  = frameTickStop;
          }
       }
