@@ -152,12 +152,15 @@ namespace dtGame
             {
                dtDAL::Project::GetInstance().GetMap(*i);
             }
-            catch (const dtUtil::Exception&)
+            catch (const dtUtil::Exception& ex)
             {
                // if we can't load a map, we go back to idle and send and
                // empty string map change ended message
                mCurrentState = &MapChangeState::IDLE;
                SendMapMessage(MessageType::INFO_MAP_CHANGED, MapChangeStateData::NameVector());
+               dtUtil::Log::GetInstance("mapchangestatedata.cpp").LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                  "Critical failure occurred while opening map[%s].", (*i).c_str()); 
+               ex.LogException(dtUtil::Log::LOG_ERROR, dtUtil::Log::GetInstance("mapchangestatedata.cpp"));
                mNewMapNames.clear();
                success = false;
                break;
