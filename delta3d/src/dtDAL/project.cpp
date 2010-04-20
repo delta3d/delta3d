@@ -1783,7 +1783,7 @@ namespace dtDAL
                pathContext = *i + dtUtil::FileUtils::PATH_SEPARATOR;
             }
          }
-         catch (const dtUtil::Exception& ex)
+         catch (const dtUtil::Exception&)
          {
             //we have to make sure this happens before excepting
             fileUtils.PopDirectory();
@@ -1798,7 +1798,7 @@ namespace dtDAL
          if (!foundADir)
          {
             throw dtDAL::ProjectFileNotFoundException(
-                   std::string("The specified resource was not found: ") + path, __FILE__, __LINE__);
+               std::string("The specified resource was not found: [") + path + "]", __FILE__, __LINE__);
          }
          else
          {
