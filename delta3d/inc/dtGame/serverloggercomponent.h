@@ -220,6 +220,7 @@ namespace dtGame
        * Handles the change state to playback message.  This will open the current
        * log file, and jump to the keyframe marking the beginning of the log.
        * @param message The playback message.
+       * @note When the end of the Log is reached, the System will go into Pause mode.
        */
       void HandleChangeStatePlayback(const Message& message);
 

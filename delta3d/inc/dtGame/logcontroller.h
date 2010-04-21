@@ -48,6 +48,8 @@ namespace dtGame
       /**
        * Sends a request to the server logger component to tell it to
        * change state to PLAYBACK.  Only valid in Idle state (sends request anyway).
+       * @note Will set the System into Pause mode, if the end of the Log is reached.
+       * @see GameManager::SetPause()
        */
       virtual void RequestChangeStateToPlayback();
 
