@@ -79,7 +79,13 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DirectorActor::LoadDirectors(const dtGame::Message&)
+   void DirectorActor::OnLoadDirectors(const dtGame::Message&)
+   {
+      LoadDirectors();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DirectorActor::LoadDirectors()
    {
       mDirectorList.clear();
 
@@ -300,7 +306,7 @@ namespace dtActors
          GetActor(actor);
 
          AddInvokable(*new dtGame::Invokable("Map Loaded",
-            dtDAL::MakeFunctor(*actor, &DirectorActor::LoadDirectors)));   
+            dtDAL::MakeFunctor(*actor, &DirectorActor::OnLoadDirectors)));   
       }
    }
 
