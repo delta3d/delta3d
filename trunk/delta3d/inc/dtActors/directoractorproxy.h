@@ -62,7 +62,8 @@ namespace dtActors
       * Initializes all of the Directors.
       * @note:  Only use this outside of STAGE.
       */
-      void LoadDirectors(const dtGame::Message&);
+      void OnLoadDirectors(const dtGame::Message&);
+      void LoadDirectors();
 
       /**
       * Sets the Player Actor.

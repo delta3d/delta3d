@@ -68,6 +68,7 @@ namespace dtDirector
       static dtCore::RefPtr<dtDirector::NodeType> BOOLEAN_VALUE_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> INT_VALUE_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> FLOAT_VALUE_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> RANDOM_FLOAT_VALUE_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> DOUBLE_VALUE_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> STRING_VALUE_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> ACTOR_VALUE_NODE_TYPE;
