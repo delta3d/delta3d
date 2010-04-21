@@ -88,7 +88,7 @@ namespace dtGame
          , mPosSplineZC(0.0f)
          , mPosSplineZD(0.0f)
          , mCurTimeDelta(0.0f)
-         , mInstantTimeBetweenTransUpdates(0.0f)
+         //, mInstantTimeBetweenTransUpdates(0.0f)
       {  
       }
       ~DeadReckoningHelperImpl() 
@@ -133,6 +133,8 @@ namespace dtGame
          mPosSplineZB = coord0.z() - 2.5f*coord1.z() + 2.0f*coord2.z() - 0.5f*coord3.z();
          mPosSplineZC = 0.5f * (-coord0.z() + coord2.z());
          mPosSplineZD = coord1.z();
+
+         mSplineEndLocation = coord2;
 
          /// Below are 2 alternate methods that were fully implemented but discarded due to failures
 
@@ -179,7 +181,8 @@ namespace dtGame
       float mPosSplineZA, mPosSplineZB, mPosSplineZC, mPosSplineZD; // z spline pre-compute values
       osg::Vec3 mPreviousInstantVel;
       float mCurTimeDelta; // Tracks how long this process step is for. Used to compute instant vel.
-      float mInstantTimeBetweenTransUpdates;
+      //float mInstantTimeBetweenTransUpdates;
+      osg::Vec3 mSplineEndLocation; // The target goal of the spline == the end point at time T.
       //std::ostringstream oss;
    };
 
@@ -306,7 +309,12 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////
    void DeadReckoningHelper::SetLastKnownVelocity(const osg::Vec3 &vec)
    {
-      mVelocityBeforeLastUpdate = mDRImpl->mPreviousInstantVel;
+      mVelocityBeforeLastUpdate = mLastVelocity;
+      // mDRImpl->mPreviousInstantVel; 
+      // Note - The instantaneous Vel is a good way to do it, with less sharp angles, but 
+      // it tends to overexagerate the corrections as the blending curve starts to impact the future dead
+      // reckoning more and more.  
+
       mLastVelocity = vec;
       mTranslationElapsedTimeSinceUpdate = 0.0;
       // If velocity is updated, the effect is the same as if the trans was updated
@@ -398,7 +406,7 @@ namespace dtGame
       //the average of the last average and the current time since an update.
       float timeDelta = float(newUpdatedTime - mLastTranslationUpdatedTime);
       mAverageTimeBetweenTranslationUpdates = 0.5f * timeDelta + 0.5f * mAverageTimeBetweenTranslationUpdates;
-      mDRImpl->mInstantTimeBetweenTransUpdates = timeDelta;
+      //mDRImpl->mInstantTimeBetweenTransUpdates = timeDelta;
       mLastTranslationUpdatedTime = newUpdatedTime;
    }
 
@@ -903,8 +911,9 @@ namespace dtGame
       // See DRImpl->RecomputeTransSplineValues() for the actual algorithm
       //////////////////////////////////////////////////
 
-      // If we have blending time remaining...
-      if ((mTranslationEndSmoothingTime > 0.0f) && (mTranslationElapsedTimeSinceUpdate <= mTranslationEndSmoothingTime))
+      float timeSinceEndOfSpline = mTranslationElapsedTimeSinceUpdate - mTranslationEndSmoothingTime;
+      // If we have blending time remaining...  mTranslationElapsedTimeSinceUpdate <= mTranslationEndSmoothingTime
+      if ((mTranslationEndSmoothingTime > 0.0f) && (timeSinceEndOfSpline <= 0.0f)) 
       {
          // The formula for X, Y, and Z is ... x = A*t^3 + B*t^2 + C*t + D.
          // Note - t is normalized between 0 and 1. 
@@ -937,12 +946,11 @@ namespace dtGame
          // Should we add accel or not? Using this could put us further away on long updates
          if (GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::VELOCITY_AND_ACCELERATION)
          {
-            accelerationEffect = ((mAccelerationVector * 0.5f) * (mDRImpl->mCurTimeDelta * mDRImpl->mCurTimeDelta));
+            accelerationEffect = ((mAccelerationVector * 0.5f) * (timeSinceEndOfSpline * timeSinceEndOfSpline));
          }
 
          // We are past our time, so we keep on our last path. Note - mDRImpl->mPreviousInstantVel may push you too far away over time
-         osg::Vec3 posChangeThisFrame = mLastVelocity * mDRImpl->mCurTimeDelta + accelerationEffect; 
-         pos = mCurrentDeadReckonedTranslation + posChangeThisFrame;
+         pos = mDRImpl->mSplineEndLocation + mLastVelocity * timeSinceEndOfSpline + accelerationEffect;
       }
 
    }
