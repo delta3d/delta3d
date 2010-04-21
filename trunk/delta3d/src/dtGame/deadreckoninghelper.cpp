@@ -309,8 +309,8 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////
    void DeadReckoningHelper::SetLastKnownVelocity(const osg::Vec3 &vec)
    {
-      mVelocityBeforeLastUpdate = mLastVelocity;
-      // mDRImpl->mPreviousInstantVel; 
+      //mVelocityBeforeLastUpdate = mLastVelocity;
+      mVelocityBeforeLastUpdate = mDRImpl->mPreviousInstantVel; 
       // Note - The instantaneous Vel is a good way to do it, with less sharp angles, but 
       // it tends to overexagerate the corrections as the blending curve starts to impact the future dead
       // reckoning more and more.  
