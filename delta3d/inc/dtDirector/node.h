@@ -233,18 +233,18 @@ namespace dtDirector
       void SetPosition(const osg::Vec2& pos) {mPosition = pos;}
 
       /**
-       * Retrieves the enabled status of the node.
-       *
-       * @return  True if the node is enabled.
-       */
-      bool GetEnabled() const;
-
-      /**
        * Sets the enabled status of the node.
        *
        * @param[in]  enabled   True to enable.
        */
       void SetEnabled(bool enabled);
+
+      /**
+       * Retrieves whether this node is enabled.
+       *
+       * @return  True if enabled.
+       */
+      bool IsEnabled();
 
       /**
        * Retrieves the director.
@@ -492,6 +492,13 @@ namespace dtDirector
        * @param[in]  right  The node to copy from.
        */
       Node& operator=(const Node&);
+
+      /**
+       * Retrieves the enabled status of the node.
+       *
+       * @return  True if the node is enabled.
+       */
+      bool GetEnabled() const;
 
       /**
        *	Sets the types of the node.

@@ -89,7 +89,7 @@ namespace dtDirector
    void EventNode::Trigger(const std::string& outputName, const dtCore::UniqueId* instigator, bool countTrigger, bool immediate)
    {
       // Can't trigger a disabled event.
-      if (!GetEnabled()) return;
+      if (!IsEnabled()) return;
 
       if (Test(outputName, instigator))
       {
@@ -127,13 +127,13 @@ namespace dtDirector
             int count = GetPropertyCount("Instigator");
             for (int index = 0; index < count; index++)
             {
+               // The test is valid if we have valid connections
+               // to the instigator link.
+               bValidValue = true;
+
                dtCore::UniqueId id = GetActorID("Instigator", index);
                if (id.ToString() != "")
                {
-                  // The test is valid if we have valid connections
-                  // to the instigator link.
-                  bValidValue = true;
-
                   // Can't do proper matching if we have no instigator.
                   if (!instigator || instigator->ToString().empty()) break;
 

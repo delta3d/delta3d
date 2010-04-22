@@ -128,13 +128,15 @@ namespace dtDirector
       bool result = false;
 
       float elapsedTime = simDelta;
-      if (!mUseSimTime) elapsedTime = delta;
+      if (!GetBoolean("UseSimTime")) elapsedTime = delta;
 
       switch (input)
       {
       case INPUT_PLAY:
       case INPUT_REVERSE:
          {
+            float totalTime = GetFloat("TotalTime");
+
             // We need to check the current active status because this node
             // will be updated multiple times using this same index until
             // the desired time has elapsed.  And we only want to trigger
@@ -148,7 +150,7 @@ namespace dtDirector
                   // If we are playing from the beginning and our
                   // elapsed time is at the end, reset it back
                   // to the start.
-                  if (mElapsedTime >= mTotalTime)
+                  if (mElapsedTime >= totalTime)
                   {
                      mElapsedTime = 0.0f;
                   }
@@ -159,7 +161,7 @@ namespace dtDirector
                   // is at the beginning, flip it to start at the end.
                   if (mElapsedTime <= 0.0f)
                   {
-                     mElapsedTime = mTotalTime;
+                     mElapsedTime = totalTime;
                   }
                }
 
@@ -199,14 +201,14 @@ namespace dtDirector
 
             // Test if the desired time has elapsed.
             result = true;
-            if ((input == INPUT_PLAY && mElapsedTime >= mTotalTime) ||
+            if ((input == INPUT_PLAY && mElapsedTime >= totalTime) ||
                (input == INPUT_REVERSE && mElapsedTime <= 0))
             {
                mIsActive = false;
 
                // Clamp the time to the bounds of the track.
                if (mElapsedTime < 0.0f) mElapsedTime = 0.0f;
-               else if (mElapsedTime > mTotalTime) mElapsedTime = mTotalTime;
+               else if (mElapsedTime > totalTime) mElapsedTime = totalTime;
 
                // Fire the "Stopped" output
                OutputLink* link = GetOutputLink("Ended");
