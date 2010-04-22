@@ -147,31 +147,12 @@ private:
             "CEGUI::%s", e.getMessage().c_str() );
       }
 
-      //create a new CEGUI Texture and apply it to a loaded widget
       CEGUI::Window* w = mGUI->GetWidget("camera1target");
-      CEGUI::Texture& texture = CEGUI::System::getSingleton().getRenderer()->createTexture(w->getPixelSize());
-      CEGUI::Imageset& imageset = CEGUI::ImagesetManager::getSingleton().create("RTT", texture);
-      imageset.defineImage("RTTImage", CEGUI::Point(0,texture.getSize().d_height),
-         CEGUI::Size(texture.getSize().d_width, -texture.getSize().d_height), CEGUI::Point(0,0));  //note: flipped upside down
-      w->setProperty("Image",  CEGUI::PropertyHelper::imageToString(&imageset.getImage("RTTImage")));
+      dtCore::RefPtr<osg::Texture2D> rttTex = mGUI->CreateRenderTargetTexture(*w, NULL, "RTT", "Image", "RTTImage");
+      osg::Vec2 viewDims(w->getPixelSize().d_width, w->getPixelSize().d_height);
+      mRTTCamera = mGUI->CreateCameraForRenderTargetTexture(*rttTex, viewDims);
 
-      // create/allocate/setup osg-texture-rendertarget
-      osg::Texture2D* rttTexture = new osg::Texture2D();
-      osgViewer::GraphicsWindow* gc = GetWindow()->GetOsgViewerGraphicsWindow();
-      rttTexture->setTextureSize(w->getPixelSize().d_width, w->getPixelSize().d_height);
-      rttTexture->setInternalFormat(GL_RGBA);
-      rttTexture->setFilter(osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR);
-      rttTexture->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR);
-      rttTexture->apply(*gc->getState());
-
-      //tell the CEGUI texture to use our OSG Texture
-      GLuint textureID = rttTexture->getTextureObject(gc->getState()->getContextID())->_id;
-      static_cast<CEGUI::OpenGLTexture&>(texture).setOpenGLTexture(textureID, w->getPixelSize());
-
-      //make a new Camera to render the RTT
       dtCore::View *rttView = new dtCore::View("rttView");
-      mRTTCamera = new dtCore::Camera();
-      mRTTCamera->SetWindow(GetWindow());
       rttView->SetCamera(mRTTCamera.get());
       rttView->SetScene(GetScene());
       AddView(*rttView);
@@ -179,14 +160,6 @@ private:
       dtCore::Transform xform;
       GetCamera()->GetTransform(xform);
       mRTTCamera->SetTransform(xform);
-
-      osg::Camera* osgCam = mRTTCamera->GetOSGCamera();
-      osgCam->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
-      osgCam->setClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-      osgCam->setViewport(0, 0, w->getPixelSize().d_width, w->getPixelSize().d_height);
-      osgCam->setRenderTargetImplementation(osg::Camera::FRAME_BUFFER_OBJECT);
-      osgCam->setRenderOrder(osg::Camera::PRE_RENDER);
-      osgCam->attach(osg::Camera::COLOR_BUFFER, rttTexture);
    }
 
    //quit!

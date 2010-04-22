@@ -289,6 +289,37 @@ namespace dtGUI
        */
       const osg::Group& GetRootNode() const;
 
+      /**
+       * Convenience method for creating render-to-texture texture for a specified widget.
+       * @param widget The widget to be modified.  Will create a new Imageset and set the Image
+       *               on the Property, referenced by propertyName.
+       * @param dimensions The dimensions to set for the created texture. By default the method
+       *        will use the dimensions of the widget if this argument is left NULL.
+       * @param newImagesetName Use a unique image set name to represent the texture independently.
+       *        WARNING, do not use the name of an existing imageset or problems may occur.
+       * @param propertyName The optional name of the Property to apply the new Image to.  Defaults to "Image".
+       * @param newImageName Name of the image area on the imageset texture.
+       *        Not specifying this name will default to the same name as the image set,
+       *        since it should be unique.
+       * @return A fully qualified render-to-texture Texture2D.  Anything rendered to this texture
+       *         will be seen on the supplied widget.
+       */
+      dtCore::RefPtr<osg::Texture2D> CreateRenderTargetTexture(Widget& widget,
+                                                               const osg::Vec2* dimensions,
+                                                               const std::string& newImagesetName,
+                                                               const std::string& propertyName = "Image",
+                                                               const std::string& newImageName = "");
+
+      /**
+       * Convenience method for creating a Camera to render to a specified texture.
+       * @param renderTargetTexture Texture to be the render target on the camera that is created.
+       * @param viewDimensions The created camera's view port area dimensions. Normally this
+       *        is the dimension of the widget being rendered to or the dimensions of the texture itself.
+       * @return New Camera that has been set up to render to the specified texture.
+       */
+      dtCore::RefPtr<dtCore::Camera> GUI::CreateCameraForRenderTargetTexture(osg::Texture2D& renderTargetTexture,
+                                                                             const osg::Vec2& viewDimensions);
+
    protected:
       virtual ~GUI();
    	
