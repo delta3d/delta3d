@@ -43,6 +43,7 @@ namespace dtDirector
       , mLogger(NULL)
       , mGameManager(NULL)
       , mMessageGMComponent(NULL)
+      , mParent(NULL)
    {
       mPlayer = "";
       mLogger = &dtUtil::Log::GetInstance();
@@ -307,6 +308,13 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void Director::BeginThread(Node* node, int index, bool immediate)
    {
+      // Always create threads on the proxy if able.
+      if (GetParent())
+      {
+         GetParent()->BeginThread(node, index, immediate);
+         return;
+      }
+
       // If we are queuing threads now, add the new thread data to the queue
       // for later.
       if (mQueueingThreads)
@@ -404,6 +412,13 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void Director::PushStack(Node* node, int index)
    {
+      // Always push stacks on the proxy director if able.
+      if (GetParent())
+      {
+         GetParent()->PushStack(node, index);
+         return;
+      }
+
       // If we are queuing threads now, add the new stack data to the queue
       // for later.
       if (mQueueingThreads)
@@ -836,11 +851,17 @@ namespace dtDirector
                   InputLink* input = output->GetLinks()[linkIndex];
                   if (!input) continue;
 
-                  // Check for redirection of the input.
-                  if (input->GetRedirectLink()) input = input->GetRedirectLink();
-
                   // Disabled nodes are ignored.
-                  if (!input->GetOwner()->GetEnabled()) continue;
+                  if (!input->GetOwner()->IsEnabled()) continue;
+
+                  // Check for redirection of the input.
+                  if (input->GetRedirectLink())
+                  {
+                     input = input->GetRedirectLink();
+
+                     // Disabled nodes are ignored.
+                     if (!input->GetOwner()->IsEnabled()) continue;
+                  }
 
                   int inputCount = (int)input->GetOwner()->GetInputLinks().size();
                   int inputIndex = 0;

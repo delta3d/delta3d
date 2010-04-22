@@ -123,8 +123,11 @@ namespace dtDirector
             mScript->Init(GetDirector()->GetGameManager(), GetDirector()->GetMap());
             mScript->SetPlayer(GetDirector()->GetPlayer());
             //mScript->SetCamera(GetDirector()->GetCamera());
-            mScript->SetNodeLogging(GetNodeLogging());
+            mScript->SetNodeLogging(GetDirector()->GetNodeLogging());
             // TODO: Record.
+
+            // Make sure all new threads and stacks are created on the parent director.
+            mScript->SetParent(GetDirector());
          }
 
          if (mScript.valid())
@@ -142,7 +145,7 @@ namespace dtDirector
                int count = (int)inputs.size();
                for (int index = 0; index < count; index++)
                {
-                  if (inputs[index]->GetEnabled())
+                  if (inputs[index]->IsEnabled())
                   {
                      InputLink* link = &inputs[index]->GetInputLinks()[0];
 
@@ -157,7 +160,7 @@ namespace dtDirector
                mOutputs.reserve(count);
                for (int index = 0; index < count; index++)
                {
-                  if (outputs[index]->GetEnabled())
+                  if (outputs[index]->IsEnabled())
                   {
                      OutputLink* link = &outputs[index]->GetOutputLinks()[0];
 
@@ -172,7 +175,7 @@ namespace dtDirector
                mValues.reserve(count + mCoreValueIndex);
                for (int index = 0; index < count; index++)
                {
-                  if (values[index]->GetEnabled())
+                  if (values[index]->IsEnabled())
                   {
                      ValueLink* link = &values[index]->GetValueLinks()[0];
 

@@ -139,7 +139,7 @@ namespace dtDirector
          for (int index = 0; index < count; index++)
          {
             ValueNode* node = mLinks[index];
-            if (node && node->GetEnabled())
+            if (node && node->IsEnabled())
             {
                if (node->GetPropertyType() != dtDAL::DataType::UNKNOWN)
                {
@@ -197,7 +197,7 @@ namespace dtDirector
       for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
       {
          ValueNode* vNode = mLinks[linkIndex];
-         if (vNode && vNode->GetEnabled())
+         if (vNode && vNode->IsEnabled())
          {
             int total = vNode->GetPropertyCount();
 
@@ -274,7 +274,7 @@ namespace dtDirector
       for (int index = 0; index < linkCount; index++)
       {
          ValueNode* vNode = mLinks[index];
-         if (vNode && vNode->GetEnabled())
+         if (vNode && vNode->IsEnabled())
          {
             count += vNode->GetPropertyCount();
          }

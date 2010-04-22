@@ -30,6 +30,8 @@
 
 #include <dtGame/gamemanager.h>
 
+#include <dtCore/observerptr.h>
+
 #include <cstdio>
 
 namespace dtUtil
@@ -100,6 +102,20 @@ namespace dtDirector
        * @param[in]  threads  The recording threadlist to clear.
        */
       void ClearRecordingData(std::vector<RecordThreadData*>& threads);
+
+      /**
+       * Retrieves the Director Proxy if it has one.
+       *
+       * @return  The Director Proxy.
+       */
+      Director* GetParent() {return mParent.get();}
+
+      /**
+       * Sets the Director Proxy.
+       *
+       * @param[in]  proxy  The Director Proxy.
+       */
+      void SetParent(Director* parent) {mParent = parent;}
 
       /**
        * Retrieves the map.
@@ -576,6 +592,8 @@ namespace dtDirector
 
       dtGame::GameManager* mGameManager;
       dtCore::RefPtr<dtDirector::MessageGMComponent> mMessageGMComponent;
+
+      dtCore::ObserverPtr<Director> mParent;
    };
 }
 

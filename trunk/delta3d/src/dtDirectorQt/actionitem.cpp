@@ -72,7 +72,7 @@ namespace dtDirector
 
          QRadialGradient radialGradient(mNodeWidth/2, mNodeHeight/2, size, mNodeWidth/2, mNodeHeight/2);
 
-         if (mNode->GetEnabled())
+         if (mNode->IsEnabled())
          {
             if (mNode->GetNodeLogging())
             {
