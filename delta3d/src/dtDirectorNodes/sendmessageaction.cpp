@@ -35,6 +35,8 @@ namespace dtDirector
       : ActionNode()
    {
       AddAuthor("Jeff P. Houde");
+
+      mMessageType = "Map Changed";
    }
 
    ////////////////////////////////////////////////////////////////////////////////

@@ -304,6 +304,7 @@ namespace dtDirector
          ValueLink* link = &node->GetValueLinks()[index];
 
          link->SetVisible(fromLink->GetVisible());
+         link->SetExposed(fromLink->GetExposed());
          LinkValues(link, fromLink, parent, undoManager, linkNodes, createLinks);
       }
 

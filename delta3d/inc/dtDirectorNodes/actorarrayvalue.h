@@ -19,8 +19,8 @@
  * Author: Jeff P. Houde
  */
 
-#ifndef DIRECTOR_STRING_ARRAY_VALUE_NODE
-#define DIRECTOR_STRING_ARRAY_VALUE_NODE
+#ifndef DIRECTOR_ACTOR_ARRAY_VALUE_NODE
+#define DIRECTOR_ACTOR_ARRAY_VALUE_NODE
 
 #include <dtDirector/arrayvaluenode.h>
 #include <dtDirectorNodes/nodelibraryexport.h>
@@ -36,19 +36,19 @@ namespace dtDirector
     *      the NodeManager. If they are not created in this fashion,
     *      the node types will not be set correctly.
     */
-   class NODE_LIBRARY_EXPORT StringArrayValue : public ArrayValueNode
+   class NODE_LIBRARY_EXPORT ActorArrayValue : public ArrayValueNode
    {
    public:
 
       /**
        * Constructs the Node.
        */
-      StringArrayValue();
+      ActorArrayValue();
 
       /**
        *	Protected Destructor.  dtCore::RefPtr will handle its destruction.
        */
-      virtual ~StringArrayValue();
+      virtual ~ActorArrayValue();
 
       /**
        * Initializes the Node.
@@ -78,37 +78,37 @@ namespace dtDirector
        *
        * @param[in]  value  The value.
        */
-      void SetValue(const std::string& value);
+      void SetValue(const dtCore::UniqueId& value);
 
       /**
        * Retrieves the value.
        *
        * @return  The value.
        */
-      std::string GetValue();
+      dtCore::UniqueId GetValue();
 
       /**
        * Retrieves the default value for a new array element.
        *
        * @return  The default value.
        */
-      std::string GetDefaultValue();
+      dtCore::UniqueId GetDefaultValue();
 
       /**
        * Retrieves the value array.
        *
        * @return  The array.
        */
-      std::vector<std::string> GetArray();
+      std::vector<dtCore::UniqueId> GetArray();
 
       /**
        * Sets the current value array.
        *
        * @param[in]  value  The new value.
        */
-      void SetArray(const std::vector<std::string>& value);
+      void SetArray(const std::vector<dtCore::UniqueId>& value);
 
-      std::vector<std::string> mValues;
+      std::vector<dtCore::UniqueId> mValues;
    };
 }
 

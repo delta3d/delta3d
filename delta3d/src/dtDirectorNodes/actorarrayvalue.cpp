@@ -22,7 +22,7 @@
 #include <sstream>
 #include <algorithm>
 
-#include <dtDirectorNodes/stringarrayvalue.h>
+#include <dtDirectorNodes/actorarrayvalue.h>
 
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actorproperty.h>
@@ -31,47 +31,47 @@
 namespace dtDirector
 {
    ///////////////////////////////////////////////////////////////////////////////////////
-   StringArrayValue::StringArrayValue()
+   ActorArrayValue::ActorArrayValue()
        : ArrayValueNode()
    {
-      mName = "String Array";
+      mName = "Actor Array";
       AddAuthor("Jeff P. Houde");
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   StringArrayValue::~StringArrayValue()
+   ActorArrayValue::~ActorArrayValue()
    {
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   void StringArrayValue::Init(const NodeType& nodeType, DirectorGraph* graph)
+   void ActorArrayValue::Init(const NodeType& nodeType, DirectorGraph* graph)
    {
       ArrayValueNode::Init(nodeType, graph);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void StringArrayValue::BuildPropertyMap()
+   void ActorArrayValue::BuildPropertyMap()
    {
       ArrayValueNode::BuildPropertyMap();
 
-      mProperty = new dtDAL::StringActorProperty(
+      mProperty = new dtDAL::ActorIDActorProperty(
          "Value", "Value",
-         dtDAL::StringActorProperty::SetFuncType(this, &StringArrayValue::SetValue),
-         dtDAL::StringActorProperty::GetFuncType(this, &StringArrayValue::GetValue),
+         dtDAL::ActorIDActorProperty::SetFuncType(this, &ActorArrayValue::SetValue),
+         dtDAL::ActorIDActorProperty::GetFuncType(this, &ActorArrayValue::GetValue),
          "The value.");
 
-      mArrayProperty = new dtDAL::ArrayActorProperty<std::string>(
+      mArrayProperty = new dtDAL::ArrayActorProperty<dtCore::UniqueId>(
          "ValueList", "Value List", "All values contained in this array.",
          dtDAL::MakeFunctor(*this, &ArrayValueNode::SetPropertyIndex),
-         dtDAL::MakeFunctorRet(*this, &StringArrayValue::GetDefaultValue),
-         dtDAL::MakeFunctorRet(*this, &StringArrayValue::GetArray),
-         dtDAL::MakeFunctor(*this, &StringArrayValue::SetArray),
+         dtDAL::MakeFunctorRet(*this, &ActorArrayValue::GetDefaultValue),
+         dtDAL::MakeFunctorRet(*this, &ActorArrayValue::GetArray),
+         dtDAL::MakeFunctor(*this, &ActorArrayValue::SetArray),
          mProperty, "");
       AddProperty(mArrayProperty);
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void StringArrayValue::SetValue(const std::string& value)
+   void ActorArrayValue::SetValue(const dtCore::UniqueId& value)
    {
       if (mPropertyIndex < (int)mValues.size())
       {
@@ -82,7 +82,7 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   std::string StringArrayValue::GetValue()
+   dtCore::UniqueId ActorArrayValue::GetValue()
    {
       ArrayValueNode::OnValueRetrieved();
 
@@ -90,23 +90,28 @@ namespace dtDirector
       {
          return mValues[mPropertyIndex];
       }
-      return "";
+
+      dtCore::UniqueId id;
+      id = "";
+      return id;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   std::string StringArrayValue::GetDefaultValue()
+   dtCore::UniqueId ActorArrayValue::GetDefaultValue()
    {
-      return "";
+      dtCore::UniqueId id;
+      id = "";
+      return id;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   std::vector<std::string> StringArrayValue::GetArray()
+   std::vector<dtCore::UniqueId> ActorArrayValue::GetArray()
    {
       return mValues;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void StringArrayValue::SetArray(const std::vector<std::string>& value)
+   void ActorArrayValue::SetArray(const std::vector<dtCore::UniqueId>& value)
    {
       mValues = value;
    }

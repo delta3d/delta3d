@@ -19,36 +19,31 @@
  * Author: Jeff P. Houde
  */
 
-#ifndef DIRECTOR_STRING_ARRAY_VALUE_NODE
-#define DIRECTOR_STRING_ARRAY_VALUE_NODE
+#ifndef SET_ARRAY_ACTION
+#define SET_ARRAY_ACTION
 
-#include <dtDirector/arrayvaluenode.h>
+////////////////////////////////////////////////////////////////////////////////
+
+#include <dtDirector/actionnode.h>
 #include <dtDirectorNodes/nodelibraryexport.h>
-
 
 namespace dtDirector
 {
-   /**
-    * This is the base class for all value nodes.
-    *
-    * @note
-    *      Node objects must be created through the NodePluginRegistry or
-    *      the NodeManager. If they are not created in this fashion,
-    *      the node types will not be set correctly.
-    */
-   class NODE_LIBRARY_EXPORT StringArrayValue : public ArrayValueNode
+   ////////////////////////////////////////////////////////////////////////////////
+   class NODE_LIBRARY_EXPORT SetArrayAction: public ActionNode
    {
    public:
 
-      /**
-       * Constructs the Node.
-       */
-      StringArrayValue();
+      enum InputType
+      {
+         INPUT_SET = 0,
+         INPUT_INSERT,
+      };
 
       /**
-       *	Protected Destructor.  dtCore::RefPtr will handle its destruction.
+       * Constructor.
        */
-      virtual ~StringArrayValue();
+      SetArrayAction();
 
       /**
        * Initializes the Node.
@@ -70,46 +65,46 @@ namespace dtDirector
        */
       virtual void BuildPropertyMap();
 
+      /**
+       * Updates the node.
+       * @note  Parent implementation will auto activate any trigger
+       *        with the "Out" label by default.
+       *
+       * @param[in]  simDelta     The simulation time step.
+       * @param[in]  delta        The real time step.
+       * @param[in]  input        The index to the input that is active.
+       * @param[in]  firstUpdate  True if this input was just activated,
+       *
+       * @return     True if the current node should remain active.
+       */
+      virtual bool Update(float simDelta, float delta, int input, bool firstUpdate);     
+
+      /**
+       * Accessors for property values.
+       */
+      void SetArray(int value);
+      int GetArray() const;
+
+      void SetIndex(int value);
+      int GetIndex() const;
+
+      void SetValue(const std::string& value);
+      std::string GetValue() const;
+
+   protected:
+
+      /**
+       * Destructor.
+       */
+      ~SetArrayAction();
 
    private:
 
-      /**
-       * Sets the value.
-       *
-       * @param[in]  value  The value.
-       */
-      void SetValue(const std::string& value);
-
-      /**
-       * Retrieves the value.
-       *
-       * @return  The value.
-       */
-      std::string GetValue();
-
-      /**
-       * Retrieves the default value for a new array element.
-       *
-       * @return  The default value.
-       */
-      std::string GetDefaultValue();
-
-      /**
-       * Retrieves the value array.
-       *
-       * @return  The array.
-       */
-      std::vector<std::string> GetArray();
-
-      /**
-       * Sets the current value array.
-       *
-       * @param[in]  value  The new value.
-       */
-      void SetArray(const std::vector<std::string>& value);
-
-      std::vector<std::string> mValues;
+      int         mIndex;
+      std::string mValue;
    };
 }
 
-#endif
+////////////////////////////////////////////////////////////////////////////////
+
+#endif // SET_ARRAY_ACTION

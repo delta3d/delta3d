@@ -34,6 +34,7 @@
 #include <dtDirectorNodes/referencescriptaction.h>
 #include <dtDirectorNodes/callremoteeventaction.h>
 #include <dtDirectorNodes/setvalueaction.h>
+#include <dtDirectorNodes/setarrayaction.h>
 #include <dtDirectorNodes/getactorpropertyaction.h>
 #include <dtDirectorNodes/setactorpropertyaction.h>
 #include <dtDirectorNodes/operationaction.h>
@@ -58,6 +59,7 @@
 #include <dtDirectorNodes/vecvalue.h>
 #include <dtDirectorNodes/referencevalue.h>
 #include <dtDirectorNodes/actorvalue.h>
+#include <dtDirectorNodes/actorarrayvalue.h>
 #include <dtDirectorNodes/playervalue.h>
 #include <dtDirectorNodes/staticmeshvalue.h>
 
@@ -95,6 +97,7 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::CALL_REMOTE_EVENT_ACTION_NODE_TYPE(     new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Call Remote Event",         "Core",        "Actions",     "Calls all remote event nodes with a given name in parallel, and waits until their entire chains are finished before continuing."));
    RefPtr<NodeType> NodeLibraryRegistry::DELAY_ACTION_NODE_TYPE(                 new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Delay",                     "General",     "Actions",     "Performs a time delay."));
    RefPtr<NodeType> NodeLibraryRegistry::SET_VALUE_ACTION_NODE_TYPE(             new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Set Value",                 "General",     "Operations",  "Copies the value of the Source value into the Destination value."));
+   RefPtr<NodeType> NodeLibraryRegistry::SET_ARRAY_VALUE_ACTION_NODE_TYPE(       new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Set Array Value",           "General",     "Operations",  "Copies a value into an index of an array value."));
    RefPtr<NodeType> NodeLibraryRegistry::GET_ACTOR_PROPERTY_ACTION_NODE_TYPE(    new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Get Actor Property",        "General",     "Operations",  "Retrieves the value of a property from an actor."));
    RefPtr<NodeType> NodeLibraryRegistry::SET_ACTOR_PROPERTY_ACTION_NODE_TYPE(    new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Set Actor Property",        "General",     "Operations",  "Sets the value of a property from an actor."));
    RefPtr<NodeType> NodeLibraryRegistry::OPERATION_ACTION_NODE_TYPE(             new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Binary Operation",          "General",     "Operations",  "Performs a simple operation between two values A and B and outputs to Result."));
@@ -118,6 +121,7 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::VEC_VALUE_NODE_TYPE(                    new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Vector",                    "General",     "Variables",   "A vector value."));
    RefPtr<NodeType> NodeLibraryRegistry::REFERENCE_VALUE_NODE_TYPE(              new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Reference",                 "Core",        "Variables",   "This will reference another value in the script."));
    RefPtr<NodeType> NodeLibraryRegistry::ACTOR_VALUE_NODE_TYPE(                  new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Actor",                     "General",     "Actors",      "An actor value."));
+   RefPtr<NodeType> NodeLibraryRegistry::ACTOR_ARRAY_VALUE_NODE_TYPE(            new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Actor Array",               "General",     "Arrays",      "An array of actor values."));
    RefPtr<NodeType> NodeLibraryRegistry::PLAYER_VALUE_NODE_TYPE(                 new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Player",                    "Core",        "Actors",      "This player actor."));
    RefPtr<NodeType> NodeLibraryRegistry::STATIC_MESH_VALUE_NODE_TYPE(            new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Static Mesh",               "General",     "Resources",   "A Static Mesh resource value."));
 
@@ -156,6 +160,7 @@ namespace dtDirector
       mNodeFactory->RegisterType<CallRemoteEventAction>(CALL_REMOTE_EVENT_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<DelayAction>(DELAY_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<SetValueAction>(SET_VALUE_ACTION_NODE_TYPE.get());
+      mNodeFactory->RegisterType<SetArrayAction>(SET_ARRAY_VALUE_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<GetActorPropertyAction>(GET_ACTOR_PROPERTY_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<SetActorPropertyAction>(SET_ACTOR_PROPERTY_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<OperationAction>(OPERATION_ACTION_NODE_TYPE.get());
@@ -179,6 +184,7 @@ namespace dtDirector
       mNodeFactory->RegisterType<VecValue>(VEC_VALUE_NODE_TYPE.get());
       mNodeFactory->RegisterType<ReferenceValue>(REFERENCE_VALUE_NODE_TYPE.get());
       mNodeFactory->RegisterType<ActorValue>(ACTOR_VALUE_NODE_TYPE.get());
+      mNodeFactory->RegisterType<ActorArrayValue>(ACTOR_ARRAY_VALUE_NODE_TYPE.get());
       mNodeFactory->RegisterType<PlayerValue>(PLAYER_VALUE_NODE_TYPE.get());
       mNodeFactory->RegisterType<StaticMeshValue>(STATIC_MESH_VALUE_NODE_TYPE.get());
    }

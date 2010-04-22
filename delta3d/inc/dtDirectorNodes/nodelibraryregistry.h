@@ -50,6 +50,7 @@ namespace dtDirector
       static dtCore::RefPtr<dtDirector::NodeType> DELAY_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> SOUND_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> SET_VALUE_ACTION_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> SET_ARRAY_VALUE_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> GET_ACTOR_PROPERTY_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> SET_ACTOR_PROPERTY_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> OPERATION_ACTION_NODE_TYPE;
@@ -71,11 +72,11 @@ namespace dtDirector
       static dtCore::RefPtr<dtDirector::NodeType> RANDOM_FLOAT_VALUE_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> DOUBLE_VALUE_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> STRING_VALUE_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> STRING_ARRAY_VALUE_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> ACTOR_VALUE_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> ACTOR_ARRAY_VALUE_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> STATIC_MESH_VALUE_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> VEC_VALUE_NODE_TYPE;
-
-      static dtCore::RefPtr<dtDirector::NodeType> STRING_ARRAY_VALUE_NODE_TYPE;
 
       /**
        *	Constructor.
