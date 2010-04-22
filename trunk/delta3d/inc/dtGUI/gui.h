@@ -32,8 +32,8 @@
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
 {
-   class Geode;
-   class Camera;
+   class Group;
+   class Texture2D;
 }
 /// @endcond
 
@@ -275,6 +275,20 @@ namespace dtGUI
        */
       static BaseScriptModule* GetScriptModule();
 
+      /**
+       * Get the internal root node to change any stateset attributes, add layers
+       * to the UI or to perform extra tweaking not anticipated by this class.
+       * @param The root node that's in the scene graph
+       */
+      osg::Group& GetRootNode();
+
+      /**
+       * Get the const internal root node to change any stateset attributes, add layers
+       * to the UI or to perform extra tweaking not anticipated by this class.
+       * @param The const root node that's in the scene graph
+       */
+      const osg::Group& GetRootNode() const;
+
    protected:
       virtual ~GUI();
    	
@@ -290,10 +304,10 @@ namespace dtGUI
 
       dtCore::RefPtr<dtGUI::CEGUIKeyboardListener> mKeyboardListener; ///needed for injection mouse-events to the cegui
       dtCore::RefPtr<dtGUI::CEGUIMouseListener>    mMouseListener; ///needed for injection keyboard-events to the cegui
-      osg::Geode*                                  mInternalGraph; ///osg graph used to render the gui
+      osg::Group*                                  mInternalGraph; ///osg graph used to render the gui
       CEGUI::Window*                               mRootSheet; ///auto-generated panel-window
 
-      dtCore::RefPtr<osg::Camera>           mCamera; ///camera, whose viewport is used to draw the gui
+      dtCore::RefPtr<dtCore::Camera>        mCamera; ///camera, whose viewport is used to draw the gui
       dtCore::RefPtr<dtCore::Keyboard>      mKeyboard; ///observed keyboard
       dtCore::RefPtr<dtCore::Mouse>         mMouse; ///observed mouse
 

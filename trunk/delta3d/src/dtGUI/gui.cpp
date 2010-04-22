@@ -124,7 +124,7 @@ GUI::~GUI()
 
    if (mCamera.valid() && mInternalGraph)
    {
-      mCamera->removeChild(mInternalGraph);
+      mCamera->GetOSGCamera()->removeChild(mInternalGraph);
    }
 
    if (mMouse.valid())
@@ -156,16 +156,19 @@ GUI::~GUI()
 ////////////////////////////////////////////////////////////////////////////////
 void GUI::_SetupInternalGraph()
 {
-   mInternalGraph = new osg::Geode();
+   mInternalGraph = new osg::Group();
+   osg::StateSet* states = mInternalGraph->getOrCreateStateSet();
 
    //m_pInternalGraph->setName("internal_GUI_Geode");
-   mInternalGraph->getOrCreateStateSet()->setMode(GL_DEPTH_TEST,osg::StateAttribute::OFF);
-   mInternalGraph->getOrCreateStateSet()->setRenderBinDetails(11, "RenderBin");
-   mInternalGraph->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
-   mInternalGraph->getOrCreateStateSet()->setTextureMode(0, GL_TEXTURE_2D, osg::StateAttribute::ON);
-   mInternalGraph->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+   states->setMode(GL_DEPTH_TEST,osg::StateAttribute::OFF);
+   states->setRenderBinDetails(11, "RenderBin");
+   states->setMode(GL_BLEND, osg::StateAttribute::ON);
+   states->setTextureMode(0, GL_TEXTURE_2D, osg::StateAttribute::ON);
+   states->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 
-   mInternalGraph->addDrawable(new HUDDrawable());
+   osg::Geode* geode = new osg::Geode;
+   geode->addDrawable(new HUDDrawable());
+   mInternalGraph->addChild(geode);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -174,16 +177,16 @@ void GUI::SetCamera(dtCore::Camera* camera)
    // if this was already a child of another camera remove itself from there:
    if (mCamera.valid())
    {
-      mCamera->removeChild(mInternalGraph);
+      mCamera->GetOSGCamera()->removeChild(mInternalGraph);
    }
 
    // set ("parent") camera
-   mCamera = camera == NULL ? NULL : camera->GetOSGCamera();
+   mCamera = camera;
 
    // that'll force the camera to draw this gui via the HUDDrawable-object
    if (mCamera)
    {
-      mCamera->addChild(mInternalGraph);
+      mCamera->GetOSGCamera()->addChild(mInternalGraph);
    }
 
 }
@@ -485,6 +488,18 @@ BaseScriptModule* dtGUI::GUI::GetScriptModule()
    }
 
    return NULL;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+osg::Group& dtGUI::GUI::GetRootNode()
+{
+   return *mInternalGraph;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+const osg::Group& dtGUI::GUI::GetRootNode() const
+{
+   return *mInternalGraph;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
