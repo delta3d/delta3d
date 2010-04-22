@@ -92,4 +92,10 @@ namespace dtDirector
    {
       mPropertyIndex = index;
    }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtDAL::ArrayActorPropertyBase* ArrayValueNode::GetArrayProperty()
+   {
+      return mArrayProperty.get();
+   }
 }

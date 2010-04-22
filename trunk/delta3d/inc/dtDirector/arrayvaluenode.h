@@ -98,8 +98,17 @@ namespace dtDirector
 
       /**
        * Sets the current property index.
+       *
+       * @param[in]  index  The index.
        */
       void SetPropertyIndex(int index);
+
+      /**
+       * Accessor to the array property.
+       *
+       * @return  The array property.
+       */
+      dtDAL::ArrayActorPropertyBase* GetArrayProperty();
 
    protected:
 

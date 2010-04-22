@@ -40,6 +40,8 @@ namespace dtDirector
        : EventNode()
    {
       AddAuthor("Jeff P. Houde");
+
+      mMessageType = "Map Changed";
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
@@ -51,8 +53,6 @@ namespace dtDirector
    void GameMessageEvent::Init(const NodeType& nodeType, DirectorGraph* graph)
    {
       EventNode::Init(nodeType, graph);
-
-      mLabel = EventNode::GetName();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
