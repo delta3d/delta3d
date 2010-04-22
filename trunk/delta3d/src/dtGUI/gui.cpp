@@ -4,13 +4,16 @@
 #include <dtCore/camera.h>
 #include <dtCore/keyboard.h>
 #include <dtCore/mouse.h>
+#include <dtCore/deltawin.h>
 #include <dtUtil/log.h>
 #include <dtUtil/datapathutils.h>
 
 #include <osg/Drawable>
 #include <osg/StateSet>
 #include <osg/Geode>
+#include <osg/Texture2D>
 #include <osgDB/FileNameUtils>
+#include <osgViewer/GraphicsWindow>
 
 #include <CEGUI/CEGUISystem.h>
 #include <CEGUI/RendererModules/OpenGL/CEGUIOpenGLRenderer.h>  // for base class
@@ -21,6 +24,9 @@
 #include <CEGUI/CEGUIScheme.h>
 #include <CEGUI/CEGUISchemeManager.h>
 #include <CEGUI/CEGUIFont.h>
+#include <CEGUI/CEGUIPropertyHelper.h>
+#include <CEGUI/CEGUITexture.h>
+#include <CEGUI/RendererModules/OpenGL/CEGUIOpenGLTexture.h>
 #include <CEGUI/falagard/CEGUIFalWidgetLookManager.h>
 
 using namespace dtGUI;
@@ -557,4 +563,78 @@ void GUI::DestroyImageset(const std::string& imagesetName)
    }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+dtCore::RefPtr<osg::Texture2D> GUI::CreateRenderTargetTexture( Widget& widget,
+                                                               const osg::Vec2* dimensions,
+                                                               const std::string& newImagesetName,
+                                                               const std::string& propertyName,
+                                                               const std::string& newImageName)
+{
+   
+   if (!widget.isPropertyPresent(propertyName))
+   {
+      std::ostringstream oss;
+      oss << "Widget \"" << widget.getName().c_str() << "\" does not have the \""
+         << propertyName << "\" property. Cannot create render target texture.";
+      LOG_WARNING(oss.str());
+      return NULL;
+   }
 
+   // Determine the size of the texture.
+   osg::Vec2 dims;
+   if (dimensions != NULL)
+   {
+      dims.set(dimensions->x(), dimensions->y());
+   }
+   else
+   {
+      CEGUI::Size ceguiDims = widget.getPixelSize();
+      dims.set(ceguiDims.d_width, ceguiDims.d_height);
+   }
+
+   // If no image name was specified, use the image set name.
+   const std::string& imageName = newImageName.empty() ? newImagesetName : newImageName;
+
+   CEGUI::Size ceguiDims(dims.x(), dims.y());
+   CEGUI::Texture& texture = CEGUI::System::getSingleton().getRenderer()->createTexture(ceguiDims);
+   CEGUI::Imageset& imageset = CEGUI::ImagesetManager::getSingleton().create(newImagesetName, texture);
+   imageset.defineImage(imageName, CEGUI::Point(0,texture.getSize().d_height),
+      CEGUI::Size(texture.getSize().d_width, -texture.getSize().d_height), CEGUI::Point(0,0));  //note: flipped upside down
+
+   // create/allocate/setup osg-texture-render target
+   osg::Texture2D* rttTexture = new osg::Texture2D();
+   rttTexture->setTextureSize(dims.x(), dims.y());
+   rttTexture->setInternalFormat(GL_RGBA);
+   rttTexture->setFilter(osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR);
+   rttTexture->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR);
+
+   osgViewer::GraphicsWindow* gc = mCamera->GetWindow()->GetOsgViewerGraphicsWindow();
+   rttTexture->apply(*gc->getState());
+
+   //tell the CEGUI texture to use our OSG Texture
+   GLuint textureID = rttTexture->getTextureObject(gc->getState()->getContextID())->_id;
+   static_cast<CEGUI::OpenGLTexture&>(texture).setOpenGLTexture(textureID, ceguiDims);
+
+   CEGUI::String ceguiSetImage = CEGUI::PropertyHelper::imageToString(&imageset.getImage(imageName));
+   widget.setProperty(propertyName, ceguiSetImage);
+
+   return rttTexture;
+}
+
+dtCore::RefPtr<dtCore::Camera> GUI::CreateCameraForRenderTargetTexture(osg::Texture2D& renderTargetTexture,
+                                                                       const osg::Vec2& viewDimensions)
+{
+   // Create a Camera to render the specified target texture.
+   dtCore::Camera* rttCam = new dtCore::Camera("RTTCamera");
+   rttCam->SetWindow(mCamera->GetWindow()); // Use the root camera to gain access to the main window.
+
+   osg::Camera* osgCam = rttCam->GetOSGCamera();
+   osgCam->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
+   osgCam->setClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+   osgCam->setViewport(0, 0, viewDimensions.x(), viewDimensions.y());
+   osgCam->setRenderTargetImplementation(osg::Camera::FRAME_BUFFER_OBJECT);
+   osgCam->setRenderOrder(osg::Camera::PRE_RENDER);
+   osgCam->attach(osg::Camera::COLOR_BUFFER, &renderTargetTexture);
+
+   return rttCam;
+}
