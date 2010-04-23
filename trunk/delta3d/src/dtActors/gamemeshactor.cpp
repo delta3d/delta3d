@@ -222,6 +222,18 @@ namespace dtActors
          dtDAL::MakeFunctor(myActor, &GameMeshActor::SetScale),
          dtDAL::MakeFunctorRet(myActor, &GameMeshActor::GetScale),
          "Scales this visual model", "Transformable"));
+
+      AddProperty(new dtDAL::Vec3ActorProperty("Model Rotation", "Model Rotation",
+         dtDAL::MakeFunctor(myActor, &GameMeshActor::SetModelRotation),
+         dtDAL::MakeFunctorRet(myActor, &GameMeshActor::GetModelRotation),
+         "Specifies the Rotation of the object",
+         "Transformable"));
+
+      AddProperty(new dtDAL::Vec3ActorProperty("Model Translation", "Model Translation",
+         dtDAL::MakeFunctor(myActor, &GameMeshActor::SetModelTranslation),
+         dtDAL::MakeFunctorRet(myActor, &GameMeshActor::GetModelTranslation),
+         "Specifies the Translation of the object",
+         "Transformable"));
    }
 
    //////////////////////////////////////////////////////////////////////////////
