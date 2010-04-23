@@ -119,16 +119,17 @@ namespace dtDirector
        *         via this method instead of directly to ensure that
        *         the desired property is being used.
        */
-      virtual dtDAL::ActorProperty* GetProperty(const std::string& name, int index = 0);
+      virtual dtDAL::ActorProperty* GetProperty(const std::string& name, int index = 0, ValueNode** outNode = NULL);
 
       /**
        * Retrieves the property for this value.
        *
-       * @param[in]  index  The property index, in case this is an array value.
+       * @param[in]   index    The property index, in case this is an array value.
+       * @param[out]  outNode  The owner node of the retrieved property.
        *
        * @return  The property.
        */
-      virtual dtDAL::ActorProperty* GetProperty(int index);
+      virtual dtDAL::ActorProperty* GetProperty(int index, ValueNode** outNode = NULL);
 
       /**
        * Retrieves whether the value can be a specified type.

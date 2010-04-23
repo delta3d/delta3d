@@ -199,6 +199,8 @@ namespace dtDirector
          ValueNode* vNode = mLinks[linkIndex];
          if (vNode && vNode->IsEnabled())
          {
+            if (!valueNode) valueNode = vNode;
+
             int total = vNode->GetPropertyCount();
 
             // If our desired index is within this link, find the sub index.
@@ -215,9 +217,7 @@ namespace dtDirector
 
       if (valueNode)
       {
-         if (outNode) *outNode = valueNode;
-
-         dtDAL::ActorProperty* prop = valueNode->GetProperty(subIndex);
+         dtDAL::ActorProperty* prop = valueNode->GetProperty(subIndex, outNode);
          if (prop)
          {
             return prop;
