@@ -330,6 +330,9 @@ namespace dtCore
       /// Returns true if there is a stats set.  When true, we are doing a tad more processing to do stats.
       bool IsStatsOn();
 
+      /// Returns how long (in milliseconds) a stage took the last time it ran (ex STAGE_PREFRAME took 3ms)
+      double GetSystemStageTime(System::SystemStages systemStage);
+
    private:
       SystemImpl* mSystemImpl;
       System(); ///<private

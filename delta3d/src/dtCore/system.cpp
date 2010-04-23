@@ -54,38 +54,58 @@ namespace dtCore
 
 
       /////////////////////////////////////////////////////////////////
-      float EndStatTimer(const std::string& attribName)
-      {
-         // Call this at the end of a section. User is responsible for calling StartStatTimer()
-         // first.
-
-         double elapsedTime = 0.0;
-         if (mStats != NULL && mStats->collectStats(attribName))
-         {
-            elapsedTime = mTickClock.DeltaMil(mTimerStart, mTickClock.Tick());
-            mStats->setAttribute(mStats->getLatestFrameNumber(), attribName, elapsedTime);
-         }
-         // accumulates till the end of frame, then reset back to 0 next frame.
-         mTotalFrameTime += elapsedTime;
-
-         return elapsedTime;
-      }
-
-      /////////////////////////////////////////////////////////////////
       void StartStatTimer()
       {
-         // Call at the beginning of a section.  User is responsible for calling this before
-         // calling EndStatTimer()
+         // Call at the beginning of a section.  Call before calling EndStatTimer()
          if (mStats != NULL)
          {
             mTimerStart = mTickClock.Tick();
          }
       }
 
+      /////////////////////////////////////////////////////////////////
+      double EndStatTimer(const std::string& attribName, System::SystemStages systemStage)
+      {
+         // Call this at the end of a section. Call StartStatTimer() first 
+         double elapsedTime = mTickClock.DeltaMil(mTimerStart, mTickClock.Tick());
+         mTotalFrameTime += elapsedTime; // accumulate till frame end, then reset to 0 next frame.
+
+         // Update stats if we are tracking
+         if (mStats != NULL && mStats->collectStats(attribName))
+         {
+            mStats->setAttribute(mStats->getLatestFrameNumber(), attribName, elapsedTime);
+         }
+
+         // Update the system time value so it 
+         mSystemStageTimes[systemStage] = elapsedTime;
+
+         return elapsedTime;
+      }
+
+      //////////////////////////////////////////////////////////////////
+      void SetLastStatTimer(const std::string& attribName, System::SystemStages systemStage)
+      {
+         // If we are in fixed time step and we are skipping a phase, 
+         // then use last frame's value.
+         double lastTime = mSystemStageTimes[systemStage];
+         mTotalFrameTime += lastTime; // accumulate till frame end, then reset to 0 next frame.
+         // Update stats if we are tracking
+         if (mStats != NULL && mStats->collectStats(attribName))
+         {
+            mStats->setAttribute(mStats->getLatestFrameNumber(), attribName, lastTime);
+         }
+      }
+
+      //////////////////////////////////////////////////////////////////
+
       dtCore::Timer mTickClock;
       dtCore::Timer_t mTimerStart;
       dtCore::ObserverPtr<osg::Stats> mStats;
       double mTotalFrameTime;
+
+      // Store the time it took for each phase of the system (preframe, frame, ...)
+      typedef std::map<System::SystemStages, double> SystemStageTimesMap;
+      SystemStageTimesMap mSystemStageTimes;
    };
 
 
@@ -316,6 +336,7 @@ namespace dtCore
       mRealClockTime += Timer_t(realDT * 1000000);
       const double simDT = realDT * mTimeScale;
 
+      // simFrameTime is our fixed time step. Usually like 1/60 or something.
       const float simFrameTime = mFrameTime * mTimeScale;
 
       if (!mWasPaused)
@@ -359,6 +380,12 @@ namespace dtCore
          CameraSynch(simFrameTime, realFrameTime);
          FrameSynch(simFrameTime, realFrameTime);
          Frame(simFrameTime, realFrameTime);
+      }
+      else // Else, skip the draw and just update the stats (w/o this the stats don't work right)
+      {
+         mSystemImpl->SetLastStatTimer(MESSAGE_CAMERA_SYNCH, System::STAGE_CAMERA_SYNCH);
+         mSystemImpl->SetLastStatTimer(MESSAGE_FRAME_SYNCH, System::STAGE_FRAME_SYNCH);
+         mSystemImpl->SetLastStatTimer(MESSAGE_FRAME, System::STAGE_FRAME);
       }
       PostFrame(simFrameTime, realFrameTime);
 
@@ -520,8 +547,7 @@ namespace dtCore
          double userData[2] = { deltaSimTime, deltaRealTime };
          SendMessage(MESSAGE_EVENT_TRAVERSAL, userData);
 
-         mSystemImpl->EndStatTimer(MESSAGE_EVENT_TRAVERSAL);
-
+         mSystemImpl->EndStatTimer(MESSAGE_EVENT_TRAVERSAL, System::STAGE_EVENT_TRAVERSAL);
       }
    }
 
@@ -535,7 +561,7 @@ namespace dtCore
          double userData[2] = { deltaSimTime, deltaRealTime };
          SendMessage(MESSAGE_POST_EVENT_TRAVERSAL, userData);
 
-         mSystemImpl->EndStatTimer(MESSAGE_POST_EVENT_TRAVERSAL);
+         mSystemImpl->EndStatTimer(MESSAGE_POST_EVENT_TRAVERSAL, System::STAGE_POST_EVENT_TRAVERSAL);
       }
    }
 
@@ -549,7 +575,7 @@ namespace dtCore
          double userData[2] = { deltaSimTime, deltaRealTime };
          SendMessage(MESSAGE_PRE_FRAME, userData);
 
-         mSystemImpl->EndStatTimer(MESSAGE_PRE_FRAME);
+         mSystemImpl->EndStatTimer(MESSAGE_PRE_FRAME, System::STAGE_PREFRAME);
       }
    }
 
@@ -563,7 +589,7 @@ namespace dtCore
          double userData[2] = { deltaSimTime, deltaRealTime };
          SendMessage(MESSAGE_FRAME_SYNCH, userData);
 
-         mSystemImpl->EndStatTimer(MESSAGE_FRAME_SYNCH);
+         mSystemImpl->EndStatTimer(MESSAGE_FRAME_SYNCH, System::STAGE_FRAME_SYNCH);
       }
    }
 
@@ -577,7 +603,7 @@ namespace dtCore
          double userData[2] = { deltaSimTime, deltaRealTime };
          SendMessage(MESSAGE_CAMERA_SYNCH, userData);
 
-         mSystemImpl->EndStatTimer(MESSAGE_CAMERA_SYNCH);
+         mSystemImpl->EndStatTimer(MESSAGE_CAMERA_SYNCH, System::STAGE_CAMERA_SYNCH);
       }
    }
 
@@ -591,7 +617,7 @@ namespace dtCore
          double userData[2] = { deltaSimTime, deltaRealTime };
          SendMessage(MESSAGE_FRAME, userData );
 
-         mSystemImpl->EndStatTimer(MESSAGE_FRAME);
+         mSystemImpl->EndStatTimer(MESSAGE_FRAME, System::STAGE_FRAME);
       }
    }
 
@@ -605,7 +631,7 @@ namespace dtCore
          double userData[2] = { deltaSimTime, deltaRealTime };
          SendMessage(MESSAGE_POST_FRAME, userData);
 
-         mSystemImpl->EndStatTimer(MESSAGE_POST_FRAME);
+         mSystemImpl->EndStatTimer(MESSAGE_POST_FRAME, System::STAGE_POSTFRAME);
       }
    }
 
@@ -617,5 +643,12 @@ namespace dtCore
          SendMessage(MESSAGE_CONFIG);
       }
    }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   double System::GetSystemStageTime(System::SystemStages systemStage)
+   {
+      return mSystemImpl->mSystemStageTimes[systemStage];
+   }
+
 }
 
