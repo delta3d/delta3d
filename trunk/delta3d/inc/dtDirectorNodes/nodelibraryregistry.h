@@ -51,6 +51,8 @@ namespace dtDirector
       static dtCore::RefPtr<dtDirector::NodeType> SOUND_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> SET_VALUE_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> SET_ARRAY_VALUE_ACTION_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> GET_ARRAY_VALUE_ACTION_NODE_TYPE;
+      static dtCore::RefPtr<dtDirector::NodeType> GET_ARRAY_SIZE_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> GET_ACTOR_PROPERTY_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> SET_ACTOR_PROPERTY_ACTION_NODE_TYPE;
       static dtCore::RefPtr<dtDirector::NodeType> OPERATION_ACTION_NODE_TYPE;

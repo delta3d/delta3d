@@ -19,8 +19,8 @@
  * Author: Jeff P. Houde
  */
 
-#ifndef DELAY_ACTION_NODE
-#define DELAY_ACTION_NODE
+#ifndef GET_ARRAY_SIZE_ACTION
+#define GET_ARRAY_SIZE_ACTION
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -30,21 +30,14 @@
 namespace dtDirector
 {
    ////////////////////////////////////////////////////////////////////////////////
-   class NODE_LIBRARY_EXPORT DelayAction: public ActionNode
+   class NODE_LIBRARY_EXPORT GetArraySizeAction: public ActionNode
    {
    public:
-
-      enum InputType
-      {
-         INPUT_START = 0,
-         INPUT_STOP,
-         INPUT_PAUSE,
-      };
 
       /**
        * Constructor.
        */
-      DelayAction();
+      GetArraySizeAction();
 
       /**
        * Initializes the Node.
@@ -78,46 +71,28 @@ namespace dtDirector
        *
        * @return     True if the current node should remain active.
        */
-      virtual bool Update(float simDelta, float delta, int input, bool firstUpdate);
-
-      /**
-       * Determines whether a value link on this node can connect
-       * to a given value.
-       *
-       * @param[in]  link   The link.
-       * @param[in]  value  The value to connect to.
-       *
-       * @return     True if a connection can be made.
-       */
-      virtual bool CanConnectValue(ValueLink* link, ValueNode* value);
+      virtual bool Update(float simDelta, float delta, int input, bool firstUpdate);     
 
       /**
        * Accessors for property values.
        */
-      void SetDelay(float value);
-      float GetDelay();
+      void SetArray(int value);
+      int GetArray() const;
 
-      void SetUseSimTime(bool value);
-      bool GetUseSimTime();
+      void SetSize(int value);
+      int GetSize() const;
 
    protected:
 
       /**
        * Destructor.
        */
-      ~DelayAction();
+      ~GetArraySizeAction();
 
    private:
-
-      float mDelay;
-      float mElapsedTime;
-      float mGoalTime;
-      bool  mUseSimTime;
-
-      bool  mIsActive;
    };
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#endif // DELAY_ACTION_NODE
+#endif // GET_ARRAY_SIZE_ACTION

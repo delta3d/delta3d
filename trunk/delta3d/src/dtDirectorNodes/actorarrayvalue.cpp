@@ -58,7 +58,7 @@ namespace dtDirector
          "Value", "Value",
          dtDAL::ActorIDActorProperty::SetFuncType(this, &ActorArrayValue::SetValue),
          dtDAL::ActorIDActorProperty::GetFuncType(this, &ActorArrayValue::GetValue),
-         "The value.");
+         "", "The value.");
 
       mArrayProperty = new dtDAL::ArrayActorProperty<dtCore::UniqueId>(
          "ValueList", "Value List", "All values contained in this array.",
