@@ -33,6 +33,7 @@ namespace dtDirector
       : ActionNode()
       , mDelay(1.0f)
       , mElapsedTime(0.0f)
+      , mGoalTime(0.0f)
       , mIsActive(false)
    {
       AddAuthor("Jeff P. Houde");
@@ -104,6 +105,7 @@ namespace dtDirector
                if (firstUpdate)
                {
                   mIsActive = true;
+                  mGoalTime = GetFloat("Delay");
 
                   // Call the parent so the default "Out" link is triggered.
                   ActionNode::Update(simDelta, delta, input, firstUpdate);
@@ -122,7 +124,7 @@ namespace dtDirector
 
             // Test if the desired time has elapsed.
             result = true;
-            if (mElapsedTime >= GetFloat("Delay"))
+            if (mElapsedTime >= mGoalTime)
             {
                // Reset the time and trigger the "Time Elapsed" output.
                mElapsedTime = 0.0f;

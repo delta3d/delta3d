@@ -75,7 +75,12 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    bool InputNode::Update(float simDelta, float delta, int input, bool firstUpdate)
    {
-      return Node::Update(simDelta, delta, input, firstUpdate);
+      if (Test("Out", NULL))
+      {
+         return Node::Update(simDelta, delta, input, firstUpdate);
+      }
+
+      return false;
    }
 
    //////////////////////////////////////////////////////////////////////////

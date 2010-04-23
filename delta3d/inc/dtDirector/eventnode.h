@@ -89,7 +89,7 @@ namespace dtDirector
        * @param[in]  outputName  The output to trigger.
        * @param[in]  instigator  The instigating actor ID.
        */
-      virtual bool Test(const std::string& outputName, const dtCore::UniqueId* instigator);
+      virtual bool Test(const std::string& outputName, const dtCore::UniqueId* instigator = NULL, bool countTrigger = true);
 
       /**
        * Updates the node.

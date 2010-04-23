@@ -84,6 +84,7 @@ namespace dtDirector
        * Accessors for the name of the node.
        */
       virtual void SetValueName(const std::string& name);
+      virtual const std::string& GetValueName();
       virtual std::string GetValueLabel();
 
       /**
@@ -150,6 +151,8 @@ namespace dtDirector
       virtual ~ExternalValueNode();
 
       void UpdateLinkType();
+
+      std::string mLinkName;
    };
 }
 

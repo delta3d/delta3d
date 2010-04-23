@@ -47,7 +47,7 @@ namespace dtDirector
    ///////////////////////////////////////////////////////////////////////////////////////
    void ExternalValueNode::Init(const NodeType& nodeType, DirectorGraph* graph)
    {
-      ValueNode::Init(nodeType, graph);
+      Node::Init(nodeType, graph);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -73,27 +73,22 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void ExternalValueNode::SetValueName(const std::string& name)
    {
-      ValueNode::SetValueName(name);
+      //ValueNode::SetValueName(name);
 
+      mLinkName = name;
       mValues[0].SetLabel(name);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const std::string& ExternalValueNode::GetValueName()
+   {
+      return mLinkName;
    }
 
    //////////////////////////////////////////////////////////////////////////
    std::string ExternalValueNode::GetValueLabel()
    {
-      if (mValues.size())
-      {
-         if (!mValues[0].GetLinks().empty())
-         {
-            ValueNode* valueNode = dynamic_cast<ValueNode*>(mValues[0].GetLinks()[0]);
-            if (valueNode)
-            {
-               return valueNode->GetValueLabel();
-            }
-         }
-      }
-
-      return "";
+      return mLinkName;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -184,6 +179,7 @@ namespace dtDirector
    {
       bool isOut = false;
       bool isTypeChecking = false;
+      bool allowMultiple = false;
 
       if (mLinks.size())
       {
@@ -192,11 +188,13 @@ namespace dtDirector
          {
             isOut |= mLinks[index]->IsOutLink();
             isTypeChecking |= mLinks[index]->IsTypeChecking();
+            allowMultiple |= mLinks[index]->AllowMultiple();
          }
       }
 
       // If we are not linked, reset to defaults.
       mValues[0].SetOutLink(isOut);
       mValues[0].SetTypeChecking(isTypeChecking);
+      mValues[0].SetAllowMultiple(allowMultiple);
    }
 }

@@ -91,19 +91,8 @@ namespace dtDirector
       // Can't trigger a disabled event.
       if (!IsEnabled()) return;
 
-      if (Test(outputName, instigator))
+      if (Test(outputName, instigator, countTrigger))
       {
-         // If this event has a trigger count limit,
-         // disable the event when that limit is met.
-         if (countTrigger && mMaxTriggerCount > 0)
-         {
-            if (mTriggerCount >= mMaxTriggerCount)
-            {
-               return;
-            }
-            mTriggerCount++;
-         }
-
          OutputLink* link = GetOutputLink(outputName);
          if (link) link->Activate();
 
@@ -113,8 +102,19 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   bool EventNode::Test(const std::string& outputName, const dtCore::UniqueId* instigator)
+   bool EventNode::Test(const std::string& outputName, const dtCore::UniqueId* instigator, bool countTrigger)
    {
+      // If this event has a trigger count limit,
+      // disable the event when that limit is met.
+      if (countTrigger && mMaxTriggerCount > 0)
+      {
+         if (mTriggerCount >= mMaxTriggerCount)
+         {
+            return false;
+         }
+         mTriggerCount++;
+      }
+
       OutputLink* link = GetOutputLink(outputName);
       if (link)
       {
