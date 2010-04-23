@@ -2,8 +2,8 @@
 <director xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dDirector" xsi:schemaLocation="delta3dDirector director.xsd">
     <header>
         <createTimestamp>2009-12-16T22:35:23-08:00</createTimestamp>
-        <lastUpdateTimestamp>2010-03-08T10:11:33-08:00</lastUpdateTimestamp>
-        <editorVersion>2.4.0</editorVersion>
+        <lastUpdateTimestamp>2010-04-22T17:25:04-08:00</lastUpdateTimestamp>
+        <editorVersion>2.5.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
         <property>
             <name>Name</name>
@@ -85,10 +85,27 @@
                     </link>
                 </outputlink>
                 <valuelink>
+                    <name>TriggerCount</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
                     <name>Instigator</name>
                     <visible>false</visible>
+                    <exposed>true</exposed>
                     <isout>false</isout>
                     <allowmultiple>true</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>EventName</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
                     <typecheck>true</typecheck>
                 </valuelink>
             </node>
@@ -136,10 +153,27 @@
                     </link>
                 </outputlink>
                 <valuelink>
+                    <name>TriggerCount</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
                     <name>Instigator</name>
                     <visible>false</visible>
+                    <exposed>true</exposed>
                     <isout>false</isout>
                     <allowmultiple>true</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>EventName</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
                     <typecheck>true</typecheck>
                 </valuelink>
             </node>
@@ -189,8 +223,17 @@
                     </link>
                 </outputlink>
                 <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
                     <name>EventName</name>
                     <visible>false</visible>
+                    <exposed>false</exposed>
                     <isout>false</isout>
                     <allowmultiple>false</allowmultiple>
                     <typecheck>true</typecheck>
@@ -256,8 +299,17 @@
                     <visible>false</visible>
                 </outputlink>
                 <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
                     <name>A</name>
                     <visible>true</visible>
+                    <exposed>true</exposed>
                     <isout>false</isout>
                     <allowmultiple>false</allowmultiple>
                     <typecheck>false</typecheck>
@@ -268,6 +320,7 @@
                 <valuelink>
                     <name>B</name>
                     <visible>false</visible>
+                    <exposed>true</exposed>
                     <isout>false</isout>
                     <allowmultiple>false</allowmultiple>
                     <typecheck>false</typecheck>
@@ -333,8 +386,17 @@
                     <visible>false</visible>
                 </outputlink>
                 <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
                     <name>A</name>
                     <visible>false</visible>
+                    <exposed>true</exposed>
                     <isout>false</isout>
                     <allowmultiple>false</allowmultiple>
                     <typecheck>false</typecheck>
@@ -342,6 +404,7 @@
                 <valuelink>
                     <name>B</name>
                     <visible>false</visible>
+                    <exposed>true</exposed>
                     <isout>false</isout>
                     <allowmultiple>false</allowmultiple>
                     <typecheck>false</typecheck>
@@ -349,6 +412,7 @@
                 <valuelink>
                     <name>Result</name>
                     <visible>true</visible>
+                    <exposed>true</exposed>
                     <isout>true</isout>
                     <allowmultiple>true</allowmultiple>
                     <typecheck>false</typecheck>
@@ -390,6 +454,14 @@
                     <name>Value</name>
                     <float>0</float>
                 </property>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
             </node>
             <node>
                 <name>Int</name>
@@ -422,6 +494,14 @@
                     <name>Value</name>
                     <integer>0</integer>
                 </property>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
             </node>
             <node>
                 <name>Boolean</name>
@@ -454,6 +534,14 @@
                     <name>Value</name>
                     <boolean>false</boolean>
                 </property>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
             </node>
             <node>
                 <name>Reference</name>
@@ -489,6 +577,7 @@
                 <valuelink>
                     <name>Ref</name>
                     <visible>true</visible>
+                    <exposed>false</exposed>
                     <isout>false</isout>
                     <allowmultiple>false</allowmultiple>
                     <typecheck>false</typecheck>
@@ -531,6 +620,7 @@
                 <valuelink>
                     <name>Ref</name>
                     <visible>true</visible>
+                    <exposed>false</exposed>
                     <isout>true</isout>
                     <allowmultiple>false</allowmultiple>
                     <typecheck>false</typecheck>
@@ -608,6 +698,14 @@
                             <name>Start</name>
                         </link>
                     </outputlink>
+                    <valuelink>
+                        <name>TriggerCount</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
                 </node>
             </eventnodes>
             <actionnodes>
@@ -667,8 +765,17 @@
                         <visible>false</visible>
                     </outputlink>
                     <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
                         <name>A</name>
                         <visible>true</visible>
+                        <exposed>true</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>false</typecheck>
@@ -679,6 +786,7 @@
                     <valuelink>
                         <name>B</name>
                         <visible>false</visible>
+                        <exposed>true</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>false</typecheck>
@@ -686,6 +794,7 @@
                     <valuelink>
                         <name>Result</name>
                         <visible>true</visible>
+                        <exposed>true</exposed>
                         <isout>true</isout>
                         <allowmultiple>true</allowmultiple>
                         <typecheck>false</typecheck>
@@ -754,14 +863,31 @@
                         </link>
                     </outputlink>
                     <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
                         <name>Delay</name>
                         <visible>true</visible>
+                        <exposed>true</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>false</typecheck>
                         <link>
                             <id>2553c4e8-6a5b-469c-9719-b44ae6f8d144</id>
                         </link>
+                    </valuelink>
+                    <valuelink>
+                        <name>UseSimTime</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
                     </valuelink>
                 </node>
             </actionnodes>
@@ -797,6 +923,14 @@
                         <name>Value</name>
                         <double>2</double>
                     </property>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
                 </node>
                 <node>
                     <name>Reference</name>
@@ -832,9 +966,13 @@
                     <valuelink>
                         <name>Ref</name>
                         <visible>true</visible>
+                        <exposed>false</exposed>
                         <isout>true</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>false</typecheck>
+                        <link>
+                            <id>bb68d7bf-4a16-4922-9f5c-d3d1b1857d31</id>
+                        </link>
                     </valuelink>
                 </node>
             </valuenodes>
@@ -904,10 +1042,27 @@
                         </link>
                     </outputlink>
                     <valuelink>
+                        <name>TriggerCount</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
                         <name>Instigator</name>
                         <visible>false</visible>
+                        <exposed>true</exposed>
                         <isout>false</isout>
                         <allowmultiple>true</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>EventName</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
                     </valuelink>
                 </node>
@@ -957,8 +1112,17 @@
                         </link>
                     </outputlink>
                     <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
                         <name>EventName</name>
                         <visible>false</visible>
+                        <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
@@ -1020,8 +1184,17 @@
                         <visible>false</visible>
                     </outputlink>
                     <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
                         <name>A</name>
                         <visible>true</visible>
+                        <exposed>true</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>false</typecheck>
@@ -1032,6 +1205,7 @@
                     <valuelink>
                         <name>B</name>
                         <visible>false</visible>
+                        <exposed>true</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>false</typecheck>
@@ -1093,8 +1267,17 @@
                         <visible>false</visible>
                     </outputlink>
                     <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
                         <name>A</name>
                         <visible>false</visible>
+                        <exposed>true</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>false</typecheck>
@@ -1102,6 +1285,7 @@
                     <valuelink>
                         <name>B</name>
                         <visible>false</visible>
+                        <exposed>true</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>false</typecheck>
@@ -1109,6 +1293,7 @@
                     <valuelink>
                         <name>Result</name>
                         <visible>true</visible>
+                        <exposed>true</exposed>
                         <isout>true</isout>
                         <allowmultiple>true</allowmultiple>
                         <typecheck>false</typecheck>
@@ -1153,6 +1338,7 @@
                     <valuelink>
                         <name>Ref</name>
                         <visible>true</visible>
+                        <exposed>false</exposed>
                         <isout>false</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>false</typecheck>
@@ -1195,9 +1381,13 @@
                     <valuelink>
                         <name>Ref</name>
                         <visible>true</visible>
+                        <exposed>false</exposed>
                         <isout>true</isout>
                         <allowmultiple>false</allowmultiple>
                         <typecheck>false</typecheck>
+                        <link>
+                            <id>77d3e2f8-a576-4d99-9d5c-ddf4c1dda1f2</id>
+                        </link>
                     </valuelink>
                 </node>
             </valuenodes>

@@ -125,15 +125,24 @@ namespace dtDirector
          if (UsesInstigator())
          {
             int count = GetPropertyCount("Instigator");
+
+            // If our count is 0 then we are connected to an empty array,
+            // If our count is greater than 0 then we are connected to multiple
+            // values.  Either case, the instigator will be valid.
+            if (count != 1)
+            {
+               bValidValue = true;
+            }
+
             for (int index = 0; index < count; index++)
             {
-               // The test is valid if we have valid connections
-               // to the instigator link.
-               bValidValue = true;
-
                dtCore::UniqueId id = GetActorID("Instigator", index);
                if (id.ToString() != "")
                {
+                  // The test is valid if we have valid connections
+                  // to the instigator link.
+                  bValidValue = true;
+
                   // Can't do proper matching if we have no instigator.
                   if (!instigator || instigator->ToString().empty()) break;
 
