@@ -140,14 +140,16 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProperty* ValueNode::GetProperty()
+   dtDAL::ActorProperty* ValueNode::GetProperty(ValueNode** outNode)
    {
-      return GetProperty(0);
+      return GetProperty(0, outNode);
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProperty* ValueNode::GetProperty(int index)
+   dtDAL::ActorProperty* ValueNode::GetProperty(int index, ValueNode** outNode)
    {
+      if (outNode) *outNode = this;
+
       return mProperty;
    }
 

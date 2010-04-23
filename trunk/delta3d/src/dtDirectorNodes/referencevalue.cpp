@@ -131,19 +131,19 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProperty* ReferenceValue::GetProperty(const std::string& name, int index)
+   dtDAL::ActorProperty* ReferenceValue::GetProperty(const std::string& name, int index, ValueNode** outNode)
    {
       if (mValues.size())
       {
-         dtDAL::ActorProperty* prop = mValues[0].GetProperty(index);
+         dtDAL::ActorProperty* prop = mValues[0].GetProperty(index, outNode);
          if (prop && prop->GetName() == name) return prop;
       }
 
-      return Node::GetProperty(name, index);
+      return Node::GetProperty(name, index, outNode);
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProperty* ReferenceValue::GetProperty(int index)
+   dtDAL::ActorProperty* ReferenceValue::GetProperty(int index, ValueNode** outNode)
    {
       UpdateReference();
 
@@ -151,11 +151,11 @@ namespace dtDirector
       {
          if (mValues[0].GetLinks().size())
          {
-            return mValues[0].GetLinks()[0]->GetProperty(index);
+            return mValues[0].GetLinks()[0]->GetProperty(index, outNode);
          }
       }
 
-      return ValueNode::GetProperty(index);
+      return ValueNode::GetProperty(index, outNode);
    }
 
    //////////////////////////////////////////////////////////////////////////

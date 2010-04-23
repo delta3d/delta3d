@@ -70,10 +70,10 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProperty* ArrayValueNode::GetProperty(int index)
+   dtDAL::ActorProperty* ArrayValueNode::GetProperty(int index, ValueNode **outNode)
    {
       mPropertyIndex = index;
-      return ValueNode::GetProperty(index);
+      return ValueNode::GetProperty(index, outNode);
    }
 
    ////////////////////////////////////////////////////////////////////////////////

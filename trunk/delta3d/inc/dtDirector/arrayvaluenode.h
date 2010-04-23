@@ -81,11 +81,12 @@ namespace dtDirector
       /**
        * Retrieves the property for this value.
        *
-       * @param[in]  index  The property index, in case this is an array value.
+       * @param[in]   index    The property index, in case this is an array value.
+       * @param[out]  outNode  The owner node of the retrieved property.
        *
        * @return  The property.
        */
-      virtual dtDAL::ActorProperty* GetProperty(int index);
+      virtual dtDAL::ActorProperty* GetProperty(int index, ValueNode** outNode = NULL);
 
       /**
        * Retrieves the total number of values linked to a property.
