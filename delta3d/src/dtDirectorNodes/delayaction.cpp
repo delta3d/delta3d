@@ -119,9 +119,6 @@ namespace dtDirector
                }
             }
 
-            // Continue the timer.
-            mElapsedTime += elapsedTime;
-
             // Test if the desired time has elapsed.
             result = true;
             if (mElapsedTime >= mGoalTime)
@@ -136,6 +133,10 @@ namespace dtDirector
                // Return false so this node does not remain active.
                result = false;
             }
+
+            // Continue the timer (force at least one update before this node
+            // can be completed to ensure that it will break any chain).
+            mElapsedTime += elapsedTime;
 
             // return true to keep this node active in the current thread.
             return result;
