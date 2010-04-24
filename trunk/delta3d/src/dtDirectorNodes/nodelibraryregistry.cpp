@@ -37,6 +37,7 @@
 #include <dtDirectorNodes/setarrayaction.h>
 #include <dtDirectorNodes/getarrayaction.h>
 #include <dtDirectorNodes/getarraysizeaction.h>
+#include <dtDirectorNodes/removearrayaction.h>
 #include <dtDirectorNodes/getactorpropertyaction.h>
 #include <dtDirectorNodes/setactorpropertyaction.h>
 #include <dtDirectorNodes/operationaction.h>
@@ -102,6 +103,7 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::SET_ARRAY_VALUE_ACTION_NODE_TYPE(       new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Set Array Value",           "General",     "Operations",  "Copies a value into an index of an array value."));
    RefPtr<NodeType> NodeLibraryRegistry::GET_ARRAY_VALUE_ACTION_NODE_TYPE(       new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Get Array Value",           "General",     "Operations",  "Retrieves the value of an array index."));
    RefPtr<NodeType> NodeLibraryRegistry::GET_ARRAY_SIZE_ACTION_NODE_TYPE(        new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Get Array Size",            "General",     "Operations",  "Retrieves the total size of an array."));
+   RefPtr<NodeType> NodeLibraryRegistry::REMOVE_ARRAY_VALUE_ACTION_NODE_TYPE(    new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Remove Array Value",        "General",     "Operations",  "Removes an index from an array."));
    RefPtr<NodeType> NodeLibraryRegistry::GET_ACTOR_PROPERTY_ACTION_NODE_TYPE(    new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Get Actor Property",        "General",     "Operations",  "Retrieves the value of a property from an actor."));
    RefPtr<NodeType> NodeLibraryRegistry::SET_ACTOR_PROPERTY_ACTION_NODE_TYPE(    new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Set Actor Property",        "General",     "Operations",  "Sets the value of a property from an actor."));
    RefPtr<NodeType> NodeLibraryRegistry::OPERATION_ACTION_NODE_TYPE(             new dtDirector::NodeType(dtDirector::NodeType::ACTION_NODE, "Binary Operation",          "General",     "Operations",  "Performs a simple operation between two values A and B and outputs to Result."));
@@ -167,6 +169,7 @@ namespace dtDirector
       mNodeFactory->RegisterType<SetArrayAction>(SET_ARRAY_VALUE_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<GetArrayAction>(GET_ARRAY_VALUE_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<GetArraySizeAction>(GET_ARRAY_SIZE_ACTION_NODE_TYPE.get());
+      mNodeFactory->RegisterType<RemoveArrayAction>(REMOVE_ARRAY_VALUE_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<GetActorPropertyAction>(GET_ACTOR_PROPERTY_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<SetActorPropertyAction>(SET_ACTOR_PROPERTY_ACTION_NODE_TYPE.get());
       mNodeFactory->RegisterType<OperationAction>(OPERATION_ACTION_NODE_TYPE.get());
