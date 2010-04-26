@@ -410,13 +410,9 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::PreFrame(double deltaSimTime, double deltaRealTime)
    {
-      // statistics stuff.
-      //  stats information used to track statistics per fragment (usually about 1 second)
-      dtCore::Timer_t frameTickStart(0);
-      if (mGMImpl->mGMStatistics.mStatisticsInterval > 0)
-      {
-         frameTickStart = mGMImpl->mGMStatistics.mStatsTickClock.Tick();
-      }
+      // information used to track statistics over a fragment of time (ex 30 seconds)
+      dtCore::Timer_t frameTickStart = mGMImpl->mGMStatistics.mStatsTickClock.Tick();
+      //frameTickStart = mGMImpl->mGMStatistics.mStatsTickClock.Tick();
 
       DoSendNetworkMessages();
 
@@ -455,6 +451,7 @@ namespace dtGame
 
       RemoveDeletedActors();
 
+      // End the stats for this frame.
       mGMImpl->mGMStatistics.FragmentTimeDump(frameTickStart, *this, mGMImpl->mLogger);
    }
 
