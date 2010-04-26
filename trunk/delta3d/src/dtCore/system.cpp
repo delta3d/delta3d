@@ -57,10 +57,7 @@ namespace dtCore
       void StartStatTimer()
       {
          // Call at the beginning of a section.  Call before calling EndStatTimer()
-         if (mStats != NULL)
-         {
-            mTimerStart = mTickClock.Tick();
-         }
+         mTimerStart = mTickClock.Tick();
       }
 
       /////////////////////////////////////////////////////////////////
@@ -119,10 +116,10 @@ namespace dtCore
       , mFrameTime(1.0/60.0)
       , mTimeScale(1.0)
       , mMaxTimeBetweenDraws(30000)
-      , mAccumulationTime(0.0)
+      //, mAccumulationTime(0.0) // Cruft. Delete when removed from system.h
       , mSystemStages(STAGES_DEFAULT)
       , mUseFixedTimeStep(false)
-      , mAccumulateLastRealDt(false)
+      //, mAccumulateLastRealDt(false) // cruft. Delete when removed from system.h
       , mRunning(false)
       , mShutdownOnWindowClose(true)
       , mPaused(false)
@@ -349,24 +346,24 @@ namespace dtCore
          mWasPaused = false;
       }
 
-      if (mCorrectSimulationTime + 0.001f < mSimulationTime + simFrameTime)
+      // If ahead enough that we could draw and still be ahead, then just waste time (do nothing in a loop)
+      double previousDrawTime = mSystemImpl->mSystemStageTimes[System::STAGE_FRAME] / 1000.0;
+      if (mCorrectSimulationTime + previousDrawTime < mSimulationTime + simFrameTime)
       {
-         // we tried a sleep here, but even passing 1 millisecond was to long.
-         mAccumulateLastRealDt = true;
 #ifndef DELTA_WIN32
-         AppSleep(1);
+         AppSleep(1); // In Linux, it seems to sleep for 1 like it should
+#else
+         AppSleep(0); // in Windows, it sleeps a LONG time so we just 'yield'
 #endif
          return;
       }
 
       mSystemImpl->mTotalFrameTime = 0.0;  // reset frame timer for stats
-      mAccumulateLastRealDt = false;
 
       mSimulationTime      += simFrameTime;
       mSimTimeSinceStartup += simFrameTime;
       mSimulationClockTime += Timer_t(simFrameTime * 1000000);
-
-      //const double realFrameTime = realDT + mAccumulationTime;
+ 
       const double realFrameTime = mFrameTime;
       EventTraversal(simFrameTime, realFrameTime);
       PostEventTraversal(simFrameTime, realFrameTime);
@@ -388,8 +385,6 @@ namespace dtCore
          mSystemImpl->SetLastStatTimer(MESSAGE_FRAME, System::STAGE_FRAME);
       }
       PostFrame(simFrameTime, realFrameTime);
-
-      mAccumulationTime = 0;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -400,10 +395,6 @@ namespace dtCore
       mTickClockTime = mClock.Tick();
 
       const double realDT = mClock.DeltaSec(lastClockTime, mTickClockTime);
-      if (mAccumulateLastRealDt)
-      {
-         mAccumulationTime += mClock.DeltaSec(lastClockTime, mTickClockTime);
-      }
 
       if (mPaused)
       {
@@ -478,8 +469,6 @@ namespace dtCore
    ////////////////////////////////////////////////////////////////////////////////
    void System::InitVars()
    {
-      mAccumulationTime = 0;
-      mAccumulateLastRealDt = false;
       mTickClockTime = mClock.Tick();
       time_t realTime;
       time(&realTime);
