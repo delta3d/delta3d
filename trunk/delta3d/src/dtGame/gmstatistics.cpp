@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * Allen Danklefsen
+ * Curtiss Murphy, Allen Danklefsen
  */
 
 #include <prefix/dtgameprefix.h>
@@ -46,6 +46,7 @@ namespace dtGame
       , mPrintFileToConsole(false)
       , mDoStatsOnTheComponents(false)
       , mDoStatsOnTheActors(false)
+      , mDoStatsForDisplay(false)
    {
 
    }
@@ -72,13 +73,19 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////////////
    bool GMStatistics::ShouldWeLogActors() const
    {
-      return (mStatisticsInterval > 0 && mDoStatsOnTheActors);
+      return (ShouldWeLogStatsForDisplay() || (mStatisticsInterval > 0 && mDoStatsOnTheActors));
    }
 
    //////////////////////////////////////////////////////////////////////////////
    bool GMStatistics::ShouldWeLogComponents() const
    {
-      return (mStatisticsInterval > 0 && mDoStatsOnTheComponents);
+      return (ShouldWeLogStatsForDisplay() || (mStatisticsInterval > 0 && mDoStatsOnTheComponents));
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   bool GMStatistics::ShouldWeLogStatsForDisplay() const
+   {
+      return mDoStatsForDisplay;
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -328,8 +335,9 @@ namespace dtGame
    void GMStatistics::FragmentTimeDump(dtCore::Timer_t& frameTickStart, const GameManager& ourGm, 
       dtUtil::Log* logger)
    {
-      // STATISTICS - If fragment time occured, dump out the GM statistics
-      if (mStatisticsInterval > 0)
+      osg::Stats* stats = dtCore::System::GetInstance().GetStats();
+      // If ANYONE is interested in the stats, we have some work to do.
+      if (ShouldWeLogStatsForDisplay() || ShouldWeLogActors() || ShouldWeLogComponents())
       {
          mStatsNumFrames++;
 
@@ -342,9 +350,7 @@ namespace dtGame
          mStatsCumGMProcessTime += timeForThisTick;
 
          // Update the visual statistics used when stats is on - via application.SetNextStatisticsType()
-         // See dtCore::System.cpp and dtCore::Stats.cpp for more info
-         osg::Stats* stats = dtCore::System::GetInstance().GetStats();
-         if (stats != NULL && stats->collectStats("GMTotal"))
+         if (ShouldWeLogStatsForDisplay() && stats != NULL)
          {
             float timeThisTickInMillis = timeForThisTick / 1000.0f; // timethis tick is in micros.
             stats->setAttribute(stats->getLatestFrameNumber(), "GMTotal", timeThisTickInMillis);
@@ -352,25 +358,38 @@ namespace dtGame
             stats->setAttribute(stats->getLatestFrameNumber(), "GMActors", actorTimeThisTickInMillis);
             mStatsCurFrameActorTotal = 0.0f; // reset for next frame.
             stats->setAttribute(stats->getLatestFrameNumber(), "GMNumActors", ourGm.GetNumAllActors());
-
             float compTimeThisTickInMillis = mStatsCurFrameCompTotal * 1000.f; // comp total is in secs.
             stats->setAttribute(stats->getLatestFrameNumber(), "GMComponents", compTimeThisTickInMillis);
             mStatsCurFrameCompTotal = 0.0f; // reset for next frame.
             //stats->setAttribute(stats->getLatestFrameNumber(), "GMNumComponents", ourGm.GetNumAllActors());
          }
 
-         // handle weird case of wrap around (just to be safe)
-         if (fragmentDelta < 0)
+         // If we are doing print outs or console dumps.
+         if (mStatisticsInterval > 0)
          {
-            mStatsLastFragmentDump = frameTickStop;
-         }
-         else if (fragmentDelta >= (mStatisticsInterval * 1000000))
-         {
-            dtCore::Timer_t realTimeElapsed = dtCore::Timer_t(fragmentDelta);
+            // handle weird case of wrap around (just to be safe)
+            if (fragmentDelta < 0)
+            {
+               mStatsLastFragmentDump = frameTickStop;
+            }
+            else if (fragmentDelta >= (mStatisticsInterval * 1000000))
+            {
+               dtCore::Timer_t realTimeElapsed = dtCore::Timer_t(fragmentDelta);
 
-            DebugStatisticsPrintOut(realTimeElapsed, ourGm, logger);
-            mStatsLastFragmentDump  = frameTickStop;
+               DebugStatisticsPrintOut(realTimeElapsed, ourGm, logger);
+               mStatsLastFragmentDump  = frameTickStop;
+            }
          }
       }
+
+      // If the user turned on visual stats, then we will start tracking stats next frame.
+      // See dtCore::System.cpp and dtCore::Stats.cpp - use via application.SetNextStatisticsType()
+      bool gmVisualStatsAreOn = (stats != NULL && stats->collectStats("GMTotal"));
+      // stats are now off, but were on before and we aren't logging for any other reason
+      if (!gmVisualStatsAreOn && mDoStatsForDisplay && !ShouldWeLogComponents() && !ShouldWeLogActors())  
+      {
+         mDebugLoggerInformation.clear();
+      }
+      mDoStatsForDisplay = gmVisualStatsAreOn;
    }
 }

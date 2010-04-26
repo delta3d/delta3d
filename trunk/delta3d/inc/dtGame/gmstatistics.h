@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * Allen Danklefsen
+ * Curtiss Murphy, Allen Danklefsen
  */
 
 #ifndef GM_STATISTICS
@@ -107,6 +107,9 @@ namespace dtGame
 
          bool ShouldWeLogToConsole() const;
 
+         /// Returns true if the stats used by System are currently on so we can compute the values
+         bool ShouldWeLogStatsForDisplay() const;
+
          ///If fragment time occured, dump out the GM statistics
          void FragmentTimeDump(dtCore::Timer_t& frameTickStart, const GameManager& ourGm, dtUtil::Log* logger);
 
@@ -153,6 +156,7 @@ namespace dtGame
          bool                 mPrintFileToConsole;                                  ///< if the information goes to console or file
          bool                 mDoStatsOnTheComponents;                              ///< do we fill in the information for the components.
          bool                 mDoStatsOnTheActors;                                  ///< Do we fill in information for the actors
+         bool                 mDoStatsForDisplay;                                   ///< Do we compute stats for the sake of visual stat tracking?
 
          std::map<dtCore::UniqueId, dtCore::RefPtr<LogDebugInformation> > mDebugLoggerInformation; ///< hold onto all the information.
          ////////////////////////////////////////////////
