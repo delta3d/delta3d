@@ -354,12 +354,10 @@ namespace dtCore
       double mFrameTime;
       double mTimeScale;
       double mMaxTimeBetweenDraws;
-      double mAccumulationTime;
 
       SystemStageFlags mSystemStages;
 
       bool mUseFixedTimeStep;
-      bool mAccumulateLastRealDt;
       bool mRunning; ///<Are we currently running?
       bool mShutdownOnWindowClose;
       bool mPaused;

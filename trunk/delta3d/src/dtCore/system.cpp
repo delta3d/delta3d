@@ -116,10 +116,8 @@ namespace dtCore
       , mFrameTime(1.0/60.0)
       , mTimeScale(1.0)
       , mMaxTimeBetweenDraws(30000)
-      //, mAccumulationTime(0.0) // Cruft. Delete when removed from system.h
       , mSystemStages(STAGES_DEFAULT)
       , mUseFixedTimeStep(false)
-      //, mAccumulateLastRealDt(false) // cruft. Delete when removed from system.h
       , mRunning(false)
       , mShutdownOnWindowClose(true)
       , mPaused(false)
