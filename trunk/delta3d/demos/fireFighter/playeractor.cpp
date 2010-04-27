@@ -29,6 +29,7 @@
 #include <fireFighter/fireactor.h>
 #include <dtDAL/actorproxyicon.h>
 #include <dtDAL/gameeventmanager.h>
+#include <dtDAL/functor.h>
 #include <dtCore/isector.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/camera.h>

@@ -30,6 +30,7 @@
 
 #include <dtDAL/gameeventmanager.h>
 #include <dtDAL/actorproperty.h>
+#include <dtDAL/functor.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <fireFighter/messagetype.h>
 #include <osg/MatrixTransform>

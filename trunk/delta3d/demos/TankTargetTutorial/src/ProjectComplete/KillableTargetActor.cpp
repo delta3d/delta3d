@@ -27,6 +27,7 @@
 #include "KillableTargetActor.h"
 #include "TargetChanged.h"
 #include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/functor.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/actorupdatemessage.h>
 #include <dtGame/basemessages.h>

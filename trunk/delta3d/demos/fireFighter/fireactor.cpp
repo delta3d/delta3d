@@ -39,6 +39,7 @@
 #include <dtDAL/gameeventmanager.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/basemessages.h>
+#include <dtDAL/functor.h>
 
 using dtCore::RefPtr;
 

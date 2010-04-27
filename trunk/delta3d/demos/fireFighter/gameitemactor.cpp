@@ -22,6 +22,7 @@
 #include <fireFighter/gameitemactor.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/resourceactorproperty.h>
+#include <dtDAL/functor.h>
 #include <dtAudio/audiomanager.h>
 #include <dtGame/gamemanager.h>
 #include <dtCore/scene.h>

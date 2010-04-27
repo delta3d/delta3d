@@ -29,6 +29,7 @@
 #include "KillableTargetActor.h"
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actorproperty.h>
+#include <dtDAL/functor.h>
 #include <dtCore/loadable.h>
 #include <dtCore/isector.h>
 #include <dtUtil/nodecollector.h>
