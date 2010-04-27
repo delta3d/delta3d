@@ -427,13 +427,13 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   std::vector<std::string> FenceActor::GetPostResourceArray(void) const
+   std::vector<dtDAL::ResourceDescriptor> FenceActor::GetPostResourceArray(void) const
    {
       return mPostResourceList;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void FenceActor::SetPostResourceArray(const std::vector<std::string>& value)
+   void FenceActor::SetPostResourceArray(const std::vector<dtDAL::ResourceDescriptor>& value)
    {
       mPostResourceList = value;
 
@@ -441,13 +441,13 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   std::vector<std::string> FenceActor::GetSegmentResourceArray(void) const
+   std::vector<dtDAL::ResourceDescriptor> FenceActor::GetSegmentResourceArray(void) const
    {
       return mSegmentResourceList;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void FenceActor::SetSegmentResourceArray(const std::vector<std::string>& value)
+   void FenceActor::SetSegmentResourceArray(const std::vector<dtDAL::ResourceDescriptor>& value)
    {
       mSegmentResourceList = value;
 
@@ -500,7 +500,11 @@ namespace dtActors
       // Now find the mesh matching this index.
       if (meshIndex < (int)mPostResourceList.size())
       {
-         return mPostResourceList[meshIndex];
+         dtDAL::ResourceDescriptor& rd = mPostResourceList[meshIndex];
+         if (rd != dtDAL::ResourceDescriptor::NULL_RESOURCE)
+         {
+            return dtDAL::Project::GetInstance().GetResourcePath(rd);
+         }
       }
 
       return "";
@@ -618,7 +622,11 @@ namespace dtActors
       // Now find the mesh matching this index.
       if (textureIndex < (int)mSegmentResourceList.size())
       {
-         return mSegmentResourceList[textureIndex];
+         dtDAL::ResourceDescriptor& rd = mSegmentResourceList[textureIndex];
+         if (rd != dtDAL::ResourceDescriptor::NULL_RESOURCE)
+         {
+            return dtDAL::Project::GetInstance().GetResourcePath(rd);
+         }
       }
 
       return "";
@@ -1025,8 +1033,9 @@ namespace dtActors
             if (!textureName.empty())
             {
                // set up the texture state.
-               dtDAL::ResourceDescriptor descriptor = dtDAL::ResourceDescriptor(textureName);
-               geomData->mSegTexture->setImage(osgDB::readImageFile(dtDAL::Project::GetInstance().GetResourcePath(descriptor)));
+               //dtDAL::ResourceDescriptor descriptor = dtDAL::ResourceDescriptor(textureName);
+               //geomData->mSegTexture->setImage(osgDB::readImageFile(dtDAL::Project::GetInstance().GetResourcePath(descriptor)));
+               geomData->mSegTexture->setImage(osgDB::readImageFile(textureName));
             }
 
             // Make sure the geometry node knows to re-calculate the bounding area and display lists.
@@ -1099,14 +1108,14 @@ namespace dtActors
 
       // Post Resources Array
       dtDAL::ResourceActorProperty* postResourceProp =
-         new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::STATIC_MESH,
+         new dtDAL::ResourceActorProperty(dtDAL::DataType::STATIC_MESH,
          "PostMeshResource", "Post Mesh",
          dtDAL::MakeFunctor(*this, &FenceActorProxy::SetPostMesh),
          dtDAL::MakeFunctorRet(*this, &FenceActorProxy::GetPostMesh),
          "Defines the mesh used to represent a fence post.", "Fence");
 
       dtDAL::ArrayActorPropertyBase* postResourceArrayProp =
-         new dtDAL::ArrayActorProperty<std::string>(
+         new dtDAL::ArrayActorProperty<dtDAL::ResourceDescriptor>(
          "PostMeshArray", "Post Meshes",
          "Defines the meshes used to represent the fence posts.",
          dtDAL::MakeFunctor(*this, &FenceActorProxy::SetPostResourceIndex),
@@ -1118,14 +1127,14 @@ namespace dtActors
 
       // Segment Resources Array
       dtDAL::ResourceActorProperty* segmentResourceProp =
-         new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::TEXTURE,
+         new dtDAL::ResourceActorProperty(dtDAL::DataType::TEXTURE,
          "SegmentTextureResource", "Segment Texture",
          dtDAL::MakeFunctor(*this, &FenceActorProxy::SetSegmentTexture),
          dtDAL::MakeFunctorRet(*this, &FenceActorProxy::GetSegmentTexture),
          "Defines the texture used to represent a fence segment.", "Fence");
 
       dtDAL::ArrayActorPropertyBase* segmentResourceArrayProp =
-         new dtDAL::ArrayActorProperty<std::string>(
+         new dtDAL::ArrayActorProperty<dtDAL::ResourceDescriptor>(
          "SegmentTextureArray", "Segment Textures",
          "Defines the textures used to represent the fence segments.",
          dtDAL::MakeFunctor(*this, &FenceActorProxy::SetSegmentResourceIndex),
@@ -1300,73 +1309,73 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   std::string FenceActorProxy::GetDefaultPost(void)
+   dtDAL::ResourceDescriptor FenceActorProxy::GetDefaultPost(void)
    {
-      return "";
+      return dtDAL::ResourceDescriptor::NULL_RESOURCE;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   std::string FenceActorProxy::GetDefaultSegment(void)
+   dtDAL::ResourceDescriptor FenceActorProxy::GetDefaultSegment(void)
    {
-      return "";
+      return dtDAL::ResourceDescriptor::NULL_RESOURCE;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void FenceActorProxy::SetPostMesh(const std::string& fileName)
+   void FenceActorProxy::SetPostMesh(const dtDAL::ResourceDescriptor& value)
    {
       FenceActor* actor = NULL;
       GetActor(actor);
 
-      std::vector<std::string> postArray = actor->GetPostResourceArray();
+      std::vector<dtDAL::ResourceDescriptor> postArray = actor->GetPostResourceArray();
       if (mPostResourceIndex >= 0 && mPostResourceIndex < (int)postArray.size())
       {
-         postArray[mPostResourceIndex] = fileName;
+         postArray[mPostResourceIndex] = value;
          actor->SetPostResourceArray(postArray);
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   std::string FenceActorProxy::GetPostMesh()
+   dtDAL::ResourceDescriptor FenceActorProxy::GetPostMesh()
    {
       FenceActor* actor = NULL;
       GetActor(actor);
 
-      std::vector<std::string> postArray = actor->GetPostResourceArray();
+      std::vector<dtDAL::ResourceDescriptor> postArray = actor->GetPostResourceArray();
       if (mPostResourceIndex >= 0 && mPostResourceIndex < (int)postArray.size())
       {
          return postArray[mPostResourceIndex];
       }
 
-      return "";
+      return dtDAL::ResourceDescriptor::NULL_RESOURCE;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void FenceActorProxy::SetSegmentTexture(const std::string& fileName)
+   void FenceActorProxy::SetSegmentTexture(const dtDAL::ResourceDescriptor& value)
    {
       FenceActor* actor = NULL;
       GetActor(actor);
 
-      std::vector<std::string> segmentArray = actor->GetSegmentResourceArray();
+      std::vector<dtDAL::ResourceDescriptor> segmentArray = actor->GetSegmentResourceArray();
       if (mSegmentResourceIndex >= 0 && mSegmentResourceIndex < (int)segmentArray.size())
       {
-         segmentArray[mSegmentResourceIndex] = fileName;
+         segmentArray[mSegmentResourceIndex] = value;
          actor->SetSegmentResourceArray(segmentArray);
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   std::string FenceActorProxy::GetSegmentTexture()
+   dtDAL::ResourceDescriptor FenceActorProxy::GetSegmentTexture()
    {
       FenceActor* actor = NULL;
       GetActor(actor);
 
-      std::vector<std::string> segmentArray = actor->GetSegmentResourceArray();
+      std::vector<dtDAL::ResourceDescriptor> segmentArray = actor->GetSegmentResourceArray();
       if (mSegmentResourceIndex >= 0 && mSegmentResourceIndex < (int)segmentArray.size())
       {
          return segmentArray[mSegmentResourceIndex];
       }
 
-      return "";
+      return dtDAL::ResourceDescriptor::NULL_RESOURCE;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
