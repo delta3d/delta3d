@@ -37,7 +37,6 @@
 #include <dtDAL/datatype.h>
 #include <dtDAL/gameevent.h>
 #include <dtDAL/export.h>
-#include <dtDAL/functor.h>
 #include <dtDAL/map.h>
 // added because this header is going to become a header of headers.
 #include <dtDAL/resourceactorproperty.h>

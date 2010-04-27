@@ -48,40 +48,40 @@ namespace dtHLAGM
       mThirdDimensionEnabled(false)
    {
       AddProperty(new dtDAL::LongActorProperty(PROP_SECOND_DIMENSION_MIN, PROP_SECOND_DIMENSION_MIN,
-            dtDAL::MakeFunctor(*this, &DDMMultiEnumeratedCalculator::SetSecondDimensionMinimum),
-            dtDAL::MakeFunctorRet(*this, &DDMMultiEnumeratedCalculator::GetSecondDimensionMinimum)
+            dtDAL::LongActorProperty::SetFuncType(this, &DDMMultiEnumeratedCalculator::SetSecondDimensionMinimum),
+            dtDAL::LongActorProperty::GetFuncType(this, &DDMMultiEnumeratedCalculator::GetSecondDimensionMinimum)
             ));
       AddProperty(new dtDAL::LongActorProperty(PROP_SECOND_DIMENSION_MAX, PROP_SECOND_DIMENSION_MAX,
-            dtDAL::MakeFunctor(*this, &DDMMultiEnumeratedCalculator::SetSecondDimensionMaximum),
-            dtDAL::MakeFunctorRet(*this, &DDMMultiEnumeratedCalculator::GetSecondDimensionMaximum)
+            dtDAL::LongActorProperty::SetFuncType(this, &DDMMultiEnumeratedCalculator::SetSecondDimensionMaximum),
+            dtDAL::LongActorProperty::GetFuncType(this, &DDMMultiEnumeratedCalculator::GetSecondDimensionMaximum)
             ));
 
       AddProperty(new dtDAL::LongActorProperty(PROP_SECOND_DIMENSION_VALUE, PROP_SECOND_DIMENSION_VALUE,
-            dtDAL::MakeFunctor(*this, &DDMMultiEnumeratedCalculator::SetSecondDimensionValue),
-            dtDAL::MakeFunctorRet(*this, &DDMMultiEnumeratedCalculator::GetSecondDimensionValue)
+            dtDAL::LongActorProperty::SetFuncType(this, &DDMMultiEnumeratedCalculator::SetSecondDimensionValue),
+            dtDAL::LongActorProperty::GetFuncType(this, &DDMMultiEnumeratedCalculator::GetSecondDimensionValue)
             ));
       AddProperty(new dtDAL::BooleanActorProperty(PROP_SECOND_DIMENSION_ENABLED, PROP_SECOND_DIMENSION_ENABLED,
-            dtDAL::MakeFunctor(*this, &DDMMultiEnumeratedCalculator::SetSecondDimensionEnabled),
-            dtDAL::MakeFunctorRet(*this, &DDMMultiEnumeratedCalculator::IsSecondDimensionEnabled)
+            dtDAL::BooleanActorProperty::SetFuncType(this, &DDMMultiEnumeratedCalculator::SetSecondDimensionEnabled),
+            dtDAL::BooleanActorProperty::GetFuncType(this, &DDMMultiEnumeratedCalculator::IsSecondDimensionEnabled)
             ));
 
       AddProperty(new dtDAL::LongActorProperty(PROP_THIRD_DIMENSION_MIN, PROP_THIRD_DIMENSION_MIN,
-            dtDAL::MakeFunctor(*this, &DDMMultiEnumeratedCalculator::SetThirdDimensionMinimum),
-            dtDAL::MakeFunctorRet(*this, &DDMMultiEnumeratedCalculator::GetThirdDimensionMinimum)
+            dtDAL::LongActorProperty::SetFuncType(this, &DDMMultiEnumeratedCalculator::SetThirdDimensionMinimum),
+            dtDAL::LongActorProperty::GetFuncType(this, &DDMMultiEnumeratedCalculator::GetThirdDimensionMinimum)
             ));
       AddProperty(new dtDAL::LongActorProperty(PROP_THIRD_DIMENSION_MAX, PROP_THIRD_DIMENSION_MAX,
-            dtDAL::MakeFunctor(*this, &DDMMultiEnumeratedCalculator::SetThirdDimensionMaximum),
-            dtDAL::MakeFunctorRet(*this, &DDMMultiEnumeratedCalculator::GetThirdDimensionMaximum)
+            dtDAL::LongActorProperty::SetFuncType(this, &DDMMultiEnumeratedCalculator::SetThirdDimensionMaximum),
+            dtDAL::LongActorProperty::GetFuncType(this, &DDMMultiEnumeratedCalculator::GetThirdDimensionMaximum)
             ));
 
       AddProperty(new dtDAL::LongActorProperty(PROP_THIRD_DIMENSION_VALUE, PROP_THIRD_DIMENSION_VALUE,
-            dtDAL::MakeFunctor(*this, &DDMMultiEnumeratedCalculator::SetThirdDimensionValue),
-            dtDAL::MakeFunctorRet(*this, &DDMMultiEnumeratedCalculator::GetThirdDimensionValue)
+            dtDAL::LongActorProperty::SetFuncType(this, &DDMMultiEnumeratedCalculator::SetThirdDimensionValue),
+            dtDAL::LongActorProperty::GetFuncType(this, &DDMMultiEnumeratedCalculator::GetThirdDimensionValue)
             ));
 
       AddProperty(new dtDAL::BooleanActorProperty(PROP_THIRD_DIMENSION_ENABLED, PROP_THIRD_DIMENSION_ENABLED,
-            dtDAL::MakeFunctor(*this, &DDMMultiEnumeratedCalculator::SetThirdDimensionEnabled),
-            dtDAL::MakeFunctorRet(*this, &DDMMultiEnumeratedCalculator::IsThirdDimensionEnabled)
+            dtDAL::BooleanActorProperty::SetFuncType(this, &DDMMultiEnumeratedCalculator::SetThirdDimensionEnabled),
+            dtDAL::BooleanActorProperty::GetFuncType(this, &DDMMultiEnumeratedCalculator::IsThirdDimensionEnabled)
             ));
    }
 

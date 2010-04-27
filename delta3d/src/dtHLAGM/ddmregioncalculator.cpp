@@ -10,22 +10,22 @@ namespace dtHLAGM
    const std::string DDMRegionCalculator::PROP_THIRD_DIMENSION_NAME("Third Dimension Name");
 
    //////////////////////////////////////////////////////////////
-   DDMRegionCalculator::DDMRegionCalculator():
-      mFirstDimensionName("subspace"),
-      mSecondDimensionName("one"),
-      mThirdDimensionName("two")
+   DDMRegionCalculator::DDMRegionCalculator()
+   : mFirstDimensionName("subspace")
+   ,  mSecondDimensionName("one")
+   ,  mThirdDimensionName("two")
    {
       AddProperty(new dtDAL::StringActorProperty(PROP_FIRST_DIMENSION_NAME, PROP_FIRST_DIMENSION_NAME,
-            dtDAL::MakeFunctor(*this, &DDMRegionCalculator::SetFirstDimensionName),
-            dtDAL::MakeFunctorRet(*this, &DDMRegionCalculator::GetFirstDimensionNameByCopy)
+            dtDAL::StringActorProperty::SetFuncType(this, &DDMRegionCalculator::SetFirstDimensionName),
+            dtDAL::StringActorProperty::GetFuncType(this, &DDMRegionCalculator::GetFirstDimensionNameByCopy)
             ));
       AddProperty(new dtDAL::StringActorProperty(PROP_SECOND_DIMENSION_NAME, PROP_SECOND_DIMENSION_NAME,
-            dtDAL::MakeFunctor(*this, &DDMRegionCalculator::SetSecondDimensionName),
-            dtDAL::MakeFunctorRet(*this, &DDMRegionCalculator::GetSecondDimensionNameByCopy)
+            dtDAL::StringActorProperty::SetFuncType(this, &DDMRegionCalculator::SetSecondDimensionName),
+            dtDAL::StringActorProperty::GetFuncType(this, &DDMRegionCalculator::GetSecondDimensionNameByCopy)
             ));
       AddProperty(new dtDAL::StringActorProperty(PROP_THIRD_DIMENSION_NAME, PROP_THIRD_DIMENSION_NAME,
-            dtDAL::MakeFunctor(*this, &DDMRegionCalculator::SetThirdDimensionName),
-            dtDAL::MakeFunctorRet(*this, &DDMRegionCalculator::GetThirdDimensionNameByCopy)
+            dtDAL::StringActorProperty::SetFuncType(this, &DDMRegionCalculator::SetThirdDimensionName),
+            dtDAL::StringActorProperty::GetFuncType(this, &DDMRegionCalculator::GetThirdDimensionNameByCopy)
             ));
    }
 

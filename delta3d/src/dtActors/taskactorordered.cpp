@@ -22,6 +22,7 @@
 #include <dtActors/engineactorregistry.h>
 
 #include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/functor.h>
 
 namespace dtActors
 {

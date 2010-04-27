@@ -23,7 +23,6 @@
 #include <cassert>
 #include <dtGame/gameactor.h>
 #include <dtGame/gameactorproxy.h>
-#include <dtDAL/functor.h>
 #include <dtGame/invokable.h>
 #include <dtGame/messagetype.h>
 #include <dtGame/message.h>
@@ -74,7 +73,7 @@ void ActorComponent::RegisterForTicks()
    std::string tickInvokable = "Tick Local " + GetType().Get();
    if(!owner->GetGameActorProxy().GetInvokable(tickInvokable))
    {
-      owner->GetGameActorProxy().AddInvokable(*new Invokable(tickInvokable, dtDAL::MakeFunctor(*this, &ActorComponent::OnTickLocal)));
+      owner->GetGameActorProxy().AddInvokable(*new Invokable(tickInvokable, dtUtil::MakeFunctor(&ActorComponent::OnTickLocal, this)));
    }
    owner->GetGameActorProxy().RegisterForMessages(MessageType::TICK_LOCAL, tickInvokable);
 }

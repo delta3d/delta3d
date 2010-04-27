@@ -75,8 +75,8 @@ void ToolObjectMotionModel::OnMessage(MessageData *data)
 ////////////////////////////////////////////////////////////////////////////////
 void ToolObjectMotionModel::ResetGetMouseLineFunc(void)
 {
-   mGetMouseLineFunc = dtDAL::MakeFunctor(
-      *this, &ToolObjectMotionModel::DefaultGetMouseLineFunc);
+   mGetMouseLineFunc = dtUtil::MakeFunctor(
+      &ToolObjectMotionModel::DefaultGetMouseLineFunc, this);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -88,8 +88,8 @@ void ToolObjectMotionModel::SetGetMouseLineFunc(GetMouseLineFunc func)
 ////////////////////////////////////////////////////////////////////////////////
 void ToolObjectMotionModel::ResetObjectToScreenFunc(void)
 {
-   mObjectToScreenFunc = dtDAL::MakeFunctorRet(
-      *this, &ToolObjectMotionModel::DefaultGetObjectScreenCoordinates);
+   mObjectToScreenFunc = dtUtil::MakeFunctor(
+      &ToolObjectMotionModel::DefaultGetObjectScreenCoordinates, this);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

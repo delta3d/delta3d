@@ -22,6 +22,7 @@
 #ifndef DELTA_FUNCTOR
 #define DELTA_FUNCTOR
 
+#include <dtUtil/deprecationmgr.h>
 #include <dtUtil/functor.h>
 
 namespace dtDAL 
@@ -51,38 +52,40 @@ namespace dtDAL
     */
 
    template <typename CallType> inline 
-   dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType> 
+   DEPRECATE_FUNC dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType>
    MakeFunctor(CallType fun)
    {
       return dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType>(fun);
    }
    template <typename CallType, class PObj> inline 
-   dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType> 
+   DEPRECATE_FUNC dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType>
    MakeFunctor(PObj& pobj, CallType memfun)
    {
       return dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType>(&pobj, memfun);
    }
    template <typename CallType, class Fun> inline 
-   dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType> 
+   DEPRECATE_FUNC dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType>
    MakeFunctor(Fun const& fun)
    {
       return dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType>(fun);
    }
 
    template <typename CallType> inline 
-   dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType> 
+   DEPRECATE_FUNC dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType>
    MakeFunctorRet(CallType fun)
    {
       return dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType>(fun);
    }
+
    template <typename CallType, class PObj> inline 
    dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType> 
-   MakeFunctorRet(PObj& pobj, CallType memfun)
+   DEPRECATE_FUNC MakeFunctorRet(PObj& pobj, CallType memfun)
    {
       return dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType>(&pobj, memfun);
    }
+
    template <typename CallType, class Fun> inline 
-   dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType> 
+   DEPRECATE_FUNC dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType>
    MakeFunctorRet(Fun const& fun)
    {
       return dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType>(fun);

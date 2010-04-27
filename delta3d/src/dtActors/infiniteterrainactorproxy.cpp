@@ -21,6 +21,7 @@
 
 #include "dtActors/infiniteterrainactorproxy.h"
 #include "dtDAL/enginepropertytypes.h"
+#include <dtDAL/functor.h>
 
 using namespace dtDAL;
 using namespace dtCore;

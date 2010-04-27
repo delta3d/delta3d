@@ -149,10 +149,23 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////////
    void ActorComponentBase::InitComponents()
    {
-      // loop through all components and call their OnEnteredWorld method
-      for(ActorComponentMap::iterator iter = mComponents.begin(); iter != mComponents.end(); ++iter)
+      /*
+         Copy current list of components and iterate through that.
+         Otherwise, when actor components add other actor components to the actor
+         in their OnAddedToActor method, the OnAddedToActor method of that new component
+         would be called twice: once immediately (because actor is now in game),
+         and once when they are reached by iteration.
+      */
+      std::list<ActorComponent*> components;
+      for (ActorComponentMap::iterator iter = mComponents.begin(); iter != mComponents.end(); ++iter)
       {
-         ActorComponent& component = (*iter->second);
+         components.push_back(iter->second);
+      }
+
+      // loop through all components and call their OnAddedToActor method
+      for(std::list<ActorComponent*>::iterator iter = components.begin(); iter != components.end(); ++iter)
+      {
+         ActorComponent& component = (**iter);
          component.OnEnteredWorld();
       }
    }
@@ -160,10 +173,16 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////////
    void ActorComponentBase::ShutdownComponents()
    {
-      // loop through all components and call their OnEnteredWorld method
-      for(ActorComponentMap::iterator iter = mComponents.begin(); iter != mComponents.end(); ++iter)
+      std::list<ActorComponent*> components;
+      for (ActorComponentMap::iterator iter = mComponents.begin(); iter != mComponents.end(); ++iter)
       {
-         ActorComponent& component = (*iter->second);
+         components.push_back(iter->second);
+      }
+
+      // loop through all components and call their OnAddedToActor method
+      for(std::list<ActorComponent*>::iterator iter = components.begin(); iter != components.end(); ++iter)
+      {
+         ActorComponent& component = (**iter);
          component.OnRemovedFromWorld();
       }
    }

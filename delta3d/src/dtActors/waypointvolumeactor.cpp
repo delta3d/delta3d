@@ -122,16 +122,17 @@ namespace dtActors
    //////////////////////////////////////////////////////////////////////////////
    void WaypointVolumeActorProxy::BuildPropertyMap()
    {
-      const std::string GROUPNAME = "Spacing";
+      static const std::string GROUPNAME = "Spacing";
 
       dtDAL::TransformableActorProxy::BuildPropertyMap();
-      WaypointVolumeActor &volume = static_cast<WaypointVolumeActor &>(*GetActor());
+      WaypointVolumeActor* volume = NULL;
+      GetActor(volume);
 
       //Description...
       AddProperty(new dtDAL::FloatActorProperty("name","label",
-         dtDAL::MakeFunctor(volume, &WaypointVolumeActor::SetWaypointSpacing),
-         dtDAL::MakeFunctorRet(volume, &WaypointVolumeActor::GetWaypointSpacing),
-         "Sets/gets the spacing between waypoints in explorer tool.",GROUPNAME));
+               dtDAL::FloatActorProperty::SetFuncType(volume, &WaypointVolumeActor::SetWaypointSpacing),
+               dtDAL::FloatActorProperty::GetFuncType(volume, &WaypointVolumeActor::GetWaypointSpacing),
+               "Sets/gets the spacing between waypoints in explorer tool.",GROUPNAME));
    }
 
    //////////////////////////////////////////////////////////////////////////////

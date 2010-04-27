@@ -13,6 +13,8 @@
 #include <osgDB/ReadFile>
 #include <osg/CullFace>
 #include <osg/PolygonMode>
+#include <dtDAL/functor.h>
+
 
 namespace dtActors
 {

@@ -234,18 +234,20 @@ void TestPlayerProxy::BuildPropertyMap()
 {
    dtGame::GameActorProxy::BuildPropertyMap();
 
-   TestPlayer &player = static_cast<TestPlayer &>(GetGameActor());
+   TestPlayer* player = NULL;
+   GetActor(player);
+
    AddProperty(new dtDAL::StringActorProperty("mesh","mesh",
-      dtDAL::MakeFunctor(player,&TestPlayer::SetModel),
-      dtDAL::MakeFunctorRet(player,&TestPlayer::GetModel)));
+      dtDAL::StringActorProperty::SetFuncType(player,&TestPlayer::SetModel),
+      dtDAL::StringActorProperty::GetFuncType(player,&TestPlayer::GetModel)));
 
    AddProperty(new dtDAL::FloatActorProperty("velocity","velocity",
-      dtDAL::MakeFunctor(player,&TestPlayer::SetVelocity),
-      dtDAL::MakeFunctorRet(player,&TestPlayer::GetVelocity)));
+      dtDAL::FloatActorProperty::SetFuncType(player,&TestPlayer::SetVelocity),
+      dtDAL::FloatActorProperty::GetFuncType(player,&TestPlayer::GetVelocity)));
 
    AddProperty(new dtDAL::FloatActorProperty("turnrate","turnrate",
-      dtDAL::MakeFunctor(player,&TestPlayer::SetTurnRate),
-      dtDAL::MakeFunctorRet(player,&TestPlayer::GetTurnRate)));
+      dtDAL::FloatActorProperty::SetFuncType(player,&TestPlayer::SetTurnRate),
+      dtDAL::FloatActorProperty::GetFuncType(player,&TestPlayer::GetTurnRate)));
 }
 
 //////////////////////////////////////////////////////////////////////////////

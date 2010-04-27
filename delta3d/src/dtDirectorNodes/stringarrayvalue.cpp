@@ -62,10 +62,10 @@ namespace dtDirector
 
       mArrayProperty = new dtDAL::ArrayActorProperty<std::string>(
          "ValueList", "Value List", "All values contained in this array.",
-         dtDAL::MakeFunctor(*this, &ArrayValueNode::SetPropertyIndex),
-         dtDAL::MakeFunctorRet(*this, &StringArrayValue::GetDefaultValue),
-         dtDAL::MakeFunctorRet(*this, &StringArrayValue::GetArray),
-         dtDAL::MakeFunctor(*this, &StringArrayValue::SetArray),
+         dtDAL::ArrayActorProperty<std::string>::SetIndexFuncType(this, &ArrayValueNode::SetPropertyIndex),
+         dtDAL::ArrayActorProperty<std::string>::GetDefaultFuncType(this, &StringArrayValue::GetDefaultValue),
+         dtDAL::ArrayActorProperty<std::string>::GetArrayFuncType(this, &StringArrayValue::GetArray),
+         dtDAL::ArrayActorProperty<std::string>::SetArrayFuncType(this, &StringArrayValue::SetArray),
          mProperty, "");
       AddProperty(mArrayProperty);
    }

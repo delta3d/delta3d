@@ -179,19 +179,19 @@ void BackdropActorProxy::BuildPropertyMap()
 
    //Volume actors need to be scalable
    AddProperty(new dtDAL::Vec3ActorProperty("Scale", "Scale",
-      dtDAL::MakeFunctor(*actor, &BackdropActor::SetScale),
-      dtDAL::MakeFunctorRet(*actor, &BackdropActor::GetScale),
-      "Scales", "Transformable"));
+            dtDAL::Vec3ActorProperty::SetFuncType(actor, &BackdropActor::SetScale),
+            dtDAL::Vec3ActorProperty::GetFuncType(actor, &BackdropActor::GetScale),
+            "Scales", "Transformable"));
 
    AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::TEXTURE,
-      "Front Texture", "Front Texture",
-      MakeFunctor(*this, &BackdropActorProxy::SetFrontTexture),
-      "Sets the texture on the front of the backdrop", GROUPNAME));
+            "Front Texture", "Front Texture",
+            dtDAL::ResourceActorProperty::SetFuncType(this, &BackdropActorProxy::SetFrontTexture),
+            "Sets the texture on the front of the backdrop", GROUPNAME));
 
    AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::TEXTURE,
-      "Back Texture", "Back Texture",
-      MakeFunctor(*this, &BackdropActorProxy::SetBackTexture),
-      "Sets the texture on the back of the backdrop", GROUPNAME));
+            "Back Texture", "Back Texture",
+            dtDAL::ResourceActorProperty::SetFuncType(this, &BackdropActorProxy::SetBackTexture),
+            "Sets the texture on the back of the backdrop", GROUPNAME));
 }
 
 ////////////////////////////////////////////////////////////////////////////////

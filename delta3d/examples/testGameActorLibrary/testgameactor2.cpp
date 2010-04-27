@@ -48,7 +48,7 @@ void TestGameActorProxy2::BuildInvokables()
    GameActorProxy::BuildInvokables();
 
    AddInvokable(*new dtGame::Invokable("Test Message Listener", 
-      dtDAL::MakeFunctor(static_cast<TestGameActor2&>(GetGameActor()), &TestGameActor2::LogMessage)));
+      dtUtil::MakeFunctor(&TestGameActor2::LogMessage, static_cast<TestGameActor2*>(GetActor()))));
    
 }
 
@@ -56,19 +56,22 @@ void TestGameActorProxy2::BuildPropertyMap()
 {
    dtGame::GameActorProxy::BuildPropertyMap();
 
+   TestGameActor2* actor = NULL;
+   GetActor(actor);
+
    AddProperty(new dtDAL::IntActorProperty("Actor Deleted Count", "The number of Actor Deleted message received", 
-      dtDAL::MakeFunctor(static_cast<TestGameActor2&>(GetGameActor()), &TestGameActor2::SetActorDeletedCount), 
-      dtDAL::MakeFunctorRet(static_cast<TestGameActor2&>(GetGameActor()), &TestGameActor2::GetActorDeletedCount), 
+      dtDAL::IntActorProperty::SetFuncType(actor, &TestGameActor2::SetActorDeletedCount),
+      dtDAL::IntActorProperty::GetFuncType(actor, &TestGameActor2::GetActorDeletedCount),
       "A property marking the number of actor deleted message received.", ""));
 
    AddProperty(new dtDAL::IntActorProperty("Actor Published Count", "The number of Actor Published message received", 
-      dtDAL::MakeFunctor(static_cast<TestGameActor2&>(GetGameActor()), &TestGameActor2::SetActorPublishedCount), 
-      dtDAL::MakeFunctorRet(static_cast<TestGameActor2&>(GetGameActor()), &TestGameActor2::GetActorPublishedCount), 
+      dtDAL::IntActorProperty::SetFuncType(actor, &TestGameActor2::SetActorPublishedCount),
+      dtDAL::IntActorProperty::GetFuncType(actor, &TestGameActor2::GetActorPublishedCount),
       "A property marking the number of actor published message received.", ""));
 
    AddProperty(new dtDAL::IntActorProperty("Map Loaded Count", "The number of Map Loaded message received", 
-      dtDAL::MakeFunctor(static_cast<TestGameActor2&>(GetGameActor()), &TestGameActor2::SetMapLoadedCount), 
-      dtDAL::MakeFunctorRet(static_cast<TestGameActor2&>(GetGameActor()), &TestGameActor2::GetMapLoadedCount), 
+      dtDAL::IntActorProperty::SetFuncType(actor, &TestGameActor2::SetMapLoadedCount),
+      dtDAL::IntActorProperty::GetFuncType(actor, &TestGameActor2::GetMapLoadedCount),
       "A property marking the number of Map Loaded message received.", ""));
 }
 

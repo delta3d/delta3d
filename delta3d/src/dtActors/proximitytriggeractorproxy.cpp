@@ -25,6 +25,7 @@
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/exceptionenum.h>
 #include <dtABC/proximitytrigger.h>
+#include <dtDAL/functor.h>
 
 #include <sstream>
 

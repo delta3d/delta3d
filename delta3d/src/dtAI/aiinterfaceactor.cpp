@@ -647,7 +647,7 @@ namespace dtAI
        AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::STATIC_MESH,
                    PROPERTY_WAYPOINT_FILE_NAME,
                    PROPERTY_WAYPOINT_FILE_NAME,
-                   dtDAL::MakeFunctor(*this, &AIInterfaceActorProxy::LoadFile),
+                   dtDAL::ResourceActorProperty::SetFuncType(this, &AIInterfaceActorProxy::LoadFile),
                    "Loads the waypoint and connectivity graph.", GROUPNAME));
     }
 

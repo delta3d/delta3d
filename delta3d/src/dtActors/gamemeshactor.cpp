@@ -25,6 +25,7 @@
 #include <dtDAL/resourceactorproperty.h>
 #include <dtDAL/actorproxyicon.h>
 #include <dtCore/transform.h>
+#include <dtDAL/functor.h>
 
 #include <osg/MatrixTransform>
 

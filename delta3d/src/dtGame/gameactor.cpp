@@ -50,7 +50,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////
-   GameActor::GameActor(GameActorProxy& proxy, TransformableNode &node, const std::string &name)
+   GameActor::GameActor(GameActorProxy& proxy, TransformableNode& node, const std::string& name)
       : dtCore::Physical(node, name)
       , mProxy(&proxy)
       , mPublished(false)
@@ -119,7 +119,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////
-   void GameActor::SetShaderGroup(const std::string &groupName)
+   void GameActor::SetShaderGroup(const std::string& groupName)
    {
       // Setting the shader group, when it didn't change can cause a massive
       // hit on performance because it unassigns everything and will make a new 
@@ -179,7 +179,7 @@ namespace dtGame
             return;
          }
       }
-      catch (const dtUtil::Exception &e)
+      catch (const dtUtil::Exception& e)
       {
          mLogger.LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
                   "Caught Exception while assigning shader: " + e.ToString());

@@ -105,8 +105,8 @@ namespace dtActors
       AddProperty(new dtDAL::FloatActorProperty(
          BaseWaterActorProxy::PROPERTY_WATER_HEIGHT,
          BaseWaterActorProxy::PROPERTY_WATER_HEIGHT,
-         dtDAL::MakeFunctor(*actor, &BaseWaterActor::SetWaterHeight),
-         dtDAL::MakeFunctorRet(*actor, &BaseWaterActor::GetWaterHeight),
+         dtDAL::FloatActorProperty::SetFuncType(actor, &BaseWaterActor::SetWaterHeight),
+         dtDAL::FloatActorProperty::GetFuncType(actor, &BaseWaterActor::GetWaterHeight),
          "Sets the offset for the water height (often, this is 0.0, but it depends on the terrain).",
          GROUP_WATER));
    }

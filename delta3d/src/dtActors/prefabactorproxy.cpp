@@ -25,6 +25,7 @@
 #include <dtDAL/mapxml.h>
 #include <dtDAL/project.h>
 #include <dtUtil/exception.h>
+#include <dtDAL/functor.h>
 
 namespace dtActors
 {

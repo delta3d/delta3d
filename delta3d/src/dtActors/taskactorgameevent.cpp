@@ -24,6 +24,7 @@
 #include <dtGame/messagetype.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/invokable.h>
+#include <dtDAL/functor.h>
 
 namespace dtActors
 {

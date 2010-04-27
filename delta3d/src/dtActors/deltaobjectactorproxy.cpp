@@ -23,6 +23,7 @@
 #include <dtCore/object.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtUtil/matrixutil.h>
+#include <dtDAL/functor.h>
 
 namespace dtActors 
 {

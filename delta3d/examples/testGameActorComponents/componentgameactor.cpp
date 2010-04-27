@@ -31,9 +31,9 @@ void ComponentGameActorProxy::BuildPropertyMap()
    static const std::string GROUPNAME = "ComponentGameActor";
 
    AddProperty(new dtDAL::IntActorProperty("Some Property", "Some Property",
-      dtDAL::MakeFunctor(*actor, &ComponentGameActor::SetSomeProperty),
-      dtDAL::MakeFunctorRet(*actor, &ComponentGameActor::GetSomeProperty),
-      "", GROUPNAME));
+            dtDAL::IntActorProperty::SetFuncType(actor, &ComponentGameActor::SetSomeProperty),
+            dtDAL::IntActorProperty::GetFuncType(actor, &ComponentGameActor::GetSomeProperty),
+            "", GROUPNAME));
 }
 
 

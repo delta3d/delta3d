@@ -36,17 +36,17 @@ namespace dtHLAGM
       mDefaultAppSpace(0)
    {
       AddProperty(new dtDAL::LongActorProperty(PROP_APP_SPACE_MIN, PROP_APP_SPACE_MIN,
-            dtDAL::MakeFunctor(*this, &DDMAppSpaceCalculator::SetAppSpaceMinimum),
-            dtDAL::MakeFunctorRet(*this, &DDMAppSpaceCalculator::GetAppSpaceMinimum)
+               dtDAL::LongActorProperty::SetFuncType(this, &DDMAppSpaceCalculator::SetAppSpaceMinimum),
+               dtDAL::LongActorProperty::GetFuncType(this, &DDMAppSpaceCalculator::GetAppSpaceMinimum)
             ));
       AddProperty(new dtDAL::LongActorProperty(PROP_APP_SPACE_MAX, PROP_APP_SPACE_MAX,
-            dtDAL::MakeFunctor(*this, &DDMAppSpaceCalculator::SetAppSpaceMaximum),
-            dtDAL::MakeFunctorRet(*this, &DDMAppSpaceCalculator::GetAppSpaceMaximum)
+               dtDAL::LongActorProperty::SetFuncType(this, &DDMAppSpaceCalculator::SetAppSpaceMaximum),
+               dtDAL::LongActorProperty::GetFuncType(this, &DDMAppSpaceCalculator::GetAppSpaceMaximum)
             ));
 
       AddProperty(new dtDAL::LongActorProperty(PROP_DEFAULT_APP_SPACE, PROP_DEFAULT_APP_SPACE,
-            dtDAL::MakeFunctor(*this, &DDMAppSpaceCalculator::SetDefaultAppSpace),
-            dtDAL::MakeFunctorRet(*this, &DDMAppSpaceCalculator::GetDefaultAppSpace)
+               dtDAL::LongActorProperty::SetFuncType(this, &DDMAppSpaceCalculator::SetDefaultAppSpace),
+               dtDAL::LongActorProperty::GetFuncType(this, &DDMAppSpaceCalculator::GetDefaultAppSpace)
             ));
    }
 

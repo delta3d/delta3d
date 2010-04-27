@@ -42,16 +42,16 @@ namespace dtHLAGM
    DDMCameraCalculatorGeographic::DDMCameraCalculatorGeographic(): BaseClass(), mXRange(100), mYRange(100), mMinTimeBetweenUpdates(0.25)
    {
       AddProperty(new dtDAL::FloatActorProperty(PROP_X_SUBSCRIPTION_RANGE, PROP_X_SUBSCRIPTION_RANGE,
-            dtDAL::MakeFunctor(*this, &DDMCameraCalculatorGeographic::SetXSubscriptionRange),
-            dtDAL::MakeFunctorRet(*this, &DDMCameraCalculatorGeographic::GetXSubscriptionRange)
+            dtDAL::FloatActorProperty::SetFuncType(this, &DDMCameraCalculatorGeographic::SetXSubscriptionRange),
+            dtDAL::FloatActorProperty::GetFuncType(this, &DDMCameraCalculatorGeographic::GetXSubscriptionRange)
             ));
       AddProperty(new dtDAL::FloatActorProperty(PROP_Y_SUBSCRIPTION_RANGE, PROP_Y_SUBSCRIPTION_RANGE,
-            dtDAL::MakeFunctor(*this, &DDMCameraCalculatorGeographic::SetYSubscriptionRange),
-            dtDAL::MakeFunctorRet(*this, &DDMCameraCalculatorGeographic::GetYSubscriptionRange)
+            dtDAL::FloatActorProperty::SetFuncType(this, &DDMCameraCalculatorGeographic::SetYSubscriptionRange),
+            dtDAL::FloatActorProperty::GetFuncType(this, &DDMCameraCalculatorGeographic::GetYSubscriptionRange)
             ));
       AddProperty(new dtDAL::FloatActorProperty(PROP_MIN_TIME_BETWEEN_UPDATES, PROP_MIN_TIME_BETWEEN_UPDATES,
-            dtDAL::MakeFunctor(*this, &DDMCameraCalculatorGeographic::SetMinTimeBetweenUpdates),
-            dtDAL::MakeFunctorRet(*this, &DDMCameraCalculatorGeographic::GetMinTimeBetweenUpdates)
+            dtDAL::FloatActorProperty::SetFuncType(this, &DDMCameraCalculatorGeographic::SetMinTimeBetweenUpdates),
+            dtDAL::FloatActorProperty::GetFuncType(this, &DDMCameraCalculatorGeographic::GetMinTimeBetweenUpdates)
             ));
    }
 

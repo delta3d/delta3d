@@ -100,10 +100,10 @@ namespace dtActors
       dtDAL::TransformableActorProxy::BuildPropertyMap();
 
       AddProperty(new dtDAL::ActorActorProperty(*this, "Bezier Node", "Bezier Node", 
-         dtDAL::MakeFunctor(*this, &BezierControlPointActorProxy::SetBezierNode),
-         dtDAL::MakeFunctorRet(*this, &BezierControlPointActorProxy::GetBezierNode), 
-         "dtABC::BezierNode", 
-         "Sets the Bezier Node of this proxy"));
+               dtDAL::ActorActorProperty::SetFuncType(this, &BezierControlPointActorProxy::SetBezierNode),
+               dtDAL::ActorActorProperty::GetFuncType(this, &BezierControlPointActorProxy::GetBezierNode),
+               "dtABC::BezierNode",
+               "Sets the Bezier Node of this proxy"));
    }
 
 

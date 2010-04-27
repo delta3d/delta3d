@@ -36,7 +36,6 @@
 #include <dtGame/basemessages.h>
 #include <dtCore/system.h>
 #include <dtGame/invokable.h>
-#include <dtDAL/functor.h>
 
 #include <osg/MatrixTransform>
 #include <osg/Geode>
@@ -180,16 +179,18 @@ namespace dtAnim
 
       dtGame::GameActorProxy::BuildPropertyMap();
 
-      Cal3DGameActor& myActor = static_cast<Cal3DGameActor&>(GetGameActor());
+      Cal3DGameActor* myActor = NULL;
+      GetActor(myActor);
 
       AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::SKELETAL_MESH,
-         "Skeletal Mesh", "Skeletal Mesh", dtDAL::MakeFunctor(myActor, &Cal3DGameActor::SetModel),
+         "Skeletal Mesh", "Skeletal Mesh",
+         dtDAL::ResourceActorProperty::SetFuncType(myActor, &Cal3DGameActor::SetModel),
          "The model resource that defines the skeletal mesh", GROUPNAME));
 
       AddProperty(new dtDAL::GroupActorProperty(Cal3DGameActor::PropertyNames::ANIMATION_GROUP,
          Cal3DGameActor::PropertyNames::ANIMATION_GROUP_LABEL,
-         dtDAL::MakeFunctor(myActor, &Cal3DGameActor::ApplyAnimationGroup),
-         dtDAL::MakeFunctorRet(myActor, &Cal3DGameActor::MakeAnimationGroup),
+         dtDAL::GroupActorProperty::SetFunctorType(myActor, &Cal3DGameActor::ApplyAnimationGroup),
+         dtDAL::GroupActorProperty::GetFunctorType(myActor, &Cal3DGameActor::MakeAnimationGroup),
          "A pipe for processing animation requests",
          "Slot: animation parameter",
          "no thanks editor",
@@ -198,8 +199,8 @@ namespace dtAnim
       ///\todo make a UChar actor property and use it here.
       AddProperty(new dtDAL::IntActorProperty(Cal3DGameActor::PropertyNames::RENDER_MODE,
          Cal3DGameActor::PropertyNames::RENDER_MODE_LABEL,
-         dtDAL::MakeFunctor(myActor, &Cal3DGameActor::SetRenderMode),
-         dtDAL::MakeFunctorRet(myActor, &Cal3DGameActor::GetRenderMode),
+         dtDAL::IntActorProperty::SetFuncType(myActor, &Cal3DGameActor::SetRenderMode),
+         dtDAL::IntActorProperty::GetFuncType(myActor, &Cal3DGameActor::GetRenderMode),
          "Bits to control what is rendered.",
          "No idea what is meant by _group name_"));
    }

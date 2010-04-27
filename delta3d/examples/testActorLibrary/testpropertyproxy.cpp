@@ -70,122 +70,122 @@ void ExampleTestPropertyProxy::BuildPropertyMap()
       throw dtDAL::InvalidActorException( "Actor should be type dtCore::Object", __FILE__, __LINE__);
 
    AddProperty(new BooleanActorProperty("Test_Boolean", "Test Boolean",
-      MakeFunctor(*this, &ExampleTestPropertyProxy::SetTestBool),
-      MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetTestBool),
+      BooleanActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetTestBool),
+      BooleanActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetTestBool),
       "Holds a test Boolean property", GROUPNAME));
 
    AddProperty(new IntActorProperty("Test_Int", "Test Int",
-      MakeFunctor(*this, &ExampleTestPropertyProxy::SetTestInt),
-      MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetTestInt),
+      IntActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetTestInt),
+      IntActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetTestInt),
       "Holds a test Int property", GROUPNAME));
 
    dtDAL::IntActorProperty *i = new IntActorProperty("Test_Read_Only_Int", "Test_Read_Only_Int",
-      MakeFunctor(*this, &ExampleTestPropertyProxy::SetReadOnlyTestInt),
-      MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetReadOnlyTestInt),
+      IntActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetReadOnlyTestInt),
+      IntActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetReadOnlyTestInt),
       "Holds a test Read Only Int property", GROUPNAME);
    i->SetReadOnly(true);
 
    AddProperty(i);
 
    AddProperty(new LongActorProperty("Test_Long", "Test Long",
-      MakeFunctor(*this, &ExampleTestPropertyProxy::SetTestLong),
-      MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetTestLong),
+      LongActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetTestLong),
+      LongActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetTestLong),
       "Holds a test Long property", GROUPNAME));
 
    AddProperty(new FloatActorProperty("Test_Float", "Test Float",
-      MakeFunctor(*this, &ExampleTestPropertyProxy::SetTestFloat),
-      MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetTestFloat),
+      FloatActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetTestFloat),
+      FloatActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetTestFloat),
       "Holds a test Float property", GROUPNAME));
 
    AddProperty(new DoubleActorProperty("Test_Double", "Test Double",
-      MakeFunctor(*this, &ExampleTestPropertyProxy::SetTestDouble),
-      MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetTestDouble),
+      DoubleActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetTestDouble),
+      DoubleActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetTestDouble),
       "Holds a test Double property", GROUPNAME));
 
    AddProperty(new Vec3ActorProperty("Test_Vec3", "Test Vector3",
-      MakeFunctor(*this, &ExampleTestPropertyProxy::SetTestVec3),
-      MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetTestVec3),
+      Vec3ActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetTestVec3),
+      Vec3ActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetTestVec3),
       "Holds a test Vector3 Property", GROUPNAME));
 
    AddProperty(new Vec2ActorProperty("Test_Vec2", "Test Vector2",
-      MakeFunctor(*this, &ExampleTestPropertyProxy::SetTestVec2),
-      MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetTestVec2),
+      Vec2ActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetTestVec2),
+      Vec2ActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetTestVec2),
       "Holds a test Vector2 Property", GROUPNAME));
 
    AddProperty(new Vec4ActorProperty("Test_Vec4", "Test Vector4",
-      MakeFunctor(*this, &ExampleTestPropertyProxy::SetTestVec4),
-      MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetTestVec4),
+      Vec4ActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetTestVec4),
+      Vec4ActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetTestVec4),
       "Holds a test Vector4 Property", GROUPNAME));
 
    AddProperty(new Vec3fActorProperty("Test_Vec3f", "Test Vector3f",
-      MakeFunctor(*this, &ExampleTestPropertyProxy::SetTestVec3f),
-      MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetTestVec3f),
+      Vec3fActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetTestVec3f),
+      Vec3fActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetTestVec3f),
       "Holds a test Vector3f Property", GROUPNAME));
 
    AddProperty(new Vec2fActorProperty("Test_Vec2f", "Test Vector2f",
-      MakeFunctor(*this, &ExampleTestPropertyProxy::SetTestVec2f),
-      MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetTestVec2f),
+      Vec2fActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetTestVec2f),
+      Vec2fActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetTestVec2f),
       "Holds a test Vector2f Property", GROUPNAME));
 
    AddProperty(new Vec4fActorProperty("Test_Vec4f", "Test Vector4f",
-      MakeFunctor(*this, &ExampleTestPropertyProxy::SetTestVec4f),
-      MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetTestVec4f),
+      Vec4fActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetTestVec4f),
+      Vec4fActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetTestVec4f),
       "Holds a test Vector4f Property", GROUPNAME));
 
    AddProperty(new Vec3dActorProperty("Test_Vec3d", "Test Vector3d",
-      MakeFunctor(*this, &ExampleTestPropertyProxy::SetTestVec3d),
-      MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetTestVec3d),
+      Vec3dActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetTestVec3d),
+      Vec3dActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetTestVec3d),
       "Holds a test Vector3d Property", GROUPNAME));
 
    AddProperty(new Vec2dActorProperty("Test_Vec2d", "Test Vector2d",
-      MakeFunctor(*this, &ExampleTestPropertyProxy::SetTestVec2d),
-      MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetTestVec2d),
+      Vec2dActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetTestVec2d),
+      Vec2dActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetTestVec2d),
       "Holds a test Vector2d Property", GROUPNAME));
 
    AddProperty(new Vec4dActorProperty("Test_Vec4d", "Test Vector4d",
-      MakeFunctor(*this, &ExampleTestPropertyProxy::SetTestVec4d),
-      MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetTestVec4d),
+      Vec4dActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetTestVec4d),
+      Vec4dActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetTestVec4d),
       "Holds a test Vector4d Property", GROUPNAME));
 
    AddProperty(new StringActorProperty("Test_String", "Test String",
-      MakeFunctor(*this, &ExampleTestPropertyProxy::SetTestString),
-      MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetTestString),
+      StringActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetTestString),
+      StringActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetTestString),
       "Holds a test String property (unlimited length)", GROUPNAME));
 
-   StringActorProperty *stringProp = new StringActorProperty("Test_String2", "Test String (max 10)",
-      MakeFunctor(*this, &ExampleTestPropertyProxy::SetTestStringWithLength),
-      MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetTestStringWithLength),
+   StringActorProperty* stringProp = new StringActorProperty("Test_String2", "Test String (max 10)",
+      StringActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetTestStringWithLength),
+      StringActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetTestStringWithLength),
       "Holds a test String property with a max length of 10", GROUPNAME);
    stringProp->SetMaxLength(10);
    AddProperty(stringProp);
 
    AddProperty(new ColorRgbaActorProperty("Test_Color", "Test Color",
-      MakeFunctor(*this, &ExampleTestPropertyProxy::SetTestColor),
-      MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetTestColor),
+      ColorRgbaActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetTestColor),
+      ColorRgbaActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetTestColor),
       "Holds a test Color property", GROUPNAME));
 
    AddProperty(new EnumActorProperty<TestEnum>("Test_Enum", "Test Enum",
-      MakeFunctor(*this, &ExampleTestPropertyProxy::SetTestEnum),
-      MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetTestEnum),
+      EnumActorProperty<TestEnum>::SetFuncType(this, &ExampleTestPropertyProxy::SetTestEnum),
+      EnumActorProperty<TestEnum>::GetFuncType(this, &ExampleTestPropertyProxy::GetTestEnum),
       "Holds a test Enum property", GROUPNAME));
 
    AddProperty(new ResourceActorProperty(*this, DataType::SOUND, "Test_Sound_Resource", "Test Sound",
-      MakeFunctor(*this, &ExampleTestPropertyProxy::SetSoundResourceName),
+      ResourceActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetSoundResourceName),
       "An example sound resource property", GROUPNAME));
 
    AddProperty(new ResourceActorProperty(*this, DataType::TEXTURE, "Test_Texture_Resource", "Texture",
-      MakeFunctor(*this, &ExampleTestPropertyProxy::SetTextureResourceName),
+      ResourceActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetTextureResourceName),
       "An example texture resource property", GROUPNAME));
 
    AddProperty(new ActorActorProperty(*this, "Test_Actor", "Test Actor",
-      MakeFunctor(*this, &ExampleTestPropertyProxy::SetTestActor),
-      MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetTestActor),
+      ActorActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetTestActor),
+      ActorActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetTestActor),
       "dtCore::Transformable",
       "An example linked actor property", GROUPNAME));
 
    AddProperty(new GameEventActorProperty(*this, "TestGameEvent", "Test Game Event",
-      MakeFunctor(*this, &ExampleTestPropertyProxy::SetTestGameEvent),
-      MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetTestGameEvent),
+      GameEventActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetTestGameEvent),
+      GameEventActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetTestGameEvent),
       "Holds a test game event property", GROUPNAME));
 
    mGroupParam->AddParameter("FloatParam", dtDAL::DataType::FLOAT);
@@ -193,8 +193,8 @@ void ExampleTestPropertyProxy::BuildPropertyMap()
    mGroupParam->AddParameter("StringParam", dtDAL::DataType::STRING);
 
    AddProperty(new GroupActorProperty("TestGroup", "Test Group Property",
-      MakeFunctor(*this, &ExampleTestPropertyProxy::SetTestGroup),
-      MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetTestGroup),
+      GroupActorProperty::SetFunctorType(this, &ExampleTestPropertyProxy::SetTestGroup),
+      GroupActorProperty::GetFunctorType(this, &ExampleTestPropertyProxy::GetTestGroup),
       "Holds a test group", GROUPNAME));
 
    mStringArray.push_back("First Element");
@@ -206,16 +206,16 @@ void ExampleTestPropertyProxy::BuildPropertyMap()
 
    StringActorProperty* stringProp2 = new StringActorProperty(
       "ArrayString", "Array String",
-      MakeFunctor(*this, &ExampleTestPropertyProxy::SetStringArrayValue),
-      MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetStringArrayValue),
+      StringActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetStringArrayValue),
+      StringActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetStringArrayValue),
       "Holds the strings used in the Array", GROUPNAME);
 
    ArrayActorPropertyBase* arrayStringProp = new ArrayActorProperty<std::string>(
       "TestStringArray", "Test String Array", "Holds a test array of Strings",
-      MakeFunctor(*this, &ExampleTestPropertyProxy::StringArraySetIndex),
-      MakeFunctorRet(*this, &ExampleTestPropertyProxy::StringArrayGetDefault),
-      MakeFunctorRet(*this, &ExampleTestPropertyProxy::StringArrayGetValue),
-      MakeFunctorRet(*this, &ExampleTestPropertyProxy::StringArraySetValue),
+      ArrayActorProperty<std::string>::SetIndexFuncType(this, &ExampleTestPropertyProxy::StringArraySetIndex),
+      ArrayActorProperty<std::string>::GetDefaultFuncType(this, &ExampleTestPropertyProxy::StringArrayGetDefault),
+      ArrayActorProperty<std::string>::GetArrayFuncType(this, &ExampleTestPropertyProxy::StringArrayGetValue),
+      ArrayActorProperty<std::string>::SetArrayFuncType(this, &ExampleTestPropertyProxy::StringArraySetValue),
       stringProp2, GROUPNAME);
 
    arrayStringProp->SetMinArraySize(2);
@@ -228,14 +228,14 @@ void ExampleTestPropertyProxy::BuildPropertyMap()
 
    Vec3ActorProperty* vecContainerProp = new Vec3ActorProperty(
       "VectorProp", "Vector Prop",
-      MakeFunctor(*this, &ExampleTestPropertyProxy::SetVecContainerValue),
-      MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetVecContainerValue),
+      Vec3ActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetVecContainerValue),
+      Vec3ActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetVecContainerValue),
       "Holds the vector used in the container", GROUPNAME);
 
    IntActorProperty* intContainerProp = new IntActorProperty(
       "IntProp", "Int Prop",
-      MakeFunctor(*this, &ExampleTestPropertyProxy::SetIntContainerValue),
-      MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetIntContainerValue),
+      IntActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetIntContainerValue),
+      IntActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetIntContainerValue),
       "Holds the int used in the container", GROUPNAME);
 
    ContainerActorProperty* containerProp = new ContainerActorProperty(
@@ -246,10 +246,10 @@ void ExampleTestPropertyProxy::BuildPropertyMap()
 
    ArrayActorPropertyBase* arrayContainerProp = new ArrayActorProperty<ExampleTestPropertyProxy::testStruct>(
       "TestContainerArray", "Array of Containers", "Holds a test array of Containers",
-      MakeFunctor(*this, &ExampleTestPropertyProxy::ContainerArraySetIndex),
-      MakeFunctorRet(*this, &ExampleTestPropertyProxy::ContainerArrayGetDefault),
-      MakeFunctorRet(*this, &ExampleTestPropertyProxy::ContainerArrayGetValue),
-      MakeFunctorRet(*this, &ExampleTestPropertyProxy::ContainerArraySetValue),
+      ArrayActorProperty<ExampleTestPropertyProxy::testStruct>::SetIndexFuncType(this, &ExampleTestPropertyProxy::ContainerArraySetIndex),
+      ArrayActorProperty<ExampleTestPropertyProxy::testStruct>::GetDefaultFuncType(this, &ExampleTestPropertyProxy::ContainerArrayGetDefault),
+      ArrayActorProperty<ExampleTestPropertyProxy::testStruct>::GetArrayFuncType(this, &ExampleTestPropertyProxy::ContainerArrayGetValue),
+      ArrayActorProperty<ExampleTestPropertyProxy::testStruct>::SetArrayFuncType(this, &ExampleTestPropertyProxy::ContainerArraySetValue),
       containerProp, GROUPNAME, "", false);
 
    AddProperty(arrayContainerProp);
@@ -272,24 +272,24 @@ void ExampleTestPropertyProxy::BuildPropertyMap()
 
    IntActorProperty* intProp = new IntActorProperty(
       "ArrayInt", "Array Int",
-      MakeFunctor(*this, &ExampleTestPropertyProxy::SetIntArrayValue),
-      MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetIntArrayValue),
+      IntActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetIntArrayValue),
+      IntActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetIntArrayValue),
       "Holds the int used in the double array", GROUPNAME);
 
    ArrayActorPropertyBase* arrayIntProp = new ArrayActorProperty<int>(
       "TestIntArray", "Test Int Array", "Holds an array of Ints",
-      MakeFunctor(*this, &ExampleTestPropertyProxy::IntArraySetIndex),
-      MakeFunctorRet(*this, &ExampleTestPropertyProxy::IntArrayGetDefault),
-      MakeFunctorRet(*this, &ExampleTestPropertyProxy::IntArrayGetValue),
-      MakeFunctorRet(*this, &ExampleTestPropertyProxy::IntArraySetValue),
+      ArrayActorProperty<int>::SetIndexFuncType(this, &ExampleTestPropertyProxy::IntArraySetIndex),
+      ArrayActorProperty<int>::GetDefaultFuncType(this, &ExampleTestPropertyProxy::IntArrayGetDefault),
+      ArrayActorProperty<int>::GetArrayFuncType(this, &ExampleTestPropertyProxy::IntArrayGetValue),
+      ArrayActorProperty<int>::SetArrayFuncType(this, &ExampleTestPropertyProxy::IntArraySetValue),
       intProp, GROUPNAME);
 
    ArrayActorPropertyBase* arrayArrayProp = new ArrayActorProperty<std::vector<int> >(
       "TestArrayArray", "Test Array of Arrays", "Holds an array of arrays",
-      MakeFunctor(*this, &ExampleTestPropertyProxy::ArrayArraySetIndex),
-      MakeFunctorRet(*this, &ExampleTestPropertyProxy::ArrayArrayGetDefault),
-      MakeFunctorRet(*this, &ExampleTestPropertyProxy::ArrayArrayGetValue),
-      MakeFunctorRet(*this, &ExampleTestPropertyProxy::ArrayArraySetValue),
+      ArrayActorProperty<std::vector<int> >::SetIndexFuncType(this, &ExampleTestPropertyProxy::ArrayArraySetIndex),
+      ArrayActorProperty<std::vector<int> >::GetDefaultFuncType(this, &ExampleTestPropertyProxy::ArrayArrayGetDefault),
+      ArrayActorProperty<std::vector<int> >::GetArrayFuncType(this, &ExampleTestPropertyProxy::ArrayArrayGetValue),
+      ArrayActorProperty<std::vector<int> >::SetArrayFuncType(this, &ExampleTestPropertyProxy::ArrayArraySetValue),
       arrayIntProp, GROUPNAME);
 
    AddProperty(arrayArrayProp);
