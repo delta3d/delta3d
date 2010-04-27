@@ -123,6 +123,7 @@ namespace dtGame
                   : mTotalTime(0.0f)
                   , mTickLocalTime(0.0f)
                   , mTimesThrough(1)
+                  , mTimesThroughThisFrame(1)
                   , mNameOfLogInfo(name)
                   , mUniqueID(uniqueID)
                   , mIsComponent(isComponent)
@@ -132,6 +133,7 @@ namespace dtGame
                float             mTotalTime;
                float             mTickLocalTime;
                unsigned int      mTimesThrough;
+               unsigned int      mTimesThroughThisFrame;
                std::string       mNameOfLogInfo;
                dtCore::UniqueId  mUniqueID;
                bool              mIsComponent;
@@ -151,6 +153,8 @@ namespace dtGame
          dtCore::Timer_t      mStatsCumGMProcessTime;
          float                mStatsCurFrameActorTotal; 
          float                mStatsCurFrameCompTotal; 
+         int                  mStatsNumActorsProcessed; 
+         int                  mStatsNumCompsProcessed;
          int                  mStatisticsInterval;                                  ///< how often we print the information out.
          std::string          mFilePathToPrintDebugInformation;                     ///< where the file is located at that we print out to
          bool                 mPrintFileToConsole;                                  ///< if the information goes to console or file

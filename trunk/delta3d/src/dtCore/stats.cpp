@@ -101,11 +101,17 @@ bool StatsHandler::SelectNextType()
          stats->collectStats(System::MESSAGE_FRAME_SYNCH, false);
          stats->collectStats(System::MESSAGE_FRAME, false);
          stats->collectStats(System::MESSAGE_POST_FRAME, false);
+         stats->collectStats("UpdatePlusDrawTime", false);
+         stats->collectStats("FrameMinusDrawAndUpdateTime", false);
          stats->collectStats("FullDeltaFrameTime", false); // should be a constant
-         stats->collectStats("GMTotal", false);
-         stats->collectStats("GMActors", false);
-         stats->collectStats("GMComponents", false);
-         stats->collectStats("GMNumActors", false);
+
+         // GM Stats
+         stats->collectStats("GMTotalTime", false);
+         stats->collectStats("GMActorsTime", false);
+         stats->collectStats("GMComponentsTime", false);
+         stats->collectStats("GMTotalNumActors", false);
+         stats->collectStats("GMNumActorsProcessed", false);
+         stats->collectStats("GMNumCompsProcessed", false);
 
          mCamera->setNodeMask(0x0); 
          mSwitch->setAllChildrenOff();
@@ -191,11 +197,18 @@ bool StatsHandler::SelectNextType()
          stats->collectStats(System::MESSAGE_FRAME_SYNCH, true);
          stats->collectStats(System::MESSAGE_FRAME, true);
          stats->collectStats(System::MESSAGE_POST_FRAME, true);
+         stats->collectStats("UpdatePlusDrawTime", true);
+         stats->collectStats("FrameMinusDrawAndUpdateTime", true);
          stats->collectStats("FullDeltaFrameTime", true);
-         stats->collectStats("GMTotal", true);
-         stats->collectStats("GMActors", true);
-         stats->collectStats("GMComponents", true);
-         stats->collectStats("GMNumActors", true);
+
+         // GM Stats
+         stats->collectStats("GMTotalTime", true);
+         stats->collectStats("GMActorsTime", true);
+         stats->collectStats("GMComponentsTime", true);
+         stats->collectStats("GMTotalNumActors", true);
+         stats->collectStats("GMNumActorsProcessed", true);
+         stats->collectStats("GMNumCompsProcessed", true);
+
          mCamera->setNodeMask(0xffffffff);
          mSwitch->setValue(mDeltaSystemChildNum, true);
          break;
@@ -314,10 +327,11 @@ struct AveragedValueTextDrawCallback : public virtual osg::Drawable::DrawCallbac
 
 struct SimpleIntTextDrawCallback : public virtual osg::Drawable::DrawCallback
 {
-   SimpleIntTextDrawCallback(osg::Stats* stats, const std::string& name)
+   SimpleIntTextDrawCallback(osg::Stats* stats, const std::string& name, bool useParentheses = false)
       : _stats(stats)
       , _attributeName(name)
       , _tickLastUpdated(0)
+      , _useParentheses(useParentheses)
    {
    }
 
@@ -336,7 +350,14 @@ struct SimpleIntTextDrawCallback : public virtual osg::Drawable::DrawCallback
          if (_stats->getAttribute( _stats->getLatestFrameNumber()-1, _attributeName, value))
          {
             int intValue = (int) value;
-            sprintf(_tmpText,"(%d)", intValue);
+            if (_useParentheses)
+            {
+               sprintf(_tmpText,"(%d)", intValue);
+            }
+            else 
+            {
+               sprintf(_tmpText,"%d", intValue);
+            }
             text->setText(_tmpText);
          }
          else
@@ -352,6 +373,7 @@ struct SimpleIntTextDrawCallback : public virtual osg::Drawable::DrawCallback
    std::string                 _attributeName;
    mutable char                _tmpText[128];
    mutable osg::Timer_t        _tickLastUpdated;
+   bool                        _useParentheses;
 };
 
 struct CameraSceneStatsTextDrawCallback : public virtual osg::Drawable::DrawCallback
@@ -1576,35 +1598,44 @@ void StatsHandler::SetUpScene(osgViewer::ViewerBase* viewer)
       pos.x() = leftPos;
       text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "Pre Frame: "); // label
       pos.x() = text->getBound().xMax();
-      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "0.0"); // Value
+      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "12.34  "); // Value
       text->setDrawCallback(new AveragedValueTextDrawCallback(stats,System::MESSAGE_PRE_FRAME,-1, true, 1.0));
-      // The GameManager part of PreFrame
-      // GM Total
-      pos.x() += 60.0f;
+      pos.x() = text->getBound().xMax();
+
+      // The GameManager part of PreFrame - GM [Total: 12.34  Comps: 12.34 (99)  Actors: 12.34 (100/999)]
+      // GM Total -- GM [Total: 12.34
+      //pos.x() += 60.0f;
       text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "GM [Total: "); // label
       pos.x() = text->getBound().xMax();
-      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "0.0"); // Value
-      text->setDrawCallback(new AveragedValueTextDrawCallback(stats,"GMTotal",-1, true, 1.0));
-      // GM Actors
-      pos.x() += 50.0f;
-      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "Actors: "); // label
-      pos.x() = text->getBound().xMax();
-      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "0.0"); // Value
-      text->setDrawCallback(new AveragedValueTextDrawCallback(stats,"GMActors",-1, true, 1.0));
-      pos.x() += 50.0f;
-      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "(1234)"); // Value
-      text->setDrawCallback(new SimpleIntTextDrawCallback(stats, "GMNumActors"));
-      // GM Components
-      pos.x() += 65.0f;
+      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "12.34  "); // Value
+      text->setDrawCallback(new AveragedValueTextDrawCallback(stats,"GMTotalTime",-1, true, 1.0));
+      pos.x() = text->getBound().xMax(); /* 65.0f */ // "12.34" is about the right size
+      // GM Components -- Comps: 12.34 (99) 
       text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "Comps: "); // label
       pos.x() = text->getBound().xMax();
-      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "0.0"); // Value
-      text->setDrawCallback(new AveragedValueTextDrawCallback(stats,"GMComponents",-1, true, 1.0));
-      pos.x() += 50.0f;
-      //text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "(1234)"); // Value
-      //text->setDrawCallback(new SimpleIntTextDrawCallback(stats, "GMNumComponents"));
-      //pos.x() += 60.0f;
-      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "]"); // label
+      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "12.34 "); // Value
+      text->setDrawCallback(new AveragedValueTextDrawCallback(stats,"GMComponentsTime",-1, true, 1.0));
+      pos.x() = text->getBound().xMax(); // "12.34" is about the right size
+      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "(99)  "); // Value
+      text->setDrawCallback(new SimpleIntTextDrawCallback(stats, "GMNumCompsProcessed", true));
+      // GM Actors -- Actors: 12.34 (100/999) ] 
+      pos.x() = text->getBound().xMax(); /* 50.0f */ // "(99)" is about the right size
+      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "Actors: "); // label
+      pos.x() = text->getBound().xMax();
+      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "12.34 "); // Value
+      text->setDrawCallback(new AveragedValueTextDrawCallback(stats,"GMActorsTime",-1, true, 1.0));
+      pos.x() = text->getBound().xMax(); // "12.34" is about the right size
+      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "("); // label
+      pos.x() = text->getBound().xMax();
+      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "999 "); // Value
+      text->setDrawCallback(new SimpleIntTextDrawCallback(stats, "GMNumActorsProcessed", false));
+      pos.x() = text->getBound().xMax(); // "999" is about the right size
+      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "/"); // label
+      pos.x() = text->getBound().xMax();
+      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "999 "); // Value
+      text->setDrawCallback(new SimpleIntTextDrawCallback(stats, "GMTotalNumActors", false));
+      pos.x() = text->getBound().xMax(); // "999" is about the right size
+      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, ") ]"); // label
       pos.y() -= characterSize * 1.5f;
 
       // MESSAGE_CAMERA_SYNCH
@@ -1623,13 +1654,24 @@ void StatsHandler::SetUpScene(osgViewer::ViewerBase* viewer)
       text->setDrawCallback(new AveragedValueTextDrawCallback(stats,System::MESSAGE_FRAME_SYNCH,-1, true, 1.0));
       pos.y() -= characterSize * 1.5f;
 
-      // MESSAGE_FRAME
+      // MESSAGE_FRAME  --  Frame: 12.34  RenderTime: 12.34  Diff: 12.34
       pos.x() = leftPos;
       text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "Frame: "); // label
       pos.x() = text->getBound().xMax();
-      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "0.0"); // Value
+      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "12.34 "); // Value
       text->setDrawCallback(new AveragedValueTextDrawCallback(stats,System::MESSAGE_FRAME,-1, true, 1.0));
+      pos.x() = 15.0f + text->getBound().xMax(); // "12.34" is about the right size
+      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "UpdatePlusDraw: "); // label
+      pos.x() = text->getBound().xMax();
+      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "12.34 "); // Value
+      text->setDrawCallback(new AveragedValueTextDrawCallback(stats,"UpdatePlusDrawTime",-1, true, 1.0));
+      pos.x() = 10.0f + text->getBound().xMax(); // "12.34" is about the right size
+      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "Diff: "); // label
+      pos.x() = text->getBound().xMax();
+      text = CreateTextControl(geode, colorDelta, font, characterSize, pos, "12.34 "); // Value
+      text->setDrawCallback(new AveragedValueTextDrawCallback(stats,"FrameMinusDrawAndUpdateTime",-1, true, 1.0));
       pos.y() -= characterSize * 1.5f;
+
 
       // MESSAGE_POST_FRAME
       pos.x() = leftPos;
