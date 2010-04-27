@@ -25,6 +25,7 @@
 #include <dtCore/particlesystem.h>
 #include <dtDAL/resourceactorproperty.h>
 #include <dtDAL/datatype.h>
+#include <dtDAL/functor.h>
 #include <dtUtil/log.h>
 #include <osg/MatrixTransform>
 

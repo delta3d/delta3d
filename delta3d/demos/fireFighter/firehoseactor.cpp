@@ -23,6 +23,7 @@
 #include <dtCore/particlesystem.h>
 #include <dtDAL/gameeventmanager.h>
 #include <dtDAL/map.h>
+#include <dtDAL/functor.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/message.h>
 #include <dtGame/basemessages.h>

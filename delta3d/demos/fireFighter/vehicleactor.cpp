@@ -22,6 +22,7 @@
 #include <fireFighter/vehicleactor.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actorproxyicon.h>
+#include <dtDAL/functor.h>
 #include <dtCore/object.h>
 
 ///////////////////////////////////////////////////////
