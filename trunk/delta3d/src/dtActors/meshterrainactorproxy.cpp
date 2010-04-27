@@ -19,7 +19,7 @@
  * William E. Johnson II
  */
 
-#include "dtActors/meshterrainactorproxy.h"
+#include <dtActors/meshterrainactorproxy.h>
 #include <dtDAL/datatype.h>
 #include <dtDAL/resourceactorproperty.h>
 #include <dtDAL/resourcedescriptor.h>
@@ -47,7 +47,7 @@ namespace dtActors
 
 
       AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::TERRAIN,
-            "terrain mesh", "Terrain Mesh", MakeFunctor(*this, &MeshTerrainActorProxy::LoadFile),
+            "terrain mesh", "Terrain Mesh", dtDAL::ResourceActorProperty::SetFuncType(this, &MeshTerrainActorProxy::LoadFile),
             "The mesh that defines the geometry of the terrain.", GROUPNAME));
    }
 

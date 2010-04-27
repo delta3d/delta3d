@@ -43,17 +43,18 @@ namespace dtActors
    {
       dtDAL::ActorProxy::BuildPropertyMap();
 
-      AutoTrigger* trigger = static_cast<AutoTrigger*>(GetActor());
+      AutoTrigger* trigger = NULL;
+      GetActor(trigger);
 
       AddProperty(new ActorActorProperty(*this, "Action","Action",
-         MakeFunctor(*this ,&AutoTriggerActorProxy::SetAction),
-         MakeFunctorRet(*this ,&AutoTriggerActorProxy::GetAction),
-         "dtABC::Action","Sets the action which this Auto Trigger will start."));
+               ActorActorProperty::SetFuncType(this ,&AutoTriggerActorProxy::SetAction),
+               ActorActorProperty::GetFuncType(this ,&AutoTriggerActorProxy::GetAction),
+               "dtABC::Action","Sets the action which this Auto Trigger will start."));
 
       AddProperty(new FloatActorProperty("Time Delay","Time Delay",
-         MakeFunctor(*trigger,&AutoTrigger::SetTimeDelay),
-         MakeFunctorRet(*trigger,&AutoTrigger::GetTimeDelay),
-         "After this trigger has been fired it will wait this amount of time before starting its action.", "dtABC::AutoTrigger"));
+               FloatActorProperty::SetFuncType(trigger,&AutoTrigger::SetTimeDelay),
+               FloatActorProperty::GetFuncType(trigger,&AutoTrigger::GetTimeDelay),
+               "After this trigger has been fired it will wait this amount of time before starting its action.", "dtABC::AutoTrigger"));
 
    }
 

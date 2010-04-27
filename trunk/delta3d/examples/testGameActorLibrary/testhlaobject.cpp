@@ -54,27 +54,27 @@ void TestHLAObjectProxy::BuildPropertyMap()
    }
 
    AddProperty(
-      new dtDAL::Vec3ActorProperty("Last Known Translation", "Last Known Translation",
-                                    dtDAL::MakeFunctor(*actor, &TestHLAObject::SetLastKnownTranslation),
-                                    dtDAL::MakeFunctorRet(*actor, &TestHLAObject::GetLastKnownTranslation),
-                                    "The last known correct position of this actor.  Used for remote actors only.", ""));
+            new dtDAL::Vec3ActorProperty("Last Known Translation", "Last Known Translation",
+                     dtDAL::Vec3ActorProperty::SetFuncType(actor, &TestHLAObject::SetLastKnownTranslation),
+                     dtDAL::Vec3ActorProperty::GetFuncType(actor, &TestHLAObject::GetLastKnownTranslation),
+                     "The last known correct position of this actor.  Used for remote actors only.", ""));
 
    AddProperty(
-      new dtDAL::Vec3ActorProperty("Last Known Rotation", "Last Known Rotation",
-                                    dtDAL::MakeFunctor(*this, &TestHLAObjectProxy::SetLastKnownRotation),
-                                    dtDAL::MakeFunctorRet(*this, &TestHLAObjectProxy::GetLastKnownRotation),
-                                    "The last known correct rotation of this actor.  Used for remote actors only.", ""));
+            new dtDAL::Vec3ActorProperty("Last Known Rotation", "Last Known Rotation",
+                     dtDAL::Vec3ActorProperty::SetFuncType(this, &TestHLAObjectProxy::SetLastKnownRotation),
+                     dtDAL::Vec3ActorProperty::GetFuncType(this, &TestHLAObjectProxy::GetLastKnownRotation),
+                     "The last known correct rotation of this actor.  Used for remote actors only.", ""));
    AddProperty(
-               new dtDAL::EnumActorProperty<TestHLAObject::DamageStateEnum>("Damage State", "Damage State",
-                                            dtDAL::MakeFunctor(*actor, &TestHLAObject::SetDamageState),
-                                            dtDAL::MakeFunctorRet(*actor, &TestHLAObject::GetDamageState),
-                                            "The general amount of damage sustained by the object.", ""));
+            new dtDAL::EnumActorProperty<TestHLAObject::DamageStateEnum>("Damage State", "Damage State",
+                     dtDAL::EnumActorProperty<TestHLAObject::DamageStateEnum>::SetFuncType(actor, &TestHLAObject::SetDamageState),
+                     dtDAL::EnumActorProperty<TestHLAObject::DamageStateEnum>::GetFuncType(actor, &TestHLAObject::GetDamageState),
+                     "The general amount of damage sustained by the object.", ""));
 
    AddProperty(
-               new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::STATIC_MESH,
-                                                "Mesh", "Mesh",
-                                                dtDAL::MakeFunctor(*actor, &TestHLAObject::TestLoadTheMesh),
-                                                "", ""));
+            new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::STATIC_MESH,
+                     "Mesh", "Mesh",
+                     dtDAL::ResourceActorProperty::SetFuncType(actor, &TestHLAObject::TestLoadTheMesh),
+                     "", ""));
 
 }
 

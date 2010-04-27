@@ -21,6 +21,7 @@
 #include <dtActors/spotlightactorproxy.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actorproxyicon.h>
+#include <dtDAL/functor.h>
 
 using namespace dtCore;
 using namespace dtDAL;

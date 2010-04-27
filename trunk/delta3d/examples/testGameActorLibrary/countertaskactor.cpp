@@ -63,12 +63,12 @@ void CounterTaskActorProxy::BuildPropertyMap()
    dtActors::TaskActorProxy::BuildPropertyMap();
    
    AddProperty(new dtDAL::IntActorProperty("Counter","Counter",
-      dtDAL::MakeFunctor(*this,&CounterTaskActorProxy::SetCounter),
-      dtDAL::MakeFunctorRet(*this,&CounterTaskActorProxy::GetCounter)));
+            dtDAL::IntActorProperty::SetFuncType(this,&CounterTaskActorProxy::SetCounter),
+            dtDAL::IntActorProperty::GetFuncType(this,&CounterTaskActorProxy::GetCounter)));
       
    AddProperty(new dtDAL::IntActorProperty("TargetCount","TargetCount",
-      dtDAL::MakeFunctor(*this,&CounterTaskActorProxy::SetTargetCount),
-      dtDAL::MakeFunctorRet(*this,&CounterTaskActorProxy::GetTargetCount)));
+            dtDAL::IntActorProperty::SetFuncType(this,&CounterTaskActorProxy::SetTargetCount),
+            dtDAL::IntActorProperty::GetFuncType(this,&CounterTaskActorProxy::GetTargetCount)));
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -2,6 +2,7 @@
 #include <dtCore/model.h>
 #include <dtCore/transform.h>
 #include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/functor.h>
 #include <dtUtil/log.h>
 
 #include <osg/BlendFunc>

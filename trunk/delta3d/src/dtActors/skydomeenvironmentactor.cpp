@@ -2,6 +2,7 @@
 #include <dtCore/environment.h>
 #include <dtCore/skydome.h>
 #include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/functor.h>
 
 using namespace dtActors;
 

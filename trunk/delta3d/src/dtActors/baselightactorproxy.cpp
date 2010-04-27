@@ -19,9 +19,10 @@
  * Matthew W. Campbell
  */
 
-#include "dtActors/baselightactorproxy.h"
-#include "dtDAL/enginepropertytypes.h"
-#include "dtDAL/actorproxyicon.h"
+#include <dtActors/baselightactorproxy.h>
+#include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/actorproxyicon.h>
+#include <dtDAL/functor.h>
 
 namespace dtActors
 {

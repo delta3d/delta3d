@@ -23,6 +23,7 @@
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actorproxyicon.h>
 #include <dtDAL/resourceactorproperty.h>
+#include <dtDAL/functor.h>
 
 using namespace dtCore;
 using namespace dtDAL;

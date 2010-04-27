@@ -19,9 +19,10 @@
 * William E. Johnson II
 */
 
-#include "dtActors/skyboxactorproxy.h"
+#include <dtActors/skyboxactorproxy.h>
 #include <dtDAL/resourceactorproperty.h>
 #include <dtDAL/datatype.h>
+#include <dtDAL/functor.h>
 
 namespace dtActors 
 {

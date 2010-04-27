@@ -22,6 +22,7 @@
 #include <dtActors/coordinateconfigactor.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/exceptionenum.h>
+#include <dtDAL/functor.h>
 
 #include <osg/Math>
 

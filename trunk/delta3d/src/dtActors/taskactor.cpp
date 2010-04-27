@@ -34,6 +34,7 @@
 #include <dtDAL/namedparameter.h>
 #include <dtDAL/project.h>
 #include <dtDAL/map.h>
+#include <dtDAL/functor.h>
 
 #include <sstream>
 

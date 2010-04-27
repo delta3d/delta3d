@@ -108,10 +108,10 @@ namespace dtDirector
 
       dtDAL::ArrayActorPropertyBase* eventListProp = new dtDAL::ArrayActorProperty<OutputEventData>(
          "EventList", "Event List", "The list of events.",
-         dtDAL::MakeFunctor(*this, &SchedulerAction::SetEventIndex),
-         dtDAL::MakeFunctorRet(*this, &SchedulerAction::GetDefaultEvent),
-         dtDAL::MakeFunctorRet(*this, &SchedulerAction::GetEventList),
-         dtDAL::MakeFunctor(*this, &SchedulerAction::SetEventList),
+         dtDAL::ArrayActorProperty<OutputEventData>::SetIndexFuncType(this, &SchedulerAction::SetEventIndex),
+         dtDAL::ArrayActorProperty<OutputEventData>::GetDefaultFuncType(this, &SchedulerAction::GetDefaultEvent),
+         dtDAL::ArrayActorProperty<OutputEventData>::GetArrayFuncType(this, &SchedulerAction::GetEventList),
+         dtDAL::ArrayActorProperty<OutputEventData>::SetArrayFuncType(this, &SchedulerAction::SetEventList),
          eventGroupProp, "");
       AddProperty(eventListProp);
 

@@ -26,7 +26,6 @@
 #include <dtDAL/actorproxyicon.h>
 #include <dtGame/basemessages.h>
 #include <dtGame/invokable.h>
-#include <dtDAL/functor.h>
 #include <dtUtil/functor.h>
 
 #include <dtAnim/animnodebuilder.h>
@@ -118,7 +117,8 @@ namespace dtAnim
       AnimationGameActor& actor = static_cast<AnimationGameActor&>(GetGameActor());
 
       AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::SKELETAL_MESH,
-         "Skeletal Mesh", "Skeletal Mesh", dtDAL::MakeFunctor(actor, &AnimationGameActor::SetModel),
+         "Skeletal Mesh", "Skeletal Mesh",
+         dtDAL::ResourceActorProperty::SetFuncType(&actor, &AnimationGameActor::SetModel),
          "The model resource that defines the skeletal mesh", "AnimationBase"));
    }
 

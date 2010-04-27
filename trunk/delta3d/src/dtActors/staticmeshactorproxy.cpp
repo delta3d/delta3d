@@ -31,6 +31,7 @@
 #include <dtDAL/resourcedescriptor.h>
 #include <dtDAL/actorproxyicon.h>
 #include <dtDAL/datatype.h>
+#include <dtDAL/functor.h>
 
 #include <dtCore/object.h>
 

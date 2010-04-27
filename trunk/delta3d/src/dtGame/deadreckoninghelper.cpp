@@ -27,7 +27,6 @@
 #include <dtUtil/matrixutil.h>
 #include <dtUtil/mathdefines.h>
 #include <dtGame/gameactor.h>
-#include <dtDAL/functor.h>
 
 #include <osgSim/DOFTransform>
 #include <sstream>

@@ -22,6 +22,7 @@
 #include "dtActors/clouddomeactorproxy.h"
 #include "dtDAL/enginepropertytypes.h"
 #include <dtCore/deltadrawable.h>
+#include <dtDAL/functor.h>
 
 using namespace dtDAL;
 using namespace dtCore;

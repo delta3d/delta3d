@@ -22,6 +22,7 @@
 #include <dtActors/positionallightactorproxy.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actorproxyicon.h>
+#include <dtDAL/functor.h>
 
 namespace dtActors 
 {

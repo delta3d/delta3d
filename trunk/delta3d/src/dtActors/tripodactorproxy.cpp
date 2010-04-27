@@ -25,6 +25,7 @@
 #include <dtCore/tripod.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/exceptionenum.h>
+#include <dtDAL/functor.h>
 #include <sstream>
 
 using namespace dtActors;
@@ -53,7 +54,7 @@ void TripodActorProxy::BuildPropertyMap()
 {
    dtDAL::ActorProxy::BuildPropertyMap();
 
-   const std::string& GROUPNAME = "Tripod";
+   static const std::string GROUPNAME = "Tripod";
 
    //Tripod* tripod = static_cast< Tripod* >( GetActor() );
   

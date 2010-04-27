@@ -118,125 +118,118 @@ void TestGamePropertyProxy::BuildPropertyMap()
 {
    GameActorProxy::BuildPropertyMap();
 
-   TestGamePropertyActor& actor = static_cast<TestGamePropertyActor &>(GetGameActor());
+   TestGamePropertyActor* actor = NULL;
+   GetActor(actor);
 
    AddProperty(new BooleanActorProperty("Test_Boolean", "Test Boolean",
-      MakeFunctor(actor, &TestGamePropertyActor::SetTestBool),
-      MakeFunctorRet(actor, &TestGamePropertyActor::GetTestBool),
+      BooleanActorProperty::SetFuncType(actor, &TestGamePropertyActor::SetTestBool),
+      BooleanActorProperty::GetFuncType(actor, &TestGamePropertyActor::GetTestBool),
       "Holds a test Boolean property", GROUPNAME));
 
    AddProperty(new IntActorProperty("Test_Int", "Test Int",
-      MakeFunctor(actor, &TestGamePropertyActor::SetTestInt),
-      MakeFunctorRet(actor, &TestGamePropertyActor::GetTestInt),
+      IntActorProperty::SetFuncType(actor, &TestGamePropertyActor::SetTestInt),
+      IntActorProperty::GetFuncType(actor, &TestGamePropertyActor::GetTestInt),
       "Holds a test Int property", GROUPNAME));
 
    dtDAL::IntActorProperty *i = new IntActorProperty("Test_Read_Only_Int", "Test_Read_Only_Int",
-      MakeFunctor(actor, &TestGamePropertyActor::SetReadOnlyTestInt),
-      MakeFunctorRet(actor, &TestGamePropertyActor::GetReadOnlyTestInt),
+      IntActorProperty::SetFuncType(actor, &TestGamePropertyActor::SetReadOnlyTestInt),
+      IntActorProperty::GetFuncType(actor, &TestGamePropertyActor::GetReadOnlyTestInt),
       "Holds a test Read Only Int property", GROUPNAME);
    i->SetReadOnly(true);
    AddProperty(i);
 
    AddProperty(new LongActorProperty("Test_Long", "Test Long",
-      MakeFunctor(actor, &TestGamePropertyActor::SetTestLong),
-      MakeFunctorRet(actor, &TestGamePropertyActor::GetTestLong),
+      LongActorProperty::SetFuncType(actor, &TestGamePropertyActor::SetTestLong),
+      LongActorProperty::GetFuncType(actor, &TestGamePropertyActor::GetTestLong),
       "Holds a test Long property", GROUPNAME));
 
    AddProperty(new FloatActorProperty("Test_Float", "Test Float",
-      MakeFunctor(actor, &TestGamePropertyActor::SetTestFloat),
-      MakeFunctorRet(actor, &TestGamePropertyActor::GetTestFloat),
+      FloatActorProperty::SetFuncType(actor, &TestGamePropertyActor::SetTestFloat),
+      FloatActorProperty::GetFuncType(actor, &TestGamePropertyActor::GetTestFloat),
       "Holds a test Float property", GROUPNAME));
 
    AddProperty(new DoubleActorProperty("Test_Double", "Test Double",
-      MakeFunctor(actor, &TestGamePropertyActor::SetTestDouble),
-      MakeFunctorRet(actor, &TestGamePropertyActor::GetTestDouble),
+      DoubleActorProperty::SetFuncType(actor, &TestGamePropertyActor::SetTestDouble),
+      DoubleActorProperty::GetFuncType(actor, &TestGamePropertyActor::GetTestDouble),
       "Holds a test Double property", GROUPNAME));
 
    AddProperty(new Vec3ActorProperty("Test_Vec3", "Test Vector3",
-      MakeFunctor(actor, &TestGamePropertyActor::SetTestVec3),
-      MakeFunctorRet(actor, &TestGamePropertyActor::GetTestVec3),
+      Vec3ActorProperty::SetFuncType(actor, &TestGamePropertyActor::SetTestVec3),
+      Vec3ActorProperty::GetFuncType(actor, &TestGamePropertyActor::GetTestVec3),
       "Holds a test Vector3 Property", GROUPNAME));
 
    AddProperty(new Vec2ActorProperty("Test_Vec2", "Test Vector2",
-      MakeFunctor(actor, &TestGamePropertyActor::SetTestVec2),
-      MakeFunctorRet(actor, &TestGamePropertyActor::GetTestVec2),
+      Vec2ActorProperty::SetFuncType(actor, &TestGamePropertyActor::SetTestVec2),
+      Vec2ActorProperty::GetFuncType(actor, &TestGamePropertyActor::GetTestVec2),
       "Holds a test Vector2 Property", GROUPNAME));
 
    AddProperty(new Vec4ActorProperty("Test_Vec4", "Test Vector4",
-      MakeFunctor(actor, &TestGamePropertyActor::SetTestVec4),
-      MakeFunctorRet(actor, &TestGamePropertyActor::GetTestVec4),
+      Vec4ActorProperty::SetFuncType(actor, &TestGamePropertyActor::SetTestVec4),
+      Vec4ActorProperty::GetFuncType(actor, &TestGamePropertyActor::GetTestVec4),
       "Holds a test Vector4 Property", GROUPNAME));
 
    AddProperty(new Vec3fActorProperty("Test_Vec3f", "Test Vector3f",
-      MakeFunctor(actor, &TestGamePropertyActor::SetTestVec3f),
-      MakeFunctorRet(actor, &TestGamePropertyActor::GetTestVec3f),
+      Vec3fActorProperty::SetFuncType(actor, &TestGamePropertyActor::SetTestVec3f),
+      Vec3fActorProperty::GetFuncType(actor, &TestGamePropertyActor::GetTestVec3f),
       "Holds a test Vector3f Property", GROUPNAME));
 
    AddProperty(new Vec2fActorProperty("Test_Vec2f", "Test Vector2f",
-      MakeFunctor(actor, &TestGamePropertyActor::SetTestVec2f),
-      MakeFunctorRet(actor, &TestGamePropertyActor::GetTestVec2f),
+      Vec2fActorProperty::SetFuncType(actor, &TestGamePropertyActor::SetTestVec2f),
+      Vec2fActorProperty::GetFuncType(actor, &TestGamePropertyActor::GetTestVec2f),
       "Holds a test Vector2f Property", GROUPNAME));
 
    AddProperty(new Vec4fActorProperty("Test_Vec4f", "Test Vector4f",
-      MakeFunctor(actor, &TestGamePropertyActor::SetTestVec4f),
-      MakeFunctorRet(actor, &TestGamePropertyActor::GetTestVec4f),
+      Vec4fActorProperty::SetFuncType(actor, &TestGamePropertyActor::SetTestVec4f),
+      Vec4fActorProperty::GetFuncType(actor, &TestGamePropertyActor::GetTestVec4f),
       "Holds a test Vector4f Property", GROUPNAME));
 
    AddProperty(new Vec3dActorProperty("Test_Vec3d", "Test Vector3d",
-      MakeFunctor(actor, &TestGamePropertyActor::SetTestVec3d),
-      MakeFunctorRet(actor, &TestGamePropertyActor::GetTestVec3d),
+      Vec3dActorProperty::SetFuncType(actor, &TestGamePropertyActor::SetTestVec3d),
+      Vec3dActorProperty::GetFuncType(actor, &TestGamePropertyActor::GetTestVec3d),
       "Holds a test Vector3d Property", GROUPNAME));
 
    AddProperty(new Vec2dActorProperty("Test_Vec2d", "Test Vector2d",
-      MakeFunctor(actor, &TestGamePropertyActor::SetTestVec2d),
-      MakeFunctorRet(actor, &TestGamePropertyActor::GetTestVec2d),
+      Vec2dActorProperty::SetFuncType(actor, &TestGamePropertyActor::SetTestVec2d),
+      Vec2dActorProperty::GetFuncType(actor, &TestGamePropertyActor::GetTestVec2d),
       "Holds a test Vector2d Property", GROUPNAME));
 
    AddProperty(new Vec4dActorProperty("Test_Vec4d", "Test Vector4d",
-      MakeFunctor(actor, &TestGamePropertyActor::SetTestVec4d),
-      MakeFunctorRet(actor, &TestGamePropertyActor::GetTestVec4d),
+      Vec4dActorProperty::SetFuncType(actor, &TestGamePropertyActor::SetTestVec4d),
+      Vec4dActorProperty::GetFuncType(actor, &TestGamePropertyActor::GetTestVec4d),
       "Holds a test Vector4d Property", GROUPNAME));
 
    AddProperty(new StringActorProperty("Test_String", "Test String",
-      MakeFunctor(actor, &TestGamePropertyActor::SetTestString),
-      MakeFunctorRet(actor, &TestGamePropertyActor::GetTestString),
+      StringActorProperty::SetFuncType(actor, &TestGamePropertyActor::SetTestString),
+      StringActorProperty::GetFuncType(actor, &TestGamePropertyActor::GetTestString),
       "Holds a test String property (unlimited length)", GROUPNAME));
 
-   StringActorProperty *stringProp = new StringActorProperty("Test_String2", "Test String (max 10)",
-      MakeFunctor(actor, &TestGamePropertyActor::SetTestStringWithLength),
-      MakeFunctorRet(actor, &TestGamePropertyActor::GetTestStringWithLength),
+   StringActorProperty* stringProp = new StringActorProperty("Test_String2", "Test String (max 10)",
+      StringActorProperty::SetFuncType(actor, &TestGamePropertyActor::SetTestStringWithLength),
+      StringActorProperty::GetFuncType(actor, &TestGamePropertyActor::GetTestStringWithLength),
       "Holds a test String property with a max length of 10", GROUPNAME);
    stringProp->SetMaxLength(10);
    AddProperty(stringProp);
 
    AddProperty(new ColorRgbaActorProperty("Test_Color", "Test Color",
-      MakeFunctor(actor, &TestGamePropertyActor::SetTestColor),
-      MakeFunctorRet(actor, &TestGamePropertyActor::GetTestColor),
+      ColorRgbaActorProperty::SetFuncType(actor, &TestGamePropertyActor::SetTestColor),
+      ColorRgbaActorProperty::GetFuncType(actor, &TestGamePropertyActor::GetTestColor),
       "Holds a test Color property", GROUPNAME));
 
    AddProperty(new EnumActorProperty<TestGamePropertyActor::TestEnum>("Test_Enum", "Test Enum",
-      MakeFunctor(actor, &TestGamePropertyActor::SetTestEnum),
-      MakeFunctorRet(actor, &TestGamePropertyActor::GetTestEnum),
+      EnumActorProperty<TestGamePropertyActor::TestEnum>::SetFuncType(actor, &TestGamePropertyActor::SetTestEnum),
+      EnumActorProperty<TestGamePropertyActor::TestEnum>::GetFuncType(actor, &TestGamePropertyActor::GetTestEnum),
       "Holds a test Enum property", GROUPNAME));
 
-   //AddProperty(new ResourceActorProperty(*this, DataType::SOUND, "Test_Sound_Resource", "Test Sound",
-   //   MakeFunctor(actor, &TestGamePropertyActor::SetSoundResourceName),
-   //   "An example sound resource property", GROUPNAME));
-
-   //AddProperty(new ResourceActorProperty(*this, DataType::TEXTURE, "Test_Texture_Resource", "Texture",
-   //   MakeFunctor(actor, &TestGamePropertyActor::SetTextureResourceName),
-   //   "An example texture resource property", GROUPNAME));
-
    AddProperty(new ActorIDActorProperty(*this, "Test_Actor_Id", "Test Actor Id",
-      dtDAL::ActorIDActorProperty::SetFuncType(&actor, &TestGamePropertyActor::SetTestActorId),
-      dtDAL::ActorIDActorProperty::GetFuncType(&actor, &TestGamePropertyActor::GetTestActorId),
+      dtDAL::ActorIDActorProperty::SetFuncType(actor, &TestGamePropertyActor::SetTestActorId),
+      dtDAL::ActorIDActorProperty::GetFuncType(actor, &TestGamePropertyActor::GetTestActorId),
       "dtCore::Transformable",
       "An example linked actor property", GROUPNAME));
 
    AddProperty(new GameEventActorProperty(*this, "TestGameEvent", "Test Game Event",
-               MakeFunctor(actor, &TestGamePropertyActor::SetTestGameEvent),
-               MakeFunctorRet(actor, &TestGamePropertyActor::GetTestGameEvent),
-               "Holds a test game event property", GROUPNAME));
+            GameEventActorProperty::SetFuncType(actor, &TestGamePropertyActor::SetTestGameEvent),
+            GameEventActorProperty::GetFuncType(actor, &TestGamePropertyActor::GetTestGameEvent),
+            "Holds a test game event property", GROUPNAME));
 }
 
 //////////////////////////////////////////////////////////////////////////////

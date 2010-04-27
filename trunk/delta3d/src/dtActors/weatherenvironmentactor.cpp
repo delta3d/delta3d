@@ -22,6 +22,7 @@
 #include <dtDAL/exceptionenum.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtUtil/datetime.h>
+#include <dtDAL/functor.h>
 #include <sstream>
 #include <dtCore/environment.h>
 

@@ -26,8 +26,8 @@
 
 #include <dtDAL/export.h>
 #include <dtDAL/actorproperty.h>
-#include <dtDAL/functor.h>
 #include <dtUtil/deprecationmgr.h>
+#include <dtUtil/functor.h>
 
 namespace dtDAL
 {

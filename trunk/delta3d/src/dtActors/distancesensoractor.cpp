@@ -23,6 +23,7 @@
 #include <dtCore/scene.h>
 #include <dtCore/transform.h>
 #include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/functor.h>
 
 #include <dtGame/message.h>
 #include <dtGame/messagetype.h>

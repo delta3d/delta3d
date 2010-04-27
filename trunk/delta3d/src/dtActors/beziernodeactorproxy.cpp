@@ -22,6 +22,7 @@
 #include <dtActors/beziernodeactorproxy.h>
 #include <dtDAL/actorproxyicon.h>
 #include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/functor.h>
 
 #include <sstream>
 

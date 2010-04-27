@@ -34,6 +34,7 @@
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actortype.h>
 #include <dtUtil/log.h>
+#include <dtUtil/functor.h>
 
 using namespace dtGame;
 
@@ -608,13 +609,13 @@ void GameActorProxy::RemoveInvokable(Invokable* inv)
 void GameActorProxy::BuildInvokables()
 {
    AddInvokable(*new Invokable(TICK_LOCAL_INVOKABLE,
-      dtDAL::MakeFunctor(GetGameActor(), &GameActor::OnTickLocal)));
+            dtUtil::MakeFunctor(&GameActor::OnTickLocal, &GetGameActor())));
 
    AddInvokable(*new Invokable(TICK_REMOTE_INVOKABLE,
-      dtDAL::MakeFunctor(GetGameActor(), &GameActor::OnTickRemote)));
+            dtUtil::MakeFunctor(&GameActor::OnTickRemote, &GetGameActor())));
 
    AddInvokable(*new Invokable(PROCESS_MSG_INVOKABLE,
-      dtDAL::MakeFunctor(GetGameActor(), &GameActor::ProcessMessage)));
+            dtUtil::MakeFunctor(&GameActor::ProcessMessage, &GetGameActor())));
 }
 
 Invokable* GameActorProxy::GetInvokable(const std::string& name)

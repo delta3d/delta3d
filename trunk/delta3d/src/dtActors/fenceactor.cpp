@@ -10,6 +10,7 @@
 #include <dtDAL/resourcedescriptor.h>
 #include <dtDAL/resourceactorproperty.h>
 #include <dtUtil/exception.h>
+#include <dtDAL/functor.h>
 #include <osgDB/ReadFile>
 
 namespace dtActors

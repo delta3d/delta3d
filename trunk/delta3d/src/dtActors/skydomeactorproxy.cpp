@@ -41,9 +41,9 @@ namespace dtActors
         //SkyDome *sd = static_cast<SkyDome*> (GetActor());
 
         AddProperty(new Vec3ActorProperty("Base Color", "Base Color",
-            MakeFunctor(*this, &SkyDomeActorProxy::SetBaseColor),
-            MakeFunctorRet(*this, &SkyDomeActorProxy::GetBaseColor),
-            "Sets the color of a sky dome.", GROUPNAME));
+                 Vec3ActorProperty::SetFuncType(this, &SkyDomeActorProxy::SetBaseColor),
+                 Vec3ActorProperty::GetFuncType(this, &SkyDomeActorProxy::GetBaseColor),
+                 "Sets the color of a sky dome.", GROUPNAME));
     }
 
     ///////////////////////////////////////////////////////////////////////////////
