@@ -92,6 +92,34 @@ namespace dtCore
             mStats->setAttribute(mStats->getLatestFrameNumber(), attribName, lastTime);
          }
       }
+      
+      //////////////////////////////////////////////////////////////////
+      void FinishFrameStats()
+      {
+         if (mStats != NULL)
+         {
+            int frameNumber = mStats->getLatestFrameNumber();
+
+            // set the stats for the full time it took EVERYTHING this frame
+            if (mStats->collectStats("FullDeltaFrameTime"))
+            {
+               mStats->setAttribute(frameNumber, "FullDeltaFrameTime", mTotalFrameTime);
+            }
+
+            // The amount of time it took for OSG to update & draw versus the rest of our frame time
+            if (mStats->collectStats("UpdatePlusDrawTime"))
+            {
+               double updateTime, renderTime;
+               mStats->getAttribute(frameNumber, "Update traversal time taken", updateTime);
+               mStats->getAttribute(frameNumber, "Rendering traversals time taken", renderTime);
+ 
+               double totalDrawTime = 1000.0 * (updateTime + renderTime);
+               mStats->setAttribute(frameNumber, "UpdatePlusDrawTime", totalDrawTime);
+               double frameTime = mSystemStageTimes[System::STAGE_FRAME];
+               mStats->setAttribute(frameNumber, "FrameMinusDrawAndUpdateTime", frameTime - totalDrawTime);
+            }
+         }
+      }
 
       //////////////////////////////////////////////////////////////////
 
@@ -435,14 +463,7 @@ namespace dtCore
          }
       }
 
-      // set our full delta processing time as an attribute
-      if (IsStatsOn())
-      {
-         mSystemImpl->mStats->setAttribute(mSystemImpl->mStats->getLatestFrameNumber(),
-            "FullDeltaFrameTime", mSystemImpl->mTotalFrameTime);
-      }
-
-
+      mSystemImpl->FinishFrameStats();
    }
 
    ////////////////////////////////////////////////////////////////////////////////

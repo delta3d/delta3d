@@ -42,6 +42,8 @@ namespace dtGame
       , mStatsCumGMProcessTime(0)
       , mStatsCurFrameActorTotal(0.0f)
       , mStatsCurFrameCompTotal(0.0f)
+      , mStatsNumActorsProcessed(0)
+      , mStatsNumCompsProcessed(0)
       , mStatisticsInterval(0)
       , mPrintFileToConsole(false)
       , mDoStatsOnTheComponents(false)
@@ -98,6 +100,7 @@ namespace dtGame
    void GMStatistics::UpdateDebugStats(const dtCore::UniqueId &uniqueIDToFind,
                                       const std::string& nameOfObject, float elapsedTime, bool isComponent, bool ticklocal)
    {
+      int newItemCount = 0; // Becomes 1 on first entry for each frame
 
       std::map<dtCore::UniqueId, dtCore::RefPtr<LogDebugInformation> >::iterator itor =
          mDebugLoggerInformation.find(uniqueIDToFind);
@@ -109,22 +112,27 @@ namespace dtGame
             debugInfo.mTickLocalTime +=elapsedTime;
             debugInfo.mTimesThrough += 1;
          }
+         newItemCount = (debugInfo.mTimesThroughThisFrame == 0) ? (1) : (0); // First time this frame
+         debugInfo.mTimesThroughThisFrame += 1;
          debugInfo.mTotalTime += elapsedTime;
       }
-      else
+      else // First entry for this item. 
       {
          dtCore::RefPtr<LogDebugInformation> toPushDebugInfo = new LogDebugInformation(nameOfObject, uniqueIDToFind, isComponent);
          toPushDebugInfo->mTotalTime = elapsedTime;
          mDebugLoggerInformation.insert(std::make_pair(uniqueIDToFind, toPushDebugInfo));
+         newItemCount = 1;
       }
 
       if (!isComponent)
       {
          mStatsCurFrameActorTotal += elapsedTime;
+         mStatsNumActorsProcessed += newItemCount;
       }
       else
       {
          mStatsCurFrameCompTotal += elapsedTime;
+         mStatsNumCompsProcessed += newItemCount;
       }
 
    }
@@ -259,9 +267,9 @@ namespace dtGame
                   numIgnored ++;
                   ignoredCumulativeTime += truncTotalTime;
                }
-               debugInfo.mTotalTime = 0;
-               debugInfo.mTimesThrough = 0;
-               debugInfo.mTickLocalTime = 0;
+               debugInfo.mTotalTime = 0.0f;
+               debugInfo.mTimesThrough = 0.0f;
+               debugInfo.mTickLocalTime = 0.0f;
                cumulativeTime += truncTotalTime;
                numActors += 1;
             }
@@ -352,16 +360,16 @@ namespace dtGame
          // Update the visual statistics used when stats is on - via application.SetNextStatisticsType()
          if (ShouldWeLogStatsForDisplay() && stats != NULL)
          {
+            int frameNumber = stats->getLatestFrameNumber();
             float timeThisTickInMillis = timeForThisTick / 1000.0f; // timethis tick is in micros.
-            stats->setAttribute(stats->getLatestFrameNumber(), "GMTotal", timeThisTickInMillis);
             float actorTimeThisTickInMillis = mStatsCurFrameActorTotal * 1000.f; // actor total is in secs.
-            stats->setAttribute(stats->getLatestFrameNumber(), "GMActors", actorTimeThisTickInMillis);
-            mStatsCurFrameActorTotal = 0.0f; // reset for next frame.
-            stats->setAttribute(stats->getLatestFrameNumber(), "GMNumActors", ourGm.GetNumAllActors());
             float compTimeThisTickInMillis = mStatsCurFrameCompTotal * 1000.f; // comp total is in secs.
-            stats->setAttribute(stats->getLatestFrameNumber(), "GMComponents", compTimeThisTickInMillis);
-            mStatsCurFrameCompTotal = 0.0f; // reset for next frame.
-            //stats->setAttribute(stats->getLatestFrameNumber(), "GMNumComponents", ourGm.GetNumAllActors());
+            stats->setAttribute(frameNumber, "GMTotalTime", timeThisTickInMillis);
+            stats->setAttribute(frameNumber, "GMActorsTime", actorTimeThisTickInMillis);
+            stats->setAttribute(frameNumber, "GMComponentsTime", compTimeThisTickInMillis);
+            stats->setAttribute(frameNumber, "GMTotalNumActors", ourGm.GetNumAllActors());
+            stats->setAttribute(frameNumber, "GMNumActorsProcessed", mStatsNumActorsProcessed);
+            stats->setAttribute(frameNumber, "GMNumCompsProcessed", mStatsNumCompsProcessed);
          }
 
          // If we are doing print outs or console dumps.
@@ -380,16 +388,30 @@ namespace dtGame
                mStatsLastFragmentDump  = frameTickStop;
             }
          }
+
+         // Reset Variables for next frame.
+         mStatsCurFrameActorTotal = 0.0f;
+         mStatsCurFrameCompTotal = 0.0f; 
+         mStatsNumActorsProcessed = 0;
+         mStatsNumCompsProcessed = 0;
+         // Reset frame specific log info
+         std::map<dtCore::UniqueId, dtCore::RefPtr<LogDebugInformation> >::iterator iter = mDebugLoggerInformation.begin();
+         for (; iter != mDebugLoggerInformation.end(); ++iter)
+         {
+            LogDebugInformation& debugInfo = *iter->second;
+            debugInfo.mTimesThroughThisFrame = 0;
+         }
       }
 
       // If the user turned on visual stats, then we will start tracking stats next frame.
       // See dtCore::System.cpp and dtCore::Stats.cpp - use via application.SetNextStatisticsType()
-      bool gmVisualStatsAreOn = (stats != NULL && stats->collectStats("GMTotal"));
+      bool gmVisualStatsAreOn = (stats != NULL && stats->collectStats("GMTotalTime"));
       // stats are now off, but were on before and we aren't logging for any other reason
       if (!gmVisualStatsAreOn && mDoStatsForDisplay && !ShouldWeLogComponents() && !ShouldWeLogActors())  
       {
          mDebugLoggerInformation.clear();
       }
       mDoStatsForDisplay = gmVisualStatsAreOn;
+
    }
 }
