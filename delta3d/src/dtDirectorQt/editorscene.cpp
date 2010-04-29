@@ -202,55 +202,74 @@ namespace dtDirector
       std::vector<float> mSnapTargetsX;
       std::vector<float> mSnapTargetsY;
 
+      float snapRange = 150.0f;
+
       QList<QGraphicsItem*> nodes = items();
       int count = (int)nodes.size();
       for (int index = 0; index < count; index++)
       {
+         // Ignore nodes that are currently selected.
+         if (nodes[index]->isSelected())
+         {
+            continue;
+         }
+
          NodeItem* nodeItem = dynamic_cast<NodeItem*>(nodes[index]);
+
          if (nodeItem && nodeItem != item)
          {
-            // Snap align with the top of this node.
-            mSnapTargetsY.push_back(nodeItem->GetPosition().y());
+            QRectF itemBounds = QRectF(item->GetPosition().x(), item->GetPosition().y(), item->GetNodeWidth(), item->GetNodeHeight());
+            QRectF nodeBounds = QRectF(nodeItem->GetPosition().x(), nodeItem->GetPosition().y(), nodeItem->GetNodeWidth(), nodeItem->GetNodeHeight());
 
-            // Snap align with the bottom of this node.
-            mSnapTargetsY.push_back(nodeItem->GetPosition().y() + nodeItem->GetNodeHeight() - item->GetNodeHeight());
-
-            // Snap align with the left side of this node.
-            mSnapTargetsX.push_back(nodeItem->GetPosition().x());
-
-            // Snap align with the right side of this node.
-            mSnapTargetsX.push_back(nodeItem->GetPosition().x() + nodeItem->GetNodeWidth() - item->GetNodeWidth());
-
-            // If the snapping node is a value, snap this node to all
-            // value link positions as well.
-            if (isValue)
+            // Only align with nodes that are within range of the current item.
+            if (itemBounds.left() - snapRange <= nodeBounds.right() &&
+               itemBounds.right() + snapRange >= nodeBounds.left() &&
+               itemBounds.top() - snapRange <= nodeBounds.bottom() &&
+               itemBounds.bottom() + snapRange >= nodeBounds.top())
             {
-               int valueCount = (int)nodeItem->GetValues().size();
-               for (int valueIndex = 0; valueIndex < valueCount; valueIndex++)
-               {
-                  ValueData& data = nodeItem->GetValues()[valueIndex];
+               // Snap align with the top of this node.
+               mSnapTargetsY.push_back(nodeItem->GetPosition().y());
 
-                  float x = data.linkGraphic->scenePos().x();
-                  x -= mTranslationItem->pos().x();
-                  x -= item->GetNodeWidth()/2;
-                  mSnapTargetsX.push_back(x);
+               // Snap align with the bottom of this node.
+               mSnapTargetsY.push_back(nodeItem->GetPosition().y() + nodeItem->GetNodeHeight() - item->GetNodeHeight());
+
+               // Snap align with the left side of this node.
+               mSnapTargetsX.push_back(nodeItem->GetPosition().x());
+
+               // Snap align with the right side of this node.
+               mSnapTargetsX.push_back(nodeItem->GetPosition().x() + nodeItem->GetNodeWidth() - item->GetNodeWidth());
+
+               // If the snapping node is a value, snap this node to all
+               // value link positions as well.
+               if (isValue)
+               {
+                  int valueCount = (int)nodeItem->GetValues().size();
+                  for (int valueIndex = 0; valueIndex < valueCount; valueIndex++)
+                  {
+                     ValueData& data = nodeItem->GetValues()[valueIndex];
+
+                     float x = data.linkGraphic->scenePos().x();
+                     x -= mTranslationItem->pos().x();
+                     x -= item->GetNodeWidth()/2;
+                     mSnapTargetsX.push_back(x);
+                  }
                }
-            }
 
-            // If the test node is a value node, snap align the moving
-            // node's value links with this value.
-            if (dynamic_cast<ValueItem*>(nodeItem))
-            {
-               int valueCount = (int)item->GetValues().size();
-               for (int valueIndex = 0; valueIndex < valueCount; valueIndex++)
+               // If the test node is a value node, snap align the moving
+               // node's value links with this value.
+               if (dynamic_cast<ValueItem*>(nodeItem))
                {
-                  ValueData& data = item->GetValues()[valueIndex];
+                  int valueCount = (int)item->GetValues().size();
+                  for (int valueIndex = 0; valueIndex < valueCount; valueIndex++)
+                  {
+                     ValueData& data = item->GetValues()[valueIndex];
 
-                  float offset = data.linkGraphic->scenePos().x() - item->scenePos().x();
+                     float offset = data.linkGraphic->scenePos().x() - item->scenePos().x();
 
-                  float x = nodeItem->GetNodeWidth()/2 + nodeItem->GetPosition().x();
-                  x -= offset;
-                  mSnapTargetsX.push_back(x);
+                     float x = nodeItem->GetNodeWidth()/2 + nodeItem->GetPosition().x();
+                     x -= offset;
+                     mSnapTargetsX.push_back(x);
+                  }
                }
             }
          }

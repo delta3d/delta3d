@@ -292,16 +292,16 @@ namespace dtEditQt
       }
       else if (event->mimeData()->hasFormat("SkeletalMesh"))
       {
-         //validDrag = true;
-         //ClearGhostProxy();
+         validDrag = true;
+         ClearGhostProxy();
 
-         //mGhostProxy = dtDAL::LibraryManager::GetInstance().CreateActorProxy("dtcore.Game.Actors", "Game Mesh Actor");
-         //if (mGhostProxy.valid())
-         //{
-         //   ghostData = event->mimeData()->data("StaticMesh");
-         //   resourceProp = dynamic_cast<dtDAL::ResourceActorProperty*>(mGhostProxy->GetProperty("static mesh"));
-         //   mGhostProxy->GetActor(drawable);
-         //}
+         mGhostProxy = dtDAL::LibraryManager::GetInstance().CreateActorProxy("dtanim", "AnimationGameActor");
+         if (mGhostProxy.valid())
+         {
+            ghostData = event->mimeData()->data("SkeletalMesh");
+            resourceProp = dynamic_cast<dtDAL::ResourceActorProperty*>(mGhostProxy->GetProperty("Skeletal Mesh"));
+            mGhostProxy->GetActor(drawable);
+         }
       }
       else if (event->mimeData()->hasFormat("Particle"))
       {
@@ -321,11 +321,11 @@ namespace dtEditQt
          validDrag = true;
          ClearGhostProxy();
 
-         mGhostProxy = dtDAL::LibraryManager::GetInstance().CreateActorProxy("dtcore", "Particle System");
+         mGhostProxy = dtDAL::LibraryManager::GetInstance().CreateActorProxy("dtcore.Environment", "Sound Actor");
          if (mGhostProxy.valid())
          {
-            ghostData = event->mimeData()->data("Particle");
-            resourceProp = dynamic_cast<dtDAL::ResourceActorProperty*>(mGhostProxy->GetProperty("Particle(s) File"));
+            ghostData = event->mimeData()->data("Sound");
+            resourceProp = dynamic_cast<dtDAL::ResourceActorProperty*>(mGhostProxy->GetProperty("The Sound Effect"));
             mGhostProxy->GetActor(drawable);
          }
       }
