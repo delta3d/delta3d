@@ -433,6 +433,11 @@ namespace dtEditQt
             mGhostProxy->GetActor(ghostDrawable);
             std::vector<dtCore::DeltaDrawable*> ignoredDrawables;
             ignoredDrawables.push_back(ghostDrawable);
+            dtDAL::ActorProxyIcon* icon = mGhostProxy->GetBillBoardIcon();
+            if (icon)
+            {
+               ignoredDrawables.push_back(icon->GetDrawable());
+            }
             osg::Vec3 position;
 
             if (!getPickPosition(event->pos().x(), event->pos().y(), position, ignoredDrawables))
@@ -925,6 +930,12 @@ namespace dtEditQt
                if (drawable)
                {
                   ignoredDrawables.push_back(drawable);
+               }
+
+               dtDAL::ActorProxyIcon* icon = proxy->GetBillBoardIcon();
+               if (icon)
+               {
+                  ignoredDrawables.push_back(icon->GetDrawable());
                }
             }
          }
