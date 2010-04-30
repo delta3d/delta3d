@@ -123,7 +123,7 @@ namespace dtDAL
       {
          typedef dtDAL::StringActorProperty value_type;
 
-         typedef std::string GetValueType;
+         typedef const std::string& GetValueType;
          typedef const std::string& SetValueType;
 
          typedef value_type::GetFuncType GetFuncType;
@@ -207,7 +207,7 @@ namespace dtDAL
       {
          typedef dtDAL::ActorIDActorProperty value_type;
 
-         typedef const dtCore::UniqueId GetValueType;
+         typedef const dtCore::UniqueId& GetValueType;
          typedef const dtCore::UniqueId& SetValueType;
 
          typedef value_type::GetFuncType GetFuncType;
