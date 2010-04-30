@@ -23,7 +23,6 @@
 #ifndef DELTA_TYPETRAITS_H
 #define DELTA_TYPETRAITS_H
 
-
 namespace dtUtil
 {
 
@@ -112,7 +111,7 @@ namespace dtUtil
    struct TypeTraits
    {
    private:
-      template <class U>
+      template <class U, class T = _Type>
       struct _TypeTraits_
       {
          typedef U value_type;
@@ -120,12 +119,182 @@ namespace dtUtil
          typedef U& reference;
          typedef const U& const_reference;
 
-         typedef U const_return_type;
-         typedef U return_type;    
+         typedef const U& const_return_type;
+         typedef const U& return_type;
+         typedef const U& param_type;
       };
 
-      template <class U>
-      struct _TypeTraits_<const U&>
+      template <class T>
+      struct _TypeTraits_<signed char, T>
+      {
+         typedef signed char value_type;
+         typedef signed char* pointer_type;
+         typedef signed char& reference;
+         typedef const signed char& const_reference;
+
+         typedef signed char const_return_type;
+         typedef signed char return_type;
+         typedef signed char param_type;
+      };
+
+      template <class T>
+      struct _TypeTraits_<float, T>
+      {
+         typedef float value_type;
+         typedef float* pointer_type;
+         typedef float& reference;
+         typedef const float& const_reference;
+
+         typedef float const_return_type;
+         typedef float return_type;
+         typedef float param_type;
+      };
+
+      template <class T>
+      struct _TypeTraits_<double, T>
+      {
+         typedef double value_type;
+         typedef double* pointer_type;
+         typedef double& reference;
+         typedef const double& const_reference;
+
+         typedef double const_return_type;
+         typedef double return_type;
+         typedef double param_type;
+      };
+
+      template <class T>
+      struct _TypeTraits_<int, T>
+      {
+         typedef int value_type;
+         typedef int* pointer_type;
+         typedef int& reference;
+         typedef const int& const_reference;
+
+         typedef int const_return_type;
+         typedef int return_type;
+         typedef int param_type;
+      };
+
+      template <class T>
+      struct _TypeTraits_<short, T>
+      {
+         typedef short value_type;
+         typedef short* pointer_type;
+         typedef short& reference;
+         typedef const short& const_reference;
+
+         typedef short const_return_type;
+         typedef short return_type;
+         typedef short param_type;
+      };
+
+      template <class T>
+      struct _TypeTraits_<char, T>
+      {
+         typedef char value_type;
+         typedef char* pointer_type;
+         typedef char& reference;
+         typedef const char& const_reference;
+
+         typedef char const_return_type;
+         typedef char return_type;
+         typedef char param_type;
+      };
+
+      template <class T>
+      struct _TypeTraits_<long, T>
+      {
+         typedef long value_type;
+         typedef long* pointer_type;
+         typedef long& reference;
+         typedef const long& const_reference;
+
+         typedef long const_return_type;
+         typedef long return_type;
+         typedef long param_type;
+      };
+
+      template <class T>
+      struct _TypeTraits_<long long, T>
+      {
+         typedef long long value_type;
+         typedef long long* pointer_type;
+         typedef long long& reference;
+         typedef const long long& const_reference;
+
+         typedef long long const_return_type;
+         typedef long long return_type;
+         typedef long long param_type;
+      };
+
+      template <class T>
+      struct _TypeTraits_<unsigned, T>
+      {
+         typedef unsigned value_type;
+         typedef unsigned* pointer_type;
+         typedef unsigned& reference;
+         typedef const unsigned& const_reference;
+
+         typedef unsigned const_return_type;
+         typedef unsigned return_type;
+         typedef unsigned param_type;
+      };
+
+      template <class T>
+      struct _TypeTraits_<unsigned short, T>
+      {
+         typedef unsigned short value_type;
+         typedef unsigned short* pointer_type;
+         typedef unsigned short& reference;
+         typedef const unsigned short& const_reference;
+
+         typedef unsigned short const_return_type;
+         typedef unsigned short return_type;
+         typedef unsigned short param_type;
+      };
+
+      template <class T>
+      struct _TypeTraits_<unsigned char, T>
+      {
+         typedef unsigned char value_type;
+         typedef unsigned char* pointer_type;
+         typedef unsigned char& reference;
+         typedef const unsigned char& const_reference;
+
+         typedef unsigned char const_return_type;
+         typedef unsigned char return_type;
+         typedef unsigned char param_type;
+      };
+
+      template <class T>
+      struct _TypeTraits_<unsigned long, T>
+      {
+         typedef unsigned long value_type;
+         typedef unsigned long* pointer_type;
+         typedef unsigned long& reference;
+         typedef const unsigned long& const_reference;
+
+         typedef unsigned long const_return_type;
+         typedef unsigned long return_type;
+         typedef unsigned long param_type;
+      };
+
+      template <class T>
+      struct _TypeTraits_<unsigned long long, T>
+      {
+         typedef unsigned long long value_type;
+         typedef unsigned long long* pointer_type;
+         typedef unsigned long long& reference;
+         typedef const unsigned long long& const_reference;
+
+         typedef unsigned long long const_return_type;
+         typedef unsigned long long return_type;
+         typedef unsigned long long param_type;
+      };
+
+      template <class U, class T>
+      struct _TypeTraits_<const U&, T>
       {
          typedef U value_type;
          typedef U* pointer_type;
@@ -134,10 +303,11 @@ namespace dtUtil
 
          typedef const U& const_return_type;
          typedef U& return_type;    
+         typedef const U& param_type;
       };
 
-      template <class U>
-      struct _TypeTraits_<U&>
+      template <class U, class T>
+      struct _TypeTraits_<U&, T>
       {
          typedef U value_type;
          typedef U* pointer_type;
@@ -145,11 +315,12 @@ namespace dtUtil
          typedef const U& const_reference;
 
          typedef const U& const_return_type;
-         typedef U& return_type;    
+         typedef U& return_type;
+         typedef const U& param_type;
       };
 
-      template <class U>
-      struct _TypeTraits_<const U*>
+      template <class U, class T>
+      struct _TypeTraits_<const U*, T>
       {
          typedef U value_type;
          typedef U* pointer_type;
@@ -157,11 +328,12 @@ namespace dtUtil
          typedef const U& const_reference;
 
          typedef const U* const_return_type;
-         typedef U* return_type;
+         typedef const U* return_type;
+         typedef const U* param_type;
       };
 
-      template <class U>
-      struct _TypeTraits_<U* const>
+      template <class U, class T>
+      struct _TypeTraits_<U* const, T>
       {
          typedef U value_type;
          typedef U* pointer_type;
@@ -170,23 +342,25 @@ namespace dtUtil
 
          typedef const U* const const_return_type;
          typedef U* const return_type;
+         typedef const U* const param_type;
       };
 
-      template <class U>
-      struct _TypeTraits_<const U* const>
+      template <class U, class T>
+      struct _TypeTraits_<const U* const, T>
       {
          typedef U value_type;
          typedef U* pointer_type;
          typedef U& reference;
          typedef const U& const_reference;
 
-         typedef const U* const const_return_type;
-         typedef const U* const return_type;
+         typedef const U* const_return_type;
+         typedef const U* return_type;
+         typedef const U* param_type;
       };
 
 
-      template <class U>
-      struct _TypeTraits_<U*>
+      template <class U, class T>
+      struct _TypeTraits_<U*, T>
       {
          typedef U value_type;
          typedef U* pointer_type;
@@ -195,6 +369,7 @@ namespace dtUtil
 
          typedef const U* const_return_type;
          typedef U* return_type;
+         typedef U* param_type;
       };
 
    public:
@@ -204,8 +379,8 @@ namespace dtUtil
       typedef typename _TypeTraits_<_Type>::const_reference const_reference;
 
 
-      typedef typename _TypeTraits_<_Type>::const_return_type const_param_type;
-      typedef typename _TypeTraits_<_Type>::return_type param_type;
+      typedef typename _TypeTraits_<_Type>::param_type const_param_type;
+      typedef typename _TypeTraits_<_Type>::param_type param_type;
 
       typedef typename _TypeTraits_<_Type>::const_return_type const_return_type;
       typedef typename _TypeTraits_<_Type>::return_type return_type;

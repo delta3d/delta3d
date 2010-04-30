@@ -56,9 +56,11 @@ namespace dtAI
    class SensorBase: public osg::Referenced
    {
    public:
+      typedef typename dtUtil::TypeTraits<ReportData> ReportTypeTraits;
+      typedef typename dtUtil::TypeTraits<ReportData>::return_type EvalReturnType;
       SensorBase(){}
 
-      virtual ReportData Evaluate() = 0;
+      virtual EvalReturnType Evaluate() = 0;
 
    protected:
       ~SensorBase(){}
@@ -91,7 +93,7 @@ namespace dtAI
       /**
        * This simple function is the basis of the Sensor
        */
-      typename dtUtil::TypeTraits<ReportData>::param_type Evaluate()
+      typename dtUtil::TypeTraits<ReportData>::return_type Evaluate()
       {
          typedef typename dtUtil::TypeTraits<Type1>::reference Traits1Ref;
          typedef typename dtUtil::TypeTraits<Type2>::reference Traits2Ref;
@@ -115,7 +117,7 @@ namespace dtAI
       /**
        * This function makes us play friendly with the generic functor interface
        */
-      typename dtUtil::TypeTraits<ReportData>::param_type operator()()
+      typename dtUtil::TypeTraits<ReportData>::return_type operator()()
       {
          return Evaluate();
       }
@@ -123,7 +125,7 @@ namespace dtAI
       /**
        * Allows sensor to work with SteeringBehavior error handling
        */
-      typename dtUtil::TypeTraits<ReportData>::param_type operator()(typename dtUtil::TypeTraits<ReportData>::reference result)
+      typename dtUtil::TypeTraits<ReportData>::return_type operator()(typename dtUtil::TypeTraits<ReportData>::reference result)
       {
          return result = Evaluate();
       }
