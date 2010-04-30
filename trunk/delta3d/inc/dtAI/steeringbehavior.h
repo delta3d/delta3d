@@ -71,7 +71,8 @@ namespace dtAI
 
       void InvokeErrorHandling()
       {
-         std::for_each(mSensorErrors.begin(), mSensorErrors.end(), dtUtil::EvaluateInvoke<SensorParamType, ErrorHandlerParamType, ErrorResultType>());
+         dtUtil::EvaluateInvoke<SensorParamType, ErrorHandlerParamType, ErrorResultType> evalInvoke;
+         std::for_each(mSensorErrors.begin(), mSensorErrors.end(), evalInvoke);
       }
 
    protected:
