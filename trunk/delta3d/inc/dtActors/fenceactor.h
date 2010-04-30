@@ -56,6 +56,9 @@ namespace dtActors
       // Post
       dtCore::RefPtr<dtCore::Object>         mPost;
 
+      // Collision
+      dtCore::RefPtr<dtCore::Transformable>  mCollision;
+
       // Segment
       bool                                   mSegEnabled;
       dtCore::RefPtr<dtCore::Transformable>  mSegOrigin;
@@ -413,6 +416,8 @@ namespace dtActors
       float mSegmentWidth;
 
       float mTopTextureRatio;
+
+      bool  mCollisionWireframe;
    };
 
    /////////////////////////////////////////////////////////////////////////////
