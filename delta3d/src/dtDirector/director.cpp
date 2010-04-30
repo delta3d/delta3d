@@ -98,7 +98,7 @@ namespace dtDirector
    void Director::Clear()
    {
       // Save out any currently recorded data if it exists.
-      if (mRecording)
+      if (mRecording && !mScriptName.empty())
       {
          SaveRecording(mScriptName);
       }
