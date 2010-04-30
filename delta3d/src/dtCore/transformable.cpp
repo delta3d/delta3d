@@ -478,6 +478,16 @@ void Transformable::GetCollisionGeomDimensions(std::vector<float>& dimensions)
 void Transformable::SetCollisionCategoryBits(unsigned long bits)
 {
    mImpl->mGeomWrap->SetCollisionCategoryBits(bits);
+
+   unsigned int count = GetNumChildren();
+   for (unsigned int index = 0; index < count; ++index)
+   {
+      Transformable* child = dynamic_cast<Transformable*>(GetChild(index));
+      if (child)
+      {
+         child->SetCollisionCategoryBits(bits);
+      }
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -490,6 +500,16 @@ unsigned long Transformable::GetCollisionCategoryBits() const
 void Transformable::SetCollisionCollideBits(unsigned long bits)
 {
    mImpl->mGeomWrap->SetCollisionCollideBits(bits);
+
+   unsigned int count = GetNumChildren();
+   for (unsigned int index = 0; index < count; ++index)
+   {
+      Transformable* child = dynamic_cast<Transformable*>(GetChild(index));
+      if (child)
+      {
+         child->SetCollisionCollideBits(bits);
+      }
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -503,6 +523,16 @@ unsigned long Transformable::GetCollisionCollideBits() const
 void Transformable::SetCollisionDetection(bool enabled)
 {
    mImpl->mGeomWrap->SetCollisionDetection(enabled);
+
+   unsigned int count = GetNumChildren();
+   for (unsigned int index = 0; index < count; ++index)
+   {
+      Transformable* child = dynamic_cast<Transformable*>(GetChild(index));
+      if (child)
+      {
+         child->SetCollisionDetection(enabled);
+      }
+   }
 }
 
 ////////////////////////////////////////////////////////////////
@@ -788,6 +818,16 @@ void Transformable::RenderCollisionGeometry(bool enable /* = true */,
    else
    {
       this->RemoveRenderedCollisionGeometry();
+   }
+
+   unsigned int count = GetNumChildren();
+   for (unsigned int index = 0; index < count; ++index)
+   {
+      Transformable* child = dynamic_cast<Transformable*>(GetChild(index));
+      if (child)
+      {
+         child->RenderCollisionGeometry(enable);
+      }
    }
 }
 

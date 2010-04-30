@@ -208,6 +208,7 @@ namespace dtActors
       , mSegmentHeight(5.0f)
       , mSegmentWidth(1.0f)
       , mTopTextureRatio(0.2f)
+      , mCollisionWireframe(false)
    {
       mSegmentPointList.push_back(SegmentPointData(osg::Vec2(0.0f, 1.0f)));
       mSegmentPointList.push_back(SegmentPointData());
@@ -805,6 +806,83 @@ namespace dtActors
                postMesh->GetTransform(transform);
                transform.SetTranslation(position);
                postMesh->SetTransform(transform);
+
+               // Place collision geometry between primary posts.
+               if (pointIndex > 0 && subIndex == 0)
+               {
+                  // Make sure we have collision geometry for this node.
+                  if (!geomData->mCollision.valid())
+                  {
+                     geomData->mCollision = new dtCore::Transformable();
+                     postMesh->AddChild(geomData->mCollision);
+                  }
+
+                  // Set up collision geometry.
+                  FencePostGeomNode* prevFencePost = dynamic_cast<FencePostGeomNode*>(GetPointDrawable(pointIndex - 1));
+                  if (prevFencePost && prevFencePost->mGeomList.size())
+                  {
+                     FencePostGeomData* prevGeomData = dynamic_cast<FencePostGeomData*>(prevFencePost->mGeomList[0].get());
+                     if (prevGeomData && prevGeomData->mPost.valid())
+                     {
+                        dtCore::Transform prevTransform;
+                        prevGeomData->mPost->GetTransform(prevTransform);
+
+                        osg::Vec3 pos = transform.GetTranslation();
+                        osg::Vec3 prevPos = prevTransform.GetTranslation();
+
+                        // Position the collision transform in the midpoint between
+                        // the posts.
+                        osg::Vec3 vec = prevPos - pos;
+                        osg::Vec3 mid = (vec * 0.5f) + pos;
+
+                        // Calculate the size of the collision box.
+                        float xMin = 0.0f;
+                        float xMax = 0.0f;
+                        float yMin = 0.0f;
+                        float yMax = 0.0f;
+                        for (int index = 0; index < (int)mSegmentPointList.size(); index++)
+                        {
+                           SegmentPointData& data = mSegmentPointList[index];
+
+                           if (index != 0)
+                           {
+                              if (data.position.x() < xMin) xMin = data.position.x();
+                              if (data.position.x() > xMax) xMax = data.position.x();
+                              if (data.position.y() < yMin) yMin = data.position.y();
+                              if (data.position.y() > yMax) yMax = data.position.y();
+                           }
+                           else
+                           {
+                              xMin = xMax = data.position.x();
+                              yMin = yMax = data.position.y();
+                           }
+                        }
+
+                        float width = ((xMax - xMin) + mSegmentWidth) * mSegmentHeight * mFenceScale * 2.0f;
+                        float height = (yMax - yMin) * mSegmentHeight * mFenceScale;
+                        float length = vec.length();
+
+                        // Offset the height of the collision center based on the geometry.
+                        osg::Vec3 offset;
+                        offset.z() = (yMin * mSegmentHeight * mFenceScale) + (height * 0.5f);
+
+                        dtCore::Transform colTransform;
+                        colTransform.Set(mid + offset, prevPos + offset, osg::Vec3(0, 0, 1));
+                        geomData->mCollision->SetTransform(colTransform);
+
+                        geomData->mCollision->SetCollisionBox(width, length, height);
+                        geomData->mCollision->SetCollisionDetection(GetCollisionDetection());
+                        geomData->mCollision->RenderCollisionGeometry(GetRenderCollisionGeometry(), mCollisionWireframe);
+                        geomData->mCollision->SetCollisionCategoryBits(GetCollisionCategoryBits());
+                        geomData->mCollision->SetCollisionCollideBits(GetCollisionCollideBits());
+                     }
+                  }
+               }
+               else if (geomData->mCollision.valid())
+               {
+                  postMesh->RemoveChild(geomData->mCollision);
+                  geomData->mCollision = NULL;
+               }
             }
          }
       }
