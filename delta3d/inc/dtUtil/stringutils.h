@@ -222,7 +222,6 @@ namespace dtUtil
    /// bool mybool = dtUtil::ToType<bool>( mystring );
    /// @endcode
    ///
-   /// @todo make a specialization for 'bool' supporting "false" and "true".
    template<typename T>
    T ToType(const std::string& u)
    {
