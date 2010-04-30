@@ -172,21 +172,21 @@ namespace dtGame
          mGameManager->SetApplication(*this);
          mEntryPoint->OnStartup(*this);
       }
-      catch (const dtUtil::Exception& ex)
+      catch (const dtGame::GameApplicationConfigException& ex)
       {
          // force console logging to be on so you don't miss this critical exception.
          dtUtil::Log::GetInstance().SetOutputStreamBit(dtUtil::Log::STANDARD);
          ex.LogException(dtUtil::Log::LOG_ERROR);
          std::cerr << "The Game Manager got an exception and will now shut down ... " << std::endl;
 
-         if (ex.TypeEnum() == dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR)
-         {
-            exit(-1);
-         }
-         else
-         {
-            throw ex;
-         }
+         exit(-1);
+      }
+      catch (const dtUtil::Exception& ex)
+      {
+         dtUtil::Log::GetInstance().SetOutputStreamBit(dtUtil::Log::STANDARD);
+         ex.LogException(dtUtil::Log::LOG_ERROR);
+         std::cerr << "The Game Manager got an exception and will now shut down ... " << std::endl;
+         throw;
       }
    }
 
