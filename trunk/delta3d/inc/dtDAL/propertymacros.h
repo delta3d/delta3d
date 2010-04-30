@@ -32,6 +32,7 @@
 #include <dtDAL/enginepropertytypes.h>
 #include <dtUtil/command.h>
 #include <dtUtil/functor.h>
+#include <dtUtil/getsetmacros.h>
 
 ///////////////////////////////////////////////////////////////////////////
 //
@@ -49,7 +50,7 @@ namespace dtDAL
 
       typedef dtDAL::Vec3ActorProperty Vec3;
 
-      PropertyRegHelper(ContainerType con, FuncObj* objPtr, const std::string& str)
+      PropertyRegHelper(ContainerType con, FuncObj* objPtr, const dtUtil::RefString& str)
          : mPropCon(con)
          , mFuncObj(objPtr)
          , mGroup(str)
@@ -68,62 +69,8 @@ namespace dtDAL
       ContainerType mPropCon;
       FuncObj* mFuncObj;
 
-      const std::string& mGroup;
+      const dtUtil::RefString mGroup;
    };
-
-   #define DECLARE_PROPERTY_INLINE(PropertyType, PropertyName) \
-   private:\
-      PropertyType  m ## PropertyName; \
-   public: \
-      \
-      void Set ## PropertyName(dtDAL::TypeToActorProperty<PropertyType>::SetValueType value)\
-   {\
-      m ## PropertyName = value; \
-   };\
-      \
-      dtDAL::TypeToActorProperty<PropertyType>::GetValueType Get ## PropertyName() const\
-   {\
-      return m ## PropertyName;\
-   };\
-      \
-
-   #define DECLARE_PROPERTY(PropertyType, PropertyName) \
-   private:\
-      PropertyType  m ## PropertyName; \
-   public: \
-      \
-      void Set ## PropertyName(dtDAL::TypeToActorProperty<PropertyType>::SetValueType value);\
-      \
-      dtDAL::TypeToActorProperty<PropertyType>::GetValueType Get ## PropertyName() const;\
-      \
-
-   #define IMPLEMENT_PROPERTY_GETTER(ClassName, PropertyType, PropertyName) \
-      dtDAL::TypeToActorProperty<PropertyType>::GetValueType ClassName::Get ## PropertyName() const\
-      {\
-         return m ## PropertyName;\
-      }\
-      \
-
-   #define IMPLEMENT_PROPERTY_SETTER(ClassName, PropertyType, PropertyName) \
-      void ClassName::Set ## PropertyName(dtDAL::TypeToActorProperty<PropertyType>::SetValueType value)\
-      {\
-         m ## PropertyName = value;\
-      }\
-      \
-
-   #define IMPLEMENT_PROPERTY(ClassName, PropertyType, PropertyName) \
-      IMPLEMENT_PROPERTY_SETTER(ClassName, PropertyType, PropertyName)\
-      \
-      IMPLEMENT_PROPERTY_GETTER(ClassName, PropertyType, PropertyName)\
-      \
-
-
-   #define CREATE_PROPERTY_GETTER_HELPER_MACRO(RegHelperType_, PropertyName)\
-      &RegHelperType_::FunctorObjectType::Get ## PropertyName\
-
-   #define CREATE_PROPERTY_SETTER_HELPER_MACRO(RegHelperType_, PropertyName)\
-      &RegHelperType_::FunctorObjectType::Set ## PropertyName\
-
 
    #define REGISTER_PROPERTY(PropertyName, PropertyDesc, RegHelperType_, RegHelperInstance) \
       static const dtUtil::RefString DESC_ ## PropertyName (PropertyDesc);\
@@ -138,6 +85,13 @@ namespace dtDAL
       CREATE_PROPERTY_SETTER_HELPER_MACRO(RegHelperType_, PropertyName), \
       CREATE_PROPERTY_GETTER_HELPER_MACRO(RegHelperType_, PropertyName), \
    PropertyStringName, DESC_ ## PropertyName);\
+
+
+   #define CREATE_PROPERTY_GETTER_HELPER_MACRO(RegHelperType_, PropertyName)\
+      &RegHelperType_::FunctorObjectType::Get ## PropertyName\
+
+   #define CREATE_PROPERTY_SETTER_HELPER_MACRO(RegHelperType_, PropertyName)\
+      &RegHelperType_::FunctorObjectType::Set ## PropertyName\
 
 }//namespace dtDAL
 
