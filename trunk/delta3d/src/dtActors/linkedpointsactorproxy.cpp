@@ -450,21 +450,21 @@ namespace dtActors
    ////////////////////////////////////////////////////////////////////////////////
    void LinkedPointsActor::SetPointList(const std::vector<dtCore::RefPtr<dtCore::Transformable> >& pointList)
    {
-      // First clear all children.
-      int pointCount = GetPointCount();
-      for (int pointIndex = 0; pointIndex < pointCount; pointIndex++)
-      {
-         RemoveChild(mPointList[pointIndex].get());
-      }
+      //// First clear all children.
+      //int pointCount = GetPointCount();
+      //for (int pointIndex = 0; pointIndex < pointCount; pointIndex++)
+      //{
+      //   RemoveChild(mPointList[pointIndex].get());
+      //}
 
-      mPointList.clear();
+      //mPointList.clear();
 
-      // Now add all the new children.
-      pointCount = (int)pointList.size();
-      for (int pointIndex = 0; pointIndex < pointCount; pointIndex++)
-      {
-         AddChild(pointList[pointIndex].get());
-      }
+      //// Now add all the new children.
+      //pointCount = (int)pointList.size();
+      //for (int pointIndex = 0; pointIndex < pointCount; pointIndex++)
+      //{
+      //   AddChild(pointList[pointIndex].get());
+      //}
 
       mPointList = pointList;
 
