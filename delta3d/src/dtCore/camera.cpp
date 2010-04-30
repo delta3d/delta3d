@@ -14,6 +14,7 @@
 #include <dtUtil/datetime.h>
 #include <dtUtil/log.h>
 #include <dtUtil/functor.h>
+#include <dtUtil/mathdefines.h>
 
 #include <osg/Matrix>
 #include <osg/MatrixTransform>
@@ -38,12 +39,14 @@ namespace dtCore
 
    /////////////////////////////////////////////////////////////////////////////
    Camera::Camera(const std::string& name)
-      : Transformable(name)
-      , mOsgCamera(new osg::Camera)
-      , mAddedToSceneGraph(false)
-      , mEnable(true)
-      , mEnabledNodeMask(0xffffffff)
-      , mCallbackContainer(NULL)
+   : Transformable(name)
+   , mOsgCamera(new osg::Camera)
+   , mAddedToSceneGraph(false)
+   , mEnable(true)
+   , mEnableAutoLODScaleCallback(false)
+   , mEnabledNodeMask(0xffffffff)
+   , mCallbackContainer(NULL)
+
    {
       mOsgCamera->setName(GetName());
 
@@ -337,6 +340,49 @@ namespace dtCore
    {
       return GetOSGCamera()->getLODScale();
    }
+   /////////////////////////////////////////////////////////////////////////////
+   void Camera::SetAutoLODScaleEnabled(bool enable)
+   {
+      if (enable && !mEnableAutoLODScaleCallback)
+      {
+         if (!mAutoLODScaleCameraCallback.valid())
+         {
+            mAutoLODScaleCameraCallback = new AutoLODScaleCameraCallback(this);
+         }
+         AddCameraSyncCallback(*mAutoLODScaleCameraCallback, CameraSyncCallback(mAutoLODScaleCameraCallback, &AutoLODScaleCameraCallback::Update));
+      }
+      else if (!enable && mEnableAutoLODScaleCallback)
+      {
+         // this check SHOULD be unnecessary but I'll do it anyway.
+         if (mAutoLODScaleCameraCallback.valid())
+         {
+            RemoveCameraSyncCallback(*mAutoLODScaleCameraCallback);
+         }
+
+      }
+      mEnableAutoLODScaleCallback = enable;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   bool Camera::IsAutoLODScaleEnabled() const
+   {
+      return mEnableAutoLODScaleCallback;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   AutoLODScaleCameraCallback* Camera::GetAutoLODScaleCallback()
+   {
+      return mAutoLODScaleCameraCallback;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void Camera::SetAutoLODScaleCallback(AutoLODScaleCameraCallback* callback)
+   {
+      bool wasEnabled = mEnableAutoLODScaleCallback;
+      SetAutoLODScaleEnabled(false);
+      mAutoLODScaleCameraCallback = callback;
+      SetAutoLODScaleEnabled(wasEnabled);
+   }
 
    /////////////////////////////////////////////////////////////////////////////
    double Camera::ComputeAspectFromFOV(double hfov, double vfov)
@@ -565,6 +611,68 @@ namespace dtCore
 
       return true;
    }
+
+   //////////////////////////////////////////////////////////////
+   AutoLODScaleCameraCallback::AutoLODScaleCameraCallback(dtCore::Camera* camera)
+   : mTargetFrameTimeMS(33.333)
+   , mTargetFrameTimeEpsilon(0.3)
+   , mMinLODScale(1.0f)
+   , mMaxLODScale(2.0f)
+   , mChangeFactor(0.001f)
+   , mCamera(camera)
+   , mCameraWasNull(camera == NULL)
+   {
+   }
+
+   //////////////////////////////////////////////////////////////
+   AutoLODScaleCameraCallback::~AutoLODScaleCameraCallback()
+   {
+   }
+
+   //////////////////////////////////////////////////////////////
+   void AutoLODScaleCameraCallback::Update(Camera& camera)
+   {
+      if (mCameraWasNull || mCamera == &camera)
+      {
+         double frameTime = GetFrameTimeMS();
+         // Check to see if they are different by more than a tenth of a millisecond
+         if (!dtUtil::Equivalent(mTargetFrameTimeMS, frameTime, mTargetFrameTimeEpsilon))
+         {
+            float oldScale = camera.GetLODScale();
+            float newScale = oldScale;
+
+            if (frameTime < mTargetFrameTimeMS)
+            {
+               newScale = dtUtil::Max(camera.GetLODScale() / (1 + mChangeFactor), mMinLODScale);
+            }
+            else // frame time is greater
+            {
+               newScale = dtUtil::Min(camera.GetLODScale() * (1 + mChangeFactor), mMaxLODScale);
+            }
+
+            if (!dtUtil::Equivalent(oldScale, newScale))
+            {
+               printf("changing LOD scale from \"%f\" to \"%f\"\n", oldScale, newScale);
+               camera.SetLODScale(newScale);
+            }
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////
+   double AutoLODScaleCameraCallback::GetFrameTimeMS() const
+   {
+      return dtCore::System::GetInstance().GetSystemStageTime(System::STAGES_ALL);
+   }
+
+   //////////////////////////////////////////////////////////////
+   //////////////////////////////////////////////////////////////
+   IMPLEMENT_PROPERTY(AutoLODScaleCameraCallback, double, TargetFrameTimeMS);
+   IMPLEMENT_PROPERTY(AutoLODScaleCameraCallback, double, TargetFrameTimeEpsilon)
+   IMPLEMENT_PROPERTY(AutoLODScaleCameraCallback, float, MinLODScale);
+   IMPLEMENT_PROPERTY(AutoLODScaleCameraCallback, float, MaxLODScale);
+   IMPLEMENT_PROPERTY(AutoLODScaleCameraCallback, float, ChangeFactor);
+
 }
 
 /////////////////////////////////////////////////////////////////////////////
