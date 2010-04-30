@@ -46,12 +46,36 @@
 
 extern dtABC::Application& GetGlobalApplication();
 
+class TestAutoLODScaleCameraCallback : public dtCore::AutoLODScaleCameraCallback
+{
+public:
+   TestAutoLODScaleCameraCallback(dtCore::Camera* camera = NULL)
+   : dtCore::AutoLODScaleCameraCallback(camera)
+   , mFrameTimeMSToReturn(12.0)
+   , mWasCalled(false)
+   {}
+
+   virtual void Update(dtCore::Camera& cam)
+   {
+      dtCore::AutoLODScaleCameraCallback::Update(cam);
+      mWasCalled = true;
+   }
+
+   /// @return the frame time in milliseconds.  You may override this to use a different time value that you either lookup or calculate.
+   virtual double GetFrameTimeMS() const { return mFrameTimeMSToReturn;}
+
+
+   double mFrameTimeMSToReturn;
+   bool mWasCalled;
+};
+
 
 class CameraTests : public CPPUNIT_NS::TestFixture
 {
       CPPUNIT_TEST_SUITE(CameraTests);
 
          CPPUNIT_TEST(TestSaveScreenShot);
+         CPPUNIT_TEST(TestAutoLODScale);
          CPPUNIT_TEST(TestPerspective);
          CPPUNIT_TEST(TestFrustum);
          CPPUNIT_TEST(TestEnabled);
@@ -87,6 +111,7 @@ class CameraTests : public CPPUNIT_NS::TestFixture
       }
 
       void TestSaveScreenShot();
+      void TestAutoLODScale();
       void TestPerspective();
       void TestFrustum();
       void TestSupplyingOSGCameraToConstructor();
@@ -173,6 +198,80 @@ void CameraTests::TestSaveScreenShot()
    {
       dtCore::System::GetInstance().Stop();
    }
+}
+
+void CameraTests::TestAutoLODScale()
+{
+   dtCore::RefPtr<dtCore::Camera> camera = new dtCore::Camera();
+
+   CPPUNIT_ASSERT(camera->GetAutoLODScaleCallback() == NULL);
+   CPPUNIT_ASSERT(!camera->IsAutoLODScaleEnabled());
+   camera->SetAutoLODScaleEnabled(true);
+   CPPUNIT_ASSERT(camera->GetAutoLODScaleCallback() != NULL);
+   CPPUNIT_ASSERT(camera->IsAutoLODScaleEnabled());
+
+   dtCore::RefPtr<TestAutoLODScaleCameraCallback> subCallback = new TestAutoLODScaleCameraCallback(camera);
+   // Set it WHILE it's enabled to make sure it swaps the internal callback correctly.
+   camera->SetAutoLODScaleCallback(subCallback);
+   CPPUNIT_ASSERT(camera->GetAutoLODScaleCallback() == subCallback);
+
+   // Check defaults.
+   CPPUNIT_ASSERT_DOUBLES_EQUAL(0.001f, subCallback->GetChangeFactor(), 0.001f) ;
+   CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0f, subCallback->GetMinLODScale(), 0.001f) ;
+   CPPUNIT_ASSERT_DOUBLES_EQUAL(2.0f, subCallback->GetMaxLODScale(), 0.001f) ;
+   CPPUNIT_ASSERT_DOUBLES_EQUAL(33.333f, subCallback->GetTargetFrameTimeMS(), 0.001f) ;
+   CPPUNIT_ASSERT_DOUBLES_EQUAL(0.3f, subCallback->GetTargetFrameTimeEpsilon(), 0.001f) ;
+
+   subCallback->mFrameTimeMSToReturn = subCallback->GetTargetFrameTimeMS() * 2.0f;
+   subCallback->mWasCalled = false;
+
+   float lodScaleExpected = 1.7f;
+   camera->SetLODScale(lodScaleExpected);
+   dtCore::System::GetInstance().Step();
+   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("Time is long so lod scale should increase", 1.7f * (1.0 + subCallback->GetChangeFactor()), camera->GetLODScale(), 0.01f);
+   CPPUNIT_ASSERT(subCallback->mWasCalled);
+   subCallback->mWasCalled = false;
+
+   subCallback->mFrameTimeMSToReturn = subCallback->GetTargetFrameTimeMS() / 2.0f;
+   dtCore::System::GetInstance().Step();
+   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("Time was short lodscale should drop back down.", 1.7f, camera->GetLODScale(), 0.01f);
+
+   camera->SetLODScale(subCallback->GetMinLODScale());
+   dtCore::System::GetInstance().Step();
+   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("Time was short but scale shouldn't drop below min", subCallback->GetMinLODScale(), camera->GetLODScale(), 0.01f);
+
+   camera->SetLODScale(subCallback->GetMaxLODScale());
+   subCallback->mFrameTimeMSToReturn = subCallback->GetTargetFrameTimeMS() * 2.0f;
+   dtCore::System::GetInstance().Step();
+   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("Time was long but scale shouldn't go above max", subCallback->GetMaxLODScale(), camera->GetLODScale(), 0.01f);
+
+   // put the scale in the middle so we know it can change.
+   lodScaleExpected = (subCallback->GetMaxLODScale() + subCallback->GetMinLODScale()) / 2.0f;
+   camera->SetLODScale(lodScaleExpected);
+   subCallback->mFrameTimeMSToReturn = subCallback->GetTargetFrameTimeMS() + subCallback->GetTargetFrameTimeEpsilon();
+   dtCore::System::GetInstance().Step();
+   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("Time within lod epsilon, so it shouldn't change", lodScaleExpected, camera->GetLODScale(), 0.01f);
+
+   // Setting it to NULL while enabled
+   camera->SetAutoLODScaleCallback(NULL);
+   CPPUNIT_ASSERT_MESSAGE("Setting the callback to NULL while it's enabled should make it generate a new one.",
+            camera->GetAutoLODScaleCallback() != NULL);
+   CPPUNIT_ASSERT_MESSAGE("It shouldn't still have the old callback after it was changed.", camera->GetAutoLODScaleCallback() != subCallback);
+
+   dtCore::ObserverPtr<dtCore::Camera> camOb = camera.get();
+   camera = NULL;
+   CPPUNIT_ASSERT(!camOb.valid());
+
+   // Make sure it doesn't crash and won't set the lod scale on the main camera when it was set to another camera and that camera was deleted.
+   float cameraLodScale = GetGlobalApplication().GetCamera()->GetLODScale();
+   subCallback->mFrameTimeMSToReturn = subCallback->GetTargetFrameTimeMS() * 2.0;
+   subCallback->Update(*GetGlobalApplication().GetCamera());
+   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("It should ignore the main camera", cameraLodScale, GetGlobalApplication().GetCamera()->GetLODScale(), 0.01f);
+
+
+   dtCore::ObserverPtr<TestAutoLODScaleCameraCallback> callbackOb = subCallback.get();
+   subCallback = NULL;
+   CPPUNIT_ASSERT(!callbackOb.valid());
 }
 
 void CameraTests::TestPerspective()

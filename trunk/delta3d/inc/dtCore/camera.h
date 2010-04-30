@@ -29,7 +29,10 @@
 #include <dtUtil/generic.h>
 #include <dtCore/refptr.h>
 #include <dtCore/transformable.h>
+#include <dtCore/observerptr.h>
 #include <osg/Vec4>
+
+#include <dtUtil/getsetmacros.h>
 
 #include <osg/Camera>
 
@@ -46,6 +49,7 @@ namespace dtCore
    class ScreenShotCallback;
    class CameraCallbackContainer;
    class CameraDrawCallback;
+   class AutoLODScaleCameraCallback;
 
    /**
     * A dtCore::Camera is a view into the Scene.  It requires a dtCore::DeltaWin to
@@ -184,6 +188,29 @@ namespace dtCore
       float GetLODScale() const;
 
       /**
+       *  Enables or disables the auto LOD scale support.
+       *  Auto LOD scale will attempt to increase or decrease the LOD scale in an attempt to keep the app at a decent framerate.
+       *  Setting this to true will, if none has been assigned, make the camera create a default instance.
+       */
+      void SetAutoLODScaleEnabled(bool enable);
+      /// @return true if the auto lod scale callback is enabled.
+      bool IsAutoLODScaleEnabled() const;
+
+      /**
+       * Call this to get the auto lod scale callback so you can set values on it.  It will return NULL if none has been set
+       * and SetAutoLODScaleEnabled is set to false.  If you set the callback, this will return the instance or subclass you assigned.
+       */
+      AutoLODScaleCameraCallback* GetAutoLODScaleCallback();
+
+      /**
+       * Sets the callback for handling auto lod scaling. You only need to set this if you want to subclass and
+       * override behavior for your callback.  If you want to make a single callback work for all of the cameras, you should
+       * create an instance of AutoLODScaleCameraCallback or a subclass, and assign it here.  If you set this to null, it will
+       * go back to using the default class by creating a new instance as necessary.
+       */
+      void SetAutoLODScaleCallback(AutoLODScaleCameraCallback* callback);
+
+      /**
       * Supply the Scene this Camera has been added to. Normally this
       * is done inside dtCore::Scene. So you should probably never have
       * to call this.
@@ -273,10 +300,75 @@ namespace dtCore
 
       bool mAddedToSceneGraph;
       bool mEnable;
+      bool mEnableAutoLODScaleCallback;
       RefPtr<ScreenShotCallback> mScreenShotTaker;
+      RefPtr<AutoLODScaleCameraCallback> mAutoLODScaleCameraCallback;
 
       osg::Node::NodeMask mEnabledNodeMask; ///<The last known node mask corresponding to "enabled"
       RefPtr<CameraCallbackContainer> mCallbackContainer;
+   };
+
+   /**
+    * @brief implements the auto level of detail (LOD) scale feature.
+    *
+    * The LOD scale is a multiplier that is applied to the distance from the view point to
+    * the bounding sphere of an LOD node when it is traversed in the culling phase of rendering.
+    * the.  The LOD node has several children that are assigned ranges of distance where they will be rendered,
+    * and each child is expected to have a different level of detail.  At some distance, no child will be selected and
+    * nothing will be rendered. The scale with either move those transitions closer or farther depending on if the value is
+    * greater or lesser than 1.0 respectively.  This class will take into account the time it takes to render the scene
+    * using the system frame time by default and decide whether to increase or decrease the scale to make the rendering
+    * time approach the target.  Minimum and maximum scales values exist to so the rendering quality can be controlled as well.
+    *
+    * The Update and GetFrameTimeMS methods can be overridden to change the behavior if needed.
+    */
+   class DT_CORE_EXPORT AutoLODScaleCameraCallback : public osg::Referenced
+   {
+   public:
+      /**
+       * Main constructor.
+       * @param camera The camera use a target. If you want to use a specific camera, you set this, if you want to
+       *               apply it to all cameras, pass NULL.
+       */
+      AutoLODScaleCameraCallback(Camera* camera = NULL);
+      virtual ~AutoLODScaleCameraCallback();
+
+      /// The main update method. Override this to change the behavior.
+      virtual void Update(Camera&);
+      /// @return the frame time in milliseconds.  You may override this to use a different time value that you either lookup or calculate.
+      virtual double GetFrameTimeMS() const;
+
+      /**
+       * The target frame time.  It will increase the LOD scale if the frame time is larger than this,
+       * or decrease it if it's smaller. Default is 33.33 or 30Hz
+       */
+      DECLARE_PROPERTY(double, TargetFrameTimeMS)
+
+      /// The amount of slop to allow when comparing the frame time to the target frame time.  Defaults to 0.3
+      DECLARE_PROPERTY(double, TargetFrameTimeEpsilon)
+
+      /**
+       * The minimum LOD scale to set even if the framerate is really high.  You should probably set this to 1.0 (Default)
+       * but if you want it to go lower than 1.0 so it will show better LOD if you have the performance, then you can.
+       */
+      DECLARE_PROPERTY(float, MinLODScale)
+
+      /**
+       * The maximum LOD scale to set even if the framerate is really low.  You should probably set this to something greater than 1.0.
+       * The default is 2.0.
+       */
+      DECLARE_PROPERTY(float, MaxLODScale)
+
+      /**
+       * Each time it needs to change the number, this is the scalar factor of how much to change it.  0-1 work.  Something
+       * around 0.001 probably makes the most sense so you don't get huge changes in one frame, which can lead to oscillations.
+       */
+      DECLARE_PROPERTY(float, ChangeFactor)
+
+   private:
+      dtCore::ObserverPtr<Camera> mCamera;
+      // bool to see if it should just exit if the camera is/becomes null.
+      bool mCameraWasNull;
    };
 }
 
