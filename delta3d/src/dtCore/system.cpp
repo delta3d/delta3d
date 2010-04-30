@@ -21,9 +21,6 @@ namespace dtCore
 {
    IMPLEMENT_MANAGEMENT_LAYER(System)
 
-   bool System::mInstanceFlag = false;
-   System* System::mSystem = 0;
-
    const dtUtil::RefString System::MESSAGE_EVENT_TRAVERSAL("eventtraversal");
    const dtUtil::RefString System::MESSAGE_POST_EVENT_TRAVERSAL("posteventtraversal");
    const dtUtil::RefString System::MESSAGE_PRE_FRAME("preframe");
@@ -43,13 +40,28 @@ namespace dtCore
    {
    public:
       SystemImpl()
-         : mTimerStart(0)
-         , mTotalFrameTime(0.0)
+      : mTimerStart(0)
+      , mTotalFrameTime(0.0)
+      , mRealClockTime(0)
+      , mSimulationClockTime(0)
+      , mLastDrawClockTime(0)
+      , mSimulationTime(0.0)
+      , mCorrectSimulationTime(0.0)
+      , mFrameTime(1.0/60.0)
+      , mTimeScale(1.0)
+      , mMaxTimeBetweenDraws(30000)
+      , mSystemStages(System::STAGES_DEFAULT)
+      , mUseFixedTimeStep(false)
+      , mRunning(false)
+      , mShutdownOnWindowClose(true)
+      , mPaused(false)
+      , mWasPaused(false)
       {
       }
       ~SystemImpl()
       {
          mStats = NULL;
+         mTickClockTime = mClock.Tick();
       }
 
 
@@ -96,6 +108,8 @@ namespace dtCore
       //////////////////////////////////////////////////////////////////
       void FinishFrameStats()
       {
+         mSystemStageTimes[System::STAGES_ALL] = mTotalFrameTime;
+
          if (mStats != NULL)
          {
             int frameNumber = mStats->getLatestFrameNumber();
@@ -122,6 +136,71 @@ namespace dtCore
       }
 
       //////////////////////////////////////////////////////////////////
+      /**
+       * @param deltaSimTime The change in simulation time is seconds.
+       * @param deltaRealTime The change in real time in seconds.
+       */
+      void EventTraversal(const double deltaSimTime, const double deltaRealTime);
+
+      /**
+       * @param deltaSimTime The change in simulation time is seconds.
+       * @param deltaRealTime The change in real time in seconds.
+       */
+      void PostEventTraversal(const double deltaSimTime, const double deltaRealTime);
+
+      /**
+       * Stuff to do before the frame. Message: "preframe", delta real and time in seconds
+       * @param deltaSimTime The change in simulation time is seconds.
+       * @param deltaRealTime The change in real time in seconds.
+       */
+      void PreFrame(const double deltaSimTime, const double deltaRealTime);
+
+      /**
+       * @param deltaSimTime The change in simulation time is seconds.
+       * @param deltaRealTime The change in real time in seconds.
+       */
+      void FrameSynch(const double deltaSimTime, const double deltaRealTime);
+
+      /**
+       * @param deltaSimTime The change in simulation time is seconds.
+       * @param deltaRealTime The change in real time in seconds.
+       */
+      void CameraSynch(const double deltaSimTime, const double deltaRealTime);
+
+      /**
+       * Render the Camera, etc.  Message: "frame", delta time in seconds
+       * @param deltaSimTime The change in simulation time is seconds.
+       * @param deltaRealTime The change in real time in seconds.
+       */
+      void Frame(const double deltaSimTime, const double deltaRealTime);
+
+      /**
+       * Stuff to do after the frame.  Message: "postframe", delta time in seconds
+       * @param deltaSimTime The change in simulation time is seconds.
+       * @param deltaRealTime The change in real time in seconds.
+       */
+      void PostFrame(const double deltaSimTime, const double deltaRealTime);
+
+      void SystemStepFixed(const double realDT);
+
+      // initializes internal variables at the start of a run.
+      void InitVars();
+
+
+      void Pause(const double deltaRealTime);
+
+      ///Intenal helper that calls Producer::Camera::frame(bool doSwap)
+      ///with the proper value for doSwap.
+      void CameraFrame();
+
+      ///One System frame
+      void SystemStep();
+
+      /// A passthough hack so impl methods can send messages
+      void SendMessage(const std::string& message = "", void* data = NULL)
+      {
+         System::GetInstance().SendMessage(message, data);
+      }
 
       dtCore::Timer mTickClock;
       dtCore::Timer_t mTimerStart;
@@ -131,27 +210,42 @@ namespace dtCore
       // Store the time it took for each phase of the system (preframe, frame, ...)
       typedef std::map<System::SystemStages, double> SystemStageTimesMap;
       SystemStageTimesMap mSystemStageTimes;
+
+      static System* mSystem;   ///<The System pointer
+      static bool mInstanceFlag;///<Have we created a System yet?
+      Timer mClock;
+
+      /// time keeping variable.  This clock is used for calculating accurate time deltas using
+      /// system dependent algorithms.  The value is not necessarily human understandable.
+      Timer_t mTickClockTime;
+
+      // The real world time (UTC) and a simulated, set-able version of it. They are both
+      // in microseconds since January 1, 1970.
+      Timer_t mRealClockTime, mSimulationClockTime;
+      Timer_t mLastDrawClockTime;
+      double mSimulationTime;
+      double mSimTimeSinceStartup;
+      double mCorrectSimulationTime;
+      double mFrameTime;
+      double mTimeScale;
+      double mMaxTimeBetweenDraws;
+
+      System::SystemStageFlags mSystemStages;
+
+      bool mUseFixedTimeStep;
+      bool mRunning; ///<Are we currently running?
+      bool mShutdownOnWindowClose;
+      bool mPaused;
+      bool mWasPaused;
+
    };
 
+   bool SystemImpl::mInstanceFlag = false;
+   System* SystemImpl::mSystem = NULL;
 
    ////////////////////////////////////////////////////////////////////////////////
    System::System()
-      : mRealClockTime(0)
-      , mSimulationClockTime(0)
-      , mLastDrawClockTime(0)
-      , mSimulationTime(0.0)
-      , mCorrectSimulationTime(0.0)
-      , mFrameTime(1.0/60.0)
-      , mTimeScale(1.0)
-      , mMaxTimeBetweenDraws(30000)
-      , mSystemStages(STAGES_DEFAULT)
-      , mUseFixedTimeStep(false)
-      , mRunning(false)
-      , mShutdownOnWindowClose(true)
-      , mPaused(false)
-      , mWasPaused(false)
    {
-      mTickClockTime = mClock.Tick();
       RegisterInstance(this);
 
       mSystemImpl = new SystemImpl();
@@ -162,7 +256,7 @@ namespace dtCore
    {
       DeregisterInstance(this);
 
-      mInstanceFlag = false;
+      SystemImpl::mInstanceFlag = false;
 
       delete mSystemImpl;
    }
@@ -170,13 +264,13 @@ namespace dtCore
    ////////////////////////////////////////////////////////////////////////////////
    System& System::GetInstance()
    {
-      if (!mInstanceFlag)
+      if (!SystemImpl::mInstanceFlag)
       {
-         mSystem = new System();
-         mSystem->SetName("System");
-         mInstanceFlag = true;
+         SystemImpl::mSystem = new System();
+         SystemImpl::mSystem->SetName("System");
+         SystemImpl::mInstanceFlag = true;
       }
-      return *mSystem;
+      return *SystemImpl::mSystem;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -187,97 +281,97 @@ namespace dtCore
    ////////////////////////////////////////////////////////////////////////////////
    void System::SetShutdownOnWindowClose(bool shutdown)
    {
-      mShutdownOnWindowClose = shutdown;
+      mSystemImpl->mShutdownOnWindowClose = shutdown;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    bool System::GetShutdownOnWindowClose() const
    {
-      return mShutdownOnWindowClose;
+      return mSystemImpl->mShutdownOnWindowClose;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    double System::GetTimeScale() const
    {
-      return mTimeScale;
+      return mSystemImpl->mTimeScale;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void System::SetTimeScale(double newTimeScale)
    {
-      mTimeScale = newTimeScale;
+      mSystemImpl->mTimeScale = newTimeScale;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    Timer_t System::GetRealClockTime() const
    {
-      return mRealClockTime;
+      return mSystemImpl->mRealClockTime;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    Timer_t System::GetSimulationClockTime() const
    {
-      return mSimulationClockTime;
+      return mSystemImpl->mSimulationClockTime;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void System::SetSimulationClockTime(const dtCore::Timer_t& newTime)
    {
-      mSimulationClockTime = newTime;
+      mSystemImpl->mSimulationClockTime = newTime;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    double System::GetSimulationTime() const
    {
-      return mSimulationTime;
+      return mSystemImpl->mSimulationTime;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    double System::GetSimTimeSinceStartup() const
    {
-      return mSimTimeSinceStartup;
+      return mSystemImpl->mSimTimeSinceStartup;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    double System::GetCorrectSimulationTime() const
    {
-      return mCorrectSimulationTime;
+      return mSystemImpl->mCorrectSimulationTime;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void System::SetFrameRate(double newRate)
    {
-      mFrameTime = 1.0 / newRate;
+      mSystemImpl->mFrameTime = 1.0 / newRate;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void System::SetMaxTimeBetweenDraws(double newTime)
    {
-      mMaxTimeBetweenDraws = newTime * 1000000.0;
+      mSystemImpl->mMaxTimeBetweenDraws = newTime * 1000000.0;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void System::SetUseFixedTimeStep(bool value)
    {
-      mUseFixedTimeStep = value;
+      mSystemImpl->mUseFixedTimeStep = value;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    double System::GetFrameRate() const
    {
-      return 1.0/mFrameTime;
+      return 1.0/mSystemImpl->mFrameTime;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    bool System::GetUsesFixedTimeStep() const
    {
-      return mUseFixedTimeStep;
+      return mSystemImpl->mUseFixedTimeStep;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    double System::GetMaxTimeBetweenDraws() const
    {
-      return mMaxTimeBetweenDraws / 1000000.0;
+      return mSystemImpl->mMaxTimeBetweenDraws / 1000000.0;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -303,22 +397,22 @@ namespace dtCore
    ////////////////////////////////////////////////////////////////////////////////
    void System::SetSimulationTime(double newTime)
    {
-      mSimulationTime = newTime;
-      mCorrectSimulationTime = newTime;
+      mSystemImpl->mSimulationTime = newTime;
+      mSystemImpl->mCorrectSimulationTime = newTime;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void System::SetPause(bool paused)
    {
       // don't send out a message unless it actually changes.
-      if (mPaused == paused)
+      if (mSystemImpl->mPaused == paused)
       {
          return;
       }
 
-      mPaused = paused;
+      mSystemImpl->mPaused = paused;
 
-      if (mPaused)
+      if (mSystemImpl->mPaused)
       {
          SendMessage(MESSAGE_PAUSE_START);
       }
@@ -331,30 +425,30 @@ namespace dtCore
    ////////////////////////////////////////////////////////////////////////////////
    bool System::GetPause() const
    {
-      return mPaused;
+      return mSystemImpl->mPaused;
    }
 
 
    ////////////////////////////////////////////////////////////////////////////////
    void System::SetSystemStages(SystemStageFlags stages)
    {
-      mSystemStages = stages;
+      mSystemImpl->mSystemStages = stages;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    System::SystemStageFlags System::GetSystemStages() const
    {
-      return mSystemStages;
+      return mSystemImpl->mSystemStages;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void System::Pause(const double deltaRealTime)
+   void SystemImpl::Pause(const double deltaRealTime)
    {
-      SendMessage(MESSAGE_PAUSE, const_cast<double*>(&deltaRealTime));
+      SendMessage(System::MESSAGE_PAUSE, const_cast<double*>(&deltaRealTime));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void System::SystemStepFixed(const double realDT)
+   void SystemImpl::SystemStepFixed(const double realDT)
    {
       mRealClockTime += Timer_t(realDT * 1000000);
       const double simDT = realDT * mTimeScale;
@@ -373,7 +467,7 @@ namespace dtCore
       }
 
       // If ahead enough that we could draw and still be ahead, then just waste time (do nothing in a loop)
-      double previousDrawTime = mSystemImpl->mSystemStageTimes[System::STAGE_FRAME] / 1000.0;
+      double previousDrawTime = mSystemStageTimes[System::STAGE_FRAME] / 1000.0;
       if (mCorrectSimulationTime + previousDrawTime < mSimulationTime + simFrameTime)
       {
 #ifndef DELTA_WIN32
@@ -384,7 +478,7 @@ namespace dtCore
          return;
       }
 
-      mSystemImpl->mTotalFrameTime = 0.0;  // reset frame timer for stats
+      mTotalFrameTime = 0.0;  // reset frame timer for stats
 
       mSimulationTime      += simFrameTime;
       mSimTimeSinceStartup += simFrameTime;
@@ -406,16 +500,16 @@ namespace dtCore
       }
       else // Else, skip the draw and just update the stats (w/o this the stats don't work right)
       {
-         mSystemImpl->SetLastStatTimer(MESSAGE_CAMERA_SYNCH, System::STAGE_CAMERA_SYNCH);
-         mSystemImpl->SetLastStatTimer(MESSAGE_FRAME_SYNCH, System::STAGE_FRAME_SYNCH);
-         mSystemImpl->SetLastStatTimer(MESSAGE_FRAME, System::STAGE_FRAME);
+         SetLastStatTimer(System::MESSAGE_CAMERA_SYNCH, System::STAGE_CAMERA_SYNCH);
+         SetLastStatTimer(System::MESSAGE_FRAME_SYNCH, System::STAGE_FRAME_SYNCH);
+         SetLastStatTimer(System::MESSAGE_FRAME, System::STAGE_FRAME);
       }
       PostFrame(simFrameTime, realFrameTime);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    ///private
-   void System::SystemStep()
+   void SystemImpl::SystemStep()
    {
       const Timer_t lastClockTime  = mTickClockTime;
       mTickClockTime = mClock.Tick();
@@ -424,7 +518,7 @@ namespace dtCore
 
       if (mPaused)
       {
-         mSystemImpl->mTotalFrameTime = 0.0;  // reset frame timer for stats
+         mTotalFrameTime = 0.0;  // reset frame timer for stats
          mWasPaused = true;
          EventTraversal(0.0, realDT);
          PostEventTraversal(0.0, realDT);
@@ -437,7 +531,7 @@ namespace dtCore
       {
          if (!mUseFixedTimeStep)
          {
-            mSystemImpl->mTotalFrameTime = 0.0;  // reset frame timer for stats
+            mTotalFrameTime = 0.0;  // reset frame timer for stats
             mWasPaused = false;
 
             // update real time variable(s)
@@ -463,17 +557,17 @@ namespace dtCore
          }
       }
 
-      mSystemImpl->FinishFrameStats();
+      FinishFrameStats();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void System::StepWindow()
    {
-      SystemStep();
+      mSystemImpl->SystemStep();
 
       // FIXME how to check if GraphicsWindow is always running ??
       // this implementation in really the good way
-      if (mShutdownOnWindowClose)
+      if (mSystemImpl->mShutdownOnWindowClose)
       {
          bool areGraphicsWindow = false;
          for (int i = 0; i < DeltaWin::GetInstanceCount() && !areGraphicsWindow; ++i)
@@ -481,12 +575,12 @@ namespace dtCore
              areGraphicsWindow = areGraphicsWindow || DeltaWin::GetInstance(i)->GetOsgViewerGraphicsWindow()->valid();
          }
 
-         mRunning = mRunning && areGraphicsWindow;
+         mSystemImpl->mRunning = mSystemImpl->mRunning && areGraphicsWindow;
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void System::InitVars()
+   void SystemImpl::InitVars()
    {
       mTickClockTime = mClock.Tick();
       time_t realTime;
@@ -503,7 +597,7 @@ namespace dtCore
    {
       Start(); ///Automatically start the System when Run.
 
-      while (mRunning)
+      while (mSystemImpl->mRunning)
       {
          StepWindow();
       }
@@ -514,10 +608,17 @@ namespace dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   bool System::IsRunning() const
+   {
+      return mSystemImpl->mRunning;
+   }
+
+
+   ////////////////////////////////////////////////////////////////////////////////
    void System::Start()
    {
-      mRunning = true;
-      InitVars();
+      mSystemImpl->mRunning = true;
+      mSystemImpl->InitVars();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -525,130 +626,130 @@ namespace dtCore
    {
       static bool first = true;
 
-      if (!mRunning)
+      if (!mSystemImpl->mRunning)
       {
          return;
       }
 
       if (first)
       {
-         InitVars();
+         mSystemImpl->InitVars();
          first = false;
       }
 
-      SystemStep();
+      mSystemImpl->SystemStep();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void System::Stop()
    {
-      mRunning = false;
+      mSystemImpl->mRunning = false;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void System::EventTraversal(const double deltaSimTime, const double deltaRealTime)
+   void SystemImpl::EventTraversal(const double deltaSimTime, const double deltaRealTime)
    {
       if (dtUtil::Bits::Has(mSystemStages, System::STAGE_EVENT_TRAVERSAL))
       {
-         mSystemImpl->StartStatTimer();
+         StartStatTimer();
 
          double userData[2] = { deltaSimTime, deltaRealTime };
-         SendMessage(MESSAGE_EVENT_TRAVERSAL, userData);
+         SendMessage(System::MESSAGE_EVENT_TRAVERSAL, userData);
 
-         mSystemImpl->EndStatTimer(MESSAGE_EVENT_TRAVERSAL, System::STAGE_EVENT_TRAVERSAL);
+         EndStatTimer(System::MESSAGE_EVENT_TRAVERSAL, System::STAGE_EVENT_TRAVERSAL);
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void System::PostEventTraversal(const double deltaSimTime, const double deltaRealTime)
+   void SystemImpl::PostEventTraversal(const double deltaSimTime, const double deltaRealTime)
    {
       if (dtUtil::Bits::Has(mSystemStages, System::STAGE_POST_EVENT_TRAVERSAL))
       {
-         mSystemImpl->StartStatTimer();
+         StartStatTimer();
 
          double userData[2] = { deltaSimTime, deltaRealTime };
-         SendMessage(MESSAGE_POST_EVENT_TRAVERSAL, userData);
+         SendMessage(System::MESSAGE_POST_EVENT_TRAVERSAL, userData);
 
-         mSystemImpl->EndStatTimer(MESSAGE_POST_EVENT_TRAVERSAL, System::STAGE_POST_EVENT_TRAVERSAL);
+         EndStatTimer(System::MESSAGE_POST_EVENT_TRAVERSAL, System::STAGE_POST_EVENT_TRAVERSAL);
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void System::PreFrame(const double deltaSimTime, const double deltaRealTime)
+   void SystemImpl::PreFrame(const double deltaSimTime, const double deltaRealTime)
    {
       if (dtUtil::Bits::Has(mSystemStages, System::STAGE_PREFRAME))
       {
-         mSystemImpl->StartStatTimer();
+         StartStatTimer();
 
          double userData[2] = { deltaSimTime, deltaRealTime };
-         SendMessage(MESSAGE_PRE_FRAME, userData);
+         SendMessage(System::MESSAGE_PRE_FRAME, userData);
 
-         mSystemImpl->EndStatTimer(MESSAGE_PRE_FRAME, System::STAGE_PREFRAME);
+         EndStatTimer(System::MESSAGE_PRE_FRAME, System::STAGE_PREFRAME);
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void System::FrameSynch(const double deltaSimTime, const double deltaRealTime)
+   void SystemImpl::FrameSynch(const double deltaSimTime, const double deltaRealTime)
    {
       if (dtUtil::Bits::Has(mSystemStages, System::STAGE_FRAME_SYNCH))
       {
-         mSystemImpl->StartStatTimer();
+         StartStatTimer();
 
          double userData[2] = { deltaSimTime, deltaRealTime };
-         SendMessage(MESSAGE_FRAME_SYNCH, userData);
+         SendMessage(System::MESSAGE_FRAME_SYNCH, userData);
 
-         mSystemImpl->EndStatTimer(MESSAGE_FRAME_SYNCH, System::STAGE_FRAME_SYNCH);
+         EndStatTimer(System::MESSAGE_FRAME_SYNCH, System::STAGE_FRAME_SYNCH);
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void System::CameraSynch(const double deltaSimTime, const double deltaRealTime)
+   void SystemImpl::CameraSynch(const double deltaSimTime, const double deltaRealTime)
    {
       if (dtUtil::Bits::Has(mSystemStages, System::STAGE_CAMERA_SYNCH))
       {
-         mSystemImpl->StartStatTimer();
+         StartStatTimer();
 
          double userData[2] = { deltaSimTime, deltaRealTime };
-         SendMessage(MESSAGE_CAMERA_SYNCH, userData);
+         SendMessage(System::MESSAGE_CAMERA_SYNCH, userData);
 
-         mSystemImpl->EndStatTimer(MESSAGE_CAMERA_SYNCH, System::STAGE_CAMERA_SYNCH);
+         EndStatTimer(System::MESSAGE_CAMERA_SYNCH, System::STAGE_CAMERA_SYNCH);
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void System::Frame(const double deltaSimTime, const double deltaRealTime)
+   void SystemImpl::Frame(const double deltaSimTime, const double deltaRealTime)
    {
       if (dtUtil::Bits::Has(mSystemStages, System::STAGE_FRAME))
       {
-         mSystemImpl->StartStatTimer();
+         StartStatTimer();
 
          double userData[2] = { deltaSimTime, deltaRealTime };
-         SendMessage(MESSAGE_FRAME, userData );
+         SendMessage(System::MESSAGE_FRAME, userData );
 
-         mSystemImpl->EndStatTimer(MESSAGE_FRAME, System::STAGE_FRAME);
+         EndStatTimer(System::MESSAGE_FRAME, System::STAGE_FRAME);
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void System::PostFrame(const double deltaSimTime, const double deltaRealTime)
+   void SystemImpl::PostFrame(const double deltaSimTime, const double deltaRealTime)
    {
       if (dtUtil::Bits::Has(mSystemStages, System::STAGE_POSTFRAME))
       {
-         mSystemImpl->StartStatTimer();
+         StartStatTimer();
 
          double userData[2] = { deltaSimTime, deltaRealTime };
-         SendMessage(MESSAGE_POST_FRAME, userData);
+         SendMessage(System::MESSAGE_POST_FRAME, userData);
 
-         mSystemImpl->EndStatTimer(MESSAGE_POST_FRAME, System::STAGE_POSTFRAME);
+         EndStatTimer(System::MESSAGE_POST_FRAME, System::STAGE_POSTFRAME);
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void System::Config()
    {
-      if (dtUtil::Bits::Has(mSystemStages, System::STAGE_CONFIG))
+      if (dtUtil::Bits::Has(mSystemImpl->mSystemStages, System::STAGE_CONFIG))
       {
-         SendMessage(MESSAGE_CONFIG);
+         SendMessage(System::MESSAGE_CONFIG);
       }
    }
 
