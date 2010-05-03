@@ -248,6 +248,24 @@ namespace dtGUI
         */
       static void DestroyImageset(const std::string& imagesetName);
 
+      /** 
+        * Sets whether an Imageset should be auto scaled or not
+        * @param imagesetName The name of the Imageset
+        * @param autoScale Whether we want to autoscale the imageset or not
+        */
+      static void AutoScaleImageset(const std::string& imagesetName, bool autoScale);
+
+      /** 
+        * Define an image on the given imageset with the given properties
+        * @param imagesetName The name of the Imageset
+        * @param image The name of the Image to define
+        * @param position The position of the image
+        * @param size The size of the image
+        * @param offset The amount to offset rendering from the position
+        */
+      static void DefineImage(const std::string& imagesetName, const std::string& image,
+         osg::Vec2 position, osg::Vec2 size, osg::Vec2 offset);
+
       /**
        * Shortcut to the CEGUI::SchemeManager
        * @param fileName The filename of the .scheme file to load

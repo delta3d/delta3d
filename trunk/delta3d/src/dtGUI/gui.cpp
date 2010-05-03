@@ -564,6 +564,30 @@ void GUI::DestroyImageset(const std::string& imagesetName)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void dtGUI::GUI::AutoScaleImageset(const std::string& imagesetName, bool autoScale)
+{
+   _SetupSystemAndRenderer();
+   if (IsImagesetPresent(imagesetName))
+   {
+      CEGUI::ImagesetManager::getSingleton().get(imagesetName).setAutoScalingEnabled(autoScale);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void dtGUI::GUI::DefineImage(const std::string& imagesetName, const std::string& image,
+   osg::Vec2 position, osg::Vec2 size, osg::Vec2 offset)
+{
+   _SetupSystemAndRenderer();
+   if (IsImagesetPresent(imagesetName))
+   {
+      CEGUI::Point ceguiPosition(position.x(), position.y());
+      CEGUI::Size ceguiSize(size.x(), size.y());
+      CEGUI::Point ceguiOffset(offset.x(), offset.y());
+      CEGUI::ImagesetManager::getSingleton().get(imagesetName).defineImage(image, ceguiPosition, ceguiSize, ceguiOffset);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
 dtCore::RefPtr<osg::Texture2D> GUI::CreateRenderTargetTexture( Widget& widget,
                                                                const osg::Vec2* dimensions,
                                                                const std::string& newImagesetName,
