@@ -636,7 +636,7 @@ namespace dtCore
       {
          double frameTime = GetFrameTimeMS();
          // Check to see if they are different by more than a tenth of a millisecond
-         if (!dtUtil::Equivalent(mTargetFrameTimeMS, frameTime, mTargetFrameTimeEpsilon))
+         if (!osg::equivalent(mTargetFrameTimeMS, frameTime, mTargetFrameTimeEpsilon))
          {
             float oldScale = camera.GetLODScale();
             float newScale = oldScale;
@@ -652,7 +652,12 @@ namespace dtCore
 
             if (!dtUtil::Equivalent(oldScale, newScale))
             {
-               printf("changing LOD scale from \"%f\" to \"%f\"\n", oldScale, newScale);
+               dtUtil::Log& log = dtUtil::Log::GetInstance("camera.cpp");
+               if (log.IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+               {
+                  log.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                           "Auto-LOD: Changing LOD scale from \"%f\" to \"%f\".  FrameTime \"%lf\" ", oldScale, newScale, frameTime);
+               }
                camera.SetLODScale(newScale);
             }
          }
