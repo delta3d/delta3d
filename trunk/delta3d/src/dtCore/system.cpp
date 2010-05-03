@@ -563,9 +563,14 @@ namespace dtCore
    ////////////////////////////////////////////////////////////////////////////////
    void System::StepWindow()
    {
-      mSystemImpl->SystemStep();
+      if (!mSystemImpl->mRunning)
+      {
+         return;
+      }
 
-      // FIXME how to check if GraphicsWindow is always running ??
+      Step();
+
+      // FIXME TODO how to check if GraphicsWindow is always running ??
       // this implementation in really the good way
       if (mSystemImpl->mShutdownOnWindowClose)
       {

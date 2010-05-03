@@ -326,7 +326,7 @@ namespace dtCore
       double GetMaxTimeBetweenDraws() const;
 
       /// Turns on statistics - set from and used by stats to view Delta3D statistics.
-      void SetStats(osg::Stats *newValue);
+      void SetStats(osg::Stats* newValue);
 
       /// Non-null if stats was set by stats. If non-null, system does some extra processing for stats.
       osg::Stats* GetStats();
