@@ -61,7 +61,6 @@ namespace dtDirector
    void EventNode::BuildPropertyMap()
    {
       Node::BuildPropertyMap();
-      mValues.clear();
 
       dtDAL::IntActorProperty* triggerCountProp =
          new dtDAL::IntActorProperty("TriggerCount", "Max Trigger Count",
