@@ -73,7 +73,9 @@ namespace dtDirector
          int size = mNodeWidth;
          if (size < mNodeHeight) size = mNodeHeight;
 
-         QRadialGradient radialGradient(mNodeWidth/2, mNodeHeight/2, size, mNodeWidth/2, mNodeHeight/2);
+         QLinearGradient linearGradient(0,0,0,mNodeHeight);
+
+         setPen(QPen(mColorDarken, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 
          if (mNode->IsEnabled())
          {
@@ -81,30 +83,24 @@ namespace dtDirector
             {
                setPen(QPen(Qt::green, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
             }
-            else
-            {
-               setPen(QPen(Qt::darkGray, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-            }
 
             QColor color = Qt::darkGreen;
             color.setAlphaF(0.80f);
-            radialGradient.setColorAt(0.0, color);
+            linearGradient.setColorAt(1.0, color);
 
             color = Qt::green;
             color.setAlphaF(0.80f);
-            radialGradient.setColorAt(1.0, color);
+            linearGradient.setColorAt(0.0, color);
          }
          else
          {
-            setPen(QPen(Qt::red, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-
             QColor color = Qt::darkGreen;
             color.setAlphaF(0.25f);
-            radialGradient.setColorAt(0.0, color);
+            linearGradient.setColorAt(1.0, color);
 
             color = Qt::green;
             color.setAlphaF(0.25f);
-            radialGradient.setColorAt(1.0, color);
+            linearGradient.setColorAt(0.0, color);
          }
 
          // If we are in replay mode and if this node is the current node,
@@ -115,7 +111,7 @@ namespace dtDirector
             setPen(QPen(Qt::yellow, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
          }
 
-         setBrush(radialGradient);
+         setBrush(linearGradient);
          setPolygon(mPolygon);
 
          SetComment(mNode->GetComment());
