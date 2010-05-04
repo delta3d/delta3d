@@ -31,6 +31,7 @@
 #include <dtAI/waypointgraphastar.h>
 #include <dtAI/waypointreaderwriter.h>
 
+#include <dtUtil/datapathutils.h>
 #include <dtUtil/templateutility.h>
 #include <dtUtil/kdtree.h>
 
@@ -657,9 +658,9 @@ namespace dtAI
          mAIInterface->ClearMemory();
          if (!fileName.empty())
          {
-            std::string res = dtDAL::Project::GetInstance().GetContext() + '/'+ fileName;
+            std::string fullpath = dtUtil::FindFileInPathList(fileName);
 
-            bool success = mAIInterface->LoadWaypointFile(res);
+            bool success = mAIInterface->LoadWaypointFile(fullpath);
 
             if (!success)
             {
