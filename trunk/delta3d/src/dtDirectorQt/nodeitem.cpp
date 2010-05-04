@@ -157,6 +157,7 @@ namespace dtDirector
        , mNode(node)
        , mLinkDivider(NULL)
        , mValueDivider(NULL)
+       , mTitleDivider(NULL)
        , mNodeWidth(MIN_NODE_WIDTH)
        , mNodeHeight(MIN_NODE_HEIGHT)
        , mTextHeight(0.0f)
@@ -164,6 +165,7 @@ namespace dtDirector
        , mLinkHeight(0.0f)
        , mValueHeight(0.0f)
        , mHasHiddenLinks(false)
+       , mColorDarken(0, 0, 0, 50)
    {
       setFlag(QGraphicsItem::ItemIsMovable, true);
       setFlag(QGraphicsItem::ItemIsSelectable, true);
@@ -308,7 +310,7 @@ namespace dtDirector
          mTitleBG = new QGraphicsRectItem(this, scene());
          mTitle = new GraphicsTextItem(mTitleBG, scene());
 
-         mTitleBG->setPen(QPen(Qt::darkGray, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+         mTitleBG->setPen(QPen(Qt::transparent, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
          mTitleBG->setBrush(QColor(0, 0, 0, 0));
          mTitleBG->setFlag(QGraphicsItem::ItemClipsChildrenToShape, true);
       }
@@ -732,17 +734,22 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void NodeItem::DrawDividers()
    {
+      if (!mTitleDivider) mTitleDivider = new QGraphicsRectItem(this, scene());
+      mTitleDivider->setPos(1, mTextHeight + 1);
+      mTitleDivider->setRect(0, 0, mNodeWidth - 2, 0);
+      mTitleDivider->setPen(QPen(mColorDarken, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+
       // Draw the vertical divider if we are displaying both inputs and outputs.
       if (!mInputs.empty() && !mOutputs.empty())
       {
          float x = mLinkWidth + (LINK_SPACING / 2);
-         float y = mTextHeight + 1;
-         float height = mLinkHeight - mTextHeight - 2;
+         float y = mTextHeight + 2;
+         float height = (mValues.empty() ? std::max((float)MIN_NODE_HEIGHT, mLinkHeight) : mLinkHeight) - y - 1;
 
          if (!mLinkDivider) mLinkDivider = new QGraphicsRectItem(this, scene());
          mLinkDivider->setPos(x, y);
          mLinkDivider->setRect(0, 0, 0, height);
-         mLinkDivider->setPen(QPen(Qt::darkGray, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+         mLinkDivider->setPen(QPen(mColorDarken, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
       }
       else if (mLinkDivider)
       {
@@ -754,14 +761,10 @@ namespace dtDirector
       if (!mValues.empty() &&
          (!mInputs.empty() || !mOutputs.empty()))
       {
-         float x = 0;
-         float y = mLinkHeight - 1;
-         float width = mNodeWidth;
-
          if (!mValueDivider) mValueDivider = new QGraphicsRectItem(this, scene());
-         mValueDivider->setPos(x, y);
-         mValueDivider->setRect(1, 0, width - 2, mNodeHeight - y - 1);
-         mValueDivider->setPen(QPen(Qt::darkGray, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+         mValueDivider->setPos(0, mLinkHeight - 1);
+         mValueDivider->setRect(1, 0, mNodeWidth - 2, 0);
+         mValueDivider->setPen(QPen(mColorDarken, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
       }
       else if (mValueDivider)
       {

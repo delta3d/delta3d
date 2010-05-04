@@ -417,6 +417,7 @@ namespace dtDirector
 
       QGraphicsRectItem* mLinkDivider;
       QGraphicsRectItem* mValueDivider;
+      QGraphicsRectItem* mTitleDivider;
 
       int         mNodeWidth;
       int         mNodeHeight;
@@ -429,6 +430,8 @@ namespace dtDirector
       float       mValueHeight;
 
       bool        mHasHiddenLinks;
+
+      QColor mColorDarken;
    };
 }
 
