@@ -7,7 +7,7 @@
 #include <CEGUI/CEGUIScriptModule.h>
 #include <map>
 #include <string>
-
+#include <vector>
 
 namespace dtGUI
 {
@@ -18,6 +18,11 @@ namespace dtGUI
    class DT_GUI_EXPORT ScriptModule : public CEGUI::ScriptModule
    {
       public:
+         virtual ~ScriptModule();
+
+         virtual void destroyBindings(void);
+
+
          virtual CEGUI::Event::Connection subscribeEvent(CEGUI::EventSet* window,
                                                          const CEGUI::String& eventName,
                                                          CEGUI::Event::Group groupName,
@@ -72,6 +77,7 @@ namespace dtGUI
          bool NotSupported(const std::string& methodName);
 
          CallbackRegistry mCallbacks;
+         std::vector<CEGUI::Event::Connection> mConnections; 
    };
 }
 
