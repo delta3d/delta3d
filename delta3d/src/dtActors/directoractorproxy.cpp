@@ -205,6 +205,12 @@ namespace dtActors
       mResourceList = value;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   std::vector<dtCore::RefPtr<dtDirector::Director> >& DirectorActor::GetInstancedDirectors()
+   {
+      return mDirectorList;
+   }
+
 
    /////////////////////////////////////////////////////////////////////////////
    // PROXY CODE

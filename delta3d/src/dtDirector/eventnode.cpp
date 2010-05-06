@@ -105,13 +105,14 @@ namespace dtDirector
    {
       // If this event has a trigger count limit,
       // disable the event when that limit is met.
-      if (countTrigger && mMaxTriggerCount > 0)
+      if (mMaxTriggerCount > 0)
       {
          if (mTriggerCount >= mMaxTriggerCount)
          {
             return false;
          }
-         mTriggerCount++;
+
+         if (countTrigger) mTriggerCount++;
       }
 
       OutputLink* link = GetOutputLink(outputName);
