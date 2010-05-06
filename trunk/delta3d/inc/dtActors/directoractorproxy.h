@@ -161,6 +161,13 @@ namespace dtActors
       */
       void SetDirectorArray(const std::vector<dtDAL::ResourceDescriptor>& value);
 
+      /**
+       * Retrieves the list of instanced directors that are loaded.
+       *
+       * @return  Instanced Directors.
+       */
+      std::vector<dtCore::RefPtr<dtDirector::Director> >& GetInstancedDirectors();
+
    protected:
 
       /**
