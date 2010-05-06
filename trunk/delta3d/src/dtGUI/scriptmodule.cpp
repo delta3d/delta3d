@@ -1,7 +1,7 @@
 #include <dtGUI/scriptmodule.h>
 #include <dtUtil/log.h>
 #include <CEGUI/CEGUIEventSet.h>
-
+#include <CEGUI/CEGUIEvent.h>
 
 using namespace dtGUI;
 
@@ -34,10 +34,18 @@ CEGUI::Event::Connection ScriptModule::subscribeEvent(CEGUI::EventSet* window,
       return NULL;
    }
 
+   CEGUI::Event::Connection c;
    if (groupName)
-      return window->subscribeEvent(eventName, groupName, iter->second);
+   {
+       c = window->subscribeEvent(eventName, groupName, iter->second);
+   }
    else
-      return window->subscribeEvent(eventName, iter->second);
+   {
+      c = window->subscribeEvent(eventName, iter->second);
+   }
+
+   mConnections.push_back(c);
+   return c;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -82,4 +90,32 @@ void dtGUI::ScriptModule::executeString(const CEGUI::String &str)
 const dtGUI::ScriptModule::CallbackRegistry& dtGUI::ScriptModule::GetRegistry() const
 {
    return mCallbacks;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+dtGUI::ScriptModule::~ScriptModule()
+{
+
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void dtGUI::ScriptModule::destroyBindings(void)
+{
+   mCallbacks.clear();
+
+   std::vector<CEGUI::Event::Connection>::iterator itr = mConnections.begin();
+
+   while(itr != mConnections.end())
+   {
+      if (itr->isValid())
+      {
+         if ((*itr)->connected())
+         {
+            (*itr)->disconnect();
+         }
+         ++itr;
+      }
+   }
+
+   mConnections.clear();
 }
