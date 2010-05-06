@@ -68,6 +68,20 @@ namespace dtGame
          compType = static_cast<TComp*>(GetComponent(TComp::TYPE));
          return true;
       }
+      
+      /** 
+       * Get a component by type. Usage:
+       * @code
+       * MyComponentClass* component = myComponentBase->GetComponent<MyComponentClass>();
+       * @endcode       
+       * @return The ActorComponent of that type, or NULL if it doesn't exist
+       */
+      template <class T> T* GetComponent()
+      {
+         T* component = NULL;
+         GetComponent(component);
+         return component;
+      }
 
       /**
        * Allows performing an operation on each actor component.
