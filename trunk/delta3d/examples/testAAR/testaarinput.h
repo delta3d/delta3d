@@ -114,8 +114,6 @@ class TEST_AAR_EXPORT TestAARInput : public dtGame::BaseInputComponent
       const dtGame::LogStateEnumeration* mAppMode;
       TestAARHUD* mHudGUI;
       dtGame::GameActorProxy* mPlayer;
-      bool mVelocityUpdated;
-      bool mTurnRateUpdated;
       dtGame::LogController* mLogController;
 };
 

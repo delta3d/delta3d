@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
     <header>
         <name>testAAR</name>
@@ -7,8 +8,8 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2006-11-17T17:08:36.0-05:00</createTimestamp>
-        <lastUpdateTimestamp>2009-03-19T10:36:15-08:00</lastUpdateTimestamp>
-        <editorVersion>2.0.0</editorVersion>
+        <lastUpdateTimestamp>2010-04-01T12:25:01-08:00</lastUpdateTimestamp>
+        <editorVersion>2.5.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
     <libraries>
@@ -56,13 +57,27 @@
             <id>064EF600-B6A1-4511-BECB-74AB36DAB022</id>
             <name>Turn Player Left</name>
             <property>
+                <name>Description</name>
+                <string>
+            </string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
                 <name>Initial Ownership</name>
                 <enumerated>Server Local</enumerated>
             </property>
             <property>
-                <name>Description</name>
-                <string>
-            </string>
+                <name>Local Actor Update Policy</name>
+                <enumerated>ACCEPT_ALL</enumerated>
+            </property>
+            <property>
+                <name>CurrentShader</name>
+                <resourceType>Shaders</resourceType>
+                <resourceDisplayName></resourceDisplayName>
+                <resource></resource>
             </property>
             <property>
                 <name>DisplayName</name>
@@ -93,7 +108,7 @@
                 <double>-1</double>
             </property>
             <property>
-                <name>TaskList</name>
+                <name>SubTaskList</name>
                 <array>
                     <size>0</size>
                 </array>
@@ -124,13 +139,27 @@
             <id>12C524FD-FC3A-4F1D-BD18-0BFE3A7EF019</id>
             <name>Drop 10 boxes</name>
             <property>
+                <name>Description</name>
+                <string>
+            </string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
                 <name>Initial Ownership</name>
                 <enumerated>Server Local</enumerated>
             </property>
             <property>
-                <name>Description</name>
-                <string>
-            </string>
+                <name>Local Actor Update Policy</name>
+                <enumerated>ACCEPT_ALL</enumerated>
+            </property>
+            <property>
+                <name>CurrentShader</name>
+                <resourceType>Shaders</resourceType>
+                <resourceDisplayName></resourceDisplayName>
+                <resource></resource>
             </property>
             <property>
                 <name>DisplayName</name>
@@ -161,7 +190,7 @@
                 <double>-1</double>
             </property>
             <property>
-                <name>TaskList</name>
+                <name>SubTaskList</name>
                 <array>
                     <size>0</size>
                 </array>
@@ -192,13 +221,27 @@
             <id>2A71C94E-070D-4863-BB64-EAE14BDB393E</id>
             <name>Place Objects (Ordered)</name>
             <property>
+                <name>Description</name>
+                <string>
+            </string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
                 <name>Initial Ownership</name>
                 <enumerated>Server Local</enumerated>
             </property>
             <property>
-                <name>Description</name>
-                <string>
-            </string>
+                <name>Local Actor Update Policy</name>
+                <enumerated>ACCEPT_ALL</enumerated>
+            </property>
+            <property>
+                <name>CurrentShader</name>
+                <resourceType>Shaders</resourceType>
+                <resourceDisplayName></resourceDisplayName>
+                <resource></resource>
             </property>
             <property>
                 <name>DisplayName</name>
@@ -229,7 +272,7 @@
                 <double>-1</double>
             </property>
             <property>
-                <name>TaskList</name>
+                <name>SubTaskList</name>
                 <array>
                     <size>2</size>
                     <element>
@@ -266,13 +309,27 @@
             <id>2F073D35-038A-48D1-8F3C-063ED0E47A25</id>
             <name>Turn Player Right</name>
             <property>
+                <name>Description</name>
+                <string>
+            </string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
                 <name>Initial Ownership</name>
                 <enumerated>Server Local</enumerated>
             </property>
             <property>
-                <name>Description</name>
-                <string>
-            </string>
+                <name>Local Actor Update Policy</name>
+                <enumerated>ACCEPT_ALL</enumerated>
+            </property>
+            <property>
+                <name>CurrentShader</name>
+                <resourceType>Shaders</resourceType>
+                <resourceDisplayName></resourceDisplayName>
+                <resource></resource>
             </property>
             <property>
                 <name>DisplayName</name>
@@ -303,7 +360,7 @@
                 <double>-1</double>
             </property>
             <property>
-                <name>TaskList</name>
+                <name>SubTaskList</name>
                 <array>
                     <size>0</size>
                 </array>
@@ -334,13 +391,27 @@
             <id>45326D2A-D59E-4639-B9AA-9DB81B4AB232</id>
             <name>Move Player Forward</name>
             <property>
+                <name>Description</name>
+                <string>
+            </string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
                 <name>Initial Ownership</name>
                 <enumerated>Server Local</enumerated>
             </property>
             <property>
-                <name>Description</name>
-                <string>
-            </string>
+                <name>Local Actor Update Policy</name>
+                <enumerated>ACCEPT_ALL</enumerated>
+            </property>
+            <property>
+                <name>CurrentShader</name>
+                <resourceType>Shaders</resourceType>
+                <resourceDisplayName></resourceDisplayName>
+                <resource></resource>
             </property>
             <property>
                 <name>DisplayName</name>
@@ -371,7 +442,7 @@
                 <double>-1</double>
             </property>
             <property>
-                <name>TaskList</name>
+                <name>SubTaskList</name>
                 <array>
                     <size>0</size>
                 </array>
@@ -402,13 +473,27 @@
             <id>71C44C5F-A219-4CC8-932B-F51794FEC502</id>
             <name>Start a Record</name>
             <property>
+                <name>Description</name>
+                <string>
+            </string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
                 <name>Initial Ownership</name>
                 <enumerated>Server Local</enumerated>
             </property>
             <property>
-                <name>Description</name>
-                <string>
-            </string>
+                <name>Local Actor Update Policy</name>
+                <enumerated>ACCEPT_ALL</enumerated>
+            </property>
+            <property>
+                <name>CurrentShader</name>
+                <resourceType>Shaders</resourceType>
+                <resourceDisplayName></resourceDisplayName>
+                <resource></resource>
             </property>
             <property>
                 <name>DisplayName</name>
@@ -439,7 +524,7 @@
                 <double>-1</double>
             </property>
             <property>
-                <name>TaskList</name>
+                <name>SubTaskList</name>
                 <array>
                     <size>0</size>
                 </array>
@@ -470,13 +555,27 @@
             <id>7A358D0C-E1FA-4379-A226-A4CDD18AE1D2</id>
             <name>Move Player Back</name>
             <property>
+                <name>Description</name>
+                <string>
+            </string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
                 <name>Initial Ownership</name>
                 <enumerated>Server Local</enumerated>
             </property>
             <property>
-                <name>Description</name>
-                <string>
-            </string>
+                <name>Local Actor Update Policy</name>
+                <enumerated>ACCEPT_ALL</enumerated>
+            </property>
+            <property>
+                <name>CurrentShader</name>
+                <resourceType>Shaders</resourceType>
+                <resourceDisplayName></resourceDisplayName>
+                <resource></resource>
             </property>
             <property>
                 <name>DisplayName</name>
@@ -507,7 +606,7 @@
                 <double>-1</double>
             </property>
             <property>
-                <name>TaskList</name>
+                <name>SubTaskList</name>
                 <array>
                     <size>0</size>
                 </array>
@@ -538,13 +637,27 @@
             <id>7C7A1856-E9A5-4FF1-B38D-D70DE39DF8C1</id>
             <name>Drop 5 boxes</name>
             <property>
+                <name>Description</name>
+                <string>
+            </string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
                 <name>Initial Ownership</name>
                 <enumerated>Server Local</enumerated>
             </property>
             <property>
-                <name>Description</name>
-                <string>
-            </string>
+                <name>Local Actor Update Policy</name>
+                <enumerated>ACCEPT_ALL</enumerated>
+            </property>
+            <property>
+                <name>CurrentShader</name>
+                <resourceType>Shaders</resourceType>
+                <resourceDisplayName></resourceDisplayName>
+                <resource></resource>
             </property>
             <property>
                 <name>DisplayName</name>
@@ -575,7 +688,7 @@
                 <double>-1</double>
             </property>
             <property>
-                <name>TaskList</name>
+                <name>SubTaskList</name>
                 <array>
                     <size>0</size>
                 </array>
@@ -606,13 +719,27 @@
             <id>8A41923B-0B00-46B8-AE3E-FCB20896D565</id>
             <name>Move Camera</name>
             <property>
+                <name>Description</name>
+                <string>
+            </string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
                 <name>Initial Ownership</name>
                 <enumerated>Server Local</enumerated>
             </property>
             <property>
-                <name>Description</name>
-                <string>
-            </string>
+                <name>Local Actor Update Policy</name>
+                <enumerated>ACCEPT_ALL</enumerated>
+            </property>
+            <property>
+                <name>CurrentShader</name>
+                <resourceType>Shaders</resourceType>
+                <resourceDisplayName></resourceDisplayName>
+                <resource></resource>
             </property>
             <property>
                 <name>DisplayName</name>
@@ -643,7 +770,7 @@
                 <double>-1</double>
             </property>
             <property>
-                <name>TaskList</name>
+                <name>SubTaskList</name>
                 <array>
                     <size>0</size>
                 </array>
@@ -662,13 +789,27 @@
             <id>E4D49AF5-AC79-44E0-8E14-6777A85200D5</id>
             <name>Move the Player (Rollup)</name>
             <property>
+                <name>Description</name>
+                <string>
+            </string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
                 <name>Initial Ownership</name>
                 <enumerated>Server Local</enumerated>
             </property>
             <property>
-                <name>Description</name>
-                <string>
-            </string>
+                <name>Local Actor Update Policy</name>
+                <enumerated>ACCEPT_ALL</enumerated>
+            </property>
+            <property>
+                <name>CurrentShader</name>
+                <resourceType>Shaders</resourceType>
+                <resourceDisplayName></resourceDisplayName>
+                <resource></resource>
             </property>
             <property>
                 <name>DisplayName</name>
@@ -699,7 +840,7 @@
                 <double>-1</double>
             </property>
             <property>
-                <name>TaskList</name>
+                <name>SubTaskList</name>
                 <array>
                     <size>4</size>
                     <element>
@@ -742,4 +883,6 @@
             </property>
         </actor>
     </actors>
+    <groups></groups>
+    <presetCameras></presetCameras>
 </map>

@@ -155,7 +155,6 @@ TestAARMessageProcessor::CreateNewMovingActor(const std::string& meshName,
       return NULL;
    }
 
-   float xScale = 0.0f, yScale = 0.0f, zScale = 0.0f;
    float xRot = 0.0f, yRot = 0.0f, zRot = 0.0f;
    dtCore::RefPtr<dtGame::GameActorProxy> object;
    dtCore::Transform position;
@@ -166,12 +165,6 @@ TestAARMessageProcessor::CreateNewMovingActor(const std::string& meshName,
    if (bSetLocation)
    {
       object->SetTranslation(mPlayer->GetTranslation());
-
-      // rescale our object to make it neat.
-      zScale = dtUtil::RandFloat(0.70f, 1.3f);
-      xScale = dtUtil::RandFloat(0.70f, 1.3f) * zScale;
-      yScale = dtUtil::RandFloat(0.70f, 1.3f) * zScale;
-      //object->SetScale(osg::Vec3(xScale, yScale, zScale));
 
       // set initial random rotation (X = pitch, Y = roll, Z = yaw) for non rotating objects
       // don't change rotating objects cause the movement will follow the rotation, which may
@@ -281,60 +274,8 @@ void TestAARMessageProcessor::PlaceActor(bool ignored)
 //////////////////////////////////////////////////////////////////////////
 void TestAARMessageProcessor::OnReceivedStatus(const dtGame::LogStatus& newStatus)
 {
-   static bool isFirstPlayback = true;
-
    // so we don't update again if user just requested it
    mLastAutoRequestStatus = GetGameManager()->GetSimulationTime();
-
-   if (newStatus.GetStateEnum() == dtGame::LogStateEnumeration::LOGGER_STATE_IDLE)
-   {
-      isFirstPlayback = true;
-   }
-
-   //The following is a great big hack due to the fact that we do not yet
-   //support the task hierarchy as actor properties.  Since the task hierarchy
-   //is not wrapped within actor properties, it does not get recreated
-   //properly when changing to playback mode.  However, the since the task
-   //actors themselves got properly recreated, we just need to manually set
-   //the hierarchy when changing from IDLE state to PLAYBACK state.
-   if (newStatus.GetStateEnum() == dtGame::LogStateEnumeration::LOGGER_STATE_PLAYBACK
-      && isFirstPlayback)
-   {
-      isFirstPlayback = false;
-
-      dtActors::TaskActorProxy* placeObjects =
-         static_cast<dtActors::TaskActorProxy*>(mLmsComponent->GetTaskByName("Place Objects (Ordered)"));
-
-      dtActors::TaskActorProxy* movePlayerRollup =
-         static_cast<dtActors::TaskActorProxy*>(mLmsComponent->GetTaskByName("Move the Player (Rollup)"));
-
-      dtActors::TaskActorProxy* movePlayerLeft =
-         static_cast<dtActors::TaskActorProxy*>(mLmsComponent->GetTaskByName("Turn Player Left"));
-
-      dtActors::TaskActorProxy* movePlayerRight =
-         static_cast<dtActors::TaskActorProxy*>(mLmsComponent->GetTaskByName("Turn Player Right"));
-
-      dtActors::TaskActorProxy* movePlayerForward =
-         static_cast<dtActors::TaskActorProxy*>(mLmsComponent->GetTaskByName("Move Player Forward"));
-
-      dtActors::TaskActorProxy* movePlayerBack =
-         static_cast<dtActors::TaskActorProxy*>(mLmsComponent->GetTaskByName("Move Player Back"));
-
-      dtActors::TaskActorProxy* drop5Boxes =
-         static_cast<dtActors::TaskActorProxy*>(mLmsComponent->GetTaskByName("Drop 5 boxes"));
-
-      //Recreate the hierarchy...
-      movePlayerRollup->AddSubTask(*movePlayerLeft);
-      movePlayerRollup->AddSubTask(*movePlayerRight);
-      movePlayerRollup->AddSubTask(*movePlayerForward);
-      movePlayerRollup->AddSubTask(*movePlayerBack);
-
-      placeObjects->AddSubTask(*movePlayerRollup);
-      placeObjects->AddSubTask(*drop5Boxes);
-
-      //mTaskComponent->CheckTaskHierarchy();
-      mLmsComponent->CheckTaskHierarchy();
-   }
 }
 
 //////////////////////////////////////////////////////////////////////////

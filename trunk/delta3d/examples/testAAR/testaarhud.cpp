@@ -326,9 +326,13 @@ void TestAARHUD::TickHUD()
       {
          UpdateStaticText(mStateText, "PLAYBACK", 0.1f, 1.0f, 0.1f);
       }
-      else // if (dtGame::LogStateEnumeration::LOGGER_STATE_RECORD == mLogController->GetLastKnownStatus().GetStateEnum())
+      else if (dtGame::LogStateEnumeration::LOGGER_STATE_RECORD == mLogController->GetLastKnownStatus().GetStateEnum())
       {
          UpdateStaticText(mStateText, "RECORD", 1.0f, 0.1f, 0.1f);
+      }
+      else
+      {
+         UpdateStaticText(mStateText, "UNKNOWN", 1.0f, 1.0f, 1.0f);
       }
 
       // Sim Time
@@ -532,7 +536,10 @@ int TestAARHUD::RecursivelyAddTasks(const std::string& indent, int curIndex,
          for (int i = 0; i < (int)children.size(); i ++)
          {
             const dtActors::TaskActorProxy* childProxy = dynamic_cast<const dtActors::TaskActorProxy *> (children[i]);
-            totalNumAdded += RecursivelyAddTasks(indent + "     ", curIndex + totalNumAdded, childProxy, numCompleted);
+            if (childProxy != NULL)
+            {
+               totalNumAdded += RecursivelyAddTasks(indent + "     ", curIndex + totalNumAdded, childProxy, numCompleted);
+            }
          }
       }
    }
