@@ -64,6 +64,7 @@ SET( LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/funtraits.h
     ${HEADER_PATH}/generic.h
     ${HEADER_PATH}/geometrycollector.h
+    ${HEADER_PATH}/getsetmacros.h
     ${HEADER_PATH}/hotspotdefinition.h
     ${HEADER_PATH}/hotspotxml.h
     ${HEADER_PATH}/kdtree.h
