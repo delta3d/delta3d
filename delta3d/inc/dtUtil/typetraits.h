@@ -161,6 +161,18 @@ namespace dtUtil
       };
 
       template <class T>
+      struct _TypeTraits_<bool, T>
+      {
+         typedef bool value_type;
+         typedef bool* pointer_type;
+         typedef bool& reference;
+         typedef const bool& const_reference;
+
+         typedef bool return_type;
+         typedef bool param_type;
+      };
+
+      template <class T>
       struct _TypeTraits_<signed char, T>
       {
          typedef signed char value_type;
