@@ -35,9 +35,10 @@
 #include <dtCore/system.h>
 
 #include <dtCore/objectmotionmodel.h>
-#include <dtCore/flymotionmodel.h>
+#include <dtCore/rtsmotionmodel.h>
 
 #include "aicomponent.h"
+#include "aiutilityinputcomponent.h"
 
 /////////////////////////////////////
 AIUtilityApp::AIUtilityApp()
@@ -61,7 +62,7 @@ void AIUtilityApp::Config()
    AIComponent* aicomp = new AIComponent();
    mGM->AddComponent(*aicomp, dtGame::GameManager::ComponentPriority::NORMAL);
 
-   mMotionModel = new dtCore::FlyMotionModel(GetKeyboard(), GetMouse());
+   mMotionModel = new dtCore::RTSMotionModel(GetKeyboard(), GetMouse(), false, false);
    mMotionModel->SetTarget(GetCamera());
 
    dtCore::System::GetInstance().Start();
@@ -72,6 +73,13 @@ void AIUtilityApp::Config()
 void AIUtilityApp::SetAIPluginInterface(dtAI::AIPluginInterface* interface)
 {
    emit AIPluginInterfaceChanged(interface);
+
+   // We can now setup the input component
+   AIUtilityInputComponent* inputComponent = new AIUtilityInputComponent();
+   inputComponent->SetAIPluginInterface(interface);
+   mGM->AddComponent(*inputComponent, dtGame::GameManager::ComponentPriority::NORMAL);
+   QObject::connect(inputComponent, SIGNAL(WaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>&)),
+      this, SLOT(UpdateWaypointSelection(std::vector<dtAI::WaypointInterface*>&)));
 }
 
 
@@ -142,3 +150,12 @@ void AIUtilityApp::AddAIInterfaceToMap(const std::string& map)
       emit Error(ex.ToString());
    }
 }
+
+////////////////////////////////////////////////////////////////////////////////
+void AIUtilityApp::UpdateWaypointSelection(std::vector<dtAI::WaypointInterface*>& selectedWaypoints)
+{
+   emit WaypointSelectionChanged(selectedWaypoints);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+

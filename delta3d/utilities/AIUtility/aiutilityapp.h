@@ -36,6 +36,7 @@
 namespace dtAI
 {
    class AIPluginInterface;
+   class WaypointInterface;
 }
 
 class AIUtilityApp: public QObject, public dtABC::Application
@@ -51,6 +52,7 @@ public:
 signals:
    void AIPluginInterfaceChanged(dtAI::AIPluginInterface* interface);
    void CameraTransformChanged(const dtCore::Transform& xform);
+   void WaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>&);
    void Error(const std::string& message);
 public slots:
    void DoQuit();
@@ -59,6 +61,7 @@ public slots:
    void CloseMap();
    void TransformCamera(const dtCore::Transform&);
    void AddAIInterfaceToMap(const std::string& map);
+   void UpdateWaypointSelection(std::vector<dtAI::WaypointInterface*>& selectedWaypoints);
 protected:
    ///override for preframe
    virtual void PreFrame(const double deltaSimTime);
