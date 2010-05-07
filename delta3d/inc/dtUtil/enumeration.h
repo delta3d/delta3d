@@ -116,6 +116,12 @@ namespace dtUtil
       }
 
    protected:
+      /**
+       * virtual string compare method to used by the operators that take a string.  This allows overriding the behavior in a subclass.
+       *  It should work like std::string::compare
+       */
+      virtual int Compare(const std::string& nameString) const;
+
       ///Private virtual desctructor to get rid of compile warning
       virtual ~Enumeration();
 
@@ -150,11 +156,7 @@ namespace dtUtil
 private:                                                       \
    static std::vector<EnumType*> mInstances;                   \
    static std::vector<dtUtil::Enumeration*> mGenericInstances; \
-   static void AddInstance(EnumType* instance)                 \
-   {                                                           \
-      EnumType::mInstances.push_back(instance);                \
-      EnumType::mGenericInstances.push_back(instance);         \
-   }                                                           \
+   static void AddInstance(EnumType* instance);                 \
 public:                                                        \
    static const std::vector<EnumType*>& EnumerateType()        \
    {                                                           \
@@ -166,11 +168,21 @@ public:                                                        \
       return EnumType::mGenericInstances;                      \
    }                                                           \
                                                                \
-   static EnumType* GetValueForName(const std::string& name)   \
+   static EnumType* GetValueForName(const std::string& name);
+
+#define IMPLEMENT_ENUM(EnumType)                       \
+   std::vector<EnumType*> EnumType::mInstances;        \
+   std::vector<dtUtil::Enumeration*> EnumType::mGenericInstances; \
+   void EnumType::AddInstance(EnumType* instance)                 \
+   {                                                           \
+      EnumType::mInstances.push_back(instance);                \
+      EnumType::mGenericInstances.push_back(instance);         \
+   }                                                           \
+   EnumType* EnumType::GetValueForName(const std::string& name)   \
    {                                                           \
       for (unsigned i = 0; i < mInstances.size(); ++i)         \
       {                                                        \
-         if (name == mInstances[i]->GetName())                 \
+         if ((*mInstances[i]) == name)                 \
          {                                                     \
             return mInstances[i];                              \
          }                                                     \
@@ -178,10 +190,74 @@ public:                                                        \
       return NULL;                                             \
    }
 
-#define IMPLEMENT_ENUM(EnumType)                       \
-   std::vector<EnumType*> EnumType::mInstances;        \
-   std::vector<dtUtil::Enumeration*> EnumType::mGenericInstances;
+   template <typename T>
+   class EnumerationPointer
+   {
+   public:
+      typedef T element_type;
+      EnumerationPointer() : mEnum(NULL) {}
+      EnumerationPointer(T* ptr) : mEnum(ptr) { }
+      EnumerationPointer(const EnumerationPointer& rp) : mEnum(rp.mEnum) { }
+      template<class Other> EnumerationPointer(const EnumerationPointer<Other>& rp) : mEnum(rp.mEnum) { }
+
+      ~EnumerationPointer() { mEnum = NULL; }
+
+      operator T*() const { return mEnum; }
+      operator T&() const { return *mEnum; }
+
+      EnumerationPointer& operator = (EnumerationPointer& rp)
+      {
+         mEnum = rp.mEnum;
+         return *this;
+      }
+
+      template<class Other> EnumerationPointer& operator = (EnumerationPointer<Other>& rp)
+      {
+         mEnum = rp.mEnum;
+         return *this;
+      }
+
+      inline EnumerationPointer& operator = (T* ptr)
+      {
+         if (mEnum==ptr) return *this;
+         mEnum = ptr;
+         return *this;
+      }
+
+      inline EnumerationPointer& operator = (T& enumRef)
+      {
+         if (mEnum==&enumRef) return *this;
+         mEnum = &enumRef;
+         return *this;
+      }
+
+      // comparison operators for EnumerationPointer.
+      bool operator == (const EnumerationPointer& rp) const { return (mEnum==rp.mEnum); }
+      bool operator == (const T* ptr) const { return (mEnum==ptr); }
+      friend bool operator == (const T* ptr, const EnumerationPointer& rp) { return (ptr==rp.mEnum); }
+
+      bool operator != (const EnumerationPointer& rp) const { return (mEnum!=rp.mEnum); }
+      bool operator != (const T* ptr) const { return (mEnum!=ptr); }
+      friend bool operator != (const T* ptr, const EnumerationPointer& rp) { return (ptr!=rp.mEnum); }
+
+      bool operator < (const EnumerationPointer& rp) const { return (mEnum<rp.mEnum); }
+
+      T& operator*() const { return *mEnum; }
+      T* operator->() const { return mEnum; }
+      T* get() const { return mEnum; }
+
+      bool operator!() const   { return mEnum==0; } // not required
+      bool valid() const       { return mEnum!=0; }
+
+      void swap(EnumerationPointer& rp) { T* tmp=mEnum; mEnum=rp.mEnum; rp.mEnum=tmp; }
+   private:
+      T* mEnum;
+   };
+
+
 } // namespace dtUtil
+
+
 
 #ifdef _MSC_VER
 #   pragma warning(pop)

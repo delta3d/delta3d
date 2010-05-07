@@ -25,6 +25,32 @@
 namespace dtDAL 
 {
    IMPLEMENT_ENUM(DataType);
+   //////////////////////////////////////
+   DataType::DataType(const std::string& name, const std::string& displayName, bool resource, unsigned char id, std::string extensions, const std::string& altName)
+   : dtUtil::Enumeration(name)
+   , mResource(resource)
+   , mAltName(altName)
+   , mDisplayName(displayName)
+   , mId(id)
+   {
+      AddInstance(this);
+   }
+
+   //////////////////////////////////////////////////
+   int DataType::Compare(const std::string& nameString) const
+   {
+      int result = GetName().compare(nameString);
+
+      if (result != 0)
+      {
+         if (mAltName.compare(nameString) == 0)
+         {
+            return 0;
+         }
+      }
+      return result;
+   }
+
    DataType DataType::UNKNOWN("UNKNOWN", "Unknown", false, UNKNOWN_ID);
    DataType DataType::CHAR("CHAR", "Char", false, CHAR_ID);
    DataType DataType::UCHAR("UCHAR", "Unsigned Char", false, UCHAR_ID);
@@ -38,22 +64,22 @@ namespace dtDAL
    DataType DataType::USHORTINT("USHORT", "Unsigned short", false, USHORTINT_ID);
    DataType DataType::STRING("STRING", "String", false, STRING_ID);
    DataType DataType::BOOLEAN("BOOLEAN", "Boolean", false, BOOLEAN_ID);
-   
-   DataType DataType::VEC2("VEC2", "Vector 2", false, VEC2_ID);
-   DataType DataType::VEC3("VEC3", "Vector 3", false, VEC3_ID);
-   DataType DataType::VEC4("VEC4", "Vector 4", false, VEC4_ID);
-   
-   DataType DataType::VEC2F("VEC2F", "Vector 2f", false, VEC2F_ID);
-   DataType DataType::VEC3F("VEC3F", "Vector 3f", false, VEC3F_ID);
-   DataType DataType::VEC4F("VEC4F", "Vector 4f", false, VEC4F_ID);
-   
+
+   DataType DataType::VEC2F("VEC2F", "Vector 2f", false, VEC2F_ID, "", "VEC2");
+   DataType DataType::VEC3F("VEC3F", "Vector 3f", false, VEC3F_ID, "", "VEC3");
+   DataType DataType::VEC4F("VEC4F", "Vector 4f", false, VEC4F_ID, "", "VEC4");
+
+   DataType& DataType::VEC2(DataType::VEC2F);
+   DataType& DataType::VEC3(DataType::VEC3F);
+   DataType& DataType::VEC4(DataType::VEC4F);
+
    DataType DataType::VEC2D("VEC2D", "Vector 2d", false, VEC2D_ID);
    DataType DataType::VEC3D("VEC3D", "Vector 3d", false, VEC3D_ID);
    DataType DataType::VEC4D("VEC4D", "Vector 4d", false, VEC4D_ID);
-   
+
    DataType DataType::RGBCOLOR("RGBCOLOR", "RGB Color", false, RGBCOLOR_ID);
    DataType DataType::RGBACOLOR("RGBACOLOR", "RGBA Color", false, RGBACOLOR_ID);
-   
+
    DataType DataType::ENUMERATION("ENUMERATION",  "Enumeration", false, ENUMERATION_ID);
    DataType DataType::GAME_EVENT("GAME_EVENT", "Game Event", false, GAMEEVENT_ID);
    DataType DataType::GROUP("GROUP", "Group", false, GROUP_ID);

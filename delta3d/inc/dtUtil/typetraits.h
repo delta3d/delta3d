@@ -23,6 +23,9 @@
 #ifndef DELTA_TYPETRAITS_H
 #define DELTA_TYPETRAITS_H
 
+#include <dtUtil/enumeration.h>
+#include <dtCore/refptr.h>
+
 namespace dtUtil
 {
 
@@ -102,8 +105,6 @@ namespace dtUtil
 
    };
 
-
-
    //////////////////////////////////////////////////////////////////////////
    //Type Traits
    //////////////////////////////////////////////////////////////////////////
@@ -119,9 +120,44 @@ namespace dtUtil
          typedef U& reference;
          typedef const U& const_reference;
 
-         typedef const U& const_return_type;
          typedef const U& return_type;
          typedef const U& param_type;
+      };
+
+      template <class U, class T>
+      struct _TypeTraits_<osg::ref_ptr<U>, T>
+      {
+         typedef osg::ref_ptr<U> value_type;
+         typedef U* pointer_type;
+         typedef U& reference;
+         typedef const U& const_reference;
+
+         typedef U* return_type;
+         typedef U* param_type;
+      };
+
+      template <class U, class T>
+      struct _TypeTraits_<dtCore::RefPtr<U>, T>
+      {
+         typedef dtCore::RefPtr<U> value_type;
+         typedef U* pointer_type;
+         typedef U& reference;
+         typedef const U& const_reference;
+
+         typedef U* return_type;
+         typedef U* param_type;
+      };
+
+      template <class U, class T>
+      struct _TypeTraits_<EnumerationPointer<U>, T>
+      {
+         typedef EnumerationPointer<U> value_type;
+         typedef U* pointer_type;
+         typedef U& reference;
+         typedef const U& const_reference;
+
+         typedef U& return_type;
+         typedef U& param_type;
       };
 
       template <class T>
@@ -132,7 +168,6 @@ namespace dtUtil
          typedef signed char& reference;
          typedef const signed char& const_reference;
 
-         typedef signed char const_return_type;
          typedef signed char return_type;
          typedef signed char param_type;
       };
@@ -145,7 +180,6 @@ namespace dtUtil
          typedef float& reference;
          typedef const float& const_reference;
 
-         typedef float const_return_type;
          typedef float return_type;
          typedef float param_type;
       };
@@ -158,7 +192,6 @@ namespace dtUtil
          typedef double& reference;
          typedef const double& const_reference;
 
-         typedef double const_return_type;
          typedef double return_type;
          typedef double param_type;
       };
@@ -171,7 +204,6 @@ namespace dtUtil
          typedef int& reference;
          typedef const int& const_reference;
 
-         typedef int const_return_type;
          typedef int return_type;
          typedef int param_type;
       };
@@ -184,7 +216,6 @@ namespace dtUtil
          typedef short& reference;
          typedef const short& const_reference;
 
-         typedef short const_return_type;
          typedef short return_type;
          typedef short param_type;
       };
@@ -197,7 +228,6 @@ namespace dtUtil
          typedef char& reference;
          typedef const char& const_reference;
 
-         typedef char const_return_type;
          typedef char return_type;
          typedef char param_type;
       };
@@ -210,7 +240,6 @@ namespace dtUtil
          typedef long& reference;
          typedef const long& const_reference;
 
-         typedef long const_return_type;
          typedef long return_type;
          typedef long param_type;
       };
@@ -223,7 +252,6 @@ namespace dtUtil
          typedef long long& reference;
          typedef const long long& const_reference;
 
-         typedef long long const_return_type;
          typedef long long return_type;
          typedef long long param_type;
       };
@@ -236,7 +264,6 @@ namespace dtUtil
          typedef unsigned& reference;
          typedef const unsigned& const_reference;
 
-         typedef unsigned const_return_type;
          typedef unsigned return_type;
          typedef unsigned param_type;
       };
@@ -249,7 +276,6 @@ namespace dtUtil
          typedef unsigned short& reference;
          typedef const unsigned short& const_reference;
 
-         typedef unsigned short const_return_type;
          typedef unsigned short return_type;
          typedef unsigned short param_type;
       };
@@ -262,7 +288,6 @@ namespace dtUtil
          typedef unsigned char& reference;
          typedef const unsigned char& const_reference;
 
-         typedef unsigned char const_return_type;
          typedef unsigned char return_type;
          typedef unsigned char param_type;
       };
@@ -275,7 +300,6 @@ namespace dtUtil
          typedef unsigned long& reference;
          typedef const unsigned long& const_reference;
 
-         typedef unsigned long const_return_type;
          typedef unsigned long return_type;
          typedef unsigned long param_type;
       };
@@ -288,7 +312,6 @@ namespace dtUtil
          typedef unsigned long long& reference;
          typedef const unsigned long long& const_reference;
 
-         typedef unsigned long long const_return_type;
          typedef unsigned long long return_type;
          typedef unsigned long long param_type;
       };
@@ -301,8 +324,7 @@ namespace dtUtil
          typedef U& reference;
          typedef const U& const_reference;
 
-         typedef const U& const_return_type;
-         typedef U& return_type;    
+         typedef const U& return_type;
          typedef const U& param_type;
       };
 
@@ -314,8 +336,7 @@ namespace dtUtil
          typedef U& reference;
          typedef const U& const_reference;
 
-         typedef const U& const_return_type;
-         typedef U& return_type;
+         typedef const U& return_type;
          typedef const U& param_type;
       };
 
@@ -327,7 +348,6 @@ namespace dtUtil
          typedef U& reference;
          typedef const U& const_reference;
 
-         typedef const U* const_return_type;
          typedef const U* return_type;
          typedef const U* param_type;
       };
@@ -340,9 +360,8 @@ namespace dtUtil
          typedef U& reference;
          typedef U& const_reference;
 
-         typedef const U* const const_return_type;
          typedef U* const return_type;
-         typedef const U* const param_type;
+         typedef U* const param_type;
       };
 
       template <class U, class T>
@@ -353,7 +372,6 @@ namespace dtUtil
          typedef U& reference;
          typedef const U& const_reference;
 
-         typedef const U* const_return_type;
          typedef const U* return_type;
          typedef const U* param_type;
       };
@@ -367,7 +385,6 @@ namespace dtUtil
          typedef U& reference;
          typedef const U& const_reference;
 
-         typedef const U* const_return_type;
          typedef U* return_type;
          typedef U* param_type;
       };
@@ -378,11 +395,9 @@ namespace dtUtil
       typedef typename _TypeTraits_<_Type>::reference reference;
       typedef typename _TypeTraits_<_Type>::const_reference const_reference;
 
-
       typedef typename _TypeTraits_<_Type>::param_type const_param_type;
       typedef typename _TypeTraits_<_Type>::param_type param_type;
 
-      typedef typename _TypeTraits_<_Type>::const_return_type const_return_type;
       typedef typename _TypeTraits_<_Type>::return_type return_type;
 
    };

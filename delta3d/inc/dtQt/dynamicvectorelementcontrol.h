@@ -35,9 +35,6 @@
 
 namespace dtDAL
 {
-   class Vec3ActorProperty;
-   class Vec2ActorProperty;
-   class Vec4ActorProperty;
    class Vec3fActorProperty;
    class Vec2fActorProperty;
    class Vec4fActorProperty;
@@ -62,13 +59,6 @@ namespace dtQt
       Q_OBJECT
 
    public:
-      /**
-       * Constructor - For the Vec2 property
-       *
-       * @Note - We can put data in the constructor because aren't using the factory for this.
-       */
-      DynamicVectorElementControl(dtDAL::Vec2ActorProperty* newVectorProp, int whichIndex,
-         const std::string& newLabel);
 
       /**
        * Constructor - For the Vec2f property
@@ -87,14 +77,6 @@ namespace dtQt
          const std::string& newLabel);
 
       /**
-       * Constructor - For the Vec3 property
-       *
-       * @Note - We can put data in the constructor because aren't using the factory for this.
-       */
-      DynamicVectorElementControl(dtDAL::Vec3ActorProperty* newVectorProp, int whichIndex,
-         const std::string& newLabel);
-
-      /**
        * Constructor - For the Vec3f property
        *
        * @Note - We can put data in the constructor because aren't using the factory for this.
@@ -110,13 +92,6 @@ namespace dtQt
       DynamicVectorElementControl(dtDAL::Vec3dActorProperty* newVectorProp, int whichIndex,
          const std::string& newLabel);
 
-      /**
-       * Constructor - For the Vec4 property
-       *
-       * @Note - We can put data in the constructor because aren't using the factory for this.
-       */
-      DynamicVectorElementControl(dtDAL::Vec4ActorProperty* newVectorProp, int whichIndex,
-         const std::string& newLabel);
 
       /**
        * Constructor - For the Vec4f property
@@ -217,13 +192,10 @@ namespace dtQt
    private:
       enum WHICHTYPE
       {
-         VEC2,
          VEC2F,
          VEC2D,
-         VEC3,
          VEC3F,
          VEC3D,
-         VEC4,
          VEC4F,
          VEC4D
       } mWhichType;
@@ -235,9 +207,6 @@ namespace dtQt
 
       dtDAL::ActorProperty*  mActiveProp;
 
-      dtDAL::Vec2ActorProperty*  mVec2Prop;
-      dtDAL::Vec3ActorProperty*  mVec3Prop;
-      dtDAL::Vec4ActorProperty*  mVec4Prop;
       dtDAL::Vec2fActorProperty* mVec2fProp;
       dtDAL::Vec3fActorProperty* mVec3fProp;
       dtDAL::Vec4fActorProperty* mVec4fProp;

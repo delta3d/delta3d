@@ -118,17 +118,17 @@ namespace dtDAL
          /**
           * A vector of 4 values.
           */
-         static DataType VEC4;
+         static DataType& VEC4;
 
          /**
           * A vector of 3 values.
           */
-         static DataType VEC3;
+         static DataType& VEC3;
 
          /**
           * A vector of 2 values.
           */
-         static DataType VEC2;
+         static DataType& VEC2;
 
          /**
           * A vector of 4 values.
@@ -272,42 +272,20 @@ namespace dtDAL
          //*/
          //const dtUtil::FileExtensionList& GetExtensions() const {return mExtensions;}
 
+      protected:
+         virtual int Compare(const std::string& nameString) const;
+
        private:
          /**
           * Private constructor which registers a new DataType enumeration
           * with the static list of available DataType enumerations.
           */
-          DataType(const std::string& name, const std::string& displayName, bool resource = false, unsigned char id = 0, std::string extensions = "")
-            : dtUtil::Enumeration(name)
-         {
-            AddInstance(this);
-            mResource = resource;
-            mDisplayName = displayName;
-            mId = id;
+          DataType(const std::string& name, const std::string& displayName, bool resource = false, unsigned char id = 0, std::string extensions = "", const std::string& alias = "__NONE__");
 
-            //// Parse through the extension string for each extension.
-            //int len = extensions.length();
-            //int firstLetter = 0;
-            //for (int letter = 0; letter < len; letter++)
-            //{
-            //   // Find the end of the token.
-            //   if (extensions[letter] == '|' || letter == len - 1)
-            //   {
-            //      std::string ext = &extensions[firstLetter];
-            //      if (extensions[letter] == '|')
-            //      {
-            //         ext.resize(letter - firstLetter);
-            //      }
-            //      firstLetter = letter + 1;
-            //      mExtensions.push_back(ext);
-            //   }
-            //}
-         }
-
-         bool mResource;
-         std::string mDisplayName;
-         //dtUtil::FileExtensionList mExtensions;
-         unsigned char mId;
+          bool mResource;
+          std::string mAltName, mDisplayName;
+          //dtUtil::FileExtensionList mExtensions;
+          unsigned char mId;
    };
 }
 

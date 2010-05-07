@@ -33,6 +33,7 @@
 #include <dtDAL/arrayactorproperty.h>
 #include <dtDAL/arrayactorpropertybase.h>
 #include <dtDAL/containeractorproperty.h>
+#include <dtDAL/propertymacros.h>
 #include <dtCore/scene.h>
 #include <dtCore/object.h>
 #include <dtUtil/log.h>
@@ -54,8 +55,8 @@ ExampleTestPropertyProxy::TestEnum ExampleTestPropertyProxy::TestEnum::OPTION6("
 
 ///////////////////////////////////////////////////////////////////////////////
 ExampleTestPropertyProxy::ExampleTestPropertyProxy()
-  : mInt(0), mReadOnlyInt(5), mFloat(0.0), mDouble(0.0), mLong(0), mBool(0),
-  mString(""), mEnum(&TestEnum::OPTION1), mGroupParam(new dtDAL::NamedGroupParameter("test")),
+  : mTestFloat(0.0), mTestBool(false), mTestDouble(0.0), mTestInt(0), mReadOnlyTestInt(5),  mTestLong(0),
+  mTestString(), mTestEnum(&TestEnum::OPTION1), mGroupParam(new dtDAL::NamedGroupParameter("test")),
   mStringArrayIndex(0), mIntArrayIndex(0), mArrayArrayIndex(0)
 {
    SetClassName("dtCore::ExampleTestPropertyProxy");
@@ -69,133 +70,91 @@ void ExampleTestPropertyProxy::BuildPropertyMap()
    if (obj == NULL)
       throw dtDAL::InvalidActorException( "Actor should be type dtCore::Object", __FILE__, __LINE__);
 
-   AddProperty(new BooleanActorProperty("Test_Boolean", "Test Boolean",
-      BooleanActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetTestBool),
-      BooleanActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetTestBool),
-      "Holds a test Boolean property", GROUPNAME));
+   typedef PropertyRegHelper<ExampleTestPropertyProxy&, ExampleTestPropertyProxy> PropRegHelperType;
+   PropRegHelperType propRegHelper(*this, this, GROUPNAME);
 
-   AddProperty(new IntActorProperty("Test_Int", "Test Int",
-      IntActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetTestInt),
-      IntActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetTestInt),
-      "Holds a test Int property", GROUPNAME));
+   REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestBool, "Test_Boolean", "Test Boolean", "Holds a test Boolean property",
+            PropRegHelperType, propRegHelper);
 
-   dtDAL::IntActorProperty *i = new IntActorProperty("Test_Read_Only_Int", "Test_Read_Only_Int",
-      IntActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetReadOnlyTestInt),
-      IntActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetReadOnlyTestInt),
-      "Holds a test Read Only Int property", GROUPNAME);
-   i->SetReadOnly(true);
+   REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestInt, "Test_Int", "Test Int", "Holds a test Int property",
+            PropRegHelperType, propRegHelper);
 
-   AddProperty(i);
+   REGISTER_PROPERTY_WITH_NAME(ReadOnlyTestInt, "Test_Read_Only_Int", "Holds a test Read Only Int property",
+            PropRegHelperType, propRegHelper);
 
-   AddProperty(new LongActorProperty("Test_Long", "Test Long",
-      LongActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetTestLong),
-      LongActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetTestLong),
-      "Holds a test Long property", GROUPNAME));
+   GetProperty("Test_Read_Only_Int")->SetReadOnly(true);
 
-   AddProperty(new FloatActorProperty("Test_Float", "Test Float",
-      FloatActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetTestFloat),
-      FloatActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetTestFloat),
-      "Holds a test Float property", GROUPNAME));
+   REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestLong, "Test_Long", "Test Long", "Holds a test Long property",
+            PropRegHelperType, propRegHelper);
 
-   AddProperty(new DoubleActorProperty("Test_Double", "Test Double",
-      DoubleActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetTestDouble),
-      DoubleActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetTestDouble),
-      "Holds a test Double property", GROUPNAME));
+   REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestFloat, "Test_Float", "Test Float", "Holds a test Float property",
+            PropRegHelperType, propRegHelper);
 
-   AddProperty(new Vec3ActorProperty("Test_Vec3", "Test Vector3",
-      Vec3ActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetTestVec3),
-      Vec3ActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetTestVec3),
-      "Holds a test Vector3 Property", GROUPNAME));
+   REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestDouble, "Test_Double", "Test Double", "Holds a test Double property",
+            PropRegHelperType, propRegHelper);
 
-   AddProperty(new Vec2ActorProperty("Test_Vec2", "Test Vector2",
-      Vec2ActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetTestVec2),
-      Vec2ActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetTestVec2),
-      "Holds a test Vector2 Property", GROUPNAME));
+   REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestVec3, "Test_Vec3", "Test Vector3", "Holds a test Vector3 property",
+            PropRegHelperType, propRegHelper);
+   REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestVec4, "Test_Vec4", "Test Vector4", "Holds a test Vector4 property",
+            PropRegHelperType, propRegHelper);
+   REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestVec2, "Test_Vec2", "Test Vector2", "Holds a test Vector2 property",
+            PropRegHelperType, propRegHelper);
 
-   AddProperty(new Vec4ActorProperty("Test_Vec4", "Test Vector4",
-      Vec4ActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetTestVec4),
-      Vec4ActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetTestVec4),
-      "Holds a test Vector4 Property", GROUPNAME));
+   REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestVec2f, "Test_Vec2f", "Test Vector2f", "Holds a test Vector2f property",
+            PropRegHelperType, propRegHelper);
+   REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestVec3f, "Test_Vec3f", "Test Vector3f", "Holds a test Vector3f property",
+            PropRegHelperType, propRegHelper);
+   REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestVec4f, "Test_Vec4f", "Test Vector4f", "Holds a test Vector4f property",
+            PropRegHelperType, propRegHelper);
 
-   AddProperty(new Vec3fActorProperty("Test_Vec3f", "Test Vector3f",
-      Vec3fActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetTestVec3f),
-      Vec3fActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetTestVec3f),
-      "Holds a test Vector3f Property", GROUPNAME));
+   REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestVec2d, "Test_Vec2d", "Test Vector2d", "Holds a test Vector2d property",
+            PropRegHelperType, propRegHelper);
+   REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestVec3d, "Test_Vec3d", "Test Vector3d", "Holds a test Vector3d property",
+            PropRegHelperType, propRegHelper);
+   REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestVec4d, "Test_Vec4d", "Test Vector4d", "Holds a test Vector4d property",
+            PropRegHelperType, propRegHelper);
 
-   AddProperty(new Vec2fActorProperty("Test_Vec2f", "Test Vector2f",
-      Vec2fActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetTestVec2f),
-      Vec2fActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetTestVec2f),
-      "Holds a test Vector2f Property", GROUPNAME));
+   REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestString, "Test_String", "Test String", "Holds a test String property (unlimited length)",
+            PropRegHelperType, propRegHelper);
 
-   AddProperty(new Vec4fActorProperty("Test_Vec4f", "Test Vector4f",
-      Vec4fActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetTestVec4f),
-      Vec4fActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetTestVec4f),
-      "Holds a test Vector4f Property", GROUPNAME));
+   REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestStringWithLength, "Test_String2", "Test String (max 10)",
+            "Holds a test String property with a max length of 10",
+            PropRegHelperType, propRegHelper);
 
-   AddProperty(new Vec3dActorProperty("Test_Vec3d", "Test Vector3d",
-      Vec3dActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetTestVec3d),
-      Vec3dActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetTestVec3d),
-      "Holds a test Vector3d Property", GROUPNAME));
-
-   AddProperty(new Vec2dActorProperty("Test_Vec2d", "Test Vector2d",
-      Vec2dActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetTestVec2d),
-      Vec2dActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetTestVec2d),
-      "Holds a test Vector2d Property", GROUPNAME));
-
-   AddProperty(new Vec4dActorProperty("Test_Vec4d", "Test Vector4d",
-      Vec4dActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetTestVec4d),
-      Vec4dActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetTestVec4d),
-      "Holds a test Vector4d Property", GROUPNAME));
-
-   AddProperty(new StringActorProperty("Test_String", "Test String",
-      StringActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetTestString),
-      StringActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetTestString),
-      "Holds a test String property (unlimited length)", GROUPNAME));
-
-   StringActorProperty* stringProp = new StringActorProperty("Test_String2", "Test String (max 10)",
-      StringActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetTestStringWithLength),
-      StringActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetTestStringWithLength),
-      "Holds a test String property with a max length of 10", GROUPNAME);
-   stringProp->SetMaxLength(10);
-   AddProperty(stringProp);
+   static_cast<dtDAL::StringActorProperty*>(GetProperty("Test_String2"))->SetMaxLength(10);
 
    AddProperty(new ColorRgbaActorProperty("Test_Color", "Test Color",
       ColorRgbaActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetTestColor),
       ColorRgbaActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetTestColor),
       "Holds a test Color property", GROUPNAME));
 
-   AddProperty(new EnumActorProperty<TestEnum>("Test_Enum", "Test Enum",
-      EnumActorProperty<TestEnum>::SetFuncType(this, &ExampleTestPropertyProxy::SetTestEnum),
-      EnumActorProperty<TestEnum>::GetFuncType(this, &ExampleTestPropertyProxy::GetTestEnum),
-      "Holds a test Enum property", GROUPNAME));
+   REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestEnum, "Test_Enum", "Test Enum",
+            "Holds a test Enumeration property",
+            PropRegHelperType, propRegHelper);
 
-   AddProperty(new ResourceActorProperty(*this, DataType::SOUND, "Test_Sound_Resource", "Test Sound",
-      ResourceActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetSoundResourceName),
-      "An example sound resource property", GROUPNAME));
+   REGISTER_RESOURCE_PROPERTY_WITH_NAME(DataType::SOUND, TestSoundResource, "Test_Source_Resource", "Test Sound",
+            "An example sound resource property",
+            PropRegHelperType, propRegHelper);
 
-   AddProperty(new ResourceActorProperty(*this, DataType::TEXTURE, "Test_Texture_Resource", "Texture",
-      ResourceActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetTextureResourceName),
-      "An example texture resource property", GROUPNAME));
+   REGISTER_RESOURCE_PROPERTY_WITH_NAME(DataType::TEXTURE, TestTextureResource, "Test_Texture_Resource", "Test Texture",
+            "An example texture resource property",
+            PropRegHelperType, propRegHelper);
 
-   AddProperty(new ActorActorProperty(*this, "Test_Actor", "Test Actor",
-      ActorActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetTestActor),
-      ActorActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetTestActor),
-      "dtCore::Transformable",
-      "An example linked actor property", GROUPNAME));
+   REGISTER_ACTOR_ID_PROPERTY_WITH_NAME("dtCore::Transformable", TestActor, "Test_Actor", "Test Actor",
+            "An example linked actor property",
+            PropRegHelperType, propRegHelper);
 
-   AddProperty(new GameEventActorProperty(*this, "TestGameEvent", "Test Game Event",
-      GameEventActorProperty::SetFuncType(this, &ExampleTestPropertyProxy::SetTestGameEvent),
-      GameEventActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetTestGameEvent),
-      "Holds a test game event property", GROUPNAME));
+   REGISTER_PROPERTY_WITH_LABEL(TestGameEvent, "Test Game Event",
+            "Holds a test game event property",
+            PropRegHelperType, propRegHelper);
 
    mGroupParam->AddParameter("FloatParam", dtDAL::DataType::FLOAT);
    mGroupParam->AddParameter("IntParam", dtDAL::DataType::INT);
    mGroupParam->AddParameter("StringParam", dtDAL::DataType::STRING);
 
-   AddProperty(new GroupActorProperty("TestGroup", "Test Group Property",
-      GroupActorProperty::SetFunctorType(this, &ExampleTestPropertyProxy::SetTestGroup),
-      GroupActorProperty::GetFunctorType(this, &ExampleTestPropertyProxy::GetTestGroup),
-      "Holds a test group", GROUPNAME));
+   REGISTER_PROPERTY_WITH_LABEL(TestGroup, "Test Group Property",
+            "Holds a test group property",
+            PropRegHelperType, propRegHelper);
 
    mStringArray.push_back("First Element");
    mStringArray.push_back("Second Element");

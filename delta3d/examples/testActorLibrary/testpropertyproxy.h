@@ -36,6 +36,7 @@
 #include <dtDAL/plugin_export.h>
 #include <dtDAL/gameevent.h>
 #include <dtUtil/enumeration.h>
+#include <dtUtil/getsetmacros.h>
 
 using namespace dtActors;
 
@@ -76,371 +77,38 @@ class DT_PLUGIN_EXPORT ExampleTestPropertyProxy : public StaticMeshActorProxy
          int       value;
       };
 
-      /**
-       * Sets the test Float
-       * @param value Test value
-       */
-      void SetTestFloat(float value)
-      {
-         mFloat = value;
-      }
 
-      /**
-       * Gets the Test Float
-       * @return the test value
-       */
-      float GetTestFloat()
-      {
-         return mFloat;
-      }
 
-      /**
-       * Sets the test bool
-       * @param value Test value
-       */
-      void SetTestBool(bool value)
-      {
-         mBool = value;
-      }
+      DECLARE_PROPERTY_INLINE(float, TestFloat);
+      DECLARE_PROPERTY_INLINE(bool, TestBool);
+      DECLARE_PROPERTY_INLINE(double, TestDouble);
+      DECLARE_PROPERTY_INLINE(int, TestInt);
+      DECLARE_PROPERTY_INLINE(int, ReadOnlyTestInt);
+      DECLARE_PROPERTY_INLINE(long, TestLong);
+      DECLARE_PROPERTY_INLINE(std::string, TestString);
+      DECLARE_PROPERTY_INLINE(std::string, TestStringWithLength);
+      DECLARE_PROPERTY_INLINE(osg::Vec2, TestVec2);
+      DECLARE_PROPERTY_INLINE(osg::Vec2f, TestVec2f);
+      DECLARE_PROPERTY_INLINE(osg::Vec2d, TestVec2d);
+      DECLARE_PROPERTY_INLINE(osg::Vec3, TestVec3);
+      DECLARE_PROPERTY_INLINE(osg::Vec3f, TestVec3f);
+      DECLARE_PROPERTY_INLINE(osg::Vec3d, TestVec3d);
+      DECLARE_PROPERTY_INLINE(osg::Vec4, TestVec4);
+      DECLARE_PROPERTY_INLINE(osg::Vec4f, TestVec4f);
+      DECLARE_PROPERTY_INLINE(osg::Vec4d, TestVec4d);
+      DECLARE_PROPERTY_INLINE(osg::Vec4, TestColor);
+      DECLARE_PROPERTY_INLINE(dtUtil::EnumerationPointer<TestEnum>, TestEnum);
+      DECLARE_PROPERTY_INLINE(dtCore::UniqueId, TestActor);
+      DECLARE_PROPERTY_INLINE(dtCore::RefPtr<dtDAL::GameEvent>, TestGameEvent);
 
-      /**
-       * Gets the Test bool
-       * @return the test value
-       */
-      bool GetTestBool()
-      {
-         return mBool;
-      }
+      DECLARE_PROPERTY_INLINE(dtDAL::ResourceDescriptor, TestSoundResource);
+      DECLARE_PROPERTY_INLINE(dtDAL::ResourceDescriptor, TestTextureResource);
 
-      /**
-       * Sets the test Double
-       * @param value Test value
-       */
-      void SetTestDouble(double value)
-      {
-         mDouble = value;
-      }
+//      void SetTestGameEvent(dtDAL::GameEvent* event) { mTestGameEvent = event; }
+//      dtDAL::GameEvent* GetTestGameEvent() { return mTestGameEvent; }
 
-      /**
-      * Gets the Test Value
-      * @return the test value
-      */
-      double GetTestDouble()
-      {
-         return mDouble;
-      }
-
-      /**
-       * Sets the test value
-       * @param value Test value
-       */
-      void SetTestInt(int value)
-      {
-         mInt = value;
-      }
-
-      /**
-       * Gets the Test value
-       * @return the test value
-       */
-      int GetTestInt()
-      {
-         return mInt;
-      }
-
-      /**
-       * Sets the test value
-       * @param value Test value
-       */
-      void SetReadOnlyTestInt(int value)
-      {
-         mReadOnlyInt = value;
-      }
-
-      /**
-       * Gets the Test value
-       * @return the test value
-       */
-      int GetReadOnlyTestInt()
-      {
-         return mReadOnlyInt;
-      }
-
-      /**
-      * Sets the test value
-      * @param value Test value
-      */
-      void SetTestLong(long value)
-      {
-         mLong = value;
-      }
-
-      /**
-       * Gets the Test value
-       * @return the test value
-       */
-      long GetTestLong()
-      {
-         return mLong;
-      }
-
-      /**
-       * Sets the test value
-       * @param value Test value
-       */
-      void SetTestString(const std::string &value)
-      {
-         mString = value;
-      }
-
-      /**
-       * Gets the Test value
-       * @return the test value
-       */
-      std::string GetTestString()
-      {
-        return mString;
-      }
-
-      /**
-       * Sets the test value
-       * @param value Test value
-       */
-      void SetTestStringWithLength(const std::string &value)
-      {
-         mStringWithLength = value;
-      }
-
-      /**
-       * Gets the Test value
-       * @return the test value
-       */
-      std::string GetTestStringWithLength()
-      {
-         return mStringWithLength;
-      }
-
-      /**
-       * Sets the test value
-       * @param value Test value
-       */
-      void SetTestVec4(const osg::Vec4 &value)
-      {
-         mVec4 = value;
-      }
-
-      /**
-       * Gets the Test value
-       * @return the test value
-       */
-      osg::Vec4 GetTestVec4()
-      {
-         return mVec4;
-      }
-
-      /**
-       * Sets the test value
-       * @param value Test value
-       */
-      void SetTestVec4f(const osg::Vec4f &value)
-      {
-         mVec4f = value;
-      }
-
-      /**
-       * Gets the Test value
-       * @return the test value
-       */
-      osg::Vec4d GetTestVec4d()
-      {
-         return mVec4d;
-      }
-
-      /**
-       * Sets the test value
-       * @param value Test value
-       */
-      void SetTestVec4d(const osg::Vec4d &value)
-      {
-         mVec4d = value;
-      }
-
-      /**
-       * Gets the Test value
-       * @return the test value
-       */
-      osg::Vec4f GetTestVec4f()
-      {
-         return mVec4f;
-      }
-
-      /**
-       * Sets the test value
-       * @param value Test value
-       */
-      void SetTestVec2(const osg::Vec2 &value)
-      {
-         mVec2 = value;
-      }
-
-      /**
-       * Gets the Test value
-       * @return the test value
-       */
-      osg::Vec2 GetTestVec2()
-      {
-         return mVec2;
-      }
-
-      /**
-       * Sets the test value
-       * @param value Test value
-       */
-      void SetTestVec2f(const osg::Vec2f &value)
-      {
-         mVec2f = value;
-      }
-
-      /**
-       * Gets the Test value
-       * @return the test value
-       */
-      osg::Vec2f GetTestVec2f()
-      {
-         return mVec2f;
-      }
-
-      /**
-       * Sets the test value
-       * @param value Test value
-       */
-      void SetTestVec2d(const osg::Vec2d &value)
-      {
-         mVec2d = value;
-      }
-
-      /**
-       * Gets the Test value
-       * @return the test value
-       */
-      osg::Vec2d GetTestVec2d()
-      {
-         return mVec2d;
-      }
-
-      /**
-       * Sets the test value
-       * @param value Test value
-       */
-      void SetTestVec3(const osg::Vec3 &value)
-      {
-         mVec3 = value;
-      }
-
-      /**
-       * Gets the Test value
-       * @return the test value
-       */
-      osg::Vec3 GetTestVec3()
-      {
-         return mVec3;
-      }
-
-      /**
-       * Sets the test value
-       * @param value Test value
-       */
-      void SetTestVec3f(const osg::Vec3f &value)
-      {
-         mVec3f = value;
-      }
-
-      /**
-       * Gets the Test value
-       * @return the test value
-       */
-      osg::Vec3f GetTestVec3f()
-      {
-         return mVec3f;
-      }
-
-      /**
-       * Sets the test value
-       * @param value Test value
-       */
-      void SetTestVec3d(const osg::Vec3d &value)
-      {
-         mVec3d = value;
-      }
-
-      /**
-       * Gets the Test value
-       * @return the test value
-       */
-      osg::Vec3d GetTestVec3d()
-      {
-         return mVec3d;
-      }
-
-      void SetTestEnum(TestEnum &mode)
-      {
-         //dtCore::Light *l = dynamic_cast<dtCore::Light *>(this->actor.get());
-         mEnum = &mode;
-      }
-
-      TestEnum &GetTestEnum()
-      {
-         return *mEnum;
-      }
-
-      /**
-       * Sets the test value
-       * @param value Test value
-       */
-      void SetTestColor(const osg::Vec4 &value)
-      {
-         mColor = value;
-      }
-
-      /**
-       * Gets the Test value
-       * @return the test value
-       */
-      osg::Vec4 GetTestColor()
-      {
-         return mColor;
-      }
-
-      void SetSoundResourceName(const std::string &fileName) { mSound = fileName;}
-
-      void SetTextureResourceName(const std::string &fileName) { mTexture = fileName; }
-
-      dtCore::DeltaDrawable* GetTestActor()
-      {
-         //LOG_ALWAYS("ActorProxy Get");
-
-         ActorProxy* proxy = GetLinkedActor("Test_Actor");
-         return proxy->GetActor();
-      }
-
-      void SetTestActor(ActorProxy* proxy)
-      {
-         this->SetLinkedActor("Test_Actor", proxy);
-         //LOG_ALWAYS("ActorProxy Set");
-      }
-
-      void loadFile(const std::string &fileName) 
-      {
-      //    dtCore::Loadable *obj = dynamic_cast<dtCore::Loadable*>(actor.get());
-      //    if (obj == NULL)
-      //        EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Loadable");
-
-      //    obj->LoadFile(fileName);
-      }
-
-      void SetTestGameEvent(dtDAL::GameEvent *event) { mTestGameEvent = event; }
-      dtDAL::GameEvent *GetTestGameEvent() { return mTestGameEvent.get(); }
-
+      // Can't use a DECLARE_PROPERTY because it returns a ref ptr to the value because it expects you may generate the group
+      // data on the fly.
       void SetTestGroup(const dtDAL::NamedGroupParameter& groupParam) { mGroupParam = new dtDAL::NamedGroupParameter(groupParam); }
       dtCore::RefPtr<dtDAL::NamedGroupParameter> GetTestGroup() { return mGroupParam; }
 
@@ -479,27 +147,7 @@ class DT_PLUGIN_EXPORT ExampleTestPropertyProxy : public StaticMeshActorProxy
 
    private:
 
-      int mInt, mReadOnlyInt;
-      float mFloat;
-      double mDouble;
-      long mLong;
-      bool mBool;
-      std::string mString;
-      std::string mStringWithLength;
-      osg::Vec2 mVec2;
-      osg::Vec3 mVec3;
-      osg::Vec4 mVec4;
-      osg::Vec2 mVec2f;
-      osg::Vec3 mVec3f;
-      osg::Vec4 mVec4f;
-      osg::Vec2 mVec2d;
-      osg::Vec3 mVec3d;
-      osg::Vec4 mVec4d;
-      osg::Vec4 mColor;
-      TestEnum *mEnum;
-      std::string mSound;
-      std::string mTexture;
-      dtCore::RefPtr<dtDAL::GameEvent> mTestGameEvent;
+//      dtCore::RefPtr<dtDAL::GameEvent> mTestGameEvent;
       dtCore::RefPtr<dtDAL::NamedGroupParameter> mGroupParam;
       std::vector<std::string>      mStringArray;
       int                           mStringArrayIndex;
