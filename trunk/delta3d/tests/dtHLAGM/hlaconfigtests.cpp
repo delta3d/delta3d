@@ -327,6 +327,9 @@ void HLAConfigTests::TestConfigure()
 {
    try
    {
+      dtDAL::DataType* dt = dtDAL::DataType::GetValueForName("VEC3");
+
+
       CPPUNIT_ASSERT_MESSAGE("Library should not yet be loaded.",
          mGameManager->GetRegistry(mHLAActorRegistry) == NULL);
       dtHLAGM::HLAComponentConfig config;

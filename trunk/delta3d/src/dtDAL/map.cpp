@@ -294,11 +294,24 @@ namespace dtDAL
             {
                if(props[k]->GetDataType() == DataType::ACTOR)
                {
-                  ActorActorProperty *aap = static_cast<ActorActorProperty*>(props[k]);
-                  if(aap->GetValue() == &proxy)
-                     aap->SetValue(NULL);
+                  ActorActorProperty* aap = dynamic_cast<ActorActorProperty*>(props[k]);
+                  if (aap != NULL)
+                  {
+                     if(aap->GetValue() == &proxy)
+                        aap->SetValue(NULL);
+                  }
+                  else
+                  {
+                     ActorIDActorProperty* aidap = dynamic_cast<ActorIDActorProperty*>(props[k]);
+                     if (aidap != NULL)
+                     {
+                        if (aidap->GetValue() == proxy.GetId())
+                        {
+                           aidap->SetValue(dtCore::UniqueId(""));
+                        }
+                     }
+                  }
                }
-                  
             }
          }
          mProxyMap.erase(i);

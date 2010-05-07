@@ -50,20 +50,49 @@ namespace dtDAL
 
       typedef dtDAL::Vec3ActorProperty Vec3;
 
-      PropertyRegHelper(ContainerType con, FuncObj* objPtr, const dtUtil::RefString& str)
+      PropertyRegHelper(ContainerType con, FuncObj* objPtr, const dtUtil::RefString& groupName)
          : mPropCon(con)
          , mFuncObj(objPtr)
-         , mGroup(str)
+         , mGroup(groupName)
       {}
 
-      template <class PropType, typename SetPtr, typename GetPtr>
-      void RegisterProperty(PropType prop, SetPtr setter, GetPtr getter, const dtUtil::RefString& name, const dtUtil::RefString& desc)
+      template <typename SetPtr, typename GetPtr>
+      void RegisterProperty(SetPtr setter, GetPtr getter, const dtUtil::RefString& name,
+               const dtUtil::RefString& label, const dtUtil::RefString& desc)
       {
+         typedef typename dtUtil::FunTraits<GetPtr>::ResultType ResType;
+         typedef typename dtUtil::TypeTraits<ResType>::value_type PropType;
 
-         mPropCon.AddProperty(new typename dtDAL::TypeToActorProperty<PropType>::value_type(name, name,
+         mPropCon.AddProperty(new typename dtDAL::TypeToActorProperty<PropType>::value_type(name, label,
             typename dtDAL::TypeToActorProperty<PropType>::SetFuncType(mFuncObj, setter),
             typename dtDAL::TypeToActorProperty<PropType>::GetFuncType(mFuncObj, getter),
             desc, mGroup));
+      }
+
+      template <typename SetPtr, typename GetPtr>
+      void RegisterResourceProperty(DataType& resourceType, SetPtr setter, GetPtr getter,
+               const dtUtil::RefString& name, const dtUtil::RefString& label, const dtUtil::RefString& desc)
+      {
+         typedef typename dtUtil::FunTraits<GetPtr>::ResultType ResType;
+         typedef typename dtUtil::TypeTraits<ResType>::value_type PropType;
+
+         mPropCon.AddProperty(new dtDAL::ResourceActorProperty(resourceType, name, label,
+            typename dtDAL::TypeToActorProperty<PropType>::SetFuncType(mFuncObj, setter),
+            typename dtDAL::TypeToActorProperty<PropType>::GetFuncType(mFuncObj, getter),
+            desc, mGroup));
+      }
+
+      template <typename SetPtr, typename GetPtr>
+      void RegisterActorIdProperty(const dtUtil::RefString& baseClass, SetPtr setter, GetPtr getter,
+               const dtUtil::RefString& name, const dtUtil::RefString& label, const dtUtil::RefString& desc)
+      {
+         typedef typename dtUtil::FunTraits<GetPtr>::ResultType ResType;
+         typedef typename dtUtil::TypeTraits<ResType>::value_type PropType;
+
+         mPropCon.AddProperty(new dtDAL::ActorIDActorProperty(name, label,
+            typename dtDAL::TypeToActorProperty<PropType>::SetFuncType(mFuncObj, setter),
+            typename dtDAL::TypeToActorProperty<PropType>::GetFuncType(mFuncObj, getter),
+            baseClass, desc, mGroup));
       }
 
       ContainerType mPropCon;
@@ -72,26 +101,69 @@ namespace dtDAL
       const dtUtil::RefString mGroup;
    };
 
-   #define REGISTER_PROPERTY(PropertyName, PropertyDesc, RegHelperType_, RegHelperInstance) \
-      static const dtUtil::RefString DESC_ ## PropertyName (PropertyDesc);\
-      RegHelperInstance.RegisterProperty(m ## PropertyName, \
-      CREATE_PROPERTY_SETTER_HELPER_MACRO(RegHelperType_, PropertyName), \
-      CREATE_PROPERTY_GETTER_HELPER_MACRO(RegHelperType_, PropertyName), \
-   #PropertyName, DESC_ ## PropertyName);\
+#define REGISTER_PROPERTY(PropertyName, PropertyDesc, RegHelperType_, RegHelperInstance) \
+   static const dtUtil::RefString DESC_ ## PropertyName (PropertyDesc);\
+   RegHelperInstance.RegisterProperty( \
+   CREATE_PROPERTY_SETTER_HELPER_MACRO(RegHelperType_, PropertyName), \
+   CREATE_PROPERTY_GETTER_HELPER_MACRO(RegHelperType_, PropertyName), \
+#PropertyName, #PropertyName, DESC_ ## PropertyName);\
 
-   #define REGISTER_PROPERTY_WITH_NAME(PropertyName, PropertyStringName, PropertyDesc, RegHelperType_, RegHelperInstance) \
-      static const dtUtil::RefString DESC_ ## PropertyName (PropertyDesc);\
-      RegHelperInstance.RegisterProperty(m ## PropertyName, \
-      CREATE_PROPERTY_SETTER_HELPER_MACRO(RegHelperType_, PropertyName), \
-      CREATE_PROPERTY_GETTER_HELPER_MACRO(RegHelperType_, PropertyName), \
-   PropertyStringName, DESC_ ## PropertyName);\
+#define REGISTER_PROPERTY_WITH_NAME(PropertyName, PropertyStringName, PropertyDesc, RegHelperType_, RegHelperInstance) \
+   static const dtUtil::RefString DESC_ ## PropertyName (PropertyDesc);\
+   RegHelperInstance.RegisterProperty(\
+   CREATE_PROPERTY_SETTER_HELPER_MACRO(RegHelperType_, PropertyName), \
+   CREATE_PROPERTY_GETTER_HELPER_MACRO(RegHelperType_, PropertyName), \
+PropertyStringName, PropertyStringName, DESC_ ## PropertyName);\
 
+#define REGISTER_PROPERTY_WITH_LABEL(PropertyName, PropertyLabel, PropertyDesc, RegHelperType_, RegHelperInstance) \
+   static const dtUtil::RefString DESC_ ## PropertyName (PropertyDesc);\
+   RegHelperInstance.RegisterProperty(\
+   CREATE_PROPERTY_SETTER_HELPER_MACRO(RegHelperType_, PropertyName), \
+   CREATE_PROPERTY_GETTER_HELPER_MACRO(RegHelperType_, PropertyName), \
+#PropertyName, PropertyLabel, DESC_ ## PropertyName);\
 
-   #define CREATE_PROPERTY_GETTER_HELPER_MACRO(RegHelperType_, PropertyName)\
-      &RegHelperType_::FunctorObjectType::Get ## PropertyName\
+#define REGISTER_PROPERTY_WITH_NAME_AND_LABEL(PropertyName, PropertyStringName, PropertyLabel, PropertyDesc, RegHelperType_, RegHelperInstance) \
+   static const dtUtil::RefString DESC_ ## PropertyName (PropertyDesc);\
+   RegHelperInstance.RegisterProperty(\
+   CREATE_PROPERTY_SETTER_HELPER_MACRO(RegHelperType_, PropertyName), \
+   CREATE_PROPERTY_GETTER_HELPER_MACRO(RegHelperType_, PropertyName), \
+PropertyStringName, PropertyLabel, DESC_ ## PropertyName);\
 
-   #define CREATE_PROPERTY_SETTER_HELPER_MACRO(RegHelperType_, PropertyName)\
-      &RegHelperType_::FunctorObjectType::Set ## PropertyName\
+#define REGISTER_RESOURCE_PROPERTY(DataType, PropertyName, PropertyLabel, PropertyDesc, RegHelperType_, RegHelperInstance) \
+   static const dtUtil::RefString DESC_ ## PropertyName (PropertyDesc);\
+   RegHelperInstance.RegisterResourceProperty(DataType,\
+   CREATE_PROPERTY_SETTER_HELPER_MACRO(RegHelperType_, PropertyName), \
+   CREATE_PROPERTY_GETTER_HELPER_MACRO(RegHelperType_, PropertyName), \
+#PropertyName, PropertyLabel, DESC_ ## PropertyName);\
+
+#define REGISTER_RESOURCE_PROPERTY_WITH_NAME(DataType, PropertyName, PropertyStringName, PropertyLabel, PropertyDesc, RegHelperType_, RegHelperInstance) \
+   static const dtUtil::RefString DESC_ ## PropertyName (PropertyDesc);\
+   RegHelperInstance.RegisterResourceProperty(DataType,\
+   CREATE_PROPERTY_SETTER_HELPER_MACRO(RegHelperType_, PropertyName), \
+   CREATE_PROPERTY_GETTER_HELPER_MACRO(RegHelperType_, PropertyName), \
+PropertyStringName, PropertyLabel, DESC_ ## PropertyName);\
+
+   #define REGISTER_ACTOR_ID_PROPERTY(BaseClassString, PropertyName, PropertyLabel, PropertyDesc, RegHelperType_, RegHelperInstance) \
+   static const dtUtil::RefString DESC_ ## PropertyName (PropertyDesc);\
+   static const dtUtil::RefString BASE_ ## PropertyName (BaseClassString);\
+   RegHelperInstance.RegisterActorIdProperty(BASE_ ##_PropertyName,\
+   CREATE_PROPERTY_SETTER_HELPER_MACRO(RegHelperType_, PropertyName), \
+   CREATE_PROPERTY_GETTER_HELPER_MACRO(RegHelperType_, PropertyName), \
+#PropertyName, PropertyLabel, DESC_ ## PropertyName);\
+
+#define REGISTER_ACTOR_ID_PROPERTY_WITH_NAME(BaseClassString, PropertyName, PropertyStringName, PropertyLabel, PropertyDesc, RegHelperType_, RegHelperInstance) \
+   static const dtUtil::RefString DESC_ ## PropertyName (PropertyDesc);\
+   static const dtUtil::RefString BASE_ ## PropertyName (BaseClassString);\
+    RegHelperInstance.RegisterActorIdProperty(BASE_ ## PropertyName,\
+   CREATE_PROPERTY_SETTER_HELPER_MACRO(RegHelperType_, PropertyName), \
+   CREATE_PROPERTY_GETTER_HELPER_MACRO(RegHelperType_, PropertyName), \
+PropertyStringName, PropertyLabel, DESC_ ## PropertyName);\
+
+#define CREATE_PROPERTY_GETTER_HELPER_MACRO(RegHelperType_, PropertyName)\
+   &RegHelperType_::FunctorObjectType::Get ## PropertyName\
+
+#define CREATE_PROPERTY_SETTER_HELPER_MACRO(RegHelperType_, PropertyName)\
+   &RegHelperType_::FunctorObjectType::Set ## PropertyName\
 
 }//namespace dtDAL
 

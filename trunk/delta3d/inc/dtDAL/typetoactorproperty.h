@@ -29,9 +29,11 @@
 #include <dtDAL/propertycontainer.h>
 #include <dtDAL/containeractorproperty.h>
 #include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/groupactorproperty.h>
+#include <dtDAL/namedparameter.h>
 #include <dtUtil/command.h>
 #include <dtUtil/functor.h>
-
+#include <dtUtil/typemanip.h>
 
 ///////////////////////////////////////////////////////////////////////////
 //
@@ -45,23 +47,38 @@ namespace dtDAL
    {
    private:
       //if no specializations are used we will just do everything by copy
-      template <class U, typename T = _Type>
+      template <bool isEnumSubclass, class U, typename T = _Type>
       struct _TypeToActorProperty_
       {
-         typedef U value_type;
-         typedef value_type GetValueType;
-         typedef value_type SetValueType;
+         typedef dtDAL::ActorProperty value_type;
+         typedef dtDAL::NamedParameter named_parameter_type;
+         typedef U* GetValueType;
+         typedef U* SetValueType;
 
          typedef dtUtil::Functor<GetValueType, TYPELIST_0()> GetFuncType;
          typedef dtUtil::Functor<void, TYPELIST_1(SetValueType)> SetFuncType;
       };
 
-      //TODO- ActorActor, GameEvent, Resource, Enumeration, and ColorRGBA
+      template <class U, typename T>
+      struct _TypeToActorProperty_<true, U, T>
+      {
+         typedef dtDAL::EnumActorProperty<U> value_type;
+         typedef dtDAL::NamedEnumParameter named_parameter_type;
+
+         typedef U& GetValueType;
+         typedef U& SetValueType;
+
+         typedef typename value_type::GetFuncType GetFuncType;
+         typedef typename value_type::SetFuncType SetFuncType;
+      };
+      //TODO- ActorActor (DEPRECATED ANYWAY), and ColorRGBA (Which uses a vec4, so there is no way to distinguish it)
+      // ResourceActorProperty is in the list, but it needs work in the property macros to set the type
 
       template <typename T>
-      struct _TypeToActorProperty_<bool, T>
+      struct _TypeToActorProperty_<false, bool, T>
       {
          typedef dtDAL::BooleanActorProperty value_type;
+         typedef dtDAL::NamedBooleanParameter named_parameter_type;
 
          typedef bool GetValueType;
          typedef bool SetValueType;
@@ -71,9 +88,36 @@ namespace dtDAL
       };
 
       template <typename T>
-      struct _TypeToActorProperty_<int, T>
+      struct _TypeToActorProperty_<false, GameEvent, T>
+      {
+         typedef dtDAL::GameEventActorProperty value_type;
+         typedef dtDAL::NamedGameEventParameter named_parameter_type;
+
+         typedef GameEvent* GetValueType;
+         typedef GameEvent* SetValueType;
+
+         typedef value_type::GetFuncType GetFuncType;
+         typedef value_type::SetFuncType SetFuncType;
+      };
+
+      template <typename T>
+      struct _TypeToActorProperty_<false, ResourceDescriptor, T>
+      {
+         typedef dtDAL::ResourceActorProperty value_type;
+         typedef dtDAL::NamedResourceParameter named_parameter_type;
+
+         typedef const ResourceDescriptor& GetValueType;
+         typedef const ResourceDescriptor& SetValueType;
+
+         typedef value_type::GetDescFuncType GetFuncType;
+         typedef value_type::SetDescFuncType SetFuncType;
+      };
+
+      template <typename T>
+      struct _TypeToActorProperty_<false, int, T>
       {
          typedef dtDAL::IntActorProperty value_type;
+         typedef dtDAL::NamedIntParameter named_parameter_type;
 
          typedef int GetValueType;
          typedef int SetValueType;
@@ -83,9 +127,10 @@ namespace dtDAL
       };
 
       template <typename T>
-      struct _TypeToActorProperty_<long, T>
+      struct _TypeToActorProperty_<false, long, T>
       {
          typedef dtDAL::LongActorProperty value_type;
+         typedef dtDAL::NamedLongIntParameter named_parameter_type;
 
          typedef long GetValueType;
          typedef long SetValueType;
@@ -95,9 +140,10 @@ namespace dtDAL
       };
 
       template <typename T>
-      struct _TypeToActorProperty_<float, T>
+      struct _TypeToActorProperty_<false, float, T>
       {
          typedef dtDAL::FloatActorProperty value_type;
+         typedef dtDAL::NamedFloatParameter named_parameter_type;
 
          typedef float GetValueType;
          typedef float SetValueType;
@@ -107,9 +153,10 @@ namespace dtDAL
       };
 
       template <typename T>
-      struct _TypeToActorProperty_<double, T>
+      struct _TypeToActorProperty_<false, double, T>
       {
          typedef dtDAL::DoubleActorProperty value_type;
+         typedef dtDAL::NamedDoubleParameter named_parameter_type;
 
          typedef double GetValueType;
          typedef double SetValueType;
@@ -119,11 +166,12 @@ namespace dtDAL
       };
 
       template <typename T>
-      struct _TypeToActorProperty_<std::string, T>
+      struct _TypeToActorProperty_<false, std::string, T>
       {
          typedef dtDAL::StringActorProperty value_type;
+         typedef dtDAL::NamedStringParameter named_parameter_type;
 
-         typedef const std::string& GetValueType;
+         typedef std::string GetValueType;
          typedef const std::string& SetValueType;
 
          typedef value_type::GetFuncType GetFuncType;
@@ -131,11 +179,12 @@ namespace dtDAL
       };
 
       template <typename T>
-      struct _TypeToActorProperty_<osg::Vec2f, T>
+      struct _TypeToActorProperty_<false, osg::Vec2f, T>
       {
          typedef dtDAL::Vec2ActorProperty value_type;
+         typedef dtDAL::NamedVec2Parameter named_parameter_type;
 
-         typedef const osg::Vec2f& GetValueType;
+         typedef osg::Vec2f GetValueType;
          typedef const osg::Vec2f& SetValueType;
 
          typedef value_type::GetFuncType GetFuncType;
@@ -143,11 +192,12 @@ namespace dtDAL
       };
 
       template <typename T>
-      struct _TypeToActorProperty_<osg::Vec2d, T>
+      struct _TypeToActorProperty_<false, osg::Vec2d, T>
       {
          typedef dtDAL::Vec2dActorProperty value_type;
+         typedef dtDAL::NamedVec2dParameter named_parameter_type;
 
-         typedef const osg::Vec2d& GetValueType;
+         typedef osg::Vec2d GetValueType;
          typedef const osg::Vec2d& SetValueType;
 
          typedef value_type::GetFuncType GetFuncType;
@@ -155,11 +205,12 @@ namespace dtDAL
       };
 
       template <typename T>
-      struct _TypeToActorProperty_<osg::Vec3f, T>
+      struct _TypeToActorProperty_<false, osg::Vec3f, T>
       {
          typedef dtDAL::Vec3fActorProperty value_type;
+         typedef dtDAL::NamedVec3fParameter named_parameter_type;
 
-         typedef const osg::Vec3f& GetValueType;
+         typedef osg::Vec3f GetValueType;
          typedef const osg::Vec3f& SetValueType;
 
          typedef value_type::GetFuncType GetFuncType;
@@ -167,11 +218,12 @@ namespace dtDAL
       };
 
       template <typename T>
-      struct _TypeToActorProperty_<osg::Vec3d, T>
+      struct _TypeToActorProperty_<false, osg::Vec3d, T>
       {
          typedef dtDAL::Vec3dActorProperty value_type;
+         typedef dtDAL::NamedVec3dParameter named_parameter_type;
 
-         typedef const osg::Vec3d& GetValueType;
+         typedef osg::Vec3d GetValueType;
          typedef const osg::Vec3d& SetValueType;
 
          typedef value_type::GetFuncType GetFuncType;
@@ -179,11 +231,12 @@ namespace dtDAL
       };
 
       template <typename T>
-      struct _TypeToActorProperty_<osg::Vec4f, T>
+      struct _TypeToActorProperty_<false, osg::Vec4f, T>
       {
          typedef dtDAL::Vec4fActorProperty value_type;
+         typedef dtDAL::NamedVec4fParameter named_parameter_type;
 
-         typedef const osg::Vec4f& GetValueType;
+         typedef osg::Vec4f GetValueType;
          typedef const osg::Vec4f& SetValueType;
 
          typedef value_type::GetFuncType GetFuncType;
@@ -191,11 +244,12 @@ namespace dtDAL
       };
 
       template <typename T>
-      struct _TypeToActorProperty_<osg::Vec4d, T>
+      struct _TypeToActorProperty_<false, osg::Vec4d, T>
       {
          typedef dtDAL::Vec4dActorProperty value_type;
+         typedef dtDAL::NamedVec4dParameter named_parameter_type;
 
-         typedef const osg::Vec4d& GetValueType;
+         typedef osg::Vec4d GetValueType;
          typedef const osg::Vec4d& SetValueType;
 
          typedef value_type::GetFuncType GetFuncType;
@@ -203,26 +257,56 @@ namespace dtDAL
       };
 
       template <typename T>
-      struct _TypeToActorProperty_<dtCore::UniqueId, T>
+      struct _TypeToActorProperty_<false, dtCore::UniqueId, T>
       {
          typedef dtDAL::ActorIDActorProperty value_type;
+         typedef dtDAL::NamedActorParameter named_parameter_type;
 
-         typedef const dtCore::UniqueId& GetValueType;
+         typedef dtCore::UniqueId GetValueType;
          typedef const dtCore::UniqueId& SetValueType;
 
          typedef value_type::GetFuncType GetFuncType;
          typedef value_type::SetFuncType SetFuncType;
       };
 
+      template <typename T>
+      struct _TypeToActorProperty_<false, dtDAL::NamedGroupParameter, T>
+      {
+         typedef dtDAL::GroupActorProperty value_type;
+         typedef dtDAL::NamedGroupParameter named_parameter_type;
+
+         typedef dtCore::RefPtr<dtDAL::NamedGroupParameter> GetValueType;
+         typedef const dtDAL::NamedGroupParameter& SetValueType;
+
+         typedef value_type::GetFunctorType GetFuncType;
+         typedef value_type::SetFunctorType SetFuncType;
+      };
+
+      // Need this one because the getter return is used in property macros, which has the refptr
+      template <typename T>
+      struct _TypeToActorProperty_<false, dtCore::RefPtr<dtDAL::NamedGroupParameter>, T>
+      {
+         typedef dtDAL::GroupActorProperty value_type;
+         typedef dtDAL::NamedGroupParameter named_parameter_type;
+
+         typedef dtCore::RefPtr<dtDAL::NamedGroupParameter> GetValueType;
+         typedef const dtDAL::NamedGroupParameter& SetValueType;
+
+         typedef value_type::GetFunctorType GetFuncType;
+         typedef value_type::SetFunctorType SetFuncType;
+      };
+
 
    public:
-      typedef typename _TypeToActorProperty_<_Type>::value_type value_type;
+      enum { isEnum = DTUTIL_SUPERSUBCLASS_STRICT(dtUtil::Enumeration, _Type) };
+      typedef typename _TypeToActorProperty_<isEnum, _Type>::value_type value_type;
+      typedef typename _TypeToActorProperty_<isEnum, _Type>::named_parameter_type named_parameter_type;
 
-      typedef typename _TypeToActorProperty_<_Type>::GetValueType GetValueType;
-      typedef typename _TypeToActorProperty_<_Type>::SetValueType SetValueType;
+      typedef typename _TypeToActorProperty_<isEnum, _Type>::SetValueType SetValueType;
+      typedef typename _TypeToActorProperty_<isEnum, _Type>::GetValueType GetValueType;
 
-      typedef typename _TypeToActorProperty_<_Type>::SetFuncType SetFuncType;
-      typedef typename _TypeToActorProperty_<_Type>::GetFuncType GetFuncType;
+      typedef typename _TypeToActorProperty_<isEnum, _Type>::SetFuncType SetFuncType;
+      typedef typename _TypeToActorProperty_<isEnum, _Type>::GetFuncType GetFuncType;
    };
 
 }//namespace dtDAL

@@ -722,48 +722,6 @@ namespace dtDAL
     * This actor property represents a vector data member with 2 values.
     */
    ////////////////////////////////////////////////////////////////////////////
-   class DT_DAL_EXPORT Vec2ActorProperty :
-      public GenericActorProperty<const osg::Vec2&, osg::Vec2>
-   {
-      public:
-         typedef GenericActorProperty<const osg::Vec2&, osg::Vec2> BaseClass;
-         typedef BaseClass::SetFuncType SetFuncType;
-         typedef BaseClass::GetFuncType GetFuncType;
-
-         Vec2ActorProperty(const dtUtil::RefString& name, const dtUtil::RefString& label,
-                           SetFuncType set, GetFuncType get,
-                           const dtUtil::RefString& desc = "", const dtUtil::RefString& groupName = "")
-            : BaseClass(DataType::VEC2, name, label, set, get, desc, groupName)
-         {
-            SetNumberPrecision(2 * sizeof(GetValue()[0]) + 1);
-         }
-
-         /**
-          * Sets the value of the property based on a string.
-          * The string should be two floating point values as a strings separated by spaces.
-          * This will return false if the values can't be set.
-          * @note Returns false it the property is read only
-          * @param value the value to set.
-          * @return true
-          */
-         virtual bool FromString(const std::string& value);
-
-
-         /**
-          * @return a string version of the data.  This value can be used when calling FromString.
-          * @see #FromString
-          */
-         virtual const std::string ToString() const;
-
-      protected:
-         virtual ~Vec2ActorProperty() { }
-   };
-
-   ////////////////////////////////////////////////////////////////////////////
-   /**
-    * This actor property represents a vector data member with 2 values.
-    */
-   ////////////////////////////////////////////////////////////////////////////
    class DT_DAL_EXPORT Vec2fActorProperty :
       public GenericActorProperty<const osg::Vec2f&, osg::Vec2f>
    {
@@ -841,48 +799,6 @@ namespace dtDAL
 
       protected:
          virtual ~Vec2dActorProperty() { }
-   };
-
-   ////////////////////////////////////////////////////////////////////////////
-   /**
-    * This actor property represents a vector data member with 3 values.
-    */
-   ////////////////////////////////////////////////////////////////////////////
-   class DT_DAL_EXPORT Vec3ActorProperty :
-      public GenericActorProperty<const osg::Vec3&, osg::Vec3>
-   {
-      public:
-         typedef GenericActorProperty<const osg::Vec3&, osg::Vec3> BaseClass;
-         typedef BaseClass::SetFuncType SetFuncType;
-         typedef BaseClass::GetFuncType GetFuncType;
-
-         Vec3ActorProperty(const dtUtil::RefString& name, const dtUtil::RefString& label,
-                           SetFuncType set, GetFuncType get,
-                           const dtUtil::RefString& desc = "", const dtUtil::RefString& groupName = "")
-            : BaseClass(DataType::VEC3, name, label, set, get, desc, groupName)
-         {
-            SetNumberPrecision(2 * sizeof(GetValue()[0]) + 1);
-         }
-
-         /**
-          * Sets the value of the property based on a string.
-          * The string should be three floating point values as a strings separated by spaces.
-          * This will return false if the values can't be set.
-          * @note Returns false it the property is read only
-          * @param value the value to set.
-          * @return true
-          */
-         virtual bool FromString(const std::string& value);
-
-
-         /**
-          * @return a string version of the data.  This value can be used when calling FromString.
-          * @see #FromString
-          */
-         virtual const std::string ToString() const;
-
-      protected:
-         virtual ~Vec3ActorProperty() { }
    };
 
    ////////////////////////////////////////////////////////////////////////////
@@ -969,91 +885,49 @@ namespace dtDAL
          virtual ~Vec3dActorProperty() { }
    };
 
-   ////////////////////////////////////////////////////////////////////////////
-   /**
-    * This actor property represents a vector data member with 4 values.
-    */
-   ////////////////////////////////////////////////////////////////////////////
-   class DT_DAL_EXPORT Vec4ActorProperty :
-      public GenericActorProperty<const osg::Vec4&, osg::Vec4>
-   {
-      public:
-         typedef GenericActorProperty<const osg::Vec4&, osg::Vec4> BaseClass;
-         typedef BaseClass::SetFuncType SetFuncType;
-         typedef BaseClass::GetFuncType GetFuncType;
+      ////////////////////////////////////////////////////////////////////////////
+      /**
+       * This actor property represents a vector data member with 4 values.
+       */
+      ////////////////////////////////////////////////////////////////////////////
+      class DT_DAL_EXPORT Vec4fActorProperty :
+         public GenericActorProperty<const osg::Vec4f&, osg::Vec4f>
+      {
+         public:
+            typedef GenericActorProperty<const osg::Vec4f&, osg::Vec4f> BaseClass;
+            typedef BaseClass::SetFuncType SetFuncType;
+            typedef BaseClass::GetFuncType GetFuncType;
 
-         Vec4ActorProperty(const dtUtil::RefString& name, const dtUtil::RefString& label,
-                           SetFuncType set, GetFuncType get,
-                           const dtUtil::RefString& desc = "", const dtUtil::RefString& groupName = "",
-                           dtDAL::DataType& type = DataType::VEC4)
-            : BaseClass(type, name, label, set, get, desc, groupName)
-         {
-            SetNumberPrecision(2 * sizeof(GetValue()[0]) + 1);
-         }
+            Vec4fActorProperty(const dtUtil::RefString& name, const dtUtil::RefString& label,
+                              SetFuncType set, GetFuncType get,
+                              const dtUtil::RefString& desc = "", const dtUtil::RefString& groupName = "",
+                              dtDAL::DataType& type = DataType::VEC4F)
+               : BaseClass(type, name, label, set, get, desc, groupName)
+            {
+               SetNumberPrecision(2 * sizeof(GetValue()[0]) + 1);
+            }
 
-         /**
-          * Sets the value of the property based on a string.
-          * The string should be four floating point values as a strings separated by spaces.
-          * This will return false if the values can't be set.
-          * @note Returns false it the property is read only
-          * @param value the value to set.
-          * @return true
-          */
-         virtual bool FromString(const std::string& value);
-
-
-         /**
-          * @return a string version of the data.  This value can be used when calling FromString.
-          * @see #FromString
-          */
-         virtual const std::string ToString() const;
-
-      protected:
-
-         virtual ~Vec4ActorProperty() { }
-   };
-
-   ////////////////////////////////////////////////////////////////////////////
-   /**
-    * This actor property represents a vector data member with 4 values.
-    */
-   ////////////////////////////////////////////////////////////////////////////
-   class DT_DAL_EXPORT Vec4fActorProperty :
-      public GenericActorProperty<const osg::Vec4f&, osg::Vec4f>
-   {
-      public:
-         typedef GenericActorProperty<const osg::Vec4f&, osg::Vec4f> BaseClass;
-         typedef BaseClass::SetFuncType SetFuncType;
-         typedef BaseClass::GetFuncType GetFuncType;
-
-         Vec4fActorProperty(const dtUtil::RefString& name, const dtUtil::RefString& label,
-                           SetFuncType set, GetFuncType get,
-                           const dtUtil::RefString& desc = "", const dtUtil::RefString& groupName = "")
-            : BaseClass(DataType::VEC4F, name, label, set, get, desc, groupName)
-         {
-            SetNumberPrecision(2 * sizeof(GetValue()[0]) + 1);
-         }
-
-         /**
-          * Sets the value of the property based on a string.
-          * The string should be four floating point values as a strings separated by spaces.
-          * This will return false if the values can't be set.
-          * @note Returns false it the property is read only
-          * @param value the value to set.
-          * @return true
-          */
-         virtual bool FromString(const std::string& value);
+            /**
+             * Sets the value of the property based on a string.
+             * The string should be four floating point values as a strings separated by spaces.
+             * This will return false if the values can't be set.
+             * @note Returns false it the property is read only
+             * @param value the value to set.
+             * @return true
+             */
+            virtual bool FromString(const std::string& value);
 
 
-         /**
-          * @return a string version of the data.  This value can be used when calling FromString.
-          * @see #FromString
-          */
-         virtual const std::string ToString() const;
+            /**
+             * @return a string version of the data.  This value can be used when calling FromString.
+             * @see #FromString
+             */
+            virtual const std::string ToString() const;
 
-      protected:
-         virtual ~Vec4fActorProperty() { }
-   };
+         protected:
+
+            virtual ~Vec4fActorProperty() { }
+      };
 
    ////////////////////////////////////////////////////////////////////////////
    /**
@@ -1096,6 +970,11 @@ namespace dtDAL
       protected:
          virtual ~Vec4dActorProperty() { }
    };
+
+   /// TODO make this auto change based on if the Vec[2,3,4] is has a float or a double.
+   typedef Vec2fActorProperty Vec2ActorProperty;
+   typedef Vec3fActorProperty Vec3ActorProperty;
+   typedef Vec4fActorProperty Vec4ActorProperty;
 
    ////////////////////////////////////////////////////////////////////////////
    /**

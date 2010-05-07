@@ -30,25 +30,31 @@ namespace dtUtil
    //////////////////////////////////////////////////////
    bool Enumeration::operator==(const std::string& rhs) const
    {
-      return mName == rhs;
+      return Compare(rhs) == 0;
    }
 
    //////////////////////////////////////////////////////
    bool Enumeration::operator!=(const std::string& rhs) const
    {
-      return mName != rhs;
+      return Compare(rhs) != 0;
    }
 
    //////////////////////////////////////////////////////
    bool Enumeration::operator<(const std::string& rhs) const
    {
-      return mName < rhs;
+      return Compare(rhs) < 0;
    }
 
    //////////////////////////////////////////////////////
    bool Enumeration::operator>(const std::string& rhs) const
    {
-      return mName > rhs;
+      return Compare(rhs) > 0;
+   }
+
+   //////////////////////////////////////////////////////
+   int Enumeration::Compare(const std::string& nameString) const
+   {
+      return mName.compare(nameString);
    }
 
    //////////////////////////////////////////////////////

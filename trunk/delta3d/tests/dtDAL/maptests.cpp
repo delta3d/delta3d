@@ -363,15 +363,15 @@ void MapTests::TestMapAddRemoveProxies()
         map.AddProxy(*proxy3.get());
         map.AddProxy(*proxy4.get());
 
-        static_cast<dtDAL::ActorActorProperty*>(proxy1->GetProperty("Test_Actor"))->SetValue(proxy2.get());
-        static_cast<dtDAL::ActorActorProperty*>(proxy2->GetProperty("Test_Actor"))->SetValue(proxy4.get());
-        static_cast<dtDAL::ActorActorProperty*>(proxy3->GetProperty("Test_Actor"))->SetValue(proxy4.get());
+        dynamic_cast<dtDAL::ActorIDActorProperty*>(proxy1->GetProperty("Test_Actor"))->SetValue(proxy2->GetId());
+        dynamic_cast<dtDAL::ActorIDActorProperty*>(proxy2->GetProperty("Test_Actor"))->SetValue(proxy4->GetId());
+        dynamic_cast<dtDAL::ActorIDActorProperty*>(proxy3->GetProperty("Test_Actor"))->SetValue(proxy4->GetId());
 
         map.RemoveProxy(*proxy4.get());
 
-        CPPUNIT_ASSERT_MESSAGE("Proxy 1 is not linked to proxy2", static_cast<dtDAL::ActorActorProperty*>(proxy1->GetProperty("Test_Actor"))->GetValue() == proxy2.get());
-        CPPUNIT_ASSERT_MESSAGE("Proxy 2 is linked still", static_cast<dtDAL::ActorActorProperty*>(proxy2->GetProperty("Test_Actor"))->GetValue() == NULL);
-        CPPUNIT_ASSERT_MESSAGE("Proxy 3 is linked still", static_cast<dtDAL::ActorActorProperty*>(proxy3->GetProperty("Test_Actor"))->GetValue() == NULL);
+        CPPUNIT_ASSERT_MESSAGE("Proxy 1 should still be linked to proxy2", dynamic_cast<dtDAL::ActorIDActorProperty*>(proxy1->GetProperty("Test_Actor"))->GetValue() == proxy2->GetId());
+        CPPUNIT_ASSERT_MESSAGE("Proxy 2 is linked still", dynamic_cast<dtDAL::ActorIDActorProperty*>(proxy2->GetProperty("Test_Actor"))->GetValue().ToString().empty());
+        CPPUNIT_ASSERT_MESSAGE("Proxy 3 is linked still", dynamic_cast<dtDAL::ActorIDActorProperty*>(proxy3->GetProperty("Test_Actor"))->GetValue().ToString().empty());
     }
     catch (const dtUtil::Exception& e)
     {
@@ -826,18 +826,36 @@ void MapTests::TestMapSaveAndLoad()
 
         // ActorActorProperty
         ap = getActorProperty(*map, "", dtDAL::DataType::ACTOR);
-        dtDAL::ActorActorProperty* aap = static_cast<dtDAL::ActorActorProperty*>(ap);
-        const std::string& className = aap->GetDesiredActorClass();
-        std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > toFill;
-        // Do a search for the class name.
-        map->FindProxies(toFill, "", "", "", className);
+        dtDAL::ActorActorProperty* aap = dynamic_cast<dtDAL::ActorActorProperty*>(ap);
+        if (aap != NULL)
+        {
+           const std::string& className = aap->GetDesiredActorClass();
+           std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > toFill;
+           // Do a search for the class name.
+           map->FindProxies(toFill, "", "", "", className);
 
-        CPPUNIT_ASSERT(toFill.size() > 0);
-        // Set the value.
-        aap->SetValue(toFill[0].get());
-        // need to clear this because it could cause a segfault if this is not deleted before a
-        // library is unloadad.
-        toFill.clear();
+           CPPUNIT_ASSERT(toFill.size() > 0);
+           // Set the value.
+           aap->SetValue(toFill[0]);
+           // need to clear this because it could cause a segfault if this is not deleted before a
+           // library is unloadad.
+           toFill.clear();
+        }
+        else
+        {
+           dtDAL::ActorIDActorProperty* aidap = dynamic_cast<dtDAL::ActorIDActorProperty*>(ap);
+           const std::string& className = aidap->GetDesiredActorClass();
+           std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > toFill;
+           // Do a search for the class name.
+           map->FindProxies(toFill, "", "", "", className);
+
+           CPPUNIT_ASSERT(toFill.size() > 0);
+           // Set the value.
+           aidap->SetValue(toFill[0]->GetId());
+           // need to clear this because it could cause a segfault if this is not deleted before a
+           // library is unloadad.
+           toFill.clear();
+        }
 
         osg::Vec3 testVec3_1(33.5f, 12.25f, 49.125f);
         osg::Vec3 testVec3_2(-34.75f, 96.03125f, 8.0f);
@@ -1119,21 +1137,39 @@ void MapTests::TestMapSaveAndLoad()
         ap = getActorProperty(*map, "", dtDAL::DataType::ACTOR);
 
         //aap is used above in the method
-        aap = static_cast<dtDAL::ActorActorProperty*> (ap);
+        aap = dynamic_cast<dtDAL::ActorActorProperty*> (ap);
 
-        const std::string& id = aap->ToString();
-        dtDAL::ActorProxy* p  = aap->GetValue();
+        if (aap != NULL)
+        {
+           const std::string& id = aap->ToString();
+           dtDAL::ActorProxy* p  = aap->GetValue();
 
-        CPPUNIT_ASSERT_MESSAGE("The proxy should not be NULL", p != NULL);
+           CPPUNIT_ASSERT_MESSAGE("The proxy should not be NULL", p != NULL);
 
-        aap->SetValue(NULL);
+           aap->SetValue(NULL);
 
-        CPPUNIT_ASSERT_MESSAGE("GetValue should return NULL", aap->GetValue() == NULL);
+           CPPUNIT_ASSERT_MESSAGE("GetValue should return NULL", aap->GetValue() == NULL);
 
-        aap->FromString(id);
+           aap->FromString(id);
 
-        CPPUNIT_ASSERT_MESSAGE("The value should not be equal to the proxy", aap->GetValue() == p);
+           CPPUNIT_ASSERT_MESSAGE("The value should not be equal to the proxy", aap->GetValue() == p);
+        }
+        else
+        {
+           dtDAL::ActorIDActorProperty* aidap = dynamic_cast<dtDAL::ActorIDActorProperty*> (ap);
+           const std::string& id = aidap->ToString();
+           dtCore::UniqueId p  = aidap->GetValue();
 
+           CPPUNIT_ASSERT_MESSAGE("The proxy should not be NULL", !p.ToString().empty());
+
+           aidap->SetValue(dtCore::UniqueId(""));
+
+           CPPUNIT_ASSERT_MESSAGE("GetValue should return NULL", aidap->GetValue().ToString().empty());
+
+           aidap->FromString(id);
+
+           CPPUNIT_ASSERT_MESSAGE("The value should not be equal to the proxy", aidap->GetValue() == p);
+        }
         std::string newAuthor("Dr. Eddie");
 
         map->SetAuthor(newAuthor);

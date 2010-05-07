@@ -145,17 +145,17 @@ namespace dtAI
          return mReportData;
       }
 
-      typename dtUtil::TypeTraits<Type1>::const_return_type GetFirstElement() const
+      typename dtUtil::TypeTraits<Type1>::return_type GetFirstElement() const
       {
          return mElement1;
       }
 
-      typename dtUtil::TypeTraits<Type2>::const_return_type GetSecondElement() const
+      typename dtUtil::TypeTraits<Type2>::return_type GetSecondElement() const
       {
          return mElement2;
       }
 
-      typename dtUtil::TypeTraits<ReportData>::const_return_type GetReportData() const
+      typename dtUtil::TypeTraits<ReportData>::return_type GetReportData() const
       {
          return mReportData;
       }

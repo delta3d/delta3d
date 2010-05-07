@@ -548,35 +548,6 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   bool Vec2ActorProperty::FromString(const std::string& value)
-   {
-      if (IsReadOnly())
-      {
-         LOG_WARNING("FromString has been called on a property that is read only.");
-         return false;
-      }
-
-      osg::Vec2 newValue;
-
-      if (dtUtil::ParseVec<osg::Vec2>(value, newValue, 2))
-      {
-         SetValue(newValue);
-         return true;
-      }
-      else return false;
-
-   }
-
-   ////////////////////////////////////////////////////////////////////////////
-   const std::string Vec2ActorProperty::ToString() const
-   {
-      std::ostringstream stream;
-      stream.precision(GetNumberPrecision());
-      stream << GetValue();
-      return stream.str();
-   }
-
-   ////////////////////////////////////////////////////////////////////////////
    bool Vec2fActorProperty::FromString(const std::string& value)
    {
       if (IsReadOnly())
@@ -627,34 +598,6 @@ namespace dtDAL
 
    ////////////////////////////////////////////////////////////////////////////
    const std::string Vec2dActorProperty::ToString() const
-   {
-      std::ostringstream stream;
-      stream.precision(GetNumberPrecision());
-      stream << GetValue();
-      return stream.str();
-   }
-
-   ////////////////////////////////////////////////////////////////////////////
-   bool Vec3ActorProperty::FromString(const std::string& value)
-   {
-      if (IsReadOnly())
-      {
-         LOG_WARNING("FromString has been called on a property that is read only.");
-         return false;
-      }
-
-      osg::Vec3 newValue;
-
-      if (dtUtil::ParseVec<osg::Vec3>(value, newValue, 3))
-      {
-         SetValue(newValue);
-         return true;
-      }
-      else return false;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////
-   const std::string Vec3ActorProperty::ToString() const
    {
       std::ostringstream stream;
       stream.precision(GetNumberPrecision());
@@ -718,33 +661,6 @@ namespace dtDAL
       return stream.str();
    }
 
-   ////////////////////////////////////////////////////////////////////////////
-   bool Vec4ActorProperty::FromString(const std::string& value)
-   {
-      if (IsReadOnly())
-      {
-         LOG_WARNING("FromString has been called on a property that is read only.");
-         return false;
-      }
-
-      osg::Vec4 newValue;
-
-      if (dtUtil::ParseVec<osg::Vec4>(value, newValue, 4))
-      {
-         SetValue(newValue);
-         return true;
-      }
-      else return false;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////
-   const std::string Vec4ActorProperty::ToString() const
-   {
-      std::ostringstream stream;
-      stream.precision(GetNumberPrecision());
-      stream << GetValue();
-      return stream.str();
-   }
 
    ////////////////////////////////////////////////////////////////////////////
    bool Vec4fActorProperty::FromString(const std::string& value)

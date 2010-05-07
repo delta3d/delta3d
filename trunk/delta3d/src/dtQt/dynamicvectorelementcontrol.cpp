@@ -45,37 +45,12 @@ namespace dtQt
 {
 
    ///////////////////////////////////////////////////////////////////////////////
-   DynamicVectorElementControl::DynamicVectorElementControl(dtDAL::Vec2ActorProperty* newVectorProp,
-      int whichIndex, const std::string &newLabel)
-      : mLabel(newLabel)
-      , mElementIndex(whichIndex)
-      , mTemporaryEditControl(NULL)
-   {
-      mVec2Prop  = newVectorProp;
-      mVec3Prop  = NULL;
-      mVec4Prop  = NULL;
-      mVec2fProp = NULL;
-      mVec3fProp = NULL;
-      mVec4fProp = NULL;
-      mVec2dProp = NULL;
-      mVec3dProp = NULL;
-      mVec4dProp = NULL;
-
-      mActiveProp = newVectorProp;
-
-      mWhichType = VEC2;
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
    DynamicVectorElementControl::DynamicVectorElementControl(dtDAL::Vec2fActorProperty* newVectorProp,
       int whichIndex, const std::string& newLabel)
       : mLabel(newLabel)
       , mElementIndex(whichIndex)
       , mTemporaryEditControl(NULL)
    {
-      mVec2Prop  = NULL;
-      mVec3Prop  = NULL;
-      mVec4Prop  = NULL;
       mVec2fProp = newVectorProp;
       mVec3fProp = NULL;
       mVec4fProp = NULL;
@@ -95,9 +70,6 @@ namespace dtQt
       , mElementIndex(whichIndex)
       , mTemporaryEditControl(NULL)
    {
-      mVec2Prop  = NULL;
-      mVec3Prop  = NULL;
-      mVec4Prop  = NULL;
       mVec2fProp = NULL;
       mVec3fProp = NULL;
       mVec4fProp = NULL;
@@ -111,37 +83,12 @@ namespace dtQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   DynamicVectorElementControl::DynamicVectorElementControl(dtDAL::Vec3ActorProperty* newVectorProp,
-      int whichIndex, const std::string& newLabel)
-      : mLabel(newLabel)
-      , mElementIndex(whichIndex)
-      , mTemporaryEditControl(NULL)
-   {
-      mVec2Prop  = NULL;
-      mVec3Prop  = newVectorProp;
-      mVec4Prop  = NULL;
-      mVec2fProp = NULL;
-      mVec3fProp = NULL;
-      mVec4fProp = NULL;
-      mVec2dProp = NULL;
-      mVec3dProp = NULL;
-      mVec4dProp = NULL;
-
-      mActiveProp = newVectorProp;
-
-      mWhichType = VEC3;
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
    DynamicVectorElementControl::DynamicVectorElementControl(dtDAL::Vec3fActorProperty* newVectorProp,
       int whichIndex, const std::string& newLabel)
       : mLabel(newLabel)
       , mElementIndex(whichIndex)
       , mTemporaryEditControl(NULL)
    {
-      mVec2Prop  = NULL;
-      mVec3Prop  = NULL;
-      mVec4Prop  = NULL;
       mVec2fProp = NULL;
       mVec3fProp = newVectorProp;
       mVec4fProp = NULL;
@@ -161,9 +108,6 @@ namespace dtQt
       , mElementIndex(whichIndex)
       , mTemporaryEditControl(NULL)
    {
-      mVec2Prop  = NULL;
-      mVec3Prop  = NULL;
-      mVec4Prop  = NULL;
       mVec2fProp = NULL;
       mVec3fProp = NULL;
       mVec4fProp = NULL;
@@ -177,37 +121,12 @@ namespace dtQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   DynamicVectorElementControl::DynamicVectorElementControl(dtDAL::Vec4ActorProperty* newVectorProp,
-      int whichIndex, const std::string& newLabel)
-      : mLabel(newLabel)
-      , mElementIndex(whichIndex)
-      , mTemporaryEditControl(NULL)
-   {
-      mVec2Prop  = NULL;
-      mVec3Prop  = NULL;
-      mVec4Prop  = newVectorProp;
-      mVec2fProp = NULL;
-      mVec3fProp = NULL;
-      mVec4fProp = NULL;
-      mVec2dProp = NULL;
-      mVec3dProp = NULL;
-      mVec4dProp = NULL;
-
-      mActiveProp = newVectorProp;
-
-      mWhichType = VEC4;
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
    DynamicVectorElementControl::DynamicVectorElementControl(dtDAL::Vec4fActorProperty* newVectorProp,
       int whichIndex, const std::string& newLabel)
       : mLabel(newLabel)
       , mElementIndex(whichIndex)
       , mTemporaryEditControl(NULL)
    {
-      mVec2Prop  = NULL;
-      mVec3Prop  = NULL;
-      mVec4Prop  = NULL;
       mVec2fProp = NULL;
       mVec3fProp = NULL;
       mVec4fProp = newVectorProp;
@@ -227,9 +146,6 @@ namespace dtQt
       , mElementIndex(whichIndex)
       , mTemporaryEditControl(NULL)
    {
-      mVec2Prop  = NULL;
-      mVec3Prop  = NULL;
-      mVec4Prop  = NULL;
       mVec2fProp = NULL;
       mVec3fProp = NULL;
       mVec4fProp = NULL;
@@ -407,11 +323,6 @@ namespace dtQt
 
       switch (mWhichType)
       {
-      case VEC2:
-         {
-            osg::Vec2 vectorValue = mVec2Prop->GetValue();
-            result = vectorValue[mElementIndex];
-         } break;
       case VEC2F:
          {
             osg::Vec2f vectorValue = mVec2fProp->GetValue();
@@ -422,11 +333,6 @@ namespace dtQt
             osg::Vec2d vectorValue = mVec2dProp->GetValue();
             result = vectorValue[mElementIndex];
          } break;
-      case VEC3:
-         {
-            osg::Vec3 vectorValue = mVec3Prop->GetValue();
-            result = vectorValue[mElementIndex];
-         } break;
       case VEC3F:
          {
             osg::Vec3f vectorValue = mVec3fProp->GetValue();
@@ -435,11 +341,6 @@ namespace dtQt
       case VEC3D:
          {
             osg::Vec3d vectorValue = mVec3dProp->GetValue();
-            result = vectorValue[mElementIndex];
-         } break;
-      case VEC4:
-         {
-            osg::Vec4 vectorValue = mVec4Prop->GetValue();
             result = vectorValue[mElementIndex];
          } break;
       case VEC4F:
@@ -464,13 +365,6 @@ namespace dtQt
 
       switch (mWhichType)
       {
-      case VEC2:
-         {
-            osg::Vec2   vectorValue = mVec2Prop->GetValue();
-            vectorValue[mElementIndex] = value;
-            mVec2Prop->SetValue(vectorValue);
-
-         } break;
       case VEC2F:
          {
             osg::Vec2f  vectorValue = mVec2fProp->GetValue();
@@ -483,12 +377,6 @@ namespace dtQt
             vectorValue[mElementIndex] = value;
             mVec2dProp->SetValue(vectorValue);
          } break;
-      case VEC3:
-         {
-            osg::Vec3   vectorValue = mVec3Prop->GetValue();
-            vectorValue[mElementIndex] = value;
-            mVec3Prop->SetValue(vectorValue);
-         } break;
       case VEC3F:
          {
             osg::Vec3f  vectorValue = mVec3fProp->GetValue();
@@ -500,12 +388,6 @@ namespace dtQt
             osg::Vec3d  vectorValue = mVec3dProp->GetValue();
             vectorValue[mElementIndex] = value;
             mVec3dProp->SetValue(vectorValue);
-         } break;
-      case VEC4:
-         {
-            osg::Vec4   vectorValue = mVec4Prop->GetValue();
-            vectorValue[mElementIndex] = value;
-            mVec4Prop->SetValue(vectorValue);
          } break;
       case VEC4F:
          {
