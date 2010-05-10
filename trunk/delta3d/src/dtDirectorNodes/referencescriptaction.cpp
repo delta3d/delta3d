@@ -22,6 +22,7 @@
 #include <dtDirectorNodes/referencescriptaction.h>
 
 #include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/project.h>
 
 
 namespace dtDirector
@@ -133,7 +134,7 @@ namespace dtDirector
          if (mScript.valid())
          {
             // If we successfully load the script, create our links for this node.
-            mScript->LoadScript(mScriptResource.GetResourceName());
+            mScript->LoadScript(dtDAL::Project::GetInstance().GetResourcePath(mScriptResource));
 
             DirectorGraph* graph = mScript->GetGraphRoot();
             if (graph)

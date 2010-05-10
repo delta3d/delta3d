@@ -129,8 +129,8 @@ namespace dtActors
 
             director->SetNodeLogging(mNodeLogging);
             if (mRecording) director->StartRecording();
-
-            director->LoadScript(descriptor.GetResourceName());
+LOG_ALWAYS(dtDAL::Project::GetInstance().GetResourcePath(descriptor));
+            director->LoadScript(dtDAL::Project::GetInstance().GetResourcePath(descriptor));
 
             mDirectorList.push_back(director);
          }

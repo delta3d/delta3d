@@ -27,6 +27,7 @@
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/project.h>
+#include <osgDB/FileNameUtils>
 
 namespace dtDirector
 {
@@ -172,11 +173,7 @@ namespace dtDirector
 
       if (scriptFile.empty()) return false;
 
-      // Remove any extension.
-      std::string name = scriptFile;
-      std::size_t index = scriptFile.find_last_of('.');
-      if (index >= 0 && index < scriptFile.size()-1)
-         name = scriptFile.substr(0, index);
+      std::string fileName = osgDB::getNameLessExtension(scriptFile) + ".dtdir";
 
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
       fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext());
@@ -186,7 +183,7 @@ namespace dtDirector
       {
          try
          {
-            parser->Parse(this, mMap.get(), "directors/" + name + ".dtdir");
+            parser->Parse(this, mMap.get(), fileName);
          }
          catch (const dtUtil::Exception& e)
          {
@@ -198,7 +195,7 @@ namespace dtDirector
 
          fileUtils.PopDirectory();
          mModified = parser->HasDeprecatedProperty();
-         mScriptName = name;
+         mScriptName = fileName;
          return true;
       }
 
@@ -212,12 +209,14 @@ namespace dtDirector
       DirectorWriter* writer = new DirectorWriter();
       if (writer)
       {
+         std::string fileName = osgDB::getNameLessExtension(scriptFile) + ".dtdir";
+
          dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
          fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext());
 
          try
          {
-            writer->Save(this, "directors/" + scriptFile + ".dtdir");
+            writer->Save(this, fileName);
          }
          catch (const dtUtil::Exception& e)
          {
