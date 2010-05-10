@@ -31,6 +31,7 @@
 #include <QtGui/QCloseEvent>
 #include <QtGui/QApplication>
 #include <QtGui/QDialog>
+#include <QtGui/QGridLayout>
 #include <QtGui/QMessageBox>
 #include <QtCore/QSettings>
 
@@ -40,6 +41,7 @@
 #include <dtDAL/propertycontainer.h>
 #include <dtDAL/actorproperty.h>
 #include "aipropertyeditor.h"
+#include "qtglframe.h"
 #include "waypointbrowser.h"
 
 #include <dtAI/aiplugininterface.h>
@@ -66,7 +68,14 @@ MainWindow::MainWindow(QWidget& mainWidget)
 {
    mUi->setupUi(this);
 
-   setCentralWidget(&mCentralWidget);
+   QtGLFrame* centerFrame = new QtGLFrame();
+   QGridLayout* frameLayout = new QGridLayout();
+   frameLayout->setContentsMargins(0, 0, 0, 0);
+   frameLayout->setSpacing(0);
+   centerFrame->setLayout(frameLayout);
+   frameLayout->addWidget(&mCentralWidget);
+
+   setCentralWidget(centerFrame);
    setWindowTitle(tr("AI Utility"));
 
    mCurrentCameraTransform.MakeIdentity();
@@ -364,20 +373,7 @@ void MainWindow::OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*
    mUi->mActionRemoveEdge->setEnabled(false);
    if (waypoints.size() == 2) // There must be exactly two waypoints selected
    {
-      bool edgeExists = false;
-      dtAI::WaypointInterface* waypointStart = waypoints[0];
-      dtAI::WaypointInterface* waypointEnd = waypoints[1];
-      dtAI::AIPluginInterface::ConstWaypointArray edgeList;
-      mPluginInterface->GetAllEdgesFromWaypoint(waypointStart->GetID(), edgeList);
-      for (size_t edgeIndex = 0; edgeIndex < edgeList.size(); ++edgeIndex)
-      {
-         if (edgeList[edgeIndex] == waypointEnd)
-         {
-            edgeExists = true;
-         }
-      }
-
-      if (edgeExists)
+      if (DoesEdgeExistBetweenWaypoints(waypoints[0], waypoints[1]))
       {
          // Enable Remove Edge
          mUi->mActionRemoveEdge->setEnabled(true);
@@ -400,6 +396,23 @@ void MainWindow::OnPropertyEditorShowHide(bool checked)
 void MainWindow::OnWaypointBrowserShowHide(bool checked)
 {
    mWaypointBrowser.setVisible(checked);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool MainWindow::DoesEdgeExistBetweenWaypoints(dtAI::WaypointInterface* waypointStart,
+   dtAI::WaypointInterface* waypointEnd)
+{
+   dtAI::AIPluginInterface::ConstWaypointArray edgeList;
+   mPluginInterface->GetAllEdgesFromWaypoint(waypointStart->GetID(), edgeList);
+   for (size_t edgeIndex = 0; edgeIndex < edgeList.size(); ++edgeIndex)
+   {
+      if (edgeList[edgeIndex] == waypointEnd)
+      {
+         return true;
+      }
+   }
+
+   return false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -105,6 +105,9 @@ public slots:
 private:
    void ChangeMap(const QString& newMap);
 
+   bool DoesEdgeExistBetweenWaypoints(dtAI::WaypointInterface* waypointStart,
+      dtAI::WaypointInterface* waypointEnd);
+
    Ui::MainWindow* mUi;
    QWidget& mCentralWidget;
    AIPropertyEditor& mPropertyEditor;
