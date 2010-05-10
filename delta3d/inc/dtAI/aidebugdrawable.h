@@ -76,6 +76,12 @@ namespace dtAI
       virtual void InsertWaypoint(const WaypointInterface& wp);
       virtual void RemoveWaypoint(unsigned id);
 
+      /**
+       * Accessor functions to add or remove a single edge to the drawable
+       */
+      void AddEdge(const WaypointInterface* pFrom, const WaypointInterface* pTo);
+      void RemoveEdge(const WaypointInterface* pFrom, const WaypointInterface* pTo);
+
       void UpdateWaypointGraph(const NavMesh& nm);
 
       // this is an expensive operation because all the geometry must be recreated
@@ -112,6 +118,7 @@ namespace dtAI
       void OnGeometryChanged();
 
       void AddPathSegment(const WaypointInterface* pFrom, const WaypointInterface* pTo);
+      void RemovePathSegment(const WaypointInterface* pFrom, const WaypointInterface* pTo);
       void ClearWaypointGraph();
 
    private:

@@ -80,6 +80,10 @@ void AIUtilityApp::SetAIPluginInterface(dtAI::AIPluginInterface* interface)
    mGM->AddComponent(*inputComponent, dtGame::GameManager::ComponentPriority::NORMAL);
    QObject::connect(inputComponent, SIGNAL(WaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>&)),
       this, SLOT(UpdateWaypointSelection(std::vector<dtAI::WaypointInterface*>&)));
+   QObject::connect(this, SIGNAL(AddEdge()),
+      inputComponent, SLOT(OnAddEdge()));
+   QObject::connect(this, SIGNAL(RemoveEdge()),
+      inputComponent, SLOT(OnRemoveEdge()));
 }
 
 
@@ -157,5 +161,16 @@ void AIUtilityApp::UpdateWaypointSelection(std::vector<dtAI::WaypointInterface*>
    emit WaypointSelectionChanged(selectedWaypoints);
 }
 
+////////////////////////////////////////////////////////////////////////////////
+void AIUtilityApp::OnAddEdge()
+{
+   emit AddEdge();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void AIUtilityApp::OnRemoveEdge()
+{
+   emit RemoveEdge();
+}
 ////////////////////////////////////////////////////////////////////////////////
 

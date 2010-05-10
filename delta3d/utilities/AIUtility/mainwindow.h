@@ -79,6 +79,8 @@ signals:
    void CloseMapSelected();
    void RequestCameraTransformChange(const dtCore::Transform& xform);
    void AddAIInterfaceToMap(const std::string& map);
+   void AddEdge();
+   void RemoveEdge();
 
 public slots:
    void OnError(const std::string& message);
@@ -89,6 +91,8 @@ public slots:
    void EnableOrDisableControls();
    void SetAIPluginInterface(dtAI::AIPluginInterface* interface);
    void SelectRenderingOptions();
+   void OnAddEdge();
+   void OnRemoveEdge();
    void PropertyChangedFromControl(dtDAL::PropertyContainer&, dtDAL::ActorProperty&);
    void OnCameraTransformChanged(const dtCore::Transform& xform);
 
