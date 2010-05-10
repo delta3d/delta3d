@@ -101,7 +101,7 @@ void DirectorTests::TestRunScript()
    {
       mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__,  __LINE__, "Testing Director Graph.\n");
 
-      CPPUNIT_ASSERT_MESSAGE("dtDirector test script didn't load correctly", mDirector->LoadScript("test") == true);
+      CPPUNIT_ASSERT_MESSAGE("dtDirector test script didn't load correctly", mDirector->LoadScript("directors/test") == true);
 
       // A pre-defined script should be loaded.
       CPPUNIT_ASSERT_MESSAGE("dtDirector didn't have a Graph Root after loading the test script", mDirector->GetGraphRoot()!=NULL);
