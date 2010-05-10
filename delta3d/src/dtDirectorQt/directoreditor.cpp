@@ -44,6 +44,8 @@
 #include <QtGui/QMessageBox>
 
 #include <dtDAL/project.h>
+#include <osgDB/FileNameUtils>
+
 
 namespace dtDirector
 {
@@ -1174,10 +1176,8 @@ namespace dtDirector
    {
       bool showFiles = saveAs;
 
-      QString fileName = mFileName.c_str();
-
       // We must show the file dialog if there is no Director loaded.
-      if (!showFiles && fileName.isEmpty())
+      if (!showFiles && mFileName.empty())
       {
          showFiles = true;
       }
@@ -1185,20 +1185,24 @@ namespace dtDirector
       if (showFiles)
       {
          QString filter = tr(".dtDir");
-         std::string context = dtDAL::Project::GetInstance().GetContext();
+         std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/");
+         std::string directorsDir = contextDir + osgDB::convertFileNameToNativeStyle("directors/");
 
          QFileDialog dialog;
-         QFileInfo filePath = dialog.getSaveFileName(this, tr("Save a Director Graph File"),
-            tr((context + "\\directors\\").c_str()),
-            tr("Director Scripts (*.dtDir)"), &filter);
+         QFileInfo filePath = dialog.getSaveFileName(
+            this, tr("Save a Director Graph File"), tr(directorsDir.c_str()), tr("Director Scripts (*.dtDir)"), &filter);
 
-         fileName = filePath.baseName();
+         if( filePath.fileName().isEmpty() )
+            return false;
+
+         std::string absFileName = osgDB::convertFileNameToNativeStyle(
+            filePath.absolutePath().toStdString() + "/" + filePath.baseName().toStdString());
+         mFileName = dtUtil::FileUtils::GetInstance().RelativePath(contextDir, absFileName);
       }
 
-      if (!fileName.isEmpty())
+      if (!mFileName.empty())
       {
-         mDirector->SaveScript(fileName.toStdString());
-         mFileName = fileName.toStdString();
+         mDirector->SaveScript(mFileName);
 
          mUndoManager->OnSaved();
 
@@ -1213,23 +1217,28 @@ namespace dtDirector
    bool DirectorEditor::LoadScript()
    {
       QString filter = tr(".dtDir");
-      std::string context = dtDAL::Project::GetInstance().GetContext();
+      std::string contextDir = osgDB::convertFileNameToNativeStyle(dtDAL::Project::GetInstance().GetContext()+"/");
+      std::string directorsDir = contextDir + osgDB::convertFileNameToNativeStyle("directors/");
 
       QFileDialog dialog;
-      QFileInfo filePath = dialog.getOpenFileName(this, tr("Load a Director Graph File"),
-         tr((context + "\\directors\\").c_str()),
-         tr("Director Scripts (*.dtDir)"), &filter);
+      QFileInfo filePath = dialog.getOpenFileName(
+         this, tr("Load a Director Graph File"), tr(directorsDir.c_str()), tr("Director Scripts (*.dtDir)"), &filter);
+      
+      if( !filePath.isFile() )
+         return false;
 
-      QString fileName = filePath.baseName();
-      if (!fileName.isEmpty())
+      std::string absFileName  = osgDB::convertFileNameToNativeStyle(
+         filePath.absolutePath().toStdString() + "/" + filePath.baseName().toStdString());
+      mFileName = dtUtil::FileUtils::GetInstance().RelativePath( contextDir, absFileName );
+
+      if (!mFileName.empty())
       {
          // Clear the script.
          mDirector->Clear();
          mGraphTabs->clear();
          mUndoManager->Clear();
 
-         mDirector->LoadScript(fileName.toStdString());
-         mFileName = fileName.toStdString();
+         mDirector->LoadScript(mFileName);
 
          // Create a single tab with the default graph.
          OpenGraph(mDirector->GetGraphRoot());
