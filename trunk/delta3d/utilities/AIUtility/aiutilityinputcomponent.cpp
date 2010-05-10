@@ -22,6 +22,8 @@
 #include "aiutilityinputcomponent.h"
 
 #include <dtABC/application.h>
+#include <dtAI/aidebugdrawable.h>
+#include <dtAI/waypointgraph.h>
 
 #include <iostream>
 ////////////////////////////////////////////////////////////////////////////////
@@ -62,7 +64,16 @@ bool AIUtilityInputComponent::HandleButtonPressed(const dtCore::Mouse* mouse, dt
             dtAI::WaypointInterface* waypointInterface = mpAIInterface->GetClosestWaypoint(pickedPosition, 0.5f);
             if (waypointInterface != NULL)
             {
-               mSelectedWaypointList.push_back(waypointInterface);
+               std::vector<dtAI::WaypointInterface*>::const_iterator previousSelection =
+                  std::find(mSelectedWaypointList.begin(), mSelectedWaypointList.end(), waypointInterface);
+               if (previousSelection == mSelectedWaypointList.end())
+               {
+                  mSelectedWaypointList.push_back(waypointInterface);
+               }
+               else // Deselect it since it was already in the list
+               {
+                  mSelectedWaypointList.erase(previousSelection);
+               }
             }
          }
 
@@ -82,6 +93,46 @@ bool AIUtilityInputComponent::HandleButtonPressed(const dtCore::Mouse* mouse, dt
 void AIUtilityInputComponent::SetAIPluginInterface(dtAI::AIPluginInterface* aiInterface)
 {
    mpAIInterface = aiInterface;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void AIUtilityInputComponent::OnAddEdge()
+{
+   if(mSelectedWaypointList.size() == 2)
+   {
+      // Update NavMesh
+      dtAI::WaypointInterface* waypointA = mSelectedWaypointList[0];
+      dtAI::WaypointInterface* waypointB = mSelectedWaypointList[1];
+      mpAIInterface->AddEdge(waypointA->GetID(), waypointB->GetID());
+
+      // Update UI
+      emit WaypointSelectionChanged(mSelectedWaypointList);
+      mpAIInterface->GetDebugDrawable()->AddEdge(waypointA, waypointB);
+   }
+   else
+   {
+      LOG_ERROR("Trying to add edge with too many or too few waypoints selected.");
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void AIUtilityInputComponent::OnRemoveEdge()
+{
+   if(mSelectedWaypointList.size() == 2)
+   {
+      // Update NavMesh
+      dtAI::WaypointInterface* waypointA = mSelectedWaypointList[0];
+      dtAI::WaypointInterface* waypointB = mSelectedWaypointList[1];
+      mpAIInterface->RemoveEdge(waypointA->GetID(), waypointB->GetID());
+
+      // Update UI
+      emit WaypointSelectionChanged(mSelectedWaypointList);
+      mpAIInterface->GetDebugDrawable()->RemoveEdge(waypointA, waypointB);
+   }
+   else
+   {
+      LOG_ERROR("Trying to remove edge with too many or too few waypoints selected.");
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

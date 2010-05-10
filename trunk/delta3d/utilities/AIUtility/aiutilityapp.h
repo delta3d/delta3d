@@ -53,6 +53,8 @@ signals:
    void AIPluginInterfaceChanged(dtAI::AIPluginInterface* interface);
    void CameraTransformChanged(const dtCore::Transform& xform);
    void WaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>&);
+   void AddEdge();
+   void RemoveEdge();
    void Error(const std::string& message);
 public slots:
    void DoQuit();
@@ -62,6 +64,8 @@ public slots:
    void TransformCamera(const dtCore::Transform&);
    void AddAIInterfaceToMap(const std::string& map);
    void UpdateWaypointSelection(std::vector<dtAI::WaypointInterface*>& selectedWaypoints);
+   void OnAddEdge();
+   void OnRemoveEdge();
 protected:
    ///override for preframe
    virtual void PreFrame(const double deltaSimTime);

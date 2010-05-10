@@ -50,6 +50,10 @@ public:
 signals:
    void WaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>&);
 
+public slots:
+   void OnAddEdge();
+   void OnRemoveEdge();
+
 protected:
    virtual ~AIUtilityInputComponent();
 

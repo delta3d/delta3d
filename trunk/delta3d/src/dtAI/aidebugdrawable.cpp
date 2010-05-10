@@ -397,10 +397,16 @@ namespace dtAI
       }
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   void AIDebugDrawable::OnGeometryChanged()
+   ////////////////////////////////////////////////////////////////////////////////
+   void AIDebugDrawable::AddEdge(const WaypointInterface* pFrom, const WaypointInterface* pTo)
    {
-      mImpl->OnGeometryChanged();
+      AddPathSegment(pFrom, pTo);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void AIDebugDrawable::RemoveEdge(const WaypointInterface* pFrom, const WaypointInterface* pTo)
+   {
+      RemovePathSegment(pFrom, pTo);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -420,6 +426,12 @@ namespace dtAI
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   void AIDebugDrawable::OnGeometryChanged()
+   {
+      mImpl->OnGeometryChanged();
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    void AIDebugDrawable::AddPathSegment( const WaypointInterface* pFrom, const WaypointInterface* pTo )
    {
       int indexFrom = FindWaypoint(pFrom->GetID());
@@ -430,6 +442,32 @@ namespace dtAI
          mImpl->mWaypointPairs->push_back(indexFrom);
          mImpl->mWaypointPairs->push_back(indexTo);
          OnGeometryChanged();
+      }
+      else
+      {
+         LOG_ERROR("Invalid path segment");
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void AIDebugDrawable::RemovePathSegment(const WaypointInterface* pFrom, const WaypointInterface* pTo)
+   {
+      int indexFrom = FindWaypoint(pFrom->GetID());
+      int indexTo = FindWaypoint(pTo->GetID());
+
+      if (indexFrom > -1 && indexTo > -1)
+      {
+         for (size_t pairIndex = 0; pairIndex < mImpl->mWaypointPairs->size() - 1; pairIndex += 2)
+         {
+            if (mImpl->mWaypointPairs->at(pairIndex) == indexFrom &&
+                mImpl->mWaypointPairs->at(pairIndex + 1) == indexTo)
+            {
+               mImpl->mWaypointPairs->erase(mImpl->mWaypointPairs->begin() + (pairIndex + 1));
+               mImpl->mWaypointPairs->erase(mImpl->mWaypointPairs->begin() + pairIndex);
+               OnGeometryChanged();
+               break;
+            }
+         }
       }
       else
       {

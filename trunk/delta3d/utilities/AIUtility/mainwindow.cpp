@@ -76,6 +76,8 @@ MainWindow::MainWindow(QWidget& mainWidget)
    connect(mUi->mActionSave, SIGNAL(triggered()), this, SLOT(OnSave()));
    connect(mUi->mChangeContextAction, SIGNAL(triggered()), this, SLOT(ChangeProjectContext()));
    connect(mUi->mActionRenderingOptions, SIGNAL(triggered()), this, SLOT(SelectRenderingOptions()));
+   connect(mUi->mActionAddEdge, SIGNAL(triggered()), this, SLOT(OnAddEdge()));
+   connect(mUi->mActionRemoveEdge, SIGNAL(triggered()), this, SLOT(OnRemoveEdge()));
 
    connect(mUi->mActionPropertyEditorVisible, SIGNAL(toggled(bool)), this, SLOT(OnPropertyEditorShowHide(bool)));
    connect(mUi->mActionWaypointBrowserVisible, SIGNAL(toggled(bool)), this, SLOT(OnWaypointBrowserShowHide(bool)));
@@ -304,6 +306,18 @@ void MainWindow::SelectRenderingOptions()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnAddEdge()
+{
+   emit AddEdge();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnRemoveEdge()
+{
+   emit RemoveEdge();
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void MainWindow::PropertyChangedFromControl(dtDAL::PropertyContainer& pc, dtDAL::ActorProperty& ap)
 {
    dtAI::WaypointRenderInfo& ri = mPluginInterface->GetDebugDrawable()->GetRenderInfo();
@@ -344,6 +358,36 @@ void MainWindow::OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*
    }
 
    mPropertyEditor.HandlePropertyContainersSelected(propertyContainers);
+
+   // Update Add/Remove Edge actions
+   mUi->mActionAddEdge->setEnabled(false);
+   mUi->mActionRemoveEdge->setEnabled(false);
+   if (waypoints.size() == 2) // There must be exactly two waypoints selected
+   {
+      bool edgeExists = false;
+      dtAI::WaypointInterface* waypointStart = waypoints[0];
+      dtAI::WaypointInterface* waypointEnd = waypoints[1];
+      dtAI::AIPluginInterface::ConstWaypointArray edgeList;
+      mPluginInterface->GetAllEdgesFromWaypoint(waypointStart->GetID(), edgeList);
+      for (size_t edgeIndex = 0; edgeIndex < edgeList.size(); ++edgeIndex)
+      {
+         if (edgeList[edgeIndex] == waypointEnd)
+         {
+            edgeExists = true;
+         }
+      }
+
+      if (edgeExists)
+      {
+         // Enable Remove Edge
+         mUi->mActionRemoveEdge->setEnabled(true);
+      }
+      else
+      {
+         // Enable Add Edge
+         mUi->mActionAddEdge->setEnabled(true);
+      }
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -357,4 +401,6 @@ void MainWindow::OnWaypointBrowserShowHide(bool checked)
 {
    mWaypointBrowser.setVisible(checked);
 }
+
+////////////////////////////////////////////////////////////////////////////////
 

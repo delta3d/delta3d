@@ -20,7 +20,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>22</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -40,6 +40,8 @@
      <string>Edit</string>
     </property>
     <addaction name="mActionRenderingOptions"/>
+    <addaction name="mActionAddEdge"/>
+    <addaction name="mActionRemoveEdge"/>
    </widget>
    <widget class="QMenu" name="menuWindows">
     <property name="title">
@@ -108,6 +110,22 @@
   <action name="mActionSave">
    <property name="text">
     <string>&amp;Save</string>
+   </property>
+  </action>
+  <action name="mActionAddEdge">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Add Edge</string>
+   </property>
+  </action>
+  <action name="mActionRemoveEdge">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Remove Edge</string>
    </property>
   </action>
  </widget>

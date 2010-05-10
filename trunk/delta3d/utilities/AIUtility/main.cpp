@@ -39,6 +39,10 @@ int main(int argc, char* argv[])
       &win, SLOT(OnCameraTransformChanged(const dtCore::Transform&)));
    QObject::connect(app.get(), SIGNAL(WaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>&)),
       &win, SLOT(OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>&)));
+   QObject::connect(&win, SIGNAL(AddEdge()),
+      app.get(), SLOT(OnAddEdge()));
+   QObject::connect(&win, SIGNAL(RemoveEdge()),
+      app.get(), SLOT(OnRemoveEdge()));
    QObject::connect(app.get(), SIGNAL(Error(const std::string&)),
       &win, SLOT(OnError(const std::string&)));
    QObject::connect(&win, SIGNAL(RequestCameraTransformChange(const dtCore::Transform&)),
