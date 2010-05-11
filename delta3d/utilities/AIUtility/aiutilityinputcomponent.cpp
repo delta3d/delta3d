@@ -64,7 +64,7 @@ bool AIUtilityInputComponent::HandleButtonPressed(const dtCore::Mouse* mouse, dt
             dtAI::WaypointInterface* waypointInterface = mpAIInterface->GetClosestWaypoint(pickedPosition, 0.5f);
             if (waypointInterface != NULL)
             {
-               std::vector<dtAI::WaypointInterface*>::const_iterator previousSelection =
+               std::vector<dtAI::WaypointInterface*>::iterator previousSelection =
                   std::find(mSelectedWaypointList.begin(), mSelectedWaypointList.end(), waypointInterface);
                if (previousSelection == mSelectedWaypointList.end())
                {
