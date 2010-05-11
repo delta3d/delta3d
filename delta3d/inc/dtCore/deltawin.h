@@ -207,8 +207,19 @@ namespace dtCore
       void SetPosition(int x, int y, int width, int height);
       void SetPosition(const PositionSize& positionSize);
 
-      ///Get the size and position of the DeltaWin
+      /** 
+       * Get the size and position of the DeltaWin.
+       * @param x The x position of the DeltaWin (pixels)
+       * @param y The y position of the DeltaWin (pixels)
+       * @param width The width of the DeltaWin (pixels)
+       * @param height The height of the DeltaWin (pixels)
+       */
       void GetPosition(int& x, int& y, int& width, int& height);
+
+      /** 
+       * Get the size and position of the DeltaWin.
+       * @return The size and position of the DeltaWin (pixels) in a PositionSize struct
+       */
       PositionSize GetPosition();
 
       ///Get a handle to the underlying GraphicsWindow
@@ -232,17 +243,54 @@ namespace dtCore
 
       typedef std::vector<Resolution> ResolutionVec;
 
-      //TODO: put these into a dtCore::Display class
+      /** 
+       * Get a container of valid screen resolutions supported by this device.
+       * @return A container of valid resolutions
+       */
       static ResolutionVec GetResolutions();
+
+      /** 
+       * Get the current screen resolution.
+       * @return The current screen resolutions
+       */
       static Resolution GetCurrentResolution();
+
+      /** 
+       * Change the current screen resolution.  This screen resolution will stay
+       * until the application exits.
+       * @param width The width of the screen (pixels)
+       * @param height The height of the screen (pixels)
+       * @param colorDepth The number of bits of color (e.g., 32)
+       * @param refreshRate The screen refresh rate (e.g., 60)
+       * @return True if screen resolution was able to be changed, false otherwise.
+       */
       static bool ChangeScreenResolution(int width, int height, int colorDepth, int refreshRate);
+
+      /** 
+       * Change the current screen resolution.  This screen resolution will stay
+       * until the application exits.
+       * @param res The Resolution struct describing the new screen resolution
+       * @return True if screen resolution was able to be changed, false otherwise.
+       */
       static bool ChangeScreenResolution(Resolution res);
 
+      /** 
+       * Iterate through the supplied ResolutionVec and see if any of the supplied
+       * parameters are a match.
+       * @param rv A container of valid screen resolutions
+       * @param width A screen width to check for (pixels)
+       * @param height A screen height to check for (pixels)
+       * @param refreshRate A refresh rate to check for
+       * @param colorDepth The number of color bits to check for
+       * @return The index into rv that contains the parameters, -1 if no match was found
+       */
       static int IsValidResolution(const ResolutionVec &rv, int width = 0, int height = 0, int refreshRate = 0, int colorDepth = 0);
 
-      /// Tests to see if the system supports the desired resolution.
-      /// @param candidate the Resolution to be tested.
-      /// @return 'true' when the Resolution is supported.
+      /** 
+       * Tests to see if the system supports the desired resolution.
+       * @param candidate the Resolution to be tested.
+       * @return 'true' when the Resolution is supported.
+       */
       bool IsValidResolution(const Resolution& candidate);
 
       /** Add a window resize callback to the DeltaWin.
