@@ -35,6 +35,8 @@
 #include <dtGame/gmcomponent.h>
 #include <dtUtil/enumeration.h>
 #include <OpenThreads/ReentrantMutex>
+
+#include <osg/OperationThread>
 #include <deque>
 
 // Forward declaration
@@ -83,7 +85,7 @@ namespace dtNetGM
    class DT_NETGM_EXPORT NetworkComponent : public dtGame::GMComponent
    {
       DECLARE_MANAGEMENT_LAYER(NetworkComponent);
-   protected:
+   public:
       /**
        * @class DestinationType
        * @brief enumeration class to address different stored connections
@@ -256,6 +258,11 @@ namespace dtNetGM
 
       void SendNetworkMessage(const dtGame::Message& message, const DestinationType& destinationType = DestinationType::DESTINATION);
 
+      /**
+       * Uses an OSG OperationThread to dispatch messages on another thread
+       */
+      void SendNetworkMessageOperation(const dtGame::Message& message, const DestinationType& destinationType = DestinationType::DESTINATION);
+
       dtUtil::DataStream CreateDataStream(const dtGame::Message& message);
       dtCore::RefPtr<dtGame::Message> CreateMessage(dtUtil::DataStream& dataStream, const NetworkBridge& networkBridge);
 
@@ -361,11 +368,14 @@ namespace dtNetGM
       OpenThreads::Mutex mMutex;
       // mutex for accessing the GameManager message queue
       OpenThreads::Mutex mBufferMutex;
+
    private:
       typedef std::deque<dtCore::RefPtr<const dtGame::Message> > MessageBufferType;
       // local buffer to store messages received from the network.
       MessageBufferType mMessageBuffer;
       bool mMapChangeInProcess;
+
+      dtCore::RefPtr<osg::OperationThread> mOperationThread;
    };
 }
 #endif // DELTA_NETWORKCOMPONENT

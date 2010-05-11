@@ -482,12 +482,12 @@ IMPLEMENT_ENUM(MessageActionCode);
          if (message.GetMessageType() == dtGame::MessageType::NETCLIENT_REQUEST_CONNECTION)
          {
             // This message should be send to connections which are not clients!
-            SendNetworkMessage(message, DestinationType::ALL_NOT_CLIENTS);
+            SendNetworkMessageOperation(message, DestinationType::ALL_NOT_CLIENTS);
          }
          else
          {
             // Send message to all ClientConnections, default behavior for null destination!
-            SendNetworkMessage(message, DestinationType::ALL_CLIENTS);
+            SendNetworkMessageOperation(message, DestinationType::ALL_CLIENTS);
          }
       }
       else
@@ -499,9 +499,39 @@ IMPLEMENT_ENUM(MessageActionCode);
          }
          else
          {
-            SendNetworkMessage(message);
+            SendNetworkMessageOperation(message);
          }
       }
+   }
+
+   class DispatchOperation: public osg::Operation
+   {
+   public:
+      virtual void operator () (osg::Object*)
+      {
+         mComponent->SendNetworkMessage(*mMessage, *mDestination);
+      }
+
+      dtCore::RefPtr<NetworkComponent> mComponent;
+      dtCore::RefPtr<const dtGame::Message> mMessage;
+      const NetworkComponent::DestinationType* mDestination;
+   };
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void NetworkComponent::SendNetworkMessageOperation(const dtGame::Message& message, const DestinationType& destinationType)
+   {
+      if (!mOperationThread.valid())
+      {
+         mOperationThread = new osg::OperationThread;
+         mOperationThread->setOperationQueue(new osg::OperationQueue);
+         mOperationThread->start();
+      }
+
+      dtCore::RefPtr<DispatchOperation> dispatchOp = new DispatchOperation;
+      dispatchOp->mComponent = this;
+      dispatchOp->mMessage = &message;
+      dispatchOp->mDestination = &destinationType;
+      mOperationThread->add(dispatchOp.get());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
