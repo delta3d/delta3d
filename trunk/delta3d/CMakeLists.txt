@@ -122,8 +122,9 @@ MACRO(ADD_DELTA3D_SUBFOLDERS)
 
    IF (QT4_FOUND)
       ADD_SUBDIRECTORY(src/dtQt)
+      SET(DTQT_AVAILABLE "YES")
       ADD_SUBDIRECTORY(src/dtInspectorQt)
-	  ADD_SUBDIRECTORY(src/dtDirectorQt)
+      ADD_SUBDIRECTORY(src/dtDirectorQt)
    ENDIF (QT4_FOUND)
 
    ADD_SUBDIRECTORY(demos)
