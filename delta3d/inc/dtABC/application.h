@@ -248,6 +248,9 @@ namespace dtABC
       ///override for postframe
       virtual void PostFrame(const double deltaSimTime);
 
+      ///override for pause -- replaces PreFrame when game is paused.
+      virtual void Pause(const double deltaRealTime);
+
       ///Create basic instances and set up system hooks
       virtual void CreateInstances(const ApplicationConfigData& configData);/*const std::string& name = "defaultWin", int x = 100, int y = 100,
          int width = 640, int height = 480, bool cursor = true, bool fullScreen = false, bool realizeUponCreate = true);*/

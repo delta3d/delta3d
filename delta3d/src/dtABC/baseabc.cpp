@@ -118,6 +118,10 @@ void BaseABC::OnMessage(MessageData* data)
    {
       PostFrame(*static_cast<const double*>(data->userData));
    }
+   else if (data->message == dtCore::System::MESSAGE_PAUSE)
+   {
+      Pause(*static_cast<const double*>(data->userData));
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

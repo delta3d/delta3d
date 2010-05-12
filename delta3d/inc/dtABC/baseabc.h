@@ -146,6 +146,11 @@ namespace dtABC
       ///Override for postframe
       virtual void PostFrame(const double deltaSimTime) = 0;
 
+      /** Override for paused -- this method replaces PreFrame when the
+       *  game is paused.
+       */      
+      virtual void Pause(const double deltaRealTime) = 0;
+
       /// Base override to receive messages.
       /// This method should be called from derived classes
       /// @param data the message to receive
