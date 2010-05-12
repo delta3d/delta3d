@@ -23,6 +23,7 @@
 
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/project.h>
+#include <osgDB/FileNameUtils>
 
 
 namespace dtDirector
@@ -139,7 +140,7 @@ namespace dtDirector
             DirectorGraph* graph = mScript->GetGraphRoot();
             if (graph)
             {
-               mLabel += " (" + mScriptResource.GetResourceName() + ")";
+               mLabel += " (" + osgDB::getNameLessExtension(mScriptResource.GetResourceName()) + ")";
 
                // Set up the links.
                std::vector<dtCore::RefPtr<EventNode> > inputs = graph->GetInputNodes();
