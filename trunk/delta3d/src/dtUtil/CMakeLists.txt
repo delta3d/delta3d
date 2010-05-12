@@ -98,6 +98,7 @@ SET( LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/transformation.h
     ${HEADER_PATH}/tree.h
     ${HEADER_PATH}/typetraits.h
+    ${HEADER_PATH}/typemanip.h
     ${HEADER_PATH}/version.h
     ${HEADER_PATH}/xerceserrorhandler.h
     ${HEADER_PATH}/xercesparser.h
