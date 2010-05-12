@@ -117,6 +117,10 @@ void Widget::PostFrame(const double deltaFrameTime)
 {
 }
 
+void Widget::Pause(const double deltaRealTime)
+{
+}
+
 void Widget::OnMessage(Base::MessageData* data)
 {
    assert(data);

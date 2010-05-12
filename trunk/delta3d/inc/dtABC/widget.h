@@ -130,6 +130,9 @@ namespace dtABC
       ///Override for PostFrame
       virtual  void           PostFrame(const double deltaFrameTime);
 
+      ///Takes the place of PreFrame when game is paused.
+      virtual  void           Pause(const double deltaRealTime);
+
       ///BaseABC override to receive messages.
       ///This method should be called from derived classes
       virtual  void           OnMessage(dtCore::Base::MessageData* data);

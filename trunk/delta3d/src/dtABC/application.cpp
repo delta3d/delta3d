@@ -237,6 +237,11 @@ void Application::PostFrame(const double deltaSimTime)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+void Application::Pause(const double deltaRealTime)
+{
+}
+
+///////////////////////////////////////////////////////////////////////////////
 bool Application::KeyPressed(const dtCore::Keyboard* keyboard, int kc)
 {
    switch (kc)
