@@ -206,12 +206,14 @@ void ODEPhysicsTests::TestODEControllerDestructor()
  
    {
       dtCore::RefPtr<dtCore::Scene> scene = new dtCore::Scene(ctrl.get());
+
+      //scene holds a reference to the ODEController now
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("ODEController should have a reference count of 1.",
+                                    1, ctrl->referenceCount());
+
       sceneObserver = scene.get();
 
       ctrl->SetMessageSender(scene.get());
-
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("ODEController should have a reference count of 1.",
-                                   1, ctrl->referenceCount());
 
       CPPUNIT_ASSERT_EQUAL_MESSAGE("2 references should exist for ode.", 2U, dtCore::ODEController::GetODERefCount());
       dtCore::RefPtr<dtCore::Scene> scene2 = new dtCore::Scene();

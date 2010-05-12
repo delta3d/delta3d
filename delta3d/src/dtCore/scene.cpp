@@ -138,7 +138,7 @@ Scene::Scene(dtCore::ODEController* physicsController, const std::string& name)
    : Base(name)
    , mImpl(NULL)
 {
-   mImpl = new SceneImpl(new ODEController(this));
+   mImpl = new SceneImpl(physicsController);
    Ctor();
 }
 
