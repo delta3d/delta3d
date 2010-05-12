@@ -124,23 +124,63 @@ namespace dtCore
       * @param aspectRatio : the aspect ratio of the camera (width/height)
       * @param nearClip : the distance from the Camera to the near clipping plane
       * @param farClip : the distance from the Camera to the far clipping plane
+      * @return false if the Camera is not setup as a perspective camera
       */
-      void GetPerspectiveParams(double& vfov, double& aspectRatio, double& nearClip, double& farClip);
+      bool GetPerspectiveParams(double& vfov, double& aspectRatio, double& nearClip, double& farClip);
 
-      ///Set view frustrum of camera lens
+      /** 
+       * Set the perspective parameters of the camera using a frustum.
+       * @param left Coordinate for the left vertical clipping plane
+       * @param right Coordinate for the right vertical clipping plane
+       * @param bottom Coordinate for the bottom horizontal clipping plane
+       * @param top Coordinate for the top horizontal clipping plane
+       * @param nearClip Distance to the near depth clipping plane (must be positive)
+       * @param farClip Distance to the far depth clipping plane (must be positive)
+       */
       void SetFrustum(double left, double right,
                       double bottom, double top,
                       double nearClip, double farClip);
 
-      ///Get view frustrum in the projection matrix
-      void GetFrustum(double& left, double& right,
+      /** 
+       * Get the perspective parameters of the camera using a frustum.
+       * @param left Coordinate for the left vertical clipping plane
+       * @param right Coordinate for the right vertical clipping plane
+       * @param bottom Coordinate for the bottom horizontal clipping plane
+       * @param top Coordinate for the top horizontal clipping plane
+       * @param nearClip Distance to the near depth clipping plane (must be positive)
+       * @param farClip Distance to the far depth clipping plane (must be positive)
+       * @return false if the Camera isn't setup using frustum values
+       */
+      bool GetFrustum(double& left, double& right,
                       double& bottom, double& top,
                       double& nearClip, double& farClip);
 
-      ///set orthographic mode
+      /** 
+       * Set the orthographic parameters of the camera.
+       * @param left Coordinate for the left vertical clipping plane
+       * @param right Coordinate for the right vertical clipping plane
+       * @param bottom Coordinate for the bottom horizontal clipping plane
+       * @param top Coordinate for the top horizontal clipping plane
+       * @param nearClip Distance to the near depth clipping plane
+       * @param farClip Distance to the far depth clipping plane
+       */
       void SetOrtho(double left, double right,
                     double bottom, double top,
                     double nearClip, double farClip);
+
+      /** 
+       * Get the orthographic parameters of the camera.
+       * @param left Coordinate for the left vertical clipping plane
+       * @param right Coordinate for the right vertical clipping plane
+       * @param bottom Coordinate for the bottom horizontal clipping plane
+       * @param top Coordinate for the top horizontal clipping plane
+       * @param nearClip Distance to the near depth clipping plane
+       * @param farClip Distance to the far depth clipping plane
+       * @return false if the Camera isn't setup using orthographic values
+       */
+      bool GetOrtho(double& left, double& right,
+                    double& bottom, double& top,
+                    double& nearClip, double& farClip) const;
 
       static double ComputeAspectFromFOV(double hfov, double vfov);
 

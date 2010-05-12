@@ -275,9 +275,9 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void Camera::GetPerspectiveParams(double& vfov, double& aspectRatio, double& nearClip, double& farClip)
+   bool Camera::GetPerspectiveParams(double& vfov, double& aspectRatio, double& nearClip, double& farClip)
    {
-      mOsgCamera->getProjectionMatrixAsPerspective(vfov, aspectRatio, nearClip, farClip);
+      return mOsgCamera->getProjectionMatrixAsPerspective(vfov, aspectRatio, nearClip, farClip);
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -287,15 +287,21 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void Camera::GetFrustum(double& left, double& right, double& bottom, double& top, double& nearClip, double& farClip)
+   bool Camera::GetFrustum(double& left, double& right, double& bottom, double& top, double& nearClip, double& farClip)
    {
-      mOsgCamera->getProjectionMatrixAsFrustum(left, right, bottom, top, nearClip, farClip);
+      return mOsgCamera->getProjectionMatrixAsFrustum(left, right, bottom, top, nearClip, farClip);
    }
 
    /////////////////////////////////////////////////////////////////////////////
    void Camera::SetOrtho( double left, double right, double bottom, double top, double nearClip, double farClip )
    {
       mOsgCamera->setProjectionMatrixAsOrtho(left, right, bottom, top, nearClip, farClip);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Camera::GetOrtho(double& left, double& right, double& bottom, double& top, double& nearClip, double& farClip) const
+   {
+      return mOsgCamera->getProjectionMatrixAsOrtho(left, right, bottom, top, nearClip, farClip);
    }
 
    /////////////////////////////////////////////////////////////////////////////
