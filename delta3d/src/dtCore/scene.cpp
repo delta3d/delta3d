@@ -127,16 +127,18 @@ void ParticleSystemFreezer::apply(osg::Node& node)
 //////////////////////////////////////////////////////////////////////////
 Scene::Scene(const std::string& name)
    : Base(name)
-   , mImpl(new SceneImpl(new ODEController(this)))
+   , mImpl(NULL)
 {
+   mImpl = new SceneImpl(new ODEController(this));
    Ctor();
 }
 
 //////////////////////////////////////////////////////////////////////////
 Scene::Scene(dtCore::ODEController* physicsController, const std::string& name)
    : Base(name)
-   , mImpl(new SceneImpl(physicsController))
+   , mImpl(NULL)
 {
+   mImpl = new SceneImpl(new ODEController(this));
    Ctor();
 }
 
