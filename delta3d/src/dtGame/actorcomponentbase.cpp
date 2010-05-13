@@ -16,6 +16,8 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
+ * @author Unknown
+ * @author Curtiss Murphy
  */
 
 #include <prefix/dtgameprefix.h>
@@ -63,7 +65,17 @@ namespace dtGame
       component.SetOwner(this);
 
       GameActor* self = static_cast<GameActor*>(this);
-      
+
+      // The call to Init should eventually move to an actor component library behavior
+      // like actors have, but until then, this is the only other place to do it.
+      component.Init();
+
+      // add actor component properties to the game actor itself
+      // note - the only reason we do this is to make other parts of the system work (like STAGE). 
+      // In the future, STAGE (et al) should use the actor components directly and we won't add them to the game actor
+      // Remove the props from the game actor - This is temporary. See the note in AddComponent()
+      self->GetGameActorProxy().AddActorComponentProperties(component);
+
       // initialize component
       component.OnAddedToActor(*self);
       OnActorComponentAdded(component);
@@ -125,6 +137,10 @@ namespace dtGame
             component.OnRemovedFromWorld();
          }
          component.OnRemovedFromActor(*self);
+
+         // Remove the props from the game actor - This is temporary. See the note in AddComponent()
+         self->GetGameActorProxy().RemoveActorComponentProperties(component);
+
          OnActorComponentRemoved(component);
          mComponents.erase(iter);
          return;
@@ -147,7 +163,7 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ActorComponentBase::InitComponents()
+   void ActorComponentBase::CallOnEnteredWorldForActorComponents()
    {
       /*
          Copy current list of components and iterate through that.
@@ -171,7 +187,7 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ActorComponentBase::ShutdownComponents()
+   void ActorComponentBase::CallOnRemovedFromWorldForActorComponents()
    {
       std::list<ActorComponent*> components;
       for (ActorComponentMap::iterator iter = mComponents.begin(); iter != mComponents.end(); ++iter)

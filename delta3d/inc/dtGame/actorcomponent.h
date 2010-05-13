@@ -16,6 +16,8 @@
 * along with this library; if not, write to the Free Software Foundation, Inc.,
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
+* @author unknown
+* @author Curtiss Murphy
 */
 
 #ifndef actorcomponent_h__
@@ -117,6 +119,12 @@ namespace dtGame
        */
       virtual void SetOwner(ActorComponentBase* owner);
 
+      /** 
+       * This method builds the property map, sets the initialized state, etc. 
+       * For now, this is called from the AddComponent on the ActorComponentBase. 
+       * In the future, this should be called from library initialization behavior, like with Actors
+       */
+      virtual void Init();
 
 
    protected:
@@ -148,6 +156,9 @@ namespace dtGame
 
       /** type string of component */
       const ACType mType;
+
+      /// Have we built our property maps, etc.
+      bool mInitialized;
 
    };
 }

@@ -34,6 +34,8 @@
 
 namespace dtGame
 {
+   const dtGame::ActorComponent::ACType DeadReckoningHelper::TYPE("DeadReckoningActComp");
+
    IMPLEMENT_ENUM(DeadReckoningAlgorithm);
    DeadReckoningAlgorithm DeadReckoningAlgorithm::NONE("None");
    DeadReckoningAlgorithm DeadReckoningAlgorithm::STATIC("Static");
@@ -189,7 +191,8 @@ namespace dtGame
 
    //////////////////////////////////////////////////////////////////////
    DeadReckoningHelper::DeadReckoningHelper()
-   : mLastTranslationUpdatedTime(0.0)
+   : ActorComponent(TYPE)
+   , mLastTranslationUpdatedTime(0.0)
    , mLastRotationUpdatedTime(0.0)
    , mAverageTimeBetweenTranslationUpdates(0.0f)
    , mAverageTimeBetweenRotationUpdates(0.0f)
@@ -559,7 +562,86 @@ namespace dtGame
       return;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void DeadReckoningHelper::OnAddedToActor(dtGame::GameActor& actor)
+   {
+
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DeadReckoningHelper::OnRemovedFromActor(dtGame::GameActor& actor)
+   {
+
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DeadReckoningHelper::BuildPropertyMap()
+   {
+      dtGame::GameActor* actor;
+      GetOwner(actor);
+
+      static const dtUtil::RefString DEADRECKONING_GROUP = "Dead Reckoning";
+
+      AddProperty(new dtDAL::Vec3ActorProperty("Last Known Translation", "Last Known Translation",
+         dtDAL::Vec3ActorProperty::SetFuncType(this, &DeadReckoningHelper::SetLastKnownTranslation),
+         dtDAL::Vec3ActorProperty::GetFuncType(this, &DeadReckoningHelper::GetLastKnownTranslation),
+         "Sets the last know position of this Entity", DEADRECKONING_GROUP));
+
+      AddProperty(new dtDAL::Vec3ActorProperty("Last Known Rotation", "Last Known Rotation",
+         dtDAL::Vec3ActorProperty::SetFuncType(this, &DeadReckoningHelper::SetLastKnownRotation),
+         dtDAL::Vec3ActorProperty::GetFuncType(this, &DeadReckoningHelper::GetLastKnownRotation),
+         "Sets the last known rotation of this Entity", DEADRECKONING_GROUP));
+
+      // Note - the member vars were changed to LastKnownXYZ, but the properties were left the same
+      // so as to not break MANY maps in production.
+      AddProperty(new dtDAL::Vec3ActorProperty("Velocity Vector", "Velocity Vector",
+         dtDAL::Vec3ActorProperty::SetFuncType(this, &DeadReckoningHelper::SetLastKnownVelocity),
+         dtDAL::Vec3ActorProperty::GetFuncType(this, &DeadReckoningHelper::GetLastKnownVelocity),
+         "Sets the last known velocity vector of this Entity", DEADRECKONING_GROUP));
+
+      // Note - the member vars were changed to LastKnownXYZ, but the properties were left the same
+      // so as to not break MANY maps in production.
+      AddProperty(new dtDAL::Vec3ActorProperty("Acceleration Vector", "Acceleration Vector",
+         dtDAL::Vec3ActorProperty::SetFuncType(this, &DeadReckoningHelper::SetLastKnownAcceleration),
+         dtDAL::Vec3ActorProperty::GetFuncType(this, &DeadReckoningHelper::GetLastKnownAcceleration),
+         "Sets the last known acceleration vector of this Entity", DEADRECKONING_GROUP));
+
+      // Note - the member vars were changed to LastKnownXYZ, but the properties were left the same
+      // so as to not break MANY maps in production.
+      AddProperty(new dtDAL::Vec3ActorProperty("Angular Velocity Vector", "Angular Velocity Vector",
+         dtDAL::Vec3ActorProperty::SetFuncType(this, &DeadReckoningHelper::SetLastKnownAngularVelocity),
+         dtDAL::Vec3ActorProperty::GetFuncType(this, &DeadReckoningHelper::GetLastKnownAngularVelocity),
+         "Sets the last known angular velocity vector of this Entity", DEADRECKONING_GROUP));
+
+      AddProperty(new dtDAL::EnumActorProperty<dtGame::DeadReckoningAlgorithm>("Dead Reckoning Algorithm", "Dead Reckoning Algorithm",
+         dtDAL::EnumActorProperty<dtGame::DeadReckoningAlgorithm>::SetFuncType(this, &DeadReckoningHelper::SetDeadReckoningAlgorithm),
+         dtDAL::EnumActorProperty<dtGame::DeadReckoningAlgorithm>::GetFuncType(this, &DeadReckoningHelper::GetDeadReckoningAlgorithm),
+         "Sets the enumerated dead reckoning algorithm to use.", DEADRECKONING_GROUP));
+
+      AddProperty(new dtDAL::BooleanActorProperty("Flying", "Should Not Follow the Ground",
+         dtDAL::BooleanActorProperty::SetFuncType(this, &DeadReckoningHelper::SetFlying),
+         dtDAL::BooleanActorProperty::GetFuncType(this, &DeadReckoningHelper::IsFlying),
+         "If flying is true, then it won't ground clamp. Also useful for hovering or jumping vehicles. ", DEADRECKONING_GROUP));
+
+      AddProperty(new dtDAL::FloatActorProperty("Ground Offset", "Ground Offset",
+         dtDAL::FloatActorProperty::SetFuncType(this, &DeadReckoningHelper::SetGroundOffset),
+         dtDAL::FloatActorProperty::GetFuncType(this, &DeadReckoningHelper::GetGroundOffset),
+         "Sets the offset from the ground this entity should have.  This only matters if it is not flying.", DEADRECKONING_GROUP));
+
+      AddProperty(new dtDAL::Vec3ActorProperty("Model Dimensions", "Actor Model Dimensions",
+         dtDAL::Vec3ActorProperty::SetFuncType(this, &DeadReckoningHelper::SetModelDimensions),
+         dtDAL::Vec3ActorProperty::GetFuncType(this, &DeadReckoningHelper::GetModelDimensions),
+         "Sets the x,y,z dimensions of the model the actor loads.  This is used by the ground clamping code.", DEADRECKONING_GROUP));
+
+      AddProperty(new dtDAL::BooleanActorProperty("Use Model Dimensions", "Use Model Dimensions",
+         dtDAL::BooleanActorProperty::SetFuncType(this, &DeadReckoningHelper::SetUseModelDimensions),
+         dtDAL::BooleanActorProperty::GetFuncType(this, &DeadReckoningHelper::UseModelDimensions),
+         "Should the DR Component use the currently set model dimension values when ground clamping?", DEADRECKONING_GROUP));
+
+   }
+
    /////////////////////////////////////////////////////////////////////////////////
+   /*
    void DeadReckoningHelper::GetActorProperties(std::vector<dtCore::RefPtr<dtDAL::ActorProperty> >& pFillVector)
    {
       pFillVector.push_back(new dtDAL::Vec3ActorProperty("Last Known Translation", "Last Known Translation",
@@ -618,6 +700,7 @@ namespace dtGame
             dtDAL::BooleanActorProperty::GetFuncType(this, &DeadReckoningHelper::UseModelDimensions),
             "Should the DR Component use the currently set model dimension values when ground clamping?", "Dead Reckoning"));
    }
+   */
 
    /////////////////////////////////////////////////////////////////////////////////
    bool DeadReckoningHelper::DoDR(GameActor& gameActor, dtCore::Transform& xform,

@@ -16,6 +16,8 @@
 * along with this library; if not, write to the Free Software Foundation, Inc.,
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
+* @author Unknown
+* @author Curtiss Murphy
 */
 
 #ifndef actorcomponentbase_h__
@@ -133,14 +135,14 @@ namespace dtGame
       void RemoveAllComponents();
 
       /** 
-       * Loop through all ActorComponent call their OnEnteredWorld()
+       * Loop through all ActorComponents call their OnEnteredWorld()
        */
-      void InitComponents();
+      void CallOnEnteredWorldForActorComponents();
 
       /**
-       * Loop through all ActorComponent call their OnRemovedWorld()
+       * Loop through all ActorComponents call their OnRemovedWorld()
        */
-      void ShutdownComponents();
+      void CallOnRemovedFromWorldForActorComponents();
 
       /**
        * Call the BuildPropertyMap() method of all registered ActorComponent

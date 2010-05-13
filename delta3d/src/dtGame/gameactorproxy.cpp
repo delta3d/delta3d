@@ -28,7 +28,6 @@
 #include <dtGame/gameactor.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/messagefactory.h>
-#include <dtGame/shaderactorcomponent.h>
 
 #include <dtGame/invokable.h>
 #include <dtDAL/enginepropertytypes.h>
@@ -107,7 +106,39 @@ void GameActorProxy::Init(const dtDAL::ActorType& actorType)
 {
    BaseClass::Init(actorType);
    BuildInvokables();
+
+   // The actor components are stored on the game actor, unlike the other stuff 
+   GameActor &ga = GetGameActor();
+   ga.BuildActorComponents();
 }
+
+
+/////////////////////////////////////////////////////////////////////////////
+void GameActorProxy::RemoveActorComponentProperties(ActorComponent& component)
+{
+   // Remove the props from the game actor - Needed because RemoveProperty is protected
+   std::vector<dtDAL::ActorProperty*> toFill;
+   component.GetPropertyList(toFill);
+   std::vector<dtDAL::ActorProperty*>::iterator i = toFill.begin(), iend = toFill.end();
+   for (; i != iend; ++i)
+   {
+      RemoveProperty((*i)->GetName());
+   }
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void GameActorProxy::AddActorComponentProperties(ActorComponent& component)
+{
+   // Add the props from the game actor - See RemoveActorComponentProperties header method.
+   std::vector<dtDAL::ActorProperty*> toFill;
+   component.GetPropertyList(toFill);
+   std::vector<dtDAL::ActorProperty*>::iterator i = toFill.begin(), iend = toFill.end();
+   for (; i != iend; ++i)
+   {
+      AddProperty(*i);
+   }
+}
+
 
 class AddPropsFunc
 {
@@ -132,9 +163,6 @@ void GameActorProxy::BuildPropertyMap()
 {
    GameActor& ga = GetGameActor();
    
-   //TODO should be in the CreateActor() method
-   ga.AddComponent(*new ShaderActorComponent());
-
    dtDAL::PhysicalActorProxy::BuildPropertyMap();
 
    static const dtUtil::RefString PROPERTY_IS_GAME_ACTOR("IsGameActor");
@@ -192,12 +220,13 @@ void GameActorProxy::BuildPropertyMap()
       dtDAL::StringActorProperty::GetFuncType(&ga, &GameActor::GetShaderGroup),
       PROPERTY_SHADER_GROUP_DESC,GROUPNAME));
 
-   /** let game actor components add their properties */
-   ga.BuildComponentPropertyMaps();
+   // CURT - Remove this stuff.
+   ///** let game actor components add their properties */
+   //ga.BuildComponentPropertyMaps();
 
-   AddPropsFunc addAllProps;
-   addAllProps.gap = this;
-   ga.ForEachComponent(addAllProps);
+   //AddPropsFunc addAllProps;
+   //addAllProps.gap = this;
+   //ga.ForEachComponent(addAllProps);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -784,7 +813,7 @@ void GameActorProxy::InvokeEnteredWorld()
    }
 
    ga->OnEnteredWorld();
-   ga->InitComponents();
+   ga->CallOnEnteredWorldForActorComponents();
 
    OnEnteredWorld();
 }
@@ -804,7 +833,7 @@ void GameActorProxy::InvokeRemovedFromWorld()
          "ERROR: Actor has the type of a GameActor, but casting it to a GameActorProxy failed.", __FILE__, __LINE__);
    }
 
-   ga->ShutdownComponents();
+   ga->CallOnRemovedFromWorldForActorComponents();
    OnRemovedFromWorld();
 }
 
