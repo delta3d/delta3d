@@ -161,14 +161,14 @@ Keyboard::~Keyboard()
 
 bool Keyboard::GetKeyState(int key) const
 {
-   const Button *b = GetButton(key);
+   const Button* b = GetButton(key);
    if (b == NULL)
    {
       LOG_ERROR("Keyboard does not have a Button assigned to the key value of " + dtUtil::ToString(key) );
       return false;
    }
 
-   return GetButton(key)->GetState();
+   return b->GetState();
 }
 
 void Keyboard::AddKeyboardListener(KeyboardListener* keyboardListener)
@@ -199,19 +199,17 @@ bool Keyboard::KeyDown(int kc)
       ++iter;
    }
 
-   if( !handled )  // affect the return value
+   Button* b = GetButton(kc);
+   if(b != NULL)
    {
-      if (GetButton(kc) != NULL)
+      if( !handled ) // affect the return value
       {
-         handled = GetButton(kc)->SetState(true);
-      }      
-   }
-   else  // don't affect the return value, but change the state for "pollers of the state"
-   {
-      if (GetButton(kc) != NULL)
+         handled = b->SetState(true);
+      }
+      else // don't affect the return value, but change the state for "pollers of the state"
       {
-         GetButton(kc)->SetState(true);
-      }      
+         b->SetState(true);
+      }
    }
 
    return handled;
@@ -228,18 +226,16 @@ bool Keyboard::KeyUp(int kc)
       ++iter;
    }
 
-   if( !handled )   // affect the return value
+   Button* b = GetButton(kc);
+   if(b != NULL)
    {
-      if (GetButton(kc) != NULL)
+      if( !handled ) // affect the return value
       {
-         handled = GetButton(kc)->SetState(false);
+         handled = b->SetState(false);
       }
-   }
-   else  // don't affect the return value, but change the state for "pollers of the state"
-   {
-      if (GetButton(kc) != NULL)
+      else // don't affect the return value, but change the state for "pollers of the state"
       {
-         GetButton(kc)->SetState(false);
+         b->SetState(false);
       }
    }
 
