@@ -253,7 +253,7 @@ void GUI::_SetupSystemAndRenderer()
       renderer.enableExtraStateSettings(true);
       CEGUI::System::create(renderer);
 
-      CEGUI::DefaultResourceProvider* rp = static_cast<CEGUI::DefaultResourceProvider*>(CEGUI::System::getSingleton().getResourceProvider());
+      //CEGUI::DefaultResourceProvider* rp = static_cast<CEGUI::DefaultResourceProvider*>(CEGUI::System::getSingleton().getResourceProvider());
 
       CEGUI::Imageset::setDefaultResourceGroup("imagesets");
       SetResourceGroupDirectory("imagesets", dtUtil::FindFileInPathList("imagesets"));
@@ -588,11 +588,11 @@ void dtGUI::GUI::DefineImage(const std::string& imagesetName, const std::string&
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-dtCore::RefPtr<osg::Texture2D> GUI::CreateRenderTargetTexture( Widget& widget,
-                                                               const osg::Vec2* dimensions,
-                                                               const std::string& newImagesetName,
-                                                               const std::string& propertyName,
-                                                               const std::string& newImageName)
+dtCore::RefPtr<osg::Texture2D> dtGUI::GUI::CreateRenderTargetTexture(Widget& widget,
+                                                                     const osg::Vec2* dimensions,
+                                                                     const std::string& newImagesetName,
+                                                                     const std::string& propertyName,
+                                                                     const std::string& newImageName)
 {
    
    if (!widget.isPropertyPresent(propertyName))
@@ -645,8 +645,8 @@ dtCore::RefPtr<osg::Texture2D> GUI::CreateRenderTargetTexture( Widget& widget,
    return rttTexture;
 }
 
-dtCore::RefPtr<dtCore::Camera> GUI::CreateCameraForRenderTargetTexture(osg::Texture2D& renderTargetTexture,
-                                                                       const osg::Vec2& viewDimensions)
+dtCore::RefPtr<dtCore::Camera> dtGUI::GUI::CreateCameraForRenderTargetTexture(osg::Texture2D& renderTargetTexture,
+                                                                              const osg::Vec2& viewDimensions)
 {
    // Create a Camera to render the specified target texture.
    dtCore::Camera* rttCam = new dtCore::Camera("RTTCamera");

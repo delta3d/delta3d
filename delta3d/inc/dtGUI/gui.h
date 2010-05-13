@@ -335,8 +335,8 @@ namespace dtGUI
        *        is the dimension of the widget being rendered to or the dimensions of the texture itself.
        * @return New Camera that has been set up to render to the specified texture.
        */
-      dtCore::RefPtr<dtCore::Camera> GUI::CreateCameraForRenderTargetTexture(osg::Texture2D& renderTargetTexture,
-                                                                             const osg::Vec2& viewDimensions);
+      dtCore::RefPtr<dtCore::Camera> CreateCameraForRenderTargetTexture(osg::Texture2D& renderTargetTexture,
+                                                                        const osg::Vec2& viewDimensions);
 
    protected:
       virtual ~GUI();
