@@ -27,7 +27,7 @@
 
 #include <QtOpenGL/QGLWidget>
 #include <osg/Referenced>
-#include <dtUtil/deprecationmgr.h>
+#include <dtUtil/breakoverride.h>
 
 namespace dtQt
 {
@@ -45,20 +45,16 @@ namespace dtQt
          }
 
          ///Override to generate a custom OSGAdapterWidget
-         virtual OSGAdapterWidget* CreateWidget(const QGLFormat& format, bool drawOnSeparateThread,  QWidget* parent = NULL,
-                                                const QGLWidget* shareWidget = NULL, Qt::WindowFlags f = NULL) {
-            // call the old version by default, which, unfortunately, will generate a warning.
-            return CreateWidget(drawOnSeparateThread, parent, shareWidget, f);
-         }
-
-         /// This is the old, deprecated version.  Deprecated 4/5/2010
-         DEPRECATE_FUNC virtual OSGAdapterWidget* CreateWidget(bool drawOnSeparateThread,  QWidget* parent = NULL,
+         virtual OSGAdapterWidget* CreateWidget(const QGLFormat& format, bool drawOnSeparateThread, QWidget* parent = NULL,
                                                 const QGLWidget* shareWidget = NULL, Qt::WindowFlags f = NULL) 
-         { 
-            DEPRECATE("virtual OSGAdapterWidget* CreateWidget(bool,  QWidget*, const QGLWidget*, Qt::WindowFlags f)",
-                      "N/A");
+         {
             return NULL;
          }
+
+         /// This is the old, deprecated version.  Deprecated 4/5/2010.
+         /// Overwrite OSGAdapterWidget* CreateWidget(const QGLFormat&,bool,QWidget*,const QGLWidget*,Qt::WindowFlags) instead
+         BREAK_OVERRIDE(CreateWidget(bool drawOnSeparateThread,  QWidget* parent = NULL,
+                                     const QGLWidget* shareWidget = NULL, Qt::WindowFlags f = NULL))
 
       protected:
          ~GLWidgetFactory()

@@ -26,7 +26,6 @@
 #include <prefix/dtqtprefix.h>
 #include <dtQt/qtguiwindowsystemwrapper.h>
 #include <dtQt/osggraphicswindowqt.h>
-#include <dtQt/glwidgetfactory.h>
 #include <dtUtil/log.h>
 
 namespace dtQt
