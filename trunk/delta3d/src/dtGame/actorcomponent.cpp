@@ -16,6 +16,8 @@
 * along with this library; if not, write to the Free Software Foundation, Inc.,
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
+* @author unknown
+* @author Curtiss Murphy
 */
 
 #include <prefix/dtgameprefix.h>
@@ -31,9 +33,10 @@
 using namespace dtGame;
 
 ////////////////////////////////////////////////////////////////////////////////
-dtGame::ActorComponent::ActorComponent(const ACType& type) : 
-  mOwner(NULL)
-, mType(type) 
+dtGame::ActorComponent::ActorComponent(const ACType& type) 
+  : mOwner(NULL)
+  , mType(type)  
+  , mInitialized(false)
 {
 
 }
@@ -63,6 +66,16 @@ void dtGame::ActorComponent::SetOwner(ActorComponentBase* owner)
    mOwner = owner;
 }
 
+//////////////////////////////////////////////////////////////////////////
+void dtGame::ActorComponent::Init()
+{
+   if (!mInitialized)
+   {
+      BuildPropertyMap();
+
+      mInitialized = true;
+   }
+}
 
 //////////////////////////////////////////////////////////////////////////
 void ActorComponent::RegisterForTicks()

@@ -23,6 +23,7 @@
 #include <dtGame/gameactor.h>
 #include <dtGame/basemessages.h>
 #include <dtGame/exceptionenum.h>
+#include <dtGame/shaderactorcomponent.h>
 
 #include <dtCore/shadergroup.h>
 #include <dtCore/shaderprogram.h>
@@ -87,6 +88,12 @@ namespace dtGame
                   __FILE__, __LINE__);
       }
       return *mProxy;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////
+   void GameActor::BuildActorComponents()
+   {
+      AddComponent(*new ShaderActorComponent());
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////

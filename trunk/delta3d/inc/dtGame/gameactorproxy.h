@@ -39,6 +39,7 @@ namespace dtGame
    class Invokable;
    class ActorUpdateMessage;
    class MessageType;
+   class ActorComponent;
 
    /**
     * class GameActorProxy
@@ -92,6 +93,26 @@ namespace dtGame
 
       /// Overridden to call BuildInvokables
       virtual void Init(const dtDAL::ActorType& actorType);
+
+      /** 
+       * The actor component was probably removed. So, we need to remove each of the properties 
+       * from the actor component that were added to our actor. 
+       *
+       * Note - this is sort of temporary code because the actor component props are 
+       * stored on both the game actor proxy AND on the actor component itself. In the future, 
+       * tools like STAGE should know how to resolve this and this whole method can go away.
+       */
+      void RemoveActorComponentProperties(ActorComponent& component);
+
+      /** 
+       * We are probably adding this actor component. So, we need to add each of the properties 
+       * on the actor component to our proxy. 
+       *
+       * Note - this is sort of temporary code because the actor component props are 
+       * stored on both the game actor proxy AND on the actor component itself. In the future, 
+       * tools like STAGE should know how to resolve this and this whole method can go away.
+       */
+      void AddActorComponentProperties(ActorComponent& component);
 
       /**
        * This is a shortcut to avoid having to dynamic cast to a GameActorProxy.

@@ -119,9 +119,6 @@ void TextLabelComponent::OnTickLocal(const dtGame::TickMessage& tickMessage)
 ////////////////////////////////////////////////////////////////////////////////
 void TextLabelComponent::BuildPropertyMap()
 {
-   dtGame::GameActor* actor;
-   GetOwner(actor);
-
    static const dtUtil::RefString GROUPNAME = "Text Label";
 
    AddProperty(new dtDAL::StringActorProperty("Text", "Text",

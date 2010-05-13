@@ -31,6 +31,7 @@
 #include <dtCore/base.h>
 #include <dtCore/transform.h>
 #include <dtGame/basegroundclamper.h>
+#include <dtGame/actorcomponent.h>
 
 namespace dtDAL
 {
@@ -65,11 +66,14 @@ namespace dtGame
    };
 
 
-   class DT_GAME_EXPORT DeadReckoningHelper : public dtCore::Base
+   class DT_GAME_EXPORT DeadReckoningHelper : public dtGame::ActorComponent
    {
       public:
          static const float DEFAULT_MAX_SMOOTHING_TIME_ROT;
          static const float DEFAULT_MAX_SMOOTHING_TIME_POS;
+
+         // The type of the actor component - use to look it up.
+         static const ActorComponent::ACType TYPE;
 
          class DT_GAME_EXPORT DeadReckoningDOF : public osg::Referenced
          {
@@ -138,6 +142,14 @@ namespace dtGame
 
          DeadReckoningHelper();
 
+         // base methods for actor components.
+         virtual void OnAddedToActor(dtGame::GameActor& actor);
+         virtual void OnRemovedFromActor(dtGame::GameActor& actor);
+
+         /** add actor component properties to game actor for configuring in STAGE */
+         virtual void BuildPropertyMap();
+
+
          /**
           * This function is responsible for manipulating the internal data types to do the actual
           * dead reckoning.  To implement another dead reckoning algorithm, overload this function.
@@ -149,16 +161,6 @@ namespace dtGame
           */
          virtual bool DoDR(GameActor& gameActor, dtCore::Transform& xform,
                   dtUtil::Log* pLogger, BaseGroundClamper::GroundClampingType*& gcType);
-
-         /**
-          * This is a utility function to make it easier to have a dead reckoned actor.  The actor
-          * should then iterate through this vector and call AddActorProperty() with each element.
-          * If this class is derived and additional data members are added, this function should be
-          * overloaded to add the additional properties to the actor.
-          *
-          * @param a vector of actor property ref ptrs to be filled
-          */
-         virtual void GetActorProperties(std::vector<dtCore::RefPtr<dtDAL::ActorProperty> >& pFillVector);
 
          /**
           * Calculates how long the associated actor's position and rotation should be smoothed into a updated value.
@@ -536,8 +538,8 @@ namespace dtGame
          // -----------------------------------------------------------------------
          //  Unimplemented constructors and operators
          // -----------------------------------------------------------------------
-         DeadReckoningHelper(const DeadReckoningHelper&) {}
-         DeadReckoningHelper& operator=(const DeadReckoningHelper&) {return *this;}
+         //DeadReckoningHelper(const DeadReckoningHelper&) {}
+         //DeadReckoningHelper& operator=(const DeadReckoningHelper&) {return *this;}
    };
 
 }

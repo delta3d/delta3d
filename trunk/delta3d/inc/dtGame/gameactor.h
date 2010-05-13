@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * William E. Johnson II
+ * William E. Johnson II, David Guthrie, Curtiss Murphy
  */
 
 #ifndef DELTA_GAMEACTOR
@@ -70,6 +70,13 @@ namespace dtGame
        * @return the GameActorProxy for this game actor.
        */
       const GameActorProxy& GetGameActorProxy() const;
+
+      /** 
+        * Override this to add your own Actor Components. 
+        * Note - actor components do the BuildPropertyMap during the AddComponent method, so set
+        * your default values after you that. 
+        */
+      virtual void BuildActorComponents();
 
       /**
        * Returns if the actor is remote
