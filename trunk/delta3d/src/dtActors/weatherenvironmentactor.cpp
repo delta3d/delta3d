@@ -22,7 +22,6 @@
 #include <dtDAL/exceptionenum.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtUtil/datetime.h>
-#include <dtDAL/functor.h>
 #include <sstream>
 #include <dtCore/environment.h>
 
@@ -42,58 +41,60 @@ namespace dtActors
 
    void WeatherEnvironmentActorProxy::BuildPropertyMap()
    {
+      using namespace dtDAL;
+
       WeatherEnvironmentActor *env = static_cast<WeatherEnvironmentActor*>(GetActor());
 
       dtGame::GameActorProxy::BuildPropertyMap();
 
-      AddProperty(new dtDAL::BooleanActorProperty("Enable Fog", "Enable Fog",
-         dtDAL::MakeFunctor(*env, &WeatherEnvironmentActor::EnableFog),
-         dtDAL::MakeFunctorRet(*env, &WeatherEnvironmentActor::IsFogEnabled),
+      AddProperty(new BooleanActorProperty("Enable Fog", "Enable Fog",
+         BooleanActorProperty::SetFuncType(env, &WeatherEnvironmentActor::EnableFog),
+         BooleanActorProperty::GetFuncType(env, &WeatherEnvironmentActor::IsFogEnabled),
          "Toggles fog on and off"));
 
-      AddProperty(new dtDAL::BooleanActorProperty("Enable Cloud Plane", "Enable Cloud Plane",
-         dtDAL::MakeFunctor(*env, &WeatherEnvironmentActor::EnableCloudPlane),
-         dtDAL::MakeFunctorRet(*env, &WeatherEnvironmentActor::IsCloudPlaneEnabled),
+      AddProperty(new BooleanActorProperty("Enable Cloud Plane", "Enable Cloud Plane",
+         BooleanActorProperty::SetFuncType(env, &WeatherEnvironmentActor::EnableCloudPlane),
+         BooleanActorProperty::GetFuncType(env, &WeatherEnvironmentActor::IsCloudPlaneEnabled),
          "Toggles cloud planes on and off"));
 
-      AddProperty(new dtDAL::EnumActorProperty<WeatherEnvironmentActor::VisibilityTypeEnum>("Visibility", "Visibility",
-         dtDAL::MakeFunctor(*env, &WeatherEnvironmentActor::SetWeatherVisibility),
-         dtDAL::MakeFunctorRet(*env, &WeatherEnvironmentActor::GetWeatherVisibility),
+      AddProperty(new EnumActorProperty<WeatherEnvironmentActor::VisibilityTypeEnum>("Visibility", "Visibility",
+         EnumActorProperty<WeatherEnvironmentActor::VisibilityTypeEnum>::SetFuncType(env, &WeatherEnvironmentActor::SetWeatherVisibility),
+         EnumActorProperty<WeatherEnvironmentActor::VisibilityTypeEnum>::GetFuncType(env, &WeatherEnvironmentActor::GetWeatherVisibility),
          "Sets the visibility of the scene"));
 
-      AddProperty(new dtDAL::EnumActorProperty<WeatherEnvironmentActor::WeatherThemeEnum>("Weather Theme", "Weather Theme",
-         dtDAL::MakeFunctor(*env, &WeatherEnvironmentActor::SetWeatherTheme),
-         dtDAL::MakeFunctorRet(*env, &WeatherEnvironmentActor::GetWeatherTheme),
+      AddProperty(new EnumActorProperty<WeatherEnvironmentActor::WeatherThemeEnum>("Weather Theme", "Weather Theme",
+         EnumActorProperty<WeatherEnvironmentActor::WeatherThemeEnum>::SetFuncType(env, &WeatherEnvironmentActor::SetWeatherTheme),
+         EnumActorProperty<WeatherEnvironmentActor::WeatherThemeEnum>::GetFuncType(env, &WeatherEnvironmentActor::GetWeatherTheme),
          "Sets the weather theme of the scene"));
 
-      AddProperty(new dtDAL::EnumActorProperty<WeatherEnvironmentActor::WindTypeEnum>("Wind Type", "Wind Type",
-         dtDAL::MakeFunctor(*env, &WeatherEnvironmentActor::SetWindType),
-         dtDAL::MakeFunctorRet(*env, &WeatherEnvironmentActor::GetWindType),
+      AddProperty(new EnumActorProperty<WeatherEnvironmentActor::WindTypeEnum>("Wind Type", "Wind Type",
+         EnumActorProperty<WeatherEnvironmentActor::WindTypeEnum>::SetFuncType(env, &WeatherEnvironmentActor::SetWindType),
+         EnumActorProperty<WeatherEnvironmentActor::WindTypeEnum>::GetFuncType(env, &WeatherEnvironmentActor::GetWindType),
          "Sets the type of wind in the scene"));
 
-      AddProperty(new dtDAL::EnumActorProperty<WeatherEnvironmentActor::TimePeriodEnum>("Time Period", "Time Period",
-         dtDAL::MakeFunctor(*env, &WeatherEnvironmentActor::SetTimePeriod),
-         dtDAL::MakeFunctorRet(*env, &WeatherEnvironmentActor::GetTimePeriod),
+      AddProperty(new EnumActorProperty<WeatherEnvironmentActor::TimePeriodEnum>("Time Period", "Time Period",
+         EnumActorProperty<WeatherEnvironmentActor::TimePeriodEnum>::SetFuncType(env, &WeatherEnvironmentActor::SetTimePeriod),
+         EnumActorProperty<WeatherEnvironmentActor::TimePeriodEnum>::GetFuncType(env, &WeatherEnvironmentActor::GetTimePeriod),
          "Sets the time period in the scene"));
 
-      AddProperty(new dtDAL::EnumActorProperty<WeatherEnvironmentActor::SeasonEnum>("Season", "Season",
-         dtDAL::MakeFunctor(*env, &WeatherEnvironmentActor::SetSeason),
-         dtDAL::MakeFunctorRet(*env, &WeatherEnvironmentActor::GetSeason),
+      AddProperty(new EnumActorProperty<WeatherEnvironmentActor::SeasonEnum>("Season", "Season",
+         EnumActorProperty<WeatherEnvironmentActor::SeasonEnum>::SetFuncType(env, &WeatherEnvironmentActor::SetSeason),
+         EnumActorProperty<WeatherEnvironmentActor::SeasonEnum>::GetFuncType(env, &WeatherEnvironmentActor::GetSeason),
          "Sets the season in the scene"));
 
-      AddProperty(new dtDAL::StringActorProperty("Time and Date", "Time and Date",
-         dtDAL::MakeFunctor(*env, &WeatherEnvironmentActor::SetTimeAndDateString),
-         dtDAL::MakeFunctorRet(*env, &WeatherEnvironmentActor::GetTimeAndDateString),
+      AddProperty(new StringActorProperty("Time and Date", "Time and Date",
+         StringActorProperty::SetFuncType(env, &WeatherEnvironmentActor::SetTimeAndDateString),
+         StringActorProperty::GetFuncType(env, &WeatherEnvironmentActor::GetTimeAndDateString),
          "Sets the time and date of the application. This string must be in the following UTC format: yyyy-mm-ddThh:mm:ss"));
 
-      AddProperty(new dtDAL::ColorRgbaActorProperty("Sky Color", "Sky Color",
-         dtDAL::MakeFunctor(*env, &WeatherEnvironmentActor::SetSkyColor),
-         dtDAL::MakeFunctorRet(*env, &WeatherEnvironmentActor::GetSkyColor),
+      AddProperty(new ColorRgbaActorProperty("Sky Color", "Sky Color",
+         dtDAL::ColorRgbaActorProperty::SetFuncType(env, &WeatherEnvironmentActor::SetSkyColor),
+         dtDAL::ColorRgbaActorProperty::GetFuncType(env, &WeatherEnvironmentActor::GetSkyColor),
          "Sets the sky color of this environment"));
 
-      AddProperty(new dtDAL::FloatActorProperty("Rate of Change", "Rate of change",
-         dtDAL::MakeFunctor(*env, &WeatherEnvironmentActor::SetRateOfChange),
-         dtDAL::MakeFunctorRet(*env, &WeatherEnvironmentActor::GetRateOfChange),
+      AddProperty(new FloatActorProperty("Rate of Change", "Rate of change",
+         FloatActorProperty::SetFuncType(env, &WeatherEnvironmentActor::SetRateOfChange),
+         FloatActorProperty::GetFuncType(env, &WeatherEnvironmentActor::GetRateOfChange),
          "Sets the rate of change of this environment. This effects how fast clouds move, etc."));
    }
 
