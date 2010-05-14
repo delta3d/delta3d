@@ -235,7 +235,10 @@ void TestAnim::OnShutdown(dtGame::GameApplication& app)
    dtGame::GameManager* gm = app.GetGameManager();
 
    gm->RemoveComponent(*mAnimationComponent);
-   gm->RemoveComponent(*mInputComponent);
+   if (mInputComponent.valid())
+   {
+      gm->RemoveComponent(*mInputComponent);
+   }
    gm->RemoveComponent(*mMessageProcComponent);
 
    dtGame::GameEntryPoint::OnShutdown(app);
