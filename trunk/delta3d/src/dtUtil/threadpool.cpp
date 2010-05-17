@@ -22,6 +22,7 @@
  * David Guthrie
  */
 
+#include <prefix/dtutilprefix.h>
 #include <dtUtil/threadpool.h>
 
 #include <OpenThreads/Thread>
