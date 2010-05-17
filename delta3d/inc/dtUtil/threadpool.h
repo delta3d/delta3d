@@ -86,7 +86,7 @@ namespace dtUtil
     * so that things like IO specific tasks will still run in the background and not block the main thread.
     * </p>
     */
-   class ThreadPool
+   class DT_UTIL_EXPORT ThreadPool
    {
    public:
 
