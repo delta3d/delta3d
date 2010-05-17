@@ -69,39 +69,39 @@ namespace dtDAL
       virtual ~BaseException() {};
    };
 
-   class DT_DAL_EXPORT ProjectInvalidContextException : public dtUtil::Exception
+   class DT_DAL_EXPORT ProjectException : public dtUtil::Exception
+   {
+   public:
+      ProjectException(const std::string& message, const std::string& filename, unsigned int linenum);
+      virtual ~ProjectException() {};
+   };
+
+   class DT_DAL_EXPORT ProjectInvalidContextException : public ProjectException
    {
    public:
       ProjectInvalidContextException(const std::string& message, const std::string& filename, unsigned int linenum);
       virtual ~ProjectInvalidContextException() {};
    };
 
-   class DT_DAL_EXPORT ProjectReadOnlyException : public dtUtil::Exception
+   class DT_DAL_EXPORT ProjectReadOnlyException : public ProjectException
    {
    public:
       ProjectReadOnlyException(const std::string& message, const std::string& filename, unsigned int linenum);
       virtual ~ProjectReadOnlyException() {};
    };
 
-   class DT_DAL_EXPORT ProjectFileNotFoundException : public dtUtil::Exception
+   class DT_DAL_EXPORT ProjectFileNotFoundException : public ProjectException
    {
    public:
       ProjectFileNotFoundException(const std::string& message, const std::string& filename, unsigned int linenum);
       virtual ~ProjectFileNotFoundException() {};
    };
 
-   class DT_DAL_EXPORT ProjectResourceErrorException : public dtUtil::Exception
+   class DT_DAL_EXPORT ProjectResourceErrorException : public ProjectException
    {
    public:
       ProjectResourceErrorException(const std::string& message, const std::string& filename, unsigned int linenum);
       virtual ~ProjectResourceErrorException() {};
-   };
-
-   class DT_DAL_EXPORT ProjectException : public dtUtil::Exception
-   {
-   public:
-      ProjectException(const std::string& message, const std::string& filename, unsigned int linenum);
-      virtual ~ProjectException() {};
    };
 
    class DT_DAL_EXPORT MapParsingException : public dtUtil::Exception
