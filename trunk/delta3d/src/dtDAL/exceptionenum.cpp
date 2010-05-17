@@ -38,38 +38,38 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtDAL::ProjectInvalidContextException::ProjectInvalidContextException(const std::string& message, const std::string& filename, unsigned int linenum)
+   dtDAL::ProjectException::ProjectException(const std::string& message, const std::string& filename, unsigned int linenum)
       : dtUtil::Exception(message, filename, linenum)
+   {
+      mType = &dtDAL::ExceptionEnum::ProjectException;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtDAL::ProjectInvalidContextException::ProjectInvalidContextException(const std::string& message, const std::string& filename, unsigned int linenum)
+      : ProjectException(message, filename, linenum)
    {
       mType = &dtDAL::ExceptionEnum::ProjectInvalidContext;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    dtDAL::ProjectReadOnlyException::ProjectReadOnlyException(const std::string& message, const std::string& filename, unsigned int linenum)
-      : dtUtil::Exception(message, filename, linenum)
+      : ProjectException(message, filename, linenum)
    {
       mType = &dtDAL::ExceptionEnum::ProjectReadOnly;
    }
     
    ////////////////////////////////////////////////////////////////////////////////
    dtDAL::ProjectFileNotFoundException::ProjectFileNotFoundException(const std::string& message, const std::string& filename, unsigned int linenum)
-      : dtUtil::Exception(message, filename, linenum)
+      : ProjectException(message, filename, linenum)
    {
       mType = &dtDAL::ExceptionEnum::ProjectFileNotFound;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    dtDAL::ProjectResourceErrorException::ProjectResourceErrorException(const std::string& message, const std::string& filename, unsigned int linenum)
-      : dtUtil::Exception(message, filename, linenum)
+      : ProjectException(message, filename, linenum)
    {
       mType = &dtDAL::ExceptionEnum::ProjectResourceError;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   dtDAL::ProjectException::ProjectException(const std::string& message, const std::string& filename, unsigned int linenum)
-      : dtUtil::Exception(message, filename, linenum)
-   {
-      mType = &dtDAL::ExceptionEnum::ProjectException;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
