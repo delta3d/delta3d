@@ -19,6 +19,24 @@
    };\
       \
 
+/** 
+  * Macro that will declare a private data member and declare the accessors for 
+  * it.  Note, this only creates the method declarations, not the implementations.
+  * Example:
+  * @code 
+  * DECLARE_PROPERTY(bool, Lighting)
+  * 
+  * //equates to: 
+  * private:
+  *    bool mLighting
+  * public:
+  *    void SetLighting(bool value);
+  *    bool GetLighting() const;
+  * @endcode
+  * @param PropertyType the data type of the class member (e.g., bool, int)
+  * @param PropertyName The name of the class member.  Also used for the accessors. 
+  *         (e.g.: "Speed" creates "mSpeed", GetSpeed(), and SetSpeed())
+  */
 #define DECLARE_PROPERTY(PropertyType, PropertyName) \
    private:\
       dtUtil::TypeTraits<PropertyType>::value_type  m ## PropertyName; \
