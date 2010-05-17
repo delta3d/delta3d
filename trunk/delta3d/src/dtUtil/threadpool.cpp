@@ -30,7 +30,7 @@
 #include <OpenThreads/Mutex>
 #include <list>
 #include <set>
-
+#include <algorithm>
 
 namespace dtUtil
 {
