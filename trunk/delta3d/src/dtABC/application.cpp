@@ -42,6 +42,7 @@
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/librarysharingmanager.h>
 #include <dtUtil/mathdefines.h>
+#include <dtUtil/threadpool.h>
 #include <dtCore/mouse.h>
 
 #include <cassert>
@@ -62,6 +63,7 @@ IMPLEMENT_MANAGEMENT_LAYER(Application)
 const std::string Application::SIM_FRAME_RATE("System.SimFrameRate");
 const std::string Application::MAX_TIME_BETWEEN_DRAWS("System.MaxTimeBetweenDraws");
 const std::string Application::USE_FIXED_TIME_STEP("System.UseFixedTimeStep");
+const std::string Application::NUM_WORKER_THREADS("ThreadPool.NumWorkerThreads");
 
 
 /// A utility to apply the parsed data to the Application instance
@@ -130,6 +132,7 @@ void Application::Config()
 #endif
 
    ReadSystemProperties();
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -167,6 +170,18 @@ void Application::ReadSystemProperties()
    {
       GetView()->GetDatabasePager()->SetConfiguration(this);
    }
+
+   value = GetConfigPropertyValue(NUM_WORKER_THREADS);
+   if (value.empty())
+   {
+      dtUtil::ThreadPool::Init();
+   }
+   else if (value != "OFF" && value != "off")
+   {
+      int intVal = dtUtil::ToType<int>(value);
+      dtUtil::ThreadPool::Init(intVal);
+   }
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////

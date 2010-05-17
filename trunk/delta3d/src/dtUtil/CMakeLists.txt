@@ -32,6 +32,7 @@ SET( LIB_SOURCES
     ${SOURCE_PATH}/stateattributecollector.cpp
     ${SOURCE_PATH}/stringutils.cpp
     ${SOURCE_PATH}/tangentspacevisitor.cpp
+    ${SOURCE_PATH}/threadpool.cpp
     ${SOURCE_PATH}/version.cpp
     ${SOURCE_PATH}/xerceserrorhandler.cpp
     ${SOURCE_PATH}/xercesparser.cpp
@@ -95,6 +96,7 @@ SET( LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/stringutils.h
     ${HEADER_PATH}/tangentspacevisitor.h
     ${HEADER_PATH}/templateutility.h
+    ${HEADER_PATH}/threadpool.h
     ${HEADER_PATH}/transformation.h
     ${HEADER_PATH}/tree.h
     ${HEADER_PATH}/typetraits.h
