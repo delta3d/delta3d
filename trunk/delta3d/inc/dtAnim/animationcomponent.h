@@ -32,6 +32,7 @@
 #include <dtGame/gmcomponent.h>
 
 #include <dtAnim/animationhelper.h>
+#include <dtUtil/threadpool.h>
 
 
 namespace dtGame
@@ -48,8 +49,25 @@ namespace dtAnim
 class DT_ANIM_EXPORT AnimationComponent: public dtGame::GMComponent
 {
 public:
+
+   class AnimCompUpdateTask: public dtUtil::ThreadPoolTask
+   {
+   public:
+      AnimCompUpdateTask(dtAnim::AnimationHelper& animActorComp);
+      virtual void operator()();
+      float mUpdateDT;
+   private:
+      dtCore::RefPtr<dtAnim::AnimationHelper> mAnimActorComp;
+   };
+
+   struct AnimCompData
+   {
+      dtCore::RefPtr<dtAnim::AnimationHelper> mAnimActorComp;
+      dtCore::RefPtr<AnimCompUpdateTask> mUpdateTask;
+   };
+
    typedef dtGame::GMComponent BaseClass;
-   typedef std::map<dtCore::UniqueId, dtCore::RefPtr<dtAnim::AnimationHelper> > AnimCompMap;
+   typedef std::map<dtCore::UniqueId, AnimCompData > AnimCompMap;
    typedef AnimCompMap::allocator_type::value_type AnimCompMapping;
    typedef AnimCompMap::iterator AnimCompIter;
 
