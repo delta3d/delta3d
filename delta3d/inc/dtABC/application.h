@@ -111,6 +111,17 @@ namespace dtABC
        */
       static const std::string USE_FIXED_TIME_STEP;
 
+      /**
+       * Configuration property
+       * <br>
+       * Set to the number of worker threads requested for the global ThreadPool service in dtUtil
+       * <br>
+       *
+       * The default is to just call the thread pool init with default settings.
+       * @see dtUtil::ThreadPool
+       */
+      static const std::string NUM_WORKER_THREADS;
+
       Application(const std::string& configFilename = "", dtCore::DeltaWin* win = NULL);
 
       ///Start the Application
