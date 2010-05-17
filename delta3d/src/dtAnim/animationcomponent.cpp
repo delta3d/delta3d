@@ -30,6 +30,23 @@
 namespace dtAnim
 {
 
+
+/////////////////////////////////////////////////////////////
+AnimationComponent::AnimCompUpdateTask::AnimCompUpdateTask(dtAnim::AnimationHelper& animActorComp)
+: mUpdateDT(0.0)
+, mAnimActorComp(&animActorComp)
+{
+}
+
+/////////////////////////////////////////////////////////////
+void AnimationComponent::AnimCompUpdateTask::operator()()
+{
+   mAnimActorComp->Update(mUpdateDT);
+   //printf("Running animation update %p %p with dt %f\n", this, mAnimActorComp.get(), mUpdateDT);
+}
+
+
+/////////////////////////////////////////////////////////////
 const std::string AnimationComponent::DEFAULT_NAME("Animation Component");
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -82,9 +99,13 @@ void AnimationComponent::TickLocal(float dt)
 
    for (AnimCompIter iter = mRegisteredActors.begin(); iter != end; ++iter)
    {
-      std::pair<const dtCore::UniqueId, dtCore::RefPtr<dtAnim::AnimationHelper> >& current = *iter;
-      current.second->Update(dt);
+      AnimCompMapping& current = *iter;
+      AnimCompUpdateTask* updateTask = current.second.mUpdateTask;
+      updateTask->mUpdateDT = dt;
+      //(*updateTask)();
+      dtUtil::ThreadPool::AddTask(*updateTask);
    }
+   dtUtil::ThreadPool::ExecuteTasks();
 
    GroundClamp();
 }
@@ -98,14 +119,18 @@ const dtAnim::AnimationHelper* AnimationComponent::GetHelperForProxy(dtGame::Gam
       return NULL;
    }
 
-   return (*iter).second.get();
+   return (*iter).second.mAnimActorComp.get();
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 void AnimationComponent::RegisterActor(dtGame::GameActorProxy& proxy, dtAnim::AnimationHelper& helper)
 {
+   AnimCompData data;
+   data.mAnimActorComp = &helper;
+   data.mUpdateTask = new AnimCompUpdateTask(helper);
+   data.mUpdateTask->SetName(proxy.GetName());
    //if the insert fails, log a message.
-   if (!mRegisteredActors.insert(AnimCompMapping(proxy.GetId(), &helper)).second)
+   if (!mRegisteredActors.insert(AnimCompMapping(proxy.GetId(), data)).second)
    {
       LOG_ERROR("GameActor already registered with Animation Component.");
    }

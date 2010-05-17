@@ -34,9 +34,8 @@
 #include <gnelib.h>
 #include <dtGame/gmcomponent.h>
 #include <dtUtil/enumeration.h>
-#include <OpenThreads/ReentrantMutex>
+#include <OpenThreads/Mutex>
 
-#include <osg/OperationThread>
 #include <deque>
 
 // Forward declaration
@@ -374,8 +373,6 @@ namespace dtNetGM
       // local buffer to store messages received from the network.
       MessageBufferType mMessageBuffer;
       bool mMapChangeInProcess;
-
-      dtCore::RefPtr<osg::OperationThread> mOperationThread;
    };
 }
 #endif // DELTA_NETWORKCOMPONENT

@@ -28,6 +28,7 @@
 #include <dtGame/messagefactory.h>
 #include <dtGame/basemessages.h>
 #include <dtUtil/log.h>
+#include <dtUtil/threadpool.h>
 #include <dtCore/system.h>
 
 #include <OpenThreads/ScopedLock>
@@ -504,10 +505,10 @@ IMPLEMENT_ENUM(MessageActionCode);
       }
    }
 
-   class DispatchOperation: public osg::Operation
+   class DispatchTask: public dtUtil::ThreadPoolTask
    {
    public:
-      virtual void operator () (osg::Object*)
+      virtual void operator () ()
       {
          mComponent->SendNetworkMessage(*mMessage, *mDestination);
       }
@@ -520,18 +521,11 @@ IMPLEMENT_ENUM(MessageActionCode);
    ////////////////////////////////////////////////////////////////////////////////
    void NetworkComponent::SendNetworkMessageOperation(const dtGame::Message& message, const DestinationType& destinationType)
    {
-      if (!mOperationThread.valid())
-      {
-         mOperationThread = new osg::OperationThread;
-         mOperationThread->setOperationQueue(new osg::OperationQueue);
-         mOperationThread->start();
-      }
-
-      dtCore::RefPtr<DispatchOperation> dispatchOp = new DispatchOperation;
-      dispatchOp->mComponent = this;
-      dispatchOp->mMessage = &message;
-      dispatchOp->mDestination = &destinationType;
-      mOperationThread->add(dispatchOp.get());
+      dtCore::RefPtr<DispatchTask> dispatchTask = new DispatchTask;
+      dispatchTask->mComponent = this;
+      dispatchTask->mMessage = &message;
+      dispatchTask->mDestination = &destinationType;
+      dtUtil::ThreadPool::AddTask(*dispatchTask, dtUtil::ThreadPool::BACKGROUND);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
