@@ -39,13 +39,94 @@ namespace dtGame
    }
 
    ////////////////////////////////////////////////////////////////////
+   bool InputComponentMouseListener::HandleButtonPressed(const dtCore::Mouse* mouse, dtCore::Mouse::MouseButton button)
+   {
+      if (!mInputComp.valid())
+         return false;
+
+      return mInputComp->HandleButtonPressed(mouse, button);
+   }
+
+   ////////////////////////////////////////////////////////////////////
+   bool InputComponentMouseListener::HandleButtonReleased(const dtCore::Mouse* mouse, dtCore::Mouse::MouseButton button)
+   {
+      if (!mInputComp.valid())
+         return false;
+
+      return mInputComp->HandleButtonReleased(mouse, button);
+   }
+
+   ////////////////////////////////////////////////////////////////////
+   bool InputComponentMouseListener::HandleButtonClicked(const dtCore::Mouse* mouse, dtCore::Mouse::MouseButton button, int clickCount)
+   {
+      if (!mInputComp.valid())
+         return false;
+
+      return mInputComp->HandleButtonClicked(mouse, button, clickCount);
+   }
+
+   ////////////////////////////////////////////////////////////////////
+   bool InputComponentMouseListener::HandleMouseMoved(const dtCore::Mouse* mouse, float x, float y)
+   {
+      if (!mInputComp.valid())
+         return false;
+
+      return mInputComp->HandleMouseMoved(mouse, x, y);
+   }
+
+   ////////////////////////////////////////////////////////////////////
+   bool InputComponentMouseListener::HandleMouseDragged(const dtCore::Mouse* mouse, float x, float y)
+   {
+      if (!mInputComp.valid())
+         return false;
+
+      return mInputComp->HandleMouseDragged(mouse, x, y);
+   }
+
+   ////////////////////////////////////////////////////////////////////
+   bool InputComponentMouseListener::HandleMouseScrolled(const dtCore::Mouse* mouse, int delta)
+   {
+      if (!mInputComp.valid())
+         return false;
+
+      return mInputComp->HandleMouseScrolled(mouse, delta);
+   }
+
+   ////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////
 
    ////////////////////////////////////////////////////////////////////
-   InputComponentKeyboardListener::InputComponentKeyboardListener(dtGame::BaseInputComponent &inputComp) : 
+   InputComponentKeyboardListener::InputComponentKeyboardListener(dtGame::BaseInputComponent& inputComp) :
       mInputComp(&inputComp)
    {
+   }
+
+   ////////////////////////////////////////////////////////////////////
+   bool InputComponentKeyboardListener::HandleKeyPressed(const dtCore::Keyboard* keyboard, int key)
+   {
+      if (!mInputComp.valid())
+         return false;
+
+      return mInputComp->HandleKeyPressed(keyboard, key);
+   }
+
+   ////////////////////////////////////////////////////////////////////
+   bool InputComponentKeyboardListener::HandleKeyReleased(const dtCore::Keyboard* keyboard, int key)
+   {
+      if (!mInputComp.valid())
+         return false;
+
+      return mInputComp->HandleKeyReleased(keyboard, key);
+   }
+
+   ////////////////////////////////////////////////////////////////////
+   bool InputComponentKeyboardListener::HandleKeyTyped(const dtCore::Keyboard* keyboard, int key )
+   {
+      if (!mInputComp.valid())
+         return false;
+
+      return false;
    }
 
    ////////////////////////////////////////////////////////////////////
@@ -64,7 +145,7 @@ namespace dtGame
    void BaseInputComponent::OnAddedToGM()
    { 
       //enable the keyboard input.
-      dtCore::View * view = GetGameManager()->GetApplication().GetView();
+      dtCore::View* view = GetGameManager()->GetApplication().GetView();
       view->GetMouse()->AddMouseListener(mMouseListener.get());
       view->GetKeyboard()->AddKeyboardListener(mKeyboardListener.get());
    }
@@ -72,7 +153,7 @@ namespace dtGame
    ////////////////////////////////////////////////////////////////////
    void BaseInputComponent::OnRemovedFromGM()
    {
-      dtCore::View * view = GetGameManager()->GetApplication().GetView();
+      dtCore::View* view = GetGameManager()->GetApplication().GetView();
       view->GetMouse()->RemoveMouseListener(mMouseListener.get());
       view->GetKeyboard()->RemoveKeyboardListener(mKeyboardListener.get());
    }
