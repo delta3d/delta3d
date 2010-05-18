@@ -32,17 +32,18 @@ namespace dtAnim
 
 
 /////////////////////////////////////////////////////////////
-AnimationComponent::AnimCompUpdateTask::AnimCompUpdateTask(dtAnim::AnimationHelper& animActorComp)
+AnimationComponent::AnimCompUpdateTask::AnimCompUpdateTask()
 : mUpdateDT(0.0)
-, mAnimActorComp(&animActorComp)
 {
 }
 
 /////////////////////////////////////////////////////////////
 void AnimationComponent::AnimCompUpdateTask::operator()()
 {
-   mAnimActorComp->Update(mUpdateDT);
-   //printf("Running animation update %p %p with dt %f\n", this, mAnimActorComp.get(), mUpdateDT);
+   for (unsigned i = 0; i < mAnimActorComps.size(); ++i)
+   {
+      mAnimActorComps[i]->Update(mUpdateDT);
+   }
 }
 
 
@@ -75,12 +76,9 @@ void AnimationComponent::ProcessMessage(const dtGame::Message& message)
    else if (message.GetMessageType() == dtGame::MessageType::INFO_ACTOR_DELETED)
    {
       // TODO Write unit tests for the delete message.
-      const AnimCompMap::iterator iter = mRegisteredActors.find(message.GetAboutActorId());
-      if (iter != mRegisteredActors.end())
-      {
-         mRegisteredActors.erase(iter);
-      }
-      else if (GetTerrainActor() != NULL && GetTerrainActor()->GetUniqueId() == message.GetAboutActorId())
+      UnregisterActor(message.GetAboutActorId());
+
+      if (GetTerrainActor() != NULL && GetTerrainActor()->GetUniqueId() == message.GetAboutActorId())
       {
          SetTerrainActor(NULL);
       }
@@ -93,21 +91,51 @@ void AnimationComponent::ProcessMessage(const dtGame::Message& message)
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-void AnimationComponent::TickLocal(float dt)
+void AnimationComponent::BuildThreadWorkerTasks()
 {
+   unsigned threads = dtUtil::ThreadPool::GetNumImmediateWorkerThreads();
+
+
+   for (unsigned i = 0; i < threads; ++i)
+   {
+      mThreadTasks.push_back(new AnimCompUpdateTask);
+      mThreadTasks.back()->mAnimActorComps.reserve(mRegisteredActors.size() + 1);
+   }
+
+   AnimCompIter iter = mRegisteredActors.begin();
    AnimCompIter end = mRegisteredActors.end();
 
-   for (AnimCompIter iter = mRegisteredActors.begin(); iter != end; ++iter)
+   while (iter != end)
    {
-      AnimCompMapping& current = *iter;
-      AnimCompUpdateTask* updateTask = current.second.mUpdateTask;
-      updateTask->mUpdateDT = dt;
-      //(*updateTask)();
-      dtUtil::ThreadPool::AddTask(*updateTask);
+      for (unsigned i = 0; i < threads && iter != end; ++i)
+      {
+         AnimCompMapping& current = *iter;
+         mThreadTasks[i]->mAnimActorComps.push_back(current.second.mAnimActorComp);
+         ++iter;
+      }
    }
-   dtUtil::ThreadPool::ExecuteTasks();
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+void AnimationComponent::TickLocal(float dt)
+{
+   if (mThreadTasks.empty())
+   {
+      BuildThreadWorkerTasks();
+   }
+
+   for (unsigned i = 0; i < mThreadTasks.size(); ++i)
+   {
+      if (!mThreadTasks[i]->mAnimActorComps.empty())
+      {
+         mThreadTasks[i]->mUpdateDT = dt;
+         dtUtil::ThreadPool::AddTask(*mThreadTasks[i]);
+      }
+   }
 
    GroundClamp();
+
+   dtUtil::ThreadPool::ExecuteTasks();
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -127,8 +155,6 @@ void AnimationComponent::RegisterActor(dtGame::GameActorProxy& proxy, dtAnim::An
 {
    AnimCompData data;
    data.mAnimActorComp = &helper;
-   data.mUpdateTask = new AnimCompUpdateTask(helper);
-   data.mUpdateTask->SetName(proxy.GetName());
    //if the insert fails, log a message.
    if (!mRegisteredActors.insert(AnimCompMapping(proxy.GetId(), data)).second)
    {
@@ -139,10 +165,17 @@ void AnimationComponent::RegisterActor(dtGame::GameActorProxy& proxy, dtAnim::An
 /////////////////////////////////////////////////////////////////////////////////
 void AnimationComponent::UnregisterActor(dtGame::GameActorProxy& proxy)
 {
-   AnimCompIter iter = mRegisteredActors.find(proxy.GetId());
+   UnregisterActor(proxy.GetId());
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+void AnimationComponent::UnregisterActor(const dtCore::UniqueId& actorId)
+{
+   AnimCompIter iter = mRegisteredActors.find(actorId);
    if (iter != mRegisteredActors.end())
    {
       mRegisteredActors.erase(iter);
+      mThreadTasks.clear();
    }
 }
 

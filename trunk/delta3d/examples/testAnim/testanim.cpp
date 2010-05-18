@@ -158,35 +158,33 @@ void TestAnim::OnStartup(dtGame::GameApplication& app)
    gameManager.AddComponent(*mMessageProcComponent,dtGame::GameManager::ComponentPriority::HIGHEST);
    gameManager.AddComponent(*mAnimationComponent, dtGame::GameManager::ComponentPriority::NORMAL);
 
-   if (!mPerformanceTest)
+   mInputComponent = new TestAnimInput("TestAnimInput");
+   gameManager.AddComponent(*mInputComponent, dtGame::GameManager::ComponentPriority::NORMAL);
+
+   ProxyContainer::iterator iter = proxies.begin();
+   ProxyContainer::iterator endIter = proxies.end();
+
+   for (;iter != endIter; ++iter)
    {
-      mInputComponent = new TestAnimInput("TestAnimInput");
-      gameManager.AddComponent(*mInputComponent, dtGame::GameManager::ComponentPriority::NORMAL);
+      dtAnim::AnimationGameActorProxy* gameProxy = dynamic_cast<dtAnim::AnimationGameActorProxy*>(*iter);
 
-      ProxyContainer::iterator iter = proxies.begin();
-      ProxyContainer::iterator endIter = proxies.end();
-
-      for (;iter != endIter; ++iter)
+      if (gameProxy != NULL)
       {
-         dtAnim::AnimationGameActorProxy* gameProxy = dynamic_cast<dtAnim::AnimationGameActorProxy*>(*iter);
+         static bool first = true;
 
-         if (gameProxy != NULL)
+         //the first one will be the player
+         InitializeAnimationActor(gameProxy, mAnimationComponent, true, app.GetCamera());
+
+         if (first)
          {
-            static bool first = true;
-
-            //the first one will be the player
-            InitializeAnimationActor(gameProxy, mAnimationComponent, true, app.GetCamera());          
-
-            if (first)
-            {
-               mInputComponent->SetAnimationHelper(*mAnimationHelper);
-               mInputComponent->SetPlayerActor(*gameProxy);
-               first = false;
-            }
+            mInputComponent->SetAnimationHelper(*mAnimationHelper);
+            mInputComponent->SetPlayerActor(*gameProxy);
+            first = false;
          }
       }
    }
-   else
+
+   if (mPerformanceTest)
    {
       osg::Vec3 startPos(0.0f, 0.0f, 10.0f);
 
@@ -205,6 +203,7 @@ void TestAnim::OnStartup(dtGame::GameApplication& app)
                InitializeAnimationActor(proxy.get(), mAnimationComponent, false, app.GetCamera());
 
                proxy->SetTranslation(startPos);
+
             }
          }
          startPos[1] = 0.0f;
