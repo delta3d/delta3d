@@ -26,6 +26,7 @@
 #include <dtGame/export.h>
 #include <dtCore/keyboard.h>
 #include <dtCore/mouse.h>
+#include <dtCore/observerptr.h>
 
 namespace dtGame
 {
@@ -242,43 +243,24 @@ namespace dtGame
       public:
 
          /// Constructor
-         InputComponentMouseListener(dtGame::BaseInputComponent &inputComp);
+         InputComponentMouseListener(dtGame::BaseInputComponent& inputComp);
 
-         // mouse event - passes to the BaseInputComponent
-         virtual bool HandleButtonPressed(const dtCore::Mouse* mouse, dtCore::Mouse::MouseButton button)
-         {
-            return mInputComp->HandleButtonPressed(mouse, button);
-         }
+         /// mouse event - passes to the BaseInputComponent
+         virtual bool HandleButtonPressed(const dtCore::Mouse* mouse, dtCore::Mouse::MouseButton button);
 
-         // mouse event - passes to the BaseInputComponent
-         virtual bool HandleButtonReleased(const dtCore::Mouse* mouse, dtCore::Mouse::MouseButton button)
-         {
-            return mInputComp->HandleButtonReleased(mouse, button);
-         }
+         /// mouse event - passes to the BaseInputComponent
+         virtual bool HandleButtonReleased(const dtCore::Mouse* mouse, dtCore::Mouse::MouseButton button);
+         /// mouse event - passes to the BaseInputComponent
+         virtual bool HandleButtonClicked(const dtCore::Mouse* mouse, dtCore::Mouse::MouseButton button, int clickCount);
 
-         // mouse event - passes to the BaseInputComponent
-         virtual bool HandleButtonClicked(const dtCore::Mouse* mouse, dtCore::Mouse::MouseButton button, int clickCount)
-         {
-            return mInputComp->HandleButtonClicked(mouse, button, clickCount);
-         }
+         /// mouse event - passes to the BaseInputComponent
+         virtual bool HandleMouseMoved(const dtCore::Mouse* mouse, float x, float y);
 
-         // mouse event - passes to the BaseInputComponent
-         virtual bool HandleMouseMoved(const dtCore::Mouse* mouse, float x, float y)
-         {
-            return mInputComp->HandleMouseMoved(mouse, x, y);
-         }
+         /// mouse event - passes to the BaseInputComponent
+         virtual bool HandleMouseDragged(const dtCore::Mouse* mouse, float x, float y);
 
-         // mouse event - passes to the BaseInputComponent
-         virtual bool HandleMouseDragged(const dtCore::Mouse* mouse, float x, float y)
-         {
-            return mInputComp->HandleMouseDragged(mouse, x, y);
-         }
-
-         // mouse event - passes to the BaseInputComponent
-         virtual bool HandleMouseScrolled(const dtCore::Mouse* mouse, int delta)
-         {
-            return mInputComp->HandleMouseScrolled(mouse, delta);
-         }
+         /// mouse event - passes to the BaseInputComponent
+         virtual bool HandleMouseScrolled(const dtCore::Mouse* mouse, int delta);
 
       protected:
 
@@ -288,7 +270,7 @@ namespace dtGame
       private:
 
          // This is not a RefPtr to prevent a circular reference with BaseInputComponent.
-         dtGame::BaseInputComponent* mInputComp;
+         dtCore::ObserverPtr<dtGame::BaseInputComponent> mInputComp;
    };
 
 
@@ -306,23 +288,14 @@ namespace dtGame
          /// Constructor
          InputComponentKeyboardListener(dtGame::BaseInputComponent &inputComp);
 
-         // keyboard event - passes to the BaseInputComponent
-         virtual bool HandleKeyPressed(const dtCore::Keyboard* keyboard, int key)
-         {
-            return mInputComp->HandleKeyPressed(keyboard, key);
-         }
+         /// keyboard event - passes to the BaseInputComponent
+         virtual bool HandleKeyPressed(const dtCore::Keyboard* keyboard, int key);
 
-         // keyboard event - passes to the BaseInputComponent
-         virtual bool HandleKeyReleased(const dtCore::Keyboard* keyboard, int key) 
-         { 
-            return mInputComp->HandleKeyReleased(keyboard, key);
-         }
+         /// keyboard event - passes to the BaseInputComponent
+         virtual bool HandleKeyReleased(const dtCore::Keyboard* keyboard, int key);
 
-         // keyboard event - passes to the BaseInputComponent
-         virtual bool HandleKeyTyped(const dtCore::Keyboard* keyboard, int key ) 
-         { 
-            return false;
-         }
+         /// keyboard event - passes to the BaseInputComponent
+         virtual bool HandleKeyTyped(const dtCore::Keyboard* keyboard, int key );
 
       protected:
 
@@ -332,7 +305,7 @@ namespace dtGame
       private:
 
          // This is not a RefPtr to prevent a circular reference with BaseInputComponent.
-         dtGame::BaseInputComponent* mInputComp;
+         dtCore::ObserverPtr<dtGame::BaseInputComponent> mInputComp;
    };
 
 }
