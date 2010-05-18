@@ -100,12 +100,6 @@ bool TestAnimInput::HandleKeyPressed(const dtCore::Keyboard* keyBoard, int key)
             mTurnDirection = 1.0f;
             return false;
          }
-      case '\\':
-      case osgGA::GUIEventAdapter::KEY_Insert:
-         {
-            //GetGameManager()->GetApplication().GetCamera()->SetNextStatisticsType();
-            break;
-         }
       case osgGA::GUIEventAdapter::KEY_Up:
          {
             if (!mIsWalking)
@@ -130,7 +124,8 @@ bool TestAnimInput::HandleKeyPressed(const dtCore::Keyboard* keyBoard, int key)
             camera->SetLODScale(oldLODScale / 1.1);
             return false;
          }
-      case '~':
+      case '\\':
+      case osgGA::GUIEventAdapter::KEY_Insert:
          {
             dtABC::Application& app = GetGameManager()->GetApplication();
             app.SetNextStatisticsType();

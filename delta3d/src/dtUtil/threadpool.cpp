@@ -385,10 +385,12 @@ namespace dtUtil
          dtCore::RefPtr<ThreadPoolTask> task;
          dtCore::RefPtr<TaskQueue> queue;
 
-         bool didSomething = false;
-
-         for (unsigned i = 0; !mDone && i < mTaskQueues.size(); ++i)
+         unsigned lastI = 10000U;
+         unsigned i = 0;
+         while (!mDone && i < mTaskQueues.size())
          {
+            // This keeps it from locking when executing multiple tasks on the main queue.
+            if (i != lastI)
             {
                OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mThreadMutex);
 
@@ -402,21 +404,23 @@ namespace dtUtil
                   // The loop is now invalid because the list of queues has changed
                   break;
                }
+               lastI = i;
             }
 
-            while (!mDone && queue->ExecuteSingleTask(false))
+            // if a queue hits a task, then start back at the first priority queue
+            // looking for tasks, if not, go to the next queue.
+            if (queue->ExecuteSingleTask(false))
             {
-               didSomething = true;
+               i = 0;
+            }
+            else
+            {
+               ++i;
             }
          }
 
-         if (!didSomething)
-         {
-            // yield when there was nothing to do for a full iteration over all the queues.
-            // if there was something to do, there may be more to do in the earlier queues
-            // by this time, so don't yield.
-            OpenThreads::Thread::YieldCurrentThread();
-         }
+         // If we get to here, it went through all of the queues without doing anything.
+         OpenThreads::Thread::YieldCurrentThread();
 
       } while (!mDone);
 
@@ -443,6 +447,7 @@ namespace dtUtil
    {
    public:
       ThreadPoolImpl()
+      : mTaskThreadForBackgroundOnly(false)
       {
       }
 
@@ -450,6 +455,7 @@ namespace dtUtil
       dtCore::RefPtr<TaskQueue> mBackgroundQueue;
 
       std::vector<dtCore::RefPtr<TaskThread> > mTaskThreads;
+      bool mTaskThreadForBackgroundOnly;
    };
 
    static ThreadPoolImpl gThreadPoolImpl;
@@ -471,7 +477,7 @@ namespace dtUtil
          // we still have to create one thread for background processes.
          // Immediate stuff will only be run when ExecuteTasks is called.
          numThreads = 1;
-         threadForBackgroundOnly = true;
+         gThreadPoolImpl.mTaskThreadForBackgroundOnly = true;
       }
 
       gThreadPoolImpl.mImmediateQueue = new TaskQueue;
@@ -480,7 +486,7 @@ namespace dtUtil
       for (int i = 0; i < numThreads; ++i)
       {
          dtCore::RefPtr<TaskThread> newThread = new TaskThread;
-         if (!threadForBackgroundOnly)
+         if (!gThreadPoolImpl.mTaskThreadForBackgroundOnly)
          {
             newThread->AddTaskQueue(gThreadPoolImpl.mImmediateQueue);
          }
@@ -515,6 +521,17 @@ namespace dtUtil
    void ThreadPool::ExecuteTasks()
    {
       gThreadPoolImpl.mImmediateQueue->ExecuteTasks(true);
+   }
+
+   //////////////////////////////////////////////////
+   unsigned ThreadPool::GetNumImmediateWorkerThreads()
+   {
+      if (gThreadPoolImpl.mTaskThreadForBackgroundOnly)
+      {
+         return 1U;
+      }
+
+      return gThreadPoolImpl.mTaskThreads.size() + 1U;
    }
 
    //////////////////////////////////////////////////

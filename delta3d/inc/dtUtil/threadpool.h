@@ -117,6 +117,11 @@ namespace dtUtil
        */
       static void ExecuteTasks();
 
+      /**
+       * @return the number of worker threads that can work on immediate tasks including the main thread.
+       */
+      static unsigned GetNumImmediateWorkerThreads();
+
    private:
       // Hide all constructors and destructors
       ThreadPool();

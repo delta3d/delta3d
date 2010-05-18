@@ -35,6 +35,7 @@
 #include <dtGame/gmcomponent.h>
 #include <dtUtil/enumeration.h>
 #include <OpenThreads/Mutex>
+#include <dtUtil/threadpool.h>
 
 #include <deque>
 
@@ -255,12 +256,9 @@ namespace dtNetGM
       virtual MessageActionCode& OnBeforeSendMessage(const dtGame::Message& message, std::string& rejectReason);
 
 
-      void SendNetworkMessage(const dtGame::Message& message, const DestinationType& destinationType = DestinationType::DESTINATION);
+      void SendNetworkMessages();
 
-      /**
-       * Uses an OSG OperationThread to dispatch messages on another thread
-       */
-      void SendNetworkMessageOperation(const dtGame::Message& message, const DestinationType& destinationType = DestinationType::DESTINATION);
+      void SendNetworkMessage(const dtGame::Message& message, const DestinationType& destinationType = DestinationType::DESTINATION);
 
       dtUtil::DataStream CreateDataStream(const dtGame::Message& message);
       dtCore::RefPtr<dtGame::Message> CreateMessage(dtUtil::DataStream& dataStream, const NetworkBridge& networkBridge);
@@ -367,11 +365,14 @@ namespace dtNetGM
       OpenThreads::Mutex mMutex;
       // mutex for accessing the GameManager message queue
       OpenThreads::Mutex mBufferMutex;
+      OpenThreads::Mutex mOutBufferMutex;
 
    private:
       typedef std::deque<dtCore::RefPtr<const dtGame::Message> > MessageBufferType;
       // local buffer to store messages received from the network.
       MessageBufferType mMessageBuffer;
+      MessageBufferType mMessageBufferOut;
+      dtCore::RefPtr<dtUtil::ThreadPoolTask> mDispatchTask;
       bool mMapChangeInProcess;
    };
 }

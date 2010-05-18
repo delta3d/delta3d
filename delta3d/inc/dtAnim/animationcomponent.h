@@ -53,17 +53,15 @@ public:
    class AnimCompUpdateTask: public dtUtil::ThreadPoolTask
    {
    public:
-      AnimCompUpdateTask(dtAnim::AnimationHelper& animActorComp);
+      AnimCompUpdateTask();
       virtual void operator()();
       float mUpdateDT;
-   private:
-      dtCore::RefPtr<dtAnim::AnimationHelper> mAnimActorComp;
+      std::vector<dtCore::RefPtr<dtAnim::AnimationHelper> > mAnimActorComps;
    };
 
    struct AnimCompData
    {
       dtCore::RefPtr<dtAnim::AnimationHelper> mAnimActorComp;
-      dtCore::RefPtr<AnimCompUpdateTask> mUpdateTask;
    };
 
    typedef dtGame::GMComponent BaseClass;
@@ -108,6 +106,9 @@ public:
     */
    void UnregisterActor(dtGame::GameActorProxy& toRegister);
 
+   /// alternate unregister that just tasks the actor id
+   void UnregisterActor(const dtCore::UniqueId& actorId);
+
    /**
     * @return true if the given actor is registered with this component.
     */
@@ -143,6 +144,7 @@ protected:
    virtual ~AnimationComponent();
 
    virtual void TickLocal(float dt);
+   void BuildThreadWorkerTasks();
    // creates batches of isector queries
    void GroundClamp();
 
@@ -153,6 +155,7 @@ private:
    AnimCompMap mRegisteredActors;
 
    dtCore::RefPtr<dtGame::BaseGroundClamper> mGroundClamper;
+   std::vector<dtCore::RefPtr<AnimCompUpdateTask> > mThreadTasks;
 };
 
 } // namespace dtGame
