@@ -167,7 +167,15 @@ void dtAnim::PoseMeshFileHandler::ReadPoseMeshNode(const XERCES_CPP_NAMESPACE_QU
       float xAxis, yAxis, zAxis;
 
       iss >> xAxis >> yAxis >> zAxis;
-      mCurrentData.mRootForward.set(xAxis, yAxis, zAxis);
+
+      if (!iss.fail())
+      {
+         mCurrentData.mRootForward.set(xAxis, yAxis, zAxis);
+      }
+      else
+      {
+         LOG_ERROR("Invalid root forward for posemesh.");
+      }
    }
 
    // Get the effector bone attribute
@@ -189,7 +197,15 @@ void dtAnim::PoseMeshFileHandler::ReadPoseMeshNode(const XERCES_CPP_NAMESPACE_QU
       float xAxis, yAxis, zAxis;
 
       iss >> xAxis >> yAxis >> zAxis;
-      mCurrentData.mEffectorForward.set(xAxis, yAxis, zAxis);
+
+      if (!iss.fail())
+      {
+         mCurrentData.mEffectorForward.set(xAxis, yAxis, zAxis);
+      }
+      else
+      {
+         LOG_ERROR("Invalid effector forward for posemesh.");
+      }
    }
 
    // Report errors
