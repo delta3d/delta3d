@@ -1039,6 +1039,9 @@ void GameActorTests::TestAddActorComponent()
 
       dtGame::GameActor* actor = &gap->GetGameActor();
 
+      bool notExists = (actor->GetComponent(TestActorComponent1::TYPE) == NULL);
+      CPPUNIT_ASSERT_MESSAGE("Searching for an actor component not on the actor should return NULL.", notExists);
+
       dtCore::RefPtr<TestActorComponent1> component = new TestActorComponent1();
       actor->AddComponent(*component);
 
@@ -1060,14 +1063,8 @@ void GameActorTests::TestAddActorComponent()
 
       actor->RemoveComponent(TestActorComponent1::TYPE);
 
-      try
-      {
-         bool notfound = (actor->GetComponent(TestActorComponent1::TYPE) == NULL);
-         CPPUNIT_ASSERT_MESSAGE("Searching for actor component should throw exception!", notfound);
-      }
-      catch(const dtUtil::Exception&)
-      {
-      }
+      bool notfound = (actor->GetComponent(TestActorComponent1::TYPE) == NULL);
+      CPPUNIT_ASSERT_MESSAGE("Searching for removed actor component should return NULL.", notfound);
    }
    catch(const dtUtil::Exception& e)
    {

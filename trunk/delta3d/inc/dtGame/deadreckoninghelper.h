@@ -27,6 +27,7 @@
 #include <dtCore/refptr.h>
 #include <dtGame/export.h>
 #include <dtUtil/nodecollector.h>
+#include <dtUtil/refstring.h>
 
 #include <dtCore/base.h>
 #include <dtCore/transform.h>
@@ -50,6 +51,8 @@ namespace dtGame
 
    class DeadReckoningHelperImpl;
 
+
+   ///////////////////////////////////////////////////////////////////////////
    class DT_GAME_EXPORT DeadReckoningAlgorithm : public dtUtil::Enumeration
    {
       DECLARE_ENUM(DeadReckoningAlgorithm);
@@ -66,6 +69,14 @@ namespace dtGame
    };
 
 
+   ///////////////////////////////////////////////////////////////////////////
+   /** 
+    * Add this component to your actor for dead reckoning (DR). DR is typically used in
+    * networked applications to reduce publish rate. You dead reckon your actors locally 
+    * and then make some determination when to publish (see the DRPublishingActComp). Then,
+    * on the remote side, it receives those updates and dead reckons between the update positions.
+    * There is a good example of how to use this in the SimulationCore SVN repository in BaseEntity.
+    */
    class DT_GAME_EXPORT DeadReckoningHelper : public dtGame::ActorComponent
    {
       public:
@@ -75,6 +86,19 @@ namespace dtGame
          // The type of the actor component - use to look it up.
          static const ActorComponent::ACType TYPE;
 
+         ///////////////////////////////////////////////////////////////////////////
+         // Property names.
+         static const dtUtil::RefString PROPERTY_LAST_KNOWN_TRANSLATION;
+         static const dtUtil::RefString PROPERTY_LAST_KNOWN_ROTATION;
+         static const dtUtil::RefString PROPERTY_VELOCITY_VECTOR;
+         static const dtUtil::RefString PROPERTY_ACCELERATION_VECTOR;
+         static const dtUtil::RefString PROPERTY_ANGULAR_VELOCITY_VECTOR;
+         static const dtUtil::RefString PROPERTY_FLYING;
+         static const dtUtil::RefString PROPERTY_DEAD_RECKONING_ALGORITHM;
+         static const dtUtil::RefString PROPERTY_GROUND_OFFSET;
+
+
+         ///////////////////////////////////////////////////////////////////////////
          class DT_GAME_EXPORT DeadReckoningDOF : public osg::Referenced
          {
             public:
@@ -126,6 +150,7 @@ namespace dtGame
                DeadReckoningDOF *mNext, *mPrev;
          };
 
+         ///////////////////////////////////////////////////////////////////////////
          class DT_GAME_EXPORT UpdateMode : public dtUtil::Enumeration
          {
             DECLARE_ENUM(UpdateMode);
@@ -140,15 +165,41 @@ namespace dtGame
                }
          };
 
+         ///////////////////////////////////////////////////////////////////////////
          DeadReckoningHelper();
 
          // base methods for actor components.
          virtual void OnAddedToActor(dtGame::GameActor& actor);
          virtual void OnRemovedFromActor(dtGame::GameActor& actor);
 
+         /// Called when the parent actor enters the "world".
+         virtual void OnEnteredWorld();
+         /// Called when the parent actor leaves the "world".
+         virtual void OnRemovedFromWorld();
+
          /** add actor component properties to game actor for configuring in STAGE */
          virtual void BuildPropertyMap();
 
+         /** 
+          * Use these externally to know if something other than pos, rot, accel, etc were changed
+          * This is used mainly to decouple the update behavior (ex Flying) from the DRPublishingActComp.
+          * @see SetExtraDataUpdated
+          */
+         bool IsExtraDataUpdated();
+         /** 
+          * Call this externally to clear the status of updates on non-positional stuff. 
+          * Setting this to true outside of this class is dumb
+          * This is used mainly to decouple the update behavior (ex Flying) from the DRPublishingActComp.
+          * @see IsExtraDataUpdated
+          */
+         void SetExtraDataUpdated(bool newValue);
+
+         /**  
+          * Adds a list of the KEY properties that you send with every partial update. 
+          * Includes last known trans, last known rot, velocity, angular velocity, & acceleration
+          * Call this from your own GetPartialUpdateProperties() on your actor.
+          */
+         void GetPartialUpdateProperties(std::vector<dtUtil::RefString>& propNamesToFill);
 
          /**
           * This function is responsible for manipulating the internal data types to do the actual
@@ -417,6 +468,10 @@ namespace dtGame
          void SetAlwaysUseMaxSmoothingTime(bool newValue) { mAlwaysUseMaxSmoothingTime = newValue; }
 
 
+         /// Makes the SetLastKnownRotation() ignore the pitch and yaw values to help keep some objects upright.
+         void SetForceUprightRotation(bool newValue);
+         bool GetForceUprightRotation() const;
+
       protected:
          virtual ~DeadReckoningHelper();// {}
 
@@ -453,6 +508,23 @@ namespace dtGame
          void DeadReckonThePositionUsingLinearBlend(osg::Vec3& pos, dtUtil::Log* pLogger, GameActor &gameActor);
 
       private:
+         /** 
+          * A private, internal version of the SetLastKnownRotation. This is needed 
+          * because in STAGE and other tools, the rotation is displayed as XYZ.
+          * Note - HPR is like ZXY order so we have to rearrange to be PRH order.
+          * THERE IS NO REASON YOU SHOULD NOT CALL THIS. It is needed for the property only
+          */
+         void SetInternalLastKnownRotationInXYZ(const osg::Vec3 &vec);
+
+         /** 
+          * A private, internal version of the GetLastKnownRotation. This is needed 
+          * because in STAGE and other tools, the rotation is displayed as XYZ.
+          * Note - HPR is like ZXY order so we have to rearrange to be PRH order.
+          * THERE IS NO REASON YOU SHOULD NOT CALL THIS. It is needed for the property only
+          */
+         osg::Vec3 GetInternalLastKnownRotationInXYZ() const;
+
+
          DeadReckoningHelperImpl* mDRImpl;
 
          /// The list of DeadReckoningDOFs, might want to change to has table of list later.
@@ -534,6 +606,10 @@ namespace dtGame
          // if the rotation has been resolved to the last updated version.
          bool mRotationResolved;
          bool mUseCubicSplineTransBlend; // true is NEW WAY (default) - should we use simple linear or cubic spline blend?
+
+         bool mExtraDataUpdated; // set to true when an important non-positional related property is changed. 
+
+         bool mForceUprightRotation; // Used to keep characters (et al) from wierd leaning over, regardless of the source data
 
          // -----------------------------------------------------------------------
          //  Unimplemented constructors and operators
