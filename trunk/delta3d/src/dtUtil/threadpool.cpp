@@ -345,12 +345,15 @@ namespace dtUtil
       {
          result = OpenThreads::Thread::cancel();
          mDone = true;
+         mTaskQueue->ReleaseTasksBlock();
 
+         int i = 200;
          // then wait for the the thread to stop running.
-         while (isRunning())
+         while (isRunning() && i > 0)
          {
             mTaskQueue->ReleaseTasksBlock();
             OpenThreads::Thread::YieldCurrentThread();
+            --i;
          }
       }
 
@@ -359,6 +362,8 @@ namespace dtUtil
 
    void TaskThread::run()
    {
+      bool firstTime = true;
+
       // Run Loop
       while (!mDone)
       {
@@ -370,11 +375,15 @@ namespace dtUtil
             queue = mTaskQueue;
          }
 
+         //printf("Preparing To Run a task! %p \n", this);
          // execute any task and block if there are none
-         if (!queue->ExecuteSingleTask() && !mDone)
+         if ((!queue->ExecuteSingleTask() && !mDone) || firstTime)
          {
+            //printf("Yielding worker thread! %p \n", this);
             OpenThreads::Thread::YieldCurrentThread();
+            firstTime = false;
          }
+
 
          testCancel();
       }
