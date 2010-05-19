@@ -160,6 +160,10 @@ void AnimationComponent::RegisterActor(dtGame::GameActorProxy& proxy, dtAnim::An
    {
       LOG_ERROR("GameActor already registered with Animation Component.");
    }
+   else
+   {
+      mThreadTasks.clear();
+   }
 }
 
 /////////////////////////////////////////////////////////////////////////////////
