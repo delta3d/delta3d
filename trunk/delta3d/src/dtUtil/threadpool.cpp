@@ -29,8 +29,9 @@
 #include <OpenThreads/Atomic>
 #include <OpenThreads/Block>
 #include <OpenThreads/Mutex>
-#include <list>
+#include <queue>
 #include <set>
+#include <map>
 #include <algorithm>
 
 namespace dtUtil
@@ -52,28 +53,29 @@ namespace dtUtil
 
            /** Add a task to end of TaskQueue, this will be
              * executed by the task thread once this operation gets to the head of the queue.*/
-           void Add(ThreadPoolTask& task);
+           void Add(ThreadPoolTask& task, unsigned queueId);
 
-           /** Remove task from TaskQueue.*/
-           void Remove(ThreadPoolTask& task);
-
-           /** Remove named task from TaskQueue.*/
-           void Remove(const dtUtil::RefString& name);
+//           /** Remove task from TaskQueue.*/
+//           void Remove(ThreadPoolTask& task);
+//
+//           /** Remove named task from TaskQueue.*/
+//           void Remove(const dtUtil::RefString& name);
 
            /** Remove all tasks from TaskQueue.*/
            void RemoveAllTasks();
 
-           /** Run the tasks. and optionally wait until all threads complete their tasks for this queue as well.
+           /** Run all the tasks with the given priority. and optionally wait until all threads complete their tasks for this queue as well.
             */
-           void ExecuteTasks(bool waitForAllTasksToBeCompleted = true);
+           void ExecuteTasks(bool waitForAllTasksToBeCompleted = true, unsigned maxQueueId = 0);
 
            /**
             * Run one task
             * @param blockIfEmpty if the queue is empty at the start, then block until a task is queued or the block
             *                     is otherwise released.
+            * @param maxQueueId execute only tasks with a queue id less than equal to the one passed it.
             * @return true if a task was executed.
             */
-           bool ExecuteSingleTask(bool blockIfEmpty = true);
+           bool ExecuteSingleTask(bool blockIfEmpty = true, unsigned maxQueueId = INT_MAX);
 
            /** Release tasks block that is used to block threads that are waiting on an empty tasks queue.*/
            void ReleaseTasksBlock();
@@ -92,98 +94,106 @@ namespace dtUtil
            void AddTaskThread(TaskThread* thread);
            void RemoveTaskThread(TaskThread* thread);
 
-           typedef std::list< dtCore::RefPtr<ThreadPoolTask> > Tasks;
+           struct TaskQueueItem
+           {
+              dtCore::RefPtr<ThreadPoolTask> mTask;
+              unsigned mQueueId;
+              bool operator < (const TaskQueueItem& item) const { return mQueueId < item.mQueueId; }
+           };
+
+           typedef std::priority_queue<TaskQueueItem> Tasks;
 
            OpenThreads::Mutex     mTasksMutex;
            OpenThreads::Block     mTasksBlock;
            Tasks                  mTasks;
-           Tasks::iterator        mCurrentTaskIterator;
 
            TaskThreads            mTaskThreads;
-           OpenThreads::Atomic    mInProcessTasks;
+           std::map<unsigned, unsigned>  mInProcessTasks;
    };
 
    TaskQueue::TaskQueue():
        osg::Referenced(true)
    {
-       mCurrentTaskIterator = mTasks.begin();
    }
 
    TaskQueue::~TaskQueue()
    {
    }
 
-   void TaskQueue::Add(ThreadPoolTask& task)
+   void TaskQueue::Add(ThreadPoolTask& task, unsigned queueId)
    {
        // acquire the lock on the operations queue to prevent anyone else for modifying it at the same time
        OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mTasksMutex);
 
+       TaskQueueItem newItem;
+       newItem.mTask = &task;
+       newItem.mQueueId = queueId;
        // add the operation to the end of the list
-       mTasks.push_back(&task);
+       mTasks.push(newItem);
 
        mTasksBlock.release();
    }
 
-   void TaskQueue::Remove(ThreadPoolTask& task)
-   {
-       // acquire the lock on the operations queue to prevent anyone else for modifying it at the same time
-       OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mTasksMutex);
+//   void TaskQueue::Remove(ThreadPoolTask& task)
+//   {
+//       // acquire the lock on the operations queue to prevent anyone else for modifying it at the same time
+//       OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mTasksMutex);
+//
+//       for(Tasks::iterator itr = mTasks.begin();
+//           itr!=mTasks.end();)
+//       {
+//           if ((*itr)==&task)
+//           {
+//               bool needToResetCurrentIterator = (mCurrentTaskIterator == itr);
+//
+//               itr = mTasks.erase(itr);
+//
+//               if (needToResetCurrentIterator) mCurrentTaskIterator = itr;
+//
+//           }
+//           else ++itr;
+//       }
+//
+//       if (mTasks.empty())
+//       {
+//           mTasksBlock.reset();
+//       }
+//   }
 
-       for(Tasks::iterator itr = mTasks.begin();
-           itr!=mTasks.end();)
-       {
-           if ((*itr)==&task)
-           {
-               bool needToResetCurrentIterator = (mCurrentTaskIterator == itr);
-
-               itr = mTasks.erase(itr);
-
-               if (needToResetCurrentIterator) mCurrentTaskIterator = itr;
-
-           }
-           else ++itr;
-       }
-
-       if (mTasks.empty())
-       {
-           mTasksBlock.reset();
-       }
-   }
-
-   void TaskQueue::Remove(const dtUtil::RefString& name)
-   {
-       // acquire the lock on the operations queue to prevent anyone else for modifying it at the same time
-       OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mTasksMutex);
-
-       // find the remove all operations with specified name
-       for(Tasks::iterator itr = mTasks.begin();
-           itr!=mTasks.end();)
-       {
-           if ((*itr)->GetName() == name)
-           {
-               bool needToResetCurrentIterator = (mCurrentTaskIterator == itr);
-
-               itr = mTasks.erase(itr);
-
-               if (needToResetCurrentIterator) mCurrentTaskIterator = itr;
-           }
-           else ++itr;
-       }
-
-       if (mTasks.empty())
-       {
-           mTasksBlock.reset();
-       }
-   }
+//   void TaskQueue::Remove(const dtUtil::RefString& name)
+//   {
+//       // acquire the lock on the operations queue to prevent anyone else for modifying it at the same time
+//       OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mTasksMutex);
+//
+//       // find the remove all operations with specified name
+//       for(Tasks::iterator itr = mTasks.begin();
+//           itr!=mTasks.end();)
+//       {
+//           if ((*itr)->GetName() == name)
+//           {
+//               bool needToResetCurrentIterator = (mCurrentTaskIterator == itr);
+//
+//               itr = mTasks.erase(itr);
+//
+//               if (needToResetCurrentIterator) mCurrentTaskIterator = itr;
+//           }
+//           else ++itr;
+//       }
+//
+//       if (mTasks.empty())
+//       {
+//           mTasksBlock.reset();
+//       }
+//   }
 
    void TaskQueue::RemoveAllTasks()
    {
        OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mTasksMutex);
 
-       mTasks.clear();
-
-       // reset current operator.
-       mCurrentTaskIterator = mTasks.begin();
+       while (!mTasks.empty())
+       {
+          mTasks.pop();
+       }
 
        if (mTasks.empty())
        {
@@ -191,7 +201,7 @@ namespace dtUtil
        }
    }
 
-   bool TaskQueue::ExecuteSingleTask(bool blockIfEmpty)
+   bool TaskQueue::ExecuteSingleTask(bool blockIfEmpty, unsigned maxQueueId)
    {
       if (blockIfEmpty && mTasks.empty())
       {
@@ -199,35 +209,26 @@ namespace dtUtil
       }
 
       dtCore::RefPtr<ThreadPoolTask> currentTask = NULL;
+      unsigned queueId;
       {
          OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mTasksMutex);
 
-         if (mTasks.empty())
+         queueId = mTasks.top().mQueueId;
+         if (mTasks.empty() || queueId > maxQueueId)
          {
             return false;
          }
 
-         if (mCurrentTaskIterator == mTasks.end())
-         {
-             // iterator at end of operations so reset to beginning.
-             mCurrentTaskIterator = mTasks.begin();
-         }
+         currentTask = mTasks.top().mTask;
 
-         currentTask = *mCurrentTaskIterator;
-
-         mCurrentTaskIterator = mTasks.erase(mCurrentTaskIterator);
          if (mTasks.empty())
          {
             mTasksBlock.reset();
          }
 
-         ++mInProcessTasks;
+         ++mInProcessTasks[queueId];
+         mTasks.pop();
       }
-//
-//      if (OpenThreads::Thread::CurrentThread() != NULL)
-//         printf("Running Thread %d\n", OpenThreads::Thread::CurrentThread()->getThreadId());
-//      else
-//         printf("Running Unknown Thread\n");
 
       /// execute
       (*currentTask)();
@@ -235,26 +236,47 @@ namespace dtUtil
       if (currentTask->GetKeep())
       {
          // re-add the task before decrementing the in process count so that code won't think all tasks are done
-         Add(*currentTask);
+         Add(*currentTask, queueId);
       }
 
-      --mInProcessTasks;
+      --mInProcessTasks[queueId];
 
       return true;
    }
 
-   void TaskQueue::ExecuteTasks(bool waitForAllTasksToBeComplete)
+   void TaskQueue::ExecuteTasks(bool waitForAllTasksToBeComplete, unsigned maxQueueId)
    {
       // First empty the queue
-      while (ExecuteSingleTask(false))
+      while (ExecuteSingleTask(false, maxQueueId))
          ;
 
       if (waitForAllTasksToBeComplete)
       {
+         unsigned tasksInProcess = 1;
          // Then wait for all other threads to complete their tasks.
-         while (unsigned(mInProcessTasks) > 0)
+         while (tasksInProcess > 0)
          {
-            OpenThreads::Thread::YieldCurrentThread();
+            tasksInProcess = 0;
+
+            {
+               OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mTasksMutex);
+
+               std::map<unsigned, unsigned>::iterator i, iend;
+               i = mInProcessTasks.begin();
+               iend = mInProcessTasks.end();
+               for (; i != iend; ++i)
+               {
+                  if (i->first <= maxQueueId)
+                  {
+                     tasksInProcess += i->second;
+                  }
+               }
+            }
+
+            if (tasksInProcess > 0)
+            {
+               OpenThreads::Thread::YieldCurrentThread();
+            }
          }
       }
    }
@@ -277,18 +299,10 @@ namespace dtUtil
    class  TaskThread : public osg::Referenced, public OpenThreads::Thread
    {
    public:
-      TaskThread();
-
-      /** Set the TaskQueue. */
-      void AddTaskQueue(TaskQueue* q);
-      /** Set the TaskQueue. */
-      void RemoveTaskQueue(TaskQueue* q);
+      TaskThread(TaskQueue& queue);
 
       /** Run does the operation thread run loop.*/
       virtual void run();
-
-      bool GetDone() const { return mDone; }
-      void SetDone(bool done);
 
       /** Cancel this thread.*/
       virtual int cancel();
@@ -297,15 +311,13 @@ namespace dtUtil
 
       virtual ~TaskThread();
 
-      volatile bool mDone;
-
-      OpenThreads::Mutex                       mThreadMutex;
-      std::vector<dtCore::RefPtr<TaskQueue> >  mTaskQueues;
+      OpenThreads::Mutex         mThreadMutex;
+      dtCore::RefPtr<TaskQueue>  mTaskQueue;
    };
 
-   TaskThread::TaskThread()
+   TaskThread::TaskThread(TaskQueue& queue)
    : osg::Referenced(true)
-   , mDone(false)
+   , mTaskQueue(&queue)
    {
    }
 
@@ -314,58 +326,12 @@ namespace dtUtil
       cancel();
    }
 
-   void TaskThread::AddTaskQueue(TaskQueue* q)
-   {
-      OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mThreadMutex);
-
-      if (std::find(mTaskQueues.begin(), mTaskQueues.end(), dtCore::RefPtr<TaskQueue>(q)) != mTaskQueues.end())
-         return;
-
-      mTaskQueues.push_back(q);
-
-      //if (_operationQueue.valid()) _operationQueue->addTaskThread(this);
-   }
-
-   void TaskThread::RemoveTaskQueue(TaskQueue* q)
-   {
-      OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mThreadMutex);
-
-      std::vector<dtCore::RefPtr<TaskQueue> >::iterator found = std::find(mTaskQueues.begin(), mTaskQueues.end(), dtCore::RefPtr<TaskQueue>(q));
-
-      if (found != mTaskQueues.end())
-      {
-         mTaskQueues.erase(found);
-         //if (_operationQueue.valid()) _operationQueue->removeTaskThread(this);
-      }
-   }
-
-   void TaskThread::SetDone(bool done)
-   {
-      if (mDone==done) return;
-
-      mDone = done;
-
-      if (mDone)
-      {
-         OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mThreadMutex);
-
-         std::vector<dtCore::RefPtr<TaskQueue> >::iterator i, iend;
-         i = mTaskQueues.begin();
-         iend = mTaskQueues.end();
-         for (; i != iend; ++i)
-         {
-            TaskQueue& tq = **i;
-            tq.ReleaseTasksBlock();
-         }
-      }
-   }
-
    int TaskThread::cancel()
    {
       int result = 0;
       if (isRunning())
       {
-         SetDone(true);
+         result = OpenThreads::Thread::cancel();
 
          // then wait for the the thread to stop running.
          while (isRunning())
@@ -380,49 +346,24 @@ namespace dtUtil
    void TaskThread::run()
    {
       // Run Loop
-      do
+      while (true)
       {
          dtCore::RefPtr<ThreadPoolTask> task;
          dtCore::RefPtr<TaskQueue> queue;
 
-         unsigned lastI = 10000U;
-         unsigned i = 0;
-         while (!mDone && i < mTaskQueues.size())
          {
-            // This keeps it from locking when executing multiple tasks on the main queue.
-            if (i != lastI)
-            {
-               OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mThreadMutex);
-
-               // I hope this doesn't amount to double check locking :-)
-               if (mTaskQueues.size() > i)
-               {
-                  queue = mTaskQueues[i];
-               }
-               else
-               {
-                  // The loop is now invalid because the list of queues has changed
-                  break;
-               }
-               lastI = i;
-            }
-
-            // if a queue hits a task, then start back at the first priority queue
-            // looking for tasks, if not, go to the next queue.
-            if (queue->ExecuteSingleTask(false))
-            {
-               i = 0;
-            }
-            else
-            {
-               ++i;
-            }
+            OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mThreadMutex);
+            queue = mTaskQueue;
          }
 
-         // If we get to here, it went through all of the queues without doing anything.
-         OpenThreads::Thread::YieldCurrentThread();
+         // execute any task and block if there are none
+         if (!queue->ExecuteSingleTask());
+         {
+            OpenThreads::Thread::YieldCurrentThread();
+         }
 
-      } while (!mDone);
+         testCancel();
+      }
 
    }
 
@@ -451,7 +392,7 @@ namespace dtUtil
       {
       }
 
-      dtCore::RefPtr<TaskQueue> mImmediateQueue;
+      dtCore::RefPtr<TaskQueue> mTaskQueue;
       dtCore::RefPtr<TaskQueue> mBackgroundQueue;
 
       std::vector<dtCore::RefPtr<TaskThread> > mTaskThreads;
@@ -469,7 +410,8 @@ namespace dtUtil
          numThreads = OpenThreads::GetNumberOfProcessors() - 1;
       }
 
-      bool threadForBackgroundOnly = false;
+      gThreadPoolImpl.mTaskQueue = new TaskQueue;
+      gThreadPoolImpl.mBackgroundQueue = gThreadPoolImpl.mTaskQueue;
 
       if (numThreads <= 0)
       {
@@ -478,19 +420,15 @@ namespace dtUtil
          // Immediate stuff will only be run when ExecuteTasks is called.
          numThreads = 1;
          gThreadPoolImpl.mTaskThreadForBackgroundOnly = true;
+         gThreadPoolImpl.mBackgroundQueue = new TaskQueue;
       }
-
-      gThreadPoolImpl.mImmediateQueue = new TaskQueue;
-      gThreadPoolImpl.mBackgroundQueue = new TaskQueue;
 
       for (int i = 0; i < numThreads; ++i)
       {
-         dtCore::RefPtr<TaskThread> newThread = new TaskThread;
-         if (!gThreadPoolImpl.mTaskThreadForBackgroundOnly)
-         {
-            newThread->AddTaskQueue(gThreadPoolImpl.mImmediateQueue);
-         }
-         newThread->AddTaskQueue(gThreadPoolImpl.mBackgroundQueue);
+         dtCore::RefPtr<TaskThread> newThread;
+         // the background queue may also be the main task queue.
+         newThread = new TaskThread(*gThreadPoolImpl.mBackgroundQueue);
+
          gThreadPoolImpl.mTaskThreads.push_back(newThread);
          newThread->start();
       }
@@ -500,7 +438,7 @@ namespace dtUtil
    void ThreadPool::Shutdown()
    {
       gThreadPoolImpl.mTaskThreads.clear();
-      gThreadPoolImpl.mImmediateQueue = NULL;
+      gThreadPoolImpl.mTaskQueue = NULL;
       gThreadPoolImpl.mBackgroundQueue = NULL;
    }
 
@@ -509,18 +447,19 @@ namespace dtUtil
    {
       if (queue == IMMEDIATE)
       {
-         gThreadPoolImpl.mImmediateQueue->Add(task);
+         gThreadPoolImpl.mTaskQueue->Add(task, 0);
       }
       else if (queue == BACKGROUND)
       {
-         gThreadPoolImpl.mBackgroundQueue->Add(task);
+         // in cases where worker threads > 0, the background queue is the same pointer as the task queue
+         gThreadPoolImpl.mBackgroundQueue->Add(task, 1);
       }
    }
 
    //////////////////////////////////////////////////
    void ThreadPool::ExecuteTasks()
    {
-      gThreadPoolImpl.mImmediateQueue->ExecuteTasks(true);
+      gThreadPoolImpl.mTaskQueue->ExecuteTasks(true, 0);
    }
 
    //////////////////////////////////////////////////
