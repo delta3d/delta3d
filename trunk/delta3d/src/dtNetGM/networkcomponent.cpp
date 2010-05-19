@@ -32,6 +32,7 @@
 #include <dtCore/system.h>
 
 #include <OpenThreads/ScopedLock>
+#include <OpenThreads/Atomic>
 
 namespace dtNetGM
 {
@@ -50,9 +51,11 @@ namespace dtNetGM
       virtual void operator () ()
       {
          mComponent->SendNetworkMessages();
+         --mQueued;
       }
 
       dtCore::RefPtr<NetworkComponent> mComponent;
+      OpenThreads::Atomic mQueued;
    };
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -168,7 +171,11 @@ namespace dtNetGM
       }
       else if (message.GetMessageType() == dtGame::MessageType::SYSTEM_POST_FRAME)
       {
-         dtUtil::ThreadPool::AddTask(*mDispatchTask, dtUtil::ThreadPool::BACKGROUND);
+         OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mOutBufferMutex);
+         if (!mMessageBufferOut.empty())
+         {
+            StartSendTask();
+         }
       }
       else if (message.GetMessageType() == dtGame::MessageType::NETCLIENT_REQUEST_CONNECTION)
       {
@@ -368,6 +375,17 @@ namespace dtNetGM
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void NetworkComponent::StartSendTask()
+   {
+      DispatchTask* task = static_cast<DispatchTask*>(mDispatchTask.get());
+      if (unsigned(task->mQueued) == 0U)
+      {
+         ++task->mQueued;
+         dtUtil::ThreadPool::AddTask(*mDispatchTask, dtUtil::ThreadPool::BACKGROUND);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void NetworkComponent::GetConnectedClients(std::vector<NetworkBridge*>& connectedClients)
    {
       OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mMutex);
@@ -507,6 +525,10 @@ namespace dtNetGM
       // of the work is done on the same thread as the gm.
       OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mOutBufferMutex);
       mMessageBufferOut.push_back(&message);
+      if (mMessageBufferOut.size() > 20)
+      {
+         StartSendTask();
+      }
    }
 
    /////////////////////////////////////////////////////////////

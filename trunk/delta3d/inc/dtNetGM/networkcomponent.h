@@ -357,6 +357,9 @@ namespace dtNetGM
        */
       virtual const dtGame::MachineInfo* GetMachineInfo(const dtCore::UniqueId& uniqueId);
 
+      /// Starts the message send background task.
+      void StartSendTask();
+
       bool mReliable ; // Value describing the GNE connection parameter
       int mRateOut; // Value describing the GNE connection parameter
       int mRateIn; // Value describing the GNE connection parameter
