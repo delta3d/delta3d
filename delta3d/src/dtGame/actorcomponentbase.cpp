@@ -16,7 +16,8 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * @author Unknown
+ * @author Choco (forum handle)
+ * @author David Guthrie
  * @author Curtiss Murphy
  */
 
@@ -93,11 +94,16 @@ namespace dtGame
       ActorComponentMap::const_iterator iter = mComponents.find(type);
       if (iter == mComponents.end())
       {
-         std::ostringstream os;
-         os << "Actor component of type " << type.Get() << " not found!";
-         throw dtUtil::Exception(os.str(), __FILE__, __LINE__);
+         return NULL;
+         // Should not through an exception, all the comments say NULL is OK.
+         //std::ostringstream os;
+         //os << "Actor component of type " << type.Get() << " not found!";
+         //throw dtUtil::Exception(os.str(), __FILE__, __LINE__);
       }
-      return (*iter).second.get();
+      else 
+      {
+         return (*iter).second.get();
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////

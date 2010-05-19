@@ -16,7 +16,8 @@
 * along with this library; if not, write to the Free Software Foundation, Inc.,
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
-* @author unknown
+* @author Choco (forum handle)
+* @author David Guthrie
 * @author Curtiss Murphy
 */
 
@@ -40,6 +41,10 @@ namespace dtGame
     * for ACType to identify the ActorComponent type.
     * When the ActorComponent is added to a ActorComponentBase, it receives a
     * reference to the ActorComponentBase through the method SetOwner().
+    *
+    * Note - Actor Components can reference each other, but you should not check for another
+    * actor component until the OnEnteredWorld() method. This gives each actor component a chance
+    * to initialize and get properties from the map regardless of order.
     */
    class DT_GAME_EXPORT ActorComponent : public dtDAL::PropertyContainer
    {
