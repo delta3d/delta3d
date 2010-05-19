@@ -403,6 +403,7 @@ namespace dtUtil
    public:
       ThreadPoolImpl()
       : mTaskThreadForBackgroundOnly(false)
+      , mInitialized(false)
       {
       }
 
@@ -411,6 +412,7 @@ namespace dtUtil
 
       std::vector<dtCore::RefPtr<TaskThread> > mTaskThreads;
       bool mTaskThreadForBackgroundOnly;
+      bool mInitialized;
    };
 
    static ThreadPoolImpl gThreadPoolImpl;
@@ -419,6 +421,11 @@ namespace dtUtil
    //////////////////////////////////////////////////
    void ThreadPool::Init(int numThreads)
    {
+      if (gThreadPoolImpl.mInitialized)
+      {
+         return;
+      }
+
       if (numThreads < 0)
       {
          numThreads = OpenThreads::GetNumberOfProcessors() - 1;
@@ -446,6 +453,7 @@ namespace dtUtil
          gThreadPoolImpl.mTaskThreads.push_back(newThread);
          newThread->start();
       }
+      gThreadPoolImpl.mInitialized = true;
    }
 
    //////////////////////////////////////////////////
@@ -454,6 +462,7 @@ namespace dtUtil
       gThreadPoolImpl.mTaskThreads.clear();
       gThreadPoolImpl.mTaskQueue = NULL;
       gThreadPoolImpl.mBackgroundQueue = NULL;
+      gThreadPoolImpl.mInitialized = false;
    }
 
    //////////////////////////////////////////////////
