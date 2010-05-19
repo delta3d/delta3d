@@ -195,10 +195,7 @@ namespace dtUtil
           mTasks.pop();
        }
 
-       if (mTasks.empty())
-       {
-           mTasksBlock.reset();
-       }
+        mTasksBlock.reset();
    }
 
    bool TaskQueue::ExecuteSingleTask(bool blockIfEmpty, unsigned maxQueueId)
@@ -209,7 +206,7 @@ namespace dtUtil
       }
 
       dtCore::RefPtr<ThreadPoolTask> currentTask = NULL;
-      unsigned queueId;
+      unsigned queueId = 0;
       {
          OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mTasksMutex);
 
@@ -227,13 +224,14 @@ namespace dtUtil
 
          currentTask = mTasks.top().mTask;
 
+         ++mInProcessTasks[queueId];
+
+         mTasks.pop();
+
          if (mTasks.empty())
          {
             mTasksBlock.reset();
          }
-
-         ++mInProcessTasks[queueId];
-         mTasks.pop();
       }
 
       /// execute
