@@ -213,8 +213,14 @@ namespace dtUtil
       {
          OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mTasksMutex);
 
+         if (mTasks.empty())
+         {
+            return false;
+         }
+
          queueId = mTasks.top().mQueueId;
-         if (mTasks.empty() || queueId > maxQueueId)
+
+         if (queueId > maxQueueId)
          {
             return false;
          }
@@ -317,11 +323,13 @@ namespace dtUtil
 
       OpenThreads::Mutex         mThreadMutex;
       dtCore::RefPtr<TaskQueue>  mTaskQueue;
+      volatile bool mDone;
    };
 
    TaskThread::TaskThread(TaskQueue& queue)
    : osg::Referenced(true)
    , mTaskQueue(&queue)
+   , mDone(false)
    {
    }
 
@@ -336,10 +344,12 @@ namespace dtUtil
       if (isRunning())
       {
          result = OpenThreads::Thread::cancel();
+         mDone = true;
 
          // then wait for the the thread to stop running.
          while (isRunning())
          {
+            mTaskQueue->ReleaseTasksBlock();
             OpenThreads::Thread::YieldCurrentThread();
          }
       }
@@ -350,7 +360,7 @@ namespace dtUtil
    void TaskThread::run()
    {
       // Run Loop
-      while (true)
+      while (!mDone)
       {
          dtCore::RefPtr<ThreadPoolTask> task;
          dtCore::RefPtr<TaskQueue> queue;
@@ -361,7 +371,7 @@ namespace dtUtil
          }
 
          // execute any task and block if there are none
-         if (!queue->ExecuteSingleTask())
+         if (!queue->ExecuteSingleTask() && !mDone)
          {
             OpenThreads::Thread::YieldCurrentThread();
          }
