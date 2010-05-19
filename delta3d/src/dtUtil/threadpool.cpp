@@ -239,7 +239,11 @@ namespace dtUtil
          Add(*currentTask, queueId);
       }
 
-      --mInProcessTasks[queueId];
+      {
+         OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mTasksMutex);
+
+         --mInProcessTasks[queueId];
+      }
 
       return true;
    }
@@ -357,7 +361,7 @@ namespace dtUtil
          }
 
          // execute any task and block if there are none
-         if (!queue->ExecuteSingleTask());
+         if (!queue->ExecuteSingleTask())
          {
             OpenThreads::Thread::YieldCurrentThread();
          }
