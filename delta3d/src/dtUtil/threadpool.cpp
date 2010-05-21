@@ -358,17 +358,18 @@ namespace dtUtil
       int result = 0;
       if (isRunning())
       {
+#ifdef DELTA_WIN32
+         setCancelModeAsynchronous();
+#endif
          result = OpenThreads::Thread::cancel();
          mDone = true;
          mTaskQueue->ReleaseTasksBlock();
 
-         int i = 200;
          // then wait for the the thread to stop running.
-         while (isRunning() && i > 0)
+         while (isRunning())
          {
             mTaskQueue->ReleaseTasksBlock();
             OpenThreads::Thread::YieldCurrentThread();
-            --i;
          }
       }
 
