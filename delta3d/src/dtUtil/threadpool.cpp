@@ -154,7 +154,7 @@ namespace dtUtil
 //           else ++itr;
 //       }
 //
-//       if (mTasks.empty())
+//       if (Empty())
 //       {
 //           mTasksBlock.reset();
 //       }
@@ -180,7 +180,7 @@ namespace dtUtil
 //           else ++itr;
 //       }
 //
-//       if (mTasks.empty())
+//       if (Empty())
 //       {
 //           mTasksBlock.reset();
 //       }
@@ -190,7 +190,7 @@ namespace dtUtil
    {
        OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mTasksMutex);
 
-       while (!mTasks.empty())
+       while (!Empty())
        {
           mTasks.pop();
        }
@@ -200,37 +200,54 @@ namespace dtUtil
 
    bool TaskQueue::ExecuteSingleTask(bool blockIfEmpty, unsigned maxQueueId)
    {
-      if (blockIfEmpty && mTasks.empty())
-      {
-          mTasksBlock.block();
-      }
+      bool wasEmpty = false;
 
       dtCore::RefPtr<ThreadPoolTask> currentTask = NULL;
       unsigned queueId = 0;
       {
          OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mTasksMutex);
 
-         if (mTasks.empty())
+         if (Empty())
+         {
+            wasEmpty = true;
+         }
+         else
+         {
+
+            queueId = mTasks.top().mQueueId;
+
+            if (queueId > maxQueueId)
+            {
+               return false;
+            }
+
+            currentTask = mTasks.top().mTask;
+
+            ++mInProcessTasks[queueId];
+
+            mTasks.pop();
+
+            if (Empty())
+            {
+               mTasksBlock.reset();
+            }
+         }
+      }
+
+      // if the code above decided that the queue was empty when inside the lock
+      // and the caller specified that it should block...
+      if (wasEmpty)
+      {
+         if (blockIfEmpty && mTasksBlock.block(1000))
+         {
+            // if the block was released without a timeout, execute again, but with no blocking
+            // The reason for no blocking is that we don't want to keep re-blocking if we don't
+            // get a task, that would be bad.
+            return ExecuteSingleTask(false, maxQueueId);
+         }
+         else
          {
             return false;
-         }
-
-         queueId = mTasks.top().mQueueId;
-
-         if (queueId > maxQueueId)
-         {
-            return false;
-         }
-
-         currentTask = mTasks.top().mTask;
-
-         ++mInProcessTasks[queueId];
-
-         mTasks.pop();
-
-         if (mTasks.empty())
-         {
-            mTasksBlock.reset();
          }
       }
 
@@ -368,10 +385,7 @@ namespace dtUtil
          dtCore::RefPtr<ThreadPoolTask> task;
          dtCore::RefPtr<TaskQueue> queue;
 
-         {
-            OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mThreadMutex);
-            queue = mTaskQueue;
-         }
+         queue = mTaskQueue;
 
          //printf("Preparing To Run a task! %p \n", this);
          // execute any task and block if there are none
