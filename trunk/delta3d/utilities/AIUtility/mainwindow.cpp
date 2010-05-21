@@ -371,6 +371,10 @@ void MainWindow::OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*
    // Update Add/Remove Edge actions
    mUi->mActionAddEdge->setEnabled(false);
    mUi->mActionRemoveEdge->setEnabled(false);
+
+   // Only allow the delete action when waypoint(s) are selected
+   mUi->mActionDeleteSelectedWaypoints->setEnabled(!waypoints.empty());
+
    if (waypoints.size() == 2) // There must be exactly two waypoints selected
    {
       if (DoesEdgeExistBetweenWaypoints(waypoints[0], waypoints[1]))

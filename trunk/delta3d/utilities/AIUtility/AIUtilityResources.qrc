@@ -1,4 +1,8 @@
 <RCC>
    <qresource prefix="/" >
+   <file>../STAGE/icons/newmap_small.png</file>
+   <file>../STAGE/icons/openmap_small.png</file>
+   <file>../STAGE/icons/savemap_small.png</file>
+   <file>../STAGE/icons/trash_small.png</file>
    </qresource>
 </RCC>
