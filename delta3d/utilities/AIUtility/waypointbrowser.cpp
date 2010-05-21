@@ -48,7 +48,7 @@ WaypointBrowser::WaypointBrowser(QWidget& parent)
    connect(mUi->mBtnSearchRefresh, SIGNAL(pressed()), this, SLOT(ResetWaypointResult()));
 
 
-   connect(mUi->mWaypointList, SIGNAL(itemSelectionChanged()), this, SLOT(WaypointsSelected()));
+   connect(mUi->mWaypointList, SIGNAL(itemSelectionChanged()), this, SLOT(WaypointsSelectedFromBrowser()));
    connect(mUi->mObjectTypeTree, SIGNAL(itemSelectionChanged()), this, SLOT(EnableDisable()));
 
    QDoubleValidator* validator = new QDoubleValidator(mUi->mDistanceEdit);
@@ -339,7 +339,7 @@ void WaypointBrowser::EnableDisable()
 }
 
 ///////////////////////////////////////////////////
-void WaypointBrowser::WaypointsSelected()
+void WaypointBrowser::WaypointsSelectedFromBrowser()
 {
    QList<QTreeWidgetItem*> list = mUi->mWaypointList->selectedItems();
 
@@ -360,6 +360,12 @@ void WaypointBrowser::WaypointsSelected()
    emit WaypointSelectionChanged(waypointsSelected);
 
    EnableDisable();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void WaypointBrowser::WaypointsSelectedOutsideBrowser(std::vector<dtAI::WaypointInterface*>& selectedWaypoints)
+{
+
 }
 
 ///////////////////////////////////////////////////

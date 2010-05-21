@@ -92,7 +92,9 @@ public slots:
    void ResetWaypointResult();
 protected slots:
    void EnableDisable();
-   void WaypointsSelected();
+   void WaypointsSelectedFromBrowser();
+   void WaypointsSelectedOutsideBrowser(std::vector<dtAI::WaypointInterface*>& selectedWaypoints);
+
 private:
 
    float GetCreateAndGotoDistance() const;
