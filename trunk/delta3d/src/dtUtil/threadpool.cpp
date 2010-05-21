@@ -25,6 +25,8 @@
 #include <prefix/dtutilprefix.h>
 #include <dtUtil/threadpool.h>
 
+#include <dtUtil/mswinmacros.h>
+
 #include <OpenThreads/Thread>
 #include <OpenThreads/Atomic>
 #include <OpenThreads/Block>
