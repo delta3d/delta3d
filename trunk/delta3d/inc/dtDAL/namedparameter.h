@@ -865,23 +865,6 @@ namespace dtDAL
          }
    };
 
-   /**
-    * @class Vec2MessageParameter
-    */
-   class DT_DAL_EXPORT NamedVec2Parameter: public NamedVecParameter<osg::Vec2>
-   {
-      public:
-         NamedVec2Parameter(const dtUtil::RefString& name,
-             const osg::Vec2& defaultValue = osg::Vec2(0.0,0.0), bool isList = false);
-
-         virtual bool FromString(const std::string& value) { return InternalFromString(value, 2); }
-
-         virtual void SetFromProperty(const dtDAL::ActorProperty& property);
-         virtual void ApplyValueToProperty(dtDAL::ActorProperty& property) const;
-
-      protected:
-         virtual ~NamedVec2Parameter();
-   };
 
    /**
      * @class Vec2fMessageParameter
@@ -901,6 +884,8 @@ namespace dtDAL
          virtual ~NamedVec2fParameter();
    };
 
+   typedef NamedVec2fParameter NamedVec2Parameter;
+
    /**
      * @class Vec2dMessageParameter
      */
@@ -919,39 +904,6 @@ namespace dtDAL
          virtual ~NamedVec2dParameter();
    };
 
-   /**
-     * @class Vec3MessageParameter
-     */
-   class DT_DAL_EXPORT NamedVec3Parameter: public NamedVecParameter<osg::Vec3>
-   {
-      public:
-         NamedVec3Parameter(const dtUtil::RefString& name,
-               const osg::Vec3& defaultValue = osg::Vec3(0.0, 0.0, 0.0), bool isList = false);
-
-         virtual bool FromString(const std::string& value) { return InternalFromString(value, 3); }
-
-         virtual void SetFromProperty(const dtDAL::ActorProperty& property);
-         virtual void ApplyValueToProperty(dtDAL::ActorProperty& property) const;
-
-      protected:
-         NamedVec3Parameter(DataType& dataType, const dtUtil::RefString& name,
-               const osg::Vec3& defaultValue = osg::Vec3(0.0, 0.0, 0.0), bool isList = false);
-         virtual ~NamedVec3Parameter();
-   };
-
-   /**
-     * @class RGBColorMessageParameter
-     */
-   class DT_DAL_EXPORT NamedRGBColorParameter: public NamedVec3Parameter
-   {
-      public:
-         NamedRGBColorParameter(const dtUtil::RefString& name,
-             const osg::Vec3& defaultValue = osg::Vec3(0.0, 0.0, 0.0), bool isList = false);
-
-      protected:
-         virtual ~NamedRGBColorParameter();
-   };
-
 
    /**
      * @class Vec3fMessageParameter
@@ -968,8 +920,12 @@ namespace dtDAL
          virtual void ApplyValueToProperty(dtDAL::ActorProperty& property) const;
 
       protected:
+         NamedVec3fParameter(DataType& dataType, const dtUtil::RefString& name,
+            const osg::Vec3f& defaultValue, bool isList);
          virtual ~NamedVec3fParameter();
    };
+
+   typedef NamedVec3fParameter NamedVec3Parameter;
 
    /**
      * @class Vec3dMessageParameter
@@ -990,36 +946,16 @@ namespace dtDAL
    };
 
    /**
-     * @class Vec4MessageParameter
+     * @class RGBColorMessageParameter
      */
-   class DT_DAL_EXPORT NamedVec4Parameter: public NamedVecParameter<osg::Vec4>
+   class DT_DAL_EXPORT NamedRGBColorParameter: public NamedVec3Parameter
    {
       public:
-         NamedVec4Parameter(const dtUtil::RefString& name,
-             const osg::Vec4& defaultValue = osg::Vec4(0.0, 0.0, 0.0, 0.0), bool isList = false);
-
-         virtual bool FromString(const std::string& value) { return InternalFromString(value, 4); }
-
-         virtual void SetFromProperty(const dtDAL::ActorProperty& property);
-         virtual void ApplyValueToProperty(dtDAL::ActorProperty& property) const;
+         NamedRGBColorParameter(const dtUtil::RefString& name,
+             const osg::Vec3& defaultValue = osg::Vec3(0.0, 0.0, 0.0), bool isList = false);
 
       protected:
-         NamedVec4Parameter(DataType& dataType, const dtUtil::RefString& name,
-             const osg::Vec4& defaultValue = osg::Vec4(0.0, 0.0, 0.0, 0.0), bool isList = false);
-         virtual ~NamedVec4Parameter();
-   };
-
-   /**
-     * @class RGBAColorMessageParameter
-     */
-   class DT_DAL_EXPORT NamedRGBAColorParameter: public NamedVec4Parameter
-   {
-      public:
-         NamedRGBAColorParameter(const dtUtil::RefString& name,
-             const osg::Vec4& defaultValue = osg::Vec4(0.0, 0.0, 0.0, 0.0), bool isList = false);
-
-      protected:
-         virtual ~NamedRGBAColorParameter();
+         virtual ~NamedRGBColorParameter();
    };
 
    /**
@@ -1037,8 +973,12 @@ namespace dtDAL
          virtual void ApplyValueToProperty(dtDAL::ActorProperty& property) const;
 
       protected:
+         NamedVec4fParameter(DataType& dataType, const dtUtil::RefString& name,
+            const osg::Vec4f& defaultValue, bool isList);
          virtual ~NamedVec4fParameter();
    };
+
+   typedef NamedVec4fParameter NamedVec4Parameter;
 
    /**
     * @class Vec4dMessageParameter
@@ -1056,6 +996,19 @@ namespace dtDAL
 
       protected:
          virtual ~NamedVec4dParameter();
+   };
+
+   /**
+     * @class RGBAColorMessageParameter
+     */
+   class DT_DAL_EXPORT NamedRGBAColorParameter: public NamedVec4Parameter
+   {
+      public:
+         NamedRGBAColorParameter(const dtUtil::RefString& name,
+             const osg::Vec4& defaultValue = osg::Vec4(0.0, 0.0, 0.0, 0.0), bool isList = false);
+
+      protected:
+         virtual ~NamedRGBAColorParameter();
    };
 
    /**

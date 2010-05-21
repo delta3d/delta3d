@@ -1224,37 +1224,6 @@ namespace dtDAL
 
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
-   NamedVec2Parameter::NamedVec2Parameter(const dtUtil::RefString& name,
-      const osg::Vec2& defaultValue, bool isList) :
-         NamedVecParameter<osg::Vec2>(dtDAL::DataType::VEC2, name,defaultValue,isList)
-   {
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   NamedVec2Parameter::~NamedVec2Parameter()
-   {
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void NamedVec2Parameter::SetFromProperty(const dtDAL::ActorProperty& property)
-   {
-      ValidatePropertyType(property);
-
-      const dtDAL::Vec2ActorProperty *ap = static_cast<const dtDAL::Vec2ActorProperty*> (&property);
-      SetValue(ap->GetValue());
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void NamedVec2Parameter::ApplyValueToProperty(dtDAL::ActorProperty& property) const
-   {
-      ValidatePropertyType(property);
-
-      dtDAL::Vec2ActorProperty *ap = static_cast<dtDAL::Vec2ActorProperty*> (&property);
-      ap->SetValue(GetValue());
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   ///////////////////////////////////////////////////////////////////////////////
    NamedVec2fParameter::NamedVec2fParameter(const dtUtil::RefString& name,
       const osg::Vec2f& defaultValue, bool isList) :
          NamedVecParameter<osg::Vec2f>(dtDAL::DataType::VEC2F, name,defaultValue,isList)
@@ -1315,49 +1284,12 @@ namespace dtDAL
       ap->SetValue(GetValue());
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   ///////////////////////////////////////////////////////////////////////////////
-   NamedVec3Parameter::NamedVec3Parameter(const dtUtil::RefString& name,
-      const osg::Vec3& defaultValue, bool isList)
-      : NamedVecParameter<osg::Vec3>(dtDAL::DataType::VEC3, name, defaultValue, isList)
-   {
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   NamedVec3Parameter::NamedVec3Parameter(DataType& dataType, const dtUtil::RefString& name,
-      const osg::Vec3& defaultValue, bool isList)
-      : NamedVecParameter<osg::Vec3>(dataType, name, defaultValue, isList)
-   {
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   NamedVec3Parameter::~NamedVec3Parameter()
-   {
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void NamedVec3Parameter::SetFromProperty(const dtDAL::ActorProperty& property)
-   {
-      ValidatePropertyType(property);
-
-      const dtDAL::Vec3ActorProperty *ap = static_cast<const dtDAL::Vec3ActorProperty*> (&property);
-      SetValue(ap->GetValue());
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void NamedVec3Parameter::ApplyValueToProperty(dtDAL::ActorProperty& property) const
-   {
-      ValidatePropertyType(property);
-
-      dtDAL::Vec3ActorProperty *ap = static_cast<dtDAL::Vec3ActorProperty*> (&property);
-      ap->SetValue(GetValue());
-   }
 
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
    NamedRGBColorParameter::NamedRGBColorParameter(const dtUtil::RefString& name,
       const osg::Vec3& defaultValue, bool isList) :
-         NamedVec3Parameter(dtDAL::DataType::RGBCOLOR, name, defaultValue, isList)
+         NamedVec3fParameter(dtDAL::DataType::RGBCOLOR, name, defaultValue, isList)
    {
    }
 
@@ -1371,6 +1303,13 @@ namespace dtDAL
    NamedVec3fParameter::NamedVec3fParameter(const dtUtil::RefString& name,
       const osg::Vec3f& defaultValue, bool isList) :
          NamedVecParameter<osg::Vec3f>(dtDAL::DataType::VEC3F, name, defaultValue, isList)
+   {
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   NamedVec3fParameter::NamedVec3fParameter(DataType& dataType, const dtUtil::RefString& name,
+      const osg::Vec3f& defaultValue, bool isList) :
+         NamedVecParameter<osg::Vec3f>(dataType, name, defaultValue, isList)
    {
    }
 
@@ -1430,44 +1369,6 @@ namespace dtDAL
 
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
-   NamedVec4Parameter::NamedVec4Parameter(const dtUtil::RefString& name,
-      const osg::Vec4& defaultValue, bool isList) :
-         NamedVecParameter<osg::Vec4>(dtDAL::DataType::VEC4, name, defaultValue, isList)
-   {
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   NamedVec4Parameter::NamedVec4Parameter(DataType& dataType, const dtUtil::RefString& name,
-      const osg::Vec4& defaultValue, bool isList) :
-         NamedVecParameter<osg::Vec4>(dataType, name, defaultValue, isList)
-   {
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   NamedVec4Parameter::~NamedVec4Parameter()
-   {
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void NamedVec4Parameter::SetFromProperty(const dtDAL::ActorProperty& property)
-   {
-      ValidatePropertyType(property);
-
-      const dtDAL::Vec4ActorProperty *ap = static_cast<const dtDAL::Vec4ActorProperty*> (&property);
-      SetValue(ap->GetValue());
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void NamedVec4Parameter::ApplyValueToProperty(dtDAL::ActorProperty& property) const
-   {
-      ValidatePropertyType(property);
-
-      dtDAL::Vec4ActorProperty *ap = static_cast<dtDAL::Vec4ActorProperty*> (&property);
-      ap->SetValue(GetValue());
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   ///////////////////////////////////////////////////////////////////////////////
    NamedRGBAColorParameter::NamedRGBAColorParameter(const dtUtil::RefString& name,
       const osg::Vec4& defaultValue, bool isList)
       : NamedVec4Parameter(dtDAL::DataType::RGBACOLOR, name, defaultValue, isList)
@@ -1487,6 +1388,13 @@ namespace dtDAL
    {
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
+   NamedVec4fParameter::NamedVec4fParameter(DataType& dataType, const dtUtil::RefString& name,
+      const osg::Vec4f& defaultValue, bool isList) :
+         NamedVecParameter<osg::Vec4f>(dataType, name, defaultValue, isList)
+   {
+   }
+ 
    ///////////////////////////////////////////////////////////////////////////////
    NamedVec4fParameter::~NamedVec4fParameter()
    {
