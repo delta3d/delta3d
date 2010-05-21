@@ -563,7 +563,7 @@ void FileUtilsTests::testCopyFileOntoItself()
       dtUtil::FileUtils &instance = dtUtil::FileUtils::GetInstance();
 
       std::string path;
-      std::string mapXSDPath = dtCore::FindFileInPathList("map.xsd");
+      std::string mapXSDPath = dtUtil::FindFileInPathList("map.xsd");
 
       NormalizeDirectorySlashes(mapXSDPath);
 

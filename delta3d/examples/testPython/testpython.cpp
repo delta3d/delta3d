@@ -1,6 +1,6 @@
 #include <dtScript/scriptmanager.h>
 
-#include <dtCore/globals.h>
+#include <dtUtil/datapathutils.h>
 #include <dtCore/keyboard.h>
 #include <dtCore/object.h>
 #include <dtCore/refptr.h>
@@ -33,7 +33,7 @@ public:
       mScriptManager = new dtScript::ScriptManager();
 
       // Pre-load the Python script
-      std::string filename = dtCore::FindFileInPathList("flyhelo.py");
+      std::string filename = dtUtil::FindFileInPathList("flyhelo.py");
 
       if(!filename.empty())
       {
@@ -85,9 +85,9 @@ IMPLEMENT_MANAGEMENT_LAYER(TestPythonApp)
 
 int main()
 {
-   dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList() + ";" +
-                               dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
-                               dtCore::GetDeltaRootPath() + "/examples/testPython");
+   dtUtil::SetDataFilePathList(dtUtil::GetDeltaDataPathList() + ";" +
+                               dtUtil::GetDeltaRootPath() + "/examples/data" + ";" +
+                               dtUtil::GetDeltaRootPath() + "/examples/testPython");
 
    dtCore::RefPtr<TestPythonApp> app = new TestPythonApp("config.xml");
 

@@ -73,7 +73,7 @@ void StateAttribCollectorTests::setUp()
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
 
 /*   dtCore::SetDataFilePathList(dtCore::GetDeltaRootPath() + "/tests/data/ProjectContext/");
-   std::string loadFile = dtCore::FindFileInPathList("StaticMeshes/articulation_test.ive");
+   std::string loadFile = dtUtil::FindFileInPathList("StaticMeshes/articulation_test.ive");
    CPPUNIT_ASSERT(!loadFile.empty());
 
    mObj = new dtCore::Object("Object");
