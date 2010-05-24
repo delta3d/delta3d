@@ -96,12 +96,16 @@ namespace dtUtil
          BACKGROUND ///< Runs as lower priority and only when IMMEDIATE tasks are not available.
       };
 
+      static bool IsInitialized();
+
       /**
        * Initializes the thread pool and starts the worker threads.
        * @param numThreads the number of threads to create, don't set it and this will create a thread per core - 1.
        */
       static void Init(int numThreads = -1);
       static void Shutdown();
+
+
 
       /**
        * Adds a task for the worker threads to execute.

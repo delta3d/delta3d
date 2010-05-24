@@ -294,6 +294,7 @@ namespace dtABC
       void RemoveViewImpl(dtCore::View& view);
 
       bool mFirstFrame;
+      bool mThreadPoolInitialized;
       dtCore::RefPtr<osgViewer::CompositeViewer> mCompositeViewer;
 
       dtCore::RefPtr<dtCore::GenericKeyboardListener> mKeyboardListener;
