@@ -101,17 +101,19 @@ namespace dtTerrain
       osg::HeightField *newHF = new osg::HeightField();
       newHF->allocate(correctSize,correctSize);
       
-      float aspectRatio = (float)height/(float)correctSize;
+      //Determine Aspect Ratio for both width and height
+      float aspectRatioWidth = (float)width/(float)correctSize;
+      float aspectRatioHeight = (float)height/(float)correctSize;
       width = correctSize;
       height = correctSize;
      
-      if(aspectRatio != 0)
+      if(aspectRatioWidth && aspectRatioHeight != 0)
       {
          for(unsigned int y=0; y<height; y++)
          {
             for(unsigned int x=0; x<width; x++)
             {
-               float height = hf->getHeight((int)(x*aspectRatio),(int)(y*aspectRatio));
+               float height = hf->getHeight((int)(x*aspectRatioWidth),(int)(y*aspectRatioHeight));
                newHF->setHeight(x,y,height);
             }
          }
