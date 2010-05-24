@@ -1,9 +1,10 @@
+
 /* -*-c++-*-
  * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2004-2009 MOVES Institute
  *
  * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free
+ * the terms of the GNU Lesser General Pfblic License as published by the Free
  * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
  *
@@ -54,6 +55,7 @@
 #include <osg/io_utils>
 #include <osg/Version>
 #include <osg/DisplaySettings>
+#include <osgDB/Registry>
 
 using namespace dtABC;
 XERCES_CPP_NAMESPACE_USE
@@ -132,7 +134,6 @@ void Application::Config()
 #endif
 
    ReadSystemProperties();
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -187,6 +188,10 @@ void Application::ReadSystemProperties()
 ///////////////////////////////////////////////////////////////////////////////
 Application::~Application()
 {
+   dtUtil::ThreadPool::Shutdown();
+   osgDB::Registry::instance()->clearArchiveCache();
+   osgDB::Registry::instance()->clearObjectCache();
+   osgDB::Registry::instance()->closeAllLibraries();
    mCompositeViewer = NULL;
    delete mStats;
    dtCore::SingletonManager::Destroy(); //destroy any singletons that need to go away
