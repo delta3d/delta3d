@@ -131,6 +131,7 @@ HardwareSubmeshDrawable::HardwareSubmeshDrawable(Cal3DModelWrapper* wrapper, Cal
 {
    setUseDisplayList(false);
    setUseVertexBufferObjects(true);
+   setDataVariance(osg::Object::DYNAMIC);
 
    osg::StateSet* ss = getOrCreateStateSet();
    ss->addUniform(mBoneTransforms.get());
