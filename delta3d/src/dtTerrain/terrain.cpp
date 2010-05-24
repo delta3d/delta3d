@@ -288,8 +288,9 @@ namespace dtTerrain
 
    //////////////////////////////////////////////////////////////////////////   
    void Terrain::LoadTerrainTile(PagedTerrainTile &newTile)
-   {      
+   {
       mTilesToLoadQ.push(&newTile);
+      mResidentTiles.insert(std::make_pair(newTile.GetGeoCoordinates(),&newTile));
    }
 
    //////////////////////////////////////////////////////////////////////////   
@@ -511,7 +512,6 @@ namespace dtTerrain
 
          //Now once we have finished loading a tile, remove it from the load queue,
          //and add it to the lisbt of loaded and resident tiles.
-         mResidentTiles.insert(std::make_pair(currTile->GetGeoCoordinates(),currTile));
          mTilesToLoadQ.pop();
       }     
    }
