@@ -47,6 +47,7 @@
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/log.h>
 #include <dtUtil/exception.h>
+#include <dtUtil/threadpool.h>
 
 #include "unittestapplication.h"
 

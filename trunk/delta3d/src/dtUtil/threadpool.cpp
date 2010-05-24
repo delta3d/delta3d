@@ -443,6 +443,12 @@ namespace dtUtil
 
    //////////////////////////////////////////////////
    //////////////////////////////////////////////////
+   bool ThreadPool::IsInitialized()
+   {
+      return gThreadPoolImpl.mInitialized;
+   }
+
+   //////////////////////////////////////////////////
    void ThreadPool::Init(int numThreads)
    {
       if (gThreadPoolImpl.mInitialized)

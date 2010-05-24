@@ -83,6 +83,7 @@ public:
 Application::Application(const std::string& configFilename, dtCore::DeltaWin* win)
    : BaseClass("Application")
    , mFirstFrame(true)
+   , mThreadPoolInitialized(false)
    , mKeyboardListener(new dtCore::GenericKeyboardListener())
    , mMouseListener(new dtCore::GenericMouseListener())
 {
@@ -172,15 +173,20 @@ void Application::ReadSystemProperties()
       GetView()->GetDatabasePager()->SetConfiguration(this);
    }
 
-   value = GetConfigPropertyValue(NUM_WORKER_THREADS);
-   if (value.empty())
+   if (!dtUtil::ThreadPool::IsInitialized())
    {
-      dtUtil::ThreadPool::Init();
-   }
-   else if (value != "OFF" && value != "off")
-   {
-      int intVal = dtUtil::ToType<int>(value);
-      dtUtil::ThreadPool::Init(intVal);
+      value = GetConfigPropertyValue(NUM_WORKER_THREADS);
+      if (value.empty())
+      {
+         dtUtil::ThreadPool::Init();
+         mThreadPoolInitialized = true;
+      }
+      else if (value != "OFF" && value != "off")
+      {
+         int intVal = dtUtil::ToType<int>(value);
+         dtUtil::ThreadPool::Init(intVal);
+         mThreadPoolInitialized = true;
+      }
    }
 
 }
@@ -188,7 +194,8 @@ void Application::ReadSystemProperties()
 ///////////////////////////////////////////////////////////////////////////////
 Application::~Application()
 {
-   dtUtil::ThreadPool::Shutdown();
+   if (mThreadPoolInitialized) { dtUtil::ThreadPool::Shutdown(); }
+
    osgDB::Registry::instance()->clearArchiveCache();
    osgDB::Registry::instance()->clearObjectCache();
    osgDB::Registry::instance()->closeAllLibraries();
