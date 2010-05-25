@@ -451,6 +451,7 @@ namespace dtUtil
       {
          result = mBlockUntilComplete.block();
       }
+      return result;
    }
 
    //////////////////////////////////////////////////
