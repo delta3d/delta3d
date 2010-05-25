@@ -103,9 +103,6 @@ private:
    Ui::WaypointBrowser* mUi;
    dtAI::AIPluginInterface* mAIPluginInterface;
    dtCore::Transform mCameraTransform;
-
-   dtCore::RefPtr<dtDAL::ObjectType> mSelectedObjectType;
-   dtAI::WaypointInterface* mSelectedWaypoint;
 };
 
 #endif /* WAYPOINTBROWSER_H_ */

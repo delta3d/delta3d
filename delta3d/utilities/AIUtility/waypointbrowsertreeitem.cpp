@@ -56,6 +56,13 @@ WaypointBrowserTreeItem::~WaypointBrowserTreeItem()
 {
 }
 
+////////////////////////////////////////////////////////////////////////////////
+bool WaypointBrowserTreeItem::operator<(const QTreeWidgetItem& other) const
+{
+   const WaypointBrowserTreeItem& comparisonItem = static_cast<const WaypointBrowserTreeItem&>(other);
+   return (this->GetWaypoint()->GetID() < comparisonItem.GetWaypoint()->GetID());
+}
+
 //////////////////////////////////////////////////
 dtAI::WaypointInterface* WaypointBrowserTreeItem::GetWaypoint()
 {

@@ -37,7 +37,6 @@
 WaypointBrowser::WaypointBrowser(QWidget& parent)
 : QDockWidget(&parent)
 , mAIPluginInterface(NULL)
-, mSelectedWaypoint(NULL)
 {
    mUi = new Ui::WaypointBrowser();
    mUi->setupUi(this);
@@ -46,7 +45,6 @@ WaypointBrowser::WaypointBrowser(QWidget& parent)
    connect(mUi->mBtnDeleteWaypoint, SIGNAL(pressed()), this, SLOT(OnDelete()));
    connect(mUi->mBtnGotoWaypoint, SIGNAL(pressed()), this, SLOT(OnGoto()));
    connect(mUi->mBtnSearchRefresh, SIGNAL(pressed()), this, SLOT(ResetWaypointResult()));
-
 
    connect(mUi->mWaypointList, SIGNAL(itemSelectionChanged()), this, SLOT(WaypointsSelectedFromBrowser()));
    connect(mUi->mObjectTypeTree, SIGNAL(itemSelectionChanged()), this, SLOT(EnableDisable()));
@@ -69,9 +67,6 @@ WaypointBrowser::~WaypointBrowser()
 void WaypointBrowser::SetPluginInterface(dtAI::AIPluginInterface* plugin)
 {
    mAIPluginInterface = plugin;
-
-   mSelectedObjectType = NULL;
-   mSelectedWaypoint = NULL;
 
    ResetTypesTree();
    ResetWaypointResult();
