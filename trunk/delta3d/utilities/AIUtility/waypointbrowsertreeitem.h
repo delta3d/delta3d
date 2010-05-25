@@ -60,6 +60,8 @@ public:
 
    virtual ~WaypointBrowserTreeItem();
 
+   virtual bool operator<(const QTreeWidgetItem& other) const;
+
    dtAI::WaypointInterface* GetWaypoint();
    const dtAI::WaypointInterface* GetWaypoint() const;
 private:
