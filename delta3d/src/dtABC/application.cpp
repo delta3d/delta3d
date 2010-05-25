@@ -196,9 +196,9 @@ Application::~Application()
 {
    if (mThreadPoolInitialized) { dtUtil::ThreadPool::Shutdown(); }
 
-   osgDB::Registry::instance()->clearArchiveCache();
-   osgDB::Registry::instance()->clearObjectCache();
-   osgDB::Registry::instance()->closeAllLibraries();
+   //osgDB::Registry::instance()->clearArchiveCache();
+   //osgDB::Registry::instance()->clearObjectCache();
+   //osgDB::Registry::instance()->closeAllLibraries();
    mCompositeViewer = NULL;
    delete mStats;
    dtCore::SingletonManager::Destroy(); //destroy any singletons that need to go away
