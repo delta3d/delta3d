@@ -123,6 +123,12 @@
     </item>
     <item>
      <widget class="QTreeWidget" name="mWaypointList">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="frameShadow">
        <enum>QFrame::Sunken</enum>
       </property>
@@ -131,6 +137,9 @@
       </property>
       <property name="alternatingRowColors">
        <bool>true</bool>
+      </property>
+      <property name="selectionMode">
+       <enum>QAbstractItemView::ExtendedSelection</enum>
       </property>
       <property name="rootIsDecorated">
        <bool>false</bool>
@@ -149,6 +158,15 @@
       </attribute>
       <attribute name="headerDefaultSectionSize">
        <number>100</number>
+      </attribute>
+      <attribute name="headerShowSortIndicator" stdset="0">
+       <bool>true</bool>
+      </attribute>
+      <attribute name="headerDefaultSectionSize">
+       <number>100</number>
+      </attribute>
+      <attribute name="headerVisible">
+       <bool>true</bool>
       </attribute>
       <attribute name="headerShowSortIndicator" stdset="0">
        <bool>true</bool>
