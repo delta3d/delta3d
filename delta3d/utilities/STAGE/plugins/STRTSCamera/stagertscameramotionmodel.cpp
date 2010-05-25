@@ -17,6 +17,7 @@
 #include <dtCore/transform.h>
 #include <dtCore/camera.h>
 #include <dtUtil/matrixutil.h>
+#include <dtUtil/mathdefines.h>
 
 IMPLEMENT_MANAGEMENT_LAYER(STAGERTSCameraMotionModel)
 
@@ -87,7 +88,7 @@ void STAGERTSCameraMotionModel::OnMessage(MessageData *data)
 
       // Interpolate the distance.
       float travel = mDistance - mCurrentDistance;
-      if (abs(travel) > 0.001f)
+      if (dtUtil::Abs(travel) > 0.001f)
       {
          double alpha = (delta * mTransitionSpeed);
          if (alpha > 1.0f) alpha = 1.0f;
