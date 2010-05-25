@@ -26,6 +26,7 @@
 #define THREADPOOL_H_
 
 #include <osg/Referenced>
+#include <OpenThreads/Block>
 #include <dtUtil/export.h>
 #include <dtUtil/getsetmacros.h>
 #include <dtUtil/refstring.h>
@@ -36,7 +37,7 @@ namespace dtUtil
    {
    public:
       ThreadPoolTask();
-      virtual ~ThreadPoolTask() {}
+      virtual ~ThreadPoolTask();
 
       /// Implement this method to actually do the work for the task
       virtual void operator()() = 0;
@@ -46,6 +47,17 @@ namespace dtUtil
 
       /// Whether this operation should go the back of the queue when it's done.
       DECLARE_PROPERTY(bool, Keep);
+
+      /// Called by the threadpool, this will reset the wait until complete block.
+      void ResetWaitBlock();
+      /// Called by the threadpool, this will release the wait until complete block.
+      void ReleaseWaitBlock();
+
+      /// Will block the current thread until this task completes.
+      bool WaitUntilComplete(int timeoutMS = -1);
+
+   private:
+      OpenThreads::Block mBlockUntilComplete;
    };
 
    /**

@@ -24,6 +24,7 @@
 
 #include <prefix/dtutilprefix.h>
 #include <dtUtil/threadpool.h>
+#include <dtUtil/log.h>
 
 #include <dtUtil/mswinmacros.h>
 
@@ -41,6 +42,7 @@ namespace dtUtil
 {
 
    class TaskThread;
+
 
    class DT_UTIL_EXPORT TaskQueue : public osg::Referenced
    {
@@ -125,7 +127,7 @@ namespace dtUtil
 
    void TaskQueue::Add(ThreadPoolTask& task, unsigned queueId)
    {
-       // acquire the lock on the operations queue to prevent anyone else for modifying it at the same time
+       // acquire the lock on the operations queue to prevent anyone else from modifying it at the same time
        OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mTasksMutex);
 
        TaskQueueItem newItem;
@@ -262,6 +264,10 @@ namespace dtUtil
          // re-add the task before decrementing the in process count so that code won't think all tasks are done
          Add(*currentTask, queueId);
       }
+      else
+      {
+         currentTask->ReleaseWaitBlock();
+      }
 
       {
          OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mTasksMutex);
@@ -361,9 +367,6 @@ namespace dtUtil
       int result = 0;
       if (isRunning())
       {
-#ifdef DELTA_WIN32
-         setCancelModeAsynchronous();
-#endif
          result = OpenThreads::Thread::cancel();
          mDone = true;
          mTaskQueue->ReleaseTasksBlock();
@@ -411,14 +414,44 @@ namespace dtUtil
    //////////////////////////////////////////////////
    //////////////////////////////////////////////////
    ThreadPoolTask::ThreadPoolTask()
-   : mName("Task")
+   : osg::Referenced(true)
+   , mName("Task")
    , mKeep(false)
+   {
+   }
+
+   ThreadPoolTask::~ThreadPoolTask()
    {
    }
 
    IMPLEMENT_PROPERTY(ThreadPoolTask, dtUtil::RefString, Name);
    IMPLEMENT_PROPERTY(ThreadPoolTask, bool, Keep);
 
+   //////////////////////////////////////
+   void ThreadPoolTask::ResetWaitBlock()
+   {
+      mBlockUntilComplete.reset();
+   }
+
+   //////////////////////////////////////
+   void ThreadPoolTask::ReleaseWaitBlock()
+   {
+      mBlockUntilComplete.release();
+   }
+
+   //////////////////////////////////////
+   bool ThreadPoolTask::WaitUntilComplete(int timeoutMS)
+   {
+      bool result = false;
+      if (timeoutMS > 0)
+      {
+         result = mBlockUntilComplete.block(timeoutMS);
+      }
+      else
+      {
+         result = mBlockUntilComplete.block();
+      }
+   }
 
    //////////////////////////////////////////////////
    //////////////////////////////////////////////////
@@ -499,6 +532,7 @@ namespace dtUtil
    //////////////////////////////////////////////////
    void ThreadPool::AddTask(ThreadPoolTask& task, PoolQueue queue)
    {
+      task.ResetWaitBlock();
       if (queue == IMMEDIATE)
       {
          gThreadPoolImpl.mTaskQueue->Add(task, 0);
