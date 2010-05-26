@@ -28,11 +28,9 @@
 #include <dtGame/messagefactory.h>
 #include <dtGame/basemessages.h>
 #include <dtUtil/log.h>
-#include <dtUtil/threadpool.h>
 #include <dtCore/system.h>
 
 #include <OpenThreads/ScopedLock>
-#include <OpenThreads/Atomic>
 
 namespace dtNetGM
 {
@@ -41,26 +39,7 @@ namespace dtNetGM
 
    ////////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////////
-   class DispatchTask: public dtUtil::ThreadPoolTask
-   {
-   public:
-      DispatchTask()
-      {
-      }
-
-      virtual void operator () ()
-      {
-         mComponent->SendNetworkMessages();
-         --mQueued;
-      }
-
-      dtCore::RefPtr<NetworkComponent> mComponent;
-      OpenThreads::Atomic mQueued;
-   };
-
-   ////////////////////////////////////////////////////////////////////////////////
-   ////////////////////////////////////////////////////////////////////////////////
-   IMPLEMENT_ENUM(MessageActionCode);
+IMPLEMENT_ENUM(MessageActionCode);
    MessageActionCode::MessageActionCode(const std::string& name) : dtUtil::Enumeration(name)
    {
       AddInstance(this);
@@ -130,10 +109,6 @@ namespace dtNetGM
          GetGameManager()->GetMessageFactory().RegisterMessageType<MachineInfoMessage>(dtGame::MessageType::NETSERVER_ACCEPT_CONNECTION);
          GetGameManager()->GetMessageFactory().RegisterMessageType<MachineInfoMessage>(dtGame::MessageType::NETCLIENT_NOTIFY_DISCONNECT);
       }
-
-      dtCore::RefPtr<DispatchTask> task = new DispatchTask;
-      mDispatchTask = task;
-      task->mComponent = this;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -168,14 +143,6 @@ namespace dtNetGM
       if (message.GetMessageType() == dtGame::MessageType::TICK_LOCAL)
       {
          ProcessTickLocal(static_cast<const dtGame::TickMessage&>(message));
-      }
-      else if (message.GetMessageType() == dtGame::MessageType::SYSTEM_POST_FRAME)
-      {
-         OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mOutBufferMutex);
-         if (!mMessageBufferOut.empty())
-         {
-            StartSendTask();
-         }
       }
       else if (message.GetMessageType() == dtGame::MessageType::NETCLIENT_REQUEST_CONNECTION)
       {
@@ -375,17 +342,6 @@ namespace dtNetGM
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void NetworkComponent::StartSendTask()
-   {
-      DispatchTask* task = static_cast<DispatchTask*>(mDispatchTask.get());
-      if (unsigned(task->mQueued) == 0U)
-      {
-         ++task->mQueued;
-         dtUtil::ThreadPool::AddTask(*mDispatchTask, dtUtil::ThreadPool::BACKGROUND);
-      }
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
    void NetworkComponent::GetConnectedClients(std::vector<NetworkBridge*>& connectedClients)
    {
       OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mMutex);
@@ -514,72 +470,68 @@ namespace dtNetGM
    ////////////////////////////////////////////////////////////////////////////////
    void NetworkComponent::DispatchNetworkMessage(const dtGame::Message& message)
    {
-      // trying to send a message across the network to this machin
-      if (message.GetDestination() != NULL && *message.GetDestination() == GetGameManager()->GetMachineInfo())
-      {
-         GetGameManager()->SendMessage(message);
-      }
-
-
       // The mutex is not needed here because SendNetworkMessage in this class locks.  The rest
       // of the work is done on the same thread as the gm.
-      OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mOutBufferMutex);
-      mMessageBufferOut.push_back(&message);
-      if (mMessageBufferOut.size() > 20)
+
+      if (message.GetDestination() == NULL)
       {
-         StartSendTask();
-      }
-   }
+         // No Destination
 
-   /////////////////////////////////////////////////////////////
-   void NetworkComponent::SendNetworkMessages()
-   {
-      MessageBufferType swapBuffer;
-
-      {
-         // safely push all the received messages onto the GameManager message queue
-         //printf("Buffer [%x].\n", &mBufferMutex);
-         OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mOutBufferMutex);
-         swapBuffer.swap(mMessageBufferOut);
-      }
-
-      MessageBufferType::iterator i, iend;
-      i = swapBuffer.begin();
-      iend = swapBuffer.end();
-      for (; i != iend; ++i)
-      {
-         const dtGame::Message& message = **i;
-
-         if (message.GetDestination() == NULL)
+         // Send a connection request to all non-client connections, but only
+         // if we are requesting a connection
+         if (message.GetMessageType() == dtGame::MessageType::NETCLIENT_REQUEST_CONNECTION)
          {
-            // No Destination
-
-            // Send a connection request to all non-client connections, but only
-            // if we are requesting a connection
-            if (message.GetMessageType() == dtGame::MessageType::NETCLIENT_REQUEST_CONNECTION)
-            {
-               // This message should be send to connections which are not clients!
-               SendNetworkMessage(message, DestinationType::ALL_NOT_CLIENTS);
-            }
-            else
-            {
-               // Send message to all ClientConnections, default behavior for null destination!
-               SendNetworkMessage(message, DestinationType::ALL_CLIENTS);
-            }
+            // This message should be send to connections which are not clients!
+            SendNetworkMessageOperation(message, DestinationType::ALL_NOT_CLIENTS);
          }
          else
          {
-            // trying to send a message across the network to ourselves
-            if (*message.GetDestination() == GetGameManager()->GetMachineInfo())
-            {
-               GetGameManager()->SendMessage(message);
-            }
-            else
-            {
-               SendNetworkMessage(message);
-            }
+            // Send message to all ClientConnections, default behavior for null destination!
+            SendNetworkMessageOperation(message, DestinationType::ALL_CLIENTS);
          }
       }
+      else
+      {
+         // trying to send a message across the network to ourselves
+         if (*message.GetDestination() == GetGameManager()->GetMachineInfo())
+         {
+            GetGameManager()->SendMessage(message);
+         }
+         else
+         {
+            SendNetworkMessageOperation(message);
+         }
+      }
+   }
+
+   class DispatchOperation: public osg::Operation
+   {
+   public:
+      virtual void operator () (osg::Object*)
+      {
+         mComponent->SendNetworkMessage(*mMessage, *mDestination);
+      }
+
+      dtCore::RefPtr<NetworkComponent> mComponent;
+      dtCore::RefPtr<const dtGame::Message> mMessage;
+      const NetworkComponent::DestinationType* mDestination;
+   };
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void NetworkComponent::SendNetworkMessageOperation(const dtGame::Message& message, const DestinationType& destinationType)
+   {
+      if (!mOperationThread.valid())
+      {
+         mOperationThread = new osg::OperationThread;
+         mOperationThread->setOperationQueue(new osg::OperationQueue);
+         mOperationThread->start();
+      }
+
+      dtCore::RefPtr<DispatchOperation> dispatchOp = new DispatchOperation;
+      dispatchOp->mComponent = this;
+      dispatchOp->mMessage = &message;
+      dispatchOp->mDestination = &destinationType;
+      mOperationThread->add(dispatchOp.get());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -762,15 +714,6 @@ namespace dtNetGM
    ////////////////////////////////////////////////////////////////////////////////
    void NetworkComponent::Disconnect()
    {
-      {
-         OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mOutBufferMutex);
-         mMessageBufferOut.clear();
-         if (mDispatchTask.valid())
-         {
-            mDispatchTask = NULL;
-         }
-      }
-
       OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mMutex);
 
       mShuttingDown = true;
