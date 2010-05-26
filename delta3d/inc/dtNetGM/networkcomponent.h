@@ -34,9 +34,9 @@
 #include <gnelib.h>
 #include <dtGame/gmcomponent.h>
 #include <dtUtil/enumeration.h>
-#include <OpenThreads/ReentrantMutex>
+#include <OpenThreads/Mutex>
+#include <dtUtil/threadpool.h>
 
-#include <osg/OperationThread>
 #include <deque>
 
 // Forward declaration
@@ -256,13 +256,6 @@ namespace dtNetGM
       virtual MessageActionCode& OnBeforeSendMessage(const dtGame::Message& message, std::string& rejectReason);
 
 
-      void SendNetworkMessage(const dtGame::Message& message, const DestinationType& destinationType = DestinationType::DESTINATION);
-
-      /**
-       * Uses an OSG OperationThread to dispatch messages on another thread
-       */
-      void SendNetworkMessageOperation(const dtGame::Message& message, const DestinationType& destinationType = DestinationType::DESTINATION);
-
       dtUtil::DataStream CreateDataStream(const dtGame::Message& message);
       dtCore::RefPtr<dtGame::Message> CreateMessage(dtUtil::DataStream& dataStream, const NetworkBridge& networkBridge);
 
@@ -327,6 +320,10 @@ namespace dtNetGM
       bool mShuttingDown; // bool indicating if we are shutting down
 
    protected:
+      friend class DispatchTask;
+
+      typedef std::deque<dtCore::RefPtr<const dtGame::Message> > MessageBufferType;
+
       std::vector<NetworkBridge*> mConnections; // vector containing the NetworkBridges.
 
       // Destructor
@@ -360,6 +357,13 @@ namespace dtNetGM
        */
       virtual const dtGame::MachineInfo* GetMachineInfo(const dtCore::UniqueId& uniqueId);
 
+      void SendNetworkMessages(MessageBufferType& messages);
+
+      void SendNetworkMessage(const dtGame::Message& message, const DestinationType& destinationType = DestinationType::DESTINATION);
+
+      /// Starts the message send background task.
+      void StartSendTask();
+
       bool mReliable ; // Value describing the GNE connection parameter
       int mRateOut; // Value describing the GNE connection parameter
       int mRateIn; // Value describing the GNE connection parameter
@@ -368,14 +372,14 @@ namespace dtNetGM
       OpenThreads::Mutex mMutex;
       // mutex for accessing the GameManager message queue
       OpenThreads::Mutex mBufferMutex;
-
    private:
-      typedef std::deque<dtCore::RefPtr<const dtGame::Message> > MessageBufferType;
       // local buffer to store messages received from the network.
       MessageBufferType mMessageBuffer;
+      // out buffer doesn't need a mutex because it is only accessed on the main thread
+      // despite the fact that the outgoing messages are sent in a background thread.
+      MessageBufferType mMessageBufferOut;
+      dtCore::RefPtr<dtUtil::ThreadPoolTask> mDispatchTask;
       bool mMapChangeInProcess;
-
-      dtCore::RefPtr<osg::OperationThread> mOperationThread;
    };
 }
 #endif // DELTA_NETWORKCOMPONENT

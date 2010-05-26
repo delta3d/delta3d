@@ -28,9 +28,11 @@
 #include <dtGame/messagefactory.h>
 #include <dtGame/basemessages.h>
 #include <dtUtil/log.h>
+#include <dtUtil/threadpool.h>
 #include <dtCore/system.h>
 
 #include <OpenThreads/ScopedLock>
+#include <OpenThreads/Atomic>
 
 namespace dtNetGM
 {
@@ -39,7 +41,28 @@ namespace dtNetGM
 
    ////////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////////
-IMPLEMENT_ENUM(MessageActionCode);
+   class DispatchTask: public dtUtil::ThreadPoolTask
+   {
+   public:
+      DispatchTask()
+      {
+      }
+
+      virtual void operator () ()
+      {
+         mComponent->SendNetworkMessages(mMessageBuffer);
+         mMessageBuffer.clear();
+         --mQueued;
+      }
+
+      dtCore::RefPtr<NetworkComponent> mComponent;
+      NetworkComponent::MessageBufferType mMessageBuffer;
+      OpenThreads::Atomic mQueued;
+   };
+
+   ////////////////////////////////////////////////////////////////////////////////
+   ////////////////////////////////////////////////////////////////////////////////
+   IMPLEMENT_ENUM(MessageActionCode);
    MessageActionCode::MessageActionCode(const std::string& name) : dtUtil::Enumeration(name)
    {
       AddInstance(this);
@@ -109,6 +132,10 @@ IMPLEMENT_ENUM(MessageActionCode);
          GetGameManager()->GetMessageFactory().RegisterMessageType<MachineInfoMessage>(dtGame::MessageType::NETSERVER_ACCEPT_CONNECTION);
          GetGameManager()->GetMessageFactory().RegisterMessageType<MachineInfoMessage>(dtGame::MessageType::NETCLIENT_NOTIFY_DISCONNECT);
       }
+
+      dtCore::RefPtr<DispatchTask> task = new DispatchTask;
+      mDispatchTask = task;
+      task->mComponent = this;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -143,6 +170,15 @@ IMPLEMENT_ENUM(MessageActionCode);
       if (message.GetMessageType() == dtGame::MessageType::TICK_LOCAL)
       {
          ProcessTickLocal(static_cast<const dtGame::TickMessage&>(message));
+      }
+      // Don't change this to Post-Frame.  There is no post frame when system is pause, which can cause messages to
+      // be delayed for a long time, or mess up the networking during pause.
+      else if (message.GetMessageType() == dtGame::MessageType::TICK_END_OF_FRAME)
+      {
+         if (!mMessageBufferOut.empty())
+         {
+            StartSendTask();
+         }
       }
       else if (message.GetMessageType() == dtGame::MessageType::NETCLIENT_REQUEST_CONNECTION)
       {
@@ -181,19 +217,18 @@ IMPLEMENT_ENUM(MessageActionCode);
    ////////////////////////////////////////////////////////////////////////////////
    void NetworkComponent::ProcessTickLocal(const dtGame::TickMessage& msg)
    {
-      MessageBufferType swapBuffer;
+      MessageBufferType messageBuffer;
 
       {
          // safely push all the received messages onto the GameManager message queue
-         //printf("Buffer [%x].\n", &mBufferMutex);
          OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mBufferMutex);
-         swapBuffer.swap(mMessageBuffer);
+         messageBuffer.swap(mMessageBuffer);
       }
 
       std::string rejectMessageString;
       MessageBufferType::iterator i, iend;
-      i = swapBuffer.begin();
-      iend = swapBuffer.end();
+      i = messageBuffer.begin();
+      iend = messageBuffer.end();
       for (; i != iend; ++i)
       {
          // pass the message to the GM
@@ -342,6 +377,25 @@ IMPLEMENT_ENUM(MessageActionCode);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void NetworkComponent::StartSendTask()
+   {
+      DispatchTask* task = static_cast<DispatchTask*>(mDispatchTask.get());
+      if (++task->mQueued == 1U)
+      {
+         task->mMessageBuffer.swap(mMessageBufferOut);
+         dtUtil::ThreadPool::AddTask(*mDispatchTask, dtUtil::ThreadPool::BACKGROUND);
+      }
+      else
+      {
+         --task->mQueued;
+      }
+//      MessageBufferType messageBuffer;
+//      messageBuffer.swap(mMessageBufferOut);
+//
+//      SendNetworkMessages(messageBuffer);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void NetworkComponent::GetConnectedClients(std::vector<NetworkBridge*>& connectedClients)
    {
       OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mMutex);
@@ -447,7 +501,6 @@ IMPLEMENT_ENUM(MessageActionCode);
       {
          // Store the message on the local buffer
          // Message queue will be forwarded to the GM on the next frame tick
-         //printf("Buffer [%x].\n", &mBufferMutex);
          OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mBufferMutex);
          mMessageBuffer.push_back(&message);
       }
@@ -470,68 +523,57 @@ IMPLEMENT_ENUM(MessageActionCode);
    ////////////////////////////////////////////////////////////////////////////////
    void NetworkComponent::DispatchNetworkMessage(const dtGame::Message& message)
    {
+      // trying to send a message across the network to this machin
+      if (message.GetDestination() != NULL && *message.GetDestination() == GetGameManager()->GetMachineInfo())
+      {
+         GetGameManager()->SendMessage(message);
+      }
+
       // The mutex is not needed here because SendNetworkMessage in this class locks.  The rest
       // of the work is done on the same thread as the gm.
-
-      if (message.GetDestination() == NULL)
+      mMessageBufferOut.push_back(&message);
+      if (mMessageBufferOut.size() > 5)
       {
-         // No Destination
-
-         // Send a connection request to all non-client connections, but only
-         // if we are requesting a connection
-         if (message.GetMessageType() == dtGame::MessageType::NETCLIENT_REQUEST_CONNECTION)
-         {
-            // This message should be send to connections which are not clients!
-            SendNetworkMessageOperation(message, DestinationType::ALL_NOT_CLIENTS);
-         }
-         else
-         {
-            // Send message to all ClientConnections, default behavior for null destination!
-            SendNetworkMessageOperation(message, DestinationType::ALL_CLIENTS);
-         }
-      }
-      else
-      {
-         // trying to send a message across the network to ourselves
-         if (*message.GetDestination() == GetGameManager()->GetMachineInfo())
-         {
-            GetGameManager()->SendMessage(message);
-         }
-         else
-         {
-            SendNetworkMessageOperation(message);
-         }
+         StartSendTask();
       }
    }
 
-   class DispatchOperation: public osg::Operation
+   /////////////////////////////////////////////////////////////
+   void NetworkComponent::SendNetworkMessages(MessageBufferType& messageBuffer)
    {
-   public:
-      virtual void operator () (osg::Object*)
+      MessageBufferType::iterator i, iend;
+      i = messageBuffer.begin();
+      iend = messageBuffer.end();
+      for (; i != iend; ++i)
       {
-         mComponent->SendNetworkMessage(*mMessage, *mDestination);
+         const dtGame::Message& message = **i;
+
+         if (message.GetDestination() == NULL)
+         {
+            // No Destination
+
+            // Send a connection request to all non-client connections, but only
+            // if we are requesting a connection
+            if (message.GetMessageType() == dtGame::MessageType::NETCLIENT_REQUEST_CONNECTION)
+            {
+               // This message should be send to connections which are not clients!
+               SendNetworkMessage(message, DestinationType::ALL_NOT_CLIENTS);
+            }
+            else
+            {
+               // Send message to all ClientConnections, default behavior for null destination!
+               SendNetworkMessage(message, DestinationType::ALL_CLIENTS);
+            }
+         }
+         else
+         {
+            // trying to send a message across the network to ourselves
+            if (*message.GetDestination() != GetGameManager()->GetMachineInfo())
+            {
+               SendNetworkMessage(message);
+            }
+         }
       }
-
-      dtCore::RefPtr<NetworkComponent> mComponent;
-      dtCore::RefPtr<const dtGame::Message> mMessage;
-      const NetworkComponent::DestinationType* mDestination;
-   };
-
-   ////////////////////////////////////////////////////////////////////////////////
-   void NetworkComponent::SendNetworkMessageOperation(const dtGame::Message& message, const DestinationType& destinationType)
-   {
-      if (!mOperationThread.valid())
-      {
-         mOperationThread = new osg::OperationThread;
-         mOperationThread->setOperationQueue(new osg::OperationQueue);
-         mOperationThread->start();
-      }
-
-      dtCore::RefPtr<DispatchOperation> dispatchOp = new DispatchOperation;
-      dispatchOp->mComponent = this;
-      dispatchOp->mMessage = &message;
-      dispatchOp->mDestination = &destinationType;
-      mOperationThread->add(dispatchOp.get());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -714,6 +756,14 @@ IMPLEMENT_ENUM(MessageActionCode);
    ////////////////////////////////////////////////////////////////////////////////
    void NetworkComponent::Disconnect()
    {
+      mMessageBufferOut.clear();
+      if (mDispatchTask.valid())
+      {
+         // block until complete to make sure the buffer is empty before disconnecting.
+         mDispatchTask->WaitUntilComplete();
+         mDispatchTask = NULL;
+      }
+
       OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mMutex);
 
       mShuttingDown = true;
