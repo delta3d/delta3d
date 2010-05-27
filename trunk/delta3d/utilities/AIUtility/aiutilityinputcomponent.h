@@ -47,9 +47,6 @@ public:
 
    void SetAIPluginInterface(dtAI::AIPluginInterface* aiInterface);
 
-signals:
-   void WaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>&);
-
 public slots:
    void OnAddEdge();
    void OnRemoveEdge();
@@ -59,7 +56,6 @@ protected:
 
 private:
    dtCore::RefPtr<dtAI::AIPluginInterface> mpAIInterface;
-   std::vector<dtAI::WaypointInterface*> mSelectedWaypointList;
 };
 
 #endif //AIUTILITY_INPUT_COMPONENT

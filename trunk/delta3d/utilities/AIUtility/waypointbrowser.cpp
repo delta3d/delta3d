@@ -22,12 +22,14 @@
  */
 
 #include "waypointbrowser.h"
-#include <ui_waypointbrowser.h>
-#include <dtAI/aiplugininterface.h>
+#include "waypointselection.h"
 #include "waypointbrowsertreeitem.h"
 #include "objecttypetreewidget.h"
-
 #include "mainwindow.h"
+
+#include <ui_waypointbrowser.h>
+#include <dtAI/aiplugininterface.h>
+#include <dtUtil/log.h>
 
 #include <QtGui/QDoubleValidator>
 #include <QtGui/QScrollBar>
@@ -48,6 +50,9 @@ WaypointBrowser::WaypointBrowser(QWidget& parent)
 
    connect(mUi->mWaypointList, SIGNAL(itemSelectionChanged()), this, SLOT(WaypointsSelectedFromBrowser()));
    connect(mUi->mObjectTypeTree, SIGNAL(itemSelectionChanged()), this, SLOT(EnableDisable()));
+
+   connect(&WaypointSelection::GetInstance(), SIGNAL(WaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>&)),
+           this, SLOT(OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>&)));
 
    QDoubleValidator* validator = new QDoubleValidator(mUi->mDistanceEdit);
    validator->setDecimals(8);
@@ -221,6 +226,9 @@ void WaypointBrowser::ResetWaypointResult()
          }
       }
    }
+
+   // update the selection to take into account selected waypoints that were not previously shown
+   OnWaypointSelectionChanged(WaypointSelection::GetInstance().GetWaypointList());
 }
 
 ///////////////////////////////////////////////////
@@ -271,6 +279,9 @@ void WaypointBrowser::OnDelete()
       WaypointBrowserTreeItem* item = dynamic_cast<WaypointBrowserTreeItem*>(*i);
       if (item != NULL && item->GetWaypoint() != NULL)
       {
+         // Deselect the waypoint first
+         WaypointSelection::GetInstance().DeselectWaypoint(item->GetWaypoint());
+
          mAIPluginInterface->RemoveWaypoint(item->GetWaypoint());
          deletedSomething = true;
       }
@@ -336,9 +347,13 @@ void WaypointBrowser::EnableDisable()
 ///////////////////////////////////////////////////
 void WaypointBrowser::WaypointsSelectedFromBrowser()
 {
-   QList<QTreeWidgetItem*> list = mUi->mWaypointList->selectedItems();
+   // Prevent an infinite loop
+   disconnect(&WaypointSelection::GetInstance(), SIGNAL(WaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>&)),
+      this, SLOT(OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>&)));
 
-   std::vector<dtAI::WaypointInterface*> waypointsSelected;
+   WaypointSelection::GetInstance().DeselectAllWaypoints();
+
+   QList<QTreeWidgetItem*> list = mUi->mWaypointList->selectedItems();
 
    QList<QTreeWidgetItem*>::const_iterator i, iend;
    i = list.begin();
@@ -348,19 +363,49 @@ void WaypointBrowser::WaypointsSelectedFromBrowser()
       WaypointBrowserTreeItem* item = dynamic_cast<WaypointBrowserTreeItem*>(*i);
       if (item != NULL && item->GetWaypoint() != NULL)
       {
-         waypointsSelected.push_back(item->GetWaypoint());
+         // It would be more efficient to pass this as a whole list rather than 
+         // one at a time due to all the listeners who process in response
+         if (!WaypointSelection::GetInstance().HasWaypoint(item->GetWaypoint()))
+         {
+            WaypointSelection::GetInstance().AddWaypointToSelection(item->GetWaypoint());            
+         }
       }
    }
 
-   emit WaypointSelectionChanged(waypointsSelected);
-
    EnableDisable();
+
+   // resubscribe
+   connect(&WaypointSelection::GetInstance(), SIGNAL(WaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>&)),
+           this, SLOT(OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>&)));  
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void WaypointBrowser::WaypointsSelectedOutsideBrowser(std::vector<dtAI::WaypointInterface*>& selectedWaypoints)
+void WaypointBrowser::OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>& selectedWaypoints)
 {
+   // Prevent loops
+   disconnect(mUi->mWaypointList, SIGNAL(itemSelectionChanged()), this, SLOT(WaypointsSelectedFromBrowser()));
 
+   // Redo them all unless there is a perf reason not too
+   mUi->mWaypointList->clearSelection();
+
+   for (size_t waypointIndex = 0; waypointIndex < selectedWaypoints.size(); ++waypointIndex)
+   {
+      QString id = QString("%1").arg(selectedWaypoints[waypointIndex]->GetID());
+      QList<QTreeWidgetItem*> itemList = mUi->mWaypointList->findItems(id, Qt::MatchExactly);
+
+      if (itemList.count() == 1)
+      {
+         mUi->mWaypointList->setItemSelected(itemList.front(), true);
+      }
+      else
+      {
+         LOG_ERROR("Duplicate waypoint ID's exist in the browser!");
+      }
+   }
+
+   EnableDisable();
+   
+   connect(mUi->mWaypointList, SIGNAL(itemSelectionChanged()), this, SLOT(WaypointsSelectedFromBrowser()));
 }
 
 ///////////////////////////////////////////////////

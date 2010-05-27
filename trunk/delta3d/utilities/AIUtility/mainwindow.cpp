@@ -23,6 +23,11 @@
  */
 
 #include "mainwindow.h"
+#include "aipropertyeditor.h"
+#include "qtglframe.h"
+#include "waypointbrowser.h"
+#include "waypointselection.h"
+
 #include <ui_mainwindow.h>
 #include <dtQt/deltastepper.h>
 #include <dtQt/projectcontextdialog.h>
@@ -40,9 +45,6 @@
 #include <dtDAL/project.h>
 #include <dtDAL/propertycontainer.h>
 #include <dtDAL/actorproperty.h>
-#include "aipropertyeditor.h"
-#include "qtglframe.h"
-#include "waypointbrowser.h"
 
 #include <dtAI/aiplugininterface.h>
 #include <dtAI/aidebugdrawable.h>
@@ -60,11 +62,11 @@ const std::string MainWindow::WINDOW_SETTINGS("WindowSettings");
 
 //////////////////////////////////////////////
 MainWindow::MainWindow(QWidget& mainWidget)
-   : mUi(new Ui::MainWindow)
-   , mCentralWidget(mainWidget)
-   , mPropertyEditor(*new AIPropertyEditor(*this))
-   , mWaypointBrowser(*new WaypointBrowser(*this))
-   , mPluginInterface(NULL)
+: mUi(new Ui::MainWindow)
+, mCentralWidget(mainWidget)
+, mPropertyEditor(*new AIPropertyEditor(*this))
+, mWaypointBrowser(*new WaypointBrowser(*this))
+, mPluginInterface(NULL)
 {
    mUi->setupUi(this);
 
@@ -86,7 +88,7 @@ MainWindow::MainWindow(QWidget& mainWidget)
    connect(mUi->mChangeContextAction, SIGNAL(triggered()), this, SLOT(ChangeProjectContext()));
    connect(mUi->mActionRenderingOptions, SIGNAL(triggered()), this, SLOT(SelectRenderingOptions()));
    connect(mUi->mActionAddEdge, SIGNAL(triggered()), this, SLOT(OnAddEdge()));
-   connect(mUi->mActionRemoveEdge, SIGNAL(triggered()), this, SLOT(OnRemoveEdge()));
+   connect(mUi->mActionRemoveEdge, SIGNAL(triggered()), this, SLOT(OnRemoveEdge()));   
 
    connect(mUi->mActionPropertyEditorVisible, SIGNAL(toggled(bool)), this, SLOT(OnPropertyEditorShowHide(bool)));
    connect(mUi->mActionWaypointBrowserVisible, SIGNAL(toggled(bool)), this, SLOT(OnWaypointBrowserShowHide(bool)));
@@ -97,8 +99,8 @@ MainWindow::MainWindow(QWidget& mainWidget)
    connect(&mWaypointBrowser, SIGNAL(RequestCameraTransformChange(const dtCore::Transform&)),
             this, SLOT(OnChildRequestCameraTransformChange(const dtCore::Transform&)));
 
-   connect(&mWaypointBrowser, SIGNAL(WaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>&)),
-            this, SLOT(OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>&)));
+   connect(&WaypointSelection::GetInstance(), SIGNAL(WaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>&)),
+           this, SLOT(OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>&)));  
 
    addDockWidget(Qt::LeftDockWidgetArea, &mPropertyEditor);
    addDockWidget(Qt::RightDockWidgetArea, &mWaypointBrowser);
@@ -237,6 +239,7 @@ void MainWindow::OnSave()
    }
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////
 void MainWindow::EnableOrDisableControls()
 {
@@ -308,7 +311,8 @@ void MainWindow::SelectRenderingOptions()
    if (mPluginInterface != NULL)
    {
       dtQt::BasePropertyEditor::PropertyContainerRefPtrVector selected;
-      dtAI::WaypointRenderInfo& ri = mPluginInterface->GetDebugDrawable()->GetRenderInfo();
+      dtAI::WaypointRenderInfo& ri = mPluginInterface->GetDebugDrawable()->GetRenderInfo();      
+
       selected.push_back(&ri);
       mPropertyEditor.HandlePropertyContainersSelected(selected);
    }
