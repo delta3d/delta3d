@@ -54,8 +54,8 @@ public:
    void SetPluginInterface(dtAI::AIPluginInterface* plugin);
 
    void GetCameraTransform(dtCore::Transform& xform);
+
 signals:
-   void WaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>&);
    void RequestCameraTransformChange(const dtCore::Transform& xform);
 
 protected:
@@ -93,7 +93,7 @@ public slots:
 protected slots:
    void EnableDisable();
    void WaypointsSelectedFromBrowser();
-   void WaypointsSelectedOutsideBrowser(std::vector<dtAI::WaypointInterface*>& selectedWaypoints);
+   void OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>& selectedWaypoints);   
 
 private:
 

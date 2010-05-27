@@ -20,6 +20,7 @@
  */
 
 #include "aiutilityinputcomponent.h"
+#include "waypointselection.h"
 
 #include <dtABC/application.h>
 #include <dtAI/aidebugdrawable.h>
@@ -55,7 +56,7 @@ bool AIUtilityInputComponent::HandleButtonPressed(const dtCore::Mouse* mouse, dt
             keyboard->GetKeyState(osgGA::GUIEventAdapter::KEY_Shift_R));
          if (!isShiftHeld)
          {
-            mSelectedWaypointList.clear();
+            WaypointSelection::GetInstance().DeselectAllWaypoints();
          }
 
          // Try and find the waypoint we clicked on if any
@@ -64,21 +65,9 @@ bool AIUtilityInputComponent::HandleButtonPressed(const dtCore::Mouse* mouse, dt
             dtAI::WaypointInterface* waypointInterface = mpAIInterface->GetClosestWaypoint(pickedPosition, 0.5f);
             if (waypointInterface != NULL)
             {
-               std::vector<dtAI::WaypointInterface*>::iterator previousSelection =
-                  std::find(mSelectedWaypointList.begin(), mSelectedWaypointList.end(), waypointInterface);
-               if (previousSelection == mSelectedWaypointList.end())
-               {
-                  mSelectedWaypointList.push_back(waypointInterface);
-               }
-               else // Deselect it since it was already in the list
-               {
-                  mSelectedWaypointList.erase(previousSelection);
-               }
+               WaypointSelection::GetInstance().ToggleWaypointSelection(waypointInterface);
             }
          }
-
-         // Update UI property list with our new selection
-         emit WaypointSelectionChanged(mSelectedWaypointList);
 
          break;
       }
@@ -98,15 +87,14 @@ void AIUtilityInputComponent::SetAIPluginInterface(dtAI::AIPluginInterface* aiIn
 ////////////////////////////////////////////////////////////////////////////////
 void AIUtilityInputComponent::OnAddEdge()
 {
-   if(mSelectedWaypointList.size() == 2)
+   if(WaypointSelection::GetInstance().GetNumberSelected() == 2)
    {
       // Update NavMesh
-      dtAI::WaypointInterface* waypointA = mSelectedWaypointList[0];
-      dtAI::WaypointInterface* waypointB = mSelectedWaypointList[1];
+      dtAI::WaypointInterface* waypointA = WaypointSelection::GetInstance().GetWaypointList()[0];
+      dtAI::WaypointInterface* waypointB = WaypointSelection::GetInstance().GetWaypointList()[1];
       mpAIInterface->AddEdge(waypointA->GetID(), waypointB->GetID());
 
       // Update UI
-      emit WaypointSelectionChanged(mSelectedWaypointList);
       mpAIInterface->GetDebugDrawable()->AddEdge(waypointA, waypointB);
    }
    else
@@ -118,15 +106,14 @@ void AIUtilityInputComponent::OnAddEdge()
 ////////////////////////////////////////////////////////////////////////////////
 void AIUtilityInputComponent::OnRemoveEdge()
 {
-   if(mSelectedWaypointList.size() == 2)
+   if(WaypointSelection::GetInstance().GetNumberSelected() == 2)
    {
       // Update NavMesh
-      dtAI::WaypointInterface* waypointA = mSelectedWaypointList[0];
-      dtAI::WaypointInterface* waypointB = mSelectedWaypointList[1];
+      dtAI::WaypointInterface* waypointA = WaypointSelection::GetInstance().GetWaypointList()[0];
+      dtAI::WaypointInterface* waypointB = WaypointSelection::GetInstance().GetWaypointList()[1];
       mpAIInterface->RemoveEdge(waypointA->GetID(), waypointB->GetID());
 
       // Update UI
-      emit WaypointSelectionChanged(mSelectedWaypointList);
       mpAIInterface->GetDebugDrawable()->RemoveEdge(waypointA, waypointB);
    }
    else
