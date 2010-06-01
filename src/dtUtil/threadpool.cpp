@@ -27,7 +27,6 @@
 #include <dtUtil/log.h>
 
 #include <dtUtil/mswinmacros.h>
-#include <dtUtil/mathdefines.h>
 
 #include <OpenThreads/Thread>
 #include <OpenThreads/Atomic>
@@ -47,76 +46,74 @@ namespace dtUtil
 
    class DT_UTIL_EXPORT TaskQueue : public osg::Referenced
    {
-   public:
+       public:
 
-      static const unsigned MAX_QUEUE_ID = 15;
+           TaskQueue();
 
-      TaskQueue();
+           /** Return true if the operation queue is empty. */
+           bool Empty() const { return mTasks.empty(); }
 
-      /** Return true if the operation queue is empty. */
-      bool Empty() const { return mTasks.empty(); }
+           /** Return the num of pending tasks that are sitting in the TaskQueue.*/
+           unsigned int GetNumTasksInQueue() const { return unsigned(mTasks.size()); }
 
-      /** Return the num of pending tasks that are sitting in the TaskQueue.*/
-      unsigned int GetNumTasksInQueue() const { return unsigned(mTasks.size()); }
+           /** Add a task to end of TaskQueue, this will be
+             * executed by the task thread once this operation gets to the head of the queue.*/
+           void Add(ThreadPoolTask& task, unsigned queueId);
 
-      /** Add a task to end of TaskQueue, this will be
-      * executed by the task thread once this operation gets to the head of the queue.*/
-      void Add(ThreadPoolTask& task, unsigned queueId);
+//           /** Remove task from TaskQueue.*/
+//           void Remove(ThreadPoolTask& task);
+//
+//           /** Remove named task from TaskQueue.*/
+//           void Remove(const dtUtil::RefString& name);
 
-      //           /** Remove task from TaskQueue.*/
-      //           void Remove(ThreadPoolTask& task);
-      //
-      //           /** Remove named task from TaskQueue.*/
-      //           void Remove(const dtUtil::RefString& name);
+           /** Remove all tasks from TaskQueue.*/
+           void RemoveAllTasks();
 
-      /** Remove all tasks from TaskQueue.*/
-      void RemoveAllTasks();
+           /** Run all the tasks with the given priority. and optionally wait until all threads complete their tasks for this queue as well.
+            */
+           void ExecuteTasks(bool waitForAllTasksToBeCompleted = true, unsigned maxQueueId = 0);
 
-      /** Run all the tasks with the given priority. and optionally wait until all threads complete their tasks for this queue as well.
-      */
-      void ExecuteTasks(bool waitForAllTasksToBeCompleted = true, unsigned maxQueueId = 0);
+           /**
+            * Run one task
+            * @param blockIfEmpty if the queue is empty at the start, then block until a task is queued or the block
+            *                     is otherwise released.
+            * @param maxQueueId execute only tasks with a queue id less than equal to the one passed it.
+            * @return true if a task was executed.
+            */
+           bool ExecuteSingleTask(bool blockIfEmpty = true, unsigned maxQueueId = INT_MAX);
 
-      /**
-      * Run one task
-      * @param blockIfEmpty if the queue is empty at the start, then block until a task is queued or the block
-      *                     is otherwise released.
-      * @param maxQueueId execute only tasks with a queue id less than equal to the one passed it.
-      * @return true if a task was executed.
-      */
-      bool ExecuteSingleTask(bool blockIfEmpty = true, unsigned maxQueueId = INT_MAX);
+           /** Release tasks block that is used to block threads that are waiting on an empty tasks queue.*/
+           void ReleaseTasksBlock();
 
-      /** Release tasks block that is used to block threads that are waiting on an empty tasks queue.*/
-      void ReleaseTasksBlock();
+           typedef std::set<TaskThread*> TaskThreads;
 
-      typedef std::set<TaskThread*> TaskThreads;
+           /** Get the set of TaskThreads that are sharing this TaskQueue. */
+           const TaskThreads& getTaskThreads() const { return mTaskThreads; }
 
-      /** Get the set of TaskThreads that are sharing this TaskQueue. */
-      const TaskThreads& getTaskThreads() const { return mTaskThreads; }
+       protected:
 
-   protected:
+           virtual ~TaskQueue();
 
-      virtual ~TaskQueue();
+           friend class TaskThread;
 
-      friend class TaskThread;
+           void AddTaskThread(TaskThread* thread);
+           void RemoveTaskThread(TaskThread* thread);
 
-      void AddTaskThread(TaskThread* thread);
-      void RemoveTaskThread(TaskThread* thread);
+           struct TaskQueueItem
+           {
+              dtCore::RefPtr<ThreadPoolTask> mTask;
+              unsigned mQueueId;
+              bool operator < (const TaskQueueItem& item) const { return mQueueId < item.mQueueId; }
+           };
 
-      struct TaskQueueItem
-      {
-         dtCore::RefPtr<ThreadPoolTask> mTask;
-         unsigned mQueueId;
-         bool operator < (const TaskQueueItem& item) const { return mQueueId < item.mQueueId; }
-      };
+           typedef std::priority_queue<TaskQueueItem> Tasks;
 
-      typedef std::priority_queue<TaskQueueItem> Tasks;
+           OpenThreads::Mutex     mTasksMutex;
+           OpenThreads::Block     mTasksBlock;
+           Tasks                  mTasks;
 
-      OpenThreads::Mutex     mTasksMutex;
-      OpenThreads::Block     mTasksBlock;
-      Tasks                  mTasks;
-
-      TaskThreads            mTaskThreads;
-      OpenThreads::Atomic    mInProcessTasks[MAX_QUEUE_ID + 1U];
+           TaskThreads            mTaskThreads;
+           std::map<unsigned, unsigned>  mInProcessTasks;
    };
 
    TaskQueue::TaskQueue():
@@ -130,20 +127,16 @@ namespace dtUtil
 
    void TaskQueue::Add(ThreadPoolTask& task, unsigned queueId)
    {
-      dtUtil::Clamp(queueId, 0U, MAX_QUEUE_ID);
+       // acquire the lock on the operations queue to prevent anyone else from modifying it at the same time
+       OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mTasksMutex);
 
-      // acquire the lock on the operations queue to prevent anyone else from modifying it at the same time
-      OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mTasksMutex);
+       TaskQueueItem newItem;
+       newItem.mTask = &task;
+       newItem.mQueueId = queueId;
+       // add the operation to the end of the list
+       mTasks.push(newItem);
 
-      TaskQueueItem newItem;
-      newItem.mTask = &task;
-      newItem.mQueueId = queueId;
-      // add the operation to the end of the list
-      mTasks.push(newItem);
-
-      ++mInProcessTasks[queueId];
-
-      mTasksBlock.release();
+       mTasksBlock.release();
    }
 
 //   void TaskQueue::Remove(ThreadPoolTask& task)
@@ -212,8 +205,6 @@ namespace dtUtil
 
    bool TaskQueue::ExecuteSingleTask(bool blockIfEmpty, unsigned maxQueueId)
    {
-      dtUtil::Clamp(maxQueueId, 0U, MAX_QUEUE_ID);
-
       bool wasEmpty = false;
 
       dtCore::RefPtr<ThreadPoolTask> currentTask = NULL;
@@ -236,6 +227,8 @@ namespace dtUtil
             }
 
             currentTask = mTasks.top().mTask;
+
+            ++mInProcessTasks[queueId];
 
             mTasks.pop();
 
@@ -262,20 +255,22 @@ namespace dtUtil
             return false;
          }
       }
+
+      /// execute
+      (*currentTask)();
+
+      if (currentTask->GetKeep())
+      {
+         // re-add the task before decrementing the in process count so that code won't think all tasks are done
+         Add(*currentTask, queueId);
+      }
       else
       {
-         /// execute
-         (*currentTask)();
+         currentTask->ReleaseWaitBlock();
+      }
 
-         if (currentTask->GetKeep())
-         {
-            // re-add the task before decrementing the in process count so that code won't think all tasks are done
-            Add(*currentTask, queueId);
-         }
-         else
-         {
-            currentTask->ReleaseWaitBlock();
-         }
+      {
+         OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mTasksMutex);
 
          --mInProcessTasks[queueId];
       }
@@ -285,19 +280,30 @@ namespace dtUtil
 
    void TaskQueue::ExecuteTasks(bool waitForAllTasksToBeComplete, unsigned maxQueueId)
    {
-      dtUtil::Clamp(maxQueueId, 0U, MAX_QUEUE_ID);
+      // First empty the queue
+      while (ExecuteSingleTask(false, maxQueueId))
+         ;
 
-      unsigned tasksInProcess = 0;
-
-      do
+      if (waitForAllTasksToBeComplete)
       {
-         tasksInProcess = 0;
-         if (waitForAllTasksToBeComplete)
+         unsigned tasksInProcess = 1;
+         // Then wait for all other threads to complete their tasks.
+         while (tasksInProcess > 0)
          {
+            tasksInProcess = 0;
+
             {
-               for (unsigned i = 0; i <= maxQueueId; ++i)
+               OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mTasksMutex);
+
+               std::map<unsigned, unsigned>::iterator i, iend;
+               i = mInProcessTasks.begin();
+               iend = mInProcessTasks.end();
+               for (; i != iend; ++i)
                {
-                  tasksInProcess += unsigned(mInProcessTasks[i]);
+                  if (i->first <= maxQueueId)
+                  {
+                     tasksInProcess += i->second;
+                  }
                }
             }
 
@@ -307,7 +313,6 @@ namespace dtUtil
             }
          }
       }
-      while (ExecuteSingleTask(false, maxQueueId) || tasksInProcess > 0);
    }
 
    void TaskQueue::ReleaseTasksBlock()
