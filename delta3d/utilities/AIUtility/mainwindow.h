@@ -93,6 +93,7 @@ public slots:
    void SelectRenderingOptions();
    void OnAddEdge();
    void OnRemoveEdge();
+   void OnDeleteSelectedWaypoints();
    void PropertyChangedFromControl(dtDAL::PropertyContainer&, dtDAL::ActorProperty&);
    void OnCameraTransformChanged(const dtCore::Transform& xform);
 

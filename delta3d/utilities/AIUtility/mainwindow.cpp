@@ -88,7 +88,8 @@ MainWindow::MainWindow(QWidget& mainWidget)
    connect(mUi->mChangeContextAction, SIGNAL(triggered()), this, SLOT(ChangeProjectContext()));
    connect(mUi->mActionRenderingOptions, SIGNAL(triggered()), this, SLOT(SelectRenderingOptions()));
    connect(mUi->mActionAddEdge, SIGNAL(triggered()), this, SLOT(OnAddEdge()));
-   connect(mUi->mActionRemoveEdge, SIGNAL(triggered()), this, SLOT(OnRemoveEdge()));   
+   connect(mUi->mActionRemoveEdge, SIGNAL(triggered()), this, SLOT(OnRemoveEdge()));
+   connect(mUi->mActionDeleteSelectedWaypoints, SIGNAL(triggered()), this, SLOT(OnDeleteSelectedWaypoints()));
 
    connect(mUi->mActionPropertyEditorVisible, SIGNAL(toggled(bool)), this, SLOT(OnPropertyEditorShowHide(bool)));
    connect(mUi->mActionWaypointBrowserVisible, SIGNAL(toggled(bool)), this, SLOT(OnWaypointBrowserShowHide(bool)));
@@ -328,6 +329,20 @@ void MainWindow::OnAddEdge()
 void MainWindow::OnRemoveEdge()
 {
    emit RemoveEdge();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnDeleteSelectedWaypoints()
+{
+   WaypointSelection::GetInstance().DeselectAllWaypoints();
+
+   std::vector<dtAI::WaypointInterface*> waypointList =
+      WaypointSelection::GetInstance().GetWaypointList();
+
+   for (size_t pointIndex = 0; pointIndex < waypointList.size(); ++pointIndex)
+   {
+      mPluginInterface->RemoveWaypoint(waypointList[pointIndex]);
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
