@@ -32,7 +32,8 @@ using dtUtil::DataStream;
 namespace dtGame 
 {
    Message::Message()
-      : mMessageType(&MessageType::UNKNOWN)
+      : osg::Referenced(true)
+      , mMessageType(&MessageType::UNKNOWN)
       , mDestination(NULL)
       , mSendingActorId("")
       , mAboutActorId("")
