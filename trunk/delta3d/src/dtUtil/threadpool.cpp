@@ -413,6 +413,8 @@ namespace dtUtil
    , mName("Task")
    , mKeep(false)
    {
+      //default it to released.
+      mBlockUntilComplete.release();
    }
 
    ThreadPoolTask::~ThreadPoolTask()
