@@ -334,15 +334,15 @@ void MainWindow::OnRemoveEdge()
 ////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnDeleteSelectedWaypoints()
 {
-   WaypointSelection::GetInstance().DeselectAllWaypoints();
-
-   std::vector<dtAI::WaypointInterface*> waypointList =
+   std::vector<dtAI::WaypointInterface*>& waypointList =
       WaypointSelection::GetInstance().GetWaypointList();
 
    for (size_t pointIndex = 0; pointIndex < waypointList.size(); ++pointIndex)
    {
       mPluginInterface->RemoveWaypoint(waypointList[pointIndex]);
    }
+
+   WaypointSelection::GetInstance().DeselectAllWaypoints();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
