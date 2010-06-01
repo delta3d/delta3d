@@ -133,10 +133,14 @@ void MainWindow::showEvent(QShowEvent* e)
          emit ProjectContextChanged(projectContext.toStdString());
       }
 
-      if(dtDAL::Project::GetInstance().IsContextValid())
-      {
-         ChangeMap(settings.value(CURRENT_MAP_SETTING.c_str()).toString());
-      }
+      // The map could induce crashes so don't autoload.
+      // We need to provide an alternative way to get around maps
+      // that crash on load other than modifying this code or the registry.
+
+      //if(dtDAL::Project::GetInstance().IsContextValid())
+      //{
+      //   ChangeMap(settings.value(CURRENT_MAP_SETTING.c_str()).toString());
+      //}
 
       EnableOrDisableControls();
    }
