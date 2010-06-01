@@ -378,6 +378,9 @@ namespace dtNetGM
       // out buffer doesn't need a mutex because it is only accessed on the main thread
       // despite the fact that the outgoing messages are sent in a background thread.
       MessageBufferType mMessageBufferOut;
+
+      std::set<short> mUnknownMessages;
+
       dtCore::RefPtr<dtUtil::ThreadPoolTask> mDispatchTask;
       bool mMapChangeInProcess;
    };

@@ -690,15 +690,24 @@ namespace dtNetGM
          // Create Message
          msg = gm->GetMessageFactory().CreateMessage(messageType);
       }
-      catch (dtGame::MessageFactory::MessageTypeNotRegisteredException& ex)
+      catch (dtGame::MessageFactory::MessageTypeNotRegisteredException&)
       {
-         LOGN_WARNING("networkcomponent.cpp", "Received an unsupported message. MessageId = " + dtUtil::ToString(msgId));
+         if (mUnknownMessages.insert(msgId).second)
+         {
+            LOGN_WARNING("networkcomponent.cpp", "Received an unsupported message "
+                     "(You will only get the log message once per message type). MessageId = " + dtUtil::ToString(msgId));
+         }
          return NULL;
       }
 
       if (!msg.valid())
       {
-         LOGN_WARNING("networkcomponent.cpp", "Error creating message from stream.");
+         // This assumes looking up the message type will work because
+         // the code above just tried to do that, and if it had failed, it wouldn't have made it here.
+         // plus this is a really unusual case with no known cause.
+         LOGN_ERROR("networkcomponent.cpp",
+                  "Unknown error creating message with message type \""
+                  + gm->GetMessageFactory().GetMessageTypeById(msgId).GetName() + "\"");
          return NULL;
       }
 
