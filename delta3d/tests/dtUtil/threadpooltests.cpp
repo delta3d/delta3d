@@ -109,6 +109,8 @@ class ThreadPoolTests : public CPPUNIT_NS::TestFixture {
       for (unsigned i = 0; i < numTasks; ++i)
       {
          testTasks.push_back(new TestTask(1));
+         //this should not block since the task has never been added to a queue.
+         testTasks.back()->WaitUntilComplete();
          dtUtil::ThreadPool::AddTask(*testTasks.back());
       }
 
