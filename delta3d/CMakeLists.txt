@@ -2,10 +2,7 @@ IF(WIN32)
    CMAKE_MINIMUM_REQUIRED(VERSION 2.4.8 FATAL_ERROR)
 ELSE(WIN32)
    IF(APPLE)
-      CMAKE_MINIMUM_REQUIRED(VERSION 2.4.8 FATAL_ERROR)
-      IF(${CMAKE_MAJOR_VERSION} EQUAL 2 AND ${CMAKE_MINOR_VERSION} EQUAL 4 AND ${CMAKE_PATCH_VERSION} LESS 7)
-         MESSAGE("Warning: A critical CMake bug exists in 2.4.6 and below. Trying to build Universal Binaries will result in a compile error that seems unrelated. Either avoid building Universal Binaries by changing the CMAKE_OSX_ARCHITECTURES field to list only your architecture, or upgrade to the current CVS version of CMake or a newer stable version if it exists.")
-      ENDIF(${CMAKE_MAJOR_VERSION} EQUAL 2 AND ${CMAKE_MINOR_VERSION} EQUAL 4 AND ${CMAKE_PATCH_VERSION} LESS 7)
+      CMAKE_MINIMUM_REQUIRED(VERSION 2.6.2 FATAL_ERROR)
    ELSE(APPLE)
       CMAKE_MINIMUM_REQUIRED(VERSION 2.4.8 FATAL_ERROR)
    ENDIF(APPLE)
@@ -206,10 +203,23 @@ IF(APPLE)
    FIND_LIBRARY(AGL_LIBRARY AGL)
    FIND_LIBRARY(COCOA_LIBRARY Cocoa)
 
-   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wnewline-eof")
+   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wnewline-eof -pipe")
 
-   SET(CMAKE_CXX_FLAGS "-pipe -mmacosx-version-min=10.4")
-   SET(CMAKE_C_FLAGS "-pipe -mmacosx-version-min=10.4")
+   SET(CMAKE_C_FLAGS "-pipe -Wnewline-eof")
+
+   if (NOT CMAKE_OSX_ARCHITECTURES)
+     set(CMAKE_OSX_ARCHITECTURES "i386")
+   endif()
+
+   if (NOT CMAKE_OSX_SYSROOT)
+     set(CMAKE_OSX_SYSROOT "/Developer/SDKs/MacOSX10.5.sdk")
+   endif()
+
+   if (NOT CMAKE_OSX_DEPLOYMENT_TARGET)
+     # use 10.5 because osg atomics won't build on less. 
+     set(CMAKE_OSX_DEPLOYMENT_TARGET "10.5")
+   endif()
+
    SET(CMAKE_SHARED_LINKER_FLAGS "-Wl,-single_module -compatibility_version 3 -current_version 3" )
    SET(CMAKE_CXX_FLAGS_DEBUG "-gdwarf-2")
    SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -gdwarf-2")
@@ -419,40 +429,6 @@ IF(DELTA3D_AGGRESSIVE_WARNING_FLAGS)
       ENDIF("${OLD_CMAKE_CXX_FLAGS_WAS_SET}")
    ENDIF(DELTA3D_USE_AGGRESSIVE_WARNINGS)
 ENDIF(DELTA3D_AGGRESSIVE_WARNING_FLAGS)
-
-# Set defaults for Universal Binaries. We want 32-bit Intel/PPC on 10.4 
-# and 32/64-bit Intel/PPC on >= 10.5. Anything <= 10.3 doesn't support.
-#IF(APPLE)
-#   # These are just defaults/recommendations, but how we want to build
-#   # out of the box. But the user needs to be able to change these options.
-#   # So we must only set the values the first time CMake is run, or we 
-#   # will overwrite any changes the user sets.
-#   # FORCE is used because the options are not reflected in the UI otherwise.
-#   # Seems like a good place to add version specific compiler flags too.
-#   IF(NOT DELTA3D_CONFIG_HAS_BEEN_RUN_BEFORE)
-#      # This is really fragile, but CMake doesn't provide the OS system 
-#      # version information we need. (Darwin versions can be changed 
-#      # independently of OS X versions.)
-#      # It does look like CMake handles the CMAKE_OSX_SYSROOT automatically.
-#      IF(EXISTS /Developer/SDKs/MacOSX10.5.sdk)
-#         SET(CMAKE_OSX_ARCHITECTURES "i386" CACHE STRING "Build architectures for OSX" FORCE)
-#         SET(CMAKE_OSX_ARCHITECTURES "ppc;i386;ppc64;x86_64" CACHE STRING "Build architectures for OSX" FORCE)
-#         SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -isysroot /Developer/SDKs/MacOSX10.5.sdk -mmacosx-version-min=10.5 -ftree-vectorize -fvisibility-inlines-hidden" CACHE STRING "Flags used by the compiler during all build types." FORCE)
-#      ELSE(EXISTS /Developer/SDKs/MacOSX10.5.sdk)
-#         IF(EXISTS /Developer/SDKs/MacOSX10.4u.sdk)
-#            SET(CMAKE_OSX_ARCHITECTURES "i386" CACHE STRING "Build architectures for OSX" FORCE)
-#            SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -isysroot /Developer/SDKs/MacOSX10.4u.sdk -mmacosx-version-min=10.4 -ftree-vectorize -fvisibility-inlines-hidden" CACHE STRING "Flags used by the compiler during all build types." FORCE)
-#         ELSE(EXISTS /Developer/SDKs/MacOSX10.4u.sdk)
-#            # No Universal Binary support
-#            # Should break down further to set the -mmacosx-version-min,
-#            # but the SDK detection is too unreliable here.
-#         ENDIF(EXISTS /Developer/SDKs/MacOSX10.4u.sdk)
-#      ENDIF(EXISTS /Developer/SDKs/MacOSX10.5.sdk)
-#   ENDIF(NOT DELTA3D_CONFIG_HAS_BEEN_RUN_BEFORE)
-#
-#   OPTION(DELTA3D_BUILD_APPLICATION_BUNDLES "Enable the building of applications and examples as OSX Bundles" OFF)
-#ENDIF(APPLE)
-
 
 # This needs to be run very last so other parts of the scripts can take
 # advantage of this.
