@@ -1,10 +1,10 @@
 /*
  * Delta3D Open Source Game and Simulation Engine
- * Copyright (C) 2005, BMH Associates, Inc.
+ * Copyright (C) 2005-2010, Alion Science and Technology.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation; either version 2.1 of the License, or (at your option)   f
+ * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
  *
  * This library is distributed in the hope that it will be useful, but WITHOUT
@@ -17,6 +17,7 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  * @author Pjotr van Amerongen
+ * @author David Guthrie
  */
 
 #include <dtNetGM/networkcomponent.h>
@@ -452,24 +453,35 @@ namespace dtNetGM
             || msgId == dtGame::MessageType::NETSERVER_ACCEPT_CONNECTION.GetId())
          {
             message = CreateMessage(dataStream, networkBridge);
-            // Set the MachineInfo of the NetworkBridge
-            MachineInfoMessage* machineMsg = static_cast<MachineInfoMessage*> (message.get());
-            networkBridge.SetMachineInfo(*machineMsg->GetMachineInfo());
-            // The source is probably up at this point because only the unique id of the machine info would be set at
-            // this point, so setting it from the one of the message will clean that up.
-            machineMsg->SetSource(networkBridge.GetMachineInfo());
+            if (message.valid())
+            {
+               // Set the MachineInfo of the NetworkBridge
+               MachineInfoMessage* machineMsg = static_cast<MachineInfoMessage*> (message.get());
+               networkBridge.SetMachineInfo(*machineMsg->GetMachineInfo());
+               // The source is probably up at this point because only the unique id of the machine info would be set at
+               // this point, so setting it from the one of the message will clean that up.
+               machineMsg->SetSource(networkBridge.GetMachineInfo());
+            }
+            else
+            {
+               LOGN_ERROR("networkcomponent.cpp", "Received either a NETCLIENT_REQUEST_CONNECTION or NETCLIENT_ACCEPT_CONNECTION message, "
+                        "but was unable to create the message from the stream data.  This is serious.");
+            }
 
             dataStream.Rewind();
          }
          else
          {
-            LOG_DEBUG("Received DataStream with MessageType " + dtUtil::ToString(msgId) + " while not being a client.");
+            LOGN_WARNING("networkcomponent.cpp", "Received DataStream with MessageType " + dtUtil::ToString(msgId) + " while not being a client.");
          }
       }
       // create message, again maybe but with proper Source!
       dataStream.Rewind();
       message = CreateMessage(dataStream, networkBridge);
-      OnReceivedNetworkMessage(*message, networkBridge);
+      if (message.valid())
+      {
+         OnReceivedNetworkMessage(*message, networkBridge);
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -671,21 +683,25 @@ namespace dtNetGM
       // MessageType.mId
       dataStream.Read(msgId);
 
-      // Check if message is supported
-      if (!gm->GetMessageFactory().IsMessageTypeSupported(
-            gm->GetMessageFactory().GetMessageTypeById(msgId)))
+      try
       {
-         LOG_ERROR("Received an unsupported message. MessageId = " + dtUtil::ToString(msgId));
-         return msg;
+         const dtGame::MessageType& messageType = gm->GetMessageFactory().GetMessageTypeById(msgId);
+
+         // Create Message
+         msg = gm->GetMessageFactory().CreateMessage(messageType);
+      }
+      catch (dtGame::MessageFactory::MessageTypeNotRegisteredException& ex)
+      {
+         LOGN_WARNING("networkcomponent.cpp", "Received an unsupported message. MessageId = " + dtUtil::ToString(msgId));
+         return NULL;
       }
 
-      // Create Message
-      msg = gm->GetMessageFactory().CreateMessage(gm->GetMessageFactory().GetMessageTypeById(msgId));
       if (!msg.valid())
       {
-         LOG_ERROR("Error creating message from stream.");
-         return msg;
+         LOGN_WARNING("networkcomponent.cpp", "Error creating message from stream.");
+         return NULL;
       }
+
       std::string szUniqueId;
 
       // Source
@@ -723,8 +739,12 @@ namespace dtNetGM
 
       if (dataStream.GetRemainingReadSize() != 0)
       {
-         // more information, there must be a causing message!
-         msg->SetCausingMessage((CreateMessage(dataStream, networkBridge)).get());
+         dtCore::RefPtr<dtGame::Message> msg = CreateMessage(dataStream, networkBridge);
+         if (msg.valid())
+         {
+            // more information, there must be a causing message!
+            msg->SetCausingMessage(msg);
+         }
       }
       return msg;
    }
