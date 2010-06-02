@@ -398,12 +398,17 @@ namespace dtDAL
        * The first time this is called, an index of the resources may need to be created internally to validate
        * the string, so it may take some time to return.
        * @param resource The  representation of a resource.
+       * @param isCategory The optional parameter, if set to true, will make this call assume the descriptor points
+       *                   to a category, which means it will return a path to a directory/folder.  This distinction needs
+       *                   to be made because with multiple resource paths, a category could exist that conflicts with a file name
+       *                   and the code will skip those categories until it finds the file, and also most code when using this
+       *                   call is looking for a file, and a category would mean that there is an error.
        * @return The path to load a resource.
        * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
        * @throws ExceptionEnum::ProjectResourceError if the string representation is invalid.
        * @throws FileExceptionEnum::FileNotFound if the file was not found.
        */
-      const std::string GetResourcePath(const ResourceDescriptor& resource) const;
+      const std::string GetResourcePath(const ResourceDescriptor& resource, bool isCategory = false) const;
 
       /**
        * Adds a resource to the project by copying it into the project.
