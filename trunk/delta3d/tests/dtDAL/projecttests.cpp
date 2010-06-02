@@ -620,6 +620,13 @@ void ProjectTests::TestResources()
             dtDAL::DataType::SOUND.GetName() + dtUtil::FileUtils::PATH_SEPARATOR + "tee"
             + dtUtil::FileUtils::PATH_SEPARATOR + "cash" + dtUtil::FileUtils::PATH_SEPARATOR + "bang.wav");
 
+      CPPUNIT_ASSERT_THROW_MESSAGE("Getting the path to a resource directory should throw an exception",
+               p.GetResourcePath(dtDAL::DataType::SOUND.GetName()), dtDAL::ProjectResourceErrorException);
+
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Getting the path to a resource directory should work in this case.",
+               p.GetContext(0) + dtUtil::FileUtils::PATH_SEPARATOR + dtDAL::DataType::SOUND.GetName(),
+               p.GetResourcePath(dtDAL::DataType::SOUND.GetName(), true));
+
       p.Refresh();
 
       //const dtUtil::tree<dtDAL::ResourceTreeNode>& allTree = p.GetAllResources();

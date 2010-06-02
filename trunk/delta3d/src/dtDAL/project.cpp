@@ -1742,7 +1742,7 @@ namespace dtDAL
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   const std::string Project::GetResourcePath(const ResourceDescriptor& resource) const
+   const std::string Project::GetResourcePath(const ResourceDescriptor& resource, bool isCategory) const
    {
       if (!IsContextValid())
       {
@@ -1757,6 +1757,13 @@ namespace dtDAL
 
       // Init to file not found.
       dtUtil::FileType ftype = dtUtil::FILE_NOT_FOUND;
+
+      dtUtil::FileType expectedType = dtUtil::REGULAR_FILE;
+      if (isCategory)
+      {
+         expectedType = dtUtil::DIRECTORY;
+      }
+
       //for proper error handling.
       bool foundADir = false;
       std::string pathContext;
@@ -1764,7 +1771,7 @@ namespace dtDAL
       std::vector<std::string>::const_iterator i, iend;
       i = mImpl->mContexts.begin();
       iend = mImpl->mContexts.end();
-      for (; i != iend && ftype != dtUtil::REGULAR_FILE; ++i)
+      for (; i != iend && ftype != expectedType; ++i)
       {
          fileUtils.PushDirectory(*i);
 
@@ -1773,14 +1780,28 @@ namespace dtDAL
             ftype = fileUtils.GetFileInfo(path).fileType;
             if (ftype == dtUtil::DIRECTORY)
             {
-               // didn't find the resource, but found a directory with that same name.
-               // This is only an error if no file is found in a later path.
-               foundADir = true;
+               if (!isCategory)
+               {
+                  // didn't find the resource, but found a directory with that same name.
+                  // This is only an error if no file is found in a later path.
+                  foundADir = true;
+               }
+               else
+               {
+                  pathContext = *i + dtUtil::FileUtils::PATH_SEPARATOR;
+               }
             }
 
             if (ftype == dtUtil::REGULAR_FILE)
             {
-               pathContext = *i + dtUtil::FileUtils::PATH_SEPARATOR;
+               if (!isCategory)
+               {
+                  pathContext = *i + dtUtil::FileUtils::PATH_SEPARATOR;
+               }
+               else
+               {
+                  break;
+               }
             }
          }
          catch (const dtUtil::Exception&)
@@ -1793,18 +1814,36 @@ namespace dtDAL
          fileUtils.PopDirectory();
       }
 
-      if (ftype != dtUtil::REGULAR_FILE)
+      if (ftype != expectedType)
       {
-         if (!foundADir)
+
+         if (!isCategory)
          {
-            throw dtDAL::ProjectFileNotFoundException(
-               std::string("The specified resource was not found: [") + path + "]", __FILE__, __LINE__);
+            if (!foundADir)
+            {
+               throw ProjectFileNotFoundException(
+                  std::string("The specified resource was not found: [") + path + "]", __FILE__, __LINE__);
+            }
+            else
+            {
+               throw ProjectResourceErrorException(
+                      std::string("The resource identifier specifies a category or directory: ") + path, __FILE__, __LINE__);
+            }
          }
          else
          {
-            throw dtDAL::ProjectResourceErrorException(
-                   std::string("The resource identifier specifies a category or directory: ") + path, __FILE__, __LINE__);
+            if (ftype == dtUtil::FILE_NOT_FOUND)
+            {
+               throw ProjectFileNotFoundException(
+                  std::string("The specified resource was not found: [") + path + "]", __FILE__, __LINE__);
+            }
+            else
+            {
+               throw ProjectResourceErrorException(
+                      std::string("The resource identifier specifies a regular file, not a category/directory: ") + path, __FILE__, __LINE__);
+            }
          }
+
       }
 
       return pathContext + path;
