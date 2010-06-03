@@ -64,7 +64,7 @@ if (BUILD_WITH_PCH)
                                 PROPERTIES COMPILE_FLAGS "/Yu\"${PrecompiledHeader}\" /FI\"${PrecompiledBinary}\" /Fp\"${PrecompiledBinary}\""
                                            OBJECT_DEPENDS "${PrecompiledBinary}")  
     # Add precompiled header to SourcesVar
-    LIST(APPEND ${SourcesVar} ${CMAKE_SOURCE_DIR}/inc/${PrecompiledSource})
+    LIST(APPEND ${SourcesVar} ${PCH_HEADER_PATH}/${PrecompiledSource})
   ELSE (MSVC)
     IF(CMAKE_COMPILER_IS_GNUCXX)
     GET_FILENAME_COMPONENT(PrecompiledBasename ${PCH_HEADER_PATH}/${PrecompiledHeader} NAME)
