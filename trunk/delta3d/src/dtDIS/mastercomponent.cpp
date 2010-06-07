@@ -15,9 +15,11 @@
 
 using namespace dtDIS;
 
+const std::string MasterComponent::DEFAULT_NAME = "dtDIS_MasterComponent";
+
 ///\todo what should set the network stream's endian type?  the SharedState's connection data?
 MasterComponent::MasterComponent(SharedState* config)
-   : dtGame::GMComponent("dtDIS_MasterComponent")
+   : dtGame::GMComponent(DEFAULT_NAME)
    , mPluginManager()
    , mConnection()
    , mIncomingMessage()
