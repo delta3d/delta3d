@@ -253,6 +253,20 @@ namespace dtDAL
             actorType = static_cast<TActorPtr>(GetActor());
          }
 
+         /** Templated version of GetActor() that static casts the actor to the type passed in.
+          *  @note Make sure the supplied ref pointer is of the correct type which
+          *  matches the proxy!
+          * @code
+          * dtCore::RefPtr<dtCore::InfiniteLight> light;
+          * proxy->GetActor(light);
+          * @endcode
+          */
+         template <typename TActor>
+         void GetActor(dtCore::RefPtr<TActor>& actorType)
+         {
+            actorType = static_cast<TActor*>(GetActor());
+         }
+
          /**
           * Gets the actor who's properties are modeled by this proxy.
           * @note
