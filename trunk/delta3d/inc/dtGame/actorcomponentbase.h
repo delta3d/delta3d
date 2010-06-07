@@ -64,12 +64,25 @@ namespace dtGame
       template <typename TComp>
       bool GetComponent(TComp*& compType) const
       {
-         if(!HasComponent(TComp::TYPE))
-         {
-            return false;
-         }
          compType = static_cast<TComp*>(GetComponent(TComp::TYPE));
-         return true;
+         return compType != NULL;
+      }
+
+
+      /**
+       * Get a component by type. Usage:
+       * @code
+       * dtCore::RefPtr<MyComponentClass> component;
+       * myComponentBase->GetComponent(component);
+       * @endcode
+       * @param compType pointer to be set to component
+       * @return True if component of this type exists, else false
+       */
+      template <typename TComp>
+      bool GetComponent(dtCore::RefPtr<TComp>& compType) const
+      {
+         compType = static_cast<TComp*>(GetComponent(TComp::TYPE));
+         return compType.valid();
       }
       
       /** 
