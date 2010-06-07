@@ -47,6 +47,8 @@ namespace dtDIS
    class DT_DIS_EXPORT MasterComponent : public dtGame::GMComponent
    {
    public:
+      static const std::string DEFAULT_NAME;
+
       /// supply the configuration files needed to support DIS.
       /// @param config the result of reading data files needed for this component to work.  This class does not assume ownership of the memory.
       /// @param connection_file The XML file that shows the ConnectionData.
