@@ -294,6 +294,12 @@ void SoundComponentTests::TestSoundManagement()
       CPPUNIT_ASSERT(mSndComp->GetSound(name5) != NULL);
       CPPUNIT_ASSERT(mSndComp->GetSound(name6) != NULL);
 
+      // Remove a few sounds by type.
+      mSndComp->RemoveAllSoundsByType(SoundType::SOUND_TYPE_DEFAULT);
+      CPPUNIT_ASSERT(mSndComp->GetSound(name1) == NULL);
+      CPPUNIT_ASSERT(mSndComp->GetSound(name3) == NULL);
+      CPPUNIT_ASSERT(mSndComp->GetSound(name5) != NULL);
+
       // Clear all remaining sounds.
       mSndComp->RemoveAllSounds();
       CPPUNIT_ASSERT(mSndComp->GetSound(name1) == NULL);

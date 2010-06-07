@@ -123,6 +123,12 @@ namespace dtAudio
       void RemoveAllSounds();
 
       /**
+       * Remove all sounds of a specific sound type that were registered with this component.
+       * Note, this does not remove Sound Actors from the Game Manager.
+       */
+      void RemoveAllSoundsByType(const dtAudio::SoundType& soundType);
+
+      /**
        * Get the sound object that holds the sound object and its type.
        * @param soundName Name used as a handle to the sound.
        */
