@@ -92,6 +92,7 @@ namespace dtAudio
          // Create the sound object.
          sound = dtAudio::AudioManager::GetInstance().NewSound();
          sound->LoadFile(soundFile.c_str());
+         sound->SetName(soundName);
 
          // Attempt adding it to the map.
          success = AddSound(*sound, soundName, soundType);
@@ -139,6 +140,22 @@ namespace dtAudio
          dtAudio::AudioManager::GetInstance().FreeSound(sound);
       }
       mSoundMap.clear();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void SoundComponent::RemoveAllSoundsByType(const dtAudio::SoundType& soundType)
+   {
+      SoundArray soundArray;
+      GetSoundsByType(soundType, soundArray);
+
+      dtAudio::Sound* curSound = NULL;
+      SoundArray::iterator curSoundIter = soundArray.begin();
+      SoundArray::iterator endSoundArray = soundArray.end();
+      for (; curSoundIter != endSoundArray; ++curSoundIter)
+      {
+         curSound = *curSoundIter;
+         RemoveSound(curSound->GetName());
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////
