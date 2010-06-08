@@ -30,14 +30,14 @@ namespace dtDAL
    const dtUtil::RefString PhysicalActorProxy::PROPERTY_MASS("Mass");
    const dtUtil::RefString PhysicalActorProxy::PROPERTY_CENTER_OF_GRAVITY("Center of Gravity");
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void PhysicalActorProxy::BuildPropertyMap()
    {
       static const dtUtil::RefString GROUPNAME("ODE Physics");
 
       TransformableActorProxy::BuildPropertyMap();
 
-      dtCore::Physical *phys = static_cast<dtCore::Physical*>(GetActor());
+      dtCore::Physical* phys = static_cast<dtCore::Physical*>(GetActor());
 
       static const dtUtil::RefString ODE_PREFIX("ODE ");
       //PHYSICS PROPS...
@@ -57,34 +57,34 @@ namespace dtDAL
                "Sets the center of gravity for this actor (using ODE).", GROUPNAME));
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void PhysicalActorProxy::SetMass(float mass)
    {
-      dtCore::Physical *phys = static_cast<dtCore::Physical*>(GetActor());
+      dtCore::Physical* phys = static_cast<dtCore::Physical*>(GetActor());
 
       phys->SetMass(mass);
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    float PhysicalActorProxy::GetMass() const
    {
-      const dtCore::Physical *phys = static_cast<const dtCore::Physical*>(GetActor());
+      const dtCore::Physical* phys = static_cast<const dtCore::Physical*>(GetActor());
 
       return phys->GetMass();
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   void PhysicalActorProxy::SetCenterOfGravity(const osg::Vec3 &g)
+   /////////////////////////////////////////////////////////////////////////////
+   void PhysicalActorProxy::SetCenterOfGravity(const osg::Vec3& g)
    {
-      dtCore::Physical *phys = static_cast<dtCore::Physical*>(GetActor());
+      dtCore::Physical* phys = static_cast<dtCore::Physical*>(GetActor());
 
       phys->SetCenterOfGravity(g);
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    osg::Vec3 PhysicalActorProxy::GetCenterOfGravity() const
    {
-      const dtCore::Physical *phys = static_cast<const dtCore::Physical*>(GetActor());
+      const dtCore::Physical* phys = static_cast<const dtCore::Physical*>(GetActor());
 
       osg::Vec3 r;
       phys->GetCenterOfGravity(r);
