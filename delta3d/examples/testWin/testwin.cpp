@@ -36,10 +36,10 @@ using namespace dtGUI;
 using namespace dtUtil;
 
 TestWinApp::TestWinApp(const std::string& configFilename)
-   : Application(configFilename)
-   , mGUI(NULL)
-   , mResolutionVec()
-   , mScriptModule(new dtGUI::ScriptModule())
+: Application(configFilename)
+, mGUI(NULL)
+, mResolutionVec()
+, mScriptModule(new dtGUI::ScriptModule())
 {
 }
 
@@ -80,8 +80,8 @@ void TestWinApp::PostFrame(const double deltaFrameTime)
 
 /** Setup the GUI with starting values.
 */
-void TestWinApp::BuildGUI(DeltaWin::ResolutionVec &resolutions,
-                          DeltaWin::Resolution &currentRes)
+void TestWinApp::BuildGUI(DeltaWin::ResolutionVec& resolutions,
+                          DeltaWin::Resolution& currentRes)
 {
    try
    {
@@ -145,20 +145,20 @@ void TestWinApp::BuildGUI(DeltaWin::ResolutionVec &resolutions,
       {
          //todo also need to scroll the window to the correct row.
          //list->ensureItemIsVisible();
-         list->setItemSelectState(CEGUI::MCLGridRef(idx, 0), true );
+         list->setItemSelectState(CEGUI::MCLGridRef(idx, 0), true);
       }
 
       CEGUI::Checkbox* check = static_cast<CEGUI::Checkbox*>(mGUI->GetWidget("FullscreenToggle"));
-      check->setSelected( GetWindow()->GetFullScreenMode() );
+      check->setSelected( GetWindow()->GetFullScreenMode());
 
       CEGUI::Editbox* title = static_cast<CEGUI::Editbox*>(mGUI->GetWidget("WindowTitle"));
-      title->setText( GetWindow()->GetWindowTitle() );
+      title->setText(GetWindow()->GetWindowTitle());
 
    }
    // catch to prevent exit (errors will be logged).
    catch (CEGUI::Exception &e)
    {
-      Log::GetInstance().LogMessage(Log::LOG_WARNING, __FILE__,  "CEGUI::%s", e.getMessage().c_str() );
+      Log::GetInstance().LogMessage(Log::LOG_WARNING, __FILE__,  "CEGUI::%s", e.getMessage().c_str());
    }
 }
 
@@ -189,7 +189,7 @@ void TestWinApp::UpdateWidgets()
 bool TestWinApp::FullScreenToggleCB(const CEGUI::EventArgs& e)
 {
    CEGUI::Checkbox* check = static_cast<CEGUI::Checkbox*>(mGUI->GetWidget("FullscreenToggle"));
-   GetWindow()->SetFullScreenMode( check->isSelected() );
+   GetWindow()->SetFullScreenMode(check->isSelected());
    return true;
 }
 
@@ -209,7 +209,7 @@ bool TestWinApp::WindowPositionCB(const CEGUI::EventArgs& e)
    CEGUI::Editbox* yBox = static_cast<CEGUI::Editbox*>(mGUI->GetWidget("WindowPosY"));
    y = atoi(yBox->getText().c_str());
 
-   GetWindow()->SetPosition(x, y, w, h );
+   GetWindow()->SetPosition(x, y, w, h);
    return true;
 }
 
@@ -226,7 +226,7 @@ bool TestWinApp::ChangeResolutionCB(const CEGUI::EventArgs& e)
 
    CEGUI::ListboxItem* item = list->getFirstSelectedItem();
 
-   DeltaWin::Resolution* res = static_cast<DeltaWin::Resolution*>( item->getUserData() );
+   DeltaWin::Resolution* res = static_cast<DeltaWin::Resolution*>(item->getUserData());
    DeltaWin::ChangeScreenResolution(*res);
    return true;
 }

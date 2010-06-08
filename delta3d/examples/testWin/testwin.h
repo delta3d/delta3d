@@ -41,13 +41,13 @@ class TestWinApp : public dtABC::Application
 {
 
 public:
-   TestWinApp( const std::string& configFilename = "config.xml" );
+   TestWinApp(const std::string& configFilename = "config.xml");
 protected:
    ~TestWinApp();
 public:
 
    virtual void Config();
-   virtual void PostFrame( const double deltaFrameTime );
+   virtual void PostFrame(const double deltaFrameTime);
 
 private:
    dtCore::RefPtr<dtGUI::GUI> mGUI;
@@ -61,7 +61,7 @@ private:
 
    bool FullScreenToggleCB(const CEGUI::EventArgs &e);
    bool WindowPositionCB(const CEGUI::EventArgs &e);
-   bool WindowTitleCB( const CEGUI::EventArgs &e);
+   bool WindowTitleCB(const CEGUI::EventArgs &e);
    bool ChangeResolutionCB( const CEGUI::EventArgs &e);
 };
 
