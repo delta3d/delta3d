@@ -82,6 +82,7 @@ namespace dtGUI
          }
 
          state->disableAllVertexArrays();
+         state->setActiveTextureUnit(0);
          state->setClientActiveTextureUnit(0);
 
          CEGUI::System::getSingletonPtr()->renderGUI();
@@ -301,6 +302,7 @@ void GUI::_SetupDefaultUI()
    }
 
    mRootSheet = CEGUI::WindowManager::getSingleton().createWindow("DefaultGUISheet", std::string(generatedUniquePrefix + "rootsheet").c_str());
+   mRootSheet->setMousePassThroughEnabled(true);
    CEGUI::System::getSingleton().setGUISheet(mRootSheet);
 }
 
