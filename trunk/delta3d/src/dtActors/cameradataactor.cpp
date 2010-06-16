@@ -38,11 +38,11 @@ CameraDataActor::ProjectionMode CameraDataActor::ProjectionMode::ORTHO2D("Ortho2
 CameraDataActor::ProjectionMode CameraDataActor::ProjectionMode::PERSPECTIVE("Perspective");
 
 //////////////////////////////////////////////////////////////////////////
-void CameraDataActorProxy::ApplyDataToCamera(dtCore::Camera& camera)
+void CameraDataActorProxy::ApplyDataTo(dtCore::Camera& camera)
 {
    CameraDataActor *actor = static_cast<CameraDataActor*>(GetActor());
 
-   actor->ApplyDataToCamera(camera);
+   actor->ApplyDataTo(camera);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -80,9 +80,14 @@ void CameraDataActorProxy::BuildPropertyMap()
       "", "Camera Enable"));
 
    // ModelView
-   AddProperty( new BooleanActorProperty("changeView", "Change ModelView",
-      BooleanActorProperty::SetFuncType(actor, &CameraDataActor::SetChangeModelView),
-      BooleanActorProperty::GetFuncType(actor, &CameraDataActor::GetChangeModelView),
+   AddProperty( new BooleanActorProperty("changeTranslation", "Change Translation / Position",
+      BooleanActorProperty::SetFuncType(actor, &CameraDataActor::SetChangeTranslation),
+      BooleanActorProperty::GetFuncType(actor, &CameraDataActor::GetChangeTranslation),
+      "", "Camera ModelView"));
+
+   AddProperty( new BooleanActorProperty("changeRotation", "Change Rotation / Orientation",
+      BooleanActorProperty::SetFuncType(actor, &CameraDataActor::SetChangeRotation),
+      BooleanActorProperty::GetFuncType(actor, &CameraDataActor::GetChangeRotation),
       "", "Camera ModelView"));
 
    // Projection
@@ -149,7 +154,8 @@ CameraDataActor::CameraDataActor( const std::string& name ) : Transformable( nam
    mChangeEnabled    = false;
    mChangeLODScale   = false;
    mChangeViewport   = false;
-   mChangeModelView  = true;
+   mChangeTranslation   = true;
+   mChangeRotation      = true;
 
    mProjectionMode   = &ProjectionMode::PERSPECTIVE;
    mLODScale         = 1.0f;
@@ -182,59 +188,6 @@ const osg::Matrix& dtActors::CameraDataActor::GetProjectionMatrix()
    return cam->getProjectionMatrix();
 }
 
-////////////////////////////////////////////////////////////////////////////////
-bool dtActors::CameraDataActor::GetChangeClearColor()
-{
-   return mChangeClearColor;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void dtActors::CameraDataActor::SetChangeClearColor(bool value)
-{
-   mChangeClearColor = value;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-const osg::Vec4& dtActors::CameraDataActor::GetClearColor()
-{
-   return mClearColor;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void dtActors::CameraDataActor::SetClearColor(const osg::Vec4& color)
-{
-   mClearColor = color;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-bool dtActors::CameraDataActor::GetChangeModelView()
-{
-   return mChangeModelView;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void dtActors::CameraDataActor::SetChangeModelView(bool value)
-{
-   mChangeModelView = value;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-const dtCore::Transform dtActors::CameraDataActor::GetModelViewTransform()
-{
-   dtCore::Transform transform; GetTransform(transform); return transform;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-bool dtActors::CameraDataActor::GetChangeProjection()
-{
-   return mChangeProjection;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void dtActors::CameraDataActor::SetChangeProjection(bool value)
-{
-   mChangeProjection = value;
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 dtActors::CameraDataActor::ProjectionMode& dtActors::CameraDataActor::GetProjectionMode()
@@ -249,103 +202,7 @@ void dtActors::CameraDataActor::SetProjectionMode(ProjectionMode& value)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void dtActors::CameraDataActor::SetProjectionRect(const osg::Vec4& value)
-{
-   mProjectionRect = value;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-const osg::Vec4& dtActors::CameraDataActor::GetProjectionRect()
-{
-   return mProjectionRect;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void dtActors::CameraDataActor::SetProjectionPersp(const osg::Vec4& value)
-{
-   mProjectionPersp = value;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-const osg::Vec4& dtActors::CameraDataActor::GetProjectionPersp()
-{
-   return mProjectionPersp;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-bool dtActors::CameraDataActor::GetChangeLODScale()
-{
-   return mChangeLODScale;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void dtActors::CameraDataActor::SetChangeLODScale(bool value)
-{
-   mChangeLODScale = value;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void dtActors::CameraDataActor::SetLODScale(float value)
-{
-   mLODScale = value;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-float dtActors::CameraDataActor::GetLODScale()
-{
-   return mLODScale;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-bool dtActors::CameraDataActor::GetChangeEnabled()
-{
-   return mChangeEnabled;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void dtActors::CameraDataActor::SetChangeEnabled(bool value)
-{
-   mChangeEnabled= value;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void dtActors::CameraDataActor::SetEnabled(bool value)
-{
-   mEnabled= value;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-bool dtActors::CameraDataActor::GetEnabled()
-{
-   return mEnabled;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-bool dtActors::CameraDataActor::GetChangeViewport()
-{
-   return mChangeViewport;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void dtActors::CameraDataActor::SetChangeViewport(bool value)
-{
-   mChangeViewport = value;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void dtActors::CameraDataActor::SetViewport(const osg::Vec4& value)
-{
-   mViewport = value;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-const osg::Vec4& dtActors::CameraDataActor::GetViewport()
-{
-   return mViewport;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void dtActors::CameraDataActor::ApplyDataToCamera(dtCore::Camera& camera)
+void dtActors::CameraDataActor::ApplyDataTo(dtCore::Camera& camera)
 {
    if (GetChangeClearColor())
    {
@@ -359,9 +216,25 @@ void dtActors::CameraDataActor::ApplyDataToCamera(dtCore::Camera& camera)
    {
       camera.SetLODScale(GetLODScale());
    }
-   if (GetChangeModelView())
+   if (GetChangeTranslation())
    {
-      camera.SetTransform(GetModelViewTransform());
+      dtCore::Transform transformSource;
+      dtCore::Transform transformTarget;
+      GetTransform(transformSource);
+      camera.GetTransform(transformTarget);
+
+      transformTarget.SetTranslation(transformSource.GetTranslation());
+      camera.SetTransform(transformTarget);
+   }
+   if (GetChangeRotation())
+   {
+      dtCore::Transform transformSource;
+      dtCore::Transform transformTarget;
+      GetTransform(transformSource);
+      camera.GetTransform(transformTarget);
+
+      transformTarget.SetRotation(transformSource.GetRotation());
+      camera.SetTransform(transformTarget);
    }
    if (GetChangeProjection())
    {
@@ -378,12 +251,6 @@ void dtActors::CameraDataActor::ApplyDataToCamera(dtCore::Camera& camera)
 dtActors::CameraDataActorProxy::CameraDataActorProxy()
 {
    SetClassName("dtActors::CameraDataActor");
-}
-
-////////////////////////////////////////////////////////////////////////////////
-bool dtActors::CameraDataActorProxy::IsPlaceable() const
-{
-   return true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
