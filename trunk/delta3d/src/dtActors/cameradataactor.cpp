@@ -149,9 +149,10 @@ CameraDataActor::CameraDataActor( const std::string& name ) : Transformable( nam
    mChangeEnabled    = false;
    mChangeLODScale   = false;
    mChangeViewport   = false;
-   mChangeModelView  = false;
+   mChangeModelView  = true;
 
    mProjectionMode   = &ProjectionMode::PERSPECTIVE;
+   mLODScale         = 1.0f;
 
    mEnabled          = false;
 }
