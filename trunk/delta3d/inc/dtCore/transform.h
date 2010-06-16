@@ -139,6 +139,8 @@ namespace dtCore
       void GetRotation(osg::Quat& quat) const { quat = mTransform.getRotate(); }
       ///Get only rotation methods
       void GetRotation(osg::Matrix& rotation) const;
+      ///Get only rotation methods
+      osg::Vec3 GetRotation() const { osg::Vec3 hpr; GetRotation(hpr); return hpr; }
 
       ///gets the contents of the matrix as the basis vectors that make up it's rows
       void GetOrientation(osg::Vec3& right, osg::Vec3& up, osg::Vec3& forward);
