@@ -35,7 +35,7 @@ namespace dtActors
 {
    /**
     * Used to store Camera-related information.  To automatically apply data
-    * to a Camera, call ApplyDataToCamera().
+    * to a Camera, call ApplyDataTo().
     */
    class DT_PLUGIN_EXPORT CameraDataActor : public dtCore::Transformable  
    {

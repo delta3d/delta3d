@@ -36,6 +36,7 @@ SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/particlesystemactorproxy.h
     ${HEADER_PATH}/playerstartactorproxy.h
     ${HEADER_PATH}/positionallightactorproxy.h
+    ${HEADER_PATH}/positiondataactor.h
     ${HEADER_PATH}/prefabactorproxy.h
     ${HEADER_PATH}/proximitytriggeractorproxy.h
     ${HEADER_PATH}/skyboxactorproxy.h
@@ -89,6 +90,7 @@ SET(LIB_SOURCES
     ${SOURCE_PATH}/particlesystemactorproxy.cpp
     ${SOURCE_PATH}/playerstartactorproxy.cpp
     ${SOURCE_PATH}/positionallightactorproxy.cpp
+    ${SOURCE_PATH}/positiondataactor.cpp
     ${SOURCE_PATH}/prefabactorproxy.cpp
     ${SOURCE_PATH}/proximitytriggeractorproxy.cpp
     ${SOURCE_PATH}/skyboxactorproxy.cpp

@@ -80,6 +80,7 @@ namespace dtActors
        static dtCore::RefPtr<dtDAL::ActorType> WATER_GRID_ACTOR_TYPE;
        static dtCore::RefPtr<dtDAL::ActorType> TRIGGER_VOLUME_ACTOR_TYPE;
        static dtCore::RefPtr<dtDAL::ActorType> DIRECTOR_ACTOR_TYPE;
+       static dtCore::RefPtr<dtDAL::ActorType> POSITION_DATA_ACTOR_TYPE;
 
         /**
          * Constructs the engine actor registry.

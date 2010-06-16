@@ -114,6 +114,7 @@ namespace dtDAL
          static std::string IMAGE_BILLBOARD_CAMERA;
          static std::string IMAGE_BILLBOARD_WAYPOINT;
          static std::string IMAGE_BILLBOARD_DIRECTOR;
+         static std::string IMAGE_BILLBOARD_POSITION;
 
          //Textures used to display the arrow orientation indicator on the billboard.
          static std::string IMAGE_ARROW_HEAD;
