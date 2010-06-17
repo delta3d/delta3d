@@ -218,11 +218,13 @@ namespace dtCore
    {}
    
    InputDeviceFeature::~InputDeviceFeature()
-   {}
+   {
+      mOwner = NULL;
+   }
    
    InputDevice* InputDeviceFeature::GetOwner() const
    {
-      return mOwner;
+      return mOwner.get();
    }
    
    void InputDeviceFeature::SetDescription(const std::string& description)
@@ -266,11 +268,14 @@ namespace dtCore
          }
 
          ///\todo Grasp why this is here
-         for (it = GetOwner()->mButtonListeners.begin();
-             it != GetOwner()->mButtonListeners.end();
-             ++it)
+         if (GetOwner() != NULL)
          {
-            (*it)->ButtonStateChanged(this, !mState, mState);
+            for (it = GetOwner()->mButtonListeners.begin();
+                 it != GetOwner()->mButtonListeners.end();
+                 ++it)
+            {
+               (*it)->ButtonStateChanged(this, !mState, mState);
+            }
          }
       }
 
@@ -328,12 +333,15 @@ namespace dtCore
 
          ///\todo Grasp why this is here.
          // update all of the device's listeners?????????????????????
-         AxisListenerList::iterator it;
-         for (it = GetOwner()->mAxisListeners.begin();
-             it != GetOwner()->mAxisListeners.end();
-             ++it)
+         if (GetOwner() != NULL)
          {
-            (*it)->AxisStateChanged(this, oldState, mState, delta);
+            AxisListenerList::iterator it;
+            for (it = GetOwner()->mAxisListeners.begin();
+                 it != GetOwner()->mAxisListeners.end();
+                 ++it)
+            {
+               (*it)->AxisStateChanged(this, oldState, mState, delta);
+            }
          }
       }
 
