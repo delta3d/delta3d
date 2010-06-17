@@ -33,6 +33,7 @@
 
 #include <dtCore/base.h>
 #include <dtCore/refptr.h>
+#include <dtCore/observerptr.h>
 
 namespace dtCore
 {
@@ -238,7 +239,7 @@ namespace dtCore
    private:
 
       /// The owner of this feature.
-      InputDevice* mOwner;
+      dtCore::ObserverPtr<InputDevice> mOwner;
 
       /// A description of this feature.
       std::string mDescription;
