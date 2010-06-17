@@ -67,6 +67,8 @@ void Action::Update(double dt)
 {
    if (mIsRunning)
    {
+      mTotalTime += dt;
+
       if (mTickOncePerFrame)
       {
          if (!OnNextStep())
@@ -76,7 +78,6 @@ void Action::Update(double dt)
       }
       else
       {
-         mTotalTime += dt;
          mAccumTime += dt;
 
          while (mAccumTime >= mTimeStep && mIsRunning)
