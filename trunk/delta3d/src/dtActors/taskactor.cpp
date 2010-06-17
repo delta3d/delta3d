@@ -41,7 +41,7 @@
 namespace dtActors
 {
    //////////////////////////////////////////////////////////////////////////////
-   TaskActor::TaskActor(dtGame::GameActorProxy &proxy) : dtGame::GameActor(proxy)
+   TaskActor::TaskActor(dtGame::GameActorProxy& proxy) : dtGame::GameActor(proxy)
    {
       SetName("Task");
       //SetDisplayName("Display Name");
@@ -68,9 +68,9 @@ namespace dtActors
          TaskActorProxy& proxy = static_cast<TaskActorProxy&>(GetGameActorProxy());
 
          // If setting, then we need to get a new time stamp
-         if(flag)
+         if (flag)
          {
-            if(proxy.GetGameManager() == NULL)
+            if (proxy.GetGameManager() == NULL)
             {
                LOG_ERROR("Error setting complete flag on Task Actor.  Game Manager was invalid on this actor.");
             }
@@ -81,7 +81,7 @@ namespace dtActors
             }
          }
          // don't overwrite complete time if we are already failed. Allows setting this back to false.
-         else if(!IsFailed())
+         else if (!IsFailed())
          {
             SetCompletedTimeStamp(-1.0);
          }
@@ -89,15 +89,15 @@ namespace dtActors
          mComplete = flag;
 
          // Significant change, so notify the world
-         if(proxy.GetGameManager() == NULL)
+         if (proxy.GetGameManager() == NULL)
          {
             proxy.NotifyFullActorUpdate();
          }
 
          // Send the Notify Completed Event if marking this task as completed.
-         if( mComplete && mNotifyEventCompleted.valid() )
+         if (mComplete && mNotifyEventCompleted.valid())
          {
-            proxy.SendGameEvent( *mNotifyEventCompleted );
+            proxy.SendGameEvent(*mNotifyEventCompleted);
          }
       }
    }
@@ -118,7 +118,7 @@ namespace dtActors
          TaskActorProxy& proxy = static_cast<TaskActorProxy&>(GetGameActorProxy());
 
          // If setting, then we need to get a new time stamp
-         if(flag)
+         if (flag)
          {
             if (proxy.GetGameManager() == NULL)
             {
@@ -131,7 +131,7 @@ namespace dtActors
             }
          }
          // don't overwrite complete time if we are already failed. Allows setting this back to false.
-         else if(!IsComplete()) // don't overwrite complete time if we are already complete
+         else if (!IsComplete()) // don't overwrite complete time if we are already complete
          {
             SetCompletedTimeStamp(-1.0);
          }
@@ -139,13 +139,13 @@ namespace dtActors
          mFailed = flag;
 
          // Significant change, so notify the world
-         if(proxy.GetGameManager() == NULL)
+         if (proxy.GetGameManager() == NULL)
          {
             proxy.NotifyFullActorUpdate();
          }
 
          // Send the Notify Failed Event if marking this task as failed.
-         if( mFailed && mNotifyEventFailed.valid() )
+         if ( mFailed && mNotifyEventFailed.valid() )
          {
             proxy.SendGameEvent( *mNotifyEventFailed );
          }
@@ -205,37 +205,37 @@ namespace dtActors
 
       //Passing Score...
       AddProperty(new dtDAL::FloatActorProperty("PassingScore","Passing Score",
-         dtDAL::MakeFunctor(task,&TaskActor::SetPassingScore),
+         dtDAL::FloatActorProperty::SetFuncType(&task,&TaskActor::SetPassingScore),
          dtDAL::MakeFunctorRet(task,&TaskActor::GetPassingScore),
          "Sets/gets the passing score for this task.",GROUPNAME));
 
       //Score...
       AddProperty(new dtDAL::FloatActorProperty("Score","Score",
-         dtDAL::MakeFunctor(task,&TaskActor::SetScore),
+         dtDAL::FloatActorProperty::SetFuncType(&task,&TaskActor::SetScore),
          dtDAL::MakeFunctorRet(task,&TaskActor::GetScore),
          "Sets/gets the current score of this task.",GROUPNAME));
 
       //Weight...
       AddProperty(new dtDAL::FloatActorProperty("Weight","Weight",
-         dtDAL::MakeFunctor(task,&TaskActor::SetWeight),
+         dtDAL::FloatActorProperty::SetFuncType(&task,&TaskActor::SetWeight),
          dtDAL::MakeFunctorRet(task,&TaskActor::GetWeight),
          "Sets/gets the current weight assigned to this task.",GROUPNAME));
 
       //Complete...
       AddProperty(new dtDAL::BooleanActorProperty("Complete","Complete",
-         dtDAL::MakeFunctor(task,&TaskActor::SetComplete),
+         dtDAL::BooleanActorProperty::SetFuncType(&task,&TaskActor::SetComplete),
          dtDAL::MakeFunctorRet(task,&TaskActor::IsComplete),
          "Gets the complete status of this task.",GROUPNAME));
 
       //NotifyLMSOnUpdate
       AddProperty(new dtDAL::BooleanActorProperty("NotifyLMSOnUpdate","Notify LMS On Update",
-         dtDAL::MakeFunctor(task,&TaskActor::SetNotifyLMSOnUpdate),
+         dtDAL::BooleanActorProperty::SetFuncType(&task,&TaskActor::SetNotifyLMSOnUpdate),
          dtDAL::MakeFunctorRet(task,&TaskActor::GetNotifyLMSOnUpdate),
          "Sets/gets the flag that determines if this task should notify an LMS when it is updated.",GROUPNAME));
 
       //Completed time...
       AddProperty(new dtDAL::DoubleActorProperty("CompleteTime","Complete Time",
-                  dtDAL::MakeFunctor(task,&TaskActor::SetCompletedTimeStamp),
+                  dtDAL::DoubleActorProperty::SetFuncType(&task,&TaskActor::SetCompletedTimeStamp),
                   dtDAL::MakeFunctorRet(task,&TaskActor::GetCompletedTimeStamp),
                   "Gets the simulation time in which this task was completed.",GROUPNAME));
 
@@ -256,7 +256,7 @@ namespace dtActors
       // The Task List.
       AddProperty(new dtDAL::ArrayActorProperty<dtCore::UniqueId>(
          "SubTaskList", "Sub Task List", "List of sub tasks",
-         dtDAL::MakeFunctor(*this, &TaskActorProxy::TaskArraySetIndex),
+         dtDAL::ArrayActorProperty<dtCore::UniqueId>::SetIndexFuncType(this, &TaskActorProxy::TaskArraySetIndex),
          dtDAL::MakeFunctorRet(*this, &TaskActorProxy::TaskArrayGetDefault),
          dtDAL::MakeFunctorRet(*this, &TaskActorProxy::TaskArrayGetValue),
          dtDAL::MakeFunctorRet(*this, &TaskActorProxy::TaskArraySetValue),
@@ -266,7 +266,7 @@ namespace dtActors
       AddProperty(new dtDAL::GameEventActorProperty(*this,
          TaskActorProxy::PROPERTY_EVENT_NOTIFY_COMPLETED,
          "Notify Completed Event",
-         dtDAL::MakeFunctor(task, &TaskActor::SetNotifyCompletedEvent),
+         dtDAL::GameEventActorProperty::SetFuncType(&task, &TaskActor::SetNotifyCompletedEvent),
          dtDAL::MakeFunctorRet<dtDAL::GameEvent* (TaskActor::*)(), TaskActor>
             (task, &TaskActor::GetNotifyCompletedEvent),
          "Sets and gets the game event that will be sent when this task completes.",GROUPNAME));
@@ -275,7 +275,7 @@ namespace dtActors
       AddProperty(new dtDAL::GameEventActorProperty(*this,
          TaskActorProxy::PROPERTY_EVENT_NOTIFY_FAILED,
          "Notify Failed Event",
-         dtDAL::MakeFunctor(task, &TaskActor::SetNotifyFailedEvent),
+         dtDAL::GameEventActorProperty::SetFuncType(&task, &TaskActor::SetNotifyFailedEvent),
          dtDAL::MakeFunctorRet<dtDAL::GameEvent* (TaskActor::*)(), TaskActor>
             (task, &TaskActor::GetNotifyFailedEvent),
          "Sets and gets the game event that will be sent when this task fails.",GROUPNAME));
@@ -317,7 +317,7 @@ namespace dtActors
             // The SubTasks property was changed from a GroupActorProperty to
             // an ArrayActorProperty.
             prop = new dtDAL::GroupActorProperty("SubTasks", "Sub Task Actor List",
-               dtDAL::MakeFunctor(*this, &TaskActorProxy::SetSubTaskGroup),
+               dtDAL::GroupActorProperty::SetFuncType(this, &TaskActorProxy::SetSubTaskGroup),
                dtDAL::MakeFunctorRet(*this, &TaskActorProxy::GetSubTaskGroup),
                "The list of subtasks.", "BaseTask", "TaskChildren");
          }
@@ -352,7 +352,9 @@ namespace dtActors
          if (subTask)
          {
             if (subTask->GetParentTask())
+            {
                subTask->GetParentTask()->RemoveSubTask(*subTask);
+            }
 
             subTask->SetParentTaskProxy(this);
          }
@@ -373,11 +375,17 @@ namespace dtActors
 
       // If we are failed, then the request is denied.
       if (taskActor->IsFailed())
+      {
          return false;
+      }
       else if (GetParentTask() != NULL) // ask our parent if we have one
-         return GetParentTask()->RequestScoreChange(*this,origTask);
+      {
+         return GetParentTask()->RequestScoreChange(*this, origTask);
+      }
       else // a root task returns true by default
+      {
          return true;
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -385,7 +393,9 @@ namespace dtActors
    {
       //Default implementation just needs to pass the notification up the chain.
       if (GetParentTask() != NULL)
+      {
          GetParentTask()->NotifyScoreChanged(*this);
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -409,11 +419,17 @@ namespace dtActors
       // Note, our child is allowed to change if we are complete, since a passing score could
       // be improved, but not if we are failed, since we want to hold failure steady.
       if (myActor->IsFailed())
+      {
          return false;
+      }
       else if (GetParentTask() != NULL) // ask our parent if we have one.
+      {
          return GetParentTask()->IsChildTaskAllowedToChange(childTask);
+      }
       else // default is to return true
+      {
          return true;
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -426,7 +442,9 @@ namespace dtActors
       }
 
       if (subTask.GetParentTask() != NULL)
+      {
          subTask.GetParentTask()->RemoveSubTask(subTask);
+      }
 
       subTask.SetParentTaskProxy(this);
       mSubTasks.push_back(subTask.GetId());
@@ -436,8 +454,10 @@ namespace dtActors
    void TaskActorProxy::AddSubTask(dtCore::UniqueId id)
    {
       if (FindSubTask(id) != NULL)
+      {
          throw dtGame::InvalidParameterException(
-         "Cannot add a duplicate sub task." , __FILE__, __LINE__);
+           "Cannot add a duplicate sub task." , __FILE__, __LINE__);
+      }
 
       mSubTasks.push_back(id);
 
@@ -445,7 +465,9 @@ namespace dtActors
       if (proxy)
       {
          if (proxy->GetParentTask() != NULL)
+         {
             proxy->GetParentTask()->RemoveSubTask(*proxy);
+         }
 
          proxy->SetParentTaskProxy(this);
       }
@@ -459,7 +481,9 @@ namespace dtActors
       for (itor=mSubTasks.begin(); itor!=mSubTasks.end(); ++itor)
       {
          if ((*itor) == subTask.GetId())
+         {
             break;
+         }
       }
 
       if (itor == mSubTasks.end())
@@ -479,15 +503,17 @@ namespace dtActors
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void TaskActorProxy::RemoveSubTask(const std::string &name)
+   void TaskActorProxy::RemoveSubTask(const std::string& name)
    {
       TaskActorProxy* proxy = NULL;
       std::vector<dtCore::UniqueId>::iterator itor;
-      for (itor=mSubTasks.begin(); itor!=mSubTasks.end(); ++itor)
+      for (itor = mSubTasks.begin(); itor != mSubTasks.end(); ++itor)
       {
          proxy = GetProxyById((*itor));
          if (proxy->GetName() == name)
+         {
             break;
+         }
       }
 
       if (itor == mSubTasks.end())
@@ -503,24 +529,26 @@ namespace dtActors
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   TaskActorProxy *TaskActorProxy::FindSubTask(const std::string &name)
+   TaskActorProxy* TaskActorProxy::FindSubTask(const std::string& name)
    {
       std::vector<dtCore::UniqueId>::iterator itor;
 
-      for (itor=mSubTasks.begin(); itor!=mSubTasks.end(); ++itor)
+      for (itor = mSubTasks.begin(); itor != mSubTasks.end(); ++itor)
       {
          TaskActorProxy* proxy = GetProxyById((*itor));
-         if(proxy->GetName() == name)
+         if (proxy->GetName() == name)
+         {
             return proxy;
+         }
       }
       return NULL;
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   TaskActorProxy *TaskActorProxy::FindSubTask(const dtCore::UniqueId &id)
+   TaskActorProxy* TaskActorProxy::FindSubTask(const dtCore::UniqueId& id)
    {
       std::vector<dtCore::UniqueId>::iterator itor;
-      for (itor=mSubTasks.begin(); itor!=mSubTasks.end(); ++itor)
+      for (itor = mSubTasks.begin(); itor != mSubTasks.end(); ++itor)
       {
          if ((*itor) == id)
          {
@@ -635,7 +663,7 @@ namespace dtActors
    void TaskActorProxy::SendGameEvent(dtDAL::GameEvent& gameEvent)
    {
       dtGame::GameManager* gm = GetGameManager();
-      if( gm != NULL )
+      if ( gm != NULL )
       {
          dtCore::RefPtr<dtGame::GameEventMessage> eventMessage;
          gm->GetMessageFactory().CreateMessage( dtGame::MessageType::INFO_GAME_EVENT, eventMessage );

@@ -30,32 +30,32 @@ namespace dtActors
       //MotionAction* mo = static_cast<MotionAction*>(GetActor());
 
       AddProperty(new ActorActorProperty(*this, "Target Object", "Target Object",
-         MakeFunctor(*this, &MotionActionActorProxy::SetActorTargetObject),
-         MakeFunctorRet(*this, &MotionActionActorProxy::GetActorTargetObject),
+         ActorActorProperty::SetFuncType(this, &MotionActionActorProxy::SetActorTargetObject),
+         ActorActorProperty::GetFuncType(this, &MotionActionActorProxy::GetActorTargetObject),
          "dtCore::Transformable",
          "Sets the object to be moved when this action is triggered"));
 
-      AddProperty(new dtDAL::ActorActorProperty(*this, "Parent Object", "Parent Object",
-         MakeFunctor(*this, &MotionActionActorProxy::SetActorParentObject),
-         MakeFunctorRet(*this, &MotionActionActorProxy::GetActorParentObject),
+      AddProperty(new ActorActorProperty(*this, "Parent Object", "Parent Object",
+         ActorActorProperty::SetFuncType(this, &MotionActionActorProxy::SetActorParentObject),
+         ActorActorProperty::GetFuncType(this, &MotionActionActorProxy::GetActorParentObject),
          "dtCore::Transformable",
          "Sets the parent for this Actor."));
 
       AddProperty(new dtDAL::EnumActorProperty<MotionActionActorProxy::ParentRelationEnum>("Parent Relation","Parent Relation",
-         dtDAL::MakeFunctor(*this,&MotionActionActorProxy::SetActorParentRelation),
-         dtDAL::MakeFunctorRet(*this,&MotionActionActorProxy::GetActorParentRelation),
+         EnumActorProperty<MotionActionActorProxy::ParentRelationEnum>::SetFuncType(this,&MotionActionActorProxy::SetActorParentRelation),
+         EnumActorProperty<MotionActionActorProxy::ParentRelationEnum>::GetFuncType(this,&MotionActionActorProxy::GetActorParentRelation),
          "Sets this actors relation to its parent.", "MotionAction"));
 
 
       AddProperty(new Vec3ActorProperty("Rotation", "Rotation",
-         MakeFunctor(*this, &MotionActionActorProxy::SetRotation),
-         MakeFunctorRet(*this, &MotionActionActorProxy::GetRotation),
+         Vec3ActorProperty::SetFuncType(this, &MotionActionActorProxy::SetRotation),
+         Vec3ActorProperty::GetFuncType(this, &MotionActionActorProxy::GetRotation),
          "Sets the amount of rotation on a transformable. Represented with pitch, yaw, and roll.",
          "LocalTransform"));
 
       AddProperty(new Vec3ActorProperty("Translation", "Translation",
-         MakeFunctor(*this, &MotionActionActorProxy::SetTranslation),
-         MakeFunctorRet(*this, &MotionActionActorProxy::GetTranslation),
+         Vec3ActorProperty::SetFuncType(this, &MotionActionActorProxy::SetTranslation),
+         Vec3ActorProperty::GetFuncType(this, &MotionActionActorProxy::GetTranslation),
          "Sets the location of a transformable in 3D space.",
          "LocalTransform"));
    }
@@ -63,7 +63,7 @@ namespace dtActors
    DeltaDrawable* MotionActionActorProxy::GetActorTargetObject()
    {
       MotionAction* mo = static_cast< MotionAction* >( GetActor() );
-      if( mo == 0 )
+      if ( mo == 0 )
       {
          throw dtDAL::InvalidActorException(
             "Actor should be type dtABC::MotionAction", __FILE__, __LINE__);
@@ -75,7 +75,7 @@ namespace dtActors
    DeltaDrawable* MotionActionActorProxy::GetActorParentObject()
    {
       MotionAction * mo = static_cast< MotionAction* >( GetActor() );
-      if( mo == 0 )
+      if ( mo == 0 )
       {
          throw dtDAL::InvalidActorException(
             "Actor should be type dtABC::MotionAction" , __FILE__, __LINE__);
@@ -92,12 +92,12 @@ namespace dtActors
 
       dtCore::Transformable* trans  = NULL;
 
-      if(node)
+      if (node)
       {
           trans = static_cast<dtCore::Transformable*>(node->GetActor());
       }
-      
-      ma->SetTargetObject(trans);      
+
+      ma->SetTargetObject(trans);
    }
 
    void MotionActionActorProxy::SetActorParentObject(ActorProxy* proxy)
@@ -108,7 +108,7 @@ namespace dtActors
 
       dtCore::Transformable* trans  = NULL;
 
-      if(proxy)
+      if (proxy)
       {
          trans = static_cast<dtCore::Transformable*>(proxy->GetActor());
       }
@@ -116,19 +116,19 @@ namespace dtActors
       ma->SetParent(trans);
    }
 
-   MotionActionActorProxy::ParentRelationEnum& MotionActionActorProxy::GetActorParentRelation() 
+   MotionActionActorProxy::ParentRelationEnum& MotionActionActorProxy::GetActorParentRelation()
    {
       dtABC::MotionAction* ma = static_cast<dtABC::MotionAction*>(GetActor());
 
       MotionAction::PARENT_RELATION pr = ma->GetParentRelation();
 
-      if(pr == dtABC::MotionAction::FOLLOW_PARENT)
+      if (pr == dtABC::MotionAction::FOLLOW_PARENT)
          return ParentRelationEnum::FOLLOW_PARENT;
 
-      else if(pr == dtABC::MotionAction::TRACK_PARENT)
+      else if (pr == dtABC::MotionAction::TRACK_PARENT)
          return ParentRelationEnum::TRACK_PARENT;
 
-      else if(pr == dtABC::MotionAction::TRACK_AND_FOLLOW)
+      else if (pr == dtABC::MotionAction::TRACK_AND_FOLLOW)
          return ParentRelationEnum::TRACK_AND_FOLLOW;
 
       return ParentRelationEnum::NO_RELATION;
@@ -137,13 +137,13 @@ namespace dtActors
    void MotionActionActorProxy::SetActorParentRelation(ParentRelationEnum& e)
    {
       dtABC::MotionAction* ma = static_cast<dtABC::MotionAction*>(GetActor());
-      if(e == ParentRelationEnum::FOLLOW_PARENT)
+      if (e == ParentRelationEnum::FOLLOW_PARENT)
          ma->SetParentRelation(dtABC::MotionAction::FOLLOW_PARENT);
 
-      else if(e == ParentRelationEnum::TRACK_PARENT)
+      else if (e == ParentRelationEnum::TRACK_PARENT)
          ma->SetParentRelation(dtABC::MotionAction::TRACK_PARENT);
-         
-      else if(e == ParentRelationEnum::TRACK_AND_FOLLOW)
+
+      else if (e == ParentRelationEnum::TRACK_AND_FOLLOW)
          ma->SetParentRelation(dtABC::MotionAction::TRACK_AND_FOLLOW);
 
       else ma->SetParentRelation(dtABC::MotionAction::NO_RELATION);
@@ -176,7 +176,7 @@ namespace dtActors
          hpr.z() -= 360.0f;
 
       dtCore::Transform trans = t->GetLocalTransform();
-      
+
       trans.SetRotation(hpr);
       t->SetLocalTransform(trans);
    }
@@ -199,7 +199,7 @@ namespace dtActors
       dtABC::MotionAction *t = static_cast<dtABC::MotionAction*>(GetActor());
 
       dtCore::Transform trans = t->GetLocalTransform();
-     
+
       osg::Vec3 oldTrans;
       trans.GetTranslation(oldTrans);
       trans.SetTranslation(translation[0], translation[1], translation[2]);

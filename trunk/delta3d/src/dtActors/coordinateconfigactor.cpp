@@ -58,13 +58,13 @@ namespace dtActors
       AddProperty(currentOriginProp.get());
 
       AddProperty(new dtDAL::Vec3dActorProperty("Origin", "Origin Translation",
-         dtDAL::MakeFunctor(*cca, &CoordinateConfigActor::SetOriginLocation),
+         dtDAL::Vec3dActorProperty::SetFuncType(cca, &CoordinateConfigActor::SetOriginLocation),
          dtDAL::MakeFunctorRet(*cca, &CoordinateConfigActor::GetOriginLocation),
          "Sets a local offset that will be applied to the coordinates after the conversion from incoming to local and vice-versa",
          "Coordinate Config"));
 
       AddProperty(new dtDAL::Vec3dActorProperty("Geo Origin", "Geo Origin",
-         dtDAL::MakeFunctor(*cca, &CoordinateConfigActor::SetGeoOrigin),
+         dtDAL::Vec3dActorProperty::SetFuncType(cca, &CoordinateConfigActor::SetGeoOrigin),
          dtDAL::MakeFunctorRet(*cca, &CoordinateConfigActor::GetGeoOrigin),
          "Sets the same local offset at the Origin Translation property, but using a lat/lon that will be converted via lat lon to UTM translation."
          "This only makes sense in odd cases when a terrain is in a UTM projection, but the origin is provided as a lat lon."
@@ -73,7 +73,7 @@ namespace dtActors
          "Coordinate Config"));
 
       AddProperty(new dtDAL::Vec2dActorProperty("Flat Earth Origin", "Flat Earth Origin",
-         dtDAL::MakeFunctor(*cca, &CoordinateConfigActor::SetFlatEarthOrigin),
+         dtDAL::Vec2dActorProperty::SetFuncType(cca, &CoordinateConfigActor::SetFlatEarthOrigin),
          dtDAL::MakeFunctorRet(*cca, &CoordinateConfigActor::GetFlatEarthOrigin),
          "Sets the lat lon origin point of reference for flat earth terrain calculations.",
          "Coordinate Config"));
@@ -95,49 +95,50 @@ namespace dtActors
       AddProperty(convertedGeoOriginProp.get());
 
       AddProperty(new dtDAL::FloatActorProperty("Globe Radius", "Globe Radius",
-         dtDAL::MakeFunctor(*cca, &CoordinateConfigActor::SetGlobeRadius),
+         dtDAL::FloatActorProperty::SetFuncType(cca, &CoordinateConfigActor::SetGlobeRadius),
          dtDAL::MakeFunctorRet(*cca, &CoordinateConfigActor::GetGlobeRadius),
          "Sets the globe radius of the coordinate set",
          "Coordinate Config"));
 
       AddProperty(new dtDAL::FloatActorProperty("Magnetic North Offset", "Magnetic North Offset",
-         dtDAL::MakeFunctor(*cca, &CoordinateConfigActor::SetMagneticNorthOffset),
+         dtDAL::FloatActorProperty::SetFuncType(cca, &CoordinateConfigActor::SetMagneticNorthOffset),
          dtDAL::MakeFunctorRet(*cca, &CoordinateConfigActor::GetMagneticNorthOffset),
          "Sets the magnetic north offset to use for the are of the world being simulated.  This is just for reference.",
          "Coordinate Config"));
 
       AddProperty(new dtDAL::IntActorProperty("UTM Zone", "UTM East-West Zone",
-         dtDAL::MakeFunctor(*cca, &CoordinateConfigActor::SetUTMZone),
+         dtDAL::IntActorProperty::SetFuncType(cca, &CoordinateConfigActor::SetUTMZone),
          dtDAL::MakeFunctorRet(*cca, &CoordinateConfigActor::GetUTMZone),
          "The Universal Transverse Mercator East-West Zone number to use when converting outgoing coordinates.",
          "Coordinate Config"));
 
       AddProperty(new dtDAL::BooleanActorProperty("Use Geo Origin", "Use Geo Origin for UTM",
-         dtDAL::MakeFunctor(*cca, &CoordinateConfigActor::SetUseGeoOrigin),
+         dtDAL::BooleanActorProperty::SetFuncType(cca, &CoordinateConfigActor::SetUseGeoOrigin),
          dtDAL::MakeFunctorRet(*cca, &CoordinateConfigActor::UseGeoOrigin),
          "Use the Geo origin to calculate the origin for UTM projejctions. False for using the Origin Location."
          "This property is not needed for Flat Earth or Globe projections.",
          "Coordinate Config"));
 
       AddProperty(new dtDAL::EnumActorProperty<dtUtil::IncomingCoordinateType>("Incoming Coordinate Type", "Incoming Coordinate Type",
-         dtDAL::MakeFunctor(*cca, &CoordinateConfigActor::SetIncomingCoordinateType),
+         dtDAL::EnumActorProperty<dtUtil::IncomingCoordinateType>::SetFuncType(cca, &CoordinateConfigActor::SetIncomingCoordinateType),
          dtDAL::MakeFunctorRet(*cca, &CoordinateConfigActor::GetIncomingCoordinateType),
          "Sets the incoming coordinate type of the coordinate set",
          "Coordinate Config"));
 
       AddProperty(new dtDAL::EnumActorProperty<dtUtil::LocalCoordinateType>("Local Coordinate Type", "Local Coordinate Type",
-         dtDAL::MakeFunctor(*cca, &CoordinateConfigActor::SetLocalCoordinateType),
+         dtDAL::EnumActorProperty<dtUtil::LocalCoordinateType>::SetFuncType(cca, &CoordinateConfigActor::SetLocalCoordinateType),
          dtDAL::MakeFunctorRet(*cca, &CoordinateConfigActor::GetLocalCoordinateType),
          "Sets the local coordinate type of the coordinate set",
          "Coordinate Config"));
-
    }
 
    /////////////////////////////////////////////////////
    dtDAL::ActorProxyIcon* CoordinateConfigActorProxy::GetBillBoardIcon()
    {
-      if(!mBillBoardIcon.valid())
+      if (!mBillBoardIcon.valid())
+      {
          mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_STATICMESH);
+      }
 
       return mBillBoardIcon.get();
    }
@@ -146,8 +147,8 @@ namespace dtActors
    // Actor code
    /////////////////////////////////////////////////////
    CoordinateConfigActor::CoordinateConfigActor(dtGame::GameActorProxy& proxy)
-   : GameActor(proxy)
-   , mUseGeoOrigin(false)
+      : GameActor(proxy)
+      , mUseGeoOrigin(false)
    {
 
    }

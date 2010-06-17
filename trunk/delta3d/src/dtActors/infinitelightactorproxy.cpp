@@ -17,13 +17,13 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  * Matthew W. Campbell
-*/
+ */
 #include "dtDAL/enginepropertytypes.h"
 #include "dtActors/infinitelightactorproxy.h"
 
 #include <dtCore/object.h>
 
-namespace dtActors 
+namespace dtActors
 {
     void InfiniteLightActorProxy::CreateActor()
     {
@@ -39,7 +39,7 @@ namespace dtActors
 
         ////Infinite lights only have a direction property so add it.
         //AddProperty(new dtDAL::Vec3ActorProperty("Direction","Direction",
-        //    dtDAL::MakeFunctor(*this,&InfiniteLightActorProxy::SetDirection),
+        //    dtDAL::SetFuncType(this,&InfiniteLightActorProxy::SetDirection),
         //    dtDAL::MakeFunctorRet(*this,&InfiniteLightActorProxy::GetDirection),
         //    "Determines the direction that the light is pointing.",GROUPNAME));
     }

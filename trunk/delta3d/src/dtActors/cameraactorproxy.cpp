@@ -1,24 +1,24 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
-* Copyright (C) 2005, MOVES Institute & BMH Associates, Inc.
-*
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
-* any later version.
-*
-* This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
-* details.
-*
-* You should have received a copy of the GNU Lesser General Public License
-* along with this library; if not, write to the Free Software Foundation, Inc.,
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*
-* William E. Johnson II
-* Chris Osborn
-*/
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2005, MOVES Institute & BMH Associates, Inc.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * William E. Johnson II
+ * Chris Osborn
+ */
 #include <dtActors/cameraactorproxy.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actorproxyicon.h>
@@ -49,13 +49,13 @@ void CameraActorProxy::CreateActor()
 ///////////////////////////////////////////////////////////////////////////////
 void CameraActorProxy::BuildPropertyMap()
 {
-   const std::string &GROUPNAME = "Camera";
+   const std::string& GROUPNAME = "Camera";
    TransformableActorProxy::BuildPropertyMap();
 
-   Camera *cam = static_cast<Camera*>(GetActor());
+   Camera* cam = static_cast<Camera*>(GetActor());
 
-   AddProperty( new BooleanActorProperty("Enable", "Enabled",
-      MakeFunctor(*cam, &dtCore::Camera::SetEnabled),
+   AddProperty(new BooleanActorProperty("Enable", "Enabled",
+      BooleanActorProperty::SetFuncType(cam, &dtCore::Camera::SetEnabled),
       MakeFunctorRet(*cam, &dtCore::Camera::GetEnabled),
       "Enables or disables this camera at runtime", GROUPNAME));
 
@@ -64,7 +64,7 @@ void CameraActorProxy::BuildPropertyMap()
    // representation. All values are clamped between 0 - 1.
    // Default is 0, 0, 1, 0 (blue)
    AddProperty(new ColorRgbaActorProperty("Clear Color", "Clear Color",
-      MakeFunctor(*this, &dtActors::CameraActorProxy::SetClearColor),
+      ColorRgbaActorProperty::SetFuncType(this, &dtActors::CameraActorProxy::SetClearColor),
       MakeFunctorRet(*this, &dtActors::CameraActorProxy::GetClearColor),
       "Sets the camera's clear color, which can be thought of as the background color", GROUPNAME));
 }
@@ -72,7 +72,7 @@ void CameraActorProxy::BuildPropertyMap()
 ////////////////////////////////////////////////////////////////////////////////
 dtDAL::ActorProxyIcon* CameraActorProxy::GetBillBoardIcon()
 {
-   if(!mBillBoardIcon.valid())
+   if (!mBillBoardIcon.valid())
    {
       mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_CAMERA);
    }

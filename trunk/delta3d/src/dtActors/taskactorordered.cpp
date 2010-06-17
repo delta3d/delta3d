@@ -77,7 +77,7 @@ namespace dtActors
       //Add the failure type enumeration property.
       AddProperty(new dtDAL::EnumActorProperty<TaskActorOrdered::FailureType>("Order Enforcement",
                   "Order Enforcement",
-                  dtDAL::MakeFunctor(task,&TaskActorOrdered::SetFailureType),
+                  dtDAL::EnumActorProperty<TaskActorOrdered::FailureType>::SetFuncType(&task,&TaskActorOrdered::SetFailureType),
                   dtDAL::MakeFunctorRet(task,&TaskActorOrdered::GetFailureType),
                   "Sets the way in which the ordered task actor handles out of order task updates.",
                   GROUPNAME));
@@ -99,7 +99,7 @@ namespace dtActors
 
       //Need to see if all the tasks added prior to the task in question have been
       //completed.  If not we have to reject.
-      for(itor=subTasks.begin(); itor!=subTasks.end(); ++itor)
+      for (itor=subTasks.begin(); itor!=subTasks.end(); ++itor)
       {
          const TaskActorProxy &task = *(*itor);
 
@@ -112,8 +112,8 @@ namespace dtActors
             //Set the task that got rejected so a user can find out why we failed.
             SetFailingTaskProxy(origTask);
 
-            // If we're a ORDERED Failing task, then we just failed. 
-            // Note, we don't fail the child. Though it is recorded as the failing task proxy 
+            // If we're a ORDERED Failing task, then we just failed.
+            // Note, we don't fail the child. Though it is recorded as the failing task proxy
             if (static_cast<TaskActorOrdered*>(GetActor())->GetFailureType() ==
                 TaskActorOrdered::FailureType::CAUSE_FAILURE)
             {
@@ -133,9 +133,9 @@ namespace dtActors
       }
 
       //Make sure to forward the request up the task's chain of command so to speak...
-      if(GetParentTask() != NULL)
+      if (GetParentTask() != NULL)
          return result && GetParentTask()->RequestScoreChange(*this,origTask);
-      
+
       return result;
    }
 
@@ -187,34 +187,34 @@ namespace dtActors
       const TaskActorOrdered *myActor;
       GetActor(myActor);
 
-      // First check to see if our parent allows us to be changed.  
+      // First check to see if our parent allows us to be changed.
       if (GetParentTask() != NULL)
          parentGivesOK = GetParentTask()->IsChildTaskAllowedToChange(*this);
 
-      // We always give permission to our children if we are failing because we ALLOW 
-      // them to do it out of order. 
+      // We always give permission to our children if we are failing because we ALLOW
+      // them to do it out of order.
       if (myActor->GetFailureType() == TaskActorOrdered::FailureType::CAUSE_FAILURE)
       {
-         bOKToChangeChildTask = true; 
+         bOKToChangeChildTask = true;
       }
-      // If we aren't failed and parent allows, so check to see if the child is the next task in line.  
+      // If we aren't failed and parent allows, so check to see if the child is the next task in line.
       else if (parentGivesOK && !myActor->IsFailed())
       {
          //Need to see if all the tasks added prior to the task in question have been
          //completed.  If not we have to reject.
-         for(itor=subTasks.begin(); itor!=subTasks.end(); ++itor)
+         for (itor=subTasks.begin(); itor!=subTasks.end(); ++itor)
          {
             const TaskActorProxy &task = *(*itor);
 
             //If we got here, then all the tasks before the current task have been completed.
             //So we can accept it and stopping checking...
-            if(&task == &childTask)
+            if (&task == &childTask)
             {
                bOKToChangeChildTask = true;
                break;
             }
 
-            // If we find an incomplete task before the child in question, then we are done. 
+            // If we find an incomplete task before the child in question, then we are done.
             bool completed = static_cast<const TaskActor*>(task.GetActor())->IsComplete();
             if (!completed)
             {

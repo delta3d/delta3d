@@ -189,8 +189,8 @@ namespace dtAnim
 
       AddProperty(new dtDAL::GroupActorProperty(Cal3DGameActor::PropertyNames::ANIMATION_GROUP,
          Cal3DGameActor::PropertyNames::ANIMATION_GROUP_LABEL,
-         dtDAL::GroupActorProperty::SetFunctorType(myActor, &Cal3DGameActor::ApplyAnimationGroup),
-         dtDAL::GroupActorProperty::GetFunctorType(myActor, &Cal3DGameActor::MakeAnimationGroup),
+         dtDAL::GroupActorProperty::SetFuncType(myActor, &Cal3DGameActor::ApplyAnimationGroup),
+         dtDAL::GroupActorProperty::GetFuncType(myActor, &Cal3DGameActor::MakeAnimationGroup),
          "A pipe for processing animation requests",
          "Slot: animation parameter",
          "no thanks editor",

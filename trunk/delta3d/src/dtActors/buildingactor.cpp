@@ -614,7 +614,7 @@ namespace dtActors
    dtCore::Transformable* BuildingActor::CreatePointDrawable(osg::Vec3 position)
    {
       dtCore::Transformable* point = new BuildingGeomNode();
-      
+
       // Attach this new point to the actor.
       AddChild(point);
 
@@ -900,7 +900,7 @@ namespace dtActors
          {
             osg::Vec3 firstPoint = mRoofPoints[testIndex];
             osg::Vec3 secondPoint;
-            
+
             if (testIndex < (int)mRoofPoints.size() - 1)
             {
                secondPoint = mRoofPoints[testIndex + 1];
@@ -1110,7 +1110,7 @@ namespace dtActors
 
          // The test angle is the angle of the master point between our two desired triangle points.
          float testAngle   = p1 * p2;
-         
+
          // The actual angle is the angle of the master point between its two adjacent points.
          float actualAngle = p1 * p3;
 
@@ -1152,7 +1152,7 @@ namespace dtActors
       // If we get here, it means we have a valid roof to draw...
       DrawRoofPortion(roofPoints);
    }
-   
+
    ////////////////////////////////////////////////////////////////////////////////
    void BuildingActor::DrawRoofPortion(std::vector<osg::Vec3> roofPoints)
    {
@@ -1412,10 +1412,10 @@ namespace dtActors
 
       //dtDAL::ArrayActorPropertyBase* attachedActorArrayProp = new dtDAL::ArrayActorProperty<dtCore::UniqueId>(
       //   "AttachedActors", "Attached Actors", "The list actors that are attached.",
-      //   dtDAL::MakeFunctor(*this, &BuildingActorProxy::SetAttachedActorIndex),
+      //   dtDAL::SetFuncType(this, &BuildingActorProxy::SetAttachedActorIndex),
       //   dtDAL::MakeFunctorRet(*this, &BuildingActorProxy::GetDefaultAttachedActor),
       //   dtDAL::MakeFunctorRet(*actor, &BuildingActor::GetAttachedList),
-      //   dtDAL::MakeFunctor(*actor, &BuildingActor::SetAttachedList),
+      //   dtDAL::SetFuncType(actor, &BuildingActor::SetAttachedList),
       //   attachedActorProp, "Internal");
       //AddProperty(attachedActorArrayProp);
 
@@ -1423,7 +1423,7 @@ namespace dtActors
       dtDAL::ResourceActorProperty* roofTextureProp =
          new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::TEXTURE,
          "RoofTextureResource", "Roof Texture",
-         dtDAL::MakeFunctor(*actor, &BuildingActor::SetRoofTexture),
+         dtDAL::ResourceActorProperty::SetFuncType(actor, &BuildingActor::SetRoofTexture),
          "Defines the texture used when rendering the roof.", "Building");
       AddProperty(roofTextureProp);
 
@@ -1431,7 +1431,7 @@ namespace dtActors
       dtDAL::ResourceActorProperty* outWallTextureProp =
          new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::TEXTURE,
          "OutWallTextureResource", "Outside Wall Texture",
-         dtDAL::MakeFunctor(*actor, &BuildingActor::SetOutWallTexture),
+         dtDAL::ResourceActorProperty::SetFuncType(actor, &BuildingActor::SetOutWallTexture),
          "Defines the texture used when rendering walls.", "Building");
       AddProperty(outWallTextureProp);
 
@@ -1439,7 +1439,7 @@ namespace dtActors
       dtDAL::ResourceActorProperty* inWallTextureProp =
          new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::TEXTURE,
          "InWallTextureResource", "Inside Wall Texture",
-         dtDAL::MakeFunctor(*actor, &BuildingActor::SetInWallTexture),
+         dtDAL::ResourceActorProperty::SetFuncType(actor, &BuildingActor::SetInWallTexture),
          "Defines the texture used when rendering walls.", "Building");
       AddProperty(inWallTextureProp);
 
@@ -1447,7 +1447,7 @@ namespace dtActors
       dtDAL::BooleanActorProperty* flatRoofProp =
          new dtDAL::BooleanActorProperty(
          "FlatRoof", "Flat Roof",
-         dtDAL::MakeFunctor(*actor, &BuildingActor::SetFlatRoofFlag),
+         dtDAL::BooleanActorProperty::SetFuncType(actor, &BuildingActor::SetFlatRoofFlag),
          dtDAL::MakeFunctorRet(*actor, &BuildingActor::GetFlatRoofFlag),
          "Flattens the top of the roof.", "Building");
       AddProperty(flatRoofProp);
@@ -1456,7 +1456,7 @@ namespace dtActors
       dtDAL::FloatActorProperty* roofTextureScaleProp =
          new dtDAL::FloatActorProperty(
          "RoofTextureScale", "Roof Texture Scale",
-         dtDAL::MakeFunctor(*actor, &BuildingActor::SetRoofTextureScale),
+         dtDAL::FloatActorProperty::SetFuncType(actor, &BuildingActor::SetRoofTextureScale),
          dtDAL::MakeFunctorRet(*actor, &BuildingActor::GetRoofTextureScale),
          "Sets the scale of the roof texture on the building.", "Building");
       AddProperty(roofTextureScaleProp);
@@ -1465,7 +1465,7 @@ namespace dtActors
       dtDAL::FloatActorProperty* wallTextureScaleProp =
          new dtDAL::FloatActorProperty(
          "WallTextureScale", "Wall Texture Scale",
-         dtDAL::MakeFunctor(*actor, &BuildingActor::SetWallTextureScale),
+         dtDAL::FloatActorProperty::SetFuncType(actor, &BuildingActor::SetWallTextureScale),
          dtDAL::MakeFunctorRet(*actor, &BuildingActor::GetWallTextureScale),
          "Sets the scale of the wall texture on the building.", "Building");
       AddProperty(wallTextureScaleProp);
@@ -1474,7 +1474,7 @@ namespace dtActors
       dtDAL::FloatActorProperty* buildingHeightProp =
          new dtDAL::FloatActorProperty(
          "BuildingHeight", "Building Height",
-         dtDAL::MakeFunctor(*actor, &BuildingActor::SetBuildingHeight),
+         dtDAL::FloatActorProperty::SetFuncType(actor, &BuildingActor::SetBuildingHeight),
          dtDAL::MakeFunctorRet(*actor, &BuildingActor::GetBuildingHeight),
          "Sets the height of the building.", "Building");
       AddProperty(buildingHeightProp);
@@ -1483,7 +1483,7 @@ namespace dtActors
       dtDAL::Vec3ActorProperty* scaleProp =
          new dtDAL::Vec3ActorProperty(
          "Scale", "Scale",
-         dtDAL::MakeFunctor(*actor, &BuildingActor::SetScale),
+         dtDAL::Vec3ActorProperty::SetFuncType(actor, &BuildingActor::SetScale),
          dtDAL::MakeFunctorRet(*actor, &BuildingActor::GetScale),
          "Sets the roof texture scale (x), wall texture scale (y), and building height (z).",
          "Internal");

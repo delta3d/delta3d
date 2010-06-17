@@ -104,15 +104,15 @@ namespace dtActors
    ////////////////////////////////////////////////////////////////////////////////
    bool LinkedPointsGeomNodeBase::SetSize(int size)
    {
-      if (size < 0) size = 0;
+      if (size < 0) { size = 0; }
 
       // Shrink the size.
-      if (size <= (int)mGeomList.size())
+      if (size <= int(mGeomList.size()))
       {
-         while ((int)mGeomList.size() > size)
+         while (int(mGeomList.size()) > size)
          {
             LinkedPointsGeomDataBase* data = mGeomList.back().get();
-            if (!data) return false;
+            if (!data) { return false; }
             data->Shutdown();
             mGeomList.pop_back();
          }
@@ -197,7 +197,7 @@ namespace dtActors
          return;
       }
 
-      dtActors::LinkedPointsGeomNode* point = 
+      dtActors::LinkedPointsGeomNode* point =
          dynamic_cast<dtActors::LinkedPointsGeomNode*>(GetPointDrawable(pointIndex));
       // If the drawable is not of the proper class, regenerate it.
       if (!point)
@@ -448,7 +448,7 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void LinkedPointsActor::SetPointList(const std::vector<dtCore::RefPtr<dtCore::Transformable> >& pointList)
+   void LinkedPointsActor::SetPointList(const std::vector< dtCore::RefPtr<dtCore::Transformable> >& pointList)
    {
       // First clear all children.
       int pointCount = GetPointCount();
@@ -582,25 +582,25 @@ namespace dtActors
 
       dtDAL::Vec3ActorProperty* positionProp = new dtDAL::Vec3ActorProperty(
          "Position", "Position",
-         dtDAL::MakeFunctor(*this, &LinkedPointsActorProxy::SetPointPosition),
+         dtDAL::Vec3ActorProperty::SetFuncType(this, &LinkedPointsActorProxy::SetPointPosition),
          dtDAL::MakeFunctorRet(*this, &LinkedPointsActorProxy::GetPointPosition),
          "The position of the point.", "Points");
 
       dtDAL::Vec3ActorProperty* rotationProp = new dtDAL::Vec3ActorProperty(
          "Rotation", "Rotation",
-         dtDAL::MakeFunctor(*this, &LinkedPointsActorProxy::SetPointRotation),
+         dtDAL::Vec3ActorProperty::SetFuncType(this, &LinkedPointsActorProxy::SetPointRotation),
          dtDAL::MakeFunctorRet(*this, &LinkedPointsActorProxy::GetPointRotation),
          "The rotation of the point.", "Points");
 
       pointProp->AddProperty(positionProp);
       pointProp->AddProperty(rotationProp);
 
-      dtDAL::ArrayActorPropertyBase* arrayProp = new dtDAL::ArrayActorProperty<dtCore::RefPtr<dtCore::Transformable> >(
+      dtDAL::ArrayActorPropertyBase* arrayProp = new dtDAL::ArrayActorProperty< dtCore::RefPtr<dtCore::Transformable> >(
          "PointList", "Point List", "The list of points.",
-         dtDAL::MakeFunctor(*this, &LinkedPointsActorProxy::SetPointIndex),
+         dtDAL::ArrayActorProperty< dtCore::RefPtr<dtCore::Transformable> >::SetIndexFuncType(this, &LinkedPointsActorProxy::SetPointIndex),
          dtDAL::MakeFunctorRet(*this, &LinkedPointsActorProxy::GetDefaultPoint),
          dtDAL::MakeFunctorRet(*this, &LinkedPointsActorProxy::GetPointArray),
-         dtDAL::MakeFunctor(*this, &LinkedPointsActorProxy::SetPointArray),
+         dtDAL::ArrayActorProperty< dtCore::RefPtr<dtCore::Transformable> >::SetArrayFuncType(this, &LinkedPointsActorProxy::SetPointArray),
          pointProp, "Points");
       arrayProp->SetMinArraySize(1);
 

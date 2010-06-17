@@ -44,8 +44,8 @@ namespace dtDAL
    class DT_DAL_EXPORT GroupActorProperty : public ActorProperty
    {
       public:
-         typedef dtUtil::Functor<void, TYPELIST_1(const NamedGroupParameter&)> SetFunctorType;
-         typedef dtUtil::Functor<dtCore::RefPtr<NamedGroupParameter>, TYPELIST_0() > GetFunctorType;
+         typedef dtUtil::Functor<void, TYPELIST_1(const NamedGroupParameter&)> SetFuncType;
+         typedef dtUtil::Functor<dtCore::RefPtr<NamedGroupParameter>, TYPELIST_0() > GetFuncType;
          /**
           * Creates a new group actor property.
           * @param name the name used to access this property.
@@ -62,8 +62,8 @@ namespace dtDAL
           */
          GroupActorProperty(const std::string& name,
                             const std::string& label,
-                            SetFunctorType set,
-                            GetFunctorType get,
+                            SetFuncType set,
+                            GetFuncType get,
                             const std::string& desc,
                             const std::string& groupName,
                             const std::string& editorType = "",
@@ -111,10 +111,10 @@ namespace dtDAL
 
       private:
          ///Set functor taking one parameter and optionally returning a value.
-         SetFunctorType mSetPropFunctor;
+         SetFuncType mSetPropFunctor;
 
          ///Get functor which returns a value and takes no parameters.
-         GetFunctorType mGetPropFunctor;
+         GetFuncType mGetPropFunctor;
          ///Used by stage
          const std::string mEditorType;
    };

@@ -48,185 +48,183 @@ namespace dtDAL
 {
    // Forward declaration for a friend :)
    class Project;
-   
+
    class DT_DAL_EXPORT ActorProxyIcon : public osg::Referenced
    {
       // Project & ViewportManager need to call LoadImages
       friend class Project;
       friend class dtEditQt::ViewportManager;
 
+   public:
+      //a basic means to encapsulate icon configure params
+      struct ActorProxyIconConfig
+      {
+         ActorProxyIconConfig(): mUpVector(true), mForwardVector(true), /*mRightVector(true),*/ mScale(1.0) {}
+         ActorProxyIconConfig(bool pUp, bool pForward, float pScale): mUpVector(pUp), mForwardVector(pForward), /*mRightVector(true),*/ mScale(pScale) {}
+         bool mUpVector;
+         bool mForwardVector;
+         //bool mRightVector;
+         float mScale;
+      };
+
+      // Our custom Delta3D drawable.
+      class BillBoardDrawable : public dtCore::DeltaDrawable
+      {
       public:
-
-         //a basic means to encapsulate icon configure params
-         struct ActorProxyIconConfig
+         BillBoardDrawable()
          {
-            ActorProxyIconConfig(): mUpVector(true), mForwardVector(true), /*mRightVector(true),*/ mScale(1.0) {}
-            ActorProxyIconConfig(bool pUp, bool pForward, float pScale): mUpVector(pUp), mForwardVector(pForward), /*mRightVector(true),*/ mScale(pScale) {}
-            bool mUpVector;
-            bool mForwardVector;
-            //bool mRightVector;
-            float mScale;
-         };
+            mNode = new osg::Group() ;
+         }
 
-
-         //Our custom Delta3D drawable.
-         class BillBoardDrawable : public dtCore::DeltaDrawable
+         virtual bool AddChild(dtCore::DeltaDrawable* child)
          {
-            public:
-               BillBoardDrawable()
-               {
-                  mNode = new osg::Group() ;
-               }
+            GetOSGNode()->asGroup()->addChild(child->GetOSGNode());
+            return dtCore::DeltaDrawable::AddChild(child);
+         }
 
-               virtual bool AddChild(dtCore::DeltaDrawable* child)
-               {
-                  GetOSGNode()->asGroup()->addChild(child->GetOSGNode());
-                  return dtCore::DeltaDrawable::AddChild(child);
-               }
+         virtual void RemoveChild(dtCore::DeltaDrawable* child)
+         {
+            GetOSGNode()->asGroup()->removeChild(child->GetOSGNode());
+            dtCore::DeltaDrawable::RemoveChild(child);
+         }
 
-               virtual void RemoveChild(dtCore::DeltaDrawable* child)
-               {
-                  GetOSGNode()->asGroup()->removeChild(child->GetOSGNode());
-                  dtCore::DeltaDrawable::RemoveChild(child);
-               }
+         ///required by DeltaDrawable
+         osg::Node* GetOSGNode(){return mNode.get();}
+         const osg::Node* GetOSGNode() const{return mNode.get();}
 
-               ///required by DeltaDrawable
-               osg::Node* GetOSGNode(){return mNode.get();}
-               const osg::Node* GetOSGNode() const{return mNode.get();}
+      protected:
+         virtual ~BillBoardDrawable() { }
 
-            protected:
-               virtual ~BillBoardDrawable() { }
+         dtCore::RefPtr<osg::Node> mNode;
+      };
 
-               dtCore::RefPtr<osg::Node> mNode;
-         };
+      // These are resources used by the editor to display billboards
+      // for the actors that need them.
+      static std::string IMAGE_BILLBOARD_GENERIC;
+      static std::string IMAGE_BILLBOARD_CHARACTER;
+      static std::string IMAGE_BILLBOARD_STATICMESH;
+      static std::string IMAGE_BILLBOARD_LIGHT;
+      static std::string IMAGE_BILLBOARD_SOUND;
+      static std::string IMAGE_BILLBOARD_PARTICLESYSTEM;
+      static std::string IMAGE_BILLBOARD_MESHTERRAIN;
+      static std::string IMAGE_BILLBOARD_PLAYERSTART;
+      static std::string IMAGE_BILLBOARD_TRIGGER;
+      static std::string IMAGE_BILLBOARD_CAMERA;
+      static std::string IMAGE_BILLBOARD_WAYPOINT;
 
-         //These are resources used by the editor to display billboards
-         //for the actors that need them.
-         static std::string IMAGE_BILLBOARD_GENERIC;
-         static std::string IMAGE_BILLBOARD_CHARACTER;
-         static std::string IMAGE_BILLBOARD_STATICMESH;
-         static std::string IMAGE_BILLBOARD_LIGHT;
-         static std::string IMAGE_BILLBOARD_SOUND;
-         static std::string IMAGE_BILLBOARD_PARTICLESYSTEM;
-         static std::string IMAGE_BILLBOARD_MESHTERRAIN;
-         static std::string IMAGE_BILLBOARD_PLAYERSTART;
-         static std::string IMAGE_BILLBOARD_TRIGGER;
-         static std::string IMAGE_BILLBOARD_CAMERA;
-         static std::string IMAGE_BILLBOARD_WAYPOINT;
+      //Textures used to display the arrow orientation indicator on the billboard.
+      static std::string IMAGE_ARROW_HEAD;
+      static std::string IMAGE_ARROW_BODY;
+
          static std::string IMAGE_BILLBOARD_DIRECTOR;
          static std::string IMAGE_BILLBOARD_POSITION;
 
-         //Textures used to display the arrow orientation indicator on the billboard.
-         static std::string IMAGE_ARROW_HEAD;
-         static std::string IMAGE_ARROW_BODY;
+      /**
+       * Constructs a new actor proxy billboard icon.  This creates the
+       * necessary scene geometry and attaches the appropriate image
+       * to the icon.
+       * @param iconImageFilename The filename of the image to load.
+       */
+      ActorProxyIcon(const std::string& iconImageFilename);
+
+      /**
+       * Constructs a new actor proxy billboard icon using an optional config class
+       * meant to be extendable to allow various options.
+       * @param iconImageFilename The filename of the image to load.
+       * @param pConfig The configuration to use
+       */
+      ActorProxyIcon(const std::string& iconImageFilename,
+                     const ActorProxyIconConfig& pConfig);
 
 
-         /**
-         * Constructs a new actor proxy billboard icon.  This creates the
-         * necessary scene geometry and attaches the appropriate image
-         * to the icon.
-         * @param iconImageFilename The filename of the image to load.
-         */
-         ActorProxyIcon(const std::string& iconImageFilename);
+      /**
+       * Gets the Delta3D drawable for this proxy icon.
+       * @return A Delta3D transformable which is the parent of the billboard geometry.
+       */
+      dtCore::DeltaDrawable* GetDrawable();
 
-         /**
-         * Constructs a new actor proxy billboard icon using an optional config class
-         * meant to be extendable to allow various options.
-         * @param iconImageFilename The filename of the image to load.
-         * @param pConfig The configuration to use
-         */
-         ActorProxyIcon(const std::string& iconImageFilename, 
-                        const ActorProxyIconConfig& pConfig);
+      /**
+       * Gets the Delta3D drawable for this proxy icon.
+       * @return A Delta3D transformable which is the parent of the billboard geometry.
+       */
+      const dtCore::DeltaDrawable* GetDrawable() const;
 
+      bool OwnsDrawable(dtCore::DeltaDrawable* drawable) const;
 
-         /**
-          * Gets the Delta3D drawable for this proxy icon.
-          * @return A Delta3D transformable which is the parent of the billboard geometry.
-          */
-         dtCore::DeltaDrawable* GetDrawable();
+      void SetPosition(const osg::Vec3& newPos);
+      void SetRotation(const osg::Matrix& rotMat);
+      void SetActorRotation(const osg::Vec3& hpr);
+      void SetActorRotation(const osg::Matrix& mat);
+      osg::Matrix GetActorRotation();
 
-         /**
-          * Gets the Delta3D drawable for this proxy icon.
-          * @return A Delta3D transformable which is the parent of the billboard geometry.
-          */
-         const dtCore::DeltaDrawable* GetDrawable() const;
+   protected:
+      virtual ~ActorProxyIcon();
 
-         bool OwnsDrawable(dtCore::DeltaDrawable* drawable) const;
+      /**
+       * Helper method assigns a texture and appropriate state to the billboard.
+       * This should only be called be dtDAL::Project (which is a friend).
+       */
+      void LoadImages();
+   private:
+      ActorProxyIcon &operator=(const ActorProxyIcon& rhs);
+      ActorProxyIcon(const ActorProxyIcon& rhs);
 
-         void SetPosition(const osg::Vec3& newPos);
-         void SetRotation(const osg::Matrix& rotMat);
-         void SetActorRotation(const osg::Vec3& hpr);
-         void SetActorRotation(const osg::Matrix& mat);
-         osg::Matrix GetActorRotation();
+      /**
+       * Helper method which builds the billboard geometry.
+       */
+      void CreateBillBoard();
 
-      protected:
-         virtual ~ActorProxyIcon();
+      /**
+       * Creates a geometry node for drawing an arrow.
+       * @return The geometry node.
+       */
+      osg::Group* CreateOrientationArrow();
 
-         /**
-          * Helper method assigns a texture and appropriate state to the billboard.
-          * This should only be called be dtDAL::Project (which is a friend).
-          */
-         void LoadImages();
-      private:
-         ActorProxyIcon &operator=(const ActorProxyIcon& rhs);
-         ActorProxyIcon(const ActorProxyIcon& rhs);
+      /**
+       * Checks the type of this billboard and loads the appropriate image.
+       * @return An image mapping to the billboard type on this billboard icon.
+       */
+      osg::Image* GetBillBoardImage();
 
-         /**
-          * Helper method which builds the billboard geometry.
-          */
-         void CreateBillBoard();
-    
-         /**
-          * Creates a geometry node for drawing an arrow.
-          * @return The geometry node.
-          */
-         osg::Group* CreateOrientationArrow();
-
-         /**
-          * Checks the type of this billboard and loads the appropriate image.
-          * @return An image mapping to the billboard type on this billboard icon.
-          */
-         osg::Image* GetBillBoardImage();
-
-         /**
-          * Creates a quad which is used for the billboard.
-          * @param corner Upper left corner of the quad.
-          * @param width Width of the quad.
-          * @param height Height of the quad.
-          * @return A geometry node holding the quad's geometry.
-          */
-         osg::Geometry* CreateGeom(const osg::Vec3& corner, const osg::Vec3& width,
-                                   const osg::Vec3& height);
+      /**
+       * Creates a quad which is used for the billboard.
+       * @param corner Upper left corner of the quad.
+       * @param width Width of the quad.
+       * @param height Height of the quad.
+       * @return A geometry node holding the quad's geometry.
+       */
+      osg::Geometry* CreateGeom(const osg::Vec3& corner, const osg::Vec3& width,
+                                const osg::Vec3& height);
 
 
-         ///The filename of the icon image
-         std::string mIconImageFile;
+      ///The filename of the icon image
+      std::string mIconImageFile;
 
-         ///our custom config
-         ActorProxyIconConfig mConfig;
+      ///our custom config
+      ActorProxyIconConfig mConfig;
 
-         ///The actual billboard drawable which includes the billboard and an arrow
-         ///depicting its actor's orientation.
-         dtCore::RefPtr<dtCore::DeltaDrawable> mBillBoard;
+      ///The actual billboard drawable which includes the billboard and an arrow
+      ///depicting its actor's orientation.
+      dtCore::RefPtr<dtCore::DeltaDrawable> mBillBoard;
 
-         ///The underlying Delta3D drawable object.
-         dtCore::RefPtr<dtCore::Transformable> mIconNode;
+      ///The underlying Delta3D drawable object.
+      dtCore::RefPtr<dtCore::Transformable> mIconNode;
 
-         ///A transformable used to represent an arrow depicting actor rotation.
-         dtCore::RefPtr<dtCore::Transformable> mArrowNode;
+      ///A transformable used to represent an arrow depicting actor rotation.
+      dtCore::RefPtr<dtCore::Transformable> mArrowNode;
 
-         ///A transformable used to represent an arrow depicting actor up vector.
-         dtCore::RefPtr<dtCore::Transformable> mArrowNodeUp;
+      ///A transformable used to represent an arrow depicting actor up vector.
+      dtCore::RefPtr<dtCore::Transformable> mArrowNodeUp;
 
-         ///A state set containing the icon's texture.
-         osg::ref_ptr<osg::StateSet> mIconStateSet;
+      ///A state set containing the icon's texture.
+      osg::ref_ptr<osg::StateSet> mIconStateSet;
 
-         ///A state set containing the orientation arrow's cone texture.
-         osg::ref_ptr<osg::StateSet> mConeStateSet;
+      ///A state set containing the orientation arrow's cone texture.
+      osg::ref_ptr<osg::StateSet> mConeStateSet;
 
-         ///A state set containing the orientation arrow's cylinder texture.
-         osg::ref_ptr<osg::StateSet> mCylinderStateSet;
+      ///A state set containing the orientation arrow's cylinder texture.
+      osg::ref_ptr<osg::StateSet> mCylinderStateSet;
    };
-}
+} // namespace dtDAL
 
-#endif
+#endif // DELTA_ACTOR_PROXY_ICON

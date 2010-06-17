@@ -78,7 +78,7 @@ namespace dtActors
 
       AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::PREFAB,
          "PrefabResource", "Prefab",
-         dtDAL::MakeFunctor(*this, &PrefabActorProxy::SetPrefab),
+         dtDAL::ResourceActorProperty::SetFuncType(this, &PrefabActorProxy::SetPrefab),
          "Defines the Prefab resource to use.", "Prefab"));
    }
 
