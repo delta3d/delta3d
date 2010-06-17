@@ -132,11 +132,17 @@ void FullApplicator::operator ()(const dtGame::ActorUpdateMessage& source,
    {
       // DIS EntityState actor property
       const dtGame::Vec3MessageParameter* v3mp = static_cast<const dtGame::Vec3MessageParameter*>(mp);
-      const osg::Vec3& val = v3mp->GetValue();
+      osg::Vec3 val = v3mp->GetValue();
+      osg::Vec3d hpr = val;
+      if (config != NULL)
+      {
+         hpr = config->GetCoordinateConverter().ConvertToRemoteRotation(val);
+      }
+
       DIS::Orientation orie;
-      orie.setPhi(osg::DegreesToRadians(val[0])); //pitch
-      orie.setTheta(osg::DegreesToRadians(val[1])); //roll
-      orie.setPsi(osg::DegreesToRadians(val[2])); //heading
+      orie.setPsi(osg::DegreesToRadians(hpr[0])); //heading
+      orie.setTheta(osg::DegreesToRadians(hpr[1])); //roll
+      orie.setPhi(osg::DegreesToRadians(hpr[2])); //pitch
       dest.setEntityOrientation(orie);
    }
 
@@ -226,19 +232,14 @@ void PartialApplicator::operator ()(const DIS::EntityStatePdu& source,
    // euler angles //
    osg::Vec3 xyzRot;
 
+   const DIS::Orientation& orie = source.getEntityOrientation();
+   xyzRot[0] = osg::RadiansToDegrees(orie.getPsi());
+   xyzRot[1] = osg::RadiansToDegrees(orie.getTheta());
+   xyzRot[2] = osg::RadiansToDegrees(orie.getPhi());
+
    if (config != NULL)
    {
-      const DIS::Orientation& orie = source.getEntityOrientation();
-      const osg::Vec3 hpr = config->GetCoordinateConverter().ConvertToLocalRotation(orie.getPsi(), 
-                                                                                    orie.getTheta(), 
-                                                                                    orie.getPhi());
-      xyzRot[0] = hpr[1]; //swap from HPR to "rotations about the axis"
-      xyzRot[1] = hpr[2];
-      xyzRot[2] = hpr[0];
-      //xyzRot[0] = osg::RadiansToDegrees(orie.getPhi()); //pitch
-      //xyzRot[1] = osg::RadiansToDegrees(orie.getTheta()); //roll
-      //xyzRot[2] = osg::RadiansToDegrees(orie.getPsi()); //heading
-
+      xyzRot = config->GetCoordinateConverter().ConvertToLocalRotation(xyzRot);
    }
 
    // dtDIS Actor Property Name
