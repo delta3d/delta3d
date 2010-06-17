@@ -335,15 +335,12 @@ bool BezierController::OnNextStep()
       return false;
    }
 
-   const PathPoint& p = (*mCurrentPoint).mPoint;
-   const float currentTime = (*mCurrentPoint).mTime;
-
    //else if our elapsed time is equal to the next points time
    //ie. the step for the controller = the step for the last BezierNode
    //then we just move to the next point
-   if (std::abs(currentTime - mTotalTime) < 0.0001f)
+   if (std::abs(mCurrentPoint->mTime - mTotalTime) < 0.0001f)
    {
-      StepObject(p);
+      StepObject(mCurrentPoint->mPoint);
    }
 
    //else if our elapsed time is equal to the previous points time
@@ -355,22 +352,20 @@ bool BezierController::OnNextStep()
 
    //if our elapsed time is between the last and next pathpoint
    //we will interpolate between the two points
-   else if (mLastPathPoint->mTime <= mTotalTime && currentTime >= mTotalTime)
+   else if (mLastPathPoint->mTime <= mTotalTime && mCurrentPoint->mTime >= mTotalTime)
    {
-      float perc = (mTotalTime - mLastPathPoint->mTime) / (currentTime  -  mLastPathPoint->mTime );
+      float ratio = (mTotalTime - mLastPathPoint->mTime) / (mCurrentPoint->mTime - mLastPathPoint->mTime);
+      
+      // position
+      osg::Vec3 from = mLastPathPoint->mPoint.GetPosition();
+      osg::Vec3 to = mCurrentPoint->mPoint.GetPosition();
+      osg::Vec3 position = (from * (1.0f - ratio)) + (to * ratio);
 
-      osg::Vec3 from = p.GetPosition();
-      osg::Vec3 to = mLastPathPoint->mPoint.GetPosition();
+      // rotation
+      osg::Quat rotation;
+      rotation.slerp(ratio, mLastPathPoint->mPoint.GetOrientation(), mCurrentPoint->mPoint.GetOrientation());
 
-      osg::Vec3 vec;
-      vec[0] = ((1.0 - perc) * from[0]) + (perc * to[0]);
-      vec[1] = ((1.0 - perc) * from[1]) + (perc * to[1]);
-      vec[2] = ((1.0 - perc) * from[2]) + (perc * to[2]);
-
-      osg::Quat quat;
-      quat.slerp(perc, mLastPathPoint->mPoint.GetOrientation(), p.GetOrientation());
-
-      StepObject(PathPoint(vec, quat));
+      StepObject(PathPoint(position, rotation));
    }
    else
    {
