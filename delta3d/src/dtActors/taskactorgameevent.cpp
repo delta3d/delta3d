@@ -163,7 +163,7 @@ namespace dtActors
          TaskActorGameEventProxy::PROPERTY_MIN_OCCURANCES,
          "Minimum Occurances",
          dtDAL::IntActorProperty::SetFuncType(&task,&TaskActorGameEvent::SetMinOccurances),
-         dtDAL::MakeFunctorRet(task,&TaskActorGameEvent::GetMinOccurances),
+         dtDAL::IntActorProperty::GetFuncType(&task,&TaskActorGameEvent::GetMinOccurances),
          "Sets/gets the minimum number of times the game event must be fired before "
             "this task is considered complete.",GROUPNAME));
    }

@@ -56,7 +56,7 @@ void CameraActorProxy::BuildPropertyMap()
 
    AddProperty(new BooleanActorProperty("Enable", "Enabled",
       BooleanActorProperty::SetFuncType(cam, &dtCore::Camera::SetEnabled),
-      MakeFunctorRet(*cam, &dtCore::Camera::GetEnabled),
+      BooleanActorProperty::GetFuncType(cam, &dtCore::Camera::GetEnabled),
       "Enables or disables this camera at runtime", GROUPNAME));
 
    // This property is used for the manipulation of the clear color
@@ -65,7 +65,7 @@ void CameraActorProxy::BuildPropertyMap()
    // Default is 0, 0, 1, 0 (blue)
    AddProperty(new ColorRgbaActorProperty("Clear Color", "Clear Color",
       ColorRgbaActorProperty::SetFuncType(this, &dtActors::CameraActorProxy::SetClearColor),
-      MakeFunctorRet(*this, &dtActors::CameraActorProxy::GetClearColor),
+      ColorRgbaActorProperty::GetFuncType(this, &dtActors::CameraActorProxy::GetClearColor),
       "Sets the camera's clear color, which can be thought of as the background color", GROUPNAME));
 }
 

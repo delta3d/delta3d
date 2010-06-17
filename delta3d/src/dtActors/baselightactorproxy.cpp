@@ -43,7 +43,7 @@ namespace dtActors
       //Now, add all of the properties for the actor.
       AddProperty(new dtDAL::BooleanActorProperty("Enable","Enabled",
          dtDAL::BooleanActorProperty::SetFuncType(light,&dtCore::Light::SetEnabled),
-         dtDAL::MakeFunctorRet(*light,&dtCore::Light::GetEnabled),
+         dtDAL::BooleanActorProperty::GetFuncType(light,&dtCore::Light::GetEnabled),
          "Sets whether or not the light is enabled in the scene.", GROUPNAME));
 
       //In this property, the actor object itself did not have a set method
@@ -52,7 +52,7 @@ namespace dtActors
       //to the property as the setter method.
       AddProperty(new dtDAL::IntActorProperty("LightNum","Light Number",
          dtDAL::IntActorProperty::SetFuncType(this,&BaseLightActorProxy::SetNumber),
-         dtDAL::MakeFunctorRet(*light,&dtCore::Light::GetNumber),
+         dtDAL::IntActorProperty::GetFuncType(light,&dtCore::Light::GetNumber),
          "Sets the OpenGL light number for this light actor.", GROUPNAME));
 
       //Property for the light's lighting mode. Uses a dtDAL::Enumeration
@@ -60,7 +60,7 @@ namespace dtActors
       // Default is GLOBAL.
       AddProperty(new dtDAL::EnumActorProperty<LightModeEnum>("Lighting Mode","Lighting Mode",
          dtDAL::EnumActorProperty<LightModeEnum>::SetFuncType(this,&BaseLightActorProxy::SetLightingMode),
-         dtDAL::MakeFunctorRet(*this,&BaseLightActorProxy::GetLightingMode),
+         dtDAL::EnumActorProperty<LightModeEnum>::GetFuncType(this,&BaseLightActorProxy::GetLightingMode),
          "Sets the lighting mode for this light actor.", GROUPNAME));
 
       //Property for the light's ambient color. Uses 4 values represented
@@ -68,7 +68,7 @@ namespace dtActors
       // All values are clamped from 0 - 1.
       AddProperty(new dtDAL::ColorRgbaActorProperty("Ambient","Ambient Color",
          dtDAL::ColorRgbaActorProperty::SetFuncType(this,&BaseLightActorProxy::SetAmbient),
-         dtDAL::MakeFunctorRet(*this,&BaseLightActorProxy::GetAmbient),
+         dtDAL::ColorRgbaActorProperty::GetFuncType(this,&BaseLightActorProxy::GetAmbient),
          "Sets the ambient color value for this light actor.", GROUPNAME));
 
       //Property for the light's diffuse color. Uses 4 values represented
@@ -76,7 +76,7 @@ namespace dtActors
       // All values are clamped from 0 - 1.
       AddProperty(new dtDAL::ColorRgbaActorProperty("Diffuse","Diffuse Color",
          dtDAL::ColorRgbaActorProperty::SetFuncType(this,&BaseLightActorProxy::SetDiffuse),
-         dtDAL::MakeFunctorRet(*this,&BaseLightActorProxy::GetDiffuse),
+         dtDAL::ColorRgbaActorProperty::GetFuncType(this,&BaseLightActorProxy::GetDiffuse),
          "Sets the diffuse color value for this light actor.", GROUPNAME));
 
       //Property for the light's specular color. Uses 4 values represented
@@ -84,7 +84,7 @@ namespace dtActors
       // All values are clamped from 0 - 1.
       AddProperty(new dtDAL::ColorRgbaActorProperty("Specular","Specular Color",
          dtDAL::ColorRgbaActorProperty::SetFuncType(this,&BaseLightActorProxy::SetSpecular),
-         dtDAL::MakeFunctorRet(*this,&BaseLightActorProxy::GetSpecular),
+         dtDAL::ColorRgbaActorProperty::GetFuncType(this,&BaseLightActorProxy::GetSpecular),
          "Sets the specular color value for this light actor.", GROUPNAME));
    }
 

@@ -38,23 +38,23 @@ void BezierControllerActorProxy::BuildPropertyMap()
 
    AddProperty(new dtDAL::ActorActorProperty(*this, "Start Node", "Start Node",
       ActorActorProperty::SetFuncType(this, &BezierControllerActorProxy::SetActorStartNode),
-      MakeFunctorRet(*this, &BezierControllerActorProxy::GetActorStartNode),
+      ActorActorProperty::GetFuncType(this, &BezierControllerActorProxy::GetActorStartNode),
       "dtABC::BezierNode",
       "Sets the start node to be used for this path" ));
 
    AddProperty(new BooleanActorProperty("Render Path", "Render Path",
       BooleanActorProperty::SetFuncType(bc, &BezierController::RenderProxyNode),
-      MakeFunctorRet(*bc, &BezierController::GetRenderProxyNode),
+      BooleanActorProperty::GetFuncType(bc, &BezierController::GetRenderProxyNode),
       "Toggles Rendering of the Path.", "Controller"));
 
    AddProperty(new BooleanActorProperty("Follow Path", "Follow Path",
       BooleanActorProperty::SetFuncType(bc, &BezierController::SetFollowPath),
-      MakeFunctorRet(*bc, &BezierController::GetFollowPath),
+      BooleanActorProperty::GetFuncType(bc, &BezierController::GetFollowPath),
       "Toggles path following oriented against start node.", "Controller"));
 
    AddProperty(new BooleanActorProperty("Set Looping", "Set Looping",
       BooleanActorProperty::SetFuncType(bc, &BezierController::SetLooping),
-      MakeFunctorRet(*bc, &BezierController::GetLooping),
+      BooleanActorProperty::GetFuncType(bc, &BezierController::GetLooping),
       "Toggles The looping of the Path.", "Controller"));
 }
 

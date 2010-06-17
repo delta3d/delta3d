@@ -46,7 +46,7 @@ namespace dtActors
       // Default is 22.5f
       AddProperty(new dtDAL::FloatActorProperty("Cutoff", "Cutoff",
          dtDAL::FloatActorProperty::SetFuncType(sl, &dtCore::SpotLight::SetSpotCutoff),
-         dtDAL::MakeFunctorRet(*sl, &dtCore::SpotLight::GetSpotCutoff),
+         dtDAL::FloatActorProperty::GetFuncType(sl, &dtCore::SpotLight::GetSpotCutoff),
          "Sets the spotlight cutoff factor.", GROUPNAME));
 
       // This property manipulates the exponent of a spotlight. It uses
@@ -56,7 +56,7 @@ namespace dtActors
       // Default is 1.0f
       AddProperty(new dtDAL::FloatActorProperty("Spot Exponent", "Spot Exponent",
          dtDAL::FloatActorProperty::SetFuncType(sl, &dtCore::SpotLight::SetSpotExponent),
-         dtDAL::MakeFunctorRet(*sl, &dtCore::SpotLight::GetSpotExponent),
+         dtDAL::FloatActorProperty::GetFuncType(sl, &dtCore::SpotLight::GetSpotExponent),
          "Sets the concentration of the light in the center of its cone.", GROUPNAME));
    }
 

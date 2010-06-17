@@ -78,7 +78,7 @@ namespace dtActors
       AddProperty(new dtDAL::EnumActorProperty<TaskActorOrdered::FailureType>("Order Enforcement",
                   "Order Enforcement",
                   dtDAL::EnumActorProperty<TaskActorOrdered::FailureType>::SetFuncType(&task,&TaskActorOrdered::SetFailureType),
-                  dtDAL::MakeFunctorRet(task,&TaskActorOrdered::GetFailureType),
+                  dtDAL::EnumActorProperty<TaskActorOrdered::FailureType>::GetFuncType(&task,&TaskActorOrdered::GetFailureType),
                   "Sets the way in which the ordered task actor handles out of order task updates.",
                   GROUPNAME));
    }

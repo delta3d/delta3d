@@ -206,37 +206,37 @@ namespace dtActors
       //Passing Score...
       AddProperty(new dtDAL::FloatActorProperty("PassingScore","Passing Score",
          dtDAL::FloatActorProperty::SetFuncType(&task,&TaskActor::SetPassingScore),
-         dtDAL::MakeFunctorRet(task,&TaskActor::GetPassingScore),
+         dtDAL::FloatActorProperty::GetFuncType(&task,&TaskActor::GetPassingScore),
          "Sets/gets the passing score for this task.",GROUPNAME));
 
       //Score...
       AddProperty(new dtDAL::FloatActorProperty("Score","Score",
          dtDAL::FloatActorProperty::SetFuncType(&task,&TaskActor::SetScore),
-         dtDAL::MakeFunctorRet(task,&TaskActor::GetScore),
+         dtDAL::FloatActorProperty::GetFuncType(&task,&TaskActor::GetScore),
          "Sets/gets the current score of this task.",GROUPNAME));
 
       //Weight...
       AddProperty(new dtDAL::FloatActorProperty("Weight","Weight",
          dtDAL::FloatActorProperty::SetFuncType(&task,&TaskActor::SetWeight),
-         dtDAL::MakeFunctorRet(task,&TaskActor::GetWeight),
+         dtDAL::FloatActorProperty::GetFuncType(&task,&TaskActor::GetWeight),
          "Sets/gets the current weight assigned to this task.",GROUPNAME));
 
       //Complete...
       AddProperty(new dtDAL::BooleanActorProperty("Complete","Complete",
          dtDAL::BooleanActorProperty::SetFuncType(&task,&TaskActor::SetComplete),
-         dtDAL::MakeFunctorRet(task,&TaskActor::IsComplete),
+         dtDAL::BooleanActorProperty::GetFuncType(&task,&TaskActor::IsComplete),
          "Gets the complete status of this task.",GROUPNAME));
 
       //NotifyLMSOnUpdate
       AddProperty(new dtDAL::BooleanActorProperty("NotifyLMSOnUpdate","Notify LMS On Update",
          dtDAL::BooleanActorProperty::SetFuncType(&task,&TaskActor::SetNotifyLMSOnUpdate),
-         dtDAL::MakeFunctorRet(task,&TaskActor::GetNotifyLMSOnUpdate),
+         dtDAL::BooleanActorProperty::GetFuncType(&task,&TaskActor::GetNotifyLMSOnUpdate),
          "Sets/gets the flag that determines if this task should notify an LMS when it is updated.",GROUPNAME));
 
       //Completed time...
       AddProperty(new dtDAL::DoubleActorProperty("CompleteTime","Complete Time",
                   dtDAL::DoubleActorProperty::SetFuncType(&task,&TaskActor::SetCompletedTimeStamp),
-                  dtDAL::MakeFunctorRet(task,&TaskActor::GetCompletedTimeStamp),
+                  dtDAL::DoubleActorProperty::GetFuncType(&task,&TaskActor::GetCompletedTimeStamp),
                   "Gets the simulation time in which this task was completed.",GROUPNAME));
 
       //IsTopLevel...
@@ -257,9 +257,9 @@ namespace dtActors
       AddProperty(new dtDAL::ArrayActorProperty<dtCore::UniqueId>(
          "SubTaskList", "Sub Task List", "List of sub tasks",
          dtDAL::ArrayActorProperty<dtCore::UniqueId>::SetIndexFuncType(this, &TaskActorProxy::TaskArraySetIndex),
-         dtDAL::MakeFunctorRet(*this, &TaskActorProxy::TaskArrayGetDefault),
-         dtDAL::MakeFunctorRet(*this, &TaskActorProxy::TaskArrayGetValue),
-         dtDAL::MakeFunctorRet(*this, &TaskActorProxy::TaskArraySetValue),
+         dtDAL::ArrayActorProperty<dtCore::UniqueId>::GetDefaultFuncType(this, &TaskActorProxy::TaskArrayGetDefault),
+         dtDAL::ArrayActorProperty<dtCore::UniqueId>::GetArrayFuncType(this, &TaskActorProxy::TaskArrayGetValue),
+         dtDAL::ArrayActorProperty<dtCore::UniqueId>::SetArrayFuncType(this, &TaskActorProxy::TaskArraySetValue),
          actorProp, GROUPNAME));
 
       // Notify Completed Event
@@ -318,7 +318,7 @@ namespace dtActors
             // an ArrayActorProperty.
             prop = new dtDAL::GroupActorProperty("SubTasks", "Sub Task Actor List",
                dtDAL::GroupActorProperty::SetFuncType(this, &TaskActorProxy::SetSubTaskGroup),
-               dtDAL::MakeFunctorRet(*this, &TaskActorProxy::GetSubTaskGroup),
+               dtDAL::GroupActorProperty::GetFuncType(this, &TaskActorProxy::GetSubTaskGroup),
                "The list of subtasks.", "BaseTask", "TaskChildren");
          }
          else if (name == "TaskList")

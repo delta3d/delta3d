@@ -1,24 +1,24 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
-* Copyright (C) 2005, BMH Associates, Inc.
-*
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
-* any later version.
-*
-* This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
-* details.
-*
-* You should have received a copy of the GNU Lesser General Public License
-* along with this library; if not, write to the Free Software Foundation, Inc.,
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*
-* William E. Johnson II
-* Bradley Anderegg
-*/
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2005, BMH Associates, Inc.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * William E. Johnson II
+ * Bradley Anderegg
+ */
 #include <dtActors/beziercontrolpointactorproxy.h>
 #include <dtActors/beziernodeactorproxy.h>
 #include <dtDAL/enginepropertytypes.h>
@@ -33,8 +33,8 @@ namespace dtActors
 
    void BezierControlPointActorProxy::CreateActor()
    {
-      SetActor(*new dtABC::BezierControlPoint); 
-      
+      SetActor(*new dtABC::BezierControlPoint);
+
       std::ostringstream ss;
       ss << "ControlPoint" << mNumControlPoints++;
       SetName(ss.str());
@@ -53,11 +53,11 @@ namespace dtActors
       //   {
       //      //only return if the node is not NULL because if it is NULL
       //      //we want to make sure the actor is NULL too.
-      //      return;         
+      //      return;
       //   }
       //   else
       //   {
-      //      //clear out old the proxy's control point to make sure we don't recurse 
+      //      //clear out old the proxy's control point to make sure we don't recurse
       //      old->SetLinkedActor("Control Point", NULL);
       //      //set the value to NULL to clear out the internal data.
       //      static_cast<dtDAL::ActorActorProperty*>(old->GetProperty("Control Point"))->SetValue(NULL);
@@ -76,7 +76,7 @@ namespace dtActors
 
       dtABC::BezierNode* bn = NULL;
 
-      if(node != NULL)
+      if (node != NULL)
       {
          bn = static_cast<dtABC::BezierNode*> (node->GetActor());
       }
@@ -99,7 +99,7 @@ namespace dtActors
 
       dtDAL::TransformableActorProxy::BuildPropertyMap();
 
-      AddProperty(new dtDAL::ActorActorProperty(*this, "Bezier Node", "Bezier Node", 
+      AddProperty(new dtDAL::ActorActorProperty(*this, "Bezier Node", "Bezier Node",
                dtDAL::ActorActorProperty::SetFuncType(this, &BezierControlPointActorProxy::SetBezierNode),
                dtDAL::ActorActorProperty::GetFuncType(this, &BezierControlPointActorProxy::GetBezierNode),
                "dtABC::BezierNode",
@@ -115,7 +115,7 @@ namespace dtActors
    //////////////////////////////////////////////////////////////////////////
    dtDAL::ActorProxyIcon *BezierControlPointActorProxy::GetBillBoardIcon()
    {
-      if(!mBillBoardIcon.valid())
+      if (!mBillBoardIcon.valid())
       {
          mBillBoardIcon = new dtDAL::ActorProxyIcon("billboards/bezierontrolpoint.png");
       }
@@ -137,7 +137,7 @@ namespace dtActors
    void BezierControlPointActorProxy::OnRotation(const osg::Vec3 &oldValue, const osg::Vec3 &newValue)
    {
       dtABC::BezierControlPoint *bcp = static_cast<dtABC::BezierControlPoint*> (GetActor());
-      
+
       if (bcp->GetParent() != NULL)
       {
          bcp->GetParent()->SetDirtyFlag(true);
@@ -148,7 +148,7 @@ namespace dtActors
    {
       dtABC::BezierControlPoint *bcp = static_cast<dtABC::BezierControlPoint*> (GetActor());
 
-      if(bcp->GetParent() != NULL)
+      if (bcp->GetParent() != NULL)
       {
          bcp->GetParent()->SetDirtyFlag(true);
       }

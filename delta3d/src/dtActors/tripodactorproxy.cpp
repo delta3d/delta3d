@@ -60,44 +60,44 @@ void TripodActorProxy::BuildPropertyMap()
 
    AddProperty(new ActorActorProperty(*this, "Camera", "Camera",
       ActorActorProperty::SetFuncType(this,&TripodActorProxy::SetCamera),
-      MakeFunctorRet(*this,&TripodActorProxy::GetCamera),
+      ActorActorProperty::GetFuncType(this,&TripodActorProxy::GetCamera),
       "dtCore::Camera", "Sets the camera which this tripod will offset."));
 
    AddProperty(new ActorActorProperty(*this, "Parent", "Parent",
       ActorActorProperty::SetFuncType(this,&TripodActorProxy::SetAttachToTransformable),
-      MakeFunctorRet(*this,&TripodActorProxy::GetAttachedTransformable),
+      ActorActorProperty::GetFuncType(this,&TripodActorProxy::GetAttachedTransformable),
       "dtCore::Transformable", "Sets the Transformable which this Tripod will follow."));
 
    AddProperty(new ActorActorProperty(*this, "Look-At Target", "Look-At Target",
       ActorActorProperty::SetFuncType(this,&TripodActorProxy::SetLookAtTarget),
-      MakeFunctorRet(*this,&TripodActorProxy::GetLookAtTarget),
+      ActorActorProperty::GetFuncType(this,&TripodActorProxy::GetLookAtTarget),
       "dtCore::Transformable", "Sets the Transformable which this Tripod will point the Camera at."));
 
    AddProperty(new Vec3ActorProperty("Rotation Offset", "Rotation Offset",
       Vec3ActorProperty::SetFuncType(this, &TripodActorProxy::SetRotationOffset),
-      MakeFunctorRet(*this, &TripodActorProxy::GetRotationOffset),
+      Vec3ActorProperty::GetFuncType(this, &TripodActorProxy::GetRotationOffset),
       "Sets the amount of rotation to offset the camera from the attached transformable. Represented with heading, pitch, and roll.",
       GROUPNAME));
 
    AddProperty(new Vec3ActorProperty("Translation Offset", "Translation Offset",
       Vec3ActorProperty::SetFuncType(this, &TripodActorProxy::SetTranslationOffset),
-      MakeFunctorRet(*this, &TripodActorProxy::GetTranslationOffset),
+      Vec3ActorProperty::GetFuncType(this, &TripodActorProxy::GetTranslationOffset),
       "Sets the amount of translation to offset the camera from the attached transformable.",
       GROUPNAME));
 
    AddProperty(new Vec3ActorProperty("Translation Scale Offset", "Translation Scale Offset",
       Vec3ActorProperty::SetFuncType(this, &TripodActorProxy::SetTranslationScaleOffset),
-      MakeFunctorRet(*this, &TripodActorProxy::GetTranslationScaleOffset),
+      Vec3ActorProperty::GetFuncType(this, &TripodActorProxy::GetTranslationScaleOffset),
       "Sets the scale on the translation offset.",GROUPNAME));
 
    AddProperty(new Vec3ActorProperty("Rotation Scale Offset", "Rotation Scale Offset",
       Vec3ActorProperty::SetFuncType(this, &TripodActorProxy::SetRotationScaleOffset),
-      MakeFunctorRet(*this, &TripodActorProxy::GetRotationScaleOffset),
+      Vec3ActorProperty::GetFuncType(this, &TripodActorProxy::GetRotationScaleOffset),
       "Sets the scale on the rotation offset.",GROUPNAME));
 
    AddProperty(new EnumActorProperty<TetherModeEnum>("Tether Mode","Tether Mode",
       EnumActorProperty<TetherModeEnum>::SetFuncType(this,&TripodActorProxy::SetTetherMode),
-      MakeFunctorRet(*this,&TripodActorProxy::GetTetherMode),
+      EnumActorProperty<TetherModeEnum>::GetFuncType(this,&TripodActorProxy::GetTetherMode),
       "Sets the tether mode for this tripod actor.", GROUPNAME));
 }
 
