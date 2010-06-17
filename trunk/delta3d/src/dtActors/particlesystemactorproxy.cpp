@@ -50,7 +50,7 @@ namespace dtActors
       // Default is true
       AddProperty(new BooleanActorProperty("Enable", "Enabled",
          BooleanActorProperty::SetFuncType(ps, &ParticleSystem::SetEnabled),
-         MakeFunctorRet(*ps, &ParticleSystem::IsEnabled),
+         BooleanActorProperty::GetFuncType(ps, &ParticleSystem::IsEnabled),
          "Toggles the visibility of a particle system to the camera.", GROUPNAME));
 
       // This property toggles whether or not a Particle System is parent
@@ -60,7 +60,7 @@ namespace dtActors
       // Default is false
       AddProperty(new BooleanActorProperty("Parent Relative", "Parent Relative",
          BooleanActorProperty::SetFuncType(ps, &ParticleSystem::SetParentRelative),
-         MakeFunctorRet(*ps, &ParticleSystem::IsParentRelative),
+         BooleanActorProperty::GetFuncType(ps, &ParticleSystem::IsParentRelative),
          "Sets if a partical system is relative to its parent, if any. ", GROUPNAME));
 
       // This property enables the loading of a particle resource file.

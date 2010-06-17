@@ -1413,8 +1413,8 @@ namespace dtActors
       //dtDAL::ArrayActorPropertyBase* attachedActorArrayProp = new dtDAL::ArrayActorProperty<dtCore::UniqueId>(
       //   "AttachedActors", "Attached Actors", "The list actors that are attached.",
       //   dtDAL::SetFuncType(this, &BuildingActorProxy::SetAttachedActorIndex),
-      //   dtDAL::MakeFunctorRet(*this, &BuildingActorProxy::GetDefaultAttachedActor),
-      //   dtDAL::MakeFunctorRet(*actor, &BuildingActor::GetAttachedList),
+      //   dtDAL::GetFuncType(*this, &BuildingActorProxy::GetDefaultAttachedActor),
+      //   dtDAL::GetFuncType(*actor, &BuildingActor::GetAttachedList),
       //   dtDAL::SetFuncType(actor, &BuildingActor::SetAttachedList),
       //   attachedActorProp, "Internal");
       //AddProperty(attachedActorArrayProp);
@@ -1448,7 +1448,7 @@ namespace dtActors
          new dtDAL::BooleanActorProperty(
          "FlatRoof", "Flat Roof",
          dtDAL::BooleanActorProperty::SetFuncType(actor, &BuildingActor::SetFlatRoofFlag),
-         dtDAL::MakeFunctorRet(*actor, &BuildingActor::GetFlatRoofFlag),
+         dtDAL::BooleanActorProperty::GetFuncType(actor, &BuildingActor::GetFlatRoofFlag),
          "Flattens the top of the roof.", "Building");
       AddProperty(flatRoofProp);
 
@@ -1457,7 +1457,7 @@ namespace dtActors
          new dtDAL::FloatActorProperty(
          "RoofTextureScale", "Roof Texture Scale",
          dtDAL::FloatActorProperty::SetFuncType(actor, &BuildingActor::SetRoofTextureScale),
-         dtDAL::MakeFunctorRet(*actor, &BuildingActor::GetRoofTextureScale),
+         dtDAL::FloatActorProperty::GetFuncType(actor, &BuildingActor::GetRoofTextureScale),
          "Sets the scale of the roof texture on the building.", "Building");
       AddProperty(roofTextureScaleProp);
 
@@ -1466,7 +1466,7 @@ namespace dtActors
          new dtDAL::FloatActorProperty(
          "WallTextureScale", "Wall Texture Scale",
          dtDAL::FloatActorProperty::SetFuncType(actor, &BuildingActor::SetWallTextureScale),
-         dtDAL::MakeFunctorRet(*actor, &BuildingActor::GetWallTextureScale),
+         dtDAL::FloatActorProperty::GetFuncType(actor, &BuildingActor::GetWallTextureScale),
          "Sets the scale of the wall texture on the building.", "Building");
       AddProperty(wallTextureScaleProp);
 
@@ -1475,7 +1475,7 @@ namespace dtActors
          new dtDAL::FloatActorProperty(
          "BuildingHeight", "Building Height",
          dtDAL::FloatActorProperty::SetFuncType(actor, &BuildingActor::SetBuildingHeight),
-         dtDAL::MakeFunctorRet(*actor, &BuildingActor::GetBuildingHeight),
+         dtDAL::FloatActorProperty::GetFuncType(actor, &BuildingActor::GetBuildingHeight),
          "Sets the height of the building.", "Building");
       AddProperty(buildingHeightProp);
 
@@ -1484,7 +1484,7 @@ namespace dtActors
          new dtDAL::Vec3ActorProperty(
          "Scale", "Scale",
          dtDAL::Vec3ActorProperty::SetFuncType(actor, &BuildingActor::SetScale),
-         dtDAL::MakeFunctorRet(*actor, &BuildingActor::GetScale),
+         dtDAL::Vec3ActorProperty::GetFuncType(actor, &BuildingActor::GetScale),
          "Sets the roof texture scale (x), wall texture scale (y), and building height (z).",
          "Internal");
       AddProperty(scaleProp);

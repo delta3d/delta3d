@@ -61,7 +61,7 @@ void TriggerVolumeActorProxy::BuildPropertyMap()
       TriggerVolumeActorProxy::PROPERTY_MAX_TRIGGER_COUNT,
       TriggerVolumeActorProxy::PROPERTY_MAX_TRIGGER_COUNT,
       dtDAL::IntActorProperty::SetFuncType(actor, &TriggerVolumeActor::SetMaxTriggerCount),
-      dtDAL::MakeFunctorRet(*actor, &TriggerVolumeActor::GetMaxTriggerCount),
+      dtDAL::IntActorProperty::GetFuncType(actor, &TriggerVolumeActor::GetMaxTriggerCount),
       "Sets the maximum number of times the trigger can active.  0 means an infinite number.",
       GROUP_TRIGGER));
 }

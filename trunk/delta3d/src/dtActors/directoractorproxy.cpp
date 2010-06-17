@@ -282,8 +282,8 @@ LOG_ALWAYS(dtDAL::Project::GetInstance().GetResourcePath(descriptor));
          "DirectorArray", "Director Graph List",
          "The Director Graphs loaded by this actor.",
          dtDAL::ArrayActorProperty<dtDAL::ResourceDescriptor>::SetIndexFuncType(actor, &DirectorActor::SetDirectorIndex),
-         dtDAL::MakeFunctorRet(*actor, &DirectorActor::GetDefaultDirector),
-         dtDAL::MakeFunctorRet(*actor, &DirectorActor::GetDirectorArray),
+         dtDAL::ArrayActorProperty<dtDAL::ResourceDescriptor>::GetDefaultFuncType(actor, &DirectorActor::GetDefaultDirector),
+         dtDAL::ArrayActorProperty<dtDAL::ResourceDescriptor>::GetArrayFuncType(actor, &DirectorActor::GetDirectorArray),
          dtDAL::ArrayActorProperty<dtDAL::ResourceDescriptor>::SetArrayFuncType(actor, &DirectorActor::SetDirectorArray),
          scriptProp, "Director");
       AddProperty(scriptArrayProp);

@@ -44,7 +44,7 @@ namespace dtActors
       // constant, linear. quadratic.
       AddProperty(new dtDAL::Vec3ActorProperty("Attenuation", "Attenuation",
          dtDAL::Vec3ActorProperty::SetFuncType(this, &dtActors::PositionalLightActorProxy::SetAttenuation),
-         MakeFunctorRet(*this, &dtActors::PositionalLightActorProxy::GetAttenuation),
+         dtDAL::Vec3ActorProperty::GetFuncType(this, &dtActors::PositionalLightActorProxy::GetAttenuation),
          "Sets a light's attenuation.",GROUPNAME));
    }
 

@@ -18,7 +18,7 @@
  *
  * Matthew W. Campbell
  * Chris Osborn
-*/
+ */
 #include <dtActors/engineactorregistry.h>
 #include <dtActors/infinitelightactorproxy.h>
 #include <dtActors/deltaobjectactorproxy.h>
@@ -126,7 +126,9 @@ namespace dtActors
        dtDAL::ActorPluginRegistry *registry)
    {
       if (registry != NULL)
+      {
          delete registry;
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -141,45 +143,45 @@ namespace dtActors
    void EngineActorRegistry::RegisterActorTypes()
    {
 
-      //In this method we will add each of the actor types the engine actor
-      //registry supports to the object factory.  These will then get
-      //registered with the LibraryManager.
+      // In this method we will add each of the actor types the engine actor
+      // registry supports to the object factory.  These will then get
+      // registered with the LibraryManager.
 
-      //Generic Task Actor
+      // Generic Task Actor
       mActorFactory->RegisterType<TaskActorProxy>(TASK_ACTOR_TYPE.get());
       // Game Event Task Actor
       mActorFactory->RegisterType<TaskActorGameEventProxy>(GAME_EVENT_TASK_ACTOR_TYPE.get());
-      //Rollup Task Actor - Parent is generic task actor.
+      // Rollup Task Actor - Parent is generic task actor.
       mActorFactory->RegisterType<TaskActorRollupProxy>(ROLL_UP_TASK_ACTOR_TYPE.get());
-      //Ordered Task Actor - Parent is generic task actor.
+      // Ordered Task Actor - Parent is generic task actor.
       mActorFactory->RegisterType<TaskActorOrderedProxy>(ORDERED_TASK_ACTOR_TYPE.get());
-      //Infinite light...
+      // Infinite light...
       mActorFactory->RegisterType<InfiniteLightActorProxy>(INFINITE_LIGHT_ACTOR_TYPE.get());
-      //Positional light...
+      // Positional light...
       mActorFactory->RegisterType<PositionalLightActorProxy>(POSITIONAL_LIGHT_ACTOR_TYPE.get());
-      //Spotlight...
+      // Spotlight...
       mActorFactory->RegisterType<SpotlightActorProxy>(SPOT_LIGHT_ACTOR_TYPE.get());
-      //Static Mesh...
+      // Static Mesh...
       mActorFactory->RegisterType<StaticMeshActorProxy>(STATIC_MESH_ACTOR_TYPE.get());
-      //Particle System...
+      // Particle System...
       mActorFactory->RegisterType<ParticleSystemActorProxy>(PARTICLE_SYSTEM_ACTOR_TYPE.get());
-      //Infinite terrain...
+      // Infinite terrain...
       mActorFactory->RegisterType<InfiniteTerrainActorProxy>(INFINITE_TERRAIN_ACTOR_TYPE.get());
-      //Terrain mesh actor...
+      // Terrain mesh actor...
       mActorFactory->RegisterType<MeshTerrainActorProxy>(MESH_TERRAIN_ACTOR_TYPE.get());
-      //Skybox actor...
+      // Skybox actor...
       mActorFactory->RegisterType<SkyBoxActorProxy>(SKY_BOX_ACTOR_TYPE.get());
-      //Skybox actor...
+      // Skybox actor...
       mActorFactory->RegisterType<SkyDomeActorProxy>(SKY_DOME_ACTOR_TYPE.get());
-      //BezierNode actor
+      // BezierNode actor
       mActorFactory->RegisterType<BezierNodeActorProxy>(BEZIER_NODE_ACTOR_TYPE.get());
-      //BezierControlPoint actor
+      // BezierControlPoint actor
       mActorFactory->RegisterType<BezierControlPointActorProxy>(BEZIER_CONTROL_POINT_ACTOR_TYPE.get());
-      //BezierController actor
+      // BezierController actor
       mActorFactory->RegisterType<BezierControllerActorProxy>(BEZIER_CONTROLLER_ACTOR_TYPE.get());
-      //CloudPlane actor...
+      // CloudPlane actor...
       mActorFactory->RegisterType<CloudPlaneActorProxy>(CLOUD_PLANE_ACTOR_TYPE.get());
-      //CloudDome Actor
+      // CloudDome Actor
       mActorFactory->RegisterType<CloudDomeActorProxy>(CLOUD_DOME_ACTOR_TYPE.get());
       mActorFactory->RegisterType<TriggerActorProxy>(TRIGGER_ACTOR_TYPE.get());
       mActorFactory->RegisterType<ProximityTriggerActorProxy>(PROXIMITY_TRIGGER_ACTOR_TYPE.get());
@@ -216,4 +218,4 @@ namespace dtActors
       replacements.push_back(std::make_pair(ENVIRONMENT_ACTOR_TYPE->GetFullName(), WEATHER_ENVIRONMENT_ACTOR_TYPE->GetFullName()));
       replacements.push_back(std::make_pair(ENV_ACTOR_TYPE->GetFullName(), SKY_DOME_ACTOR_TYPE->GetFullName()));
    }
-}
+} // namespace dtActors

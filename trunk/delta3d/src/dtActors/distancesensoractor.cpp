@@ -65,13 +65,13 @@ namespace dtActors
       AddProperty(new dtDAL::ActorActorProperty(*this, DistanceSensorActorProxy::PROPERTY_ATTACH_TO_ACTOR,
                DistanceSensorActorProxy::PROPERTY_ATTACH_TO_ACTOR,
                dtDAL::ActorActorProperty::SetFuncType(this, &DistanceSensorActorProxy::SetAttachToProxy),
-               dtDAL::MakeFunctorRet(*actor, &DistanceSensorActor::GetAttachToActor),
+               dtDAL::ActorActorProperty::GetFuncType(actor, &DistanceSensorActor::GetAttachToActor),
                "dtCore::DeltaDrawable", EMPTY, GROUP));
 
       AddProperty(new dtDAL::FloatActorProperty(DistanceSensorActorProxy::PROPERTY_TRIGGER_DISTANCE,
                DistanceSensorActorProxy::PROPERTY_TRIGGER_DISTANCE,
                dtDAL::FloatActorProperty::SetFuncType(actor, &DistanceSensorActor::SetTriggerDistance),
-               dtDAL::MakeFunctorRet(*actor, &DistanceSensorActor::GetTriggerDistance),
+               dtDAL::FloatActorProperty::GetFuncType(actor, &DistanceSensorActor::GetTriggerDistance),
                EMPTY, GROUP));
    }
 

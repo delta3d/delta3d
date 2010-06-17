@@ -94,7 +94,7 @@ namespace dtActors
    //////////////////////////////////////////////////////////////////////////
    dtDAL::ActorProxyIcon* MeshTerrainActorProxy::GetBillBoardIcon()
    {
-      if(!mBillBoardIcon.valid())
+      if (!mBillBoardIcon.valid())
       {
          mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_MESHTERRAIN);
       }
@@ -117,14 +117,14 @@ namespace dtActors
    {
       dtCore::Object::AddedToScene(scene);
 
-      // Don't load the file if we're not 
+      // Don't load the file if we're not
       // really being added to the scene
       if (scene != NULL)
-      {         
-         if(!GetFilename().empty())
+      {
+         if (!GetFilename().empty())
          {
             LoadFile(GetFilename());
          }
-      }      
+      }
    }
 }

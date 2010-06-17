@@ -54,17 +54,17 @@ namespace dtActors
 
       AddProperty(new BooleanActorProperty("Enable","Enabled",
          BooleanActorProperty::SetFuncType(trigger,&Trigger::SetEnabled),
-         MakeFunctorRet(*trigger,&Trigger::GetEnabled),
+         BooleanActorProperty::GetFuncType(trigger,&Trigger::GetEnabled),
          "Sets whether or not the trigger is enabled in the scene.", GROUPNAME));
 
       AddProperty(new DoubleActorProperty("Time Delay","Time Delay",
          DoubleActorProperty::SetFuncType(trigger,&Trigger::SetTimeDelay),
-         MakeFunctorRet(*trigger,&Trigger::GetTimeDelay),
+         DoubleActorProperty::GetFuncType(trigger,&Trigger::GetTimeDelay),
          "After this trigger has been fired it will wait this amount of time before starting its action.", GROUPNAME));
 
       AddProperty(new ActorActorProperty(*this, "Action","Action",
          ActorActorProperty::SetFuncType(this,&TriggerActorProxy::SetAction),
-         MakeFunctorRet(*this,&TriggerActorProxy::GetAction),
+         ActorActorProperty::GetFuncType(this,&TriggerActorProxy::GetAction),
          "dtABC::Action", "Sets the action which this Trigger will start."));
    }
 

@@ -216,23 +216,23 @@ namespace dtActors
 
       AddProperty(new dtDAL::BooleanActorProperty("use cache object", "Use Model Cache",
          dtDAL::BooleanActorProperty::SetFuncType(&myActor, &GameMeshActor::SetUseCache),
-         dtDAL::MakeFunctorRet(myActor, &GameMeshActor::GetUseCache),
+         dtDAL::BooleanActorProperty::GetFuncType(&myActor, &GameMeshActor::GetUseCache),
          "Indicates whether we will try to use the cache when we load our model.", GROUPNAME));
 
       AddProperty(new dtDAL::Vec3ActorProperty("Scale", "Scale",
          dtDAL::Vec3ActorProperty::SetFuncType(&myActor, &GameMeshActor::SetScale),
-         dtDAL::MakeFunctorRet(myActor, &GameMeshActor::GetScale),
+         dtDAL::Vec3ActorProperty::GetFuncType(&myActor, &GameMeshActor::GetScale),
          "Scales this visual model", "Transformable"));
 
       AddProperty(new dtDAL::Vec3ActorProperty("Model Rotation", "Model Rotation",
          dtDAL::Vec3ActorProperty::SetFuncType(&myActor, &GameMeshActor::SetModelRotation),
-         dtDAL::MakeFunctorRet(myActor, &GameMeshActor::GetModelRotation),
+         dtDAL::Vec3ActorProperty::GetFuncType(&myActor, &GameMeshActor::GetModelRotation),
          "Specifies the Rotation of the object",
          "Transformable"));
 
       AddProperty(new dtDAL::Vec3ActorProperty("Model Translation", "Model Translation",
          dtDAL::Vec3ActorProperty::SetFuncType(&myActor, &GameMeshActor::SetModelTranslation),
-         dtDAL::MakeFunctorRet(myActor, &GameMeshActor::GetModelTranslation),
+         dtDAL::Vec3ActorProperty::GetFuncType(&myActor, &GameMeshActor::GetModelTranslation),
          "Specifies the Translation of the object",
          "Transformable"));
    }

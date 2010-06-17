@@ -44,42 +44,42 @@ namespace dtActors
 
       AddProperty(new FloatActorProperty("Scale", "Scale",
          FloatActorProperty::SetFuncType(cd, &CloudDome::SetScale),
-         MakeFunctorRet(*cd, &CloudDome::GetScale),
+         FloatActorProperty::GetFuncType(cd, &CloudDome::GetScale),
          "Sets the scaling factor of a cloud dome.", GROUPNAME));
 
       AddProperty(new FloatActorProperty("Exponent", "Exponent",
          FloatActorProperty::SetFuncType(cd, &CloudDome::SetExponent),
-         MakeFunctorRet(*cd, &CloudDome::GetExponent),
+         FloatActorProperty::GetFuncType(cd, &CloudDome::GetExponent),
          "Sets the exponent of a cloud dome.", GROUPNAME));
 
       AddProperty(new FloatActorProperty("Cutoff", "Cutoff",
          FloatActorProperty::SetFuncType(cd, &CloudDome::SetCutoff),
-         MakeFunctorRet(*cd, &CloudDome::GetCutoff),
+         FloatActorProperty::GetFuncType(cd, &CloudDome::GetCutoff),
          "Sets the cutoff factor of a cloud dome.", GROUPNAME));
 
       AddProperty(new FloatActorProperty("SpeedX", "SpeedX",
          FloatActorProperty::SetFuncType(cd, &CloudDome::SetSpeedX),
-         MakeFunctorRet(*cd, &CloudDome::GetSpeedX),
+         FloatActorProperty::GetFuncType(cd, &CloudDome::GetSpeedX),
          "Sets the speed x of a cloud dome.", GROUPNAME));
 
       AddProperty(new FloatActorProperty("SpeedY", "SpeedY",
          FloatActorProperty::SetFuncType(cd, &CloudDome::SetSpeedY),
-         MakeFunctorRet(*cd, &CloudDome::GetSpeedY),
+         FloatActorProperty::GetFuncType(cd, &CloudDome::GetSpeedY),
          "Sets the speed y of a cloud dome.", GROUPNAME));
 
       AddProperty(new FloatActorProperty("Bias", "Bias",
          FloatActorProperty::SetFuncType(cd, &CloudDome::SetBias),
-         MakeFunctorRet(*cd, &CloudDome::GetBias),
+         FloatActorProperty::GetFuncType(cd, &CloudDome::GetBias),
          "Sets the bias of a cloud dome.", GROUPNAME));
 
       AddProperty(new BooleanActorProperty("EnableShaders", "EnableShaders",
          BooleanActorProperty::SetFuncType(cd, &CloudDome::SetShaderEnable),
-         MakeFunctorRet(*cd, &CloudDome::GetEnable),
+         BooleanActorProperty::GetFuncType(cd, &CloudDome::GetEnable),
          "Enables shaders on a cloud dome.", GROUPNAME));
 
       AddProperty(new Vec3ActorProperty("Cloud Color", "Cloud Color",
          Vec3ActorProperty::SetFuncType(this, &CloudDomeActorProxy::SetCloudColor),
-         MakeFunctorRet(*this, &CloudDomeActorProxy::GetCloudColor),
+         Vec3ActorProperty::GetFuncType(this, &CloudDomeActorProxy::GetCloudColor),
          "Sets the cloud color of a cloud dome.", GROUPNAME));
    }
 

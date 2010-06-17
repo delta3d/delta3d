@@ -50,35 +50,35 @@ namespace dtActors
 
       AddProperty(new dtDAL::FloatActorProperty("Time to Next", "Time to Next",
          dtDAL::FloatActorProperty::SetFuncType(bn, &dtABC::BezierNode::SetTimeToNext),
-         dtDAL::MakeFunctorRet(*bn, &dtABC::BezierNode::GetTimeToNext),
+         dtDAL::FloatActorProperty::GetFuncType(bn, &dtABC::BezierNode::GetTimeToNext),
          "Time it takes to get from this node to the next"));
 
       AddProperty(new dtDAL::FloatActorProperty("Time Step", "Time Step",
          dtDAL::FloatActorProperty::SetFuncType(bn, &dtABC::BezierNode::SetStep),
-         dtDAL::MakeFunctorRet(*bn, &dtABC::BezierNode::GetStep),
+         dtDAL::FloatActorProperty::GetFuncType(bn, &dtABC::BezierNode::GetStep),
          "The Time step in seconds to interpolate between this node and the next"));
 
       AddProperty(new dtDAL::ActorActorProperty(*this, "Entry Control Point", "Entry Control Point",
          dtDAL::ActorActorProperty::SetFuncType(this, &BezierNodeActorProxy::SetBezierEntryControlPoint),
-         dtDAL::MakeFunctorRet(*this, &BezierNodeActorProxy::GetBezierEntryControlPoint),
+         dtDAL::ActorActorProperty::GetFuncType(this, &BezierNodeActorProxy::GetBezierEntryControlPoint),
          "dtABC::BezierControlPoint",
          "Sets the control point on this node from entry"));
 
       AddProperty(new dtDAL::ActorActorProperty(*this, "Exit Control Point", "Exit Control Point",
          dtDAL::ActorActorProperty::SetFuncType(this, &BezierNodeActorProxy::SetBezierExitControlPoint),
-         dtDAL::MakeFunctorRet(*this, &BezierNodeActorProxy::GetBezierExitControlPoint),
+         dtDAL::ActorActorProperty::GetFuncType(this, &BezierNodeActorProxy::GetBezierExitControlPoint),
          "dtABC::BezierControlPoint",
          "Sets the control point on this node on exit"));
 
       AddProperty(new dtDAL::ActorActorProperty(*this, "Next Bezier Node", "Next Bezier Node",
          dtDAL::ActorActorProperty::SetFuncType(this, &BezierNodeActorProxy::SetNextBezierNode),
-         dtDAL::MakeFunctorRet(*this, &BezierNodeActorProxy::GetNextBezierNode),
+         dtDAL::ActorActorProperty::GetFuncType(this, &BezierNodeActorProxy::GetNextBezierNode),
          "dtABC::BezierNode",
          "Sets the next node on this node"));
 
       AddProperty(new dtDAL::ActorActorProperty(*this, "Previous Bezier Node", "Previous Bezier Node",
          dtDAL::ActorActorProperty::SetFuncType(this, &BezierNodeActorProxy::SetPreviousBezierNode),
-         dtDAL::MakeFunctorRet(*this, &BezierNodeActorProxy::GetPreviousBezierNode),
+         dtDAL::ActorActorProperty::GetFuncType(this, &BezierNodeActorProxy::GetPreviousBezierNode),
          "dtABC::BezierNode",
          "Sets the previous node on this node"));
    }

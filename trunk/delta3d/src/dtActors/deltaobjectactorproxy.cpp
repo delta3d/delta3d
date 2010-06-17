@@ -44,19 +44,19 @@ namespace dtActors
 
       AddProperty(new dtDAL::Vec3ActorProperty("Scale", "Scale",
          dtDAL::Vec3ActorProperty::SetFuncType(actor, &dtCore::Object::SetScale),
-         dtDAL::MakeFunctorRet(*actor, &dtCore::Object::GetScale),
+         dtDAL::Vec3ActorProperty::GetFuncType(actor, &dtCore::Object::GetScale),
          "Specifies the scale of the object",
          "Transformable"));
 
       AddProperty(new dtDAL::Vec3ActorProperty("Model Rotation", "Model Rotation",
          dtDAL::Vec3ActorProperty::SetFuncType(actor, &dtCore::Object::SetModelRotation),
-         dtDAL::MakeFunctorRet(*actor, &dtCore::Object::GetModelRotation),
+         dtDAL::Vec3ActorProperty::GetFuncType(actor, &dtCore::Object::GetModelRotation),
          "Specifies the Rotation of the object",
          "Transformable"));
 
       AddProperty(new dtDAL::Vec3ActorProperty("Model Translation", "Model Translation",
          dtDAL::Vec3ActorProperty::SetFuncType(actor, &dtCore::Object::SetModelTranslation),
-         dtDAL::MakeFunctorRet(*actor, &dtCore::Object::GetModelTranslation),
+         dtDAL::Vec3ActorProperty::GetFuncType(actor, &dtCore::Object::GetModelTranslation),
          "Specifies the Translation of the object",
          "Transformable"));
    }

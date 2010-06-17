@@ -276,7 +276,7 @@ void VolumeEditActorProxy::BuildPropertyMap()
    //Volume actors need to be scalable
    AddProperty(new dtDAL::Vec3ActorProperty("Scale", "Scale",
       dtDAL::Vec3ActorProperty::SetFuncType(actor, &VolumeEditActor::SetScale),
-      dtDAL::MakeFunctorRet(*actor, &VolumeEditActor::GetScale),
+      dtDAL::Vec3ActorProperty::GetFuncType(actor, &VolumeEditActor::GetScale),
       "Scales", "Transformable"));
 }
 
