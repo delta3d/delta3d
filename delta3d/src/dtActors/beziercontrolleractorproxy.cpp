@@ -23,7 +23,7 @@ void BezierControllerActorProxy::CreateActor()
 {
    SetActor(*new BezierController());
    static_cast<BezierController*>(GetActor())->RenderProxyNode(true);
-   
+
    std::ostringstream ss;
    ss << "Controller" << mNumControllers++;
    SetName(ss.str());
@@ -37,23 +37,23 @@ void BezierControllerActorProxy::BuildPropertyMap()
    BezierController* bc = static_cast<BezierController*>(GetActor());
 
    AddProperty(new dtDAL::ActorActorProperty(*this, "Start Node", "Start Node",
-      MakeFunctor(*this, &BezierControllerActorProxy::SetActorStartNode),
+      ActorActorProperty::SetFuncType(this, &BezierControllerActorProxy::SetActorStartNode),
       MakeFunctorRet(*this, &BezierControllerActorProxy::GetActorStartNode),
       "dtABC::BezierNode",
       "Sets the start node to be used for this path" ));
 
    AddProperty(new BooleanActorProperty("Render Path", "Render Path",
-      MakeFunctor(*bc, &BezierController::RenderProxyNode),
+      BooleanActorProperty::SetFuncType(bc, &BezierController::RenderProxyNode),
       MakeFunctorRet(*bc, &BezierController::GetRenderProxyNode),
       "Toggles Rendering of the Path.", "Controller"));
 
    AddProperty(new BooleanActorProperty("Follow Path", "Follow Path",
-      MakeFunctor(*bc, &BezierController::SetFollowPath),
+      BooleanActorProperty::SetFuncType(bc, &BezierController::SetFollowPath),
       MakeFunctorRet(*bc, &BezierController::GetFollowPath),
       "Toggles path following oriented against start node.", "Controller"));
 
    AddProperty(new BooleanActorProperty("Set Looping", "Set Looping",
-      MakeFunctor(*bc, &BezierController::SetLooping),
+      BooleanActorProperty::SetFuncType(bc, &BezierController::SetLooping),
       MakeFunctorRet(*bc, &BezierController::GetLooping),
       "Toggles The looping of the Path.", "Controller"));
 }
@@ -71,7 +71,7 @@ void BezierControllerActorProxy::SetActorStartNode(ActorProxy* node)
    SetLinkedActor("Start Node", node);
 
    BezierNode* bNode = NULL;
-   if(node)
+   if (node)
    {
       bNode = static_cast<BezierNode*>(node->GetActor());
    }

@@ -104,7 +104,7 @@ namespace dtActors
             {
                playerID = cam->GetUniqueId();
             }
-            
+
             if (cameraID.ToString().empty())
             {
                cameraID = cam->GetUniqueId();
@@ -265,7 +265,7 @@ LOG_ALWAYS(dtDAL::Project::GetInstance().GetResourcePath(descriptor));
          "Director"));
 
       AddProperty(new dtDAL::ActorIDActorProperty(
-         "CameraActor", "Camera Actor", 
+         "CameraActor", "Camera Actor",
          dtDAL::ActorIDActorProperty::SetFuncType(actor, &DirectorActor::SetCameraActor),
          dtDAL::ActorIDActorProperty::GetFuncType(actor, &DirectorActor::GetCameraActor),
          "dtCore::Transformable", "The Camera actor, if NULL it will use the Applications Camera by default.",
@@ -281,10 +281,10 @@ LOG_ALWAYS(dtDAL::Project::GetInstance().GetResourcePath(descriptor));
          new dtDAL::ArrayActorProperty<dtDAL::ResourceDescriptor>(
          "DirectorArray", "Director Graph List",
          "The Director Graphs loaded by this actor.",
-         dtDAL::MakeFunctor(*actor, &DirectorActor::SetDirectorIndex),
+         dtDAL::ArrayActorProperty<dtDAL::ResourceDescriptor>::SetIndexFuncType(actor, &DirectorActor::SetDirectorIndex),
          dtDAL::MakeFunctorRet(*actor, &DirectorActor::GetDefaultDirector),
          dtDAL::MakeFunctorRet(*actor, &DirectorActor::GetDirectorArray),
-         dtDAL::MakeFunctor(*actor, &DirectorActor::SetDirectorArray),
+         dtDAL::ArrayActorProperty<dtDAL::ResourceDescriptor>::SetArrayFuncType(actor, &DirectorActor::SetDirectorArray),
          scriptProp, "Director");
       AddProperty(scriptArrayProp);
    }
@@ -313,7 +313,7 @@ LOG_ALWAYS(dtDAL::Project::GetInstance().GetResourcePath(descriptor));
          GetActor(actor);
 
          AddInvokable(*new dtGame::Invokable("Map Loaded",
-            dtDAL::MakeFunctor(*actor, &DirectorActor::OnLoadDirectors)));   
+            dtDAL::MakeFunctor(*actor, &DirectorActor::OnLoadDirectors)));
       }
    }
 

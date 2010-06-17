@@ -1,26 +1,26 @@
 /* -*-c++-*-
-* Copyright 2007-2008, Alion Science and Technology
-*
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
-* any later version.
-*
-* This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
-* details.
-*
-* You should have received a copy of the GNU Lesser General Public License
-* along with this library; if not, write to the Free Software Foundation, Inc.,
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*
-* This software was developed by Alion Science and Technology Corporation under
-* circumstances in which the U. S. Government may have rights in the software.
-*
-* @author Bradley Anderegg
-* @author Curtiss Murphy
-*/
+ * Copyright 2007-2008, Alion Science and Technology
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * This software was developed by Alion Science and Technology Corporation under
+ * circumstances in which the U. S. Government may have rights in the software.
+ *
+ * @author Bradley Anderegg
+ * @author Curtiss Murphy
+ */
 
 #include <dtActors/watergridactor.h>
 #include <dtActors/watergridbuilder.h>
@@ -946,14 +946,14 @@ namespace dtActors
 
    ////////////////////////////////////////////////////////////////////////////////
    void WaterGridActor::AddReflectionGroup(osg::Camera* cam)
-   { 
+   {
       if (!mReflectionGroup.valid())
       {
          mReflectionGroup = new osg::MatrixTransform();
          mReflectionGroup->setMatrix(osg::Matrix::scale(osg::Vec3(1.0, 1.0, -1.0)));
 
          //we have to reverse the cullface on the ephemeris or we wont see it
-         //this is necessary due to the reflection about the z axis   
+         //this is necessary due to the reflection about the z axis
          osg::CullFace* cullState = new osg::CullFace(osg::CullFace::FRONT);
          mReflectionGroup->getOrCreateStateSet()->setAttributeAndModes(cullState,
             osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
@@ -1201,7 +1201,7 @@ namespace dtActors
       WaterGridActor& wga = static_cast<WaterGridActor&>(GetGameActor());
 
       AddInvokable(*new dtGame::Invokable(INVOKABLE_MAP_LOADED,
-         dtDAL::MakeFunctor(wga, &WaterGridActor::Init)));   
+         dtDAL::MakeFunctor(wga, &WaterGridActor::Init)));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -1231,17 +1231,17 @@ namespace dtActors
       WaterGridActor& actor = static_cast<WaterGridActor&>(GetGameActor());
 
       AddProperty(new dtDAL::ColorRgbaActorProperty(PROPERTY_WATER_COLOR, PROPERTY_WATER_COLOR,
-         dtDAL::MakeFunctor(actor,&WaterGridActor::SetWaterColor),
+         dtDAL::ColorRgbaActorProperty::SetFuncType(&actor, &WaterGridActor::SetWaterColor),
          dtDAL::MakeFunctorRet(actor,&WaterGridActor::GetWaterColor),
          "Sets the color of the water.", GROUPNAME));
 
       AddProperty(new dtDAL::EnumActorProperty<WaterGridActor::ChoppinessSettings>(PROPERTY_CHOPPINESS, PROPERTY_CHOPPINESS,
-         dtDAL::MakeFunctor(actor, &WaterGridActor::SetChoppiness),
+         dtDAL::EnumActorProperty<WaterGridActor::ChoppinessSettings>::SetFuncType(&actor, &WaterGridActor::SetChoppiness),
          dtDAL::MakeFunctorRet(actor, &WaterGridActor::GetChoppiness),
          "Sets the choppiness for the water.", GROUPNAME));
 
       AddProperty(new dtDAL::StringActorProperty(PROPERTY_SCENE_CAMERA, PROPERTY_SCENE_CAMERA,
-         dtDAL::MakeFunctor(*this, &WaterGridActorProxy::SetSceneCamera),
+         dtDAL::StringActorProperty::SetFuncType(this, &WaterGridActorProxy::SetSceneCamera),
          dtDAL::MakeFunctorRet(*this, &WaterGridActorProxy::GetSceneCamera),
          "Sets the name of the camera used to render the scene.", GROUPNAME));
    }
@@ -1254,7 +1254,7 @@ namespace dtActors
 
    ////////////////////////////////////////////////////////////////////////////////
    void WaterGridActorProxy::SetSceneCamera(const std::string& name)
-   {   
+   {
       mSceneCameraName = name;
       ResetSceneCamera();
    }
@@ -1282,7 +1282,7 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void WaterGridActorProxy::ResetSceneCamera() 
+   void WaterGridActorProxy::ResetSceneCamera()
    {
       WaterGridActor* waterActor;
       GetActor(waterActor);

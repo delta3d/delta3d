@@ -26,78 +26,78 @@
 
 namespace dtActors
 {
-    ///////////////////////////////////////////////////////////////////////////////
-    IMPLEMENT_ENUM(BaseLightActorProxy::LightModeEnum);
-    BaseLightActorProxy::LightModeEnum
-        BaseLightActorProxy::LightModeEnum::GLOBAL("GLOBAL");
-    BaseLightActorProxy::LightModeEnum
-        BaseLightActorProxy::LightModeEnum::LOCAL("LOCAL");
+   ///////////////////////////////////////////////////////////////////////////////
+   IMPLEMENT_ENUM(BaseLightActorProxy::LightModeEnum);
+   BaseLightActorProxy::LightModeEnum
+      BaseLightActorProxy::LightModeEnum::GLOBAL("GLOBAL");
+   BaseLightActorProxy::LightModeEnum
+      BaseLightActorProxy::LightModeEnum::LOCAL("LOCAL");
 
-    ///////////////////////////////////////////////////////////////////////////////
-    void BaseLightActorProxy::BuildPropertyMap()
-    {
-        const std::string GROUPNAME = "Light";
+   ///////////////////////////////////////////////////////////////////////////////
+   void BaseLightActorProxy::BuildPropertyMap()
+   {
+      const std::string GROUPNAME = "Light";
 
-        dtCore::Light* light = static_cast<dtCore::Light*>(GetActor());
+      dtCore::Light* light = static_cast<dtCore::Light*>(GetActor());
 
-        //Now, add all of the properties for the actor.
-        AddProperty(new dtDAL::BooleanActorProperty("Enable","Enabled",
-            dtDAL::MakeFunctor(*light,&dtCore::Light::SetEnabled),
-            dtDAL::MakeFunctorRet(*light,&dtCore::Light::GetEnabled),
-            "Sets whether or not the light is enabled in the scene.", GROUPNAME));
+      //Now, add all of the properties for the actor.
+      AddProperty(new dtDAL::BooleanActorProperty("Enable","Enabled",
+         dtDAL::BooleanActorProperty::SetFuncType(light,&dtCore::Light::SetEnabled),
+         dtDAL::MakeFunctorRet(*light,&dtCore::Light::GetEnabled),
+         "Sets whether or not the light is enabled in the scene.", GROUPNAME));
 
-        //In this property, the actor object itself did not have a set method
-        //that matched the method signature expected in the property class.
-        //Therefore, the setter is implemented in the proxy and it is passed
-        //to the property as the setter method.
-        AddProperty(new dtDAL::IntActorProperty("LightNum","Light Number",
-            dtDAL::MakeFunctor(*this,&BaseLightActorProxy::SetNumber),
-            dtDAL::MakeFunctorRet(*light,&dtCore::Light::GetNumber),
-            "Sets the OpenGL light number for this light actor.", GROUPNAME));
+      //In this property, the actor object itself did not have a set method
+      //that matched the method signature expected in the property class.
+      //Therefore, the setter is implemented in the proxy and it is passed
+      //to the property as the setter method.
+      AddProperty(new dtDAL::IntActorProperty("LightNum","Light Number",
+         dtDAL::IntActorProperty::SetFuncType(this,&BaseLightActorProxy::SetNumber),
+         dtDAL::MakeFunctorRet(*light,&dtCore::Light::GetNumber),
+         "Sets the OpenGL light number for this light actor.", GROUPNAME));
 
-        //Property for the light's lighting mode. Uses a dtDAL::Enumeration
-        // to represent the lighting mode. Can be either GLOBAL or LOCAL.
-        // Default is GLOBAL.
-        AddProperty(new dtDAL::EnumActorProperty<LightModeEnum>("Lighting Mode","Lighting Mode",
-            dtDAL::MakeFunctor(*this,&BaseLightActorProxy::SetLightingMode),
-            dtDAL::MakeFunctorRet(*this,&BaseLightActorProxy::GetLightingMode),
-            "Sets the lighting mode for this light actor.", GROUPNAME));
+      //Property for the light's lighting mode. Uses a dtDAL::Enumeration
+      // to represent the lighting mode. Can be either GLOBAL or LOCAL.
+      // Default is GLOBAL.
+      AddProperty(new dtDAL::EnumActorProperty<LightModeEnum>("Lighting Mode","Lighting Mode",
+         dtDAL::EnumActorProperty<LightModeEnum>::SetFuncType(this,&BaseLightActorProxy::SetLightingMode),
+         dtDAL::MakeFunctorRet(*this,&BaseLightActorProxy::GetLightingMode),
+         "Sets the lighting mode for this light actor.", GROUPNAME));
 
-        //Property for the light's ambient color. Uses 4 values represented
-        // in the RGBA format to manipulate the ambient color of a light.
-        // All values are clamped from 0 - 1.
-        AddProperty(new dtDAL::ColorRgbaActorProperty("Ambient","Ambient Color",
-            dtDAL::MakeFunctor(*this,&BaseLightActorProxy::SetAmbient),
-            dtDAL::MakeFunctorRet(*this,&BaseLightActorProxy::GetAmbient),
-            "Sets the ambient color value for this light actor.", GROUPNAME));
+      //Property for the light's ambient color. Uses 4 values represented
+      // in the RGBA format to manipulate the ambient color of a light.
+      // All values are clamped from 0 - 1.
+      AddProperty(new dtDAL::ColorRgbaActorProperty("Ambient","Ambient Color",
+         dtDAL::ColorRgbaActorProperty::SetFuncType(this,&BaseLightActorProxy::SetAmbient),
+         dtDAL::MakeFunctorRet(*this,&BaseLightActorProxy::GetAmbient),
+         "Sets the ambient color value for this light actor.", GROUPNAME));
 
-        //Property for the light's diffuse color. Uses 4 values represented
-        // in the RGBA format to manipulate the diffuse color of a light.
-        // All values are clamped from 0 - 1.
-        AddProperty(new dtDAL::ColorRgbaActorProperty("Diffuse","Diffuse Color",
-            dtDAL::MakeFunctor(*this,&BaseLightActorProxy::SetDiffuse),
-            dtDAL::MakeFunctorRet(*this,&BaseLightActorProxy::GetDiffuse),
-            "Sets the diffuse color value for this light actor.", GROUPNAME));
+      //Property for the light's diffuse color. Uses 4 values represented
+      // in the RGBA format to manipulate the diffuse color of a light.
+      // All values are clamped from 0 - 1.
+      AddProperty(new dtDAL::ColorRgbaActorProperty("Diffuse","Diffuse Color",
+         dtDAL::ColorRgbaActorProperty::SetFuncType(this,&BaseLightActorProxy::SetDiffuse),
+         dtDAL::MakeFunctorRet(*this,&BaseLightActorProxy::GetDiffuse),
+         "Sets the diffuse color value for this light actor.", GROUPNAME));
 
-        //Property for the light's specular color. Uses 4 values represented
-        // in the RGBA format to manipulate the specular color of a light.
-        // All values are clamped from 0 - 1.
-        AddProperty(new dtDAL::ColorRgbaActorProperty("Specular","Specular Color",
-            dtDAL::MakeFunctor(*this,&BaseLightActorProxy::SetSpecular),
-            dtDAL::MakeFunctorRet(*this,&BaseLightActorProxy::GetSpecular),
-            "Sets the specular color value for this light actor.", GROUPNAME));
-    }
+      //Property for the light's specular color. Uses 4 values represented
+      // in the RGBA format to manipulate the specular color of a light.
+      // All values are clamped from 0 - 1.
+      AddProperty(new dtDAL::ColorRgbaActorProperty("Specular","Specular Color",
+         dtDAL::ColorRgbaActorProperty::SetFuncType(this,&BaseLightActorProxy::SetSpecular),
+         dtDAL::MakeFunctorRet(*this,&BaseLightActorProxy::GetSpecular),
+         "Sets the specular color value for this light actor.", GROUPNAME));
+   }
 
-    ///////////////////////////////////////////////////////////////////////////////
-    dtDAL::ActorProxyIcon* BaseLightActorProxy::GetBillBoardIcon()
-    {
-        if (!mBillBoardIcon.valid())
-        {
-            mBillBoardIcon =
-                 new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_LIGHT);
-        }
+   ///////////////////////////////////////////////////////////////////////////////
+   dtDAL::ActorProxyIcon* BaseLightActorProxy::GetBillBoardIcon()
+   {
+      if (!mBillBoardIcon.valid())
+      {
+         mBillBoardIcon =
+            new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_LIGHT);
+      }
 
-        return mBillBoardIcon.get();
-    }
+      return mBillBoardIcon.get();
+   }
 
 } // namespace dtActors

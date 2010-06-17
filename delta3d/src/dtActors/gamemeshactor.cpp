@@ -30,13 +30,13 @@
 #include <osg/MatrixTransform>
 
 namespace dtActors
-{  
+{
    //////////////////////////////////////////////////////////////////////////////
    /////////////////////////// BEGIN ACTOR //////////////////////////////////////
    //////////////////////////////////////////////////////////////////////////////
 
    //////////////////////////////////////////////////////////////////////////////
-   GameMeshActor::GameMeshActor(dtGame::GameActorProxy& proxy) 
+   GameMeshActor::GameMeshActor(dtGame::GameActorProxy& proxy)
       : dtGame::GameActor(proxy)
       , mAlreadyInScene(false)
       , mUseCache(true)
@@ -211,27 +211,27 @@ namespace dtActors
       GameMeshActor& myActor = static_cast<GameMeshActor &>(GetGameActor());
 
       AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::STATIC_MESH,
-         "static mesh", "Static Mesh", dtDAL::MakeFunctor(myActor, &GameMeshActor::SetMesh),
+         "static mesh", "Static Mesh", dtDAL::ResourceActorProperty::SetFuncType(&myActor, &GameMeshActor::SetMesh),
          "The static mesh resource that defines the geometry", GROUPNAME));
 
       AddProperty(new dtDAL::BooleanActorProperty("use cache object", "Use Model Cache",
-         dtDAL::MakeFunctor(myActor, &GameMeshActor::SetUseCache),
+         dtDAL::BooleanActorProperty::SetFuncType(&myActor, &GameMeshActor::SetUseCache),
          dtDAL::MakeFunctorRet(myActor, &GameMeshActor::GetUseCache),
          "Indicates whether we will try to use the cache when we load our model.", GROUPNAME));
 
       AddProperty(new dtDAL::Vec3ActorProperty("Scale", "Scale",
-         dtDAL::MakeFunctor(myActor, &GameMeshActor::SetScale),
+         dtDAL::Vec3ActorProperty::SetFuncType(&myActor, &GameMeshActor::SetScale),
          dtDAL::MakeFunctorRet(myActor, &GameMeshActor::GetScale),
          "Scales this visual model", "Transformable"));
 
       AddProperty(new dtDAL::Vec3ActorProperty("Model Rotation", "Model Rotation",
-         dtDAL::MakeFunctor(myActor, &GameMeshActor::SetModelRotation),
+         dtDAL::Vec3ActorProperty::SetFuncType(&myActor, &GameMeshActor::SetModelRotation),
          dtDAL::MakeFunctorRet(myActor, &GameMeshActor::GetModelRotation),
          "Specifies the Rotation of the object",
          "Transformable"));
 
       AddProperty(new dtDAL::Vec3ActorProperty("Model Translation", "Model Translation",
-         dtDAL::MakeFunctor(myActor, &GameMeshActor::SetModelTranslation),
+         dtDAL::Vec3ActorProperty::SetFuncType(&myActor, &GameMeshActor::SetModelTranslation),
          dtDAL::MakeFunctorRet(myActor, &GameMeshActor::GetModelTranslation),
          "Specifies the Translation of the object",
          "Transformable"));
@@ -278,7 +278,7 @@ namespace dtActors
    //////////////////////////////////////////////////////////////////////////
    dtDAL::ActorProxyIcon* GameMeshActorProxy::GetBillBoardIcon()
    {
-      if(!mBillBoardIcon.valid())
+      if (!mBillBoardIcon.valid())
       {
          mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_STATICMESH);
       }

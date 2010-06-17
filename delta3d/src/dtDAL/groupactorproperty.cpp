@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- * 
+ *
  * David Guthrie
  */
 #include <prefix/dtdalprefix.h>
@@ -30,8 +30,8 @@ namespace dtDAL
    ////////////////////////////////////////////////////////////////////////////
    GroupActorProperty::GroupActorProperty(const std::string& name,
                                           const std::string& label,
-                                          SetFunctorType set,
-                                          GetFunctorType get,
+                                          SetFuncType set,
+                                          GetFuncType get,
                                           const std::string& desc,
                                           const std::string& groupName,
                                           const std::string& editorType,
@@ -39,10 +39,10 @@ namespace dtDAL
                                           ActorProperty(DataType::GROUP,name,label,desc,groupName, readOnly),
                                           mSetPropFunctor(set),
                                           mGetPropFunctor(get),
-                                          mEditorType(editorType)                                          
+                                          mEditorType(editorType)
    {
    }
-                      
+
    ////////////////////////////////////////////////////////////////////////////
    GroupActorProperty::~GroupActorProperty() {}
 
@@ -53,7 +53,7 @@ namespace dtDAL
       bool result = param.FromString(value);
       if (result)
          SetValue(param);
-      
+
       return result;
    }
 
@@ -65,15 +65,15 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void GroupActorProperty::SetValue(const NamedGroupParameter& value) 
-   { 
+   void GroupActorProperty::SetValue(const NamedGroupParameter& value)
+   {
       !IsReadOnly() ? mSetPropFunctor(value) : LOG_WARNING("SetValue has been called on a property that is read only.");
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<NamedGroupParameter> GroupActorProperty::GetValue() const 
-   { 
-      return mGetPropFunctor(); 
+   dtCore::RefPtr<NamedGroupParameter> GroupActorProperty::GetValue() const
+   {
+      return mGetPropFunctor();
    }
 
    ////////////////////////////////////////////////////////////////////////////
@@ -84,7 +84,7 @@ namespace dtDAL
          LOG_ERROR("Property types are incompatible. Cannot make copy.");
          return;
       }
-      
+
       const GroupActorProperty& prop =
          static_cast<const GroupActorProperty& >(otherProp);
 

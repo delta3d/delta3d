@@ -52,13 +52,13 @@ namespace dtActors
    {
       const dtGame::GameEventMessage &eventMsg = static_cast<const dtGame::GameEventMessage&>(msg);
 
-      if(eventMsg.GetGameEvent() == NULL)
+      if (eventMsg.GetGameEvent() == NULL)
       {
          LOG_WARNING("HandleGameEvent: Game event message contained a NULL game event.");
          return;
       }
 
-      if( ! mGameEvent.valid() && ! mGameEventFail.valid() )
+      if ( ! mGameEvent.valid() && ! mGameEventFail.valid() )
       {
          LOG_WARNING("HandleGameEvent: Game event task actor has NULL game events.  Perhaps it was "
                     " assigned to the task before being added to the event manager.");
@@ -68,11 +68,11 @@ namespace dtActors
       // Determine which event has been received.
       const dtCore::UniqueId& eventId = eventMsg.GetGameEvent()->GetUniqueId();
       bool isFailEvent = false;
-      if( mGameEvent.valid() && eventId == mGameEvent->GetUniqueId() )
+      if ( mGameEvent.valid() && eventId == mGameEvent->GetUniqueId() )
       {
          // DO NOTHING.
       }
-      else if( mGameEventFail.valid() && eventId == mGameEventFail->GetUniqueId() )
+      else if ( mGameEventFail.valid() && eventId == mGameEventFail->GetUniqueId() )
       {
          isFailEvent = true;
       }
@@ -86,11 +86,11 @@ namespace dtActors
       //is track the number of times we got the event, and if it reaches the min occurances
       //attempt to mark ourselves complete.
       TaskActorProxy &proxy = static_cast<TaskActorProxy&>(GetGameActorProxy());
-      if(!IsComplete() && !IsFailed())
+      if (!IsComplete() && !IsFailed())
       {
-         if(proxy.RequestScoreChange(proxy,proxy))
+         if (proxy.RequestScoreChange(proxy,proxy))
          {
-            if( isFailEvent ) // Fail event
+            if ( isFailEvent ) // Fail event
             {
                SetFailed( true );
             }
@@ -141,19 +141,19 @@ namespace dtActors
       TaskActorGameEvent &task = static_cast<TaskActorGameEvent&>(GetGameActor());
 
       // Game event property.
-      AddProperty(new dtDAL::GameEventActorProperty(*this, 
+      AddProperty(new dtDAL::GameEventActorProperty(*this,
          TaskActorGameEventProxy::PROPERTY_EVENT_COMPLETE,
          "Game Event",
-         dtDAL::MakeFunctor(task, &TaskActorGameEvent::SetGameEvent),
+         dtDAL::GameEventActorProperty::SetFuncType(&task, &TaskActorGameEvent::SetGameEvent),
          dtDAL::MakeFunctorRet<dtDAL::GameEvent* (TaskActorGameEvent::*)(), TaskActorGameEvent>
             (task, &TaskActorGameEvent::GetGameEvent),
          "Sets and gets the game event being tracked by the task.",GROUPNAME));
 
       // Fail Game Event
-      AddProperty(new dtDAL::GameEventActorProperty(*this, 
+      AddProperty(new dtDAL::GameEventActorProperty(*this,
          TaskActorGameEventProxy::PROPERTY_EVENT_FAIL,
          "Fail Game Event",
-         dtDAL::MakeFunctor(task, &TaskActorGameEvent::SetFailGameEvent),
+         dtDAL::GameEventActorProperty::SetFuncType(&task, &TaskActorGameEvent::SetFailGameEvent),
          dtDAL::MakeFunctorRet<dtDAL::GameEvent* (TaskActorGameEvent::*)(), TaskActorGameEvent>
             (task, &TaskActorGameEvent::GetFailGameEvent),
          "Sets and gets the game event that will cause this task to fail.",GROUPNAME));
@@ -162,7 +162,7 @@ namespace dtActors
       AddProperty(new dtDAL::IntActorProperty(
          TaskActorGameEventProxy::PROPERTY_MIN_OCCURANCES,
          "Minimum Occurances",
-         dtDAL::MakeFunctor(task,&TaskActorGameEvent::SetMinOccurances),
+         dtDAL::IntActorProperty::SetFuncType(&task,&TaskActorGameEvent::SetMinOccurances),
          dtDAL::MakeFunctorRet(task,&TaskActorGameEvent::GetMinOccurances),
          "Sets/gets the minimum number of times the game event must be fired before "
             "this task is considered complete.",GROUPNAME));
@@ -174,7 +174,7 @@ namespace dtActors
       TaskActorGameEvent &task = static_cast<TaskActorGameEvent&>(GetGameActor());
       TaskActorProxy::BuildInvokables();
       AddInvokable(*new dtGame::Invokable("HandleGameEvent",
-         dtDAL::MakeFunctor(task,&TaskActorGameEvent::HandleGameEvent)));
+         dtDAL::MakeFunctor(task, &TaskActorGameEvent::HandleGameEvent)));
    }
 
    //////////////////////////////////////////////////////////////////////////////

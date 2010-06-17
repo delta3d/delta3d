@@ -153,18 +153,18 @@ void SkyDomeEnvironmentActorProxy::BuildPropertyMap()
    SkyDomeEnvironmentActor *env;
    this->GetActor(env);
 
-   AddProperty( new BooleanActorProperty("Enable Fog", "Enable Fog",
-      MakeFunctor(*env, &SkyDomeEnvironmentActor::SetFogEnable),
+   AddProperty(new BooleanActorProperty("Enable Fog", "Enable Fog",
+      BooleanActorProperty::SetFuncType(env, &SkyDomeEnvironmentActor::SetFogEnable),
       MakeFunctorRet(*env, &SkyDomeEnvironmentActor::GetFogEnable),
       "Enable or disable the fog"));
 
-   AddProperty( new BooleanActorProperty("Enable Sky Dome", "Enable Sky Dome",
-      MakeFunctor(*env, &SkyDomeEnvironmentActor::SetSkyDomeEnable),
+   AddProperty(new BooleanActorProperty("Enable Sky Dome", "Enable Sky Dome",
+      BooleanActorProperty::SetFuncType(env, &SkyDomeEnvironmentActor::SetSkyDomeEnable),
       MakeFunctorRet(*env, &SkyDomeEnvironmentActor::GetSkyDomeEnable),
       "Enable or disable the rendering of the Sky Dome"));
 
-   AddProperty( new FloatActorProperty("Visibility", "Visibility",
-      MakeFunctor(*env, &SkyDomeEnvironmentActor::SetVisibility),
+   AddProperty(new FloatActorProperty("Visibility", "Visibility",
+      FloatActorProperty::SetFuncType(env, &SkyDomeEnvironmentActor::SetVisibility),
       MakeFunctorRet(*env, &SkyDomeEnvironmentActor::GetVisbility),
       "Adjusts the max visibility distance (meters)"));
 }

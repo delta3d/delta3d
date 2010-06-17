@@ -1,23 +1,23 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
-* Copyright 2008, Alion Science and Technology
-*
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
-* any later version.
-*
-* This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
-* details.
-*
-* You should have received a copy of the GNU Lesser General Public License
-* along with this library; if not, write to the Free Software Foundation, Inc.,
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*
-* David Guthrie
-*/
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright 2008, Alion Science and Technology
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * David Guthrie
+ */
 
 #include <dtActors/distancesensoractor.h>
 #include <dtCore/scene.h>
@@ -64,13 +64,13 @@ namespace dtActors
 
       AddProperty(new dtDAL::ActorActorProperty(*this, DistanceSensorActorProxy::PROPERTY_ATTACH_TO_ACTOR,
                DistanceSensorActorProxy::PROPERTY_ATTACH_TO_ACTOR,
-               dtDAL::MakeFunctor(*this, &DistanceSensorActorProxy::SetAttachToProxy),
+               dtDAL::ActorActorProperty::SetFuncType(this, &DistanceSensorActorProxy::SetAttachToProxy),
                dtDAL::MakeFunctorRet(*actor, &DistanceSensorActor::GetAttachToActor),
                "dtCore::DeltaDrawable", EMPTY, GROUP));
 
       AddProperty(new dtDAL::FloatActorProperty(DistanceSensorActorProxy::PROPERTY_TRIGGER_DISTANCE,
                DistanceSensorActorProxy::PROPERTY_TRIGGER_DISTANCE,
-               dtDAL::MakeFunctor(*actor, &DistanceSensorActor::SetTriggerDistance),
+               dtDAL::FloatActorProperty::SetFuncType(actor, &DistanceSensorActor::SetTriggerDistance),
                dtDAL::MakeFunctorRet(*actor, &DistanceSensorActor::GetTriggerDistance),
                EMPTY, GROUP));
    }
@@ -177,7 +177,7 @@ namespace dtActors
    {
 
       //do all removes here
-      while(!mRemoveList.empty())
+      while (!mRemoveList.empty())
       {
          mSensors.erase(*mRemoveList.rbegin());
          mRemoveList.pop_back();
