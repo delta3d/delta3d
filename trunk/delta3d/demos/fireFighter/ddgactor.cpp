@@ -48,7 +48,7 @@ void DDGActorProxy::BuildPropertyMap()
 
    AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::STATIC_MESH,
       "Model", "Model",
-      dtDAL::MakeFunctor(ddg, &DDGActor::LoadFile),
+      dtDAL::ResourceActorProperty::SetFuncType(&ddg, &DDGActor::LoadFile),
       "Loads the model file for the ship"));
 }
 

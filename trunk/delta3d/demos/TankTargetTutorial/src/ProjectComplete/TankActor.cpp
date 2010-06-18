@@ -264,11 +264,10 @@ void TankActor::MoveTheTank(float deltaSimTime)
    mIsector->SetDirection(osg::Vec3(0,0,1));
    if (mIsector->Update())
    {
-      osgUtil::IntersectVisitor& iv = mIsector->GetIntersectVisitor();
       const dtCore::DeltaDrawable* hitActor = mIsector->GetClosestDeltaDrawable();
       if (hitActor != this)
       {
-         osg::Vec3 p = iv.getHitList(mIsector->GetLineSegment())[0].getWorldIntersectPoint();
+         const osg::Vec3 p = mIsector->GetHitList()[0].getWorldIntersectPoint();
          // make it hover
          pos.z() = p.z() + 2.0f;
       }
@@ -483,14 +482,14 @@ void TankActorProxy::BuildPropertyMap()
 
    // "Velocity" property
    AddProperty(new dtDAL::FloatActorProperty("Velocity","Velocity",
-      dtDAL::MakeFunctor(actor, &TankActor::SetVelocity),
-      dtDAL::MakeFunctorRet(actor, &TankActor::GetVelocity),
+      dtDAL::FloatActorProperty::SetFuncType(&actor, &TankActor::SetVelocity),
+      dtDAL::FloatActorProperty::GetFuncType(&actor, &TankActor::GetVelocity),
       "Sets/gets the hover tank's velocity.", GROUP));
 
    // "Turnrate" property
    AddProperty(new dtDAL::FloatActorProperty("Turnrate","Turn Rate",
-      dtDAL::MakeFunctor(actor, &TankActor::SetTurnRate),
-      dtDAL::MakeFunctorRet(actor, &TankActor::GetTurnRate),
+      dtDAL::FloatActorProperty::SetFuncType(&actor, &TankActor::SetTurnRate),
+      dtDAL::FloatActorProperty::GetFuncType(&actor, &TankActor::GetTurnRate),
       "Sets/gets the hover tank's turn rate in degrees per second.", GROUP));
 }
 
