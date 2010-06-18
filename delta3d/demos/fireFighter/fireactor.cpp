@@ -62,42 +62,42 @@ void FireActorProxy::BuildPropertyMap()
 
    AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::PARTICLE_SYSTEM,
       "FlameFileName", "FlameFileName",
-      dtDAL::MakeFunctor(fa, &FireActor::SetFlameFilename),
+      dtDAL::ResourceActorProperty::SetFuncType(&fa, &FireActor::SetFlameFilename),
       "Sets the flame file name"));
 
    AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::PARTICLE_SYSTEM,
       "SparkFileName", "SparkFileName",
-      dtDAL::MakeFunctor(fa, &FireActor::SetSparkFilename),
+      dtDAL::ResourceActorProperty::SetFuncType(&fa, &FireActor::SetSparkFilename),
       "Sets the spark file name"));
 
    AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::PARTICLE_SYSTEM,
       "SmokeFileName", "SmokeFileName",
-      dtDAL::MakeFunctor(fa, &FireActor::SetSmokeFilename),
+      dtDAL::ResourceActorProperty::SetFuncType(&fa, &FireActor::SetSmokeFilename),
       "Sets the smoke file name"));
 
    AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::PARTICLE_SYSTEM,
       "SmokeCeilingFileName", "SmokeCeilingFileName",
-      dtDAL::MakeFunctor(fa, &FireActor::SetSmokeCeilingFilename),
+      dtDAL::ResourceActorProperty::SetFuncType(&fa, &FireActor::SetSmokeCeilingFilename),
       "Sets the smoke ceiling file name"));
 
    AddProperty(new dtDAL::FloatActorProperty("Radius", "Radius",
-      dtDAL::MakeFunctor(fa, &FireActor::SetRadius),
-      dtDAL::MakeFunctorRet(fa, &FireActor::GetRadius),
+      dtDAL::FloatActorProperty::SetFuncType(&fa, &FireActor::SetRadius),
+      dtDAL::FloatActorProperty::GetFuncType(&fa, &FireActor::GetRadius),
       "Sets the fire radius"));
 
    AddProperty(new dtDAL::FloatActorProperty("Intensity", "Intensity",
-      dtDAL::MakeFunctor(fa, &FireActor::SetIntensity),
-      dtDAL::MakeFunctorRet(fa, &FireActor::GetIntensity),
+      dtDAL::FloatActorProperty::SetFuncType(&fa, &FireActor::SetIntensity),
+      dtDAL::FloatActorProperty::GetFuncType(&fa, &FireActor::GetIntensity),
       "Sets the fire intensity"));
 
    AddProperty(new dtDAL::Vec3ActorProperty("LightRotation", "LightRotation",
-      dtDAL::MakeFunctor(fa, &FireActor::SetLightRotation),
-      dtDAL::MakeFunctorRet(fa, &FireActor::GetLightRotation),
+      dtDAL::Vec3ActorProperty::SetFuncType(&fa, &FireActor::SetLightRotation),
+      dtDAL::Vec3ActorProperty::GetFuncType(&fa, &FireActor::GetLightRotation),
       "Sets the light rotation"));
 
    AddProperty(new dtDAL::Vec3ActorProperty("LightTranslation", "LightTranslation",
-      dtDAL::MakeFunctor(fa, &FireActor::SetLightTranslation),
-      dtDAL::MakeFunctorRet(fa, &FireActor::GetLightTranslation),
+      dtDAL::Vec3ActorProperty::SetFuncType(&fa, &FireActor::SetLightTranslation),
+      dtDAL::Vec3ActorProperty::GetFuncType(&fa, &FireActor::GetLightTranslation),
       "Sets the light translation"));
 }
 

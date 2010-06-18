@@ -350,16 +350,16 @@ void KillableTargetActorProxy::BuildPropertyMap()
    actor.SetUseCache(false);
 
    // "Max Health" property
-   AddProperty( new dtDAL::IntActorProperty( "Max Health", "Max Health",
-      dtDAL::MakeFunctor( actor, &KillableTargetActor::SetMaxHealth ),
-      dtDAL::MakeFunctorRet( actor, &KillableTargetActor::GetMaxHealth ),
-      "Sets/gets the target max health (i.e. the damaged it can sustain before going boom)", GROUP ) );
+   AddProperty(new dtDAL::IntActorProperty("Max Health", "Max Health",
+      dtDAL::IntActorProperty::SetFuncType(&actor, &KillableTargetActor::SetMaxHealth),
+      dtDAL::IntActorProperty::GetFuncType(&actor, &KillableTargetActor::GetMaxHealth),
+      "Sets/gets the target max health (i.e. the damaged it can sustain before going boom)", GROUP));
 
    // "Current Health" property
-   AddProperty( new dtDAL::IntActorProperty( "Current Health", "Current Health",
-      dtDAL::MakeFunctor( actor, &KillableTargetActor::SetCurrentHealth ),
-      dtDAL::MakeFunctorRet( actor, &KillableTargetActor::GetCurrentHealth ),
-      "Sets/gets the target current health", GROUP ) );
+   AddProperty(new dtDAL::IntActorProperty("Current Health", "Current Health",
+      dtDAL::IntActorProperty::SetFuncType(&actor, &KillableTargetActor::SetCurrentHealth),
+      dtDAL::IntActorProperty::GetFuncType(&actor, &KillableTargetActor::GetCurrentHealth),
+      "Sets/gets the target current health", GROUP));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
