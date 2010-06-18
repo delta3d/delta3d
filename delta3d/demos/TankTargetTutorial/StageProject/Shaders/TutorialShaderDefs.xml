@@ -80,5 +80,5 @@
             </texture2D>
          </parameter>
       </shader>
-
+   </shadergroup>
 </shaderlist>
