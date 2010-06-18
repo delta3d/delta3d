@@ -56,12 +56,12 @@ void GameItemActorProxy::BuildPropertyMap()
 
    AddProperty(new dtDAL::BooleanActorProperty("Activate", "Activate",
       dtDAL::MakeFunctor(gia, &GameItemActor::Activate),
-      dtDAL::MakeFunctorRet(gia, &GameItemActor::IsActivated),
+      dtUtil::MakeFunctor(&GameItemActor::IsActivated, gia),
       "Activates this item"));
 
    AddProperty(new dtDAL::BooleanActorProperty("Collectable", "Collectable",
       dtDAL::MakeFunctor(gia, &GameItemActor::SetCollectable),
-      dtDAL::MakeFunctorRet(gia, &GameItemActor::IsCollectable),
+      dtUtil::MakeFunctor(&GameItemActor::IsCollectable, gia),
       "Returns true if this item is collectable"));
 }
 

@@ -192,23 +192,29 @@ private:
 
 // Helper functor creation functions
 
-template <typename CallType> inline 
-Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType> 
+template <typename CallType> inline
+Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType>
 MakeFunctor(CallType fun)
 {
-   return Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType>(fun);
+   return dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType>(fun);
 }
-template <typename CallType, class PObj> inline 
+template <typename CallType, class PObj> inline
 Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType> 
 MakeFunctor(CallType memfun, PObj const& pobj)
 {
-   return Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType>(pobj, memfun);
+   return dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType>(pobj, memfun);
 }
-template <typename CallType, class Fun> inline 
-Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType> 
+template <typename CallType, class Fun> inline
+Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType>
 MakeFunctor(Fun const& fun)
 {
-   return Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType>(fun);
+   return dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType>(fun);
+}
+template <typename CallType, class PObj> inline
+Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType> 
+MakeFunctor(CallType memfun, PObj& pobj)
+{
+   return dtUtil::Functor<typename dtUtil::FunTraits<CallType>::ResultType, typename dtUtil::FunTraits<CallType>::TypeListType>(&pobj, memfun);
 }
 
 }
