@@ -267,8 +267,8 @@ namespace dtActors
          TaskActorProxy::PROPERTY_EVENT_NOTIFY_COMPLETED,
          "Notify Completed Event",
          dtDAL::GameEventActorProperty::SetFuncType(&task, &TaskActor::SetNotifyCompletedEvent),
-         dtDAL::MakeFunctorRet<dtDAL::GameEvent* (TaskActor::*)(), TaskActor>
-            (task, &TaskActor::GetNotifyCompletedEvent),
+         dtUtil::MakeFunctor<dtDAL::GameEvent* (TaskActor::*)(), TaskActor> // djmc new attempt
+            (&TaskActor::GetNotifyCompletedEvent, task),
          "Sets and gets the game event that will be sent when this task completes.",GROUPNAME));
 
       // Notify Failed Event
@@ -276,8 +276,8 @@ namespace dtActors
          TaskActorProxy::PROPERTY_EVENT_NOTIFY_FAILED,
          "Notify Failed Event",
          dtDAL::GameEventActorProperty::SetFuncType(&task, &TaskActor::SetNotifyFailedEvent),
-         dtDAL::MakeFunctorRet<dtDAL::GameEvent* (TaskActor::*)(), TaskActor>
-            (task, &TaskActor::GetNotifyFailedEvent),
+         dtUtil::MakeFunctor<dtDAL::GameEvent* (TaskActor::*)(), TaskActor>
+            (&TaskActor::GetNotifyFailedEvent, task),
          "Sets and gets the game event that will be sent when this task fails.",GROUPNAME));
 
       // REMOVE USELESS PROPERTIES - These properties really should not show in

@@ -172,10 +172,10 @@ void TestGameActorProxy1::BuildInvokables()
    GetActor(actor);
 
    AddInvokable(*new dtGame::Invokable("Fire One",
-      dtUtil::MakeFunctor(&TestGameActor1::FireOne, actor)));
+      dtUtil::MakeFunctor(&TestGameActor1::FireOne, *actor)));
 
    AddInvokable(*new dtGame::Invokable("Reset",
-      dtUtil::MakeFunctor(&TestGameActor1::Reset, actor)));
+      dtUtil::MakeFunctor(&TestGameActor1::Reset, *actor)));
 
    AddInvokable(*new dtGame::Invokable("Toggle Ticks",
       dtUtil::MakeFunctor(&TestGameActorProxy1::ToggleTicks, this)));

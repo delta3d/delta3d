@@ -145,8 +145,8 @@ namespace dtActors
          TaskActorGameEventProxy::PROPERTY_EVENT_COMPLETE,
          "Game Event",
          dtDAL::GameEventActorProperty::SetFuncType(&task, &TaskActorGameEvent::SetGameEvent),
-         dtDAL::MakeFunctorRet<dtDAL::GameEvent* (TaskActorGameEvent::*)(), TaskActorGameEvent>
-            (task, &TaskActorGameEvent::GetGameEvent),
+         dtUtil::MakeFunctor<dtDAL::GameEvent* (TaskActorGameEvent::*)(), TaskActorGameEvent>
+            (&TaskActorGameEvent::GetGameEvent, task),
          "Sets and gets the game event being tracked by the task.",GROUPNAME));
 
       // Fail Game Event
@@ -154,8 +154,8 @@ namespace dtActors
          TaskActorGameEventProxy::PROPERTY_EVENT_FAIL,
          "Fail Game Event",
          dtDAL::GameEventActorProperty::SetFuncType(&task, &TaskActorGameEvent::SetFailGameEvent),
-         dtDAL::MakeFunctorRet<dtDAL::GameEvent* (TaskActorGameEvent::*)(), TaskActorGameEvent>
-            (task, &TaskActorGameEvent::GetFailGameEvent),
+         dtUtil::MakeFunctor<dtDAL::GameEvent* (TaskActorGameEvent::*)(), TaskActorGameEvent>
+            (&TaskActorGameEvent::GetFailGameEvent, task),
          "Sets and gets the game event that will cause this task to fail.",GROUPNAME));
 
       // Min Occurances...
