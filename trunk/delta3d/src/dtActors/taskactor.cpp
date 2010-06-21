@@ -18,6 +18,7 @@
  *
  * Matthew W. Campbell, Curtiss Murphy
  */
+
 #include <dtActors/taskactor.h>
 
 #include <dtGame/invokable.h>
@@ -335,7 +336,7 @@ namespace dtActors
    void TaskActorProxy::OnEnteredWorld()
    {
       dtGame::Invokable* mapLoadedInvoke = new dtGame::Invokable("MapLoaded",
-         dtDAL::MakeFunctor(*this, &TaskActorProxy::OnMapLoaded));
+         dtUtil::MakeFunctor(&TaskActorProxy::OnMapLoaded, *this));
 
       AddInvokable(*mapLoadedInvoke);
 

@@ -313,7 +313,7 @@ LOG_ALWAYS(dtDAL::Project::GetInstance().GetResourcePath(descriptor));
          GetActor(actor);
 
          AddInvokable(*new dtGame::Invokable("Map Loaded",
-            dtDAL::MakeFunctor(*actor, &DirectorActor::OnLoadDirectors)));
+            dtUtil::MakeFunctor(&DirectorActor::OnLoadDirectors, *actor)));
       }
    }
 
