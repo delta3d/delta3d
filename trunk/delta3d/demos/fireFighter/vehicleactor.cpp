@@ -42,7 +42,7 @@ void VehicleActorProxy::BuildPropertyMap()
 
    VehicleActor& va = static_cast<VehicleActor&>(GetGameActor());
    AddProperty(new dtDAL::EnumActorProperty<VehicleActor::CoordSys>("CoordinateSystem", "CoordinateSystem",
-      dtDAL::MakeFunctor(va, &VehicleActor::SetCoordSys),
+      dtUtil::MakeFunctor(&VehicleActor::SetCoordSys, va),
       dtUtil::MakeFunctor(&VehicleActor::GetCoordSys, va),
       "Sets the coordinate system"));
 }

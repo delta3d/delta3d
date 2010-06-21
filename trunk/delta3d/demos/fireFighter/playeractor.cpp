@@ -119,7 +119,7 @@ void PlayerActor::OnEnteredWorld()
    mIsector->SetTransform(xform);
 
    dtGame::Invokable* listenInvoke = new dtGame::Invokable("ListenForTickMessages",
-      dtDAL::MakeFunctor(*this, &PlayerActor::ListenForTickMessages));
+      dtUtil::MakeFunctor(&PlayerActor::ListenForTickMessages, *this));
 
    GetGameActorProxy().AddInvokable(*listenInvoke);
 
