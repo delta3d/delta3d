@@ -266,6 +266,14 @@ namespace dtGUI
       static void DefineImage(const std::string& imagesetName, const std::string& image,
          osg::Vec2 position, osg::Vec2 size, osg::Vec2 offset);
 
+      /** 
+        * Is the supplied Scheme present in the system?
+        * Note: Do not include ".scheme" in the name
+        * @param schemeName The name of Scheme
+        * @return true if the Scheme exists, false otherwise
+        */
+      static bool IsSchemePresent(const std::string& schemeName);
+
       /**
        * Shortcut to the CEGUI::SchemeManager
        * @param fileName The filename of the .scheme file to load

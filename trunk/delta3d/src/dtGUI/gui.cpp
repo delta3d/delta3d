@@ -307,6 +307,13 @@ void GUI::_SetupDefaultUI()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+bool GUI::IsSchemePresent(const std::string& schemeName)
+{
+   _SetupSystemAndRenderer();
+   return CEGUI::SchemeManager::getSingletonPtr()->isDefined(schemeName);
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void GUI::LoadScheme(const std::string& fileName, const std::string& resourceGroup)
 {
    _SetupSystemAndRenderer();
