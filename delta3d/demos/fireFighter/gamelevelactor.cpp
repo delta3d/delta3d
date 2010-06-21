@@ -51,7 +51,7 @@ void GameLevelActorProxy::BuildPropertyMap()
 
    AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::STATIC_MESH,
       "Model", "Model",
-      dtDAL::MakeFunctor(gla, &GameLevelActor::LoadFile),
+      dtUtil::MakeFunctor(&GameLevelActor::LoadFile, gla),
       "Loads the model file for the level"));
 }
 
@@ -72,8 +72,8 @@ dtDAL::ActorProxyIcon* GameLevelActorProxy::GetBillBoardIcon()
 void GameLevelActorProxy::OnEnteredWorld()
 {
    dtGame::Invokable* invoke = new dtGame::Invokable("ResetCollisionMesh",
-      dtDAL::MakeFunctor(static_cast<GameLevelActor&>(GetGameActor()),
-      &GameLevelActor::ResetCollisionMesh));
+      dtUtil::MakeFunctor(&GameLevelActor::ResetCollisionMesh,
+         static_cast<GameLevelActor&>(GetGameActor())));
 
    AddInvokable(*invoke);
 
@@ -102,7 +102,7 @@ void GameLevelActor::OnEnteredWorld()
    dtGame::GameActor::OnEnteredWorld();
 
    dtGame::Invokable* invoke = new dtGame::Invokable("StopSounds",
-      dtDAL::MakeFunctor(*this, &GameLevelActor::StopSounds));
+      dtUtil::MakeFunctor(&GameLevelActor::StopSounds, *this));
 
    GetGameActorProxy().AddInvokable(*invoke);
    GetGameActorProxy().RegisterForMessages(MessageType::GAME_STATE_CHANGED, "StopSounds");

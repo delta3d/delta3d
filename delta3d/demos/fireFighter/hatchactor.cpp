@@ -123,7 +123,7 @@ void HatchActor::OnEnteredWorld()
    GameItemActor::OnEnteredWorld();
 
    dtGame::Invokable* invoke = new dtGame::Invokable("MapLoaded",
-      dtDAL::MakeFunctor(*this, &HatchActor::OnMapLoaded));
+      dtUtil::MakeFunctor(&HatchActor::OnMapLoaded, *this));
 
    GetGameActorProxy().AddInvokable(*invoke);
 

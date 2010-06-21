@@ -46,21 +46,21 @@ void GameItemActorProxy::BuildPropertyMap()
 
    AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::SOUND,
       "InventorySound", "InventorySound",
-      dtDAL::MakeFunctor(gia, &GameItemActor::SetInventoryAddSnd),
+      dtUtil::MakeFunctor(&GameItemActor::SetInventoryAddSnd, gia),
       "Sets the inventory sound for this item"));
 
    AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::SOUND,
       "ItemUseSound", "ItemUseSound",
-      dtDAL::MakeFunctor(gia, &GameItemActor::SetItemUseSnd),
+      dtUtil::MakeFunctor(&GameItemActor::SetItemUseSnd, gia),
       "Sets the inventory sound for this item"));
 
    AddProperty(new dtDAL::BooleanActorProperty("Activate", "Activate",
-      dtDAL::MakeFunctor(gia, &GameItemActor::Activate),
+      dtUtil::MakeFunctor(&GameItemActor::Activate, gia),
       dtUtil::MakeFunctor(&GameItemActor::IsActivated, gia),
       "Activates this item"));
 
    AddProperty(new dtDAL::BooleanActorProperty("Collectable", "Collectable",
-      dtDAL::MakeFunctor(gia, &GameItemActor::SetCollectable),
+      dtUtil::MakeFunctor(&GameItemActor::SetCollectable, gia),
       dtUtil::MakeFunctor(&GameItemActor::IsCollectable, gia),
       "Returns true if this item is collectable"));
 }

@@ -120,10 +120,10 @@ void FireActorProxy::OnEnteredWorld()
    FireActor& fa = static_cast<FireActor&>(GetGameActor());
 
    dtGame::Invokable* playSoundInvoke = new dtGame::Invokable("PlaySound",
-      dtDAL::MakeFunctor(fa, &FireActor::PlayFireSound));
+      dtUtil::MakeFunctor(&FireActor::PlayFireSound, fa));
 
    dtGame::Invokable* stopSoundInvoke = new dtGame::Invokable("StopSounds",
-      dtDAL::MakeFunctor(fa, &FireActor::StopSounds));
+      dtUtil::MakeFunctor(&FireActor::StopSounds, fa));
 
    AddInvokable(*playSoundInvoke);
    AddInvokable(*stopSoundInvoke);

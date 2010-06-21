@@ -16,8 +16,9 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * William E. Johnson II 
+ * William E. Johnson II
  */
+
 #include <fireFighter/firehoseactor.h>
 #include <dtDAL/resourceactorproperty.h>
 #include <dtCore/particlesystem.h>
@@ -47,9 +48,9 @@ void FireHoseActorProxy::BuildPropertyMap()
 
    FireHoseActor &fha = static_cast<FireHoseActor&>(GetGameActor());
 
-   AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::PARTICLE_SYSTEM, 
-      "StreamFile", "StreamFile", 
-      dtDAL::MakeFunctor(fha, &FireHoseActor::SetStreamFilename), 
+   AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::PARTICLE_SYSTEM,
+      "StreamFile", "StreamFile",
+      dtUtil::MakeFunctor(&FireHoseActor::SetStreamFilename, fha),
       "Sets the stream file particle system"));
 }
 
