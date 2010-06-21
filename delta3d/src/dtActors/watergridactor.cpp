@@ -1201,7 +1201,7 @@ namespace dtActors
       WaterGridActor& wga = static_cast<WaterGridActor&>(GetGameActor());
 
       AddInvokable(*new dtGame::Invokable(INVOKABLE_MAP_LOADED,
-         dtDAL::MakeFunctor(wga, &WaterGridActor::Init)));
+         dtUtil::MakeFunctor(&WaterGridActor::Init, wga)));
    }
 
    ////////////////////////////////////////////////////////////////////////////////

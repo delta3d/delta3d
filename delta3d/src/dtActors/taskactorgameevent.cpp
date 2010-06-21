@@ -18,6 +18,7 @@
  *
  * Matthew W. Campbell, Curtiss Murphy
  */
+
 #include <dtActors/taskactorgameevent.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtGame/basemessages.h>
@@ -174,7 +175,7 @@ namespace dtActors
       TaskActorGameEvent &task = static_cast<TaskActorGameEvent&>(GetGameActor());
       TaskActorProxy::BuildInvokables();
       AddInvokable(*new dtGame::Invokable("HandleGameEvent",
-         dtDAL::MakeFunctor(task, &TaskActorGameEvent::HandleGameEvent)));
+         dtUtil::MakeFunctor(&TaskActorGameEvent::HandleGameEvent, task)));
    }
 
    //////////////////////////////////////////////////////////////////////////////
