@@ -54,6 +54,9 @@ namespace dtAnim
       dtAnim::AnimationHelper* GetHelper();
       const dtAnim::AnimationHelper* GetHelper() const;
 
+      virtual osg::BoundingBox GetBoundingBox();
+
+
    protected:
       dtCore::RefPtr<dtAnim::AnimationHelper> mHelper;
 

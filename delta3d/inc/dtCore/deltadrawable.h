@@ -148,14 +148,14 @@ namespace dtCore
        * @param center : pointer to fill out with the sphere's center position
        * @param radius : float pointer to fill out with the sphere's radius
        */
-      void GetBoundingSphere(osg::Vec3* center, float* radius);
+      virtual void GetBoundingSphere(osg::Vec3* center, float* radius);
 
       /**
        * Get the bounding box information for this Drawable.              
        *
        * @return BoundingBox that encloses the Drawable.  
        */
-      osg::BoundingBox GetBoundingBox();      
+      virtual osg::BoundingBox GetBoundingBox();
 
       /**
        * Make this DeltaDrawable "active" or "inactive".  The default
