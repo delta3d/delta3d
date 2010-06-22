@@ -1170,6 +1170,8 @@ namespace dtDirector
 
       // Create a single tab with the default graph.
       OpenGraph(mDirector->GetGraphRoot());
+      mReplayBrowser->BuildThreadList();
+      mGraphBrowser->BuildGraphList(mDirector->GetGraphRoot());
    }
 
    //////////////////////////////////////////////////////////////////////////
