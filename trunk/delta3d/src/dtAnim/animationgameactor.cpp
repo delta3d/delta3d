@@ -96,6 +96,12 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////
+   osg::BoundingBox AnimationGameActor::GetBoundingBox()
+   {
+      return GetHelper()->GetModelWrapper()->GetBoundingBox();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
    AnimationGameActorProxy::AnimationGameActorProxy()
    {
       SetClassName("dtActors::AnimationGameActor");
