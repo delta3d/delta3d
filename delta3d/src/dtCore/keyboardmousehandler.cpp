@@ -63,6 +63,10 @@ void KeyboardMouseHandler::SetView(dtCore::View* view)
 
 bool KeyboardMouseHandler::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa, osg::Object*, osg::NodeVisitor*)
 {
+   if(ea.getHandled()) 
+   {
+      return false;
+   }
    //returned values in the range of (-1..1)
    float x = ea.getXnormalized();
    float y = ea.getYnormalized();
