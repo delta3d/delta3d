@@ -65,12 +65,6 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void Director::Init(dtGame::GameManager* gm, dtDAL::Map* map)
    {
-      if (!mGraph.valid())
-      {
-         mGraph = new DirectorGraph(this);
-         mGraph->SetName("Director Script");
-      }
-
       mGameManager = gm;
 
       Clear();
@@ -104,11 +98,13 @@ namespace dtDirector
          SaveRecording(mScriptName);
       }
 
-      // First clear all our current nodes.
-      mGraph->mEventNodes.clear();
-      mGraph->mActionNodes.clear();
-      mGraph->mValueNodes.clear();
-      mGraph->mSubGraphs.clear();
+      // Reset our graph data.
+      mGraph = new DirectorGraph(this);
+      SetName("Director Script");
+      SetComment("");
+      SetDescription("");
+      SetAuthor("");
+      SetCopyright("");
 
       mThreads.clear();
 
