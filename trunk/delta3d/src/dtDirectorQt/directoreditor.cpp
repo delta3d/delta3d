@@ -1166,6 +1166,7 @@ namespace dtDirector
       mGraphTabs->clear();
       mDirector->Clear();
       mUndoManager->Clear();
+      mFileName.clear();
 
       // Create a single tab with the default graph.
       OpenGraph(mDirector->GetGraphRoot());
