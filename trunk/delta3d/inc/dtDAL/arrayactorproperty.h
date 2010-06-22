@@ -80,7 +80,7 @@ namespace dtDAL
       /**
       * Gets the array.
       */
-      virtual std::vector<T> GetValue()
+      virtual std::vector<T> GetValue() const
       {
          return mGetArrayFunc();
       }
@@ -96,7 +96,7 @@ namespace dtDAL
       /**
       * Gets the default value of an array element.
       */
-      virtual T GetDefault()
+      virtual T GetDefault() const
       {
          return mGetDefaultFunc();
       }
