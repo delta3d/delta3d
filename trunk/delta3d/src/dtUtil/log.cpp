@@ -209,8 +209,11 @@ namespace dtUtil
       if (LOG_MANAGER == NULL)
       {
          LOG_MANAGER = new LogManager;
-      } else
+      }
+      else
       {
+         // reset open failed if the file name changes.
+         LOG_MANAGER->mOpenFailed = false;
          LOG_MANAGER->OpenFile();
       }
    }
