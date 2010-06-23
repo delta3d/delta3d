@@ -132,6 +132,10 @@ namespace dtABC
       view->setAttribute( sch.SCENEINSTANCE , dtUtil::StringToXMLConverter(data.SCENE_INSTANCE).ToXmlString() );
       app->appendChild( view );
       
+      DOMElement* globalLogLevel = doc->createElement(sch.GLOBAL_LOG_LEVEL);
+      globalLogLevel->setAttribute(sch.LOG_LEVEL, dtUtil::StringToXMLConverter(data.GLOBAL_LOG_LEVEL).ToXmlString());
+      app->appendChild(globalLogLevel);
+
       for (std::map<std::string, std::string>::const_iterator i = data.LOG_LEVELS.begin();
          i != data.LOG_LEVELS.end(); ++i)
       {
@@ -143,10 +147,6 @@ namespace dtABC
          log->setAttribute( sch.LOG_LEVEL , dtUtil::StringToXMLConverter(i->second).ToXmlString());
          app->appendChild( log );
       }
-
-      DOMElement* globalLogLevel = doc->createElement(sch.GLOBAL_LOG_LEVEL);
-      globalLogLevel->setAttribute(sch.LOG_LEVEL, dtUtil::StringToXMLConverter(data.GLOBAL_LOG_LEVEL).ToXmlString());
-      app->appendChild(globalLogLevel);
 
       for (std::vector<std::string>::const_iterator i = data.LIBRARY_PATHS.begin();
          i != data.LIBRARY_PATHS.end(); ++i)
