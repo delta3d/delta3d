@@ -524,7 +524,7 @@ bool AudioManager::LoadWavImpl(const std::string& filename, BufferData& bd)
          filestream.seekg(0, std::ios_base::end);
          const long filesize = filestream.tellg();
          filestream.seekg(0, std::ios_base::beg);
-         printf("\tfile size: %d bytes\n", filesize);
+         //printf("\tfile size: %d bytes\n", filesize);
 
          WAV_Header header;
          filestream.read((char *)&header, sizeof(header));
