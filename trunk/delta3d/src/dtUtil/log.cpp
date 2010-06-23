@@ -51,9 +51,11 @@ namespace dtUtil
    {
    public:
       std::ofstream logFile;
+      bool mOpenFailed;
 
       ////////////////////////////////////////////////////////////////
       LogManager()
+      : mOpenFailed(false)
       {
          //std::cout << "Creating logger" << std::endl;
 
@@ -89,6 +91,11 @@ namespace dtUtil
       ////////////////////////////////////////////////////////////////
       void OpenFile()
       {
+         if (mOpenFailed)
+         {
+            return;
+         }
+
          //std::cout << "LogManager try to open file to " << sLogFileName << std::endl;
          if (logFile.is_open())
          {
@@ -103,6 +110,7 @@ namespace dtUtil
          if (!logFile.is_open())
          {
             std::cout << "could not open file \""<<sLogFileName<<"\"" << std::endl;
+            mOpenFailed = true;
             return;
          }
          else
