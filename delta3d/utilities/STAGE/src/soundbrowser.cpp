@@ -151,7 +151,6 @@ namespace dtEditQt
 
                if (!file.isEmpty() && validFile == true)
                {
-                  file = context + "\\" + file;
                   // The following is performed to comply with linux and windows file systems
                   file.replace("\\", "/");
 

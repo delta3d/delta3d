@@ -194,14 +194,12 @@ namespace dtEditQt
 
       // Find the currently selected tree item
       dtDAL::ResourceDescriptor resource = EditorData::GetInstance().getCurrentResource(dtDAL::DataType::PARTICLE_SYSTEM);
-      context = QString(project.GetContext().c_str());
 
       file = QString(project.GetResourcePath(resource).c_str());
 
       if (file != NULL && !resource.GetResourceName().empty())
       {
          // The following is performed to comply with linux and windows file systems
-         file = context + "\\" + file;
          file.replace("\\", "/");
 
          dtCore::RefPtr<dtCore::Object> c = new dtCore::Object();
