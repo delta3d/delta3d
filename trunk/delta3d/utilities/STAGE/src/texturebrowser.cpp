@@ -203,9 +203,7 @@ namespace dtEditQt
 
          if (file != NULL)
          {
-            context = QString(project.GetContext().c_str());
             // The following is performed to comply with linux and windows file systems
-            file = context + "\\" + file;
             file.replace("\\","/");
             file.replace("//","/");
 

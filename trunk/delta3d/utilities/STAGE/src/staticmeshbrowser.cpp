@@ -271,9 +271,7 @@ namespace dtEditQt
 
          if (file != NULL && validFile == true)
          {
-            context = QString(project.GetContext().c_str());
             // The following is performed to comply with linux and windows file systems
-            file = context+"\\"+file;
             file.replace("\\","/");
 
             if (meshScene->GetDrawableIndex(previewObject.get()) == (unsigned)meshScene->GetNumberOfAddedDrawable())
