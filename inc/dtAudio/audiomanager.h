@@ -294,6 +294,8 @@ namespace dtAudio
       /// get the eax function pointers from OpenAL (nothing done with them yet)
       inline bool ConfigEAX(bool eax);
 
+      bool LoadWavImpl(const std::string& filename, BufferData& bd);
+
       /**
        * This method loads the sound buffer from the Sound specified
        * into the AudioManager's std::map of sound buffers.
