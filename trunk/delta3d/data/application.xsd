@@ -61,19 +61,20 @@
             <xs:attribute form="unqualified" name="SceneInstance" type="xs:string" use="required" />
           </xs:complexType>
         </xs:element>
-        <xs:element minOccurs="0" maxOccurs="unbounded" name="Log">
-          <xs:complexType>
-            <xs:attribute form="unqualified" name="Name" type="xs:string" />
-            <xs:attribute form="unqualified" name="Level" type="xs:string" use="required" />
-          </xs:complexType>
-        </xs:element>
-        
+
         <!--All existing and new Log instances will have their log level set to this, unless otherwise specified.-->
         <xs:element minOccurs="0" maxOccurs="1" name="GlobalLog">
           <xs:complexType>
             <xs:attribute form="unqualified" name="Level" type="xs:string" use="required" />
           </xs:complexType>
         </xs:element>
+
+        <xs:element minOccurs="0" maxOccurs="unbounded" name="Log">
+          <xs:complexType>
+            <xs:attribute form="unqualified" name="Name" type="xs:string" />
+            <xs:attribute form="unqualified" name="Level" type="xs:string" use="required" />
+          </xs:complexType>
+        </xs:element>        
         
         <xs:element minOccurs="0" maxOccurs="unbounded" name="LibraryPath" type="xs:normalizedString" />
         <xs:element minOccurs="0" maxOccurs="1" name="Properties">
