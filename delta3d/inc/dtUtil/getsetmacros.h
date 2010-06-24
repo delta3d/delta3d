@@ -3,17 +3,41 @@
 
 #include <dtUtil/typetraits.h>
 
+/**
+ * Change the definition of this to add virtual or static to generated setters
+ * Do
+ * #undef PROPERTY_MODIFIERS_SETTER
+ * #define PROPERTY_MODIFIERS_SETTER virtual
+ * DECLARE_PROPERTY(float, Silliness)
+ * DECLARE_PROPERTY_INLINE(int, NumWidgets)
+ * #undef PROPERTY_MODIFIERS_SETTER
+ * #define PROPERTY_MODIFIERS_SETTER
+ */
+#define PROPERTY_MODIFIERS_SETTER
+
+/**
+ * Change the definition of this to add virtual or static to generated getters
+ * Do
+ * #undef PROPERTY_MODIFIERS_GETTER
+ * #define PROPERTY_MODIFIERS_GETTER virtual
+ * DECLARE_PROPERTY(float, Silliness)
+ * DECLARE_PROPERTY_INLINE(int, NumWidgets)
+ * #undef PROPERTY_MODIFIERS_GETTER
+ * #define PROPERTY_MODIFIERS_GETTER
+ */
+#define PROPERTY_MODIFIERS_GETTER
+
 #define DECLARE_PROPERTY_INLINE(PropertyType, PropertyName) \
    private:\
       dtUtil::TypeTraits<PropertyType>::value_type  m ## PropertyName; \
    public: \
       \
-      void Set ## PropertyName(dtUtil::TypeTraits<PropertyType>::param_type value)\
+      PROPERTY_MODIFIERS_SETTER void Set ## PropertyName(dtUtil::TypeTraits<PropertyType>::param_type value)\
    {\
       m ## PropertyName = value; \
    };\
       \
-      dtUtil::TypeTraits<PropertyType>::return_type Get ## PropertyName() const\
+      PROPERTY_MODIFIERS_GETTER dtUtil::TypeTraits<PropertyType>::return_type Get ## PropertyName() const\
    {\
       return m ## PropertyName;\
    };\
@@ -42,9 +66,9 @@
       dtUtil::TypeTraits<PropertyType>::value_type  m ## PropertyName; \
    public: \
       \
-      void Set ## PropertyName(dtUtil::TypeTraits<PropertyType>::param_type value);\
+      PROPERTY_MODIFIERS_SETTER void Set ## PropertyName(dtUtil::TypeTraits<PropertyType>::param_type value);\
       \
-      dtUtil::TypeTraits<PropertyType>::return_type Get ## PropertyName() const;\
+      PROPERTY_MODIFIERS_GETTER dtUtil::TypeTraits<PropertyType>::return_type Get ## PropertyName() const;\
       \
 
 #define IMPLEMENT_PROPERTY_GETTER(ClassName, PropertyType, PropertyName) \
