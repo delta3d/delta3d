@@ -40,6 +40,9 @@ namespace dtCore
       Transform(const Transform& that);
       virtual ~Transform();
 
+      /// @return true if the transform is an identity matrix.
+      bool IsIdentity() const { return mTransform.isIdentity(); }
+
       /// Overwrites this transform with an identity matrix
       void MakeIdentity() { mTransform.makeIdentity(); }
       /// Overwrites this transform with a scale matrix with the given values.
