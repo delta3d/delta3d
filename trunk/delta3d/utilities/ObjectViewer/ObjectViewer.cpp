@@ -242,7 +242,7 @@ void ObjectViewer::OnLoadMapFile(const std::string& filename)
             // Get the min and max bounding area.
             osg::Vec3 center;
             float radius;
-            drawable->GetBoundingSphere(&center, &radius);
+            drawable->GetBoundingSphere(center, radius);
 
             if (bFirstBoundSet)
             {
@@ -334,7 +334,7 @@ void ObjectViewer::OnLoadGeometryFile(const std::string& filename)
    if (mObject.valid())
    {
       float radius;
-      mObject->GetBoundingSphere(&center, &radius);
+      mObject->GetBoundingSphere(center, radius);
 
       // Reset the camera outside the bounding sphere.
       mModelMotion->SetDistance(radius * 2.0f);

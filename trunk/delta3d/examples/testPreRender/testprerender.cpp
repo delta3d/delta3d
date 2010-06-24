@@ -133,7 +133,7 @@ void TestPreRender::CenterCameraOnObject(dtCore::Object* object)
    osg::Vec3 center;
    float radius;
 
-   object->GetBoundingSphere(&center, &radius);
+   object->GetBoundingSphere(center, radius);
 
    // position the camera slightly behind the origin
    dtCore::Transform cameraTransform;
