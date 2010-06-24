@@ -491,13 +491,14 @@ ALint AudioManager::LoadFile(const std::string& file)
    bd->freq   = ALsizei(freq);
    bd->size   = size;
    alBufferData(bd->buf, bd->format, data, bd->size, bd->freq);
+   
+   free(data);
+   data = NULL;
+   
    if (CheckForError("AudioManager: alBufferData error ", __FUNCTION__, __LINE__))
    {
       ReleaseSoundBuffer(bd->buf, "alDeleteBuffers error prior to deleting data.",
          __FUNCTION__, __LINE__);
-
-      free(data);
-      data = NULL;
 
       delete bd;
       return AL_NONE;
@@ -505,9 +506,6 @@ ALint AudioManager::LoadFile(const std::string& file)
 
    mBufferMap[file] = bd;
    bd->file = mBufferMap.find(file)->first.c_str();
-
-   free(data);
-   data = NULL;
 
    return bd->buf;
 }
