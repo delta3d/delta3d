@@ -13,7 +13,8 @@ namespace dtUtil
 // Function traits
 
 template <typename T> struct FunTraits;
-#if (defined(_MSC_VER)) && (_MANAGED != 1)
+
+#if (defined(_MSC_VER)) && (_MANAGED != 1) && (!defined (_WIN64))
 template <typename R>
 struct FunTraits<R (__cdecl *)()>
 {
@@ -766,7 +767,7 @@ struct FunTraits<R (__fastcall O::*)(P1, P2, P3, P4, P5, P6, P7)>
    typedef P7 Parm7;
    typedef TYPELIST_7(P1, P2, P3, P4, P5, P6, P7) TypeListType;
 };
-#else // #if defined(_MSC_VER)
+#else // #if (defined(_MSC_VER)) && (_MANAGED != 1) && (!defined (_WIN64))
 template <typename R>
 struct FunTraits<R (*)()>
 {
@@ -851,7 +852,8 @@ struct FunTraits<R (*)(P1, P2, P3, P4, P5, P6, P7)>
    typedef P7 Parm7;
    typedef TYPELIST_7(P1, P2, P3, P4, P5, P6, P6) TypeListType;
 };
-#endif // #if defined(_MSC_VER)
+#endif //#if (defined(_MSC_VER)) && (_MANAGED != 1) && (!defined (_WIN64))
+
 template <class O, typename R>
 struct FunTraits<R (O::*)()>
 {
