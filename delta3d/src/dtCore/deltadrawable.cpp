@@ -50,7 +50,7 @@ namespace dtCore
       void RenderProxyNode(bool enable = true);
       bool GetIsRenderingProxyNode() const;
 
-      void GetBoundingSphere(osg::Vec3* center, float* radius, osg::Node* node);
+      void GetBoundingSphere(osg::Vec3& center, float& radius, osg::Node* node);
 
       void SetActive(bool enable, osg::Node* node);
       bool GetActive() const;
@@ -192,15 +192,15 @@ namespace dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void DeltaDrawablePrivate::GetBoundingSphere(osg::Vec3* center,
-                                                float* radius,
+   void DeltaDrawablePrivate::GetBoundingSphere(osg::Vec3& center,
+                                                float& radius,
                                                 osg::Node* node)
    {
       if (node != NULL)
       {
          osg::BoundingSphere bs = node->getBound();
-         center->set(bs.center());
-         *radius = bs.radius();
+         center.set(bs.center());
+         radius = bs.radius();
       }
       else
       {
@@ -606,7 +606,7 @@ void DeltaDrawable::OnOrphaned()
 }
 
 //////////////////////////////////////////////////////////////////////////
-void DeltaDrawable::GetBoundingSphere(osg::Vec3* center, float* radius)
+void DeltaDrawable::GetBoundingSphere(osg::Vec3& center, float& radius)
 {
    mPvt->GetBoundingSphere(center, radius, GetOSGNode());
 }

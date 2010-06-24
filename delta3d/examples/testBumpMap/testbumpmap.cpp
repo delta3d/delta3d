@@ -46,10 +46,10 @@ TestBumpMapApp::TestBumpMapApp(const std::string& customObjectName,
                                bool usePrecomputedTangents /*= false*/)
    : Application(configFilename)
    , mPitchAngle(0.0f)
+   , mYawAngle(0.0f)
    , mUsePrecomputedTangents(usePrecomputedTangents)
    , mDiffuseTexture(NULL)
    , mNormalTexture(NULL)
-   , mYawAngle(0.0f)
 
 {
    //load the xml file which specifies our shaders
@@ -319,7 +319,7 @@ void TestBumpMapApp::CenterCameraOnObject(dtCore::Object* object)
    osg::Vec3 center;
    float radius;
 
-   object->GetBoundingSphere(&center, &radius);
+   object->GetBoundingSphere(center, radius);
 
    // position the camera slightly behind the origin
    dtCore::Transform cameraTransform;
