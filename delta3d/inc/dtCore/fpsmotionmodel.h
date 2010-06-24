@@ -74,7 +74,7 @@ namespace dtCore
                      float height = 2.0f,
                      float maxStepUpDist = 1.0f,
                      bool useWASD = true,
-                     bool useArrowKeys = false);
+                     bool useArrowKeys = true);
 
    protected:
       /**
