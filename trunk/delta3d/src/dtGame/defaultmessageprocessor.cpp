@@ -20,18 +20,18 @@
  */
 #include <prefix/dtgameprefix.h>
 #include <dtGame/defaultmessageprocessor.h>
-#include <dtGame/gamemanager.h>
-#include <dtGame/message.h>
+
+#include <dtDAL/actortype.h>
+
 #include <dtGame/actorupdatemessage.h>
 #include <dtGame/basemessages.h>
-#include <dtGame/messagetype.h>
-#include <dtGame/gameactor.h>
 #include <dtGame/exceptionenum.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/actortype.h>
-#include <dtUtil/log.h>
+#include <dtGame/gameactor.h>
+#include <dtGame/gamemanager.h>
+#include <dtGame/message.h>
+#include <dtGame/messagetype.h>
 
-#include <iostream>
+#include <dtUtil/log.h>
 
 using namespace dtCore;
 

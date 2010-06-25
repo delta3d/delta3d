@@ -1,7 +1,10 @@
 
 #include <dtHLAGM/ddmregioncalculator.h>
+
+#include <dtDAL/datatype.h>
+#include <dtDAL/stringactorproperty.h>
+
 #include <dtHLAGM/ddmregiondata.h>
-#include <dtDAL/enginepropertytypes.h>
 
 namespace dtHLAGM
 {

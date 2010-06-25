@@ -27,21 +27,27 @@
 #include "TargetChanged.h"
 #include "ActorsRegistry.h"
 #include "KillableTargetActor.h"
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/functor.h>
-#include <dtCore/loadable.h>
+
+#include <dtABC/application.h>
+
+#include <dtCore/camera.h>
 #include <dtCore/isector.h>
-#include <dtUtil/nodecollector.h>
-#include <dtGame/gamemanager.h>
+#include <dtCore/keyboard.h>
+#include <dtCore/loadable.h>
+#include <dtCore/particlesystem.h>
+
+#include <dtDAL/floatactorproperty.h>
+#include <dtDAL/functor.h>
+#include <dtDAL/vectoractorproperties.h>
+
 #include <dtGame/actorupdatemessage.h>
 #include <dtGame/basemessages.h>
-#include <dtABC/application.h>
-#include <dtCore/camera.h>
-#include <dtCore/keyboard.h>
-#include <dtCore/particlesystem.h>
-#include <dtUtil/matrixutil.h>
+#include <dtGame/gamemanager.h>
+
 #include <dtUtil/mathdefines.h>
+#include <dtUtil/matrixutil.h>
+#include <dtUtil/nodecollector.h>
+
 #include <osg/MatrixTransform>
 #include <osgSim/DOFTransform>
 

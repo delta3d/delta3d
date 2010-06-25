@@ -1,19 +1,25 @@
 #include <dtActors/buildingactor.h>
+
 #include <dtCore/object.h>
 #include <dtCore/transformable.h>
 #include <dtCore/transform.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/resourceactorproperty.h>
+
 #include <dtDAL/arrayactorproperty.h>
+#include <dtDAL/booleanactorproperty.h>
 #include <dtDAL/containeractorproperty.h>
+#include <dtDAL/floatactorproperty.h>
+#include <dtDAL/functor.h>
 #include <dtDAL/mapxml.h>
 #include <dtDAL/project.h>
+#include <dtDAL/resourceactorproperty.h>
 #include <dtDAL/resourcedescriptor.h>
+#include <dtDAL/vectoractorproperties.h>
+
 #include <dtUtil/exception.h>
+
 #include <osgDB/ReadFile>
 #include <osg/CullFace>
 #include <osg/PolygonMode>
-#include <dtDAL/functor.h>
 
 
 namespace dtActors

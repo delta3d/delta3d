@@ -21,13 +21,14 @@
 
 #include <dtDirectorNodes/toggleaction.h>
 
-#include <dtDirector/director.h>
-
 #include <dtCore/transform.h>
 #include <dtCore/transformable.h>
 
-#include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/actoridactorproperty.h>
+#include <dtDAL/booleanactorproperty.h>
+#include <dtDAL/stringactorproperty.h>
 
+#include <dtDirector/director.h>
 
 namespace dtDirector
 {

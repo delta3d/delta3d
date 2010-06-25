@@ -6,7 +6,10 @@ SET(HEADER_PATH ${CMAKE_SOURCE_DIR}/inc/${LIB_NAME})
 SET(SOURCE_PATH ${CMAKE_SOURCE_DIR}/src/${LIB_NAME})
 
 SET(LIB_PUBLIC_HEADERS
+    ${HEADER_PATH}/abstractenumactorproperty.h
     ${HEADER_PATH}/abstractparameter.h
+    ${HEADER_PATH}/actoractorproperty.h
+    ${HEADER_PATH}/actoridactorproperty.h
     ${HEADER_PATH}/actorpluginregistry.h
     ${HEADER_PATH}/actorproperty.h
     ${HEADER_PATH}/actorpropertyserializer.h
@@ -17,20 +20,28 @@ SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/arrayactorpropertybase.h
     ${HEADER_PATH}/basexml.h
     ${HEADER_PATH}/basexmlhandler.h
+    ${HEADER_PATH}/booleanactorproperty.h
+    ${HEADER_PATH}/colorrgbaactorproperty.h
     ${HEADER_PATH}/containeractorproperty.h
     ${HEADER_PATH}/datatype.h
     ${HEADER_PATH}/directoryresourcetypehandler.h
+    ${HEADER_PATH}/doubleactorproperty.h
     ${HEADER_PATH}/dtdal.h
     ${HEADER_PATH}/enginepropertytypes.h
+    ${HEADER_PATH}/enumactorproperty.h
     ${HEADER_PATH}/environmentactor.h
     ${HEADER_PATH}/exceptionenum.h
     ${HEADER_PATH}/export.h
+    ${HEADER_PATH}/floatactorproperty.h
     ${HEADER_PATH}/functor.h
     ${HEADER_PATH}/gameevent.h
+    ${HEADER_PATH}/gameeventactorproperty.h
     ${HEADER_PATH}/gameeventmanager.h
     ${HEADER_PATH}/genericactorproperty.h
     ${HEADER_PATH}/groupactorproperty.h
+    ${HEADER_PATH}/intactorproperty.h
     ${HEADER_PATH}/librarymanager.h
+    ${HEADER_PATH}/longactorproperty.h
     ${HEADER_PATH}/map.h
     ${HEADER_PATH}/mapcontenthandler.h
     ${HEADER_PATH}/mapxml.h
@@ -47,11 +58,16 @@ SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/resourcehelper.h
     ${HEADER_PATH}/resourcetreenode.h
     ${HEADER_PATH}/serializeable.h
+    ${HEADER_PATH}/stringactorproperty.h
     ${HEADER_PATH}/transformableactorproxy.h
     ${HEADER_PATH}/typetoactorproperty.h
+	${HEADER_PATH}/vectoractorproperties.h
 )
 
 SET(LIB_SOURCES
+    ${SOURCE_PATH}/abstractenumactorproperty.cpp
+    ${SOURCE_PATH}/actoractorproperty.cpp
+    ${SOURCE_PATH}/actoridactorproperty.cpp
     ${SOURCE_PATH}/actorpluginregistry.cpp
     ${SOURCE_PATH}/actorproperty.cpp
     ${SOURCE_PATH}/actorpropertyserializer.cpp
@@ -61,16 +77,23 @@ SET(LIB_SOURCES
     ${SOURCE_PATH}/arrayactorpropertybase.cpp
     ${SOURCE_PATH}/basexml.cpp
     ${SOURCE_PATH}/basexmlhandler.cpp
+    ${SOURCE_PATH}/booleanactorproperty.cpp
+    ${SOURCE_PATH}/colorrgbaactorproperty.cpp
     ${SOURCE_PATH}/containeractorproperty.cpp
     ${SOURCE_PATH}/datatype.cpp
     ${SOURCE_PATH}/directoryresourcetypehandler.cpp
-    ${SOURCE_PATH}/enginepropertytypes.cpp
+    ${SOURCE_PATH}/doubleactorproperty.cpp
+    ${SOURCE_PATH}/enumactorproperty.cpp
     ${SOURCE_PATH}/environmentactor.cpp
     ${SOURCE_PATH}/exceptionenum.cpp
+    ${SOURCE_PATH}/floatactorproperty.cpp
     ${SOURCE_PATH}/gameevent.cpp
+    ${SOURCE_PATH}/gameeventactorproperty.cpp
     ${SOURCE_PATH}/gameeventmanager.cpp
     ${SOURCE_PATH}/groupactorproperty.cpp
+    ${SOURCE_PATH}/intactorproperty.cpp
     ${SOURCE_PATH}/librarymanager.cpp
+    ${SOURCE_PATH}/longactorproperty.cpp
     ${SOURCE_PATH}/map.cpp
     ${SOURCE_PATH}/mapcontenthandler.cpp
     ${SOURCE_PATH}/mapxml.cpp
@@ -83,7 +106,9 @@ SET(LIB_SOURCES
     ${SOURCE_PATH}/resourceactorproperty.cpp
     ${SOURCE_PATH}/resourcedescriptor.cpp
     ${SOURCE_PATH}/resourcehelper.cpp
+    ${SOURCE_PATH}/stringactorproperty.cpp
     ${SOURCE_PATH}/transformableactorproxy.cpp
+	${SOURCE_PATH}/vectoractorproperties.cpp
 )
 
 ADD_PRECOMPILED_HEADER(${LIB_NAME} prefix/dtdalprefix.h prefix/dtdalprefix.cpp LIB_SOURCES)

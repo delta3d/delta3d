@@ -21,10 +21,10 @@
 
 #include <dtDirectorNodes/delayaction.h>
 
+#include <dtDAL/booleanactorproperty.h>
+#include <dtDAL/floatactorproperty.h>
+
 #include <dtDirector/director.h>
-
-#include <dtDAL/enginepropertytypes.h>
-
 
 namespace dtDirector
 {

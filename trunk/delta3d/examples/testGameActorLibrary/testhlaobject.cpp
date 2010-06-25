@@ -26,11 +26,13 @@
  * David A. Guthrie
  */
 
-#include <iostream>
 #include "testhlaobject.h"
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/resourceactorproperty.h>
+
+#include <dtDAL/enumactorproperty.h>
 #include <dtDAL/exceptionenum.h>
+#include <dtDAL/resourceactorproperty.h>
+#include <dtDAL/vectoractorproperties.h>
+
 ////////////////////////////////////////////////////////////////////
 // Proxy Code
 ////////////////////////////////////////////////////////////////////

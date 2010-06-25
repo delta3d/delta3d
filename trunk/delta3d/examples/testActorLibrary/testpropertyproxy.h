@@ -29,12 +29,13 @@
 #define DELTA_EXAMPLETESTPROPERTYPROXY
 
 #include <dtActors/staticmeshactorproxy.h>
+
 #include <dtDAL/actorproxy.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/namedparameter.h>
 #include <dtDAL/arrayactorproperty.h>
-#include <dtDAL/plugin_export.h>
 #include <dtDAL/gameevent.h>
+#include <dtDAL/namedparameter.h>
+#include <dtDAL/plugin_export.h>
+
 #include <dtUtil/enumeration.h>
 #include <dtUtil/getsetmacros.h>
 

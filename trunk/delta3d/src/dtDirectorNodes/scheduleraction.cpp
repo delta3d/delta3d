@@ -21,12 +21,13 @@
 
 #include <dtDirectorNodes/scheduleraction.h>
 
-#include <dtDirector/director.h>
-
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/containeractorproperty.h>
 #include <dtDAL/arrayactorproperty.h>
+#include <dtDAL/booleanactorproperty.h>
+#include <dtDAL/containeractorproperty.h>
+#include <dtDAL/floatactorproperty.h>
+#include <dtDAL/stringactorproperty.h>
 
+#include <dtDirector/director.h>
 
 namespace dtDirector
 {

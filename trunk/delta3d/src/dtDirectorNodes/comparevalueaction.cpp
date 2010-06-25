@@ -21,10 +21,9 @@
 
 #include <dtDirectorNodes/comparevalueaction.h>
 
+#include <dtDAL/doubleactorproperty.h>
+
 #include <dtDirector/director.h>
-
-#include <dtDAL/enginepropertytypes.h>
-
 
 namespace dtDirector
 {

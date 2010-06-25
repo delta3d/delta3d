@@ -1,16 +1,22 @@
 #include <dtActors/fenceactor.h>
+
 #include <dtCore/object.h>
-#include <dtCore/transformable.h>
 #include <dtCore/transform.h>
-#include <dtDAL/enginepropertytypes.h>
+#include <dtCore/transformable.h>
+
 #include <dtDAL/arrayactorproperty.h>
 #include <dtDAL/containeractorproperty.h>
+#include <dtDAL/floatactorproperty.h>
+#include <dtDAL/functor.h>
+#include <dtDAL/intactorproperty.h>
 #include <dtDAL/mapxml.h>
 #include <dtDAL/project.h>
 #include <dtDAL/resourcedescriptor.h>
 #include <dtDAL/resourceactorproperty.h>
+#include <dtDAL/vectoractorproperties.h>
+
 #include <dtUtil/exception.h>
-#include <dtDAL/functor.h>
+
 #include <osgDB/ReadFile>
 
 namespace dtActors

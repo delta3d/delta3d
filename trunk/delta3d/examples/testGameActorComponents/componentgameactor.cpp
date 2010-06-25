@@ -1,10 +1,12 @@
 #include "componentgameactor.h"
 
-#include <dtDAL/enginepropertytypes.h>
+#include "textlabelcomponent.h"
+
 #include <dtDAL/exceptionenum.h>
+#include <dtDAL/intactorproperty.h>
+
 #include <dtGame/basemessages.h>
 #include <dtGame/messagetype.h>
-#include "textlabelcomponent.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 ComponentGameActor::ComponentGameActor(dtGame::GameActorProxy& proxy)

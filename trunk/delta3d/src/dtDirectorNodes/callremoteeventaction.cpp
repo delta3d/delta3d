@@ -20,12 +20,11 @@
  */
 
 #include <dtDirectorNodes/callremoteeventaction.h>
-#include <dtDirectorNodes/remoteevent.h>
+
+#include <dtDAL/stringactorproperty.h>
 
 #include <dtDirector/director.h>
-
-#include <dtDAL/enginepropertytypes.h>
-
+#include <dtDirectorNodes/remoteevent.h>
 
 namespace dtDirector
 {

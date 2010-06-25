@@ -19,13 +19,17 @@
  * @author Christopher DuBuc
  */
 #include <dtLMS/lmscomponent.h>
-#include <dtLMS/lmsclientsocket.h>
-#include <dtLMS/lmsmessagevalue.h>
-#include <dtLMS/lmsmessagetype.h>
+
+#include <dtDAL/booleanactorproperty.h>
+#include <dtDAL/floatactorproperty.h>
+
 #include <dtGame/gameactorproxy.h>
 #include <dtGame/message.h>
 #include <dtGame/messagetype.h>
-#include <dtDAL/enginepropertytypes.h>
+
+#include <dtLMS/lmsclientsocket.h>
+#include <dtLMS/lmsmessagetype.h>
+#include <dtLMS/lmsmessagevalue.h>
 
 namespace dtLMS
 {

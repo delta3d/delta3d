@@ -28,51 +28,54 @@
 * William E. Johnson II
 */
 #include <prefix/unittestprefix.h>
-#include <cppunit/extensions/HelperMacros.h>
-#include <cppunit/TestAssert.h>
-#include <iostream>
-#include <vector>
-#include <string>
-#include <osg/Endian>
-
-#include <dtCore/scene.h>
-
-#include <dtDAL/datatype.h>
-#include <dtDAL/project.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/resourceactorproperty.h>
-#include <dtDAL/resourcedescriptor.h>
-
-#include <dtHLAGM/ddmcameracalculatorgeographic.h>
-#include <dtHLAGM/hlacomponent.h>
-#include <dtHLAGM/objecttoactor.h>
-#include <dtHLAGM/interactiontomessage.h>
-#include <dtHLAGM/attributetoproperty.h>
-#include <dtHLAGM/parametertoparameter.h>
-#include <dtHLAGM/onetoonemapping.h>
-#include <dtHLAGM/distypes.h>
-#include <dtHLAGM/hlacomponentconfig.h>
-#include <dtHLAGM/ddmregiondata.h>
-
-#include <dtGame/gamemanager.h>
-#include <dtGame/gmcomponent.h>
-#include <dtGame/messagetype.h>
-#include <dtGame/defaultmessageprocessor.h>
-#include <dtGame/basemessages.h>
-#include <dtGame/actorupdatemessage.h>
-#include <dtGame/gameactor.h>
-#include <dtGame/messagefactory.h>
 
 //Defined in the dtgame unit tests.
 #include "../dtGame/testcomponent.h"
 
+#include <dtABC/application.h>
+
 #include <dtCore/camera.h>
+#include <dtCore/scene.h>
 #include <dtCore/system.h>
 #include <dtCore/transform.h>
 
+#include <dtDAL/datatype.h>
+#include <dtDAL/project.h>
+#include <dtDAL/resourceactorproperty.h>
+#include <dtDAL/resourcedescriptor.h>
+
+#include <dtHLAGM/attributetoproperty.h>
+#include <dtHLAGM/ddmcameracalculatorgeographic.h>
+#include <dtHLAGM/ddmregiondata.h>
+#include <dtHLAGM/distypes.h>
+#include <dtHLAGM/hlacomponent.h>
+#include <dtHLAGM/hlacomponentconfig.h>
+#include <dtHLAGM/interactiontomessage.h>
+#include <dtHLAGM/objecttoactor.h>
+#include <dtHLAGM/onetoonemapping.h>
+#include <dtHLAGM/parametertoparameter.h>
+
+#include <dtGame/actorupdatemessage.h>
+#include <dtGame/basemessages.h>
+#include <dtGame/defaultmessageprocessor.h>
+#include <dtGame/gameactor.h>
+#include <dtGame/gamemanager.h>
+#include <dtGame/gmcomponent.h>
+#include <dtGame/messagefactory.h>
+#include <dtGame/messagetype.h>
+
 #include <dtUtil/coordinates.h>
 #include <dtUtil/datapathutils.h>
-#include <dtABC/application.h>
+
+#include <cppunit/extensions/HelperMacros.h>
+#include <cppunit/TestAssert.h>
+
+#include <osg/Endian>
+
+#include <iostream>
+#include <string>
+#include <vector>
+
 extern dtABC::Application& GetGlobalApplication();
 
 class TestHLAComponent: public dtHLAGM::HLAComponent

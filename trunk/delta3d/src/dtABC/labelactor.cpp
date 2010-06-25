@@ -22,13 +22,17 @@
 ////////////////////////////////////////////////////////////////////////////////
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
-#include <osg/Geometry>
-#include <dtDAL/enginepropertytypes.h>
 #include <dtABC/labelactor.h>
-#include <osg/MatrixTransform>
+
+#include <dtDAL/booleanactorproperty.h>
+#include <dtDAL/enumactorproperty.h>
+#include <dtDAL/floatactorproperty.h>
+#include <dtDAL/stringactorproperty.h>
+#include <dtDAL/vectoractorproperties.h>
+
 #include <osg/Geode>
-
-
+#include <osg/Geometry>
+#include <osg/MatrixTransform>
 
 namespace dtABC
 {

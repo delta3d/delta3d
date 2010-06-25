@@ -19,13 +19,19 @@
  * David Guthrie
  */
 #include <prefix/dtdalprefix.h>
-#include <osgDB/FileNameUtils>
+
+#include <dtCore/deltadrawable.h>
+
+#include <dtDAL/actoractorproperty.h>
+#include <dtDAL/actoridactorproperty.h>
+#include <dtDAL/actortype.h>
+#include <dtDAL/environmentactor.h>
+#include <dtDAL/map.h>
 
 #include <dtUtil/stringutils.h>
-#include <dtDAL/map.h>
-#include <dtDAL/actortype.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/environmentactor.h>
+
+#include <osgDB/FileNameUtils>
+
 #include <cstring>
 
 namespace dtDAL 

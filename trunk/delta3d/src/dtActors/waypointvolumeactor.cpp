@@ -19,8 +19,11 @@
 * Michael Guerrero
 */
 #include <dtActors/waypointvolumeactor.h>
-#include <dtDAL/enginepropertytypes.h>
+
 #include <dtCore/transform.h>
+
+#include <dtDAL/datatype.h>
+#include <dtDAL/floatactorproperty.h>
 
 #include <assert.h>
 

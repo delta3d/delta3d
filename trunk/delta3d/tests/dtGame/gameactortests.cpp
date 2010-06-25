@@ -27,43 +27,52 @@
  */
 
 #include <prefix/unittestprefix.h>
-#include <iostream>
-#include <osg/Math>
-#include <dtUtil/log.h>
-#include <dtUtil/datapathutils.h>
-#include <dtCore/refptr.h>
-#include <dtCore/scene.h>
-#include <dtCore/system.h>
-#include <dtCore/camera.h>
-#include <dtCore/timer.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/resourcedescriptor.h>
-#include <dtDAL/actortype.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/project.h>
-#include <dtUtil/datastream.h>
-#include <dtGame/messageparameter.h>
-#include <dtGame/machineinfo.h>
-#include <dtGame/gameactor.h>
-#include <dtGame/basemessages.h>
-#include <dtGame/messagetype.h>
-#include <dtGame/messagefactory.h>
-#include <dtGame/gamemanager.h>
-#include <dtGame/actorupdatemessage.h>
-#include <dtGame/environmentactor.h>
-#include <dtGame/gmcomponent.h>
-#include <dtGame/defaultmessageprocessor.h>
-#include <dtGame/invokable.h>
-#include <dtABC/application.h>
+#include "testcomponent.h"
+
 #include <testGameActorLibrary/testgameactorlibrary.h>
 #include <testGameActorLibrary/testgameenvironmentactor.h>
 #include <testGameActorLibrary/testgamepropertyproxy.h>
 #include <testGameActorLibrary/testgameactor.h>
+
+#include <dtABC/application.h>
+
+#include <dtCore/camera.h>
 #include <dtCore/observerptr.h>
+#include <dtCore/refptr.h>
+#include <dtCore/scene.h>
+#include <dtCore/system.h>
+#include <dtCore/timer.h>
+
+#include <dtDAL/actortype.h>
+#include <dtDAL/booleanactorproperty.h>
+#include <dtDAL/datatype.h>
+#include <dtDAL/intactorproperty.h>
+#include <dtDAL/project.h>
+#include <dtDAL/resourcedescriptor.h>
+
+#include <dtGame/actorupdatemessage.h>
+#include <dtGame/basemessages.h>
+#include <dtGame/defaultmessageprocessor.h>
+#include <dtGame/environmentactor.h>
+#include <dtGame/gameactor.h>
+#include <dtGame/gamemanager.h>
+#include <dtGame/gmcomponent.h>
+#include <dtGame/invokable.h>
+#include <dtGame/machineinfo.h>
+#include <dtGame/messagefactory.h>
+#include <dtGame/messageparameter.h>
+#include <dtGame/messagetype.h>
+
+#include <dtUtil/datapathutils.h>
+#include <dtUtil/datastream.h>
+#include <dtUtil/log.h>
+
+#include <osg/Math>
 
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "testcomponent.h"
+#include <iostream>
+
 extern dtABC::Application& GetGlobalApplication();
 
 class GameActorTests : public CPPUNIT_NS::TestFixture

@@ -20,13 +20,19 @@
  */
 
 #include <dtAudio/soundactorproxy.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/resourceactorproperty.h>
-#include <dtDAL/actorproxyicon.h>
+
 #include <dtAudio/audiomanager.h>
+
+#include <dtDAL/actorproxyicon.h>
+#include <dtDAL/booleanactorproperty.h>
+#include <dtDAL/floatactorproperty.h>
+#include <dtDAL/resourceactorproperty.h>
+#include <dtDAL/vectoractorproperties.h>
+
 #include <dtGame/gamemanager.h>
 #include <dtGame/invokable.h>
 #include <dtGame/messagetype.h>
+
 #include <dtUtil/mathdefines.h>
 
 using namespace dtAudio;

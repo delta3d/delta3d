@@ -1,7 +1,11 @@
 #include <dtActors/skydomeenvironmentactor.h>
+
 #include <dtCore/environment.h>
 #include <dtCore/skydome.h>
-#include <dtDAL/enginepropertytypes.h>
+
+#include <dtDAL/booleanactorproperty.h>
+#include <dtDAL/datatype.h>
+#include <dtDAL/floatactorproperty.h>
 #include <dtDAL/functor.h>
 
 using namespace dtActors;

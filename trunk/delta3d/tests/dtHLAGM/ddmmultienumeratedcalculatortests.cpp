@@ -26,15 +26,22 @@
 * David Guthrie
 */
 #include <prefix/unittestprefix.h>
-#include <cppunit/extensions/HelperMacros.h>
 
-#include <string>
 #include <dtCore/refptr.h>
+
+#include <dtDAL/booleanactorproperty.h>
+#include <dtDAL/datatype.h>
+#include <dtDAL/longactorproperty.h>
+
 #include <dtHLAGM/ddmmultienumeratedcalculator.h>
 #include <dtHLAGM/ddmregiondata.h>
 #include <dtHLAGM/ddmutil.h>
-#include <dtDAL/enginepropertytypes.h>
+
 #include <dtUtil/coordinates.h>
+
+#include <cppunit/extensions/HelperMacros.h>
+
+#include <string>
 
 class DDMMultiEnumeratedCalculatorTests : public CPPUNIT_NS::TestFixture 
 {

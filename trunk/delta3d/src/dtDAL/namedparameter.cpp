@@ -20,14 +20,24 @@
  */
 
 #include <prefix/dtdalprefix.h>
-#include <string>
 #include <dtDAL/namedparameter.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/groupactorproperty.h>
+
+#include <dtDAL/actoridactorproperty.h>
 #include <dtDAL/arrayactorpropertybase.h>
+#include <dtDAL/booleanactorproperty.h>
 #include <dtDAL/containeractorproperty.h>
+#include <dtDAL/doubleactorproperty.h>
+#include <dtDAL/intactorproperty.h>
+#include <dtDAL/floatactorproperty.h>
+#include <dtDAL/groupactorproperty.h>
+#include <dtDAL/longactorproperty.h>
 #include <dtDAL/resourceactorproperty.h>
+#include <dtDAL/stringactorproperty.h>
+#include <dtDAL/vectoractorproperties.h>
+
 #include <dtUtil/mswinmacros.h>
+
+#include <string>
 
 namespace dtDAL
 {

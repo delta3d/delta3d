@@ -19,14 +19,10 @@
  * Author: Jeff P. Houde
  */
 
-#include <sstream>
-#include <algorithm>
-
 #include <dtDirectorNodes/inputnode.h>
 
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/actorproperty.h>
 #include <dtDAL/actorproxy.h>
+#include <dtDAL/stringactorproperty.h>
 
 #include <dtDirector/inputlink.h>
 #include <dtDirector/outputlink.h>

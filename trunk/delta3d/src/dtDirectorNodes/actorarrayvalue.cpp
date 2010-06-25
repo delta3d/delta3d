@@ -19,12 +19,9 @@
  * Author: Jeff P. Houde
  */
 
-#include <sstream>
-#include <algorithm>
-
 #include <dtDirectorNodes/actorarrayvalue.h>
 
-#include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/actoridactorproperty.h>
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/arrayactorproperty.h>
 

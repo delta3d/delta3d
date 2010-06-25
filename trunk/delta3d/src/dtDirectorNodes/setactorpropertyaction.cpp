@@ -21,10 +21,10 @@
 
 #include <dtDirectorNodes/setactorpropertyaction.h>
 
+#include <dtDAL/actoridactorproperty.h>
+#include <dtDAL/stringactorproperty.h>
+
 #include <dtDirector/director.h>
-
-#include <dtDAL/enginepropertytypes.h>
-
 
 namespace dtDirector
 {

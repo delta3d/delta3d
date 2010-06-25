@@ -19,10 +19,16 @@
 */
 
 #include <dtActors/cameradataactor.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/actorproxyicon.h>
+
 #include <dtCore/transform.h>
 #include <dtCore/camera.h>
+
+#include <dtDAL/actorproxyicon.h>
+#include <dtDAL/booleanactorproperty.h>
+#include <dtDAL/colorrgbaactorproperty.h>
+#include <dtDAL/enumactorproperty.h>
+#include <dtDAL/floatactorproperty.h>
+#include <dtDAL/vectoractorproperties.h>
 
 #include <osg/Camera>
 

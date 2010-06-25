@@ -27,48 +27,56 @@
  */
 
 #include <prefix/unittestprefix.h>
-#include <vector>
-#include <string>
-#include <sstream>
-
-#include <cstdio>
-#include <ctime>
-
-#include <osg/Math>
-#include <osg/io_utils>
-
-#include <dtUtil/exception.h>
-#include <dtUtil/fileutils.h>
-#include <dtUtil/datapathutils.h>
-#include <dtUtil/log.h>
-#include <dtUtil/mathdefines.h>
-
-#include <dtCore/timer.h>
-#include <dtCore/scene.h>
+#include <testActorLibrary/testactorlib.h>
+#include <testActorLibrary/testdalenvironmentactor.h>
 
 #include <dtABC/application.h>
 
-#include <dtDAL/project.h>
-#include <dtDAL/map.h>
-#include <dtDAL/mapxml.h>
-#include <dtDAL/librarymanager.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/groupactorproperty.h>
-#include <dtDAL/arrayactorproperty.h>
-#include <dtDAL/resourceactorproperty.h>
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/environmentactor.h>
-#include <dtDAL/gameeventmanager.h>
-#include <dtDAL/gameevent.h>
-
-#include <dtDAL/physicalactorproxy.h>
-
-#include <testActorLibrary/testactorlib.h>
-#include <testActorLibrary/testdalenvironmentactor.h>
 #include <dtActors/engineactorregistry.h>
 
+#include <dtCore/scene.h>
+#include <dtCore/timer.h>
+
+#include <dtDAL/abstractenumactorproperty.h>
+#include <dtDAL/actoractorproperty.h>
+#include <dtDAL/actoridactorproperty.h>
+#include <dtDAL/actorproxy.h>
+#include <dtDAL/arrayactorproperty.h>
+#include <dtDAL/booleanactorproperty.h>
+#include <dtDAL/colorrgbaactorproperty.h>
+#include <dtDAL/datatype.h>
+#include <dtDAL/doubleactorproperty.h>
+#include <dtDAL/environmentactor.h>
+#include <dtDAL/floatactorproperty.h>
+#include <dtDAL/gameevent.h>
+#include <dtDAL/gameeventmanager.h>
+#include <dtDAL/groupactorproperty.h>
+#include <dtDAL/intactorproperty.h>
+#include <dtDAL/librarymanager.h>
+#include <dtDAL/map.h>
+#include <dtDAL/mapxml.h>
+#include <dtDAL/physicalactorproxy.h>
+#include <dtDAL/project.h>
+#include <dtDAL/resourceactorproperty.h>
+#include <dtDAL/stringactorproperty.h>
+#include <dtDAL/vectoractorproperties.h>
+
+#include <dtUtil/datapathutils.h>
+#include <dtUtil/exception.h>
+#include <dtUtil/fileutils.h>
+#include <dtUtil/log.h>
+#include <dtUtil/mathdefines.h>
+
 #include <cppunit/extensions/HelperMacros.h>
+
+#include <osg/io_utils>
+#include <osg/Math>
+
+#include <cstdio>
+#include <ctime>
+#include <sstream>
+#include <string>
+#include <vector>
 
 extern dtABC::Application& GetGlobalApplication();
 

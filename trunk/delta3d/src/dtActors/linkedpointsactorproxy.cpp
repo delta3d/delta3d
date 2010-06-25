@@ -1,15 +1,19 @@
 #include <dtActors/linkedpointsactorproxy.h>
-#include <dtCore/transformable.h>
+
 #include <dtCore/transform.h>
-#include <dtDAL/enginepropertytypes.h>
+#include <dtCore/transformable.h>
+
 #include <dtDAL/arrayactorproperty.h>
 #include <dtDAL/containeractorproperty.h>
+#include <dtDAL/functor.h>
 #include <dtDAL/mapxml.h>
 #include <dtDAL/project.h>
-#include <dtDAL/functor.h>
+#include <dtDAL/vectoractorproperties.h>
+
+#include <dtGame/gamemanager.h>
 #include <dtGame/invokable.h>
 #include <dtGame/messagetype.h>
-#include <dtGame/gamemanager.h>
+
 #include <dtUtil/exception.h>
 
 namespace dtActors

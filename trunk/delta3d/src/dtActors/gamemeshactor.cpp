@@ -19,13 +19,17 @@
  * Curtiss Murphy
  */
 #include <dtActors/gamemeshactor.h>
-#include <dtGame/gamemanager.h>
-#include <dtGame/actorupdatemessage.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/resourceactorproperty.h>
-#include <dtDAL/actorproxyicon.h>
+
 #include <dtCore/transform.h>
+
+#include <dtDAL/actorproxyicon.h>
+#include <dtDAL/booleanactorproperty.h>
 #include <dtDAL/functor.h>
+#include <dtDAL/resourceactorproperty.h>
+#include <dtDAL/vectoractorproperties.h>
+
+#include <dtGame/actorupdatemessage.h>
+#include <dtGame/gamemanager.h>
 
 #include <osg/MatrixTransform>
 

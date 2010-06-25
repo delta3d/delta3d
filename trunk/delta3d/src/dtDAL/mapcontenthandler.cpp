@@ -21,25 +21,23 @@
 
 #include <prefix/dtdalprefix.h>
 
-#include <typeinfo>
+#include <dtCore/deltadrawable.h>
 
-#include <dtDAL/mapcontenthandler.h>
-#include <dtDAL/map.h>
-#include <dtDAL/librarymanager.h>
-#include <dtDAL/exceptionenum.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/groupactorproperty.h>
-#include <dtDAL/arrayactorpropertybase.h>
-#include <dtDAL/containeractorproperty.h>
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/actorproxy.h>
+#include <dtDAL/arrayactorpropertybase.h>
+#include <dtDAL/containeractorproperty.h>
 #include <dtDAL/datatype.h>
-#include <dtDAL/mapxmlconstants.h>
 #include <dtDAL/environmentactor.h>
+#include <dtDAL/exceptionenum.h>
 #include <dtDAL/gameevent.h>
 #include <dtDAL/gameeventmanager.h>
-#include <dtDAL/namedparameter.h>
+#include <dtDAL/groupactorproperty.h>
+#include <dtDAL/librarymanager.h>
+#include <dtDAL/mapcontenthandler.h>
+#include <dtDAL/map.h>
 #include <dtDAL/mapxmlconstants.h>
+#include <dtDAL/namedparameter.h>
 
 #include <dtUtil/xercesutils.h>
 
@@ -60,6 +58,8 @@
 #include <osg/Vec2d>
 #include <osg/Vec3f>
 #include <osg/Vec3d>
+
+#include <typeinfo>
 
 XERCES_CPP_NAMESPACE_USE
 

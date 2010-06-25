@@ -22,9 +22,10 @@
 * @author Chris Rodgers
 */
 
-#include <dtDAL/enginepropertytypes.h>
 #include <dtActors/basewateractor.h>
 
+#include <dtDAL/datatype.h>
+#include <dtDAL/floatactorproperty.h>
 
 namespace dtActors
 {

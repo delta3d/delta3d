@@ -21,8 +21,10 @@
  */
 #include <dtActors/beziercontrolpointactorproxy.h>
 #include <dtActors/beziernodeactorproxy.h>
-#include <dtDAL/enginepropertytypes.h>
+
+#include <dtDAL/actoractorproperty.h>
 #include <dtDAL/actorproxyicon.h>
+
 #include <sstream>
 
 namespace dtActors

@@ -1,6 +1,9 @@
 #include <dtActors/actionactorproxy.h>
+
+#include <dtDAL/booleanactorproperty.h>
+#include <dtDAL/datatype.h>
 #include <dtDAL/exceptionenum.h>
-#include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/floatactorproperty.h>
 #include <dtDAL/functor.h>
 
 namespace dtActors

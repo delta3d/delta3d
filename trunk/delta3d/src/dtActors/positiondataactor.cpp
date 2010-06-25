@@ -18,9 +18,12 @@
 *
 */
 #include <dtActors/positiondataactor.h>
+
 #include <dtCore/transform.h>
-#include <dtDAL/enginepropertytypes.h>
+
 #include <dtDAL/actorproxyicon.h>
+#include <dtDAL/booleanactorproperty.h>
+#include <dtDAL/datatype.h>
 
 namespace dtActors
 {

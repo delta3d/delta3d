@@ -6,8 +6,9 @@
 
 #include <dtCore/transform.h>
 #include <dtCore/transformable.h>
+
 #include <dtDAL/transformableactorproxy.h>
-#include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/vectoractorproperties.h>
 
 #include <osg/Math>
 #include <osg/Vec3>

@@ -20,22 +20,26 @@
  */
 
 #include <dtActors/directoractorproxy.h>
+
 #include <dtABC/application.h>
-#include <dtGame/gamemanager.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/resourceactorproperty.h>
+
+#include <dtDAL/actoridactorproperty.h>
+#include <dtDAL/actorproxyicon.h>
 #include <dtDAL/arrayactorproperty.h>
+#include <dtDAL/booleanactorproperty.h>
+#include <dtDAL/datatype.h>
+#include <dtDAL/functor.h>
 #include <dtDAL/mapxml.h>
 #include <dtDAL/project.h>
-#include <dtUtil/exception.h>
-#include <dtDAL/functor.h>
-#include <dtDAL/actorproxyicon.h>
+#include <dtDAL/resourceactorproperty.h>
 
 #include <dtGame/basemessages.h>
+#include <dtGame/gamemanager.h>
+#include <dtGame/invokable.h>
 #include <dtGame/message.h>
 #include <dtGame/messagetype.h>
-#include <dtGame/invokable.h>
+
+#include <dtUtil/exception.h>
 
 namespace dtActors
 {

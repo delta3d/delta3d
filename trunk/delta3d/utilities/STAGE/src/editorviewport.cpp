@@ -28,34 +28,39 @@
  */
 
 #include <prefix/stageprefix.h>
-#include <QtGui/QMouseEvent>
-#include <dtEditQt/mainwindow.h>
-#include <dtEditQt/viewportoverlay.h>
-#include <dtEditQt/editorevents.h>
-#include <dtEditQt/editordata.h>
+
+#include <dtActors/prefabactorproxy.h>
+
+#include <dtCore/deltadrawable.h>
+
 #include <dtEditQt/editoractions.h>
+#include <dtEditQt/editordata.h>
+#include <dtEditQt/editorevents.h>
+#include <dtEditQt/editorviewport.h>
+#include <dtEditQt/mainwindow.h>
 #include <dtEditQt/propertyeditor.h>
 #include <dtEditQt/stageglwidget.h>
-#include <dtEditQt/editorviewport.h>
-#include <dtDAL/transformableactorproxy.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/resourceactorproperty.h>
-#include <dtDAL/map.h>
-#include <dtDAL/librarymanager.h>
+#include <dtEditQt/viewportoverlay.h>
+
 #include <dtDAL/actorproxyicon.h>
-#include <dtCore/deltadrawable.h>
+#include <dtDAL/arrayactorproperty.h>
+#include <dtDAL/exceptionenum.h>
+#include <dtDAL/librarymanager.h>
+#include <dtDAL/map.h>
+#include <dtDAL/mapxml.h>
+#include <dtDAL/project.h>
+#include <dtDAL/resourceactorproperty.h>
+#include <dtDAL/transformableactorproxy.h>
+#include <dtDAL/vectoractorproperties.h>
+
 #include <dtUtil/exception.h>
 #include <dtUtil/mathdefines.h>
-#include <dtDAL/exceptionenum.h>
+
 #include <QtGui/QDrag>
 #include <QtGui/QDragMoveEvent>
 #include <QtGui/QDragEnterEvent>
 #include <QtGui/QDragLeaveEvent>
-#include <dtDAL/mapxml.h>
-#include <dtDAL/project.h>
-#include <dtActors/prefabactorproxy.h>
-#include <dtDAL/arrayactorproperty.h>
-
+#include <QtGui/QMouseEvent>
 
 namespace dtEditQt
 {

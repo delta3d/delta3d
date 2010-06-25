@@ -20,13 +20,14 @@
  */
 
 #include <dtDirector/director.h>
-#include <dtDirector/nodemanager.h>
 
-#include <dtDirector/directorxml.h>
-
-#include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/project.h>
+#include <dtDAL/stringactorproperty.h>
+
+#include <dtDirector/directorxml.h>
+#include <dtDirector/nodemanager.h>
+
 #include <osgDB/FileNameUtils>
 
 namespace dtDirector

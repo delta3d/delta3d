@@ -26,17 +26,22 @@
 
 #include "KillableTargetActor.h"
 #include "TargetChanged.h"
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/functor.h>
-#include <dtGame/gamemanager.h>
-#include <dtGame/actorupdatemessage.h>
-#include <dtGame/basemessages.h>
-#include <dtUtil/log.h>
-#include <dtUtil/mathdefines.h>
+
+#include <dtCore/scene.h>
 #include <dtCore/shadermanager.h>
 #include <dtCore/shaderparameter.h>
 #include <dtCore/shaderparamoscillator.h>
-#include <dtCore/scene.h>
+
+#include <dtDAL/functor.h>
+#include <dtDAL/intactorproperty.h>
+
+#include <dtGame/actorupdatemessage.h>
+#include <dtGame/basemessages.h>
+#include <dtGame/gamemanager.h>
+
+#include <dtUtil/log.h>
+#include <dtUtil/mathdefines.h>
+
 #include <osg/Switch>
 
 KillableTargetActor::SwitchVisitor::SwitchVisitor(const std::string& state)

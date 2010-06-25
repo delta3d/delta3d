@@ -20,11 +20,14 @@
  * Chris Osborn
  */
 #include <dtActors/cameraactorproxy.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/actorproxyicon.h>
 
 #include <dtCore/camera.h>
+
+#include <dtDAL/actorproxyicon.h>
+#include <dtDAL/booleanactorproperty.h>
+#include <dtDAL/colorrgbaactorproperty.h>
 #include <dtDAL/functor.h>
+
 #include <sstream>
 
 using namespace dtCore;

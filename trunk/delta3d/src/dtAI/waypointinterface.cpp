@@ -21,10 +21,11 @@
 
 #include <dtAI/waypointinterface.h>
 #include <dtAI/waypointpropertycontainer.h>
+
 #include <dtDAL/propertycontainer.h>
-#include <dtDAL/enginepropertytypes.h>
 
 #include <dtUtil/templateutility.h>
+
 #include <sstream>
 
 namespace dtAI

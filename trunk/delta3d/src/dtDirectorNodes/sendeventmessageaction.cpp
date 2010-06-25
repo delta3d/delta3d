@@ -21,13 +21,12 @@
 
 #include <dtDirectorNodes/sendeventmessageaction.h>
 
+#include <dtDAL/gameeventactorproperty.h>
+
 #include <dtDirector/director.h>
 
-#include <dtGame/messagefactory.h>
 #include <dtGame/basemessages.h>
-
-#include <dtDAL/enginepropertytypes.h>
-
+#include <dtGame/messagefactory.h>
 
 namespace dtDirector
 {

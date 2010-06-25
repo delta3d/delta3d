@@ -27,23 +27,21 @@
 */
 
 #include "testplayer.h"
-#include <osg/MatrixTransform>
-#include <osgDB/ReadFile>
 
-//#include <dtCore/isector.h>
+#include <dtDAL/floatactorproperty.h>
+#include <dtDAL/stringactorproperty.h>
 
-#include <dtDAL/enginepropertytypes.h>
-
-#include <dtCore/transform.h>
-#include <dtGame/messagetype.h>
-#include <dtGame/gamemanager.h>
-#include <dtGame/basemessages.h>
 #include <dtGame/actorupdatemessage.h>
+#include <dtGame/basemessages.h>
+#include <dtGame/gamemanager.h>
 #include <dtGame/invokable.h>
 #include <dtGame/messagefactory.h>
+#include <dtGame/messagetype.h>
+#include <dtCore/transform.h>
 
+#include <osg/MatrixTransform>
 
-#include <iostream>
+#include <osgDB/ReadFile>
 
 //////////////////////////////////////////////////////////////////////////////
 TestPlayer::TestPlayer(dtGame::GameActorProxy& proxy): dtGame::GameActor(proxy),

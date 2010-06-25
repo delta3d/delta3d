@@ -20,18 +20,23 @@
  */
 #include <prefix/dtdalprefix.h>
 #include <dtDAL/actorproxy.h>
-#include <dtUtil/log.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/librarymanager.h>
-#include <dtDAL/actorproxyicon.h>
-#include <dtDAL/exceptionenum.h>
-#include <dtDAL/project.h>
+
 #include <dtCore/scene.h>
 #include <dtCore/uniqueid.h>
-#include <sstream>
+
+#include <dtDAL/actorproperty.h>
+#include <dtDAL/actorproxyicon.h>
+#include <dtDAL/booleanactorproperty.h>
+#include <dtDAL/datatype.h>
+#include <dtDAL/exceptionenum.h>
+#include <dtDAL/librarymanager.h>
+#include <dtDAL/project.h>
+#include <dtDAL/stringactorproperty.h>
+
+#include <dtUtil/log.h>
+
 #include <algorithm>
+#include <sstream>
 
 namespace dtDAL
 {

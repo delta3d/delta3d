@@ -29,16 +29,20 @@
 
 #include <prefix/dtqtprefix.h>
 #include <dtQt/dynamicvectorelementcontrol.h>
-#include <dtQt/dynamicsubwidgets.h>
+
 #include <dtDAL/actorproxy.h>
-#include <dtDAL/actorproperty.h>
 #include <dtDAL/datatype.h>
-#include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/vectoractorproperties.h>
+
+#include <dtQt/dynamicsubwidgets.h>
+
 #include <dtUtil/log.h>
 
 #include <QtCore/QLocale>
-#include <QtGui/QWidget>
+
 #include <QtGui/QDoubleValidator>
+#include <QtGui/QWidget>
+
 #include <sstream>
 
 namespace dtQt

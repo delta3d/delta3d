@@ -28,14 +28,17 @@
  */
 #include <prefix/dtqtprefix.h>
 #include <dtQt/dynamiclabelcontrol.h>
-#include <dtQt/dynamicsubwidgets.h>
+
 #include <dtDAL/actorproxy.h>
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/datatype.h>
+
+#include <dtQt/dynamicsubwidgets.h>
+
+#include <QtCore/QString>
+
 #include <QtGui/QGridLayout>
 #include <QtGui/QLabel>
 #include <QtGui/QLineEdit>
-#include <QtCore/QString>
 #include <QtGui/QWidget>
 
 namespace dtQt

@@ -19,11 +19,14 @@
  * David Guthrie
  */
 
-#include <dtHLAGM/ddmregiondata.h>
 #include <dtHLAGM/ddmmultienumeratedcalculator.h>
-#include <dtHLAGM/ddmutil.h>
 
-#include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/booleanactorproperty.h>
+#include <dtDAL/datatype.h>
+#include <dtDAL/longactorproperty.h>
+
+#include <dtHLAGM/ddmregiondata.h>
+#include <dtHLAGM/ddmutil.h>
 
 namespace dtHLAGM
 {

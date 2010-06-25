@@ -23,8 +23,7 @@
 
 #include <dtDirector/director.h>
 
-#include <dtDAL/enginepropertytypes.h>
-
+#include <dtDAL/doubleactorproperty.h>
 
 namespace dtDirector
 {

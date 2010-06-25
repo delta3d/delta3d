@@ -19,12 +19,8 @@
  * Author: Jeff P. Houde
  */
 
-#include <sstream>
-#include <algorithm>
-
 #include <dtDirectorNodes/staticmeshvalue.h>
 
-#include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/resourceactorproperty.h>
 
 namespace dtDirector

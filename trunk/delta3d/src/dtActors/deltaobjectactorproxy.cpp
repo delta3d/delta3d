@@ -20,10 +20,13 @@
  */
 
 #include <dtActors/deltaobjectactorproxy.h>
+
 #include <dtCore/object.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtUtil/matrixutil.h>
+
 #include <dtDAL/functor.h>
+#include <dtDAL/vectoractorproperties.h>
+
+#include <dtUtil/matrixutil.h>
 
 namespace dtActors
 {

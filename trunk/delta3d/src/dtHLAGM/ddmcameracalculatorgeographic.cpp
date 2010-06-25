@@ -19,14 +19,16 @@
  * David Guthrie
  */
 #include <dtHLAGM/ddmcameracalculatorgeographic.h>
-#include <dtHLAGM/ddmgeographicregiondata.h>
-#include <dtHLAGM/ddmregiondata.h>
-#include <dtHLAGM/ddmutil.h>
-
-#include <dtDAL/enginepropertytypes.h>
 
 #include <dtCore/camera.h>
 #include <dtCore/transform.h>
+
+#include <dtDAL/datatype.h>
+#include <dtDAL/floatactorproperty.h>
+
+#include <dtHLAGM/ddmgeographicregiondata.h>
+#include <dtHLAGM/ddmregiondata.h>
+#include <dtHLAGM/ddmutil.h>
 
 #include <osg/Matrix>
 #include <osg/Vec3>

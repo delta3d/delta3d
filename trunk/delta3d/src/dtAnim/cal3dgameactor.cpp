@@ -20,28 +20,33 @@
  */
 
 #include <dtAnim/cal3dgameactor.h>
-#include <dtDAL/groupactorproperty.h>
-#include <dtGame/gamemanager.h>
-#include <dtGame/actorupdatemessage.h>
-#include <dtGame/messagetype.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/resourceactorproperty.h>
-#include <dtDAL/actorproxyicon.h>
-#include <dtAnim/submesh.h>
-#include <dtAnim/skeletaldrawable.h>
+
+#include <dtAnim/cal3danimator.h>
 #include <dtAnim/cal3ddatabase.h>
 #include <dtAnim/cal3dmodelwrapper.h>
-#include <dtAnim/cal3danimator.h>
-#include <dtCore/scene.h>
-#include <dtGame/basemessages.h>
-#include <dtCore/system.h>
-#include <dtGame/invokable.h>
+#include <dtAnim/skeletaldrawable.h>
+#include <dtAnim/submesh.h>
 
-#include <osg/MatrixTransform>
+#include <dtCore/scene.h>
+#include <dtCore/system.h>
+
+#include <dtDAL/actorproxyicon.h>
+#include <dtDAL/groupactorproperty.h>
+#include <dtDAL/intactorproperty.h>
+#include <dtDAL/resourceactorproperty.h>
+
+#include <dtGame/actorupdatemessage.h>
+#include <dtGame/basemessages.h>
+#include <dtGame/gamemanager.h>
+#include <dtGame/invokable.h>
+#include <dtGame/messagetype.h>
+
+#include <dtUtil/bits.h>
+
 #include <osg/Geode>
 #include <osg/Material>
+#include <osg/MatrixTransform>
 #include <osg/PolygonMode>
-#include <dtUtil/bits.h>
 
 #include <cstddef>  // for NULL
 

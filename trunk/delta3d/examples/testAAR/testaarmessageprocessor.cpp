@@ -34,28 +34,35 @@
 #include "testaargameevent.h"
 
 #include <dtABC/application.h>
-#include <dtCore/keyboard.h>
-#include <dtCore/system.h>
-#include <dtCore/object.h>
-#include <dtCore/scene.h>
-#include <dtCore/transform.h>
-#include <dtGame/logcontroller.h>
-#include <dtGame/actorupdatemessage.h>
-#include <dtGame/logkeyframe.h>
-#include <dtGame/logstatus.h>
-#include <dtGame/logtag.h>
-#include <dtGame/serverloggercomponent.h>
-#include <dtGame/basemessages.h>
-#include <dtGame/messagefactory.h>
-#include <dtDAL/gameeventmanager.h>
-#include <dtDAL/gameevent.h>
-#include <dtDAL/actortype.h>
-#include <dtDAL/enginepropertytypes.h>
+
 #include <dtActors/taskactor.h>
 #include <dtActors/taskactorgameevent.h>
 #include <dtActors/taskactorordered.h>
 #include <dtActors/taskactorrollup.h>
+
+#include <dtCore/keyboard.h>
+#include <dtCore/object.h>
+#include <dtCore/scene.h>
+#include <dtCore/system.h>
+#include <dtCore/transform.h>
+
+#include <dtGame/actorupdatemessage.h>
+#include <dtGame/basemessages.h>
+#include <dtGame/logcontroller.h>
+#include <dtGame/logkeyframe.h>
+#include <dtGame/logstatus.h>
+#include <dtGame/logtag.h>
+#include <dtGame/messagefactory.h>
+#include <dtGame/serverloggercomponent.h>
+
+#include <dtDAL/actortype.h>
+#include <dtDAL/floatactorproperty.h>
+#include <dtDAL/gameevent.h>
+#include <dtDAL/gameeventmanager.h>
+#include <dtDAL/stringactorproperty.h>
+
 #include <dtLMS/lmscomponent.h>
+
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/mathdefines.h>
 #include <dtUtil/exception.h>

@@ -29,15 +29,18 @@
 #define DELTA_EXAMPLETESTGAMEPROPERTYPROXY
 
 #include "export.h"
+
 #include <dtActors/deltaobjectactorproxy.h>
 #include <dtActors/staticmeshactorproxy.h>
+
 #include <dtDAL/actorproxy.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtUtil/enumeration.h>
-#include <dtDAL/plugin_export.h>
 #include <dtDAL/gameevent.h>
-#include <dtGame/gamemanager.h>
+#include <dtDAL/plugin_export.h>
+
 #include <dtGame/gameactor.h>
+#include <dtGame/gamemanager.h>
+
+#include <dtUtil/enumeration.h>
 
 using namespace dtActors;
 using namespace dtGame;

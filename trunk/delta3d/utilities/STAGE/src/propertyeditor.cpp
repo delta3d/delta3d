@@ -28,54 +28,48 @@
  */
 
 #include <prefix/stageprefix.h>
-
 #include <dtEditQt/propertyeditor.h>
-#include <dtEditQt/viewportmanager.h>
-
-#include <dtQt/dynamicabstractcontrol.h>
-#include <dtQt/dynamicgroupcontrol.h>
-#include <dtQt/dynamiclabelcontrol.h>
-
-#include <dtQt/propertyeditormodel.h>
-#include <dtQt/propertyeditortreeview.h>
-#include <dtQt/dynamiccontainercontrol.h>
-
-#include <dtEditQt/dynamicresourcecontrol.h>
-#include <dtEditQt/dynamicgameeventcontrol.h>
-#include <dtEditQt/dynamicgrouppropertycontrol.h>
-#include <dtEditQt/dynamicactorcontrol.h>
-
-#include <dtEditQt/dynamicnamecontrol.h>
-#include <dtEditQt/editoractions.h>
-#include <dtEditQt/editorevents.h>
-#include <dtEditQt/editordata.h>
-
-#include <QtCore/QStringList>
-
-#include <QtGui/QLabel>
-#include <QtGui/QGridLayout>
-#include <QtGui/QScrollArea>
-#include <QtGui/QScrollBar>
-#include <QtGui/QTreeWidget>
-#include <QtGui/QMainWindow>
-#include <QtGui/QHeaderView>
-#include <QtGui/QGroupBox>
-#include <QtGui/QTreeView>
-#include <QtGui/QAction>
-#include <QtGui/QHeaderView>
 
 #include <dtCore/deltadrawable.h>
 
-#include <dtDAL/actorproxy.h>
+#include <dtEditQt/dynamicactorcontrol.h>
+#include <dtEditQt/dynamicgameeventcontrol.h>
+#include <dtEditQt/dynamicgrouppropertycontrol.h>
+#include <dtEditQt/dynamicnamecontrol.h>
+#include <dtEditQt/dynamicresourcecontrol.h>
+#include <dtEditQt/editoractions.h>
+#include <dtEditQt/editordata.h>
+#include <dtEditQt/editorevents.h>
+#include <dtEditQt/viewportmanager.h>
+
 #include <dtDAL/actorproperty.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/exceptionenum.h>
+#include <dtDAL/actorproxy.h>
 #include <dtDAL/datatype.h>
+#include <dtDAL/exceptionenum.h>
 #include <dtDAL/librarymanager.h>
 #include <dtDAL/map.h>
 
+#include <dtQt/dynamicabstractcontrol.h>
+#include <dtQt/dynamiccontainercontrol.h>
+#include <dtQt/dynamicgroupcontrol.h>
+#include <dtQt/dynamiclabelcontrol.h>
+#include <dtQt/propertyeditormodel.h>
+#include <dtQt/propertyeditortreeview.h>
+
 #include <dtUtil/log.h>
 #include <dtUtil/tree.h>
+
+#include <QtCore/QStringList>
+#include <QtGui/QAction>
+#include <QtGui/QGridLayout>
+#include <QtGui/QGroupBox>
+#include <QtGui/QHeaderView>
+#include <QtGui/QLabel>
+#include <QtGui/QMainWindow>
+#include <QtGui/QScrollArea>
+#include <QtGui/QScrollBar>
+#include <QtGui/QTreeView>
+#include <QtGui/QTreeWidget>
 
 #include <osg/Referenced>
 

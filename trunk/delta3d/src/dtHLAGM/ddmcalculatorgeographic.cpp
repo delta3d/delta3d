@@ -19,9 +19,12 @@
  * @author David Guthrie
  */
 #include <dtHLAGM/ddmcalculatorgeographic.h>
+
+#include <dtDAL/enumactorproperty.h>
+#include <dtDAL/longactorproperty.h>
+
 #include <dtHLAGM/ddmgeographicregiondata.h>
 #include <dtHLAGM/ddmregiondata.h>
-#include <dtDAL/enginepropertytypes.h>
 
 namespace dtHLAGM
 {

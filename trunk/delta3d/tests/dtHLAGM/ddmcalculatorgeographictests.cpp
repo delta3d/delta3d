@@ -26,13 +26,20 @@
 * David Guthrie
 */
 #include <prefix/unittestprefix.h>
+
+#include <dtCore/refptr.h>
+
+#include <dtDAL/enumactorproperty.h>
+#include <dtDAL/longactorproperty.h>
+#include <dtDAL/stringactorproperty.h>
+
+#include <dtHLAGM/ddmcalculatorgeographic.h>
+
+#include <dtUtil/coordinates.h>
+
 #include <cppunit/extensions/HelperMacros.h>
 
 #include <string>
-#include <dtCore/refptr.h>
-#include <dtHLAGM/ddmcalculatorgeographic.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtUtil/coordinates.h>
 
 class DDMCalculatorGeographicTests : public CPPUNIT_NS::TestFixture 
 {

@@ -1,33 +1,33 @@
 #include <prefix/unittestprefix.h>
-
-#include <cppunit/extensions/HelperMacros.h>
-
-#include <dtDIS/plugins/default/espduprocessor.h>                    // for testing
-
-#include <DIS/EntityStatePdu.h>                                      // for usage
-
 #include "initializepdu.h"            // for usage
 #include "initializeupdatemessage.h"  // for usage
 #include "samplegameactorproxy.h"     // for usage
-#include <dtDIS/sharedstate.h>
-#include <dtDIS/propertyname.h>
 
-#include <dtGame/gamemanager.h>
-#include <dtCore/scene.h>
+#include <dtABC/application.h>
 
 #include <dtActors/engineactorregistry.h>
-#include <dtDAL/enginepropertytypes.h>
 
-#include <cstddef>   // for NULL
-#include <dtGame/gmcomponent.h>
+#include <dtCore/scene.h>
 #include <dtCore/system.h>
-#include <dtGame/messagefactory.h>        // for usage
+
+#include <dtDIS/plugins/default/espduprocessor.h>                    // for testing
+#include <dtDIS/propertyname.h>
+#include <dtDIS/sharedstate.h>
+
 #include <dtGame/actorupdatemessage.h>         // for usage
 #include <dtGame/defaultmessageprocessor.h>
+#include <dtGame/gamemanager.h>
+#include <dtGame/gmcomponent.h>
+#include <dtGame/messagefactory.h>        // for usage
 
 #include <dtUtil/mathdefines.h>
 
-#include <dtABC/application.h>
+#include <cppunit/extensions/HelperMacros.h>
+
+#include <DIS/EntityStatePdu.h>                                      // for usage
+
+#include <cstddef>   // for NULL
+
 extern dtABC::Application& GetGlobalApplication();
 
 namespace dtTest

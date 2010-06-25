@@ -20,9 +20,12 @@
  */
 
 #include <dtActors/distancesensoractor.h>
+
 #include <dtCore/scene.h>
 #include <dtCore/transform.h>
-#include <dtDAL/enginepropertytypes.h>
+
+#include <dtDAL/actoractorproperty.h>
+#include <dtDAL/floatactorproperty.h>
 #include <dtDAL/functor.h>
 
 #include <dtGame/message.h>

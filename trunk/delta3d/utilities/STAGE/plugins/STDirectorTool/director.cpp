@@ -21,24 +21,22 @@
 
 #include "director.h"
 
+#include <dtDAL/actoridactorproperty.h>
+#include <dtDAL/datatype.h>
+
 #include <dtDirectorQt/propertyeditor.h>
 
-#include <dtEditQt/pluginmanager.h>
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/editorevents.h>
-#include <dtEditQt/dynamicresourcecontrol.h>
 #include <dtEditQt/dynamicactorcontrol.h>
 #include <dtEditQt/dynamicgameeventcontrol.h>
 #include <dtEditQt/dynamicgrouppropertycontrol.h>
+#include <dtEditQt/dynamicresourcecontrol.h>
+#include <dtEditQt/pluginmanager.h>
 
-#include <dtDAL/datatype.h>
-#include <dtDAL/enginepropertytypes.h>
-
-#include <QtGui/QAction>
-#include <QtGui/QToolBar>
 #include <QtGui/QAction>
 #include <QtGui/QMenu>
-
+#include <QtGui/QToolBar>
 
 const std::string DirectorToolPlugin::PLUGIN_NAME = "Director Tool";
 

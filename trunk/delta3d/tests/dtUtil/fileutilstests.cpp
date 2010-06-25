@@ -27,15 +27,19 @@
  */
 
 #include <prefix/unittestprefix.h>
-#include <cppunit/extensions/HelperMacros.h>
-#include <dtUtil/fileutils.h>
-#include <dtUtil/log.h>
+
+#include <dtDAL/datatype.h>
+#include <dtDAL/exceptionenum.h>
+
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/exception.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/exceptionenum.h>
-#include <osgDB/FileNameUtils>
+#include <dtUtil/fileutils.h>
+#include <dtUtil/log.h>
+
+#include <cppunit/extensions/HelperMacros.h>
+
 #include <osg/Version>
+#include <osgDB/FileNameUtils>
 
 class FileUtilsTests : public CPPUNIT_NS::TestFixture
 {

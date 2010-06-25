@@ -3,27 +3,29 @@
 
 #include <dtCore/deltadrawable.h>
 #include <dtCore/transformable.h>
-#include <dtDAL/enginepropertytypes.h>
+
 #include <dtDAL/librarymanager.h>
+
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/editorevents.h>
-#include <dtEditQt/pluginmanager.h>
-#include <dtEditQt/viewportmanager.h>
-#include <dtEditQt/viewportoverlay.h>
-#include <dtEditQt/viewport.h>
 #include <dtEditQt/editorviewport.h>
 #include <dtEditQt/editorviewportcontainer.h>
 #include <dtEditQt/perspectiveviewport.h>
 #include <dtEditQt/orthoviewport.h>
-#include <dtEditQt/stageobjectmotionmodel.h>
+#include <dtEditQt/pluginmanager.h>
 #include <dtEditQt/stagecamera.h>
+#include <dtEditQt/stageobjectmotionmodel.h>
+#include <dtEditQt/viewportmanager.h>
+#include <dtEditQt/viewportoverlay.h>
+#include <dtEditQt/viewport.h>
+
 #include <dtUtil/fileutils.h>
+
 #include <QtGui/QFileDialog>
 #include <QtGui/QMessageBox>
 #include <QtGui/QMouseEvent>
-#include <QtGui/QWheelEvent>
 #include <QtGui/QToolBar>
-
+#include <QtGui/QWheelEvent>
 
 const std::string LinkedPointsActorToolPlugin::PLUGIN_NAME = "Linked Points Actor Tool";
 const std::string LinkedPointsActorToolPlugin::MODE_ICON   = ":/icons/mode.png";

@@ -27,13 +27,16 @@
  * @author William E. Johnson II
  */
 #include <prefix/stageprefix.h>
+
+#include <dtDAL/datatype.h>
+#include <dtDAL/exceptionenum.h>
+#include <dtDAL/gameevent.h>
+#include <dtDAL/gameeventactorproperty.h>
+#include <dtDAL/map.h>
+
 #include <dtEditQt/dynamicgameeventcontrol.h>
 #include <dtEditQt/editordata.h>
-#include <dtDAL/map.h>
-#include <dtDAL/exceptionenum.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/gameevent.h>
+
 #include <QtGui/QPushButton>
 #include <QtGui/QHBoxLayout>
 

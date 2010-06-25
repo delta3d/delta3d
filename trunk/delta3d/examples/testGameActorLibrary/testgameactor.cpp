@@ -25,14 +25,19 @@
 *
 * William E. Johnson II
 */
-#include <iostream>
 #include "testgameactor.h"
+
 #include <dtCore/scene.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtUtil/datastream.h>
+
+#include <dtDAL/actoridactorproperty.h>
+#include <dtDAL/booleanactorproperty.h>
+#include <dtDAL/intactorproperty.h>
+
+#include <dtGame/invokable.h>
 #include <dtGame/messageparameter.h>
 #include <dtGame/messagetype.h>
-#include <dtGame/invokable.h>
+
+#include <dtUtil/datastream.h>
 
 ////////////////////////////////////////////////////////////////////
 // Actor Component Code

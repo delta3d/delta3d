@@ -1,16 +1,19 @@
 #include <dtDIS/plugins/default/actorupdatetoentitystate.h>
+
+#include <dtDAL/stringactorproperty.h>
+
 #include <dtDIS/plugins/default/espduapplicator.h>
 #include <dtDIS/propertyname.h>
+#include <dtDIS/sharedstate.h>
+
+#include <dtGame/actorupdatemessage.h>
+#include <dtGame/gameactorproxy.h>
+#include <dtGame/gamemanager.h>
+
+#include <dtUtil/stringutils.h>
 
 #include <DIS/EntityStatePdu.h>
 #include <DIS/EntityType.h>
-#include <dtDAL/enginepropertytypes.h>
-
-#include <dtGame/actorupdatemessage.h>
-#include <dtDIS/sharedstate.h>
-#include <dtGame/gamemanager.h>
-#include <dtGame/gameactorproxy.h>
-#include <dtUtil/stringutils.h>
 
 using namespace dtDIS;
 

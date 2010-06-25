@@ -26,10 +26,10 @@
 #ifndef DELTA_PROPERTYMACROS_H
 #define DELTA_PROPERTYMACROS_H
 
-#include <dtDAL/typetoactorproperty.h>
-#include <dtDAL/propertycontainer.h>
 #include <dtDAL/containeractorproperty.h>
-#include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/propertycontainer.h>
+#include <dtDAL/typetoactorproperty.h>
+
 #include <dtUtil/command.h>
 #include <dtUtil/functor.h>
 #include <dtUtil/getsetmacros.h>
@@ -44,11 +44,9 @@ namespace dtDAL
    template <class ContainerType, class FuncObj>
    struct PropertyRegHelper
    {
-      typedef PropertyRegHelper<ContainerType, FuncObj> Type;
+      //typedef PropertyRegHelper<ContainerType, FuncObj> Type;
       typedef FuncObj FunctorObjectType;
       typedef ContainerType ContainerObjectType;
-
-      typedef dtDAL::Vec3ActorProperty Vec3;
 
       PropertyRegHelper(ContainerType con, FuncObj* objPtr, const dtUtil::RefString& groupName)
          : mPropCon(con)

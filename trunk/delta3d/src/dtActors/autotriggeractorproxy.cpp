@@ -21,9 +21,12 @@
  */
 
 #include <dtActors/autotriggeractorproxy.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/exceptionenum.h>
+
 #include <dtABC/autotrigger.h>
+
+#include <dtDAL/actoractorproperty.h>
+#include <dtDAL/exceptionenum.h>
+#include <dtDAL/floatactorproperty.h>
 
 using namespace dtABC;
 using namespace dtCore;

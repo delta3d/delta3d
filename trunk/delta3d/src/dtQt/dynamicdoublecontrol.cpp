@@ -28,15 +28,18 @@
  */
 #include <prefix/dtqtprefix.h>
 #include <dtQt/dynamicdoublecontrol.h>
-#include <dtQt/dynamicsubwidgets.h>
+
 #include <dtDAL/actorproxy.h>
-#include <dtDAL/actorproperty.h>
 #include <dtDAL/datatype.h>
-#include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/doubleactorproperty.h>
+
+#include <dtQt/dynamicsubwidgets.h>
+
 #include <dtUtil/log.h>
-#include <QtGui/QWidget>
-#include <QtGui/QLineEdit>
+
 #include <QtGui/QDoubleValidator>
+#include <QtGui/QLineEdit>
+#include <QtGui/QWidget>
 
 namespace dtQt
 {

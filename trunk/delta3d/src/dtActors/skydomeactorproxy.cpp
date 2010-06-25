@@ -19,8 +19,10 @@
 * William E. Johnson II
 */
 #include <dtActors/skydomeactorproxy.h>
-#include <dtDAL/enginepropertytypes.h>
+
 #include <dtCore/deltadrawable.h>
+
+#include <dtDAL/vectoractorproperties.h>
 
 using namespace dtCore;
 using namespace dtDAL;

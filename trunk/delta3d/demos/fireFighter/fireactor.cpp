@@ -24,22 +24,25 @@
 #include <fireFighter/hatchactor.h>
 #include <fireFighter/messages.h>
 #include <fireFighter/gamestate.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/resourceactorproperty.h>
-#include <dtDAL/actorproxyicon.h>
-#include <dtGame/basemessages.h>
-#include <dtGame/invokable.h>
-#include <dtGame/messagetype.h>
-#include <dtGame/gamemanager.h>
-#include <dtGame/messagefactory.h>
+
 #include <dtCore/particlesystem.h>
-#include <dtUtil/mathdefines.h>
 #include <dtCore/positionallight.h>
 #include <dtCore/transform.h>
-#include <dtDAL/gameeventmanager.h>
-#include <dtGame/gamemanager.h>
-#include <dtGame/basemessages.h>
+
+#include <dtDAL/actorproxyicon.h>
+#include <dtDAL/floatactorproperty.h>
 #include <dtDAL/functor.h>
+#include <dtDAL/gameeventmanager.h>
+#include <dtDAL/resourceactorproperty.h>
+#include <dtDAL/vectoractorproperties.h>
+
+#include <dtGame/basemessages.h>
+#include <dtGame/invokable.h>
+#include <dtGame/gamemanager.h>
+#include <dtGame/messagefactory.h>
+#include <dtGame/messagetype.h>
+
+#include <dtUtil/mathdefines.h>
 
 using dtCore::RefPtr;
 

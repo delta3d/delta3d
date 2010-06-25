@@ -20,12 +20,17 @@
  */
 
 #include <dtActors/tripodactorproxy.h>
+
 #include <dtCore/camera.h>
 #include <dtCore/transformable.h>
 #include <dtCore/tripod.h>
-#include <dtDAL/enginepropertytypes.h>
+
+#include <dtDAL/actoractorproperty.h>
+#include <dtDAL/enumactorproperty.h>
 #include <dtDAL/exceptionenum.h>
 #include <dtDAL/functor.h>
+#include <dtDAL/vectoractorproperties.h>
+
 #include <sstream>
 
 using namespace dtActors;

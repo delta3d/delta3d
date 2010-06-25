@@ -20,10 +20,13 @@
  */
 
 #include <dtDirector/directorgraph.h>
-#include <dtDirector/director.h>
 
-#include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actorproperty.h>
+#include <dtDAL/booleanactorproperty.h>
+#include <dtDAL/stringactorproperty.h>
+#include <dtDAL/vectoractorproperties.h>
+
+#include <dtDirector/director.h>
 
 namespace dtDirector
 {

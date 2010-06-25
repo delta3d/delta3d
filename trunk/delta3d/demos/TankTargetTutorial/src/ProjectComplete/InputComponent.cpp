@@ -24,12 +24,14 @@
  */
 
 #include "InputComponent.h"
+
+#include <dtABC/application.h>
+
+#include <dtCore/shadermanager.h>
+
 #include <dtGame/basemessages.h>
 #include <dtGame/messagetype.h>
 #include <dtGame/messagefactory.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtABC/application.h>
-#include <dtCore/shadermanager.h>
 
 ////////////////////////////////////////////////////////////////////
 InputComponent::InputComponent(const std::string& name, bool inPlaybackMode)

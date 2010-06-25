@@ -20,9 +20,10 @@
  */
 
 #include <dtActors/positionallightactorproxy.h>
-#include <dtDAL/enginepropertytypes.h>
+
 #include <dtDAL/actorproxyicon.h>
 #include <dtDAL/functor.h>
+#include <dtDAL/vectoractorproperties.h>
 
 namespace dtActors
 {

@@ -27,20 +27,29 @@
  */
 
 #include <prefix/unittestprefix.h>
-#include <cppunit/extensions/HelperMacros.h>
-#include <dtLMS/lmstaskstatus.h>
-#include <dtLMS/lmsmessage.h>
-#include <dtLMS/lmsmessagetype.h>
+
+#include <dtABC/application.h>
+
+#include <dtActors/engineactorregistry.h>
+#include <dtActors/taskactor.h>
+
+#include <dtCore/scene.h>
+
+#include <dtDAL/booleanactorproperty.h>
+#include <dtDAL/datatype.h>
+#include <dtDAL/floatactorproperty.h>
+
+#include <dtGame/gamemanager.h>
+
+#include <dtLMS/lmsclientsocket.h>
 #include <dtLMS/lmscomponent.h>
 #include <dtLMS/lmsexceptionenum.h>
+#include <dtLMS/lmsmessage.h>
+#include <dtLMS/lmsmessagetype.h>
 #include <dtLMS/lmsmessagevalue.h>
-#include <dtLMS/lmsclientsocket.h>
-#include <dtCore/scene.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtGame/gamemanager.h>
-#include <dtActors/taskactor.h>
-#include <dtActors/engineactorregistry.h>
-#include <dtABC/application.h>
+#include <dtLMS/lmstaskstatus.h>
+
+#include <cppunit/extensions/HelperMacros.h>
 
 extern dtABC::Application& GetGlobalApplication();
 

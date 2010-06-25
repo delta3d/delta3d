@@ -19,15 +19,11 @@
  * Author: Jeff P. Houde
  */
 
-#include <sstream>
-#include <algorithm>
-
 #include <dtDirectorNodes/playervalue.h>
 
-#include <dtDirector/director.h>
+#include <dtDAL/actoridactorproperty.h>
 
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/actorproperty.h>
+#include <dtDirector/director.h>
 
 namespace dtDirector
 {
