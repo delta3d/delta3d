@@ -15,7 +15,7 @@ using namespace dtCore;
 class TransformableWrap : public Transformable, public wrapper<Transformable>
 {
 public:
-   TransformableWrap (const std::string &name="Transformable")
+   TransformableWrap (const std::string &name="Transformable")      
       : Transformable (name) {}
 
    TransformableWrap (TransformableNode &node, const std::string &name="Transformable")
@@ -113,16 +113,17 @@ void initTransformableBindings()
    void (Transformable::*SetTransformRef)(const Transform&, Transformable::CoordSysEnum ) = &Transformable::SetTransform;
    void (Transformable::*GetTransformRef)(Transform&, Transformable::CoordSysEnum ) const = &Transformable::GetTransform;
 
-   scope Transformable_scope = class_< TransformableWrap, bases<DeltaDrawable>, RefPtr<TransformableWrap>, boost::noncopyable >("Transformable", no_init)
+   scope Transformable_scope = class_< TransformableWrap, bases<DeltaDrawable>, dtCore::RefPtr<TransformableWrap>, boost::noncopyable >("Transformable", init<optional<const std::string&> >())
       .def(init<optional<const std::string&> >())
       .def(init<Transformable::TransformableNode&, optional<const std::string&> >())
       .def("GetInstanceCount", &Transformable::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", TransformableGI1, return_internal_reference<>())
       .def("GetInstance", TransformableGI2, return_internal_reference<>())
-      .staticmethod("GetInstance")
-      .def("AddChild", &Transformable::AddChild, with_custodian_and_ward<1, 2>())
-      .def("RemoveChild", &Transformable::RemoveChild)
+      .staticmethod("GetInstance")   
+      .def("AddChild", &Transformable::AddChild /*, with_custodian_and_ward<1, 2>() */)
+      .def("RemoveChild", &Transformable::RemoveChild /*, &TransformableWrap2::DefaultRemoveChild */)   
+      .def("SetParent", &Transformable::SetParent /*, &TransformableWrap2::DefaultSetParent */)   
       .def("SetTransform", SetTransformRef, ST_overloads())
       .def("GetTransform", GetTransformRef, GT_overloads())
       .def("RenderProxyNode", &Transformable::RenderProxyNode, RPN_overloads())
@@ -146,7 +147,7 @@ void initTransformableBindings()
       .def("GetRenderCollisionGeometry", &Transformable::GetRenderCollisionGeometry)
       .def("GetOSGNode", GetOSGNode1, return_value_policy<reference_existing_object>())
       .def("GetOSGNode", GetOSGNode2, return_value_policy<reference_existing_object>())
-      ;
+      ;   
 
    enum_<Transformable::CoordSysEnum>("CoordSysEnum")
       .value("REL_CS", Transformable::REL_CS)
