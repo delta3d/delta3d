@@ -45,6 +45,7 @@ namespace dtActors
       , mAlreadyInScene(false)
       , mUseCache(true)
       , mModel(new dtCore::Model)
+      , mMeshNode(NULL)
    {
       GetMatrixNode()->addChild(&mModel->GetMatrixTransform());
       SetName("StaticMesh");
@@ -183,6 +184,18 @@ namespace dtActors
    const osg::MatrixTransform& GameMeshActor::GetMatrixTransform() const
    {
       return mModel->GetMatrixTransform();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   osg::Node* GameMeshActor::GetMeshNode()
+   {
+      return mMeshNode.get();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const osg::Node* GameMeshActor::GetMeshNode() const
+   {
+      return mMeshNode.get();
    }
 
    //////////////////////////////////////////////////////////////////////////////

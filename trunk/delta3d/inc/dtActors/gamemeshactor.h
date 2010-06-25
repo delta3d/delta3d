@@ -111,6 +111,18 @@ namespace dtActors
       const osg::MatrixTransform& GetMatrixTransform() const;
 
       /**
+       * Returns the osg node for the mesh of this object
+       * @return The osg::Node
+       */
+      osg::Node* GetMeshNode();
+
+      /**
+       * Returns the osg node for the mesh of this object
+       * @return The osg::Node
+       */
+      const osg::Node* GetMeshNode() const;
+
+      /**
        * Sets the models rotation
        * @param v3 the hpr
        */
@@ -158,19 +170,20 @@ namespace dtActors
             {
                mFilename = newFilename;
             }
-      };
+      };      
 
    private:
       // Does the work of loading the mesh.
       void LoadMesh();
 
       GameMeshLoader mLoader;
-      dtCore::RefPtr<osg::Node> mMeshNode;
+      
       // tracks whether we should do a notify when we change the mesh
       bool mAlreadyInScene;
       bool mUseCache;
 
       dtCore::RefPtr<dtCore::Model> mModel;
+      dtCore::RefPtr<osg::Node> mMeshNode;
    };
 
    /**
