@@ -17,9 +17,6 @@
 #include <dtUtil/stringutils.h>
 #include <dtUtil/datapathutils.h>
 
-#include <osg/Endian>
-
-#include <fstream>
 #include <iostream>
 
 // definitions
@@ -28,49 +25,18 @@
 #endif
 
 // name spaces
+using namespace dtAudio;
 using namespace dtUtil;
 
+AudioManager::MOB_ptr AudioManager::_Mgr(NULL);
+AudioManager::LOB_PTR AudioManager::_Mic(NULL);
+const char*           AudioManager::_EaxVer = "EAX2.0";
+const char*           AudioManager::_EaxSet = "EAXSet";
+const char*           AudioManager::_EaxGet = "EAXGet";
+
+IMPLEMENT_MANAGEMENT_LAYER(AudioManager)
+
 namespace dtAudio {
-
-   AudioManager::MOB_ptr AudioManager::_Mgr(NULL);
-   AudioManager::LOB_PTR AudioManager::_Mic(NULL);
-   const char*           AudioManager::_EaxVer = "EAX2.0";
-   const char*           AudioManager::_EaxSet = "EAXSet";
-   const char*           AudioManager::_EaxGet = "EAXGet";
-
-
-#pragma pack(push, 1)
-   typedef unsigned int   uint32_t;
-   typedef unsigned short uint16_t;
-
-   struct WAV_Header
-   {
-      struct
-      {
-         uint32_t Chunk_ID;
-         uint32_t ChunkSize;
-         uint32_t Format;
-      } riffChunkDescriptor;
-      struct
-      {
-         uint32_t Subchunk1ID;
-         uint32_t Subchunk1Size;
-         uint16_t AudioFormat;
-         uint16_t NumChannels;
-         uint32_t SampleRate;
-         uint32_t ByteRate;
-         uint16_t BlockAlign;
-         uint16_t BitsPerSample;
-      } fmtSubChunk;
-      struct
-      {
-         uint32_t Subchunk2ID;
-         uint32_t Subchunk2Size;
-      } dataSubChunk;
-   };
-#pragma pack(pop)
-
-   IMPLEMENT_MANAGEMENT_LAYER(AudioManager)
 
 ////////////////////////////////////////////////////////////////////////////////
 // Utility function used to work with OpenAL's error messaging system. It's used
@@ -104,6 +70,7 @@ bool CheckForError(const std::string& userMessage,
    return AL_FALSE;
 }
 
+} //namespace dtAudio
 
 ////////////////////////////////////////////////////////////////////////////////
 // public member functions
@@ -459,13 +426,80 @@ ALint AudioManager::LoadFile(const std::string& file)
 
    bd = new BufferData;
 
+   // Clear the errors
+   //ALenum err( alGetError() );
+
    // create buffer for the wave file
    alGenBuffers(1L, &bd->buf);
-
-   //if there are no errors creating the buffer then load the file 
-   if(CheckForError("AudioManager: alGenBuffers error", __FUNCTION__, __LINE__) || 
-      !LoadWavImpl(filename, *bd))
+   if (CheckForError("AudioManager: alGenBuffers error", __FUNCTION__, __LINE__))
    {
+      delete bd;
+      return AL_NONE;
+   }
+
+   ALenum format(0);
+   ALsizei size(0);
+   ALvoid* data = NULL;
+
+   // We are trying to support the new version of ALUT as well as the old intergated
+   // version. So we have two cases: DEPRECATED and NON-DEPRECATED.
+
+   // This is not defined in ALUT prior to version 1.
+   #ifndef ALUT_API_MAJOR_VERSION
+
+   // DEPRECATED version for ALUT < 1.0.0
+
+   // Man, are we still in the dark ages here???
+   // Copy the std::string to a frickin' ALByte array...
+   ALbyte fname[256L];
+   unsigned int len = std::min(filename.size(), size_t(255L));
+   memcpy(fname, filename.c_str(), len);
+   fname[len] = 0L;
+
+   ALsizei freq(0);
+   #ifdef __APPLE__
+   alutLoadWAVFile(fname, &format, &data, &size, &freq);
+   #else
+   alutLoadWAVFile(fname, &format, &data, &size, &freq, &bd->loop);
+   #endif // __APPLE__
+
+   #else
+
+   // NON-DEPRECATED version for ALUT >= 1.0.0
+   ALfloat freq(0);
+   data = alutLoadMemoryFromFile(filename.c_str(), &format, &size, &freq);
+   CheckForError("data = alutLoadMemoryFromFile", __FUNCTION__, __LINE__);
+
+   #endif // ALUT_API_MAJOR_VERSION
+
+   if (data == NULL)
+   {
+      #ifndef ALUT_API_MAJOR_VERSION
+      Log::GetInstance("audiomanager.cpp").LogMessage(Log::LOG_WARNING, __FUNCTION__,
+         "AudioManager: alutLoadWAVFile error on %s", file.c_str());
+      #else
+         CheckForError("AudioManager: alutLoadMemoryFromFile error", __FUNCTION__, __LINE__);
+      #endif // ALUT_API_MAJOR_VERSION
+
+      ReleaseSoundBuffer(bd->buf, "alDeleteBuffers error", __FUNCTION__, __LINE__);
+      delete bd;
+
+      return AL_NONE;
+   }
+
+   bd->format = format;
+   bd->freq   = ALsizei(freq);
+   bd->size   = size;
+   alBufferData(bd->buf, bd->format, data, bd->size, bd->freq);
+   
+   free(data);
+   data = NULL;
+   
+   if (CheckForError("AudioManager: alBufferData error ", __FUNCTION__, __LINE__))
+   {
+      ReleaseSoundBuffer(bd->buf, "alDeleteBuffers error prior to deleting data.",
+         __FUNCTION__, __LINE__);
+
       delete bd;
       return AL_NONE;
    }
@@ -474,131 +508,6 @@ ALint AudioManager::LoadFile(const std::string& file)
    bd->file = mBufferMap.find(file)->first.c_str();
 
    return bd->buf;
-}
-
-bool AudioManager::LoadWavImpl(const std::string& filename, BufferData& bd)
-{
-#ifdef DELTA_USE_ALUT
-   ALenum format(0);
-   ALsizei size(0);
-   ALvoid* data = NULL;
-   ALfloat freq(0);
-
-   data = alutLoadMemoryFromFile(filename.c_str(), &format, &size, &freq);
-   CheckForError("data = alutLoadMemoryFromFile", __FUNCTION__, __LINE__);
-
-   if (data == NULL)
-   {
-      CheckForError("AudioManager: alutLoadMemoryFromFile error", __FUNCTION__, __LINE__);
-      ReleaseSoundBuffer(bd.buf, "alDeleteBuffers error", __FUNCTION__, __LINE__);
-      return false;
-   }
-
-   bd.format = format;
-   bd.freq   = ALsizei(freq);
-   bd.size   = size;
-   alBufferData(bd.buf, bd.format, data, bd.size, bd.freq);
-   
-   if (CheckForError("AudioManager: alBufferData error ", __FUNCTION__, __LINE__))
-   {
-      ReleaseSoundBuffer(bd.buf, "alDeleteBuffers error prior to deleting data.",
-         __FUNCTION__, __LINE__);
-
-      free(data);
-      data = NULL;
-
-      return false;
-   }
-   
-   return true;
-#else
-
-   bool success = false;
-
-   // load the wav file...
-   {
-      std::ifstream filestream(filename.c_str(), std::ios::in | std::ios::binary);
-      if (!filestream.fail())
-      {
-         // get file size
-         filestream.seekg(0, std::ios_base::end);
-         const long filesize = filestream.tellg();
-         filestream.seekg(0, std::ios_base::beg);
-         //printf("\tfile size: %d bytes\n", filesize);
-
-         WAV_Header header;
-         filestream.read((char *)&header, sizeof(header));
-
-         // print details about wav header
-         //TODO- make these printouts dtUtil Log Debugs
-      /*   printf("\twave header:\n");
-         printf("\t\tChunk_ID:\t%c%c%c%c\n", ((char *)(&header.riffChunkDescriptor.Chunk_ID))[0],
-            ((char *)(&header.riffChunkDescriptor.Chunk_ID))[1], ((char *)(&header.riffChunkDescriptor.Chunk_ID))[2],
-            ((char *)(&header.riffChunkDescriptor.Chunk_ID))[3]);
-         printf("\t\tChunkSize:\t%d\n",      header.riffChunkDescriptor.ChunkSize);
-         printf("\t\tFormat:\t%c%c%c%c\n",   ((char *)(&header.riffChunkDescriptor.Format))[0],
-            ((char *)(&header.riffChunkDescriptor.Format))[1], ((char *)(&header.riffChunkDescriptor.Format))[2],
-            ((char *)(&header.riffChunkDescriptor.Format))[3]);
-         printf("\t\tSubchunk1ID:\t%c%c%c%c\n", ((char *)(&header.fmtSubChunk.Subchunk1ID))[0],
-            ((char *)(&header.fmtSubChunk.Subchunk1ID))[1], ((char *)(&header.fmtSubChunk.Subchunk1ID))[2],
-            ((char *)(&header.fmtSubChunk.Subchunk1ID))[3]);
-         printf("\t\tSubchunk1Size:\t%d\n",  header.fmtSubChunk.Subchunk1Size);
-         printf("\t\tAudioFormat:\t%d\n",    header.fmtSubChunk.AudioFormat);
-         printf("\t\tNumChannels:\t%d\n",    header.fmtSubChunk.NumChannels);
-         printf("\t\tSampleRate:\t%d\n",     header.fmtSubChunk.SampleRate);
-         printf("\t\tByteRate:\t%d\n",       header.fmtSubChunk.ByteRate);
-         printf("\t\tBlockAlign:\t%d\n",     header.fmtSubChunk.BlockAlign);
-         printf("\t\tBitsPerSample:\t%d\n",  header.fmtSubChunk.BitsPerSample);
-         printf("\t\tSubchunk2ID:\t%c%c%c%c\n", ((char *)(&header.dataSubChunk.Subchunk2ID))[0],
-            ((char *)(&header.dataSubChunk.Subchunk2ID))[1], ((char *)(&header.dataSubChunk.Subchunk2ID))[2],
-            ((char *)(&header.dataSubChunk.Subchunk2ID))[3]);
-         printf("\t\tSubchunk2Size:\t%d\n",  header.dataSubChunk.Subchunk2Size);*/
-
-         // note: Subchunk2Size field is often wrong
-         // correct result is filesize - headersize
-         const size_t dataSize = filesize - sizeof(header);
-
-         {
-            std::vector<char> data;
-            data.resize(dataSize);
-
-            filestream.read(&data[0], data.size());
-            if (osg::getCpuByteOrder() == osg::BigEndian)
-            {
-               osg::swapBytes(&data[0], data.size());
-            }
-            {
-               if (header.fmtSubChunk.NumChannels == 1)
-               {
-                  bd.format = AL_FORMAT_MONO16;
-               }
-               else if (header.fmtSubChunk.NumChannels == 2)
-               {
-                  bd.format = AL_FORMAT_STEREO16;
-               }
-
-               bd.freq   = ALsizei(header.fmtSubChunk.SampleRate);
-               bd.size   = dataSize;
-               
-               alBufferData(bd.buf, bd.format, &data[0], bd.size, bd.freq);
-            }
-            const ALenum error = alGetError();
-            switch (error)
-            {
-            case AL_NO_ERROR:
-               success = true;
-               break;
-            default:
-               printf("warning: OpenAL buffer data attempt failed\n");
-               printf("\terror: %s\n", alGetString(error));
-               break;
-            }
-         }
-      }
-   }
-
-   return success;
-#endif
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -898,6 +807,3 @@ void AudioManager::CloseContext()
       mContext = NULL;
    }
 }
-
-} //namespace dtAudio
-
