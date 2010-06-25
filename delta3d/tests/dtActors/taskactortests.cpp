@@ -28,29 +28,36 @@
 #include <prefix/unittestprefix.h>
 #include <cppunit/extensions/HelperMacros.h>
 
+#include <dtABC/application.h>
+
 #include <dtActors/taskactor.h>
 #include <dtActors/taskactorgameevent.h>
 #include <dtActors/taskactorrollup.h>
 #include <dtActors/taskactorordered.h>
 #include <dtActors/engineactorregistry.h>
 
+#include <dtCore/system.h>
+#include <dtCore/scene.h>
+
+#include <dtDAL/actoridactorproperty.h>
+#include <dtDAL/arrayactorproperty.h>
+#include <dtDAL/doubleactorproperty.h>
+#include <dtDAL/floatactorproperty.h>
+#include <dtDAL/gameevent.h>
+#include <dtDAL/gameeventactorproperty.h>
+#include <dtDAL/gameeventmanager.h>
+#include <dtDAL/intactorproperty.h>
+#include <dtDAL/librarymanager.h>
+#include <dtDAL/namedparameter.h>
+#include <dtDAL/stringactorproperty.h>
+
 #include <dtGame/gamemanager.h>
 #include <dtGame/defaultmessageprocessor.h>
 #include <dtGame/basemessages.h>
 #include <dtGame/messagefactory.h>
-#include <dtDAL/librarymanager.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/arrayactorproperty.h>
-#include <dtDAL/gameeventmanager.h>
-#include <dtDAL/gameevent.h>
-#include <dtDAL/namedparameter.h>
-
-#include <dtCore/system.h>
-#include <dtCore/scene.h>
 
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/stringutils.h>
-#include <dtABC/application.h>
 
 #include <vector>
 

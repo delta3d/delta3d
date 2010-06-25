@@ -19,9 +19,10 @@
  * Matthew W. Campbell, Curtiss Murphy
  */
 #include <dtActors/taskactorordered.h>
+
 #include <dtActors/engineactorregistry.h>
 
-#include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/enumactorproperty.h>
 #include <dtDAL/functor.h>
 
 namespace dtActors

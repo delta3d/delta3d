@@ -19,7 +19,7 @@
  * William E. Johnson II
  */
 #include "dtActors/playerstartactorproxy.h"
-#include <dtDAL/enginepropertytypes.h>
+
 #include <dtDAL/actorproxyicon.h>
 
 namespace dtActors

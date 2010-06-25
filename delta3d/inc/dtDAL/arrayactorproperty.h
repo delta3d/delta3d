@@ -21,11 +21,14 @@
 #ifndef DELTA_ARRAY_ACTOR_PROPERTY
 #define DELTA_ARRAY_ACTOR_PROPERTY
 
-#include <dtDAL/export.h>
 #include <dtDAL/arrayactorpropertybase.h>
+#include <dtDAL/export.h>
+
+#include <dtUtil/functor.h>
+#include <dtUtil/log.h>
+
 #include <string>
 #include <vector>
-#include <dtUtil/functor.h>
 
 namespace dtDAL
 {

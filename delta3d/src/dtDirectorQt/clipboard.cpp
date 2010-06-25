@@ -20,14 +20,14 @@
  */
 
 #include <dtDirectorQt/clipboard.h>
-#include <dtDirectorQt/undomanager.h>
-#include <dtDirectorQt/undocreateevent.h>
 
-#include <dtDirector/nodemanager.h>
+#include <dtDAL/vectoractorproperties.h>
+
 #include <dtDirector/directorgraph.h>
+#include <dtDirector/nodemanager.h>
 
-#include <dtDAL/enginepropertytypes.h>
-
+#include <dtDirectorQt/undocreateevent.h>
+#include <dtDirectorQt/undomanager.h>
 
 namespace dtDirector
 {

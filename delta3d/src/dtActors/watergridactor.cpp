@@ -23,11 +23,22 @@
  */
 
 #include <dtActors/watergridactor.h>
+
+#include <dtABC/application.h>
+#include <dtABC/applicationconfigdata.h>
+
 #include <dtActors/watergridbuilder.h>
 
-#include <dtDAL/functor.h>
-#include <dtDAL/enginepropertytypes.h>
+#include <dtCore/cloudplane.h>
+#include <dtCore/scene.h>
+#include <dtCore/shadermanager.h>
+#include <dtCore/transform.h>
+
 #include <dtDAL/actorproxyicon.h>
+#include <dtDAL/colorrgbaactorproperty.h>
+#include <dtDAL/enumactorproperty.h>
+#include <dtDAL/functor.h>
+#include <dtDAL/stringactorproperty.h>
 
 #include <dtGame/gamemanager.h>
 #include <dtGame/messagetype.h>
@@ -35,43 +46,36 @@
 #include <dtGame/gameactor.h>
 #include <dtGame/invokable.h>
 #include <dtGame/actorupdatemessage.h>
-#include <cmath>
-
-#include <dtCore/shadermanager.h>
-#include <dtCore/scene.h>
-#include <dtCore/cloudplane.h>
-#include <dtCore/transform.h>
-
-#include <dtABC/application.h>
-#include <dtABC/applicationconfigdata.h>
 
 #include <dtUtil/mathdefines.h>
 #include <dtUtil/noisetexture.h>
 #include <dtUtil/matrixutil.h>
 
-#include <osg/MatrixTransform>
 #include <osg/BlendFunc>
-#include <osg/PolygonMode>
 #include <osg/Camera>
-#include <osg/Geode>
-#include <osg/Texture>
+#include <osg/CullFace>
 #include <osg/Depth>
+#include <osg/Geode>
 #include <osg/Geometry>
+#include <osg/Math>
+#include <osg/MatrixTransform>
+#include <osg/PolygonMode>
+#include <osg/Projection>
 #include <osg/StateSet>
 #include <osg/TexGen>
 #include <osg/TexGenNode>
 #include <osg/TexMat>
-#include <osg/Math>
-#include <osg/CullFace>
-#include <osg/Projection>
-#include <osgDB/ReadFile>
+#include <osg/Texture>
+
 #include <osgDB/FileUtils>
+#include <osgDB/ReadFile>
+
 #include <osgGA/GUIEventAdapter>
 
 #include <osgViewer/GraphicsWindow>
 
 #include <iostream>
-
+#include <cmath>
 
 namespace dtActors
 {

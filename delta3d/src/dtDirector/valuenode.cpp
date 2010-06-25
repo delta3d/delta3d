@@ -19,15 +19,12 @@
  * Author: Jeff P. Houde
  */
 
-#include <sstream>
-#include <algorithm>
-
 #include <dtDirector/valuenode.h>
-#include <dtDirector/valuelink.h>
 
-#include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actorproperty.h>
+#include <dtDAL/stringactorproperty.h>
 
+#include <dtDirector/valuelink.h>
 
 namespace dtDirector
 {

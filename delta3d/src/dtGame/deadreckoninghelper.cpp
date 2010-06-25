@@ -20,18 +20,19 @@
  */
 #include <prefix/dtgameprefix.h>
 #include <dtGame/deadreckoninghelper.h>
-#include <dtGame/deadreckoningcomponent.h>
-#include <dtDAL/actorproperty.h>
+
+#include <dtDAL/booleanactorproperty.h>
 #include <dtDAL/propertymacros.h>
-#include <dtDAL/enginepropertytypes.h>
+
+#include <dtGame/deadreckoningcomponent.h>
+#include <dtGame/gameactor.h>
+
 #include <dtUtil/log.h>
 #include <dtUtil/matrixutil.h>
 #include <dtUtil/mathdefines.h>
-#include <dtGame/gameactor.h>
 
-#include <osgSim/DOFTransform>
-#include <sstream>
 #include <osg/io_utils>  //for Vec3 streaming
+#include <osgSim/DOFTransform>
 
 namespace dtGame
 {

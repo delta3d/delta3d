@@ -21,9 +21,14 @@
 */
 
 #include "disactorcomponents.h"
-#include <dtDAL/enginepropertytypes.h>
+
+#include <dtDAL/datatype.h>
+#include <dtDAL/stringactorproperty.h>
+
 #include <dtDIS/propertyname.h>
+
 #include <dtGame/gameactor.h>
+
 #include <dtUtil/stringutils.h>
 
 ////////////////////////////////////////////////////////////////////////////////

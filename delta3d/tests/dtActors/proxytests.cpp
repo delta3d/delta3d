@@ -31,16 +31,27 @@
 
 #include <dtCore/refptr.h>
 
-#include <dtDAL/librarymanager.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/groupactorproperty.h>
+#include <dtDAL/abstractenumactorproperty.h>
+#include <dtDAL/actoractorproperty.h>
+#include <dtDAL/actoridactorproperty.h>
 #include <dtDAL/arrayactorpropertybase.h>
+#include <dtDAL/booleanactorproperty.h>
+#include <dtDAL/colorrgbaactorproperty.h>
 #include <dtDAL/containeractorproperty.h>
-#include <dtDAL/namedparameter.h>
 #include <dtDAL/datatype.h>
+#include <dtDAL/doubleactorproperty.h>
+#include <dtDAL/floatactorproperty.h>
 #include <dtDAL/gameevent.h>
+#include <dtDAL/gameeventactorproperty.h>
 #include <dtDAL/gameeventmanager.h>
+#include <dtDAL/groupactorproperty.h>
+#include <dtDAL/intactorproperty.h>
+#include <dtDAL/librarymanager.h>
+#include <dtDAL/longactorproperty.h>
+#include <dtDAL/namedparameter.h>
 #include <dtDAL/project.h>
+#include <dtDAL/stringactorproperty.h>
+#include <dtDAL/vectoractorproperties.h>
 
 #include <dtActors/engineactorregistry.h>
 

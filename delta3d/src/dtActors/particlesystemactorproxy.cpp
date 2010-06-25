@@ -20,10 +20,12 @@
  */
 
 #include <dtActors/particlesystemactorproxy.h>
-#include <dtDAL/enginepropertytypes.h>
+
 #include <dtDAL/actorproxyicon.h>
-#include <dtDAL/resourceactorproperty.h>
+#include <dtDAL/datatype.h>
+#include <dtDAL/booleanactorproperty.h>
 #include <dtDAL/functor.h>
+#include <dtDAL/resourceactorproperty.h>
 
 using namespace dtCore;
 using namespace dtDAL;

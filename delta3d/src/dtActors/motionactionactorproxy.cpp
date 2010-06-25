@@ -1,8 +1,12 @@
 #include <dtActors/motionactionactorproxy.h>
+
 #include <dtABC/motionaction.h>
+
+#include <dtDAL/actoractorproperty.h>
+#include <dtDAL/enumactorproperty.h>
 #include <dtDAL/exceptionenum.h>
-#include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/functor.h>
+#include <dtDAL/vectoractorproperties.h>
 
 using namespace dtCore;
 using namespace dtABC;

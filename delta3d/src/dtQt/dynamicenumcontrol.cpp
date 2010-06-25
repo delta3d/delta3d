@@ -27,13 +27,15 @@
  * Curtiss Murphy
  */
 #include <prefix/dtqtprefix.h>
-#include <dtUtil/enumeration.h>
 #include <dtQt/dynamicenumcontrol.h>
+
+#include <dtDAL/abstractenumactorproperty.h>
 #include <dtDAL/actorproxy.h>
-#include <dtDAL/actorproperty.h>
 #include <dtDAL/datatype.h>
-#include <dtDAL/enginepropertytypes.h>
+
+#include <dtUtil/enumeration.h>
 #include <dtUtil/log.h>
+
 #include <QtGui/QComboBox>
 #include <QtGui/QGridLayout>
 #include <QtGui/QIntValidator>

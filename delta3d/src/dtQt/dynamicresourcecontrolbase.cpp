@@ -27,33 +27,30 @@
  * Curtiss Murphy
  */
 #include <prefix/dtqtprefix.h>
-
 #include <dtQt/dynamicresourcecontrolbase.h>
-#include <dtQt/dynamiclabelcontrol.h>
-#include <dtQt/dynamicsubwidgets.h>
-
-#include <dtQt/propertyeditortreeview.h>
 
 #include <dtDAL/actorproxy.h>
-#include <dtDAL/actorproperty.h>
 #include <dtDAL/datatype.h>
-#include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/resourcedescriptor.h>
 #include <dtDAL/resourceactorproperty.h>
 
+#include <dtQt/dynamiclabelcontrol.h>
+#include <dtQt/dynamicsubwidgets.h>
+#include <dtQt/propertyeditortreeview.h>
+
 #include <dtUtil/log.h>
 
-#include <QtCore/QSize>
 #include <QtCore/QRect>
+#include <QtCore/QSize>
 
-#include <QtGui/QHBoxLayout>
+#include <QtGui/QColor>
+#include <QtGui/QFocusFrame>
 #include <QtGui/QGridLayout>
+#include <QtGui/QHBoxLayout>
 #include <QtGui/QLabel>
+#include <QtGui/QPalette>
 #include <QtGui/QPushButton>
 #include <QtGui/QWidget>
-#include <QtGui/QColor>
-#include <QtGui/QPalette>
-#include <QtGui/QFocusFrame>
 
 namespace dtQt
 {

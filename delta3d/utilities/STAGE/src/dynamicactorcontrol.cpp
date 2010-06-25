@@ -30,10 +30,11 @@
 #include <dtDAL/project.h>
 #include <dtEditQt/dynamicactorcontrol.h>
 #include <dtQt/propertyeditortreeview.h>
+#include <dtDAL/actoractorproperty.h>
+#include <dtDAL/actoridactorproperty.h>
 #include <dtDAL/map.h>
 #include <dtDAL/exceptionenum.h>
 #include <dtDAL/datatype.h>
-#include <dtDAL/enginepropertytypes.h>
 #include <QtGui/QPushButton>
 #include <QtGui/QHBoxLayout>
 

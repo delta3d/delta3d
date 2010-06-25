@@ -1,8 +1,12 @@
 #include <dtActors/beziercontrolleractorproxy.h>
+
 #include <dtABC/beziercontroller.h>
-#include <dtDAL/functor.h>
-#include <dtDAL/enginepropertytypes.h>
+
+#include <dtDAL/actoractorproperty.h>
+#include <dtDAL/booleanactorproperty.h>
 #include <dtDAL/exceptionenum.h>
+#include <dtDAL/functor.h>
+
 #include <sstream>
 
 using namespace dtABC;

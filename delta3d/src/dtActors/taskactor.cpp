@@ -21,21 +21,26 @@
 
 #include <dtActors/taskactor.h>
 
-#include <dtGame/invokable.h>
-#include <dtGame/messagetype.h>
-#include <dtGame/messagefactory.h>
+#include <dtGame/actorupdatemessage.h>
 #include <dtGame/basemessages.h>
 #include <dtGame/exceptionenum.h>
 #include <dtGame/gamemanager.h>
-#include <dtGame/actorupdatemessage.h>
+#include <dtGame/invokable.h>
+#include <dtGame/messagetype.h>
+#include <dtGame/messagefactory.h>
 
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/groupactorproperty.h>
+#include <dtDAL/actoridactorproperty.h>
 #include <dtDAL/arrayactorproperty.h>
+#include <dtDAL/booleanactorproperty.h>
+#include <dtDAL/doubleactorproperty.h>
+#include <dtDAL/floatactorproperty.h>
+#include <dtDAL/functor.h>
+#include <dtDAL/gameeventactorproperty.h>
+#include <dtDAL/groupactorproperty.h>
+#include <dtDAL/map.h>
 #include <dtDAL/namedparameter.h>
 #include <dtDAL/project.h>
-#include <dtDAL/map.h>
-#include <dtDAL/functor.h>
+#include <dtDAL/stringactorproperty.h>
 
 #include <sstream>
 

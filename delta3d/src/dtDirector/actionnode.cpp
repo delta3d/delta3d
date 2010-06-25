@@ -19,12 +19,8 @@
  * Author: Jeff P. Houde
  */
 
-#include <sstream>
-#include <algorithm>
-
 #include <dtDirector/actionnode.h>
 
-#include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actorproperty.h>
 
 namespace dtDirector

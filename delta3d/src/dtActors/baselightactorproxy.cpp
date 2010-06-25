@@ -20,9 +20,13 @@
  */
 
 #include <dtActors/baselightactorproxy.h>
-#include <dtDAL/enginepropertytypes.h>
+
 #include <dtDAL/actorproxyicon.h>
+#include <dtDAL/booleanactorproperty.h>
+#include <dtDAL/colorrgbaactorproperty.h>
+#include <dtDAL/enumactorproperty.h>
 #include <dtDAL/functor.h>
+#include <dtDAL/intactorproperty.h>
 
 namespace dtActors
 {

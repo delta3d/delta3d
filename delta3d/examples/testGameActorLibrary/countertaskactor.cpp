@@ -26,11 +26,13 @@
 * Matthew W. Campbell
 */
 #include "countertaskactor.h"
-#include <dtDAL/enginepropertytypes.h>
-#include <dtGame/messagetype.h>
+
+#include <dtDAL/intactorproperty.h>
+
 #include <dtGame/actorupdatemessage.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/messagefactory.h>
+#include <dtGame/messagetype.h>
 
 //////////////////////////////////////////////////////////////////////////////
 CounterTaskActor::CounterTaskActor(dtGame::GameActorProxy &proxy) : dtActors::TaskActor(proxy)

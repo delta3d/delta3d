@@ -21,12 +21,11 @@
 
 #include <dtDirectorNodes/removearrayaction.h>
 
-#include <dtDirector/director.h>
-#include <dtDirector/arrayvaluenode.h>
-
-#include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/arrayactorpropertybase.h>
+#include <dtDAL/intactorproperty.h>
 
+#include <dtDirector/arrayvaluenode.h>
+#include <dtDirector/director.h>
 
 namespace dtDirector
 {

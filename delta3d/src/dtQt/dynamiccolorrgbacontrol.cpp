@@ -27,16 +27,19 @@
  * Curtiss Murphy
  */
 #include <prefix/dtqtprefix.h>
-#include <dtQt/dynamiccolorelementcontrol.h>
 #include <dtQt/dynamiccolorrgbacontrol.h>
+
+#include <dtDAL/actorproxy.h>
+#include <dtDAL/datatype.h>
+#include <dtDAL/colorrgbaactorproperty.h>
+
+#include <dtQt/dynamiccolorelementcontrol.h>
 #include <dtQt/dynamicsubwidgets.h>
 #include <dtQt/propertyeditortreeview.h>
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/enginepropertytypes.h>
+
 #include <dtUtil/log.h>
 #include <dtUtil/mathdefines.h>
+
 #include <QtGui/QColorDialog>
 #include <QtGui/QColor>
 #include <QtGui/QGridLayout>

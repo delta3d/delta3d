@@ -19,14 +19,10 @@
  * Author: Jeff P. Houde
  */
 
-#include <sstream>
-#include <algorithm>
-
 #include <dtDirectorNodes/stringarrayvalue.h>
 
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/actorproperty.h>
 #include <dtDAL/arrayactorproperty.h>
+#include <dtDAL/stringactorproperty.h>
 
 namespace dtDirector
 {

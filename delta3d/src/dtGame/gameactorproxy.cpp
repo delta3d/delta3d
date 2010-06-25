@@ -21,19 +21,24 @@
 
 #include <prefix/dtgameprefix.h>
 #include <dtGame/gameactorproxy.h>
+
+#include <dtDAL/actoractorproperty.h>
+#include <dtDAL/actortype.h>
+#include <dtDAL/booleanactorproperty.h>
+#include <dtDAL/enumactorproperty.h>
+#include <dtDAL/stringactorproperty.h>
+
 #include <dtGame/actorcomponent.h>
 #include <dtGame/actorupdatemessage.h>
 #include <dtGame/basemessages.h>
 #include <dtGame/exceptionenum.h>
 #include <dtGame/gameactor.h>
 #include <dtGame/gamemanager.h>
+#include <dtGame/invokable.h>
 #include <dtGame/messagefactory.h>
 
-#include <dtGame/invokable.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/actortype.h>
-#include <dtUtil/log.h>
 #include <dtUtil/functor.h>
+#include <dtUtil/log.h>
 
 using namespace dtGame;
 

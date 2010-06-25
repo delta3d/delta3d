@@ -21,16 +21,15 @@
 
 #include <dtDirectorAudioNodes/soundaction.h>
 
-#include <dtDirector/director.h>
+#include <dtAudio/sound.h>
+#include <dtAudio/soundactorproxy.h>
 
 #include <dtCore/transform.h>
 #include <dtCore/transformable.h>
 
-#include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/actoridactorproperty.h>
 
-#include <dtAudio/sound.h>
-#include <dtAudio/soundactorproxy.h>
-
+#include <dtDirector/director.h>
 
 namespace dtDirector
 {

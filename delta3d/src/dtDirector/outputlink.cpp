@@ -19,14 +19,11 @@
  * Author: Jeff P. Houde
  */
 
-#include <sstream>
-#include <algorithm>
-
 #include <dtDirector/outputlink.h>
-#include <dtDirector/inputlink.h>
 
-#include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actorproperty.h>
+
+#include <dtDirector/inputlink.h>
 
 namespace dtDirector
 {

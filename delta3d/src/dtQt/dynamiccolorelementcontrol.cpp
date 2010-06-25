@@ -30,12 +30,15 @@
 //#include <osg/Vec3>
 #include <prefix/dtqtprefix.h>
 #include <dtQt/dynamiccolorelementcontrol.h>
-#include <dtQt/dynamicsubwidgets.h>
+
 #include <dtDAL/actorproxy.h>
-#include <dtDAL/actorproperty.h>
+#include <dtDAL/colorrgbaactorproperty.h>
 #include <dtDAL/datatype.h>
-#include <dtDAL/enginepropertytypes.h>
+
+#include <dtQt/dynamicsubwidgets.h>
+
 #include <dtUtil/log.h>
+
 #include <QtGui/QWidget>
 
 namespace dtQt

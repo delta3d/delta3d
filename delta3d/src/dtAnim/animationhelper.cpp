@@ -20,30 +20,27 @@
  */
 
 #include <dtAnim/animationhelper.h>
+
+#include <dtAnim/animationchannel.h>
+#include <dtAnim/animationgameactor.h>
+#include <dtAnim/animationsequence.h>
+#include <dtAnim/animationwrapper.h>
 #include <dtAnim/animnodebuilder.h>
 #include <dtAnim/cal3ddatabase.h>
 #include <dtAnim/cal3dmodeldata.h>
 #include <dtAnim/cal3dmodelwrapper.h>
 #include <dtAnim/ical3ddriver.h>
-#include <dtAnim/animationsequence.h>
-#include <dtAnim/animationchannel.h>
-#include <dtAnim/animationwrapper.h>
-
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/resourceactorproperty.h>
 
 #include <dtCore/hotspotattachment.h>
 
+#include <dtDAL/actorproperty.h>
+#include <dtDAL/actorproxy.h>
+#include <dtDAL/resourceactorproperty.h>
+
 #include <dtUtil/log.h>
 
-#include <osg/Texture2D>
-
-
-#include <dtAnim/animationgameactor.h>
 #include <osg/MatrixTransform>
-
+#include <osg/Texture2D>
 
 namespace dtAnim
 {

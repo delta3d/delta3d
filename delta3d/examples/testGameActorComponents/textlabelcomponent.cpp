@@ -1,8 +1,12 @@
 #include "textlabelcomponent.h"
 
-#include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/booleanactorproperty.h>
+#include <dtDAL/floatactorproperty.h>
+#include <dtDAL/stringactorproperty.h>
+
 #include <dtGame/basemessages.h>
 #include <dtGame/gameactor.h>
+
 #include <osg/Geode>
 
 const dtGame::ActorComponent::ACType TextLabelComponent::TYPE("TextLabelComponent");

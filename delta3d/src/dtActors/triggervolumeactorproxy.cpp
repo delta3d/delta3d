@@ -21,7 +21,9 @@
 
 #include <dtActors/triggervolumeactorproxy.h>
 #include <dtActors/triggervolumeactor.h>
-#include <dtDAL/enginepropertytypes.h>
+
+#include <dtDAL/datatype.h>
+#include <dtDAL/intactorproperty.h>
 
 using namespace dtActors;
 

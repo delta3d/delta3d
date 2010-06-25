@@ -39,7 +39,6 @@
 #include <dtActors/engineactorregistry.h>
 #include <dtCore/system.h>
 #include <dtDAL/librarymanager.h>
-#include <dtDAL/enginepropertytypes.h>
 #include <dtUtil/stringutils.h>
 
 extern dtABC::Application& GetGlobalApplication();

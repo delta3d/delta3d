@@ -28,21 +28,24 @@
 #include <prefix/unittestprefix.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-#include <dtAudio/soundactorproxy.h>
+#include <dtABC/application.h>
+
 #include <dtActors/engineactorregistry.h>
 
 #include <dtAudio/audiomanager.h>
 #include <dtAudio/sound.h>
-
-#include <dtGame/gamemanager.h>
-#include <dtUtil/datapathutils.h>
-#include <dtDAL/enginepropertytypes.h>
-
+#include <dtAudio/soundactorproxy.h>
 
 #include <dtCore/system.h>
 #include <dtCore/scene.h>
 
-#include <dtABC/application.h>
+#include <dtDAL/booleanactorproperty.h>
+#include <dtDAL/datatype.h>
+#include <dtDAL/floatactorproperty.h>
+
+#include <dtGame/gamemanager.h>
+
+#include <dtUtil/datapathutils.h>
 
 extern dtABC::Application& GetGlobalApplication();
 

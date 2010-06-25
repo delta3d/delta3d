@@ -19,13 +19,9 @@
  * Author: Jeff P. Houde
  */
 
-#include <sstream>
-#include <algorithm>
-
 #include <dtDirectorNodes/stringvalue.h>
 
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/actorproperty.h>
+#include <dtDAL/stringactorproperty.h>
 
 namespace dtDirector
 {

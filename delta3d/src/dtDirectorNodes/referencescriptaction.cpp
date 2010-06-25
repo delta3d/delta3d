@@ -21,10 +21,10 @@
 
 #include <dtDirectorNodes/referencescriptaction.h>
 
-#include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/project.h>
-#include <osgDB/FileNameUtils>
+#include <dtDAL/resourceactorproperty.h>
 
+#include <osgDB/FileNameUtils>
 
 namespace dtDirector
 {

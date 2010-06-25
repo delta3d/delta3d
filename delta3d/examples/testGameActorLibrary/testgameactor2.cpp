@@ -26,10 +26,14 @@
 * William E. Johnson II
 */
 #include "testgameactor2.h"
+
 #include <dtCore/scene.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtGame/messagetype.h>
+
+#include <dtDAL/intactorproperty.h>
+
 #include <dtGame/invokable.h>
+#include <dtGame/messagetype.h>
+
 /////////////////////////////////////////////////////
 // Actor Proxy code
 /////////////////////////////////////////////////////

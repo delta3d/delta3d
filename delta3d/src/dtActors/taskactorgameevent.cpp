@@ -20,12 +20,15 @@
  */
 
 #include <dtActors/taskactorgameevent.h>
-#include <dtDAL/enginepropertytypes.h>
+
+#include <dtDAL/functor.h>
+#include <dtDAL/gameeventactorproperty.h>
+#include <dtDAL/intactorproperty.h>
+
 #include <dtGame/basemessages.h>
-#include <dtGame/messagetype.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/invokable.h>
-#include <dtDAL/functor.h>
+#include <dtGame/messagetype.h>
 
 namespace dtActors
 {

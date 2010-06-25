@@ -21,15 +21,15 @@
 
 #include <dtDirectorNodes/setarrayaction.h>
 
-#include <dtDirector/director.h>
-#include <dtDirector/arrayvaluenode.h>
-
 #include <dtCore/transform.h>
 #include <dtCore/transformable.h>
 
-#include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/arrayactorpropertybase.h>
+#include <dtDAL/intactorproperty.h>
+#include <dtDAL/stringactorproperty.h>
 
+#include <dtDirector/arrayvaluenode.h>
+#include <dtDirector/director.h>
 
 namespace dtDirector
 {

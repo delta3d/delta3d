@@ -19,8 +19,10 @@
  * William E. Johnson II
  */
 #include <dtActors/spotlightactorproxy.h>
-#include <dtDAL/enginepropertytypes.h>
+
 #include <dtDAL/actorproxyicon.h>
+#include <dtDAL/datatype.h>
+#include <dtDAL/floatactorproperty.h>
 #include <dtDAL/functor.h>
 
 using namespace dtCore;

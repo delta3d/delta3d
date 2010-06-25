@@ -21,10 +21,14 @@
  */
 
 #include <dtActors/triggeractorproxy.h>
-#include <dtDAL/enginepropertytypes.h>
+
+#include <dtABC/trigger.h>
+
+#include <dtDAL/actoractorproperty.h>
+#include <dtDAL/booleanactorproperty.h>
+#include <dtDAL/doubleactorproperty.h>
 #include <dtDAL/exceptionenum.h>
 #include <dtDAL/functor.h>
-#include <dtABC/trigger.h>
 
 #include <sstream>
 

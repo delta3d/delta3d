@@ -20,10 +20,12 @@
  */
 
 #include <fireFighter/vehicleactor.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/actorproxyicon.h>
-#include <dtDAL/functor.h>
+
 #include <dtCore/object.h>
+
+#include <dtDAL/actorproxyicon.h>
+#include <dtDAL/enumactorproperty.h>
+#include <dtDAL/functor.h>
 
 ///////////////////////////////////////////////////////
 VehicleActorProxy::VehicleActorProxy()

@@ -19,13 +19,10 @@
  * Author: Jeff P. Houde
  */
 
-#include <sstream>
-#include <algorithm>
-
 #include <dtDirectorNodes/doublevalue.h>
 
-#include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actorproperty.h>
+#include <dtDAL/doubleactorproperty.h>
 
 namespace dtDirector
 {

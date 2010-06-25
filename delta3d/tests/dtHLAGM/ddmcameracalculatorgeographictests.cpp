@@ -26,19 +26,25 @@
 * David Guthrie
 */
 #include <prefix/unittestprefix.h>
-#include <cppunit/extensions/HelperMacros.h>
 
-#include <string>
+#include <dtCore/camera.h>
 #include <dtCore/refptr.h>
+#include <dtCore/transform.h>
+
+#include <dtDAL/datatype.h>
+#include <dtDAL/floatactorproperty.h>
+
 #include <dtHLAGM/ddmcameracalculatorgeographic.h>
 #include <dtHLAGM/ddmgeographicregiondata.h>
 #include <dtHLAGM/ddmutil.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtCore/camera.h>
-#include <dtCore/transform.h>
+
 #include <dtUtil/coordinates.h>
 
+#include <cppunit/extensions/HelperMacros.h>
+
 #include <osg/Vec3>
+
+#include <string>
 
 class DDMCameraCalculatorGeographicTests : public CPPUNIT_NS::TestFixture 
 {

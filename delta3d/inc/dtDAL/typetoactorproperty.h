@@ -26,11 +26,22 @@
 #ifndef DELTA_TYPETOACTORPROPERTY_H
 #define DELTA_TYPETOACTORPROPERTY_H
 
-#include <dtDAL/propertycontainer.h>
+#include <dtDAL/actoridactorproperty.h>
+#include <dtDAL/booleanactorproperty.h>
 #include <dtDAL/containeractorproperty.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/groupactorproperty.h>
+#include <dtDAL/doubleactorproperty.h>
+#include <dtDAL/enumactorproperty.h>
+#include <dtDAL/floatactorproperty.h>
+#include <dtDAL/gameeventactorproperty.h>
+#include <dtDAL/intactorproperty.h>
+#include <dtDAL/longactorproperty.h>
 #include <dtDAL/namedparameter.h>
+#include <dtDAL/propertycontainer.h>
+#include <dtDAL/resourceactorproperty.h>
+#include <dtDAL/stringactorproperty.h>
+#include <dtDAL/vectoractorproperties.h>
+#include <dtDAL/groupactorproperty.h>
+
 #include <dtUtil/command.h>
 #include <dtUtil/functor.h>
 #include <dtUtil/typemanip.h>

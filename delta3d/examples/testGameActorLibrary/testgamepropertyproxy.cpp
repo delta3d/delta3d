@@ -26,13 +26,27 @@
 * Curtiss Murphy
 */
 #include "testgamepropertyproxy.h"
-#include <dtDAL/enginepropertytypes.h>
+
 #include <dtActors/deltaobjectactorproxy.h>
+
 #include <dtCore/scene.h>
 #include <dtCore/object.h>
+
+#include <dtDAL/actoridactorproperty.h>
+#include <dtDAL/booleanactorproperty.h>
+#include <dtDAL/colorrgbaactorproperty.h>
+#include <dtDAL/doubleactorproperty.h>
+#include <dtDAL/enumactorproperty.h>
+#include <dtDAL/floatactorproperty.h>
+#include <dtDAL/gameeventactorproperty.h>
+#include <dtDAL/intactorproperty.h>
+#include <dtDAL/longactorproperty.h>
+#include <dtDAL/stringactorproperty.h>
+#include <dtDAL/vectoractorproperties.h>
+
 #include <dtGame/messagetype.h>
+
 #include <dtUtil/log.h>
-#include <sstream>
 
 using namespace dtCore;
 using namespace dtDAL;

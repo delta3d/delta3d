@@ -27,15 +27,18 @@
  * Curtiss Murphy
  */
 #include <prefix/stageprefix.h>
+
 #include <dtEditQt/dynamicnamecontrol.h>
-#include <dtQt/dynamicsubwidgets.h>
 #include <dtEditQt/editorevents.h>
-#include <dtDAL/enginepropertytypes.h>
+
+#include <dtQt/dynamicsubwidgets.h>
+
 #include <dtUtil/log.h>
+
 #include <QtGui/QGridLayout>
-#include <QtGui/QWidget>
 #include <QtGui/QLabel>
 #include <QtGui/QLineEdit>
+#include <QtGui/QWidget>
 
 namespace dtEditQt
 {

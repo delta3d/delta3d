@@ -28,36 +28,33 @@
  */
 #include <prefix/dtqtprefix.h>
 #include <dtQt/dynamicabstractcontrol.h>
-#include <dtQt/propertyeditortreeview.h>
+
 #include <dtDAL/actorproxy.h>
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <QtGui/QColor>
-#include <QtGui/QPalette>
-#include <QtGui/QWidget>
-#include <QtGui/QPainter>
-#include <QtCore/QSize>
-#include <QtGui/QStyleOptionViewItem>
+#include <dtDAL/datatype.h>
+#include <dtDAL/vectoractorproperties.h>
 
 #include <dtQt/dynamicabstractparentcontrol.h>
-//#include <dtEditQt/dynamicactorcontrol.h>
+#include <dtQt/dynamicarraycontrol.h>
 #include <dtQt/dynamicboolcontrol.h>
 #include <dtQt/dynamiccolorrgbacontrol.h>
+#include <dtQt/dynamiccontainercontrol.h>
+#include <dtQt/dynamicdoublecontrol.h>
 #include <dtQt/dynamicenumcontrol.h>
 #include <dtQt/dynamicfloatcontrol.h>
-#include <dtQt/dynamicdoublecontrol.h>
-//#include <dtEditQt/dynamicgrouppropertycontrol.h>
 #include <dtQt/dynamicintcontrol.h>
 #include <dtQt/dynamiclabelcontrol.h>
 #include <dtQt/dynamiclongcontrol.h>
-//#include <dtEditQt/dynamicresourcecontrol.h>
 #include <dtQt/dynamicstringcontrol.h>
 #include <dtQt/dynamicvecncontrol.h>
-//#include <dtEditQt/dynamicgameeventcontrol.h>
-#include <dtQt/dynamicarraycontrol.h>
-#include <dtQt/dynamiccontainercontrol.h>
+#include <dtQt/propertyeditortreeview.h>
 
-#include <dtDAL/datatype.h>
+#include <QtCore/QSize>
+
+#include <QtGui/QColor>
+#include <QtGui/QPainter>
+#include <QtGui/QPalette>
+#include <QtGui/QStyleOptionViewItem>
+#include <QtGui/QWidget>
 
 namespace dtQt
 {

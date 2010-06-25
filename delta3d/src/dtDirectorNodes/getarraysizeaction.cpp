@@ -21,11 +21,10 @@
 
 #include <dtDirectorNodes/getarraysizeaction.h>
 
+#include <dtDAL/intactorproperty.h>
+
 #include <dtDirector/director.h>
 #include <dtDirector/arrayvaluenode.h>
-
-#include <dtDAL/enginepropertytypes.h>
-
 
 namespace dtDirector
 {

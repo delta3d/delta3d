@@ -19,24 +19,22 @@
 * Bradley Anderegg
 */
 
-
 #include <dtAI/waypointreaderwriter.h>
+
 #include <dtAI/aiplugininterface.h>
-#include <dtAI/waypointinterface.h>
+#include <dtAI/navmesh.h>
 #include <dtAI/waypointcollection.h>
-#include <dtAI/navmesh.h>
-#include <dtAI/waypointpair.h>
-
-#include <dtAI/waypointtypes.h>
 #include <dtAI/waypointgraph.h>
-#include <dtAI/navmesh.h>
+#include <dtAI/waypointinterface.h>
+#include <dtAI/waypointpair.h>
+#include <dtAI/waypointtypes.h>
 
-#include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/exceptionenum.h>
 
 #include <dtUtil/datastream.h>
 #include <dtUtil/exception.h>
+
 #include <fstream>
 
 namespace dtAI

@@ -20,9 +20,14 @@
  */
 
 #include <dtActors/coordinateconfigactor.h>
-#include <dtDAL/enginepropertytypes.h>
+
+#include <dtDAL/booleanactorproperty.h>
+#include <dtDAL/enumactorproperty.h>
 #include <dtDAL/exceptionenum.h>
+#include <dtDAL/floatactorproperty.h>
 #include <dtDAL/functor.h>
+#include <dtDAL/intactorproperty.h>
+#include <dtDAL/vectoractorproperties.h>
 
 #include <osg/Math>
 

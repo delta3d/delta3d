@@ -30,62 +30,64 @@
 #include <prefix/stageprefix.h>
 #include <dtEditQt/editoractions.h>
 
-#include <QtGui/QAction>
-#include <QtGui/QIcon>
-#include <QtGui/QActionGroup>
-#include <QtGui/QMainWindow>
-#include <QtGui/QMessageBox>
-#include <QtCore/QTimer>
-#include <QtCore/QFileInfo>
-
-#include <osgDB/FileNameUtils>
-
 #include <dtActors/volumeeditactor.h>
 
-#include <dtEditQt/uiresources.h>
-#include <dtEditQt/editordata.h>
-#include <dtEditQt/editorevents.h>
-#include <dtEditQt/viewportmanager.h>
-#include <dtEditQt/viewportoverlay.h>
-#include <dtEditQt/editoraboutbox.h>
-#include <dtEditQt/editorsettings.h>
-#include <dtEditQt/libraryeditor.h>
-#include <dtEditQt/gameeventsdialog.h>
-#include <dtEditQt/stagecamera.h>
-#include <dtEditQt/projectcontextdialog.h>
-#include <dtEditQt/mapdialog.h>
-#include <dtEditQt/dialogmapproperties.h>
-#include <dtEditQt/mapsaveasdialog.h>
-#include <dtEditQt/prefabsaveasdialog.h>
-#include <dtEditQt/mainwindow.h>
-#include <dtEditQt/preferencesdialog.h>
-#include <dtEditQt/propertyeditor.h>
-#include <dtEditQt/undomanager.h>
-#include <dtEditQt/taskeditor.h>
-#include <dtEditQt/configurationmanager.h>
-#include <dtEditQt/externaltooldialog.h>
-#include <dtEditQt/externaltool.h>
-#include <dtEditQt/externaltoolargparsers.h>
-#include "ui_positiondialog.h"
-
-#include <dtQt/dialoglistselection.h>
-#include <dtQt/librarypathseditor.h>
-#include <dtQt/docbrowser.h>
-
-#include <dtUtil/log.h>
-#include <dtUtil/fileutils.h>
-#include <dtUtil/datapathutils.h>
-#include <dtUtil/librarysharingmanager.h>
 #include <dtCore/transform.h>
-#include <dtDAL/project.h>
-#include <dtDAL/map.h>
-#include <dtDAL/mapxml.h>
-#include <dtDAL/transformableactorproxy.h>
+
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/actorproxyicon.h>
 #include <dtDAL/environmentactor.h>
 #include <dtDAL/librarymanager.h>
-#include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/map.h>
+#include <dtDAL/mapxml.h>
+#include <dtDAL/project.h>
+#include <dtDAL/transformableactorproxy.h>
+#include <dtDAL/vectoractorproperties.h>
+
+#include <dtEditQt/configurationmanager.h>
+#include <dtEditQt/dialogmapproperties.h>
+#include <dtEditQt/editoraboutbox.h>
+#include <dtEditQt/editordata.h>
+#include <dtEditQt/editorevents.h>
+#include <dtEditQt/editorsettings.h>
+#include <dtEditQt/externaltool.h>
+#include <dtEditQt/externaltoolargparsers.h>
+#include <dtEditQt/externaltooldialog.h>
+#include <dtEditQt/gameeventsdialog.h>
+#include <dtEditQt/libraryeditor.h>
+#include <dtEditQt/mainwindow.h>
+#include <dtEditQt/mapdialog.h>
+#include <dtEditQt/mapsaveasdialog.h>
+#include <dtEditQt/prefabsaveasdialog.h>
+#include <dtEditQt/preferencesdialog.h>
+#include <dtEditQt/projectcontextdialog.h>
+#include <dtEditQt/propertyeditor.h>
+#include <dtEditQt/stagecamera.h>
+#include <dtEditQt/taskeditor.h>
+#include <dtEditQt/uiresources.h>
+#include <dtEditQt/undomanager.h>
+#include <dtEditQt/viewportmanager.h>
+#include <dtEditQt/viewportoverlay.h>
+#include "ui_positiondialog.h"
+
+#include <dtQt/dialoglistselection.h>
+#include <dtQt/docbrowser.h>
+#include <dtQt/librarypathseditor.h>
+
+#include <dtUtil/datapathutils.h>
+#include <dtUtil/fileutils.h>
+#include <dtUtil/librarysharingmanager.h>
+#include <dtUtil/log.h>
+
+#include <osgDB/FileNameUtils>
+
+#include <QtCore/QFileInfo>
+#include <QtCore/QTimer>
+#include <QtGui/QAction>
+#include <QtGui/QActionGroup>
+#include <QtGui/QIcon>
+#include <QtGui/QMainWindow>
+#include <QtGui/QMessageBox>
 
 #include <sstream>
 

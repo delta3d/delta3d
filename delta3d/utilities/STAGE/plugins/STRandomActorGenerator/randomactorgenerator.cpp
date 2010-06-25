@@ -1,31 +1,32 @@
 #include "randomactorgenerator.h"
 
-#include <ctime>
-
-#include <dtActors/volumeeditactor.h>
 #include <dtActors/gamemeshactor.h>
+#include <dtActors/volumeeditactor.h>
 
 #include <dtCore/isector.h>
-#include <dtCore/transformable.h>
 #include <dtCore/transform.h>
+#include <dtCore/transformable.h>
 
-#include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/librarymanager.h>
 #include <dtDAL/map.h>
+#include <dtDAL/vectoractorproperties.h>
 
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/mainwindow.h>
 #include <dtEditQt/pluginmanager.h>
+#include <dtEditQt/undomanager.h>
 #include <dtEditQt/viewportmanager.h>
 #include <dtEditQt/viewportoverlay.h>
-#include <dtEditQt/undomanager.h>
+
 #include <dtUtil/fileutils.h>
 
 #include <QtGui/QComboBox>
 #include <QtGui/QLineEdit>
 #include <QtGui/QMessageBox>
 #include <QtGui/QSpinBox>
+
+#include <ctime>
 
 const std::string RandomActorGeneratorPlugin::PLUGIN_NAME = "Random Actor Generator";
 

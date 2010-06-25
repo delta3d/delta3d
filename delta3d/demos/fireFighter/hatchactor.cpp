@@ -22,17 +22,19 @@
 #include <fireFighter/hatchactor.h>
 #include <fireFighter/gamelevelactor.h>
 #include <fireFighter/entityactorregistry.h>
+#include <fireFighter/messagetype.h>
+
 #include <dtAudio/audiomanager.h>
-#include <dtGame/gamemanager.h>
+
+#include <dtDAL/actorproperty.h>
+#include <dtDAL/functor.h>
+#include <dtDAL/gameeventmanager.h>
+
 #include <dtGame/basemessages.h>
+#include <dtGame/gamemanager.h>
 #include <dtGame/invokable.h>
 #include <dtGame/messagefactory.h>
 
-#include <dtDAL/gameeventmanager.h>
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/functor.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <fireFighter/messagetype.h>
 #include <osg/MatrixTransform>
 
 using dtCore::RefPtr;

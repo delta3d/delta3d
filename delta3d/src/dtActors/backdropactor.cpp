@@ -1,6 +1,7 @@
 #include <dtActors/backdropactor.h>
-#include <dtDAL/enginepropertytypes.h>
+
 #include <dtDAL/resourceactorproperty.h>
+#include <dtDAL/vectoractorproperties.h>
 
 #include <osg/Geometry>
 #include <osg/PolygonMode>

@@ -26,18 +26,23 @@
  * Curtiss Murphy
  */
 #include "testpropertyproxy.h"
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/resourceactorproperty.h>
-#include <dtDAL/namedparameter.h>
-#include <dtDAL/groupactorproperty.h>
+
+#include <dtCore/object.h>
+#include <dtCore/scene.h>
+
 #include <dtDAL/arrayactorproperty.h>
 #include <dtDAL/arrayactorpropertybase.h>
+#include <dtDAL/colorrgbaactorproperty.h>
 #include <dtDAL/containeractorproperty.h>
+#include <dtDAL/groupactorproperty.h>
+#include <dtDAL/intactorproperty.h>
+#include <dtDAL/namedparameter.h>
 #include <dtDAL/propertymacros.h>
-#include <dtCore/scene.h>
-#include <dtCore/object.h>
+#include <dtDAL/resourceactorproperty.h>
+#include <dtDAL/stringactorproperty.h>
+#include <dtDAL/vectoractorproperties.h>
+
 #include <dtUtil/log.h>
-#include <sstream>
 
 using namespace dtCore;
 using namespace dtDAL;

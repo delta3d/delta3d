@@ -1,15 +1,19 @@
 #include <dtActors/volumeeditactor.h>
+
 #include <dtCore/model.h>
 #include <dtCore/transform.h>
-#include <dtDAL/enginepropertytypes.h>
+
+#include <dtDAL/enumactorproperty.h>
 #include <dtDAL/functor.h>
+#include <dtDAL/vectoractorproperties.h>
+
 #include <dtUtil/log.h>
 
 #include <osg/BlendFunc>
 #include <osg/Depth>
 #include <osg/Geode>
-#include <osg/PolygonOffset>
 #include <osg/PolygonMode>
+#include <osg/PolygonOffset>
 #include <osg/Shape>
 #include <osg/ShapeDrawable>
 

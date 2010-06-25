@@ -19,13 +19,9 @@
  * Author: Jeff P. Houde
  */
 
-#include <sstream>
-#include <algorithm>
-
 #include <dtDirectorNodes/triggervolumeevent.h>
 
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/actorproperty.h>
+#include <dtDAL/actoridactorproperty.h>
 #include <dtDAL/actorproxy.h>
 
 namespace dtDirector

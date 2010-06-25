@@ -21,18 +21,19 @@
 
 #include "proceduralanimationactor.h"
 
-#include <dtCore/transform.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtGame/basemessages.h>
-#include <dtGame/gameactor.h>
-#include <dtGame/messagetype.h>
-#include <dtGame/gamemanager.h>
-#include <dtUtil/mathdefines.h>
-
 #include <dtAnim/animationhelper.h>
 #include <dtAnim/cal3dmodelwrapper.h>
-#include <dtAnim/posemeshdatabase.h>
 #include <dtAnim/posemath.h>
+#include <dtAnim/posemeshdatabase.h>
+
+#include <dtCore/transform.h>
+
+#include <dtGame/basemessages.h>
+#include <dtGame/gameactor.h>
+#include <dtGame/gamemanager.h>
+#include <dtGame/messagetype.h>
+
+#include <dtUtil/mathdefines.h>
 
 #include <cassert>
 

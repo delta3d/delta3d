@@ -27,54 +27,53 @@
  */
 
 #include <prefix/unittestprefix.h>
+#include "testcomponent.h"
 
-#include <cstdlib>
-#include <iostream>
-
-#include <osg/Math>
-#include <osg/io_utils>
-#include <osg/Endian>
-
-#include <dtUtil/log.h>
-#include <dtUtil/datastream.h>
-#include <dtUtil/datapathutils.h>
-
-#include <dtCore/refptr.h>
-#include <dtCore/observerptr.h>
-#include <dtCore/scene.h>
-#include <dtCore/system.h>
-
-#include <dtDAL/datatype.h>
-#include <dtDAL/resourcedescriptor.h>
-#include <dtDAL/actortype.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/project.h>
-#include <dtDAL/map.h>
+#include <testGameActorLibrary/testplayer.h>
 
 #include <dtABC/application.h>
 
-#include <dtGame/messageparameter.h>
-#include <dtGame/machineinfo.h>
-#include <dtGame/gameactor.h>
-#include <dtGame/basemessages.h>
-#include <dtGame/messagetype.h>
-#include <dtGame/messagefactory.h>
-#include <dtGame/gamemanager.h>
-#include <dtGame/actorupdatemessage.h>
-#include <dtGame/exceptionenum.h>
-#include <dtGame/defaultnetworkpublishingcomponent.h>
-#include <dtGame/defaultmessageprocessor.h>
-#include <dtGame/environmentactor.h>
-
-#include <testGameActorLibrary/testplayer.h>
-#include <cppunit/extensions/HelperMacros.h>
-
+#include <dtActors/engineactorregistry.h>
 #include <dtActors/gamemeshactor.h>
 #include <dtActors/playerstartactorproxy.h>
-#include <dtActors/engineactorregistry.h>
 #include <dtActors/taskactorgameevent.h>
 
-#include "testcomponent.h"
+#include <dtCore/observerptr.h>
+#include <dtCore/refptr.h>
+#include <dtCore/scene.h>
+#include <dtCore/system.h>
+
+#include <dtDAL/actortype.h>
+#include <dtDAL/datatype.h>
+#include <dtDAL/map.h>
+#include <dtDAL/project.h>
+#include <dtDAL/resourcedescriptor.h>
+
+#include <dtGame/actorupdatemessage.h>
+#include <dtGame/basemessages.h>
+#include <dtGame/defaultmessageprocessor.h>
+#include <dtGame/defaultnetworkpublishingcomponent.h>
+#include <dtGame/environmentactor.h>
+#include <dtGame/exceptionenum.h>
+#include <dtGame/gameactor.h>
+#include <dtGame/gamemanager.h>
+#include <dtGame/machineinfo.h>
+#include <dtGame/messagefactory.h>
+#include <dtGame/messageparameter.h>
+#include <dtGame/messagetype.h>
+
+#include <dtUtil/datapathutils.h>
+#include <dtUtil/datastream.h>
+#include <dtUtil/log.h>
+
+#include <cppunit/extensions/HelperMacros.h>
+
+#include <osg/Endian>
+#include <osg/io_utils>
+#include <osg/Math>
+
+#include <cstdlib>
+#include <iostream>
 
 extern dtABC::Application& GetGlobalApplication();
 

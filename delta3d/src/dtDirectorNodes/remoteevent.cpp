@@ -19,14 +19,10 @@
  * Author: Jeff P. Houde
  */
 
-#include <sstream>
-#include <algorithm>
-
 #include <dtDirectorNodes/remoteevent.h>
 
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/actorproperty.h>
 #include <dtDAL/actorproxy.h>
+#include <dtDAL/stringactorproperty.h>
 
 namespace dtDirector
 {

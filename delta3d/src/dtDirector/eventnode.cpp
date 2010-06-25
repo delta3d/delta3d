@@ -19,16 +19,15 @@
  * Author: Jeff P. Houde
  */
 
-#include <sstream>
-#include <algorithm>
-
 #include <dtDirector/eventnode.h>
-#include <dtDirector/director.h>
-#include <dtDirector/messagegmcomponent.h>
 
-#include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/actoridactorproperty.h>
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/actorproxy.h>
+#include <dtDAL/intactorproperty.h>
+
+#include <dtDirector/director.h>
+#include <dtDirector/messagegmcomponent.h>
 
 namespace dtDirector
 {

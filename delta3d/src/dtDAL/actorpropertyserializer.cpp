@@ -21,39 +21,35 @@
  */
 
 #include <prefix/dtdalprefix.h>
-#include <cstdio>
-#include <cstdlib>
-#include <string>
-#include <cmath>
-
-#include <osgDB/FileNameUtils>
-
-#include <dtCore/transformable.h>
-#include <dtCore/transform.h>
-
 #include <dtDAL/actorpropertyserializer.h>
-#include <dtDAL/exceptionenum.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/groupactorproperty.h>
-#include <dtDAL/arrayactorpropertybase.h>
-#include <dtDAL/containeractorproperty.h>
-#include <dtDAL/resourceactorproperty.h>
-#include <dtDAL/actorproperty.h>
+
+#include <dtCore/transform.h>
+#include <dtCore/transformable.h>
+
+#include <dtDAL/actoractorproperty.h>
+#include <dtDAL/actoridactorproperty.h>
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/actortype.h>
+#include <dtDAL/arrayactorpropertybase.h>
+#include <dtDAL/colorrgbaactorproperty.h>
+#include <dtDAL/containeractorproperty.h>
 #include <dtDAL/datatype.h>
+#include <dtDAL/exceptionenum.h>
 #include <dtDAL/gameevent.h>
+#include <dtDAL/gameeventactorproperty.h>
 #include <dtDAL/gameeventmanager.h>
-#include <dtDAL/mapxmlconstants.h>
+#include <dtDAL/groupactorproperty.h>
 #include <dtDAL/mapcontenthandler.h>
-#include <dtDAL/transformableactorproxy.h>
-#include <dtDAL/propertycontainer.h>
+#include <dtDAL/mapxmlconstants.h>
 #include <dtDAL/project.h>
+#include <dtDAL/propertycontainer.h>
+#include <dtDAL/resourceactorproperty.h>
+#include <dtDAL/transformableactorproxy.h>
+#include <dtDAL/vectoractorproperties.h>
 
 #include <dtUtil/xercesutils.h>
 
-#include <iostream>
-#include <typeinfo>
+#include <osgDB/FileNameUtils>
 
 XERCES_CPP_NAMESPACE_USE
 

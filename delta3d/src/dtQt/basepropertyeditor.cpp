@@ -28,17 +28,26 @@
  */
 
 #include <prefix/dtqtprefix.h>
-
 #include <dtQt/basepropertyeditor.h>
 
+#include <dtCore/deltadrawable.h>
+
+#include <dtDAL/actorproxy.h>
+#include <dtDAL/datatype.h>
+#include <dtDAL/exceptionenum.h>
+#include <dtDAL/librarymanager.h>
+#include <dtDAL/map.h>
+
 #include <dtQt/dynamicabstractcontrol.h>
+#include <dtQt/dynamiccontainercontrol.h>
 #include <dtQt/dynamicgroupcontrol.h>
 #include <dtQt/dynamiclabelcontrol.h>
 //#include <dtEditQt/dynamicnamecontrol.h>
 #include <dtQt/propertyeditormodel.h>
 #include <dtQt/propertyeditortreeview.h>
 
-#include <dtQt/dynamiccontainercontrol.h>
+#include <dtUtil/log.h>
+#include <dtUtil/tree.h>
 
 #include <QtCore/QStringList>
 
@@ -53,19 +62,6 @@
 #include <QtGui/QTreeView>
 #include <QtGui/QAction>
 #include <QtGui/QHeaderView>
-
-#include <dtCore/deltadrawable.h>
-
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/exceptionenum.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/librarymanager.h>
-#include <dtDAL/map.h>
-
-#include <dtUtil/log.h>
-#include <dtUtil/tree.h>
 
 #include <osg/Referenced>
 

@@ -19,16 +19,18 @@
  * Author: Jeff P. Houde
  */
 
-#include <sstream>
-#include <algorithm>
+#include <dtDirector/node.h>
+
+#include <dtDAL/actoridactorproperty.h>
+#include <dtDAL/actorproperty.h>
+#include <dtDAL/booleanactorproperty.h>
+#include <dtDAL/gameevent.h>
+#include <dtDAL/gameeventactorproperty.h>
+#include <dtDAL/stringactorproperty.h>
+#include <dtDAL/vectoractorproperties.h>
 
 #include <dtDirector/director.h>
-#include <dtDirector/node.h>
 #include <dtDirector/nodemanager.h>
-
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/gameevent.h>
 
 namespace dtDirector
 {

@@ -19,7 +19,10 @@
  * David Guthrie
  */
 #include <dtHLAGM/ddmappspacecalculator.h>
-#include <dtDAL/enginepropertytypes.h>
+
+#include <dtDAL/datatype.h>
+#include <dtDAL/longactorproperty.h>
+
 #include <dtHLAGM/ddmutil.h>
 
 namespace dtHLAGM

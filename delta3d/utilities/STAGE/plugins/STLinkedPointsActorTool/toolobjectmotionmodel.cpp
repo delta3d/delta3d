@@ -5,14 +5,15 @@
 #include "toolobjectmotionmodel.h"
 
 #include <dtActors/linkedpointsactorproxy.h>
+
 #include <dtCore/transform.h>
 #include <dtCore/transformable.h>
+
 #include <dtDAL/transformableactorproxy.h>
-#include <dtDAL/enginepropertytypes.h>
 
 #include <osg/Math>
-#include <osg/Vec3>
 #include <osg/Matrix>
+#include <osg/Vec3>
 
 IMPLEMENT_MANAGEMENT_LAYER(ToolObjectMotionModel)
 

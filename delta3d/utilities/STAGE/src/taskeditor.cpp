@@ -31,30 +31,31 @@
 #include <prefix/stageprefix.h>
 #include <dtEditQt/taskeditor.h>
 
-#include <QtGui/QGridLayout>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QGroupBox>
-#include <QtGui/QPushButton>
-#include <QtGui/QComboBox>
-#include <QtGui/QScrollArea>
-#include <QtGui/QListWidget>
-#include <QtGui/QLabel>
-#include <QtGui/QTableWidget>
-#include <QtGui/QHeaderView>
-#include <QtGui/QCheckBox>
+#include <dtCore/uniqueid.h>
+
+#include <dtDAL/actorproxy.h>
+#include <dtDAL/actortype.h>
+#include <dtDAL/booleanactorproperty.h>
+#include <dtDAL/map.h>
+#include <dtDAL/namedparameter.h>
+
+#include <dtEditQt/editordata.h>
 
 #include <QtCore/QString>
 #include <QtCore/QVariant>
 
-#include <dtEditQt/editordata.h>
-
-#include <dtDAL/map.h>
-#include <dtDAL/namedparameter.h>
-#include <dtDAL/actortype.h>
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtCore/uniqueid.h>
+#include <QtGui/QCheckBox>
+#include <QtGui/QComboBox>
+#include <QtGui/QGridLayout>
+#include <QtGui/QGroupBox>
+#include <QtGui/QHBoxLayout>
+#include <QtGui/QHeaderView>
+#include <QtGui/QLabel>
+#include <QtGui/QListWidget>
+#include <QtGui/QPushButton>
+#include <QtGui/QScrollArea>
+#include <QtGui/QTableWidget>
+#include <QtGui/QVBoxLayout>
 
 namespace dtEditQt
 {

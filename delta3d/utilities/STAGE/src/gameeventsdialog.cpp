@@ -31,33 +31,33 @@
 
 #include <prefix/stageprefix.h>
 
+#include <dtEditQt/editoractions.h>
+#include <dtEditQt/editordata.h>
+#include <dtEditQt/editorevents.h>
+#include <dtEditQt/gameeventdialog.h>
+#include <dtEditQt/gameeventsdialog.h>
+
+#include <dtDAL/actorproperty.h>
+#include <dtDAL/actorproxy.h>
+#include <dtDAL/datatype.h>
+#include <dtDAL/gameevent.h>
+#include <dtDAL/gameeventactorproperty.h>
+#include <dtDAL/gameeventmanager.h>
+#include <dtDAL/map.h>
+
+#include <dtUtil/log.h>
+
 #include <QtCore/QStringList>
+#include <QtGui/QGridLayout>
+#include <QtGui/QGroupBox>
+#include <QtGui/QHBoxLayout>
+#include <QtGui/QHeaderView>
+#include <QtGui/QMainWindow>
+#include <QtGui/QMessageBox>
+#include <QtGui/QPushButton>
 #include <QtGui/QTableWidget>
 #include <QtGui/QTableWidgetItem>
 #include <QtGui/QVBoxLayout>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QGridLayout>
-#include <QtGui/QPushButton>
-#include <QtGui/QMessageBox>
-#include <QtGui/QMainWindow>
-#include <QtGui/QGroupBox>
-#include <QtGui/QHeaderView>
-
-#include <dtEditQt/gameeventsdialog.h>
-#include <dtEditQt/gameeventdialog.h>
-#include <dtEditQt/editordata.h>
-#include <dtEditQt/editorevents.h>
-#include <dtEditQt/editoractions.h>
-
-#include <dtDAL/gameevent.h>
-#include <dtDAL/gameeventmanager.h>
-#include <dtDAL/map.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/enginepropertytypes.h>
-
-#include <dtUtil/log.h>
 
 using std::vector;
 using dtDAL::GameEvent;

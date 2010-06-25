@@ -26,31 +26,38 @@
 * @author Eddie Johnson and David Guthrie and Curtiss Murphy
 */
 #include <prefix/unittestprefix.h>
-#include <cstdlib>
-#include <iostream>
-#include <osg/Math>
-#include <osg/io_utils>
-#include <dtUtil/log.h>
-#include <dtUtil/datastream.h>
-#include <dtUtil//datapathutils.h>
+
+#include <dtABC/application.h>
+
 #include <dtCore/observerptr.h>
 #include <dtCore/refptr.h>
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/groupactorproperty.h>
-#include <dtDAL/resourcedescriptor.h>
+
 #include <dtDAL/actortype.h>
+#include <dtDAL/actoractorproperty.h>
+#include <dtDAL/datatype.h>
 #include <dtDAL/namedparameter.h>
+#include <dtDAL/resourcedescriptor.h>
+
 #include <dtGame/gamemanager.h>
 #include <dtGame/gameactorproxy.h>
 #include <dtGame/messageparameter.h>
-#include <osg/Endian>
-#include <cppunit/extensions/HelperMacros.h>
+
+#include <dtUtil/datastream.h>
+#include <dtUtil/datapathutils.h>
+#include <dtUtil/log.h>
 #include <dtUtil/mathdefines.h>
 
-#include <dtABC/application.h>
+#include <cppunit/extensions/HelperMacros.h>
+
+#include <osg/Endian>
+#include <osg/io_utils>
+#include <osg/Math>
+
+#include <cstdlib>
+#include <iostream>
+
 extern dtABC::Application& GetGlobalApplication();
 
 class NamedParameterTests : public CPPUNIT_NS::TestFixture

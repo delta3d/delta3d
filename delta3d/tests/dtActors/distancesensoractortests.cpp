@@ -29,26 +29,27 @@
 #include <prefix/unittestprefix.h>
 #include <cppunit/extensions/HelperMacros.h>
 
+#include <dtABC/application.h>
+
 #include <dtActors/distancesensoractor.h>
-#include <dtActors/gamemeshactor.h>
 #include <dtActors/engineactorregistry.h>
+#include <dtActors/gamemeshactor.h>
 
-#include <dtGame/gamemanager.h>
-#include <dtGame/defaultmessageprocessor.h>
 #include <dtGame/basemessages.h>
+#include <dtGame/defaultmessageprocessor.h>
+#include <dtGame/gamemanager.h>
 
+#include <dtDAL/actoractorproperty.h>
+#include <dtDAL/floatactorproperty.h>
 #include <dtDAL/librarymanager.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/groupactorproperty.h>
 #include <dtDAL/namedparameter.h>
 
-#include <dtCore/system.h>
 #include <dtCore/scene.h>
+#include <dtCore/system.h>
 
 #include <dtUtil/stringutils.h>
 
 #include <vector>
-#include <dtABC/application.h>
 
 extern dtABC::Application& GetGlobalApplication();
 

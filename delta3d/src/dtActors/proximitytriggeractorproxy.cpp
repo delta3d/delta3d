@@ -21,10 +21,13 @@
  */
 
 #include <dtActors/proximitytriggeractorproxy.h>
-#include <dtDAL/actorproxyicon.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/exceptionenum.h>
+
 #include <dtABC/proximitytrigger.h>
+
+#include <dtDAL/actoractorproperty.h>
+#include <dtDAL/actorproxyicon.h>
+#include <dtDAL/exceptionenum.h>
+#include <dtDAL/floatactorproperty.h>
 #include <dtDAL/functor.h>
 
 #include <sstream>

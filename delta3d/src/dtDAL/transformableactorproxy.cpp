@@ -20,12 +20,18 @@
  */
 #include <prefix/dtdalprefix.h>
 #include <dtDAL/transformableactorproxy.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/exceptionenum.h>
-#include <dtDAL/actorproxyicon.h>
-#include <dtCore/transformable.h>
-#include <dtCore/transform.h>
+
 #include <dtCore/scene.h>
+#include <dtCore/transform.h>
+#include <dtCore/transformable.h>
+
+#include <dtDAL/actorproxyicon.h>
+#include <dtDAL/booleanactorproperty.h>
+#include <dtDAL/enumactorproperty.h>
+#include <dtDAL/exceptionenum.h>
+#include <dtDAL/floatactorproperty.h>
+#include <dtDAL/vectoractorproperties.h>
+
 #include <dtUtil/matrixutil.h>
 
 namespace dtDAL
