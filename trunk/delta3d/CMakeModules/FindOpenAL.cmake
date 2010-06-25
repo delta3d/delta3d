@@ -142,10 +142,10 @@ ELSE(${OPENAL_INCLUDE_DIR} MATCHES ".framework")
     /opt/lib
     )
 	
-	 FIND_LIBRARY(ALUT_LIBRARY 
+   FIND_LIBRARY(ALUT_LIBRARY 
     NAMES alut
     PATHS
-	${DELTA3D_EXT_DIR}/lib
+    ${DELTA3D_EXT_DIR}/lib
     $ENV{OPENALDIR}/lib
     $ENV{OPENALDIR}/libs
     /usr/local/lib
@@ -155,7 +155,20 @@ ELSE(${OPENAL_INCLUDE_DIR} MATCHES ".framework")
     /opt/csw/lib
     /opt/lib
     )
-	
+    
+    FIND_LIBRARY(ALUT_DEBUG_LIBRARY 
+    NAMES alutd
+    PATHS
+    ${DELTA3D_EXT_DIR}/lib
+    $ENV{OPENALDIR}/lib
+    $ENV{OPENALDIR}/libs
+    /usr/local/lib
+    /usr/lib
+    /sw/lib
+    /opt/local/lib
+    /opt/csw/lib
+    /opt/lib
+    )
 ENDIF(${OPENAL_INCLUDE_DIR} MATCHES ".framework")
 
 SET(OPENAL_FOUND "NO")
