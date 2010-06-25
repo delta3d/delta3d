@@ -79,9 +79,9 @@ void initDeltaDrawableBindings()
    const DeltaDrawable* (DeltaDrawable::*GetChild2)(unsigned int) const = &DeltaDrawable::GetChild;
 
    class_<DeltaDrawable, bases<Base>, dtCore::RefPtr<DeltaDrawableWrap>, boost::noncopyable>("DeltaDrawable", no_init)
-      .def("SetParent", &DeltaDrawable::SetParent, &DeltaDrawableWrap::DefaultSetParent)
-      .def("AddChild", &DeltaDrawable::AddChild, with_custodian_and_ward<1, 2>())
-      .def("RemoveChild", &DeltaDrawable::RemoveChild, &DeltaDrawableWrap::DefaultRemoveChild)
+      .def("SetParent", &DeltaDrawable::SetParent/*, &DeltaDrawableWrap::DefaultSetParent*/)
+      .def("AddChild", &DeltaDrawable::AddChild/*, with_custodian_and_ward<1, 2>()*/)
+      .def("RemoveChild", &DeltaDrawable::RemoveChild/*, &DeltaDrawableWrap::DefaultRemoveChild*/)
       .def("GetParent", GetParent1, return_internal_reference<>())
       .def("GetParent", GetParent2, return_internal_reference<>())
       .def("GetSceneParent", GetSceneParent1, return_internal_reference<>())
