@@ -22,11 +22,11 @@ LINK_WITH_VARIABLES(${LIB_NAME}
                         OSG_LIBRARY
                         OSGDB_LIBRARY
                         OPENTHREADS_LIBRARY
-                        XERCES_LIBRARY)
+                        XERCES_LIBRARY
+                        ALUT_LIBRARY)
 
 TARGET_LINK_LIBRARIES( ${LIB_NAME}    
                        ${OPENAL_LIBRARY} 
-                       optimized ${ALUT_LIBRARY} debug ${ALUT_DEBUG_LIBRARY}
                        ${DTCORE_LIBRARY}
                        ${DTDAL_LIBRARY} #for SoundActorProxy
                        ${DTGAME_LIBRARY} #for SoundActorProxy
