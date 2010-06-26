@@ -169,7 +169,7 @@ namespace dtDAL
       //Finally we can actually add the new registry to the library manager.
       //The map key is the system independent library name.
       bool inserted = mRegistries.insert(std::make_pair(libName,entry)).second;
-      if( !inserted )
+      if (!inserted)
       {
          return false;
       }
@@ -238,7 +238,9 @@ namespace dtDAL
          return typeToFind.get();
       }
       else
+      {
          return NULL;
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -279,10 +281,12 @@ namespace dtDAL
    dtCore::RefPtr<ActorProxy> LibraryManager::CreateActorProxy(const std::string &category, const std::string &name)
    {
       dtCore::RefPtr<const ActorType> type = FindActorType(category, name);
-      if(!type.valid())
+      if (!type.valid())
+      {
          throw dtDAL::ObjectFactoryUnknownTypeException( 
          "No actor exists of the specified name [" + name + "] and category[" + 
          category + "].", __FILE__, __LINE__);
+      }
 
       return CreateActorProxy(*type);
    }
@@ -303,9 +307,13 @@ namespace dtDAL
       RegistryMapItor itor = mRegistries.find(name);
 
       if (itor == mRegistries.end())
+      {
          return NULL;
+      }
       else
+      {
          return itor->second.registry;
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -400,7 +408,9 @@ namespace dtDAL
       ActorPluginRegistry *reg = regEntry.registry;
 
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+      {
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Unloading actor plugin registry: \"%s\"", reg->GetName().c_str());
+      }
          
       regEntry.destroyFn(reg);
    }
@@ -409,7 +419,9 @@ namespace dtDAL
    LibraryManager &LibraryManager::GetInstance()
    {
       if (!LibraryManager::mInstance.valid())
+      {
          LibraryManager::mInstance = new LibraryManager();
+      }
       return *(LibraryManager::mInstance.get());
    }
 

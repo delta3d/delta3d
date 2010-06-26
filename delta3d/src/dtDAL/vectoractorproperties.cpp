@@ -18,6 +18,7 @@
  *
  * Eric Heine
  */
+#include <prefix/dtdalprefix.h>
 #include <dtDAL/vectoractorproperties.h>
 #include <dtUtil/stringutils.h>
 

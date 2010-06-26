@@ -122,14 +122,14 @@ namespace dtDAL
       mIconStateSet->setAttributeAndModes(pm,turnOn);
       geom->setStateSet(mIconStateSet.get());
 
-      if(mConfig.mForwardVector)
+      if (mConfig.mForwardVector)
       {
          osg::Group *arrow = CreateOrientationArrow();
          mArrowNode = new dtCore::Transformable();
          mArrowNode->GetMatrixNode()->addChild(arrow);
       }
 
-      if(mConfig.mUpVector)
+      if (mConfig.mUpVector)
       {
          osg::Group *arrowUp = CreateOrientationArrow();
          mArrowNodeUp = new dtCore::Transformable();
@@ -149,8 +149,8 @@ namespace dtDAL
 
       mBillBoard = new BillBoardDrawable();
       mBillBoard->AddChild(mIconNode.get());
-      if(mConfig.mForwardVector) mBillBoard->AddChild(mArrowNode.get());
-      if(mConfig.mUpVector) mBillBoard->AddChild(mArrowNodeUp.get());
+      if (mConfig.mForwardVector) mBillBoard->AddChild(mArrowNode.get());
+      if (mConfig.mUpVector) mBillBoard->AddChild(mArrowNodeUp.get());
 
       SetActorRotation(osg::Vec3(0.0f, 0.0f, 0.0f));
    }
@@ -180,7 +180,7 @@ namespace dtDAL
       osg::PolygonMode *pm = new osg::PolygonMode();
       pm->setMode(osg::PolygonMode::FRONT_AND_BACK,osg::PolygonMode::FILL);
 
-      if(mConfig.mForwardVector)
+      if (mConfig.mForwardVector)
       {
          image = osgDB::readImageFile(ActorProxyIcon::IMAGE_ARROW_HEAD);
          tex = new osg::Texture2D(image);
@@ -193,7 +193,7 @@ namespace dtDAL
          mConeStateSet->setMode(GL_LIGHTING,turnOff);
       }
 
-      if(mConfig.mUpVector)
+      if (mConfig.mUpVector)
       {
          image = osgDB::readImageFile(ActorProxyIcon::IMAGE_ARROW_BODY);
          tex = new osg::Texture2D(image);
@@ -237,14 +237,14 @@ namespace dtDAL
       trans.SetTranslation(newPos);
       mIconNode->SetTransform(trans);
 
-      if(mConfig.mForwardVector)
+      if (mConfig.mForwardVector)
       {
          mArrowNode->GetTransform(trans);
          trans.SetTranslation(newPos);
          mArrowNode->SetTransform(trans);
       }
 
-      if(mConfig.mUpVector)
+      if (mConfig.mUpVector)
       {
          mArrowNodeUp->GetTransform(trans);
          trans.SetTranslation(newPos);
@@ -265,14 +265,14 @@ namespace dtDAL
    void ActorProxyIcon::SetActorRotation(const osg::Vec3 &hpr)
    {
       dtCore::Transform tx;
-      if(mConfig.mForwardVector)
+      if (mConfig.mForwardVector)
       {
          mArrowNode->GetTransform(tx);
          tx.SetRotation(hpr);
          mArrowNode->SetTransform(tx);
       }
 
-      if(mConfig.mUpVector)
+      if (mConfig.mUpVector)
       {
          tx.SetRotation(osg::Vec3(hpr[0], hpr[1] + 90.0f, hpr[2]));
          mArrowNodeUp->SetTransform(tx);
@@ -285,14 +285,14 @@ namespace dtDAL
    {
       dtCore::Transform tx;
 
-      if(mConfig.mForwardVector)
+      if (mConfig.mForwardVector)
       {
          mArrowNode->GetTransform(tx);
          tx.SetRotation(mat);
          mArrowNode->SetTransform(tx);
       }
 
-      if(mConfig.mUpVector)
+      if (mConfig.mUpVector)
       {
          osg::Vec3 hpr;
          tx.GetRotation(hpr);
@@ -308,7 +308,7 @@ namespace dtDAL
       osg::Matrix mat;
       dtCore::Transform tx;
 
-      if(mConfig.mForwardVector)
+      if (mConfig.mForwardVector)
       {
          mArrowNode->GetTransform(tx);
          tx.Get(mat);
@@ -331,12 +331,12 @@ namespace dtDAL
    //////////////////////////////////////////////////////////////////////////
    osg::Group *ActorProxyIcon::CreateOrientationArrow()
    {
-      if( !mConeStateSet.valid() )
+      if ( !mConeStateSet.valid() )
       {
          mConeStateSet = new osg::StateSet();
       }
 
-      if( !mCylinderStateSet.valid() )
+      if ( !mCylinderStateSet.valid() )
       {
          mCylinderStateSet = new osg::StateSet();
       }

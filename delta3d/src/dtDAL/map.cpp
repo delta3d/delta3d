@@ -34,10 +34,10 @@
 
 #include <cstring>
 
-namespace dtDAL 
+namespace dtDAL
 {
    const std::string Map::MAP_FILE_EXTENSION(".dtmap");
-   
+
    Map::Map(const std::string& mFileName, const std::string& name)
       : mModified(true)
       , mName(name)
@@ -47,11 +47,11 @@ namespace dtDAL
       mEventManager = new MapGameEvents(*this);
       mPresetCameras.resize(10);
    }
-   
-   Map::~Map() 
+
+   Map::~Map()
    {
    }
-   
+
    Map::MapGameEvents::MapGameEvents(Map& parent): GameEventManager(), mParent(parent)
    {}
 
@@ -79,7 +79,7 @@ namespace dtDAL
       mParent.SetModified(true);
    }
 
-   ActorProxy* Map::GetProxyById(const dtCore::UniqueId& id) 
+   ActorProxy* Map::GetProxyById(const dtCore::UniqueId& id)
    {
       std::map<dtCore::UniqueId, dtCore::RefPtr<ActorProxy> >::iterator i = mProxyMap.find(id);
       if (i != mProxyMap.end())
@@ -88,26 +88,26 @@ namespace dtDAL
       }
       return NULL;
    }
-   
-   const ActorProxy* Map::GetProxyById(const dtCore::UniqueId& id) const 
+
+   const ActorProxy* Map::GetProxyById(const dtCore::UniqueId& id) const
    {
       std::map<dtCore::UniqueId, dtCore::RefPtr<ActorProxy> >::const_iterator i = mProxyMap.find(id);
-      if (i != mProxyMap.end()) 
-      {     
+      if (i != mProxyMap.end())
+      {
          return i->second.get();
       }
       return NULL;
    }
-   
-   void Map::SetFileName(const std::string& newFileName) 
+
+   void Map::SetFileName(const std::string& newFileName)
    {
       //if "" is passed into the constructor is SetFileName
       //then it should be ignored.
       mFileName = newFileName;
-      
+
       if (mFileName.empty())
          return;
-      
+
       //see if the file already has an extension. If it does, just use it. If
       //not, tack on the officially sanctioned extension.
       if (osgDB::getFileExtension(mFileName).empty())
@@ -115,55 +115,55 @@ namespace dtDAL
          mFileName += MAP_FILE_EXTENSION;
       }
    }
-   
+
    void Map::FindProxies(std::vector<dtCore::RefPtr<ActorProxy> >& container,
                          const std::string& name,
                          const std::string& category,
                          const std::string& typeName,
                          const std::string& className,
-                         PlaceableFilter placeable) 
+                         PlaceableFilter placeable)
    {
       container.clear();
-      
-      if (name != "" || category != "" || typeName != "" || className != "" || placeable != Either ) 
+
+      if (name != "" || category != "" || typeName != "" || className != "" || placeable != Either )
       {
          for (std::map<dtCore::UniqueId, dtCore::RefPtr<ActorProxy> >::iterator i = mProxyMap.begin();
-              i != mProxyMap.end(); ++i) 
+              i != mProxyMap.end(); ++i)
          {
             ActorProxy* ap = i->second.get();
-            
+
             if (name == "" || WildMatch(name, ap->GetName()))
                if (MatchesSearch(*ap, category, typeName, className, placeable))
                   container.push_back(dtCore::RefPtr<ActorProxy>(ap));
          }
-      } 
-      else 
+      }
+      else
       {
          //return everything.
          container.reserve(mProxyMap.size());
          for (std::map<dtCore::UniqueId, dtCore::RefPtr<ActorProxy> >::iterator i = mProxyMap.begin();
-              i != mProxyMap.end(); ++i) 
+              i != mProxyMap.end(); ++i)
          {
             ActorProxy* ap = i->second.get();
             container.push_back(ap);
          }
       }
-      
+
    }
-   
+
    void Map::FindProxies(std::vector<dtCore::RefPtr<const ActorProxy> >& container,
                          const std::string& name,
                          const std::string& category,
                          const std::string& typeName,
                          const std::string& className,
-                         PlaceableFilter placeable) const 
+                         PlaceableFilter placeable) const
    {
       container.clear();
-      
-      if (name != "" || category != "" || typeName != "" || className != "" || placeable != Either) 
+
+      if (name != "" || category != "" || typeName != "" || className != "" || placeable != Either)
       {
          for (std::map<dtCore::UniqueId, dtCore::RefPtr<ActorProxy> >::const_iterator i = mProxyMap.begin();
-              i != mProxyMap.end(); ++i) 
+              i != mProxyMap.end(); ++i)
          {
             const ActorProxy* ap = i->second.get();
 
@@ -171,13 +171,13 @@ namespace dtDAL
                if (MatchesSearch(*ap, category, typeName, className, placeable))
                   container.push_back(ap);
          }
-      } 
-      else 
+      }
+      else
       {
          //return everything.
          container.reserve(mProxyMap.size());
          for (std::map<dtCore::UniqueId, dtCore::RefPtr<ActorProxy> >::const_iterator i = mProxyMap.begin();
-              i != mProxyMap.end(); ++i) 
+              i != mProxyMap.end(); ++i)
          {
             const ActorProxy* ap = i->second.get();
             container.push_back(ap);
@@ -196,15 +196,15 @@ namespace dtDAL
 
       if (!typeName.empty() || !category.empty())
       {
-         const ActorType* actorType = &actorProxy.GetActorType();         
+         const ActorType* actorType = &actorProxy.GetActorType();
          bool matches = false;
-         
+
          while (!matches && actorType != NULL)
          {
-            bool nameMatches = typeName.empty() || actorType->GetName() == typeName;       
-            const std::string& actualCategory = actorType->GetCategory();      
-            bool catMatches = false; 
-            
+            bool nameMatches = typeName.empty() || actorType->GetName() == typeName;
+            const std::string& actualCategory = actorType->GetCategory();
+            bool catMatches = false;
+
             if (actualCategory.size() >= category.size())
             {
                //The category needs to be either the whole name or be a substring up to a '.'
@@ -212,15 +212,15 @@ namespace dtDAL
                             (actualCategory.substr(0, category.size()) == category
                             && (actualCategory.size() == category.size() || actualCategory[category.size()] == '.'));
             }
-            
+
             matches = catMatches && nameMatches;
             actorType = actorType->GetParentActorType();
          }
-         
+
          if (!matches)
             return false;
       }
-      
+
       if (placeable == Placeable && !actorProxy.IsPlaceable())
          return false;
       else if (placeable == NotPlaceable && actorProxy.IsPlaceable())
@@ -230,7 +230,7 @@ namespace dtDAL
 
    }
 
-   void Map::AddProxy(ActorProxy& proxy, bool reNumber) 
+   void Map::AddProxy(ActorProxy& proxy, bool reNumber)
    {
       // Check if this proxy already has a number associated with it.
       std::string proxyName = proxy.GetName();
@@ -270,7 +270,7 @@ namespace dtDAL
          }
       }
 
-      if (mProxyMap.insert(std::make_pair(proxy.GetId(), dtCore::RefPtr<ActorProxy>(&proxy))).second) 
+      if (mProxyMap.insert(std::make_pair(proxy.GetId(), dtCore::RefPtr<ActorProxy>(&proxy))).second)
       {
          const std::set<std::string>& hierarchy = proxy.GetClassHierarchy();
          mProxyActorClasses.insert(proxy.GetClassName());
@@ -283,7 +283,7 @@ namespace dtDAL
    {
       //This needs to be faster.
       std::map<dtCore::UniqueId, dtCore::RefPtr<ActorProxy> >::iterator i = mProxyMap.find(proxy.GetId());
-      if (i != mProxyMap.end()) 
+      if (i != mProxyMap.end())
       {
          mModified = true;
 
@@ -292,13 +292,13 @@ namespace dtDAL
          std::vector<dtCore::RefPtr<ActorProxy> > proxies;
 
          GetAllProxies(proxies);
-         for(unsigned int j = 0; j < proxies.size(); j++)
+         for (unsigned int j = 0; j < proxies.size(); j++)
          {
             std::vector<ActorProperty*> props;
             proxies[j]->GetPropertyList(props);
-            for(unsigned int k = 0; k < props.size(); k++)
+            for (unsigned int k = 0; k < props.size(); k++)
             {
-               if(props[k]->GetDataType() == DataType::ACTOR)
+               if (props[k]->GetDataType() == DataType::ACTOR)
                {
                   ActorActorProperty* aap = dynamic_cast<ActorActorProperty*>(props[k]);
                   if (aap != NULL)
@@ -350,16 +350,16 @@ namespace dtDAL
       }
    }
 
-   void Map::ClearProxies() 
+   void Map::ClearProxies()
    {
       mProxyMap.clear();
       mProxyActorClasses.clear();
    }
 
-   void Map::RebuildProxyActorClassSet() const 
+   void Map::RebuildProxyActorClassSet() const
    {
       mProxyActorClasses.clear();
-      for (std::map<dtCore::UniqueId, dtCore::RefPtr<ActorProxy> >::const_iterator i = mProxyMap.begin(); i != mProxyMap.end(); ++i) 
+      for (std::map<dtCore::UniqueId, dtCore::RefPtr<ActorProxy> >::const_iterator i = mProxyMap.begin(); i != mProxyMap.end(); ++i)
       {
          const ActorProxy& proxy = *(i->second);
          const std::set<std::string>& hierarchy = proxy.GetClassHierarchy();
@@ -368,25 +368,25 @@ namespace dtDAL
       }
    }
 
-   void Map::InsertLibrary(unsigned pos, const std::string& name, const std::string& version) 
+   void Map::InsertLibrary(unsigned pos, const std::string& name, const std::string& version)
    {
       std::map<std::string,std::string>::iterator old = mLibraryVersionMap.find(name);
 
       bool alreadyExists;
-      if (old != mLibraryVersionMap.end()) 
+      if (old != mLibraryVersionMap.end())
       {
          old->second = version;
          alreadyExists = true;
-      } 
-      else 
+      }
+      else
       {
          mLibraryVersionMap.insert(make_pair(name,version));
          alreadyExists = false;
       }
 
-      for (std::vector<std::string>::iterator i = mLibraryOrder.begin(); i != mLibraryOrder.end(); ++i) 
+      for (std::vector<std::string>::iterator i = mLibraryOrder.begin(); i != mLibraryOrder.end(); ++i)
       {
-         if (*i == name) 
+         if (*i == name)
          {
             mLibraryOrder.erase(i);
             break;
@@ -401,12 +401,12 @@ namespace dtDAL
       mModified = true;
    }
 
-   void Map::AddLibrary(const std::string& name, const std::string& version) 
+   void Map::AddLibrary(const std::string& name, const std::string& version)
    {
       InsertLibrary(mLibraryOrder.size(), name, version);
    }
 
-   bool Map::RemoveLibrary(const std::string& name) 
+   bool Map::RemoveLibrary(const std::string& name)
    {
       std::map<std::string, std::string>::iterator oldMap = mLibraryVersionMap.find(name);
 
@@ -415,9 +415,9 @@ namespace dtDAL
       else
          return false;
 
-      for (std::vector<std::string>::iterator i = mLibraryOrder.begin(); i != mLibraryOrder.end(); ++i) 
+      for (std::vector<std::string>::iterator i = mLibraryOrder.begin(); i != mLibraryOrder.end(); ++i)
       {
-         if (*i == name) 
+         if (*i == name)
          {
             mLibraryOrder.erase(i);
             break;
@@ -428,7 +428,7 @@ namespace dtDAL
       return true;
    }
 
-   void Map::ClearModified() 
+   void Map::ClearModified()
    {
       mModified = false;
       mSavedName = mName;
@@ -436,12 +436,12 @@ namespace dtDAL
       mMissingLibraries.clear();
    }
 
-   void Map::AddMissingActorTypes(const std::set<std::string>& types) 
+   void Map::AddMissingActorTypes(const std::set<std::string>& types)
    {
       mMissingActorTypes.insert(types.begin(), types.end());
    }
 
-   void Map::AddMissingLibraries(const std::vector<std::string>& libs) 
+   void Map::AddMissingLibraries(const std::vector<std::string>& libs)
    {
       mMissingLibraries.insert(mMissingLibraries.end(), libs.begin(), libs.end());
    }
@@ -451,7 +451,7 @@ namespace dtDAL
    //   return osg::Matrix();
    //}
 
-   bool Map::WildMatch(const std::string& sWild, const std::string& sString) 
+   bool Map::WildMatch(const std::string& sWild, const std::string& sString)
    {
       char* WildChars = new char[sWild.size() + 1];
       char* str = new char[sString.size() + 1];
@@ -462,20 +462,20 @@ namespace dtDAL
       delete[] str;
       return result;
    }
-    
+
    GameEventManager& Map::GetEventManager()
    {
       return *mEventManager;
    }
-   
+
    const GameEventManager& Map::GetEventManager() const
    {
       return *mEventManager;
    }
-   
+
    void Map::SetEnvironmentActor(ActorProxy *envActor)
    {
-      if(envActor == NULL)
+      if (envActor == NULL)
       {
          RemoveProxy(*mEnvActor);
          mEnvActor = NULL;
@@ -483,7 +483,7 @@ namespace dtDAL
       }
 
       IEnvironmentActor *ea = dynamic_cast<IEnvironmentActor*>(envActor->GetActor());
-      if(ea == NULL)
+      if (ea == NULL)
       {
          LOG_ERROR("The actor specified is not an EnvironmentActor. Ignoring.");
          return;
@@ -564,7 +564,7 @@ namespace dtDAL
             }
          }
       }
-   
+
       return found;
    }
 

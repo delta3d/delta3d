@@ -18,6 +18,7 @@
  *
  * Eric Heine
  */
+#include <prefix/dtdalprefix.h>
 #include <dtDAL/doubleactorproperty.h>
 
 #include <dtDAL/datatype.h>
