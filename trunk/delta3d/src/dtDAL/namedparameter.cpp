@@ -463,9 +463,11 @@ namespace dtDAL
    void NamedGroupParameter::AddParameter(NamedParameter& newParam)
    {
       if (!mParameterList.insert(std::make_pair(newParam.GetName(), &newParam)).second)
+      {
          throw dtDAL::InvalidParameterException(
          "Could not add new parameter: "+ newParam.GetName() +
          ". A parameter with that name already exists.", __FILE__, __LINE__);
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////

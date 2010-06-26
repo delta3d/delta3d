@@ -18,4 +18,5 @@
  *
  * Eric Heine
  */
+#include <prefix/dtdalprefix.h>
 #include <dtDAL/enumactorproperty.h>

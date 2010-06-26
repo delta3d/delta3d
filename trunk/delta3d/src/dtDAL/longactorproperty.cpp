@@ -18,6 +18,7 @@
  *
  * Eric Heine
  */
+#include <prefix/dtdalprefix.h>
 #include <dtDAL/longactorproperty.h>
 
 #include <dtDAL/datatype.h>

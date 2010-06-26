@@ -740,7 +740,7 @@ namespace dtDAL
          result = fileUtils.DirDelete(sofar, recursive);
          if (result && dataTypeTree != NULL)
          {
-            dtUtil::tree<ResourceTreeNode>::iterator treeIt = FindTreeNodeFor (*dataTypeTree, category);
+            dtUtil::tree<ResourceTreeNode>::iterator treeIt = FindTreeNodeFor(*dataTypeTree, category);
             if (treeIt != dataTypeTree->end())
                //get the tree above this one, and remove the iterator from it.
                treeIt.out().tree_ref().erase(treeIt);
@@ -755,7 +755,7 @@ namespace dtDAL
    }
 
    //////////////////////////////////////////////////////////
-   dtUtil::tree<ResourceTreeNode>::iterator ResourceHelper::FindTreeNodeFor (
+   dtUtil::tree<ResourceTreeNode>::iterator ResourceHelper::FindTreeNodeFor(
       dtUtil::tree<ResourceTreeNode>& resources, const std::string& id)
    {
 
@@ -913,7 +913,9 @@ namespace dtDAL
    {
       std::string resourcePath = categoryPath;
       if (resourcePath.empty())
+      {
          resourcePath = ".";
+      }
 
       //push into the next subdirectory
       fileUtils.PushDirectory(osgDB::getSimpleFileName(resourcePath));
@@ -925,7 +927,9 @@ namespace dtDAL
          for (dtUtil::DirectoryContents::const_iterator j = contents.begin(); j != contents.end(); ++j)
          {
             if (*j == "." || *j == "..")
+            {
                continue;
+            }
 
             if (*j == ".svn")
                continue;
@@ -958,7 +962,9 @@ namespace dtDAL
             const ResourceTypeHandler* handler = NULL;
             //only look for a handler if the file/dir has an extension.
             if (!osgDB::getLowerCaseFileExtension(currentFile).empty())
+            {
                handler = GetHandlerForFile(dt, currentFile);
+            }
 
             if (fi.fileType == dtUtil::DIRECTORY && handler == NULL)
             {
@@ -966,15 +972,23 @@ namespace dtDAL
                //have a separator on both ends.
                std::string newCategoryPath;
                if (!categoryPath.empty())
+               {
                   newCategoryPath = categoryPath + dtUtil::FileUtils::PATH_SEPARATOR + currentFile;
+               }
                else
+               {
                   newCategoryPath = currentFile;
+               }
 
                std::string newCategory;
                if (!category.empty())
+               {
                   newCategory = category + ResourceDescriptor::DESCRIPTOR_SEPARATOR + currentFile;
+               }
                else
+               {
                   newCategory = currentFile;
+               }
 
                ResourceTreeNode newNode(currentFile,newCategory);
 
@@ -992,8 +1006,10 @@ namespace dtDAL
             else
             {
                if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+               {
                   mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "No hander returned for file %s.",
                                       currentFile.c_str());
+               }
 
                // Remove the unhandled resource from the list.
                contents.erase(contents.begin() + fileIndex);
@@ -1005,7 +1021,6 @@ namespace dtDAL
       {
          fileUtils.PopDirectory();
          throw ex;
-
       }
       fileUtils.PopDirectory();
    }

@@ -18,6 +18,7 @@
  *
  * Eric Heine
  */
+#include <prefix/dtdalprefix.h>
 #include <dtDAL/actoridactorproperty.h>
 
 #include <dtCore/deltadrawable.h>

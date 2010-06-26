@@ -93,13 +93,13 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////////////
    class RefStringInsert
    {
-      public:
-         void operator()(const dtUtil::RefString& string)
-         {
-            toFill->insert(string.Get());
-         }
+   public:
+      void operator()(const dtUtil::RefString& string)
+      {
+         toFill->insert(string.Get());
+      }
 
-         std::set<std::string>* toFill;
+      std::set<std::string>* toFill;
    };
 
    ///////////////////////////////////////////////////////////////////////////////////////
@@ -270,7 +270,7 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////////////
    ActorProxyIcon *ActorProxy::GetBillBoardIcon()
    {
-      if(!mBillBoardIcon.valid())
+      if (!mBillBoardIcon.valid())
       {
          mBillBoardIcon = new ActorProxyIcon(ActorProxyIcon::IMAGE_BILLBOARD_GENERIC);
       }
@@ -306,7 +306,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   void ActorProxy::SetActor(dtCore::DeltaDrawable &actor)
+   void ActorProxy::SetActor(dtCore::DeltaDrawable& actor)
    {
       mActor = &actor;
    }
@@ -349,7 +349,6 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////////////
    void ActorProxy::OnRemove() const
    {
-
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -389,4 +388,5 @@ namespace dtDAL
                   dtDAL::BooleanActorProperty::GetFuncType(actor, &dtCore::DeltaDrawable::GetActive),
                   "Determines whether the drawable will render.", GROUP_DRAWABLE));
    }
-}
+
+} // namespace dtDAL

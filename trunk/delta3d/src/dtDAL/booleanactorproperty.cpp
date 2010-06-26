@@ -18,6 +18,7 @@
  *
  * Eric Heine
  */
+#include <prefix/dtdalprefix.h>
 #include <dtDAL/booleanactorproperty.h>
 #include <dtDAL/datatype.h>
 #include <dtUtil/stringutils.h>

@@ -18,6 +18,7 @@
  *
  * Eric Heine
  */
+#include <prefix/dtdalprefix.h>
 #include <dtDAL/actoractorproperty.h>
 #include <dtDAL/map.h>
 #include <dtDAL/project.h>
