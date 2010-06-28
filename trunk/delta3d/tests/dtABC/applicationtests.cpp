@@ -77,6 +77,7 @@ namespace dtTest
    {
       CPPUNIT_TEST_SUITE(ApplicationTests);
       CPPUNIT_TEST(TestInput);
+      CPPUNIT_TEST(TestConstructorAddDeltaData);
       CPPUNIT_TEST(TestConfigProperties);
       CPPUNIT_TEST(TestConfigSupport);
       CPPUNIT_TEST(TestConfigSaveLoad);
@@ -92,6 +93,7 @@ namespace dtTest
          void setUp();
          void tearDown();
          void TestInput();
+         void TestConstructorAddDeltaData();
          void TestConfigProperties();
          void TestConfigSupport();
          void TestConfigSaveLoad();
@@ -233,6 +235,16 @@ namespace dtTest
          dtUtil::LibrarySharingManager::GetInstance().RemoveFromSearchPath(paths[i]);
       }
       dtUtil::Log::GetInstance().SetLogLevel(mLogLevel);
+   }
+
+   void ApplicationTests::TestConstructorAddDeltaData()
+   {
+      dtUtil::SetDataFilePathList("");
+      dtCore::RefPtr<dtTest::TestApp> app(new dtTest::TestApp('N'));
+      CPPUNIT_ASSERT(dtUtil::GetDataFilePathList().find(dtUtil::GetDeltaDataPathList(), 0) != std::string::npos);
+      std::string pathList = dtUtil::GetDataFilePathList();
+      dtCore::RefPtr<dtTest::TestApp> app2(new dtTest::TestApp('N'));
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Delta data should not have been added twice.", pathList, dtUtil::GetDataFilePathList());
    }
 
    void ApplicationTests::TestInput()
