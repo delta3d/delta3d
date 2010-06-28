@@ -39,7 +39,7 @@ namespace dtABC
    /////////////////////////////////////////////////////////////////////////////
    // ACTOR CODE
    /////////////////////////////////////////////////////////////////////////////
-   const dtUtil::RefString LabelActor::DEFAULT_FONT("Arial.ttf");
+   const dtUtil::RefString LabelActor::DEFAULT_FONT("arial.ttf");
    const float LabelActor::DEFAULT_FONT_SIZE = 1.0f;
    const osg::Vec4 LabelActor::DEFAULT_COLOR_TEXT(1.0f, 1.0f, 1.0f, 1.0f);
    const osg::Vec4 LabelActor::DEFAULT_COLOR_BACK(0.0f, 0.0f, 0.0f, 1.0f);

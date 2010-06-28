@@ -59,13 +59,13 @@ namespace dtAI
       mWaypointSize = 10.0f;
       mWaypointColor = Color(1.0f, 1.0f, 1.0f, 1.0f);
 
-      mWaypointFontFile = "Arial.ttf";
+      mWaypointFontFile = "arial.ttf";
       mWaypointFontSizeScalar = 0.5f;
       mWaypointTextOffset = osg::Vec3(0.0f, 0.0f, 0.3f);
       mWaypointFontColor = Color(1.0f, 1.0f, 1.0f, 1.0f);
       mNavMeshColor = Color(1.0f, 1.0f, 1.0f, 1.0f);
 
-      mNavMeshFontFile = "Arial.ttf";
+      mNavMeshFontFile = "arial.ttf";
       mNavMeshFontSizeScalar = 0.5f;
       mNavMeshTextOffsetScalar = 1.0f;
       mNavMeshFontColor = Color(1.0f, 1.0f, 1.0f, 1.0f);
