@@ -25,7 +25,7 @@
 #include <dtAnim/export.h>
 #include <dtAnim/cal3danimator.h>
 #include <dtAnim/cal3ddatabase.h>
-#include <dtDAL/namedparameter.h>  // for function signatures
+#include <dtDAL/namedgroupparameter.h>  // for function signatures
 #include <string>                  // for static constants
 
 // namespace specific forward declarations

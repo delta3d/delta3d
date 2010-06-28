@@ -35,6 +35,7 @@
 
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/actorproxy.h>
+#include <dtDAL/datatype.h>
 #include <dtDAL/resourceactorproperty.h>
 
 #include <dtUtil/log.h>

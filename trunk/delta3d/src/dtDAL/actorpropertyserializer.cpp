@@ -41,6 +41,11 @@
 #include <dtDAL/groupactorproperty.h>
 #include <dtDAL/mapcontenthandler.h>
 #include <dtDAL/mapxmlconstants.h>
+#include <dtDAL/namedactorparameter.h>
+#include <dtDAL/namedgameeventparameter.h>
+#include <dtDAL/namedresourceparameter.h>
+#include <dtDAL/namedrgbacolorparameter.h>
+#include <dtDAL/namedvectorparameters.h>
 #include <dtDAL/project.h>
 #include <dtDAL/propertycontainer.h>
 #include <dtDAL/resourceactorproperty.h>

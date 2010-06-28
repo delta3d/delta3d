@@ -46,7 +46,31 @@ SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/mapcontenthandler.h
     ${HEADER_PATH}/mapxml.h
     ${HEADER_PATH}/mapxmlconstants.h
+    ${HEADER_PATH}/namedactorparameter.h
+    ${HEADER_PATH}/namedarrayparameter.h
+    ${HEADER_PATH}/namedbooleanparameter.h
+    ${HEADER_PATH}/namedcontainerparameter.h
+    ${HEADER_PATH}/nameddoubleparameter.h
+    ${HEADER_PATH}/namedenumparameter.h
+    ${HEADER_PATH}/namedfloatparameter.h
+    ${HEADER_PATH}/namedgameeventparameter.h
+    ${HEADER_PATH}/namedgenericparameter.h
+    ${HEADER_PATH}/namedgroupparameter.h
+    ${HEADER_PATH}/namedintparameter.h
+    ${HEADER_PATH}/namedlongintparameter.h
     ${HEADER_PATH}/namedparameter.h
+    ${HEADER_PATH}/namedparameters.h
+    ${HEADER_PATH}/namedpodparameter.h
+    ${HEADER_PATH}/namedresourceparameter.h
+    ${HEADER_PATH}/namedrgbacolorparameter.h
+    ${HEADER_PATH}/namedrgbcolorparameter.h
+    ${HEADER_PATH}/namedshortintparameter.h
+    ${HEADER_PATH}/namedstringparameter.h
+    ${HEADER_PATH}/namedunsignedcharparameter.h
+    ${HEADER_PATH}/namedunsignedintparameter.h
+    ${HEADER_PATH}/namedunsignedlongintparameter.h
+    ${HEADER_PATH}/namedunsignedshortintparameter.h
+    ${HEADER_PATH}/namedvectorparameters.h
     ${HEADER_PATH}/objecttype.h
     ${HEADER_PATH}/physicalactorproxy.h
     ${HEADER_PATH}/plugin_export.h
@@ -98,7 +122,28 @@ SET(LIB_SOURCES
     ${SOURCE_PATH}/mapcontenthandler.cpp
     ${SOURCE_PATH}/mapxml.cpp
     ${SOURCE_PATH}/mapxmlconstants.cpp
+    ${SOURCE_PATH}/namedactorparameter.cpp
+    ${SOURCE_PATH}/namedarrayparameter.cpp
+    ${SOURCE_PATH}/namedbooleanparameter.cpp
+    ${SOURCE_PATH}/namedcontainerparameter.cpp
+    ${SOURCE_PATH}/nameddoubleparameter.cpp
+    ${SOURCE_PATH}/namedenumparameter.cpp
+    ${SOURCE_PATH}/namedfloatparameter.cpp
+    ${SOURCE_PATH}/namedgameeventparameter.cpp
+    ${SOURCE_PATH}/namedgroupparameter.cpp
+    ${SOURCE_PATH}/namedintparameter.cpp
+    ${SOURCE_PATH}/namedlongintparameter.cpp
     ${SOURCE_PATH}/namedparameter.cpp
+    ${SOURCE_PATH}/namedresourceparameter.cpp
+    ${SOURCE_PATH}/namedrgbacolorparameter.cpp
+    ${SOURCE_PATH}/namedrgbcolorparameter.cpp
+    ${SOURCE_PATH}/namedshortintparameter.cpp
+    ${SOURCE_PATH}/namedstringparameter.cpp
+    ${SOURCE_PATH}/namedunsignedcharparameter.cpp
+    ${SOURCE_PATH}/namedunsignedintparameter.cpp
+    ${SOURCE_PATH}/namedunsignedlongintparameter.cpp
+    ${SOURCE_PATH}/namedunsignedshortintparameter.cpp
+    ${SOURCE_PATH}/namedvectorparameters.cpp
     ${SOURCE_PATH}/objecttype.cpp
     ${SOURCE_PATH}/physicalactorproxy.cpp
     ${SOURCE_PATH}/project.cpp

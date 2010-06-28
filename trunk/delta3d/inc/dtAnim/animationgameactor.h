@@ -24,7 +24,6 @@
 #include <dtCore/refptr.h>
 #include <dtGame/gameactor.h>
 #include <dtAnim/export.h>
-#include <dtDAL/namedparameter.h>  // for function signatures
 #include <dtAnim/animationhelper.h> //for RefPtr member
 #include <string>                  // for static constants
 

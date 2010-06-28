@@ -59,6 +59,7 @@
 #include <osg/Vec3f>
 #include <osg/Vec3d>
 
+#include <sstream>
 #include <typeinfo>
 
 XERCES_CPP_NAMESPACE_USE

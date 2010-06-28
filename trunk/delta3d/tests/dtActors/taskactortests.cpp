@@ -48,7 +48,7 @@
 #include <dtDAL/gameeventmanager.h>
 #include <dtDAL/intactorproperty.h>
 #include <dtDAL/librarymanager.h>
-#include <dtDAL/namedparameter.h>
+#include <dtDAL/namedarrayparameter.h>
 #include <dtDAL/stringactorproperty.h>
 
 #include <dtGame/gamemanager.h>

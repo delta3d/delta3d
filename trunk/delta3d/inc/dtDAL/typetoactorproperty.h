@@ -33,14 +33,25 @@
 #include <dtDAL/enumactorproperty.h>
 #include <dtDAL/floatactorproperty.h>
 #include <dtDAL/gameeventactorproperty.h>
+#include <dtDAL/groupactorproperty.h>
 #include <dtDAL/intactorproperty.h>
 #include <dtDAL/longactorproperty.h>
-#include <dtDAL/namedparameter.h>
+#include <dtDAL/namedactorparameter.h>
+#include <dtDAL/namedbooleanparameter.h>
+#include <dtDAL/namedcontainerparameter.h>
+#include <dtDAL/nameddoubleparameter.h>
+#include <dtDAL/namedenumparameter.h>
+#include <dtDAL/namedfloatparameter.h>
+#include <dtDAL/namedgameeventparameter.h>
+#include <dtDAL/namedgroupparameter.h>
+#include <dtDAL/namedintparameter.h>
+#include <dtDAL/namedlongintparameter.h>
+#include <dtDAL/namedresourceparameter.h>
+#include <dtDAL/namedvectorparameters.h>
 #include <dtDAL/propertycontainer.h>
 #include <dtDAL/resourceactorproperty.h>
 #include <dtDAL/stringactorproperty.h>
 #include <dtDAL/vectoractorproperties.h>
-#include <dtDAL/groupactorproperty.h>
 
 #include <dtUtil/command.h>
 #include <dtUtil/functor.h>

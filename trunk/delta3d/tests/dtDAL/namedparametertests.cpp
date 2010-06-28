@@ -37,7 +37,7 @@
 #include <dtDAL/actortype.h>
 #include <dtDAL/actoractorproperty.h>
 #include <dtDAL/datatype.h>
-#include <dtDAL/namedparameter.h>
+#include <dtDAL/namedgroupparameter.h>
 #include <dtDAL/resourcedescriptor.h>
 
 #include <dtGame/gamemanager.h>
@@ -1485,7 +1485,7 @@ void NamedParameterTests::TestNamedActorParameter()
 
       dtCore::RefPtr<dtGame::MessageParameter> amp = NULL;
 
-      amp = dtGame::MessageParameter::CreateFromType(dtDAL::DataType::ACTOR, "testNamedActorParameter");
+      amp = dtGame::GroupMessageParameter::CreateFromType(dtDAL::DataType::ACTOR, "testNamedActorParameter");
 
       CPPUNIT_ASSERT_MESSAGE("The actor message parameter should not be NULL", amp != NULL);
 

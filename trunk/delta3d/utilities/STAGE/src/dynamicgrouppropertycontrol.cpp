@@ -29,24 +29,25 @@
 #include <prefix/stageprefix.h>
 
 #include <dtEditQt/dynamicgrouppropertycontrol.h>
-#include <dtQt/propertyeditormodel.h>
-#include <dtQt/propertyeditortreeview.h>
-#include <dtQt/dynamicsubwidgets.h>
 
+#include <dtDAL/datatype.h>
+#include <dtDAL/groupactorproperty.h>
 
+#include <dtEditQt/editordata.h>
 #include <dtEditQt/groupuiregistry.h>
 #include <dtEditQt/groupuiplugin.h>
 #include <dtEditQt/mainwindow.h>
 
-#include <dtDAL/groupactorproperty.h>
+#include <dtQt/dynamicsubwidgets.h>
+#include <dtQt/propertyeditormodel.h>
+#include <dtQt/propertyeditortreeview.h>
+
 #include <dtUtil/log.h>
 
-#include <QtGui/QWidget>
 #include <QtGui/QHBoxLayout>
-#include <QtGui/QPushButton>
 #include <QtGui/QMessageBox>
-
-#include <dtEditQt/editordata.h>
+#include <QtGui/QPushButton>
+#include <QtGui/QWidget>
 
 namespace dtEditQt
 {
