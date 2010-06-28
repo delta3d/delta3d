@@ -205,7 +205,7 @@ namespace dtGame
    , mRotationElapsedTimeSinceUpdate(0.0f)
    , mTranslationEndSmoothingTime(0.0f)
    , mRotationEndSmoothingTime(0.0f)
-   , mMinDRAlgorithm(&DeadReckoningAlgorithm::NONE)
+   , mMinDRAlgorithm(&DeadReckoningAlgorithm::STATIC)
    , mUpdateMode(&DeadReckoningHelper::UpdateMode::AUTO)
    , mTranslationInitiated(false)
    , mRotationInitiated(false)
@@ -218,7 +218,6 @@ namespace dtGame
    , mExtraDataUpdated(false)
    , mForceUprightRotation(false)
    {
-
       mDRImpl = new DeadReckoningHelperImpl();
    }
 
@@ -746,11 +745,17 @@ namespace dtGame
    {
       bool returnValue = false; // indicates we changed the transform
       if (IsFlying())
+      {
          gcType = &BaseGroundClamper::GroundClampingType::NONE;
+      }
       else if (GetGroundClampingData().GetAdjustRotationToGround())
+      {
          gcType = &BaseGroundClamper::GroundClampingType::RANGED;
+      }
       else
+      {
          gcType = &BaseGroundClamper::GroundClampingType::INTERMITTENT_SAVE_OFFSET;
+      }
 
       if (GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::NONE)
       {
@@ -761,6 +766,8 @@ namespace dtGame
                   "setting the transform to match the actor's current position.");
          }
          gameActor.GetTransform(xform, dtCore::Transformable::REL_CS);
+         // It's set to NONE, so no ground clamping..
+         gcType = &BaseGroundClamper::GroundClampingType::NONE;
       }
       else if (GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::STATIC)
       {
