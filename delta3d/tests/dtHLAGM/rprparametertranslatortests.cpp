@@ -38,25 +38,31 @@
    #include <cppunit/extensions/HelperMacros.h>
 #endif
 
+#include <dtCore/uniqueid.h>
+
+#include <dtDAL/datatype.h>
+#include <dtDAL/namedgroupparameter.h>
+
+#include <dtHLAGM/attributetoproperty.h>
+#include <dtHLAGM/distypes.h>
+#include <dtHLAGM/hlacomponent.h>
+#include <dtHLAGM/interactiontomessage.h>
+#include <dtHLAGM/objecttoactor.h>
+#include <dtHLAGM/onetoonemapping.h>
+#include <dtHLAGM/parametertoparameter.h>
+#include <dtHLAGM/rprparametertranslator.h>
+#include <dtHLAGM/spatial.h>
+
+#include <dtUtil/coordinates.h>
+#include <dtUtil/log.h>
+#include <dtUtil/mathdefines.h>
+#include <dtUtil/stringutils.h>
+
+#include <osg/Endian>
+
 #include <iostream>
 #include <vector>
 #include <string>
-#include <osg/Endian>
-#include <dtUtil/coordinates.h>
-#include <dtUtil/log.h>
-#include <dtUtil/stringutils.h>
-#include <dtUtil/mathdefines.h>
-#include <dtCore/uniqueid.h>
-#include <dtDAL/datatype.h>
-#include <dtHLAGM/objecttoactor.h>
-#include <dtHLAGM/interactiontomessage.h>
-#include <dtHLAGM/hlacomponent.h>
-#include <dtHLAGM/attributetoproperty.h>
-#include <dtHLAGM/parametertoparameter.h>
-#include <dtHLAGM/onetoonemapping.h>
-#include <dtHLAGM/distypes.h>
-#include <dtHLAGM/spatial.h>
-#include <dtHLAGM/rprparametertranslator.h>
 
 namespace dtHLAGM
 {
@@ -1459,7 +1465,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
 
          mMapping.GetParameterDefinitions()[0].SetGameType(dataType);
          mMapping.SetHLAType(dtHLAGM::RPRAttributeType::RTI_OBJECT_ID_STRUCT_TYPE);
-         dtCore::RefPtr<dtGame::MessageParameter> param = dtGame::MessageParameter::CreateFromType(dataType, "test");
+         dtCore::RefPtr<dtGame::MessageParameter> param = dtGame::GroupMessageParameter::CreateFromType(dataType, "test");
          param->FromString(testValue);
          messageParameters.push_back(param.get());
 

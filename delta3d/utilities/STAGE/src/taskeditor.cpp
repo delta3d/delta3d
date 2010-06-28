@@ -36,8 +36,10 @@
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/actortype.h>
 #include <dtDAL/booleanactorproperty.h>
+#include <dtDAL/datatype.h>
 #include <dtDAL/map.h>
-#include <dtDAL/namedparameter.h>
+#include <dtDAL/namedactorparameter.h>
+#include <dtDAL/namedgroupparameter.h>
 
 #include <dtEditQt/editordata.h>
 

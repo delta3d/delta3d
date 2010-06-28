@@ -42,7 +42,6 @@
 #include <dtDAL/actoractorproperty.h>
 #include <dtDAL/floatactorproperty.h>
 #include <dtDAL/librarymanager.h>
-#include <dtDAL/namedparameter.h>
 
 #include <dtCore/scene.h>
 #include <dtCore/system.h>

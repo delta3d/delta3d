@@ -33,8 +33,9 @@
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/arrayactorproperty.h>
 #include <dtDAL/gameevent.h>
-#include <dtDAL/namedparameter.h>
+#include <dtDAL/namedgroupparameter.h>
 #include <dtDAL/plugin_export.h>
+#include <dtDAL/resourcedescriptor.h>
 
 #include <dtUtil/enumeration.h>
 #include <dtUtil/getsetmacros.h>

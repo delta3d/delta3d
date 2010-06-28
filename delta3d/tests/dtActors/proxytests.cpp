@@ -48,7 +48,10 @@
 #include <dtDAL/intactorproperty.h>
 #include <dtDAL/librarymanager.h>
 #include <dtDAL/longactorproperty.h>
-#include <dtDAL/namedparameter.h>
+#include <dtDAL/namedfloatparameter.h>
+#include <dtDAL/namedgroupparameter.h>
+#include <dtDAL/namedintparameter.h>
+#include <dtDAL/namedstringparameter.h>
 #include <dtDAL/project.h>
 #include <dtDAL/stringactorproperty.h>
 #include <dtDAL/vectoractorproperties.h>
@@ -56,6 +59,7 @@
 #include <dtActors/engineactorregistry.h>
 
 #include <dtUtil/log.h>
+#include <dtUtil/stringutils.h>
 
 #include <iostream>
 

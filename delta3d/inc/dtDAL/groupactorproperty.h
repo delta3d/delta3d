@@ -23,7 +23,7 @@
 
 #include <string>
 #include <dtDAL/actorproperty.h>
-#include <dtDAL/namedparameter.h>
+#include <dtDAL/namedgroupparameter.h>
 #include <dtDAL/export.h>
 #include <dtUtil/functor.h>
 

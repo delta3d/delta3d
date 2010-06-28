@@ -31,18 +31,19 @@
 
 #define QT_STATICPLUGIN
 
-#include <QtGui/QWidget>
-#include <QtCore/QString>
-
 #include <dtEditQt/taskuiplugin.h>
 
-#include <dtEditQt/taskeditor.h>
-#include <dtEditQt/editordata.h>
-
-#include <dtDAL/map.h>
-#include <dtDAL/namedparameter.h>
-#include <dtDAL/actortype.h>
 #include <dtCore/uniqueid.h>
+
+#include <dtDAL/actortype.h>
+#include <dtDAL/map.h>
+
+#include <dtEditQt/editordata.h>
+#include <dtEditQt/taskeditor.h>
+
+#include <QtCore/QString>
+
+#include <QtGui/QWidget>
 
 namespace dtEditQt
 {

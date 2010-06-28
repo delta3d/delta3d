@@ -23,10 +23,12 @@
 #ifndef DELTA_ACTOR_PROPERTY_SERIALIZER
 #define DELTA_ACTOR_PROPERTY_SERIALIZER
 
+#include <dtCore/uniqueid.h>
+
 #include <dtDAL/export.h>
 #include <dtDAL/basexml.h>
 #include <dtDAL/basexmlhandler.h>
-#include <dtDAL/namedparameter.h>
+#include <dtDAL/namedgroupparameter.h>
 
 namespace dtDAL
 {
