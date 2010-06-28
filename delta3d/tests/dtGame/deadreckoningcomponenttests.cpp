@@ -193,8 +193,8 @@ namespace dtGame
             CPPUNIT_ASSERT_MESSAGE("Updated flag should default to false", !helper->IsUpdated());
             CPPUNIT_ASSERT_MESSAGE("Updated flag should default to false", !helper->IsUpdated());
             CPPUNIT_ASSERT_MESSAGE("Updated flag should default to false", !helper->IsUpdated());
-            CPPUNIT_ASSERT_MESSAGE("DeadReckoning algorithm should default to NONE.",
-               helper->GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::NONE);
+            CPPUNIT_ASSERT_MESSAGE("DeadReckoning algorithm should default to STATIC.",
+               helper->GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::STATIC);
             CPPUNIT_ASSERT_MESSAGE("The Update Mode should default to AUTO.",
                helper->GetUpdateMode() == DeadReckoningHelper::UpdateMode::AUTO);
             CPPUNIT_ASSERT_MESSAGE("The Effective Update Mode for a local actor should default to CALCULATE_ONLY.",
@@ -230,6 +230,8 @@ namespace dtGame
 
             CPPUNIT_ASSERT(!helper->IsUpdated());
 
+            // Change the algorithm twice to make sure, regardless of the defaults changing, it will get marked as updated.
+            helper->SetDeadReckoningAlgorithm(DeadReckoningAlgorithm::NONE);
             helper->SetDeadReckoningAlgorithm(DeadReckoningAlgorithm::STATIC);
             CPPUNIT_ASSERT_MESSAGE("DeadReckoning algorithm should be STATIC.",
             helper->GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::STATIC);
@@ -622,6 +624,8 @@ namespace dtGame
                   &dtUtil::Log::GetInstance(), groundClampingType);
 
             CPPUNIT_ASSERT(!wasTransformed);
+            CPPUNIT_ASSERT(*groundClampingType == BaseGroundClamper::GroundClampingType::NONE);
+            CPPUNIT_ASSERT(xform.IsIdentity());
          }
 
          void TestDoDRVelocityAccel()

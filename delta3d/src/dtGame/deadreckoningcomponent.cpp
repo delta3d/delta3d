@@ -150,9 +150,13 @@ namespace dtGame
       if (*updateMode == DeadReckoningHelper::UpdateMode::AUTO)
       {
          if (toRegister.GetGameActor().IsRemote())
+         {
             updateMode = &DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR;
+         }
          else
+         {
             updateMode = &DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR;
+         }
       }
 
       if (!mRegisteredActors.insert(std::make_pair(toRegister.GetId(), &helper)).second)
@@ -293,35 +297,37 @@ namespace dtGame
          BaseGroundClamper::GroundClampingType* groundClampingType = &BaseGroundClamper::GroundClampingType::NONE;
          bool transformChanged = helper.DoDR(gameActor, xform, mLogger, groundClampingType);
 
-         // Only ground clamp and move remote objects.
-         if(helper.GetEffectiveUpdateMode(gameActor.IsRemote())
-               == DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR)
+         if (helper.GetDeadReckoningAlgorithm() != DeadReckoningAlgorithm::NONE)
          {
-            // Get the object's velocity for the current frame.
-            // Curt - This line is bogus. The velocity changes based on the DR... need to access
-            // the instantaneous velocity.
-            osg::Vec3 velocity( helper.GetLastKnownVelocity() + helper.GetLastKnownAcceleration() * simTimeDelta );
-
-            // Call the ground clamper for the current object.
-            // The ground clamper should be smart enough to know
-            // what to do with the supplied values.
-            mGroundClamper->ClampToGround(*groundClampingType, tickMessage.GetSimulationTime(),
-                     xform, gameActor.GetGameActorProxy(),
-                     helper.GetGroundClampingData(), transformChanged, velocity);
-
-            if(mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            // Only ground clamp and move remote objects.
+            if (helper.GetEffectiveUpdateMode(gameActor.IsRemote())
+                  == DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR)
             {
-               std::ostringstream ss;
-               ss << "Actor " << gameActor.GetUniqueId() << " - " << gameActor.GetName() << " has attitude "
-                  << "\"" << helper.GetCurrentDeadReckonedRotation() << "\" and position \"" << helper.GetCurrentDeadReckonedTranslation() << "\" at time "
-                  << helper.GetLastRotationUpdatedTime() +  helper.GetRotationElapsedTimeSinceUpdate() << "";
-               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                     ss.str().c_str());
+               // Get the object's velocity for the current frame.
+               // Curt - This line is bogus. The velocity changes based on the DR... need to access
+               // the instantaneous velocity.
+               osg::Vec3 velocity( helper.GetLastKnownVelocity() + helper.GetLastKnownAcceleration() * simTimeDelta );
+
+               // Call the ground clamper for the current object.
+               // The ground clamper should be smart enough to know
+               // what to do with the supplied values.
+               mGroundClamper->ClampToGround(*groundClampingType, tickMessage.GetSimulationTime(),
+                        xform, gameActor.GetGameActorProxy(),
+                        helper.GetGroundClampingData(), transformChanged, velocity);
+
+               if(mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+               {
+                  std::ostringstream ss;
+                  ss << "Actor " << gameActor.GetUniqueId() << " - " << gameActor.GetName() << " has attitude "
+                     << "\"" << helper.GetCurrentDeadReckonedRotation() << "\" and position \"" << helper.GetCurrentDeadReckonedTranslation() << "\" at time "
+                     << helper.GetLastRotationUpdatedTime() +  helper.GetRotationElapsedTimeSinceUpdate() << "";
+                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                        ss.str().c_str());
+               }
             }
+
+            DoArticulation(helper, gameActor, tickMessage);
          }
-
-         DoArticulation(helper, gameActor, tickMessage);
-
          // Clear the updated flag.
          helper.ClearUpdated();
       }
