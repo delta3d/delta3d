@@ -100,6 +100,11 @@ Application::Application(const std::string& configFilename, dtCore::DeltaWin* wi
 
    mWindow = win;
 
+   if (!dtUtil::GetDeltaDataPathList().empty() &&  dtUtil::GetDataFilePathList().find(dtUtil::GetDeltaDataPathList(), 0) == std::string::npos)
+   {
+      dtUtil::SetDataFilePathList(dtUtil::GetDataFilePathList() + ":" + dtUtil::GetDeltaDataPathList());
+   }
+
    ApplicationConfigHandler handler;
    if (ParseConfigFile(configFilename, handler))
    {
