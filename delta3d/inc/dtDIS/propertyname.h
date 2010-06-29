@@ -82,6 +82,10 @@ namespace dtDIS
 
       static dtUtil::RefString ARTICULATION;
       static dtUtil::RefString DOF_NODE_NAME;
+      
+      /** Outgoing DIS packets read from this IntActorProperty, for the value of the ForceID.  
+        */
+      static dtUtil::RefString FORCE_ID;
    } ;
 
    //struct DT_DIS_EXPORT HLABaseEntityPropertyName

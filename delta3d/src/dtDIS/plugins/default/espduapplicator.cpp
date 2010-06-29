@@ -201,6 +201,15 @@ void FullApplicator::operator ()(const dtGame::ActorUpdateMessage& source,
       int appearance = imp->GetValue();
       dest.setEntityAppearance( appearance );
    }
+
+   //Force ID from ActorUpdateMesage to EntityStatePDU
+   if (const dtGame::MessageParameter* mp = source.GetUpdateParameter(dtDIS::EnginePropertyName::FORCE_ID))
+   {
+      // DIS ForceID actor property
+      const dtGame::IntMessageParameter* enumMp = static_cast<const dtGame::IntMessageParameter*>(mp);
+      const int val = enumMp->GetValue();
+      dest.setForceId(val);
+   }
 }
 
 

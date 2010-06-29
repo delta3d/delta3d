@@ -25,11 +25,7 @@ const char details::XMLConnectionSchema::NODE_APPLICATION_ID[] = {"ApplicationID
 const char details::XMLConnectionSchema::NODE_MTU[] = {"MTU\0"};
 
 
-const dtDIS::ConnectionData ConnectionXMLHandler::DEFAULT_CONNECTION_DATA = { 62040,
-                                                                              "239.1.2.3",
-                                                                              "../../dtDIS_trunk/bin/plugins",
-                                                                              1,
-                                                                              1500 };
+const dtDIS::ConnectionData ConnectionXMLHandler::DEFAULT_CONNECTION_DATA;
 
 
 ConnectionXMLHandler::ConnectionXMLHandler()
@@ -228,6 +224,7 @@ const char details::XMLEntityMapSchema::NODE_ENTITY_NON_DAMAGED[] = {"EntityNonD
 const char details::XMLEntityMapSchema::NODE_ENTITY_DAMAGED[] = {"EntityDamaged\0"};
 const char details::XMLEntityMapSchema::NODE_ENTITY_DESTROYED[] = {"EntityDestroyed\0"};
 const char details::XMLEntityMapSchema::NODE_ENTITY_TYPE[] = {"EntityTypeProperty\0"};
+const char details::XMLEntityMapSchema::NODE_ENTITY_FORCE_ID[] = {"EntityForceID\0"};
 
 EntityMapXMLHandler::EntityMapXMLHandler(SharedState* config)
    : mSharedState(config)
@@ -377,6 +374,10 @@ void EntityMapXMLHandler::characters(const XMLCh* const chars, const XMLSize_t l
    case ENTITY_TYPE:
       {
          dtDIS::EntityPropertyName::ENTITY_TYPE = std::string(cstr);
+      } break;
+   case ENTITY_FORCE_ID:
+      {
+         dtDIS::EnginePropertyName::FORCE_ID = std::string(cstr);
       } break;
    default:
       {
@@ -591,6 +592,10 @@ void EntityMapXMLHandler::startElement(const XMLCh* const uri,const XMLCh* const
    else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITY_TYPE) )
    {
       mNodeStack.push( ENTITY_TYPE );
+   }
+   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITY_FORCE_ID) )
+   {
+      mNodeStack.push( ENTITY_FORCE_ID );
    }
 
 

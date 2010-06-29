@@ -35,6 +35,8 @@ namespace dtDIS
    /// this value is not a typo, it needs to be this because of the DVTE support.
    dtUtil::RefString EnginePropertyName::DOF_NODE_NAME             ("OurName");
 
+   dtUtil::RefString EnginePropertyName::FORCE_ID                  ("Force Affiliation");
+
    // -- HLABaseEntityPropertyName -- //
    //const std::string HLABaseEntityPropertyName::PROPERTY_ACCELERATION_VECTOR        = "Acceleration Vector"        ;
    //const std::string HLABaseEntityPropertyName::PROPERTY_ANGULAR_VELOCITY_VECTOR    = "Angular Velocity Vector"    ;

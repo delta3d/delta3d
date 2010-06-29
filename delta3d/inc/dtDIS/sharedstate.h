@@ -134,7 +134,26 @@ namespace dtDIS
 
    ///\brief the information needed to connect to the DIS network.
    struct ConnectionData
-   {                         // example values
+   {
+      ConnectionData(unsigned int p = 62040,
+         const std::string& url = "239.1.2.3",
+         const std::string& plugins = "../../dtDIS_trunk/bin/plugins",
+         unsigned char ex_id = 1,
+         unsigned short site = 1,
+         unsigned short app_id = 1,
+         unsigned int mtu = 1500
+         )
+         :port(port)
+         ,ip(url)
+         , plug_dir(plugins)
+         , exercise_id(ex_id)
+         , site_id(site)
+         , application_id(app_id)
+         , MTU(mtu)
+      {
+      }
+
+      // example values
       unsigned int port;     // 1258
       std::string ip;        // "234.235.236.237"
       std::string plug_dir;  // "plugins"
