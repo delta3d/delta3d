@@ -65,11 +65,7 @@ void MasterComponentTests::Test()
    // add the component for testing
    ///\todo supply real file handles
    dtDIS::SharedState config;
-   dtDIS::ConnectionData cd = { 62040,
-			 "239.1.2.3",
-			 "../../dtDIS_trunk/bin/plugins",
-			 1,
-			 1500 };
+   dtDIS::ConnectionData cd;
    
    config.SetConnectionData(cd);
 
