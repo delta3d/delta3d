@@ -12,7 +12,8 @@ FIND_PATH(RTI_INCLUDE_DIR
       /usr/local/include
       /usr/include
       "$ENV{PROGRAMFILES}/certi 3.3.2/include"
-      $ENV{CERTI_HOME}/include
+      "$ENV{PROGRAMFILES}/certi 3.3.3/include"
+       $ENV{CERTI_HOME}/include
 )
 
 SET(CERTI_PATHS       
@@ -20,6 +21,7 @@ SET(CERTI_PATHS
       /usr/local/lib 
       /usr/lib 
       "$ENV{PROGRAMFILES}/certi 3.3.2/lib"
+      "$ENV{PROGRAMFILES}/certi 3.3.3/lib"
       $ENV{CERTI_HOME}/release
       ENV{CERTI_HOME}/lib)
 
