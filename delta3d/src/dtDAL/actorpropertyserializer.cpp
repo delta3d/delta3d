@@ -55,6 +55,7 @@
 #include <dtUtil/xercesutils.h>
 
 #include <osgDB/FileNameUtils>
+#include <typeinfo> //for std:bad_cast
 
 XERCES_CPP_NAMESPACE_USE
 
