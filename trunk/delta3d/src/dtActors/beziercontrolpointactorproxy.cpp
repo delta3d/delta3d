@@ -119,7 +119,7 @@ namespace dtActors
    {
       if (!mBillBoardIcon.valid())
       {
-         mBillBoardIcon = new dtDAL::ActorProxyIcon("billboards/bezierontrolpoint.png");
+         mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_PATHNODE);
       }
 
       return mBillBoardIcon.get();

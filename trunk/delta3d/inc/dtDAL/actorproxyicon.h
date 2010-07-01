@@ -116,8 +116,9 @@ namespace dtDAL
       static std::string IMAGE_ARROW_HEAD;
       static std::string IMAGE_ARROW_BODY;
 
-         static std::string IMAGE_BILLBOARD_DIRECTOR;
-         static std::string IMAGE_BILLBOARD_POSITION;
+      static std::string IMAGE_BILLBOARD_DIRECTOR;
+      static std::string IMAGE_BILLBOARD_POSITION;
+      static std::string IMAGE_BILLBOARD_PATHNODE;
 
       /**
        * Constructs a new actor proxy billboard icon.  This creates the
