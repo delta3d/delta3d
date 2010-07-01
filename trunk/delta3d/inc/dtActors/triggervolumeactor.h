@@ -79,6 +79,17 @@ namespace dtActors
       */
       bool UnregisterListener(void* receiver);
 
+
+      /**
+      * Instant check if another transformable/actor is in the volume.
+      *
+      * @param[in]  actor The collider.
+      *
+      * @return     Returns false if the actor is outside the volume.
+      */
+      bool IsActorInVolume(dtCore::Transformable* actor);
+
+
    protected:
 
        virtual ~TriggerVolumeActor() {}
@@ -98,7 +109,6 @@ namespace dtActors
       int mMaxTriggerCount;
       int mTriggerCount;
 
-      bool IsActorInVolume(dtCore::Transformable* actor);
       bool IsActorAnOccupant(dtCore::Transformable* actor);
 
       void TriggerEvent(dtCore::Transformable* instigator, TriggerEventType eventType);
