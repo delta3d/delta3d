@@ -48,6 +48,7 @@ namespace dtDAL
    std::string ActorProxyIcon::IMAGE_BILLBOARD_WAYPOINT("billboards/Foot.png");
    std::string ActorProxyIcon::IMAGE_BILLBOARD_DIRECTOR("billboards/director.png");
    std::string ActorProxyIcon::IMAGE_BILLBOARD_POSITION("billboards/staticmesh.png");
+   std::string ActorProxyIcon::IMAGE_BILLBOARD_PATHNODE("billboards/beziernode.png");
 
    std::string ActorProxyIcon::IMAGE_ARROW_HEAD("billboards/arrowhead.png");
    std::string ActorProxyIcon::IMAGE_ARROW_BODY("billboards/arrowbody.png");
