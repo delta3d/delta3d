@@ -47,7 +47,8 @@ namespace dtQt
 
    ///////////////////////////////////////////////////////////////////////////////
    DynamicStringControl::DynamicStringControl()
-      : mTemporaryEditControl(NULL)
+      : mProperty(NULL)
+      , mTemporaryEditControl(NULL)
    {
    }
 

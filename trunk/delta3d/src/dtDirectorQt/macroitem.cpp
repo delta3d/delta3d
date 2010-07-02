@@ -281,6 +281,11 @@ namespace dtDirector
       menu.setDefaultAction(stepInAction);
       menu.addSeparator();
       menu.addAction(mScene->GetMacroSelectionAction());
+      if (!mScene->GetSelection().empty())
+      {
+         QAction* createGroupAction = menu.addAction("Create Group Around Selection");
+         connect(createGroupAction, SIGNAL(triggered()), mScene, SLOT(OnCreateGroupForSelection()));
+      }
       menu.addSeparator();
       menu.addAction(mScene->GetEditor()->GetCutAction());
       menu.addAction(mScene->GetEditor()->GetCopyAction());

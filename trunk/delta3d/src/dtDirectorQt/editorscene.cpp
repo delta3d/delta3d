@@ -31,9 +31,11 @@
 #include <dtDirectorQt/valueitem.h>
 #include <dtDirectorQt/macroitem.h>
 #include <dtDirectorQt/linkitem.h>
+#include <dtDirectorQt/groupitem.h>
 
 #include <dtDirector/nodemanager.h>
 #include <dtDirector/nodetype.h>
+#include <dtDirector/groupnode.h>
 
 #include <QtGui/QGraphicsSceneMouseEvent>
 #include <QtGui/QMenu>
@@ -123,7 +125,7 @@ namespace dtDirector
          ActionItem* item = new ActionItem(node, mTranslationItem, this);
          if (item)
          {
-            item->setZValue(0.0f);
+            item->setZValue(10.0f);
             mNodes.push_back(item);
          }
       }
@@ -138,15 +140,22 @@ namespace dtDirector
          if (node && node->GetType().GetFullName() == "Core.Reference Script Action")
          {
             item = new ScriptItem(node, mTranslationItem, this);
+            item->setZValue(10.0f);
+         }
+         // Special case for group frame nodes.
+         else if (node && node->GetType().GetFullName() == "Core.Group Frame")
+         {
+            item = new GroupItem(node, mTranslationItem, this);
+            item->setZValue(0.0f);
          }
          else
          {
             item = new ActionItem(node, mTranslationItem, this);
+            item->setZValue(10.0f);
          }
 
          if (item)
          {
-            item->setZValue(0.0f);
             mNodes.push_back(item);
          }
       }
@@ -158,7 +167,7 @@ namespace dtDirector
          ValueItem* item = new ValueItem(node, mTranslationItem, this);
          if (item)
          {
-            item->setZValue(10.0f);
+            item->setZValue(20.0f);
             mNodes.push_back(item);
          }
       }
@@ -170,7 +179,7 @@ namespace dtDirector
          MacroItem* item = new MacroItem(graph, mTranslationItem, this);
          if (item)
          {
-            item->setZValue(0.0f);
+            item->setZValue(10.0f);
             mNodes.push_back(item);
          }
       }
@@ -276,7 +285,7 @@ namespace dtDirector
       }
 
       // Find the best snap position.
-      float nearest = 15.0f;
+      float nearest = 5.0f;
       osg::Vec2 newPos = position;
       count = (int)mSnapTargetsY.size();
       for (int index = 0; index < count; index++)
@@ -289,7 +298,7 @@ namespace dtDirector
          }
       }
 
-      nearest = 15.0f;
+      nearest = 5.0f;
       count = (int)mSnapTargetsX.size();
       for (int index = 0; index < count; index++)
       {
@@ -593,6 +602,51 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void EditorScene::OnCreateGroupFrame()
+   {
+      Node* node = CreateNode("Group Frame", "Core", mMenuPos.x(), mMenuPos.y());
+      if (node)
+      {
+         dtCore::RefPtr<UndoCreateEvent> event = new UndoCreateEvent(mEditor, node->GetID(), mGraph->GetID());
+         mEditor->GetUndoManager()->AddEvent(event);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorScene::OnCreateGroupForSelection()
+   {
+      std::vector<dtCore::RefPtr<dtDAL::PropertyContainer> > selection = GetSelection();
+      if (selection.empty()) return;
+
+      GroupNode* groupNode = dynamic_cast<GroupNode*>(CreateNode("Group Frame", "Core", 0.0f, 0.0f));
+      if (groupNode)
+      {
+         QList<NodeItem*> nodeItems;
+
+         int count = (int)selection.size();
+         for (int index = 0; index < count; index++)
+         {
+            Node* node = dynamic_cast<Node*>(selection[index].get());
+            if (node)
+            {
+               NodeItem* item = mPropertyEditor->GetScene()->GetNodeItem(node->GetID(), true);
+               if (item) nodeItems.push_back(item);
+            }
+         }
+
+         // Retrieve the group item that was created for this node.
+         GroupItem* groupItem = dynamic_cast<GroupItem*>(mPropertyEditor->GetScene()->GetNodeItem(groupNode->GetID(), true));
+         if (groupItem)
+         {
+            groupItem->SizeToFit(nodeItems);
+         }
+      }
+
+      dtCore::RefPtr<UndoCreateEvent> event = new UndoCreateEvent(mEditor, groupNode->GetID(), mGraph->GetID());
+      mEditor->GetUndoManager()->AddEvent(event);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void EditorScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
    {
       mDragging = false;
@@ -744,6 +798,7 @@ namespace dtDirector
             std::map<std::string, QMenu*> valueFolders;
             std::map<std::string, QMenu*> macroFolders;
             std::map<std::string, QMenu*> linkFolders;
+            std::map<std::string, QMenu*> miscFolders;
 
             // Events.
             QMenu* eventMenu = nodeMenu->addMenu("Events");
@@ -773,6 +828,14 @@ namespace dtDirector
             linkFolders["Links"] = linkMenu;
             connect(linkMenu, SIGNAL(triggered(QAction*)), this, SLOT(OnCreateNodeEvent(QAction*)));
 
+            // Misc.
+            QMenu* miscMenu = nodeMenu->addMenu("Misc");
+            miscFolders["Misc"] = miscMenu;
+            connect(miscMenu, SIGNAL(triggered(QAction*)), this, SLOT(OnCreateNodeEvent(QAction*)));
+           
+            QAction* createGroupAction = miscMenu->addAction("Group Frame");
+            connect(createGroupAction, SIGNAL(triggered()), this, SLOT(OnCreateGroupFrame()));
+
             // Get the list of available nodes to create.
             std::vector<const NodeType*> nodes;
             NodeManager::GetInstance().GetNodeTypes(nodes);
@@ -791,7 +854,7 @@ namespace dtDirector
                      continue;
                   }
 
-                  // Find the folder.
+                  // Find the primary folder to map the node to.
                   std::map<std::string, QMenu*>* folderMap = NULL;
 
                   if (node->GetNodeType() == NodeType::EVENT_NODE)
@@ -817,6 +880,7 @@ namespace dtDirector
 
                   if (folderMap)
                   {
+                     // Find the sub-folder to map the node to.
                      if (folderMap->find(node->GetFolder()) == folderMap->end())
                      {
                         (*folderMap)[node->GetFolder()] = new QMenu(node->GetFolder().c_str());
@@ -836,6 +900,7 @@ namespace dtDirector
                }
             }
 
+            // Now copy the contents of all of the folders into the context menu.
             std::map<std::string, QMenu*>::iterator i = eventFolders.begin();
             for (i = eventFolders.begin(); i != eventFolders.end(); i++)
             {
@@ -879,6 +944,15 @@ namespace dtDirector
                if (!folder->parent())
                {
                   linkMenu->addMenu(folder);
+               }
+            }
+
+            for (i = miscFolders.begin(); i != miscFolders.end(); i++)
+            {
+               QMenu* folder = i->second;
+               if (!folder->parent())
+               {
+                  miscMenu->addMenu(folder);
                }
             }
          }
