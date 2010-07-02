@@ -25,6 +25,9 @@
 #include <dtDirectorQt/resizeitem.h>
 #include <dtDirectorQt/lockitem.h>
 
+#include <dtDirectorQt/undomanager.h>
+#include <dtDirectorQt/undopropertyevent.h>
+
 #include <dtDirector/director.h>
 #include <dtDirector/groupnode.h>
 
@@ -127,6 +130,7 @@ namespace dtDirector
             if (item)
             {
                item->setSelected(true);
+               item->BeginMoveEvent();
             }
          }
       }
@@ -164,23 +168,23 @@ namespace dtDirector
          {
             QPointF newPos = value.toPointF();
 
-            bool clamped = false;
+            //bool clamped = false;
             if (newPos.x() < MIN_NODE_WIDTH)
             {
                newPos.setX(MIN_NODE_WIDTH);
-               clamped = true;
+               //clamped = true;
             }
             if (newPos.y() < MIN_NODE_HEIGHT)
             {
                newPos.setY(MIN_NODE_HEIGHT);
-               clamped = true;
+               //clamped = true;
             }
 
-            if (clamped)
-            {
-               mResizer->setPos(newPos);
-               return;
-            }
+            //if (clamped)
+            //{
+            //   mResizer->setPos(newPos);
+            //   return;
+            //}
 
             dtCore::RefPtr<dtDirector::GroupNode> groupNode = dynamic_cast<dtDirector::GroupNode*>(mNode.get());
             if (groupNode.valid())
@@ -229,9 +233,41 @@ namespace dtDirector
       maxPos.x() += AUTO_BORDER_SIZE;
       maxPos.y() += AUTO_BORDER_SIZE;
 
+      mScene->GetEditor()->GetUndoManager()->BeginMultipleEvents();
+      dtDAL::ActorProperty* prop = groupNode->GetProperty("Position");
+      if (prop)
+      {
+         std::string oldValue = prop->ToString();
+         groupNode->SetPosition(minPos);
+         std::string newValue = prop->ToString();
+
+         // Ignore the property if the node did not move.
+         if (newValue != oldValue)
+         {
+            // Notify the undo manager of the property changes.
+            dtCore::RefPtr<UndoPropertyEvent> event = new UndoPropertyEvent(mScene->GetEditor(), groupNode->GetID(), prop->GetName(), oldValue, newValue);
+            mScene->GetEditor()->GetUndoManager()->AddEvent(event.get());
+         }
+      }
+
+      prop = groupNode->GetProperty("Size");
+      if (prop)
+      {
+         std::string oldValue = prop->ToString();
+         groupNode->SetSize(maxPos - minPos);
+         std::string newValue = prop->ToString();
+
+         // Ignore the property if the node did not move.
+         if (newValue != oldValue)
+         {
+            // Notify the undo manager of the property changes.
+            dtCore::RefPtr<UndoPropertyEvent> event = new UndoPropertyEvent(mScene->GetEditor(), groupNode->GetID(), prop->GetName(), oldValue, newValue);
+            mScene->GetEditor()->GetUndoManager()->AddEvent(event.get());
+         }
+      }
+      mScene->GetEditor()->GetUndoManager()->EndMultipleEvents();
+
       // Now resize the frame.
-      groupNode->SetPosition(minPos);
-      groupNode->SetSize(maxPos - minPos);
       Draw();
    }
 

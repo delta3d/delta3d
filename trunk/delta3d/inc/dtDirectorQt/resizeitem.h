@@ -99,6 +99,8 @@ namespace dtDirector
 
       EditorScene*   mScene;
       NodeItem*      mNodeItem;
+
+      std::string    mOldSize;
    };
 }
 

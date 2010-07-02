@@ -22,10 +22,9 @@
 #include <dtDirectorQt/resizeitem.h>
 #include <dtDirectorQt/directoreditor.h>
 #include <dtDirectorQt/editorscene.h>
-#include <dtDirectorQt/undomanager.h>
-#include <dtDirectorQt/undolinkevent.h>
 
-#include <dtDirector/outputlink.h>
+#include <dtDirectorQt/undomanager.h>
+#include <dtDirectorQt/undopropertyevent.h>
 
 #include <dtDAL/datatype.h>
 
@@ -110,6 +109,9 @@ namespace dtDirector
          mScene->clearSelection();
       }
 
+      dtDAL::ActorProperty* prop = mNodeItem->GetNode()->GetProperty("Size");
+      if (prop) mOldSize = prop->ToString();
+
       mouseEvent->accept();
    }
 
@@ -120,9 +122,23 @@ namespace dtDirector
 
       if (!mouseEvent) return;
 
-      if (mNodeItem)
+      //if (mNodeItem)
+      //{
+      //   mNodeItem->setSelected(true);
+      //}
+
+      dtDAL::ActorProperty* prop = mNodeItem->GetNode()->GetProperty("Size");
+      if (prop)
       {
-         mNodeItem->setSelected(true);
+         std::string value = prop->ToString();
+
+         // Ignore the property if the node did not move.
+         if (value != mOldSize)
+         {
+            // Notify the undo manager of the property changes.
+            dtCore::RefPtr<UndoPropertyEvent> event = new UndoPropertyEvent(mScene->GetEditor(), mNodeItem->GetID(), prop->GetName(), mOldSize, value);
+            mScene->GetEditor()->GetUndoManager()->AddEvent(event.get());
+         }
       }
 
       //QPointF mousePos = mouseEvent->scenePos();
