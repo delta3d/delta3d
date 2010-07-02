@@ -349,6 +349,11 @@ namespace dtDirector
       virtual void BeginMoveEvent();
       virtual void EndMoveEvent();
 
+      /**
+       * Event handler when a child of this item changes.
+       */
+      virtual void childItemChange(QGraphicsItem* changedItem, GraphicsItemChange change, const QVariant &value) {}
+
    public slots:
 
       /**

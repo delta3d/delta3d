@@ -221,6 +221,16 @@ namespace dtDirector
        */
       void OnCreateMacro();
 
+      /**
+       * Event handler to create a group frame.
+       */
+      void OnCreateGroupFrame();
+
+      /**
+       * Event handler to create a group frame around the current selection.
+       */
+      void OnCreateGroupForSelection();
+
    protected:
       
       /**

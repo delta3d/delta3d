@@ -51,6 +51,7 @@ namespace dtDirector
          VALUE_NODE,
          MACRO_NODE,
          LINK_NODE,
+         MISC_NODE,
 
          UNKNOWN_NODE,
       };

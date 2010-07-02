@@ -66,6 +66,9 @@
 #include <dtDirectorNodes/playervalue.h>
 #include <dtDirectorNodes/staticmeshvalue.h>
 
+// Misc
+#include <dtDirector/groupnode.h>
+
 
 using dtCore::RefPtr;
 
@@ -130,6 +133,9 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::ACTOR_ARRAY_VALUE_NODE_TYPE(            new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Actor Array",               "General",     "Arrays",      "An array of actor values."));
    RefPtr<NodeType> NodeLibraryRegistry::PLAYER_VALUE_NODE_TYPE(                 new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Player",                    "Core",        "Actors",      "This player actor."));
    RefPtr<NodeType> NodeLibraryRegistry::STATIC_MESH_VALUE_NODE_TYPE(            new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Static Mesh",               "General",     "Resources",   "A Static Mesh resource value."));
+
+   // Misc
+   RefPtr<NodeType> NodeLibraryRegistry::GROUP_FRAME_NODE_TYPE(                  new dtDirector::NodeType(dtDirector::NodeType::MISC_NODE,   "Group Frame",               "Core",        "Misc",        "A group frame to help organize nodes together."));
 
 
    //////////////////////////////////////////////////////////////////////////
@@ -196,5 +202,8 @@ namespace dtDirector
       mNodeFactory->RegisterType<ActorArrayValue>(ACTOR_ARRAY_VALUE_NODE_TYPE.get());
       mNodeFactory->RegisterType<PlayerValue>(PLAYER_VALUE_NODE_TYPE.get());
       mNodeFactory->RegisterType<StaticMeshValue>(STATIC_MESH_VALUE_NODE_TYPE.get());
+
+      // Misc
+      mNodeFactory->RegisterType<GroupNode>(GROUP_FRAME_NODE_TYPE.get());
    }
 }
