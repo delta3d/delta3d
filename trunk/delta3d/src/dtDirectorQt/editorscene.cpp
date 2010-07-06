@@ -143,7 +143,7 @@ namespace dtDirector
             item->setZValue(10.0f);
          }
          // Special case for group frame nodes.
-         else if (node && node->GetType().GetFullName() == "Core.Group Frame")
+         else if (node && node->GetType().GetFullName() == "Core.Group Box")
          {
             item = new GroupItem(node, mTranslationItem, this);
             item->setZValue(0.0f);
@@ -604,7 +604,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void EditorScene::OnCreateGroupFrame()
    {
-      Node* node = CreateNode("Group Frame", "Core", mMenuPos.x(), mMenuPos.y());
+      Node* node = CreateNode("Group Box", "Core", mMenuPos.x(), mMenuPos.y());
       if (node)
       {
          dtCore::RefPtr<UndoCreateEvent> event = new UndoCreateEvent(mEditor, node->GetID(), mGraph->GetID());
@@ -618,7 +618,7 @@ namespace dtDirector
       std::vector<dtCore::RefPtr<dtDAL::PropertyContainer> > selection = GetSelection();
       if (selection.empty()) return;
 
-      GroupNode* groupNode = dynamic_cast<GroupNode*>(CreateNode("Group Frame", "Core", 0.0f, 0.0f));
+      GroupNode* groupNode = dynamic_cast<GroupNode*>(CreateNode("Group Box", "Core", 0.0f, 0.0f));
       if (groupNode)
       {
          QList<NodeItem*> nodeItems;
@@ -833,7 +833,7 @@ namespace dtDirector
             miscFolders["Misc"] = miscMenu;
             connect(miscMenu, SIGNAL(triggered(QAction*)), this, SLOT(OnCreateNodeEvent(QAction*)));
            
-            QAction* createGroupAction = miscMenu->addAction("Group Frame");
+            QAction* createGroupAction = miscMenu->addAction("Group Box");
             connect(createGroupAction, SIGNAL(triggered()), this, SLOT(OnCreateGroupFrame()));
 
             // Get the list of available nodes to create.

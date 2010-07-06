@@ -135,7 +135,7 @@ namespace dtDirector
    RefPtr<NodeType> NodeLibraryRegistry::STATIC_MESH_VALUE_NODE_TYPE(            new dtDirector::NodeType(dtDirector::NodeType::VALUE_NODE,  "Static Mesh",               "General",     "Resources",   "A Static Mesh resource value."));
 
    // Misc
-   RefPtr<NodeType> NodeLibraryRegistry::GROUP_FRAME_NODE_TYPE(                  new dtDirector::NodeType(dtDirector::NodeType::MISC_NODE,   "Group Frame",               "Core",        "Misc",        "A group frame to help organize nodes together."));
+   RefPtr<NodeType> NodeLibraryRegistry::GROUP_BOX_NODE_TYPE(                  new dtDirector::NodeType(dtDirector::NodeType::MISC_NODE,   "Group Box",                 "Core",        "Misc",        "A group frame to help organize nodes together."));
 
 
    //////////////////////////////////////////////////////////////////////////
@@ -204,6 +204,6 @@ namespace dtDirector
       mNodeFactory->RegisterType<StaticMeshValue>(STATIC_MESH_VALUE_NODE_TYPE.get());
 
       // Misc
-      mNodeFactory->RegisterType<GroupNode>(GROUP_FRAME_NODE_TYPE.get());
+      mNodeFactory->RegisterType<GroupNode>(GROUP_BOX_NODE_TYPE.get());
    }
 }
