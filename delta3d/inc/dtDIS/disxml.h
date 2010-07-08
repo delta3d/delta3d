@@ -160,6 +160,7 @@ namespace dtDIS
       static const char NODE_ENTITY_DAMAGED[];
       static const char NODE_ENTITY_DESTROYED[];
       static const char NODE_ENTITY_TYPE[];
+      static const char NODE_ENTITY_ID[];
       static const char NODE_ENTITY_FORCE_ID[];
    };
    } // end namespace details
@@ -226,6 +227,7 @@ namespace dtDIS
          ENTITY_DAMAGED,
          ENTITY_DESTROYED,
          ENTITY_TYPE,                    //<Property name override for DIS Entity Type
+         ENTITY_ID,                     //<Property name override for DIS EntityID
          ENTITY_FORCE_ID
       };
 

@@ -41,6 +41,15 @@ void FullApplicator::operator ()(const DIS::EntityStatePdu& source,
       strAP->SetValue(source.getMarking().getCharacters());
    }
 
+   ///entity ID
+   mp = dest.AddUpdateParameter(dtDIS::EntityPropertyName::ENTITYID, dtDAL::DataType::INT);
+   if (mp != NULL)
+   {
+      dtDAL::NamedIntParameter* intAP = static_cast<dtDAL::NamedIntParameter*>(mp);
+
+      intAP->SetValue(source.getEntityID().getEntity());
+   }
+
    mp = dest.AddUpdateParameter( dtDIS::EnginePropertyName::RESOURCE_DAMAGE_OFF , dtDAL::DataType::STATIC_MESH );
    if( mp != NULL )
    {
@@ -193,7 +202,19 @@ void FullApplicator::operator ()(const dtGame::ActorUpdateMessage& source,
    // this was already stored locally by the calling code,
    // but could have come from a group message parameter
    // if such a property existed, which it probably does not.
-   dest.setEntityID( eid );
+   if (const dtGame::MessageParameter* mp = source.GetUpdateParameter(dtDIS::EntityPropertyName::ENTITYID))
+   {
+      const dtGame::IntMessageParameter* imp = static_cast<const dtGame::IntMessageParameter*>(mp);
+      unsigned short entityID = imp->GetValue();
+
+      DIS::EntityID newID;
+      newID.setApplication(eid.getApplication());
+      newID.setSite(eid.getSite());
+      newID.setEntity(entityID);
+
+      dest.setEntityID(newID);
+   }
+
 
    if(const dtGame::MessageParameter* mp = source.GetUpdateParameter(dtDIS::EntityPropertyName::APPEARANCE) )
    {
