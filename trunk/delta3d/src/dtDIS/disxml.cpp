@@ -224,6 +224,7 @@ const char details::XMLEntityMapSchema::NODE_ENTITY_NON_DAMAGED[] = {"EntityNonD
 const char details::XMLEntityMapSchema::NODE_ENTITY_DAMAGED[] = {"EntityDamaged\0"};
 const char details::XMLEntityMapSchema::NODE_ENTITY_DESTROYED[] = {"EntityDestroyed\0"};
 const char details::XMLEntityMapSchema::NODE_ENTITY_TYPE[] = {"EntityTypeProperty\0"};
+const char details::XMLEntityMapSchema::NODE_ENTITY_ID[] = {"EntityID\0"};
 const char details::XMLEntityMapSchema::NODE_ENTITY_FORCE_ID[] = {"EntityForceID\0"};
 
 EntityMapXMLHandler::EntityMapXMLHandler(SharedState* config)
@@ -374,6 +375,10 @@ void EntityMapXMLHandler::characters(const XMLCh* const chars, const XMLSize_t l
    case ENTITY_TYPE:
       {
          dtDIS::EntityPropertyName::ENTITY_TYPE = std::string(cstr);
+      } break;
+   case ENTITY_ID:
+      {
+         dtDIS::EntityPropertyName::ENTITYID = std::string(cstr);
       } break;
    case ENTITY_FORCE_ID:
       {
@@ -592,6 +597,10 @@ void EntityMapXMLHandler::startElement(const XMLCh* const uri,const XMLCh* const
    else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITY_TYPE) )
    {
       mNodeStack.push( ENTITY_TYPE );
+   }
+   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITY_ID) )
+   {
+      mNodeStack.push( ENTITY_ID );
    }
    else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITY_FORCE_ID) )
    {

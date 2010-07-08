@@ -3,9 +3,7 @@
 namespace dtDIS
 {
    // -- EntityPropertyName -- //
-   // entitytype stuff
-   // entityid stuff
-   //const char EntityPropertyName::ENTITYID   [] = { "DIS_Entity_EntityID\0"   } ;
+   dtUtil::RefString EntityPropertyName::ENTITYID                  ("DIS_Entity_EntityID");
    dtUtil::RefString EntityPropertyName::APPEARANCE                ("DIS_Entity_Appearance");
    dtUtil::RefString EntityPropertyName::ENTITY_TYPE               ("EntityType");
 

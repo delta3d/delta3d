@@ -32,8 +32,10 @@ namespace dtDIS
    {
       /// Contains the official ActorProperty names for DIS::EntityStatePdu attributes.
 
-      // entityid stuff
-      //static const char ENTITYID[];
+      /** Outgoing DIS packets will read from this Int Property for the DIS EntityID.
+       *  Incoming DIS packets will apply the DIS Entity ID to this Int Property
+       */
+      static dtUtil::RefString ENTITYID;
 
       //// physical stuff
       //static const char LINEAR_VELOCITY[];
