@@ -139,16 +139,21 @@ void MasterComponent::ProcessMessage(const dtGame::Message& msg)
 
       // write the outgoing packets
       {
-         const DIS::DataStream& ds = mOutgoingMessage.GetData();
-         if( ds.size() > MTU )
+         OutgoingMessage::DataStreamContainer& streams = mOutgoingMessage.GetData();
+         
+         while (!streams.empty())
          {
-            LOG_WARNING("Network buffer is bigger than LAN supports.")
-         }
+            const DIS::DataStream& ds = streams.front();
+            if (ds.size() > MTU)
+            {
+               LOG_WARNING("Network buffer is bigger than LAN supports.")
+            }
 
-         if ( ds.size() > 0 )
-         {
-            mConnection.Send( &(ds[0]), ds.size() );
-            mOutgoingMessage.ClearData();
+            if (ds.size() > 0)
+            {
+               mConnection.Send(&(ds[0]), ds.size());
+            }
+            streams.pop();
          }
       }
    }
