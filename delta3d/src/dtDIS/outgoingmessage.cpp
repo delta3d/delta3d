@@ -12,7 +12,8 @@
 using namespace dtDIS;
 
 OutgoingMessage::OutgoingMessage(DIS::Endian stream, unsigned char exercise)
-   : mData(stream)
+   : 
+     mPackedEndian(stream) 
    , mExerciseID(exercise)
    , mSenders()
 {
@@ -20,7 +21,9 @@ OutgoingMessage::OutgoingMessage(DIS::Endian stream, unsigned char exercise)
 
 void OutgoingMessage::Handle(const DIS::Pdu& pdu)
 {
-   pdu.marshal( mData );
+   DIS::DataStream dataStream(mPackedEndian);
+   pdu.marshal(dataStream);
+   mDataStreams.push(dataStream);
 }
 
 void OutgoingMessage::Handle(const dtGame::Message& msg)
@@ -38,7 +41,9 @@ void OutgoingMessage::Handle(const dtGame::Message& msg)
       {
          pdu->setExerciseID(mExerciseID);
          //pdu->setTimestamp( msg.GetSource().GetTimeStamp()); //no workie
-         pdu->marshal(mData);
+         DIS::DataStream dataStream(mPackedEndian);
+         pdu->marshal(dataStream);
+         mDataStreams.push(dataStream);
       }
    }
    else
@@ -70,14 +75,25 @@ void OutgoingMessage::RemoveAdaptor(const dtGame::MessageType* mt, IMessageToPac
    }
 }
 
-const DIS::DataStream& OutgoingMessage::GetData() const
+////////////////////////////////////////////////////////////////////////////////
+OutgoingMessage::DataStreamContainer& dtDIS::OutgoingMessage::GetData()
 {
-   return mData;
+   return mDataStreams;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+bool dtDIS::OutgoingMessage::HasData() const
+{
+   return !mDataStreams.empty();
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void OutgoingMessage::ClearData()
 {
-   mData.clear();
+   while (!mDataStreams.empty())
+   {
+      mDataStreams.pop();
+   }
 }
 
 

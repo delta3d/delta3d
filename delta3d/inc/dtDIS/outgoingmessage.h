@@ -23,6 +23,7 @@
 #define __DELTA_DTDIS_OUTGOING_MESSAGE_H__
 
 #include <map>
+#include <queue>
 #include <dtGame/messagetype.h>             // for typedef, params
 #include <dtDIS/dtdisexport.h>              // for export symbols
 #include <DIS/DataStream.h>                 // for member
@@ -63,8 +64,22 @@ namespace dtDIS
       void AddAdaptor(const dtGame::MessageType* mt, IMessageToPacketAdapter* adapter);
       void RemoveAdaptor(const dtGame::MessageType* mt, IMessageToPacketAdapter* adapter);
 
-      const DIS::DataStream& GetData() const;
+      typedef std::queue<DIS::DataStream> DataStreamContainer;
+      
+      /**
+        * Get the modifiable container of DIS::DataStream
+        */
+      DataStreamContainer& GetData();
 
+      /** 
+        * Does the OutgoingMessage have more data to be sent out?
+        * @return true if more data is to be sent, false otherwise
+        */
+      bool HasData() const;
+
+      /** 
+        * Clear the existing container of outgoing data (if any)
+        */
       void ClearData();
 
       const AdapterMap& GetAdapters() { return mSenders; }
@@ -72,7 +87,8 @@ namespace dtDIS
    private:
       OutgoingMessage();   ///< not implemented by design.
 
-      DIS::DataStream mData;
+      DIS::Endian mPackedEndian;
+      DataStreamContainer mDataStreams;
       unsigned char mExerciseID;
 
       AdapterMap mSenders;
