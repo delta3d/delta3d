@@ -467,7 +467,7 @@ namespace dtGame
 
             runtimeData.SetLastClampedOffset(hp.z() - singlePoint.z());
 
-            if(gcData->GetAdjustRotationToGround())
+            if (gcData->GetAdjustRotationToGround())
             {
                normal.normalize();
                OrientTransform(xform, rotation, hp, normal);
@@ -482,7 +482,7 @@ namespace dtGame
          }
          else
          {
-            if(GetMissingHit(*proxy, *gcData, singlePoint.z(), hp, normal))
+            if (GetMissingHit(*proxy, *gcData, singlePoint.z(), hp, normal))
             {
                runtimeData.SetLastClampedOffset(hp.z() - singlePoint.z());
 
@@ -537,7 +537,7 @@ namespace dtGame
       // Use the last clamped rotation only if the transformation has been flagged
       // not to change. Dead Reckoning Helpers set the alter rotation every frame
       // which causes a twitch bug if the following code does not exist.
-      if(!transformChanged)
+      if (!transformChanged && data.GetAdjustRotationToGround())
       {
          xform.SetRotation(runtimeData.GetLastClampedRotation());
       }
