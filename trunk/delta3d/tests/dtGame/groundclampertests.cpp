@@ -991,6 +991,28 @@ namespace dtGame
             CPPUNIT_ASSERT_DOUBLES_EQUAL(resultPos.z(), pos.z(), errorThreshold);
             CPPUNIT_ASSERT(!CompareMatrices(runtimeData->GetLastClampedRotation(), lastClampRotation, errorThreshold));
             CPPUNIT_ASSERT(CompareMatrices(runtimeData->GetLastClampedRotation(), rotation, errorThreshold));
+
+            // Clamp again with the transform flagged as unchanged and with adjust rotation off..
+            curTime += 5.0;
+            forcedRotation.makeRotate(37.0f, osg::Vec3(0.0f,0.0f,1.0f));
+            xform.SetRotation(forcedRotation);
+            actor->SetTransform(xform);
+            data.SetAdjustRotationToGround(false);
+            mGroundClamper->ClampToGround(*clampType, curTime,
+               xform, *proxy, data, false);
+            mGroundClamper->FinishUp();
+
+            // Verify that the actor is now clamped, with the transform changed to the forced rotation.
+            actor->GetTransform(xform);
+            xform.GetTranslation(pos);
+            xform.GetRotation(rotation);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(resultPos.x(), pos.x(), errorThreshold);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(resultPos.y(), pos.y(), errorThreshold);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(resultPos.z(), pos.z(), errorThreshold);
+            // The last clamped rotation should not have been touched because the adjust to ground is false
+            CPPUNIT_ASSERT(!CompareMatrices(runtimeData->GetLastClampedRotation(), lastClampRotation, errorThreshold));
+            // The rotation should be the same as the forced rotation because adjusting the rotation is off.
+            CPPUNIT_ASSERT(CompareMatrices(forcedRotation, rotation, errorThreshold));
          }
 
       private:
