@@ -258,6 +258,12 @@ namespace dtCore
       /// Use the internal scene light
       void UseSceneLight(bool lightState = true);
 
+      /**
+       * This function clears out the database pager and then re-registers the remaining LOD's.
+       *  A good time to do this is on map load.
+       */
+      void ResetDatabasePager();
+
    protected:
 
       friend class View;

@@ -783,4 +783,14 @@ dtCore::ODEController* Scene::GetPhysicsController() const
    return mImpl->mPhysicsController.get();
 }
 
+//////////////////////////////////////////////////////////////////////////
+void Scene::ResetDatabasePager()
+{
+   if (mImpl->mPager.valid())
+   {
+      mImpl->mPager->GetOsgDatabasePager()->clear();
+      mImpl->mPager->GetOsgDatabasePager()->registerPagedLODs(GetSceneNode());
+   }
+} 
+
 } // namespace dtCore
