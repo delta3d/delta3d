@@ -498,58 +498,37 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void BuildingActor::SetRoofTexture(const std::string& fileName)
+   void BuildingActor::SetRoofTexture(const dtDAL::ResourceDescriptor& value)
    {
       if (mRoofTexture.valid())
       {
-         if (!fileName.empty())
-         {
-            // set up the texture state.
-            dtDAL::ResourceDescriptor descriptor = dtDAL::ResourceDescriptor(fileName);
-            mRoofTexture->setImage(osgDB::readImageFile(dtDAL::Project::GetInstance().GetResourcePath(descriptor)));
-         }
-         else
-         {
-            mRoofTexture->setImage(NULL);
-         }
+         // set up the texture state.
+         mRoofDescriptor = value;
+         mRoofTexture->setImage(osgDB::readImageFile(dtDAL::Project::GetInstance().GetResourcePath(value)));
          Visualize();
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void BuildingActor::SetOutWallTexture(const std::string& fileName)
+   void BuildingActor::SetOutWallTexture(const dtDAL::ResourceDescriptor& value)
    {
       if (mOutWallTexture.valid())
       {
-         if (!fileName.empty())
-         {
-            // set up the texture state.
-            dtDAL::ResourceDescriptor descriptor = dtDAL::ResourceDescriptor(fileName);
-            mOutWallTexture->setImage(osgDB::readImageFile(dtDAL::Project::GetInstance().GetResourcePath(descriptor)));
-         }
-         else
-         {
-            mOutWallTexture->setImage(NULL);
-         }
+         // set up the texture state.
+         mOutWallDescriptor = value;
+         mOutWallTexture->setImage(osgDB::readImageFile(dtDAL::Project::GetInstance().GetResourcePath(value)));
          Visualize();
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void BuildingActor::SetInWallTexture(const std::string& fileName)
+   void BuildingActor::SetInWallTexture(const dtDAL::ResourceDescriptor& value)
    {
       if (mInWallTexture.valid())
       {
-         if (!fileName.empty())
-         {
-            // set up the texture state.
-            dtDAL::ResourceDescriptor descriptor = dtDAL::ResourceDescriptor(fileName);
-            mInWallTexture->setImage(osgDB::readImageFile(dtDAL::Project::GetInstance().GetResourcePath(descriptor)));
-         }
-         else
-         {
-            mInWallTexture->setImage(NULL);
-         }
+         // set up the texture state.
+         mInWallDescriptor = value;
+         mInWallTexture->setImage(osgDB::readImageFile(dtDAL::Project::GetInstance().GetResourcePath(value)));
          Visualize();
       }
    }
@@ -1427,25 +1406,28 @@ namespace dtActors
 
       // Roof Texture.
       dtDAL::ResourceActorProperty* roofTextureProp =
-         new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::TEXTURE,
+         new dtDAL::ResourceActorProperty(dtDAL::DataType::TEXTURE,
          "RoofTextureResource", "Roof Texture",
-         dtDAL::ResourceActorProperty::SetFuncType(actor, &BuildingActor::SetRoofTexture),
+         dtDAL::ResourceActorProperty::SetDescFuncType(actor, &BuildingActor::SetRoofTexture),
+         dtDAL::ResourceActorProperty::GetDescFuncType(actor, &BuildingActor::GetRoofTexture),
          "Defines the texture used when rendering the roof.", "Building");
       AddProperty(roofTextureProp);
 
       // Outside Wall Texture.
       dtDAL::ResourceActorProperty* outWallTextureProp =
-         new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::TEXTURE,
+         new dtDAL::ResourceActorProperty(dtDAL::DataType::TEXTURE,
          "OutWallTextureResource", "Outside Wall Texture",
-         dtDAL::ResourceActorProperty::SetFuncType(actor, &BuildingActor::SetOutWallTexture),
+         dtDAL::ResourceActorProperty::SetDescFuncType(actor, &BuildingActor::SetOutWallTexture),
+         dtDAL::ResourceActorProperty::GetDescFuncType(actor, &BuildingActor::GetOutWallTexture),
          "Defines the texture used when rendering walls.", "Building");
       AddProperty(outWallTextureProp);
 
       // Inside Wall Texture.
       dtDAL::ResourceActorProperty* inWallTextureProp =
-         new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::TEXTURE,
+         new dtDAL::ResourceActorProperty(dtDAL::DataType::TEXTURE,
          "InWallTextureResource", "Inside Wall Texture",
-         dtDAL::ResourceActorProperty::SetFuncType(actor, &BuildingActor::SetInWallTexture),
+         dtDAL::ResourceActorProperty::SetDescFuncType(actor, &BuildingActor::SetInWallTexture),
+         dtDAL::ResourceActorProperty::GetDescFuncType(actor, &BuildingActor::GetInWallTexture),
          "Defines the texture used when rendering walls.", "Building");
       AddProperty(inWallTextureProp);
 

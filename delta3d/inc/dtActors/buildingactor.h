@@ -12,6 +12,7 @@
 #include <dtCore/object.h>
 #include <osg/Geode>
 #include <osg/Geometry>
+#include <dtDAL/resourcedescriptor.h>
 
 namespace dtDAL
 {
@@ -173,17 +174,20 @@ namespace dtActors
       /**
       * Sets the roof texture.
       */
-      void SetRoofTexture(const std::string& fileName);
+      void SetRoofTexture(const dtDAL::ResourceDescriptor& value);
+      dtDAL::ResourceDescriptor GetRoofTexture() {return mRoofDescriptor;}
 
       /**
       * Sets the outside wall texture.
       */
-      void SetOutWallTexture(const std::string& fileName);
+      void SetOutWallTexture(const dtDAL::ResourceDescriptor& value);
+      dtDAL::ResourceDescriptor GetOutWallTexture() {return mOutWallDescriptor;}
 
       /**
       * Sets the inside wall texture.
       */
-      void SetInWallTexture(const std::string& fileName);
+      void SetInWallTexture(const dtDAL::ResourceDescriptor& value);
+      dtDAL::ResourceDescriptor GetInWallTexture() {return mInWallDescriptor;}
 
       /**
       * Gets the width of the segments.
@@ -361,6 +365,10 @@ namespace dtActors
       osg::ref_ptr<osg::Texture2D>     mRoofTexture;
       osg::ref_ptr<osg::Texture2D>     mOutWallTexture;
       osg::ref_ptr<osg::Texture2D>     mInWallTexture;
+
+      dtDAL::ResourceDescriptor        mRoofDescriptor;
+      dtDAL::ResourceDescriptor        mOutWallDescriptor;
+      dtDAL::ResourceDescriptor        mInWallDescriptor;
 
       dtCore::RefPtr<dtCore::Transformable> mOrigin;
    };
