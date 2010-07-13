@@ -48,6 +48,7 @@ class DeltaDrawableTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestDeactive);
       CPPUNIT_TEST(TestDeactiveThenAddedToScene);
       CPPUNIT_TEST(TestDeactiveAddedToSceneThenActive);
+      CPPUNIT_TEST(TestAddedAndRemovedCallbacks);
    CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -59,6 +60,7 @@ public:
    void TestDeactive();
    void TestDeactiveThenAddedToScene();
    void TestDeactiveAddedToSceneThenActive();
+   void TestAddedAndRemovedCallbacks();
 
 private:
    bool HasChild(dtCore::DeltaDrawable* parent, dtCore::DeltaDrawable* child);
@@ -73,6 +75,49 @@ class TestTransformable : public dtCore::Transformable
          GetParent()->RemoveChild(this);
       }
    };
+};
+
+class TestAddedAndRemovedDrawable : public dtCore::DeltaDrawable
+{
+public:
+   TestAddedAndRemovedDrawable()
+   : mNode(new osg::Group())
+   , mAddedCalled(0)
+   , mRemovedCalled(0)
+   {
+
+   }
+
+   virtual void AddedToScene(Scene* scene)
+   {
+      dtCore::DeltaDrawable::AddedToScene(scene);
+      if (scene == NULL)
+      {
+         CPPUNIT_ASSERT(GetSceneParent() == NULL);
+      }
+      ++mAddedCalled;
+   }
+
+   virtual void RemovedFromScene(Scene* scene)
+   {
+      dtCore::DeltaDrawable::RemovedFromScene(scene);
+      CPPUNIT_ASSERT(GetSceneParent() == NULL);
+      ++mRemovedCalled;
+   }
+
+   void ResetCalled()
+   {
+      mAddedCalled = 0;
+      mRemovedCalled = 0;
+   }
+
+   const osg::Node* GetOSGNode(void) const {return mNode.get();}
+   osg::Node* GetOSGNode(void) { return mNode.get(); }
+
+   osg::ref_ptr<osg::Group> mNode;
+
+   int mAddedCalled;
+   int mRemovedCalled;
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(DeltaDrawableTests);
@@ -293,3 +338,50 @@ void DeltaDrawableTests::TestDeactiveAddedToSceneThenActive()
    System::GetInstance().Stop();
    scene->RemoveDrawable(draw.get());
 }
+
+//////////////////////////////////////////////////////////////////////////
+void DeltaDrawableTests::TestAddedAndRemovedCallbacks()
+{
+   dtCore::RefPtr<TestAddedAndRemovedDrawable> drawable = new TestAddedAndRemovedDrawable;
+
+   RefPtr<Scene> scene = GetGlobalApplication().GetScene();
+   scene->AddDrawable(drawable.get());
+
+   CPPUNIT_ASSERT_EQUAL(1, drawable->mAddedCalled);
+   CPPUNIT_ASSERT_EQUAL(0, drawable->mRemovedCalled);
+
+   drawable->ResetCalled();
+   scene->RemoveDrawable(drawable.get());
+
+   CPPUNIT_ASSERT_EQUAL(1, drawable->mAddedCalled);
+   CPPUNIT_ASSERT_EQUAL(1, drawable->mRemovedCalled);
+
+   drawable->ResetCalled();
+   scene->AddDrawable(drawable.get());
+
+   dtCore::RefPtr<TestAddedAndRemovedDrawable> subDrawable = new TestAddedAndRemovedDrawable;
+   drawable->AddChild(subDrawable.get());
+
+   CPPUNIT_ASSERT_EQUAL(1, subDrawable->mAddedCalled);
+   CPPUNIT_ASSERT_EQUAL(0, subDrawable->mRemovedCalled);
+
+   subDrawable->ResetCalled();
+   drawable->RemoveChild(subDrawable.get());
+
+   CPPUNIT_ASSERT_EQUAL(1, subDrawable->mAddedCalled);
+   CPPUNIT_ASSERT_EQUAL(1, subDrawable->mRemovedCalled);
+
+   drawable->AddChild(subDrawable.get());
+
+   drawable->ResetCalled();
+   subDrawable->ResetCalled();
+
+   scene->RemoveDrawable(drawable.get());
+
+   CPPUNIT_ASSERT_EQUAL(1, drawable->mAddedCalled);
+   CPPUNIT_ASSERT_EQUAL(1, drawable->mRemovedCalled);
+
+   CPPUNIT_ASSERT_EQUAL(1, subDrawable->mAddedCalled);
+   CPPUNIT_ASSERT_EQUAL(1, subDrawable->mRemovedCalled);
+}
+
