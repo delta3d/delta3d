@@ -467,8 +467,8 @@ namespace dtCore
       }
 
       // If ahead enough that we could draw and still be ahead, then just waste time (do nothing in a loop)
-      double previousDrawTime = mSystemStageTimes[System::STAGE_FRAME] / 1000.0;
-      if (mCorrectSimulationTime + previousDrawTime < mSimulationTime + simFrameTime)
+      //double previousDrawTime = mSystemStageTimes[System::STAGE_FRAME] / 1000.0;
+      if (mCorrectSimulationTime + (0.5f * simFrameTime) /*+ previousDrawTime*/ < mSimulationTime + simFrameTime)
       {
 #ifndef DELTA_WIN32
          AppSleep(1); // In Linux, it seems to sleep for 1 like it should
@@ -483,7 +483,7 @@ namespace dtCore
       mSimulationTime      += simFrameTime;
       mSimTimeSinceStartup += simFrameTime;
       mSimulationClockTime += Timer_t(simFrameTime * 1000000);
- 
+
       const double realFrameTime = mFrameTime;
       EventTraversal(simFrameTime, realFrameTime);
       PostEventTraversal(simFrameTime, realFrameTime);
@@ -494,7 +494,7 @@ namespace dtCore
          || (mRealClockTime - mLastDrawClockTime) > mMaxTimeBetweenDraws)
       {
          mLastDrawClockTime = mRealClockTime;
-         CameraSynch(simFrameTime, realFrameTime);
+         CameraSynch(simFrameTime, realFrameTime); 
          FrameSynch(simFrameTime, realFrameTime);
          Frame(simFrameTime, realFrameTime);
       }
@@ -504,6 +504,7 @@ namespace dtCore
          SetLastStatTimer(System::MESSAGE_FRAME_SYNCH, System::STAGE_FRAME_SYNCH);
          SetLastStatTimer(System::MESSAGE_FRAME, System::STAGE_FRAME);
       }
+
       PostFrame(simFrameTime, realFrameTime);
    }
 
