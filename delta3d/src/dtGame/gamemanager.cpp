@@ -427,21 +427,22 @@ namespace dtGame
 
       double simulationTime = dtCore::System::GetInstance().GetSimulationTime();
 
+      // Send out Tick Local and process all responses.
       dtCore::RefPtr<TickMessage> tick;
       GetMessageFactory().CreateMessage(MessageType::TICK_LOCAL, tick);
       PopulateTickMessage(*tick, deltaSimTime, deltaRealTime, simulationTime);
+      SendMessage(*tick);
+      mGMImpl->ProcessTimers(*this, mGMImpl->mRealTimeTimers, GetRealClockTime());
+      mGMImpl->ProcessTimers(*this, mGMImpl->mSimulationTimers, dtCore::Timer_t(GetSimTimeSinceStartup() * 1000000.0));
+      DoSendMessages();
 
+      // The tick remote comes after ALL responses to Tick Local
       dtCore::RefPtr<TickMessage> tickRemote;
       GetMessageFactory().CreateMessage(MessageType::TICK_REMOTE, tickRemote);
       PopulateTickMessage(*tickRemote, deltaSimTime, deltaRealTime, simulationTime);
-
-      SendMessage(*tick);
       SendMessage(*tickRemote);
-
-      mGMImpl->ProcessTimers(*this, mGMImpl->mRealTimeTimers, GetRealClockTime());
-      mGMImpl->ProcessTimers(*this, mGMImpl->mSimulationTimers, dtCore::Timer_t(GetSimTimeSinceStartup() * 1000000.0));
-
       DoSendMessages();
+
 
       dtCore::RefPtr<TickMessage> tickEnd;
       GetMessageFactory().CreateMessage(MessageType::TICK_END_OF_FRAME, tickEnd);
