@@ -96,11 +96,38 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    bool OperationAction::Update(float simDelta, float delta, int input, bool firstUpdate)
    {
-      // Perform math!
-      double left = GetDouble("A");
-      double right = GetDouble("B");
-      double result = 0;
+      dtDAL::DataType& leftType = GetPropertyType("A");
+      dtDAL::DataType& rightType = GetPropertyType("B");
 
+      osg::Vec4 left;
+      osg::Vec4 right;
+      osg::Vec4 result;
+
+      if (leftType == dtDAL::DataType::VEC4F)
+      {
+         left = GetVec("A");
+      }
+      else
+      {
+         left.x() = GetDouble("A");
+         left.y() = left.x();
+         left.z() = left.x();
+         left.w() = left.x();
+      }
+
+      if (rightType == dtDAL::DataType::VEC4F)
+      {
+         right = GetVec("B");
+      }
+      else
+      {
+         right.x() = GetDouble("B");
+         right.y() = right.x();
+         right.z() = right.x();
+         right.w() = right.x();
+      }
+
+      // Perform math!
       switch (input)
       {
       case INPUT_ADD:
@@ -110,14 +137,30 @@ namespace dtDirector
          result = left - right;
          break;
       case INPUT_MUL:
-         result = left * right;
+         result.x() = left.x() * right.x();
+         result.y() = left.y() * right.y();
+         result.z() = left.z() * right.z();
+         result.w() = left.w() * right.w();
          break;
       case INPUT_DIV:
-         if (right != 0) result = left / right;
+         if (right.x() != 0) result = left / right.x();
          break;
       }
 
-      SetDouble(result, "Result");
+      int count = GetPropertyCount("Result");
+      for (int index = 0; index < count; index++)
+      {
+         dtDAL::DataType& resultType = GetPropertyType("Result", index);
+         
+         if (resultType == dtDAL::DataType::VEC4F)
+         {
+            SetVec(result, "Result", index);
+         }
+         else
+         {
+            SetDouble(result.x(), "Result", index);
+         }
+      }
 
       return ActionNode::Update(simDelta, delta, input, firstUpdate);
    }
@@ -134,6 +177,8 @@ namespace dtDirector
          case dtDAL::DataType::INT_ID:
          case dtDAL::DataType::FLOAT_ID:
          case dtDAL::DataType::DOUBLE_ID:
+         case dtDAL::DataType::VEC4F_ID:
+         case dtDAL::DataType::UNKNOWN_ID:
             return true;
 
          default:
