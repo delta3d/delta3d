@@ -174,7 +174,11 @@ namespace dtDirector
       // If we are linked to another value node, use that value's type.
       if (mValues.size() && mValues[0].GetLinks().size())
       {
-         return mValues[0].GetLinks()[0]->GetPropertyType();
+         dtDAL::DataType& type = mValues[0].GetLinks()[0]->GetPropertyType();
+         if (type != dtDAL::DataType::UNKNOWN)
+         {
+            return type;
+         }
       }
 
       // If we are linked to a value link, use the type of that link.
@@ -183,9 +187,10 @@ namespace dtDirector
          int count = (int)mLinks.size();
          for (int index = 0; index < count; index++)
          {
-            if (mLinks[index]->GetPropertyType() != dtDAL::DataType::UNKNOWN)
+            dtDAL::DataType& type = mLinks[index]->GetPropertyType();
+            if (type != dtDAL::DataType::UNKNOWN)
             {
-               return mLinks[index]->GetPropertyType();
+               return type;
             }
          }
       }

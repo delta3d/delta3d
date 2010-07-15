@@ -294,6 +294,16 @@ namespace dtDirector
       virtual dtDAL::ActorProperty* GetProperty(const std::string& name, int index = 0, ValueNode** outNode = NULL);
 
       /**
+       * Retrieves the type of the property of the given name.
+       *
+       * @param[in]  name     The name of the property.
+       * @param[in]  index    The property index, in case of multiple linking.
+       *
+       * @return     The Data Type of the property.
+       */
+      dtDAL::DataType& GetPropertyType(const std::string& name, int index = 0);
+
+      /**
       * Logs when a value is retrieved.
       *
       * @param[in]  valueNode  The value node that was retrieved.

@@ -123,6 +123,7 @@ namespace dtDirector
             }
          }
 
+         mScene->BeginBatchSelection();
          count = (int)mMovingNodes.size();
          for (int index = 0; index < count; index++)
          {
@@ -133,6 +134,7 @@ namespace dtDirector
                item->BeginMoveEvent();
             }
          }
+         mScene->EndBatchSelection();
       }
    }
 
@@ -141,6 +143,7 @@ namespace dtDirector
    {
       NodeItem::EndMoveEvent();
 
+      mScene->BeginBatchSelection();
       osg::Vec2 pos = GetPosition();
       int count = (int)mMovingNodes.size();
       for (int index = 0; index < count; index++)
@@ -152,8 +155,8 @@ namespace dtDirector
          }
       }
       mMovingNodes.clear();
-
-      mScene->Refresh();
+      mScene->EndBatchSelection();
+      //mScene->Refresh();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
