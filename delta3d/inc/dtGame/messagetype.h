@@ -86,6 +86,8 @@ namespace dtGame
          static const MessageType NETCLIENT_NOTIFY_DISCONNECT;
          static const MessageType NETSERVER_ACCEPT_CONNECTION;
          static const MessageType NETSERVER_REJECT_CONNECTION;
+         static const MessageType NETSERVER_SYNC_CONTROL;
+         static const MessageType NETSERVER_FRAME_SYNC;
 
          //LOGGER MESSAGES
          static const MessageType LOG_REQ_CHANGESTATE_PLAYBACK;

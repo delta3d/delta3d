@@ -1,6 +1,6 @@
 /*
  * Delta3D Open Source Game and Simulation Engine
- * Copyright (C) 2005, BMH Associates, Inc.
+ * Copyright (C) 2005-2010, Alion Science and Technology.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * @author Pjotr van Amerongen
+ * Pjotr van Amerongen, David Guthrie, Curtiss Murphy
  */
 
 #ifndef DELTA_NETWORKCOMPONENT
@@ -134,7 +134,30 @@ namespace dtNetGM
       * Processes a MessageType::TICK_LOCAL Message.
       * @param msg The message
       */
-      virtual void ProcessTickLocal(const dtGame::TickMessage& msg);
+      //virtual void ProcessTickLocal(const dtGame::TickMessage& msg);
+
+      /** 
+       * Called at Tick Local. This is overridden by subclasses to perform custom behavior
+       * This default version pushes ALL incoming messages over to the GM.
+       */
+      virtual void HandleIncomingMessages();
+
+      /** 
+       * Goes through all the messages in mWorkingBuffer and processes them. The intentional 
+       * result is that mMessageBuffer will be emptied at the end.
+       */
+      virtual void HandleWorkingMessageBuffer();
+
+      /** 
+       * Puts the waiting queue onto the waiting buffer and then calls HandleWorkingMessageBuffer(). 
+       */
+      virtual void HandleWaitingMessages();
+
+      /** 
+       * Called from HandleIncomingMessages to preprocess and handle one of the incoming messages.
+       * @param the single message
+       */
+      virtual void HandleOneIncomingMessage(const dtGame::Message& msg);
 
       /**
        * Processes a MessageType::NETCLIENT_REQUEST_CONNECTION Message.
@@ -237,6 +260,12 @@ namespace dtNetGM
        */
       virtual void DispatchNetworkMessage(const dtGame::Message& message);
 
+      /// Simple utility that takes this message and adds it to the end of the output message buffer. 
+      void AddMessageToOutputBuffer(const dtGame::Message& message);
+
+      /// Creates mutex and adds to input buffer. Made into a method so subclass could override behavior.
+      virtual void AddMessageToInputBuffer(const dtGame::Message& message);
+
       /**
        * Function called by a Networkbridge to Signal a received DataStream
        * The network component creates the message and checks for destination and / or connection info
@@ -305,6 +334,68 @@ namespace dtNetGM
        */
       std::string GetHostName();
 
+
+      /** 
+       * Returns true if server frame sync'ing is currently active. In this mode, the server 
+       * will send a frame sync message out to the clients. The clients will use the frame sync
+       * to try to spread out incoming messages to match the sync timing.  
+       * Note - this value is controlled by the server and sent out to the clients.
+       * @return The FrameSyncIsEnabled value (default false)
+       * @see dtNetGM::ServerFrameSyncMessage
+       * @see dtNetGM::ServerSyncControlMessage
+       */
+      bool GetFrameSyncIsEnabled();
+
+      /** 
+       * Sets the FrameSyncIsEnabled value. See GetFrameSyncIsEnabled()
+       * Note - This value is set on the Server via the 'dtNetGM.FrameSyncIsEnabled' config property
+       *    in the OnAddedToGM() method. To override the config setting, set it AFTER adding it to the GM.
+       * @param The new FrameSyncIsEnabled value.
+       * @see GetFrameSyncIsEnabled
+       */
+      void SetFrameSyncIsEnabled(bool newValue);
+      
+      /** 
+       * The number of frame syncs to send/receive per second. Only relevant if GetFrameSyncIsEnabled(). 
+       * If frame sync'ing is active, this value is typically something like 60. 
+       * Note - this value is controlled by the server and sent out to the clients.
+       * @return The FrameSyncNumPerSecond value (default 60)
+       * @see GetFrameSyncIsEnabled
+       * @see dtNetGM::ServerFrameSyncMessage
+       * @see dtNetGM::ServerSyncControlMessage
+       */
+      unsigned int GetFrameSyncNumPerSecond();
+
+      /** 
+       * Sets the number of frame syncs to send/receive per second. See GetFrameSyncNumPerSecond()
+       * Note - This value is set on the Server via the 'dtNetGM.FrameSyncNumPerSecond' config property
+       *    in the OnAddedToGM() method. To override the config setting, set it AFTER adding it to the GM.
+       * @param The FrameSyncNumPerSecond value.
+       * @see GetFrameSyncNumPerSecond
+       */
+      void SetFrameSyncNumPerSecond(unsigned int newValue);
+
+      /** 
+       * The amount of time (in ms) to wait for a frame sync. Only relevant if GetFrameSyncIsEnabled(). 
+       * If frame sync'ing is active, this value is typically something like 4 ms. 
+       * Note - this value is controlled by the server and sent out to the clients.
+       * Note - for now, the thread block code only uses whole numbers (in ms) for the timeout. So, use 1.0, 2.0, ...
+       * @return The FrameSyncMaxWaitTime value (default 4.0)
+       * @see dtNetGM::ServerFrameSyncMessage
+       * @see dtNetGM::ServerSyncControlMessage
+       */
+      float GetFrameSyncMaxWaitTime();
+
+      /** 
+       * The amount of time (in ms) to wait for a frame sync. See GetFrameSyncMaxWaitTime()
+       * Note - This value is set on the Server via the 'dtNetGM.FrameSyncMaxWaitTime' config property
+       *    in the OnAddedToGM() method. To override the config setting, set it AFTER adding it to the GM.
+       * Note - for now, the thread block code only uses whole numbers (in ms) for the timeout. So, use 1.0, 2.0, ...
+       * @param The FrameSyncMaxWaitTime value.
+       * @see GetFrameSyncMaxWaitTime
+       */
+      void SetFrameSyncMaxWaitTime(float newValue);
+
    private:
       static bool mGneInitialized; // bool indicating GNE initialization
 
@@ -361,8 +452,16 @@ namespace dtNetGM
 
       void SendNetworkMessage(const dtGame::Message& message, const DestinationType& destinationType = DestinationType::DESTINATION);
 
+      /// When the tick is over, we force a final send. The subclasses might also do work.  
+      virtual void DoEndOfTick();
+
       /// Starts the message send background task.
       void StartSendTask();
+
+      /// FrameSyncValues are marked dirty when one changes. The subclasses each handle this differently
+      bool GetFrameSyncValuesAreDirty() { return mFrameSyncValuesAreDirty; };
+      /// FrameSyncValues are marked dirty when one changes. The subclasses each handle this differently
+      void SetFrameSyncValuesAreDirty(bool newValue) { mFrameSyncValuesAreDirty = newValue; };
 
       bool mReliable ; // Value describing the GNE connection parameter
       int mRateOut; // Value describing the GNE connection parameter
@@ -372,17 +471,34 @@ namespace dtNetGM
       OpenThreads::Mutex mMutex;
       // mutex for accessing the GameManager message queue
       OpenThreads::Mutex mBufferMutex;
+
+      // buffer to store messages received from the network. Used by client & server subclasses
+      MessageBufferType mMessageBufferIncoming;
+      // Working buffer. Uses a member var vice a local var to prevent lots of memory reallocation. 
+      // ONLY Accessed on the main thread. Used like a local var, just a member to prevent reallocation
+      MessageBufferType mMessageBufferWorking;
+
    private:
-      // local buffer to store messages received from the network.
-      MessageBufferType mMessageBuffer;
       // out buffer doesn't need a mutex because it is only accessed on the main thread
       // despite the fact that the outgoing messages are sent in a background thread.
       MessageBufferType mMessageBufferOut;
+      // messages that were told to wait end up in the wait buffer. They are rechecked every frame. 
+      MessageBufferType mMessageBufferWaiting;
 
       std::set<short> mUnknownMessages;
 
       dtCore::RefPtr<dtUtil::ThreadPoolTask> mDispatchTask;
       bool mMapChangeInProcess;
+
+      // these params are used for the server-client frame syncing behavior. 
+      // Frame Syncing is used to keep a server & client in EXTREMELY tight synchronization
+      // (ex 60 publishes per second) to prevent huge visual anomalies caused when the server/client
+      // get slightly out of phase. See ServerFrameSyncMessage and ServerSyncControlMessage
+      bool mFrameSyncIsEnabled; // Are we frame syncing? Controlled on the server config props and used by all clients
+      unsigned int mFrameSyncNumPerSecond; // how often should frame syncs be sent/received
+      float mFrameSyncMaxWaitTime; // how long should the client wait to get a frame sync
+      bool mFrameSyncValuesAreDirty; // tracks if the frame sync values have changed
+
    };
 }
 #endif // DELTA_NETWORKCOMPONENT

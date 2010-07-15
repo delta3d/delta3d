@@ -69,6 +69,10 @@ namespace dtGame
    const MessageType MessageType::NETCLIENT_NOTIFY_DISCONNECT("Client Disconnecting", "Client", "Sent when a client wishes to disconnect from the server", 151);
    const MessageType MessageType::NETSERVER_ACCEPT_CONNECTION("Accept Client", "Server", "Sent from a server to a client informing the client that it is ok to connect", 152);
    const MessageType MessageType::NETSERVER_REJECT_CONNECTION("Reject Client", "Server", "Sent from the server to the client if a client is not allowed to connect to the server", 153);
+   const MessageType MessageType::NETSERVER_SYNC_CONTROL("Server Sync Control", "Server", 
+      "Sent from the server to tell the client about the frame sync mechanism.", 154);
+   const MessageType MessageType::NETSERVER_FRAME_SYNC("Server Frame Sync", "Server", 
+      "Sent from the server, every frame, to give clients a chance to sync up.", 155);
 
     // Logger messages
    const MessageType MessageType::LOG_REQ_CHANGESTATE_PLAYBACK("Logger - Change State to Playback",

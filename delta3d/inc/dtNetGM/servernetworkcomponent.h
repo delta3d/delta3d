@@ -1,6 +1,6 @@
 /*
  * Delta3D Open Source Game and Simulation Engine
- * Copyright (C) 2005, BMH Associates, Inc.
+ * Copyright (C) 2005-2010, Alion Science and Technology
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * @author Pjotr van Amerongen
+ * Pjotr van Amerongen, Curtiss Murphy
  */
 #ifndef DELTA_SERVERNETWORKCOMPONENT
 #define DELTA_SERVERNETWORKCOMPONENT
@@ -42,6 +42,12 @@ namespace dtNetGM
    public:
       // Use this name when constructing your component - component names are unique
       static const dtUtil::RefString DEFAULT_NAME;
+      // Frame Sync config properties. To override the config or default values, call the Sets AFTER adding to the GM
+      static const dtUtil::RefString CONFIG_PROP_FRAMESYNC_ISENABLED;
+      static const dtUtil::RefString CONFIG_PROP_FRAMESYNC_NUMPERSECOND;
+      static const dtUtil::RefString CONFIG_PROP_FRAMESYNC_MAXWAITTIME;
+
+      typedef NetworkComponent BaseClass;
 
 
       /**
@@ -53,9 +59,17 @@ namespace dtNetGM
        */
       ServerNetworkComponent(const std::string& gameName, const int gameVersion, const std::string& logFile = "");
 
+      /** 
+       * Sends out a sync control message to all clients. Sent when control status changes or when a new client connects
+       */
+      void SendFrameSyncControlMessage();
+
    protected:
       // Destructor
       ~ServerNetworkComponent(void);
+
+      /// When the tick is over, we force a final send. The subclasses might also do work.  
+      virtual void DoEndOfTick();
 
    public:
       /**
@@ -90,6 +104,9 @@ namespace dtNetGM
 
       /// Disconnects both open connections and the server listener.
       virtual void Disconnect();
+
+      /// Overridden to handle config properties.
+      virtual void OnAddedToGM();
 
    protected:
 

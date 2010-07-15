@@ -16,13 +16,18 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * @author Pjotr van Amerongen, Curtiss Murphy
+ * Pjotr van Amerongen, Curtiss Murphy
  */
 #ifndef DELTA_CLIENTNETWORKCOMPONENT
 #define DELTA_CLIENTNETWORKCOMPONENT
 
 #include <dtNetGM/export.h>
 #include <dtNetGM/networkcomponent.h>
+
+namespace OpenThreads
+{
+   class Block;
+}
 
 namespace dtNetGM
 {
@@ -32,6 +37,8 @@ namespace dtNetGM
    {
    public:
       static const std::string DEFAULT_NAME;
+
+      typedef NetworkComponent BaseClass;
 
       /**
        * Construct a ClientNetworkComponent with a game name and version to be used by GNE
@@ -47,6 +54,14 @@ namespace dtNetGM
       virtual ~ClientNetworkComponent(void);
 
    public:
+
+      /** 
+       * Overridden from base class to handle the Frame Sync behaviors. Depending on whether Frame Sync
+       * is active, calls the base class or calls HandleIncomingMessagesInFrameSyncMode().
+       */
+      virtual void HandleIncomingMessages();
+
+
       /**
        * @brief Setup a new network connection to a server.
        * Call ConnectToServer to establish a connection
@@ -112,6 +127,9 @@ namespace dtNetGM
        */
       void SendRequestConnectionMessage();
 
+      /// Overridden. Uses a mutex and adds message to the input buffer. Also checks for specific message types. 
+      virtual void AddMessageToInputBuffer(const dtGame::Message& message);
+
    private:
       // MachineInfo of the Server
       dtCore::RefPtr<dtGame::MachineInfo> mMachineInfoServer;
@@ -127,6 +145,30 @@ namespace dtNetGM
        */
       bool ConnectToServer(const std::string& host, const int portNum);
 
+
+      //////////////////////////////////////////////
+      // FRAME SYNC BEHAVIORS - See networkcomponent.h for more info. 
+      //////////////////////////////////////////////
+
+      void HandleIncomingSyncControlMessage(const dtGame::Message& message);
+      void HandleIncomingFrameSyncMessage(const dtGame::Message& message);
+      void SafelyGetFrameSyncValues(bool &safeFrameSyncIsEnabled, unsigned int &safeFrameSyncNumPerSecond, 
+         float &safeFrameSyncMaxWaitTime, bool &safeFrameSyncValuesAreDirty);
+      void HandleIncomingMessagesInFrameSyncMode(unsigned int safeFrameSyncNumPerSecond, 
+         float safeFrameSyncMaxWaitTime, bool safeFrameSyncValuesAreDirty);
+      void MergeBackLogAndIncomingIntoWorking();
+      int CountNumFrameSyncsInWorkingBuffer();
+      int ComputeNumFrameSyncsToSend(int numFrameSyncsAvail);
+      void ProcessFrameSyncsInWorkingBuffer(int numFrameSyncsAvail, int numFrameSyncsToSend);
+
+      float mNumSyncsExpectingPerFrame;
+      float mNumSyncsCurrentlyNeeded; // how many syncs we expect this frame (or next, depending on where we are)
+      int mNumSyncsLeftInBackLog; // the number of frame syncs we pushed into the backlog on the previous frame.
+      int mNumTimesWithoutAFrameSync; // a gross error checking value in case we stop getting frame syncs for some reason
+      OpenThreads::Block mThreadSyncsBlock; // blocks to wait for a frame sync if none yet available
+      // Backlog holds messages that are waiting for a frame sync. 
+      MessageBufferType mMessageBufferBackLog;
+
    protected:
       // a vector containing information of other connected clients
       std::vector< dtCore::RefPtr<dtGame::MachineInfo> > mConnectedClients;
@@ -138,6 +180,7 @@ namespace dtNetGM
        * @return Pointer to the dtGame::MachineInfo* or NULL
        */
       virtual const dtGame::MachineInfo* GetMachineInfo(const dtCore::UniqueId& uniqueId);
+
    };
 }
 

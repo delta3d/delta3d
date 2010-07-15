@@ -1,6 +1,6 @@
 /*
  * Delta3D Open Source Game and Simulation Engine
- * Copyright (C) 2005, BMH Associates, Inc.
+ * Copyright (C) 2005-2010, Alion Science and Technology
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,21 +16,32 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * @author Pjotr van Amerongen
+ * Pjotr van Amerongen, Curtiss Murphy
  */
 #include <dtNetGM/servernetworkcomponent.h>
 #include <dtNetGM/networkcomponent.h>
 #include <dtNetGM/networkbridge.h>
 #include <dtNetGM/serverconnectionlistener.h>
 #include <dtNetGM/machineinfomessage.h>
+#include <dtNetGM/serversynccontrolmessage.h>
+#include <dtNetGM/serverframesyncmessage.h>
 #include <dtGame/basemessages.h>
 #include <dtGame/messagefactory.h>
 #include <dtGame/messagetype.h>
 #include <dtCore/timer.h>
+#include <dtUtil/mathdefines.h>
+#include <dtUtil/configproperties.h>
 
 namespace dtNetGM
 {
    const dtUtil::RefString ServerNetworkComponent::DEFAULT_NAME("ServerNetworkComponent");
+
+   // Config settings for the Frame Sync behavior. Initially read during the OnAddedToGM() method. 
+   // To override the config settings or the defaults, call the Set methods AFTER adding it to the GM.
+   const dtUtil::RefString ServerNetworkComponent::CONFIG_PROP_FRAMESYNC_ISENABLED("dtNetGM.FrameSyncIsEnabled");
+   const dtUtil::RefString ServerNetworkComponent::CONFIG_PROP_FRAMESYNC_NUMPERSECOND("dtNetGM.FrameSyncNumPerSecond");
+   const dtUtil::RefString ServerNetworkComponent::CONFIG_PROP_FRAMESYNC_MAXWAITTIME("dtNetGM.FrameSyncMaxWaitTime");
+
 
    ////////////////////////////////////////////////////////////////////////////////
    ServerNetworkComponent::ServerNetworkComponent(const std::string& gameName, const int gameVersion, const std::string& logFile)
@@ -43,6 +54,90 @@ namespace dtNetGM
    ////////////////////////////////////////////////////////////////////////////////
    ServerNetworkComponent::~ServerNetworkComponent(void)
    {
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ServerNetworkComponent::OnAddedToGM()
+   {
+      BaseClass::OnAddedToGM();
+
+      // FRAME SYNC CONFIG
+      // Read the frame sync config properties.  To override the config based settings, 
+      // make sure you call the Set methods after adding it to the GM. 
+      // If Frame Sync is enabled, we publish a FrameSyncControl message every time a client connects
+      std::string strSyncIsEnabled = GetGameManager()->GetConfiguration().
+         GetConfigPropertyValue(CONFIG_PROP_FRAMESYNC_ISENABLED, "false");
+      if (strSyncIsEnabled == "true" || strSyncIsEnabled == "TRUE" || strSyncIsEnabled == "1")
+      {
+         SetFrameSyncIsEnabled(true);
+
+         // NUM PER SECOND
+         std::string strNumPerSecond = GetGameManager()->GetConfiguration().
+            GetConfigPropertyValue(CONFIG_PROP_FRAMESYNC_NUMPERSECOND, "60");
+         if (!strNumPerSecond.empty())
+         {
+            unsigned int numPerSecond = dtUtil::ToUnsignedInt(strNumPerSecond);
+            SetFrameSyncNumPerSecond(numPerSecond);
+         }
+         else
+         {
+            LOG_WARNING("Frame Sync is enabled, but no config value was found for " + CONFIG_PROP_FRAMESYNC_NUMPERSECOND + ".");
+         }
+
+         // MAX WAIT TIME
+         std::string strMaxWaitTime = GetGameManager()->GetConfiguration().
+            GetConfigPropertyValue(CONFIG_PROP_FRAMESYNC_MAXWAITTIME, "4.0");
+         if (!strMaxWaitTime.empty())
+         {
+            float maxWaitTime = dtUtil::ToUnsignedInt(strMaxWaitTime);
+            SetFrameSyncMaxWaitTime(maxWaitTime);
+         }
+         else
+         {
+            LOG_WARNING("Frame Sync is enabled, but no config value was found for " + CONFIG_PROP_FRAMESYNC_MAXWAITTIME + ".");
+         }
+
+      }
+
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ServerNetworkComponent::DoEndOfTick()
+   {
+      // If our values have changed, then send out a Frame Sync Control message
+      if (GetFrameSyncValuesAreDirty())
+      {
+         SendFrameSyncControlMessage();
+         // Clear dirty
+         SetFrameSyncValuesAreDirty(false);
+      }
+
+      if (GetFrameSyncIsEnabled())
+      {
+         // Create frame sync message.
+         dtCore::RefPtr<dtGame::Message> message = GetGameManager()->GetMessageFactory().CreateMessage(dtGame::MessageType::NETSERVER_FRAME_SYNC);
+         ServerFrameSyncMessage* frameSync = static_cast<ServerFrameSyncMessage*>(message.get());
+         frameSync->SetServerSimTimeSinceStartup(GetGameManager()->GetSimTimeSinceStartup());
+         frameSync->SetServerTimeScale(GetGameManager()->GetTimeScale());
+
+         AddMessageToOutputBuffer(*frameSync); // Note - should go to all clients
+      }
+
+      BaseClass::DoEndOfTick();
+
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ServerNetworkComponent::SendFrameSyncControlMessage()
+   {
+      // Create control message
+      dtCore::RefPtr<dtGame::Message> message = GetGameManager()->GetMessageFactory().CreateMessage(dtGame::MessageType::NETSERVER_SYNC_CONTROL);
+      ServerSyncControlMessage* controlMsg = static_cast<ServerSyncControlMessage*>(message.get());
+      controlMsg->SetMaxWaitTime(GetFrameSyncMaxWaitTime());
+      controlMsg->SetNumSyncsPerSecond(GetFrameSyncNumPerSecond());
+      controlMsg->SetSyncEnabled(GetFrameSyncIsEnabled());
+
+      AddMessageToOutputBuffer(*controlMsg);  // Note - should go to all clients
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -150,6 +245,9 @@ namespace dtNetGM
          // inform new client of connected clients
          SendConnectedClientMessage(msg.GetSource());
          GetConnection(msg.GetSource())->SetClientConnected(true);
+
+         // Let the new client (and any others) know what the current frame sync mode is
+         SendFrameSyncControlMessage();
       }
       else
       {
