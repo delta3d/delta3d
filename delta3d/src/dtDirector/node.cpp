@@ -360,6 +360,18 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   dtDAL::DataType& Node::GetPropertyType(const std::string& name, int index)
+   {
+      dtDAL::ActorProperty* prop = GetProperty(name, index);
+      if (prop)
+      {
+         return prop->GetDataType();
+      }
+
+      return dtDAL::DataType::UNKNOWN;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void Node::LogValueRetrieved(ValueNode* valueNode, dtDAL::ActorProperty* prop)
    {
       // Log the comment for this value.

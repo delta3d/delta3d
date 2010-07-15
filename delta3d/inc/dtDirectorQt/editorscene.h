@@ -158,6 +158,13 @@ namespace dtDirector
       MacroItem* GetGraphItem(const dtCore::UniqueId& id);
 
       /**
+       * Batch selection.  To be used when we are purposely selecting multiple
+       * nodes in a single operation.
+       */
+      void BeginBatchSelection();
+      void EndBatchSelection();
+
+      /**
        * Adds an item to the selected list.
        *
        * @param[in]  container  The item to add.
@@ -270,6 +277,7 @@ namespace dtDirector
       QPointF  mDragOrigin;
       bool     mHasDragged;
       bool     mBandSelecting;
+      bool     mBatchSelecting;
 
       QAction* mMacroSelectionAction;
 

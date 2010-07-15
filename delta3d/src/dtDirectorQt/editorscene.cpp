@@ -53,6 +53,7 @@ namespace dtDirector
       , mDragging(false)
       , mHasDragged(false)
       , mBandSelecting(false)
+      , mBatchSelecting(false)
       , mMacroSelectionAction(NULL)
       , mTranslationItem(NULL)
    {
@@ -431,6 +432,23 @@ namespace dtDirector
       return NULL;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorScene::BeginBatchSelection()
+   {
+      mBatchSelecting = true;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorScene::EndBatchSelection()
+   {
+      if (mBatchSelecting)
+      {
+         mEditor->Refresh();
+      }
+
+      mBatchSelecting = false;
+   }
+
    //////////////////////////////////////////////////////////////////////////
    void EditorScene::AddSelected(dtDAL::PropertyContainer* container)
    {
@@ -445,7 +463,7 @@ namespace dtDirector
       // Update the property editor.
       mPropertyEditor->HandlePropertyContainersSelected(mSelected);
 
-      if (!mBandSelecting) mEditor->Refresh();
+      if (!mBandSelecting && !mBatchSelecting) mEditor->Refresh();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -470,7 +488,7 @@ namespace dtDirector
       // Update the property editor.
       mPropertyEditor->HandlePropertyContainersSelected(mSelected);
 
-      if (!mBandSelecting) mEditor->Refresh();
+      if (!mBandSelecting && !mBatchSelecting) mEditor->Refresh();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -659,15 +677,32 @@ namespace dtDirector
          mView->setDragMode(QGraphicsView::RubberBandDrag);
          mMenuPos = event->screenPos();
       }
-      else if(!itemAt(event->scenePos()))
+      else
       {
-         mDragging = true;
-         mDragOrigin = event->scenePos();
+         QList<QGraphicsItem*> itemList = items(event->scenePos());
+         bool canDrag = true;
+         int count = itemList.count();
+         for (int index = 0; index < count; index++)
+         {
+            // Ignore all path items because they are connection links.
+            QGraphicsPathItem* pathItem = dynamic_cast<QGraphicsPathItem*>(itemList[index]);
+            if (!pathItem)
+            {
+               canDrag = false;
+               break;
+            }
+         }
 
-         // This is unusual, but I have to set it to scroll
-         // drag mode so it does not un-select all selected
-         // nodes.
-         mView->setDragMode(QGraphicsView::ScrollHandDrag);
+         if (canDrag)
+         {
+            mDragging = true;
+            mDragOrigin = event->scenePos();
+
+            // This is unusual, but I have to set it to scroll
+            // drag mode so it does not un-select all selected
+            // nodes.
+            mView->setDragMode(QGraphicsView::ScrollHandDrag);
+         }
       }
 
       // If we are not mouse clicking on a node...
