@@ -16,14 +16,15 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * @author Pjotr van Amerongen
- * @author David Guthrie
+ * Pjotr van Amerongen, David Guthrie, Curtiss Murphy
  */
 
 #include <dtNetGM/networkcomponent.h>
 #include <dtNetGM/datastreampacket.h>
 #include <dtNetGM/machineinfomessage.h>
 #include <dtNetGM/networkbridge.h>
+#include <dtNetGM/serverframesyncmessage.h>
+#include <dtNetGM/serversynccontrolmessage.h>
 #include <dtGame/message.h>
 #include <dtGame/messagetype.h>
 #include <dtGame/messagefactory.h>
@@ -35,10 +36,12 @@
 #include <OpenThreads/ScopedLock>
 #include <OpenThreads/Atomic>
 
+
 namespace dtNetGM
 {
    // The release version will not compile with the following code ????????
    bool NetworkComponent::mGneInitialized = false;
+
 
    ////////////////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////////////////
@@ -99,6 +102,9 @@ namespace dtNetGM
       , mRateOut(0)
       , mRateIn(0)
       , mMapChangeInProcess(false)
+      , mFrameSyncIsEnabled(false)
+      , mFrameSyncNumPerSecond(60)
+      , mFrameSyncMaxWaitTime(4.0f)
    {
       mConnections.clear();
 
@@ -132,6 +138,9 @@ namespace dtNetGM
 
          GetGameManager()->GetMessageFactory().RegisterMessageType<MachineInfoMessage>(dtGame::MessageType::NETSERVER_ACCEPT_CONNECTION);
          GetGameManager()->GetMessageFactory().RegisterMessageType<MachineInfoMessage>(dtGame::MessageType::NETCLIENT_NOTIFY_DISCONNECT);
+
+         GetGameManager()->GetMessageFactory().RegisterMessageType<ServerSyncControlMessage>(dtGame::MessageType::NETSERVER_SYNC_CONTROL);
+         GetGameManager()->GetMessageFactory().RegisterMessageType<ServerFrameSyncMessage>(dtGame::MessageType::NETSERVER_FRAME_SYNC);
       }
 
       dtCore::RefPtr<DispatchTask> task = new DispatchTask;
@@ -170,16 +179,15 @@ namespace dtNetGM
       // Forward all messages to the appropriate function
       if (message.GetMessageType() == dtGame::MessageType::TICK_LOCAL)
       {
-         ProcessTickLocal(static_cast<const dtGame::TickMessage&>(message));
+         HandleIncomingMessages();
       }
-      // Don't change this to Post-Frame.  There is no post frame when system is pause, which can cause messages to
+      // Don't change this to Post-Frame for 2 reasons.  1 - Messages are not usually generated
+      // after end-of-frame, and sending messages later just makes it harder for clients to be in sync. 
+      // 2 - There is no post frame when system is pause, which can cause messages to
       // be delayed for a long time, or mess up the networking during pause.
       else if (message.GetMessageType() == dtGame::MessageType::TICK_END_OF_FRAME)
       {
-         if (!mMessageBufferOut.empty())
-         {
-            StartSendTask();
-         }
+         DoEndOfTick();
       }
       else if (message.GetMessageType() == dtGame::MessageType::NETCLIENT_REQUEST_CONNECTION)
       {
@@ -216,52 +224,75 @@ namespace dtNetGM
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void NetworkComponent::ProcessTickLocal(const dtGame::TickMessage& msg)
+   void NetworkComponent::HandleWaitingMessages()
    {
-      MessageBufferType messageBuffer;
+      // No need to do a scope lock - the waiting buffer is ONLY accessed on the main thread.
+      mMessageBufferWorking.swap(mMessageBufferWaiting);
+      HandleWorkingMessageBuffer();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void NetworkComponent::HandleIncomingMessages()
+   {
+      HandleWaitingMessages();
 
       {
-         // safely push all the received messages onto the GameManager message queue
+         // safely push all the incoming messages onto the working buffer and then process them. 
          OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mBufferMutex);
-         messageBuffer.swap(mMessageBuffer);
+         mMessageBufferWorking.swap(mMessageBufferIncoming);
       }
+      HandleWorkingMessageBuffer();
+   }
 
-      std::string rejectMessageString;
-      MessageBufferType::iterator i, iend;
-      i = messageBuffer.begin();
-      iend = messageBuffer.end();
+   ////////////////////////////////////////////////////////////////////////////////
+   void NetworkComponent::HandleWorkingMessageBuffer()
+   {
+      //MessageBufferType mMessageBufferWorking; // Used to be local - was made a member to prevent re-allocation of memory each frame
+
+      MessageBufferType::iterator i = mMessageBufferWorking.begin();
+      MessageBufferType::iterator iend = mMessageBufferWorking.end();
       for (; i != iend; ++i)
       {
-         // pass the message to the GM
          const dtGame::Message& msg = **i;
-
-         MessageActionCode& code = OnBeforeSendMessage(msg, rejectMessageString);
-         if (code == MessageActionCode::SEND)
-         {
-            GetGameManager()->SendMessage(msg);
-         }
-         else if (code == MessageActionCode::WAIT)
-         {
-            //put it back in the queue
-            OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mBufferMutex);
-            mMessageBuffer.push_back(&msg);
-         }
-         else if (code == MessageActionCode::DROP)
-         {
-            //do nothing
-         }
-         //check reject last because it's the least likely
-         else if (code == MessageActionCode::REJECT)
-         {
-            dtCore::RefPtr<dtGame::ServerMessageRejected> rejectMessage;
-            GetGameManager()->GetMessageFactory().CreateMessage(dtGame::MessageType::SERVER_REQUEST_REJECTED, rejectMessage);
-            rejectMessage->SetCausingMessage(&msg);
-            rejectMessage->SetDestination(&msg.GetSource());
-            rejectMessage->SetCause(rejectMessageString);
-         }
+         HandleOneIncomingMessage(msg);
       }
 
+      // The working buffer is ALWAYS empty for whoever swaps to it next.
+      mMessageBufferWorking.clear(); // maintains memory footprint - prevents reallocation
    }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void NetworkComponent::HandleOneIncomingMessage(const dtGame::Message& msg)
+   {
+      std::string rejectMessageString;
+      MessageActionCode& code = OnBeforeSendMessage(msg, rejectMessageString);
+
+      if (code == MessageActionCode::SEND)
+      {
+         GetGameManager()->SendMessage(msg);
+      }
+      else if (code == MessageActionCode::WAIT)
+      {
+         // add it to the waiting queue. All waiting messages are processed again at the start of the tick. 
+         mMessageBufferWaiting.push_back(&msg); // The waiting queue is only accessed on main thread. No need to lock.
+      }
+      else if (code == MessageActionCode::DROP)
+      {
+         //do nothing
+      }
+      //check reject last because it's the least likely
+      else if (code == MessageActionCode::REJECT)
+      {
+         dtCore::RefPtr<dtGame::ServerMessageRejected> rejectMessage;
+         GetGameManager()->GetMessageFactory().CreateMessage(dtGame::MessageType::SERVER_REQUEST_REJECTED, rejectMessage);
+         rejectMessage->SetCausingMessage(&msg);
+         rejectMessage->SetDestination(&msg.GetSource());
+         rejectMessage->SetCause(rejectMessageString);
+         // Send it back!
+         DispatchNetworkMessage(*rejectMessage);
+      }
+   }
+
 
    ////////////////////////////////////////////////////////////////////////////////
    void NetworkComponent::SetConnectionParameters(bool reliable, int bandWidthIn, int bandWidthOut)
@@ -378,22 +409,38 @@ namespace dtNetGM
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void NetworkComponent::DoEndOfTick()
+   {
+      // At the end of the frame, we want to make sure we queue up all remaining messages.
+      // Therefore, if the network publishing task is busy, wait for it to end. 
+      DispatchTask* task = static_cast<DispatchTask*>(mDispatchTask.get());
+      task->WaitUntilComplete();
+
+      if (!mMessageBufferOut.empty())
+      {
+         StartSendTask();
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void NetworkComponent::StartSendTask()
    {
       DispatchTask* task = static_cast<DispatchTask*>(mDispatchTask.get());
+
+      // the mQueued is an atomic value that tracks whether the task is busy. If it's not running,
+      // then mQueued will be 0. If, after incrementing, it is 1, then it's not busy, so 
+      // we can swap safely (no thread issue) and add the task to the thread pool.  
+      // The task will decrement mQueued back to 0 when it completes.
       if (++task->mQueued == 1U)
       {
          task->mMessageBuffer.swap(mMessageBufferOut);
          dtUtil::ThreadPool::AddTask(*mDispatchTask, dtUtil::ThreadPool::BACKGROUND);
       }
-      else
+      else // it was already busy, so we just decrement our queued flag back.
       {
          --task->mQueued;
       }
-//      MessageBufferType messageBuffer;
-//      messageBuffer.swap(mMessageBufferOut);
-//
-//      SendNetworkMessages(messageBuffer);
+
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -511,12 +558,8 @@ namespace dtNetGM
 
       if (acceptMessage)
       {
-         // Store the message on the local buffer
-         // Message queue will be forwarded to the GM on the next frame tick
-         OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mBufferMutex);
-         mMessageBuffer.push_back(&message);
+         AddMessageToInputBuffer(message);
       }
-
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -541,13 +584,29 @@ namespace dtNetGM
          GetGameManager()->SendMessage(message);
       }
 
-      // The mutex is not needed here because SendNetworkMessage in this class locks.  The rest
-      // of the work is done on the same thread as the gm.
-      mMessageBufferOut.push_back(&message);
+      AddMessageToOutputBuffer(message);
+
       if (mMessageBufferOut.size() > 5)
       {
          StartSendTask();
       }
+   }
+
+   /////////////////////////////////////////////////////////////
+   void NetworkComponent::AddMessageToOutputBuffer(const dtGame::Message& message)
+   {
+      // The mutex is not needed here because SendNetworkMessage in this class locks.  The rest
+      // of the work is done on the same thread as the gm.
+      mMessageBufferOut.push_back(&message);
+   }
+
+   /////////////////////////////////////////////////////////////
+   void NetworkComponent::AddMessageToInputBuffer(const dtGame::Message& message)
+   {
+      // Store the message on the local buffer
+      // Message queue will be forwarded to the GM on the next frame tick
+      OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mBufferMutex);
+      mMessageBufferIncoming.push_back(&message);
    }
 
    /////////////////////////////////////////////////////////////
@@ -836,4 +895,66 @@ namespace dtNetGM
          return mi->GetHostName();
       }
    }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool NetworkComponent::GetFrameSyncIsEnabled()
+   { 
+      return mFrameSyncIsEnabled;  
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void NetworkComponent::SetFrameSyncIsEnabled(bool newValue) 
+   { 
+      if (mFrameSyncIsEnabled != newValue)
+      {
+         mFrameSyncIsEnabled = newValue; 
+         SetFrameSyncValuesAreDirty(true);
+      }
+   }
+     
+   ////////////////////////////////////////////////////////////////////////////////
+   unsigned int NetworkComponent::GetFrameSyncNumPerSecond()
+   { 
+      return mFrameSyncNumPerSecond; 
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void NetworkComponent::SetFrameSyncNumPerSecond(unsigned int newValue) 
+   { 
+      if (mFrameSyncNumPerSecond != newValue)
+      {
+         if (newValue <= 0)
+         {
+            LOGN_ERROR("networkcomponent.cpp", "FrameSyncs Per Second cannot be less than 1. Canceling attempt to set to " + dtUtil::ToString(newValue));
+         }
+         else 
+         {
+            mFrameSyncNumPerSecond = newValue;
+            SetFrameSyncValuesAreDirty(true);
+         }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   float NetworkComponent::GetFrameSyncMaxWaitTime() 
+   { 
+      return mFrameSyncMaxWaitTime; 
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void NetworkComponent::SetFrameSyncMaxWaitTime(float newValue) 
+   { 
+      if (mFrameSyncMaxWaitTime != newValue)
+      {
+         if (newValue <= 1.0f)
+         {
+            LOGN_ERROR("networkcomponent.cpp", "MaxWaitTime for FrameSyncs cannot be less than 1.0. Forcing value to be 1.0 instead of the request " + dtUtil::ToString(newValue));
+            newValue = 1.0f;
+         }
+
+         mFrameSyncMaxWaitTime = newValue; 
+         SetFrameSyncValuesAreDirty(true);
+      }
+   }
+
 } // namespace dtNetGM
