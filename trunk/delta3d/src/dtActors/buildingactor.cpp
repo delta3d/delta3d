@@ -504,8 +504,11 @@ namespace dtActors
       {
          // set up the texture state.
          mRoofDescriptor = value;
-         mRoofTexture->setImage(osgDB::readImageFile(dtDAL::Project::GetInstance().GetResourcePath(value)));
-         Visualize();
+         if (dtDAL::Project::GetInstance().IsContextValid())
+         {
+            mRoofTexture->setImage(osgDB::readImageFile(dtDAL::Project::GetInstance().GetResourcePath(value)));
+            Visualize();
+         }
       }
    }
 
@@ -516,8 +519,11 @@ namespace dtActors
       {
          // set up the texture state.
          mOutWallDescriptor = value;
-         mOutWallTexture->setImage(osgDB::readImageFile(dtDAL::Project::GetInstance().GetResourcePath(value)));
-         Visualize();
+         if (dtDAL::Project::GetInstance().IsContextValid())
+         {
+            mOutWallTexture->setImage(osgDB::readImageFile(dtDAL::Project::GetInstance().GetResourcePath(value)));
+            Visualize();
+         }
       }
    }
 
@@ -528,8 +534,11 @@ namespace dtActors
       {
          // set up the texture state.
          mInWallDescriptor = value;
-         mInWallTexture->setImage(osgDB::readImageFile(dtDAL::Project::GetInstance().GetResourcePath(value)));
-         Visualize();
+         if (dtDAL::Project::GetInstance().IsContextValid())
+         {
+            mInWallTexture->setImage(osgDB::readImageFile(dtDAL::Project::GetInstance().GetResourcePath(value)));
+            Visualize();
+         }
       }
    }
 
