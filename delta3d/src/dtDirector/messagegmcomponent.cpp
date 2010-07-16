@@ -45,14 +45,14 @@ namespace dtDirector
    //////////////////////////////////////////////
    void MessageGMComponent::ProcessMessage(const dtGame::Message& message)
    {
-      std::map<std::string, std::map<dtDirector::EventNode*, MsgFunc> >::iterator i =
+      std::map<std::string, std::map<dtDirector::Node*, MsgFunc> >::iterator i =
          mRegisteredCallbacks.find(message.GetMessageType().GetName());
 
       if (i != mRegisteredCallbacks.end())
       {
-         std::map<dtDirector::EventNode*, MsgFunc>& callbacks = i->second;
+         std::map<dtDirector::Node*, MsgFunc>& callbacks = i->second;
 
-         for (std::map<dtDirector::EventNode*, MsgFunc>::iterator a = callbacks.begin();
+         for (std::map<dtDirector::Node*, MsgFunc>::iterator a = callbacks.begin();
             a != callbacks.end(); ++a)
          {
             a->second(message);
@@ -64,9 +64,9 @@ namespace dtDirector
       i = mRegisteredCallbacks.find("");
       if (i != mRegisteredCallbacks.end())
       {
-         std::map<dtDirector::EventNode*, MsgFunc>& callbacks = i->second;
+         std::map<dtDirector::Node*, MsgFunc>& callbacks = i->second;
 
-         for (std::map<dtDirector::EventNode*, MsgFunc>::iterator a = callbacks.begin();
+         for (std::map<dtDirector::Node*, MsgFunc>::iterator a = callbacks.begin();
             a != callbacks.end(); ++a)
          {
             a->second(message);
@@ -85,35 +85,35 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void MessageGMComponent::RegisterMessage(const std::string& msgType, dtDirector::EventNode* node, MsgFunc callback)
+   void MessageGMComponent::RegisterMessage(const std::string& msgType, dtDirector::Node* node, MsgFunc callback)
    {
-      std::map<std::string, std::map<dtDirector::EventNode*, MsgFunc> >::iterator i =
+      std::map<std::string, std::map<dtDirector::Node*, MsgFunc> >::iterator i =
          mRegisteredCallbacks.find(msgType);
 
       // Register the message type if it isn't.
       if (i == mRegisteredCallbacks.end())
       {
-         std::map<dtDirector::EventNode*, MsgFunc> msgList;
-         i = mRegisteredCallbacks.insert(mRegisteredCallbacks.end(), std::make_pair<std::string, std::map<dtDirector::EventNode*, MsgFunc> >(msgType, msgList));
+         std::map<dtDirector::Node*, MsgFunc> msgList;
+         i = mRegisteredCallbacks.insert(mRegisteredCallbacks.end(), std::make_pair<std::string, std::map<dtDirector::Node*, MsgFunc> >(msgType, msgList));
       }
 
       // Register this callback for that message type.
       if (i != mRegisteredCallbacks.end())
       {
-         i->second.insert(i->second.end(), std::make_pair<dtDirector::EventNode*, MsgFunc>(node, callback));
+         i->second.insert(i->second.end(), std::make_pair<dtDirector::Node*, MsgFunc>(node, callback));
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void MessageGMComponent::UnRegisterMessage(const std::string& msgType, dtDirector::EventNode* node)
+   void MessageGMComponent::UnRegisterMessage(const std::string& msgType, dtDirector::Node* node)
    {
-      std::map<std::string, std::map<dtDirector::EventNode*, MsgFunc> >::iterator i =
+      std::map<std::string, std::map<dtDirector::Node*, MsgFunc> >::iterator i =
          mRegisteredCallbacks.find(msgType);
 
       // Find the callback.
       if (i != mRegisteredCallbacks.end())
       {
-         std::map<dtDirector::EventNode*, MsgFunc>::iterator a =
+         std::map<dtDirector::Node*, MsgFunc>::iterator a =
             i->second.find(node);
 
          if (a != i->second.end())
