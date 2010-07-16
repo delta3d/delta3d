@@ -21,6 +21,7 @@
 
 #include <dtDirector/node.h>
 
+#include <dtDAL/actoractorproperty.h>
 #include <dtDAL/actoridactorproperty.h>
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/booleanactorproperty.h>
@@ -174,6 +175,25 @@ namespace dtDirector
          if (!value->CanBeType(link->GetPropertyType()))
          {
             return false;
+         }
+         else if (link->GetPropertyType() == dtDAL::DataType::ACTOR)
+         {
+            std::string desiredClass;
+            dtDAL::ActorProxy* proxyValue = NULL;
+
+            // Handle both: ActorIDActorProperty and ActorActorProperty (do nothing if redirected)
+            if (IS_A(link->GetProperty(), dtDAL::ActorIDActorProperty*))
+               desiredClass = static_cast<dtDAL::ActorIDActorProperty*>(link->GetProperty())->GetDesiredActorClass();
+            else if (IS_A(value->GetProperty(), dtDAL::ActorActorProperty*))
+               desiredClass = static_cast<dtDAL::ActorActorProperty*>(link->GetProperty())->GetDesiredActorClass();
+
+            if (IS_A(value->GetProperty(), dtDAL::ActorIDActorProperty*))
+               proxyValue = static_cast<dtDAL::ActorIDActorProperty*>(value->GetProperty())->GetActorProxy();
+            else if (IS_A(value->GetProperty(), dtDAL::ActorActorProperty*))
+               proxyValue = static_cast<dtDAL::ActorActorProperty*>(value->GetProperty())->GetValue();
+
+            if (proxyValue && !desiredClass.empty() && !proxyValue->IsInstanceOf(desiredClass))
+               return false;
          }
       }
 
