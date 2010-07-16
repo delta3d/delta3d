@@ -176,7 +176,7 @@ namespace dtDirector
             // If we are not active, stop this thread.
             if (!mIsActive) return false;
 
-            // If we are updating a thread that is flowing in the wrong director,
+            // If we are updating a thread that is flowing in the wrong direction,
             // close that thread.
             if (mPlayDirection != input) return false;
 

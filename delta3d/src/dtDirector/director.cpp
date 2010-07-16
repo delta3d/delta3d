@@ -40,6 +40,7 @@ namespace dtDirector
       , mRecordTime(0.0f)
       , mMap(NULL)
       , mModified(false)
+      , mStarted(false)
       , mGraph(NULL)
       , mLogNodes(false)
       , mLogger(NULL)
@@ -198,6 +199,7 @@ namespace dtDirector
          fileUtils.PopDirectory();
          mModified = parser->HasDeprecatedProperty();
          mScriptName = fileName;
+
          return true;
       }
 
@@ -274,6 +276,22 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void Director::Update(float simDelta, float delta)
    {
+      // On the first update, make sure we notify all nodes that are have started.
+      if (!mStarted)
+      {
+         // Notify all nodes that the script is started.
+         std::vector<Node*> nodes;
+         GetAllNodes(nodes);
+         int count = (int)nodes.size();
+         for (int index = 0; index < count; index++)
+         {
+            Node* node = nodes[index];
+            if (node) node->OnStart();
+         }
+
+         mStarted = true;
+      }
+
       mRecordTime += delta;
 
       // Update all threads.
@@ -390,7 +408,7 @@ namespace dtDirector
       data.stack.push_back(stack);
       threadList->push_back(data);
 
-      if (immediate && mCurrentThread == -1 && mThreads.size() > 0)
+      if (mStarted && immediate && mCurrentThread == -1 && mThreads.size() > 0)
       {
          mCurrentThread = mThreads.size() - 1;
 
