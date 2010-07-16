@@ -142,7 +142,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    dtDAL::ActorProperty* ReferenceValue::GetProperty(int index, ValueNode** outNode)
    {
-      UpdateReference();
+      //UpdateReference();
 
       if (mValues.size())
       {
