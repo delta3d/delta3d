@@ -80,6 +80,11 @@ namespace dtDirector
       virtual void Init(const NodeType& nodeType, DirectorGraph* graph);
 
       /**
+       * Event handler called after the entire script has been loaded.
+       */
+      virtual void OnStart() {}
+
+      /**
        * Creates a copy of this node and returns it.  The method uses the
        * node manager to create the clone and then iterates though the
        * current state of this node's property set and copies their values

@@ -588,6 +588,7 @@ namespace dtDirector
 
       dtCore::RefPtr<dtDAL::Map> mMap;
       bool        mModified;
+      bool        mStarted;
 
       std::vector<std::string> mLibraries;
       std::map<std::string, std::string> mLibraryVersionMap;
