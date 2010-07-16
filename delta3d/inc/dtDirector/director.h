@@ -31,6 +31,7 @@
 #include <dtGame/gamemanager.h>
 
 #include <dtCore/observerptr.h>
+#include <dtUtil/getsetmacros.h>
 
 #include <cstdio>
 
@@ -102,6 +103,12 @@ namespace dtDirector
        * @param[in]  threads  The recording threadlist to clear.
        */
       void ClearRecordingData(std::vector<RecordThreadData*>& threads);
+
+
+      /**
+       * Clears all running threads to stop all current nodes.
+       */
+      void ClearThreads();
 
       /**
        * Retrieves the Director Proxy if it has one.
@@ -594,6 +601,9 @@ namespace dtDirector
       dtCore::RefPtr<dtDirector::MessageGMComponent> mMessageGMComponent;
 
       dtCore::ObserverPtr<Director> mParent;
+
+      // Switch to enable/disable this director
+      DECLARE_PROPERTY_INLINE(bool, Active)
    };
 }
 

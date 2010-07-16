@@ -97,9 +97,15 @@ namespace dtDirector
        *
        * @param[in]  msgType   The message type to unregister.
        * @param[in]  node      The node.
-       * @param[in]  callback  The callback functor.
        */
       void UnRegisterMessage(const std::string& msgType, dtDirector::Node* node);
+
+      /**
+       * Un-registers all messages connected to a given node.
+       *
+       * @param[in]  node  The Node.
+       */
+      void UnRegisterMessages(dtDirector::Node* node);
 
    private:
 

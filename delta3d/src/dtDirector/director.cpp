@@ -34,7 +34,7 @@ namespace dtDirector
 {
    //////////////////////////////////////////////////////////////////////////
    Director::Director()
-      :  mCurrentThread(-1)
+      : mCurrentThread(-1)
       , mQueueingThreads(false)
       , mRecording(false)
       , mRecordTime(0.0f)
@@ -46,6 +46,7 @@ namespace dtDirector
       , mGameManager(NULL)
       , mMessageGMComponent(NULL)
       , mParent(NULL)
+      , mActive(true)
    {
       mPlayer = "";
       mLogger = &dtUtil::Log::GetInstance();
@@ -93,11 +94,7 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void Director::Clear()
    {
-      // Save out any currently recorded data if it exists.
-      if (mRecording && !mScriptName.empty())
-      {
-         SaveRecording(mScriptName);
-      }
+      ClearThreads();
 
       // Reset our graph data.
       mGraph = new DirectorGraph(this);
@@ -107,14 +104,22 @@ namespace dtDirector
       SetAuthor("");
       SetCopyright("");
 
-      mThreads.clear();
-
       mLibraries.clear();
       mLibraryVersionMap.clear();
 
-      ClearRecordingData(mRecordThreads);
-
       mScriptName = "";
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void Director::ClearThreads()
+   {
+      // Save out any currently recorded data if it exists.
+      if (mRecording && !mScriptName.empty())
+      {
+         SaveRecording(mScriptName);
+      }
+      mThreads.clear();
+      ClearRecordingData(mRecordThreads);
    }
 
    //////////////////////////////////////////////////////////////////////////

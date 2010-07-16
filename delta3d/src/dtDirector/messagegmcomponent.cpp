@@ -19,6 +19,7 @@
  * Jeff P. Houde
  */
 #include <dtDirector/messagegmcomponent.h>
+#include <dtDirector/director.h>
 #include <dtGame/message.h>
 #include <dtGame/messagetype.h>
 
@@ -55,7 +56,8 @@ namespace dtDirector
          for (std::map<dtDirector::Node*, MsgFunc>::iterator a = callbacks.begin();
             a != callbacks.end(); ++a)
          {
-            a->second(message);
+            if( a->first->GetDirector()->GetActive() )
+               a->second(message);
          }
       }
 
@@ -69,7 +71,8 @@ namespace dtDirector
          for (std::map<dtDirector::Node*, MsgFunc>::iterator a = callbacks.begin();
             a != callbacks.end(); ++a)
          {
-            a->second(message);
+            if( a->first->GetDirector()->GetActive() )
+               a->second(message);
          }
       }
    }
@@ -119,6 +122,21 @@ namespace dtDirector
          if (a != i->second.end())
          {
             i->second.erase(a);
+         }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void MessageGMComponent::UnRegisterMessages(dtDirector::Node* node)
+   {
+      std::map<std::string, std::map<dtDirector::Node*, MsgFunc> >::iterator i;
+      for (i = mRegisteredCallbacks.begin(); i != mRegisteredCallbacks.end(); ++i)
+      {
+         std::map<dtDirector::Node*, MsgFunc>::iterator found = i->second.find(node);
+
+         if (found != i->second.end())
+         {
+            i->second.erase(found);
          }
       }
    }
