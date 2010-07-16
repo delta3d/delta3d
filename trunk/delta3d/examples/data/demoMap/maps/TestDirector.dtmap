@@ -7,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2009-12-21T16:14:44-08:00</createTimestamp>
-        <lastUpdateTimestamp>2010-07-14T18:11:50-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2010-07-16T11:20:50-08:00</lastUpdateTimestamp>
         <editorVersion>2.5.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -3486,85 +3486,6 @@
                 <resourceType>Shaders</resourceType>
                 <resourceDisplayName></resourceDisplayName>
                 <resource></resource>
-            </property>
-        </actor>
-        <actor>
-            <type>dtcore.Particle System</type>
-            <id>9d9db33e-c26e-4add-9057-cd93166ad31a</id>
-            <name>ParticleSystem_05</name>
-            <property>
-                <name>Description</name>
-                <string></string>
-            </property>
-            <property>
-                <name>IsActive</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Rotation</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Translation</name>
-                <vec3>
-                    <value1>-0.072882</value1>
-                    <value2>14.306053</value2>
-                    <value3>0.191630</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Normal Rescaling</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Show Collision Geometry</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>NONE</enumerated>
-            </property>
-            <property>
-                <name>Collision Radius</name>
-                <float>0</float>
-            </property>
-            <property>
-                <name>Collision Length</name>
-                <float>0</float>
-            </property>
-            <property>
-                <name>Collision Box</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Render Proxy Node</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Enable</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Parent Relative</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Particle(s) File</name>
-                <resourceType>Particles</resourceType>
-                <resourceDisplayName>Particles::fire.osg</resourceDisplayName>
-                <resource>Particles::fire.osg</resource>
             </property>
         </actor>
         <actor>
