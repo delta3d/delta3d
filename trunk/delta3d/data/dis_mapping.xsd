@@ -6,6 +6,20 @@
         <xsd:element name="DISEntityMap">
           <xsd:complexType>
             <xsd:choice maxOccurs="unbounded">
+		      <xsd:element name="Libraries">
+		        <xsd:complexType>
+				  <xsd:sequence maxOccurs="unbounded">
+				    <xsd:element name="Library">
+					  <xsd:complexType>
+					    <xsd:sequence>
+						  <xsd:element minOccurs="1" maxOccurs="1" name="LibraryName" type="xsd:string" />
+						  <xsd:element minOccurs="1" maxOccurs="1" name="LibraryVersion" type="xsd:string" />
+					    </xsd:sequence>
+					  </xsd:complexType>
+					</xsd:element> <!-- Library -->
+				  </xsd:sequence>
+		        </xsd:complexType>
+  		      </xsd:element> <!-- Libraries -->
               <xsd:element name="Mapping">
                 <xsd:complexType>
                   <xsd:sequence>
