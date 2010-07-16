@@ -24,6 +24,7 @@
 
 // Events
 #include <dtDirectorNodes/inputnode.h>
+#include <dtDirectorNodes/startevent.h>
 #include <dtDirectorNodes/remoteevent.h>
 #include <dtDirectorNodes/triggervolumeevent.h>
 #include <dtDirectorNodes/gamemessageevent.h>
@@ -92,6 +93,7 @@ namespace dtDirector
 
    // Events
    RefPtr<NodeType> NodeLibraryRegistry::INPUT_NODE_TYPE(                        new dtDirector::NodeType(dtDirector::NodeType::LINK_NODE,   "Input Link",                "Core",        "Links",       "This node creates an input link connector in its parent graph."));
+   RefPtr<NodeType> NodeLibraryRegistry::START_EVENT_NODE_TYPE(                  new dtDirector::NodeType(dtDirector::NodeType::EVENT_NODE,  "Start Event",               "General",     "Events",      "An event that is triggered immediately when the script is first updated."));
    RefPtr<NodeType> NodeLibraryRegistry::REMOTE_EVENT_NODE_TYPE(                 new dtDirector::NodeType(dtDirector::NodeType::EVENT_NODE,  "Remote Event",              "Core",        "Events",      "A remote event."));
    RefPtr<NodeType> NodeLibraryRegistry::TRIGGER_VOLUME_EVENT_NODE_TYPE(         new dtDirector::NodeType(dtDirector::NodeType::EVENT_NODE,  "Trigger Volume Event",      "General",     "Events",      "A trigger volume event."));
    RefPtr<NodeType> NodeLibraryRegistry::GAME_MESSAGE_EVENT_NODE_TYPE(           new dtDirector::NodeType(dtDirector::NodeType::EVENT_NODE,  "Game Message Event",        "Messages",    "Messages",    "An event that responds to game messages."));
@@ -161,6 +163,7 @@ namespace dtDirector
    {
       // Events
       mNodeFactory->RegisterType<InputNode>(INPUT_NODE_TYPE.get());
+      mNodeFactory->RegisterType<StartEvent>(START_EVENT_NODE_TYPE.get());
       mNodeFactory->RegisterType<RemoteEvent>(REMOTE_EVENT_NODE_TYPE.get());
       mNodeFactory->RegisterType<TriggerVolumeEvent>(TRIGGER_VOLUME_EVENT_NODE_TYPE.get());
       mNodeFactory->RegisterType<GameMessageEvent>(GAME_MESSAGE_EVENT_NODE_TYPE.get());
