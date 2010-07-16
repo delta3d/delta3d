@@ -90,7 +90,7 @@ namespace dtDirector
        * @param[in]  node      The node.
        * @param[in]  callback  The callback functor.
        */
-      void RegisterMessage(const std::string& msgType, dtDirector::EventNode* node, MsgFunc callback);
+      void RegisterMessage(const std::string& msgType, dtDirector::Node* node, MsgFunc callback);
 
       /**
        * Un-registers a Message Callback.
@@ -99,11 +99,11 @@ namespace dtDirector
        * @param[in]  node      The node.
        * @param[in]  callback  The callback functor.
        */
-      void UnRegisterMessage(const std::string& msgType, dtDirector::EventNode* node);
+      void UnRegisterMessage(const std::string& msgType, dtDirector::Node* node);
 
    private:
 
-      std::map<std::string, std::map<dtDirector::EventNode*, MsgFunc> > mRegisteredCallbacks;
+      std::map<std::string, std::map<dtDirector::Node*, MsgFunc> > mRegisteredCallbacks;
    };
 
 } // namespace dtDirector
