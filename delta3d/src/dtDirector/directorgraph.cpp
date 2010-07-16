@@ -453,8 +453,9 @@ namespace dtDirector
       int count = (int)mValueNodes.size();
       for (int index = 0; index < count; index++)
       {
+         // An external ValueLink is a ValueNode-derivate with node-type LINK_NODE
          ValueNode* node = mValueNodes[index].get();
-         if (node && node->GetType().GetFullName() == "Core.Value Link")
+         if (node && node->GetType().GetNodeType() == NodeType::LINK_NODE)
          {
             bool bFound = false;
             int sortCount = (int)nodes.size();
