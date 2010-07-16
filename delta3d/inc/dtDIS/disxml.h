@@ -124,6 +124,11 @@ namespace dtDIS
    {
       static const char NODE_COMMON_CATEGORY[];
 
+      static const char NODE_LIBRARIES[];
+      static const char NODE_LIBRARY[];
+      static const char NODE_LIBRARYDATA_NAME[];
+      static const char NODE_LIBRARYDATA_VERSION[];
+
       static const char NODE_MAPPING[];
 
       static const char NODE_ENTITYTYPE[];
@@ -199,6 +204,10 @@ namespace dtDIS
 
       enum Nodes
       {
+         LIBRARIES,
+         LIBRARY,
+         LIBRARY_NAME,
+         LIBRARY_VERSION,
          MAPPING,
          ENTITYTYPE,
          ENTITYTYPE_ENTITY_KIND,
@@ -233,6 +242,10 @@ namespace dtDIS
 
       typedef std::stack<Nodes> NodeStack;
       NodeStack mNodeStack;
+
+      std::string mLibraryName;
+      std::string mLibraryVersion;
+      std::vector<std::string> mMissingLibraries;
 
       DIS::EntityType mCurrentEntityType;
 

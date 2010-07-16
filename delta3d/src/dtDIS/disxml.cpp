@@ -4,6 +4,7 @@
 #include <dtUtil/log.h>
 #include <dtUtil/stringutils.h>
 #include <dtDAL/librarymanager.h>
+#include <dtDAL/exceptionenum.h>
 
 #include <xercesc/util/XercesDefs.hpp>  // for xerces namespace definition
 #include <xercesc/util/XMLString.hpp>  // for xerces string support
@@ -189,6 +190,11 @@ void ConnectionXMLHandler::skippedEntity(const XMLCh* const name)
 // ---- EntityMap stuff  ---- //
 const char details::XMLEntityMapSchema::NODE_COMMON_CATEGORY[] = {"Category\0"};
 
+const char details::XMLEntityMapSchema::NODE_LIBRARIES[] = {"Libraries\0"};
+const char details::XMLEntityMapSchema::NODE_LIBRARY[] = {"Library\0"};
+const char details::XMLEntityMapSchema::NODE_LIBRARYDATA_NAME[] = {"LibraryName\0"};
+const char details::XMLEntityMapSchema::NODE_LIBRARYDATA_VERSION[] = {"LibraryVersion\0"};
+
 const char details::XMLEntityMapSchema::NODE_MAPPING[] = {"Mapping\0"};
 
 const char details::XMLEntityMapSchema::NODE_ENTITYTYPE[] = {"EntityType\0"};
@@ -252,6 +258,24 @@ void EntityMapXMLHandler::characters(const XMLCh* const chars, const XMLSize_t l
 
    switch( mNodeStack.top() )
    {
+   case LIBRARIES:
+      {
+      } break;
+
+   case LIBRARY:
+      {
+      } break;
+
+   case LIBRARY_NAME:
+      {
+         mLibraryName = cstr;
+      } break;
+
+   case LIBRARY_VERSION:
+      {
+         mLibraryVersion = cstr;
+      } break;
+
    case MAPPING:
       {
       } break;
@@ -421,6 +445,35 @@ void EntityMapXMLHandler::endElement(const XMLCh* const uri,const XMLCh* const l
       } 
       break;
 
+   case LIBRARY:
+      {
+         // Load the library.
+         try
+         {
+            if (dtDAL::LibraryManager::GetInstance().GetRegistry(mLibraryName) == NULL)
+            {
+               dtDAL::LibraryManager::GetInstance().LoadActorRegistry(mLibraryName);
+            }
+         }
+         catch (const dtDAL::ProjectResourceErrorException &e)
+         {
+            mMissingLibraries.push_back(mLibraryName);
+
+            LOG_ERROR("Error loading library " + mLibraryName + " version " + mLibraryVersion + " in the library manager.  Exception message to follow.");
+         }
+         catch (const dtUtil::Exception& e)
+         {
+            mMissingLibraries.push_back(mLibraryName);
+
+            LOG_ERROR("Unknown exception loading library " + mLibraryName + " version " + mLibraryVersion + " in the library manager.  Exception message to follow.");
+         }
+
+         // Clear data so nothing remains for the next library.
+         mLibraryName.clear();
+         mLibraryVersion.clear();
+      }
+      break;
+
    case MAPPING:
       {
          // modify the actor mapping
@@ -545,6 +598,22 @@ void EntityMapXMLHandler::startElement(const XMLCh* const uri,const XMLCh* const
    else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_ENTITYTYPE_EXTRA) )
    {
       mNodeStack.push( ENTITYTYPE_EXTRA );
+   }
+   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_LIBRARYDATA_NAME) )
+   {
+      mNodeStack.push( LIBRARY_NAME );
+   }
+   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_LIBRARYDATA_VERSION) )
+   {
+      mNodeStack.push( LIBRARY_VERSION );
+   }
+   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_LIBRARY) )
+   {
+      mNodeStack.push( LIBRARY );
+   }
+   else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_LIBRARIES) )
+   {
+      mNodeStack.push( LIBRARIES );
    }
    else if( XMLString::equals(cstr, dtDIS::details::XMLEntityMapSchema::NODE_MAPPING) )
    {
