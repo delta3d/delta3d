@@ -62,7 +62,7 @@ namespace dtActors
       * Initializes all of the Directors.
       * @note:  Only use this outside of STAGE.
       */
-      void OnLoadDirectors(const dtGame::Message&);
+      virtual void OnLoadDirectors(const dtGame::Message&);
       void LoadDirectors();
 
       /**

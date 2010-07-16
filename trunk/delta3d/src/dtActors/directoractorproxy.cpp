@@ -76,7 +76,7 @@ namespace dtActors
       for (int index = 0; index < count; index++)
       {
          dtDirector::Director* director = mDirectorList[index].get();
-         if (director)
+         if (director && director->GetActive())
          {
             director->Update(simDelta, delta);
          }
@@ -133,7 +133,7 @@ namespace dtActors
 
             director->SetNodeLogging(mNodeLogging);
             if (mRecording) director->StartRecording();
-LOG_ALWAYS(dtDAL::Project::GetInstance().GetResourcePath(descriptor));
+            LOG_INFO(dtDAL::Project::GetInstance().GetResourcePath(descriptor));
             director->LoadScript(dtDAL::Project::GetInstance().GetResourcePath(descriptor));
 
             mDirectorList.push_back(director);
