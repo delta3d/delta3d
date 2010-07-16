@@ -83,7 +83,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    void TriggerVolumeEvent::OnLinkValueChanged(const std::string& linkName)
    {
-      if (linkName == "Trigger Volume")
+      if (linkName == "TriggerVolume")
       {
          // Un-register all old volumes.
          int count = (int)mVolumes.size();
@@ -117,7 +117,7 @@ namespace dtDirector
    void TriggerVolumeEvent::SetTriggerVolume(const dtCore::UniqueId& value)
    {
       mTriggerVolume = value;
-      OnLinkValueChanged("Trigger Volume");
+      OnLinkValueChanged("TriggerVolume");
    }
 
    //////////////////////////////////////////////////////////////////////////
