@@ -72,7 +72,7 @@ namespace dtDirector
          "Actor", "Actor",
          dtDAL::ActorIDActorProperty::SetFuncType(this, &SoundAction::SetSoundActor),
          dtDAL::ActorIDActorProperty::GetFuncType(this, &SoundAction::GetSoundActor),
-         "dtAudio::SoundActor", "The sound actor.");
+         "dtAudio::Sound", "The sound actor.");
       AddProperty(actorProp);
 
       // This will expose the properties in the editor and allow
