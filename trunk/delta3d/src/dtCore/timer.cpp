@@ -1,29 +1,22 @@
 #include <prefix/dtcoreprefix.h>
 #include <dtCore/timer.h>
-#include <dtUtil/mswinmacros.h>
-
-#ifdef DELTA_WIN32
-   #include <dtUtil/mswin.h>
-   void dtCore::AppSleep(unsigned int milliseconds){Sleep(milliseconds);}
-#else
-   #include <unistd.h>
-   void dtCore::AppSleep(unsigned int milliseconds)
-   {
-      if (milliseconds == 0)
-      {
-         // usleep with 0 is a no-op, but we WANT appsleep to be like a yield, so
-         // sleeping for 1 microsecond should work around that.
-         usleep(1);
-      }
-      else
-      {
-         usleep((milliseconds) * 1000);
-      }
-   }
-#endif
+#include <OpenThreads/Thread>
 
 namespace dtCore
 {
+
+//////////////////////////////////////////////////////////////////////////
+void AppSleep(unsigned int milliseconds)
+{
+   if (milliseconds == 0)
+   {
+      OpenThreads::Thread::YieldCurrentThread();
+   }
+   else
+   {
+      OpenThreads::Thread::microSleep((milliseconds) * 1000);
+   }
+}
 
 //////////////////////////////////////////////////////////////////////////
 Timer::Timer()
