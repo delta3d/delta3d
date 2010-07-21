@@ -234,6 +234,11 @@ namespace dtDirector
       void OnCreateGroupFrame();
 
       /**
+       * Event handler to create actor nodes for the current selected actors in STAGE.
+       */
+      void OnCreateActorsFromSelection();
+
+      /**
        * Event handler to create a group frame around the current selection.
        */
       void OnCreateGroupForSelection();

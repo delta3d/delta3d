@@ -59,6 +59,13 @@ public:
    /** override close event to get notified when user closes the dock */
    virtual void closeEvent(QCloseEvent* event);
 
+   /**
+    * Retrieves the current actor selection from STAGE.
+    *
+    * @return  The current actor selection.
+    */
+   virtual std::vector<dtDAL::ActorProxy*> GetActorSelection();
+
 public slots:
 
    /**
