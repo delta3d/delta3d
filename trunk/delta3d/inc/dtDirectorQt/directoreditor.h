@@ -175,6 +175,7 @@ namespace dtDirector
        * Event handler when viewing the context menu of a value node.
        *
        * @param[in]  node  The value node.
+       * @param[in]  menu  The menu to add new context items to.
        *
        * @return     True if a default action was set.
        */
@@ -190,6 +191,14 @@ namespace dtDirector
        */
       virtual bool OnDoubleClickValueNode(dtCore::RefPtr<dtDirector::Node> node)
       {return false;}
+
+      /**
+       * Retrieves the current actor selection from STAGE.
+       *
+       * @return  The current actor selection.
+       */
+      virtual std::vector<dtDAL::ActorProxy*> GetActorSelection()
+      {return std::vector<dtDAL::ActorProxy*>();}
 
    public slots:
 

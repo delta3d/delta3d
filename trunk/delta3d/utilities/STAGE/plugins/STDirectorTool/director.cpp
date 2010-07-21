@@ -96,6 +96,15 @@ DirectorToolPlugin::~DirectorToolPlugin()
 {
 }
 
+////////////////////////////////////////////////////////////////////////////////
+std::vector<dtDAL::ActorProxy*> DirectorToolPlugin::GetActorSelection()
+{
+   std::vector<dtDAL::ActorProxy*> selection;
+   EditorData::GetInstance().GetSelectedActors(selection);
+
+   return selection;
+}
+
 //////////////////////////////////////////////////////////////////////////
 void DirectorToolPlugin::OnMapChanged()
 {

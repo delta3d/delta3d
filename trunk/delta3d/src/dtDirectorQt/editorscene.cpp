@@ -40,6 +40,8 @@
 #include <QtGui/QGraphicsSceneMouseEvent>
 #include <QtGui/QMenu>
 
+#include <dtDAL/actoridactorproperty.h>
+
 namespace dtDirector
 {
    ////////////////////////////////////////////////////////////////////////////////
@@ -631,6 +633,30 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void EditorScene::OnCreateActorsFromSelection()
+   {
+      std::vector<dtDAL::ActorProxy*> proxies = mEditor->GetActorSelection();
+
+      int count = (int)proxies.size();
+      for (int index = 0; index < count; ++index)
+      {
+         dtDirector::Node* node = CreateNode("Actor", "General", mMenuPos.x() + (index * 55), mMenuPos.y());
+
+         if (node)
+         {
+            dtDAL::ActorIDActorProperty* prop = dynamic_cast<dtDAL::ActorIDActorProperty*>(node->GetProperty("Value"));
+
+            if (prop)
+            {
+               prop->SetValue(proxies[index]->GetId());
+            }
+         }
+      }
+
+      Refresh();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void EditorScene::OnCreateGroupForSelection()
    {
       std::vector<dtCore::RefPtr<dtDAL::PropertyContainer> > selection = GetSelection();
@@ -990,6 +1016,13 @@ namespace dtDirector
                   miscMenu->addMenu(folder);
                }
             }
+         }
+
+         // If we have selected actors in STAGE, add an option to create values for those actors.
+         if (mEditor->GetActorSelection().size() > 0)
+         {
+            QAction* createActorSelection = menu.addAction("Create Actor Nodes Using Selection");
+            connect(createActorSelection, SIGNAL(triggered()), this, SLOT(OnCreateActorsFromSelection()));
          }
 
          // Add the undo and redo options.
