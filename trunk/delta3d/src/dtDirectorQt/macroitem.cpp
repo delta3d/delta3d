@@ -25,6 +25,7 @@
 #include <dtDirectorQt/linkitem.h>
 #include <dtDirectorQt/undomanager.h>
 #include <dtDirectorQt/undopropertyevent.h>
+#include <dtDirectorQt/customeditortool.h>
 
 #include <dtDirector/director.h>
 
@@ -271,14 +272,44 @@ namespace dtDirector
       mScene->GetEditor()->OpenGraph(mGraph);
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void MacroItem::OpenCustomTool()
+   {
+      if (!mScene || !mGraph) return;
+
+      if (!mGraph->GetEditor().empty())
+      {
+         CustomEditorTool* tool = mScene->GetEditor()->GetRegisteredTool(mGraph->GetEditor());
+         if (tool)
+         {
+            tool->Open(mGraph.get());
+         }
+      }
+   }
+
    //////////////////////////////////////////////////////////////////////////
    void MacroItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
    {
       setSelected(true);
       QMenu menu;
+
+      bool hasDefault = false;
+      // If this graph contains a custom editor, add an option to open it with that editor.
+      if (!mGraph->GetEditor().empty())
+      {
+         CustomEditorTool* tool = mScene->GetEditor()->GetRegisteredTool(mGraph->GetEditor());
+         if (tool)
+         {
+            QAction* useCustomToolAction = menu.addAction(QString("Open with \'") + mGraph->GetEditor().c_str() + QString("\' Editor"));
+            connect(useCustomToolAction, SIGNAL(triggered()), this, SLOT(OpenCustomTool()));
+            menu.setDefaultAction(useCustomToolAction);
+            hasDefault = true;
+         }
+      }
+
       QAction* stepInAction = menu.addAction("Step Inside Macro");
       connect(stepInAction, SIGNAL(triggered()), this, SLOT(OpenMacro()));
-      menu.setDefaultAction(stepInAction);
+      if (!hasDefault) menu.setDefaultAction(stepInAction);
       menu.addSeparator();
       menu.addAction(mScene->GetMacroSelectionAction());
       if (!mScene->GetSelection().empty())
@@ -333,7 +364,20 @@ namespace dtDirector
    void MacroItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
    {
       NodeItem::mouseDoubleClickEvent(event);
-      OpenMacro();
+
+      // If this graph contains a custom editor, add an option to open it with that editor.
+      if (!mGraph->GetEditor().empty())
+      {
+         CustomEditorTool* tool = mScene->GetEditor()->GetRegisteredTool(mGraph->GetEditor());
+         if (tool)
+         {
+            OpenCustomTool();
+         }
+      }
+      else
+      {
+         OpenMacro();
+      }
    }
 }
 

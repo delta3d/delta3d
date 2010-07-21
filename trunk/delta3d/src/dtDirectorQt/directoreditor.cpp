@@ -29,6 +29,7 @@
 #include <dtDirectorQt/undodeleteevent.h>
 #include <dtDirectorQt/clipboard.h>
 #include <dtDirectorQt/libraryeditor.h>
+#include <dtDirectorQt/customeditortool.h>
 
 #include <dtDirectorQt/actionitem.h>
 #include <dtDirectorQt/valueitem.h>
@@ -638,6 +639,78 @@ namespace dtDirector
       // Show Links
       mShowLinksAction->setEnabled(bCanShowLinks);
       mHideLinksAction->setEnabled(bCanHideLinks);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool DirectorEditor::RegisterCustomEditorTool(CustomEditorTool* tool)
+   {
+      if (!tool) return false;
+
+      // First make sure this tool is not already registered.
+      std::map<std::string, CustomEditorTool*>::iterator i = mCustomTools.find(tool->GetName());
+      if (i != mCustomTools.end())
+      {
+         return false;
+      }
+
+      mCustomTools.insert(std::make_pair<std::string, CustomEditorTool*>(tool->GetName(), tool));
+      return true;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool DirectorEditor::UnRegisterCustomEditorTool(CustomEditorTool* tool)
+   {
+      if (!tool) return false;
+
+      return UnRegisterCustomEditorTool(tool->GetName());
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool DirectorEditor::UnRegisterCustomEditorTool(const std::string& toolName)
+   {
+      // First make sure this tool is not already registered.
+      std::map<std::string, CustomEditorTool*>::iterator i = mCustomTools.find(toolName);
+      if (i == mCustomTools.end())
+      {
+         return false;
+      }
+
+      // Make sure we close this editor, if it is opened.
+      CustomEditorTool* tool = i->second;
+      if (tool && tool->IsOpen())
+      {
+         tool->Close();
+      }
+
+      mCustomTools.erase(i);
+      return true;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   std::vector<std::string> DirectorEditor::GetRegisteredToolList()
+   {
+      std::vector<std::string> toolList;
+
+      std::map<std::string, CustomEditorTool*>::iterator i = mCustomTools.begin();
+      while (i != mCustomTools.end())
+      {
+         toolList.push_back(i->first);
+         i++;
+      }
+
+      return toolList;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   CustomEditorTool* DirectorEditor::GetRegisteredTool(const std::string& name)
+   {
+      std::map<std::string, CustomEditorTool*>::iterator i = mCustomTools.find(name);
+      if (i != mCustomTools.end())
+      {
+         return i->second;
+      }
+
+      return NULL;
    }
 
    //////////////////////////////////////////////////////////////////////////

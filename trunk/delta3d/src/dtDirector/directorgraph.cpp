@@ -61,6 +61,12 @@ namespace dtDirector
          dtDAL::StringActorProperty::GetFuncType(this, &DirectorGraph::GetName),
          "The Name of the Director graph."));
 
+      AddProperty(new dtDAL::StringActorProperty(
+         "Custom Editor", "Custom Editor",
+         dtDAL::StringActorProperty::SetFuncType(this, &DirectorGraph::SetEditor),
+         dtDAL::StringActorProperty::GetFuncType(this, &DirectorGraph::GetEditor),
+         "The custom editor for use with this Director graph."));
+
       // Only sub graphs have a position.
       if (!isParent)
       {
