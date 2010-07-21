@@ -40,6 +40,7 @@ namespace dtDirector
    class GraphBrowser;
    class UndoManager;
    class ReplayBrowser;
+   class CustomEditorTool;
 
    /**
     * @class DirectorEditor
@@ -199,6 +200,42 @@ namespace dtDirector
        */
       virtual std::vector<dtDAL::ActorProxy*> GetActorSelection()
       {return std::vector<dtDAL::ActorProxy*>();}
+
+      /**
+       * Registers a custom editor tool.
+       *
+       * @param[in]  tool  The tool to register.
+       *
+       * @return     True if the tool was registered successfully.
+       */
+      bool RegisterCustomEditorTool(CustomEditorTool* tool);
+
+      /**
+       * UnRegisters a custom editor tool.
+       *
+       * @param[in]  tool      The tool to un-register.
+       * @param[in]  toolName  The name of the tool ot un-register.
+       *
+       * @return     True if the tool was found and un-registered successfully.
+       */
+      bool UnRegisterCustomEditorTool(CustomEditorTool* tool);
+      bool UnRegisterCustomEditorTool(const std::string& toolName);
+
+      /**
+       * Retrieves a list of tools that have been registered.
+       *
+       * @return  A list of registered tool names.
+       */
+      std::vector<std::string> GetRegisteredToolList();
+
+      /**
+       * Retrieves the tool of a given name.
+       *
+       * @param[in]  name  The name of the tool.
+       *
+       * @return     The tool, if found.
+       */
+      CustomEditorTool* GetRegisteredTool(const std::string& name);
 
    public slots:
 
@@ -388,6 +425,8 @@ namespace dtDirector
       Director::RecordNodeData mReplayNode;
       InputLink*               mReplayInput;
       OutputLink*              mReplayOutput;
+
+      std::map<std::string, CustomEditorTool*> mCustomTools;
 
       QMenuBar* mMenuBar;
       QToolBar* mFileToolbar;

@@ -166,6 +166,12 @@ namespace dtDirector
       std::string& GetComment() {return mComment;}
 
       /**
+       * Accessors for the custom editor used for this graph.
+       */
+      void SetEditor(const std::string& editor) {mEditor = editor;}
+      std::string& GetEditor() {return mEditor;}
+
+      /**
        * Accessors for the graph position.
        */
       void SetPosition(const osg::Vec2& pos) {mPosition = pos;}
@@ -217,6 +223,7 @@ namespace dtDirector
 
       std::string mName;
       std::string mComment;
+      std::string mEditor;
       osg::Vec2   mPosition;
 
       std::vector<dtCore::RefPtr<DirectorGraph> > mSubGraphs;

@@ -229,6 +229,11 @@ namespace dtDirector
       void OnCreateMacro();
 
       /**
+       * Event handler when a custom edited macro node item is triggered.
+       */
+      void OnCreateCustomEditedMacro(QAction* action);
+
+      /**
        * Event handler to create a group frame.
        */
       void OnCreateGroupFrame();
@@ -265,6 +270,10 @@ namespace dtDirector
        */
       void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
 
+      /**
+       * Creates a new macro node.
+       */
+      DirectorGraph* CreateMacro();
 
    private:
 

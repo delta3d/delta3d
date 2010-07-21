@@ -24,6 +24,7 @@
 #include <dtDirectorQt/propertyeditor.h>
 #include <dtDirectorQt/undomanager.h>
 #include <dtDirectorQt/undocreateevent.h>
+#include <dtDirectorQt/undopropertyevent.h>
 #include <dtDirectorQt/editorview.h>
 #include <dtDirectorQt/graphtabs.h>
 #include <dtDirectorQt/actionitem.h>
@@ -576,36 +577,33 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    void EditorScene::OnCreateMacro()
    {
-      DirectorGraph* parent = mGraph;
-      DirectorGraph* graph = mGraph->AddGraph();
-      if (graph)
+      // Modify the menu position to the top left item selection
+      QList<QGraphicsItem*> selection = selectedItems();
+      if (!selection.empty())
       {
-         QList<QGraphicsItem*> selection = selectedItems();
-         if (!selection.empty())
-         {
-            // Set the graph position to the top left most item.
-            mMenuPos = selection[0]->pos();
+         // Set the graph position to the top left most item.
+         mMenuPos = selection[0]->pos();
 
-            int count = (int)selection.size();
-            for (int index = 0; index < count; index++)
+         int count = (int)selection.size();
+         for (int index = 0; index < count; index++)
+         {
+            if (selection[index]->pos().x() < mMenuPos.x())
             {
-               if (selection[index]->pos().x() < mMenuPos.x())
-               {
-                  mMenuPos.setX(selection[index]->pos().x());
-               }
-               if (selection[index]->pos().y() < mMenuPos.y())
-               {
-                  mMenuPos.setY(selection[index]->pos().y());
-               }
+               mMenuPos.setX(selection[index]->pos().x());
+            }
+            if (selection[index]->pos().y() < mMenuPos.y())
+            {
+               mMenuPos.setY(selection[index]->pos().y());
             }
          }
+      }
 
-         graph->SetPosition(osg::Vec2(mMenuPos.x(), mMenuPos.y()));
+      DirectorGraph* parent = mGraph;
 
-         mEditor->GetUndoManager()->BeginMultipleEvents();
-         dtCore::RefPtr<UndoCreateEvent> event = new UndoCreateEvent(mEditor, graph->GetID(), mGraph->GetID());
-         mEditor->GetUndoManager()->AddEvent(event);
-
+      mEditor->GetUndoManager()->BeginMultipleEvents();
+      DirectorGraph* graph = CreateMacro();
+      if (graph)
+      {
          // If there are any nodes selected, cut them.
          mEditor->OnCut();
 
@@ -614,11 +612,37 @@ namespace dtDirector
 
          // If there are nodes selected, move them into the macro.
          mEditor->PasteNodes(true);
-         mEditor->GetUndoManager()->EndMultipleEvents();
-
-         mEditor->RefreshGraph(parent);
-         mEditor->Refresh();
       }
+      mEditor->GetUndoManager()->EndMultipleEvents();
+
+      mEditor->RefreshGraph(parent);
+      mEditor->Refresh();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorScene::OnCreateCustomEditedMacro(QAction* action)
+   {
+      mEditor->GetUndoManager()->BeginMultipleEvents();
+      DirectorGraph* graph = CreateMacro();
+      if (graph)
+      {
+         // Assign the editor to the graph.
+         graph->SetEditor(action->statusTip().toStdString());
+
+         dtCore::RefPtr<UndoPropertyEvent> event = new UndoPropertyEvent(mEditor, graph->GetID(), "Custom Editor", "", action->statusTip().toStdString());
+         mEditor->GetUndoManager()->AddEvent(event.get());
+
+         // Change the name of the macro to reflect its editor.
+         graph->SetName(action->statusTip().toStdString() + " Macro");
+
+         event = new UndoPropertyEvent(mEditor, graph->GetID(), "Name", "Macro", graph->GetName());
+         mEditor->GetUndoManager()->AddEvent(event.get());
+      }
+
+      mEditor->GetUndoManager()->EndMultipleEvents();
+
+      mEditor->RefreshGraph(mGraph);
+      mEditor->Refresh();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -999,6 +1023,29 @@ namespace dtDirector
                }
             }
 
+            // Add custom macro editing tools
+            std::vector<std::string> toolList = mEditor->GetRegisteredToolList();
+            if (!toolList.empty())
+            {
+               macroMenu->addSeparator();
+               QMenu* toolMenu = macroMenu->addMenu("Custom Editor Macro's");
+               if (toolMenu)
+               {
+                  connect(toolMenu, SIGNAL(triggered(QAction*)), this, SLOT(OnCreateCustomEditedMacro(QAction*)));
+
+                  int count = (int)toolList.size();
+                  for (int index = 0; index < count; ++index)
+                  {
+                     QAction* macroAction = toolMenu->addAction(QString("\'") + toolList[index].c_str() + "\' Macro");
+                     if (macroAction)
+                     {
+                        macroAction->setStatusTip(toolList[index].c_str());
+                        macroAction->setToolTip(QString("Creates a macro that is edited by the custom \'") + toolList[index].c_str() + "\' Editor.");
+                     }
+                  }
+               }
+            }
+
             for (i = linkFolders.begin(); i != linkFolders.end(); i++)
             {
                QMenu* folder = i->second;
@@ -1039,6 +1086,21 @@ namespace dtDirector
          mMenuPos -= mTranslationItem->scenePos();
          menu.exec(event->screenPos());
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   DirectorGraph* EditorScene::CreateMacro()
+   {
+      DirectorGraph* graph = mGraph->AddGraph();
+      if (graph)
+      {
+         graph->SetPosition(osg::Vec2(mMenuPos.x(), mMenuPos.y()));
+
+         dtCore::RefPtr<UndoCreateEvent> event = new UndoCreateEvent(mEditor, graph->GetID(), mGraph->GetID());
+         mEditor->GetUndoManager()->AddEvent(event);
+      }
+
+      return graph;
    }
 
 } // namespace dtDirector

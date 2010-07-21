@@ -94,6 +94,11 @@ namespace dtDirector
        */
       void OpenMacro();
 
+      /**
+       * Opens the macro using the assigned custom tool.
+       */
+      void OpenCustomTool();
+
    protected:
 
       /**
