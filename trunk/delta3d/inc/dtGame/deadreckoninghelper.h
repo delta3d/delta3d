@@ -454,19 +454,23 @@ namespace dtGame
          /**
           * @return true if maintaining constant smoothing time, false (default) if using avg update time.
           */
-         bool GetAlwaysUseMaxSmoothingTime() const { return mAlwaysUseMaxSmoothingTime; }
+         bool GetUseFixedSmoothingTime() const { return mUseFixedSmoothingTime; }
 
          /**
          * When this is true, the DR algorithm will maintain a constant smoothing time 
-         * by using the MaxSmoothingTime. Rotation & Translation each have their own 
-         * max value. Keeping a constant smoothing time will significantly reduce anomalies
-         * when sending updates at a rate close to the visual framerate.
+         * by using the FixedSmoothingTime, which is set with SetFixedSmoothingTime(). 
+         * This is used when you anticipate you are going to get updates on a very 
+         * regular basis and so you want the smoothing to be done at a steady rate. 
+         * note - Rotation & Translation share the same fixed smoothing time, unlike min/max. 
          * If false (the default), it will use the avg update time if that is smaller than the max smoothing time.
-         * This works better in the general case because the smoothing time should be about the same as the update.
          * @param newValue true if maintaining constant smoothing time, false (default) if using avg update time.
          */
-         void SetAlwaysUseMaxSmoothingTime(bool newValue) { mAlwaysUseMaxSmoothingTime = newValue; }
+         void SetUseFixedSmoothingTime(bool newValue) { mUseFixedSmoothingTime = newValue; }
 
+         /// Returns the fixed smoothing time. @See SetUseFixedSmoothingTime for more info
+         float GetFixedSmoothingTime() { return mFixedSmoothingTime; }
+         /// Sets the fixed smoothing time. @see SetUseFixedSmoothingTime for more info
+         void SetFixedSmoothingTime(float newValue) { mFixedSmoothingTime = newValue; }
 
          /// Makes the SetLastKnownRotation() ignore the pitch and yaw values to help keep some objects upright.
          void SetForceUprightRotation(bool newValue);
@@ -548,7 +552,8 @@ namespace dtGame
          ///The maximum amount of time to use when smoothing rotation.
          float mMaxRotationSmoothingTime;
          /// True means we maintain constant smoothing time for blending. Uses Max Rot or Trans as appropriate
-         bool mAlwaysUseMaxSmoothingTime;
+         bool mUseFixedSmoothingTime;
+         float mFixedSmoothingTime; /// The smoothing time for rot & trans if mUseFixedSmoothingTime is true
 
          ///the amount of time since this actor started smoothing.
          float mTranslationElapsedTimeSinceUpdate;
