@@ -312,10 +312,10 @@ namespace dtGame
             helper->SetAdjustRotationToGround(false);
             CPPUNIT_ASSERT(!helper->GetAdjustRotationToGround());
 
-            helper->SetAlwaysUseMaxSmoothingTime(false);
-            CPPUNIT_ASSERT(!helper->GetAlwaysUseMaxSmoothingTime());
-            helper->SetAlwaysUseMaxSmoothingTime(true);
-            CPPUNIT_ASSERT(helper->GetAlwaysUseMaxSmoothingTime());
+            helper->SetUseFixedSmoothingTime(false);
+            CPPUNIT_ASSERT(!helper->GetUseFixedSmoothingTime());
+            helper->SetUseFixedSmoothingTime(true);
+            CPPUNIT_ASSERT(helper->GetUseFixedSmoothingTime());
 
             helper->SetUseCubicSplineTransBlend(false);
             CPPUNIT_ASSERT(!helper->GetUseCubicSplineTransBlend());
@@ -677,7 +677,7 @@ namespace dtGame
             dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;
             dtCore::Transform xform(300.0f, 200.0f, 100.0f, 30.0f, 32.2f, 93.0f);
 
-            helper->SetAlwaysUseMaxSmoothingTime(false);
+            helper->SetUseFixedSmoothingTime(false);
             helper->SetLastKnownTranslation(osg::Vec3(-0.4f, -0.3f, -2.7f));
             helper->SetLastKnownRotation(osg::Vec3(-0.4f, -0.3f, -2.7f));
             helper->SetLastKnownVelocity(osg::Vec3(0.0f, 0.0f, 0.0f));
@@ -725,7 +725,7 @@ namespace dtGame
             dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;
             dtCore::Transform xform(300.0f, 200.0f, 100.0f, 30.0f, 32.2f, 93.0f);
 
-            helper->SetAlwaysUseMaxSmoothingTime(false);
+            helper->SetUseFixedSmoothingTime(false);
             helper->SetLastKnownTranslation(osg::Vec3(-0.4f, -0.3f, -2.7f));
             helper->SetLastKnownRotation(osg::Vec3(-0.4f, -0.3f, -2.7f));
             helper->SetLastKnownVelocity(osg::Vec3(0.0f, 0.0f, 0.0f));
