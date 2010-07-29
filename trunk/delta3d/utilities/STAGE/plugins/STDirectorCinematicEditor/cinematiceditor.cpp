@@ -980,6 +980,8 @@ void DirectorCinematicEditorPlugin::OnLoad()
       {
          mSelectedActor = (int)mActorData.size();
          mActorData.push_back(ActorData());
+         dtCore::Transform lastTransform;
+         osg::Vec3 lastScale;
 
          ActorData& actorData = mActorData[mSelectedActor];
 
@@ -997,18 +999,27 @@ void DirectorCinematicEditorPlugin::OnLoad()
                if (!actorData.mActor)
                {
                   actorData.mActor = node->GetActor("Actor");
+
+                  dtCore::Object* actor = NULL;
+                  actorData.mActor->GetActor(actor);
+                  if (actor)
+                  {
+                     actor->GetTransform(lastTransform);
+                     lastScale = actor->GetScale();
+                  }
                }
                {
                   int time = node->GetFloat("StartTime") * 1000;
                   osg::Vec4 pos = node->GetVec("StartPosition");
-                  TransformData* data = GetOrCreateTransformData(time);
+                  TransformData* data = GetOrCreateTransformData(time, lastTransform, lastScale);
                   if (data) data->mTransform.SetTranslation(pos.x(), pos.y(), pos.z());
                }
                {
                   int time = node->GetFloat("EndTime") * 1000;
                   osg::Vec4 pos = node->GetVec("EndPosition");
-                  TransformData* data = GetOrCreateTransformData(time);
+                  TransformData* data = GetOrCreateTransformData(time, lastTransform, lastScale);
                   if (data) data->mTransform.SetTranslation(pos.x(), pos.y(), pos.z());
+                  lastTransform.SetTranslation(pos.x(), pos.y(), pos.z());
                }
 
                outLink = node->GetOutputLink("Started");
@@ -1019,18 +1030,27 @@ void DirectorCinematicEditorPlugin::OnLoad()
                if (!actorData.mActor)
                {
                   actorData.mActor = node->GetActor("Actor");
+
+                  dtCore::Object* actor = NULL;
+                  actorData.mActor->GetActor(actor);
+                  if (actor)
+                  {
+                     actor->GetTransform(lastTransform);
+                     lastScale = actor->GetScale();
+                  }
                }
                {
                   int time = node->GetFloat("StartTime") * 1000;
                   osg::Vec4 rot = node->GetVec("StartRotation");
-                  TransformData* data = GetOrCreateTransformData(time);
+                  TransformData* data = GetOrCreateTransformData(time, lastTransform, lastScale);
                   if (data) data->mTransform.SetRotation(rot.z(), rot.x(), rot.y());
                }
                {
                   int time = node->GetFloat("EndTime") * 1000;
                   osg::Vec4 rot = node->GetVec("EndRotation");
-                  TransformData* data = GetOrCreateTransformData(time);
+                  TransformData* data = GetOrCreateTransformData(time, lastTransform, lastScale);
                   if (data) data->mTransform.SetRotation(rot.z(), rot.x(), rot.y());
+                  lastTransform.SetRotation(rot.z(), rot.x(), rot.y());
                }
 
                outLink = node->GetOutputLink("Started");
@@ -1041,18 +1061,27 @@ void DirectorCinematicEditorPlugin::OnLoad()
                if (!actorData.mActor)
                {
                   actorData.mActor = node->GetActor("Actor");
+
+                  dtCore::Object* actor = NULL;
+                  actorData.mActor->GetActor(actor);
+                  if (actor)
+                  {
+                     actor->GetTransform(lastTransform);
+                     lastScale = actor->GetScale();
+                  }
                }
                {
                   int time = node->GetFloat("StartTime") * 1000;
                   osg::Vec4 scale = node->GetVec("StartScale");
-                  TransformData* data = GetOrCreateTransformData(time);
-                  if (data) data->mTransform.SetRotation(scale.x(), scale.y(), scale.z());
+                  TransformData* data = GetOrCreateTransformData(time, lastTransform, lastScale);
+                  if (data) data->mScale.set(scale.x(), scale.y(), scale.z());
                }
                {
                   int time = node->GetFloat("EndTime") * 1000;
                   osg::Vec4 scale = node->GetVec("EndScale");
-                  TransformData* data = GetOrCreateTransformData(time);
-                  if (data) data->mTransform.SetRotation(scale.x(), scale.y(), scale.z());
+                  TransformData* data = GetOrCreateTransformData(time, lastTransform, lastScale);
+                  if (data) data->mScale.set(scale.x(), scale.y(), scale.z());
+                  lastScale.set(scale.x(), scale.y(), scale.z());
                }
 
                outLink = node->GetOutputLink("Started");
@@ -1285,6 +1314,7 @@ void DirectorCinematicEditorPlugin::OnSave()
       {
          schedulerNode->GetOutputLink("Started")->Connect(startedCallNode->GetInputLink("Call Event"));
          startedCallNode->SetString("Started", "EventName");
+         startedCallNode->SetBoolean(true, "Local Event");
          startedCallNode->SetPosition(osg::Vec2(400, 0));
          GetEditor()->OnNodeCreated(startedCallNode);
       }
@@ -1348,6 +1378,7 @@ void DirectorCinematicEditorPlugin::OnSave()
       {
          schedulerNode->GetOutputLink("Ended")->Connect(endedCallNode->GetInputLink("Call Event"));
          endedCallNode->SetString("Ended", "EventName");
+         endedCallNode->SetBoolean(true, "Local Event");
          endedCallNode->SetPosition(osg::Vec2(400, height));
          GetEditor()->OnNodeCreated(endedCallNode);
          height += 50;
@@ -1611,13 +1642,10 @@ DirectorCinematicEditorPlugin::TransformData* DirectorCinematicEditorPlugin::Get
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-DirectorCinematicEditorPlugin::TransformData* DirectorCinematicEditorPlugin::GetOrCreateTransformData(int time)
+DirectorCinematicEditorPlugin::TransformData* DirectorCinematicEditorPlugin::GetOrCreateTransformData(int time, const dtCore::Transform& transform, const osg::Vec3& scale)
 {
    if (mSelectedActor > -1)
    {
-      dtCore::Transform transform;
-      osg::Vec3 scale(1.0f, 1.0f, 1.0f);
-
       std::vector<TransformData>& transformList = mActorData[mSelectedActor].mTransformData;
       int count = (int)transformList.size();
       for (int index = 0; index < count; ++index)
