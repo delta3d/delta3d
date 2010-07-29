@@ -27,6 +27,7 @@
 #include <dtDirectorQt/editorscene.h>
 #include <dtDirectorQt/undomanager.h>
 #include <dtDirectorQt/undodeleteevent.h>
+#include <dtDirectorQt/undocreateevent.h>
 #include <dtDirectorQt/clipboard.h>
 #include <dtDirectorQt/libraryeditor.h>
 #include <dtDirectorQt/customeditortool.h>
@@ -639,6 +640,63 @@ namespace dtDirector
       // Show Links
       mShowLinksAction->setEnabled(bCanShowLinks);
       mHideLinksAction->setEnabled(bCanHideLinks);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::OnNodeCreated(Node* node)
+   {
+      if (node)
+      {
+         dtCore::RefPtr<UndoCreateEvent> event = new UndoCreateEvent(this, node->GetID(), node->GetGraph()->GetID());
+         mUndoManager->AddEvent(event);
+
+         // Now refresh the all editors that view the same graph.
+         int count = mGraphTabs->count();
+         for (int index = 0; index < count; index++)
+         {
+            EditorView* view = dynamic_cast<EditorView*>(mGraphTabs->widget(index));
+            if (view && view->GetScene())
+            {
+               if (view->GetScene()->GetGraph() == node->GetGraph())
+               {
+                  // First remember the position of the translation node.
+                  QPointF trans = view->GetScene()->GetTranslationItem()->pos();
+                  view->GetScene()->SetGraph(node->GetGraph());
+                  view->GetScene()->GetTranslationItem()->setPos(trans);
+               }
+            }
+         }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DirectorEditor::DeleteNode(dtCore::UniqueId id)
+   {
+      Node* node = mDirector->GetNode(id);
+      if (node)
+      {
+         // Create an undo event.
+         dtCore::RefPtr<UndoDeleteEvent> event = new UndoDeleteEvent(this, id, node->GetGraph()->GetID());
+         mUndoManager->AddEvent(event);
+
+         // Delete the node.
+         mDirector->DeleteNode(id);
+
+         // Remove the node from all UI's
+         int graphCount = mGraphTabs->count();
+         for (int graphIndex = 0; graphIndex < graphCount; graphIndex++)
+         {
+            EditorView* view = dynamic_cast<EditorView*>(mGraphTabs->widget(graphIndex));
+            if (view && view->GetScene())
+            {
+               // We need to find the node item that belongs to the scene.
+               NodeItem* nodeItem = view->GetScene()->GetNodeItem(id, true);
+               if (nodeItem) view->GetScene()->DeleteNode(nodeItem);
+            }
+         }
+      }
+
+      mReplayBrowser->BuildThreadList();
    }
 
    ////////////////////////////////////////////////////////////////////////////////

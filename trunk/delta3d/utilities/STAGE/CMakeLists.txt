@@ -1,5 +1,6 @@
 ADD_SUBDIRECTORY(plugins/STBuildingTool)
 
+ADD_SUBDIRECTORY(plugins/STDirectorCinematicEditor)
 ADD_SUBDIRECTORY(plugins/STDirectorTool)
 ADD_SUBDIRECTORY(plugins/STFenceTool)
 ADD_SUBDIRECTORY(plugins/STLinkedPointsActorTool)

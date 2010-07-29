@@ -40,7 +40,7 @@ class QAction;
  * The DirectorToolPlugin is a plugin that is used as a tool
  * to place a LinkedPointsActor into the world.
  */
-class DT_DIRECTOR_TOOL_EXPORT DirectorToolPlugin 
+class DT_DIRECTOR_TOOL_EXPORT DirectorToolPlugin
    : public dtDirector::DirectorEditor
    , public Plugin
 {

@@ -173,6 +173,23 @@ namespace dtDirector
       void RefreshButtonStates();
 
       /**
+       * Event handler when a director node is created.
+       * @note: This should be called after an external editor
+       *        has created a node and set all its properties
+       *        so it can be registered in the undo manager.
+       *
+       * @param[in]  node  The created node.
+       */
+      void OnNodeCreated(Node* node);
+
+      /**
+       * Deletes a director node.
+       *
+       * @param[in]  id  The ID of the node to delete.
+       */
+      void DeleteNode(dtCore::UniqueId id);
+
+      /**
        * Event handler when viewing the context menu of a value node.
        *
        * @param[in]  node  The value node.

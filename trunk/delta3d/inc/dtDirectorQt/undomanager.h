@@ -22,6 +22,7 @@
 #ifndef DIRECTORQT_UNDO_MANAGER
 #define DIRECTORQT_UNDO_MANAGER
 
+#include <dtDirectorQt/export.h>
 #include <dtDirectorQt/undoevent.h>
 #include <dtDirectorQt/undomultipleevent.h>
 
@@ -38,7 +39,7 @@ namespace dtDirector
    /**
     * This class handles undo and redo for the Director Editor.
     */
-   class UndoManager: public QObject
+   class DT_DIRECTOR_QT_EXPORT UndoManager: public QObject
    {
       Q_OBJECT
    public:
