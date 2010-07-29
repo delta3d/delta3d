@@ -62,6 +62,9 @@ namespace dtDirector
       mInputs.push_back(InputLink(this, "Start"));
       mInputs.push_back(InputLink(this, "Stop"));
 
+      mOutputs.clear();
+      mOutputs.push_back(OutputLink(this, "Started"));
+      mOutputs.push_back(OutputLink(this, "Stopped"));
       mOutputs.push_back(OutputLink(this, "Finished"));
    }
 
@@ -137,7 +140,10 @@ namespace dtDirector
                   InitLerp();
                   mIsActive = true;
 
+                  // Activate the "Out" and "Started" output links.
                   ActionNode::Update(simDelta, delta, input, firstUpdate);
+                  OutputLink* link = GetOutputLink("Started");
+                  if (link) link->Activate();
                }
                else
                {
@@ -207,6 +213,10 @@ namespace dtDirector
       case INPUT_STOP:
          {
             mIsActive = false;
+
+            // Activate the "Stopped" output link.
+            OutputLink* link = GetOutputLink("Stopped");
+            if (link) link->Activate();
          }
          break;
       }
