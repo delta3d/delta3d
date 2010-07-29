@@ -48,7 +48,7 @@ namespace dtDirector
    /**
    * @class EditorScene
    */
-   class EditorScene : public QGraphicsScene
+   class DT_DIRECTOR_QT_EXPORT EditorScene : public QGraphicsScene
    {
       Q_OBJECT
 

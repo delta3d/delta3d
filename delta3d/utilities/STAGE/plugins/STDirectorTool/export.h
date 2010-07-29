@@ -1,5 +1,5 @@
-#ifndef DELTA_LINKED_POINT_ARRAY_ACTOR_EXPORT
-#define DELTA_LINKED_POINT_ARRAY_ACTOR_EXPORT
+#ifndef DELTA_DIRECTOR_TOOL_EXPORT
+#define DELTA_DIRECTOR_TOOL_EXPORT
 
 /**
 * This is modeled from the DT_EXPORT macro found in dtCore/export.h.  
