@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>654</width>
-    <height>406</height>
+    <height>418</height>
    </rect>
   </property>
   <property name="mouseTracking">
@@ -476,9 +476,9 @@
          </widget>
         </item>
         <item row="5" column="4">
-         <widget class="EventTrackWidget" name="mEventTrack" native="true">
+         <widget class="EventTrackWidget" name="mOutputTrack" native="true">
           <property name="enabled">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <property name="minimumSize">
            <size>
@@ -489,7 +489,7 @@
          </widget>
         </item>
         <item row="5" column="6">
-         <widget class="QToolButton" name="mAddEventButton">
+         <widget class="QToolButton" name="mAddOutputButton">
           <property name="enabled">
            <bool>false</bool>
           </property>
@@ -499,7 +499,7 @@
          </widget>
         </item>
         <item row="5" column="7">
-         <widget class="QToolButton" name="mRemoveEventButton">
+         <widget class="QToolButton" name="mRemoveOutputButton">
           <property name="enabled">
            <bool>false</bool>
           </property>
@@ -521,7 +521,7 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QLineEdit" name="mEventNameEdit">
+           <widget class="QLineEdit" name="mOutputNameEdit">
             <property name="enabled">
              <bool>false</bool>
             </property>

@@ -166,6 +166,16 @@ public slots:
    void OnTransformEventRemoved(BaseEvent* event);
 
    /**
+    * Event handler when the add transform button is pressed.
+    */
+   void OnAddTransform();
+
+   /**
+    * Event handler when the remove transform button is pressed.
+    */
+   void OnRemoveTransform();
+
+   /**
     * Event handler when one of the edit boxes for the transform info is changed.
     *
     * @param[in]  value  The new value of the edit box.
@@ -181,14 +191,36 @@ public slots:
    void OnScaleZChanged(QString value);
 
    /**
-    * Event handler when the add actor button is pressed.
+    * Event handler when an output event is selected on the event track.
     */
-   void OnAddTransform();
+   void OnOutputEventSelected(BaseEvent* event);
 
    /**
-    * Event handler when the remove actor button is pressed.
+    * Event handler when an output event is moved.
     */
-   void OnRemoveTransform();
+   void OnOutputEventTimesChanged(int start, int end);
+
+   /**
+    * Event handler when an output event is removed.
+    */
+   void OnOutputEventRemoved(BaseEvent* event);
+
+   /**
+    * Event handler when the add output button is pressed.
+    */
+   void OnAddOutput();
+
+   /**
+    * Event handler when the remove output button is pressed.
+    */
+   void OnRemoveOutput();
+
+   /**
+    * Event handler when the Link Name edit box for the output event info is changed.
+    *
+    * @param[in]  value  The new value of the edit box.
+    */
+   void OnOutputNameChanged(QString value);
 
    /**
     * Event handler when the current time edit has been changed.
@@ -336,6 +368,27 @@ private:
    TransformData* GetOrCreateTransformData(int time);
 
    /**
+    * Inserts an output event into the list, sorted by time.
+    *
+    * @param[in]  time       The time.
+    * @param[in]  name       The output name.
+    * @param[in]  event      If provided, this will use the given event instead of creating a new one.
+    *
+    * @return     The new event.
+    */
+   KeyFrameEvent* InsertOutput(int time, const std::string& name, KeyFrameEvent* event = NULL);
+
+   /**
+    * Retrieves the transform data for a given event.
+    *
+    * @param[in]  event     The event.
+    * @param[in]  outIndex  The index where this data was found.
+    *
+    * @return     The transform data.
+    */
+   OutputData* GetOutputData(KeyFrameEvent* event, int* outIndex = NULL);
+
+   /**
     * Updates actors in STAGE based on time.
     *
     * @param[in]  time  The time.
@@ -353,7 +406,7 @@ private:
    // Events
    KeyFrameEvent* mTransformEvent;
    KeyFrameEvent* mAnimationEvent;
-   KeyFrameEvent* mEventEvent;
+   KeyFrameEvent* mOutputEvent;
 
    // Timeline
    QTimeLine*     mTimeLine;

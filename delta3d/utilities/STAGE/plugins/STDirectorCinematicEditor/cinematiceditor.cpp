@@ -53,7 +53,7 @@ DirectorCinematicEditorPlugin::DirectorCinematicEditorPlugin(MainWindow* mw)
    , mSelectedActor(-1)
    , mTransformEvent(NULL)
    , mAnimationEvent(NULL)
-   , mEventEvent(NULL)
+   , mOutputEvent(NULL)
    , mPlaying(false)
    , mTotalTime(1.0f)
 {
@@ -107,6 +107,14 @@ void DirectorCinematicEditorPlugin::Initialize()
    connect(mUI.mScaleXEdit, SIGNAL(textEdited(QString)), this, SLOT(OnScaleXChanged(QString)));
    connect(mUI.mScaleYEdit, SIGNAL(textEdited(QString)), this, SLOT(OnScaleYChanged(QString)));
    connect(mUI.mScaleZEdit, SIGNAL(textEdited(QString)), this, SLOT(OnScaleZChanged(QString)));
+
+   // Output Link Event Track.
+   connect(mUI.mOutputTrack, SIGNAL(EventSelected(BaseEvent*)), this, SLOT(OnOutputEventSelected(BaseEvent*)));
+   connect(mUI.mOutputTrack, SIGNAL(EventTimesChanged(int, int)), this, SLOT(OnOutputEventTimesChanged(int, int)));
+   connect(mUI.mOutputTrack, SIGNAL(EventDeleted(BaseEvent*)), this, SLOT(OnOutputEventRemoved(BaseEvent*)));
+   connect(mUI.mAddOutputButton, SIGNAL(clicked()), this, SLOT(OnAddOutput()));
+   connect(mUI.mRemoveOutputButton, SIGNAL(clicked()), this, SLOT(OnRemoveOutput()));
+   connect(mUI.mOutputNameEdit, SIGNAL(textEdited(QString)), this, SLOT(OnOutputNameChanged(QString)));
 
    // Create a time line.
    mTimeLine = new QTimeLine(1000, this);
@@ -174,11 +182,12 @@ void DirectorCinematicEditorPlugin::ResetUI()
    mUI.mActorCombo->blockSignals(false);
 
    mUI.mTransformTrack->ClearEvents();
+   mUI.mAnimationTrack->ClearEvents();
+
    if (mSelectedActor > -1)
    {
       mUI.mTransformTrack->setEnabled(true);
       mUI.mAnimationTrack->setEnabled(true);
-      mUI.mEventTrack->setEnabled(true);
 
       // Set up the transform track.
       std::vector<TransformData>& transforms = mActorData[mSelectedActor].mTransformData;
@@ -190,27 +199,27 @@ void DirectorCinematicEditorPlugin::ResetUI()
          if (index == 0) data.mEvent->SetMovable(false);
          mUI.mTransformTrack->AddEvent(data.mEvent);
       }
-
-      OnTransformEventSelected(NULL);
-      OnTimeSliderValueChanged(mUI.mTimeSlider->value());
    }
    else
    {
       mUI.mTransformTrack->setEnabled(false);
       mUI.mAnimationTrack->setEnabled(false);
-      mUI.mEventTrack->setEnabled(false);
 
       mUI.mAddTransformButton->setEnabled(false);
       mUI.mRemoveTransformButton->setEnabled(false);
       mUI.mAddAnimationButton->setEnabled(false);
       mUI.mRemoveAnimationButton->setEnabled(false);
-      mUI.mAddEventButton->setEnabled(false);
-      mUI.mRemoveEventButton->setEnabled(false);
    }
+
+   mUI.mOutputTrack->setEnabled(true);
+   OnTransformEventSelected(NULL);
+   //OnAnimationEventSelected(NULL);
+   OnOutputEventSelected(NULL);
+   OnTimeSliderValueChanged(mUI.mTimeSlider->value());
 
    mUI.mTransformTrack->SetMaximum(mTotalTime * 1000);
    mUI.mAnimationTrack->SetMaximum(mTotalTime * 1000);
-   mUI.mEventTrack->SetMaximum(mTotalTime * 1000);
+   mUI.mOutputTrack->SetMaximum(mTotalTime * 1000);
    mUI.mSelectionTrack->SetMaximum(mTotalTime * 1000);
    mUI.mTimeSlider->setMaximum(mTotalTime * 1000);
    mUI.mTotalTimeEdit->setValue(mTotalTime);
@@ -226,11 +235,6 @@ void DirectorCinematicEditorPlugin::ResetUI()
 void DirectorCinematicEditorPlugin::Open(dtDirector::DirectorGraph* graph)
 {
    CustomEditorTool::Open(graph);
-
-   // Set all cinematic values to defaults.
-   mActorData.clear();
-   mTotalTime = 1.0f;
-   if (mPlaying) OnPlay();
 
    OnLoad();
 
@@ -488,6 +492,46 @@ void DirectorCinematicEditorPlugin::OnTransformEventRemoved(BaseEvent* event)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void DirectorCinematicEditorPlugin::OnAddTransform()
+{
+   if (mSelectedActor == -1) return;
+
+   int time = mUI.mTimeSlider->value();
+
+   dtDAL::ActorProxy* proxy = mActorData[mSelectedActor].mActor.get();
+   if (proxy)
+   {
+      dtCore::Transformable* actor = NULL;
+      proxy->GetActor(actor);
+      if (actor)
+      {
+         dtCore::Transform transform;
+         osg::Vec3 scale = osg::Vec3(1, 1, 1);
+
+         actor->GetTransform(transform);
+
+         dtCore::Object* obj = NULL;
+         proxy->GetActor(obj);
+         if (obj) scale = obj->GetScale();
+
+         mTransformEvent = InsertTransform(time, transform, scale);
+         OnTransformEventSelected(mTransformEvent);
+      }
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void DirectorCinematicEditorPlugin::OnRemoveTransform()
+{
+   if (mSelectedActor == -1) return;
+
+   if (mTransformEvent && mTransformEvent->IsMovable())
+   {
+      mUI.mTransformTrack->RemoveEvent(mTransformEvent);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void DirectorCinematicEditorPlugin::OnPosXChanged(QString value)
 {
    TransformData* data = GetTransformData(mTransformEvent);
@@ -662,42 +706,95 @@ void DirectorCinematicEditorPlugin::OnScaleZChanged(QString value)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void DirectorCinematicEditorPlugin::OnAddTransform()
+void DirectorCinematicEditorPlugin::OnOutputEventSelected(BaseEvent* event)
 {
-   if (mSelectedActor == -1) return;
+   bool enable = false;
 
-   int time = mUI.mTimeSlider->value();
-
-   dtDAL::ActorProxy* proxy = mActorData[mSelectedActor].mActor.get();
-   if (proxy)
+   KeyFrameEvent* keyEvent = dynamic_cast<KeyFrameEvent*>(event);
+   // Set the time slider to the position of the event.
+   if (keyEvent)
    {
-      dtCore::Transformable* actor = NULL;
-      proxy->GetActor(actor);
-      if (actor)
+      mUI.mTimeSlider->setValue(keyEvent->GetStartTime());
+      mUI.mOutputTrack->SelectEvent(keyEvent);
+      enable = true;
+
+      mUI.mAddOutputButton->setEnabled(true);
+      mUI.mRemoveOutputButton->setEnabled(true);
+
+      OutputData* data = GetOutputData(keyEvent);
+
+      if (data)
       {
-         dtCore::Transform transform;
-         osg::Vec3 scale = osg::Vec3(1, 1, 1);
-
-         actor->GetTransform(transform);
-
-         dtCore::Object* obj = NULL;
-         proxy->GetActor(obj);
-         if (obj) scale = obj->GetScale();
-
-         mTransformEvent = InsertTransform(time, transform, scale);
-         OnTransformEventSelected(mTransformEvent);
+         mUI.mOutputNameEdit->setText(data->mName.c_str());
       }
+   }
+   else
+   {
+      mUI.mAddOutputButton->setEnabled(true);
+      mUI.mRemoveOutputButton->setEnabled(false);
+      mUI.mOutputTrack->DeselectEvents();
+   }
+
+   mUI.mOutputNameEdit->setEnabled(enable);
+
+   mOutputEvent = keyEvent;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void DirectorCinematicEditorPlugin::OnOutputEventTimesChanged(int start, int end)
+{
+   int index = -1;
+   OutputData* data = GetOutputData(mOutputEvent, &index);
+   if (data)
+   {
+      OutputData sortData = *data;
+      sortData.mTime = start;
+
+      mOutputData.erase(mOutputData.begin() + index);
+
+      InsertOutput(sortData.mTime, sortData.mName, mOutputEvent);
+   }
+
+   OnOutputEventSelected(mOutputEvent);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void DirectorCinematicEditorPlugin::OnOutputEventRemoved(BaseEvent* event)
+{
+   int index = -1;
+   OutputData* data = GetOutputData(dynamic_cast<KeyFrameEvent*>(event), &index);
+   if (data)
+   {
+      mOutputData.erase(mOutputData.begin() + index);
+      OnTimeSliderValueChanged(mUI.mTimeSlider->value());
    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void DirectorCinematicEditorPlugin::OnRemoveTransform()
+void DirectorCinematicEditorPlugin::OnAddOutput()
 {
-   if (mSelectedActor == -1) return;
+   int time = mUI.mTimeSlider->value();
 
-   if (mTransformEvent && mTransformEvent->IsMovable())
+   mOutputEvent = InsertOutput(time, "Output Name");
+   OnOutputEventSelected(mOutputEvent);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void DirectorCinematicEditorPlugin::OnRemoveOutput()
+{
+   if (mOutputEvent)
    {
-      mUI.mTransformTrack->RemoveEvent(mTransformEvent);
+      mUI.mOutputTrack->RemoveEvent(mOutputEvent);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void DirectorCinematicEditorPlugin::OnOutputNameChanged(QString value)
+{
+   OutputData* data = GetOutputData(mOutputEvent);
+   if (data)
+   {
+      data->mName = value.toStdString();
    }
 }
 
@@ -722,7 +819,7 @@ void DirectorCinematicEditorPlugin::OnTotalTimeChanged(double time)
    // Setup various UI elements with the new duration
    mUI.mTransformTrack->SetMaximum(mTotalTime * 1000);
    mUI.mAnimationTrack->SetMaximum(mTotalTime * 1000);
-   mUI.mEventTrack->SetMaximum(mTotalTime * 1000);
+   mUI.mOutputTrack->SetMaximum(mTotalTime * 1000);
    mUI.mSelectionTrack->SetMaximum(mTotalTime * 1000);
    mUI.mTimeSlider->setMaximum(mTotalTime * 1000);
 
@@ -744,12 +841,12 @@ void DirectorCinematicEditorPlugin::OnTimeSliderValueChanged(int value)
 {
    mUI.mTransformTrack->SetCurrent(value);
    mUI.mAnimationTrack->SetCurrent(value);
-   mUI.mEventTrack->SetCurrent(value);
+   mUI.mOutputTrack->SetCurrent(value);
    mUI.mSelectionTrack->SetCurrent(value);
 
    OnTransformEventSelected(mUI.mTransformTrack->GetEventAtTime(value));
    //OnAnimationEventSelected(mUI.mAnimationTrack->GetEventAtTime(value));
-   //OnEventEventSelected(mUI.mEventTrack->GetEventAtTime(value));
+   OnOutputEventSelected(mUI.mOutputTrack->GetEventAtTime(value));
 
    LerpActors(value);
 
@@ -826,6 +923,12 @@ void DirectorCinematicEditorPlugin::OnLoad()
 {
    if (!GetGraph()) return;
 
+   // Set all cinematic values to defaults.
+   mActorData.clear();
+   mOutputData.clear();
+   mTotalTime = 1.0f;
+   if (mPlaying) OnPlay();
+
    std::vector<dtDirector::Node*> nodes;
    GetGraph()->GetNodes("Scheduler", "Cinematic", nodes);
 
@@ -842,6 +945,7 @@ void DirectorCinematicEditorPlugin::OnLoad()
       mTotalTime = schedulerNode->GetFloat("TotalTime");
 
       // Load all scheduled event outputs.
+      mUI.mOutputTrack->ClearEvents();
       dtDAL::ArrayActorPropertyBase* arrayProp = dynamic_cast<dtDAL::ArrayActorPropertyBase*>(schedulerNode->GetProperty("EventList"));
       if (arrayProp)
       {
@@ -858,8 +962,7 @@ void DirectorCinematicEditorPlugin::OnLoad()
                {
                   arrayProp->SetIndex(index);
 
-                  OutputData data(timeProp->GetValue(), nameProp->GetValue(), NULL);
-                  mOutputData.push_back(data);
+                  InsertOutput(timeProp->GetValue() * 1000, nameProp->GetValue());
                }
             }
          }
@@ -989,7 +1092,7 @@ void DirectorCinematicEditorPlugin::OnSave()
    dtDirector::Node* reverseNode = NULL;
    dtDirector::Node* stopNode    = NULL;
    dtDirector::Node* pauseNode   = NULL;
-   std::vector<dtDirector::Node*> outputNodes;
+   std::vector<dtCore::ObserverPtr<dtDirector::Node> > outputNodes;
 
    int count = (int)nodes.size();
    for (int index = 0; index < count; ++index)
@@ -997,6 +1100,7 @@ void DirectorCinematicEditorPlugin::OnSave()
       dtDirector::Node* node = nodes[index];
       if (!node) continue;
 
+      bool keepNode = false;
       if (node->GetType().GetNodeType() == dtDirector::NodeType::LINK_NODE)
       {
          // Input nodes can only be "Play", "Reverse", "Stop", and "Pause".
@@ -1006,22 +1110,22 @@ void DirectorCinematicEditorPlugin::OnSave()
             if (name == "Play")
             {
                playNode = node;
-               continue;
+               keepNode = true;
             }
             else if (name == "Reverse")
             {
                reverseNode = node;
-               continue;
+               keepNode = true;
             }
             else if (name == "Stop")
             {
                stopNode = node;
-               continue;
+               keepNode = true;
             }
             else if (name == "Pause")
             {
                pauseNode = node;
-               continue;
+               keepNode = true;
             }
          }
          // Output links can only remain if they match one of the output links listed
@@ -1033,24 +1137,30 @@ void DirectorCinematicEditorPlugin::OnSave()
             if (name == "Started" || name == "Ended")
             {
                outputNodes.push_back(node);
-               continue;
+               keepNode = true;
             }
-
-            int outputCount = (int)mOutputData.size();
-            for (int outputIndex = 0; outputIndex < outputCount; ++outputIndex)
+            else
             {
-               OutputData& data = mOutputData[outputIndex];
-               if (data.mName == name)
+               int outputCount = (int)mOutputData.size();
+               for (int outputIndex = 0; outputIndex < outputCount; ++outputIndex)
                {
-                  outputNodes.push_back(node);
-                  continue;
+                  OutputData& data = mOutputData[outputIndex];
+                  if (data.mName == name)
+                  {
+                     outputNodes.push_back(node);
+                     keepNode = true;
+                     break;
+                  }
                }
             }
          }
       }
 
       // If we reach this point, this node should be removed.
-      GetEditor()->DeleteNode(node->GetID());
+      if (!keepNode)
+      {
+         GetEditor()->DeleteNode(node->GetID());
+      }
    }
 
    // Create our scheduler node.
@@ -1161,7 +1271,7 @@ void DirectorCinematicEditorPlugin::OnSave()
                   arrayProp->Insert(outIndex);
                   arrayProp->SetIndex(outIndex);
                   nameProp->SetValue(data.mName);
-                  timeProp->SetValue(data.mTime);
+                  timeProp->SetValue(data.mTime * 0.001f);
 
                   outIndex++;
                }
@@ -1182,7 +1292,6 @@ void DirectorCinematicEditorPlugin::OnSave()
       // Now create our output links for each scheduled event.
       int height = 50;
       std::vector<dtDirector::OutputLink>& links = schedulerNode->GetOutputLinks();
-      int outNodeCount = (int)outputNodes.size();
       int linkCount = (int)links.size();
       for (int linkIndex = 0; linkIndex < linkCount; ++linkIndex)
       {
@@ -1190,11 +1299,14 @@ void DirectorCinematicEditorPlugin::OnSave()
 
          // find out if the output already exists.
          dtDirector::Node* outputNode = NULL;
+         int outNodeCount = (int)outputNodes.size();
          for (int outNodeIndex = 0; outNodeIndex < outNodeCount; ++outNodeIndex)
          {
-            if (outputNodes[outNodeIndex]->GetString("Name") == link.GetName())
+            dtDirector::Node* testNode = outputNodes[outNodeIndex].get();
+
+            if (testNode && testNode->GetString("Name") == link.GetName())
             {
-               outputNode = outputNodes[outNodeIndex];
+               outputNode = testNode;
                outputNodes.erase(outputNodes.begin() + outNodeIndex);
                break;
             }
@@ -1300,7 +1412,6 @@ void DirectorCinematicEditorPlugin::OnSave()
                {
                   lerpNode->GetInputLink("Start")->Connect(startLink);
                   lerpNode->GetInputLink("Stop")->Connect(stopLink);
-                  lerpNode->SetActorID(actorData.mActor->GetId(), "Actor");
                   lerpNode->SetFloat(prevData.mTime * 0.001f, "StartTime");
                   lerpNode->SetFloat(nextData.mTime * 0.001f, "EndTime");
                   lerpNode->SetVec(osg::Vec4(prevData.mTransform.GetTranslation(), 0.0f), "StartPosition");
@@ -1310,15 +1421,24 @@ void DirectorCinematicEditorPlugin::OnSave()
                   startLink = lerpNode->GetOutputLink("Started");
                   stopLink = lerpNode->GetOutputLink("Stopped");
 
+                  dtDirector::Node* actorValue = dtDirector::NodeManager::GetInstance().CreateNode("Actor", "General", GetGraph());
+                  if (actorValue)
+                  {
+                     actorValue->SetActorID(actorData.mActor->GetId());
+                     actorValue->SetPosition(osg::Vec2(column + 3, height + 200));
+                     lerpNode->GetValueLink("Actor")->Connect(dynamic_cast<dtDirector::ValueNode*>(actorValue));
+                     GetEditor()->OnNodeCreated(actorValue);
+                  }
+
                   dtDirector::Node* timeRefValue = dtDirector::NodeManager::GetInstance().CreateNode("Reference", "Core", GetGraph());
                   if (timeRefValue)
                   {
                      timeRefValue->SetString("Current Time", "Reference");
-                     timeRefValue->SetPosition(osg::Vec2(column + 35, height + 200));
+                     timeRefValue->SetPosition(osg::Vec2(column + 59, height + 200));
                      lerpNode->GetValueLink("Time")->Connect(dynamic_cast<dtDirector::ValueNode*>(timeRefValue));
                      GetEditor()->OnNodeCreated(timeRefValue);
-                     column += 400;
                   }
+                  column += 200;
                }
             }
 
@@ -1330,7 +1450,6 @@ void DirectorCinematicEditorPlugin::OnSave()
                {
                   lerpNode->GetInputLink("Start")->Connect(startLink);
                   lerpNode->GetInputLink("Stop")->Connect(stopLink);
-                  lerpNode->SetActorID(actorData.mActor->GetId(), "Actor");
                   lerpNode->SetFloat(prevData.mTime * 0.001f, "StartTime");
                   lerpNode->SetFloat(nextData.mTime * 0.001f, "EndTime");
                   osg::Vec3 prevRot = prevData.mTransform.GetRotation();
@@ -1342,15 +1461,24 @@ void DirectorCinematicEditorPlugin::OnSave()
                   startLink = lerpNode->GetOutputLink("Started");
                   stopLink = lerpNode->GetOutputLink("Stopped");
 
+                  dtDirector::Node* actorValue = dtDirector::NodeManager::GetInstance().CreateNode("Actor", "General", GetGraph());
+                  if (actorValue)
+                  {
+                     actorValue->SetActorID(actorData.mActor->GetId());
+                     actorValue->SetPosition(osg::Vec2(column, height + 200));
+                     lerpNode->GetValueLink("Actor")->Connect(dynamic_cast<dtDirector::ValueNode*>(actorValue));
+                     GetEditor()->OnNodeCreated(actorValue);
+                  }
+
                   dtDirector::Node* timeRefValue = dtDirector::NodeManager::GetInstance().CreateNode("Reference", "Core", GetGraph());
                   if (timeRefValue)
                   {
                      timeRefValue->SetString("Current Time", "Reference");
-                     timeRefValue->SetPosition(osg::Vec2(column + 35, height + 200));
+                     timeRefValue->SetPosition(osg::Vec2(column + 52, height + 200));
                      lerpNode->GetValueLink("Time")->Connect(dynamic_cast<dtDirector::ValueNode*>(timeRefValue));
                      GetEditor()->OnNodeCreated(timeRefValue);
-                     column += 400;
                   }
+                  column += 200;
                }
             }
 
@@ -1362,7 +1490,6 @@ void DirectorCinematicEditorPlugin::OnSave()
                {
                   lerpNode->GetInputLink("Start")->Connect(startLink);
                   lerpNode->GetInputLink("Stop")->Connect(stopLink);
-                  lerpNode->SetActorID(actorData.mActor->GetId(), "Actor");
                   lerpNode->SetFloat(prevData.mTime * 0.001f, "StartTime");
                   lerpNode->SetFloat(nextData.mTime * 0.001f, "EndTime");
                   lerpNode->SetVec(osg::Vec4(prevData.mScale, 0.0f), "StartScale");
@@ -1372,15 +1499,24 @@ void DirectorCinematicEditorPlugin::OnSave()
                   startLink = lerpNode->GetOutputLink("Started");
                   stopLink = lerpNode->GetOutputLink("Stopped");
 
+                  dtDirector::Node* actorValue = dtDirector::NodeManager::GetInstance().CreateNode("Actor", "General", GetGraph());
+                  if (actorValue)
+                  {
+                     actorValue->SetActorID(actorData.mActor->GetId());
+                     actorValue->SetPosition(osg::Vec2(column - 8, height + 200));
+                     lerpNode->GetValueLink("Actor")->Connect(dynamic_cast<dtDirector::ValueNode*>(actorValue));
+                     GetEditor()->OnNodeCreated(actorValue);
+                  }
+
                   dtDirector::Node* timeRefValue = dtDirector::NodeManager::GetInstance().CreateNode("Reference", "Core", GetGraph());
                   if (timeRefValue)
                   {
                      timeRefValue->SetString("Current Time", "Reference");
-                     timeRefValue->SetPosition(osg::Vec2(column + 35, height + 200));
+                     timeRefValue->SetPosition(osg::Vec2(column + 44, height + 200));
                      lerpNode->GetValueLink("Time")->Connect(dynamic_cast<dtDirector::ValueNode*>(timeRefValue));
                      GetEditor()->OnNodeCreated(timeRefValue);
-                     column += 400;
                   }
+                  column += 200;
                }
             }
          }
@@ -1505,6 +1641,52 @@ DirectorCinematicEditorPlugin::TransformData* DirectorCinematicEditorPlugin::Get
       return &transformList[transformList.size() - 1];
    }
 
+   return NULL;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+KeyFrameEvent* DirectorCinematicEditorPlugin::InsertOutput(int time, const std::string& name, KeyFrameEvent* event)
+{
+   KeyFrameEvent* newEvent = event;
+
+   if (!newEvent)
+   {
+      newEvent = new KeyFrameEvent(time);
+      mUI.mOutputTrack->AddEvent(newEvent);
+   }
+
+   int count = (int)mOutputData.size();
+   for (int index = 0; index < count; ++index)
+   {
+      OutputData& data = mOutputData[index];
+
+      if (data.mTime >= time)
+      {
+         mOutputData.insert(mOutputData.begin() + index, OutputData(time, name, newEvent));
+         return newEvent;
+      }
+   }
+
+   // If we get this far, it means the new transform will be appended to the end instead.
+   mOutputData.push_back(OutputData(time, name, newEvent));
+   return newEvent;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+DirectorCinematicEditorPlugin::OutputData* DirectorCinematicEditorPlugin::GetOutputData(KeyFrameEvent* event, int* outIndex)
+{
+   int count = (int)mOutputData.size();
+   for (int index = 0; index < count; ++index)
+   {
+      OutputData& data = mOutputData[index];
+      if (data.mEvent == event)
+      {
+         if (outIndex) *outIndex = index;
+         return &data;
+      }
+   }
+
+   if (outIndex) *outIndex = -1;
    return NULL;
 }
 
