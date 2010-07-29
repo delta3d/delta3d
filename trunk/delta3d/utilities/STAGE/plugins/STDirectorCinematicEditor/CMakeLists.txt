@@ -4,7 +4,7 @@ SET(LIB_NAME     STDirectorCinematicEditor)
 file(GLOB LIB_HEADERS "*.h")
 file(GLOB LIB_SOURCES "*.cpp")
 
-INCLUDE_DIRECTORIES(  ${CMAKE_SOURCE_DIR}/utilities/STAGE/inc
+INCLUDE_DIRECTORIES(  ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/utilities/STAGE/inc
             ${QT_INCLUDE_DIR}
             ${CMAKE_CURRENT_BINARY_DIR} # for ui*.h files
 )

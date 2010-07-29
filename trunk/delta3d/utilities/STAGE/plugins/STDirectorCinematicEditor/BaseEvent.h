@@ -6,7 +6,7 @@
 #include <export.h>
 
 #include <QtGui/QColor>
-#include <Qt/qrect.h>
+#include <QtCore/QRect>
 
 class QPainter;
 

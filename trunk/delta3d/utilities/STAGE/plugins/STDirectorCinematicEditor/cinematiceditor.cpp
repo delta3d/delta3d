@@ -392,7 +392,7 @@ void DirectorCinematicEditorPlugin::OnRemoveActor()
 {
    if (mSelectedActor == -1) return;
 
-   dtDAL::ActorProxy* proxy = mActorData[mSelectedActor].mActor.get();
+   //dtDAL::ActorProxy* proxy = mActorData[mSelectedActor].mActor.get();
    mActorData.erase(mActorData.begin() + mSelectedActor);
    if (mSelectedActor >= (int)mActorData.size())
    {
