@@ -22,6 +22,7 @@
 #include <dtDirectorNodes/callremoteeventaction.h>
 
 #include <dtDAL/stringactorproperty.h>
+#include <dtDAL/booleanactorproperty.h>
 
 #include <dtDirector/director.h>
 #include <dtDirectorNodes/remoteevent.h>
@@ -31,6 +32,7 @@ namespace dtDirector
    ////////////////////////////////////////////////////////////////////////////////
    CallRemoteEventAction::CallRemoteEventAction()
       : ActionNode()
+      , mIsLocalEvent(false)
    {
       AddAuthor("Jeff P. Houde");
    }
@@ -68,9 +70,17 @@ namespace dtDirector
          "The name of the remote event to call.");
       AddProperty(eventNameProp);
 
+      dtDAL::BooleanActorProperty* localProp = new dtDAL::BooleanActorProperty(
+         "Local Event", "Local Event",
+         dtDAL::BooleanActorProperty::SetFuncType(this, &CallRemoteEventAction::SetLocalEvent),
+         dtDAL::BooleanActorProperty::GetFuncType(this, &CallRemoteEventAction::IsLocalEvent),
+         "False to search the entire Director script for these events.  True to only search the current graph and sub-graphs.");
+      AddProperty(localProp);
+
       // This will expose the properties in the editor and allow
       // them to be connected to ValueNodes.
       mValues.push_back(ValueLink(this, eventNameProp, false, false, true, false));
+      mValues.push_back(ValueLink(this, localProp, false, false, true, false));
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -87,7 +97,14 @@ namespace dtDirector
 
       // Find the remote event that we want to trigger.
       std::vector<Node*> nodes;
-      GetDirector()->GetNodes("Remote Event", "Core", "EventName", eventName, nodes);
+      if (!GetBoolean("Local Event"))
+      {
+         GetDirector()->GetNodes("Remote Event", "Core", "EventName", eventName, nodes);
+      }
+      else
+      {
+         GetGraph()->GetNodes("Remote Event", "Core", "EventName", eventName, nodes);
+      }
 
       bool madeStack = false;
       int count = (int)nodes.size();
@@ -124,6 +141,18 @@ namespace dtDirector
    const std::string& CallRemoteEventAction::GetEventName()
    {
       return mEventName;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void CallRemoteEventAction::SetLocalEvent(bool value)
+   {
+      mIsLocalEvent = value;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool CallRemoteEventAction::IsLocalEvent() const
+   {
+      return mIsLocalEvent;
    }
 
    //////////////////////////////////////////////////////////////////////////

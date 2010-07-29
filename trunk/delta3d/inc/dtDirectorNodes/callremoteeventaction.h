@@ -81,6 +81,12 @@ namespace dtDirector
       const std::string& GetEventName();
 
       /**
+       * Accessors for the local event property flag.
+       */
+      void SetLocalEvent(bool value);
+      bool IsLocalEvent() const;
+
+      /**
        * Retrieves the display name for the node.
        *
        * @return  The display name of the node.
@@ -99,6 +105,7 @@ namespace dtDirector
 
       std::string mLabel;
       std::string mEventName;
+      bool        mIsLocalEvent;
    };
 }
 
