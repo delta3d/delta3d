@@ -88,22 +88,33 @@ namespace dtCore
       static const std::string DATABASE_PAGER_DRAWABLE_POLICY;
 
       /**
-      * Configuration property.
-      * <br>
-      * Set the thread priority to DEFAULT, MIN, LOW, NOMINAL, HIGH or MAX.
-      * @see osgDB::DatabasePager
-      */
+       * Configuration property.
+       * <br>
+       * Set the thread priority to DEFAULT, MIN, LOW, NOMINAL, HIGH or MAX.
+       * @see osgDB::DatabasePager
+       */
       static const std::string DATABASE_PAGER_THREAD_PRIORITY;
 
       /**
-      * Configuration property.
-      * <br>
-      * floating point in seconds.
-      * <br>
-      * the time in seconds of not being rendered before the database pager deletes pages.
-      * @see osgDB::DatabasePager
-      */
+       * Configuration property.
+       * <br>
+       * floating point in seconds.
+       * <br>
+       * the time in seconds of not being rendered before the database pager deletes pages.
+       * @see osgDB::DatabasePager
+       */
       static const std::string DATABASE_PAGER_EXPIRY_DELAY;
+
+      /**
+       * Configuration property.
+       * <br>
+       * integer in tiles.
+       * <br>
+       * Setting this to non-zero sets the database pager to use a max tile based mechanism for loading tiles.
+       * Setting it to 0 uses the older timeout expiring mechanism.
+       * @see osgDB::DatabasePager
+       */
+      static const std::string DATABASE_PAGER_MAX_PAGED_LOD;
 
       DatabasePager();
 
@@ -162,7 +173,7 @@ namespace dtCore
       * rendering.
       * @see SignalEndFrame()
       */
-      virtual void SignalBeginFrame(const osg::FrameStamp* framestamp) const;      
+      virtual void SignalBeginFrame(const osg::FrameStamp* framestamp) const;
 
       /** 
       * Tell the database pager that the frame has ended.  This will
