@@ -217,7 +217,9 @@ namespace dtGame
             }
             catch (const dtUtil::Exception& ex)
             {
-               LOG_ERROR("Exception encountered trying to create a remote actor.  The actor will be ignored. Message: " + ex.What());
+               LOG_ERROR("Exception encountered trying to create a remote actor named \"" + msg.GetName()
+                        + "\".  The actor will be ignored. Message: " + ex.What()
+                        + " | Actor ID: " + dtUtil::ToString(msg.GetAboutActorId()));
             }
          }
       }
