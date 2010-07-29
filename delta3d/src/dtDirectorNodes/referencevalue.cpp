@@ -119,21 +119,22 @@ namespace dtDirector
    //////////////////////////////////////////////////////////////////////////
    int ReferenceValue::GetPropertyCount(const std::string& name)
    {
-      if (mValues.size())
+      if (name == "Value" && mValues.size())
       {
          return mValues[0].GetPropertyCount();
       }
 
-      return Node::GetPropertyCount();
+      return Node::GetPropertyCount(name);
    }
 
    //////////////////////////////////////////////////////////////////////////
    dtDAL::ActorProperty* ReferenceValue::GetProperty(const std::string& name, int index, ValueNode** outNode)
    {
-      if (mValues.size())
+      if (name == "Value" && mValues.size())
       {
          dtDAL::ActorProperty* prop = mValues[0].GetProperty(index, outNode);
-         if (prop && prop->GetName() == name) return prop;
+         //if (prop && prop->GetName() == name) return prop;
+         if (prop) return prop;
       }
 
       return Node::GetProperty(name, index, outNode);
