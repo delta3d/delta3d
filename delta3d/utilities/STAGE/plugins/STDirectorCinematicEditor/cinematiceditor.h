@@ -362,10 +362,12 @@ private:
     *
     * @param[in]  dataList  The transform data list.
     * @param[in]  time      The time.
+    * @param[in]  transform  The transform;
+    * @param[in]  scale      The scale;
     *
     * @return     A pointer to the data found, NULL if not found.
     */
-   TransformData* GetOrCreateTransformData(int time);
+   TransformData* GetOrCreateTransformData(int time, const dtCore::Transform& transform, const osg::Vec3& scale);
 
    /**
     * Inserts an output event into the list, sorted by time.
