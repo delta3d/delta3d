@@ -185,6 +185,25 @@ namespace dtDirector
    }
 
    //////////////////////////////////////////////////////////////////////////
+   void DirectorGraph::GetNodes(const std::string& name, const std::string& category, const std::string& property, const std::string& value, std::vector<Node*>& outNodes, bool searchSubGraphs)
+   {
+      std::vector<Node*> nodes;
+      GetNodes(name, category, nodes, searchSubGraphs);
+
+      int count = (int)nodes.size();
+      for (int index = 0; index < count; index++)
+      {
+         Node* node = nodes[index];
+         
+         dtDAL::ActorProperty* prop = node->GetProperty(property);
+         if (prop && prop->ToString() == value)
+         {
+            outNodes.push_back(node);
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void DirectorGraph::GetAllNodes(std::vector<Node*>& outNodes)
    {
       int count = (int)mEventNodes.size();
