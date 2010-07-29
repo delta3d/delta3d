@@ -12,6 +12,7 @@ const std::string DatabasePager::DATABASE_PAGER_TARGET_FRAMERATE("System.Databas
 const std::string DatabasePager::DATABASE_PAGER_DRAWABLE_POLICY("System.DatabasePager.DrawablePolicy");
 const std::string DatabasePager::DATABASE_PAGER_THREAD_PRIORITY("System.DatabasePager.ThreadPriority");
 const std::string DatabasePager::DATABASE_PAGER_EXPIRY_DELAY("System.DatabasePager.ExpiryDelay");
+const std::string DatabasePager::DATABASE_PAGER_MAX_PAGED_LOD("System.DatabasePager.MaxPagedLOD");
 
 
 
@@ -142,6 +143,13 @@ static void ReadDBPagerConfig(osgDB::DatabasePager& pager, dtUtil::ConfigPropert
    {
       double delay = dtUtil::ToType<double>(value);
       pager.setExpiryDelay(delay);
+   }
+
+   value = config->GetConfigPropertyValue(DatabasePager::DATABASE_PAGER_MAX_PAGED_LOD);
+   if (!value.empty())
+   {
+      int maxTiles = dtUtil::ToType<int>(value);
+      pager.setTargetMaximumNumberOfPageLOD(maxTiles);
    }
 }
 
