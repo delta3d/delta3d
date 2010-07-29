@@ -132,6 +132,12 @@ namespace dtDirector
       {
       case INPUT_START:
          {
+            if (firstUpdate)
+            {
+               OutputLink* link = GetOutputLink("Started");
+               if (link) link->Activate();
+            }
+
             // On the first activation, initialize.
             if (!mIsActive)
             {
@@ -140,10 +146,8 @@ namespace dtDirector
                   InitLerp();
                   mIsActive = true;
 
-                  // Activate the "Out" and "Started" output links.
+                  // Activate the "Out" output link.
                   ActionNode::Update(simDelta, delta, input, firstUpdate);
-                  OutputLink* link = GetOutputLink("Started");
-                  if (link) link->Activate();
                }
                else
                {
@@ -213,8 +217,11 @@ namespace dtDirector
             mIsActive = false;
 
             // Activate the "Stopped" output link.
-            OutputLink* link = GetOutputLink("Stopped");
-            if (link) link->Activate();
+            if (firstUpdate)
+            {
+               OutputLink* link = GetOutputLink("Stopped");
+               if (link) link->Activate();
+            }
          }
          break;
       }
