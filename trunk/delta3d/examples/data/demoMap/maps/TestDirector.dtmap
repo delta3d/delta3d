@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
     <header>
         <name>TestDirector</name>
@@ -7,7 +8,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2009-12-21T16:14:44-08:00</createTimestamp>
-        <lastUpdateTimestamp>2010-07-16T11:20:50-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2010-07-29T12:17:16-08:00</lastUpdateTimestamp>
         <editorVersion>2.5.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -465,6 +466,96 @@
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes::Door_Pivot_Room.IVE</resourceDisplayName>
                 <resource>StaticMeshes::Door_Pivot_Room.IVE</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Label</type>
+            <id>25df6e31-9507-44a9-94ae-170fd358d4aa</id>
+            <name>LabelActor_10</name>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>90.000000</value1>
+                    <value2>-179.999725</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>8.032939</value1>
+                    <value2>15.031965</value2>
+                    <value3>2.539727</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Text</name>
+                <string>This door scales!</string>
+            </property>
+            <property>
+                <name>Font</name>
+                <string>Arial.ttf</string>
+            </property>
+            <property>
+                <name>Font Size</name>
+                <float>0.2</float>
+            </property>
+            <property>
+                <name>Text Color</name>
+                <vec4>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>1.000000</value3>
+                    <value4>1.000000</value4>
+                </vec4>
+            </property>
+            <property>
+                <name>Back Color</name>
+                <vec4>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                    <value4>1.000000</value4>
+                </vec4>
+            </property>
+            <property>
+                <name>Back Size</name>
+                <vec2>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                </vec2>
+            </property>
+            <property>
+                <name>Back Visible</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Lighting Enabled</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Depth Testing Enabled</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Text Alignment</name>
+                <enumerated>CENTER_CENTER</enumerated>
             </property>
         </actor>
         <actor>
@@ -2659,8 +2750,8 @@
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
+                    <value2>-0.000000</value2>
+                    <value3>-0.000000</value3>
                 </vec3>
             </property>
             <property>
@@ -2793,6 +2884,96 @@
             <property>
                 <name>Text</name>
                 <string>This fireplace lights when you are near!</string>
+            </property>
+            <property>
+                <name>Font</name>
+                <string>Arial.ttf</string>
+            </property>
+            <property>
+                <name>Font Size</name>
+                <float>0.2</float>
+            </property>
+            <property>
+                <name>Text Color</name>
+                <vec4>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>1.000000</value3>
+                    <value4>1.000000</value4>
+                </vec4>
+            </property>
+            <property>
+                <name>Back Color</name>
+                <vec4>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                    <value4>1.000000</value4>
+                </vec4>
+            </property>
+            <property>
+                <name>Back Size</name>
+                <vec2>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                </vec2>
+            </property>
+            <property>
+                <name>Back Visible</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Lighting Enabled</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Depth Testing Enabled</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Text Alignment</name>
+                <enumerated>CENTER_CENTER</enumerated>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Label</type>
+            <id>85265a0d-f33e-4b53-befb-990abadc6ba4</id>
+            <name>LabelActor_11</name>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>90.000000</value1>
+                    <value2>0.000274</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>8.032939</value1>
+                    <value2>14.937447</value2>
+                    <value3>2.539727</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Text</name>
+                <string>This door scales!</string>
             </property>
             <property>
                 <name>Font</name>
@@ -4132,7 +4313,7 @@
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-0.467612</value1>
+                    <value1>-0.483625</value1>
                     <value2>14.973146</value2>
                     <value3>0.001683</value3>
                 </vec3>
@@ -4559,6 +4740,109 @@
                     <value2>0.000000</value2>
                     <value3>0.000000</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>CurrentShader</name>
+                <resourceType>Shaders</resourceType>
+                <resourceDisplayName></resourceDisplayName>
+                <resource></resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtActors.Trigger Volume Actor</type>
+            <id>c99b0323-6a23-4f9c-aeab-e6a595338506</id>
+            <name>Trigger_ScaleDoor</name>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>8.000093</value1>
+                    <value2>14.934910</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>CUBE</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>5.000000</value1>
+                    <value2>5.000000</value2>
+                    <value3>5.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.1887903</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server Local</enumerated>
+            </property>
+            <property>
+                <name>Local Actor Update Policy</name>
+                <enumerated>ACCEPT_ALL</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string></string>
+            </property>
+            <property>
+                <name>MaxTriggerCount</name>
+                <integer>0</integer>
             </property>
             <property>
                 <name>CurrentShader</name>
@@ -5780,8 +6064,8 @@
                 <name>Rotation</name>
                 <vec3>
                     <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
+                    <value2>-0.000000</value2>
+                    <value3>-0.000000</value3>
                 </vec3>
             </property>
             <property>
