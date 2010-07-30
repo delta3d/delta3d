@@ -105,6 +105,8 @@ class GameManagerTests : public CPPUNIT_NS::TestFixture
         CPPUNIT_TEST(TestGMShutdown);
 
         CPPUNIT_TEST(TestTimers);
+        CPPUNIT_TEST(TestTimersGetDeleted);
+
         CPPUNIT_TEST(TestIfOnAddedToGMIsCalled);
         CPPUNIT_TEST(TestIfGMSendsRestartedMessage);
         CPPUNIT_TEST(TestSetProjectContext);
@@ -140,6 +142,7 @@ public:
    void TestGMShutdown();
 
    void TestTimers();
+   void TestTimersGetDeleted();
 
    void TestIfOnAddedToGMIsCalled();
    void TestIfGMSendsRestartedMessage();
@@ -1234,17 +1237,89 @@ void GameManagerTests::TestIfGMSendsRestartedMessage()
    mManager->RemoveComponent(*tc);
 }
 
+/////////////////////////////////////////////////
+void GameManagerTests::TestTimersGetDeleted()
+{
+   dtCore::RefPtr<dtGame::GameActorProxy> proxy;
+   mManager->CreateActor("ExampleActors","Test2Actor", proxy);
+
+   CPPUNIT_ASSERT_MESSAGE("Proxy, the result of a dynamic_cast to dtGame::GameActorProxy, should not be NULL", proxy != NULL);
+   CPPUNIT_ASSERT_MESSAGE("IsGameActorProxy should return true", proxy->IsGameActorProxy());
+
+
+   mManager->AddActor(*proxy, false, false);
+
+   dtCore::RefPtr<TestComponent> tc = new TestComponent;
+   mManager->AddComponent(*tc.get(), dtGame::GameManager::ComponentPriority::NORMAL);
+
+   mManager->SetTimer("SimTimer1", proxy.get(), 0.07f);
+   mManager->SetTimer("RepeatingTimer1", proxy.get(), 0.07f, true, true);
+
+   // step now to make sure the time for the next one is fast.
+   dtCore::System::GetInstance().Step();
+
+   mManager->DeleteActor(*proxy);
+
+   const dtCore::Timer_t expectedSimTime  = mManager->GetSimulationClockTime() + 70000;
+   const dtCore::Timer_t expectedRealTime = mManager->GetRealClockTime()       + 70000;
+   dtCore::Timer_t currentSimTime  = mManager->GetSimulationClockTime();
+   dtCore::Timer_t currentRealTime = mManager->GetRealClockTime();
+
+   // A quick step with no sleep to make sure the delete happens.
+   dtCore::System::GetInstance().Step();
+
+   //this shouldn't ever need to run more than once, but sometimes windows doesn't sleep as long as it's supposed to.
+   while (currentSimTime < expectedSimTime)
+   {
+      dtCore::AppSleep(2);
+      dtCore::System::GetInstance().Step();
+
+      currentSimTime  = mManager->GetSimulationClockTime();
+      currentRealTime = mManager->GetRealClockTime();
+   }
+
+   std::ostringstream msg1;
+   msg1 << "(" << currentSimTime << ") should be > than (" <<expectedSimTime << ")";
+   CPPUNIT_ASSERT_MESSAGE(msg1.str(), currentSimTime  > expectedSimTime);
+
+   std::ostringstream msg2;
+   msg2 << "(" << currentRealTime << ") should be > than (" <<expectedRealTime << ")";
+   CPPUNIT_ASSERT_MESSAGE(msg2.str(), currentRealTime > expectedRealTime);
+
+   std::vector<dtCore::RefPtr<const dtGame::Message> > msgs = tc->GetReceivedProcessMessages();
+
+   for (unsigned int i = 0; i < msgs.size(); ++i)
+   {
+      if (msgs[i]->GetMessageType() == dtGame::MessageType::INFO_TIMER_ELAPSED)
+      {
+         const dtGame::TimerElapsedMessage* tem = static_cast<const dtGame::TimerElapsedMessage*> (msgs[i].get());
+
+         if (tem->GetTimerName() == "SimTimer1")
+         {
+            CPPUNIT_FAIL("SimTimer1 was not deleted");
+         }
+         else if (tem->GetTimerName() == "RepeatingTimer1")
+         {
+            CPPUNIT_FAIL("RepeatingTimer1 was not deleted");
+         }
+         else
+         {
+            CPPUNIT_FAIL("An unknown timer fired.");
+         }
+      }
+   }
+}
 
 /////////////////////////////////////////////////
 void GameManagerTests::TestTimers()
 {
-   dtCore::RefPtr<const dtDAL::ActorType> type = mManager->FindActorType("ExampleActors","Test2Actor");
-   CPPUNIT_ASSERT(type != NULL);
-
    dtCore::RefPtr<dtGame::GameActorProxy> proxy;
-   mManager->CreateActor(*type, proxy);
+   mManager->CreateActor("ExampleActors","Test2Actor", proxy);
+
    CPPUNIT_ASSERT_MESSAGE("Proxy, the result of a dynamic_cast to dtGame::GameActorProxy, should not be NULL", proxy != NULL);
    CPPUNIT_ASSERT_MESSAGE("IsGameActorProxy should return true", proxy->IsGameActorProxy());
+
+   mManager->AddActor(*proxy, false, false);
 
    dtCore::RefPtr<TestComponent> tc = new TestComponent;
    mManager->AddComponent(*tc.get(), dtGame::GameManager::ComponentPriority::NORMAL);
@@ -1276,7 +1351,7 @@ void GameManagerTests::TestTimers()
    CPPUNIT_ASSERT_MESSAGE(msg2.str(), currentRealTime > expectedRealTime);
 
    const dtCore::Timer_t lateSimTime  = currentSimTime  - expectedSimTime;
-   //const dtCore::Timer_t lateRealTime = currentRealTime - expectedRealTime;
+   const dtCore::Timer_t lateRealTime = currentRealTime - expectedRealTime;
 
    std::vector<dtCore::RefPtr<const dtGame::Message> > msgs = tc->GetReceivedProcessMessages();
    bool foundTimeMsg = false;
@@ -1298,8 +1373,10 @@ void GameManagerTests::TestTimers()
            // Not sure where the problem actually is.
          else if (tem->GetTimerName() == "RepeatingTimer1")
          {
-         //   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The late time should be reasonably close to the expected late time",
-         //                                         double(lateRealTime) * 1e-6f, tem->GetLateTime(), 1e-5f);
+            // We think we fixed the sleep timer on windows, so I put this test back
+            // if it starts failing, it will have to be commented out again.
+            CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The late time should be reasonably close to the expected late time",
+                                                  double(lateRealTime) * 1e-6f, tem->GetLateTime(), 1e-5f);
          }
          else
          {
