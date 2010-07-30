@@ -476,9 +476,11 @@ namespace dtGame
          if (itor != mGMImpl->mGameActorProxyMap.end())
          {
             id = itor->first;
-            UnregisterAllMessageListenersForActor(*itor->second);
+            UnregisterAllMessageListenersForActor(gameActorProxy);
             mGMImpl->mGameActorProxyMap.erase(itor);
             mGMImpl->RemoveActorFromScene(*this, gameActorProxy);
+            mGMImpl->ClearTimersForActor(mGMImpl->mSimulationTimers, gameActorProxy);
+            mGMImpl->ClearTimersForActor(mGMImpl->mRealTimeTimers, gameActorProxy);
          }
 
          gameActorProxy.SetGameManager(NULL);
@@ -1377,6 +1379,12 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::DeleteAllActors(bool immediate)
    {
+      // Clear all the timers first so the delete actor calls don't have to
+      // iterate over the lists a bunch of times.  We have to clear this list anyway
+      // to get rid of the timers not related to actors if no one has cleaned them up.
+      mGMImpl->mRealTimeTimers.clear();
+      mGMImpl->mSimulationTimers.clear();
+
       if (immediate)
       {
          mGMImpl->mScene->RemoveAllDrawables();
@@ -1391,8 +1399,6 @@ namespace dtGame
          mGMImpl->mGlobalMessageListeners.clear();
          mGMImpl->mActorMessageListeners.clear();
          mGMImpl->mGameActorProxyMap.clear();
-         mGMImpl->mRealTimeTimers.clear();
-         mGMImpl->mSimulationTimers.clear();
 
          // all the actors are deleted now, so the problems with clearing the list
          // of deleted actors is not a problem.
@@ -1410,6 +1416,7 @@ namespace dtGame
          {
             DeleteActor(*i->second);
          }
+
       }
 
       DeleteAllPrototypes();

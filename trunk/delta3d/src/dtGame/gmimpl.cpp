@@ -26,6 +26,27 @@ void dtGame::GMImpl::ClearTimerSingleSet(std::set<TimerInfo> &timerSet,
    }
 }
 
+//////////////////////////////////////////////////////////////////////////
+void dtGame::GMImpl::ClearTimersForActor(std::set<TimerInfo>& timerSet, const GameActorProxy& proxy)
+{
+   std::set<TimerInfo>::iterator i = timerSet.begin();
+   while (i != timerSet.end())
+   {
+      std::set<TimerInfo>::iterator toDelete;
+      const TimerInfo& timer = *i;
+      if (timer.aboutActor == proxy.GetId())
+      {
+         toDelete = i;
+         ++i;
+         timerSet.erase(toDelete);
+      }
+      else
+      {
+         ++i;
+      }
+   }
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 dtGame::GMImpl::GMImpl(dtCore::Scene& scene) : mGMStatistics()
 , mMachineInfo( new MachineInfo())
