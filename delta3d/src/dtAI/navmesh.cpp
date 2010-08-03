@@ -27,31 +27,34 @@
 
 namespace dtAI
 {
-
-   NavMesh::NavMesh()
-   {
-
-   }
-
-   NavMesh::NavMesh(NavMeshContainer::iterator from, NavMeshContainer::iterator to)
-   {
-      mNavMesh.insert(from, to);
-   }
-
    struct NavMeshDeleteFunc
    {
       template<class _Type>
-         void operator()(_Type p1)
+      void operator()(_Type p1)
       {
          delete p1.second;
       }
    };
 
+   /////////////////////////////////////////////////////////////////////////////
+   NavMesh::NavMesh()
+   {
+
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   NavMesh::NavMesh(NavMeshContainer::iterator from, NavMeshContainer::iterator to)
+   {
+      mNavMesh.insert(from, to);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
    NavMesh::~NavMesh()
    {
       Clear();
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void NavMesh::Clear()
    {
       if(!mNavMesh.empty())
@@ -61,16 +64,19 @@ namespace dtAI
       }
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void NavMesh::InsertCopy(NavMeshContainer::const_iterator from, NavMeshContainer::const_iterator to)
    {
       mNavMesh.insert(from, to);
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void NavMesh::Remove(NavMeshContainer::iterator from, NavMeshContainer::iterator to)
    {
       mNavMesh.erase(from, to);
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void NavMesh::AddEdge(const WaypointInterface* pFrom, const WaypointInterface* pTo)
    {
       //adding check for duplicates
@@ -80,11 +86,13 @@ namespace dtAI
       }
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void NavMesh::AddPathSegment(const WaypointInterface* pFrom, const WaypointInterface* pTo)
    {
       AddEdge(pFrom, pTo);
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void NavMesh::RemoveEdge(const WaypointInterface* pFrom, const WaypointInterface* pTo)
    {
       NavMeshContainer::iterator iter      = begin(pFrom);
@@ -102,11 +110,13 @@ namespace dtAI
       }
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void NavMesh::RemovePathSegment(const WaypointInterface* pFrom, const WaypointInterface* pTo)
    {
       RemoveEdge(pFrom, pTo);
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void NavMesh::RemoveAllEdges(const WaypointInterface* from)
    {
       WaypointID id = from->GetID();
@@ -134,6 +144,7 @@ namespace dtAI
       
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void NavMesh::RemoveAllEdgesFromWaypoint(const WaypointInterface* from)
    {
       std::pair<NavMeshContainer::iterator, NavMeshContainer::iterator> rangeElements = mNavMesh.equal_range(from->GetID());
@@ -141,11 +152,13 @@ namespace dtAI
       mNavMesh.erase(rangeElements.first, rangeElements.second);
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void NavMesh::RemoveAllPaths(const WaypointInterface* pFrom)
    {
       RemoveAllEdges(pFrom);
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    bool NavMesh::ContainsEdge(const WaypointInterface* pFrom, const WaypointInterface* pTo) const
    {
       NavMeshContainer::const_iterator iter = begin(pFrom);
@@ -164,40 +177,43 @@ namespace dtAI
       return false;
    }
 
-
+   /////////////////////////////////////////////////////////////////////////////
    bool NavMesh::ContainsPath(const WaypointInterface* pFrom, const WaypointInterface* pTo) const
    {
       return ContainsEdge(pFrom, pTo);
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    const NavMesh::NavMeshContainer& NavMesh::GetNavMesh() const
    {
       return mNavMesh;
    }
 
-
+   /////////////////////////////////////////////////////////////////////////////
    NavMesh::NavMeshContainer::iterator NavMesh::begin(const WaypointInterface* pPtr)
    {
       return mNavMesh.lower_bound(pPtr->GetID());
    }
 
-
+   /////////////////////////////////////////////////////////////////////////////
    NavMesh::NavMeshContainer::iterator NavMesh::end(const WaypointInterface* pPtr)
    {
       return mNavMesh.upper_bound(pPtr->GetID());
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    NavMesh::NavMeshContainer::const_iterator NavMesh::begin(const WaypointInterface* pPtr) const
    {
       return mNavMesh.lower_bound(pPtr->GetID());
    }
 
-
+   /////////////////////////////////////////////////////////////////////////////
    NavMesh::NavMeshContainer::const_iterator NavMesh::end(const WaypointInterface* pPtr) const
    {
       return mNavMesh.upper_bound(pPtr->GetID());
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    NavMesh::NavMeshContainer::size_type NavMesh::size(const WaypointInterface* pPtr) const
    {
       // first pass implementation is potentially slow, but works
@@ -209,6 +225,7 @@ namespace dtAI
       return count;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    bool NavMesh::IsOneWay(WaypointPair* pPair) const
    {
       NavMeshContainer::const_iterator iter      = begin(pPair->GetWaypointTo());

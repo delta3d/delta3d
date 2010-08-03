@@ -43,7 +43,7 @@ namespace dtAI
    namespace WaypointFileHeader
    {
       const unsigned FILE_IDENT = 5705313;
-      
+
       const unsigned VERSION_MAJOR = 1;
       const unsigned VERSION_MINOR = 0;
 
@@ -97,7 +97,7 @@ namespace dtAI
       inline value_type operator[](size_t const N) const { return d[N]; }
 
       WaypointID mID;
-      value_type d[3];      
+      value_type d[3];
    };
 
    inline float KDHolderIndexFunc(KDHolder t, size_t k ) { return t[k]; }
@@ -110,7 +110,7 @@ namespace dtAI
    {
    public:
       DeltaAIInterface()
-         //: mWaypointManager(WaypointManager::GetInstance())         
+         //: mWaypointManager(WaypointManager::GetInstance())
          : mWaypointGraph(new WaypointGraph())
          , mAStar(*mWaypointGraph)
          , mKDTreeDirty(true)
@@ -162,7 +162,7 @@ namespace dtAI
       {
          return *mWaypointGraph;
       }
-      
+
       const WaypointGraph& GetWaypointGraph() const
       {
          return *mWaypointGraph;
@@ -198,15 +198,15 @@ namespace dtAI
       }
 
       bool MoveWaypoint(WaypointInterface* wi, const osg::Vec3& newPos)
-      {         
+      {
          // the kd-tree cannot move :( for now remove and re-insert
-         osg::Vec3 pos = wi->GetPosition();        
+         osg::Vec3 pos = wi->GetPosition();
 
          find_result found = mKDTree->find_nearest(pos, 1.0f);
          if (found.first != mKDTree->end() && (*found.first).mID == wi->GetID())
-         {            
+         {
             mKDTree->erase(found.first);
-            
+
             KDHolder node(newPos, wi->GetID());
             mKDTree->insert(node);
 
@@ -230,7 +230,7 @@ namespace dtAI
 
       bool RemoveWaypoint(WaypointInterface* wi)
       {
-         bool result = false;         
+         bool result = false;
 
          osg::Vec3 pos = wi->GetPosition();
          std::vector<KDHolder> v;
@@ -243,7 +243,7 @@ namespace dtAI
          {
             WaypointInterface* wpPtr = GetWaypointById(iter->mID);
             if (wpPtr != NULL && wpPtr->GetID() == wi->GetID())
-            {            
+            {
 
                // remove from current drawable
                if (mDrawable.valid())
@@ -266,7 +266,7 @@ namespace dtAI
                break;
             }
          }
-      
+
          return result;
       }
 
@@ -353,14 +353,14 @@ namespace dtAI
 
       PathFindResult FindPath(WaypointID pFrom, WaypointID pTo, ConstWaypointArray& result)
       {
-         WaypointGraphAStar astar(*mWaypointGraph); 
+         WaypointGraphAStar astar(*mWaypointGraph);
 
          return astar.FindSingleLevelPath(pFrom, pTo, result);
       }
 
       PathFindResult HierarchicalFindPath(WaypointID pFrom, WaypointID pTo, ConstWaypointArray& result)
       {
-         WaypointGraphAStar astar(*mWaypointGraph); 
+         WaypointGraphAStar astar(*mWaypointGraph);
 
          return astar.HierarchicalFindPath(pFrom, pTo, result);
       }
@@ -395,7 +395,7 @@ namespace dtAI
                  ++nm_iter)
             {
                const WaypointPair* wp = (*nm_iter).second;
-               
+
                AddEdge(wp->GetWaypointFrom()->GetID(), wp->GetWaypointTo()->GetID());
             }
 
@@ -507,8 +507,8 @@ namespace dtAI
 
          find_result found = mKDTree->find_nearest(pos, maxRadius);
          if (found.first != mKDTree->end())
-         {              
-            result = GetWaypointById(found.first->mID);            
+         {
+            result = GetWaypointById(found.first->mID);
          }
 
          return result;
@@ -538,7 +538,7 @@ namespace dtAI
             {
                LOG_ERROR("Error searching for waypoints.");
             }
-         }  
+         }
 
          return !arrayToFill.empty();
       }

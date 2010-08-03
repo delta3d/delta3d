@@ -53,9 +53,6 @@ namespace dtCore
       DECLARE_MANAGEMENT_LAYER(CollisionMotionModel);
 
    public:
-      enum eMode{WALKING = 0, FALLING, SLIDING};
-
-   public:
       /**
        * Constructor.
        * @param height, the height of the character and camera, in meters
