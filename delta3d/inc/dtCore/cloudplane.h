@@ -1,20 +1,20 @@
-/* 
- * Delta3D Open Source Game and Simulation Engine 
- * Copyright (C) 2004-2005 MOVES Institute 
+/*
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2004-2005 MOVES Institute
  *
  * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free 
- * Software Foundation; either version 2.1 of the License, or (at your option) 
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
  *
  * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this library; if not, write to the Free Software Foundation, Inc., 
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
 */
 
@@ -50,39 +50,39 @@ namespace dtCore
    class DT_CORE_EXPORT CloudPlane : public dtCore::EnvEffect
    {
    public:
-      
+
        DECLARE_MANAGEMENT_LAYER(CloudPlane)
 
        /**
         * Constructor: These params initialize the noise function
-        * for a detailed description see dtUtil::Fractal   
+        * for a detailed description see dtUtil::Fractal
         *
         * @sa dtUtil::Fractal
         */
-       CloudPlane(   int  octaves,
-                     float cutoff,
-                     int   frequency,
-                     float amp,
-                     float persistence,
-                     float density,
-                     int   texSize,
-                     float height,
-                     const std::string& name = "CloudPlane",
-                     const std::string& textureFilePath = "");
-       
-       CloudPlane(  float height, const std::string& name, const std::string& textureFilePath );
-      
+       CloudPlane(int  octaves,
+                  float cutoff,
+                  int   frequency,
+                  float amp,
+                  float persistence,
+                  float density,
+                  int   texSize,
+                  float height,
+                  const std::string& name = "CloudPlane",
+                  const std::string& textureFilePath = "");
+
+       CloudPlane(float height, const std::string& name, const std::string& textureFilePath);
+
    protected:
 
       virtual ~CloudPlane();
 
    public:
 
-      virtual void Repaint(   const osg::Vec3& skyColor, 
-                              const osg::Vec3& fogColor,
-                              double sunAngle, 
-                              double sunAzimuth,
-                              double visibility );
+      virtual void Repaint(const osg::Vec3& skyColor,
+                           const osg::Vec3& fogColor,
+                           double sunAngle,
+                           double sunAzimuth,
+                           double visibility);
 
       ///@return height of skyplane
       float GetHeight() { return mHeight; };
@@ -97,7 +97,7 @@ namespace dtCore
 
       ///Sets the color of the Cloud Plane
       void SetColor( const osg::Vec4& );
-      
+
       ///Returns the color of the clouds
       ///@return current cloud color
       osg::Vec4 GetColor() const;
@@ -113,11 +113,11 @@ namespace dtCore
 
       void FilterTexture();
 
-      void CreateCloudTexture( const std::string& filename );
+      void CreateCloudTexture(const std::string& filename);
       void createPerlinTexture();
-      virtual void OnMessage(MessageData *data);
+      virtual void OnMessage(MessageData* data);
       void Update(const double deltaFrameTime);
-      osg::Geometry *createPlane(float, float);
+      osg::Geometry* createPlane(float, float);
 
       int mOctaves;
       float mCutoff;
@@ -138,7 +138,6 @@ namespace dtCore
       dtCore::RefPtr<osg::Geode> mGeode;
       dtCore::RefPtr<osg::Geometry> mPlane;
       dtCore::RefPtr<osg::Fog> mFog; ///< The fog adjuster
-
    };
 }
 
