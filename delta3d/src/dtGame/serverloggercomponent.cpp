@@ -194,38 +194,39 @@ namespace dtGame
       {
          HandleClearIgnoredMessageTypeMessage();
       }
-      else
+      // One last step before passing the message to the log stream is to check
+      // to see if this is a timer message for the auto keyframe capture.  If so,
+      // perform a keyframe capture.
+      // Note - we don't record INFO_TIMER_ELAPSED messages anymore. 
+      else if (message.GetMessageType() == MessageType::INFO_TIMER_ELAPSED)
       {
-         // One last step before passing the message to the log stream is to check
-         // to see if this is a timer message for the auto keyframe capture.  If so,
-         // perform a keyframe capture.
-         if (message.GetMessageType() == MessageType::INFO_TIMER_ELAPSED)
+         const TimerElapsedMessage& timerMsg =
+            static_cast<const TimerElapsedMessage&>(message);
+
+         if (timerMsg.GetTimerName() == ServerLoggerComponent::AUTO_KEYFRAME_TIMER_NAME)
          {
-            const TimerElapsedMessage& timerMsg =
-               static_cast<const TimerElapsedMessage&>(message);
-
-            if (timerMsg.GetTimerName() == ServerLoggerComponent::AUTO_KEYFRAME_TIMER_NAME)
+            if (mLogStatus.GetStateEnum() != LogStateEnumeration::LOGGER_STATE_RECORD)
             {
-               if (mLogStatus.GetStateEnum() != LogStateEnumeration::LOGGER_STATE_RECORD)
-               {
-                  GetGameManager()->RejectMessage(message, "Server Logger Component - Error: Attempted to "
-                     "auto-capture keyframe while not in a record state.");
-               }
-               else
-               {
-                  std::string time = dtUtil::DateTime::ToString(time_t(GetGameManager()->GetSimulationClockTime() / 1000000LL),
-                     dtUtil::DateTime::TimeFormat::CLOCK_TIME_24_HOUR_FORMAT);
+               GetGameManager()->RejectMessage(message, "Server Logger Component - Error: Attempted to "
+                  "auto-capture keyframe while not in a record state.");
+            }
+            else
+            {
+               std::string time = dtUtil::DateTime::ToString(time_t(GetGameManager()->GetSimulationClockTime() / 1000000LL),
+                  dtUtil::DateTime::TimeFormat::CLOCK_TIME_24_HOUR_FORMAT);
 
-                  LogKeyframe autoKeyFrame;
-                  autoKeyFrame.SetActiveMaps(mLogStatus.GetActiveMaps());
-                  autoKeyFrame.SetName("AutoKeyFrame " + time);
-                  autoKeyFrame.SetDescription("Auto captured keyframe.");
-                  autoKeyFrame.SetSimTimeStamp(mLogStatus.GetCurrentSimTime());
-                  DumpKeyFrame(autoKeyFrame);
-               }
+               LogKeyframe autoKeyFrame;
+               autoKeyFrame.SetActiveMaps(mLogStatus.GetActiveMaps());
+               autoKeyFrame.SetName("AutoKeyFrame " + time);
+               autoKeyFrame.SetDescription("Auto captured keyframe.");
+               autoKeyFrame.SetSimTimeStamp(mLogStatus.GetCurrentSimTime());
+               DumpKeyFrame(autoKeyFrame);
             }
          }
+      }
 
+      else 
+      {
          // If its not a message intended for the logger, it gets logged to the stream.
          DoRecordMessage(message);
       }
@@ -741,9 +742,14 @@ namespace dtGame
                type == MessageType::COMMAND_RESUME || type == MessageType::COMMAND_RESTART ||
                type == MessageType::COMMAND_SET_TIME || type == MessageType::REQUEST_LOAD_MAP ||
                type == MessageType::REQUEST_PAUSE || type == MessageType::REQUEST_RESUME ||
-               type == MessageType::REQUEST_RESTART || type == MessageType::REQUEST_SET_TIME)
+               type == MessageType::REQUEST_RESTART || type == MessageType::REQUEST_SET_TIME )
             {
                // do nothing for now.  Maybe in the future.  For now, just ignore and don't send.
+            }
+            // Add other misc system oriented messages to be ignored here.
+            else if (type == MessageType::INFO_TIMER_ELAPSED)
+            {
+               // do nothing
             }
             else
             {
