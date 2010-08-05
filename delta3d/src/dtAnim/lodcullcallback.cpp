@@ -44,7 +44,7 @@ bool dtAnim::LODCullCallback::cull(osg::NodeVisitor* nv, osg::Drawable* drawable
    const osg::Node* parent = nv->getNodePath().back();
    if (parent != NULL && mModelData.valid())
    {
-      const float distance = nv->getDistanceToEyePoint(parent->getBound().center(), true);
+      const float distance = nv->getDistanceFromEyePoint(parent->getBound().center(), true);
 
       // disappear once the max distance is reached
       if (distance > mModelData->GetLODOptions().GetMaxVisibleDistance())
