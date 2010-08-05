@@ -49,6 +49,7 @@
 
 namespace dtAI
 {
+   const unsigned int MAX_RENDERABLE_EDGES = 50000;
 
    class RenderData: public osg::Referenced
    {
@@ -67,12 +68,15 @@ namespace dtAI
    class AIDebugDrawableImpl
    {
    public:
+
+      //////////////////////////////////////////////////////////////////////////
       AIDebugDrawableImpl(WaypointRenderInfo& pRenderInfo)
       : mRenderInfo(&pRenderInfo)
       {
 
       }
 
+      //////////////////////////////////////////////////////////////////////////
       void Init()
       {
          mNode = new osg::Group();
@@ -103,6 +107,7 @@ namespace dtAI
          mRenderInfo->Init();
       }
 
+      //////////////////////////////////////////////////////////////////////////
       void OnRenderInfoChanged()
       {
          if (mRenderInfo->GetRenderWaypointID())
@@ -147,6 +152,7 @@ namespace dtAI
          mNavMeshGeometry->getOrCreateStateSet()->setAttribute(lw, osg::StateAttribute::ON);
       }
 
+      //////////////////////////////////////////////////////////////////////////
       void OnGeometryChanged()
       {
          //seems like there should be a generic dirty()- does this only work with display lists?
@@ -169,7 +175,7 @@ namespace dtAI
          {
             mNavMeshGeometry->removePrimitiveSet(0);
          }
-         
+
          if(!mWaypointPairs->empty())
          {
             osg::PrimitiveSet* psLines = new osg::DrawElementsUInt(osg::PrimitiveSet::LINES, mWaypointPairs->begin(), mWaypointPairs->end());
@@ -185,6 +191,7 @@ namespace dtAI
          mNavMeshGeometry->getOrCreateStateSet()->setAttribute(lw, osg::StateAttribute::ON);
       }
 
+      //////////////////////////////////////////////////////////////////////////
       void CreateWaypointIDText(const WaypointInterface& wp, RenderData& renderData)
       {
          //note: we either create a render info in the constructor
@@ -219,23 +226,23 @@ namespace dtAI
       RenderDataMap mRenderData;
    };
 
-   //////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    //AIDebugDrawable
-   //////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    AIDebugDrawable::AIDebugDrawable()
-      : mImpl(new AIDebugDrawableImpl(*new WaypointRenderInfo))
-   {
-      Init();
-   }
-   
-   ///////////////////////////////////////////////////////////////////////////////
-   AIDebugDrawable::AIDebugDrawable(WaypointRenderInfo& pRenderInfo)
-      : mImpl(new AIDebugDrawableImpl(pRenderInfo))
+   : mImpl(new AIDebugDrawableImpl(*new WaypointRenderInfo))
    {
       Init();
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
+   AIDebugDrawable::AIDebugDrawable(WaypointRenderInfo& pRenderInfo)
+   : mImpl(new AIDebugDrawableImpl(pRenderInfo))
+   {
+      Init();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
    AIDebugDrawable::~AIDebugDrawable()
    {
       delete mImpl;
@@ -243,40 +250,40 @@ namespace dtAI
    }
 
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void AIDebugDrawable::SetRenderInfo(WaypointRenderInfo& pRenderInfo)
    {
       mImpl->mRenderInfo = &pRenderInfo;
-      
+
       mImpl->OnRenderInfoChanged();
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    WaypointRenderInfo& AIDebugDrawable::GetRenderInfo()
    {
       return *mImpl->mRenderInfo;
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    const WaypointRenderInfo& AIDebugDrawable::GetRenderInfo() const
    {
       return *mImpl->mRenderInfo;
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void AIDebugDrawable::OnRenderInfoChanged()
    {
       mImpl->OnRenderInfoChanged();
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void AIDebugDrawable::Init()
    {
       mImpl->Init();
       mImpl->OnRenderInfoChanged();
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void AIDebugDrawable::ClearMemory()
    {
       //todo-
@@ -284,55 +291,55 @@ namespace dtAI
    }
 
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    osg::Geode* AIDebugDrawable::GetGeodeNavMesh()
    {
       return mImpl->mGeodeNavMesh.get();
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void AIDebugDrawable::SetGeodeNavMesh(osg::Geode* geode)
    {
       mImpl->mGeodeNavMesh = geode;
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    osg::Geode* AIDebugDrawable::GetGeodeWayPoints()
    {
       return mImpl->mGeodeWayPoints.get();
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void AIDebugDrawable::SetGeodeWayPoints(osg::Geode* geode)
    {
       mImpl->mGeodeWayPoints = geode;
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    osg::Node* AIDebugDrawable::GetOSGNode()
    {
       return mImpl->mNode.get();
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    const osg::Node* AIDebugDrawable::GetOSGNode() const
    {
       return mImpl->mNode.get();
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void AIDebugDrawable::SetOSGNode(osg::Group* grp)
    {
       mImpl->mNode = grp;
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    osg::Geometry* AIDebugDrawable::GetGeometry()
    {
       return mImpl->mWaypointGeometry.get();
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    int AIDebugDrawable::FindWaypoint(unsigned id)
    {
       unsigned numWaypoints = mImpl->mWaypointIDs->size();
@@ -347,9 +354,10 @@ namespace dtAI
       return -1;
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   void AIDebugDrawable::InsertWaypoint(const WaypointInterface& wp)
+   /////////////////////////////////////////////////////////////////////////////
+   void AIDebugDrawable::InsertWaypoint(const WaypointInterface& wp, bool addText /*= true*/)
    {
+      // FindWaypoint can be slow when alot of waypoints have accumulated
       int loc = FindWaypoint(wp.GetID());
       if (loc > -1)
       {
@@ -363,14 +371,16 @@ namespace dtAI
          dtCore::RefPtr<RenderData> newRenderData = new RenderData;
          mImpl->mRenderData.insert(std::make_pair(wp.GetID(), newRenderData));
 
-         mImpl->CreateWaypointIDText(wp, *newRenderData);
-
+         if (addText)
+         {
+            mImpl->CreateWaypointIDText(wp, *newRenderData);
+         }
       }
 
       OnGeometryChanged();
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void AIDebugDrawable::RemoveWaypoint(unsigned id)
    {
       int loc = FindWaypoint(id);
@@ -397,42 +407,47 @@ namespace dtAI
       }
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void AIDebugDrawable::AddEdge(const WaypointInterface* pFrom, const WaypointInterface* pTo)
    {
       AddPathSegment(pFrom, pTo);
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void AIDebugDrawable::RemoveEdge(const WaypointInterface* pFrom, const WaypointInterface* pTo)
    {
       RemovePathSegment(pFrom, pTo);
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   void AIDebugDrawable::UpdateWaypointGraph( const NavMesh& nm )
+   /////////////////////////////////////////////////////////////////////////////
+   void AIDebugDrawable::UpdateWaypointGraph(const NavMesh& nm)
    {
-      //just clear and re-add them all, this should only happen often during editing
-      ClearWaypointGraph();
-
-      NavMesh::NavMeshContainer::const_iterator iter = nm.GetNavMesh().begin();
-      NavMesh::NavMeshContainer::const_iterator iterEnd = nm.GetNavMesh().end();
-
-      for (;iter != iterEnd; ++iter)
+      if (nm.GetNavMesh().size() < MAX_RENDERABLE_EDGES)
       {
-         const WaypointPair* wp = (*iter).second;
-         AddPathSegment(wp->GetWaypointFrom(), wp->GetWaypointTo());
+         //just clear and re-add them all, this should only happen often during editing
+         ClearWaypointGraph();
+
+         NavMesh::NavMeshContainer::const_iterator iter = nm.GetNavMesh().begin();
+         NavMesh::NavMeshContainer::const_iterator iterEnd = nm.GetNavMesh().end();
+
+         int safetyCounter = 0;
+
+         for (;iter != iterEnd; ++iter)
+         {
+            const WaypointPair* wp = (*iter).second;
+            AddPathSegment(wp->GetWaypointFrom(), wp->GetWaypointTo());
+         }
       }
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void AIDebugDrawable::OnGeometryChanged()
    {
       mImpl->OnGeometryChanged();
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   void AIDebugDrawable::AddPathSegment( const WaypointInterface* pFrom, const WaypointInterface* pTo )
+   /////////////////////////////////////////////////////////////////////////////
+   void AIDebugDrawable::AddPathSegment(const WaypointInterface* pFrom, const WaypointInterface* pTo)
    {
       int indexFrom = FindWaypoint(pFrom->GetID());
       int indexTo = FindWaypoint(pTo->GetID());
@@ -449,7 +464,7 @@ namespace dtAI
       }
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void AIDebugDrawable::RemovePathSegment(const WaypointInterface* pFrom, const WaypointInterface* pTo)
    {
       int indexFrom = FindWaypoint(pFrom->GetID());
@@ -475,7 +490,7 @@ namespace dtAI
       }
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void AIDebugDrawable::ClearWaypointGraph()
    {
       mImpl->mWaypointPairs->clear();

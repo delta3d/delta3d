@@ -34,7 +34,7 @@ namespace dtAI
    //////////////////////////////////////////////////////////////////////////////
    WaypointRenderInfo::~WaypointRenderInfo()
    {
-      
+
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -42,7 +42,7 @@ namespace dtAI
    {
       BuildPropertyMap();
    }
-   
+
    //////////////////////////////////////////////////////////////////////////////
    void WaypointRenderInfo::SetDefaults()
    {
@@ -72,7 +72,7 @@ namespace dtAI
       mNavMeshColor = Color(0.5f, 1.0f, 0.5f, 1.0f);
       mNavMeshWidth = 2.5f;
    }
-   
+
    /////////////////////////////////////////////////////////////////////////////
    void WaypointRenderInfo::BuildPropertyMap()
    {
@@ -80,7 +80,7 @@ namespace dtAI
       typedef dtDAL::PropertyRegHelper<dtDAL::PropertyContainer&, WaypointRenderInfo> RegHelperType;
 
       RegHelperType regHelper(*this, this, "WaypointRenderInfo");
-      
+
       REGISTER_PROPERTY(RenderWaypoints, "Used to toggle waypoint rendering.", RegHelperType, regHelper);
       REGISTER_PROPERTY(RenderWaypointID, "Used to toggle rendering the waypoint id above the waypoint.", RegHelperType, regHelper);
       REGISTER_PROPERTY(RenderWaypointText, "Used to toggle waypoint text rendering.", RegHelperType, regHelper);

@@ -73,7 +73,7 @@ namespace dtAI
        * Note: Adding an existing waypoint will reset just its position
        *       currently use this to move the waypoint as well.
        */
-      virtual void InsertWaypoint(const WaypointInterface& wp);
+      virtual void InsertWaypoint(const WaypointInterface& wp, bool addText = true);
       virtual void RemoveWaypoint(unsigned id);
 
       /**
