@@ -22,6 +22,7 @@
 #include <dtAI/aiinterfaceactor.h>
 #include <dtAI/aiplugininterface.h>
 #include <dtDAL/resourceactorproperty.h>
+#include <dtDAL/booleanactorproperty.h>
 #include <dtDAL/project.h>
 #include <dtAI/navmesh.h>
 #include <dtAI/waypointcollection.h>
@@ -110,11 +111,11 @@ namespace dtAI
    {
    public:
       DeltaAIInterface()
-         //: mWaypointManager(WaypointManager::GetInstance())
-         : mWaypointGraph(new WaypointGraph())
-         , mAStar(*mWaypointGraph)
-         , mKDTreeDirty(true)
-         , mKDTree(new WaypointKDTree(std::ptr_fun(KDHolderIndexFunc)))
+      //: mWaypointManager(WaypointManager::GetInstance())
+      : mWaypointGraph(new WaypointGraph())
+      , mAStar(*mWaypointGraph)
+      , mKDTreeDirty(true)
+      , mKDTree(new WaypointKDTree(std::ptr_fun(KDHolderIndexFunc)))
       {
       }
 
@@ -442,9 +443,14 @@ namespace dtAI
             WaypointRefArray::const_iterator iter = mWaypoints.begin();
             WaypointRefArray::const_iterator iterEnd = mWaypoints.end();
 
+            const int MAX_RENDERABLE_WAYPOINTS_WITH_TEXT = 50000;
+
+            // Don't allow the sheer volume of text to bring the app down
+            bool renderText = (mWaypoints.size() > MAX_RENDERABLE_WAYPOINTS_WITH_TEXT);
+
             for (;iter != iterEnd; ++iter)
             {
-               mDrawable->InsertWaypoint(**iter);
+               mDrawable->InsertWaypoint(**iter, renderText);
             }
 
             NavMesh* nm = mWaypointGraph->GetNavMeshAtSearchLevel(0);
@@ -572,53 +578,53 @@ namespace dtAI
       std::string mLastFileLoaded;
    };
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    // CLASS CONSTANTS
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    const dtUtil::RefString AIInterfaceActorProxy::CLASS_NAME("dtAI::AIInterface");
    const dtUtil::RefString AIInterfaceActorProxy::PROPERTY_WAYPOINT_FILE_NAME("dtAI::WaypointFilename");
 
 
-   //////////////////////////////////////////////////////////////////////////////
+   ////////////////////////////////////////////////////////////////////////////
    // ACTOR CODE
-   //////////////////////////////////////////////////////////////////////////////
+   ////////////////////////////////////////////////////////////////////////////
    AIInterfaceActor::AIInterfaceActor()
    {
 
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    AIInterfaceActor::~AIInterfaceActor()
    {
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    osg::Node* AIInterfaceActor::GetOSGNode()
    {
       return dtAI::WaypointManager::GetInstance().GetOSGNode();
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    const osg::Node* AIInterfaceActor::GetOSGNode() const
    {
       return dtAI::WaypointManager::GetInstance().GetOSGNode();
    }
 
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    // PROXY CODE
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    AIInterfaceActorProxy::AIInterfaceActorProxy()
    {
       SetClassName(AIInterfaceActorProxy::CLASS_NAME.Get());
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
     AIInterfaceActorProxy::~AIInterfaceActorProxy()
     {
     }
 
-    ///////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
     void AIInterfaceActorProxy::CreateActor()
     {
        AIInterfaceActor* actor = new AIInterfaceActor();
@@ -632,13 +638,13 @@ namespace dtAI
        mAIInterface->RegisterWaypointType<WaypointCollection>(WaypointTypes::WAYPOINT_COLLECTION.get());
     }
 
-    ///////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
     AIPluginInterface* AIInterfaceActorProxy::CreateAIInterface()
     {
        return new DeltaAIInterface();
     }
 
-    ///////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
     void AIInterfaceActorProxy::BuildPropertyMap()
     {
        dtDAL::ActorProxy::BuildPropertyMap();
@@ -652,7 +658,7 @@ namespace dtAI
                    "Loads the waypoint and connectivity graph.", GROUPNAME));
     }
 
-    ///////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
     void AIInterfaceActorProxy::LoadFile(const std::string& fileName)
     {
          mAIInterface->ClearMemory();
@@ -669,17 +675,19 @@ namespace dtAI
          }
     }
 
-    ///////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
     bool AIInterfaceActorProxy::IsPlaceable() const
     {
        return false;
     }
 
+    ////////////////////////////////////////////////////////////////////////////
     AIPluginInterface* AIInterfaceActorProxy::GetAIInterface()
     {
       return mAIInterface.get();
     }
 
+    ////////////////////////////////////////////////////////////////////////////
     const AIPluginInterface* AIInterfaceActorProxy::GetAIInterface() const
     {
        return mAIInterface.get();

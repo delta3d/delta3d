@@ -40,8 +40,6 @@ namespace dtAI
       /// Constructor
       BaseAIComponent(const std::string& name = DEFAULT_NAME);
 
-      void Initialize();
-
       /*virtual*/ void ProcessMessage(const dtGame::Message& message);
 
       dtAI::AIPluginInterface* GetAIPluginInterface();
