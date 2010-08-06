@@ -26,7 +26,6 @@
 #include <dtNetGM/export.h>
 #include <dtCore/refptr.h>
 #include <dtGame/message.h>
-#include <dtGame/messageparameter.h>
 
 namespace dtNetGM
 {
@@ -41,16 +40,7 @@ namespace dtNetGM
    public:
 
       // Constructor
-      MachineInfoMessage() : dtGame::Message()
-      {
-         AddParameter(new dtGame::StringMessageParameter("Name"));
-         AddParameter(new dtGame::StringMessageParameter("UniqueId"));
-         AddParameter(new dtGame::StringMessageParameter("HostName"));
-         AddParameter(new dtGame::StringMessageParameter("IPAddress"));
-         AddParameter(new dtGame::LongIntMessageParameter("TimeStamp"));
-         AddParameter(new dtGame::UnsignedIntMessageParameter("Ping"));
-      }
-
+      MachineInfoMessage();
       /**
        * Gets the Name from the contained MachineInfo
        * @return The name
@@ -103,25 +93,25 @@ namespace dtNetGM
        * Gets the TimeStamp from the contained MachineInfo
        * @return The timestamp
        */
-      const unsigned long& GetTimeStamp() const;
+      unsigned long GetTimeStamp() const;
 
       /**
        * Sets the TimeStamp associated with the MachineInfo
        * @param The new timestamp
        */
-      void SetTimeStamp(const unsigned long& timeStamp);
+      void SetTimeStamp(unsigned long timeStamp);
 
       /**
        * Gets the Ping from the contained MachineInfo
        * @return The ping
        */
-      const unsigned int& GetPing() const;
+      unsigned int GetPing() const;
 
       /**
        * Sets the Ping associated with the MachineInfo
        * @param The new ping
        */
-      void SetPing(const unsigned int& ping);
+      void SetPing(unsigned int ping);
 
       /**
        * Gets the MachineInfo from the message
