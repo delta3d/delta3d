@@ -411,14 +411,21 @@ namespace dtNetGM
    ////////////////////////////////////////////////////////////////////////////////
    void NetworkComponent::DoEndOfTick()
    {
-      // At the end of the frame, we want to make sure we queue up all remaining messages.
-      // Therefore, if the network publishing task is busy, wait for it to end. 
-      DispatchTask* task = static_cast<DispatchTask*>(mDispatchTask.get());
-      task->WaitUntilComplete();
-
       if (!mMessageBufferOut.empty())
       {
-         StartSendTask();
+         // At the end of the frame, we want to make sure we queue up all remaining messages.
+         // Therefore, if the network publishing task is busy, wait for it to end.
+         DispatchTask* task = static_cast<DispatchTask*>(mDispatchTask.get());
+         if (task->WaitUntilComplete(100))
+         {
+            StartSendTask();
+         }
+         else
+         {
+            LOG_ERROR("Waited 100 milliseconds for the background message task to complete before sending any "
+                     "remaining messages, but it timed out.  ");
+         }
+
       }
    }
 
@@ -848,7 +855,10 @@ namespace dtNetGM
       if (mDispatchTask.valid())
       {
          // block until complete to make sure the buffer is empty before disconnecting.
-         mDispatchTask->WaitUntilComplete();
+         if (!mDispatchTask->WaitUntilComplete(2000))
+         {
+            LOG_ERROR("Attempted to wait for the background message send to complete during disconnect, but it never completed after 2 seconds.");
+         }
          mDispatchTask = NULL;
       }
 
