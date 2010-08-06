@@ -123,9 +123,6 @@ int main(int argc, char* argv[])
    catch (const dtUtil::Exception& e)
    {
       e.LogException(dtUtil::Log::LOG_ERROR);
-      std::ostringstream ss;
-      ss << "Exception (" << e.TypeEnum() << "): " << e.What()
-         << "\n\tLine: " << e.Line() << " File: " << e.File();
 
       // hide the splash screen if it's up or you can't see the error!
       if (splash != NULL)
@@ -134,7 +131,7 @@ int main(int argc, char* argv[])
          splash = NULL;
       }
 
-      QMessageBox::critical(NULL,"Exception",ss.str().c_str(),
+      QMessageBox::critical(NULL,"Exception", e.ToString().c_str(),
          QMessageBox::Ok,QMessageBox::NoButton);
 
       dtAudio::AudioManager::Destroy();
