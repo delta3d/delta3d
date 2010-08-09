@@ -292,16 +292,19 @@ namespace dtCore
           * The w/s key forward/backward mapping.
           */
          ButtonsToAxis* mWSKeysUpDownMapping;
+         ButtonsToAxis* mWSKeysUpDownMappingCaps;
 
          /**
           * The a/d key strafe left/right mapping.
           */
          ButtonsToAxis* mADKeysLeftRightMapping;
+         ButtonsToAxis* mADKeysLeftRightMappingCaps;
 
          /**
           * The q/e key fly up/down mapping.
           */
          ButtonsToAxis* mQEKeysUpDownMapping;
+         ButtonsToAxis* mQEKeysUpDownMappingCaps;
 
          /**
           * The default fly forward/backward axis.
