@@ -361,7 +361,7 @@ namespace dtGUI
 
       dtCore::RefPtr<dtGUI::CEGUIKeyboardListener> mKeyboardListener; ///needed for injection mouse-events to the cegui
       dtCore::RefPtr<dtGUI::CEGUIMouseListener>    mMouseListener; ///needed for injection keyboard-events to the cegui
-      osg::Group*                                  mInternalGraph; ///osg graph used to render the gui
+      dtCore::RefPtr<osg::Group>                   mInternalGraph; ///osg graph used to render the gui
       CEGUI::Window*                               mRootSheet; ///auto-generated panel-window
 
       dtCore::RefPtr<dtCore::Camera>        mCamera; ///camera, whose viewport is used to draw the gui

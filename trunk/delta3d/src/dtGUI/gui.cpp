@@ -129,9 +129,9 @@ GUI::~GUI()
 {
    RemoveSender(&dtCore::System::GetInstance());
 
-   if (mCamera.valid() && mInternalGraph)
+   if (mCamera.valid() && mInternalGraph.valid())
    {
-      mCamera->GetOSGCamera()->removeChild(mInternalGraph);
+      mCamera->GetOSGCamera()->removeChild(mInternalGraph.get());
    }
 
    if (mMouse.valid())
@@ -184,7 +184,7 @@ void GUI::SetCamera(dtCore::Camera* camera)
    // if this was already a child of another camera remove itself from there:
    if (mCamera.valid())
    {
-      mCamera->GetOSGCamera()->removeChild(mInternalGraph);
+      mCamera->GetOSGCamera()->removeChild(mInternalGraph.get());
    }
 
    // set ("parent") camera
@@ -193,7 +193,7 @@ void GUI::SetCamera(dtCore::Camera* camera)
    // that'll force the camera to draw this gui via the HUDDrawable-object
    if (mCamera)
    {
-      mCamera->GetOSGCamera()->addChild(mInternalGraph);
+      mCamera->GetOSGCamera()->addChild(mInternalGraph.get());
    }
 
 }
