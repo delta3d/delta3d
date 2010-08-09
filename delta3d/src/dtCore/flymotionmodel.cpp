@@ -32,8 +32,11 @@ FlyMotionModel::FlyMotionModel(Keyboard* keyboard, Mouse* mouse, unsigned int op
    , mArrowKeysUpDownMapping(NULL)
    , mArrowKeysLeftRightMapping(NULL)
    , mWSKeysUpDownMapping(NULL)
+   , mWSKeysUpDownMappingCaps(NULL)
    , mADKeysLeftRightMapping(NULL)
+   , mADKeysLeftRightMappingCaps(NULL)
    , mQEKeysUpDownMapping(NULL)
+   , mQEKeysUpDownMappingCaps(NULL)
    , mDefaultFlyForwardBackwardAxis(NULL)
    , mDefaultFlyLeftRightAxis(NULL)
    , mDefaultFlyUpDownAxis(NULL)
@@ -180,11 +183,27 @@ void FlyMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
          )
       );
 
+      Axis* wsKeysUpAndDownCaps = mDefaultInputDevice->AddAxis(
+         "w/s keys stafe forward/back",
+         mWSKeysUpDownMappingCaps = new ButtonsToAxis(
+            keyboard->GetButton('S'),
+            keyboard->GetButton('W')
+         )
+      );
+
       Axis* adKeysStrafeLeftAndRight = mDefaultInputDevice->AddAxis(
          "a/d keys strafe left/right",
          mADKeysLeftRightMapping = new ButtonsToAxis(
             keyboard->GetButton('a'),
             keyboard->GetButton('d')
+         )
+      );
+
+      Axis* adKeysStrafeLeftAndRightCaps = mDefaultInputDevice->AddAxis(
+         "a/d keys strafe left/right",
+         mADKeysLeftRightMappingCaps = new ButtonsToAxis(
+            keyboard->GetButton('A'),
+            keyboard->GetButton('D')
          )
       );
 
@@ -196,19 +215,27 @@ void FlyMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
          )
       );
 
-      mDefaultFlyForwardBackwardAxis = mDefaultInputDevice->AddAxis(
-         "default fly forward/backward",
-         new AxesToAxis(wsKeysUpAndDown, rightButtonUpAndDown)
+      Axis* qeKeysFlyUpAndDownCaps = mDefaultInputDevice->AddAxis(
+         "q/e keys fly up/down",
+         mQEKeysUpDownMappingCaps = new ButtonsToAxis(
+            keyboard->GetButton('Q'),
+            keyboard->GetButton('E')
+         )
       );
 
+      dtCore::AxesToAxis* axesMapping = new AxesToAxis(wsKeysUpAndDown, wsKeysUpAndDownCaps);
+      axesMapping->AddSourceAxis(rightButtonUpAndDown);
+      mDefaultFlyForwardBackwardAxis = mDefaultInputDevice->AddAxis(
+         "default fly forward/backward", axesMapping);
+
+      axesMapping = new AxesToAxis(adKeysStrafeLeftAndRight, adKeysStrafeLeftAndRightCaps);
+      axesMapping->AddSourceAxis(rightButtonLeftAndRight);
       mDefaultFlyLeftRightAxis = mDefaultInputDevice->AddAxis(
-         "default fly left/right",
-         new AxesToAxis(adKeysStrafeLeftAndRight, rightButtonLeftAndRight)
-      );
+         "default fly left/right", axesMapping);
 
       mDefaultFlyUpDownAxis = mDefaultInputDevice->AddAxis(
          "default fly up/down",
-         new AxesToAxis(qeKeysFlyUpAndDown, 0) // not sure what to map for right 2nd parameter (?)
+         new AxesToAxis(qeKeysFlyUpAndDown, qeKeysFlyUpAndDownCaps)
       );
    }
    else
@@ -240,14 +267,29 @@ void FlyMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
          keyboard->GetButton('w')
       );
 
+      mWSKeysUpDownMappingCaps->SetSourceButtons(
+         keyboard->GetButton('S'),
+         keyboard->GetButton('W')
+      );
+
       mADKeysLeftRightMapping->SetSourceButtons(
          keyboard->GetButton('a'),
          keyboard->GetButton('d')
       );
 
+      mADKeysLeftRightMappingCaps->SetSourceButtons(
+         keyboard->GetButton('A'),
+         keyboard->GetButton('D')
+      );
+
       mQEKeysUpDownMapping->SetSourceButtons(
          keyboard->GetButton('q'),
          keyboard->GetButton('e')
+      );
+
+      mQEKeysUpDownMappingCaps->SetSourceButtons(
+         keyboard->GetButton('Q'),
+         keyboard->GetButton('E')
       );
    }
 
