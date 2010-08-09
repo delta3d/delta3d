@@ -120,13 +120,14 @@ namespace dtCore
       if (pos < mChildList.size())
       {
          child->SetParent(NULL);
-         mChildList.erase(mChildList.begin() + pos);
-         dtCore::Scene* sceneParent = GetSceneParent();
-         if (sceneParent != NULL)
+         if (GetSceneParent() != NULL)
          {
             child->AddedToScene(NULL);
             child->RemovedFromScene(GetSceneParent());
          }
+
+         mChildList.erase(mChildList.begin() + pos);
+         child = NULL;
       }
    }
 
