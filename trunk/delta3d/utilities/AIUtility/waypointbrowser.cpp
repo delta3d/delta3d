@@ -35,6 +35,8 @@
 #include <QtGui/QScrollBar>
 #include <QtCore/QSettings>
 
+#include <sstream>
+
 ///////////////////////////////////////////////////
 WaypointBrowser::WaypointBrowser(QWidget& parent)
 : QDockWidget(&parent)
@@ -363,11 +365,11 @@ void WaypointBrowser::WaypointsSelectedFromBrowser()
       WaypointBrowserTreeItem* item = dynamic_cast<WaypointBrowserTreeItem*>(*i);
       if (item != NULL && item->GetWaypoint() != NULL)
       {
-         // It would be more efficient to pass this as a whole list rather than 
+         // It would be more efficient to pass this as a whole list rather than
          // one at a time due to all the listeners who process in response
          if (!WaypointSelection::GetInstance().HasWaypoint(item->GetWaypoint()))
          {
-            WaypointSelection::GetInstance().AddWaypointToSelection(item->GetWaypoint());            
+            WaypointSelection::GetInstance().AddWaypointToSelection(item->GetWaypoint());
          }
       }
    }
@@ -376,7 +378,7 @@ void WaypointBrowser::WaypointsSelectedFromBrowser()
 
    // resubscribe
    connect(&WaypointSelection::GetInstance(), SIGNAL(WaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>&)),
-           this, SLOT(OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>&)));  
+           this, SLOT(OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>&)));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -397,14 +399,21 @@ void WaypointBrowser::OnWaypointSelectionChanged(std::vector<dtAI::WaypointInter
       {
          mUi->mWaypointList->setItemSelected(itemList.front(), true);
       }
-      else
+      else if (itemList.count() > 1)
       {
-         LOG_ERROR("Duplicate waypoint ID's exist in the browser!");
+         std::ostringstream errorString;
+
+         for (int itemIndex = 0; itemIndex < itemList.count(); ++itemIndex)
+         {
+            errorString << itemList[itemIndex]->text(0).toStdString() << "\n";
+         }
+
+         LOG_ERROR("Duplicate waypoint ID's exist in the browser!\n" + errorString.str());
       }
    }
 
    EnableDisable();
-   
+
    connect(mUi->mWaypointList, SIGNAL(itemSelectionChanged()), this, SLOT(WaypointsSelectedFromBrowser()));
 }
 
