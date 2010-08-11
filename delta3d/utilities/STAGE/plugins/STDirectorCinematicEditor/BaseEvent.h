@@ -38,6 +38,10 @@ public:
    QColor GetColor() const        { return mColor;     }
    void SetColor(QColor newColor) { mColor = newColor; }
 
+   QColor GetFrameColor() const        { return mFrameColor;}
+   void SetFrameColor(QColor newColor) { mFrameColor = newColor;}
+
+   QColor GetDefaultColor() {return mDefaultColor;}
    void SetDefaultColor(QColor newColor);
 
    QRect GetBoundingBox() const { return mBoundingBox; }
@@ -47,16 +51,19 @@ public:
    virtual bool IsPointOnEvent(QPoint position) const;
    virtual bool IsPointOnRightResizer(QPoint position) const;
 
-   void ClearEventHighlights();
-   void HighlightEventLeftResizer(bool highlighted);
-   void HighlightEvent(bool highlighted);
-   void HighlightEventRightResizer(bool highlighted);
+   virtual void ClearEventHighlights();
+   virtual void HighlightEventLeftResizer(bool highlighted);
+   virtual void HighlightEvent(bool highlighted);
+   virtual void HighlightEventRightResizer(bool highlighted);
 
    bool IsSelected() const { return mIsSelected; }
-   void SelectEvent(bool selected);
+   virtual void SelectEvent(bool selected);
 
    bool IsMovable() const { return mIsMovable; }
    void SetMovable(bool movable) { mIsMovable = movable; }
+
+   virtual bool IsMinTimeLocked() const {return true;}
+   virtual bool IsMaxTimeLocked() const {return true;}
 
    virtual void PaintEvent(QPainter* painter);
 

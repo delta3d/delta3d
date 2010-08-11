@@ -356,9 +356,16 @@ void EventTrackWidget::mouseMoveEvent(QMouseEvent* event)
    }
    else if (mMovingEvent != NULL && mMovingEvent->IsMovable())
    {
-      int newLeftTime = std::max(0, CalculateTimeFromMouseX(event->x() - mMouseOffset));
+      int newLeftTime = CalculateTimeFromMouseX(event->x() - mMouseOffset);
       int duration = mMovingEvent->GetEndTime() - mMovingEvent->GetStartTime();
-      if (newLeftTime + duration <= mMaximum)
+
+      // Clamp the new time to the edges of the event track if necessary.
+      if (mMovingEvent->IsMinTimeLocked())
+      {
+         if (newLeftTime < 0) newLeftTime = 0;
+      }
+
+      if (!mMovingEvent->IsMaxTimeLocked() || (newLeftTime + duration <= mMaximum))
       {
          mMovingEvent->SetNewTimes(newLeftTime, newLeftTime + duration);
       }
