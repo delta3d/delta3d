@@ -388,10 +388,13 @@ namespace dtDirector
    {
       OutputLink startOutput(this, "Started");
       OutputLink endOutput(this, "Ended");
+      OutputLink stopOutput(this, "Stopped");
       OutputLink* link = GetOutputLink("Started");
       if (link) startOutput = *link;
       link = GetOutputLink("Ended");
       if (link) endOutput = *link;
+      link = GetOutputLink("Stopped");
+      if (link) stopOutput = *link;
 
       std::vector<OutputLink> outputs = mOutputs;
       mOutputs.clear();
@@ -430,6 +433,7 @@ namespace dtDirector
       }
 
       mOutputs.push_back(endOutput);
+      mOutputs.push_back(stopOutput);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
