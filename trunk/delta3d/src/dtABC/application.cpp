@@ -234,6 +234,7 @@ void Application::Frame(const double deltaSimTime)
 {
    if(!mCompositeViewer->done())
    {
+      bool singleThreaded = mCompositeViewer->getThreadingModel() == osg::ViewerBase::SingleThreaded;
       //NOTE: The OSG frame() advances the clock and does three traversals, event, update, and render.
       //We are moving the event traversal to be its own message so we can reliably accept input during the
       //typical Delta3D update of PreFrame().  The only exception to this is that we need
@@ -243,6 +244,11 @@ void Application::Frame(const double deltaSimTime)
          mFirstFrame = false;
       }
 
+      dtCore::ObserverPtr<osgViewer::GraphicsWindow> gw = GetWindow()->GetOsgViewerGraphicsWindow();
+      if (!singleThreaded && gw->isRealized() && gw->isCurrent())
+      {
+         gw->releaseContext();
+      }
       // NOTE: The new version OSG (2.2) relies on absolute frame time
       // to update drawables; especially particle systems.
       // The time delta will be ignored here and the absolute simulation
@@ -250,6 +256,11 @@ void Application::Frame(const double deltaSimTime)
       mCompositeViewer->advance(dtCore::System::GetInstance().GetSimTimeSinceStartup());
       mCompositeViewer->updateTraversal();
       mCompositeViewer->renderingTraversals();
+
+      if (!singleThreaded && gw.valid() && gw->isRealized() && !gw->isCurrent())
+      {
+         gw->makeCurrent();
+      }
    }
 }
 
@@ -374,7 +385,19 @@ void Application::CreateInstances(const ApplicationConfigData& data)
    // the means to specify the threading model.
    // This is only a temporary, working solution.
    {
-      const std::string deltaThreadingEnvVar = dtUtil::GetEnvironment("DELTA_THREADING");
+      std::string deltaThreadingEnvVar = dtUtil::GetEnvironment("DELTA_THREADING");
+
+      // I had to do the length thing because dtUtil::GetEnvironment oddly returns a non empty string
+      // when the value is not set.
+      if (deltaThreadingEnvVar.length() < 3)
+      {
+         std::map<std::string, std::string>::const_iterator i = data.mProperties.find("System.OSGThreadingModel");
+         if (i !=  data.mProperties.end())
+         {
+            deltaThreadingEnvVar = i->second;
+         }
+      }
+
       if (deltaThreadingEnvVar == "SingleThreaded")
       {
          mCompositeViewer->setThreadingModel(osgViewer::CompositeViewer::SingleThreaded);
