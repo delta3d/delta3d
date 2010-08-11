@@ -43,6 +43,8 @@
 #include <osgDB/DatabasePager>
 #include <osgDB/Registry>
 
+extern dtABC::Application& GetGlobalApplication();
+
 class CoreTests : public CPPUNIT_NS::TestFixture
 {
    CPPUNIT_TEST_SUITE(CoreTests);
@@ -190,7 +192,7 @@ void CoreTests::TestScene()
 //////////////////////////////////////////////////////////////////////////
 void CoreTests::TestHeightOfTerrainWithSkybox()
 {
-   dtCore::RefPtr<dtABC::Application> application = new dtABC::Application();
+   dtCore::RefPtr<dtABC::Application> application = &GetGlobalApplication();
    dtCore::RefPtr<dtCore::Environment> env = new dtCore::Environment();
    dtCore::RefPtr<dtCore::SkyBox> skybox = new dtCore::SkyBox("skybox", dtCore::SkyBox::RP_FIXED_FUNCTION);
    env->AddEffect(skybox.get());
