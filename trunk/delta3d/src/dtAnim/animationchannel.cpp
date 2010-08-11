@@ -143,7 +143,7 @@ void AnimationChannel::Update(float dt)
    {
       if (IsAction())
       {
-         mModelWrapper->ExecuteAction(mAnimationWrapper->GetID(), GetFadeIn(), GetFadeOut());
+         mModelWrapper->ExecuteAction(mAnimationWrapper->GetID(), GetFadeIn(), GetFadeOut(), GetBaseWeight());
       }
       else
       {
