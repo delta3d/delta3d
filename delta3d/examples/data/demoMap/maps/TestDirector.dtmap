@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
     <header>
         <name>TestDirector</name>
@@ -7,7 +8,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2009-12-21T16:14:44-08:00</createTimestamp>
-        <lastUpdateTimestamp>2010-08-11T14:42:44-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2010-08-11T15:40:31-08:00</lastUpdateTimestamp>
         <editorVersion>2.5.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -4820,6 +4821,96 @@
                 <resourceType>Shaders</resourceType>
                 <resourceDisplayName></resourceDisplayName>
                 <resource></resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Label</type>
+            <id>c1482ccd-440b-4e34-83ee-9e3f02630100</id>
+            <name>LabelActor_12</name>
+            <property>
+                <name>Description</name>
+                <string></string>
+            </property>
+            <property>
+                <name>IsActive</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>90.000000</value1>
+                    <value2>-180.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>12.096757</value1>
+                    <value2>7.140479</value2>
+                    <value3>1.833818</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Text</name>
+                <string>Cinematic: Animated Skeletal Mesh of Marine</string>
+            </property>
+            <property>
+                <name>Font</name>
+                <string>arial.ttf</string>
+            </property>
+            <property>
+                <name>Font Size</name>
+                <float>0.2</float>
+            </property>
+            <property>
+                <name>Text Color</name>
+                <vec4>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>1.000000</value3>
+                    <value4>1.000000</value4>
+                </vec4>
+            </property>
+            <property>
+                <name>Back Color</name>
+                <vec4>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                    <value4>1.000000</value4>
+                </vec4>
+            </property>
+            <property>
+                <name>Back Size</name>
+                <vec2>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                </vec2>
+            </property>
+            <property>
+                <name>Back Visible</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Lighting Enabled</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Depth Testing Enabled</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Text Alignment</name>
+                <enumerated>CENTER_CENTER</enumerated>
             </property>
         </actor>
         <actor>
