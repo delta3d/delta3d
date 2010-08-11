@@ -1911,7 +1911,7 @@ void DirectorCinematicEditorPlugin::OnSave()
       int height = 50;
       std::vector<dtDirector::OutputLink>& links = schedulerNode->GetOutputLinks();
       int linkCount = (int)links.size();
-      for (int linkIndex = 0; linkIndex < linkCount; ++linkIndex)
+      for (int linkIndex = 0; linkIndex < linkCount-1; ++linkIndex)
       {
          dtDirector::OutputLink& link = links[linkIndex];
 
@@ -1965,6 +1965,7 @@ void DirectorCinematicEditorPlugin::OnSave()
       if (endedCallNode)
       {
          schedulerNode->GetOutputLink("Ended")->Connect(endedCallNode->GetInputLink("Call Event"));
+         schedulerNode->GetOutputLink("Stopped")->Connect(endedCallNode->GetInputLink("Call Event"));
          endedCallNode->SetString("Ended", "EventName");
          endedCallNode->SetBoolean(true, "Local Event");
          endedCallNode->SetPosition(osg::Vec2(400, height));
