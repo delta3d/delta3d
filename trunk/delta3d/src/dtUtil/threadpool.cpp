@@ -440,7 +440,7 @@ namespace dtUtil
    bool ThreadPoolTask::WaitUntilComplete(int timeoutMS)
    {
       bool result = false;
-      if (timeoutMS > 0)
+      if (timeoutMS >= 0)
       {
          result = mBlockUntilComplete.block(timeoutMS);
       }
