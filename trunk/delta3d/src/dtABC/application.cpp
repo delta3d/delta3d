@@ -52,6 +52,7 @@
 #include <xercesc/util/XMLString.hpp>
 
 #include <osgViewer/Viewer>
+#include <osgViewer/Viewer>
 #include <osg/io_utils>
 #include <osg/Version>
 #include <osg/DisplaySettings>
@@ -234,7 +235,7 @@ void Application::Frame(const double deltaSimTime)
 {
    if(!mCompositeViewer->done())
    {
-      bool singleThreaded = mCompositeViewer->getThreadingModel() == osg::ViewerBase::SingleThreaded;
+      bool singleThreaded = mCompositeViewer->getThreadingModel() == osgViewer::ViewerBase::SingleThreaded;
       //NOTE: The OSG frame() advances the clock and does three traversals, event, update, and render.
       //We are moving the event traversal to be its own message so we can reliably accept input during the
       //typical Delta3D update of PreFrame().  The only exception to this is that we need
