@@ -52,7 +52,7 @@ public:
 signals:
    void AIPluginInterfaceChanged(dtAI::AIPluginInterface* interface);
    void CameraTransformChanged(const dtCore::Transform& xform);
-   void WaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>&);
+   //void WaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>&);
    void AddEdge();
    void RemoveEdge();
    void Error(const std::string& message);
@@ -63,7 +63,7 @@ public slots:
    void CloseMap();
    void TransformCamera(const dtCore::Transform&);
    void AddAIInterfaceToMap(const std::string& map);
-   void UpdateWaypointSelection(std::vector<dtAI::WaypointInterface*>& selectedWaypoints);
+   //void UpdateWaypointSelection(std::vector<dtAI::WaypointInterface*>& selectedWaypoints);
    void OnAddEdge();
    void OnRemoveEdge();
 protected:
