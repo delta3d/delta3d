@@ -446,7 +446,7 @@ namespace dtAI
             const int MAX_RENDERABLE_WAYPOINTS_WITH_TEXT = 50000;
 
             // Don't allow the sheer volume of text to bring the app down
-            bool renderText = (mWaypoints.size() > MAX_RENDERABLE_WAYPOINTS_WITH_TEXT);
+            bool renderText = (mWaypoints.size() < MAX_RENDERABLE_WAYPOINTS_WITH_TEXT);
 
             for (;iter != iterEnd; ++iter)
             {
