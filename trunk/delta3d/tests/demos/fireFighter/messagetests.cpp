@@ -42,6 +42,8 @@
 #include <fireFighter/inputcomponent.h>
 #include <cppunit/extensions/HelperMacros.h>
 
+extern dtABC::Application& GetGlobalApplication();
+
 using dtCore::RefPtr;
 
 class FireFighterMessageTests : public CPPUNIT_NS::TestFixture
@@ -65,7 +67,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION(FireFighterMessageTests);
 void FireFighterMessageTests::setUp()
 {
    dtCore::System::GetInstance().Start();
-   mApp = new dtABC::Application;
+   mApp = &GetGlobalApplication();
    mGM = new dtGame::GameManager(*mApp->GetScene());
    mGM->SetApplication(*mApp);
    dtAudio::AudioManager::Instantiate();
