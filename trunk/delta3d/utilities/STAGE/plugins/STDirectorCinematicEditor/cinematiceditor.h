@@ -163,6 +163,13 @@ public slots:
    void OnRemoveActor();
 
    /**
+    * Event handler when the transform event track is enabled/disabled.
+    *
+    * @param[in]  state  1 = enabled, 0 = disabled.
+    */
+   void OnTransformEnabled(int state);
+
+   /**
     * Event handler when a transform event is selected on the transform track.
     */
    void OnTransformEventSelected(BaseEvent* event);
@@ -409,11 +416,13 @@ private:
    {
       ActorData()
          : mActor(NULL)
+         , mTransformEnabled(true)
       {
       }
 
       dtCore::ObserverPtr<dtDAL::ActorProxy> mActor;
 
+      bool                       mTransformEnabled;
       std::vector<TransformData> mTransformData;
       std::vector<AnimationData> mAnimationData;
    };
