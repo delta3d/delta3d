@@ -89,29 +89,15 @@ void AnimationEvent::PaintEvent(QPainter* painter)
    }
 
    // Draw our animation bar.
-   // Draw frame.
-   {
-      painter->setBrush(GetFrameColor());
-      painter->setPen(GetFrameColor());
-
-      QPolygon poly;
-      poly.push_back(QPoint(boundingBox.left() - FRAME_WIDTH, boundingBox.bottom()));
-      poly.push_back(QPoint(boundingBox.left() - FRAME_WIDTH + (mBlendIn * stepSize), boundingBox.bottom() * (1.0f - mWeight)));
-      poly.push_back(QPoint(boundingBox.right() + (FRAME_WIDTH * 2) - (mBlendOut * stepSize), boundingBox.bottom() * (1.0f - mWeight)));
-      poly.push_back(QPoint(boundingBox.right() + (FRAME_WIDTH * 2), boundingBox.bottom()));
-      painter->drawPolygon(poly);
-   }
-
-   // Draw event.
    {
       painter->setBrush(GetColor());
       painter->setPen(GetColor());
 
       QPolygon poly;
-      poly.push_back(QPoint(boundingBox.left(), boundingBox.bottom() - FRAME_WIDTH));
-      poly.push_back(QPoint(boundingBox.left() + (mBlendIn * stepSize), boundingBox.bottom() * (1.0f - mWeight) + FRAME_WIDTH));
-      poly.push_back(QPoint(boundingBox.right() - (mBlendOut * stepSize), boundingBox.bottom() * (1.0f - mWeight) + FRAME_WIDTH));
-      poly.push_back(QPoint(boundingBox.right(), boundingBox.bottom() - FRAME_WIDTH));
+      poly.push_back(QPoint(boundingBox.left(), boundingBox.bottom()));
+      poly.push_back(QPoint(boundingBox.left() + (mBlendIn * stepSize), boundingBox.bottom() * (1.0f - mWeight)));
+      poly.push_back(QPoint(boundingBox.right() - (mBlendOut * stepSize), boundingBox.bottom() * (1.0f - mWeight)));
+      poly.push_back(QPoint(boundingBox.right(), boundingBox.bottom()));
       painter->drawPolygon(poly);
    }
 }

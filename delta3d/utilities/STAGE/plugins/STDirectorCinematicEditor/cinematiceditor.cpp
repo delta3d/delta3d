@@ -99,6 +99,7 @@ void DirectorCinematicEditorPlugin::Initialize()
    connect(mUI.mRemoveActorButton, SIGNAL(clicked()), this, SLOT(OnRemoveActor()));
 
    // Transform Event Track.
+   connect(mUI.mTransformEnabled, SIGNAL(stateChanged(int)), this, SLOT(OnTransformEnabled(int)));
    connect(mUI.mTransformTrack, SIGNAL(EventSelected(BaseEvent*)), this, SLOT(OnTransformEventSelected(BaseEvent*)));
    connect(mUI.mTransformTrack, SIGNAL(EventTimesChanged(int, int)), this, SLOT(OnTransformEventTimesChanged(int, int)));
    connect(mUI.mTransformTrack, SIGNAL(EventDeleted(BaseEvent*)), this, SLOT(OnTransformEventRemoved(BaseEvent*)));
@@ -203,6 +204,7 @@ void DirectorCinematicEditorPlugin::ResetUI()
       mSelectedActor = -1;
       mUI.mActorCombo->setCurrentIndex(-1);
       mUI.mRemoveActorButton->setEnabled(false);
+      mUI.mTransformEnabled->setEnabled(false);
    }
    mUI.mActorCombo->blockSignals(false);
 
@@ -212,18 +214,27 @@ void DirectorCinematicEditorPlugin::ResetUI()
 
    if (mSelectedActor > -1)
    {
-      mUI.mTransformTrack->setEnabled(true);
-      mUI.mAnimationTrack->setEnabled(true);
+      mUI.mTransformEnabled->setEnabled(true);
 
       // Set up the transform track.
-      std::vector<TransformData>& transforms = mActorData[mSelectedActor].mTransformData;
-      int count = (int)transforms.size();
-      for (int index = 0; index < count; ++index)
+      if (mActorData[mSelectedActor].mTransformEnabled)
       {
-         TransformData& data = transforms[index];
-         data.mEvent = new KeyFrameEvent(data.mTime);
-         if (index == 0) data.mEvent->SetMovable(false);
-         mUI.mTransformTrack->AddEvent(data.mEvent);
+         mUI.mTransformEnabled->setChecked(true);
+         mUI.mTransformTrack->setEnabled(true);
+
+         std::vector<TransformData>& transforms = mActorData[mSelectedActor].mTransformData;
+         int count = (int)transforms.size();
+         for (int index = 0; index < count; ++index)
+         {
+            TransformData& data = transforms[index];
+            data.mEvent = new KeyFrameEvent(data.mTime);
+            if (index == 0) data.mEvent->SetMovable(false);
+            mUI.mTransformTrack->AddEvent(data.mEvent);
+         }
+      }
+      else
+      {
+         mUI.mTransformEnabled->setChecked(false);
       }
 
       // Set up the animation track.
@@ -316,6 +327,9 @@ void DirectorCinematicEditorPlugin::Open(dtDirector::DirectorGraph* graph)
 ////////////////////////////////////////////////////////////////////////////////
 void DirectorCinematicEditorPlugin::Close()
 {
+   // Stop current playback.
+   if (mPlaying) OnPlay();
+
    // Reset the preview time slider back to the start so all actors reset.
    mUI.mTimeSlider->setValue(0);
    mTimer->stop();
@@ -528,6 +542,59 @@ void DirectorCinematicEditorPlugin::OnRemoveActor()
 
    // Now select this actor in STAGE and move the camera to it.
    GotoSelectedActor();
+
+   ResetUI();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void DirectorCinematicEditorPlugin::OnTransformEnabled(int state)
+{
+   if (mSelectedActor == -1) return;
+
+   ActorData& data = mActorData[mSelectedActor];
+
+   // Turn on.
+   if (state)
+   {
+      data.mTransformEnabled = true;
+
+      // Make sure we have our origin transform key frame.
+      if (data.mTransformData.empty())
+      {
+         // Add our root transform event.
+         dtCore::Transformable* actor = NULL;
+         data.mActor->GetActor(actor);
+         if (actor)
+         {
+            dtCore::Transform transform;
+            osg::Vec3 scale = osg::Vec3(1, 1, 1);
+
+            actor->GetTransform(transform);
+
+            bool canScale = false;
+            dtCore::Object* obj = dynamic_cast<dtCore::Object*>(actor);
+            if (obj)
+            {
+               scale = obj->GetScale();
+               canScale = true;
+            }
+
+            InsertTransform(0, transform, scale, canScale, false);
+         }
+      }
+   }
+   // Turn off.
+   else
+   {
+      // First, make sure we lerp everything back to time zero.
+      LerpActors(0);
+
+      // Now disable transforms on this actor.
+      data.mTransformEnabled = false;
+
+      // And restore the current cinematic lerp position.
+      LerpActors(mUI.mTimeSlider->value());
+   }
 
    ResetUI();
 }
@@ -1492,6 +1559,7 @@ void DirectorCinematicEditorPlugin::OnLoad()
          bool canScale = false;
 
          ActorData& actorData = mActorData[mSelectedActor];
+         actorData.mTransformEnabled = false;
 
          // Iterate to the next node in the chain.
          if (node->GetOutputLink("Out")->GetLinks().empty()) continue;
@@ -1566,6 +1634,7 @@ void DirectorCinematicEditorPlugin::OnLoad()
             // Load a Translation lerp node.
             else if (node->GetType().GetFullName() == "Cinematic.Lerp Actor Translation")
             {
+               actorData.mTransformEnabled = true;
                if (!actorData.mActor)
                {
                   actorData.mActor = node->GetActor("Actor");
@@ -1603,6 +1672,7 @@ void DirectorCinematicEditorPlugin::OnLoad()
             // Load a Rotation lerp node.
             else if (node->GetType().GetFullName() == "Cinematic.Lerp Actor Rotation")
             {
+               actorData.mTransformEnabled = true;
                if (!actorData.mActor)
                {
                   actorData.mActor = node->GetActor("Actor");
@@ -1640,6 +1710,7 @@ void DirectorCinematicEditorPlugin::OnLoad()
             // Load a Scale lerp node.
             else if (node->GetType().GetFullName() == "Cinematic.Lerp Actor Scale")
             {
+               actorData.mTransformEnabled = true;
                if (!actorData.mActor)
                {
                   actorData.mActor = node->GetActor("Actor");
@@ -2091,125 +2162,128 @@ void DirectorCinematicEditorPlugin::OnSave()
          }
 
          // Iterate through each transformation key frame.
-         int count = (int)actorData.mTransformData.size();
-         for (int index = 0; index < count - 1; ++index)
+         if (actorData.mTransformEnabled)
          {
-            TransformData& prevData = actorData.mTransformData[index];
-            TransformData& nextData = actorData.mTransformData[index+1];
-
-            // Translation.
-            if (prevData.mTransform.GetTranslation() != nextData.mTransform.GetTranslation())
+            int count = (int)actorData.mTransformData.size();
+            for (int index = 0; index < count - 1; ++index)
             {
-               dtDirector::Node* lerpNode = dtDirector::NodeManager::GetInstance().CreateNode("Lerp Actor Translation", "Cinematic", GetGraph());
-               if (lerpNode)
+               TransformData& prevData = actorData.mTransformData[index];
+               TransformData& nextData = actorData.mTransformData[index+1];
+
+               // Translation.
+               if (prevData.mTransform.GetTranslation() != nextData.mTransform.GetTranslation())
                {
-                  lerpNode->GetInputLink("Start")->Connect(startLink);
-                  lerpNode->GetInputLink("Stop")->Connect(stopLink);
-                  lerpNode->SetFloat(prevData.mTime * 0.001f, "StartTime");
-                  lerpNode->SetFloat(nextData.mTime * 0.001f, "EndTime");
-                  lerpNode->SetVec(osg::Vec4(prevData.mTransform.GetTranslation(), 0.0f), "StartPosition");
-                  lerpNode->SetVec(osg::Vec4(nextData.mTransform.GetTranslation(), 0.0f), "EndPosition");
-                  lerpNode->SetPosition(osg::Vec2(column, height));
-                  GetEditor()->OnNodeCreated(lerpNode);
-                  startLink = lerpNode->GetOutputLink("Started");
-                  stopLink = lerpNode->GetOutputLink("Stopped");
-
-                  dtDirector::Node* actorValue = dtDirector::NodeManager::GetInstance().CreateNode("Actor", "General", GetGraph());
-                  if (actorValue)
+                  dtDirector::Node* lerpNode = dtDirector::NodeManager::GetInstance().CreateNode("Lerp Actor Translation", "Cinematic", GetGraph());
+                  if (lerpNode)
                   {
-                     actorValue->SetActorID(actorData.mActor->GetId());
-                     actorValue->SetPosition(osg::Vec2(column + 3, height + 200));
-                     lerpNode->GetValueLink("Actor")->Connect(dynamic_cast<dtDirector::ValueNode*>(actorValue));
-                     GetEditor()->OnNodeCreated(actorValue);
-                  }
+                     lerpNode->GetInputLink("Start")->Connect(startLink);
+                     lerpNode->GetInputLink("Stop")->Connect(stopLink);
+                     lerpNode->SetFloat(prevData.mTime * 0.001f, "StartTime");
+                     lerpNode->SetFloat(nextData.mTime * 0.001f, "EndTime");
+                     lerpNode->SetVec(osg::Vec4(prevData.mTransform.GetTranslation(), 0.0f), "StartPosition");
+                     lerpNode->SetVec(osg::Vec4(nextData.mTransform.GetTranslation(), 0.0f), "EndPosition");
+                     lerpNode->SetPosition(osg::Vec2(column, height));
+                     GetEditor()->OnNodeCreated(lerpNode);
+                     startLink = lerpNode->GetOutputLink("Started");
+                     stopLink = lerpNode->GetOutputLink("Stopped");
 
-                  dtDirector::Node* timeRefValue = dtDirector::NodeManager::GetInstance().CreateNode("Reference", "Core", GetGraph());
-                  if (timeRefValue)
-                  {
-                     timeRefValue->SetString("Current Time", "Reference");
-                     timeRefValue->SetPosition(osg::Vec2(column + 59, height + 200));
-                     lerpNode->GetValueLink("Time")->Connect(dynamic_cast<dtDirector::ValueNode*>(timeRefValue));
-                     GetEditor()->OnNodeCreated(timeRefValue);
+                     dtDirector::Node* actorValue = dtDirector::NodeManager::GetInstance().CreateNode("Actor", "General", GetGraph());
+                     if (actorValue)
+                     {
+                        actorValue->SetActorID(actorData.mActor->GetId());
+                        actorValue->SetPosition(osg::Vec2(column + 3, height + 200));
+                        lerpNode->GetValueLink("Actor")->Connect(dynamic_cast<dtDirector::ValueNode*>(actorValue));
+                        GetEditor()->OnNodeCreated(actorValue);
+                     }
+
+                     dtDirector::Node* timeRefValue = dtDirector::NodeManager::GetInstance().CreateNode("Reference", "Core", GetGraph());
+                     if (timeRefValue)
+                     {
+                        timeRefValue->SetString("Current Time", "Reference");
+                        timeRefValue->SetPosition(osg::Vec2(column + 59, height + 200));
+                        lerpNode->GetValueLink("Time")->Connect(dynamic_cast<dtDirector::ValueNode*>(timeRefValue));
+                        GetEditor()->OnNodeCreated(timeRefValue);
+                     }
+                     column += 200;
                   }
-                  column += 200;
                }
-            }
 
-            // Rotation.
-            if (prevData.mTransform.GetRotation() != nextData.mTransform.GetRotation())
-            {
-               dtDirector::Node* lerpNode = dtDirector::NodeManager::GetInstance().CreateNode("Lerp Actor Rotation", "Cinematic", GetGraph());
-               if (lerpNode)
+               // Rotation.
+               if (prevData.mTransform.GetRotation() != nextData.mTransform.GetRotation())
                {
-                  lerpNode->GetInputLink("Start")->Connect(startLink);
-                  lerpNode->GetInputLink("Stop")->Connect(stopLink);
-                  lerpNode->SetFloat(prevData.mTime * 0.001f, "StartTime");
-                  lerpNode->SetFloat(nextData.mTime * 0.001f, "EndTime");
-                  osg::Vec3 prevRot = prevData.mTransform.GetRotation();
-                  osg::Vec3 nextRot = nextData.mTransform.GetRotation();
-                  lerpNode->SetVec(osg::Vec4(prevRot.y(), prevRot.z(), prevRot.x(), 0.0f), "StartRotation");
-                  lerpNode->SetVec(osg::Vec4(nextRot.y(), nextRot.z(), nextRot.x(), 0.0f), "EndRotation");
-                  lerpNode->SetPosition(osg::Vec2(column, height));
-                  GetEditor()->OnNodeCreated(lerpNode);
-                  startLink = lerpNode->GetOutputLink("Started");
-                  stopLink = lerpNode->GetOutputLink("Stopped");
-
-                  dtDirector::Node* actorValue = dtDirector::NodeManager::GetInstance().CreateNode("Actor", "General", GetGraph());
-                  if (actorValue)
+                  dtDirector::Node* lerpNode = dtDirector::NodeManager::GetInstance().CreateNode("Lerp Actor Rotation", "Cinematic", GetGraph());
+                  if (lerpNode)
                   {
-                     actorValue->SetActorID(actorData.mActor->GetId());
-                     actorValue->SetPosition(osg::Vec2(column, height + 200));
-                     lerpNode->GetValueLink("Actor")->Connect(dynamic_cast<dtDirector::ValueNode*>(actorValue));
-                     GetEditor()->OnNodeCreated(actorValue);
-                  }
+                     lerpNode->GetInputLink("Start")->Connect(startLink);
+                     lerpNode->GetInputLink("Stop")->Connect(stopLink);
+                     lerpNode->SetFloat(prevData.mTime * 0.001f, "StartTime");
+                     lerpNode->SetFloat(nextData.mTime * 0.001f, "EndTime");
+                     osg::Vec3 prevRot = prevData.mTransform.GetRotation();
+                     osg::Vec3 nextRot = nextData.mTransform.GetRotation();
+                     lerpNode->SetVec(osg::Vec4(prevRot.y(), prevRot.z(), prevRot.x(), 0.0f), "StartRotation");
+                     lerpNode->SetVec(osg::Vec4(nextRot.y(), nextRot.z(), nextRot.x(), 0.0f), "EndRotation");
+                     lerpNode->SetPosition(osg::Vec2(column, height));
+                     GetEditor()->OnNodeCreated(lerpNode);
+                     startLink = lerpNode->GetOutputLink("Started");
+                     stopLink = lerpNode->GetOutputLink("Stopped");
 
-                  dtDirector::Node* timeRefValue = dtDirector::NodeManager::GetInstance().CreateNode("Reference", "Core", GetGraph());
-                  if (timeRefValue)
-                  {
-                     timeRefValue->SetString("Current Time", "Reference");
-                     timeRefValue->SetPosition(osg::Vec2(column + 52, height + 200));
-                     lerpNode->GetValueLink("Time")->Connect(dynamic_cast<dtDirector::ValueNode*>(timeRefValue));
-                     GetEditor()->OnNodeCreated(timeRefValue);
+                     dtDirector::Node* actorValue = dtDirector::NodeManager::GetInstance().CreateNode("Actor", "General", GetGraph());
+                     if (actorValue)
+                     {
+                        actorValue->SetActorID(actorData.mActor->GetId());
+                        actorValue->SetPosition(osg::Vec2(column, height + 200));
+                        lerpNode->GetValueLink("Actor")->Connect(dynamic_cast<dtDirector::ValueNode*>(actorValue));
+                        GetEditor()->OnNodeCreated(actorValue);
+                     }
+
+                     dtDirector::Node* timeRefValue = dtDirector::NodeManager::GetInstance().CreateNode("Reference", "Core", GetGraph());
+                     if (timeRefValue)
+                     {
+                        timeRefValue->SetString("Current Time", "Reference");
+                        timeRefValue->SetPosition(osg::Vec2(column + 52, height + 200));
+                        lerpNode->GetValueLink("Time")->Connect(dynamic_cast<dtDirector::ValueNode*>(timeRefValue));
+                        GetEditor()->OnNodeCreated(timeRefValue);
+                     }
+                     column += 200;
                   }
-                  column += 200;
                }
-            }
 
-            // Scale.
-            if (prevData.mScale != nextData.mScale)
-            {
-               dtDirector::Node* lerpNode = dtDirector::NodeManager::GetInstance().CreateNode("Lerp Actor Scale", "Cinematic", GetGraph());
-               if (lerpNode)
+               // Scale.
+               if (prevData.mScale != nextData.mScale)
                {
-                  lerpNode->GetInputLink("Start")->Connect(startLink);
-                  lerpNode->GetInputLink("Stop")->Connect(stopLink);
-                  lerpNode->SetFloat(prevData.mTime * 0.001f, "StartTime");
-                  lerpNode->SetFloat(nextData.mTime * 0.001f, "EndTime");
-                  lerpNode->SetVec(osg::Vec4(prevData.mScale, 0.0f), "StartScale");
-                  lerpNode->SetVec(osg::Vec4(nextData.mScale, 0.0f), "EndScale");
-                  lerpNode->SetPosition(osg::Vec2(column, height));
-                  GetEditor()->OnNodeCreated(lerpNode);
-                  startLink = lerpNode->GetOutputLink("Started");
-                  stopLink = lerpNode->GetOutputLink("Stopped");
-
-                  dtDirector::Node* actorValue = dtDirector::NodeManager::GetInstance().CreateNode("Actor", "General", GetGraph());
-                  if (actorValue)
+                  dtDirector::Node* lerpNode = dtDirector::NodeManager::GetInstance().CreateNode("Lerp Actor Scale", "Cinematic", GetGraph());
+                  if (lerpNode)
                   {
-                     actorValue->SetActorID(actorData.mActor->GetId());
-                     actorValue->SetPosition(osg::Vec2(column - 8, height + 200));
-                     lerpNode->GetValueLink("Actor")->Connect(dynamic_cast<dtDirector::ValueNode*>(actorValue));
-                     GetEditor()->OnNodeCreated(actorValue);
-                  }
+                     lerpNode->GetInputLink("Start")->Connect(startLink);
+                     lerpNode->GetInputLink("Stop")->Connect(stopLink);
+                     lerpNode->SetFloat(prevData.mTime * 0.001f, "StartTime");
+                     lerpNode->SetFloat(nextData.mTime * 0.001f, "EndTime");
+                     lerpNode->SetVec(osg::Vec4(prevData.mScale, 0.0f), "StartScale");
+                     lerpNode->SetVec(osg::Vec4(nextData.mScale, 0.0f), "EndScale");
+                     lerpNode->SetPosition(osg::Vec2(column, height));
+                     GetEditor()->OnNodeCreated(lerpNode);
+                     startLink = lerpNode->GetOutputLink("Started");
+                     stopLink = lerpNode->GetOutputLink("Stopped");
 
-                  dtDirector::Node* timeRefValue = dtDirector::NodeManager::GetInstance().CreateNode("Reference", "Core", GetGraph());
-                  if (timeRefValue)
-                  {
-                     timeRefValue->SetString("Current Time", "Reference");
-                     timeRefValue->SetPosition(osg::Vec2(column + 44, height + 200));
-                     lerpNode->GetValueLink("Time")->Connect(dynamic_cast<dtDirector::ValueNode*>(timeRefValue));
-                     GetEditor()->OnNodeCreated(timeRefValue);
+                     dtDirector::Node* actorValue = dtDirector::NodeManager::GetInstance().CreateNode("Actor", "General", GetGraph());
+                     if (actorValue)
+                     {
+                        actorValue->SetActorID(actorData.mActor->GetId());
+                        actorValue->SetPosition(osg::Vec2(column - 8, height + 200));
+                        lerpNode->GetValueLink("Actor")->Connect(dynamic_cast<dtDirector::ValueNode*>(actorValue));
+                        GetEditor()->OnNodeCreated(actorValue);
+                     }
+
+                     dtDirector::Node* timeRefValue = dtDirector::NodeManager::GetInstance().CreateNode("Reference", "Core", GetGraph());
+                     if (timeRefValue)
+                     {
+                        timeRefValue->SetString("Current Time", "Reference");
+                        timeRefValue->SetPosition(osg::Vec2(column + 44, height + 200));
+                        lerpNode->GetValueLink("Time")->Connect(dynamic_cast<dtDirector::ValueNode*>(timeRefValue));
+                        GetEditor()->OnNodeCreated(timeRefValue);
+                     }
+                     column += 200;
                   }
-                  column += 200;
                }
             }
          }
@@ -2520,6 +2594,7 @@ void DirectorCinematicEditorPlugin::LerpActors(int time)
       if (!actor) continue;
 
       // Transformation
+      if (actorData.mTransformEnabled)
       {
          // Find the previous and next key frames.
          TransformData* prev = NULL;
