@@ -20,12 +20,12 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>21</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>File</string>
+     <string>&amp;File</string>
     </property>
     <addaction name="mActionOpenMap"/>
     <addaction name="mActionCloseMap"/>
@@ -91,12 +91,15 @@
      <normaloff>:/STAGE/icons/openmap_small.png</normaloff>:/STAGE/icons/openmap_small.png</iconset>
    </property>
    <property name="text">
-    <string>Open Map</string>
+    <string>&amp;Open Map</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
    </property>
   </action>
   <action name="mActionCloseMap">
    <property name="text">
-    <string>Close Map</string>
+    <string>&amp;Close Map</string>
    </property>
   </action>
   <action name="mActionRenderingOptions">
@@ -133,6 +136,9 @@
    </property>
    <property name="text">
     <string>&amp;Save</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
    </property>
   </action>
   <action name="mActionAddEdge">
