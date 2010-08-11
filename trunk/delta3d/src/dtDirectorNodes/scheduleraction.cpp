@@ -62,6 +62,7 @@ namespace dtDirector
       mOutputs.clear();
       mOutputs.push_back(OutputLink(this, "Started"));
       mOutputs.push_back(OutputLink(this, "Ended"));
+      mOutputs.push_back(OutputLink(this, "Stopped"));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -232,7 +233,7 @@ namespace dtDirector
             mIsActive = false;
 
             // Fire the "Stopped" output
-            OutputLink* link = GetOutputLink("Ended");
+            OutputLink* link = GetOutputLink("Stopped");
             if (link) link->Activate();
          }
          break;
