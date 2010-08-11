@@ -26,6 +26,7 @@
 #include <ui_cinematiceditor.h>
 
 #include <KeyFrameEvent.h>
+#include <AnimationEvent.h>
 
 #include <dtEditQt/mainwindow.h>
 #include <dtEditQt/plugininterface.h>
@@ -36,7 +37,12 @@
 
 #include <dtCore/transform.h>
 
+#include <dtAnim/animationwrapper.h>
+#include <dtAnim/animationchannel.h>
+
 #include <QtGui/QWidget>
+
+#include <QtCore/QTimer>
 
 
 using namespace dtEditQt;
@@ -49,6 +55,7 @@ namespace dtEditQt
 {
    class Viewport;
 }
+
 
 /**
  * The DirectorCinematicEditorPlugin is a plugin that is used as a tool
@@ -116,6 +123,11 @@ public:
    virtual void closeEvent(QCloseEvent* event);
 
 public slots:
+
+   /**
+    * Update.
+    */
+   void OnUpdate();
 
    /**
    * Handles when actors are selected.
@@ -189,6 +201,50 @@ public slots:
    void OnScaleXChanged(QString value);
    void OnScaleYChanged(QString value);
    void OnScaleZChanged(QString value);
+
+   /**
+    * Event handler when an animation event is selected on the animation track.
+    */
+   void OnAnimationEventSelected(BaseEvent* event);
+
+   /**
+    * Event handler when an animation event is moved.
+    */
+   void OnAnimationEventTimesChanged(int start, int end);
+
+   /**
+    * Event handler when an animation event is removed.
+    */
+   void OnAnimationEventRemoved(BaseEvent* event);
+
+   /**
+    * Event handler when the add animation button is pressed.
+    */
+   void OnAddAnimation();
+
+   /**
+    * Event handler when the remove animation button is pressed.
+    */
+   void OnRemoveAnimation();
+
+   /**
+    * Event handler when the current animation combo is changed.
+    *
+    * @param[in]  index  The current selection.
+    */
+   void OnAnimationComboChanged(int index);
+
+   /**
+    * Event handler when one of the edit fields of the animation event has been changed.
+    *
+    * @param[in]  value  The new value of the edit box.
+    */
+   void OnAnimationSpeedChanged(double value);
+   void OnAnimationStartTimeChanged(double value);
+   void OnAnimationEndTimeChanged(double value);
+   void OnAnimationBlendInTimeChanged(double value);
+   void OnAnimationBlendOutTimeChanged(double value);
+   void OnAnimationWeightChanged(double value);
 
    /**
     * Event handler when an output event is selected on the event track.
@@ -285,19 +341,51 @@ private:
    // Transform Actor Data.
    struct TransformData
    {
-      TransformData(int time, const dtCore::Transform& transform, const osg::Vec3& scale, KeyFrameEvent* event)
+      TransformData(int time, const dtCore::Transform& transform, const osg::Vec3& scale, bool canScale, KeyFrameEvent* event)
       {
          mTime = time;
          mTransform = transform;
          mScale = scale;
+         mCanScale = canScale;
          mEvent = event;
       }
 
       int                  mTime;
       dtCore::Transform    mTransform;
       osg::Vec3            mScale;
+      bool                 mCanScale;
 
       KeyFrameEvent*       mEvent;
+   };
+
+   // Animation Data
+   struct AnimationData
+   {
+      AnimationData(int time, const std::string& name, float duration, float weight, float speed, AnimationEvent* event)
+      {
+         mTime = time;
+         mName = name;
+         mStartTime = 0.0f;
+         mEndTime = duration;
+         mBlendInTime = 0.25f;
+         mBlendOutTime = 0.25f;
+         mWeight = weight;
+         mSpeed = speed;
+         mDuration = duration;
+         mEvent = event;
+      }
+
+      int         mTime;
+      std::string mName;
+      float       mStartTime;
+      float       mEndTime;
+      float       mBlendInTime;
+      float       mBlendOutTime;
+      float       mWeight;
+      float       mSpeed;
+      float       mDuration;
+
+      AnimationEvent*                  mEvent;
    };
 
    // Event Data
@@ -327,6 +415,7 @@ private:
       dtCore::ObserverPtr<dtDAL::ActorProxy> mActor;
 
       std::vector<TransformData> mTransformData;
+      std::vector<AnimationData> mAnimationData;
    };
 
    /**
@@ -340,12 +429,13 @@ private:
     * @param[in]  time       The time.
     * @param[in]  transform  The transform;
     * @param[in]  scale      The scale;
+    * @param[in]  canScale   True if this transform actor is scalable.
     * @param[in]  movable    True if this event can be moved to a different time.
     * @param[in]  event      If provided, this will use the given event instead of creating a new one.
     *
     * @return     The new event.
     */
-   KeyFrameEvent* InsertTransform(int time, const dtCore::Transform& transform, const osg::Vec3& scale, bool movable = true, KeyFrameEvent* event = NULL);
+   KeyFrameEvent* InsertTransform(int time, const dtCore::Transform& transform, const osg::Vec3& scale, bool canScale, bool movable = true, KeyFrameEvent* event = NULL);
 
    /**
     * Retrieves the transform data for a given event.
@@ -360,14 +450,15 @@ private:
    /**
     * Finds or creates a transform data at the given time.
     *
-    * @param[in]  dataList  The transform data list.
-    * @param[in]  time      The time.
+    * @param[in]  dataList   The transform data list.
+    * @param[in]  time       The time.
     * @param[in]  transform  The transform;
     * @param[in]  scale      The scale;
+    * @param[in]  canScale   True if this transform actor is scalable.
     *
     * @return     A pointer to the data found, NULL if not found.
     */
-   TransformData* GetOrCreateTransformData(int time, const dtCore::Transform& transform, const osg::Vec3& scale);
+   TransformData* GetOrCreateTransformData(int time, const dtCore::Transform& transform, const osg::Vec3& scale, bool canScale);
 
    /**
     * Inserts an output event into the list, sorted by time.
@@ -391,11 +482,53 @@ private:
    OutputData* GetOutputData(KeyFrameEvent* event, int* outIndex = NULL);
 
    /**
+    * Inserts an animation event into the list, sorted by time.
+    *
+    * @param[in]  time       The time.
+    * @param[in]  animName   The animation name;
+    * @param[in]  event      If provided, this will use the given event instead of creating a new one.
+    *
+    * @return     The new event.
+    */
+   AnimationEvent* InsertAnimation(int time, const std::string& animName, AnimationEvent* event = NULL);
+
+   /**
+    * Inserts an animation event into the list, sorted by time.
+    *
+    * @param[in]  animData   The animation data to insert.
+    * @param[in]  event      If provided, this will use the given event instead of creating a new one.
+    *
+    * @return     The new event.
+    */
+   AnimationEvent* InsertAnimation(AnimationData& animData, AnimationEvent* event);
+
+   /**
+    * Inserts an animation event into the list, sorted by time.
+    *
+    * @param[in]  animData   The animation data to insert.
+    *
+    * @return     The new event.
+    */
+   void InsertAnimation(AnimationData& animData);
+
+   /**
+    * Retrieves the animation data for a given event.
+    *
+    * @param[in]  event     The event.
+    * @param[in]  outIndex  The index where this data was found.
+    *
+    * @return     The transform data.
+    */
+   AnimationData* GetAnimationData(AnimationEvent* event, int* outIndex = NULL);
+
+   /**
     * Updates actors in STAGE based on time.
     *
     * @param[in]  time  The time.
     */
    void LerpActors(int time);
+
+   QTimer*        mTimer;
 
    Ui_CinematicEditor mUI;
    MainWindow*    mMainWindow;
@@ -406,9 +539,9 @@ private:
    int                     mSelectedActor;
 
    // Events
-   KeyFrameEvent* mTransformEvent;
-   KeyFrameEvent* mAnimationEvent;
-   KeyFrameEvent* mOutputEvent;
+   KeyFrameEvent*    mTransformEvent;
+   AnimationEvent*   mAnimationEvent;
+   KeyFrameEvent*    mOutputEvent;
 
    // Timeline
    QTimeLine*     mTimeLine;
