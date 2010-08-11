@@ -2,8 +2,8 @@
 <director xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dDirector" xsi:schemaLocation="delta3dDirector director.xsd">
     <header>
         <createTimestamp>2009-12-23T15:09:12-08:00</createTimestamp>
-        <lastUpdateTimestamp>2009-12-30T21:49:59-08:00</lastUpdateTimestamp>
-        <editorVersion>2.4.0</editorVersion>
+        <lastUpdateTimestamp>2010-07-30T10:45:02-08:00</lastUpdateTimestamp>
+        <editorVersion>2.5.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
         <property>
             <name>Name</name>
@@ -33,18 +33,6 @@
         </library>
     </libraries>
     <graph>
-        <property>
-            <name>Enabled</name>
-            <boolean>true</boolean>
-        </property>
-        <property>
-            <name>Comment</name>
-            <string></string>
-        </property>
-        <property>
-            <name>Name</name>
-            <string>fires</string>
-        </property>
         <eventnodes>
             <node>
                 <name>Trigger Volume Event</name>
@@ -114,8 +102,25 @@
                     </link>
                 </outputlink>
                 <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>TriggerCount</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
                     <name>Instigator</name>
                     <visible>true</visible>
+                    <exposed>true</exposed>
                     <isout>false</isout>
                     <allowmultiple>true</allowmultiple>
                     <typecheck>true</typecheck>
@@ -126,6 +131,7 @@
                 <valuelink>
                     <name>TriggerVolume</name>
                     <visible>true</visible>
+                    <exposed>true</exposed>
                     <isout>false</isout>
                     <allowmultiple>true</allowmultiple>
                     <typecheck>true</typecheck>
@@ -179,8 +185,25 @@
                     <visible>true</visible>
                 </outputlink>
                 <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
+                    <name>TriggerCount</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
                     <name>Instigator</name>
                     <visible>true</visible>
+                    <exposed>true</exposed>
                     <isout>false</isout>
                     <allowmultiple>true</allowmultiple>
                     <typecheck>true</typecheck>
@@ -191,6 +214,7 @@
                 <valuelink>
                     <name>TriggerVolume</name>
                     <visible>true</visible>
+                    <exposed>true</exposed>
                     <isout>false</isout>
                     <allowmultiple>true</allowmultiple>
                     <typecheck>true</typecheck>
@@ -254,14 +278,31 @@
                     <visible>true</visible>
                 </outputlink>
                 <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
                     <name>Actor</name>
                     <visible>true</visible>
+                    <exposed>true</exposed>
                     <isout>true</isout>
                     <allowmultiple>true</allowmultiple>
                     <typecheck>true</typecheck>
                     <link>
                         <id>03bf3a88-8406-4f17-a397-f2cb3d31cbba</id>
                     </link>
+                </valuelink>
+                <valuelink>
+                    <name>TogglePropertyName</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
                 </valuelink>
             </node>
             <node>
@@ -320,8 +361,17 @@
                     <visible>true</visible>
                 </outputlink>
                 <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
                     <name>Actor</name>
                     <visible>true</visible>
+                    <exposed>true</exposed>
                     <isout>true</isout>
                     <allowmultiple>true</allowmultiple>
                     <typecheck>true</typecheck>
@@ -349,7 +399,7 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>1230.891235</value1>
+                        <value1>762.784302</value1>
                         <value2>-435.489380</value2>
                     </vec2>
                 </property>
@@ -382,65 +432,31 @@
                     <visible>true</visible>
                 </outputlink>
                 <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
                     <name>Actor</name>
                     <visible>true</visible>
+                    <exposed>true</exposed>
                     <isout>true</isout>
                     <allowmultiple>true</allowmultiple>
                     <typecheck>true</typecheck>
                     <link>
-                        <id>33ee4743-02b0-46d9-8f18-21fdcf761a4c</id>
+                        <id>beca92d8-f672-4899-82eb-938830cb6ca6</id>
                     </link>
-                    <link>
-                        <id>ba4d65ed-cb19-47f3-8f8e-066eb5b57d90</id>
-                    </link>
-                    <link>
-                        <id>e12c3a60-4795-4d8e-b691-70ab5b37fdf1</id>
-                    </link>
-                    <link>
-                        <id>a43ab051-ab38-428e-b9dd-d6f9497a0d8b</id>
-                    </link>
-                    <link>
-                        <id>2b3b2e2d-6585-4631-aa03-ae2c64b83768</id>
-                    </link>
-                    <link>
-                        <id>3a29a7c8-3fd5-4cca-9c15-e43cc2db1dc6</id>
-                    </link>
-                    <link>
-                        <id>0a18175e-6c2d-4e70-8fbd-a7fb9b76b2c6</id>
-                    </link>
-                    <link>
-                        <id>eea05bf1-2fd7-42b6-82ca-dede7c36a655</id>
-                    </link>
-                    <link>
-                        <id>21c072b9-e9af-4729-bf14-90845b527102</id>
-                    </link>
-                    <link>
-                        <id>6d18dda7-572e-48f1-97d6-a871f8d58f78</id>
-                    </link>
-                    <link>
-                        <id>8e6fb848-4c68-439b-9cb7-0d4e4c2504ab</id>
-                    </link>
-                    <link>
-                        <id>04d126f7-5218-4421-a2d2-bbf444c9686a</id>
-                    </link>
-                    <link>
-                        <id>6537be0f-ef42-4698-b744-bb3559d009dc</id>
-                    </link>
-                    <link>
-                        <id>b26a6baf-6799-48cf-b5e1-990b0b633a50</id>
-                    </link>
-                    <link>
-                        <id>b8433fda-b298-4c9d-a79e-152ee76066f1</id>
-                    </link>
-                    <link>
-                        <id>f5084e0c-5d83-4617-95f3-0e8df1adcb4e</id>
-                    </link>
-                    <link>
-                        <id>0cd83ab2-56f6-4ac7-ae4f-76c66627dae7</id>
-                    </link>
-                    <link>
-                        <id>76b3e57f-c23b-408d-844c-c768f5132ac0</id>
-                    </link>
+                </valuelink>
+                <valuelink>
+                    <name>TogglePropertyName</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
                 </valuelink>
             </node>
             <node>
@@ -495,8 +511,17 @@
                     <visible>true</visible>
                 </outputlink>
                 <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
                     <name>Actor</name>
                     <visible>true</visible>
+                    <exposed>true</exposed>
                     <isout>true</isout>
                     <allowmultiple>true</allowmultiple>
                     <typecheck>true</typecheck>
@@ -507,12 +532,21 @@
                 <valuelink>
                     <name>NewValue</name>
                     <visible>true</visible>
+                    <exposed>true</exposed>
                     <isout>false</isout>
                     <allowmultiple>false</allowmultiple>
                     <typecheck>false</typecheck>
                     <link>
                         <id>b80abdb4-2910-4e33-96fa-1ea41ec07893</id>
                     </link>
+                </valuelink>
+                <valuelink>
+                    <name>PropertyName</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
                 </valuelink>
             </node>
             <node>
@@ -567,8 +601,17 @@
                     <visible>true</visible>
                 </outputlink>
                 <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
                     <name>Actor</name>
                     <visible>true</visible>
+                    <exposed>true</exposed>
                     <isout>true</isout>
                     <allowmultiple>true</allowmultiple>
                     <typecheck>true</typecheck>
@@ -579,12 +622,21 @@
                 <valuelink>
                     <name>NewValue</name>
                     <visible>true</visible>
+                    <exposed>true</exposed>
                     <isout>false</isout>
                     <allowmultiple>false</allowmultiple>
                     <typecheck>false</typecheck>
                     <link>
                         <id>71b0aa7e-9a66-4746-aae4-368ef79b2aac</id>
                     </link>
+                </valuelink>
+                <valuelink>
+                    <name>PropertyName</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
                 </valuelink>
             </node>
             <node>
@@ -639,8 +691,17 @@
                     <visible>true</visible>
                 </outputlink>
                 <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
+                <valuelink>
                     <name>Actor</name>
                     <visible>true</visible>
+                    <exposed>true</exposed>
                     <isout>false</isout>
                     <allowmultiple>false</allowmultiple>
                     <typecheck>true</typecheck>
@@ -651,12 +712,21 @@
                 <valuelink>
                     <name>Result</name>
                     <visible>true</visible>
+                    <exposed>true</exposed>
                     <isout>true</isout>
                     <allowmultiple>true</allowmultiple>
                     <typecheck>false</typecheck>
                     <link>
                         <id>de28e2b0-05ca-4720-808e-3f0adfe43ac8</id>
                     </link>
+                </valuelink>
+                <valuelink>
+                    <name>PropertyName</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
                 </valuelink>
             </node>
         </actionnodes>
@@ -692,6 +762,14 @@
                     <name>Value</name>
                     <actorId>cb9a3920-0a56-497c-92b5-6f1446366bdc</actorId>
                 </property>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
             </node>
             <node>
                 <name>Player</name>
@@ -716,6 +794,14 @@
                         <value2>207.000000</value2>
                     </vec2>
                 </property>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
             </node>
             <node>
                 <name>Actor</name>
@@ -748,582 +834,14 @@
                     <name>Value</name>
                     <actorId>9b275918-e1ba-4352-acf1-34c88f488eb0</actorId>
                 </property>
-            </node>
-            <node>
-                <name>Actor</name>
-                <category>General</category>
-                <id>33ee4743-02b0-46d9-8f18-21fdcf761a4c</id>
-                <property>
+                <valuelink>
                     <name>Enabled</name>
-                    <boolean>true</boolean>
-                </property>
-                <property>
-                    <name>Comment</name>
-                    <string></string>
-                </property>
-                <property>
-                    <name>LogNode</name>
-                    <boolean>false</boolean>
-                </property>
-                <property>
-                    <name>Position</name>
-                    <vec2>
-                        <value1>583.627441</value1>
-                        <value2>-66.262039</value2>
-                    </vec2>
-                </property>
-                <property>
-                    <name>Name</name>
-                    <string>Actor</string>
-                </property>
-                <property>
-                    <name>Value</name>
-                    <actorId>8f9ea7dd-16b9-4dc8-a193-c73bb2f19d3e</actorId>
-                </property>
-            </node>
-            <node>
-                <name>Actor</name>
-                <category>General</category>
-                <id>a43ab051-ab38-428e-b9dd-d6f9497a0d8b</id>
-                <property>
-                    <name>Enabled</name>
-                    <boolean>true</boolean>
-                </property>
-                <property>
-                    <name>Comment</name>
-                    <string></string>
-                </property>
-                <property>
-                    <name>LogNode</name>
-                    <boolean>false</boolean>
-                </property>
-                <property>
-                    <name>Position</name>
-                    <vec2>
-                        <value1>790.680176</value1>
-                        <value2>-66.262039</value2>
-                    </vec2>
-                </property>
-                <property>
-                    <name>Name</name>
-                    <string>Actor</string>
-                </property>
-                <property>
-                    <name>Value</name>
-                    <actorId>e9de4159-a74c-4bf6-8099-1739e48d0802</actorId>
-                </property>
-            </node>
-            <node>
-                <name>Actor</name>
-                <category>General</category>
-                <id>3a29a7c8-3fd5-4cca-9c15-e43cc2db1dc6</id>
-                <property>
-                    <name>Enabled</name>
-                    <boolean>true</boolean>
-                </property>
-                <property>
-                    <name>Comment</name>
-                    <string></string>
-                </property>
-                <property>
-                    <name>LogNode</name>
-                    <boolean>false</boolean>
-                </property>
-                <property>
-                    <name>Position</name>
-                    <vec2>
-                        <value1>918.878296</value1>
-                        <value2>-66.262039</value2>
-                    </vec2>
-                </property>
-                <property>
-                    <name>Name</name>
-                    <string>Actor</string>
-                </property>
-                <property>
-                    <name>Value</name>
-                    <actorId>1188a57f-1bc3-4e5b-b34e-2e25d3b22fd4</actorId>
-                </property>
-            </node>
-            <node>
-                <name>Actor</name>
-                <category>General</category>
-                <id>2b3b2e2d-6585-4631-aa03-ae2c64b83768</id>
-                <property>
-                    <name>Enabled</name>
-                    <boolean>true</boolean>
-                </property>
-                <property>
-                    <name>Comment</name>
-                    <string></string>
-                </property>
-                <property>
-                    <name>LogNode</name>
-                    <boolean>false</boolean>
-                </property>
-                <property>
-                    <name>Position</name>
-                    <vec2>
-                        <value1>859.218567</value1>
-                        <value2>-66.262039</value2>
-                    </vec2>
-                </property>
-                <property>
-                    <name>Name</name>
-                    <string>Actor</string>
-                </property>
-                <property>
-                    <name>Value</name>
-                    <actorId>7ca1f83a-4603-4988-9ec9-d6c3d3f09e29</actorId>
-                </property>
-            </node>
-            <node>
-                <name>Actor</name>
-                <category>General</category>
-                <id>e12c3a60-4795-4d8e-b691-70ab5b37fdf1</id>
-                <property>
-                    <name>Enabled</name>
-                    <boolean>true</boolean>
-                </property>
-                <property>
-                    <name>Comment</name>
-                    <string></string>
-                </property>
-                <property>
-                    <name>LogNode</name>
-                    <boolean>false</boolean>
-                </property>
-                <property>
-                    <name>Position</name>
-                    <vec2>
-                        <value1>725.218567</value1>
-                        <value2>-66.262039</value2>
-                    </vec2>
-                </property>
-                <property>
-                    <name>Name</name>
-                    <string>Actor</string>
-                </property>
-                <property>
-                    <name>Value</name>
-                    <actorId>6835997d-7eef-4dd6-a1eb-c20a8bd267e2</actorId>
-                </property>
-            </node>
-            <node>
-                <name>Actor</name>
-                <category>General</category>
-                <id>ba4d65ed-cb19-47f3-8f8e-066eb5b57d90</id>
-                <property>
-                    <name>Enabled</name>
-                    <boolean>true</boolean>
-                </property>
-                <property>
-                    <name>Comment</name>
-                    <string></string>
-                </property>
-                <property>
-                    <name>LogNode</name>
-                    <boolean>false</boolean>
-                </property>
-                <property>
-                    <name>Position</name>
-                    <vec2>
-                        <value1>653.838074</value1>
-                        <value2>-66.262039</value2>
-                    </vec2>
-                </property>
-                <property>
-                    <name>Name</name>
-                    <string>Actor</string>
-                </property>
-                <property>
-                    <name>Value</name>
-                    <actorId>b16d667d-17dc-410c-b951-58853f8c364e</actorId>
-                </property>
-            </node>
-            <node>
-                <name>Actor</name>
-                <category>General</category>
-                <id>0a18175e-6c2d-4e70-8fbd-a7fb9b76b2c6</id>
-                <property>
-                    <name>Enabled</name>
-                    <boolean>true</boolean>
-                </property>
-                <property>
-                    <name>Comment</name>
-                    <string></string>
-                </property>
-                <property>
-                    <name>LogNode</name>
-                    <boolean>false</boolean>
-                </property>
-                <property>
-                    <name>Position</name>
-                    <vec2>
-                        <value1>1053.790894</value1>
-                        <value2>-66.262039</value2>
-                    </vec2>
-                </property>
-                <property>
-                    <name>Name</name>
-                    <string>Actor</string>
-                </property>
-                <property>
-                    <name>Value</name>
-                    <actorId>87826508-c043-4b98-a6e1-450c6c293c89</actorId>
-                </property>
-            </node>
-            <node>
-                <name>Actor</name>
-                <category>General</category>
-                <id>eea05bf1-2fd7-42b6-82ca-dede7c36a655</id>
-                <property>
-                    <name>Enabled</name>
-                    <boolean>true</boolean>
-                </property>
-                <property>
-                    <name>Comment</name>
-                    <string></string>
-                </property>
-                <property>
-                    <name>LogNode</name>
-                    <boolean>false</boolean>
-                </property>
-                <property>
-                    <name>Position</name>
-                    <vec2>
-                        <value1>1122.947266</value1>
-                        <value2>-66.262039</value2>
-                    </vec2>
-                </property>
-                <property>
-                    <name>Name</name>
-                    <string>Actor</string>
-                </property>
-                <property>
-                    <name>Value</name>
-                    <actorId>c9501e45-6ab6-417f-844b-7192faca8596</actorId>
-                </property>
-            </node>
-            <node>
-                <name>Actor</name>
-                <category>General</category>
-                <id>21c072b9-e9af-4729-bf14-90845b527102</id>
-                <property>
-                    <name>Enabled</name>
-                    <boolean>true</boolean>
-                </property>
-                <property>
-                    <name>Comment</name>
-                    <string></string>
-                </property>
-                <property>
-                    <name>LogNode</name>
-                    <boolean>false</boolean>
-                </property>
-                <property>
-                    <name>Position</name>
-                    <vec2>
-                        <value1>988.148926</value1>
-                        <value2>-66.262039</value2>
-                    </vec2>
-                </property>
-                <property>
-                    <name>Name</name>
-                    <string>Actor</string>
-                </property>
-                <property>
-                    <name>Value</name>
-                    <actorId>759d728e-9eb9-454e-a856-ff29cda45bb8</actorId>
-                </property>
-            </node>
-            <node>
-                <name>Actor</name>
-                <category>General</category>
-                <id>6d18dda7-572e-48f1-97d6-a871f8d58f78</id>
-                <property>
-                    <name>Enabled</name>
-                    <boolean>true</boolean>
-                </property>
-                <property>
-                    <name>Comment</name>
-                    <string></string>
-                </property>
-                <property>
-                    <name>LogNode</name>
-                    <boolean>false</boolean>
-                </property>
-                <property>
-                    <name>Position</name>
-                    <vec2>
-                        <value1>1400.056641</value1>
-                        <value2>-74.813980</value2>
-                    </vec2>
-                </property>
-                <property>
-                    <name>Name</name>
-                    <string>Actor</string>
-                </property>
-                <property>
-                    <name>Value</name>
-                    <actorId>61af94f1-7222-4a65-9c05-811c7cae0416</actorId>
-                </property>
-            </node>
-            <node>
-                <name>Actor</name>
-                <category>General</category>
-                <id>8e6fb848-4c68-439b-9cb7-0d4e4c2504ab</id>
-                <property>
-                    <name>Enabled</name>
-                    <boolean>true</boolean>
-                </property>
-                <property>
-                    <name>Comment</name>
-                    <string></string>
-                </property>
-                <property>
-                    <name>LogNode</name>
-                    <boolean>false</boolean>
-                </property>
-                <property>
-                    <name>Position</name>
-                    <vec2>
-                        <value1>1470.267334</value1>
-                        <value2>-74.813980</value2>
-                    </vec2>
-                </property>
-                <property>
-                    <name>Name</name>
-                    <string>Actor</string>
-                </property>
-                <property>
-                    <name>Value</name>
-                    <actorId>42c2c7e1-555e-4f2b-a61d-57deb9fea7eb</actorId>
-                </property>
-            </node>
-            <node>
-                <name>Actor</name>
-                <category>General</category>
-                <id>04d126f7-5218-4421-a2d2-bbf444c9686a</id>
-                <property>
-                    <name>Enabled</name>
-                    <boolean>true</boolean>
-                </property>
-                <property>
-                    <name>Comment</name>
-                    <string></string>
-                </property>
-                <property>
-                    <name>LogNode</name>
-                    <boolean>false</boolean>
-                </property>
-                <property>
-                    <name>Position</name>
-                    <vec2>
-                        <value1>1541.647705</value1>
-                        <value2>-74.813980</value2>
-                    </vec2>
-                </property>
-                <property>
-                    <name>Name</name>
-                    <string>Actor</string>
-                </property>
-                <property>
-                    <name>Value</name>
-                    <actorId>ab5146f3-9ec4-4cca-86f5-32e6ffd478cf</actorId>
-                </property>
-            </node>
-            <node>
-                <name>Actor</name>
-                <category>General</category>
-                <id>6537be0f-ef42-4698-b744-bb3559d009dc</id>
-                <property>
-                    <name>Enabled</name>
-                    <boolean>true</boolean>
-                </property>
-                <property>
-                    <name>Comment</name>
-                    <string></string>
-                </property>
-                <property>
-                    <name>LogNode</name>
-                    <boolean>false</boolean>
-                </property>
-                <property>
-                    <name>Position</name>
-                    <vec2>
-                        <value1>1607.109375</value1>
-                        <value2>-74.813980</value2>
-                    </vec2>
-                </property>
-                <property>
-                    <name>Name</name>
-                    <string>Actor</string>
-                </property>
-                <property>
-                    <name>Value</name>
-                    <actorId>2b0eeb54-0098-4e45-bcb8-15797a5cbe3d</actorId>
-                </property>
-            </node>
-            <node>
-                <name>Actor</name>
-                <category>General</category>
-                <id>b26a6baf-6799-48cf-b5e1-990b0b633a50</id>
-                <property>
-                    <name>Enabled</name>
-                    <boolean>true</boolean>
-                </property>
-                <property>
-                    <name>Comment</name>
-                    <string></string>
-                </property>
-                <property>
-                    <name>LogNode</name>
-                    <boolean>false</boolean>
-                </property>
-                <property>
-                    <name>Position</name>
-                    <vec2>
-                        <value1>1675.647705</value1>
-                        <value2>-74.813980</value2>
-                    </vec2>
-                </property>
-                <property>
-                    <name>Name</name>
-                    <string>Actor</string>
-                </property>
-                <property>
-                    <name>Value</name>
-                    <actorId>e7cabc1e-542d-4156-8257-76ca75df8a9a</actorId>
-                </property>
-            </node>
-            <node>
-                <name>Actor</name>
-                <category>General</category>
-                <id>b8433fda-b298-4c9d-a79e-152ee76066f1</id>
-                <property>
-                    <name>Enabled</name>
-                    <boolean>true</boolean>
-                </property>
-                <property>
-                    <name>Comment</name>
-                    <string></string>
-                </property>
-                <property>
-                    <name>LogNode</name>
-                    <boolean>false</boolean>
-                </property>
-                <property>
-                    <name>Position</name>
-                    <vec2>
-                        <value1>1735.307495</value1>
-                        <value2>-74.813980</value2>
-                    </vec2>
-                </property>
-                <property>
-                    <name>Name</name>
-                    <string>Actor</string>
-                </property>
-                <property>
-                    <name>Value</name>
-                    <actorId>a3d98b66-869b-466c-acef-9ba7711d5246</actorId>
-                </property>
-            </node>
-            <node>
-                <name>Actor</name>
-                <category>General</category>
-                <id>f5084e0c-5d83-4617-95f3-0e8df1adcb4e</id>
-                <property>
-                    <name>Enabled</name>
-                    <boolean>true</boolean>
-                </property>
-                <property>
-                    <name>Comment</name>
-                    <string></string>
-                </property>
-                <property>
-                    <name>LogNode</name>
-                    <boolean>false</boolean>
-                </property>
-                <property>
-                    <name>Position</name>
-                    <vec2>
-                        <value1>1804.578125</value1>
-                        <value2>-74.813980</value2>
-                    </vec2>
-                </property>
-                <property>
-                    <name>Name</name>
-                    <string>Actor</string>
-                </property>
-                <property>
-                    <name>Value</name>
-                    <actorId>ed981ba3-7458-4689-9b73-5f33a6a9b0d2</actorId>
-                </property>
-            </node>
-            <node>
-                <name>Actor</name>
-                <category>General</category>
-                <id>0cd83ab2-56f6-4ac7-ae4f-76c66627dae7</id>
-                <property>
-                    <name>Enabled</name>
-                    <boolean>true</boolean>
-                </property>
-                <property>
-                    <name>Comment</name>
-                    <string></string>
-                </property>
-                <property>
-                    <name>LogNode</name>
-                    <boolean>false</boolean>
-                </property>
-                <property>
-                    <name>Position</name>
-                    <vec2>
-                        <value1>1870.220093</value1>
-                        <value2>-74.813980</value2>
-                    </vec2>
-                </property>
-                <property>
-                    <name>Name</name>
-                    <string>Actor</string>
-                </property>
-                <property>
-                    <name>Value</name>
-                    <actorId>6a171766-1453-4517-ab5a-70e12cdf7dac</actorId>
-                </property>
-            </node>
-            <node>
-                <name>Actor</name>
-                <category>General</category>
-                <id>76b3e57f-c23b-408d-844c-c768f5132ac0</id>
-                <property>
-                    <name>Enabled</name>
-                    <boolean>true</boolean>
-                </property>
-                <property>
-                    <name>Comment</name>
-                    <string></string>
-                </property>
-                <property>
-                    <name>LogNode</name>
-                    <boolean>false</boolean>
-                </property>
-                <property>
-                    <name>Position</name>
-                    <vec2>
-                        <value1>1939.376465</value1>
-                        <value2>-74.813980</value2>
-                    </vec2>
-                </property>
-                <property>
-                    <name>Name</name>
-                    <string>Actor</string>
-                </property>
-                <property>
-                    <name>Value</name>
-                    <actorId>0464b171-2dcf-44ca-8c40-2276ced06bb4</actorId>
-                </property>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
             </node>
             <node>
                 <name>Player</name>
@@ -1344,10 +862,18 @@
                 <property>
                     <name>Position</name>
                     <vec2>
-                        <value1>558.838074</value1>
-                        <value2>-226.381180</value2>
+                        <value1>558.837891</value1>
+                        <value2>-241.716568</value2>
                     </vec2>
                 </property>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
             </node>
             <node>
                 <name>Actor</name>
@@ -1380,6 +906,14 @@
                     <name>Value</name>
                     <actorId>83a6d006-251b-4c4c-a25b-f677ebb5792b</actorId>
                 </property>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
             </node>
             <node>
                 <name>String</name>
@@ -1412,6 +946,14 @@
                     <name>Value</name>
                     <string>HOT!</string>
                 </property>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
             </node>
             <node>
                 <name>Reference</name>
@@ -1447,6 +989,7 @@
                 <valuelink>
                     <name>Ref</name>
                     <visible>true</visible>
+                    <exposed>false</exposed>
                     <isout>false</isout>
                     <allowmultiple>false</allowmultiple>
                     <typecheck>true</typecheck>
@@ -1486,6 +1029,14 @@
                     <name>Value</name>
                     <string></string>
                 </property>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
+                </valuelink>
             </node>
             <node>
                 <name>Reference</name>
@@ -1521,6 +1072,7 @@
                 <valuelink>
                     <name>Ref</name>
                     <visible>true</visible>
+                    <exposed>false</exposed>
                     <isout>false</isout>
                     <allowmultiple>false</allowmultiple>
                     <typecheck>false</typecheck>
@@ -1563,12 +1115,181 @@
                 <valuelink>
                     <name>Ref</name>
                     <visible>true</visible>
+                    <exposed>false</exposed>
                     <isout>true</isout>
                     <allowmultiple>false</allowmultiple>
                     <typecheck>true</typecheck>
                     <link>
                         <id>ab98c260-cdf0-4451-a2f5-2d0e6cf67030</id>
                     </link>
+                </valuelink>
+            </node>
+            <node>
+                <name>Actor Array</name>
+                <category>General</category>
+                <id>beca92d8-f672-4899-82eb-938830cb6ca6</id>
+                <property>
+                    <name>Enabled</name>
+                    <boolean>true</boolean>
+                </property>
+                <property>
+                    <name>Comment</name>
+                    <string></string>
+                </property>
+                <property>
+                    <name>LogNode</name>
+                    <boolean>false</boolean>
+                </property>
+                <property>
+                    <name>Position</name>
+                    <vec2>
+                        <value1>773.284180</value1>
+                        <value2>-243.212708</value2>
+                    </vec2>
+                </property>
+                <property>
+                    <name>Name</name>
+                    <string>Crates</string>
+                </property>
+                <property>
+                    <name>ValueList</name>
+                    <array>
+                        <size>18</size>
+                        <element>
+                            <index>0</index>
+                            <property>
+                                <name>Value</name>
+                                <actorId>8f9ea7dd-16b9-4dc8-a193-c73bb2f19d3e</actorId>
+                            </property>
+                        </element>
+                        <element>
+                            <index>1</index>
+                            <property>
+                                <name>Value</name>
+                                <actorId>b16d667d-17dc-410c-b951-58853f8c364e</actorId>
+                            </property>
+                        </element>
+                        <element>
+                            <index>2</index>
+                            <property>
+                                <name>Value</name>
+                                <actorId>6835997d-7eef-4dd6-a1eb-c20a8bd267e2</actorId>
+                            </property>
+                        </element>
+                        <element>
+                            <index>3</index>
+                            <property>
+                                <name>Value</name>
+                                <actorId>e9de4159-a74c-4bf6-8099-1739e48d0802</actorId>
+                            </property>
+                        </element>
+                        <element>
+                            <index>4</index>
+                            <property>
+                                <name>Value</name>
+                                <actorId>7ca1f83a-4603-4988-9ec9-d6c3d3f09e29</actorId>
+                            </property>
+                        </element>
+                        <element>
+                            <index>5</index>
+                            <property>
+                                <name>Value</name>
+                                <actorId>1188a57f-1bc3-4e5b-b34e-2e25d3b22fd4</actorId>
+                            </property>
+                        </element>
+                        <element>
+                            <index>6</index>
+                            <property>
+                                <name>Value</name>
+                                <actorId>759d728e-9eb9-454e-a856-ff29cda45bb8</actorId>
+                            </property>
+                        </element>
+                        <element>
+                            <index>7</index>
+                            <property>
+                                <name>Value</name>
+                                <actorId>87826508-c043-4b98-a6e1-450c6c293c89</actorId>
+                            </property>
+                        </element>
+                        <element>
+                            <index>8</index>
+                            <property>
+                                <name>Value</name>
+                                <actorId>c9501e45-6ab6-417f-844b-7192faca8596</actorId>
+                            </property>
+                        </element>
+                        <element>
+                            <index>9</index>
+                            <property>
+                                <name>Value</name>
+                                <actorId>61af94f1-7222-4a65-9c05-811c7cae0416</actorId>
+                            </property>
+                        </element>
+                        <element>
+                            <index>10</index>
+                            <property>
+                                <name>Value</name>
+                                <actorId>42c2c7e1-555e-4f2b-a61d-57deb9fea7eb</actorId>
+                            </property>
+                        </element>
+                        <element>
+                            <index>11</index>
+                            <property>
+                                <name>Value</name>
+                                <actorId>ab5146f3-9ec4-4cca-86f5-32e6ffd478cf</actorId>
+                            </property>
+                        </element>
+                        <element>
+                            <index>12</index>
+                            <property>
+                                <name>Value</name>
+                                <actorId>2b0eeb54-0098-4e45-bcb8-15797a5cbe3d</actorId>
+                            </property>
+                        </element>
+                        <element>
+                            <index>13</index>
+                            <property>
+                                <name>Value</name>
+                                <actorId>e7cabc1e-542d-4156-8257-76ca75df8a9a</actorId>
+                            </property>
+                        </element>
+                        <element>
+                            <index>14</index>
+                            <property>
+                                <name>Value</name>
+                                <actorId>a3d98b66-869b-466c-acef-9ba7711d5246</actorId>
+                            </property>
+                        </element>
+                        <element>
+                            <index>15</index>
+                            <property>
+                                <name>Value</name>
+                                <actorId>ed981ba3-7458-4689-9b73-5f33a6a9b0d2</actorId>
+                            </property>
+                        </element>
+                        <element>
+                            <index>16</index>
+                            <property>
+                                <name>Value</name>
+                                <actorId>6a171766-1453-4517-ab5a-70e12cdf7dac</actorId>
+                            </property>
+                        </element>
+                        <element>
+                            <index>17</index>
+                            <property>
+                                <name>Value</name>
+                                <actorId>0464b171-2dcf-44ca-8c40-2276ced06bb4</actorId>
+                            </property>
+                        </element>
+                    </array>
+                </property>
+                <valuelink>
+                    <name>Enabled</name>
+                    <visible>true</visible>
+                    <exposed>false</exposed>
+                    <isout>false</isout>
+                    <allowmultiple>false</allowmultiple>
+                    <typecheck>true</typecheck>
                 </valuelink>
             </node>
         </valuenodes>
