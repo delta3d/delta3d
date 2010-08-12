@@ -44,6 +44,11 @@
 
 #include <QtCore/QTimer>
 
+#include <cal3d/global.h>
+
+#if CAL3D_VERSION >= 1300
+   #define MANUAL_ANIMATIONS
+#endif
 
 using namespace dtEditQt;
 
@@ -393,6 +398,9 @@ private:
          mWeight = weight;
          mSpeed = speed;
          mDuration = duration;
+#ifdef MANUAL_ANIMATIONS
+         mAnimation = -1;
+#endif
          mEvent = event;
       }
 
@@ -406,7 +414,11 @@ private:
       float       mSpeed;
       float       mDuration;
 
-      AnimationEvent*                  mEvent;
+#ifdef MANUAL_ANIMATIONS
+      int         mAnimation;
+#endif
+
+      AnimationEvent* mEvent;
    };
 
    // Event Data

@@ -2714,6 +2714,89 @@ void DirectorCinematicEditorPlugin::LerpActors(int time)
       }
 
       // Animation
+#ifdef MANUAL_ANIMATIONS
+      {
+         dtAnim::AnimationGameActor* animActor = NULL;
+         animActor = dynamic_cast<dtAnim::AnimationGameActor*>(actor);
+         if (animActor)
+         {
+            CalMixer* calMixer = animActor->GetHelper()->GetModelWrapper()->GetCalModel()->getMixer();
+            dtAnim::SequenceMixer& mixer = animActor->GetHelper()->GetSequenceMixer();
+
+            int count = (int)actorData.mAnimationData.size();
+            for (int index = 0; index < count; ++index)
+            {
+               AnimationData& data = actorData.mAnimationData[index];
+
+               int eventLength = data.mTime + ((data.mEndTime - data.mStartTime) * 1000 / data.mSpeed);
+
+               // Determine if this current animation should be playing.
+               if (time >= data.mTime && time <= eventLength)
+               {
+                  CalAnimationAction* calAnim = NULL;
+                  if (data.mAnimation > -1)
+                  {
+                     calAnim = calMixer->animationActionFromCoreAnimationId(data.mAnimation);;
+                  }
+
+                  if (!calAnim)
+                  {
+                     // Create the animation.
+                     const dtAnim::AnimationChannel* anim = dynamic_cast<const dtAnim::AnimationChannel*>(mixer.GetRegisteredAnimation(data.mName));
+                     if (anim)
+                     {
+                        data.mAnimation = anim->GetAnimation()->GetID();
+
+                        calMixer->addManualAnimation(data.mAnimation);
+                        calAnim = calMixer->animationActionFromCoreAnimationId(data.mAnimation);
+                        if (calAnim)
+                        {
+                           calMixer->setManualAnimationOn(calAnim, true);
+                           calMixer->setManualAnimationWeight(calAnim, data.mWeight);
+                           calMixer->setManualAnimationCompositionFunction(calAnim, CalAnimation::CompositionFunctionAverage);
+                        }
+                     }
+                  }
+
+                  if (calAnim)
+                  {
+                     float animTime = (time - data.mTime) * 0.001f;
+                     // Update the current animation time.
+                     calMixer->setManualAnimationTime(calAnim, animTime);
+
+                     // Update the animation weight.
+                     float weight = data.mWeight;
+
+                     // Blending in.
+                     if (data.mBlendInTime > 0.0f && animTime - data.mStartTime < data.mBlendInTime)
+                     {
+                        weight *= (animTime - data.mStartTime) / data.mBlendInTime;
+                     }
+                     // Blending out.
+                     else if (data.mBlendOutTime > 0.0f && data.mEndTime - animTime < data.mBlendOutTime)
+                     {
+                        weight *= (data.mEndTime - animTime) / data.mBlendOutTime;
+                     }
+
+                     calMixer->setManualAnimationWeight(calAnim, weight);
+                  }
+
+                  animActor->GetHelper()->Update(0.0f);
+               }
+               else
+               {
+                  // Turn off the animation if it is still valid.
+                  if (data.mAnimation > -1)
+                  {
+                     calMixer->removeManualAnimation(data.mAnimation);
+                     animActor->GetHelper()->Update(0.0f);
+                     data.mAnimation = -1;
+                  }
+               }
+            }
+         }
+      }
+#else
       {
          dtAnim::AnimationGameActor* animActor = NULL;
          animActor = dynamic_cast<dtAnim::AnimationGameActor*>(actor);
@@ -2796,6 +2879,7 @@ void DirectorCinematicEditorPlugin::LerpActors(int time)
             }
          }
       }
+#endif
    }
 
    ViewportManager::GetInstance().refreshAllViewports();
