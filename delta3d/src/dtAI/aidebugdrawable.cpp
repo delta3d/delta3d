@@ -138,11 +138,7 @@ namespace dtAI
             mGeodeWayPoints->setNodeMask(0);
          }
 
-         for (size_t colorIndex = 0; colorIndex < mWaypointColors->size(); ++colorIndex)
-         {
-            (*mWaypointColors)[colorIndex] = mRenderInfo->GetWaypointColor();
-         }
-         mWaypointGeometry->setColorArray(mWaypointColors);
+         ResetWaypointColorsToDefault();
 
          osg::Vec4Array* navmeshColors = new osg::Vec4Array(1);
          (*navmeshColors)[0] = mRenderInfo->GetNavMeshColor();
@@ -213,6 +209,30 @@ namespace dtAI
          text->setText(dtUtil::ToString(wp.GetID()));
          renderData.mTextNode = text;
          mGeodeIDs->addDrawable(text);
+      }
+
+      //////////////////////////////////////////////////////////////////////////
+      //set an individual waypoint render color
+      void SetWaypointColor(unsigned int waypointIndex, const osg::Vec4& color)
+      {
+         if (waypointIndex < mWaypointColors->size())
+         {
+            (*mWaypointColors)[waypointIndex] = color;
+            mWaypointGeometry->setColorArray(mWaypointColors.get());
+         }
+      }
+
+      //////////////////////////////////////////////////////////////////////////
+      //reset all waypoint colors back to the value in the WaypointRenderInfo
+      void ResetWaypointColorsToDefault()
+      {
+         const WaypointRenderInfo::Color color = mRenderInfo->GetWaypointColor();
+         for (size_t colorIndex = 0; colorIndex < mWaypointColors->size(); ++colorIndex)
+         {
+            (*mWaypointColors)[colorIndex] = color;
+         }
+
+         mWaypointGeometry->setColorArray(mWaypointColors);
       }
 
       dtCore::RefPtr<WaypointRenderInfo> mRenderInfo;
@@ -505,4 +525,19 @@ namespace dtAI
       mImpl->mWaypointPairs->clear();
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void AIDebugDrawable::SetWaypointColor(const WaypointInterface& wp, const osg::Vec4& color)
+   {
+      int loc = FindWaypoint(wp.GetID());
+      if (loc > -1)
+      {
+         mImpl->SetWaypointColor(loc, color);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void AIDebugDrawable::ResetWaypointColorsToDefault()
+   {
+      mImpl->ResetWaypointColorsToDefault();
+   }
 } // namespace dtAI

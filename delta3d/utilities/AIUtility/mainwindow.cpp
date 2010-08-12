@@ -315,6 +315,10 @@ void MainWindow::SelectRenderingOptions()
 {
    if (mPluginInterface != NULL)
    {
+      //deselect any waypoints since changing the WaypointRenderInfo could conflict
+      //with selected waypoint rendering.
+      WaypointSelection::GetInstance().DeselectAllWaypoints();
+
       dtQt::BasePropertyEditor::PropertyContainerRefPtrVector selected;
       dtAI::WaypointRenderInfo& ri = mPluginInterface->GetDebugDrawable()->GetRenderInfo();      
 
@@ -373,20 +377,29 @@ void MainWindow::OnChildRequestCameraTransformChange(const dtCore::Transform& xf
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void MainWindow::OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>& waypoints)
+void MainWindow::OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>& selectedWaypoints)
 {
    if (mPluginInterface == NULL)
    {
       return;
    }
 
-   std::vector<dtCore::RefPtr<dtDAL::PropertyContainer> > propertyContainers;
-   propertyContainers.reserve(waypoints.size());
+   const osg::Vec4 kSelectedColor(1.f, 0.1f, 0.1f, 1.f);
 
-   for (size_t i = 0; i < waypoints.size(); ++i)
+   std::vector<dtCore::RefPtr<dtDAL::PropertyContainer> > propertyContainers;
+   propertyContainers.reserve(selectedWaypoints.size());
+
+   mPluginInterface->GetDebugDrawable()->ResetWaypointColorsToDefault();
+
+   for (size_t i = 0; i < selectedWaypoints.size(); ++i)
    {
-      dtAI::WaypointInterface* wpi = waypoints[i];
+      dtAI::WaypointInterface* wpi = selectedWaypoints[i];
       propertyContainers.push_back(mPluginInterface->CreateWaypointPropertyContainer(wpi->GetWaypointType(), wpi));
+
+      if (wpi)
+      {
+         mPluginInterface->GetDebugDrawable()->SetWaypointColor(*wpi, kSelectedColor);
+      }
    }
 
    mPropertyEditor.HandlePropertyContainersSelected(propertyContainers);
@@ -396,11 +409,11 @@ void MainWindow::OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*
    mUi->mActionRemoveEdge->setEnabled(false);
 
    // Only allow the delete action when waypoint(s) are selected
-   mUi->mActionDeleteSelectedWaypoints->setEnabled(!waypoints.empty());
+   mUi->mActionDeleteSelectedWaypoints->setEnabled(!selectedWaypoints.empty());
 
-   if (waypoints.size() == 2) // There must be exactly two waypoints selected
+   if (selectedWaypoints.size() == 2) // There must be exactly two waypoints selected
    {
-      if (DoesEdgeExistBetweenWaypoints(waypoints[0], waypoints[1]))
+      if (DoesEdgeExistBetweenWaypoints(selectedWaypoints[0], selectedWaypoints[1]))
       {
          // Enable Remove Edge
          mUi->mActionRemoveEdge->setEnabled(true);

@@ -76,6 +76,19 @@ namespace dtAI
       virtual void InsertWaypoint(const WaypointInterface& wp, bool addText = true);
       virtual void RemoveWaypoint(unsigned id);
 
+      /** 
+       * Set the color of an individual WaypointInterface, overwriting the color defined
+       * in the WaypointRenderInfo.
+       * @param wp An existing WaypointInterface
+       * @param color The color to set this WaypointInterface to
+       */
+      void SetWaypointColor(const WaypointInterface& wp, const osg::Vec4& color);
+
+      /** 
+       * Reset all the WaypointInterface colors back to the value defined in the WaypointRenderInfo.
+       */
+      void ResetWaypointColorsToDefault();
+
       /**
        * Accessor functions to add or remove a single edge to the drawable
        */
