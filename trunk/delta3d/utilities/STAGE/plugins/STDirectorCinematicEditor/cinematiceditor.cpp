@@ -143,6 +143,9 @@ void DirectorCinematicEditorPlugin::Initialize()
    mTimeLine = new QTimeLine(1000, this);
    mTimeLine->setCurveShape(QTimeLine::LinearCurve);
 
+   connect(mUI.mStartTimeEdit, SIGNAL(valueChanged(double)), this, SLOT(OnStartTimeChanged(double)));
+   connect(mUI.mEndTimeEdit, SIGNAL(valueChanged(double)), this, SLOT(OnEndTimeChanged(double)));
+
    connect(mUI.mCurrentTimeEdit, SIGNAL(valueChanged(double)), this, SLOT(OnCurrentTimeChanged(double)));
    connect(mUI.mTotalTimeEdit, SIGNAL(valueChanged(double)), this, SLOT(OnTotalTimeChanged(double)));
    connect(mTimeLine, SIGNAL(frameChanged(int)), mUI.mTimeSlider, SLOT(setValue(int)));
@@ -296,11 +299,21 @@ void DirectorCinematicEditorPlugin::ResetUI()
    OnOutputEventSelected(NULL);
    OnTimeSliderValueChanged(mUI.mTimeSlider->value());
 
-   mUI.mTransformTrack->SetMaximum(mTotalTime * 1000, false);
-   mUI.mAnimationTrack->SetMaximum(mTotalTime * 1000, false);
-   mUI.mOutputTrack->SetMaximum(mTotalTime * 1000, false);
-   mUI.mSelectionTrack->SetMaximum(mTotalTime * 1000);
-   mUI.mTimeSlider->setMaximum(mTotalTime * 1000);
+   float startTime = mUI.mStartTimeEdit->value();
+   float endTime   = mUI.mEndTimeEdit->value();
+
+   mUI.mTransformTrack->SetMinimum(startTime * 1000, false);
+   mUI.mAnimationTrack->SetMinimum(startTime * 1000, false);
+   mUI.mOutputTrack->SetMinimum(startTime * 1000, false);
+   mUI.mSelectionTrack->SetMinimum(startTime * 1000);
+   mUI.mTimeSlider->setMinimum(startTime * 1000);
+
+   mUI.mTransformTrack->SetMaximum(endTime * 1000, false);
+   mUI.mAnimationTrack->SetMaximum(endTime * 1000, false);
+   mUI.mOutputTrack->SetMaximum(endTime * 1000, false);
+   mUI.mSelectionTrack->SetMaximum(endTime * 1000);
+   mUI.mTimeSlider->setMaximum(endTime * 1000);
+
    mUI.mTotalTimeEdit->setValue(mTotalTime);
 
    std::vector<dtDAL::ActorProxy*> selection;
@@ -328,7 +341,7 @@ void DirectorCinematicEditorPlugin::Open(dtDirector::DirectorGraph* graph)
 void DirectorCinematicEditorPlugin::Close()
 {
    // Stop current playback.
-   if (mPlaying) OnPlay();
+   OnTimeLineFinished();
 
    // Reset the preview time slider back to the start so all actors reset.
    mUI.mTimeSlider->setValue(0);
@@ -1380,6 +1393,24 @@ void DirectorCinematicEditorPlugin::OnCurrentTimeChanged(double time)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void DirectorCinematicEditorPlugin::OnStartTimeChanged(double time)
+{
+   // Make sure the end time can not be before the start time.
+   mUI.mEndTimeEdit->setMinimum(time + 0.01);
+
+   ResetUI();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void DirectorCinematicEditorPlugin::OnEndTimeChanged(double time)
+{
+   // Make sure the start time can not go beyond the end time.
+   mUI.mStartTimeEdit->setMaximum(time - 0.01);
+
+   ResetUI();
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void DirectorCinematicEditorPlugin::OnTotalTimeChanged(double time)
 {
    // If there is no duration, force at least one second.
@@ -1389,16 +1420,23 @@ void DirectorCinematicEditorPlugin::OnTotalTimeChanged(double time)
       time = 1.0;
    }
 
+   mUI.mEndTimeEdit->setMaximum(time);
+
+   // Increase the viewed end time if we are viewing up to the total time.
+   if (mUI.mEndTimeEdit->value() > mTotalTime - 0.001 &&
+      mUI.mEndTimeEdit->value() < mTotalTime + 0.001)
+   {
+      mUI.mEndTimeEdit->blockSignals(true);
+      mUI.mEndTimeEdit->setValue(time);
+      mUI.mStartTimeEdit->setMaximum(time - 0.01);
+      mUI.mEndTimeEdit->blockSignals(false);
+   }
+
    mTotalTime = (float)time;
 
-   // Setup various UI elements with the new duration
-   mUI.mTransformTrack->SetMaximum(mTotalTime * 1000, false);
-   mUI.mAnimationTrack->SetMaximum(mTotalTime * 1000, false);
-   mUI.mOutputTrack->SetMaximum(mTotalTime * 1000, false);
-   mUI.mSelectionTrack->SetMaximum(mTotalTime * 1000);
-   mUI.mTimeSlider->setMaximum(mTotalTime * 1000);
-
    OnTimeLineFinished();
+
+   ResetUI();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1517,6 +1555,15 @@ void DirectorCinematicEditorPlugin::OnLoad()
    {
       // Determine the total cinematic time.
       mTotalTime = schedulerNode->GetFloat("TotalTime");
+
+      mUI.mStartTimeEdit->blockSignals(true);
+      mUI.mStartTimeEdit->setValue(0.0);
+      mUI.mStartTimeEdit->blockSignals(false);
+      mUI.mEndTimeEdit->blockSignals(true);
+      mUI.mEndTimeEdit->setValue(mTotalTime);
+      mUI.mEndTimeEdit->setMinimum(0.01);
+      mUI.mEndTimeEdit->setMaximum(mTotalTime);
+      mUI.mEndTimeEdit->blockSignals(false);
 
       // Load all scheduled event outputs.
       mUI.mOutputTrack->ClearEvents();

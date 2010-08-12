@@ -286,6 +286,20 @@ public slots:
    void OnOutputNameChanged(QString value);
 
    /**
+    * Event handler when the viewed start time edit has been changed.
+    *
+    * @param[in]  time  The new current time.
+    */
+   void OnStartTimeChanged(double time);
+
+   /**
+    * Event handler when the viewed end time edit has been changed.
+    *
+    * @param[in]  time  The new current time.
+    */
+   void OnEndTimeChanged(double time);
+
+   /**
     * Event handler when the current time edit has been changed.
     *
     * @param[in]  time  The new current time.
