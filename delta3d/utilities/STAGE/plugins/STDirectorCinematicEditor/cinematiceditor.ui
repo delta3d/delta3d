@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>654</width>
-    <height>490</height>
+    <width>700</width>
+    <height>535</height>
    </rect>
   </property>
   <property name="mouseTracking">
@@ -34,7 +34,7 @@
         <enum>QFrame::Raised</enum>
        </property>
        <layout class="QGridLayout" name="gridLayout">
-        <item row="10" column="4">
+        <item row="11" column="4">
          <widget class="EventTrackWidget" name="mSelectionTrack" native="true">
           <property name="minimumSize">
            <size>
@@ -57,14 +57,14 @@
           </property>
          </widget>
         </item>
-        <item row="11" column="2">
+        <item row="12" column="2">
          <widget class="QCheckBox" name="mLoopFlag">
           <property name="text">
            <string>Loop</string>
           </property>
          </widget>
         </item>
-        <item row="10" column="0" colspan="3">
+        <item row="11" column="0" colspan="3">
          <widget class="QCheckBox" name="mPlaySelectionFlag">
           <property name="text">
            <string>Play Selection</string>
@@ -87,7 +87,7 @@
           </property>
          </widget>
         </item>
-        <item row="11" column="4">
+        <item row="12" column="4">
          <widget class="QSlider" name="mTimeSlider">
           <property name="minimumSize">
            <size>
@@ -231,31 +231,6 @@
            </size>
           </property>
          </spacer>
-        </item>
-        <item row="9" column="6" colspan="2">
-         <widget class="QLabel" name="label">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>20</height>
-           </size>
-          </property>
-          <property name="acceptDrops">
-           <bool>false</bool>
-          </property>
-          <property name="text">
-           <string> Total Time (secs):</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
-          </property>
-         </widget>
         </item>
         <item row="4" column="6">
          <widget class="QToolButton" name="mAddAnimationButton">
@@ -522,7 +497,7 @@
           </item>
          </layout>
         </item>
-        <item row="10" column="6" colspan="2">
+        <item row="11" column="6" colspan="2">
          <widget class="QDoubleSpinBox" name="mTotalTimeEdit">
           <property name="alignment">
            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -544,7 +519,7 @@
           </property>
          </widget>
         </item>
-        <item row="11" column="6" colspan="2">
+        <item row="12" column="6" colspan="2">
          <widget class="QDoubleSpinBox" name="mCurrentTimeEdit">
           <property name="maximum">
            <double>1000.000000000000000</double>
@@ -724,7 +699,7 @@
           </item>
          </layout>
         </item>
-        <item row="11" column="0" colspan="2">
+        <item row="12" column="0" colspan="2">
          <widget class="QToolButton" name="mPlayButton">
           <property name="text">
            <string>Play</string>
@@ -744,6 +719,78 @@
           </property>
           <property name="checked">
            <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="10" column="4">
+         <layout class="QGridLayout" name="gridLayout_5">
+          <item row="0" column="1">
+           <widget class="QDoubleSpinBox" name="mStartTimeEdit">
+            <property name="maximum">
+             <double>1000.000000000000000</double>
+            </property>
+            <property name="singleStep">
+             <double>0.010000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QLabel" name="label_25">
+            <property name="text">
+             <string>Viewed End Time: </string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <widget class="QDoubleSpinBox" name="mEndTimeEdit">
+            <property name="maximum">
+             <double>1000.000000000000000</double>
+            </property>
+            <property name="singleStep">
+             <double>0.010000000000000</double>
+            </property>
+            <property name="value">
+             <double>1.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_24">
+            <property name="text">
+             <string>Viewed Start Time:</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="10" column="6" colspan="2">
+         <widget class="QLabel" name="label">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>20</height>
+           </size>
+          </property>
+          <property name="acceptDrops">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string> Total Time (secs):</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
           </property>
          </widget>
         </item>
