@@ -4,9 +4,10 @@ SET(LIB_NAME     STDirectorCinematicEditor)
 file(GLOB LIB_HEADERS "*.h")
 file(GLOB LIB_SOURCES "*.cpp")
 
-INCLUDE_DIRECTORIES(  ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/utilities/STAGE/inc
-            ${QT_INCLUDE_DIR}
-            ${CMAKE_CURRENT_BINARY_DIR} # for ui*.h files
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/utilities/STAGE/inc
+                    ${CAL3D_INCLUDE_DIR}
+                    ${QT_INCLUDE_DIR}
+                    ${CMAKE_CURRENT_BINARY_DIR} # for ui*.h files
 )
 
 qt4_wrap_cpp(MOC_SOURCES ${LIB_HEADERS})
@@ -21,15 +22,15 @@ ADD_LIBRARY(${LIB_NAME} MODULE
 )
 
 TARGET_LINK_LIBRARIES( ${LIB_NAME}
-                  STAGE
+                       STAGE
                        ${DTUTIL_LIBRARY}
                        ${DTCORE_LIBRARY}
                        ${DTGAME_LIBRARY}
                        ${DTABC_LIBRARY}
-					   ${DTANIM_LIBRARY}
+                       ${DTANIM_LIBRARY}
                        ${DTDAL_LIBRARY}
-					   ${DTDIRECTOR_LIBRARY}
-					   ${DTDIRECTORQT_LIBRARY}
+                       ${DTDIRECTOR_LIBRARY}
+                       ${DTDIRECTORQT_LIBRARY}
                        ${QT_QTCORE_LIBRARY}
                        ${QT_QTGUI_LIBRARY}
                        ${QT_QTOPENGL_LIBRARY}
