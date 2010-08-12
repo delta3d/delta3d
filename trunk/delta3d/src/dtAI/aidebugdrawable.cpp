@@ -89,8 +89,10 @@ namespace dtAI
          mWaypointIDs = new osg::UIntArray();
          mWaypointPairs = new osg::UIntArray();
          mVerts = new osg::Vec3Array();
+         mWaypointColors = new osg::Vec4Array();
 
          mWaypointGeometry->setVertexArray(mVerts.get());
+         mWaypointGeometry->setColorArray(mWaypointColors.get());
          mNavMeshGeometry->setVertexArray(mVerts.get());
 
          mNode->addChild(mGeodeWayPoints.get());
@@ -100,8 +102,7 @@ namespace dtAI
          mGeodeNavMesh->addDrawable(mNavMeshGeometry.get());
          mGeodeWayPoints->addDrawable(mWaypointGeometry.get());
 
-         mWaypointGeometry->setColorBinding(osg::Geometry::BIND_OVERALL);
-
+         mWaypointGeometry->setColorBinding(osg::Geometry::BIND_PER_VERTEX);
          mNavMeshGeometry->setColorBinding(osg::Geometry::BIND_OVERALL);
 
          mRenderInfo->Init();
@@ -137,9 +138,11 @@ namespace dtAI
             mGeodeWayPoints->setNodeMask(0);
          }
 
-         osg::Vec4Array* waypointColors = new osg::Vec4Array(1);
-         (*waypointColors)[0] = mRenderInfo->GetWaypointColor();
-         mWaypointGeometry->setColorArray(waypointColors);
+         for (size_t colorIndex = 0; colorIndex < mWaypointColors->size(); ++colorIndex)
+         {
+            (*mWaypointColors)[colorIndex] = mRenderInfo->GetWaypointColor();
+         }
+         mWaypointGeometry->setColorArray(mWaypointColors);
 
          osg::Vec4Array* navmeshColors = new osg::Vec4Array(1);
          (*navmeshColors)[0] = mRenderInfo->GetNavMeshColor();
@@ -158,6 +161,7 @@ namespace dtAI
          //seems like there should be a generic dirty()- does this only work with display lists?
          mWaypointGeometry->dirtyDisplayList();
          mWaypointGeometry->setVertexArray(mVerts.get());
+         mWaypointGeometry->setColorArray(mWaypointColors.get());
 
          if (mWaypointGeometry->getNumPrimitiveSets() > 0)
          {
@@ -215,6 +219,7 @@ namespace dtAI
 
       dtCore::RefPtr<osg::UIntArray> mWaypointIDs;
       dtCore::RefPtr<osg::Vec3Array> mVerts;
+      dtCore::RefPtr<osg::Vec4Array> mWaypointColors;
       dtCore::RefPtr<osg::UIntArray> mWaypointPairs;
       dtCore::RefPtr<osg::Geometry> mWaypointGeometry;
       dtCore::RefPtr<osg::Geometry> mNavMeshGeometry;
@@ -368,6 +373,8 @@ namespace dtAI
       {
          mImpl->mWaypointIDs->push_back(wp.GetID());
          mImpl->mVerts->push_back(wp.GetPosition());
+         mImpl->mWaypointColors->push_back(mImpl->mRenderInfo->GetWaypointColor());
+
          dtCore::RefPtr<RenderData> newRenderData = new RenderData;
          mImpl->mRenderData.insert(std::make_pair(wp.GetID(), newRenderData));
 
@@ -389,12 +396,14 @@ namespace dtAI
          //since this data is easily copied we can perform a faster erase
          //we simply copy the last element to the place of the element to be removed
          //and then we pop off the last element
-         //it should be noted that order is not preserved.... if this matters we will need to revist this
+         //it should be noted that order is not preserved.... if this matters we will need to revisit this
          (*mImpl->mVerts)[loc].set((*mImpl->mVerts)[mImpl->mVerts->size() - 1]);
          (*mImpl->mWaypointIDs)[loc] = (*mImpl->mWaypointIDs)[mImpl->mWaypointIDs->size() - 1];
+         (*mImpl->mWaypointColors)[loc] = (*mImpl->mWaypointColors)[mImpl->mWaypointColors->size() - 1];
 
          mImpl->mVerts->pop_back();
          mImpl->mWaypointIDs->pop_back();
+         mImpl->mWaypointColors->pop_back();
 
          RenderDataMap::iterator i = mImpl->mRenderData.find(id);
          if (i != mImpl->mRenderData.end())
