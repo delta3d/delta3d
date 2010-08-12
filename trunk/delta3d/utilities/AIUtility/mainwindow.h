@@ -101,7 +101,7 @@ public slots:
    void OnWaypointBrowserShowHide(bool);
    void OnChildRequestCameraTransformChange(const dtCore::Transform& xform);
 
-   void OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>& waypoints);
+   void OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>& selectedWaypoints);
 
 private:
    void ChangeMap(const QString& newMap);
