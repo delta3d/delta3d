@@ -245,8 +245,13 @@ void Application::Frame(const double deltaSimTime)
          mFirstFrame = false;
       }
 
-      dtCore::ObserverPtr<osgViewer::GraphicsWindow> gw = GetWindow()->GetOsgViewerGraphicsWindow();
-      if (!singleThreaded && gw->isRealized() && gw->isCurrent())
+      dtCore::ObserverPtr<osgViewer::GraphicsWindow> gw;
+      if (GetWindow() != NULL)
+      {
+         gw = GetWindow()->GetOsgViewerGraphicsWindow();
+      }
+
+      if (!singleThreaded && gw.valid() && gw->isRealized() && gw->isCurrent())
       {
          gw->releaseContext();
       }
