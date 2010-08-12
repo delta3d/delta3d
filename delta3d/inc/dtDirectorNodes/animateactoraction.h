@@ -27,6 +27,13 @@
 #include <dtDirector/actionnode.h>
 #include <dtDirectorNodes/nodelibraryexport.h>
 
+#include <cal3d/global.h>
+
+
+#if CAL3D_VERSION >= 1300
+   #define MANUAL_ANIMATIONS
+#endif
+
 namespace dtDirector
 {
    ////////////////////////////////////////////////////////////////////////////////
@@ -48,6 +55,10 @@ namespace dtDirector
          float       mBlendInTime;
          float       mBlendOutTime;
          float       mWeight;
+
+#ifdef MANUAL_ANIMATIONS
+         int         mAnimation;
+#endif
       };
 
       /**
