@@ -66,7 +66,7 @@ MainWindow::MainWindow(QWidget& mainWidget)
 : mUi(new Ui::MainWindow)
 , mCentralWidget(mainWidget)
 , mPropertyEditor(*new AIPropertyEditor(*this))
-, mWaypointBrowser(*new WaypointBrowser(*this))
+, mWaypointBrowser(NULL)
 , mPluginInterface(NULL)
 {
    mUi->setupUi(this);
@@ -81,33 +81,6 @@ MainWindow::MainWindow(QWidget& mainWidget)
    setCentralWidget(centerFrame);
 
    mCurrentCameraTransform.MakeIdentity();
-
-   connect(mUi->mActionOpenMap, SIGNAL(triggered()), this, SLOT(OnOpenMap()));
-   connect(mUi->mActionCloseMap, SIGNAL(triggered()), this, SLOT(OnCloseMap()));
-   connect(mUi->mActionSave, SIGNAL(triggered()), this, SLOT(OnSave()));
-   connect(mUi->mChangeContextAction, SIGNAL(triggered()), this, SLOT(ChangeProjectContext()));
-   connect(mUi->mActionRenderingOptions, SIGNAL(triggered()), this, SLOT(SelectRenderingOptions()));
-   connect(mUi->mActionAddEdge, SIGNAL(triggered()), this, SLOT(OnAddEdge()));
-   connect(mUi->mActionRemoveEdge, SIGNAL(triggered()), this, SLOT(OnRemoveEdge()));
-   connect(mUi->mActionDeleteSelectedWaypoints, SIGNAL(triggered()), this, SLOT(OnDeleteSelectedWaypoints()));
-
-   connect(mUi->mActionPropertyEditorVisible, SIGNAL(toggled(bool)), this, SLOT(OnPropertyEditorShowHide(bool)));
-   connect(mUi->mActionWaypointBrowserVisible, SIGNAL(toggled(bool)), this, SLOT(OnWaypointBrowserShowHide(bool)));
-
-   connect(&mPropertyEditor, SIGNAL(SignalPropertyChangedFromControl(dtDAL::PropertyContainer&, dtDAL::ActorProperty&)),
-            this, SLOT(PropertyChangedFromControl(dtDAL::PropertyContainer&, dtDAL::ActorProperty&)));
-
-   connect(&mWaypointBrowser, SIGNAL(RequestCameraTransformChange(const dtCore::Transform&)),
-            this, SLOT(OnChildRequestCameraTransformChange(const dtCore::Transform&)));
-
-   connect(&WaypointSelection::GetInstance(), SIGNAL(WaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>&)),
-           this, SLOT(OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>&)));  
-
-   addDockWidget(Qt::LeftDockWidgetArea, &mPropertyEditor);
-   addDockWidget(Qt::RightDockWidgetArea, &mWaypointBrowser);
-
-   mPropertyEditor.installEventFilter(this);
-   mWaypointBrowser.installEventFilter(this);
 
    mUndoStack = new QUndoStack(this);
    mUi->undoView->setStack(mUndoStack);
@@ -127,6 +100,35 @@ MainWindow::MainWindow(QWidget& mainWidget)
    mUi->toolBar->addSeparator();
    mUi->toolBar->addAction(undoAction);
    mUi->toolBar->addAction(redoAction);
+
+   mWaypointBrowser = new WaypointBrowser(*mUndoStack, this);
+
+   connect(mUi->mActionOpenMap, SIGNAL(triggered()), this, SLOT(OnOpenMap()));
+   connect(mUi->mActionCloseMap, SIGNAL(triggered()), this, SLOT(OnCloseMap()));
+   connect(mUi->mActionSave, SIGNAL(triggered()), this, SLOT(OnSave()));
+   connect(mUi->mChangeContextAction, SIGNAL(triggered()), this, SLOT(ChangeProjectContext()));
+   connect(mUi->mActionRenderingOptions, SIGNAL(triggered()), this, SLOT(SelectRenderingOptions()));
+   connect(mUi->mActionAddEdge, SIGNAL(triggered()), this, SLOT(OnAddEdge()));
+   connect(mUi->mActionRemoveEdge, SIGNAL(triggered()), this, SLOT(OnRemoveEdge()));
+   connect(mUi->mActionDeleteSelectedWaypoints, SIGNAL(triggered()), mWaypointBrowser, SLOT(OnDelete()));
+
+   connect(mUi->mActionPropertyEditorVisible, SIGNAL(toggled(bool)), this, SLOT(OnPropertyEditorShowHide(bool)));
+   connect(mUi->mActionWaypointBrowserVisible, SIGNAL(toggled(bool)), this, SLOT(OnWaypointBrowserShowHide(bool)));
+
+   connect(&mPropertyEditor, SIGNAL(SignalPropertyChangedFromControl(dtDAL::PropertyContainer&, dtDAL::ActorProperty&)),
+            this, SLOT(PropertyChangedFromControl(dtDAL::PropertyContainer&, dtDAL::ActorProperty&)));
+
+   connect(mWaypointBrowser, SIGNAL(RequestCameraTransformChange(const dtCore::Transform&)),
+            this, SLOT(OnChildRequestCameraTransformChange(const dtCore::Transform&)));
+
+   connect(&WaypointSelection::GetInstance(), SIGNAL(WaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>&)),
+           this, SLOT(OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>&)));  
+
+   addDockWidget(Qt::LeftDockWidgetArea, &mPropertyEditor);
+   addDockWidget(Qt::RightDockWidgetArea, mWaypointBrowser);
+
+   mPropertyEditor.installEventFilter(this);
+   mWaypointBrowser->installEventFilter(this);
 }
 
 //////////////////////////////////////////////
@@ -277,7 +279,7 @@ void MainWindow::EnableOrDisableControls()
    // since the map doesn't change immediately in the GM, we can't just change maps.
    mUi->mChangeContextAction->setEnabled(mCurrentMapName.isEmpty());
 
-   mUi->mActionWaypointBrowserVisible->setChecked(mWaypointBrowser.isVisible());
+   mUi->mActionWaypointBrowserVisible->setChecked(mWaypointBrowser->isVisible());
    mUi->mActionPropertyEditorVisible->setChecked(mPropertyEditor.isVisible());
 }
 
@@ -295,7 +297,7 @@ void MainWindow::SetAIPluginInterface(dtAI::AIPluginInterface* interface)
    // clear the selection
    dtQt::BasePropertyEditor::PropertyContainerRefPtrVector selected;
    mPropertyEditor.HandlePropertyContainersSelected(selected);
-   mWaypointBrowser.SetPluginInterface(interface);
+   mWaypointBrowser->SetPluginInterface(interface);
 
    if (interface == NULL && !mCurrentMapName.isEmpty())
    {
@@ -324,7 +326,7 @@ bool MainWindow::eventFilter(QObject* object, QEvent* event)
          mUi->mActionPropertyEditorVisible->setChecked(false);
          result = true;
       }
-      else if (object == &mWaypointBrowser)
+      else if (object == mWaypointBrowser)
       {
          mUi->mActionWaypointBrowserVisible->setChecked(false);
          result = true;
@@ -363,33 +365,6 @@ void MainWindow::OnRemoveEdge()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void MainWindow::OnDeleteSelectedWaypoints()
-{
-   std::vector<dtAI::WaypointInterface*>& waypointList =
-      WaypointSelection::GetInstance().GetWaypointList();
-
-   for (size_t pointIndex = 0; pointIndex < waypointList.size(); ++pointIndex)
-   {
-      dtAI::WaypointInterface* wp = waypointList[pointIndex];
-      if (wp)
-      {
-         QUndoCommand* command = new DeleteWaypointCommand(*wp, mPluginInterface);
-
-         if (mPluginInterface->RemoveWaypoint(wp))
-         {
-            mUndoStack->push(command);
-         }
-         else
-         {
-            delete command;
-         }
-      }
-   }
-
-   WaypointSelection::GetInstance().DeselectAllWaypoints();
-}
-
-////////////////////////////////////////////////////////////////////////////////
 void MainWindow::PropertyChangedFromControl(dtDAL::PropertyContainer& pc, dtDAL::ActorProperty& ap)
 {
    dtAI::WaypointRenderInfo& ri = mPluginInterface->GetDebugDrawable()->GetRenderInfo();
@@ -403,7 +378,7 @@ void MainWindow::PropertyChangedFromControl(dtDAL::PropertyContainer& pc, dtDAL:
 void MainWindow::OnCameraTransformChanged(const dtCore::Transform& xform)
 {
    mCurrentCameraTransform = xform;
-   mWaypointBrowser.SetCameraTransform(xform);
+   mWaypointBrowser->SetCameraTransform(xform);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -471,7 +446,7 @@ void MainWindow::OnPropertyEditorShowHide(bool checked)
 ////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnWaypointBrowserShowHide(bool checked)
 {
-   mWaypointBrowser.setVisible(checked);
+   mWaypointBrowser->setVisible(checked);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
