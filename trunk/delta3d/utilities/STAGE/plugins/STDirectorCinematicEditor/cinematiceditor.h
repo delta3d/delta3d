@@ -50,6 +50,8 @@
    #define MANUAL_ANIMATIONS
 #endif
 
+#define NEAR_EQUAL(a, b) (a - 0.001 < b && a + 0.001 > b)
+
 using namespace dtEditQt;
 
 class QAction;
@@ -291,6 +293,20 @@ public slots:
    void OnOutputNameChanged(QString value);
 
    /**
+    * Event handler when the Trigger on Play check box for the output event info is changed.
+    *
+    * @param[in]  value  The new value of the edit box.
+    */
+   void OnOutputTriggerPlay(int value);
+
+   /**
+   * Event handler when the Trigger on Reverse check box for the output event info is changed.
+    *
+    * @param[in]  value  The new value of the edit box.
+    */
+   void OnOutputTriggerReverse(int value);
+
+   /**
     * Event handler when the viewed start time edit has been changed.
     *
     * @param[in]  time  The new current time.
@@ -424,15 +440,19 @@ private:
    // Event Data
    struct OutputData
    {
-      OutputData(int time, const std::string& name, KeyFrameEvent* event)
+      OutputData(int time, const std::string& name, bool triggerPlay, bool triggerReverse, KeyFrameEvent* event)
       {
          mTime = time;
          mName = name;
+         mTriggerPlay = triggerPlay;
+         mTriggerReverse = triggerReverse;
          mEvent = event;
       }
 
       int            mTime;
       std::string    mName;
+      bool           mTriggerPlay;
+      bool           mTriggerReverse;
 
       KeyFrameEvent* mEvent;
    };
@@ -498,13 +518,15 @@ private:
    /**
     * Inserts an output event into the list, sorted by time.
     *
-    * @param[in]  time       The time.
-    * @param[in]  name       The output name.
-    * @param[in]  event      If provided, this will use the given event instead of creating a new one.
+    * @param[in]  time            The time.
+    * @param[in]  name            The output name.
+    * @param[in]  triggerPlay     True to trigger output on normal play.
+    * @param[in]  triggerReverse  True to trigger output on reverse.
+    * @param[in]  event           If provided, this will use the given event instead of creating a new one.
     *
     * @return     The new event.
     */
-   KeyFrameEvent* InsertOutput(int time, const std::string& name, KeyFrameEvent* event = NULL);
+   KeyFrameEvent* InsertOutput(int time, const std::string& name, bool triggerPlay, bool triggerReverse, KeyFrameEvent* event = NULL);
 
    /**
     * Retrieves the transform data for a given event.

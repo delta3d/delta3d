@@ -40,6 +40,7 @@
 #include <dtDAL/containeractorproperty.h>
 #include <dtDAL/stringactorproperty.h>
 #include <dtDAL/floatactorproperty.h>
+#include <dtDAL/booleanactorproperty.h>
 
 #include <QtCore/QTimeLine>
 
@@ -106,15 +107,15 @@ void DirectorCinematicEditorPlugin::Initialize()
    connect(mUI.mAddTransformButton, SIGNAL(clicked()), this, SLOT(OnAddTransform()));
    connect(mUI.mRemoveTransformButton, SIGNAL(clicked()), this, SLOT(OnRemoveTransform()));
 
-   connect(mUI.mPosXEdit, SIGNAL(textEdited(QString)), this, SLOT(OnPosXChanged(QString)));
-   connect(mUI.mPosYEdit, SIGNAL(textEdited(QString)), this, SLOT(OnPosYChanged(QString)));
-   connect(mUI.mPosZEdit, SIGNAL(textEdited(QString)), this, SLOT(OnPosZChanged(QString)));
-   connect(mUI.mRotXEdit, SIGNAL(textEdited(QString)), this, SLOT(OnRotXChanged(QString)));
-   connect(mUI.mRotYEdit, SIGNAL(textEdited(QString)), this, SLOT(OnRotYChanged(QString)));
-   connect(mUI.mRotZEdit, SIGNAL(textEdited(QString)), this, SLOT(OnRotZChanged(QString)));
-   connect(mUI.mScaleXEdit, SIGNAL(textEdited(QString)), this, SLOT(OnScaleXChanged(QString)));
-   connect(mUI.mScaleYEdit, SIGNAL(textEdited(QString)), this, SLOT(OnScaleYChanged(QString)));
-   connect(mUI.mScaleZEdit, SIGNAL(textEdited(QString)), this, SLOT(OnScaleZChanged(QString)));
+   connect(mUI.mTransformPosXEdit, SIGNAL(textEdited(QString)), this, SLOT(OnPosXChanged(QString)));
+   connect(mUI.mTransformPosYEdit, SIGNAL(textEdited(QString)), this, SLOT(OnPosYChanged(QString)));
+   connect(mUI.mTransformPosZEdit, SIGNAL(textEdited(QString)), this, SLOT(OnPosZChanged(QString)));
+   connect(mUI.mTransformRotXEdit, SIGNAL(textEdited(QString)), this, SLOT(OnRotXChanged(QString)));
+   connect(mUI.mTransformRotYEdit, SIGNAL(textEdited(QString)), this, SLOT(OnRotYChanged(QString)));
+   connect(mUI.mTransformRotZEdit, SIGNAL(textEdited(QString)), this, SLOT(OnRotZChanged(QString)));
+   connect(mUI.mTransformScaleXEdit, SIGNAL(textEdited(QString)), this, SLOT(OnScaleXChanged(QString)));
+   connect(mUI.mTransformScaleYEdit, SIGNAL(textEdited(QString)), this, SLOT(OnScaleYChanged(QString)));
+   connect(mUI.mTransformScaleZEdit, SIGNAL(textEdited(QString)), this, SLOT(OnScaleZChanged(QString)));
 
    // Animation Event Track.
    connect(mUI.mAnimationTrack, SIGNAL(EventSelected(BaseEvent*)), this, SLOT(OnAnimationEventSelected(BaseEvent*)));
@@ -138,6 +139,8 @@ void DirectorCinematicEditorPlugin::Initialize()
    connect(mUI.mAddOutputButton, SIGNAL(clicked()), this, SLOT(OnAddOutput()));
    connect(mUI.mRemoveOutputButton, SIGNAL(clicked()), this, SLOT(OnRemoveOutput()));
    connect(mUI.mOutputNameEdit, SIGNAL(textEdited(QString)), this, SLOT(OnOutputNameChanged(QString)));
+   connect(mUI.mOutputTriggerPlay, SIGNAL(stateChanged(int)), this, SLOT(OnOutputTriggerPlay(int)));
+   connect(mUI.mOutputTriggerReverse, SIGNAL(stateChanged(int)), this, SLOT(OnOutputTriggerReverse(int)));
 
    // Create a time line.
    mTimeLine = new QTimeLine(1000, this);
@@ -211,6 +214,10 @@ void DirectorCinematicEditorPlugin::ResetUI()
    }
    mUI.mActorCombo->blockSignals(false);
 
+   OnTransformEventSelected(NULL);
+   OnAnimationEventSelected(NULL);
+   OnOutputEventSelected(NULL);
+
    mUI.mTransformTrack->ClearEvents();
    mUI.mAnimationTrack->ClearEvents();
    mUI.mAnimationCombo->clear();
@@ -278,7 +285,8 @@ void DirectorCinematicEditorPlugin::ResetUI()
          for (int index = 0; index < count; ++index)
          {
             AnimationData& data = anims[index];
-            data.mEvent = new AnimationEvent(data.mTime, data.mTime + (data.mDuration * 1000));
+            int duration = (data.mEndTime - data.mStartTime) * 1000 / data.mSpeed;
+            data.mEvent = new AnimationEvent(data.mTime, data.mTime + duration);
             data.mEvent->SetBlendIn(data.mBlendInTime * 1000);
             data.mEvent->SetBlendOut(data.mBlendOutTime * 1000);
             data.mEvent->SetWeight(data.mWeight);
@@ -294,9 +302,6 @@ void DirectorCinematicEditorPlugin::ResetUI()
    }
 
    mUI.mOutputTrack->setEnabled(true);
-   OnTransformEventSelected(NULL);
-   OnAnimationEventSelected(NULL);
-   OnOutputEventSelected(NULL);
    OnTimeSliderValueChanged(mUI.mTimeSlider->value());
 
    float startTime = mUI.mStartTimeEdit->value();
@@ -314,7 +319,7 @@ void DirectorCinematicEditorPlugin::ResetUI()
    mUI.mSelectionTrack->SetMaximum(endTime * 1000);
    mUI.mTimeSlider->setMaximum(endTime * 1000);
 
-   mUI.mTotalTimeEdit->setValue(mTotalTime);
+   if (!NEAR_EQUAL(mUI.mTotalTimeEdit->value(), mTotalTime)) mUI.mTotalTimeEdit->setValue(mTotalTime);
 
    std::vector<dtDAL::ActorProxy*> selection;
    EditorData::GetInstance().GetSelectedActors(selection);
@@ -639,15 +644,15 @@ void DirectorCinematicEditorPlugin::OnTransformEventSelected(BaseEvent* event)
          osg::Vec3 scale = data->mScale;
          canScale = data->mCanScale;
 
-         mUI.mPosXEdit->setText(dtUtil::ToString(pos.x()).c_str());
-         mUI.mPosYEdit->setText(dtUtil::ToString(pos.y()).c_str());
-         mUI.mPosZEdit->setText(dtUtil::ToString(pos.z()).c_str());
-         mUI.mRotXEdit->setText(dtUtil::ToString(rot.x()).c_str());
-         mUI.mRotYEdit->setText(dtUtil::ToString(rot.y()).c_str());
-         mUI.mRotZEdit->setText(dtUtil::ToString(rot.z()).c_str());
-         mUI.mScaleXEdit->setText(dtUtil::ToString(scale.x()).c_str());
-         mUI.mScaleYEdit->setText(dtUtil::ToString(scale.y()).c_str());
-         mUI.mScaleZEdit->setText(dtUtil::ToString(scale.z()).c_str());
+         mUI.mTransformPosXEdit->setText(dtUtil::ToString(pos.x()).c_str());
+         mUI.mTransformPosYEdit->setText(dtUtil::ToString(pos.y()).c_str());
+         mUI.mTransformPosZEdit->setText(dtUtil::ToString(pos.z()).c_str());
+         mUI.mTransformRotXEdit->setText(dtUtil::ToString(rot.x()).c_str());
+         mUI.mTransformRotYEdit->setText(dtUtil::ToString(rot.y()).c_str());
+         mUI.mTransformRotZEdit->setText(dtUtil::ToString(rot.z()).c_str());
+         mUI.mTransformScaleXEdit->setText(dtUtil::ToString(scale.x()).c_str());
+         mUI.mTransformScaleYEdit->setText(dtUtil::ToString(scale.y()).c_str());
+         mUI.mTransformScaleZEdit->setText(dtUtil::ToString(scale.z()).c_str());
       }
    }
    else
@@ -657,15 +662,15 @@ void DirectorCinematicEditorPlugin::OnTransformEventSelected(BaseEvent* event)
       mUI.mTransformTrack->DeselectEvents();
    }
 
-   mUI.mPosXEdit->setEnabled(enable);
-   mUI.mPosYEdit->setEnabled(enable);
-   mUI.mPosZEdit->setEnabled(enable);
-   mUI.mRotXEdit->setEnabled(enable);
-   mUI.mRotYEdit->setEnabled(enable);
-   mUI.mRotZEdit->setEnabled(enable);
-   mUI.mScaleXEdit->setEnabled(enable && canScale);
-   mUI.mScaleYEdit->setEnabled(enable && canScale);
-   mUI.mScaleZEdit->setEnabled(enable && canScale);
+   mUI.mTransformPosXEdit->setEnabled(enable);
+   mUI.mTransformPosYEdit->setEnabled(enable);
+   mUI.mTransformPosZEdit->setEnabled(enable);
+   mUI.mTransformRotXEdit->setEnabled(enable);
+   mUI.mTransformRotYEdit->setEnabled(enable);
+   mUI.mTransformRotZEdit->setEnabled(enable);
+   mUI.mTransformScaleXEdit->setEnabled(enable && canScale);
+   mUI.mTransformScaleYEdit->setEnabled(enable && canScale);
+   mUI.mTransformScaleZEdit->setEnabled(enable && canScale);
 
    mTransformEvent = transformEvent;
 }
@@ -971,12 +976,12 @@ void DirectorCinematicEditorPlugin::OnAnimationEventSelected(BaseEvent* event)
          int index = mUI.mAnimationCombo->findText(data->mName.c_str());
          mUI.mAnimationCombo->setCurrentIndex(index);
          mUI.mAnimationDurationText->setText(dtUtil::ToString(data->mDuration).c_str());
-         mUI.mAnimationSpeedEdit->setValue(data->mSpeed);
-         mUI.mAnimationStartTimeEdit->setValue(data->mStartTime);
-         mUI.mAnimationEndTimeEdit->setValue(data->mEndTime);
-         mUI.mAnimationFadeInTimeEdit->setValue(data->mBlendInTime);
-         mUI.mAnimationFadeOutTimeEdit->setValue(data->mBlendOutTime);
-         mUI.mAnimationWeightEdit->setValue(data->mWeight);
+         if (!NEAR_EQUAL(mUI.mAnimationSpeedEdit->value(), data->mSpeed)) mUI.mAnimationSpeedEdit->setValue(data->mSpeed);
+         if (!NEAR_EQUAL(mUI.mAnimationStartTimeEdit->value(), data->mStartTime)) mUI.mAnimationStartTimeEdit->setValue(data->mStartTime);
+         if (!NEAR_EQUAL(mUI.mAnimationEndTimeEdit->value(), data->mEndTime)) mUI.mAnimationEndTimeEdit->setValue(data->mEndTime);
+         if (!NEAR_EQUAL(mUI.mAnimationFadeInTimeEdit->value(), data->mBlendInTime)) mUI.mAnimationFadeInTimeEdit->setValue(data->mBlendInTime);
+         if (!NEAR_EQUAL(mUI.mAnimationFadeOutTimeEdit->value(), data->mBlendOutTime)) mUI.mAnimationFadeOutTimeEdit->setValue(data->mBlendOutTime);
+         if (!NEAR_EQUAL(mUI.mAnimationWeightEdit->value(), data->mWeight)) mUI.mAnimationWeightEdit->setValue(data->mWeight);
 
          mUI.mAnimationCombo->blockSignals(false);
          mUI.mAnimationDurationText->blockSignals(false);
@@ -997,9 +1002,13 @@ void DirectorCinematicEditorPlugin::OnAnimationEventSelected(BaseEvent* event)
 
    mUI.mAnimationCombo->setEnabled(enable);
    mUI.mAnimationDurationText->setEnabled(enable);
+#ifdef MANUAL_ANIMATIONS
+   mUI.mAnimationSpeedEdit->setEnabled(enable);
+#else
    mUI.mAnimationSpeedEdit->setEnabled(false);
-   mUI.mAnimationStartTimeEdit->setEnabled(false);
-   mUI.mAnimationEndTimeEdit->setEnabled(false);
+#endif
+   mUI.mAnimationStartTimeEdit->setEnabled(enable);
+   mUI.mAnimationEndTimeEdit->setEnabled(enable);
    mUI.mAnimationFadeInTimeEdit->setEnabled(enable);
    mUI.mAnimationFadeOutTimeEdit->setEnabled(enable);
    mUI.mAnimationWeightEdit->setEnabled(enable);
@@ -1094,6 +1103,7 @@ void DirectorCinematicEditorPlugin::OnAnimationComboChanged(int index)
       }
    }
 
+   CalMixer* calMixer = animActor->GetHelper()->GetModelWrapper()->GetCalModel()->getMixer();
    dtAnim::SequenceMixer& mixer = animActor->GetHelper()->GetSequenceMixer();
    const dtAnim::AnimationChannel* anim = dynamic_cast<const dtAnim::AnimationChannel*>(mixer.GetRegisteredAnimation(animName));
    if (anim)
@@ -1116,8 +1126,19 @@ void DirectorCinematicEditorPlugin::OnAnimationComboChanged(int index)
             data->mBlendOutTime *= blendMod;
          }
 
+#ifdef MANUAL_ANIMATIONS
+         if (data->mAnimation > -1)
+         {
+            calMixer->removeManualAnimation(data->mAnimation);
+            animActor->GetHelper()->Update(0.0f);
+            data->mAnimation = -1;
+
+            LerpActors(mUI.mTimeSlider->value());
+         }
+#else
          mixer.ClearActiveAnimations(0.0f);
          mixer.Update(0.0f);
+#endif
 
          mAnimationEvent->SetEndTime(mAnimationEvent->GetStartTime() + (((data->mDuration * 1000) - (data->mStartTime * 1000) - ((data->mDuration - data->mEndTime) * 1000)) / data->mSpeed));
          mAnimationEvent->SetBlendIn(data->mBlendInTime * 1000);
@@ -1313,7 +1334,17 @@ void DirectorCinematicEditorPlugin::OnOutputEventSelected(BaseEvent* event)
 
       if (data)
       {
+         mUI.mOutputNameEdit->blockSignals(true);
+         mUI.mOutputTriggerPlay->blockSignals(true);
+         mUI.mOutputTriggerReverse->blockSignals(true);
+
          mUI.mOutputNameEdit->setText(data->mName.c_str());
+         mUI.mOutputTriggerPlay->setChecked(data->mTriggerPlay);
+         mUI.mOutputTriggerReverse->setChecked(data->mTriggerReverse);
+
+         mUI.mOutputNameEdit->blockSignals(false);
+         mUI.mOutputTriggerPlay->blockSignals(false);
+         mUI.mOutputTriggerReverse->blockSignals(false);
       }
    }
    else
@@ -1324,6 +1355,8 @@ void DirectorCinematicEditorPlugin::OnOutputEventSelected(BaseEvent* event)
    }
 
    mUI.mOutputNameEdit->setEnabled(enable);
+   mUI.mOutputTriggerPlay->setEnabled(enable);
+   mUI.mOutputTriggerReverse->setEnabled(enable);
 
    mOutputEvent = keyEvent;
 }
@@ -1340,7 +1373,7 @@ void DirectorCinematicEditorPlugin::OnOutputEventTimesChanged(int start, int end
 
       mOutputData.erase(mOutputData.begin() + index);
 
-      InsertOutput(sortData.mTime, sortData.mName, mOutputEvent);
+      InsertOutput(sortData.mTime, sortData.mName, sortData.mTriggerPlay, sortData.mTriggerReverse, mOutputEvent);
    }
 
    OnOutputEventSelected(mOutputEvent);
@@ -1363,7 +1396,7 @@ void DirectorCinematicEditorPlugin::OnAddOutput()
 {
    int time = mUI.mTimeSlider->value();
 
-   mOutputEvent = InsertOutput(time, "Output Name");
+   mOutputEvent = InsertOutput(time, "Output Name", true, true);
    OnOutputEventSelected(mOutputEvent);
 }
 
@@ -1383,6 +1416,26 @@ void DirectorCinematicEditorPlugin::OnOutputNameChanged(QString value)
    if (data)
    {
       data->mName = value.toStdString();
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void DirectorCinematicEditorPlugin::OnOutputTriggerPlay(int value)
+{
+   OutputData* data = GetOutputData(mOutputEvent);
+   if (data)
+   {
+      data->mTriggerPlay = value;
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void DirectorCinematicEditorPlugin::OnOutputTriggerReverse(int value)
+{
+   OutputData* data = GetOutputData(mOutputEvent);
+   if (data)
+   {
+      data->mTriggerReverse = value;
    }
 }
 
@@ -1416,23 +1469,22 @@ void DirectorCinematicEditorPlugin::OnTotalTimeChanged(double time)
    // If there is no duration, force at least one second.
    if (time <= 0.0)
    {
-      mUI.mTotalTimeEdit->setValue(1.0);
-      time = 1.0;
+      mUI.mTotalTimeEdit->setValue(0.1);
+      time = 0.1;
    }
 
+   float oldTime = mTotalTime;
+   mTotalTime = (float)time;
    mUI.mEndTimeEdit->setMaximum(time);
 
    // Increase the viewed end time if we are viewing up to the total time.
-   if (mUI.mEndTimeEdit->value() > mTotalTime - 0.001 &&
-      mUI.mEndTimeEdit->value() < mTotalTime + 0.001)
+   if NEAR_EQUAL(oldTime, mUI.mEndTimeEdit->value())
    {
       mUI.mEndTimeEdit->blockSignals(true);
       mUI.mEndTimeEdit->setValue(time);
       mUI.mStartTimeEdit->setMaximum(time - 0.01);
       mUI.mEndTimeEdit->blockSignals(false);
    }
-
-   mTotalTime = (float)time;
 
    OnTimeLineFinished();
 
@@ -1573,17 +1625,19 @@ void DirectorCinematicEditorPlugin::OnLoad()
          dtDAL::ContainerActorProperty* containerProp = dynamic_cast<dtDAL::ContainerActorProperty*>(arrayProp->GetArrayProperty());
          if (containerProp)
          {
-            dtDAL::StringActorProperty* nameProp = dynamic_cast<dtDAL::StringActorProperty*>(containerProp->GetProperty(0));
-            dtDAL::FloatActorProperty*  timeProp = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty(1));
+            dtDAL::StringActorProperty*  nameProp    = dynamic_cast<dtDAL::StringActorProperty*>(containerProp->GetProperty(0));
+            dtDAL::FloatActorProperty*   timeProp    = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty(1));
+            dtDAL::BooleanActorProperty* playProp    = dynamic_cast<dtDAL::BooleanActorProperty*>(containerProp->GetProperty(2));
+            dtDAL::BooleanActorProperty* reverseProp = dynamic_cast<dtDAL::BooleanActorProperty*>(containerProp->GetProperty(3));
 
-            if (nameProp && timeProp)
+            if (nameProp && timeProp && playProp && reverseProp)
             {
                int count = arrayProp->GetArraySize();
                for (int index = 0; index < count; ++index)
                {
                   arrayProp->SetIndex(index);
 
-                  InsertOutput(timeProp->GetValue() * 1000, nameProp->GetValue());
+                  InsertOutput(timeProp->GetValue() * 1000, nameProp->GetValue(), playProp->GetValue(), reverseProp->GetValue());
                }
             }
          }
@@ -1637,7 +1691,13 @@ void DirectorCinematicEditorPlugin::OnLoad()
                      }
                   }
                }
+
+               dtAnim::AnimationGameActor* animActor = NULL;
+               animActor = dynamic_cast<dtAnim::AnimationGameActor*>(actorData.mActor->GetActor());
+               if (animActor)
                {
+                  dtAnim::SequenceMixer& mixer = animActor->GetHelper()->GetSequenceMixer();
+
                   // Load our scheduled animation list.
                   dtDAL::ArrayActorPropertyBase* arrayProp = dynamic_cast<dtDAL::ArrayActorPropertyBase*>(node->GetProperty("Animations"));
                   if (arrayProp)
@@ -1651,8 +1711,10 @@ void DirectorCinematicEditorPlugin::OnLoad()
                         dtDAL::FloatActorProperty*  blendInProp = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty(3));
                         dtDAL::FloatActorProperty*  blendOutProp = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty(4));
                         dtDAL::FloatActorProperty*  weightProp = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty(5));
+                        dtDAL::FloatActorProperty*  offsetProp = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty(6));
+                        dtDAL::FloatActorProperty*  speedProp = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty(7));
 
-                        if (nameProp && timeProp && durationProp && blendInProp && blendOutProp && weightProp)
+                        if (nameProp && timeProp && durationProp && blendInProp && blendOutProp && weightProp && offsetProp && speedProp)
                         {
                            int count = arrayProp->GetArraySize();
                            for (int index = 0; index < count; ++index)
@@ -1662,9 +1724,16 @@ void DirectorCinematicEditorPlugin::OnLoad()
                               arrayProp->SetIndex(index);
 
                               data.mName = nameProp->GetValue();
+                              const dtAnim::AnimationChannel* anim = dynamic_cast<const dtAnim::AnimationChannel*>(mixer.GetRegisteredAnimation(data.mName));
+                              if (anim)
+                              {
+                                 data.mDuration = anim->GetAnimation()->GetDuration();
+                              }
+
+                              data.mSpeed = speedProp->GetValue();
                               data.mTime = timeProp->GetValue() * 1000;
-                              data.mDuration = durationProp->GetValue();
-                              data.mEndTime = data.mDuration;
+                              data.mStartTime = offsetProp->GetValue();
+                              data.mEndTime = (durationProp->GetValue() * data.mSpeed) + data.mStartTime;
                               data.mBlendInTime = blendInProp->GetValue();
                               data.mBlendOutTime = blendOutProp->GetValue();
                               data.mWeight = weightProp->GetValue();
@@ -1991,10 +2060,12 @@ void DirectorCinematicEditorPlugin::OnSave()
          dtDAL::ContainerActorProperty* containerProp = dynamic_cast<dtDAL::ContainerActorProperty*>(arrayProp->GetArrayProperty());
          if (containerProp)
          {
-            dtDAL::StringActorProperty* nameProp = dynamic_cast<dtDAL::StringActorProperty*>(containerProp->GetProperty(0));
-            dtDAL::FloatActorProperty*  timeProp = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty(1));
+            dtDAL::StringActorProperty*  nameProp    = dynamic_cast<dtDAL::StringActorProperty*>(containerProp->GetProperty(0));
+            dtDAL::FloatActorProperty*   timeProp    = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty(1));
+            dtDAL::BooleanActorProperty* playProp    = dynamic_cast<dtDAL::BooleanActorProperty*>(containerProp->GetProperty(2));
+            dtDAL::BooleanActorProperty* reverseProp = dynamic_cast<dtDAL::BooleanActorProperty*>(containerProp->GetProperty(3));
             
-            if (nameProp && timeProp)
+            if (nameProp && timeProp && playProp && reverseProp)
             {
                int outIndex = 0;
 
@@ -2007,6 +2078,8 @@ void DirectorCinematicEditorPlugin::OnSave()
                   arrayProp->SetIndex(outIndex);
                   nameProp->SetValue(data.mName);
                   timeProp->SetValue(data.mTime * 0.001f);
+                  playProp->SetValue(data.mTriggerPlay);
+                  reverseProp->SetValue(data.mTriggerReverse);
 
                   outIndex++;
                }
@@ -2162,8 +2235,10 @@ void DirectorCinematicEditorPlugin::OnSave()
                      dtDAL::FloatActorProperty*  blendInProp = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty(3));
                      dtDAL::FloatActorProperty*  blendOutProp = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty(4));
                      dtDAL::FloatActorProperty*  weightProp = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty(5));
+                     dtDAL::FloatActorProperty*  offsetProp = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty(6));
+                     dtDAL::FloatActorProperty*  speedProp = dynamic_cast<dtDAL::FloatActorProperty*>(containerProp->GetProperty(7));
 
-                     if (nameProp && timeProp && durationProp && blendInProp && blendOutProp && weightProp)
+                     if (nameProp && timeProp && durationProp && blendInProp && blendOutProp && weightProp && offsetProp && speedProp)
                      {
                         int outIndex = 0;
 
@@ -2171,15 +2246,18 @@ void DirectorCinematicEditorPlugin::OnSave()
                         for (int index = 0; index < count; ++index)
                         {
                            AnimationData& data = actorData.mAnimationData[index];
+                           float duration = (data.mEndTime - data.mStartTime) / data.mSpeed;
 
                            arrayProp->Insert(outIndex);
                            arrayProp->SetIndex(outIndex);
                            nameProp->SetValue(data.mName);
                            timeProp->SetValue(data.mTime * 0.001f);
-                           durationProp->SetValue(data.mDuration);
+                           durationProp->SetValue(duration);
                            blendInProp->SetValue(data.mBlendInTime);
                            blendOutProp->SetValue(data.mBlendOutTime);
                            weightProp->SetValue(data.mWeight);
+                           offsetProp->SetValue(data.mStartTime);
+                           speedProp->SetValue(data.mSpeed);
 
                            outIndex++;
                         }
@@ -2458,7 +2536,7 @@ DirectorCinematicEditorPlugin::TransformData* DirectorCinematicEditorPlugin::Get
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-KeyFrameEvent* DirectorCinematicEditorPlugin::InsertOutput(int time, const std::string& name, KeyFrameEvent* event)
+KeyFrameEvent* DirectorCinematicEditorPlugin::InsertOutput(int time, const std::string& name, bool triggerPlay, bool triggerReverse, KeyFrameEvent* event)
 {
    KeyFrameEvent* newEvent = event;
 
@@ -2475,13 +2553,13 @@ KeyFrameEvent* DirectorCinematicEditorPlugin::InsertOutput(int time, const std::
 
       if (data.mTime >= time)
       {
-         mOutputData.insert(mOutputData.begin() + index, OutputData(time, name, newEvent));
+         mOutputData.insert(mOutputData.begin() + index, OutputData(time, name, triggerPlay, triggerReverse, newEvent));
          return newEvent;
       }
    }
 
    // If we get this far, it means the new transform will be appended to the end instead.
-   mOutputData.push_back(OutputData(time, name, newEvent));
+   mOutputData.push_back(OutputData(time, name, triggerPlay, triggerReverse, newEvent));
    return newEvent;
 }
 
@@ -2539,43 +2617,26 @@ AnimationEvent* DirectorCinematicEditorPlugin::InsertAnimation(AnimationData& an
 {
    if (mSelectedActor == -1) return NULL;
 
-   dtAnim::AnimationGameActor* animActor = NULL;
-   dtCore::Transformable* actor = NULL;
-   mActorData[mSelectedActor].mActor->GetActor(actor);
-   if (actor)
-   {
-      animActor = dynamic_cast<dtAnim::AnimationGameActor*>(actor);
-      if (!animActor)
-      {
-         return NULL;
-      }
-   }
-
    AnimationEvent* newEvent = event;
 
-   dtAnim::SequenceMixer& mixer = animActor->GetHelper()->GetSequenceMixer();
-   const dtAnim::AnimationChannel* anim = dynamic_cast<const dtAnim::AnimationChannel*>(mixer.GetRegisteredAnimation(animData.mName));
-   if (anim)
+   int duration = (animData.mEndTime - animData.mStartTime) * 1000 / animData.mSpeed;
+
+   if (!newEvent)
    {
-      int duration = anim->GetAnimation()->GetDuration() * 1000 / anim->GetSpeed();
-
-      if (!newEvent)
-      {
-         newEvent = new AnimationEvent(animData.mTime, animData.mTime + duration);
-         newEvent->SetBlendIn(animData.mBlendInTime * 1000);
-         newEvent->SetBlendOut(animData.mBlendOutTime * 1000);
-         newEvent->SetWeight(animData.mWeight);
-         mUI.mAnimationTrack->AddEvent(newEvent);
-      }
-      else
-      {
-         newEvent->SetNewTimes(animData.mTime, animData.mTime + duration);
-      }
-
-      animData.mEvent = newEvent;
-
-      InsertAnimation(animData);
+      newEvent = new AnimationEvent(animData.mTime, animData.mTime + duration);
+      newEvent->SetBlendIn(animData.mBlendInTime * 1000);
+      newEvent->SetBlendOut(animData.mBlendOutTime * 1000);
+      newEvent->SetWeight(animData.mWeight);
+      mUI.mAnimationTrack->AddEvent(newEvent);
    }
+   else
+   {
+      newEvent->SetNewTimes(animData.mTime, animData.mTime + duration);
+   }
+
+   animData.mEvent = newEvent;
+
+   InsertAnimation(animData);
 
    return newEvent;
 }
@@ -2728,10 +2789,10 @@ void DirectorCinematicEditorPlugin::LerpActors(int time)
             {
                AnimationData& data = actorData.mAnimationData[index];
 
-               int eventLength = data.mTime + ((data.mEndTime - data.mStartTime) * 1000 / data.mSpeed);
+               int eventLength = ((data.mEndTime - data.mStartTime) * 1000 / data.mSpeed);
 
                // Determine if this current animation should be playing.
-               if (time >= data.mTime && time <= eventLength)
+               if (time >= data.mTime && time <= data.mTime + eventLength)
                {
                   CalAnimationAction* calAnim = NULL;
                   if (data.mAnimation > -1)
@@ -2760,24 +2821,26 @@ void DirectorCinematicEditorPlugin::LerpActors(int time)
 
                   if (calAnim)
                   {
-                     float animTime = (time - data.mTime) * 0.001f;
-                     // Update the current animation time.
-                     calMixer->setManualAnimationTime(calAnim, animTime);
+                     float animTime = ((time - data.mTime) * 0.001f);
+                     float duration = eventLength * 0.001f;
 
-                     // Update the animation weight.
                      float weight = data.mWeight;
-
                      // Blending in.
-                     if (data.mBlendInTime > 0.0f && animTime - data.mStartTime < data.mBlendInTime)
+                     if (data.mBlendInTime > 0.0f && animTime < data.mBlendInTime)
                      {
-                        weight *= (animTime - data.mStartTime) / data.mBlendInTime;
+                        weight *= animTime / data.mBlendInTime;
                      }
                      // Blending out.
-                     else if (data.mBlendOutTime > 0.0f && data.mEndTime - animTime < data.mBlendOutTime)
+                     else if (data.mBlendOutTime > 0.0f && duration - animTime < data.mBlendOutTime)
                      {
-                        weight *= (data.mEndTime - animTime) / data.mBlendOutTime;
+                        weight *= (duration - animTime) / data.mBlendOutTime;
                      }
 
+                     animTime *= data.mSpeed;
+                     animTime += data.mStartTime;
+
+                     // Update the animation.
+                     calMixer->setManualAnimationTime(calAnim, animTime);
                      calMixer->setManualAnimationWeight(calAnim, weight);
                   }
 
@@ -2812,41 +2875,41 @@ void DirectorCinematicEditorPlugin::LerpActors(int time)
             {
                AnimationData& data = actorData.mAnimationData[index];
 
-               int eventLength = data.mTime + ((data.mEndTime - data.mStartTime) * 1000 / data.mSpeed);
+               int eventLength = ((data.mEndTime - data.mStartTime) * 1000 / data.mSpeed);
 
                // Determine if this current animation should be playing.
-               if (time >= data.mTime && time <= eventLength)
+               if (time >= data.mTime && time <= data.mTime + eventLength)
                {
-                  // Step the animator time up to the time of this event.
-                  if (elapsedTime < data.mTime)
+                  int startTime = data.mTime - (data.mStartTime * 1000);
+                  if (startTime < elapsedTime)
                   {
-                     float increment = (data.mTime - elapsedTime) * 0.001f;
-                     elapsedTime = data.mTime;
+                     elapsedTime = startTime;
+                  }
+
+                  // Step the animator time up to the time of this event.
+                  if (elapsedTime < startTime)
+                  {
+                     float increment = (startTime - elapsedTime) * 0.001f;
+                     elapsedTime = startTime;
 
                      animActor->GetHelper()->Update(increment);
                   }
 
-                  //// Determine the current anim time.
-                  //float alpha = 0.0f;
-                  //if (eventLength > 0)
-                  //{
-                  //   alpha = (time - data.mTime) / (float)eventLength;
-                  //}
+                  // Update the animation weight.
+                  float weight = data.mWeight;
+                  float duration = eventLength * 0.001f;
 
-                  //float animTime = data.mStartTime + (alpha * (data.mEndTime - data.mStartTime));
-
-                  //// Determine the weight amount.
-                  //float weight = 1.0f;
-                  //if (animTime - data.mStartTime < data.mBlendInTime)
-                  //{
-                  //   // Blending in.
-                  //   weight = (animTime - data.mStartTime) / data.mBlendInTime;
-                  //}
-                  //else if (data.mEndTime - animTime < data.mBlendOutTime)
-                  //{
-                  //   // Blending out.
-                  //   weight = (data.mEndTime - animTime) / data.mBlendOutTime;
-                  //}
+                  // Blending in.
+                  float animTime = ((time - data.mTime) * 0.001f);
+                  if (data.mBlendInTime > 0.0f && animTime < data.mBlendInTime)
+                  {
+                     weight *= animTime / data.mBlendInTime;
+                  }
+                  // Blending out.
+                  else if (data.mBlendOutTime > 0.0f && duration - animTime < data.mBlendOutTime)
+                  {
+                     weight *= (duration - animTime) / data.mBlendOutTime;
+                  }
 
                   // Create the animation.
                   const dtAnim::AnimationChannel* anim = dynamic_cast<const dtAnim::AnimationChannel*>(mixer.GetRegisteredAnimation(data.mName));
@@ -2856,13 +2919,7 @@ void DirectorCinematicEditorPlugin::LerpActors(int time)
                      newAnim = dynamic_cast<dtAnim::AnimationChannel*>(anim->Clone(animActor->GetHelper()->GetModelWrapper()).get());
                      newAnim->SetLooping(false);
                      newAnim->SetAction(true);
-                     newAnim->GetAnimation()->SetSpeed(data.mSpeed);
-                     newAnim->SetFadeIn(data.mBlendInTime);
-                     newAnim->SetFadeOut(data.mBlendOutTime);
-                     newAnim->SetBaseWeight(data.mWeight);
-
-                     // TODO: Fix Speed, Start time, and End time attributes.
-                     newAnim->SetStartTime(data.mStartTime);
+                     newAnim->SetBaseWeight(weight);
 
                      mixer.PlayAnimation(newAnim);
                   }
