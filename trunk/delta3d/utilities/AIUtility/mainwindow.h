@@ -48,6 +48,7 @@ namespace dtDAL
 }
 
 class QCloseEvent;
+class QUndoStack;
 class AIPropertyEditor;
 class WaypointBrowser;
 /// @endcond
@@ -103,6 +104,8 @@ public slots:
 
    void OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>& selectedWaypoints);
 
+   private slots:
+      void OnModifiedChanged();
 private:
    void ChangeMap(const QString& newMap);
 
@@ -117,6 +120,8 @@ private:
 
    QString mCurrentMapName;
    dtCore::Transform mCurrentCameraTransform;
+
+   QUndoStack *mUndoStack;
 };
 
 #endif /*AIUTILITY_MAIN_WINDOW*/

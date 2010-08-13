@@ -7,8 +7,37 @@ INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR}
                                   )
 
 SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/utilities/${APP_NAME})
-file(GLOB PROG_HEADERS "*.h")
-file(GLOB PROG_SOURCES "*.cpp" "*.rc")
+
+SET(PROG_HEADERS 
+                aicomponent.h
+                aipropertyeditor.h
+                aiutilityapp.h
+                aiutilityinputcomponent.h
+                mainwindow.h
+                objecttypetreewidget.h
+                qtglframe.h
+                undocommands.h
+                waypointbrowser.h
+                waypointbrowsertreeitem.h
+                waypointselection.h
+)
+
+SET(PROG_SOURCES 
+                aicomponent.cpp
+                aipropertyeditor.cpp
+                aiutilityapp.cpp
+                aiutilityinputcomponent.cpp
+                main.cpp
+                mainwindow.cpp
+                objectypettreewidget.cpp
+                qtglframe.cpp
+                undocommands.cpp
+                waypointbrowser.cpp
+                waypointbrowsertreeitem.cpp
+                waypointselection.cpp
+                AIUtilityResources.qrc
+)
+    
 
 QT4_ADD_RESOURCES(RCC_SOURCES ${APP_NAME}Resources.qrc)
 qt4_wrap_cpp(MOC_SOURCES ${PROG_HEADERS})

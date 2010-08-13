@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>AI Utility[*]</string>
   </property>
   <widget class="QWidget" name="centralwidget"/>
   <widget class="QMenuBar" name="menubar">
@@ -69,6 +69,21 @@
    <addaction name="mActionSave"/>
    <addaction name="separator"/>
    <addaction name="mActionDeleteSelectedWaypoints"/>
+  </widget>
+  <widget class="QDockWidget" name="undoStack">
+   <property name="windowTitle">
+    <string>Undo Stack</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QUndoView" name="undoView"/>
+     </item>
+    </layout>
+   </widget>
   </widget>
   <action name="actionQuit">
    <property name="text">
@@ -130,6 +145,9 @@
    </property>
   </action>
   <action name="mActionSave">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="AIUtilityResources.qrc">
      <normaloff>:/STAGE/icons/savemap_small.png</normaloff>:/STAGE/icons/savemap_small.png</iconset>
@@ -173,6 +191,13 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QUndoView</class>
+   <extends>QListView</extends>
+   <header>qundoview.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="AIUtilityResources.qrc"/>
  </resources>
