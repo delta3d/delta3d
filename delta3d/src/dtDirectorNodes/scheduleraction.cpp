@@ -108,6 +108,20 @@ namespace dtDirector
          "The time that the output will fire.");
       eventGroupProp->AddProperty(eventTimeProp);
 
+      dtDAL::BooleanActorProperty* eventNormalProp = new dtDAL::BooleanActorProperty(
+         "TriggerNormal", "Trigger on Play",
+         dtDAL::BooleanActorProperty::SetFuncType(this, &SchedulerAction::SetEventNormal),
+         dtDAL::BooleanActorProperty::GetFuncType(this, &SchedulerAction::GetEventNormal),
+         "True to trigger this event on normal play.");
+      eventGroupProp->AddProperty(eventNormalProp);
+
+      dtDAL::BooleanActorProperty* eventReverseProp = new dtDAL::BooleanActorProperty(
+         "TriggerReverse", "Trigger on Reverse",
+         dtDAL::BooleanActorProperty::SetFuncType(this, &SchedulerAction::SetEventReverse),
+         dtDAL::BooleanActorProperty::GetFuncType(this, &SchedulerAction::GetEventReverse),
+         "True to trigger this event on reverse play.");
+      eventGroupProp->AddProperty(eventReverseProp);
+
       dtDAL::ArrayActorPropertyBase* eventListProp = new dtDAL::ArrayActorProperty<OutputEventData>(
          "EventList", "Event List", "The list of events.",
          dtDAL::ArrayActorProperty<OutputEventData>::SetIndexFuncType(this, &SchedulerAction::SetEventIndex),
@@ -199,7 +213,7 @@ namespace dtDirector
 
             // Trigger any events that are between the current time and the
             // time delta.
-            TestEvents(start, end);
+            TestEvents(start, end, input == INPUT_PLAY);
 
             // Test if the desired time has elapsed.
             result = true;
@@ -356,6 +370,50 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void SchedulerAction::SetEventNormal(bool value)
+   {
+      if (mEventIndex >= 0 && mEventIndex < (int)mEventList.size())
+      {
+         OutputEventData& data = mEventList[mEventIndex];
+         data.triggerNormal = value;
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool SchedulerAction::GetEventNormal()
+   {
+      if (mEventIndex >= 0 && mEventIndex < (int)mEventList.size())
+      {
+         OutputEventData& data = mEventList[mEventIndex];
+         return data.triggerNormal;
+      }
+
+      return 0.0f;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void SchedulerAction::SetEventReverse(bool value)
+   {
+      if (mEventIndex >= 0 && mEventIndex < (int)mEventList.size())
+      {
+         OutputEventData& data = mEventList[mEventIndex];
+         data.triggerReverse = value;
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool SchedulerAction::GetEventReverse()
+   {
+      if (mEventIndex >= 0 && mEventIndex < (int)mEventList.size())
+      {
+         OutputEventData& data = mEventList[mEventIndex];
+         return data.triggerReverse;
+      }
+
+      return 0.0f;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void SchedulerAction::SetEventIndex(int index)
    {
       mEventIndex = index;
@@ -367,6 +425,8 @@ namespace dtDirector
       OutputEventData data;
       data.name = "";
       data.time = 0.0f;
+      data.triggerNormal = true;
+      data.triggerReverse = true;
       return data;
    }
 
@@ -437,7 +497,7 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void SchedulerAction::TestEvents(float start, float end)
+   void SchedulerAction::TestEvents(float start, float end, bool normalPlay)
    {
       int count = (int)mEventList.size();
       for (int index = 0; index < count; index++)
@@ -449,8 +509,12 @@ namespace dtDirector
             data.time < end ||
             (data.time == end && end == mTotalTime)))
          {
-            OutputLink* link = GetOutputLink(data.name);
-            if (link) link->Activate();
+            if ((normalPlay && data.triggerNormal) ||
+               (!normalPlay && data.triggerReverse))
+            {
+               OutputLink* link = GetOutputLink(data.name);
+               if (link) link->Activate();
+            }
          }
       }
    }
