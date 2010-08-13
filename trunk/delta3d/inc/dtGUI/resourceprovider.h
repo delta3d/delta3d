@@ -3,7 +3,6 @@
 
 #include <dtGUI/export.h>
 #include <CEGUI/CEGUIDefaultResourceProvider.h>
-#include <dtUtil/deprecationmgr.h>
 
 namespace dtGUI
 {
@@ -17,8 +16,7 @@ namespace dtGUI
    class DT_GUI_EXPORT ResourceProvider :   public CEGUI::DefaultResourceProvider
    {
    public:
-      ///deprecated 2/12/10
-      DEPRECATE_FUNC ResourceProvider();
+      ResourceProvider();
       ~ResourceProvider(){};
 
       ///Load the data of the supplied filename.

@@ -309,6 +309,15 @@ namespace dtGUI
       osg::Group& GetRootNode();
 
       /**
+       * Set the parser to be used for parsing UI scheme and layout files.
+       * @param parserName Name of the preferred XML parser.
+       *        For CEGUI, the name should be one of those listed in the documentation
+       *        for method CEGUISystem::setDefaultXMLParserName.
+       * @return TRUE if the specified parser was successfully found and set.
+       */
+      static bool SetDefaultParser(const std::string& parserName);
+
+      /**
        * Get the const internal root node to change any stateset attributes, add layers
        * to the UI or to perform extra tweaking not anticipated by this class.
        * @param The const root node that's in the scene graph
