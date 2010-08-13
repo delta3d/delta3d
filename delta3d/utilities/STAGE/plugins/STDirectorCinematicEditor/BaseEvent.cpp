@@ -32,7 +32,6 @@ BaseEvent::~BaseEvent()
 void BaseEvent::SetStartTime(int value)
 {
    mStartTime = std::min(value, mEndTime);
-   mStartTime = std::max(0, mStartTime);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -44,7 +43,7 @@ void BaseEvent::SetEndTime(int value)
 ///////////////////////////////////////////////////////////////////////////////
 void BaseEvent::SetNewTimes(int newStartTime, int newEndTime)
 {
-   mStartTime = std::max(0, newStartTime);
+   mStartTime = newStartTime;
    mEndTime = std::max(newEndTime, mStartTime);
 }
 

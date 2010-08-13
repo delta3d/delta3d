@@ -24,7 +24,7 @@ public:
 
    virtual void PaintEvent(QPainter* painter);
 
-   virtual bool IsMinTimeLocked() const {return true;}
+   virtual bool IsMinTimeLocked() const {return false;}
    virtual bool IsMaxTimeLocked() const {return false;}
 
    /**
