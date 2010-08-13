@@ -94,7 +94,6 @@ public slots:
    void SelectRenderingOptions();
    void OnAddEdge();
    void OnRemoveEdge();
-   void OnDeleteSelectedWaypoints();
    void PropertyChangedFromControl(dtDAL::PropertyContainer&, dtDAL::ActorProperty&);
    void OnCameraTransformChanged(const dtCore::Transform& xform);
 
@@ -115,7 +114,7 @@ private:
    Ui::MainWindow* mUi;
    QWidget& mCentralWidget;
    AIPropertyEditor& mPropertyEditor;
-   WaypointBrowser& mWaypointBrowser;
+   WaypointBrowser* mWaypointBrowser;
    dtAI::AIPluginInterface* mPluginInterface;
 
    QString mCurrentMapName;

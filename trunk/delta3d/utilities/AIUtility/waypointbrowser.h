@@ -42,13 +42,14 @@ namespace Ui
 }
 class QTreeWidget;
 class QTreeWidgetItem;
+class QUndoStack;
 /// @endcond
 
 class WaypointBrowser: public QDockWidget
 {
    Q_OBJECT
 public:
-   WaypointBrowser(QWidget& parent);
+   WaypointBrowser(QUndoStack& undoStack, QWidget* parent=NULL);
    virtual ~WaypointBrowser();
 
    void SetPluginInterface(dtAI::AIPluginInterface* plugin);
@@ -103,6 +104,7 @@ private:
    Ui::WaypointBrowser* mUi;
    dtAI::AIPluginInterface* mAIPluginInterface;
    dtCore::Transform mCameraTransform;
+   QUndoStack *mUndoStack;
 };
 
 #endif /* WAYPOINTBROWSER_H_ */

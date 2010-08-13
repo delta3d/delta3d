@@ -26,6 +26,7 @@
 #include "waypointbrowsertreeitem.h"
 #include "objecttypetreewidget.h"
 #include "mainwindow.h"
+#include "undocommands.h"
 
 #include <ui_waypointbrowser.h>
 #include <dtAI/aiplugininterface.h>
@@ -38,9 +39,10 @@
 #include <sstream>
 
 ///////////////////////////////////////////////////
-WaypointBrowser::WaypointBrowser(QWidget& parent)
-: QDockWidget(&parent)
+WaypointBrowser::WaypointBrowser(QUndoStack& undoStack, QWidget* parent)
+: QDockWidget(parent)
 , mAIPluginInterface(NULL)
+, mUndoStack(&undoStack)
 {
    mUi = new Ui::WaypointBrowser();
    mUi->setupUi(this);
@@ -270,29 +272,30 @@ void WaypointBrowser::OnCreate()
 ///////////////////////////////////////////////////
 void WaypointBrowser::OnDelete()
 {
-   const QList<QTreeWidgetItem*>& list = mUi->mWaypointList->selectedItems();
+   std::vector<dtAI::WaypointInterface*>& waypointList =
+      WaypointSelection::GetInstance().GetWaypointList();
 
-   bool deletedSomething = false;
-   QList<QTreeWidgetItem*>::const_iterator i, iend;
-   i = list.begin();
-   iend = list.end();
-   for (; i != iend; ++i)
+   for (size_t pointIndex = 0; pointIndex < waypointList.size(); ++pointIndex)
    {
-      WaypointBrowserTreeItem* item = dynamic_cast<WaypointBrowserTreeItem*>(*i);
-      if (item != NULL && item->GetWaypoint() != NULL)
+      dtAI::WaypointInterface* wp = waypointList[pointIndex];
+      if (wp)
       {
-         // Deselect the waypoint first
-         WaypointSelection::GetInstance().DeselectWaypoint(item->GetWaypoint());
+         QUndoCommand* command = new DeleteWaypointCommand(*wp, mAIPluginInterface);
 
-         mAIPluginInterface->RemoveWaypoint(item->GetWaypoint());
-         deletedSomething = true;
+         if (mAIPluginInterface->RemoveWaypoint(wp))
+         {
+            mUndoStack->push(command);
+         }
+         else
+         {
+            delete command;
+         }
       }
    }
 
-   if (deletedSomething)
-   {
-      ResetWaypointResult();
-   }
+   WaypointSelection::GetInstance().DeselectAllWaypoints();
+
+   ResetWaypointResult();
 }
 
 ///////////////////////////////////////////////////
