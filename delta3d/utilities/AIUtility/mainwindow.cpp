@@ -27,6 +27,7 @@
 #include "qtglframe.h"
 #include "waypointbrowser.h"
 #include "waypointselection.h"
+#include "undocommands.h"
 
 #include <ui_mainwindow.h>
 #include <dtQt/deltastepper.h>
@@ -38,8 +39,8 @@
 #include <QtGui/QDialog>
 #include <QtGui/QGridLayout>
 #include <QtGui/QMessageBox>
+#include <QtGui/QUndoStack>
 #include <QtCore/QSettings>
-
 #include <dtCore/transform.h>
 #include <dtDAL/map.h>
 #include <dtDAL/project.h>
@@ -78,7 +79,6 @@ MainWindow::MainWindow(QWidget& mainWidget)
    frameLayout->addWidget(&mCentralWidget);
 
    setCentralWidget(centerFrame);
-   setWindowTitle(tr("AI Utility"));
 
    mCurrentCameraTransform.MakeIdentity();
 
@@ -108,6 +108,25 @@ MainWindow::MainWindow(QWidget& mainWidget)
 
    mPropertyEditor.installEventFilter(this);
    mWaypointBrowser.installEventFilter(this);
+
+   mUndoStack = new QUndoStack(this);
+   mUi->undoView->setStack(mUndoStack);
+   mUi->undoView->setCleanIcon(QIcon(":/images/ok.png"));
+   connect(mUndoStack, SIGNAL(cleanChanged(bool)), this, SLOT(OnModifiedChanged()));
+   connect(mUndoStack, SIGNAL(indexChanged(int)), this, SLOT(OnModifiedChanged()));
+
+   QAction *undoAction = mUndoStack->createUndoAction(this);
+   QAction *redoAction = mUndoStack->createRedoAction(this);
+   undoAction->setIcon(QIcon(":/images/undo.png"));
+   redoAction->setIcon(QIcon(":/images/redo.png"));
+
+   mUi->menuEdit->addSeparator();
+   mUi->menuEdit->addAction(undoAction);
+   mUi->menuEdit->addAction(redoAction);
+
+   mUi->toolBar->addSeparator();
+   mUi->toolBar->addAction(undoAction);
+   mUi->toolBar->addAction(redoAction);
 }
 
 //////////////////////////////////////////////
@@ -237,7 +256,11 @@ void MainWindow::OnSave()
    if (mPluginInterface != NULL)
    {
       // save the one that was last opened.  It would be nice to have a save as.
-      if (!mPluginInterface->SaveWaypointFile())
+      if (mPluginInterface->SaveWaypointFile())
+      {
+         mUndoStack->setClean();  //purge the list of undo's
+      }
+      else
       {
          QMessageBox::critical(this, "Error Saving", "Saving the waypoint file failed for an unknown reason");
       }
@@ -347,7 +370,20 @@ void MainWindow::OnDeleteSelectedWaypoints()
 
    for (size_t pointIndex = 0; pointIndex < waypointList.size(); ++pointIndex)
    {
-      mPluginInterface->RemoveWaypoint(waypointList[pointIndex]);
+      dtAI::WaypointInterface* wp = waypointList[pointIndex];
+      if (wp)
+      {
+         QUndoCommand* command = new DeleteWaypointCommand(*wp, mPluginInterface);
+
+         if (mPluginInterface->RemoveWaypoint(wp))
+         {
+            mUndoStack->push(command);
+         }
+         else
+         {
+            delete command;
+         }
+      }
    }
 
    WaypointSelection::GetInstance().DeselectAllWaypoints();
@@ -456,4 +492,8 @@ bool MainWindow::DoesEdgeExistBetweenWaypoints(dtAI::WaypointInterface* waypoint
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-
+void MainWindow::OnModifiedChanged()
+{
+   mUi->mActionSave->setEnabled(!mUndoStack->isClean());
+   this->setWindowModified(!mUndoStack->isClean());
+}
