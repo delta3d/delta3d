@@ -2,7 +2,7 @@
 <director xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dDirector" xsi:schemaLocation="delta3dDirector director.xsd">
     <header>
         <createTimestamp>2009-12-22T14:26:31-08:00</createTimestamp>
-        <lastUpdateTimestamp>2010-08-11T15:32:50-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2010-08-13T14:03:37-08:00</lastUpdateTimestamp>
         <editorVersion>2.5.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
         <property>
@@ -333,7 +333,7 @@
                         <name>Call Event</name>
                     </link>
                     <link>
-                        <id>33cb6c10-81a3-478b-8097-dbd51133f0d2</id>
+                        <id>1cce43d2-aabc-48d4-82e8-861793b1b705</id>
                         <name>Play</name>
                     </link>
                 </outputlink>
@@ -345,7 +345,7 @@
                         <name>Call Event</name>
                     </link>
                     <link>
-                        <id>b61063e9-79cd-48be-8143-f6f8bd01c4a9</id>
+                        <id>fd99edbc-b191-4f9d-a613-70d3bb7fce74</id>
                         <name>Reverse</name>
                     </link>
                 </outputlink>
@@ -491,7 +491,7 @@
                     <name>Out</name>
                     <visible>true</visible>
                     <link>
-                        <id>4f35abe4-ca2e-45e0-8cef-a3bc73515fe6</id>
+                        <id>5530a6b9-86b1-49b0-b885-e4255491fdd7</id>
                         <name>Play</name>
                     </link>
                 </outputlink>
@@ -567,7 +567,7 @@
                     <name>Out</name>
                     <visible>true</visible>
                     <link>
-                        <id>83338a04-22d1-4cae-833e-66e352ac6aa7</id>
+                        <id>f0229355-283d-4600-99d3-f6691f264abb</id>
                         <name>Stop</name>
                     </link>
                 </outputlink>
@@ -641,7 +641,7 @@
                     <name>Call Event</name>
                     <visible>true</visible>
                     <link>
-                        <id>d3bc323c-703b-442b-ad3a-1d94cf39e24b</id>
+                        <id>e8d6454e-c17f-4ac8-9ecb-99b20ba02739</id>
                         <name>Ended</name>
                     </link>
                 </inputlink>
@@ -849,8 +849,12 @@
                     <name>Call Event</name>
                     <visible>true</visible>
                     <link>
-                        <id>549c0926-6738-439e-b578-82e8819d06e5</id>
-                        <name>Ended</name>
+                        <id>0329fd4c-526e-45bd-a644-d4eda58fa102</id>
+                        <name>Idle In</name>
+                    </link>
+                    <link>
+                        <id>b27ae480-94cd-45f4-936d-7c231bbb0e65</id>
+                        <name>Idle Out</name>
                     </link>
                 </inputlink>
                 <outputlink>
@@ -9539,7 +9543,7 @@
                 <node>
                     <name>Input Link</name>
                     <category>Core</category>
-                    <id>4f35abe4-ca2e-45e0-8cef-a3bc73515fe6</id>
+                    <id>5530a6b9-86b1-49b0-b885-e4255491fdd7</id>
                     <property>
                         <name>Enabled</name>
                         <boolean>true</boolean>
@@ -9579,7 +9583,7 @@
                         <name>Out</name>
                         <visible>true</visible>
                         <link>
-                            <id>dff4e695-f1a8-4a20-8592-d63f334f75e8</id>
+                            <id>16d14ec1-65b0-41e7-8b55-fa242ff3fe59</id>
                             <name>Play</name>
                         </link>
                     </outputlink>
@@ -9603,7 +9607,7 @@
                 <node>
                     <name>Input Link</name>
                     <category>Core</category>
-                    <id>282038b2-740e-44d7-a88e-50380ec5d33e</id>
+                    <id>47870a04-1cd9-4cd9-857c-eda36177d6be</id>
                     <property>
                         <name>Enabled</name>
                         <boolean>true</boolean>
@@ -9639,7 +9643,7 @@
                         <name>Out</name>
                         <visible>true</visible>
                         <link>
-                            <id>dff4e695-f1a8-4a20-8592-d63f334f75e8</id>
+                            <id>16d14ec1-65b0-41e7-8b55-fa242ff3fe59</id>
                             <name>Reverse</name>
                         </link>
                     </outputlink>
@@ -9663,7 +9667,7 @@
                 <node>
                     <name>Input Link</name>
                     <category>Core</category>
-                    <id>83338a04-22d1-4cae-833e-66e352ac6aa7</id>
+                    <id>f0229355-283d-4600-99d3-f6691f264abb</id>
                     <property>
                         <name>Enabled</name>
                         <boolean>true</boolean>
@@ -9703,7 +9707,7 @@
                         <name>Out</name>
                         <visible>true</visible>
                         <link>
-                            <id>dff4e695-f1a8-4a20-8592-d63f334f75e8</id>
+                            <id>16d14ec1-65b0-41e7-8b55-fa242ff3fe59</id>
                             <name>Stop</name>
                         </link>
                     </outputlink>
@@ -9727,7 +9731,7 @@
                 <node>
                     <name>Input Link</name>
                     <category>Core</category>
-                    <id>b74e8d1f-8339-4047-9fda-cb483ef9ba22</id>
+                    <id>e51f7ca1-f410-42f3-a374-08b2bfd45a28</id>
                     <property>
                         <name>Enabled</name>
                         <boolean>true</boolean>
@@ -9763,7 +9767,7 @@
                         <name>Out</name>
                         <visible>true</visible>
                         <link>
-                            <id>dff4e695-f1a8-4a20-8592-d63f334f75e8</id>
+                            <id>16d14ec1-65b0-41e7-8b55-fa242ff3fe59</id>
                             <name>Pause</name>
                         </link>
                     </outputlink>
@@ -9787,7 +9791,7 @@
                 <node>
                     <name>Remote Event</name>
                     <category>Core</category>
-                    <id>b22ad0a3-9388-432e-802d-ec649ceeb7f5</id>
+                    <id>ba857c11-4799-4ad1-8a0a-a44bf8ff2717</id>
                     <property>
                         <name>Enabled</name>
                         <boolean>true</boolean>
@@ -9823,7 +9827,7 @@
                         <name>Out</name>
                         <visible>true</visible>
                         <link>
-                            <id>55604484-372d-408e-b5d9-e1b18652134e</id>
+                            <id>d7431b99-8a40-4956-bf32-b81d25c80dbf</id>
                             <name>Start</name>
                         </link>
                     </outputlink>
@@ -9863,7 +9867,7 @@
                 <node>
                     <name>Remote Event</name>
                     <category>Core</category>
-                    <id>932d1676-479a-41d9-a4e2-b6d4d2477ff3</id>
+                    <id>1adcc131-b6e1-4768-b16c-fee82416e8a9</id>
                     <property>
                         <name>Enabled</name>
                         <boolean>true</boolean>
@@ -9899,7 +9903,7 @@
                         <name>Out</name>
                         <visible>true</visible>
                         <link>
-                            <id>55604484-372d-408e-b5d9-e1b18652134e</id>
+                            <id>d7431b99-8a40-4956-bf32-b81d25c80dbf</id>
                             <name>Stop</name>
                         </link>
                     </outputlink>
@@ -9941,7 +9945,7 @@
                 <node>
                     <name>Scheduler</name>
                     <category>Cinematic</category>
-                    <id>dff4e695-f1a8-4a20-8592-d63f334f75e8</id>
+                    <id>16d14ec1-65b0-41e7-8b55-fa242ff3fe59</id>
                     <property>
                         <name>Enabled</name>
                         <boolean>true</boolean>
@@ -9963,11 +9967,11 @@
                     </property>
                     <property>
                         <name>TotalTime</name>
-                        <float>1.97</float>
+                        <float>1.96</float>
                     </property>
                     <property>
                         <name>UseSimTime</name>
-                        <boolean>false</boolean>
+                        <boolean>true</boolean>
                     </property>
                     <property>
                         <name>EventList</name>
@@ -9979,7 +9983,7 @@
                         <name>Play</name>
                         <visible>true</visible>
                         <link>
-                            <id>4f35abe4-ca2e-45e0-8cef-a3bc73515fe6</id>
+                            <id>5530a6b9-86b1-49b0-b885-e4255491fdd7</id>
                             <name>Out</name>
                         </link>
                     </inputlink>
@@ -9987,7 +9991,7 @@
                         <name>Reverse</name>
                         <visible>true</visible>
                         <link>
-                            <id>282038b2-740e-44d7-a88e-50380ec5d33e</id>
+                            <id>47870a04-1cd9-4cd9-857c-eda36177d6be</id>
                             <name>Out</name>
                         </link>
                     </inputlink>
@@ -9995,7 +9999,7 @@
                         <name>Stop</name>
                         <visible>true</visible>
                         <link>
-                            <id>83338a04-22d1-4cae-833e-66e352ac6aa7</id>
+                            <id>f0229355-283d-4600-99d3-f6691f264abb</id>
                             <name>Out</name>
                         </link>
                     </inputlink>
@@ -10003,7 +10007,7 @@
                         <name>Pause</name>
                         <visible>true</visible>
                         <link>
-                            <id>b74e8d1f-8339-4047-9fda-cb483ef9ba22</id>
+                            <id>e51f7ca1-f410-42f3-a374-08b2bfd45a28</id>
                             <name>Out</name>
                         </link>
                     </inputlink>
@@ -10011,11 +10015,11 @@
                         <name>Started</name>
                         <visible>true</visible>
                         <link>
-                            <id>abd61647-e727-4908-91a7-c827629cc504</id>
+                            <id>78b596e4-8451-44ec-98f8-a78eca30c157</id>
                             <name>Call Event</name>
                         </link>
                         <link>
-                            <id>cec2ed4a-c313-443b-a7d0-5928a4146e2d</id>
+                            <id>ec7fbb13-e336-4b86-b5a6-2729fb93e936</id>
                             <name>In</name>
                         </link>
                     </outputlink>
@@ -10023,11 +10027,11 @@
                         <name>Ended</name>
                         <visible>true</visible>
                         <link>
-                            <id>d3bc323c-703b-442b-ad3a-1d94cf39e24b</id>
+                            <id>e8d6454e-c17f-4ac8-9ecb-99b20ba02739</id>
                             <name>In</name>
                         </link>
                         <link>
-                            <id>e0419a76-87a7-4fa5-bc53-5dfb4a129b47</id>
+                            <id>3cc008fa-0ff6-4685-adc6-45a24cc717b5</id>
                             <name>Call Event</name>
                         </link>
                     </outputlink>
@@ -10035,7 +10039,7 @@
                         <name>Stopped</name>
                         <visible>true</visible>
                         <link>
-                            <id>e0419a76-87a7-4fa5-bc53-5dfb4a129b47</id>
+                            <id>3cc008fa-0ff6-4685-adc6-45a24cc717b5</id>
                             <name>Call Event</name>
                         </link>
                     </outputlink>
@@ -10055,7 +10059,7 @@
                         <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
                         <link>
-                            <id>d38fb1f7-834c-4254-be2b-887089970476</id>
+                            <id>9bc73f7e-e03c-44d3-8d2e-c0b87762fb87</id>
                         </link>
                     </valuelink>
                     <valuelink>
@@ -10078,7 +10082,7 @@
                 <node>
                     <name>Call Remote Event</name>
                     <category>Core</category>
-                    <id>abd61647-e727-4908-91a7-c827629cc504</id>
+                    <id>78b596e4-8451-44ec-98f8-a78eca30c157</id>
                     <property>
                         <name>Enabled</name>
                         <boolean>true</boolean>
@@ -10110,7 +10114,7 @@
                         <name>Call Event</name>
                         <visible>true</visible>
                         <link>
-                            <id>dff4e695-f1a8-4a20-8592-d63f334f75e8</id>
+                            <id>16d14ec1-65b0-41e7-8b55-fa242ff3fe59</id>
                             <name>Started</name>
                         </link>
                     </inputlink>
@@ -10146,7 +10150,7 @@
                 <node>
                     <name>Output Link</name>
                     <category>Core</category>
-                    <id>cec2ed4a-c313-443b-a7d0-5928a4146e2d</id>
+                    <id>ec7fbb13-e336-4b86-b5a6-2729fb93e936</id>
                     <property>
                         <name>Enabled</name>
                         <boolean>true</boolean>
@@ -10174,7 +10178,7 @@
                         <name>In</name>
                         <visible>true</visible>
                         <link>
-                            <id>dff4e695-f1a8-4a20-8592-d63f334f75e8</id>
+                            <id>16d14ec1-65b0-41e7-8b55-fa242ff3fe59</id>
                             <name>Started</name>
                         </link>
                     </inputlink>
@@ -10194,7 +10198,7 @@
                 <node>
                     <name>Output Link</name>
                     <category>Core</category>
-                    <id>d3bc323c-703b-442b-ad3a-1d94cf39e24b</id>
+                    <id>e8d6454e-c17f-4ac8-9ecb-99b20ba02739</id>
                     <property>
                         <name>Enabled</name>
                         <boolean>true</boolean>
@@ -10222,7 +10226,7 @@
                         <name>In</name>
                         <visible>true</visible>
                         <link>
-                            <id>dff4e695-f1a8-4a20-8592-d63f334f75e8</id>
+                            <id>16d14ec1-65b0-41e7-8b55-fa242ff3fe59</id>
                             <name>Ended</name>
                         </link>
                     </inputlink>
@@ -10246,7 +10250,7 @@
                 <node>
                     <name>Call Remote Event</name>
                     <category>Core</category>
-                    <id>e0419a76-87a7-4fa5-bc53-5dfb4a129b47</id>
+                    <id>3cc008fa-0ff6-4685-adc6-45a24cc717b5</id>
                     <property>
                         <name>Enabled</name>
                         <boolean>true</boolean>
@@ -10278,11 +10282,11 @@
                         <name>Call Event</name>
                         <visible>true</visible>
                         <link>
-                            <id>dff4e695-f1a8-4a20-8592-d63f334f75e8</id>
+                            <id>16d14ec1-65b0-41e7-8b55-fa242ff3fe59</id>
                             <name>Ended</name>
                         </link>
                         <link>
-                            <id>dff4e695-f1a8-4a20-8592-d63f334f75e8</id>
+                            <id>16d14ec1-65b0-41e7-8b55-fa242ff3fe59</id>
                             <name>Stopped</name>
                         </link>
                     </inputlink>
@@ -10318,7 +10322,7 @@
                 <node>
                     <name>Animate Actor</name>
                     <category>Cinematic</category>
-                    <id>55604484-372d-408e-b5d9-e1b18652134e</id>
+                    <id>d7431b99-8a40-4956-bf32-b81d25c80dbf</id>
                     <property>
                         <name>Enabled</name>
                         <boolean>true</boolean>
@@ -10373,6 +10377,14 @@
                                         </property>
                                         <property>
                                             <name>Weight</name>
+                                            <float>0.5</float>
+                                        </property>
+                                        <property>
+                                            <name>Start Offset</name>
+                                            <float>0</float>
+                                        </property>
+                                        <property>
+                                            <name>Speed</name>
                                             <float>1</float>
                                         </property>
                                     </container>
@@ -10384,7 +10396,7 @@
                         <name>Start</name>
                         <visible>true</visible>
                         <link>
-                            <id>b22ad0a3-9388-432e-802d-ec649ceeb7f5</id>
+                            <id>ba857c11-4799-4ad1-8a0a-a44bf8ff2717</id>
                             <name>Out</name>
                         </link>
                     </inputlink>
@@ -10392,7 +10404,7 @@
                         <name>Stop</name>
                         <visible>true</visible>
                         <link>
-                            <id>932d1676-479a-41d9-a4e2-b6d4d2477ff3</id>
+                            <id>1adcc131-b6e1-4768-b16c-fee82416e8a9</id>
                             <name>Out</name>
                         </link>
                     </inputlink>
@@ -10424,7 +10436,7 @@
                         <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
                         <link>
-                            <id>3a4c90a2-6ccc-4851-832c-4c9dddda74bd</id>
+                            <id>5b7de5be-e7c0-44b3-9f71-651a10695d32</id>
                         </link>
                     </valuelink>
                     <valuelink>
@@ -10435,7 +10447,7 @@
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
                         <link>
-                            <id>1a170b86-b25e-4ded-872d-f0062add2f2c</id>
+                            <id>c31f2271-9373-4def-a8f8-6c6013c6be94</id>
                         </link>
                     </valuelink>
                 </node>
@@ -10444,7 +10456,7 @@
                 <node>
                     <name>Float</name>
                     <category>General</category>
-                    <id>d38fb1f7-834c-4254-be2b-887089970476</id>
+                    <id>9bc73f7e-e03c-44d3-8d2e-c0b87762fb87</id>
                     <property>
                         <name>Enabled</name>
                         <boolean>true</boolean>
@@ -10484,7 +10496,7 @@
                 <node>
                     <name>Actor</name>
                     <category>General</category>
-                    <id>3a4c90a2-6ccc-4851-832c-4c9dddda74bd</id>
+                    <id>5b7de5be-e7c0-44b3-9f71-651a10695d32</id>
                     <property>
                         <name>Enabled</name>
                         <boolean>true</boolean>
@@ -10524,7 +10536,7 @@
                 <node>
                     <name>Reference</name>
                     <category>Core</category>
-                    <id>1a170b86-b25e-4ded-872d-f0062add2f2c</id>
+                    <id>c31f2271-9373-4def-a8f8-6c6013c6be94</id>
                     <property>
                         <name>Enabled</name>
                         <boolean>true</boolean>
@@ -10560,7 +10572,7 @@
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
                         <link>
-                            <id>d38fb1f7-834c-4254-be2b-887089970476</id>
+                            <id>9bc73f7e-e03c-44d3-8d2e-c0b87762fb87</id>
                         </link>
                     </valuelink>
                 </node>
@@ -10594,7 +10606,7 @@
                 <node>
                     <name>Input Link</name>
                     <category>Core</category>
-                    <id>33cb6c10-81a3-478b-8097-dbd51133f0d2</id>
+                    <id>1cce43d2-aabc-48d4-82e8-861793b1b705</id>
                     <property>
                         <name>Enabled</name>
                         <boolean>true</boolean>
@@ -10634,7 +10646,7 @@
                         <name>Out</name>
                         <visible>true</visible>
                         <link>
-                            <id>6e88ce6b-b457-4828-8578-c53863a51275</id>
+                            <id>8ddaa0e5-2d26-4869-affe-259e467e33d6</id>
                             <name>Play</name>
                         </link>
                     </outputlink>
@@ -10658,7 +10670,7 @@
                 <node>
                     <name>Input Link</name>
                     <category>Core</category>
-                    <id>b61063e9-79cd-48be-8143-f6f8bd01c4a9</id>
+                    <id>fd99edbc-b191-4f9d-a613-70d3bb7fce74</id>
                     <property>
                         <name>Enabled</name>
                         <boolean>true</boolean>
@@ -10698,7 +10710,7 @@
                         <name>Out</name>
                         <visible>true</visible>
                         <link>
-                            <id>6e88ce6b-b457-4828-8578-c53863a51275</id>
+                            <id>8ddaa0e5-2d26-4869-affe-259e467e33d6</id>
                             <name>Reverse</name>
                         </link>
                     </outputlink>
@@ -10722,7 +10734,7 @@
                 <node>
                     <name>Input Link</name>
                     <category>Core</category>
-                    <id>bfa2c468-f117-4419-a149-0bd369bd73bc</id>
+                    <id>5948212e-d412-4d6a-9952-95105f803fca</id>
                     <property>
                         <name>Enabled</name>
                         <boolean>true</boolean>
@@ -10758,7 +10770,7 @@
                         <name>Out</name>
                         <visible>true</visible>
                         <link>
-                            <id>6e88ce6b-b457-4828-8578-c53863a51275</id>
+                            <id>8ddaa0e5-2d26-4869-affe-259e467e33d6</id>
                             <name>Stop</name>
                         </link>
                     </outputlink>
@@ -10782,7 +10794,7 @@
                 <node>
                     <name>Input Link</name>
                     <category>Core</category>
-                    <id>5c9784a2-4c41-4bd8-9db6-941cbdcdc949</id>
+                    <id>3ac59025-4bcd-42a9-9cf1-e7de8cdf54b0</id>
                     <property>
                         <name>Enabled</name>
                         <boolean>true</boolean>
@@ -10818,7 +10830,7 @@
                         <name>Out</name>
                         <visible>true</visible>
                         <link>
-                            <id>6e88ce6b-b457-4828-8578-c53863a51275</id>
+                            <id>8ddaa0e5-2d26-4869-affe-259e467e33d6</id>
                             <name>Pause</name>
                         </link>
                     </outputlink>
@@ -10842,7 +10854,7 @@
                 <node>
                     <name>Remote Event</name>
                     <category>Core</category>
-                    <id>bcc9fe52-b7ce-4d0c-b735-f310b4dacd65</id>
+                    <id>a2047797-b079-4c90-bba7-07819e4f09a8</id>
                     <property>
                         <name>Enabled</name>
                         <boolean>true</boolean>
@@ -10859,7 +10871,7 @@
                         <name>Position</name>
                         <vec2>
                             <value1>0.000000</value1>
-                            <value2>300.000000</value2>
+                            <value2>400.000000</value2>
                         </vec2>
                     </property>
                     <property>
@@ -10878,7 +10890,7 @@
                         <name>Out</name>
                         <visible>true</visible>
                         <link>
-                            <id>e5c3005e-f0b7-407d-865d-4bf363ce7dbc</id>
+                            <id>4c70fd6f-9959-4bdc-8839-3456c8a6980d</id>
                             <name>Start</name>
                         </link>
                     </outputlink>
@@ -10918,7 +10930,7 @@
                 <node>
                     <name>Remote Event</name>
                     <category>Core</category>
-                    <id>6e016d78-9ac4-4aa3-b934-521f84a4ce51</id>
+                    <id>d07583ad-5053-44de-849d-1df42c2c669e</id>
                     <property>
                         <name>Enabled</name>
                         <boolean>true</boolean>
@@ -10935,7 +10947,7 @@
                         <name>Position</name>
                         <vec2>
                             <value1>6.000000</value1>
-                            <value2>400.000000</value2>
+                            <value2>500.000000</value2>
                         </vec2>
                     </property>
                     <property>
@@ -10954,7 +10966,7 @@
                         <name>Out</name>
                         <visible>true</visible>
                         <link>
-                            <id>e5c3005e-f0b7-407d-865d-4bf363ce7dbc</id>
+                            <id>4c70fd6f-9959-4bdc-8839-3456c8a6980d</id>
                             <name>Stop</name>
                         </link>
                     </outputlink>
@@ -10996,7 +11008,7 @@
                 <node>
                     <name>Scheduler</name>
                     <category>Cinematic</category>
-                    <id>6e88ce6b-b457-4828-8578-c53863a51275</id>
+                    <id>8ddaa0e5-2d26-4869-affe-259e467e33d6</id>
                     <property>
                         <name>Enabled</name>
                         <boolean>true</boolean>
@@ -11018,23 +11030,71 @@
                     </property>
                     <property>
                         <name>TotalTime</name>
-                        <float>3.29</float>
+                        <float>1.97</float>
                     </property>
                     <property>
                         <name>UseSimTime</name>
-                        <boolean>false</boolean>
+                        <boolean>true</boolean>
                     </property>
                     <property>
                         <name>EventList</name>
                         <array>
-                            <size>0</size>
+                            <size>2</size>
+                            <element>
+                                <index>0</index>
+                                <property>
+                                    <name>OutputEventData</name>
+                                    <container>
+                                        <property>
+                                            <name>EventName</name>
+                                            <string>Idle In</string>
+                                        </property>
+                                        <property>
+                                            <name>EventTime</name>
+                                            <float>0.23800001</float>
+                                        </property>
+                                        <property>
+                                            <name>TriggerNormal</name>
+                                            <boolean>false</boolean>
+                                        </property>
+                                        <property>
+                                            <name>TriggerReverse</name>
+                                            <boolean>true</boolean>
+                                        </property>
+                                    </container>
+                                </property>
+                            </element>
+                            <element>
+                                <index>1</index>
+                                <property>
+                                    <name>OutputEventData</name>
+                                    <container>
+                                        <property>
+                                            <name>EventName</name>
+                                            <string>Idle Out</string>
+                                        </property>
+                                        <property>
+                                            <name>EventTime</name>
+                                            <float>1.7360001</float>
+                                        </property>
+                                        <property>
+                                            <name>TriggerNormal</name>
+                                            <boolean>true</boolean>
+                                        </property>
+                                        <property>
+                                            <name>TriggerReverse</name>
+                                            <boolean>false</boolean>
+                                        </property>
+                                    </container>
+                                </property>
+                            </element>
                         </array>
                     </property>
                     <inputlink>
                         <name>Play</name>
                         <visible>true</visible>
                         <link>
-                            <id>33cb6c10-81a3-478b-8097-dbd51133f0d2</id>
+                            <id>1cce43d2-aabc-48d4-82e8-861793b1b705</id>
                             <name>Out</name>
                         </link>
                     </inputlink>
@@ -11042,7 +11102,7 @@
                         <name>Reverse</name>
                         <visible>true</visible>
                         <link>
-                            <id>b61063e9-79cd-48be-8143-f6f8bd01c4a9</id>
+                            <id>fd99edbc-b191-4f9d-a613-70d3bb7fce74</id>
                             <name>Out</name>
                         </link>
                     </inputlink>
@@ -11050,7 +11110,7 @@
                         <name>Stop</name>
                         <visible>true</visible>
                         <link>
-                            <id>bfa2c468-f117-4419-a149-0bd369bd73bc</id>
+                            <id>5948212e-d412-4d6a-9952-95105f803fca</id>
                             <name>Out</name>
                         </link>
                     </inputlink>
@@ -11058,7 +11118,7 @@
                         <name>Pause</name>
                         <visible>true</visible>
                         <link>
-                            <id>5c9784a2-4c41-4bd8-9db6-941cbdcdc949</id>
+                            <id>3ac59025-4bcd-42a9-9cf1-e7de8cdf54b0</id>
                             <name>Out</name>
                         </link>
                     </inputlink>
@@ -11066,11 +11126,27 @@
                         <name>Started</name>
                         <visible>true</visible>
                         <link>
-                            <id>c37f3657-8407-42c4-9915-e6338f6a4995</id>
+                            <id>0f1ff75a-4d19-4ea7-8a5d-3444cbf3df74</id>
                             <name>Call Event</name>
                         </link>
                         <link>
-                            <id>97bfd266-1e6b-434a-94bd-c4b542b54606</id>
+                            <id>e81b28d2-4ee8-4c8b-b9bb-6b7a2bc10aa3</id>
+                            <name>In</name>
+                        </link>
+                    </outputlink>
+                    <outputlink>
+                        <name>Idle In</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>0329fd4c-526e-45bd-a644-d4eda58fa102</id>
+                            <name>In</name>
+                        </link>
+                    </outputlink>
+                    <outputlink>
+                        <name>Idle Out</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>b27ae480-94cd-45f4-936d-7c231bbb0e65</id>
                             <name>In</name>
                         </link>
                     </outputlink>
@@ -11078,11 +11154,11 @@
                         <name>Ended</name>
                         <visible>true</visible>
                         <link>
-                            <id>549c0926-6738-439e-b578-82e8819d06e5</id>
+                            <id>3bdb967e-ead9-44db-9e4f-66dffe7b3118</id>
                             <name>In</name>
                         </link>
                         <link>
-                            <id>f2a9509d-43a9-434f-8cb1-b546ef660667</id>
+                            <id>3cc99411-32b9-4f41-ac00-cc5e05c5922d</id>
                             <name>Call Event</name>
                         </link>
                     </outputlink>
@@ -11090,7 +11166,7 @@
                         <name>Stopped</name>
                         <visible>true</visible>
                         <link>
-                            <id>f2a9509d-43a9-434f-8cb1-b546ef660667</id>
+                            <id>3cc99411-32b9-4f41-ac00-cc5e05c5922d</id>
                             <name>Call Event</name>
                         </link>
                     </outputlink>
@@ -11110,7 +11186,7 @@
                         <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
                         <link>
-                            <id>114d2d26-616e-4af9-9da2-96d657a188f4</id>
+                            <id>dbd58153-8c2a-473a-8369-a1daa896de98</id>
                         </link>
                     </valuelink>
                     <valuelink>
@@ -11133,7 +11209,7 @@
                 <node>
                     <name>Call Remote Event</name>
                     <category>Core</category>
-                    <id>c37f3657-8407-42c4-9915-e6338f6a4995</id>
+                    <id>0f1ff75a-4d19-4ea7-8a5d-3444cbf3df74</id>
                     <property>
                         <name>Enabled</name>
                         <boolean>true</boolean>
@@ -11165,7 +11241,7 @@
                         <name>Call Event</name>
                         <visible>true</visible>
                         <link>
-                            <id>6e88ce6b-b457-4828-8578-c53863a51275</id>
+                            <id>8ddaa0e5-2d26-4869-affe-259e467e33d6</id>
                             <name>Started</name>
                         </link>
                     </inputlink>
@@ -11201,7 +11277,7 @@
                 <node>
                     <name>Output Link</name>
                     <category>Core</category>
-                    <id>97bfd266-1e6b-434a-94bd-c4b542b54606</id>
+                    <id>e81b28d2-4ee8-4c8b-b9bb-6b7a2bc10aa3</id>
                     <property>
                         <name>Enabled</name>
                         <boolean>true</boolean>
@@ -11229,7 +11305,7 @@
                         <name>In</name>
                         <visible>true</visible>
                         <link>
-                            <id>6e88ce6b-b457-4828-8578-c53863a51275</id>
+                            <id>8ddaa0e5-2d26-4869-affe-259e467e33d6</id>
                             <name>Started</name>
                         </link>
                     </inputlink>
@@ -11249,7 +11325,7 @@
                 <node>
                     <name>Output Link</name>
                     <category>Core</category>
-                    <id>549c0926-6738-439e-b578-82e8819d06e5</id>
+                    <id>0329fd4c-526e-45bd-a644-d4eda58fa102</id>
                     <property>
                         <name>Enabled</name>
                         <boolean>true</boolean>
@@ -11271,18 +11347,18 @@
                     </property>
                     <property>
                         <name>Name</name>
-                        <string>Ended</string>
+                        <string>Idle In</string>
                     </property>
                     <inputlink>
                         <name>In</name>
                         <visible>true</visible>
                         <link>
-                            <id>6e88ce6b-b457-4828-8578-c53863a51275</id>
-                            <name>Ended</name>
+                            <id>8ddaa0e5-2d26-4869-affe-259e467e33d6</id>
+                            <name>Idle In</name>
                         </link>
                     </inputlink>
                     <outputlink>
-                        <name>Ended</name>
+                        <name>Idle In</name>
                         <visible>true</visible>
                         <link>
                             <id>d6583c8d-8708-489f-8599-d0bb0a441313</id>
@@ -11299,9 +11375,9 @@
                     </valuelink>
                 </node>
                 <node>
-                    <name>Call Remote Event</name>
+                    <name>Output Link</name>
                     <category>Core</category>
-                    <id>f2a9509d-43a9-434f-8cb1-b546ef660667</id>
+                    <id>b27ae480-94cd-45f4-936d-7c231bbb0e65</id>
                     <property>
                         <name>Enabled</name>
                         <boolean>true</boolean>
@@ -11322,6 +11398,106 @@
                         </vec2>
                     </property>
                     <property>
+                        <name>Name</name>
+                        <string>Idle Out</string>
+                    </property>
+                    <inputlink>
+                        <name>In</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>8ddaa0e5-2d26-4869-affe-259e467e33d6</id>
+                            <name>Idle Out</name>
+                        </link>
+                    </inputlink>
+                    <outputlink>
+                        <name>Idle Out</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>d6583c8d-8708-489f-8599-d0bb0a441313</id>
+                            <name>Call Event</name>
+                        </link>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Output Link</name>
+                    <category>Core</category>
+                    <id>3bdb967e-ead9-44db-9e4f-66dffe7b3118</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>LogNode</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>400.000000</value1>
+                            <value2>200.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>Name</name>
+                        <string>Ended</string>
+                    </property>
+                    <inputlink>
+                        <name>In</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>8ddaa0e5-2d26-4869-affe-259e467e33d6</id>
+                            <name>Ended</name>
+                        </link>
+                    </inputlink>
+                    <outputlink>
+                        <name>Ended</name>
+                        <visible>false</visible>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Call Remote Event</name>
+                    <category>Core</category>
+                    <id>3cc99411-32b9-4f41-ac00-cc5e05c5922d</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>LogNode</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>400.000000</value1>
+                            <value2>250.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
                         <name>EventName</name>
                         <string>Ended</string>
                     </property>
@@ -11333,11 +11509,11 @@
                         <name>Call Event</name>
                         <visible>true</visible>
                         <link>
-                            <id>6e88ce6b-b457-4828-8578-c53863a51275</id>
+                            <id>8ddaa0e5-2d26-4869-affe-259e467e33d6</id>
                             <name>Ended</name>
                         </link>
                         <link>
-                            <id>6e88ce6b-b457-4828-8578-c53863a51275</id>
+                            <id>8ddaa0e5-2d26-4869-affe-259e467e33d6</id>
                             <name>Stopped</name>
                         </link>
                     </inputlink>
@@ -11373,7 +11549,1883 @@
                 <node>
                     <name>Animate Actor</name>
                     <category>Cinematic</category>
-                    <id>e5c3005e-f0b7-407d-865d-4bf363ce7dbc</id>
+                    <id>4c70fd6f-9959-4bdc-8839-3456c8a6980d</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>LogNode</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>200.000000</value1>
+                            <value2>400.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>Actor</name>
+                        <actorId></actorId>
+                    </property>
+                    <property>
+                        <name>Animations</name>
+                        <array>
+                            <size>4</size>
+                            <element>
+                                <index>0</index>
+                                <property>
+                                    <name>Anim Data</name>
+                                    <container>
+                                        <property>
+                                            <name>Name</name>
+                                            <string>Idle</string>
+                                        </property>
+                                        <property>
+                                            <name>Start Time</name>
+                                            <float>0</float>
+                                        </property>
+                                        <property>
+                                            <name>Duration</name>
+                                            <float>0.4666667</float>
+                                        </property>
+                                        <property>
+                                            <name>Blend in Time</name>
+                                            <float>0.23333335</float>
+                                        </property>
+                                        <property>
+                                            <name>Blend out Time</name>
+                                            <float>0.23333335</float>
+                                        </property>
+                                        <property>
+                                            <name>Weight</name>
+                                            <float>1</float>
+                                        </property>
+                                        <property>
+                                            <name>Start Offset</name>
+                                            <float>1.5</float>
+                                        </property>
+                                        <property>
+                                            <name>Speed</name>
+                                            <float>1</float>
+                                        </property>
+                                    </container>
+                                </property>
+                            </element>
+                            <element>
+                                <index>1</index>
+                                <property>
+                                    <name>Anim Data</name>
+                                    <container>
+                                        <property>
+                                            <name>Name</name>
+                                            <string>Run</string>
+                                        </property>
+                                        <property>
+                                            <name>Start Time</name>
+                                            <float>0.245</float>
+                                        </property>
+                                        <property>
+                                            <name>Duration</name>
+                                            <float>0.76666665</float>
+                                        </property>
+                                        <property>
+                                            <name>Blend in Time</name>
+                                            <float>0.25</float>
+                                        </property>
+                                        <property>
+                                            <name>Blend out Time</name>
+                                            <float>0</float>
+                                        </property>
+                                        <property>
+                                            <name>Weight</name>
+                                            <float>1</float>
+                                        </property>
+                                        <property>
+                                            <name>Start Offset</name>
+                                            <float>0</float>
+                                        </property>
+                                        <property>
+                                            <name>Speed</name>
+                                            <float>1</float>
+                                        </property>
+                                    </container>
+                                </property>
+                            </element>
+                            <element>
+                                <index>2</index>
+                                <property>
+                                    <name>Anim Data</name>
+                                    <container>
+                                        <property>
+                                            <name>Name</name>
+                                            <string>Run</string>
+                                        </property>
+                                        <property>
+                                            <name>Start Time</name>
+                                            <float>0.98800004</float>
+                                        </property>
+                                        <property>
+                                            <name>Duration</name>
+                                            <float>0.76666665</float>
+                                        </property>
+                                        <property>
+                                            <name>Blend in Time</name>
+                                            <float>0</float>
+                                        </property>
+                                        <property>
+                                            <name>Blend out Time</name>
+                                            <float>0.25</float>
+                                        </property>
+                                        <property>
+                                            <name>Weight</name>
+                                            <float>1</float>
+                                        </property>
+                                        <property>
+                                            <name>Start Offset</name>
+                                            <float>0</float>
+                                        </property>
+                                        <property>
+                                            <name>Speed</name>
+                                            <float>1</float>
+                                        </property>
+                                    </container>
+                                </property>
+                            </element>
+                            <element>
+                                <index>3</index>
+                                <property>
+                                    <name>Anim Data</name>
+                                    <container>
+                                        <property>
+                                            <name>Name</name>
+                                            <string>Idle</string>
+                                        </property>
+                                        <property>
+                                            <name>Start Time</name>
+                                            <float>1.5130001</float>
+                                        </property>
+                                        <property>
+                                            <name>Duration</name>
+                                            <float>0.46000001</float>
+                                        </property>
+                                        <property>
+                                            <name>Blend in Time</name>
+                                            <float>0.22666904</float>
+                                        </property>
+                                        <property>
+                                            <name>Blend out Time</name>
+                                            <float>0.23</float>
+                                        </property>
+                                        <property>
+                                            <name>Weight</name>
+                                            <float>1</float>
+                                        </property>
+                                        <property>
+                                            <name>Start Offset</name>
+                                            <float>0</float>
+                                        </property>
+                                        <property>
+                                            <name>Speed</name>
+                                            <float>1</float>
+                                        </property>
+                                    </container>
+                                </property>
+                            </element>
+                        </array>
+                    </property>
+                    <inputlink>
+                        <name>Start</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>a2047797-b079-4c90-bba7-07819e4f09a8</id>
+                            <name>Out</name>
+                        </link>
+                    </inputlink>
+                    <inputlink>
+                        <name>Stop</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>d07583ad-5053-44de-849d-1df42c2c669e</id>
+                            <name>Out</name>
+                        </link>
+                    </inputlink>
+                    <outputlink>
+                        <name>Started</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>9b327b85-cae6-4b50-b701-ca32ffc645ef</id>
+                            <name>Start</name>
+                        </link>
+                    </outputlink>
+                    <outputlink>
+                        <name>Stopped</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>9b327b85-cae6-4b50-b701-ca32ffc645ef</id>
+                            <name>Stop</name>
+                        </link>
+                    </outputlink>
+                    <outputlink>
+                        <name>Finished</name>
+                        <visible>true</visible>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Actor</name>
+                        <visible>true</visible>
+                        <exposed>true</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>true</typecheck>
+                        <link>
+                            <id>df094e69-89ea-499e-8d4d-b1f1b695960b</id>
+                        </link>
+                    </valuelink>
+                    <valuelink>
+                        <name>Time</name>
+                        <visible>true</visible>
+                        <exposed>true</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                        <link>
+                            <id>5f5a056b-4c09-4a23-b5be-9b5e6b03d62e</id>
+                        </link>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Lerp Actor Translation</name>
+                    <category>Cinematic</category>
+                    <id>9b327b85-cae6-4b50-b701-ca32ffc645ef</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>LogNode</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>400.000000</value1>
+                            <value2>400.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>Actor</name>
+                        <actorId></actorId>
+                    </property>
+                    <property>
+                        <name>StartTime</name>
+                        <float>0.23800001</float>
+                    </property>
+                    <property>
+                        <name>EndTime</name>
+                        <float>1.526</float>
+                    </property>
+                    <property>
+                        <name>StartPosition</name>
+                        <vec4>
+                            <value1>14.061634</value1>
+                            <value2>8.538706</value2>
+                            <value3>0.073650</value3>
+                            <value4>0.000000</value4>
+                        </vec4>
+                    </property>
+                    <property>
+                        <name>EndPosition</name>
+                        <vec4>
+                            <value1>9.299291</value1>
+                            <value2>8.538706</value2>
+                            <value3>0.073650</value3>
+                            <value4>0.000000</value4>
+                        </vec4>
+                    </property>
+                    <inputlink>
+                        <name>Start</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>4c70fd6f-9959-4bdc-8839-3456c8a6980d</id>
+                            <name>Started</name>
+                        </link>
+                    </inputlink>
+                    <inputlink>
+                        <name>Stop</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>4c70fd6f-9959-4bdc-8839-3456c8a6980d</id>
+                            <name>Stopped</name>
+                        </link>
+                    </inputlink>
+                    <outputlink>
+                        <name>Started</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>13168d2d-a66b-415b-a6c9-a560db5a0624</id>
+                            <name>Start</name>
+                        </link>
+                    </outputlink>
+                    <outputlink>
+                        <name>Stopped</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>13168d2d-a66b-415b-a6c9-a560db5a0624</id>
+                            <name>Stop</name>
+                        </link>
+                    </outputlink>
+                    <outputlink>
+                        <name>Finished</name>
+                        <visible>true</visible>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Actor</name>
+                        <visible>true</visible>
+                        <exposed>true</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>true</typecheck>
+                        <link>
+                            <id>2487ada6-8681-46d4-879b-5f9c404e08bc</id>
+                        </link>
+                    </valuelink>
+                    <valuelink>
+                        <name>StartTime</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>EndTime</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Time</name>
+                        <visible>true</visible>
+                        <exposed>true</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                        <link>
+                            <id>c7aabc9b-6dd6-473e-8ed6-d0ce0066927e</id>
+                        </link>
+                    </valuelink>
+                    <valuelink>
+                        <name>StartPosition</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>EndPosition</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Lerp Actor Translation</name>
+                    <category>Cinematic</category>
+                    <id>13168d2d-a66b-415b-a6c9-a560db5a0624</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>LogNode</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>600.000000</value1>
+                            <value2>400.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>Actor</name>
+                        <actorId></actorId>
+                    </property>
+                    <property>
+                        <name>StartTime</name>
+                        <float>1.526</float>
+                    </property>
+                    <property>
+                        <name>EndTime</name>
+                        <float>1.599</float>
+                    </property>
+                    <property>
+                        <name>StartPosition</name>
+                        <vec4>
+                            <value1>9.299291</value1>
+                            <value2>8.538706</value2>
+                            <value3>0.073650</value3>
+                            <value4>0.000000</value4>
+                        </vec4>
+                    </property>
+                    <property>
+                        <name>EndPosition</name>
+                        <vec4>
+                            <value1>9.122586</value1>
+                            <value2>8.538706</value2>
+                            <value3>0.073650</value3>
+                            <value4>0.000000</value4>
+                        </vec4>
+                    </property>
+                    <inputlink>
+                        <name>Start</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>9b327b85-cae6-4b50-b701-ca32ffc645ef</id>
+                            <name>Started</name>
+                        </link>
+                    </inputlink>
+                    <inputlink>
+                        <name>Stop</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>9b327b85-cae6-4b50-b701-ca32ffc645ef</id>
+                            <name>Stopped</name>
+                        </link>
+                    </inputlink>
+                    <outputlink>
+                        <name>Started</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>58d7b4e3-9105-4b75-9240-d4cb600d2177</id>
+                            <name>Start</name>
+                        </link>
+                    </outputlink>
+                    <outputlink>
+                        <name>Stopped</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>58d7b4e3-9105-4b75-9240-d4cb600d2177</id>
+                            <name>Stop</name>
+                        </link>
+                    </outputlink>
+                    <outputlink>
+                        <name>Finished</name>
+                        <visible>true</visible>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Actor</name>
+                        <visible>true</visible>
+                        <exposed>true</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>true</typecheck>
+                        <link>
+                            <id>bda61297-8e70-4e53-8131-e033b1276a72</id>
+                        </link>
+                    </valuelink>
+                    <valuelink>
+                        <name>StartTime</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>EndTime</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Time</name>
+                        <visible>true</visible>
+                        <exposed>true</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                        <link>
+                            <id>92d0bc56-682b-4401-a448-04cef3cea1cc</id>
+                        </link>
+                    </valuelink>
+                    <valuelink>
+                        <name>StartPosition</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>EndPosition</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Lerp Actor Translation</name>
+                    <category>Cinematic</category>
+                    <id>58d7b4e3-9105-4b75-9240-d4cb600d2177</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>LogNode</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>800.000000</value1>
+                            <value2>400.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>Actor</name>
+                        <actorId></actorId>
+                    </property>
+                    <property>
+                        <name>StartTime</name>
+                        <float>1.6390001</float>
+                    </property>
+                    <property>
+                        <name>EndTime</name>
+                        <float>1.744</float>
+                    </property>
+                    <property>
+                        <name>StartPosition</name>
+                        <vec4>
+                            <value1>9.122586</value1>
+                            <value2>8.538706</value2>
+                            <value3>0.073650</value3>
+                            <value4>0.000000</value4>
+                        </vec4>
+                    </property>
+                    <property>
+                        <name>EndPosition</name>
+                        <vec4>
+                            <value1>9.254625</value1>
+                            <value2>8.538706</value2>
+                            <value3>0.073650</value3>
+                            <value4>0.000000</value4>
+                        </vec4>
+                    </property>
+                    <inputlink>
+                        <name>Start</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>13168d2d-a66b-415b-a6c9-a560db5a0624</id>
+                            <name>Started</name>
+                        </link>
+                    </inputlink>
+                    <inputlink>
+                        <name>Stop</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>13168d2d-a66b-415b-a6c9-a560db5a0624</id>
+                            <name>Stopped</name>
+                        </link>
+                    </inputlink>
+                    <outputlink>
+                        <name>Started</name>
+                        <visible>true</visible>
+                    </outputlink>
+                    <outputlink>
+                        <name>Stopped</name>
+                        <visible>true</visible>
+                    </outputlink>
+                    <outputlink>
+                        <name>Finished</name>
+                        <visible>true</visible>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Actor</name>
+                        <visible>true</visible>
+                        <exposed>true</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>true</typecheck>
+                        <link>
+                            <id>2b66b2ce-7888-4ea8-a0a1-d941a65bb758</id>
+                        </link>
+                    </valuelink>
+                    <valuelink>
+                        <name>StartTime</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>EndTime</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Time</name>
+                        <visible>true</visible>
+                        <exposed>true</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                        <link>
+                            <id>66569792-c516-46fe-b4ad-55fd03b73c9b</id>
+                        </link>
+                    </valuelink>
+                    <valuelink>
+                        <name>StartPosition</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>EndPosition</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+            </actionnodes>
+            <valuenodes>
+                <node>
+                    <name>Float</name>
+                    <category>General</category>
+                    <id>dbd58153-8c2a-473a-8369-a1daa896de98</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>LogNode</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>0.000000</value1>
+                            <value2>300.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>Name</name>
+                        <string>Current Time</string>
+                    </property>
+                    <property>
+                        <name>Value</name>
+                        <float>0</float>
+                    </property>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Actor</name>
+                    <category>General</category>
+                    <id>df094e69-89ea-499e-8d4d-b1f1b695960b</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>LogNode</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>195.000000</value1>
+                            <value2>600.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>Name</name>
+                        <string>Actor</string>
+                    </property>
+                    <property>
+                        <name>Value</name>
+                        <actorId>11378b3a-3352-421f-b43b-0792580d9e78</actorId>
+                    </property>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Reference</name>
+                    <category>Core</category>
+                    <id>5f5a056b-4c09-4a23-b5be-9b5e6b03d62e</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>LogNode</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>246.000000</value1>
+                            <value2>600.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>Name</name>
+                        <string>Ref</string>
+                    </property>
+                    <property>
+                        <name>Reference</name>
+                        <string>Current Time</string>
+                    </property>
+                    <valuelink>
+                        <name>Ref</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                        <link>
+                            <id>dbd58153-8c2a-473a-8369-a1daa896de98</id>
+                        </link>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Actor</name>
+                    <category>General</category>
+                    <id>2487ada6-8681-46d4-879b-5f9c404e08bc</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>LogNode</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>403.000000</value1>
+                            <value2>600.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>Name</name>
+                        <string>Actor</string>
+                    </property>
+                    <property>
+                        <name>Value</name>
+                        <actorId>11378b3a-3352-421f-b43b-0792580d9e78</actorId>
+                    </property>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Reference</name>
+                    <category>Core</category>
+                    <id>c7aabc9b-6dd6-473e-8ed6-d0ce0066927e</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>LogNode</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>459.000000</value1>
+                            <value2>600.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>Name</name>
+                        <string>Ref</string>
+                    </property>
+                    <property>
+                        <name>Reference</name>
+                        <string>Current Time</string>
+                    </property>
+                    <valuelink>
+                        <name>Ref</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                        <link>
+                            <id>dbd58153-8c2a-473a-8369-a1daa896de98</id>
+                        </link>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Actor</name>
+                    <category>General</category>
+                    <id>bda61297-8e70-4e53-8131-e033b1276a72</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>LogNode</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>603.000000</value1>
+                            <value2>600.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>Name</name>
+                        <string>Actor</string>
+                    </property>
+                    <property>
+                        <name>Value</name>
+                        <actorId>11378b3a-3352-421f-b43b-0792580d9e78</actorId>
+                    </property>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Reference</name>
+                    <category>Core</category>
+                    <id>92d0bc56-682b-4401-a448-04cef3cea1cc</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>LogNode</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>659.000000</value1>
+                            <value2>600.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>Name</name>
+                        <string>Ref</string>
+                    </property>
+                    <property>
+                        <name>Reference</name>
+                        <string>Current Time</string>
+                    </property>
+                    <valuelink>
+                        <name>Ref</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                        <link>
+                            <id>dbd58153-8c2a-473a-8369-a1daa896de98</id>
+                        </link>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Actor</name>
+                    <category>General</category>
+                    <id>2b66b2ce-7888-4ea8-a0a1-d941a65bb758</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>LogNode</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>803.000000</value1>
+                            <value2>600.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>Name</name>
+                        <string>Actor</string>
+                    </property>
+                    <property>
+                        <name>Value</name>
+                        <actorId>11378b3a-3352-421f-b43b-0792580d9e78</actorId>
+                    </property>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Reference</name>
+                    <category>Core</category>
+                    <id>66569792-c516-46fe-b4ad-55fd03b73c9b</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>LogNode</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>859.000000</value1>
+                            <value2>600.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>Name</name>
+                        <string>Ref</string>
+                    </property>
+                    <property>
+                        <name>Reference</name>
+                        <string>Current Time</string>
+                    </property>
+                    <valuelink>
+                        <name>Ref</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                        <link>
+                            <id>dbd58153-8c2a-473a-8369-a1daa896de98</id>
+                        </link>
+                    </valuelink>
+                </node>
+            </valuenodes>
+        </graph>
+        <graph>
+            <property>
+                <name>Enabled</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Comment</name>
+                <string></string>
+            </property>
+            <property>
+                <name>Name</name>
+                <string>Cinematic Macro</string>
+            </property>
+            <property>
+                <name>Custom Editor</name>
+                <string>Cinematic</string>
+            </property>
+            <property>
+                <name>Position</name>
+                <vec2>
+                    <value1>-10.937936</value1>
+                    <value2>1021.773682</value2>
+                </vec2>
+            </property>
+            <eventnodes>
+                <node>
+                    <name>Input Link</name>
+                    <category>Core</category>
+                    <id>5fb8d343-f200-4d1b-b629-912e1c1506bd</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>LogNode</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>-200.000000</value1>
+                            <value2>0.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>TriggerCount</name>
+                        <integer>0</integer>
+                    </property>
+                    <property>
+                        <name>Name</name>
+                        <string>Play</string>
+                    </property>
+                    <inputlink>
+                        <name>Play</name>
+                        <visible>true</visible>
+                    </inputlink>
+                    <outputlink>
+                        <name>Out</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>ae7c5641-c1c3-430c-84c1-6dc27cdb01aa</id>
+                            <name>Play</name>
+                        </link>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>TriggerCount</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Input Link</name>
+                    <category>Core</category>
+                    <id>0fe83da0-0024-4d89-b009-dfbaa9c2225c</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>LogNode</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>-200.000000</value1>
+                            <value2>50.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>TriggerCount</name>
+                        <integer>0</integer>
+                    </property>
+                    <property>
+                        <name>Name</name>
+                        <string>Reverse</string>
+                    </property>
+                    <inputlink>
+                        <name>Reverse</name>
+                        <visible>true</visible>
+                    </inputlink>
+                    <outputlink>
+                        <name>Out</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>ae7c5641-c1c3-430c-84c1-6dc27cdb01aa</id>
+                            <name>Reverse</name>
+                        </link>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>TriggerCount</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Input Link</name>
+                    <category>Core</category>
+                    <id>c4219154-7663-4c06-9a99-e086158330e5</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>LogNode</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>-200.000000</value1>
+                            <value2>100.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>TriggerCount</name>
+                        <integer>0</integer>
+                    </property>
+                    <property>
+                        <name>Name</name>
+                        <string>Stop</string>
+                    </property>
+                    <inputlink>
+                        <name>Stop</name>
+                        <visible>true</visible>
+                    </inputlink>
+                    <outputlink>
+                        <name>Out</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>ae7c5641-c1c3-430c-84c1-6dc27cdb01aa</id>
+                            <name>Stop</name>
+                        </link>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>TriggerCount</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Input Link</name>
+                    <category>Core</category>
+                    <id>b5c39200-cbee-40b4-aaa4-b037d19160f4</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>LogNode</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>-200.000000</value1>
+                            <value2>150.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>TriggerCount</name>
+                        <integer>0</integer>
+                    </property>
+                    <property>
+                        <name>Name</name>
+                        <string>Pause</string>
+                    </property>
+                    <inputlink>
+                        <name>Pause</name>
+                        <visible>true</visible>
+                    </inputlink>
+                    <outputlink>
+                        <name>Out</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>ae7c5641-c1c3-430c-84c1-6dc27cdb01aa</id>
+                            <name>Pause</name>
+                        </link>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>TriggerCount</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Remote Event</name>
+                    <category>Core</category>
+                    <id>2aed0c5c-22c3-489f-a1c8-87141e1a0aab</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>LogNode</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>0.000000</value1>
+                            <value2>300.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>TriggerCount</name>
+                        <integer>0</integer>
+                    </property>
+                    <property>
+                        <name>Instigator</name>
+                        <actorId></actorId>
+                    </property>
+                    <property>
+                        <name>EventName</name>
+                        <string>Started</string>
+                    </property>
+                    <outputlink>
+                        <name>Out</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>f137848f-9af3-4d58-8b86-d3856bcfa9b1</id>
+                            <name>Start</name>
+                        </link>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>TriggerCount</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>true</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>EventName</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Remote Event</name>
+                    <category>Core</category>
+                    <id>6eaad954-6b0c-4da4-a512-07e2203bbf02</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>LogNode</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>6.000000</value1>
+                            <value2>400.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>TriggerCount</name>
+                        <integer>0</integer>
+                    </property>
+                    <property>
+                        <name>Instigator</name>
+                        <actorId></actorId>
+                    </property>
+                    <property>
+                        <name>EventName</name>
+                        <string>Ended</string>
+                    </property>
+                    <outputlink>
+                        <name>Out</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>f137848f-9af3-4d58-8b86-d3856bcfa9b1</id>
+                            <name>Stop</name>
+                        </link>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>TriggerCount</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Instigator</name>
+                        <visible>true</visible>
+                        <exposed>true</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>EventName</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+            </eventnodes>
+            <actionnodes>
+                <node>
+                    <name>Scheduler</name>
+                    <category>Cinematic</category>
+                    <id>ae7c5641-c1c3-430c-84c1-6dc27cdb01aa</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>LogNode</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>0.000000</value1>
+                            <value2>0.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>TotalTime</name>
+                        <float>1</float>
+                    </property>
+                    <property>
+                        <name>UseSimTime</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>EventList</name>
+                        <array>
+                            <size>0</size>
+                        </array>
+                    </property>
+                    <inputlink>
+                        <name>Play</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>5fb8d343-f200-4d1b-b629-912e1c1506bd</id>
+                            <name>Out</name>
+                        </link>
+                    </inputlink>
+                    <inputlink>
+                        <name>Reverse</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>0fe83da0-0024-4d89-b009-dfbaa9c2225c</id>
+                            <name>Out</name>
+                        </link>
+                    </inputlink>
+                    <inputlink>
+                        <name>Stop</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>c4219154-7663-4c06-9a99-e086158330e5</id>
+                            <name>Out</name>
+                        </link>
+                    </inputlink>
+                    <inputlink>
+                        <name>Pause</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>b5c39200-cbee-40b4-aaa4-b037d19160f4</id>
+                            <name>Out</name>
+                        </link>
+                    </inputlink>
+                    <outputlink>
+                        <name>Started</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>00d6814e-2afe-4ec6-91ef-5b609fb0de7b</id>
+                            <name>Call Event</name>
+                        </link>
+                        <link>
+                            <id>7e0f3034-68b4-43a5-a5c0-b366907cea44</id>
+                            <name>In</name>
+                        </link>
+                    </outputlink>
+                    <outputlink>
+                        <name>Ended</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>0070024a-bf50-4088-af9e-711a56b537d8</id>
+                            <name>In</name>
+                        </link>
+                        <link>
+                            <id>993f8acb-47be-4db1-a9f6-9e7de240ae9b</id>
+                            <name>Call Event</name>
+                        </link>
+                    </outputlink>
+                    <outputlink>
+                        <name>Stopped</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>993f8acb-47be-4db1-a9f6-9e7de240ae9b</id>
+                            <name>Call Event</name>
+                        </link>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Time</name>
+                        <visible>true</visible>
+                        <exposed>true</exposed>
+                        <isout>true</isout>
+                        <allowmultiple>true</allowmultiple>
+                        <typecheck>true</typecheck>
+                        <link>
+                            <id>23b5c1f6-e00d-4ba1-863f-16d9b8615bbb</id>
+                        </link>
+                    </valuelink>
+                    <valuelink>
+                        <name>TotalTime</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>false</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>UseSimTime</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Call Remote Event</name>
+                    <category>Core</category>
+                    <id>00d6814e-2afe-4ec6-91ef-5b609fb0de7b</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>LogNode</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>400.000000</value1>
+                            <value2>0.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>EventName</name>
+                        <string>Started</string>
+                    </property>
+                    <property>
+                        <name>Local Event</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <inputlink>
+                        <name>Call Event</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>ae7c5641-c1c3-430c-84c1-6dc27cdb01aa</id>
+                            <name>Started</name>
+                        </link>
+                    </inputlink>
+                    <outputlink>
+                        <name>Event Finished</name>
+                        <visible>true</visible>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>EventName</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Local Event</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Output Link</name>
+                    <category>Core</category>
+                    <id>7e0f3034-68b4-43a5-a5c0-b366907cea44</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>LogNode</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>400.000000</value1>
+                            <value2>50.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>Name</name>
+                        <string>Started</string>
+                    </property>
+                    <inputlink>
+                        <name>In</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>ae7c5641-c1c3-430c-84c1-6dc27cdb01aa</id>
+                            <name>Started</name>
+                        </link>
+                    </inputlink>
+                    <outputlink>
+                        <name>Started</name>
+                        <visible>true</visible>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Output Link</name>
+                    <category>Core</category>
+                    <id>0070024a-bf50-4088-af9e-711a56b537d8</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>LogNode</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>400.000000</value1>
+                            <value2>100.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>Name</name>
+                        <string>Ended</string>
+                    </property>
+                    <inputlink>
+                        <name>In</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>ae7c5641-c1c3-430c-84c1-6dc27cdb01aa</id>
+                            <name>Ended</name>
+                        </link>
+                    </inputlink>
+                    <outputlink>
+                        <name>Ended</name>
+                        <visible>true</visible>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Call Remote Event</name>
+                    <category>Core</category>
+                    <id>993f8acb-47be-4db1-a9f6-9e7de240ae9b</id>
+                    <property>
+                        <name>Enabled</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Comment</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>LogNode</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>Position</name>
+                        <vec2>
+                            <value1>400.000000</value1>
+                            <value2>150.000000</value2>
+                        </vec2>
+                    </property>
+                    <property>
+                        <name>EventName</name>
+                        <string>Ended</string>
+                    </property>
+                    <property>
+                        <name>Local Event</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <inputlink>
+                        <name>Call Event</name>
+                        <visible>true</visible>
+                        <link>
+                            <id>ae7c5641-c1c3-430c-84c1-6dc27cdb01aa</id>
+                            <name>Ended</name>
+                        </link>
+                        <link>
+                            <id>ae7c5641-c1c3-430c-84c1-6dc27cdb01aa</id>
+                            <name>Stopped</name>
+                        </link>
+                    </inputlink>
+                    <outputlink>
+                        <name>Event Finished</name>
+                        <visible>true</visible>
+                    </outputlink>
+                    <valuelink>
+                        <name>Enabled</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>EventName</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                    <valuelink>
+                        <name>Local Event</name>
+                        <visible>true</visible>
+                        <exposed>false</exposed>
+                        <isout>false</isout>
+                        <allowmultiple>false</allowmultiple>
+                        <typecheck>true</typecheck>
+                    </valuelink>
+                </node>
+                <node>
+                    <name>Animate Actor</name>
+                    <category>Cinematic</category>
+                    <id>f137848f-9af3-4d58-8b86-d3856bcfa9b1</id>
                     <property>
                         <name>Enabled</name>
                         <boolean>true</boolean>
@@ -11400,7 +13452,7 @@
                     <property>
                         <name>Animations</name>
                         <array>
-                            <size>3</size>
+                            <size>2</size>
                             <element>
                                 <index>0</index>
                                 <property>
@@ -11412,15 +13464,15 @@
                                         </property>
                                         <property>
                                             <name>Start Time</name>
-                                            <float>0</float>
+                                            <float>0.079000004</float>
                                         </property>
                                         <property>
                                             <name>Duration</name>
-                                            <float>0.76666665</float>
+                                            <float>0.14999999</float>
                                         </property>
                                         <property>
                                             <name>Blend in Time</name>
-                                            <float>0.25</float>
+                                            <float>0</float>
                                         </property>
                                         <property>
                                             <name>Blend out Time</name>
@@ -11428,6 +13480,14 @@
                                         </property>
                                         <property>
                                             <name>Weight</name>
+                                            <float>1</float>
+                                        </property>
+                                        <property>
+                                            <name>Start Offset</name>
+                                            <float>0.23</float>
+                                        </property>
+                                        <property>
+                                            <name>Speed</name>
                                             <float>1</float>
                                         </property>
                                     </container>
@@ -11444,11 +13504,11 @@
                                         </property>
                                         <property>
                                             <name>Start Time</name>
-                                            <float>0.75600004</float>
+                                            <float>0.56800002</float>
                                         </property>
                                         <property>
                                             <name>Duration</name>
-                                            <float>0.76666665</float>
+                                            <float>0.53666663</float>
                                         </property>
                                         <property>
                                             <name>Blend in Time</name>
@@ -11456,42 +13516,18 @@
                                         </property>
                                         <property>
                                             <name>Blend out Time</name>
-                                            <float>0.25</float>
+                                            <float>0</float>
                                         </property>
                                         <property>
                                             <name>Weight</name>
                                             <float>1</float>
                                         </property>
-                                    </container>
-                                </property>
-                            </element>
-                            <element>
-                                <index>2</index>
-                                <property>
-                                    <name>Anim Data</name>
-                                    <container>
                                         <property>
-                                            <name>Name</name>
-                                            <string>Idle</string>
+                                            <name>Start Offset</name>
+                                            <float>0.23</float>
                                         </property>
                                         <property>
-                                            <name>Start Time</name>
-                                            <float>1.335</float>
-                                        </property>
-                                        <property>
-                                            <name>Duration</name>
-                                            <float>1.9666667</float>
-                                        </property>
-                                        <property>
-                                            <name>Blend in Time</name>
-                                            <float>0.25</float>
-                                        </property>
-                                        <property>
-                                            <name>Blend out Time</name>
-                                            <float>0.25</float>
-                                        </property>
-                                        <property>
-                                            <name>Weight</name>
+                                            <name>Speed</name>
                                             <float>1</float>
                                         </property>
                                     </container>
@@ -11503,7 +13539,7 @@
                         <name>Start</name>
                         <visible>true</visible>
                         <link>
-                            <id>bcc9fe52-b7ce-4d0c-b735-f310b4dacd65</id>
+                            <id>2aed0c5c-22c3-489f-a1c8-87141e1a0aab</id>
                             <name>Out</name>
                         </link>
                     </inputlink>
@@ -11511,589 +13547,13 @@
                         <name>Stop</name>
                         <visible>true</visible>
                         <link>
-                            <id>6e016d78-9ac4-4aa3-b934-521f84a4ce51</id>
+                            <id>6eaad954-6b0c-4da4-a512-07e2203bbf02</id>
                             <name>Out</name>
                         </link>
                     </inputlink>
                     <outputlink>
                         <name>Started</name>
                         <visible>true</visible>
-                        <link>
-                            <id>8298b0a0-a933-4d36-86a0-5ea5e8c8cabd</id>
-                            <name>Start</name>
-                        </link>
-                    </outputlink>
-                    <outputlink>
-                        <name>Stopped</name>
-                        <visible>true</visible>
-                        <link>
-                            <id>8298b0a0-a933-4d36-86a0-5ea5e8c8cabd</id>
-                            <name>Stop</name>
-                        </link>
-                    </outputlink>
-                    <outputlink>
-                        <name>Finished</name>
-                        <visible>true</visible>
-                    </outputlink>
-                    <valuelink>
-                        <name>Enabled</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                    <valuelink>
-                        <name>Actor</name>
-                        <visible>true</visible>
-                        <exposed>true</exposed>
-                        <isout>true</isout>
-                        <allowmultiple>true</allowmultiple>
-                        <typecheck>true</typecheck>
-                        <link>
-                            <id>2f3d2b0d-ebfe-495c-9e87-ffaaf907c3c1</id>
-                        </link>
-                    </valuelink>
-                    <valuelink>
-                        <name>Time</name>
-                        <visible>true</visible>
-                        <exposed>true</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                        <link>
-                            <id>4b7778f6-622f-4f45-b2fb-595bf36b1299</id>
-                        </link>
-                    </valuelink>
-                </node>
-                <node>
-                    <name>Lerp Actor Translation</name>
-                    <category>Cinematic</category>
-                    <id>8298b0a0-a933-4d36-86a0-5ea5e8c8cabd</id>
-                    <property>
-                        <name>Enabled</name>
-                        <boolean>true</boolean>
-                    </property>
-                    <property>
-                        <name>Comment</name>
-                        <string></string>
-                    </property>
-                    <property>
-                        <name>LogNode</name>
-                        <boolean>false</boolean>
-                    </property>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>400.000000</value1>
-                            <value2>300.000000</value2>
-                        </vec2>
-                    </property>
-                    <property>
-                        <name>Actor</name>
-                        <actorId></actorId>
-                    </property>
-                    <property>
-                        <name>StartTime</name>
-                        <float>0</float>
-                    </property>
-                    <property>
-                        <name>EndTime</name>
-                        <float>1.36</float>
-                    </property>
-                    <property>
-                        <name>StartPosition</name>
-                        <vec4>
-                            <value1>14.061634</value1>
-                            <value2>8.538706</value2>
-                            <value3>0.073650</value3>
-                            <value4>0.000000</value4>
-                        </vec4>
-                    </property>
-                    <property>
-                        <name>EndPosition</name>
-                        <vec4>
-                            <value1>10.090934</value1>
-                            <value2>8.538706</value2>
-                            <value3>0.055904</value3>
-                            <value4>0.000000</value4>
-                        </vec4>
-                    </property>
-                    <inputlink>
-                        <name>Start</name>
-                        <visible>true</visible>
-                        <link>
-                            <id>e5c3005e-f0b7-407d-865d-4bf363ce7dbc</id>
-                            <name>Started</name>
-                        </link>
-                    </inputlink>
-                    <inputlink>
-                        <name>Stop</name>
-                        <visible>true</visible>
-                        <link>
-                            <id>e5c3005e-f0b7-407d-865d-4bf363ce7dbc</id>
-                            <name>Stopped</name>
-                        </link>
-                    </inputlink>
-                    <outputlink>
-                        <name>Started</name>
-                        <visible>true</visible>
-                        <link>
-                            <id>e978857d-1351-48cc-bc9a-a5e25ed1b8d2</id>
-                            <name>Start</name>
-                        </link>
-                    </outputlink>
-                    <outputlink>
-                        <name>Stopped</name>
-                        <visible>true</visible>
-                        <link>
-                            <id>e978857d-1351-48cc-bc9a-a5e25ed1b8d2</id>
-                            <name>Stop</name>
-                        </link>
-                    </outputlink>
-                    <outputlink>
-                        <name>Finished</name>
-                        <visible>true</visible>
-                    </outputlink>
-                    <valuelink>
-                        <name>Enabled</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                    <valuelink>
-                        <name>Actor</name>
-                        <visible>true</visible>
-                        <exposed>true</exposed>
-                        <isout>true</isout>
-                        <allowmultiple>true</allowmultiple>
-                        <typecheck>true</typecheck>
-                        <link>
-                            <id>4855b832-e0d2-4857-a1cc-05151b034467</id>
-                        </link>
-                    </valuelink>
-                    <valuelink>
-                        <name>StartTime</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                    <valuelink>
-                        <name>EndTime</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                    <valuelink>
-                        <name>Time</name>
-                        <visible>true</visible>
-                        <exposed>true</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                        <link>
-                            <id>125299c7-7d46-4f76-ae78-a07e37c07e28</id>
-                        </link>
-                    </valuelink>
-                    <valuelink>
-                        <name>StartPosition</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                    <valuelink>
-                        <name>EndPosition</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                </node>
-                <node>
-                    <name>Lerp Actor Translation</name>
-                    <category>Cinematic</category>
-                    <id>e978857d-1351-48cc-bc9a-a5e25ed1b8d2</id>
-                    <property>
-                        <name>Enabled</name>
-                        <boolean>true</boolean>
-                    </property>
-                    <property>
-                        <name>Comment</name>
-                        <string></string>
-                    </property>
-                    <property>
-                        <name>LogNode</name>
-                        <boolean>false</boolean>
-                    </property>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>600.000000</value1>
-                            <value2>300.000000</value2>
-                        </vec2>
-                    </property>
-                    <property>
-                        <name>Actor</name>
-                        <actorId></actorId>
-                    </property>
-                    <property>
-                        <name>StartTime</name>
-                        <float>1.36</float>
-                    </property>
-                    <property>
-                        <name>EndTime</name>
-                        <float>1.415</float>
-                    </property>
-                    <property>
-                        <name>StartPosition</name>
-                        <vec4>
-                            <value1>10.090934</value1>
-                            <value2>8.538706</value2>
-                            <value3>0.055904</value3>
-                            <value4>0.000000</value4>
-                        </vec4>
-                    </property>
-                    <property>
-                        <name>EndPosition</name>
-                        <vec4>
-                            <value1>10.036037</value1>
-                            <value2>8.538706</value2>
-                            <value3>0.055904</value3>
-                            <value4>0.000000</value4>
-                        </vec4>
-                    </property>
-                    <inputlink>
-                        <name>Start</name>
-                        <visible>true</visible>
-                        <link>
-                            <id>8298b0a0-a933-4d36-86a0-5ea5e8c8cabd</id>
-                            <name>Started</name>
-                        </link>
-                    </inputlink>
-                    <inputlink>
-                        <name>Stop</name>
-                        <visible>true</visible>
-                        <link>
-                            <id>8298b0a0-a933-4d36-86a0-5ea5e8c8cabd</id>
-                            <name>Stopped</name>
-                        </link>
-                    </inputlink>
-                    <outputlink>
-                        <name>Started</name>
-                        <visible>true</visible>
-                        <link>
-                            <id>46636139-f785-4936-92d7-74522cede324</id>
-                            <name>Start</name>
-                        </link>
-                    </outputlink>
-                    <outputlink>
-                        <name>Stopped</name>
-                        <visible>true</visible>
-                        <link>
-                            <id>46636139-f785-4936-92d7-74522cede324</id>
-                            <name>Stop</name>
-                        </link>
-                    </outputlink>
-                    <outputlink>
-                        <name>Finished</name>
-                        <visible>true</visible>
-                    </outputlink>
-                    <valuelink>
-                        <name>Enabled</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                    <valuelink>
-                        <name>Actor</name>
-                        <visible>true</visible>
-                        <exposed>true</exposed>
-                        <isout>true</isout>
-                        <allowmultiple>true</allowmultiple>
-                        <typecheck>true</typecheck>
-                        <link>
-                            <id>751bbff5-44c9-4964-88ac-601b248a6b70</id>
-                        </link>
-                    </valuelink>
-                    <valuelink>
-                        <name>StartTime</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                    <valuelink>
-                        <name>EndTime</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                    <valuelink>
-                        <name>Time</name>
-                        <visible>true</visible>
-                        <exposed>true</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                        <link>
-                            <id>c2400358-9d6a-41b2-920a-a689101165b5</id>
-                        </link>
-                    </valuelink>
-                    <valuelink>
-                        <name>StartPosition</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                    <valuelink>
-                        <name>EndPosition</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                </node>
-                <node>
-                    <name>Lerp Actor Translation</name>
-                    <category>Cinematic</category>
-                    <id>46636139-f785-4936-92d7-74522cede324</id>
-                    <property>
-                        <name>Enabled</name>
-                        <boolean>true</boolean>
-                    </property>
-                    <property>
-                        <name>Comment</name>
-                        <string></string>
-                    </property>
-                    <property>
-                        <name>LogNode</name>
-                        <boolean>false</boolean>
-                    </property>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>800.000000</value1>
-                            <value2>300.000000</value2>
-                        </vec2>
-                    </property>
-                    <property>
-                        <name>Actor</name>
-                        <actorId></actorId>
-                    </property>
-                    <property>
-                        <name>StartTime</name>
-                        <float>1.415</float>
-                    </property>
-                    <property>
-                        <name>EndTime</name>
-                        <float>1.4630001</float>
-                    </property>
-                    <property>
-                        <name>StartPosition</name>
-                        <vec4>
-                            <value1>10.036037</value1>
-                            <value2>8.538706</value2>
-                            <value3>0.055904</value3>
-                            <value4>0.000000</value4>
-                        </vec4>
-                    </property>
-                    <property>
-                        <name>EndPosition</name>
-                        <vec4>
-                            <value1>10.089129</value1>
-                            <value2>8.538706</value2>
-                            <value3>0.055904</value3>
-                            <value4>0.000000</value4>
-                        </vec4>
-                    </property>
-                    <inputlink>
-                        <name>Start</name>
-                        <visible>true</visible>
-                        <link>
-                            <id>e978857d-1351-48cc-bc9a-a5e25ed1b8d2</id>
-                            <name>Started</name>
-                        </link>
-                    </inputlink>
-                    <inputlink>
-                        <name>Stop</name>
-                        <visible>true</visible>
-                        <link>
-                            <id>e978857d-1351-48cc-bc9a-a5e25ed1b8d2</id>
-                            <name>Stopped</name>
-                        </link>
-                    </inputlink>
-                    <outputlink>
-                        <name>Started</name>
-                        <visible>true</visible>
-                        <link>
-                            <id>2046d483-6c24-4447-bf48-a8e4fa2f05ca</id>
-                            <name>Start</name>
-                        </link>
-                    </outputlink>
-                    <outputlink>
-                        <name>Stopped</name>
-                        <visible>true</visible>
-                        <link>
-                            <id>2046d483-6c24-4447-bf48-a8e4fa2f05ca</id>
-                            <name>Stop</name>
-                        </link>
-                    </outputlink>
-                    <outputlink>
-                        <name>Finished</name>
-                        <visible>true</visible>
-                    </outputlink>
-                    <valuelink>
-                        <name>Enabled</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                    <valuelink>
-                        <name>Actor</name>
-                        <visible>true</visible>
-                        <exposed>true</exposed>
-                        <isout>true</isout>
-                        <allowmultiple>true</allowmultiple>
-                        <typecheck>true</typecheck>
-                        <link>
-                            <id>91f81727-6fd5-4245-ba45-6231375ecdf1</id>
-                        </link>
-                    </valuelink>
-                    <valuelink>
-                        <name>StartTime</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                    <valuelink>
-                        <name>EndTime</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                    <valuelink>
-                        <name>Time</name>
-                        <visible>true</visible>
-                        <exposed>true</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                        <link>
-                            <id>0a3ba7c3-d74d-44d1-853c-2ef92f85fc8d</id>
-                        </link>
-                    </valuelink>
-                    <valuelink>
-                        <name>StartPosition</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                    <valuelink>
-                        <name>EndPosition</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                </node>
-                <node>
-                    <name>Lerp Actor Translation</name>
-                    <category>Cinematic</category>
-                    <id>2046d483-6c24-4447-bf48-a8e4fa2f05ca</id>
-                    <property>
-                        <name>Enabled</name>
-                        <boolean>true</boolean>
-                    </property>
-                    <property>
-                        <name>Comment</name>
-                        <string></string>
-                    </property>
-                    <property>
-                        <name>LogNode</name>
-                        <boolean>false</boolean>
-                    </property>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>1000.000000</value1>
-                            <value2>300.000000</value2>
-                        </vec2>
-                    </property>
-                    <property>
-                        <name>Actor</name>
-                        <actorId></actorId>
-                    </property>
-                    <property>
-                        <name>StartTime</name>
-                        <float>1.4630001</float>
-                    </property>
-                    <property>
-                        <name>EndTime</name>
-                        <float>1.524</float>
-                    </property>
-                    <property>
-                        <name>StartPosition</name>
-                        <vec4>
-                            <value1>10.089129</value1>
-                            <value2>8.538706</value2>
-                            <value3>0.055904</value3>
-                            <value4>0.000000</value4>
-                        </vec4>
-                    </property>
-                    <property>
-                        <name>EndPosition</name>
-                        <vec4>
-                            <value1>10.252828</value1>
-                            <value2>8.538706</value2>
-                            <value3>0.055904</value3>
-                            <value4>0.000000</value4>
-                        </vec4>
-                    </property>
-                    <inputlink>
-                        <name>Start</name>
-                        <visible>true</visible>
-                        <link>
-                            <id>46636139-f785-4936-92d7-74522cede324</id>
-                            <name>Started</name>
-                        </link>
-                    </inputlink>
-                    <inputlink>
-                        <name>Stop</name>
-                        <visible>true</visible>
-                        <link>
-                            <id>46636139-f785-4936-92d7-74522cede324</id>
-                            <name>Stopped</name>
-                        </link>
-                    </inputlink>
-                    <outputlink>
-                        <name>Started</name>
-                        <visible>true</visible>
                     </outputlink>
                     <outputlink>
                         <name>Stopped</name>
@@ -12119,24 +13579,8 @@
                         <allowmultiple>true</allowmultiple>
                         <typecheck>true</typecheck>
                         <link>
-                            <id>3a521b42-918d-4a95-9f72-f58ef06da44c</id>
+                            <id>b9d520fd-ce3d-4495-bb2b-f3d1347e0ee5</id>
                         </link>
-                    </valuelink>
-                    <valuelink>
-                        <name>StartTime</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                    <valuelink>
-                        <name>EndTime</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
                     </valuelink>
                     <valuelink>
                         <name>Time</name>
@@ -12146,24 +13590,8 @@
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
                         <link>
-                            <id>6403a742-7d44-40d4-ba92-0715ce6dd173</id>
+                            <id>d0a08fb6-5b88-47ef-a10e-7c18fc2ca86b</id>
                         </link>
-                    </valuelink>
-                    <valuelink>
-                        <name>StartPosition</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                    <valuelink>
-                        <name>EndPosition</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
                     </valuelink>
                 </node>
             </actionnodes>
@@ -12171,7 +13599,7 @@
                 <node>
                     <name>Float</name>
                     <category>General</category>
-                    <id>114d2d26-616e-4af9-9da2-96d657a188f4</id>
+                    <id>23b5c1f6-e00d-4ba1-863f-16d9b8615bbb</id>
                     <property>
                         <name>Enabled</name>
                         <boolean>true</boolean>
@@ -12211,7 +13639,7 @@
                 <node>
                     <name>Actor</name>
                     <category>General</category>
-                    <id>2f3d2b0d-ebfe-495c-9e87-ffaaf907c3c1</id>
+                    <id>b9d520fd-ce3d-4495-bb2b-f3d1347e0ee5</id>
                     <property>
                         <name>Enabled</name>
                         <boolean>true</boolean>
@@ -12251,7 +13679,7 @@
                 <node>
                     <name>Reference</name>
                     <category>Core</category>
-                    <id>4b7778f6-622f-4f45-b2fb-595bf36b1299</id>
+                    <id>d0a08fb6-5b88-47ef-a10e-7c18fc2ca86b</id>
                     <property>
                         <name>Enabled</name>
                         <boolean>true</boolean>
@@ -12287,339 +13715,7 @@
                         <allowmultiple>false</allowmultiple>
                         <typecheck>true</typecheck>
                         <link>
-                            <id>114d2d26-616e-4af9-9da2-96d657a188f4</id>
-                        </link>
-                    </valuelink>
-                </node>
-                <node>
-                    <name>Actor</name>
-                    <category>General</category>
-                    <id>4855b832-e0d2-4857-a1cc-05151b034467</id>
-                    <property>
-                        <name>Enabled</name>
-                        <boolean>true</boolean>
-                    </property>
-                    <property>
-                        <name>Comment</name>
-                        <string></string>
-                    </property>
-                    <property>
-                        <name>LogNode</name>
-                        <boolean>false</boolean>
-                    </property>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>403.000000</value1>
-                            <value2>500.000000</value2>
-                        </vec2>
-                    </property>
-                    <property>
-                        <name>Name</name>
-                        <string>Actor</string>
-                    </property>
-                    <property>
-                        <name>Value</name>
-                        <actorId>11378b3a-3352-421f-b43b-0792580d9e78</actorId>
-                    </property>
-                    <valuelink>
-                        <name>Enabled</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                </node>
-                <node>
-                    <name>Reference</name>
-                    <category>Core</category>
-                    <id>125299c7-7d46-4f76-ae78-a07e37c07e28</id>
-                    <property>
-                        <name>Enabled</name>
-                        <boolean>true</boolean>
-                    </property>
-                    <property>
-                        <name>Comment</name>
-                        <string></string>
-                    </property>
-                    <property>
-                        <name>LogNode</name>
-                        <boolean>false</boolean>
-                    </property>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>459.000000</value1>
-                            <value2>500.000000</value2>
-                        </vec2>
-                    </property>
-                    <property>
-                        <name>Name</name>
-                        <string>Ref</string>
-                    </property>
-                    <property>
-                        <name>Reference</name>
-                        <string>Current Time</string>
-                    </property>
-                    <valuelink>
-                        <name>Ref</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                        <link>
-                            <id>114d2d26-616e-4af9-9da2-96d657a188f4</id>
-                        </link>
-                    </valuelink>
-                </node>
-                <node>
-                    <name>Actor</name>
-                    <category>General</category>
-                    <id>751bbff5-44c9-4964-88ac-601b248a6b70</id>
-                    <property>
-                        <name>Enabled</name>
-                        <boolean>true</boolean>
-                    </property>
-                    <property>
-                        <name>Comment</name>
-                        <string></string>
-                    </property>
-                    <property>
-                        <name>LogNode</name>
-                        <boolean>false</boolean>
-                    </property>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>603.000000</value1>
-                            <value2>500.000000</value2>
-                        </vec2>
-                    </property>
-                    <property>
-                        <name>Name</name>
-                        <string>Actor</string>
-                    </property>
-                    <property>
-                        <name>Value</name>
-                        <actorId>11378b3a-3352-421f-b43b-0792580d9e78</actorId>
-                    </property>
-                    <valuelink>
-                        <name>Enabled</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                </node>
-                <node>
-                    <name>Reference</name>
-                    <category>Core</category>
-                    <id>c2400358-9d6a-41b2-920a-a689101165b5</id>
-                    <property>
-                        <name>Enabled</name>
-                        <boolean>true</boolean>
-                    </property>
-                    <property>
-                        <name>Comment</name>
-                        <string></string>
-                    </property>
-                    <property>
-                        <name>LogNode</name>
-                        <boolean>false</boolean>
-                    </property>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>659.000000</value1>
-                            <value2>500.000000</value2>
-                        </vec2>
-                    </property>
-                    <property>
-                        <name>Name</name>
-                        <string>Ref</string>
-                    </property>
-                    <property>
-                        <name>Reference</name>
-                        <string>Current Time</string>
-                    </property>
-                    <valuelink>
-                        <name>Ref</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                        <link>
-                            <id>114d2d26-616e-4af9-9da2-96d657a188f4</id>
-                        </link>
-                    </valuelink>
-                </node>
-                <node>
-                    <name>Actor</name>
-                    <category>General</category>
-                    <id>91f81727-6fd5-4245-ba45-6231375ecdf1</id>
-                    <property>
-                        <name>Enabled</name>
-                        <boolean>true</boolean>
-                    </property>
-                    <property>
-                        <name>Comment</name>
-                        <string></string>
-                    </property>
-                    <property>
-                        <name>LogNode</name>
-                        <boolean>false</boolean>
-                    </property>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>803.000000</value1>
-                            <value2>500.000000</value2>
-                        </vec2>
-                    </property>
-                    <property>
-                        <name>Name</name>
-                        <string>Actor</string>
-                    </property>
-                    <property>
-                        <name>Value</name>
-                        <actorId>11378b3a-3352-421f-b43b-0792580d9e78</actorId>
-                    </property>
-                    <valuelink>
-                        <name>Enabled</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                </node>
-                <node>
-                    <name>Reference</name>
-                    <category>Core</category>
-                    <id>0a3ba7c3-d74d-44d1-853c-2ef92f85fc8d</id>
-                    <property>
-                        <name>Enabled</name>
-                        <boolean>true</boolean>
-                    </property>
-                    <property>
-                        <name>Comment</name>
-                        <string></string>
-                    </property>
-                    <property>
-                        <name>LogNode</name>
-                        <boolean>false</boolean>
-                    </property>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>859.000000</value1>
-                            <value2>500.000000</value2>
-                        </vec2>
-                    </property>
-                    <property>
-                        <name>Name</name>
-                        <string>Ref</string>
-                    </property>
-                    <property>
-                        <name>Reference</name>
-                        <string>Current Time</string>
-                    </property>
-                    <valuelink>
-                        <name>Ref</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                        <link>
-                            <id>114d2d26-616e-4af9-9da2-96d657a188f4</id>
-                        </link>
-                    </valuelink>
-                </node>
-                <node>
-                    <name>Actor</name>
-                    <category>General</category>
-                    <id>3a521b42-918d-4a95-9f72-f58ef06da44c</id>
-                    <property>
-                        <name>Enabled</name>
-                        <boolean>true</boolean>
-                    </property>
-                    <property>
-                        <name>Comment</name>
-                        <string></string>
-                    </property>
-                    <property>
-                        <name>LogNode</name>
-                        <boolean>false</boolean>
-                    </property>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>1003.000000</value1>
-                            <value2>500.000000</value2>
-                        </vec2>
-                    </property>
-                    <property>
-                        <name>Name</name>
-                        <string>Actor</string>
-                    </property>
-                    <property>
-                        <name>Value</name>
-                        <actorId>11378b3a-3352-421f-b43b-0792580d9e78</actorId>
-                    </property>
-                    <valuelink>
-                        <name>Enabled</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                    </valuelink>
-                </node>
-                <node>
-                    <name>Reference</name>
-                    <category>Core</category>
-                    <id>6403a742-7d44-40d4-ba92-0715ce6dd173</id>
-                    <property>
-                        <name>Enabled</name>
-                        <boolean>true</boolean>
-                    </property>
-                    <property>
-                        <name>Comment</name>
-                        <string></string>
-                    </property>
-                    <property>
-                        <name>LogNode</name>
-                        <boolean>false</boolean>
-                    </property>
-                    <property>
-                        <name>Position</name>
-                        <vec2>
-                            <value1>1059.000000</value1>
-                            <value2>500.000000</value2>
-                        </vec2>
-                    </property>
-                    <property>
-                        <name>Name</name>
-                        <string>Ref</string>
-                    </property>
-                    <property>
-                        <name>Reference</name>
-                        <string>Current Time</string>
-                    </property>
-                    <valuelink>
-                        <name>Ref</name>
-                        <visible>true</visible>
-                        <exposed>false</exposed>
-                        <isout>false</isout>
-                        <allowmultiple>false</allowmultiple>
-                        <typecheck>true</typecheck>
-                        <link>
-                            <id>114d2d26-616e-4af9-9da2-96d657a188f4</id>
+                            <id>23b5c1f6-e00d-4ba1-863f-16d9b8615bbb</id>
                         </link>
                     </valuelink>
                 </node>
