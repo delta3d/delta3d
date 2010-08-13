@@ -46,6 +46,8 @@ namespace dtDirector
       {
          std::string name;
          float       time;
+         bool        triggerNormal;
+         bool        triggerReverse;
       };
 
       /**
@@ -116,6 +118,12 @@ namespace dtDirector
       void SetEventTime(float value);
       float GetEventTime();
 
+      void SetEventNormal(bool value);
+      bool GetEventNormal();
+
+      void SetEventReverse(bool value);
+      bool GetEventReverse();
+
       void SetEventIndex(int index);
       OutputEventData GetDefaultEvent(void);
       std::vector<OutputEventData> GetEventList(void);
@@ -139,10 +147,11 @@ namespace dtDirector
       /**
       * Triggers events based on a given time range.
       *
-      * @param[in]  start  The starting time.
-      * @param[in]  end    The ending time.
+      * @param[in]  start       The starting time.
+      * @param[in]  end         The ending time.
+      * @param[in]  normalPlay  Playing normally, or in reverse.
       */
-      void TestEvents(float start, float end);
+      void TestEvents(float start, float end, bool normalPlay);
 
       float mElapsedTime;
       float mTotalTime;
