@@ -10,6 +10,7 @@ IF (NOT BUILD_WITH_OLD_CEGUI)
       ${HEADER_PATH}/ceguimouselistener.h
       ${HEADER_PATH}/export.h
       ${HEADER_PATH}/gui.h
+      ${HEADER_PATH}/resourceprovider.h
       ${HEADER_PATH}/scriptmodule.h
       ${HEADER_PATH}/widget.h     
   )
@@ -18,6 +19,7 @@ IF (NOT BUILD_WITH_OLD_CEGUI)
       ${SOURCE_PATH}/ceguikeyboardlistener.cpp
       ${SOURCE_PATH}/ceguimouselistener.cpp
       ${SOURCE_PATH}/gui.cpp
+      ${SOURCE_PATH}/resourceprovider.cpp
       ${SOURCE_PATH}/scriptmodule.cpp
   )
 ELSE (NOT BUILD_WITH_OLD_CEGUI)

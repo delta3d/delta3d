@@ -119,6 +119,8 @@ private:
    {
       try
       {
+         dtGUI::GUI::SetDefaultParser("XercesParser");
+
          mGUI->LoadScheme("WindowsLook.scheme");
          mGUI->SetMouseCursor("WindowsLook", "MouseArrow");
 

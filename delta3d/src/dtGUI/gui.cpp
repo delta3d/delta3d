@@ -1,5 +1,6 @@
 #include <dtGUI/gui.h>
 #include <dtGUI/scriptmodule.h>
+#include <dtGUI/resourceprovider.h>
 #include <dtCore/system.h>
 #include <dtCore/camera.h>
 #include <dtCore/keyboard.h>
@@ -100,8 +101,17 @@ namespace dtGUI
 };
 
 
+
+////////////////////////////////////////////////////////////////////////////////
+// STATIC VARIABLES & OBJECTS
+////////////////////////////////////////////////////////////////////////////////
+dtGUI::ResourceProvider mResProvider;
 bool GUI::SystemAndRendererCreatedByHUD = false;
 
+
+
+////////////////////////////////////////////////////////////////////////////////
+// GUI IMPLEMENTATION
 ////////////////////////////////////////////////////////////////////////////////
 GUI::GUI(dtCore::Camera* camera,
          dtCore::Keyboard* keyboard,
@@ -252,7 +262,7 @@ void GUI::_SetupSystemAndRenderer()
    {
       CEGUI::OpenGLRenderer& renderer = CEGUI::OpenGLRenderer::create();
       renderer.enableExtraStateSettings(true);
-      CEGUI::System::create(renderer);
+      CEGUI::System::create(renderer, &mResProvider);
 
       //CEGUI::DefaultResourceProvider* rp = static_cast<CEGUI::DefaultResourceProvider*>(CEGUI::System::getSingleton().getResourceProvider());
 
@@ -515,6 +525,47 @@ osg::Group& dtGUI::GUI::GetRootNode()
 const osg::Group& dtGUI::GUI::GetRootNode() const
 {
    return *mInternalGraph;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool GUI::SetDefaultParser(const std::string& parserName)
+{
+   _SetupSystemAndRenderer();
+   CEGUI::System& sys = CEGUI::System::getSingleton();
+   const CEGUI::String currentParserName = sys.getDefaultXMLParserName();
+   
+   bool success = false;
+   try
+   {
+      sys.setXMLParser(parserName);
+      success = true;
+   }
+   catch(CEGUI::Exception& e)
+   {
+      std::ostringstream oss;
+      oss << "CEGUI system will use the original default XML parser \""
+         << currentParserName.c_str() << "\" because the system could not link to use XML parser \""
+         << parserName.c_str() << "\" because of the following CEGUI exception ("
+         << e.getName().c_str() << "):\n"
+         << e.getMessage().c_str() << "\n";
+      LOG_WARNING(oss.str().c_str());
+   }
+   catch(...)
+   {
+      std::ostringstream oss;
+      oss << "CEGUI system will use the original default XML parser \""
+         << currentParserName.c_str() << "\" because the system could not link to use XML parser \""
+         << parserName.c_str() << "\" because of some unknown exception.\n";
+      LOG_ERROR(oss.str().c_str());
+   }
+
+   // If the intended parser assignment failed, ensure the last parser used is assigned.
+   if( ! success)
+   {
+      sys.setXMLParser(currentParserName);
+   }
+
+   return success;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

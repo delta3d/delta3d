@@ -4,13 +4,12 @@
 #include <dtUtil/log.h>
 
 
+
 using namespace dtGUI;
 
 ResourceProvider::ResourceProvider()
    : CEGUI::DefaultResourceProvider()
 {
-   DEPRECATE("dtGUI::ResourceProvider",
-              "n/a");
 }
 
 
