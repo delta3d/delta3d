@@ -131,6 +131,20 @@ namespace dtDirector
             "The animation weight.");
          animDataProp->AddProperty(weightProp);
 
+         dtDAL::FloatActorProperty* offsetProp = new dtDAL::FloatActorProperty(
+            "Start Offset", "Start Offset",
+            dtDAL::FloatActorProperty::SetFuncType(this, &AnimateActorAction::SetAnimOffset),
+            dtDAL::FloatActorProperty::GetFuncType(this, &AnimateActorAction::GetAnimOffset),
+            "The animation start offset.");
+         animDataProp->AddProperty(offsetProp);
+
+         dtDAL::FloatActorProperty* speedProp = new dtDAL::FloatActorProperty(
+            "Speed", "Speed",
+            dtDAL::FloatActorProperty::SetFuncType(this, &AnimateActorAction::SetAnimSpeed),
+            dtDAL::FloatActorProperty::GetFuncType(this, &AnimateActorAction::GetAnimSpeed),
+            "The animation speed.");
+         animDataProp->AddProperty(speedProp);
+
          dtDAL::ArrayActorPropertyBase* animListProp = new dtDAL::ArrayActorProperty<AnimData>(
             "Animations", "Animations", "List of animations to play.",
             dtDAL::ArrayActorProperty<AnimData>::SetIndexFuncType(this, &AnimateActorAction::SetAnimIndex),
@@ -268,23 +282,25 @@ namespace dtDirector
                            {
                               float animTime = curTime - data.mTime;
 
-                              // Update the current animation time.
-                              calMixer->setManualAnimationTime(calAnim, animTime);
-
                               // Update the animation weight.
                               float weight = data.mWeight;
 
                               // Blending in.
-                              if (data.mBlendInTime > 0.0f && animTime /*- data.mStartTime*/ < data.mBlendInTime)
+                              if (data.mBlendInTime > 0.0f && animTime < data.mBlendInTime)
                               {
-                                 weight *= (animTime /*- data.mStartTime*/) / data.mBlendInTime;
+                                 weight *= animTime / data.mBlendInTime;
                               }
                               // Blending out.
-                              else if (data.mBlendOutTime > 0.0f && /*data.mEndTime*/data.mDuration - animTime < data.mBlendOutTime)
+                              else if (data.mBlendOutTime > 0.0f && data.mDuration - animTime < data.mBlendOutTime)
                               {
-                                 weight *= (/*data.mEndTime*/data.mDuration - animTime) / data.mBlendOutTime;
+                                 weight *= (data.mDuration - animTime) / data.mBlendOutTime;
                               }
 
+                              animTime *= data.mSpeed;
+                              animTime += data.mStartOffset;
+
+                              // Update the animation.
+                              calMixer->setManualAnimationTime(calAnim, animTime);
                               calMixer->setManualAnimationWeight(calAnim, weight);
                            }
 
@@ -313,12 +329,34 @@ namespace dtDirector
                      for (int animIndex = 0; animIndex < animCount; ++animIndex)
                      {
                         AnimData& data = playList[animIndex];
-                        if (elapsedTime < data.mTime)
+
+                        float startTime = data.mTime - data.mStartOffset;
+                        if (startTime < elapsedTime)
                         {
-                           float increment = data.mTime - elapsedTime;
-                           elapsedTime = data.mTime;
+                           elapsedTime = startTime;
+                        }
+
+                        if (elapsedTime < startTime)
+                        {
+                           float increment = startTime - elapsedTime;
+                           elapsedTime = startTime;
 
                            actor->GetHelper()->Update(increment);
+                        }
+
+                        // Update the animation weight.
+                        float weight = data.mWeight;
+
+                        // Blending in.
+                        float animTime = curTime - data.mTime;
+                        if (data.mBlendInTime > 0.0f && animTime < data.mBlendInTime)
+                        {
+                           weight *= animTime / data.mBlendInTime;
+                        }
+                        // Blending out.
+                        else if (data.mBlendOutTime > 0.0f && data.mDuration - animTime < data.mBlendOutTime)
+                        {
+                           weight *= (data.mDuration - animTime) / data.mBlendOutTime;
                         }
 
                         // Create the animation.
@@ -329,13 +367,7 @@ namespace dtDirector
                            newAnim = dynamic_cast<dtAnim::AnimationChannel*>(anim->Clone(actor->GetHelper()->GetModelWrapper()).get());
                            newAnim->SetLooping(false);
                            newAnim->SetAction(true);
-                           newAnim->SetFadeIn(data.mBlendInTime);
-                           newAnim->SetFadeOut(data.mBlendOutTime);
-                           newAnim->SetBaseWeight(data.mWeight);
-
-                           // TODO: Fix Speed, Start time, and End time attributes.
-                           //newAnim->GetAnimation()->SetSpeed(data.mSpeed);
-                           //newAnim->SetStartTime(data.mStartTime);
+                           newAnim->SetBaseWeight(weight);
 
                            mixer.PlayAnimation(newAnim);
                         }
@@ -390,7 +422,7 @@ namespace dtDirector
 #else
                      dtAnim::SequenceMixer& mixer = actor->GetHelper()->GetSequenceMixer();
                      mixer.ClearActiveAnimations(0.0f);
-                     mixer.Update(0.0f);
+                     actor->GetHelper()->Update(0.0f);
 #endif
                   }
                }
@@ -530,6 +562,42 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void AnimateActorAction::SetAnimOffset(float value)
+   {
+      if (mAnimIndex >= (int)mAnimList.size()) return;
+
+      AnimData& data = mAnimList[mAnimIndex];
+      data.mStartOffset = value;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   float AnimateActorAction::GetAnimOffset()
+   {
+      if (mAnimIndex >= (int)mAnimList.size()) return 0.0f;
+
+      AnimData& data = mAnimList[mAnimIndex];
+      return data.mStartOffset;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void AnimateActorAction::SetAnimSpeed(float value)
+   {
+      if (mAnimIndex >= (int)mAnimList.size()) return;
+
+      AnimData& data = mAnimList[mAnimIndex];
+      data.mSpeed = value;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   float AnimateActorAction::GetAnimSpeed()
+   {
+      if (mAnimIndex >= (int)mAnimList.size()) return 0.0f;
+
+      AnimData& data = mAnimList[mAnimIndex];
+      return data.mSpeed;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void AnimateActorAction::SetAnimIndex(int index)
    {
       mAnimIndex = index;
@@ -545,6 +613,8 @@ namespace dtDirector
       data.mBlendInTime = 0.0f;
       data.mBlendOutTime = 0.0f;
       data.mWeight = 1.0f;
+      data.mStartOffset = 0.0f;
+      data.mSpeed = 1.0f;
       return data;
    }
 
