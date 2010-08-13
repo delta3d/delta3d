@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
     <header>
         <name>TestDirector</name>
@@ -8,7 +7,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2009-12-21T16:14:44-08:00</createTimestamp>
-        <lastUpdateTimestamp>2010-08-11T15:40:31-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2010-08-13T09:24:09-08:00</lastUpdateTimestamp>
         <editorVersion>2.5.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -6753,6 +6752,36 @@
                 <rotationY>0.004649</rotationY>
                 <rotationZ>-0.013165</rotationZ>
                 <rotationW>0.942840</rotationW>
+            </perspectiveView>
+            <topView>
+                <positionX>0.000000</positionX>
+                <positionY>0.000000</positionY>
+                <positionZ>0.000000</positionZ>
+                <zoom>1.000000</zoom>
+            </topView>
+            <sideView>
+                <positionX>0.000000</positionX>
+                <positionY>0.000000</positionY>
+                <positionZ>0.000000</positionZ>
+                <zoom>1.000000</zoom>
+            </sideView>
+            <frontView>
+                <positionX>0.000000</positionX>
+                <positionY>0.000000</positionY>
+                <positionZ>0.000000</positionZ>
+                <zoom>1.000000</zoom>
+            </frontView>
+        </presetCamera>
+        <presetCamera>
+            <index>5</index>
+            <perspectiveView>
+                <positionX>11.776335</positionX>
+                <positionY>12.785604</positionY>
+                <positionZ>3.935432</positionZ>
+                <rotationX>0.003794</rotationX>
+                <rotationY>-0.289845</rotationY>
+                <rotationZ>0.956984</rotationZ>
+                <rotationW>-0.012528</rotationW>
             </perspectiveView>
             <topView>
                 <positionX>0.000000</positionX>
