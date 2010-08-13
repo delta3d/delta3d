@@ -55,6 +55,8 @@ namespace dtDirector
          float       mBlendInTime;
          float       mBlendOutTime;
          float       mWeight;
+         float       mStartOffset;
+         float       mSpeed;
 
 #ifdef MANUAL_ANIMATIONS
          int         mAnimation;
@@ -123,6 +125,12 @@ namespace dtDirector
 
       void SetAnimWeight(float value);
       float GetAnimWeight();
+
+      void SetAnimOffset(float value);
+      float GetAnimOffset();
+
+      void SetAnimSpeed(float value);
+      float GetAnimSpeed();
 
       void SetAnimIndex(int index);
       AnimData GetDefaultAnim(void);
