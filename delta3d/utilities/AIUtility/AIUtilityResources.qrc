@@ -7,5 +7,7 @@
    <file>./images/redo.png</file>
    <file>./images/undo.png</file>
    <file>./images/ok.png</file>
+   <file>./images/addedge.png</file>
+   <file>./images/removeedge.png</file>
    </qresource>
 </RCC>

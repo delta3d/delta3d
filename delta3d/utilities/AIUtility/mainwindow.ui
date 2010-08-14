@@ -163,6 +163,10 @@
    <property name="enabled">
     <bool>false</bool>
    </property>
+   <property name="icon">
+    <iconset resource="AIUtilityResources.qrc">
+     <normaloff>:/images/addedge.png</normaloff>:/images/addedge.png</iconset>
+   </property>
    <property name="text">
     <string>Add Edge</string>
    </property>
@@ -170,6 +174,10 @@
   <action name="mActionRemoveEdge">
    <property name="enabled">
     <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="AIUtilityResources.qrc">
+     <normaloff>:/images/removeedge.png</normaloff>:/images/removeedge.png</iconset>
    </property>
    <property name="text">
     <string>Remove Edge</string>
