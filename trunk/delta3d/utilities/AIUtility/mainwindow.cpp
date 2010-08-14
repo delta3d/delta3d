@@ -81,6 +81,8 @@ MainWindow::MainWindow(QWidget& mainWidget)
    setCentralWidget(centerFrame);
 
    mCurrentCameraTransform.MakeIdentity();
+   mUi->toolBar->addAction(mUi->mActionAddEdge);
+   mUi->toolBar->addAction(mUi->mActionRemoveEdge);
 
    mUndoStack = new QUndoStack(this);
    mUi->undoView->setStack(mUndoStack);
@@ -281,6 +283,30 @@ void MainWindow::EnableOrDisableControls()
 
    mUi->mActionWaypointBrowserVisible->setChecked(mWaypointBrowser->isVisible());
    mUi->mActionPropertyEditorVisible->setChecked(mPropertyEditor.isVisible());
+
+   // Update Add/Remove Edge actions
+   mUi->mActionAddEdge->setEnabled(false);
+   mUi->mActionRemoveEdge->setEnabled(false);
+
+   // Only allow the delete action when waypoint(s) are selected
+   mUi->mActionDeleteSelectedWaypoints->setEnabled(WaypointSelection::GetInstance().GetNumberSelected() != 0);
+
+   if (WaypointSelection::GetInstance().GetNumberSelected() == 2) // There must be exactly two waypoints selected
+   {
+      dtAI::WaypointInterface* waypointA = WaypointSelection::GetInstance().GetWaypointList()[0];
+      dtAI::WaypointInterface* waypointB = WaypointSelection::GetInstance().GetWaypointList()[1];
+
+      if (DoesEdgeExistBetweenWaypoints(waypointA, waypointB))
+      {
+         // Enable Remove Edge
+         mUi->mActionRemoveEdge->setEnabled(true);
+      }
+      else
+      {
+         // Enable Add Edge
+         mUi->mActionAddEdge->setEnabled(true);
+      }
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -355,13 +381,44 @@ void MainWindow::SelectRenderingOptions()
 ////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnAddEdge()
 {
-   emit AddEdge();
+   if(WaypointSelection::GetInstance().GetNumberSelected() == 2)
+   {
+      // Update NavMesh
+      dtAI::WaypointInterface* waypointA = WaypointSelection::GetInstance().GetWaypointList()[0];
+      dtAI::WaypointInterface* waypointB = WaypointSelection::GetInstance().GetWaypointList()[1];
+      mPluginInterface->AddEdge(waypointA->GetID(), waypointB->GetID());
+
+      // Update UI
+      mPluginInterface->GetDebugDrawable()->AddEdge(waypointA, waypointB);
+      
+      EnableOrDisableControls();
+   }
+   else
+   {
+      LOG_ERROR("Trying to add edge with too many or too few waypoints selected.");
+   }
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnRemoveEdge()
 {
-   emit RemoveEdge();
+   if(WaypointSelection::GetInstance().GetNumberSelected() == 2)
+   {
+      // Update NavMesh
+      dtAI::WaypointInterface* waypointA = WaypointSelection::GetInstance().GetWaypointList()[0];
+      dtAI::WaypointInterface* waypointB = WaypointSelection::GetInstance().GetWaypointList()[1];
+      mPluginInterface->RemoveEdge(waypointA->GetID(), waypointB->GetID());
+
+      // Update UI
+      mPluginInterface->GetDebugDrawable()->RemoveEdge(waypointA, waypointB);
+
+      EnableOrDisableControls();
+   }
+   else
+   {
+      LOG_ERROR("Trying to remove edge with too many or too few waypoints selected.");
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -415,26 +472,7 @@ void MainWindow::OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*
 
    mPropertyEditor.HandlePropertyContainersSelected(propertyContainers);
 
-   // Update Add/Remove Edge actions
-   mUi->mActionAddEdge->setEnabled(false);
-   mUi->mActionRemoveEdge->setEnabled(false);
-
-   // Only allow the delete action when waypoint(s) are selected
-   mUi->mActionDeleteSelectedWaypoints->setEnabled(!selectedWaypoints.empty());
-
-   if (selectedWaypoints.size() == 2) // There must be exactly two waypoints selected
-   {
-      if (DoesEdgeExistBetweenWaypoints(selectedWaypoints[0], selectedWaypoints[1]))
-      {
-         // Enable Remove Edge
-         mUi->mActionRemoveEdge->setEnabled(true);
-      }
-      else
-      {
-         // Enable Add Edge
-         mUi->mActionAddEdge->setEnabled(true);
-      }
-   }
+   EnableOrDisableControls();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

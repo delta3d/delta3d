@@ -47,10 +47,6 @@ public:
 
    void SetAIPluginInterface(dtAI::AIPluginInterface* aiInterface);
 
-public slots:
-   void OnAddEdge();
-   void OnRemoveEdge();
-
 protected:
    virtual ~AIUtilityInputComponent();
 

@@ -80,8 +80,6 @@ signals:
    void CloseMapSelected();
    void RequestCameraTransformChange(const dtCore::Transform& xform);
    void AddAIInterfaceToMap(const std::string& map);
-   void AddEdge();
-   void RemoveEdge();
 
 public slots:
    void OnError(const std::string& message);

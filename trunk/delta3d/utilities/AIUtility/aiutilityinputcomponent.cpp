@@ -85,42 +85,4 @@ void AIUtilityInputComponent::SetAIPluginInterface(dtAI::AIPluginInterface* aiIn
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void AIUtilityInputComponent::OnAddEdge()
-{
-   if(WaypointSelection::GetInstance().GetNumberSelected() == 2)
-   {
-      // Update NavMesh
-      dtAI::WaypointInterface* waypointA = WaypointSelection::GetInstance().GetWaypointList()[0];
-      dtAI::WaypointInterface* waypointB = WaypointSelection::GetInstance().GetWaypointList()[1];
-      mpAIInterface->AddEdge(waypointA->GetID(), waypointB->GetID());
-
-      // Update UI
-      mpAIInterface->GetDebugDrawable()->AddEdge(waypointA, waypointB);
-   }
-   else
-   {
-      LOG_ERROR("Trying to add edge with too many or too few waypoints selected.");
-   }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void AIUtilityInputComponent::OnRemoveEdge()
-{
-   if(WaypointSelection::GetInstance().GetNumberSelected() == 2)
-   {
-      // Update NavMesh
-      dtAI::WaypointInterface* waypointA = WaypointSelection::GetInstance().GetWaypointList()[0];
-      dtAI::WaypointInterface* waypointB = WaypointSelection::GetInstance().GetWaypointList()[1];
-      mpAIInterface->RemoveEdge(waypointA->GetID(), waypointB->GetID());
-
-      // Update UI
-      mpAIInterface->GetDebugDrawable()->RemoveEdge(waypointA, waypointB);
-   }
-   else
-   {
-      LOG_ERROR("Trying to remove edge with too many or too few waypoints selected.");
-   }
-}
-
-////////////////////////////////////////////////////////////////////////////////
 
