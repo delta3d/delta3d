@@ -9,7 +9,7 @@ DeleteWaypointCommand::DeleteWaypointCommand(dtAI::WaypointInterface& wp,
 , mWp(&wp)
 , mAIInterface(aiInterface)
 {
-   setText("Delete Waypoint");
+   setText("Delete Waypoint ID#" + QString::number(mWp->GetID()));
 
    if (mAIInterface)
    {
@@ -54,5 +54,39 @@ void DeleteWaypointCommand::undo()
 
          ++itr;
       }
+   }
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+AddWaypointCommand::AddWaypointCommand(dtAI::WaypointInterface& wp, dtAI::AIPluginInterface* aiInterface, QUndoCommand* parent/*=NULL*/)
+: QUndoCommand(parent)
+, mWp(&wp)
+, mAIInterface(aiInterface)
+{
+   setText("Add Waypoint ID#" + QString::number(mWp->GetID()));
+}
+
+////////////////////////////////////////////////////////////////////////////////
+AddWaypointCommand::~AddWaypointCommand()
+{
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void AddWaypointCommand::redo()
+{
+   if (mAIInterface)
+   {
+      mAIInterface->InsertWaypoint(mWp);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void AddWaypointCommand::undo()
+{
+   if (mAIInterface)
+   {
+      mAIInterface->RemoveWaypoint(mWp);
    }
 }

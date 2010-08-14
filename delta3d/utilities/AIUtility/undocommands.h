@@ -30,4 +30,23 @@ private:
    dtAI::AIPluginInterface* mAIInterface;
 };
 
+/** Add a waypoint command.  Undo-ing will remove it while redo-ing will re-add it.
+  */
+class AddWaypointCommand : public QUndoCommand
+{
+public:
+   AddWaypointCommand(dtAI::WaypointInterface& wp,
+                      dtAI::AIPluginInterface* aiInterface,
+                      QUndoCommand* parent=NULL);
+
+   virtual ~AddWaypointCommand();
+
+   virtual void redo();
+   virtual void undo();
+   
+private:
+   dtAI::WaypointInterface *mWp;
+   dtAI::AIPluginInterface* mAIInterface;
+};
+
 #endif // UNDOCOMMANDS_h__

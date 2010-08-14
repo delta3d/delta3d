@@ -260,11 +260,14 @@ void WaypointBrowser::OnCreate()
       mCameraTransform.GetTranslation(pos);
       mCameraTransform.GetRow(1, forward);
 
-      QString distanceText = mUi->mDistanceEdit->text();
-
       pos += forward * GetCreateAndGotoDistance();
 
-      mAIPluginInterface->CreateWaypoint(pos, *objectTypeSelected);
+      dtAI::WaypointInterface* wp = mAIPluginInterface->CreateWaypoint(pos, *objectTypeSelected);
+      if (wp)
+      {
+         mUndoStack->push(new AddWaypointCommand(*wp, mAIPluginInterface));
+      }
+
       ResetWaypointResult();
    }
 }
