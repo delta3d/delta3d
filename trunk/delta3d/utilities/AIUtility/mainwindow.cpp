@@ -107,6 +107,11 @@ MainWindow::MainWindow(QWidget& mainWidget)
 
    mWaypointBrowser = new WaypointBrowser(*mUndoStack, this);
 
+   mUi->menuWindows->addAction(mPropertyEditor.toggleViewAction());
+   mUi->menuWindows->addAction(mWaypointBrowser->toggleViewAction());
+   mUi->menuWindows->addAction(mUi->undoStack->toggleViewAction());
+   mUi->menuWindows->addAction(mUi->toolBar->toggleViewAction());
+
    connect(mUi->mActionOpenMap, SIGNAL(triggered()), this, SLOT(OnOpenMap()));
    connect(mUi->mActionCloseMap, SIGNAL(triggered()), this, SLOT(OnCloseMap()));
    connect(mUi->mActionSave, SIGNAL(triggered()), this, SLOT(OnSave()));
@@ -118,8 +123,8 @@ MainWindow::MainWindow(QWidget& mainWidget)
    connect(mUi->mActionSelectAllWaypoints, SIGNAL(triggered()), this, SLOT(OnSelectAllWaypoints()));
    connect(mUi->mActionDeselectAllWaypoints, SIGNAL(triggered()), this, SLOT(OnDeselectAllWaypoints()));
 
-   connect(mUi->mActionPropertyEditorVisible, SIGNAL(toggled(bool)), this, SLOT(OnPropertyEditorShowHide(bool)));
-   connect(mUi->mActionWaypointBrowserVisible, SIGNAL(toggled(bool)), this, SLOT(OnWaypointBrowserShowHide(bool)));
+   connect(mPropertyEditor.toggleViewAction(), SIGNAL(toggled(bool)), this, SLOT(OnPropertyEditorShowHide(bool)));
+   connect(mWaypointBrowser->toggleViewAction(), SIGNAL(toggled(bool)), this, SLOT(OnWaypointBrowserShowHide(bool)));
 
    connect(&mPropertyEditor, SIGNAL(SignalPropertyChangedFromControl(dtDAL::PropertyContainer&, dtDAL::ActorProperty&)),
             this, SLOT(PropertyChangedFromControl(dtDAL::PropertyContainer&, dtDAL::ActorProperty&)));
@@ -285,8 +290,8 @@ void MainWindow::EnableOrDisableControls()
    // since the map doesn't change immediately in the GM, we can't just change maps.
    mUi->mChangeContextAction->setEnabled(mCurrentMapName.isEmpty());
 
-   mUi->mActionWaypointBrowserVisible->setChecked(mWaypointBrowser->isVisible());
-   mUi->mActionPropertyEditorVisible->setChecked(mPropertyEditor.isVisible());
+   mWaypointBrowser->toggleViewAction()->setChecked(mWaypointBrowser->isVisible());
+   mPropertyEditor.toggleViewAction()->setChecked(mPropertyEditor.isVisible());
 
    // Update Add/Remove Edge actions
    mUi->mActionAddEdge->setEnabled(false);
@@ -345,25 +350,6 @@ void MainWindow::SetAIPluginInterface(dtAI::AIPluginInterface* interface)
    }
 }
 
-////////////////////////////////////////////////////////////////////////////////
-bool MainWindow::eventFilter(QObject* object, QEvent* event)
-{
-   bool result = false;
-   if (event->type() == QEvent::Close)
-   {
-      if (object == &mPropertyEditor)
-      {
-         mUi->mActionPropertyEditorVisible->setChecked(false);
-         result = true;
-      }
-      else if (object == mWaypointBrowser)
-      {
-         mUi->mActionWaypointBrowserVisible->setChecked(false);
-         result = true;
-      }
-   }
-   return result;
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 void MainWindow::SelectRenderingOptions()

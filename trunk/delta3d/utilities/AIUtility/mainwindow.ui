@@ -46,10 +46,8 @@
    </widget>
    <widget class="QMenu" name="menuWindows">
     <property name="title">
-     <string>Windows</string>
+     <string>&amp;Windows</string>
     </property>
-    <addaction name="mActionPropertyEditorVisible"/>
-    <addaction name="mActionWaypointBrowserVisible"/>
    </widget>
    <widget class="QMenu" name="menu_Select">
     <property name="title">
@@ -129,28 +127,6 @@
   <action name="mActionRenderingOptions">
    <property name="text">
     <string>Rendering Options</string>
-   </property>
-  </action>
-  <action name="mActionPropertyEditorVisible">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Property Editor</string>
-   </property>
-  </action>
-  <action name="mActionWaypointBrowserVisible">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Waypoint Browser</string>
    </property>
   </action>
   <action name="mActionSave">

@@ -72,8 +72,6 @@ public:
 
    dtAI::AIPluginInterface* GetAIPluginInterface();
 
-   bool eventFilter(QObject *object, QEvent *event);
-
 signals:
    void ProjectContextChanged(const std::string& path);
    void MapSelected(const std::string& path);
