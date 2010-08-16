@@ -91,10 +91,10 @@ public slots:
    void OnGoto();
    void SetCameraTransform(const dtCore::Transform& xform);
    void ResetWaypointResult();
+   void OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>& selectedWaypoints);   
 protected slots:
    void EnableDisable();
    void WaypointsSelectedFromBrowser();
-   void OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>& selectedWaypoints);   
 
 private:
 

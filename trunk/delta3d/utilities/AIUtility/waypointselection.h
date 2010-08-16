@@ -54,6 +54,8 @@ public:
 
    void AddWaypointListToSelection(std::vector<dtAI::WaypointInterface*> waypointList);
 
+   void SetWaypointSelectionList(std::vector<dtAI::WaypointInterface*>& waypointList);
+
    void DeselectWaypoint(dtAI::WaypointInterface* waypoint);
 
    void DeselectAllWaypoints();

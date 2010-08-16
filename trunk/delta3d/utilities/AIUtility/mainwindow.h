@@ -100,6 +100,8 @@ public slots:
    void OnChildRequestCameraTransformChange(const dtCore::Transform& xform);
 
    void OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>& selectedWaypoints);
+   void OnSelectAllWaypoints();
+   void OnDeselectAllWaypoints();
 
    private slots:
       void OnModifiedChanged();
@@ -107,7 +109,9 @@ private:
    void ChangeMap(const QString& newMap);
 
    bool DoesEdgeExistBetweenWaypoints(dtAI::WaypointInterface* waypointStart,
-      dtAI::WaypointInterface* waypointEnd);
+                                      dtAI::WaypointInterface* waypointEnd);
+   
+   void RefreshPropertyEditor(std::vector<dtAI::WaypointInterface*>& selectedWaypoints);
 
    Ui::MainWindow* mUi;
    QWidget& mCentralWidget;

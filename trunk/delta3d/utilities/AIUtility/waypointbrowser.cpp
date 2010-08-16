@@ -390,6 +390,11 @@ void WaypointBrowser::WaypointsSelectedFromBrowser()
 ////////////////////////////////////////////////////////////////////////////////
 void WaypointBrowser::OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>& selectedWaypoints)
 {
+   if (this->isVisible() == false)
+   {
+      return;
+   }
+
    // Prevent loops
    disconnect(mUi->mWaypointList, SIGNAL(itemSelectionChanged()), this, SLOT(WaypointsSelectedFromBrowser()));
 
@@ -403,7 +408,7 @@ void WaypointBrowser::OnWaypointSelectionChanged(std::vector<dtAI::WaypointInter
 
       if (itemList.count() == 1)
       {
-         mUi->mWaypointList->setItemSelected(itemList.front(), true);
+         itemList.front()->setSelected(true);
       }
       else if (itemList.count() > 1)
       {
