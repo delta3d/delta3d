@@ -102,3 +102,12 @@ std::vector<dtAI::WaypointInterface*>& WaypointSelection::GetWaypointList()
 {
    return mSelectedWaypointList;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+void WaypointSelection::SetWaypointSelectionList(std::vector<dtAI::WaypointInterface*>& waypointList)
+{
+   mSelectedWaypointList.clear();
+   mSelectedWaypointList = waypointList;
+
+   emit WaypointSelectionChanged(mSelectedWaypointList);
+}

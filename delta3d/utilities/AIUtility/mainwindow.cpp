@@ -96,6 +96,8 @@ MainWindow::MainWindow(QWidget& mainWidget)
    redoAction->setIcon(QIcon(":/images/redo.png"));
 
    mUi->menuEdit->addSeparator();
+   mUi->menuEdit->addAction(mUi->mActionDeleteSelectedWaypoints);
+   mUi->menuEdit->addSeparator();
    mUi->menuEdit->addAction(undoAction);
    mUi->menuEdit->addAction(redoAction);
 
@@ -113,6 +115,8 @@ MainWindow::MainWindow(QWidget& mainWidget)
    connect(mUi->mActionAddEdge, SIGNAL(triggered()), this, SLOT(OnAddEdge()));
    connect(mUi->mActionRemoveEdge, SIGNAL(triggered()), this, SLOT(OnRemoveEdge()));
    connect(mUi->mActionDeleteSelectedWaypoints, SIGNAL(triggered()), mWaypointBrowser, SLOT(OnDelete()));
+   connect(mUi->mActionSelectAllWaypoints, SIGNAL(triggered()), this, SLOT(OnSelectAllWaypoints()));
+   connect(mUi->mActionDeselectAllWaypoints, SIGNAL(triggered()), this, SLOT(OnDeselectAllWaypoints()));
 
    connect(mUi->mActionPropertyEditorVisible, SIGNAL(toggled(bool)), this, SLOT(OnPropertyEditorShowHide(bool)));
    connect(mUi->mActionWaypointBrowserVisible, SIGNAL(toggled(bool)), this, SLOT(OnWaypointBrowserShowHide(bool)));
@@ -462,24 +466,22 @@ void MainWindow::OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*
    }
 
    const osg::Vec4 kSelectedColor(1.f, 0.1f, 0.1f, 1.f);
-
-   std::vector<dtCore::RefPtr<dtDAL::PropertyContainer> > propertyContainers;
-   propertyContainers.reserve(selectedWaypoints.size());
-
    mPluginInterface->GetDebugDrawable()->ResetWaypointColorsToDefault();
+
+   if (mPropertyEditor.isVisible())
+   {
+      RefreshPropertyEditor(selectedWaypoints);
+   }
 
    for (size_t i = 0; i < selectedWaypoints.size(); ++i)
    {
       dtAI::WaypointInterface* wpi = selectedWaypoints[i];
-      propertyContainers.push_back(mPluginInterface->CreateWaypointPropertyContainer(wpi->GetWaypointType(), wpi));
 
       if (wpi)
       {
          mPluginInterface->GetDebugDrawable()->SetWaypointColor(*wpi, kSelectedColor);
       }
    }
-
-   mPropertyEditor.HandlePropertyContainersSelected(propertyContainers);
 
    EnableOrDisableControls();
 }
@@ -488,12 +490,41 @@ void MainWindow::OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*
 void MainWindow::OnPropertyEditorShowHide(bool checked)
 {
    mPropertyEditor.setVisible(checked);
+
+   if (mPropertyEditor.isVisible())
+   {
+      RefreshPropertyEditor(WaypointSelection::GetInstance().GetWaypointList());
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::RefreshPropertyEditor(std::vector<dtAI::WaypointInterface*>& selectedWaypoints)
+{
+   std::vector<dtCore::RefPtr<dtDAL::PropertyContainer> > propertyContainers;
+   propertyContainers.reserve(selectedWaypoints.size());
+
+   for (size_t i = 0; i < selectedWaypoints.size(); ++i)
+   {
+      dtAI::WaypointInterface* wpi = selectedWaypoints[i];
+
+      if (wpi)
+      {
+         propertyContainers.push_back(mPluginInterface->CreateWaypointPropertyContainer(wpi->GetWaypointType(), wpi));
+      }
+   }
+
+   mPropertyEditor.HandlePropertyContainersSelected(propertyContainers);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnWaypointBrowserShowHide(bool checked)
 {
    mWaypointBrowser->setVisible(checked);
+
+   if (mWaypointBrowser->isVisible())
+   {
+      mWaypointBrowser->OnWaypointSelectionChanged(WaypointSelection::GetInstance().GetWaypointList());
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -523,4 +554,24 @@ void MainWindow::OnModifiedChanged()
 {
    mUi->mActionSave->setEnabled(!mUndoStack->isClean());
    this->setWindowModified(!mUndoStack->isClean());
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnSelectAllWaypoints()
+{
+   if (mPluginInterface == NULL)
+   {
+      return;
+   }
+
+   dtAI::AIPluginInterface::WaypointArray waypoints;
+   mPluginInterface->GetWaypoints(waypoints);
+
+   WaypointSelection::GetInstance().SetWaypointSelectionList(waypoints);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnDeselectAllWaypoints()
+{
+   WaypointSelection::GetInstance().DeselectAllWaypoints();
 }

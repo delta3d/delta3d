@@ -37,9 +37,10 @@
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
-     <string>Edit</string>
+     <string>&amp;Edit</string>
     </property>
     <addaction name="mActionRenderingOptions"/>
+    <addaction name="separator"/>
     <addaction name="mActionAddEdge"/>
     <addaction name="mActionRemoveEdge"/>
    </widget>
@@ -50,8 +51,16 @@
     <addaction name="mActionPropertyEditorVisible"/>
     <addaction name="mActionWaypointBrowserVisible"/>
    </widget>
+   <widget class="QMenu" name="menu_Select">
+    <property name="title">
+     <string>&amp;Select</string>
+    </property>
+    <addaction name="mActionSelectAllWaypoints"/>
+    <addaction name="mActionDeselectAllWaypoints"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
+   <addaction name="menu_Select"/>
    <addaction name="menuWindows"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -196,6 +205,22 @@
    </property>
    <property name="toolTip">
     <string>Delete selected waypoints.</string>
+   </property>
+  </action>
+  <action name="mActionSelectAllWaypoints">
+   <property name="text">
+    <string>Select All Waypoint</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+A</string>
+   </property>
+  </action>
+  <action name="mActionDeselectAllWaypoints">
+   <property name="text">
+    <string>Deselect All Waypoints</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
    </property>
   </action>
  </widget>
