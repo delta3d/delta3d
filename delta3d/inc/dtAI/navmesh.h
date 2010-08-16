@@ -67,7 +67,7 @@ namespace dtAI
       /**
        * Removes the path segment between the two waypoints if one exists
        */
-      void RemoveEdge(const WaypointInterface* pFrom, const WaypointInterface* pTo);
+      bool RemoveEdge(const WaypointInterface* pFrom, const WaypointInterface* pTo);
       void RemovePathSegment(const WaypointInterface* pFrom, const WaypointInterface* pTo);
 
       /**

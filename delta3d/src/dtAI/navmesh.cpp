@@ -93,7 +93,7 @@ namespace dtAI
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void NavMesh::RemoveEdge(const WaypointInterface* pFrom, const WaypointInterface* pTo)
+   bool NavMesh::RemoveEdge(const WaypointInterface* pFrom, const WaypointInterface* pTo)
    {
       NavMeshContainer::iterator iter      = begin(pFrom);
       NavMeshContainer::iterator endOfList = end(pFrom);
@@ -104,10 +104,12 @@ namespace dtAI
          if (iter->second->GetWaypointTo()->GetID() == id)
          {
             mNavMesh.erase(iter);
-            return;
+            return true;
          }
          ++iter;
       }
+
+      return false;
    }
 
    /////////////////////////////////////////////////////////////////////////////
