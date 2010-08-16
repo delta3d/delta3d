@@ -390,6 +390,9 @@ void MainWindow::OnAddEdge()
 
       // Update UI
       mPluginInterface->GetDebugDrawable()->AddEdge(waypointA, waypointB);
+
+      //Undo'ing the AddEdge doesn't always remove the geometry from the AIDebugDrawable, for some reason
+      //mUndoStack->push(new AddEdgeCommand(*waypointA, *waypointB, mPluginInterface));
       
       EnableOrDisableControls();
    }
@@ -408,12 +411,18 @@ void MainWindow::OnRemoveEdge()
       // Update NavMesh
       dtAI::WaypointInterface* waypointA = WaypointSelection::GetInstance().GetWaypointList()[0];
       dtAI::WaypointInterface* waypointB = WaypointSelection::GetInstance().GetWaypointList()[1];
-      mPluginInterface->RemoveEdge(waypointA->GetID(), waypointB->GetID());
-
-      // Update UI
-      mPluginInterface->GetDebugDrawable()->RemoveEdge(waypointA, waypointB);
-
-      EnableOrDisableControls();
+      
+      if (mPluginInterface->RemoveEdge(waypointA->GetID(), waypointB->GetID()))
+      {
+         // Update UI
+         mPluginInterface->GetDebugDrawable()->RemoveEdge(waypointA, waypointB);
+         mUndoStack->push(new RemoveEdgeCommand(*waypointA, *waypointB, mPluginInterface));
+         EnableOrDisableControls();
+      }
+      else
+      {
+         LOG_ERROR("Could not remove edge");
+      }
    }
    else
    {
@@ -491,6 +500,11 @@ void MainWindow::OnWaypointBrowserShowHide(bool checked)
 bool MainWindow::DoesEdgeExistBetweenWaypoints(dtAI::WaypointInterface* waypointStart,
    dtAI::WaypointInterface* waypointEnd)
 {
+   if (mPluginInterface == NULL)
+   {
+      return false;
+   }
+
    dtAI::AIPluginInterface::ConstWaypointArray edgeList;
    mPluginInterface->GetAllEdgesFromWaypoint(waypointStart->GetID(), edgeList);
    for (size_t edgeIndex = 0; edgeIndex < edgeList.size(); ++edgeIndex)

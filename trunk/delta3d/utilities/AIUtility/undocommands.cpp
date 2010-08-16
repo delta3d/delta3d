@@ -90,3 +90,91 @@ void AddWaypointCommand::undo()
       mAIInterface->RemoveWaypoint(mWp);
    }
 }
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+AddEdgeCommand::AddEdgeCommand(dtAI::WaypointInterface& fromWp,
+                               dtAI::WaypointInterface& toWp,
+                               dtAI::AIPluginInterface* aiInterface,
+                               QUndoCommand* parent)
+: QUndoCommand(parent)
+, mFromWp(&fromWp)
+, mToWp(&toWp)
+, mAIInterface(aiInterface)
+{
+   setText("Add Edge #" + QString::number(mFromWp->GetID()) + "->" + QString::number(mToWp->GetID()));
+}
+
+////////////////////////////////////////////////////////////////////////////////
+AddEdgeCommand::~AddEdgeCommand()
+{
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void AddEdgeCommand::redo()
+{
+   if (mAIInterface)
+   {
+      mAIInterface->AddEdge(mFromWp->GetID(), mToWp->GetID());
+      mAIInterface->GetDebugDrawable()->AddEdge(mFromWp, mToWp);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void AddEdgeCommand::undo()
+{
+   if (mAIInterface)
+   {
+      if (mAIInterface->RemoveEdge(mFromWp->GetID(), mToWp->GetID()))
+      {
+         mAIInterface->GetDebugDrawable()->RemoveEdge(mFromWp, mToWp);
+      }
+      else
+      {
+         LOG_ERROR("Could not remove edge" );
+
+      }
+   }
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+RemoveEdgeCommand::RemoveEdgeCommand(dtAI::WaypointInterface& fromWp,
+                                     dtAI::WaypointInterface& toWp,
+                                     dtAI::AIPluginInterface* aiInterface,
+                                     QUndoCommand* parent)
+: QUndoCommand(parent)
+, mFromWp(&fromWp)
+, mToWp(&toWp)
+, mAIInterface(aiInterface)
+{
+   setText("Remove Edge #" + QString::number(mFromWp->GetID()) + "->" + QString::number(mToWp->GetID()));
+}
+
+////////////////////////////////////////////////////////////////////////////////
+RemoveEdgeCommand::~RemoveEdgeCommand()
+{
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void RemoveEdgeCommand::redo()
+{
+   if (mAIInterface)
+   {
+      mAIInterface->RemoveEdge(mFromWp->GetID(), mToWp->GetID());
+      mAIInterface->GetDebugDrawable()->RemoveEdge(mFromWp, mToWp);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void RemoveEdgeCommand::undo()
+{
+   if (mAIInterface)
+   {
+      mAIInterface->AddEdge(mFromWp->GetID(), mToWp->GetID());
+      mAIInterface->GetDebugDrawable()->AddEdge(mFromWp, mToWp);
+   }
+}
