@@ -2290,13 +2290,20 @@ void DirectorCinematicEditorPlugin::OnSave()
          if (actorData.mTransformEnabled)
          {
             int count = (int)actorData.mTransformData.size();
-            for (int index = 0; index < count - 1; ++index)
+            int nextIndex = 0;
+            if (count > 1)
+            {
+               count--;
+               nextIndex = 1;
+            }
+
+            for (int index = 0; index < count; ++index, ++nextIndex)
             {
                TransformData& prevData = actorData.mTransformData[index];
-               TransformData& nextData = actorData.mTransformData[index+1];
+               TransformData& nextData = actorData.mTransformData[nextIndex];
 
                // Translation.
-               if (prevData.mTransform.GetTranslation() != nextData.mTransform.GetTranslation())
+               if (index == 0 || prevData.mTransform.GetTranslation() != nextData.mTransform.GetTranslation())
                {
                   dtDirector::Node* lerpNode = dtDirector::NodeManager::GetInstance().CreateNode("Lerp Actor Translation", "Cinematic", GetGraph());
                   if (lerpNode)
@@ -2334,7 +2341,7 @@ void DirectorCinematicEditorPlugin::OnSave()
                }
 
                // Rotation.
-               if (prevData.mTransform.GetRotation() != nextData.mTransform.GetRotation())
+               if (index == 0 || prevData.mTransform.GetRotation() != nextData.mTransform.GetRotation())
                {
                   dtDirector::Node* lerpNode = dtDirector::NodeManager::GetInstance().CreateNode("Lerp Actor Rotation", "Cinematic", GetGraph());
                   if (lerpNode)
@@ -2374,7 +2381,7 @@ void DirectorCinematicEditorPlugin::OnSave()
                }
 
                // Scale.
-               if (prevData.mScale != nextData.mScale)
+               if (prevData.mCanScale && (index == 0 || prevData.mScale != nextData.mScale))
                {
                   dtDirector::Node* lerpNode = dtDirector::NodeManager::GetInstance().CreateNode("Lerp Actor Scale", "Cinematic", GetGraph());
                   if (lerpNode)
