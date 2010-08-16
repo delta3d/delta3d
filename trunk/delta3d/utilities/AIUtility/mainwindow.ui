@@ -55,6 +55,7 @@
     </property>
     <addaction name="mActionSelectAllWaypoints"/>
     <addaction name="mActionDeselectAllWaypoints"/>
+    <addaction name="mActionSelectInverseWaypoints"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -185,7 +186,7 @@
   </action>
   <action name="mActionSelectAllWaypoints">
    <property name="text">
-    <string>Select All Waypoint</string>
+    <string>&amp;Select All Waypoint</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+A</string>
@@ -193,10 +194,18 @@
   </action>
   <action name="mActionDeselectAllWaypoints">
    <property name="text">
-    <string>Deselect All Waypoints</string>
+    <string>&amp;Deselect All Waypoints</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+D</string>
+   </property>
+  </action>
+  <action name="mActionSelectInverseWaypoints">
+   <property name="text">
+    <string>&amp;Inverse</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+I</string>
    </property>
   </action>
  </widget>

@@ -100,6 +100,7 @@ public slots:
    void OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>& selectedWaypoints);
    void OnSelectAllWaypoints();
    void OnDeselectAllWaypoints();
+   void OnSelectInverseWaypoints();
 
    private slots:
       void OnModifiedChanged();

@@ -54,6 +54,7 @@
 #include <dtAI/waypointpropertycache.h>
 
 #include <set>
+#include <algorithm>
 
 const std::string MainWindow::ORG_NAME("delta3d.org");
 const std::string MainWindow::APP_NAME("AIUtility");
@@ -122,6 +123,7 @@ MainWindow::MainWindow(QWidget& mainWidget)
    connect(mUi->mActionDeleteSelectedWaypoints, SIGNAL(triggered()), mWaypointBrowser, SLOT(OnDelete()));
    connect(mUi->mActionSelectAllWaypoints, SIGNAL(triggered()), this, SLOT(OnSelectAllWaypoints()));
    connect(mUi->mActionDeselectAllWaypoints, SIGNAL(triggered()), this, SLOT(OnDeselectAllWaypoints()));
+   connect(mUi->mActionSelectInverseWaypoints, SIGNAL(triggered()), this, SLOT(OnSelectInverseWaypoints()));
 
    connect(mPropertyEditor.toggleViewAction(), SIGNAL(toggled(bool)), this, SLOT(OnPropertyEditorShowHide(bool)));
    connect(mWaypointBrowser->toggleViewAction(), SIGNAL(toggled(bool)), this, SLOT(OnWaypointBrowserShowHide(bool)));
@@ -560,4 +562,35 @@ void MainWindow::OnSelectAllWaypoints()
 void MainWindow::OnDeselectAllWaypoints()
 {
    WaypointSelection::GetInstance().DeselectAllWaypoints();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnSelectInverseWaypoints()
+{
+   //find the waypoints that aren't currently selected, and select them
+
+   dtAI::AIPluginInterface::WaypointArray allWaypoints;
+   mPluginInterface->GetWaypoints(allWaypoints);
+   std::vector<dtAI::WaypointInterface*> selectedWaypoints = WaypointSelection::GetInstance().GetWaypointList();
+
+   //containers must be sorted for set_difference to work
+   std::sort(allWaypoints.begin(), allWaypoints.end());
+   std::sort(selectedWaypoints.begin(), selectedWaypoints.end());
+
+
+   std::vector<dtAI::WaypointInterface*>::iterator endItr;
+   std::vector<dtAI::WaypointInterface*> v(allWaypoints.size()); //NULLs
+   endItr = std::set_difference(allWaypoints.begin(), allWaypoints.end(),
+                                selectedWaypoints.begin(), selectedWaypoints.end(), v.begin());
+
+   std::vector<dtAI::WaypointInterface*> inverseSelected;
+
+   std::vector<dtAI::WaypointInterface*>::iterator newlySelectedItr = v.begin();
+   while (newlySelectedItr != endItr)
+   {
+      inverseSelected.push_back(*newlySelectedItr);
+      ++newlySelectedItr;
+   }
+
+   WaypointSelection::GetInstance().SetWaypointSelectionList(inverseSelected);
 }
