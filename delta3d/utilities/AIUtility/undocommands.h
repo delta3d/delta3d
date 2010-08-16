@@ -49,4 +49,50 @@ private:
    dtAI::AIPluginInterface* mAIInterface;
 };
 
+
+/** Add an edge between two waypoints command.  Undo-ing will remove it while redo-ing will re-add it.
+  */
+class AddEdgeCommand : public QUndoCommand
+{
+public:
+   AddEdgeCommand(dtAI::WaypointInterface& fromWp,
+                  dtAI::WaypointInterface& toWp,
+                  dtAI::AIPluginInterface* aiInterface,
+                  QUndoCommand* parent=NULL);
+
+   virtual ~AddEdgeCommand();
+
+   virtual void redo();
+   virtual void undo();
+   
+private:
+   dtAI::WaypointInterface *mFromWp;
+   dtAI::WaypointInterface *mToWp;
+   dtAI::AIPluginInterface* mAIInterface;
+};
+
+/** Remove an edge between two waypoints command.  
+  * Undo-ing will re-add it while redo-ing will remove it.
+  */
+class RemoveEdgeCommand : public QUndoCommand
+{
+public:
+   RemoveEdgeCommand(dtAI::WaypointInterface& fromWp,
+                     dtAI::WaypointInterface& toWp,
+                     dtAI::AIPluginInterface* aiInterface,
+                     QUndoCommand* parent=NULL);
+
+   virtual ~RemoveEdgeCommand();
+
+   virtual void redo();
+   virtual void undo();
+   
+private:
+   dtAI::WaypointInterface *mFromWp;
+   dtAI::WaypointInterface *mToWp;
+   dtAI::AIPluginInterface* mAIInterface;
+};
+
+
+
 #endif // UNDOCOMMANDS_h__
