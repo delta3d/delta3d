@@ -686,7 +686,7 @@ namespace dtAI
          if(whFrom.mLevel == whTo.mLevel)
          {
             SearchLevel* sl = mImpl->GetSearchLevel(whFrom.mLevel);
-            sl->mNavMesh->RemoveEdge(whFrom.mWaypoint, whTo.mWaypoint);                             
+            return (sl->mNavMesh->RemoveEdge(whFrom.mWaypoint, whTo.mWaypoint));
          }
          else
          {
