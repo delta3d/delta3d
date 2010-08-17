@@ -21,8 +21,6 @@
 
 #include "waypointselection.h"
 
-#include <assert.h>
-
 WaypointSelection* WaypointSelection::sInstance = NULL;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -40,22 +38,38 @@ WaypointSelection& WaypointSelection::GetInstance()
 bool WaypointSelection::HasWaypoint(dtAI::WaypointInterface* waypoint)
 {
    return std::find(mSelectedWaypointList.begin(), mSelectedWaypointList.end(), waypoint) != 
-      mSelectedWaypointList.end();
+                    mSelectedWaypointList.end();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void WaypointSelection::AddWaypointToSelection(dtAI::WaypointInterface* waypoint)
 {
-   assert(!HasWaypoint(waypoint));
-
+   if (HasWaypoint(waypoint))
+   {
+      return;
+   }
+   
    mSelectedWaypointList.push_back(waypoint);
    emit WaypointSelectionChanged(mSelectedWaypointList);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void WaypointSelection::AddWaypointListToSelection(std::vector<dtAI::WaypointInterface*> waypointList)
+void WaypointSelection::AddWaypointListToSelection(const std::vector<dtAI::WaypointInterface*>& waypointList)
 {
-   std::copy(waypointList.begin(), waypointList.end(), std::back_inserter(mSelectedWaypointList));
+   std::vector<dtAI::WaypointInterface*>::const_iterator itr = waypointList.begin();
+
+   //ensure the supplied waypoints aren't aready selected
+   std::vector<dtAI::WaypointInterface*> prunedList;
+   while (itr != waypointList.end())
+   {
+      if (HasWaypoint(*itr) == false)
+      {
+         prunedList.push_back((*itr));
+      }
+      ++itr;
+   }
+
+   std::copy(prunedList.begin(), prunedList.end(), std::back_inserter(mSelectedWaypointList));
    emit WaypointSelectionChanged(mSelectedWaypointList);
 }
 

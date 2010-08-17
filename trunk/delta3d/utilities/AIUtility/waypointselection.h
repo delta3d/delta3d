@@ -52,7 +52,7 @@ public:
 
    void AddWaypointToSelection(dtAI::WaypointInterface* waypoint);
 
-   void AddWaypointListToSelection(std::vector<dtAI::WaypointInterface*> waypointList);
+   void AddWaypointListToSelection(const std::vector<dtAI::WaypointInterface*>& waypointList);
 
    void SetWaypointSelectionList(std::vector<dtAI::WaypointInterface*>& waypointList);
 
