@@ -226,7 +226,8 @@ void WaypointBrowser::ResetWaypointResult()
          for (; i != iend; ++i)
          {
             dtAI::WaypointInterface* wpi = *i;
-            new WaypointBrowserTreeItem(mUi->mWaypointList->invisibleRootItem(), *wpi);
+            QTreeWidgetItem* item = new WaypointBrowserTreeItem(mUi->mWaypointList->invisibleRootItem(), *wpi);
+            item->setData(0, Qt::UserRole, wpi->GetID());
          }
       }
    }
@@ -403,23 +404,17 @@ void WaypointBrowser::OnWaypointSelectionChanged(std::vector<dtAI::WaypointInter
 
    for (size_t waypointIndex = 0; waypointIndex < selectedWaypoints.size(); ++waypointIndex)
    {
-      QString id = QString("%1").arg(selectedWaypoints[waypointIndex]->GetID());
-      QList<QTreeWidgetItem*> itemList = mUi->mWaypointList->findItems(id, Qt::MatchExactly);
 
-      if (itemList.count() == 1)
+      const dtAI::WaypointID id = selectedWaypoints[waypointIndex]->GetID();
+      QTreeWidgetItemIterator itr(mUi->mWaypointList);
+      while (*itr)
       {
-         itemList.front()->setSelected(true);
-      }
-      else if (itemList.count() > 1)
-      {
-         std::ostringstream errorString;
-
-         for (int itemIndex = 0; itemIndex < itemList.count(); ++itemIndex)
+         if ((*itr)->data(0, Qt::UserRole) == id)
          {
-            errorString << itemList[itemIndex]->text(0).toStdString() << "\n";
+            (*itr)->setSelected(true);
+            break;
          }
-
-         LOG_ERROR("Duplicate waypoint ID's exist in the browser!\n" + errorString.str());
+         ++itr;
       }
    }
 
