@@ -24,6 +24,7 @@
 
 #include "mainwindow.h"
 #include "aipropertyeditor.h"
+#include "aiutilitypreferencesdialog.h"
 #include "qtglframe.h"
 #include "waypointbrowser.h"
 #include "waypointselection.h"
@@ -136,6 +137,7 @@ MainWindow::MainWindow(QWidget& mainWidget)
    connect(mUi->mActionSave, SIGNAL(triggered()), this, SLOT(OnSave()));
    connect(mUi->mChangeContextAction, SIGNAL(triggered()), this, SLOT(ChangeProjectContext()));
    connect(mUi->mActionRenderingOptions, SIGNAL(triggered()), this, SLOT(SelectRenderingOptions()));
+   connect(mUi->mActionPreferences, SIGNAL(triggered()), this, SLOT(OnPreferences()));
    connect(mUi->mActionAddEdge, SIGNAL(triggered()), this, SLOT(OnAddEdge()));
    connect(mUi->mActionRemoveEdge, SIGNAL(triggered()), this, SLOT(OnRemoveEdge()));
    connect(mUi->mActionDeleteSelectedWaypoints, SIGNAL(triggered()), mWaypointBrowser, SLOT(OnDelete()));
@@ -153,7 +155,7 @@ MainWindow::MainWindow(QWidget& mainWidget)
             this, SLOT(OnChildRequestCameraTransformChange(const dtCore::Transform&)));
 
    connect(&WaypointSelection::GetInstance(), SIGNAL(WaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>&)),
-           this, SLOT(OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>&)));  
+           this, SLOT(OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>&)));
 
    connect(mUi->mActionSelectPointMode, SIGNAL(triggered()), this, SLOT(OnSelectWaypointPointMode()));
    connect(mUi->mActionSelectionBrushMode, SIGNAL(triggered()), this, SLOT(OnSelectWaypontBrushMode()));
@@ -303,6 +305,15 @@ void MainWindow::OnSave()
    }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnPreferences()
+{
+   AIUtilityPreferencesDialog dlg(this);
+   if (dlg.exec()== QDialog::Accepted)
+   {
+      emit PreferencesUpdated();
+   }
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 void MainWindow::EnableOrDisableControls()
@@ -384,7 +395,7 @@ void MainWindow::SelectRenderingOptions()
       WaypointSelection::GetInstance().DeselectAllWaypoints();
 
       dtQt::BasePropertyEditor::PropertyContainerRefPtrVector selected;
-      dtAI::WaypointRenderInfo& ri = mPluginInterface->GetDebugDrawable()->GetRenderInfo();      
+      dtAI::WaypointRenderInfo& ri = mPluginInterface->GetDebugDrawable()->GetRenderInfo();
 
       selected.push_back(&ri);
       mPropertyEditor.HandlePropertyContainersSelected(selected);
@@ -406,7 +417,7 @@ void MainWindow::OnAddEdge()
 
       //Undo'ing the AddEdge doesn't always remove the geometry from the AIDebugDrawable, for some reason
       //mUndoStack->push(new AddEdgeCommand(*waypointA, *waypointB, mPluginInterface));
-      
+
       EnableOrDisableControls();
    }
    else
@@ -424,7 +435,7 @@ void MainWindow::OnRemoveEdge()
       // Update NavMesh
       dtAI::WaypointInterface* waypointA = WaypointSelection::GetInstance().GetWaypointList()[0];
       dtAI::WaypointInterface* waypointB = WaypointSelection::GetInstance().GetWaypointList()[1];
-      
+
       if (mPluginInterface->RemoveEdge(waypointA->GetID(), waypointB->GetID()))
       {
          // Update UI

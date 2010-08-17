@@ -74,6 +74,7 @@ public:
 
 signals:
    void ProjectContextChanged(const std::string& path);
+   void PreferencesUpdated();
    void MapSelected(const std::string& path);
    void CloseMapSelected();
    void RequestCameraTransformChange(const dtCore::Transform& xform);
@@ -87,6 +88,7 @@ public slots:
    void OnOpenMap();
    void OnCloseMap();
    void OnSave();
+   void OnPreferences();
    void EnableOrDisableControls();
    void SetAIPluginInterface(dtAI::AIPluginInterface* interface);
    void SelectRenderingOptions();

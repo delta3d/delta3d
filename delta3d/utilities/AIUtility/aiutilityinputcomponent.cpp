@@ -28,7 +28,7 @@
 
 #include <iostream>
 ////////////////////////////////////////////////////////////////////////////////
-AIUtilityInputComponent::AIUtilityInputComponent(const std::string &name /*= "AIUtilityInputComponent"*/) 
+AIUtilityInputComponent::AIUtilityInputComponent(const std::string &name /*= "AIUtilityInputComponent"*/)
 : dtGame::BaseInputComponent(name)
 , mPickDistanceBuffer(0.5f)
 , mSelectBrushMode(false)

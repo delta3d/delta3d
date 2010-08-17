@@ -38,12 +38,12 @@ namespace dtAI
 
 
 class WaypointSelection: public QObject
-{   
+{
    Q_OBJECT
 public:
 
    /**
-    * Gets the singleton instance of the EditorActions.
+    * Gets the singleton instance of the WaypointSelection.
     * @return Returns the singleton instance.
     */
    static WaypointSelection& GetInstance();
@@ -63,7 +63,7 @@ public:
    void ToggleWaypointSelection(dtAI::WaypointInterface* waypoint);
 
    size_t GetNumberSelected();
-   
+
    std::vector<dtAI::WaypointInterface*>& GetWaypointList();
 
 signals:
@@ -75,7 +75,7 @@ private:
    WaypointSelection(){}
    virtual ~WaypointSelection(){}
 
-   std::vector<dtAI::WaypointInterface*> mSelectedWaypointList;  
+   std::vector<dtAI::WaypointInterface*> mSelectedWaypointList;
    static WaypointSelection* sInstance;
 };
 

@@ -13,6 +13,7 @@ SET(PROG_HEADERS
                 aipropertyeditor.h
                 aiutilityapp.h
                 aiutilityinputcomponent.h
+                aiutilitypreferencesdialog.h
                 mainwindow.h
                 objecttypetreewidget.h
                 qtglframe.h
@@ -27,6 +28,7 @@ SET(PROG_SOURCES
                 aipropertyeditor.cpp
                 aiutilityapp.cpp
                 aiutilityinputcomponent.cpp
+                aiutilitypreferencesdialog.cpp
                 main.cpp
                 mainwindow.cpp
                 objectypettreewidget.cpp
