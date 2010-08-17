@@ -78,6 +78,8 @@ signals:
    void CloseMapSelected();
    void RequestCameraTransformChange(const dtCore::Transform& xform);
    void AddAIInterfaceToMap(const std::string& map);
+   void WaypointBrushSelectMode(bool enabled);
+   void WaypointBrushSizeChanged(double value);
 
 public slots:
    void OnError(const std::string& message);
@@ -101,9 +103,13 @@ public slots:
    void OnSelectAllWaypoints();
    void OnDeselectAllWaypoints();
    void OnSelectInverseWaypoints();
-
-   private slots:
+   
+private slots:
       void OnModifiedChanged();
+      void OnSelectWaypointPointMode();
+      void OnSelectWaypontBrushMode();
+      void OnWaypointBrushSizeChanged(double value);
+
 private:
    void ChangeMap(const QString& newMap);
 

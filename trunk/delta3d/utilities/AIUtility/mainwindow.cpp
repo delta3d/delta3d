@@ -40,6 +40,7 @@
 #include <QtGui/QGridLayout>
 #include <QtGui/QMessageBox>
 #include <QtGui/QUndoStack>
+#include <QtGui/QDoubleSpinBox>
 #include <QtCore/QSettings>
 #include <dtCore/transform.h>
 #include <dtDAL/map.h>
@@ -113,6 +114,23 @@ MainWindow::MainWindow(QWidget& mainWidget)
    mUi->menuWindows->addAction(mUi->undoStack->toggleViewAction());
    mUi->menuWindows->addAction(mUi->toolBar->toggleViewAction());
 
+   QActionGroup* waypointSelectionModeGroup = new QActionGroup(this);
+   waypointSelectionModeGroup->addAction(mUi->mActionSelectPointMode);
+   waypointSelectionModeGroup->addAction(mUi->mActionSelectionBrushMode);
+
+   mUi->selectModeToolBar->addAction(mUi->mActionSelectPointMode);
+   mUi->selectModeToolBar->addAction(mUi->mActionSelectionBrushMode);
+
+   //waypoint selection brush size
+   QDoubleSpinBox* brushSize = new QDoubleSpinBox(this);
+   brushSize->setToolTip(tr("Size of selection brush"));
+   brushSize->setRange(0.1, 100.0);
+   brushSize->setDecimals(2);
+   brushSize->setSingleStep(1.0);
+   connect(brushSize, SIGNAL(valueChanged(double)), this, SLOT(OnWaypointBrushSizeChanged(double)));
+   brushSize->setValue(1.0);
+   mUi->selectModeToolBar->addWidget(brushSize);
+
    connect(mUi->mActionOpenMap, SIGNAL(triggered()), this, SLOT(OnOpenMap()));
    connect(mUi->mActionCloseMap, SIGNAL(triggered()), this, SLOT(OnCloseMap()));
    connect(mUi->mActionSave, SIGNAL(triggered()), this, SLOT(OnSave()));
@@ -136,6 +154,9 @@ MainWindow::MainWindow(QWidget& mainWidget)
 
    connect(&WaypointSelection::GetInstance(), SIGNAL(WaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>&)),
            this, SLOT(OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>&)));  
+
+   connect(mUi->mActionSelectPointMode, SIGNAL(triggered()), this, SLOT(OnSelectWaypointPointMode()));
+   connect(mUi->mActionSelectionBrushMode, SIGNAL(triggered()), this, SLOT(OnSelectWaypontBrushMode()));
 
    addDockWidget(Qt::LeftDockWidgetArea, &mPropertyEditor);
    addDockWidget(Qt::RightDockWidgetArea, mWaypointBrowser);
@@ -593,4 +614,22 @@ void MainWindow::OnSelectInverseWaypoints()
    }
 
    WaypointSelection::GetInstance().SetWaypointSelectionList(inverseSelected);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnSelectWaypointPointMode()
+{
+   emit WaypointBrushSelectMode(false);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnSelectWaypontBrushMode()
+{
+   emit WaypointBrushSelectMode(true);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnWaypointBrushSizeChanged(double value)
+{
+   emit WaypointBrushSizeChanged(value);
 }

@@ -45,13 +45,29 @@ public:
     */
    virtual bool HandleButtonPressed(const dtCore::Mouse* mouse, dtCore::Mouse::MouseButton button);
 
+   virtual bool HandleMouseDragged(const dtCore::Mouse* mouse, float x, float y);
+
    void SetAIPluginInterface(dtAI::AIPluginInterface* aiInterface);
+
+   float GetPickDistanceBuffer() const;
+   void SetPickDistanceBuffer(float val);
+
+   void OnSelectWaypontBrushMode(bool enable);
+
+   void OnSelectBrushSizeChanged(double size);
 
 protected:
    virtual ~AIUtilityInputComponent();
 
 private:
    dtCore::RefPtr<dtAI::AIPluginInterface> mpAIInterface;
+   bool IsShiftHeld();
+   double GetSelectionBrushSize() const;
+
+   float mPickDistanceBuffer; //used to "pad" the mouse picked position to make it easier to select
+
+   bool mSelectBrushMode;
+   double mSelectBrushSize; ///<Size (meters) of the selection brush
 };
 
 #endif //AIUTILITY_INPUT_COMPONENT

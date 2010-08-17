@@ -30,6 +30,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 AIUtilityInputComponent::AIUtilityInputComponent(const std::string &name /*= "AIUtilityInputComponent"*/) 
 : dtGame::BaseInputComponent(name)
+, mPickDistanceBuffer(0.5f)
+, mSelectBrushMode(false)
+, mSelectBrushSize(1.0)
 {
 }
 
@@ -43,6 +46,12 @@ bool AIUtilityInputComponent::HandleButtonPressed(const dtCore::Mouse* mouse, dt
 {
    bool handled = false;
 
+   if (mpAIInterface.valid() == false)
+   {
+      return handled;
+   }
+
+
    switch (button)
    {
       case dtCore::Mouse::LeftButton:
@@ -50,19 +59,22 @@ bool AIUtilityInputComponent::HandleButtonPressed(const dtCore::Mouse* mouse, dt
          osg::Vec3f pickedPosition;
          GetGameManager()->GetApplication().GetView()->GetMousePickPosition(pickedPosition);
 
-         // See if we are adding to the selection list or not
-         dtCore::Keyboard* keyboard = GetGameManager()->GetApplication().GetKeyboard();
-         bool isShiftHeld = keyboard && (keyboard->GetKeyState(osgGA::GUIEventAdapter::KEY_Shift_L) ||
-            keyboard->GetKeyState(osgGA::GUIEventAdapter::KEY_Shift_R));
-         if (!isShiftHeld)
+         // See if we are adding to the selection list or not     
+         if (IsShiftHeld() == false)
          {
             WaypointSelection::GetInstance().DeselectAllWaypoints();
          }
 
          // Try and find the waypoint we clicked on if any
-         if (mpAIInterface.valid())
+         if (mSelectBrushMode)
          {
-            dtAI::WaypointInterface* waypointInterface = mpAIInterface->GetClosestWaypoint(pickedPosition, 0.5f);
+            dtAI::AIPluginInterface::WaypointArray selectedWaypoints;
+            mpAIInterface->GetWaypointsAtRadius(pickedPosition, GetSelectionBrushSize(), selectedWaypoints);
+            WaypointSelection::GetInstance().AddWaypointListToSelection(selectedWaypoints);
+         }
+         else
+         {
+            dtAI::WaypointInterface* waypointInterface = mpAIInterface->GetClosestWaypoint(pickedPosition, GetPickDistanceBuffer());
             if (waypointInterface != NULL)
             {
                WaypointSelection::GetInstance().ToggleWaypointSelection(waypointInterface);
@@ -79,10 +91,90 @@ bool AIUtilityInputComponent::HandleButtonPressed(const dtCore::Mouse* mouse, dt
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+bool AIUtilityInputComponent::HandleMouseDragged(const dtCore::Mouse* mouse, float x, float y)
+{
+   bool handled = false;
+
+   if (mpAIInterface.valid() == false)
+   {
+      return handled;
+   }
+
+   osg::Vec3f pickedPosition;
+   GetGameManager()->GetApplication().GetView()->GetMousePickPosition(pickedPosition);
+
+   // See if we are adding to the selection list or not
+   if (IsShiftHeld() == false)
+   {
+      WaypointSelection::GetInstance().DeselectAllWaypoints();
+   }
+
+   // Try and find the waypoint we clicked on if any
+   if (mSelectBrushMode)
+   {
+      dtAI::AIPluginInterface::WaypointArray selectedWaypoints;
+      mpAIInterface->GetWaypointsAtRadius(pickedPosition, GetSelectionBrushSize(), selectedWaypoints);
+      WaypointSelection::GetInstance().AddWaypointListToSelection(selectedWaypoints);
+   }
+   else
+   {
+      dtAI::WaypointInterface* waypointInterface = mpAIInterface->GetClosestWaypoint(pickedPosition, GetPickDistanceBuffer());
+      if (waypointInterface != NULL)
+      {
+         if (!WaypointSelection::GetInstance().HasWaypoint(waypointInterface))
+         {
+            WaypointSelection::GetInstance().AddWaypointToSelection(waypointInterface);
+            handled = true;
+         }
+      }
+   }
+
+   return handled;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void AIUtilityInputComponent::SetAIPluginInterface(dtAI::AIPluginInterface* aiInterface)
 {
    mpAIInterface = aiInterface;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+bool AIUtilityInputComponent::IsShiftHeld()
+{
+   dtCore::Keyboard* keyboard = GetGameManager()->GetApplication().GetKeyboard();
+   bool isShiftHeld = keyboard && (keyboard->GetKeyState(osgGA::GUIEventAdapter::KEY_Shift_L) ||
+                      keyboard->GetKeyState(osgGA::GUIEventAdapter::KEY_Shift_R));
 
+   return isShiftHeld;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+float AIUtilityInputComponent::GetPickDistanceBuffer() const
+{
+   return mPickDistanceBuffer;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void AIUtilityInputComponent::SetPickDistanceBuffer(float val)
+{
+   mPickDistanceBuffer = val;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void AIUtilityInputComponent::OnSelectWaypontBrushMode(bool enable)
+{
+   mSelectBrushMode = enable;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void AIUtilityInputComponent::OnSelectBrushSizeChanged(double size)
+{
+   mSelectBrushSize = size;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+double AIUtilityInputComponent::GetSelectionBrushSize() const
+{
+   return mSelectBrushSize;
+}
+////////////////////////////////////////////////////////////////////////////////
