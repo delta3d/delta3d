@@ -79,9 +79,9 @@ void AIUtilityApp::SetAIPluginInterface(dtAI::AIPluginInterface* interface)
    emit AIPluginInterfaceChanged(interface);
 
    // We can now setup the input component
-   AIUtilityInputComponent* inputComponent = new AIUtilityInputComponent();
-   inputComponent->SetAIPluginInterface(interface);
-   mGM->AddComponent(*inputComponent, dtGame::GameManager::ComponentPriority::NORMAL);
+   mInputComponent = new AIUtilityInputComponent();
+   mInputComponent->SetAIPluginInterface(interface);
+   mGM->AddComponent(*mInputComponent, dtGame::GameManager::ComponentPriority::NORMAL);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -152,5 +152,22 @@ void AIUtilityApp::AddAIInterfaceToMap(const std::string& map)
    }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+void AIUtilityApp::OnSelectWaypontBrushMode(bool enable)
+{
+   if (mInputComponent.valid())
+   {
+      mInputComponent->OnSelectWaypontBrushMode(enable);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void AIUtilityApp::OnWaypointBrushSizeChanged(double value)
+{
+   if (mInputComponent.valid())
+   {
+      mInputComponent->OnSelectBrushSizeChanged(value);
+   }
+}
 ////////////////////////////////////////////////////////////////////////////////
 

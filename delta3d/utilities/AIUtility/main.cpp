@@ -43,6 +43,8 @@ int main(int argc, char* argv[])
       app.get(), SLOT(TransformCamera(const dtCore::Transform&)));
    QObject::connect(&win, SIGNAL(AddAIInterfaceToMap(const std::string&)),
       app.get(), SLOT(AddAIInterfaceToMap(const std::string&)));
+   QObject::connect(&win, SIGNAL(WaypointBrushSelectMode(bool)), app.get(), SLOT(OnSelectWaypontBrushMode(bool)));
+   QObject::connect(&win, SIGNAL(WaypointBrushSizeChanged(double)), app.get(), SLOT(OnWaypointBrushSizeChanged(double)));
 
    QObject::connect(&win, SIGNAL(ProjectContextChanged(const std::string&)), app.get(), SLOT(SetProjectContext(const std::string&)));
    QObject::connect(&win, SIGNAL(MapSelected(const std::string&)), app.get(), SLOT(ChangeMap(const std::string&)));

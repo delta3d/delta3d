@@ -33,6 +33,8 @@
 
 #include <dtGame/gamemanager.h>
 
+class AIUtilityInputComponent;
+
 namespace dtAI
 {
    class AIPluginInterface;
@@ -60,6 +62,9 @@ public slots:
    void CloseMap();
    void TransformCamera(const dtCore::Transform&);
    void AddAIInterfaceToMap(const std::string& map);
+   void OnSelectWaypontBrushMode(bool enable);
+   void OnWaypointBrushSizeChanged(double value);
+
 protected:
    ///override for preframe
    virtual void PreFrame(const double deltaSimTime);
@@ -68,6 +73,7 @@ private:
    dtCore::RefPtr<dtGame::GameManager> mGM;
    dtCore::RefPtr<dtCore::MotionModel> mMotionModel;
    dtCore::Transform mLastCameraTransform;
+   dtCore::RefPtr<AIUtilityInputComponent> mInputComponent;
 };
 
 #endif /* AIUTILITYAPP_H_ */
