@@ -20,7 +20,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -39,10 +39,11 @@
     <property name="title">
      <string>&amp;Edit</string>
     </property>
-    <addaction name="mActionRenderingOptions"/>
     <addaction name="separator"/>
     <addaction name="mActionAddEdge"/>
     <addaction name="mActionRemoveEdge"/>
+    <addaction name="mActionRenderingOptions"/>
+    <addaction name="mActionPreferences"/>
    </widget>
    <widget class="QMenu" name="menuWindows">
     <property name="title">
@@ -259,6 +260,11 @@
    </property>
    <property name="toolTip">
     <string>Brush Select Mode</string>
+   </property>
+  </action>
+  <action name="mActionPreferences">
+   <property name="text">
+    <string>Preferences</string>
    </property>
   </action>
  </widget>

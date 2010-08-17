@@ -64,6 +64,7 @@ public slots:
    void AddAIInterfaceToMap(const std::string& map);
    void OnSelectWaypontBrushMode(bool enable);
    void OnWaypointBrushSizeChanged(double value);
+   void OnPreferencesUpdated();
 
 protected:
    ///override for preframe

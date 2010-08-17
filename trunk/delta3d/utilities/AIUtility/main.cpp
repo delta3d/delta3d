@@ -49,6 +49,7 @@ int main(int argc, char* argv[])
    QObject::connect(&win, SIGNAL(ProjectContextChanged(const std::string&)), app.get(), SLOT(SetProjectContext(const std::string&)));
    QObject::connect(&win, SIGNAL(MapSelected(const std::string&)), app.get(), SLOT(ChangeMap(const std::string&)));
    QObject::connect(&win, SIGNAL(CloseMapSelected()), app.get(), SLOT(CloseMap()));
+   QObject::connect(&win, SIGNAL(PreferencesUpdated()), app.get(), SLOT(OnPreferencesUpdated()));
 
    win.show();
 
