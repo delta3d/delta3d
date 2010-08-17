@@ -279,22 +279,35 @@ void WaypointBrowser::OnDelete()
    std::vector<dtAI::WaypointInterface*>& waypointList =
       WaypointSelection::GetInstance().GetWaypointList();
 
+   if (waypointList.empty())  {return;}
+
+   //if there's more than one to delete, batch the commands under one parent undo command
+   QUndoCommand* parentUndo(waypointList.size()==1 ? NULL : new QUndoCommand("Delete Waypoints"));
+
    for (size_t pointIndex = 0; pointIndex < waypointList.size(); ++pointIndex)
    {
       dtAI::WaypointInterface* wp = waypointList[pointIndex];
       if (wp)
       {
-         QUndoCommand* command = new DeleteWaypointCommand(*wp, mAIPluginInterface);
+         QUndoCommand* command = new DeleteWaypointCommand(*wp, mAIPluginInterface, parentUndo);
 
          if (mAIPluginInterface->RemoveWaypoint(wp))
          {
-            mUndoStack->push(command);
+            if (parentUndo == NULL)
+            {
+               mUndoStack->push(command);
+            }
          }
          else
          {
             delete command;
          }
       }
+   }
+
+   if (parentUndo != NULL)
+   {
+      mUndoStack->push(parentUndo);
    }
 
    WaypointSelection::GetInstance().DeselectAllWaypoints();
