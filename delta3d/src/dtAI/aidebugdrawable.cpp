@@ -73,7 +73,6 @@ namespace dtAI
       AIDebugDrawableImpl(WaypointRenderInfo& pRenderInfo)
       : mRenderInfo(&pRenderInfo)
       {
-
       }
 
       //////////////////////////////////////////////////////////////////////////
@@ -105,38 +104,19 @@ namespace dtAI
          mWaypointGeometry->setColorBinding(osg::Geometry::BIND_PER_VERTEX);
          mNavMeshGeometry->setColorBinding(osg::Geometry::BIND_OVERALL);
 
+         // Don't light waypoint data
+         mNode->getOrCreateStateSet()->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+
          mRenderInfo->Init();
       }
 
       //////////////////////////////////////////////////////////////////////////
       void OnRenderInfoChanged()
       {
-         if (mRenderInfo->GetRenderWaypointID())
-         {
-            mGeodeIDs->setNodeMask(~0);
-         }
-         else
-         {
-            mGeodeIDs->setNodeMask(0);
-         }
-
-         if (mRenderInfo->GetRenderNavMesh())
-         {
-            mGeodeNavMesh->setNodeMask(~0);
-         }
-         else
-         {
-            mGeodeNavMesh->setNodeMask(0);
-         }
-
-         if (mRenderInfo->GetRenderWaypoints())
-         {
-            mGeodeWayPoints->setNodeMask(~0);
-         }
-         else
-         {
-            mGeodeWayPoints->setNodeMask(0);
-         }
+         // Turn on or off by setting the node mask
+         mGeodeIDs->setNodeMask(mRenderInfo->GetRenderWaypointID() ? ~0: 0);
+         mGeodeNavMesh->setNodeMask(mRenderInfo->GetRenderNavMesh() ? ~0: 0);
+         mGeodeWayPoints->setNodeMask(mRenderInfo->GetRenderWaypoints() ? ~0: 0);
 
          ResetWaypointColorsToDefault();
 
@@ -163,6 +143,7 @@ namespace dtAI
          {
             mWaypointGeometry->removePrimitiveSet(0);
          }
+
          if(!mVerts->empty())
          {
             osg::PrimitiveSet* ps = new osg::DrawArrays(osg::PrimitiveSet::POINTS, 0, mVerts->size());
@@ -274,7 +255,6 @@ namespace dtAI
       mImpl = NULL;
    }
 
-
    /////////////////////////////////////////////////////////////////////////////
    void AIDebugDrawable::SetRenderInfo(WaypointRenderInfo& pRenderInfo)
    {
@@ -311,10 +291,18 @@ namespace dtAI
    /////////////////////////////////////////////////////////////////////////////
    void AIDebugDrawable::ClearMemory()
    {
-      //todo-
-      ClearWaypointGraph();
-   }
+      mImpl->mVerts->clear();
+      mImpl->mWaypointIDs->clear();
+      mImpl->mWaypointColors->clear();
+      mImpl->mGeodeIDs->removeDrawables(0, mImpl->mGeodeIDs->getNumDrawables());
+      mImpl->mRenderData.clear();
 
+      // Clears waypoint pairs
+      ClearWaypointGraph();
+
+      // Existing primitive sets will be cleared here (mWaypointGeometry,mNavMeshGeometry)
+      OnGeometryChanged();
+   }
 
    /////////////////////////////////////////////////////////////////////////////
    osg::Geode* AIDebugDrawable::GetGeodeNavMesh()
@@ -377,6 +365,42 @@ namespace dtAI
       }
 
       return -1;
+   }
+
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void AIDebugDrawable::SetWaypoints(const std::vector<dtCore::RefPtr<dtAI::WaypointInterface> >& wpArray)
+   {
+      // Make sure we start with a clean slate
+      ClearMemory();
+
+      typedef std::vector< dtCore::RefPtr<dtAI::WaypointInterface> > WaypointRefArray;
+
+      //now we must add all current waypoints
+      WaypointRefArray::const_iterator iter = wpArray.begin();
+      WaypointRefArray::const_iterator iterEnd = wpArray.end();
+
+      const int MAX_RENDERABLE_WAYPOINTS_WITH_TEXT = 50000;
+
+      // Don't allow the sheer volume of text to bring the app down
+      bool renderText = (wpArray.size() < MAX_RENDERABLE_WAYPOINTS_WITH_TEXT);
+
+      for (;iter != iterEnd; ++iter)
+      {
+         mImpl->mWaypointIDs->push_back((*iter)->GetID());
+         mImpl->mVerts->push_back((*iter)->GetPosition());
+         mImpl->mWaypointColors->push_back(mImpl->mRenderInfo->GetWaypointColor());
+
+         dtCore::RefPtr<RenderData> newRenderData = new RenderData;
+         mImpl->mRenderData.insert(std::make_pair((*iter)->GetID(), newRenderData));
+
+         if (renderText)
+         {
+            mImpl->CreateWaypointIDText(**iter, *newRenderData);
+         }
+      }
+
+      OnGeometryChanged();
    }
 
    /////////////////////////////////////////////////////////////////////////////

@@ -439,19 +439,7 @@ namespace dtAI
          {
             mDrawable = new AIDebugDrawable();
 
-            //now we must add all current waypoints
-            WaypointRefArray::const_iterator iter = mWaypoints.begin();
-            WaypointRefArray::const_iterator iterEnd = mWaypoints.end();
-
-            const int MAX_RENDERABLE_WAYPOINTS_WITH_TEXT = 50000;
-
-            // Don't allow the sheer volume of text to bring the app down
-            bool renderText = (mWaypoints.size() < MAX_RENDERABLE_WAYPOINTS_WITH_TEXT);
-
-            for (;iter != iterEnd; ++iter)
-            {
-               mDrawable->InsertWaypoint(**iter, renderText);
-            }
+            mDrawable->SetWaypoints(mWaypoints);
 
             NavMesh* nm = mWaypointGraph->GetNavMeshAtSearchLevel(0);
             if (nm != NULL)
