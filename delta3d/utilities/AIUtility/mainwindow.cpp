@@ -84,8 +84,6 @@ MainWindow::MainWindow(QWidget& mainWidget)
    setCentralWidget(centerFrame);
 
    mCurrentCameraTransform.MakeIdentity();
-   mUi->toolBar->addAction(mUi->mActionAddEdge);
-   mUi->toolBar->addAction(mUi->mActionRemoveEdge);
 
    mUndoStack = new QUndoStack(this);
    mUi->undoView->setStack(mUndoStack);
@@ -98,8 +96,6 @@ MainWindow::MainWindow(QWidget& mainWidget)
    undoAction->setIcon(QIcon(":/images/undo.png"));
    redoAction->setIcon(QIcon(":/images/redo.png"));
 
-   mUi->menuEdit->addSeparator();
-   mUi->menuEdit->addAction(mUi->mActionDeleteSelectedWaypoints);
    mUi->menuEdit->addSeparator();
    mUi->menuEdit->addAction(undoAction);
    mUi->menuEdit->addAction(redoAction);
