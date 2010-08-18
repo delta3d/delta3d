@@ -70,13 +70,19 @@ namespace dtAI
       const osg::Node* GetOSGNode() const;
 
       /**
+       * @note This clears out all existing waypoints and replaces them with those in wpArray
+       * @param wpArray The array of all WaypointInterface objects to visualize
+       */
+      virtual void SetWaypoints(const std::vector<dtCore::RefPtr<dtAI::WaypointInterface> >& wpArray);
+
+      /**
        * Note: Adding an existing waypoint will reset just its position
        *       currently use this to move the waypoint as well.
        */
       virtual void InsertWaypoint(const WaypointInterface& wp, bool addText = true);
       virtual void RemoveWaypoint(unsigned id);
 
-      /** 
+      /**
        * Set the color of an individual WaypointInterface, overwriting the color defined
        * in the WaypointRenderInfo.
        * @param wp An existing WaypointInterface
@@ -84,7 +90,7 @@ namespace dtAI
        */
       void SetWaypointColor(const WaypointInterface& wp, const osg::Vec4& color);
 
-      /** 
+      /**
        * Reset all the WaypointInterface colors back to the value defined in the WaypointRenderInfo.
        */
       void ResetWaypointColorsToDefault();
@@ -104,7 +110,6 @@ namespace dtAI
        * @return -1 if no hit was found, else a WaypointID
        */
       //int Intersect(osg::Vec3& from, osg::Vec3& to) const;
-
 
       void ClearMemory();
 
