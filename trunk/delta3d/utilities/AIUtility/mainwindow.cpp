@@ -458,6 +458,18 @@ void MainWindow::PropertyChangedFromControl(dtDAL::PropertyContainer& pc, dtDAL:
    {
       mPluginInterface->GetDebugDrawable()->OnRenderInfoChanged();
    }
+
+   dtAI::WaypointPropertyBase *wpb = dynamic_cast<dtAI::WaypointPropertyBase*>(&pc);
+   if (wpb)
+   {
+      if (wpb->Get())
+      {
+         //adjust the graphical representation of the waypoint to match the new property changes
+         mPluginInterface->GetDebugDrawable()->InsertWaypoint(*wpb->Get());
+      }
+
+      OnModifiedChanged();
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
