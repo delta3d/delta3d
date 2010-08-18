@@ -303,14 +303,10 @@ namespace dtGame
             if (helper.GetEffectiveUpdateMode(gameActor.IsRemote())
                   == DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR)
             {
-               // Get the object's velocity for the current frame.
-               // Curt - This line is bogus. The velocity changes based on the DR... need to access
-               // the instantaneous velocity.
-               osg::Vec3 velocity( helper.GetLastKnownVelocity() + helper.GetLastKnownAcceleration() * simTimeDelta );
+               osg::Vec3 velocity(helper.GetCurrentInstantVelocity()); //  helper.GetLastKnownVelocity() + helper.GetLastKnownAcceleration() * simTimeDelta );
 
-               // Call the ground clamper for the current object.
-               // The ground clamper should be smart enough to know
-               // what to do with the supplied values.
+               // Call the ground clamper for the current object. The ground clamper should 
+               // be smart enough to know what to do with the supplied values.
                mGroundClamper->ClampToGround(*groundClampingType, tickMessage.GetSimulationTime(),
                         xform, gameActor.GetGameActorProxy(),
                         helper.GetGroundClampingData(), transformChanged, velocity);
