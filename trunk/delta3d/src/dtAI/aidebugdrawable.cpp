@@ -434,30 +434,39 @@ namespace dtAI
    /////////////////////////////////////////////////////////////////////////////
    void AIDebugDrawable::RemoveWaypoint(unsigned id)
    {
-      int loc = FindWaypoint(id);
-      if (loc > -1)
+      RemoveWaypoints(std::vector<unsigned int>(1, id));
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void AIDebugDrawable::RemoveWaypoints(const std::vector<unsigned int>& idList)
+   {
+      for (size_t idIndex = 0; idIndex < idList.size(); ++idIndex)
       {
-         //since this data is easily copied we can perform a faster erase
-         //we simply copy the last element to the place of the element to be removed
-         //and then we pop off the last element
-         //it should be noted that order is not preserved.... if this matters we will need to revisit this
-         (*mImpl->mVerts)[loc].set((*mImpl->mVerts)[mImpl->mVerts->size() - 1]);
-         (*mImpl->mWaypointIDs)[loc] = (*mImpl->mWaypointIDs)[mImpl->mWaypointIDs->size() - 1];
-         (*mImpl->mWaypointColors)[loc] = (*mImpl->mWaypointColors)[mImpl->mWaypointColors->size() - 1];
-
-         mImpl->mVerts->pop_back();
-         mImpl->mWaypointIDs->pop_back();
-         mImpl->mWaypointColors->pop_back();
-
-         RenderDataMap::iterator i = mImpl->mRenderData.find(id);
-         if (i != mImpl->mRenderData.end())
+         int loc = FindWaypoint(idList[idIndex]);
+         if (loc > -1)
          {
-            mImpl->mGeodeIDs->removeDrawable(i->second->mTextNode.get());
-            mImpl->mRenderData.erase(i);
-         }
+            //since this data is easily copied we can perform a faster erase
+            //we simply copy the last element to the place of the element to be removed
+            //and then we pop off the last element
+            //it should be noted that order is not preserved.... if this matters we will need to revisit this
+            (*mImpl->mVerts)[loc].set((*mImpl->mVerts)[mImpl->mVerts->size() - 1]);
+            (*mImpl->mWaypointIDs)[loc] = (*mImpl->mWaypointIDs)[mImpl->mWaypointIDs->size() - 1];
+            (*mImpl->mWaypointColors)[loc] = (*mImpl->mWaypointColors)[mImpl->mWaypointColors->size() - 1];
 
-         OnGeometryChanged();
+            mImpl->mVerts->pop_back();
+            mImpl->mWaypointIDs->pop_back();
+            mImpl->mWaypointColors->pop_back();
+
+            RenderDataMap::iterator i = mImpl->mRenderData.find(idList[idIndex]);
+            if (i != mImpl->mRenderData.end())
+            {
+               mImpl->mGeodeIDs->removeDrawable(i->second->mTextNode.get());
+               mImpl->mRenderData.erase(i);
+            }
+         }
       }
+
+      OnGeometryChanged();
    }
 
    /////////////////////////////////////////////////////////////////////////////

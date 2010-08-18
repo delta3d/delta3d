@@ -80,7 +80,8 @@ namespace dtAI
        *       currently use this to move the waypoint as well.
        */
       virtual void InsertWaypoint(const WaypointInterface& wp, bool addText = true);
-      virtual void RemoveWaypoint(unsigned id);
+      virtual void RemoveWaypoint(unsigned int id);
+      virtual void RemoveWaypoints(const std::vector<unsigned int>& idList);
 
       /**
        * Set the color of an individual WaypointInterface, overwriting the color defined
