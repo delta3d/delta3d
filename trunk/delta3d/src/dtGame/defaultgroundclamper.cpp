@@ -145,7 +145,7 @@ namespace dtGame
       // If we found both, we have to pick the right one (prevents snapping with overlapping terrain objects)
       finalResult = foundAbove || foundBelow; // regardless of what we do next, the function is true if we found ANY hits.
       bool clampUp = (foundAbove && !foundBelow); // we are below ALL terrain, so clamp up.
-      bool clampDown = (foundBelow && false /* CURT MAGIC - new feature */); // clampUp always wins over clampDown 
+      bool clampDown = (foundBelow && true /* new feature TO COME */); // clampUp always wins over clampDown 
 
       if (foundBelow && foundAbove)
       {
@@ -156,7 +156,7 @@ namespace dtGame
             clampUp = true;
          }
          // it didn't fit, so clamp down or do nothing. 
-         else if (false /* CURT MAGIC - new feature*/)
+         else if (true /* new feature TO COME */)
          {
             clampDown = true;
          }

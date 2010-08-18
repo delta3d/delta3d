@@ -364,6 +364,8 @@ namespace dtGame
 
             single->SetHitList(hitList);
 
+            // CLAMPING UP - two hits above, pick the one that is lowest because fits under the 2nd. 
+            data.SetModelDimensions(osg::Vec3(1.0f, 1.0f, 2.0f)); 
             CPPUNIT_ASSERT_MESSAGE("A nearest hit should have been found.",
                      mGroundClamper->GetClosestHit(*mTestGameActor, data, *single, 0.03, point, normal));
 
@@ -375,6 +377,7 @@ namespace dtGame
             CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0f, normal.y(), 0.001);
             CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0f, normal.z(), 0.001);
 
+            // CLAMPING UP - one hit is up and one hit is down
             CPPUNIT_ASSERT_MESSAGE("A nearest hit should have been found.",
                      mGroundClamper->GetClosestHit(*mTestGameActor, data, *single, 3.4, point, normal));
 
@@ -386,6 +389,7 @@ namespace dtGame
             CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0f, normal.y(), 0.001);
             CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0f, normal.z(), 0.001);
 
+            //  CLAMPING DOWN
             CPPUNIT_ASSERT_MESSAGE("A nearest hit should have been found.",
                      mGroundClamper->GetClosestHit(*mTestGameActor, data, *single, 5.0, point, normal));
 
@@ -396,6 +400,7 @@ namespace dtGame
             CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0f, normal.x(), 0.001);
             CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0f, normal.y(), 0.001);
             CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0f, normal.z(), 0.001);
+
          }
 
          ///////////////////////////////////////////////////////////////////////
