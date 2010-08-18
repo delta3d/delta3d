@@ -493,9 +493,13 @@ void GameActorProxy::ApplyActorUpdate(const ActorUpdateMessage& msg, bool checkL
 
       const dtDAL::DataType& paramType = params[i]->GetDataType();
 
-      dtDAL::ActorProperty* property = GetProperty(paramName);
-
-      if (property == NULL)
+      // The property can now be either real or a deprecated property (which is created each time). 
+      dtCore::RefPtr<dtDAL::ActorProperty> property = GetProperty(paramName);
+      if (!property.valid())
+      {
+         property = GetDeprecatedProperty(paramName);
+      }  
+      if (!property.valid())
       {
          LOG_WARNING(("Property \"" + paramName +
             "\" was not found on actor type \"" +
@@ -532,7 +536,7 @@ void GameActorProxy::ApplyActorUpdate(const ActorUpdateMessage& msg, bool checkL
 
       if (paramType == dtDAL::DataType::ACTOR)
       {
-         aap = dynamic_cast<dtDAL::ActorActorProperty*>(property);
+         aap = dynamic_cast<dtDAL::ActorActorProperty*>(property.get());
       }
 
       // If the property is of type ACTOR AND it is an ActorActor property not an ActorID property, it's a special case.

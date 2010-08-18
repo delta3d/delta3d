@@ -28,6 +28,8 @@
 #include <dtGame/defaultgroundclamper.h>
 #include <dtUtil/log.h>
 #include <dtUtil/boundingshapeutils.h>
+#include <dtUtil/mathdefines.h>
+#include <dtUtil/matrixutil.h>
 #include <osg/io_utils>
 #include <osg/Matrix>
 #include <cmath>
@@ -104,22 +106,75 @@ namespace dtGame
       GroundClampingData& data, dtCore::BatchIsector::SingleISector& single, float pointZ,
       osg::Vec3& outHit, osg::Vec3& outNormal)
    {
-      bool found = false;
-      float diff = FLT_MAX;
+      bool finalResult = false; 
+      bool foundAbove = false, foundBelow = false;
+      float aboveDiff = FLT_MAX, belowDiff = -FLT_MAX;
+      osg::Vec3 aboveHit, aboveOutNormal, belowHit, belowOutNormal;
       osg::Vec3 tempHit;
+      float modelHeightAllowance = 0.8f * data.GetModelDimensions().z();
+
+      // Loop through all the hits. Find the closest hit above us and below us
       for (unsigned int i = 0; i < single.GetNumberOfHits(); ++i)
       {
          single.GetHitPoint(tempHit, i);
-         float newDiff = std::abs(tempHit.z() - pointZ);
-         if (newDiff < diff)
+         float newDiff = tempHit.z() - pointZ;
+         // ABOVE
+         if (newDiff > 0.0f && newDiff < aboveDiff)
          {
-            diff = newDiff;
-            outHit = tempHit;
-            single.GetHitPointNormal(outNormal, i);
-            found = true;
+            // Keep the old hit if it is already inside the vehicle 
+            // (for when you have skirts or ovelapping geometry in terrain)
+            if (aboveDiff > modelHeightAllowance)
+            {
+               aboveDiff = newDiff;
+               aboveHit = tempHit;
+               single.GetHitPointNormal(aboveOutNormal, i);
+               foundAbove = true;
+            }
+            // Else just keep the last 'above' hit we had
+         }
+         // BELOW 
+         else if (newDiff < 0.0f && newDiff > belowDiff)
+         {
+            belowDiff = newDiff;
+            belowHit = tempHit;
+            single.GetHitPointNormal(belowOutNormal, i);
+            foundBelow = true;
          }
       }
-      return found;
+
+      // If we found both, we have to pick the right one (prevents snapping with overlapping terrain objects)
+      finalResult = foundAbove || foundBelow; // regardless of what we do next, the function is true if we found ANY hits.
+      bool clampUp = (foundAbove && !foundBelow); // we are below ALL terrain, so clamp up.
+      bool clampDown = (foundBelow && false /* CURT MAGIC - new feature */); // clampUp always wins over clampDown 
+
+      if (foundBelow && foundAbove)
+      {
+         finalResult = true;
+         // If most of the vehicle is intersecting with the above hit, then clamp up, cause we are intersecting both parts the terrain. 
+         if (aboveDiff < modelHeightAllowance)
+         {
+            clampUp = true;
+         }
+         // it didn't fit, so clamp down or do nothing. 
+         else if (false /* CURT MAGIC - new feature*/)
+         {
+            clampDown = true;
+         }
+      }      
+
+      // Do the actual clamp UP or DOWN
+      if (clampUp)
+      {
+         outHit = aboveHit;
+         outNormal = aboveOutNormal;
+      }
+      else if (clampDown)
+      {
+         outHit = belowHit;
+         outNormal = belowOutNormal;
+      }
+
+      return finalResult;
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -178,7 +233,7 @@ namespace dtGame
       oldNormal = osg::Matrix::transform3x3(oldNormal, rotation);
       osg::Matrix normalRot;
       normalRot.makeRotate(oldNormal, normal);
-
+      
       rotation = rotation * normalRot;
 
       xform.Set(location, rotation);
@@ -309,7 +364,7 @@ namespace dtGame
       // Allow any sub-classes to adjust the final clamp points,
       // in case the terrain is not completely rigid; for example mud, water, sand, etc.
       FinalizeSurfacePoints(proxy, data, points);
-
+      
       float averageZ = 0;
       for(unsigned i = 0; i < 3; ++i)
       {

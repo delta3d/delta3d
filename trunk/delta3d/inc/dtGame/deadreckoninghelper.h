@@ -336,6 +336,13 @@ namespace dtGame
           */
          const osg::Vec3& GetLastKnownVelocity() const { return mLastVelocity; }
 
+         /** 
+          * For moving objects, the DR helper computes the instantaneous velocity each frame. This
+          * exposes that value to classes like the DR Component.
+          * @return the instantaneous velocity
+          */
+         const osg::Vec3& GetCurrentInstantVelocity() const;
+
          /**
           * Sets this entity's DIS/RPR-FOM acceleration vector.
           * @param accelerationVector the acceleration vector to copy
