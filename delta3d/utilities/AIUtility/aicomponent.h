@@ -34,6 +34,9 @@ class AIComponent : public dtAI::BaseAIComponent
 public:
    static const std::string DEFAULT_NAME;
 
+   static const int SUGGESTED_MAX_RENDERABLE_WAYPOINTS_WITH_TEXT = 50000;
+   static const int SUGGESTED_MAX_RENDERABLE_EDGES = 50000;
+
    /// Constructor
    AIComponent(const std::string& name = DEFAULT_NAME);
 
@@ -46,6 +49,8 @@ public:
 
 protected:
    /*virtual*/ void CleanUp();
+
+   bool ShouldUseRenderFallback(dtAI::AIPluginInterface* aiInterface);
 };
 
 #endif //AIUTILITY_AI_COMPONENT

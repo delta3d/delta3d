@@ -119,6 +119,7 @@ namespace dtAI
       {
       }
 
+      //////////////////////////////////////////////////////////////////////////
       void InsertWaypoint(WaypointInterface* waypoint)
       {
          if (GetWaypointById(waypoint->GetID()) == NULL)
@@ -139,6 +140,7 @@ namespace dtAI
          }
       }
 
+      //////////////////////////////////////////////////////////////////////////
       void InsertCollection(WaypointCollection* waypoint, unsigned level)
       {
          if (GetWaypointById(waypoint->GetID()) == NULL)
@@ -159,16 +161,19 @@ namespace dtAI
          }
       }
 
+      //////////////////////////////////////////////////////////////////////////
       WaypointGraph& GetWaypointGraph()
       {
          return *mWaypointGraph;
       }
 
+      //////////////////////////////////////////////////////////////////////////
       const WaypointGraph& GetWaypointGraph() const
       {
          return *mWaypointGraph;
       }
 
+      //////////////////////////////////////////////////////////////////////////
       bool Assign(WaypointID childWp, WaypointCollection* parentWp)
       {
          // only the parent can be added through this function
@@ -198,6 +203,7 @@ namespace dtAI
          return false;
       }
 
+      //////////////////////////////////////////////////////////////////////////
       bool MoveWaypoint(WaypointInterface* wi, const osg::Vec3& newPos)
       {
          // the kd-tree cannot move :( for now remove and re-insert
@@ -229,6 +235,7 @@ namespace dtAI
          return false;
       }
 
+      //////////////////////////////////////////////////////////////////////////
       bool RemoveWaypoint(WaypointInterface* wi)
       {
          bool result = false;
@@ -271,18 +278,21 @@ namespace dtAI
          return result;
       }
 
+      //////////////////////////////////////////////////////////////////////////
       WaypointInterface* GetWaypointById(WaypointID id)
       {
          // todo- fix this const cast
          return const_cast<WaypointInterface*>(mWaypointGraph->FindWaypoint(id));
       }
 
+      //////////////////////////////////////////////////////////////////////////
       const WaypointInterface* GetWaypointById(WaypointID id) const
       {
          // todo- fix this const cast
          return const_cast<WaypointInterface*>(mWaypointGraph->FindWaypoint(id));
       }
 
+      //////////////////////////////////////////////////////////////////////////
       WaypointInterface* GetWaypointByName(const std::string& name)
       {
          WaypointRefArray::const_iterator iter = mWaypoints.begin();
@@ -299,6 +309,7 @@ namespace dtAI
          return NULL;
       }
 
+      //////////////////////////////////////////////////////////////////////////
       void GetWaypointsByName(const std::string& name, WaypointArray& arrayToFill)
       {
          WaypointRefArray::const_iterator iter = mWaypoints.begin();
@@ -313,6 +324,7 @@ namespace dtAI
          }
       }
 
+      //////////////////////////////////////////////////////////////////////////
       void AddEdge(WaypointID pFrom, WaypointID pTo)
       {
          mWaypointGraph->AddEdge(pFrom, pTo);
@@ -323,6 +335,7 @@ namespace dtAI
          }*/
       }
 
+      //////////////////////////////////////////////////////////////////////////
       bool RemoveEdge(WaypointID pFrom, WaypointID pTo)
       {
          bool result = mWaypointGraph->RemoveEdge(pFrom, pTo);
@@ -334,6 +347,7 @@ namespace dtAI
          return result;
       }
 
+      //////////////////////////////////////////////////////////////////////////
       void RemoveAllEdges(WaypointID pFrom)
       {
          mWaypointGraph->RemoveAllEdgesFromWaypoint(pFrom);
@@ -347,11 +361,13 @@ namespace dtAI
          }
       }
 
+      //////////////////////////////////////////////////////////////////////////
       void GetAllEdgesFromWaypoint(WaypointID pFrom, ConstWaypointArray& result) const
       {
          mWaypointGraph->GetAllEdgesFromWaypoint(pFrom, result);
       }
 
+      //////////////////////////////////////////////////////////////////////////
       PathFindResult FindPath(WaypointID pFrom, WaypointID pTo, ConstWaypointArray& result)
       {
          WaypointGraphAStar astar(*mWaypointGraph);
@@ -359,6 +375,7 @@ namespace dtAI
          return astar.FindSingleLevelPath(pFrom, pTo, result);
       }
 
+      //////////////////////////////////////////////////////////////////////////
       PathFindResult HierarchicalFindPath(WaypointID pFrom, WaypointID pTo, ConstWaypointArray& result)
       {
          WaypointGraphAStar astar(*mWaypointGraph);
@@ -366,6 +383,7 @@ namespace dtAI
          return astar.HierarchicalFindPath(pFrom, pTo, result);
       }
 
+      //////////////////////////////////////////////////////////////////////////
       void ClearMemory()
       {
          mKDTree->clear();
@@ -378,6 +396,7 @@ namespace dtAI
          mWaypointGraph->Clear();
       }
 
+      //////////////////////////////////////////////////////////////////////////
       bool LoadLegacyWaypointFile(const std::string& filename)
       {
          WaypointManager& wm = WaypointManager::GetInstance();
@@ -405,6 +424,7 @@ namespace dtAI
          return result;
       }
 
+      //////////////////////////////////////////////////////////////////////////
       bool LoadWaypointFile(const std::string& filename)
       {
          dtCore::RefPtr<WaypointReaderWriter> reader = new WaypointReaderWriter(*this);
@@ -420,6 +440,7 @@ namespace dtAI
          return result;
       }
 
+      //////////////////////////////////////////////////////////////////////////
       bool SaveWaypointFile(const std::string& filename)
       {
          dtCore::RefPtr<WaypointReaderWriter> reader = new WaypointReaderWriter(*this);
@@ -433,13 +454,27 @@ namespace dtAI
          }
       }
 
+      //////////////////////////////////////////////////////////////////////////
+      void SetDebugDrawable(AIDebugDrawable* debugDrawable)
+      {
+         if (mDrawable.valid())
+         {
+            mDrawable->ClearMemory();
+         }
+
+         mDrawable = debugDrawable;
+      }
+
+      //////////////////////////////////////////////////////////////////////////
       AIDebugDrawable* GetDebugDrawable()
       {
          if (!mDrawable.valid())
          {
-            mDrawable = new AIDebugDrawable();
+            std::vector<dtAI::WaypointInterface*> waypointList;
+            GetWaypoints(waypointList);
 
-            mDrawable->SetWaypoints(mWaypoints);
+            mDrawable = new AIDebugDrawable();
+            mDrawable->SetWaypoints(waypointList);
 
             NavMesh* nm = mWaypointGraph->GetNavMeshAtSearchLevel(0);
             if (nm != NULL)
@@ -451,21 +486,25 @@ namespace dtAI
          return mDrawable.get();
       }
 
+      //////////////////////////////////////////////////////////////////////////
       void GetWaypoints(WaypointArray& toFill)
       {
          std::for_each(mWaypoints.begin(), mWaypoints.end(), dtUtil::insert_back< WaypointArray, dtCore::RefPtr<WaypointInterface> >(toFill));
       }
 
+      //////////////////////////////////////////////////////////////////////////
       void GetWaypoints(ConstWaypointArray& toFill) const
       {
          std::for_each(mWaypoints.begin(), mWaypoints.end(), dtUtil::insert_back< ConstWaypointArray, dtCore::RefPtr<WaypointInterface> >(toFill));
       }
 
+      //////////////////////////////////////////////////////////////////////////
       size_t GetNumWaypoints() const
       {
          return mWaypoints.size();
       }
 
+      //////////////////////////////////////////////////////////////////////////
       dtAI::WaypointID GetMaxWaypointID() const
       {
          dtAI::WaypointID maxID = 0;
@@ -476,6 +515,7 @@ namespace dtAI
          return maxID;
       }
 
+      //////////////////////////////////////////////////////////////////////////
       void GetWaypointsByType(const dtDAL::ObjectType& type, WaypointArray& toFill)
       {
          WaypointRefArray::const_iterator iter = mWaypoints.begin();
@@ -490,6 +530,7 @@ namespace dtAI
          }
       }
 
+      //////////////////////////////////////////////////////////////////////////
       WaypointInterface* GetClosestWaypoint(const osg::Vec3& pos, float maxRadius)
       {
          if (mKDTreeDirty)
@@ -508,6 +549,7 @@ namespace dtAI
          return result;
       }
 
+      //////////////////////////////////////////////////////////////////////////
       bool GetWaypointsAtRadius(const osg::Vec3& pos, float radius, WaypointArray& arrayToFill)
       {
          if (mKDTreeDirty)
@@ -538,12 +580,15 @@ namespace dtAI
       }
 
    protected:
+
+      //////////////////////////////////////////////////////////////////////////
       virtual ~DeltaAIInterface()
       {
          ClearMemory();
          delete mKDTree;
       }
 
+      //////////////////////////////////////////////////////////////////////////
       void Optimize()
       {
          mKDTree->optimize();

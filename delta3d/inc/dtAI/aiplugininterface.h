@@ -220,6 +220,14 @@ namespace dtAI
       virtual bool SaveWaypointFile(const std::string& filename = "") = 0;
 
       /**
+       *   This method is for manually setting a custom debug drawable as opposed
+       *   to have one automatically created and returned on the first call to GetDebugDrawable.
+       * @return A DeltaDrawable to add to your Scene, this will most likely create
+       * @param debugDrawable The drawable to use for applying waypoint visualizations.
+       */
+      virtual void SetDebugDrawable(AIDebugDrawable* debugDrawable) = 0;
+
+      /**
        *   This method is used for visualizing the internal data in the AI system
        * @return A DeltaDrawable to add to your Scene, this will most likely create
        *            one the first time this is called.
