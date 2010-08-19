@@ -20,6 +20,7 @@ SET(PROG_HEADERS
                 undocommands.h
                 waypointbrowser.h
                 waypointbrowsertreeitem.h
+                waypointmotionmodel.h
                 waypointselection.h
 )
 
@@ -36,6 +37,7 @@ SET(PROG_SOURCES
                 undocommands.cpp
                 waypointbrowser.cpp
                 waypointbrowsertreeitem.cpp
+                waypointmotionmodel.cpp
                 waypointselection.cpp
                 AIUtilityResources.qrc
 )
