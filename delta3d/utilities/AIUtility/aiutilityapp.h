@@ -34,6 +34,7 @@
 #include <dtGame/gamemanager.h>
 
 class AIUtilityInputComponent;
+class WaypointMotionModel;
 
 namespace dtAI
 {
@@ -73,6 +74,7 @@ private:
    dtQt::DeltaStepper mStepper;
    dtCore::RefPtr<dtGame::GameManager> mGM;
    dtCore::RefPtr<dtCore::MotionModel> mMotionModel;
+   dtCore::RefPtr<WaypointMotionModel> mWaypointMotionModel;
    dtCore::Transform mLastCameraTransform;
    dtCore::RefPtr<AIUtilityInputComponent> mInputComponent;
 };

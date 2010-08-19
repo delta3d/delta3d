@@ -34,11 +34,13 @@
 #include <dtCore/deltawin.h>
 #include <dtCore/system.h>
 
-#include <dtCore/objectmotionmodel.h>
 #include <dtCore/rtsmotionmodel.h>
+#include <dtCore/objectmotionmodel.h>
 
 #include "aicomponent.h"
 #include "aiutilityinputcomponent.h"
+#include "waypointselection.h"
+#include "waypointmotionmodel.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 AIUtilityApp::AIUtilityApp()
@@ -69,6 +71,11 @@ void AIUtilityApp::Config()
    mMotionModel = new dtCore::RTSMotionModel(GetKeyboard(), GetMouse(), false, false);
    mMotionModel->SetTarget(GetCamera());
 
+   mWaypointMotionModel = new WaypointMotionModel(GetView());
+   mWaypointMotionModel->SetEnabled(false);
+   connect(&WaypointSelection::GetInstance(), SIGNAL(WaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>&)),
+           mWaypointMotionModel.get(), SLOT(OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>&)));
+
    dtCore::System::GetInstance().Start();
    mStepper.Start();
 }
@@ -82,6 +89,11 @@ void AIUtilityApp::SetAIPluginInterface(dtAI::AIPluginInterface* interface)
    mInputComponent = new AIUtilityInputComponent();
    mInputComponent->SetAIPluginInterface(interface);
    mGM->AddComponent(*mInputComponent, dtGame::GameManager::ComponentPriority::NORMAL);
+
+   //input component needs to know about the ObjectMotionModel, so they don't collide on mouse events
+   mInputComponent->SetObjectMotionModel(mWaypointMotionModel.get());
+
+   mWaypointMotionModel->SetAIInterface(interface);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -51,7 +51,11 @@ bool AIUtilityInputComponent::HandleButtonPressed(const dtCore::Mouse* mouse, dt
       return handled;
    }
 
-
+   if (!IsOkToSelect())
+   {
+      return false;
+   }
+   
    switch (button)
    {
       case dtCore::Mouse::LeftButton:
@@ -71,6 +75,7 @@ bool AIUtilityInputComponent::HandleButtonPressed(const dtCore::Mouse* mouse, dt
             dtAI::AIPluginInterface::WaypointArray selectedWaypoints;
             mpAIInterface->GetWaypointsAtRadius(pickedPosition, GetSelectionBrushSize(), selectedWaypoints);
             WaypointSelection::GetInstance().AddWaypointListToSelection(selectedWaypoints);
+            handled = true;
          }
          else
          {
@@ -78,6 +83,7 @@ bool AIUtilityInputComponent::HandleButtonPressed(const dtCore::Mouse* mouse, dt
             if (waypointInterface != NULL)
             {
                WaypointSelection::GetInstance().ToggleWaypointSelection(waypointInterface);
+               handled = true;
             }
          }
 
@@ -100,6 +106,11 @@ bool AIUtilityInputComponent::HandleMouseDragged(const dtCore::Mouse* mouse, flo
       return handled;
    }
 
+   if (!IsOkToSelect())
+   {
+      return false;
+   }
+
    osg::Vec3f pickedPosition;
    GetGameManager()->GetApplication().GetView()->GetMousePickPosition(pickedPosition);
 
@@ -115,6 +126,7 @@ bool AIUtilityInputComponent::HandleMouseDragged(const dtCore::Mouse* mouse, flo
       dtAI::AIPluginInterface::WaypointArray selectedWaypoints;
       mpAIInterface->GetWaypointsAtRadius(pickedPosition, GetSelectionBrushSize(), selectedWaypoints);
       WaypointSelection::GetInstance().AddWaypointListToSelection(selectedWaypoints);
+      handled = true;
    }
    else
    {
@@ -176,5 +188,26 @@ void AIUtilityInputComponent::OnSelectBrushSizeChanged(double size)
 double AIUtilityInputComponent::GetSelectionBrushSize() const
 {
    return mSelectBrushSize;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void AIUtilityInputComponent::SetObjectMotionModel(dtCore::ObjectMotionModel* objectMotionModel)
+{
+   mObjectMotionModel = objectMotionModel;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool AIUtilityInputComponent::IsOkToSelect() const
+{
+   if (mObjectMotionModel.valid() &&
+      mObjectMotionModel->IsEnabled() &&
+      mObjectMotionModel->GetMotionType() != dtCore::ObjectMotionModel::MOTION_TYPE_MAX)
+   {
+      return false;
+   }
+   else
+   {
+      return true;
+   }
 }
 ////////////////////////////////////////////////////////////////////////////////

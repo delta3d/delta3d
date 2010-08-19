@@ -23,7 +23,7 @@
 
 #include <QtCore/QObject>
 #include <dtGame/baseinputcomponent.h>
-
+#include <dtCore/objectmotionmodel.h>
 #include <dtAI/aiplugininterface.h>
 
 class AIUtilityInputComponent : public QObject, public dtGame::BaseInputComponent
@@ -47,6 +47,8 @@ public:
 
    virtual bool HandleMouseDragged(const dtCore::Mouse* mouse, float x, float y);
 
+   void SetObjectMotionModel(dtCore::ObjectMotionModel* objectMotionModel);
+
    void SetAIPluginInterface(dtAI::AIPluginInterface* aiInterface);
 
    float GetPickDistanceBuffer() const;
@@ -63,11 +65,13 @@ private:
    dtCore::RefPtr<dtAI::AIPluginInterface> mpAIInterface;
    bool IsShiftHeld();
    double GetSelectionBrushSize() const;
+   bool IsOkToSelect() const;
 
    float mPickDistanceBuffer; //used to "pad" the mouse picked position to make it easier to select
 
    bool mSelectBrushMode;
    double mSelectBrushSize; ///<Size (meters) of the selection brush
+   dtCore::ObserverPtr<dtCore::ObjectMotionModel> mObjectMotionModel;
 };
 
 #endif //AIUTILITY_INPUT_COMPONENT
