@@ -203,14 +203,24 @@ void MainWindow::showEvent(QShowEvent* e)
 //////////////////////////////////////////////
 void MainWindow::closeEvent(QCloseEvent* e)
 {
-   //Disconnect the central widget because OSG wants to close it itself.
-   mCentralWidget.setParent(NULL);
 
-   QSettings settings(ORG_NAME.c_str(), APP_NAME.c_str());
-   settings.setValue(WINDOW_SETTINGS.c_str(), saveGeometry());
-   settings.sync();
+   if (MaybeSave())
+   {
+      //Disconnect the central widget because OSG wants to close it itself.
+      mCentralWidget.setParent(NULL);
 
-   QApplication::quit();
+      QSettings settings(ORG_NAME.c_str(), APP_NAME.c_str());
+      settings.setValue(WINDOW_SETTINGS.c_str(), saveGeometry());
+      settings.sync();
+      e->accept();
+
+      QApplication::quit();
+   }
+   else
+   {
+      e->ignore();
+   }
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -239,6 +249,11 @@ void MainWindow::ChangeProjectContext()
 ////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnOpenMap()
 {
+   if (MaybeSave() == false)
+   {
+      return;
+   }
+
    dtQt::DialogListSelection openMapDialog(this, tr("Open Existing Map"), tr("Available Maps"));
 
    QStringList listItems;
@@ -273,6 +288,9 @@ void MainWindow::ChangeMap(const QString& newMap)
    QSettings settings(ORG_NAME.c_str(), APP_NAME.c_str());
    settings.setValue(CURRENT_MAP_SETTING.c_str(), mCurrentMapName);
    settings.sync();
+   mUndoStack->clear();
+   OnModifiedChanged();
+
    EnableOrDisableControls();
 }
 
@@ -281,7 +299,10 @@ void MainWindow::OnCloseMap()
 {
    if (QMessageBox::question(this, tr("Close Map"), tr("Do you want to close the currently opened map?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes)
    {
-      ChangeMap(tr(""));
+      if (MaybeSave())
+      {
+         ChangeMap(tr(""));
+      }
    }
 }
 
@@ -658,4 +679,29 @@ void MainWindow::OnWaypointBrushSizeChanged(double value)
 void MainWindow::OnUndoCommandCreated(QUndoCommand* undoCommand)
 {
    mUndoStack->push(undoCommand);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool MainWindow::MaybeSave()
+{
+   if (this->isWindowModified())
+   {
+      QMessageBox::StandardButton ret;
+      ret = QMessageBox::warning(this, tr("Save"),
+                  tr("The nav mesh has been modified.\n"
+                  "Do you want to save your changes?"),
+                  QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+
+      if (ret == QMessageBox::Save)
+      {
+         OnSave();
+         return true;
+      }
+      else if (ret == QMessageBox::Cancel)
+      {
+         return false;
+      }
+   }
+
+   return true;
 }
