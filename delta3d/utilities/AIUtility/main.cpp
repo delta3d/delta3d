@@ -39,6 +39,8 @@ int main(int argc, char* argv[])
       &win, SLOT(OnCameraTransformChanged(const dtCore::Transform&)));
    QObject::connect(app.get(), SIGNAL(Error(const std::string&)),
       &win, SLOT(OnError(const std::string&)));
+
+   QObject::connect(app.get(), SIGNAL(UndoCommandGenerated(QUndoCommand*)), &win, SLOT(OnUndoCommandCreated(QUndoCommand*)));
    QObject::connect(&win, SIGNAL(RequestCameraTransformChange(const dtCore::Transform&)),
       app.get(), SLOT(TransformCamera(const dtCore::Transform&)));
    QObject::connect(&win, SIGNAL(AddAIInterfaceToMap(const std::string&)),

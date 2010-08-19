@@ -94,5 +94,27 @@ private:
 };
 
 
+/** Move a waypoint command.  Undo-ing will revert back to the it's original
+  * position.  Redo-ing will move it to the new position.
+  */
+class MoveWaypointCommand : public QUndoCommand
+{
+public:
+   MoveWaypointCommand(const osg::Vec3& oldXYZ, const osg::Vec3& newXYZ, 
+                       dtAI::WaypointInterface& waypoint,
+                       dtAI::AIPluginInterface* aiInterface,
+                       QUndoCommand* parent = NULL);
 
+   virtual ~MoveWaypointCommand();
+
+   virtual void redo();
+   virtual void undo();
+protected:
+   
+private:
+   const osg::Vec3 mOldXYZ;
+   const osg::Vec3 mNewXYZ;
+   dtAI::WaypointInterface *mWp;
+   dtAI::AIPluginInterface* mAIInterface;
+};
 #endif // UNDOCOMMANDS_h__

@@ -1,7 +1,9 @@
 #include "waypointmotionmodel.h"
+#include "undocommands.h"
 #include <dtAI/waypointinterface.h>
 #include <dtAI/aidebugdrawable.h>
 #include <dtCore/transform.h>
+#include <QtGui/QUndoCommand>
 
 ////////////////////////////////////////////////////////////////////////////////
 WaypointMotionModel::WaypointMotionModel(dtCore::View* view)
@@ -32,7 +34,6 @@ void WaypointMotionModel::OnTranslate(const osg::Vec3& delta)
 
    while (itr != mCurrentWaypoints.end())
    {     
-      //(*itr)->SetPosition((*itr)->GetPosition() + delta);
       mAIInterface->MoveWaypoint((*itr), (*itr)->GetPosition() + delta);
       
       //and update the graphics as well
@@ -67,4 +68,48 @@ void WaypointMotionModel::OnWaypointSelectionChanged(std::vector<dtAI::WaypointI
 void WaypointMotionModel::SetAIInterface(dtAI::AIPluginInterface* aiInterface)
 {
    mAIInterface = aiInterface;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void WaypointMotionModel::OnTranslateBegin()
+{
+   dtCore::Transform xform;
+   GetTarget()->GetTransform(xform);
+   mStartMoveXYZ = xform.GetTranslation();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void WaypointMotionModel::OnTranslateEnd()
+{
+   dtCore::Transform xform;
+   GetTarget()->GetTransform(xform);
+   const osg::Vec3 deltaXYZ = xform.GetTranslation()-mStartMoveXYZ;
+
+   //if there's more than one to move, batch the commands under one parent undo command
+   QUndoCommand* parentUndo(mCurrentWaypoints.size()==1 ? NULL : new QUndoCommand("Move Waypoints"));
+
+   std::vector<dtAI::WaypointInterface*>::iterator itr = mCurrentWaypoints.begin();
+
+   while (itr != mCurrentWaypoints.end())
+   {
+      const osg::Vec3 oldPos = (*itr)->GetPosition()-deltaXYZ;
+      MoveWaypointCommand* undoMove = new MoveWaypointCommand(oldPos,
+                                                              (*itr)->GetPosition(),
+                                                              **itr,
+                                                              mAIInterface.get(), parentUndo);
+      
+      if (parentUndo == NULL)
+      {
+         emit UndoCommandGenerated(undoMove);
+      }
+
+      ++itr;
+   }
+
+   if (parentUndo != NULL)
+   {
+      emit UndoCommandGenerated(parentUndo);
+   }
+
+   mStartMoveXYZ = xform.GetTranslation();
 }

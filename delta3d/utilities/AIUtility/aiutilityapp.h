@@ -36,6 +36,8 @@
 class AIUtilityInputComponent;
 class WaypointMotionModel;
 
+class QUndoCommand;
+
 namespace dtAI
 {
    class AIPluginInterface;
@@ -56,6 +58,8 @@ signals:
    void AIPluginInterfaceChanged(dtAI::AIPluginInterface* interface);
    void CameraTransformChanged(const dtCore::Transform& xform);
    void Error(const std::string& message);
+   void UndoCommandGenerated(QUndoCommand* command);
+
 public slots:
    void DoQuit();
    void SetProjectContext(const std::string& path);
@@ -66,6 +70,7 @@ public slots:
    void OnSelectWaypontBrushMode(bool enable);
    void OnWaypointBrushSizeChanged(double value);
    void OnPreferencesUpdated();
+   void OnUndoCommandCreated(QUndoCommand* undoCommand);
 
 protected:
    ///override for preframe

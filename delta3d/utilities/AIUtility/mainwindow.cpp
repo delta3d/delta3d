@@ -104,7 +104,8 @@ MainWindow::MainWindow(QWidget& mainWidget)
    mUi->toolBar->addAction(undoAction);
    mUi->toolBar->addAction(redoAction);
 
-   mWaypointBrowser = new WaypointBrowser(*mUndoStack, this);
+   mWaypointBrowser = new WaypointBrowser(this);
+   connect(mWaypointBrowser, SIGNAL(UndoCommandGenerated(QUndoCommand*)), this, SLOT(OnUndoCommandCreated(QUndoCommand*)));
 
    mUi->menuWindows->addAction(mPropertyEditor.toggleViewAction());
    mUi->menuWindows->addAction(mWaypointBrowser->toggleViewAction());
@@ -412,7 +413,7 @@ void MainWindow::OnAddEdge()
       mPluginInterface->GetDebugDrawable()->AddEdge(waypointA, waypointB);
 
       //Undo'ing the AddEdge doesn't always remove the geometry from the AIDebugDrawable, for some reason
-      //mUndoStack->push(new AddEdgeCommand(*waypointA, *waypointB, mPluginInterface));
+      //OnUndoCommandCreated(new AddEdgeCommand(*waypointA, *waypointB, mPluginInterface));
 
       EnableOrDisableControls();
    }
@@ -436,7 +437,7 @@ void MainWindow::OnRemoveEdge()
       {
          // Update UI
          mPluginInterface->GetDebugDrawable()->RemoveEdge(waypointA, waypointB);
-         mUndoStack->push(new RemoveEdgeCommand(*waypointA, *waypointB, mPluginInterface));
+         OnUndoCommandCreated(new RemoveEdgeCommand(*waypointA, *waypointB, mPluginInterface));
          EnableOrDisableControls();
       }
       else
@@ -651,4 +652,10 @@ void MainWindow::OnSelectWaypontBrushMode()
 void MainWindow::OnWaypointBrushSizeChanged(double value)
 {
    emit WaypointBrushSizeChanged(value);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnUndoCommandCreated(QUndoCommand* undoCommand)
+{
+   mUndoStack->push(undoCommand);
 }
