@@ -389,31 +389,37 @@ void ObjectMotionModel::OnRightMouseReleased(void)
 ////////////////////////////////////////////////////////////////////////////////
 void ObjectMotionModel::OnMessage(MessageData *data)
 {
-   // If we have a Delta3D mouse, then set our mouse position with it.
-   if (mMouse)
+   if (data->sender == &dtCore::System::GetInstance())
    {
-      bool bLeftMouse = mMouse->GetButtonState(dtCore::Mouse::LeftButton);
-      bool bRightMouse= mMouse->GetButtonState(dtCore::Mouse::RightButton);
-
-      if (mLeftMouse != bLeftMouse)
+      if (data->message == dtCore::System::MESSAGE_FRAME_SYNCH)
       {
-         if (bLeftMouse) OnLeftMousePressed();
-         else            OnLeftMouseReleased();
-      }
+         // If we have a Delta3D mouse, then set our mouse position with it.
+         if (mMouse)
+         {
+            bool bLeftMouse = mMouse->GetButtonState(dtCore::Mouse::LeftButton);
+            bool bRightMouse= mMouse->GetButtonState(dtCore::Mouse::RightButton);
 
-      if (mRightMouse != bRightMouse)
-      {
-         if (bRightMouse) OnRightMousePressed();
-         else             OnRightMouseReleased();
-      }
+            if (mLeftMouse != bLeftMouse)
+            {
+               if (bLeftMouse) OnLeftMousePressed();
+               else            OnLeftMouseReleased();
+            }
 
-      osg::Vec2 mousePos = mMouse->GetPosition();
-      Update(mousePos);
+            if (mRightMouse != bRightMouse)
+            {
+               if (bRightMouse) OnRightMousePressed();
+               else             OnRightMouseReleased();
+            }
+
+            osg::Vec2 mousePos = mMouse->GetPosition();
+            Update(mousePos);
+         }
+      }
    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-ObjectMotionModel::MotionType ObjectMotionModel::Update(osg::Vec2 pos)
+ObjectMotionModel::MotionType ObjectMotionModel::Update(const osg::Vec2& pos)
 {
    if (mMousePos != pos)
    {
@@ -888,7 +894,7 @@ dtCore::DeltaDrawable* ObjectMotionModel::MousePick(void)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ObjectMotionModel::GetMouseLine(osg::Vec2 mousePos, osg::Vec3& start, osg::Vec3& end)
+void ObjectMotionModel::GetMouseLine(const osg::Vec2& mousePos, osg::Vec3& start, osg::Vec3& end)
 {
    if (!mCamera)
    {
@@ -932,7 +938,7 @@ void ObjectMotionModel::GetMouseLine(osg::Vec2 mousePos, osg::Vec3& start, osg::
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-osg::Vec2 ObjectMotionModel::GetObjectScreenCoordinates(osg::Vec3 objectPos)
+osg::Vec2 ObjectMotionModel::GetObjectScreenCoordinates(const osg::Vec3& objectPos)
 {
    if (!mCamera)
    {
@@ -1665,7 +1671,7 @@ void ObjectMotionModel::UpdateScale(void)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ObjectMotionModel::OnTranslate(osg::Vec3 delta)
+void ObjectMotionModel::OnTranslate(const osg::Vec3& delta)
 {
    dtCore::Transformable* target = GetTarget();
 
@@ -1679,7 +1685,7 @@ void ObjectMotionModel::OnTranslate(osg::Vec3 delta)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ObjectMotionModel::OnRotate(float delta, osg::Vec3 axis)
+void ObjectMotionModel::OnRotate(float delta, const osg::Vec3& axis)
 {
    dtCore::Transformable* target = GetTarget();
 
@@ -1696,7 +1702,7 @@ void ObjectMotionModel::OnRotate(float delta, osg::Vec3 axis)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ObjectMotionModel::OnScale(osg::Vec3 delta)
+void ObjectMotionModel::OnScale(const osg::Vec3& delta)
 {
 }
 

@@ -629,7 +629,7 @@ namespace dtEditQt
 
       if (mMouseButton == Qt::LeftButton)
       {
-         mObjectMotionModel->OnLeftMousePressed();
+         //mObjectMotionModel->OnLeftMousePressed();
 
          if (mCameraMotionModel.valid())
          {
@@ -638,7 +638,7 @@ namespace dtEditQt
       }
       else if (mMouseButton == Qt::RightButton)
       {
-         mObjectMotionModel->OnRightMousePressed();
+         //mObjectMotionModel->OnRightMousePressed();
 
          if (mCameraMotionModel.valid())
          {
@@ -692,7 +692,7 @@ namespace dtEditQt
 
       if (mMouseButton == Qt::LeftButton)
       {
-         mObjectMotionModel->OnLeftMouseReleased();
+         //mObjectMotionModel->OnLeftMouseReleased();
 
          if (mCameraMotionModel.valid())
          {
@@ -701,7 +701,7 @@ namespace dtEditQt
       }
       else if (mMouseButton == Qt::RightButton)
       {
-         mObjectMotionModel->OnRightMouseReleased();
+         //mObjectMotionModel->OnRightMouseReleased();
 
          if (mCameraMotionModel.valid())
          {
@@ -879,7 +879,7 @@ namespace dtEditQt
       }
 
       if (mObjectMotionModel->IsEnabled() && mObjectMotionModel->GetNumTargets() > 0 &&
-         mObjectMotionModel->Update(position) != dtCore::ObjectMotionModel::MOTION_TYPE_MAX)
+         mObjectMotionModel->GetMotionType() != dtCore::ObjectMotionModel::MOTION_TYPE_MAX)
       {
          return true;
       }

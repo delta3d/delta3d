@@ -268,7 +268,7 @@ namespace dtCore
        *
        * @return          Returns the current motion type activated.
        */
-      MotionType Update(osg::Vec2 pos);
+      MotionType Update(const osg::Vec2& pos);
 
       /**
        * Updates position the motion model widgets.
@@ -314,7 +314,7 @@ namespace dtCore
        * @param[in]  start     The start position of the line.
        * @param[in]  end       The end position of the line.
        */
-      virtual void GetMouseLine(osg::Vec2 mousePos, osg::Vec3& start, osg::Vec3& end);
+      virtual void GetMouseLine(const osg::Vec2& mousePos, osg::Vec3& start, osg::Vec3& end);
 
       /**
        * Calculates the screen coordinates of a 3d position in the world.
@@ -323,7 +323,7 @@ namespace dtCore
        *
        * @return                The position of the object in screen coords.
        */
-      virtual osg::Vec2 GetObjectScreenCoordinates(osg::Vec3 objectPos);
+      virtual osg::Vec2 GetObjectScreenCoordinates(const osg::Vec3& objectPos);
 
       /**
        * Tests if a given delta drawable belongs to this motion model.
@@ -355,7 +355,7 @@ namespace dtCore
        *
        * @param[in]  delta  The amount of translation to be performed.
        */
-      virtual void OnTranslate(osg::Vec3 delta);
+      virtual void OnTranslate(const osg::Vec3& delta);
 
       /**
        * This callback handles the actual rotation of the target.
@@ -363,14 +363,14 @@ namespace dtCore
        * @param[in]  delta  The amount of rotation to apply.
        * @param[in]  axis   The axis of rotation.
        */
-      virtual void OnRotate(float delta, osg::Vec3 axis);
+      virtual void OnRotate(float delta, const osg::Vec3& axis);
 
       /**
        * This callback handles the action scale of the target.
        *
        * @param[in]  delta  The amount of scale to apply.
        */
-      virtual void OnScale(osg::Vec3 delta);
+      virtual void OnScale(const osg::Vec3& delta);
 
       struct ArrowData
       {

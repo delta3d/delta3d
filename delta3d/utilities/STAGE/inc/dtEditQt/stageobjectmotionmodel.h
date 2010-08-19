@@ -126,7 +126,7 @@ class STAGEObjectMotionModel : public dtCore::ObjectMotionModel
       *
       * @param[in]  delta  The amount of translation to be performed.
       */
-      virtual void OnTranslate(osg::Vec3 delta);
+      virtual void OnTranslate(const osg::Vec3& delta);
 
       /**
       * This callback handles the actual rotation of the target.
@@ -134,14 +134,14 @@ class STAGEObjectMotionModel : public dtCore::ObjectMotionModel
       * @param[in]  delta  The amount of rotation to apply.
       * @param[in]  axis   The axis of rotation.
       */
-      virtual void OnRotate(float delta, osg::Vec3 axis);
+      virtual void OnRotate(float delta, const osg::Vec3& axis);
 
       /**
       * This callback handles the action scale of the target.
       *
       * @param[in]  delta  The amount of scale to apply.
       */
-      virtual void OnScale(osg::Vec3 delta);
+      virtual void OnScale(const osg::Vec3& delta);
 
       std::vector<dtDAL::TransformableActorProxy*> mTargets;
 };
