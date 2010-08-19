@@ -437,6 +437,15 @@ ObjectMotionModel::MotionType ObjectMotionModel::Update(const osg::Vec2& pos)
                {
                   mAngleGeode->removeDrawable(mAngleDrawable.get());
                   mAngleOriginGeode->removeDrawable(mAngleOriginDrawable.get());
+
+                  //callbacks
+                  switch(mMotionType)
+                  {
+                  case MOTION_TYPE_TRANSLATION: OnTranslateEnd(); break;
+                  case MOTION_TYPE_ROTATION: OnRotateEnd(); break;
+                  case MOTION_TYPE_SCALE: OnScaleEnd(); break;
+                  default: break;
+                  }
                }
 
                mMouseDown     = false;
@@ -469,6 +478,15 @@ ObjectMotionModel::MotionType ObjectMotionModel::Update(const osg::Vec2& pos)
                         mMouseOffset = objectPos - mMouseOrigin;
                         mOriginalTargetPos = transform.GetTranslation();
                         mOriginAngle = 0.0f;
+
+                        //callbacks
+                        switch(mMotionType)
+                        {
+                        case MOTION_TYPE_TRANSLATION: OnTranslateBegin(); break;
+                        case MOTION_TYPE_ROTATION: OnRotateBegin(); break;
+                        case MOTION_TYPE_SCALE: OnScaleBegin(); break;
+                        default: break;
+                        }
                      }
                   }
                }
