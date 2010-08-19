@@ -412,6 +412,15 @@ namespace dtAI
       {
          // we already have this waypoint so lets make sure its in the right place
          (*mImpl->mVerts)[loc].set(wp.GetPosition());
+         
+         if (addText)
+         {
+            RenderData* rd = mImpl->mRenderData[wp.GetID()];
+            if (rd && rd->mTextNode.valid())
+            {
+               rd->mTextNode->setPosition(wp.GetPosition() + mImpl->mRenderInfo->GetWaypointTextOffset());
+            }
+         }
       }
       else // lets add it to the existing waypoints
       {
