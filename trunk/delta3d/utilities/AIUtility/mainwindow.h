@@ -122,6 +122,8 @@ private:
    
    void RefreshPropertyEditor(std::vector<dtAI::WaypointInterface*>& selectedWaypoints);
 
+   bool MaybeSave();
+
    Ui::MainWindow* mUi;
    QWidget& mCentralWidget;
    AIPropertyEditor& mPropertyEditor;
