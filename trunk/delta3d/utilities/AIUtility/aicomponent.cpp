@@ -35,10 +35,13 @@
 #include <dtAI/aiinterfaceactor.h>
 #include <dtAI/aiplugininterface.h>
 #include <dtAI/aidebugdrawable.h>
+#include <dtAI/waypointgraph.h>
+#include <dtAI/navmesh.h>
 
 #include <osgDB/FileNameUtils>
 
 #include "aiutilityapp.h"
+#include "aiutilitypreferencesdialog.h"
 
 const std::string AIComponent::DEFAULT_NAME("AIComponent");
 
@@ -70,9 +73,40 @@ void AIComponent::ProcessMessage(const dtGame::Message& message)
 
    if (message.GetMessageType() == dtGame::MessageType::INFO_MAP_LOADED)
    {
-      if (GetAIPluginInterface())
+      dtAI::AIPluginInterface* aiInterface = GetAIPluginInterface();
+      if (aiInterface)
       {
-         GetGameManager()->GetScene().AddDrawable(GetAIPluginInterface()->GetDebugDrawable());
+         // Don't allow the sheer volume of waypoint render data to bring the app down
+         bool useRenderFallback = ShouldUseRenderFallback(aiInterface);
+
+         std::vector<dtAI::WaypointInterface*> waypointArray;
+         aiInterface->GetWaypoints(waypointArray);
+
+         // Creating another bool for clarity
+         bool createText = !useRenderFallback;
+
+         dtAI::AIDebugDrawable* debugDrawable = new dtAI::AIDebugDrawable;
+         debugDrawable->SetWaypoints(waypointArray, createText);
+
+         if (useRenderFallback)
+         {
+            // Set up the default value for the preferences
+            AIUtilityPreferencesDialog::SetRenderSelectionDefaultValue(true);
+         }
+         else
+         {
+            // Since we're doing a full render of everything, send the whole base graph
+            dtAI::NavMesh* navmesh = aiInterface->GetWaypointGraph().GetNavMeshAtSearchLevel(0);
+            if (navmesh != NULL)
+            {
+               debugDrawable->UpdateWaypointGraph(*navmesh);
+            }
+         }
+
+         // Set a custom debug drawable so that we control exactly what is rendered
+         aiInterface->SetDebugDrawable(debugDrawable);
+
+         GetGameManager()->GetScene().AddDrawable(debugDrawable);
       }
 
       AIUtilityApp& aiApp = dynamic_cast<AIUtilityApp&>(GetGameManager()->GetApplication());
@@ -131,5 +165,28 @@ void AIComponent::AddAIInterfaceToMap(const std::string& map)
    GetGameManager()->GetScene().AddDrawable(GetAIPluginInterface()->GetDebugDrawable());
    aiApp.SetAIPluginInterface(GetAIPluginInterface());
 }
+
+////////////////////////////////////////////////////////////////////////////////
+bool AIComponent::ShouldUseRenderFallback(dtAI::AIPluginInterface* aiInterface)
+{
+   bool useRenderFallback = false;
+
+   if (aiInterface->GetNumWaypoints() >= SUGGESTED_MAX_RENDERABLE_WAYPOINTS_WITH_TEXT)
+   {
+      useRenderFallback = true;
+   }
+   else
+   {
+      dtAI::NavMesh* baseNavMesh = aiInterface->GetWaypointGraph().GetNavMeshAtSearchLevel(0);
+
+      if (baseNavMesh && baseNavMesh->GetNavMesh().size() >= SUGGESTED_MAX_RENDERABLE_EDGES)
+      {
+         useRenderFallback = true;
+      }
+   }
+
+   return useRenderFallback;
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -49,8 +49,6 @@
 
 namespace dtAI
 {
-   const unsigned int MAX_RENDERABLE_EDGES = 50000;
-
    class RenderData: public osg::Referenced
    {
    public:
@@ -369,21 +367,16 @@ namespace dtAI
 
 
    ////////////////////////////////////////////////////////////////////////////////
-   void AIDebugDrawable::SetWaypoints(const std::vector<dtCore::RefPtr<dtAI::WaypointInterface> >& wpArray)
+   void AIDebugDrawable::SetWaypoints(const std::vector<dtAI::WaypointInterface*>& wpArray, bool createText /*= true*/)
    {
       // Make sure we start with a clean slate
       ClearMemory();
 
-      typedef std::vector< dtCore::RefPtr<dtAI::WaypointInterface> > WaypointRefArray;
+      typedef std::vector<dtAI::WaypointInterface*> WaypointArray;
 
       //now we must add all current waypoints
-      WaypointRefArray::const_iterator iter = wpArray.begin();
-      WaypointRefArray::const_iterator iterEnd = wpArray.end();
-
-      const int MAX_RENDERABLE_WAYPOINTS_WITH_TEXT = 50000;
-
-      // Don't allow the sheer volume of text to bring the app down
-      bool renderText = (wpArray.size() < MAX_RENDERABLE_WAYPOINTS_WITH_TEXT);
+      WaypointArray::const_iterator iter = wpArray.begin();
+      WaypointArray::const_iterator iterEnd = wpArray.end();
 
       for (;iter != iterEnd; ++iter)
       {
@@ -394,7 +387,7 @@ namespace dtAI
          dtCore::RefPtr<RenderData> newRenderData = new RenderData;
          mImpl->mRenderData.insert(std::make_pair((*iter)->GetID(), newRenderData));
 
-         if (renderText)
+         if (createText)
          {
             mImpl->CreateWaypointIDText(**iter, *newRenderData);
          }
@@ -412,7 +405,7 @@ namespace dtAI
       {
          // we already have this waypoint so lets make sure its in the right place
          (*mImpl->mVerts)[loc].set(wp.GetPosition());
-         
+
          if (addText)
          {
             RenderData* rd = mImpl->mRenderData[wp.GetID()];
@@ -493,21 +486,18 @@ namespace dtAI
    /////////////////////////////////////////////////////////////////////////////
    void AIDebugDrawable::UpdateWaypointGraph(const NavMesh& nm)
    {
-      if (nm.GetNavMesh().size() < MAX_RENDERABLE_EDGES)
+      //just clear and re-add them all, this should only happen often during editing
+      ClearWaypointGraph();
+
+      NavMesh::NavMeshContainer::const_iterator iter = nm.GetNavMesh().begin();
+      NavMesh::NavMeshContainer::const_iterator iterEnd = nm.GetNavMesh().end();
+
+      int safetyCounter = 0;
+
+      for (;iter != iterEnd; ++iter)
       {
-         //just clear and re-add them all, this should only happen often during editing
-         ClearWaypointGraph();
-
-         NavMesh::NavMeshContainer::const_iterator iter = nm.GetNavMesh().begin();
-         NavMesh::NavMeshContainer::const_iterator iterEnd = nm.GetNavMesh().end();
-
-         int safetyCounter = 0;
-
-         for (;iter != iterEnd; ++iter)
-         {
-            const WaypointPair* wp = (*iter).second;
-            AddPathSegment(wp->GetWaypointFrom(), wp->GetWaypointTo());
-         }
+         const WaypointPair* wp = (*iter).second;
+         AddPathSegment(wp->GetWaypointFrom(), wp->GetWaypointTo());
       }
    }
 

@@ -72,8 +72,9 @@ namespace dtAI
       /**
        * @note This clears out all existing waypoints and replaces them with those in wpArray
        * @param wpArray The array of all WaypointInterface objects to visualize
+       * @param createText True if a text billboard should be created for each waypoint
        */
-      virtual void SetWaypoints(const std::vector<dtCore::RefPtr<dtAI::WaypointInterface> >& wpArray);
+      virtual void SetWaypoints(const std::vector<dtAI::WaypointInterface*>& wpArray, bool createText = true);
 
       /**
        * Note: Adding an existing waypoint will reset just its position
