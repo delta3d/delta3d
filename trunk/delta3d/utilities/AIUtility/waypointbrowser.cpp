@@ -39,10 +39,9 @@
 #include <sstream>
 
 ///////////////////////////////////////////////////
-WaypointBrowser::WaypointBrowser(QUndoStack& undoStack, QWidget* parent)
+WaypointBrowser::WaypointBrowser(QWidget* parent)
 : QDockWidget(parent)
 , mAIPluginInterface(NULL)
-, mUndoStack(&undoStack)
 {
    mUi = new Ui::WaypointBrowser();
    mUi->setupUi(this);
@@ -266,7 +265,7 @@ void WaypointBrowser::OnCreate()
       dtAI::WaypointInterface* wp = mAIPluginInterface->CreateWaypoint(pos, *objectTypeSelected);
       if (wp)
       {
-         mUndoStack->push(new AddWaypointCommand(*wp, mAIPluginInterface));
+         emit UndoCommandGenerated(new AddWaypointCommand(*wp, mAIPluginInterface));
       }
 
       ResetWaypointResult();
@@ -295,7 +294,7 @@ void WaypointBrowser::OnDelete()
          {
             if (parentUndo == NULL)
             {
-               mUndoStack->push(command);
+               emit UndoCommandGenerated(command);
             }
          }
          else
@@ -307,7 +306,7 @@ void WaypointBrowser::OnDelete()
 
    if (parentUndo != NULL)
    {
-      mUndoStack->push(parentUndo);
+      emit UndoCommandGenerated(parentUndo);
    }
 
    WaypointSelection::GetInstance().DeselectAllWaypoints();

@@ -11,6 +11,7 @@ namespace dtAI
    class WaypointInterface;
 }
 
+class QUndoCommand;
 
 class WaypointMotionModel : public QObject, public dtCore::ObjectMotionModel
 {
@@ -19,16 +20,24 @@ public:
    WaypointMotionModel(dtCore::View* view);
 
    virtual void OnTranslate(const osg::Vec3& delta);
+
    void SetAIInterface(dtAI::AIPluginInterface* aiInterface);
 
 public slots:
    void OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>& selectedWaypoints);
 
+signals:
+   void UndoCommandGenerated(QUndoCommand* command);
+
 protected:
    virtual ~WaypointMotionModel();
+
+   virtual void OnTranslateBegin();
+   virtual void OnTranslateEnd();
    
 private:
    std::vector<dtAI::WaypointInterface*> mCurrentWaypoints;
    dtCore::ObserverPtr<dtAI::AIPluginInterface> mAIInterface;
+   osg::Vec3 mStartMoveXYZ; ///<the position of the MotionModel target when the move begins
 };
 #endif // WAYPOINTMOTIONMODEL_h__

@@ -76,6 +76,8 @@ void AIUtilityApp::Config()
    connect(&WaypointSelection::GetInstance(), SIGNAL(WaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>&)),
            mWaypointMotionModel.get(), SLOT(OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>&)));
 
+   connect(mWaypointMotionModel, SIGNAL(UndoCommandGenerated(QUndoCommand*)), this, SLOT(OnUndoCommandCreated(QUndoCommand*)));
+
    dtCore::System::GetInstance().Start();
    mStepper.Start();
 }
@@ -188,5 +190,10 @@ void AIUtilityApp::OnPreferencesUpdated()
 
 }
 
+////////////////////////////////////////////////////////////////////////////////
+void AIUtilityApp::OnUndoCommandCreated(QUndoCommand* undoCommand)
+{
+   emit UndoCommandGenerated(undoCommand);
+}
 ////////////////////////////////////////////////////////////////////////////////
 

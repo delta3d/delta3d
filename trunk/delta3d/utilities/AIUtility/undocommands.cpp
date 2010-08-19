@@ -178,3 +178,37 @@ void RemoveEdgeCommand::undo()
       mAIInterface->GetDebugDrawable()->AddEdge(mFromWp, mToWp);
    }
 }
+
+////////////////////////////////////////////////////////////////////////////////
+MoveWaypointCommand::MoveWaypointCommand(const osg::Vec3& oldXYZ, const osg::Vec3& newXYZ,
+                                         dtAI::WaypointInterface& waypoint,
+                                         dtAI::AIPluginInterface* aiInterface,
+                                         QUndoCommand* parent)
+:QUndoCommand(parent)
+, mOldXYZ(oldXYZ)
+, mNewXYZ(newXYZ)
+, mWp(&waypoint)
+, mAIInterface(aiInterface)
+{
+   setText("Move Waypoint ID#" + QString::number(mWp->GetID()));
+}
+
+////////////////////////////////////////////////////////////////////////////////
+MoveWaypointCommand::~MoveWaypointCommand()
+{
+
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MoveWaypointCommand::redo()
+{
+   mAIInterface->MoveWaypoint(mWp, mNewXYZ);
+   mAIInterface->GetDebugDrawable()->InsertWaypoint(*mWp);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MoveWaypointCommand::undo()
+{
+   mAIInterface->MoveWaypoint(mWp, mOldXYZ);
+   mAIInterface->GetDebugDrawable()->InsertWaypoint(*mWp);
+}

@@ -49,6 +49,7 @@ namespace dtDAL
 
 class QCloseEvent;
 class QUndoStack;
+class QUndoCommand;
 class AIPropertyEditor;
 class WaypointBrowser;
 /// @endcond
@@ -105,6 +106,7 @@ public slots:
    void OnSelectAllWaypoints();
    void OnDeselectAllWaypoints();
    void OnSelectInverseWaypoints();
+   void OnUndoCommandCreated(QUndoCommand* undoCommand);
    
 private slots:
       void OnModifiedChanged();
