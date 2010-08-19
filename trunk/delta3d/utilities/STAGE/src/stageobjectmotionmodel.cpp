@@ -137,7 +137,7 @@ void STAGEObjectMotionModel::ClearTargets(void)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void STAGEObjectMotionModel::OnTranslate(osg::Vec3 delta)
+void STAGEObjectMotionModel::OnTranslate(const osg::Vec3& delta)
 {
    for (int subIndex = 0; subIndex < GetNumTargets(); subIndex++)
    {
@@ -153,7 +153,7 @@ void STAGEObjectMotionModel::OnTranslate(osg::Vec3 delta)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void STAGEObjectMotionModel::OnRotate(float delta, osg::Vec3 axis)
+void STAGEObjectMotionModel::OnRotate(float delta, const osg::Vec3& axis)
 {
    osg::Vec3 center;
    dtCore::Transformable* target = ObjectMotionModel::GetTarget();
@@ -195,7 +195,7 @@ void STAGEObjectMotionModel::OnRotate(float delta, osg::Vec3 axis)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void STAGEObjectMotionModel::OnScale(osg::Vec3 delta)
+void STAGEObjectMotionModel::OnScale(const osg::Vec3& delta)
 {
    for (int subIndex = 0; subIndex < GetNumTargets(); subIndex++)
    {
