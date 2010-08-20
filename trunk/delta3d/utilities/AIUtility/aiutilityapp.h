@@ -53,9 +53,9 @@ public:
    AIUtilityApp();
    virtual ~AIUtilityApp();
    virtual void Config();
-   void SetAIPluginInterface(dtAI::AIPluginInterface* interface);
+   void SetAIPluginInterface(dtAI::AIPluginInterface* interface, bool selectionBasedRenderingHint);
 signals:
-   void AIPluginInterfaceChanged(dtAI::AIPluginInterface* interface);
+   void AIPluginInterfaceChanged(dtAI::AIPluginInterface* interface, bool selectionBasedRenderingHint);
    void CameraTransformChanged(const dtCore::Transform& xform);
    void Error(const std::string& message);
    void UndoCommandGenerated(QUndoCommand* command);
@@ -69,9 +69,10 @@ public slots:
    void AddAIInterfaceToMap(const std::string& map);
    void OnSelectWaypontBrushMode(bool enable);
    void OnWaypointBrushSizeChanged(double value);
-   void OnPreferencesUpdated();
+   void OnRenderOnSelectChanged(bool enabled);
    void OnUndoCommandCreated(QUndoCommand* undoCommand);
    void OnGroundClampSelectedWaypoints();
+   void OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>& selectedWaypoints);
 
 protected:
    ///override for preframe
@@ -86,6 +87,8 @@ private:
    dtCore::Transform mLastCameraTransform;
    dtCore::RefPtr<AIUtilityInputComponent> mInputComponent;
    dtCore::RefPtr<dtAI::AIPluginInterface> mAIInterface;
+   bool mSelectionBasedRendering; ///Do we only render expensive graphics for selected waypoints
+
 };
 
 #endif /* AIUTILITYAPP_H_ */

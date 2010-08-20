@@ -52,9 +52,6 @@
 #include <dtAI/aiplugininterface.h>
 #include <dtAI/aidebugdrawable.h>
 #include <dtAI/waypointrenderinfo.h>
-#include <dtAI/waypointpropertycontainer.h>
-#include <dtAI/waypointpropertycache.h>
-#include <dtAI/waypointpair.h>
 
 #include <set>
 #include <algorithm>
@@ -72,6 +69,7 @@ MainWindow::MainWindow(QWidget& mainWidget)
 , mPropertyEditor(*new AIPropertyEditor(*this))
 , mWaypointBrowser(NULL)
 , mPluginInterface(NULL)
+, mSelectionBasedRendering(false)
 {
    mUi->setupUi(this);
 
@@ -329,9 +327,12 @@ void MainWindow::OnSave()
 void MainWindow::OnPreferences()
 {
    AIUtilityPreferencesDialog dlg(this);
+   dlg.SetRenderSelectionDefaultValue(mSelectionBasedRendering);
+ 
    if (dlg.exec()== QDialog::Accepted)
    {
-      emit PreferencesUpdated();
+      mSelectionBasedRendering = dlg.GetRenderSelectionMode();
+      emit RenderOnSelection(dlg.GetRenderSelectionMode());
    }
 }
 
@@ -379,9 +380,11 @@ dtAI::AIPluginInterface* MainWindow::GetAIPluginInterface()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void MainWindow::SetAIPluginInterface(dtAI::AIPluginInterface* interface)
+void MainWindow::SetAIPluginInterface(dtAI::AIPluginInterface* interface, bool selectionBasedRenderingHint)
 {
    mPluginInterface = interface;
+   mSelectionBasedRendering = selectionBasedRenderingHint;
+
    EnableOrDisableControls();
    // clear the selection
    dtQt::BasePropertyEditor::PropertyContainerRefPtrVector selected;
@@ -498,47 +501,9 @@ void MainWindow::OnChildRequestCameraTransformChange(const dtCore::Transform& xf
 ////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>& selectedWaypoints)
 {
-   if (mPluginInterface == NULL)
-   {
-      return;
-   }
-
-   const osg::Vec4 kSelectedColor(1.f, 0.1f, 0.1f, 1.f);
-   mPluginInterface->GetDebugDrawable()->ResetWaypointColorsToDefault();
-
    if (mPropertyEditor.isVisible())
    {
       RefreshPropertyEditor(selectedWaypoints);
-   }
-
-   std::vector<dtAI::WaypointPair> edgesForSelection;
-   bool useRenderFallback = false;
-
-   for (size_t i = 0; i < selectedWaypoints.size(); ++i)
-   {
-      dtAI::WaypointInterface* wpi = selectedWaypoints[i];
-
-      if (wpi)
-      {
-         mPluginInterface->GetDebugDrawable()->SetWaypointColor(*wpi, kSelectedColor);
-      }
-
-      if (useRenderFallback)
-      {
-         std::vector<const dtAI::WaypointInterface*> edgePoints;
-         mPluginInterface->GetAllEdgesFromWaypoint(wpi->GetID(), edgePoints);
-
-         for (size_t edgeIndex = 0; edgeIndex < edgePoints.size(); ++edgeIndex)
-         {
-            edgesForSelection.push_back(dtAI::WaypointPair(wpi, edgePoints[edgeIndex]));
-         }
-      }
-   }
-
-   if (useRenderFallback)
-   {
-      mPluginInterface->GetDebugDrawable()->SetEdges(edgesForSelection);
-      mPluginInterface->GetDebugDrawable()->SetText(selectedWaypoints);
    }
 
    EnableOrDisableControls();

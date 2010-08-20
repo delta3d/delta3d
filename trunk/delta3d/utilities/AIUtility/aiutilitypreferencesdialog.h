@@ -36,7 +36,8 @@ public:
    /// Destructor
    virtual ~AIUtilityPreferencesDialog() {}
 
-   static void SetRenderSelectionDefaultValue(bool useSelectionRender);
+   void SetRenderSelectionDefaultValue(bool useSelectionRender);
+   bool GetRenderSelectionMode() const;
 
 private slots:
 
@@ -45,7 +46,6 @@ private slots:
 
 private:
    QCheckBox* mRenderOnSelection;
-   static bool mSelectionRenderDefault;
 };
 
 #endif // AIUTILITY_PREFERENCES_DIALOG
