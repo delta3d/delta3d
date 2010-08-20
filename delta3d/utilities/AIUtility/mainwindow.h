@@ -82,6 +82,7 @@ signals:
    void AddAIInterfaceToMap(const std::string& map);
    void WaypointBrushSelectMode(bool enabled);
    void WaypointBrushSizeChanged(double value);
+   void GroundClampSelectedWaypoints();
 
 public slots:
    void OnError(const std::string& message);
@@ -113,6 +114,7 @@ private slots:
       void OnSelectWaypointPointMode();
       void OnSelectWaypontBrushMode();
       void OnWaypointBrushSizeChanged(double value);
+      void OnGroundClampSelectedWaypoints();
 
 private:
    void ChangeMap(const QString& newMap);

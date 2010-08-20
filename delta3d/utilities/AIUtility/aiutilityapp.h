@@ -71,17 +71,21 @@ public slots:
    void OnWaypointBrushSizeChanged(double value);
    void OnPreferencesUpdated();
    void OnUndoCommandCreated(QUndoCommand* undoCommand);
+   void OnGroundClampSelectedWaypoints();
 
 protected:
    ///override for preframe
    virtual void PreFrame(const double deltaSimTime);
 private:
+   QUndoCommand* GroundClampWaypoints(std::vector<dtAI::WaypointInterface*> &selected);
+
    dtQt::DeltaStepper mStepper;
    dtCore::RefPtr<dtGame::GameManager> mGM;
    dtCore::RefPtr<dtCore::MotionModel> mMotionModel;
    dtCore::RefPtr<WaypointMotionModel> mWaypointMotionModel;
    dtCore::Transform mLastCameraTransform;
    dtCore::RefPtr<AIUtilityInputComponent> mInputComponent;
+   dtCore::RefPtr<dtAI::AIPluginInterface> mAIInterface;
 };
 
 #endif /* AIUTILITYAPP_H_ */
