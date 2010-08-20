@@ -396,6 +396,13 @@ namespace dtAI
       OnGeometryChanged();
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void AIDebugDrawable::SetEdges(const std::vector<dtAI::WaypointPair>& edgeArray)
+   {
+      ClearWaypointGraph();
+      AddEdges(edgeArray);
+   }
+
    /////////////////////////////////////////////////////////////////////////////
    void AIDebugDrawable::InsertWaypoint(const WaypointInterface& wp, bool addText /*= true*/)
    {
@@ -475,6 +482,15 @@ namespace dtAI
    void AIDebugDrawable::AddEdge(const WaypointInterface* pFrom, const WaypointInterface* pTo)
    {
       AddPathSegment(pFrom, pTo);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void AIDebugDrawable::AddEdges(const std::vector<WaypointPair>& pairs)
+   {
+      for (size_t pairIndex = 0; pairIndex < pairs.size(); ++pairIndex)
+      {
+         AddEdge(pairs[pairIndex].GetWaypointFrom(), pairs[pairIndex].GetWaypointTo());
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////

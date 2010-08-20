@@ -54,6 +54,7 @@
 #include <dtAI/waypointrenderinfo.h>
 #include <dtAI/waypointpropertycontainer.h>
 #include <dtAI/waypointpropertycache.h>
+#include <dtAI/waypointpair.h>
 
 #include <set>
 #include <algorithm>
@@ -524,6 +525,8 @@ void MainWindow::OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*
       RefreshPropertyEditor(selectedWaypoints);
    }
 
+   std::vector<dtAI::WaypointPair> edgesForSelection;
+
    for (size_t i = 0; i < selectedWaypoints.size(); ++i)
    {
       dtAI::WaypointInterface* wpi = selectedWaypoints[i];
@@ -532,7 +535,17 @@ void MainWindow::OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*
       {
          mPluginInterface->GetDebugDrawable()->SetWaypointColor(*wpi, kSelectedColor);
       }
+
+      std::vector<const dtAI::WaypointInterface*> edgePoints;
+      mPluginInterface->GetAllEdgesFromWaypoint(wpi->GetID(), edgePoints);
+
+      for (size_t edgeIndex = 0; edgeIndex < edgePoints.size(); ++edgeIndex)
+      {
+         edgesForSelection.push_back(dtAI::WaypointPair(wpi, edgePoints[edgeIndex]));
+      }
    }
+
+   mPluginInterface->GetDebugDrawable()->SetEdges(edgesForSelection);
 
    EnableOrDisableControls();
 }

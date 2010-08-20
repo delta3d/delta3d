@@ -35,13 +35,13 @@
 #include <dtAI/aiinterfaceactor.h>
 #include <dtAI/aiplugininterface.h>
 #include <dtAI/aidebugdrawable.h>
-#include <dtAI/waypointgraph.h>
-#include <dtAI/navmesh.h>
 
 #include <osgDB/FileNameUtils>
 
 #include "aiutilityapp.h"
 #include "aiutilitypreferencesdialog.h"
+#include <dtAI/waypointgraph.h>
+#include <dtAI/navmesh.h>
 
 const std::string AIComponent::DEFAULT_NAME("AIComponent");
 

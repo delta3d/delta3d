@@ -46,6 +46,7 @@ namespace dtAI
    class WaypointInterface;
    class WaypointRenderInfo;
    class NavMesh;
+   class WaypointPair;
 
    class AIDebugDrawableImpl;
 
@@ -77,6 +78,13 @@ namespace dtAI
       virtual void SetWaypoints(const std::vector<dtAI::WaypointInterface*>& wpArray, bool createText = true);
 
       /**
+       * @note This clears out all existing edges and replaces them with those in edgeArray.
+       *       This is a more granular version of UpdateWaypointGraph(below).
+       * @param edgeArray The array of all edges to visualize
+       */
+      virtual void SetEdges(const std::vector<dtAI::WaypointPair>& edgeArray);
+
+      /**
        * Note: Adding an existing waypoint will reset just its position
        *       currently use this to move the waypoint as well.
        */
@@ -101,6 +109,7 @@ namespace dtAI
        * Accessor functions to add or remove a single edge to the drawable
        */
       void AddEdge(const WaypointInterface* pFrom, const WaypointInterface* pTo);
+      void AddEdges(const std::vector<WaypointPair>& pairs);
       void RemoveEdge(const WaypointInterface* pFrom, const WaypointInterface* pTo);
 
       void UpdateWaypointGraph(const NavMesh& nm);
