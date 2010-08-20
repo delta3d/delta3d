@@ -10,11 +10,6 @@ DeleteWaypointCommand::DeleteWaypointCommand(dtAI::WaypointInterface& wp,
 , mAIInterface(aiInterface)
 {
    setText("Delete Waypoint ID#" + QString::number(mWp->GetID()));
-
-   if (mAIInterface)
-   {
-      mAIInterface->GetAllEdgesFromWaypoint(mWp->GetID(), mConnectedWaypoints);
-   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -28,6 +23,8 @@ void DeleteWaypointCommand::redo()
    //redo this command should re-delete the wp
    if (mAIInterface)
    {
+      mAIInterface->GetAllEdgesFromWaypoint(mWp->GetID(), mConnectedWaypoints);
+
       mAIInterface->RemoveWaypoint(mWp);
    }
 }
@@ -47,10 +44,7 @@ void DeleteWaypointCommand::undo()
          mAIInterface->AddEdge(mWp->GetID(), (*itr)->GetID());
 
          //need to manually update the debug drawing
-         if (mAIInterface->GetDebugDrawable())
-         {
-            mAIInterface->GetDebugDrawable()->AddEdge(mWp, (*itr));
-         }
+         mAIInterface->GetDebugDrawable()->AddEdge(mWp, (*itr));
 
          ++itr;
       }

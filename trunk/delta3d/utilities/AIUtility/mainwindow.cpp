@@ -430,13 +430,8 @@ void MainWindow::OnAddEdge()
       // Update NavMesh
       dtAI::WaypointInterface* waypointA = WaypointSelection::GetInstance().GetWaypointList()[0];
       dtAI::WaypointInterface* waypointB = WaypointSelection::GetInstance().GetWaypointList()[1];
-      mPluginInterface->AddEdge(waypointA->GetID(), waypointB->GetID());
 
-      // Update UI
-      mPluginInterface->GetDebugDrawable()->AddEdge(waypointA, waypointB);
-
-      //Undo'ing the AddEdge doesn't always remove the geometry from the AIDebugDrawable, for some reason
-      //OnUndoCommandCreated(new AddEdgeCommand(*waypointA, *waypointB, mPluginInterface));
+      OnUndoCommandCreated(new AddEdgeCommand(*waypointA, *waypointB, mPluginInterface));
 
       EnableOrDisableControls();
    }
@@ -456,17 +451,8 @@ void MainWindow::OnRemoveEdge()
       dtAI::WaypointInterface* waypointA = WaypointSelection::GetInstance().GetWaypointList()[0];
       dtAI::WaypointInterface* waypointB = WaypointSelection::GetInstance().GetWaypointList()[1];
 
-      if (mPluginInterface->RemoveEdge(waypointA->GetID(), waypointB->GetID()))
-      {
-         // Update UI
-         mPluginInterface->GetDebugDrawable()->RemoveEdge(waypointA, waypointB);
-         OnUndoCommandCreated(new RemoveEdgeCommand(*waypointA, *waypointB, mPluginInterface));
-         EnableOrDisableControls();
-      }
-      else
-      {
-         LOG_ERROR("Could not remove edge");
-      }
+      OnUndoCommandCreated(new RemoveEdgeCommand(*waypointA, *waypointB, mPluginInterface));
+      EnableOrDisableControls();
    }
    else
    {
