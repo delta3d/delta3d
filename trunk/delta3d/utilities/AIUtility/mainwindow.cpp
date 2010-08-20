@@ -141,6 +141,7 @@ MainWindow::MainWindow(QWidget& mainWidget)
    connect(mUi->mActionSelectAllWaypoints, SIGNAL(triggered()), this, SLOT(OnSelectAllWaypoints()));
    connect(mUi->mActionDeselectAllWaypoints, SIGNAL(triggered()), this, SLOT(OnDeselectAllWaypoints()));
    connect(mUi->mActionSelectInverseWaypoints, SIGNAL(triggered()), this, SLOT(OnSelectInverseWaypoints()));
+   connect(mUi->mActionGroundClamp, SIGNAL(triggered()), this, SLOT(OnGroundClampSelectedWaypoints()));
 
    connect(mPropertyEditor.toggleViewAction(), SIGNAL(toggled(bool)), this, SLOT(OnPropertyEditorShowHide(bool)));
    connect(mWaypointBrowser->toggleViewAction(), SIGNAL(toggled(bool)), this, SLOT(OnWaypointBrowserShowHide(bool)));
@@ -704,4 +705,10 @@ bool MainWindow::MaybeSave()
    }
 
    return true;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnGroundClampSelectedWaypoints()
+{
+   emit GroundClampSelectedWaypoints();
 }

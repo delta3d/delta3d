@@ -36,11 +36,18 @@
 
 #include <dtCore/rtsmotionmodel.h>
 #include <dtCore/objectmotionmodel.h>
+#include <dtCore/scene.h> //for GetHeightOfTerrain()
+#include <dtAI/aidebugdrawable.h>
+#include <dtAI/waypointrenderinfo.h>
+
+#include <QtGui/QUndoCommand>
 
 #include "aicomponent.h"
 #include "aiutilityinputcomponent.h"
 #include "waypointselection.h"
 #include "waypointmotionmodel.h"
+#include "undocommands.h"
+
 
 ////////////////////////////////////////////////////////////////////////////////
 AIUtilityApp::AIUtilityApp()
@@ -96,6 +103,7 @@ void AIUtilityApp::SetAIPluginInterface(dtAI::AIPluginInterface* interface)
    mInputComponent->SetObjectMotionModel(mWaypointMotionModel.get());
 
    mWaypointMotionModel->SetAIInterface(interface);
+   mAIInterface = interface;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -195,5 +203,82 @@ void AIUtilityApp::OnUndoCommandCreated(QUndoCommand* undoCommand)
 {
    emit UndoCommandGenerated(undoCommand);
 }
-////////////////////////////////////////////////////////////////////////////////
 
+////////////////////////////////////////////////////////////////////////////////
+void AIUtilityApp::OnGroundClampSelectedWaypoints()
+{
+   std::vector<dtAI::WaypointInterface*> selected = WaypointSelection::GetInstance().GetWaypointList();
+
+   bool motionWasEnabled = false;
+   bool idWasEnabled = false;
+
+   if (mWaypointMotionModel->IsEnabled())
+   {
+      motionWasEnabled = true;
+      mWaypointMotionModel->SetEnabled(false);
+   }
+
+   if (mAIInterface->GetDebugDrawable()->GetRenderInfo().GetRenderWaypointID())
+   {
+      idWasEnabled = true;
+      mAIInterface->GetDebugDrawable()->GetRenderInfo().SetRenderWaypointID(false);
+      mAIInterface->GetDebugDrawable()->OnRenderInfoChanged();
+   }
+
+   QUndoCommand* undoCmd = GroundClampWaypoints(selected);
+   if (undoCmd)
+   {
+      emit UndoCommandGenerated(undoCmd);
+   }
+
+   if (motionWasEnabled)
+   {
+      mWaypointMotionModel->SetEnabled(true);
+   }
+
+   if (idWasEnabled)
+   {
+      mAIInterface->GetDebugDrawable()->GetRenderInfo().SetRenderWaypointID(true);
+      mAIInterface->GetDebugDrawable()->OnRenderInfoChanged();
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+QUndoCommand* AIUtilityApp::GroundClampWaypoints(std::vector<dtAI::WaypointInterface*> &selected)
+{
+   if (selected.empty())
+   {
+      return NULL;
+   }
+
+   //if there's more than one to move, batch the commands under one parent undo command
+   QUndoCommand* parentUndo(selected.size()==1 ? NULL : new QUndoCommand("Move Waypoints"));
+   MoveWaypointCommand* undoMove = NULL;
+
+   std::vector<dtAI::WaypointInterface*>::iterator itr = selected.begin();
+   while (itr != selected.end())
+   {
+      const osg::Vec3 wpXYZ = (*itr)->GetPosition();
+      float hot = 0.f;
+
+      if (GetScene()->GetHeightOfTerrain(hot, wpXYZ[0], wpXYZ[1]))
+      {
+         undoMove = new MoveWaypointCommand(wpXYZ,
+                           osg::Vec3(wpXYZ[0], wpXYZ[1], hot),
+                           **itr,
+                           mAIInterface.get(), parentUndo);
+      }
+
+      ++itr;
+   }
+
+   if (selected.size() == 1)
+   {
+      return undoMove;
+   }
+   else
+   {
+      return parentUndo;
+   }
+}
+////////////////////////////////////////////////////////////////////////////////

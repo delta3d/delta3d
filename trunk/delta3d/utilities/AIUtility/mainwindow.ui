@@ -20,7 +20,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>21</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -43,6 +43,7 @@
     <addaction name="mActionAddEdge"/>
     <addaction name="mActionRemoveEdge"/>
     <addaction name="mActionDeleteSelectedWaypoints"/>
+    <addaction name="mActionGroundClamp"/>
     <addaction name="mActionRenderingOptions"/>
     <addaction name="mActionPreferences"/>
    </widget>
@@ -90,6 +91,7 @@
    <addaction name="mActionRemoveEdge"/>
    <addaction name="mActionDeleteSelectedWaypoints"/>
    <addaction name="separator"/>
+   <addaction name="mActionGroundClamp"/>
   </widget>
   <widget class="QDockWidget" name="undoStack">
    <property name="windowTitle">
@@ -270,6 +272,14 @@
   <action name="mActionPreferences">
    <property name="text">
     <string>Preferences</string>
+   </property>
+  </action>
+  <action name="mActionGroundClamp">
+   <property name="text">
+    <string>Clamp To Ground</string>
+   </property>
+   <property name="toolTip">
+    <string>Clamp the selected waypoints to the ground</string>
    </property>
   </action>
  </widget>
