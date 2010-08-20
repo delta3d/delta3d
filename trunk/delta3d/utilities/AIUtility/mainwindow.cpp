@@ -512,6 +512,7 @@ void MainWindow::OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*
    }
 
    std::vector<dtAI::WaypointPair> edgesForSelection;
+   bool useRenderFallback = false;
 
    for (size_t i = 0; i < selectedWaypoints.size(); ++i)
    {
@@ -522,16 +523,23 @@ void MainWindow::OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*
          mPluginInterface->GetDebugDrawable()->SetWaypointColor(*wpi, kSelectedColor);
       }
 
-      std::vector<const dtAI::WaypointInterface*> edgePoints;
-      mPluginInterface->GetAllEdgesFromWaypoint(wpi->GetID(), edgePoints);
-
-      for (size_t edgeIndex = 0; edgeIndex < edgePoints.size(); ++edgeIndex)
+      if (useRenderFallback)
       {
-         edgesForSelection.push_back(dtAI::WaypointPair(wpi, edgePoints[edgeIndex]));
+         std::vector<const dtAI::WaypointInterface*> edgePoints;
+         mPluginInterface->GetAllEdgesFromWaypoint(wpi->GetID(), edgePoints);
+
+         for (size_t edgeIndex = 0; edgeIndex < edgePoints.size(); ++edgeIndex)
+         {
+            edgesForSelection.push_back(dtAI::WaypointPair(wpi, edgePoints[edgeIndex]));
+         }
       }
    }
 
-   mPluginInterface->GetDebugDrawable()->SetEdges(edgesForSelection);
+   if (useRenderFallback)
+   {
+      mPluginInterface->GetDebugDrawable()->SetEdges(edgesForSelection);
+      mPluginInterface->GetDebugDrawable()->SetText(selectedWaypoints);
+   }
 
    EnableOrDisableControls();
 }

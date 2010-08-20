@@ -85,6 +85,13 @@ namespace dtAI
       virtual void SetEdges(const std::vector<dtAI::WaypointPair>& edgeArray);
 
       /**
+       * @note This clears out all existing text and replaces them with those
+       *       corresponding to the waypoints in wpArray.
+       * @param wpArray The array of all waypoints to show text for
+       */
+      virtual void SetText(const std::vector<dtAI::WaypointInterface*>& wpArray);
+
+      /**
        * Note: Adding an existing waypoint will reset just its position
        *       currently use this to move the waypoint as well.
        */
@@ -149,6 +156,7 @@ namespace dtAI
       void AddPathSegment(const WaypointInterface* pFrom, const WaypointInterface* pTo);
       void RemovePathSegment(const WaypointInterface* pFrom, const WaypointInterface* pTo);
       void ClearWaypointGraph();
+      void ClearText();
 
    private:
       AIDebugDrawableImpl* mImpl;

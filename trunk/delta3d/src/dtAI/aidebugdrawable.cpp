@@ -292,8 +292,8 @@ namespace dtAI
       mImpl->mVerts->clear();
       mImpl->mWaypointIDs->clear();
       mImpl->mWaypointColors->clear();
-      mImpl->mGeodeIDs->removeDrawables(0, mImpl->mGeodeIDs->getNumDrawables());
-      mImpl->mRenderData.clear();
+
+      ClearText();
 
       // Clears waypoint pairs
       ClearWaypointGraph();
@@ -403,6 +403,19 @@ namespace dtAI
       AddEdges(edgeArray);
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void AIDebugDrawable::SetText(const std::vector<dtAI::WaypointInterface*>& wpArray)
+   {
+      ClearText();
+
+      for (size_t waypointIndex = 0; waypointIndex < wpArray.size(); ++waypointIndex)
+      {
+         dtCore::RefPtr<RenderData> newRenderData = new RenderData;
+         mImpl->mRenderData.insert(std::make_pair(wpArray[waypointIndex]->GetID(), newRenderData));
+         mImpl->CreateWaypointIDText(*wpArray[waypointIndex], *newRenderData);
+      }
+   }
+
    /////////////////////////////////////////////////////////////////////////////
    void AIDebugDrawable::InsertWaypoint(const WaypointInterface& wp, bool addText /*= true*/)
    {
@@ -428,11 +441,10 @@ namespace dtAI
          mImpl->mVerts->push_back(wp.GetPosition());
          mImpl->mWaypointColors->push_back(mImpl->mRenderInfo->GetWaypointColor());
 
-         dtCore::RefPtr<RenderData> newRenderData = new RenderData;
-         mImpl->mRenderData.insert(std::make_pair(wp.GetID(), newRenderData));
-
          if (addText)
          {
+            dtCore::RefPtr<RenderData> newRenderData = new RenderData;
+            mImpl->mRenderData.insert(std::make_pair(wp.GetID(), newRenderData));
             mImpl->CreateWaypointIDText(wp, *newRenderData);
          }
       }
@@ -588,4 +600,12 @@ namespace dtAI
    {
       mImpl->ResetWaypointColorsToDefault();
    }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void AIDebugDrawable::ClearText()
+   {
+      mImpl->mGeodeIDs->removeDrawables(0, mImpl->mGeodeIDs->getNumDrawables());
+      mImpl->mRenderData.clear();
+   }
+
 } // namespace dtAI
