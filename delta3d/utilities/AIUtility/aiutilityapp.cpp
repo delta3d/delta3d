@@ -39,6 +39,8 @@
 #include <dtCore/scene.h> //for GetHeightOfTerrain()
 #include <dtAI/aidebugdrawable.h>
 #include <dtAI/waypointrenderinfo.h>
+#include <dtAI/waypointpair.h>
+#include <dtAI/waypointgraph.h>
 
 #include <QtGui/QUndoCommand>
 
@@ -53,6 +55,7 @@
 AIUtilityApp::AIUtilityApp()
 : dtABC::Application("config.xml")
 , mGM(new dtGame::GameManager(*GetScene()))
+, mSelectionBasedRendering(false)
 {
    mGM->SetApplication(*this);
    mLastCameraTransform.MakeIdentity();
@@ -90,9 +93,8 @@ void AIUtilityApp::Config()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void AIUtilityApp::SetAIPluginInterface(dtAI::AIPluginInterface* interface)
+void AIUtilityApp::SetAIPluginInterface(dtAI::AIPluginInterface* interface, bool selectionBasedRenderingHint)
 {
-   emit AIPluginInterfaceChanged(interface);
 
    // We can now setup the input component
    mInputComponent = new AIUtilityInputComponent();
@@ -104,6 +106,9 @@ void AIUtilityApp::SetAIPluginInterface(dtAI::AIPluginInterface* interface)
 
    mWaypointMotionModel->SetAIInterface(interface);
    mAIInterface = interface;
+
+   emit AIPluginInterfaceChanged(interface, selectionBasedRenderingHint);
+   OnRenderOnSelectChanged(selectionBasedRenderingHint);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -193,9 +198,29 @@ void AIUtilityApp::OnWaypointBrushSizeChanged(double value)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void AIUtilityApp::OnPreferencesUpdated()
+void AIUtilityApp::OnRenderOnSelectChanged(bool enabled)
 {
+   mSelectionBasedRendering = enabled;
 
+   if (mSelectionBasedRendering)
+   {
+      OnWaypointSelectionChanged(WaypointSelection::GetInstance().GetWaypointList());
+   }
+   else
+   {
+      //redraw the whole nav mesh
+      if (mAIInterface)
+      {
+         if (mAIInterface->GetDebugDrawable()->GetRenderInfo().GetRenderNavMesh())
+         {
+            dtAI::NavMesh* navmesh = mAIInterface->GetWaypointGraph().GetNavMeshAtSearchLevel(0);
+            if (navmesh != NULL)
+            {
+               mAIInterface->GetDebugDrawable()->UpdateWaypointGraph(*navmesh);
+            }
+         }
+      }
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -279,6 +304,54 @@ QUndoCommand* AIUtilityApp::GroundClampWaypoints(std::vector<dtAI::WaypointInter
    else
    {
       return parentUndo;
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void AIUtilityApp::OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>& selectedWaypoints)
+{
+   if (mAIInterface == NULL)
+   {
+      return;
+   }
+
+   const osg::Vec4 kSelectedColor(1.f, 0.1f, 0.1f, 1.f);
+   mAIInterface->GetDebugDrawable()->ResetWaypointColorsToDefault();
+
+   std::vector<dtAI::WaypointPair> edgesForSelection;
+
+   for (size_t i = 0; i < selectedWaypoints.size(); ++i)
+   {
+      dtAI::WaypointInterface* wpi = selectedWaypoints[i];
+
+      if (wpi)
+      {
+         mAIInterface->GetDebugDrawable()->SetWaypointColor(*wpi, kSelectedColor);
+      }
+
+      if (mSelectionBasedRendering)
+      {
+         std::vector<const dtAI::WaypointInterface*> edgePoints;
+         mAIInterface->GetAllEdgesFromWaypoint(wpi->GetID(), edgePoints);
+
+         for (size_t edgeIndex = 0; edgeIndex < edgePoints.size(); ++edgeIndex)
+         {
+            edgesForSelection.push_back(dtAI::WaypointPair(wpi, edgePoints[edgeIndex]));
+         }
+      }
+   }
+
+   if (mSelectionBasedRendering)
+   {
+      if (mAIInterface->GetDebugDrawable()->GetRenderInfo().GetRenderNavMesh())
+      {
+         mAIInterface->GetDebugDrawable()->SetEdges(edgesForSelection);
+      }
+
+      if (mAIInterface->GetDebugDrawable()->GetRenderInfo().GetRenderWaypointID())
+      {
+         mAIInterface->GetDebugDrawable()->SetText(selectedWaypoints);
+      }
    }
 }
 ////////////////////////////////////////////////////////////////////////////////

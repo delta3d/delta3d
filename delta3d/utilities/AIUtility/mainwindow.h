@@ -75,7 +75,6 @@ public:
 
 signals:
    void ProjectContextChanged(const std::string& path);
-   void PreferencesUpdated();
    void MapSelected(const std::string& path);
    void CloseMapSelected();
    void RequestCameraTransformChange(const dtCore::Transform& xform);
@@ -83,6 +82,7 @@ signals:
    void WaypointBrushSelectMode(bool enabled);
    void WaypointBrushSizeChanged(double value);
    void GroundClampSelectedWaypoints();
+   void RenderOnSelection(bool enabled);
 
 public slots:
    void OnError(const std::string& message);
@@ -92,7 +92,7 @@ public slots:
    void OnSave();
    void OnPreferences();
    void EnableOrDisableControls();
-   void SetAIPluginInterface(dtAI::AIPluginInterface* interface);
+   void SetAIPluginInterface(dtAI::AIPluginInterface* interface, bool selectionBasedRenderingHint);
    void SelectRenderingOptions();
    void OnAddEdge();
    void OnRemoveEdge();
@@ -136,6 +136,7 @@ private:
    dtCore::Transform mCurrentCameraTransform;
 
    QUndoStack *mUndoStack;
+   bool mSelectionBasedRendering; ///Do we only render expensive graphics for selected waypoints
 };
 
 #endif /*AIUTILITY_MAIN_WINDOW*/

@@ -27,7 +27,6 @@
 
 #include "aiutilitypreferencesdialog.h"
 
-bool AIUtilityPreferencesDialog::mSelectionRenderDefault = false;
 
 ////////////////////////////////////////////////////////////////////////////////
 AIUtilityPreferencesDialog::AIUtilityPreferencesDialog(QWidget* parent)
@@ -43,7 +42,7 @@ AIUtilityPreferencesDialog::AIUtilityPreferencesDialog(QWidget* parent)
    QLabel*      label  = new QLabel(tr("Selection based rendering."));
 
    mRenderOnSelection = new QCheckBox;
-   mRenderOnSelection->setChecked(mSelectionRenderDefault);
+   mRenderOnSelection->setChecked(false);
    mRenderOnSelection->setToolTip(tr("Allows visualization of waypoint edges and text by selection."));
    label->setToolTip(tr("Allows visualization of waypoint edges and text by selection."));
 
@@ -71,11 +70,17 @@ AIUtilityPreferencesDialog::AIUtilityPreferencesDialog(QWidget* parent)
 ////////////////////////////////////////////////////////////////////////////////
 void AIUtilityPreferencesDialog::SetRenderSelectionDefaultValue(bool useSelectionRender)
 {
-   mSelectionRenderDefault = useSelectionRender;
+   mRenderOnSelection->setChecked(useSelectionRender);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void AIUtilityPreferencesDialog::onOk()
 {
    accept();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool AIUtilityPreferencesDialog::GetRenderSelectionMode() const
+{
+   return mRenderOnSelection->isChecked();
 }

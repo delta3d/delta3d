@@ -5,7 +5,7 @@
 
 #include "mainwindow.h"
 #include "aiutilityapp.h"
-
+#include "waypointselection.h"
 #include <dtCore/deltawin.h>
 
 #include <dtQt/qtguiwindowsystemwrapper.h>
@@ -33,12 +33,15 @@ int main(int argc, char* argv[])
    MainWindow win(*osgGraphWindow->GetQGLWidget());
 
    QObject::connect(QApplication::instance(), SIGNAL(lastWindowClosed()), app.get(), SLOT(DoQuit()));
-   QObject::connect(app.get(), SIGNAL(AIPluginInterfaceChanged(dtAI::AIPluginInterface*)),
-      &win, SLOT(SetAIPluginInterface(dtAI::AIPluginInterface*)));
+   QObject::connect(app.get(), SIGNAL(AIPluginInterfaceChanged(dtAI::AIPluginInterface*, bool)),
+      &win, SLOT(SetAIPluginInterface(dtAI::AIPluginInterface*, bool)));
    QObject::connect(app.get(), SIGNAL(CameraTransformChanged(const dtCore::Transform&)),
       &win, SLOT(OnCameraTransformChanged(const dtCore::Transform&)));
    QObject::connect(app.get(), SIGNAL(Error(const std::string&)),
       &win, SLOT(OnError(const std::string&)));
+
+   QObject::connect(&WaypointSelection::GetInstance(), SIGNAL(WaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>&)),
+                    app.get(), SLOT(OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>&)));
 
    QObject::connect(app.get(), SIGNAL(UndoCommandGenerated(QUndoCommand*)), &win, SLOT(OnUndoCommandCreated(QUndoCommand*)));
    QObject::connect(&win, SIGNAL(RequestCameraTransformChange(const dtCore::Transform&)),
@@ -51,7 +54,7 @@ int main(int argc, char* argv[])
    QObject::connect(&win, SIGNAL(ProjectContextChanged(const std::string&)), app.get(), SLOT(SetProjectContext(const std::string&)));
    QObject::connect(&win, SIGNAL(MapSelected(const std::string&)), app.get(), SLOT(ChangeMap(const std::string&)));
    QObject::connect(&win, SIGNAL(CloseMapSelected()), app.get(), SLOT(CloseMap()));
-   QObject::connect(&win, SIGNAL(PreferencesUpdated()), app.get(), SLOT(OnPreferencesUpdated()));
+   QObject::connect(&win, SIGNAL(RenderOnSelection(bool)), app.get(), SLOT(OnRenderOnSelectChanged(bool)));
    QObject::connect(&win, SIGNAL(GroundClampSelectedWaypoints()), app.get(), SLOT(OnGroundClampSelectedWaypoints()));
 
    win.show();
