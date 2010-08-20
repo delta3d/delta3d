@@ -290,16 +290,9 @@ void WaypointBrowser::OnDelete()
       {
          QUndoCommand* command = new DeleteWaypointCommand(*wp, mAIPluginInterface, parentUndo);
 
-         if (mAIPluginInterface->RemoveWaypoint(wp))
+         if (parentUndo == NULL)
          {
-            if (parentUndo == NULL)
-            {
-               emit UndoCommandGenerated(command);
-            }
-         }
-         else
-         {
-            delete command;
+            emit UndoCommandGenerated(command);
          }
       }
    }
