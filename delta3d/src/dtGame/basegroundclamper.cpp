@@ -24,6 +24,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include <prefix/dtgameprefix.h>
 #include <dtDAL/transformableactorproxy.h>
+#include <dtDAL/propertymacros.h>
 #include <dtGame/basegroundclamper.h>
 #include <dtCore/transform.h>
 #include <dtUtil/log.h>
@@ -34,10 +35,24 @@
 namespace dtGame
 {
    /////////////////////////////////////////////////////////////////////////////
+   IMPLEMENT_ENUM(GroundClampTypeEnum);
+   GroundClampTypeEnum::GroundClampTypeEnum(const std::string& name)
+      : dtUtil::Enumeration(name)
+   {
+      AddInstance(this);
+   }
+   GroundClampTypeEnum GroundClampTypeEnum::NONE("None");
+   GroundClampTypeEnum GroundClampTypeEnum::KEEP_ABOVE("KeepAbove");
+   GroundClampTypeEnum GroundClampTypeEnum::FULL("Full");
+
+
+
+   /////////////////////////////////////////////////////////////////////////////
    // GROUND CLAMPING DATA
    /////////////////////////////////////////////////////////////////////////////
    GroundClampingData::GroundClampingData()
-      : mGroundOffset(0.0f)
+      : mGroundClampType(&GroundClampTypeEnum::KEEP_ABOVE)
+      , mGroundOffset(0.0f)
       , mAdjustRotationToGround(true)
       , mUseModelDimensions(false)
    {
@@ -48,16 +63,17 @@ namespace dtGame
    {
    }
 
+   IMPLEMENT_PROPERTY(GroundClampingData, dtUtil::EnumerationPointer<GroundClampTypeEnum>, GroundClampType);
 
 
    /////////////////////////////////////////////////////////////////////////////
    // GROUND CLAMPING TYPE
    /////////////////////////////////////////////////////////////////////////////
-   IMPLEMENT_ENUM(BaseGroundClamper::GroundClampingType);
-   BaseGroundClamper::GroundClampingType BaseGroundClamper::GroundClampingType::NONE("NONE");
-   BaseGroundClamper::GroundClampingType BaseGroundClamper::GroundClampingType::RANGED("RANGED");
-   BaseGroundClamper::GroundClampingType 
-      BaseGroundClamper::GroundClampingType::INTERMITTENT_SAVE_OFFSET("INTERMITTENT_SAVE_OFFSET");
+   IMPLEMENT_ENUM(BaseGroundClamper::GroundClampRangeType);
+   BaseGroundClamper::GroundClampRangeType BaseGroundClamper::GroundClampRangeType::NONE("NONE");
+   BaseGroundClamper::GroundClampRangeType BaseGroundClamper::GroundClampRangeType::RANGED("RANGED");
+   BaseGroundClamper::GroundClampRangeType 
+      BaseGroundClamper::GroundClampRangeType::INTERMITTENT_SAVE_OFFSET("INTERMITTENT_SAVE_OFFSET");
 
 
 

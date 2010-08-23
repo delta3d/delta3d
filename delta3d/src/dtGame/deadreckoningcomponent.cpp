@@ -294,7 +294,7 @@ namespace dtGame
 
 
          // Actual dead reckoning code moved into the helper..
-         BaseGroundClamper::GroundClampingType* groundClampingType = &BaseGroundClamper::GroundClampingType::NONE;
+         BaseGroundClamper::GroundClampRangeType* groundClampingType = &BaseGroundClamper::GroundClampRangeType::NONE;
          bool transformChanged = helper.DoDR(gameActor, xform, mLogger, groundClampingType);
 
          if (helper.GetDeadReckoningAlgorithm() != DeadReckoningAlgorithm::NONE)

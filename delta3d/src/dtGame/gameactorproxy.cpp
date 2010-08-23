@@ -867,3 +867,27 @@ bool GameActorProxy::ShouldAcceptPropertyInLocalUpdate(const dtUtil::RefString& 
 {
    return mLocalUpdatePropertyAcceptList.find(propName) != mLocalUpdatePropertyAcceptList.end();
 }
+
+////////////////////////////////////////////////////////////////////////////////
+dtCore::RefPtr<dtDAL::ActorProperty> GameActorProxy::GetDeprecatedProperty(const std::string& name)
+{
+   dtCore::RefPtr<dtDAL::ActorProperty> prop = BaseClass::GetDeprecatedProperty(name);
+
+   if (!prop.valid())
+   {
+      // Check all of our actor components to see if one of them can support it
+      std::vector<ActorComponent*> components;
+      GetGameActor().GetAllComponents(components);
+      unsigned int size = components.size();
+      for (unsigned int i = 0; i < size; i ++)
+      {
+         prop = components[i]->GetDeprecatedProperty(name);
+         if (prop.valid())
+         {
+            break; // quit looking.
+         }
+      }
+   }
+
+   return prop;
+}

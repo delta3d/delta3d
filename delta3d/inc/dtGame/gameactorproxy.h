@@ -392,6 +392,15 @@ namespace dtGame
       bool ShouldAcceptPropertyInLocalUpdate(const dtUtil::RefString& propName) const;
 
       /**
+       * This function walks the child actor components to see if one of them
+       * can handle the deprecated property.        *
+       * @param[in]  name  The name of the property queried for.
+       * @return           A property, or NULL if none found.
+       */
+      virtual dtCore::RefPtr<dtDAL::ActorProperty> GetDeprecatedProperty(const std::string& name);
+
+
+      /**
        * Deprecated - Use NotifyPartialActorUpdate() with dtUtil::RefString instead.
        * @see NotifyPartialActorUpdate
        */

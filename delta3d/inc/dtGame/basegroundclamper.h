@@ -29,7 +29,7 @@
 #include <dtCore/transformable.h>
 #include <osg/Referenced>
 #include <osg/Vec3>
-
+#include <dtUtil/getsetmacros.h>
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -47,6 +47,24 @@ namespace dtUtil
 
 namespace dtGame
 {
+   ///////////////////////////////////////////////////////////////////////////
+   class DT_GAME_EXPORT GroundClampTypeEnum : public dtUtil::Enumeration
+   {
+      DECLARE_ENUM(GroundClampTypeEnum);
+
+   public:
+      /// No ground clamping is the same as 'flying' or 'underwater'.
+      static GroundClampTypeEnum NONE;
+      /// Keep above is used to keep an actor from falling below the ground, but allows it to go above (ie jumping). 
+      static GroundClampTypeEnum KEEP_ABOVE;
+      /// Full forces the object to stick to the ground like glue (clamps both up AND down)
+      static GroundClampTypeEnum FULL;
+   private:
+      GroundClampTypeEnum(const std::string& name);
+   };
+
+
+
    /////////////////////////////////////////////////////////////////////////////
    // CLAMPING DATA CODE
    /////////////////////////////////////////////////////////////////////////////
@@ -102,6 +120,9 @@ namespace dtGame
          osg::Referenced* GetUserData() { return mUserData.get(); }
          const osg::Referenced* GetUserData() const { return mUserData.get(); }
 
+         /// GROUND CLAMP TYPE - enum property - usually set via the Dead Reckoning Helper property.
+         DECLARE_PROPERTY(dtUtil::EnumerationPointer<GroundClampTypeEnum>, GroundClampType);
+
       private:
 
          float mGroundOffset;
@@ -119,15 +140,15 @@ namespace dtGame
    {
       public:
 
-         class DT_GAME_EXPORT GroundClampingType : public dtUtil::Enumeration
+         class DT_GAME_EXPORT GroundClampRangeType : public dtUtil::Enumeration
          {
-            DECLARE_ENUM(GroundClampingType);
+            DECLARE_ENUM(GroundClampRangeType);
             public:
-               static GroundClampingType NONE;
-               static GroundClampingType RANGED;
-               static GroundClampingType INTERMITTENT_SAVE_OFFSET;
+               static GroundClampRangeType NONE;
+               static GroundClampRangeType RANGED;
+               static GroundClampRangeType INTERMITTENT_SAVE_OFFSET;
             private:
-               GroundClampingType(const std::string &name) : dtUtil::Enumeration(name)
+               GroundClampRangeType(const std::string &name) : dtUtil::Enumeration(name)
                {
                   AddInstance(this);
                }
@@ -213,7 +234,7 @@ namespace dtGame
           * @param transformChanged Flag to help the clamper to determine if it should perform a clamp or not.
           * @param velocity The transformable's instantaneous velocity for the current frame.
           */
-         virtual void ClampToGround(GroundClampingType& type, double currentTime, dtCore::Transform& xform,
+         virtual void ClampToGround(GroundClampRangeType& type, double currentTime, dtCore::Transform& xform,
             dtDAL::TransformableActorProxy& proxy, GroundClampingData& data,
             bool transformChanged = false,
             const osg::Vec3& velocity = osg::Vec3()) = 0;

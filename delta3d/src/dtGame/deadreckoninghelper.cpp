@@ -227,6 +227,7 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////
    DeadReckoningHelper::DeadReckoningHelper()
    : ActorComponent(TYPE)
+   , mGroundClampType(&GroundClampTypeEnum::KEEP_ABOVE)
    , mLastTranslationUpdatedTime(0.0)
    , mLastRotationUpdatedTime(0.0)
    , mAverageTimeBetweenTranslationUpdates(0.0f)
@@ -246,7 +247,7 @@ namespace dtGame
    , mUpdated(false)
    , mTranslationUpdated(false)
    , mRotationUpdated(false)
-   , mFlying(false)
+   //, mFlying(false)
    , mRotationResolved(true)
    , mUseCubicSplineTransBlend(false)
    , mExtraDataUpdated(false)
@@ -260,6 +261,9 @@ namespace dtGame
    {
       delete mDRImpl;
    }
+
+   // GROUND CLAMP TYPE PROPERTY
+   IMPLEMENT_PROPERTY_GETTER(DeadReckoningHelper, dtUtil::EnumerationPointer<GroundClampTypeEnum>, GroundClampType);
 
 
    //////////////////////////////////////////////////////////////////////
@@ -301,13 +305,30 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::SetFlying(bool newFlying)
+   bool DeadReckoningHelper::IsFlyingDeprecatedProperty()
    {
-      if (mFlying == newFlying)
-         return;
-      mFlying = newFlying;
-      mUpdated = true;
+      bool result = (GroundClampTypeEnum::NONE == GetGroundClampType());
+      return result;
+   }
 
+   //////////////////////////////////////////////////////////////////////
+   void DeadReckoningHelper::SetFlyingDeprecatedProperty(bool newFlying)
+   {
+      // THIS METHOD IS HERE TO SUPPORT THE DEPRECATED PROPERTY. USE SetGroundClampType() instead.
+      (newFlying) ?
+         (SetGroundClampType(GroundClampTypeEnum::NONE)) :
+         (SetGroundClampType(GroundClampTypeEnum::KEEP_ABOVE));
+   }
+
+   //////////////////////////////////////////////////////////////////////
+   void DeadReckoningHelper::SetGroundClampType(GroundClampTypeEnum& newType)
+   {
+      if (newType == GetGroundClampType())
+         return;
+
+      mGroundClampingData.SetGroundClampType(newType);
+      mGroundClampType = newType;
+      mUpdated = true;
       mExtraDataUpdated = true;
    }
 
@@ -693,7 +714,8 @@ namespace dtGame
    const dtUtil::RefString DeadReckoningHelper::PROPERTY_ACCELERATION_VECTOR("Acceleration Vector");
    const dtUtil::RefString DeadReckoningHelper::PROPERTY_ANGULAR_VELOCITY_VECTOR("Angular Velocity Vector");
    const dtUtil::RefString DeadReckoningHelper::PROPERTY_DEAD_RECKONING_ALGORITHM("Dead Reckoning Algorithm");
-   const dtUtil::RefString DeadReckoningHelper::PROPERTY_FLYING("Flying");
+   //const dtUtil::RefString DeadReckoningHelper::PROPERTY_FLYING("Flying");
+   const dtUtil::RefString DeadReckoningHelper::PROPERTY_GROUND_CLAMP_TYPE("GroundClampType");
    const dtUtil::RefString DeadReckoningHelper::PROPERTY_GROUND_OFFSET("Ground Offset");
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -731,11 +753,18 @@ namespace dtGame
       REGISTER_PROPERTY_WITH_NAME(DeadReckoningAlgorithm, PROPERTY_DEAD_RECKONING_ALGORITHM, 
          "Sets the enumerated dead reckoning algorithm to use.", PropRegType, propRegHelper);
 
+      // IsFlying was changed to the enumeration below. The property is depracated and creatd on the fly.
       // Doesn't use macro cause the Getter is called IsFlying
-      AddProperty(new dtDAL::BooleanActorProperty(PROPERTY_FLYING, "Should Not Follow the Ground",
-         dtDAL::BooleanActorProperty::SetFuncType(this, &DeadReckoningHelper::SetFlying),
-         dtDAL::BooleanActorProperty::GetFuncType(this, &DeadReckoningHelper::IsFlying),
-         "If flying is true, then it won't ground clamp. Also useful for hovering or jumping vehicles. ", DEADRECKONING_GROUP));
+      //AddProperty(new dtDAL::BooleanActorProperty(PROPERTY_FLYING, "Should Not Follow the Ground",
+      //   dtDAL::BooleanActorProperty::SetFuncType(this, &DeadReckoningHelper::SetFlying),
+      //   dtDAL::BooleanActorProperty::GetFuncType(this, &DeadReckoningHelper::IsFlying),
+      //   "If flying is true, then it won't ground clamp. Also useful for hovering or jumping vehicles. ", DEADRECKONING_GROUP));
+
+      // Doesn't use macro cause the Getter is called IsFlying
+      REGISTER_PROPERTY_WITH_NAME_AND_LABEL(GroundClampType, PROPERTY_GROUND_CLAMP_TYPE, "Ground Clamp Type",
+         "What type of ground clamping should be performed. This replaced the Flying property.", 
+         PropRegType, propRegHelper);
+
 
       REGISTER_PROPERTY_WITH_NAME(GroundOffset, PROPERTY_GROUND_OFFSET, 
          "Sets the offset from the ground this entity should have.  This only matters if it is not flying.", PropRegType, propRegHelper);
@@ -761,20 +790,20 @@ namespace dtGame
 
    /////////////////////////////////////////////////////////////////////////////////
    bool DeadReckoningHelper::DoDR(GameActor& gameActor, dtCore::Transform& xform,
-         dtUtil::Log* pLogger, BaseGroundClamper::GroundClampingType*& gcType)
+         dtUtil::Log* pLogger, BaseGroundClamper::GroundClampRangeType*& gcType)
    {
       bool returnValue = false; // indicates we changed the transform
-      if (IsFlying())
+      if (GetGroundClampType() == GroundClampTypeEnum::NONE)
       {
-         gcType = &BaseGroundClamper::GroundClampingType::NONE;
+         gcType = &BaseGroundClamper::GroundClampRangeType::NONE;
       }
       else if (GetGroundClampingData().GetAdjustRotationToGround())
       {
-         gcType = &BaseGroundClamper::GroundClampingType::RANGED;
+         gcType = &BaseGroundClamper::GroundClampRangeType::RANGED;
       }
       else
       {
-         gcType = &BaseGroundClamper::GroundClampingType::INTERMITTENT_SAVE_OFFSET;
+         gcType = &BaseGroundClamper::GroundClampRangeType::INTERMITTENT_SAVE_OFFSET;
       }
 
       if (GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::NONE)
@@ -787,7 +816,7 @@ namespace dtGame
          }
          gameActor.GetTransform(xform, dtCore::Transformable::REL_CS);
          // It's set to NONE, so no ground clamping..
-         gcType = &BaseGroundClamper::GroundClampingType::NONE;
+         gcType = &BaseGroundClamper::GroundClampRangeType::NONE;
       }
       else if (GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::STATIC)
       {
@@ -1168,7 +1197,6 @@ namespace dtGame
    {
       std::ostringstream ss;
       ss << "Actor passed optimization checks: fully dead-reckoning actor.\n"
-         << "  IsFlying():                           " << IsFlying() << std::endl
          << "  mLastTranslation:                     " << mLastTranslation << std::endl
          << "  unclampedTranslation:                 " << unclampedTranslation << std::endl
          << "  mLastVelocity.length2():     " << mLastVelocity.length2() << std::endl
@@ -1196,6 +1224,21 @@ namespace dtGame
    {
       const osg::Vec3& result = GetLastKnownRotation();
       return osg::Vec3(result[1], result[2], result[0]);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   dtCore::RefPtr<dtDAL::ActorProperty> DeadReckoningHelper::GetDeprecatedProperty(const std::string& name)
+   {
+      static const dtUtil::RefString DEADRECKONING_GROUP = "Dead Reckoning";
+      dtCore::RefPtr<dtDAL::ActorProperty> result;
+      if (name == "Flying")
+      {
+         result = new dtDAL::BooleanActorProperty(name, "Should Not Follow the Ground",
+            dtDAL::BooleanActorProperty::SetFuncType(this, &DeadReckoningHelper::SetFlyingDeprecatedProperty),
+            dtDAL::BooleanActorProperty::GetFuncType(this, &DeadReckoningHelper::IsFlyingDeprecatedProperty),
+            "DEPRECATED - USE GROUNDCLAMPTYPE INSTEAD! ", DEADRECKONING_GROUP);
+      }
+      return result;
    }
 
 
