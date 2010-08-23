@@ -201,7 +201,8 @@ namespace dtGame
                helper->GetEffectiveUpdateMode(false) == DeadReckoningHelper::UpdateMode::CALCULATE_ONLY);
             CPPUNIT_ASSERT_MESSAGE("The Effective Update Mode for a remote actor should default to CALCULATE_AND_MOVE_ACTOR.",
                helper->GetEffectiveUpdateMode(true) == DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR);
-            CPPUNIT_ASSERT_MESSAGE("Flying should default to false", !helper->IsFlying());
+            CPPUNIT_ASSERT_MESSAGE("Ground Clamp Type should default to Above Ground (previously flying false)", 
+               helper->GetGroundClampType() == dtGame::GroundClampTypeEnum::KEEP_ABOVE );
 
             osg::Vec3 vec(0.0f, 0.0f, 0.0f);
 
@@ -222,9 +223,10 @@ namespace dtGame
          void TestDeadReckoningHelperProperties()
          {
             dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;
-            helper->SetFlying(true);
+            helper->SetGroundClampType(dtGame::GroundClampTypeEnum::NONE); //helper->SetFlying(true);
             CPPUNIT_ASSERT(helper->IsUpdated());
-            CPPUNIT_ASSERT(helper->IsFlying());
+            CPPUNIT_ASSERT(helper->GetGroundClampType() == 
+               dtGame::GroundClampTypeEnum::NONE); //IsFlying()
 
             helper->ClearUpdated();
 
@@ -619,12 +621,12 @@ namespace dtGame
 
             dtCore::Transform xform;
 
-            BaseGroundClamper::GroundClampingType* groundClampingType = &BaseGroundClamper::GroundClampingType::NONE;
+            BaseGroundClamper::GroundClampRangeType* groundClampingType = &BaseGroundClamper::GroundClampRangeType::NONE;
             bool wasTransformed = helper->DoDR(mTestGameActor->GetGameActor(), xform,
                   &dtUtil::Log::GetInstance(), groundClampingType);
 
             CPPUNIT_ASSERT(!wasTransformed);
-            CPPUNIT_ASSERT(*groundClampingType == BaseGroundClamper::GroundClampingType::NONE);
+            CPPUNIT_ASSERT(*groundClampingType == BaseGroundClamper::GroundClampRangeType::NONE);
             CPPUNIT_ASSERT(xform.IsIdentity());
          }
 
@@ -649,7 +651,7 @@ namespace dtGame
             xform.SetRotation(helper->GetLastKnownRotation());
             helper->ClearUpdated();
 
-            BaseGroundClamper::GroundClampingType* groundClampingType = &BaseGroundClamper::GroundClampingType::NONE;
+            BaseGroundClamper::GroundClampRangeType* groundClampingType = &BaseGroundClamper::GroundClampRangeType::NONE;
             bool wasTransformed = helper->DoDR(mTestGameActor->GetGameActor(), xform,
                   &dtUtil::Log::GetInstance(), groundClampingType);
 
@@ -888,7 +890,8 @@ namespace dtGame
             helper->SetLastKnownTranslation(setVec);
             helper->SetLastKnownRotation(setVec);
             helper->SetDeadReckoningAlgorithm(DeadReckoningAlgorithm::NONE);
-            helper->SetFlying(true);
+            helper->SetGroundClampType(dtGame::GroundClampTypeEnum::NONE);
+            //helper->SetFlying(true);
 
             dtCore::System::GetInstance().Step();
 
@@ -946,14 +949,24 @@ namespace dtGame
             InitDoDRTestHelper(*helper);
 
             helper->SetDeadReckoningAlgorithm(DeadReckoningAlgorithm::VELOCITY_AND_ACCELERATION);
-            helper->SetFlying(flying);
+            helper->SetGroundClampType(dtGame::GroundClampTypeEnum::NONE);
+
+            //helper->SetFlying(flying);
+            if (flying) // we just use none or full for this test
+            {
+               helper->SetGroundClampType(dtGame::GroundClampTypeEnum::NONE);
+            }
+            else 
+            {
+               helper->SetGroundClampType(dtGame::GroundClampTypeEnum::FULL);
+            }
 
             dtCore::Transform xform;
-            BaseGroundClamper::GroundClampingType* groundClampingType = &BaseGroundClamper::GroundClampingType::NONE;
+            BaseGroundClamper::GroundClampRangeType* groundClampingType = &BaseGroundClamper::GroundClampRangeType::NONE;
             bool wasTransformed = helper->DoDR(mTestGameActor->GetGameActor(), xform,
                   &dtUtil::Log::GetInstance(), groundClampingType);
 
-            CPPUNIT_ASSERT((*groundClampingType == BaseGroundClamper::GroundClampingType::NONE) == flying);
+            CPPUNIT_ASSERT((*groundClampingType == BaseGroundClamper::GroundClampRangeType::NONE) == flying);
             CPPUNIT_ASSERT(wasTransformed);
          }
 
@@ -964,14 +977,23 @@ namespace dtGame
             InitDoDRTestHelper(*helper);
 
             helper->SetDeadReckoningAlgorithm(DeadReckoningAlgorithm::STATIC);
-            helper->SetFlying(flying);
+
+            //helper->SetFlying(flying);
+            if (flying) // we just use none or full for this test
+            {
+               helper->SetGroundClampType(dtGame::GroundClampTypeEnum::NONE);
+            }
+            else 
+            {
+               helper->SetGroundClampType(dtGame::GroundClampTypeEnum::FULL);
+            }
 
             dtCore::Transform xform;
-            BaseGroundClamper::GroundClampingType* groundClampingType = &BaseGroundClamper::GroundClampingType::NONE;
+            BaseGroundClamper::GroundClampRangeType* groundClampingType = &BaseGroundClamper::GroundClampRangeType::NONE;
             bool wasTransformed = helper->DoDR(mTestGameActor->GetGameActor(), xform,
                   &dtUtil::Log::GetInstance(), groundClampingType);
 
-            CPPUNIT_ASSERT((*groundClampingType == BaseGroundClamper::GroundClampingType::NONE) == flying);
+            CPPUNIT_ASSERT((*groundClampingType == BaseGroundClamper::GroundClampRangeType::NONE) == flying);
             CPPUNIT_ASSERT(wasTransformed);
 
             osg::Vec3 trans;

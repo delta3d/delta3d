@@ -114,6 +114,7 @@ namespace dtGame
       float modelHeightAllowance = 0.8f * data.GetModelDimensions().z();
 
       // Loop through all the hits. Find the closest hit above us and below us
+      // NOTE - The hits MUST be in order - highest to lowest or this doesn't work
       for (unsigned int i = 0; i < single.GetNumberOfHits(); ++i)
       {
          single.GetHitPoint(tempHit, i);
@@ -123,7 +124,9 @@ namespace dtGame
          {
             // Keep the old hit if it is already inside the vehicle 
             // (for when you have skirts or ovelapping geometry in terrain)
-            if (aboveDiff > modelHeightAllowance)
+            // Note - this could get confused if you have a lot of terrain hits at similar heights. 
+            if (!foundAbove || (aboveHit.z() - tempHit.z() > modelHeightAllowance))
+            //if (aboveDiff > modelHeightAllowance)
             {
                aboveDiff = newDiff;
                aboveHit = tempHit;
@@ -145,7 +148,8 @@ namespace dtGame
       // If we found both, we have to pick the right one (prevents snapping with overlapping terrain objects)
       finalResult = foundAbove || foundBelow; // regardless of what we do next, the function is true if we found ANY hits.
       bool clampUp = (foundAbove && !foundBelow); // we are below ALL terrain, so clamp up.
-      bool clampDown = (foundBelow && true /* new feature TO COME */); // clampUp always wins over clampDown 
+      bool clampDown = (foundBelow &&    // clampUp always wins over clampDown 
+         data.GetGroundClampType() == GroundClampTypeEnum::FULL); 
 
       if (foundBelow && foundAbove)
       {
@@ -155,11 +159,7 @@ namespace dtGame
          {
             clampUp = true;
          }
-         // it didn't fit, so clamp down or do nothing. 
-         else if (true /* new feature TO COME */)
-         {
-            clampDown = true;
-         }
+         // it didn't fit, so clamp down or do nothing. Note - clampDown is already set above.
       }      
 
       // Do the actual clamp UP or DOWN
@@ -172,6 +172,13 @@ namespace dtGame
       {
          outHit = belowHit;
          outNormal = belowOutNormal;
+      }
+      // If not clamping up or down, but found a hit, we are flying above ground
+      else if (finalResult)
+      {
+         // Make up a hit loc/normal that leaves it right where it is
+         outHit = osg::Vec3(tempHit.x(), tempHit.y(), pointZ);
+         outNormal = osg::Vec3(0.0f, 0.0f, 1.0f); // straight up. Hit normal isn't used anyway
       }
 
       return finalResult;
@@ -563,7 +570,7 @@ namespace dtGame
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void DefaultGroundClamper::ClampToGround(DefaultGroundClamper::GroundClampingType& type,
+   void DefaultGroundClamper::ClampToGround(DefaultGroundClamper::GroundClampRangeType& type,
       double currentTime, dtCore::Transform& xform, dtDAL::TransformableActorProxy& proxy,
       GroundClampingData& data, bool transformChanged, const osg::Vec3& velocity)
    {
@@ -577,11 +584,11 @@ namespace dtGame
 
       // Determine if a different clamp type should be used based on the object and
       // other factors such as transform change or velocity.
-      DefaultGroundClamper::GroundClampingType* clampType
+      DefaultGroundClamper::GroundClampRangeType* clampType
          = &GetBestClampType(type, proxy, data, transformChanged, velocity);
 
       // Avoid any further processing on certain conditions.
-      if(!HasValidSurface() || *clampType == DefaultGroundClamper::GroundClampingType::NONE)
+      if(!HasValidSurface() || *clampType == DefaultGroundClamper::GroundClampRangeType::NONE)
       {
          // If no terrain, just set the position and exit.
          actor->SetTransform(xform, dtCore::Transformable::REL_CS);
@@ -605,7 +612,7 @@ namespace dtGame
          logger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Ground clamping actor.");
       }
 
-      if(*clampType == DefaultGroundClamper::GroundClampingType::RANGED)
+      if(*clampType == DefaultGroundClamper::GroundClampRangeType::RANGED)
       {
          osg::Vec3 position;
          xform.GetTranslation(position);
@@ -650,15 +657,15 @@ namespace dtGame
             runtimeData.SetLastClampedTime(currentTime);
          }
       }
-      else if(*clampType == DefaultGroundClamper::GroundClampingType::INTERMITTENT_SAVE_OFFSET)
+      else if(*clampType == DefaultGroundClamper::GroundClampRangeType::INTERMITTENT_SAVE_OFFSET)
       {
          ClampToGroundIntermittent(currentTime, xform, proxy, data, runtimeData);
       }
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   DefaultGroundClamper::GroundClampingType& DefaultGroundClamper::GetBestClampType(
-      DefaultGroundClamper::GroundClampingType& suggestedClampType,
+   DefaultGroundClamper::GroundClampRangeType& DefaultGroundClamper::GetBestClampType(
+      DefaultGroundClamper::GroundClampRangeType& suggestedClampType,
       const dtDAL::TransformableActorProxy& proxy, const GroundClampingData& data,
       bool transformChanged, const osg::Vec3& velocity) const
    {

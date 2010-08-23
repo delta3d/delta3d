@@ -218,7 +218,7 @@ namespace dtGame
           * @param transformChanged Flag to help the clamper to determine if it should perform a clamp or not.
           * @param velocity The transformable's instantaneous velocity for the current frame.
           */
-         virtual void ClampToGround(GroundClampingType& type, double currentTime,
+         virtual void ClampToGround(GroundClampRangeType& type, double currentTime,
             dtCore::Transform& xform, dtDAL::TransformableActorProxy& proxy,
             GroundClampingData& data, bool transformChanged = false,
             const osg::Vec3& velocity = osg::Vec3());
@@ -234,7 +234,7 @@ namespace dtGame
           * @param velocity Instantaneous velocity of the object for the current frame.
           * @return suggestedClampType is returned for the default behavior.
           */
-         virtual GroundClampingType& GetBestClampType(GroundClampingType& suggestedClampType,
+         virtual GroundClampRangeType& GetBestClampType(GroundClampRangeType& suggestedClampType,
             const dtDAL::TransformableActorProxy& proxy, const GroundClampingData& data,
             bool transformChanged, const osg::Vec3& velocity) const;
 

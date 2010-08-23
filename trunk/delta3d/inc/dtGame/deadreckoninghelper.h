@@ -28,6 +28,7 @@
 #include <dtGame/export.h>
 #include <dtUtil/nodecollector.h>
 #include <dtUtil/refstring.h>
+#include <dtUtil/getsetmacros.h>
 
 #include <dtCore/base.h>
 #include <dtCore/transform.h>
@@ -93,10 +94,10 @@ namespace dtGame
          static const dtUtil::RefString PROPERTY_VELOCITY_VECTOR;
          static const dtUtil::RefString PROPERTY_ACCELERATION_VECTOR;
          static const dtUtil::RefString PROPERTY_ANGULAR_VELOCITY_VECTOR;
-         static const dtUtil::RefString PROPERTY_FLYING;
+         //static const dtUtil::RefString PROPERTY_FLYING;
+         static const dtUtil::RefString PROPERTY_GROUND_CLAMP_TYPE;
          static const dtUtil::RefString PROPERTY_DEAD_RECKONING_ALGORITHM;
          static const dtUtil::RefString PROPERTY_GROUND_OFFSET;
-
 
          ///////////////////////////////////////////////////////////////////////////
          class DT_GAME_EXPORT DeadReckoningDOF : public osg::Referenced
@@ -211,7 +212,7 @@ namespace dtGame
           * @return Return true if you think you changed the Transform, false if you did not.
           */
          virtual bool DoDR(GameActor& gameActor, dtCore::Transform& xform,
-                  dtUtil::Log* pLogger, BaseGroundClamper::GroundClampingType*& gcType);
+                  dtUtil::Log* pLogger, BaseGroundClamper::GroundClampRangeType*& gcType);
 
          /**
           * Calculates how long the associated actor's position and rotation should be smoothed into a updated value.
@@ -229,17 +230,16 @@ namespace dtGame
          UpdateMode& GetEffectiveUpdateMode(bool isRemote) const;
          void SetUpdateMode(UpdateMode& newUpdateMode) { mUpdateMode = &newUpdateMode; }
 
-         /**
-          * @return true if no ground following should be performed on this actor.
-          */
-         bool IsFlying() const { return mFlying; }
+         /// Deprecated - replaced by GroundClampType
+         //bool IsFlying() const { return mFlying; }
+         bool IsFlyingDeprecatedProperty();
+         /// Deprecated - replaced by GroundClampType
+         //void SetFlying(bool newFlying);
+         void SetFlyingDeprecatedProperty(bool newFlying); 
 
-         /**
-          * True means no ground following should be performed on this actor.  False
-          * it will follow the ground as it moves.
-          * @param newFlying the new value to set.
-          */
-         void SetFlying(bool newFlying);
+         /// GROUND CLAMP TYPE - enum property - replaces the old Flying property
+         DECLARE_PROPERTY(dtUtil::EnumerationPointer<dtGame::GroundClampTypeEnum>, GroundClampType);
+         //void SetGroundClampType(DeadReckoningHelper::GroundClampTypeEnum& typeEnum);
 
          /**
           * Sets the entity's minimum Dead Reckoning Algorithm.
@@ -483,6 +483,9 @@ namespace dtGame
          void SetForceUprightRotation(bool newValue);
          bool GetForceUprightRotation() const;
 
+         /// Supports the following deprecated properties: 'Flying' 
+         dtCore::RefPtr<dtDAL::ActorProperty> GetDeprecatedProperty(const std::string& name);
+
       protected:
          virtual ~DeadReckoningHelper();// {}
 
@@ -614,7 +617,7 @@ namespace dtGame
          bool mUpdated;
          bool mTranslationUpdated;
          bool mRotationUpdated;
-         bool mFlying;
+         //bool mFlying; // Deprecated now - use GroundClampType instead
          // if the rotation has been resolved to the last updated version.
          bool mRotationResolved;
          bool mUseCubicSplineTransBlend; // true is NEW WAY (default) - should we use simple linear or cubic spline blend?

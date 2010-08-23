@@ -350,24 +350,26 @@ namespace dtGame
             // Declare a Ground Clamp Data to satisfy the GetClosestHit method.
             GroundClampingData data;
 
+
             CPPUNIT_ASSERT_MESSAGE("No nearest hit should have been found if no hits exist.",
-                     !mGroundClamper->GetClosestHit(*mTestGameActor, data, *single, 0.03, point, normal));
+                     !mGroundClamper->GetClosestHit(*mTestGameActor, data, *single, 0.03f, point, normal));
 
             dtCore::BatchIsector::Hit hit;
-            hit._intersectNormal = osg::Vec3(0.0f, 0.0f, 1.0f);
-            hit._intersectPoint  = osg::Vec3(3.0f, 4.0f, 1.0f);
-            hitList.push_back(hit);
-
             hit._intersectNormal = osg::Vec3(0.0f, 1.0f, 0.0f);
             hit._intersectPoint  = osg::Vec3(3.0f, 4.0f, 4.0f);
+            hitList.push_back(hit);
+
+            hit._intersectNormal = osg::Vec3(0.0f, 0.0f, 1.0f);
+            hit._intersectPoint  = osg::Vec3(3.0f, 4.0f, 1.0f);
             hitList.push_back(hit);
 
             single->SetHitList(hitList);
 
             // CLAMPING UP - two hits above, pick the one that is lowest because fits under the 2nd. 
             data.SetModelDimensions(osg::Vec3(1.0f, 1.0f, 2.0f)); 
+            point.z() = 0.0f;
             CPPUNIT_ASSERT_MESSAGE("A nearest hit should have been found.",
-                     mGroundClamper->GetClosestHit(*mTestGameActor, data, *single, 0.03, point, normal));
+                     mGroundClamper->GetClosestHit(*mTestGameActor, data, *single, 0.03f, point, normal));
 
             CPPUNIT_ASSERT_DOUBLES_EQUAL(3.0f, point.x(), 0.001);
             CPPUNIT_ASSERT_DOUBLES_EQUAL(4.0f, point.y(), 0.001);
@@ -377,9 +379,18 @@ namespace dtGame
             CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0f, normal.y(), 0.001);
             CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0f, normal.z(), 0.001);
 
-            // CLAMPING UP - one hit is up and one hit is down
+            // CLAMPING UP - two hits above, pick the highest when doesn't fit under the 2nd. 
+            data.SetModelDimensions(osg::Vec3(1.0f, 1.0f, 3.8f)); 
+            point.z() = 0.0f;
             CPPUNIT_ASSERT_MESSAGE("A nearest hit should have been found.",
-                     mGroundClamper->GetClosestHit(*mTestGameActor, data, *single, 3.4, point, normal));
+               mGroundClamper->GetClosestHit(*mTestGameActor, data, *single, 0.03f, point, normal));
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(4.0f, point.z(), 0.001);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0f, normal.y(), 0.001);
+
+            // CLAMPING UP - one hit is up and one hit is down - doesn't fit inside
+            point.z() = 0.0f;
+            CPPUNIT_ASSERT_MESSAGE("A nearest hit should have been found.",
+                     mGroundClamper->GetClosestHit(*mTestGameActor, data, *single, 3.4f, point, normal));
 
             CPPUNIT_ASSERT_DOUBLES_EQUAL(3.0f, point.x(), 0.001);
             CPPUNIT_ASSERT_DOUBLES_EQUAL(4.0f, point.y(), 0.001);
@@ -389,9 +400,11 @@ namespace dtGame
             CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0f, normal.y(), 0.001);
             CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0f, normal.z(), 0.001);
 
-            //  CLAMPING DOWN
+            //  CLAMPING DOWN - with FULL mode
+            point.z() = 0.0f;
+            data.SetGroundClampType(dtGame::GroundClampTypeEnum::FULL);
             CPPUNIT_ASSERT_MESSAGE("A nearest hit should have been found.",
-                     mGroundClamper->GetClosestHit(*mTestGameActor, data, *single, 5.0, point, normal));
+                     mGroundClamper->GetClosestHit(*mTestGameActor, data, *single, 5.0f, point, normal));
 
             CPPUNIT_ASSERT_DOUBLES_EQUAL(3.0f, point.x(), 0.001);
             CPPUNIT_ASSERT_DOUBLES_EQUAL(4.0f, point.y(), 0.001);
@@ -401,6 +414,24 @@ namespace dtGame
             CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0f, normal.y(), 0.001);
             CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0f, normal.z(), 0.001);
 
+            // CLAMPING DOWN - 'keep above' should do nothing - returns what went in
+            data.SetGroundClampType(dtGame::GroundClampTypeEnum::KEEP_ABOVE);
+            CPPUNIT_ASSERT_MESSAGE("A nearest hit should have been found.",
+               mGroundClamper->GetClosestHit(*mTestGameActor, data, *single, 5.0f, point, normal));
+
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(5.0f, point.z(), 0.001);
+            // Normal is set to be straight up
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0f, normal.x(), 0.001);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0f, normal.y(), 0.001);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0f, normal.z(), 0.001);
+
+            // CLAMPING - 1 up and 1 down... fits inside. - FULL CLAMP - should go down
+            data.SetGroundClampType(dtGame::GroundClampTypeEnum::FULL);
+            data.SetModelDimensions(osg::Vec3(1.0f, 1.0f, 1.0f)); 
+            point.z() = 0.0f;
+            CPPUNIT_ASSERT_MESSAGE("A nearest hit should have been found.",
+               mGroundClamper->GetClosestHit(*mTestGameActor, data, *single, 2.0f, point, normal));
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0f, point.z(), 0.001);
          }
 
          ///////////////////////////////////////////////////////////////////////
@@ -659,6 +690,7 @@ namespace dtGame
 
             // Declare a Ground Clamp Data to satisfy the GetClosestHit method.
             GroundClampingData data;
+            data.SetGroundClampType(dtGame::GroundClampTypeEnum::FULL); // make it clamp down
 
             // Test the method.
             dtCore::Transform xform; // Satisfy the method parameters.
@@ -830,6 +862,8 @@ namespace dtGame
             // Create Ground Clamp Data.
             GroundClampingData clampData1;
             GroundClampingData clampData2;
+            clampData1.SetGroundClampType(dtGame::GroundClampTypeEnum::FULL); // make it clamp down
+            clampData2.SetGroundClampType(dtGame::GroundClampTypeEnum::FULL); // make it clamp down
 
             // Create User Runtime Data.
             DefaultGroundClamper::RuntimeData* runtimeData1
@@ -936,10 +970,11 @@ namespace dtGame
             CPPUNIT_ASSERT(runtimeData->GetLastClampedRotation() == clampRotation);
             double curTime = 5.0;
             dtGame::GroundClampingData data;
-            dtGame::BaseGroundClamper::GroundClampingType* clampType
-               = &dtGame::BaseGroundClamper::GroundClampingType::INTERMITTENT_SAVE_OFFSET;
+            dtGame::BaseGroundClamper::GroundClampRangeType* clampType
+               = &dtGame::BaseGroundClamper::GroundClampRangeType::INTERMITTENT_SAVE_OFFSET;
             data.SetUserData(runtimeData.get());
             data.SetAdjustRotationToGround(true);
+            data.SetGroundClampType(dtGame::GroundClampTypeEnum::FULL); // make it clamp down
 
             mGroundClamper->ClampToGround(*clampType, curTime,
                xform, *proxy, data, true);
