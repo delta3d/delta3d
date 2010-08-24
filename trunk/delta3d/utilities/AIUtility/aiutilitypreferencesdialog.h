@@ -39,6 +39,9 @@ public:
    void SetRenderSelectionDefaultValue(bool useSelectionRender);
    bool GetRenderSelectionMode() const;
 
+   void SetRenderBackfacesDefaultValue(bool renderBackfaces);
+   bool GetRenderBackFaces() const;
+
 private slots:
 
    /// Called when the Ok button is pressed
@@ -46,6 +49,7 @@ private slots:
 
 private:
    QCheckBox* mRenderOnSelection;
+   QCheckBox* mRenderBackfaces;
 };
 
 #endif // AIUTILITY_PREFERENCES_DIALOG

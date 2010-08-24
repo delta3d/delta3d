@@ -55,6 +55,7 @@ int main(int argc, char* argv[])
    QObject::connect(&win, SIGNAL(MapSelected(const std::string&)), app.get(), SLOT(ChangeMap(const std::string&)));
    QObject::connect(&win, SIGNAL(CloseMapSelected()), app.get(), SLOT(CloseMap()));
    QObject::connect(&win, SIGNAL(RenderOnSelection(bool)), app.get(), SLOT(OnRenderOnSelectChanged(bool)));
+   QObject::connect(&win, SIGNAL(RenderBackfaces(bool)), app.get(), SLOT(OnRenderBackfacesChanged(bool)));
    QObject::connect(&win, SIGNAL(GroundClampSelectedWaypoints()), app.get(), SLOT(OnGroundClampSelectedWaypoints()));
 
    win.show();

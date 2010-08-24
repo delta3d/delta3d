@@ -70,6 +70,7 @@ public slots:
    void OnSelectWaypontBrushMode(bool enable);
    void OnWaypointBrushSizeChanged(double value);
    void OnRenderOnSelectChanged(bool enabled);
+   void OnRenderBackfacesChanged(bool enabled);
    void OnUndoCommandCreated(QUndoCommand* undoCommand);
    void OnGroundClampSelectedWaypoints();
    void OnWaypointSelectionChanged(std::vector<dtAI::WaypointInterface*>& selectedWaypoints);
