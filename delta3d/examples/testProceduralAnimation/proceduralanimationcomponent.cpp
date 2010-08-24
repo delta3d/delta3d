@@ -161,7 +161,7 @@ void ProceduralAnimationComponent::CreateIKActorsForAesthetics()
       dtGame::GameActorProxy& proxy = mActorList[actorIndex]->GetGameActorProxy();
 
       // Add this actor to the ground clamp batch
-      mGroundClamper->ClampToGround(dtGame::BaseGroundClamper::GroundClampingType::RANGED,
+      mGroundClamper->ClampToGround(dtGame::BaseGroundClamper::GroundClampRangeType::RANGED,
          0.0, transform, proxy, gcData, true);
    }
 
