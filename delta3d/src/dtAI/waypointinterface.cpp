@@ -77,7 +77,7 @@ namespace dtAI
    {
       return *mWaypointType;
    }
-   
+
    //////////////////////////////////////////////////////////////////////////
    osg::Vec3 WaypointInterface::GetPosCopy() const
    {
@@ -93,12 +93,12 @@ namespace dtAI
       static const dtUtil::RefString Desc_WaypointID("The ID of the waypoint");
       static const dtUtil::RefString WaypointGroup("WaypointInterface");
 
-      container.CreateProperty<osg::Vec3>(Property_WaypointPosition, Property_WaypointPosition, 
+      container.CreateProperty<osg::Vec3>(Property_WaypointPosition, Property_WaypointPosition,
                   &WaypointInterface::GetPosCopy, &WaypointInterface::SetPosition, Desc_WaypointPosition, WaypointGroup);
 
       //we actually do not let you set the ID through the property, because we cannot guarantee it will never change.
       //This boils down to a read/write issue.
-      container.CreateReadOnlyProperty<int>(Property_WaypointID, Property_WaypointID, 
+      container.CreateReadOnlyProperty<int>(Property_WaypointID, Property_WaypointID,
                                                   &WaypointInterface::GetIDAsInt, Desc_WaypointID, WaypointGroup);
 
    }
