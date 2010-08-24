@@ -224,6 +224,16 @@ void AIUtilityApp::OnRenderOnSelectChanged(bool enabled)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void AIUtilityApp::OnRenderBackfacesChanged(bool enabled)
+{
+   osg::StateAttribute::Values value = (enabled) ? osg::StateAttribute::OFF: osg::StateAttribute::ON;
+
+   // Apply the backface setting to the whole scene
+   osg::Node* sceneNode = GetScene()->GetSceneNode();
+   sceneNode->getOrCreateStateSet()->setMode(GL_CULL_FACE, value | osg::StateAttribute::OVERRIDE);
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void AIUtilityApp::OnUndoCommandCreated(QUndoCommand* undoCommand)
 {
    emit UndoCommandGenerated(undoCommand);

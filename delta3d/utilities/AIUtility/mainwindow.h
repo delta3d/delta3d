@@ -83,6 +83,7 @@ signals:
    void WaypointBrushSizeChanged(double value);
    void GroundClampSelectedWaypoints();
    void RenderOnSelection(bool enabled);
+   void RenderBackfaces(bool shouldRender);
 
 public slots:
    void OnError(const std::string& message);
@@ -137,6 +138,7 @@ private:
 
    QUndoStack *mUndoStack;
    bool mSelectionBasedRendering; ///Do we only render expensive graphics for selected waypoints
+   bool mRenderBackfaces;
 };
 
 #endif /*AIUTILITY_MAIN_WINDOW*/

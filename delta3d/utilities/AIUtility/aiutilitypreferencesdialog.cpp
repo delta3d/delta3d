@@ -40,16 +40,24 @@ AIUtilityPreferencesDialog::AIUtilityPreferencesDialog(QWidget* parent)
    QPushButton* ok     = new QPushButton(tr("OK"));
    QPushButton* cancel = new QPushButton(tr("Cancel"));
    QLabel*      label  = new QLabel(tr("Selection based rendering."));
+   QLabel* backfaceLabel = new QLabel(tr("Render back faces."));
 
    mRenderOnSelection = new QCheckBox;
    mRenderOnSelection->setChecked(false);
    mRenderOnSelection->setToolTip(tr("Allows visualization of waypoint edges and text by selection."));
+
+   mRenderBackfaces = new QCheckBox;
+   mRenderBackfaces->setChecked(false);
+   mRenderBackfaces->setToolTip(tr("Cause geometry not facing the camera to be rendered (typically culled)."));
+
    label->setToolTip(tr("Allows visualization of waypoint edges and text by selection."));
 
    vLay->addWidget(group);
 
    grid->addWidget(label, 0, 0);
    grid->addWidget(mRenderOnSelection, 0, 2);
+   grid->addWidget(backfaceLabel, 1, 0);
+   grid->addWidget(mRenderBackfaces, 1, 2);
 
    hLay->addStretch(1);
    hLay->addWidget(ok);
@@ -64,7 +72,7 @@ AIUtilityPreferencesDialog::AIUtilityPreferencesDialog(QWidget* parent)
    setWindowTitle(tr("Preference Editor"));
 
    setModal(true);
-   setFixedSize(325, 100);
+   setFixedSize(325, 150);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -83,4 +91,16 @@ void AIUtilityPreferencesDialog::onOk()
 bool AIUtilityPreferencesDialog::GetRenderSelectionMode() const
 {
    return mRenderOnSelection->isChecked();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void AIUtilityPreferencesDialog::SetRenderBackfacesDefaultValue(bool renderBackfaces)
+{
+   mRenderBackfaces->setChecked(renderBackfaces);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool AIUtilityPreferencesDialog::GetRenderBackFaces() const
+{
+   return mRenderBackfaces->isChecked();
 }

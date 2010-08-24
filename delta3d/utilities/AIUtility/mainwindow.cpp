@@ -70,6 +70,7 @@ MainWindow::MainWindow(QWidget& mainWidget)
 , mWaypointBrowser(NULL)
 , mPluginInterface(NULL)
 , mSelectionBasedRendering(false)
+, mRenderBackfaces(false)
 {
    mUi->setupUi(this);
 
@@ -328,11 +329,15 @@ void MainWindow::OnPreferences()
 {
    AIUtilityPreferencesDialog dlg(this);
    dlg.SetRenderSelectionDefaultValue(mSelectionBasedRendering);
- 
+   dlg.SetRenderBackfacesDefaultValue(mRenderBackfaces);
+
    if (dlg.exec()== QDialog::Accepted)
    {
       mSelectionBasedRendering = dlg.GetRenderSelectionMode();
-      emit RenderOnSelection(dlg.GetRenderSelectionMode());
+      mRenderBackfaces = dlg.GetRenderBackFaces();
+
+      emit RenderOnSelection(mSelectionBasedRendering);
+      emit RenderBackfaces(mRenderBackfaces);
    }
 }
 
