@@ -252,7 +252,6 @@ namespace dtAI
             WaypointInterface* wpPtr = GetWaypointById(iter->mID);
             if (wpPtr != NULL && wpPtr->GetID() == wi->GetID())
             {
-
                // remove from current drawable
                if (mDrawable.valid())
                {
@@ -419,7 +418,12 @@ namespace dtAI
                AddEdge(wp->GetWaypointFrom()->GetID(), wp->GetWaypointTo()->GetID());
             }
 
-            //wm.SetDeleteOnClear(false);
+            // Waypoints are deleted in ClearMemory.  The WaypointManager is legacy
+            // and should not be used for memory management if at all possible.
+            wm.SetDeleteOnClear(false);
+
+            // The WaypointManager doesn't need to hang on to this anymore
+            wm.Clear();
          }
          return result;
       }

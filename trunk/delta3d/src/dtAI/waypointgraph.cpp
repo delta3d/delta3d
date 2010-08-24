@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * Bradley Anderegg 
+ * Bradley Anderegg
  */
 
 #include <dtAI/waypointgraph.h>
@@ -50,6 +50,7 @@ namespace dtAI
 
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    WaypointGraph::SearchLevel::~SearchLevel()
    {
       mNodes.clear();
@@ -67,28 +68,35 @@ namespace dtAI
       struct WaypointHolder
       {
          WaypointHolder()
-            : mLevel(0) 
+            : mLevel(0)
             , mParent(0)
             , mWaypoint(0){}
-              
+
          unsigned mLevel;
          WaypointCollection* mParent;
          dtCore::RefPtr<const WaypointInterface> mWaypoint;
       };
 
       typedef std::map<WaypointID, WaypointHolder> WaypointMap;
-      
+
+      /////////////////////////////////////////////////////////////////////////////
       WaypointGraphImpl()
       {
-
       }
 
+      /////////////////////////////////////////////////////////////////////////////
       void CleanUp()
       {
          mSearchLevels.clear();
+
+         WaypointMap::iterator iter = mWaypointOwnership.begin();
+
+         // If we loaded a legacy ai file, then it is important to make sure
+         // that the WaypointManager doesn't delete our Waypoints before this
          mWaypointOwnership.clear();
       }
 
+      /////////////////////////////////////////////////////////////////////////////
       WaypointCollection* CastToCollection(WaypointCollection::WaypointTree* wt)
       {
          const WaypointCollection* col = dynamic_cast<const WaypointCollection*>(wt);
@@ -100,19 +108,21 @@ namespace dtAI
          return NULL;
       }
 
-      const WaypointCollection* CastToCollection(const WaypointCollection::WaypointTree* wt) const 
+      /////////////////////////////////////////////////////////////////////////////
+      const WaypointCollection* CastToCollection(const WaypointCollection::WaypointTree* wt) const
       {
          const WaypointCollection* col = dynamic_cast<const WaypointCollection*>(wt);
 
          return col;
       }
 
+      /////////////////////////////////////////////////////////////////////////////
       WaypointGraph::SearchLevel* CreateSearchLevel(unsigned level)
       {
          WaypointGraph::SearchLevel* sl = new WaypointGraph::SearchLevel();
          sl->mNavMesh = new NavMesh();
          sl->mLevelNum = level;
-         
+
          //insert sorted
          WaypointGraph::SearchLevelArray::iterator iter = mSearchLevels.begin();
          WaypointGraph::SearchLevelArray::iterator iterEnd = mSearchLevels.end();
@@ -127,6 +137,7 @@ namespace dtAI
          return sl;
       }
 
+      /////////////////////////////////////////////////////////////////////////////
       WaypointGraph::SearchLevel* FindSearchLevel(unsigned levelNum)
       {
          //we need to iterate through all the levels
@@ -141,6 +152,7 @@ namespace dtAI
          return NULL;
       }
 
+      /////////////////////////////////////////////////////////////////////////////
       const WaypointGraph::SearchLevel* FindSearchLevel(unsigned levelNum) const
       {
          //we need to iterate through all the levels
@@ -155,7 +167,7 @@ namespace dtAI
          return NULL;
       }
 
-
+      /////////////////////////////////////////////////////////////////////////////
       WaypointGraph::SearchLevel* GetSearchLevel(unsigned levelNum)
       {
          if(levelNum < mSearchLevels.size())
@@ -171,17 +183,19 @@ namespace dtAI
          return FindSearchLevel(levelNum);
       }
 
+      /////////////////////////////////////////////////////////////////////////////
       WaypointGraph::SearchLevel* GetOrCreateSearchLevel(unsigned levelNum)
       {
          WaypointGraph::SearchLevel* sl = GetSearchLevel(levelNum);
          if(sl == NULL)
          {
-            sl = CreateSearchLevel(levelNum);            
+            sl = CreateSearchLevel(levelNum);
          }
 
          return sl;
       }
 
+      /////////////////////////////////////////////////////////////////////////////
       const WaypointGraph::SearchLevel* GetSearchLevel(unsigned levelNum) const
       {
          if(levelNum < mSearchLevels.size())
@@ -197,7 +211,7 @@ namespace dtAI
          return FindSearchLevel(levelNum);
       }
 
-
+      /////////////////////////////////////////////////////////////////////////////
       //wc can be NULL, if so it will make a new collection and add it
       void Insert(const WaypointInterface& waypoint, WaypointCollection* wcParent)
       {
@@ -222,6 +236,7 @@ namespace dtAI
          mWaypointOwnership.insert(std::make_pair(waypoint.GetID(), wh));
       }
 
+      /////////////////////////////////////////////////////////////////////////////
       void InsertCollection(dtCore::RefPtr<WaypointCollection> wc, unsigned level)
       {
          WaypointGraph::SearchLevel* sl = GetOrCreateSearchLevel(level);
@@ -230,27 +245,28 @@ namespace dtAI
          //insert ownership
          WaypointHolder wh;
          wh.mLevel = level;
-         //on waypoint collections the pointer points back to itelf         
+         //on waypoint collections the pointer points back to itelf
          wh.mWaypoint = wc.get();
          wh.mParent = wc.get();
 
          mWaypointOwnership.insert(std::make_pair(wc->GetID(), wh));
       }
 
-
+      /////////////////////////////////////////////////////////////////////////////
       //returns the top most node for a specific child
       WaypointCollection* GetRoot(WaypointCollection* wc)
       {
          WaypointCollection::WaypointTree* rootNode = wc;
-         
+
          while(rootNode->parent() != NULL)
          {
             rootNode = rootNode->parent();
          }
-            
+
          return CastToCollection(rootNode);
       }
 
+      /////////////////////////////////////////////////////////////////////////////
       //returns the top most node for a specific child
       const WaypointCollection* GetRoot(const WaypointCollection* wc) const
       {
@@ -264,7 +280,7 @@ namespace dtAI
          return CastToCollection(rootNode);
       }
 
-
+      /////////////////////////////////////////////////////////////////////////////
       void Remove(const WaypointInterface* waypoint)
       {
          const WaypointCollection* wcConst = dynamic_cast<const WaypointCollection*>(waypoint);
@@ -276,7 +292,7 @@ namespace dtAI
             WaypointCollection::WaypointTree::child_iterator iter = wc->begin_child();
             WaypointCollection::WaypointTree::child_iterator iterEnd = wc->end_child();
             for(;iter != iterEnd; ++iter)
-            {            
+            {
                Remove(iter->value);
             }
 
@@ -287,10 +303,11 @@ namespace dtAI
          }
          else
          {
-            RemoveWaypoint(waypoint);               
+            RemoveWaypoint(waypoint);
          }
       }
 
+      /////////////////////////////////////////////////////////////////////////////
       void RemoveWaypoint(const WaypointInterface* waypoint)
       {
          WaypointMap::iterator iter = mWaypointOwnership.find(waypoint->GetID());
@@ -312,8 +329,8 @@ namespace dtAI
          }
 
       }
-      
 
+      /////////////////////////////////////////////////////////////////////////////
       //they have a path if they share a common parent
       bool HasPath(const WaypointCollection& lhs, const WaypointCollection& rhs) const
       {
@@ -333,12 +350,13 @@ namespace dtAI
       //}
 
 
+      /////////////////////////////////////////////////////////////////////////////
       const WaypointCollection* FindCommonParent(const WaypointCollection& lhs, const WaypointCollection& rhs) const
       {
          //first lets get them on the same level
          int idLHS = GetSearchLevelNum(lhs.GetID());
          int idRHS = GetSearchLevelNum(rhs.GetID());
-         
+
          if(idLHS >= 0 && idRHS > 0)
          {
             const WaypointCollection::WaypointTree* lhsParent = &lhs;
@@ -352,7 +370,7 @@ namespace dtAI
 
             while(idRHS < idLHS && rhsParent != NULL)
             {
-               rhsParent = rhsParent->parent();          
+               rhsParent = rhsParent->parent();
                ++idRHS;
             }
 
@@ -365,14 +383,16 @@ namespace dtAI
                }
 
                lhsParent = lhsParent->parent();
-               rhsParent = rhsParent->parent();                        
+               rhsParent = rhsParent->parent();
             }
          }
 
          return NULL;
       }
 
-      bool GetNodePath(const WaypointCollection& wp, const WaypointCollection& parentNode, WaypointGraph::ConstWaypointCollectionArray& result) const
+      /////////////////////////////////////////////////////////////////////////////
+      bool GetNodePath(const WaypointCollection& wp, const WaypointCollection& parentNode,
+                       WaypointGraph::ConstWaypointCollectionArray& result) const
       {
          const WaypointCollection::WaypointTree* curNode = &wp;
 
@@ -391,6 +411,7 @@ namespace dtAI
          return false;
       }
 
+      /////////////////////////////////////////////////////////////////////////////
       int GetSearchLevelNum(WaypointID id) const
       {
          WaypointMap::const_iterator iter = mWaypointOwnership.find(id);
@@ -399,7 +420,7 @@ namespace dtAI
             const WaypointHolder& wh = (*iter).second;
             return wh.mLevel;
          }
-          
+
          return -1;
       }
 
@@ -419,7 +440,7 @@ namespace dtAI
    //WaypointGraph
    //////////////////////////////////////////////////////////////////////////
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    WaypointGraph::WaypointGraph()
       : mImpl(new WaypointGraphImpl())
    {
@@ -427,7 +448,7 @@ namespace dtAI
 
    /////////////////////////////////////////////////////////////////////////////
    WaypointGraph::~WaypointGraph()
-   {      
+   {
       Clear();
 
       delete mImpl;
@@ -439,7 +460,7 @@ namespace dtAI
    {
       OnClear();
    }
-   
+
    /////////////////////////////////////////////////////////////////////////////
    void WaypointGraph::OnClear()
    {
@@ -448,7 +469,7 @@ namespace dtAI
 
    /////////////////////////////////////////////////////////////////////////////
    void WaypointGraph::CreateSearchGraph(WaypointGraphBuilder* builder, unsigned maxLevels)
-   {      
+   {
       bool success = true;
       for(unsigned i = 1; i < maxLevels && success; ++i)
       {
@@ -470,7 +491,7 @@ namespace dtAI
       }
 
    }
-  
+
    /////////////////////////////////////////////////////////////////////////////
    void WaypointGraph::InsertWaypoint(WaypointInterface* waypoint)
    {
@@ -503,7 +524,7 @@ namespace dtAI
          //recalculate up the tree
          WaypointCollection* wc = FindCollection(waypoint->GetID());
          if(wc != NULL)
-         {            
+         {
             wc->Recalculate();
          }
       }
@@ -531,7 +552,7 @@ namespace dtAI
 
    /////////////////////////////////////////////////////////////////////////////
    void WaypointGraph::RemoveWaypoint_Protected(const WaypointInterface* waypoint)
-   {      
+   {
       mImpl->Remove(waypoint);
    }
 
@@ -647,18 +668,18 @@ namespace dtAI
          if(iterFrom != mImpl->mWaypointOwnership.end() && iterTo != mImpl->mWaypointOwnership.end())
          {
             WaypointGraphImpl::WaypointHolder& whFrom = (*iterFrom).second;
-            WaypointGraphImpl::WaypointHolder& whTo = (*iterTo).second;         
+            WaypointGraphImpl::WaypointHolder& whTo = (*iterTo).second;
             if(whFrom.mLevel == whTo.mLevel)
             {
                //now for each search level, add the new path to all parents
                SearchLevel* sl = mImpl->GetSearchLevel(whFrom.mLevel);
-               sl->mNavMesh->AddEdge(whFrom.mWaypoint, whTo.mWaypoint);                             
+               sl->mNavMesh->AddEdge(whFrom.mWaypoint, whTo.mWaypoint);
             }
             else
             {
                LOG_ERROR("Cannot insert edge between waypoints that are not on the same level.");
             }
-         }         
+         }
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -682,7 +703,7 @@ namespace dtAI
       if(iterFrom != mImpl->mWaypointOwnership.end() && iterTo != mImpl->mWaypointOwnership.end())
       {
          WaypointGraphImpl::WaypointHolder& whFrom = (*iterFrom).second;
-         WaypointGraphImpl::WaypointHolder& whTo = (*iterTo).second;         
+         WaypointGraphImpl::WaypointHolder& whTo = (*iterTo).second;
          if(whFrom.mLevel == whTo.mLevel)
          {
             SearchLevel* sl = mImpl->GetSearchLevel(whFrom.mLevel);
@@ -692,7 +713,7 @@ namespace dtAI
          {
             LOG_ERROR("Cannot remove edge between waypoints that are not on the same level.");
          }
-      }         
+      }
       return false;
    }
 
@@ -706,7 +727,7 @@ namespace dtAI
          RemoveAllEdgesFromWaypoint_Protected(wpFrom);
       }
    }
-   
+
    ////////////////////////////////////////////////////////////////////////////
    void WaypointGraph::RemoveAllEdgesFromWaypoint_Protected(const WaypointInterface* from)
    {
@@ -714,10 +735,10 @@ namespace dtAI
       if(iterFrom != mImpl->mWaypointOwnership.end())
       {
          WaypointGraphImpl::WaypointHolder& whFrom = (*iterFrom).second;
-   
+
          SearchLevel* sl = mImpl->GetSearchLevel(whFrom.mLevel);
          sl->mNavMesh->RemoveAllEdges(whFrom.mWaypoint);
-      }         
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -730,7 +751,7 @@ namespace dtAI
          GetAllEdgesFromWaypoint_Protected(*wpFrom, result);
       }
    }
-      
+
    /////////////////////////////////////////////////////////////////////////////
    void WaypointGraph::GetAllEdgesFromWaypoint_Protected(const WaypointInterface& pFrom, ConstWaypointArray& result) const
    {
@@ -739,22 +760,22 @@ namespace dtAI
       {
          const WaypointGraphImpl::WaypointHolder& wh = (*iter).second;
          WaypointGraph::SearchLevel* sl = mImpl->GetSearchLevel(wh.mLevel);
-         
+
          if(sl != NULL)
          {
             NavMesh::NavMeshContainer::iterator nm_iter = sl->mNavMesh->begin(wh.mWaypoint);
             NavMesh::NavMeshContainer::iterator nm_iterEnd = sl->mNavMesh->end(wh.mWaypoint);
-            
+
             for(;nm_iter != nm_iterEnd; ++nm_iter)
             {
                result.push_back( (*nm_iter).second->GetWaypointTo() );
             }
          }
       }
-      
+
    }
 
-  
+
    /////////////////////////////////////////////////////////////////////////////
    bool WaypointGraph::HasPath(WaypointID lhs, WaypointID rhs) const
    {
@@ -767,13 +788,13 @@ namespace dtAI
       {
          result = HasPath_Protected(lhsC, rhsC);
       }
-      
+
       return result;
    }
 
    /////////////////////////////////////////////////////////////////////////////
    bool WaypointGraph::HasPath_Protected(const WaypointCollection* lhs, const WaypointCollection* rhs) const
-   {      
+   {
       return mImpl->HasPath(*lhs, *rhs);
    }
 
@@ -794,7 +815,7 @@ namespace dtAI
 
       return NULL;
    }
-   
+
    /////////////////////////////////////////////////////////////////////////////
    NavMesh* WaypointGraph::GetNavMeshAtSearchLevel(unsigned level)
    {
@@ -821,13 +842,13 @@ namespace dtAI
       }
 
       return NULL;
-   }   
+   }
 
    /////////////////////////////////////////////////////////////////////////////
    unsigned WaypointGraph::GetNumSearchLevels() const
    {
       //note this is not necessarily the max mLevel of all search levels
-      //the distinction is made because this is the index used to access the search level array directly      
+      //the distinction is made because this is the index used to access the search level array directly
       return mImpl->mSearchLevels.size();
    }
 
@@ -839,14 +860,14 @@ namespace dtAI
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   WaypointGraph::SearchLevel* WaypointGraph::GetSearchLevel(unsigned levelNum) 
+   WaypointGraph::SearchLevel* WaypointGraph::GetSearchLevel(unsigned levelNum)
    {
       //we are guaranteed to have a search level 0
       return mImpl->GetSearchLevel(levelNum);
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   WaypointGraph::SearchLevel* WaypointGraph::GetOrCreateSearchLevel(unsigned levelNum) 
+   WaypointGraph::SearchLevel* WaypointGraph::GetOrCreateSearchLevel(unsigned levelNum)
    {
       //we are guaranteed to have a search level 0
       return mImpl->GetOrCreateSearchLevel(levelNum);
@@ -883,7 +904,7 @@ namespace dtAI
       if(wpColRhs != NULL && wpColLhs != NULL)
       {
          return FindCommonParent(*wpColLhs, *wpColRhs);
-      } 
+      }
 
       return NULL;
    }
@@ -969,11 +990,11 @@ namespace dtAI
 
       WaypointGraphImpl::WaypointMap::iterator iter = mImpl->mWaypointOwnership.find(childWp);
       WaypointGraphImpl::WaypointMap::iterator parentIter = mImpl->mWaypointOwnership.find(parentID);
-      
+
       if(iter != mImpl->mWaypointOwnership.end())
       {
          WaypointGraphImpl::WaypointHolder& wh = (*iter).second;
-         
+
          unsigned searchLevel = wh.mLevel + 1;
 
          if(parentIter == mImpl->mWaypointOwnership.end())
@@ -1006,7 +1027,7 @@ namespace dtAI
 
                   //erase the waypoint from the map
                   mImpl->mWaypointOwnership.erase(parentIter);
-                  
+
                   //now re-add it at the correct level
                   InsertCollection(wcHolder.get(), searchLevel);
 
@@ -1015,7 +1036,7 @@ namespace dtAI
                else
                {
 
-                  LOG_ERROR("WaypointCollection '" + parentWp->ToString() + 
+                  LOG_ERROR("WaypointCollection '" + parentWp->ToString() +
                      "' has search level " + dtUtil::ToString(whParent.mLevel) + " which should be 1 greater then child '" +
                      wh.mWaypoint->ToString() + "' search level of " + dtUtil::ToString(wh.mLevel) + ".");
                   return false;
@@ -1032,7 +1053,7 @@ namespace dtAI
             wh.mParent = const_cast<WaypointCollection*>(childCollection);
          }
          else
-         {        
+         {
             wh.mParent = parentWp;
          }
 
@@ -1091,7 +1112,7 @@ namespace dtAI
                   {
                      if(wpToParent->GetID() != wc->GetID())
                      {
-                        //this effectively adds an edge from me to all my children's destination waypoint parents                  
+                        //this effectively adds an edge from me to all my children's destination waypoint parents
                         AddEdge(wc->GetID(), wpToParent->GetID());
                      }
 
@@ -1103,7 +1124,7 @@ namespace dtAI
                   }
                   else
                   {
-                     LOG_ERROR("Error while creating abstract edges for level '" + dtUtil::ToString(level) + 
+                     LOG_ERROR("Error while creating abstract edges for level '" + dtUtil::ToString(level) +
                                  "', no parent found for waypoint '" + (*nm_iter).second->GetWaypointTo()->ToString() + ".");
                   }
                }
