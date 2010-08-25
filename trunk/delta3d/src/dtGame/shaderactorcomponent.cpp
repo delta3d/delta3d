@@ -26,6 +26,7 @@
 #include <dtDAL/resourceactorproperty.h>
 #include <dtDAL/datatype.h>
 #include <dtDAL/project.h>
+#include <dtDAL/actortype.h>
 #include <dtUtil/log.h>
 
 const dtGame::ActorComponent::ACType dtGame::ShaderActorComponent::SHADER_ACTOR_COMPONENT_TYPE("ShaderActorComponent");
@@ -80,8 +81,23 @@ void dtGame::ShaderActorComponent::SetCurrentShader(const dtDAL::ResourceDescrip
       return;  //no parent GameActor yet!
    }
 
-   // Unassign any old setting on this, if any - works regardless if there's a node or not
-   dtCore::ShaderManager::GetInstance().UnassignShaderFromNode(*actor->GetOSGNode());
+   if (!mCurrentShaderResource.IsEmpty())
+   {
+      if (!actor->GetShaderGroup().empty())
+      {
+         LOG_WARNING(std::string("Setting a current shader resource on an actor that already has a shader group assigned.  "
+                  "The shader group is being cleared. Actor: ") + actor->GetName() + " " + actor->GetGameActorProxy().GetActorType().GetFullName());
+      }
+
+      actor->SetShaderGroup(std::string());
+   }
+
+   // This will only be not empty if the current shader resource passed in is empty
+   if (actor->GetShaderGroup().empty())
+   {
+      // Unassign any old setting on this, if any - works regardless if there's a node or not
+      dtCore::ShaderManager::GetInstance().UnassignShaderFromNode(*actor->GetOSGNode());
+   }
 
    if (mCurrentShaderResource.IsEmpty())
    {
