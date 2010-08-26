@@ -588,38 +588,42 @@ namespace dtAI
    ////////////////////////////////////////////////////////////////////////////////
    void AIDebugDrawable::RemovePathSegments(const WaypointInterface* pFrom)
    {
-      int indexFrom = FindWaypoint(pFrom->GetID());
-
-      for (size_t pairIndex = 0; pairIndex < mImpl->mWaypointPairs->size() - 1; pairIndex += 2)
+      // Bail out if there's nothing here
+      if (!mImpl->mWaypointPairs->empty())
       {
-         if (mImpl->mWaypointPairs->at(pairIndex) == indexFrom ||
-             mImpl->mWaypointPairs->at(pairIndex + 1) == indexFrom)
+         int indexFrom = FindWaypoint(pFrom->GetID());
+
+         for (size_t pairIndex = 0; pairIndex < mImpl->mWaypointPairs->size() - 1; pairIndex += 2)
          {
-            size_t currentSize = mImpl->mWaypointPairs->size();
-
-            // Do a fast erase if possible
-            if (pairIndex + 4 <= currentSize)
+            if (mImpl->mWaypointPairs->at(pairIndex) == indexFrom ||
+               mImpl->mWaypointPairs->at(pairIndex + 1) == indexFrom)
             {
-               (*mImpl->mWaypointPairs)[pairIndex] = mImpl->mWaypointPairs->at(currentSize - 2);
-               (*mImpl->mWaypointPairs)[pairIndex + 1] = mImpl->mWaypointPairs->at(currentSize - 1);
+               size_t currentSize = mImpl->mWaypointPairs->size();
 
-               mImpl->mWaypointPairs->pop_back();
-               mImpl->mWaypointPairs->pop_back();
-            }
-            else
-            {
-               // These must be the last 2
-               mImpl->mWaypointPairs->erase(mImpl->mWaypointPairs->begin() + (pairIndex + 1));
-               mImpl->mWaypointPairs->erase(mImpl->mWaypointPairs->begin() + pairIndex);
-               break;
-            }
+               // Do a fast erase if possible
+               if (pairIndex + 4 <= currentSize)
+               {
+                  (*mImpl->mWaypointPairs)[pairIndex] = mImpl->mWaypointPairs->at(currentSize - 2);
+                  (*mImpl->mWaypointPairs)[pairIndex + 1] = mImpl->mWaypointPairs->at(currentSize - 1);
 
-            // We just removed 2 so stay at the current index
-            pairIndex -= 2;
+                  mImpl->mWaypointPairs->pop_back();
+                  mImpl->mWaypointPairs->pop_back();
+               }
+               else
+               {
+                  // These must be the last 2
+                  mImpl->mWaypointPairs->erase(mImpl->mWaypointPairs->begin() + (pairIndex + 1));
+                  mImpl->mWaypointPairs->erase(mImpl->mWaypointPairs->begin() + pairIndex);
+                  break;
+               }
+
+               // We just removed 2 so stay at the current index
+               pairIndex -= 2;
+            }
          }
-      }
 
-      OnGeometryChanged();
+         OnGeometryChanged();
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////
