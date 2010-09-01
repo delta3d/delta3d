@@ -349,27 +349,15 @@ namespace dtAI
       //////////////////////////////////////////////////////////////////////////
       void RemoveAllEdges(WaypointID pFrom)
       {
-         dtAI::WaypointGraph::ConstWaypointArray edgePoints;
-         mWaypointGraph->GetAllEdgesFromWaypoint(pFrom, edgePoints);
-
+         mWaypointGraph->RemoveAllEdgesFromWaypoint(pFrom);
          if (mDrawable.valid())
          {
-            WaypointInterface* wi = GetWaypointById(pFrom);
-            mDrawable->RemoveAllEdges(wi);
-
-            // This brute force method should no longer be necessary
-            // but is intentionally left here in case things go awry.
-            // A side effect of the code below is causing the debug
-            // drawable to draw all edges, even in selection based mode.
-
-            //NavMesh* nm = mWaypointGraph->GetNavMeshAtSearchLevel(0);
-            //if (nm != NULL)
-            //{
-            //   mDrawable->UpdateWaypointGraph(*nm);
-            //}
+            NavMesh* nm = mWaypointGraph->GetNavMeshAtSearchLevel(0);
+            if (nm != NULL)
+            {
+               mDrawable->UpdateWaypointGraph(*nm);
+            }
          }
-
-         mWaypointGraph->RemoveAllEdgesFromWaypoint(pFrom);
       }
 
       //////////////////////////////////////////////////////////////////////////

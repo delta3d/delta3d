@@ -1117,6 +1117,8 @@ namespace dtGame
       // See DRImpl->RecomputeTransSplineValues() for the actual algorithm
       //////////////////////////////////////////////////
 
+      float timeSinceEndOfSpline = mTranslationElapsedTimeSinceUpdate - mTranslationEndSmoothingTime;
+
       // The formula for X, Y, and Z is ... x = A*t^3 + B*t^2 + C*t + D.
       // Note - t is normalized between 0 and 1. 
       // Note - Acceleration is accounted for in RecomputeTransSplineValues()

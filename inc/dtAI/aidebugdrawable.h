@@ -118,7 +118,6 @@ namespace dtAI
       void AddEdge(const WaypointInterface* pFrom, const WaypointInterface* pTo);
       void AddEdges(const std::vector<WaypointPair>& pairs);
       void RemoveEdge(const WaypointInterface* pFrom, const WaypointInterface* pTo);
-      void RemoveAllEdges(const WaypointInterface* pFrom);
 
       void UpdateWaypointGraph(const NavMesh& nm);
 
@@ -156,7 +155,6 @@ namespace dtAI
 
       void AddPathSegment(const WaypointInterface* pFrom, const WaypointInterface* pTo);
       void RemovePathSegment(const WaypointInterface* pFrom, const WaypointInterface* pTo);
-      void RemovePathSegments(const WaypointInterface* pFrom);
       void ClearWaypointGraph();
       void ClearText();
 

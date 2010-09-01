@@ -1355,11 +1355,10 @@ namespace dtHLAGM
    void HLAFOMConfigContentHandler::fatalError(const xercesc_dt::SAXParseException& exc)
    {
       mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-         //"FATAL-ERROR %d:%d - %s:%s - %s", exc.getLineNumber(),
-               "FATAL-ERROR %d:%d", exc.getLineNumber(),
-         exc.getColumnNumber());//, dtUtil::XMLStringConverter(exc.getPublicId()).c_str(),
-         //dtUtil::XMLStringConverter(exc.getSystemId()).c_str(),
-         //dtUtil::XMLStringConverter(exc.getMessage()).c_str());
+         "FATAL-ERROR %d:%d - %s:%s - %s", exc.getLineNumber(),
+         exc.getColumnNumber(), dtUtil::XMLStringConverter(exc.getPublicId()).c_str(),
+         dtUtil::XMLStringConverter(exc.getSystemId()).c_str(),
+         dtUtil::XMLStringConverter(exc.getMessage()).c_str());
       mTargetTranslator = NULL;
       throw exc;
    }

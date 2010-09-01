@@ -5,7 +5,7 @@ INCLUDE(delta3d_common)
   
 #variable names of the individual Delta3D libraries.  Can be used in application cmakelist.txt files.
 FIND_DELTA3D_LIBRARY(DTDIS_LIBRARY         dtDIS)
-FIND_DELTA3D_LIBRARY(DTDIS_DEBUG_LIBRARY   dtDISd)
+FIND_DELTA3D_LIBRARY(DTDIS_DEBUG_LIBRARY   dtDISD)
 
 DELTA3D_FIND_PATH   (DIS DIS/Pdu.h)
 DELTA3D_FIND_PATH   (DIS_CPPUTILS DIS/DataStream.h)

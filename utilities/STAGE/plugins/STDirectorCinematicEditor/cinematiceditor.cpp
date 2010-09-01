@@ -1103,6 +1103,7 @@ void DirectorCinematicEditorPlugin::OnAnimationComboChanged(int index)
       }
    }
 
+   CalMixer* calMixer = animActor->GetHelper()->GetModelWrapper()->GetCalModel()->getMixer();
    dtAnim::SequenceMixer& mixer = animActor->GetHelper()->GetSequenceMixer();
    const dtAnim::AnimationChannel* anim = dynamic_cast<const dtAnim::AnimationChannel*>(mixer.GetRegisteredAnimation(animName));
    if (anim)
