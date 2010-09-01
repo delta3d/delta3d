@@ -1,0 +1,19 @@
+<RCC>
+   <qresource prefix="/" >       
+      <file>images/wireframe.png</file>  
+      <file>images/shaded.png</file>              
+      <file>images/shadedwire.png</file>    
+      <file>images/diffuseLight.png</file>                          
+      <file>images/pointLight.png</file>        
+      <file>images/checker.png</file>
+      <file>images/reticle.png</file>
+      <file>images/handIcon.png</file>
+      <file>images/epsilon.png</file>
+      <file>images/epsilonCursor.png</file>
+      <file>images/displayEdges.png</file>
+      <file>images/displayError.png</file>
+      <file>images/boneBasis.png</file>
+      <file>images/verticalFlip.png</file>
+      <file>images/horizontalFlip.png</file>
+   </qresource>
+</RCC>

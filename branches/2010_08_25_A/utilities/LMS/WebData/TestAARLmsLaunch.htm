@@ -1,0 +1,162 @@
+<html>
+
+	<head>
+		<title>Delta3D AAR-LMS Integration Demo</title>
+	
+		<style type="text/css">
+			p.indented {text-indent: 2em; font-family: Arial; color: #FFFD86;}
+			h4.bold {font-family: Arial; color: #FFFD86;}
+			h5.bold {font-family: Arial; color: #FFFD86;}
+		</style>
+
+      <!--scripts for detecting which web browser user is running -->
+		<script src="DetectWebStartGecko.js"></script>
+		<script type="text/vbscript" src="DetectWebStartIE.vb"></script>
+		
+		<script src="APIWrapper.js"></script>
+		<script src="LoadXml.js"></script>
+		<script src="ProcessObjectives.js"></script>
+		<script src="ProcessMessage.js"></script>
+		<script src="LaunchPage.js"></script>
+
+		<script>
+		   var jnlpFile = "ApplicationLaunch.jnlp";
+		   var assessmentXmlUrl = "JavaLaunch.xml";
+		</script>
+
+	</head>
+		
+	<body bgcolor="#6E6C84" onunload="UnloadPage()">
+			<p>
+				<h2 style="color:#FFFD86; text-align: center">Delta3D AAR-LMS Integration Demo<br>Simulation Launch Page</h2>
+			</p>
+
+			<h4 class="bold">Simulation Control Panel</h4>
+			
+			<table id="SimulationTable" border=10 cellpadding=10 width=600 style="color:#FFFD86">
+				
+				<col width="100px">
+				<col>
+				<col>
+
+				<tr>
+					<td rowspan="2"><img src="images/SimulationImage.PNG"/></td>
+					<td>
+                     <script>WriteStartJnlpButton();</script>
+               </td>
+					<td>
+                     Press Start button to begin simulation...
+               </td>
+				</tr>
+
+				<tr>
+					<td colspan="2">&nbsp</td>
+				</tr>
+
+				<tr>
+					<td colspan="3">
+                              <em>Required Tasks:<br><br></em>
+					</td>
+				</tr>
+
+				<tr>
+				      <td colspan="3">
+				           <table id="DebugTable" border=0 cellpadding=0 width=505 style="color:#FFFD86">
+				                <col>
+				                <col>
+				                <tr>
+				                     <td>
+				                          <em>Debug Messages:<em>
+				                     </td>
+				                     <td align="right">
+                                       <button id="DebugButton" style="width:50" onclick="ToggleDebug()">Show</button>
+                                 </td>
+                            </tr>
+                            <tr style="display:'none'">
+                                 <td colspan="2"">
+				                          <form name="DebugTextForm">
+				                             <textarea id="DebugMessageTextArea" name="DebugMessageTextArea" cols=60 rows=10 readonly></textarea>
+                                      </form>
+                                 </td>
+                            </tr>
+				           </table>
+				      </td>
+				</tr>
+			</table>
+
+			<h4 class="bold">Description</h4>
+			
+			<p class="indented">
+				The purpose of this web page is to demonstrate the ability to install, launch, and communicate with
+				a training simulation from within a web-based training environment. When you click on the "Launch"
+				button below, the web server will begin downloading and installing (with your permission) all files and data
+				needed to run a 3D training simulation. These files will be cached locally on your machine, so that the next time
+				you run the simulation via the "Launch" button, the training scenario should start almost immediately.
+			</p>
+			<p class="indented">
+				In addition, this demonstration page shows the capability to "listen" to messages being sent back from the native
+				game/simulation code. This ability to send messages from a game engine to a JavaScript function running in a web
+				page is critical for sending back training assessment information to a server-based Learning Management System (LMS).
+			</p>
+			
+			<h4 class="bold">Requirements</h4>
+			
+			<h5 class="bold">Java Runtime Environment</h5>
+			
+			<p class="indented">
+				The ability to automatically download, install, launch, and cache a full-blown game environment on a client machine
+				is based Java Web Start&#174; technology. Therefore, it is required that the version 1.5 of the Java Runtime Environment
+				be installed on the local machine. This web page has tried to detect your JRE version here:
+			</p>
+
+			<p class="indented">
+				<em>Your detected Java (JRE) version:&nbsp;</em>
+				
+				<span style="color: white">
+				<script>
+					if (javawsInstalled)
+					{
+						document.write(JREVersion);
+					} 
+					else
+					{
+						document.write("Not Installed");
+					}
+				</script>
+				</span>
+			</p>
+			
+			<p class="indented">
+				<script>
+					if (javawsInstalled && JREVersion == "1.5")
+					{
+						document.write("It appears that you have the JRE version required to run the demonstration. ");
+						document.write("However, if you have any problems you can try manually downloading Java JRE 1.5 ");
+						document.write("from <a href=\"http://java.sun.com/j2se/1.5.0/download.html\">http://java.sun.com/j2se/1.5.0/download.html</a>.");
+					}
+					else
+					{
+						document.write("It appears that you do <em>not</em> have the latest version of the Java Runtime Environment (JRE) ");
+						document.write("required to run the demonstration.");
+						document.write("<p>Click ");
+    					document.write("<a href=http://java.sun.com/PluginBrowserCheck?pass=http://65.15.129.58/~chrisd/Java5Download.html&fail=http://java.sun.com/j2se/1.5.0/download.html>here</a> ");
+    					document.write("to download and install JRE 5.0");
+					}
+				</script>
+			</p>
+			
+			<!--Initialize page and load list of objectives from xml file on server-->
+			<script>
+			   LoadPage()
+            LoadXMLDoc(assessmentXmlUrl, true);
+         </script>
+
+         <!--Start LMS Messaging Applet to wait for an incoming connection from a running simulation-->
+			<applet code="org/delta3d/lms/MessageApplet/LmsMessageApplet.class" archive="MessageApplet.jar" width="1" height="1" MAYSCRIPT ID="Applet1">
+			   <param name="port" value="4444"/>
+         </applet>
+
+	</body>
+
+
+</html>
