@@ -460,7 +460,8 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////
    void DeadReckoningHelper::ComputeRotationChangeWithAngularVelocity(double deltaTime, osg::Matrix& result)
    {
-      //mComputedAngularRotationMatrix
+      // THIS METHOD IS NOW OBSOLETE
+
       if (mAngularVelocityVector.length2() < 1e-6)
       {
          result.makeIdentity();
@@ -1016,25 +1017,23 @@ namespace dtGame
             // The Dead Reckoning Matrix
             osg::Matrix angularRotation;
             float actualRotationTime = std::min(mRotationElapsedTimeSinceUpdate, mRotationEndSmoothingTime);
-            ComputeRotationChangeWithAngularVelocity(actualRotationTime, angularRotation);
 
+            // The rotation change method was replaced with a much simpler calculation. 
+            // Create a quaternian using an axis/angle derived from teh ang vel vector. 
+            //ComputeRotationChangeWithAngularVelocity(actualRotationTime, angularRotation);
+            //osg::Quat angularRotAsQuat;//(rotationAngle, angVelAxis);
+            //angularRotation.get(angularRotAsQuat);
+
+            osg::Vec3 angVelAxis(mAngularVelocityVector);
+            float angVelMag = angVelAxis.normalize(); // returns the length
+            // rotation around the axis is magnitude of ang vel * time.
+            float rotationAngle = angVelMag * actualRotationTime;
+            osg::Quat rotationFromAngVel(rotationAngle, angVelAxis);
+            
             // Expected DR'ed rotation - Take the last rot and add the change over time
-            osg::Quat angularRotAsQuat;
-            angularRotation.get(angularRotAsQuat);
-            drQuat = angularRotAsQuat * mLastQuatRotation; // The current DR'ed rotation
-
+            drQuat = rotationFromAngVel * mLastQuatRotation; // The current DR'ed rotation
             // Previous DR'ed rotation - same, but uses where we were before the last update, so we can smooth it out...
-            startRotation = angularRotAsQuat * mRotQuatBeforeLastUpdate; // The current DR'ed rotation
-
-            // New hpr computation
-            //osg::Matrix drRot = angularRotation * mLastRotationMatrix;
-            //////dtUtil::MatrixUtil::Print(mComputedAngularRotationMatrix);
-            // Compute change in rotation as quaternion representation
-            //drRot.get(drQuat);
-            //osg::Quat rotationChange = drQuat - mLastQuatRotation;
-            //isRotationChangedByAccel = rotationChange.length2() > 1e-6;
-            //osg::Matrix drStartRot = angularRotation * mLastRotationMatrix;
-            //startRotation = mRotQuatBeforeLastUpdate + rotationChange;
+            startRotation = rotationFromAngVel * mRotQuatBeforeLastUpdate; // The current DR'ed rotation
          }
 
          // If there is a difference in the rotations and we still have time to smooth, then
