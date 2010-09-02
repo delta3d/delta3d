@@ -1,1 +1,0 @@
-This directory holds cached data for the testTerrain example.
