@@ -1,6 +1,0 @@
-Import('*')
-
-srcs = SGlob( '*.cpp' )
-deps = [ 'dtCore', 'dtABC', 'dtUtil', 'dtGame' ]
-
-env.BuildProgram( 'testLogger', srcs, deps )

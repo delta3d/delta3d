@@ -1,6 +1,0 @@
-Import('*')
-
-srcs =  env.SGlob( '*.cpp' )
-deps =[ 'dtABC' ] 
-
-env.BuildProgram( 'testMap', srcs, deps )

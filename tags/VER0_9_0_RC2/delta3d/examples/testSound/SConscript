@@ -1,7 +1,0 @@
-Import('*')
-
-testSrcs = ['testsound.cpp']
-
-testDeps = [ 'dtcore', 'dtabc', 'dtutil', 'dtaudio' ]
-
-BuildProgram( 'testSound', testSrcs, testDeps )

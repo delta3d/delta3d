@@ -1,7 +1,0 @@
-Import('*')
-
-testSrcs = SGlob('*.cpp')
-
-testDeps = [ 'dtcore', 'dtabc', 'dtutil' ]
-
-BuildProgram( '#bin/testRecorder', testSrcs, testDeps )

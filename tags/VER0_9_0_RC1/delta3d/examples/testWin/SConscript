@@ -1,7 +1,0 @@
-Import('*')
-
-testSrcs = ['testwin.cpp']
-
-testDeps = [ 'dtcore', 'dtabc', 'dtutil' ]
-
-BuildProgram( 'testWin', testSrcs, testDeps )

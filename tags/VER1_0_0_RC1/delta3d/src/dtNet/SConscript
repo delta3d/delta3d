@@ -1,9 +1,0 @@
-Import('*')
-
-import glob
-
-srcfiles = SGlob('*.cpp')
-
-dtNetDeps=[]
-       
-BuildLib( 'dtNet', srcfiles, dtNetDeps, [] )
