@@ -265,7 +265,7 @@ namespace dtUtil
             {
                std::ostringstream msg;
                // First, try and load the dynamic library.
-               msg << "Re-attempting using the module extension: " << actualLibName;
+               msg << "Re-attempting using the module extension: " << actualLibName2;
                LOG_ALWAYS(msg.str());
                dynLib = InternalLibraryHandle::LoadSharedLibrary(actualLibName2);
             }
