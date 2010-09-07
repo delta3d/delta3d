@@ -263,6 +263,7 @@ void Application::Frame(const double deltaSimTime)
       mCompositeViewer->updateTraversal();
       mCompositeViewer->renderingTraversals();
 
+      // you must check gw->isRealized() again here and not cache it because the step could cause the window to close.
       if (!singleThreaded && gw.valid() && gw->isRealized() && !gw->isCurrent())
       {
          gw->makeCurrent();
