@@ -23,10 +23,11 @@
 #define DELTA_MESSAGE
 
 #include <map>
-#include <limits.h>
+#include <climits>
+#include <dtUtil/exception.h>
+#include <dtUtil/typetraits.h>
 #include <dtDAL/exceptionenum.h>
 #include <dtDAL/serializeable.h>
-#include <dtUtil/exception.h>
 #include <dtGame/export.h>
 #include <dtGame/machineinfo.h>
 #include <dtGame/messageparameter.h>
@@ -220,8 +221,7 @@ namespace dtGame
          std::map<std::string,dtCore::RefPtr<MessageParameter> > mParameterList;
          
          dtCore::RefPtr<const Message> mCausingMessage;
-    };
-
+   };
 }
 
 #endif

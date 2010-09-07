@@ -29,12 +29,13 @@
 #include <dtUtil/objectfactory.h>
 #include <dtUtil/enumeration.h>
 #include <dtGame/export.h>
-#include <dtGame/messagetype.h>
 #include <dtGame/message.h>
 #include <dtGame/machineinfo.h>
 
 namespace dtGame
 {
+   class MessageType;
+
    class DT_GAME_EXPORT MessageFactory
    {
       public:
@@ -81,7 +82,9 @@ namespace dtGame
           * @note The template should be the class the MessageType corresponds to
           */
          template <typename T>
-         void RegisterMessageType(const MessageType& type);
+         static void RegisterMessageType(const MessageType& type);
+
+         static void UnregisterMessageType(const MessageType& type);
 
          /**
           * Gets the name of the factory
@@ -105,13 +108,13 @@ namespace dtGame
           * Tells is a message type is supported
           * @return True if it is, false if not
           */
-         bool IsMessageTypeSupported(const MessageType& msg) const;
+         static bool IsMessageTypeSupported(const MessageType& msg);
 
          /**
           * Gets a list of supported types
           * @param The vector to fill
           */
-         void GetSupportedMessageTypes(std::vector<const MessageType*>& vec);
+         static void GetSupportedMessageTypes(std::vector<const MessageType*>& vec);
 
          /**
           * Returns a MessageType for the corresponding id.
@@ -120,13 +123,13 @@ namespace dtGame
           * @return A reference to the MessageType
           * @throws dtUtil::Exception with enum MessageFactoryException::TYPE_NOT_REGISTERED if the type is not found.
           */
-         const MessageType& GetMessageTypeById(unsigned short id) const;
+         static const MessageType& GetMessageTypeById(unsigned short id);
 
          /**
           * Returns a MessageType for the corresponding name
           * @return A pointer to the MessageType or NULL if there was no matching message type.
           */
-         const MessageType* GetMessageTypeByName(const std::string& name) const;
+         static const MessageType* GetMessageTypeByName(const std::string& name);
 
          /**
           * Creates a message from the factory and fills a passed in refptr.
@@ -164,28 +167,29 @@ namespace dtGame
          dtCore::RefPtr<Message> CloneMessage(const Message& msg) const;
 
       private:
-         void ThrowIdException(const MessageType& type) const;
+         static void ThrowIdException(const MessageType& type);
 
          std::string mName, mDescription;
 
          dtCore::RefPtr<const MachineInfo> mMachine;
 
-         dtCore::RefPtr<dtUtil::ObjectFactory<const MessageType*, Message> > mMessageFactory;
+         static dtCore::RefPtr<dtUtil::ObjectFactory<const MessageType*, Message> > mMessageFactory;
 
-         std::map<unsigned short, const MessageType*> mIdMap;
+         static std::map<unsigned short, const MessageType*> mIdMap;
+         static void InsertMessageTypeInIdMap(const MessageType& type);
    };
 
    template <typename T>
    void MessageFactory::RegisterMessageType(const MessageType& type)
    {
-      if (mIdMap.find(type.GetId()) != mIdMap.end())
+      if (IsMessageTypeSupported(type))
       {
          ThrowIdException(type);
       }
 
       mMessageFactory->template RegisterType<T>(&type);
 
-      mIdMap.insert(std::make_pair(type.GetId(), &type));
+      InsertMessageTypeInIdMap(type);
    }
 }
 

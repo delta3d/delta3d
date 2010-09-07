@@ -48,6 +48,7 @@
 #include <dtGame/basemessages.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/messagefactory.h>
+#include <dtGame/messagetype.h>
 #include <dtGame/exceptionenum.h>
 #include <dtGame/deadreckoningcomponent.h>
 #include <dtGame/defaultgroundclamper.h>

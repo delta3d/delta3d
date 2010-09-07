@@ -21,10 +21,10 @@
 
 #include <dtNetGM/networkcomponent.h>
 #include <dtNetGM/datastreampacket.h>
-#include <dtNetGM/machineinfomessage.h>
+//#include <dtNetGM/machineinfomessage.h>
 #include <dtNetGM/networkbridge.h>
-#include <dtNetGM/serverframesyncmessage.h>
-#include <dtNetGM/serversynccontrolmessage.h>
+//#include <dtNetGM/serverframesyncmessage.h>
+//#include <dtNetGM/serversynccontrolmessage.h>
 #include <dtGame/message.h>
 #include <dtGame/messagetype.h>
 #include <dtGame/messagefactory.h>
@@ -128,20 +128,20 @@ namespace dtNetGM
    ////////////////////////////////////////////////////////////////////////////////
    void NetworkComponent::OnAddedToGM()
    {
-      // Just check the first message to see if it was registered.  Unless someone writes code to manually register of
-      // of the other types in the this method but not the first, this check should prevent double registration.
-      if (!GetGameManager()->GetMessageFactory().IsMessageTypeSupported(dtGame::MessageType::NETCLIENT_REQUEST_CONNECTION))
-      {
-         // Register Network specific messages
-         GetGameManager()->GetMessageFactory().RegisterMessageType<MachineInfoMessage>(dtGame::MessageType::NETCLIENT_REQUEST_CONNECTION);
-         GetGameManager()->GetMessageFactory().RegisterMessageType<MachineInfoMessage>(dtGame::MessageType::INFO_CLIENT_CONNECTED);
-
-         GetGameManager()->GetMessageFactory().RegisterMessageType<MachineInfoMessage>(dtGame::MessageType::NETSERVER_ACCEPT_CONNECTION);
-         GetGameManager()->GetMessageFactory().RegisterMessageType<MachineInfoMessage>(dtGame::MessageType::NETCLIENT_NOTIFY_DISCONNECT);
-
-         GetGameManager()->GetMessageFactory().RegisterMessageType<ServerSyncControlMessage>(dtGame::MessageType::NETSERVER_SYNC_CONTROL);
-         GetGameManager()->GetMessageFactory().RegisterMessageType<ServerFrameSyncMessage>(dtGame::MessageType::NETSERVER_FRAME_SYNC);
-      }
+//      // Just check the first message to see if it was registered.  Unless someone writes code to manually register of
+//      // of the other types in the this method but not the first, this check should prevent double registration.
+//      if (!GetGameManager()->GetMessageFactory().IsMessageTypeSupported(dtGame::MessageType::NETCLIENT_REQUEST_CONNECTION))
+//      {
+//         // Register Network specific messages
+//         GetGameManager()->GetMessageFactory().RegisterMessageType<MachineInfoMessage>(dtGame::MessageType::NETCLIENT_REQUEST_CONNECTION);
+//         GetGameManager()->GetMessageFactory().RegisterMessageType<MachineInfoMessage>(dtGame::MessageType::INFO_CLIENT_CONNECTED);
+//
+//         GetGameManager()->GetMessageFactory().RegisterMessageType<MachineInfoMessage>(dtGame::MessageType::NETSERVER_ACCEPT_CONNECTION);
+//         GetGameManager()->GetMessageFactory().RegisterMessageType<MachineInfoMessage>(dtGame::MessageType::NETCLIENT_NOTIFY_DISCONNECT);
+//
+//         GetGameManager()->GetMessageFactory().RegisterMessageType<ServerSyncControlMessage>(dtGame::MessageType::NETSERVER_SYNC_CONTROL);
+//         GetGameManager()->GetMessageFactory().RegisterMessageType<ServerFrameSyncMessage>(dtGame::MessageType::NETSERVER_FRAME_SYNC);
+//      }
 
       dtCore::RefPtr<DispatchTask> task = new DispatchTask;
       mDispatchTask = task;
@@ -191,11 +191,11 @@ namespace dtNetGM
       }
       else if (message.GetMessageType() == dtGame::MessageType::NETCLIENT_REQUEST_CONNECTION)
       {
-         ProcessNetClientRequestConnection(static_cast<const MachineInfoMessage&>(message));
+         ProcessNetClientRequestConnection(static_cast<const dtGame::MachineInfoMessage&>(message));
       }
       else if (message.GetMessageType() == dtGame::MessageType::NETSERVER_ACCEPT_CONNECTION)
       {
-         ProcessNetServerAcceptConnection(static_cast<const MachineInfoMessage&>(message));
+         ProcessNetServerAcceptConnection(static_cast<const dtGame::MachineInfoMessage&>(message));
       }
       else if (message.GetMessageType() == dtGame::MessageType::NETSERVER_REJECT_CONNECTION)
       {
@@ -203,11 +203,11 @@ namespace dtNetGM
       }
       else if (message.GetMessageType() == dtGame::MessageType::INFO_CLIENT_CONNECTED)
       {
-         ProcessInfoClientConnected(static_cast<const MachineInfoMessage&>(message));
+         ProcessInfoClientConnected(static_cast<const dtGame::MachineInfoMessage&>(message));
       }
       else if (message.GetMessageType() == dtGame::MessageType::NETCLIENT_NOTIFY_DISCONNECT)
       {
-         ProcessNetClientNotifyDisconnect(static_cast<const MachineInfoMessage&>(message));
+         ProcessNetClientNotifyDisconnect(static_cast<const dtGame::MachineInfoMessage&>(message));
       }
       else if (message.GetMessageType() == dtGame::MessageType::SERVER_REQUEST_REJECTED)
       {
@@ -510,7 +510,7 @@ namespace dtNetGM
             if (message.valid())
             {
                // Set the MachineInfo of the NetworkBridge
-               MachineInfoMessage* machineMsg = static_cast<MachineInfoMessage*> (message.get());
+               dtGame::MachineInfoMessage* machineMsg = static_cast<dtGame::MachineInfoMessage*> (message.get());
                networkBridge.SetMachineInfo(*machineMsg->GetMachineInfo());
                // The source is probably up at this point because only the unique id of the machine info would be set at
                // this point, so setting it from the one of the message will clean that up.

@@ -34,6 +34,7 @@
 #include <dtGame/defaultmessageprocessor.h>
 #include <dtGame/basemessages.h>
 #include <dtGame/messagefactory.h>
+#include <dtGame/messagetype.h>
 #include <dtCore/system.h>
 #include <dtCore/scene.h>
 #include <dtABC/application.h>

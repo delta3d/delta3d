@@ -26,7 +26,6 @@
 #include "testClient.h"
 #include "clientmessageprocessor.h"
 #include <dtNetGM/clientnetworkcomponent.h>
-#include <dtNetGM/machineinfomessage.h>
 #include <dtDAL/gameevent.h>
 #include <dtDAL/gameeventmanager.h>
 #include <dtCore/deltawin.h>
@@ -68,7 +67,7 @@ void EchoClient::Config()
    bool bConnected = mClientNetwComp->SetupClient("localhost", 5555);
    if (bConnected)
    {
-      dtCore::RefPtr<dtNetGM::MachineInfoMessage> msg;
+      dtCore::RefPtr<dtGame::MachineInfoMessage> msg;
       mClientGM->GetMessageFactory().CreateMessage(dtGame::MessageType::NETCLIENT_REQUEST_CONNECTION, msg);
       msg->SetMachineInfo(mClientGM->GetMachineInfo());
       msg->SetDestination(NULL); // We don't know our server yet......

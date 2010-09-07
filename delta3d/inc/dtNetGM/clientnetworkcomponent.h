@@ -75,7 +75,7 @@ namespace dtNetGM
        * Processes a MessageType::NETSERVER_ACCEPT_CONNECTION Message.
        * @param msg The message
        */
-      virtual void ProcessNetServerAcceptConnection(const MachineInfoMessage& msg);
+      virtual void ProcessNetServerAcceptConnection(const dtGame::MachineInfoMessage& msg);
 
       /**
        * Processes a MessageType::NETSERVER_REJECT_CONNECTION Message.
@@ -87,14 +87,14 @@ namespace dtNetGM
        * Processes a MessageType::INFO_CLIENT_CONNECTED Message.
        * @param msg The message
        */
-      virtual void ProcessInfoClientConnected(const MachineInfoMessage& msg);
+      virtual void ProcessInfoClientConnected(const dtGame::MachineInfoMessage& msg);
 
       /**
        * Processes a MessageType::NETCLIENT_NOTIFY_DISCONNECT Message and removes the client
        * from the connected clients vector
        * @param msg The message
        */
-      virtual void ProcessNetClientNotifyDisconnect(const MachineInfoMessage& msg);
+      virtual void ProcessNetClientNotifyDisconnect(const dtGame::MachineInfoMessage& msg);
 
       /**
        * Processes a MessageType::SERVER_REQUEST_REJECTED Message.

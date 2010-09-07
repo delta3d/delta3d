@@ -24,6 +24,7 @@
 #define DELTA_BASEMESSAGES
 
 #include <dtGame/message.h>
+#include <dtGame/messagemacros.h>
 #include <dtGame/messageparameter.h>
 #include <dtDAL/gameevent.h>
 
@@ -32,130 +33,26 @@ namespace dtGame
    typedef Message ActorDeletedMessage;
    typedef Message ActorPublishedMessage;
 
-   class DT_GAME_EXPORT TickMessage : public Message
-   {
-      public:
-         static const dtUtil::RefString PARAM_DELTA_SIM_TIME;
-         static const dtUtil::RefString PARAM_DELTA_REAL_TIME;
-         static const dtUtil::RefString PARAM_SIM_TIME_SCALE;
-         static const dtUtil::RefString PARAM_SIMULATION_TIME;
 
+   DECLARE_MESSAGE_BEGIN(TickMessage, Message, DT_GAME_EXPORT)
+      /// Parameter that represents the change in the simulation time since last frame.
+      DECLARE_PARAMETER_INLINE(float, DeltaSimTime)
+      /// Parameter that represents the change in the real time since last frame.
+      DECLARE_PARAMETER_INLINE(float, DeltaRealTime)
+      /// The time scale, that is the factor of realtime that simulation time uses.
+      DECLARE_PARAMETER_INLINE(float, SimTimeScale)
+      /// The actual simulation time.
+      DECLARE_PARAMETER_INLINE(double, SimulationTime)
+   DECLARE_MESSAGE_END()
 
-         /// Constructor
-         TickMessage();
+   typedef TickMessage SystemMessage;
 
-         /**
-          * Gets the delta sim time variable associated with this message
-          * @return The deltaSimTime
-          */
-         float GetDeltaSimTime() const;
-
-         /**
-          * Sets the delta sim time variable associated with this message
-          * @param The new time
-          */
-         void SetDeltaSimTime(float newTime);
-
-         /**
-          * Gets the delta real time variable associated with this message
-          * @return The deltaRealTime
-          */
-         float GetDeltaRealTime() const;
-
-         /**
-          * Sets the delta real time variable associated with this message
-          * @param The new time
-          */
-         void SetDeltaRealTime(float newTime);
-
-         /**
-          * Gets the sim time scale variable associated with this message
-          * @return The simTimeScale
-          */
-         float GetSimTimeScale() const;
-
-         /**
-          * Sets the sim time scale variable associated with this message
-          * @param the new scale
-          */
-         void SetSimTimeScale(float newScale);
-
-         /**
-          * Gets the simulation time
-          * @return The current value of simulation time.
-          */
-         double GetSimulationTime() const;
-
-         /**
-          * Sets the simulation time
-          * @param newTime the new time to set
-          */
-         void SetSimulationTime(double newSimulationTime);
-
-
-      protected:
-         /// Destructor
-         virtual ~TickMessage() { }
-
-         dtCore::RefPtr<FloatMessageParameter> mDeltaSimTime;
-         dtCore::RefPtr<FloatMessageParameter> mDeltaRealTime;
-         dtCore::RefPtr<FloatMessageParameter> mSimTimeScale;
-         dtCore::RefPtr<DoubleMessageParameter> mSimulationTime;
-   };
-
-   /**
-    *	SystemMessage is used to propagate messages sent out by dtCore::System
-    * it derives from TickMessage and has no new functionality, currently a placeholder.
-    */
-   class DT_GAME_EXPORT SystemMessage : public TickMessage
-   {
-      public:
-         SystemMessage(){}
-
-      protected:
-         virtual ~SystemMessage(){}
-   };
-
-   class DT_GAME_EXPORT TimerElapsedMessage : public Message
-   {
-      public:
-
-         /// Constructor
-         TimerElapsedMessage() : Message()
-         {
-            AddParameter(new StringMessageParameter("TimerName"));
-            AddParameter(new FloatMessageParameter("LateTime"));
-         }
-
-         /**
-          * Gets the sim time of day variable associated with this message
-          * @return The simTimeOfDay
-          */
-         const std::string& GetTimerName() const;
-
-         /**
-          * Gets the sim time of day variable associated with this message
-          * @return The simTimeOfDay
-          */
-         float GetLateTime() const;
-
-         /**
-          * Gets the sim time of day variable associated with this message
-          * @return The simTimeOfDay
-          */
-         void SetTimerName(const std::string& name);
-
-         /**
-          * Gets the sim time of day variable associated with this message
-          * @return The simTimeOfDay
-          */
-         void SetLateTime(float newTime);
-
-      protected:
-         /// Destructor
-         virtual ~TimerElapsedMessage() { }
-
-   };
+   DECLARE_MESSAGE_BEGIN(TimerElapsedMessage, Message, DT_GAME_EXPORT)
+      /// The name of the timer that elapsed
+      DECLARE_PARAMETER_INLINE(std::string, TimerName)
+      /// The amount of time the timer is late, since the frame time won't exactly match up with the specified timer.
+      DECLARE_PARAMETER_INLINE(float, LateTime)
+   DECLARE_MESSAGE_END()
 
 
    class DT_GAME_EXPORT TimeChangeMessage : public Message
@@ -348,6 +245,233 @@ namespace dtGame
          virtual ~ServerMessageRejected() {}
    };
 
+   /**
+    * @class MachineInfoMessage
+    * @brief A MachineInfoMessage contains a dtGame::MachineInfo to be used with different messages
+    * to send information about a GameManager accross the network
+    * @see dtGame::MachineInfo
+    */
+   class DT_GAME_EXPORT MachineInfoMessage : public dtGame::Message
+   {
+   public:
+
+      // Constructor
+      MachineInfoMessage();
+      /**
+       * Gets the Name from the contained MachineInfo
+       * @return The name
+       */
+      const std::string& GetMachineInfoName() const;
+
+      /**
+       * Sets the name associated with the MachineInfo
+       * @param The new name
+       */
+      void SetMachineInfoName(const std::string& name);
+
+      /**
+       * Gets the UniqueId from the contained MachineInfo as string
+       * @return The uniqueid
+       */
+      const std::string& GetUniqueId() const;
+
+      /**
+       * Sets the UniqueId associated with the MachineInfo
+       * @param The new uniqueid as string
+       */
+      void SetUniqueId(const std::string& strId);
+
+      /**
+       * Gets the HostName from the contained MachineInfo
+       * @return The hostname
+       */
+      const std::string& GetHostName() const;
+
+      /**
+       * Sets the HostName associated with the MachineInfo
+       * @param The new hostname
+       */
+      void SetHostName(const std::string& hostname);
+
+      /**
+       * Gets the IpAddress from the contained MachineInfo
+       * @return The ipaddress
+       */
+      const std::string& GetIPAddress() const;
+
+      /**
+       * Sets the IpAddress associated with the MachineInfo
+       * @param The new ipaddress
+       */
+      void SetIPAddress(const std::string& ipAddress);
+
+      /**
+       * Gets the TimeStamp from the contained MachineInfo
+       * @return The timestamp
+       */
+      unsigned long GetTimeStamp() const;
+
+      /**
+       * Sets the TimeStamp associated with the MachineInfo
+       * @param The new timestamp
+       */
+      void SetTimeStamp(unsigned long timeStamp);
+
+      /**
+       * Gets the Ping from the contained MachineInfo
+       * @return The ping
+       */
+      unsigned int GetPing() const;
+
+      /**
+       * Sets the Ping associated with the MachineInfo
+       * @param The new ping
+       */
+      void SetPing(unsigned int ping);
+
+      /**
+       * Gets the MachineInfo from the message
+       * @return The machineinfo
+       */
+      dtCore::RefPtr<dtGame::MachineInfo> GetMachineInfo() const;
+
+      /**
+       * Sets the MachineInfo
+       * @param The new machineinfo
+       */
+      void SetMachineInfo(const dtGame::MachineInfo& machineInfo);
+
+   protected:
+      /// Destructor
+      virtual ~MachineInfoMessage() { }
+   };
+
+   /**
+    * @class ServerFrameSyncMessage
+    * @brief A ServerFrameSyncMessage is sent from the server at the end of EVERY frame. This message
+    * is used by the client to be able to determine which messages belong to which frames. Specifically
+    * this it is used to keep a client tightly in sync with the server for systems that are publishing
+    * at high rates (ex 60 publishes per second). This message is only sent if this behavior
+    * is activated on the server. At that point, the server will publish a ServerSyncControlMessage.
+    * In most cases, this behavior is disabled so this message will never be sent.
+    *
+    * NOTE - This message is eaten by ClientNetworkComponent. It is NOT forwarded to the GM message queue.
+    *
+    * @see dtNetGM::ServerSyncControlMessage
+    */
+   class DT_GAME_EXPORT ServerFrameSyncMessage : public dtGame::Message
+   {
+   public:
+
+      // Constructor
+      ServerFrameSyncMessage();
+
+      /**
+       * Gets the ServerSimTimeSinceStartup param (in seconds). This is how long the server has
+       * been running. You probably won't need this data, but it may help clients determine
+       * how old the data is and do a better job keeping the server in sync with the client. .
+       * @return The ServerSimTimeSinceStartup value sent from the server
+       */
+      double GetServerSimTimeSinceStartup() const;
+
+      /**
+       * Gets the ServerSimTimeSinceStartup param (in seconds). This is how long the server has
+       * been running. You probably won't need this data, but it may help clients determine
+       * how old the data is and do a better job keeping the server in sync with the client. .
+       * @param The ServerSimTimeSinceStartup value (set this on the server)
+       */
+      void SetServerSimTimeSinceStartup(double newValue);
+
+      /**
+       * Gets the ServerTimeScale param. This is the current timescale used by the server.
+       * Timescale indicates whether we are running in real time (1.0), faster than real (ex 2.0), or
+       * slower (ex 0.5). This may help the client do a better job keeping in sync.
+       * @return The ServerTimeScale value
+       */
+      float GetServerTimeScale() const;
+
+      /**
+       * Gets the ServerTimeScale param. This is the current timescale used by the server.
+       * Timescale indicates whether we are running in real time (1.0), faster than real (ex 2.0), or
+       * slower (ex 0.5). This may help the client do a better job keeping in sync.
+       * @param The ServerTimeScale value
+       */
+      void SetServerTimeScale(float newValue);
+
+   protected:
+      /// Destructor
+      virtual ~ServerFrameSyncMessage() { }
+   };
+
+   /**
+    * @class ServerSyncControlMessage
+    * @brief A ServerSyncControlMessage is sent from the server whenever a client establishes a
+    * connection to the server or when the frame sync behavior changes. Server frame syncs are
+    * used to keep a server & client tightly coupled. In most cases, this behavior is disabled.
+    *
+    * This behavior is useful when there is a server with clients setup to display the same
+    * environment at 60 Hz. The entity data is published at a high frequency. At this rate, even
+    * variance between monitor VSync rates can cause obvious and distracting 'jiggles'.
+    *
+    * @see dtNetGM::ServerFrameSyncMessage
+    */
+   class DT_GAME_EXPORT ServerSyncControlMessage : public dtGame::Message
+   {
+   public:
+
+      // Constructor
+      ServerSyncControlMessage();
+
+      /**
+       * Gets the SyncEnabled param. If true, frame syncs will be sent at the end of each frame
+       * @return The SyncEnabled value (default is false)
+       */
+      bool GetSyncEnabled() const;
+
+      /**
+       * Sets the SyncEnabled param. If true, frame syncs will be sent at the end of each frame.
+       * @param The SyncEnabled value (default is false)
+       */
+      void SetSyncEnabled(bool newValue);
+
+      /**
+       * Gets the NumSyncsPerSecond param. This is how often the server will publish a ServerFrameSyncMessage.
+       * The client will use this value to determine when to wait for the sync and when to push network traffic.
+       * @return The NumSyncsPerSecond value (default 60)
+       * @see dtNetGM::ServerFrameSyncMessage
+       */
+      unsigned int GetNumSyncsPerSecond() const;
+
+      /**
+       * Sets the NumSyncsPerSecond param. This is how often the server will publish a ServerFrameSyncMessage.
+       * The client will use this value to determine when to wait for the sync and when to push network traffic.
+       * @param The NumSyncsPerSecond value (default 60)
+       */
+      void SetNumSyncsPerSecond(unsigned int newValue);
+
+      /**
+       * Gets the MaxWaitTime param (in milliseconds). This is how long the client should wait when expecting
+       * the next ServerFrameSyncMessage. If the client doesn't get a message before this time, then it gives up.
+       * Note - Messages are not sent until a frame sync is received (except in extreme error conditions).
+       * Note - The client forces a thread BLOCK while waiting. Long WaitTimes could impact performance.
+       * @return The MaxWaitTime value (default 4.0ms)
+       */
+      float GetMaxWaitTime() const;
+
+      /**
+       * Sets the MaxWaitTime param (in milliseconds). This is how long the client should wait when expecting
+       * the next ServerFrameSyncMessage. If the client doesn't get a message before this time, then it gives up.
+       * Note - Messages are not sent until a frame sync is received (except in extreme error conditions).
+       * Note - The client forces a thread BLOCK while waiting. Long WaitTimes could impact performance.
+       * @param The MaxWaitTime value (default 4.0ms)
+       */
+      void SetMaxWaitTime(float newValue);
+
+
+   protected:
+      /// Destructor
+      virtual ~ServerSyncControlMessage() { }
+   };
 }
 
 #endif

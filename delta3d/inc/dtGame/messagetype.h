@@ -24,10 +24,14 @@
 
 #include <string>
 #include <dtUtil/enumeration.h>
+#include <dtUtil/typetraits.h>
+#include <dtDAL/typetoactorproperty.h>
 #include <dtGame/export.h>
+#include <dtGame/messagefactory.h>
 
 namespace dtGame
 {
+   class MessageFactory;
    /**
     * Class that enumerates the message types used by the GameManager
     * @see class dtGame::GameManager
@@ -156,9 +160,42 @@ namespace dtGame
 
       protected:
 
-         /// Constructor
+         /**
+          * Message type constructor takes a pointer the class that implements the message.
+          * It only takes the extra parameter because you can't explicitly pass template parameters
+          * to a templated constructor so pass (MessageClass*)(NULL)
+          *
+          * Then it will auto register the message with the message factory at creation time.
+          *
+          * try using the macro
+          * IMPLEMENT_MESSAGE_TYPE
+          */
+         template<typename MessageClass>
          MessageType(const std::string& name, const std::string& category,
-                     const std::string& description, const unsigned short id);
+                     const std::string& description, const unsigned short id, const MessageClass*)
+            : dtUtil::Enumeration(name)
+            , mCategory(category)
+            , mDescription(description)
+            , mId(id)
+         {
+            AddInstance(this);
+            dtGame::MessageFactory::RegisterMessageType<MessageClass>(*this);
+         }
+
+         /**
+          * Use the new template constructor, preferably by calling the macro
+          * IMPLEMENT_MESSAGE_TYPE
+          */
+         DEPRECATE_FUNC
+         MessageType(const std::string& name, const std::string& category,
+                     const std::string& description, const unsigned short id)
+            : dtUtil::Enumeration(name)
+            , mCategory(category)
+            , mDescription(description)
+            , mId(id)
+         {
+            AddInstance(this);
+         }
 
          /// Destructor
          virtual ~MessageType();
@@ -171,5 +208,36 @@ namespace dtGame
          const unsigned short mId;
    };
 }
+
+#define DECLARE_MESSAGE_TYPE_CLASS_BEGIN(CLS, EXPORT_MACRO) \
+   class EXPORT_MACRO CLS : public dtGame::MessageType \
+   { \
+   protected:\
+      DECLARE_ENUM(CLS)\
+      \
+      template<typename MessageClass> \
+      CLS(const std::string& name, const std::string& category, \
+          const std::string& description, const unsigned short id, const MessageClass*) \
+      : dtGame::MessageType(name, category, description, id, (const MessageClass*)(NULL))\
+      { \
+      }\
+      virtual ~CLS() {} \
+   public: \
+
+#define DECLARE_MESSAGE_TYPE(CLS, Name, MessageClass) \
+      static const CLS Name;
+
+#define DECLARE_MESSAGE_TYPE_CLASS_END() };
+
+#define IMPLEMENT_MESSAGE_TYPE_CLASS(CLS) \
+         IMPLEMENT_ENUM(CLS)
+
+#define DT_MSG_CLASS(MessageClass) (const MessageClass*)(NULL)
+
+#define IMPLEMENT_MESSAGE_TYPE(CLS, Name, Category, Description, id, MessageClass) \
+      static const CLS CLS::Name(#Name, Category, Description, id, DT_MSG_CLASS(MessageClass));
+
+#define IMPLEMENT_MESSAGE_TYPE_WNAME(CLS, Name, StringName, Category, Description, id, MessageClass) \
+      static const CLS CLS::Name(StringName, Category, Description, id, DT_MSG_CLASS(MessageClass));
 
 #endif

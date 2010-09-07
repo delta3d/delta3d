@@ -28,102 +28,46 @@
 
 namespace dtGame
 {
-   const dtUtil::RefString TickMessage::PARAM_DELTA_SIM_TIME("DeltaSimTime");
-   const dtUtil::RefString TickMessage::PARAM_DELTA_REAL_TIME("DeltaRealTime");
-   const dtUtil::RefString TickMessage::PARAM_SIM_TIME_SCALE("SimTimeScale");
-   const dtUtil::RefString TickMessage::PARAM_SIMULATION_TIME("SimulationTime");
 
-   //////////////////////////////////////////////////////////////////////////////
-   /// Constructor
-   TickMessage::TickMessage() : Message()
-   {
-      mDeltaSimTime = new FloatMessageParameter(PARAM_DELTA_SIM_TIME); 
-      mDeltaRealTime = new FloatMessageParameter(PARAM_DELTA_REAL_TIME);
-      mSimTimeScale = new FloatMessageParameter(PARAM_SIM_TIME_SCALE);
-      mSimulationTime = new DoubleMessageParameter(PARAM_SIMULATION_TIME);   
-      AddParameter(mDeltaSimTime.get());
-      AddParameter(mDeltaRealTime.get());
-      AddParameter(mSimTimeScale.get());
-      AddParameter(mSimulationTime.get());
-   }
+   IMPLEMENT_MESSAGE_BEGIN(TickMessage)
+      ADD_PARAMETER(float, DeltaSimTime)
+      ADD_PARAMETER(float, DeltaRealTime)
+      ADD_PARAMETER_WITH_DEFAULT(float, SimTimeScale, 1.0f)
+      ADD_PARAMETER(double, SimulationTime)
+   IMPLEMENT_MESSAGE_END()
 
-   //////////////////////////////////////////////////////////////////////////////
-   float TickMessage::GetDeltaSimTime() const
-   {
-      return mDeltaSimTime->GetValue();
-   }
 
-   //////////////////////////////////////////////////////////////////////////////
-   float TickMessage::GetDeltaRealTime() const
-   {
-      return mDeltaRealTime->GetValue();
-   }
+   IMPLEMENT_MESSAGE_BEGIN(TimerElapsedMessage)
+      ADD_PARAMETER(std::string, TimerName)
+      ADD_PARAMETER(float, LateTime)
+   IMPLEMENT_MESSAGE_END()
 
-   //////////////////////////////////////////////////////////////////////////////
-   float TickMessage::GetSimTimeScale() const
-   {
-      return mSimTimeScale->GetValue();
-   }
-
-   //////////////////////////////////////////////////////////////////////////////
-   double TickMessage::GetSimulationTime() const
-   {
-      return mSimulationTime->GetValue();
-   }
-
-   //////////////////////////////////////////////////////////////////////////////
-   void TickMessage::SetSimulationTime(double newSimulationTime)
-   {
-      mSimulationTime->SetValue(newSimulationTime);
-   }
-
-   //////////////////////////////////////////////////////////////////////////////
-   void TickMessage::SetDeltaSimTime(float newTime)
-   {
-      mDeltaSimTime->SetValue(newTime);
-   }
-
-   //////////////////////////////////////////////////////////////////////////////
-   void TickMessage::SetDeltaRealTime(float newTime)
-   {
-      mDeltaRealTime->SetValue(newTime);
-   }
-
-   //////////////////////////////////////////////////////////////////////////////
-   void TickMessage::SetSimTimeScale(float newScale)
-   {
-      mSimTimeScale->SetValue(newScale);
-   }
-
-   //////////////////////////////////////////////////////////////////////////////
-   //////////////////////////////////////////////////////////////////////////////
-
-   const std::string& TimerElapsedMessage::GetTimerName() const
-   {
-      const StringMessageParameter *mp = static_cast<const StringMessageParameter*> (GetParameter("TimerName"));
-      return mp->GetValue();
-   }
-
-   //////////////////////////////////////////////////////////////////////////////
-   float TimerElapsedMessage::GetLateTime() const
-   {
-      const FloatMessageParameter *mp = static_cast<const FloatMessageParameter*> (GetParameter("LateTime"));
-      return mp->GetValue();
-   }
-
-   //////////////////////////////////////////////////////////////////////////////
-   void TimerElapsedMessage::SetTimerName(const std::string &name)
-   {
-      StringMessageParameter *mp = static_cast<StringMessageParameter*> (GetParameter("TimerName"));
-      mp->SetValue(name);
-   }
-
-   //////////////////////////////////////////////////////////////////////////////
-   void TimerElapsedMessage::SetLateTime(float newTime)
-   {
-      FloatMessageParameter *mp = static_cast<FloatMessageParameter*> (GetParameter("LateTime"));
-      mp->SetValue(newTime);
-   }
+//   const std::string& TimerElapsedMessage::GetTimerName() const
+//   {
+//      const StringMessageParameter *mp = static_cast<const StringMessageParameter*> (GetParameter("TimerName"));
+//      return mp->GetValue();
+//   }
+//
+//   //////////////////////////////////////////////////////////////////////////////
+//   float TimerElapsedMessage::GetLateTime() const
+//   {
+//      const FloatMessageParameter *mp = static_cast<const FloatMessageParameter*> (GetParameter("LateTime"));
+//      return mp->GetValue();
+//   }
+//
+//   //////////////////////////////////////////////////////////////////////////////
+//   void TimerElapsedMessage::SetTimerName(const std::string &name)
+//   {
+//      StringMessageParameter *mp = static_cast<StringMessageParameter*> (GetParameter("TimerName"));
+//      mp->SetValue(name);
+//   }
+//
+//   //////////////////////////////////////////////////////////////////////////////
+//   void TimerElapsedMessage::SetLateTime(float newTime)
+//   {
+//      FloatMessageParameter *mp = static_cast<FloatMessageParameter*> (GetParameter("LateTime"));
+//      mp->SetValue(newTime);
+//   }
 
    //////////////////////////////////////////////////////////////////////////////
    //////////////////////////////////////////////////////////////////////////////
@@ -300,5 +244,213 @@ namespace dtGame
    {
       StringMessageParameter *mp = static_cast<StringMessageParameter*> (GetParameter("Cause"));
       mp->SetValue(cause);
+   }
+
+   ////////////////////////////////////////////////////////////////////
+   ////////////////////////////////////////////////////////////////////
+   // Constructor
+   MachineInfoMessage::MachineInfoMessage()
+   {
+      AddParameter(new dtGame::StringMessageParameter("Name"));
+      AddParameter(new dtGame::StringMessageParameter("UniqueId"));
+      AddParameter(new dtGame::StringMessageParameter("HostName"));
+      AddParameter(new dtGame::StringMessageParameter("IPAddress"));
+      AddParameter(new dtGame::UnsignedLongIntMessageParameter("TimeStamp"));
+      AddParameter(new dtGame::UnsignedIntMessageParameter("Ping"));
+   }
+
+   ////////////////////////////////////////////////////////////////////
+   const std::string& MachineInfoMessage::GetMachineInfoName() const
+   {
+      const dtGame::StringMessageParameter* mp = static_cast<const dtGame::StringMessageParameter*>(GetParameter("Name"));
+      return mp->GetValue();
+   }
+
+   ////////////////////////////////////////////////////////////////////
+   void MachineInfoMessage::SetMachineInfoName(const std::string& name)
+   {
+      dtGame::StringMessageParameter* mp = static_cast<dtGame::StringMessageParameter*>(GetParameter("Name"));
+      mp->SetValue(name);
+   }
+
+   ////////////////////////////////////////////////////////////////////
+   const std::string& MachineInfoMessage::GetUniqueId() const
+   {
+      const dtGame::StringMessageParameter* mp = static_cast<const dtGame::StringMessageParameter*>(GetParameter("UniqueId"));
+      return mp->GetValue();
+   }
+
+   ////////////////////////////////////////////////////////////////////
+   void MachineInfoMessage::SetUniqueId(const std::string& strId)
+   {
+      dtGame::StringMessageParameter* mp = static_cast<dtGame::StringMessageParameter*>(GetParameter("UniqueId"));
+      mp->SetValue(strId);
+   }
+
+   ////////////////////////////////////////////////////////////////////
+   const std::string& MachineInfoMessage::GetHostName() const
+   {
+      const dtGame::StringMessageParameter* mp = static_cast<const dtGame::StringMessageParameter*>(GetParameter("HostName"));
+      return mp->GetValue();
+   }
+
+   ////////////////////////////////////////////////////////////////////
+   void MachineInfoMessage::SetHostName(const std::string& hostname)
+   {
+      dtGame::StringMessageParameter* mp = static_cast<dtGame::StringMessageParameter*>(GetParameter("HostName"));
+      mp->SetValue(hostname);
+   }
+
+   ////////////////////////////////////////////////////////////////////
+   const std::string& MachineInfoMessage::GetIPAddress() const
+   {
+      const dtGame::StringMessageParameter* mp = static_cast<const dtGame::StringMessageParameter*>(GetParameter("IPAddress"));
+      return mp->GetValue();
+   }
+
+   ////////////////////////////////////////////////////////////////////
+   void MachineInfoMessage::SetIPAddress(const std::string& ipAddress)
+   {
+      dtGame::StringMessageParameter* mp = static_cast<dtGame::StringMessageParameter*>(GetParameter("IPAddress"));
+      mp->SetValue(ipAddress);
+   }
+
+   ////////////////////////////////////////////////////////////////////
+   unsigned long MachineInfoMessage::GetTimeStamp() const
+   {
+      const dtGame::UnsignedLongIntMessageParameter* mp = static_cast<const dtGame::UnsignedLongIntMessageParameter*>(GetParameter("TimeStamp"));
+      return mp->GetValue();
+   }
+
+   ////////////////////////////////////////////////////////////////////
+   void MachineInfoMessage::SetTimeStamp(unsigned long timeStamp)
+   {
+      dtGame::UnsignedLongIntMessageParameter* mp = static_cast<dtGame::UnsignedLongIntMessageParameter*>(GetParameter("TimeStamp"));
+      mp->SetValue(timeStamp);
+   }
+
+   ////////////////////////////////////////////////////////////////////
+   unsigned int MachineInfoMessage::GetPing() const
+   {
+      const dtGame::UnsignedIntMessageParameter* mp = static_cast<const dtGame::UnsignedIntMessageParameter*>(GetParameter("Ping"));
+      return mp->GetValue();
+   }
+
+   ////////////////////////////////////////////////////////////////////
+   void MachineInfoMessage::SetPing(unsigned int ping)
+   {
+      dtGame::UnsignedIntMessageParameter* mp = static_cast<dtGame::UnsignedIntMessageParameter*>(GetParameter("Ping"));
+      mp->SetValue(ping);
+   }
+
+   ////////////////////////////////////////////////////////////////////
+   dtCore::RefPtr<dtGame::MachineInfo> MachineInfoMessage::GetMachineInfo() const
+   {
+      dtCore::RefPtr<dtGame::MachineInfo> machineInfo = new dtGame::MachineInfo();
+      machineInfo->SetName(GetMachineInfoName());
+      machineInfo->SetUniqueId(dtCore::UniqueId(GetUniqueId()));
+      machineInfo->SetHostName(GetHostName());
+      machineInfo->SetIPAddress(GetIPAddress());
+      machineInfo->SetTimeStamp(GetTimeStamp());
+      machineInfo->SetPing(GetPing());
+
+      return machineInfo;
+   }
+
+   ////////////////////////////////////////////////////////////////////
+   void MachineInfoMessage::SetMachineInfo(const dtGame::MachineInfo& machineInfo)
+   {
+      SetMachineInfoName(machineInfo.GetName());
+      SetUniqueId(machineInfo.GetUniqueId().ToString());
+      SetHostName(machineInfo.GetHostName());
+      SetIPAddress(machineInfo.GetIPAddress());
+      SetTimeStamp(machineInfo.GetTimeStamp());
+      SetPing(machineInfo.GetPing());
+   }
+
+   ////////////////////////////////////////////////////////////////////
+   ServerFrameSyncMessage::ServerFrameSyncMessage()
+   {
+      AddParameter(new dtGame::DoubleMessageParameter("ServerSimTimeSinceStartup"));
+      AddParameter(new dtGame::FloatMessageParameter("ServerTimeScale"));
+   }
+
+   ////////////////////////////////////////////////////////////////////
+   double ServerFrameSyncMessage::GetServerSimTimeSinceStartup() const
+   {
+      const dtGame::DoubleMessageParameter* mp = static_cast<const dtGame::DoubleMessageParameter*>(GetParameter("ServerSimTimeSinceStartup"));
+      return mp->GetValue();
+   }
+
+   ////////////////////////////////////////////////////////////////////
+   void ServerFrameSyncMessage::SetServerSimTimeSinceStartup(double newValue)
+   {
+      dtGame::DoubleMessageParameter* mp = static_cast<dtGame::DoubleMessageParameter*>(GetParameter("ServerSimTimeSinceStartup"));
+      mp->SetValue(newValue);
+   }
+
+   ////////////////////////////////////////////////////////////////////
+   float ServerFrameSyncMessage::GetServerTimeScale() const
+   {
+      const dtGame::FloatMessageParameter* mp = static_cast<const dtGame::FloatMessageParameter*>(GetParameter("ServerTimeScale"));
+      return mp->GetValue();
+   }
+
+   ////////////////////////////////////////////////////////////////////
+   void ServerFrameSyncMessage::SetServerTimeScale(float newValue)
+   {
+      dtGame::FloatMessageParameter* mp = static_cast<dtGame::FloatMessageParameter*>(GetParameter("ServerTimeScale"));
+      mp->SetValue(newValue);
+   }
+
+   ////////////////////////////////////////////////////////////////////
+   ServerSyncControlMessage::ServerSyncControlMessage()
+   {
+      AddParameter(new dtGame::BooleanMessageParameter("SyncEnabled", false));
+      AddParameter(new dtGame::UnsignedIntMessageParameter("NumSyncsPerSecond", 60));
+      AddParameter(new dtGame::FloatMessageParameter("MaxWaitTime", 4.0f));
+   }
+
+
+   ////////////////////////////////////////////////////////////////////
+   bool ServerSyncControlMessage::GetSyncEnabled() const
+   {
+      const dtGame::BooleanMessageParameter* mp = static_cast<const dtGame::BooleanMessageParameter*>(GetParameter("SyncEnabled"));
+      return mp->GetValue();
+   }
+
+   ////////////////////////////////////////////////////////////////////
+   void ServerSyncControlMessage::SetSyncEnabled(bool newValue)
+   {
+      dtGame::BooleanMessageParameter* mp = static_cast<dtGame::BooleanMessageParameter*>(GetParameter("SyncEnabled"));
+      mp->SetValue(newValue);
+   }
+
+   ////////////////////////////////////////////////////////////////////
+   unsigned int ServerSyncControlMessage::GetNumSyncsPerSecond() const
+   {
+      const dtGame::UnsignedIntMessageParameter* mp = static_cast<const dtGame::UnsignedIntMessageParameter*>(GetParameter("NumSyncsPerSecond"));
+      return mp->GetValue();
+   }
+
+   ////////////////////////////////////////////////////////////////////
+   void ServerSyncControlMessage::SetNumSyncsPerSecond(unsigned int newValue)
+   {
+      dtGame::UnsignedIntMessageParameter* mp = static_cast<dtGame::UnsignedIntMessageParameter*>(GetParameter("NumSyncsPerSecond"));
+      mp->SetValue(newValue);
+   }
+
+   ////////////////////////////////////////////////////////////////////
+   float ServerSyncControlMessage::GetMaxWaitTime() const
+   {
+      const dtGame::FloatMessageParameter* mp = static_cast<const dtGame::FloatMessageParameter*>(GetParameter("MaxWaitTime"));
+      return mp->GetValue();
+   }
+
+   ////////////////////////////////////////////////////////////////////
+   void ServerSyncControlMessage::SetMaxWaitTime(float newValue)
+   {
+      dtGame::FloatMessageParameter* mp = static_cast<dtGame::FloatMessageParameter*>(GetParameter("MaxWaitTime"));
+      mp->SetValue(newValue);
    }
 }

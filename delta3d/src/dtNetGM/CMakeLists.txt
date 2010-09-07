@@ -5,7 +5,18 @@ SET(LIB_NAME     dtNetGM)
 SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/inc/${LIB_NAME})
 SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/src/${LIB_NAME})
 file(GLOB LIB_PUBLIC_HEADERS "${HEADER_PATH}/*.h")
-file(GLOB LIB_SOURCES "*.cpp")
+#file(GLOB LIB_SOURCES "*.cpp")
+SET(LIB_SOURCES
+   clientconnectionlistener.cpp
+   clientnetworkcomponent.cpp
+   datastreampacket.cpp
+   messagepacket.cpp
+   networkbridge.cpp
+   networkcomponent.cpp
+   serverconnectionlistener.cpp
+   servernetworkcomponent.cpp
+)
+
 list(REMOVE_ITEM LIB_SOURCES ${SOURCE_PATH}/precomp.cpp)
 
 INCLUDE_DIRECTORIES( ${GNE_INCLUDE_DIR}  

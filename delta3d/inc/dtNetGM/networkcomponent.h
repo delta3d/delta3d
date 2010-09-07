@@ -52,13 +52,13 @@ namespace dtGame
    class MachineInfo;
    class NetServerRejectMessage;
    class ServerMessageRejected;
+   class MachineInfoMessage;
 }
 
 namespace dtNetGM
 {
    // Forward declaration
    class NetworkBridge;
-   class MachineInfoMessage;
 
    class DT_NETGM_EXPORT MessageActionCode : public dtUtil::Enumeration
    {
@@ -163,13 +163,13 @@ namespace dtNetGM
        * Processes a MessageType::NETCLIENT_REQUEST_CONNECTION Message.
        * @param msg The message
        */
-      virtual void ProcessNetClientRequestConnection(const MachineInfoMessage& msg) { };
+      virtual void ProcessNetClientRequestConnection(const dtGame::MachineInfoMessage& msg) { };
 
       /**
        * Processes a MessageType::NETSERVER_ACCEPT_CONNECTION Message.
        * @param msg The message
        */
-      virtual void ProcessNetServerAcceptConnection(const MachineInfoMessage& msg) { };
+      virtual void ProcessNetServerAcceptConnection(const dtGame::MachineInfoMessage& msg) { };
 
       /**
        * Processes a MessageType::NETSERVER_REJECT_CONNECTION Message.
@@ -181,13 +181,13 @@ namespace dtNetGM
        * Processes a MessageType::INFO_CLIENT_CONNECTED Message.
        * @param msg The message
        */
-      virtual void ProcessInfoClientConnected(const MachineInfoMessage& msg) { };
+      virtual void ProcessInfoClientConnected(const dtGame::MachineInfoMessage& msg) { };
 
       /**
        * Processes a MessageType::NETCLIENT_NOTIFY_DISCONNECT Message.
        * @param msg The message
        */
-      virtual void ProcessNetClientNotifyDisconnect(const MachineInfoMessage& msg) { };
+      virtual void ProcessNetClientNotifyDisconnect(const dtGame::MachineInfoMessage& msg) { };
 
       /**
        * Processes a MessageType::SERVER_REQUEST_REJECTED Message.
