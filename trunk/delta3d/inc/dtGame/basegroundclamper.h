@@ -102,7 +102,7 @@ namespace dtGame
          bool UseModelDimensions() const { return mUseModelDimensions; }
 
          /// Sets the model dimensions of this helper.  This will call SetUseModelDimensions(true) internally.
-         void SetModelDimensions(const osg::Vec3& newDimensions) { mModelDimensions = newDimensions; }
+         void SetModelDimensions(const osg::Vec3& newDimensions) { mModelDimensions = newDimensions; SetUseModelDimensions(true); }
 
          /// @return the current assigned dimensions of the model for the actor being dead-reckoned
          const osg::Vec3& GetModelDimensions() const { return mModelDimensions; }
