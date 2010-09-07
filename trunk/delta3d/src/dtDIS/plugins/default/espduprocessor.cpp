@@ -4,6 +4,7 @@
 #include <dtGame/gamemanager.h>
 #include <dtGame/gameactorproxy.h>
 #include <dtGame/actorupdatemessage.h>
+#include <dtGame/messagetype.h>
 #include <DIS/EntityStatePdu.h>
 
 

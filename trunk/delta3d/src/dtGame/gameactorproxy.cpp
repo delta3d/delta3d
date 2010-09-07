@@ -36,6 +36,7 @@
 #include <dtGame/gamemanager.h>
 #include <dtGame/invokable.h>
 #include <dtGame/messagefactory.h>
+#include <dtGame/messagetype.h>
 
 #include <dtUtil/functor.h>
 #include <dtUtil/log.h>

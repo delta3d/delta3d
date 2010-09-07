@@ -37,6 +37,7 @@
 #include <dtGame/machineinfo.h>
 #include <dtGame/mapchangestatedata.h>
 #include <dtGame/messagefactory.h>
+#include <dtGame/messagetype.h>
 #include <dtGame/message.h>
 
 #include <dtGame/gmstatistics.h>

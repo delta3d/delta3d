@@ -21,10 +21,7 @@
 #include <dtNetGM/clientnetworkcomponent.h>
 #include <dtNetGM/clientconnectionlistener.h>
 #include <dtNetGM/networkbridge.h>
-#include <dtNetGM/machineinfomessage.h>
 #include <dtNetGM/networkcomponent.h>
-#include <dtNetGM/serversynccontrolmessage.h>
-#include <dtNetGM/serverframesyncmessage.h>
 #include <dtGame/basemessages.h>
 #include <dtGame/messagetype.h>
 #include <dtGame/messagefactory.h>
@@ -130,7 +127,7 @@ namespace dtNetGM
    }
 
    ////////////////////////////////////////////////////////////////////
-   void ClientNetworkComponent::ProcessNetServerAcceptConnection(const MachineInfoMessage& msg)
+   void ClientNetworkComponent::ProcessNetServerAcceptConnection(const dtGame::MachineInfoMessage& msg)
    {
       mAcceptedClient = true;
 
@@ -154,7 +151,7 @@ namespace dtNetGM
    }
 
    ////////////////////////////////////////////////////////////////////
-   void ClientNetworkComponent::ProcessInfoClientConnected(const MachineInfoMessage& msg)
+   void ClientNetworkComponent::ProcessInfoClientConnected(const dtGame::MachineInfoMessage& msg)
    {
       mConnectedClients.push_back(msg.GetMachineInfo());
 
@@ -162,7 +159,7 @@ namespace dtNetGM
    }
 
    ////////////////////////////////////////////////////////////////////
-   void ClientNetworkComponent::ProcessNetClientNotifyDisconnect(const MachineInfoMessage& msg)
+   void ClientNetworkComponent::ProcessNetClientNotifyDisconnect(const dtGame::MachineInfoMessage& msg)
    {
       OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mMutex);
 
@@ -222,7 +219,7 @@ namespace dtNetGM
    ////////////////////////////////////////////////////////////////////
    void ClientNetworkComponent::SendRequestConnectionMessage()
    {
-      dtCore::RefPtr<dtNetGM::MachineInfoMessage> message;
+      dtCore::RefPtr<dtGame::MachineInfoMessage> message;
       GetGameManager()->GetMessageFactory().CreateMessage(dtGame::MessageType::NETCLIENT_REQUEST_CONNECTION, message);
       message->SetDestination(GetServer());
       message->SetMachineInfo(GetGameManager()->GetMachineInfo());
@@ -279,8 +276,8 @@ namespace dtNetGM
    {
       { // Scoped lock for the frame sync values. Free lock before releasing block below
          OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mBufferMutex);
-         const ServerSyncControlMessage* serverSyncMessage = 
-            dynamic_cast<const ServerSyncControlMessage*>(&message);
+         const dtGame::ServerSyncControlMessage* serverSyncMessage =
+            dynamic_cast<const dtGame::ServerSyncControlMessage*>(&message);
 
          bool syncEnabledHasChanged = GetFrameSyncIsEnabled() != serverSyncMessage->GetSyncEnabled();
          SetFrameSyncIsEnabled(serverSyncMessage->GetSyncEnabled());

@@ -22,9 +22,6 @@
 #include <dtNetGM/networkcomponent.h>
 #include <dtNetGM/networkbridge.h>
 #include <dtNetGM/serverconnectionlistener.h>
-#include <dtNetGM/machineinfomessage.h>
-#include <dtNetGM/serversynccontrolmessage.h>
-#include <dtNetGM/serverframesyncmessage.h>
 #include <dtGame/basemessages.h>
 #include <dtGame/messagefactory.h>
 #include <dtGame/messagetype.h>
@@ -116,7 +113,7 @@ namespace dtNetGM
       {
          // Create frame sync message.
          dtCore::RefPtr<dtGame::Message> message = GetGameManager()->GetMessageFactory().CreateMessage(dtGame::MessageType::NETSERVER_FRAME_SYNC);
-         ServerFrameSyncMessage* frameSync = static_cast<ServerFrameSyncMessage*>(message.get());
+         dtGame::ServerFrameSyncMessage* frameSync = static_cast<dtGame::ServerFrameSyncMessage*>(message.get());
          frameSync->SetServerSimTimeSinceStartup(GetGameManager()->GetSimTimeSinceStartup());
          frameSync->SetServerTimeScale(GetGameManager()->GetTimeScale());
 
@@ -132,7 +129,7 @@ namespace dtNetGM
    {
       // Create control message
       dtCore::RefPtr<dtGame::Message> message = GetGameManager()->GetMessageFactory().CreateMessage(dtGame::MessageType::NETSERVER_SYNC_CONTROL);
-      ServerSyncControlMessage* controlMsg = static_cast<ServerSyncControlMessage*>(message.get());
+      dtGame::ServerSyncControlMessage* controlMsg = static_cast<dtGame::ServerSyncControlMessage*>(message.get());
       controlMsg->SetMaxWaitTime(GetFrameSyncMaxWaitTime());
       controlMsg->SetNumSyncsPerSecond(GetFrameSyncNumPerSecond());
       controlMsg->SetSyncEnabled(GetFrameSyncIsEnabled());
@@ -213,7 +210,7 @@ namespace dtNetGM
 
          // send an INFO_CLIENT_DISCONNECTED message to other connected clients
          dtCore::RefPtr<dtGame::Message> message = GetGameManager()->GetMessageFactory().CreateMessage(dtGame::MessageType::NETCLIENT_NOTIFY_DISCONNECT);
-         MachineInfoMessage* machineMsg = static_cast<MachineInfoMessage*>(message.get());
+         dtGame::MachineInfoMessage* machineMsg = static_cast<dtGame::MachineInfoMessage*>(message.get());
          machineMsg->SetMachineInfo(networkBridge.GetMachineInfo());
 
          SendNetworkMessage(*machineMsg, DestinationType::ALL_CLIENTS);
@@ -225,7 +222,7 @@ namespace dtNetGM
 
 
    ////////////////////////////////////////////////////////////////////////////////
-   void ServerNetworkComponent::ProcessNetClientRequestConnection(const MachineInfoMessage& msg)
+   void ServerNetworkComponent::ProcessNetClientRequestConnection(const dtGame::MachineInfoMessage& msg)
    {
       std::string rejectReason = "";
       bool acceptClient = AcceptClient(msg.GetSource(), rejectReason);
@@ -238,7 +235,7 @@ namespace dtNetGM
          // Generate a NETSERVER_ACCEPT_CONNECTION message
          // send the MachineInfo of our server to  the new client
          dtCore::RefPtr<dtGame::Message> message = GetGameManager()->GetMessageFactory().CreateMessage(dtGame::MessageType::NETSERVER_ACCEPT_CONNECTION);
-         MachineInfoMessage* acceptMsg = static_cast<MachineInfoMessage*>(message.get());
+         dtGame::MachineInfoMessage* acceptMsg = static_cast<dtGame::MachineInfoMessage*>(message.get());
          acceptMsg->SetDestination(&msg.GetSource());
          SendNetworkMessage(*acceptMsg);
 
@@ -278,7 +275,7 @@ namespace dtNetGM
    void ServerNetworkComponent::SendInfoClientConnectedMessage(const dtGame::MachineInfo& machineInfo)
    {
       dtCore::RefPtr<dtGame::Message> msg = GetGameManager()->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_CLIENT_CONNECTED);
-      MachineInfoMessage* machineMsg = static_cast<MachineInfoMessage*>(msg.get());
+      dtGame::MachineInfoMessage* machineMsg = static_cast<dtGame::MachineInfoMessage*>(msg.get());
       machineMsg->SetMachineInfo(machineInfo);
 
       // Send Info to all other clients
@@ -295,7 +292,7 @@ namespace dtNetGM
 
       // Create the Message
       dtCore::RefPtr<dtGame::Message> msg = GetGameManager()->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_CLIENT_CONNECTED);
-      MachineInfoMessage* machineMsg = static_cast<MachineInfoMessage*> (msg.get());
+      dtGame::MachineInfoMessage* machineMsg = static_cast<dtGame::MachineInfoMessage*> (msg.get());
 
       while (!connectedClients.empty())
       {

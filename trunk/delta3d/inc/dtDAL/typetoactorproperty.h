@@ -45,6 +45,12 @@
 #include <dtDAL/namedgameeventparameter.h>
 #include <dtDAL/namedgroupparameter.h>
 #include <dtDAL/namedintparameter.h>
+#include <dtDAL/namedunsignedintparameter.h>
+#include <dtDAL/namedshortintparameter.h>
+#include <dtDAL/namedunsignedshortintparameter.h>
+#include <dtDAL/namedlongintparameter.h>
+#include <dtDAL/namedunsignedlongintparameter.h>
+#include <dtDAL/namedunsignedcharparameter.h>
 #include <dtDAL/namedlongintparameter.h>
 #include <dtDAL/namedresourceparameter.h>
 #include <dtDAL/namedvectorparameters.h>
@@ -136,6 +142,71 @@ namespace dtDAL
       };
 
       template <typename T>
+      struct _TypeToActorProperty_<false, unsigned char, T>
+      {
+         typedef dtDAL::IntActorProperty value_type;
+         typedef dtDAL::NamedUnsignedCharParameter named_parameter_type;
+
+         typedef unsigned char GetValueType;
+         typedef unsigned char SetValueType;
+
+         typedef value_type::GetFuncType GetFuncType;
+         typedef value_type::SetFuncType SetFuncType;
+      };
+
+      template <typename T>
+      struct _TypeToActorProperty_<false, char, T>
+      {
+         typedef dtDAL::IntActorProperty value_type;
+         typedef dtDAL::NamedUnsignedCharParameter named_parameter_type;
+
+         typedef char GetValueType;
+         typedef char SetValueType;
+
+         typedef value_type::GetFuncType GetFuncType;
+         typedef value_type::SetFuncType SetFuncType;
+      };
+
+      template <typename T>
+      struct _TypeToActorProperty_<false, unsigned short, T>
+      {
+         typedef dtDAL::IntActorProperty value_type;
+         typedef dtDAL::NamedUnsignedShortIntParameter named_parameter_type;
+
+         typedef unsigned short GetValueType;
+         typedef unsigned short SetValueType;
+
+         typedef value_type::GetFuncType GetFuncType;
+         typedef value_type::SetFuncType SetFuncType;
+      };
+
+      template <typename T>
+      struct _TypeToActorProperty_<false, short, T>
+      {
+         typedef dtDAL::IntActorProperty value_type;
+         typedef dtDAL::NamedShortIntParameter named_parameter_type;
+
+         typedef short GetValueType;
+         typedef short SetValueType;
+
+         typedef value_type::GetFuncType GetFuncType;
+         typedef value_type::SetFuncType SetFuncType;
+      };
+
+      template <typename T>
+      struct _TypeToActorProperty_<false, unsigned int, T>
+      {
+         typedef dtDAL::IntActorProperty value_type;
+         typedef dtDAL::NamedUnsignedIntParameter named_parameter_type;
+
+         typedef unsigned int GetValueType;
+         typedef unsigned int SetValueType;
+
+         typedef value_type::GetFuncType GetFuncType;
+         typedef value_type::SetFuncType SetFuncType;
+      };
+
+      template <typename T>
       struct _TypeToActorProperty_<false, int, T>
       {
          typedef dtDAL::IntActorProperty value_type;
@@ -156,6 +227,19 @@ namespace dtDAL
 
          typedef long GetValueType;
          typedef long SetValueType;
+
+         typedef value_type::GetFuncType GetFuncType;
+         typedef value_type::SetFuncType SetFuncType;
+      };
+
+      template <typename T>
+      struct _TypeToActorProperty_<false, unsigned long, T>
+      {
+         typedef dtDAL::LongActorProperty value_type;
+         typedef dtDAL::NamedUnsignedLongIntParameter named_parameter_type;
+
+         typedef unsigned long GetValueType;
+         typedef unsigned long SetValueType;
 
          typedef value_type::GetFuncType GetFuncType;
          typedef value_type::SetFuncType SetFuncType;

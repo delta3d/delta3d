@@ -94,7 +94,7 @@ namespace dtNetGM
        * Processes a MessageType::NETCLIENT_REQUEST_CONNECTION Message.
        * @param msg The message
        */
-      virtual void ProcessNetClientRequestConnection(const MachineInfoMessage& msg);
+      virtual void ProcessNetClientRequestConnection(const dtGame::MachineInfoMessage& msg);
 
       /**
        * Processes a MessageType::NETCLIENT_NOTIFY_DISCONNECT Message.

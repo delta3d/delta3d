@@ -47,6 +47,7 @@ SET(LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/mapchangestatedata.h
     ${HEADER_PATH}/message.h
     ${HEADER_PATH}/messagefactory.h
+    ${HEADER_PATH}/messagemacros.h
     ${HEADER_PATH}/messageparameter.h
     ${HEADER_PATH}/messagetype.h
     ${HEADER_PATH}/serverloggercomponent.h

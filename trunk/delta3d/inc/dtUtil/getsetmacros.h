@@ -43,6 +43,13 @@
    };\
       \
 
+#define DECLARE_PROPERTY_GET_SET(PropertyType, PropertyName) \
+      \
+      PROPERTY_MODIFIERS_SETTER void Set ## PropertyName(dtUtil::TypeTraits<PropertyType>::param_type value);\
+      \
+      PROPERTY_MODIFIERS_GETTER dtUtil::TypeTraits<PropertyType>::return_type Get ## PropertyName() const;\
+      \
+
 /** 
   * Macro that will declare a private data member and declare the accessors for 
   * it.  Note, this only creates the method declarations, not the implementations.
@@ -65,11 +72,7 @@
    private:\
       dtUtil::TypeTraits<PropertyType>::value_type  m ## PropertyName; \
    public: \
-      \
-      PROPERTY_MODIFIERS_SETTER void Set ## PropertyName(dtUtil::TypeTraits<PropertyType>::param_type value);\
-      \
-      PROPERTY_MODIFIERS_GETTER dtUtil::TypeTraits<PropertyType>::return_type Get ## PropertyName() const;\
-      \
+       DECLARE_PROPERTY_GET_SET(PropertyType, PropertyName)
 
 #define IMPLEMENT_PROPERTY_GETTER(ClassName, PropertyType, PropertyName) \
       dtUtil::TypeTraits<PropertyType>::return_type ClassName::Get ## PropertyName() const\

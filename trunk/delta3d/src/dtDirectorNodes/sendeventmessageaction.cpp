@@ -27,6 +27,7 @@
 
 #include <dtGame/basemessages.h>
 #include <dtGame/messagefactory.h>
+#include <dtGame/messagetype.h>
 
 namespace dtDirector
 {

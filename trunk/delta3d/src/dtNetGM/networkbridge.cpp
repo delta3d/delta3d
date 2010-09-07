@@ -25,7 +25,7 @@
 #include <dtNetGM/networkcomponent.h>
 #include <dtNetGM/datastreampacket.h>
 #include <dtGame/machineinfo.h>
-#include <dtNetGM/machineinfomessage.h>
+#include <dtUtil/stringutils.h>
 #include <gnelib.h>
 #include <dtUtil/log.h>
 
