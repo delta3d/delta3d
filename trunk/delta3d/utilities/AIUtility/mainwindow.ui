@@ -184,6 +184,9 @@
    <property name="text">
     <string>Add Edge</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+E</string>
+   </property>
   </action>
   <action name="mActionRemoveEdge">
    <property name="enabled">
@@ -195,6 +198,9 @@
    </property>
    <property name="text">
     <string>Remove Edge</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
    </property>
   </action>
   <action name="mActionDeleteSelectedWaypoints">
@@ -275,6 +281,10 @@
    </property>
   </action>
   <action name="mActionGroundClamp">
+   <property name="icon">
+    <iconset resource="AIUtilityResources.qrc">
+     <normaloff>:/STAGE/icons/groundclamp_small.png</normaloff>:/STAGE/icons/groundclamp_small.png</iconset>
+   </property>
    <property name="text">
     <string>Clamp To Ground</string>
    </property>
