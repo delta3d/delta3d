@@ -119,8 +119,8 @@ namespace dtGame
       {
          single.GetHitPoint(tempHit, i);
          float newDiff = tempHit.z() - pointZ;
-         // ABOVE
-         if (newDiff > 0.0f && newDiff < aboveDiff)
+         // The terrain is ABOVE
+         if (newDiff >= 0.0f && newDiff < aboveDiff)
          {
             // Keep the old hit if it is already inside the vehicle 
             // (for when you have skirts or ovelapping geometry in terrain)
@@ -135,7 +135,7 @@ namespace dtGame
             }
             // Else just keep the last 'above' hit we had
          }
-         // BELOW 
+         // the terrain is BELOW
          else if (newDiff < 0.0f && newDiff > belowDiff)
          {
             belowDiff = newDiff;
@@ -146,14 +146,12 @@ namespace dtGame
       }
 
       // If we found both, we have to pick the right one (prevents snapping with overlapping terrain objects)
-      finalResult = foundAbove || foundBelow; // regardless of what we do next, the function is true if we found ANY hits.
       bool clampUp = (foundAbove && !foundBelow); // we are below ALL terrain, so clamp up.
       bool clampDown = (foundBelow &&    // clampUp always wins over clampDown 
          data.GetGroundClampType() == GroundClampTypeEnum::FULL); 
 
       if (foundBelow && foundAbove)
       {
-         finalResult = true;
          // If most of the vehicle is intersecting with the above hit, then clamp up, cause we are intersecting both parts the terrain. 
          if (aboveDiff < modelHeightAllowance)
          {
@@ -167,32 +165,17 @@ namespace dtGame
       {
          outHit = aboveHit;
          outNormal = aboveOutNormal;
+         finalResult = true;
       }
       else if (clampDown)
       {
          outHit = belowHit;
          outNormal = belowOutNormal;
+         finalResult = true;
       }
-      // If not clamping up or down, but found a hit, we are flying above ground
-      else if (finalResult)
-      {
-         // Make up a hit loc/normal that leaves it right where it is
-         outHit = osg::Vec3(tempHit.x(), tempHit.y(), pointZ);
-         outNormal = osg::Vec3(0.0f, 0.0f, 1.0f); // straight up. Hit normal isn't used anyway
-      }
+      // else -- If not clamping up or down, but found a hit, we are flying above ground
 
       return finalResult;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   bool DefaultGroundClamper::GetMissingHit(const dtDAL::TransformableActorProxy& proxy,
-      GroundClampingData& data, float pointZ, osg::Vec3& outHit, osg::Vec3& outNormal)
-   {
-      // This method is a place holder for any sub-class that wants to
-      // improvise a new point if one was not detected by an Isector.
-      // Thus, this method has no implementation.
-
-      return false;
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -302,18 +285,17 @@ namespace dtGame
             }
             else
             {
-               // Get an improvised point and normal if possible.
-               GetMissingHit(proxy, data, inOutPoints[i].z(), inOutPoints[i], normal);
-
-               std::ostringstream ss;
-               ss << "Found no hit on line segment [" << i <<  "] on points:";
-               for (unsigned i = 0; i < 3; ++i)
+               if (debugEnabled)
                {
-                  ss << " [" << inOutPoints[i] << "]";
+                  std::ostringstream ss;
+                  ss << "Found no hit on line segment [" << i <<  "] on points:";
+                  for (unsigned i = 0; i < 3; ++i)
+                  {
+                     ss << " [" << inOutPoints[i] << "]";
+                  }
+
+                  logger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
                }
-
-               logger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
-
             }
          }
       } 
@@ -544,25 +526,7 @@ namespace dtGame
          }
          else
          {
-            if (GetMissingHit(*proxy, *gcData, singlePoint.z(), hp, normal))
-            {
-               runtimeData.SetLastClampedOffset(hp.z() - singlePoint.z());
-
-               if(gcData->GetAdjustRotationToGround())
-               {
-                  normal.normalize();
-                  OrientTransform(xform, rotation, hp, normal);
-                  runtimeData.SetLastClampedRotation(rotation);
-               }
-               else
-               {
-                  xform.Set(hp, rotation);
-               }
-            }
-            else
-            {
-               runtimeData.SetLastClampedOffset(0);
-            }
+            runtimeData.SetLastClampedOffset(0);
             actor->SetTransform(xform, dtCore::Transformable::REL_CS);
          }
       }

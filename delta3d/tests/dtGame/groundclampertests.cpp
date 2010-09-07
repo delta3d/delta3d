@@ -164,7 +164,6 @@ namespace dtGame
          CPPUNIT_TEST(TestRuntimeDataProperties);
          CPPUNIT_TEST(TestOrientTransform);
          CPPUNIT_TEST(TestOrientTransformToSurfacePoints);
-         CPPUNIT_TEST(TestMissingHit);
          CPPUNIT_TEST(TestActorDetectPoints);
          CPPUNIT_TEST(TestSurfacePointDetection);
          CPPUNIT_TEST(TestFinalizeSurfacePoints);
@@ -416,14 +415,8 @@ namespace dtGame
 
             // CLAMPING DOWN - 'keep above' should do nothing - returns what went in
             data.SetGroundClampType(dtGame::GroundClampTypeEnum::KEEP_ABOVE);
-            CPPUNIT_ASSERT_MESSAGE("A nearest hit should have been found.",
-               mGroundClamper->GetClosestHit(*mTestGameActor, data, *single, 5.0f, point, normal));
-
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(5.0f, point.z(), 0.001);
-            // Normal is set to be straight up
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0f, normal.x(), 0.001);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0f, normal.y(), 0.001);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0f, normal.z(), 0.001);
+            CPPUNIT_ASSERT_MESSAGE("A nearest hit should NOT have been found because the current position is above the ground.",
+               !mGroundClamper->GetClosestHit(*mTestGameActor, data, *single, 5.0f, point, normal));
 
             // CLAMPING - 1 up and 1 down... fits inside. - FULL CLAMP - should go down
             data.SetGroundClampType(dtGame::GroundClampTypeEnum::FULL);
@@ -575,23 +568,6 @@ namespace dtGame
             CPPUNIT_ASSERT(IsEqual(resultNormal, testNormal));
             CPPUNIT_ASSERT(IsEqual(resultHpr, testHpr));
             CPPUNIT_ASSERT(IsEqual(resultRotation, testRotation));
-         }
-
-         ///////////////////////////////////////////////////////////////////////
-         void TestMissingHit()
-         {
-            osg::Vec3 testPoint;
-            osg::Vec3 testNormal(0.0f,0.0f,1.0f);
-            osg::Vec3 resultPoint;
-            osg::Vec3 resultNormal(testNormal);
-
-            // Declare a Ground Clamp Data to satisfy the GetClosestHit method.
-            GroundClampingData data;
-
-            CPPUNIT_ASSERT_MESSAGE("Current Default Ground Clamper implementation should not return any improvised point & normal from GetMissingHit.",
-               !mGroundClamper->GetMissingHit(*mTestGameActor, data, 3.0f, testPoint, testNormal));
-            CPPUNIT_ASSERT(testPoint == resultPoint);
-            CPPUNIT_ASSERT(testNormal == resultNormal);
          }
 
          ///////////////////////////////////////////////////////////////////////
@@ -759,7 +735,8 @@ namespace dtGame
             // --- Setup the data.
             osg::Vec3 modelDimensions(3.0f, 4.0f, 5.0f);
             clampData.SetModelDimensions(modelDimensions);
-            clampData.SetUseModelDimensions(true);
+            CPPUNIT_ASSERT(clampData.UseModelDimensions());
+            clampData.SetGroundClampType(dtGame::GroundClampTypeEnum::FULL);
 
             // Create runtime data to pass to the method.
             // This simulates the creation from the higher-level
@@ -953,7 +930,7 @@ namespace dtGame
             mGroundClamper->SetTerrainActor(terrain);
 
             // Get the terrain height
-            osg::Vec3 pos(12.34f, -54.76f, 10.9f);
+            osg::Vec3 pos(12.34f, 96.76f, 10.9f);
             osg::Vec3 resultPos(pos);
             resultPos.z() = terrain->GetHeight(pos.x(), pos.y(), true);
 
@@ -970,13 +947,14 @@ namespace dtGame
             CPPUNIT_ASSERT(runtimeData->GetLastClampedRotation() == clampRotation);
             double curTime = 5.0;
             dtGame::GroundClampingData data;
-            dtGame::BaseGroundClamper::GroundClampRangeType* clampType
+            data.SetModelDimensions(osg::Vec3(1.0f, 1.0f, 1.0f));
+            dtGame::BaseGroundClamper::GroundClampRangeType* clampRangeType
                = &dtGame::BaseGroundClamper::GroundClampRangeType::INTERMITTENT_SAVE_OFFSET;
             data.SetUserData(runtimeData.get());
             data.SetAdjustRotationToGround(true);
             data.SetGroundClampType(dtGame::GroundClampTypeEnum::FULL); // make it clamp down
 
-            mGroundClamper->ClampToGround(*clampType, curTime,
+            mGroundClamper->ClampToGround(*clampRangeType, curTime,
                xform, *proxy, data, true);
             mGroundClamper->FinishUp();
 
@@ -998,7 +976,7 @@ namespace dtGame
             actor->SetTransform(xform);
             osg::Matrix forcedRotation(rotation);
             curTime += 5.0;
-            mGroundClamper->ClampToGround(*clampType, curTime,
+            mGroundClamper->ClampToGround(*clampRangeType, curTime,
                xform, *proxy, data, false);
             mGroundClamper->FinishUp();
 
@@ -1018,7 +996,7 @@ namespace dtGame
             curTime += 5.0;
             xform.SetRotation(forcedRotation);
             actor->SetTransform(xform);
-            mGroundClamper->ClampToGround(*clampType, curTime,
+            mGroundClamper->ClampToGround(*clampRangeType, curTime,
                xform, *proxy, data, true);
             mGroundClamper->FinishUp();
 
@@ -1038,7 +1016,7 @@ namespace dtGame
             xform.SetRotation(forcedRotation);
             actor->SetTransform(xform);
             data.SetAdjustRotationToGround(false);
-            mGroundClamper->ClampToGround(*clampType, curTime,
+            mGroundClamper->ClampToGround(*clampRangeType, curTime,
                xform, *proxy, data, false);
             mGroundClamper->FinishUp();
 

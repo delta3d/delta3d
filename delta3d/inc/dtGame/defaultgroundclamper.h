@@ -44,7 +44,7 @@ namespace dtDAL
 }
 
 namespace dtGame
-{  
+{
    /**
     * This is a utility class for doing ground clamping.
     */
@@ -164,7 +164,7 @@ namespace dtGame
           * @param outHit Point to capture the values of the point that is the closest match.
           * @param outNormal Normal to capture values of the matched hit point's normal.
           * @return TRUE if a hit point was detected, otherwise FALSE if there are no points
-          *         contained in the specified Isector.
+          *         contained in the specified Isector, or
           */
          virtual bool GetClosestHit(const dtDAL::TransformableActorProxy& proxy,
             GroundClampingData& data,
@@ -182,9 +182,9 @@ namespace dtGame
           * @param outNormal Normal to capture values of the matched hit point's normal.
           * @return TRUE if a hit point was calculated, otherwise FALSE if it could not be calculated.
           */
-         virtual bool GetMissingHit(const dtDAL::TransformableActorProxy& proxy,
-            GroundClampingData& data, 
-            float pointZ, osg::Vec3& outHit, osg::Vec3& outNormal);
+//         virtual bool GetMissingHit(const dtDAL::TransformableActorProxy& proxy,
+//            GroundClampingData& data,
+//            float pointZ, osg::Vec3& outHit, osg::Vec3& outNormal);
 
          /**
           * Get the surface points of the specified actor based on its model dimensions.
