@@ -16,6 +16,7 @@
 # But for now, we have to look around.
 # Other (Unix) systems should be able to utilize the non-framework paths.
 FIND_PATH(OPENAL_INCLUDE_DIR al.h
+  HINTS
   $ENV{OPENALDIR}/include/AL
   $ENV{OPENALDIR}/include/OpenAL
   ${DELTA3D_EXT_DIR}/inc
@@ -24,6 +25,7 @@ FIND_PATH(OPENAL_INCLUDE_DIR al.h
   $ENV{DELTA_ROOT}/ext/inc
   $ENV{DELTA_ROOT}/ext/inc/AL
   $ENV{DELTA_ROOT}/ext/inc/OpenAL
+  PATHS
   ~/Library/Frameworks/OpenAL.framework/Headers
   /Library/Frameworks/OpenAL.framework/Headers
   /System/Library/Frameworks/OpenAL.framework/Headers # Tiger
