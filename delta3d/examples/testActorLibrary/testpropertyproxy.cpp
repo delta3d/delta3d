@@ -89,51 +89,51 @@ void ExampleTestPropertyProxy::BuildPropertyMap()
    typedef PropertyRegHelper<ExampleTestPropertyProxy&, ExampleTestPropertyProxy> PropRegHelperType;
    PropRegHelperType propRegHelper(*this, this, GROUPNAME);
 
-   REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestBool, "Test_Boolean", "Test Boolean", "Holds a test Boolean property",
+   DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestBool, "Test_Boolean", "Test Boolean", "Holds a test Boolean property",
             PropRegHelperType, propRegHelper);
 
-   REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestInt, "Test_Int", "Test Int", "Holds a test Int property",
+   DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestInt, "Test_Int", "Test Int", "Holds a test Int property",
             PropRegHelperType, propRegHelper);
 
-   REGISTER_PROPERTY_WITH_NAME(ReadOnlyTestInt, "Test_Read_Only_Int", "Holds a test Read Only Int property",
+   DT_REGISTER_PROPERTY_WITH_NAME(ReadOnlyTestInt, "Test_Read_Only_Int", "Holds a test Read Only Int property",
             PropRegHelperType, propRegHelper);
 
    GetProperty("Test_Read_Only_Int")->SetReadOnly(true);
 
-   REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestLong, "Test_Long", "Test Long", "Holds a test Long property",
+   DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestLong, "Test_Long", "Test Long", "Holds a test Long property",
             PropRegHelperType, propRegHelper);
 
-   REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestFloat, "Test_Float", "Test Float", "Holds a test Float property",
+   DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestFloat, "Test_Float", "Test Float", "Holds a test Float property",
             PropRegHelperType, propRegHelper);
 
-   REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestDouble, "Test_Double", "Test Double", "Holds a test Double property",
+   DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestDouble, "Test_Double", "Test Double", "Holds a test Double property",
             PropRegHelperType, propRegHelper);
 
-   REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestVec3, "Test_Vec3", "Test Vector3", "Holds a test Vector3 property",
+   DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestVec3, "Test_Vec3", "Test Vector3", "Holds a test Vector3 property",
             PropRegHelperType, propRegHelper);
-   REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestVec4, "Test_Vec4", "Test Vector4", "Holds a test Vector4 property",
+   DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestVec4, "Test_Vec4", "Test Vector4", "Holds a test Vector4 property",
             PropRegHelperType, propRegHelper);
-   REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestVec2, "Test_Vec2", "Test Vector2", "Holds a test Vector2 property",
-            PropRegHelperType, propRegHelper);
-
-   REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestVec2f, "Test_Vec2f", "Test Vector2f", "Holds a test Vector2f property",
-            PropRegHelperType, propRegHelper);
-   REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestVec3f, "Test_Vec3f", "Test Vector3f", "Holds a test Vector3f property",
-            PropRegHelperType, propRegHelper);
-   REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestVec4f, "Test_Vec4f", "Test Vector4f", "Holds a test Vector4f property",
+   DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestVec2, "Test_Vec2", "Test Vector2", "Holds a test Vector2 property",
             PropRegHelperType, propRegHelper);
 
-   REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestVec2d, "Test_Vec2d", "Test Vector2d", "Holds a test Vector2d property",
+   DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestVec2f, "Test_Vec2f", "Test Vector2f", "Holds a test Vector2f property",
             PropRegHelperType, propRegHelper);
-   REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestVec3d, "Test_Vec3d", "Test Vector3d", "Holds a test Vector3d property",
+   DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestVec3f, "Test_Vec3f", "Test Vector3f", "Holds a test Vector3f property",
             PropRegHelperType, propRegHelper);
-   REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestVec4d, "Test_Vec4d", "Test Vector4d", "Holds a test Vector4d property",
-            PropRegHelperType, propRegHelper);
-
-   REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestString, "Test_String", "Test String", "Holds a test String property (unlimited length)",
+   DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestVec4f, "Test_Vec4f", "Test Vector4f", "Holds a test Vector4f property",
             PropRegHelperType, propRegHelper);
 
-   REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestStringWithLength, "Test_String2", "Test String (max 10)",
+   DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestVec2d, "Test_Vec2d", "Test Vector2d", "Holds a test Vector2d property",
+            PropRegHelperType, propRegHelper);
+   DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestVec3d, "Test_Vec3d", "Test Vector3d", "Holds a test Vector3d property",
+            PropRegHelperType, propRegHelper);
+   DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestVec4d, "Test_Vec4d", "Test Vector4d", "Holds a test Vector4d property",
+            PropRegHelperType, propRegHelper);
+
+   DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestString, "Test_String", "Test String", "Holds a test String property (unlimited length)",
+            PropRegHelperType, propRegHelper);
+
+   DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestStringWithLength, "Test_String2", "Test String (max 10)",
             "Holds a test String property with a max length of 10",
             PropRegHelperType, propRegHelper);
 
@@ -144,23 +144,23 @@ void ExampleTestPropertyProxy::BuildPropertyMap()
       ColorRgbaActorProperty::GetFuncType(this, &ExampleTestPropertyProxy::GetTestColor),
       "Holds a test Color property", GROUPNAME));
 
-   REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestEnum, "Test_Enum", "Test Enum",
+   DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TestEnum, "Test_Enum", "Test Enum",
             "Holds a test Enumeration property",
             PropRegHelperType, propRegHelper);
 
-   REGISTER_RESOURCE_PROPERTY_WITH_NAME(DataType::SOUND, TestSoundResource, "Test_Source_Resource", "Test Sound",
+   DT_REGISTER_RESOURCE_PROPERTY_WITH_NAME(DataType::SOUND, TestSoundResource, "Test_Source_Resource", "Test Sound",
             "An example sound resource property",
             PropRegHelperType, propRegHelper);
 
-   REGISTER_RESOURCE_PROPERTY_WITH_NAME(DataType::TEXTURE, TestTextureResource, "Test_Texture_Resource", "Test Texture",
+   DT_REGISTER_RESOURCE_PROPERTY_WITH_NAME(DataType::TEXTURE, TestTextureResource, "Test_Texture_Resource", "Test Texture",
             "An example texture resource property",
             PropRegHelperType, propRegHelper);
 
-   REGISTER_ACTOR_ID_PROPERTY_WITH_NAME("dtCore::Transformable", TestActor, "Test_Actor", "Test Actor",
+   DT_REGISTER_ACTOR_ID_PROPERTY_WITH_NAME("dtCore::Transformable", TestActor, "Test_Actor", "Test Actor",
             "An example linked actor property",
             PropRegHelperType, propRegHelper);
 
-   REGISTER_PROPERTY_WITH_LABEL(TestGameEvent, "Test Game Event",
+   DT_REGISTER_PROPERTY_WITH_LABEL(TestGameEvent, "Test Game Event",
             "Holds a test game event property",
             PropRegHelperType, propRegHelper);
 
@@ -168,7 +168,7 @@ void ExampleTestPropertyProxy::BuildPropertyMap()
    mGroupParam->AddParameter("IntParam", dtDAL::DataType::INT);
    mGroupParam->AddParameter("StringParam", dtDAL::DataType::STRING);
 
-   REGISTER_PROPERTY_WITH_LABEL(TestGroup, "Test Group Property",
+   DT_REGISTER_PROPERTY_WITH_LABEL(TestGroup, "Test Group Property",
             "Holds a test group property",
             PropRegHelperType, propRegHelper);
 

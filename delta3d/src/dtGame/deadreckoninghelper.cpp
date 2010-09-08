@@ -730,28 +730,28 @@ namespace dtGame
       PropRegType propRegHelper(*this, this, DEADRECKONING_GROUP);//"Dead Reckoning");
 
 
-      REGISTER_PROPERTY_WITH_NAME(LastKnownTranslation, PROPERTY_LAST_KNOWN_TRANSLATION, 
+      DT_REGISTER_PROPERTY_WITH_NAME(LastKnownTranslation, PROPERTY_LAST_KNOWN_TRANSLATION, 
          "Sets the last know position of this Entity", PropRegType, propRegHelper);
 
       // Last Known Rotation - See the header for GetInternalLastKnownRotationInXYZ() for why this is wierd.
-      REGISTER_PROPERTY_WITH_NAME(InternalLastKnownRotationInXYZ, PROPERTY_LAST_KNOWN_ROTATION, 
+      DT_REGISTER_PROPERTY_WITH_NAME(InternalLastKnownRotationInXYZ, PROPERTY_LAST_KNOWN_ROTATION, 
          "Sets the last known rotation of this Entity", PropRegType, propRegHelper);
 
       // Note - the member vars were changed to LastKnownXYZ, but the properties were left the same
       // so as to not break MANY maps in production.
-      REGISTER_PROPERTY_WITH_NAME(LastKnownVelocity, PROPERTY_VELOCITY_VECTOR, 
+      DT_REGISTER_PROPERTY_WITH_NAME(LastKnownVelocity, PROPERTY_VELOCITY_VECTOR, 
          "Sets the last known velocity vector of this Entity", PropRegType, propRegHelper);
 
       // Note - the member vars were changed to LastKnownXYZ, but the properties were left the same
       // so as to not break MANY maps in production.
-      REGISTER_PROPERTY_WITH_NAME(LastKnownAcceleration, PROPERTY_ACCELERATION_VECTOR, 
+      DT_REGISTER_PROPERTY_WITH_NAME(LastKnownAcceleration, PROPERTY_ACCELERATION_VECTOR, 
          "Sets the last known acceleration vector of this Entity", PropRegType, propRegHelper);
 
       // Note - the member vars were changed to LastKnownXYZ, but the properties were left the same
       // so as to not break MANY maps in production.
-      REGISTER_PROPERTY_WITH_NAME(LastKnownAngularVelocity, PROPERTY_ANGULAR_VELOCITY_VECTOR, 
+      DT_REGISTER_PROPERTY_WITH_NAME(LastKnownAngularVelocity, PROPERTY_ANGULAR_VELOCITY_VECTOR, 
          "Sets the last known angular velocity vector of this Entity", PropRegType, propRegHelper);
-      REGISTER_PROPERTY_WITH_NAME(DeadReckoningAlgorithm, PROPERTY_DEAD_RECKONING_ALGORITHM, 
+      DT_REGISTER_PROPERTY_WITH_NAME(DeadReckoningAlgorithm, PROPERTY_DEAD_RECKONING_ALGORITHM, 
          "Sets the enumerated dead reckoning algorithm to use.", PropRegType, propRegHelper);
 
       // IsFlying was changed to the enumeration below. The property is depracated and creatd on the fly.
@@ -762,12 +762,12 @@ namespace dtGame
       //   "If flying is true, then it won't ground clamp. Also useful for hovering or jumping vehicles. ", DEADRECKONING_GROUP));
 
       // Doesn't use macro cause the Getter is called IsFlying
-      REGISTER_PROPERTY_WITH_NAME_AND_LABEL(GroundClampType, PROPERTY_GROUND_CLAMP_TYPE, "Ground Clamp Type",
+      DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(GroundClampType, PROPERTY_GROUND_CLAMP_TYPE, "Ground Clamp Type",
          "What type of ground clamping should be performed. This replaced the Flying property.", 
          PropRegType, propRegHelper);
 
 
-      REGISTER_PROPERTY_WITH_NAME(GroundOffset, PROPERTY_GROUND_OFFSET, 
+      DT_REGISTER_PROPERTY_WITH_NAME(GroundOffset, PROPERTY_GROUND_OFFSET, 
          "Sets the offset from the ground this entity should have.  This only matters if it is not flying.", PropRegType, propRegHelper);
 
 

@@ -55,59 +55,14 @@ namespace dtGame
    DT_DECLARE_MESSAGE_END()
 
 
-   class DT_GAME_EXPORT TimeChangeMessage : public Message
-   {
-      public:
-
-         /// Constructor
-         TimeChangeMessage() : Message()
-         {
-            AddParameter(new FloatMessageParameter("TimeScale", 1.0f));
-            AddParameter(new DoubleMessageParameter("SimulationTime"));
-            AddParameter(new DoubleMessageParameter("SimulationClockTime"));
-         }
-
-         /**
-          * Gets the time scale
-          * @return The current value of time scale.
-          */
-         float GetTimeScale() const;
-
-         /**
-          * Sets the time scale
-          * @param newTimeScale the new time scale to set
-          */
-         void SetTimeScale(float newTimeScale);
-
-         /**
-          * Gets the simulation time
-          * @return The current value of simulation time.
-          */
-         double GetSimulationTime() const;
-
-         /**
-          * Sets the simulation time
-          * @param newTime the new time to set
-          */
-         void SetSimulationTime(double newTime);
-
-         /**
-          * Gets the simulated clock time.  That is, the wall clock date/time of the simulation
-          * @return The current value of the simulation clock time.
-          */
-         double GetSimulationClockTime() const;
-
-         /**
-          * Sets the simulated clock time.  That is, the wall clock date/time of the simulation
-          * @param newSimClockTime the new simulatied clock time to set
-          */
-         void SetSimulationClockTime(double newSimClockTime);
-
-      protected:
-         /// Destructor
-         virtual ~TimeChangeMessage() { }
-
-   };
+   DT_DECLARE_MESSAGE_BEGIN(TimeChangeMessage, Message, DT_GAME_EXPORT)
+      /// The Time scale, i.e. the factor of real time at which simulation time advances.
+      DECLARE_PARAMETER_INLINE(float, TimeScale)
+      /// The simulation time as a count of seconds.
+      DECLARE_PARAMETER_INLINE(double, SimulationTime)
+      /// The simulation clock time as seconds since the epoch.
+      DECLARE_PARAMETER_INLINE(double, SimulationClockTime)
+   DT_DECLARE_MESSAGE_END()
 
    /**
     * Message used for all of the map change, close, load, etc messages.  It
