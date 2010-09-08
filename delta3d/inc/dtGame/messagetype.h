@@ -35,6 +35,28 @@ namespace dtGame
    /**
     * Class that enumerates the message types used by the GameManager
     * @see class dtGame::GameManager
+    *
+    * <br>
+    * To add new message types subclass this type using
+    * <br>
+    * DT_DECLARE_MESSAGE_TYPE_CLASS_BEGIN(CustomMessageType, NEW_EXPORT_MACRO)
+    *    static const CustomMessageType MSG_TYPE_1;
+    *    static const CustomMessageType MSG_TYPE_2;
+    * DT_DECLARE_MESSAGE_TYPE_CLASS_END()
+    * <br>
+    * in the cpp file
+    * <br>
+    * DT_IMPLEMENT_MESSAGE_TYPE_CLASS(CustomMessageType);
+    * static const unsigned short START_SHORT_INT_VALUE = dtGame::MessageType::USER_DEFINED_MESSAGE_TYPE;
+    *
+    * const CustomMessageType::CustomMessageType MSG_TYPE_1("MSG_TYPE_1", "Info", "Description", START_SHORT_INT_VALUE, DT_MSG_CLASS(Message));
+    * const CustomMessageType::CustomMessageType MSG_TYPE_2("MSG_TYPE_2", "Info", "Description", START_SHORT_INT_VALUE + 1US, DT_MSG_CLASS(Message));
+    * <br>
+    * Note that the DT_MSG_CLASS() macro takes the subclass of dtGame::Message that is uses for
+    * the message.  It will auto register and unregister the message at startup/library load and shutdown/library unload
+    * so you no longer need to do that explicitly.
+    *
+    * @see messagemacros.h for macros to make it easier to make a new message subclass.
     */
    class DT_GAME_EXPORT MessageType : public dtUtil::Enumeration
    {
@@ -166,9 +188,6 @@ namespace dtGame
           * to a templated constructor so pass (MessageClass*)(NULL)
           *
           * Then it will auto register the message with the message factory at creation time.
-          *
-          * try using the macro
-          * DT_IMPLEMENT_MESSAGE_TYPE
           */
          template<typename MessageClass>
          MessageType(const std::string& name, const std::string& category,
@@ -183,8 +202,8 @@ namespace dtGame
          }
 
          /**
-          * Use the new template constructor, preferably by calling the macro
-          * DT_IMPLEMENT_MESSAGE_TYPE
+          * Use the new templated constructor.  See the class comments for more information.
+          * @see MessageType
           */
          DEPRECATE_FUNC
          MessageType(const std::string& name, const std::string& category,
@@ -209,6 +228,7 @@ namespace dtGame
    };
 }
 
+// See the comment on the MesssageType class
 #define DT_DECLARE_MESSAGE_TYPE_CLASS_BEGIN(CLS, EXPORT_MACRO) \
    class EXPORT_MACRO CLS : public dtGame::MessageType \
    { \
@@ -224,11 +244,14 @@ namespace dtGame
       virtual ~CLS() {} \
    public: \
 
+// See the comment on the MesssageType class
 #define DT_DECLARE_MESSAGE_TYPE_CLASS_END() };
 
+// See the comment on the MesssageType class
 #define DT_IMPLEMENT_MESSAGE_TYPE_CLASS(CLS) \
          IMPLEMENT_ENUM(CLS)
 
+// See the comment on the MesssageType class
 #define DT_MSG_CLASS(MessageClass) (const MessageClass*)(NULL)
 
 #endif
