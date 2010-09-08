@@ -5,7 +5,7 @@
 #include <dtUtil/stringutils.h>
 #include <dtDAL/librarymanager.h>
 #include <dtDAL/exceptionenum.h>
-
+#include <dtUtil/macros.h>
 #include <xercesc/util/XercesDefs.hpp>  // for xerces namespace definition
 #include <xercesc/util/XMLString.hpp>  // for xerces string support
 
@@ -457,12 +457,14 @@ void EntityMapXMLHandler::endElement(const XMLCh* const uri,const XMLCh* const l
          }
          catch (const dtDAL::ProjectResourceErrorException &e)
          {
+            DTUNREFERENCED_PARAMETER(e);
             mMissingLibraries.push_back(mLibraryName);
 
             LOG_ERROR("Error loading library " + mLibraryName + " version " + mLibraryVersion + " in the library manager.  Exception message to follow.");
          }
          catch (const dtUtil::Exception& e)
          {
+            DTUNREFERENCED_PARAMETER(e);
             mMissingLibraries.push_back(mLibraryName);
 
             LOG_ERROR("Unknown exception loading library " + mLibraryName + " version " + mLibraryVersion + " in the library manager.  Exception message to follow.");
