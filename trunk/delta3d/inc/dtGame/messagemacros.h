@@ -27,6 +27,45 @@
 
 #include <dtDAL/typetoactorproperty.h>
 
+
+/**
+
+    Example (Tick Message)
+    <br>
+    /// Subclass dtGame::Message making a new class TickMessage.
+    /// The export macro is DT_GAME_EXPORT.
+    DT_DECLARE_MESSAGE_BEGIN(TickMessage, Message, DT_GAME_EXPORT)
+      /// Parameter that represents the change in the simulation time since last frame.
+      DECLARE_PARAMETER_INLINE(float, DeltaSimTime)
+      /// Parameter that represents the change in the real time since last frame.
+      DECLARE_PARAMETER_INLINE(float, DeltaRealTime)
+      /// The time scale, that is the factor of realtime that simulation time uses.
+      DECLARE_PARAMETER_INLINE(float, SimTimeScale)
+      /// The actual simulation time.
+      DECLARE_PARAMETER_INLINE(double, SimulationTime)
+
+      /// Add a custom method.
+      void CustomMethod(...);
+
+   DT_DECLARE_MESSAGE_END()
+   <br>
+
+   In the cpp:
+   This actually implements the constructor and it inlines all of the parameter get sets in the
+   header.  if you want to implement the methods yourself
+   <br>
+   DT_IMPLEMENT_MESSAGE_BEGIN(TickMessage)
+      DT_ADD_PARAMETER(float, DeltaSimTime)
+      DT_ADD_PARAMETER(float, DeltaRealTime)
+      DT_ADD_PARAMETER_WITH_DEFAULT(float, SimTimeScale, 1.0f)
+      DT_ADD_PARAMETER(double, SimulationTime)
+   DT_IMPLEMENT_MESSAGE_END()
+
+   void TickMessage::CustomMethod(...);
+
+ */
+
+
 #define DT_DECLARE_MESSAGE_BEGIN(CLS, BASE, EXPORT_MACRO) \
    class EXPORT_MACRO CLS : public BASE \
    { \
