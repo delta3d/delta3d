@@ -79,21 +79,21 @@ namespace dtActors
       private:
          ProjectionMode* mProjectionMode;
 
-      DECLARE_PROPERTY_INLINE(bool, Enabled)
-      DECLARE_PROPERTY_INLINE(osg::Vec4, ClearColor)
-      DECLARE_PROPERTY_INLINE(float, LODScale)
-      DECLARE_PROPERTY_INLINE(osg::Vec4, Viewport)
-      DECLARE_PROPERTY_INLINE(osg::Vec4, ProjectionRect)
-      DECLARE_PROPERTY_INLINE(osg::Vec4, ProjectionPersp)
+      DT_DECLARE_ACCESSOR_INLINE(bool, Enabled)
+      DT_DECLARE_ACCESSOR_INLINE(osg::Vec4, ClearColor)
+      DT_DECLARE_ACCESSOR_INLINE(float, LODScale)
+      DT_DECLARE_ACCESSOR_INLINE(osg::Vec4, Viewport)
+      DT_DECLARE_ACCESSOR_INLINE(osg::Vec4, ProjectionRect)
+      DT_DECLARE_ACCESSOR_INLINE(osg::Vec4, ProjectionPersp)
 
 
-      DECLARE_PROPERTY_INLINE(bool, ChangeEnabled)
-      DECLARE_PROPERTY_INLINE(bool, ChangeClearColor)
-      DECLARE_PROPERTY_INLINE(bool, ChangeLODScale)
-      DECLARE_PROPERTY_INLINE(bool, ChangeProjection)
-      DECLARE_PROPERTY_INLINE(bool, ChangeTranslation)
-      DECLARE_PROPERTY_INLINE(bool, ChangeRotation)
-      DECLARE_PROPERTY_INLINE(bool, ChangeViewport)
+      DT_DECLARE_ACCESSOR_INLINE(bool, ChangeEnabled)
+      DT_DECLARE_ACCESSOR_INLINE(bool, ChangeClearColor)
+      DT_DECLARE_ACCESSOR_INLINE(bool, ChangeLODScale)
+      DT_DECLARE_ACCESSOR_INLINE(bool, ChangeProjection)
+      DT_DECLARE_ACCESSOR_INLINE(bool, ChangeTranslation)
+      DT_DECLARE_ACCESSOR_INLINE(bool, ChangeRotation)
+      DT_DECLARE_ACCESSOR_INLINE(bool, ChangeViewport)
    };
 
    class DT_PLUGIN_EXPORT CameraDataActorProxy : public dtDAL::TransformableActorProxy

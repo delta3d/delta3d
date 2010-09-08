@@ -79,35 +79,35 @@ public:
       int       value;
    };
 
-   DECLARE_PROPERTY_INLINE(float, TestFloat);
-   DECLARE_PROPERTY_INLINE(bool, TestBool);
-   DECLARE_PROPERTY_INLINE(double, TestDouble);
-   DECLARE_PROPERTY_INLINE(int, TestInt);
-   DECLARE_PROPERTY_INLINE(int, ReadOnlyTestInt);
-   DECLARE_PROPERTY_INLINE(long, TestLong);
-   DECLARE_PROPERTY_INLINE(std::string, TestString);
-   DECLARE_PROPERTY_INLINE(std::string, TestStringWithLength);
-   DECLARE_PROPERTY_INLINE(osg::Vec2, TestVec2);
-   DECLARE_PROPERTY_INLINE(osg::Vec2f, TestVec2f);
-   DECLARE_PROPERTY_INLINE(osg::Vec2d, TestVec2d);
-   DECLARE_PROPERTY_INLINE(osg::Vec3, TestVec3);
-   DECLARE_PROPERTY_INLINE(osg::Vec3f, TestVec3f);
-   DECLARE_PROPERTY_INLINE(osg::Vec3d, TestVec3d);
-   DECLARE_PROPERTY_INLINE(osg::Vec4, TestVec4);
-   DECLARE_PROPERTY_INLINE(osg::Vec4f, TestVec4f);
-   DECLARE_PROPERTY_INLINE(osg::Vec4d, TestVec4d);
-   DECLARE_PROPERTY_INLINE(osg::Vec4, TestColor);
-   DECLARE_PROPERTY_INLINE(dtUtil::EnumerationPointer<TestEnum>, TestEnum);
-   DECLARE_PROPERTY_INLINE(dtCore::UniqueId, TestActor);
-   DECLARE_PROPERTY_INLINE(dtCore::RefPtr<dtDAL::GameEvent>, TestGameEvent);
+   DT_DECLARE_ACCESSOR_INLINE(float, TestFloat);
+   DT_DECLARE_ACCESSOR_INLINE(bool, TestBool);
+   DT_DECLARE_ACCESSOR_INLINE(double, TestDouble);
+   DT_DECLARE_ACCESSOR_INLINE(int, TestInt);
+   DT_DECLARE_ACCESSOR_INLINE(int, ReadOnlyTestInt);
+   DT_DECLARE_ACCESSOR_INLINE(long, TestLong);
+   DT_DECLARE_ACCESSOR_INLINE(std::string, TestString);
+   DT_DECLARE_ACCESSOR_INLINE(std::string, TestStringWithLength);
+   DT_DECLARE_ACCESSOR_INLINE(osg::Vec2, TestVec2);
+   DT_DECLARE_ACCESSOR_INLINE(osg::Vec2f, TestVec2f);
+   DT_DECLARE_ACCESSOR_INLINE(osg::Vec2d, TestVec2d);
+   DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, TestVec3);
+   DT_DECLARE_ACCESSOR_INLINE(osg::Vec3f, TestVec3f);
+   DT_DECLARE_ACCESSOR_INLINE(osg::Vec3d, TestVec3d);
+   DT_DECLARE_ACCESSOR_INLINE(osg::Vec4, TestVec4);
+   DT_DECLARE_ACCESSOR_INLINE(osg::Vec4f, TestVec4f);
+   DT_DECLARE_ACCESSOR_INLINE(osg::Vec4d, TestVec4d);
+   DT_DECLARE_ACCESSOR_INLINE(osg::Vec4, TestColor);
+   DT_DECLARE_ACCESSOR_INLINE(dtUtil::EnumerationPointer<TestEnum>, TestEnum);
+   DT_DECLARE_ACCESSOR_INLINE(dtCore::UniqueId, TestActor);
+   DT_DECLARE_ACCESSOR_INLINE(dtCore::RefPtr<dtDAL::GameEvent>, TestGameEvent);
 
-   DECLARE_PROPERTY_INLINE(dtDAL::ResourceDescriptor, TestSoundResource);
-   DECLARE_PROPERTY_INLINE(dtDAL::ResourceDescriptor, TestTextureResource);
+   DT_DECLARE_ACCESSOR_INLINE(dtDAL::ResourceDescriptor, TestSoundResource);
+   DT_DECLARE_ACCESSOR_INLINE(dtDAL::ResourceDescriptor, TestTextureResource);
 
 // void SetTestGameEvent(dtDAL::GameEvent* event) { mTestGameEvent = event; }
 // dtDAL::GameEvent* GetTestGameEvent() { return mTestGameEvent; }
 
-   // Can't use a DECLARE_PROPERTY because it returns a ref ptr to the value because it expects you may generate the group
+   // Can't use a DT_DECLARE_ACCESSOR because it returns a ref ptr to the value because it expects you may generate the group
    // data on the fly.
    void SetTestGroup(const dtDAL::NamedGroupParameter& groupParam) { mGroupParam = new dtDAL::NamedGroupParameter(groupParam); }
    dtCore::RefPtr<dtDAL::NamedGroupParameter> GetTestGroup() { return mGroupParam; }

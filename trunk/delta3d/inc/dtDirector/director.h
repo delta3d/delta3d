@@ -604,7 +604,7 @@ namespace dtDirector
       dtCore::ObserverPtr<Director> mParent;
 
       // Switch to enable/disable this director
-      DECLARE_PROPERTY_INLINE(bool, Active)
+      DT_DECLARE_ACCESSOR_INLINE(bool, Active)
    };
 }
 

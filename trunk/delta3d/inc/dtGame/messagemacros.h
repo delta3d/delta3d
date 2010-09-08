@@ -27,7 +27,7 @@
 
 #include <dtDAL/typetoactorproperty.h>
 
-#define DECLARE_MESSAGE_BEGIN(CLS, BASE, EXPORT_MACRO) \
+#define DT_DECLARE_MESSAGE_BEGIN(CLS, BASE, EXPORT_MACRO) \
    class EXPORT_MACRO CLS : public BASE \
    { \
    public: \
@@ -51,22 +51,22 @@
          return static_cast<const TYPE_##ParamName*>(GetParameter(NAME_TO_LOOKUP))->GetValue();\
       };\
 
-#define DECLARE_MESSAGE_END() };
+#define DT_DECLARE_MESSAGE_END() };
 
-#define IMPLEMENT_MESSAGE_BEGIN(CLS) \
+#define DT_IMPLEMENT_MESSAGE_BEGIN(CLS) \
          CLS::CLS() {
 
-#define ADD_PARAMETER(Type, ParamName) \
+#define DT_ADD_PARAMETER(Type, ParamName) \
    typedef dtDAL::TypeToActorProperty<Type>::named_parameter_type TYPE_##ParamName; \
    static const dtUtil::RefString PARAM_NAME_##ParamName(#ParamName); \
    AddParameter(new TYPE_##ParamName(PARAM_NAME_##ParamName));
 
-#define ADD_PARAMETER_WITH_DEFAULT(Type, ParamName, Default) \
+#define DT_ADD_PARAMETER_WITH_DEFAULT(Type, ParamName, Default) \
    typedef dtDAL::TypeToActorProperty<Type>::named_parameter_type TYPE_##ParamName; \
    static const dtUtil::RefString PARAM_NAME_##ParamName(#ParamName); \
    AddParameter(new TYPE_##ParamName(PARAM_NAME_##ParamName, Default));
 
-#define IMPLEMENT_MESSAGE_END() };
+#define DT_IMPLEMENT_MESSAGE_END() };
 
 
 #endif /* MESSAGEMACROS_H_ */

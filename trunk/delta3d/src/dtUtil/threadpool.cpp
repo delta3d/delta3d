@@ -421,8 +421,8 @@ namespace dtUtil
    {
    }
 
-   IMPLEMENT_PROPERTY(ThreadPoolTask, dtUtil::RefString, Name);
-   IMPLEMENT_PROPERTY(ThreadPoolTask, bool, Keep);
+   DT_IMPLEMENT_ACCESSOR(ThreadPoolTask, dtUtil::RefString, Name);
+   DT_IMPLEMENT_ACCESSOR(ThreadPoolTask, bool, Keep);
 
    //////////////////////////////////////
    void ThreadPoolTask::ResetWaitBlock()

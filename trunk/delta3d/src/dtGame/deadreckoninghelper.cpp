@@ -263,7 +263,7 @@ namespace dtGame
    }
 
    // GROUND CLAMP TYPE PROPERTY
-   IMPLEMENT_PROPERTY_GETTER(DeadReckoningHelper, dtUtil::EnumerationPointer<GroundClampTypeEnum>, GroundClampType);
+   DT_IMPLEMENT_ACCESSOR_GETTER(DeadReckoningHelper, dtUtil::EnumerationPointer<GroundClampTypeEnum>, GroundClampType);
 
 
    //////////////////////////////////////////////////////////////////////

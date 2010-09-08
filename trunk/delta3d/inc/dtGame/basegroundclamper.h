@@ -121,7 +121,7 @@ namespace dtGame
          const osg::Referenced* GetUserData() const { return mUserData.get(); }
 
          /// GROUND CLAMP TYPE - enum property - usually set via the Dead Reckoning Helper property.
-         DECLARE_PROPERTY(dtUtil::EnumerationPointer<GroundClampTypeEnum>, GroundClampType);
+         DT_DECLARE_ACCESSOR(dtUtil::EnumerationPointer<GroundClampTypeEnum>, GroundClampType);
 
       private:
 
