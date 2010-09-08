@@ -43,10 +43,10 @@ namespace dtUtil
       virtual void operator()() = 0;
 
       /// the task name
-      DECLARE_PROPERTY(dtUtil::RefString, Name);
+      DT_DECLARE_ACCESSOR(dtUtil::RefString, Name);
 
       /// Whether this operation should go the back of the queue when it's done.
-      DECLARE_PROPERTY(bool, Keep);
+      DT_DECLARE_ACCESSOR(bool, Keep);
 
       /// Called by the threadpool, this will reset the wait until complete block.
       void ResetWaitBlock();

@@ -238,7 +238,7 @@ namespace dtGame
          void SetFlyingDeprecatedProperty(bool newFlying); 
 
          /// GROUND CLAMP TYPE - enum property - replaces the old Flying property
-         DECLARE_PROPERTY(dtUtil::EnumerationPointer<dtGame::GroundClampTypeEnum>, GroundClampType);
+         DT_DECLARE_ACCESSOR(dtUtil::EnumerationPointer<dtGame::GroundClampTypeEnum>, GroundClampType);
          //void SetGroundClampType(DeadReckoningHelper::GroundClampTypeEnum& typeEnum);
 
          /**

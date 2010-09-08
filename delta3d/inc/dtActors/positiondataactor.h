@@ -41,8 +41,8 @@ namespace dtActors
          void ApplyDataTo(dtCore::Transformable* transformable) const;
 
 
-      DECLARE_PROPERTY_INLINE(bool, ChangeTranslation)
-      DECLARE_PROPERTY_INLINE(bool, ChangeRotation)
+      DT_DECLARE_ACCESSOR_INLINE(bool, ChangeTranslation)
+      DT_DECLARE_ACCESSOR_INLINE(bool, ChangeRotation)
    };
 }
 #endif

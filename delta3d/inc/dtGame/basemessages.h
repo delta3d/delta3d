@@ -34,7 +34,7 @@ namespace dtGame
    typedef Message ActorPublishedMessage;
 
 
-   DECLARE_MESSAGE_BEGIN(TickMessage, Message, DT_GAME_EXPORT)
+   DT_DECLARE_MESSAGE_BEGIN(TickMessage, Message, DT_GAME_EXPORT)
       /// Parameter that represents the change in the simulation time since last frame.
       DECLARE_PARAMETER_INLINE(float, DeltaSimTime)
       /// Parameter that represents the change in the real time since last frame.
@@ -43,16 +43,16 @@ namespace dtGame
       DECLARE_PARAMETER_INLINE(float, SimTimeScale)
       /// The actual simulation time.
       DECLARE_PARAMETER_INLINE(double, SimulationTime)
-   DECLARE_MESSAGE_END()
+   DT_DECLARE_MESSAGE_END()
 
    typedef TickMessage SystemMessage;
 
-   DECLARE_MESSAGE_BEGIN(TimerElapsedMessage, Message, DT_GAME_EXPORT)
+   DT_DECLARE_MESSAGE_BEGIN(TimerElapsedMessage, Message, DT_GAME_EXPORT)
       /// The name of the timer that elapsed
       DECLARE_PARAMETER_INLINE(std::string, TimerName)
       /// The amount of time the timer is late, since the frame time won't exactly match up with the specified timer.
       DECLARE_PARAMETER_INLINE(float, LateTime)
-   DECLARE_MESSAGE_END()
+   DT_DECLARE_MESSAGE_END()
 
 
    class DT_GAME_EXPORT TimeChangeMessage : public Message

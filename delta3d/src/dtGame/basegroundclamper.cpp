@@ -63,7 +63,7 @@ namespace dtGame
    {
    }
 
-   IMPLEMENT_PROPERTY(GroundClampingData, dtUtil::EnumerationPointer<GroundClampTypeEnum>, GroundClampType);
+   DT_IMPLEMENT_ACCESSOR(GroundClampingData, dtUtil::EnumerationPointer<GroundClampTypeEnum>, GroundClampType);
 
 
    /////////////////////////////////////////////////////////////////////////////

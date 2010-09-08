@@ -56,32 +56,32 @@ namespace dtAI
    public:
       osg::Vec3 mWorldSpacePos;
 
-      DECLARE_PROPERTY(bool, RenderWaypoints);
-      DECLARE_PROPERTY(bool, RenderWaypointID);
-      DECLARE_PROPERTY(bool, RenderWaypointText);
-      DECLARE_PROPERTY(bool, RenderNavMesh);
-      DECLARE_PROPERTY(bool, RenderNavMeshText);
+      DT_DECLARE_ACCESSOR(bool, RenderWaypoints);
+      DT_DECLARE_ACCESSOR(bool, RenderWaypointID);
+      DT_DECLARE_ACCESSOR(bool, RenderWaypointText);
+      DT_DECLARE_ACCESSOR(bool, RenderNavMesh);
+      DT_DECLARE_ACCESSOR(bool, RenderNavMeshText);
 
       // Waypoints
-      DECLARE_PROPERTY(float, WaypointSize);
-      DECLARE_PROPERTY(Color, WaypointColor);
+      DT_DECLARE_ACCESSOR(float, WaypointSize);
+      DT_DECLARE_ACCESSOR(Color, WaypointColor);
 
       // Waypoint Font
-      DECLARE_PROPERTY(std::string, WaypointFontFile);
-      DECLARE_PROPERTY(float,       WaypointFontSizeScalar);
-      DECLARE_PROPERTY(osg::Vec3,   WaypointTextOffset);
-      DECLARE_PROPERTY(Color,       WaypointFontColor);
+      DT_DECLARE_ACCESSOR(std::string, WaypointFontFile);
+      DT_DECLARE_ACCESSOR(float,       WaypointFontSizeScalar);
+      DT_DECLARE_ACCESSOR(osg::Vec3,   WaypointTextOffset);
+      DT_DECLARE_ACCESSOR(Color,       WaypointFontColor);
 
       // Nav Mesh
-      DECLARE_PROPERTY(float, NavMeshWidth);
-      DECLARE_PROPERTY(Color, NavMeshColor);
+      DT_DECLARE_ACCESSOR(float, NavMeshWidth);
+      DT_DECLARE_ACCESSOR(Color, NavMeshColor);
 
       // Nav Mesh Font
-      DECLARE_PROPERTY(std::string, NavMeshFontFile);
-      DECLARE_PROPERTY(float,       NavMeshFontSizeScalar);
+      DT_DECLARE_ACCESSOR(std::string, NavMeshFontFile);
+      DT_DECLARE_ACCESSOR(float,       NavMeshFontSizeScalar);
       /// the text is scaled across the navmesh path
-      DECLARE_PROPERTY(float, NavMeshTextOffsetScalar);
-      DECLARE_PROPERTY(Color, NavMeshFontColor);
+      DT_DECLARE_ACCESSOR(float, NavMeshTextOffsetScalar);
+      DT_DECLARE_ACCESSOR(Color, NavMeshFontColor);
    };
 
 } // namespace dtAI

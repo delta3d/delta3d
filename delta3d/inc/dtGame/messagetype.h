@@ -168,7 +168,7 @@ namespace dtGame
           * Then it will auto register the message with the message factory at creation time.
           *
           * try using the macro
-          * IMPLEMENT_MESSAGE_TYPE
+          * DT_IMPLEMENT_MESSAGE_TYPE
           */
          template<typename MessageClass>
          MessageType(const std::string& name, const std::string& category,
@@ -184,7 +184,7 @@ namespace dtGame
 
          /**
           * Use the new template constructor, preferably by calling the macro
-          * IMPLEMENT_MESSAGE_TYPE
+          * DT_IMPLEMENT_MESSAGE_TYPE
           */
          DEPRECATE_FUNC
          MessageType(const std::string& name, const std::string& category,
@@ -209,7 +209,7 @@ namespace dtGame
    };
 }
 
-#define DECLARE_MESSAGE_TYPE_CLASS_BEGIN(CLS, EXPORT_MACRO) \
+#define DT_DECLARE_MESSAGE_TYPE_CLASS_BEGIN(CLS, EXPORT_MACRO) \
    class EXPORT_MACRO CLS : public dtGame::MessageType \
    { \
    protected:\
@@ -224,20 +224,11 @@ namespace dtGame
       virtual ~CLS() {} \
    public: \
 
-#define DECLARE_MESSAGE_TYPE(CLS, Name, MessageClass) \
-      static const CLS Name;
+#define DT_DECLARE_MESSAGE_TYPE_CLASS_END() };
 
-#define DECLARE_MESSAGE_TYPE_CLASS_END() };
-
-#define IMPLEMENT_MESSAGE_TYPE_CLASS(CLS) \
+#define DT_IMPLEMENT_MESSAGE_TYPE_CLASS(CLS) \
          IMPLEMENT_ENUM(CLS)
 
 #define DT_MSG_CLASS(MessageClass) (const MessageClass*)(NULL)
-
-#define IMPLEMENT_MESSAGE_TYPE(CLS, Name, Category, Description, id, MessageClass) \
-      static const CLS CLS::Name(#Name, Category, Description, id, DT_MSG_CLASS(MessageClass));
-
-#define IMPLEMENT_MESSAGE_TYPE_WNAME(CLS, Name, StringName, Category, Description, id, MessageClass) \
-      static const CLS CLS::Name(StringName, Category, Description, id, DT_MSG_CLASS(MessageClass));
 
 #endif

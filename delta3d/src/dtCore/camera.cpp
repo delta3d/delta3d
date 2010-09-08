@@ -678,11 +678,11 @@ namespace dtCore
 
    //////////////////////////////////////////////////////////////
    //////////////////////////////////////////////////////////////
-   IMPLEMENT_PROPERTY(AutoLODScaleCameraCallback, double, TargetFrameTimeMS);
-   IMPLEMENT_PROPERTY(AutoLODScaleCameraCallback, double, TargetFrameTimeEpsilon)
-   IMPLEMENT_PROPERTY(AutoLODScaleCameraCallback, float, MinLODScale);
-   IMPLEMENT_PROPERTY(AutoLODScaleCameraCallback, float, MaxLODScale);
-   IMPLEMENT_PROPERTY(AutoLODScaleCameraCallback, float, ChangeFactor);
+   DT_IMPLEMENT_ACCESSOR(AutoLODScaleCameraCallback, double, TargetFrameTimeMS);
+   DT_IMPLEMENT_ACCESSOR(AutoLODScaleCameraCallback, double, TargetFrameTimeEpsilon)
+   DT_IMPLEMENT_ACCESSOR(AutoLODScaleCameraCallback, float, MinLODScale);
+   DT_IMPLEMENT_ACCESSOR(AutoLODScaleCameraCallback, float, MaxLODScale);
+   DT_IMPLEMENT_ACCESSOR(AutoLODScaleCameraCallback, float, ChangeFactor);
 
 }
 

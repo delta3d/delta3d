@@ -382,28 +382,28 @@ namespace dtCore
        * The target frame time.  It will increase the LOD scale if the frame time is larger than this,
        * or decrease it if it's smaller. Default is 33.33 or 30Hz
        */
-      DECLARE_PROPERTY(double, TargetFrameTimeMS)
+      DT_DECLARE_ACCESSOR(double, TargetFrameTimeMS)
 
       /// The amount of slop to allow when comparing the frame time to the target frame time.  Defaults to 0.3
-      DECLARE_PROPERTY(double, TargetFrameTimeEpsilon)
+      DT_DECLARE_ACCESSOR(double, TargetFrameTimeEpsilon)
 
       /**
        * The minimum LOD scale to set even if the framerate is really high.  You should probably set this to 1.0 (Default)
        * but if you want it to go lower than 1.0 so it will show better LOD if you have the performance, then you can.
        */
-      DECLARE_PROPERTY(float, MinLODScale)
+      DT_DECLARE_ACCESSOR(float, MinLODScale)
 
       /**
        * The maximum LOD scale to set even if the framerate is really low.  You should probably set this to something greater than 1.0.
        * The default is 2.0.
        */
-      DECLARE_PROPERTY(float, MaxLODScale)
+      DT_DECLARE_ACCESSOR(float, MaxLODScale)
 
       /**
        * Each time it needs to change the number, this is the scalar factor of how much to change it.  0-1 work.  Something
        * around 0.001 probably makes the most sense so you don't get huge changes in one frame, which can lead to oscillations.
        */
-      DECLARE_PROPERTY(float, ChangeFactor)
+      DT_DECLARE_ACCESSOR(float, ChangeFactor)
 
    private:
       dtCore::ObserverPtr<Camera> mCamera;

@@ -29,18 +29,18 @@
 namespace dtGame
 {
 
-   IMPLEMENT_MESSAGE_BEGIN(TickMessage)
-      ADD_PARAMETER(float, DeltaSimTime)
-      ADD_PARAMETER(float, DeltaRealTime)
-      ADD_PARAMETER_WITH_DEFAULT(float, SimTimeScale, 1.0f)
-      ADD_PARAMETER(double, SimulationTime)
-   IMPLEMENT_MESSAGE_END()
+   DT_IMPLEMENT_MESSAGE_BEGIN(TickMessage)
+      DT_ADD_PARAMETER(float, DeltaSimTime)
+      DT_ADD_PARAMETER(float, DeltaRealTime)
+      DT_ADD_PARAMETER_WITH_DEFAULT(float, SimTimeScale, 1.0f)
+      DT_ADD_PARAMETER(double, SimulationTime)
+   DT_IMPLEMENT_MESSAGE_END()
 
 
-   IMPLEMENT_MESSAGE_BEGIN(TimerElapsedMessage)
-      ADD_PARAMETER(std::string, TimerName)
-      ADD_PARAMETER(float, LateTime)
-   IMPLEMENT_MESSAGE_END()
+   DT_IMPLEMENT_MESSAGE_BEGIN(TimerElapsedMessage)
+      DT_ADD_PARAMETER(std::string, TimerName)
+      DT_ADD_PARAMETER(float, LateTime)
+   DT_IMPLEMENT_MESSAGE_END()
 
 //   const std::string& TimerElapsedMessage::GetTimerName() const
 //   {

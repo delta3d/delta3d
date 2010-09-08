@@ -65,10 +65,10 @@ public:
       }
    }
 
-   DECLARE_PROPERTY_INLINE(int, KeepTimes);
-   DECLARE_PROPERTY_INLINE(int, RunTimes);
-   DECLARE_PROPERTY_INLINE(bool, HasRun);
-   DECLARE_PROPERTY_INLINE(bool, OkayToDelete);
+   DT_DECLARE_ACCESSOR_INLINE(int, KeepTimes);
+   DT_DECLARE_ACCESSOR_INLINE(int, RunTimes);
+   DT_DECLARE_ACCESSOR_INLINE(bool, HasRun);
+   DT_DECLARE_ACCESSOR_INLINE(bool, OkayToDelete);
 };
 
 /**
