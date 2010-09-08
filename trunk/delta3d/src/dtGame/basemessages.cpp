@@ -42,73 +42,16 @@ namespace dtGame
       DT_ADD_PARAMETER(float, LateTime)
    DT_IMPLEMENT_MESSAGE_END()
 
-//   const std::string& TimerElapsedMessage::GetTimerName() const
-//   {
-//      const StringMessageParameter *mp = static_cast<const StringMessageParameter*> (GetParameter("TimerName"));
-//      return mp->GetValue();
-//   }
-//
-//   //////////////////////////////////////////////////////////////////////////////
-//   float TimerElapsedMessage::GetLateTime() const
-//   {
-//      const FloatMessageParameter *mp = static_cast<const FloatMessageParameter*> (GetParameter("LateTime"));
-//      return mp->GetValue();
-//   }
-//
-//   //////////////////////////////////////////////////////////////////////////////
-//   void TimerElapsedMessage::SetTimerName(const std::string &name)
-//   {
-//      StringMessageParameter *mp = static_cast<StringMessageParameter*> (GetParameter("TimerName"));
-//      mp->SetValue(name);
-//   }
-//
-//   //////////////////////////////////////////////////////////////////////////////
-//   void TimerElapsedMessage::SetLateTime(float newTime)
-//   {
-//      FloatMessageParameter *mp = static_cast<FloatMessageParameter*> (GetParameter("LateTime"));
-//      mp->SetValue(newTime);
-//   }
 
    //////////////////////////////////////////////////////////////////////////////
    //////////////////////////////////////////////////////////////////////////////
 
-   float TimeChangeMessage::GetTimeScale() const
-   {
-      return static_cast<const FloatMessageParameter*>(GetParameter("TimeScale"))->GetValue();
-   }
+   DT_IMPLEMENT_MESSAGE_BEGIN(TimeChangeMessage)
+      DT_ADD_PARAMETER_WITH_DEFAULT(float, TimeScale, 1.0f)
+      DT_ADD_PARAMETER(double, SimulationTime)
+      DT_ADD_PARAMETER(double, SimulationClockTime)
+   DT_IMPLEMENT_MESSAGE_END()
 
-   //////////////////////////////////////////////////////////////////////////////
-   void TimeChangeMessage::SetTimeScale(float newTimeScale)
-   {
-      FloatMessageParameter *mp = static_cast<FloatMessageParameter*>(GetParameter("TimeScale"));
-      mp->SetValue(newTimeScale);
-   }
-
-   //////////////////////////////////////////////////////////////////////////////
-   double TimeChangeMessage::GetSimulationTime() const
-   {
-      return static_cast<const DoubleMessageParameter*>(GetParameter("SimulationTime"))->GetValue();
-   }
-
-   //////////////////////////////////////////////////////////////////////////////
-   void TimeChangeMessage::SetSimulationTime(double newSimulationTime)
-   {
-      DoubleMessageParameter *mp = static_cast<DoubleMessageParameter*>(GetParameter("SimulationTime"));
-      mp->SetValue(newSimulationTime);
-   }
-
-   //////////////////////////////////////////////////////////////////////////////
-   double TimeChangeMessage::GetSimulationClockTime() const
-   {
-      return static_cast<const DoubleMessageParameter*>(GetParameter("SimulationClockTime"))->GetValue();
-   }
-
-   //////////////////////////////////////////////////////////////////////////////
-   void TimeChangeMessage::SetSimulationClockTime(double newSimClockTime)
-   {
-      DoubleMessageParameter *mp = static_cast<DoubleMessageParameter*>(GetParameter("SimulationClockTime"));
-      mp->SetValue(newSimClockTime);
-   }
 
    //////////////////////////////////////////////////////////////////////////////
    //////////////////////////////////////////////////////////////////////////////
