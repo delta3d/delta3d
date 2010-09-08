@@ -324,6 +324,27 @@ namespace dtAI
       }
 
       //////////////////////////////////////////////////////////////////////////
+      bool HasEdge(WaypointID from, WaypointID to)
+      {
+         bool hasEdge = false;
+
+         ConstWaypointArray toArray;
+         GetAllEdgesFromWaypoint(from, toArray);
+
+         // Is the "to" waypoint accessible from "from"?
+         for (size_t toIndex = 0; toIndex < toArray.size(); ++toIndex)
+         {
+            if (toArray[toIndex]->GetID() == to)
+            {
+               hasEdge = true;
+               break;
+            }
+         }
+
+         return hasEdge;
+      }
+
+      //////////////////////////////////////////////////////////////////////////
       void AddEdge(WaypointID pFrom, WaypointID pTo)
       {
          mWaypointGraph->AddEdge(pFrom, pTo);

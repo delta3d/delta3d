@@ -162,6 +162,11 @@ namespace dtAI
       virtual void GetWaypointsByType(const dtDAL::ObjectType& type, WaypointArray& toFill) = 0;
 
       /**
+       * @returns true if an edge exists for (from-to)
+       */
+      virtual bool HasEdge(WaypointID from, WaypointID to) = 0;
+
+      /**
        * Creates a path between the specified waypoints
        */
       virtual void AddEdge(WaypointID pFrom, WaypointID pTo) = 0;
