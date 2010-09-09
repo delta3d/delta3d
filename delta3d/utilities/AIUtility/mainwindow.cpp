@@ -92,7 +92,9 @@ MainWindow::MainWindow(QWidget& mainWidget)
    connect(mUndoStack, SIGNAL(indexChanged(int)), this, SLOT(OnModifiedChanged()));
 
    QAction *undoAction = mUndoStack->createUndoAction(this);
+   undoAction->setShortcut(QKeySequence::Undo);
    QAction *redoAction = mUndoStack->createRedoAction(this);
+   redoAction->setShortcut(QKeySequence::Redo);
    undoAction->setIcon(QIcon(":/images/undo.png"));
    redoAction->setIcon(QIcon(":/images/redo.png"));
 
@@ -135,6 +137,8 @@ MainWindow::MainWindow(QWidget& mainWidget)
    connect(mUi->mChangeContextAction, SIGNAL(triggered()), this, SLOT(ChangeProjectContext()));
    connect(mUi->mActionRenderingOptions, SIGNAL(triggered()), this, SLOT(SelectRenderingOptions()));
    connect(mUi->mActionPreferences, SIGNAL(triggered()), this, SLOT(OnPreferences()));
+   connect(mUi->mActionAddBiEdge, SIGNAL(triggered()), this, SLOT(OnAddBiDirectionalEdge()));
+   connect(mUi->mActionRemoveBiEdge, SIGNAL(triggered()), this, SLOT(OnRemoveBiDirectionalEdge()));
    connect(mUi->mActionAddEdge, SIGNAL(triggered()), this, SLOT(OnAddEdge()));
    connect(mUi->mActionRemoveEdge, SIGNAL(triggered()), this, SLOT(OnRemoveEdge()));
    connect(mUi->mActionDeleteSelectedWaypoints, SIGNAL(triggered()), mWaypointBrowser, SLOT(OnDelete()));
@@ -354,11 +358,14 @@ void MainWindow::EnableOrDisableControls()
    mPropertyEditor.toggleViewAction()->setChecked(mPropertyEditor.isVisible());
 
    // Update Add/Remove Edge actions
+   mUi->mActionAddBiEdge->setEnabled(false);
+   mUi->mActionRemoveBiEdge->setEnabled(false);
    mUi->mActionAddEdge->setEnabled(false);
    mUi->mActionRemoveEdge->setEnabled(false);
 
    // Only allow the delete action when waypoint(s) are selected
    mUi->mActionDeleteSelectedWaypoints->setEnabled(WaypointSelection::GetInstance().GetNumberSelected() != 0);
+   mUi->mActionGroundClamp->setEnabled(WaypointSelection::GetInstance().GetNumberSelected() != 0);
 
    if (WaypointSelection::GetInstance().GetNumberSelected() == 2) // There must be exactly two waypoints selected
    {
@@ -369,11 +376,23 @@ void MainWindow::EnableOrDisableControls()
       {
          // Enable Remove Edge
          mUi->mActionRemoveEdge->setEnabled(true);
+
+         if (DoesEdgeExistBetweenWaypoints(waypointB, waypointA))
+         {
+            // Enable Remove Bi-directional Edge
+            mUi->mActionRemoveBiEdge->setEnabled(true);
+         }
       }
       else
       {
          // Enable Add Edge
          mUi->mActionAddEdge->setEnabled(true);
+
+         if (DoesEdgeExistBetweenWaypoints(waypointB, waypointA) == false)
+         {
+            //Enable Add Bi-directional Edge
+            mUi->mActionAddBiEdge->setEnabled(true);
+         }
       }
    }
 }
@@ -451,6 +470,26 @@ void MainWindow::OnAddEdge()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnAddBiDirectionalEdge()
+{
+   if(WaypointSelection::GetInstance().GetNumberSelected() == 2)
+   {
+      // Update NavMesh
+      dtAI::WaypointInterface* waypointA = WaypointSelection::GetInstance().GetWaypointList()[0];
+      dtAI::WaypointInterface* waypointB = WaypointSelection::GetInstance().GetWaypointList()[1];
+
+      OnUndoCommandCreated(new AddEdgeCommand(*waypointA, *waypointB, mPluginInterface));
+      OnUndoCommandCreated(new AddEdgeCommand(*waypointB, *waypointA, mPluginInterface));
+
+      EnableOrDisableControls();
+   }
+   else
+   {
+      LOG_ERROR("Trying to add edge with too many or too few waypoints selected.");
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnRemoveEdge()
 {
    if(WaypointSelection::GetInstance().GetNumberSelected() == 2)
@@ -460,6 +499,25 @@ void MainWindow::OnRemoveEdge()
       dtAI::WaypointInterface* waypointB = WaypointSelection::GetInstance().GetWaypointList()[1];
 
       OnUndoCommandCreated(new RemoveEdgeCommand(*waypointA, *waypointB, mPluginInterface));
+      EnableOrDisableControls();
+   }
+   else
+   {
+      LOG_ERROR("Trying to remove edge with too many or too few waypoints selected.");
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnRemoveBiDirectionalEdge()
+{
+   if(WaypointSelection::GetInstance().GetNumberSelected() == 2)
+   {
+      // Update NavMesh
+      dtAI::WaypointInterface* waypointA = WaypointSelection::GetInstance().GetWaypointList()[0];
+      dtAI::WaypointInterface* waypointB = WaypointSelection::GetInstance().GetWaypointList()[1];
+
+      OnUndoCommandCreated(new RemoveEdgeCommand(*waypointA, *waypointB, mPluginInterface));
+      OnUndoCommandCreated(new RemoveEdgeCommand(*waypointB, *waypointA, mPluginInterface));
       EnableOrDisableControls();
    }
    else

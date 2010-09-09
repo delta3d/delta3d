@@ -42,8 +42,11 @@
     <addaction name="separator"/>
     <addaction name="mActionAddEdge"/>
     <addaction name="mActionRemoveEdge"/>
+    <addaction name="mActionAddBiEdge"/>
+    <addaction name="mActionRemoveBiEdge"/>
     <addaction name="mActionDeleteSelectedWaypoints"/>
     <addaction name="mActionGroundClamp"/>
+    <addaction name="separator"/>
     <addaction name="mActionRenderingOptions"/>
     <addaction name="mActionPreferences"/>
    </widget>
@@ -87,6 +90,8 @@
    <addaction name="mActionOpenMap"/>
    <addaction name="mActionSave"/>
    <addaction name="separator"/>
+   <addaction name="mActionAddBiEdge"/>
+   <addaction name="mActionRemoveBiEdge"/>
    <addaction name="mActionAddEdge"/>
    <addaction name="mActionRemoveEdge"/>
    <addaction name="mActionDeleteSelectedWaypoints"/>
@@ -281,6 +286,9 @@
    </property>
   </action>
   <action name="mActionGroundClamp">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="AIUtilityResources.qrc">
      <normaloff>:/STAGE/icons/groundclamp_small.png</normaloff>:/STAGE/icons/groundclamp_small.png</iconset>
@@ -290,6 +298,36 @@
    </property>
    <property name="toolTip">
     <string>Clamp the selected waypoints to the ground</string>
+   </property>
+  </action>
+  <action name="mActionAddBiEdge">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="AIUtilityResources.qrc">
+     <normaloff>:/images/addbidirectionaledge.png</normaloff>:/images/addbidirectionaledge.png</iconset>
+   </property>
+   <property name="text">
+    <string>Add Bi-Directional Edge</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+E</string>
+   </property>
+  </action>
+  <action name="mActionRemoveBiEdge">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="AIUtilityResources.qrc">
+     <normaloff>:/images/removebidirectionaledge.png</normaloff>:/images/removebidirectionaledge.png</iconset>
+   </property>
+   <property name="text">
+    <string>Remove Bi-Directional Edge</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+R</string>
    </property>
   </action>
  </widget>
