@@ -10,6 +10,8 @@
    <file>./images/ok.png</file>
    <file>./images/addedge.png</file>
    <file>./images/removeedge.png</file>
+   <file>./images/addbidirectionaledge.png</file>
+   <file>./images/removebidirectionaledge.png</file>
    <file>./images/pointselectmode.png</file>
    <file>./images/brushselectmode.png</file>
    </qresource>
