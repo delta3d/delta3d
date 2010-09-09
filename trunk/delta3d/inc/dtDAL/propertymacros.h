@@ -144,7 +144,7 @@ PropertyStringName, PropertyLabel, DESC_ ## PropertyName);\
 #define DT_REGISTER_ACTOR_ID_PROPERTY(BaseClassString, PropertyName, PropertyLabel, PropertyDesc, RegHelperType_, RegHelperInstance) \
    static const dtUtil::RefString DESC_ ## PropertyName (PropertyDesc);\
    static const dtUtil::RefString BASE_ ## PropertyName (BaseClassString);\
-   RegHelperInstance.RegisterActorIdProperty(BASE_ ##_PropertyName,\
+   RegHelperInstance.RegisterActorIdProperty(BASE_ ## PropertyName,\
    DT_CREATE_PROPERTY_SETTER_HELPER_MACRO(RegHelperType_, PropertyName), \
    DT_CREATE_PROPERTY_GETTER_HELPER_MACRO(RegHelperType_, PropertyName), \
 #PropertyName, PropertyLabel, DESC_ ## PropertyName);\
