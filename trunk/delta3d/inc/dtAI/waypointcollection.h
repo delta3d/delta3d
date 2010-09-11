@@ -81,12 +81,12 @@ namespace dtAI
        * A collection is marked as a leaf if it has any concrete nodes as children
        * as opposed to waypoint collections as children.
        */
-      bool IsLeaf();
+      bool IsLeaf() const;
 
       /**
        * Our position and radius make up a bounding sphere.
        */
-      float GetRadius();
+      float GetRadius() const;
 
       /*virtual*/ const osg::Vec3& GetPosition() const;
       /*virtual*/ void SetPosition(const osg::Vec3& pVec);
@@ -99,8 +99,8 @@ namespace dtAI
       void Remove(const WaypointInterface* waypoint);
 
       /**
-      *  @return true if there is a waypoint with specified id as an immediate child.
-      */
+       *  @return true if there is a waypoint with specified id as an immediate child.
+       */
       bool HasChild(WaypointID id);
 
       WaypointCollection* GetParent();

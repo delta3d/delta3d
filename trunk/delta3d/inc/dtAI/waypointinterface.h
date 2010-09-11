@@ -73,8 +73,7 @@ namespace dtAI
       virtual void unref() const = 0;
 
    protected:
-
-      //for use by property container
+      // for use by property container
       osg::Vec3 GetPosCopy() const;
       int GetIDAsInt() const;
 
