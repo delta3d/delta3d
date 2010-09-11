@@ -560,7 +560,7 @@ namespace dtAI
    const WaypointInterface* WaypointGraph::FindWaypoint(WaypointID id) const
    {
       WaypointGraphImpl::WaypointMap::const_iterator iter = mImpl->mWaypointOwnership.find(id);
-      if(iter != mImpl->mWaypointOwnership.end())
+      if (iter != mImpl->mWaypointOwnership.end())
       {
          return (*iter).second.mWaypoint;
       }

@@ -92,13 +92,13 @@ namespace dtAI
 
 
    /////////////////////////////////////////////////////////////////////////////
-   bool WaypointCollection::IsLeaf()
+   bool WaypointCollection::IsLeaf() const
    {
       return mLeaf;
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   float WaypointCollection::GetRadius()
+   float WaypointCollection::GetRadius() const
    {
       return mRadius;
    }

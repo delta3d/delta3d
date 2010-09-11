@@ -69,7 +69,7 @@ namespace dtAI
 
       //////////////////////////////////////////////////////////////////////////
       AIDebugDrawableImpl(WaypointRenderInfo& pRenderInfo)
-      : mRenderInfo(&pRenderInfo)
+         : mRenderInfo(&pRenderInfo)
       {
       }
 
