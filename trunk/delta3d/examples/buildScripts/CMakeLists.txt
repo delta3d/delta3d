@@ -74,8 +74,10 @@ ADD_SUBDIRECTORY(examples/testMotionModels)
 ADD_SUBDIRECTORY(examples/testMultiWin)
 ADD_SUBDIRECTORY(examples/testNestedView)
 #ADD_SUBDIRECTORY(examples/testNetwork)  #needs dtNet (deprecated?)
+ADD_SUBDIRECTORY(examples/testPackage)
 ADD_SUBDIRECTORY(examples/testPhysics)
 ADD_SUBDIRECTORY(examples/testPreRender)
+ADD_SUBDIRECTORY(examples/testQt)
 #ADD_SUBDIRECTORY(examples/testProceduralAnimation)  #needs GameStart
 #ADD_SUBDIRECTORY(examples/testPython)  #needs Python, dtScript
 ADD_SUBDIRECTORY(examples/testRecorder)
