@@ -42,7 +42,8 @@ MACRO(ADD_DELTA3D_SUBFOLDERS)
    ENDIF (BUILD_DIS)  
 
    IF (BUILD_GUI)  
-      OPTION(BUILD_WITH_OLD_CEGUI  "ON = build using legacy CEGUI 0.6.x compatability, OFF = build using CEGUI 0.7.x compatibility" ON)
+      OPTION(BUILD_WITH_OLD_CEGUI  "ON = build using legacy CEGUI 0.6.x compatability, OFF = build using CEGUI 0.7.x compatibility" OFF)
+      MARK_AS_ADVANCED(BUILD_WITH_OLD_CEGUI)
       FIND_PACKAGE(CEGUI)   #for dtGUI
       SET(DTGUI_AVAILABLE "YES")
       ADD_SUBDIRECTORY(src/dtGUI)
