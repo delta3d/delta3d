@@ -19,6 +19,8 @@ SET( LIB_SOURCES
     ${SOURCE_PATH}/hotspotxml.cpp
     ${SOURCE_PATH}/librarysharingmanager.cpp
     ${SOURCE_PATH}/log.cpp
+    ${SOURCE_PATH}/logobserverconsole.cpp
+    ${SOURCE_PATH}/logobserverfile.cpp
     ${SOURCE_PATH}/matrixutil.cpp
     ${SOURCE_PATH}/nodecollector.cpp
     ${SOURCE_PATH}/nodeprintout.cpp
@@ -72,6 +74,9 @@ SET( LIB_PUBLIC_HEADERS
     ${HEADER_PATH}/keyframedecoder.h
     ${HEADER_PATH}/librarysharingmanager.h
     ${HEADER_PATH}/log.h
+    ${HEADER_PATH}/logobserver.h
+    ${HEADER_PATH}/logobserverconsole.h
+    ${HEADER_PATH}/logobserverfile.h
     ${HEADER_PATH}/macros.h
     ${HEADER_PATH}/mathdefines.h
     ${HEADER_PATH}/matrixutil.h

@@ -1,6 +1,6 @@
 /*
  * Delta3D Open Source Game and Simulation Engine
- * Copyright (C) 2005, BMH Associates, Inc.
+ * Copyright (C) 2005-2010, BMH Associates, Inc.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,22 +16,21 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * Matthew W. Campbell, Curtiss Murphy
+ * Matthew W. Campbell, Curtiss Murphy, Erik Johnson
  */
 #include <prefix/dtutilprefix.h>
 #include <dtUtil/log.h>
 #include <dtUtil/bits.h>
-
+#include <dtUtil/logobserver.h>
+#include <dtUtil/logobserverconsole.h>
+#include <dtUtil/logobserverfile.h>
 #include <dtCore/refptr.h>
 
 #include <OpenThreads/Mutex>
 #include <OpenThreads/ScopedLock>
 
-#include <iomanip>
-#include <iostream>
-#include <fstream>
 #include <cstdarg>
-#include <cstdio>
+//#include <cstdio>
 #include <ctime>
 #include <map>
 
@@ -45,112 +44,33 @@ namespace dtUtil
    static std::string sTitle("Delta 3D Engine Log File");
 #endif
 
-   //////////////////////////////////////////////////////////////////////////
+   //forward declaration
+   class LogManager;
 
+   static dtCore::RefPtr<LogManager> LOG_MANAGER(NULL);
+   static Log::LogMessageType DEFAULT_LOG_LEVEL(Log::LOG_WARNING);
+
+
+   //////////////////////////////////////////////////////////////////////////
    class LogManager: public osg::Referenced
    {
    public:
-      std::ofstream logFile;
-      bool mOpenFailed;
+      dtCore::RefPtr<LogObserver> mLogObserverConsole; ///writes to console
+      dtCore::RefPtr<LogObserverFile> mLogObserverFile; ///writes to file
 
       ////////////////////////////////////////////////////////////////
       LogManager()
-      : mOpenFailed(false)
+      : mLogObserverConsole(new LogObserverConsole())
+      , mLogObserverFile(new LogObserverFile())
       {
-         //std::cout << "Creating logger" << std::endl;
-
-         //if (!logFile.is_open())
-         //{
-         //   OpenFile();
-         //}
-         //std::cout.flush();
       }
 
       ////////////////////////////////////////////////////////////////
       ~LogManager()
       {
          mInstances.clear();
-         //std::cout << "BEING DESTROYED - LogManager" << std::endl;
-         //std::cout.flush();
-         if (logFile.is_open())
-         {
-            //std::cout << "Closing log file" << std::endl;
-            //std::cout.flush();
-            EndFile();
-            //Log::logFile.close();
-         }
-      }
-
-      ////////////////////////////////////////////////////////////////
-      void EndFile()
-      {
-         logFile << "</body></html>" << std::endl;
-         logFile.flush();
-      }
-
-      ////////////////////////////////////////////////////////////////
-      void OpenFile()
-      {
-         if (mOpenFailed)
-         {
-            return;
-         }
-
-         //std::cout << "LogManager try to open file to " << sLogFileName << std::endl;
-         if (logFile.is_open())
-         {
-            logFile << "<p>Change to log file: "<< sLogFileName<< std::endl;
-            TimeTag("At ");
-            EndFile();
-            logFile.close();
-         }
-
-         //First attempt to create the log file.
-         logFile.open(sLogFileName);
-         if (!logFile.is_open())
-         {
-            std::cout << "could not open file \""<<sLogFileName<<"\"" << std::endl;
-            mOpenFailed = true;
-            return;
-         }
-         else
-         {
-            //std::cout << "Using file \"delta3d_log.html\" for logging" << std::endl;
-         }
-         //Write a decent header to the html file.
-         logFile << "<html><title>" << sTitle <<"</title><body>" << std::endl;
-         logFile << "<h1 align=\"center\">" << sTitle << "</h1><hr>" << std::endl;
-         logFile << "<pre><h3 align=\"center\""
-            "<font color=#808080><b>  Debug     </b></font>"
-            "<font color=#008080><b>  Information     </b></font>"
-            "<font color=#808000><b>  Warning  </b></font>"
-            "<font color=#FF0000><b>  Error   </b></font></h3></pre><hr>"
-            << std::endl;
-
-         TimeTag("Started at ");
-
-         logFile.flush();
-         //std::cout.flush();
-      }
-
-      ////////////////////////////////////////////////////////////////
-      void TimeTag(std::string prefix){
-
-         struct tm *t;
-         time_t cTime;
-         std::string color;
-
-         time(&cTime);
-         t = localtime(&cTime);
-         logFile << prefix
-            << std::setw(2) << std::setfill('0') << (1900+t->tm_year) << "/"
-            << std::setw(2) << std::setfill('0') << t->tm_mon << "/"
-            << std::setw(2) << std::setfill('0') << t->tm_mday << " "
-            << std::setw(2) << std::setfill('0') << t->tm_hour << ":"
-            << std::setw(2) << std::setfill('0') << t->tm_min << ":"
-            << std::setw(2) << std::setfill('0') << t->tm_sec << "<br>"
-            << std::endl;
-         logFile.flush();
+         mLogObserverConsole = NULL;
+         mLogObserverFile = NULL;
       }
 
       ////////////////////////////////////////////////////////////////
@@ -190,10 +110,6 @@ namespace dtUtil
       std::map<std::string, dtCore::RefPtr<Log> > mInstances;
    };
 
-   static dtCore::RefPtr<LogManager> LOG_MANAGER(NULL);
-   static Log::LogMessageType DEFAULT_LOG_LEVEL(Log::LOG_WARNING);
-
-
    ////////////////////////////////////////////////////////////////////
    ////////////////////////////////////////////////////////////////////
 
@@ -213,8 +129,8 @@ namespace dtUtil
       else
       {
          // reset open failed if the file name changes.
-         LOG_MANAGER->mOpenFailed = false;
-         LOG_MANAGER->OpenFile();
+         LOG_MANAGER->mLogObserverFile->mOpenFailed = false;
+         LOG_MANAGER->mLogObserverFile->OpenFile();
       }
    }
 
@@ -240,6 +156,8 @@ namespace dtUtil
       LogImpl(const std::string& name)
       : mOutputStreamBit(Log::STANDARD)
       , mName(name)
+      , mLevel(DEFAULT_LOG_LEVEL)
+      , mObservers()
       {
       }
 
@@ -247,6 +165,8 @@ namespace dtUtil
 
       unsigned int mOutputStreamBit; ///<the current output stream option
       std::string mName;
+      Log::LogMessageType mLevel;
+      Log::LogObserverContainer mObservers;
    };
 
    const std::string LogImpl::mDefaultName("__+default+__");
@@ -254,8 +174,8 @@ namespace dtUtil
    //////////////////////////////////////////////////////////////////////////
 
    Log::Log(const std::string& name)
-      : mLevel(DEFAULT_LOG_LEVEL)
-      , mImpl(new LogImpl(name))
+      : 
+        mImpl(new LogImpl(name))      
    {
    }
 
@@ -276,91 +196,42 @@ namespace dtUtil
          return;
       }
 
-      if (msgType < mLevel)
+      if (msgType < mImpl->mLevel)
       {
          return;
       }
 
       struct tm *t;
       time_t cTime;
-      std::string color;
 
       time(&cTime);
       t = localtime(&cTime);
 
-      switch (msgType)
-      {
-      case LOG_DEBUG:
-         color = "<b><font color=#808080>";
-         break;
-
-      case LOG_INFO:
-         color = "<b><font color=#008080>";
-         break;
-
-      case LOG_ERROR:
-         color = "<b><font color=#FF0000>";
-         break;
-
-      case LOG_WARNING:
-         color = "<b><font color=#808000>";
-         break;
-
-      case LOG_ALWAYS:
-         color = "<b><font color=#000000>";
-         break;
-      }
 
       OpenThreads::ScopedLock<OpenThreads::Mutex> lock(LOG_MANAGER->mMutex);
 
       if (dtUtil::Bits::Has(mImpl->mOutputStreamBit, Log::TO_FILE))
       {
-         if (!LOG_MANAGER->logFile.is_open())
-         {
-            LOG_MANAGER->OpenFile();
-
-            if (!LOG_MANAGER->logFile.is_open())
-            {
-               return;
-            }
-         }
-
-         static const std::string htmlNewline ("<br>\n");
-         std::string htmlMsg (msg);
-         for (size_t lineEnd = htmlMsg.find('\n');
-              lineEnd != std::string::npos;
-              lineEnd = htmlMsg.find('\n', lineEnd))
-         {
-            htmlMsg.replace (lineEnd, 1, htmlNewline);
-            lineEnd += htmlNewline.size() + 1;
-         }
-         LOG_MANAGER->logFile << color << GetLogLevelString(msgType) << ": "
-            << std::setw(2) << std::setfill('0') << t->tm_hour << ":"
-            << std::setw(2) << std::setfill('0') << t->tm_min << ":"
-            << std::setw(2) << std::setfill('0') << t->tm_sec << ": &lt;"
-            << source;
-         if (line > 0)
-         {
-            LOG_MANAGER->logFile << ":" << line;
-         }
-
-         LOG_MANAGER->logFile << "&gt; " << htmlMsg << "</font></b><br>" << std::endl;
-
-         LOG_MANAGER->logFile.flush(); //Make sure everything is written, in case of a crash.
+         LOG_MANAGER->mLogObserverFile->LogMessage(msgType,
+                                                   t->tm_hour, t->tm_min, t->tm_sec,
+                                                   source, line, msg);
       }
 
       if (dtUtil::Bits::Has(mImpl->mOutputStreamBit, Log::TO_CONSOLE))
       {
-         std::cout << GetLogLevelString(msgType) << ": "
-            << std::setw(2) << std::setfill('0') << t->tm_hour << ":"
-            << std::setw(2) << std::setfill('0') << t->tm_min << ":"
-            << std::setw(2) << std::setfill('0') << t->tm_sec << ":<"
-            << source;
-         if (line > 0)
+         LOG_MANAGER->mLogObserverConsole->LogMessage(msgType,
+                                                      t->tm_hour, t->tm_min, t->tm_sec,
+                                                      source, line, msg);
+      }
+
+      if (dtUtil::Bits::Has(mImpl->mOutputStreamBit, Log::TO_OBSERVER) && !mImpl->mObservers.empty())
+      {
+         Log::LogObserverContainer::iterator itr = mImpl->mObservers.begin();
+         while (itr != mImpl->mObservers.end())
          {
-            std:: cout << ":" << line;
+            (*itr)->LogMessage(msgType, t->tm_hour, t->tm_min, t->tm_sec, source, line, msg);
+            ++itr;
          }
-         std::cout << ">" << msg << std::endl;
       }
    }
 
@@ -409,11 +280,6 @@ namespace dtUtil
    //////////////////////////////////////////////////////////////////////////
    void Log::LogHorizRule()
    {
-      if (!LOG_MANAGER->logFile.is_open())
-      {
-         return;
-      }
-
       if (mImpl->mOutputStreamBit == Log::NO_OUTPUT)
       {
          return;
@@ -421,7 +287,7 @@ namespace dtUtil
 
       if (dtUtil::Bits::Has(mImpl->mOutputStreamBit, Log::TO_FILE))
       {
-         LOG_MANAGER->logFile << "<hr>" << std::endl;
+         LOG_MANAGER->mLogObserverFile->LogHorizRule();
       }
    }
 
@@ -524,19 +390,19 @@ namespace dtUtil
    ////////////////////////////////////////////////////////////////////////////////
    bool Log::IsLevelEnabled(LogMessageType msgType) const
    {
-      return msgType >= mLevel;
+      return msgType >= mImpl->mLevel;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void Log::SetLogLevel(LogMessageType msgType)
    {
-      mLevel = msgType;
+      mImpl->mLevel = msgType;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    dtUtil::Log::LogMessageType Log::GetLogLevel() const
    {
-      return mLevel;
+      return mImpl->mLevel;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -547,4 +413,34 @@ namespace dtUtil
          LOG_MANAGER->SetAllLogLevels(newLevel);
       }
    }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void Log::AddObserver(LogObserver& observer)
+   {
+      mImpl->mObservers.push_back(&observer);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const Log::LogObserverContainer& Log::GetObservers() const
+   {
+      return mImpl->mObservers;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   Log::LogObserverContainer& Log::GetObservers()
+   {
+      return mImpl->mObservers;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void Log::RemoveObserver(LogObserver& observer)
+   {
+      LogObserverContainer::iterator found = std::find(mImpl->mObservers.begin(),
+                                                       mImpl->mObservers.end(), &observer);
+      if (found != mImpl->mObservers.end())
+      {
+         mImpl->mObservers.erase(found);
+      }
+   }
+
 } // namespace dtUtil
