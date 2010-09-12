@@ -123,7 +123,7 @@ void PlayerActor::OnEnteredWorld()
 
    GetGameActorProxy().AddInvokable(*listenInvoke);
 
-   GetGameActorProxy().RegisterForMessages(MessageType::GAME_STATE_CHANGED, "ListenForTickMessages");
+   GetGameActorProxy().RegisterForMessages(FireFighterMessageType::GAME_STATE_CHANGED, "ListenForTickMessages");
    GetGameActorProxy().RegisterForMessages(dtGame::MessageType::TICK_LOCAL,
       dtGame::GameActorProxy::TICK_LOCAL_INVOKABLE);
 }
@@ -203,7 +203,7 @@ void PlayerActor::AddItemToInventory(GameItemActor& item)
 
       // Play the added to inventory sound and send out a message
       item.PlayInventoryAddSnd();
-      RefPtr<dtGame::Message> msg = GetGameActorProxy().GetGameManager()->GetMessageFactory().CreateMessage(MessageType::ITEM_ACQUIRED);
+      RefPtr<dtGame::Message> msg = GetGameActorProxy().GetGameManager()->GetMessageFactory().CreateMessage(FireFighterMessageType::ITEM_ACQUIRED);
       msg->SetAboutActorId(item.GetUniqueId());
       GetGameActorProxy().GetGameManager()->SendMessage(*msg);
    }
@@ -248,7 +248,7 @@ void PlayerActor::UseSelectedItem(bool use)
       //use ? mSelectedItem->second->PlayItemUseSnd() : mSelectedItem->second->StopItemUseSnd();
       mSelectedItem->second->Activate(use);
    }
-   RefPtr<dtGame::Message> msg = GetGameActorProxy().GetGameManager()->GetMessageFactory().CreateMessage(use ? MessageType::ITEM_ACTIVATED : MessageType::ITEM_DEACTIVATED);
+   RefPtr<dtGame::Message> msg = GetGameActorProxy().GetGameManager()->GetMessageFactory().CreateMessage(use ? FireFighterMessageType::ITEM_ACTIVATED : FireFighterMessageType::ITEM_DEACTIVATED);
    msg->SetAboutActorId(mSelectedItem->second->GetUniqueId());
    GetGameActorProxy().GetGameManager()->SendMessage(*msg);
 }
@@ -277,7 +277,7 @@ void PlayerActor::UpdateSelectedItem(bool toTheLeft)
       }
    }
 
-   RefPtr<dtGame::Message> msg = GetGameActorProxy().GetGameManager()->GetMessageFactory().CreateMessage(MessageType::ITEM_SELECTED);
+   RefPtr<dtGame::Message> msg = GetGameActorProxy().GetGameManager()->GetMessageFactory().CreateMessage(FireFighterMessageType::ITEM_SELECTED);
    msg->SetAboutActorId(mSelectedItem->second->GetUniqueId());
    GetGameActorProxy().GetGameManager()->SendMessage(*msg);
 }
@@ -376,7 +376,7 @@ void PlayerActor::SendItemIntersectedMessage(const dtCore::UniqueId& id)
    {
       mLastIntersectedMessage = id;
       dtGame::GameManager& mgr = *GetGameActorProxy().GetGameManager();
-      RefPtr<dtGame::Message> msg = mgr.GetMessageFactory().CreateMessage(MessageType::ITEM_INTERSECTED);
+      RefPtr<dtGame::Message> msg = mgr.GetMessageFactory().CreateMessage(FireFighterMessageType::ITEM_INTERSECTED);
 
       msg->SetAboutActorId(id);
       mgr.SendMessage(*msg);

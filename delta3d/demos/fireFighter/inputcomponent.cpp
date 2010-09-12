@@ -84,7 +84,7 @@ InputComponent::~InputComponent()
 
 void InputComponent::ProcessMessage(const dtGame::Message& message)
 {
-   if (message.GetMessageType() == MessageType::GAME_STATE_CHANGED)
+   if (message.GetMessageType() == FireFighterMessageType::GAME_STATE_CHANGED)
    {
       mCurrentState = &(static_cast<const GameStateChangedMessage&>(message)).GetNewState();
       if (*mCurrentState == GameState::STATE_MENU)
@@ -128,7 +128,7 @@ void InputComponent::ProcessMessage(const dtGame::Message& message)
          OnGame();
       }
    }
-   else if (message.GetMessageType() == MessageType::ITEM_INTERSECTED)
+   else if (message.GetMessageType() == FireFighterMessageType::ITEM_INTERSECTED)
    {
       if (!message.GetAboutActorId().ToString().empty())
       {
@@ -146,11 +146,11 @@ void InputComponent::ProcessMessage(const dtGame::Message& message)
          ProcessTasks();
       }
    }
-   else if (message.GetMessageType() == MessageType::HELP_WINDOW_OPENED)
+   else if (message.GetMessageType() == FireFighterMessageType::HELP_WINDOW_OPENED)
    {
       mMotionModel->SetTarget(NULL);
    }
-   else if (message.GetMessageType() == MessageType::HELP_WINDOW_CLOSED)
+   else if (message.GetMessageType() == FireFighterMessageType::HELP_WINDOW_CLOSED)
    {
       mMotionModel->SetTarget(mPlayer);
    }
@@ -424,7 +424,7 @@ bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard, int key)
       {
          if (isGameRunning)
          {
-            RefPtr<dtGame::Message> msg = GetGameManager()->GetMessageFactory().CreateMessage(MessageType::HELP_WINDOW_OPENED);
+            RefPtr<dtGame::Message> msg = GetGameManager()->GetMessageFactory().CreateMessage(FireFighterMessageType::HELP_WINDOW_OPENED);
             GetGameManager()->SendMessage(*msg);
          }
       }
@@ -567,7 +567,7 @@ void InputComponent::UpdateCollider(float newHeight)
 
 void InputComponent::SendGameStateChangedMessage(GameState& oldState, GameState& newState)
 {
-   RefPtr<dtGame::Message> msg = GetGameManager()->GetMessageFactory().CreateMessage(MessageType::GAME_STATE_CHANGED);
+   RefPtr<dtGame::Message> msg = GetGameManager()->GetMessageFactory().CreateMessage(FireFighterMessageType::GAME_STATE_CHANGED);
    GameStateChangedMessage& gscm = static_cast<GameStateChangedMessage&>(*msg);
    gscm.SetOldState(oldState);
    gscm.SetNewState(newState);
@@ -632,7 +632,7 @@ void InputComponent::ProcessTasks()
    if (mMission->GetScore() == mMission->GetPassingScore())
    {
       RefPtr<dtGame::Message> msg =
-         GetGameManager()->GetMessageFactory().CreateMessage(MessageType::MISSION_COMPLETE);
+         GetGameManager()->GetMessageFactory().CreateMessage(FireFighterMessageType::MISSION_COMPLETE);
 
       msg->SetAboutActorId(mMission->GetId());
       GetGameManager()->SendMessage(*msg);
@@ -660,7 +660,7 @@ void InputComponent::ProcessTasks()
                if (failedChildTask != NULL)
                {
                   RefPtr<dtGame::Message> msg =
-                     GetGameManager()->GetMessageFactory().CreateMessage(MessageType::MISSION_FAILED);
+                     GetGameManager()->GetMessageFactory().CreateMessage(FireFighterMessageType::MISSION_FAILED);
 
                   msg->SetAboutActorId(failedChildTask->GetId());
                   GetGameManager()->SendMessage(*msg);
@@ -669,7 +669,7 @@ void InputComponent::ProcessTasks()
             else
             {
                RefPtr<dtGame::Message> msg =
-                  GetGameManager()->GetMessageFactory().CreateMessage(MessageType::MISSION_FAILED);
+                  GetGameManager()->GetMessageFactory().CreateMessage(FireFighterMessageType::MISSION_FAILED);
 
                msg->SetAboutActorId(failedTask->GetId());
                GetGameManager()->SendMessage(*msg);

@@ -19,18 +19,17 @@
  * William E. Johnson II
  */
 #include <fireFighter/messagetype.h>
+#include <fireFighter/messages.h>
 
-IMPLEMENT_ENUM(MessageType);
-
-const MessageType MessageType::GAME_STATE_CHANGED("GAME_STATE_CHANGED", "INFO", "Sent when a game state changes", USER_DEFINED_MESSAGE_TYPE + 1);
-const MessageType MessageType::ITEM_ACQUIRED("ITEM_ACQUIRED", "INFO", "Sent the the player picks up an item", USER_DEFINED_MESSAGE_TYPE + 2);
-const MessageType MessageType::ITEM_ACTIVATED("ITEM_ACTIVATED", "INFO", "Sent when an inventory item is selected", USER_DEFINED_MESSAGE_TYPE + 3);
-const MessageType MessageType::ITEM_DEACTIVATED("ITEM_DEACTIVATED", "INFO", "Sent when an inventory item is deselected", USER_DEFINED_MESSAGE_TYPE + 9);
-const MessageType MessageType::ITEM_USED("ITEM_USED", "INFO", "Sent when an item in the inventory is used", USER_DEFINED_MESSAGE_TYPE + 4);
-const MessageType MessageType::ITEM_SELECTED("ITEM_SELECTED", "INFO", "Sent when an item in the inventory is selected", USER_DEFINED_MESSAGE_TYPE + 8);
-const MessageType MessageType::ITEM_INTERSECTED("ITEM_INTERSECTED", "INFO", "Sent when an item is collided with", USER_DEFINED_MESSAGE_TYPE + 5);
-const MessageType MessageType::MISSION_COMPLETE("MISSION_COMPLETE", "INFO", "Sent when the top level game task is completed", USER_DEFINED_MESSAGE_TYPE + 6);
-const MessageType MessageType::MISSION_FAILED("MISSION_FAILED", "INFO", "Sent when the mission is failed", USER_DEFINED_MESSAGE_TYPE + 10);
-const MessageType MessageType::HELP_WINDOW_OPENED("HELP_WINDOW_OPENED", "INFO", "Sent when F1 is pressed", USER_DEFINED_MESSAGE_TYPE + 11);
-const MessageType MessageType::HELP_WINDOW_CLOSED("HELP_WINDOW_CLOSED", "INFO", "Sent when F1 is pressed", USER_DEFINED_MESSAGE_TYPE + 12);
-
+DT_IMPLEMENT_MESSAGE_TYPE_CLASS(FireFighterMessageType)
+const FireFighterMessageType FireFighterMessageType::GAME_STATE_CHANGED("GAME_STATE_CHANGED", "INFO", "Sent when a game state changes", USER_DEFINED_MESSAGE_TYPE + 1, DT_MSG_CLASS(GameStateChangedMessage));
+const FireFighterMessageType FireFighterMessageType::ITEM_ACQUIRED("ITEM_ACQUIRED", "INFO", "Sent the the player picks up an item", USER_DEFINED_MESSAGE_TYPE + 2, DT_MSG_CLASS(dtGame::Message));
+const FireFighterMessageType FireFighterMessageType::ITEM_ACTIVATED("ITEM_ACTIVATED", "INFO", "Sent when an inventory item is selected", USER_DEFINED_MESSAGE_TYPE + 3, DT_MSG_CLASS(dtGame::Message));
+const FireFighterMessageType FireFighterMessageType::ITEM_DEACTIVATED("ITEM_DEACTIVATED", "INFO", "Sent when an inventory item is deselected", USER_DEFINED_MESSAGE_TYPE + 9, DT_MSG_CLASS(dtGame::Message));
+//const FireFighterMessageType FireFighterMessageType::ITEM_USED("ITEM_USED", "INFO", "Sent when an item in the inventory is used", USER_DEFINED_MESSAGE_TYPE + 4, DT_MSG_CLASS(dtGame::Message));
+const FireFighterMessageType FireFighterMessageType::ITEM_SELECTED("ITEM_SELECTED", "INFO", "Sent when an item in the inventory is selected", USER_DEFINED_MESSAGE_TYPE + 8, DT_MSG_CLASS(dtGame::Message));
+const FireFighterMessageType FireFighterMessageType::ITEM_INTERSECTED("ITEM_INTERSECTED", "INFO", "Sent when an item is collided with", USER_DEFINED_MESSAGE_TYPE + 5, DT_MSG_CLASS(dtGame::Message));
+const FireFighterMessageType FireFighterMessageType::MISSION_COMPLETE("MISSION_COMPLETE", "INFO", "Sent when the top level game task is completed", USER_DEFINED_MESSAGE_TYPE + 6, DT_MSG_CLASS(dtGame::Message));
+const FireFighterMessageType FireFighterMessageType::MISSION_FAILED("MISSION_FAILED", "INFO", "Sent when the mission is failed", USER_DEFINED_MESSAGE_TYPE + 10, DT_MSG_CLASS(dtGame::Message));
+const FireFighterMessageType FireFighterMessageType::HELP_WINDOW_OPENED("HELP_WINDOW_OPENED", "INFO", "Sent when F1 is pressed", USER_DEFINED_MESSAGE_TYPE + 11, DT_MSG_CLASS(dtGame::Message));
+const FireFighterMessageType FireFighterMessageType::HELP_WINDOW_CLOSED("HELP_WINDOW_CLOSED", "INFO", "Sent when F1 is pressed", USER_DEFINED_MESSAGE_TYPE + 12, DT_MSG_CLASS(dtGame::Message));

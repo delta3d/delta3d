@@ -174,8 +174,8 @@ void HatchActor::Activate(bool enable)
       dtGame::GameManager& mgr = *GetGameActorProxy().GetGameManager();
 
       RefPtr<dtGame::Message> msg =
-         mgr.GetMessageFactory().CreateMessage(enable ? MessageType::ITEM_ACTIVATED :
-                                                        MessageType::ITEM_DEACTIVATED);
+         mgr.GetMessageFactory().CreateMessage(enable ? FireFighterMessageType::ITEM_ACTIVATED :
+                                                        FireFighterMessageType::ITEM_DEACTIVATED);
 
       msg->SetAboutActorId(GetUniqueId());
       mgr.SendMessage(*msg);

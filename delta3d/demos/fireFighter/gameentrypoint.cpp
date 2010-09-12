@@ -108,18 +108,6 @@ void FireFighterGameEntryPoint::OnStartup(dtGame::GameApplication& app)
    // Make sure we can hear audio
    app.GetCamera()->AddChild(dtAudio::AudioManager::GetListener());
 
-   // Register the messages of the game with the game manager
-   gameManager.GetMessageFactory().RegisterMessageType<GameStateChangedMessage>(MessageType::GAME_STATE_CHANGED);
-   gameManager.GetMessageFactory().RegisterMessageType<dtGame::Message>(MessageType::ITEM_INTERSECTED);
-   gameManager.GetMessageFactory().RegisterMessageType<dtGame::Message>(MessageType::ITEM_ACQUIRED);
-   gameManager.GetMessageFactory().RegisterMessageType<dtGame::Message>(MessageType::ITEM_SELECTED);
-   gameManager.GetMessageFactory().RegisterMessageType<dtGame::Message>(MessageType::ITEM_ACTIVATED);
-   gameManager.GetMessageFactory().RegisterMessageType<dtGame::Message>(MessageType::ITEM_DEACTIVATED);
-   gameManager.GetMessageFactory().RegisterMessageType<dtGame::Message>(MessageType::MISSION_COMPLETE);
-   gameManager.GetMessageFactory().RegisterMessageType<dtGame::Message>(MessageType::MISSION_FAILED);
-   gameManager.GetMessageFactory().RegisterMessageType<dtGame::Message>(MessageType::HELP_WINDOW_OPENED);
-   gameManager.GetMessageFactory().RegisterMessageType<dtGame::Message>(MessageType::HELP_WINDOW_CLOSED);
-
    // Create the components and add them to the game manager
    RefPtr<HUDComponent>   hudComp   = new HUDComponent(app);
    RefPtr<InputComponent> inputComp = new InputComponent;
@@ -147,7 +135,7 @@ void FireFighterGameEntryPoint::OnStartup(dtGame::GameApplication& app)
    }
 
    // Send the message to switch to the menu
-   RefPtr<dtGame::Message> msg = gameManager.GetMessageFactory().CreateMessage(MessageType::GAME_STATE_CHANGED);
+   RefPtr<dtGame::Message> msg = gameManager.GetMessageFactory().CreateMessage(FireFighterMessageType::GAME_STATE_CHANGED);
    GameStateChangedMessage& gscm = static_cast<GameStateChangedMessage&>(*msg);
    gscm.SetOldState(GameState::STATE_UNKNOWN);
    gscm.SetNewState(GameState::STATE_MENU);

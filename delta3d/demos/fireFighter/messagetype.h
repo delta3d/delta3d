@@ -24,34 +24,18 @@
 #include <dtGame/messagetype.h>
 #include <fireFighter/export.h>
 
-class FIRE_FIGHTER_EXPORT MessageType : public dtGame::MessageType
-{
-   DECLARE_ENUM(MessageType);
-
-   public:
-
-      static const MessageType GAME_STATE_CHANGED;
-      static const MessageType ITEM_ACQUIRED;
-      static const MessageType ITEM_ACTIVATED;
-      static const MessageType ITEM_DEACTIVATED;
-      static const MessageType ITEM_USED;
-      static const MessageType ITEM_SELECTED;
-      static const MessageType ITEM_INTERSECTED;
-      static const MessageType MISSION_COMPLETE;
-      static const MessageType MISSION_FAILED;
-      static const MessageType HELP_WINDOW_OPENED;
-      static const MessageType HELP_WINDOW_CLOSED;
-
-   private:
-
-      /// Constructor
-      MessageType(const std::string &name, 
-                  const std::string &cat, 
-                  const std::string &desc, 
-                  const unsigned short int id) : dtGame::MessageType(name, cat, desc, id)
-      {
-
-      }
-};
+DT_DECLARE_MESSAGE_TYPE_CLASS_BEGIN(FireFighterMessageType, FIRE_FIGHTER_EXPORT)
+   static const FireFighterMessageType GAME_STATE_CHANGED;
+      static const FireFighterMessageType ITEM_ACQUIRED;
+      static const FireFighterMessageType ITEM_ACTIVATED;
+      static const FireFighterMessageType ITEM_DEACTIVATED;
+      //static const FireFighterMessageType ITEM_USED;
+      static const FireFighterMessageType ITEM_SELECTED;
+      static const FireFighterMessageType ITEM_INTERSECTED;
+      static const FireFighterMessageType MISSION_COMPLETE;
+      static const FireFighterMessageType MISSION_FAILED;
+      static const FireFighterMessageType HELP_WINDOW_OPENED;
+      static const FireFighterMessageType HELP_WINDOW_CLOSED;
+DT_DECLARE_MESSAGE_TYPE_CLASS_END()
 
 #endif

@@ -129,13 +129,13 @@ void HUDComponent::SetupGUI(dtABC::BaseABC& app)
 
 void HUDComponent::ProcessMessage(const dtGame::Message& msg)
 {
-   if (msg.GetMessageType() == MessageType::GAME_STATE_CHANGED)
+   if (msg.GetMessageType() == FireFighterMessageType::GAME_STATE_CHANGED)
    {
       const GameStateChangedMessage& gscm = static_cast<const GameStateChangedMessage&>(msg);
       mCurrentState = &gscm.GetNewState();
       Refresh();
    }
-   else if (msg.GetMessageType() == MessageType::ITEM_INTERSECTED)
+   else if (msg.GetMessageType() == FireFighterMessageType::ITEM_INTERSECTED)
    {
       if (!msg.GetAboutActorId().ToString().empty())
       {
@@ -154,23 +154,23 @@ void HUDComponent::ProcessMessage(const dtGame::Message& msg)
          HideGameItemImage();
       }
    }
-   else if (msg.GetMessageType() == MessageType::ITEM_ACQUIRED)
+   else if (msg.GetMessageType() == FireFighterMessageType::ITEM_ACQUIRED)
    {
       dtGame::GameActorProxy* proxy = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
       AddItemToHUD(dynamic_cast<GameItemActor*>(proxy->GetActor()));
    }
-   else if (msg.GetMessageType() == MessageType::ITEM_SELECTED)
+   else if (msg.GetMessageType() == FireFighterMessageType::ITEM_SELECTED)
    {
       dtGame::GameActorProxy* proxy = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
       SetSelectedItem(dynamic_cast<GameItemActor*>(proxy->GetActor()));
    }
-   else if (msg.GetMessageType() == MessageType::ITEM_ACTIVATED)
+   else if (msg.GetMessageType() == FireFighterMessageType::ITEM_ACTIVATED)
    {
       dtGame::GameActorProxy* proxy = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
       SetActivatedItem(dynamic_cast<GameItemActor*>(proxy->GetActor()));
       UpdateHUDBackground();
    }
-   else if (msg.GetMessageType() == MessageType::ITEM_DEACTIVATED)
+   else if (msg.GetMessageType() == FireFighterMessageType::ITEM_DEACTIVATED)
    {
       dtGame::GameActorProxy* proxy = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
       SetDeactivatedItem(dynamic_cast<GameItemActor*>(proxy->GetActor()));
@@ -187,25 +187,25 @@ void HUDComponent::ProcessMessage(const dtGame::Message& msg)
          RefreshDebriefScreen();
       }
    }
-   else if (msg.GetMessageType() == MessageType::MISSION_COMPLETE)
+   else if (msg.GetMessageType() == FireFighterMessageType::MISSION_COMPLETE)
    {
       mMissionComplete = true;
       mMissionFailed = false;
       Refresh();
    }
-   else if (msg.GetMessageType() == MessageType::MISSION_FAILED)
+   else if (msg.GetMessageType() == FireFighterMessageType::MISSION_FAILED)
    {
       mMissionFailed = true;
       mMissionComplete = false;
       GetGameManager()->FindActorById(msg.GetAboutActorId(), mFailedProxy);
       Refresh();
    }
-   else if (msg.GetMessageType() == MessageType::HELP_WINDOW_OPENED)
+   else if (msg.GetMessageType() == FireFighterMessageType::HELP_WINDOW_OPENED)
    {
       mHelpWindow->Enable(true);
       ShowMouse(true);
    }
-   else if (msg.GetMessageType() == MessageType::HELP_WINDOW_CLOSED)
+   else if (msg.GetMessageType() == FireFighterMessageType::HELP_WINDOW_CLOSED)
    {
       mHelpWindow->Enable(false);
       ShowMouse(false);
@@ -556,14 +556,14 @@ bool HUDComponent::OnReturnToMenu(const CEGUI::EventArgs& e)
 
 bool HUDComponent::OnHelpWindowClosed(const CEGUI::EventArgs& e)
 {
-   RefPtr<dtGame::Message> msg = GetGameManager()->GetMessageFactory().CreateMessage(MessageType::HELP_WINDOW_CLOSED);
+   RefPtr<dtGame::Message> msg = GetGameManager()->GetMessageFactory().CreateMessage(FireFighterMessageType::HELP_WINDOW_CLOSED);
    GetGameManager()->SendMessage(*msg);
    return true;
 }
 
 void HUDComponent::SendGameStateChangedMessage(GameState& oldState, GameState& newState)
 {
-   RefPtr<dtGame::Message> msg = GetGameManager()->GetMessageFactory().CreateMessage(MessageType::GAME_STATE_CHANGED);
+   RefPtr<dtGame::Message> msg = GetGameManager()->GetMessageFactory().CreateMessage(FireFighterMessageType::GAME_STATE_CHANGED);
    GameStateChangedMessage& gscm = static_cast<GameStateChangedMessage&>(*msg);
    gscm.SetOldState(oldState);
    gscm.SetNewState(newState);
