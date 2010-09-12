@@ -223,7 +223,7 @@ void FlySequenceActor::StopFlying()
    GetGameActorProxy().UnregisterForMessages(dtGame::MessageType::TICK_LOCAL, dtGame::GameActorProxy::TICK_LOCAL_INVOKABLE);
 
    dtGame::MessageFactory& mf = GetGameActorProxy().GetGameManager()->GetMessageFactory();
-   dtCore::RefPtr<dtGame::Message> msg = mf.CreateMessage(MessageType::GAME_STATE_CHANGED);
+   dtCore::RefPtr<dtGame::Message> msg = mf.CreateMessage(FireFighterMessageType::GAME_STATE_CHANGED);
    GameStateChangedMessage& gscm = static_cast<GameStateChangedMessage&>(*msg);
    gscm.SetOldState(GameState::STATE_INTRO);
    gscm.SetNewState(GameState::STATE_RUNNING);

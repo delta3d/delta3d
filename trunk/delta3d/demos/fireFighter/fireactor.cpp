@@ -132,9 +132,9 @@ void FireActorProxy::OnEnteredWorld()
    AddInvokable(*stopSoundInvoke);
 
    RegisterForMessages(dtGame::MessageType::TICK_LOCAL, dtGame::GameActorProxy::TICK_LOCAL_INVOKABLE);
-   RegisterForMessages(MessageType::ITEM_ACTIVATED,   "PlaySound");
-   RegisterForMessages(MessageType::ITEM_DEACTIVATED, "PlaySound");
-   RegisterForMessages(MessageType::GAME_STATE_CHANGED, "StopSounds");
+   RegisterForMessages(FireFighterMessageType::ITEM_ACTIVATED,   "PlaySound");
+   RegisterForMessages(FireFighterMessageType::ITEM_DEACTIVATED, "PlaySound");
+   RegisterForMessages(FireFighterMessageType::GAME_STATE_CHANGED, "StopSounds");
 }
 
 /////////////////////////////////////////////////

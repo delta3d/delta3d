@@ -3,7 +3,8 @@ Demonstrates most of the functionality of Delta3D in a full-blown game setting.
 The objective is to walk through the ship performing the required tasks.  If you
 manage to complete all the tasks, you win!
 
-To run, use the GameStart utility and supply the library name on the command line.
+To run, use the GameStart utility and supply the library name on the command line.  The
+demo's working directory should be the delta3d root folder.
 
 Usage:
 "GameStart.exe fireFighter" or "GameStartD.exe fireFighter"

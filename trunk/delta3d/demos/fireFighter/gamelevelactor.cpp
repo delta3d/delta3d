@@ -77,8 +77,8 @@ void GameLevelActorProxy::OnEnteredWorld()
 
    AddInvokable(*invoke);
 
-   RegisterForMessages(MessageType::ITEM_ACTIVATED,   "ResetCollisionMesh");
-   RegisterForMessages(MessageType::ITEM_DEACTIVATED, "ResetCollisionMesh");
+   RegisterForMessages(FireFighterMessageType::ITEM_ACTIVATED,   "ResetCollisionMesh");
+   RegisterForMessages(FireFighterMessageType::ITEM_DEACTIVATED, "ResetCollisionMesh");
 }
 
 /////////////////////////////////////////////////////////////////
@@ -105,7 +105,7 @@ void GameLevelActor::OnEnteredWorld()
       dtUtil::MakeFunctor(&GameLevelActor::StopSounds, *this));
 
    GetGameActorProxy().AddInvokable(*invoke);
-   GetGameActorProxy().RegisterForMessages(MessageType::GAME_STATE_CHANGED, "StopSounds");
+   GetGameActorProxy().RegisterForMessages(FireFighterMessageType::GAME_STATE_CHANGED, "StopSounds");
 
    mAmbientSound = dtAudio::AudioManager::GetInstance().NewSound();
    mAmbientSound->LoadFile("Sounds/ambientVentilation.wav");
