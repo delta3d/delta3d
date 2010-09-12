@@ -1,6 +1,6 @@
 /* -*-c++-*-
  * allTests - This source file (.h & .cpp) - Using 'The MIT License'
- * Copyright (C) 2005-2008, Alion Science and Technology Corporation
+ * Copyright (C) 2005-2010, Alion Science and Technology Corporation
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,12 +24,14 @@
  * circumstances in which the U. S. Government may have rights in the software.
  *
  * Roy Newton
+ * Erik Johnson
  */
 
 #include <prefix/unittestprefix.h>
 #include <dtUtil/log.h>
 #include <dtUtil/exception.h>
 #include <dtUtil/fileutils.h>
+#include <dtUtil/logobserver.h>
 #include <cppunit/extensions/HelperMacros.h>
 
 /**
@@ -45,6 +47,8 @@ class LogTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestIsLevelEnabled);
       CPPUNIT_TEST(TestLogFilename);
       CPPUNIT_TEST(TestOutputStream);
+      CPPUNIT_TEST(TestAddingCustomLogObserver);
+      CPPUNIT_TEST(TestTriggeringCustomLogObserver);
    CPPUNIT_TEST_SUITE_END();
 
    public:
@@ -72,6 +76,10 @@ class LogTests : public CPPUNIT_NS::TestFixture
       void TestLogFilename();
 
       void TestOutputStream();
+
+      void TestAddingCustomLogObserver();
+
+      void TestTriggeringCustomLogObserver();
 
    private:
       std::string mMsgStr;
@@ -296,4 +304,74 @@ void LogTests::TestOutputStream()
 
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Returned bit doesn't match set bit",
                                  option, newBit);
+}
+
+//////////////////////////////////////////////////////////////////////////
+class TestObserver : public dtUtil::LogObserver
+{
+public:
+   TestObserver(): mLogged(false)
+   {
+   }
+
+   virtual void LogMessage(dtUtil::Log::LogMessageType type, int hour, int min, int sec,
+                           const std::string& source, int line, const std::string& msg)
+   {
+      mLogged = true;
+   }
+
+   bool mLogged;
+protected:
+   virtual ~TestObserver() {};
+};
+
+
+////////////////////////////////////////////////////////////////////////////////
+void LogTests::TestAddingCustomLogObserver()
+{
+   using namespace dtUtil;
+
+   dtCore::RefPtr<TestObserver> testObserver = new TestObserver();
+
+   const size_t originalCount = Log::GetInstance().GetObservers().size();
+
+   Log::GetInstance().AddObserver(*testObserver);
+
+   //should be one more
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Custom LogObserver didn't get added",
+                                 originalCount+1, 
+                                 Log::GetInstance().GetObservers().size());
+
+   Log::GetInstance().RemoveObserver(*testObserver);
+
+   //should be back to where we started
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Custom LogObserver didn't get removed",
+                                 originalCount, 
+                                 Log::GetInstance().GetObservers().size());
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void LogTests::TestTriggeringCustomLogObserver()
+{
+   using namespace dtUtil;
+
+   dtCore::RefPtr<TestObserver> testObserver = new TestObserver();
+
+   Log::GetInstance().AddObserver(*testObserver);
+
+   Log::GetInstance().SetOutputStreamBit(Log::GetInstance().GetOutputStreamBit() & ~Log::TO_OBSERVER); //Turn off the observer bit
+
+   LOG_ALWAYS("custom LogObserver message");
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Custom LogObserver should have not been triggered",
+                                 false, testObserver->mLogged);
+
+   Log::GetInstance().SetOutputStreamBit(Log::GetInstance().GetOutputStreamBit() | Log::TO_OBSERVER); //Turn on the observer bit
+
+   LOG_ALWAYS("custom LogObserver message");
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Custom LogObserver should have been triggered",
+                                 true, testObserver->mLogged);
+
+   Log::GetInstance().RemoveObserver(*testObserver);
 }

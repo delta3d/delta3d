@@ -1,6 +1,6 @@
 /*
  * Delta3D Open Source Game and Simulation Engine
- * Copyright (C) 2005, BMH Associates, Inc.
+ * Copyright (C) 2005-2010, BMH Associates, Inc.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,18 +17,24 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  * Matthew W. Campbell
+ * Erik Johnson
  */
 #ifndef DELTA_LOG
 #define DELTA_LOG
 
 #include <string>
 #include <cstdarg>
+#include <vector>
 
 #include <osg/Referenced>
+#include <dtCore/refptr.h>
 #include <dtUtil/export.h>
 
 namespace dtUtil
 {
+   // Fwd declaration
+   class LogObserver;
+
    class DT_UTIL_EXPORT LogFile
    {
    public:
@@ -216,12 +222,44 @@ namespace dtUtil
         */
       static void SetAllLogLevels(LogMessageType newLevel);
 
+      /** 
+        *  Add an observer that receives all log messages via callback.  The
+        *  TO_OBSERVER OutputStreamOptions bit must be set in order for LogObservers
+        *  to get triggered.
+        *  @see SetOutputStreamBit()
+        *  @see RemoveObserver()
+        *  @param observer The LogObserver to register
+        */
+      void AddObserver(LogObserver& observer);
+
+      /** 
+        * Remove an existing LogObserver from the container.
+        * @see AddObserver()
+        * @param observer The LogObserver to remove
+        */
+      void RemoveObserver(LogObserver& observer);
+
+      typedef std::vector<dtCore::RefPtr<LogObserver> > LogObserverContainer;
+
+      /** 
+        *  Get all registered LogObservers that are registered to receive log messages.
+        *  @return The container of LogObservers (could be empty)
+        */
+      const LogObserverContainer& GetObservers() const;
+
+      /** 
+        *  Get all registered LogObservers that are registered to receive log messages.
+        *  @return The container of LogObservers (could be empty)
+        */
+      LogObserverContainer& GetObservers();
+
       enum OutputStreamOptions
       {
-         NO_OUTPUT =   0x00000000, ///<Log messages don't get written to any device
-         TO_FILE =     0x00000001,   ///<Log messages get sent to the output file
-         TO_CONSOLE =  0x00000002,///<Log messages get sent to the console
-         STANDARD = TO_FILE | TO_CONSOLE ///<The default setting
+         NO_OUTPUT =    0x00000000, ///<Log messages don't get written to any device
+         TO_FILE =      0x00000001,   ///<Log messages get sent to the output file
+         TO_CONSOLE =   0x00000002,///<Log messages get sent to the console
+         TO_OBSERVER =  0x00000004,///<Log messages get sent to all registered observers
+         STANDARD = TO_FILE | TO_CONSOLE | TO_OBSERVER ///<The default setting
       };
 
       /** Tell the Log where to send output messages.  The supplied parameter is a
@@ -255,10 +293,9 @@ namespace dtUtil
       ~Log();
 
    private:
-      LogMessageType mLevel;
       LogImpl* mImpl;
    };
-
+  
 } // namespace dtUtil
 
 #endif // DELTA_LOG
