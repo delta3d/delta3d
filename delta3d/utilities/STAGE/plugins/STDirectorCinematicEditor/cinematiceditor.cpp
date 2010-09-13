@@ -1128,6 +1128,7 @@ void DirectorCinematicEditorPlugin::OnAnimationComboChanged(int index)
 #ifdef MANUAL_ANIMATIONS
          if (data->mAnimation > -1)
          {
+            CalMixer* calMixer = animActor->GetHelper()->GetModelWrapper()->GetCalModel()->getMixer();
             calMixer->removeManualAnimation(data->mAnimation);
             animActor->GetHelper()->Update(0.0f);
             data->mAnimation = -1;
