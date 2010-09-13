@@ -26,8 +26,6 @@
 
 namespace dtUtil
 {
-   enum LogMessageType;
-
    /** Interface class to receive messages from the Log.  Derive and implement
      *   the LogMessage() method to support custom handling of Log messages.
      *   @see dtUtil::Log::AddObserver()
