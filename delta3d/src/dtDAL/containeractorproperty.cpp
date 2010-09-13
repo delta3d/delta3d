@@ -81,7 +81,7 @@ namespace dtDAL
 
       int depth = 0;
       int dataIndex = 0;
-      while (data.length() > 0)
+      while (data.length() > 1)
       {
          bool appendChar = true;
 

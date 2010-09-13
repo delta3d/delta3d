@@ -85,7 +85,7 @@ std::string dtDAL::ArrayActorPropertyBase::TakeToken(std::string& data)
 
    int depth = 0;
    int dataIndex = 0;
-   while (data.length() > 0)
+   while (data.length() > 1)
    {
       bool appendChar = true;
 
