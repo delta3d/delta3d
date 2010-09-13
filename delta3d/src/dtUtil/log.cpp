@@ -29,6 +29,7 @@
 #include <OpenThreads/Mutex>
 #include <OpenThreads/ScopedLock>
 
+#include <algorithm>
 #include <cstdarg>
 //#include <cstdio>
 #include <ctime>
