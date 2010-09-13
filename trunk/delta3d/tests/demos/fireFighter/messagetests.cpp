@@ -99,12 +99,12 @@ void FireFighterMessageTests::TestGameStateMessages()
       mGM->AddComponent(*dmp, dtGame::GameManager::ComponentPriority::HIGHEST);
 
       dtGame::MessageFactory& mf = mGM->GetMessageFactory();
-      mf.RegisterMessageType<GameStateChangedMessage>(MessageType::GAME_STATE_CHANGED);
+      mf.RegisterMessageType<GameStateChangedMessage>(FireFighterMessageType::GAME_STATE_CHANGED);
 
       GameState& state = inputComp->GetCurrentGameState();
       CPPUNIT_ASSERT_MESSAGE("The initial game state should be unknown", state == GameState::STATE_UNKNOWN);
 
-      RefPtr<dtGame::Message> msg = mf.CreateMessage(MessageType::GAME_STATE_CHANGED);
+      RefPtr<dtGame::Message> msg = mf.CreateMessage(FireFighterMessageType::GAME_STATE_CHANGED);
       CPPUNIT_ASSERT(msg.valid());
 
       GameStateChangedMessage* gscm = static_cast<GameStateChangedMessage*>(msg.get());
@@ -130,7 +130,7 @@ void FireFighterMessageTests::TestGameStateMessages()
       CPPUNIT_ASSERT_MESSAGE("The current state was not one where the Escape keypress applied, the state shoudl NOT have changed",
          inputComp->GetCurrentGameState() == GameState::STATE_MENU);
 
-      msg = mf.CreateMessage(MessageType::GAME_STATE_CHANGED);
+      msg = mf.CreateMessage(FireFighterMessageType::GAME_STATE_CHANGED);
       CPPUNIT_ASSERT(msg.valid());
       gscm = static_cast<GameStateChangedMessage*>(msg.get());
       gscm->SetOldState(GameState::STATE_MENU);
