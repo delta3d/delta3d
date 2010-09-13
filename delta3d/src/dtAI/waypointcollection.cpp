@@ -22,7 +22,7 @@
 #include <dtAI/waypointcollection.h>
 #include <dtAI/waypointpair.h>
 #include <dtAI/waypointtypes.h>
-
+#include <osg/BoundingSphere>
 
 #include <dtUtil/log.h>
 
@@ -261,38 +261,49 @@ namespace dtAI
    void WaypointCollection::Recalculate()
    {
       //calculate new bounds
-
-      WaypointTreeConstChildIterator iter = begin_child();
-      WaypointTreeConstChildIterator iterEnd = end_child();
-      
-      //average points to find new center
-      osg::Vec3 newCenter;
-      for(;iter != iterEnd; ++iter)
       {
-         newCenter += iter->value->GetPosition();
-      }       
+         WaypointTreeConstChildIterator iter = begin_child();
+         WaypointTreeConstChildIterator iterEnd = end_child();
 
-      //reset position
-      mPosition = newCenter;
-      int numChildren = degree();
-      if(numChildren > 1)
-      {
-         mPosition /= numChildren;
+         //average points to find new center
+         osg::Vec3 newCenter;
+         for(;iter != iterEnd; ++iter)
+         {
+            newCenter += iter->value->GetPosition();
+         }       
+
+         //reset position
+         mPosition = newCenter;
+         int numChildren = degree();
+         if(numChildren > 1)
+         {
+            mPosition /= numChildren;
+         }
       }
 
-      //reset radius
-      mRadius = 0.0f;
-      WaypointTreeConstChildIterator iter2 = begin_child();
-      WaypointTreeConstChildIterator iterEnd2 = end_child();
-      for(;iter2 != iterEnd2; ++iter2)
       {
-         //increase bounds, potentially recenter
-         WaypointPair wp(this, iter2->value);
-         if(wp.Get3DDistance() > mRadius)
+         //reset radius
+         mRadius = 0.0f;
+         osg::BoundingSphere bs;
+
+         WaypointTreeConstChildIterator iter2 = begin_child();
+         WaypointTreeConstChildIterator iterEnd2 = end_child();
+         for(;iter2 != iterEnd2; ++iter2)
          {
-            mRadius = wp.Get3DDistance();
+            //increase bounds, potentially recenter
+            const WaypointCollection* childParent = dynamic_cast<const WaypointCollection*>(iter2->value);
+            if (childParent)
+            {
+               bs.expandBy(osg::BoundingSphere(childParent->GetPosition(), childParent->GetRadius()));
+            }
+            else
+            {
+               bs.expandBy(iter2->value->GetPosition());
+            }
          }
-      }         
+
+         mRadius = bs.radius();
+      }      
 
       //recursively recalculate up to root
       if(!is_root() && parent() != NULL)
