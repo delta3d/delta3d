@@ -99,7 +99,6 @@ void FireFighterMessageTests::TestGameStateMessages()
       mGM->AddComponent(*dmp, dtGame::GameManager::ComponentPriority::HIGHEST);
 
       dtGame::MessageFactory& mf = mGM->GetMessageFactory();
-      mf.RegisterMessageType<GameStateChangedMessage>(FireFighterMessageType::GAME_STATE_CHANGED);
 
       GameState& state = inputComp->GetCurrentGameState();
       CPPUNIT_ASSERT_MESSAGE("The initial game state should be unknown", state == GameState::STATE_UNKNOWN);
