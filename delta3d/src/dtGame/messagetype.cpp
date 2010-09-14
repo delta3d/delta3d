@@ -29,4 +29,6 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////////////////////
    MessageType::~MessageType() { dtGame::MessageFactory::UnregisterMessageType(*this); }
 
+   // CONCRETE instances are in messagefactory.cpp for now. -DG
+
 }
