@@ -56,6 +56,7 @@ namespace dtAI
    public:
       osg::Vec3 mWorldSpacePos;
 
+      DT_DECLARE_ACCESSOR(bool, EnableDepthTest);
       DT_DECLARE_ACCESSOR(bool, RenderWaypoints);
       DT_DECLARE_ACCESSOR(bool, RenderWaypointID);
       DT_DECLARE_ACCESSOR(bool, RenderWaypointText);

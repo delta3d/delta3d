@@ -49,6 +49,7 @@ namespace dtAI
       //we actually don't want to reset this, simiarly to the Waypoint ID
       //this comes from supporting the pure virtual functions in the base
       //mWorldSpacePos = osg::Vec3(0.0f, 0.0f, 0.0f);
+      mEnableDepthTest = true;
       mRenderWaypoints = true;
       mRenderWaypointID = true;
       mRenderWaypointText = true;
@@ -81,6 +82,7 @@ namespace dtAI
 
       RegHelperType regHelper(*this, this, "WaypointRenderInfo");
 
+      DT_REGISTER_PROPERTY(EnableDepthTest, "Used to toggle depth testing on the waypoints and navmesh.", RegHelperType, regHelper);
       DT_REGISTER_PROPERTY(RenderWaypoints, "Used to toggle waypoint rendering.", RegHelperType, regHelper);
       DT_REGISTER_PROPERTY(RenderWaypointID, "Used to toggle rendering the waypoint id above the waypoint.", RegHelperType, regHelper);
       DT_REGISTER_PROPERTY(RenderWaypointText, "Used to toggle waypoint text rendering.", RegHelperType, regHelper);
@@ -98,10 +100,9 @@ namespace dtAI
       DT_REGISTER_PROPERTY(NavMeshFontSizeScalar, "Used to change the size of the navmesh font.", RegHelperType, regHelper);
       DT_REGISTER_PROPERTY(NavMeshTextOffsetScalar, "Used to offset the navmesh text.", RegHelperType, regHelper);
       DT_REGISTER_PROPERTY(NavMeshFontColor, "Used to change the navmesh text color.", RegHelperType, regHelper);
-
-
    }
 
+   DT_IMPLEMENT_ACCESSOR(WaypointRenderInfo, bool, EnableDepthTest)
    DT_IMPLEMENT_ACCESSOR(WaypointRenderInfo, bool, RenderWaypoints)
    DT_IMPLEMENT_ACCESSOR(WaypointRenderInfo, bool, RenderWaypointID)
    DT_IMPLEMENT_ACCESSOR(WaypointRenderInfo, bool, RenderWaypointText)
