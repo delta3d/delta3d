@@ -8,16 +8,17 @@
 
 #where to find the root Delta3D folder
 FIND_PATH(DELTA3D_ROOT src
-          PATHS
+          HINTS
           $ENV{DELTA_ROOT}
           DOC "The root folder of Delta3D"
           )
 
 #where to find the Delta3D include dir
 FIND_PATH(DELTA3D_INCLUDE_DIR dtCore/dt.h
-          PATHS
+         HINTS
          ${DELTA3D_ROOT}/inc
          $ENV{DELTA_ROOT}/inc
+         PATHS
          /usr/local/include
          /usr/freeware/include     
          DOC "The Delta3D include folder. Should contain 'dtCore', 'dtUtil', 'dtABC',..."
@@ -25,7 +26,7 @@ FIND_PATH(DELTA3D_INCLUDE_DIR dtCore/dt.h
 
 #where to find the Delta3D "ext" folder
 FIND_PATH(DELTA3D_EXT_DIR inc/al.h
-          PATHS
+         HINTS
          ${DELTA3D_ROOT}/ext
          $ENV{DELTA_ROOT}/ext
          DOC "The root of the Delta3D external dependency folder"
@@ -43,8 +44,8 @@ SET(DELTA3D_LIB_SEARCH_PATH
 )
 
 MACRO(FIND_DELTA3D_LIBRARY LIB_VAR LIB_NAME)
-  FIND_LIBRARY(LIB_VAR NAMES ${LIB_NAME}
-               PATHS
+  FIND_LIBRARY(LIB_VAR NAMES LIB_NAME
+               HINTS
                ${DELTA3D_LIB_SEARCH_PATH}
               )
 ENDMACRO(FIND_DELTA3D_LIBRARY LIB_VAR LIB_NAME)            
