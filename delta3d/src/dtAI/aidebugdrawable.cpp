@@ -532,8 +532,6 @@ namespace dtAI
       NavMesh::NavMeshContainer::const_iterator iter = nm.GetNavMesh().begin();
       NavMesh::NavMeshContainer::const_iterator iterEnd = nm.GetNavMesh().end();
 
-      int safetyCounter = 0;
-
       for (;iter != iterEnd; ++iter)
       {
          const WaypointPair* wp = (*iter).second;
