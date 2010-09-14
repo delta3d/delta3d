@@ -59,6 +59,7 @@ MainWindow::MainWindow()
   , mAttachmentRotXSpinner(NULL)
   , mAttachmentRotYSpinner(NULL)
   , mAttachmentRotZSpinner(NULL)
+  , mCurrentAttachment("")
   , mAnimListWidget(NULL)
   , mMeshListWidget(NULL)
   , mMaterialModel(NULL)
@@ -67,7 +68,7 @@ MainWindow::MainWindow()
   , mPoseMeshViewer(NULL)
   , mPoseMeshScene(NULL)
   , mPoseMeshProperties(NULL)
-  , mCurrentAttachment("")
+
 {
    resize(800, 800);
 

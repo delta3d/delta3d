@@ -441,7 +441,9 @@ bool Scene::GetHeightOfTerrain(float& heightOfTerrain, float x, float y, float m
       // set the traversal mask so we don't collide with the skybox
       isector->SetTraversalMask(SCENE_INTERSECT_MASK);
 
-      if (heightFound = isector->Update())
+      heightFound = isector->Update();
+
+      if (heightFound)
       {
          osg::Vec3 hitPoint;
          isector->GetSingleISector(0).GetHitPoint(hitPoint);
