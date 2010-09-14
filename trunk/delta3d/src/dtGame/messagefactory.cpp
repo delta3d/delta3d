@@ -37,14 +37,8 @@ namespace dtGame
    MessageFactory::MessageFactoryException MessageFactory::MessageFactoryException::TYPE_ALREADY_REGISTERED("Type already registered");
    MessageFactory::MessageFactoryException MessageFactory::MessageFactoryException::TYPE_NOT_REGISTERED("Type not registered");
 
-#ifdef __GNUC__
-#define INIT_PRIORITY(priority)// __attribute__ ((init_priority (priority)))
-#else
-#define INIT_PRIORITY(priority)
-#endif
-
    dtCore::RefPtr<dtUtil::ObjectFactory<const MessageType*, Message> >
-      MessageFactory::mMessageFactory INIT_PRIORITY(101) (new dtUtil::ObjectFactory<const MessageType*, Message>);
+      MessageFactory::mMessageFactory (new dtUtil::ObjectFactory<const MessageType*, Message>);
 
    std::map<unsigned short, const MessageType*> MessageFactory::mIdMap;
 
