@@ -116,6 +116,12 @@ namespace dtAI
          mGeodeNavMesh->setNodeMask(mRenderInfo->GetRenderNavMesh() ? ~0: 0);
          mGeodeWayPoints->setNodeMask(mRenderInfo->GetRenderWaypoints() ? ~0: 0);
 
+         osg::StateAttribute::Values depthAttrib =
+            (mRenderInfo->GetEnableDepthTest()) ? osg::StateAttribute::ON : osg::StateAttribute::OFF;
+
+         // Allow waypoint data to be obscured or always visible?
+         mNode->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, depthAttrib);
+
          ResetWaypointColorsToDefault();
 
          osg::Vec4Array* navmeshColors = new osg::Vec4Array(1);
