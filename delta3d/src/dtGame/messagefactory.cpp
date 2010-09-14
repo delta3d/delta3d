@@ -183,6 +183,8 @@ namespace dtGame
       mType = &MessageFactory::MessageFactoryException::TYPE_NOT_REGISTERED;
    }
 
+   IMPLEMENT_ENUM(MessageType);
+
    const MessageType MessageType::UNKNOWN("Unknown", "Unknown", "This is the default when creating a message with the empty constuctor", 0, (Message*)(NULL));
    const MessageType MessageType::TICK_LOCAL("Tick Local", "Tick", "Signals a frame event. Actors are local and should run the next frame of simulation code", 1, (TickMessage*)(NULL));
    const MessageType MessageType::TICK_REMOTE("Tick Remote", "Tick", "Signals a frame event. Actors are remote and should run the next frame of simulation code", 2, (TickMessage*)(NULL));
