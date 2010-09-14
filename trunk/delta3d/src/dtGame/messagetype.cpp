@@ -24,7 +24,6 @@
 
 namespace dtGame
 {
-   IMPLEMENT_ENUM(MessageType);
 
    //////////////////////////////////////////////////////////////////////////////////////
    MessageType::~MessageType() { dtGame::MessageFactory::UnregisterMessageType(*this); }
