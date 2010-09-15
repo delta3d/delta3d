@@ -311,8 +311,9 @@ void GUI::_SetupDefaultUI()
       return;
    }
 
-   mRootSheet = CEGUI::WindowManager::getSingleton().createWindow("DefaultGUISheet", std::string(generatedUniquePrefix + "rootsheet").c_str());
+   mRootSheet = CEGUI::WindowManager::getSingleton().createWindow("DefaultWindow", std::string(generatedUniquePrefix + "rootsheet").c_str());
    mRootSheet->setMousePassThroughEnabled(true);
+   mRootSheet->setMouseInputPropagationEnabled(true);
    CEGUI::System::getSingleton().setGUISheet(mRootSheet);
 }
 

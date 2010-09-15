@@ -5,6 +5,7 @@
         <Property Name="InheritsAlpha" Value="True" />
         <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
         <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+        <Property Name="MousePassThroughEnabled" Value="True" />
         <Window Type="WindowsLook/FrameWindow" Name="Framewindow" >
             <Property Name="TitlebarFont" Value="DejaVuSans-10" />
             <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
