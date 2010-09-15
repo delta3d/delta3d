@@ -32,11 +32,8 @@
 #include <dtGame/messagetype.h>
 #include "export.h"
 
-class TEST_AAR_EXPORT TestAARMessageType : public dtGame::MessageType
-{
-   public:
 
-      DECLARE_ENUM(TestAARMessageType);
+DT_DECLARE_MESSAGE_TYPE_CLASS_BEGIN(TestAARMessageType, TEST_AAR_EXPORT)
 
       static TestAARMessageType PLACE_ACTOR;
       static TestAARMessageType RESET;
@@ -45,18 +42,7 @@ class TEST_AAR_EXPORT TestAARMessageType : public dtGame::MessageType
       static TestAARMessageType UPDATE_TASK_CAMERA;
       static TestAARMessageType PLACE_IGNORED_ACTOR;
 
-   private:
-
-      /// Constructor
-      TestAARMessageType(const std::string& name, 
-                         const std::string& category = "", 
-                         const std::string& desc = "", 
-                         const unsigned short id = 0)
-         : dtGame::MessageType(name, category, desc, id)
-      {
-         AddInstance(this);
-      }
-};
+DT_DECLARE_MESSAGE_TYPE_CLASS_END()
 
 #endif
 
