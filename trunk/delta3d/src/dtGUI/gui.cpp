@@ -313,7 +313,9 @@ void GUI::_SetupDefaultUI()
 
    mRootSheet = CEGUI::WindowManager::getSingleton().createWindow("DefaultWindow", std::string(generatedUniquePrefix + "rootsheet").c_str());
    mRootSheet->setMousePassThroughEnabled(true);
+#if CEGUI_VERSION_MAJOR >= 0 && CEGUI_VERSION_MINOR >= 7 && CEGUI_VERSION_PATCH > 1
    mRootSheet->setMouseInputPropagationEnabled(true);
+#endif
    CEGUI::System::getSingleton().setGUISheet(mRootSheet);
 }
 

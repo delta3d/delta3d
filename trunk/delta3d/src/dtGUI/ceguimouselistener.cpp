@@ -9,7 +9,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 bool verifyHandled(bool handled)
 {
-#if CEGUI_VERSION_MAJOR >= 0 && CEGUI_VERSION_MINOR >= 7
+#if CEGUI_VERSION_MAJOR >= 0 && CEGUI_VERSION_MINOR >= 7 && CEGUI_VERSION_PATCH > 1
    CEGUI::Window* w = CEGUI::System::getSingleton().getWindowContainingMouse();
    while(w != NULL)
    {
