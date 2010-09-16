@@ -266,23 +266,23 @@ void GUI::_SetupSystemAndRenderer()
 
       //CEGUI::DefaultResourceProvider* rp = static_cast<CEGUI::DefaultResourceProvider*>(CEGUI::System::getSingleton().getResourceProvider());
 
-//      CEGUI::Imageset::setDefaultResourceGroup("imagesets");
-//      SetResourceGroupDirectory("imagesets", dtUtil::FindFileInPathList("imagesets"));
-//
-//      CEGUI::WidgetLookManager::setDefaultResourceGroup("looknfeels");
-//      SetResourceGroupDirectory("looknfeels", dtUtil::FindFileInPathList("looknfeel"));
-//
-//      CEGUI::WindowManager::setDefaultResourceGroup("layouts");
-//      SetResourceGroupDirectory("layouts", dtUtil::FindFileInPathList("layouts"));
-//
-//      CEGUI::ScriptModule::setDefaultResourceGroup("lua_scripts");
-//      SetResourceGroupDirectory("lua_scripts", dtUtil::FindFileInPathList("lua_scripts"));
-//
-//      CEGUI::Scheme::setDefaultResourceGroup("schemes");
-//      SetResourceGroupDirectory("schemes", dtUtil::FindFileInPathList("schemes"));
-//
-//      CEGUI::Font::setDefaultResourceGroup("fonts");
-//      SetResourceGroupDirectory("fonts", dtUtil::FindFileInPathList("fonts"));
+      CEGUI::Imageset::setDefaultResourceGroup("imagesets");
+      SetResourceGroupDirectory("imagesets", dtUtil::FindFileInPathList("imagesets"));
+
+      CEGUI::WidgetLookManager::setDefaultResourceGroup("looknfeels");
+      SetResourceGroupDirectory("looknfeels", dtUtil::FindFileInPathList("looknfeel"));
+
+      CEGUI::WindowManager::setDefaultResourceGroup("layouts");
+      SetResourceGroupDirectory("layouts", dtUtil::FindFileInPathList("layouts"));
+
+      CEGUI::ScriptModule::setDefaultResourceGroup("lua_scripts");
+      SetResourceGroupDirectory("lua_scripts", dtUtil::FindFileInPathList("lua_scripts"));
+
+      CEGUI::Scheme::setDefaultResourceGroup("schemes");
+      SetResourceGroupDirectory("schemes", dtUtil::FindFileInPathList("schemes"));
+
+      CEGUI::Font::setDefaultResourceGroup("fonts");
+      SetResourceGroupDirectory("fonts", dtUtil::FindFileInPathList("fonts"));
 
       SystemAndRendererCreatedByHUD = true;
    }
@@ -688,7 +688,7 @@ dtCore::RefPtr<osg::Texture2D> dtGUI::GUI::CreateRenderTargetTexture(Widget& wid
 
    // create/allocate/setup osg-texture-render target
    osg::Texture2D* rttTexture = new osg::Texture2D();
-   rttTexture->setTextureSize(int(dims.x()), int(dims.y()));
+   rttTexture->setTextureSize(dims.x(), dims.y());
    rttTexture->setInternalFormat(GL_RGBA);
    rttTexture->setFilter(osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR);
    rttTexture->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR);
@@ -716,7 +716,7 @@ dtCore::RefPtr<dtCore::Camera> dtGUI::GUI::CreateCameraForRenderTargetTexture(os
    osg::Camera* osgCam = rttCam->GetOSGCamera();
    osgCam->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
    osgCam->setClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-   osgCam->setViewport(0, 0, int(viewDimensions.x()), int(viewDimensions.y()));
+   osgCam->setViewport(0, 0, viewDimensions.x(), viewDimensions.y());
    osgCam->setRenderTargetImplementation(osg::Camera::FRAME_BUFFER_OBJECT);
    osgCam->setRenderOrder(osg::Camera::PRE_RENDER);
    osgCam->attach(osg::Camera::COLOR_BUFFER, &renderTargetTexture);
