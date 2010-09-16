@@ -45,6 +45,7 @@ namespace dtAI
    class WaypointGraphTests : public CPPUNIT_NS::TestFixture
    {
       CPPUNIT_TEST_SUITE(WaypointGraphTests);
+      CPPUNIT_TEST(TestTreeTraversal);
       CPPUNIT_TEST(TestAddRemoveWaypoints);
       CPPUNIT_TEST(TestAddRemoveEdge);
       CPPUNIT_TEST(TestBuildGraph);
@@ -71,6 +72,7 @@ namespace dtAI
       void TestLoadSave();
       void TestCollectionBounds();
       void TestAddDuplicates();
+      void TestTreeTraversal();
 
    private:
       void CreateWaypoints();
@@ -386,6 +388,28 @@ void WaypointGraphTests::TestBuildGraph()
    //delete wp8;
 }
 
+
+void WaypointGraphTests::TestTreeTraversal()
+{
+
+   CreateWaypoints();
+
+   //test tree traversal
+   WaypointCollection* rootNode = mGraph->GetRootParent(wpArray[1]);
+   if(rootNode != NULL)
+   {
+      dtAI::Tree<const WaypointInterface*>::iterator iter = rootNode->begin();
+      dtAI::Tree<const WaypointInterface*>::iterator iterEnd = rootNode->end();
+
+      std::cout << std::endl;
+      for(;iter != iterEnd; ++iter)
+      {
+         const WaypointInterface* node = iter->value;
+         std::cout << node->GetID() << std::endl;
+      }
+      std::cout << std::endl;
+   }
+}
 
 void WaypointGraphTests::TestClearMemory()
 {
