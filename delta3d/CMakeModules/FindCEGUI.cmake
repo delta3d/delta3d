@@ -9,14 +9,29 @@
 #
 # Created by David Guthrie with code from Robert Osfield. 
 
-FIND_PATH(CEGUI_INCLUDE_DIR CEGUI/CEGUI.h 
-    PATHS
+IF (APPLE)
+   FIND_PATH(CEGUI_FRAMEWORK_DIR CEGUI.h 
+     HINTS
+       ${DELTA3D_EXT_DIR}/Frameworks/CEGUIBase.framework/Headers
+       ${DELTA3D_EXT_DIR}/Frameworks/CEGUI.framework/Headers
+     PATHS
+       ~/Library/Frameworks/CEGUIBase.framework/Headers
+       /Library/Frameworks/CEGUIBase.framework/Headers
+       ~/Library/Frameworks/CEGUI.framework/Headers
+       /Library/Frameworks/CEGUI.framework/Headers
+)
+ENDIF (APPLE)
+
+FIND_PATH(CEGUI_INCLUDE_DIR NAMES CEGUI/CEGUI.h CEGUI.h
+    HINTS
+    ${CEGUI_FRAMEWORK_DIR}
     $ENV{CEGUI_DIR}/include
     $ENV{CEGUIDIR}/include
     $ENV{CEGUI_ROOT}/include
     ${DELTA3D_EXT_DIR}/inc
     ${DELTA3D_EXT_DIR}/Frameworks
     $ENV{DELTA_ROOT}/ext/inc
+    PATHS
     ~/Library/Frameworks
     /Library/Frameworks
     /usr/local/include
@@ -28,14 +43,6 @@ FIND_PATH(CEGUI_INCLUDE_DIR CEGUI/CEGUI.h
     /usr/freeware/include
 )
 
-IF (APPLE)
-   FIND_PATH(CEGUI_FRAMEWORK_DIR CEGUI.h 
-     PATHS
-       ~/Library/Frameworks/CEGUI.framework/Headers
-       /Library/Frameworks/CEGUI.framework/Headers
-       ${DELTA3D_EXT_DIR}/Frameworks/CEGUI.framework/Headers
-)
-ENDIF (APPLE)
 
 IF (CEGUI_FRAMEWORK_DIR)
    SET(CEGUI_INCLUDE_DIR ${CEGUI_INCLUDE_DIR} ${CEGUI_FRAMEWORK_DIR})
@@ -47,7 +54,7 @@ MACRO(FIND_CEGUI_LIBRARY MYLIBRARY MYLIBRARYNAMES)
 
     FIND_LIBRARY(${MYLIBRARY}
         NAMES ${MYLIBRARYNAMES}
-        PATHS
+        HINTS
         $ENV{CEGUI_DIR}/lib
         $ENV{CEGUI_DIR}
         $ENV{CEGUIDIR}/lib
@@ -55,6 +62,7 @@ MACRO(FIND_CEGUI_LIBRARY MYLIBRARY MYLIBRARYNAMES)
         $ENV{CEGUI_ROOT}/lib
         ${DELTA3D_EXT_DIR}/lib
         $ENV{DELTA_ROOT}/ext/lib
+        PATHS
         ~/Library/Frameworks
         /Library/Frameworks
         /usr/local/lib
