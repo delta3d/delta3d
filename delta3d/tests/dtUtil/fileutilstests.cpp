@@ -48,7 +48,7 @@ class FileUtilsTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(testFileIO1);
       CPPUNIT_TEST(testFileIO2);
       CPPUNIT_TEST(testRelativePath);
-      CPPUNIT_TEST(testCopyFileOntoItself);
+      CPPUNIT_TEST(testConcatPaths);
       //CPPUNIT_TEST(testAbsoluteToRelativePath);
       CPPUNIT_TEST(testDirectoryContentsWithOneFilter);
       CPPUNIT_TEST(testDirectoryContentsWithTwoFilters);
@@ -64,6 +64,7 @@ class FileUtilsTests : public CPPUNIT_NS::TestFixture
       void testFileIO1();
       void testFileIO2();
       void testRelativePath();
+      void testConcatPaths();
       void testCopyFileOntoItself();
       //void testAbsoluteToRelativePath();
       void testDirectoryContentsWithOneFilter();
@@ -528,6 +529,17 @@ void FileUtilsTests::testRelativePath()
 
    CPPUNIT_ASSERT_EQUAL_MESSAGE("The relative path should be: data/map.xsd",
          std::string("data/map.xsd"), relativePath);
+}
+
+void FileUtilsTests::testConcatPaths()
+{
+   std::string sepStr(1U, dtUtil::FileUtils::PATH_SEPARATOR);
+   CPPUNIT_ASSERT_EQUAL(std::string("test1" + sepStr + "test2.ooo"), dtUtil::FileUtils::ConcatPaths("test1", "test2.ooo"));
+   CPPUNIT_ASSERT_EQUAL(std::string("test1" + sepStr + "test2.ooo"), dtUtil::FileUtils::ConcatPaths("test1/", "test2.ooo"));
+   //CPPUNIT_ASSERT_EQUAL(std::string("test1" + sepStr + "test2.ooo"), dtUtil::FileUtils::ConcatPaths("test1/", "/test2.ooo"));
+   //CPPUNIT_ASSERT_EQUAL(std::string("test1" + sepStr + "test2.ooo"), dtUtil::FileUtils::ConcatPaths("test1\\", "\\test2.ooo"));
+   CPPUNIT_ASSERT_EQUAL(std::string("test1" + sepStr + "test2.ooo"), dtUtil::FileUtils::ConcatPaths("test1\\", "test2.ooo"));
+   //CPPUNIT_ASSERT_EQUAL(std::string("test1" + sepStr + "test2.ooo"), dtUtil::FileUtils::ConcatPaths("test1", "\\test2.ooo"));
 }
 
 void FileUtilsTests::testCopyFileOntoItself()

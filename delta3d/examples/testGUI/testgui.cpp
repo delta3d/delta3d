@@ -126,11 +126,6 @@ private:
 
          CEGUI::Window* sheet = mGUI->GetRootSheet();
 
-         //overwrite the default "layouts" directory search path to find the supplied layout filename
-         CEGUI::DefaultResourceProvider* rp = dynamic_cast<CEGUI::DefaultResourceProvider*>
-            (CEGUI::System::getSingleton().getResourceProvider());
-         rp->setResourceGroupDirectory("layouts",  dtUtil::GetDeltaRootPath() + "/examples/testGUI");
-
          ///We'll make a new ScriptModule which will handle subscribing callbacks
          ///to widgets when it loads the Layout file.
          dtGUI::ScriptModule* sm = new dtGUI::ScriptModule();
@@ -188,7 +183,6 @@ int main(int argc, const char* argv[])
    std::string dataPath = dtUtil::GetDeltaDataPathList();
    dtUtil::SetDataFilePathList(
                                dtUtil::GetDeltaRootPath() + "/examples/data;" +
-                               dtUtil::GetDeltaRootPath() + "/examples/data/gui/;" +
                                dtUtil::GetDeltaRootPath() + "/examples/testGUI;" +
                                dataPath + ";");
 

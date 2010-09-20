@@ -267,22 +267,60 @@ void GUI::_SetupSystemAndRenderer()
       //CEGUI::DefaultResourceProvider* rp = static_cast<CEGUI::DefaultResourceProvider*>(CEGUI::System::getSingleton().getResourceProvider());
 
       CEGUI::Imageset::setDefaultResourceGroup("imagesets");
-      SetResourceGroupDirectory("imagesets", dtUtil::FindFileInPathList("imagesets"));
-
-      CEGUI::WidgetLookManager::setDefaultResourceGroup("looknfeels");
-      SetResourceGroupDirectory("looknfeels", dtUtil::FindFileInPathList("looknfeel"));
-
+//      SetResourceGroupDirectory("imagesets", dtUtil::FindFileInPathList("imagesets"));
+//
+      CEGUI::WidgetLookManager::setDefaultResourceGroup("looknfeel");
+//      SetResourceGroupDirectory("looknfeels", dtUtil::FindFileInPathList("looknfeel"));
+//
       CEGUI::WindowManager::setDefaultResourceGroup("layouts");
-      SetResourceGroupDirectory("layouts", dtUtil::FindFileInPathList("layouts"));
-
+//      SetResourceGroupDirectory("layouts", dtUtil::FindFileInPathList("layouts"));
+//
       CEGUI::ScriptModule::setDefaultResourceGroup("lua_scripts");
-      SetResourceGroupDirectory("lua_scripts", dtUtil::FindFileInPathList("lua_scripts"));
-
+//      SetResourceGroupDirectory("lua_scripts", dtUtil::FindFileInPathList("lua_scripts"));
+//
       CEGUI::Scheme::setDefaultResourceGroup("schemes");
-      SetResourceGroupDirectory("schemes", dtUtil::FindFileInPathList("schemes"));
-
+//      SetResourceGroupDirectory("schemes", dtUtil::FindFileInPathList("schemes"));
+//
       CEGUI::Font::setDefaultResourceGroup("fonts");
-      SetResourceGroupDirectory("fonts", dtUtil::FindFileInPathList("fonts"));
+//      SetResourceGroupDirectory("fonts", dtUtil::FindFileInPathList("fonts"));
+
+      if (CEGUI::System::getSingletonPtr() == NULL)
+      {
+         return;
+      }
+
+      dtGUI::ResourceProvider* rp = dynamic_cast<dtGUI::ResourceProvider*>(CEGUI::System::getSingleton().getResourceProvider());
+
+      if (rp != NULL)
+      {
+         rp->AddSearchSuffix("imagesets", "");
+         rp->AddSearchSuffix("imagesets", "CEGUI/imagesets");
+         rp->AddSearchSuffix("imagesets", "imagesets");
+         rp->AddSearchSuffix("imagesets", "gui/imagesets");
+         rp->AddSearchSuffix("looknfeel", "");
+         rp->AddSearchSuffix("looknfeel", "CEGUI/looknfeel");
+         rp->AddSearchSuffix("looknfeel", "looknfeel");
+         rp->AddSearchSuffix("looknfeel", "gui/looknfeel");
+         rp->AddSearchSuffix("layouts", "");
+         rp->AddSearchSuffix("layouts", "CEGUI/layouts");
+         rp->AddSearchSuffix("layouts", "layouts");
+         rp->AddSearchSuffix("layouts", "gui/layouts");
+         rp->AddSearchSuffix("lua_scripts", "");
+         rp->AddSearchSuffix("lua_scripts", "CEGUI/lua_scripts");
+         rp->AddSearchSuffix("lua_scripts", "lua_scripts");
+         rp->AddSearchSuffix("lua_scripts", "gui/lua_scripts");
+         rp->AddSearchSuffix("schemes", "");
+         rp->AddSearchSuffix("schemes", "CEGUI/schemes");
+         rp->AddSearchSuffix("schemes", "schemes");
+         rp->AddSearchSuffix("schemes", "gui/schemes");
+         rp->AddSearchSuffix("fonts", "");
+         rp->AddSearchSuffix("fonts", "CEGUI/fonts");
+         rp->AddSearchSuffix("fonts", "fonts");
+         rp->AddSearchSuffix("fonts", "gui/fonts");
+         rp->AddSearchSuffix("", "");
+         rp->AddSearchSuffix("", "CEGUI");
+         rp->AddSearchSuffix("", "gui");
+      }
 
       SystemAndRendererCreatedByHUD = true;
    }
@@ -415,7 +453,6 @@ void GUI::SetResourceGroupDirectory(const std::string& resourceType, const std::
 
    rp->setResourceGroupDirectory(resourceType, directory);
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 std::string dtGUI::GUI::SetResourceGroupFromResource(const std::string& resourceGroup,
@@ -724,4 +761,30 @@ dtCore::RefPtr<dtCore::Camera> dtGUI::GUI::CreateCameraForRenderTargetTexture(os
    osgCam->attach(osg::Camera::COLOR_BUFFER, &renderTargetTexture);
 
    return rttCam;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool dtGUI::GUI::AddSearchSuffix(const std::string& resourceGroup,
+                                       const std::string& searchSuffix)
+{
+   return mResProvider.AddSearchSuffix(resourceGroup, searchSuffix);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool dtGUI::GUI::RemoveSearchSuffix(const std::string& resourceGroup,
+                                          const std::string& searchSuffix)
+{
+   return mResProvider.RemoveSearchSuffix(resourceGroup, searchSuffix);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+unsigned dtGUI::GUI::RemoveSearchSuffixes(const std::string& resourceGroup)
+{
+   return mResProvider.RemoveSearchSuffixes(resourceGroup);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+unsigned dtGUI::GUI::ClearSearchSuffixes()
+{
+   return mResProvider.ClearSearchSuffixes();
 }

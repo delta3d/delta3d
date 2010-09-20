@@ -1131,6 +1131,12 @@ namespace dtUtil
       ChangeDirectoryInternal(std::string(".."));
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   std::string FileUtils::ConcatPaths(const std::string& left, const std::string& right)
+   {
+      return osgDB::concatPaths(left, right);
+   }
+
    //-----------------------------------------------------------------------
    FileUtils::FileUtils()
    {
@@ -1247,4 +1253,5 @@ namespace dtUtil
    {
       mType = &dtUtil::FileExceptionEnum::FileNotFound;
    }
+
 } // namespace dtUtil
