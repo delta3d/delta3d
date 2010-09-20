@@ -320,6 +320,9 @@ namespace dtUtil
        */
       bool IsSameFile(const std::string& file1, const std::string& file2) const;
 
+      /// Concatenates two paths adding a path separator in between if necessary.
+      static std::string ConcatPaths(const std::string& left, const std::string& right);
+
    private:
       FileUtils();
 
