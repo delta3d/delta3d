@@ -1131,6 +1131,19 @@ namespace dtUtil
       ChangeDirectoryInternal(std::string(".."));
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   std::string FileUtils::ConcatPaths(const std::string& left, const std::string& right)
+   {
+#if defined(OPENSCENEGRAPH_MAJOR_VERSION) && OPENSCENEGRAPH_MAJOR_VERSION <= 2 && defined(OPENSCENEGRAPH_MINOR_VERSION) && OPENSCENEGRAPH_MINOR_VERSION <= 8 && defined(OPENSCENEGRAPH_PATCH_VERSION) && OPENSCENEGRAPH_PATCH_VERSION < 3
+      if (left.empty())
+      {
+         return right;
+      }
+#endif
+
+      return osgDB::concatPaths(left, right);
+   }
+
    //-----------------------------------------------------------------------
    FileUtils::FileUtils()
    {
@@ -1247,4 +1260,5 @@ namespace dtUtil
    {
       mType = &dtUtil::FileExceptionEnum::FileNotFound;
    }
+
 } // namespace dtUtil

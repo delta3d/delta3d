@@ -279,7 +279,7 @@ namespace dtGUI
        * @param fileName The filename of the .scheme file to load
        * @param resourceGroup The name of the optional resource group this belongs to
        */
-      static void LoadScheme(const std::string& fileName, const std::string& resourceGroup = "");
+      static void LoadScheme(const std::string& fileName, const std::string& resourceGroup = "schemes");
 
       /**
        * Set the image for the rendered mouse cursor.
@@ -354,6 +354,39 @@ namespace dtGUI
        */
       dtCore::RefPtr<dtCore::Camera> CreateCameraForRenderTargetTexture(osg::Texture2D& renderTargetTexture,
                                                                         const osg::Vec2& viewDimensions);
+
+      /**
+       * Add an alternate sub-directory (relative to any project context)
+       * to search when trying to find a file in a specified resource group.
+       * @param resourceGroup The resource group for the alternate search suffix.
+       * @param searchSuffix The sub-directory to append to existing project search
+       *        paths. This suffix will be used in case a file is not found for the
+       *        specified resource group.
+       * @return TRUE if the suffix was successfully added.
+       */
+      bool AddSearchSuffix(const std::string& resourceGroup, const std::string& searchSuffix);
+
+      /**
+       * Remove a previously added search suffix for a specified resource group.
+       * @param resourceGroup The resource group for the alternate search suffix.
+       * @param searchSuffix The sub-directory search suffix that was previously added
+       *        for the specified resource group. This should match exactly as it was added.
+       * @return TRUE if the suffix was successfully found and removed.
+       */
+      bool RemoveSearchSuffix(const std::string& resourceGroup, const std::string& searchSuffix);
+
+      /**
+       * Remove all previously added search suffixes for a specified resource group.
+       * @param resourceGroup The resource group for the alternate search suffixes.
+       * @return The number of suffixes that were successfully removed.
+       */
+      unsigned RemoveSearchSuffixes(const std::string& resourceGroup);
+
+      /**
+       * Remove all previously added search suffixes for all resource groups.
+       * @return The number of suffixes that were successfully removed.
+       */
+      unsigned ClearSearchSuffixes();
 
    protected:
       virtual ~GUI();

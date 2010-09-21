@@ -235,8 +235,8 @@ namespace dtGame
 #define DT_DECLARE_MESSAGE_TYPE_CLASS_BEGIN(CLS, EXPORT_MACRO) \
    class EXPORT_MACRO CLS : public dtGame::MessageType \
    { \
+   DECLARE_ENUM(CLS)\
    protected:\
-      DECLARE_ENUM(CLS)\
       \
       template<typename MessageClass> \
       CLS(const std::string& name, const std::string& category, \
