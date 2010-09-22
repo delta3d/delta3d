@@ -48,7 +48,7 @@ namespace dtAI
    public:
       typedef dtAI::Tree<const WaypointInterface*> WaypointTree;
       typedef dtAI::Tree<const WaypointInterface*>::child_iterator WaypointTreeChildIterator;
-      typedef dtAI::Tree<const WaypointInterface*>::child_iterator WaypointTreeConstChildIterator;
+      typedef dtAI::Tree<const WaypointInterface*>::const_child_iterator WaypointTreeConstChildIterator;
 
       typedef std::pair<WaypointID, WaypointID> ChildEdge;
       typedef std::multimap<WaypointID, ChildEdge> ChildEdgeMap;
