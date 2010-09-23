@@ -251,7 +251,7 @@ void Application::Frame(const double deltaSimTime)
          gw = GetWindow()->GetOsgViewerGraphicsWindow();
       }
 
-      if (!singleThreaded && gw.valid() && gw->isRealized() && gw->isCurrent())
+      if (!singleThreaded && gw.valid() && gw->isRealized())
       {
          gw->releaseContext();
       }
@@ -264,7 +264,7 @@ void Application::Frame(const double deltaSimTime)
       mCompositeViewer->renderingTraversals();
 
       // you must check gw->isRealized() again here and not cache it because the step could cause the window to close.
-      if (!singleThreaded && gw.valid() && gw->isRealized() && !gw->isCurrent())
+      if (gw.valid() && gw->isRealized())
       {
          gw->makeCurrent();
       }
