@@ -51,6 +51,9 @@
 #include <cal3d/coresubmorphtarget.h>
 #include <cal3d/mesh.h>
 #include <cal3d/submesh.h>
+#include <cal3d/coremodel.h>
+#include <cal3d/coresubmesh.h>
+#include <cal3d/morphtargetmixer.h>
 
 #include <dtAnim/hotspotdriver.h>
 #include <dtCore/hotspotattachment.h>
@@ -119,6 +122,9 @@ void Viewer::Config()
    exampleDataPath += "/examples/data;" + rootDataPath;
 
    dtUtil::SetDataFilePathList(dtUtil::GetDataFilePathList() + ";" + exampleDataPath);
+
+   // Ensure bind poses are allowed by default.
+   Cal3DModelWrapper::SetAllowBindPose(true);
 
    //adjust the Camera position
    dtCore::Transform camPos;

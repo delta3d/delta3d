@@ -43,6 +43,8 @@
 #include <osg/MatrixTransform>
 #include <osg/Texture2D>
 
+#include <cal3d/model.h>
+
 namespace dtAnim
 {
 
