@@ -314,10 +314,26 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////
    void DeadReckoningHelper::SetFlyingDeprecatedProperty(bool newFlying)
    {
-      // THIS METHOD IS HERE TO SUPPORT THE DEPRECATED PROPERTY. USE SetGroundClampType() instead.
+      // THIS METHOD SUPPORTS THE DEPRECATED PROPERTY IN EXISTING MAPS. USE SetGroundClampType() instead.
       (newFlying) ?
          (SetGroundClampType(GroundClampTypeEnum::NONE)) :
          (SetGroundClampType(GroundClampTypeEnum::KEEP_ABOVE));
+   }
+
+   //////////////////////////////////////////////////////////////////////
+   DEPRECATE_FUNC bool DeadReckoningHelper::IsFlying()
+   {
+      DEPRECATE("void DeadReckoningHelper::IsFlying()", 
+         " GroundClampTypeEnum DeadReckoningHelper::GetGroundClampType()");
+      return IsFlyingDeprecatedProperty();
+   }
+
+   //////////////////////////////////////////////////////////////////////
+   DEPRECATE_FUNC void DeadReckoningHelper::SetFlying(bool newFlying)
+   {
+      DEPRECATE("void DeadReckoningHelper::SetFlying(bool)", 
+         " bool DeadReckoningHelper::SetGroundClampType(GroundClampTypeEnum)");
+      SetFlyingDeprecatedProperty(newFlying);
    }
 
    //////////////////////////////////////////////////////////////////////
