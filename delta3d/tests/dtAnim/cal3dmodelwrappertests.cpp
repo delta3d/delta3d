@@ -127,7 +127,7 @@ namespace dtAnim
          CPPUNIT_ASSERT(boneNameArray.size() > 0);
 
          // --- Find a test bone id.
-         int boneId = mModel->GetCoreBoneID("Bip02 R Foot");//boneNameArray[0]);
+         int boneId = mModel->GetCoreBoneID(boneNameArray[0]);
          CPPUNIT_ASSERT(boneId != Cal3DModelWrapper::NULL_BONE);
 
 
