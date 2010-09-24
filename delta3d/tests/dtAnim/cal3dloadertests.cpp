@@ -43,6 +43,8 @@
 #include <dtDAL/project.h>
 #include <dtUtil/datapathutils.h>
 
+#include <cal3d/model.h>
+
 #include <osg/Geode>
 
 #include <string>

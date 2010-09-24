@@ -17,16 +17,54 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
+////////////////////////////////////////////////////////////////////////////////
+// INCLUDE DIRECTIVES
+////////////////////////////////////////////////////////////////////////////////
 #include <dtAnim/cal3dmodelwrapper.h>
 #include <cal3d/cal3d.h>
 #include <cal3d/coretrack.h>
 #include <cal3d/corekeyframe.h>
+#include <cal3d/model.h>
+#include <cal3d/hardwaremodel.h>
+#include <cal3d/coremodel.h>
+#include <cal3d/renderer.h>
+#include <cal3d/mixer.h>
+#include <cal3d/morphtargetmixer.h>
+#include <cal3d/physique.h>
+#include <cal3d/springsystem.h>
 
 #include <cassert>
 #include <algorithm>
 
+
+
 namespace dtAnim
 {
+   /////////////////////////////////////////////////////////////////////////////
+   // STATIC VARIABLES
+   /////////////////////////////////////////////////////////////////////////////
+   bool Cal3DModelWrapper::sAllowBindPose = false;
+
+
+
+   /////////////////////////////////////////////////////////////////////////////
+   // STATIC METHODS
+   /////////////////////////////////////////////////////////////////////////////
+   void Cal3DModelWrapper::SetAllowBindPose(bool allow)
+   {
+      sAllowBindPose = allow;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   bool Cal3DModelWrapper::GetAllowBindPose()
+   {
+      return sAllowBindPose;
+   }
+
+
+
+   /////////////////////////////////////////////////////////////////////////////
+   // CLASS CODE
    /////////////////////////////////////////////////////////////////////////////
    Cal3DModelWrapper::Cal3DModelWrapper(CalModel* model)
       : mCalModel(model)
@@ -423,6 +461,18 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////
+   int Cal3DModelWrapper::GetCoreMaterialCount() const
+   {
+      return mCalModel->getCoreModel()->getCoreMaterialCount();
+   }
+   
+   /////////////////////////////////////////////////////////////////////////////
+   CalCoreMaterial* Cal3DModelWrapper::GetCoreMaterial(int matID)
+   {
+      return mCalModel->getCoreModel()->getCoreMaterial(matID);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
    osg::Vec4 Cal3DModelWrapper::GetCoreMaterialDiffuse(int matID) const
    {
       osg::Vec4 retColor;
@@ -525,6 +575,180 @@ namespace dtAnim
       }
 
       return mHardwareModel;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void Cal3DModelWrapper::SetMaterialSet(int materialSetID)
+   {
+      mCalModel->setMaterialSet(materialSetID);
+   }
+   
+   /////////////////////////////////////////////////////////////////////////////
+   void Cal3DModelWrapper::SetLODLevel(float level)
+   {
+      mCalModel->setLodLevel(level);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void Cal3DModelWrapper::Update(float deltaTime)
+   {
+      mCalModel->update(deltaTime);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void Cal3DModelWrapper::UpdateAnimation(float deltaTime)
+   {
+      mCalModel->getMixer()->updateAnimation(deltaTime);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void Cal3DModelWrapper::UpdateMorphTargetMixer(float deltaTime)
+   {
+      mCalModel->getMorphTargetMixer()->update(deltaTime);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void Cal3DModelWrapper::UpdatePhysique()
+   {
+      mCalModel->getPhysique()->update();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void Cal3DModelWrapper::UpdateSpringSystem(float deltaTime)
+   {
+      mCalModel->getSpringSystem()->update(deltaTime);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   bool Cal3DModelWrapper::BeginRenderingQuery()
+   {
+      return mRenderer->beginRendering();
+   }
+   
+   /////////////////////////////////////////////////////////////////////////////
+   void Cal3DModelWrapper::EndRenderingQuery()
+   {
+      mRenderer->endRendering();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   bool Cal3DModelWrapper::SelectMeshSubmesh(int meshID, int submeshID)
+   {
+      return mRenderer->selectMeshSubmesh(meshID, submeshID);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   int Cal3DModelWrapper::GetVertexCount()
+   {
+      return mRenderer->getVertexCount();
+   }
+   
+   /////////////////////////////////////////////////////////////////////////////
+   int Cal3DModelWrapper::GetFaceCount()
+   {
+      return mRenderer->getFaceCount();
+   }
+   
+   /////////////////////////////////////////////////////////////////////////////
+   int Cal3DModelWrapper::GetMapCount()
+   {
+      return mRenderer->getMapCount();
+   }
+   
+   /////////////////////////////////////////////////////////////////////////////
+   int Cal3DModelWrapper::GetMeshCount()
+   {
+      return mRenderer->getMeshCount();
+   }
+   
+   /////////////////////////////////////////////////////////////////////////////
+   int Cal3DModelWrapper::GetSubmeshCount(int submeshID)
+   {
+      return mRenderer->getSubmeshCount(submeshID);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   int Cal3DModelWrapper::GetCoreMeshCount() const
+   {
+      return mCalModel->getCoreModel()->getCoreMeshCount();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   int Cal3DModelWrapper::GetFaces(CalIndex* faces)
+   {
+      return mRenderer->getFaces((CalIndex*)faces);
+   }
+   
+   /////////////////////////////////////////////////////////////////////////////
+   int Cal3DModelWrapper::GetNormals(float* normals, int stride)
+   {
+      return mRenderer->getNormals(normals, stride);
+   }
+   
+   /////////////////////////////////////////////////////////////////////////////
+   int Cal3DModelWrapper::GetTextureCoords(int mapID, float* coords, int stride) 
+   {
+      return mRenderer->getTextureCoordinates(mapID, coords, stride);
+   }
+   
+   /////////////////////////////////////////////////////////////////////////////
+   int Cal3DModelWrapper::GetVertices(float* vertBuffer, int stride)
+   {
+      return mRenderer->getVertices(vertBuffer, stride);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void Cal3DModelWrapper::GetAmbientColor(unsigned char* colorBuffer)
+   {
+      mRenderer->getAmbientColor(colorBuffer);
+   }
+   
+   /////////////////////////////////////////////////////////////////////////////
+   void Cal3DModelWrapper::GetDiffuseColor(unsigned char* colorBuffer)
+   {
+      mRenderer->getDiffuseColor(colorBuffer);
+   }
+   
+   /////////////////////////////////////////////////////////////////////////////
+   void Cal3DModelWrapper::GetSpecularColor(unsigned char* colorBuffer)
+   {
+      mRenderer->getSpecularColor(colorBuffer);
+   }
+   
+   /////////////////////////////////////////////////////////////////////////////
+   float Cal3DModelWrapper::GetShininess()
+   {
+      return mRenderer->getShininess();
+   }
+   
+   /////////////////////////////////////////////////////////////////////////////
+   void* Cal3DModelWrapper::GetMapUserData(int mapID)
+   {
+      return mRenderer->getMapUserData(mapID);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   const std::string& Cal3DModelWrapper::GetCoreMaterialName(int matID) const
+   {
+      return mCalModel->getCoreModel()->getCoreMaterial(matID)->getName();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void Cal3DModelWrapper::UpdateSkeleton()
+   {
+      if(CanUpdate())
+      {
+         mCalModel->getMixer()->updateSkeleton();
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   bool Cal3DModelWrapper::CanUpdate() const
+   {
+      CalMixer* mixer = mCalModel->getMixer();
+      return ! mixer->getAnimationActionList().empty()
+         || ! mixer->getAnimationCycle().empty()
+         || GetAllowBindPose();
    }
 
    /////////////////////////////////////////////////////////////////////////////

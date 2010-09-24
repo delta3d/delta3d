@@ -24,6 +24,8 @@
 #include <cal3d/model.h>
 #include <cal3d/coremodel.h>
 #include <cal3d/coreanimation.h>
+#include <cal3d/hardwaremodel.h>
+#include <cal3d/coresubmesh.h>
 #include <dtAnim/characterfilehandler.h>
 #include <dtAnim/animationwrapper.h>
 #include <dtAnim/animationchannel.h>
