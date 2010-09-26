@@ -18,12 +18,19 @@ ADD_LIBRARY(${LIB_NAME} SHARED
     ${LIB_SOURCES}
 )
 
+#Use the debug alut library, should it exist, otherwise, use the release version
+SET (ALUT_DEBUG ${ALUT_DEBUG_LIBRARY})
+
+IF (NOT ALUT_DEBUG)
+  SET (ALUT_DEBUG ${ALUT_LIBRARY})
+ENDIF (NOT ALUT_DEBUG)
+
 LINK_WITH_VARIABLES(${LIB_NAME}
                         OSG_LIBRARY
                         OSGDB_LIBRARY
                         OPENTHREADS_LIBRARY
                         XERCES_LIBRARY
-                        ALUT_LIBRARY)
+                    )
 
 TARGET_LINK_LIBRARIES( ${LIB_NAME}    
                        ${OPENAL_LIBRARY} 
@@ -31,6 +38,7 @@ TARGET_LINK_LIBRARIES( ${LIB_NAME}
                        ${DTDAL_LIBRARY} #for SoundActorProxy
                        ${DTGAME_LIBRARY} #for SoundActorProxy
                        ${DTUTIL_LIBRARY}
+                       optimized ${ALUT_LIBRARY} debug ${ALUT_DEBUG}
                        )
 
 SET_TARGET_PROPERTIES(${LIB_NAME}
