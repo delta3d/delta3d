@@ -33,6 +33,8 @@
 #include <dtActors/engineactorregistry.h>
 #include <dtUtil/mathdefines.h>
 
+#include <cal3d/model.h>
+
 const std::string& ProceduralAnimationComponent::NAME = "ProceduralAnimationComponent";
 
 ////////////////////////////////////////////////////////////////////////////////
